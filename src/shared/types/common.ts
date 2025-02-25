@@ -177,6 +177,7 @@ export type DLGlobalData = {
         foldersEnabled: boolean;
         workbooksEnabled: boolean;
         collectionsEnabled: boolean;
+        features?: Record<string, unknown>;
     };
     userIsOrgAdmin?: boolean;
     allowLanguages?: Language[];
@@ -217,6 +218,7 @@ export type DLGlobalData = {
     connectorIcons?: ConnectorIconData[];
     releaseVersion?: string;
     isAuthEnabled?: boolean;
+    authManageLocalUsersDisabled?: boolean;
 } & MainLayoutConfigData;
 
 export type ContactDialogSettings = {

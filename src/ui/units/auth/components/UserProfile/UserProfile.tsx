@@ -3,8 +3,9 @@ import * as React from 'react';
 import {Button, DefinitionList, Flex, Text, spacing} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {useHistory} from 'react-router';
-import type {UserRole} from 'shared/components/auth/constants/role';
+import type {UserProfile as UserProfileType} from 'shared/schema/auth/types/users';
 import {DL} from 'ui/constants';
+import {registry} from 'ui/registry';
 import {UserRoleLabel} from 'ui/units/auth/components/UserRoleLabel/UserRoleLabel';
 
 import {ChangePasswordDialog} from '../ChangePasswordDialog/ChangePasswordDialog';
@@ -15,27 +16,11 @@ import {EditUserProfileDialog} from '../EditUserProfileDialog/EditUserProfileDia
 const i18n = I18n.keyset('auth.user-profile.view');
 
 interface UserProfileProps {
-    firstName?: string;
-    lastName?: string;
-    login: string | null;
-    email: string | null;
-    id: string;
-    roles?: `${UserRole}`[];
+    userProfile?: UserProfileType;
     onUserDataChange: () => void;
 }
 
-export function UserProfile({
-    firstName,
-    lastName,
-    login,
-    email,
-    id,
-    roles,
-    onUserDataChange,
-}: UserProfileProps) {
-    const canChangeUserData = DL.IS_NATIVE_AUTH_ADMIN;
-    const isCurrentUserProfile = DL.USER_ID === id;
-
+export function UserProfile({userProfile, onUserDataChange}: UserProfileProps) {
     const history = useHistory();
 
     const [assignRoleDialogOpen, setAssignRoleDialogOpen] = React.useState(false);
@@ -47,21 +32,41 @@ export function UserProfile({
         history.push('/settings/users');
     }, [history]);
 
+    if (!userProfile) {
+        return null;
+    }
+
+    const {login, email, firstName, lastName, userId: id, roles, idpType} = userProfile;
+    const canChangeUserData = DL.IS_NATIVE_AUTH_ADMIN;
+    const isCurrentUserProfile = DL.USER_ID === id;
+
+    const disableActions = DL.AUTH_MANAGE_LOCAL_USERS_DISABLED || Boolean(idpType);
+    const showAdministrationActions = !disableActions && canChangeUserData && !isCurrentUserProfile;
+
+    const {getAdditionalProfileFields} = registry.auth.functions.getAll();
+
+    const additionalProfileFields = getAdditionalProfileFields?.(userProfile)?.map((field) => (
+        <DefinitionList.Item name={field.name} key={field.name}>
+            {field.value}
+        </DefinitionList.Item>
+    ));
+
     return (
         <Flex direction="column" gap={10} width={490}>
             <Section
                 title={i18n('title_profile')}
+                disableActions={disableActions}
                 actions={
-                    canChangeUserData && (
-                        <React.Fragment>
+                    <React.Fragment>
+                        {canChangeUserData && (
                             <Button onClick={() => setEditUserProfileDialogOpen(true)}>
                                 {i18n('action_edit-profile')}
                             </Button>
-                            <Button onClick={() => setUpdateUserPasswordOpen(true)}>
-                                {i18n('action_change-password')}
-                            </Button>
-                        </React.Fragment>
-                    )
+                        )}
+                        <Button onClick={() => setUpdateUserPasswordOpen(true)}>
+                            {i18n('action_change-password')}
+                        </Button>
+                    </React.Fragment>
                 }
             >
                 <DefinitionList>
@@ -74,6 +79,7 @@ export function UserProfile({
                     <DefinitionList.Item name={i18n('label_login')}>{login}</DefinitionList.Item>
                     <DefinitionList.Item name={i18n('label_email')}>{email}</DefinitionList.Item>
                     <DefinitionList.Item name={i18n('label_user-id')}>{id}</DefinitionList.Item>
+                    {additionalProfileFields}
                 </DefinitionList>
 
                 <ChangePasswordDialog
@@ -102,6 +108,7 @@ export function UserProfile({
                         </Button>
                     )
                 }
+                disableActions={disableActions}
             >
                 <DefinitionList>
                     <DefinitionList.Item name={i18n('label_role')}>
@@ -120,7 +127,7 @@ export function UserProfile({
                 />
             </Section>
 
-            {canChangeUserData && !isCurrentUserProfile && (
+            {showAdministrationActions && (
                 <Section
                     title={i18n('title_administration')}
                     actions={
@@ -131,6 +138,7 @@ export function UserProfile({
                             {i18n('action_delete-user')}
                         </Button>
                     }
+                    disableActions={disableActions}
                 >
                     <DeleteUserDialog
                         open={deleteUserDialogOpen}
@@ -149,18 +157,21 @@ function Section({
     title,
     actions,
     children,
+    disableActions,
 }: {
     title: string;
     actions?: React.ReactNode;
     children: React.ReactNode;
+    disableActions?: boolean;
 }) {
+    const showActions = !disableActions && actions;
     return (
         <section>
             <Text as={HEADER_TAG} variant="subheader-3" className={spacing({mb: 3})}>
                 {title}
             </Text>
             {children}
-            {actions && (
+            {showActions && (
                 <Flex gap={2} className={spacing({mt: 3})}>
                     {actions}
                 </Flex>

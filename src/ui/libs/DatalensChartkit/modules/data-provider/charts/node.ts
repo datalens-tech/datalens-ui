@@ -241,6 +241,18 @@ function isNodeResponse(loaded: CurrentResponse): loaded is ResponseSuccessNode 
     return 'data' in loaded;
 }
 
+function shouldShowSafeChartInfo(params: StringParams) {
+    if (!isEnabledFeature('ShowSafeChartInfo')) {
+        return false;
+    }
+    return (
+        Utils.getOptionsFromSearch(window.location.search).showSafeChartInfo ||
+        (params &&
+            SHARED_URL_OPTIONS.SAFE_CHART in params &&
+            String(params?.[SHARED_URL_OPTIONS.SAFE_CHART]?.[0]) === '1')
+    );
+}
+
 /* eslint-disable complexity */
 async function processNode<T extends CurrentResponse, R extends Widget | ControlsOnlyWidget>(
     loaded: T,
@@ -264,12 +276,6 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
     } = loaded;
 
     try {
-        const showSafeChartInfo =
-            Utils.getOptionsFromSearch(window.location.search).showSafeChartInfo ||
-            (params &&
-                SHARED_URL_OPTIONS.SAFE_CHART in params &&
-                String(params?.[SHARED_URL_OPTIONS.SAFE_CHART]?.[0]) === '1');
-
         let result: Widget & Optional<WithControls> & ChartsData = {
             // @ts-ignore
             type: loadedType.match(/^[^_]*/)![0],
@@ -313,7 +319,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 noJsonFn ? replacer : undefined,
             );
 
-            if (showSafeChartInfo) {
+            if (shouldShowSafeChartInfo(params)) {
                 result.safeChartInfo = getSafeChartWarnings(
                     loadedType,
                     pick(result, 'config', 'libraryConfig', 'data'),

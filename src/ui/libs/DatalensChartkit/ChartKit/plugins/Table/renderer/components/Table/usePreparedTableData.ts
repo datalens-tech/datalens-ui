@@ -9,10 +9,12 @@ import {
     useReactTable,
 } from '@tanstack/react-table';
 import {useVirtualizer} from '@tanstack/react-virtual';
+import debounce from 'lodash/debounce';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import type {TableCell, TableCellsRow, TableCommonCell, TableHead} from 'shared';
 import {i18n} from 'ui/libs/DatalensChartkit/ChartKit/modules/i18n/i18n';
+import {getRandomCKId} from 'ui/libs/DatalensChartkit/helpers/helpers';
 
 import type {TableData} from '../../../../../../types';
 import type {WidgetDimensions} from '../../types';
@@ -172,9 +174,19 @@ export const usePreparedTableData = (props: {
         sortingState,
         backgroundColor,
     } = props;
+    const [shouldResize, resize] = React.useState<string | null>(null);
+
+    const onRenderCell = React.useCallback(
+        debounce(() => {
+            resize(getRandomCKId());
+        }),
+        [],
+    );
 
     const columns = React.useMemo(() => {
-        const headData = data.head?.map((th) => mapHeadCell(th, dimensions.width));
+        const headData = data.head?.map((th) =>
+            mapHeadCell({th, tableWidth: dimensions.width, onRenderCell}),
+        );
         const footerData = ((data.footer?.[0] as TableCellsRow)?.cells ?? []) as TFoot[];
         return createTableColumns({head: headData, rows: data.rows, footer: footerData});
     }, [data, dimensions.width]);
@@ -233,7 +245,7 @@ export const usePreparedTableData = (props: {
 
     const rowMeasures = React.useMemo<Record<string, number>>(() => {
         return {};
-    }, [data, dimensions, cellMinSizes]);
+    }, [data, dimensions, cellMinSizes, shouldResize]);
 
     const rowVirtualizer = useVirtualizer({
         count: tableRows.length,
@@ -252,6 +264,7 @@ export const usePreparedTableData = (props: {
                     const rowSpan = Number(c.getAttribute('rowspan')) || 0;
                     return rowSpan <= 1;
                 });
+
                 return simpleCell?.getBoundingClientRect()?.height ?? 0;
             };
 

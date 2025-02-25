@@ -24,11 +24,15 @@ const ROLES_OPTIONS = Object.values(getUsersRoles()).map((key) => ({
 
 const UPDATE_FILTERS_TIMEOUT = 500;
 
-type UsersFilterProps = {onChange: (filterName: string, filterValue: string | string[]) => void};
+type UsersFilterProps = {
+    onChange: (filterName: string, filterValue: string | string[] | undefined) => void;
+};
 
 export const UsersFilter = ({onChange}: UsersFilterProps) => {
     const [search, setSearch] = React.useState('');
     const [roles, setRole] = React.useState<UserRole[]>([]);
+
+    const {AdditionalUsersFilters} = registry.auth.components.getAll();
 
     const sendUpdatedFilters = React.useMemo(
         () => debounce((name, value) => onChange(name, value), UPDATE_FILTERS_TIMEOUT),
@@ -62,6 +66,7 @@ export const UsersFilter = ({onChange}: UsersFilterProps) => {
                 label={i18n('label_field-roles')}
                 className={b('filter')}
             />
+            <AdditionalUsersFilters onChange={onChange} className={b('filter')} />
         </Flex>
     );
 };

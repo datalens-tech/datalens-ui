@@ -3,6 +3,8 @@ export enum Feature {
     UseConfigurableChartkit = 'UseConfigurableChartkit',
     Ql = 'ql',
     HideOldRelations = 'hideOldRelations',
+    // Show new relations button in navigation action panel
+    ShowNewRelationsButton = 'ShowNewRelationsButton',
     AsideHeaderEnabled = 'AsideHeaderEnabled',
     FieldEditorDocSection = 'FieldEditorDocSection',
     UsePublicDistincts = 'UsePublicDistincts',
@@ -43,7 +45,6 @@ export enum Feature {
     MenuItemsFlatView = 'MenuItemsFlatView',
     EntryMenuItemCopy = 'EntryMenuItemCopy',
     EntryMenuItemMove = 'EntryMenuItemMove',
-    EntryMenuEditor = 'EntryMenuEditor',
     ExternalSelectors = 'ExternalSelectors',
     DashBoardWidgetParamsStrictValidation = 'DashBoardWidgetParamsStrictValidation',
     D3Visualizations = 'D3Visualizations',

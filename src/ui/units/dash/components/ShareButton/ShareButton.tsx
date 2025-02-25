@@ -63,7 +63,6 @@ export const ShareButton = ({
         if (enablePopover && !DL.IS_MOBILE) {
             return (
                 <SharePopover
-                    useWebShareApi={!DL.IS_MOBILE}
                     url={window.location.href}
                     title={popoverTitle}
                     text={popoverText}

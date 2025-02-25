@@ -3,6 +3,7 @@ import React from 'react';
 import {FormRow} from '@gravity-ui/components';
 import {Alert, Button, Flex, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {InterpolatedText} from 'ui/components/InterpolatedText/InterpolatedText';
 
@@ -21,6 +22,8 @@ import {RepeatPassword} from '../formControls/RepeatPassword';
 import {Back} from './components/Back';
 
 import './Signup.scss';
+
+const i18n = I18n.keyset('auth.sign-up');
 
 const b = block('dl-signup');
 
@@ -54,7 +57,7 @@ export const Signup = () => {
                 as="form"
                 onChange={handleFormChange}
             >
-                <Text variant="subheader-3">Sign Up</Text>
+                <Text variant="subheader-3">{i18n('title_sign-up')}</Text>
                 <Flex direction="column" gap="4">
                     {errorMessage && (
                         <Alert
@@ -71,8 +74,8 @@ export const Signup = () => {
                         <RepeatPassword size="l" />
                     </Flex>
                     <FormRow>
-                        <Button size="l" view="action" onClick={handleSubmit}>
-                            Sign up
+                        <Button size="xl" view="action" onClick={handleSubmit}>
+                            {i18n('button_sign-up')}
                         </Button>
                     </FormRow>
                     <Back />

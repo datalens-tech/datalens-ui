@@ -4,13 +4,13 @@ import {Flex} from '@gravity-ui/uikit';
 import {useDispatch, useSelector} from 'react-redux';
 import {Redirect, Route, Switch} from 'react-router-dom';
 import {DL} from 'ui/constants';
+import {registry} from 'ui/registry';
 
 import {AUTH_ROUTE} from '../../constants/routes';
 import {resetAuthState} from '../../store/actions/common';
 import {selectAuthPageInited} from '../../store/selectors/common';
 import {Logout} from '../Logout/Logout';
 import {Reload} from '../Reload/Reload';
-import {Signin} from '../Signin/Signin';
 import {Signup} from '../Signup/Signup';
 
 import {useAuthPageInit} from './useAuthPageInit';
@@ -18,6 +18,8 @@ import {useAuthPageInit} from './useAuthPageInit';
 export function AuthPage() {
     const dispatch = useDispatch();
     const authPageInited = useSelector(selectAuthPageInited);
+
+    const {Signin} = registry.auth.components.getAll();
 
     useAuthPageInit();
 

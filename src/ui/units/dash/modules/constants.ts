@@ -83,6 +83,6 @@ export enum Mode {
     SelectState = 'selectState',
 }
 
-export const socialNets = [ShareOptions.Telegram, ShareOptions.Twitter, ShareOptions.VK];
+export const socialNets = [ShareOptions.Telegram, ShareOptions.VK];
 
 export const CROSS_PASTE_ITEMS_ALLOWED = [ITEM_TYPE.TITLE, ITEM_TYPE.TEXT];
