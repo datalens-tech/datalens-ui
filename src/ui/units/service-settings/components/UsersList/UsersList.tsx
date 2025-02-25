@@ -47,7 +47,10 @@ const i18n = I18n.keyset('service-settings.users-list.view');
 
 const USERS_PAGE_SIZE = 15;
 
-const TableWithActions = withTableCopy(withTableActions<ListUser>(Table));
+const TableWithCopy = withTableCopy<ListUser>(Table);
+const TableWithActions = withTableActions<ListUser>(TableWithCopy);
+
+const TableComponent = DL.DISABLE_USER_EDIT ? TableWithCopy : TableWithActions;
 
 const columns: TableColumnConfig<ListUser>[] = [
     {
@@ -240,7 +243,7 @@ const UsersList = () => {
                         onSuccess={resetTable}
                     />
                 )}
-                <TableWithActions
+                <TableComponent
                     className={b('table')}
                     data={displayedUsers}
                     columns={columns}

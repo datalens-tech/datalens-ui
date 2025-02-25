@@ -154,13 +154,14 @@ function Section({
     actions?: React.ReactNode;
     children: React.ReactNode;
 }) {
+    const showActions = !DL.DISABLE_USER_EDIT && Boolean(actions);
     return (
         <section>
             <Text as={HEADER_TAG} variant="subheader-3" className={spacing({mb: 3})}>
                 {title}
             </Text>
             {children}
-            {actions && (
+            {showActions && (
                 <Flex gap={2} className={spacing({mt: 3})}>
                     {actions}
                 </Flex>

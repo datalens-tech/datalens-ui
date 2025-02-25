@@ -181,6 +181,9 @@ export const DL = {
     get AUTH_ENABLED() {
         return window.DL.isAuthEnabled === true;
     },
+    get DISABLE_USER_EDIT() {
+        return window.DL.disableUserEdit === true;
+    },
     get IS_AUTH_PAGE() {
         return Boolean(window.DL.authPageSettings?.isAuthPage);
     },

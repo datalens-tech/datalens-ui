@@ -218,6 +218,7 @@ export type DLGlobalData = {
     connectorIcons?: ConnectorIconData[];
     releaseVersion?: string;
     isAuthEnabled?: boolean;
+    disableUserEdit?: boolean;
 } & MainLayoutConfigData;
 
 export type ContactDialogSettings = {

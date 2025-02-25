@@ -180,7 +180,7 @@ export function deleteUserProfile({userId}: {userId: string}, onSuccess: VoidFun
         dispatch({type: DELETE_USER_PROFILE_LOADING});
 
         return getSdk()
-            .sdk.auth.deleteUser({userId})
+            .sdk.auth.deleteUser?.({userId})
             .then(() => {
                 dispatch({
                     type: DELETE_USER_PROFILE_SUCCESS,
@@ -232,10 +232,14 @@ export function updateUserPassword({
         dispatch({type: UPDATE_USER_PASSWORD_LOADING});
 
         const updateAction = oldPassword
-            ? getSdk().sdk.auth.updateMyUserPassword({newPassword, oldPassword})
-            : getSdk().sdk.auth.updateUserPassword({userId, newPassword});
+            ? getSdk().sdk.auth.updateMyUserPassword?.({newPassword, oldPassword})
+            : getSdk().sdk.auth.updateUserPassword?.({userId, newPassword});
 
-        return updateAction
+        if (!updateAction) {
+            return;
+        }
+
+        updateAction
             .then(() => {
                 dispatch({
                     type: UPDATE_USER_PASSWORD_SUCCESS,
@@ -280,13 +284,13 @@ export function updateUserRoles(
             const rolesToDelete = oldRoles.filter((role) => role !== newRole);
 
             if (newRole && !newRoleIsInList) {
-                await getSdk().sdk.auth.addUsersRoles({
+                await getSdk().sdk.auth.addUsersRoles?.({
                     deltas: [{role: newRole, subjectId: userId}],
                 });
             }
 
             if (rolesToDelete.length > 0) {
-                await getSdk().sdk.auth.removeUsersRoles({
+                await getSdk().sdk.auth.removeUsersRoles?.({
                     deltas: rolesToDelete.map((role) => ({role, subjectId: userId})),
                 });
             }
@@ -339,7 +343,7 @@ export function updateUserProfile({
     return async (dispatch: UserProfileDispatch) => {
         dispatch({type: EDIT_USER_PROFILE_LOADING});
         return getSdk()
-            .sdk.auth.updateUserProfile(data)
+            .sdk.auth.updateUserProfile?.(data)
             .then(() => {
                 dispatch({
                     type: EDIT_USER_PROFILE_SUCCESS,

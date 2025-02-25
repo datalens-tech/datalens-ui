@@ -215,6 +215,7 @@ export default {
     // auth
     isAuthEnabled: isTrueArg(process.env.AUTH_ENABLED),
     authTokenPublicKey: getEnvCert(process.env.AUTH_TOKEN_PUBLIC_KEY),
+    disableUserEdit: isTrueArg(process.env.DISABLE_USER_EDIT),
 
     apiPrefix: '/api',
 } satisfies Partial<AppConfig>;
