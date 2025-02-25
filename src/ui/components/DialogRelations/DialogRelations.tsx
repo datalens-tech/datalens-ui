@@ -518,6 +518,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
             <Dialog.Header caption={i18n('title_links')} />
             <Dialog.Body className={b('container')}>
                 <Select
+                    qa={DashCommonQa.RelationsWidgetSelect}
                     placeholder={i18n('label_empty-state')}
                     className={b('item-select')}
                     popupClassName={b('item-select-popup')}

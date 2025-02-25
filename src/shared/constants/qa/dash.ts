@@ -77,6 +77,7 @@ export enum DashCommonQa {
     WidgetSelectBackgroundButton = 'dialog-widget-settings-select-background-button',
     WidgetSelectBackgroundPalleteContainer = 'dialog-widget-settings-select-background-pallete-container',
     RelationsDialogEmptyText = 'dialog-relations-empty-text',
+    RelationsWidgetSelect = 'dialog-relations-widget-select',
     RelationsDisconnectAllSwitcher = 'dialog-relations-disconnect-all-switcher',
     RelationsDisconnectAllSelectors = 'dialog-relations-disconnect-all-selectors',
     RelationsDisconnectAllWidgets = 'dialog-relations-disconnect-all-widgets',
