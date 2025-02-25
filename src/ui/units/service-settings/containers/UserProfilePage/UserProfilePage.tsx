@@ -3,7 +3,7 @@ import React from 'react';
 import {Flex} from '@gravity-ui/uikit';
 import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
 import block from 'bem-cn-lite';
-import {/* I18n, */ i18n as i18nGlobal} from 'i18n';
+import {I18n, i18n as i18nGlobal} from 'i18n';
 import {useSelector} from 'react-redux';
 import {useHistory, useParams} from 'react-router';
 import {ActionPanel} from 'ui/components/ActionPanel';
@@ -21,19 +21,7 @@ import './UserProfilePage.scss';
 
 reducerRegistry.register({auth: reducer});
 
-// TODO: add title to translations
-// const i18n = I18n.keyset('auth.user-profile.view');
-const i18n = (key: string) => {
-    switch (key) {
-        case 'title_profile':
-            return 'Profile';
-        case 'title_users':
-            return 'Users';
-
-        default:
-            return key;
-    }
-};
+const i18n = I18n.keyset('auth.user-profile.view');
 
 const b = block('dl-user-profile-page');
 
@@ -61,7 +49,7 @@ const UserProfilePage = () => {
                             {i18nGlobal('service-settings.main.view', 'label_header')}
                         </Breadcrumbs.Item>
                         <Breadcrumbs.Item href="/settings/users">
-                            {i18n('title_users')}
+                            {i18nGlobal('service-settings.main.view', 'section_users')}
                         </Breadcrumbs.Item>
                         <Breadcrumbs.Item disabled>
                             {userProfile ? getUserDisplayName(userProfile) : userId}

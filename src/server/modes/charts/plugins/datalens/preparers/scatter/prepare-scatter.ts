@@ -1,5 +1,4 @@
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
-import escape from 'lodash/escape';
 
 import type {
     PointSizeConfig,
@@ -8,7 +7,6 @@ import type {
     WrappedMarkup,
 } from '../../../../../../../shared';
 import {
-    Feature,
     MINIMUM_FRACTION_DIGITS,
     POINT_SHAPES_IN_ORDER,
     getFakeTitleOrTitle,
@@ -85,7 +83,6 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         shapes,
         shapesConfig,
         ChartEditor,
-        features,
         shared,
     } = options;
     const widgetConfig = ChartEditor.getWidgetConfig();
@@ -123,9 +120,6 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
     const yDataType = idToDataType[y.guid];
     const yIsNumber = isNumericalDataType(yDataType);
     const yIsDate = isDateField({data_type: yDataType});
-    const shouldEscapeUserValue =
-        features[Feature.EscapeUserHtmlInDefaultHcTooltip] &&
-        !features[Feature.EscapeStringInWizard];
 
     const cDataType = color && idToDataType[color.guid];
 
@@ -200,8 +194,6 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
                 value = wrapMarkdownValue(value);
             } else if (isHtmlField(x)) {
                 value = wrapHtml(value);
-            } else if (shouldEscapeUserValue) {
-                value = escape(value);
             }
 
             point.xLabel = value;
@@ -255,8 +247,6 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
                 yLabel = wrapMarkdownValue(yLabel);
             } else if (isHtmlField(y)) {
                 yLabel = wrapHtml(yLabel);
-            } else if (shouldEscapeUserValue) {
-                yLabel = escape(yLabel);
             }
 
             point.yLabel = yLabel;
@@ -295,8 +285,6 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
                     formattedZValue = wrapMarkdownValue(zValueRaw as string);
                 } else if (isHtmlField(z)) {
                     formattedZValue = wrapHtml(zValueRaw as string);
-                } else if (shouldEscapeUserValue) {
-                    formattedZValue = escape(formattedZValue as string);
                 }
             }
 
@@ -337,8 +325,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         if (color) {
             const cTitle = idToTitle[color.guid];
             const i = findIndexInOrder(order, color, cTitle);
-            const colorValue =
-                values[i] && shouldEscapeUserValue ? escape(String(values[i])) : values[i];
+            const colorValue = values[i];
             let colorLabel: string | null | WrappedMarkdown | WrappedHTML = colorValue;
             if (isMarkdownField(color)) {
                 colorLabel = wrapMarkdownValue(String(colorValue));
@@ -377,9 +364,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         if (shape) {
             const cTitle = idToTitle[shape.guid];
             const i = findIndexInOrder(order, shape, cTitle);
-            const shapeValue = shouldEscapeUserValue
-                ? escape(String(values[i] ?? ''))
-                : String(values[i] ?? '');
+            const shapeValue = String(values[i] ?? '');
             let shapeLabel: WrappedMarkdown | string | WrappedHTML = shapeValue;
             if (isMarkdownField(shape)) {
                 shapeLabel = wrapMarkdownValue(shapeValue);
@@ -482,7 +467,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         graph.keys = Array.from(keys);
         graph.custom = {
             ...graph.custom,
-            tooltipOptions: getScatterTooltipOptions({placeholders, shared, features}),
+            tooltipOptions: getScatterTooltipOptions({placeholders, shared}),
         };
 
         if (isActionParamsEnable) {

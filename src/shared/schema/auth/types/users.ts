@@ -44,6 +44,8 @@ export interface UserSubject {
     email: string | null;
     firstName: string | null;
     lastName: string | null;
+    idpSlug: string | null;
+    idpType: string | null;
 }
 
 export interface GetUsersByIdsArgs {
@@ -92,10 +94,7 @@ export interface GetUsersListArgs {
     idpType?: string;
 }
 
-export interface ListUser extends UserProfile {
-    idpType: string | null;
-    idpSlug: string | null;
-}
+export interface ListUser extends UserProfile {}
 
 export interface GetUsersListResponse {
     nextPageToken?: string;

@@ -95,8 +95,8 @@ export const actions = {
     getUsersList: createAction<GetUsersListResponse, GetUsersListArgs>({
         method: 'GET',
         path: () => `${PATH_PREFIX}/users/list`,
-        params: ({page, pageSize, filterString, roles}, headers) => ({
-            query: {page, pageSize, filterString, roles},
+        params: ({page, pageSize, filterString, roles, idpType}, headers) => ({
+            query: {page, pageSize, filterString, roles, idpType},
             headers,
         }),
         paramsSerializer: defaultParamsSerializer,
