@@ -59,19 +59,6 @@ export function UserProfile({
             />
         );
     }
-    if (!userProfile) {
-        return null;
-    }
 
-    return (
-        <Profile
-            firstName={userProfile.firstName || undefined}
-            lastName={userProfile.lastName || undefined}
-            login={userProfile.login}
-            email={userProfile.email}
-            id={userProfile.userId}
-            roles={userProfile.roles}
-            onUserDataChange={reloadUserProfile}
-        />
-    );
+    return <Profile userProfile={userProfile} onUserDataChange={reloadUserProfile} />;
 }

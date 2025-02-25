@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Alert, Button, Flex, Text} from '@gravity-ui/uikit';
+import {Alert, Button, Flex, Icon, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
@@ -16,13 +16,15 @@ import {selectFormData} from '../../store/selectors/signin';
 import {Login} from './components/Login';
 import {Password} from './components/Password';
 
+import defaultLogoIcon from 'ui/assets/icons/logo.svg';
+
 import './Signin.scss';
 
 const i18n = I18n.keyset('auth.sign-in');
 
 const b = block('dl-signin');
 
-export const Signin = ({alternativeAuthOptions}: SigninProps) => {
+export const Signin = ({alternativeAuthOptions, logoIcon}: SigninProps) => {
     const dispatch = useDispatch();
 
     const [errorMessage, setErrorMessage] = React.useState<null | string>(null);
@@ -64,7 +66,7 @@ export const Signin = ({alternativeAuthOptions}: SigninProps) => {
                 onChange={handleFormChange}
             >
                 <Flex direction="column" gap="2" alignItems="center">
-                    <div className={b('logo')} />
+                    <Icon size={32} data={logoIcon || defaultLogoIcon} />
                     <Text variant="subheader-3">{i18n('title_product')}</Text>
                 </Flex>
                 <Flex direction="column" gap="4">
@@ -76,7 +78,9 @@ export const Signin = ({alternativeAuthOptions}: SigninProps) => {
                     </Button>
                     <Flex gap={1}>
                         {i18n('label_sign-up-hint')}
-                        <Link to={AUTH_ROUTE.SIGNUP}>{i18n('label_sing-up-link')}</Link>
+                        <Link to={AUTH_ROUTE.SIGNUP} className={b('link')}>
+                            {i18n('label_sing-up-link')}
+                        </Link>
                     </Flex>
                 </Flex>
                 {alternativeAuthOptions}

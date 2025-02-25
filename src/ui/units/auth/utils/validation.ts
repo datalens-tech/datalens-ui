@@ -1,27 +1,7 @@
-// import {I18n} from 'i18n';
+import {I18n} from 'i18n';
 import * as yup from 'yup';
 
-// const i18n = I18n.keyset('auth.user-form-validation');
-
-const i18n = (key: string, _?: Record<string, unknown>) => {
-    const keys: Record<string, string> = {
-        'label_error-first-name-max': 'First name must be less than 200 characters',
-        'label_error-last-name-max': 'Last name must be less than 200 characters',
-        'label_error-login-max': 'Login must be less than 200 characters',
-        'label_error-login-min': 'Login must be at least 3 characters',
-        'label_error-login-invalid':
-            'The login must start with letters and end only with letters or numbers',
-        'label_error-login-email-invalid': 'The email in the login is in the wrong format',
-        'label_error-required-fields': 'Please fill in all required fields',
-        'label_error-email-invalid': 'Incorrect email format',
-        'label_error-password-max': 'Password must be less than 200 characters',
-        'label_error-password-not-match': 'Passwords do not match',
-        'label_error-password-invalid':
-            'Create strong password<br></br>– min 12 characters<br></br>– make sure you mix uppercase letters, lowercase letters, special characters and numbers',
-    };
-
-    return keys[key] || '';
-};
+const i18n = I18n.keyset('auth.user-form-validation');
 
 export const VALIDATING_REQUIRED_KEYS = {
     LOGIN: 'login',

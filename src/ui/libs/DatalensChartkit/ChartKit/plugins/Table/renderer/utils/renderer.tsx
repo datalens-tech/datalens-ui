@@ -39,7 +39,12 @@ export type HeadCell = THead & {
     custom?: unknown;
 };
 
-export function mapHeadCell(th: TableHead, tableWidth: number | undefined): HeadCell {
+export function mapHeadCell(args: {
+    th: TableHead;
+    tableWidth: number | undefined;
+    onRenderCell?: () => void;
+}): HeadCell {
+    const {th, tableWidth, onRenderCell} = args;
     const columnType: TableCommonCell['type'] = get(th, 'type');
     const hint = get(th, 'hint');
 
@@ -50,13 +55,12 @@ export function mapHeadCell(th: TableHead, tableWidth: number | undefined): Head
         header: () => {
             const cell = {
                 value: th.markup ?? th.name,
-                // Remove condition after wrappedHTML being supported for new Table
-                formattedValue: typeof th.formattedName === 'string' ? th.formattedName : th.name,
+                formattedValue: th.formattedName ?? th.name,
                 type: th.markup ? 'markup' : columnType,
-            };
+            } as TableCommonCell;
             return (
                 <span data-qa={ChartKitTableQa.HeadCellContent}>
-                    {renderCellContent({cell, column: th, header: true})}
+                    {renderCellContent({cell, column: th, header: true, onRender: onRenderCell})}
                     {hint && <MarkdownHelpPopover markdown={hint} />}
                 </span>
             );
@@ -67,7 +71,7 @@ export function mapHeadCell(th: TableHead, tableWidth: number | undefined): Head
             const cell = (cellData || {}) as TableCommonCell;
             return (
                 <React.Fragment>
-                    {renderCellContent({cell, column: th})}
+                    {renderCellContent({cell, column: th, onRender: onRenderCell})}
                     {cell.sortDirection && (
                         <Icon
                             className={b('sort-icon')}
@@ -78,7 +82,7 @@ export function mapHeadCell(th: TableHead, tableWidth: number | undefined): Head
             );
         },
         columns: get(th, 'sub', []).map((subColumn: TableHead) =>
-            mapHeadCell(subColumn, tableWidth),
+            mapHeadCell({th: subColumn, tableWidth, onRenderCell}),
         ),
         pinned: get(th, 'pinned', false),
     };
@@ -113,8 +117,9 @@ export function renderCellContent(args: {
     cell: TableCommonCell;
     column: TableHead;
     header?: boolean;
+    onRender?: () => void;
 }) {
-    const {cell, column, header} = args;
+    const {cell, column, header, onRender} = args;
     const cellView = get(cell, 'view', get(column, 'view'));
     const cellType = cell.type ?? get(column, 'type');
 
@@ -163,7 +168,7 @@ export function renderCellContent(args: {
             formattedValue = String(cell.value ?? '');
         }
     } else if (isWrappedHTML(formattedValue)) {
-        return <HtmlCell content={formattedValue[WRAPPED_HTML_KEY]} />;
+        return <HtmlCell content={formattedValue[WRAPPED_HTML_KEY]} onRender={onRender} />;
     }
 
     if (cell.link?.href) {
@@ -176,7 +181,7 @@ export function renderCellContent(args: {
             },
             content: formattedValue,
         };
-        return <HtmlCell content={content} />;
+        return <HtmlCell content={content} onRender={onRender} />;
     }
 
     return formattedValue;
