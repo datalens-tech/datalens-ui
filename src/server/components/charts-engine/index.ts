@@ -44,7 +44,6 @@ class ChartsEngine {
     telemetryCallbacks: TelemetryCallbacks;
     processorHooks: Record<string, any>[];
     flags: Record<string, boolean>;
-    nativeModules: Record<string, unknown>;
     cacheClient: CacheClient;
     controllers: Controllers;
     plugins: Plugin[];
@@ -57,7 +56,6 @@ class ChartsEngine {
         plugins,
         telemetryCallbacks = {},
         flags = {},
-        nativeModules,
         cacheClient,
         beforeAuth,
         afterAuth,
@@ -68,7 +66,6 @@ class ChartsEngine {
         plugins: Plugin[];
         telemetryCallbacks?: TelemetryCallbacks;
         flags?: Record<string, boolean>;
-        nativeModules: Record<string, unknown>;
         cacheClient: CacheClient;
         beforeAuth: AppMiddleware[];
         afterAuth: AppMiddleware[];
@@ -79,7 +76,6 @@ class ChartsEngine {
         this.telemetryCallbacks = telemetryCallbacks;
         this.processorHooks = [];
         this.flags = flags;
-        this.nativeModules = nativeModules;
         this.plugins = plugins;
         this.beforeAuth = beforeAuth;
         this.afterAuth = afterAuth;
