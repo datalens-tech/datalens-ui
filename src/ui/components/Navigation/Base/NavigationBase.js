@@ -397,8 +397,10 @@ class NavigationBase extends React.Component {
                 break;
             }
             case CreateMenuValue.Script: {
-                history.push(`/editor/new${query}`);
-                this.closeNavigation();
+                if (!this.props.isOnlyCollectionsMode) {
+                    history.push(`/editor/new${query}`);
+                    this.closeNavigation();
+                }
                 break;
             }
         }
