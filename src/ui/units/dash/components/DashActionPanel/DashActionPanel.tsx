@@ -40,6 +40,7 @@ import {
     updateDeprecatedDashConfig,
 } from '../../store/actions/dashTyped';
 import {isDeprecatedDashData} from '../../store/actions/helpers';
+import {openEmptyDialogRelations} from '../../store/actions/relations/actions';
 import {
     selectDashAccessDescription,
     selectDashShowOpenedDescription,
@@ -140,7 +141,12 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
                 onSaveAsNewClick={this.handlerSaveAsNewClick}
                 onCancelClick={this.handlerCancelEditClick}
                 onOpenDialogSettingsClick={this.openDialogSettings}
-                onOpenDialogConnectionsClick={this.openDialogConnections}
+                onOpenDialogConnectionsClick={
+                    !isEnabledFeature(Feature.HideOldRelations) ||
+                    isEnabledFeature(Feature.ShowNewRelationsButton)
+                        ? this.openDialogConnections
+                        : undefined
+                }
                 onOpenDialogTabsClick={this.openDialogTabs}
                 entryDialoguesRef={this.props.entryDialoguesRef}
                 isDraft={this.props.isDraft}
@@ -164,7 +170,13 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
     }
 
     openDialogSettings = () => this.props.openDialog(DIALOG_TYPE.SETTINGS);
-    openDialogConnections = () => this.props.openDialog(DIALOG_TYPE.CONNECTIONS);
+    openDialogConnections = () => {
+        if (isEnabledFeature(Feature.ShowNewRelationsButton)) {
+            this.props.openEmptyDialogRelations();
+        } else if (!isEnabledFeature(Feature.HideOldRelations)) {
+            this.props.openDialog(DIALOG_TYPE.CONNECTIONS);
+        }
+    };
     openDialogTabs = () => this.props.openDialog(DIALOG_TYPE.TABS);
 
     openDialogAccess = () => {
@@ -346,6 +358,7 @@ const mapDispatchToProps = {
     setDefaultViewState,
     updateDeprecatedDashConfig,
     openDialogConfirm,
+    openEmptyDialogRelations,
     closeDialogConfirm,
 };
 

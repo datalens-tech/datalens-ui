@@ -4,10 +4,8 @@ import {Gear} from '@gravity-ui/icons';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {Feature} from 'shared';
 import {ActionPanelDashSaveControlsQa} from 'shared/constants/qa/action-panel';
 import {DashboardActionPanelControlsQa} from 'shared/constants/qa/dash';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import EntryDialogues from '../../../../../components/EntryDialogues/EntryDialogues';
 import NavigationPrompt from '../../../../../components/NavigationPrompt/NavigationPrompt';
@@ -26,7 +24,7 @@ type EditControlsProps = {
     onSaveAsDraftDashClick: () => void;
     onSaveAsNewClick: () => void;
     onOpenDialogSettingsClick: () => void;
-    onOpenDialogConnectionsClick: () => void;
+    onOpenDialogConnectionsClick?: () => void;
     onCancelClick: () => void;
     onOpenDialogTabsClick: () => void;
     entryDialoguesRef: React.RefObject<EntryDialogues>;
@@ -113,7 +111,7 @@ export const EditControls = (props: EditControlsProps) => {
                 entryDialoguesRef={entryDialoguesRef}
                 showOpenedDescription={false}
             />
-            {!isEnabledFeature(Feature.HideOldRelations) && (
+            {Boolean(onOpenDialogConnectionsClick) && (
                 <Button
                     view="normal"
                     size="m"

@@ -10,6 +10,8 @@ import type {DashState} from '../reducers/dashTypedReducer';
 
 export const selectDash = (state: DatalensGlobalState) => state.dash || null;
 
+export const selectDashkitRef = (state: DatalensGlobalState) => state.dash?.dashKitRef || null;
+
 export const canEdit = (state: DatalensGlobalState) =>
     Boolean(state.dash.permissions && state.dash.permissions.edit);
 
