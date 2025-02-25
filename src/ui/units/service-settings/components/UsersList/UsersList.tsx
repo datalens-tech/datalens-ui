@@ -49,10 +49,6 @@ const USERS_PAGE_SIZE = 15;
 
 const TableWithActions = withTableCopy(withTableActions<ListUser>(Table));
 
-const {getUsersListColumns} = registry.auth.functions.getAll();
-
-const columns: TableColumnConfig<ListUser>[] = getUsersListColumns();
-
 const prepareFilterValue = (filterValue: string | string[]) => {
     if (typeof filterValue === 'string' || filterValue === undefined) {
         return filterValue || undefined;
@@ -74,6 +70,13 @@ const UsersList = () => {
     const displayedUsers = useSelector(selectServiceUsersListUsers);
 
     const dispatch = useDispatch<ServiceSettingsDispatch>();
+
+    const {getUsersListColumns} = registry.auth.functions.getAll();
+
+    const columns: TableColumnConfig<ListUser>[] = React.useMemo(
+        () => getUsersListColumns(),
+        [getUsersListColumns],
+    );
 
     const [assignRoleDialogOpenForUser, setAssignRoleDialogOpenForUser] = React.useState<
         ListUser | undefined
