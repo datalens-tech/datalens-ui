@@ -25,7 +25,7 @@ const ROLES_OPTIONS = Object.values(getUsersRoles()).map((key) => ({
 const UPDATE_FILTERS_TIMEOUT = 500;
 
 type UsersFilterProps = {
-    onChange: (filterName: string, filterValue: string | string[] | undefined) => void;
+    onChange: (filterName: string, filterValue: string | string[] | undefined | null) => void;
 };
 
 export const UsersFilter = ({onChange}: UsersFilterProps) => {
