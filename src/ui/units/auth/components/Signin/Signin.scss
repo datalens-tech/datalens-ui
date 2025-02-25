@@ -1,3 +1,5 @@
+@import '../../../../styles/mixins.scss';
+
 .dl-signin {
     height: 100%;
     background-color: var(--g-color-base-misc-light);
@@ -10,10 +12,16 @@
         padding: 48px;
     }
 
-    &__logo {
-        width: 32px;
-        height: 32px;
-        border-radius: 50%;
-        background-color: var(--g-color-base-brand);
+    &__link {
+        color: var(--g-color-text-link);
+        text-decoration: none;
+
+        &:visited {
+            color: var(--g-color-text-link);
+        }
+
+        &:hover {
+            color: var(--g-color-text-link-hover);
+        }
     }
 }

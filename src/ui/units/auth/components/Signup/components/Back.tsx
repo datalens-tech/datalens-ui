@@ -2,9 +2,12 @@ import React from 'react';
 
 import {ChevronLeft} from '@gravity-ui/icons';
 import {Button, Flex, Icon} from '@gravity-ui/uikit';
+import {I18n} from 'i18n';
 import {useHistory} from 'react-router-dom';
 
 import {AUTH_ROUTE} from '../../../constants/routes';
+
+const i18n = I18n.keyset('auth.sign-up');
 
 export const Back = () => {
     const history = useHistory();
@@ -19,9 +22,9 @@ export const Back = () => {
 
     return (
         <Flex>
-            <Button size="s" view="flat-secondary" href={AUTH_ROUTE.SIGNIN} onClick={handleClick}>
+            <Button size="m" view="flat-secondary" href={AUTH_ROUTE.SIGNIN} onClick={handleClick}>
                 <Icon data={ChevronLeft} size={16} />
-                Back
+                {i18n('button_back')}
             </Button>
         </Flex>
     );
