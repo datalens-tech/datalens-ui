@@ -1,7 +1,6 @@
 import {
     ChartColumn,
     CirclesIntersection,
-    CurlyBrackets,
     FolderHouse,
     Folders,
     LayoutCellsLarge,
@@ -12,8 +11,7 @@ import type {IconData} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import memoize from 'lodash/memoize';
-import {Feature, NavigationMinimalPlaceSelectQa} from 'shared';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import {NavigationMinimalPlaceSelectQa} from 'shared';
 
 import {CreateMenuValue} from '../Core/CreateEntry/CreateEntry';
 import {PLACE, QUICK_ITEMS} from '../constants';
@@ -147,16 +145,6 @@ export interface EntrySettings {
 
 export const getCreatableEntriesConfig = memoize(() => {
     return [
-        // TODO: remove CHARTS-11016 (item)
-        {
-            value: CreateMenuValue.Script,
-            icon: CurlyBrackets,
-            type: 'editor',
-            text: i18n('value_create-editor'),
-            place: PLACE.WIDGETS,
-            submenu: 'charts',
-            condition: () => isEnabledFeature(Feature.EntryMenuEditor),
-        },
         {
             value: CreateMenuValue.Widget,
             icon: ChartColumn,

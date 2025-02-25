@@ -71,7 +71,7 @@ export const Signup = () => {
                         <RepeatPassword size="l" />
                     </Flex>
                     <FormRow>
-                        <Button size="l" view="action" onClick={handleSubmit}>
+                        <Button size="xl" view="action" onClick={handleSubmit}>
                             Sign up
                         </Button>
                     </FormRow>

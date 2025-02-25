@@ -43,7 +43,6 @@ export enum Feature {
     MenuItemsFlatView = 'MenuItemsFlatView',
     EntryMenuItemCopy = 'EntryMenuItemCopy',
     EntryMenuItemMove = 'EntryMenuItemMove',
-    EntryMenuEditor = 'EntryMenuEditor',
     ExternalSelectors = 'ExternalSelectors',
     DashBoardWidgetParamsStrictValidation = 'DashBoardWidgetParamsStrictValidation',
     D3Visualizations = 'D3Visualizations',
