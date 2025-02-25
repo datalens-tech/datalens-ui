@@ -11,7 +11,6 @@ import {
     isTrueArg,
 } from '../../../shared';
 import {resolveSource} from '../../../shared/endpoints/sources';
-import {nativeModules} from '../../components/charts-engine/components/processor/native-modules';
 import type {SourceConfig} from '../../components/charts-engine/types';
 import {SERVICE_NAME_DATALENS} from '../../constants';
 import {getEnvCert} from '../../utils/env-utils';
@@ -150,7 +149,7 @@ export default {
     },
 
     chartsEngineConfig: {
-        nativeModules: nativeModules.BASE_NATIVE_MODULES,
+        nativeModules: {},
         secrets: {},
         enableTelemetry: true,
         usEndpointPostfix: '',
