@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {Dialog, Flex, Select, Text, spacing} from '@gravity-ui/uikit';
+import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import type {UserRole} from 'shared/components/auth/constants/role';
 import {registry} from 'ui/registry';
@@ -9,31 +10,8 @@ import type {AppDispatch} from 'ui/store';
 import {updateUserRoles} from '../../store/actions/userProfile';
 import {selectUpdateUserRoleIsLoading} from '../../store/selectors/userProfile';
 import {getRoleByKey} from '../../utils/userProfile';
-// import {I18n} from 'i18n';
 
-// TODO: add translations
-// const i18n = I18n.keyset('auth.dialog-change-user-role');
-
-const i18n = (key: string) => {
-    switch (key) {
-        case 'title_update-role':
-            return 'Assign role';
-        case 'label_select-role':
-            return 'Select role';
-        case 'label_failed-to-change-roles':
-            return 'Failed to change user roles';
-        case 'action_user-roles-change-cancel':
-            return 'Cancel';
-        case 'action_user-roles-change-apply':
-            return 'Save';
-        case 'label_base-role':
-            return 'Base role';
-        case 'label_includes-permissions-from':
-            return 'Extends permissions of';
-        default:
-            return key;
-    }
-};
+const i18n = I18n.keyset('auth.dialog-change-user-role');
 
 const {getUsersRoles} = registry.auth.functions.getAll();
 
