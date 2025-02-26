@@ -19,7 +19,6 @@ import type {StringParams} from '../../../../../../shared';
 import {
     ChartkitHandlers,
     EDITOR_CHART_NODE,
-    Feature,
     QL_CHART_NODE,
     SHARED_URL_OPTIONS,
     WIZARD_CHART_NODE,
@@ -357,15 +356,11 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
 
             const isWizardOrQl = result.isNewWizard || result.isQL;
             const shouldProcessHtmlFields =
-                isPotentiallyUnsafeChart(loadedType) ||
-                (isEnabledFeature(Feature.HtmlInWizard) && result.config?.useHtml);
+                isPotentiallyUnsafeChart(loadedType) || result.config?.useHtml;
             if (shouldProcessHtmlFields) {
                 const parseHtml = await getParseHtmlFn();
                 const ignoreInvalidValues = isWizardOrQl;
-                const allowHtml =
-                    isWizardOrQl && isEnabledFeature(Feature.EscapeStringInWizard)
-                        ? false
-                        : enableJsAndHtml;
+                const allowHtml = isWizardOrQl ? false : enableJsAndHtml;
                 processHtmlFields(result.data, {
                     allowHtml,
                     parseHtml,

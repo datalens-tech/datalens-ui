@@ -396,11 +396,6 @@ class NavigationBase extends React.Component {
                 this.closeNavigation();
                 break;
             }
-            case CreateMenuValue.Script: {
-                history.push(`/editor/new${query}`);
-                this.closeNavigation();
-                break;
-            }
         }
 
         if (this.props.onCreateMenuClick) {
