@@ -1,5 +1,4 @@
 import type {ChartKitWidgetSeries, ChartKitWidgetSeriesData} from '@gravity-ui/chartkit';
-import {create} from 'd3';
 import get from 'lodash/get';
 import set from 'lodash/set';
 
@@ -11,6 +10,8 @@ const Opacity = {
     SELECTED: 1,
     UNSELECTED: 0.5,
 };
+
+const SVG_NAMESPACE_URI = 'http://www.w3.org/2000/svg';
 
 export function getPointActionParams(
     point: ChartKitWidgetSeriesData,
@@ -75,9 +76,9 @@ export function getCustomShapeRenderer(fn: (this: unknown, ...args: unknown[]) =
     return function renderer(this: unknown, ...args: unknown[]) {
         const content = fn.call(this, args);
 
-        const container = create('svg:g');
-        container.html(content);
+        const container = document.createElementNS(SVG_NAMESPACE_URI, 'g');
+        container.innerHTML = content;
 
-        return container.node();
+        return container;
     };
 }
