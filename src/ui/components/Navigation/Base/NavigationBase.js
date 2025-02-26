@@ -336,16 +336,9 @@ class NavigationBase extends React.Component {
                 }
                 break;
             }
-            case CreateMenuValue.Report: {
-                if (this.props.isOnlyCollectionsMode) {
-                    this.openOnlyCollectionsDialog('report');
-                } else {
-                    history.push(`/reports/new${query}`);
-                    this.closeNavigation();
-                }
-                break;
-            }
             case CreateMenuValue.Connection: {
+                // special ignoring of isOnlyCollectionsMode, because
+                // connections creation page doesn't belong to folders or workbooks
                 history.push(`/connections/new${query}`);
                 this.closeNavigation();
                 break;
@@ -375,25 +368,6 @@ class NavigationBase extends React.Component {
                     history.push(`/ql${query}`);
                     this.closeNavigation();
                 }
-                break;
-            }
-            case CreateMenuValue.SQL: {
-                if (this.props.isOnlyCollectionsMode) {
-                    this.openOnlyCollectionsDialog('ql');
-                } else {
-                    history.push(`/ql/new/sql${query}`);
-                    this.closeNavigation();
-                }
-                break;
-            }
-            case CreateMenuValue.PromQL: {
-                history.push(`/ql/new/promql${query}`);
-                this.closeNavigation();
-                break;
-            }
-            case CreateMenuValue.MonitoringQL: {
-                history.push(`/ql/new/monitoringql${query}`);
-                this.closeNavigation();
                 break;
             }
         }

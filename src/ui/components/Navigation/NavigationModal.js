@@ -1,6 +1,8 @@
 import React from 'react';
 
 import PropTypes from 'prop-types';
+import {withRouter} from 'react-router';
+import {registry} from 'ui/registry';
 
 import NavigationBase from './Base/NavigationBase';
 import NavigationModal from './Core/NavigationModal';
@@ -17,6 +19,8 @@ class ServiceNavigationModal extends React.PureComponent {
         onUpdate: PropTypes.func,
         onChangeFavorite: PropTypes.func,
         currentPageEntry: PropTypes.object,
+        history: PropTypes.object,
+        closeNavigation: PropTypes.func,
     };
 
     static defaultProps = {
@@ -60,6 +64,17 @@ class ServiceNavigationModal extends React.PureComponent {
         });
     };
 
+    onCreateMenuClick = (type) => {
+        const {onNavigationCreateMenuClick} = registry.common.functions.getAll();
+
+        onNavigationCreateMenuClick({
+            type,
+            history: this.props.history,
+            path: this.state.path,
+            closeNavigation: this.closeNavigation,
+        });
+    };
+
     render() {
         const {path, root} = this.state;
         return (
@@ -71,9 +86,10 @@ class ServiceNavigationModal extends React.PureComponent {
                 navConstructor={NavigationModal}
                 onChangeLocation={this.onChangeLocation}
                 onPermissionError={this.onPermissionError}
+                onCreateMenuClick={this.onCreateMenuClick}
             />
         );
     }
 }
 
-export default resolveNavigationPath(ServiceNavigationModal);
+export default withRouter(resolveNavigationPath(ServiceNavigationModal));

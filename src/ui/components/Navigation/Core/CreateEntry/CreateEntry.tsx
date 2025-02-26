@@ -28,13 +28,9 @@ export enum CreateMenuValue {
     Script = 'script',
     Widget = 'widget',
     QL = 'ql',
-    SQL = 'sql',
-    PromQL = 'promql',
-    MonitoringQL = 'monitoringql',
     Dashboard = 'dashboard',
     Connection = 'connection',
     Dataset = 'dataset',
-    Report = 'report',
 }
 
 export interface CreateEntryProps {
