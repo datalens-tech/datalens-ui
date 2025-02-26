@@ -1,4 +1,4 @@
-// import {i18n} from 'i18n';
+import {i18n} from 'i18n';
 import type {ThunkDispatch} from 'redux-thunk';
 import type {UserRole} from 'shared/components/auth/constants/role';
 import type {GetUserProfileResponse, UpdateUserProfileArgs} from 'shared/schema/auth/types/users';
@@ -27,11 +27,6 @@ import {
     UPDATE_USER_ROLE_LOADING,
     UPDATE_USER_ROLE_SUCCESS,
 } from '../constants/userProfile';
-
-// TODO: add translations
-const i18n = (_0: string, _1: string) => {
-    return 'Operation completed successfully';
-};
 
 type ResetUserProfileStateAction = {
     type: typeof RESET_USER_PROFILE_STATE;

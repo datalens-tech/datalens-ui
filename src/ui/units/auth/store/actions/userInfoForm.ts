@@ -1,4 +1,4 @@
-// import {I18n} from 'i18n';
+import {I18n} from 'i18n';
 import type {DatalensGlobalState} from 'index';
 import type {ThunkDispatch} from 'redux-thunk';
 
@@ -15,16 +15,7 @@ import {
 } from '../constants/userInfoForm';
 import type {UserInfoFormFormValues, ValidationFormState} from '../typings/userInfoForm';
 
-// const validationI18n = I18n.keyset('auth.user-form-validation');
-
-const validationI18n = (key: string) => {
-    const keys: Record<string, string> = {
-        'label_error-required-fields': 'Please fill in all required fields',
-        'label_error-password-not-match': 'Passwords do not match',
-    };
-
-    return keys[key] || '';
-};
+const validationI18n = I18n.keyset('auth.user-form-validation');
 
 type UpdateFormValuesAction = {
     type: typeof UPDATE_FORM_VALUES;
