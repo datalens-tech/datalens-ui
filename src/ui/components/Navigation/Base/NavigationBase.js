@@ -292,13 +292,14 @@ class NavigationBase extends React.Component {
         return getInitDestination(path);
     }
 
-    openOnlyCollectionsDialog = (entryType) => {
+    openOnlyCollectionsDialog = (entryType, onApply) => {
         this.props.openDialog({
             id: DIALOG_CREATE_ENTRY_IN_WORKBOOK,
             props: {
                 entryType,
                 initialCollectionId: null,
-                onApply: () => {
+                onApply: (targetWorkbookId) => {
+                    onApply?.(targetWorkbookId, entryType);
                     this.closeNavigation();
                 },
                 onClose: () => {
@@ -373,7 +374,13 @@ class NavigationBase extends React.Component {
         }
 
         if (this.props.onCreateMenuClick) {
-            this.props.onCreateMenuClick(type);
+            this.props.onCreateMenuClick({
+                type,
+                query,
+                openOnlyCollectionsDialog: this.openOnlyCollectionsDialog,
+                closeNavigation: this.closeNavigation,
+                history,
+            });
         }
     };
 
