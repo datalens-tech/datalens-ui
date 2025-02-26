@@ -1,4 +1,5 @@
 import type {ChartKitWidgetSeries, ChartKitWidgetSeriesData} from '@gravity-ui/chartkit';
+import {create} from 'd3';
 import get from 'lodash/get';
 import set from 'lodash/set';
 
@@ -68,4 +69,15 @@ export function setSeriesSelectState(args: {series: ChartKitWidgetSeries; select
             break;
         }
     }
+}
+
+export function getCustomShapeRenderer(fn: (this: unknown, ...args: unknown[]) => string) {
+    return function renderer(this: unknown, ...args: unknown[]) {
+        const content = fn.call(this, args);
+
+        const container = create('svg:g');
+        container.html(content);
+
+        return container.node();
+    };
 }

@@ -377,10 +377,13 @@ async function getUnwrappedFunction(args: {
 
         const oneRunTimeLimit = options?.fnExecTimeLimit ?? UI_SANDBOX_FN_TIME_LIMIT;
         const execTimeout = Math.min(oneRunTimeLimit, options?.totalTimeLimit ?? Infinity);
-        const interruptHandler = getInterruptAfterDeadlineHandler(Date.now() + execTimeout);
-        const runtime = new UiSandboxRuntime({sandbox, interruptHandler});
+        const runtime = new UiSandboxRuntime({
+            sandbox,
+            getInterruptAfterDeadlineHandler,
+            timelimit: execTimeout,
+        });
         try {
-            const result = runtime.callFunction({
+            const {result, execTime} = runtime.callFunction({
                 fn: wrappedFn.fn,
                 fnContext,
                 fnArgs,
@@ -388,9 +391,9 @@ async function getUnwrappedFunction(args: {
                 libs,
                 name,
             });
-            const performance = Performance.getDuration(runId);
+
             if (options?.totalTimeLimit) {
-                options.totalTimeLimit = Math.max(0, options.totalTimeLimit - Number(performance));
+                options.totalTimeLimit = Math.max(0, options.totalTimeLimit - Number(execTime));
             }
 
             return unwrapHtml({value: result, parseHtml, addElementId: isBlankChart});
