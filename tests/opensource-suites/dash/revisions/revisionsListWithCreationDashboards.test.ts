@@ -1,6 +1,6 @@
 import {ElementHandle, Page} from '@playwright/test';
 
-import {DashRevisions, RevisionsPanelQa} from '../../../../src/shared';
+import {DashRevisions, RevisionsListQa, RevisionsPanelQa} from '../../../../src/shared';
 import {ActionPanelEntryContextMenuQa} from '../../../../src/shared/constants/qa/action-panel';
 import Revisions from '../../../page-objects/common/Revisions';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
@@ -74,7 +74,7 @@ datalensTest.describe('Dashboards - Versioning', () => {
             await page.waitForSelector(`${slct(DashRevisions.EXPANDABLE_PANEL_COLLAPSED_BTN)}`);
 
             // click on the close list button
-            await page.click(slct(DashRevisions.EXPANDABLE_PANEL_CLOSE));
+            await page.click(slct(RevisionsListQa.ExpandablePanelButtonClose));
             const expandablePanel = await page.$$(slct(DashRevisions.EXPANDABLE_PANEL));
             // check that the block with the list of revisions is closed
             expect(expandablePanel).toHaveLength(0);

@@ -6,7 +6,7 @@ import {clickDropDownOption, cssSlct, slct, waitForCondition} from '../../../uti
 import {COMMON_SELECTORS} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {ActionPanelEntryContextMenuQa} from '../../../../src/shared/constants/qa/action-panel';
-import {DashRevisions, RevisionsPanelQa} from '../../../../src/shared';
+import {DashRevisions, RevisionsListQa, RevisionsPanelQa} from '../../../../src/shared';
 
 const PARAMS = {
     INITIAL_TITLE: 'New dash',
@@ -75,7 +75,7 @@ datalensTest.describe('Dashboards - Versioning', () => {
             await page.waitForSelector(`${slct(DashRevisions.EXPANDABLE_PANEL_COLLAPSED_BTN)}`);
 
             // click on the close list button
-            await page.click(slct(DashRevisions.EXPANDABLE_PANEL_CLOSE));
+            await page.click(slct(RevisionsListQa.ExpandablePanelButtonClose));
             const expandablePanel = await page.$$(slct(DashRevisions.EXPANDABLE_PANEL));
             // check that the block with the list of revisions is closed
             expect(expandablePanel).toHaveLength(0);
