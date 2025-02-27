@@ -21,6 +21,5 @@ export enum EditorActionPanelQA {
 }
 
 export enum EditorPaneQA {
-    ParamsTab = 'editor-pane-params-tab',
     Editor = 'editor-pane-editor',
 }

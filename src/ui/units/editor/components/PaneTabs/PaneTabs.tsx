@@ -2,7 +2,6 @@ import React from 'react';
 
 import {AdaptiveTabs} from '@gravity-ui/components';
 import block from 'bem-cn-lite';
-import {EditorPaneQA} from 'shared';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
 
 import './PaneTabs.scss';
@@ -22,15 +21,6 @@ interface Props {
     className?: string;
 }
 
-const getQa = (tabId: string) => {
-    switch (tabId) {
-        case 'params':
-            return EditorPaneQA.ParamsTab;
-        default:
-            return undefined;
-    }
-};
-
 const PaneTabs: React.FC<Props> = ({paneId, tabs, currentTabId, onSelectTab, className}) => {
     return (
         <div className={b(null, className)}>
@@ -46,9 +36,7 @@ const PaneTabs: React.FC<Props> = ({paneId, tabs, currentTabId, onSelectTab, cla
                     const isActive = tab?.id === currentTabId;
 
                     return tab?.id ? (
-                        <div className={b('tab', {active: isActive})} data-qa={getQa(tab.id)}>
-                            {node}
-                        </div>
+                        <div className={b('tab', {active: isActive})}>{node}</div>
                     ) : (
                         <React.Fragment>{node}</React.Fragment>
                     );

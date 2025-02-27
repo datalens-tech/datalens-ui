@@ -108,7 +108,7 @@ export default class Revisions {
 
             revisions = await this.getRevisions();
 
-            await expect(revisions).toHaveLength(expectedNumber);
+            return revisions.length === expectedNumber;
         }).catch(() => {
             throw new Error(
                 `Expected ${expectedNumber} of revisions in the list, but in fact ${revisions.length}`,
