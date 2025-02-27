@@ -1,10 +1,12 @@
+import moment from 'moment';
 import {slct} from '../../utils';
-import {BasePage, BasePageProps} from '../BasePage';
+import {BasePageProps} from '../BasePage';
+import {ChartPage} from '../ChartPage';
 import ChartKit from '../wizard/ChartKit';
 
 interface EditorPageProps extends BasePageProps {}
 
-class EditorPage extends BasePage {
+class EditorPage extends ChartPage {
     chartkit: ChartKit;
 
     constructor({page}: EditorPageProps) {
@@ -19,6 +21,14 @@ class EditorPage extends BasePage {
 
     async drawPreview() {
         await this.page.click(slct('button-draw-preview'));
+    }
+
+    async saveEditorEntry(entryName?: string) {
+        const chartName = `${entryName}__${moment(moment.now()).format('DD.MM.YYYY HH:mm:ss.SS')}`;
+        await this.saveEntry({
+            entryName: chartName,
+            customUrlsForValidation: ['/createEditorChart', '/getEntry'],
+        });
     }
 }
 

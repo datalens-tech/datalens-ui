@@ -5,7 +5,7 @@ import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {DashRevisions} from 'shared';
+import {DashRevisions, RevisionsListQa} from 'shared';
 
 import {setRevisionsListMode} from '../../store/actions/entryContent';
 import {selectIsRevisionsListCollapsed} from '../../store/selectors/entryContent';
@@ -77,7 +77,7 @@ const ExpandablePanel: React.FC<ExpandablePanelProps> = ({
                             size="s"
                             view="flat"
                             onClick={onClose}
-                            qa="expandable-panel-close"
+                            qa={RevisionsListQa.ExpandablePanelButtonClose}
                         >
                             <Icon data={Xmark} width="14" height="14" />
                         </Button>
