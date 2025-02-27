@@ -62,6 +62,8 @@ const PASSED_PROPERTIES: (keyof Entry)[] = [
     'updatedAt',
     'updatedBy',
     'workbookId',
+    'servicePlan',
+    'tenantFeatures',
 ];
 
 export type Entry = {
@@ -91,6 +93,7 @@ export type Entry = {
     updatedBy?: string;
     workbookId?: WorkbookId;
     servicePlan?: string;
+    tenantFeatures?: Record<string, unknown>;
 };
 
 const PASSED_HEADERS = [
@@ -185,10 +188,6 @@ function formatPassedProperties(entry: Entry = {}) {
         formattedData.publicAuthor = publicAuthor;
     }
 
-    if (entry.servicePlan) {
-        formattedData.servicePlan = entry.servicePlan;
-    }
-
     return formattedData as DashEntryData | ChartEntryData;
 }
 
@@ -246,6 +245,7 @@ export class USProvider {
             includeLinks,
             includePermissionsInfo,
             includeServicePlan,
+            includeTenantFeatures,
             headers,
             storageApiPath,
             extraAllowedHeaders,
@@ -261,6 +261,7 @@ export class USProvider {
             headers: Request['headers'];
             workbookId?: WorkbookId;
             includeServicePlan?: boolean;
+            includeTenantFeatures?: boolean;
         },
     ) {
         const hrStart = process.hrtime();
@@ -271,12 +272,17 @@ export class USProvider {
             includePermissionsInfo?: boolean;
             revId?: string;
             includeServicePlan?: boolean;
+            includeTenantFeatures?: boolean;
         } = {
             branch: unreleased ? 'saved' : 'published',
         };
 
         if (includeServicePlan) {
             params.includeServicePlan = true;
+        }
+
+        if (includeTenantFeatures) {
+            params.includeTenantFeatures = true;
         }
 
         if (includeLinks) {

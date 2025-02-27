@@ -16,6 +16,7 @@ type RunControllerExtraSettings = {
     storageApiPath?: string;
     extraAllowedHeaders?: string[];
     includeServicePlan?: boolean;
+    includeTenantFeatures?: boolean;
 };
 
 export const runController = (

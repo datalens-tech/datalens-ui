@@ -196,6 +196,7 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
         dataProps,
         handleRenderChart,
         loadControls,
+        runAction,
     } = useLoadingChart({
         dataProvider,
         requestHeadersGetter,
@@ -439,5 +440,6 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
         dataProps,
         handleRenderChart,
         getControls: loadControls,
+        runAction,
     };
 };
