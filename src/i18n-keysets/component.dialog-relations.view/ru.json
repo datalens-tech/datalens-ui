@@ -28,6 +28,7 @@
   "label_choose-fields-from-list": "Выберите поля из списка",
   "label_dataset": "датасет",
   "label_datasets": "датасета",
+  "label_empty-selected-widgets": "Не выбран виджет",
   "label_empty-state": "Выберите виджет",
   "label_ignore": "Не связаны",
   "label_input": "Входящая",

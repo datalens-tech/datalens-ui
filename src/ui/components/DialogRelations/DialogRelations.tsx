@@ -77,6 +77,7 @@ const EmptyState: React.FC = () => {
             size={'m'}
             direction={'column'}
             name={'emptyDirectory'}
+            title={i18n('label_empty-selected-widgets')}
         />
     );
 };
