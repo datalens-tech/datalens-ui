@@ -54,6 +54,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@braintree/sanitize-url": "^6.0.0",
+    "@datalens-tech/ui-sandbox-modules": "^0.34.0",
     "@datalens-tech/xlsx": "^0.20.1",
     "@diplodoc/cut-extension": "^0.5.0",
     "@diplodoc/latex-extension": "^1.1.0",
@@ -118,7 +119,6 @@
     "workerpool": "^9.1.1"
   },
   "devDependencies": {
-    "@datalens-tech/ui-sandbox-modules": "^0.34.0",
     "@gravity-ui/app-builder": "^0.13.1",
     "@gravity-ui/components": "^3.12.5",
     "@gravity-ui/date-components": "^2.11.0",
