@@ -11,6 +11,8 @@ const Opacity = {
     UNSELECTED: 0.5,
 };
 
+const SVG_NAMESPACE_URI = 'http://www.w3.org/2000/svg';
+
 export function getPointActionParams(
     point: ChartKitWidgetSeriesData,
     series: ChartKitWidgetSeries | undefined,
@@ -68,4 +70,15 @@ export function setSeriesSelectState(args: {series: ChartKitWidgetSeries; select
             break;
         }
     }
+}
+
+export function getCustomShapeRenderer(fn: (this: unknown, ...args: unknown[]) => string) {
+    return function renderer(this: unknown, ...args: unknown[]) {
+        const content = fn.call(this, args);
+
+        const container = document.createElementNS(SVG_NAMESPACE_URI, 'g');
+        container.innerHTML = content;
+
+        return container;
+    };
 }

@@ -10,7 +10,12 @@ import {getTooltipRenderer} from '../tooltip';
 import {getNormalizedClickActions} from '../utils';
 
 import {handleClick} from './event-handlers';
-import {isPointSelected, setPointSelectState, setSeriesSelectState} from './utils';
+import {
+    getCustomShapeRenderer,
+    isPointSelected,
+    setPointSelectState,
+    setSeriesSelectState,
+} from './utils';
 
 export function getGravityChartsChartKitData(args: {
     loadedData: ChartKitAdapterProps['loadedData'];
@@ -47,7 +52,11 @@ export function getGravityChartsChartKitData(args: {
         switch (s.type) {
             case 'pie': {
                 const totals = get(s, 'custom.totals');
-                if (typeof totals !== 'undefined') {
+                const renderCustomShapeFn = get(s, 'renderCustomShape') as any;
+
+                if (renderCustomShapeFn) {
+                    s.renderCustomShape = getCustomShapeRenderer(renderCustomShapeFn);
+                } else if (typeof totals !== 'undefined') {
                     s.renderCustomShape = CustomShapeRenderer.pieCenterText(totals);
                 }
 
