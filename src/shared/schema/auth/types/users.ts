@@ -17,14 +17,14 @@ export interface UpdateUsersRolesArgs {
     }[];
 }
 
-export interface CreateUserArgs {
+export type CreateUserArgs = {
     login: string;
     password: string;
     email?: string;
     firstName?: string;
     lastName?: string;
     roles?: `${UserRole}`[];
-}
+};
 
 export interface CreateUserResponse {
     userId: string;

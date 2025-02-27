@@ -9,6 +9,7 @@ import type {
 import type {DatalensGlobalState} from 'ui/index';
 import {getSdk} from 'ui/libs/schematic-sdk';
 import {showToast} from 'ui/store/actions/toaster';
+import {removeEmptyFields} from 'ui/units/auth/utils/fields';
 
 import {
     RESET_CREATE_USER,
@@ -140,16 +141,12 @@ export const createUser = ({
             dispatch({
                 type: SET_CREATE_USER_LOADING,
             });
-            // clean empty fields
-            const preparedData: CreateUserArgs = {...userData};
-            Object.entries(preparedData).forEach(([key, value]) => {
-                if (!value) {
-                    delete preparedData[key as keyof CreateUserArgs];
-                }
-            });
-            const data = await getSdk().sdk.auth.createUser(preparedData, {
-                concurrentId: 'serviceSettings/createUser',
-            });
+            const data = await getSdk().sdk.auth.createUser(
+                removeEmptyFields<CreateUserArgs>(userData),
+                {
+                    concurrentId: 'serviceSettings/createUser',
+                },
+            );
             onSuccess?.();
             dispatch({
                 type: SET_CREATE_USER_SUCCESS,
