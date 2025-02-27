@@ -1,7 +1,7 @@
 import type React from 'react';
 
 import type {PluginWidgetProps} from '@gravity-ui/dashkit';
-import type {DashTabItemControlElement} from 'shared';
+import type {BackgroundSettings, DashTabItemControlElement} from 'shared';
 import {CustomPaletteBgColors} from 'ui/constants/widgets';
 
 import {DL} from '../../constants';
@@ -290,13 +290,19 @@ export function getControlHint(source: DashTabItemControlElement) {
     return source.showHint ? source.hint : undefined;
 }
 
-export function getPreparedWrapSettings(showBgColor: boolean, color?: string) {
-    const wrapperClassMod =
-        (showBgColor &&
+type ClassModAvailableValues = 'with-default-color' | 'with-color' | '';
+
+export function getPreparedWrapSettings(background?: BackgroundSettings) {
+    const color = background?.color;
+    const hasBgColor =
+        background?.enabled !== false && color && color !== CustomPaletteBgColors.NONE;
+
+    const wrapperClassMod: ClassModAvailableValues =
+        (hasBgColor &&
             (color === CustomPaletteBgColors.LIKE_CHART ? 'with-default-color' : 'with-color')) ||
         '';
 
-    const style = showBgColor
+    const style: React.CSSProperties = hasBgColor
         ? {
               backgroundColor: color === CustomPaletteBgColors.LIKE_CHART ? undefined : color,
           }

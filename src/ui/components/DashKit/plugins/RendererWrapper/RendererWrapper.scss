@@ -13,11 +13,6 @@
             background-color: var(--g-color-base-float);
         }
 
-        .dashkit-grid-item__item_editMode &_text,
-        .dashkit-grid-item__item_editMode &_title {
-            background-color: var(--g-color-base-float);
-        }
-
         &_title {
             scroll-margin-left: calc(24px + var(--gn-aside-header-size, 0px));
             overflow: clip;

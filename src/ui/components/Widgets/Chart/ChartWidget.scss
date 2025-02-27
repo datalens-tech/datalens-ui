@@ -4,8 +4,7 @@ $dashPublicContainerClassName: '.dash';
 $hintOffset: 3px;
 
 .dl-widget {
-    #{$dashContainerClassName} &,
-    #{$dashPublicContainerClassName} & {
+    &_with-default-color {
         background-color: var(--g-color-base-float);
     }
 

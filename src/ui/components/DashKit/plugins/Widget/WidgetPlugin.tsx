@@ -18,7 +18,7 @@ const plugin = {
         const workbookId = props.context.workbookId;
 
         return (
-            <RendererWrapper type="widget" id={props.id}>
+            <RendererWrapper type="widget" id={props.id} editMode={props.editMode}>
                 <ChartWrapper
                     {...props}
                     usageType="widget"

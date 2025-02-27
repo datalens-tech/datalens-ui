@@ -13,7 +13,6 @@ import {
     adjustWidgetLayout as dashkitAdjustWidgetLayout,
     getPreparedWrapSettings,
 } from 'ui/components/DashKit/utils';
-import {CustomPaletteBgColors} from 'ui/constants/widgets';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
@@ -95,13 +94,8 @@ const titlePlugin: PluginTitle = {
 
         const content = <DashKitPluginTitle {...props} ref={forwardedRef} />;
 
-        const showBgColor = Boolean(
-            data.background?.enabled !== false &&
-                data.background?.color &&
-                data.background?.color !== CustomPaletteBgColors.NONE,
-        );
-
-        const {classMod, style} = getPreparedWrapSettings(showBgColor, data.background?.color);
+        const {classMod, style} = getPreparedWrapSettings(data.background);
+        const showBgColor = Boolean(classMod);
 
         const currentLayout = props.layout.find(({i}) => i === props.id) || {
             x: null,
@@ -186,6 +180,7 @@ const titlePlugin: PluginTitle = {
                 nodeRef={rootNodeRef}
                 style={style as React.StyleHTMLAttributes<HTMLDivElement>}
                 classMod={classMod}
+                editMode={props.editMode}
             >
                 <div
                     className={b({
