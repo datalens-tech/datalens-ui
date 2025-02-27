@@ -196,4 +196,6 @@ export const COMMON_SELECTORS = {
     REVISIONS_LIST_ROW_ACTUAL: 'revisions-list__row_published',
     REVISIONS_LIST_LOADER: 'revisions-loader',
     REVISIONS_TOP_PANEL: 'revisions-top-panel',
+    REVISIONS_TOP_PANEL_OPEN_BTN: 'action-open-actual',
+    REVISIONS_TOP_PANEL_ACTUALIZE_BTN: 'action-make-actual',
 };
