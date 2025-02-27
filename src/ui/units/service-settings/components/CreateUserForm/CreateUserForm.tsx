@@ -12,7 +12,6 @@ import {FirstName} from 'ui/units/auth/components/formControls/FirstName';
 import {LastName} from 'ui/units/auth/components/formControls/LastName';
 import {Login} from 'ui/units/auth/components/formControls/Login';
 import {Password} from 'ui/units/auth/components/formControls/Password';
-import {RepeatPassword} from 'ui/units/auth/components/formControls/RepeatPassword';
 import {Roles} from 'ui/units/auth/components/formControls/Roles';
 import {
     resetUserInfoForm,
@@ -85,13 +84,12 @@ export const CreateUserForm = () => {
                     <Alert theme="danger" message={<InterpolatedText text={errorMessage} br />} />
                 )}
                 <Flex gap={3} as="form" direction="column" onChange={handleFormChange}>
+                    <Login />
                     <FirstName />
                     <LastName />
-                    <Login />
                     <Email />
                     <Roles />
                     <Password />
-                    <RepeatPassword />
                 </Flex>
             </Flex>
             <Flex gap={2}>

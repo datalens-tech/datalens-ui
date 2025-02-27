@@ -122,6 +122,8 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                 ...res.locals.subrequestHeaders,
                 ...ctx.getMetadata(),
             },
+            includeServicePlan: true,
+            includeTenantFeatures: true,
         };
 
         // 1. it's embedded chart, id is not used, chart is resolved by token

@@ -41,7 +41,8 @@ export const Signin = ({alternativeAuthOptions, logoIcon}: SigninProps) => {
         dispatch(showToast({title: error.message, error}));
     };
 
-    const handleSubmit = () => {
+    const handleSubmit = (event: React.FormEvent<string>) => {
+        event.preventDefault();
         if (!formData.login || !formData.password) {
             setErrorMessage(i18n('label_error-required-fields'));
             return;
@@ -64,6 +65,7 @@ export const Signin = ({alternativeAuthOptions, logoIcon}: SigninProps) => {
                 gap="6"
                 as="form"
                 onChange={handleFormChange}
+                onSubmit={handleSubmit}
             >
                 <Flex direction="column" gap="2" alignItems="center">
                     <Icon size={32} data={logoIcon || defaultLogoIcon} />
@@ -73,7 +75,7 @@ export const Signin = ({alternativeAuthOptions, logoIcon}: SigninProps) => {
                     {errorMessage && <Alert theme="danger" message={errorMessage} />}
                     <Login />
                     <Password />
-                    <Button size="xl" view="action" onClick={handleSubmit}>
+                    <Button size="xl" view="action" type="submit">
                         {i18n('button_sign-in')}
                     </Button>
                     <Flex gap={1}>

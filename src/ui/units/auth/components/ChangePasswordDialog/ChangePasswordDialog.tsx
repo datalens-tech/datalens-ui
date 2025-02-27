@@ -5,6 +5,7 @@ import {Alert, Dialog, Flex, PasswordInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
+import {InterpolatedText} from 'ui/components/InterpolatedText/InterpolatedText';
 import type {SdkError} from 'ui/libs/schematic-sdk';
 import type {AppDispatch} from 'ui/store';
 import {showToast} from 'ui/store/actions/toaster';
@@ -12,6 +13,7 @@ import {showToast} from 'ui/store/actions/toaster';
 import {AuthErrorCode} from '../../constants/errors';
 import {resetUpdateUserPasswordState, updateUserPassword} from '../../store/actions/userProfile';
 import {selectUpdateUserPasswordIsLoading} from '../../store/selectors/userProfile';
+import {passwordValidationSchema} from '../../utils/validation';
 
 import './ChangePasswordDialog.scss';
 
@@ -61,6 +63,9 @@ export function ChangePasswordDialog({
             setErrorMessage(null);
             setValidationsStates(INITIAL_VALIDATION_STATE);
             dispatch(resetUpdateUserPasswordState());
+            setOldPassword('');
+            setNewPassword('');
+            setRepeatPassword('');
         }
     }, [dispatch, open]);
 
@@ -77,9 +82,6 @@ export function ChangePasswordDialog({
     };
 
     const handleClose = () => {
-        setOldPassword('');
-        setNewPassword('');
-        setRepeatPassword('');
         onClose();
     };
 
@@ -113,6 +115,17 @@ export function ChangePasswordDialog({
                 newPassword: newPassword ? undefined : 'invalid',
                 oldPassword: oldPassword || !isOwnProfile ? undefined : 'invalid',
                 repeatPassword: repeatPassword || !isOwnProfile ? undefined : 'invalid',
+            });
+            return;
+        }
+
+        try {
+            passwordValidationSchema.validateSync(newPassword);
+        } catch (error) {
+            setErrorMessage(error.message);
+            setValidationsStates({
+                ...validationsStates,
+                newPassword: 'invalid',
             });
             return;
         }
@@ -156,7 +169,12 @@ export function ChangePasswordDialog({
             <Dialog.Header caption={i18n('title_change-password')} />
             <Dialog.Body>
                 <Flex gap={4} direction="column">
-                    {message && <Alert theme={alertTheme} message={message} />}
+                    {message && (
+                        <Alert
+                            theme={alertTheme}
+                            message={<InterpolatedText text={message} br />}
+                        />
+                    )}
                     <Flex
                         gap={3}
                         className={b('form')}

@@ -1,7 +1,6 @@
 import React from 'react';
 
-import {FormRow} from '@gravity-ui/components';
-import {Alert, Button, Flex, Text} from '@gravity-ui/uikit';
+import {Alert, Flex, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
@@ -18,6 +17,7 @@ import {LastName} from '../formControls/LastName';
 import {Login} from '../formControls/Login';
 import {Password} from '../formControls/Password';
 import {RepeatPassword} from '../formControls/RepeatPassword';
+import {RowButton} from '../formControls/RowButton';
 
 import {Back} from './components/Back';
 
@@ -32,13 +32,16 @@ export const Signup = () => {
 
     const [errorMessage, setErrorMessage] = React.useState<null | string>(null);
 
-    const handleSubmit = () => {
+    const handleSubmit = (event: React.FormEvent<string>) => {
+        event.preventDefault();
+
         dispatch(
             validateFormValues({
                 onSuccess: () => {
                     dispatch(submitSignupForm());
                 },
                 onError: setErrorMessage,
+                needRepeatPassword: true,
             }),
         );
     };
@@ -55,6 +58,7 @@ export const Signup = () => {
                 direction="column"
                 gap="6"
                 as="form"
+                onSubmit={handleSubmit}
                 onChange={handleFormChange}
             >
                 <Text variant="subheader-3">{i18n('title_sign-up')}</Text>
@@ -70,14 +74,12 @@ export const Signup = () => {
                         <Email autoComplete={true} size="l" />
                         <FirstName autoComplete={true} size="l" />
                         <LastName autoComplete={true} size="l" />
-                        <Password size="l" />
+                        <Password size="l" hideCopyButton={true} />
                         <RepeatPassword size="l" />
                     </Flex>
-                    <FormRow>
-                        <Button size="xl" view="action" onClick={handleSubmit}>
-                            {i18n('button_sign-up')}
-                        </Button>
-                    </FormRow>
+                    <RowButton width="max" size="xl" view="action" type="submit">
+                        {i18n('button_sign-up')}
+                    </RowButton>
                     <Back />
                 </Flex>
             </Flex>

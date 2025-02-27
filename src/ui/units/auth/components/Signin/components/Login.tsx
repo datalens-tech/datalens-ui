@@ -23,6 +23,7 @@ export const Login = () => {
             placeholder={i18n('label_login-placeholder')}
             size="l"
             autoComplete="username"
+            autoFocus
         />
     );
 };

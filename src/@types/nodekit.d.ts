@@ -44,6 +44,7 @@ export interface SharedAppConfig {
         dataFetcherProxiedHeaders?: string[];
         maxWorkers?: number;
         includeServicePlan?: boolean;
+        includeTenantFeatures?: true;
     };
     // CHARTS ENGINE -- FINISH
 
