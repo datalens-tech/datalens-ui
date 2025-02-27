@@ -91,11 +91,11 @@ class ChartsEngine {
 
         Request.init({cacheClientInstance: this.cacheClient});
 
-        const {includeServicePlan} = config.chartsEngineConfig;
+        const {includeServicePlan, includeTenantFeatures} = config.chartsEngineConfig;
         this.controllers = {
             export: defaultControllers.export(),
             markdown: defaultControllers.markdown,
-            run: defaultControllers.run(this, {includeServicePlan}),
+            run: defaultControllers.run(this, {includeServicePlan, includeTenantFeatures}),
             config: defaultControllers.config(this),
             charts: defaultControllers.charts(this),
             embeds: defaultControllers.embeds(this),
