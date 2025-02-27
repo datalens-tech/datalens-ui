@@ -1,6 +1,6 @@
 import {ElementHandle, Page} from '@playwright/test';
 
-import {DashRevisions} from '../../../../src/shared';
+import {DashRevisions, RevisionsPanelQa} from '../../../../src/shared';
 import {ActionPanelEntryContextMenuQa} from '../../../../src/shared/constants/qa/action-panel';
 import Revisions from '../../../page-objects/common/Revisions';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
@@ -143,12 +143,12 @@ datalensTest.describe('Dashboards - Versioning', () => {
             // click "Make relevant" from the blue panel
             await page.waitForSelector(
                 `${slct(COMMON_SELECTORS.REVISIONS_TOP_PANEL)} ${slct(
-                    COMMON_SELECTORS.REVISIONS_TOP_PANEL_ACTUALIZE_BTN,
+                    RevisionsPanelQa.ButtonMakeActual,
                 )}`,
             );
             await page.click(
                 `${slct(COMMON_SELECTORS.REVISIONS_TOP_PANEL)} ${slct(
-                    COMMON_SELECTORS.REVISIONS_TOP_PANEL_ACTUALIZE_BTN,
+                    RevisionsPanelQa.ButtonMakeActual,
                 )}`,
             );
 
