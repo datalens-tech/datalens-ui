@@ -3,9 +3,7 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {useDispatch} from 'react-redux';
 import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
-import {showToast} from 'ui/store/actions/toaster';
 import {setSkipReload} from 'ui/units/dash/store/actions/dashTyped';
-import {getRenderMarkdownFn} from 'ui/utils';
 
 import {getRandomCKId} from '../../../../libs/DatalensChartkit/ChartKit/helpers/getRandomCKId';
 import {DatalensChartkitContent} from '../../../../libs/DatalensChartkit/components/ChartKitBase/components/Chart/Chart';
@@ -15,6 +13,7 @@ import Drill from '../../../../libs/DatalensChartkit/components/Drill/Drill';
 import {SideMarkdown} from '../../../../libs/DatalensChartkit/components/SideMarkdown/SideMarkdown';
 import ExtensionsManager from '../../../../libs/DatalensChartkit/modules/extensions-manager/extensions-manager';
 import type {ControlsOnlyWidget, DrillDownConfig} from '../../../../libs/DatalensChartkit/types';
+import {useChartActions} from '../helpers/chart-actions';
 import type {ChartContentProps, ChartControlsType} from '../types';
 
 import {Header as ChartHeader} from './Header';
@@ -105,40 +104,7 @@ export const Content = (props: ChartContentProps) => {
     const showContentLoader = showLoader || isExportLoading;
     const showLoaderVeil = veil && !isExportLoading;
 
-    const onAction = React.useCallback(async (actionArgs: {data?: any} = {}) => {
-        const {action, ...args} = actionArgs.data || {};
-
-        switch (action) {
-            case 'toast': {
-                const renderMarkdown = await getRenderMarkdownFn();
-                dispatch(
-                    showToast({
-                        title: args?.title,
-                        type: args?.type,
-                        content: (
-                            <div
-                                dangerouslySetInnerHTML={{
-                                    __html: renderMarkdown(String(args.content ?? '')),
-                                }}
-                            />
-                        ),
-                    }),
-                );
-                break;
-            }
-            case 'setParams': {
-                if (onChange) {
-                    onChange(
-                        {type: 'PARAMS_CHANGED', data: {params: args}},
-                        {forceUpdate: true},
-                        true,
-                    );
-                }
-
-                break;
-            }
-        }
-    }, []);
+    const {onAction} = useChartActions({onChange});
 
     return (
         <div className={b('container', {[String(widgetType)]: Boolean(widgetType)})}>

@@ -22,6 +22,7 @@ export const ALLOWED_TAGS = [
     'code',
     'dd',
     'defs',
+    'details',
     'div',
     'dl',
     'dt',
@@ -65,6 +66,7 @@ export const ALLOWED_TAGS = [
     'stop',
     'strong',
     'sub',
+    'summary',
     'sup',
     'svg',
     'table',
@@ -84,6 +86,7 @@ export const ALLOWED_TAGS = [
 
 export const ALLOWED_ATTRIBUTES = [
     'alt',
+    'alignment-baseline',
     'aria-controls',
     'aria-describedby',
     'aria-expanded',
@@ -118,6 +121,7 @@ export const ALLOWED_ATTRIBUTES = [
     'height',
     'href',
     'in',
+    'name',
     'offset',
     'opacity',
     'orient',

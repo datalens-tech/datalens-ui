@@ -21,6 +21,7 @@ export type ResolveConfigProps = {
     extraAllowedHeaders?: string[];
     workbookId?: WorkbookId;
     includeServicePlan?: boolean;
+    includeTenantFeatures?: boolean;
 };
 
 export type EmbedResolveConfigProps = ResolveConfigProps & {embedToken: string; embedId: string};
@@ -143,6 +144,7 @@ export class BaseStorage {
             extraAllowedHeaders,
             workbookId,
             includeServicePlan,
+            includeTenantFeatures,
         } = params;
         const requestId = ctx.get(REQUEST_ID_PARAM_NAME);
         if (requestId) {
@@ -154,6 +156,7 @@ export class BaseStorage {
             unreleased: this.flags.alwaysUnreleased ? true : unreleased,
             includePermissionsInfo: true,
             includeServicePlan,
+            includeTenantFeatures,
             storageApiPath,
             extraAllowedHeaders,
         };

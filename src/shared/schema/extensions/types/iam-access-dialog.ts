@@ -1,3 +1,5 @@
+import type {Lang} from '../../..';
+
 export enum AccessServiceResourceType {
     Collection = 'datalens.collection',
     Workbook = 'datalens.workbook',
@@ -91,6 +93,7 @@ export type AccessBindingDelta = {
 
 export type GetClaimsArgs = {
     subjectIds: string[];
+    language?: Lang;
 };
 
 export interface SubjectClaims {
@@ -120,6 +123,7 @@ export type BatchListMembersArgs = {
     pageToken?: string;
     pageSize: number;
     filter?: string;
+    language?: Lang;
 };
 
 export type BatchListMembersResponse = {
