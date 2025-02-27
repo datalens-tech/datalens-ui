@@ -1,8 +1,12 @@
 {
-  "label_control": "Selector",
-  "label_graph": "Chart",
+  "label_blank-chart": "Advanced chart",
+  "label_control": "Selectors",
+  "label_graph-gravity": "Chart (Gravity Charts)",
   "label_markdown": "Markdown",
   "label_markup": "Markup",
+  "label_metric": "Indicator",
   "label_module": "Module",
-  "label_table": "Table"
+  "label_table": "Table",
+  "label_yagr": "Chart (Yagr)",
+  "label_yamaps": "Yandex Maps"
 }

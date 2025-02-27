@@ -1,8 +1,12 @@
 {
+  "label_blank-chart": "Advanced-чарт",
   "label_control": "Селектор",
-  "label_graph": "График",
+  "label_graph-gravity": "График (Gravity Charts)",
   "label_markdown": "Markdown",
   "label_markup": "Markup",
+  "label_metric": "Индикатор",
   "label_module": "Модуль",
-  "label_table": "Таблица"
+  "label_table": "Таблица",
+  "label_yagr": "График (Yagr)",
+  "label_yamaps": "Яндекс Карты"
 }
