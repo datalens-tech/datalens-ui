@@ -2,7 +2,7 @@ import type {History} from 'history';
 import type {BackgroundSettings, DashData, DashEntry, DashTabItem, DashTabItemWidget} from 'shared';
 import {DashTabItemType} from 'shared';
 import {URL_QUERY} from 'ui/constants/common';
-import {DUPLICATED_WIDGET_BG_COLORS_PRESET} from 'ui/constants/widgets';
+import {CustomPaletteBgColors, DUPLICATED_WIDGET_BG_COLORS_PRESET} from 'ui/constants/widgets';
 import {isEmbeddedEntry} from 'ui/utils/embedded';
 
 import ChartKit from '../../../../libs/DatalensChartkit';
@@ -26,18 +26,40 @@ const hasTabs = (data: DashTabItem['data']): data is DashTabItemWidget['data'] =
 // This type guard is to save this behaviour
 export const isCallable = <T extends (args: any) => void>(fn: T | undefined): T => fn as T;
 
-function getActualBackground(background?: BackgroundSettings): BackgroundSettings | undefined {
+function getActualBackground(
+    background?: BackgroundSettings,
+    defaultBgColor?: string,
+): BackgroundSettings | undefined {
+    if (background && background.enabled === false) {
+        return {color: defaultBgColor ?? CustomPaletteBgColors.NONE};
+    }
+
     if (background && DUPLICATED_WIDGET_BG_COLORS_PRESET.includes(background.color)) {
         return {
             color: background.color.replace('medium', 'light-hover'),
         };
     }
 
-    return background;
+    if (background || !defaultBgColor) {
+        return background;
+    }
+
+    return {
+        color: defaultBgColor,
+    };
 }
 
 export function migrateBgColor(item: DashTabItem): DashTabItem {
     const newItem: DashTabItem = Object.assign({...item}, {data: Object.assign({}, item.data)});
+
+    if (newItem.type === DashTabItemType.Widget) {
+        newItem.data.tabs = newItem.data.tabs.map((tab) => ({
+            ...tab,
+            background: getActualBackground(tab.background, CustomPaletteBgColors.LIKE_CHART),
+        }));
+
+        return newItem;
+    }
 
     if ('background' in newItem.data) {
         if (
@@ -48,14 +70,6 @@ export function migrateBgColor(item: DashTabItem): DashTabItem {
 
             return newItem;
         }
-    }
-    if (newItem.type === DashTabItemType.Widget) {
-        newItem.data.tabs = newItem.data.tabs.map((tab) => ({
-            ...tab,
-            background: getActualBackground(tab.background),
-        }));
-
-        return newItem;
     }
     return item;
 }

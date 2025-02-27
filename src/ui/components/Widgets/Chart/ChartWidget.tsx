@@ -523,13 +523,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         };
     }, [editMode, widgetType]);
 
-    const showBgColor = Boolean(
-        currentTab?.enabled !== false &&
-            currentTab.background?.color &&
-            currentTab.background?.color !== 'transparent',
-    );
-
-    const {classMod, style} = getPreparedWrapSettings(showBgColor, currentTab.background?.color);
+    const {classMod, style} = getPreparedWrapSettings(currentTab.background);
 
     const disableControls = noControls || urlNoControls;
 
@@ -539,7 +533,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
             className={`${b({
                 ...mods,
                 autoheight: isAutoHeightEnabled,
-                classMod,
+                [String(classMod)]: Boolean(classMod),
                 ['wait-for-init']: !isInit,
                 'default-mobile': DL.IS_MOBILE && !isFullscreen,
             })}`}

@@ -4,7 +4,6 @@ import type {Plugin, PluginWidgetProps} from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
 import type {DashTabItemImage} from 'shared';
 import {DashTabItemType} from 'shared';
-import {CustomPaletteBgColors} from 'ui/constants/widgets';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
 import {getPreparedWrapSettings} from '../../utils';
@@ -31,14 +30,10 @@ function PluginImage(props: Props, _ref?: React.LegacyRef<HTMLDivElement>) {
         h: null,
         w: null,
     };
-    const backgroundEnabled = Boolean(
-        background?.enabled !== false &&
-            background?.color &&
-            background?.color !== CustomPaletteBgColors.NONE,
-    );
+
     const {classMod, style} = React.useMemo(() => {
-        return getPreparedWrapSettings(backgroundEnabled, background?.color);
-    }, [backgroundEnabled, background?.color]);
+        return getPreparedWrapSettings(background);
+    }, [background]);
 
     React.useEffect(() => {
         handleUpdate?.();
@@ -53,7 +48,13 @@ function PluginImage(props: Props, _ref?: React.LegacyRef<HTMLDivElement>) {
     ]);
 
     return (
-        <RendererWrapper id={id} type={DashTabItemType.Image} classMod={classMod} style={style}>
+        <RendererWrapper
+            id={id}
+            type={DashTabItemType.Image}
+            classMod={classMod}
+            style={style}
+            editMode={props.editMode}
+        >
             <img
                 className={b({'preserve-aspect-ratio': preserveAspectRatio})}
                 alt={alt}
