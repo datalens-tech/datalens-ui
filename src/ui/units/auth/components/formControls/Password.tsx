@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {FormRow} from '@gravity-ui/components';
+import type {PasswordInputProps} from '@gravity-ui/uikit';
 import {PasswordInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -17,7 +18,8 @@ const b = block('user-info-form-controls');
 
 const i18n = I18n.keyset('auth.form-controls');
 
-type PasswordProps = Omit<UserFormInputProps, 'autocomplete'> & {isCurrentPassword?: boolean};
+type PasswordProps = Omit<UserFormInputProps, 'autocomplete'> &
+    Pick<PasswordInputProps, 'hideCopyButton'> & {isCurrentPassword?: boolean};
 
 export const Password = ({isCurrentPassword, ...props}: PasswordProps) => {
     const dispatch = useDispatch();
