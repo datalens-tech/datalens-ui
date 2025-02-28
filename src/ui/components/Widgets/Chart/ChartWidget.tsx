@@ -13,6 +13,7 @@ import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import type {StringParams} from 'shared';
+import {usePreparedWrapSettings} from 'ui/components/DashKit/hooks';
 import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
 
 import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
@@ -20,7 +21,6 @@ import {getDataProviderData} from '../../../libs/DatalensChartkit/components/Cha
 import settings from '../../../libs/DatalensChartkit/modules/settings/settings';
 import DebugInfoTool from '../../DashKit/plugins/DebugInfoTool/DebugInfoTool';
 import type {CurrentTab, WidgetPluginDataWithTabs} from '../../DashKit/plugins/Widget/types';
-import {getPreparedWrapSettings} from '../../DashKit/utils';
 import {MarkdownHelpPopover} from '../../MarkdownHelpPopover/MarkdownHelpPopover';
 
 import {Content} from './components/Content';
@@ -523,13 +523,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         };
     }, [editMode, widgetType]);
 
-    const showBgColor = Boolean(
-        currentTab?.enabled !== false &&
-            currentTab.background?.color &&
-            currentTab.background?.color !== 'transparent',
-    );
-
-    const {classMod, style} = getPreparedWrapSettings(showBgColor, currentTab.background?.color);
+    const {classMod, style} = usePreparedWrapSettings(currentTab.background);
 
     const disableControls = noControls || urlNoControls;
 
@@ -539,7 +533,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
             className={`${b({
                 ...mods,
                 autoheight: isAutoHeightEnabled,
-                classMod,
+                [String(classMod)]: Boolean(classMod),
                 ['wait-for-init']: !isInit,
                 'default-mobile': DL.IS_MOBILE && !isFullscreen,
             })}`}
