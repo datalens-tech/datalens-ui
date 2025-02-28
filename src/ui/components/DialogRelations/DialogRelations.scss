@@ -102,6 +102,10 @@
         border-bottom: 1px solid var(--g-color-line-generic);
     }
 
+    &__item-select_empty-state {
+        border-bottom-color: transparent;
+    }
+
     &__item-select-popup {
         max-height: 320px;
     }
