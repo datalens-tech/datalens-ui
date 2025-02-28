@@ -1,5 +1,21 @@
+function getShuffledString(array: string[]) {
+    for (let i = array.length - 1; i > 0; i--) {
+        const randomNumbers = new Uint32Array(1);
+        window.crypto.getRandomValues(randomNumbers);
+
+        // get index in interval [0, i]
+        const j = randomNumbers[0] % (i + 1);
+
+        [array[i], array[j]] = [array[j], array[i]];
+    }
+
+    return array.join('');
+}
+
 function getRandomSymbolFromString(set: string) {
-    const index = Math.floor(Math.random() * set.length);
+    const randomNumbers = new Uint32Array(1);
+    window.crypto.getRandomValues(randomNumbers);
+    const index = randomNumbers[0] % set.length;
     return set[index];
 }
 
@@ -24,8 +40,5 @@ export function generateRandomPassword() {
         requiredSymbols.push(getRandomSymbolFromString(allSymbols));
     }
 
-    // Math.rand() - 0.5 returns a random number between -0.5 and 0.5
-    requiredSymbols.sort(() => Math.random() - 0.5);
-
-    return requiredSymbols.join('');
+    return getShuffledString(requiredSymbols);
 }

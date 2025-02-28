@@ -14,6 +14,11 @@ export const GeneratePasswordButton = ({
 }: {
     onGenerate: (generatedPassword: string) => void;
 }) => {
+    // we use window.crypto to generate a random	password
+    if (!window.crypto) {
+        return null;
+    }
+
     const generatePassword = () => {
         onGenerate(generateRandomPassword());
     };
