@@ -1,7 +1,6 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
-import PropTypes from 'prop-types';
 
 import {registry} from '../../../../registry';
 
@@ -11,7 +10,12 @@ import './NodeTemplates.scss';
 
 const b = block('node-templates');
 
-function NodeTemplates({onClick}) {
+type NodeTemplatesProps = {
+    onClick: (val: string) => void;
+    workbookId: string;
+};
+
+export function NodeTemplates({onClick}: NodeTemplatesProps) {
     const getEditorTemplates = registry.editor.functions.get('getEditorTemplates');
 
     const templates = getEditorTemplates();
@@ -22,9 +26,3 @@ function NodeTemplates({onClick}) {
         </div>
     );
 }
-
-NodeTemplates.propTypes = {
-    onClick: PropTypes.func.isRequired,
-};
-
-export default NodeTemplates;

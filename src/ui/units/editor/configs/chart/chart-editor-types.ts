@@ -115,6 +115,7 @@ export function getChartEditorTypes(type: string) {
     const chartEditorTypes = {
         [EDITOR_TYPE.GRAPH_NODE]: {
             get name() {
+                //@ts-ignore
                 return i18n('label_graph');
             },
             tabs: [
@@ -177,7 +178,9 @@ export function getChartEditorTypes(type: string) {
             ],
         },
         [EDITOR_TYPE.TIMESERIES_NODE]: {
-            name: 'Timeseries',
+            get name() {
+                return i18n('label_yagr');
+            },
             tabs: [
                 {
                     name: 'Urls',
@@ -343,7 +346,9 @@ export function getChartEditorTypes(type: string) {
             ],
         },
         [EDITOR_TYPE.METRIC_NODE]: {
-            name: 'Показатель',
+            get name() {
+                return i18n('label_metric');
+            },
             tabs: [
                 {
                     name: 'Urls',
@@ -434,7 +439,9 @@ export function getChartEditorTypes(type: string) {
             ],
         },
         [EDITOR_TYPE.YMAP_NODE]: {
-            name: 'Яндекс Карта',
+            get name() {
+                return i18n('label_yamaps');
+            },
             tabs: [
                 {
                     name: 'Urls',
@@ -555,7 +562,7 @@ export function getChartEditorTypes(type: string) {
             ],
         },
         [EDITOR_TYPE.MARKUP_NODE]: {
-            name: 'Markup',
+            name: i18n('label_markup'),
             tabs: [
                 {
                     name: 'Urls',
@@ -592,7 +599,7 @@ export function getChartEditorTypes(type: string) {
         },
         [EDITOR_TYPE.GRAVITY_CHARTS_NODE]: {
             get name() {
-                return i18n('label_graph');
+                return i18n('label_graph-gravity');
             },
             tabs: [
                 {
@@ -636,7 +643,7 @@ export function getChartEditorTypes(type: string) {
         },
         [EDITOR_TYPE.BLANK_CHART_NODE]: {
             get name() {
-                // @ts-ignore
+                //@ts-ignore
                 return i18n('label_blank-chart');
             },
             tabs: [
