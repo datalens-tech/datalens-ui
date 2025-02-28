@@ -43,6 +43,7 @@ export type EntityIconProps = {
     iconData?: IconData;
     size?: EntityIconSize;
     iconSize?: number;
+    view?: 'round';
     classMixin?: string;
 };
 
@@ -58,6 +59,7 @@ export const EntityIcon: React.FC<EntityIconProps> = ({
     iconData,
     iconSize = defaultIconSize[size],
     classMixin,
+    view,
 }) => {
     let targetIconData;
     if (iconData) {
@@ -67,7 +69,7 @@ export const EntityIcon: React.FC<EntityIconProps> = ({
     }
 
     return (
-        <div className={b('container', {size}, classMixin)}>
+        <div className={b('container', {size, view}, classMixin)}>
             <div className={b('color-box', {type})}>
                 <Icon data={targetIconData} size={iconSize} />
             </div>
