@@ -14,6 +14,7 @@ import {AuthErrorCode} from '../../constants/errors';
 import {resetUpdateUserPasswordState, updateUserPassword} from '../../store/actions/userProfile';
 import {selectUpdateUserPasswordIsLoading} from '../../store/selectors/userProfile';
 import {passwordValidationSchema} from '../../utils/validation';
+import {GeneratePasswordButton} from '../formControls/GeneratePasswordButton';
 
 import './ChangePasswordDialog.scss';
 
@@ -194,13 +195,18 @@ export function ChangePasswordDialog({
                             </FormRow>
                         )}
                         <FormRow label={newPasswordLabel} className={b('row')}>
-                            <PasswordInput
-                                value={newPassword}
-                                onUpdate={handleNewPasswordChange}
-                                validationState={validationsStates.newPassword}
-                                hideCopyButton={true}
-                                autoComplete="new-password"
-                            />
+                            <Flex gap={2}>
+                                <PasswordInput
+                                    value={newPassword}
+                                    onUpdate={handleNewPasswordChange}
+                                    validationState={validationsStates.newPassword}
+                                    hideCopyButton={true}
+                                    autoComplete="new-password"
+                                />
+                                {!isOwnProfile && (
+                                    <GeneratePasswordButton onGenerate={handleNewPasswordChange} />
+                                )}
+                            </Flex>
                         </FormRow>
                         {isOwnProfile && (
                             <FormRow label={i18n('label_repeat-password')} className={b('row')}>
