@@ -420,9 +420,13 @@ export class USProvider {
         {
             token,
             headers,
+            includeServicePlan,
+            includeTenantFeatures,
         }: {
             token: string;
             headers: Request['headers'];
+            includeServicePlan?: boolean;
+            includeTenantFeatures?: boolean;
         },
     ): Promise<EmbeddingInfo> {
         const hrStart = process.hrtime();
@@ -430,6 +434,18 @@ export class USProvider {
             ...headers,
             [DL_EMBED_TOKEN_HEADER]: token,
         };
+        const params: {
+            includeServicePlan?: boolean;
+            includeTenantFeatures?: boolean;
+        } = {};
+
+        if (includeServicePlan) {
+            params.includeServicePlan = true;
+        }
+
+        if (includeTenantFeatures) {
+            params.includeTenantFeatures = true;
+        }
         const formattedHeaders = formatPassedHeaders(headersWithToken, ctx);
         const axiosArgs: AxiosRequestConfig = {
             url: `${storageEndpoint}/v1/embedded-entry`,
@@ -477,10 +493,14 @@ export class USProvider {
             id,
             token,
             headers,
+            includeServicePlan,
+            includeTenantFeatures,
         }: {
             id: string;
             token: string;
             headers: Request['headers'];
+            includeServicePlan?: boolean;
+            includeTenantFeatures?: boolean;
         },
     ): Promise<EmbeddingInfo> {
         const hrStart = process.hrtime();
@@ -488,12 +508,26 @@ export class USProvider {
             ...headers,
             [DL_EMBED_TOKEN_HEADER]: token,
         };
+        const params: {
+            includeServicePlan?: boolean;
+            includeTenantFeatures?: boolean;
+        } = {};
+
+        if (includeServicePlan) {
+            params.includeServicePlan = true;
+        }
+
+        if (includeTenantFeatures) {
+            params.includeTenantFeatures = true;
+        }
+
         const formattedHeaders = formatPassedHeaders(headersWithToken, ctx);
         const axiosArgs: AxiosRequestConfig = {
             url: `${storageEndpoint}/embeds/entries/${id}`,
             method: 'get',
             headers: injectMetadata(formattedHeaders, ctx),
             timeout: TIMEOUT_10_SEC,
+            params,
         };
 
         return axios
