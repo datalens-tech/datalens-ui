@@ -89,7 +89,7 @@ export const CreateUserForm = () => {
                     <LastName />
                     <Email />
                     <Roles />
-                    <Password />
+                    <Password showGenerateButton={true} />
                 </Flex>
             </Flex>
             <Flex gap={2}>
