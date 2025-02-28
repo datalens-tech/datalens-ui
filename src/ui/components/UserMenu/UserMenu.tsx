@@ -16,7 +16,7 @@ const b = block('dl-user-menu');
 const i18n = I18n.keyset('component.user-menu.view');
 const i18nAsideHeader = I18n.keyset('component.aside-header.view');
 
-export function UserMenu() {
+export function UserMenu({onClose}: {onClose: () => void}) {
     const user = DL.USER;
     return (
         <div className={b()}>
@@ -41,6 +41,7 @@ export function UserMenu() {
                                 view="flat-secondary"
                                 className={b('entry-button')}
                                 title={i18nAsideHeader('label_profile-settings')}
+                                onClick={onClose}
                             >
                                 <Icon data={Gear} size={18} />
                             </Button>
