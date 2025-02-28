@@ -8,6 +8,7 @@ import {i18n} from 'i18n';
 import PropTypes from 'prop-types';
 import {useSelector} from 'react-redux';
 import {useHistory, useLocation} from 'react-router-dom';
+import {EditorActionPanelQA} from 'shared';
 import {
     EntryDialogName,
     EntryDialogResolveStatus,
@@ -18,6 +19,7 @@ import {
 } from 'ui';
 import {selectIsRenameWithoutReload} from 'ui/store/selectors/entryContent';
 
+import {SaveChartControlsQa} from '../../../../../shared/constants/qa/components';
 import {ENTRY_ACTION, TOASTER_TYPE, UPDATE_ENTRY_MODE} from '../../constants/common';
 import Dialogs from '../Dialogs/Dialogs';
 
@@ -180,12 +182,14 @@ function ButtonSave({
             action: () => onClick(ACTIONS.SAVE),
             text: i18n('component.chart-save-controls', 'button_save-as-draft'),
             hidden: entry.fake || locked,
+            qa: EditorActionPanelQA.SaveAsDraftButton,
         };
 
         const saveAndPublishItem = {
             action: () => onClick(ACTIONS.PUBLISH),
             text: i18n('editor.button-save.view', 'button_save-as-published'),
             hidden: entry.fake || locked || disabledPublish,
+            qa: EditorActionPanelQA.SaveAndPublishButton,
         };
 
         items.push(isCurrentRevisionActual ? saveAsDraftItem : saveAndPublishItem);
@@ -216,6 +220,7 @@ function ButtonSave({
                 disabled={disabledSave}
                 onClick={handleClick}
                 loading={progress && !disabledSave}
+                qa={SaveChartControlsQa.SaveButton}
             >
                 {locked && (
                     <Icon data={iconLock} className={b('icon-lock')} width="16" height="16" />
@@ -238,6 +243,7 @@ function ButtonSave({
                             view="action"
                             size="m"
                             loading={progress}
+                            qa={EditorActionPanelQA.MoreSwitcher}
                             {...props}
                         >
                             <Icon data={ChevronDown} height={16} width={16} />

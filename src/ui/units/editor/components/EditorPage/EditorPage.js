@@ -9,6 +9,8 @@ import {useDispatch} from 'react-redux';
 import {isDraftVersion} from 'ui/components/Revisions/helpers';
 import {URL_QUERY} from 'ui/constants';
 import {openDialogSaveDraftChartAsActualConfirm} from 'ui/store/actions/dialog';
+import {cleanRevisions, setRevisionsMode} from 'ui/store/actions/entryContent';
+import {RevisionsMode} from 'ui/store/typings/entryContent';
 import {getUrlParamFromStr} from 'ui/utils';
 
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
@@ -98,6 +100,11 @@ const EditorPage = ({
             return;
         }
 
+        if (editorPath !== prevEditorPath) {
+            dispatch(cleanRevisions());
+            dispatch(setRevisionsMode(RevisionsMode.Closed));
+        }
+
         if (revId !== prevRevId || editorPath !== prevEditorPath || !isEntryInited) {
             initialLoad({id: editorPath, location});
         }
@@ -110,6 +117,7 @@ const EditorPage = ({
         setLoading,
         revId,
         isEntryInited,
+        dispatch,
     ]);
 
     React.useEffect(() => {
@@ -145,14 +153,16 @@ const EditorPage = ({
         } else {
             dispatch(
                 openDialogSaveDraftChartAsActualConfirm({
-                    onApply: () =>
+                    onApply: () => {
                         dispatch(
                             fetchEditorChartUpdate({
                                 mode: UPDATE_ENTRY_MODE.PUBLISH,
                                 history,
                                 location,
                             }),
-                        ),
+                        );
+                        dispatch(setRevisionsMode(RevisionsMode.Closed));
+                    },
                 }),
             );
         }

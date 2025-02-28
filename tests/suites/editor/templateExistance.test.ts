@@ -3,7 +3,7 @@ import {Page} from '@playwright/test';
 import EditorPage from '../../page-objects/editor/EditorPage';
 import {openTestPage, slct} from '../../utils';
 import datalensTest from '../../utils/playwright/globalTestDefinition';
-import {EditorTemplatesQA} from '../../../src/shared/constants/qa/editor';
+import {EditorPaneQA, EditorTemplatesQA} from '../../../src/shared/constants/qa/editor';
 import {RobotChartsEditorUrls} from '../../utils/constants';
 import {DEFAULT_QUERY} from '../../page-objects/constants/base';
 
@@ -40,7 +40,7 @@ datalensTest.describe('ChartEditor template selection', () => {
             const editorPage = new EditorPage({page});
             await openTestPage(page, RobotChartsEditorUrls.EditorNew, DEFAULT_QUERY);
             await editorPage.clickTemplate(EditorTemplatesQA.Module);
-            await page.waitForSelector(`${slct('pane-editor')} .view-line >> text=PI`);
+            await page.waitForSelector(`${slct(EditorPaneQA.Editor)} .view-line >> text=PI`);
         },
     );
 

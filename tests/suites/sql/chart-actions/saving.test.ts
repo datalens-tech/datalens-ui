@@ -4,7 +4,7 @@ import QLPage from '../../../page-objects/ql/QLPage';
 import {openTestPage, slct} from '../../../utils';
 import {RobotChartsSQLEditorUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {ActionPanelQA} from '../../../../src/shared';
+import {ActionPanelQA, SaveChartControlsQa} from '../../../../src/shared';
 
 const sqlScript = `
 select built_year, AVG(iznos::float)
@@ -48,7 +48,7 @@ datalensTest.describe('QL - saving the chart', () => {
 
         await qlPage.saveQlEntry(qlPage.getUniqueEntryName('ql-e2e-save-test'));
 
-        const saveButtonLocator = await qlPage.page.locator(slct('action-panel-save-btn'));
+        const saveButtonLocator = await qlPage.page.locator(slct(SaveChartControlsQa.SaveButton));
 
         await expect(saveButtonLocator).toBeDisabled();
     });
@@ -64,7 +64,7 @@ datalensTest.describe('QL - saving the chart', () => {
 
         await qlPage.saveQlEntry(qlPage.getUniqueEntryName('ql-e2e-save-test'));
 
-        const saveButtonLocator = await qlPage.page.locator(slct('action-panel-save-btn'));
+        const saveButtonLocator = await qlPage.page.locator(slct(SaveChartControlsQa.SaveButton));
 
         await expect(saveButtonLocator).toBeDisabled();
 
@@ -81,7 +81,7 @@ datalensTest.describe('QL - saving the chart', () => {
         await qlPage.saveExistentQlEntry();
 
         const saveButtonLocatorAfterReload = await qlPage.page.locator(
-            slct('action-panel-save-btn'),
+            slct(SaveChartControlsQa.SaveButton),
         );
 
         await expect(saveButtonLocatorAfterReload).toBeDisabled();
@@ -126,7 +126,7 @@ datalensTest.describe('QL - saving the chart', () => {
     datalensTest('Creating QL chart with error', async ({page}) => {
         const qlPage = new QLPage({page});
 
-        const saveBtnLocator = page.locator(slct('action-panel-save-btn'));
+        const saveBtnLocator = page.locator(slct(SaveChartControlsQa.SaveButton));
 
         await expect(saveBtnLocator).toBeDisabled();
 

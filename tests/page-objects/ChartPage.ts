@@ -6,6 +6,7 @@ import {
     DialogConfirmQA,
     DlNavigationQA,
     EntryDialogQA,
+    SaveChartControlsQa,
     VisualizationsQa,
     WizardPageQa,
 } from '../../src/shared';
@@ -27,8 +28,6 @@ export class ChartPage extends BasePage {
     revisions: Revisions;
     chartkit: ChartKit;
     chartContainer: ChartContainer;
-
-    private saveButtonQaAttribute = 'action-panel-save-btn';
 
     constructor(props: BasePageProps) {
         super(props);
@@ -182,7 +181,7 @@ export class ChartPage extends BasePage {
     }
 
     getSaveButtonLocator() {
-        return this.page.locator(slct(this.saveButtonQaAttribute));
+        return this.page.locator(slct(SaveChartControlsQa.SaveButton));
     }
 
     protected async switchToSecondRevision({
@@ -218,18 +217,32 @@ export class ChartPage extends BasePage {
         await waitForConditionPromise;
     }
 
-    protected async saveEntry({entryName, chartType}: {entryName: string; chartType: ChartType}) {
+    protected async saveEntry({
+        entryName,
+        chartType,
+        customUrlsForValidation,
+    }:
+        | {
+              entryName: string;
+              chartType?: never;
+              customUrlsForValidation: string[];
+          }
+        | {entryName: string; chartType?: ChartType; customUrlsForValidation?: never}) {
         let urlsForValidation: string[] = [];
 
-        switch (chartType) {
-            case ChartType.Wizard:
-                urlsForValidation = ['/api/charts/v1/charts', '/api/run'];
-                break;
-            case ChartType.QL:
-                urlsForValidation = ['/api/charts/v1/charts', '/getEntry'];
-                break;
-            default:
-                throw new Error('Unknown chart type');
+        if (customUrlsForValidation) {
+            urlsForValidation = customUrlsForValidation;
+        } else {
+            switch (chartType) {
+                case ChartType.Wizard:
+                    urlsForValidation = ['/api/charts/v1/charts', '/api/run'];
+                    break;
+                case ChartType.QL:
+                    urlsForValidation = ['/api/charts/v1/charts', '/getEntry'];
+                    break;
+                default:
+                    throw new Error('Unknown chart type');
+            }
         }
 
         const promises = Promise.all(
@@ -249,9 +262,7 @@ export class ChartPage extends BasePage {
 
         const successfulSaveResponse = this.waitForSuccessfulResponse(`/${entryId}`);
 
-        const selector = 'action-panel-save-btn';
-
-        await this.page.click(slct(selector));
+        await this.page.click(slct(SaveChartControlsQa.SaveButton));
 
         await successfulSaveResponse;
     }

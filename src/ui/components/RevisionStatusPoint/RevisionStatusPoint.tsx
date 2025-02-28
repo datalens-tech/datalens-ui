@@ -1,6 +1,7 @@
 import * as React from 'react';
 
 import block from 'bem-cn-lite';
+import {RevisionsListQa} from 'shared';
 import type {RevisionStatusKey} from 'ui/utils/revisions';
 
 import './RevisionStatusPoint.scss';
@@ -14,5 +15,18 @@ export function RevisionStatusPoint({
     status: RevisionStatusKey;
     className?: string;
 }) {
-    return <span className={b({status}, className)} />;
+    let qa;
+    switch (status) {
+        case 'draft':
+            qa = RevisionsListQa.RevisionsListRowDraft;
+            break;
+        case 'notActual':
+            qa = RevisionsListQa.RevisionsListRowNotActual;
+            break;
+        case 'published':
+            qa = RevisionsListQa.RevisionsListRowActual;
+            break;
+    }
+
+    return <span data-qa={qa} className={b({status}, className)} />;
 }

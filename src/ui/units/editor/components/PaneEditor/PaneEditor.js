@@ -5,6 +5,7 @@ import {usePrevious} from 'hooks/usePrevious';
 import debounce from 'lodash/debounce';
 import PropTypes from 'prop-types';
 import SplitPane from 'react-split-pane';
+import {EditorPaneQA} from 'shared';
 import {SPLIT_PANE_RESIZER_CLASSNAME, useSetState} from 'ui';
 
 import Editor from '../../containers/Editor/Editor';
@@ -60,7 +61,7 @@ function PaneEditor({
     }, []);
 
     return (
-        <div className={b(false, className)} data-qa="pane-editor">
+        <div className={b(false, className)} data-qa={EditorPaneQA.Editor}>
             {showSearch ? (
                 <SplitPane
                     resizerClassName={SPLIT_PANE_RESIZER_CLASSNAME}

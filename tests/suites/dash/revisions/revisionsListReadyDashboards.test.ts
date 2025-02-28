@@ -5,6 +5,7 @@ import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {openTestPage, slct, waitForCondition} from '../../../utils';
 import {COMMON_SELECTORS, RobotChartsDashboardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
+import {RevisionsPanelQa} from '../../../../src/shared/constants/qa';
 
 const TIMEOUT = 3000;
 
@@ -150,7 +151,7 @@ datalensTest.describe('Dashboards - Versioning', () => {
             //click on the "open current" button
             await page.click(
                 `${slct(COMMON_SELECTORS.REVISIONS_TOP_PANEL)} ${slct(
-                    COMMON_SELECTORS.REVISIONS_TOP_PANEL_OPEN_BTN,
+                    RevisionsPanelQa.ButtonOpenActual,
                 )}`,
             );
 
