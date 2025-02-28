@@ -9,7 +9,7 @@ import {CollectionStructureDialog, ResourceType} from './CollectionStructureDial
 
 const i18n = I18n.keyset('component.collections-structure');
 
-export type Props = {
+export type CreateEntryInWorkbookDialogProps = {
     entryType: 'connection' | 'dataset' | 'wizard' | 'ql' | 'dashboard';
     closeDialogAfterSuccessfulApply?: boolean;
     disableHistoryPush?: boolean;
@@ -22,10 +22,10 @@ export const DIALOG_CREATE_ENTRY_IN_WORKBOOK = Symbol('DIALOG_CREATE_ENTRY_IN_WO
 
 export type OpenDialogCreateEntryInWorkbookArgs = {
     id: typeof DIALOG_CREATE_ENTRY_IN_WORKBOOK;
-    props: Props;
+    props: CreateEntryInWorkbookDialogProps;
 };
 
-export const CreateEntryInWorkbookDialog: React.FC<Props> = ({
+export const CreateEntryInWorkbookDialog: React.FC<CreateEntryInWorkbookDialogProps> = ({
     entryType,
     closeDialogAfterSuccessfulApply,
     disableHistoryPush = false,
