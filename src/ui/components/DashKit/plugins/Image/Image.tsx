@@ -6,7 +6,7 @@ import type {DashTabItemImage} from 'shared';
 import {DashTabItemType} from 'shared';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
-import {getPreparedWrapSettings} from '../../utils';
+import {usePreparedWrapSettings} from '../../hooks';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
 import './Image.scss';
@@ -31,9 +31,7 @@ function PluginImage(props: Props, _ref?: React.LegacyRef<HTMLDivElement>) {
         w: null,
     };
 
-    const {classMod, style} = React.useMemo(() => {
-        return getPreparedWrapSettings(background);
-    }, [background]);
+    const {classMod, style} = usePreparedWrapSettings(background);
 
     React.useEffect(() => {
         handleUpdate?.();
@@ -48,13 +46,7 @@ function PluginImage(props: Props, _ref?: React.LegacyRef<HTMLDivElement>) {
     ]);
 
     return (
-        <RendererWrapper
-            id={id}
-            type={DashTabItemType.Image}
-            classMod={classMod}
-            style={style}
-            editMode={props.editMode}
-        >
+        <RendererWrapper id={id} type={DashTabItemType.Image} classMod={classMod} style={style}>
             <img
                 className={b({'preserve-aspect-ratio': preserveAspectRatio})}
                 alt={alt}

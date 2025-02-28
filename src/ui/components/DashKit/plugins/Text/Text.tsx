@@ -6,15 +6,13 @@ import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
 import get from 'lodash/get';
 import type {DashTabItemText} from 'shared';
-import {
-    adjustWidgetLayout as dashkitAdjustWidgetLayout,
-    getPreparedWrapSettings,
-} from 'ui/components/DashKit/utils';
+import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
 import {YFM_MARKDOWN_CLASSNAME} from 'ui/constants/yfm';
 import {usePrevious} from 'ui/hooks';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
 import {YfmWrapper} from '../../../YfmWrapper/YfmWrapper';
+import {usePreparedWrapSettings} from '../../hooks';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
 import './Text.scss';
@@ -182,7 +180,7 @@ const textPlugin = {
 
         const data = props.data as DashTabItemText['data'];
 
-        const {classMod, style} = getPreparedWrapSettings(data.background);
+        const {classMod, style} = usePreparedWrapSettings(data.background);
         const showBgColor = Boolean(classMod);
 
         const currentLayout = props.layout.find(({i}) => i === props.id) || {
@@ -233,7 +231,6 @@ const textPlugin = {
                 nodeRef={rootNodeRef}
                 style={style as React.StyleHTMLAttributes<HTMLDivElement>}
                 classMod={classMod}
-                editMode={props.editMode}
             >
                 <YfmWrapper
                     // needed for force update when text is changed

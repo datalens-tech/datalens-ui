@@ -16,11 +16,10 @@ type RendererProps = {
     classMod?: string;
     style?: React.CSSProperties;
     beforeContentNode?: React.ReactNode;
-    editMode: boolean;
 };
 
 export const RendererWrapper: React.FC<RendererProps> = React.memo(
-    ({children, type, nodeRef, classMod, beforeContentNode, editMode, ...props}) => {
+    ({children, type, nodeRef, classMod, beforeContentNode, ...props}) => {
         const innerNodeRef = React.useRef(null);
         useWidgetContext(props.id, nodeRef || innerNodeRef);
 
@@ -32,7 +31,6 @@ export const RendererWrapper: React.FC<RendererProps> = React.memo(
                     className={b('wrapper', {
                         [type]: Boolean(type),
                         [String(classMod)]: Boolean(classMod),
-                        editMode,
                     })}
                     {...props}
                 >

@@ -1,8 +1,7 @@
 import type React from 'react';
 
 import type {PluginWidgetProps} from '@gravity-ui/dashkit';
-import type {BackgroundSettings, DashTabItemControlElement} from 'shared';
-import {CustomPaletteBgColors} from 'ui/constants/widgets';
+import type {DashTabItemControlElement} from 'shared';
 
 import {DL} from '../../constants';
 import {
@@ -288,28 +287,4 @@ function collectBelowLyingNodesHeight(
 
 export function getControlHint(source: DashTabItemControlElement) {
     return source.showHint ? source.hint : undefined;
-}
-
-type ClassModAvailableValues = 'with-default-color' | 'with-color' | '';
-
-export function getPreparedWrapSettings(background?: BackgroundSettings) {
-    const color = background?.color;
-    const hasBgColor =
-        background?.enabled !== false && color && color !== CustomPaletteBgColors.NONE;
-
-    const wrapperClassMod: ClassModAvailableValues =
-        (hasBgColor &&
-            (color === CustomPaletteBgColors.LIKE_CHART ? 'with-default-color' : 'with-color')) ||
-        '';
-
-    const style: React.CSSProperties = hasBgColor
-        ? {
-              backgroundColor: color === CustomPaletteBgColors.LIKE_CHART ? undefined : color,
-          }
-        : {};
-
-    return {
-        classMod: wrapperClassMod,
-        style,
-    };
 }

@@ -49,13 +49,16 @@ function getActualBackground(
     };
 }
 
-export function migrateBgColor(item: DashTabItem): DashTabItem {
+export function migrateBgColor(
+    item: DashTabItem,
+    defaultBgColor: string = CustomPaletteBgColors.LIKE_CHART,
+): DashTabItem {
     const newItem: DashTabItem = Object.assign({...item}, {data: Object.assign({}, item.data)});
 
     if (newItem.type === DashTabItemType.Widget) {
         newItem.data.tabs = newItem.data.tabs.map((tab) => ({
             ...tab,
-            background: getActualBackground(tab.background, CustomPaletteBgColors.LIKE_CHART),
+            background: getActualBackground(tab.background, defaultBgColor),
         }));
 
         return newItem;
