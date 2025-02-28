@@ -9,12 +9,10 @@ import type {Plugin, PluginTitleProps} from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
 import type {DashTabItemTitle} from 'shared';
-import {
-    adjustWidgetLayout as dashkitAdjustWidgetLayout,
-    getPreparedWrapSettings,
-} from 'ui/components/DashKit/utils';
+import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
+import {usePreparedWrapSettings} from '../../hooks';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
 import {AnchorLink} from './AnchorLink/AnchorLink';
@@ -94,7 +92,7 @@ const titlePlugin: PluginTitle = {
 
         const content = <DashKitPluginTitle {...props} ref={forwardedRef} />;
 
-        const {classMod, style} = getPreparedWrapSettings(data.background);
+        const {classMod, style} = usePreparedWrapSettings(data.background);
         const showBgColor = Boolean(classMod);
 
         const currentLayout = props.layout.find(({i}) => i === props.id) || {
@@ -180,7 +178,6 @@ const titlePlugin: PluginTitle = {
                 nodeRef={rootNodeRef}
                 style={style as React.StyleHTMLAttributes<HTMLDivElement>}
                 classMod={classMod}
-                editMode={props.editMode}
             >
                 <div
                     className={b({
