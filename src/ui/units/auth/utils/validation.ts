@@ -9,6 +9,13 @@ export const VALIDATING_REQUIRED_KEYS = {
     REPEAT_PASSWORD: 'repeatPassword',
 };
 
+export const passwordValidationSchema = yup
+    .string()
+    .max(200, i18n('label_error-password-max', {max: 200}))
+    .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*_-]).{8,}$/, {
+        message: i18n('label_error-password-invalid', {min: 8}),
+    });
+
 export const baseFieldsValidSchema = yup.object({
     firstName: yup.string().max(200, i18n('label_error-first-name-max', {max: 200})),
     lastName: yup.string().max(200, i18n('label_error-last-name-max', {max: 200})),
@@ -25,17 +32,17 @@ export const baseFieldsValidSchema = yup.object({
         }),
     email: yup.string().email(i18n('label_error-email-invalid')),
     repeatPassword: yup.string(),
-    password: yup
-        .string()
-        .max(200, i18n('label_error-password-max', {max: 200}))
-        .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*_-]).{8,}$/, {
-            message: i18n('label_error-password-invalid', {min: 8}),
-        }),
+    password: passwordValidationSchema,
 });
 
 export const requiredBaseFieldsSchema = yup.object({
     // messages are used to identify fields names in setting validating state
     login: yup.string().required(VALIDATING_REQUIRED_KEYS.LOGIN),
     password: yup.string().required(VALIDATING_REQUIRED_KEYS.PASSWORD),
-    repeatPassword: yup.string().required(VALIDATING_REQUIRED_KEYS.REPEAT_PASSWORD),
 });
+
+export const fullRequiredFieldsSchema = requiredBaseFieldsSchema.concat(
+    yup.object({
+        repeatPassword: yup.string().required(VALIDATING_REQUIRED_KEYS.REPEAT_PASSWORD),
+    }),
+);

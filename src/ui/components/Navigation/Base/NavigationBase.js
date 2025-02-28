@@ -292,13 +292,14 @@ class NavigationBase extends React.Component {
         return getInitDestination(path);
     }
 
-    openOnlyCollectionsDialog = (entryType) => {
+    openOnlyCollectionsDialog = (entryType, onApply) => {
         this.props.openDialog({
             id: DIALOG_CREATE_ENTRY_IN_WORKBOOK,
             props: {
                 entryType,
                 initialCollectionId: null,
-                onApply: () => {
+                onApply: (targetWorkbookId) => {
+                    onApply?.(targetWorkbookId, entryType);
                     this.closeNavigation();
                 },
                 onClose: () => {
@@ -336,16 +337,9 @@ class NavigationBase extends React.Component {
                 }
                 break;
             }
-            case CreateMenuValue.Report: {
-                if (this.props.isOnlyCollectionsMode) {
-                    this.openOnlyCollectionsDialog('report');
-                } else {
-                    history.push(`/reports/new${query}`);
-                    this.closeNavigation();
-                }
-                break;
-            }
             case CreateMenuValue.Connection: {
+                // special ignoring of isOnlyCollectionsMode, because
+                // connections creation page doesn't belong to folders or workbooks
                 history.push(`/connections/new${query}`);
                 this.closeNavigation();
                 break;
@@ -377,29 +371,16 @@ class NavigationBase extends React.Component {
                 }
                 break;
             }
-            case CreateMenuValue.SQL: {
-                if (this.props.isOnlyCollectionsMode) {
-                    this.openOnlyCollectionsDialog('ql');
-                } else {
-                    history.push(`/ql/new/sql${query}`);
-                    this.closeNavigation();
-                }
-                break;
-            }
-            case CreateMenuValue.PromQL: {
-                history.push(`/ql/new/promql${query}`);
-                this.closeNavigation();
-                break;
-            }
-            case CreateMenuValue.MonitoringQL: {
-                history.push(`/ql/new/monitoringql${query}`);
-                this.closeNavigation();
-                break;
-            }
         }
 
         if (this.props.onCreateMenuClick) {
-            this.props.onCreateMenuClick(type);
+            this.props.onCreateMenuClick({
+                type,
+                query,
+                openOnlyCollectionsDialog: this.openOnlyCollectionsDialog,
+                closeNavigation: this.closeNavigation,
+                history,
+            });
         }
     };
 

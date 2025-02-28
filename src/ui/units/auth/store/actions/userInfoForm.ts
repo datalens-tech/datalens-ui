@@ -6,7 +6,12 @@ import {RELOADED_URL_QUERY} from '../../../../../shared/components/auth/constant
 import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';
 import {showToast} from '../../../../store/actions/toaster';
-import {baseFieldsValidSchema, requiredBaseFieldsSchema} from '../../utils/validation';
+import {removeEmptyFields} from '../../utils/fields';
+import {
+    baseFieldsValidSchema,
+    fullRequiredFieldsSchema,
+    requiredBaseFieldsSchema,
+} from '../../utils/validation';
 import {
     RESET_FORM,
     RESET_FORM_VALIDATION,
@@ -60,15 +65,16 @@ export const submitSignupForm = () => {
         const {sdk} = getSdk();
         const {login, password, lastName, firstName, email} = getState().auth.userInfoForm.values;
 
-        // TODO: add validation
         return sdk.auth.auth
-            .signup({
-                login,
-                password,
-                lastName,
-                firstName,
-                email,
-            })
+            .signup(
+                removeEmptyFields({
+                    login,
+                    password,
+                    lastName,
+                    firstName,
+                    email,
+                }),
+            )
             .then(() => {
                 const {rethPath} = getState().auth.common;
                 const url = new URL(rethPath || window.location.origin);
@@ -93,15 +99,21 @@ export const submitSignupForm = () => {
 export const validateFormValues = ({
     onError,
     onSuccess,
+    needRepeatPassword,
 }: {
     onError: (errorMessage: string) => void;
     onSuccess: () => void;
+    needRepeatPassword?: boolean;
 }) => {
     return (dispatch: UserInfoFormDispatch, getState: () => DatalensGlobalState) => {
         const userInfo = getState().auth.userInfoForm.values;
 
+        const requiredSchema = needRepeatPassword
+            ? fullRequiredFieldsSchema
+            : requiredBaseFieldsSchema;
+
         try {
-            requiredBaseFieldsSchema.validateSync(userInfo, {abortEarly: false});
+            requiredSchema.validateSync(userInfo, {abortEarly: false});
         } catch (error) {
             if ('errors' in error) {
                 const validationState = error.errors.reduce(
@@ -125,7 +137,7 @@ export const validateFormValues = ({
             return;
         }
 
-        if (userInfo.password !== userInfo.repeatPassword) {
+        if (needRepeatPassword && userInfo.password !== userInfo.repeatPassword) {
             onError(validationI18n('label_error-password-not-match'));
             dispatch(updateFormValidation({password: 'invalid', repeatPassword: 'invalid'}));
             return;
