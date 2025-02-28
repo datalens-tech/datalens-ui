@@ -45,7 +45,7 @@
   "label_unknown": "Unspecified",
   "label_widget": "Widget",
   "title-error": "Unable to display widget title",
-  "title_empty-selected-widgets": "No selected widget",
+  "title_empty-selected-widgets": "No widget selected",
   "title_links": "Links",
   "value_link-affect": "affects",
   "value_link-both": "Widgets affect each other",

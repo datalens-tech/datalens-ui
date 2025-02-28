@@ -45,7 +45,7 @@
   "label_unknown": "Не определена",
   "label_widget": "Виджет",
   "title-error": "Невозможно отобразить название виджета",
-  "title_empty-selected-widgets": "Не выбран виджет",
+  "title_empty-selected-widgets": "Виджет не выбран",
   "title_links": "Связи",
   "value_link-affect": "влияет на",
   "value_link-both": "Виджеты влияют друг на друга",
