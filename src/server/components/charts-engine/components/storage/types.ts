@@ -51,6 +51,7 @@ export type ResolvedConfig = {
     owner?: string;
     publicAuthor?: EntryPublicAuthor;
     servicePlan?: string;
+    tenantFeatures?: Record<string, unknown>;
 };
 
 export type ReducedResolvedConfig = ResolvedConfig & {data: {shared: string | object}};
