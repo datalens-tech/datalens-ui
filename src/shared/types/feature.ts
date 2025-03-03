@@ -38,8 +38,6 @@ export enum Feature {
     // The ability to upload xlsx files for file connections
     XlsxFilesEnabled = 'XlsxFilesEnabled',
     XlsxChartExportEnabled = 'XlsxChartExportEnabled',
-    // Escaping field values in chart tooltips (only scatter, treemap, geopoints visualizations)
-    EscapeUserHtmlInDefaultHcTooltip = 'EscapeUserHtmlInDefaultHcTooltip',
     HolidaysOnChart = 'HolidaysOnChart',
     ReadOnlyMode = 'ReadOnlyMode',
     MenuItemsFlatView = 'MenuItemsFlatView',
@@ -75,12 +73,8 @@ export enum Feature {
     UseMovePermAction = 'UseMovePermAction',
     /** An empty chart for drawing something unusual */
     BlankChart = 'BlankChart',
-    /** Add a setting to display html in wizard */
-    HtmlInWizard = 'HtmlInWizard',
     /** Additional chart config for making requests by widget events */
     ChartActions = 'ChartActions',
-    /** Escaping string in wizard chart config to remove potential html injection */
-    EscapeStringInWizard = 'EscapeStringInWizard',
     /** Disable the use of html and function in chart configs */
     DisableFnAndHtml = 'DisableFnAndHtml',
     /** Enable using of presigned urls for uploading files to S3 */
