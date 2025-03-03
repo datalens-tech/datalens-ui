@@ -16,19 +16,19 @@ import {ATTR_DATA_ELEMENT_ID} from '../../../../modules/html-generator/constants
 import Performance from '../../../../modules/perfomance';
 import {getRandomCKId} from '../../../helpers/getRandomCKId';
 import {chartStorage} from '../../chart-storage';
-import type {BlankChartWidgetProps, WidgetDimensions} from '../types';
+import type {AdvancedChartWidgetProps, WidgetDimensions} from '../types';
 
 import {Tooltip} from './components/Tooltip/Tooltip';
 import type {PointPosition, TooltipState} from './types';
 import {IS_TOUCH_ENABLED} from './utils';
 
-import './BlankChartWidget.scss';
+import './AdvancedChartWidget.scss';
 
-const b = block('chartkit-blank-chart-widget');
+const b = block('chartkit-advanced-chart-widget');
 
 const THROTTLE_DELAY = 50;
 
-const BlankChartWidget = (props: BlankChartWidgetProps) => {
+const AdvancedChartWidget = (props: AdvancedChartWidgetProps) => {
     const {
         id,
         onLoad,
@@ -229,4 +229,4 @@ const BlankChartWidget = (props: BlankChartWidgetProps) => {
     );
 };
 
-export default BlankChartWidget;
+export default AdvancedChartWidget;

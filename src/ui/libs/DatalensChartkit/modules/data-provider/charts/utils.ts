@@ -13,6 +13,7 @@ export function isPotentiallyUnsafeChart(chartType: string) {
         EDITOR_TYPE.YMAP_NODE,
         EDITOR_TYPE.TIMESERIES_NODE,
         EDITOR_TYPE.BLANK_CHART_NODE,
+        EDITOR_TYPE.ADVANCED_CHART_NODE,
         EDITOR_TYPE.GRAVITY_CHARTS_NODE,
     ];
     const wizardUnsafeCharts: string[] = [

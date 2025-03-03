@@ -10,7 +10,7 @@ export type WidgetDimensions = {
     height: number;
 };
 
-export type BlankChartWidgetProps = {
+export type AdvancedChartWidgetProps = {
     id: string;
     data: {
         data: {
@@ -32,6 +32,6 @@ export type BlankChartWidgetProps = {
         callExternalOnChange?: boolean,
         callChangeByClick?: boolean,
     ) => void;
-    onLoad?: (data?: ChartKitOnLoadData<'blank-chart'>) => void;
+    onLoad?: (data?: ChartKitOnLoadData<'advanced-chart'>) => void;
     widgetDashState?: WidgetDashState;
 };

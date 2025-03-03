@@ -9,7 +9,7 @@ import type {InterruptHandler, QuickJSWASMModule} from 'quickjs-emscripten';
 import {chartStorage} from 'ui/libs/DatalensChartkit/ChartKit/plugins/chart-storage';
 
 import type {ChartKitHtmlItem, StringParams} from '../../../../../../shared';
-import {WRAPPED_FN_KEY, WRAPPED_HTML_KEY} from '../../../../../../shared';
+import {EditorType, WRAPPED_FN_KEY, WRAPPED_HTML_KEY} from '../../../../../../shared';
 import type {UISandboxWrappedFunction} from '../../../../../../shared/types/ui-sandbox';
 import {wrapHtml} from '../../../../../../shared/utils/ui-sandbox';
 import {getRandomCKId} from '../../../ChartKit/helpers/getRandomCKId';
@@ -213,7 +213,7 @@ async function getUnwrappedFunction(args: {
     const {sandbox, wrappedFn, options, entryId, entryType, name} = args;
     let libs = await getUiSandboxLibs(wrappedFn.libs ?? []);
     const parseHtml = await getParseHtmlFn();
-    const isBlankChart = entryType === 'blank-chart_node';
+    const isAdvancedChart = entryType === EditorType.AdvancedChartNode;
 
     return function (this: unknown, ...restArgs: unknown[]) {
         const runId = getRandomCKId();
@@ -352,7 +352,7 @@ async function getUnwrappedFunction(args: {
                     },
                 },
             });
-        } else if (isBlankChart) {
+        } else if (isAdvancedChart) {
             const chartId = get(this, 'chartId');
             const chartContext = chartStorage.get(chartId);
 
@@ -396,7 +396,7 @@ async function getUnwrappedFunction(args: {
                 options.totalTimeLimit = Math.max(0, options.totalTimeLimit - Number(execTime));
             }
 
-            return unwrapHtml({value: result, parseHtml, addElementId: isBlankChart});
+            return unwrapHtml({value: result, parseHtml, addElementId: isAdvancedChart});
         } catch (e) {
             const performance = Performance.getDuration(runId);
             if (performance && e?.message === 'interrupted') {

@@ -70,6 +70,9 @@ export const EDITOR_TYPE = {
     MARKUP_NODE: 'markup_node',
     TIMESERIES_NODE: 'timeseries_node',
     GRAVITY_CHARTS_NODE: 'd3_node',
+    ADVANCED_CHART_NODE: 'advanced-chart_node',
+
+    // deprecated
     BLANK_CHART_NODE: 'blank-chart_node',
 };
 

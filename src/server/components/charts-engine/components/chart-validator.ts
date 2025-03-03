@@ -69,13 +69,15 @@ const MODEL_TABS = {
         'config,js,meta,params,secrets,shared,ui,url',
     ]),
 
-    [EDITOR_TYPE.BLANK_CHART_NODE]: new Set([
+    [EDITOR_TYPE.ADVANCED_CHART_NODE]: new Set([
         'config,js,params,shared,ui,url',
         'config,js,meta,params,shared,ui,url',
         'config,js,params,secrets,shared,ui,url',
         'config,js,meta,params,secrets,shared,ui,url',
     ]),
 };
+
+MODEL_TABS[EDITOR_TYPE.BLANK_CHART_NODE] = MODEL_TABS[EDITOR_TYPE.ADVANCED_CHART_NODE];
 
 export const chartValidator = {
     validate: ({data, type}: {data: Record<string, unknown>; type: string}) => {
