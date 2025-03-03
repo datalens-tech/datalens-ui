@@ -74,7 +74,7 @@ export enum Feature {
      */
     UseMovePermAction = 'UseMovePermAction',
     /** An empty chart for drawing something unusual */
-    AdvancedChart = 'BlankChart',
+    BlankChart = 'BlankChart',
     /** Add a setting to display html in wizard */
     HtmlInWizard = 'HtmlInWizard',
     /** Additional chart config for making requests by widget events */
