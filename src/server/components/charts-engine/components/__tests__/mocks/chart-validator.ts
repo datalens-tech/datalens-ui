@@ -400,7 +400,7 @@ export const validDataChunks: {data: Record<string, unknown>; type: string}[] = 
             ui: {},
             url: {},
         },
-        type: EDITOR_TYPE.BLANK_CHART_NODE,
+        type: EDITOR_TYPE.ADVANCED_CHART_NODE,
     },
     {
         data: {
@@ -412,7 +412,7 @@ export const validDataChunks: {data: Record<string, unknown>; type: string}[] = 
             ui: {},
             url: {},
         },
-        type: EDITOR_TYPE.BLANK_CHART_NODE,
+        type: EDITOR_TYPE.ADVANCED_CHART_NODE,
     },
     {
         data: {
@@ -424,7 +424,7 @@ export const validDataChunks: {data: Record<string, unknown>; type: string}[] = 
             ui: {},
             url: {},
         },
-        type: EDITOR_TYPE.BLANK_CHART_NODE,
+        type: EDITOR_TYPE.ADVANCED_CHART_NODE,
     },
     {
         data: {
@@ -437,6 +437,6 @@ export const validDataChunks: {data: Record<string, unknown>; type: string}[] = 
             ui: {},
             url: {},
         },
-        type: EDITOR_TYPE.BLANK_CHART_NODE,
+        type: EDITOR_TYPE.ADVANCED_CHART_NODE,
     },
 ];
