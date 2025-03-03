@@ -1,24 +1,29 @@
-export const getIllustrationStore = () => ({
-    light: {
-        notFound: () => import('assets/images/illustration/light/404.svg'),
-        noAccess: () => import('assets/images/illustration/light/403.svg'),
-        error: () => import('assets/images/illustration/light/500.svg'),
-        identity: () => import('assets/images/illustration/light/identity.svg'),
-        project: () => import('assets/images/illustration/light/project.svg'),
-        template: () => import('assets/images/illustration/light/template.svg'),
-        emptyDirectory: () => import('assets/images/illustration/light/folder.svg'),
-        successOperation: () => import('assets/images/illustration/light/success_operation.svg'),
-        badRequest: () => import('assets/images/illustration/light/bad_request.svg'),
-    },
-    dark: {
-        notFound: () => import('assets/images/illustration/dark/404.svg'),
-        noAccess: () => import('assets/images/illustration/dark/403.svg'),
-        error: () => import('assets/images/illustration/dark/500.svg'),
-        identity: () => import('assets/images/illustration/dark/identity.svg'),
-        project: () => import('assets/images/illustration/dark/project.svg'),
-        template: () => import('assets/images/illustration/dark/template.svg'),
-        emptyDirectory: () => import('assets/images/illustration/dark/folder.svg'),
-        successOperation: () => import('assets/images/illustration/dark/success_operation.svg'),
-        badRequest: () => import('assets/images/illustration/light/bad_request.svg'),
-    },
-});
+import React from 'react';
+
+import mapValues from 'lodash/mapValues';
+
+import type {IllustrationStore} from './types';
+
+export const getIllustrationStore = (): IllustrationStore => {
+    const illustrationsSet = mapValues(
+        {
+            notFound: React.lazy(() => import('@gravity-ui/illustrations/NotFound')),
+            noAccess: React.lazy(() => import('@gravity-ui/illustrations/AccessDenied')),
+            error: React.lazy(() => import('@gravity-ui/illustrations/InternalError')),
+            identity: React.lazy(() => import('@gravity-ui/illustrations/Identity')),
+            project: React.lazy(() => import('@gravity-ui/illustrations/Project')),
+            template: React.lazy(() => import('@gravity-ui/illustrations/Template')),
+            emptyDirectory: React.lazy(() => import('@gravity-ui/illustrations/Folder')),
+            successOperation: React.lazy(
+                () => import('@gravity-ui/illustrations/SuccessOperation'),
+            ),
+            badRequest: React.lazy(() => import('@gravity-ui/illustrations/UnableToDisplay')),
+        },
+        (value) => ({type: 'lazy-component' as const, value}),
+    );
+
+    return {
+        light: illustrationsSet,
+        dark: illustrationsSet,
+    };
+};

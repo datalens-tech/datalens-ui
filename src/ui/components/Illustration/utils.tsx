@@ -5,10 +5,10 @@ import merge from 'lodash/merge';
 
 import {SvgImage} from './SvgImage/SvgImage';
 import {importContext, isContext} from './context';
-import type {CreateIllustrationProps, IllustrationStore} from './types';
+import type {IllustrationName, IllustrationProps, IllustrationStore} from './types';
 
-export function createIllustration(
-    items: Array<__WebpackModuleApi.RequireContext | IllustrationStore> = [],
+export function createIllustration<IKey extends string = IllustrationName>(
+    items: Array<__WebpackModuleApi.RequireContext | IllustrationStore<IKey>> = [],
 ) {
     const getCustomStores = items.map((item) => {
         if (isContext(item)) {
@@ -17,13 +17,16 @@ export function createIllustration(
             return item;
         }
     });
-    const store: IllustrationStore = merge({}, ...getCustomStores);
+    const store: IllustrationStore<IKey> = merge({}, ...getCustomStores);
 
-    function Illustration({name, ...props}: CreateIllustrationProps) {
+    function Illustration({name, ...props}: IllustrationProps<IKey>) {
         const theme = useThemeType();
         const src = store[theme] && store[theme][name];
-        return <SvgImage alt={name} src={src} {...props} />;
+        if (src?.type === 'lazy-component') {
+            const Component = src.value;
+            return <Component />;
+        }
+        return src ? <SvgImage alt={name} src={src.value} {...props} /> : null;
     }
-
     return Illustration;
 }

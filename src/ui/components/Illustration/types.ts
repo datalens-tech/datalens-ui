@@ -1,4 +1,15 @@
-export type IllustrationStore = Record<string, Record<string, any>>;
+import type React from 'react';
+
+import type {ThemeType} from '@gravity-ui/uikit';
+
+export type IllustrationStoreItem =
+    | {type: 'async-img-src'; value: () => Promise<{default: string}>}
+    | {type: 'lazy-component'; value: ReturnType<typeof React.lazy>};
+
+export type IllustrationStore<
+    IKey extends string = IllustrationName,
+    Theme extends string = ThemeType,
+> = Record<Theme, Record<IKey, IllustrationStoreItem>>;
 
 export type IllustrationName =
     | 'error'
@@ -11,12 +22,19 @@ export type IllustrationName =
     | 'emptyDirectory'
     | 'badRequest';
 
-export type IllustrationProps = {
-    name: IllustrationName;
-    illustrationStore: IllustrationStore;
-    [prop: string]: unknown;
-};
+export type ExtendedIllustrationsNamesSet =
+    | IllustrationName
+    | 'barchar'
+    | 'logo'
+    | 'logoShort'
+    | 'logoInit';
 
-export type CreateIllustrationProps = Omit<IllustrationProps, 'name'> & {
-    name: IllustrationName | 'barchar' | 'logo' | 'logoShort' | 'logoInit';
-};
+export interface IllustrationProps<IKey extends string = IllustrationName> {
+    name: IKey;
+    [prop: string]: unknown;
+}
+
+export type CustomIllustrationProps<IKey extends string = IllustrationName> =
+    IllustrationProps<IKey> & {
+        illustrationStore: IllustrationStore<IKey>;
+    };

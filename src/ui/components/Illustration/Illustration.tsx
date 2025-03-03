@@ -1,10 +1,13 @@
 import React from 'react';
 
-import type {IllustrationProps} from './types';
+import type {CustomIllustrationProps, IllustrationName} from './types';
 import {createIllustration} from './utils';
 
-export const Illustration = ({illustrationStore, ...props}: IllustrationProps) => {
+export function Illustration<IKey extends string = IllustrationName>({
+    illustrationStore,
+    ...props
+}: CustomIllustrationProps<IKey>) {
     const CreatedIllustration = createIllustration([illustrationStore]);
 
     return <CreatedIllustration {...props} />;
-};
+}

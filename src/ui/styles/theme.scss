@@ -54,6 +54,15 @@ body.g-root {
     --g-color-text-link-hover: var(--g-color-private-blue-800-solid);
     --g-color-text-link-visited: var(--g-color-private-purple-550-solid);
     --g-color-text-link-visited-hover: var(--g-color-private-purple-800-solid);
+
+    --gil-color-object-base: rgb(255, 164, 126);
+    --gil-color-object-accent-heavy: rgb(255, 255, 255);
+    --gil-color-object-hightlight: rgb(255, 126, 70);
+    --gil-color-shadow-over-object: rgb(98, 98, 98);
+    --gil-color-background-lines: rgb(98, 98, 98);
+    --gil-color-background-shapes: rgb(236, 242, 249);
+    --gil-color-object-accent-light: rgb(255, 255, 255);
+    --gil-color-object-danger: rgb(255, 89, 88);
 }
 
 .g-root_theme_dark,
@@ -105,6 +114,15 @@ body.g-root {
     --g-color-text-link-hover: var(--g-color-private-blue-850-solid);
     --g-color-text-link-visited: var(--g-color-private-purple-700-solid);
     --g-color-text-link-visited-hover: var(--g-color-private-purple-850-solid);
+
+    --gil-color-object-base: rgb(255, 226, 214);
+    --gil-color-object-accent-heavy: rgb(255, 255, 255);
+    --gil-color-object-hightlight: rgb(255, 126, 70);
+    --gil-color-shadow-over-object: rgb(38, 38, 38);
+    --gil-color-background-lines: rgb(255, 255, 255);
+    --gil-color-background-shapes: rgb(57, 57, 57);
+    --gil-color-object-accent-light: rgb(255, 255, 255);
+    --gil-color-object-danger: rgb(255, 89, 88);
 }
 
 .g-root_theme_dark-hc {
