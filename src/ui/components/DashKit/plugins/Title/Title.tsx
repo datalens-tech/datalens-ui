@@ -92,8 +92,7 @@ const titlePlugin: PluginTitle = {
 
         const content = <DashKitPluginTitle {...props} ref={forwardedRef} />;
 
-        const {classMod, style} = usePreparedWrapSettings(data.background);
-        const showBgColor = Boolean(classMod);
+        const {classMod, style, hasBgColor} = usePreparedWrapSettings(data.background);
 
         const currentLayout = props.layout.find(({i}) => i === props.id) || {
             x: null,
@@ -182,7 +181,7 @@ const titlePlugin: PluginTitle = {
                 <div
                     className={b({
                         'with-auto-height': Boolean(data.autoHeight),
-                        'with-color': Boolean(showBgColor),
+                        'with-color': hasBgColor,
                         'with-inline-anchor': Boolean(withInlineAnchor),
                         'with-absolute-anchor': Boolean(withAbsoluteAnchor),
                     })}

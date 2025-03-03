@@ -180,8 +180,7 @@ const textPlugin = {
 
         const data = props.data as DashTabItemText['data'];
 
-        const {classMod, style} = usePreparedWrapSettings(data.background);
-        const showBgColor = Boolean(classMod);
+        const {classMod, style, hasBgColor} = usePreparedWrapSettings(data.background);
 
         const currentLayout = props.layout.find(({i}) => i === props.id) || {
             x: null,
@@ -236,7 +235,7 @@ const textPlugin = {
                     // needed for force update when text is changed
                     key={`yfm_${YfmWrapperKeyRef.current}`}
                     content={<div className={b('content-wrap', null)}>{content}</div>}
-                    className={b({'with-color': Boolean(showBgColor)})}
+                    className={b({'with-color': hasBgColor})}
                     metaScripts={metaScripts}
                     onRenderCallback={handleTextRender}
                 />

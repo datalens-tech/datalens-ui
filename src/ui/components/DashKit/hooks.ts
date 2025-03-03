@@ -28,5 +28,6 @@ export function usePreparedWrapSettings(background?: BackgroundSettings) {
     return {
         classMod: wrapperClassMod,
         style,
+        hasBgColor,
     };
 }
