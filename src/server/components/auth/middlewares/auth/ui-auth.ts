@@ -145,6 +145,7 @@ export const uiAuth = async (req: Request, res: Response, next: NextFunction) =>
                     profile.login ||
                     profile.email ||
                     userId,
+                idpType: profile.idpType,
             },
         });
     } catch (err) {

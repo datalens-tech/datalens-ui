@@ -106,6 +106,7 @@ export interface SubjectClaims {
     preferredUsername: string;
     federation: unknown;
     pictureData?: string;
+    idpType?: string | null;
 }
 
 export type SubjectDetails = {

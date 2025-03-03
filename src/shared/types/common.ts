@@ -137,6 +137,7 @@ export interface DLUser extends DLUserAccount {
     isLocalFederationUser?: boolean;
     withNavigation?: boolean;
     roles?: `${UserRole}`[];
+    idpType: string | null;
 }
 
 export type MainLayoutConfigData = {
