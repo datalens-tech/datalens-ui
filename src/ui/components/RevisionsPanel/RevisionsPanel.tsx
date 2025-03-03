@@ -215,15 +215,20 @@ const RevisionsPanel = ({
     let warningText = '';
     let loginText = null;
     let dateText = '';
+    let subQa;
     if (showDeprecationMessage) {
         warningText = deprecationMessage ?? '';
     } else if (showDraftWarningPanel) {
+        subQa = RevisionsPanelQa.HasDraft;
         warningText = `${i18n('label_later-warning-text', {scope: scopeText})}`;
     } else {
         dateText = `${i18n('label_by')} ${date}`;
         const prefixText = isCurrentRevDraft
             ? i18n('label_draft-version')
             : i18n('label_not-actual');
+        subQa = isCurrentRevDraft
+            ? RevisionsPanelQa.DraftVersion
+            : RevisionsPanelQa.NotActualVersion;
         warningText = `${prefixText} ${scopeText}, ${dateText}`;
 
         const showLogin = LoginById && updatedBy;
@@ -244,7 +249,7 @@ const RevisionsPanel = ({
                 style={leftStyle}
                 data-qa={RevisionsPanelQa.RevisionsPanel}
             >
-                <div className={b('text')}>
+                <div className={b('text')} data-qa={subQa}>
                     <div className={b('text-info')}>{warningText}</div>
                     {loginText}
                 </div>

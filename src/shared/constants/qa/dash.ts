@@ -38,7 +38,6 @@ export enum DashRevisions {
     EXPANDABLE_PANEL = 'expandable-panel',
     EXPANDABLE_PANEL_COLLAPSED_BTN = 'expandable-panel-toggle-btn-collapsed',
     EXPANDABLE_PANEL_EXPANDED_BTN = 'expandable-panel-toggle-btn-expanded',
-    EXPANDABLE_PANEL_CLOSE = 'expandable-panel-close',
 }
 
 export enum DashEntryQa {
