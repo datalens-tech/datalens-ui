@@ -36,6 +36,17 @@ $entityIconClassName: '.entity-icon';
                 border-radius: 6px;
             }
         }
+
+        &_size_l#{&}_view_round {
+            width: 28px;
+            height: 28px;
+
+            #{$entityIconClassName}__color-box {
+                height: 100%;
+                width: 100%;
+                border-radius: 50%;
+            }
+        }
     }
 
     &__color-box {
