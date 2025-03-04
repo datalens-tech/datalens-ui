@@ -149,7 +149,6 @@ export default {
     },
 
     chartsEngineConfig: {
-        nativeModules: {},
         secrets: {},
         enableTelemetry: true,
         usEndpointPostfix: '',
