@@ -14,7 +14,7 @@ class EditorPage extends BasePage {
     }
 
     async clickTemplate(templateQa: string) {
-        await this.page.click(`${slct('node-templates-list')} ${slct(templateQa)}`);
+        await this.page.click(`${slct(templateQa)}`);
     }
 
     async drawPreview() {
