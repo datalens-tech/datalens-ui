@@ -15,7 +15,7 @@ import {
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
 
-const OperationSelector: React.FC = () => {
+const OperationSelector = ({className}: {className?: string}) => {
     const dispatch = useDispatch();
     const {operation} = useSelector(selectSelectorDialog);
     const operations = useSelector(selectInputOperations);
@@ -67,7 +67,7 @@ const OperationSelector: React.FC = () => {
     );
 
     return (
-        <FormRow label={label}>
+        <FormRow label={label} className={className}>
             <SelectFeatured
                 disabled={isFieldDisabled}
                 placeholder="—"

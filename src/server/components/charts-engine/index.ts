@@ -39,13 +39,11 @@ type Controllers = {
 };
 
 class ChartsEngine {
-    config: AppConfig;
     runners: Runner[];
     sources: Record<string, SourceConfig>;
     telemetryCallbacks: TelemetryCallbacks;
     processorHooks: Record<string, any>[];
     flags: Record<string, boolean>;
-    nativeModules: Record<string, unknown>;
     cacheClient: CacheClient;
     controllers: Controllers;
     plugins: Plugin[];
@@ -58,7 +56,6 @@ class ChartsEngine {
         plugins,
         telemetryCallbacks = {},
         flags = {},
-        nativeModules,
         cacheClient,
         beforeAuth,
         afterAuth,
@@ -69,19 +66,16 @@ class ChartsEngine {
         plugins: Plugin[];
         telemetryCallbacks?: TelemetryCallbacks;
         flags?: Record<string, boolean>;
-        nativeModules: Record<string, unknown>;
         cacheClient: CacheClient;
         beforeAuth: AppMiddleware[];
         afterAuth: AppMiddleware[];
         runners: Runner[];
     }) {
-        this.config = config;
         this.runners = runners;
         this.sources = config.sources;
         this.telemetryCallbacks = telemetryCallbacks;
         this.processorHooks = [];
         this.flags = flags;
-        this.nativeModules = nativeModules;
         this.plugins = plugins;
         this.beforeAuth = beforeAuth;
         this.afterAuth = afterAuth;
@@ -97,10 +91,11 @@ class ChartsEngine {
 
         Request.init({cacheClientInstance: this.cacheClient});
 
+        const {includeServicePlan, includeTenantFeatures} = config.chartsEngineConfig;
         this.controllers = {
             export: defaultControllers.export(),
             markdown: defaultControllers.markdown,
-            run: defaultControllers.run(this),
+            run: defaultControllers.run(this, {includeServicePlan, includeTenantFeatures}),
             config: defaultControllers.config(this),
             charts: defaultControllers.charts(this),
             embeds: defaultControllers.embeds(this),

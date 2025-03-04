@@ -1,4 +1,4 @@
-import type {OutgoingHttpHeaders} from 'http';
+import type {IncomingHttpHeaders, OutgoingHttpHeaders} from 'http';
 
 import type {AppMiddleware, AppRouteDescription, Request, Response} from '@gravity-ui/expresskit';
 import type {HttpMethod} from '@gravity-ui/expresskit/dist/types';
@@ -113,7 +113,7 @@ export type TelemetryCallbacks = {
 
 export type Source<T = string | Record<string, string>> = {
     url: string;
-    method?: string;
+    method?: 'GET' | 'POST';
     headers?: OutgoingHttpHeaders;
     cache?: string;
     statFormat?: string;
@@ -123,6 +123,35 @@ export type Source<T = string | Record<string, string>> = {
     hideInInspector?: boolean;
     ui?: boolean;
     sourceArgs?: SourcesArgs;
+    apiConnectionId?: string;
+    qlConnectionId?: string;
+    datasetId?: string;
+    body?: Record<string, unknown>;
+    path?: string;
+    _original?: unknown;
+};
+
+export type SourceWithAPIConnector = Source &
+    Required<Pick<Source, 'apiConnectionId' | 'method' | 'body' | 'path'>>;
+
+export type SourceWithQLConnector = Source &
+    Required<Pick<Source, 'qlConnectionId' | 'method' | 'body' | 'path'>>;
+
+export type SourceWithDatasetId = Source &
+    Required<Pick<Source, 'datasetId' | 'method' | 'body' | 'path'>>;
+
+export type AdapterContext = {
+    headers: {
+        cookie: IncomingHttpHeaders['cookie'];
+        ['x-forwarded-for']: IncomingHttpHeaders['x-forwarded-for'];
+    };
+};
+
+export type HooksContext = {
+    headers: {
+        cookie: IncomingHttpHeaders['cookie'];
+        authorization: IncomingHttpHeaders['authorization'];
+    };
 };
 
 export type SourceConfig = {
@@ -139,21 +168,21 @@ export type SourceConfig = {
     uiEndpointFormatter?: (url: string, sourceData?: Source['data']) => string | null;
     uiEndpoint?: string;
     passedCredentials?: Record<string, boolean>;
-    extraHeaders?: Record<string, string | undefined> | ((req: Request) => Record<string, string>);
+    extraHeaders?: Record<string, string | undefined> | (() => Record<string, string>);
     sourceType?: string;
     dataEndpoint?: string;
     preprocess?: (url: string) => string;
     allowedMethods?: ('GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE')[];
 
-    adapter?: ({
+    adapterWithContext?: ({
         targetUri,
         sourceName,
-        req,
+        adapterContext,
         ctx,
     }: {
         targetUri: string;
         sourceName: string;
-        req: Request;
+        adapterContext: AdapterContext;
         ctx: AppContext;
     }) => unknown;
 

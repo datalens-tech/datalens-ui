@@ -183,7 +183,7 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
         }
 
         getSdk()
-            .us.getWorkbookEntries(
+            .sdk.us.getWorkbookEntries(
                 {workbookId: this.props.workbookId, scope: this.props.scope, filters},
                 {concurrentId: 'WorkbookNavigationMinimal/getWorkbookEntries'},
             )

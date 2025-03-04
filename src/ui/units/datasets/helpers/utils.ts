@@ -1,8 +1,7 @@
 import _get from 'lodash/get';
 import type {DatasetField, DatasetSource, DatasetSourceAvatar, Feature, WorkbookId} from 'shared';
 import {DL} from 'ui';
-
-import Utils from '../../../utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 export default class DatasetUtils {
     static sortObjectBy(sortParameter: string) {
@@ -80,7 +79,7 @@ export default class DatasetUtils {
     }
 
     static isEnabledFeature(featureName: Feature) {
-        return Utils.isEnabledFeature(featureName);
+        return isEnabledFeature(featureName);
     }
 
     static getSourceTitle(source: {group?: string[]; title?: string}) {
@@ -148,4 +147,9 @@ export default class DatasetUtils {
     static filterDatasetFields(field: DatasetField) {
         return DatasetUtils.filterVirtual(field) && field.calc_mode !== 'parameter';
     }
+}
+
+export function isCreationProcess(pathname = '') {
+    const lastPathnamePart = pathname.split('/').filter(Boolean).slice(-1)[0];
+    return lastPathnamePart === 'new';
 }

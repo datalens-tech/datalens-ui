@@ -3,7 +3,7 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import type {DashTabItemGroupControl} from 'shared';
+import {type DashTabItemGroupControl} from 'shared';
 import {ControlQA} from 'shared/constants/qa';
 import {applyGroupControlDialog, copyControlToStorage} from 'ui/store/actions/controlDialog';
 import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
@@ -22,6 +22,8 @@ const i18n = I18n.keyset('dash.group-controls-dialog.edit');
 
 export type DialogGroupControlFeaturesProps = {
     enableAutoheightDefault?: boolean;
+    showSelectorsGroupTitle?: boolean;
+    theme?: string;
 };
 
 export type DialogGroupControlProps = {
@@ -31,6 +33,7 @@ export type DialogGroupControlProps = {
     setItemData: (newItemData: SetItemDataArgs) => void;
     navigationPath: string | null;
     changeNavigationPath: (newNavigationPath: string) => void;
+    selectorsGroupTitlePlaceholder?: string;
 } & DialogGroupControlFeaturesProps;
 
 export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
@@ -40,6 +43,8 @@ export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
     navigationPath,
     changeNavigationPath,
     enableAutoheightDefault,
+    showSelectorsGroupTitle,
+    selectorsGroupTitlePlaceholder,
 }) => {
     const {id, draftId} = useSelector(selectSelectorDialog);
 
@@ -72,7 +77,9 @@ export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
             sidebarHeader={i18n('label_selectors-list')}
             sidebar={
                 <GroupControlSidebar
+                    selectorsGroupTitlePlaceholder={selectorsGroupTitlePlaceholder}
                     enableAutoheightDefault={enableAutoheightDefault}
+                    showSelectorsGroupTitle={showSelectorsGroupTitle}
                     handleCopyItem={handleCopyItem}
                 />
             }

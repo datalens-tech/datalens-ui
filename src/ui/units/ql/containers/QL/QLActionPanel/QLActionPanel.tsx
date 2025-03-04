@@ -8,6 +8,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import type {CommonSharedExtraSettings} from 'shared';
 import {EntryUpdateMode, Feature} from 'shared';
 import type {QlConfig} from 'shared/types/config/ql';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import {isDraftVersion} from 'ui/utils/revisions';
 
 import type {DatalensGlobalState, EntryDialogues} from '../../../../../';
 import {
@@ -21,7 +23,6 @@ import {
 import type {GetEntryResponse} from '../../../../../../shared/schema';
 import {ChartSaveControls} from '../../../../../components/ActionPanel/components/ChartSaveControls/ChartSaveControl';
 import type {EntryContextMenuItems} from '../../../../../components/EntryContextMenu/helpers';
-import {isDraftVersion} from '../../../../../components/Revisions/helpers';
 import {registry} from '../../../../../registry';
 import {openDialogSaveDraftChartAsActualConfirm} from '../../../../../store/actions/dialog';
 import {addEditHistoryPoint, resetEditHistoryUnit} from '../../../../../store/actions/editHistory';
@@ -91,8 +92,7 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
 
     const {QlActionPanelExtension} = registry.ql.components.getAll();
 
-    const enablePublish =
-        entry && Utils.isEnabledFeature(Feature.EnablePublishEntry) && !entry.fake;
+    const enablePublish = entry && isEnabledFeature(Feature.EnablePublishEntry) && !entry.fake;
 
     const dispatch = useDispatch();
 

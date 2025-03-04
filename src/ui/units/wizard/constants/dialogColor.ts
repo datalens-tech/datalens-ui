@@ -1,6 +1,7 @@
 import {getAvailableClientPalettesMap, selectDefaultClientGradient} from 'constants/common';
 
-import {DEFAULT_PALETTE, GradientType} from 'shared';
+import {i18n} from 'i18n';
+import {DEFAULT_PALETTE, GradientNullModes, GradientType, WizardVisualizationId} from 'shared';
 
 export const DEFAULT_BORDERS = 'show';
 export const DEFAULT_THRESHOLDS_MODE = 'auto';
@@ -25,4 +26,15 @@ export const DEFAULT_GRADIENT_STATE = {
     middleThreshold: undefined,
     rightThreshold: undefined,
     gradientPalette: DEFAULT_TWO_POINT_GRADIENT,
+    nullMode: undefined,
 };
+
+export const ALLOWED_FOR_NULL_MODE_VISUALIZATIONS = [
+    WizardVisualizationId.FlatTable,
+    WizardVisualizationId.PivotTable,
+];
+
+export const NULLS_OPTIONS = [
+    {value: GradientNullModes.Ignore, content: i18n('wizard', 'label_painting-ignore')},
+    {value: GradientNullModes.AsZero, content: i18n('wizard', 'label_painting-as-0')},
+];

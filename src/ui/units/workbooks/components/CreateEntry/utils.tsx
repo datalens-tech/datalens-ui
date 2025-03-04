@@ -3,9 +3,8 @@ import React from 'react';
 import type {DropdownMenuItemMixed} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {EntryScope, Feature} from 'shared';
+import {EntryScope} from 'shared';
 import {EntityIcon} from 'ui/components/EntityIcon/EntityIcon';
-import Utils from 'ui/utils';
 
 import {CreateEntryActionType} from '../../constants';
 
@@ -62,16 +61,6 @@ export const useCreateEntryOptions = ({
                         </div>
                     ),
                 },
-                {
-                    action: () => handleAction(CreateEntryActionType.Editor),
-                    text: (
-                        <div className={b('dropdown-item')}>
-                            <EntityIcon type="editor" />
-                            <div className={b('dropdown-text')}>{i18n('menu_editor-chart')}</div>
-                        </div>
-                    ),
-                    hidden: !Utils.isEnabledFeature(Feature.EntryMenuEditor),
-                },
             ];
             break;
         default:
@@ -109,18 +98,6 @@ export const useCreateEntryOptions = ({
                                 <div className={b('dropdown-text')}>{i18n('menu_ql-chart')}</div>
                             </div>
                         ),
-                    },
-                    {
-                        action: () => handleAction(CreateEntryActionType.Editor),
-                        text: (
-                            <div className={b('dropdown-item')}>
-                                <EntityIcon type="editor" />
-                                <div className={b('dropdown-text')}>
-                                    {i18n('menu_editor-chart')}
-                                </div>
-                            </div>
-                        ),
-                        hidden: !Utils.isEnabledFeature(Feature.EntryMenuEditor),
                     },
                 ],
                 [

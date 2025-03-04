@@ -11,7 +11,7 @@ import {useBindHotkey} from 'ui/hooks/useBindHotkey';
 import type {DatalensGlobalState} from 'ui/index';
 import {goBack, goForward} from 'ui/store/actions/editHistory';
 import {selectCanGoBack, selectCanGoForward} from 'ui/store/selectors/editHistory';
-import Utils from 'ui/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {DATASETS_EDIT_HISTORY_UNIT_ID} from '../../constants';
 
@@ -41,7 +41,7 @@ const canGoForwardSelector = (state: DatalensGlobalState) => {
 
 export function useHistoryActions() {
     const dispatch = useDispatch();
-    const featureEnabled = Utils.isEnabledFeature(Feature.EnableEditHistoryDatasets);
+    const featureEnabled = isEnabledFeature(Feature.EnableEditHistoryDatasets);
     const canGoBack = useSelector(canGoBackSelector);
     const canGoForward = useSelector(canGoForwardSelector);
 

@@ -1,3 +1,5 @@
+import {UserRole} from 'shared/components/auth/constants/role';
+
 import type {LineShapeType} from '../../shared';
 import {
     AppEnvironment,
@@ -9,15 +11,11 @@ import {
     THREE_POINT_DEFAULT_ID,
     TWO_POINT_DEFAULT_ID,
     getAvailablePalettesMap,
-    selectAvailableGradients,
     selectAvailablePalettes,
     selectGradient,
     selectPaletteById,
     selectShapes,
 } from '../../shared';
-import type {Gradient, GradientPalettes} from '../../shared/constants';
-import type {ColorPalette} from '../../shared/types/color-palettes';
-import type {DatalensGlobalState} from '../index';
 
 import blueGrayRedIcon from '../assets/icons/gradients/blue-gray-red.svg';
 import blueYellowRedIcon from '../assets/icons/gradients/blue-yellow-red.svg';
@@ -103,7 +101,7 @@ export const DL = {
     get REQUEST_ID_PREFIX() {
         return `dl.${this.REQUEST_ID.slice(0, 5)}`;
     },
-    // Utils.isEnabledFeature - check if the feature is enabled
+    // isEnabledFeature - check if the feature is enabled
     get FEATURES() {
         return window.DL.features;
     },
@@ -180,6 +178,18 @@ export const DL = {
     get IS_LANDING() {
         return window.DL.isLanding;
     },
+    get AUTH_ENABLED() {
+        return window.DL.isAuthEnabled === true;
+    },
+    get AUTH_MANAGE_LOCAL_USERS_DISABLED() {
+        return window.DL.authManageLocalUsersDisabled === true;
+    },
+    get IS_AUTH_PAGE() {
+        return Boolean(window.DL.authPageSettings?.isAuthPage);
+    },
+    get AUTH_PAGE_SETTINGS() {
+        return window.DL.authPageSettings;
+    },
     get OAUTH_ENDPOINT() {
         return window.DL.oauthEndpoint!;
     },
@@ -233,6 +243,12 @@ export const DL = {
     },
     get CONNECTOR_ICONS() {
         return window.DL.connectorIcons || [];
+    },
+    get RELEASE_VERSION() {
+        return window.DL.releaseVersion;
+    },
+    get IS_NATIVE_AUTH_ADMIN() {
+        return window.DL.user.roles?.includes(UserRole.Admin);
     },
 };
 
@@ -299,7 +315,6 @@ export const BI_ERRORS = {
 export const MODULE_TYPE = 'module';
 
 export const URL_QUERY = {
-    REV_ID_OLD: 'rev_id',
     REV_ID: 'revId',
     HIGHLIGHT_LINES: '_l',
     ACTIVE_TAB: '_t',
@@ -350,33 +365,6 @@ export const selectAvailableClientPalettes = () =>
 export const selectPalette = (paletteId: string) =>
     selectPaletteById(paletteId, getAvailableClientPalettesMap());
 
-export const selectAvailableClientGradients = (
-    state: DatalensGlobalState,
-    gradientType: GradientType,
-): GradientPalettes => {
-    const colorsLength = gradientType === GradientType.TWO_POINT ? 2 : 3;
-
-    const gradientPalletes = state.colorPaletteEditor.colorPalettes
-        .filter((colorPalette) => {
-            return colorPalette.isGradient && colorPalette.colors.length === colorsLength;
-        })
-        .reduce(
-            (acc: GradientPalettes, colorPalette: ColorPalette) => ({
-                ...acc,
-                [colorPalette.colorPaletteId]: {
-                    id: colorPalette.colorPaletteId,
-                    title: colorPalette.displayName,
-                    colors: colorPalette.colors,
-                } as Gradient,
-            }),
-            {},
-        );
-
-    return {
-        ...selectAvailableGradients(gradientType),
-        ...gradientPalletes,
-    };
-};
 export const selectDefaultClientGradient = (gradientType: GradientType) => {
     const gradientId =
         gradientType === GradientType.TWO_POINT ? TWO_POINT_DEFAULT_ID : THREE_POINT_DEFAULT_ID;

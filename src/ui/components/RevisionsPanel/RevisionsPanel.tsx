@@ -1,10 +1,10 @@
 import React from 'react';
 
+import {dateTimeParse} from '@gravity-ui/date-utils';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import moment from 'moment';
 import {useDispatch, useSelector} from 'react-redux';
-import type {EntryScope} from 'shared';
+import {type EntryScope, RevisionsPanelQa} from 'shared';
 import type {AppDispatch} from 'store';
 import {closeDialog as closeDialogConfirm, openDialogConfirm} from 'store/actions/dialog';
 import {setRevisionsListMode, setRevisionsMode} from 'store/actions/entryContent';
@@ -34,6 +34,7 @@ export type RevisionsPanelProps = {
     onDeprecationConfirm?: () => void;
     deprecationMessage?: string | null;
     isEditing: boolean;
+    className?: string;
 };
 
 const b = block('revisions-panel');
@@ -124,6 +125,7 @@ const RevisionsPanel = ({
     onDeprecationConfirm,
     deprecationMessage,
     isEditing,
+    className,
 }: RevisionsPanelProps) => {
     const dispatch = useDispatch();
     const storedEntryContent = useSelector(selectEntryContent);
@@ -205,7 +207,7 @@ const RevisionsPanel = ({
     const scopeTexts = getRevisionsPanelEntryScopesTexts();
 
     const scopeText = scopeTexts[scope]?.panelText || '';
-    const date = moment(updatedAt).format(TIMESTAMP_FORMAT);
+    const date = dateTimeParse(updatedAt)?.format(TIMESTAMP_FORMAT) || updatedAt;
 
     const {getLoginById} = registry.common.functions.getAll();
     const LoginById = getLoginById();
@@ -213,15 +215,20 @@ const RevisionsPanel = ({
     let warningText = '';
     let loginText = null;
     let dateText = '';
+    let subQa;
     if (showDeprecationMessage) {
         warningText = deprecationMessage ?? '';
     } else if (showDraftWarningPanel) {
+        subQa = RevisionsPanelQa.HasDraft;
         warningText = `${i18n('label_later-warning-text', {scope: scopeText})}`;
     } else {
         dateText = `${i18n('label_by')} ${date}`;
         const prefixText = isCurrentRevDraft
             ? i18n('label_draft-version')
             : i18n('label_not-actual');
+        subQa = isCurrentRevDraft
+            ? RevisionsPanelQa.DraftVersion
+            : RevisionsPanelQa.NotActualVersion;
         warningText = `${prefixText} ${scopeText}, ${dateText}`;
 
         const showLogin = LoginById && updatedBy;
@@ -236,9 +243,13 @@ const RevisionsPanel = ({
     }
 
     return (
-        <div className={b('wrap', null, 'active')}>
-            <div className={b('text-container')} style={leftStyle} data-qa="revisions-top-panel">
-                <div className={b('text')}>
+        <div className={b(null, className)}>
+            <div
+                className={b('text-container')}
+                style={leftStyle}
+                data-qa={RevisionsPanelQa.RevisionsPanel}
+            >
+                <div className={b('text')} data-qa={subQa}>
                     <div className={b('text-info')}>{warningText}</div>
                     {loginText}
                 </div>

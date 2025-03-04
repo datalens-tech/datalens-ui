@@ -1,5 +1,4 @@
 import {transformParamsToActionParams} from '@gravity-ui/dashkit/helpers';
-import type {Request} from '@gravity-ui/expresskit';
 import {type AppContext, REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 import {AxiosError} from 'axios';
 import JSONfn from 'json-fn';
@@ -18,8 +17,9 @@ import type {
 import {DL_CONTEXT_HEADER, Feature, isEnabledServerFeature} from '../../../../../shared';
 import {renderHTML} from '../../../../../shared/modules/markdown/markdown';
 import {registry} from '../../../../registry';
+import type {CacheClient} from '../../../cache-client';
 import {config as configConstants} from '../../constants';
-import type {Source} from '../../types';
+import type {AdapterContext, HooksContext, Source, TelemetryCallbacks} from '../../types';
 import * as Storage from '../storage';
 import type {ResolvedConfig} from '../storage/types';
 import {getDuration, normalizeParams, resolveParams} from '../utils';
@@ -27,7 +27,12 @@ import {getDuration, normalizeParams, resolveParams} from '../utils';
 import type {CommentsFetcherPrepareCommentsParams} from './comments-fetcher';
 import {CommentsFetcher} from './comments-fetcher';
 import type {LogItem} from './console';
-import type {DataFetcherResult} from './data-fetcher';
+import type {
+    AuthParams,
+    DataFetcherOriginalReqHeaders,
+    DataFetcherResult,
+    ZitadelParams,
+} from './data-fetcher';
 import {DataFetcher} from './data-fetcher';
 import {ProcessorHooks} from './hooks';
 import {updateActionParams, updateParams} from './paramsUtils';
@@ -134,7 +139,15 @@ function logFetchingError(ctx: AppContext, error: unknown) {
 }
 
 export type ProcessorParams = {
-    chartsEngine: ChartsEngine;
+    ctx: AppContext;
+    builder: ChartBuilder;
+    telemetryCallbacks: TelemetryCallbacks;
+    cacheClient: CacheClient;
+    hooks: ProcessorHooks;
+    sourcesConfig: ChartsEngine['sources'];
+} & SerializableProcessorParams;
+
+export type SerializableProcessorParams = {
     subrequestHeaders: Record<string, string>;
     paramsOverride: Record<string, string | string[]>;
     actionParamsOverride: Record<string, string | string[]>;
@@ -152,25 +165,27 @@ export type ProcessorParams = {
     userLang: string | null;
     userId: string | null;
     iamToken: string | null;
-    req: Request;
     responseOptions?: Record<string, string | boolean>;
     uiOnly?: boolean;
     isEditMode: boolean;
     configResolving: number;
-    ctx: AppContext;
     cacheToken: string | string[] | null;
     workbookId?: WorkbookId;
-    builder: ChartBuilder;
     forbiddenFields?: (keyof ProcessorSuccessResponse)[];
     disableJSONFnByCookie: boolean;
     configName: string;
     configId: string;
+    isEmbed: boolean;
+    zitadelParams: ZitadelParams | undefined;
+    authParams: AuthParams | undefined;
+    originalReqHeaders: DataFetcherOriginalReqHeaders;
+    adapterContext: AdapterContext;
+    hooksContext: HooksContext;
 };
 
 export class Processor {
     // eslint-disable-next-line complexity
     static async process({
-        chartsEngine,
         subrequestHeaders,
         paramsOverride = {},
         widgetConfig = {},
@@ -180,7 +195,6 @@ export class Processor {
         userLogin,
         userId = null,
         iamToken = null,
-        req,
         responseOptions = {},
         uiOnly = false,
         isEditMode,
@@ -192,6 +206,16 @@ export class Processor {
         disableJSONFnByCookie,
         configName,
         configId,
+        isEmbed,
+        zitadelParams,
+        authParams,
+        originalReqHeaders,
+        adapterContext,
+        hooksContext,
+        telemetryCallbacks,
+        cacheClient,
+        hooks,
+        sourcesConfig,
     }: ProcessorParams): Promise<
         ProcessorSuccessResponse | ProcessorErrorResponse | {error: string}
     > {
@@ -206,7 +230,6 @@ export class Processor {
         let params: Record<string, string | string[]> | StringParams;
         let actionParams: Record<string, string | string[]>;
         let usedParams: Record<string, string | string[]>;
-        const hooks = new ProcessorHooks({chartsEngine});
 
         const timings: {
             configResolving: number;
@@ -218,10 +241,10 @@ export class Processor {
             jsExecution: null,
         };
 
-        const onCodeExecuted = chartsEngine.telemetryCallbacks.onCodeExecuted || (() => {});
-        const onTabsExecuted = chartsEngine.telemetryCallbacks.onTabsExecuted || (() => {});
+        const onCodeExecuted = telemetryCallbacks.onCodeExecuted || (() => {});
+        const onTabsExecuted = telemetryCallbacks.onTabsExecuted || (() => {});
 
-        function injectConfigAndParams({target}: {target: Record<string, any>}) {
+        function injectConfigAndParams({target}: {target: ProcessorSuccessResponse}) {
             let responseConfig;
             const useChartsEngineResponseConfig = Boolean(
                 isEnabledServerFeature(ctx, Feature.UseChartsEngineResponseConfig),
@@ -317,13 +340,13 @@ export class Processor {
             ctx.log('EditorEngine::ConfigResolved', {duration: getDuration(hrStart)});
 
             const resultHooksInit = await hooks.init({
-                req,
                 config: {
                     ...config,
                     entryId: config.entryId || configId,
                 },
                 isEditMode,
                 ctx,
+                hooksContext,
             });
 
             if (resultHooksInit.status === ProcessorHooks.STATUS.FAILED) {
@@ -554,15 +577,21 @@ export class Processor {
                 }
 
                 resolvedSources = await DataFetcher.fetch({
-                    chartsEngine,
                     sources,
-                    req,
                     ctx,
                     iamToken,
                     subrequestHeaders,
                     userId,
                     userLogin,
                     workbookId,
+                    isEmbed,
+                    zitadelParams,
+                    authParams,
+                    originalReqHeaders,
+                    adapterContext,
+                    telemetryCallbacks,
+                    cacheClient,
+                    sourcesConfig,
                 });
 
                 if (Object.keys(resolvedSources).length) {
@@ -717,7 +746,7 @@ export class Processor {
 
                 ctx.log('EditorEngine::JS', {duration: getDuration(hrStart)});
 
-                processedData = jsTabResults.exports as Record<string, any>;
+                processedData = jsTabResults.exports;
                 logs.JavaScript = jsTabResults.logs;
 
                 const jsError = jsTabResults.runtimeMetadata.error;
@@ -792,7 +821,7 @@ export class Processor {
             injectLogs({target: result});
 
             if (!uiOnly && jsTabResults) {
-                result.data = processedData;
+                result.data = processedData as ProcessorSuccessResponse['data'];
                 let resultConfig = merge(
                     {},
                     userConfig,
@@ -819,7 +848,11 @@ export class Processor {
                     entryId: config.entryId || configId,
                 });
 
-                if (!isChartWithJSAndHtmlAllowed({createdAt: config.createdAt})) {
+                const disableFnAndHtml = isEnabledServerFeature(ctx, Feature.DisableFnAndHtml);
+                if (
+                    disableFnAndHtml ||
+                    !isChartWithJSAndHtmlAllowed({createdAt: config.createdAt})
+                ) {
                     resultConfig.enableJsAndHtml = false;
                 }
                 const enableJsAndHtml = get(resultConfig, 'enableJsAndHtml', false);
@@ -853,7 +886,7 @@ export class Processor {
                 ctx.log('EditorEngine::Postprocessing', {duration: getDuration(hrStart)});
 
                 if (
-                    chartsEngine.flags.chartComments &&
+                    ctx.config.chartsEngineConfig.flags?.chartComments &&
                     (type === CONFIG_TYPE.GRAPH_NODE ||
                         type === CONFIG_TYPE.GRAPH_WIZARD_NODE ||
                         type === CONFIG_TYPE.GRAPH_QL_NODE)

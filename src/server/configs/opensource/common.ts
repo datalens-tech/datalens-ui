@@ -11,9 +11,9 @@ import {
     isTrueArg,
 } from '../../../shared';
 import {resolveSource} from '../../../shared/endpoints/sources';
-import {nativeModules} from '../../components/charts-engine/components/processor/native-modules';
 import type {SourceConfig} from '../../components/charts-engine/types';
 import {SERVICE_NAME_DATALENS} from '../../constants';
+import {getEnvCert} from '../../utils/env-utils';
 import controlDashChartTemplate from '../shared/control-dash-chart-template';
 import datalensChartTemplate from '../shared/datalens-chart-template';
 import qlChartTemplate from '../shared/ql-chart-template';
@@ -149,7 +149,6 @@ export default {
     },
 
     chartsEngineConfig: {
-        nativeModules: nativeModules.BASE_NATIVE_MODULES,
         secrets: {},
         enableTelemetry: true,
         usEndpointPostfix: '',
@@ -199,20 +198,22 @@ export default {
     appSensitiveKeys: [CSP_HEADER, CSP_REPORT_TO_HEADER, SERVICE_USER_ACCESS_TOKEN_HEADER],
     appSensitiveHeaders: [CSP_HEADER, CSP_REPORT_TO_HEADER, SERVICE_USER_ACCESS_TOKEN_HEADER],
 
+    // zitadel
     isZitadelEnabled: isTrueArg(process.env.ZITADEL),
-
     clientId: process.env.CLIENT_ID || '',
     clientSecret: process.env.CLIENT_SECRET || '',
-
     zitadelProjectId: process.env.ZITADEL_PROJECT_ID || '',
-
     zitadelUri: process.env.ZITADEL_URI || '',
     zitadelInternalUri: process.env.ZITADEL_INTERNAL_URI || process.env.ZITADEL_URI,
     appHostUri: process.env.APP_HOST_URI || '',
     zitadelCookieSecret: process.env.ZITADEL_COOKIE_SECRET || '',
-
     serviceClientId: process.env.SERVICE_CLIENT_ID || '',
     serviceClientSecret: process.env.SERVICE_CLIENT_SECRET || '',
+
+    // auth
+    isAuthEnabled: isTrueArg(process.env.AUTH_ENABLED),
+    authTokenPublicKey: getEnvCert(process.env.AUTH_TOKEN_PUBLIC_KEY),
+    authManageLocalUsersDisabled: isTrueArg(process.env.AUTH_MANAGE_LOCAL_USERS_DISABLED),
 
     apiPrefix: '/api',
 } satisfies Partial<AppConfig>;

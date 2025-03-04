@@ -50,6 +50,8 @@ export type ResolvedConfig = {
     template?: keyof ChartTemplates;
     owner?: string;
     publicAuthor?: EntryPublicAuthor;
+    servicePlan?: string;
+    tenantFeatures?: Record<string, unknown>;
 };
 
 export type ReducedResolvedConfig = ResolvedConfig & {data: {shared: string | object}};

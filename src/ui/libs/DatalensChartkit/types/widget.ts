@@ -190,7 +190,7 @@ type AlertWidget = WidgetBase & {
     type: 'alert';
 };
 
-type D3Widget = WidgetBase & {type: 'd3'};
+type GravityChartsWidget = WidgetBase & {type: 'd3'};
 
 type BlankChartWidget = WidgetBase & {type: 'blank-chart'};
 
@@ -352,7 +352,7 @@ export type MarkupWidget = WidgetBaseWithData & {
 
 export type Widget =
     | GraphWidget
-    | D3Widget
+    | GravityChartsWidget
     | TableWidgetData
     | ControlWidget
     | MapWidget

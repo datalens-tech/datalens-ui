@@ -6,7 +6,7 @@ import {I18n} from 'i18n';
 import {getSdk} from 'libs/schematic-sdk';
 import {Feature, PLACE} from 'shared';
 import {DialogSuccessWithAction} from 'ui/components/DialogSuccessWithAction/DialogSuccessWithAction';
-import Utils from 'utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {NavigationEntry} from '../../../../../shared/schema';
 import type {ChangeLocation} from '../../types';
@@ -43,7 +43,7 @@ export const BatchMove = ({
 
     const entriesWithRights = React.useMemo(() => {
         return entries.filter((entry) =>
-            Utils.isEnabledFeature(Feature.UseMovePermAction)
+            isEnabledFeature(Feature.UseMovePermAction)
                 ? entry.permissions.admin === true
                 : entry.permissions.edit === true,
         );
@@ -90,7 +90,7 @@ export const BatchMove = ({
 
         for (const [index, entry] of entriesWithRights.entries()) {
             try {
-                await getSdk().us.moveEntry(
+                await getSdk().sdk.us.moveEntry(
                     {
                         entryId: entry.entryId,
                         destination: path,
@@ -98,7 +98,7 @@ export const BatchMove = ({
                     {concurrentId: CONCURRENT_ID},
                 );
             } catch (error) {
-                if (getSdk().isCancel(error)) {
+                if (getSdk().sdk.isCancel(error)) {
                     moveCancelled.current = true;
                     break;
                 }

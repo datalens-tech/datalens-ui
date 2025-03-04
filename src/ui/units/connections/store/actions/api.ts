@@ -7,6 +7,8 @@ import type {
     AddGoogleSheetResponse,
     AddYandexDocumentResponse,
     ApplySourceSettingsArgs,
+    DownloadPresignedUrlArgs,
+    DownloadPresignedUrlResponse,
     FormSchema,
     GetConnectorSchemaArgs,
     GetConnectorsResponse,
@@ -18,6 +20,7 @@ import type {
     GetOAuthTokenResponse,
     GetOAuthUriArgs,
     GetOAuthUriResponse,
+    GetPresignedUrlResponse,
     RefreshToken,
     UpdateFileSourceArgs,
     UpdateFileSourceResponse,
@@ -40,7 +43,7 @@ const fetchEntry = async (
     error?: DataLensApiError;
 }> => {
     try {
-        const entry = await getSdk().us.getEntry({
+        const entry = await getSdk().sdk.us.getEntry({
             entryId,
             includePermissionsInfo: true,
         });
@@ -59,7 +62,7 @@ const fetchConnectionData = async (
     error?: DataLensApiError;
 }> => {
     try {
-        const connectionData = await getSdk().bi.getConnection({connectionId, workbookId});
+        const connectionData = await getSdk().sdk.bi.getConnection({connectionId, workbookId});
         return {connectionData};
     } catch (error) {
         logger.logError('Redux actions (conn): fetchConnectionData failed', error);
@@ -73,7 +76,7 @@ const fetchConnectors = async (): Promise<
     }
 > => {
     try {
-        return await getSdk().bi.getConnectors();
+        return await getSdk().sdk.bi.getConnectors();
     } catch (error) {
         logger.logError('Redux actions (conn): fetchConnectors failed', error);
         return {result: [], error};
@@ -88,7 +91,7 @@ const fetchConnectorSchema = async ({
     error?: DataLensApiError;
 }> => {
     try {
-        const {form: schema} = await getSdk().bi.getConnectorSchema({type, mode});
+        const {form: schema} = await getSdk().sdk.bi.getConnectorSchema({type, mode});
         return {schema};
     } catch (error) {
         logger.logError('Redux actions (conn): fetchConnectorForm failed', error);
@@ -112,7 +115,7 @@ const createConnection = async (
     form: FormDict,
 ): Promise<{id?: string; error?: DataLensApiError}> => {
     try {
-        const {id} = await getSdk().bi.createConnection(form);
+        const {id} = await getSdk().sdk.bi.createConnection(form);
         reachMetricaGoal(CounterName.Main, GoalId.ConnectionCreateSubmit, {
             type: form.type,
         });
@@ -129,7 +132,7 @@ const updateConnection = async (
     dbType: string,
 ): Promise<{error?: DataLensApiError}> => {
     try {
-        await getSdk().bi.updateConnection({...form, connectionId});
+        await getSdk().sdk.bi.updateConnection({...form, connectionId});
         reachMetricaGoal(CounterName.Main, GoalId.ConnectionEditSubmit, {
             type: dbType,
         });
@@ -142,7 +145,7 @@ const updateConnection = async (
 
 const checkConnectionParams = async (params: FormDict): Promise<CheckData> => {
     try {
-        await getSdk().bi.verifyConnectionParams(params);
+        await getSdk().sdk.bi.verifyConnectionParams(params);
         return {status: 'success', error: undefined};
     } catch (error) {
         logger.logError('Redux actions (conn): checkConnectionParams failed', error);
@@ -156,7 +159,7 @@ const checkConnection = async (
     workbookId: string | null,
 ): Promise<CheckData> => {
     try {
-        await getSdk().bi.verifyConnection({...params, connectionId, workbookId});
+        await getSdk().sdk.bi.verifyConnection({...params, connectionId, workbookId});
         return {status: 'success', error: undefined};
     } catch (error) {
         logger.logError('Redux actions (conn): checkConnection failed', error);
@@ -174,7 +177,7 @@ const copyTemplate = async (
     workbookId?: string;
 }> => {
     try {
-        const {entryId, workbookId: templateWorkbookId} = await getSdk().us.copyTemplate(
+        const {entryId, workbookId: templateWorkbookId} = await getSdk().sdk.us.copyTemplate(
             {connectionId, templateName, workbookId},
             {timeout: TIMEOUT_65_SEC},
         );
@@ -205,7 +208,7 @@ const checkFileStatus = async (
     fileId: string,
 ): Promise<{status: GetFileStatusResponse['status']; error?: DataLensApiError}> => {
     try {
-        const {status, error} = await getSdk().biConverter.getFileStatus({fileId});
+        const {status, error} = await getSdk().sdk.biConverter.getFileStatus({fileId});
 
         if (status === 'failed') {
             const code = error?.code;
@@ -230,7 +233,7 @@ const checkFileSourceStatus = async (
     sourceId: string,
 ): Promise<{status: GetFileSourceStatusResponse['status']; error?: DataLensApiError}> => {
     try {
-        const {status} = await getSdk().biConverter.getFileSourceStatus({
+        const {status} = await getSdk().sdk.biConverter.getFileSourceStatus({
             fileId,
             sourceId,
         });
@@ -250,7 +253,7 @@ const fetchFileSources = async (
     fileId: string,
 ): Promise<{sources: GetFileSourcesResponse['sources']; error?: DataLensApiError}> => {
     try {
-        const {sources} = await getSdk().biConverter.getFileSources({fileId});
+        const {sources} = await getSdk().sdk.biConverter.getFileSources({fileId});
         return {sources};
     } catch (error) {
         logger.logError('Redux actions (conn): fetchFileSources failed', error);
@@ -264,7 +267,7 @@ const updateFileSource = async (
     columnTypes?: UpdateFileSourceArgs['column_types'],
 ): Promise<{source: UpdateFileSourceResponse} | {sourceId: string; error: DataLensApiError}> => {
     try {
-        const source = await getSdk().biConverter.updateFileSource({
+        const source = await getSdk().sdk.biConverter.updateFileSource({
             fileId,
             sourceId,
             column_types: columnTypes,
@@ -283,7 +286,7 @@ const applySourceSettings = async (
     title?: string,
 ): Promise<{error?: DataLensApiError}> => {
     try {
-        await getSdk().biConverter.applySourceSettings({
+        await getSdk().sdk.biConverter.applySourceSettings({
             fileId,
             sourceId,
             data_settings: settings,
@@ -308,7 +311,7 @@ const addGoogleSheet = async ({
     refreshToken?: RefreshToken;
 }): Promise<{gsheet?: AddGoogleSheetResponse; error?: DataLensApiError}> => {
     try {
-        const gsheet = await getSdk().biConverter.addGoogleSheet({
+        const gsheet = await getSdk().sdk.biConverter.addGoogleSheet({
             type: 'gsheets',
             url,
             authorized,
@@ -326,7 +329,7 @@ const updateS3BasedConnectionData = async (
     args: UpdateS3BasedConnectionDataArgs,
 ): Promise<{files: UpdateS3BasedConnectionDataResponse['files']; error?: DataLensApiError}> => {
     try {
-        const {files} = await getSdk().biConverter.updateS3BasedConnectionData(args);
+        const {files} = await getSdk().sdk.biConverter.updateS3BasedConnectionData(args);
         return {files};
     } catch (error) {
         logger.logError('Redux actions (conn): addGoogleSheet failed', error);
@@ -348,7 +351,7 @@ const addYandexDocument = async ({
     oauthToken?: string;
 }): Promise<{document?: AddYandexDocumentResponse; error?: DataLensApiError}> => {
     try {
-        const document = await getSdk().biConverter.addYandexDocument({
+        const document = await getSdk().sdk.biConverter.addYandexDocument({
             authorized,
             connection_id: connectionId,
             type: 'yadocs',
@@ -367,7 +370,7 @@ const getOAuthUrl = async (
     args: GetOAuthUriArgs,
 ): Promise<GetOAuthUriResponse & {error?: DataLensApiError}> => {
     try {
-        return await getSdk().bi.getOAuthUri(args);
+        return await getSdk().sdk.bi.getOAuthUri(args);
     } catch (error) {
         return {uri: '', error};
     }
@@ -377,9 +380,58 @@ const getOAuthToken = async (
     args: GetOAuthTokenArgs,
 ): Promise<Partial<GetOAuthTokenResponse> & {error?: DataLensApiError}> => {
     try {
-        return await getSdk().bi.getOAuthToken(args);
+        return await getSdk().sdk.bi.getOAuthToken(args);
     } catch (error) {
         return {access_token: '', error};
+    }
+};
+
+const getPresignedUrl = async (): Promise<GetPresignedUrlResponse & {error?: DataLensApiError}> => {
+    try {
+        return await getSdk().sdk.biConverter.getPresignedUrl();
+    } catch (error) {
+        return {url: '', fields: {}, error};
+    }
+};
+
+const uploadFileToS3 = async (
+    args: GetPresignedUrlResponse & {file: File},
+): Promise<{error?: DataLensApiError}> => {
+    const {fields, file, url} = args;
+
+    try {
+        const formData = new FormData();
+        Object.entries(fields).forEach(([key, value]) => {
+            formData.append(key, value);
+        });
+        formData.append('file', file);
+        /*
+            Why don't we need axios here?
+
+            DL axios instance has a lot of predefined settings, for example `withCredentials: true` that
+            we don't need in this request. Also we don't want to send any headers, except Content-Type,
+            but this header is sets automatically by using FormData object in `fetch` body
+            (more details https://muffinman.io/blog/uploading-files-using-fetch-multipart-form-data)
+        */
+        await fetch(url, {method: 'POST', body: formData});
+
+        return {};
+    } catch (error) {
+        return {error};
+    }
+};
+
+const downloadPresignedUrl = async (
+    args: DownloadPresignedUrlArgs,
+): Promise<DownloadPresignedUrlResponse & {error?: DataLensApiError}> => {
+    const {filename, key} = args;
+    try {
+        return await getSdk().sdk.biConverter.downloadPresignedUrl({
+            filename,
+            key,
+        });
+    } catch (error) {
+        return {file_id: '', filename: '', error};
     }
 };
 
@@ -405,4 +457,7 @@ export const api = {
     addYandexDocument,
     getOAuthUrl,
     getOAuthToken,
+    getPresignedUrl,
+    uploadFileToS3,
+    downloadPresignedUrl,
 };

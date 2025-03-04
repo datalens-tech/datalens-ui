@@ -39,6 +39,7 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
     }
 
     const isZitadelEnabled = req.ctx.config.isZitadelEnabled;
+    const isAuthEnabled = req.ctx.config.isAuthEnabled;
 
     // TODO: check and remove optional props;
     let user: DLUser = {lang} as DLUser;
@@ -51,6 +52,18 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         const userInfo = getUserInfo(req, res);
         iamUserId = userInfo.uid as string;
         user = {...user, ...userInfo};
+    }
+
+    if (isAuthEnabled) {
+        const authUser = req.ctx.get('user');
+        iamUserId = authUser?.userId as string;
+        const profile = authUser?.profile;
+        user = {
+            ...user,
+            uid: iamUserId,
+            roles: authUser?.roles,
+            ...profile,
+        };
     }
 
     const DL: DLGlobalData = {
@@ -69,9 +82,11 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         allowLanguages,
         headersMap: req.ctx.config.headersMap,
         isZitadelEnabled,
+        isAuthEnabled,
         ymapApiKey: config.chartkitSettings?.yandexMap?.token,
         connectorIcons: res.locals.connectorIcons,
         apiPrefix: config.apiPrefix,
+        releaseVersion: config.releaseVersion,
         ...appLayoutSettings.DL,
     };
     const renderConfig: RenderParams<{DL: DLGlobalData}> = {

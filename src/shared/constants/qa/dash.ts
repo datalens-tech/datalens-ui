@@ -38,7 +38,6 @@ export enum DashRevisions {
     EXPANDABLE_PANEL = 'expandable-panel',
     EXPANDABLE_PANEL_COLLAPSED_BTN = 'expandable-panel-toggle-btn-collapsed',
     EXPANDABLE_PANEL_EXPANDED_BTN = 'expandable-panel-toggle-btn-expanded',
-    EXPANDABLE_PANEL_CLOSE = 'expandable-panel-close',
 }
 
 export enum DashEntryQa {
@@ -77,6 +76,7 @@ export enum DashCommonQa {
     WidgetSelectBackgroundButton = 'dialog-widget-settings-select-background-button',
     WidgetSelectBackgroundPalleteContainer = 'dialog-widget-settings-select-background-pallete-container',
     RelationsDialogEmptyText = 'dialog-relations-empty-text',
+    RelationsWidgetSelect = 'dialog-relations-widget-select',
     RelationsDisconnectAllSwitcher = 'dialog-relations-disconnect-all-switcher',
     RelationsDisconnectAllSelectors = 'dialog-relations-disconnect-all-selectors',
     RelationsDisconnectAllWidgets = 'dialog-relations-disconnect-all-widgets',

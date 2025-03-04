@@ -32,12 +32,12 @@ import {
     WidgetKind,
 } from 'shared';
 import {isEmbeddedEntry} from 'ui/utils/embedded';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {ChartWidgetData} from '../../../../../components/Widgets/Chart/types';
 import {registry} from '../../../../../registry';
 import type {WidgetType} from '../../../../../units/dash/modules/constants';
-import Utils from '../../../../../utils';
-import {chartToTable} from '../../../ChartKit/helpers/d3-chart-to-table';
+import {chartToTable} from '../../../ChartKit/helpers/gravity-charts/chart-to-table';
 import {isNavigatorSerie} from '../../../ChartKit/modules/graph/config/config';
 import type {
     ChartKitLoadSuccess,
@@ -398,7 +398,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                 case WidgetKind.Graph: {
                     return ChartsDataProvider.graphToTable(processed);
                 }
-                case WidgetKind.D3: {
+                case WidgetKind.GravityCharts: {
                     return {
                         ...processed,
                         type: 'table',
@@ -656,7 +656,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
 
         try {
             const result = await this.makeRequest({
-                url: `${DL.API_PREFIX}/run-action`,
+                url: `${this.requestEndpoint}${DL.API_PREFIX}/run-action`,
                 data: {
                     id,
                     key,
@@ -859,7 +859,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             ...(contextHeaders ?? {}),
             [REQUEST_ID_HEADER]: requestId,
         };
-        if (Utils.isEnabledFeature(Feature.UseComponentHeader)) {
+        if (isEnabledFeature(Feature.UseComponentHeader)) {
             headers[DL_COMPONENT_HEADER] = DlComponentHeader.UI;
         }
 

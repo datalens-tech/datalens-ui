@@ -1,0 +1,31 @@
+.service-settings {
+    $baseClass: &;
+
+    min-height: 100vh;
+    padding: var(--g-spacing-5) var(--g-spacing-6);
+    width: 100%;
+
+    &__header {
+        margin: 0;
+    }
+
+    &__section {
+        width: 520px;
+        margin-top: var(--g-spacing-3);
+    }
+
+    &__loader {
+        width: 100%;
+        margin-top: var(--g-spacing-6);
+        display: flex;
+        justify-content: center;
+    }
+
+    &__tabs {
+        margin-top: var(--g-spacing-3);
+    }
+
+    &__tabs-content {
+        width: 100%;
+    }
+}

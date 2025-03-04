@@ -1,6 +1,6 @@
 {
   "button_access-rights": "Request permissions",
-  "button_save-as": "Save as",
+  "button_save-as": "Save as copy",
   "label_no-rights-text": "This chart is read-only. Request write permissions or save changes as a new chart",
   "section_no-rights-title": "No write permissions"
 }

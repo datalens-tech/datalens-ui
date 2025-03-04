@@ -5,8 +5,13 @@
     height: 100%;
     width: 100%;
     min-height: 44px;
-    background-color: var(--g-color-base-float);
+    background-color: var(--dl-color-dashkit-control-background, var(--g-color-base-float));
     border-radius: 3px;
+
+    &__header {
+        margin-top: 8px;
+        width: 100%;
+    }
 
     &_static {
         display: flex;
@@ -39,6 +44,11 @@
         flex-wrap: wrap;
         padding-bottom: 8px;
         align-items: flex-end;
+    }
+
+    &__controls-title {
+        display: block;
+        width: 100%;
     }
 
     &__control-container {

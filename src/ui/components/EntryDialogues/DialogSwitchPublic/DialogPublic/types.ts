@@ -62,6 +62,7 @@ export type State = {
         title: string;
         description?: string;
     };
+    hasLockedEntries: boolean;
     onClose: DialogPublicCloseCallback;
 };
 

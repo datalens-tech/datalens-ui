@@ -3,6 +3,7 @@ import React from 'react';
 import {useLatex} from '@diplodoc/latex-extension/react';
 import {useMermaid} from '@diplodoc/mermaid-extension/react';
 import {getThemeType, useThemeValue} from '@gravity-ui/uikit';
+import dompurify from 'dompurify';
 import type {DebouncedFunc} from 'lodash';
 import debounce from 'lodash/debounce';
 import {YfmMetaScripts} from 'shared/constants/yfm';
@@ -82,7 +83,10 @@ export const YfmWrapper = React.forwardRef<HTMLDivElement, Omit<YfmWrapperProps,
                 );
 
                 if (latexNodes.length) {
-                    renderLatex({nodes: latexNodes}).then(() => {
+                    renderLatex({
+                        nodes: latexNodes,
+                        sanitize: dompurify.sanitize,
+                    }).then(() => {
                         props.onRenderCallback?.();
                     });
                 }

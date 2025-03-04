@@ -3,6 +3,8 @@ export enum Feature {
     UseConfigurableChartkit = 'UseConfigurableChartkit',
     Ql = 'ql',
     HideOldRelations = 'hideOldRelations',
+    // Show new relations button in navigation action panel
+    ShowNewRelationsButton = 'ShowNewRelationsButton',
     AsideHeaderEnabled = 'AsideHeaderEnabled',
     FieldEditorDocSection = 'FieldEditorDocSection',
     UsePublicDistincts = 'UsePublicDistincts',
@@ -36,14 +38,11 @@ export enum Feature {
     // The ability to upload xlsx files for file connections
     XlsxFilesEnabled = 'XlsxFilesEnabled',
     XlsxChartExportEnabled = 'XlsxChartExportEnabled',
-    // Escaping field values in chart tooltips (only scatter, treemap, geopoints visualizations)
-    EscapeUserHtmlInDefaultHcTooltip = 'EscapeUserHtmlInDefaultHcTooltip',
     HolidaysOnChart = 'HolidaysOnChart',
     ReadOnlyMode = 'ReadOnlyMode',
     MenuItemsFlatView = 'MenuItemsFlatView',
     EntryMenuItemCopy = 'EntryMenuItemCopy',
     EntryMenuItemMove = 'EntryMenuItemMove',
-    EntryMenuEditor = 'EntryMenuEditor',
     ExternalSelectors = 'ExternalSelectors',
     DashBoardWidgetParamsStrictValidation = 'DashBoardWidgetParamsStrictValidation',
     D3Visualizations = 'D3Visualizations',
@@ -63,8 +62,6 @@ export enum Feature {
     EnableServerlessEditor = 'EnableServerlessEditor',
     EnableFooter = 'EnableFooter',
     MassRemoveCollectionsWorkbooks = 'MassRemoveCollectionsWorkbooks',
-    /* Enable dashboard fixed header */
-    EnableDashFixedHeader = 'EnableDashFixedHeader',
     EnableEmbedsInDialogShare = 'EnableEmbedsInDialogShare',
     EnableEntryMenuItemShare = 'EnableEntryMenuItemShare',
     NewTableWidgetForCE = 'NewTableWidgetForCE',
@@ -76,10 +73,12 @@ export enum Feature {
     UseMovePermAction = 'UseMovePermAction',
     /** An empty chart for drawing something unusual */
     BlankChart = 'BlankChart',
-    /** Add a setting to display html in wizard */
-    HtmlInWizard = 'HtmlInWizard',
     /** Additional chart config for making requests by widget events */
     ChartActions = 'ChartActions',
+    /** Disable the use of html and function in chart configs */
+    DisableFnAndHtml = 'DisableFnAndHtml',
+    /** Enable using of presigned urls for uploading files to S3 */
+    EnableFileUploadingByPresignedUrl = 'EnableFileUploadingByPresignedUrl',
 }
 
 export type FeatureConfig = Record<string, boolean>;

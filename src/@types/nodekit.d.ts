@@ -1,10 +1,11 @@
 import type {Link, Meta} from '@gravity-ui/app-layout';
 import type {Request, Response} from '@gravity-ui/expresskit';
 
+import type {CtxUser} from '../server/components/auth/types/user';
 import type {RedisConfig} from '../server/components/cache-client';
 import type {ChartTemplates} from '../server/components/charts-engine/components/chart-generator';
 import type {SourceConfig} from '../server/components/charts-engine/types';
-import type {AppEnvironment} from '../shared';
+import type {AppEnvironment, LandingPageSettings} from '../shared';
 import type {FeatureConfig} from '../shared/types';
 
 export interface SharedAppConfig {
@@ -35,12 +36,14 @@ export interface SharedAppConfig {
     runResponseWhitelist?: string[];
     allowBodyConfig: boolean;
     chartsEngineConfig: {
-        nativeModules: Record<string, unknown>;
         secrets: Record<string, string>;
         enableTelemetry: boolean;
         flags?: Record<string, boolean>;
         usEndpointPostfix: string;
         dataFetcherProxiedHeaders?: string[];
+        maxWorkers?: number;
+        includeServicePlan?: boolean;
+        includeTenantFeatures?: true;
     };
     // CHARTS ENGINE -- FINISH
 
@@ -70,25 +73,28 @@ export interface SharedAppConfig {
         };
     };
 
+    // zitadel
     isZitadelEnabled: boolean;
-
     clientId?: string;
     clientSecret?: string;
-
     zitadelProjectId?: string;
-
     zitadelUri?: string;
     zitadelInternalUri?: string;
     appHostUri?: string;
     zitadelCookieSecret?: string;
-
     serviceClientId?: string;
     serviceClientSecret?: string;
+
+    // auth
+    isAuthEnabled: boolean;
+    authTokenPublicKey?: string;
+    authManageLocalUsersDisabled?: boolean;
 
     chartTemplates: Partial<Record<keyof ChartTemplates, unknown>>;
     redis: RedisConfig | null;
     apiPrefix: string;
     preloadList?: string[];
+    releaseVersion?: string;
 }
 
 export interface SharedAppDynamicConfig {
@@ -111,11 +117,17 @@ export interface SharedAppContextParams {
         ) => Promise<ResolveEntryByLinkComponentResponse>;
     };
 
+    sources: {
+        reqBody: Request['body'];
+    };
+
     getAppLayoutSettings: (req: Request, res: Response, name?: string) => AppLayoutSettings;
     landingPageSettings?: LandingPageSettings;
 
     i18n: ServerI18n;
     tenantId?: string;
+
+    user?: CtxUser;
 }
 
 declare module '@gravity-ui/nodekit' {

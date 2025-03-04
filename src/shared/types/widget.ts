@@ -5,7 +5,7 @@ export enum WizardType {
     MetricWizardNode = 'metric_wizard_node',
     MarkupWizardNode = 'markup_wizard_node',
     TimeseriesWizardNode = 'timeseries_wizard_node',
-    D3WizardNode = 'd3_wizard_node',
+    GravityChartsWizardNode = 'd3_wizard_node',
 }
 
 export enum LegacyEditorType {
@@ -28,6 +28,8 @@ export enum EditorType {
     ControlNode = 'control_node',
     MarkdownNode = 'markdown_node',
     MarkupNode = 'markup_node',
+    GravityChartsNode = 'd3_node',
+    BlankChartNode = 'blank-chart_node',
 }
 
 export enum WidgetKind {
@@ -41,7 +43,7 @@ export enum WidgetKind {
     Control = 'control',
     Markdown = 'markdown',
     Markup = 'markup',
-    D3 = 'd3',
+    GravityCharts = 'd3',
     BlankChart = 'blank-chart',
 }
 

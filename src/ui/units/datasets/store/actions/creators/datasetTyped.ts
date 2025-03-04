@@ -17,13 +17,22 @@ import type {GetPreviewResponse, ValidateDatasetResponse} from 'shared/schema';
 import {sdk} from 'ui';
 import {BI_ERRORS} from 'ui/constants';
 import {addEditHistoryPoint, resetEditHistoryUnit} from 'ui/store/actions/editHistory';
+import {EDIT_HISTORY_ACTION} from 'ui/store/constants/editHistory';
+import type {EditHistoryUnit} from 'ui/store/reducers/editHistory';
 import Utils from 'ui/utils';
 
 import type {ApplyData} from '../../../../../components/DialogFilter/DialogFilter';
 import logger from '../../../../../libs/logger';
 import {getSdk} from '../../../../../libs/schematic-sdk';
 import {getFilteredObject} from '../../../../../utils';
-import {DATASETS_EDIT_HISTORY_UNIT_ID, TOASTERS_NAMES} from '../../../constants';
+import {
+    DATASETS_EDIT_HISTORY_UNIT_ID,
+    TAB_DATASET,
+    TAB_FILTERS,
+    TAB_SOURCES,
+    TOASTERS_NAMES,
+} from '../../../constants';
+import {EDIT_HISTORY_OPTIONS_KEY} from '../../constants';
 import {
     datasetContentSelector,
     datasetFieldsSelector,
@@ -38,9 +47,13 @@ import type {
     ConnectionEntry,
     DatasetError,
     DatasetReduxAction,
+    DatasetReduxState,
+    EditHistoryOptions,
     EditorItemToDisplay,
     FreeformSource,
-    SetEditHistoryState,
+    SetCurrentTab,
+    SetLastModifiedTab,
+    SetValidationState,
     ToggleAllowanceSave,
     Update,
 } from '../../types';
@@ -90,12 +103,19 @@ export function renameDataset(key: string) {
         payload: key,
     };
 }
-
+//
 export function toggleSaveDataset(args: ToggleAllowanceSave['payload']): DatasetReduxAction {
-    const {enable = true, validationPending} = args;
+    const {enable = true, validationPending, [EDIT_HISTORY_OPTIONS_KEY]: editHistoryOptions} = args;
     return {
         type: DATASET_ACTION_TYPES.TOGGLE_ALLOWANCE_SAVE,
-        payload: {enable, validationPending},
+        payload: {
+            enable,
+            validationPending,
+            [EDIT_HISTORY_OPTIONS_KEY]: {
+                stacked: true,
+                ...editHistoryOptions,
+            },
+        },
     };
 }
 
@@ -173,7 +193,7 @@ const dispatchFetchPreviewDataset = async (
         let previewDataset: GetPreviewResponse = {};
 
         if (resultSchema.length && !isLoading) {
-            previewDataset = await getSdk().bi.getPreview(
+            previewDataset = await getSdk().sdk.bi.getPreview(
                 {
                     datasetId,
                     workbookId,
@@ -192,6 +212,9 @@ const dispatchFetchPreviewDataset = async (
             type: DATASET_ACTION_TYPES.PREVIEW_DATASET_FETCH_SUCCESS,
             payload: {
                 data: data || regular,
+                [EDIT_HISTORY_OPTIONS_KEY]: {
+                    stacked: true,
+                },
             },
         });
     } catch (error) {
@@ -201,6 +224,9 @@ const dispatchFetchPreviewDataset = async (
                 type: DATASET_ACTION_TYPES.PREVIEW_DATASET_FETCH_FAILURE,
                 payload: {
                     error,
+                    [EDIT_HISTORY_OPTIONS_KEY]: {
+                        stacked: true,
+                    },
                 },
             });
         }
@@ -278,12 +304,20 @@ export function queuedFetchPreviewDataset() {
     };
 }
 
-export function toggleLoadPreviewByDefault(enable: boolean) {
+export function toggleLoadPreviewByDefault(
+    enable: boolean,
+    editHistoryOptions?: EditHistoryOptions,
+) {
     return (dispatch: DatasetDispatch, getState: GetState) => {
         if (isLoadPreviewByDefaultSelector(getState()) !== enable) {
             dispatch({
                 type: DATASET_ACTION_TYPES.TOGGLE_LOAD_PREVIEW_BY_DEFAULT,
-                payload: {enable},
+                payload: {
+                    enable,
+                    [EDIT_HISTORY_OPTIONS_KEY]: {
+                        ...editHistoryOptions,
+                    },
+                },
             });
 
             dispatch(toggleSaveDataset({enable: true}));
@@ -291,72 +325,61 @@ export function toggleLoadPreviewByDefault(enable: boolean) {
     };
 }
 
-export function changeAmountPreviewRows({amountPreviewRows}: {amountPreviewRows: number}) {
+export function changeAmountPreviewRows({
+    amountPreviewRows,
+    editHistoryOptions,
+}: {
+    amountPreviewRows: number;
+    editHistoryOptions?: EditHistoryOptions;
+}) {
     return (dispatch: DatasetDispatch) => {
         dispatch({
             type: DATASET_ACTION_TYPES.CHANGE_AMOUNT_PREVIEW_ROWS,
             payload: {
                 amountPreviewRows,
+                [EDIT_HISTORY_OPTIONS_KEY]: {
+                    ...editHistoryOptions,
+                },
             },
         });
     };
 }
 
-export function duplicateField(field: DatasetField) {
+export function duplicateField(field: DatasetField, editHistoryOptions?: EditHistoryOptions) {
     return (dispatch: DatasetDispatch) => {
         dispatch({
             type: DATASET_ACTION_TYPES.DUPLICATE_FIELD,
             payload: {
                 field,
+                [EDIT_HISTORY_OPTIONS_KEY]: {
+                    ...editHistoryOptions,
+                },
             },
         });
     };
 }
-export function deleteField(field: Partial<DatasetField>) {
-    return (dispatch: DatasetDispatch) => {
-        dispatch({
-            type: DATASET_ACTION_TYPES.DELETE_FIELD,
-            payload: {
-                field,
-            },
-        });
-    };
-}
-export function batchDeleteFields(fields: Partial<DatasetField>[]) {
+
+export function batchDeleteFields(
+    fields: Partial<DatasetField>[],
+    editHistoryOptions?: EditHistoryOptions,
+) {
     return (dispatch: DatasetDispatch) => {
         dispatch({
             type: DATASET_ACTION_TYPES.BATCH_DELETE_FIELDS,
             payload: {
                 fields,
+                [EDIT_HISTORY_OPTIONS_KEY]: {
+                    ...editHistoryOptions,
+                },
             },
         });
     };
 }
-export function addField(field: Partial<DatasetField>, ignoreMergeWithSchema?: boolean) {
-    return (dispatch: DatasetDispatch) => {
-        dispatch({
-            type: DATASET_ACTION_TYPES.ADD_FIELD,
-            payload: {
-                field,
-                ignoreMergeWithSchema,
-            },
-        });
-    };
-}
-export function updateField(field: Partial<DatasetField>, ignoreMergeWithSchema?: boolean) {
-    return (dispatch: DatasetDispatch) => {
-        dispatch({
-            type: DATASET_ACTION_TYPES.UPDATE_FIELD,
-            payload: {
-                field,
-                ignoreMergeWithSchema,
-            },
-        });
-    };
-}
+
 export function batchUpdateFields(
     fields: Partial<DatasetField>[],
     ignoreMergeWithSchema?: boolean,
+    editHistoryOptions?: EditHistoryOptions,
 ) {
     return (dispatch: DatasetDispatch) => {
         dispatch({
@@ -364,17 +387,24 @@ export function batchUpdateFields(
             payload: {
                 fields,
                 ignoreMergeWithSchema,
+                [EDIT_HISTORY_OPTIONS_KEY]: {
+                    ...editHistoryOptions,
+                },
             },
         });
     };
 }
 
-export function updateRLS(rls: {[key: string]: string}) {
+export function updateRLS(rls: {[key: string]: string}, editHistoryOptions?: EditHistoryOptions) {
     return (dispatch: DatasetDispatch) => {
         dispatch({
             type: DATASET_ACTION_TYPES.UPDATE_RLS,
             payload: {
                 rls,
+                [EDIT_HISTORY_OPTIONS_KEY]: {
+                    tab: TAB_DATASET,
+                    ...editHistoryOptions,
+                },
             },
         });
 
@@ -392,22 +422,40 @@ export function clickConnection({connectionId}: {connectionId: string}) {
         });
     };
 }
-export function addConnection({connection}: {connection: ConnectionEntry}) {
+export function addConnection({
+    connection,
+    editHistoryOptions,
+}: {
+    connection: ConnectionEntry;
+    editHistoryOptions?: EditHistoryOptions;
+}) {
     return (dispatch: DatasetDispatch) => {
         dispatch({
             type: DATASET_ACTION_TYPES.ADD_CONNECTION,
             payload: {
                 connection,
+                [EDIT_HISTORY_OPTIONS_KEY]: {
+                    ...editHistoryOptions,
+                },
             },
         });
     };
 }
-export function deleteConnection({connectionId}: {connectionId: string}) {
+export function deleteConnection({
+    connectionId,
+    editHistoryOptions,
+}: {
+    connectionId: string;
+    editHistoryOptions?: EditHistoryOptions;
+}) {
     return (dispatch: DatasetDispatch, getState: GetState) => {
         dispatch({
             type: DATASET_ACTION_TYPES.DELETE_CONNECTION,
             payload: {
                 connectionId,
+                [EDIT_HISTORY_OPTIONS_KEY]: {
+                    ...editHistoryOptions,
+                },
             },
         });
 
@@ -447,49 +495,87 @@ export function addAvatarPrototypes({
     };
 }
 
-export function addSource({source}: {source: DatasetSource}) {
+export function addSource({
+    source,
+    editHistoryOptions,
+}: {
+    source: DatasetSource;
+    editHistoryOptions?: EditHistoryOptions;
+}) {
     return (dispatch: DatasetDispatch) => {
         dispatch({
             type: DATASET_ACTION_TYPES.SOURCE_ADD,
             payload: {
                 source,
+                [EDIT_HISTORY_OPTIONS_KEY]: {
+                    stacked: true,
+                    tab: TAB_SOURCES,
+                    ...editHistoryOptions,
+                },
             },
         });
     };
 }
-export function updateSource({source}: {source: DatasetSource}) {
+export function updateSource({
+    source,
+    editHistoryOptions,
+}: {
+    source: DatasetSource;
+    editHistoryOptions?: EditHistoryOptions;
+}) {
     return (dispatch: DatasetDispatch) => {
         dispatch({
             type: DATASET_ACTION_TYPES.SOURCE_UPDATE,
             payload: {
                 source,
+                [EDIT_HISTORY_OPTIONS_KEY]: {
+                    stacked: true,
+                    tab: TAB_SOURCES,
+                    ...editHistoryOptions,
+                },
             },
         });
     };
 }
-export function deleteSource({sourceId}: {sourceId: string}) {
+export function deleteSource({
+    sourceId,
+    editHistoryOptions,
+}: {
+    sourceId: string;
+    editHistoryOptions?: EditHistoryOptions;
+}) {
     return (dispatch: DatasetDispatch) => {
         dispatch({
             type: DATASET_ACTION_TYPES.SOURCE_DELETE,
             payload: {
                 sourceId,
+                [EDIT_HISTORY_OPTIONS_KEY]: {
+                    tab: TAB_SOURCES,
+                    ...editHistoryOptions,
+                },
             },
         });
     };
 }
-export function refreshSources() {
+export function refreshSources(editHistoryOptions?: EditHistoryOptions) {
     return (dispatch: DatasetDispatch) => {
         dispatch({
             type: DATASET_ACTION_TYPES.SOURCES_REFRESH,
+            [EDIT_HISTORY_OPTIONS_KEY]: {
+                tab: TAB_DATASET,
+                ...editHistoryOptions,
+            },
         });
     };
 }
 export function replaceSource({
     source,
     avatar,
+    editHistoryOptions,
 }: {
     source: DatasetSource;
     avatar: DatasetSourceAvatar;
+    editHistoryOptions?: EditHistoryOptions;
 }) {
     return (dispatch: DatasetDispatch) => {
         dispatch({
@@ -497,6 +583,10 @@ export function replaceSource({
             payload: {
                 source,
                 avatar,
+                [EDIT_HISTORY_OPTIONS_KEY]: {
+                    tab: TAB_SOURCES,
+                    ...editHistoryOptions,
+                },
             },
         });
     };
@@ -505,9 +595,11 @@ export function replaceSource({
 export function replaceConnection({
     connection,
     newConnection,
+    editHistoryOptions,
 }: {
     connection?: ConnectionEntry;
     newConnection?: ConnectionEntry;
+    editHistoryOptions?: EditHistoryOptions;
 }) {
     return (dispatch: DatasetDispatch) => {
         dispatch({
@@ -515,84 +607,157 @@ export function replaceConnection({
             payload: {
                 connection,
                 newConnection,
+                [EDIT_HISTORY_OPTIONS_KEY]: {
+                    tab: TAB_SOURCES,
+                    ...editHistoryOptions,
+                },
             },
         });
     };
 }
 
-export function addAvatar({avatar}: {avatar: DatasetSourceAvatar}) {
+export function addAvatar({
+    avatar,
+    editHistoryOptions,
+}: {
+    avatar: DatasetSourceAvatar;
+    editHistoryOptions?: EditHistoryOptions;
+}) {
     return (dispatch: DatasetDispatch) => {
         dispatch({
             type: DATASET_ACTION_TYPES.AVATAR_ADD,
             payload: {
                 avatar,
+                [EDIT_HISTORY_OPTIONS_KEY]: {
+                    stacked: true,
+                    tab: TAB_SOURCES,
+                    ...editHistoryOptions,
+                },
             },
         });
     };
 }
-export function deleteAvatar({avatarId}: {avatarId: string}) {
+export function deleteAvatar({
+    avatarId,
+    editHistoryOptions,
+}: {
+    avatarId: string;
+    editHistoryOptions?: EditHistoryOptions;
+}) {
     return (dispatch: DatasetDispatch) => {
         dispatch({
             type: DATASET_ACTION_TYPES.AVATAR_DELETE,
             payload: {
                 avatarId,
+                [EDIT_HISTORY_OPTIONS_KEY]: {
+                    tab: TAB_SOURCES,
+                    ...editHistoryOptions,
+                },
             },
         });
     };
 }
 
-export function addRelation({relation}: {relation: DatasetAvatarRelation}) {
+export function addRelation({
+    relation,
+    editHistoryOptions,
+}: {
+    relation: DatasetAvatarRelation;
+    editHistoryOptions?: EditHistoryOptions;
+}) {
     return (dispatch: DatasetDispatch) => {
         dispatch({
             type: DATASET_ACTION_TYPES.RELATION_ADD,
             payload: {
                 relation,
+                [EDIT_HISTORY_OPTIONS_KEY]: {
+                    tab: TAB_SOURCES,
+                    ...editHistoryOptions,
+                },
             },
         });
     };
 }
-export function updateRelation({relation}: {relation: DatasetAvatarRelation}) {
+export function updateRelation({
+    relation,
+    editHistoryOptions,
+}: {
+    relation: DatasetAvatarRelation;
+    editHistoryOptions?: EditHistoryOptions;
+}) {
     return (dispatch: DatasetDispatch) => {
         dispatch({
             type: DATASET_ACTION_TYPES.RELATION_UPDATE,
             payload: {
                 relation,
+                [EDIT_HISTORY_OPTIONS_KEY]: {
+                    tab: TAB_SOURCES,
+                    ...editHistoryOptions,
+                },
             },
         });
     };
 }
-export function deleteRelation({relationId}: {relationId: string}) {
+export function deleteRelation({
+    relationId,
+    editHistoryOptions,
+}: {
+    relationId: string;
+    editHistoryOptions?: EditHistoryOptions;
+}) {
     return (dispatch: DatasetDispatch) => {
         dispatch({
             type: DATASET_ACTION_TYPES.RELATION_DELETE,
             payload: {
                 relationId,
+                [EDIT_HISTORY_OPTIONS_KEY]: {
+                    tab: TAB_SOURCES,
+                    ...editHistoryOptions,
+                },
             },
         });
     };
 }
 
-export function addObligatoryFilter(filter: ApplyData) {
+export function addObligatoryFilter(filter: ApplyData, editHistoryOptions?: EditHistoryOptions) {
     return (dispatch: DatasetDispatch) => {
         dispatch({
             type: DATASET_ACTION_TYPES.ADD_OBLIGATORY_FILTER,
-            payload: {filter},
+            payload: {
+                filter,
+                [EDIT_HISTORY_OPTIONS_KEY]: {
+                    tab: TAB_FILTERS,
+                    ...editHistoryOptions,
+                },
+            },
         });
     };
 }
-export function updateObligatoryFilter(filter: ApplyData) {
+export function updateObligatoryFilter(filter: ApplyData, editHistoryOptions?: EditHistoryOptions) {
     return (dispatch: DatasetDispatch) => {
         dispatch({
             type: DATASET_ACTION_TYPES.UPDATE_OBLIGATORY_FILTER,
-            payload: {filter},
+            payload: {
+                filter,
+                [EDIT_HISTORY_OPTIONS_KEY]: {
+                    tab: TAB_FILTERS,
+                    ...editHistoryOptions,
+                },
+            },
         });
     };
 }
-export function deleteObligatoryFilter(filterId: string) {
+export function deleteObligatoryFilter(filterId: string, editHistoryOptions?: EditHistoryOptions) {
     return (dispatch: DatasetDispatch) => {
         dispatch({
             type: DATASET_ACTION_TYPES.DELETE_OBLIGATORY_FILTER,
-            payload: {id: filterId},
+            payload: {
+                id: filterId,
+                [EDIT_HISTORY_OPTIONS_KEY]: {
+                    tab: TAB_FILTERS,
+                    ...editHistoryOptions,
+                },
+            },
         });
     };
 }
@@ -602,15 +767,6 @@ export function toggleFieldEditorModuleLoader(isLoading: boolean) {
         dispatch({
             type: DATASET_ACTION_TYPES.TOGGLE_FIELD_EDITOR_MODULE_LOADING,
             payload: {isLoading},
-        });
-    };
-}
-
-export function setAsideHeaderWidth(width: number) {
-    return (dispatch: DatasetDispatch) => {
-        dispatch({
-            type: DATASET_ACTION_TYPES.SET_ASIDE_HEADER_WIDTH,
-            payload: {width},
         });
     };
 }
@@ -679,47 +835,117 @@ export function editorSetItemsToDisplay(itemsToDisplay: EditorItemToDisplay[]) {
     };
 }
 
-export function addFieldWithValidation(field: DatasetField) {
+export function addField(
+    field: Partial<DatasetField>,
+    ignoreMergeWithSchema?: boolean,
+    editHistoryOptions?: EditHistoryOptions,
+) {
+    return (dispatch: DatasetDispatch) => {
+        dispatch({
+            type: DATASET_ACTION_TYPES.ADD_FIELD,
+            payload: {
+                field,
+                ignoreMergeWithSchema,
+                [EDIT_HISTORY_OPTIONS_KEY]: {
+                    ...editHistoryOptions,
+                },
+            },
+        });
+    };
+}
+
+export function addFieldWithValidation(
+    field: DatasetField,
+    editHistoryOptions?: EditHistoryOptions,
+) {
     return (dispatch: DatasetDispatch) => {
         batch(() => {
-            dispatch(addField(field, true));
+            dispatch(addField(field, true, editHistoryOptions));
             dispatch(updateDatasetByValidation({updatePreview: true}));
         });
     };
 }
 
-export function deleteFieldWithValidation(field: DatasetField) {
+function deleteField(field: Partial<DatasetField>, editHistoryOptions?: EditHistoryOptions) {
+    return (dispatch: DatasetDispatch) => {
+        dispatch({
+            type: DATASET_ACTION_TYPES.DELETE_FIELD,
+            payload: {
+                field,
+                [EDIT_HISTORY_OPTIONS_KEY]: {
+                    ...editHistoryOptions,
+                },
+            },
+        });
+    };
+}
+export function deleteFieldWithValidation(
+    field: DatasetField,
+    editHistoryOptions?: EditHistoryOptions,
+) {
     return (dispatch: DatasetDispatch) => {
         batch(() => {
-            dispatch(deleteField(field));
+            dispatch(deleteField(field, editHistoryOptions));
             dispatch(updateDatasetByValidation({updatePreview: true}));
         });
     };
 }
 
-export function duplicateFieldWithValidation(field: DatasetField) {
+export function duplicateFieldWithValidation(
+    field: DatasetField,
+    editHistoryOptions?: EditHistoryOptions,
+) {
     return (dispatch: DatasetDispatch) => {
         batch(() => {
-            dispatch(duplicateField(field));
+            dispatch(duplicateField(field, editHistoryOptions));
             dispatch(updateDatasetByValidation({updatePreview: true}));
         });
     };
 }
 
-export function updateFieldWithValidation(field: DatasetField) {
+function updateField(
+    field: Partial<DatasetField>,
+    ignoreMergeWithSchema?: boolean,
+    editHistoryOptions?: EditHistoryOptions | null,
+) {
+    return (dispatch: DatasetDispatch) => {
+        dispatch({
+            type: DATASET_ACTION_TYPES.UPDATE_FIELD,
+            payload: {
+                field,
+                ignoreMergeWithSchema,
+                ...(editHistoryOptions === null
+                    ? {}
+                    : {
+                          [EDIT_HISTORY_OPTIONS_KEY]: {
+                              ...editHistoryOptions,
+                          },
+                      }),
+            },
+        });
+    };
+}
+
+export function updateFieldWithValidation(
+    field: DatasetField,
+    editHistoryOptions?: EditHistoryOptions,
+) {
     return (dispatch: DatasetDispatch) => {
         batch(() => {
-            dispatch(updateField(field));
+            dispatch(updateField(field, false, editHistoryOptions));
             dispatch(updateDatasetByValidation({updatePreview: true}));
         });
     };
 }
 
-export function updateFieldWithValidationByMultipleUpdates(fields: DatasetField[]) {
+export function updateFieldWithValidationByMultipleUpdates(
+    fields: DatasetField[],
+    editHistoryOptions?: EditHistoryOptions,
+) {
     return (dispatch: DatasetDispatch) => {
         batch(() => {
-            fields.forEach((field) => {
-                dispatch(updateField(field, true));
+            fields.forEach((field, index) => {
+                dispatch(updateField(field, true, index === 0 ? null : editHistoryOptions));
             });
             dispatch(updateDatasetByValidation({updatePreview: true}));
         });
@@ -746,7 +972,7 @@ export function validateDataset({compareContent, initial = false}: ValidateDatas
 
             const workbookId = workbookIdSelector(getState());
 
-            const validation = await getSdk().bi.validateDataset(
+            const validation = await getSdk().sdk.bi.validateDataset(
                 {
                     datasetId,
                     workbookId,
@@ -773,7 +999,7 @@ export function validateDataset({compareContent, initial = false}: ValidateDatas
                 dispatch(toggleSaveDataset({enable: true}));
             }
         } catch (error) {
-            if (!getSdk().isCancel(error)) {
+            if (!getSdk().sdk.isCancel(error)) {
                 const filteredError = getFilteredObject(error, [
                     'details.data.dataset',
                     'details.data.options',
@@ -792,6 +1018,8 @@ export function validateDataset({compareContent, initial = false}: ValidateDatas
 
                 if (!initial && error.status === 400 && activateSaveButton && !isFatalError) {
                     dispatch(toggleSaveDataset({enable: true}));
+                } else if (isFatalError) {
+                    dispatch(toggleSaveDataset({enable: false}));
                 }
 
                 dispatch({
@@ -807,25 +1035,75 @@ export function validateDataset({compareContent, initial = false}: ValidateDatas
     };
 }
 
-export function setEditHistoryState(payload: SetEditHistoryState['payload']): SetEditHistoryState {
-    return {
-        type: DATASET_ACTION_TYPES.SET_EDIT_HISTORY_STATE,
-        payload,
+export function setEditHistoryState({
+    state,
+    type,
+}: Parameters<EditHistoryUnit<DatasetReduxState>['setState']>[0]) {
+    return (dispatch: DatasetDispatch, getState: GetState) => {
+        const {lastModifiedTab: prevLastModifiedTab} = getState().dataset;
+        const {lastModifiedTab} = state;
+        const resultState = {...state};
+
+        switch (type) {
+            case EDIT_HISTORY_ACTION.UNDO: {
+                if (prevLastModifiedTab && prevLastModifiedTab !== lastModifiedTab) {
+                    resultState.currentTab = prevLastModifiedTab;
+                }
+                break;
+            }
+            case EDIT_HISTORY_ACTION.REDO: {
+                if (lastModifiedTab && prevLastModifiedTab !== lastModifiedTab) {
+                    resultState.currentTab = lastModifiedTab;
+                }
+            }
+        }
+
+        dispatch({
+            type: DATASET_ACTION_TYPES.SET_EDIT_HISTORY_STATE,
+            payload: {state: resultState},
+        });
     };
 }
 
-export type AddEditHistoryPointDsArgs = {
-    stacked?: boolean;
-};
-
-export function addEditHistoryPointDs({stacked}: AddEditHistoryPointDsArgs = {}) {
+export function addEditHistoryPointDs({stacked, tab}: EditHistoryOptions = {}) {
     return (dispatch: DatasetDispatch, getState: GetState) => {
-        dispatch(
-            addEditHistoryPoint({
-                unitId: DATASETS_EDIT_HISTORY_UNIT_ID,
-                newState: getState().dataset,
-                stacked,
-            }),
-        );
+        batch(() => {
+            const {lastModifiedTab} = getState().dataset;
+
+            if (tab && tab !== lastModifiedTab) {
+                dispatch(setLastModifiedTab({lastModifiedTab: tab}));
+            }
+
+            dispatch(
+                addEditHistoryPoint({
+                    unitId: DATASETS_EDIT_HISTORY_UNIT_ID,
+                    newState: getState().dataset,
+                    stacked: stacked,
+                }),
+            );
+        });
+    };
+}
+
+export function setCurrentTab({currentTab}: SetCurrentTab['payload']): SetCurrentTab {
+    return {
+        type: DATASET_ACTION_TYPES.SET_CURRENT_TAB,
+        payload: {currentTab},
+    };
+}
+
+export function setLastModifiedTab({
+    lastModifiedTab,
+}: SetLastModifiedTab['payload']): SetLastModifiedTab {
+    return {
+        type: DATASET_ACTION_TYPES.SET_LAST_MODIFIED_TAB,
+        payload: {lastModifiedTab},
+    };
+}
+
+export function setValidationState(payload: SetValidationState['payload']): SetValidationState {
+    return {
+        type: DATASET_ACTION_TYPES.SET_VALIDATION_STATE,
+        payload,
     };
 }

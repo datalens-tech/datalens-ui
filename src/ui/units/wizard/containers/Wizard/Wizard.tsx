@@ -14,6 +14,8 @@ import SplitPane from 'react-split-pane';
 import {compose} from 'recompose';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import {isDraftVersion} from 'ui/utils/revisions';
 
 import {
     DL,
@@ -34,7 +36,6 @@ import type {ChartsConfig} from '../../../../../shared';
 import {AccessRightsUrlOpen} from '../../../../components/AccessRights/AccessRightsUrlOpen';
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
 import withErrorPage from '../../../../components/ErrorPage/withErrorPage';
-import {isDraftVersion} from '../../../../components/Revisions/helpers';
 import type {RevisionEntry} from '../../../../components/Revisions/types';
 import {HOTKEYS_SCOPES} from '../../../../constants/misc';
 import {withHotkeysContext} from '../../../../hoc/withHotkeysContext';
@@ -462,7 +463,7 @@ class Wizard extends React.Component<Props, State> {
             {
                 action: () => this.openSaveAsWidgetDialog(true),
                 text: i18n('wizard', 'button_save-as-editor-script'),
-                hidden: !Utils.isEnabledFeature(Feature.EnableSaveAsEditorScript),
+                hidden: !isEnabledFeature(Feature.EnableSaveAsEditorScript),
                 qa: ChartSaveControlsQA.SaveAsEditorScript,
             },
         ];

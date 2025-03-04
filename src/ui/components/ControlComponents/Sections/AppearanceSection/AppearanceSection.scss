@@ -1,11 +1,12 @@
 .control2-appearance-section {
     &__setting-container {
         display: flex;
-        align-items: center;
+        align-items: flex-start;
         min-height: var(--gc-form-row-field-height);
     }
 
     &__setting-checkbox {
-        margin-right: 8px;
+        margin-block-start: var(--g-spacing-1);
+        margin-inline-end: var(--g-spacing-2);
     }
 }

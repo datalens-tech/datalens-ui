@@ -1,0 +1,17 @@
+.service-settings-color-palettes {
+    &__header {
+        margin: 0;
+    }
+
+    &__content {
+        flex-direction: column;
+
+        &_tab {
+            margin-top: var(--g-spacing-6);
+        }
+    }
+
+    &__description {
+        margin: var(--g-spacing-3) 0 var(--g-spacing-4);
+    }
+}

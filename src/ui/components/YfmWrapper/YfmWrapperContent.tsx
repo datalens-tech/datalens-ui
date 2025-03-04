@@ -1,11 +1,12 @@
 import React from 'react';
 
-import '@diplodoc/transform/dist/js/yfm';
+import '@diplodoc/cut-extension/runtime';
+import '@diplodoc/tabs-extension/runtime';
+import '@diplodoc/transform/dist/js/_yfm-only';
+import '@diplodoc/transform/dist/js/base';
 
 import {YFM_MARKDOWN_CLASSNAME} from '../../constants/yfm';
 
-import '@diplodoc/transform/dist/css/yfm.css';
-// eslint-disable-next-line import/order
 import './YfmWrapperContent.scss';
 
 type YfmWrapperProps = {

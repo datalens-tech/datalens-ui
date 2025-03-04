@@ -1,11 +1,11 @@
 import {DL} from 'constants/common';
 
 import {Feature} from 'shared';
-import Utils from 'utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 export function getIsAsideHeaderEnabled() {
-    if (DL.IS_MOBILE || DL.IS_NOT_AUTHENTICATED) {
+    if (DL.IS_MOBILE || DL.IS_NOT_AUTHENTICATED || DL.IS_AUTH_PAGE) {
         return false;
     }
-    return Utils.isEnabledFeature(Feature.AsideHeaderEnabled);
+    return isEnabledFeature(Feature.AsideHeaderEnabled);
 }

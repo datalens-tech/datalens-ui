@@ -110,7 +110,12 @@ export const SubjectsList = ({resourceId, subjects, onUpdateSubjects}: Props) =>
                 tabId,
             });
 
-            const batchListArgs: SuggestBatchListMembersArgs = {id, search, pageToken};
+            const batchListArgs: SuggestBatchListMembersArgs = {
+                id,
+                search,
+                pageToken,
+                tabId,
+            };
 
             if (filter) {
                 batchListArgs.filter = filter;

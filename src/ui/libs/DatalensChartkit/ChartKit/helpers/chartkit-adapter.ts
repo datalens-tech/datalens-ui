@@ -1,10 +1,10 @@
 import type {ChartKitProps, ChartKitType} from '@gravity-ui/chartkit';
 import cloneDeep from 'lodash/cloneDeep';
 import get from 'lodash/get';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {Feature} from '../../../../../shared';
 import {DL} from '../../../../constants/common';
-import Utils from '../../../../utils';
 import type {GraphWidget, LoadedWidgetData} from '../../types';
 import type {ChartKitAdapterProps} from '../types';
 
@@ -14,7 +14,7 @@ import {
     applyTreemapLabelFormatter,
     fixPieTotals,
 } from './apply-hc-handlers';
-import {getD3ChartKitData} from './d3-chartkit-adapter';
+import {getGravityChartsChartKitData} from './gravity-charts/chartkit-adapter';
 import {extractHcTypeFromData, getNormalizedClickActions} from './utils';
 
 export const extractWidgetType = (data?: LoadedWidgetData) => {
@@ -86,7 +86,7 @@ export const getChartkitType = (data?: LoadedWidgetData): ChartKitType | undefin
         case 'table': {
             const isWizardOrQl = get(data, 'isNewWizard') || get(data, 'isQL');
 
-            if (isWizardOrQl || Utils.isEnabledFeature(Feature.NewTableWidgetForCE)) {
+            if (isWizardOrQl || isEnabledFeature(Feature.NewTableWidgetForCE)) {
                 chartkitType = 'table';
             }
 
@@ -203,7 +203,7 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
         }
         case 'd3': {
             const data = cloneDeep(loadedData) as GraphWidget;
-            return getD3ChartKitData({
+            return getGravityChartsChartKitData({
                 loadedData: data,
                 onChange,
             });

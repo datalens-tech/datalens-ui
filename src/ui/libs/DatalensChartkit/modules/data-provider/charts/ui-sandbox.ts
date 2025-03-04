@@ -1,3 +1,4 @@
+import {sanitizeUrl} from '@braintree/sanitize-url';
 import type {PointOptionsType} from 'highcharts';
 import escape from 'lodash/escape';
 import get from 'lodash/get';
@@ -5,8 +6,9 @@ import merge from 'lodash/merge';
 import pick from 'lodash/pick';
 import set from 'lodash/set';
 import type {InterruptHandler, QuickJSWASMModule} from 'quickjs-emscripten';
+import {chartStorage} from 'ui/libs/DatalensChartkit/ChartKit/plugins/chart-storage';
 
-import type {ChartKitHtmlItem} from '../../../../../../shared';
+import type {ChartKitHtmlItem, StringParams} from '../../../../../../shared';
 import {WRAPPED_FN_KEY, WRAPPED_HTML_KEY} from '../../../../../../shared';
 import type {UISandboxWrappedFunction} from '../../../../../../shared/types/ui-sandbox';
 import {wrapHtml} from '../../../../../../shared/utils/ui-sandbox';
@@ -18,7 +20,7 @@ import {
 import Performance from '../../../ChartKit/modules/perfomance';
 import type {UiSandboxRuntimeOptions} from '../../../types';
 import {generateHtml} from '../../html-generator';
-import {getParseHtmlFn, validateUrl} from '../../html-generator/utils';
+import {getParseHtmlFn} from '../../html-generator/utils';
 
 import {UiSandboxRuntime} from './ui-sandbox-runtime';
 
@@ -67,6 +69,8 @@ const HC_FORBIDDEN_ATTRS = [
 ] as const;
 const ALLOWED_SERIES_ATTRS = ['color', 'name', 'userOptions', 'state'];
 
+const EVENT_KEYS = ['ctrlKey', 'altKey', 'shiftKey', 'metaKey'];
+
 const MAX_NESTING_LEVEL = 5;
 function removeSVGElements(val: unknown, nestingLevel = 0): unknown {
     if (nestingLevel > MAX_NESTING_LEVEL) {
@@ -112,6 +116,9 @@ function clearVmProp(prop: unknown): unknown {
             return getChartProps(prop);
         }
 
+        // instanceof Event
+        const eventProps = 'preventDefault' in prop ? pick(prop, EVENT_KEYS) : {};
+
         const item: Record<string, TargetValue> = {...(prop as object)};
         HC_FORBIDDEN_ATTRS.forEach((attr) => {
             if (attr in item) {
@@ -140,7 +147,14 @@ function clearVmProp(prop: unknown): unknown {
             points = points.map(clearVmProp);
         }
 
-        return {series, point, points, this: _this, ...(removeSVGElements(other) as object)};
+        return {
+            series,
+            point,
+            points,
+            this: _this,
+            ...(removeSVGElements(other) as object),
+            ...eventProps,
+        };
     }
 
     if (prop && typeof prop === 'function') {
@@ -172,6 +186,10 @@ async function getUiSandboxLibs(libs: string[]) {
             case 'd3-chord': {
                 return getModule('d3-chord/v3.0.1');
             }
+            case 'd3-sankey@0.12.3':
+            case 'd3-sankey': {
+                return getModule('d3-sankey/v0.12.3');
+            }
             default: {
                 throw new ChartKitCustomError(null, {
                     details: `The library '${lib}' is not available`,
@@ -193,8 +211,9 @@ async function getUnwrappedFunction(args: {
     name?: string;
 }) {
     const {sandbox, wrappedFn, options, entryId, entryType, name} = args;
-    const libs = await getUiSandboxLibs(wrappedFn.libs ?? []);
+    let libs = await getUiSandboxLibs(wrappedFn.libs ?? []);
     const parseHtml = await getParseHtmlFn();
+    const isBlankChart = entryType === 'blank-chart_node';
 
     return function (this: unknown, ...restArgs: unknown[]) {
         const runId = getRandomCKId();
@@ -211,7 +230,11 @@ async function getUnwrappedFunction(args: {
         }
 
         // prepare function context
-        const fnContext = clearVmProp(this);
+        let fnContext = this;
+
+        if (entryType === 'graph_node') {
+            fnContext = clearVmProp(fnContext);
+        }
 
         // set global api
         const globalApi = {
@@ -221,11 +244,12 @@ async function getUnwrappedFunction(args: {
                 log: (...logArgs: unknown[]) => console.log(...logArgs),
             },
             setTimeout: (handler: TimerHandler, timeout: number) => setTimeout(handler, timeout),
+            clearTimeout: (timeoutId: number) => clearTimeout(timeoutId),
             window: {
                 open: function (url: string, target?: string) {
                     try {
-                        validateUrl(url);
-                        window.open(url, target === '_self' ? '_self' : '_blank');
+                        const href = sanitizeUrl(url);
+                        window.open(href, target === '_self' ? '_self' : '_blank');
                     } catch (e) {
                         console.error(e);
                     }
@@ -261,7 +285,9 @@ async function getUnwrappedFunction(args: {
                     appendElements: (node: unknown) => {
                         const chart = getCurrentChart();
 
-                        const html = unwrapHtml(wrapHtml(node as ChartKitHtmlItem)) as string;
+                        const html = unwrapHtml({
+                            value: wrapHtml(node as ChartKitHtmlItem),
+                        }) as string;
                         const container = chart.container;
                         const wrapper = document.createElement('div');
                         wrapper.insertAdjacentHTML('beforeend', html);
@@ -326,14 +352,38 @@ async function getUnwrappedFunction(args: {
                     },
                 },
             });
+        } else if (isBlankChart) {
+            const chartId = get(this, 'chartId');
+            const chartContext = chartStorage.get(chartId);
+
+            merge(globalApi, {
+                Chart: {
+                    getState: () => {
+                        return chartContext.getState();
+                    },
+                    setState: (update: any, options?: any) => {
+                        chartContext?.setState(update, options);
+                    },
+                    updateActionParams: (params: StringParams) => {
+                        chartContext?.updateActionParams(params);
+                    },
+                },
+            });
+
+            if (fnContext && typeof fnContext === 'object' && '__innerHTML' in fnContext) {
+                libs += `document.body.innerHTML = (${JSON.stringify(fnContext.__innerHTML)});`;
+            }
         }
 
         const oneRunTimeLimit = options?.fnExecTimeLimit ?? UI_SANDBOX_FN_TIME_LIMIT;
         const execTimeout = Math.min(oneRunTimeLimit, options?.totalTimeLimit ?? Infinity);
-        const interruptHandler = getInterruptAfterDeadlineHandler(Date.now() + execTimeout);
-        const runtime = new UiSandboxRuntime({sandbox, interruptHandler});
+        const runtime = new UiSandboxRuntime({
+            sandbox,
+            getInterruptAfterDeadlineHandler,
+            timelimit: execTimeout,
+        });
         try {
-            const result = runtime.callFunction({
+            const {result, execTime} = runtime.callFunction({
                 fn: wrappedFn.fn,
                 fnContext,
                 fnArgs,
@@ -341,12 +391,12 @@ async function getUnwrappedFunction(args: {
                 libs,
                 name,
             });
-            const performance = Performance.getDuration(runId);
+
             if (options?.totalTimeLimit) {
-                options.totalTimeLimit = Math.max(0, options.totalTimeLimit - Number(performance));
+                options.totalTimeLimit = Math.max(0, options.totalTimeLimit - Number(execTime));
             }
 
-            return unwrapHtml(result, parseHtml);
+            return unwrapHtml({value: result, parseHtml, addElementId: isBlankChart});
         } catch (e) {
             const performance = Performance.getDuration(runId);
             if (performance && e?.message === 'interrupted') {
@@ -470,6 +520,7 @@ type ProcessHtmlOptions = {
     allowHtml: boolean;
     parseHtml?: (value: string) => unknown;
     ignoreInvalidValues?: boolean;
+    addElementId?: boolean;
 };
 
 export function processHtmlFields(target: unknown, options?: ProcessHtmlOptions) {
@@ -487,6 +538,7 @@ export function processHtmlFields(target: unknown, options?: ProcessHtmlOptions)
                     key,
                     generateHtml(content as ChartKitHtmlItem, {
                         ignoreInvalidValues: options?.ignoreInvalidValues,
+                        addElementId: options?.addElementId,
                     }),
                 );
             } else {
@@ -511,13 +563,18 @@ export function processHtmlFields(target: unknown, options?: ProcessHtmlOptions)
     }
 }
 
-export function unwrapHtml(value: unknown, parseHtml?: (value: string) => unknown) {
+function unwrapHtml(args: {
+    value: unknown;
+    parseHtml?: (value: string) => unknown;
+    addElementId?: boolean;
+}) {
+    const {value, parseHtml, addElementId} = args;
     if (value && typeof value === 'object' && WRAPPED_HTML_KEY in value) {
         let content = value[WRAPPED_HTML_KEY];
         if (typeof content === 'string' && typeof parseHtml === 'function') {
             content = parseHtml(content);
         }
-        return generateHtml(content as ChartKitHtmlItem);
+        return generateHtml(content as ChartKitHtmlItem, {addElementId});
     }
 
     if (typeof value === 'string') {

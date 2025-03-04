@@ -2,7 +2,6 @@ import {
     CONTROL_MIDDLEWARE_URL_TYPE,
     REQUEST_WITH_DATASET_SOURCE_NAME,
 } from '../../../constants/middleware-urls';
-import {DATASET_DISTINCTS_URL, DATASET_ID_PLACEHOLDER} from '../constants';
 import type {SourceControlArgs, SourceControlDistinctsRequestWithDataset} from '../types';
 
 export const prepareDistinctsRequest = (
@@ -12,7 +11,7 @@ export const prepareDistinctsRequest = (
     return {
         sourceArgs,
         method: 'POST',
-        url: DATASET_DISTINCTS_URL.replace(DATASET_ID_PLACEHOLDER, datasetId),
+        path: 'values/distinct',
         datasetId,
         middlewareUrl: {
             sourceName: REQUEST_WITH_DATASET_SOURCE_NAME,

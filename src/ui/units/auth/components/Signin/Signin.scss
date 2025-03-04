@@ -1,0 +1,27 @@
+@import '../../../../styles/mixins.scss';
+
+.dl-signin {
+    height: 100%;
+    background-color: var(--g-color-base-misc-light);
+
+    &__form-container {
+        background-color: var(--g-color-base-background);
+        border-radius: var(--g-border-radius-l);
+        width: 440px;
+        min-height: 200px;
+        padding: 48px;
+    }
+
+    &__link {
+        color: var(--g-color-text-link);
+        text-decoration: none;
+
+        &:visited {
+            color: var(--g-color-text-link);
+        }
+
+        &:hover {
+            color: var(--g-color-text-link-hover);
+        }
+    }
+}

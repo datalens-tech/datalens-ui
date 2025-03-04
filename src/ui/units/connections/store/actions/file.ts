@@ -1,6 +1,9 @@
+import {I18n} from 'i18n';
 import {clone, get} from 'lodash';
 import {batch} from 'react-redux';
-import {ConnectorType} from 'shared';
+import {ConnectorType, Feature} from 'shared';
+import {showToast} from 'ui/store/actions/toaster';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {UpdateFileSourceArgs} from '../../../../../shared/schema';
 import logger from '../../../../libs/logger';
@@ -36,6 +39,9 @@ import {
     setInitialForm,
     setUploadedFiles,
 } from './base';
+
+const i18n = I18n.keyset('connections.file.view');
+const FILE_MAX_SIZE = 1024 * 1024 * 200; // 200MB
 
 type UtilityHandlerArgs = {
     fileId: string;
@@ -276,7 +282,17 @@ const updateUploadedFiles = (uploadedFile: UploadedFile) => {
     };
 };
 
-export const uploadFile = (file: File) => {
+const removeUploadedFile = (file: File) => {
+    return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
+        const prevUploadedFiles = get(getState().connections, ['file', 'uploadedFiles']);
+        const uploadedFiles = prevUploadedFiles.filter((prevUploadedFile) => {
+            return prevUploadedFile.file !== file;
+        });
+        dispatch(setUploadedFiles({uploadedFiles}));
+    };
+};
+
+const uploadFileViaUploader = (file: File) => {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
         // To show the loader without waiting for the file to be uploaded to the uploader
         dispatch(updateUploadedFiles({file, id: ''}));
@@ -290,6 +306,67 @@ export const uploadFile = (file: File) => {
         }
     };
 };
+
+const uploadFileViaPresignedUrl = (file: File) => {
+    return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
+        if (file.size > FILE_MAX_SIZE) {
+            dispatch(
+                showToast({
+                    title: i18n('label_file-size-error'),
+                    type: 'danger',
+                }),
+            );
+
+            return;
+        }
+
+        // To show the loader without waiting for the file to be uploaded to the uploader
+        dispatch(updateUploadedFiles({file, id: ''}));
+
+        const {fields, url, error: getPresignedUrlError} = await api.getPresignedUrl();
+
+        if (getPresignedUrlError) {
+            dispatch(removeUploadedFile(file));
+            dispatch(
+                showToast({
+                    title: i18n('label_file-download-failure'),
+                    error: getPresignedUrlError,
+                }),
+            );
+
+            return;
+        }
+
+        const {error: uploadFileToS3Error} = await api.uploadFileToS3({fields, file, url});
+
+        if (uploadFileToS3Error) {
+            dispatch(removeUploadedFile(file));
+            dispatch(
+                showToast({
+                    title: i18n('label_file-download-failure'),
+                    error: uploadFileToS3Error,
+                }),
+            );
+
+            return;
+        }
+
+        const {file_id: id, error} = await api.downloadPresignedUrl({
+            filename: file.name,
+            key: fields.key,
+        });
+
+        dispatch(updateUploadedFiles({file, id, error}));
+
+        if (id) {
+            pollFileStatus({fileId: id, dispatch, getState});
+        }
+    };
+};
+
+export const uploadFile = isEnabledFeature(Feature.EnableFileUploadingByPresignedUrl)
+    ? uploadFileViaPresignedUrl
+    : uploadFileViaUploader;
 
 export const updateFileSource = (
     fileId: string,

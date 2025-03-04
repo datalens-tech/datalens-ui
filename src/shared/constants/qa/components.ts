@@ -1,8 +1,25 @@
 export enum ActionPanelQA {
     MoreBtn = 'entry-panel-more-btn',
     ActionPanel = 'entry-action-panel',
-    EntryMenuTop = 'entry-menu-top',
-    EntryMenuTopRevisions = 'entry-menu-top-revisions',
+}
+
+export enum RevisionsPanelQa {
+    RevisionsPanel = 'revisions-top-panel',
+    DraftVersion = 'revisions-top-panel-draft-version',
+    NotActualVersion = 'revisions-top-panel-not-actual-version',
+    HasDraft = 'revisions-top-panel-has-draft',
+    ButtonOpenActual = 'revisions-button-open-actual',
+    ButtonMakeActual = 'revisions-button-make-actual',
+}
+
+export enum RevisionsListQa {
+    ExpandablePanel = 'expandable-panel',
+    ExpandablePanelButtonClose = 'expandable-panel-close-btn',
+    List = 'revisions-list',
+    RevisionsListRow = 'revisions-list-row',
+    RevisionsListRowDraft = 'revisions-list-row-draft',
+    RevisionsListRowActual = 'revisions-list-row-actual',
+    RevisionsListRowNotActual = 'revisions-list-row-not-actual',
 }
 
 export enum SaveChartControlsQa {
@@ -105,6 +122,11 @@ export enum DialogConfirmQA {
     Dialog = 'dialog-confirm',
     ApplyButton = 'dialog-confirm-apply-button',
     CancelButton = 'dialog-confirm-cancel-button',
+}
+
+export enum DialogInfoQA {
+    Dialog = 'dialog-info',
+    CloseButton = 'dialog-close-button',
 }
 
 export enum DialogWarningQA {

@@ -9,6 +9,7 @@ export const ExtendedDashKitContext = createContext<{
     isNewRelations: boolean;
     defaultGlobalParams?: DashSettingsGlobalParams;
     hideErrorDetails?: boolean;
+    selectorsGroupTitlePlaceholder?: string;
     dataProviderContextGetter?: (widgetId: string) => DashChartRequestContext;
     setWidgetCurrentTab?: (payload: {widgetId: string; tabId: string}) => void;
 } | null>(null);

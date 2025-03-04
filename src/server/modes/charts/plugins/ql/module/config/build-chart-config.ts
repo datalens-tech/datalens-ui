@@ -7,6 +7,7 @@ import {
     Feature,
     WizardVisualizationId,
 } from '../../../../../../../shared';
+import {ChartkitHandlers} from '../../../../../../../shared/constants/chartkit-handlers';
 import {mapQlConfigToLatestVersion} from '../../../../../../../shared/modules/config/ql';
 import type {DashWidgetConfig} from '../../../../../../../shared/types/charts';
 import {log} from '../../utils/misc-helpers';
@@ -22,6 +23,7 @@ type QlChartConfig = Pick<
     'title' | 'hideHolidaysBands' | 'linesLimit' | 'tooltip' | 'enableSum'
 > & {
     enableGPTInsights?: boolean;
+    manageTooltipConfig?: ChartkitHandlers.WizardManageTooltipConfig;
 };
 
 export function buildChartConfig(args: BuildChartsConfigArgs) {
@@ -50,6 +52,7 @@ export function buildChartConfig(args: BuildChartsConfigArgs) {
 
     const visualizationId = qlConfig?.visualization?.id;
     const isTableWidget = visualizationId === WizardVisualizationId.FlatTable;
+    const isIndicatorWidget = visualizationId === WizardVisualizationId.Metric;
 
     if (isTableWidget) {
         const size = widgetConfig?.size ?? shared?.extraSettings?.size;
@@ -62,6 +65,10 @@ export function buildChartConfig(args: BuildChartsConfigArgs) {
 
     config.hideHolidaysBands = !features[Feature.HolidaysOnChart];
     config.linesLimit = DEFAULT_CHART_LINES_LIMIT;
+
+    if (!isIndicatorWidget && !isTableWidget) {
+        config.manageTooltipConfig = ChartkitHandlers.WizardManageTooltipConfig;
+    }
 
     log('CONFIG:', config);
 

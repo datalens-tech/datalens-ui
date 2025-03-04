@@ -23,7 +23,7 @@ export const getItemsValues = (
             lang: 'ru',
         });
     } else {
-        formattedValue = value || 'Null';
+        formattedValue = value ?? 'Null';
     }
 
     return {

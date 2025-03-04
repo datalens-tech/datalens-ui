@@ -8,11 +8,13 @@ export function isEntryTypeWithFiltering(
     const widgetTypesWithFilteringAvailable: WidgetType[] = [
         EditorType.TableNode,
         EditorType.GraphNode,
+        EditorType.GravityChartsNode,
+        EditorType.BlankChartNode,
     ];
 
     const wizardEntryTypes = [
         WizardType.GraphWizardNode,
-        WizardType.D3WizardNode,
+        WizardType.GravityChartsWizardNode,
         WizardType.TableWizardNode,
         WizardType.YmapWizardNode,
     ];

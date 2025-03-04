@@ -21,13 +21,13 @@ import {updateUserSettings} from 'store/actions/user';
 import {selectFieldEditorDocShown} from 'store/selectors/user';
 import type {DataTypeConfig, DatalensGlobalState} from 'ui';
 import {SPLIT_PANE_RESIZER_CLASSNAME, sdk} from 'ui';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {I18n} from '../../../i18n/index';
 import logger from '../../libs/logger';
 import type {MonacoTypes} from '../../libs/monaco';
 import {registerDatalensFormulaLanguage} from '../../libs/monaco';
 import {getSdk} from '../../libs/schematic-sdk';
-import Utils from '../../utils';
 import DialogConfirm from '../DialogConfirm/DialogConfirm';
 
 import DocSection from './components/DocSection';
@@ -217,7 +217,7 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
                             >
                                 {this.renderFooter()}
                             </FormulaSection>
-                            {Utils.isEnabledFeature(Feature.FieldEditorDocSection) ? (
+                            {isEnabledFeature(Feature.FieldEditorDocSection) ? (
                                 <DocSection sdk={sdk} />
                             ) : (
                                 <div></div>
@@ -291,7 +291,7 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
         let fieldErrors: DatasetFieldError[] = [];
 
         try {
-            await getSdk().bi.validateDatasetFormula(
+            await getSdk().sdk.bi.validateDatasetFormula(
                 {
                     datasetId,
                     workbookId,
@@ -301,7 +301,7 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
                 {concurrentId: 'validateDatasetFormula'},
             );
         } catch (error) {
-            if (!getSdk().isCancel(error)) {
+            if (!getSdk().sdk.isCancel(error)) {
                 fieldErrors = (error?.details?.data?.field_errors as DatasetFieldError[]) || [];
                 logger.logError('FieldEditor: validateDatasetFormula failed', error);
             }

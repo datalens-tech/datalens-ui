@@ -16,7 +16,6 @@ import {
     toggleFieldEditorModuleLoader,
     toggleSaveDataset,
     updateDatasetByValidation,
-    updateField,
     updateRLS,
 } from 'units/datasets/store/actions/creators';
 
@@ -25,7 +24,7 @@ import {CounterName, GoalId, reachMetricaGoal} from '../../../../libs/metrica';
 import {closeDialog, openDialog, openDialogConfirm} from '../../../../store/actions/dialog';
 import DatasetTable from '../../components/DatasetTable/DatasetTable';
 import RLSDialog from '../../components/RLSDialog/RLSDialog';
-import {DATASET_VALIDATION_TIMEOUT} from '../../constants';
+import {DATASET_VALIDATION_TIMEOUT, TAB_DATASET} from '../../constants';
 import {
     UISelector,
     avatarsSelector,
@@ -156,10 +155,11 @@ class DatasetEditor extends React.Component {
     }) => {
         if (fields.length > 0 && fields.every(({guid}) => guid)) {
             this.props.toggleSaveDataset({enable: !validateEnabled, validationPending: debounce});
+            const stacked = debounce && this.props.validation.isPending;
 
             switch (actionType) {
                 case 'delete': {
-                    this.props.batchDeleteFields(fields);
+                    this.props.batchDeleteFields(fields, {stacked, tab: TAB_DATASET});
 
                     this.updateDataset({
                         debounce,
@@ -170,7 +170,7 @@ class DatasetEditor extends React.Component {
                     break;
                 }
                 case 'update': {
-                    this.props.batchUpdateFields(fields);
+                    this.props.batchUpdateFields(fields, undefined, {stacked, tab: TAB_DATASET});
 
                     this.updateDataset({
                         debounce,
@@ -184,13 +184,22 @@ class DatasetEditor extends React.Component {
         }
     };
 
-    modifyFields = ({actionType, field, updatePreview = false, validateEnabled = true}) => {
+    modifyFields = ({
+        actionType,
+        field,
+        updatePreview = false,
+        validateEnabled = true,
+        editHistoryOptions,
+    }) => {
         if (field.guid) {
             this.props.toggleSaveDataset({enable: !validateEnabled});
 
             switch (actionType) {
                 case 'duplicate': {
-                    this.props.duplicateField(field);
+                    this.props.duplicateField(field, {
+                        stacked: this.props.validation.isPending,
+                        tab: editHistoryOptions.tab,
+                    });
 
                     this.updateDataset({
                         debounce: true,
@@ -201,7 +210,7 @@ class DatasetEditor extends React.Component {
                     break;
                 }
                 case 'add': {
-                    this.props.addField(field);
+                    this.props.addField(field, false, {tab: TAB_DATASET});
 
                     this.updateDataset({
                         debounce: false,
@@ -348,7 +357,6 @@ DatasetEditor.propTypes = {
     updateDatasetByValidation: PropTypes.func.isRequired,
     addField: PropTypes.func.isRequired,
     duplicateField: PropTypes.func.isRequired,
-    updateField: PropTypes.func.isRequired,
     toggleSaveDataset: PropTypes.func.isRequired,
     updateRLS: PropTypes.func.isRequired,
     toggleFieldEditorModuleLoader: PropTypes.func.isRequired,
@@ -402,7 +410,6 @@ const mapDispatchToProps = {
     addField,
     duplicateField,
     batchDeleteFields,
-    updateField,
     batchUpdateFields,
     updateRLS,
     toggleSaveDataset,

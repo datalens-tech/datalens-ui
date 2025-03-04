@@ -170,7 +170,7 @@ export default class Utils {
     }
 
     static setSdk() {
-        window.sdk = getSdk();
+        window.sdk = getSdk().sdk;
     }
 
     static setup() {
@@ -211,6 +211,7 @@ export default class Utils {
         return csrfMetaTag ? csrfMetaTag.content : null;
     }
 
+    /** @deprecated use separate function ui/utils/isEnabledFeature */
     static isEnabledFeature(featureName: string) {
         const featureDynamicStatus = _get(DL.DYNAMIC_FEATURES, featureName);
 

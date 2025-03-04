@@ -12,13 +12,13 @@ import pick from 'lodash/pick';
 import set from 'lodash/set';
 import {WidgetKind} from 'shared/types/widget';
 import {getRandomCKId} from 'ui/libs/DatalensChartkit/ChartKit/helpers/getRandomCKId';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import type {Optional} from 'utility-types';
 
 import type {StringParams} from '../../../../../../shared';
 import {
     ChartkitHandlers,
     EDITOR_CHART_NODE,
-    Feature,
     QL_CHART_NODE,
     SHARED_URL_OPTIONS,
     WIZARD_CHART_NODE,
@@ -240,6 +240,18 @@ function isNodeResponse(loaded: CurrentResponse): loaded is ResponseSuccessNode 
     return 'data' in loaded;
 }
 
+function shouldShowSafeChartInfo(params: StringParams) {
+    if (!isEnabledFeature('ShowSafeChartInfo')) {
+        return false;
+    }
+    return (
+        Utils.getOptionsFromSearch(window.location.search).showSafeChartInfo ||
+        (params &&
+            SHARED_URL_OPTIONS.SAFE_CHART in params &&
+            String(params?.[SHARED_URL_OPTIONS.SAFE_CHART]?.[0]) === '1')
+    );
+}
+
 /* eslint-disable complexity */
 async function processNode<T extends CurrentResponse, R extends Widget | ControlsOnlyWidget>(
     loaded: T,
@@ -263,12 +275,6 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
     } = loaded;
 
     try {
-        const showSafeChartInfo =
-            Utils.getOptionsFromSearch(window.location.search).showSafeChartInfo ||
-            (params &&
-                SHARED_URL_OPTIONS.SAFE_CHART in params &&
-                String(params?.[SHARED_URL_OPTIONS.SAFE_CHART]?.[0]) === '1');
-
         let result: Widget & Optional<WithControls> & ChartsData = {
             // @ts-ignore
             type: loadedType.match(/^[^_]*/)![0],
@@ -312,7 +318,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 noJsonFn ? replacer : undefined,
             );
 
-            if (showSafeChartInfo) {
+            if (shouldShowSafeChartInfo(params)) {
                 result.safeChartInfo = getSafeChartWarnings(
                     loadedType,
                     pick(result, 'config', 'libraryConfig', 'data'),
@@ -348,19 +354,20 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 result.uiSandboxOptions = uiSandboxOptions;
             }
 
+            const isWizardOrQl = result.isNewWizard || result.isQL;
             const shouldProcessHtmlFields =
-                isPotentiallyUnsafeChart(loadedType) ||
-                (Utils.isEnabledFeature(Feature.HtmlInWizard) && result.config?.useHtml);
+                isPotentiallyUnsafeChart(loadedType) || result.config?.useHtml;
             if (shouldProcessHtmlFields) {
                 const parseHtml = await getParseHtmlFn();
-                const ignoreInvalidValues = result.isNewWizard || result.isQL;
+                const ignoreInvalidValues = isWizardOrQl;
+                const allowHtml = isWizardOrQl ? false : enableJsAndHtml;
                 processHtmlFields(result.data, {
-                    allowHtml: enableJsAndHtml,
+                    allowHtml,
                     parseHtml,
                     ignoreInvalidValues,
                 });
                 processHtmlFields(result.libraryConfig, {
-                    allowHtml: enableJsAndHtml,
+                    allowHtml,
                     parseHtml,
                     ignoreInvalidValues,
                 });

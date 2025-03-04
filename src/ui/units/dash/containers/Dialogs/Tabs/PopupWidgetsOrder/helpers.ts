@@ -1,3 +1,4 @@
+import {DEFAULT_GROUP} from '@gravity-ui/dashkit/helpers';
 import {i18n} from 'i18n';
 import update from 'immutability-helper';
 import {isNumber} from 'lodash';
@@ -10,6 +11,7 @@ import type {
     DashTabLayout,
 } from 'shared';
 import {DashTabItemType} from 'shared';
+import {FIXED_GROUP_CONTAINER_ID, FIXED_GROUP_HEADER_ID} from 'ui/components/DashKit/constants';
 
 import {getTextOverflowedStr} from '../../../../../../utils/stringUtils';
 import {getLayoutMap, sortByOrderIdOrLayoutComparator} from '../../../../modules/helpers';
@@ -92,6 +94,57 @@ export const getPreparedItems = (items: Array<DashTabItem>, layout: Array<DashTa
             orderId: index,
             defaultOrderId: index,
         };
+    });
+};
+
+export const getGroupedItems = (items: Array<DashTabItem>, layout: Array<DashTabLayout>) => {
+    const preparedItems = getPreparedItems(items, layout);
+
+    const itemsCountByParent = {
+        [FIXED_GROUP_HEADER_ID]: 0,
+        [FIXED_GROUP_CONTAINER_ID]: 0,
+        [DEFAULT_GROUP]: 0,
+    };
+    const parentByItem = layout.reduce<Record<string, string>>((memo, item) => {
+        const parent = item.parent ?? DEFAULT_GROUP;
+
+        if (parent in itemsCountByParent) {
+            itemsCountByParent[parent as keyof typeof itemsCountByParent]++;
+        }
+
+        memo[item.i] = parent;
+
+        return memo;
+    }, {});
+
+    const getItemOrder = (item: DashTabItem, index: number) => {
+        const parent = parentByItem[item.id];
+
+        if (parent === FIXED_GROUP_HEADER_ID) {
+            return index;
+        } else if (parent === FIXED_GROUP_CONTAINER_ID) {
+            return index + itemsCountByParent[FIXED_GROUP_HEADER_ID];
+        } else {
+            return (
+                index +
+                itemsCountByParent[FIXED_GROUP_HEADER_ID] +
+                itemsCountByParent[FIXED_GROUP_CONTAINER_ID]
+            );
+        }
+    };
+
+    return [FIXED_GROUP_HEADER_ID, FIXED_GROUP_CONTAINER_ID, DEFAULT_GROUP].map((group) => {
+        return preparedItems
+            .filter((item) => parentByItem[item.id] === group)
+            .map((item, index) => {
+                const orderId = getItemOrder(item, index);
+
+                return {
+                    ...item,
+                    orderId,
+                    defaultOrderId: orderId,
+                };
+            });
     });
 };
 

@@ -217,18 +217,20 @@ class DashboardPage extends BasePage {
     async createDashboard({
         editDash,
         waitingRequestOptions,
+        workbookId,
     }: {
         editDash: () => Promise<void>;
         waitingRequestOptions?: {
             controlTitles: string[];
             waitForLoader?: boolean;
         };
+        workbookId?: string;
     }) {
         // some page need to be loaded so we can get data of feature flag from DL var
         await openTestPage(this.page, '/');
         const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
         const createDashUrl = isEnabledCollections
-            ? `/workbooks/${WorkbookIds.E2EWorkbook}/dashboards`
+            ? `/workbooks/${workbookId ?? WorkbookIds.E2EWorkbook}/dashboards`
             : '/dashboards/new';
         await openTestPage(this.page, createDashUrl);
 
@@ -395,6 +397,25 @@ class DashboardPage extends BasePage {
         return this.page.locator(slct(DashkitQa.GRID_ITEM)).getByText(text, {exact: true});
     }
 
+    async getGlobalRelationsDialogType(): Promise<'new' | 'old' | null> {
+        const isEnabledShowNewRelationsButton = await isEnabledFeature(
+            this.page,
+            Feature.ShowNewRelationsButton,
+        );
+
+        if (isEnabledShowNewRelationsButton) {
+            return 'new';
+        }
+
+        const hideOldRelations = await isEnabledFeature(this.page, Feature.HideOldRelations);
+
+        if (!hideOldRelations) {
+            return 'old';
+        }
+
+        return null;
+    }
+
     async deleteSelector(controlTitle: string) {
         const control = this.page.locator(slct('dashkit-grid-item'), {
             has: this.page.locator(slct(ControlQA.chartkitControl, controlTitle)),
@@ -559,18 +580,35 @@ class DashboardPage extends BasePage {
     }
 
     async setupNewLinks({
-        linkType,
         widgetElem,
+        selectorName,
+
+        linkType,
         firstParamName,
         secondParamName,
     }: {
         linkType: DashRelationTypes;
         firstParamName: string;
-        widgetElem: Locator;
         secondParamName: string;
-    }) {
-        // open dialog relations by click on control item links icon
-        await widgetElem.click();
+    } & (
+        | {widgetElem: Locator; selectorName?: undefined}
+        | {selectorName: string; widgetElem?: undefined}
+    )) {
+        if (widgetElem) {
+            // open dialog relations by click on control item links icon
+            await widgetElem.click();
+        } else if (selectorName) {
+            // click on global links button
+            await this.clickOnLinksBtn();
+
+            await clickGSelectOption({
+                page: this.page,
+                key: DashCommonQa.RelationsWidgetSelect,
+                optionText: selectorName,
+            });
+        } else {
+            throw new Error('Relation dialog needs selectorName or widgetElement param');
+        }
 
         // choose new link
         await this.page.click(slct(DashCommonQa.RelationTypeButton));
@@ -711,9 +749,10 @@ class DashboardPage extends BasePage {
         ]);
     }
 
-    async deleteDash() {
+    async deleteDash(args?: {workbookId?: string}) {
+        const {workbookId = WorkbooksUrls.E2EWorkbook} = args ?? {};
         const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
-        const urlOnDelete = isEnabledCollections ? WorkbooksUrls.E2EWorkbook : '/dashboards';
+        const urlOnDelete = isEnabledCollections ? workbookId : '/dashboards';
 
         await deleteEntity(this.page, urlOnDelete);
     }
@@ -988,9 +1027,11 @@ class DashboardPage extends BasePage {
     async disableAutoupdateInFirstControl() {
         await this.enterEditMode();
         await this.clickFirstControlSettingsButton();
+        await this.page.locator(slct(DialogGroupControlQa.extendedSettingsButton)).click();
         await this.page
             .locator(`${slct(DialogGroupControlQa.updateControlOnChangeCheckbox)} input`)
             .setChecked(false);
+        await this.page.locator(slct(DialogGroupControlQa.extendedSettingsApplyButton)).click();
         await this.controlActions.applyControlSettings();
         await this.saveChanges();
     }

@@ -4,7 +4,9 @@ import type {AppContext} from '@gravity-ui/nodekit';
 import type {PassportStatic} from 'passport';
 
 import {Feature, isEnabledServerFeature} from '../../../shared';
+import {getAuthArgs} from '../../../shared/schema/gateway-utils';
 import {isChartsMode, isDatalensMode, isFullMode} from '../../app-env';
+import {getAuthRoutes} from '../../components/auth/routes';
 import type {ChartsEngine} from '../../components/charts-engine';
 import {getZitadelRoutes} from '../../components/zitadel/routes';
 import {ping} from '../../controllers/ping';
@@ -40,6 +42,10 @@ export function getRoutes({
         routes = {...routes, ...getZitadelRoutes({passport, beforeAuth, afterAuth})};
     }
 
+    if (ctx.config.isAuthEnabled) {
+        routes = {...routes, ...getAuthRoutes({routeParams: {beforeAuth, afterAuth}})};
+    }
+
     if (isFullMode || isDatalensMode) {
         routes = {...routes, ...getDataLensRoutes({ctx, beforeAuth, afterAuth})};
     }
@@ -62,7 +68,14 @@ function getDataLensRoutes({
 }) {
     const ui: Omit<ExtendedAppRouteDescription, 'handler' | 'route'> = {
         beforeAuth,
-        afterAuth: [...afterAuth, getConnectorIconsMiddleware()],
+        afterAuth: [
+            ...afterAuth,
+            getConnectorIconsMiddleware({
+                getAdditionalArgs: (req, res) => ({
+                    authArgs: getAuthArgs(req, res),
+                }),
+            }),
+        ],
         ui: true,
     };
 
@@ -78,6 +91,7 @@ function getDataLensRoutes({
         getDashboards: getConfiguredRoute('navigation', {...ui, route: 'GET /dashboards'}),
         getDatasetsAll: getConfiguredRoute('dl-main', {...ui, route: 'GET /datasets/*'}),
         getConnectionsAll: getConfiguredRoute('dl-main', {...ui, route: 'GET /connections/*'}),
+        getSettingsAll: getConfiguredRoute('dl-main', {...ui, route: 'GET /settings/*'}),
         getDashboardsAll: {
             route: 'GET /dashboards/*',
             beforeAuth,

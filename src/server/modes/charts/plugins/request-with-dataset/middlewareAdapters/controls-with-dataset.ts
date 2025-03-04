@@ -1,4 +1,3 @@
-import type Cache from '../../../../../components/cache-client';
 import type {ControlShared} from '../../control/types';
 import {getDistinctsRequestBody} from '../../control/url/distincts/build-distincts-body';
 import type {MiddlewareSourceAdapterArgs} from '../../types';
@@ -11,34 +10,38 @@ export default async (
     },
 ) => {
     const {
+        ctx,
         source,
-        req,
-        ChartsEngine,
+        cacheClient,
         userId,
         iamToken,
         workbookId,
         rejectFetchingSource,
         pluginOptions,
+        zitadelParams,
+        authParams,
+        requestHeaders,
     } = args;
-
-    const cacheClient = ChartsEngine.cacheClient as Cache;
 
     const datasetId = source.datasetId || '';
 
     const datasetFieldsResponse = await getDatasetFields({
         datasetId,
         workbookId: workbookId ?? null,
-        req,
+        ctx,
         cacheClient,
         userId,
         iamToken,
         rejectFetchingSource,
         pluginOptions,
+        zitadelParams,
+        authParams,
+        requestHeaders,
     });
 
     const datasetFields = datasetFieldsResponse.datasetFields;
 
-    req.ctx.log('CONTROLS_DATASET_FIELDS_RECEIVED', {
+    ctx.log('CONTROLS_DATASET_FIELDS_RECEIVED', {
         count: datasetFields.length,
     });
 
@@ -46,10 +49,10 @@ export default async (
         params: source.sourceArgs.params,
         shared: source.sourceArgs.shared as unknown as ControlShared,
         datasetFields,
-        req,
+        ctx,
     });
 
-    req.ctx.log('CONTROLS_DATASET_FIELDS_PROCESSED');
+    ctx.log('CONTROLS_DATASET_FIELDS_PROCESSED');
 
     return {
         ...source,

@@ -5,13 +5,14 @@ import {connect} from 'react-redux';
 import {Link, withRouter} from 'react-router-dom';
 import {ENTRY_TYPES, EntryScope, Feature} from 'shared';
 import {closeNavigation} from 'store/actions/asideHeader/navigation';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import Utils from 'ui/utils/utils';
 
 import {DIALOG_CREATE_ENTRY_IN_WORKBOOK} from '../../../components/CollectionsStructure';
 import {URL_QUERY} from '../../../constants/common';
 import navigateHelper from '../../../libs/navigateHelper';
 import {registry} from '../../../registry';
 import {closeDialog, openDialog} from '../../../store/actions/dialog';
-import Utils from '../../../utils';
 import {ENTRY_CONTEXT_MENU_ACTION, getEntryContextMenuItems} from '../../EntryContextMenu';
 import {getGroupedMenu} from '../../EntryContextMenu/helpers';
 import {EntryDialogName, EntryDialogResolveStatus, EntryDialogues} from '../../EntryDialogues';
@@ -291,13 +292,14 @@ class NavigationBase extends React.Component {
         return getInitDestination(path);
     }
 
-    openOnlyCollectionsDialog = (entryType) => {
+    openOnlyCollectionsDialog = (entryType, onApply) => {
         this.props.openDialog({
             id: DIALOG_CREATE_ENTRY_IN_WORKBOOK,
             props: {
                 entryType,
                 initialCollectionId: null,
-                onApply: () => {
+                onApply: (targetWorkbookId) => {
+                    onApply?.(targetWorkbookId, entryType);
                     this.closeNavigation();
                 },
                 onClose: () => {
@@ -335,16 +337,9 @@ class NavigationBase extends React.Component {
                 }
                 break;
             }
-            case CreateMenuValue.Report: {
-                if (this.props.isOnlyCollectionsMode) {
-                    this.openOnlyCollectionsDialog('report');
-                } else {
-                    history.push(`/reports/new${query}`);
-                    this.closeNavigation();
-                }
-                break;
-            }
             case CreateMenuValue.Connection: {
+                // special ignoring of isOnlyCollectionsMode, because
+                // connections creation page doesn't belong to folders or workbooks
                 history.push(`/connections/new${query}`);
                 this.closeNavigation();
                 break;
@@ -376,34 +371,16 @@ class NavigationBase extends React.Component {
                 }
                 break;
             }
-            case CreateMenuValue.SQL: {
-                if (this.props.isOnlyCollectionsMode) {
-                    this.openOnlyCollectionsDialog('ql');
-                } else {
-                    history.push(`/ql/new/sql${query}`);
-                    this.closeNavigation();
-                }
-                break;
-            }
-            case CreateMenuValue.PromQL: {
-                history.push(`/ql/new/promql${query}`);
-                this.closeNavigation();
-                break;
-            }
-            case CreateMenuValue.MonitoringQL: {
-                history.push(`/ql/new/monitoringql${query}`);
-                this.closeNavigation();
-                break;
-            }
-            case CreateMenuValue.Script: {
-                history.push(`/editor/new${query}`);
-                this.closeNavigation();
-                break;
-            }
         }
 
         if (this.props.onCreateMenuClick) {
-            this.props.onCreateMenuClick(type);
+            this.props.onCreateMenuClick({
+                type,
+                query,
+                openOnlyCollectionsDialog: this.openOnlyCollectionsDialog,
+                closeNavigation: this.closeNavigation,
+                history,
+            });
         }
     };
 
@@ -474,7 +451,7 @@ class NavigationBase extends React.Component {
             const items = getEntryContextMenuItems(params);
             const menu = getGroupedMenu(items, {
                 type: 'entry',
-                isFlat: Utils.isEnabledFeature(Feature.MenuItemsFlatView),
+                isFlat: isEnabledFeature(Feature.MenuItemsFlatView),
             });
             return menu;
         };

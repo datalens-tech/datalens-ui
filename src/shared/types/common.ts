@@ -1,6 +1,8 @@
 import type {RenderParams} from '@gravity-ui/app-layout';
 import type {TableSettingsData, Theme, ThemeSettings} from '@gravity-ui/uikit';
 
+import type {UserRole} from '../components/auth/constants/role';
+import type {AuthPageSettings} from '../components/auth/types/layout';
 import type {AppEnvironment, AppInstallation, DeviceType, Language} from '../constants';
 import type {Palette} from '../constants/colors';
 import type {Endpoints} from '../endpoints';
@@ -134,6 +136,8 @@ export interface DLUser extends DLUserAccount {
     isGlobalFederationUser?: boolean;
     isLocalFederationUser?: boolean;
     withNavigation?: boolean;
+    roles?: `${UserRole}`[];
+    idpType: string | null;
 }
 
 export type MainLayoutConfigData = {
@@ -161,6 +165,7 @@ export type DLGlobalData = {
     intLandingConfigEntryId?: string;
     meta?: Record<string, any>;
     landingPageSettings?: LandingPageSettings;
+    authPageSettings?: AuthPageSettings;
     push?: PushServiceConfig;
     metricaCounters?: MetricaCounterConfig[];
     templateWorkbookId?: string;
@@ -173,6 +178,7 @@ export type DLGlobalData = {
         foldersEnabled: boolean;
         workbooksEnabled: boolean;
         collectionsEnabled: boolean;
+        features?: Record<string, unknown>;
     };
     userIsOrgAdmin?: boolean;
     allowLanguages?: Language[];
@@ -211,6 +217,9 @@ export type DLGlobalData = {
     isZitadelEnabled?: boolean;
     hideNavigation?: boolean;
     connectorIcons?: ConnectorIconData[];
+    releaseVersion?: string;
+    isAuthEnabled?: boolean;
+    authManageLocalUsersDisabled?: boolean;
 } & MainLayoutConfigData;
 
 export type ContactDialogSettings = {

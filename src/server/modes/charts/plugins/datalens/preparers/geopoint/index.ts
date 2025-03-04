@@ -8,13 +8,13 @@ import type {
     VisualizationLayerShared,
 } from '../../../../../../../shared';
 import {
-    Feature,
     MARKUP_TYPE,
     MINIMUM_FRACTION_DIGITS,
     WRAPPED_MARKDOWN_KEY,
     getFakeTitleOrTitle,
     isMarkupDataType,
 } from '../../../../../../../shared';
+import {wrapHtml} from '../../../../../../../shared/utils/ui-sandbox';
 import {getColorsByMeasureField, getThresholdValues} from '../../utils/color-helpers';
 import {GEO_MAP_LAYERS_LEVEL, getMountedColor} from '../../utils/constants';
 import type {Coordinate, GradientOptions} from '../../utils/geo-helpers';
@@ -122,7 +122,6 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
         idToTitle,
         shared,
         idToDataType,
-        features,
         ChartEditor,
     } = options;
     const widgetConfig = ChartEditor.getWidgetConfig();
@@ -147,7 +146,6 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
     const size = placeholders[1].items[0];
     const coordinates = placeholders[0].items;
     const updatedTooltips = [...tooltips];
-    const shouldEscapeUserValue = features[Feature.EscapeUserHtmlInDefaultHcTooltip];
 
     const label = labels[0];
 
@@ -336,10 +334,19 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
                     );
                     const text = itemTitle ? `${itemTitle}: ${value}` : value;
 
-                    if (tooltipField?.markupType === MARKUP_TYPE.markdown) {
-                        pointData[WRAPPED_MARKDOWN_KEY] = text;
-                    } else {
-                        pointData.text = shouldEscapeUserValue ? escape(text) : text;
+                    switch (tooltipField?.markupType) {
+                        case MARKUP_TYPE.markdown: {
+                            pointData[WRAPPED_MARKDOWN_KEY] = text;
+                            break;
+                        }
+                        case MARKUP_TYPE.html: {
+                            pointData.text = wrapHtml(text);
+                            break;
+                        }
+                        default: {
+                            pointData.text = text;
+                            break;
+                        }
                     }
                 }
 

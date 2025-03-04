@@ -2,12 +2,13 @@ import escape from 'lodash/escape';
 
 import type {ChartKitHtmlItem} from '../../../../../shared';
 import {ChartKitCustomError} from '../../ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
-import {getRandomCKId} from '../../helpers/helpers';
+import {getRandomCKId, getRandomKey} from '../../helpers/helpers';
 
 import {
     ALLOWED_ATTRIBUTES,
     ALLOWED_TAGS,
     ATTR_DATA_CE_THEME,
+    ATTR_DATA_ELEMENT_ID,
     ATTR_DATA_TOOLTIP_ANCHOR_ID,
     ATTR_DATA_TOOLTIP_CONTENT,
     ATTR_DATA_TOOLTIP_PLACEMENT,
@@ -15,12 +16,14 @@ import {
 } from './constants';
 import {getThemeStyle, validateUrl} from './utils';
 
-const ATTRS_WITH_REF_VALIDATION = ['background', 'href', 'src'];
+const ATTRS_WITH_REF_VALIDATION = ['background', 'href', 'xlink:href', 'src'];
 const TOOLTIP_ATTRS = [ATTR_DATA_TOOLTIP_CONTENT, ATTR_DATA_TOOLTIP_PLACEMENT];
 
 type GenerateHtmlOptions = {
     tooltipId?: string;
     ignoreInvalidValues?: boolean;
+    /** Add an id in a special attribute to all elements - useful for further work with items in events, for example */
+    addElementId?: boolean;
 };
 
 export function generateHtml(
@@ -100,6 +103,10 @@ export function generateHtml(
 
         if (!isDLTooltip && options?.tooltipId) {
             elem.setAttribute(ATTR_DATA_TOOLTIP_ANCHOR_ID, options.tooltipId);
+        }
+
+        if (options?.addElementId) {
+            elem.setAttribute(ATTR_DATA_ELEMENT_ID, getRandomKey());
         }
 
         const nextOptions = {...options};

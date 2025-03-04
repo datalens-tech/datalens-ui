@@ -40,7 +40,8 @@ export const UPDATE_ENTRY_MODE = {
 };
 
 export const ENTRY_ACTION = {
-    SAVE_AS: 'saveAs',
+    SAVE_AS_COPY: 'saveAsCopy',
+    SAVE_AS_DRAFT: 'saveAsDraft',
 };
 
 export const DIALOG_RESOLVE_STATUS = {
@@ -57,4 +58,4 @@ export const UNRELEASED_MODULE_MARK = '@saved';
 
 export const EVENT_DRAW_PREVIEW = 'editor-draw-preview';
 
-export const getEmptyTemplateType = () => EDITOR_TYPE.D3_NODE;
+export const getEmptyTemplateType = () => EDITOR_TYPE.GRAVITY_CHARTS_NODE;

@@ -6,6 +6,7 @@ import ChartKit from 'libs/DatalensChartkit';
 import {useDispatch, useSelector} from 'react-redux';
 import {DashboardDialogSettingsQa} from 'shared/constants/qa/dash';
 import {registry} from 'ui/registry';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {DatalensGlobalState} from '../../../../..';
 import {EntryDialogName} from '../../../../..';
@@ -14,7 +15,6 @@ import type {DashSettingsGlobalParams} from '../../../../../../shared';
 import {DashLoadPriority, Feature} from '../../../../../../shared';
 import EntryDialogues from '../../../../../components/EntryDialogues/EntryDialogues';
 import {DIALOG_TYPE} from '../../../../../constants/dialogs';
-import Utils from '../../../../../utils';
 import {validateParamTitle} from '../../../components/ParamsSettings/helpers';
 import {
     setDashAccessDescription,
@@ -197,7 +197,7 @@ const Settings = () => {
         >
             <Dialog.Header caption={i18n('dash.settings-dialog.edit', 'label_settings')} />
             <Dialog.Body className={b()}>
-                {Utils.isEnabledFeature(Feature.DashAutorefresh) && (
+                {isEnabledFeature(Feature.DashAutorefresh) && (
                     <AutoRefresh
                         autoUpdateValue={autoupdate}
                         onChangeAutoUpdate={() => {

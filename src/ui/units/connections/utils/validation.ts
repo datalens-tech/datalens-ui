@@ -17,6 +17,9 @@ export const getErrorMessage = (type?: ValidationErrorType) => {
         case ValidationErrorType.Length: {
             return i18n('label_error-length-field');
         }
+        case ValidationErrorType.DuplicatedKey: {
+            return i18n('label_error-duplicated-keys');
+        }
         default: {
             return '';
         }

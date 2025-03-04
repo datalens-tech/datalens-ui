@@ -13,7 +13,6 @@ import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
 import {ActionPanelQA, EntryScope} from 'shared';
 import type {DatalensGlobalState, EntryDialogues} from 'ui';
-import {sdk} from 'ui';
 import {CounterName, GoalId, reachMetricaGoal} from 'ui/libs/metrica';
 import {registry} from 'ui/registry';
 import {addWorkbookInfo, resetWorkbookPermissions} from 'units/workbooks/store/actions';
@@ -23,7 +22,6 @@ import type {GetEntryResponse} from '../../../../../shared/schema';
 import {DL} from '../../../../constants/common';
 import logger from '../../../../libs/logger';
 import {getSdk} from '../../../../libs/schematic-sdk';
-import Utils from '../../../../utils';
 import type {EntryContextMenuProps} from '../../../EntryContextMenu/EntryContextMenu';
 import EntryContextMenu from '../../../EntryContextMenu/EntryContextMenu';
 import {
@@ -32,7 +30,6 @@ import {
 } from '../../../EntryContextMenu/EntryContextMenuBase/EntryContextMenuBase';
 import type {EntryContextMenuItems} from '../../../EntryContextMenu/helpers';
 import type {DialogSwitchPublicProps} from '../../../EntryDialogues/DialogSwitchPublic';
-import NavigationModal from '../../../Navigation/NavigationModal';
 
 import './EntryPanel.scss';
 
@@ -55,10 +52,8 @@ type Props = OwnProps & DispatchProps & StateProps & RouteComponentProps;
 
 type State = {
     visibleEntryContextMenu?: boolean;
-    isNavigationVisible?: boolean;
     entry?: GetEntryResponse;
     error?: Error;
-    startFromNavigation?: string;
 };
 
 class EntryPanel extends React.Component<Props, State> {
@@ -97,9 +92,7 @@ class EntryPanel extends React.Component<Props, State> {
 
     state: State = {
         entry: undefined,
-        startFromNavigation: '',
         visibleEntryContextMenu: false,
-        isNavigationVisible: false,
     };
 
     private btnEntryContextMenuRef = React.createRef<HTMLButtonElement>();
@@ -129,11 +122,7 @@ class EntryPanel extends React.Component<Props, State> {
 
     render() {
         const {children, workbookName, workbookBreadcrumbs} = this.props;
-        const {
-            entry: {isFavorite} = {isFavorite: undefined},
-            entry,
-            isNavigationVisible,
-        } = this.state;
+        const {entry: {isFavorite} = {isFavorite: undefined}, entry} = this.state;
 
         const isFakeEntry = (entry as any)?.fake;
 
@@ -149,7 +138,6 @@ class EntryPanel extends React.Component<Props, State> {
                     entry={this.state.entry}
                     workbookName={workbookName}
                     workbookBreadcrumbs={workbookBreadcrumbs}
-                    openNavigationAction={this.openNavigation}
                 />
                 <div className={b()}>
                     {!DL.IS_MOBILE && (
@@ -186,14 +174,6 @@ class EntryPanel extends React.Component<Props, State> {
                         </div>
                     )}
                     {children}
-                    <NavigationModal
-                        sdk={sdk}
-                        startFrom={this.getNavigationPath()}
-                        resolvePathMode="key"
-                        onClose={this.onCloseNavigation}
-                        visible={Boolean(isNavigationVisible)}
-                        currentPageEntry={entry}
-                    />
                 </div>
             </React.Fragment>
         );
@@ -206,7 +186,7 @@ class EntryPanel extends React.Component<Props, State> {
         try {
             if (isFavorite) {
                 getSdk()
-                    .us.deleteFavorite({entryId})
+                    .sdk.us.deleteFavorite({entryId})
                     .then(() =>
                         this.setState({
                             entry: {
@@ -218,7 +198,7 @@ class EntryPanel extends React.Component<Props, State> {
                 return;
             }
             getSdk()
-                .us.addFavorite({entryId})
+                .sdk.us.addFavorite({entryId})
                 .then(() =>
                     this.setState({
                         entry: {
@@ -259,24 +239,6 @@ class EntryPanel extends React.Component<Props, State> {
                 },
             });
         }
-    };
-
-    getNavigationPath() {
-        return this.state.startFromNavigation || Utils.getPathBefore({path: this.state.entry!.key});
-    }
-
-    onCloseNavigation = () => {
-        this.setState({
-            isNavigationVisible: false,
-            startFromNavigation: '',
-        });
-    };
-
-    openNavigation = (startFromNavigation: string) => {
-        this.setState({
-            isNavigationVisible: true,
-            startFromNavigation,
-        });
     };
 
     onCloseEntryContextMenu = () => this.setState({visibleEntryContextMenu: false});

@@ -51,7 +51,7 @@ export interface IChartEditor {
     ): string;
 
     /**
-     * Return added yav secrets {key: value, ...}
+     * Return added secrets {key: value, ...}
      */
     getSecrets(): {[key: string]: string};
 
@@ -152,6 +152,8 @@ export interface IChartEditor {
     attachFormatter(
         formatterConfig: Record<string, unknown>,
     ): Record<string, unknown> & {__chartkitFormatter: true};
+
+    getId?(key: string): string;
 }
 
 export interface Link {

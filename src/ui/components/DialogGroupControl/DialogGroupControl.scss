@@ -4,19 +4,6 @@
     display: flex;
     flex-direction: column;
 
-    &__section {
-        margin-bottom: 15px;
-
-        &_top-divider {
-            border-top: 1px solid var(--g-color-line-generic);
-            padding-top: 15px;
-        }
-
-        &_bottom-divider {
-            border-bottom: 1px solid var(--g-color-line-generic);
-        }
-    }
-
     &__sidebar {
         display: flex;
         flex-direction: column;
@@ -27,50 +14,24 @@
     }
 
     &__selectors-list {
-        overflow-y: auto;
+        overflow-y: hidden;
         flex: 1;
         display: flex;
         flex-direction: column;
     }
 
     &__settings {
-        border-top: 1px solid var(--g-color-line-generic);
-        padding: 25px 24px 32px;
-    }
-
-    &__settings-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 5px;
-
-        &:not(:last-of-type) {
-            margin-bottom: 22px;
-        }
-    }
-
-    &__order-selectors-button {
-        margin-top: 12px;
-    }
-
-    &__help-icon {
-        left: 5px;
+        padding: var(--g-spacing-2) var(--dialog-sidebar-horizontal-padding)
+            calc(var(--dialog-footer-vertical-padding, 28px) + var(--g-spacing-1));
     }
 
     &__row {
         display: flex;
-        align-items: center;
-        border-radius: 3px;
-        font-size: 13px;
         width: 100%;
-        height: 40px;
+        margin-block-end: var(--g-spacing-2);
 
-        svg {
-            margin-right: 10px;
-        }
-
-        &:not(:last-child) {
-            margin-bottom: 10px;
+        &:last-child {
+            margin-block-end: 0;
         }
 
         &_add {
@@ -87,9 +48,5 @@
     &__sidebar-content {
         display: flex;
         flex-direction: column;
-    }
-
-    &__body {
-        padding: 14px 20px 0px 32px;
     }
 }

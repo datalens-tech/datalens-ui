@@ -10,6 +10,7 @@ import type {DatalensGlobalState} from 'ui';
 import {MarkdownProvider, URL_QUERY, Utils} from 'ui';
 import type {ConnectionsReduxDispatch} from 'ui/units/connections/store';
 import type {ManualError} from 'ui/utils/errors/manual';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {getLoginOrIdFromLockedError, isEntryIsLockedError} from 'utils/errors/errorByCode';
 
 import type {DashDispatch} from '..';
@@ -83,7 +84,7 @@ export const setSelectStateMode = ({
                 } = getState();
 
                 const hashData = await getSdk()
-                    .us.getDashState({entryId, hash: stateHash})
+                    .sdk.us.getDashState({entryId, hash: stateHash})
                     .catch((error) => {
                         logger.logError('getDashState failed', error);
                         console.error('STATE_LOAD', error);
@@ -125,7 +126,7 @@ export const setEditMode = (successCallback = () => {}, failCallback = () => {})
         }
 
         try {
-            const {savedId} = await getSdk().us.getEntryMeta({entryId});
+            const {savedId} = await getSdk().sdk.us.getEntryMeta({entryId});
 
             if (stateSavedId !== savedId) {
                 dispatch(
@@ -276,7 +277,7 @@ export const load = ({
                 }),
                 hash
                     ? getSdk()
-                          .us.getDashState({
+                          .sdk.us.getDashState({
                               entryId,
                               hash,
                           })
@@ -329,8 +330,7 @@ export const load = ({
             const isEmptyDash = data.tabs.length === 1 && !data.tabs[0].items.length;
             const hasEditPermissions = entry?.permissions?.admin || entry?.permissions?.edit;
             const isOpenedActualRevision = !revId;
-            const isAvailableEditMode =
-                !Utils.isEnabledFeature(Feature.ReadOnlyMode) && !DL.IS_MOBILE;
+            const isAvailableEditMode = !isEnabledFeature(Feature.ReadOnlyMode) && !DL.IS_MOBILE;
 
             const mode =
                 isEmptyDash && isOpenedActualRevision && hasEditPermissions && isAvailableEditMode

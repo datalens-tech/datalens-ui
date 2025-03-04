@@ -23,6 +23,7 @@
         flex: 1;
         flex-direction: column;
         width: 255px;
+        padding-block-end: var(--dialog-footer-vertical-padding, var(--g-spacing-6));
     }
 
     &__add-icon {
@@ -53,6 +54,14 @@
 
     &__row {
         margin-bottom: var(--g-spacing-2);
+    }
+
+    &__settings-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 5px;
+        gap: 8px;
     }
 
     &__checkbox {
@@ -139,6 +148,6 @@
     &__info-comment {
         color: var(--g-color-text-secondary);
         line-height: var(--g-text-body-1-line-height);
-        margin: 0;
+        margin: var(--g-spacing-2) 0 0 0;
     }
 }

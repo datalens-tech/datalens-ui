@@ -1,4 +1,5 @@
 import libs from './libs';
+import authRegistry from './units/auth';
 import chartRegistry from './units/chart';
 import collectionsRegistry from './units/collections';
 import commonRegistry from './units/common';
@@ -27,6 +28,7 @@ export const registry = {
     collections: collectionsRegistry,
     main: mainRegistry,
     docs: docsRegistry,
+    auth: authRegistry,
 
     libs,
 };

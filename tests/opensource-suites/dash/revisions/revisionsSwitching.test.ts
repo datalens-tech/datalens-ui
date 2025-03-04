@@ -9,6 +9,7 @@ import {slct} from '../../../utils';
 import {COMMON_SELECTORS} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {arbitraryText} from '../constants';
+import {RevisionsPanelQa} from '../../../../src/shared/constants/qa';
 
 const revTexts = ['Revision 1', 'Revision 2', 'Revision 3'];
 
@@ -87,7 +88,7 @@ datalensTest.describe('Dashboards - Versioning', () => {
             //click on the "open current" button
             await page.click(
                 `${slct(COMMON_SELECTORS.REVISIONS_TOP_PANEL)} ${slct(
-                    COMMON_SELECTORS.REVISIONS_TOP_PANEL_OPEN_BTN,
+                    RevisionsPanelQa.ButtonOpenActual,
                 )}`,
             );
 

@@ -1,5 +1,4 @@
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
-import escape from 'lodash/escape';
 
 import type {
     PointSizeConfig,
@@ -8,7 +7,6 @@ import type {
     WrappedMarkup,
 } from '../../../../../../../shared';
 import {
-    Feature,
     MINIMUM_FRACTION_DIGITS,
     POINT_SHAPES_IN_ORDER,
     getFakeTitleOrTitle,
@@ -35,6 +33,7 @@ import {
     chartKitFormatNumberWrapper,
     findIndexInOrder,
     formatDate,
+    getCategoryFormatter,
     getPointRadius,
     getTimezoneOffsettedTime,
     isGradientMode,
@@ -59,11 +58,12 @@ export type ScatterGraph = {
 
 export type PrepareScatterResult = {
     graphs: ScatterGraph[];
-    categories?: (string | number | WrappedMarkdown)[];
+    categories?: (string | number | WrappedMarkdown | WrappedHTML)[];
     x?: ServerField;
     y?: ServerField;
     z?: ServerField;
     color?: ServerField;
+    shape?: ServerField;
     size?: ServerField;
     minColorValue?: number;
     maxColorValue?: number;
@@ -83,7 +83,6 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         shapes,
         shapesConfig,
         ChartEditor,
-        features,
         shared,
     } = options;
     const widgetConfig = ChartEditor.getWidgetConfig();
@@ -121,7 +120,6 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
     const yDataType = idToDataType[y.guid];
     const yIsNumber = isNumericalDataType(yDataType);
     const yIsDate = isDateField({data_type: yDataType});
-    const shouldEscapeUserValue = features[Feature.EscapeUserHtmlInDefaultHcTooltip];
 
     const cDataType = color && idToDataType[color.guid];
 
@@ -196,8 +194,6 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
                 value = wrapMarkdownValue(value);
             } else if (isHtmlField(x)) {
                 value = wrapHtml(value);
-            } else if (shouldEscapeUserValue) {
-                value = escape(value);
             }
 
             point.xLabel = value;
@@ -251,8 +247,6 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
                 yLabel = wrapMarkdownValue(yLabel);
             } else if (isHtmlField(y)) {
                 yLabel = wrapHtml(yLabel);
-            } else if (shouldEscapeUserValue) {
-                yLabel = escape(yLabel);
             }
 
             point.yLabel = yLabel;
@@ -291,8 +285,6 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
                     formattedZValue = wrapMarkdownValue(zValueRaw as string);
                 } else if (isHtmlField(z)) {
                     formattedZValue = wrapHtml(zValueRaw as string);
-                } else if (shouldEscapeUserValue) {
-                    formattedZValue = escape(formattedZValue as string);
                 }
             }
 
@@ -333,8 +325,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         if (color) {
             const cTitle = idToTitle[color.guid];
             const i = findIndexInOrder(order, color, cTitle);
-            const colorValue =
-                values[i] && shouldEscapeUserValue ? escape(String(values[i])) : values[i];
+            const colorValue = values[i];
             let colorLabel: string | null | WrappedMarkdown | WrappedHTML = colorValue;
             if (isMarkdownField(color)) {
                 colorLabel = wrapMarkdownValue(String(colorValue));
@@ -373,7 +364,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         if (shape) {
             const cTitle = idToTitle[shape.guid];
             const i = findIndexInOrder(order, shape, cTitle);
-            const shapeValue = escape(values[i] as string) || '';
+            const shapeValue = String(values[i] ?? '');
             let shapeLabel: WrappedMarkdown | string | WrappedHTML = shapeValue;
             if (isMarkdownField(shape)) {
                 shapeLabel = wrapMarkdownValue(shapeValue);
@@ -446,14 +437,16 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         });
     }
 
-    let categories: (string | number | WrappedMarkdown)[] | undefined;
+    let categories: (string | number | WrappedMarkdown | WrappedHTML)[] | undefined;
 
     if (!xIsNumber && !xIsDate) {
         categories = xCategories;
+        const categoryField = x ? {...x, data_type: xDataType ?? x?.data_type} : undefined;
+        const categoriesFormatter = getCategoryFormatter({
+            field: categoryField,
+        });
 
-        if (isMarkdownField(x)) {
-            categories = categories?.map((c) => wrapMarkdownValue(c as string));
-        }
+        categories = categories?.map((c) => categoriesFormatter(String(c)));
     }
 
     const hasMarkdown = [x, y, z, size, color, shape].some((field) => isMarkdownField(field));
@@ -474,7 +467,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         graph.keys = Array.from(keys);
         graph.custom = {
             ...graph.custom,
-            tooltipOptions: getScatterTooltipOptions({placeholders, shared, features}),
+            tooltipOptions: getScatterTooltipOptions({placeholders, shared}),
         };
 
         if (isActionParamsEnable) {
@@ -491,6 +484,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         y,
         z,
         color,
+        shape,
         minColorValue,
         maxColorValue,
         colorsConfig,

@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {FormRow, HelpPopover} from '@gravity-ui/components';
+import type {RealTheme} from '@gravity-ui/uikit';
 import {Checkbox, Dialog, Flex, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
@@ -28,6 +29,8 @@ const DEFAULT_ITEM_DATA: DashTabItemImage['data'] = {
     preserveAspectRatio: true,
 };
 
+export type DialogImageWidgetFeatureProps = {};
+
 type Props = {
     openedItemId: string | null;
     openedItemData?: DashTabItemImage['data'];
@@ -35,7 +38,8 @@ type Props = {
     onClose: () => void;
     onApply: (newItemData: SetItemDataArgs) => void;
     scope: EntryScope;
-};
+    theme?: RealTheme;
+} & DialogImageWidgetFeatureProps;
 
 const getValidationErrors = (data: DashTabItemImage['data']) => {
     const result: Record<string, string> = {};
@@ -152,6 +156,7 @@ export function DialogImageWidget(props: Props) {
                     <PaletteBackground
                         color={data.background?.color}
                         onSelect={(color) => updateData({background: {color}})}
+                        enableCustomBgColorSelector
                     />
                 </FormRow>
             </Dialog.Body>

@@ -5,7 +5,11 @@ import type {
     DashTabItemGroupControl,
     StringParams,
 } from 'shared';
-import type {SelectorsGroupDialogState, SetSelectorDialogItemArgs} from '../typings/controlDialog';
+import type {
+    DialogEditItemFeaturesProp,
+    SelectorsGroupDialogState,
+    SetSelectorDialogItemArgs,
+} from '../typings/controlDialog';
 import type {AppDispatch} from '..';
 import {
     getControlDefaultsForField,
@@ -27,6 +31,7 @@ import type {ConfigItemGroup} from '@gravity-ui/dashkit/helpers';
 import {DEFAULT_NAMESPACE} from '@gravity-ui/dashkit/helpers';
 import {CONTROLS_PLACEMENT_MODE} from 'ui/constants/dialogs';
 import type {PreparedCopyItemOptions} from '@gravity-ui/dashkit';
+import type {RealTheme} from '@gravity-ui/uikit';
 import {getPreparedCopyItemOptions, type CopiedConfigContext} from 'ui/units/dash/modules/helpers';
 import type {SetItemDataArgs} from 'ui/units/dash/store/actions/dashTyped';
 import type {DatalensGlobalState} from 'ui/index';
@@ -38,6 +43,8 @@ import {
     selectOpenedItemMeta,
     selectSelectorDialog,
     selectSelectorsGroup,
+    selectControlDialogFeatureByType,
+    selectControlDialogState,
 } from '../selectors/controlDialog';
 
 const dialogI18n = I18n.keyset('dash.group-controls-dialog.edit');
@@ -51,6 +58,9 @@ export type InitDialogAction = {
         data: DashTabItem['data'];
         type: DashTabItemType;
         defaults?: StringParams | null;
+        features?: DialogEditItemFeaturesProp;
+        theme?: RealTheme;
+        titlePlaceholder?: string;
         openedItemMeta: ControlDialogStateItemMeta;
     };
 };
@@ -175,6 +185,8 @@ export const applyGroupControlDialog = ({
         const activeSelectorIndex = selectActiveSelectorIndex(state);
         const openedItemData = selectOpenedItemData(state);
         const openedItemId = selectOpenedItemId(state);
+        const controlState = selectControlDialogState(state);
+        const features = selectControlDialogFeatureByType(state)(DashTabItemType.GroupControl);
 
         let firstInvalidIndex: number | null = null;
         const groupFieldNames: Record<string, string[]> = {};
@@ -224,14 +236,26 @@ export const applyGroupControlDialog = ({
             return;
         }
 
+        const {enableAutoheightDefault} = features;
         const isSingleControl = selectorsGroup.group.length === 1;
-        const autoHeight =
-            !isSingleControl ||
-            selectorsGroup.buttonApply ||
-            selectorsGroup.buttonReset ||
-            selectorsGroup.group[0].titlePlacement === TitlePlacementOption.Top
-                ? selectorsGroup.autoHeight
-                : false;
+
+        let autoHeight;
+        if (enableAutoheightDefault) {
+            autoHeight = true;
+        } else {
+            const hasButtons = selectorsGroup.buttonApply || selectorsGroup.buttonReset;
+            const hasGroupName =
+                selectorsGroup.showGroupName &&
+                (selectorsGroup.groupName || controlState.titlePlaceholder);
+            const hasTopPlacementTitle =
+                selectorsGroup.group[0].titlePlacement === TitlePlacementOption.Top;
+
+            if (!isSingleControl || hasButtons || hasGroupName || hasTopPlacementTitle) {
+                autoHeight = selectorsGroup.autoHeight;
+            } else {
+                autoHeight = false;
+            }
+        }
         const updateControlsOnChange =
             !isSingleControl && selectorsGroup.buttonApply
                 ? selectorsGroup.updateControlsOnChange
@@ -239,9 +263,11 @@ export const applyGroupControlDialog = ({
 
         const data = {
             autoHeight,
+            updateControlsOnChange,
+            showGroupName: selectorsGroup.showGroupName,
+            groupName: selectorsGroup.groupName,
             buttonApply: selectorsGroup.buttonApply,
             buttonReset: selectorsGroup.buttonReset,
-            updateControlsOnChange,
             group: selectorsGroup.group.map((selector) => {
                 let hasChangedSourceType = false;
                 if (openedItemId) {

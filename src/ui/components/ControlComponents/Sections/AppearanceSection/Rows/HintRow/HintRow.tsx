@@ -18,7 +18,7 @@ const b = block('control2-appearance-section');
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
 
-export const HintRow = () => {
+export const HintRow = ({className}: {className?: string}) => {
     const dispatch = useDispatch();
     const {showHint = false, hint} = useSelector(selectSelectorDialog);
     const isFieldDisabled = useSelector(selectIsControlConfigurationDisabled);
@@ -38,14 +38,14 @@ export const HintRow = () => {
     const {MarkdownControl} = registry.common.components.getAll();
 
     return (
-        <FormRow label={i18n('field_hint')}>
+        <FormRow label={i18n('field_hint')} className={className}>
             <div className={b('setting-container')}>
                 <Checkbox
                     disabled={isFieldDisabled}
                     onUpdate={handleUpdateEnable}
                     checked={showHint}
                     size="l"
-                    className={b('setting-checkbox')}
+                    className={b('setting-checkbox', {top: true})}
                 />
                 {showHint && (
                     <MarkdownControl

@@ -1,9 +1,9 @@
-import type {Request, Response} from '@gravity-ui/expresskit';
+import type {Response} from '@gravity-ui/expresskit';
+import type {AppContext} from '@gravity-ui/nodekit';
 
 import type {Palette} from '../../../../shared/constants/colors';
 import type {GetEntryByKeyResponse} from '../../../../shared/schema';
 import {makeFunctionTemplate} from '../../../../shared/utils/makeFunctionTemplate';
-import type {ChartsEngine} from '../../../components/charts-engine';
 import type {SourceConfig} from '../../../components/charts-engine/types';
 
 export const commonFunctionsMap = {
@@ -11,8 +11,7 @@ export const commonFunctionsMap = {
     getSourceAuthorizationHeaders:
         makeFunctionTemplate<
             (args: {
-                chartsEngine: ChartsEngine;
-                req: Request;
+                ctx: AppContext;
                 sourceConfig: SourceConfig;
                 subrequestHeaders: Record<string, string>;
             }) => Record<string, string>

@@ -7,6 +7,10 @@ import type {
     VmCallResult,
 } from 'quickjs-emscripten';
 
+import {getRandomCKId} from '../../../ChartKit/helpers/getRandomCKId';
+import Performance from '../../../ChartKit/modules/perfomance';
+import {ATTR_DATA_ELEMENT_ID} from '../../html-generator/constants';
+
 type UiSandboxRuntimeProps = {
     fn: string;
     fnArgs: unknown[];
@@ -20,39 +24,29 @@ export class UiSandboxRuntime {
     private runtime: QuickJSRuntime;
     private vm: QuickJSContext;
     private pending: QuickJSHandle[];
+    private getInterruptAfterDeadlineHandler: (deadline: Date | number) => InterruptHandler;
+    private timelimit: number;
 
-    constructor(props: {sandbox: QuickJSWASMModule; interruptHandler: InterruptHandler}) {
-        const {sandbox, interruptHandler} = props;
+    constructor(props: {
+        sandbox: QuickJSWASMModule;
+        timelimit: number;
+        getInterruptAfterDeadlineHandler: (deadline: Date | number) => InterruptHandler;
+    }) {
+        const {sandbox, getInterruptAfterDeadlineHandler, timelimit} = props;
 
         this.runtime = sandbox.newRuntime();
-        this.runtime.setInterruptHandler(interruptHandler);
+        this.timelimit = timelimit;
+        this.getInterruptAfterDeadlineHandler = getInterruptAfterDeadlineHandler;
         this.vm = this.runtime.newContext();
 
         this.pending = [];
     }
 
-    callFunction(props: UiSandboxRuntimeProps) {
-        const {fn, fnContext, fnArgs, globalApi, libs, name} = props;
-
-        this.defineVmArguments(fnArgs);
-        this.defineVmContext(fnContext);
-        this.defineVmApi(globalApi);
-        const code = `${libs}
-            const __fn = ${fn};
-            __fn.call(JSON.parse(context), ...(args.length
-                ? JSON.parse(args).map((arg) => {
-                    if(typeof arg === "string" && arg.startsWith('function')) {
-                        let fn;
-                        eval('fn = ' + arg);
-                        return fn;
-                    }
-                    return arg;
-                })
-                : []))`;
-        const result = this.vm.evalCode(code, 'fn');
-        const lines = code?.split('\n') ?? [];
-        const startPoint = lines.findIndex((row) => row.trim().startsWith('const __fn')) + 1;
-
+    checkCallResult(
+        result: VmCallResult<QuickJSHandle>,
+        options: {name?: string; startPoint?: number},
+    ): result is {value: QuickJSHandle} {
+        const {startPoint = 0, name} = options;
         if (result.error) {
             const errorMsg = this.vm.dump(result.error);
             errorMsg.stack = errorMsg.stack
@@ -68,12 +62,55 @@ export class UiSandboxRuntime {
             throw errorMsg;
         }
 
-        const value = this.vm.dump(result.value);
+        return true;
+    }
 
-        result.value.dispose();
-        this.dispose();
+    callFunction(props: UiSandboxRuntimeProps) {
+        const {fn, fnContext = {}, fnArgs, globalApi, libs, name} = props;
+        const filename = 'fn';
 
-        return value;
+        const libsResult = this.vm.evalCode(libs, filename, {type: 'global'});
+        this.checkCallResult(libsResult, {name});
+
+        this.defineVmContext(fnContext);
+        this.defineVmArguments(fnArgs);
+        this.defineVmApi(globalApi);
+
+        const code = `globalThis.__fn = ${fn};
+            globalThis.__fn_args = args.length
+                ? JSON.parse(args).map((arg) => {
+                    if(typeof arg === "string" && arg.startsWith('function')) {
+                        let fn;
+                        eval('fn = ' + arg);
+                        return fn;
+                    }
+
+                    if (arg?.target && '${ATTR_DATA_ELEMENT_ID}' in arg.target) {
+                        arg.target = document.querySelector('[${ATTR_DATA_ELEMENT_ID}="' + arg.target['${ATTR_DATA_ELEMENT_ID}'] + '"]');
+                    }
+                    return arg;
+                })
+                : [];
+            globalThis.__fn.call(JSON.parse(context), ...globalThis.__fn_args)`;
+        this.runtime.setInterruptHandler(
+            this.getInterruptAfterDeadlineHandler(Date.now() + this.timelimit),
+        );
+        const runId = getRandomCKId();
+        Performance.mark(runId);
+        const result = this.vm.evalCode(code, filename);
+        const performance = Performance.getDuration(runId);
+        const lines = code?.split('\n') ?? [];
+        const startPoint = lines.findIndex((row) => row.trim().startsWith('const __fn')) + 1;
+
+        if (this.checkCallResult(result, {name, startPoint})) {
+            const value = this.vm.dump(result.value);
+            result.value.dispose();
+            this.dispose();
+
+            return {result: value, execTime: performance};
+        }
+
+        return {result: null, execTime: performance};
     }
 
     private defineVmContext(context: unknown) {

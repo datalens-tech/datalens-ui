@@ -15,12 +15,15 @@ import {resolveChartConfig} from './utils';
 type RunControllerExtraSettings = {
     storageApiPath?: string;
     extraAllowedHeaders?: string[];
+    includeServicePlan?: boolean;
+    includeTenantFeatures?: boolean;
 };
 
 export const runController = (
     chartsEngine: ChartsEngine,
     extraSettings?: RunControllerExtraSettings,
 ) => {
+    // eslint-disable-next-line complexity
     return async function chartsRunController(req: Request, res: Response) {
         const {ctx} = req;
 
@@ -107,20 +110,8 @@ export const runController = (
                 return;
             }
 
-            // TODO: remove this condition and corresponded code block after ChartEditor unit migrating
-            if (
-                !isEnabledServerFeature(ctx, 'EnableChartEditor') &&
-                runnerFound.name === 'editor'
-            ) {
-                ctx.log('CHARTS_ENGINE_EDITOR_DISABLED');
-                res.status(400).send({
-                    error: 'ChartEditor is disabled',
-                });
-                return;
-            }
-
             if (req.body.config) {
-                if (!chartsEngine.config.allowBodyConfig && !runnerFound.safeConfig) {
+                if (!ctx.config.allowBodyConfig && !runnerFound.safeConfig) {
                     ctx.log('UNSAFE_CONFIG_OVERRIDE');
                     res.status(400).send({
                         error: `It is forbidden to pass config in body for "${configType}"`,

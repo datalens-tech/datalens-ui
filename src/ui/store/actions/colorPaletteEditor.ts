@@ -44,7 +44,7 @@ export function setColorPalettes(colorPalettes: ColorPalette[]): SetColorPalette
 export function fetchColorPalettes() {
     return async (dispatch: AppDispatch) => {
         try {
-            const colorPalettes = await getSdk().us.getColorPalettesList();
+            const colorPalettes = await getSdk().sdk.us.getColorPalettesList();
 
             dispatch(setColorPalettes(colorPalettes));
         } catch (e) {
@@ -66,9 +66,9 @@ export function saveCurrentPalette() {
         const isUpdateAction = currentColorPalette.colorPaletteId;
 
         if (isUpdateAction) {
-            operationPromise = getSdk().us.updateColorPalette(currentColorPalette);
+            operationPromise = getSdk().sdk.us.updateColorPalette(currentColorPalette);
         } else {
-            operationPromise = getSdk().us.createColorPalette({
+            operationPromise = getSdk().sdk.us.createColorPalette({
                 displayName: currentColorPalette.displayName,
                 colors: currentColorPalette.colors,
                 isDefault: currentColorPalette.isDefault,
@@ -110,7 +110,7 @@ export function deleteColorPalette(colorPalette: ColorPalette) {
         }
 
         try {
-            await getSdk().us.deleteColorPalette({
+            await getSdk().sdk.us.deleteColorPalette({
                 colorPaletteId,
             });
         } catch (error) {

@@ -1,0 +1,35 @@
+.conn-form-key-value {
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+    width: 100%;
+
+    &__add-button-wrapper {
+        display: flex;
+        flex-direction: column;
+        row-gap: 2px;
+    }
+
+    &__add-button {
+        width: fit-content;
+    }
+
+    &__add-button-error-message {
+        color: var(--g-color-text-danger);
+    }
+
+    &__entry {
+        display: flex;
+        column-gap: 10px;
+    }
+
+    &__key-select {
+        flex-shrink: 0;
+        max-width: 40%;
+    }
+
+    &__value-input {
+        flex-shrink: 1;
+        flex-basis: auto;
+    }
+}

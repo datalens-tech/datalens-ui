@@ -1,19 +1,15 @@
 import React from 'react';
 
-import {HelpPopover} from '@gravity-ui/components';
 import {Gear} from '@gravity-ui/icons';
-import {Button, Checkbox, Icon} from '@gravity-ui/uikit';
+import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import type {DashTabItemControlData, DashTabItemGroupControlData} from 'shared';
-import {
-    DashTabItemControlSourceType,
-    DashTabItemType,
-    DialogGroupControlQa,
-    TitlePlacementOption,
-} from 'shared';
-import {useEffectOnce} from 'ui/hooks';
+import {DashTabItemControlSourceType, DashTabItemType, DialogGroupControlQa} from 'shared';
+import {TabMenu} from 'ui/components/TabMenu/TabMenu';
+import type {TabMenuItemData, UpdateState} from 'ui/components/TabMenu/types';
+import {TabActionType} from 'ui/components/TabMenu/types';
 import {
     addSelectorToGroup,
     setActiveSelectorIndex,
@@ -30,10 +26,7 @@ import type {SelectorDialogState, SelectorsGroupDialogState} from 'ui/store/typi
 import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
 import {isItemPasteAllowed} from 'ui/units/dash/modules/helpers';
 
-import {TabMenu} from '../../DialogChartWidget/TabMenu/TabMenu';
-import type {TabMenuItemData, UpdateState} from '../../DialogChartWidget/TabMenu/types';
-import {TabActionType} from '../../DialogChartWidget/TabMenu/types';
-import {DIALOG_SELECTORS_PLACEMENT} from '../../DialogControlsPlacement/DialogControlsPlacement';
+import {DIALOG_EXTENDED_SETTINGS} from '../../DialogExtendedSettings/DialogExtendedSettings';
 
 import '../DialogGroupControl.scss';
 
@@ -81,8 +74,15 @@ const handlePasteItems = (pasteConfig: CopiedConfigData | null) => {
 
 export const GroupControlSidebar: React.FC<{
     handleCopyItem: (itemIndex: number) => void;
+    selectorsGroupTitlePlaceholder?: string;
     enableAutoheightDefault?: boolean;
-}> = ({enableAutoheightDefault, handleCopyItem}) => {
+    showSelectorsGroupTitle?: boolean;
+}> = ({
+    handleCopyItem,
+    selectorsGroupTitlePlaceholder,
+    enableAutoheightDefault,
+    showSelectorsGroupTitle,
+}) => {
     const selectorsGroup = useSelector(selectSelectorsGroup);
     const activeSelectorIndex = useSelector(selectActiveSelectorIndex);
 
@@ -91,8 +91,6 @@ export const GroupControlSidebar: React.FC<{
     const initialTabIndex =
         selectorsGroup.group?.[0]?.title === i18n('label_default-tab', {index: 1}) ? 2 : 1;
     const [defaultTabIndex, setDefaultTabIndex] = React.useState(initialTabIndex);
-
-    const isMultipleSelectors = selectorsGroup.group?.length > 1;
 
     const updateSelectorsList = React.useCallback(
         ({items, selectedItemIndex, action}: UpdateState<SelectorDialogState>) => {
@@ -129,64 +127,25 @@ export const GroupControlSidebar: React.FC<{
         dispatch(closeDialog());
     }, [dispatch]);
 
-    const handleSelectorsPlacementClick = React.useCallback(() => {
+    const handleExtendedSettingsClick = React.useCallback(() => {
         dispatch(
             openDialog({
-                id: DIALOG_SELECTORS_PLACEMENT,
+                id: DIALOG_EXTENDED_SETTINGS,
                 props: {
                     onClose: handleClosePlacementDialog,
+                    selectorsGroupTitlePlaceholder,
+                    enableAutoheightDefault,
+                    showSelectorsGroupTitle,
                 },
             }),
         );
-    }, [dispatch, handleClosePlacementDialog]);
-
-    const handleChangeAutoHeight = React.useCallback(
-        (value) => {
-            dispatch(
-                updateSelectorsGroup({
-                    ...selectorsGroup,
-                    autoHeight: value,
-                }),
-            );
-        },
-        [dispatch, selectorsGroup],
-    );
-
-    const handleChangeButtonApply = React.useCallback(
-        (value) => {
-            dispatch(
-                updateSelectorsGroup({
-                    ...selectorsGroup,
-                    buttonApply: value,
-                }),
-            );
-        },
-        [dispatch, selectorsGroup],
-    );
-
-    const handleChangeButtonReset = React.useCallback(
-        (value) => {
-            dispatch(
-                updateSelectorsGroup({
-                    ...selectorsGroup,
-                    buttonReset: value,
-                }),
-            );
-        },
-        [dispatch, selectorsGroup],
-    );
-
-    const handleChangeUpdateControls = React.useCallback(
-        (value: boolean) => {
-            dispatch(
-                updateSelectorsGroup({
-                    ...selectorsGroup,
-                    updateControlsOnChange: value,
-                }),
-            );
-        },
-        [dispatch, selectorsGroup],
-    );
+    }, [
+        dispatch,
+        handleClosePlacementDialog,
+        selectorsGroupTitlePlaceholder,
+        enableAutoheightDefault,
+        showSelectorsGroupTitle,
+    ]);
 
     const handleUpdateItem = React.useCallback(
         (title: string) => {
@@ -198,22 +157,6 @@ export const GroupControlSidebar: React.FC<{
         },
         [dispatch],
     );
-
-    useEffectOnce(() => {
-        if (enableAutoheightDefault) {
-            handleChangeAutoHeight(true);
-        }
-    });
-
-    const showAutoHeight =
-        (isMultipleSelectors ||
-            selectorsGroup.buttonApply ||
-            selectorsGroup.buttonReset ||
-            // until we have supported automatic height adjustment for case with top title placement,
-            // we allow to enable autoheight
-            selectorsGroup.group[0].titlePlacement === TitlePlacementOption.Top) &&
-        !enableAutoheightDefault;
-    const showUpdateControlsOnChange = selectorsGroup.buttonApply && isMultipleSelectors;
 
     return (
         <div className={b('sidebar')}>
@@ -228,85 +171,20 @@ export const GroupControlSidebar: React.FC<{
                     enableActionMenu={true}
                     onPasteItems={handlePasteItems}
                     canPasteItems={canPasteItems}
-                    addButtonView="outlined"
                     onCopyItem={handleCopyItem}
                     onUpdateItem={handleUpdateItem}
                 />
             </div>
             <div className={b('settings')}>
-                {showUpdateControlsOnChange && (
-                    <div className={b('settings-container')}>
-                        <div>
-                            <span>{i18n('label_update-controls-on-change')}</span>
-                            <HelpPopover
-                                className={b('help-icon')}
-                                htmlContent={i18n('context_update-controls-on-change')}
-                            />
-                        </div>
-                        <Checkbox
-                            checked={selectorsGroup.updateControlsOnChange}
-                            onUpdate={handleChangeUpdateControls}
-                            size="l"
-                            qa={DialogGroupControlQa.updateControlOnChangeCheckbox}
-                        />
-                    </div>
-                )}
-                {showAutoHeight && (
-                    <div className={b('settings-container')}>
-                        <div>
-                            <span>{i18n('label_autoheight-checkbox')}</span>
-                        </div>
-                        <Checkbox
-                            checked={selectorsGroup.autoHeight}
-                            onUpdate={handleChangeAutoHeight}
-                            size="l"
-                            qa={DialogGroupControlQa.autoHeightCheckbox}
-                        />
-                    </div>
-                )}
-                <div className={b('settings-container')}>
-                    <div>
-                        <span>{i18n('label_apply-button-checkbox')}</span>
-                        <HelpPopover
-                            className={b('help-icon')}
-                            htmlContent={i18n('context_apply-button')}
-                        />
-                    </div>
-                    <Checkbox
-                        checked={selectorsGroup.buttonApply}
-                        onUpdate={handleChangeButtonApply}
-                        size="l"
-                        qa={DialogGroupControlQa.applyButtonCheckbox}
-                    />
-                </div>
-                <div className={b('settings-container')}>
-                    <div>
-                        <span>{i18n('label_reset-button-checkbox')}</span>
-                        <HelpPopover
-                            className={b('help-icon')}
-                            htmlContent={i18n('context_reset-button')}
-                        />
-                    </div>
-                    <Checkbox
-                        checked={selectorsGroup.buttonReset}
-                        onUpdate={handleChangeButtonReset}
-                        size="l"
-                        qa={DialogGroupControlQa.resetButtonCheckbox}
-                    />
-                </div>
-
-                {isMultipleSelectors && (
-                    <Button
-                        view="outlined"
-                        width="max"
-                        className={b('order-selectors-button')}
-                        onClick={handleSelectorsPlacementClick}
-                        qa={DialogGroupControlQa.placementButton}
-                    >
-                        <Icon data={Gear} height={16} width={16} />
-                        {i18n('button_selectors-placement')}
-                    </Button>
-                )}
+                <Button
+                    className={b('extended-settings-button')}
+                    width="max"
+                    onClick={handleExtendedSettingsClick}
+                    qa={DialogGroupControlQa.extendedSettingsButton}
+                >
+                    <Icon data={Gear} height={16} width={16} />
+                    {i18n('button_extended-settings')}
+                </Button>
             </div>
         </div>
     );
