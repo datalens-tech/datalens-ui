@@ -128,7 +128,6 @@ export enum RobotChartsDashboardUrls {
     DashboardWithYagrCharts = '/8gvkpbjv3x7wy',
     DashboardWithChartTabsAndRelation = '/lt9uci9co9g2b',
     DashboardWithOverLimitsChart = '/y7t337y87h04o',
-    DashboardWithHighchartsMap = '/jse7ewxsyjue9',
     DashboardWithCustomTooltip = '/mrkyzqh950pmb',
     DashboardWithEditorSelectorsWithoutParams = '/saj2by7fkc64i',
     DashboardWithEditorSelectorsWithParams = '/4mwiptdrf4n8u',
