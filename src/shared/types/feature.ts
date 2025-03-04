@@ -1,7 +1,6 @@
 export enum Feature {
     ChartkitAlerts = 'chartkitAlerts',
     UseConfigurableChartkit = 'UseConfigurableChartkit',
-    Ql = 'ql',
     HideOldRelations = 'hideOldRelations',
     // Show new relations button in navigation action panel
     ShowNewRelationsButton = 'ShowNewRelationsButton',
