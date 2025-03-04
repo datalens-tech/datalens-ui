@@ -23,6 +23,7 @@ import {TabMenu} from 'ui/components/TabMenu/TabMenu';
 import type {UpdateState} from 'ui/components/TabMenu/types';
 import {TabActionType} from 'ui/components/TabMenu/types';
 import {DL} from 'ui/constants/common';
+import {CustomPaletteBgColors} from 'ui/constants/widgets';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {registry} from '../../registry';
@@ -135,7 +136,7 @@ class DialogChartWidget extends React.PureComponent<
                     isDefault: true,
                     description: '',
                     background: {
-                        color: 'transparent',
+                        color: CustomPaletteBgColors.LIKE_CHART,
                     },
                     enableHint: false,
                     hint: '',
@@ -572,7 +573,6 @@ class DialogChartWidget extends React.PureComponent<
             workbookId,
             navigationPath,
             enableAutoheight,
-            enableBackgroundColor,
             enableCustomBgColorSelector,
             enableFilteringSetting,
             changeNavigationPath,
@@ -739,24 +739,23 @@ class DialogChartWidget extends React.PureComponent<
                         />
                     </FormRow>
                 )}
-                {enableBackgroundColor && (
-                    <FormRow
-                        className={b('row')}
-                        label={
-                            <div className={b('caption')}>
-                                <span className={b('caption-text')}>
-                                    {i18n('dash.widget-dialog.edit', 'field_background')}
-                                </span>
-                            </div>
-                        }
-                    >
-                        <PaletteBackground
-                            color={background?.color}
-                            onSelect={this.handleBackgroundColorSelected}
-                            enableCustomBgColorSelector={enableCustomBgColorSelector}
-                        />
-                    </FormRow>
-                )}
+                <FormRow
+                    className={b('row')}
+                    label={
+                        <div className={b('caption')}>
+                            <span className={b('caption-text')}>
+                                {i18n('dash.widget-dialog.edit', 'field_background')}
+                            </span>
+                        </div>
+                    }
+                >
+                    <PaletteBackground
+                        key={`bg-selector-tab-${tabIndex}`}
+                        color={background?.color}
+                        onSelect={this.handleBackgroundColorSelected}
+                        enableCustomBgColorSelector={enableCustomBgColorSelector}
+                    />
+                </FormRow>
                 {enableFilteringSetting && this.renderFilteringCharts()}
                 {this.renderParams()}
             </React.Fragment>

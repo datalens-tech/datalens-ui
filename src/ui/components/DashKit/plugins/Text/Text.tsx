@@ -6,16 +6,13 @@ import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
 import get from 'lodash/get';
 import type {DashTabItemText} from 'shared';
-import {
-    adjustWidgetLayout as dashkitAdjustWidgetLayout,
-    getPreparedWrapSettings,
-} from 'ui/components/DashKit/utils';
-import {CustomPaletteBgColors} from 'ui/constants/widgets';
+import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
 import {YFM_MARKDOWN_CLASSNAME} from 'ui/constants/yfm';
 import {usePrevious} from 'ui/hooks';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
 import {YfmWrapper} from '../../../YfmWrapper/YfmWrapper';
+import {usePreparedWrapSettings} from '../../hooks';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
 import './Text.scss';
@@ -183,13 +180,7 @@ const textPlugin = {
 
         const data = props.data as DashTabItemText['data'];
 
-        const showBgColor = Boolean(
-            data.background?.enabled !== false &&
-                data.background?.color &&
-                data.background?.color !== CustomPaletteBgColors.NONE,
-        );
-
-        const {classMod, style} = getPreparedWrapSettings(showBgColor, data.background?.color);
+        const {classMod, style, hasBgColor} = usePreparedWrapSettings(data.background);
 
         const currentLayout = props.layout.find(({i}) => i === props.id) || {
             x: null,
@@ -244,7 +235,7 @@ const textPlugin = {
                     // needed for force update when text is changed
                     key={`yfm_${YfmWrapperKeyRef.current}`}
                     content={<div className={b('content-wrap', null)}>{content}</div>}
-                    className={b({'with-color': Boolean(showBgColor)})}
+                    className={b({'with-color': hasBgColor})}
                     metaScripts={metaScripts}
                     onRenderCallback={handleTextRender}
                 />
