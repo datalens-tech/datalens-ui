@@ -36,7 +36,6 @@ export interface SharedAppConfig {
     runResponseWhitelist?: string[];
     allowBodyConfig: boolean;
     chartsEngineConfig: {
-        nativeModules: Record<string, unknown>;
         secrets: Record<string, string>;
         enableTelemetry: boolean;
         flags?: Record<string, boolean>;
