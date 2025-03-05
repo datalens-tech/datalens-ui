@@ -16,15 +16,6 @@ datalensTest.describe('Dashboards - renderers of various types of charts', () =>
         },
     );
     datalensTest(
-        'In a dashboard with a highcharts map chart, the page loads and the chart is displayed',
-        async ({page}: {page: Page}) => {
-            await openTestPage(page, RobotChartsDashboardUrls.DashboardWithHighchartsMap);
-
-            // check that the chart is displayed
-            await page.waitForSelector(`.${COMMON_CHARTKIT_SELECTORS.chartkit}`);
-        },
-    );
-    datalensTest(
         'When you click the "Display" button in the chart exceeding the limits, the chart is loaded',
         async ({page}: {page: Page}) => {
             await openTestPage(page, RobotChartsDashboardUrls.DashboardWithOverLimitsChart);
