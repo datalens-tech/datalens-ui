@@ -9,7 +9,12 @@ import type {InterruptHandler, QuickJSWASMModule} from 'quickjs-emscripten';
 import {chartStorage} from 'ui/libs/DatalensChartkit/ChartKit/plugins/chart-storage';
 
 import type {ChartKitHtmlItem, StringParams} from '../../../../../../shared';
-import {EditorType, WRAPPED_FN_KEY, WRAPPED_HTML_KEY} from '../../../../../../shared';
+import {
+    EditorType,
+    LegacyEditorType,
+    WRAPPED_FN_KEY,
+    WRAPPED_HTML_KEY,
+} from '../../../../../../shared';
 import type {UISandboxWrappedFunction} from '../../../../../../shared/types/ui-sandbox';
 import {wrapHtml} from '../../../../../../shared/utils/ui-sandbox';
 import {getRandomCKId} from '../../../ChartKit/helpers/getRandomCKId';
@@ -213,7 +218,9 @@ async function getUnwrappedFunction(args: {
     const {sandbox, wrappedFn, options, entryId, entryType, name} = args;
     let libs = await getUiSandboxLibs(wrappedFn.libs ?? []);
     const parseHtml = await getParseHtmlFn();
-    const isAdvancedChart = entryType === EditorType.AdvancedChartNode;
+    const isAdvancedChart = (
+        [EditorType.AdvancedChartNode, LegacyEditorType.BlankChart] as string[]
+    ).includes(entryType);
 
     return function (this: unknown, ...restArgs: unknown[]) {
         const runId = getRandomCKId();

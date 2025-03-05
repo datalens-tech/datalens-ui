@@ -1,5 +1,10 @@
 import type {WidgetType} from '../../../../../shared';
-import {EditorType, WizardType, WizardVisualizationId} from '../../../../../shared';
+import {
+    EditorType,
+    LegacyEditorType,
+    WizardType,
+    WizardVisualizationId,
+} from '../../../../../shared';
 
 export function isEntryTypeWithFiltering(
     entryType?: WidgetType,
@@ -10,6 +15,7 @@ export function isEntryTypeWithFiltering(
         EditorType.GraphNode,
         EditorType.GravityChartsNode,
         EditorType.AdvancedChartNode,
+        LegacyEditorType.BlankChart,
     ];
 
     const wizardEntryTypes = [

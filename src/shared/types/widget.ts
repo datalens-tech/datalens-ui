@@ -15,6 +15,7 @@ export enum LegacyEditorType {
     Manager = 'manager',
     Text = 'text',
     Metric = 'metric',
+    BlankChart = 'blank-chart_node',
 }
 
 export enum EditorType {
@@ -29,7 +30,7 @@ export enum EditorType {
     MarkdownNode = 'markdown_node',
     MarkupNode = 'markup_node',
     GravityChartsNode = 'd3_node',
-    AdvancedChartNode = 'blank-chart_node',
+    AdvancedChartNode = 'advanced-chart_node',
 }
 
 export enum WidgetKind {
