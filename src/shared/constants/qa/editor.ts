@@ -10,7 +10,7 @@ export const enum EditorTemplatesQA {
     Timeseries = 'editor-templates-timeseries-item',
     Markup = 'editor-templates-markup-item',
     GravityCharts = 'editor-templates-gravity-charts-item',
-    BlankChart = 'editor-templates-blank-chart-item',
+    AdvancedChart = 'editor-templates-advacned-chart-item',
 }
 
 export enum EditorActionPanelQA {

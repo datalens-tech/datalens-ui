@@ -641,10 +641,10 @@ export function getChartEditorTypes(type: string) {
                 ...getMetaTab(),
             ],
         },
-        [EDITOR_TYPE.BLANK_CHART_NODE]: {
+        [EDITOR_TYPE.ADVANCED_CHART_NODE]: {
             get name() {
-                //@ts-ignore
-                return i18n('label_blank-chart');
+                // @ts-ignore
+                return i18n('label_advanced-chart');
             },
             tabs: [
                 {
@@ -677,16 +677,14 @@ export function getChartEditorTypes(type: string) {
                     language: 'javascript',
                     docs: docsControls,
                 },
-                {
-                    name: 'Config',
-                    id: 'config',
-                    language: 'javascript',
-                },
                 ...getSharedTab({docs: docsShare}),
                 ...getMetaTab(),
             ],
         },
     } as Record<string, ChartEditorType>;
+
+    chartEditorTypes[EDITOR_TYPE.BLANK_CHART_NODE] =
+        chartEditorTypes[EDITOR_TYPE.ADVANCED_CHART_NODE];
 
     if (isEnabledFeature(Feature.ChartActions)) {
         chartEditorTypes[EDITOR_TYPE.CONTROL_NODE].tabs.push({
