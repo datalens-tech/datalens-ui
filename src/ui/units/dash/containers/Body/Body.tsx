@@ -162,6 +162,7 @@ type DashBodyState = {
     hash: string;
     delayedScrollId: string | null;
     lastDelayedScrollTop: number | null;
+    groups: DashKitGroup[];
 };
 
 type BodyProps = StateProps & DispatchProps & RouteComponentProps & OwnProps;
@@ -299,44 +300,45 @@ class Body extends React.PureComponent<BodyProps> {
         hash: '',
         delayedScrollId: null,
         lastDelayedScrollTop: null,
+        groups: [
+            {
+                id: FIXED_GROUP_HEADER_ID,
+                render: (id, children, props) =>
+                    this.renderFixedGroupHeader(
+                        id,
+                        children,
+                        props as DashkitGroupRenderWithContextProps,
+                    ),
+                gridProperties: (props) => {
+                    return {
+                        ...props,
+                        cols: FIXED_HEADER_GROUP_COLS,
+                        maxRows: FIXED_HEADER_GROUP_LINE_MAX_ROWS,
+                        autoSize: false,
+                        compactType: 'horizontal-nowrap',
+                    };
+                },
+            },
+            {
+                id: FIXED_GROUP_CONTAINER_ID,
+                render: (id, children, props) =>
+                    this.renderFixedGroupContainer(
+                        id,
+                        children,
+                        props as DashkitGroupRenderWithContextProps,
+                    ),
+                gridProperties: getPropertiesWithResizeHandles,
+            },
+            {
+                id: DEFAULT_GROUP,
+                gridProperties: getPropertiesWithResizeHandles,
+            },
+        ],
     };
 
-    groups: DashKitGroup[] = [
-        {
-            id: FIXED_GROUP_HEADER_ID,
-            render: (id, children, props) =>
-                this.renderFixedGroupHeader(
-                    id,
-                    children,
-                    props as DashkitGroupRenderWithContextProps,
-                ),
-            gridProperties: (props) => {
-                return {
-                    ...props,
-                    cols: FIXED_HEADER_GROUP_COLS,
-                    maxRows: FIXED_HEADER_GROUP_LINE_MAX_ROWS,
-                    autoSize: false,
-                    compactType: 'horizontal-nowrap',
-                };
-            },
-        },
-        {
-            id: FIXED_GROUP_CONTAINER_ID,
-            render: (id, children, props) =>
-                this.renderFixedGroupContainer(
-                    id,
-                    children,
-                    props as DashkitGroupRenderWithContextProps,
-                ),
-            gridProperties: getPropertiesWithResizeHandles,
-        },
-        {
-            id: DEFAULT_GROUP,
-            gridProperties: getPropertiesWithResizeHandles,
-        },
-    ];
-
     componentDidMount() {
+        this.insertGlobalMarginHook();
+
         // if localStorage already have a dash item, we need to set it to state
         this.storageHandler();
 
@@ -374,6 +376,64 @@ class Body extends React.PureComponent<BodyProps> {
                 <EntryDialogues ref={this.entryDialoguesRef} />
             </div>
         );
+    }
+
+    insertGlobalMarginHook() {
+        (window as any).$setDashkitMargins = (vMargin = 8, hMargin = 8) => {
+            const margin = [vMargin, hMargin];
+            const rowHeight = 18 + Math.min(8 - vMargin, 8);
+
+            this.setState({
+                groups: [
+                    {
+                        id: FIXED_GROUP_HEADER_ID,
+                        render: (id, children, props) =>
+                            this.renderFixedGroupHeader(
+                                id,
+                                children,
+                                props as DashkitGroupRenderWithContextProps,
+                            ),
+                        gridProperties: (props) => {
+                            return {
+                                ...props,
+                                cols: FIXED_HEADER_GROUP_COLS,
+                                maxRows: FIXED_HEADER_GROUP_LINE_MAX_ROWS,
+                                autoSize: false,
+                                compactType: 'horizontal-nowrap',
+                                margin,
+                                rowHeight,
+                            };
+                        },
+                    },
+                    {
+                        id: FIXED_GROUP_CONTAINER_ID,
+                        render: (id, children, props) =>
+                            this.renderFixedGroupContainer(
+                                id,
+                                children,
+                                props as DashkitGroupRenderWithContextProps,
+                            ),
+                        gridProperties: (props) => {
+                            return {
+                                ...(getPropertiesWithResizeHandles as any)(props),
+                                margin,
+                                rowHeight,
+                            };
+                        },
+                    },
+                    {
+                        id: DEFAULT_GROUP,
+                        gridProperties: (props) => {
+                            return {
+                                ...(getPropertiesWithResizeHandles as any)(props),
+                                margin,
+                                rowHeight,
+                            };
+                        },
+                    },
+                ] as DashKitGroup[],
+            });
+        };
     }
 
     onChange = ({
@@ -557,7 +617,7 @@ class Body extends React.PureComponent<BodyProps> {
                 layout: GravityDashkit.reflowLayout({
                     newLayoutItem: movedItem,
                     layout: newLayout,
-                    groups: this.groups,
+                    groups: this.state.groups,
                 }),
             });
         }
@@ -962,7 +1022,7 @@ class Body extends React.PureComponent<BodyProps> {
                 focusable={true}
                 onDrop={this.onDropElement}
                 itemsStateAndParams={this.props.hashStates as DashKitProps['itemsStateAndParams']}
-                groups={this.groups}
+                groups={this.state.groups}
                 context={context}
                 getPreparedCopyItemOptions={
                     this
