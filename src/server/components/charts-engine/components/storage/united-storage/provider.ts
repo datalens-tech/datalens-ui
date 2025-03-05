@@ -452,6 +452,7 @@ export class USProvider {
             method: 'get',
             headers: injectMetadata(formattedHeaders, ctx),
             timeout: TIMEOUT_10_SEC,
+            params,
         };
 
         return axios
