@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {ArrowRightFromSquare, Gear} from '@gravity-ui/icons';
-import {Button, Icon} from '@gravity-ui/uikit';
+import {Button, Icon, Label} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Link} from 'react-router-dom';
@@ -18,6 +18,12 @@ const i18nAsideHeader = I18n.keyset('component.aside-header.view');
 
 export function UserMenu({onClose}: {onClose: () => void}) {
     const user = DL.USER;
+
+    let subInfo = user.email;
+    if (!subInfo && user.displayName !== user.login) {
+        subInfo = user.login;
+    }
+
     return (
         <div className={b()}>
             <div className={b('entry')}>
@@ -28,9 +34,16 @@ export function UserMenu({onClose}: {onClose: () => void}) {
                             <span className={b('user-name')} title={user.displayName}>
                                 {user.displayName}
                             </span>
-                            <span className={b('user-description')} title={user.email}>
-                                {user.email}
-                            </span>
+                            {subInfo && (
+                                <span className={b('user-description')} title={subInfo}>
+                                    {subInfo}
+                                </span>
+                            )}
+                            {user.idpType && (
+                                <Label theme="normal" className={b('user-label')}>
+                                    {user.idpType?.toUpperCase()}
+                                </Label>
+                            )}
                         </div>
                     </div>
                 </div>

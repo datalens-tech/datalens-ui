@@ -109,8 +109,6 @@ export type NativeModule = {
     setConsole?: (console: Console) => void;
 };
 
-export type NativeModulesType = 'BASE_NATIVE_MODULES';
-
 export type RuntimeMetadata = {
     error?: unknown;
     userParamsOverride?: StringParams;

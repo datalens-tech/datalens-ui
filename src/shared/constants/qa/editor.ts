@@ -12,3 +12,14 @@ export const enum EditorTemplatesQA {
     GravityCharts = 'editor-templates-gravity-charts-item',
     AdvancedChart = 'editor-templates-advacned-chart-item',
 }
+
+export enum EditorActionPanelQA {
+    ButtonSave = 'editor-action-panel-button-save',
+    MoreSwitcher = 'editor-action-panel-more-switcher',
+    SaveAsDraftButton = 'editor-action-panel-save-as-draft-button',
+    SaveAndPublishButton = 'editor-action-panel-save-and-publish-button',
+}
+
+export enum EditorPaneQA {
+    Editor = 'editor-pane-editor',
+}
