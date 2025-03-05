@@ -192,7 +192,7 @@ type AlertWidget = WidgetBase & {
 
 type GravityChartsWidget = WidgetBase & {type: 'd3'};
 
-type BlankChartWidget = WidgetBase & {type: 'blank-chart'};
+type AdvancedChartWidget = WidgetBase & {type: 'advanced-chart'};
 
 type WidgetComponentProps =
     | GraphWidget
@@ -363,7 +363,7 @@ export type Widget =
     | TextWidget
     | TimeseriesWidget
     | MarkupWidget
-    | BlankChartWidget;
+    | AdvancedChartWidget;
 
 type ParamsChangedOnChange = {
     type: 'PARAMS_CHANGED';
