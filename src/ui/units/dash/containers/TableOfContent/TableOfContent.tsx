@@ -8,10 +8,11 @@ import {useShallowEqualSelector} from 'hooks';
 import {I18n} from 'i18n';
 import type {DatalensGlobalState} from 'index';
 import throttle from 'lodash/throttle';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {Link, useLocation} from 'react-router-dom';
 import {TableOfContentQa} from 'shared';
 import {DL} from 'ui/constants';
+import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
 import {
     selectHashStates,
     selectShowTableOfContent,
@@ -64,6 +65,8 @@ const TableOfContent = React.memo(
     }) => {
         const dispatch = useDispatch();
         const location = useLocation();
+
+        const isAsideHeaderCompact = useSelector(selectAsideHeaderIsCompact);
 
         const containerRef = React.useRef<HTMLDivElement | null>(null);
         const {opened, tabs, currentTabId, hashStates} = useShallowEqualSelector(selectState);
@@ -162,6 +165,7 @@ const TableOfContent = React.memo(
             const resizeObserver = new ResizeObserver(() => {
                 handler();
             });
+
             if (containerRef?.current) {
                 resizeObserver.observe(containerRef?.current || undefined);
             }
@@ -172,6 +176,10 @@ const TableOfContent = React.memo(
                 resizeObserver.disconnect();
             };
         }, [opened, setUpdatedOffsets]);
+
+        React.useEffect(() => {
+            requestAnimationFrame(setUpdatedOffsets);
+        }, [isAsideHeaderCompact, setUpdatedOffsets]);
 
         const localTabs = memoizedGetLocalTabs(tabs);
 

@@ -3,6 +3,7 @@ import React from 'react';
 import {dateTimeParse} from '@gravity-ui/date-utils';
 import {Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {RevisionsListQa} from 'shared/constants/qa';
 import {RevisionStatusPoint} from 'ui/components/RevisionStatusPoint/RevisionStatusPoint';
 import {registry} from 'ui/registry';
 import {
@@ -56,7 +57,7 @@ const RevisionRow: React.FC<RevisionRowProps> = ({
                 current: currentRevId === item.revId,
                 draft: isDraft,
             })}
-            data-qa="revisions-list-row"
+            data-qa={RevisionsListQa.RevisionsListRow}
             data-qa-revid={item.revId}
             onClick={handlerClick}
         >

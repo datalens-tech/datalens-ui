@@ -152,6 +152,8 @@ export interface IChartEditor {
     attachFormatter(
         formatterConfig: Record<string, unknown>,
     ): Record<string, unknown> & {__chartkitFormatter: true};
+
+    getId?(key: string): string;
 }
 
 export interface Link {
