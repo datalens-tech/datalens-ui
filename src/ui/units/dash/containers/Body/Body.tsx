@@ -302,6 +302,7 @@ class Body extends React.PureComponent<BodyProps> {
         key: DashKitProps['config'];
         config: DashKitProps['config'];
     };
+    _dashBodyRef: React.RefObject<HTMLDivElement>;
     _fixedHeaderControlsRef: React.RefObject<HTMLDivElement>;
     _fixedHeaderContainerRef: React.RefObject<HTMLDivElement>;
 
@@ -339,6 +340,7 @@ class Body extends React.PureComponent<BodyProps> {
             },
         ];
 
+        this._dashBodyRef = React.createRef();
         this._fixedHeaderControlsRef = React.createRef();
         this._fixedHeaderContainerRef = React.createRef();
     }
@@ -375,7 +377,7 @@ class Body extends React.PureComponent<BodyProps> {
 
     render() {
         return (
-            <div className={b()}>
+            <div className={b()} ref={this._dashBodyRef}>
                 {this.renderBody()}
                 <PaletteEditor />
                 <EntryDialogues ref={this.entryDialoguesRef} />
@@ -1016,12 +1018,11 @@ class Body extends React.PureComponent<BodyProps> {
         ) : (
             <React.Fragment>
                 <FixedHeaderWrapper
+                    dashBodyRef={this._dashBodyRef}
                     controlsRef={this._fixedHeaderControlsRef}
                     containerRef={this._fixedHeaderContainerRef}
                     isCollapsed={fixedHeaderCollapsed}
                     editMode={isEditMode}
-                    isEmbedded={context.isEmbeddedMode}
-                    isPublic={context.isPublicMode}
                     isControlsGroupEmpty={!hasFixedHeaderControlsElements}
                     isContainerGroupEmpty={!hasFixedHeaderCotainerElements}
                 />

@@ -26,19 +26,11 @@ type FixedHeaderContainerProps = CommonFixedHeaderProps & {
 const b = block('dash-fixed-header');
 const i18n = I18n.keyset('dash.empty-state.view');
 
-const CONTROLS_TOP_EMBEDDED_OFFSET = 0;
-const CONTROLS_TOP_PUBLIC_OFFSET = 70;
-const CONTROLS_TOP_DEFAULT_NAV_OFFSET = 40;
+const calculateOffset = (dashBodyRef: React.RefObject<HTMLDivElement>) => {
+    const pageBodyY = document.body.getBoundingClientRect().y;
+    const dashBodyY = dashBodyRef.current?.getBoundingClientRect()?.y ?? pageBodyY;
 
-const calculateOffset = (pageOptions: {isEmbedded?: boolean; isPublic?: boolean}) => {
-    let globalOffset = CONTROLS_TOP_DEFAULT_NAV_OFFSET;
-    if (pageOptions.isEmbedded) {
-        globalOffset = CONTROLS_TOP_EMBEDDED_OFFSET;
-    } else if (pageOptions.isPublic) {
-        globalOffset = CONTROLS_TOP_PUBLIC_OFFSET;
-    }
-
-    return globalOffset;
+    return dashBodyY - pageBodyY;
 };
 
 const EmptyPlaceholder = ({
@@ -160,20 +152,18 @@ export const FixedHeaderContainer: React.FC<FixedHeaderContainerProps> = ({
 
 type FixedHeaderWrapperProps = CommonFixedHeaderProps & {
     isCollapsed: boolean;
-    isEmbedded?: boolean;
-    isPublic?: boolean;
     isControlsGroupEmpty?: boolean;
     isContainerGroupEmpty?: boolean;
+    dashBodyRef: React.RefObject<HTMLDivElement>;
     controlsRef: React.RefObject<HTMLDivElement>;
     containerRef: React.RefObject<HTMLDivElement>;
 };
 
 export function FixedHeaderWrapper({
+    dashBodyRef,
     controlsRef,
     containerRef,
     editMode,
-    isEmbedded,
-    isPublic,
     isCollapsed,
     isControlsGroupEmpty,
     isContainerGroupEmpty,
@@ -184,7 +174,7 @@ export function FixedHeaderWrapper({
     const [containerHeight, setContainerHeight] = React.useState<'auto' | number>('auto');
     const [isScrollLocked, setScrollLock] = React.useState(false);
 
-    const topOffset = calculateOffset({isEmbedded, isPublic});
+    const topOffset = calculateOffset(dashBodyRef);
     const {isFixed, leftOffset} = useFixedHeaderRef(rootRef, topOffset);
     const style = isFixed && !editMode ? {left: leftOffset, top: topOffset, right: 0} : {};
 
