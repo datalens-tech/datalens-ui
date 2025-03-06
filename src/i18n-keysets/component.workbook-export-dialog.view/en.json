@@ -1,0 +1,14 @@
+{
+  "button_begin-export": "Begin export",
+  "button_cancel": "Cancel",
+  "button_close": "Close",
+  "button_download": "Download",
+  "label_info-documentation": "How does workbooks export work?",
+  "label_info-file": "The configuration is exported to a file",
+  "label_info-secrets": "You will need to re-enter your passwords when importing",
+  "label_info-time": "The export may take several minutes",
+  "label_info-versions": "In other versions of DataLens, <link>some</link> connections will not work",
+  "title_export": "Workbook export",
+  "title_export-success": "Export file is ready",
+  "title_fatal-error": "Export is not possible"
+}

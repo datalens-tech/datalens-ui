@@ -1,10 +1,11 @@
 import React from 'react';
 
-import {ArrowRight, Copy, LockOpen, PencilToLine, TrashBin} from '@gravity-ui/icons';
+import {ArrowRight, Copy, FileArrowUp, LockOpen, PencilToLine, TrashBin} from '@gravity-ui/icons';
 import type {DropdownMenuItem} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {useHistory} from 'react-router-dom';
+import {DIALOG_EXPORT_WORKBOOK} from 'ui/components/CollectionsStructure/ExportWorkbookDialog/ExportWorkbookDialog';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {Feature} from '../../../../../../shared';
@@ -267,6 +268,26 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
                             }),
                         );
                     },
+                });
+            }
+
+            if (isEnabledFeature(Feature.EnableExportWorkbookFile) && item.permissions.update) {
+                actions.push({
+                    action: () => {
+                        dispatch(
+                            openDialog({
+                                id: DIALOG_EXPORT_WORKBOOK,
+                                props: {
+                                    open: true,
+                                    workbookId: item.workbookId,
+                                    onClose: () => {
+                                        dispatch(closeDialog());
+                                    },
+                                },
+                            }),
+                        );
+                    },
+                    text: <DropdownAction icon={FileArrowUp} text={i18n('action_export')} />,
                 });
             }
 
