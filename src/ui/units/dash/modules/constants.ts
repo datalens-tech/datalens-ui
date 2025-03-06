@@ -40,7 +40,8 @@ export const DASH_WIDGET_TYPES = {
     MARKDOWN: 'markdown',
     TIMESERIES: 'timeseries',
     D3: 'd3',
-    BLANK_CHART: 'blank-chart',
+    GRAVITY_CHART: 'gravity-chart',
+    ADVANCED_CHART: 'advanced-chart',
     MARKUP: 'markup',
 } as const;
 
@@ -56,6 +57,9 @@ export const DASH_ACCEPT_FILTERING_CHARTS_WIDGET_TYPES = {
     markdown: DASH_WIDGET_TYPES.MARKDOWN,
     markup: DASH_WIDGET_TYPES.MARKUP,
     d3: DASH_WIDGET_TYPES.D3,
+    'gravity-chart': DASH_WIDGET_TYPES.GRAVITY_CHART,
+    'blank-chart': DASH_WIDGET_TYPES.ADVANCED_CHART,
+    'advanced-chart': DASH_WIDGET_TYPES.ADVANCED_CHART,
 };
 
 export type AcceptFiltersWidgetType =

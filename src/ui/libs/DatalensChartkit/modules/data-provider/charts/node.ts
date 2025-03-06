@@ -338,7 +338,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                     uiSandboxOptions.totalTimeLimit = UI_SANDBOX_TOTAL_TIME_LIMIT;
                 }
 
-                if (result.type === WidgetKind.BlankChart) {
+                if (result.type === WidgetKind.AdvancedChart) {
                     uiSandboxOptions.fnExecTimeLimit = 1500;
                 }
 

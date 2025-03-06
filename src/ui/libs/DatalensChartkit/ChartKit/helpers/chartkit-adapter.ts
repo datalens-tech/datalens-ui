@@ -93,8 +93,10 @@ export const getChartkitType = (data?: LoadedWidgetData): ChartKitType | undefin
             break;
         }
 
-        case 'blank-chart': {
-            chartkitType = 'blank-chart';
+        // @ts-ignore
+        case 'blank-chart':
+        case 'advanced-chart': {
+            chartkitType = 'advanced-chart';
 
             break;
         }

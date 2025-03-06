@@ -65,6 +65,7 @@ export enum RobotChartsWizardUrls {
 export enum RobotChartsEditorUrls {
     EditorNew = '/editor/new',
     EditorEmptyDraft = '/editor/draft',
+    EditorNewMarkup = '/editor/draft/markup',
     EditorWithWizardId = '/editor/ikblc7qjn4reb',
     EditorWithSQLId = '/editor/estm3g44u4g84',
     InputWithReset = '/editor/gx2pqz0oqtno6',
@@ -127,7 +128,6 @@ export enum RobotChartsDashboardUrls {
     DashboardWithYagrCharts = '/8gvkpbjv3x7wy',
     DashboardWithChartTabsAndRelation = '/lt9uci9co9g2b',
     DashboardWithOverLimitsChart = '/y7t337y87h04o',
-    DashboardWithHighchartsMap = '/jse7ewxsyjue9',
     DashboardWithCustomTooltip = '/mrkyzqh950pmb',
     DashboardWithEditorSelectorsWithoutParams = '/saj2by7fkc64i',
     DashboardWithEditorSelectorsWithParams = '/4mwiptdrf4n8u',
@@ -195,6 +195,4 @@ export const COMMON_SELECTORS = {
     REVISIONS_LIST_ROW_ACTUAL: 'revisions-list__row_published',
     REVISIONS_LIST_LOADER: 'revisions-loader',
     REVISIONS_TOP_PANEL: 'revisions-top-panel',
-    REVISIONS_TOP_PANEL_OPEN_BTN: 'action-open-actual',
-    REVISIONS_TOP_PANEL_ACTUALIZE_BTN: 'action-make-actual',
 };

@@ -47,6 +47,10 @@
         padding-bottom: 0;
     }
 
+    &__empty-state {
+        flex-grow: 1;
+    }
+
     &__loader {
         display: flex;
         align-items: center;
@@ -96,6 +100,10 @@
         padding-bottom: 10px;
         margin-bottom: 10px;
         border-bottom: 1px solid var(--g-color-line-generic);
+    }
+
+    &__item-select_empty-state {
+        border-bottom-color: transparent;
     }
 
     &__item-select-popup {

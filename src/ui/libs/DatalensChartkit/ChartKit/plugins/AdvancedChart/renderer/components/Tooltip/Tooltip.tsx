@@ -7,7 +7,7 @@ import type {PointPosition} from '../../types';
 
 import './Tooltip.scss';
 
-const b = block('blank-chart-tooltip');
+const b = block('advacned-chart-tooltip');
 
 type TooltipProps = {
     content?: string | null;
