@@ -51,10 +51,18 @@ interface IChartEditor {
      */
     generateHtml: (value: object) => string;
 
+    /**
+     * \tMethod used to get source id from the meta tab.\n
+     * \t@param {string} name name of the source.\n
+     * \t@return source id.
+     */
+    getId(name: string) => string;
+
     ${next.join('\n')}
 }
 
 declare let ChartEditor: IChartEditor;
+declare let Editor: IChartEditor;
 `;
 
 const partUpdateParams = `
