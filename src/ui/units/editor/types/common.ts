@@ -97,7 +97,6 @@ export type EditorEntryData =
 export interface EditorEntry extends Required<Omit<GetEntryResponse, 'data'>, 'permissions'> {
     meta: EntryFieldMeta<{
         is_release?: boolean;
-        sandbox_version?: string;
     }>;
     data: NonNullable<EntryFieldData<EditorEntryData>>;
     fake?: false;
