@@ -1,3 +1,5 @@
+import {isEqual} from 'lodash';
+
 import {EDITOR_TYPE} from '../../../../shared/constants';
 
 // Parts in Set keys should be separeted by comma and defined in alphabetic order
@@ -82,7 +84,6 @@ MODEL_TABS[EDITOR_TYPE.BLANK_CHART_NODE] = MODEL_TABS[EDITOR_TYPE.ADVANCED_CHART
 export const chartValidator = {
     validate: ({data, type}: {data: Record<string, unknown>; type: string}) => {
         const dataTabs = Object.keys(data).sort();
-        const joinedDataTabs = dataTabs.join(',');
         const modelTabs = MODEL_TABS[type as keyof typeof MODEL_TABS];
 
         if (modelTabs) {
@@ -92,7 +93,15 @@ export const chartValidator = {
                 }
             });
 
-            return modelTabs.has(joinedDataTabs);
+            return Array.from(modelTabs).some((modelTab) => {
+                const oldTabs = modelTab.split(',');
+                const newTabs = modelTab
+                    .replace('js', 'prepare')
+                    .replace('ui', 'controls')
+                    .replace('url', 'sources')
+                    .split(',');
+                return isEqual(oldTabs, dataTabs) || isEqual(newTabs, dataTabs);
+            });
         } else {
             throw new Error(`Unknown chart type "${type}"`);
         }

@@ -38,7 +38,7 @@ module.exports = result;
 `;
 
 const commonTemplate = {
-    js: `
+    prepare: `
 const {buildGraph} = require('#module');
 
 const result = buildGraph({
@@ -89,7 +89,7 @@ const result = buildChartsConfig({
 
 module.exports = result;
 `,
-    ui: `
+    controls: `
 const {buildUI} = require('#module');
 
 if (buildUI) {
@@ -106,7 +106,7 @@ if (buildUI) {
     module.exports = result;
 }
 `,
-    url: `
+    sources: `
 const {buildSources} = require('#module');
 
 const result = buildSources({
@@ -139,12 +139,12 @@ type ChartTemplate = {
 };
 
 type Chart = {
-    js: string;
+    prepare?: string;
     params: string;
     shared: null | string;
     config: string;
-    ui: string;
-    url: string;
+    controls?: string;
+    sources?: string;
     table?: string;
     statface_metric?: string;
     graph?: string;
@@ -209,11 +209,10 @@ export const chartGenerator = {
         }
 
         const isD3Graph = type.indexOf('d3') > -1;
-        if (type.indexOf('table') > -1) {
-            chart.table = chart.config.replace('#module', chartTemplate.module);
-        } else if (type.indexOf('metric') > -1) {
+        const isTable = type.indexOf('table') > -1;
+        if (type.indexOf('metric') > -1) {
             chart.statface_metric = chart.config.replace('#module', chartTemplate.module);
-        } else if (type.indexOf('markup') > -1) {
+        } else if (type.indexOf('markup') > -1 || isTable) {
             chart.config = chart.config.replace('#module', chartTemplate.module);
         } else if (isD3Graph) {
             chart.graph = commonTemplateD3Graph.replace('#module', chartTemplate.module);
@@ -224,21 +223,22 @@ export const chartGenerator = {
             chart.statface_graph = chart.config.replace('#module', chartTemplate.module);
         }
 
-        chart.js = chart.js.replace('#module', chartTemplate.module);
-        chart.url = chart.url.replace('#module', chartTemplate.module);
-        chart.ui = chart.ui.replace('#module', chartTemplate.module);
+        chart.prepare = chart.prepare?.replace('#module', chartTemplate.module) ?? '';
+        chart.sources = chart.sources?.replace('#module', chartTemplate.module) ?? '';
+        chart.controls = chart.controls?.replace('#module', chartTemplate.module);
 
         const apiVersion = '2';
 
-        chart.js = chart.js.replace('#apiVersion', apiVersion);
-        chart.url = chart.url.replace('#apiVersion', apiVersion);
+        chart.prepare = chart.prepare.replace('#apiVersion', apiVersion);
+        chart.sources = chart.sources.replace('#apiVersion', apiVersion);
 
         if (isEnabledServerFeature(ctx, 'EnableChartEditorMetaTab')) {
             chart.meta = createChartManifect({links});
         }
 
+        const chartsWithConfig = isD3Graph || isTable;
         const {config: _, ...chartWithoutCOnfig} = chart;
 
-        return {chart: isD3Graph ? chart : chartWithoutCOnfig, links, type};
+        return {chart: chartsWithConfig ? chart : chartWithoutCOnfig, links, type};
     },
 };
