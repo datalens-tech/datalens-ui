@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {useBodyScrollLock} from '@gravity-ui/uikit';
+import {ChevronsUp} from '@gravity-ui/icons';
+import {Icon, useBodyScrollLock} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {FixedHeaderQa} from 'shared';
@@ -13,11 +14,13 @@ type CommonFixedHeaderProps = {
 
 type FixedHeaderControlsProps = CommonFixedHeaderProps & {
     isEmpty: boolean;
+    isContainerGroupEmpty: boolean;
     controls: React.ReactNode;
 };
 
 type FixedHeaderContainerProps = CommonFixedHeaderProps & {
     isEmpty: boolean;
+    isControlsGroupEmpty: boolean;
 };
 
 const b = block('dash-fixed-header');
@@ -26,8 +29,6 @@ const i18n = I18n.keyset('dash.empty-state.view');
 const CONTROLS_TOP_EMBEDDED_OFFSET = 0;
 const CONTROLS_TOP_PUBLIC_OFFSET = 70;
 const CONTROLS_TOP_DEFAULT_NAV_OFFSET = 40;
-
-const CONTAINER_PADDING_OFFSET = 48;
 
 const calculateOffset = (pageOptions: {isEmbedded?: boolean; isPublic?: boolean}) => {
     let globalOffset = CONTROLS_TOP_DEFAULT_NAV_OFFSET;
@@ -46,7 +47,7 @@ const EmptyPlaceholder = ({
     mod,
 }: {
     content: React.ReactNode;
-    text: string;
+    text: React.ReactNode;
     mod?: string;
 }) => (
     <React.Fragment>
@@ -58,7 +59,6 @@ const EmptyPlaceholder = ({
 const useFixedHeaderRef = (rootRef: React.RefObject<HTMLDivElement>, topOffset = 0) => {
     const [isFixed, setIsFixed] = React.useState(false);
     const [leftOffset, setLeftOffset] = React.useState(0);
-    const [width, setWidth] = React.useState<number | string>(0);
 
     React.useLayoutEffect(() => {
         const handler = () => {
@@ -71,7 +71,6 @@ const useFixedHeaderRef = (rootRef: React.RefObject<HTMLDivElement>, topOffset =
         const resizeObserver = new ResizeObserver(() => {
             const rect = rootRef.current?.getBoundingClientRect();
 
-            setWidth(rect?.width ? rect.width + CONTAINER_PADDING_OFFSET : '100%');
             setLeftOffset(rect?.left || 0);
         });
 
@@ -89,11 +88,12 @@ const useFixedHeaderRef = (rootRef: React.RefObject<HTMLDivElement>, topOffset =
         };
     }, [rootRef, topOffset]);
 
-    return {isFixed, leftOffset, width};
+    return {isFixed, leftOffset};
 };
 
 export const FixedHeaderControls: React.FC<FixedHeaderControlsProps> = ({
     isEmpty,
+    isContainerGroupEmpty,
     editMode,
     controls,
     children: externalChildren,
@@ -112,12 +112,14 @@ export const FixedHeaderControls: React.FC<FixedHeaderControlsProps> = ({
             <div
                 className={b('controls', {
                     'edit-mode': editMode,
-                    hidden: isEmpty && !editMode,
+                    hidden: isEmpty && (!editMode || (editMode && isContainerGroupEmpty)),
                 })}
             >
                 {content}
             </div>
-            <div className={b('controls-settings')}>{controls}</div>
+            <div className={b('controls-settings')}>
+                <div className={b('controls-settings-wrapper')}>{controls}</div>
+            </div>
         </React.Fragment>
     );
 };
@@ -131,7 +133,12 @@ export const FixedHeaderContainer: React.FC<FixedHeaderContainerProps> = ({
         isEmpty && editMode ? (
             <EmptyPlaceholder
                 content={children}
-                text={i18n('label_empty-fixed-content')}
+                text={
+                    <React.Fragment>
+                        <Icon size={16} data={ChevronsUp} />
+                        {i18n('label_empty-fixed-content')}
+                    </React.Fragment>
+                }
                 mod="with-offset"
             />
         ) : (
@@ -155,6 +162,8 @@ type FixedHeaderWrapperProps = CommonFixedHeaderProps & {
     isCollapsed: boolean;
     isEmbedded?: boolean;
     isPublic?: boolean;
+    isControlsGroupEmpty?: boolean;
+    isContainerGroupEmpty?: boolean;
     controlsRef: React.RefObject<HTMLDivElement>;
     containerRef: React.RefObject<HTMLDivElement>;
 };
@@ -166,6 +175,8 @@ export function FixedHeaderWrapper({
     isEmbedded,
     isPublic,
     isCollapsed,
+    isControlsGroupEmpty,
+    isContainerGroupEmpty,
 }: FixedHeaderWrapperProps) {
     const rootRef = React.useRef<HTMLDivElement>(null);
     const wrapperRef = React.useRef<HTMLDivElement>(null);
@@ -174,19 +185,10 @@ export function FixedHeaderWrapper({
     const [isScrollLocked, setScrollLock] = React.useState(false);
 
     const topOffset = calculateOffset({isEmbedded, isPublic});
-    const {isFixed, leftOffset, width} = useFixedHeaderRef(rootRef, topOffset);
-    const style = isFixed && !editMode ? {left: leftOffset, top: topOffset, width} : {};
-
-    const isRenderEmpty =
-        controlsRef.current?.getBoundingClientRect().height === 0 &&
-        containerRef.current?.getBoundingClientRect().height === 0;
+    const {isFixed, leftOffset} = useFixedHeaderRef(rootRef, topOffset);
+    const style = isFixed && !editMode ? {left: leftOffset, top: topOffset, right: 0} : {};
 
     React.useEffect(() => {
-        if (isRenderEmpty) {
-            setContainerHeight(0);
-            return;
-        }
-
         const observer = new ResizeObserver(([el]) => {
             if (el) {
                 const {height} = el.contentRect;
@@ -199,19 +201,23 @@ export function FixedHeaderWrapper({
             observer.observe(wrapperRef.current);
         }
 
-        // eslint-disable-next-line consistent-return
         return () => {
             observer.disconnect();
         };
-    }, [isRenderEmpty, wrapperRef, topOffset]);
+    }, [wrapperRef, topOffset]);
 
     const isScrollCaptured = isFixed && !editMode && !isCollapsed && isScrollLocked;
 
     useBodyScrollLock({enabled: isScrollCaptured});
 
+    const collapsibleGroupHidden = isCollapsed && !editMode;
+
     return (
         <div
-            className={b({hidden: isRenderEmpty})}
+            className={b({
+                'no-content':
+                    isControlsGroupEmpty && (isContainerGroupEmpty || collapsibleGroupHidden),
+            })}
             ref={rootRef}
             style={{
                 height: isFixed ? containerHeight : 'auto',
@@ -232,7 +238,7 @@ export function FixedHeaderWrapper({
                         <div
                             ref={containerRef}
                             className={b('container-placeholder', {
-                                collapsed: isCollapsed && !editMode,
+                                collapsed: collapsibleGroupHidden,
                             })}
                         ></div>
                     </div>

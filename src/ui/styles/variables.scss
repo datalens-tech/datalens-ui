@@ -45,7 +45,6 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
     --dl-color-entity-dataset: #0abe05;
     --dl-color-entity-dashboard: #ff8c3c;
 
-    --dl-color-fixed-header-background: var(--g-color-base-simple-hover-solid);
     --dl-color-text-workbook-icon: var(--g-color-text-dark-primary);
 
     &_theme_light {
@@ -60,6 +59,7 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
         --dl-filter-ymap-heatmap: none;
         --dl-color-ymap-background: #fafafa;
         --dl-filter-zoom-control: none;
+        --dl-color-fixed-header-background: var(--g-color-private-cool-grey-100-solid);
     }
 
     &_theme_light-hc {
@@ -74,6 +74,7 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
         --dl-filter-ymap-heatmap: none;
         --dl-color-ymap-background: #fafafa;
         --dl-filter-zoom-control: none;
+        --dl-color-fixed-header-background: var(--g-color-private-cool-grey-100-solid);
     }
 
     &_theme_dark {
@@ -88,6 +89,7 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
         --dl-filter-ymap-heatmap: invert(0.9) saturate(0.4) hue-rotate(-30deg);
         --dl-color-ymap-background: transparent;
         --dl-filter-zoom-control: invert(1);
+        --dl-color-fixed-header-background: var(--g-color-base-background);
     }
 
     &_theme_dark-hc {
@@ -102,5 +104,6 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
         --dl-filter-ymap-heatmap: invert(0.95) saturate(0.4) hue-rotate(-30deg);
         --dl-color-ymap-background: transparent;
         --dl-filter-zoom-control: invert(1);
+        --dl-color-fixed-header-background: var(--g-color-base-background);
     }
 }

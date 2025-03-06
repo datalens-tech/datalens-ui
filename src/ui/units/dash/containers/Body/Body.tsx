@@ -17,8 +17,10 @@ import type {
 } from '@gravity-ui/dashkit';
 import {DEFAULT_GROUP, MenuItems} from '@gravity-ui/dashkit/helpers';
 import {
-    ArrowChevronDown,
-    ArrowChevronUp,
+    ChevronsDown,
+    ChevronsLeft,
+    ChevronsRight,
+    ChevronsUp,
     Gear,
     Pin,
     PinSlash,
@@ -677,7 +679,11 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         return config.settings?.fixedHeaderCollapsedDefault ?? false;
     }
 
-    renderFixedControls = (isCollapsed: boolean, hasFixedContainerElements: boolean) => {
+    renderFixedControls = (
+        isCollapsed: boolean,
+        hasFixedHeaderControlsElements: boolean,
+        hasFixedContainerElements: boolean,
+    ) => {
         const {mode} = this.props;
         const config = this.getTabConfig();
 
@@ -715,10 +721,13 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                 />
             );
         } else if (hasFixedContainerElements) {
+            const {expandIcon, collapseIcon} = hasFixedHeaderControlsElements
+                ? {expandIcon: ChevronsDown, collapseIcon: ChevronsUp}
+                : {expandIcon: ChevronsLeft, collapseIcon: ChevronsRight};
             return (
                 <Button
                     onClick={this.toggleFixedHeader}
-                    view="flat"
+                    view="action"
                     size="xl"
                     width="max"
                     pin="round-brick"
@@ -728,7 +737,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                     )}
                     qa={FixedHeaderQa.ExpandCollapseButton}
                 >
-                    <Icon data={isCollapsed ? ArrowChevronDown : ArrowChevronUp} />
+                    <Icon data={isCollapsed ? expandIcon : collapseIcon} />
                 </Button>
             );
         }
@@ -742,8 +751,11 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         params: DashkitGroupRenderWithContextProps,
     ) => {
         const isEmpty = params.items.length === 0;
+        const hasFixedHeaderControlsElements = Boolean(
+            this.getWidgetLayoutByGroup(FIXED_GROUP_HEADER_ID)?.length,
+        );
         const hasFixedContainerElements = Boolean(
-            this.getWidgetLayoutByGroup(FIXED_GROUP_CONTAINER_ID),
+            this.getWidgetLayoutByGroup(FIXED_GROUP_CONTAINER_ID)?.length,
         );
 
         if (isEmpty && !hasFixedContainerElements && this.props.mode !== Mode.Edit) {
@@ -760,10 +772,12 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             ? createPortal(
                   <FixedHeaderControls
                       isEmpty={isEmpty}
+                      isContainerGroupEmpty={!hasFixedContainerElements}
                       key={`${id}_${this.props.tabId}`}
                       editMode={params.editMode}
                       controls={this.renderFixedControls(
                           fixedHeaderCollapsed,
+                          hasFixedHeaderControlsElements,
                           hasFixedContainerElements,
                       )}
                   >
@@ -780,7 +794,9 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         params: DashkitGroupRenderWithContextProps,
     ) => {
         const isEmpty = params.items.length === 0;
-        const hasFixedHeaderElements = Boolean(this.getWidgetLayoutByGroup(FIXED_GROUP_HEADER_ID));
+        const hasFixedHeaderElements = Boolean(
+            this.getWidgetLayoutByGroup(FIXED_GROUP_HEADER_ID)?.length,
+        );
 
         if (isEmpty && !hasFixedHeaderElements && this.props.mode !== Mode.Edit) {
             return null;
@@ -794,6 +810,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             ? createPortal(
                   <FixedHeaderContainer
                       isEmpty={isEmpty}
+                      isControlsGroupEmpty={!hasFixedHeaderElements}
                       key={`${id}_${this.props.tabId}`}
                       editMode={params.editMode}
                   >
@@ -848,6 +865,37 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             this._memoizedControls = {
                 overlayControls: [
                     {
+                        id: 'pin',
+                        title: i18n('dash.main.view', 'label_pin'),
+                        icon: Pin,
+                        handler: this.togglePinElement,
+                        visible: (configItem) => {
+                            const parent = this.getWidgetLayoutById(configItem.id)?.parent;
+
+                            return (
+                                configItem.type === DashTabItemType.GroupControl &&
+                                parent !== FIXED_GROUP_HEADER_ID &&
+                                parent !== FIXED_GROUP_CONTAINER_ID
+                            );
+                        },
+                        qa: DashKitOverlayMenuQa.PinButton,
+                    },
+                    {
+                        id: 'unpin',
+                        title: i18n('dash.main.view', 'label_unpin'),
+                        icon: PinSlash,
+                        handler: this.togglePinElement,
+                        visible: (configItem) => {
+                            const parent = this.getWidgetLayoutById(configItem.id)?.parent;
+
+                            return (
+                                parent === FIXED_GROUP_HEADER_ID ||
+                                parent === FIXED_GROUP_CONTAINER_ID
+                            );
+                        },
+                        qa: DashKitOverlayMenuQa.UnpinButton,
+                    },
+                    {
                         allWidgetsControls: true,
                         id: MenuItems.Settings,
                         title: i18n('dash.settings-dialog.edit', 'label_settings'),
@@ -897,25 +945,14 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                         const parent = this.getWidgetLayoutById(configItem.id)?.parent;
 
                         return (
-                            parent !== FIXED_GROUP_HEADER_ID && parent !== FIXED_GROUP_CONTAINER_ID
+                            configItem.type !== DashTabItemType.GroupControl &&
+                            parent !== FIXED_GROUP_HEADER_ID &&
+                            parent !== FIXED_GROUP_CONTAINER_ID
                         );
                     },
                     qa: DashKitOverlayMenuQa.PinButton,
                 },
-                {
-                    id: 'unpin',
-                    title: i18n('dash.main.view', 'label_unpin'),
-                    icon: <Icon data={PinSlash} size={16} />,
-                    handler: this.togglePinElement,
-                    visible: (configItem) => {
-                        const parent = this.getWidgetLayoutById(configItem.id)?.parent;
 
-                        return (
-                            parent === FIXED_GROUP_HEADER_ID || parent === FIXED_GROUP_CONTAINER_ID
-                        );
-                    },
-                    qa: DashKitOverlayMenuQa.UnpinButton,
-                },
                 ...dashkitMenu.slice(-1),
             ];
         }
@@ -1013,6 +1050,13 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
 
         const DashKit = getConfiguredDashKit(undefined, {disableHashNavigation});
 
+        const hasFixedHeaderControlsElements = Boolean(
+            this.getWidgetLayoutByGroup(FIXED_GROUP_HEADER_ID)?.length,
+        );
+        const hasFixedHeaderCotainerElements = Boolean(
+            this.getWidgetLayoutByGroup(FIXED_GROUP_CONTAINER_ID)?.length,
+        );
+
         return isEmptyTab && !isGlobalDragging ? (
             <EmptyState
                 canEdit={this.props.canEdit}
@@ -1030,6 +1074,8 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                     editMode={isEditMode}
                     isEmbedded={context.isEmbeddedMode}
                     isPublic={context.isPublicMode}
+                    isControlsGroupEmpty={!hasFixedHeaderControlsElements}
+                    isContainerGroupEmpty={!hasFixedHeaderCotainerElements}
                 />
                 {this._fixedHeaderControlsRef.current && this._fixedHeaderContainerRef.current ? (
                     <DashKit
