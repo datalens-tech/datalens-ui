@@ -212,7 +212,7 @@ function buildSource(payload: BuildSourcePayload) {
     });
 
     return {
-        datasetId: payload.id || payload.datasetId,
+        datasetId: String(payload.id || payload.datasetId),
         path: 'result',
         data: requestData,
         ui: payload.ui,
