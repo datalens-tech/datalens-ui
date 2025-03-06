@@ -267,6 +267,10 @@ async function getUnwrappedFunction(args: {
             },
         };
 
+        merge(globalApi, {
+            Editor: globalApi.ChartEditor,
+        });
+
         // extend API for Highcharts charts
         if (entryType === 'graph_node') {
             const getCurrentChart = () => {
