@@ -211,17 +211,6 @@ export default class Utils {
         return csrfMetaTag ? csrfMetaTag.content : null;
     }
 
-    /** @deprecated use separate function ui/utils/isEnabledFeature */
-    static isEnabledFeature(featureName: string) {
-        const featureDynamicStatus = _get(DL.DYNAMIC_FEATURES, featureName);
-
-        if (typeof featureDynamicStatus !== 'undefined') {
-            return featureDynamicStatus;
-        }
-
-        return Boolean(_get(DL.FEATURES, featureName));
-    }
-
     static getOptionsFromSearch(search: string) {
         const searchParams = new URLSearchParams(search);
 
