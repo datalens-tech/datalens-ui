@@ -158,7 +158,7 @@ export const runController = (
                     ...config,
                     data: {
                         ...config.data,
-                        url: get(config.data, 'source', get(config.data, 'url')),
+                        url: get(config.data, 'sources', get(config.data, 'url')),
                         js: get(config.data, 'prepare', get(config.data, 'js')),
                         ui: get(config.data, 'controls', get(config.data, 'ui')),
                     },
