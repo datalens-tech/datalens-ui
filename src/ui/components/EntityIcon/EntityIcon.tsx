@@ -35,10 +35,9 @@ const typeIcons = {
 
 export type EntityIconType = keyof typeof typeIcons;
 
-export type EntityIconSize = 's' | 'l' | 'xl';
+export type EntityIconSize = 's' | 'm' | 'l' | 'xl';
 
-// TODO: remove usage of this type from closed source, then remove it from here
-export type EntityIconProps = {
+type EntityIconProps = {
     type?: string;
     iconData?: IconData;
     size?: EntityIconSize;
@@ -49,18 +48,19 @@ export type EntityIconProps = {
 
 export const defaultIconSize = {
     s: 12,
+    m: 14,
     l: 16,
     xl: 18,
 };
 
-export const EntityIcon: React.FC<EntityIconProps> = ({
+export const EntityIcon = ({
     size = 's',
     type,
     iconData,
     iconSize = defaultIconSize[size],
     classMixin,
     view,
-}) => {
+}: EntityIconProps) => {
     let targetIconData;
     if (iconData) {
         targetIconData = iconData;

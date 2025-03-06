@@ -16,6 +16,16 @@ $entityIconClassName: '.entity-icon';
             }
         }
 
+        &_size_m {
+            width: 28px;
+            height: 28px;
+
+            #{$entityIconClassName}__color-box {
+                height: 20px;
+                width: 20px;
+            }
+        }
+
         &_size_l {
             width: 32px;
             height: 32px;
@@ -37,10 +47,7 @@ $entityIconClassName: '.entity-icon';
             }
         }
 
-        &_size_l#{&}_view_round {
-            width: 28px;
-            height: 28px;
-
+        &_view_round {
             #{$entityIconClassName}__color-box {
                 height: 100%;
                 width: 100%;
