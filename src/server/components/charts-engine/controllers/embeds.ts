@@ -303,9 +303,9 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                         ...entry,
                         data: {
                             ...entry.data,
-                            url: get(entry.data, 'sources', get(entry.data, 'url')),
-                            js: get(entry.data, 'prepare', get(entry.data, 'js')),
-                            ui: get(entry.data, 'controls', get(entry.data, 'ui')),
+                            url: get(entry.data, 'sources') || get(entry.data, 'url'),
+                            js: get(entry.data, 'prepare') || get(entry.data, 'js'),
+                            ui: get(entry.data, 'controls') || get(entry.data, 'ui'),
                         },
                     },
                     configResolving,
