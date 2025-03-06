@@ -23,6 +23,10 @@ $actionPanelDefaultBottom: 20px;
         font-weight: 500;
     }
 
+    .dashkit {
+        margin-block-start: var(--g-spacing-4);
+    }
+
     &__content {
         width: 100%;
         transition: width 0.1s;
