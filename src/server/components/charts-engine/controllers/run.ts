@@ -154,7 +154,15 @@ export const runController = (
                 chartsEngine,
                 req,
                 res,
-                config,
+                config: {
+                    ...config,
+                    data: {
+                        ...config.data,
+                        url: get(config.data, 'sources', get(config.data, 'url')),
+                        js: get(config.data, 'prepare', get(config.data, 'js')),
+                        ui: get(config.data, 'controls', get(config.data, 'ui')),
+                    },
+                },
                 configResolving,
                 workbookId,
             });

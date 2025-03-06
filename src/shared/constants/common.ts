@@ -90,8 +90,8 @@ export const EDITOR_CHART_NODE = {
     map_node: 'statface_map',
     markup_node: 'config',
     markdown_node: '',
-    'blank-chart_node': 'blank-chart',
-    'advanced-chart_node': 'advanced-chart',
+    'blank-chart_node': 'config',
+    'advanced-chart_node': 'config',
     d3_node: 'd3',
 };
 

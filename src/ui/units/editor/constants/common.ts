@@ -25,7 +25,7 @@ export const PANE_VIEWS = {
 
 export const MODULE_TYPE = 'module';
 
-export const DEFAULT_TAB_ID = 'js';
+export const DEFAULT_TAB_ID = 'prepare';
 
 export const TIMESTAMP_FORMAT = 'DD.MM.YYYY HH:mm:ss';
 

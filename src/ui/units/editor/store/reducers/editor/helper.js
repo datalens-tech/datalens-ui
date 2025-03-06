@@ -1,4 +1,5 @@
 import Hashids from 'hashids';
+import get from 'lodash/get';
 import moment from 'moment';
 import {registry} from 'ui/registry';
 
@@ -41,7 +42,29 @@ export class Helper {
             acc[tabId] = {
                 ...tabs[index],
             };
-            scriptsValues[tabId] = data[tabId] || '';
+            const tabName = tabId;
+            switch (tabId) {
+                case 'sources': {
+                    scriptsValues[tabName] = get(data, 'url', get(data, 'sources', ''));
+                    break;
+                }
+                case 'controls': {
+                    scriptsValues[tabName] = get(data, 'ui', get(data, 'controls', ''));
+                    break;
+                }
+                case 'prepare': {
+                    scriptsValues[tabName] = get(data, 'js', get(data, 'prepare', ''));
+                    break;
+                }
+                case 'config': {
+                    scriptsValues[tabName] = get(data, 'table', get(data, 'config', ''));
+                    break;
+                }
+                default: {
+                    scriptsValues[tabName] = data[tabId] || '';
+                }
+            }
+
             return acc;
         }, {});
         return {
