@@ -8,73 +8,111 @@
     }
 }
 
+@mixin dashedBorderPositioning {
+    position: absolute;
+    content: '';
+    pointer-events: none;
+    left: var(--dashed-border-offset);
+    right: var(--dashed-border-offset);
+    top: var(--top-divider-offset, var(--dashed-border-offset));
+    bottom: var(--bottom-divider-offset, var(--dashed-border-offset));
+    border-radius: var(--g-border-radius-xl);
+}
+
 @mixin dndHighlight {
     &_edit-mode {
         position: relative;
-        .react-grid-layout {
-            background-color: var(--g-color-base-background);
-            border-radius: var(--g-border-radius-s);
-            outline: 1px dashed var(--g-color-line-generic);
+
+        &::before {
+            @include dashedBorderPositioning;
+            border: var(--outline-dashed-style);
         }
+
+        &::after {
+            @include dashedBorderPositioning;
+            border: var(--outline-font-color-style);
+        }
+    }
+}
+
+@mixin hiddenSection {
+    &_hidden {
+        display: none;
+        margin: 0;
     }
 }
 
 .dash-fixed-header {
     $class: &;
 
-    $fixed-header-background: var(
+    --fixed-header-background: var(
         --dl-color-fixed-header-background,
-        var(--g-color-base-simple-hover-solid)
+        var(--g-color-base-background)
     );
 
     --dash-inline-padding: var(--g-spacing-6);
+    --fixed-header-block-spacing: var(--g-spacing-4);
 
-    margin-bottom: 20px;
+    --dashed-border-offset: calc(var(--g-spacing-3) * -1);
+    --hidden-dashed-border-width: 4px;
+
+    --outline-dashed-style: calc(var(--hidden-dashed-border-width) + 1px) dashed
+        var(--g-color-line-generic);
+    --outline-font-color-style: var(--hidden-dashed-border-width) solid
+        var(--fixed-header-background);
+
+    margin-bottom: var(--g-spacing-4);
+    margin-inline: calc(-1 * var(--dash-inline-padding));
+
+    &_no-content {
+        margin-block: 0;
+    }
 
     &__wrapper {
+        position: relative;
+        background-color: var(--fixed-header-background);
+
         &_fixed {
             position: fixed;
             top: 40px;
 
-            margin-inline: calc(-1 * var(--dash-inline-padding));
             z-index: 10;
-            max-height: calc(100vh - 40px);
+            max-height: 70vh;
 
-            box-shadow: 0px 1px 5px 0px var(--g-color-sfx-shadow);
-            background-color: $fixed-header-background;
             display: flex;
             flex-direction: row;
-
-            #{$class}__scrollable-container {
-                padding-inline: var(--dash-inline-padding);
-            }
-            #{$class}__controls-settings {
-                right: 0;
-            }
         }
-
-        &_edit-mode {
-            border-bottom: 1px solid var(--g-color-line-generic);
-        }
-    }
-
-    &_hidden {
-        margin: 0;
-        height: 0;
-    }
-
-    &__controls-settings {
-        width: 20px;
-        position: absolute;
-        right: calc(-1 * var(--dash-inline-padding));
-        top: var(--g-spacing-2);
     }
 
     &__content {
-        position: relative;
         display: flex;
         flex-direction: column;
         flex: 1;
+    }
+
+    &__scrollable-container {
+        padding-inline: var(--dash-inline-padding);
+    }
+
+    &__controls-settings {
+        z-index: 11;
+        width: 36px;
+        position: absolute;
+        right: 0;
+        top: var(--fixed-header-block-spacing);
+
+        display: flex;
+        justify-content: flex-end;
+
+        #{$class}__controls-settings-wrapper {
+            width: 28px;
+
+            transition: width 0.1s;
+        }
+
+        &:hover #{$class}__controls-settings-wrapper {
+            width: 36px;
+        }
     }
 
     &__scrollable-container {
@@ -83,40 +121,54 @@
     }
 
     &__controls {
-        min-height: 60px;
-        padding-block: var(--g-spacing-2);
+        --bottom-divider-offset: calc(var(--fixed-header-block-spacing) / -2);
 
-        padding-block-end: var(--g-spacing-2);
         @include dndHighlight;
-        @include flexReactGridLayout;
-
-        &_hidden {
-            display: none;
+        &::before,
+        &::after {
+            border-bottom-right-radius: 0;
+            border-bottom-left-radius: 0;
+            border-bottom: none;
         }
     }
 
     &__container {
+        --top-divider-offset: calc(
+            var(--fixed-header-block-spacing) / -2 - var(--hidden-dashed-border-width)
+        );
         display: flex;
         flex-direction: row;
-        min-height: 68px;
-        padding-block: var(--g-spacing-2);
 
         @include dndHighlight;
-        @include flexReactGridLayout;
-
-        &_hidden {
-            display: none;
+        &::before,
+        &::after {
+            border-top-right-radius: 0;
+            border-top-left-radius: 0;
         }
+    }
+
+    &__controls-placeholder,
+    &__container-placeholder {
+        display: contents;
+    }
+
+    &__controls,
+    &__container {
+        margin-block: var(--fixed-header-block-spacing);
+
+        @include flexReactGridLayout;
+        @include hiddenSection;
     }
 
     &__container-placeholder {
         position: relative;
 
-        &_collapsed {
+        &_collapsed #{$class}__container {
             overflow: clip;
             min-height: 0;
             max-height: 0;
             padding: 0;
+            margin: 0;
         }
     }
 
@@ -128,6 +180,9 @@
         top: 50%;
         pointer-events: none;
         color: var(--g-color-text-hint);
-        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: var(--g-spacing-1);
     }
 }
