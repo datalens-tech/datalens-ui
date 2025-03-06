@@ -3,7 +3,6 @@ import {AuthPolicy} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
 import type {PassportStatic} from 'passport';
 
-import {Feature, isEnabledServerFeature} from '../../../shared';
 import {getAuthArgs} from '../../../shared/schema/gateway-utils';
 import {isChartsMode, isDatalensMode, isFullMode} from '../../app-env';
 import {getAuthRoutes} from '../../components/auth/routes';
@@ -58,7 +57,6 @@ export function getRoutes({
 }
 
 function getDataLensRoutes({
-    ctx,
     beforeAuth,
     afterAuth,
 }: {
@@ -84,7 +82,7 @@ function getDataLensRoutes({
         afterAuth,
     };
 
-    let routes: Record<string, ExtendedAppRouteDescription> = {
+    const routes: Record<string, ExtendedAppRouteDescription> = {
         getConnections: getConfiguredRoute('navigation', {...ui, route: 'GET /connections'}),
         getDatasets: getConfiguredRoute('navigation', {...ui, route: 'GET /datasets'}),
         getWidgets: getConfiguredRoute('navigation', {...ui, route: 'GET /widgets'}),
@@ -123,32 +121,27 @@ function getDataLensRoutes({
         getRoot: getConfiguredRoute('dl-main', {...ui, route: 'GET /'}),
 
         getEditorAll: getConfiguredRoute('dl-main', {...ui, route: 'GET /editor*'}),
-    };
 
-    if (isEnabledServerFeature(ctx, Feature.Ql)) {
-        routes = {
-            getSql: {
-                handler: (_req: Request, res: Response) => {
-                    res.redirect(`/ql`);
-                },
-                beforeAuth,
-                afterAuth,
-                route: 'GET /sql',
+        getSql: {
+            handler: (_req: Request, res: Response) => {
+                res.redirect(`/ql`);
             },
+            beforeAuth,
+            afterAuth,
+            route: 'GET /sql',
+        },
 
-            // Path to UI ql Charts
-            getQlEntry: getConfiguredRoute('dl-main', {...ui, route: 'GET /ql/:entryId'}),
-            getQlNew: getConfiguredRoute('dl-main', {...ui, route: 'GET /ql/new'}),
-            getQlNnewMonitoringql: getConfiguredRoute('dl-main', {
-                ...ui,
-                route: 'GET /ql/new/monitoringql',
-            }),
-            getQlNewSql: getConfiguredRoute('dl-main', {...ui, route: 'GET /ql/new/sql'}),
-            getQlNewPromql: getConfiguredRoute('dl-main', {...ui, route: 'GET /ql/new/promql'}),
-            getEntrNewQl: getConfiguredRoute('dl-main', {...ui, route: 'GET  /:entryId/new/ql'}),
-            ...routes,
-        };
-    }
+        // Path to UI ql Charts
+        getQlEntry: getConfiguredRoute('dl-main', {...ui, route: 'GET /ql/:entryId'}),
+        getQlNew: getConfiguredRoute('dl-main', {...ui, route: 'GET /ql/new'}),
+        getQlNnewMonitoringql: getConfiguredRoute('dl-main', {
+            ...ui,
+            route: 'GET /ql/new/monitoringql',
+        }),
+        getQlNewSql: getConfiguredRoute('dl-main', {...ui, route: 'GET /ql/new/sql'}),
+        getQlNewPromql: getConfiguredRoute('dl-main', {...ui, route: 'GET /ql/new/promql'}),
+        getEntrNewQl: getConfiguredRoute('dl-main', {...ui, route: 'GET  /:entryId/new/ql'}),
+    };
 
     return routes;
 }
