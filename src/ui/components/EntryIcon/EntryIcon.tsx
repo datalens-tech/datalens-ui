@@ -31,6 +31,7 @@ const entityTypeIcons: Record<string, string> = {
 
 const folderIconSize = {
     s: 18,
+    m: 20,
     l: 22,
     xl: 28,
 };
