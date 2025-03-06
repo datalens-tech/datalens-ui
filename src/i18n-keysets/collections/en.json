@@ -14,6 +14,7 @@
   "action_create-workbook-hint": "Stores related connections, datasets, charts, and dashboards",
   "action_delete": "Delete",
   "action_edit": "Edit",
+  "action_export": "Export",
   "action_move": "Move",
   "action_reset-all": "Reset all",
   "action_select": "Select",

@@ -56,6 +56,7 @@ import type {OpenDialogTooltipSettingsArgs} from '../../units/wizard/components/
 import type {OpenDialogChangeDatasetFieldsArgs} from '../../units/datasets/components/DatasetTable/components/BatchActionPanel/components/DialogChangeDatasetFields/DialogChangeDatasetFields';
 import type {OpenDialogCollectionNoCreatePermissionArgs} from 'ui/components/CollectionsStructure/CollectionNoCreatePermissionDialog';
 import type {OpenDialogReleaseVersionArgs} from 'ui/components/AsideHeaderAdapter/VersionDialog/VersionDialog';
+import type {OpenDialogExportWorkbookArgs} from 'ui/components/CollectionsStructure/ExportWorkbookDialog/ExportWorkbookDialog';
 
 export type OpenDialogArgs<T = unknown> =
     | OpenDialogReleaseVersionArgs
@@ -113,4 +114,5 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogCreateEntryInWorkbookArgs
     | OpenDialogTooltipSettingsArgs
     | OpenDialogChangeDatasetFieldsArgs
-    | OpenDialogCollectionNoCreatePermissionArgs;
+    | OpenDialogCollectionNoCreatePermissionArgs
+    | OpenDialogExportWorkbookArgs;

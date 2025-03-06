@@ -14,6 +14,7 @@
   "action_create-workbook-hint": "Содержит подключения, датасеты, чарты и дашборды",
   "action_delete": "Удалить",
   "action_edit": "Редактировать",
+  "action_export": "Экспортировать",
   "action_move": "Переместить",
   "action_reset-all": "Снять все",
   "action_select": "Выбрать",
