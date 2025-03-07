@@ -146,6 +146,13 @@ export interface IChartEditor {
 
     generateHtml(value: ChartKitHtmlItem): WrappedHTML;
 
+    attachHandler?(
+        handlerConfig: Record<string, unknown>,
+    ): Record<string, unknown> & {__chartkitHandler: true};
+    attachFormatter?(
+        formatterConfig: Record<string, unknown>,
+    ): Record<string, unknown> & {__chartkitFormatter: true};
+
     getId?(key: string): string;
 }
 
