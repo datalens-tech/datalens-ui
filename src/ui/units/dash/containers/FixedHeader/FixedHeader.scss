@@ -61,6 +61,12 @@
     --outline-font-color-style: var(--hidden-dashed-border-width) solid
         var(--fixed-header-background);
 
+    /*
+    Clicked btn shrinks, and small empty space appears between button pinned to the border of the page and the actual page border.
+    This commensation is desired to remove this empty space by moving button out of the border for this value
+    */
+    --btn-click-scale-compensantion: 1px;
+
     margin-bottom: var(--g-spacing-4);
     margin-inline: calc(-1 * var(--dash-inline-padding));
 
@@ -98,20 +104,30 @@
         z-index: 11;
         width: 36px;
         position: absolute;
-        right: 0;
+        right: calc(-1 * var(--btn-click-scale-compensantion));
         top: var(--fixed-header-block-spacing);
 
         display: flex;
         justify-content: flex-end;
 
+        #{$class}_edit-mode & {
+            top: var(--g-spacing-2);
+        }
+
         #{$class}__controls-settings-wrapper {
-            width: 28px;
+            width: calc(28px + var(--btn-click-scale-compensantion));
+
+            overflow: hidden;
+
+            background-color: var(--g-color-base-float);
+            border-radius: var(--g-border-radius-m) 0 0 var(--g-border-radius-m);
+            box-shadow: 0 0 15px var(--g-color-sfx-shadow);
 
             transition: width 0.1s;
         }
 
         &:hover #{$class}__controls-settings-wrapper {
-            width: 36px;
+            width: calc(36px + var(--btn-click-scale-compensantion));
         }
     }
 
@@ -121,27 +137,29 @@
     }
 
     &__controls {
-        --bottom-divider-offset: calc(var(--fixed-header-block-spacing) / -2);
+        --bottom-divider-offset: calc(
+            var(--fixed-header-block-spacing) / -2 - var(--hidden-dashed-border-width)
+        );
 
         @include dndHighlight;
         &::before,
         &::after {
-            border-bottom-right-radius: 0;
-            border-bottom-left-radius: 0;
-            border-bottom: none;
+            #{$class}:not(#{$class}_collapsed) & {
+                border-bottom-right-radius: 0;
+                border-bottom-left-radius: 0;
+            }
         }
     }
 
     &__container {
-        --top-divider-offset: calc(
-            var(--fixed-header-block-spacing) / -2 - var(--hidden-dashed-border-width)
-        );
+        --top-divider-offset: calc(var(--fixed-header-block-spacing) / -2);
         display: flex;
         flex-direction: row;
 
         @include dndHighlight;
         &::before,
         &::after {
+            border-top: none;
             border-top-right-radius: 0;
             border-top-left-radius: 0;
         }
