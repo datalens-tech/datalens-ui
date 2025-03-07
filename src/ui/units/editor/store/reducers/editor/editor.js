@@ -152,7 +152,7 @@ export const fetchEditorChartUpdate = ({mode, history, location}) => {
 
             const updatedEntry = await getSdk().sdk.mix.updateEditorChart({
                 mode,
-                data: Helper.formEntryData({scriptsValues, entry}),
+                data: Helper.formEntryData({scriptsValues}),
                 entryId: entry.entryId,
                 meta,
             });
@@ -253,7 +253,7 @@ export const fetchRevisionChange = ({revisionEntry, action}, history, location) 
                     entryData = await getSdk().sdk.mix.updateEditorChart({
                         mode: UPDATE_ENTRY_MODE.PUBLISH,
                         entryId,
-                        data: Helper.formEntryData({scriptsValues, entry: clonedEntry}),
+                        data: Helper.formEntryData({scriptsValues}),
                         meta: {...clonedEntry.meta, is_release: true},
                     });
                     const query = urlSearch.delete(URL_QUERY.REV_ID).toString();
