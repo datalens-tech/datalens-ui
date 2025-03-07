@@ -39,14 +39,6 @@ export const getChartApiContext = (args: GetChartApiContextArgs): ChartApiContex
     const api: IChartEditor = {
         getSharedData: () => shared,
         getLang: () => userLang,
-        attachHandler: (handlerConfig: Record<string, unknown>) => ({
-            ...handlerConfig,
-            __chartkitHandler: true,
-        }),
-        attachFormatter: (formatterConfig: Record<string, unknown>) => ({
-            ...formatterConfig,
-            __chartkitFormatter: true,
-        }),
         ...hooks?.getSandboxApiMethods(),
     };
 
