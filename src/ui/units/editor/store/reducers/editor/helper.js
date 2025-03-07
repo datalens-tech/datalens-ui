@@ -45,19 +45,19 @@ export class Helper {
             const tabName = tabId;
             switch (tabId) {
                 case 'sources': {
-                    scriptsValues[tabName] = get(data, 'url', get(data, 'sources', ''));
+                    scriptsValues.sources = get(data, 'sources', get(data, 'url', ''));
                     break;
                 }
                 case 'controls': {
-                    scriptsValues[tabName] = get(data, 'ui', get(data, 'controls', ''));
+                    scriptsValues.controls = get(data, 'controls', get(data, 'ui', ''));
                     break;
                 }
                 case 'prepare': {
-                    scriptsValues[tabName] = get(data, 'js', get(data, 'prepare', ''));
+                    scriptsValues.prepare = get(data, 'prepare', get(data, 'js', ''));
                     break;
                 }
                 case 'config': {
-                    scriptsValues[tabName] = get(data, 'table', get(data, 'config', ''));
+                    scriptsValues.config = get(data, 'config', get(data, 'table', ''));
                     break;
                 }
                 default: {
@@ -119,9 +119,8 @@ export class Helper {
         };
     }
 
-    static formEntryData({entry, scriptsValues}) {
+    static formEntryData({scriptsValues}) {
         return {
-            ...entry.data,
             ...scriptsValues,
         };
     }
