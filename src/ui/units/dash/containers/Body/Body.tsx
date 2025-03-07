@@ -689,59 +689,73 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         const {mode} = this.props;
         const config = this.getTabConfig();
 
+        const {expandIcon, collapseIcon} = hasFixedHeaderControlsElements
+            ? {expandIcon: ChevronsDown, collapseIcon: ChevronsUp}
+            : {expandIcon: ChevronsLeft, collapseIcon: ChevronsRight};
+
+        const expandCollapseButton = (
+            <Button
+                onClick={this.toggleFixedHeader}
+                view={mode === Mode.Edit ? 'flat' : 'action'}
+                size={mode === Mode.Edit ? 'm' : 'xl'}
+                width="max"
+                pin="brick-brick"
+                title={i18n(
+                    'dash.main.view',
+                    isCollapsed ? 'tooltip_expand-fixed-group' : 'tooltip_collapse-fixed-group',
+                )}
+                qa={FixedHeaderQa.ExpandCollapseButton}
+            >
+                <Icon data={isCollapsed ? expandIcon : collapseIcon} />
+            </Button>
+        );
+
         if (mode === Mode.Edit) {
             return (
-                <DropdownMenu
-                    switcherWrapperClassName={b('fixed-header-settings-switcher')}
-                    renderSwitcher={(props) => (
-                        <Button {...props} view="raised" size="xl" width="max" pin="round-brick">
-                            <Icon size={16} data={Gear} />
-                        </Button>
+                <React.Fragment>
+                    {hasFixedHeaderControlsElements && hasFixedContainerElements && (
+                        <DropdownMenu
+                            switcherWrapperClassName={b('fixed-header-settings-switcher')}
+                            renderSwitcher={(props) => (
+                                <Button
+                                    {...props}
+                                    view="flat"
+                                    size="m"
+                                    width="max"
+                                    pin="brick-brick"
+                                >
+                                    <Icon size={16} data={Gear} />
+                                </Button>
+                            )}
+                            items={[
+                                {
+                                    action: this.toggleDefaultCollapsedState,
+                                    text: i18n('dash.main.view', 'label_fixed-collapsed-default'),
+                                    iconStart: (
+                                        <Icon
+                                            data={
+                                                config.settings?.fixedHeaderCollapsedDefault
+                                                    ? SquareCheck
+                                                    : Square
+                                            }
+                                        />
+                                    ),
+                                    theme: 'normal',
+                                },
+                                {
+                                    action: this.unpinAllElements,
+                                    text: i18n('dash.main.view', 'label_unpin-all'),
+                                    iconStart: <Icon data={PinSlash} />,
+                                    theme: 'danger',
+                                },
+                            ]}
+                        />
                     )}
-                    items={[
-                        {
-                            action: this.toggleDefaultCollapsedState,
-                            text: i18n('dash.main.view', 'label_fixed-collapsed-default'),
-                            iconStart: (
-                                <Icon
-                                    data={
-                                        config.settings?.fixedHeaderCollapsedDefault
-                                            ? SquareCheck
-                                            : Square
-                                    }
-                                />
-                            ),
-                            theme: 'normal',
-                        },
-                        {
-                            action: this.unpinAllElements,
-                            text: i18n('dash.main.view', 'label_unpin-all'),
-                            iconStart: <Icon data={PinSlash} />,
-                            theme: 'danger',
-                        },
-                    ]}
-                />
+                    {hasFixedContainerElements && expandCollapseButton}
+                </React.Fragment>
             );
         } else if (hasFixedContainerElements) {
-            const {expandIcon, collapseIcon} = hasFixedHeaderControlsElements
-                ? {expandIcon: ChevronsDown, collapseIcon: ChevronsUp}
-                : {expandIcon: ChevronsLeft, collapseIcon: ChevronsRight};
-            return (
-                <Button
-                    onClick={this.toggleFixedHeader}
-                    view="action"
-                    size="xl"
-                    width="max"
-                    pin="round-brick"
-                    title={i18n(
-                        'dash.main.view',
-                        isCollapsed ? 'tooltip_expand-fixed-group' : 'tooltip_collapse-fixed-group',
-                    )}
-                    qa={FixedHeaderQa.ExpandCollapseButton}
-                >
-                    <Icon data={isCollapsed ? expandIcon : collapseIcon} />
-                </Button>
-            );
+            return expandCollapseButton;
         }
 
         return null;
