@@ -70,7 +70,6 @@ class FiltersPlaceholder extends React.Component<Props> {
                 id: 'delete-all-filters',
                 qa: 'delete-all-filters-action',
                 icon: TrashBin,
-                styles: {marginTop: 4},
                 hidden: this.filters.length === 0,
                 hoverText: i18n('wizard', 'label_delete-all-filters-action'),
                 onClick: () => {

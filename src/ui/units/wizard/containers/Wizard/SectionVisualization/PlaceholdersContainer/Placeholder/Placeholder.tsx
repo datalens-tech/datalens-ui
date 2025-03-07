@@ -64,15 +64,13 @@ type Props = StateProps &
 
 export type CustomPlaceholderAction = {
     id: string;
-    icon: React.ElementType;
+    icon: IconData;
     onClick?: () => void;
     disabledText?: string;
     hoverText?: string;
     qa?: string;
     hidden?: boolean;
     isFirst?: boolean;
-
-    styles?: React.CSSProperties;
 };
 
 const PLACEHOLDER_DEFAULT_ICON_SIZE = 18;
@@ -179,7 +177,6 @@ class PlaceholderComponent extends React.PureComponent<Props> {
                     {customPlaceholderActions?.map((action) => {
                         return (
                             <PlaceholderActionIcon
-                                styles={action.styles}
                                 key={`${id}__${action.id}`}
                                 className="visualization-container__placeholder-action"
                                 hidden={action.hidden}
