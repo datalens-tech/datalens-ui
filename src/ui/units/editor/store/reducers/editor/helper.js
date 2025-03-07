@@ -45,7 +45,7 @@ export class Helper {
             const tabName = tabId;
             switch (tabId) {
                 case 'sources': {
-                    scriptsValues.sources = get(data, 'sources', get(data, 'urls', ''));
+                    scriptsValues.sources = get(data, 'sources', get(data, 'url', ''));
                     break;
                 }
                 case 'controls': {
