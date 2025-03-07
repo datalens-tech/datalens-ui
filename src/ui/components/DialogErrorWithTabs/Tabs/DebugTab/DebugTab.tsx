@@ -40,7 +40,8 @@ const DebugTab: React.FC<Props> = ({error}: Props) => {
         }
     });
 
-    const trace = 'stack' in error ? JSON.stringify(error.stack, null, 4) : '';
+    const trace =
+        'stackTrace' in errorDetails ? JSON.stringify(errorDetails.stackTrace, null, 4) : '';
 
     const errorMessage = errorContent.join('\n');
 
