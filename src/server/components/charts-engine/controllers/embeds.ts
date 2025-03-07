@@ -283,7 +283,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                 ) {
                     ctx.log('CHARTS_ENGINE_EDITOR_DISABLED');
                     return res.status(400).send({
-                        error: 'ChartEditor is disabled',
+                        error: 'Editor is disabled',
                     });
                 }
 

@@ -18,7 +18,7 @@ export enum Status {
 }
 
 export const PANE_VIEWS = {
-    EDITOR: 'Editor',
+    EDITOR: 'Code editor',
     PREVIEW: 'Preview',
     CONSOLE: 'Console',
 };

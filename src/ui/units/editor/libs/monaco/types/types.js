@@ -1,5 +1,5 @@
 const basic = (next = []) => `
-interface IChartEditor {
+interface IEditor {
     /**
      * Return current user login
      */
@@ -61,8 +61,8 @@ interface IChartEditor {
     ${next.join('\n')}
 }
 
-declare let ChartEditor: IChartEditor;
-declare let Editor: IChartEditor;
+declare let ChartEditor: IEditor;
+declare let Editor: IEditor;
 `;
 
 const partUpdateParams = `

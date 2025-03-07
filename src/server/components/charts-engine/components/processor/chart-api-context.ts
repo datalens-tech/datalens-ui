@@ -76,7 +76,7 @@ export const getChartApiContext = (args: GetChartApiContextArgs): ChartApiContex
     api.wrapFn = (value) => {
         if (!isWrapFnArgsValid(value)) {
             // There is no way to reach this code, just satisfy ts
-            throw new Error('You should pass a valid arguments to ChartEditor.wrapFn method');
+            throw new Error('You should pass a valid arguments to Editor.wrapFn method');
         }
 
         const fnArgs = Array.isArray(value.args)

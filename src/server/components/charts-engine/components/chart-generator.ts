@@ -9,11 +9,11 @@ const {buildHighchartsConfig, buildLibraryConfig} = require('#module');
 const buildFn = typeof buildLibraryConfig === 'function' ? buildLibraryConfig : buildHighchartsConfig;
 
 const result = buildFn({
-    shared: ChartEditor.getSharedData(),
-    params: ChartEditor.getParams(),
-    actionParams: ChartEditor.getActionParams(),
-    widgetConfig: ChartEditor.getWidgetConfig(),
-    ChartEditor
+    shared: Editor.getSharedData(),
+    params: Editor.getParams(),
+    actionParams: Editor.getActionParams(),
+    widgetConfig: Editor.getWidgetConfig(),
+    Editor
 });
 
 // your code here
@@ -25,11 +25,11 @@ const commonTemplateD3Graph = `
 const {buildD3Config} = require('#module');
 
 const result = buildD3Config({
-    shared: ChartEditor.getSharedData(),
-    params: ChartEditor.getParams(),
-    actionParams: ChartEditor.getActionParams(),
-    widgetConfig: ChartEditor.getWidgetConfig(),
-    ChartEditor
+    shared: Editor.getSharedData(),
+    params: Editor.getParams(),
+    actionParams: Editor.getActionParams(),
+    widgetConfig: Editor.getWidgetConfig(),
+    Editor
 });
 
 // your code here
@@ -43,12 +43,12 @@ const {buildGraph} = require('#module');
 
 const result = buildGraph({
     apiVersion: '#apiVersion',
-    data: ChartEditor.getLoadedData(),
-    shared: ChartEditor.getSharedData(),
-    params: ChartEditor.getParams(),
-    actionParams: ChartEditor.getActionParams(),
-    widgetConfig: ChartEditor.getWidgetConfig(),
-    ChartEditor,
+    data: Editor.getLoadedData(),
+    shared: Editor.getSharedData(),
+    params: Editor.getParams(),
+    actionParams: Editor.getActionParams(),
+    widgetConfig: Editor.getWidgetConfig(),
+    Editor,
 });
 
 // your code here
@@ -60,8 +60,8 @@ const {buildParams} = require('#module');
 
 if (buildParams) {
     const result = buildParams({
-        shared: ChartEditor.getSharedData(),
-        ChartEditor
+        shared: Editor.getSharedData(),
+        Editor
     });
 
     // your code here
@@ -78,11 +78,11 @@ if (buildParams) {
 const {buildChartsConfig} = require('#module');
 
 const result = buildChartsConfig({
-    shared: ChartEditor.getSharedData(),
-    params: ChartEditor.getParams(),
-    actionParams: ChartEditor.getActionParams(),
-    widgetConfig: ChartEditor.getWidgetConfig(),
-    ChartEditor
+    shared: Editor.getSharedData(),
+    params: Editor.getParams(),
+    actionParams: Editor.getActionParams(),
+    widgetConfig: Editor.getWidgetConfig(),
+    Editor
 });
 
 // your code here
@@ -94,11 +94,11 @@ const {buildUI} = require('#module');
 
 if (buildUI) {
     const result = buildUI({
-        shared: ChartEditor.getSharedData(),
-        params: ChartEditor.getParams(),
-        actionParams: ChartEditor.getActionParams(),
-        widgetConfig: ChartEditor.getWidgetConfig(),
-        ChartEditor
+        shared: Editor.getSharedData(),
+        params: Editor.getParams(),
+        actionParams: Editor.getActionParams(),
+        widgetConfig: Editor.getWidgetConfig(),
+        Editor
     });
 
     // your code here
@@ -111,9 +111,9 @@ const {buildSources} = require('#module');
 
 const result = buildSources({
     apiVersion: '#apiVersion',
-    shared: ChartEditor.getSharedData(),
-    params: ChartEditor.getParams(),
-    ChartEditor
+    shared: Editor.getSharedData(),
+    params: Editor.getParams(),
+    Editor
 });
 
 // your code here

@@ -115,7 +115,7 @@ export function valueFormatter(
             type = cell.type;
         }
 
-        // Fallback (needed to support already created ChartEditor charts).
+        // Fallback (needed to support already created Editor charts).
         // type bar is deprecated was merged with number.
         // Now the number column has a prop view that determines whether to show a number or draw a bar
         if (type === 'bar') {

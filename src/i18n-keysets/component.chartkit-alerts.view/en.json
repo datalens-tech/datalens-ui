@@ -6,7 +6,7 @@
   "button_get": "Get",
   "button_retry": "Repeat",
   "button_save": "Save",
-  "context_timezone": "DataLens is <linkTimezone>not yet able</linkTimezone> to work with timezones: all dates on the charts are displayed in UTC+0.<br></br><br></br>If you shift the time series using a formula in the dataset or a code in ChartEditor, you must select the appropriate time zone here.<br></br><br></br>Example: if you add 3 hours to the datetime values in the dataset, select +03:00 here.",
+  "context_timezone": "DataLens is <linkTimezone>not yet able</linkTimezone> to work with timezones: all dates on the charts are displayed in UTC+0.<br></br><br></br>If you shift the time series using a formula in the dataset or a code in Editor, you must select the appropriate time zone here.<br></br><br></br>Example: if you add 3 hours to the datetime values in the dataset, select +03:00 here.",
   "field_aggregation-function": "Aggregation function",
   "field_description": "Description",
   "field_name": "Name",
