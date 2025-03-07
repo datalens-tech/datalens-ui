@@ -11,12 +11,7 @@ import {
     CHARTKIT_SCROLLABLE_NODE_CLASSNAME,
 } from '../../libs/DatalensChartkit/ChartKit/helpers/constants';
 
-import {
-    FIXED_GROUP_HEADER_ID,
-    FIXED_HEADER_GROUP_LINE_MAX_ROWS,
-    MAX_AUTO_HEIGHT_PX,
-    MIN_AUTO_HEIGHT_PX,
-} from './constants';
+import {FIXED_GROUP_HEADER_ID, MAX_AUTO_HEIGHT_PX, MIN_AUTO_HEIGHT_PX} from './constants';
 
 /*
     The description is taken from dashkit (removed from there), but the meaning has not changed much.
@@ -163,9 +158,6 @@ export function adjustWidgetLayout({
             needSetDefault: false,
             adjustedWidgetLayout: {
                 ...correspondedLayoutItem,
-                h: FIXED_HEADER_GROUP_LINE_MAX_ROWS,
-                maxH: FIXED_HEADER_GROUP_LINE_MAX_ROWS,
-                minH: FIXED_HEADER_GROUP_LINE_MAX_ROWS,
             },
         });
         return;
