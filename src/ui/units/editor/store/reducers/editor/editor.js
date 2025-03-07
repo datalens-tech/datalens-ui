@@ -391,12 +391,9 @@ export const getScriptsValues = (state) => state.editor.scriptsValues;
 export const getIsScriptsChanged = createSelector(
     [getEntry, getScriptsValues],
     (entry, scriptsValues) => {
-        if (entry.meta?.is_sandbox_version_changed) {
-            delete entry.meta.is_sandbox_version_changed;
-            return true;
-        }
+        const {scriptsValues: initialScriptsValues} = Helper.createTabData(entry);
         return Object.keys(scriptsValues).some(
-            (key) => (entry.data[key] || '') !== scriptsValues[key],
+            (key) => (initialScriptsValues[key] || '') !== scriptsValues[key],
         );
     },
 );
