@@ -7,6 +7,7 @@ import intersection from 'lodash/intersection';
 
 import type {ServerI18n} from '../../../i18n/types';
 import {DASH_CURRENT_SCHEME_VERSION} from '../../../shared/constants';
+import {DashSchemeConverter} from '../../../shared/modules';
 import type {
     CreateEntryRequest,
     DashData,
@@ -69,7 +70,7 @@ function gatherLinks(data: DashData) {
     );
 }
 
-function assignData(I18n: ServerI18n, requestData: DashData) {
+function assignData(I18n: ServerI18n, requestData: DashData, initialData?: DashData) {
     const i18n = I18n.keyset('dash.tabs-dialog.edit');
     const salt = Math.random().toString();
     const hashids = new Hashids(salt);
@@ -99,7 +100,7 @@ function assignData(I18n: ServerI18n, requestData: DashData) {
         },
     };
 
-    return assign(data, requestData);
+    return assign(initialData ?? data, requestData);
 }
 
 function validateData(data: DashData) {
@@ -242,6 +243,10 @@ class Dash {
                 ctx,
             )) as DashEntry;
 
+            if (DashSchemeConverter.isUpdateNeeded(result.data)) {
+                result.data = await DashSchemeConverter.update(result.data);
+            }
+
             ctx.log('SDK_DASH_READ_SUCCESS', US.getLoggedEntry(result));
 
             return result;
@@ -265,7 +270,8 @@ class Dash {
 
             const needDataSend = !(mode === EntryUpdateMode.Publish && data.revId);
             if (needDataSend) {
-                usData.data = assignData(I18n, usData.data);
+                const initialData = await Dash.read(entryId, null, headers, ctx);
+                usData.data = assignData(I18n, usData.data, initialData.data);
                 usData.links = gatherLinks(usData.data);
                 validateData(usData.data);
             }

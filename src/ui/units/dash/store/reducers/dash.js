@@ -3,7 +3,7 @@ import {generateUniqId} from '@gravity-ui/dashkit/helpers';
 import update from 'immutability-helper';
 import pick from 'lodash/pick';
 import {DashTabItemTitleSizes, DashTabItemType} from 'shared';
-import {CustomPaletteBgColors, WIDGET_BG_COLORS_PRESET} from 'ui/constants/widgets';
+import {CustomPaletteBgColors, WIDGET_BG_COLORS_PRESET} from 'shared/constants/widgets';
 import {migrateConnectionsForGroupControl} from 'ui/store/utils/controlDialog';
 import {getUpdatedConnections} from 'ui/utils/copyItems';
 

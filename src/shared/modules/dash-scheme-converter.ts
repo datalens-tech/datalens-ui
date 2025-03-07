@@ -1,11 +1,63 @@
 import {dateTimeUtc} from '@gravity-ui/date-utils';
 import omitBy from 'lodash/omitBy';
 
-import {DASH_CURRENT_SCHEME_VERSION} from '../constants';
-import type {DashData, DashTab} from '../types';
+import {DASH_CURRENT_SCHEME_VERSION} from '../constants/dash';
+import {DUPLICATED_WIDGET_BG_COLORS_PRESET} from '../constants/widgets';
+import type {BackgroundSettings, DashData, DashTab, DashTabItem} from '../types';
 import {DashTabConnectionKind, DashTabItemControlElementType, DashTabItemType} from '../types';
 
 const DATE_FORMAT_V7 = 'YYYY-MM-DD';
+
+function getActualBackground(background?: BackgroundSettings): BackgroundSettings | undefined {
+    if (background && DUPLICATED_WIDGET_BG_COLORS_PRESET.includes(background.color)) {
+        return {
+            color: background.color.replace('medium', 'light-hover'),
+        };
+    }
+
+    return background;
+}
+
+export function migrateBgColor(item: DashTabItem): DashTabItem {
+    const newItem: DashTabItem = Object.assign({...item}, {data: Object.assign({}, item.data)});
+
+    if ('background' in newItem.data) {
+        if (
+            newItem.data.background &&
+            DUPLICATED_WIDGET_BG_COLORS_PRESET.includes(newItem.data.background.color)
+        ) {
+            newItem.data.background = getActualBackground(newItem.data.background);
+
+            return newItem;
+        }
+    }
+    if (newItem.type === DashTabItemType.Widget) {
+        newItem.data.tabs = newItem.data.tabs.map((tab) => ({
+            ...tab,
+            background: getActualBackground(tab.background),
+        }));
+
+        return newItem;
+    }
+    return item;
+}
+
+export function preparedData(data: DashData) {
+    data.tabs.forEach((dashTabItem) => {
+        dashTabItem.items = dashTabItem.items.map((wi) => {
+            const widgetItem = migrateBgColor(wi);
+            if (widgetItem.type !== DashTabItemType.Control) {
+                return widgetItem;
+            }
+            for (const [key, val] of Object.entries(widgetItem.defaults)) {
+                widgetItem.defaults[key] = val === null ? '' : val;
+            }
+            return widgetItem;
+        });
+    });
+
+    return data;
+}
 
 // appeared at the time of the transition from 6 to 7, there is possibility that previous conversions are no longer needed
 
@@ -16,7 +68,7 @@ class DashSchemeConverter {
 
     static update(data: DashData) {
         if (data.schemeVersion < DASH_CURRENT_SCHEME_VERSION) {
-            return DashSchemeConverter.upTo7(data);
+            return DashSchemeConverter.upTo8(data);
         }
         return data;
     }
@@ -291,6 +343,33 @@ class DashSchemeConverter {
         };
 
         return result;
+    }
+
+    static async upTo8(originalData: any): Promise<DashData> {
+        const data = await DashSchemeConverter.upTo7(originalData);
+        const {schemeVersion} = data;
+
+        if (schemeVersion >= 8) {
+            return data;
+        }
+
+        data.tabs.forEach((dashTabItem) => {
+            dashTabItem.items = dashTabItem.items.map((wi) => {
+                const widgetItem = migrateBgColor(wi);
+                if (widgetItem.type !== DashTabItemType.Control) {
+                    return widgetItem;
+                }
+                for (const [key, val] of Object.entries(widgetItem.defaults)) {
+                    widgetItem.defaults[key] = val === null ? '' : val;
+                }
+                return widgetItem;
+            });
+        });
+
+        return {
+            ...data,
+            schemeVersion: 8,
+        };
     }
 }
 

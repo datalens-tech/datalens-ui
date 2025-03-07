@@ -44,6 +44,6 @@ export const RESTRICTED_PARAM_NAMES = [
     'genericdatetime',
 ];
 
-export const DASH_CURRENT_SCHEME_VERSION = 7;
+export const DASH_CURRENT_SCHEME_VERSION = 8;
 
 export const LOADED_DASH_CLASS = 'dash-body-loaded';
