@@ -119,6 +119,7 @@ export const FixedHeaderControls: React.FC<FixedHeaderControlsProps> = ({
 export const FixedHeaderContainer: React.FC<FixedHeaderContainerProps> = ({
     editMode,
     isEmpty,
+    isControlsGroupEmpty,
     children,
 }) => {
     const content =
@@ -141,7 +142,7 @@ export const FixedHeaderContainer: React.FC<FixedHeaderContainerProps> = ({
         <div
             className={b('container', {
                 'edit-mode': editMode,
-                hidden: isEmpty && !editMode,
+                hidden: isEmpty && (!editMode || (editMode && isControlsGroupEmpty)),
             })}
             data-qa={FixedHeaderQa.Container}
         >
@@ -200,13 +201,12 @@ export function FixedHeaderWrapper({
 
     useBodyScrollLock({enabled: isScrollCaptured});
 
-    const collapsibleGroupHidden = isCollapsed && !editMode;
-
     return (
         <div
             className={b({
-                'no-content':
-                    isControlsGroupEmpty && (isContainerGroupEmpty || collapsibleGroupHidden),
+                'no-content': isControlsGroupEmpty && (isContainerGroupEmpty || isCollapsed),
+                'edit-mode': editMode,
+                collapsed: isCollapsed,
             })}
             ref={rootRef}
             style={{
@@ -216,7 +216,6 @@ export function FixedHeaderWrapper({
             <div
                 className={b('wrapper', {
                     fixed: isFixed && !editMode,
-                    'edit-mode': editMode,
                 })}
                 style={style}
                 ref={wrapperRef}
@@ -228,7 +227,7 @@ export function FixedHeaderWrapper({
                         <div
                             ref={containerRef}
                             className={b('container-placeholder', {
-                                collapsed: collapsibleGroupHidden,
+                                collapsed: isCollapsed,
                             })}
                         ></div>
                     </div>
