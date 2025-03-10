@@ -60,7 +60,6 @@ type ChartkitSource = {
 type PromiseWithAbortController = [Promise<unknown>, AbortController];
 
 type DataFetcherOptions = {
-    chartsEngine?: ChartsEngine;
     sources: Record<string, Source | string>;
     ctx: AppContext;
     postprocess?:
@@ -79,9 +78,9 @@ type DataFetcherOptions = {
     authParams?: AuthParams | undefined;
     originalReqHeaders: DataFetcherOriginalReqHeaders;
     adapterContext: AdapterContext;
-    telemetryCallbacks?: TelemetryCallbacks;
-    cacheClient?: CacheClient;
-    sourcesConfig?: ChartsEngine['sources'];
+    telemetryCallbacks: TelemetryCallbacks;
+    cacheClient: CacheClient;
+    sourcesConfig: ChartsEngine['sources'];
 };
 
 export type DataFetcherOriginalReqHeaders = {
@@ -206,7 +205,6 @@ export function addAuthHeaders({
 
 export class DataFetcher {
     static fetch({
-        chartsEngine,
         sources,
         ctx,
         postprocess = null,
@@ -224,16 +222,6 @@ export class DataFetcher {
         cacheClient,
         sourcesConfig,
     }: DataFetcherOptions): Promise<Record<string, DataFetcherResult>> {
-        // TODO remove after migration
-        if ((!telemetryCallbacks || !cacheClient) && chartsEngine) {
-            telemetryCallbacks = chartsEngine.telemetryCallbacks;
-            cacheClient = chartsEngine.cacheClient;
-            sourcesConfig = chartsEngine.sources;
-        }
-        if (!telemetryCallbacks || !cacheClient || !sourcesConfig) {
-            throw new Error('Missing telemetry callbacks or cache client');
-        }
-
         const fetchingTimeout = ctx.config.fetchingTimeout || DEFAULT_FETCHING_TIMEOUT;
 
         const fetchingStartTime = Date.now();
