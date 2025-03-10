@@ -15,12 +15,11 @@ import {getUrlParamFromStr} from 'ui/utils';
 
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
 import {registry} from '../../../../registry';
-import {EditorUrlParams, EditorUrls, Status, UPDATE_ENTRY_MODE} from '../../constants/common';
+import {EditorUrlParams, Status, UPDATE_ENTRY_MODE} from '../../constants/common';
 import ActionPanel from '../../containers/ActionPanel/ActionPanel';
 import Grid from '../../containers/Grid/Grid';
 import UnloadConfirmation from '../../containers/UnloadConfirmation/UnloadConfirmation';
 import {fetchEditorChartUpdate} from '../../store/reducers/editor/editor';
-import {getFullPathName} from '../../utils';
 import EditorPageError from '../EditorPageError/EditorPageError';
 import NewChart from '../NewChart/NewChart';
 import {ViewLoader} from '../ViewLoader/ViewLoader';
@@ -135,16 +134,6 @@ const EditorPage = ({
         };
     }, []);
 
-    function onClickNodeTemplate(item) {
-        const urlPath = item.empty ? '' : `/${item.name}`;
-        history.push(
-            getFullPathName({
-                base: `${EditorUrls.EntryDraft}${urlPath}`,
-                workbookId: routeWorkbookId,
-            }),
-        );
-    }
-
     const handleSetActualVersion = () => {
         const isDraftEntry = isDraftVersion(entry);
 
@@ -198,9 +187,7 @@ const EditorPage = ({
 
     const renderPageContent = () => {
         if (editorPath === EditorUrlParams.New) {
-            return (
-                <NewChart onClickNodeTemplate={onClickNodeTemplate} workbookId={routeWorkbookId} />
-            );
+            return <NewChart workbookId={routeWorkbookId} />;
         } else {
             return renderEditor(asideHeaderData.size);
         }
