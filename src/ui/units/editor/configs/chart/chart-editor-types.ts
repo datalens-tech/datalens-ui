@@ -1,4 +1,5 @@
 import {I18n} from 'i18n';
+import sortBy from 'lodash/sortBy';
 import {Feature} from 'shared';
 import {EDITOR_TYPE} from 'shared/constants';
 import {registry} from 'ui/registry';
@@ -56,9 +57,11 @@ function getSharedTab({docs}: {docs: DocsLink}) {
 }
 
 function getSourcesTab({docs}: {docs: DocsLink}) {
+    const tabName = isEnabledFeature('EditorTabNewNaming') ? 'Sources' : 'Urls';
+
     return [
         {
-            name: 'Urls',
+            name: tabName,
             id: 'sources',
             language: 'javascript',
             docs,
@@ -68,10 +71,11 @@ function getSourcesTab({docs}: {docs: DocsLink}) {
 
 function getPrepareTab(args?: {docs: DocsLink}) {
     const docs = args?.docs;
+    const tabName = isEnabledFeature('EditorTabNewNaming') ? 'Prepare' : 'JavaScript';
 
     return [
         {
-            name: 'JavaScript',
+            name: tabName,
             id: 'prepare',
             language: 'javascript',
             docs: docs,
@@ -79,7 +83,6 @@ function getPrepareTab(args?: {docs: DocsLink}) {
     ];
 }
 
-// TODO: https://github.com/datalens-tech/datalens-ui/issues/762
 export function getChartEditorTypes(type: string) {
     const getDocPathPrefix = registry.common.functions.get('getDocPathPrefix');
     const prefix = getDocPathPrefix();
@@ -615,6 +618,13 @@ export function getChartEditorTypes(type: string) {
             docs: docsControls,
         });
     }
+
+    const order = isEnabledFeature('EditorTabNewOrder')
+        ? ['meta', 'shared', 'params', 'sources', 'config', 'prepare', 'controls', 'actions']
+        : [];
+    chartEditorTypes[type].tabs = sortBy(chartEditorTypes[type].tabs, (tab) =>
+        order.indexOf(tab.id),
+    );
 
     return chartEditorTypes[type];
 }

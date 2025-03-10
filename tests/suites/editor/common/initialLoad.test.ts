@@ -6,9 +6,9 @@ import WizardPage from '../../../page-objects/wizard/WizardPage';
 import QLPage from '../../../page-objects/ql/QLPage';
 import {openTestPage} from '../../../utils';
 
-datalensTest.describe('ChartEditor - chart loading', () => {
+datalensTest.describe('Editor - chart loading', () => {
     datalensTest(
-        'When trying to go to ChartEditor with the wizard chart id, a redirect to the Wizard page occurs',
+        'When trying to go to Editor with the wizard chart id, a redirect to the Wizard page occurs',
         async ({page}: {page: Page}) => {
             await openTestPage(page, RobotChartsEditorUrls.EditorWithWizardId);
 
@@ -19,7 +19,7 @@ datalensTest.describe('ChartEditor - chart loading', () => {
     );
 
     datalensTest(
-        'When trying to go to ChartEditor with the ql chart id, a redirect to the QL page occurs',
+        'When trying to go to Editor with the ql chart id, a redirect to the QL page occurs',
         async ({page}: {page: Page}) => {
             await openTestPage(page, RobotChartsEditorUrls.EditorWithSQLId);
 

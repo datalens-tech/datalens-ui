@@ -133,7 +133,7 @@ export const runController = (
                             error: {
                                 code: 403,
                                 details: {
-                                    message: 'Access to ChartEditor developer mode was denied',
+                                    message: 'Access to Editor developer mode was denied',
                                 },
                             },
                         });
@@ -158,9 +158,9 @@ export const runController = (
                     ...config,
                     data: {
                         ...config.data,
-                        url: get(config.data, 'sources', get(config.data, 'url')),
-                        js: get(config.data, 'prepare', get(config.data, 'js')),
-                        ui: get(config.data, 'controls', get(config.data, 'ui')),
+                        url: get(config.data, 'sources') || get(config.data, 'url'),
+                        js: get(config.data, 'prepare') || get(config.data, 'js'),
+                        ui: get(config.data, 'controls') || get(config.data, 'ui'),
                     },
                 },
                 configResolving,

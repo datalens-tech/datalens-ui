@@ -14,7 +14,7 @@ const PARAMS = {
     applyButtonLabel: 'Apply',
 };
 
-datalensTest.describe('ChartEditor - reset button', () => {
+datalensTest.describe('Editor - reset button', () => {
     datalensTest(
         'In the editorial selector without updateOnChange, the button resets to parameters from Params',
         async ({page}: {page: Page}) => {

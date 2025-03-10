@@ -152,7 +152,7 @@ export const fetchEditorChartUpdate = ({mode, history, location}) => {
 
             const updatedEntry = await getSdk().sdk.mix.updateEditorChart({
                 mode,
-                data: Helper.formEntryData({scriptsValues, entry}),
+                data: Helper.formEntryData({scriptsValues}),
                 entryId: entry.entryId,
                 meta,
             });
@@ -253,7 +253,7 @@ export const fetchRevisionChange = ({revisionEntry, action}, history, location) 
                     entryData = await getSdk().sdk.mix.updateEditorChart({
                         mode: UPDATE_ENTRY_MODE.PUBLISH,
                         entryId,
-                        data: Helper.formEntryData({scriptsValues, entry: clonedEntry}),
+                        data: Helper.formEntryData({scriptsValues}),
                         meta: {...clonedEntry.meta, is_release: true},
                     });
                     const query = urlSearch.delete(URL_QUERY.REV_ID).toString();
@@ -391,12 +391,9 @@ export const getScriptsValues = (state) => state.editor.scriptsValues;
 export const getIsScriptsChanged = createSelector(
     [getEntry, getScriptsValues],
     (entry, scriptsValues) => {
-        if (entry.meta?.is_sandbox_version_changed) {
-            delete entry.meta.is_sandbox_version_changed;
-            return true;
-        }
+        const {scriptsValues: initialScriptsValues} = Helper.createTabData(entry);
         return Object.keys(scriptsValues).some(
-            (key) => (entry.data[key] || '') !== scriptsValues[key],
+            (key) => (initialScriptsValues[key] || '') !== scriptsValues[key],
         );
     },
 );
