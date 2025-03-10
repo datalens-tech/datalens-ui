@@ -24,7 +24,7 @@ export const buildGraph = (...options: JSTabOptions) => {
     } else {
         data = options[0];
         shared = options[1] as Shared | ServerChartsConfig;
-        ChartEditor = (options[2] as IChartEditor) || (options[0].Editor as IChartEditor);
+        ChartEditor = options[2] as IChartEditor;
     }
 
     apiVersion = apiVersion || '1.5';
