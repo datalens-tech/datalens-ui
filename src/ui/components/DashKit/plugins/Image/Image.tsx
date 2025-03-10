@@ -4,10 +4,9 @@ import type {Plugin, PluginWidgetProps} from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
 import type {DashTabItemImage} from 'shared';
 import {DashTabItemType} from 'shared';
-import {CustomPaletteBgColors} from 'ui/constants/widgets';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
-import {getPreparedWrapSettings} from '../../utils';
+import {usePreparedWrapSettings} from '../../hooks';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
 import './Image.scss';
@@ -31,14 +30,8 @@ function PluginImage(props: Props, _ref?: React.LegacyRef<HTMLDivElement>) {
         h: null,
         w: null,
     };
-    const backgroundEnabled = Boolean(
-        background?.enabled !== false &&
-            background?.color &&
-            background?.color !== CustomPaletteBgColors.NONE,
-    );
-    const {classMod, style} = React.useMemo(() => {
-        return getPreparedWrapSettings(backgroundEnabled, background?.color);
-    }, [backgroundEnabled, background?.color]);
+
+    const {classMod, style} = usePreparedWrapSettings(background);
 
     React.useEffect(() => {
         handleUpdate?.();
