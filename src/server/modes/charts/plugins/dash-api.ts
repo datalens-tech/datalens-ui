@@ -8,10 +8,6 @@ import type {Plugin, PluginRoute} from '../../../components/charts-engine/types'
 import {Dash} from '../../../components/sdk';
 import {DASH_ENTRY_RELEVANT_FIELDS} from '../../../constants';
 
-// TODO: add "additionalProperties: false" for all "type: object"
-// in view of the existing incorrect schemes, we leave validation enabled only for internal installation
-// (in particular, because there is a public API inside)
-// dashboards in other installations are being run through purgeData while saving
 function purgeResult(result: DashEntry) {
     return pick(result, DASH_ENTRY_RELEVANT_FIELDS);
 }
@@ -24,10 +20,6 @@ type ConfiguredDashApiPluginOptions = {
      */
     validate?: PluginRoute['validationConfig'];
     validationConfig?: PluginRoute['validationConfig'];
-    validationConfigs?: {
-        dashCreate: PluginRoute['validationConfig'];
-        dashUpdate: PluginRoute['validationConfig'];
-    };
     routeParams?: Partial<Omit<PluginRoute, 'path' | 'method' | 'handler' | 'validate'>>;
     privateRouteParams?: Partial<Omit<PluginRoute, 'path' | 'method' | 'handler' | 'validate'>>;
 };
@@ -40,23 +32,17 @@ const getRoutes = (options?: ConfiguredDashApiPluginOptions): Plugin['routes'] =
         basePath = DASH_API_BASE_URL,
         privatePath,
     } = options || {};
-    const {validationConfig, validationConfigs} = options || {};
-    let validationConfigCreate = validationConfig;
-    let validationConfigUpdate = validationConfig;
+    let {validationConfig} = options || {};
 
     if (validate && !validationConfig) {
-        validationConfigCreate = validate;
-        validationConfigUpdate = validate;
-    } else if (validationConfigs) {
-        validationConfigCreate = validationConfigs.dashCreate;
-        validationConfigUpdate = validationConfigs.dashUpdate;
+        validationConfig = validate;
     }
 
     let routes: PluginRoute[] = [
         {
             method: 'POST',
             path: basePath,
-            validationConfig: validationConfigCreate,
+            validationConfig,
             handler: async (req: Request, res: Response) => {
                 try {
                     const {body, ctx} = req;
@@ -115,7 +101,7 @@ const getRoutes = (options?: ConfiguredDashApiPluginOptions): Plugin['routes'] =
         {
             method: 'POST',
             path: `${basePath}/:id`,
-            validationConfig: validationConfigUpdate,
+            validationConfig,
             handler: async (req: Request, res: Response) => {
                 try {
                     const {

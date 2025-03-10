@@ -66,3 +66,9 @@ export const WIDGET_BG_COLORS_PRESET = [
     'var(--g-color-base-misc-medium-hover)',
     'var(--g-color-base-neutral-medium-hover)',
 ];
+
+export const CONTROLS_PLACEMENT_MODE = {
+    AUTO: 'auto',
+    PERCENT: '%',
+    PIXELS: 'px',
+};

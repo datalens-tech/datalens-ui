@@ -1,6 +1,5 @@
-import cloneDeep from 'lodash/cloneDeep';
-
 import {
+    CONTROLS_PLACEMENT_MODE,
     DASH_CURRENT_SCHEME_VERSION,
     DashLoadPriority,
     DashTabConnectionKind,
@@ -12,7 +11,11 @@ import {
 import {DASH_DEFAULT_NAMESPACE} from '../../../constants';
 import type {ValidationConfig} from '../../../lib/validation/types';
 
-export const dashCreateJsonSchema: ValidationConfig = {
+// TODO: add "additionalProperties: false" for all "type: object"
+// in view of the existing incorrect schemes, we leave validation enabled only for internal installation
+// (in particular, because there is a public API inside)
+// dashboards in other installations are being run through purgeData while saving
+export const dashApiValidation: ValidationConfig = {
     body: {
         definitions: {
             text: {
@@ -86,6 +89,7 @@ export const dashCreateJsonSchema: ValidationConfig = {
                     },
                 },
                 allOf: [
+                    // @deprecated use groupControl
                     {
                         if: {
                             properties: {
@@ -100,6 +104,7 @@ export const dashCreateJsonSchema: ValidationConfig = {
                             },
                         },
                     },
+                    // @deprecated use groupControl
                     {
                         if: {
                             properties: {
@@ -200,6 +205,8 @@ export const dashCreateJsonSchema: ValidationConfig = {
                 type: 'object',
                 required: ['elementType'],
                 properties: {
+                    required: {type: 'boolean'},
+                    showHint: {type: 'boolean'},
                     showTitle: {type: 'boolean'},
                     elementType: {
                         enum: Object.values(DashTabItemControlElementType),
@@ -274,6 +281,92 @@ export const dashCreateJsonSchema: ValidationConfig = {
                         },
                     },
                 ],
+            },
+            groupControlItems: {
+                allOf: [
+                    {
+                        required: ['sourceType', 'source', 'namespace', 'id', 'title', 'defaults'],
+                        properties: {
+                            id: {
+                                type: 'string',
+                                minLength: 1,
+                            },
+                            title: {
+                                type: 'string',
+                                minLength: 1,
+                            },
+                            namespace: {
+                                const: DASH_DEFAULT_NAMESPACE,
+                                // uncomment when namespace is different from default
+                                // type: 'string',
+                                // minLength: 1,
+                            },
+                            sourceType: {
+                                enum: Object.values(DashTabItemControlSourceType),
+                            },
+                            defaults: {type: 'object'},
+                            placementMode: {
+                                enum: Object.values(CONTROLS_PLACEMENT_MODE),
+                            },
+                            width: {
+                                type: 'string',
+                            },
+                        },
+                    },
+                    {
+                        if: {
+                            properties: {
+                                sourceType: {
+                                    const: DashTabItemControlSourceType.Dataset,
+                                },
+                            },
+                        },
+                        then: {
+                            properties: {
+                                source: {$ref: '#/definitions/controlSourceDataset'},
+                            },
+                        },
+                    },
+                    {
+                        if: {
+                            properties: {
+                                sourceType: {
+                                    const: DashTabItemControlSourceType.Manual,
+                                },
+                            },
+                        },
+                        then: {
+                            properties: {
+                                source: {$ref: '#/definitions/controlSourceManual'},
+                            },
+                        },
+                    },
+                ],
+            },
+            groupControl: {
+                type: 'object',
+                required: ['group'],
+                properties: {
+                    group: {
+                        type: 'array',
+                        items: {$ref: '#/definitions/groupControlItems'},
+                    },
+                    autoHeight: {
+                        type: 'boolean',
+                    },
+                    buttonApply: {
+                        type: 'boolean',
+                    },
+                    buttonReset: {
+                        type: 'boolean',
+                    },
+                    showGroupName: {
+                        type: 'boolean',
+                    },
+                    updateControlsOnChange: {
+                        type: 'boolean',
+                    },
+                },
             },
         },
 
@@ -404,6 +497,23 @@ export const dashCreateJsonSchema: ValidationConfig = {
                                                     },
                                                 },
                                             },
+                                            {
+                                                if: {
+                                                    properties: {
+                                                        type: {
+                                                            const: DashTabItemType.GroupControl,
+                                                        },
+                                                    },
+                                                },
+                                                then: {
+                                                    required: ['data'],
+                                                    properties: {
+                                                        data: {
+                                                            $ref: '#/definitions/groupControl',
+                                                        },
+                                                    },
+                                                },
+                                            },
                                         ],
                                     },
                                 },
@@ -421,6 +531,7 @@ export const dashCreateJsonSchema: ValidationConfig = {
                                             w: {type: 'number'},
                                             x: {type: 'number'},
                                             y: {type: 'number'},
+                                            parent: {type: 'string'},
                                         },
                                     },
                                 },
@@ -520,9 +631,3 @@ export const dashCreateJsonSchema: ValidationConfig = {
         },
     },
 };
-
-export const dashUpdateJsonSchema: ValidationConfig = cloneDeep(dashCreateJsonSchema);
-const items = (dashUpdateJsonSchema.body as any).properties.data.properties.tabs.items;
-if (items.required) {
-    items.required = [];
-}
