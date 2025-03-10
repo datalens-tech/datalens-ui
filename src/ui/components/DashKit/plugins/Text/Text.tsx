@@ -6,11 +6,11 @@ import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
 import get from 'lodash/get';
 import type {DashTabItemText} from 'shared';
+import {CustomPaletteBgColors} from 'shared/constants/widgets';
 import {
     adjustWidgetLayout as dashkitAdjustWidgetLayout,
     getPreparedWrapSettings,
 } from 'ui/components/DashKit/utils';
-import {CustomPaletteBgColors} from 'ui/constants/widgets';
 import {YFM_MARKDOWN_CLASSNAME} from 'ui/constants/yfm';
 import {usePrevious} from 'ui/hooks';
 

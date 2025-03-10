@@ -2,7 +2,7 @@ import type React from 'react';
 
 import type {PluginWidgetProps} from '@gravity-ui/dashkit';
 import type {DashTabItemControlElement} from 'shared';
-import {CustomPaletteBgColors} from 'ui/constants/widgets';
+import {CustomPaletteBgColors} from 'shared/constants/widgets';
 
 import {DL} from '../../constants';
 import {
