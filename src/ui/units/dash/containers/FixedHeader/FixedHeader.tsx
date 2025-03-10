@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {ChevronsUp} from '@gravity-ui/icons';
-import {Icon, useBodyScrollLock} from '@gravity-ui/uikit';
+import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {FixedHeaderQa} from 'shared';
@@ -173,7 +173,6 @@ export function FixedHeaderWrapper({
     const wrapperRef = React.useRef<HTMLDivElement>(null);
 
     const [containerHeight, setContainerHeight] = React.useState<'auto' | number>('auto');
-    const [isScrollLocked, setScrollLock] = React.useState(false);
 
     const topOffset = calculateOffset(dashBodyRef);
     const {isFixed, leftOffset} = useFixedHeaderRef(rootRef, topOffset);
@@ -184,7 +183,6 @@ export function FixedHeaderWrapper({
             if (el) {
                 const {height} = el.contentRect;
                 setContainerHeight(height);
-                setScrollLock(el.target.scrollHeight + topOffset >= window.innerHeight);
             }
         });
 
@@ -196,10 +194,6 @@ export function FixedHeaderWrapper({
             observer.disconnect();
         };
     }, [wrapperRef, topOffset]);
-
-    const isScrollCaptured = isFixed && !editMode && !isCollapsed && isScrollLocked;
-
-    useBodyScrollLock({enabled: isScrollCaptured});
 
     return (
         <div

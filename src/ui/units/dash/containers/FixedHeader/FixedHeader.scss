@@ -77,7 +77,6 @@
     &__wrapper {
         position: relative;
         background-color: var(--fixed-header-background);
-        max-height: 70vh;
 
         &_fixed {
             position: fixed;
@@ -98,6 +97,11 @@
 
     &__scrollable-container {
         padding-inline: var(--dash-inline-padding);
+
+        max-height: 70vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        flex: 1;
     }
 
     &__controls-settings {
@@ -133,11 +137,6 @@
     &_edit-mode #{$class}__controls-settings-wrapper {
         background-color: var(--g-color-base-float);
         border-radius: var(--g-border-radius-m) 0 0 var(--g-border-radius-m);
-    }
-
-    &__scrollable-container {
-        overflow: auto;
-        flex: 1;
     }
 
     &__controls {
