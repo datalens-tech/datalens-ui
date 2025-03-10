@@ -51,6 +51,7 @@ const EmptyPlaceholder = ({
 const useFixedHeaderRef = (rootRef: React.RefObject<HTMLDivElement>, topOffset = 0) => {
     const [isFixed, setIsFixed] = React.useState(false);
     const [leftOffset, setLeftOffset] = React.useState(0);
+    const [width, setWidth] = React.useState<number | string>(0);
 
     React.useLayoutEffect(() => {
         const handler = () => {
@@ -63,6 +64,7 @@ const useFixedHeaderRef = (rootRef: React.RefObject<HTMLDivElement>, topOffset =
         const resizeObserver = new ResizeObserver(() => {
             const rect = rootRef.current?.getBoundingClientRect();
 
+            setWidth(rect?.width ? rect.width : '100%');
             setLeftOffset(rect?.left || 0);
         });
 
@@ -80,7 +82,7 @@ const useFixedHeaderRef = (rootRef: React.RefObject<HTMLDivElement>, topOffset =
         };
     }, [rootRef, topOffset]);
 
-    return {isFixed, leftOffset};
+    return {isFixed, leftOffset, width};
 };
 
 export const FixedHeaderControls: React.FC<FixedHeaderControlsProps> = ({
@@ -175,8 +177,8 @@ export function FixedHeaderWrapper({
     const [containerHeight, setContainerHeight] = React.useState<'auto' | number>('auto');
 
     const topOffset = calculateOffset(dashBodyRef);
-    const {isFixed, leftOffset} = useFixedHeaderRef(rootRef, topOffset);
-    const style = isFixed && !editMode ? {left: leftOffset, top: topOffset, right: 0} : {};
+    const {isFixed, leftOffset, width} = useFixedHeaderRef(rootRef, topOffset);
+    const style = isFixed && !editMode ? {left: leftOffset, top: topOffset, width} : {};
 
     React.useEffect(() => {
         const observer = new ResizeObserver(([el]) => {
