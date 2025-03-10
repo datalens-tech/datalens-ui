@@ -77,13 +77,13 @@
     &__wrapper {
         position: relative;
         background-color: var(--fixed-header-background);
+        max-height: 70vh;
 
         &_fixed {
             position: fixed;
             top: 40px;
 
             z-index: 10;
-            max-height: 70vh;
 
             display: flex;
             flex-direction: row;
@@ -119,8 +119,7 @@
 
             overflow: hidden;
 
-            background-color: var(--g-color-base-float);
-            border-radius: var(--g-border-radius-m) 0 0 var(--g-border-radius-m);
+            border-radius: var(--g-border-radius-xl) 0 0 var(--g-border-radius-xl);
             box-shadow: 0 0 15px var(--g-color-sfx-shadow);
 
             transition: width 0.1s;
@@ -129,6 +128,11 @@
         &:hover #{$class}__controls-settings-wrapper {
             width: calc(36px + var(--btn-click-scale-compensantion));
         }
+    }
+
+    &_edit-mode #{$class}__controls-settings-wrapper {
+        background-color: var(--g-color-base-float);
+        border-radius: var(--g-border-radius-m) 0 0 var(--g-border-radius-m);
     }
 
     &__scrollable-container {
