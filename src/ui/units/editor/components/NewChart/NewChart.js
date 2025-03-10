@@ -11,7 +11,7 @@ import {registry} from '../../../../registry';
 import './NewChart.scss';
 
 const b = block('new-chart');
-function NewChart({onClickNodeTemplate, workbookId}) {
+function NewChart({workbookId}) {
     const searchParams = new URLSearchParams(location.search);
     const searchCurrentPath = searchParams.get(URL_QUERY.CURRENT_PATH);
     let path = searchCurrentPath || DL.USER_FOLDER;
@@ -37,14 +37,13 @@ function NewChart({onClickNodeTemplate, workbookId}) {
                 rightItems={[null]}
             />
             <div className={b('content')}>
-                <EditorChooseTemplate onClick={onClickNodeTemplate} workbookId={workbookId} />
+                <EditorChooseTemplate workbookId={workbookId} />
             </div>
         </React.Fragment>
     );
 }
 
 NewChart.propTypes = {
-    onClickNodeTemplate: PropTypes.func.isRequired,
     workbookId: PropTypes.string,
 };
 
