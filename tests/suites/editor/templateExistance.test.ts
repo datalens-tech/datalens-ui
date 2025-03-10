@@ -7,7 +7,7 @@ import {EditorPaneQA, EditorTemplatesQA} from '../../../src/shared/constants/qa/
 import {RobotChartsEditorUrls} from '../../utils/constants';
 import {DEFAULT_QUERY} from '../../page-objects/constants/base';
 
-datalensTest.describe('ChartEditor template selection', () => {
+datalensTest.describe('Editor template selection', () => {
     datalensTest(
         'Template `Markdown` can be selected and executed',
         async ({page}: {page: Page}) => {

@@ -506,7 +506,7 @@ export class Processor {
                 usedParams[paramName] = params[paramName];
             });
 
-            // ChartEditor.updateParams() has the highest priority,
+            // Editor.updateParams() has the highest priority,
             // therefore, now we take the parameters set through this method
             updateParams({
                 userParamsOverride: paramsTabResults.runtimeMetadata.userParamsOverride,
@@ -754,7 +754,7 @@ export class Processor {
                     throw jsError;
                 }
 
-                // ChartEditor.updateParams() has the highest priority,
+                // Editor.updateParams() has the highest priority,
                 // so now we take the parameters set through this method
                 updateParams({
                     userParamsOverride: jsTabResults.runtimeMetadata.userParamsOverride,
@@ -788,7 +788,7 @@ export class Processor {
             logs.UI = uiTabResults.logs;
             ctx.log('EditorEngine::UI', {duration: getDuration(hrStart)});
 
-            // ChartEditor.updateParams() has the highest priority,
+            // Editor.updateParams() has the highest priority,
             // so now we take the parameters set through this method
             updateParams({
                 userParamsOverride: uiTabResults.runtimeMetadata.userParamsOverride,

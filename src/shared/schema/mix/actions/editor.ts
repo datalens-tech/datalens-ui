@@ -24,7 +24,7 @@ export const editorActions = {
 
                 return await typedApi.us._createEditorChart({...args, links: getEntryLinks(args)});
             } else {
-                throw new Error('Access to ChartEditor developer mode was denied');
+                throw new Error('Access to Editor developer mode was denied');
             }
         },
     ),
@@ -41,7 +41,7 @@ export const editorActions = {
 
                 return await typedApi.us._updateEditorChart({...args, links: getEntryLinks(args)});
             } else {
-                throw new Error('Access to ChartEditor developer mode was denied');
+                throw new Error('Access to Editor developer mode was denied');
             }
         },
     ),

@@ -133,7 +133,7 @@ export const runController = (
                             error: {
                                 code: 403,
                                 details: {
-                                    message: 'Access to ChartEditor developer mode was denied',
+                                    message: 'Access to Editor developer mode was denied',
                                 },
                             },
                         });
