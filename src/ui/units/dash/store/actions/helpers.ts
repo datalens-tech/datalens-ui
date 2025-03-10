@@ -27,6 +27,9 @@ const hasTabs = (data: DashTabItem['data']): data is DashTabItemWidget['data'] =
 // This type guard is to save this behaviour
 export const isCallable = <T extends (args: any) => void>(fn: T | undefined): T => fn as T;
 
+// TODO CHARTS-2692 remove after internal update
+export const prepareLoadedData = <T extends any>(data: T): T => data;
+
 export const isDeprecatedDashData = (data?: DashEntry['data'] | null) => {
     if (!data) return true;
 
