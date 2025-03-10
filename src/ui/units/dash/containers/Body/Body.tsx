@@ -688,18 +688,21 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
     ) => {
         const {mode} = this.props;
         const config = this.getTabConfig();
+        const isEditMode = mode === Mode.Edit;
 
-        const {expandIcon, collapseIcon} = hasFixedHeaderControlsElements
-            ? {expandIcon: ChevronsDown, collapseIcon: ChevronsUp}
-            : {expandIcon: ChevronsLeft, collapseIcon: ChevronsRight};
+        const {expandIcon, collapseIcon} =
+            hasFixedHeaderControlsElements || isEditMode
+                ? {expandIcon: ChevronsDown, collapseIcon: ChevronsUp}
+                : {expandIcon: ChevronsLeft, collapseIcon: ChevronsRight};
 
         const expandCollapseButton = (
             <Button
+                className={b('sticky-control-btn', {first: !isEditMode, last: true})}
                 onClick={this.toggleFixedHeader}
-                view={mode === Mode.Edit ? 'flat' : 'action'}
-                size={mode === Mode.Edit ? 'm' : 'xl'}
+                view={isEditMode ? 'flat' : 'action'}
+                size={isEditMode ? 'm' : 'xl'}
                 width="max"
-                pin="brick-brick"
+                pin="round-brick"
                 title={i18n(
                     'dash.main.view',
                     isCollapsed ? 'tooltip_expand-fixed-group' : 'tooltip_collapse-fixed-group',
@@ -710,10 +713,11 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             </Button>
         );
 
-        if (mode === Mode.Edit) {
+        if (isEditMode) {
+            const hasExpandBtn = hasFixedContainerElements;
             return (
                 <React.Fragment>
-                    {hasFixedHeaderControlsElements && hasFixedContainerElements && (
+                    {(hasFixedHeaderControlsElements || hasFixedContainerElements) && (
                         <DropdownMenu
                             switcherWrapperClassName={b('fixed-header-settings-switcher')}
                             renderSwitcher={(props) => (
@@ -722,7 +726,11 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                                     view="flat"
                                     size="m"
                                     width="max"
-                                    pin="brick-brick"
+                                    pin="round-brick"
+                                    className={b('sticky-control-btn', {
+                                        first: true,
+                                        last: !hasExpandBtn,
+                                    })}
                                 >
                                     <Icon size={16} data={Gear} />
                                 </Button>
@@ -751,7 +759,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                             ]}
                         />
                     )}
-                    {hasFixedContainerElements && expandCollapseButton}
+                    {hasExpandBtn && expandCollapseButton}
                 </React.Fragment>
             );
         } else if (hasFixedContainerElements) {
@@ -887,9 +895,12 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                         handler: this.togglePinElement,
                         visible: (configItem) => {
                             const parent = this.getWidgetLayoutById(configItem.id)?.parent;
+                            const isSelector =
+                                configItem.type === DashTabItemType.GroupControl ||
+                                configItem.type === DashTabItemType.Control;
 
                             return (
-                                configItem.type === DashTabItemType.GroupControl &&
+                                isSelector &&
                                 parent !== FIXED_GROUP_HEADER_ID &&
                                 parent !== FIXED_GROUP_CONTAINER_ID
                             );
@@ -959,9 +970,12 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                     handler: this.togglePinElement,
                     visible: (configItem) => {
                         const parent = this.getWidgetLayoutById(configItem.id)?.parent;
+                        const isSelector =
+                            configItem.type === DashTabItemType.GroupControl ||
+                            configItem.type === DashTabItemType.Control;
 
                         return (
-                            configItem.type !== DashTabItemType.GroupControl &&
+                            !isSelector &&
                             parent !== FIXED_GROUP_HEADER_ID &&
                             parent !== FIXED_GROUP_CONTAINER_ID
                         );
@@ -1216,7 +1230,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         const content = (
             <div
                 data-qa={DashBodyQa.ContentWrapper}
-                className={b('content-wrapper', {mobile: DL.IS_MOBILE}, loadedMixin)}
+                className={b('content-wrapper', {mobile: DL.IS_MOBILE, mode}, loadedMixin)}
             >
                 <div
                     className={b('content-container', {
