@@ -11,6 +11,7 @@
   "action_delete": "Delete",
   "action_duplicate": "Duplicate",
   "action_edit": "Edit",
+  "action_export": "Export",
   "action_move": "Move",
   "action_rename": "Rename",
   "action_retry": "Retry",

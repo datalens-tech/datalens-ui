@@ -1,0 +1,14 @@
+{
+  "button_begin-export": "Экспортировать",
+  "button_cancel": "Отменить",
+  "button_close": "Закрыть",
+  "button_download": "Скачать",
+  "label_info-documentation": "Как работает экспорт воркбуков?",
+  "label_info-file": "Экспортируем конфигурацию воркбука в файл",
+  "label_info-secrets": "При импорте потребуется заново ввести пароли",
+  "label_info-time": "Экспорт может занять несколько минут",
+  "label_info-versions": "В других версиях DataLens <link>некоторые</link> подключения не будут работать",
+  "title_export": "Экспорт воркбука",
+  "title_export-success": "Воркбук экспортирован",
+  "title_fatal-error": "Ошибка при экспорте воркбука"
+}
