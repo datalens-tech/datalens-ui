@@ -127,7 +127,7 @@ export const chartsController = (_chartsEngine: ChartsEngine) => {
                         error: {
                             code: 403,
                             details: {
-                                message: 'Access to ChartEditor developer mode was denied',
+                                message: 'Access to Editor developer mode was denied',
                             },
                         },
                     });
@@ -189,7 +189,7 @@ export const chartsController = (_chartsEngine: ChartsEngine) => {
                         error: {
                             code: 403,
                             details: {
-                                message: 'Access to ChartEditor developer mode was denied',
+                                message: 'Access to Editor developer mode was denied',
                             },
                         },
                     });

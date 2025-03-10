@@ -34,7 +34,7 @@
   "label_invalid-alias": "Field in the alias created doesn't belong to any dashboard widget parameters. Delete it to allow links to work correctly.",
   "label_invalid-alias-text": "The aliases don't belong to any dashboard widget parameters. Delete them to allow links to work correctly.",
   "label_invalid-alias-title": "Alias error",
-  "label_need-default-editor-chart": "To add an alias with a ChartEditor chart, set <link>parameters</link> in the chart settings on the dashboard",
+  "label_need-default-editor-chart": "To add an alias with an Editor chart, set <link>parameters</link> in the chart settings on the dashboard",
   "label_need-default-external-control": "To add an alias with an external selector, add default <link>parameters</link> in its settings",
   "label_no-connections": "No elements to link",
   "label_no-widget-info": "Unable to load widget data",
