@@ -6,7 +6,7 @@ import {connect} from 'react-redux';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
 import type {Field, Shared} from 'shared';
-import {Feature, PlaceholderActionQa, isFieldHierarchy} from 'shared';
+import {DatasetFieldType, Feature, PlaceholderActionQa, isFieldHierarchy} from 'shared';
 import {isChartSupportMultipleColors} from 'shared/modules/colors/common-helpers';
 import type {DatalensGlobalState} from 'ui';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -50,11 +50,19 @@ class ColorsPlaceholder extends React.Component<Props> {
         } = this.props;
 
         const colorsContainsHierarchies = colors.some(isFieldHierarchy);
+        const hasStringMeasures = colors.some(
+            (item) => item.type === DatasetFieldType.Measure && item.data_type === 'string',
+        );
 
-        const onActionIconClick = colorsContainsHierarchies ? undefined : this.openDialogColor;
-        const disabledText = colorsContainsHierarchies
-            ? i18n('wizard', 'label_no-colors-setup-for-hierarchy')
-            : undefined;
+        const canChangeColorSettings = !colorsContainsHierarchies && !hasStringMeasures;
+        const onActionIconClick = canChangeColorSettings ? this.openDialogColor : undefined;
+        let disabledText: string | undefined;
+
+        if (colorsContainsHierarchies) {
+            disabledText = i18n('wizard', 'label_no-colors-setup-for-hierarchy');
+        } else if (hasStringMeasures) {
+            disabledText = i18n('wizard', 'label_no-colors-setup-for-string-measures');
+        }
 
         const colorsCapacity =
             isEnabledFeature(Feature.MultipleColorsInVisualization) &&
