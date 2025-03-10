@@ -1,6 +1,8 @@
 import {createSelector} from 'reselect';
+import {Feature} from 'shared';
 import type {DatasetField} from 'shared';
 import type {DatalensGlobalState} from 'ui';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import DatasetUtils from '../../helpers/utils';
 import type {BaseSource} from '../types';
@@ -31,7 +33,13 @@ export const sourcesSelector = (state: DatalensGlobalState) => state.dataset.con
 export const avatarsSelector = (state: DatalensGlobalState) => state.dataset.content.source_avatars;
 export const relationsSelector = (state: DatalensGlobalState) =>
     state.dataset.content.avatar_relations;
-export const rlsSelector = (state: DatalensGlobalState) => state.dataset.content.rls;
+export const rlsSelector = (state: DatalensGlobalState) => {
+    if (isEnabledFeature(Feature.EnableRLSV2)) {
+        return state.dataset.content.rls || [];
+    }
+
+    return state.dataset.content.rls;
+};
 export const optionsSelector = (state: DatalensGlobalState) => state.dataset.options;
 
 export const datasetPreviewSelector = (state: DatalensGlobalState) => state.dataset.preview;

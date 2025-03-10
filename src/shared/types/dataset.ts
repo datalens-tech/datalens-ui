@@ -120,6 +120,7 @@ export interface Dataset {
             };
         };
         rls: {[key: string]: string};
+        rls2: unknown[];
         source_avatars: DatasetSourceAvatar[];
         source_features: {};
         sources: DatasetSource[];
