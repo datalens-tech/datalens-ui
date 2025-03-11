@@ -4,6 +4,8 @@ import {Dialog, TextArea, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 
+import type {GetDialogFooterProps} from './types';
+
 import './WorkbookDialog.scss';
 
 const i18n = I18n.keyset('component.collections-structure');
@@ -19,8 +21,11 @@ export type Props = {
     descriptionValue?: string;
     isHiddenDescription?: boolean;
     titleAutoFocus?: boolean;
-    onApply: (args: {title: string; description?: string}) => Promise<unknown>;
+    onApply: (args: {title: string; description?: string; onClose: () => void}) => void;
     onClose: () => void;
+    customActions?: React.ReactNode;
+    customBody?: React.ReactNode;
+    getDialogFooterProps?: GetDialogFooterProps;
 };
 
 export const WorkbookDialog = React.memo<Props>(
@@ -35,6 +40,9 @@ export const WorkbookDialog = React.memo<Props>(
         titleAutoFocus = false,
         onApply,
         onClose,
+        customActions,
+        customBody,
+        getDialogFooterProps,
     }) => {
         const [innerTitleValue, setInnerTitleValue] = React.useState(titleValue);
         const [innerDescriptionValue, setInnerDescriptionValue] = React.useState(descriptionValue);
@@ -50,21 +58,40 @@ export const WorkbookDialog = React.memo<Props>(
             onApply({
                 title: innerTitleValue,
                 description: isHiddenDescription ? undefined : innerDescriptionValue,
-            }).then(() => {
-                onClose();
+                onClose,
             });
-        }, [innerTitleValue, innerDescriptionValue, isHiddenDescription, onApply, onClose]);
+        }, [innerTitleValue, isHiddenDescription, innerDescriptionValue, onApply, onClose]);
 
-        return (
-            <Dialog
-                className={b()}
-                size="s"
-                open={open}
-                onClose={onClose}
-                onEnterKeyDown={handleApply}
-            >
-                <Dialog.Header caption={title} />
-                <Dialog.Body>
+        const dialogFooterProps = React.useMemo(() => {
+            const defaultDialogFooterProps = {
+                onClickButtonCancel: onClose,
+                onClickButtonApply: handleApply,
+                textButtonApply: textButtonApply,
+                propsButtonApply: {
+                    disabled: !innerTitleValue,
+                },
+                textButtonCancel: i18n('action_cancel'),
+                loading: isLoading,
+            };
+            return getDialogFooterProps
+                ? getDialogFooterProps(defaultDialogFooterProps)
+                : defaultDialogFooterProps;
+        }, [
+            getDialogFooterProps,
+            handleApply,
+            innerTitleValue,
+            isLoading,
+            onClose,
+            textButtonApply,
+        ]);
+
+        const renderBody = () => {
+            if (customBody) {
+                return customBody;
+            }
+
+            return (
+                <React.Fragment>
                     <div className={b('field')}>
                         <div className={b('title')}>{i18n('label_title')}</div>
                         <TextInput
@@ -83,17 +110,22 @@ export const WorkbookDialog = React.memo<Props>(
                             />
                         </div>
                     )}
-                </Dialog.Body>
-                <Dialog.Footer
-                    onClickButtonCancel={onClose}
-                    onClickButtonApply={handleApply}
-                    textButtonApply={textButtonApply}
-                    propsButtonApply={{
-                        disabled: !innerTitleValue,
-                    }}
-                    textButtonCancel={i18n('action_cancel')}
-                    loading={isLoading}
-                />
+                    {customActions}
+                </React.Fragment>
+            );
+        };
+
+        return (
+            <Dialog
+                className={b()}
+                size="s"
+                open={open}
+                onClose={onClose}
+                onEnterKeyDown={handleApply}
+            >
+                <Dialog.Header caption={title} />
+                <Dialog.Body>{renderBody()}</Dialog.Body>
+                <Dialog.Footer {...dialogFooterProps} loading={isLoading} />
             </Dialog>
         );
     },
