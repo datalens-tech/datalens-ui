@@ -2,6 +2,7 @@ import React from 'react';
 
 import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {CreateEntityButton} from 'shared';
 
 import {registry} from '../../../../registry';
 
@@ -33,7 +34,7 @@ export const CreateEntrySwitcher = ({
     return (
         <Button
             view="action"
-            qa="create-entry-button"
+            qa={CreateEntityButton.Button}
             className={b('button-create')}
             onClick={
                 withMenu
