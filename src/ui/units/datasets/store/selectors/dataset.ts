@@ -35,7 +35,7 @@ export const relationsSelector = (state: DatalensGlobalState) =>
     state.dataset.content.avatar_relations;
 export const rlsSelector = (state: DatalensGlobalState) => {
     if (isEnabledFeature(Feature.EnableRLSV2)) {
-        return state.dataset.content.rls || [];
+        return state.dataset.content.rls2 || [];
     }
 
     return state.dataset.content.rls;
