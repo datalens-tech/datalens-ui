@@ -1,8 +1,8 @@
 {
-  "button_cancel": "Отменить",
-  "button_close": "Закрыть",
-  "button_go-to-workbook": "Перейти",
-  "title_creating-workbook": "Создаём воркбук",
-  "title_error-creating": "Ошибка при создании воркбука",
-  "title_workbook-created": "Воркбук создан"
+  "button_cancel": "Отменить!",
+  "button_close": "Закрыть!",
+  "button_go-to-workbook": "Перейти!",
+  "title_creating-workbook": "Создаём воркбук!",
+  "title_error-creating": "Ошибка при создании воркбука!",
+  "title_workbook-created": "Воркбук создан!"
 }
