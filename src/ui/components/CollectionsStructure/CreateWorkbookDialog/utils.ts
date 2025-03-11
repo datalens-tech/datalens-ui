@@ -2,7 +2,7 @@ import {I18n} from 'i18n';
 
 import type {ImportExportStatus} from '../types';
 
-const i18n = I18n.keyset('component.workbook-import-dialog.view');
+const i18n = I18n.keyset('component.workbook-import-view.view');
 
 export const getApplyButtonText = (status: ImportExportStatus, defaultText: string) => {
     switch (status) {
