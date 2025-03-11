@@ -677,10 +677,9 @@ class Body extends React.PureComponent<BodyProps> {
         );
 
         if (isEditMode) {
-            const hasExpandBtn = hasFixedContainerElements;
             return (
-                <React.Fragment>
-                    {(hasFixedHeaderControlsElements || hasFixedContainerElements) && (
+                (hasFixedHeaderControlsElements || hasFixedContainerElements) && (
+                    <React.Fragment>
                         <DropdownMenu
                             switcherWrapperClassName={b('fixed-header-settings-switcher')}
                             renderSwitcher={(props) => (
@@ -692,7 +691,7 @@ class Body extends React.PureComponent<BodyProps> {
                                     pin="round-brick"
                                     className={b('sticky-control-btn', {
                                         first: true,
-                                        last: !hasExpandBtn,
+                                        last: false,
                                     })}
                                 >
                                     <Icon size={16} data={Gear} />
@@ -721,9 +720,9 @@ class Body extends React.PureComponent<BodyProps> {
                                 },
                             ]}
                         />
-                    )}
-                    {hasExpandBtn && expandCollapseButton}
-                </React.Fragment>
+                        {expandCollapseButton}
+                    </React.Fragment>
+                )
             );
         } else if (hasFixedContainerElements) {
             return expandCollapseButton;
@@ -1009,7 +1008,6 @@ class Body extends React.PureComponent<BodyProps> {
         const {
             mode,
             settings,
-            tabId,
             tabs,
             handlerEditClick,
             isEditModeLoading,
@@ -1021,7 +1019,7 @@ class Body extends React.PureComponent<BodyProps> {
         const context = this.getContext();
 
         const tabDataConfig = this.getConfig();
-        const fixedHeaderCollapsed = tabId ? this.state.fixedHeaderCollapsed[tabId] : false;
+        const fixedHeaderCollapsed = context.fixedHeaderCollapsed || false;
         const isEditMode = mode === Mode.Edit;
 
         const isEmptyTab = !tabDataConfig?.items.length;
