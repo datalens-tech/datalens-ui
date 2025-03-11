@@ -11,6 +11,7 @@
   "action_delete": "Удалить",
   "action_duplicate": "Дублировать",
   "action_edit": "Редактировать",
+  "action_export": "Экспортировать",
   "action_move": "Переместить",
   "action_rename": "Переименовать",
   "action_retry": "Обновить",
