@@ -1,7 +1,9 @@
 import _has from 'lodash/has';
 import _xorBy from 'lodash/xorBy';
 import type {DatasetAvatarRelation, DatasetField, DatasetSource, DatasetSourceAvatar} from 'shared';
+import {Feature} from 'shared';
 import {DatasetSDK} from 'ui';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {v1 as uuidv1} from 'uuid';
 
 import {DATASET_UPDATE_ACTIONS} from '../../constants';
@@ -1148,15 +1150,25 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
         case UPDATE_RLS: {
             const {rls} = action.payload;
             const {content} = state;
+            const updates = isEnabledFeature(Feature.EnableRLSV2)
+                ? {
+                      rls2: {
+                          ...content.rls2,
+                          ...rls,
+                      },
+                  }
+                : {
+                      rls: {
+                          ...content.rls,
+                          ...rls,
+                      },
+                  };
 
             return {
                 ...state,
                 content: {
                     ...content,
-                    rls: {
-                        ...content.rls,
-                        ...rls,
-                    },
+                    ...updates,
                 },
             };
         }
