@@ -37,5 +37,5 @@
   "label_wizard": "chart",
   "section_delete-collection": "Are you sure you want to delete the collection \"{{name}}\"?",
   "section_delete-workbook": "Are you sure you want to delete the workbook \"{{name}}\"?",
-  "title_import-exit": "Точно выйти?"
+  "title_import-exit": "Are you sure you want to exit?"
 }

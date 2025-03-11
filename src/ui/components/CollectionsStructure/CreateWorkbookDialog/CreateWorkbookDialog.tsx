@@ -21,7 +21,7 @@ import {
     selectImportWorkbookStatus,
 } from '../../../store/selectors/collectionsStructure';
 import DialogManager from '../../DialogManager/DialogManager';
-import type {GetDialogFooterProps} from '../WorkbookDialog';
+import type {GetDialogFooterPropsOverride} from '../WorkbookDialog';
 import {WorkbookDialog} from '../WorkbookDialog';
 
 import {ImportFileField} from './ImportFileField/ImportFileField';
@@ -170,14 +170,14 @@ export const CreateWorkbookDialog: React.FC<Props> = ({
         [collectionId, dispatch, importFiles, onApply],
     );
 
-    const getDialogFooterProps = React.useCallback<GetDialogFooterProps>(
-        ({propsButtonApply, onClickButtonApply, textButtonCancel}) => {
+    const getDialogFooterPropsOverride = React.useCallback<GetDialogFooterPropsOverride>(
+        ({propsButtonApply, onClickButtonApply, textButtonCancel, textButtonApply}) => {
             return {
                 onClickButtonCancel: handleClose,
                 onClickButtonApply: onClickButtonApply,
                 textButtonApply: importStatus
-                    ? getApplyButtonText(importStatus)
-                    : i18n('action_create'),
+                    ? getApplyButtonText(importStatus, textButtonApply)
+                    : textButtonApply,
                 propsButtonApply: {disabled: propsButtonApply?.disabled, loading: isLoading},
                 propsButtonCancel: {
                     view: importStatus === 'error' ? 'normal' : 'flat',
@@ -227,7 +227,7 @@ export const CreateWorkbookDialog: React.FC<Props> = ({
             titleAutoFocus
             customActions={renderImportSection()}
             customBody={renderDialogView()}
-            getDialogFooterProps={getDialogFooterProps}
+            getDialogFooterPropsOverride={getDialogFooterPropsOverride}
         />
     );
 };

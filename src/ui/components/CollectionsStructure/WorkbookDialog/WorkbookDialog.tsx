@@ -4,7 +4,7 @@ import {Dialog, TextArea, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 
-import type {GetDialogFooterProps} from './types';
+import type {GetDialogFooterPropsOverride} from './types';
 
 import './WorkbookDialog.scss';
 
@@ -25,7 +25,7 @@ export type Props = {
     onClose: () => void;
     customActions?: React.ReactNode;
     customBody?: React.ReactNode;
-    getDialogFooterProps?: GetDialogFooterProps;
+    getDialogFooterPropsOverride?: GetDialogFooterPropsOverride;
 };
 
 export const WorkbookDialog = React.memo<Props>(
@@ -42,7 +42,7 @@ export const WorkbookDialog = React.memo<Props>(
         onClose,
         customActions,
         customBody,
-        getDialogFooterProps,
+        getDialogFooterPropsOverride,
     }) => {
         const [innerTitleValue, setInnerTitleValue] = React.useState(titleValue);
         const [innerDescriptionValue, setInnerDescriptionValue] = React.useState(descriptionValue);
@@ -73,11 +73,11 @@ export const WorkbookDialog = React.memo<Props>(
                 textButtonCancel: i18n('action_cancel'),
                 loading: isLoading,
             };
-            return getDialogFooterProps
-                ? getDialogFooterProps(defaultDialogFooterProps)
+            return getDialogFooterPropsOverride
+                ? getDialogFooterPropsOverride(defaultDialogFooterProps)
                 : defaultDialogFooterProps;
         }, [
-            getDialogFooterProps,
+            getDialogFooterPropsOverride,
             handleApply,
             innerTitleValue,
             isLoading,

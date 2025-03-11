@@ -4,10 +4,10 @@ import type {ImportExportStatus} from '../types';
 
 const i18n = I18n.keyset('component.workbook-import-dialog.view');
 
-export const getApplyButtonText = (status: ImportExportStatus) => {
+export const getApplyButtonText = (status: ImportExportStatus, defaultText: string) => {
     switch (status) {
         case 'loading':
-            return i18n('button_create');
+            return defaultText;
         case 'success':
             return i18n('button_go-to-workbook');
         case 'error':
