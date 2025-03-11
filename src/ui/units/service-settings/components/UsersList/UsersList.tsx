@@ -158,7 +158,7 @@ const UsersList = () => {
             return [];
         }
 
-        return [
+        const menuItems: TableAction<ListUser>[] = [
             {
                 text: i18n('label_menu-edit-profile'),
                 handler: () => setEditProfileeDialogOpenForUser(item),
@@ -171,12 +171,17 @@ const UsersList = () => {
                 text: i18n('label_menu-change-password'),
                 handler: () => setChangePasswordUserDialogOpenForUser(item),
             },
-            {
+        ];
+
+        if (DL.USER_ID !== item.userId) {
+            menuItems.push({
                 text: i18n('label_menu-delete'),
                 handler: () => setDeleteUserDialogOpenForUser(item),
                 theme: 'danger',
-            },
-        ];
+            });
+        }
+
+        return menuItems;
     }, []);
 
     const renderTable = () => {
