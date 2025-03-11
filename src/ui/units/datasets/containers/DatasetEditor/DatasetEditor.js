@@ -6,7 +6,10 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {compose} from 'recompose';
 import {createStructuredSelector} from 'reselect';
+import {Feature} from 'shared';
+import {registry} from 'ui/registry';
 import {selectDebugMode} from 'ui/store/selectors/user';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {
     addField,
     batchDeleteFields,
@@ -23,7 +26,6 @@ import {DIALOG_FIELD_EDITOR} from '../../../../components/DialogFieldEditor/Dial
 import {CounterName, GoalId, reachMetricaGoal} from '../../../../libs/metrica';
 import {closeDialog, openDialog, openDialogConfirm} from '../../../../store/actions/dialog';
 import DatasetTable from '../../components/DatasetTable/DatasetTable';
-import RLSDialog from '../../components/RLSDialog/RLSDialog';
 import {DATASET_VALIDATION_TIMEOUT, TAB_DATASET} from '../../constants';
 import {
     UISelector,
@@ -57,7 +59,7 @@ class DatasetEditor extends React.Component {
         field: null,
         updates: [],
         visibleRLSDialog: false,
-        currentRLSField: '',
+        currentRLSField: isEnabledFeature(Feature.EnableRLSV2) ? [] : '',
     };
 
     get filteredFields() {
@@ -297,7 +299,8 @@ class DatasetEditor extends React.Component {
         const {guid} = field;
 
         if (rls && guid) {
-            const rlsField = rls[guid] || '';
+            const rlsFieldDefault = isEnabledFeature(Feature.EnableRLSV2) ? [] : '';
+            const rlsField = rls[guid] || rlsFieldDefault;
 
             this.setState({
                 visibleRLSDialog: true,
@@ -310,7 +313,7 @@ class DatasetEditor extends React.Component {
     closeRLSDialog = () => {
         this.setState({
             visibleRLSDialog: false,
-            currentRLSField: '',
+            currentRLSField: isEnabledFeature(Feature.EnableRLSV2) ? [] : '',
             field: null,
         });
     };
@@ -318,6 +321,7 @@ class DatasetEditor extends React.Component {
     render() {
         const {sourceAvatars, validation, options, itemsToDisplay, rls, permissions} = this.props;
         const {field, visibleRLSDialog, currentRLSField} = this.state;
+        const {renderRLSDialog} = registry.datasets.functions.getAll();
 
         return (
             <div className={b()}>
@@ -341,13 +345,13 @@ class DatasetEditor extends React.Component {
                     openDialogConfirm={this.props.openDialogConfirm}
                     onDisplaySettingsUpdate={this.handleItemsToDisplayUpdate}
                 />
-                <RLSDialog
-                    visible={visibleRLSDialog}
-                    rlsField={currentRLSField}
-                    field={field}
-                    onClose={this.closeRLSDialog}
-                    onSave={this.props.updateRLS}
-                />
+                {renderRLSDialog({
+                    visible: visibleRLSDialog,
+                    rlsField: currentRLSField,
+                    field,
+                    onClose: this.closeRLSDialog,
+                    onSave: this.props.updateRLS,
+                })}
             </div>
         );
     }

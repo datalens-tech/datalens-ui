@@ -252,16 +252,6 @@ async function getUnwrappedFunction(args: {
             },
             setTimeout: (handler: TimerHandler, timeout: number) => setTimeout(handler, timeout),
             clearTimeout: (timeoutId: number) => clearTimeout(timeoutId),
-            window: {
-                open: function (url: string, target?: string) {
-                    try {
-                        const href = sanitizeUrl(url);
-                        window.open(href, target === '_self' ? '_self' : '_blank');
-                    } catch (e) {
-                        console.error(e);
-                    }
-                },
-            },
             ChartEditor: {
                 generateHtml: (value: ChartKitHtmlItem) => wrapHtml(value),
             },
@@ -360,6 +350,16 @@ async function getUnwrappedFunction(args: {
                             }
                         }
                         return null;
+                    },
+                },
+                window: {
+                    open: function (url: string, target?: string) {
+                        try {
+                            const href = sanitizeUrl(url);
+                            window.open(href, target === '_self' ? '_self' : '_blank');
+                        } catch (e) {
+                            console.error(e);
+                        }
                     },
                 },
             });

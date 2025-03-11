@@ -119,9 +119,12 @@ export class Helper {
         };
     }
 
-    static formEntryData({scriptsValues}) {
-        return {
-            ...scriptsValues,
-        };
+    static formEntryData({scriptsValues, entry}) {
+        const entryData = {...scriptsValues};
+        if (entry?.data?.secrets) {
+            entryData.secrets = entry.data.secrets;
+        }
+
+        return entryData;
     }
 }

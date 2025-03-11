@@ -11,7 +11,7 @@ type ValidatedWrapFnArgs = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isWrapFnArgsValid = (value: any): value is ValidatedWrapFnArgs => {
     if (!value || typeof value !== 'object') {
-        throw new Error('You should pass an object to ChartEditor.wrapFn method');
+        throw new Error('You should pass an object to Editor.wrapFn method');
     }
 
     if (typeof value.fn !== 'function') {
