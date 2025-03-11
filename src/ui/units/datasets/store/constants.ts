@@ -1,4 +1,7 @@
-import type {Dataset} from '../../../../shared';
+import {Feature} from 'shared';
+import type {Dataset} from 'shared';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+
 import type {DatasetTab} from '../constants';
 import {DATASET_TABS, TAB_DATASET, TAB_SOURCES} from '../constants';
 import DatasetUtils, {isCreationProcess} from '../helpers/utils';
@@ -11,11 +14,11 @@ const getDefaultDatasetContent = (): Partial<Dataset['dataset']> => ({
     obligatory_filters: [],
     result_schema: [],
     result_schema_aux: {inter_dependencies: {deps: []}},
-    rls: {},
     source_avatars: [],
     source_features: {},
     sources: [],
     load_preview_by_default: true,
+    ...(isEnabledFeature(Feature.EnableRLSV2) ? {rls2: []} : {rls: {}}),
 });
 
 const isDatasetTab = (value: unknown): value is DatasetTab => {

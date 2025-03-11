@@ -81,6 +81,8 @@ export enum Feature {
     /** Enables export menu item for downloading workbook config and import button
      * when creating a workbook */
     EnableExportWorkbookFile = 'EnableExportWorkbookFile',
+    /** Enable using RLS v2 config for datasets */
+    EnableRLSV2 = 'EnableRLSV2',
 }
 
 export type FeatureConfig = Record<string, boolean>;
