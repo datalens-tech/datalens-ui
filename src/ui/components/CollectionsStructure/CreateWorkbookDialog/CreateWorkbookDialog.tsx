@@ -112,7 +112,7 @@ export const CreateWorkbookDialog: React.FC<Props> = ({
                         onCancel: () => dispatch(closeDialog()),
                         message: i18n('label_import-exit-description'),
                         textButtonApply: i18n('action_exit'),
-                        textButtonCancel: i18n('action_cancel'),
+                        textButtonCancel: i18n('action_stay'),
                         caption: i18n('title_import-exit'),
                         className: b('import-cancel-dialog'),
                     },

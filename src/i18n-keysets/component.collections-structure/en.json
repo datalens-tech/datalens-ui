@@ -11,6 +11,7 @@
   "action_exit": "Exit",
   "action_move": "Move",
   "action_save": "Save",
+  "action_stay": "Stay",
   "button_choose-file": "Choose file",
   "label_connection": "connection",
   "label_copy": "Copy to",

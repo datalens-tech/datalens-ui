@@ -11,6 +11,7 @@
   "action_exit": "Выйти",
   "action_move": "Переместить",
   "action_save": "Сохранить",
+  "action_stay": "Остаться",
   "button_choose-file": "Выбрать файл",
   "label_connection": "подключения",
   "label_copy": "Куда копировать",
