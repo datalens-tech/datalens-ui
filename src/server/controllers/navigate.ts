@@ -11,7 +11,7 @@ function navigateDefault(reqPath: string, res: Response) {
 }
 
 // eslint-disable-next-line complexity
-export default async (req: Request, res: Response) => {
+export const navigateController = async (req: Request, res: Response) => {
     const {url: reqUrl} = req;
 
     req.ctx.log('Navigate init', {reqUrl});
