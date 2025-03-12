@@ -19,6 +19,7 @@ import type {
     VisualizationLayerType,
 } from '../../../../../../../../shared';
 import {
+    DatasetFieldType,
     PlaceholderActionQa,
     PlaceholderId,
     PseudoFieldTitle,
@@ -141,16 +142,23 @@ class VisualizationPlaceholder extends React.Component<Props> {
                 const hasSettings =
                     placeholder.items.length > 0 && placeholder.id === PlaceholderId.Colors;
                 const colorsContainsHierarchies = placeholder.items.some(isFieldHierarchy);
+                const hasStringMeasures = placeholder.items.some(
+                    (item) => item.type === DatasetFieldType.Measure && item.data_type === 'string',
+                );
+                const canChangeColorSettings = !colorsContainsHierarchies && !hasStringMeasures;
+                let disabledText: string | undefined;
+
+                if (colorsContainsHierarchies) {
+                    disabledText = i18n('wizard', 'label_no-colors-setup-for-hierarchy');
+                } else if (hasStringMeasures) {
+                    disabledText = i18n('wizard', 'label_no-colors-setup-for-string-measures');
+                }
 
                 return {
                     hasSettings,
                     actionIconQa: PlaceholderActionQa.OpenColorDialogIcon,
-                    onActionIconClick: colorsContainsHierarchies
-                        ? undefined
-                        : this.openDialogColors,
-                    disabledText: colorsContainsHierarchies
-                        ? i18n('wizard', 'label_no-colors-setup-for-hierarchy')
-                        : undefined,
+                    onActionIconClick: canChangeColorSettings ? this.openDialogColors : undefined,
+                    disabledText,
                 };
             }
             case 'metric': {

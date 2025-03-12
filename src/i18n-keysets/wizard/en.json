@@ -207,6 +207,7 @@
   "label_new-widget": "New chart",
   "label_no": "No",
   "label_no-colors-setup-for-hierarchy": "Colors setup for the hierarchy is not available",
+  "label_no-colors-setup-for-string-measures": "Colors cannot be chosen for measures with string-type data",
   "label_no-links": "There are no links between datasets",
   "label_no-rights-text": "This chart is read-only. Request write permissions or save changes as a new chart",
   "label_no-rights-title": "No write permissions",
