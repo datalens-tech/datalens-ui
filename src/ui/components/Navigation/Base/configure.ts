@@ -141,6 +141,7 @@ export interface EntrySettings {
     place?: string;
     submenu?: string;
     condition?: () => boolean;
+    qa?: string;
 }
 
 export const getCreatableEntriesConfig = memoize(() => {
