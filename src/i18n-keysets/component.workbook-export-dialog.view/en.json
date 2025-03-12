@@ -1,11 +1,11 @@
 {
-  "button_back-to-export": "Bacl",
+  "button_back-to-export": "Back",
   "button_begin-export": "Export",
   "button_cancel": "Cancel",
   "button_cancel-export": "Cancel export",
   "button_close": "Close",
   "button_download": "Download",
-  "label_cancel-export-description": "The workbook export file will not be created",
+  "label_cancel-export-description": "The workbook configuration file will not be created",
   "label_info-documentation": "How do workbooks export work?",
   "label_info-file": "We are exporting the workbook configuration to a file",
   "label_info-secrets": "You will need to re-enter your passwords during the import",
