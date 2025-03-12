@@ -1,4 +1,9 @@
-import {api, dlMain, navigate, navigation} from '../controllers';
+import {
+    apiContollers,
+    dlMainController,
+    navigateController,
+    navigationController,
+} from '../controllers';
 import {registry} from '../registry';
 import type {BasicControllers, ExtendedAppRouteDescription} from '../types/controllers';
 
@@ -9,22 +14,22 @@ export const getConfiguredRoute = (
     switch (controllerName) {
         case 'navigate':
             return {
-                handler: navigate,
+                handler: navigateController,
                 ...params,
             };
         case 'api.deleteLock':
             return {
-                handler: api.deleteLock,
+                handler: apiContollers.deleteLock,
                 ...params,
             };
         case 'dl-main':
             return {
-                handler: dlMain,
+                handler: dlMainController,
                 ...params,
             };
         case 'navigation':
             return {
-                handler: navigation,
+                handler: navigationController,
                 ...params,
             };
         case 'schematic-gateway': {

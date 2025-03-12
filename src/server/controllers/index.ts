@@ -1,6 +1,6 @@
-import api from './api';
-import dlMain from './dl-main';
-import navigate from './navigate';
-import navigation from './navigation';
+import {apiContollers} from './api';
+import {dlMainController} from './dl-main';
+import {navigateController} from './navigate';
+import {navigationController} from './navigation';
 
-export {api, dlMain, navigation, navigate};
+export {apiContollers, dlMainController, navigationController, navigateController};
