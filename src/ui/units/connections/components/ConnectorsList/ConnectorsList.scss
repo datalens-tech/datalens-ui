@@ -20,10 +20,14 @@
         margin: 0;
     }
 
+    &__list-title:not(:first-of-type) {
+        margin-top: 24px;
+    }
+
     &__list {
         display: flex;
         flex-wrap: wrap;
-        gap: 20px;
+        gap: 16px;
     }
 
     &__item {
