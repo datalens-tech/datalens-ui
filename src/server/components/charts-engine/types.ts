@@ -132,7 +132,7 @@ export type Source<T = string | Record<string, string>> = {
 };
 
 export type SourceWithAPIConnector = Source &
-    Required<Pick<Source, 'apiConnectionId' | 'method' | 'body' | 'path'>>;
+    Required<Pick<Source, 'apiConnectionId' | 'method' | 'path'>>;
 
 export type SourceWithQLConnector = Source &
     Required<Pick<Source, 'qlConnectionId' | 'method' | 'body' | 'path'>>;

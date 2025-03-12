@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Loader, TextInput} from '@gravity-ui/uikit';
+import {Alert, Loader, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import _ from 'lodash';
@@ -137,9 +137,11 @@ class ValuesList extends React.Component<Props, State> {
         return (
             <div className={b('values-container')}>
                 {error ? (
-                    <div className={b('error-label')}>
-                        {i18n('wizard', 'label_error-loading-filter-values')}
-                    </div>
+                    <Alert
+                        theme="danger"
+                        className={b('error-label')}
+                        message={i18n('wizard', 'label_error-loading-filter-values')}
+                    />
                 ) : (
                     <React.Fragment>
                         <div className={b('values-search')}>

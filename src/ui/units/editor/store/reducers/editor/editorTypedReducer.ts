@@ -167,7 +167,7 @@ export function editorTypedReducer(state: EditorState, action: EditorActions): E
                             $set: {
                                 type: entry.type,
                                 createdAt: entry.fake ? undefined : entry.createdAt,
-                                data: Helper.formEntryData({scriptsValues}),
+                                data: Helper.formEntryData({scriptsValues, entry}),
                                 key: entry.fake ? undefined : entry.key,
                             },
                         },

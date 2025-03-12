@@ -5,7 +5,7 @@ import {registry} from '../registry';
 import type {DatalensGatewaySchemas} from '../types/gateway';
 import type {GatewayApiErrorResponse} from '../utils/gateway';
 
-export default {
+export const apiControllers = {
     deleteLock: async (req: Request, res: Response) => {
         try {
             const {entryId, params} = req.body;
