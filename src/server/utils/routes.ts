@@ -1,5 +1,5 @@
 import {
-    apiContollers,
+    apiControllers,
     dlMainController,
     navigateController,
     navigationController,
@@ -19,7 +19,7 @@ export const getConfiguredRoute = (
             };
         case 'api.deleteLock':
             return {
-                handler: apiContollers.deleteLock,
+                handler: apiControllers.deleteLock,
                 ...params,
             };
         case 'dl-main':
