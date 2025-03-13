@@ -54,7 +54,7 @@ export const Label = ({text, helpText, align = 'center'}: LabelProps) => {
     }, []);
 
     return (
-        <div style={getStyles(align)} className={b()}>
+        <div style={getStyles(align)} className={b({align})}>
             <span className={b('inner-content')}>
                 <LabelText text={text} />
                 {helpText && (

@@ -30,6 +30,8 @@ export type DialogCommonProps = {
     showIcon?: boolean;
 
     closeOnEnterPress?: boolean;
+
+    className?: string;
 };
 
 const DialogCommon: React.FC<DialogCommonProps> = (props) => {
@@ -45,6 +47,7 @@ const DialogCommon: React.FC<DialogCommonProps> = (props) => {
         widthType,
         showIcon = true,
         showAlert,
+        className,
     } = props;
 
     const enterPressHandler = React.useCallback(
@@ -74,7 +77,10 @@ const DialogCommon: React.FC<DialogCommonProps> = (props) => {
             open={visible}
             onClose={() => onClose()}
             hasCloseButton={Boolean(headerText)}
-            className={b({warning: isWarning, [widthType as string]: Boolean(widthType)})}
+            className={b(
+                {warning: isWarning, [widthType as string]: Boolean(widthType)},
+                className,
+            )}
             qa={qa}
         >
             {headerText && (
