@@ -302,7 +302,10 @@ export const dashApiValidation: ValidationConfig = {
                                 // minLength: 1,
                             },
                             sourceType: {
-                                enum: Object.values(DashTabItemControlSourceType),
+                                enum: [
+                                    DashTabItemControlSourceType.Dataset,
+                                    DashTabItemControlSourceType.Manual,
+                                ],
                             },
                             defaults: {type: 'object'},
                             placementMode: {
