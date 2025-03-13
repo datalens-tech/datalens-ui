@@ -46,4 +46,9 @@ export default {
     headersMap: {},
     requestIdHeaderName: 'x-request-id',
     releaseVersion: releaseVersion,
+    jsExecutionTimeouts: {
+        common: 500,
+        prepare: 5 * 1000,
+        controls: 1000,
+    },
 } satisfies Partial<AppConfig>;

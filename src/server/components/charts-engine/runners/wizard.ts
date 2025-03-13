@@ -27,6 +27,7 @@ export const runWizardChart: RunnerHandler = async (cx: AppContext, props: Runne
 
     const {widgetConfig} = req.body;
     const chartBuilder = await getWizardChartBuilder({
+        ctx: req.ctx,
         userLang: res.locals && res.locals.lang,
         userLogin: res.locals && res.locals.login,
         widgetConfig,

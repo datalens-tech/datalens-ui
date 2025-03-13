@@ -33,6 +33,11 @@ export interface SharedAppConfig {
     enablePreloading?: boolean;
     fetchingTimeout: number;
     singleFetchingTimeout: number;
+    jsExecutionTimeouts: {
+        common: number;
+        prepare: number;
+        controls: number;
+    };
     runResponseWhitelist?: string[];
     allowBodyConfig: boolean;
     chartsEngineConfig: {

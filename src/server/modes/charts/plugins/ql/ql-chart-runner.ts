@@ -33,6 +33,7 @@ export const runQlChart: RunnerHandler = async (cx: AppContext, props: RunnerHan
     const {req, res, config} = props;
     const {widgetConfig} = req.body;
     const chartBuilder = await getWizardChartBuilder({
+        ctx: req.ctx,
         userLang: res.locals && res.locals.lang,
         userLogin: res.locals && res.locals.login,
         widgetConfig,
