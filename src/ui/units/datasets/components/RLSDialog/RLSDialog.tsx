@@ -114,4 +114,8 @@ class RLSDialog extends React.Component<RLSDialogProps<string>, State> {
     };
 }
 
+export const renderRLSDialog = (props: RLSDialogProps<any, any>) => {
+    return <RLSDialog {...props} />;
+};
+
 export default RLSDialog;
