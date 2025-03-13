@@ -33,9 +33,7 @@ export interface SharedAppConfig {
     enablePreloading?: boolean;
     fetchingTimeout: number;
     singleFetchingTimeout: number;
-    runnerExecutionTimeouts: {
-        [string]: Record<string, number>;
-    };
+    runnerExecutionTimeouts: Record<string, Record<string, number>>;
     runResponseWhitelist?: string[];
     allowBodyConfig: boolean;
     chartsEngineConfig: {
