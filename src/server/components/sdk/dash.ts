@@ -75,8 +75,20 @@ function gatherLinks(data: DashData) {
 function setDefaultData(I18n: ServerI18n, requestData: DashData, initialData?: DashData) {
     const i18n = I18n.keyset('dash.tabs-dialog.edit');
     const salt = Math.random().toString();
-    const hashids = new Hashids(salt);
 
+    if (initialData) {
+        const counter =
+            initialData.counter ||
+            initialData.tabs.reduce((memo, tab) => {
+                memo++;
+                tab.items?.forEach(() => memo++);
+                return memo;
+            }, 1);
+
+        return assign({salt, counter}, initialData, requestData);
+    }
+
+    const hashids = new Hashids(salt);
     const data: DashData = {
         salt,
         counter: 2,
@@ -102,7 +114,7 @@ function setDefaultData(I18n: ServerI18n, requestData: DashData, initialData?: D
         },
     };
 
-    return assign(initialData ?? data, requestData);
+    return assign(data, requestData);
 }
 
 const needSetDefaultData = (data: DashData) =>
