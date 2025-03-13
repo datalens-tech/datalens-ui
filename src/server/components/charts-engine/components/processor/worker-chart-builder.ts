@@ -14,6 +14,9 @@ import {getChartApiContext} from '../wizard-worker/utils';
 
 import type {ChartBuilder, ChartBuilderResult} from './types';
 
+const ONE_SECOND = 1000;
+const JS_EXECUTION_TIMEOUT = ONE_SECOND * 9.5;
+
 type WizardChartBuilderArgs = {
     ctx: AppContext;
     userLogin: string | null;
@@ -35,8 +38,8 @@ export const getWizardChartBuilder = async (
     const wizardWorker = worker;
     let shared: Record<string, any>;
 
-    const prepareTimeout = ctx.config.jsExecutionTimeouts.prepare;
-    const commonExecutionTimeout = ctx.config.jsExecutionTimeouts.common;
+    const prepareTimeout = ctx.config.jsExecutionTimeouts.wizardPrepare || JS_EXECUTION_TIMEOUT;
+    const commonExecutionTimeout = ctx.config.jsExecutionTimeouts.wizardCommon || ONE_SECOND;
 
     const app = registry.getApp();
     const features = getServerFeatures(app.nodekit.ctx);

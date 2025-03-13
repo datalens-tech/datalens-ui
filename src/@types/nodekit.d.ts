@@ -34,9 +34,9 @@ export interface SharedAppConfig {
     fetchingTimeout: number;
     singleFetchingTimeout: number;
     jsExecutionTimeouts: {
-        common: number;
-        prepare: number;
-        controls: number;
+        wizardCommon?: number;
+        wizardPrepare?: number;
+        [string]: number;
     };
     runResponseWhitelist?: string[];
     allowBodyConfig: boolean;
