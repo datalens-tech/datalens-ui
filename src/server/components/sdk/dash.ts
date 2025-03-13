@@ -23,7 +23,9 @@ import {
     DashTabItemType,
     EntryScope,
     EntryUpdateMode,
+    Feature,
 } from '../../../shared/types';
+import {isEnabledServerFeature} from '../../../shared/utils';
 
 import US from './us';
 
@@ -198,6 +200,13 @@ class Dash {
                 usData.data = assignData(I18n, usData.data);
             }
 
+            const isServerMigrationEnabled = Boolean(
+                isEnabledServerFeature(ctx, Feature.DashServerMigrationEnable),
+            );
+            if (isServerMigrationEnabled && DashSchemeConverter.isUpdateNeeded(usData.data)) {
+                usData.data = await DashSchemeConverter.update(usData.data);
+            }
+
             usData.links = gatherLinks(usData.data);
 
             validateData(usData.data);
@@ -243,7 +252,10 @@ class Dash {
                 ctx,
             )) as DashEntry;
 
-            if (DashSchemeConverter.isUpdateNeeded(result.data)) {
+            const isServerMigrationEnabled = Boolean(
+                isEnabledServerFeature(ctx, Feature.DashServerMigrationEnable),
+            );
+            if (isServerMigrationEnabled && DashSchemeConverter.isUpdateNeeded(result.data)) {
                 result.data = await DashSchemeConverter.update(result.data);
             }
 
@@ -271,8 +283,10 @@ class Dash {
             const needDataSend = !(mode === EntryUpdateMode.Publish && data.revId);
             if (needDataSend) {
                 const initialData = await Dash.read(entryId, null, headers, ctx);
+
                 usData.data = assignData(I18n, usData.data, initialData.data);
                 usData.links = gatherLinks(usData.data);
+
                 validateData(usData.data);
             }
 
