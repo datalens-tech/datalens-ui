@@ -24,12 +24,7 @@ export type APIConnectorParams = {
 };
 
 export const isAPIConnectorSource = (source: Source): source is SourceWithAPIConnector => {
-    return (
-        isString(source.apiConnectionId) &&
-        isString(source.method) &&
-        isObject(source.body) &&
-        isString(source.path)
-    );
+    return isString(source.apiConnectionId) && isString(source.method) && isString(source.path);
 };
 
 export const getApiConnectorParamsFromSource = (
@@ -41,19 +36,24 @@ export const getApiConnectorParamsFromSource = (
             isObject(originalSource) &&
             'method' in originalSource &&
             isString(originalSource.method) &&
-            'body' in originalSource &&
-            isObject(originalSource.body) &&
             'path' in originalSource &&
             isString(originalSource.path)
         )
     ) {
         throw new Error('ApiConnector source is not prepared');
     }
-    return {
+
+    const result: APIConnectorParams = {
         method: originalSource.method,
-        body: originalSource.body as Record<string, unknown>,
+        body: {},
         path: originalSource.path,
     };
+
+    if (originalSource.method === 'POST' && 'body' in originalSource) {
+        result.body = originalSource.body as Record<string, unknown>;
+    }
+
+    return result;
 };
 
 export const prepareSourceWithAPIConnector = (source: SourceWithAPIConnector) => {

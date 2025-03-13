@@ -7,7 +7,7 @@ import Utils from '../utils';
 import type {GatewayApiErrorResponse} from '../utils/gateway';
 
 /* eslint-disable consistent-return */
-export default async (req: Request, res: Response): Promise<void> => {
+export const navigationController = async (req: Request, res: Response): Promise<void> => {
     const {query, ctx} = req;
 
     const layoutConfig = await registry.useGetLayoutConfig({
