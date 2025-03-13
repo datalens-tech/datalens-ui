@@ -107,15 +107,19 @@ ENV APP_VERSION=$app_version
 ENV TMPDIR=/tmp
 
 #RUN chown -R ${USER} /opt/app/dist/run
-RUN chown -R ${USER} /opt/app/export 
+#RUN chown -R ${USER} /opt/app/export 
 WORKDIR /opt/app
 
 COPY package.json package-lock.json /opt/app/
+
+COPY export/dash2sheets.py /opt/app/export/dash2sheets.py
+COPY export/csv2ods.py /opt/app/export/csv2ods.py
 
 COPY --from=install-stage /opt/app/node_modules /opt/app/node_modules
 COPY --from=native-build-stage /opt/app/dist /opt/app/dist
 
 RUN chown -R ${USER} /opt/app/dist/run
+RUN chown -R ${USER} /opt/app/export 
 
 USER app
 

@@ -30,3 +30,6 @@ secrets/*
 !secrets/.keep
 
 tests/artifacts
+!export/requirements.txt
+!export/dash2sheets.py
+!export/csv2ods.py
