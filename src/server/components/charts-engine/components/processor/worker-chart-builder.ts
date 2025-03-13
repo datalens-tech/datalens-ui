@@ -1,4 +1,3 @@
-import type {AppContext} from '@gravity-ui/nodekit';
 import type {Proxy} from 'workerpool';
 
 import type {
@@ -18,7 +17,13 @@ const ONE_SECOND = 1000;
 const PREPARE_EXECUTION_TIMEOUT = ONE_SECOND * 9.5;
 
 type WizardChartBuilderArgs = {
-    ctx: AppContext;
+    timeouts?: {
+        params?: number;
+        prepare?: number;
+        chartConfig?: number;
+        libraryConfig?: number;
+        sources?: number;
+    };
     userLogin: string | null;
     userLang: string;
     config: {
@@ -34,11 +39,10 @@ type WizardChartBuilderArgs = {
 export const getWizardChartBuilder = async (
     args: WizardChartBuilderArgs,
 ): Promise<ChartBuilder> => {
-    const {config, widgetConfig, userLang, worker, ctx} = args;
+    const {config, widgetConfig, userLang, worker, timeouts = {}} = args;
     const wizardWorker = worker;
     let shared: Record<string, any>;
 
-    const timeouts = ctx.config.runnerExecutionTimeouts.wizard || {};
     const app = registry.getApp();
     const features = getServerFeatures(app.nodekit.ctx);
     const {getAvailablePalettesMap} = registry.common.functions.getAll();

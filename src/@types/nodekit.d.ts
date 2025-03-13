@@ -34,13 +34,6 @@ export interface SharedAppConfig {
     fetchingTimeout: number;
     singleFetchingTimeout: number;
     runnerExecutionTimeouts: {
-        wizard?: {
-            params?: number;
-            prepare?: number;
-            chartConfig?: number;
-            libraryConfig?: number;
-            sources?: number;
-        };
         [string]: Record<string, number>;
     };
     runResponseWhitelist?: string[];
