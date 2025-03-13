@@ -20,7 +20,7 @@ type WizardChartBuilderArgs = {
     timeouts?: {
         params?: number;
         prepare?: number;
-        chartConfig?: number;
+        config?: number;
         libraryConfig?: number;
         sources?: number;
     };
@@ -154,7 +154,7 @@ export const getWizardChartBuilder = async (
                     userLang,
                     features,
                 })
-                .timeout(timeouts.chartConfig || ONE_SECOND);
+                .timeout(timeouts.config || ONE_SECOND);
 
             return {
                 executionTiming: process.hrtime(timeStart),

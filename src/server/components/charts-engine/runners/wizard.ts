@@ -24,7 +24,7 @@ async function getWizardWorker(options?: WorkerPoolOptions): Promise<Proxy<Wizar
 
 export const runWizardChart: RunnerHandler = async (cx: AppContext, props: RunnerHandlerProps) => {
     const {req, res, config} = props;
-    const timeouts = cx.config.runnerExecutionTimeouts.wizard;
+    const timeouts = cx.config.runnerExecutionTimeouts?.wizard;
     const {widgetConfig} = req.body;
     const chartBuilder = await getWizardChartBuilder({
         userLang: res.locals && res.locals.lang,
