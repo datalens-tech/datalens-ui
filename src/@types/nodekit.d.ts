@@ -33,10 +33,15 @@ export interface SharedAppConfig {
     enablePreloading?: boolean;
     fetchingTimeout: number;
     singleFetchingTimeout: number;
-    jsExecutionTimeouts: {
-        wizardCommon?: number;
-        wizardPrepare?: number;
-        [string]: number;
+    runnerExecutionTimeouts: {
+        wizard?: {
+            params?: number;
+            prepare?: number;
+            chartConfig?: number;
+            libraryConfig?: number;
+            sources?: number;
+        };
+        [string]: Record<string, number>;
     };
     runResponseWhitelist?: string[];
     allowBodyConfig: boolean;
