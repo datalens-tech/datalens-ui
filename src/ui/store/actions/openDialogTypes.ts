@@ -34,7 +34,7 @@ import type {OpenDialogMoveWorkbookArgs} from '../../components/CollectionsStruc
 import type {OpenDialogCopyWorkbookArgs} from '../../components/CollectionsStructure/CopyWorkbookDialog';
 import type {OpenDialogMigrateEntryToWorkbookArgs} from '../../components/CollectionsStructure/MigrateEntryToWorkbookDialog';
 import type {OpenDialogEditWorkbookArgs} from '../../components/CollectionsStructure/EditWorkbookDialog';
-import type {OpenDialogCreateWorkbookArgs} from '../../components/CollectionsStructure/CreateWorkbookDialog';
+import type {OpenDialogCreateWorkbookArgs} from '../../components/CollectionsStructure/CreateWorkbookDialog/CreateWorkbookDialog';
 import type {OpenDialogEditCollectionArgs} from '../../components/CollectionsStructure/EditCollectionDialog';
 import type {OpenDialogCreateCollectionArgs} from '../../components/CollectionsStructure/CreateCollectionDialog';
 import type {OpenDialogCopyEntriesArgs} from '../../components/CollectionsStructure/CopyEntriesDialog';
@@ -57,6 +57,7 @@ import type {OpenDialogChangeDatasetFieldsArgs} from '../../units/datasets/compo
 import type {OpenDialogCollectionNoCreatePermissionArgs} from 'ui/components/CollectionsStructure/CollectionNoCreatePermissionDialog';
 import type {OpenDialogReleaseVersionArgs} from 'ui/components/AsideHeaderAdapter/VersionDialog/VersionDialog';
 import type {OpenDialogExportWorkbookArgs} from 'ui/components/CollectionsStructure/ExportWorkbookDialog/ExportWorkbookDialog';
+import type {OpenDialogDefaultArgs} from 'ui/components/DialogDefault/DialogDefault';
 
 export type OpenDialogArgs<T = unknown> =
     | OpenDialogReleaseVersionArgs
@@ -115,4 +116,5 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogTooltipSettingsArgs
     | OpenDialogChangeDatasetFieldsArgs
     | OpenDialogCollectionNoCreatePermissionArgs
-    | OpenDialogExportWorkbookArgs;
+    | OpenDialogExportWorkbookArgs
+    | OpenDialogDefaultArgs;

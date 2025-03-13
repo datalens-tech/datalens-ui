@@ -1,5 +1,6 @@
 import {createSelector} from 'reselect';
 import type {DatalensGlobalState} from 'index';
+import {getStatusFromOperationData} from '../utils/collectionStructure';
 
 export const selectGetRootCollectionPermissions = (state: DatalensGlobalState) =>
     state.collectionsStructure.getRootCollectionPermissions;
@@ -54,6 +55,20 @@ const selectDeleteWorkbooks = (state: DatalensGlobalState) =>
 
 const selectAddDemoWorkbook = (state: DatalensGlobalState) =>
     state.collectionsStructure.addDemoWorkbook;
+
+export const selectExportWorkbook = (state: DatalensGlobalState) =>
+    state.collectionsStructure.exportWorkbook;
+
+export const selectImportWorkbook = (state: DatalensGlobalState) =>
+    state.collectionsStructure.importWorkbook;
+
+export const selectExportWorkbookStatus = createSelector([selectExportWorkbook], (exportWorkbook) =>
+    getStatusFromOperationData(exportWorkbook),
+);
+
+export const selectImportWorkbookStatus = createSelector([selectImportWorkbook], (importWorkbook) =>
+    getStatusFromOperationData(importWorkbook),
+);
 
 // Rights at the root of the structure
 export const selectRootPermissionsData = createSelector(
