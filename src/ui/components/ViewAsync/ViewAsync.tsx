@@ -22,7 +22,7 @@ export interface ViewAsyncProps {
     classNameLoader?: ViewLoaderProps['className'];
     loaderText?: ViewLoaderProps['text'];
     loaderSize?: ViewLoaderProps['size'];
-    classNameError?: ViewErrorProps['className'];
+    classNameError?: ViewErrorProps['actionsClassName'];
     buttonErrorText?: ViewErrorProps['buttonText'];
     errorText?: ViewErrorProps['title'];
     onRetry?: ViewErrorProps['retry'];
@@ -54,7 +54,7 @@ export const ViewAsync: React.FC<ViewAsyncProps> = ({
             )}
             {status === Status.Failed && (
                 <ViewError
-                    className={classNameError}
+                    actionsClassName={classNameError}
                     buttonText={buttonErrorText}
                     title={errorText}
                     retry={onRetry}
