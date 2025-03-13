@@ -5,7 +5,12 @@ import type {
     SharedData,
     StringParams,
 } from '../../../../../../shared';
-import {DATASET_FIELD_TYPES, PlaceholderId, isMarkupField} from '../../../../../../shared';
+import {
+    DATASET_FIELD_TYPES,
+    PlaceholderId,
+    WizardVisualizationId,
+    isMarkupField,
+} from '../../../../../../shared';
 
 import {getDrillDownData} from './misc-helpers';
 
@@ -52,8 +57,13 @@ export function preprocessHierarchies({
                     isColorDrillDown: hierachyContainer === colors || hierachyContainer === shapes,
                 };
             } else if (sharedData.drillDownData) {
+                const notSplitByColors: string[] = [
+                    WizardVisualizationId.Pie,
+                    WizardVisualizationId.Donut,
+                    WizardVisualizationId.Treemap,
+                ];
                 sharedData.drillDownData.isColorDrillDown =
-                    visualizationId !== 'pie' &&
+                    !notSplitByColors.includes(visualizationId) &&
                     (sharedData.drillDownData.isColorDrillDown ||
                         hierachyContainer === colors ||
                         hierachyContainer === shapes ||
