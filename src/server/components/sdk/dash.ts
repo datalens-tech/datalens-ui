@@ -6,7 +6,7 @@ import assign from 'lodash/assign';
 import intersection from 'lodash/intersection';
 
 import type {ServerI18n} from '../../../i18n/types';
-import {DASH_CURRENT_SCHEME_VERSION} from '../../../shared/constants';
+import {DASH_CURRENT_SCHEME_VERSION, DASH_DATA_REQUIRED_FIELDS} from '../../../shared/constants';
 import {DashSchemeConverter} from '../../../shared/modules';
 import type {
     CreateEntryRequest,
@@ -72,7 +72,7 @@ function gatherLinks(data: DashData) {
     );
 }
 
-function assignData(I18n: ServerI18n, requestData: DashData, initialData?: DashData) {
+function setDefaultData(I18n: ServerI18n, requestData: DashData, initialData?: DashData) {
     const i18n = I18n.keyset('dash.tabs-dialog.edit');
     const salt = Math.random().toString();
     const hashids = new Hashids(salt);
@@ -104,6 +104,9 @@ function assignData(I18n: ServerI18n, requestData: DashData, initialData?: DashD
 
     return assign(initialData ?? data, requestData);
 }
+
+const needSetDefaultData = (data: DashData) =>
+    DASH_DATA_REQUIRED_FIELDS.every((fieldName) => fieldName in data);
 
 function validateData(data: DashData) {
     const allTabsIds: Set<string> = new Set();
@@ -196,8 +199,8 @@ class Dash {
                     scope: EntryScope.Dash,
                     type: '',
                 };
-            } else {
-                usData.data = assignData(I18n, usData.data);
+            } else if (needSetDefaultData(usData.data)) {
+                usData.data = setDefaultData(I18n, usData.data);
             }
 
             const isServerMigrationEnabled = Boolean(
@@ -282,9 +285,11 @@ class Dash {
 
             const needDataSend = !(mode === EntryUpdateMode.Publish && data.revId);
             if (needDataSend) {
-                const initialData = await Dash.read(entryId, null, headers, ctx);
+                if (needSetDefaultData(usData.data)) {
+                    const initialData = await Dash.read(entryId, null, headers, ctx);
+                    usData.data = setDefaultData(I18n, usData.data, initialData.data);
+                }
 
-                usData.data = assignData(I18n, usData.data, initialData.data);
                 usData.links = gatherLinks(usData.data);
 
                 validateData(usData.data);
