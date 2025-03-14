@@ -54,6 +54,7 @@ import {
 } from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {
+    DEFAULT_DASH_MARGINS,
     FIXED_GROUP_CONTAINER_ID,
     FIXED_GROUP_HEADER_ID,
     FIXED_HEADER_GROUP_COLS,
@@ -111,7 +112,7 @@ import {
     selectTabHashState,
     selectTabs,
 } from '../../store/selectors/dashTypedSelectors';
-import {getPropertiesWithResizeHandles} from '../../utils/dashkitProps';
+import {fixedHeaderGridProperties, getPropertiesWithResizeHandles} from '../../utils/dashkitProps';
 import {scrollIntoView} from '../../utils/scrollUtils';
 import {DashError} from '../DashError/DashError';
 import {getGroupedItems} from '../Dialogs/Tabs/PopupWidgetsOrder/helpers';
@@ -162,6 +163,10 @@ type DashBodyState = {
     hash: string;
     delayedScrollId: string | null;
     lastDelayedScrollTop: number | null;
+    groups: {
+        margins: [number, number];
+        renderers: DashKitGroup[];
+    };
 };
 
 type BodyProps = StateProps & DispatchProps & RouteComponentProps & OwnProps;
@@ -299,42 +304,36 @@ class Body extends React.PureComponent<BodyProps> {
         hash: '',
         delayedScrollId: null,
         lastDelayedScrollTop: null,
+        groups: {
+            margins: DEFAULT_DASH_MARGINS,
+            renderers: [
+                {
+                    id: FIXED_GROUP_HEADER_ID,
+                    render: (id, children, props) =>
+                        this.renderFixedGroupHeader(
+                            id,
+                            children,
+                            props as DashkitGroupRenderWithContextProps,
+                        ),
+                    gridProperties: fixedHeaderGridProperties(),
+                },
+                {
+                    id: FIXED_GROUP_CONTAINER_ID,
+                    render: (id, children, props) =>
+                        this.renderFixedGroupContainer(
+                            id,
+                            children,
+                            props as DashkitGroupRenderWithContextProps,
+                        ),
+                    gridProperties: getPropertiesWithResizeHandles(),
+                },
+                {
+                    id: DEFAULT_GROUP,
+                    gridProperties: getPropertiesWithResizeHandles(),
+                },
+            ],
+        },
     };
-
-    groups: DashKitGroup[] = [
-        {
-            id: FIXED_GROUP_HEADER_ID,
-            render: (id, children, props) =>
-                this.renderFixedGroupHeader(
-                    id,
-                    children,
-                    props as DashkitGroupRenderWithContextProps,
-                ),
-            gridProperties: (props) => {
-                return {
-                    ...props,
-                    cols: FIXED_HEADER_GROUP_COLS,
-                    maxRows: FIXED_HEADER_GROUP_LINE_MAX_ROWS,
-                    autoSize: false,
-                    compactType: 'horizontal-nowrap',
-                };
-            },
-        },
-        {
-            id: FIXED_GROUP_CONTAINER_ID,
-            render: (id, children, props) =>
-                this.renderFixedGroupContainer(
-                    id,
-                    children,
-                    props as DashkitGroupRenderWithContextProps,
-                ),
-            gridProperties: getPropertiesWithResizeHandles,
-        },
-        {
-            id: DEFAULT_GROUP,
-            gridProperties: getPropertiesWithResizeHandles,
-        },
-    ];
 
     componentDidMount() {
         // if localStorage already have a dash item, we need to set it to state
@@ -347,12 +346,16 @@ class Body extends React.PureComponent<BodyProps> {
         window.addEventListener('storage', this.storageHandler);
         window.addEventListener('wheel', this.interruptAutoScroll);
         window.addEventListener('touchmove', this.interruptAutoScroll);
+
+        this.updateMargins();
     }
 
     componentDidUpdate() {
         if (this.dashKitRef !== this.props.dashKitRef) {
             this.props.setDashKitRef(this.dashKitRef);
         }
+
+        this.updateMargins();
     }
 
     componentDidCatch(error: Error) {
@@ -375,6 +378,35 @@ class Body extends React.PureComponent<BodyProps> {
             </div>
         );
     }
+
+    updateMargins() {
+        const {margins: stateMargins} = this.state.groups;
+        const {margins: propsMargins = DEFAULT_DASH_MARGINS} = this.props.settings;
+
+        if (stateMargins?.[0] !== propsMargins?.[0] || stateMargins?.[1] !== propsMargins?.[1]) {
+            this.setState({
+                groups: {
+                    margins: propsMargins,
+                    renderers: this.state.groups.renderers.map((group) => {
+                        if (group.id === FIXED_GROUP_HEADER_ID) {
+                            return {
+                                ...group,
+                                gridProperties: fixedHeaderGridProperties({margin: propsMargins}),
+                            };
+                        }
+                        return {
+                            ...group,
+                            gridProperties: getPropertiesWithResizeHandles({margin: propsMargins}),
+                        };
+                    }),
+                },
+            });
+        }
+    }
+
+    isCondensed = () => {
+        return this.state.groups.margins[0] === 0 || this.state.groups.margins[1] === 0;
+    };
 
     onChange = ({
         config,
@@ -557,7 +589,7 @@ class Body extends React.PureComponent<BodyProps> {
                 layout: GravityDashkit.reflowLayout({
                     newLayoutItem: movedItem,
                     layout: newLayout,
-                    groups: this.groups,
+                    groups: this.state.groups.renderers,
                 }),
             });
         }
@@ -962,7 +994,7 @@ class Body extends React.PureComponent<BodyProps> {
                 focusable={true}
                 onDrop={this.onDropElement}
                 itemsStateAndParams={this.props.hashStates as DashKitProps['itemsStateAndParams']}
-                groups={this.groups}
+                groups={this.state.groups.renderers}
                 context={context}
                 getPreparedCopyItemOptions={
                     this
@@ -1091,6 +1123,7 @@ class Body extends React.PureComponent<BodyProps> {
                     />
                     <div
                         className={b('content', {
+                            condensed: this.isCondensed(),
                             'with-table-of-content': showTableOfContent && hasTableOfContent,
                             mobile: DL.IS_MOBILE,
                             aside: getIsAsideHeaderEnabled(),
