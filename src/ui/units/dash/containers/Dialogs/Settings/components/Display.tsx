@@ -76,7 +76,7 @@ export const Display = ({
                 <Row>
                     <div>
                         <Title text={i18n('label_margins')}>
-                            <Label theme={'warning'}>Experimental</Label>
+                            <Label theme={'warning'}>{i18n('label_experimental')}</Label>
                         </Title>
                     </div>
                     <Slider
