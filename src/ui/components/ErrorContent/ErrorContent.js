@@ -56,6 +56,7 @@ class ErrorContent extends React.PureComponent {
         accessDescription: PropTypes.string,
         hideTitle: PropTypes.bool,
         style: PropTypes.object,
+        containerClassName: PropTypes.string,
     };
 
     static defaultProps = {
@@ -260,7 +261,8 @@ class ErrorContent extends React.PureComponent {
     };
 
     render() {
-        const {noControls, className, size, direction, showDebugInfo, style} = this.props;
+        const {noControls, className, size, direction, showDebugInfo, style, containerClassName} =
+            this.props;
 
         const showDebugActions = showDebugInfo && DL.IS_MOBILE;
 
@@ -308,6 +310,7 @@ class ErrorContent extends React.PureComponent {
                         renderAction={this.renderAction}
                         size={size}
                         direction={direction}
+                        className={containerClassName}
                     />
                     {DL.IS_MOBILE && this.renderActions()}
                 </div>

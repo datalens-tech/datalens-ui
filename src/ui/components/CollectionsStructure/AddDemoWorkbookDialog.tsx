@@ -41,7 +41,7 @@ export const AddDemoWorkbookDialog: React.FC<Props> = ({
     const isLoading = useSelector(selectAddDemoWorkbookIsLoading);
 
     const onApply = React.useCallback(
-        async ({title: workbookTitle}: {title: string}) => {
+        async ({title: workbookTitle, onClose}: {title: string; onClose: () => void}) => {
             const result = await dispatch(
                 addDemoWorkbook({
                     workbookId: demoWorkbookId,
@@ -54,7 +54,7 @@ export const AddDemoWorkbookDialog: React.FC<Props> = ({
                 onSuccessApply(result);
             }
 
-            return result;
+            onClose();
         },
         [collectionId, demoWorkbookId, dispatch, onSuccessApply],
     );
