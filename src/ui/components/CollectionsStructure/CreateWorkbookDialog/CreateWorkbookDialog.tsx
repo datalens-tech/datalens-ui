@@ -12,11 +12,13 @@ import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import type {CreateWorkbookResponse} from '../../../../shared/schema';
 import {
     createWorkbook,
+    getImportProgress,
     importWorkbook,
     resetImportWorkbook,
 } from '../../../store/actions/collectionsStructure';
 import {
     selectCreateWorkbookIsLoading,
+    selectGetImportProgress,
     selectImportWorkbook,
     selectImportWorkbookStatus,
 } from '../../../store/selectors/collectionsStructure';
@@ -46,6 +48,7 @@ type Props = {
     defaultWorkbookTitle?: string;
     onClose: () => void;
     onApply?: (result: CreateWorkbookResponse | null) => void | Promise<void>;
+    defaultView?: 'default' | 'import';
 };
 
 const b = block('create-workbook-dialog');
@@ -57,49 +60,62 @@ export const CreateWorkbookDialog: React.FC<Props> = ({
     defaultWorkbookTitle,
     onClose,
     onApply,
+    defaultView = 'default',
 }) => {
     const dispatch: AppDispatch = useDispatch();
 
     const isCreatingLoading = useSelector(selectCreateWorkbookIsLoading);
 
-    const {
-        isLoading: isImportLoading,
-        error: importError,
-        // TODO: data is needed to render succes phase
-        data: _,
-    } = useSelector(selectImportWorkbook);
+    const {error: importError, data: importData} = useSelector(selectImportWorkbook);
+    const {data: importProgress} = useSelector(selectGetImportProgress);
 
     const [isExternalLoading, setIsExternalLoading] = React.useState(false);
 
-    const isLoading = isCreatingLoading || isImportLoading || isExternalLoading;
-
-    const [view, setView] = React.useState<'default' | 'import'>('default');
-    const [importFiles, setImportFiles] = React.useState<File[]>([]);
-    const [hasImportError, setHasImportError] = React.useState(false);
-
     const importStatus = useSelector(selectImportWorkbookStatus);
+
+    const isLoading = isCreatingLoading || importStatus === 'loading' || isExternalLoading;
+
+    const [view, setView] = React.useState<'default' | 'import'>(defaultView);
+    const [importFiles, setImportFiles] = React.useState<File[]>([]);
+    const [importValidationError, setImportValidationError] = React.useState<null | string>(null);
 
     React.useEffect(() => {
         if (open) {
-            setView('default');
+            setView(defaultView);
             setImportFiles([]);
-            setHasImportError(false);
+            setImportValidationError(null);
             dispatch(resetImportWorkbook());
         }
-    }, [dispatch, open]);
+    }, [defaultView, dispatch, open]);
+
+    React.useEffect(() => {
+        let intervalId: NodeJS.Timeout | null = null;
+
+        if (view === 'import' && importStatus === 'loading' && open) {
+            intervalId = setInterval(() => {
+                dispatch(getImportProgress({loadId: ''}));
+            }, 300);
+        }
+
+        return () => {
+            if (intervalId) {
+                clearInterval(intervalId);
+            }
+        };
+    }, [dispatch, importStatus, open, view]);
 
     const handleFileUploding = (file: File) => {
         setImportFiles([file]);
-        setHasImportError(false);
+        setImportValidationError(null);
     };
 
     const handleRemoveFile = (index: number) => {
         setImportFiles((prev) => prev.filter((_, i) => i !== index));
-        setHasImportError(false);
+        setImportValidationError(null);
     };
 
     const handleClose = React.useCallback(() => {
-        if (isImportLoading) {
+        if (importStatus === 'loading') {
             dispatch(
                 openDialog({
                     id: DIALOG_DEFAULT,
@@ -122,7 +138,7 @@ export const CreateWorkbookDialog: React.FC<Props> = ({
         }
 
         onClose();
-    }, [dispatch, isImportLoading, onClose]);
+    }, [dispatch, importStatus, onClose]);
 
     const handleApply = React.useCallback(
         async ({
@@ -134,8 +150,12 @@ export const CreateWorkbookDialog: React.FC<Props> = ({
             description?: string;
             onClose: () => void;
         }) => {
+            if (importStatus === 'success') {
+                // TODO: Add switching to workbook page
+                onClose();
+            }
             if (importFiles.length > 0 && !importFiles[0].name.toLowerCase().endsWith('.json')) {
-                setHasImportError(true);
+                setImportValidationError(i18n('label_error-file-type'));
                 return;
             }
 
@@ -147,7 +167,7 @@ export const CreateWorkbookDialog: React.FC<Props> = ({
             };
 
             if (isEnabledFeature(Feature.EnableExportWorkbookFile) && importFiles.length > 0) {
-                result = await dispatch(importWorkbook(workbookData));
+                dispatch(importWorkbook(workbookData));
 
                 setView('import');
                 return;
@@ -167,7 +187,7 @@ export const CreateWorkbookDialog: React.FC<Props> = ({
 
             onClose();
         },
-        [collectionId, dispatch, importFiles, onApply],
+        [collectionId, dispatch, importFiles, importStatus, onApply],
     );
 
     const getDialogFooterPropsOverride = React.useCallback<GetDialogFooterPropsOverride>(
@@ -180,7 +200,7 @@ export const CreateWorkbookDialog: React.FC<Props> = ({
                     : textButtonApply,
                 propsButtonApply: {disabled: propsButtonApply?.disabled, loading: isLoading},
                 propsButtonCancel: {
-                    view: importStatus === 'error' ? 'normal' : 'flat',
+                    view: importStatus?.endsWith('error') ? 'normal' : 'flat',
                     disabled: isLoading && importStatus !== 'loading',
                 },
                 textButtonCancel: importStatus
@@ -200,14 +220,21 @@ export const CreateWorkbookDialog: React.FC<Props> = ({
                 onUpload={handleFileUploding}
                 onRemove={handleRemoveFile}
                 files={importFiles}
-                hasError={hasImportError}
+                error={importValidationError}
             />
         );
     };
 
     const renderDialogView = () => {
         if (view === 'import') {
-            return <ImportWorkbookView status={importStatus} error={importError} />;
+            return (
+                <ImportWorkbookView
+                    progress={importProgress}
+                    status={importStatus}
+                    error={importError}
+                    data={importData}
+                />
+            );
         }
         return null;
     };

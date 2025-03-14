@@ -11,6 +11,7 @@
   "label_info-secrets": "При импорте потребуется заново ввести пароли",
   "label_info-time": "Экспорт может занять несколько минут",
   "label_info-versions": "В других версиях DataLens <link>некоторые</link> подключения не будут работать",
+  "label_success-export": "Экспорт прошёл успешно",
   "title_cancel-export": "Отменить экспорт?",
   "title_export": "Экспорт воркбука",
   "title_export-success": "Воркбук экспортирован",

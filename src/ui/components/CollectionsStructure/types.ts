@@ -1,1 +1,6 @@
-export type ImportExportStatus = 'loading' | 'error' | 'success' | null;
+export type ImportExportStatus =
+    | 'loading'
+    | 'fatal-error'
+    | 'notification-error'
+    | 'success'
+    | null;

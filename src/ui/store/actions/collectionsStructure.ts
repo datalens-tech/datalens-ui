@@ -7,12 +7,13 @@ import {showToast} from 'store/actions/toaster';
 
 import type {
     EXPORT_WORKBOOK_FAILED,
-    EXPORT_WORKBOOK_SUCCESS,
     GET_ROOT_COLLECTION_PERMISSIONS_FAILED,
     IMPORT_WORKBOOK_FAILED,
-    IMPORT_WORKBOOK_SUCCESS,
 } from '../constants/collectionsStructure';
 import {
+    EXPORT_WORKBOOK_PROGRESS,
+    RESET_IMPORT_PROGRESS,
+    IMPORT_WORKBOOK_SUCCESS,
     IMPORT_WORKBOOK_LOADING,
     EXPORT_WORKBOOK_LOADING,
     DELETE_COLLECTIONS_FAILED,
@@ -76,6 +77,9 @@ import {
     ADD_DEMO_WORKBOOK_FAILED,
     RESET_IMPORT_WORKBOOK,
     RESET_EXPORT_WORKBOOK,
+    EXPORT_WORKBOOK_SUCCESS,
+    GET_IMPORT_PROGRESS_LOADING,
+    GET_IMPORT_PROGRESS_SUCCESS,
 } from '../constants/collectionsStructure';
 
 import type {
@@ -100,6 +104,7 @@ import type {
     DeleteCollectionsResponse,
     DeleteWorkbooksResponse,
 } from '../../../shared/schema';
+import {notifications} from 'ui/components/CollectionsStructure/components/EntriesNotificationCut/helpers';
 
 type ResetStateAction = {
     type: typeof RESET_STATE;
@@ -1370,26 +1375,52 @@ type ExportWorkbookLoadingAction = {
 };
 type ExportWorkbookSuccessAction = {
     type: typeof EXPORT_WORKBOOK_SUCCESS;
-    data: CreateCollectionResponse;
+    data: {};
 };
 type ExportWorkbookFailedAction = {
     type: typeof EXPORT_WORKBOOK_FAILED;
     error: Error | null;
 };
+type ExportWorkbookProgressAction = {
+    type: typeof EXPORT_WORKBOOK_PROGRESS;
+    progress: number;
+};
 type ResetExportWorkbookAction = {
     type: typeof RESET_EXPORT_WORKBOOK;
 };
+
 type ExportWorkbookAction =
     | ExportWorkbookLoadingAction
     | ExportWorkbookSuccessAction
     | ExportWorkbookFailedAction
+    | ExportWorkbookProgressAction
     | ResetExportWorkbookAction;
 
 export const exportWorkbook = (_: {workbookId: string}) => {
-    return (dispatch: CollectionsStructureDispatch) => {
+    return (dispatch: CollectionsStructureDispatch, getState: () => DatalensGlobalState) => {
         dispatch({
             type: EXPORT_WORKBOOK_LOADING,
         });
+
+        const interval = setInterval(() => {
+            const {collectionsStructure} = getState();
+
+            const progressData = collectionsStructure.exportWorkbook.progress;
+            const nextProgressData = progressData + 20;
+
+            dispatch({
+                type: EXPORT_WORKBOOK_PROGRESS,
+                progress: nextProgressData,
+            });
+
+            if (nextProgressData >= 100) {
+                dispatch({
+                    type: EXPORT_WORKBOOK_SUCCESS,
+                    data: {notifications},
+                });
+                clearInterval(interval);
+            }
+        }, 200);
 
         return null;
     };
@@ -1405,7 +1436,7 @@ type ImportWorkbookLoadingAction = {
 };
 type ImportWorkbookSuccessAction = {
     type: typeof IMPORT_WORKBOOK_SUCCESS;
-    data: CreateCollectionResponse;
+    data: {};
 };
 type ImportWorkbookFailedAction = {
     type: typeof IMPORT_WORKBOOK_FAILED;
@@ -1434,8 +1465,63 @@ export const importWorkbook = (_: {
     };
 };
 export const resetImportWorkbook = () => {
-    return {
-        type: RESET_IMPORT_WORKBOOK,
+    return (dispatch: CollectionsStructureDispatch) => {
+        dispatch({
+            type: RESET_IMPORT_WORKBOOK,
+        });
+        dispatch({
+            type: RESET_IMPORT_PROGRESS,
+        });
+    };
+};
+
+type GetImportProgressLoadingAction = {
+    type: typeof GET_IMPORT_PROGRESS_LOADING;
+};
+type GetImportProgressSuccessAction = {
+    type: typeof GET_IMPORT_PROGRESS_SUCCESS;
+    data: number;
+};
+type ResetGetImportProgressAction = {
+    type: typeof RESET_IMPORT_PROGRESS;
+};
+type GetImportProgressAction =
+    | GetImportProgressLoadingAction
+    | GetImportProgressSuccessAction
+    | ResetGetImportProgressAction;
+
+export const getImportProgress = (_: {loadId: string}) => {
+    return (dispatch: CollectionsStructureDispatch, getState: () => DatalensGlobalState) => {
+        const {collectionsStructure} = getState();
+        dispatch({
+            type: GET_IMPORT_PROGRESS_LOADING,
+        });
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                // TODO: add api request to get progress
+                const progressData = collectionsStructure.getImportProgress.data || 0;
+                const nextProgressData = progressData + 30;
+                dispatch({
+                    type: GET_IMPORT_PROGRESS_SUCCESS,
+                    data: nextProgressData,
+                });
+                resolve({progress: nextProgressData});
+
+                if (nextProgressData >= 100) {
+                    dispatch({
+                        type: IMPORT_WORKBOOK_SUCCESS,
+                        data: {notifications},
+                    });
+                }
+
+                // if(error) {
+                //     dispatch({
+                //         type: IMPORT_WORKBOOK_FAILED,
+                //         error,
+                //     });
+                // }
+            }, 500);
+        });
     };
 };
 
@@ -1463,7 +1549,8 @@ export type CollectionsStructureAction =
     | DeleteWorkbookAction
     | AddDemoWorkbookAction
     | ExportWorkbookAction
-    | ImportWorkbookAction;
+    | ImportWorkbookAction
+    | GetImportProgressAction;
 
 export type CollectionsStructureDispatch = ThunkDispatch<
     DatalensGlobalState,

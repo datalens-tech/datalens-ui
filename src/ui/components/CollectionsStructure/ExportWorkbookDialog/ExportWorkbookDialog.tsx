@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Dialog} from '@gravity-ui/uikit';
+import {Dialog, Flex} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
@@ -15,6 +15,7 @@ import {
 } from 'ui/store/selectors/collectionsStructure';
 
 import DialogManager from '../../DialogManager/DialogManager';
+import {EntriesNotificationCut} from '../components/EntriesNotificationCut/EntriesNotificationCut';
 import type {ImportExportStatus} from '../types';
 
 import {ExportInfo} from './ExportInfo/ExportInfo';
@@ -47,7 +48,8 @@ const getApplyButtonText = (view: DialogView, status: ImportExportStatus) => {
     switch (status) {
         case 'success':
             return i18n('button_download');
-        case 'error':
+        case 'fatal-error':
+        case 'notification-error':
         default:
             return undefined;
     }
@@ -58,7 +60,8 @@ const getCaption = (view: DialogView, status: ImportExportStatus) => {
         return i18n('title_export');
     }
     switch (status) {
-        case 'error':
+        case 'fatal-error':
+        case 'notification-error':
             return i18n('title_fatal-error');
         case 'success':
             return i18n('title_export-success');
@@ -73,8 +76,9 @@ export const ExportWorkbookDialog: React.FC<Props> = ({workbookId, open, onClose
     const [view, setView] = React.useState<DialogView>('info');
     const status = useSelector(selectExportWorkbookStatus);
 
-    // TODO: data will be needed for success state
-    const {isLoading, data: _, error} = useSelector(selectExportWorkbook);
+    const {data, error, progress} = useSelector(selectExportWorkbook);
+
+    const isLoading = status === 'loading';
 
     React.useEffect(() => {
         if (open) {
@@ -83,7 +87,7 @@ export const ExportWorkbookDialog: React.FC<Props> = ({workbookId, open, onClose
     }, [dispatch, open]);
 
     const handleCancel = React.useCallback(() => {
-        if (status === 'loading') {
+        if (isLoading) {
             dispatch(
                 openDialog({
                     id: DIALOG_DEFAULT,
@@ -109,7 +113,7 @@ export const ExportWorkbookDialog: React.FC<Props> = ({workbookId, open, onClose
         }
 
         onClose();
-    }, [dispatch, onClose, status]);
+    }, [dispatch, isLoading, onClose]);
 
     const handleApply = React.useCallback(() => {
         if (view === 'info') {
@@ -126,7 +130,7 @@ export const ExportWorkbookDialog: React.FC<Props> = ({workbookId, open, onClose
     }, [dispatch, onClose, status, view, workbookId]);
 
     const cancelButtonText =
-        view === 'info' || status === 'loading' ? i18n('button_cancel') : i18n('button_close');
+        view === 'info' || isLoading ? i18n('button_cancel') : i18n('button_close');
 
     const renderBody = () => {
         if (view === 'info') {
@@ -134,10 +138,33 @@ export const ExportWorkbookDialog: React.FC<Props> = ({workbookId, open, onClose
         }
         switch (status) {
             case 'loading':
-                return <ProgressBar size="s" className={b('progress')} value={50} />;
+                return <ProgressBar size="s" className={b('progress')} value={progress} />;
             case 'success':
-                return <div>Success</div>;
-            case 'error':
+            case 'notification-error':
+                if (!data) {
+                    return null;
+                }
+                if (!data.notifications?.length) {
+                    return (
+                        <EntriesNotificationCut
+                            title={i18n('label_success-export')}
+                            level="success"
+                        />
+                    );
+                }
+                return (
+                    <Flex direction="column" gap={4} className={b('notifications')}>
+                        {data.notifications.map((notification) => (
+                            <EntriesNotificationCut
+                                key={notification.code}
+                                title={notification.message}
+                                level={notification.level}
+                                entries={notification.entries}
+                            />
+                        ))}
+                    </Flex>
+                );
+            case 'fatal-error':
             default:
                 return <ViewError containerClassName={b('error-content')} error={error} size="s" />;
         }

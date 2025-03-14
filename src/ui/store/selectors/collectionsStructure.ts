@@ -62,6 +62,9 @@ export const selectExportWorkbook = (state: DatalensGlobalState) =>
 export const selectImportWorkbook = (state: DatalensGlobalState) =>
     state.collectionsStructure.importWorkbook;
 
+export const selectGetImportProgress = (state: DatalensGlobalState) =>
+    state.collectionsStructure.getImportProgress;
+
 export const selectExportWorkbookStatus = createSelector([selectExportWorkbook], (exportWorkbook) =>
     getStatusFromOperationData(exportWorkbook),
 );

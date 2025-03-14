@@ -10,7 +10,8 @@ export const getApplyButtonText = (status: ImportExportStatus, defaultText: stri
             return defaultText;
         case 'success':
             return i18n('button_go-to-workbook');
-        case 'error':
+        case 'fatal-error':
+        case 'notification-error':
         default:
             return undefined;
     }
@@ -20,7 +21,8 @@ export const getCaption = (status: ImportExportStatus) => {
     switch (status) {
         case 'loading':
             return i18n('title_creating-workbook');
-        case 'error':
+        case 'fatal-error':
+        case 'notification-error':
             return i18n('title_error-creating');
         case 'success':
             return i18n('title_workbook-created');
