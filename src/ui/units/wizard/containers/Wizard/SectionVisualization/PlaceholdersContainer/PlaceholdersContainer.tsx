@@ -76,10 +76,14 @@ class PlaceholdersContainer extends React.PureComponent<Props> {
             qlMode,
         );
 
-        const allowShapes =
-            currentVisualization?.allowShapes &&
-            !(qlMode && qlChartType && isYAGRVisualization(qlChartType, currentVisualization.id));
+        const isYagrVisualization =
+            qlMode &&
+            qlChartType &&
+            currentVisualization &&
+            isYAGRVisualization(qlChartType, currentVisualization.id);
+        const allowShapes = currentVisualization?.allowShapes && !isYagrVisualization;
         const allowSegments = currentVisualization?.allowSegments;
+        const allowLabels = visualization.allowLabels && !isYagrVisualization;
         const placeholders = visualization.placeholders;
 
         return (
@@ -151,7 +155,7 @@ class PlaceholdersContainer extends React.PureComponent<Props> {
                         onUpdate={onUpdate}
                     />
                 )}
-                {visualization.allowLabels && (
+                {allowLabels && (
                     <LabelsPlaceholder
                         wrapTo={this.renderDatasetItem}
                         onBeforeRemoveItem={this.removeItemQuickFormula}
