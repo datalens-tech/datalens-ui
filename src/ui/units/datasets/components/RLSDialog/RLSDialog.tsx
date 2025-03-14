@@ -10,7 +10,16 @@ import './RLSDialog.scss';
 const b = block('rls-dialog');
 const i18n = I18n.keyset('dataset.rls.modify');
 
-export interface RLSDialogProps<T1 = string, T2 = unknown> {
+export interface RLSDialogUser {
+    /**
+     * User identifier string that should consist of two parts separated by a colon
+     * Example: "groupId:userName"
+     */
+    name?: string;
+    title?: string;
+}
+
+export interface RLSDialogProps<T1 = string, T2 extends RLSDialogUser = RLSDialogUser> {
     visible: boolean;
     onClose: () => void;
     onSave: (args: any) => void;
@@ -113,5 +122,9 @@ class RLSDialog extends React.Component<RLSDialogProps<string>, State> {
         this.setState({rlsField});
     };
 }
+
+export const renderRLSDialog = (props: RLSDialogProps<any, any>) => {
+    return <RLSDialog {...props} />;
+};
 
 export default RLSDialog;

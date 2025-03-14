@@ -3,9 +3,19 @@ import React from 'react';
 import {Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {useDispatch, useSelector} from 'react-redux';
+import {DIALOG_DEFAULT} from 'ui/components/DialogDefault/DialogDefault';
 import {ProgressBar} from 'ui/components/ProgressBar/ProgressBar';
+import {ViewError} from 'ui/components/ViewError/ViewError';
+import {exportWorkbook, resetExportWorkbook} from 'ui/store/actions/collectionsStructure';
+import {closeDialog, openDialog} from 'ui/store/actions/dialog';
+import {
+    selectExportWorkbook,
+    selectExportWorkbookStatus,
+} from 'ui/store/selectors/collectionsStructure';
 
 import DialogManager from '../../DialogManager/DialogManager';
+import type {ImportExportStatus} from '../types';
 
 import {ExportInfo} from './ExportInfo/ExportInfo';
 
@@ -28,13 +38,13 @@ export type OpenDialogExportWorkbookArgs = {
     props: Props;
 };
 
-type ExportState = 'info' | 'loading' | 'error' | 'success';
+type DialogView = 'info' | 'export';
 
-const getApplyButtonText = (state: ExportState) => {
-    switch (state) {
-        case 'info':
-        case 'loading':
-            return i18n('button_begin-export');
+const getApplyButtonText = (view: DialogView, status: ImportExportStatus) => {
+    if (view === 'info' || status === 'loading') {
+        return i18n('button_begin-export');
+    }
+    switch (status) {
         case 'success':
             return i18n('button_download');
         case 'error':
@@ -43,11 +53,11 @@ const getApplyButtonText = (state: ExportState) => {
     }
 };
 
-const getCaption = (state: ExportState) => {
-    switch (state) {
-        case 'info':
-        case 'loading':
-            return i18n('title_export');
+const getCaption = (view: DialogView, status: ImportExportStatus) => {
+    if (view === 'info' || status === 'loading') {
+        return i18n('title_export');
+    }
+    switch (status) {
         case 'error':
             return i18n('title_fatal-error');
         case 'success':
@@ -57,59 +67,88 @@ const getCaption = (state: ExportState) => {
     }
 };
 
-export const ExportWorkbookDialog: React.FC<Props> = ({open, onClose}) => {
-    const [state, setState] = React.useState<ExportState>('info');
-    const isLoading = state === 'loading';
+export const ExportWorkbookDialog: React.FC<Props> = ({workbookId, open, onClose}) => {
+    const dispatch = useDispatch();
 
-    const handleClose = React.useCallback(() => {
-        onClose();
-    }, [onClose]);
+    const [view, setView] = React.useState<DialogView>('info');
+    const status = useSelector(selectExportWorkbookStatus);
+
+    // TODO: data will be needed for success state
+    const {isLoading, data: _, error} = useSelector(selectExportWorkbook);
+
+    React.useEffect(() => {
+        if (open) {
+            dispatch(resetExportWorkbook());
+        }
+    }, [dispatch, open]);
 
     const handleCancel = React.useCallback(() => {
-        if (state === 'loading') {
-            // TODO: add cancel modal
+        if (status === 'loading') {
+            dispatch(
+                openDialog({
+                    id: DIALOG_DEFAULT,
+                    props: {
+                        open: true,
+                        onApply: () => {
+                            // TODO: cancel request
+                            dispatch(closeDialog());
+                            onClose();
+                        },
+                        onCancel: () => dispatch(closeDialog()),
+                        message: i18n('label_cancel-export-description'),
+                        textButtonApply: i18n('button_cancel-export'),
+                        textButtonCancel: i18n('button_back-to-export'),
+                        propsButtonApply: {view: 'outlined-danger'},
+                        caption: i18n('title_cancel-export'),
+                        className: b('import-cancel-dialog'),
+                    },
+                }),
+            );
+
             return;
         }
-        handleClose();
-    }, [handleClose, state]);
+
+        onClose();
+    }, [dispatch, onClose, status]);
 
     const handleApply = React.useCallback(() => {
-        if (state === 'info') {
-            setState('loading');
-            // dispatch();
+        if (view === 'info') {
+            setView('export');
+            dispatch(exportWorkbook({workbookId}));
             return;
         }
 
-        if (state === 'success') {
+        if (status === 'success') {
             // await donwload file
 
-            handleClose();
+            onClose();
         }
-    }, [handleClose, state]);
+    }, [dispatch, onClose, status, view, workbookId]);
 
     const cancelButtonText =
-        state === 'info' || state === 'loading' ? i18n('button_cancel') : i18n('button_close');
+        view === 'info' || status === 'loading' ? i18n('button_cancel') : i18n('button_close');
 
     const renderBody = () => {
-        switch (state) {
-            case 'info':
-                return <ExportInfo />;
+        if (view === 'info') {
+            return <ExportInfo />;
+        }
+        switch (status) {
             case 'loading':
                 return <ProgressBar size="s" className={b('progress')} value={50} />;
             case 'success':
                 return <div>Success</div>;
             case 'error':
             default:
-                return <div>Error</div>;
+                return <ViewError containerClassName={b('error-content')} error={error} size="s" />;
         }
     };
 
     return (
-        <Dialog className={b()} open={open} onClose={handleClose} onEscapeKeyDown={handleClose}>
-            <Dialog.Header caption={getCaption(state)} />
+        <Dialog className={b()} open={open} onClose={handleCancel} onEscapeKeyDown={handleCancel}>
+            <Dialog.Header caption={getCaption(view, status)} />
             <Dialog.Body>{renderBody()}</Dialog.Body>
             <Dialog.Footer
-                textButtonApply={getApplyButtonText(state)}
+                textButtonApply={getApplyButtonText(view, status)}
                 textButtonCancel={cancelButtonText}
                 onClickButtonApply={handleApply}
                 onClickButtonCancel={handleCancel}

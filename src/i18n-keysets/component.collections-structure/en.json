@@ -8,8 +8,11 @@
   "action_delete": "Delete",
   "action_edit-collection": "Edit collection",
   "action_edit-workbook": "Edit workbook",
+  "action_exit": "Close",
   "action_move": "Move",
   "action_save": "Save",
+  "action_stay": "Remain",
+  "button_choose-file": "Select a file",
   "label_connection": "connection",
   "label_copy": "Copy to",
   "label_copy-denied-title": "Insufficient permissions to copy",
@@ -24,6 +27,9 @@
   "label_delete-workbooks-for-delete": "Workbooks to be deleted",
   "label_description": "Description",
   "label_empty-collection": "This collection is empty or nothing matching the filter conditions was found",
+  "label_error-file-type": "File must be in JSON format",
+  "label_import-exit-description": "This will not affect the import process. The import window can be opened again by clicking on the workbook in the list.",
+  "label_import-from-file": "Import from file",
   "label_move": "Move to",
   "label_move-denied-title": "Insufficient permissions to move object",
   "label_ql": "QL chart",
@@ -31,5 +37,6 @@
   "label_title": "Name",
   "label_wizard": "chart",
   "section_delete-collection": "Are you sure you want to delete the collection \"{{name}}\"?",
-  "section_delete-workbook": "Are you sure you want to delete the workbook \"{{name}}\"?"
+  "section_delete-workbook": "Are you sure you want to delete the workbook \"{{name}}\"?",
+  "title_import-exit": "Do you want to close the import window?"
 }
