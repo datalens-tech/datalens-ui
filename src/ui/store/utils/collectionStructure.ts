@@ -4,17 +4,21 @@ export const getStatusFromOperationData = ({
     error,
 }: {
     isLoading: boolean;
-    data: unknown | null;
+    // TODO: use type of data from request
+    data: {notifications: {level: 'info' | 'warning' | 'critical'}[]} | null;
     error: Error | null;
 }) => {
     if (isLoading) {
         return 'loading';
     }
     if (data) {
-        return 'success';
+        return data.notifications.length &&
+            data.notifications.some((notification) => notification.level === 'critical')
+            ? 'notification-error'
+            : 'success';
     }
     if (error) {
-        return 'error';
+        return 'fatal-error';
     }
     return null;
 };

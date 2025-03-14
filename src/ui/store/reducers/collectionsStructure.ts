@@ -67,6 +67,10 @@ import {
     IMPORT_WORKBOOK_FAILED,
     RESET_EXPORT_WORKBOOK,
     RESET_IMPORT_WORKBOOK,
+    GET_IMPORT_PROGRESS_LOADING,
+    GET_IMPORT_PROGRESS_SUCCESS,
+    RESET_IMPORT_PROGRESS,
+    EXPORT_WORKBOOK_PROGRESS,
 } from '../constants/collectionsStructure';
 import type {CollectionsStructureAction} from '../actions/collectionsStructure';
 import type {
@@ -91,6 +95,7 @@ import type {
     DeleteWorkbookResponse,
     CopyWorkbookTemplateResponse,
 } from '../../../shared/schema';
+import type {TempImportExportDataType} from 'ui/components/CollectionsStructure/components/EntriesNotificationCut/types';
 
 export type CollectionsStructureState = {
     getRootCollectionPermissions: {
@@ -191,13 +196,19 @@ export type CollectionsStructureState = {
     };
     exportWorkbook: {
         isLoading: boolean;
-        data: null;
+        // TODO: use type of data from request
+        data: null | TempImportExportDataType;
+        progress: number;
         error: Error | null;
     };
     importWorkbook: {
         isLoading: boolean;
-        data: null;
+        data: null | TempImportExportDataType;
         error: Error | null;
+    };
+    getImportProgress: {
+        isLoading: boolean;
+        data: null | number;
     };
 };
 
@@ -301,12 +312,17 @@ const initialState: CollectionsStructureState = {
     exportWorkbook: {
         isLoading: false,
         data: null,
+        progress: 0,
         error: null,
     },
     importWorkbook: {
         isLoading: false,
         data: null,
         error: null,
+    },
+    getImportProgress: {
+        isLoading: false,
+        data: null,
     },
 };
 
@@ -962,6 +978,7 @@ export const collectionsStructure = (
             return {
                 ...state,
                 exportWorkbook: {
+                    progress: 0,
                     isLoading: true,
                     data: null,
                     error: null,
@@ -972,6 +989,7 @@ export const collectionsStructure = (
             return {
                 ...state,
                 exportWorkbook: {
+                    ...state.exportWorkbook,
                     isLoading: false,
                     data: action.data,
                     error: null,
@@ -982,9 +1000,19 @@ export const collectionsStructure = (
             return {
                 ...state,
                 exportWorkbook: {
+                    ...state.exportWorkbook,
                     isLoading: false,
                     data: null,
                     error: action.error,
+                },
+            };
+        }
+        case EXPORT_WORKBOOK_PROGRESS: {
+            return {
+                ...state,
+                exportWorkbook: {
+                    ...state.exportWorkbook,
+                    progress: action.progress,
                 },
             };
         }
@@ -995,6 +1023,7 @@ export const collectionsStructure = (
                     isLoading: false,
                     data: null,
                     error: null,
+                    progress: 0,
                 },
             };
         }
@@ -1037,6 +1066,35 @@ export const collectionsStructure = (
                     isLoading: false,
                     data: null,
                     error: null,
+                },
+            };
+        }
+
+        // Getting workbook import progres
+        case GET_IMPORT_PROGRESS_LOADING: {
+            return {
+                ...state,
+                getImportProgress: {
+                    ...state.getImportProgress,
+                    isLoading: true,
+                },
+            };
+        }
+        case GET_IMPORT_PROGRESS_SUCCESS: {
+            return {
+                ...state,
+                getImportProgress: {
+                    isLoading: false,
+                    data: action.data,
+                },
+            };
+        }
+        case RESET_IMPORT_PROGRESS: {
+            return {
+                ...state,
+                getImportProgress: {
+                    isLoading: false,
+                    data: null,
                 },
             };
         }
