@@ -1,3 +1,5 @@
+import type {DashData} from '../types';
+
 export enum DashMailingChartHeight {
     Original = 'original',
     '280px' = '280',
@@ -44,6 +46,14 @@ export const RESTRICTED_PARAM_NAMES = [
     'genericdatetime',
 ];
 
-export const DASH_CURRENT_SCHEME_VERSION = 7;
+export const DASH_CURRENT_SCHEME_VERSION = 8;
 
 export const LOADED_DASH_CLASS = 'dash-body-loaded';
+
+export const DASH_DATA_REQUIRED_FIELDS: Array<keyof DashData> = [
+    'salt',
+    'counter',
+    'schemeVersion',
+    'tabs',
+    'settings',
+];

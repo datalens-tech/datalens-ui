@@ -16,8 +16,8 @@ import block from 'bem-cn-lite';
 import {color as d3Color} from 'd3-color';
 import {i18n} from 'i18n';
 import {DashCommonQa} from 'shared';
+import {BASE_GREY_BACKGROUND_COLOR, CustomPaletteBgColors} from 'shared/constants/widgets';
 import {ColorPickerInput} from 'ui/components/ColorPickerInput/ColorPickerInput';
-import {BASE_GREY_BACKGROUND_COLOR, CustomPaletteBgColors} from 'ui/constants/widgets';
 
 import './ColorPalette.scss';
 
