@@ -45,6 +45,9 @@ export const selectWidgetsCurrentTab = (state: DatalensGlobalState) =>
 
 export const selectTabId = (state: DatalensGlobalState) => state.dash?.tabId;
 
+export const selectLastModifiedItemId = (state: DatalensGlobalState) =>
+    state.dash?.lastModifiedItemId ?? null;
+
 export const selectTabs = (state: DatalensGlobalState) => state.dash.data?.tabs || null;
 export const selectTab = (state: DatalensGlobalState) =>
     state.dash.data?.tabs.find(({id}) => id === state.dash.tabId) || null;

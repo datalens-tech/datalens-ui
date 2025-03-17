@@ -38,6 +38,7 @@ const initialState = {
     convertedEntryData: null,
 
     tabId: null,
+    lastModifiedItemId: null,
 
     hashStates: null,
 
@@ -179,6 +180,7 @@ function dash(state = initialState, action) {
             return {
                 ...state,
                 data: update(data, updateData),
+                lastModifiedItemId: null,
                 tabId: newTabId,
             };
         }
@@ -302,8 +304,11 @@ function dash(state = initialState, action) {
                 });
             }
 
+            const modifiedItem = tabData.layout[tabData.layout.length - 1];
+
             return {
                 ...state,
+                lastModifiedItemId: modifiedItem.i,
                 data: update(data, {
                     tabs: {
                         [tabIndex]: {$set: pick(tabData, TAB_PROPERTIES)},
