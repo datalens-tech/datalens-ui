@@ -49,6 +49,7 @@ import {TAB_PROPERTIES} from './dash';
 
 export type DashState = {
     tabId: null | string;
+    lastModifiedItemId: null | string;
     hashStates?: null | TabsHashStates;
     stateHashId: null | string;
     initialTabsSettings?: null | DashData['tabs'];
