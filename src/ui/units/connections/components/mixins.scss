@@ -1,4 +1,4 @@
-@mixin form-layout($width: 668px, $padding: 20px) {
+@mixin form-layout($width: 668px, $padding: 28px 0) {
     width: $width;
     margin: 0 auto;
     padding: $padding;

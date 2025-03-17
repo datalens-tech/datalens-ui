@@ -84,6 +84,7 @@ export type DashSettings = {
     globalParams?: DashSettingsGlobalParams;
     loadPriority?: DashLoadPriority;
     loadOnlyVisibleCharts?: boolean;
+    margins?: [number, number];
 };
 
 export interface DashData {
@@ -102,7 +103,9 @@ export type DashDragOptions = ItemDropProps;
 // config with strict requirements of settings for new dash
 // schemeVersion comes from server
 export type FakeDashData = Omit<DashData, 'schemeVersion'> & {
-    settings: Required<DashSettings>;
+    settings: Required<Omit<DashSettings, 'margins'>> & {
+        margins?: DashSettings['margins'];
+    };
 };
 
 export interface DashTabSettings {
