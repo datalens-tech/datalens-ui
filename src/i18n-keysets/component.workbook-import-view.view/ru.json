@@ -2,7 +2,7 @@
   "button_cancel": "Отменить",
   "button_close": "Закрыть",
   "button_go-to-workbook": "Открыть воркбук",
-  "label_success-import": "Импорт прошёл успешно",
+  "label_success-import": "Импорт конфигурации воркбука прошёл успешно",
   "title_creating-workbook": "Создаём воркбук",
   "title_error-creating": "Ошибка при импорте воркбука",
   "title_workbook-created": "Воркбук создан"
