@@ -34,7 +34,6 @@ const vendors = (vendorsList: string[]) => {
 const config: ServiceConfig = {
     client: {
         bundler: 'rspack',
-        javaScriptLoader: 'swc',
         alias: {
             i18n: 'src/i18n',
             shared: 'src/shared',
@@ -76,6 +75,7 @@ const config: ServiceConfig = {
             'cose-base': false,
             'layout-base': false,
             'highlight.js': false,
+            buffer: false,
         },
     },
     server: {
