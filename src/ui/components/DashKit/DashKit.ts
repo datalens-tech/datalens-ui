@@ -5,6 +5,7 @@ import {registry} from 'ui/registry';
 import {DL} from '../../constants';
 import MarkdownProvider from '../../modules/markdownProvider';
 
+import {DEFAULT_DASH_MARGINS} from './constants';
 import {DashkitWrapper, getDashKitMenu} from './helpers';
 import pluginControl from './plugins/Control/Control';
 import pluginGroupControl from './plugins/GroupControl/GroupControl';
@@ -78,7 +79,7 @@ export const getConfiguredDashKit = (
     isConfigured = true;
 
     DashKit.setSettings({
-        gridLayout: {margin: [8, 8]},
+        gridLayout: {margin: DEFAULT_DASH_MARGINS},
         theme: 'datalens',
         isMobile: DL.IS_MOBILE,
         menu: getDashKitMenu(),

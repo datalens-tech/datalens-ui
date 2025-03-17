@@ -83,6 +83,8 @@ export enum Feature {
     EnableExportWorkbookFile = 'EnableExportWorkbookFile',
     /** Enable using RLS v2 config for datasets */
     EnableRLSV2 = 'EnableRLSV2',
+    /** Enable custom dashboard gaps */
+    EnableCustomDashMargins = 'EnableCustomDashMargins',
 }
 
 export type FeatureConfig = Record<string, boolean>;
