@@ -1490,7 +1490,7 @@ type GetImportProgressAction =
     | GetImportProgressSuccessAction
     | ResetGetImportProgressAction;
 
-export const getImportProgress = (_: {loadId: string}) => {
+export const getImportProgress = (_: {importId?: string}) => {
     return (dispatch: CollectionsStructureDispatch, getState: () => DatalensGlobalState) => {
         const {collectionsStructure} = getState();
         dispatch({
