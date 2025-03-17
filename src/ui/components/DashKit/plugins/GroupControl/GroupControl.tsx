@@ -26,7 +26,8 @@ import {
 import {getUrlGlobalParams} from 'ui/units/dash/utils/url';
 
 import {ExtendedDashKitContext} from '../../../../units/dash/utils/context';
-import {DEFAULT_CONTROL_LAYOUT} from '../../constants';
+import {DEBOUNCE_RENDER_TIMEOUT, DEFAULT_CONTROL_LAYOUT} from '../../constants';
+import {useWidgetContext} from '../../context/WidgetContext';
 import {adjustWidgetLayout} from '../../utils';
 import {LOAD_STATUS} from '../Control/constants';
 import type {ControlSettings, LoadStatus} from '../Control/types';
@@ -66,6 +67,19 @@ const i18n = I18n.keyset('dash.dashkit-plugin-control.view');
 
 const LOCAL_META_VERSION = 2;
 
+const GroupControlWrapper = React.forwardRef<
+    HTMLDivElement,
+    {id: string; autoHeight: boolean; children: React.ReactNode}
+>(function GroupControlWrapper(props, nodeRef) {
+    useWidgetContext(props.id, nodeRef as React.RefObject<HTMLElement>);
+
+    return (
+        <div ref={nodeRef} className={b({mobile: DL.IS_MOBILE, static: props.autoHeight})}>
+            {props.children}
+        </div>
+    );
+});
+
 class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGroupControlState> {
     static contextType = ExtendedDashKitContext;
 
@@ -93,9 +107,13 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
     localMeta: GroupControlLocalMeta = {version: LOCAL_META_VERSION, queue: []};
 
+    _onRedraw: null | (() => void) = null;
+
     constructor(props: PluginGroupControlProps) {
         super(props);
         const controlData = this.propsControlData;
+
+        this._onRedraw = debounce(this.props.onBeforeLoad(), DEBOUNCE_RENDER_TIMEOUT);
 
         this.controlsProgressCount = controlData?.group?.length || 0;
         controlData.group?.forEach((item) => {
@@ -222,9 +240,10 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             this.state.localUpdateLoader;
 
         return (
-            <div
+            <GroupControlWrapper
                 ref={this.rootNode}
-                className={b({mobile: DL.IS_MOBILE, static: !this.props.data.autoHeight})}
+                id={this.props.id}
+                autoHeight={(this.props.data.autoHeight as boolean) ?? false}
             >
                 <div
                     className={b('container', CHARTKIT_SCROLLABLE_NODE_CLASSNAME)}
@@ -242,7 +261,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                         </div>
                     )}
                 </div>
-            </div>
+            </GroupControlWrapper>
         );
     }
 
@@ -661,6 +680,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             if (loadedData || loadedData === null) {
                 this.controlsData[controlId] = loadedData;
             }
+            this._onRedraw?.();
         } else if (isInitialPending) {
             this.controlsProgressCount++;
         } else if (isReloadPending) {
@@ -904,7 +924,10 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             rootNode: this.rootNode,
             gridLayout: this.props.gridLayout,
             layout: this.props.layout,
-            cb: this.props.adjustWidgetLayout,
+            cb: (data) => {
+                this.props.adjustWidgetLayout(data);
+                this._onRedraw?.();
+            },
         });
     }
 }

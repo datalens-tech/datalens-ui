@@ -60,6 +60,7 @@ import {
     FIXED_HEADER_GROUP_COLS,
     FIXED_HEADER_GROUP_LINE_MAX_ROWS,
 } from 'ui/components/DashKit/constants';
+import {WidgetContextProvider} from 'ui/components/DashKit/context/WidgetContext';
 import {getDashKitMenu} from 'ui/components/DashKit/helpers';
 import {showToast} from 'ui/store/actions/toaster';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
@@ -106,6 +107,7 @@ import {
     selectDashWorkbookId,
     selectEntryId,
     selectIsNewRelations,
+    selectLastModifiedItemId,
     selectSettings,
     selectShowTableOfContent,
     selectSkipReload,
@@ -161,7 +163,7 @@ type DashBodyState = {
     prevMeta: {tabId: string | null; entryId: string | null};
     loadedItemsMap: Map<string, boolean>;
     hash: string;
-    delayedScrollId: string | null;
+    delayedScrollElement: HTMLElement | string | null;
     lastDelayedScrollTop: number | null;
     groups: {
         margins: [number, number];
@@ -188,7 +190,7 @@ type GetPreparedCopyItemOptions<T extends object = {}> = (
 ) => PreparedCopyItemOptions<T>;
 
 // Body is used as a core in different environments
-class Body extends React.PureComponent<BodyProps> {
+class Body extends React.PureComponent<BodyProps, DashBodyState> {
     static getDerivedStateFromProps(props: BodyProps, state: DashBodyState) {
         let updatedState: Partial<DashBodyState> = {};
 
@@ -215,15 +217,17 @@ class Body extends React.PureComponent<BodyProps> {
         }
 
         if (!props.disableHashNavigation) {
-            if (!currentHash && state.delayedScrollId) {
-                updatedState.delayedScrollId = null;
+            if (!currentHash && state.delayedScrollElement) {
+                updatedState.delayedScrollElement = null;
                 updatedState.lastDelayedScrollTop = null;
             } else if (!isTabUnmount && hasHashChanged) {
                 scrollIntoView(currentHash.replace('#', ''));
-                updatedState.delayedScrollId = state.loaded ? null : currentHash.replace('#', '');
+                updatedState.delayedScrollElement = state.loaded
+                    ? null
+                    : currentHash.replace('#', '');
                 updatedState.lastDelayedScrollTop = null;
             } else if (currentHash && isTabUnmount) {
-                updatedState.delayedScrollId = currentHash.replace('#', '');
+                updatedState.delayedScrollElement = currentHash.replace('#', '');
                 updatedState.lastDelayedScrollTop = null;
             }
         }
@@ -266,9 +270,9 @@ class Body extends React.PureComponent<BodyProps> {
     }, UPDATE_STATE_DEBOUNCE_TIME);
 
     scrollIntoViewWithDebounce = debounce(() => {
-        if (this.state.delayedScrollId) {
+        if (this.state.delayedScrollElement) {
             const lastDelayedScrollTop = scrollIntoView(
-                this.state.delayedScrollId,
+                this.state.delayedScrollElement,
                 this.state.lastDelayedScrollTop,
             );
             this.setState({lastDelayedScrollTop});
@@ -302,7 +306,7 @@ class Body extends React.PureComponent<BodyProps> {
         loaded: false,
         loadedItemsMap: new Map<string, boolean>(),
         hash: '',
-        delayedScrollId: null,
+        delayedScrollElement: null,
         lastDelayedScrollTop: null,
         groups: {
             margins: DEFAULT_DASH_MARGINS,
@@ -340,7 +344,7 @@ class Body extends React.PureComponent<BodyProps> {
         this.storageHandler();
 
         if (this.props.location.hash && !this.props.disableHashNavigation) {
-            this.setState({delayedScrollId: this.props.location.hash.replace('#', '')});
+            this.setState({delayedScrollElement: this.props.location.hash.replace('#', '')});
         }
 
         window.addEventListener('storage', this.storageHandler);
@@ -792,8 +796,8 @@ class Body extends React.PureComponent<BodyProps> {
     };
 
     interruptAutoScroll = (event: Event) => {
-        if (event.isTrusted && this.state.delayedScrollId) {
-            this.setState({delayedScrollId: null, lastDelayedScrollTop: null});
+        if (event.isTrusted && this.state.delayedScrollElement) {
+            this.setState({delayedScrollElement: null, lastDelayedScrollTop: null});
         }
     };
 
@@ -957,6 +961,17 @@ class Body extends React.PureComponent<BodyProps> {
         return this._memoizedOrderedConfig?.config;
     };
 
+    private itemAddHandler = (isMounted: boolean, id: string, domElement: HTMLElement) => {
+        if (isMounted && this.props.lastModifiedItem === id) {
+            const lastDelayedScrollTop = scrollIntoView(domElement, null);
+
+            this.setState({
+                delayedScrollElement: domElement,
+                lastDelayedScrollTop,
+            });
+        }
+    };
+
     private renderDashkit = () => {
         const {isGlobalDragging} = this.state;
         const {
@@ -987,35 +1002,39 @@ class Body extends React.PureComponent<BodyProps> {
                 isEditModeLoading={isEditModeLoading}
             />
         ) : (
-            <DashKit
-                ref={this.dashKitRef}
-                config={tabDataConfig as DashKitProps['config']}
-                editMode={mode === Mode.Edit}
-                focusable={true}
-                onDrop={this.onDropElement}
-                itemsStateAndParams={this.props.hashStates as DashKitProps['itemsStateAndParams']}
-                groups={this.state.groups.renderers}
-                context={context}
-                getPreparedCopyItemOptions={
-                    this
-                        .getPreparedCopyItemOptionsFn satisfies GetPreparedCopyItemOptions<any> as GetPreparedCopyItemOptions<{}>
-                }
-                onCopyFulfill={this.onItemCopy}
-                onItemEdit={this.props.openItemDialogAndSetData}
-                onChange={this.onChange}
-                settings={dashkitSettings}
-                defaultGlobalParams={settings.globalParams}
-                globalParams={globalParams}
-                overlayControls={this.getOverlayControls()}
-                overlayMenuItems={this.getOverlayMenu()}
-                skipReload={this.props.skipReload}
-                isNewRelations={this.props.isNewRelations}
-                onItemMountChange={this.handleItemMountChange}
-                onItemRender={this.handleItemRender}
-                hideErrorDetails={this.props.hideErrorDetails}
-                setWidgetCurrentTab={this.props.setWidgetCurrentTab}
-                dataProviderContextGetter={this.dataProviderContextGetter}
-            />
+            <WidgetContextProvider onWidgetMountChange={this.itemAddHandler}>
+                <DashKit
+                    ref={this.dashKitRef}
+                    config={tabDataConfig as DashKitProps['config']}
+                    editMode={mode === Mode.Edit}
+                    focusable={true}
+                    onDrop={this.onDropElement}
+                    itemsStateAndParams={
+                        this.props.hashStates as DashKitProps['itemsStateAndParams']
+                    }
+                    groups={this.state.groups.renderers}
+                    context={context}
+                    getPreparedCopyItemOptions={
+                        this
+                            .getPreparedCopyItemOptionsFn satisfies GetPreparedCopyItemOptions<any> as GetPreparedCopyItemOptions<{}>
+                    }
+                    onCopyFulfill={this.onItemCopy}
+                    onItemEdit={this.props.openItemDialogAndSetData}
+                    onChange={this.onChange}
+                    settings={dashkitSettings}
+                    defaultGlobalParams={settings.globalParams}
+                    globalParams={globalParams}
+                    overlayControls={this.getOverlayControls()}
+                    overlayMenuItems={this.getOverlayMenu()}
+                    skipReload={this.props.skipReload}
+                    isNewRelations={this.props.isNewRelations}
+                    onItemMountChange={this.handleItemMountChange}
+                    onItemRender={this.handleItemRender}
+                    hideErrorDetails={this.props.hideErrorDetails}
+                    setWidgetCurrentTab={this.props.setWidgetCurrentTab}
+                    dataProviderContextGetter={this.dataProviderContextGetter}
+                />
+            </WidgetContextProvider>
         );
     };
 
@@ -1047,9 +1066,9 @@ class Body extends React.PureComponent<BodyProps> {
                 loadedItemsMap.size === this.props.tabData?.items.length &&
                 Array.from(loadedItemsMap.values()).every(Boolean);
 
-            if (isLoaded && this.state.delayedScrollId) {
-                scrollIntoView(this.state.delayedScrollId, this.state.lastDelayedScrollTop);
-                this.setState({delayedScrollId: null, lastDelayedScrollTop: null});
+            if (isLoaded && this.state.delayedScrollElement) {
+                scrollIntoView(this.state.delayedScrollElement, this.state.lastDelayedScrollTop);
+                this.setState({delayedScrollElement: null, lastDelayedScrollTop: null});
             } else {
                 // if the dash is not fully loaded, we are starting a scroll chain
                 // that will try to scroll to the title after each item rendering
@@ -1066,7 +1085,7 @@ class Body extends React.PureComponent<BodyProps> {
             }
 
             this.setState({
-                delayedScrollId: encodeURIComponent(itemTitle),
+                delayedScrollElement: encodeURIComponent(itemTitle),
                 lastDelayedScrollTop: null,
             });
         }
@@ -1170,6 +1189,7 @@ class Body extends React.PureComponent<BodyProps> {
 
 const mapStateToProps = (state: DatalensGlobalState) => ({
     entryId: selectEntryId(state),
+    lastModifiedItem: selectLastModifiedItemId(state),
     entry: state.dash.entry,
     mode: state.dash.mode,
     showTableOfContent: selectShowTableOfContent(state),

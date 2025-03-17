@@ -1,8 +1,8 @@
 import React from 'react';
 
 import debounce from 'lodash/debounce';
+import {DEBOUNCE_RENDER_TIMEOUT} from 'ui/components/DashKit/constants';
 
-const DEBOUNCE_RENDER_TIMEOUT = 200;
 export const useBeforeLoad = (onBeforeLoad: () => () => void) => {
     const onUpdate = React.useRef<() => void | null>();
 
