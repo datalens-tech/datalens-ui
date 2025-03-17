@@ -87,6 +87,8 @@ export enum Feature {
     DashServerValidationEnable = 'DashServerValidationEnable',
     /* Enable Dash server entry migrations */
     DashServerMigrationEnable = 'DashServerMigrationEnable',
+    /** Enable custom dashboard gaps */
+    EnableCustomDashMargins = 'EnableCustomDashMargins',
 }
 
 export type FeatureConfig = Record<string, boolean>;

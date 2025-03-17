@@ -817,9 +817,7 @@ export class DataFetcher {
             });
         }
 
-        if (ctx.config.appEnv !== 'development') {
-            requestOptions.headers['x-forwarded-for'] = originalReqHeaders.xForwardedFor;
-        }
+        requestOptions.headers['x-forwarded-for'] = originalReqHeaders.xForwardedFor;
 
         if (!requestOptions.headers['x-real-ip']) {
             requestOptions.headers['x-real-ip'] = originalReqHeaders.xRealIP;

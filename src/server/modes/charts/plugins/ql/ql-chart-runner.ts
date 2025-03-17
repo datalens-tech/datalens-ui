@@ -32,6 +32,7 @@ async function getQlWorker(options?: WorkerPoolOptions): Promise<Proxy<WizardWor
 export const runQlChart: RunnerHandler = async (cx: AppContext, props: RunnerHandlerProps) => {
     const {req, res, config} = props;
     const {widgetConfig} = req.body;
+    const timeouts = cx.config.runnerExecutionTimeouts?.qlChart;
     const chartBuilder = await getWizardChartBuilder({
         userLang: res.locals && res.locals.lang,
         userLogin: res.locals && res.locals.login,
@@ -41,6 +42,7 @@ export const runQlChart: RunnerHandler = async (cx: AppContext, props: RunnerHan
         worker: await getQlWorker({
             maxWorkers: cx.config.chartsEngineConfig.maxWorkers ?? 1,
         }),
+        timeouts,
     });
 
     return runWorkerChart(cx, {...props, chartBuilder, runnerType: 'Ql'});
