@@ -11,17 +11,12 @@ import {
     DATASET_RESULT_URL,
 } from '../../../../modes/charts/plugins/control/url/constants';
 import type {
+    APIConnectorParams,
     Source,
     SourceWithAPIConnector,
     SourceWithDatasetId,
     SourceWithQLConnector,
 } from '../../types';
-
-export type APIConnectorParams = {
-    method: string;
-    body: Record<string, unknown>;
-    path: string;
-};
 
 export const isAPIConnectorSource = (source: Source): source is SourceWithAPIConnector => {
     return isString(source.apiConnectionId) && isString(source.method) && isString(source.path);
@@ -50,7 +45,10 @@ export const getApiConnectorParamsFromSource = (
     };
 
     if (originalSource.method === 'POST' && 'body' in originalSource) {
-        result.body = originalSource.body as Record<string, unknown>;
+        result.body = originalSource.body;
+        result.content_type = isString(originalSource.body)
+            ? 'text/plain;charset=utf-8'
+            : 'application/json';
     }
 
     return result;
