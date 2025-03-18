@@ -6,6 +6,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {Feature} from 'shared/types/feature';
 import type {AppDispatch} from 'store';
 import {DIALOG_DEFAULT} from 'ui/components/DialogDefault/DialogDefault';
+import {useMountedState} from 'ui/hooks';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
@@ -34,6 +35,8 @@ import './CreateWorkbookDialog.scss';
 
 const i18n = I18n.keyset('component.collections-structure');
 
+const GET_IMPORT_PROGRESS_INTERVAL = 1000;
+
 export const DIALOG_CREATE_WORKBOOK = Symbol('DIALOG_CREATE_WORKBOOK');
 
 export type OpenDialogCreateWorkbookArgs = {
@@ -49,6 +52,7 @@ type Props = {
     onClose: () => void;
     onApply?: (result: CreateWorkbookResponse | null) => void | Promise<void>;
     defaultView?: 'default' | 'import';
+    importId?: string;
 };
 
 const b = block('create-workbook-dialog');
@@ -61,6 +65,7 @@ export const CreateWorkbookDialog: React.FC<Props> = ({
     onClose,
     onApply,
     defaultView = 'default',
+    importId,
 }) => {
     const dispatch: AppDispatch = useDispatch();
 
@@ -79,6 +84,8 @@ export const CreateWorkbookDialog: React.FC<Props> = ({
     const [importFiles, setImportFiles] = React.useState<File[]>([]);
     const [importValidationError, setImportValidationError] = React.useState<null | string>(null);
 
+    const isMounted = useMountedState();
+
     React.useEffect(() => {
         if (open) {
             setView(defaultView);
@@ -89,20 +96,40 @@ export const CreateWorkbookDialog: React.FC<Props> = ({
     }, [defaultView, dispatch, open]);
 
     React.useEffect(() => {
-        let intervalId: NodeJS.Timeout | null = null;
+        let timeoutId: NodeJS.Timeout | null = null;
+        let isCancelled = false;
+
+        const fetchProgress = async () => {
+            if (!isMounted() || isCancelled) {
+                return;
+            }
+
+            const startTime = Date.now();
+
+            await dispatch(getImportProgress({importId}));
+
+            // Calculate time elapsed since request started
+            const elapsedTime = Date.now() - startTime;
+
+            // Schedule next poll either after 1 second from the finish of the previous request
+            // or immediately if the request took longer than 1 second
+            if (!isCancelled) {
+                const nextPollDelay = Math.max(0, GET_IMPORT_PROGRESS_INTERVAL - elapsedTime);
+                timeoutId = setTimeout(fetchProgress, nextPollDelay);
+            }
+        };
 
         if (view === 'import' && importStatus === 'loading' && open) {
-            intervalId = setInterval(() => {
-                dispatch(getImportProgress({loadId: ''}));
-            }, 300);
+            fetchProgress();
         }
 
         return () => {
-            if (intervalId) {
-                clearInterval(intervalId);
+            isCancelled = true;
+            if (timeoutId) {
+                clearTimeout(timeoutId);
             }
         };
-    }, [dispatch, importStatus, open, view]);
+    }, [dispatch, importId, importStatus, isMounted, open, view]);
 
     const handleFileUploding = (file: File) => {
         setImportFiles([file]);
