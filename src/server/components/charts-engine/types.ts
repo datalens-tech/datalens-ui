@@ -131,6 +131,15 @@ export type Source<T = string | Record<string, string>> = {
     _original?: unknown;
 };
 
+export type APIConnectorContentType = 'application/json' | 'text/plain;charset=utf-8';
+
+export type APIConnectorParams = {
+    method: string;
+    body: Record<string, unknown>;
+    path: string;
+    content_type: APIConnectorContentType;
+};
+
 export type SourceWithAPIConnector = Source &
     Required<Pick<Source, 'apiConnectionId' | 'method' | 'path'>>;
 
