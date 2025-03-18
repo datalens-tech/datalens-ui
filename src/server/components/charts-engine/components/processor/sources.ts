@@ -38,20 +38,17 @@ export const getApiConnectorParamsFromSource = (
         throw new Error('ApiConnector source is not prepared');
     }
 
-    const contentType =
-        'body' in originalSource && isString(originalSource.body)
-            ? 'text/plain;charset=utf-8'
-            : 'application/json';
-
     const result: APIConnectorParams = {
         method: originalSource.method,
         body: {},
         path: originalSource.path,
-        content_type: contentType,
     };
 
     if (originalSource.method === 'POST' && 'body' in originalSource) {
-        result.body = originalSource.body as Record<string, unknown>;
+        result.body = originalSource.body;
+        result.content_type = isString(originalSource.body)
+            ? 'text/plain;charset=utf-8'
+            : 'application/json';
     }
 
     return result;

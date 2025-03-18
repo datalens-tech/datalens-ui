@@ -135,9 +135,9 @@ export type APIConnectorContentType = 'application/json' | 'text/plain;charset=u
 
 export type APIConnectorParams = {
     method: string;
-    body: Record<string, unknown>;
+    body: unknown;
     path: string;
-    content_type: APIConnectorContentType;
+    content_type?: APIConnectorContentType;
 };
 
 export type SourceWithAPIConnector = Source &
