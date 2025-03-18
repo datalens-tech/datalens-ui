@@ -54,7 +54,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@braintree/sanitize-url": "^6.0.0",
-    "@datalens-tech/ui-sandbox-modules": "^0.34.0",
+    "@datalens-tech/ui-sandbox-modules": "^0.35.0",
     "@datalens-tech/xlsx": "^0.20.1",
     "@diplodoc/cut-extension": "^0.5.0",
     "@diplodoc/latex-extension": "^1.1.0",
