@@ -3,7 +3,11 @@ import {generateUniqId} from '@gravity-ui/dashkit/helpers';
 import update from 'immutability-helper';
 import pick from 'lodash/pick';
 import {DashTabItemTitleSizes, DashTabItemType} from 'shared';
-import {CustomPaletteBgColors, WIDGET_BG_COLORS_PRESET} from 'ui/constants/widgets';
+import {
+    CustomPaletteBgColors,
+    WIDGET_BG_COLORS_PRESET,
+    isCustomPaletteBgColor,
+} from 'ui/constants/widgets';
 import {migrateConnectionsForGroupControl} from 'ui/store/utils/controlDialog';
 import {getUpdatedConnections} from 'ui/utils/copyItems';
 
@@ -208,16 +212,25 @@ function dash(state = initialState, action) {
             };
         case actionTypes.SET_COPIED_ITEM_DATA: {
             const itemData = action.payload.item.data;
+
+            const defaultBgColor =
+                action.payload.item.type === DashTabItemType.Widget
+                    ? CustomPaletteBgColors.LIKE_CHART
+                    : CustomPaletteBgColors.NONE;
+
+            const currentItemBgColor = itemData.background?.color ?? defaultBgColor;
+
+            const isAvailableInDashsBgColor =
+                WIDGET_BG_COLORS_PRESET.includes(currentItemBgColor) ||
+                isCustomPaletteBgColor(currentItemBgColor);
             const backgroundData =
                 'background' in itemData
                     ? {
                           background: {
                               color:
-                                  itemData.background?.color &&
-                                  itemData.background.enabled !== false &&
-                                  WIDGET_BG_COLORS_PRESET.includes(itemData.background.color)
-                                      ? itemData.background.color
-                                      : CustomPaletteBgColors.NONE,
+                                  itemData.background.enabled !== false && isAvailableInDashsBgColor
+                                      ? currentItemBgColor
+                                      : defaultBgColor,
                           },
                       }
                     : {};

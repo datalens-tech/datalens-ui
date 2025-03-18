@@ -9,13 +9,10 @@ import type {Plugin, PluginTitleProps} from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
 import type {DashTabItemTitle} from 'shared';
-import {
-    adjustWidgetLayout as dashkitAdjustWidgetLayout,
-    getPreparedWrapSettings,
-} from 'ui/components/DashKit/utils';
-import {CustomPaletteBgColors} from 'ui/constants/widgets';
+import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
+import {usePreparedWrapSettings} from '../../hooks';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
 import {AnchorLink} from './AnchorLink/AnchorLink';
@@ -95,13 +92,7 @@ const titlePlugin: PluginTitle = {
 
         const content = <DashKitPluginTitle {...props} ref={forwardedRef} />;
 
-        const showBgColor = Boolean(
-            data.background?.enabled !== false &&
-                data.background?.color &&
-                data.background?.color !== CustomPaletteBgColors.NONE,
-        );
-
-        const {classMod, style} = getPreparedWrapSettings(showBgColor, data.background?.color);
+        const {classMod, style, hasBgColor} = usePreparedWrapSettings(data.background);
 
         const currentLayout = props.layout.find(({i}) => i === props.id) || {
             x: null,
@@ -190,7 +181,7 @@ const titlePlugin: PluginTitle = {
                 <div
                     className={b({
                         'with-auto-height': Boolean(data.autoHeight),
-                        'with-color': Boolean(showBgColor),
+                        'with-color': hasBgColor,
                         'with-inline-anchor': Boolean(withInlineAnchor),
                         'with-absolute-anchor': Boolean(withAbsoluteAnchor),
                     })}
