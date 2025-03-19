@@ -79,6 +79,7 @@ function getPrepareTab(args?: {docs: DocsLink}) {
             id: 'prepare',
             language: 'javascript',
             docs: docs,
+            isMainTab: true,
         },
     ];
 }
@@ -460,13 +461,14 @@ export function getChartEditorTypes(type: string) {
                     docs: docsParams,
                 },
                 ...(isEnabledFeature('EnableChartEditorControlsJSTab')
-                    ? getPrepareTab({docs: docsControls})
+                    ? [{...getPrepareTab({docs: docsControls})[0], isMainTab: false}]
                     : []),
                 {
                     name: 'Controls',
                     id: 'controls',
                     language: 'javascript',
                     docs: docsControls,
+                    isMainTab: true,
                 },
                 ...getSharedTab({docs: docsShare}),
             ],
@@ -622,6 +624,7 @@ export function getChartEditorTypes(type: string) {
     const order = isEnabledFeature('EditorTabNewOrder')
         ? ['meta', 'shared', 'params', 'sources', 'config', 'prepare', 'controls', 'actions']
         : [];
+
     chartEditorTypes[type].tabs = sortBy(chartEditorTypes[type].tabs, (tab) =>
         order.indexOf(tab.id),
     );

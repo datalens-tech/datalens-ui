@@ -98,8 +98,8 @@ export interface EditorEntry extends Required<Omit<GetEntryResponse, 'data'>, 'p
     meta: EntryFieldMeta<{
         is_release?: boolean;
     }>;
-    data: NonNullable<EntryFieldData<EditorEntryData>>;
-    fake?: false;
+    data: EntryFieldData;
+    fake?: boolean;
 }
 
 export type EditorFakeEntry = Omit<EditorEntry, 'entryId'> & {
