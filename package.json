@@ -63,7 +63,7 @@
     "@diplodoc/transform": "^4.42.3",
     "@gravity-ui/app-layout": "^2.1.0",
     "@gravity-ui/browserslist-config": "^4.3.0",
-    "@gravity-ui/chartkit": "^5.19.1",
+    "@gravity-ui/chartkit": "^5.19.2",
     "@gravity-ui/dashkit": "^8.26.1",
     "@gravity-ui/date-utils": "^2.5.6",
     "@gravity-ui/expresskit": "^2.1.0",
