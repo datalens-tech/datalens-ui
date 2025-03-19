@@ -18,6 +18,7 @@ function App() {
             <Switch>
                 <Route
                     path={['/editor/draft', '/workbooks/:workbookId/editor/draft']}
+                    exact={true}
                     component={(props: AppRouteProps) => (
                         <Redirect
                             to={getFullPathName({
