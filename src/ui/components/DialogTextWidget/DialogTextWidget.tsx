@@ -7,7 +7,7 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import type {DashTabItemText} from 'shared';
 import {DialogDashWidgetItemQA, DialogDashWidgetQA} from 'shared';
-import {CustomPaletteBgColors} from 'ui/constants/widgets';
+import {CustomPaletteBgColors} from 'shared/constants/widgets';
 import {PaletteBackground} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 
 import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
