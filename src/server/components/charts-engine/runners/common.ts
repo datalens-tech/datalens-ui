@@ -235,15 +235,8 @@ export const getSerializableProcessorParams = ({
         originalReqHeaders,
         adapterContext,
         hooksContext,
+        configOverride: generatedConfig,
     };
-
-    if (req.body.unreleased === 1) {
-        processorParams.useUnreleasedConfig = true;
-    }
-
-    if (generatedConfig) {
-        processorParams.configOverride = generatedConfig;
-    }
 
     const configWorkbook = workbookId ?? localConfig?.workbookId;
     if (configWorkbook) {
@@ -274,7 +267,7 @@ export const getSerializableProcessorParams = ({
     return processorParams;
 };
 
-export function commonRunner({
+export async function commonRunner({
     res,
     req,
     ctx,
