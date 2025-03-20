@@ -267,7 +267,7 @@ export const getSerializableProcessorParams = ({
     return processorParams;
 };
 
-export async function commonRunner({
+export function commonRunner({
     res,
     req,
     ctx,
