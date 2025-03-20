@@ -7,6 +7,7 @@ import {ProgressBar} from 'ui/components/ProgressBar/ProgressBar';
 import ViewError from 'ui/components/ViewError/ViewError';
 
 import {EntriesNotificationCut} from '../../components/EntriesNotificationCut/EntriesNotificationCut';
+import {transformNotifications} from '../../components/EntriesNotificationCut/helpers';
 import type {TempImportExportDataType} from '../../components/EntriesNotificationCut/types';
 import type {ImportExportStatus} from '../../types';
 
@@ -16,47 +17,50 @@ const b = block('import-workbook-file-view');
 
 const i18n = I18n.keyset('component.workbook-import-view.view');
 
-export type Props = {
-    status?: ImportExportStatus;
+export type ImportWorkbookViewProps = {
     error: null | Error;
-    progress: number | null;
-    // TODO: Fix type
     data: TempImportExportDataType | null;
+    status: ImportExportStatus;
+    progress: number;
 };
 
-export const ImportWorkbookView: React.FC<Props> = ({status, error, progress, data}) => {
+export const ImportWorkbookView = ({status, error, progress, data}: ImportWorkbookViewProps) => {
     switch (status) {
-        case 'loading':
-            if (!progress) {
-                return (
-                    <Flex alignItems="center" justifyContent="center">
-                        <Loader size="m" />
-                    </Flex>
-                );
-            }
+        case 'pending':
             return <ProgressBar size="s" className={b('progress')} value={progress} />;
+
+        case 'loading':
+            return (
+                <Flex alignItems="center" justifyContent="center">
+                    <Loader size="m" />
+                </Flex>
+            );
         case 'success':
         case 'notification-error':
             if (!data) {
                 return null;
             }
-            if (!data.notifications?.length) {
+            if (data.status !== 'error' && !data.notifications) {
                 return (
                     <EntriesNotificationCut title={i18n('label_success-import')} level="success" />
                 );
             }
-            return (
-                <Flex direction="column" gap={4}>
-                    {data.notifications.map((notification) => (
-                        <EntriesNotificationCut
-                            key={notification.code}
-                            title={notification.message}
-                            level={notification.level}
-                            entries={notification.entries}
-                        />
-                    ))}
-                </Flex>
-            );
+
+            {
+                const preparedNotifications = transformNotifications(data.notifications);
+                return (
+                    <Flex direction="column" gap={4}>
+                        {preparedNotifications.map(({code, message, level, entries}) => (
+                            <EntriesNotificationCut
+                                key={code}
+                                title={message}
+                                level={level}
+                                entries={entries}
+                            />
+                        ))}
+                    </Flex>
+                );
+            }
         case 'fatal-error':
         default:
             return <ViewError containerClassName={b('error-content')} error={error} size="s" />;
