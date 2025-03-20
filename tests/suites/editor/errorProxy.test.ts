@@ -18,7 +18,7 @@ const PARAMS = {
 datalensTest.describe('Editor passing JS errors to the user', () => {
     datalensTest('User should see a readable error', async ({page}: {page: Page}) => {
         const editorPage = new EditorPage({page});
-        await openTestPage(page, RobotChartsEditorUrls.EditorEmptyDraft, DEFAULT_QUERY);
+        await openTestPage(page, RobotChartsEditorUrls.EditorNewMarkup, DEFAULT_QUERY);
         await editorPage.drawPreview();
         const editor = await page.waitForSelector('.view-line');
         await editor.click();

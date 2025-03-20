@@ -64,7 +64,6 @@ export enum RobotChartsWizardUrls {
 
 export enum RobotChartsEditorUrls {
     EditorNew = '/editor/new',
-    EditorEmptyDraft = '/editor/draft',
     EditorNewMarkup = '/editor/draft/markup',
     EditorWithWizardId = '/editor/ikblc7qjn4reb',
     EditorWithSQLId = '/editor/estm3g44u4g84',
