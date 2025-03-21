@@ -79,7 +79,8 @@ export const CreateWorkbookDialog: React.FC<Props> = ({
 
     const importStatus = useSelector(selectImportWorkbookStatus);
 
-    const isLoading = isCreatingLoading || importStatus === 'loading' || isExternalLoading;
+    const isImportLoading = importStatus === 'loading' || importStatus === 'pending';
+    const isLoading = isCreatingLoading || isImportLoading || isExternalLoading;
 
     const [view, setView] = React.useState<'default' | 'import'>(defaultView);
     const [importFiles, setImportFiles] = React.useState<File[]>([]);
@@ -231,14 +232,14 @@ export const CreateWorkbookDialog: React.FC<Props> = ({
                 propsButtonApply: {disabled: propsButtonApply?.disabled, loading: isLoading},
                 propsButtonCancel: {
                     view: importStatus?.endsWith('error') ? 'normal' : 'flat',
-                    disabled: isLoading && importStatus !== 'loading',
+                    disabled: isLoading && !isImportLoading,
                 },
                 textButtonCancel: importStatus
                     ? getCancelButtonText(importStatus, textButtonCancel)
                     : textButtonCancel,
             };
         },
-        [handleClose, importStatus, isLoading],
+        [handleClose, importStatus, isImportLoading, isLoading],
     );
 
     const renderImportSection = () => {

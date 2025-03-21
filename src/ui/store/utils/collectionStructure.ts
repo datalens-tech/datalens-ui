@@ -15,6 +15,15 @@ export const getStatusFromOperation = ({
         isLoading: boolean;
     };
 }): ImportExportStatus => {
+    if (
+        progessOperation.data?.status === 'error' &&
+        progessOperation.data?.notifications?.some((item) => item.level === 'critical')
+    ) {
+        return 'notification-error';
+    }
+    if (initialOperation.error || progessOperation.error) {
+        return 'fatal-error';
+    }
     if (progessOperation.data?.progress && progessOperation.data.progress < 100) {
         return 'pending';
     }
@@ -23,15 +32,6 @@ export const getStatusFromOperation = ({
     }
     if (progessOperation.data?.status === 'success') {
         return 'success';
-    }
-    if (
-        progessOperation.data?.status === 'error' &&
-        progessOperation.data.notifications?.some((item) => item.level === 'critical')
-    ) {
-        return 'notification-error';
-    }
-    if (initialOperation.error || progessOperation.error) {
-        return 'fatal-error';
     }
     return null;
 };
