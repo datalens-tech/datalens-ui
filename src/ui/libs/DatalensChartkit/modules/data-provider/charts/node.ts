@@ -168,7 +168,6 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 result.uiSandboxOptions = uiSandboxOptions;
             }
 
-            await unwrapMarkdown({config: result.config, data: result.data});
             await unwrapMarkup({config: result.config, data: result.data});
 
             const isWizardOrQl = result.isNewWizard || result.isQL;
@@ -189,6 +188,8 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                     ignoreInvalidValues,
                 });
             }
+
+            await unwrapMarkdown({config: result.config, data: result.data});
 
             applyChartkitHandlers({
                 config: result.config,

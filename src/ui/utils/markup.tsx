@@ -103,7 +103,7 @@ export function mapMarkupToHtml(
                 tag: TAG_DL_TOOLTIP,
                 attributes: {
                     [ATTR_DATA_TOOLTIP_CONTENT]: mapMarkupToHtml(markup.tooltip),
-                    [ATTR_DATA_TOOLTIP_PLACEMENT]: markup.placement ?? '',
+                    [ATTR_DATA_TOOLTIP_PLACEMENT]: markup.placement ?? ['auto'],
                 } as ChartKitHtmlItem['attributes'],
                 content: mapMarkupToHtml(markup.content),
             };
