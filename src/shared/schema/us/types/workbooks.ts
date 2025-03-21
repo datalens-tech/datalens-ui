@@ -22,11 +22,12 @@ export type Workbook = {
     description: string | null;
     tenantId: string;
     projectId: string | null;
-    meta: Record<string, unknown>;
+    meta: {importId?: string; [key: string]: unknown};
     createdBy: string;
     createdAt: string;
     updatedBy: string;
     updatedAt: string;
+    status?: 'importing';
 };
 
 export type WorkbookWithPermissions = Workbook & {
