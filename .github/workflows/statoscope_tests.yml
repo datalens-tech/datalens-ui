@@ -30,8 +30,7 @@ jobs:
         continue-on-error: true
       - name: Validate
         run: |
-            npm run statoscope:validate-diff 2>&1 | tee script-output.log
-            echo "Finished validate"
+            npm run statoscope:validate-diff
         continue-on-error: true
       - name: Query stats
         if: github.event_name == 'pull_request'
@@ -40,6 +39,8 @@ jobs:
         if: always()
         run: |
           cp result.json ./report/statoscope
+          cp input.json ./report/statoscope
+          cp reference.json ./report/statoscope
           echo "${{ github.event.pull_request.number }}" > ./report/statoscope/report-pr
       - uses: actions/upload-artifact@v4
         if: always()
