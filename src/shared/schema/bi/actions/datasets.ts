@@ -2,6 +2,7 @@ import {TIMEOUT_60_SEC, TIMEOUT_95_SEC, WORKBOOK_ID_HEADER} from '../../../const
 import {createAction} from '../../gateway-utils';
 import {filterUrlFragment} from '../../utils';
 import {
+    prepareDatasetProperty,
     transformApiV2DistinctsResponse,
     transformValidateDatasetFormulaResponseError,
     transformValidateDatasetResponseError,
@@ -124,7 +125,10 @@ export const actions = {
     createDataset: createAction<CreateDatasetResponse, CreateDatasetArgs>({
         method: 'POST',
         path: () => `${API_V1}/datasets`,
-        params: (body, headers) => ({body, headers}),
+        params: ({dataset, ...restBody}, headers, {ctx}) => {
+            const resultDataset = prepareDatasetProperty(ctx, dataset);
+            return {body: {...restBody, dataset: resultDataset}, headers};
+        },
     }),
     validateDataset: createAction<ValidateDatasetResponse, ValidateDatasetArgs>({
         method: 'POST',
@@ -134,10 +138,13 @@ export const actions = {
                       version,
                   )}/validators/schema`
                 : `${API_V1}/datasets/validators/dataset`,
-        params: ({dataset, workbookId, updates}, headers) => ({
-            body: {dataset, updates},
-            headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
-        }),
+        params: ({dataset, workbookId, updates}, headers, {ctx}) => {
+            const resultDataset = prepareDatasetProperty(ctx, dataset);
+            return {
+                body: {dataset: resultDataset, updates},
+                headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
+            };
+        },
         transformResponseError: transformValidateDatasetResponseError,
         timeout: TIMEOUT_95_SEC,
     }),
@@ -147,7 +154,10 @@ export const actions = {
             `${API_V1}/datasets/${filterUrlFragment(datasetId)}/versions/${filterUrlFragment(
                 version,
             )}`,
-        params: ({dataset, multisource}, headers) => ({body: {dataset, multisource}, headers}),
+        params: ({dataset, multisource}, headers, {ctx}) => {
+            const resultDataset = prepareDatasetProperty(ctx, dataset);
+            return {body: {dataset: resultDataset, multisource}, headers};
+        },
     }),
     getPreview: createAction<GetPreviewResponse, GetPreviewArgs>({
         method: 'POST',
@@ -158,10 +168,13 @@ export const actions = {
                       datasetId,
                   )}/versions/${filterUrlFragment(version)}/preview`
                 : `${API_DATA_V1}/datasets/data/preview`,
-        params: ({dataset, workbookId, limit}, headers) => ({
-            body: {dataset, limit},
-            headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
-        }),
+        params: ({dataset, workbookId, limit}, headers, {ctx}) => {
+            const resultDataset = prepareDatasetProperty(ctx, dataset);
+            return {
+                body: {dataset: resultDataset, limit},
+                headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
+            };
+        },
         timeout: TIMEOUT_95_SEC,
     }),
     validateDatasetFormula: createAction<
@@ -175,10 +188,13 @@ export const actions = {
                       datasetId,
                   )}/versions/draft/validators/field`
                 : `${API_V1}/datasets/validators/field`,
-        params: ({dataset, workbookId, field}, headers) => ({
-            body: {dataset, field},
-            headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
-        }),
+        params: ({dataset, workbookId, field}, headers, {ctx}) => {
+            const resultDataset = prepareDatasetProperty(ctx, dataset);
+            return {
+                body: {dataset: resultDataset, field},
+                headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
+            };
+        },
         transformResponseError: transformValidateDatasetFormulaResponseError,
     }),
     copyDataset: createAction<CopyDatasetResponse, CopyDatasetArgs>({
