@@ -1,6 +1,6 @@
 import {createSelector} from 'reselect';
 import type {DatalensGlobalState} from 'index';
-import {getStatusFromOperationData} from '../utils/collectionStructure';
+import {getStatusFromOperation} from '../utils/collectionStructure';
 
 export const selectGetRootCollectionPermissions = (state: DatalensGlobalState) =>
     state.collectionsStructure.getRootCollectionPermissions;
@@ -59,15 +59,31 @@ const selectAddDemoWorkbook = (state: DatalensGlobalState) =>
 export const selectExportWorkbook = (state: DatalensGlobalState) =>
     state.collectionsStructure.exportWorkbook;
 
+export const selectGetExportProgress = (state: DatalensGlobalState) =>
+    state.collectionsStructure.getExportProgress;
+
+export const selectExportWorkbookStatus = createSelector(
+    [selectExportWorkbook, selectGetExportProgress],
+    (exportWorkbook, getExportProgress) =>
+        getStatusFromOperation({
+            initialOperation: exportWorkbook,
+            progessOperation: getExportProgress,
+        }),
+);
+
 export const selectImportWorkbook = (state: DatalensGlobalState) =>
     state.collectionsStructure.importWorkbook;
 
-export const selectExportWorkbookStatus = createSelector([selectExportWorkbook], (exportWorkbook) =>
-    getStatusFromOperationData(exportWorkbook),
-);
+export const selectGetImportProgress = (state: DatalensGlobalState) =>
+    state.collectionsStructure.getImportProgress;
 
-export const selectImportWorkbookStatus = createSelector([selectImportWorkbook], (importWorkbook) =>
-    getStatusFromOperationData(importWorkbook),
+export const selectImportWorkbookStatus = createSelector(
+    [selectImportWorkbook, selectGetImportProgress],
+    (importWorkbook, getImportProgress) =>
+        getStatusFromOperation({
+            initialOperation: importWorkbook,
+            progessOperation: getImportProgress,
+        }),
 );
 
 // Rights at the root of the structure

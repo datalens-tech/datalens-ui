@@ -15,10 +15,10 @@ type ImportFileFieldProps = {
     onUpload: (file: File) => void;
     onRemove: (index: number) => void;
     files: File[];
-    hasError: boolean;
+    error: string | null;
 };
 
-export const ImportFileField = ({onUpload, onRemove, files, hasError}: ImportFileFieldProps) => {
+export const ImportFileField = ({onUpload, onRemove, files, error}: ImportFileFieldProps) => {
     const handleFileUploading = (file: File[]) => {
         onUpload(file[0]);
     };
@@ -53,9 +53,9 @@ export const ImportFileField = ({onUpload, onRemove, files, hasError}: ImportFil
                     </Label>
                 ))}
             </Flex>
-            {hasError && (
+            {error && (
                 <Text variant="body-1" color="danger">
-                    {i18n('label_error-file-type')}
+                    {error}
                 </Text>
             )}
         </Flex>

@@ -67,6 +67,12 @@ import {
     IMPORT_WORKBOOK_FAILED,
     RESET_EXPORT_WORKBOOK,
     RESET_IMPORT_WORKBOOK,
+    GET_IMPORT_PROGRESS_LOADING,
+    GET_IMPORT_PROGRESS_SUCCESS,
+    RESET_IMPORT_PROGRESS,
+    GET_EXPORT_PROGRESS_LOADING,
+    GET_EXPORT_PROGRESS_SUCCESS,
+    RESET_EXPORT_PROGRESS,
 } from '../constants/collectionsStructure';
 import type {CollectionsStructureAction} from '../actions/collectionsStructure';
 import type {
@@ -91,6 +97,7 @@ import type {
     DeleteWorkbookResponse,
     CopyWorkbookTemplateResponse,
 } from '../../../shared/schema';
+import type {TempImportExportDataType} from 'ui/components/CollectionsStructure/components/EntriesNotificationCut/types';
 
 export type CollectionsStructureState = {
     getRootCollectionPermissions: {
@@ -191,12 +198,22 @@ export type CollectionsStructureState = {
     };
     exportWorkbook: {
         isLoading: boolean;
-        data: null;
+        data: null | {exportId: string};
         error: Error | null;
     };
     importWorkbook: {
         isLoading: boolean;
-        data: null;
+        data: null | {importId: string};
+        error: Error | null;
+    };
+    getImportProgress: {
+        isLoading: boolean;
+        data: null | TempImportExportDataType;
+        error: Error | null;
+    };
+    getExportProgress: {
+        isLoading: boolean;
+        data: null | TempImportExportDataType;
         error: Error | null;
     };
 };
@@ -304,6 +321,16 @@ const initialState: CollectionsStructureState = {
         error: null,
     },
     importWorkbook: {
+        isLoading: false,
+        data: null,
+        error: null,
+    },
+    getImportProgress: {
+        isLoading: false,
+        data: null,
+        error: null,
+    },
+    getExportProgress: {
         isLoading: false,
         data: null,
         error: null,
@@ -1034,6 +1061,70 @@ export const collectionsStructure = (
             return {
                 ...state,
                 importWorkbook: {
+                    isLoading: false,
+                    data: null,
+                    error: null,
+                },
+            };
+        }
+
+        // Getting workbook import progres
+        case GET_IMPORT_PROGRESS_LOADING: {
+            return {
+                ...state,
+                getImportProgress: {
+                    ...state.getImportProgress,
+                    isLoading: true,
+                    error: null,
+                },
+            };
+        }
+        case GET_IMPORT_PROGRESS_SUCCESS: {
+            return {
+                ...state,
+                getImportProgress: {
+                    isLoading: false,
+                    data: action.data,
+                    error: null,
+                },
+            };
+        }
+        case RESET_IMPORT_PROGRESS: {
+            return {
+                ...state,
+                getImportProgress: {
+                    isLoading: false,
+                    data: null,
+                    error: null,
+                },
+            };
+        }
+
+        // Getting workbook export progress
+        case GET_EXPORT_PROGRESS_LOADING: {
+            return {
+                ...state,
+                getExportProgress: {
+                    ...state.getExportProgress,
+                    isLoading: true,
+                    error: null,
+                },
+            };
+        }
+        case GET_EXPORT_PROGRESS_SUCCESS: {
+            return {
+                ...state,
+                getExportProgress: {
+                    isLoading: false,
+                    data: action.data,
+                    error: null,
+                },
+            };
+        }
+        case RESET_EXPORT_PROGRESS: {
+            return {
+                ...state,
+                getExportProgress: {
                     isLoading: false,
                     data: null,
                     error: null,
