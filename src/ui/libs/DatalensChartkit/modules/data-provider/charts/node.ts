@@ -22,9 +22,10 @@ import {
     WRAPPED_MARKUP_KEY,
     isMarkupItem,
 } from '../../../../../../shared';
+import {wrapHtml} from '../../../../../../shared/utils/ui-sandbox';
 import {DL} from '../../../../../constants/common';
 import {registry} from '../../../../../registry';
-import Utils, {getRenderMarkupToStringFn} from '../../../../../utils';
+import Utils, {mapMarkupToHtml} from '../../../../../utils';
 import {getRenderYfmFn as getRenderMarkdownFn} from '../../../../../utils/markdown/get-render-yfm-fn';
 import type {
     ControlsOnlyWidget,
@@ -48,7 +49,7 @@ import {
 } from './ui-sandbox';
 import {getSafeChartWarnings, isPotentiallyUnsafeChart} from './utils';
 
-import {CHARTS_ERROR_CODE} from '.';
+import {CHARTS_ERROR_CODE} from './index';
 
 type CurrentResponse = ResponseSuccessNode | ResponseSuccessControls;
 
@@ -167,6 +168,9 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 result.uiSandboxOptions = uiSandboxOptions;
             }
 
+            await unwrapMarkdown({config: result.config, data: result.data});
+            await unwrapMarkup({config: result.config, data: result.data});
+
             const isWizardOrQl = result.isNewWizard || result.isQL;
             const shouldProcessHtmlFields =
                 isPotentiallyUnsafeChart(loadedType) || result.config?.useHtml;
@@ -185,9 +189,6 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                     ignoreInvalidValues,
                 });
             }
-
-            await unwrapMarkdown({config: result.config, data: result.data});
-            await unwrapMarkup({config: result.config, data: result.data});
 
             applyChartkitHandlers({
                 config: result.config,
@@ -300,7 +301,6 @@ async function unwrapMarkdown(args: {config: Widget['config']; data: Widget['dat
 async function unwrapMarkup(args: {config: Widget['config']; data: Widget['data']}) {
     const {config, data} = args;
     if (config?.useMarkup) {
-        const renderMarkup = await getRenderMarkupToStringFn();
         const unwrapItem = (item: unknown) => {
             if (!item || typeof item !== 'object') {
                 return;
@@ -311,18 +311,19 @@ async function unwrapMarkup(args: {config: Widget['config']; data: Widget['data'
                     if (value && typeof value === 'object' && WRAPPED_MARKUP_KEY in value) {
                         const markupItem = value[WRAPPED_MARKUP_KEY];
                         if (isMarkupItem(markupItem)) {
-                            list[index] = renderMarkup(markupItem);
+                            list[index] = wrapHtml(mapMarkupToHtml(markupItem));
                         }
                     } else {
                         unwrapItem(value);
                     }
                 });
             } else {
-                Object.entries(item as Record<string, unknown>).forEach(([key, value]) => {
+                const itemObject = item as Record<string, unknown>;
+                Object.entries(itemObject).forEach(([key, value]) => {
                     if (value && typeof value === 'object' && WRAPPED_MARKUP_KEY in value) {
                         const markupItem = value[WRAPPED_MARKUP_KEY];
                         if (isMarkupItem(markupItem)) {
-                            set(item, key, renderMarkup(markupItem));
+                            itemObject[key] = wrapHtml(mapMarkupToHtml(markupItem));
                         }
                     } else {
                         unwrapItem(value);
