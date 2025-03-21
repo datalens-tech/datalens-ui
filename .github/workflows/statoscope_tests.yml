@@ -29,7 +29,9 @@ jobs:
           path: ./
         continue-on-error: true
       - name: Validate
-        run: npm run statoscope:validate-diff
+        run: |
+            npm run statoscope:validate-diff 2>&1 | tee script-output.log
+            echo "Finished validate"
         continue-on-error: true
       - name: Query stats
         if: github.event_name == 'pull_request'
