@@ -6,9 +6,11 @@ import {Checkbox, DropdownMenu, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
+import {Feature} from 'shared';
 import {CollectionContentTableQa, DEFAULT_DATE_FORMAT} from 'shared/constants';
 import {DL} from 'ui/constants/common';
 import {selectDateTimeFormat} from 'ui/store/selectors/user';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {
     CollectionWithPermissions,
@@ -138,10 +140,15 @@ export const CollectionContentTable = React.memo<Props>(
 
                         <div className={b('content')}>
                             {items.map((item) => {
-                                const actions =
-                                    'workbookId' in item
-                                        ? getWorkbookActions(item)
-                                        : getCollectionActions(item);
+                                const isWorkbookItem = 'workbookId' in item;
+                                const actions = isWorkbookItem
+                                    ? getWorkbookActions(item)
+                                    : getCollectionActions(item);
+
+                                const isImporting =
+                                    isEnabledFeature(Feature.EnableExportWorkbookFile) &&
+                                    isWorkbookItem &&
+                                    item.status === 'importing';
 
                                 return (
                                     <CollectionLinkRow
@@ -151,32 +158,42 @@ export const CollectionContentTable = React.memo<Props>(
                                                 : item.collectionId
                                         }
                                         item={item}
+                                        isImporting={isImporting}
                                     >
                                         <CollectionCheckboxCell
                                             item={item}
                                             onUpdateCheckboxClick={onUpdateCheckboxClick}
                                             selectedMap={selectedMap}
+                                            disabled={isImporting}
                                         />
                                         <CollectionTitleCell
                                             isWorkbook={'workbookId' in item}
                                             title={item.title}
                                             collectionId={item.collectionId}
+                                            isImporting={isImporting}
                                         />
+
                                         <div className={b('content-cell', {date: true})}>
-                                            <Tooltip
-                                                content={dateTime({input: item.updatedAt}).format(
-                                                    dateTimeFormat,
-                                                )}
-                                            >
-                                                <span>
-                                                    {dateTime({
+                                            {!isImporting && (
+                                                <Tooltip
+                                                    content={dateTime({
                                                         input: item.updatedAt,
-                                                    }).fromNow()}
-                                                </span>
-                                            </Tooltip>
+                                                    }).format(dateTimeFormat)}
+                                                >
+                                                    <span>
+                                                        {dateTime({
+                                                            input: item.updatedAt,
+                                                        }).fromNow()}
+                                                    </span>
+                                                </Tooltip>
+                                            )}
                                         </div>
+
                                         <div
-                                            className={b('content-cell', {control: true})}
+                                            className={b('content-cell', {
+                                                control: true,
+                                                import: isImporting,
+                                            })}
                                             onClick={(e) => {
                                                 if (actions.length > 0) {
                                                     e.stopPropagation();
@@ -185,7 +202,11 @@ export const CollectionContentTable = React.memo<Props>(
                                             }}
                                         >
                                             {actions.length > 0 && (
-                                                <DropdownMenu size="s" items={actions} />
+                                                <DropdownMenu
+                                                    size="s"
+                                                    items={actions}
+                                                    disabled={isImporting}
+                                                />
                                             )}
                                         </div>
                                     </CollectionLinkRow>

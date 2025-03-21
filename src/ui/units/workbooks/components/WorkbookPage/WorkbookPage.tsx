@@ -1,8 +1,10 @@
 import React from 'react';
 
+import {Alert, Button, Flex, spacing} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {SmartLoader} from 'components/SmartLoader/SmartLoader';
 import {ViewError} from 'components/ViewError/ViewError';
+import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {useLocation, useParams} from 'react-router-dom';
 import {DL} from 'ui/constants/common';
@@ -32,6 +34,7 @@ import {useLayout} from './hooks/useLayout';
 import './WorkbookPage.scss';
 
 const b = block('dl-workbook-page');
+const i18n = I18n.keyset('new-workbooks');
 
 export const WorkbookPage = () => {
     const {search} = useLocation();
@@ -43,6 +46,13 @@ export const WorkbookPage = () => {
     const workbook = useSelector(selectWorkbook);
     const pageError = useSelector(selectPageError);
     const breadcrumbsError = useSelector(selectCollectionBreadcrumbsError);
+
+    const [showImportAlert, setShowImportAlert] = React.useState(
+        // isEnabledFeature(Feature.EnableExportWorkbookFile) &&
+        //     workbook?.meta &&
+        //     'importId' in workbook.meta,
+        false,
+    );
 
     const {getWorkbookTabs} = registry.workbooks.functions.getAll();
     const availableItems = React.useMemo(() => {
@@ -100,6 +110,24 @@ export const WorkbookPage = () => {
         );
     }
 
+    const handleCloseImportAlert = () => {
+        setShowImportAlert(false);
+    };
+
+    const renderAlertActions = () => {
+        return (
+            <Flex gap={3}>
+                <Button view="normal-contrast" onClick={handleCloseImportAlert}>
+                    {i18n('button_import-alert-close')}
+                </Button>
+                {/* TODO: Add after publication of documentation */}
+                {/* <Button view="flat-secondary" href={DL.ENDPOINTS.datalensDocs}>
+                    {i18n('button_import-alert-documentation')}
+                </Button> */}
+            </Flex>
+        );
+    };
+
     return (
         <div className={b()}>
             {showContentLoader ? (
@@ -112,6 +140,15 @@ export const WorkbookPage = () => {
                                 <WorkbookFilters filters={filters} onChange={handleChangeFilters} />
                             )}
                             {workbook && <WorkbookTabs workbook={workbook} />}
+                            {showImportAlert && (
+                                <Alert
+                                    theme="info"
+                                    title={i18n('label_import-alert-title')}
+                                    actions={renderAlertActions()}
+                                    onClose={handleCloseImportAlert}
+                                    className={spacing({mt: 6})}
+                                />
+                            )}
                         </div>
                         <div className={b('content')}>
                             {isMainTab ? (
