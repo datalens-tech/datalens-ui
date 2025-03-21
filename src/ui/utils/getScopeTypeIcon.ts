@@ -16,8 +16,6 @@ export const getScopeTypeIcon = (scope: string) => {
             return 'editor';
         case 'broken':
             return 'broken';
-        case 'connection':
-            return 'connection';
         default:
             return null;
     }

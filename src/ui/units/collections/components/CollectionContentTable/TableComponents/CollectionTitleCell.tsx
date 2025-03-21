@@ -1,6 +1,5 @@
 import React from 'react';
 
-import {Label, spacing} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {CollectionContentTableQa} from 'shared';
 import {CollectionIcon} from 'ui/components/CollectionIcon/CollectionIcon';
@@ -15,14 +14,12 @@ type CollectionTitleCellProps = {
     isWorkbook: boolean;
     collectionId: string | null;
     title: string;
-    isImporting?: boolean;
 };
 
 export const CollectionTitleCell = ({
     isWorkbook,
     collectionId,
     title,
-    isImporting,
 }: CollectionTitleCellProps) => {
     // if it's not mobile set default size
     const workbookSize = DL.IS_MOBILE ? 'mobile' : undefined;
@@ -45,11 +42,6 @@ export const CollectionTitleCell = ({
                 <div className={b('title-col-text')} title={title}>
                     {title}
                 </div>
-                {isImporting && (
-                    <Label theme="info" size="xs" className={spacing({ml: 2})}>
-                        {'Импортируется'}
-                    </Label>
-                )}
             </div>
         </div>
     );

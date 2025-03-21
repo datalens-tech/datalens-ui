@@ -14,17 +14,14 @@ type CollectionCheckboxCellProps = {
     item: WorkbookWithPermissions | CollectionWithPermissions;
     selectedMap: SelectedMap;
     onUpdateCheckboxClick: (args: UpdateCheckboxArgs) => void;
-    disabled?: boolean;
 };
 
 export const CollectionCheckboxCell = ({
     item,
     selectedMap,
     onUpdateCheckboxClick,
-    disabled,
 }: CollectionCheckboxCellProps) => {
     const canMoveItem = item.permissions.move;
-    const isDisabled = !canMoveItem || disabled;
 
     const handleUpdate = (checked: boolean) => {
         const isWorkbook = 'workbookId' in item;
@@ -49,14 +46,14 @@ export const CollectionCheckboxCell = ({
     return (
         <div
             className={b('content-cell', {
-                disabled: isDisabled,
+                disabled: !canMoveItem,
             })}
             onClick={onCheckboxContainerClick}
         >
             <Checkbox
                 size="l"
                 onUpdate={handleUpdate}
-                disabled={isDisabled}
+                disabled={!canMoveItem}
                 checked={
                     Boolean(
                         selectedMap['workbookId' in item ? item.workbookId : item.collectionId],
