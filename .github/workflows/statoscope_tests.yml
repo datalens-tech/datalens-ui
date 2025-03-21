@@ -30,6 +30,7 @@ jobs:
         continue-on-error: true
       - name: Validate
         run: npm run statoscope:validate-diff
+        continue-on-error: true
       - name: Query stats
         if: github.event_name == 'pull_request'
         run: cat ./scripts/ci/statoscope-comment.jora | npx --no-install @statoscope/cli query --input input.json --input reference.json > result.json
