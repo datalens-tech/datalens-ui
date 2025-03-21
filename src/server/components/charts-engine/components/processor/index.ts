@@ -20,7 +20,6 @@ import {registry} from '../../../../registry';
 import type {CacheClient} from '../../../cache-client';
 import {config as configConstants} from '../../constants';
 import type {AdapterContext, HooksContext, Source, TelemetryCallbacks} from '../../types';
-import * as Storage from '../storage';
 import type {ResolvedConfig} from '../storage/types';
 import {getDuration, normalizeParams, resolveParams} from '../utils';
 
@@ -152,7 +151,7 @@ export type SerializableProcessorParams = {
     paramsOverride: Record<string, string | string[]>;
     actionParamsOverride: Record<string, string | string[]>;
     widgetConfig?: DashWidgetConfig['widgetConfig'];
-    configOverride?: {
+    configOverride: {
         data: Record<string, string>;
         key?: string;
         entryId?: string;
@@ -160,7 +159,6 @@ export type SerializableProcessorParams = {
         meta: {stype: keyof typeof EDITOR_TYPE_CONFIG_TABS | ControlType.Dash};
         publicAuthor?: EntryPublicAuthor;
     };
-    useUnreleasedConfig?: boolean;
     userLogin: string | null;
     userLang: string | null;
     userId: string | null;
@@ -190,7 +188,6 @@ export class Processor {
         paramsOverride = {},
         widgetConfig = {},
         configOverride,
-        useUnreleasedConfig,
         userLang,
         userLogin,
         userId = null,
@@ -226,7 +223,7 @@ export class Processor {
         let processedModules: Record<string, ChartBuilderResult> = {};
         let modulesLogsCollected = false;
         let resolvedSources: Record<string, DataFetcherResult> | undefined;
-        let config: ResolvedConfig;
+        const config: ResolvedConfig = configOverride as ResolvedConfig;
         let params: Record<string, string | string[]> | StringParams;
         let actionParams: Record<string, string | string[]>;
         let usedParams: Record<string, string | string[]>;
@@ -313,26 +310,6 @@ export class Processor {
 
         try {
             let hrStart = process.hrtime();
-
-            try {
-                config =
-                    (configOverride as ResolvedConfig) ||
-                    (await Storage.resolveConfig(ctx, {
-                        unreleased: useUnreleasedConfig,
-                        key: configName,
-                        headers: {...subrequestHeaders},
-                        workbookId,
-                    }));
-            } catch (e) {
-                return {
-                    error: {
-                        code: CONFIG_LOADING_ERROR,
-                        debug: {
-                            message: getMessageFromUnknownError(e),
-                        },
-                    },
-                };
-            }
 
             const type = config.meta.stype;
 
@@ -556,7 +533,7 @@ export class Processor {
                     sources = filteredSources;
                 }
 
-                if (configOverride?.entryId || configId) {
+                if (config?.entryId || configId) {
                     let dlContext: Record<string, string> = {};
                     if (subrequestHeaders[DL_CONTEXT_HEADER]) {
                         const dlContextHeader = subrequestHeaders[DL_CONTEXT_HEADER];
@@ -567,7 +544,7 @@ export class Processor {
                         );
                     }
 
-                    dlContext.chartId = configOverride?.entryId || configId;
+                    dlContext.chartId = config?.entryId || configId;
 
                     if (subrequestHeaders['x-chart-kind']) {
                         dlContext.chartKind = subrequestHeaders['x-chart-kind'];
