@@ -325,6 +325,7 @@ type GetStructureItemsAction =
 
 export const getStructureItems = ({
     collectionId,
+    includePermissionsInfo,
     page,
     filterString,
     orderField,
@@ -340,7 +341,7 @@ export const getStructureItems = ({
         return getSdk()
             .sdk.us.getStructureItems({
                 collectionId,
-                includePermissionsInfo: false,
+                includePermissionsInfo,
                 page,
                 filterString,
                 orderField,

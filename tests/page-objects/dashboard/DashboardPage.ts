@@ -671,6 +671,13 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(ConnectionsDialogQA.Apply));
     }
 
+    async hasChanges() {
+        const saveButton = await this.page.locator(slct(ActionPanelDashSaveControlsQa.Save));
+        const disabledAttribute = await saveButton.getAttribute('disabled');
+
+        return disabledAttribute === null;
+    }
+
     async clickSaveButton() {
         // save the changes made on the dashboard
         await this.page.click(slct(ActionPanelDashSaveControlsQa.Save));
