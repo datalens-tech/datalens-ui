@@ -962,7 +962,11 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
     };
 
     private itemAddHandler = (isMounted: boolean, id: string, domElement: HTMLElement) => {
-        if (isMounted && this.props.lastModifiedItem === id) {
+        if (
+            isEnabledFeature(Feature.EnableDashAutoFocus) &&
+            isMounted &&
+            this.props.lastModifiedItem === id
+        ) {
             const lastDelayedScrollTop = scrollIntoView(domElement, null);
 
             this.setState({
