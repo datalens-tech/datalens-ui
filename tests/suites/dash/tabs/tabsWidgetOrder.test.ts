@@ -31,6 +31,12 @@ datalensTest.describe(`Dashboards - Change widgets order on tab`, () => {
         async ({page}: {page: Page}) => {
             const dashboardPage = new DashboardPage({page});
 
+            // When there are changes while client migration saving changes before tabs order check
+            if (await dashboardPage.hasChanges()) {
+                await dashboardPage.clickSaveButton();
+                await dashboardPage.enterEditMode();
+            }
+
             const popupWidgetOrderList = await openTabPopupWidgetOrder(dashboardPage, 0);
 
             const widgetOrderListItems = await popupWidgetOrderList.$$(

@@ -6,7 +6,8 @@ import assign from 'lodash/assign';
 import intersection from 'lodash/intersection';
 
 import type {ServerI18n} from '../../../i18n/types';
-import {DASH_CURRENT_SCHEME_VERSION} from '../../../shared/constants';
+import {DASH_CURRENT_SCHEME_VERSION, DASH_DATA_REQUIRED_FIELDS} from '../../../shared/constants';
+import {DashSchemeConverter} from '../../../shared/modules';
 import type {
     CreateEntryRequest,
     DashData,
@@ -22,7 +23,9 @@ import {
     DashTabItemType,
     EntryScope,
     EntryUpdateMode,
+    Feature,
 } from '../../../shared/types';
+import {isEnabledServerFeature} from '../../../shared/utils';
 
 import US from './us';
 
@@ -69,11 +72,15 @@ function gatherLinks(data: DashData) {
     );
 }
 
-function assignData(I18n: ServerI18n, requestData: DashData) {
+function setDefaultData(I18n: ServerI18n, requestData: DashData, initialData?: DashData) {
     const i18n = I18n.keyset('dash.tabs-dialog.edit');
+
+    if (initialData) {
+        return assign({}, initialData, requestData);
+    }
+
     const salt = Math.random().toString();
     const hashids = new Hashids(salt);
-
     const data: DashData = {
         salt,
         counter: 2,
@@ -101,6 +108,9 @@ function assignData(I18n: ServerI18n, requestData: DashData) {
 
     return assign(data, requestData);
 }
+
+const needSetDefaultData = (data: DashData) =>
+    DASH_DATA_REQUIRED_FIELDS.every((fieldName) => fieldName in data);
 
 function validateData(data: DashData) {
     const allTabsIds: Set<string> = new Set();
@@ -193,8 +203,15 @@ class Dash {
                     scope: EntryScope.Dash,
                     type: '',
                 };
-            } else {
-                usData.data = assignData(I18n, usData.data);
+            } else if (needSetDefaultData(usData.data)) {
+                usData.data = setDefaultData(I18n, usData.data);
+            }
+
+            const isServerMigrationEnabled = Boolean(
+                isEnabledServerFeature(ctx, Feature.DashServerMigrationEnable),
+            );
+            if (isServerMigrationEnabled && DashSchemeConverter.isUpdateNeeded(usData.data)) {
+                usData.data = await DashSchemeConverter.update(usData.data);
             }
 
             usData.links = gatherLinks(usData.data);
@@ -242,6 +259,13 @@ class Dash {
                 ctx,
             )) as DashEntry;
 
+            const isServerMigrationEnabled = Boolean(
+                isEnabledServerFeature(ctx, Feature.DashServerMigrationEnable),
+            );
+            if (isServerMigrationEnabled && DashSchemeConverter.isUpdateNeeded(result.data)) {
+                result.data = await DashSchemeConverter.update(result.data);
+            }
+
             ctx.log('SDK_DASH_READ_SUCCESS', US.getLoggedEntry(result));
 
             return result;
@@ -265,8 +289,13 @@ class Dash {
 
             const needDataSend = !(mode === EntryUpdateMode.Publish && data.revId);
             if (needDataSend) {
-                usData.data = assignData(I18n, usData.data);
+                if (needSetDefaultData(usData.data)) {
+                    const initialData = await Dash.read(entryId, null, headers, ctx);
+                    usData.data = setDefaultData(I18n, usData.data, initialData.data);
+                }
+
                 usData.links = gatherLinks(usData.data);
+
                 validateData(usData.data);
             }
 

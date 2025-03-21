@@ -8,20 +8,32 @@ import {EditorUrls} from '../../constants/common';
 import EditorPage from '../../containers/EditorPage/EditorPage';
 import {getFullPathName} from '../../utils';
 
-type AppRouteProps = RouteComponentProps<{workbookId?: string}>;
+const EditorPageView = EditorPage as unknown as React.ComponentType<RouteComponentProps<any>>;
+
+type AppRouteProps = RouteComponentProps<{workbookId?: string; path?: string; template?: string}>;
 
 function App() {
     return (
         <React.Fragment>
             <Switch>
                 <Route
+                    path={['/editor/draft', '/workbooks/:workbookId/editor/draft']}
+                    exact={true}
+                    component={(props: AppRouteProps) => (
+                        <Redirect
+                            to={getFullPathName({
+                                base: EditorUrls.NewEntry,
+                                workbookId: props.match.params.workbookId,
+                            })}
+                        />
+                    )}
+                />
+                <Route
                     path={[
                         '/editor/:path/:template?',
                         '/workbooks/:workbookId/editor/:path/:template?',
                     ]}
-                    component={
-                        EditorPage as unknown as React.ComponentType<RouteComponentProps<any>>
-                    }
+                    component={EditorPageView}
                 />
                 <Route
                     path={['/editor', '/workbooks/:workbookId/editor']}

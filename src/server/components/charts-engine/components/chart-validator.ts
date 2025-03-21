@@ -94,12 +94,14 @@ export const chartValidator = {
             });
 
             return Array.from(modelTabs).some((modelTab) => {
-                const oldTabs = modelTab.split(',');
+                const oldTabs = modelTab.split(',').sort();
                 const newTabs = modelTab
                     .replace('js', 'prepare')
                     .replace('ui', 'controls')
                     .replace('url', 'sources')
-                    .split(',');
+                    .replace('table', 'config')
+                    .split(',')
+                    .sort();
                 return isEqual(oldTabs, dataTabs) || isEqual(newTabs, dataTabs);
             });
         } else {

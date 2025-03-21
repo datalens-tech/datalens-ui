@@ -72,7 +72,8 @@ export const CreateWorkbookDialog: React.FC<Props> = ({
     const isCreatingLoading = useSelector(selectCreateWorkbookIsLoading);
 
     const {error: importError, data: importData} = useSelector(selectImportWorkbook);
-    const {data: importProgress} = useSelector(selectGetImportProgress);
+    const {data: importProgressData} = useSelector(selectGetImportProgress);
+    const importProgress = importProgressData?.progress;
 
     const [isExternalLoading, setIsExternalLoading] = React.useState(false);
 
@@ -84,52 +85,52 @@ export const CreateWorkbookDialog: React.FC<Props> = ({
     const [importFiles, setImportFiles] = React.useState<File[]>([]);
     const [importValidationError, setImportValidationError] = React.useState<null | string>(null);
 
+    const importProgressTimeout = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+
     const isMounted = useMountedState();
 
     React.useEffect(() => {
         if (open) {
+            dispatch(resetImportWorkbook());
             setView(defaultView);
             setImportFiles([]);
             setImportValidationError(null);
-            dispatch(resetImportWorkbook());
         }
     }, [defaultView, dispatch, open]);
 
-    React.useEffect(() => {
-        let timeoutId: NodeJS.Timeout | null = null;
-        let isCancelled = false;
+    const pollImportStatus = React.useCallback(
+        async (currentImportId: string) => {
+            if (importProgressTimeout.current) {
+                clearTimeout(importProgressTimeout.current);
+            }
 
-        const fetchProgress = async () => {
-            if (!isMounted() || isCancelled) {
+            if (!isMounted()) {
                 return;
             }
 
             const startTime = Date.now();
 
-            await dispatch(getImportProgress({importId}));
+            const result = await dispatch(getImportProgress({importId: currentImportId}));
 
-            // Calculate time elapsed since request started
             const elapsedTime = Date.now() - startTime;
 
-            // Schedule next poll either after 1 second from the start of the previous request
-            // or immediately if the request took longer than 1 second
-            if (!isCancelled) {
+            if (result && result.status === 'pending') {
                 const nextPollDelay = Math.max(0, GET_IMPORT_PROGRESS_INTERVAL - elapsedTime);
-                timeoutId = setTimeout(fetchProgress, nextPollDelay);
+                importProgressTimeout.current = setTimeout(
+                    () => pollImportStatus(currentImportId),
+                    nextPollDelay,
+                );
             }
-        };
+        },
+        [dispatch, isMounted],
+    );
 
-        if (view === 'import' && importStatus === 'loading' && open) {
-            fetchProgress();
+    // open import dialog from importing workbook row
+    React.useEffect(() => {
+        if (importId) {
+            pollImportStatus(importId);
         }
-
-        return () => {
-            isCancelled = true;
-            if (timeoutId) {
-                clearTimeout(timeoutId);
-            }
-        };
-    }, [dispatch, importId, importStatus, isMounted, open, view]);
+    }, [importData?.importId, pollImportStatus, importId]);
 
     const handleFileUploding = (file: File) => {
         setImportFiles([file]);
@@ -142,7 +143,7 @@ export const CreateWorkbookDialog: React.FC<Props> = ({
     };
 
     const handleClose = React.useCallback(() => {
-        if (importStatus === 'loading') {
+        if (importStatus === 'loading' || importStatus === 'pending') {
             dispatch(
                 openDialog({
                     id: DIALOG_DEFAULT,
@@ -186,7 +187,7 @@ export const CreateWorkbookDialog: React.FC<Props> = ({
                 return;
             }
 
-            let result: CreateWorkbookResponse | null;
+            let result: CreateWorkbookResponse | null = null;
             const workbookData = {
                 title,
                 description: description ?? '',
@@ -194,15 +195,17 @@ export const CreateWorkbookDialog: React.FC<Props> = ({
             };
 
             if (isEnabledFeature(Feature.EnableExportWorkbookFile) && importFiles.length > 0) {
-                dispatch(importWorkbook(workbookData));
-
                 setView('import');
+                const importResult = await dispatch(importWorkbook(workbookData));
+                if (importResult && importResult.importId) {
+                    pollImportStatus(importResult.importId);
+                }
                 return;
             } else {
                 result = await dispatch(createWorkbook(workbookData));
             }
 
-            // TODO: add importData type in onApply type func
+            // TODO: add importProgressData type in onApply type func
             if (onApply) {
                 const promise = onApply(result);
                 if (promise) {
@@ -214,7 +217,7 @@ export const CreateWorkbookDialog: React.FC<Props> = ({
 
             onClose();
         },
-        [collectionId, dispatch, importFiles, importStatus, onApply],
+        [collectionId, dispatch, importFiles, importStatus, onApply, pollImportStatus],
     );
 
     const getDialogFooterPropsOverride = React.useCallback<GetDialogFooterPropsOverride>(
@@ -256,10 +259,10 @@ export const CreateWorkbookDialog: React.FC<Props> = ({
         if (view === 'import') {
             return (
                 <ImportWorkbookView
-                    progress={importProgress}
-                    status={importStatus}
                     error={importError}
-                    data={importData}
+                    data={importProgressData}
+                    status={importStatus}
+                    progress={importProgress ?? 0}
                 />
             );
         }

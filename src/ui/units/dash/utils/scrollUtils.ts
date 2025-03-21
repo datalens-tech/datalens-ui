@@ -13,12 +13,13 @@ const OFFSETS_QA = [
     DatalensHeaderQa.DesktopContainer,
 ];
 
-export const scrollIntoView = (id: string, lastTop?: number | null) => {
-    if (!id) {
+export const scrollIntoView = (scrollElement: string | HTMLElement, lastTop?: number | null) => {
+    if (!scrollElement) {
         return null;
     }
 
-    const element = document.getElementById(id);
+    const element =
+        typeof scrollElement === 'string' ? document.getElementById(scrollElement) : scrollElement;
 
     if (!element) {
         return null;

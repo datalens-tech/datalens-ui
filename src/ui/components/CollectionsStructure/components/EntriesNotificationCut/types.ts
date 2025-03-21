@@ -1,11 +1,24 @@
-import type {RowEntryData} from 'ui/components/EntryRow/EntryRow';
-
 // TODO: use type from api request
 export type TempImportExportDataType = {
-    notifications: {
-        code?: string;
+    importId?: string;
+    exportId?: string;
+    status: 'pending' | 'success' | 'error';
+    progress: number;
+    notifications?: {
+        entryId?: string;
+        scope?: 'connection' | 'dataset';
+        code: string;
         message: string;
-        level: 'info' | 'warning' | 'critical';
-        entries: RowEntryData[];
+        level: 'warning' | 'info' | 'critical';
+    }[];
+};
+
+export type PreparedNotificationType = {
+    code: string;
+    message: string;
+    level: 'warning' | 'info' | 'critical';
+    entries: {
+        entryId: string;
+        scope: 'connection' | 'dataset';
     }[];
 };

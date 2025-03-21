@@ -16,3 +16,5 @@ export const MIN_DASH_MARGIN = 0;
 export const MAX_DASH_MARGIN = 22;
 export const DASH_MARGIN_STEP = 2;
 export const MIN_DASH_ROW_HEIGHT = MIN_AUTO_HEIGHT_PX;
+
+export const DEBOUNCE_RENDER_TIMEOUT = 200;

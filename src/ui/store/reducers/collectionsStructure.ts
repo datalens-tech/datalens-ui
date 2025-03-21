@@ -70,7 +70,9 @@ import {
     GET_IMPORT_PROGRESS_LOADING,
     GET_IMPORT_PROGRESS_SUCCESS,
     RESET_IMPORT_PROGRESS,
-    EXPORT_WORKBOOK_PROGRESS,
+    GET_EXPORT_PROGRESS_LOADING,
+    GET_EXPORT_PROGRESS_SUCCESS,
+    RESET_EXPORT_PROGRESS,
 } from '../constants/collectionsStructure';
 import type {CollectionsStructureAction} from '../actions/collectionsStructure';
 import type {
@@ -196,19 +198,23 @@ export type CollectionsStructureState = {
     };
     exportWorkbook: {
         isLoading: boolean;
-        // TODO: use type of data from request
-        data: null | TempImportExportDataType;
-        progress: number;
+        data: null | {exportId: string};
         error: Error | null;
     };
     importWorkbook: {
         isLoading: boolean;
-        data: null | TempImportExportDataType;
+        data: null | {importId: string};
         error: Error | null;
     };
     getImportProgress: {
         isLoading: boolean;
-        data: null | number;
+        data: null | TempImportExportDataType;
+        error: Error | null;
+    };
+    getExportProgress: {
+        isLoading: boolean;
+        data: null | TempImportExportDataType;
+        error: Error | null;
     };
 };
 
@@ -312,7 +318,6 @@ const initialState: CollectionsStructureState = {
     exportWorkbook: {
         isLoading: false,
         data: null,
-        progress: 0,
         error: null,
     },
     importWorkbook: {
@@ -323,6 +328,12 @@ const initialState: CollectionsStructureState = {
     getImportProgress: {
         isLoading: false,
         data: null,
+        error: null,
+    },
+    getExportProgress: {
+        isLoading: false,
+        data: null,
+        error: null,
     },
 };
 
@@ -978,7 +989,6 @@ export const collectionsStructure = (
             return {
                 ...state,
                 exportWorkbook: {
-                    progress: 0,
                     isLoading: true,
                     data: null,
                     error: null,
@@ -989,7 +999,6 @@ export const collectionsStructure = (
             return {
                 ...state,
                 exportWorkbook: {
-                    ...state.exportWorkbook,
                     isLoading: false,
                     data: action.data,
                     error: null,
@@ -1000,19 +1009,9 @@ export const collectionsStructure = (
             return {
                 ...state,
                 exportWorkbook: {
-                    ...state.exportWorkbook,
                     isLoading: false,
                     data: null,
                     error: action.error,
-                },
-            };
-        }
-        case EXPORT_WORKBOOK_PROGRESS: {
-            return {
-                ...state,
-                exportWorkbook: {
-                    ...state.exportWorkbook,
-                    progress: action.progress,
                 },
             };
         }
@@ -1023,7 +1022,6 @@ export const collectionsStructure = (
                     isLoading: false,
                     data: null,
                     error: null,
-                    progress: 0,
                 },
             };
         }
@@ -1075,8 +1073,9 @@ export const collectionsStructure = (
             return {
                 ...state,
                 getImportProgress: {
-                    ...state.getImportProgress,
+                    data: null,
                     isLoading: true,
+                    error: null,
                 },
             };
         }
@@ -1086,6 +1085,7 @@ export const collectionsStructure = (
                 getImportProgress: {
                     isLoading: false,
                     data: action.data,
+                    error: null,
                 },
             };
         }
@@ -1095,6 +1095,39 @@ export const collectionsStructure = (
                 getImportProgress: {
                     isLoading: false,
                     data: null,
+                    error: null,
+                },
+            };
+        }
+
+        // Getting workbook export progress
+        case GET_EXPORT_PROGRESS_LOADING: {
+            return {
+                ...state,
+                getExportProgress: {
+                    data: null,
+                    isLoading: true,
+                    error: null,
+                },
+            };
+        }
+        case GET_EXPORT_PROGRESS_SUCCESS: {
+            return {
+                ...state,
+                getExportProgress: {
+                    isLoading: false,
+                    data: action.data,
+                    error: null,
+                },
+            };
+        }
+        case RESET_EXPORT_PROGRESS: {
+            return {
+                ...state,
+                getExportProgress: {
+                    isLoading: false,
+                    data: null,
+                    error: null,
                 },
             };
         }
