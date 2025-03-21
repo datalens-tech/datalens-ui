@@ -1,27 +1,16 @@
-@import '../../styles/variables';
 @import '../../styles/mixins.scss';
 
-$topMargin: 8px;
-$topPadding: 16px;
-$leftPadding: 20px;
+$topPadding: var(--g-spacing-4);
+$leftPadding: var(--g-spacing-5);
 $titleLineHeight: calc(var(--g-text-body-1-line-height) * 1.15);
 
 .expandable-panel {
     $class: &;
-    position: fixed;
-    top: calc(#{$actionPanelHeight} + #{$topMargin});
-    height: calc(100vh - #{$actionPanelHeight} - 2 * #{$topMargin});
-    right: 8px;
     padding: 0;
     z-index: 100;
     width: 246px;
     box-sizing: border-box;
     pointer-events: none;
-
-    .active + & {
-        top: calc(#{$actionPanelHeight} + #{$topMargin} + #{$revisionPanelHeight});
-        height: calc(100vh - #{$actionPanelHeight} - 2 * #{$topMargin} - #{$revisionPanelHeight});
-    }
 
     &_collapsed {
         height: auto;

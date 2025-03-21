@@ -1,9 +1,11 @@
 import {registryLibsPlugins} from '../libs/registryLibsPlugins';
+import {registerAuthPlugins} from '../units/auth/register';
 import {registerChartPlugins} from '../units/chart/register';
 import {registerCollectionsPlugins} from '../units/collections/register';
 import {registerCommonPlugins} from '../units/common/register';
 import {registerConnectionsPlugins} from '../units/connections/register';
 import {registerDashPlugins} from '../units/dash/register';
+import {registerDatasetPlugins} from '../units/datasets/register';
 import {registerDocsPlugins} from '../units/docs/register';
 import {registerEditorPlugins} from '../units/editor/register';
 import {registerMainPlugins} from '../units/main/register';
@@ -16,6 +18,7 @@ export const registerAppPlugins = () => {
     registerChartPlugins();
     registerConnectionsPlugins();
     registerCommonPlugins();
+    registerDatasetPlugins();
     registerDashPlugins();
     registerEditorPlugins();
     registerQlPlugins();
@@ -25,6 +28,7 @@ export const registerAppPlugins = () => {
     registerMainPlugins();
     registerDocsPlugins();
     registerCollectionsPlugins();
+    registerAuthPlugins();
     //libs
     registryLibsPlugins();
 };

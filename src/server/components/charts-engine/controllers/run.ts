@@ -16,6 +16,8 @@ import { US } from '../../sdk';
 type RunControllerExtraSettings = {
     storageApiPath?: string;
     extraAllowedHeaders?: string[];
+    includeServicePlan?: boolean;
+    includeTenantFeatures?: boolean;
 };
 
 export const runController = (
@@ -109,18 +111,6 @@ export const runController = (
                 return;
             }
 
-            // TODO: remove this condition and corresponded code block after ChartEditor unit migrating
-            if (
-                !isEnabledServerFeature(ctx, 'EnableChartEditor') &&
-                runnerFound.name === 'editor'
-            ) {
-                ctx.log('CHARTS_ENGINE_EDITOR_DISABLED');
-                res.status(400).send({
-                    error: 'ChartEditor is disabled',
-                });
-                return;
-            }
-
             if (req.body.config) {
                 if (!ctx.config.allowBodyConfig && !runnerFound.safeConfig) {
                     ctx.log('UNSAFE_CONFIG_OVERRIDE');
@@ -144,7 +134,7 @@ export const runController = (
                             error: {
                                 code: 403,
                                 details: {
-                                    message: 'Access to ChartEditor developer mode was denied',
+                                    message: 'Access to Editor developer mode was denied',
                                 },
                             },
                         });
@@ -185,7 +175,15 @@ export const runController = (
                 chartsEngine,
                 req,
                 res,
-                config,
+                config: {
+                    ...config,
+                    data: {
+                        ...config.data,
+                        url: get(config.data, 'sources') || get(config.data, 'url'),
+                        js: get(config.data, 'prepare') || get(config.data, 'js'),
+                        ui: get(config.data, 'controls') || get(config.data, 'ui'),
+                    },
+                },
                 configResolving,
                 workbookId,
             });

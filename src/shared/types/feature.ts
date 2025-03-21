@@ -1,8 +1,9 @@
 export enum Feature {
     ChartkitAlerts = 'chartkitAlerts',
     UseConfigurableChartkit = 'UseConfigurableChartkit',
-    Ql = 'ql',
     HideOldRelations = 'hideOldRelations',
+    // Show new relations button in navigation action panel
+    ShowNewRelationsButton = 'ShowNewRelationsButton',
     AsideHeaderEnabled = 'AsideHeaderEnabled',
     FieldEditorDocSection = 'FieldEditorDocSection',
     UsePublicDistincts = 'UsePublicDistincts',
@@ -36,14 +37,11 @@ export enum Feature {
     // The ability to upload xlsx files for file connections
     XlsxFilesEnabled = 'XlsxFilesEnabled',
     XlsxChartExportEnabled = 'XlsxChartExportEnabled',
-    // Escaping field values in chart tooltips (only scatter, treemap, geopoints visualizations)
-    EscapeUserHtmlInDefaultHcTooltip = 'EscapeUserHtmlInDefaultHcTooltip',
     HolidaysOnChart = 'HolidaysOnChart',
     ReadOnlyMode = 'ReadOnlyMode',
     MenuItemsFlatView = 'MenuItemsFlatView',
     EntryMenuItemCopy = 'EntryMenuItemCopy',
     EntryMenuItemMove = 'EntryMenuItemMove',
-    EntryMenuEditor = 'EntryMenuEditor',
     ExternalSelectors = 'ExternalSelectors',
     DashBoardWidgetParamsStrictValidation = 'DashBoardWidgetParamsStrictValidation',
     D3Visualizations = 'D3Visualizations',
@@ -74,16 +72,23 @@ export enum Feature {
     UseMovePermAction = 'UseMovePermAction',
     /** An empty chart for drawing something unusual */
     BlankChart = 'BlankChart',
-    /** Add a setting to display html in wizard */
-    HtmlInWizard = 'HtmlInWizard',
     /** Additional chart config for making requests by widget events */
     ChartActions = 'ChartActions',
-    /** Escaping string in wizard chart config to remove potential html injection */
-    EscapeStringInWizard = 'EscapeStringInWizard',
     /** Disable the use of html and function in chart configs */
     DisableFnAndHtml = 'DisableFnAndHtml',
     /** Enable using of presigned urls for uploading files to S3 */
     EnableFileUploadingByPresignedUrl = 'EnableFileUploadingByPresignedUrl',
+    /** Enables export menu item for downloading workbook config and import button
+     * when creating a workbook */
+    EnableExportWorkbookFile = 'EnableExportWorkbookFile',
+    /** Enable using RLS v2 config for datasets */
+    EnableRLSV2 = 'EnableRLSV2',
+    /* Enable Dash server entry validation */
+    DashServerValidationEnable = 'DashServerValidationEnable',
+    /* Enable Dash server entry migrations */
+    DashServerMigrationEnable = 'DashServerMigrationEnable',
+    /** Enable custom dashboard gaps */
+    EnableCustomDashMargins = 'EnableCustomDashMargins',
 }
 
 export type FeatureConfig = Record<string, boolean>;

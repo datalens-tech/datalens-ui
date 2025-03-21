@@ -1,7 +1,8 @@
 import React from 'react';
 
-import {Label} from '@gravity-ui/uikit';
+import {ActionTooltip, Button, Icon, Label} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {i18n} from 'i18n';
 import PropTypes from 'prop-types';
 import {ActionPanel, SlugifyUrl, Utils, usePageTitle} from 'ui';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -11,9 +12,11 @@ import {registry} from '../../../../registry';
 import {MODULE_TYPE} from '../../constants/common';
 import ButtonSave from '../../containers/ButtonSave/ButtonSave';
 import ButtonDrawPreview from '../ButtonDrawPreview/ButtonDrawPreview';
-import EntryLabel from '../EntryLabel/EntryLabel';
 import EntryTypeName from '../EntryTypeName/EntryTypeName';
 import {GridSchemeSelect} from '../GridSchemeSelect/GridSchemeSelect';
+import {RevisionsDiffDialog} from '../RevisionsDiff/RevisionsDiff';
+
+import FileDiff from '../../../../assets/icons/file-diff.svg';
 
 import './ActionPanel.scss';
 
@@ -28,8 +31,39 @@ function ActionPanelService({
     isGridContainsPreview,
     history,
     setActualVersion,
+    tabsData,
+    scriptsValues,
+    isScriptsChanged,
 }) {
     usePageTitle({entry});
+
+    const [selectedRevisionForDiff, setSelectedRevisionForDiff] =
+        React.useState(/* <string | undefined> */);
+
+    const renderRevisionItemActions = React.useCallback(
+        (item /* : GetRevisionsEntry */, currentRevId /* : string */) /* : React.ReactNode */ => {
+            if (item.revId === currentRevId) {
+                return null;
+            }
+
+            return (
+                <ActionTooltip
+                    title={i18n('component.dialog-revisions.view', 'button_show-revisions-diff')}
+                >
+                    <Button
+                        view="flat-secondary"
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            setSelectedRevisionForDiff(item.revId);
+                        }}
+                    >
+                        <Icon size={16} data={FileDiff} />
+                    </Button>
+                </ActionTooltip>
+            );
+        },
+        [],
+    );
 
     if (!entry) {
         return null;
@@ -43,11 +77,19 @@ function ActionPanelService({
                 onChange={(newSchemeId) => onSelectGridScheme({schemeId: newSchemeId})}
             />
             {entry.type !== MODULE_TYPE && (
-                <ButtonDrawPreview
-                    className={b('btn-draw-preview')}
-                    onDrawPreview={onDrawPreview}
-                    disabled={!isGridContainsPreview}
-                />
+                <ActionTooltip
+                    hotkey={'cmd + Enter'}
+                    title={i18n('component.editor-action-panel', 'button_preview')}
+                >
+                    {/* ActionTooltip can't work with functional component on children */}
+                    <div>
+                        <ButtonDrawPreview
+                            className={b('btn-draw-preview')}
+                            onDrawPreview={onDrawPreview}
+                            disabled={!isGridContainsPreview}
+                        />
+                    </div>
+                </ActionTooltip>
             )}
             <ButtonSave workbookId={workbookId} />
         </React.Fragment>,
@@ -63,7 +105,6 @@ function ActionPanelService({
                 </Label>
             )}
             <ActionPanelButton entry={entry} className={b('custom-button')} />
-            <EntryLabel entry={entry} />
         </React.Fragment>,
     ];
 
@@ -93,6 +134,17 @@ function ActionPanelService({
                 rightItems={rightItems}
                 setActualVersion={setActualVersion}
                 hideOpenRevisionsButton={true}
+                renderRevisionItemActions={renderRevisionItemActions}
+            />
+            <RevisionsDiffDialog
+                visible={Boolean(selectedRevisionForDiff)}
+                initialRevisionLeft={selectedRevisionForDiff}
+                initialRevisionRight={entry.revId}
+                onClose={() => setSelectedRevisionForDiff(undefined)}
+                scriptsValues={scriptsValues}
+                isScriptsChanged={isScriptsChanged}
+                entry={entry}
+                tabsData={tabsData}
             />
         </React.Fragment>
     );
@@ -118,6 +170,22 @@ ActionPanelService.propTypes = {
     setActualVersion: PropTypes.func,
 
     history: PropTypes.object.isRequired,
+
+    isScriptsChanged: PropTypes.bool,
+    scriptsValues: PropTypes.object,
+    tabsData: PropTypes.arrayOf(
+        PropTypes.shape({
+            id: PropTypes.string.isRequired,
+            language: PropTypes.string.isRequired,
+            name: PropTypes.string.isRequired,
+            docs: PropTypes.arrayOf(
+                PropTypes.shape({
+                    path: PropTypes.string.isRequired,
+                    title: PropTypes.string.isRequired,
+                }),
+            ),
+        }),
+    ),
 };
 
 export default ActionPanelService;

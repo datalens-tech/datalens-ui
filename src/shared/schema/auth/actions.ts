@@ -9,6 +9,8 @@ import type {
     DeleteUserArgs,
     GetUserProfileArgs,
     GetUserProfileResponse,
+    GetUsersByIdsArgs,
+    GetUsersByIdsResponse,
     GetUsersListArgs,
     GetUsersListResponse,
     RemoveUsersRolesArgs,
@@ -93,10 +95,18 @@ export const actions = {
     getUsersList: createAction<GetUsersListResponse, GetUsersListArgs>({
         method: 'GET',
         path: () => `${PATH_PREFIX}/users/list`,
-        params: ({page, pageSize, filterString, roles}, headers) => ({
-            query: {page, pageSize, filterString, roles},
+        params: ({page, pageSize, filterString, roles, idpType}, headers) => ({
+            query: {page, pageSize, filterString, roles, idpType},
             headers,
         }),
         paramsSerializer: defaultParamsSerializer,
+    }),
+    getUsersByIds: createAction<GetUsersByIdsResponse, GetUsersByIdsArgs>({
+        method: 'POST',
+        path: () => `${PATH_PREFIX}/users/get-by-ids`,
+        params: ({subjectIds}, headers) => ({
+            body: {subjectIds},
+            headers,
+        }),
     }),
 };

@@ -1,5 +1,10 @@
 {
   "button_open-revision-in-new-window": "Открыть в новом окне",
+  "field_split-diff": "Разделить",
+  "label_author": "Автор",
+  "label_compare-with": "сравнить с",
+  "label_status": "Статус",
+  "label_without-diff": "Нет изменений",
   "toast_fetch-initial-diff-failed": "Не удалось загрузить различия версий",
   "toast_get-revisions-failed": "Не удалось загрузить историю изменений",
   "toast_get-script-failed": "Не удалось загрузить скрипт"

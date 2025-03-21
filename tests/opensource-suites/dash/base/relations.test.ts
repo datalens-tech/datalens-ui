@@ -1,9 +1,9 @@
 import {Page} from '@playwright/test';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {isEnabledFeature, openTestPage, waitForCondition} from '../../../utils';
+import {openTestPage, waitForCondition} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {ConnectionsDialogQA, Feature} from '../../../../src/shared';
+import {ConnectionsDialogQA, DashRelationTypes} from '../../../../src/shared';
 import {TestParametrizationConfig} from '../../../types/config';
 
 const SELECTORS = {
@@ -25,11 +25,8 @@ datalensTest.describe('Dashboards - Basic functionality', () => {
             // some page need to be loaded so we can get data of feature flag from DL var
             await openTestPage(page, '/');
 
-            const isEnabledHideOldRelations = await isEnabledFeature(
-                page,
-                Feature.HideOldRelations,
-            );
-            if (isEnabledHideOldRelations) {
+            const relationType = await dashboardPage.getGlobalRelationsDialogType();
+            if (relationType === null) {
                 return;
             }
 
@@ -43,11 +40,20 @@ datalensTest.describe('Dashboards - Basic functionality', () => {
 
                     await dashboardPage.addChart(config.dash.charts.ChartCityPie);
 
-                    await dashboardPage.setupLinks({
-                        linkType: ConnectionsDialogQA.TypeSelectOutputOption,
-                        chartField: PARAMS.CHART_FIELD,
-                        selectorName: PARAMS.CONTROL_TITLE,
-                    });
+                    if (relationType === 'new') {
+                        await dashboardPage.setupNewLinks({
+                            linkType: DashRelationTypes.output,
+                            firstParamName: PARAMS.CONTROL_FIELD_NAME,
+                            secondParamName: PARAMS.CHART_FIELD,
+                            selectorName: PARAMS.CONTROL_TITLE,
+                        });
+                    } else {
+                        await dashboardPage.setupLinks({
+                            linkType: ConnectionsDialogQA.TypeSelectOutputOption,
+                            chartField: PARAMS.CHART_FIELD,
+                            selectorName: PARAMS.CONTROL_TITLE,
+                        });
+                    }
 
                     await dashboardPage.clickSaveButton();
                 },

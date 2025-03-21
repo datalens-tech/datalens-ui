@@ -59,6 +59,8 @@ function unitFormatter({
             minimumFractionDigits: typeof precision === 'number' ? precision : 0,
             maximumFractionDigits: 20,
             useGrouping: showRankDelimiter,
+            // @ts-ignore
+            signDisplay: 'negative',
         }).format(result);
 
         const unit = i18n(unitsI18nKeys[resultUnitRate]);

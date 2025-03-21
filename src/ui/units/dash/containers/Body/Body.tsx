@@ -54,11 +54,13 @@ import {
 } from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {
+    DEFAULT_DASH_MARGINS,
     FIXED_GROUP_CONTAINER_ID,
     FIXED_GROUP_HEADER_ID,
     FIXED_HEADER_GROUP_COLS,
     FIXED_HEADER_GROUP_LINE_MAX_ROWS,
 } from 'ui/components/DashKit/constants';
+import {WidgetContextProvider} from 'ui/components/DashKit/context/WidgetContext';
 import {getDashKitMenu} from 'ui/components/DashKit/helpers';
 import {showToast} from 'ui/store/actions/toaster';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
@@ -105,13 +107,14 @@ import {
     selectDashWorkbookId,
     selectEntryId,
     selectIsNewRelations,
+    selectLastModifiedItemId,
     selectSettings,
     selectShowTableOfContent,
     selectSkipReload,
     selectTabHashState,
     selectTabs,
 } from '../../store/selectors/dashTypedSelectors';
-import {getPropertiesWithResizeHandles} from '../../utils/dashkitProps';
+import {fixedHeaderGridProperties, getPropertiesWithResizeHandles} from '../../utils/dashkitProps';
 import {scrollIntoView} from '../../utils/scrollUtils';
 import {DashError} from '../DashError/DashError';
 import {getGroupedItems} from '../Dialogs/Tabs/PopupWidgetsOrder/helpers';
@@ -161,8 +164,12 @@ type DashBodyState = {
     prevMeta: {tabId: string | null; entryId: string | null};
     loadedItemsMap: Map<string, boolean>;
     hash: string;
-    delayedScrollId: string | null;
+    delayedScrollElement: HTMLElement | string | null;
     lastDelayedScrollTop: number | null;
+    groups: {
+        margins: [number, number];
+        renderers: DashKitGroup[];
+    };
 };
 
 type BodyProps = StateProps & DispatchProps & RouteComponentProps & OwnProps;
@@ -184,7 +191,7 @@ type GetPreparedCopyItemOptions<T extends object = {}> = (
 ) => PreparedCopyItemOptions<T>;
 
 // Body is used as a core in different environments
-class Body extends React.PureComponent<BodyProps> {
+class Body extends React.PureComponent<BodyProps, DashBodyState> {
     static getDerivedStateFromProps(props: BodyProps, state: DashBodyState) {
         let updatedState: Partial<DashBodyState> = {};
 
@@ -211,15 +218,17 @@ class Body extends React.PureComponent<BodyProps> {
         }
 
         if (!props.disableHashNavigation) {
-            if (!currentHash && state.delayedScrollId) {
-                updatedState.delayedScrollId = null;
+            if (!currentHash && state.delayedScrollElement) {
+                updatedState.delayedScrollElement = null;
                 updatedState.lastDelayedScrollTop = null;
             } else if (!isTabUnmount && hasHashChanged) {
                 scrollIntoView(currentHash.replace('#', ''));
-                updatedState.delayedScrollId = state.loaded ? null : currentHash.replace('#', '');
+                updatedState.delayedScrollElement = state.loaded
+                    ? null
+                    : currentHash.replace('#', '');
                 updatedState.lastDelayedScrollTop = null;
             } else if (currentHash && isTabUnmount) {
-                updatedState.delayedScrollId = currentHash.replace('#', '');
+                updatedState.delayedScrollElement = currentHash.replace('#', '');
                 updatedState.lastDelayedScrollTop = null;
             }
         }
@@ -262,9 +271,9 @@ class Body extends React.PureComponent<BodyProps> {
     }, UPDATE_STATE_DEBOUNCE_TIME);
 
     scrollIntoViewWithDebounce = debounce(() => {
-        if (this.state.delayedScrollId) {
+        if (this.state.delayedScrollElement) {
             const lastDelayedScrollTop = scrollIntoView(
-                this.state.delayedScrollId,
+                this.state.delayedScrollElement,
                 this.state.lastDelayedScrollTop,
             );
             this.setState({lastDelayedScrollTop});
@@ -299,62 +308,60 @@ class Body extends React.PureComponent<BodyProps> {
         loaded: false,
         loadedItemsMap: new Map<string, boolean>(),
         hash: '',
-        delayedScrollId: null,
+        delayedScrollElement: null,
         lastDelayedScrollTop: null,
+        groups: {
+            margins: DEFAULT_DASH_MARGINS,
+            renderers: [
+                {
+                    id: FIXED_GROUP_HEADER_ID,
+                    render: (id, children, props) =>
+                        this.renderFixedGroupHeader(
+                            id,
+                            children,
+                            props as DashkitGroupRenderWithContextProps,
+                        ),
+                    gridProperties: fixedHeaderGridProperties(),
+                },
+                {
+                    id: FIXED_GROUP_CONTAINER_ID,
+                    render: (id, children, props) =>
+                        this.renderFixedGroupContainer(
+                            id,
+                            children,
+                            props as DashkitGroupRenderWithContextProps,
+                        ),
+                    gridProperties: getPropertiesWithResizeHandles(),
+                },
+                {
+                    id: DEFAULT_GROUP,
+                    gridProperties: getPropertiesWithResizeHandles(),
+                },
+            ],
+        },
     };
-
-    groups: DashKitGroup[] = [
-        {
-            id: FIXED_GROUP_HEADER_ID,
-            render: (id, children, props) =>
-                this.renderFixedGroupHeader(
-                    id,
-                    children,
-                    props as DashkitGroupRenderWithContextProps,
-                ),
-            gridProperties: (props) => {
-                return {
-                    ...props,
-                    cols: FIXED_HEADER_GROUP_COLS,
-                    maxRows: FIXED_HEADER_GROUP_LINE_MAX_ROWS,
-                    autoSize: false,
-                    compactType: 'horizontal-nowrap',
-                };
-            },
-        },
-        {
-            id: FIXED_GROUP_CONTAINER_ID,
-            render: (id, children, props) =>
-                this.renderFixedGroupContainer(
-                    id,
-                    children,
-                    props as DashkitGroupRenderWithContextProps,
-                ),
-            gridProperties: getPropertiesWithResizeHandles,
-        },
-        {
-            id: DEFAULT_GROUP,
-            gridProperties: getPropertiesWithResizeHandles,
-        },
-    ];
 
     componentDidMount() {
         // if localStorage already have a dash item, we need to set it to state
         this.storageHandler();
 
         if (this.props.location.hash && !this.props.disableHashNavigation) {
-            this.setState({delayedScrollId: this.props.location.hash.replace('#', '')});
+            this.setState({delayedScrollElement: this.props.location.hash.replace('#', '')});
         }
 
         window.addEventListener('storage', this.storageHandler);
         window.addEventListener('wheel', this.interruptAutoScroll);
         window.addEventListener('touchmove', this.interruptAutoScroll);
+
+        this.updateMargins();
     }
 
     componentDidUpdate() {
         if (this.dashKitRef !== this.props.dashKitRef) {
             this.props.setDashKitRef(this.dashKitRef);
         }
+
+        this.updateMargins();
     }
 
     componentDidCatch(error: Error) {
@@ -377,6 +384,35 @@ class Body extends React.PureComponent<BodyProps> {
             </div>
         );
     }
+
+    updateMargins() {
+        const {margins: stateMargins} = this.state.groups;
+        const {margins: propsMargins = DEFAULT_DASH_MARGINS} = this.props.settings;
+
+        if (stateMargins?.[0] !== propsMargins?.[0] || stateMargins?.[1] !== propsMargins?.[1]) {
+            this.setState({
+                groups: {
+                    margins: propsMargins,
+                    renderers: this.state.groups.renderers.map((group) => {
+                        if (group.id === FIXED_GROUP_HEADER_ID) {
+                            return {
+                                ...group,
+                                gridProperties: fixedHeaderGridProperties({margin: propsMargins}),
+                            };
+                        }
+                        return {
+                            ...group,
+                            gridProperties: getPropertiesWithResizeHandles({margin: propsMargins}),
+                        };
+                    }),
+                },
+            });
+        }
+    }
+
+    isCondensed = () => {
+        return this.state.groups.margins[0] === 0 || this.state.groups.margins[1] === 0;
+    };
 
     onChange = ({
         config,
@@ -559,7 +595,7 @@ class Body extends React.PureComponent<BodyProps> {
                 layout: GravityDashkit.reflowLayout({
                     newLayoutItem: movedItem,
                     layout: newLayout,
-                    groups: this.groups,
+                    groups: this.state.groups.renderers,
                 }),
             });
         }
@@ -762,8 +798,8 @@ class Body extends React.PureComponent<BodyProps> {
     };
 
     interruptAutoScroll = (event: Event) => {
-        if (event.isTrusted && this.state.delayedScrollId) {
-            this.setState({delayedScrollId: null, lastDelayedScrollTop: null});
+        if (event.isTrusted && this.state.delayedScrollElement) {
+            this.setState({delayedScrollElement: null, lastDelayedScrollTop: null});
         }
     };
 
@@ -927,6 +963,17 @@ class Body extends React.PureComponent<BodyProps> {
         return this._memoizedOrderedConfig?.config;
     };
 
+    private itemAddHandler = (isMounted: boolean, id: string, domElement: HTMLElement) => {
+        if (isMounted && this.props.lastModifiedItem === id) {
+            const lastDelayedScrollTop = scrollIntoView(domElement, null);
+
+            this.setState({
+                delayedScrollElement: domElement,
+                lastDelayedScrollTop,
+            });
+        }
+    };
+
     private renderDashkit = () => {
         const {isGlobalDragging} = this.state;
         const {
@@ -957,35 +1004,39 @@ class Body extends React.PureComponent<BodyProps> {
                 isEditModeLoading={isEditModeLoading}
             />
         ) : (
-            <DashKit
-                ref={this.dashKitRef}
-                config={tabDataConfig as DashKitProps['config']}
-                editMode={mode === Mode.Edit}
-                focusable={true}
-                onDrop={this.onDropElement}
-                itemsStateAndParams={this.props.hashStates as DashKitProps['itemsStateAndParams']}
-                groups={this.groups}
-                context={context}
-                getPreparedCopyItemOptions={
-                    this
-                        .getPreparedCopyItemOptionsFn satisfies GetPreparedCopyItemOptions<any> as GetPreparedCopyItemOptions<{}>
-                }
-                onCopyFulfill={this.onItemCopy}
-                onItemEdit={this.props.openItemDialogAndSetData}
-                onChange={this.onChange}
-                settings={dashkitSettings}
-                defaultGlobalParams={settings.globalParams}
-                globalParams={globalParams}
-                overlayControls={this.getOverlayControls()}
-                overlayMenuItems={this.getOverlayMenu()}
-                skipReload={this.props.skipReload}
-                isNewRelations={this.props.isNewRelations}
-                onItemMountChange={this.handleItemMountChange}
-                onItemRender={this.handleItemRender}
-                hideErrorDetails={this.props.hideErrorDetails}
-                setWidgetCurrentTab={this.props.setWidgetCurrentTab}
-                dataProviderContextGetter={this.dataProviderContextGetter}
-            />
+            <WidgetContextProvider onWidgetMountChange={this.itemAddHandler}>
+                <DashKit
+                    ref={this.dashKitRef}
+                    config={tabDataConfig as DashKitProps['config']}
+                    editMode={mode === Mode.Edit}
+                    focusable={true}
+                    onDrop={this.onDropElement}
+                    itemsStateAndParams={
+                        this.props.hashStates as DashKitProps['itemsStateAndParams']
+                    }
+                    groups={this.state.groups.renderers}
+                    context={context}
+                    getPreparedCopyItemOptions={
+                        this
+                            .getPreparedCopyItemOptionsFn satisfies GetPreparedCopyItemOptions<any> as GetPreparedCopyItemOptions<{}>
+                    }
+                    onCopyFulfill={this.onItemCopy}
+                    onItemEdit={this.props.openItemDialogAndSetData}
+                    onChange={this.onChange}
+                    settings={dashkitSettings}
+                    defaultGlobalParams={settings.globalParams}
+                    globalParams={globalParams}
+                    overlayControls={this.getOverlayControls()}
+                    overlayMenuItems={this.getOverlayMenu()}
+                    skipReload={this.props.skipReload}
+                    isNewRelations={this.props.isNewRelations}
+                    onItemMountChange={this.handleItemMountChange}
+                    onItemRender={this.handleItemRender}
+                    hideErrorDetails={this.props.hideErrorDetails}
+                    setWidgetCurrentTab={this.props.setWidgetCurrentTab}
+                    dataProviderContextGetter={this.dataProviderContextGetter}
+                />
+            </WidgetContextProvider>
         );
     };
 
@@ -1017,9 +1068,9 @@ class Body extends React.PureComponent<BodyProps> {
                 loadedItemsMap.size === this.props.tabData?.items.length &&
                 Array.from(loadedItemsMap.values()).every(Boolean);
 
-            if (isLoaded && this.state.delayedScrollId) {
-                scrollIntoView(this.state.delayedScrollId, this.state.lastDelayedScrollTop);
-                this.setState({delayedScrollId: null, lastDelayedScrollTop: null});
+            if (isLoaded && this.state.delayedScrollElement) {
+                scrollIntoView(this.state.delayedScrollElement, this.state.lastDelayedScrollTop);
+                this.setState({delayedScrollElement: null, lastDelayedScrollTop: null});
             } else {
                 // if the dash is not fully loaded, we are starting a scroll chain
                 // that will try to scroll to the title after each item rendering
@@ -1036,7 +1087,7 @@ class Body extends React.PureComponent<BodyProps> {
             }
 
             this.setState({
-                delayedScrollId: encodeURIComponent(itemTitle),
+                delayedScrollElement: encodeURIComponent(itemTitle),
                 lastDelayedScrollTop: null,
             });
         }
@@ -1153,6 +1204,7 @@ class Body extends React.PureComponent<BodyProps> {
                     />
                     <div
                         className={b('content', {
+                            condensed: this.isCondensed(),
                             'with-table-of-content': showTableOfContent && hasTableOfContent,
                             mobile: DL.IS_MOBILE,
                             aside: getIsAsideHeaderEnabled(),
@@ -1208,6 +1260,7 @@ class Body extends React.PureComponent<BodyProps> {
 
 const mapStateToProps = (state: DatalensGlobalState) => ({
     entryId: selectEntryId(state),
+    lastModifiedItem: selectLastModifiedItemId(state),
     entry: state.dash.entry,
     mode: state.dash.mode,
     showTableOfContent: selectShowTableOfContent(state),

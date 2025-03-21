@@ -6,12 +6,9 @@ import {
     CustomPaletteBgColors,
     WIDGET_BG_COLORS_PRESET,
     WIDGET_BG_HEAVY_COLORS_PRESET,
-} from 'ui/constants/widgets';
+} from 'shared/constants/widgets';
 
 import {ColorPalette} from '../ColorPalette/ColorPalette';
-
-/** @deprecated  */
-export const CustomPaletteColors = CustomPaletteBgColors;
 
 type PaletteBackgroundProps = {
     color?: string;

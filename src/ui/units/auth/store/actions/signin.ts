@@ -2,8 +2,10 @@ import type {DatalensGlobalState} from 'index';
 import type {ThunkDispatch} from 'redux-thunk';
 import type {Unionize} from 'utility-types';
 
+import {RELOADED_URL_QUERY} from '../../../../../shared/components/auth/constants/url';
 import logger from '../../../../libs/logger';
-import {getSdk} from '../../../../libs/schematic-sdk';
+import type {SdkError} from '../../../../libs/schematic-sdk';
+import {getSdk, isSdkError} from '../../../../libs/schematic-sdk';
 import {showToast} from '../../../../store/actions/toaster';
 import {UPDATE_FORM_VALUES} from '../constants/signin';
 
@@ -18,27 +20,36 @@ export const updateFormValues = (
     payload,
 });
 
-export const submitSigninForm = () => {
+export const submitSigninForm = ({onError}: {onError?: (error: SdkError) => void}) => {
     return (dispatch: SigninDispatch, getState: () => DatalensGlobalState) => {
         const {sdk} = getSdk();
         const {login, password} = getState().auth.signin;
 
+        const preparedLogin = login.trim();
+
         return sdk.auth.auth
             .signin({
-                login,
+                login: preparedLogin,
                 password,
             })
             .then(() => {
                 const {rethPath} = getState().auth.common;
-                window.location.href = rethPath ? rethPath : '/';
+                const url = new URL(rethPath || window.location.origin);
+                url.searchParams.delete(RELOADED_URL_QUERY);
+                window.location.href = url.toString();
             })
             .catch((error) => {
                 if (!sdk.isCancel(error)) {
                     logger.logError('auth/signin failed', error);
 
+                    if (isSdkError(error)) {
+                        onError?.(error);
+                        return;
+                    }
+
                     dispatch(
                         showToast({
-                            title: 'Failed to login',
+                            title: error.message,
                             error,
                         }),
                     );

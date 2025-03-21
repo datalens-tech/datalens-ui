@@ -397,6 +397,25 @@ class DashboardPage extends BasePage {
         return this.page.locator(slct(DashkitQa.GRID_ITEM)).getByText(text, {exact: true});
     }
 
+    async getGlobalRelationsDialogType(): Promise<'new' | 'old' | null> {
+        const isEnabledShowNewRelationsButton = await isEnabledFeature(
+            this.page,
+            Feature.ShowNewRelationsButton,
+        );
+
+        if (isEnabledShowNewRelationsButton) {
+            return 'new';
+        }
+
+        const hideOldRelations = await isEnabledFeature(this.page, Feature.HideOldRelations);
+
+        if (!hideOldRelations) {
+            return 'old';
+        }
+
+        return null;
+    }
+
     async deleteSelector(controlTitle: string) {
         const control = this.page.locator(slct('dashkit-grid-item'), {
             has: this.page.locator(slct(ControlQA.chartkitControl, controlTitle)),
@@ -561,18 +580,35 @@ class DashboardPage extends BasePage {
     }
 
     async setupNewLinks({
-        linkType,
         widgetElem,
+        selectorName,
+
+        linkType,
         firstParamName,
         secondParamName,
     }: {
         linkType: DashRelationTypes;
         firstParamName: string;
-        widgetElem: Locator;
         secondParamName: string;
-    }) {
-        // open dialog relations by click on control item links icon
-        await widgetElem.click();
+    } & (
+        | {widgetElem: Locator; selectorName?: undefined}
+        | {selectorName: string; widgetElem?: undefined}
+    )) {
+        if (widgetElem) {
+            // open dialog relations by click on control item links icon
+            await widgetElem.click();
+        } else if (selectorName) {
+            // click on global links button
+            await this.clickOnLinksBtn();
+
+            await clickGSelectOption({
+                page: this.page,
+                key: DashCommonQa.RelationsWidgetSelect,
+                optionText: selectorName,
+            });
+        } else {
+            throw new Error('Relation dialog needs selectorName or widgetElement param');
+        }
 
         // choose new link
         await this.page.click(slct(DashCommonQa.RelationTypeButton));
@@ -633,6 +669,13 @@ class DashboardPage extends BasePage {
         await this.page.click(slct('connect-by-alias-dialog-apply-button'));
         // applying changes in the communication dialog
         await this.page.click(slct(ConnectionsDialogQA.Apply));
+    }
+
+    async hasChanges() {
+        const saveButton = await this.page.locator(slct(ActionPanelDashSaveControlsQa.Save));
+        const disabledAttribute = await saveButton.getAttribute('disabled');
+
+        return disabledAttribute === null;
     }
 
     async clickSaveButton() {

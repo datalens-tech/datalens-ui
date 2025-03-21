@@ -11,7 +11,6 @@ import {
     isTrueArg,
 } from '../../../shared';
 import {resolveSource} from '../../../shared/endpoints/sources';
-import {nativeModules} from '../../components/charts-engine/components/processor/native-modules';
 import type {SourceConfig} from '../../components/charts-engine/types';
 import {SERVICE_NAME_DATALENS} from '../../constants';
 import {getEnvCert} from '../../utils/env-utils';
@@ -150,7 +149,6 @@ export default {
     },
 
     chartsEngineConfig: {
-        nativeModules: nativeModules.BASE_NATIVE_MODULES,
         secrets: {},
         enableTelemetry: true,
         usEndpointPostfix: '',
@@ -243,6 +241,7 @@ export default {
     // auth
     isAuthEnabled: isTrueArg(process.env.AUTH_ENABLED),
     authTokenPublicKey: getEnvCert(process.env.AUTH_TOKEN_PUBLIC_KEY),
+    authManageLocalUsersDisabled: isTrueArg(process.env.AUTH_MANAGE_LOCAL_USERS_DISABLED),
 
     apiPrefix: '/api',
 

@@ -1,7 +1,9 @@
 import React from 'react';
 
-import {Dialog, Progress} from '@gravity-ui/uikit';
+import {Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+
+import {ProgressBar} from '../ProgressBar/ProgressBar';
 
 import './DialogCounterProgress.scss';
 
@@ -43,14 +45,14 @@ export const DialogCounterProgress = ({
             <Dialog.Header caption={caption} />
             <Dialog.Body>
                 <div className={b('content')}>
-                    <Progress
-                        className={b('progress')}
+                    <ProgressBar
                         theme={hasError ? 'danger' : 'info'}
                         size="s"
                         value={progress}
                         loading={totalUnknown}
+                        progressText={textProgress}
+                        textClassName={b('text-progress')}
                     />
-                    <div className={b('text-progress')}>{textProgress}</div>
                 </div>
             </Dialog.Body>
             <Dialog.Footer onClickButtonCancel={onClose} textButtonCancel={textButtonCancel} />

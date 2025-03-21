@@ -1,0 +1,78 @@
+@mixin point($type: small) {
+    content: '';
+    box-sizing: border-box;
+    border-radius: 50%;
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 7px;
+    height: 7px;
+    z-index: 1;
+
+    @if $type == 'medium' {
+        top: 1px;
+        left: 1px;
+        width: 13px;
+        height: 13px;
+        z-index: 0;
+    }
+    @if $type == 'mediumL' {
+        top: 0;
+        left: 0;
+        width: 15px;
+        height: 15px;
+        z-index: 0;
+    }
+}
+
+.revision-status-point {
+    width: 15px;
+    height: 15px;
+    display: inline-block;
+    position: relative;
+
+    &_status_draft {
+        background-color: transparent;
+        border-color: transparent;
+
+        &:before {
+            @include point(medium);
+            background-color: var(--g-color-base-background);
+            border: 1px solid var(--g-color-line-generic-accent);
+        }
+
+        &:after {
+            @include point();
+            background-color: var(--g-color-base-neutral-heavy);
+            border: 1px solid var(--g-color-base-background);
+        }
+    }
+
+    &_status_published {
+        background-color: transparent;
+        border-color: transparent;
+
+        &:before {
+            @include point(mediumL);
+            background-color: var(--g-color-base-selection-hover);
+            border: 1px solid var(--g-color-base-selection-hover);
+        }
+
+        &:after {
+            @include point();
+            background-color: var(--g-color-base-brand);
+            border: 1px solid var(--g-color-base-brand);
+        }
+    }
+
+    &_status_notActual {
+        background-color: transparent;
+        border-color: transparent;
+
+        &:before {
+            @include point();
+            border: 1px solid var(--g-color-line-generic-accent);
+            background-color: var(--g-color-base-background);
+        }
+    }
+}

@@ -1,0 +1,15 @@
+.export-workbook-file-dialog {
+    width: 540px;
+
+    &__progress {
+        --g-progress-filled-background-color: var(--g-color-base-brand);
+    }
+
+    &__import-cancel-dialog {
+        width: 480px;
+    }
+
+    &__error-content {
+        padding: 0;
+    }
+}

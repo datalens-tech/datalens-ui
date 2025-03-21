@@ -1,3 +1,5 @@
+import {UserRole} from 'shared/components/auth/constants/role';
+
 import type {LineShapeType} from '../../shared';
 import {
     AppEnvironment,
@@ -179,6 +181,9 @@ export const DL = {
     get AUTH_ENABLED() {
         return window.DL.isAuthEnabled === true;
     },
+    get AUTH_MANAGE_LOCAL_USERS_DISABLED() {
+        return window.DL.authManageLocalUsersDisabled === true;
+    },
     get IS_AUTH_PAGE() {
         return Boolean(window.DL.authPageSettings?.isAuthPage);
     },
@@ -285,6 +290,9 @@ export const DL = {
     },
     get EXPORT_DASH_EXCEL() {
         return window.DL.exportDashExcel === true;
+    },
+    get IS_NATIVE_AUTH_ADMIN() {
+        return window.DL.user.roles?.includes(UserRole.Admin);
     },
 };
 

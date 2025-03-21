@@ -9,7 +9,17 @@ import {PANE_VIEWS} from '../../constants/common';
 import './PaneViewSelect.scss';
 
 const b = block('editor-pane-view-select');
-const options = Object.values(PANE_VIEWS).map((view) => ({value: view, content: view}));
+
+const PANE_VIEWS_NAMES = {
+    [PANE_VIEWS.EDITOR]: 'Code editor',
+    [PANE_VIEWS.PREVIEW]: 'Preview',
+    [PANE_VIEWS.CONSOLE]: 'Console',
+};
+
+const options = Object.values(PANE_VIEWS).map((view) => ({
+    value: view,
+    content: PANE_VIEWS_NAMES[view] || view,
+}));
 
 type Props = {
     value: string;

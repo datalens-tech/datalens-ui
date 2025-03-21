@@ -3,7 +3,7 @@ import _get from 'lodash/get';
 import {createSelector} from 'reselect';
 import {showToast} from 'store/actions/toaster';
 import {DL, URL_QUERY} from 'ui';
-import {SET_ENTRY} from 'ui/store/actions/entryContent';
+import {SET_ENTRY, reloadRevisionsOnSave} from 'ui/store/actions/entryContent';
 import history from 'ui/utils/history';
 
 import {ENTRY_TYPES} from '../../../../../../shared';
@@ -14,7 +14,7 @@ import {UrlSearch} from '../../../../../utils';
 import {EditorUrls, Status, TOASTER_TYPE, UPDATE_ENTRY_MODE} from '../../../constants/common';
 import {RevisionAction} from '../../../types/revisions';
 import {isEntryLatest} from '../../../utils/utils';
-import {ComponentName, componentStateChange} from '../../actions';
+import {ComponentName, componentStateChange, drawPreview} from '../../actions';
 import {imm} from '../../update';
 
 import {editorTypedReducer} from './editorTypedReducer';
@@ -96,6 +96,7 @@ export const fetchInitialLoad = ({id, template, location, workbookId}) => {
                     chart: null,
                 },
             });
+            dispatch(drawPreview());
         } catch (error) {
             logger.logError('editor: fetchInitialLoad failed', error);
             dispatch({
@@ -169,6 +170,7 @@ export const fetchEditorChartUpdate = ({mode, history, location}) => {
                 ? urlSearch.delete(URL_QUERY.REV_ID).toString()
                 : urlSearch.set(URL_QUERY.REV_ID, updatedEntry.revId).toString();
             history.replace(`${pathname}${query}`);
+            dispatch(reloadRevisionsOnSave(true));
             dispatch(
                 showToast({
                     name: 'success_update_chart_editor',
@@ -389,12 +391,9 @@ export const getScriptsValues = (state) => state.editor.scriptsValues;
 export const getIsScriptsChanged = createSelector(
     [getEntry, getScriptsValues],
     (entry, scriptsValues) => {
-        if (entry.meta?.is_sandbox_version_changed) {
-            delete entry.meta.is_sandbox_version_changed;
-            return true;
-        }
+        const {scriptsValues: initialScriptsValues} = Helper.createTabData(entry);
         return Object.keys(scriptsValues).some(
-            (key) => (entry.data[key] || '') !== scriptsValues[key],
+            (key) => (initialScriptsValues[key] || '') !== scriptsValues[key],
         );
     },
 );

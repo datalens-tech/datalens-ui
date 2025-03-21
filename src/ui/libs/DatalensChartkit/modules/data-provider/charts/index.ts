@@ -956,7 +956,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             params,
             widgetType,
             widgetConfig,
-            config: {type, data: configData, key, createdAt, sandbox_version} = {},
+            config: {type, data: configData, key, createdAt} = {},
             workbookId,
         } = data;
 
@@ -975,7 +975,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                     ? {
                           data: configData,
                           createdAt: createdAt,
-                          meta: {stype: type, sandbox_version},
+                          meta: {stype: type},
                       }
                     : undefined,
                 responseOptions: {

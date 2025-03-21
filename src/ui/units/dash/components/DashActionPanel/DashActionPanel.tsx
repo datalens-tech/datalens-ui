@@ -15,6 +15,7 @@ import {registry} from 'ui/registry';
 import {closeDialog as closeDialogConfirm, openDialogConfirm} from 'ui/store/actions/dialog';
 import {selectIsRenameWithoutReload} from 'ui/store/selectors/entryContent';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import {isDraftVersion} from 'ui/utils/revisions';
 import Utils from 'ui/utils/utils';
 import type {ValuesType} from 'utility-types';
 
@@ -23,7 +24,6 @@ import type {
     EntryContextMenuItem,
     EntryContextMenuItems,
 } from '../../../../components/EntryContextMenu/helpers';
-import {isDraftVersion} from '../../../../components/Revisions/helpers';
 import type {RevisionEntry} from '../../../../components/Revisions/types';
 import {DIALOG_TYPE} from '../../../../constants/dialogs';
 import {ICONS_MENU_DEFAULT_SIZE} from '../../../../libs/DatalensChartkit/menu/MenuItems';
@@ -40,6 +40,7 @@ import {
     updateDeprecatedDashConfig,
 } from '../../store/actions/dashTyped';
 import {isDeprecatedDashData} from '../../store/actions/helpers';
+import {openEmptyDialogRelations} from '../../store/actions/relations/actions';
 import {
     selectDashAccessDescription,
     selectDashShowOpenedDescription,
@@ -140,7 +141,12 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
                 onSaveAsNewClick={this.handlerSaveAsNewClick}
                 onCancelClick={this.handlerCancelEditClick}
                 onOpenDialogSettingsClick={this.openDialogSettings}
-                onOpenDialogConnectionsClick={this.openDialogConnections}
+                onOpenDialogConnectionsClick={
+                    !isEnabledFeature(Feature.HideOldRelations) ||
+                    isEnabledFeature(Feature.ShowNewRelationsButton)
+                        ? this.openDialogConnections
+                        : undefined
+                }
                 onOpenDialogTabsClick={this.openDialogTabs}
                 entryDialoguesRef={this.props.entryDialoguesRef}
                 isDraft={this.props.isDraft}
@@ -164,7 +170,13 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
     }
 
     openDialogSettings = () => this.props.openDialog(DIALOG_TYPE.SETTINGS);
-    openDialogConnections = () => this.props.openDialog(DIALOG_TYPE.CONNECTIONS);
+    openDialogConnections = () => {
+        if (isEnabledFeature(Feature.ShowNewRelationsButton)) {
+            this.props.openEmptyDialogRelations();
+        } else if (!isEnabledFeature(Feature.HideOldRelations)) {
+            this.props.openDialog(DIALOG_TYPE.CONNECTIONS);
+        }
+    };
     openDialogTabs = () => this.props.openDialog(DIALOG_TYPE.TABS);
 
     openDialogAccess = () => {
@@ -346,6 +358,7 @@ const mapDispatchToProps = {
     setDefaultViewState,
     updateDeprecatedDashConfig,
     openDialogConfirm,
+    openEmptyDialogRelations,
     closeDialogConfirm,
 };
 

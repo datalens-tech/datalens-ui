@@ -1,0 +1,16 @@
+{
+  "action_assign-role": "Назначить роль",
+  "action_change-password": "Сменить пароль",
+  "action_delete-user": "Удалить пользователя",
+  "action_edit-profile": "Редактировать профиль",
+  "label_email": "Почта",
+  "label_failed-to-load-user": "При загрузке учётной записи произошла ошибка, возможно, пользователь был удалён",
+  "label_first-name": "Имя",
+  "label_last-name": "Фамилия",
+  "label_login": "Логин",
+  "label_role": "Роль",
+  "label_user-id": "Идентификатор",
+  "title_administration": "Администрирование",
+  "title_permissions": "Права доступа",
+  "title_profile": "Профиль"
+}

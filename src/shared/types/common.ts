@@ -137,6 +137,7 @@ export interface DLUser extends DLUserAccount {
     isLocalFederationUser?: boolean;
     withNavigation?: boolean;
     roles?: `${UserRole}`[];
+    idpType: string | null;
 }
 
 export type MainLayoutConfigData = {
@@ -177,6 +178,7 @@ export type DLGlobalData = {
         foldersEnabled: boolean;
         workbooksEnabled: boolean;
         collectionsEnabled: boolean;
+        features?: Record<string, unknown>;
     };
     userIsOrgAdmin?: boolean;
     allowLanguages?: Language[];
@@ -230,6 +232,7 @@ export type DLGlobalData = {
     releaseVersion?: string;
     isAuthEnabled?: boolean;
     exportDashExcel?: boolean;
+    authManageLocalUsersDisabled?: boolean;
 } & MainLayoutConfigData;
 
 export type ContactDialogSettings = {

@@ -18,6 +18,7 @@ import {selectDebugMode} from 'store/selectors/user';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents/components/SelectOptionWithIcon/SelectOptionWithIcon';
 
 import {openDialogAliases} from '../../units/dash/store/actions/relations/actions';
+import {PlaceholderIllustration} from '../PlaceholderIllustration/PlaceholderIllustration';
 
 import {Content} from './components/Content/Content';
 import {AliasesInvalidList} from './components/DialogAliases/components/AliasesList/AliasesInvalidList';
@@ -54,7 +55,7 @@ export const DIALOG_RELATIONS = Symbol('dash/DIALOG_RELATIONS');
 export type DialogRelationsProps = {
     onClose: () => void;
     onApply: (item: {aliases?: DashTab['aliases']; connections?: Config['connections']}) => void;
-    widget: DashTabItem;
+    widget?: DashTabItem;
     allWidgets?: DashTabItem[];
     dashKitRef: React.RefObject<DashKit>;
     dashTabAliases: DashTabAliases | null;
@@ -69,8 +70,22 @@ export type OpenDialogRelationsArgs = {
 
 const renderOptions = (option: SelectOption) => <SelectOptionWithIcon option={option} />;
 
+const EmptyState: React.FC = () => {
+    return (
+        <PlaceholderIllustration
+            className={b('empty-state')}
+            size={'m'}
+            direction={'column'}
+            name={'emptyDirectory'}
+            title={i18n('title_empty-selected-widgets')}
+        />
+    );
+};
+
 const DialogRelations = (props: DialogRelationsProps) => {
-    const [currentWidget, setCurrentWidget] = React.useState<DashTabItem>(props.widget);
+    const [currentWidget, setCurrentWidget] = React.useState<DashTabItem | null>(
+        props.widget ?? null,
+    );
     const {
         dashKitRef,
         dashTabAliases,
@@ -93,7 +108,9 @@ const DialogRelations = (props: DialogRelationsProps) => {
     const [aliases, setAliases] = React.useState(dashTabAliases || {});
 
     const [itemId, setItemId] = React.useState(
-        currentWidget.type === DashTabItemType.GroupControl ? currentWidget.data.group[0].id : null,
+        currentWidget?.type === DashTabItemType.GroupControl
+            ? currentWidget.data.group[0].id
+            : null,
     );
 
     const {isLoading, currentWidgetMeta, relations, datasets, dashWidgetsMeta, invalidAliases} =
@@ -502,9 +519,13 @@ const DialogRelations = (props: DialogRelationsProps) => {
             <Dialog.Header caption={i18n('title_links')} />
             <Dialog.Body className={b('container')}>
                 <Select
-                    className={b('item-select')}
+                    qa={DashCommonQa.RelationsWidgetSelect}
+                    placeholder={i18n('label_empty-state')}
+                    className={b('item-select', {
+                        'empty-state': !currentWidget,
+                    })}
                     popupClassName={b('item-select-popup')}
-                    value={[currentWidgetId]}
+                    value={currentWidgetId ? [currentWidgetId] : undefined}
                     options={widgetOptions}
                     onUpdate={handleItemChange}
                     filterable={true}
@@ -513,20 +534,25 @@ const DialogRelations = (props: DialogRelationsProps) => {
                     renderSelectedOption={renderOptions}
                     popupWidth="fit"
                 />
-
-                <Filters
-                    onChangeInput={handleFilterInputChange}
-                    onChangeButtons={handleFilterTypesChange}
-                />
-                <Content
-                    relations={filteredRelations}
-                    widgetMeta={currentWidgetMeta}
-                    isLoading={isLoading}
-                    onChange={handleRelationTypeChange}
-                    onAliasClick={handleAliasesClick}
-                    showDebugInfo={showDebugInfo}
-                    widgetIcon={widgetsIconMap[currentWidgetMeta?.widgetId || '']}
-                />
+                {currentWidget ? (
+                    <React.Fragment>
+                        <Filters
+                            onChangeInput={handleFilterInputChange}
+                            onChangeButtons={handleFilterTypesChange}
+                        />
+                        <Content
+                            relations={filteredRelations}
+                            widgetMeta={currentWidgetMeta}
+                            isLoading={isLoading}
+                            onChange={handleRelationTypeChange}
+                            onAliasClick={handleAliasesClick}
+                            showDebugInfo={showDebugInfo}
+                            widgetIcon={widgetsIconMap[currentWidgetMeta?.widgetId || '']}
+                        />
+                    </React.Fragment>
+                ) : (
+                    <EmptyState />
+                )}
             </Dialog.Body>
             <Dialog.Footer
                 preset="default"
@@ -540,75 +566,82 @@ const DialogRelations = (props: DialogRelationsProps) => {
                     qa: DashCommonQa.RelationsApplyBtn,
                 }}
             >
-                <span className={b('disconnect-text')}>{i18n('button_disconnect')}</span>
-                <DropdownMenu
-                    disabled={isDisconnectDisabled}
-                    size="l"
-                    items={[
-                        {
-                            action: () => handleDisconnectAll('all'),
-                            text: i18n('label_all'),
-                            qa: DashCommonQa.RelationsDisconnectAllWidgets,
-                        },
-                        {
-                            action: () => handleDisconnectAll('charts'),
-                            text: i18n('label_charts'),
-                            qa: DashCommonQa.RelationsDisconnectAllCharts,
-                        },
-                        {
-                            action: () => handleDisconnectAll('selectors'),
-                            text: i18n('label_selectors'),
-                            qa: DashCommonQa.RelationsDisconnectAllSelectors,
-                        },
-                    ]}
-                    switcher={
-                        <Button
-                            className={b('switcher-button')}
-                            view="normal"
-                            qa={DashCommonQa.RelationsDisconnectAllSwitcher}
-                            disabled={isDisconnectDisabled}
-                        >
-                            <Icon
-                                className={b('switcher-button-icon')}
-                                data={ChevronDown}
-                                size={ICON_SIZE}
-                            />
-                        </Button>
-                    }
-                />
-                {Boolean(shownInvalidAliases?.length) && (
+                {currentWidget && (
                     <React.Fragment>
-                        <Button
-                            ref={aliasWarnButtonRef}
-                            className={b('error-button')}
-                            onClick={handleAliasesWarnClick}
-                            view="flat"
-                        >
-                            <Icon data={TriangleExclamationFill} className={b('error-icon')} />
-                        </Button>
-                        <Popup
-                            hasArrow={true}
-                            anchorRef={aliasWarnButtonRef}
-                            open={aliasWarnPopupOpen}
-                            placement="right"
-                            className={b('invalid-list-popup')}
-                        >
-                            <div className={b('warn-content')}>
-                                <div className={b('warn-title')}>
-                                    {i18n('label_invalid-alias-title')}
-                                </div>
-                                <div className={b('warn-text')}>
-                                    {i18n('label_invalid-alias-text')}
-                                </div>
-                                <AliasesInvalidList
-                                    aliases={aliases?.[DEFAULT_ALIAS_NAMESPACE]}
-                                    invalidAliases={shownInvalidAliases}
-                                    datasets={datasets}
-                                    onClose={handleAliasesWarnClick}
-                                    onClear={handleInvalidAliasesClear}
-                                />
-                            </div>
-                        </Popup>
+                        <span className={b('disconnect-text')}>{i18n('button_disconnect')}</span>
+                        <DropdownMenu
+                            disabled={isDisconnectDisabled}
+                            size="l"
+                            items={[
+                                {
+                                    action: () => handleDisconnectAll('all'),
+                                    text: i18n('label_all'),
+                                    qa: DashCommonQa.RelationsDisconnectAllWidgets,
+                                },
+                                {
+                                    action: () => handleDisconnectAll('charts'),
+                                    text: i18n('label_charts'),
+                                    qa: DashCommonQa.RelationsDisconnectAllCharts,
+                                },
+                                {
+                                    action: () => handleDisconnectAll('selectors'),
+                                    text: i18n('label_selectors'),
+                                    qa: DashCommonQa.RelationsDisconnectAllSelectors,
+                                },
+                            ]}
+                            switcher={
+                                <Button
+                                    className={b('switcher-button')}
+                                    view="normal"
+                                    qa={DashCommonQa.RelationsDisconnectAllSwitcher}
+                                    disabled={isDisconnectDisabled}
+                                >
+                                    <Icon
+                                        className={b('switcher-button-icon')}
+                                        data={ChevronDown}
+                                        size={ICON_SIZE}
+                                    />
+                                </Button>
+                            }
+                        />
+                        {Boolean(shownInvalidAliases?.length) && (
+                            <React.Fragment>
+                                <Button
+                                    ref={aliasWarnButtonRef}
+                                    className={b('error-button')}
+                                    onClick={handleAliasesWarnClick}
+                                    view="flat"
+                                >
+                                    <Icon
+                                        data={TriangleExclamationFill}
+                                        className={b('error-icon')}
+                                    />
+                                </Button>
+                                <Popup
+                                    hasArrow={true}
+                                    anchorRef={aliasWarnButtonRef}
+                                    open={aliasWarnPopupOpen}
+                                    placement="right"
+                                    className={b('invalid-list-popup')}
+                                >
+                                    <div className={b('warn-content')}>
+                                        <div className={b('warn-title')}>
+                                            {i18n('label_invalid-alias-title')}
+                                        </div>
+                                        <div className={b('warn-text')}>
+                                            {i18n('label_invalid-alias-text')}
+                                        </div>
+                                        <AliasesInvalidList
+                                            aliases={aliases?.[DEFAULT_ALIAS_NAMESPACE]}
+                                            invalidAliases={shownInvalidAliases}
+                                            datasets={datasets}
+                                            onClose={handleAliasesWarnClick}
+                                            onClear={handleInvalidAliasesClear}
+                                        />
+                                    </div>
+                                </Popup>
+                            </React.Fragment>
+                        )}
                     </React.Fragment>
                 )}
             </Dialog.Footer>

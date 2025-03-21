@@ -37,6 +37,12 @@ $actionPanelDefaultBottom: 20px;
             width: calc(100% - 250px);
         }
 
+        &_condensed {
+            --dashkit-grid-item-border-radius: 0px;
+            --dl-dk-charts-border-radius: 0px;
+            --dl-dk-controls-border-radius: 0px;
+        }
+
         &_mobile {
             padding: 8px #{$contentMobilePadding} 18px;
         }

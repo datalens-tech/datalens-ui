@@ -26,7 +26,7 @@ export const getRlsColumn = ({onUpdate, rls}: GetHiddenColumnArgs): Column<Datas
     sortAscending: (row1, row2) => sortRslColumn(row1, row2, rls),
     header: <Icon className={b('header-icon')} data={Key} width="24" />,
     render: function RlsColumnItem({index, row}) {
-        const isRls = Boolean(rls[row.guid]);
+        const isRls = Boolean(Array.isArray(rls[row.guid]) ? rls[row.guid].length : rls[row.guid]);
 
         return (
             <Button

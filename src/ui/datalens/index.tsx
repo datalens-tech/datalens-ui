@@ -15,6 +15,7 @@ import {reducerRegistry} from '../store';
 import {AsideHeaderAdapter} from 'ui/components/AsideHeaderAdapter/AsideHeaderAdapter';
 import {MobileHeaderComponent} from 'ui/components/MobileHeader/MobileHeaderComponent/MobileHeaderComponent';
 import {DL} from 'ui/constants';
+import {useClearReloadedQuery} from '../units/auth/hooks/useClearReloadedQuery';
 
 import {getSdk} from '../libs/schematic-sdk';
 import {
@@ -52,9 +53,11 @@ const UsersPage = React.lazy(
 );
 
 const ServiceSettings = React.lazy(() => import('./pages/ServiceSettingsPage/ServiceSettingsPage'));
+//const UserProfile = React.lazy(() => import('./pages/OwnUserProfilePage/OwnUserProfilePage'));
+
 const LandingPage = React.lazy(() => import('./pages/LandingPage/LandingPage'));
 const AuthPage = React.lazy(
-    () => import(/* webpackChunkName: "connections-page" */ './pages/AuthPage/AuthPage'),
+    () => import(/* webpackChunkName: "auth-page" */ './pages/AuthPage/AuthPage'),
 );
 
 export const AuthContext = React.createContext({
@@ -69,6 +72,7 @@ export const AuthContext = React.createContext({
 });
 
 const DatalensPageView = (props: any) => {
+    useClearReloadedQuery();
     var token = props.token;
     var setToken = props.setToken;
 

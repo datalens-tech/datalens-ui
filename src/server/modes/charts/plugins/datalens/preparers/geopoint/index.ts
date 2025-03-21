@@ -8,7 +8,6 @@ import type {
     VisualizationLayerShared,
 } from '../../../../../../../shared';
 import {
-    Feature,
     MARKUP_TYPE,
     MINIMUM_FRACTION_DIGITS,
     WRAPPED_MARKDOWN_KEY,
@@ -123,7 +122,6 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
         idToTitle,
         shared,
         idToDataType,
-        features,
         ChartEditor,
     } = options;
     const widgetConfig = ChartEditor.getWidgetConfig();
@@ -148,7 +146,6 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
     const size = placeholders[1].items[0];
     const coordinates = placeholders[0].items;
     const updatedTooltips = [...tooltips];
-    const shouldEscapeUserValue = features[Feature.EscapeUserHtmlInDefaultHcTooltip];
 
     const label = labels[0];
 
@@ -347,7 +344,7 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
                             break;
                         }
                         default: {
-                            pointData.text = shouldEscapeUserValue ? escape(text) : text;
+                            pointData.text = text;
                             break;
                         }
                     }

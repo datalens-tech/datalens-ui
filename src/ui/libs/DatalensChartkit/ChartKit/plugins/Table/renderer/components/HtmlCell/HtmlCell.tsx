@@ -9,6 +9,7 @@ import {getParseHtmlFn} from '../../../../../../modules/html-generator/utils';
 type CellContent = ChartKitHtmlItem['content'];
 type HtmlCellProps = {
     content?: CellContent;
+    onRender?: () => void;
 };
 
 /* check that the object is a link and that a valid html can be generated */
@@ -19,7 +20,7 @@ function isLink(item: CellContent | null): item is ChartKitHtmlItem {
 }
 
 export const HtmlCell = (props: HtmlCellProps) => {
-    const {content} = props;
+    const {content, onRender} = props;
     const shouldParseValue = typeof content === 'string';
     const initialValue = shouldParseValue ? null : content;
     const [htmlContent, setHtmlContent] = React.useState<CellContent | null>(initialValue);
@@ -28,6 +29,12 @@ export const HtmlCell = (props: HtmlCellProps) => {
         const parseHtml = await getParseHtmlFn();
         setHtmlContent(parseHtml(String(content)) as CellContent);
     };
+
+    React.useEffect(() => {
+        if (onRender) {
+            onRender();
+        }
+    }, [htmlContent]);
 
     React.useEffect(() => {
         if (shouldParseValue) {

@@ -34,15 +34,18 @@ export interface SharedAppConfig {
     fetchingTimeout: number;
     singleFetchingTimeout: number;
     flatTableRowsLimit: number;
+    runnerExecutionTimeouts?: Record<string, Record<string, number>>;
     runResponseWhitelist?: string[];
     allowBodyConfig: boolean;
     chartsEngineConfig: {
-        nativeModules: Record<string, unknown>;
         secrets: Record<string, string>;
         enableTelemetry: boolean;
         flags?: Record<string, boolean>;
         usEndpointPostfix: string;
         dataFetcherProxiedHeaders?: string[];
+        maxWorkers?: number;
+        includeServicePlan?: boolean;
+        includeTenantFeatures?: true;
     };
     // CHARTS ENGINE -- FINISH
 
@@ -115,6 +118,7 @@ export interface SharedAppConfig {
     // auth
     isAuthEnabled: boolean;
     authTokenPublicKey?: string;
+    authManageLocalUsersDisabled?: boolean;
 
     chartTemplates: Partial<Record<keyof ChartTemplates, unknown>>;
     redis: RedisConfig | null;

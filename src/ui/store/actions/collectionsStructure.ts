@@ -5,8 +5,16 @@ import type {DatalensGlobalState} from 'index';
 import {waitOperation} from '../../utils/waitOperation';
 import {showToast} from 'store/actions/toaster';
 
-import type {GET_ROOT_COLLECTION_PERMISSIONS_FAILED} from '../constants/collectionsStructure';
+import type {
+    EXPORT_WORKBOOK_FAILED,
+    EXPORT_WORKBOOK_SUCCESS,
+    GET_ROOT_COLLECTION_PERMISSIONS_FAILED,
+    IMPORT_WORKBOOK_FAILED,
+    IMPORT_WORKBOOK_SUCCESS,
+} from '../constants/collectionsStructure';
 import {
+    IMPORT_WORKBOOK_LOADING,
+    EXPORT_WORKBOOK_LOADING,
     DELETE_COLLECTIONS_FAILED,
     DELETE_COLLECTIONS_LOADING,
     DELETE_COLLECTIONS_SUCCESS,
@@ -66,6 +74,8 @@ import {
     ADD_DEMO_WORKBOOK_LOADING,
     ADD_DEMO_WORKBOOK_SUCCESS,
     ADD_DEMO_WORKBOOK_FAILED,
+    RESET_IMPORT_WORKBOOK,
+    RESET_EXPORT_WORKBOOK,
 } from '../constants/collectionsStructure';
 
 import type {
@@ -306,6 +316,7 @@ type GetStructureItemsAction =
 
 export const getStructureItems = ({
     collectionId,
+    includePermissionsInfo,
     page,
     filterString,
     orderField,
@@ -321,7 +332,7 @@ export const getStructureItems = ({
         return getSdk()
             .sdk.us.getStructureItems({
                 collectionId,
-                includePermissionsInfo: false,
+                includePermissionsInfo,
                 page,
                 filterString,
                 orderField,
@@ -1367,6 +1378,80 @@ export const addDemoWorkbook = ({
     };
 };
 
+type ExportWorkbookLoadingAction = {
+    type: typeof EXPORT_WORKBOOK_LOADING;
+};
+type ExportWorkbookSuccessAction = {
+    type: typeof EXPORT_WORKBOOK_SUCCESS;
+    data: CreateCollectionResponse;
+};
+type ExportWorkbookFailedAction = {
+    type: typeof EXPORT_WORKBOOK_FAILED;
+    error: Error | null;
+};
+type ResetExportWorkbookAction = {
+    type: typeof RESET_EXPORT_WORKBOOK;
+};
+type ExportWorkbookAction =
+    | ExportWorkbookLoadingAction
+    | ExportWorkbookSuccessAction
+    | ExportWorkbookFailedAction
+    | ResetExportWorkbookAction;
+
+export const exportWorkbook = (_: {workbookId: string}) => {
+    return (dispatch: CollectionsStructureDispatch) => {
+        dispatch({
+            type: EXPORT_WORKBOOK_LOADING,
+        });
+
+        return null;
+    };
+};
+export const resetExportWorkbook = () => {
+    return {
+        type: RESET_EXPORT_WORKBOOK,
+    };
+};
+
+type ImportWorkbookLoadingAction = {
+    type: typeof IMPORT_WORKBOOK_LOADING;
+};
+type ImportWorkbookSuccessAction = {
+    type: typeof IMPORT_WORKBOOK_SUCCESS;
+    data: CreateCollectionResponse;
+};
+type ImportWorkbookFailedAction = {
+    type: typeof IMPORT_WORKBOOK_FAILED;
+    error: Error | null;
+};
+type ResetImportWorkbookAction = {
+    type: typeof RESET_IMPORT_WORKBOOK;
+};
+type ImportWorkbookAction =
+    | ImportWorkbookLoadingAction
+    | ImportWorkbookSuccessAction
+    | ImportWorkbookFailedAction
+    | ResetImportWorkbookAction;
+
+export const importWorkbook = (_: {
+    title: string;
+    description?: string;
+    collectionId: string | null;
+}) => {
+    return (dispatch: CollectionsStructureDispatch) => {
+        dispatch({
+            type: IMPORT_WORKBOOK_LOADING,
+        });
+
+        return null;
+    };
+};
+export const resetImportWorkbook = () => {
+    return {
+        type: RESET_IMPORT_WORKBOOK,
+    };
+};
+
 export type CollectionsStructureAction =
     | ResetStateAction
     | GetRootCollectionPemissionsAction
@@ -1389,7 +1474,9 @@ export type CollectionsStructureAction =
     | UpdateCollectionAction
     | DeleteCollectionAction
     | DeleteWorkbookAction
-    | AddDemoWorkbookAction;
+    | AddDemoWorkbookAction
+    | ExportWorkbookAction
+    | ImportWorkbookAction;
 
 export type CollectionsStructureDispatch = ThunkDispatch<
     DatalensGlobalState,

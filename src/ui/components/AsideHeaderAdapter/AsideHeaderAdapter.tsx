@@ -234,6 +234,10 @@ export const AsideHeaderAdapter = ({renderContent, superUser, logoIcon}: AsideHe
         [dispatch],
     );
 
+    const handleClosePopup = React.useCallback(() => {
+        setCurrentPopup(null);
+    }, []);
+
     const renderFooter = () => {
         return (
             <React.Fragment>
@@ -341,8 +345,8 @@ export const AsideHeaderAdapter = ({renderContent, superUser, logoIcon}: AsideHe
                         enableTooltip={false}
                         popupVisible={currentPopup === PopupName.Account}
                         popupOffset={[0, 8]}
-                        onClosePopup={() => setCurrentPopup(null)}
-                        renderPopupContent={() => <UserMenu />}
+                        onClosePopup={handleClosePopup}
+                        renderPopupContent={() => <UserMenu onClose={handleClosePopup} />}
                     />
                 )}
             </React.Fragment>

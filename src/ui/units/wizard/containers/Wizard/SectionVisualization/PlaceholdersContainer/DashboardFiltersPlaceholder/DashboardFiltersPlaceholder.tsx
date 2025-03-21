@@ -67,7 +67,6 @@ class DashboardFiltersPlaceholder extends React.Component<Props> {
                 qa: 'delete-all-dashboard-filters-action',
                 icon: TrashBin,
                 hidden: this.filtersFromDashboard.length === 0,
-                styles: {marginTop: 4},
                 hoverText: i18n('wizard', 'label_delete-all-filters-action'),
                 isFirst: true,
                 onClick: () => {

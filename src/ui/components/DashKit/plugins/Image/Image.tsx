@@ -4,7 +4,7 @@ import type {Plugin, PluginWidgetProps} from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
 import type {DashTabItemImage} from 'shared';
 import {DashTabItemType} from 'shared';
-import {CustomPaletteBgColors} from 'ui/constants/widgets';
+import {CustomPaletteBgColors} from 'shared/constants/widgets';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
 import {getPreparedWrapSettings} from '../../utils';

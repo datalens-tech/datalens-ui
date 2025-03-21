@@ -1,4 +1,5 @@
 import {DashTabItemType} from 'shared';
+import {CONTROLS_PLACEMENT_MODE as PLACEMENT_MODE} from 'shared/constants/widgets';
 import type {SelectorDialogState} from 'ui/store/typings/controlDialog';
 
 export const ITEM_TYPE = {
@@ -26,8 +27,8 @@ export const DIALOG_TYPE = Object.assign(
     ITEM_TYPE,
 );
 
-export const CONTROLS_PLACEMENT_MODE: Record<string, SelectorDialogState['placementMode']> = {
-    AUTO: 'auto',
-    PERCENT: '%',
-    PIXELS: 'px',
-};
+// Reexport const with UI typing
+export const CONTROLS_PLACEMENT_MODE = PLACEMENT_MODE as Record<
+    string,
+    SelectorDialogState['placementMode']
+>;

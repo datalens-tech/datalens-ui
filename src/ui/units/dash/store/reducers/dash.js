@@ -3,7 +3,7 @@ import {generateUniqId} from '@gravity-ui/dashkit/helpers';
 import update from 'immutability-helper';
 import pick from 'lodash/pick';
 import {DashTabItemTitleSizes, DashTabItemType} from 'shared';
-import {CustomPaletteBgColors, WIDGET_BG_COLORS_PRESET} from 'ui/constants/widgets';
+import {CustomPaletteBgColors, WIDGET_BG_COLORS_PRESET} from 'shared/constants/widgets';
 import {migrateConnectionsForGroupControl} from 'ui/store/utils/controlDialog';
 import {getUpdatedConnections} from 'ui/utils/copyItems';
 
@@ -38,6 +38,7 @@ const initialState = {
     convertedEntryData: null,
 
     tabId: null,
+    lastModifiedItemId: null,
 
     hashStates: null,
 
@@ -179,6 +180,7 @@ function dash(state = initialState, action) {
             return {
                 ...state,
                 data: update(data, updateData),
+                lastModifiedItemId: null,
                 tabId: newTabId,
             };
         }
@@ -302,8 +304,11 @@ function dash(state = initialState, action) {
                 });
             }
 
+            const modifiedItem = tabData.layout[tabData.layout.length - 1];
+
             return {
                 ...state,
+                lastModifiedItemId: modifiedItem.i,
                 data: update(data, {
                     tabs: {
                         [tabIndex]: {$set: pick(tabData, TAB_PROPERTIES)},
