@@ -116,7 +116,7 @@ export const EntryRow = ({
                     </React.Fragment>
                 ) : (
                     <Link
-                        view={entry.disabled ? 'secondary' : 'primary'}
+                        view={entry?.disabled ? 'secondary' : 'primary'}
                         target="_blank"
                         className={b('text-block')}
                         title={entryName}

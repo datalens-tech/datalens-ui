@@ -21,4 +21,5 @@ export type PreparedNotificationType = {
         entryId: string;
         scope: 'connection' | 'dataset';
     }[];
+    entryId?: string;
 };
