@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Dialog, Flex} from '@gravity-ui/uikit';
+import {Dialog, Flex, Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
@@ -190,9 +190,14 @@ export const ExportWorkbookDialog: React.FC<Props> = ({workbookId, open, onClose
             return <ExportInfo />;
         }
         switch (status) {
-            case 'loading':
             case 'pending':
                 return <ProgressBar size="s" className={b('progress')} value={progress ?? 0} />;
+            case 'loading':
+                return (
+                    <Flex alignItems="center" justifyContent="center">
+                        <Loader size="m" />
+                    </Flex>
+                );
             case 'success':
             case 'notification-error':
                 if (!notifications) {

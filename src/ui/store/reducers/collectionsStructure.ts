@@ -1073,7 +1073,7 @@ export const collectionsStructure = (
             return {
                 ...state,
                 getImportProgress: {
-                    data: null,
+                    ...state.getImportProgress,
                     isLoading: true,
                     error: null,
                 },
@@ -1105,7 +1105,7 @@ export const collectionsStructure = (
             return {
                 ...state,
                 getExportProgress: {
-                    data: null,
+                    ...state.getExportProgress,
                     isLoading: true,
                     error: null,
                 },
