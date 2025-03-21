@@ -127,10 +127,12 @@ export const CreateWorkbookDialog: React.FC<Props> = ({
     const handleApply = React.useCallback(
         async ({
             title,
+            project,
             description,
             onClose,
         }: {
             title: string;
+            project?: string;
             description?: string;
             onClose: () => void;
         }) => {
@@ -143,6 +145,7 @@ export const CreateWorkbookDialog: React.FC<Props> = ({
             const workbookData = {
                 title,
                 description: description ?? '',
+                project,
                 collectionId,
             };
 
