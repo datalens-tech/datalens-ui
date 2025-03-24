@@ -1,12 +1,10 @@
 import {Page, expect} from '@playwright/test';
 
-import {WizardPageQa} from '../../../../../src/shared';
-import {WizardVisualizationId} from '../../../../../src/shared/constants/visualization';
+import {WizardPageQa, WizardVisualizationId} from '../../../../../src/shared';
 import {PlaceholderName} from '../../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../../page-objects/wizard/WizardPage';
-import {getUniqueTimestamp, slct} from '../../../../utils';
-import {openTestPage} from '../../../../../../../tests/utils';
-import {datalensTest} from '../../../../../../../tests/utils/playwright/globalTestDefinition';
+import {openTestPage, slct, getUniqueTimestamp} from '../../../../utils';
+import datalensTest from '../../../../utils/playwright/globalTestDefinition';
 import {addCustomPalette} from '../../../utils';
 
 datalensTest.describe('Wizard', () => {
