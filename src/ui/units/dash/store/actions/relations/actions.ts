@@ -44,7 +44,7 @@ export const openDialogRelations = ({
             },
             onApply: (newData) => {
                 onApply?.();
-                dispatch(updateCurrentTabData(newData));
+                updateCurrentTabData(newData)(dispatch);
                 onClose();
                 dispatch(closeDialog());
             },

@@ -23,3 +23,13 @@ export const selectCanGoForward = (state: DatalensGlobalState, {unitId}: {unitId
     // Actual point index should not be last
     return unit.pointIndex < unit.diffs.length - 1;
 };
+
+export const hasHistoryChanges = (state: DatalensGlobalState, {unitId}: {unitId: string}) => {
+    try {
+        const unit = _selectUnit(state, {unitId});
+
+        return unit.pointIndex > 0;
+    } catch (err) {
+        return false;
+    }
+};

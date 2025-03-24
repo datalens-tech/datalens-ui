@@ -27,6 +27,7 @@ import {getFakeDashEntry} from '../../utils';
 import {
     SET_ERROR_MODE,
     SET_STATE,
+    addDashEditHistoryPoint,
     purgeData,
     setDashViewMode,
     setLock,
@@ -154,6 +155,7 @@ export const setEditMode = (successCallback = () => {}, failCallback = () => {})
 
             await dispatch(setLock(entryId));
             successCallback();
+            dispatch(addDashEditHistoryPoint());
         } catch (error) {
             if (isEntryIsLockedError(error)) {
                 const loginOrId = getLoginOrIdFromLockedError(error);
@@ -165,6 +167,7 @@ export const setEditMode = (successCallback = () => {}, failCallback = () => {})
                                 await dispatch(setLock(entryId, true));
                                 (dispatch as ConnectionsReduxDispatch)(closeDialogConfirm());
                                 successCallback();
+                                dispatch(addDashEditHistoryPoint());
                             } catch (localError) {
                                 dispatch(
                                     showToast({
