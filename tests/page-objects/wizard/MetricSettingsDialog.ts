@@ -66,7 +66,7 @@ export default class MetricSettingsDialog {
 
     async selectPalette(palette: string) {
         await this.page.locator(this.paletteSelector).click();
-        await this.page.locator(CommonSelectors.SelectItem, {hasText: palette}).click();
+        await this.page.locator(CommonSelectors.SelectItem, {hasText: palette}).first().click();
     }
 
     async apply() {
