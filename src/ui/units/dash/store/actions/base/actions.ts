@@ -122,6 +122,7 @@ export const setEditMode = (successCallback = () => {}, failCallback = () => {})
         } = getState();
 
         if (fake) {
+            dispatch(resetDashEditHistory());
             return;
         }
 

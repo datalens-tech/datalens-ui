@@ -82,7 +82,11 @@ export type SetStateAction<T> = {
 
 export function addDashEditHistoryPoint(stacked = false) {
     return (dispatch: DashDispatch, getState: () => DatalensGlobalState) => {
-        const {data, widgetsCurrentTab, hashStates, tabId} = getState().dash;
+        const {data, widgetsCurrentTab, hashStates, tabId, mode} = getState().dash;
+
+        if (mode !== Mode.Edit) {
+            return;
+        }
 
         dispatch(
             addEditHistoryPoint({
@@ -291,10 +295,15 @@ export type SetHashStateAction = {
         config: DashTab;
     };
 };
-export const setHashState = (hashStates: TabsHashStates, config: DashTab): SetHashStateAction => ({
-    type: SET_HASH_STATE,
-    payload: {hashStates, config},
-});
+export const setHashState =
+    (hashStates: TabsHashStates, config: DashTab) => (dispatch: DashDispatch) => {
+        dispatch({
+            type: SET_HASH_STATE,
+            payload: {hashStates, config},
+        });
+
+        dispatch(addDashEditHistoryPoint());
+    };
 
 export const SET_TAB_HASH_STATE = Symbol('dash/SET_TAB_HASH_STATE');
 export type SetTabHashStateAction = {
