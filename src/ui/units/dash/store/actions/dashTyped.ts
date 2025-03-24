@@ -28,7 +28,11 @@ import type {
 } from 'shared';
 import {EntryScope, EntryUpdateMode} from 'shared';
 import type {AppDispatch} from 'ui/store';
-import {addEditHistoryPoint, initEditHistoryUnit} from 'ui/store/actions/editHistory';
+import {
+    addEditHistoryPoint,
+    initEditHistoryUnit,
+    resetEditHistoryUnit,
+} from 'ui/store/actions/editHistory';
 import type {ItemDataSource} from 'ui/store/typings/controlDialog';
 import {getLoginOrIdFromLockedError, isEntryIsLockedError} from 'utils/errors/errorByCode';
 
@@ -119,6 +123,14 @@ export function initDashEditHistory() {
                 },
             }),
         );
+    };
+}
+
+export function resetDashEditHistory() {
+    return (dispatch: AppDispatch) => {
+        dispatch(addEditHistoryPoint({unitId: DASH_EDIT_HISTORY_UNIT_ID, newState: {}}));
+        dispatch(resetEditHistoryUnit({unitId: DASH_EDIT_HISTORY_UNIT_ID}));
+        dispatch(addDashEditHistoryPoint());
     };
 }
 
@@ -408,10 +420,14 @@ export type SetViewModeAction = {
         mode: Mode;
     };
 };
-export const setDashViewMode = (payload?: SetViewModeAction['payload']): SetViewModeAction => ({
-    type: SET_DASH_VIEW_MODE,
-    payload,
-});
+export const setDashViewMode =
+    (payload?: SetViewModeAction['payload']) => (dispatch: DashDispatch) => {
+        dispatch({
+            type: SET_DASH_VIEW_MODE,
+            payload,
+        });
+        dispatch(resetDashEditHistory());
+    };
 
 export const SET_DASH_DESC_VIEW_MODE = Symbol('dash/SET_DASH_DESC_VIEW_MODE');
 export type SetDescViewModeAction = {
