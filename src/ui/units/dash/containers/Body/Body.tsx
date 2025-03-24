@@ -117,7 +117,7 @@ import {
     selectTabHashState,
     selectTabs,
 } from '../../store/selectors/dashTypedSelectors';
-import {fixedHeaderGridProperties, getPropertiesWithResizeHandles} from '../../utils/dashkitProps';
+import {getPropertiesWithResizeHandles} from '../../utils/dashkitProps';
 import {scrollIntoView} from '../../utils/scrollUtils';
 import {DashError} from '../DashError/DashError';
 import {getGroupedItems} from '../Dialogs/Tabs/PopupWidgetsOrder/helpers';
@@ -405,7 +405,9 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                         if (group.id === FIXED_GROUP_HEADER_ID) {
                             return {
                                 ...group,
-                                gridProperties: fixedHeaderGridProperties({margin: propsMargins}),
+                                gridProperties: getPropertiesWithResizeHandles({
+                                    margin: propsMargins,
+                                }),
                             };
                         }
                         return {
