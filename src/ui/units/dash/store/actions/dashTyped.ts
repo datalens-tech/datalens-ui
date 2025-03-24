@@ -90,6 +90,7 @@ export function addDashEditHistoryPoint(stacked = false) {
                     tabId,
                 },
                 stacked,
+                skipEmptyDiff: true,
             }),
         );
     };
@@ -195,6 +196,7 @@ export const setPageTab = (tabId: string) => {
             // TODO: if you pass null, then DashKit crashes
             payload: {tabId},
         });
+        dispatch(addDashEditHistoryPoint(true));
     };
 };
 
@@ -892,8 +894,10 @@ export const setCopiedItemData = (payload: {
 
 export const setDefaultViewState = () => {
     return (dispatch: AppDispatch) => {
-        dispatch(setDashViewMode());
-        dispatch(setPageDefaultTabItems());
+        batch(() => {
+            dispatch(setDashViewMode());
+            dispatch(setPageDefaultTabItems());
+        });
     };
 };
 

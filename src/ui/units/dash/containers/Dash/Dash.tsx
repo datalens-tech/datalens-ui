@@ -41,7 +41,6 @@ import {load as loadDash, setEditMode} from '../../store/actions/base/actions';
 import {
     cleanLock,
     deleteLock,
-    initDashEditHistory,
     setCopiedItemData,
     setErrorMode,
     setLock,
@@ -88,11 +87,6 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
     };
 
     private entryDialoguesRef = React.createRef<EntryDialogues>();
-
-    constructor(props: DashProps) {
-        super(props);
-        props.initDashEditHistory();
-    }
 
     async componentDidMount() {
         const {extractEntryId} = registry.common.functions.getAll();
@@ -475,7 +469,6 @@ const mapDispatchToProps = {
     openWarningDialog,
     closeDialog,
     updateDashOpenedDesc,
-    initDashEditHistory,
 };
 
 export const DashWrapper = connect(mapStateToProps, mapDispatchToProps)(DashComponent);

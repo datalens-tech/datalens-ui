@@ -1,11 +1,11 @@
 import type {DatalensGlobalState} from 'index';
+import isEqual from 'lodash/isEqual';
 import {createSelector} from 'reselect';
 import type {DashTabItem, DashTabItemWidget, DashTabItemWidgetTab} from 'shared';
-import {hasHistoryChanges} from 'ui/store/selectors/editHistory';
 
 import {ITEM_TYPE} from '../../../../constants/dialogs';
+import {isOrderIdsChanged} from '../../containers/Dialogs/Tabs/PopupWidgetsOrder/helpers';
 import {Mode} from '../../modules/constants';
-import {DASH_EDIT_HISTORY_UNIT_ID} from '../constants';
 import type {DashState} from '../reducers/dashTypedReducer';
 
 export const selectDash = (state: DatalensGlobalState) => state.dash || null;
@@ -14,6 +14,8 @@ export const selectDashkitRef = (state: DatalensGlobalState) => state.dash?.dash
 
 export const canEdit = (state: DatalensGlobalState) =>
     Boolean(state.dash.permissions && state.dash.permissions.edit);
+
+const selectInitialTabsSettings = (state: DatalensGlobalState) => state.dash.initialTabsSettings;
 
 export const selectDashEntry = (state: DatalensGlobalState) => state.dash.entry || null;
 
@@ -105,9 +107,18 @@ export const selectTabsMetas = createSelector([selectTabs], (tabs) =>
     tabs ? tabs.map(({id, title}) => ({id, title})) : null,
 );
 
+const selectTabsItemsOrderChanged = createSelector(
+    [selectInitialTabsSettings, selectTabs],
+    (initTabs, currentTabs) => (initTabs ? isOrderIdsChanged(initTabs, currentTabs || []) : false),
+);
+
+const selectDashChanged = createSelector([selectDashEntry, selectDashData], (entry, dashData) => {
+    return Boolean(entry) && !isEqual({...entry.data, counter: 0}, {...dashData, counter: 0});
+});
+
 export const isDraft = createSelector(
-    [(state) => hasHistoryChanges(state, {unitId: DASH_EDIT_HISTORY_UNIT_ID})],
-    (isChanged) => isChanged,
+    [selectTabsItemsOrderChanged, selectDashChanged],
+    (isOrderChanged, isDashChanged) => isOrderChanged || isDashChanged,
 );
 
 export const selectCurrentTab = createSelector([selectDashData, selectTabId], (data, tabId) => {
