@@ -17,7 +17,6 @@ import {isNumericCSSValueValid} from './utils';
 type MarkupProps = {
     item: MarkupItem;
     externalProps?: Partial<Record<MarkupItemType, Record<string, unknown>>>;
-    renderToString?: (element: React.ReactElement) => string;
 };
 
 // eslint-disable-next-line complexity
@@ -26,13 +25,11 @@ function getConfig({
     externalProps,
     configItem,
     config,
-    renderToString,
 }: {
     markupItem?: string | MarkupItem;
     externalProps?: MarkupProps['externalProps'];
     configItem?: TemplateItem;
     config?: TemplateItem;
-    renderToString?: (element: React.ReactElement) => string;
 }): TemplateItem {
     if (!markupItem) {
         return config as TemplateItem;
@@ -87,7 +84,6 @@ function getConfig({
                             markupItem: child,
                             externalProps,
                             configItem: {children: []},
-                            renderToString,
                         });
                     }),
                 );
@@ -146,9 +142,8 @@ function getConfig({
 
             iteratedConfigItem.props = {
                 tooltipId,
-                content: markupItem.tooltip ? <Markup item={markupItem.tooltip} /> : '',
+                content: markupItem.tooltip ?? '',
                 ...(markupItem.placement && {placement: markupItem.placement}),
-                renderToString: renderToString as any,
             };
 
             childProps[ATTR_DATA_TOOLTIP_ANCHOR_ID] = tooltipId;
@@ -177,7 +172,6 @@ function getConfig({
         externalProps,
         configItem: nextConfigItem,
         config: nextConfig,
-        renderToString,
     });
 }
 
@@ -196,8 +190,8 @@ export function renderTemplate(templateItem: TemplateItem | string): JSX.Element
 }
 
 export function Markup(props: MarkupProps) {
-    const {item: markupItem, externalProps, renderToString} = props;
-    const template = getConfig({markupItem, externalProps, renderToString});
+    const {item: markupItem, externalProps} = props;
+    const template = getConfig({markupItem, externalProps});
 
     return renderTemplate(template);
 }

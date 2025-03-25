@@ -4,6 +4,8 @@ import {Popup} from '@gravity-ui/uikit';
 import type {PopupPlacement} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
+import {isMarkupItem} from '../../../../../../shared';
+import {getRenderMarkupToStringFn} from '../../../../../utils/markup';
 import {generateHtml} from '../../../modules/html-generator';
 import {getParseHtmlFn} from '../../../modules/html-generator/utils';
 
@@ -29,14 +31,20 @@ const getTooltipContent = async (value = '') => {
 
     try {
         json = JSON.parse(value);
-        const parseHtml = await getParseHtmlFn();
+
         if (typeof json === 'string') {
+            const parseHtml = await getParseHtmlFn();
             json = parseHtml(json);
         }
     } catch {}
 
     if (json) {
-        result = generateHtml(json, {ignoreInvalidValues: true});
+        if (isMarkupItem(json)) {
+            const fn = await getRenderMarkupToStringFn();
+            result = fn(json);
+        } else {
+            result = generateHtml(json, {ignoreInvalidValues: true});
+        }
     }
 
     return result;
@@ -133,6 +141,7 @@ const ChartKitTooltipComponent = React.forwardRef<ChartKitTooltipRef | undefined
                 key={anchor?.ref.current.id}
                 anchorRef={anchor?.ref}
                 placement={anchor?.placement}
+                className={b('popup')}
                 open={open}
                 hasArrow={true}
                 onMouseEnter={() => setHover(true)}

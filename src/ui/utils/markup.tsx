@@ -15,6 +15,6 @@ export const getRenderMarkupToStringFn = async () => {
             return String(value);
         }
 
-        return renderToString(<Markup item={value} renderToString={renderToString} />);
+        return renderToString(<Markup item={value} />);
     };
 };

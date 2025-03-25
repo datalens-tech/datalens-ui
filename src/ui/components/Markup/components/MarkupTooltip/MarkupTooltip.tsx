@@ -13,16 +13,13 @@ type Props = {
     children?: (string | TemplateItem)[];
     placement?: PopupPlacement;
     tooltipId?: string;
-    renderToString: (element: React.ReactElement | string) => string;
 };
 
 export function MarkupTooltip(props: Props) {
-    const {children, content = '', tooltipId, renderToString, placement = 'auto'} = props;
+    const {children, content = '', tooltipId, placement = 'auto'} = props;
 
     const attrs = {
-        [ATTR_DATA_TOOLTIP_CONTENT]: JSON.stringify(
-            renderToString ? renderToString(content) : String(content),
-        ),
+        [ATTR_DATA_TOOLTIP_CONTENT]: JSON.stringify(content),
         [ATTR_DATA_TOOLTIP_PLACEMENT]: JSON.stringify(placement),
     };
 
