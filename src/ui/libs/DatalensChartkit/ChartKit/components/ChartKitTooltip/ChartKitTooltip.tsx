@@ -4,7 +4,10 @@ import {Popup} from '@gravity-ui/uikit';
 import type {PopupPlacement} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
+import {isMarkupItem} from '../../../../../../shared';
+import {getRenderMarkupToStringFn} from '../../../../../utils/markup';
 import {generateHtml} from '../../../modules/html-generator';
+import {getParseHtmlFn} from '../../../modules/html-generator/utils';
 
 import './ChartKitTooltip.scss';
 
@@ -22,16 +25,26 @@ type ChartKitTooltipAnchor = {
     placement?: PopupPlacement;
 };
 
-const getTooltipContent = (value = '') => {
+const getTooltipContent = async (value = '') => {
     let result = value;
-    let json: Parameters<typeof generateHtml>[0];
+    let json;
 
     try {
         json = JSON.parse(value);
+
+        if (typeof json === 'string') {
+            const parseHtml = await getParseHtmlFn();
+            json = parseHtml(json);
+        }
     } catch {}
 
     if (json) {
-        result = generateHtml(json);
+        if (isMarkupItem(json)) {
+            const fn = await getRenderMarkupToStringFn();
+            result = fn(json);
+        } else {
+            result = generateHtml(json, {ignoreInvalidValues: true});
+        }
     }
 
     return result;
@@ -47,10 +60,10 @@ const getTooltipPlacement = (value = '') => {
     return result ? (result as PopupPlacement) : undefined;
 };
 
-const createAnchor = (node: HTMLElement): ChartKitTooltipAnchor => {
+const createAnchor = async (node: HTMLElement): Promise<ChartKitTooltipAnchor> => {
     return {
         ref: {current: node},
-        content: getTooltipContent(node.dataset['tooltipContent']),
+        content: await getTooltipContent(node.dataset['tooltipContent']),
         openDelay: Number(node.dataset['tooltipOpenDelay']) || 0,
         hideDelay: Number(node.dataset['tooltipHideDelay']) || 0,
         placement: getTooltipPlacement(node.dataset['tooltipPlacement']),
@@ -77,7 +90,7 @@ const ChartKitTooltipComponent = React.forwardRef<ChartKitTooltipRef | undefined
         React.useImperativeHandle(
             ref,
             () => ({
-                checkForTooltipNode(e) {
+                async checkForTooltipNode(e) {
                     if (hover) {
                         return;
                     }
@@ -99,7 +112,7 @@ const ChartKitTooltipComponent = React.forwardRef<ChartKitTooltipRef | undefined
                     const currentId = anchor?.ref.current.id;
 
                     if (id && hasRawContent && currentId !== id) {
-                        const nextAnchor = createAnchor(node);
+                        const nextAnchor = await createAnchor(node);
                         setAnchor(nextAnchor);
                         setOpenAsync(true, nextAnchor.openDelay);
                     } else if (anchor !== null && currentId !== id) {
@@ -128,6 +141,7 @@ const ChartKitTooltipComponent = React.forwardRef<ChartKitTooltipRef | undefined
                 key={anchor?.ref.current.id}
                 anchorRef={anchor?.ref}
                 placement={anchor?.placement}
+                className={b('popup')}
                 open={open}
                 hasArrow={true}
                 onMouseEnter={() => setHover(true)}
