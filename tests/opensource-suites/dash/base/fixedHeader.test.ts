@@ -5,11 +5,11 @@ import {openTestPage, slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {ActionPanelQA} from '../../../../src/shared';
 
-const dashboardKey = 'at6wshbewj36x-fixed-header-tests';
+const dashboardKey = 'v0y2qhtmq73qh-fixed-header-tests';
 const tabsIds = {
-    twoGroups: 'X5',
-    onlySecondGroup: 'Ja',
-    overflownSecondGroup: 'vJ',
+    twoGroups: '6M',
+    onlySecondGroup: 'KR',
+    overflownSecondGroup: 'Pg',
 };
 
 function getTabUrl(tabName: string) {
@@ -113,7 +113,7 @@ datalensTest.describe('Fixed header', () => {
         const fixedHeaderScrollPositionBeforeCollapsing =
             (await fixedHeader.container.boundingBox())?.y ?? 0;
 
-        await fixedHeader.container.hover();
+        await fixedHeader.wrapper.hover();
         await page.mouse.wheel(0, 500);
 
         expect((await body.boundingBox())?.y).toEqual(bodyScrollPositionBeforeCollapsing);

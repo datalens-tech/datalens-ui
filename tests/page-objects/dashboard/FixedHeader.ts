@@ -24,6 +24,10 @@ export class FixedHeader {
         return this.page.locator(FixedHeader.selectors.expandCollapseButton).click();
     }
 
+    get wrapper() {
+        return this.page.locator(FixedHeader.selectors.wrapper);
+    }
+
     get controls() {
         return this.page.locator(FixedHeader.selectors.controls);
     }
