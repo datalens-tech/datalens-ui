@@ -52,7 +52,8 @@ const getName = (entry?: RowEntryData, name?: string) => {
 const isValidEntryForRedirect = (
     entry: RowEntryData,
 ): entry is RowEntryData & {entryId: string; key: string; type: string} => {
-    return Boolean(entry.entryId) && Boolean(entry.key) && Boolean(entry.type);
+    // datasets has empty string entry.type
+    return Boolean(entry.entryId) && Boolean(entry.key) && typeof entry.type === 'string';
 };
 
 export const EntryRow = ({
