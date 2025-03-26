@@ -108,6 +108,7 @@ export const FixedHeaderControls: React.FC<FixedHeaderControlsProps> = ({
                     'edit-mode': editMode,
                     hidden: isEmpty && (!editMode || (editMode && isContainerGroupEmpty)),
                 })}
+                data-qa={FixedHeaderQa.Controls}
             >
                 {content}
             </div>
