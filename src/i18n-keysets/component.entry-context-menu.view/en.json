@@ -1,7 +1,11 @@
 {
+  "toast_copy-error": "The copy failed",
+  "toast_copy-id-success": "The ID has been copied to the clipboard",
+  "toast_copy-link-success": "The link has been copied to the clipboard",
   "value_access": "Permissions",
   "value_add-favorites-alias": "Add label",
   "value_copy": "Copy",
+  "value_copy-id": "Copy ID",
   "value_copy-link": "Copy link",
   "value_copy-success": "Object copied successfully",
   "value_delete": "Delete",

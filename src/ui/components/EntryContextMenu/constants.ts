@@ -20,6 +20,8 @@ import {registry} from '../../registry';
 
 import type {ContextMenuItem, ContextMenuParams} from './types';
 
+import iconId from 'ui/assets/icons/id-square.svg';
+
 export const ENTRY_CONTEXT_MENU_ACTION = {
     RENAME: 'rename',
     ADD_FAVORITES_ALIAS: 'add-favorites-alias',
@@ -29,6 +31,7 @@ export const ENTRY_CONTEXT_MENU_ACTION = {
     COPY: 'copy',
     ACCESS: 'access',
     COPY_LINK: 'copy-link',
+    COPY_ID: 'copy-id',
     SHARE: 'share',
     REVISIONS: 'revisions',
     MIGRATE_TO_WORKBOOK: 'migrate-to-workbook',
@@ -58,6 +61,21 @@ const CONTEXT_MENU_COPY = {
         const revId = searchParams.get(URL_QUERY.REV_ID);
         return showSpecificItems ? !revId : true;
     },
+};
+
+export const CONTEXT_MENU_COPY_LINK = {
+    id: ENTRY_CONTEXT_MENU_ACTION.COPY_LINK,
+    action: ENTRY_CONTEXT_MENU_ACTION.COPY_LINK,
+    icon: Link,
+    text: 'value_copy-link',
+    enable: () => true,
+};
+export const CONTEXT_MENU_COPY_ID = {
+    id: ENTRY_CONTEXT_MENU_ACTION.COPY_ID,
+    action: ENTRY_CONTEXT_MENU_ACTION.COPY_ID,
+    icon: iconId,
+    text: 'value_copy-id',
+    enable: () => true,
 };
 
 const getContextMenuAccess = () => {
@@ -208,13 +226,13 @@ export const getEntryContextMenu = (): ContextMenuItem[] => {
         },
         getContextMenuAccess(),
         {
-            id: ENTRY_CONTEXT_MENU_ACTION.COPY_LINK,
-            action: ENTRY_CONTEXT_MENU_ACTION.COPY_LINK,
-            icon: Link,
-            text: 'value_copy-link',
-            enable: () => true,
+            ...CONTEXT_MENU_COPY_LINK,
             scopes: getAllEntryScopes(),
             isVisible: (params) => !isVisibleEntryContextShareItem(params),
+        },
+        {
+            ...CONTEXT_MENU_COPY_ID,
+            scopes: getAllEntryScopes(),
         },
         {
             id: ENTRY_CONTEXT_MENU_ACTION.SHARE,

@@ -4,14 +4,14 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 6px;
 
     &__title {
         @include text-subheader-1;
+        margin-bottom: var(--g-spacing-1);
     }
 
     &__row {
-        height: 28px;
-        padding-left: 0;
+        height: 34px;
+        padding-left: var(--g-spacing-half);
     }
 }
