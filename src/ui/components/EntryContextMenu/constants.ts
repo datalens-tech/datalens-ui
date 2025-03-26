@@ -232,7 +232,12 @@ export const getEntryContextMenu = (): ContextMenuItem[] => {
         },
         {
             ...CONTEXT_MENU_COPY_ID,
-            scopes: getAllEntryScopes(),
+            scopes: [
+                EntryScope.Widget,
+                EntryScope.Dataset,
+                EntryScope.Connection,
+                ...getTopLevelEntryScopes(),
+            ],
         },
         {
             id: ENTRY_CONTEXT_MENU_ACTION.SHARE,
