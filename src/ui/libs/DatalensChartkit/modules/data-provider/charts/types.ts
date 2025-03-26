@@ -147,6 +147,8 @@ export interface ChartsProps {
     ignoreUsedParams?: boolean;
     workbookId?: WorkbookId;
     forceShowSafeChart?: boolean;
+    /** add distance from the borders of the diagram to the borders of the widget */
+    padding?: boolean;
 }
 
 export interface ChartsData extends DashWidgetConfig {
