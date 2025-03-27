@@ -1,5 +1,5 @@
 {
-  "toast_copy-error": "Не удалось копировать",
+  "toast_copy-error": "При копировании произошла ошибка",
   "toast_copy-id-success": "ID скопирован в буфер обмена",
   "toast_copy-link-success": "Ссылка скопирована в буфер обмена",
   "value_access": "Права доступа",
