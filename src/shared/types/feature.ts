@@ -89,6 +89,8 @@ export enum Feature {
     DashServerMigrationEnable = 'DashServerMigrationEnable',
     /** Enable custom dashboard gaps */
     EnableCustomDashMargins = 'EnableCustomDashMargins',
+    /** Enabled Dash elements auto-focus */
+    EnableDashAutoFocus = 'EnableDashAutoFocus',
 }
 
 export type FeatureConfig = Record<string, boolean>;

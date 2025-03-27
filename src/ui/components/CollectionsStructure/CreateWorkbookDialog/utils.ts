@@ -7,10 +7,12 @@ const i18n = I18n.keyset('component.workbook-import-view.view');
 export const getApplyButtonText = (status: ImportExportStatus, defaultText: string) => {
     switch (status) {
         case 'loading':
+        case 'pending':
             return defaultText;
         case 'success':
             return i18n('button_go-to-workbook');
-        case 'error':
+        case 'fatal-error':
+        case 'notification-error':
         default:
             return undefined;
     }
@@ -19,8 +21,10 @@ export const getApplyButtonText = (status: ImportExportStatus, defaultText: stri
 export const getCaption = (status: ImportExportStatus) => {
     switch (status) {
         case 'loading':
+        case 'pending':
             return i18n('title_creating-workbook');
-        case 'error':
+        case 'fatal-error':
+        case 'notification-error':
             return i18n('title_error-creating');
         case 'success':
             return i18n('title_workbook-created');
@@ -30,5 +34,5 @@ export const getCaption = (status: ImportExportStatus) => {
 };
 
 export const getCancelButtonText = (status: ImportExportStatus, defaultText: string) => {
-    return status === 'loading' ? defaultText : i18n('button_close');
+    return status === 'loading' || status === 'pending' ? defaultText : i18n('button_close');
 };

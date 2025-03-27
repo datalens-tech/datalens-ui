@@ -4,6 +4,7 @@ import block from 'bem-cn-lite';
 import PropTypes from 'prop-types';
 import {useLocation} from 'react-router-dom';
 import {MenuType} from 'ui/libs/DatalensChartkit/menu/constants';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {ChartWrapper} from '../../../../components/Widgets/Chart/ChartWidgetWithProvider';
 import {URL_QUERY} from '../../../../constants';
@@ -40,7 +41,7 @@ const Preview = ({
                 actionParamsEnabled={actionParamsEnabled}
                 forwardedRef={widgetRef}
                 workbookId={workbookId}
-                forceShowSafeChart={true}
+                forceShowSafeChart={isEnabledFeature('ShowSafeChartInfo')}
                 menuType={menuType}
             />
         </div>
