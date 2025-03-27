@@ -54,6 +54,7 @@ const MainTabContent = ({
     createEntryBtn,
     clearView,
     onShowRelatedClick,
+    onCopyId,
 }: MainTabContentProps) => {
     const [isOpen, setIsOpen] = React.useState(true);
 
@@ -79,6 +80,7 @@ const MainTabContent = ({
                     onDuplicateEntry={onDuplicateEntry}
                     onCopyEntry={onCopyEntry}
                     onShowRelatedClick={onShowRelatedClick}
+                    onCopyId={onCopyId}
                 />
             );
         }

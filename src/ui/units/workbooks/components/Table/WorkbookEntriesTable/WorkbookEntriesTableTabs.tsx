@@ -34,6 +34,7 @@ export type WorkbookEntriesTableTabsProps = {
     onDuplicateEntry: (data: WorkbookEntry) => void;
     onCopyEntry: (data: WorkbookEntry) => void;
     onShowRelated: (data: WorkbookEntry) => void;
+    onCopyId?: (data: WorkbookEntry) => void;
 };
 
 export const WorkbookEntriesTableTabs = ({
@@ -50,6 +51,7 @@ export const WorkbookEntriesTableTabs = ({
     onDuplicateEntry,
     onCopyEntry,
     onShowRelated,
+    onCopyId,
 }: WorkbookEntriesTableTabsProps) => {
     if (scope) {
         return null;
@@ -90,6 +92,7 @@ export const WorkbookEntriesTableTabs = ({
                 onCopyEntry={onCopyEntry}
                 clearView={clearViewDash}
                 onShowRelatedClick={onShowRelated}
+                onCopyId={onCopyId}
             />
             <MainTabContent
                 chunk={widgetChunk}
@@ -109,6 +112,7 @@ export const WorkbookEntriesTableTabs = ({
                 createEntryBtn={<CreateEntry className={b('controls')} scope={EntryScope.Widget} />}
                 clearView={clearViewWidget}
                 onShowRelatedClick={onShowRelated}
+                onCopyId={onCopyId}
             />
             {showDataEntities && (
                 <MainTabContent
@@ -129,6 +133,7 @@ export const WorkbookEntriesTableTabs = ({
                     onDuplicateEntry={onDuplicateEntry}
                     onCopyEntry={onCopyEntry}
                     onShowRelatedClick={onShowRelated}
+                    onCopyId={onCopyId}
                 />
             )}
             {showDataEntities && (
@@ -150,6 +155,7 @@ export const WorkbookEntriesTableTabs = ({
                     onDuplicateEntry={onDuplicateEntry}
                     onCopyEntry={onCopyEntry}
                     onShowRelatedClick={onShowRelated}
+                    onCopyId={onCopyId}
                 />
             )}
         </React.Fragment>
