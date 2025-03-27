@@ -11,7 +11,7 @@ import {URL_QUERY} from 'ui/constants';
 import {openDialogSaveDraftChartAsActualConfirm} from 'ui/store/actions/dialog';
 import {cleanRevisions, setRevisionsMode} from 'ui/store/actions/entryContent';
 import {RevisionsMode} from 'ui/store/typings/entryContent';
-import {getUrlParamFromStr} from 'ui/utils';
+import {UrlSearch, getUrlParamFromStr} from 'ui/utils';
 
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
 import {registry} from '../../../../registry';
@@ -72,7 +72,9 @@ const EditorPage = ({
 
     const getEditorTemplates = registry.editor.functions.get('getEditorTemplates');
 
-    const templates = getEditorTemplates();
+    const urlSearch = new UrlSearch(window.location.search);
+    const connectionId = urlSearch.get(URL_QUERY.CONNECTION_ID);
+    const templates = getEditorTemplates({connectionId});
 
     React.useEffect(() => {
         async function getEntryItem() {

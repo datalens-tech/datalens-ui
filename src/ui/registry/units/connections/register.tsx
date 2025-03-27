@@ -7,6 +7,7 @@ import {registry} from '../../../registry';
 
 export const registerConnectionsPlugins = () => {
     registry.connections.components.registerMany({
+        CreateEditorChartButton: () => null,
         PreparedRowItem,
     });
     registry.connections.functions.register({
