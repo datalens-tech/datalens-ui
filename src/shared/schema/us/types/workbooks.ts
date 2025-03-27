@@ -1,3 +1,5 @@
+import type {WorkbookStatus} from '../../../constants/workbooks';
+
 import type {GetEntryResponse} from './entries';
 import type {GetDatalensOperationResponse} from './operations';
 import type {OrderBasicField, OrderDirection, OrderWorkbookEntriesField} from './sort';
@@ -27,7 +29,7 @@ export type Workbook = {
     createdAt: string;
     updatedBy: string;
     updatedAt: string;
-    status?: 'importing';
+    status?: WorkbookStatus;
 };
 
 export type WorkbookWithPermissions = Workbook & {

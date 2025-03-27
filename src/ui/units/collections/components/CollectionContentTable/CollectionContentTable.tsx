@@ -8,6 +8,7 @@ import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
 import {Feature} from 'shared';
 import {CollectionContentTableQa, DEFAULT_DATE_FORMAT} from 'shared/constants';
+import {WORKBOOK_STATUS} from 'shared/constants/workbooks';
 import {DL} from 'ui/constants/common';
 import {selectDateTimeFormat} from 'ui/store/selectors/user';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -148,7 +149,7 @@ export const CollectionContentTable = React.memo<Props>(
                                 const isImporting =
                                     isEnabledFeature(Feature.EnableExportWorkbookFile) &&
                                     isWorkbookItem &&
-                                    item.status === 'importing';
+                                    item.status === WORKBOOK_STATUS.IMPORTING;
 
                                 return (
                                     <CollectionLinkRow
