@@ -114,9 +114,15 @@ type AddEditHistoryPointArgs = {
     unitId: string;
     newState: unknown;
     stacked?: boolean;
+    skipEmptyDiff?: boolean;
 };
 
-export function addEditHistoryPoint({unitId, newState, stacked}: AddEditHistoryPointArgs) {
+export function addEditHistoryPoint({
+    unitId,
+    newState,
+    stacked,
+    skipEmptyDiff,
+}: AddEditHistoryPointArgs) {
     return function (dispatch: Dispatch, getState: () => DatalensGlobalState) {
         const globalState = getState();
         const {
@@ -137,6 +143,10 @@ export function addEditHistoryPoint({unitId, newState, stacked}: AddEditHistoryP
                 const oldState = unit.pointState;
 
                 diff = jdp.diff(oldState, newState);
+            }
+
+            if (!diff && unit.pointState && skipEmptyDiff) {
+                return;
             }
 
             dispatch(_addEditHistoryPoint({unitId, diff, state: newState, stacked}));

@@ -6,6 +6,7 @@ import type {
     SetSelectorDialogItemAction,
     UpdateSelectorsGroupAction,
 } from 'ui/store/actions/controlDialog';
+import type {EditHistoryAction} from 'ui/store/actions/editHistory';
 
 import type {EntryContentAction} from '../../../../store/actions/entryContent';
 
@@ -21,6 +22,7 @@ import type {
     SetDescriptionAction,
     SetErrorModeAction,
     SetHashStateAction,
+    SetHistoryStateAction,
     SetInitialPageTabsItemsAction,
     SetItemDataAction,
     SetLoadingEditModeAction,
@@ -76,6 +78,8 @@ export type DashAction<T = unknown> =
     | CloseDialogAction
     | SaveDashSuccessAction
     | SaveDashErrorAction
-    | SetSettingsAction;
+    | SetSettingsAction
+    | SetHistoryStateAction
+    | EditHistoryAction;
 
 export type DashDispatch = ThunkDispatch<DatalensGlobalState, void, DashAction>;

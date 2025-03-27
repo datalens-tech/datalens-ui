@@ -11,8 +11,8 @@ import type EntryDialogues from '../../../../../components/EntryDialogues/EntryD
 import {Mode} from '../../../modules/constants';
 import {
     setDashDescViewMode,
-    setDashDescription,
     updateDashOpenedDesc,
+    updateDescription,
 } from '../../../store/actions/dashTyped';
 import {
     isEditMode,
@@ -45,8 +45,7 @@ export const Description = (props: DescriptionProps) => {
 
     const handleOnApplyClick = React.useCallback(
         (text: string) => {
-            dispatch(setDashDescription(text));
-            dispatch(setDashDescViewMode(Mode.View));
+            dispatch(updateDescription(text));
         },
         [dispatch],
     );

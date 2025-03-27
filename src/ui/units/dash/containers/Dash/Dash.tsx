@@ -27,8 +27,6 @@ import {addWorkbookInfo, resetWorkbookPermissions} from 'ui/units/workbooks/stor
 import Utils, {formDocsEndpointDL} from 'ui/utils';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
-const i18n = I18n.keyset('dash.main.view');
-
 import {
     cleanRevisions,
     setRevisionsListMode,
@@ -62,8 +60,11 @@ import {
 import {getTabId} from '../../utils/getTabId';
 import {getUrlGlobalParams} from '../../utils/url';
 import Body from '../Body/Body';
+import {DashHotkeys} from '../DashHotkes/DashHotkeys';
 import Dialogs from '../Dialogs/Dialogs';
 import Header from '../Header/Header';
+
+const i18n = I18n.keyset('dash.main.view');
 
 const AUTH_UPDATE_TIMEOUT = 40 * 60 * 1000;
 
@@ -264,7 +265,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
         const subtitle = getTabTitleById({tabs, tabId});
 
         return (
-            <React.Fragment>
+            <DashHotkeys>
                 <PageTitle entry={entry} extraSettings={{subtitle}} />
                 <SlugifyUrl
                     entryId={entry ? entry.entryId : null}
@@ -289,7 +290,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
                     onlyView={DL.IS_MOBILE}
                 />
                 <Dialogs />
-            </React.Fragment>
+            </DashHotkeys>
         );
     }
 
