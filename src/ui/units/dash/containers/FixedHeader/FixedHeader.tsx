@@ -159,8 +159,8 @@ type FixedHeaderWrapperProps = CommonFixedHeaderProps & {
     isControlsGroupEmpty?: boolean;
     isContainerGroupEmpty?: boolean;
     dashBodyRef: React.RefObject<HTMLDivElement>;
-    controlsRef: React.RefObject<HTMLDivElement>;
-    containerRef: React.RefObject<HTMLDivElement>;
+    controlsRef: React.Ref<HTMLDivElement>;
+    containerRef: React.Ref<HTMLDivElement>;
 };
 
 export function FixedHeaderWrapper({

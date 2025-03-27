@@ -164,6 +164,8 @@ type NoEditProps = {
 
 type DashBodyState = {
     fixedHeaderCollapsed: Record<string, boolean>;
+    fixedHeaderControlsEl: HTMLDivElement | null;
+    fixedHeaderContainerEl: HTMLDivElement | null;
     isGlobalDragging: boolean;
     hasCopyInBuffer: CopiedConfigData | null;
     loaded: boolean;
@@ -305,52 +307,46 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         config: DashKitProps['config'];
     };
     _dashBodyRef: React.RefObject<HTMLDivElement>;
-    _fixedHeaderControlsRef: React.RefObject<HTMLDivElement>;
-    _fixedHeaderContainerRef: React.RefObject<HTMLDivElement>;
 
-    // is set to true if dashkit render occures to be done before fixed-header render
-    // it triggers forceUpdate
-    _shouldRerender = false;
-
-    state: DashBodyState = {
-        fixedHeaderCollapsed: {},
-        isGlobalDragging: false,
-        hasCopyInBuffer: null,
-        prevMeta: {tabId: null, entryId: null},
-        loaded: false,
-        loadedItemsMap: new Map<string, boolean>(),
-        hash: '',
-        delayedScrollElement: null,
-        lastDelayedScrollTop: null,
-        groups: {
-            margins: DEFAULT_DASH_MARGINS,
-            renderers: [],
-        },
-    };
+    state: DashBodyState;
 
     constructor(props: BodyProps) {
         super(props);
 
-        this.state.groups.renderers = [
-            {
-                id: FIXED_GROUP_HEADER_ID,
-                render: this.renderFixedGroupHeader,
-                gridProperties: getPropertiesWithResizeHandles(),
+        this.state = {
+            fixedHeaderCollapsed: {},
+            fixedHeaderControlsEl: null,
+            fixedHeaderContainerEl: null,
+            isGlobalDragging: false,
+            hasCopyInBuffer: null,
+            prevMeta: {tabId: null, entryId: null},
+            loaded: false,
+            loadedItemsMap: new Map<string, boolean>(),
+            hash: '',
+            delayedScrollElement: null,
+            lastDelayedScrollTop: null,
+            groups: {
+                margins: DEFAULT_DASH_MARGINS,
+                renderers: [
+                    {
+                        id: FIXED_GROUP_HEADER_ID,
+                        render: this.renderFixedGroupHeader,
+                        gridProperties: getPropertiesWithResizeHandles(),
+                    },
+                    {
+                        id: FIXED_GROUP_CONTAINER_ID,
+                        render: this.renderFixedGroupContainer,
+                        gridProperties: getPropertiesWithResizeHandles(),
+                    },
+                    {
+                        id: DEFAULT_GROUP,
+                        gridProperties: getPropertiesWithResizeHandles(),
+                    },
+                ],
             },
-            {
-                id: FIXED_GROUP_CONTAINER_ID,
-                render: this.renderFixedGroupContainer,
-                gridProperties: getPropertiesWithResizeHandles(),
-            },
-            {
-                id: DEFAULT_GROUP,
-                gridProperties: getPropertiesWithResizeHandles(),
-            },
-        ];
+        };
 
         this._dashBodyRef = React.createRef();
-        this._fixedHeaderControlsRef = React.createRef();
-        this._fixedHeaderContainerRef = React.createRef();
     }
 
     componentDidMount() {
@@ -366,8 +362,6 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         window.addEventListener('touchmove', this.interruptAutoScroll);
 
         this.updateMargins();
-
-        this.rerenderIfNeeded();
     }
 
     componentDidUpdate() {
@@ -376,8 +370,6 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         }
 
         this.updateMargins();
-
-        this.rerenderIfNeeded();
     }
 
     componentDidCatch(error: Error) {
@@ -401,6 +393,13 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         );
     }
 
+    _fixedHeaderControlsRef: React.RefCallback<HTMLDivElement> = (el) => {
+        this.setState({fixedHeaderControlsEl: el});
+    };
+    _fixedHeaderContainerRef: React.RefCallback<HTMLDivElement> = (el) => {
+        this.setState({fixedHeaderContainerEl: el});
+    };
+
     updateMargins() {
         const {margins: stateMargins} = this.state.groups;
         const {margins: propsMargins = DEFAULT_DASH_MARGINS} = this.props.settings;
@@ -419,13 +418,6 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             });
         }
     }
-
-    rerenderIfNeeded = () => {
-        if (this._shouldRerender) {
-            this._shouldRerender = false;
-            this.forceUpdate();
-        }
-    };
 
     isCondensed = () => {
         return this.state.groups.margins[0] === 0 || this.state.groups.margins[1] === 0;
@@ -800,8 +792,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
 
         const {fixedHeaderCollapsed = false} = params.context;
 
-        if (!this._fixedHeaderControlsRef.current) {
-            this._shouldRerender = true;
+        if (!this.state.fixedHeaderControlsEl) {
             return null;
         }
 
@@ -819,7 +810,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             >
                 {children}
             </FixedHeaderControls>,
-            this._fixedHeaderControlsRef.current,
+            this.state.fixedHeaderControlsEl,
         );
     };
 
@@ -841,8 +832,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             return children;
         }
 
-        if (!this._fixedHeaderContainerRef.current) {
-            this._shouldRerender = true;
+        if (!this.state.fixedHeaderContainerEl) {
             return null;
         }
 
@@ -855,7 +845,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             >
                 {children}
             </FixedHeaderContainer>,
-            this._fixedHeaderContainerRef.current,
+            this.state.fixedHeaderContainerEl,
         );
     };
 
@@ -1101,7 +1091,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         );
 
         const canRenderDashkit =
-            this._fixedHeaderControlsRef.current && this._fixedHeaderContainerRef.current;
+            this.state.fixedHeaderControlsEl && this.state.fixedHeaderContainerEl;
 
         if (isEmptyTab && !isGlobalDragging) {
             return (
@@ -1113,10 +1103,6 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                     isEditModeLoading={isEditModeLoading}
                 />
             );
-        }
-
-        if (!canRenderDashkit) {
-            this._shouldRerender = true;
         }
 
         return (
