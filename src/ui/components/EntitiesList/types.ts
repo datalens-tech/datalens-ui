@@ -8,6 +8,7 @@ export type EntitiesListProps = {
     enableHover?: boolean;
     rightSectionSlot?: React.FC<RightSectionProps>;
     className?: string;
+    rowClassName?: string;
 } & (CurrentEntity | ScopeEntities);
 
 export type CurrentEntity = {

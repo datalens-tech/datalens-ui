@@ -73,7 +73,11 @@
         transition: opacity 0.2s ease-in-out;
     }
 
-    .entry-row_hoverable:hover &__entry-menu {
-        opacity: 1;
+    &__entity-row {
+        &:hover &__entry-menu {
+            opacity: 1;
+        }
+
+        padding-left: var(--g-spacing-half);
     }
 }

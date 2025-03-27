@@ -188,6 +188,7 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
                 entities={value}
                 key={key}
                 rightSectionSlot={RowActions}
+                rowClassName={b('entity-row')}
             />
         ));
     };
@@ -204,6 +205,7 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
                     entities={[entry]}
                     rightSectionSlot={RowActions}
                     className={b('current-row')}
+                    rowClassName={b('entity-row')}
                 />
                 {showDirectionControl && (
                     <div className={b('direction-row')}>

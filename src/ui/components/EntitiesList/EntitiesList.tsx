@@ -35,6 +35,7 @@ export const EntitiesList = ({
     hideTitle,
     enableHover,
     rightSectionSlot,
+    rowClassName,
     className,
 }: EntitiesListProps) => {
     const title = isCurrent ? i18n('label_current-object') : getLabelByScope(scope);
@@ -46,7 +47,7 @@ export const EntitiesList = ({
             {title && !hideTitle && <div className={b('title')}>{title}</div>}
             {entities.map((entity) => (
                 <EntryRow
-                    className={b('row')}
+                    className={b('row', rowClassName)}
                     key={entity.entryId}
                     entry={entity}
                     nonInteractive={isCurrent}
