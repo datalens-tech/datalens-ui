@@ -2,6 +2,7 @@
 @import '../../styles/mixins.scss';
 
 .dialog-related-entities {
+    $class: &;
     width: 720px;
     max-height: 95vh;
     min-height: 590px;
@@ -74,7 +75,7 @@
     }
 
     &__entity-row {
-        &:hover &__entry-menu {
+        &:hover #{$class}__entry-menu {
             opacity: 1;
         }
 
