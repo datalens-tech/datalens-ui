@@ -11,6 +11,7 @@
   "label_info-secrets": "You will need to re-enter your passwords during the import",
   "label_info-time": "The export may take several minutes",
   "label_info-versions": "In other versions of DataLens, <link>some</link> connections will not work",
+  "label_success-export": "Download file with workbook configuration",
   "title_cancel-export": "Cancel the export?",
   "title_export": "Workbook export",
   "title_export-success": "Export file is ready",
