@@ -24,6 +24,7 @@ export function ChunkGroup({
     onDuplicateEntry,
     onCopyEntry,
     onShowRelatedClick,
+    onCopyId,
 }: ChunkGroupProps) {
     const {ref, inView} = useInView(options);
 
@@ -43,6 +44,7 @@ export function ChunkGroup({
                             onDuplicateEntry={onDuplicateEntry}
                             onCopyEntry={onCopyEntry}
                             onShowRelatedClick={onShowRelatedClick}
+                            onCopyId={onCopyId}
                         />
                     );
                 case 'empty':

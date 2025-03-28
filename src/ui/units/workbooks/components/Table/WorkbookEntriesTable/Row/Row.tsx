@@ -32,6 +32,7 @@ type RowProps = {
     onDuplicateEntry: (data: WorkbookEntry) => void;
     onCopyEntry: (data: WorkbookEntry) => void;
     onShowRelatedClick: (data: WorkbookEntry) => void;
+    onCopyId?: (data: WorkbookEntry) => void;
 };
 
 const onClickStopPropogation: React.MouseEventHandler = (e) => {
@@ -49,6 +50,7 @@ const Row: React.FC<RowProps> = ({
     onDuplicateEntry,
     onCopyEntry,
     onShowRelatedClick,
+    onCopyId,
 }) => {
     const {getWorkbookEntryUrl} = registry.workbooks.functions.getAll();
     const {getLoginById} = registry.common.functions.getAll();
@@ -151,6 +153,9 @@ const Row: React.FC<RowProps> = ({
                                 }}
                                 onShowRelatedClick={() => {
                                     onShowRelatedClick(item);
+                                }}
+                                onCopyId={() => {
+                                    onCopyId?.(item);
                                 }}
                             />
                         </div>

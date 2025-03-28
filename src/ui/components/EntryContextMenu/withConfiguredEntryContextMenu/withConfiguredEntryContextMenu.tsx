@@ -1,16 +1,15 @@
 import React from 'react';
 
-import {CopyToClipboard, Icon} from '@gravity-ui/uikit';
+import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Feature} from 'shared';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
-import navigateHelper from '../../../libs/navigateHelper';
 import type {EntryContextMenuNestedProps, MenuClickHandler} from '../EntryContextMenu';
 import type EntryContextMenuBase from '../EntryContextMenuBase/EntryContextMenuBase';
 import {ENTRY_CONTEXT_MENU_ACTION} from '../constants';
-import type {EntryContextMenuItem, EntryContextMenuItems, WrapperParams} from '../helpers';
+import type {EntryContextMenuItem, EntryContextMenuItems} from '../helpers';
 import {getGroupedMenu} from '../helpers';
 import type {ContextMenuParams} from '../types';
 
@@ -24,15 +23,6 @@ const b = block('dl-entry-context-menu-base');
 const OVERRIDE_CONTEXT_MENU = {
     [ENTRY_CONTEXT_MENU_ACTION.DELETE]: {
         menuItemClassName: b('item', {danger: true}),
-    },
-    [ENTRY_CONTEXT_MENU_ACTION.COPY_LINK]: {
-        wrapper: ({entry, children}: WrapperParams) => {
-            return (
-                <CopyToClipboard text={navigateHelper.redirectUrlSwitcher(entry)} timeout={500}>
-                    {() => children}
-                </CopyToClipboard>
-            );
-        },
     },
 };
 
@@ -55,7 +45,7 @@ export const getEntryContextMenuItems = (
     }).map(
         (menuItem) =>
             ({
-                icon: <Icon data={menuItem.icon} />,
+                icon: <Icon size={16} data={menuItem.icon} />,
                 text: i18n(menuItem.text),
                 action: menuItem.action,
                 id: menuItem.id,
