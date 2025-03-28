@@ -24,7 +24,7 @@ const i18n = I18n.keyset('new-workbooks');
 
 interface MainTabContentProps extends WorkbookEntriesTableProps {
     chunk: ChunkItem[];
-    actionCreateText: string;
+    actionCreateText?: string;
     title: string;
     isErrorMessage?: boolean;
     isLoading?: boolean;
@@ -130,6 +130,25 @@ const MainTabContent = ({
         return null;
     }
 
+    const renderCreateButton = () => {
+        if (!showCreateButton || (!createEntryBtn && !actionCreateText)) {
+            return null;
+        }
+
+        return (
+            <div className={b('content')}>
+                <div className={b('create-btn')}>
+                    {createEntryBtn ?? (
+                        <Button onClick={handleCreateEntity}>
+                            <Icon data={Plus} />
+                            {actionCreateText}
+                        </Button>
+                    )}
+                </div>
+            </div>
+        );
+    };
+
     return (
         <div className={b({mobile: DL.IS_MOBILE})}>
             {!clearView && (
@@ -141,18 +160,7 @@ const MainTabContent = ({
                             <div className={b('title-text')}>{title}</div>
                         </div>
                     </div>
-                    {showCreateButton && (
-                        <div className={b('content')}>
-                            <div className={b('create-btn')}>
-                                {createEntryBtn ?? (
-                                    <Button onClick={handleCreateEntity}>
-                                        <Icon data={Plus} />
-                                        {actionCreateText}
-                                    </Button>
-                                )}
-                            </div>
-                        </div>
-                    )}
+                    {renderCreateButton()}
                 </div>
             )}
 
