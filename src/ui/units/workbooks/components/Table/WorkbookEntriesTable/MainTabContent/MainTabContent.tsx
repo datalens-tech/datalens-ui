@@ -22,9 +22,8 @@ const b = block('dl-main-tab-content');
 
 const i18n = I18n.keyset('new-workbooks');
 
-interface MainTabContentProps extends WorkbookEntriesTableProps {
+type MainTabContentProps = WorkbookEntriesTableProps & {
     chunk: ChunkItem[];
-    actionCreateText?: string;
     title: string;
     isErrorMessage?: boolean;
     isLoading?: boolean;
@@ -34,7 +33,10 @@ interface MainTabContentProps extends WorkbookEntriesTableProps {
     retryLoadEntries: () => void;
     createEntryBtn?: React.ReactNode;
     clearView?: boolean;
-}
+} & (
+        | {actionCreateText?: string; hideCreateButton: true}
+        | {actionCreateText: string; hideCreateButton?: false}
+    );
 
 const MainTabContent = ({
     workbook,
@@ -44,6 +46,7 @@ const MainTabContent = ({
     onDuplicateEntry,
     onCopyEntry,
     actionCreateText,
+    hideCreateButton,
     title,
     actionType,
     isShowMoreBtn,
@@ -131,7 +134,7 @@ const MainTabContent = ({
     }
 
     const renderCreateButton = () => {
-        if (!showCreateButton || (!createEntryBtn && !actionCreateText)) {
+        if (!showCreateButton || hideCreateButton) {
             return null;
         }
 
