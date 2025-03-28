@@ -22,9 +22,9 @@ const b = block('dl-main-tab-content');
 
 const i18n = I18n.keyset('new-workbooks');
 
-interface MainTabContentProps extends WorkbookEntriesTableProps {
-    chunk: ChunkItem[];
+type MainTabContentProps = WorkbookEntriesTableProps & {
     actionCreateText: string;
+    chunk: ChunkItem[];
     title: string;
     isErrorMessage?: boolean;
     isLoading?: boolean;
@@ -34,7 +34,8 @@ interface MainTabContentProps extends WorkbookEntriesTableProps {
     retryLoadEntries: () => void;
     createEntryBtn?: React.ReactNode;
     clearView?: boolean;
-}
+    hasCreateButton?: boolean;
+};
 
 const MainTabContent = ({
     workbook,
@@ -44,6 +45,7 @@ const MainTabContent = ({
     onDuplicateEntry,
     onCopyEntry,
     actionCreateText,
+    hasCreateButton = true,
     title,
     actionType,
     isShowMoreBtn,
@@ -124,11 +126,30 @@ const MainTabContent = ({
         return null;
     };
 
-    const showCreateButton = workbook.permissions.update && !DL.IS_MOBILE;
+    const showCreateButton = workbook.permissions.update && !DL.IS_MOBILE && hasCreateButton;
 
     if (!isLoading && DL.IS_MOBILE && chunk.length === 0) {
         return null;
     }
+
+    const renderCreateButton = () => {
+        if (showCreateButton) {
+            return (
+                <div className={b('content')}>
+                    <div className={b('create-btn')}>
+                        {createEntryBtn ?? (
+                            <Button onClick={handleCreateEntity}>
+                                <Icon data={Plus} />
+                                {actionCreateText}
+                            </Button>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        return null;
+    };
 
     return (
         <div className={b({mobile: DL.IS_MOBILE})}>
@@ -141,18 +162,7 @@ const MainTabContent = ({
                             <div className={b('title-text')}>{title}</div>
                         </div>
                     </div>
-                    {showCreateButton && (
-                        <div className={b('content')}>
-                            <div className={b('create-btn')}>
-                                {createEntryBtn ?? (
-                                    <Button onClick={handleCreateEntity}>
-                                        <Icon data={Plus} />
-                                        {actionCreateText}
-                                    </Button>
-                                )}
-                            </div>
-                        </div>
-                    )}
+                    {renderCreateButton()}
                 </div>
             )}
 
