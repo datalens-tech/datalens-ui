@@ -34,7 +34,7 @@ type MainTabContentProps = WorkbookEntriesTableProps & {
     retryLoadEntries: () => void;
     createEntryBtn?: React.ReactNode;
     clearView?: boolean;
-    hideCreateButton?: boolean;
+    hasCreateButton?: boolean;
 };
 
 const MainTabContent = ({
@@ -45,7 +45,7 @@ const MainTabContent = ({
     onDuplicateEntry,
     onCopyEntry,
     actionCreateText,
-    hideCreateButton,
+    hasCreateButton = true,
     title,
     actionType,
     isShowMoreBtn,
@@ -126,29 +126,29 @@ const MainTabContent = ({
         return null;
     };
 
-    const showCreateButton = workbook.permissions.update && !DL.IS_MOBILE;
+    const showCreateButton = workbook.permissions.update && !DL.IS_MOBILE && hasCreateButton;
 
     if (!isLoading && DL.IS_MOBILE && chunk.length === 0) {
         return null;
     }
 
     const renderCreateButton = () => {
-        if (!showCreateButton || hideCreateButton) {
-            return null;
+        if (showCreateButton) {
+            return (
+                <div className={b('content')}>
+                    <div className={b('create-btn')}>
+                        {createEntryBtn ?? (
+                            <Button onClick={handleCreateEntity}>
+                                <Icon data={Plus} />
+                                {actionCreateText}
+                            </Button>
+                        )}
+                    </div>
+                </div>
+            );
         }
 
-        return (
-            <div className={b('content')}>
-                <div className={b('create-btn')}>
-                    {createEntryBtn ?? (
-                        <Button onClick={handleCreateEntity}>
-                            <Icon data={Plus} />
-                            {actionCreateText}
-                        </Button>
-                    )}
-                </div>
-            </div>
-        );
+        return null;
     };
 
     return (
