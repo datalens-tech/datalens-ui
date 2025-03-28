@@ -203,6 +203,7 @@ type FormApiSchema = {
 type FormUiSchema = {
     showCreateDatasetButton?: boolean;
     showCreateQlChartButton?: boolean;
+    showCreateEditorChartButton?: boolean;
 };
 
 export type FormSchema = {
