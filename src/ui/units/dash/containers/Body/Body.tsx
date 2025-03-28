@@ -58,7 +58,6 @@ import {
 } from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {
-    DASHKIT_COLS_AMOUNT,
     DEFAULT_DASH_MARGINS,
     FIXED_GROUP_CONTAINER_ID,
     FIXED_GROUP_HEADER_ID,
@@ -573,19 +572,11 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                         ...groupCoords[DEFAULT_GROUP],
                     };
                 } else {
-                    const leftSpace = tabDataConfig.layout.reduce((memo, item) => {
-                        if (item.parent === FIXED_GROUP_HEADER_ID) {
-                            memo -= item.w;
-                        }
-                        return memo;
-                    }, DASHKIT_COLS_AMOUNT);
-
-                    const parentId =
-                        itemCopy.w <= leftSpace ? FIXED_GROUP_HEADER_ID : FIXED_GROUP_CONTAINER_ID;
+                    const parentId = FIXED_GROUP_HEADER_ID;
 
                     movedItem = {
                         ...itemCopy,
-                        parent: parentId,
+                        parent: FIXED_GROUP_HEADER_ID,
                         ...groupCoords[parentId],
                     };
                 }
