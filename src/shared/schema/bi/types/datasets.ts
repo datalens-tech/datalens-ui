@@ -1,5 +1,14 @@
-import type {Dataset, DatasetField, DatasetFieldCalcMode, DatasetFieldError} from '../../../types';
+import type {
+    Dataset,
+    DatasetField,
+    DatasetFieldCalcMode,
+    DatasetFieldError,
+    ExportNotifications,
+    IdMapping,
+    ImportVerifiedVia,
+} from '../../../types';
 import type {ApiV2RequestBody, ApiV2ResultData} from '../../../types/bi-api/v2';
+import type {EntryFieldData} from '../../types';
 
 import type {WorkbookIdArg} from './common';
 
@@ -209,3 +218,20 @@ export type GetDistinctsApiV2Args = Omit<
 > &
     DatasetId &
     WorkbookIdArg;
+
+export type ExportDatasetResponse = {dataset: EntryFieldData; notifications: ExportNotifications};
+
+export type ExportDatasetArgs = {
+    datasetId: string;
+    id_mapping: IdMapping;
+    workbookId?: string | null;
+};
+
+export type ImportDatasetResponse = {notifications: ExportNotifications};
+
+export type ImportDatasetArgs = {
+    created_via: ImportVerifiedVia;
+    dataset: EntryFieldData;
+    id_mapping: IdMapping;
+    workbookId?: string | null;
+};

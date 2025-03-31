@@ -1,4 +1,9 @@
-import {TIMEOUT_60_SEC, TIMEOUT_95_SEC, WORKBOOK_ID_HEADER} from '../../../constants';
+import {
+    TIMEOUT_60_SEC,
+    TIMEOUT_95_SEC,
+    US_MASTER_TOKEN_HEADER,
+    WORKBOOK_ID_HEADER,
+} from '../../../constants';
 import {createAction} from '../../gateway-utils';
 import {filterUrlFragment} from '../../utils';
 import {
@@ -18,6 +23,8 @@ import type {
     CreateDatasetResponse,
     DeleteDatasetArgs,
     DeleteDatasetResponse,
+    ExportDatasetArgs,
+    ExportDatasetResponse,
     GetDataSetFieldsByIdArgs,
     GetDataSetFieldsByIdResponse,
     GetDatasetByVersionArgs,
@@ -30,6 +37,8 @@ import type {
     GetPreviewResponse,
     GetSourceArgs,
     GetSourceResponse,
+    ImportDatasetArgs,
+    ImportDatasetResponse,
     UpdateDatasetArgs,
     UpdateDatasetResponse,
     ValidateDatasetArgs,
@@ -241,5 +250,34 @@ export const actions = {
         method: 'DELETE',
         path: ({datasetId}) => `${API_V1}/datasets/${filterUrlFragment(datasetId)}`,
         params: (_, headers) => ({headers}),
+    }),
+    _exportDataset: createAction<ExportDatasetResponse, ExportDatasetArgs>({
+        method: 'POST',
+        path: ({datasetId}) => `${API_V1}/datasets/export/${datasetId}`,
+        params: ({workbookId, id_mapping}, headers, {ctx}) => ({
+            headers: {
+                ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
+                ...headers,
+                [US_MASTER_TOKEN_HEADER]: ctx.config.usMasterToken,
+            },
+            body: {
+                id_mapping,
+            },
+        }),
+    }),
+    _importDataset: createAction<ImportDatasetResponse, ImportDatasetArgs>({
+        method: 'POST',
+        path: () => `${API_V1}/datasets/import`,
+        params: ({workbookId, id_mapping, dataset}, headers, {ctx}) => ({
+            headers: {
+                ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
+                ...headers,
+                [US_MASTER_TOKEN_HEADER]: ctx.config.usMasterToken,
+            },
+            body: {
+                dataset,
+                id_mapping,
+            },
+        }),
     }),
 };

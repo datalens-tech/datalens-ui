@@ -1,4 +1,5 @@
-import {WORKBOOK_ID_HEADER} from '../../../constants';
+import type {IdMapping} from '../../..';
+import {US_MASTER_TOKEN_HEADER, WORKBOOK_ID_HEADER} from '../../../constants';
 import {createAction} from '../../gateway-utils';
 import {filterUrlFragment} from '../../utils';
 import {transformConnectionResponseError} from '../helpers';
@@ -135,5 +136,20 @@ export const actions = {
         method: 'GET',
         path: () => `${PATH_PREFIX}/info/connectors/icons`,
         params: (_, headers) => ({headers}),
+    }),
+    // TODO Types
+    _exportConnection: createAction<
+        any,
+        {connectionId: string; id_mapping: IdMapping; workbookId?: string | null}
+    >({
+        method: 'GET',
+        path: ({connectionId}) => `${PATH_PREFIX}/connections/export/${connectionId}`,
+        params: ({workbookId}, headers, {ctx}) => ({
+            headers: {
+                ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
+                ...headers,
+                [US_MASTER_TOKEN_HEADER]: ctx.config.usMasterToken,
+            },
+        }),
     }),
 };

@@ -13,9 +13,11 @@ import type {
     DashData,
     DashEntry,
     DashEntryCreateParams,
+    DashTab,
     DashTabItemControlData,
     Dictionary,
     EntryReadParams,
+    IdMapping,
     UpdateEntryRequest,
 } from '../../../shared/types';
 import {
@@ -29,47 +31,73 @@ import {isEnabledServerFeature} from '../../../shared/utils';
 
 import US from './us';
 
-function addControlLinkToResult(result: Dictionary<string>, data: DashTabItemControlData) {
+function processControlLinkToResult(
+    result: Dictionary<string>,
+    data: DashTabItemControlData,
+    idMapping?: IdMapping,
+) {
     if (data.sourceType === DashTabItemControlSourceType.Dataset && 'datasetId' in data.source) {
         const {datasetId} = data.source;
-        result[datasetId] = datasetId;
+        if (idMapping?.[datasetId]) {
+            result[idMapping[datasetId]] = datasetId;
+            data.source.datasetId = idMapping[datasetId];
+        } else {
+            result[datasetId] = datasetId;
+        }
     }
 
     return result;
 }
 
-function gatherLinks(data: DashData) {
-    return data.tabs.reduce(
-        (result: Dictionary<string>, tab) =>
-            tab.items.reduce((result, item) => {
-                const {type, data} = item;
+export function processLinksForItems(tabData: DashTab, idMapping?: IdMapping) {
+    return tabData.items.reduce((result: Dictionary<string>, item) => {
+        const {type, data} = item;
 
-                if (type === DashTabItemType.Widget && 'tabs' in data) {
-                    return data.tabs.reduce((result, widget) => {
-                        const {chartId} = widget;
-                        result[chartId] = chartId;
-                        return result;
-                    }, result);
-                } else if (type === DashTabItemType.GroupControl) {
-                    data.group.forEach((groupItem) => {
-                        result = addControlLinkToResult(result, groupItem);
-                    });
-                } else if (type === DashTabItemType.Control && 'sourceType' in data) {
-                    result = addControlLinkToResult(result, data);
-
-                    if (
-                        data.sourceType === DashTabItemControlSourceType.External &&
-                        'chartId' in data.source
-                    ) {
-                        const {chartId} = data.source;
-                        result[chartId] = chartId;
-                    }
+        if (type === DashTabItemType.Widget && 'tabs' in data) {
+            return data.tabs.reduce((result, widget) => {
+                const {chartId} = widget;
+                if (idMapping?.[chartId]) {
+                    result[idMapping[chartId]] = chartId;
+                    widget.chartId = idMapping[chartId];
+                } else {
+                    result[chartId] = chartId;
                 }
-
                 return result;
-            }, result),
+            }, result);
+        } else if (type === DashTabItemType.GroupControl) {
+            data.group.forEach((groupItem) => {
+                result = processControlLinkToResult(result, groupItem, idMapping);
+            });
+        } else if (type === DashTabItemType.Control && 'sourceType' in data) {
+            result = processControlLinkToResult(result, data);
+
+            if (
+                data.sourceType === DashTabItemControlSourceType.External &&
+                'chartId' in data.source
+            ) {
+                const {chartId} = data.source;
+                if (idMapping?.[chartId]) {
+                    result[idMapping[chartId]] = chartId;
+                    data.source.chartId = idMapping[chartId];
+                } else {
+                    result[chartId] = chartId;
+                }
+            }
+        }
+
+        return result;
+    }, {});
+}
+
+export function processLinks(data: DashData, idMapping?: IdMapping) {
+    return data.tabs.reduce(
+        (result: Dictionary<string>, tab) => ({...result, ...processLinksForItems(tab, idMapping)}),
         {},
     );
+}
+
+export function gatherLinks(data: DashData) {
+    return processLinks(data);
 }
 
 function setDefaultData(I18n: ServerI18n, requestData: DashData, initialData?: DashData) {
@@ -263,7 +291,7 @@ class Dash {
                 isEnabledServerFeature(ctx, Feature.DashServerMigrationEnable),
             );
             if (isServerMigrationEnabled && DashSchemeConverter.isUpdateNeeded(result.data)) {
-                result.data = await DashSchemeConverter.update(result.data);
+                result.data = await Dash.migrate(result.data);
             }
 
             ctx.log('SDK_DASH_READ_SUCCESS', US.getLoggedEntry(result));
@@ -274,6 +302,36 @@ class Dash {
 
             throw error;
         }
+    }
+
+    static async migrate(data: DashEntry['data']) {
+        return await DashSchemeConverter.update(data);
+    }
+
+    static async export(data: DashEntry['data'], id_mapping: IdMapping) {
+        const dash = await Dash.migrate(data);
+        processLinks(dash, id_mapping);
+
+        return {
+            dash,
+            id_mapping,
+        };
+    }
+
+    static async import(importObject: {dash: DashEntry['data']; id_mapping: IdMapping}) {
+        const reverseMapping = Object.entries(importObject.id_mapping).reduce<IdMapping>(
+            (acc, [entryId, placeholder]) => {
+                acc[placeholder] = entryId;
+                return acc;
+            },
+            {},
+        );
+
+        const dash = await Dash.migrate(importObject.dash);
+        processLinks(dash, reverseMapping);
+
+        // TODO
+        return importObject;
     }
 
     static async update(

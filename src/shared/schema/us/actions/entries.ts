@@ -70,6 +70,23 @@ export const entriesActions = {
             },
         }),
     }),
+    _getEntry: createAction<GetEntryResponse, GetEntryArgs>({
+        method: 'GET',
+        path: ({entryId}) => `${PRIVATE_PATH_PREFIX}/entries/${filterUrlFragment(entryId)}`,
+        params: (
+            {entryId: _entryId, workbookId, includeDlComponentUiData, ...query},
+            headers,
+            {ctx},
+        ) => ({
+            query,
+            headers: {
+                ...headers,
+                [US_MASTER_TOKEN_HEADER]: ctx.config.usMasterToken,
+                ...(includeDlComponentUiData ? {[DL_COMPONENT_HEADER]: DlComponentHeader.UI} : {}),
+                ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
+            },
+        }),
+    }),
     getEntryByKey: createAction<GetEntryByKeyResponse, GetEntryByKeyArgs>({
         method: 'GET',
         path: () => `${PATH_PREFIX}/entriesByKey`,
