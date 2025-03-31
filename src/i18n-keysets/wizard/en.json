@@ -308,6 +308,7 @@
   "label_visualization-line": "Line chart",
   "label_visualization-metric": "Indicator",
   "label_visualization-pie": "Pie chart",
+  "label_visualization-pie-3d": "Pie chart 3D",
   "label_visualization-pivot-table": "Pivot table",
   "label_visualization-polyline": "Polylines",
   "label_visualization-scatter": "Scatter chart",

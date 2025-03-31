@@ -76,6 +76,7 @@ export function canUseStringAsMarkdown(
         case WizardVisualizationId.Bar:
         case WizardVisualizationId.Bar100p:
         case WizardVisualizationId.Pie:
+        case WizardVisualizationId.Pie3D:
         case WizardVisualizationId.Donut: {
             const possiblePlaceholders: PlaceholderId[] = [PlaceholderId.Labels];
             return placeholderId && possiblePlaceholders.includes(placeholderId);
@@ -100,6 +101,7 @@ export function canUseStringAsHtml(visualizationId: WizardVisualizationId) {
         case WizardVisualizationId.Bar:
         case WizardVisualizationId.Bar100p:
         case WizardVisualizationId.Pie:
+        case WizardVisualizationId.Pie3D:
         case WizardVisualizationId.Donut:
         case WizardVisualizationId.CombinedChart:
             return true;

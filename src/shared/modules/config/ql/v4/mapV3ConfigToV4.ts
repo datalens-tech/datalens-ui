@@ -7,6 +7,7 @@ import {QlConfigVersions} from '../../../../types/ql/versions';
 export const mapV3ConfigToV4 = (config: QlConfigV3): QlConfigV4 => {
     const affectedVisualizations = [
         WizardVisualizationId.Pie,
+        WizardVisualizationId.Pie3D,
         WizardVisualizationId.Donut,
         WizardVisualizationId.PieD3,
         WizardVisualizationId.DonutD3,

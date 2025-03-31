@@ -10,6 +10,7 @@ export const enum VisualizationsQa {
     Scatter = 'visualization-item-scatter',
     ScatterD3 = 'visualization-item-scatter-d3',
     Pie = 'visualization-item-pie',
+    Pie3D = 'visualization-item-pie-3d',
     PieD3 = 'visualization-item-pie-d3',
     Donut = 'visualization-item-donut',
     DonutD3 = 'visualization-item-donut-d3',

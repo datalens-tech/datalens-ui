@@ -65,6 +65,10 @@ export const prepareMonitoringPresetV2 = (preset: MonitoringPresetV2) => {
                 visualizationId = 'pie';
                 break;
 
+            case 'VISUALIZATION_TYPE_PIE3D':
+                visualizationId = 'pie3d';
+                break;
+
             default:
                 visualizationId = 'area';
         }

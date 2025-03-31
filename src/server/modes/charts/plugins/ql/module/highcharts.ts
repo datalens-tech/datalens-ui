@@ -81,6 +81,7 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
             break;
 
         case 'pie':
+        case 'pie3d':
             plotOptions.pie = {
                 dataLabels: {
                     enabled: true,

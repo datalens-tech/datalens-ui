@@ -138,6 +138,7 @@ class VisualizationPlaceholder extends React.Component<Props> {
             case WizardVisualizationId.PieD3:
             case WizardVisualizationId.DonutD3:
             case 'pie':
+            case 'pie3d':
             case 'donut': {
                 const hasSettings =
                     placeholder.items.length > 0 && placeholder.id === PlaceholderId.Colors;

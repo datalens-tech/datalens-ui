@@ -82,6 +82,7 @@ function prepareColors(
     const isPieOrDonut = [
         WizardVisualizationId.Donut,
         WizardVisualizationId.Pie,
+        WizardVisualizationId.Pie3D,
         WizardVisualizationId.PieD3,
         WizardVisualizationId.DonutD3,
     ].includes(visualization?.id);

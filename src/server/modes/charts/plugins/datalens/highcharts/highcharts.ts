@@ -391,6 +391,7 @@ const extendPlotOptions = ({visualizationId, plotOptions}: ExtendPlotOptionsPayl
             };
             break;
         case WizardVisualizationId.Pie:
+        case WizardVisualizationId.Pie3D:
             plotOptions.pie = {
                 allowPointSelect: false,
             };

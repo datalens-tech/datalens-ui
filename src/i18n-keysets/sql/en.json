@@ -51,6 +51,7 @@
   "label_visualization-line": "Line chart",
   "label_visualization-metric": "Indicator",
   "label_visualization-pie": "Pie chart",
+  "label_visualization-pie-3d": "Pie chart 3D",
   "label_visualization-scatter": "Scatter chart",
   "label_visualization-treemap": "Tree chart",
   "text_default-name": "New QL-сhart"

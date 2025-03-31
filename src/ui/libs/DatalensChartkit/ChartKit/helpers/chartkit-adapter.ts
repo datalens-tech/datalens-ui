@@ -191,7 +191,8 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
 
             const chartType = extractHcTypeFromData(data);
             switch (chartType) {
-                case 'pie': {
+                case 'pie':
+                case 'pie3d': {
                     fixPieTotals({data});
                     break;
                 }

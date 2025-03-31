@@ -205,6 +205,7 @@ export interface GraphShared extends CommonShared {
             | WizardVisualizationId.BarYD3
             | WizardVisualizationId.BarY100pD3
             | WizardVisualizationId.Pie
+            | WizardVisualizationId.Pie3D
             | WizardVisualizationId.PieD3
             | WizardVisualizationId.Donut
             | WizardVisualizationId.DonutD3
@@ -455,6 +456,7 @@ export function isGraphShared(shared: Shared): shared is GraphShared {
         shared.visualization.id === 'bar' ||
         shared.visualization.id === 'bar100p' ||
         shared.visualization.id === 'pie' ||
+        shared.visualization.id === 'pie3d' ||
         shared.visualization.id === 'donut' ||
         shared.visualization.id === 'scatter' ||
         shared.visualization.id === 'treemap'

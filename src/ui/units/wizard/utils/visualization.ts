@@ -191,6 +191,7 @@ const highchartsD3Map = [
     [WizardVisualizationId.Column, WizardVisualizationId.BarXD3],
     [WizardVisualizationId.Scatter, WizardVisualizationId.ScatterD3],
     [WizardVisualizationId.Pie, WizardVisualizationId.PieD3],
+    [WizardVisualizationId.Pie3D, WizardVisualizationId.PieD3],
     [WizardVisualizationId.Donut, WizardVisualizationId.DonutD3],
     [WizardVisualizationId.Bar, WizardVisualizationId.BarYD3],
     [WizardVisualizationId.Bar100p, WizardVisualizationId.BarY100pD3],

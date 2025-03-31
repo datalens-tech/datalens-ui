@@ -14,6 +14,7 @@ export * from './heatmap';
 export * from './geopolygon';
 export * from './polyline';
 export * from './pie';
+export * from './pie3d';
 export * from './donut';
 export * from './treemap';
 export * from './line';
@@ -44,6 +45,7 @@ import {
 } from './line';
 import {METRIC_VISUALIZATION} from './metric';
 import {PIE_D3_VISUALIZATION, PIE_VISUALIZATION} from './pie';
+import {PIE_3D_VISUALIZATION} from './pie3d';
 import {PIVOT_TABLE_VISUALIZATION} from './pivotTable';
 import {POLYLINE_VISUALIZATION} from './polyline';
 import {SCATTER_D3_VISUALIZATION, SCATTER_VISUALIZATION} from './scatter';
@@ -189,6 +191,7 @@ export const VISUALIZATION_IDS = {
     BAR_Y_100P_D3: BAR_Y_100P_D3_VISUALIZATION.id,
     SCATTER: SCATTER_VISUALIZATION.id,
     PIE: PIE_VISUALIZATION.id,
+    PIE_3D: PIE_3D_VISUALIZATION.id,
     METRIC: METRIC_VISUALIZATION.id,
     TREEMAP: TREEMAP_VISUALIZATION.id,
     FLAT_TABLE: FLAT_TABLE_VISUALIZATION.id,

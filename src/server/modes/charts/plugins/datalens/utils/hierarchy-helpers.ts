@@ -59,6 +59,7 @@ export function preprocessHierarchies({
             } else if (sharedData.drillDownData) {
                 const notSplitByColors: string[] = [
                     WizardVisualizationId.Pie,
+                    WizardVisualizationId.Pie3D,
                     WizardVisualizationId.Donut,
                     WizardVisualizationId.Treemap,
                 ];

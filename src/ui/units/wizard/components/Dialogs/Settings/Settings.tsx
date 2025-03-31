@@ -94,6 +94,7 @@ const VISUALIZATION_WITH_TOOLTIP_AVAILABLE = new Set<string>([
     WizardVisualizationId.Scatter,
     WizardVisualizationId.Treemap,
     WizardVisualizationId.Pie,
+    WizardVisualizationId.Pie3D,
     WizardVisualizationId.Donut,
     WizardVisualizationId.CombinedChart,
 ]);
@@ -125,6 +126,7 @@ const visualizationsWithLegendDict = (
         VISUALIZATION_IDS.BAR_100P,
 
         VISUALIZATION_IDS.PIE,
+        VISUALIZATION_IDS.PIE_3D,
         VISUALIZATION_IDS.DONUT,
         VISUALIZATION_IDS.SCATTER,
 

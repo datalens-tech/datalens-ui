@@ -13,6 +13,7 @@ export enum WizardVisualizationId {
     Scatter = 'scatter',
     ScatterD3 = 'scatter-d3',
     Pie = 'pie',
+    Pie3D = 'pie3d',
     PieD3 = 'pie-d3',
     Donut = 'donut',
     DonutD3 = 'donut-d3',
@@ -36,6 +37,7 @@ export enum QlVisualizationId {
     Column100p = 'column100p',
     Bar = 'bar',
     Pie = 'pie',
+    Pie3D = 'pie3d',
     Metric = 'metric',
     FlatTable = 'table',
 }

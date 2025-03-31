@@ -7,6 +7,7 @@ export const VISUALIZATION_IDS = {
     BAR: 'bar',
     BAR_100P: 'bar100p',
     PIE: 'pie',
+    PIE3D: 'pie3d',
     DONUT: 'donut',
     METRIC: 'metric',
     TABLE: 'table',

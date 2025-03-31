@@ -541,6 +541,7 @@ function prepareSingleResult({
             break;
 
         case 'pie':
+        case 'pie3d':
         case 'donut':
             prepare = prepareHighchartsPie;
             rowsLimit = 1000;

@@ -98,6 +98,7 @@ export const migrateOrAutofillVisualization = ({
     } else if (
         new Set([
             WizardVisualizationId.Pie,
+            WizardVisualizationId.Pie3D,
             WizardVisualizationId.Donut,
             WizardVisualizationId.PieD3,
             WizardVisualizationId.DonutD3,

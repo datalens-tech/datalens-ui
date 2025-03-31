@@ -49,6 +49,7 @@ function getActionParamsEvents(
         case WizardVisualizationId.Scatter:
         case WizardVisualizationId.ScatterD3:
         case WizardVisualizationId.Pie:
+        case WizardVisualizationId.Pie3D:
         case WizardVisualizationId.PieD3:
         case WizardVisualizationId.Donut:
         case WizardVisualizationId.DonutD3:
@@ -181,7 +182,11 @@ export const buildChartsConfigPrivate = (
                 config.enableSum = true;
             }
         }
-    } else if (visualizationId === 'pie' || visualizationId === 'donut') {
+    } else if (
+        visualizationId === 'pie' ||
+        visualizationId === 'pie3d' ||
+        visualizationId === 'donut'
+    ) {
         config.showPercentInTooltip = true;
         config.manageTooltipConfig = ChartkitHandlers.WizardManageTooltipConfig;
     } else if (visualizationId === 'metric') {

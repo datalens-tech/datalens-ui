@@ -405,6 +405,7 @@ export function buildGraph(args: BuildGraphArgs) {
                 break;
 
             case VISUALIZATION_IDS.PIE:
+            case VISUALIZATION_IDS.PIE3D:
             case VISUALIZATION_IDS.DONUT:
                 prepare = preparePie;
                 rowsLimit = 1000;

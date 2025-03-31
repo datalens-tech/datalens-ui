@@ -120,6 +120,7 @@ const VISUALIZATION_WITH_LABEL_MODE = new Set([
     WizardVisualizationId.Area100p,
     WizardVisualizationId.Column100p,
     WizardVisualizationId.Pie,
+    WizardVisualizationId.Pie3D,
     WizardVisualizationId.Donut,
 ]);
 

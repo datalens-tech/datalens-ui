@@ -308,6 +308,7 @@
   "label_visualization-line": "Линейная диаграмма",
   "label_visualization-metric": "Индикатор",
   "label_visualization-pie": "Круговая диаграмма",
+  "label_visualization-pie-3d": "Круговая диаграмма 3D",
   "label_visualization-pivot-table": "Сводная таблица",
   "label_visualization-polyline": "Полилинии",
   "label_visualization-scatter": "Точечная диаграмма",

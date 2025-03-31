@@ -174,6 +174,7 @@ export default ({
             break;
 
         case WizardVisualizationId.Pie:
+        case WizardVisualizationId.Pie3D:
         case WizardVisualizationId.Donut:
             prepare = prepareHighchartsPie;
             rowsLimit = 1000;
