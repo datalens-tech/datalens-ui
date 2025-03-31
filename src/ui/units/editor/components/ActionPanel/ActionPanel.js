@@ -4,6 +4,7 @@ import {ActionTooltip, Button, Icon, Label} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import PropTypes from 'prop-types';
+import {Feature} from 'shared';
 import {ActionPanel, SlugifyUrl, Utils, usePageTitle} from 'ui';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
@@ -97,6 +98,8 @@ function ActionPanelService({
 
     const ActionPanelButton = registry.editor.components.get('editor/ACTION_PANEL_BUTTON');
 
+    const enablePublish = entry && isEnabledFeature(Feature.EnablePublishEntry) && !entry.fake;
+
     const centerItems = [
         <React.Fragment key="additionalEntryItems">
             {isEnabledFeature('ShowEditorPreviewLabel') && (
@@ -135,6 +138,7 @@ function ActionPanelService({
                 setActualVersion={setActualVersion}
                 hideOpenRevisionsButton={true}
                 renderRevisionItemActions={renderRevisionItemActions}
+                enablePublish={enablePublish}
             />
             <RevisionsDiffDialog
                 visible={Boolean(selectedRevisionForDiff)}
