@@ -26,7 +26,13 @@ export interface RLSDialogProps<T1 = string, T2 extends RLSDialogUser = RLSDialo
     rlsField: T1;
     field?: DatasetField;
     getUsers?: (searchText: string) => Promise<T2[]>;
-    getInitialUsers?: (args: {ids: string[]}) => Promise<T2[]>;
+    getInitialUsers?: (args: {
+        /**
+         * @deprecated use `rules` property instead
+         */
+        ids: string[];
+        rules: T1;
+    }) => Promise<T2[]>;
     renderUser?: (props: {user: T2}) => React.ReactNode;
 }
 
