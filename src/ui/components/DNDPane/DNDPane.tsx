@@ -1,6 +1,7 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
+import type {ConnectDragPreview, ConnectDragSource, ConnectDropTarget} from 'react-dnd';
 
 import DNDItem from './DNDItem/DNDItem';
 
@@ -11,12 +12,13 @@ const b = block('dnd-pane');
 interface DNDPaneProps {
     children: (connectDragSource: any) => void;
     id: string;
+    onDrop?: (value: {sourceId: string; targetId: string}) => void;
 }
 
 interface DNDPaneWrapperProps {
-    connectDropTarget: any;
-    connectDragSource: any;
-    connectDragPreview: any;
+    connectDropTarget: ConnectDropTarget;
+    connectDragSource: ConnectDragSource;
+    connectDragPreview: ConnectDragPreview;
     isDragging: any;
     isOver: any;
     canDrop: any;
