@@ -11,12 +11,7 @@ import {
     CHARTKIT_SCROLLABLE_NODE_CLASSNAME,
 } from '../../libs/DatalensChartkit/ChartKit/helpers/constants';
 
-import {
-    FIXED_GROUP_HEADER_ID,
-    FIXED_HEADER_GROUP_LINE_MAX_ROWS,
-    MAX_AUTO_HEIGHT_PX,
-    MIN_AUTO_HEIGHT_PX,
-} from './constants';
+import {MAX_AUTO_HEIGHT_PX, MIN_AUTO_HEIGHT_PX} from './constants';
 
 /*
     The description is taken from dashkit (removed from there), but the meaning has not changed much.
@@ -138,10 +133,7 @@ export function adjustWidgetLayout({
     scrollableNodeSelector,
     needHeightReset,
 }: AdjustWidgetLayoutProps) {
-    const correspondedLayoutItem = layout.find(({i}) => i === widgetId);
-    const isFixedHeaderGroupLine = correspondedLayoutItem?.parent === FIXED_GROUP_HEADER_ID;
-
-    if (DL.IS_MOBILE || (needSetDefault && !isFixedHeaderGroupLine)) {
+    if (DL.IS_MOBILE || needSetDefault) {
         cb({widgetId, needSetDefault});
         return;
     }
@@ -154,21 +146,6 @@ export function adjustWidgetLayout({
     const prevHeight = '100%';
     if (needHeightReset) {
         setStyle(node, 'height', 'auto');
-    }
-
-    // Disabling auto-size for grid line widgets
-    if (isFixedHeaderGroupLine) {
-        cb({
-            widgetId,
-            needSetDefault: false,
-            adjustedWidgetLayout: {
-                ...correspondedLayoutItem,
-                h: FIXED_HEADER_GROUP_LINE_MAX_ROWS,
-                maxH: FIXED_HEADER_GROUP_LINE_MAX_ROWS,
-                minH: FIXED_HEADER_GROUP_LINE_MAX_ROWS,
-            },
-        });
-        return;
     }
 
     const scrollableNode = node.querySelector(

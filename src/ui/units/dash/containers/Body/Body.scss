@@ -23,10 +23,15 @@ $actionPanelDefaultBottom: 20px;
         font-weight: 500;
     }
 
+    .dashkit {
+        margin-block-start: var(--g-spacing-4);
+    }
+
     &__content {
         width: 100%;
         transition: width 0.1s;
         padding: 20px #{$contentPadding} 48px;
+        background-color: var(--g-color-base-generic-ultralight);
 
         &_with-table-of-content:not(&_mobile) {
             width: calc(100% - 250px);
@@ -134,5 +139,26 @@ $actionPanelDefaultBottom: 20px;
 
     .edit-panel-item {
         width: 108px;
+    }
+
+    &__fixed-header-settings-switcher {
+        width: inherit;
+    }
+
+    &__content-wrapper_mode_edit &__sticky-control-btn {
+        --sticky-control-border-radius: var(--g-border-radius-m);
+        --sticky-control-border-top-left-radius: var(--sticky-control-border-radius);
+        --sticky-control-border-bottom-left-radius: var(--sticky-control-border-radius);
+
+        --g-button-border-radius: var(--sticky-control-border-top-left-radius, 0) 0 0
+            var(--sticky-control-border-bottom-left-radius, 0);
+
+        &_last {
+            --sticky-control-border-top-left-radius: 0;
+        }
+
+        &_first {
+            --sticky-control-border-bottom-left-radius: 0;
+        }
     }
 }
