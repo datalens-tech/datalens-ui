@@ -138,7 +138,7 @@ export function prepareD3Scatter(args: PrepareFunctionArgs): ChartKitWidgetData<
     });
 
     let xAxis: ChartKitWidgetData['xAxis'] = {};
-    if (xAxisType === 'category') {
+    if (xAxisType === 'category' && xCategories?.length) {
         xAxis = {
             type: 'category',
             categories: xCategories,
