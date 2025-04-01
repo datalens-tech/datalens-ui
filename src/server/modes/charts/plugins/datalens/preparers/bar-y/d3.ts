@@ -63,6 +63,7 @@ export function prepareD3BarY(args: PrepareFunctionArgs): ChartKitWidgetData {
         },
         xAxis: {
             min: 0,
+            type: 'linear',
         },
     };
 

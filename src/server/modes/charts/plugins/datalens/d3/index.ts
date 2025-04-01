@@ -1,15 +1,7 @@
-import type {ChartKitWidgetAxisType} from '@gravity-ui/chartkit';
 import type {ChartKitWidgetData} from '@gravity-ui/chartkit/build/types/widget-data';
 
 import type {QlExtendedConfig, ServerChartsConfig} from '../../../../../../shared';
-import {
-    AxisMode,
-    PlaceholderId,
-    WizardVisualizationId,
-    getXAxisMode,
-    isDateField,
-} from '../../../../../../shared';
-import {getAxisType} from '../preparers/helpers/axis';
+import {PlaceholderId, WizardVisualizationId, isDateField} from '../../../../../../shared';
 import {getAxisTitle, getTickPixelInterval, isGridEnabled} from '../utils/axis-helpers';
 import {mapChartsConfigToServerConfig} from '../utils/config-helpers';
 
@@ -24,7 +16,6 @@ export function buildD3Config(args: BuildD3ConfigArgs) {
     const xPlaceholder = visualization.placeholders.find((p) => p.id === PlaceholderId.X);
     const xItem = xPlaceholder?.items[0];
     const xPlaceholderSettings = xPlaceholder?.settings || {};
-    const xAxisMode = getXAxisMode({config: args as ServerChartsConfig}) ?? AxisMode.Discrete;
 
     const yPlaceholder = visualization.placeholders.find((p) => p.id === PlaceholderId.Y);
     const yPlaceholderSettings = yPlaceholder?.settings || {};
@@ -35,11 +26,6 @@ export function buildD3Config(args: BuildD3ConfigArgs) {
         tooltip: {enabled: extraSettings?.tooltip !== 'hide'},
         legend: {enabled: isLegendEnabled},
         xAxis: {
-            type: getAxisType({
-                field: xItem,
-                settings: xPlaceholderSettings,
-                axisMode: xAxisMode,
-            }) as ChartKitWidgetAxisType | undefined,
             labels: {
                 enabled: xPlaceholderSettings?.hideLabels !== 'yes',
             },
