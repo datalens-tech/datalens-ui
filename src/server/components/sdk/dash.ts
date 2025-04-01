@@ -72,12 +72,12 @@ function gatherLinks(data: DashData) {
     );
 }
 
-function setDefaultData(I18n: ServerI18n, requestData: DashData, initialData?: DashData) {
+function setDefaultData(
+    I18n: ServerI18n,
+    requestData: DashData,
+    initialData: Partial<DashData> = {},
+) {
     const i18n = I18n.keyset('dash.tabs-dialog.edit');
-
-    if (initialData) {
-        return assign({}, initialData, requestData);
-    }
 
     const salt = Math.random().toString();
     const hashids = new Hashids(salt);
@@ -106,11 +106,11 @@ function setDefaultData(I18n: ServerI18n, requestData: DashData, initialData?: D
         },
     };
 
-    return assign(data, requestData);
+    return assign(data, initialData, requestData);
 }
 
 const needSetDefaultData = (data: DashData) =>
-    DASH_DATA_REQUIRED_FIELDS.every((fieldName) => fieldName in data);
+    DASH_DATA_REQUIRED_FIELDS.some((fieldName) => fieldName in data);
 
 function validateData(data: DashData) {
     const allTabsIds: Set<string> = new Set();
