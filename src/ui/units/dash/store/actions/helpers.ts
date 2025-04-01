@@ -31,7 +31,7 @@ export const isCallable = <T extends (args: any) => void>(fn: T | undefined): T 
 export const prepareLoadedData = <T extends any>(data: T): T => data;
 
 export const isDeprecatedDashData = (data?: DashEntry['data'] | null) => {
-    if (!data) return true;
+    if (!data || !data.settings) return true;
 
     return data.settings.dependentSelectors !== true;
 };
