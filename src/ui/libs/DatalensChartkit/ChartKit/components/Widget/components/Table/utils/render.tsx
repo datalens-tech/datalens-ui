@@ -5,7 +5,7 @@ import type {Column, SortOrder} from '@gravity-ui/react-data-table';
 import DataTable from '@gravity-ui/react-data-table';
 import {Button, Icon, Link, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {debounce, isUndefined} from 'lodash';
+import {debounce, isEmpty, isUndefined} from 'lodash';
 import get from 'lodash/get';
 import moment from 'moment';
 import type {
@@ -34,7 +34,7 @@ import {Bar} from '../Bar/Bar';
 import {WrappedHTMLNode} from '../WrappedHTMLNode';
 import type {TableProps} from '../types';
 
-import {getAdditionalStyles, getRowActionParams} from './action-params';
+import {getAdditionalStyles, getRowActionParams, isCellSelected} from './action-params';
 import {getCellClickArgs, getCellOnClickHandler} from './event-handlers';
 import {
     camelCaseCss,
@@ -343,6 +343,15 @@ export const getColumnsAndNames = ({
 }) => {
     const resizeTable = debounce(() => tableRef?.resize());
 
+    const hasSomeCellSelected = Boolean(
+        actionParamsData?.params &&
+            !isEmpty(actionParamsData.params) &&
+            rows.some(
+                (r) =>
+                    'cells' in r && r.cells.some((c) => isCellSelected(c, actionParamsData.params)),
+            ),
+    );
+
     return head.reduce(
         // eslint-disable-next-line complexity
         (
@@ -490,9 +499,9 @@ export const getColumnsAndNames = ({
                             additionalStyles = getAdditionalStyles({
                                 actionParamsData,
                                 row,
-                                rows,
                                 head,
                                 cell,
+                                hasSomeCellSelected,
                             });
                         }
 
