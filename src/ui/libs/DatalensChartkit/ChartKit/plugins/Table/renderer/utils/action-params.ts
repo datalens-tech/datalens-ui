@@ -74,9 +74,9 @@ export function getCellActionParams(args: GetCellActionParamsArgs) {
 export function getCellCss(args: {
     actionParamsData?: ActionParamsData;
     row?: TableCellsRow;
-    rows: TableRow[];
     head?: TableHead[];
     cell?: TableCell;
+    hasSomeCellSelected: boolean;
 }) {
     const {row, head = [], actionParamsData} = args;
 
