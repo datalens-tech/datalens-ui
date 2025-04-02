@@ -1,5 +1,6 @@
 export type GetEditorTemplatesArgs = {
     connectionId?: string;
+    apiConnectionId?: string | null;
 };
 
 export type GetEditorTemplatesResponse = Array<{

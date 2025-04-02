@@ -11,6 +11,8 @@ import {
     PlaceholderId,
     getFakeTitleOrTitle,
     getXAxisMode,
+    isDateField,
+    isNumberField,
 } from '../../../../../../../shared';
 import type {WrappedHTML} from '../../../../../../../shared/types/charts';
 import {getFormattedLabel} from '../../d3/utils/dataLabels';
@@ -141,12 +143,20 @@ export function prepareD3BarX(args: PrepareFunctionArgs) {
         legend = {enabled: false};
     }
 
-    let xAxis: ChartKitWidgetData['xAxis'];
+    let xAxis: ChartKitWidgetData['xAxis'] = {};
     if (isCategoriesXAxis) {
         xAxis = {
             type: 'category',
             categories: xCategories?.map(String),
         };
+    } else {
+        if (isDateField(xField)) {
+            xAxis.type = 'datetime';
+        }
+
+        if (isNumberField(xField)) {
+            xAxis.type = xPlaceholder?.settings?.type === 'logarithmic' ? 'logarithmic' : 'linear';
+        }
     }
 
     return {

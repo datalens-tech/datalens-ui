@@ -322,6 +322,7 @@ export const URL_QUERY = {
     CHART_TYPE: 'chartType',
     TAB_ID: 'tab',
     CONNECTION_FORM: '_form',
+    API_CONNECTION_ID: 'apiConnectionId',
     CONNECTION_ID: 'connectionId',
     DEBUG: '_debug',
     OPEN_DASH_INFO: '_opened_info',
