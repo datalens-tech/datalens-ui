@@ -5,8 +5,10 @@ import type {Column, SortOrder} from '@gravity-ui/react-data-table';
 import DataTable from '@gravity-ui/react-data-table';
 import {Button, Icon, Link, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {debounce, isEmpty, isUndefined} from 'lodash';
+import debounce from 'lodash/debounce';
 import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
+import isUndefined from 'lodash/isUndefined';
 import moment from 'moment';
 import type {
     BarTableCell,
