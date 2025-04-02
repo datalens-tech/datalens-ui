@@ -1,7 +1,7 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
 
 import type {DashEntry} from '../../shared';
-import {EntryScope, ErrorContentTypes} from '../../shared';
+import {EntryScope, ErrorCode} from '../../shared';
 import {Utils} from '../components';
 import {Dash} from '../components/sdk';
 import {registry} from '../registry';
@@ -24,14 +24,11 @@ export const workbooksExportController = {
                 headers,
                 args: {
                     entryId: exportId,
-                    includeLinks: true,
                     workbookId,
                 },
                 ctx,
                 requestId: req.id,
             });
-
-            const scope = entry.scope;
 
             switch (entry.scope) {
                 case EntryScope.Dash: {
@@ -39,6 +36,7 @@ export const workbooksExportController = {
                         entry as unknown as DashEntry,
                         id_mapping,
                     );
+
                     res.status(200).send(result);
                     break;
                 }
@@ -78,9 +76,8 @@ export const workbooksExportController = {
                     break;
                 }
                 default: {
-                    res.status(404).send({
-                        code: ErrorContentTypes.NOT_FOUND,
-                        extra: {message: `Export failed: ${scope}`, hideRetry: true},
+                    res.status(400).send({
+                        code: ErrorCode.TransferInvalidEntryScope,
                     });
                     break;
                 }
@@ -126,13 +123,13 @@ export const workbooksExportController = {
 
                 res.status(200).send(responseData);
             } else if (data.dash) {
-                const entry = await Dash.prepareImport(data);
+                const {dash, notifications} = await Dash.prepareImport(data);
 
                 const {responseData} = await gatewayApi.us._createEntry({
                     headers,
                     args: {
                         workbookId: data.workbook_id,
-                        ...entry,
+                        ...dash,
                     },
                     ctx,
                     requestId: req.id,
@@ -140,12 +137,13 @@ export const workbooksExportController = {
 
                 res.status(200).send({
                     id: responseData.entryId,
-                    notifications: [],
+                    notifications,
                 });
+            } else if (data.widget) {
+                res.status(200).send({});
             } else {
-                res.status(404).send({
-                    code: ErrorContentTypes.NOT_FOUND,
-                    extra: {message: `Import failed`, hideRetry: true},
+                res.status(400).send({
+                    code: ErrorCode.TransferInvalidEntryScope,
                 });
             }
         } catch (ex) {

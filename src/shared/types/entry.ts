@@ -6,6 +6,10 @@ export type EntryPublicAuthor = {text?: string; link?: string};
 
 export type WorkbookId = string | null;
 
-export type IdMapping = Record<string, string>;
+export type TransferIdMapping = Record<string, string>;
 
-export type ExportNotifications = Array<string>;
+export type TransferNotification = {
+    level: 'info' | 'warning' | 'critical';
+    message: 'string';
+    code: 'string';
+};

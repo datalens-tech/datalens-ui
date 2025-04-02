@@ -29,6 +29,16 @@ export interface GetEntryArgs {
     includeDlComponentUiData?: boolean;
 }
 
+export interface CreateEntryArgs {
+    workbookId?: string;
+    data: EntryFieldData;
+    name: string;
+    type: string;
+    scope: string;
+    mode: string;
+    links: EntryFieldLinks;
+}
+
 export interface GetEntryByKeyResponse extends Omit<GetEntryResponse, 'isFavorite'> {}
 export interface GetEntryByKeyArgs extends Omit<GetEntryArgs, 'entryId'> {
     key: string;

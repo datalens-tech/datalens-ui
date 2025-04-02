@@ -1,4 +1,3 @@
-import type {IdMapping} from '../../..';
 import {US_MASTER_TOKEN_HEADER, WORKBOOK_ID_HEADER} from '../../../constants';
 import {createAction} from '../../gateway-utils';
 import {filterUrlFragment} from '../../utils';
@@ -10,6 +9,8 @@ import type {
     DeleteConnectionResponse,
     EnsureUploadRobotArgs,
     EnsureUploadRobotResponse,
+    ExportConnectionArgs,
+    ExportConnectionResponse,
     GetAvailableCountersArgs,
     GetAvailableCountersResponse,
     GetConnectionArgs,
@@ -23,6 +24,8 @@ import type {
     GetConnectorSchemaArgs,
     GetConnectorSchemaResponse,
     GetConnectorsResponse,
+    ImportConnectionArgs,
+    ImportConnectionResponse,
     ListConnectorIconsResponse,
     UpdateConnectionArgs,
     UpdateConnectionResponse,
@@ -138,10 +141,7 @@ export const actions = {
         params: (_, headers) => ({headers}),
     }),
     // TODO Types
-    _exportConnection: createAction<
-        any,
-        {connectionId: string; id_mapping: IdMapping; workbookId?: string | null}
-    >({
+    _exportConnection: createAction<ExportConnectionResponse, ExportConnectionArgs>({
         method: 'GET',
         path: ({connectionId}) => `${PATH_PREFIX}/connections/export/${connectionId}`,
         params: ({workbookId}, headers, {ctx}) => ({
@@ -152,7 +152,7 @@ export const actions = {
             },
         }),
     }),
-    _importConnection: createAction<any, any>({
+    _importConnection: createAction<ImportConnectionResponse, ImportConnectionArgs>({
         method: 'POST',
         path: () => `${PATH_PREFIX}/connections/import`,
         params: ({data}, headers, {ctx}) => ({

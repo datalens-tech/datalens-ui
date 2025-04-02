@@ -3,8 +3,8 @@ import type {
     DatasetField,
     DatasetFieldCalcMode,
     DatasetFieldError,
-    ExportNotifications,
-    IdMapping,
+    TransferIdMapping,
+    TransferNotification,
 } from '../../../types';
 import type {ApiV2RequestBody, ApiV2ResultData} from '../../../types/bi-api/v2';
 import type {EntryFieldData} from '../../types';
@@ -218,17 +218,20 @@ export type GetDistinctsApiV2Args = Omit<
     DatasetId &
     WorkbookIdArg;
 
-export type ExportDatasetResponse = {dataset: EntryFieldData; notifications: ExportNotifications};
+export type ExportDatasetResponse = {
+    dataset: EntryFieldData;
+    notifications: TransferNotification[];
+};
 
 export type ExportDatasetArgs = {
     datasetId: string;
-    id_mapping: IdMapping;
+    id_mapping: TransferIdMapping;
     workbookId?: string | null;
 };
 
 export type ImportDatasetResponse = {
     id: string;
-    notifications: ExportNotifications;
+    notifications: TransferNotification[];
 };
 
 export type ImportDatasetArgs = {
@@ -236,5 +239,5 @@ export type ImportDatasetArgs = {
         workbook_id: string;
         dataset: EntryFieldData;
     };
-    id_mapping: IdMapping;
+    id_mapping: TransferIdMapping;
 };

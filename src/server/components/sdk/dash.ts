@@ -17,7 +17,8 @@ import type {
     DashTabItemControlData,
     Dictionary,
     EntryReadParams,
-    IdMapping,
+    TransferIdMapping,
+    TransferNotification,
     UpdateEntryRequest,
 } from '../../../shared/types';
 import {
@@ -34,7 +35,7 @@ import US from './us';
 function processControlLinkToResult(
     result: Dictionary<string>,
     data: DashTabItemControlData,
-    idMapping?: IdMapping,
+    idMapping?: TransferIdMapping,
 ) {
     if (data.sourceType === DashTabItemControlSourceType.Dataset && 'datasetId' in data.source) {
         const {datasetId} = data.source;
@@ -49,7 +50,7 @@ function processControlLinkToResult(
     return result;
 }
 
-export function processLinksForItems(tabData: DashTab, idMapping?: IdMapping) {
+export function processLinksForItems(tabData: DashTab, idMapping?: TransferIdMapping) {
     return tabData.items.reduce((result: Dictionary<string>, item) => {
         const {type, data} = item;
 
@@ -89,7 +90,7 @@ export function processLinksForItems(tabData: DashTab, idMapping?: IdMapping) {
     }, {});
 }
 
-export function processLinks(data: DashData, idMapping?: IdMapping) {
+export function processLinks(data: DashData, idMapping?: TransferIdMapping) {
     return data.tabs.reduce(
         (result: Dictionary<string>, tab) => ({...result, ...processLinksForItems(tab, idMapping)}),
         {},
@@ -308,48 +309,6 @@ class Dash {
         return DashSchemeConverter.update(data);
     }
 
-    static async prepareExport(entry: DashEntry, id_mapping: IdMapping) {
-        const data = await Dash.migrate(entry.data);
-
-        processLinks(data, id_mapping);
-
-        validateData(data);
-
-        const nameParts = entry.key.split('/');
-        const name = nameParts[nameParts.length - 1];
-
-        const dash = {
-            name,
-            data,
-        };
-
-        return {
-            dash,
-            notifications: [],
-        };
-    }
-
-    static async prepareImport(importObject: {
-        dash: {data: DashEntry['data']; name: string};
-        id_mapping: IdMapping;
-    }) {
-        const data = await Dash.migrate(importObject.dash.data);
-
-        processLinks(data, importObject.id_mapping);
-        validateData(data);
-
-        const links = gatherLinks(data);
-
-        return {
-            data,
-            name: importObject.dash.name,
-            scope: EntryScope.Dash,
-            mode: EntryUpdateMode.Publish,
-            type: '',
-            links,
-        };
-    }
-
     static async update(
         entryId: string,
         data: UpdateEntryRequest<DashEntry>,
@@ -420,6 +379,51 @@ class Dash {
 
             throw error;
         }
+    }
+
+    static async prepareExport(entry: DashEntry, id_mapping: TransferIdMapping) {
+        const data = await Dash.migrate(entry.data);
+        const notifications: TransferNotification[] = [];
+
+        processLinks(data, id_mapping);
+
+        const nameParts = entry.key.split('/');
+        const name = nameParts[nameParts.length - 1];
+
+        const dash = {
+            name,
+            data,
+        };
+
+        return {
+            dash,
+            notifications,
+        };
+    }
+
+    static async prepareImport(importObject: {
+        dash: {data: DashEntry['data']; name: string};
+        id_mapping: TransferIdMapping;
+    }) {
+        const data = await Dash.migrate(importObject.dash.data);
+        const notifications: TransferNotification[] = [];
+
+        processLinks(data, importObject.id_mapping);
+        validateData(data);
+
+        const links = gatherLinks(data);
+
+        return {
+            dash: {
+                data,
+                name: importObject.dash.name,
+                scope: EntryScope.Dash,
+                mode: EntryUpdateMode.Publish,
+                type: '',
+                links,
+            },
+            notifications,
+        };
     }
 }
 

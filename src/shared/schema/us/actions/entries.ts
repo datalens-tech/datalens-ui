@@ -19,6 +19,7 @@ import type {
     CopyEntryResponse,
     CopyWorkbookEntryArgs,
     CopyWorkbookEntryResponse,
+    CreateEntryArgs,
     CreateFolderArgs,
     CreateFolderResponse,
     DeleteUSEntryArgs,
@@ -82,7 +83,7 @@ export const entriesActions = {
             },
         }),
     }),
-    _createEntry: createAction<any, any>({
+    _createEntry: createAction<GetEntryResponse, CreateEntryArgs>({
         method: 'POST',
         path: () => `${PRIVATE_PATH_PREFIX}/entries/`,
         params: ({workbookId, data, name, type, scope, mode, links}, headers, {ctx}) => ({
