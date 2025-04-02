@@ -3,6 +3,7 @@ import React from 'react';
 import type {SortingState} from '@tanstack/react-table';
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import {DEFAULT_WIDGET_SIZE} from 'shared';
 import type {StringParams, TableCell, TableCellsRow, TableCommonCell, WidgetSizeType} from 'shared';
@@ -12,6 +13,7 @@ import {isMacintosh} from '../../../../../../../../utils';
 import type {TableWidgetData} from '../../../../../../types';
 import Paginator from '../../../../../components/Widget/components/Table/Paginator/Paginator';
 import {hasGroups} from '../../../../../components/Widget/components/Table/utils';
+import {isCellSelected} from '../../../../../components/Widget/components/Table/utils/action-params';
 import {SNAPTER_HTML_CLASSNAME} from '../../../../../components/Widget/components/constants';
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../../../../helpers/constants';
 import {i18n} from '../../../../../modules/i18n/i18n';
@@ -113,6 +115,20 @@ export const Table = React.memo<Props>((props: Props) => {
         config: config?.drillDown,
     });
 
+    const hasSomeCellSelected = React.useMemo(
+        () =>
+            Boolean(
+                actionParams?.params &&
+                    !isEmpty(actionParams.params) &&
+                    data.rows?.some(
+                        (r) =>
+                            'cells' in r &&
+                            r.cells.some((c) => isCellSelected(c, actionParams.params)),
+                    ),
+            ),
+        [actionParams?.params, data.rows],
+    );
+
     const getCellAdditionStyles = (cell: TableCell, row: TData) => {
         const commonCell = cell as TableCommonCell;
         const isCellClickable =
@@ -126,7 +142,7 @@ export const Table = React.memo<Props>((props: Props) => {
             row: {cells: row} as TableCellsRow,
             cell,
             head: data.head,
-            rows: data.rows || [],
+            hasSomeCellSelected,
         });
 
         return {cursor, ...actionParamsCss};
