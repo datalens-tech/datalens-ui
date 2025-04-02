@@ -74,7 +74,7 @@ const GroupControlWrapper = React.forwardRef<
     useWidgetContext(props.id, nodeRef as React.RefObject<HTMLElement>);
 
     return (
-        <div ref={nodeRef} className={b({mobile: DL.IS_MOBILE, static: props.autoHeight})}>
+        <div ref={nodeRef} className={b({mobile: DL.IS_MOBILE, static: !props.autoHeight})}>
             {props.children}
         </div>
     );
