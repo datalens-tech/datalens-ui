@@ -129,7 +129,7 @@ export const workbooksExportController = {
                     headers,
                     args: {
                         workbookId: data.workbook_id,
-                        ...dash,
+                        ...(dash as any),
                     },
                     ctx,
                     requestId: req.id,
