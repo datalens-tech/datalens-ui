@@ -1,6 +1,6 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
 
-import type {DashData} from '../../shared';
+import type {DashEntry} from '../../shared';
 import {EntryScope, ErrorContentTypes} from '../../shared';
 import {Utils} from '../components';
 import {Dash} from '../components/sdk';
@@ -35,7 +35,10 @@ export const workbooksExportController = {
 
             switch (entry.scope) {
                 case EntryScope.Dash: {
-                    const result = await Dash.export(entry.data as unknown as DashData, id_mapping);
+                    const result = await Dash.prepareExport(
+                        entry as unknown as DashEntry,
+                        id_mapping,
+                    );
                     res.status(200).send(result);
                     break;
                 }
@@ -122,6 +125,23 @@ export const workbooksExportController = {
                 });
 
                 res.status(200).send(responseData);
+            } else if (data.dash) {
+                const entry = await Dash.prepareImport(data);
+
+                const {responseData} = await gatewayApi.us._createEntry({
+                    headers,
+                    args: {
+                        workbookId: data.workbook_id,
+                        ...entry,
+                    },
+                    ctx,
+                    requestId: req.id,
+                });
+
+                res.status(200).send({
+                    id: responseData.entryId,
+                    notifications: [],
+                });
             } else {
                 res.status(404).send({
                     code: ErrorContentTypes.NOT_FOUND,

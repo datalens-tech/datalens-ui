@@ -308,13 +308,20 @@ class Dash {
         return DashSchemeConverter.update(data);
     }
 
-    static async export(data: DashEntry['data'], id_mapping: IdMapping) {
-        const dash = await Dash.migrate(data);
-        // const notifications =
+    static async prepareExport(entry: DashEntry, id_mapping: IdMapping) {
+        const data = await Dash.migrate(entry.data);
 
-        processLinks(dash, id_mapping);
+        processLinks(data, id_mapping);
 
-        validateData(dash);
+        validateData(data);
+
+        const nameParts = entry.key.split('/');
+        const name = nameParts[nameParts.length - 1];
+
+        const dash = {
+            name,
+            data,
+        };
 
         return {
             dash,
@@ -322,13 +329,25 @@ class Dash {
         };
     }
 
-    static async import(importObject: {dash: DashEntry['data']; id_mapping: IdMapping}) {
-        const dash = await Dash.migrate(importObject.dash);
-        processLinks(dash, importObject.id_mapping);
-        validateData(dash);
+    static async prepareImport(importObject: {
+        dash: {data: DashEntry['data']; name: string};
+        id_mapping: IdMapping;
+    }) {
+        const data = await Dash.migrate(importObject.dash.data);
 
-        // TODO
-        return importObject;
+        processLinks(data, importObject.id_mapping);
+        validateData(data);
+
+        const links = gatherLinks(data);
+
+        return {
+            data,
+            name: importObject.dash.name,
+            scope: EntryScope.Dash,
+            mode: EntryUpdateMode.Publish,
+            type: '',
+            links,
+        };
     }
 
     static async update(
