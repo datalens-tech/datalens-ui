@@ -126,12 +126,16 @@ const preparePolyline = (options: PrepareFunctionArgs) => {
 
     const groups = data.reduce(
         (acc: Record<string, PrepareFunctionDataRow[]>, dataRow: PrepareFunctionDataRow) => {
-            const groupingObjects = getFieldData(groupingFields, dataRow, order, options.idToTitle);
+            const point = JSON.parse(dataRow[0] as string);
+            if (point === null) {
+                return acc;
+            }
 
+            const groupingObjects = getFieldData(groupingFields, dataRow, order, options.idToTitle);
             [leftBot, rightTop] = getMapBounds({
                 leftBot,
                 rightTop,
-                current: JSON.parse(dataRow[0] as string),
+                current: point,
             });
 
             const group = groupingObjects.map((item) => `${item.title}: ${item.value}`).join(', ');
