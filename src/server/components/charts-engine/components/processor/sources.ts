@@ -33,7 +33,7 @@ const validateAPIConnectorSource = (source: Source): true => {
 };
 
 export const isAPIConnectorSource = (source: Source): source is SourceWithAPIConnector => {
-    return validateAPIConnectorSource(source);
+    return isString(source.apiConnectionId) && validateAPIConnectorSource(source);
 };
 
 export const getApiConnectorParamsFromSource = (
@@ -94,7 +94,7 @@ const validateQLConnectionSource = (source: Source): true => {
 };
 
 export const isQLConnectionSource = (source: Source): source is SourceWithQLConnector => {
-    return validateQLConnectionSource(source);
+    return isString(source.qlConnectionId) && validateQLConnectionSource(source);
 };
 
 export const prepareSourceWithQLConnection = (source: SourceWithQLConnector) => {
@@ -160,15 +160,15 @@ export const prepareSource = (source: Source): Source => {
         return source;
     }
 
-    if (isString(source.apiConnectionId) && isAPIConnectorSource(source)) {
+    if (isAPIConnectorSource(source)) {
         return prepareSourceWithAPIConnector(source);
     }
 
-    if (isString(source.qlConnectionId) && isQLConnectionSource(source)) {
+    if (isQLConnectionSource(source)) {
         return prepareSourceWithQLConnection(source);
     }
 
-    if (isString(source.datasetId) && isDatasetSource(source)) {
+    if (isDatasetSource(source)) {
         return prepareSourceWithDataset(source);
     }
 
