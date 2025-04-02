@@ -148,13 +148,6 @@ export const prepareSourceWithDataset = (source: SourceWithDatasetId) => {
     return source;
 };
 
-/**
- * Prepares a source object based on its type.
- * Determines the source type by checking for specific properties and applies the appropriate preparation function.
- *
- * @param source - The source object to prepare
- * @returns The prepared source object
- */
 export const prepareSource = (source: Source): Source => {
     if (!isObject(source)) {
         return source;
