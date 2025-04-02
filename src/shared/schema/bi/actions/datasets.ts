@@ -268,14 +268,14 @@ export const actions = {
     _importDataset: createAction<ImportDatasetResponse, ImportDatasetArgs>({
         method: 'POST',
         path: () => `${API_V1}/datasets/import`,
-        params: ({workbookId, id_mapping, dataset}, headers, {ctx}) => ({
+        params: ({data, id_mapping}, headers, {ctx}) => ({
             headers: {
-                ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
+                ...(data.workbook_id ? {[WORKBOOK_ID_HEADER]: data.workbook_id} : {}),
                 ...headers,
                 [US_MASTER_TOKEN_HEADER]: ctx.config.usMasterToken,
             },
             body: {
-                dataset,
+                data,
                 id_mapping,
             },
         }),

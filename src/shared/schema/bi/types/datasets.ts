@@ -5,7 +5,6 @@ import type {
     DatasetFieldError,
     ExportNotifications,
     IdMapping,
-    ImportVerifiedVia,
 } from '../../../types';
 import type {ApiV2RequestBody, ApiV2ResultData} from '../../../types/bi-api/v2';
 import type {EntryFieldData} from '../../types';
@@ -227,11 +226,15 @@ export type ExportDatasetArgs = {
     workbookId?: string | null;
 };
 
-export type ImportDatasetResponse = {notifications: ExportNotifications};
+export type ImportDatasetResponse = {
+    id: string;
+    notifications: ExportNotifications;
+};
 
 export type ImportDatasetArgs = {
-    created_via: ImportVerifiedVia;
-    dataset: EntryFieldData;
+    data: {
+        workbook_id: string;
+        dataset: EntryFieldData;
+    };
     id_mapping: IdMapping;
-    workbookId?: string | null;
 };

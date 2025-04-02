@@ -305,30 +305,27 @@ class Dash {
     }
 
     static async migrate(data: DashEntry['data']) {
-        return await DashSchemeConverter.update(data);
+        return DashSchemeConverter.update(data);
     }
 
     static async export(data: DashEntry['data'], id_mapping: IdMapping) {
         const dash = await Dash.migrate(data);
+        // const notifications =
+
         processLinks(dash, id_mapping);
+
+        validateData(dash);
 
         return {
             dash,
-            id_mapping,
+            notifications: [],
         };
     }
 
     static async import(importObject: {dash: DashEntry['data']; id_mapping: IdMapping}) {
-        const reverseMapping = Object.entries(importObject.id_mapping).reduce<IdMapping>(
-            (acc, [entryId, placeholder]) => {
-                acc[placeholder] = entryId;
-                return acc;
-            },
-            {},
-        );
-
         const dash = await Dash.migrate(importObject.dash);
-        processLinks(dash, reverseMapping);
+        processLinks(dash, importObject.id_mapping);
+        validateData(dash);
 
         // TODO
         return importObject;

@@ -9,5 +9,3 @@ export type WorkbookId = string | null;
 export type IdMapping = Record<string, string>;
 
 export type ExportNotifications = Array<string>;
-
-export type ImportVerifiedVia = 'verified_import' | 'unverified_import';

@@ -152,4 +152,19 @@ export const actions = {
             },
         }),
     }),
+    _importConnection: createAction<any, any>({
+        method: 'POST',
+        path: () => `${PATH_PREFIX}/connections/import`,
+        params: ({data}, headers, {ctx}) => ({
+            headers: {
+                ...(data.workbook_id ? {[WORKBOOK_ID_HEADER]: data.workbook_id} : {}),
+                ...headers,
+                [US_MASTER_TOKEN_HEADER]: ctx.config.usMasterToken,
+            },
+            body: {
+                data,
+                id_mapping: {},
+            },
+        }),
+    }),
 };

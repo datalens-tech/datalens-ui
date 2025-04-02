@@ -12,26 +12,25 @@ export const workbooksExportController = {
     export: async (req: Request, res: Response) => {
         try {
             const {ctx} = req;
-            const {exportId} = req.body;
-
             const headers = {
                 ...Utils.pickHeaders(req),
             };
+
+            const {exportId, id_mapping} = req.body;
+            const workbookId = (req.body?.workbookId as string) ?? null;
 
             const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
             const {responseData: entry} = await gatewayApi.us._getEntry({
                 headers,
                 args: {
                     entryId: exportId,
-                    branch: 'published',
                     includeLinks: true,
+                    workbookId,
                 },
                 ctx,
                 requestId: req.id,
             });
 
-            const workbookId = (entry.data?.workbookId as string) ?? null;
-            const id_mapping = req.body.id_mapping;
             const scope = entry.scope;
 
             switch (entry.scope) {
@@ -78,7 +77,7 @@ export const workbooksExportController = {
                 default: {
                     res.status(404).send({
                         code: ErrorContentTypes.NOT_FOUND,
-                        extra: {message: `Failed to fined scope: ${scope}`, hideRetry: true},
+                        extra: {message: `Export failed: ${scope}`, hideRetry: true},
                     });
                     break;
                 }
@@ -90,9 +89,45 @@ export const workbooksExportController = {
     },
     import: async (req: Request, res: Response) => {
         try {
-            const responseData = {id: req.id};
+            const {ctx} = req;
+            const headers = {
+                ...Utils.pickHeaders(req),
+            };
 
-            res.status(200).send(responseData);
+            const {data, id_mapping} = req.body;
+
+            const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
+
+            if (data.connection) {
+                const {responseData} = await gatewayApi.bi._importConnection({
+                    headers,
+                    args: {
+                        data,
+                        id_mapping,
+                    },
+                    ctx,
+                    requestId: req.id,
+                });
+
+                res.status(200).send(responseData);
+            } else if (data.dataset) {
+                const {responseData} = await gatewayApi.bi._importDataset({
+                    headers,
+                    args: {
+                        data,
+                        id_mapping,
+                    },
+                    ctx,
+                    requestId: req.id,
+                });
+
+                res.status(200).send(responseData);
+            } else {
+                res.status(404).send({
+                    code: ErrorContentTypes.NOT_FOUND,
+                    extra: {message: `Import failed`, hideRetry: true},
+                });
+            }
         } catch (ex) {
             const {error} = ex as GatewayApiErrorResponse;
             res.status(error.status).send(error);
