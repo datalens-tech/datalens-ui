@@ -231,10 +231,12 @@ async function getUnwrappedFunction(args: {
         if (wrappedFn.args) {
             preparedUserArgs = Array.isArray(wrappedFn.args) ? wrappedFn.args : [wrappedFn.args];
         }
-        let fnArgs: unknown[] = [...preparedUserArgs];
+        let fnArgs: unknown[] = [...restArgs];
         if (entryType === 'graph_node') {
-            fnArgs = [...(restArgs ?? []).map((a) => clearVmProp(a)), ...preparedUserArgs];
+            fnArgs = fnArgs.map((a) => clearVmProp(a));
         }
+
+        fnArgs = [...fnArgs, ...preparedUserArgs];
 
         // prepare function context
         let fnContext = this;
