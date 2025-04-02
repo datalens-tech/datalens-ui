@@ -28,6 +28,7 @@ import {Request as RequestPromise} from '../request';
 import {hideSensitiveData} from '../utils';
 
 import {getApiConnectorParamsFromSource, isAPIConnectorSource, prepareSource} from './sources';
+import {getMessageFromUnknownError} from './utils';
 
 const {
     ALL_REQUESTS_SIZE_LIMIT_EXCEEDED,
@@ -523,12 +524,12 @@ export class DataFetcher {
             ctx.config.singleFetchingTimeout || DEFAULT_SINGLE_FETCHING_TIMEOUT;
 
         try {
-            source = prepareSource(source, ctx);
-        } catch {
+            source = prepareSource(source);
+        } catch (e) {
             return {
                 sourceId: sourceName,
                 sourceType: 'Unresolved',
-                code: 'UNKNOWN_SOURCE',
+                code: getMessageFromUnknownError(e) || 'UNKNOWN_SOURCE',
             };
         }
 
