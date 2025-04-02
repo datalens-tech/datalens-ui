@@ -163,6 +163,7 @@ export type DataFetcherResult = {
     message?: string;
     code?: string;
     data?: any;
+    details?: string;
 };
 
 export type ZitadelParams = {
@@ -309,6 +310,7 @@ export class DataFetcher {
                                 hideInInspector: result.hideInInspector,
                                 /** @deprecated use uiUrl and dataUrl */
                                 url: result.url,
+                                details: result.details,
                             };
 
                             if (result.body) {
@@ -529,7 +531,8 @@ export class DataFetcher {
             return {
                 sourceId: sourceName,
                 sourceType: 'Unresolved',
-                code: getMessageFromUnknownError(e) || 'UNKNOWN_SOURCE',
+                code: 'INVALID_SOURCE_CONFIG',
+                details: getMessageFromUnknownError(e),
             };
         }
 
