@@ -140,25 +140,25 @@ export const actions = {
         path: () => `${PATH_PREFIX}/info/connectors/icons`,
         params: (_, headers) => ({headers}),
     }),
-    _exportConnection: createAction<ExportConnectionResponse, ExportConnectionArgs>({
+    _proxyExportConnection: createAction<ExportConnectionResponse, ExportConnectionArgs>({
         method: 'GET',
         path: ({connectionId}) => `${PATH_PREFIX}/connections/export/${connectionId}`,
-        params: ({usMasterToken, workbookId}, headers, {ctx}) => ({
+        params: ({usMasterToken, workbookId}, headers) => ({
             headers: {
                 ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
                 ...headers,
-                [US_MASTER_TOKEN_HEADER]: usMasterToken || ctx.config.usMasterToken,
+                [US_MASTER_TOKEN_HEADER]: usMasterToken,
             },
         }),
     }),
-    _importConnection: createAction<ImportConnectionResponse, ImportConnectionArgs>({
+    _proxyImportConnection: createAction<ImportConnectionResponse, ImportConnectionArgs>({
         method: 'POST',
         path: () => `${PATH_PREFIX}/connections/import`,
-        params: ({usMasterToken, data}, headers, {ctx}) => ({
+        params: ({usMasterToken, data}, headers) => ({
             headers: {
                 ...(data.workbook_id ? {[WORKBOOK_ID_HEADER]: data.workbook_id} : {}),
                 ...headers,
-                [US_MASTER_TOKEN_HEADER]: usMasterToken || ctx.config.usMasterToken,
+                [US_MASTER_TOKEN_HEADER]: usMasterToken,
             },
             body: {
                 data,

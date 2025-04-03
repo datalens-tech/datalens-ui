@@ -251,28 +251,28 @@ export const actions = {
         path: ({datasetId}) => `${API_V1}/datasets/${filterUrlFragment(datasetId)}`,
         params: (_, headers) => ({headers}),
     }),
-    _exportDataset: createAction<ExportDatasetResponse, ExportDatasetArgs>({
+    _proxyExportDataset: createAction<ExportDatasetResponse, ExportDatasetArgs>({
         method: 'POST',
         path: ({datasetId}) => `${API_V1}/datasets/export/${datasetId}`,
-        params: ({usMasterToken, workbookId, id_mapping}, headers, {ctx}) => ({
+        params: ({usMasterToken, workbookId, id_mapping}, headers) => ({
             headers: {
                 ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
                 ...headers,
-                [US_MASTER_TOKEN_HEADER]: usMasterToken || ctx.config.usMasterToken,
+                [US_MASTER_TOKEN_HEADER]: usMasterToken,
             },
             body: {
                 id_mapping,
             },
         }),
     }),
-    _importDataset: createAction<ImportDatasetResponse, ImportDatasetArgs>({
+    _proxyImportDataset: createAction<ImportDatasetResponse, ImportDatasetArgs>({
         method: 'POST',
         path: () => `${API_V1}/datasets/import`,
-        params: ({usMasterToken, data, id_mapping}, headers, {ctx}) => ({
+        params: ({usMasterToken, data, id_mapping}, headers) => ({
             headers: {
                 ...(data.workbook_id ? {[WORKBOOK_ID_HEADER]: data.workbook_id} : {}),
                 ...headers,
-                [US_MASTER_TOKEN_HEADER]: usMasterToken || ctx.config.usMasterToken,
+                [US_MASTER_TOKEN_HEADER]: usMasterToken,
             },
             body: {
                 data,

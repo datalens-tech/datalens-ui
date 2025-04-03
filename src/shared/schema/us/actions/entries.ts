@@ -47,8 +47,8 @@ import type {
     ListDirectoryResponse,
     MoveEntryArgs,
     MoveEntryResponse,
-    PrivateCreateEntryArgs,
     PrivateGetEntryArgs,
+    ProxyCreateEntryArgs,
     RenameEntryArgs,
     RenameEntryResponse,
     SwitchPublicationStatusArgs,
@@ -72,30 +72,29 @@ export const entriesActions = {
             },
         }),
     }),
-    _getEntry: createAction<GetEntryResponse, PrivateGetEntryArgs>({
+    _proxyGetEntry: createAction<GetEntryResponse, PrivateGetEntryArgs>({
         method: 'GET',
         path: ({entryId}) => `${PRIVATE_PATH_PREFIX}/entries/${filterUrlFragment(entryId)}`,
-        params: ({entryId: _entryId, workbookId, usMasterToken, ...query}, headers, {ctx}) => ({
+        params: ({entryId: _entryId, workbookId, usMasterToken, ...query}, headers) => ({
             query,
             headers: {
                 ...headers,
-                [US_MASTER_TOKEN_HEADER]: usMasterToken || ctx.config.usMasterToken,
                 ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
+                [US_MASTER_TOKEN_HEADER]: usMasterToken,
             },
         }),
     }),
-    _createEntry: createAction<GetEntryResponse, PrivateCreateEntryArgs>({
+    _proxyCreateEntry: createAction<GetEntryResponse, ProxyCreateEntryArgs>({
         method: 'POST',
         path: () => `${PRIVATE_PATH_PREFIX}/entries/`,
         params: (
-            {usMasterToken, workbookId, data, name, type, scope, mode, links},
+            {usMasterToken, workbookId, data, name, type, scope, mode, links, key},
             headers,
-            {ctx},
         ) => ({
             headers: {
                 ...headers,
-                [US_MASTER_TOKEN_HEADER]: usMasterToken || ctx.config.usMasterToken,
                 ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
+                [US_MASTER_TOKEN_HEADER]: usMasterToken,
             },
             body: {
                 workbookId,
@@ -105,6 +104,7 @@ export const entriesActions = {
                 scope,
                 mode,
                 links,
+                ...(key ? {key} : {}),
             },
         }),
     }),

@@ -33,7 +33,7 @@ export interface PrivateGetEntryArgs extends GetEntryArgs {
     usMasterToken: string;
 }
 
-export interface PrivateCreateEntryArgs {
+export interface ProxyCreateEntryArgs {
     usMasterToken?: string;
     workbookId?: string;
     data: EntryFieldData;
@@ -42,6 +42,7 @@ export interface PrivateCreateEntryArgs {
     scope: string;
     mode: string;
     links: EntryFieldLinks;
+    key?: string;
 }
 
 export interface GetEntryByKeyResponse extends Omit<GetEntryResponse, 'isFavorite'> {}

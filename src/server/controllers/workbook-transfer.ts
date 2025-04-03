@@ -29,12 +29,12 @@ export const workbooksExportController = {
 
             const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
 
-            const {responseData: entry} = await gatewayApi.us._getEntry({
+            const {responseData: entry} = await gatewayApi.us._proxyGetEntry({
                 headers,
                 args: {
-                    usMasterToken,
                     entryId: exportId,
                     workbookId,
+                    usMasterToken,
                 },
                 ctx,
                 requestId: req.id,
@@ -52,13 +52,13 @@ export const workbooksExportController = {
                     break;
                 }
                 case EntryScope.Connection: {
-                    const {responseData} = await gatewayApi.bi._exportConnection({
+                    const {responseData} = await gatewayApi.bi._proxyExportConnection({
                         headers,
                         args: {
-                            usMasterToken,
                             connectionId: exportId,
                             id_mapping,
                             workbookId,
+                            usMasterToken,
                         },
                         ctx,
                         requestId: req.id,
@@ -68,13 +68,13 @@ export const workbooksExportController = {
                     break;
                 }
                 case EntryScope.Dataset: {
-                    const {responseData} = await gatewayApi.bi._exportDataset({
+                    const {responseData} = await gatewayApi.bi._proxyExportDataset({
                         headers,
                         args: {
-                            usMasterToken,
                             datasetId: exportId,
                             id_mapping,
                             workbookId,
+                            usMasterToken,
                         },
                         ctx,
                         requestId: req.id,
@@ -115,12 +115,12 @@ export const workbooksExportController = {
             const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
 
             if (data.connection) {
-                const {responseData} = await gatewayApi.bi._importConnection({
+                const {responseData} = await gatewayApi.bi._proxyImportConnection({
                     headers,
                     args: {
-                        usMasterToken,
                         data,
                         id_mapping,
+                        usMasterToken,
                     },
                     ctx,
                     requestId: req.id,
@@ -128,12 +128,12 @@ export const workbooksExportController = {
 
                 res.status(200).send(responseData);
             } else if (data.dataset) {
-                const {responseData} = await gatewayApi.bi._importDataset({
+                const {responseData} = await gatewayApi.bi._proxyImportDataset({
                     headers,
                     args: {
-                        usMasterToken,
                         data,
                         id_mapping,
+                        usMasterToken,
                     },
                     ctx,
                     requestId: req.id,
@@ -143,12 +143,12 @@ export const workbooksExportController = {
             } else if (data.dash) {
                 const {dash, notifications} = await Dash.prepareImport(data);
 
-                const {responseData} = await gatewayApi.us._createEntry({
+                const {responseData} = await gatewayApi.us._proxyCreateEntry({
                     headers,
                     args: {
-                        usMasterToken,
                         workbookId: data.workbook_id,
                         ...(dash as any),
+                        usMasterToken,
                     },
                     ctx,
                     requestId: req.id,
