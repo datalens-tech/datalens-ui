@@ -17,12 +17,7 @@ import {DashLoadPriority, Feature} from '../../../../../../shared';
 import EntryDialogues from '../../../../../components/EntryDialogues/EntryDialogues';
 import {DIALOG_TYPE} from '../../../../../constants/dialogs';
 import {validateParamTitle} from '../../../components/ParamsSettings/helpers';
-import {
-    setDashAccessDescription,
-    setDashSupportDescription,
-    setSettings,
-    toggleTableOfContent,
-} from '../../../store/actions/dashTyped';
+import {toggleTableOfContent, updateAllDashSettings} from '../../../store/actions/dashTyped';
 import {closeDialog} from '../../../store/actions/dialogs/actions';
 import {
     selectDashAccessDescription,
@@ -151,9 +146,13 @@ const Settings = () => {
                 delete newSettings.margins;
             }
 
-            dispatch(setSettings(newSettings));
-            dispatch(setDashAccessDescription(accessDescription));
-            dispatch(setDashSupportDescription(supportDescription));
+            dispatch(
+                updateAllDashSettings({
+                    settings: newSettings,
+                    accessDescription,
+                    supportDescription,
+                }),
+            );
             dispatch(toggleTableOfContent(Boolean(expandTOC)));
 
             ChartKit?.setDataProviderSettings?.({

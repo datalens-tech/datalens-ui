@@ -28,6 +28,7 @@ import {
     SET_ERROR_MODE,
     SET_STATE,
     purgeData,
+    resetDashEditHistory,
     setDashViewMode,
     setLock,
     toggleTableOfContent,
@@ -121,6 +122,7 @@ export const setEditMode = (successCallback = () => {}, failCallback = () => {})
         } = getState();
 
         if (fake) {
+            dispatch(resetDashEditHistory());
             return;
         }
 
@@ -153,6 +155,7 @@ export const setEditMode = (successCallback = () => {}, failCallback = () => {})
             }
 
             await dispatch(setLock(entryId));
+            dispatch(resetDashEditHistory());
             successCallback();
         } catch (error) {
             if (isEntryIsLockedError(error)) {
@@ -165,6 +168,7 @@ export const setEditMode = (successCallback = () => {}, failCallback = () => {})
                                 await dispatch(setLock(entryId, true));
                                 (dispatch as ConnectionsReduxDispatch)(closeDialogConfirm());
                                 successCallback();
+                                dispatch(resetDashEditHistory());
                             } catch (localError) {
                                 dispatch(
                                     showToast({
