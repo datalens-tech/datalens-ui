@@ -666,7 +666,7 @@ export class DataFetcher {
                 sourceType,
             });
             if (result.valid === false) {
-                return result;
+                return result.meta;
             }
         }
 
