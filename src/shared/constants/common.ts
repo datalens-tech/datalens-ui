@@ -18,6 +18,7 @@ export enum AppMode {
     Full = 'full',
     Datalens = 'datalens',
     Charts = 'charts',
+    Api = 'api',
 }
 
 export enum Language {
