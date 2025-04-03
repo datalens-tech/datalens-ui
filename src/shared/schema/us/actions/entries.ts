@@ -19,7 +19,6 @@ import type {
     CopyEntryResponse,
     CopyWorkbookEntryArgs,
     CopyWorkbookEntryResponse,
-    CreateEntryArgs,
     CreateFolderArgs,
     CreateFolderResponse,
     DeleteUSEntryArgs,
@@ -48,6 +47,8 @@ import type {
     ListDirectoryResponse,
     MoveEntryArgs,
     MoveEntryResponse,
+    PrivateCreateEntryArgs,
+    PrivateGetEntryArgs,
     RenameEntryArgs,
     RenameEntryResponse,
     SwitchPublicationStatusArgs,
@@ -71,25 +72,29 @@ export const entriesActions = {
             },
         }),
     }),
-    _getEntry: createAction<GetEntryResponse, GetEntryArgs>({
+    _getEntry: createAction<GetEntryResponse, PrivateGetEntryArgs>({
         method: 'GET',
         path: ({entryId}) => `${PRIVATE_PATH_PREFIX}/entries/${filterUrlFragment(entryId)}`,
-        params: ({entryId: _entryId, workbookId, ...query}, headers, {ctx}) => ({
+        params: ({entryId: _entryId, workbookId, usMasterToken, ...query}, headers, {ctx}) => ({
             query,
             headers: {
                 ...headers,
-                [US_MASTER_TOKEN_HEADER]: ctx.config.usMasterToken,
+                [US_MASTER_TOKEN_HEADER]: usMasterToken || ctx.config.usMasterToken,
                 ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
             },
         }),
     }),
-    _createEntry: createAction<GetEntryResponse, CreateEntryArgs>({
+    _createEntry: createAction<GetEntryResponse, PrivateCreateEntryArgs>({
         method: 'POST',
         path: () => `${PRIVATE_PATH_PREFIX}/entries/`,
-        params: ({workbookId, data, name, type, scope, mode, links}, headers, {ctx}) => ({
+        params: (
+            {usMasterToken, workbookId, data, name, type, scope, mode, links},
+            headers,
+            {ctx},
+        ) => ({
             headers: {
                 ...headers,
-                [US_MASTER_TOKEN_HEADER]: ctx.config.usMasterToken,
+                [US_MASTER_TOKEN_HEADER]: usMasterToken || ctx.config.usMasterToken,
                 ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
             },
             body: {

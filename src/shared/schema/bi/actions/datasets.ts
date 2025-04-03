@@ -254,11 +254,11 @@ export const actions = {
     _exportDataset: createAction<ExportDatasetResponse, ExportDatasetArgs>({
         method: 'POST',
         path: ({datasetId}) => `${API_V1}/datasets/export/${datasetId}`,
-        params: ({workbookId, id_mapping}, headers, {ctx}) => ({
+        params: ({usMasterToken, workbookId, id_mapping}, headers, {ctx}) => ({
             headers: {
                 ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
                 ...headers,
-                [US_MASTER_TOKEN_HEADER]: ctx.config.usMasterToken,
+                [US_MASTER_TOKEN_HEADER]: usMasterToken || ctx.config.usMasterToken,
             },
             body: {
                 id_mapping,
@@ -268,11 +268,11 @@ export const actions = {
     _importDataset: createAction<ImportDatasetResponse, ImportDatasetArgs>({
         method: 'POST',
         path: () => `${API_V1}/datasets/import`,
-        params: ({data, id_mapping}, headers, {ctx}) => ({
+        params: ({usMasterToken, data, id_mapping}, headers, {ctx}) => ({
             headers: {
                 ...(data.workbook_id ? {[WORKBOOK_ID_HEADER]: data.workbook_id} : {}),
                 ...headers,
-                [US_MASTER_TOKEN_HEADER]: ctx.config.usMasterToken,
+                [US_MASTER_TOKEN_HEADER]: usMasterToken || ctx.config.usMasterToken,
             },
             body: {
                 data,

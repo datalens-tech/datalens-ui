@@ -224,6 +224,7 @@ export type ExportDatasetResponse = {
 };
 
 export type ExportDatasetArgs = {
+    usMasterToken?: string;
     datasetId: string;
     id_mapping: TransferIdMapping;
     workbookId?: string | null;
@@ -235,6 +236,7 @@ export type ImportDatasetResponse = {
 };
 
 export type ImportDatasetArgs = {
+    usMasterToken?: string;
     data: {
         workbook_id: string;
         dataset: EntryFieldData;

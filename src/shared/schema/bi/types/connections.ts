@@ -159,6 +159,7 @@ export type ListConnectorIconsResponse = {
 };
 
 export type ExportConnectionArgs = {
+    usMasterToken?: string;
     connectionId: string;
     id_mapping: TransferIdMapping;
     workbookId?: string | null;
@@ -175,6 +176,7 @@ export type ImportConnectionResponse = {
 };
 
 export type ImportConnectionArgs = {
+    usMasterToken?: string;
     data: {
         workbook_id: string;
         connection: ConnectionData;

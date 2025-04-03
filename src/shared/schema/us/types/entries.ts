@@ -29,7 +29,12 @@ export interface GetEntryArgs {
     includeDlComponentUiData?: boolean;
 }
 
-export interface CreateEntryArgs {
+export interface PrivateGetEntryArgs extends GetEntryArgs {
+    usMasterToken: string;
+}
+
+export interface PrivateCreateEntryArgs {
+    usMasterToken?: string;
     workbookId?: string;
     data: EntryFieldData;
     name: string;

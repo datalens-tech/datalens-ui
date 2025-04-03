@@ -143,22 +143,22 @@ export const actions = {
     _exportConnection: createAction<ExportConnectionResponse, ExportConnectionArgs>({
         method: 'GET',
         path: ({connectionId}) => `${PATH_PREFIX}/connections/export/${connectionId}`,
-        params: ({workbookId}, headers, {ctx}) => ({
+        params: ({usMasterToken, workbookId}, headers, {ctx}) => ({
             headers: {
                 ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
                 ...headers,
-                [US_MASTER_TOKEN_HEADER]: ctx.config.usMasterToken,
+                [US_MASTER_TOKEN_HEADER]: usMasterToken || ctx.config.usMasterToken,
             },
         }),
     }),
     _importConnection: createAction<ImportConnectionResponse, ImportConnectionArgs>({
         method: 'POST',
         path: () => `${PATH_PREFIX}/connections/import`,
-        params: ({data}, headers, {ctx}) => ({
+        params: ({usMasterToken, data}, headers, {ctx}) => ({
             headers: {
                 ...(data.workbook_id ? {[WORKBOOK_ID_HEADER]: data.workbook_id} : {}),
                 ...headers,
-                [US_MASTER_TOKEN_HEADER]: ctx.config.usMasterToken,
+                [US_MASTER_TOKEN_HEADER]: usMasterToken || ctx.config.usMasterToken,
             },
             body: {
                 data,

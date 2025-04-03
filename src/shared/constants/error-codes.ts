@@ -45,6 +45,7 @@ export enum ErrorCode {
     InsufficientServicePlan = 'ERR.CHARTS.INSUFFICIENT_SERVICE_PLAN',
 
     TransferInvalidEntryScope = 'ERR.DS_API.INVALID_ENTRY_SCOPE',
+    TransferInvalidToken = 'ERR.DS_API.INVALID_TOKEN',
 }
 
 export const ErrorContentTypes = {

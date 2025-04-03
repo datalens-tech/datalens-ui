@@ -15,22 +15,33 @@ export const workbooksExportController = {
             const headers = {
                 ...Utils.pickHeaders(req),
             };
+            const usMasterToken = Utils.pickUsMasterToken(req);
+
+            if (!usMasterToken) {
+                res.send(403).send({
+                    code: ErrorCode.TransferInvalidToken,
+                });
+                return;
+            }
 
             const {exportId, id_mapping} = req.body;
             const workbookId = (req.body?.workbookId as string) ?? null;
 
             const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
+
             const {responseData: entry} = await gatewayApi.us._getEntry({
                 headers,
                 args: {
+                    usMasterToken,
                     entryId: exportId,
                     workbookId,
                 },
                 ctx,
                 requestId: req.id,
             });
+            const scope = entry.scope;
 
-            switch (entry.scope) {
+            switch (scope) {
                 case EntryScope.Dash: {
                     const result = await Dash.prepareExport(
                         entry as unknown as DashEntry,
@@ -44,6 +55,7 @@ export const workbooksExportController = {
                     const {responseData} = await gatewayApi.bi._exportConnection({
                         headers,
                         args: {
+                            usMasterToken,
                             connectionId: exportId,
                             id_mapping,
                             workbookId,
@@ -59,6 +71,7 @@ export const workbooksExportController = {
                     const {responseData} = await gatewayApi.bi._exportDataset({
                         headers,
                         args: {
+                            usMasterToken,
                             datasetId: exportId,
                             id_mapping,
                             workbookId,
@@ -88,6 +101,14 @@ export const workbooksExportController = {
             const headers = {
                 ...Utils.pickHeaders(req),
             };
+            const usMasterToken = Utils.pickUsMasterToken(req);
+
+            if (!usMasterToken) {
+                res.send(403).send({
+                    code: ErrorCode.TransferInvalidToken,
+                });
+                return;
+            }
 
             const {data, id_mapping} = req.body;
 
@@ -97,6 +118,7 @@ export const workbooksExportController = {
                 const {responseData} = await gatewayApi.bi._importConnection({
                     headers,
                     args: {
+                        usMasterToken,
                         data,
                         id_mapping,
                     },
@@ -109,6 +131,7 @@ export const workbooksExportController = {
                 const {responseData} = await gatewayApi.bi._importDataset({
                     headers,
                     args: {
+                        usMasterToken,
                         data,
                         id_mapping,
                     },
@@ -123,6 +146,7 @@ export const workbooksExportController = {
                 const {responseData} = await gatewayApi.us._createEntry({
                     headers,
                     args: {
+                        usMasterToken,
                         workbookId: data.workbook_id,
                         ...(dash as any),
                     },
