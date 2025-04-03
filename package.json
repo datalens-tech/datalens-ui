@@ -33,7 +33,7 @@
     "test:install:chromium": "npx playwright install --with-deps chromium",
     "test:e2e": "cd tests && npx playwright test --config=./playwright.config.ts --project=basic",
     "test:e2e:opensource": "cd tests && npx playwright test --config=./playwright.config.ts --project=opensource",
-    "test:e2e:us-dump": "bash scripts/e2e/us-dump.sh",
+    "test:e2e:us-dump": "./scripts/e2e/us-dump.sh",
     "test:e2e:docker": "cd ./tests && docker compose -f ./docker-compose.e2e.yml down --volumes && docker compose -f ./docker-compose.e2e.yml up --quiet-pull --no-log-prefix --exit-code-from datalens-from-image-tests datalens-from-image-tests",
     "test:e2e:docker:playwright": "bash scripts/e2e/playwright-docker.sh 'npm run test:e2e:opensource'",
     "test:e2e:docker:playwright:clear": "bash scripts/e2e/playwright-docker.sh 'clear-cache'",
@@ -41,7 +41,7 @@
     "test:e2e:docker:check": "cd ./tests && docker compose -f ./docker-compose.e2e.yml config",
     "test:e2e:docker:up": "cd ./tests && docker compose -f ./docker-compose.e2e.yml up --quiet-pull --build -d datalens-from-build",
     "test:e2e:docker:up-no-build": "cd ./tests && docker compose -f ./docker-compose.e2e.yml up --no-build --quiet-pull -d datalens-from-build",
-    "test:e2e:docker:up-no-ui": "cd ./tests && docker compose -f ./docker-compose.e2e.yml up -d data-api control-api us postgres-e2e",
+    "test:e2e:docker:up-no-ui": "cd ./tests && docker compose -f ./docker-compose.e2e.yml up -d data-api control-api us",
     "test:e2e:docker:down": "cd ./tests && docker compose -f ./docker-compose.e2e.yml down --volumes",
     "statoscope:validate-diff": "statoscope validate --input input.json --reference reference.json",
     "statoscope:validate": "statoscope validate --input ./dist/public/build/stats.json"
