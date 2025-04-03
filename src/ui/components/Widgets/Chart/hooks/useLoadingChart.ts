@@ -11,7 +11,6 @@ import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
-import unescape from 'lodash/unescape';
 import type {DashChartRequestContext, StringParams} from 'shared';
 import {DashTabItemControlSourceType, SHARED_URL_OPTIONS} from 'shared';
 import {isEmbeddedMode} from 'ui/utils/embedded';
@@ -826,16 +825,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                             _page: String(START_PAGE),
                         };
                     }
-
-                    newParams = Object.entries(changedData.data.params).reduce(
-                        (acc, [key, value]) => {
-                            acc[key] = Array.isArray(value) ? value.map(unescape) : unescape(value);
-                            return acc;
-                        },
-                        {} as StringParams,
-                    );
-
-                    newParams = {...newParams, ...additionalParams};
+                    newParams = {...changedData.data.params, ...additionalParams};
                     if (!enableActionParams) {
                         newParams = pickExceptActionParamsFromParams(newParams);
                     }
