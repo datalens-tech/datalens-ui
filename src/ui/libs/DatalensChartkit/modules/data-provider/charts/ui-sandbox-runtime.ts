@@ -129,7 +129,15 @@ export class UiSandboxRuntime {
     private defineVmArguments(args: unknown[]) {
         let stringifiedArgs = '[]';
         try {
-            stringifiedArgs = JSON.stringify(args);
+            stringifiedArgs = JSON.stringify(
+                args.map((arg) => {
+                    if (arg && typeof arg === 'function') {
+                        return arg.toString();
+                    }
+
+                    return arg;
+                }),
+            );
         } catch (e) {
             console.error(e, {args});
         }
