@@ -9,7 +9,7 @@ import {getAuthRoutes} from '../../components/auth/routes';
 import type {ChartsEngine} from '../../components/charts-engine';
 import {getZitadelRoutes} from '../../components/zitadel/routes';
 import {ping} from '../../controllers/ping';
-import {workbooksExportController} from '../../controllers/workbook-export';
+import {workbooksExportController} from '../../controllers/workbook-transfer';
 import {getConnectorIconsMiddleware} from '../../middlewares';
 import type {ExtendedAppRouteDescription} from '../../types/controllers';
 import {getConfiguredRoute} from '../../utils/routes';

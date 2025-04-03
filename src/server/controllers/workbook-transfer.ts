@@ -40,11 +40,6 @@ export const workbooksExportController = {
                     res.status(200).send(result);
                     break;
                 }
-                case EntryScope.Widget: {
-                    // {type, data} = entry; {template} = data.type;
-                    res.status(200).send(entry);
-                    break;
-                }
                 case EntryScope.Connection: {
                     const {responseData} = await gatewayApi.bi._exportConnection({
                         headers,
@@ -139,8 +134,6 @@ export const workbooksExportController = {
                     id: responseData.entryId,
                     notifications,
                 });
-            } else if (data.widget) {
-                res.status(200).send({});
             } else {
                 res.status(400).send({
                     code: ErrorCode.TransferInvalidEntryScope,
