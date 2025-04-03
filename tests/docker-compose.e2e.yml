@@ -31,8 +31,6 @@ services:
       US_HOST: http://us:8080
       US_MASTER_TOKEN: us-master-token
       CONNECTOR_AVAILABILITY_VISIBLE: "clickhouse,postgres,chyt"
-    depends_on:
-      - us
     networks:
       - default
 
@@ -52,7 +50,8 @@ services:
       US_HOST: http://us:8080
       US_MASTER_TOKEN: ${US_MASTER_TOKEN:-us-master-token}
     depends_on:
-      - us
+      postgres:
+        condition: service_healthy
     networks:
       - default
 
