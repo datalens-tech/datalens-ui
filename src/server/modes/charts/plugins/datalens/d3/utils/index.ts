@@ -1,4 +1,4 @@
-import type {ChartKitWidgetTitle} from '@gravity-ui/chartkit';
+import type {ChartKitWidgetTitle} from '@gravity-ui/chartkit/d3';
 
 import type {ServerCommonSharedExtraSettings} from '../../../../../../../shared';
 

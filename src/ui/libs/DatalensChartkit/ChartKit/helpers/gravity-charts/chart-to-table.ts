@@ -1,11 +1,10 @@
-import type {ChartKitWidgetData} from '@gravity-ui/chartkit';
-import type {ChartKitWidgetSeries} from '@gravity-ui/chartkit/build/types/widget-data/series';
+import type {ChartData, ChartKitWidgetSeries} from '@gravity-ui/chartkit/d3';
 import get from 'lodash/get';
 import type {ColumnExportSettings, SeriesExportSettings, TableRow} from 'shared';
 import type {TableData} from 'ui/libs/DatalensChartkit/types';
 
 type ChartToTableArgs = {
-    chartData?: ChartKitWidgetData;
+    chartData?: ChartData;
 };
 
 function getSeriesDataForExport(series: ChartKitWidgetSeries) {

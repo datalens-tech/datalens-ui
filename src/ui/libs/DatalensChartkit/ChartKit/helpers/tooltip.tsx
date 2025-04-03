@@ -1,11 +1,11 @@
 import React from 'react';
 
-import type {ChartKitWidgetData, PieSeriesData, TreemapSeriesData} from '@gravity-ui/chartkit';
 import type {
     ChartKitWidgetTooltip,
     ScatterSeries,
     ScatterSeriesData,
 } from '@gravity-ui/chartkit/build/types/widget-data';
+import type {ChartData, PieSeriesData, TreemapSeriesData} from '@gravity-ui/chartkit/d3';
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
 import {formatNumber} from 'shared/modules/format-units/index';
@@ -18,7 +18,7 @@ type CustomScatterSeries = ScatterSeries<PointCustomData> & {custom: ScatterSeri
 type TooltipRenderer = NonNullable<ChartKitWidgetTooltip['renderer']>;
 
 export const scatterTooltipRenderer = (
-    widgetData: ChartKitWidgetData,
+    widgetData: ChartData,
     data: Parameters<TooltipRenderer>[0],
 ) => {
     const seriesName = data.hovered[0].series.name;
@@ -67,10 +67,7 @@ export const scatterTooltipRenderer = (
     );
 };
 
-function treemapTooltipRenderer(
-    widgetData: ChartKitWidgetData,
-    data: Parameters<TooltipRenderer>[0],
-) {
+function treemapTooltipRenderer(widgetData: ChartData, data: Parameters<TooltipRenderer>[0]) {
     const series = widgetData.series.data[0];
     const point = data?.hovered[0]?.data as TreemapSeriesData | undefined;
 
@@ -93,7 +90,7 @@ function treemapTooltipRenderer(
     );
 }
 
-function pieTooltipRenderer(_widgetData: ChartKitWidgetData, data: Parameters<TooltipRenderer>[0]) {
+function pieTooltipRenderer(_widgetData: ChartData, data: Parameters<TooltipRenderer>[0]) {
     const point = data?.hovered[0]?.data as PieSeriesData | undefined;
 
     if (!point) {
@@ -116,7 +113,7 @@ function pieTooltipRenderer(_widgetData: ChartKitWidgetData, data: Parameters<To
     );
 }
 
-function customTooltipRenderer(widgetData: ChartKitWidgetData, data: Parameters<TooltipRenderer>) {
+function customTooltipRenderer(widgetData: ChartData, data: Parameters<TooltipRenderer>) {
     const render = widgetData?.tooltip?.renderer;
     if (typeof render !== 'function') {
         return null;
@@ -128,7 +125,7 @@ function customTooltipRenderer(widgetData: ChartKitWidgetData, data: Parameters<
     );
 }
 
-export const getTooltipRenderer = (widgetData: ChartKitWidgetData): TooltipRenderer | undefined => {
+export const getTooltipRenderer = (widgetData: ChartData): TooltipRenderer | undefined => {
     if (widgetData?.tooltip?.renderer) {
         return (...args) => customTooltipRenderer(widgetData, args);
     }

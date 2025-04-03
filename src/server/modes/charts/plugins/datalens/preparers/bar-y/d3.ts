@@ -1,4 +1,4 @@
-import type {BarYSeries, ChartKitWidgetData} from '@gravity-ui/chartkit/build/types/widget-data';
+import type {BarYSeries, ChartData} from '@gravity-ui/chartkit/d3';
 
 import type {SeriesExportSettings, ServerField} from '../../../../../../../shared';
 import {PlaceholderId, WizardVisualizationId} from '../../../../../../../shared';
@@ -9,7 +9,7 @@ import {prepareBarYData} from './prepare-bar-y-data';
 
 type BarYPoint = {x: number; y: number} & Record<string, unknown>;
 
-export function prepareD3BarY(args: PrepareFunctionArgs): ChartKitWidgetData {
+export function prepareD3BarY(args: PrepareFunctionArgs): ChartData {
     const {visualizationId, colors, placeholders} = args;
     const {graphs, categories} = prepareBarYData(args);
     const hasCategories = Boolean(categories?.length);
@@ -58,7 +58,7 @@ export function prepareD3BarY(args: PrepareFunctionArgs): ChartKitWidgetData {
         } as BarYSeries;
     });
 
-    const config: ChartKitWidgetData = {
+    const config: ChartData = {
         series: {
             data: series.filter((s) => s.data.length),
         },

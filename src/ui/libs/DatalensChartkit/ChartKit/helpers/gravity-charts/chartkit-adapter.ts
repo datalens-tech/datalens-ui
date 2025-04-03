@@ -1,4 +1,4 @@
-import type {ChartKitWidgetData, ChartKitWidgetSeriesData} from '@gravity-ui/chartkit';
+import type {ChartData, ChartKitWidgetSeriesData} from '@gravity-ui/chartkit/d3';
 import {CustomShapeRenderer} from '@gravity-ui/chartkit/d3';
 import {pickActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
 import get from 'lodash/get';
@@ -22,10 +22,10 @@ export function getGravityChartsChartKitData(args: {
     onChange?: ChartKitAdapterProps['onChange'];
 }) {
     const {loadedData, onChange} = args;
-    const widgetData = loadedData?.data as ChartKitWidgetData;
-    const config = loadedData?.libraryConfig as ChartKitWidgetData;
+    const widgetData = loadedData?.data as ChartData;
+    const config = loadedData?.libraryConfig as ChartData;
 
-    const chartWidgetData: Partial<ChartKitWidgetData> = {
+    const chartWidgetData: Partial<ChartData> = {
         chart: {
             events: {
                 click: (data, event) => {
@@ -69,7 +69,7 @@ export function getGravityChartsChartKitData(args: {
 }
 
 function getStyledSeries(loadedData: ChartKitAdapterProps['loadedData']) {
-    const widgetData = loadedData?.data as ChartKitWidgetData;
+    const widgetData = loadedData?.data as ChartData;
     const clickActions = getNormalizedClickActions(loadedData as GraphWidget);
     const clickScope = clickActions.find((a) => {
         const handlers = Array.isArray(a.handler) ? a.handler : [a.handler];

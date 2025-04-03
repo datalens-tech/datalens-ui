@@ -1,6 +1,6 @@
 import {DL} from 'constants/common';
 
-import type {ChartKitWidgetData} from '@gravity-ui/chartkit';
+import type {ChartData} from '@gravity-ui/chartkit';
 import type {AxiosError, AxiosRequestConfig, AxiosResponse, CancelTokenSource} from 'axios';
 import axios from 'axios';
 import type {Series as HighchartSeries} from 'highcharts';
@@ -402,7 +402,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                     return {
                         ...processed,
                         type: 'table',
-                        data: chartToTable({chartData: processed.data as ChartKitWidgetData}),
+                        data: chartToTable({chartData: processed.data as ChartData}),
                     } as Widget & ChartsData;
                 }
             }
