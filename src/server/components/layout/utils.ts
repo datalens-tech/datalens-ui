@@ -39,6 +39,7 @@ export function getChartkitLayoutSettings(
         const items = [
             'highcharts',
             'highcharts-more',
+            'highcharts-3d',
             ...modules.map((item) => `modules/${item}`),
         ];
 

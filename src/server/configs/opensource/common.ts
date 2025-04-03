@@ -158,7 +158,7 @@ export default {
 
     chartkitSettings: {
         highcharts: {
-            enabled: isTrueArg(process.env.HC),
+            enabled: true, //isTrueArg(process.env.HC),
             external: true,
             domain: process.env.HC_ENDPOINT || 'code.highcharts.com',
             protocol: process.env.HC_PROTOCOL || 'https',

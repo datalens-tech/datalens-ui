@@ -104,6 +104,13 @@ export const buildHighchartsConfigPrivate = (args: {
                 legend.labelFormatter = ChartkitHandlers.WizardLabelFormatter;
                 break;
             }
+            case WizardVisualizationId.Pie3D: {
+                chart.options3d = {
+                    enabled: true,
+                    alpha: 35,
+                    beta: 2,
+                };
+            }
         }
 
         extendPlotOptions({visualizationId: shared.visualization.id, plotOptions});
@@ -391,9 +398,14 @@ const extendPlotOptions = ({visualizationId, plotOptions}: ExtendPlotOptionsPayl
             };
             break;
         case WizardVisualizationId.Pie:
+            plotOptions.pie = {
+                allowPointSelect: false,
+            };
+            break;
         case WizardVisualizationId.Pie3D:
             plotOptions.pie = {
                 allowPointSelect: false,
+                depth: 55,
             };
             break;
         case WizardVisualizationId.Donut:
