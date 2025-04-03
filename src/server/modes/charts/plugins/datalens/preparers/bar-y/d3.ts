@@ -36,6 +36,7 @@ export function prepareD3BarY(args: PrepareFunctionArgs): ChartKitWidgetData {
         return {
             ...graph,
             type: 'bar-y',
+            stackId: graph.stack,
             stacking: visualizationId === WizardVisualizationId.BarY100pD3 ? 'percent' : 'normal',
             name: graph.title,
             data: graph.data
@@ -63,6 +64,7 @@ export function prepareD3BarY(args: PrepareFunctionArgs): ChartKitWidgetData {
         },
         xAxis: {
             min: 0,
+            type: 'linear',
         },
     };
 

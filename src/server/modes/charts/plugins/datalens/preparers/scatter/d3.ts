@@ -5,7 +5,13 @@ import type {
 } from '@gravity-ui/chartkit/build/types/widget-data';
 
 import type {SeriesExportSettings} from '../../../../../../../shared';
-import {PlaceholderId, getFakeTitleOrTitle, getXAxisMode} from '../../../../../../../shared';
+import {
+    PlaceholderId,
+    getFakeTitleOrTitle,
+    getXAxisMode,
+    isDateField,
+    isNumberField,
+} from '../../../../../../../shared';
 import type {
     PointCustomData,
     ScatterSeriesCustomData,
@@ -130,7 +136,25 @@ export function prepareD3Scatter(args: PrepareFunctionArgs): ChartKitWidgetData<
         field: y,
         settings: yPlaceholder?.settings,
     });
+
+    let xAxis: ChartKitWidgetData['xAxis'] = {};
+    if (xAxisType === 'category' && xCategories?.length) {
+        xAxis = {
+            type: 'category',
+            categories: xCategories,
+        };
+    } else {
+        if (isDateField(x)) {
+            xAxis.type = 'datetime';
+        }
+
+        if (isNumberField(x)) {
+            xAxis.type = xPlaceholder?.settings?.type === 'logarithmic' ? 'logarithmic' : 'linear';
+        }
+    }
+
     const config: ChartKitWidgetData = {
+        xAxis,
         series: {
             data: graphs.map((graph) => ({
                 ...mapScatterSeries({graph, xAxisType, yAxisType}),
@@ -138,12 +162,6 @@ export function prepareD3Scatter(args: PrepareFunctionArgs): ChartKitWidgetData<
             })),
         },
     };
-
-    if (xAxisType === 'category') {
-        config.xAxis = {
-            categories: xCategories,
-        };
-    }
 
     if (config.series.data.length <= 1) {
         config.legend = {enabled: false};
