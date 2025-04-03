@@ -3,8 +3,9 @@ import {AuthPolicy} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
 import type {PassportStatic} from 'passport';
 
+import {AppEnvironment} from '../../../shared';
 import {getAuthArgs} from '../../../shared/schema/gateway-utils';
-import {isApiMode, isChartsMode, isDatalensMode, isFullMode} from '../../app-env';
+import {appEnv, isApiMode, isChartsMode, isDatalensMode, isFullMode} from '../../app-env';
 import {getAuthRoutes} from '../../components/auth/routes';
 import type {ChartsEngine} from '../../components/charts-engine';
 import {getZitadelRoutes} from '../../components/zitadel/routes';
@@ -42,7 +43,7 @@ export function getRoutes({
         routes = {...routes, ...getZitadelRoutes({passport, beforeAuth, afterAuth})};
     }
 
-    if (isFullMode || isApiMode) {
+    if (appEnv === AppEnvironment.Development || isApiMode) {
         routes = {
             ...routes,
             ...getApiRoutes({beforeAuth, afterAuth}),
