@@ -140,7 +140,6 @@ export const actions = {
         path: () => `${PATH_PREFIX}/info/connectors/icons`,
         params: (_, headers) => ({headers}),
     }),
-    // TODO Types
     _exportConnection: createAction<ExportConnectionResponse, ExportConnectionArgs>({
         method: 'GET',
         path: ({connectionId}) => `${PATH_PREFIX}/connections/export/${connectionId}`,
