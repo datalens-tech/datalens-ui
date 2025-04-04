@@ -9,6 +9,7 @@ import type {
 import {
     AxisLabelFormatMode,
     ChartkitHandlers,
+    Feature,
     LabelsPositions,
     LegendDisplayMode,
     VISUALIZATIONS_WITH_LABELS_POSITION,
@@ -36,6 +37,7 @@ export const buildHighchartsConfigPrivate = (args: {
     shared: ServerChartsConfig;
     features: FeatureConfig;
 }) => {
+    const features = args.features;
     const shared = mapChartsConfigToServerConfig(args.shared);
 
     if (
@@ -224,6 +226,10 @@ export const buildHighchartsConfigPrivate = (args: {
             set(navigator, 'yAxis.softMin', 0);
             break;
         }
+    }
+
+    if (features[Feature.OutsideMargin]) {
+        chart.spacing = [0, 0, 0, 0];
     }
 
     const result: ExtendedHighchartsOptions = {

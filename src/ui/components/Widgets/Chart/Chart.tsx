@@ -79,6 +79,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
         paneSplitOrientation,
         widgetDashState,
         onBeforeChartLoad,
+        padding,
     } = props;
 
     const innerParamsRef = React.useRef<DataProps['params'] | null>(null);
@@ -288,6 +289,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
                 paneSplitOrientation={paneSplitOrientation}
                 widgetDashState={widgetDashState}
                 rootNodeRef={rootNodeRef}
+                padding={padding}
             />
         </div>
     );
