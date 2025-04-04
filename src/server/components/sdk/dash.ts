@@ -108,11 +108,20 @@ function setDefaultData(
 ) {
     const i18n = I18n.keyset('dash.tabs-dialog.edit');
 
+    let counter = 2;
+    if (initialData?.tabs && !initialData?.counter) {
+        counter = initialData.tabs.reduce((acc, tab) => {
+            acc++;
+            tab.items.forEach(() => acc++);
+            return acc;
+        }, 0);
+    }
     const salt = Math.random().toString();
     const hashids = new Hashids(salt);
+
     const data: DashData = {
         salt,
-        counter: 2,
+        counter,
         schemeVersion: DASH_CURRENT_SCHEME_VERSION,
         tabs: [
             {
