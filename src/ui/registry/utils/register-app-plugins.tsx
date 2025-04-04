@@ -7,7 +7,6 @@ import {registerConnectionsPlugins} from '../units/connections/register';
 import {registerDashPlugins} from '../units/dash/register';
 import {registerDatasetPlugins} from '../units/datasets/register';
 import {registerDocsPlugins} from '../units/docs/register';
-import {registerEditorPlugins} from '../units/editor/register';
 import {registerMainPlugins} from '../units/main/register';
 import {registerPublicPlugins} from '../units/public/register';
 import {registerQlPlugins} from '../units/ql/register';
@@ -20,7 +19,6 @@ export const registerAppPlugins = () => {
     registerCommonPlugins();
     registerDatasetPlugins();
     registerDashPlugins();
-    registerEditorPlugins();
     registerQlPlugins();
     registerWizardPlugins();
     registerPublicPlugins();

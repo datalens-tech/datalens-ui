@@ -1,7 +1,0 @@
-@import '~@gravity-ui/uikit/styles/mixins';
-
-.editor-pane-view-select {
-    &__selected-option {
-        @include text-subheader-1();
-    }
-}
