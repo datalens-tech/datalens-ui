@@ -111,9 +111,7 @@ function setDefaultData(
     let counter = 2;
     if (initialData?.tabs && !initialData?.counter) {
         counter = initialData.tabs.reduce((acc, tab) => {
-            acc++;
-            tab.items.forEach(() => acc++);
-            return acc;
+            return acc + 1 + (tab.items?.length || 0); // + 1 tabId + n items ids
         }, 0);
     }
     const salt = Math.random().toString();
