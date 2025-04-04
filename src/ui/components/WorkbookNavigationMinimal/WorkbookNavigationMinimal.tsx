@@ -210,7 +210,7 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
                             ? !includeType.has(entry.type)
                             : false;
                         const inactiveByExcludeType = excludeClickableType
-                            ? excludeType.has(entry.entryId)
+                            ? excludeType.has(entry.type)
                             : false;
                         const inactiveByIds = inactiveEntryIds
                             ? inactiveIds.has(entry.entryId)

@@ -1,4 +1,3 @@
-import type {AppContext} from '@gravity-ui/nodekit';
 import {isObject, isString} from 'lodash';
 
 import {
@@ -18,8 +17,23 @@ import type {
     SourceWithQLConnector,
 } from '../../types';
 
+const validateAPIConnectorSource = (source: Source): true => {
+    const requiredFields = [
+        {field: 'apiConnectionId', valid: isString(source.apiConnectionId)},
+        {field: 'method', valid: isString(source.method)},
+        {field: 'path', valid: isString(source.path)},
+    ];
+    const missingFields = requiredFields.filter((item) => !item.valid).map((item) => item.field);
+
+    if (missingFields.length > 0) {
+        throw new Error(`Missing or invalid API connector fields: ${missingFields.join(', ')}`);
+    }
+
+    return true;
+};
+
 export const isAPIConnectorSource = (source: Source): source is SourceWithAPIConnector => {
-    return isString(source.apiConnectionId) && isString(source.method) && isString(source.path);
+    return isString(source.apiConnectionId) && validateAPIConnectorSource(source);
 };
 
 export const getApiConnectorParamsFromSource = (
@@ -65,8 +79,22 @@ export const prepareSourceWithAPIConnector = (source: SourceWithAPIConnector) =>
     return source;
 };
 
+const validateQLConnectionSource = (source: Source): true => {
+    const requiredFields = [
+        {field: 'qlConnectionId', valid: isString(source.qlConnectionId)},
+        {field: 'data', valid: isObject(source.data)},
+    ];
+    const missingFields = requiredFields.filter((item) => !item.valid).map((item) => item.field);
+
+    if (missingFields.length > 0) {
+        throw new Error(`Missing or invalid QL connector fields: ${missingFields.join(', ')}`);
+    }
+
+    return true;
+};
+
 export const isQLConnectionSource = (source: Source): source is SourceWithQLConnector => {
-    return isString(source.qlConnectionId) && isObject(source.data);
+    return isString(source.qlConnectionId) && validateQLConnectionSource(source);
 };
 
 export const prepareSourceWithQLConnection = (source: SourceWithQLConnector) => {
@@ -120,51 +148,22 @@ export const prepareSourceWithDataset = (source: SourceWithDatasetId) => {
     return source;
 };
 
-export const prepareSource = (source: Source, ctx: AppContext): Source => {
-    if (isObject(source)) {
-        let validSource = true;
-
-        switch (true) {
-            case isString(source.apiConnectionId):
-                if (isAPIConnectorSource(source)) {
-                    source = prepareSourceWithAPIConnector(source);
-                } else {
-                    ctx.logError('FETCHER_INCORRECT_API_CONNECTOR_SPECIFICATION', null, {
-                        apiConnectionId: source.apiConnectionId,
-                    });
-                    validSource = false;
-                }
-                break;
-
-            case isString(source.qlConnectionId):
-                if (isQLConnectionSource(source)) {
-                    source = prepareSourceWithQLConnection(source);
-                } else {
-                    ctx.logError('FETCHER_INCORRECT_QL_CONNECTION_SPECIFICATION', null, {
-                        qlConnectionId: source.qlConnectionId,
-                    });
-                    validSource = false;
-                }
-                break;
-
-            case isString(source.datasetId):
-                if (isDatasetSource(source)) {
-                    source = prepareSourceWithDataset(source);
-                } else {
-                    ctx.logError('FETCHER_INCORRECT_DATASET_SPECIFICATION', null, {
-                        datasetId: source.datasetId,
-                    });
-                    validSource = false;
-                }
-                break;
-
-            default:
-                break;
-        }
-
-        if (!validSource) {
-            throw new Error('Wrong source specification');
-        }
+export const prepareSource = (source: Source): Source => {
+    if (!isObject(source)) {
+        return source;
     }
+
+    if (isAPIConnectorSource(source)) {
+        return prepareSourceWithAPIConnector(source);
+    }
+
+    if (isQLConnectionSource(source)) {
+        return prepareSourceWithQLConnection(source);
+    }
+
+    if (isDatasetSource(source)) {
+        return prepareSourceWithDataset(source);
+    }
+
     return source;
 };
