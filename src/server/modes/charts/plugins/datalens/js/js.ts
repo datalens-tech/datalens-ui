@@ -889,7 +889,6 @@ export const buildGraphPrivate = (args: {
     if (layers) {
         const legendValues: Record<string, string> = {};
         const layerChartMeta = getLayerChartMeta({
-            layers,
             isComboChart: shared.visualization.id === 'combined-chart',
         });
         const usedColors: (string | undefined)[] = [];
