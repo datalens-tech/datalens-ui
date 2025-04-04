@@ -1,11 +1,13 @@
 import React from 'react';
 
 import type {
-    ChartKitWidgetTooltip,
+    ChartData,
+    ChartTooltip,
+    PieSeriesData,
     ScatterSeries,
     ScatterSeriesData,
-} from '@gravity-ui/chartkit/build/types/widget-data';
-import type {ChartData, PieSeriesData, TreemapSeriesData} from '@gravity-ui/chartkit/d3';
+    TreemapSeriesData,
+} from '@gravity-ui/chartkit/d3';
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
 import {formatNumber} from 'shared/modules/format-units/index';
@@ -15,7 +17,7 @@ import type {PointCustomData, ScatterSeriesCustomData} from '../../../../../shar
 const b = block('chartkit-tooltip');
 
 type CustomScatterSeries = ScatterSeries<PointCustomData> & {custom: ScatterSeriesCustomData};
-type TooltipRenderer = NonNullable<ChartKitWidgetTooltip['renderer']>;
+type TooltipRenderer = NonNullable<ChartTooltip['renderer']>;
 
 export const scatterTooltipRenderer = (
     widgetData: ChartData,

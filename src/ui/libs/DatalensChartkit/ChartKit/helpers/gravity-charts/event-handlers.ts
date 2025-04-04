@@ -1,8 +1,4 @@
-import type {
-    ChartData,
-    ChartKitWidgetSeries,
-    ChartKitWidgetSeriesData,
-} from '@gravity-ui/chartkit/d3';
+import type {ChartData, ChartSeries, ChartSeriesData} from '@gravity-ui/chartkit/d3';
 import {
     pickActionParamsFromParams,
     transformParamsToActionParams,
@@ -86,8 +82,8 @@ export function handleClick(args: OnClickHandlerArgs) {
                         actionParams,
                         clickScope,
                         chartData: widgetData?.data as ChartData,
-                        point: point as ChartKitWidgetSeriesData,
-                        series: series as ChartKitWidgetSeries,
+                        point: point as ChartSeriesData,
+                        series: series as ChartSeries,
                     });
                 }
             }
@@ -97,8 +93,8 @@ export function handleClick(args: OnClickHandlerArgs) {
 
 function setActionParamsByClick(args: {
     chartData?: ChartData;
-    point?: ChartKitWidgetSeriesData;
-    series?: ChartKitWidgetSeries;
+    point?: ChartSeriesData;
+    series?: ChartSeries;
     clickScope: GraphWidgetEventScope;
     event: {metaKey?: boolean};
     onChange?: ChartKitAdapterProps['onChange'];

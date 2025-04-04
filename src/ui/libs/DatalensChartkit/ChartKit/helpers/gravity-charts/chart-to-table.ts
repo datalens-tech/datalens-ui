@@ -1,4 +1,4 @@
-import type {ChartData, ChartKitWidgetSeries} from '@gravity-ui/chartkit/d3';
+import type {ChartData, ChartSeries} from '@gravity-ui/chartkit/d3';
 import get from 'lodash/get';
 import type {ColumnExportSettings, SeriesExportSettings, TableRow} from 'shared';
 import type {TableData} from 'ui/libs/DatalensChartkit/types';
@@ -7,7 +7,7 @@ type ChartToTableArgs = {
     chartData?: ChartData;
 };
 
-function getSeriesDataForExport(series: ChartKitWidgetSeries) {
+function getSeriesDataForExport(series: ChartSeries) {
     switch (series.type) {
         case 'treemap': {
             // Only the leaves of the tree are involved in the export
@@ -19,7 +19,7 @@ function getSeriesDataForExport(series: ChartKitWidgetSeries) {
     }
 }
 
-function getDefaultExportSettings(series: ChartKitWidgetSeries): SeriesExportSettings {
+function getDefaultExportSettings(series: ChartSeries): SeriesExportSettings {
     const point = series.data?.[0];
     const pointFields = Object.keys(point).map((key) => {
         return {

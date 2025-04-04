@@ -1,6 +1,6 @@
 import {DL} from 'constants/common';
 
-import type {ChartData} from '@gravity-ui/chartkit';
+import type {ChartData} from '@gravity-ui/chartkit/d3';
 import type {AxiosError, AxiosRequestConfig, AxiosResponse, CancelTokenSource} from 'axios';
 import axios from 'axios';
 import type {Series as HighchartSeries} from 'highcharts';

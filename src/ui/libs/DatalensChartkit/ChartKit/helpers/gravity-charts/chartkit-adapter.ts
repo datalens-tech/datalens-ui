@@ -1,4 +1,4 @@
-import type {ChartData, ChartKitWidgetSeriesData} from '@gravity-ui/chartkit/d3';
+import type {ChartData, ChartSeriesData} from '@gravity-ui/chartkit/d3';
 import {CustomShapeRenderer} from '@gravity-ui/chartkit/d3';
 import {pickActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
 import get from 'lodash/get';
@@ -85,8 +85,8 @@ function getStyledSeries(loadedData: ChartKitAdapterProps['loadedData']) {
 
         if (hasSomePointSelected) {
             chartSeries.forEach((s) => {
-                const points = s.data as ChartKitWidgetSeriesData[];
-                const hasAnySelectedPoints = points.reduce((acc, p: ChartKitWidgetSeriesData) => {
+                const points = s.data as ChartSeriesData[];
+                const hasAnySelectedPoints = points.reduce((acc, p: ChartSeriesData) => {
                     const pointSelected = isPointSelected(p, s, actionParams);
                     setPointSelectState({point: p, series: s, selected: pointSelected});
                     return acc || pointSelected;
