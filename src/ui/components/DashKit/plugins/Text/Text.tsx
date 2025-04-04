@@ -152,18 +152,6 @@ const textPlugin = {
             handleTextRender();
         }, [props.data.autoHeight]);
 
-        /**
-         * Watching yfm dom element sizes for update
-         */
-        useWatchDomResizeObserver({
-            domNodeGetter: () =>
-                rootNodeRef.current?.querySelector(
-                    `.${YFM_MARKDOWN_CLASSNAME}.${b()} .${YFM_MARKDOWN_CLASSNAME}`,
-                ) || null,
-            onResize: handleTextRender,
-            enable: props.data.autoHeight as boolean,
-        });
-
         const content = <PluginText {...props} apiHandler={textHandler} ref={forwardedRef} />;
 
         const data = props.data as DashTabItemText['data'];
@@ -202,11 +190,21 @@ const textPlugin = {
             // Widget dimensions
             currentLayout.x,
             currentLayout.y,
-            currentLayout.h,
-            currentLayout.w,
             classMod,
             data.background?.color,
         ]);
+
+        /**
+         * Watching yfm width, height - as result currentLayout.w, currentLayout.h
+         */
+        useWatchDomResizeObserver({
+            domNodeGetter: () =>
+                rootNodeRef.current?.querySelector(
+                    `.${YFM_MARKDOWN_CLASSNAME}.${b()} .${YFM_MARKDOWN_CLASSNAME}`,
+                ) || null,
+            onResize: handleTextRender,
+            enable: props.data.autoHeight as boolean,
+        });
 
         /**
          * Increment key to force yfm editor redraw
