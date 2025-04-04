@@ -39,6 +39,7 @@ type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
 type ColorPaletteEditorProps = StateProps &
     DispatchProps & {
         condensed?: boolean;
+        hasEditRights?: boolean;
     };
 
 class ColorPaletteEditorContainer extends React.Component<ColorPaletteEditorProps> {
@@ -51,7 +52,7 @@ class ColorPaletteEditorContainer extends React.Component<ColorPaletteEditorProp
     }
 
     render() {
-        const {colorPalettes, condensed} = this.props;
+        const {colorPalettes, condensed, hasEditRights = true} = this.props;
 
         return (
             <div className={b()}>
@@ -68,6 +69,7 @@ class ColorPaletteEditorContainer extends React.Component<ColorPaletteEditorProp
                     className={b('color-palettes-card')}
                     colorPalettes={colorPalettes.filter((item) => item.isGradient)}
                     condensed={condensed}
+                    hasEditRights={hasEditRights}
                 />
                 <ColorPalettesCard
                     isFavoritesEnabled={IS_FAVORITES_ENABLED}
@@ -83,9 +85,16 @@ class ColorPaletteEditorContainer extends React.Component<ColorPaletteEditorProp
                     colorPalettes={colorPalettes.filter((item) => !item.isGradient)}
                     condensed={condensed}
                     qa={ServiceSettingsQA.ColorPalettes}
+                    hasEditRights={hasEditRights}
                 />
-                <ColorPaletteEditor isFavoritesEnabled={IS_FAVORITES_ENABLED} />
-                <GradientColorPaletteEditor isFavoritesEnabled={IS_FAVORITES_ENABLED} />
+                <ColorPaletteEditor
+                    isFavoritesEnabled={IS_FAVORITES_ENABLED}
+                    hasEditRights={hasEditRights}
+                />
+                <GradientColorPaletteEditor
+                    isFavoritesEnabled={IS_FAVORITES_ENABLED}
+                    hasEditRights={hasEditRights}
+                />
             </div>
         );
     }

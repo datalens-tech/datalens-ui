@@ -27,6 +27,7 @@ type Props = {
     isFavoritesEnabled: boolean;
     condensed?: boolean;
     qa?: string;
+    hasEditRights?: boolean;
 };
 
 class ColorPalettesCard extends React.Component<Props> {
@@ -39,6 +40,7 @@ class ColorPalettesCard extends React.Component<Props> {
             condensed,
             handleCreateColorPalette,
             qa,
+            hasEditRights,
         } = this.props;
         const hasPalettes = colorPalettes.length > 0;
 
@@ -60,20 +62,22 @@ class ColorPalettesCard extends React.Component<Props> {
                         itemClassName={b('list-item-wrapper')}
                     />
                 )}
-                <Button
-                    className={b('add-palette-button', {condensed})}
-                    onClick={handleCreateColorPalette}
-                    qa={ServiceSettingsQA.AddPaletteButton}
-                >
-                    <Icon data={iconPlus} />
-                    {i18n('component.color-palette-editor', 'label_add-palette')}
-                </Button>
+                {hasEditRights && (
+                    <Button
+                        className={b('add-palette-button', {condensed})}
+                        onClick={handleCreateColorPalette}
+                        qa={ServiceSettingsQA.AddPaletteButton}
+                    >
+                        <Icon data={iconPlus} />
+                        {i18n('component.color-palette-editor', 'label_add-palette')}
+                    </Button>
+                )}
             </div>
         );
     }
 
     private renderPaletteListItem = (colorPalette: ColorPalette) => {
-        const {isFavoritesEnabled} = this.props;
+        const {isFavoritesEnabled, hasEditRights} = this.props;
 
         const items: DropdownMenuItem<unknown>[] = [
             {
@@ -101,16 +105,18 @@ class ColorPalettesCard extends React.Component<Props> {
                     {colorPalette.displayName}
                 </div>
                 <div className={b('list-item-actions')}>
-                    <DropdownMenu
-                        size="s"
-                        defaultSwitcherProps={{
-                            view: 'flat-secondary',
-                            size: 's',
-                            width: 'max',
-                        }}
-                        switcherWrapperClassName={b('more-icon')}
-                        items={items}
-                    />
+                    {hasEditRights && (
+                        <DropdownMenu
+                            size="s"
+                            defaultSwitcherProps={{
+                                view: 'flat-secondary',
+                                size: 's',
+                                width: 'max',
+                            }}
+                            switcherWrapperClassName={b('more-icon')}
+                            items={items}
+                        />
+                    )}
                     {isFavoritesEnabled ? (
                         <Icon
                             className={b('default-icon', {default: colorPalette.isDefault})}
