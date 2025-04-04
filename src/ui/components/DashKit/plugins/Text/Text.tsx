@@ -36,10 +36,10 @@ const useWatchDomResizeObserver = ({
     enable: boolean;
 }) => {
     const currentRectRef = React.useRef({width: 0, height: 0});
-    const domElement = domNodeGetter();
+    const domElement = enable ? domNodeGetter() : null;
 
     React.useEffect(() => {
-        if (!enable || !domElement) {
+        if (!domElement) {
             return;
         }
 
