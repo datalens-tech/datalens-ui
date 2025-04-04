@@ -66,7 +66,7 @@ const useWatchDomResizeObserver = ({
         return () => {
             observer.disconnect();
         };
-    }, [domElement, enable, onResize]);
+    }, [domElement, onResize]);
 };
 
 const textPlugin = {
