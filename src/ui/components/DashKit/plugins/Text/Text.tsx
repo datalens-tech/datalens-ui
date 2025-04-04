@@ -38,27 +38,30 @@ const useWatchDomResizeObserver = ({
     const currentRectRef = React.useRef({width: 0, height: 0});
     const domElement = enable ? domNodeGetter() : null;
 
+    // using ref to avoil effect calls when function link changed
+    const onResizeRef = React.useRef(onResize);
+    onResizeRef.current = onResize;
+
     React.useEffect(() => {
         if (!domElement) {
             return;
         }
 
-        const observer = new ResizeObserver(
-            debounce((entries) => {
-                if (!entries[0]) {
-                    return;
-                }
-                const {width, height} = entries[0].contentRect;
-                const currentRect = currentRectRef.current;
+        const observer = new ResizeObserver((entries) => {
+            if (!entries[0]) {
+                return;
+            }
 
-                if (currentRect.height !== height || currentRect.width !== width) {
-                    currentRect.height = height;
-                    currentRect.width = width;
+            const {width, height} = entries[0].contentRect;
+            const currentRect = currentRectRef.current;
 
-                    onResize();
-                }
-            }, WIDGET_RESIZE_DEBOUNCE_TIMEOUT),
-        );
+            if (currentRect.height !== height || currentRect.width !== width) {
+                currentRect.height = height;
+                currentRect.width = width;
+
+                onResizeRef.current();
+            }
+        });
 
         observer.observe(domElement);
 
@@ -66,7 +69,7 @@ const useWatchDomResizeObserver = ({
         return () => {
             observer.disconnect();
         };
-    }, [domElement, onResize]);
+    }, [domElement, onResizeRef]);
 };
 
 const textPlugin = {
@@ -152,6 +155,20 @@ const textPlugin = {
             handleTextRender();
         }, [props.data.autoHeight]);
 
+        /**
+         * Watching yfm dom element sizes for update
+         */
+        useWatchDomResizeObserver({
+            domNodeGetter: () =>
+                rootNodeRef.current?.querySelector(
+                    `.${YFM_MARKDOWN_CLASSNAME}.${b()} .${YFM_MARKDOWN_CLASSNAME}`,
+                ) || null,
+            onResize: () => {
+                adjustLayout(false);
+            },
+            enable: props.data.autoHeight as boolean,
+        });
+
         const content = <PluginText {...props} apiHandler={textHandler} ref={forwardedRef} />;
 
         const data = props.data as DashTabItemText['data'];
@@ -190,21 +207,11 @@ const textPlugin = {
             // Widget dimensions
             currentLayout.x,
             currentLayout.y,
+            currentLayout.h,
+            currentLayout.w,
             classMod,
             data.background?.color,
         ]);
-
-        /**
-         * Watching yfm width, height - as result currentLayout.w, currentLayout.h
-         */
-        useWatchDomResizeObserver({
-            domNodeGetter: () =>
-                rootNodeRef.current?.querySelector(
-                    `.${YFM_MARKDOWN_CLASSNAME}.${b()} .${YFM_MARKDOWN_CLASSNAME}`,
-                ) || null,
-            onResize: handleTextRender,
-            enable: props.data.autoHeight as boolean,
-        });
 
         /**
          * Increment key to force yfm editor redraw
