@@ -1,8 +1,4 @@
-import type {
-    ChartKitWidgetData,
-    TreemapSeries,
-    TreemapSeriesData,
-} from '@gravity-ui/chartkit/build/types/widget-data';
+import type {ChartData, TreemapSeries, TreemapSeriesData} from '@gravity-ui/chartkit/d3';
 
 import type {
     ColumnExportSettings,
@@ -51,7 +47,7 @@ export function prepareD3Treemap({
     idToTitle,
     idToDataType,
     ChartEditor,
-}: PrepareFunctionArgs): Partial<ChartKitWidgetData> {
+}: PrepareFunctionArgs): Partial<ChartData> {
     const dimensions = placeholders.find((p) => p.id === PlaceholderId.Dimensions)?.items ?? [];
     const dTypes = dimensions.map((item) => item.data_type);
     const useMarkdown = dimensions?.some(isMarkdownField);

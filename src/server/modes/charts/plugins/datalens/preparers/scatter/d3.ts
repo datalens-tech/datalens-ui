@@ -1,8 +1,4 @@
-import type {
-    ChartKitWidgetData,
-    ScatterSeries,
-    ScatterSeriesData,
-} from '@gravity-ui/chartkit/build/types/widget-data';
+import type {ChartData, ScatterSeries, ScatterSeriesData} from '@gravity-ui/chartkit/d3';
 
 import type {SeriesExportSettings} from '../../../../../../../shared';
 import {
@@ -78,7 +74,7 @@ function mapScatterSeries(args: MapScatterSeriesArgs): ScatterSeries<PointCustom
     return series;
 }
 
-export function prepareD3Scatter(args: PrepareFunctionArgs): ChartKitWidgetData<PointCustomData> {
+export function prepareD3Scatter(args: PrepareFunctionArgs): ChartData<PointCustomData> {
     const {shared, idToDataType, placeholders, colors, shapes} = args;
     const {categories: preparedXCategories, graphs, x, y, z, color, size} = prepareScatter(args);
     const xCategories = (preparedXCategories || []).map(String);
@@ -137,7 +133,7 @@ export function prepareD3Scatter(args: PrepareFunctionArgs): ChartKitWidgetData<
         settings: yPlaceholder?.settings,
     });
 
-    let xAxis: ChartKitWidgetData['xAxis'] = {};
+    let xAxis: ChartData['xAxis'] = {};
     if (xAxisType === 'category' && xCategories?.length) {
         xAxis = {
             type: 'category',
@@ -153,7 +149,7 @@ export function prepareD3Scatter(args: PrepareFunctionArgs): ChartKitWidgetData<
         }
     }
 
-    const config: ChartKitWidgetData = {
+    const config: ChartData = {
         xAxis,
         series: {
             data: graphs.map((graph) => ({

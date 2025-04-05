@@ -1,4 +1,4 @@
-import type {PieSeries, PieSeriesData} from '@gravity-ui/chartkit';
+import type {PieSeries, PieSeriesData} from '@gravity-ui/chartkit/d3';
 
 import type {SeriesExportSettings} from '../../../../../../../shared';
 import {WizardVisualizationId, formatNumber, getFormatOptions} from '../../../../../../../shared';

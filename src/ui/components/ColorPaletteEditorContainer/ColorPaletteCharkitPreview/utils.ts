@@ -1,4 +1,4 @@
-import type {BarXSeries, BarXSeriesData, ChartKitWidgetData} from '@gravity-ui/chartkit';
+import type {BarXSeries, BarXSeriesData, ChartData} from '@gravity-ui/chartkit/d3';
 import {interpolateRgbBasis, scaleSequential} from 'd3';
 import cloneDeep from 'lodash/cloneDeep';
 import merge from 'lodash/merge';
@@ -6,7 +6,7 @@ import range from 'lodash/range';
 
 import type {ColorPaletteChartkitPreviewProps} from './types';
 
-const DATA_WITHOUT_GRAPHS: ChartKitWidgetData = {
+const DATA_WITHOUT_GRAPHS: ChartData = {
     series: {data: []},
     chart: {margin: {left: 5}},
     legend: {enabled: false},
@@ -62,7 +62,7 @@ const getPaletteBarXData = (colors: string[]): {categories: string[]; data: BarX
 export const getWidgetData = ({
     colors,
     isGradient,
-}: Omit<ColorPaletteChartkitPreviewProps, 'onPluginLoaded'>): ChartKitWidgetData => {
+}: Omit<ColorPaletteChartkitPreviewProps, 'onPluginLoaded'>): ChartData => {
     const widgetData = cloneDeep(DATA_WITHOUT_GRAPHS);
     const {categories, data} = isGradient
         ? getGradientBarXData(colors)

@@ -1,8 +1,4 @@
-import type {
-    BarXSeries,
-    BarXSeriesData,
-    ChartKitWidgetData,
-} from '@gravity-ui/chartkit/build/types/widget-data';
+import type {BarXSeries, BarXSeriesData, ChartData} from '@gravity-ui/chartkit/d3';
 
 import type {SeriesExportSettings, ServerField, WrappedMarkdown} from '../../../../../../../shared';
 import {
@@ -138,12 +134,12 @@ export function prepareD3BarX(args: PrepareFunctionArgs) {
         };
     });
 
-    let legend: ChartKitWidgetData['legend'];
+    let legend: ChartData['legend'];
     if (seriesData.length <= 1) {
         legend = {enabled: false};
     }
 
-    let xAxis: ChartKitWidgetData['xAxis'] = {};
+    let xAxis: ChartData['xAxis'] = {};
     if (isCategoriesXAxis) {
         xAxis = {
             type: 'category',
