@@ -15,7 +15,7 @@ type ExportRequestBody = {
 };
 
 type ExportSuccessResponseBody = {
-    data: object;
+    data: Record<string, unknown>;
     notifications: TransferNotification[];
 };
 
@@ -26,7 +26,7 @@ type ExportErrorResponseBody = {
 type ExportResponseBody = ExportSuccessResponseBody | ExportErrorResponseBody;
 
 type ImportRequestBody = {
-    data: object;
+    data: Record<string, unknown>;
     workbookId: string;
     idMapping: TransferIdMapping;
     scope: EntryScope;
@@ -83,7 +83,7 @@ export const workbooksTransferController = {
                     );
 
                     res.status(200).send({
-                        data: result.dash.data,
+                        data: result.dash,
                         notifications: result.notifications,
                     });
                     break;
