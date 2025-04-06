@@ -7,7 +7,6 @@ import type {
     TransferNotification,
 } from '../../../types';
 import type {ApiV2RequestBody, ApiV2ResultData} from '../../../types/bi-api/v2';
-import type {EntryFieldData} from '../../types';
 
 import type {WorkbookIdArg} from './common';
 
@@ -219,7 +218,7 @@ export type GetDistinctsApiV2Args = Omit<
     WorkbookIdArg;
 
 export type ExportDatasetResponse = {
-    dataset: EntryFieldData;
+    dataset: Record<string, unknown>;
     notifications: TransferNotification[];
 };
 
@@ -239,7 +238,7 @@ export type ImportDatasetArgs = {
     usMasterToken: string;
     data: {
         workbook_id: string;
-        dataset: EntryFieldData;
+        dataset: Record<string, unknown>;
     };
     id_mapping: TransferIdMapping;
 };

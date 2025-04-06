@@ -166,20 +166,20 @@ export type ExportConnectionArgs = {
 };
 
 export type ExportConnectionResponse = {
-    connection: ConnectionData;
-    notifications: TransferNotification;
+    connection: Record<string, unknown>;
+    notifications: TransferNotification[];
 };
 
 export type ImportConnectionResponse = {
     id: string;
-    notifications: TransferNotification;
+    notifications: TransferNotification[];
 };
 
 export type ImportConnectionArgs = {
     usMasterToken: string;
     data: {
         workbook_id: string;
-        connection: ConnectionData;
+        connection: Record<string, unknown>;
     };
     id_mapping: TransferIdMapping;
 };
