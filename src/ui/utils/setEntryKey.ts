@@ -5,7 +5,6 @@ import {setIsRenameWithoutReload} from 'ui/store/actions/entryContent';
 import {setConnectionKey} from 'ui/units/connections/store';
 import {renameDash} from 'ui/units/dash/store/actions/dashTyped';
 import {renameDataset} from 'ui/units/datasets/store/actions/creators';
-import {setEditorEntryKey} from 'ui/units/editor/store/actions';
 import {setQlEntryKey} from 'ui/units/ql/store/actions/ql';
 import {setWizardWidgetKey} from 'ui/units/wizard/actions/widget';
 
@@ -31,8 +30,6 @@ export const setEntryKey: SetEntryKey = async ({scope, type, key, withRouting = 
                 store.dispatch(setWizardWidgetKey(key));
             } else if (ENTRY_TYPES.ql.includes(type)) {
                 store.dispatch(setQlEntryKey(key));
-            } else if (ENTRY_TYPES.editor.includes(type)) {
-                store.dispatch(setEditorEntryKey(key));
             }
             break;
         }
