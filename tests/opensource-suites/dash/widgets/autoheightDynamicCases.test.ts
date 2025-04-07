@@ -60,15 +60,15 @@ datalensTest.describe('Dashboards - Auto-height of widgets with dynamic content'
             });
 
             const textWrapper = page.locator(slct(TextWidgetQa.Wrapper));
-            const tabTitle = textWrapper.getByText(PARAMS_NAMES.CUT);
+            const cutTitle = textWrapper.getByText(PARAMS_NAMES.CUT).first();
             const textContent = textWrapper.locator('> *');
 
-            await expect(tabTitle).toBeVisible();
+            await expect(cutTitle).toBeVisible();
 
             // check the scroll of the child element of the container
             await dashboardPage.checkNoScroll({locator: textContent});
 
-            await tabTitle.click();
+            await cutTitle.click();
 
             const cutContent = textWrapper.getByText(PARAMS_TEXT.CUT);
             await expect(cutContent).toBeVisible();
@@ -90,7 +90,7 @@ datalensTest.describe('Dashboards - Auto-height of widgets with dynamic content'
             });
 
             const textWrapper = page.locator(slct(TextWidgetQa.Wrapper));
-            const tab2Title = textWrapper.getByText(PARAMS_NAMES.TAB_2);
+            const tab2Title = textWrapper.getByText(PARAMS_NAMES.TAB_2).first();
             const tab1Content = textWrapper.getByText(PARAMS_TEXT.TAB_1);
             const textContent = textWrapper.locator('> *');
 
