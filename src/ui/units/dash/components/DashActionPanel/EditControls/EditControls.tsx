@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Gear} from '@gravity-ui/icons';
+import {ArrowUturnCcwLeft, ArrowUturnCwRight, Gear} from '@gravity-ui/icons';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -33,6 +33,10 @@ type EditControlsProps = {
     loading: boolean;
     showCancel: boolean;
     showSaveDropdown: boolean;
+    canGoBack?: boolean;
+    canGoForward?: boolean;
+    onGoBack: () => void;
+    onGoForward: () => void;
 };
 
 export const EditControls = (props: EditControlsProps) => {
@@ -52,6 +56,10 @@ export const EditControls = (props: EditControlsProps) => {
         loading,
         showCancel = true,
         showSaveDropdown = true,
+        canGoBack,
+        canGoForward,
+        onGoBack,
+        onGoForward,
     } = props;
 
     const isCurrentRevisionActual = revId === publishedId;
@@ -77,7 +85,7 @@ export const EditControls = (props: EditControlsProps) => {
                     view="action"
                     size="m"
                     loading={loading}
-                    disabled={!isDraft}
+                    disabled={!canGoBack}
                     onClick={defaultButtonSaveHandler}
                     qa={defaultButtonSaveQA}
                 >
@@ -97,6 +105,13 @@ export const EditControls = (props: EditControlsProps) => {
 
     return (
         <React.Fragment>
+            {/* TODO QA and language */}
+            <Button disabled={!canGoBack} onClick={onGoBack} view={'flat'}>
+                <Icon data={ArrowUturnCcwLeft} size={16} />
+            </Button>
+            <Button disabled={!canGoForward} onClick={onGoForward} view={'flat'}>
+                <Icon data={ArrowUturnCwRight} size={16} />
+            </Button>
             <Button
                 view="flat"
                 size="m"
