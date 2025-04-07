@@ -6,7 +6,7 @@ import {Checkbox, Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import type {DashTabItemText} from 'shared';
-import {DialogDashWidgetItemQA, DialogDashWidgetQA} from 'shared';
+import {DashCommonQa, DialogDashWidgetItemQA, DialogDashWidgetQA} from 'shared';
 import {CustomPaletteBgColors} from 'shared/constants/widgets';
 import {PaletteBackground} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 
@@ -124,6 +124,7 @@ class DialogTextWidget extends React.PureComponent<DialogTextWidgetProps, Dialog
                                 className={b('checkbox')}
                                 checked={Boolean(autoHeight)}
                                 onChange={this.handleAutoHeightChanged}
+                                qa={DashCommonQa.WidgetEnableAutoHeightCheckbox}
                             />
                         </FormRow>
                     )}
