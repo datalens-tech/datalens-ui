@@ -1,5 +1,3 @@
-import {DL} from 'constants/common';
-
 import React from 'react';
 
 import {Loader, RadioButton} from '@gravity-ui/uikit';
@@ -12,6 +10,7 @@ import {connect} from 'react-redux';
 import {filterUsersIds, makeUserId, normalizeDestination} from 'shared';
 import {showToast} from 'store/actions/toaster';
 import Tabs from 'ui/components/Tabs/Tabs';
+import {DL} from 'ui/constants/common';
 import {getResolveUsersByIdsAction} from 'ui/store/actions/usersByIds';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 

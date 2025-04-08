@@ -5,7 +5,7 @@ import {
     BASE_EQUALITY_OPERATIONS,
     BASE_SET_OPERATIONS,
     BASE_STRING_OPERATIONS,
-} from 'constants/operations';
+} from 'ui/constants/operations';
 
 export const ALL_OPERATIONS = [
     ...BASE_SET_OPERATIONS,

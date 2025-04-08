@@ -1,5 +1,3 @@
-import {AREA_OR_AREA100P} from 'constants/misc';
-
 import React from 'react';
 
 import {HelpPopover} from '@gravity-ui/components';
@@ -30,6 +28,7 @@ import {
     isNumberField,
     isPercentVisualization,
 } from 'shared';
+import {AREA_OR_AREA100P} from 'ui/constants/misc';
 import {withHiddenUnmount} from 'ui/hoc';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 

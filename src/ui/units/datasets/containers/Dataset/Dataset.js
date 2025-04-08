@@ -1,5 +1,3 @@
-import {SPLIT_PANE_RESIZER_CLASSNAME, URL_QUERY} from 'constants/common';
-
 import React from 'react';
 
 import block from 'bem-cn-lite';
@@ -11,6 +9,7 @@ import SplitPane from 'react-split-pane';
 import {compose} from 'recompose';
 import {createStructuredSelector} from 'reselect';
 import {ErrorCode, ErrorContentTypes} from 'shared';
+import {SPLIT_PANE_RESIZER_CLASSNAME, URL_QUERY} from 'ui/constants/common';
 import {HOTKEYS_SCOPES} from 'ui/constants/misc';
 import {withHotkeysContext} from 'ui/hoc/withHotkeysContext';
 import {openDialogErrorWithTabs} from 'ui/store/actions/dialog';

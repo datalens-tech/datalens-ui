@@ -1,5 +1,3 @@
-import {DL} from 'constants/common';
-
 import type {ChartData} from '@gravity-ui/chartkit/d3';
 import type {AxiosError, AxiosRequestConfig, AxiosResponse, CancelTokenSource} from 'axios';
 import axios from 'axios';
@@ -31,6 +29,7 @@ import {
     MAX_SEGMENTS_NUMBER,
     WidgetKind,
 } from 'shared';
+import {DL} from 'ui/constants/common';
 import {isEmbeddedEntry} from 'ui/utils/embedded';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 

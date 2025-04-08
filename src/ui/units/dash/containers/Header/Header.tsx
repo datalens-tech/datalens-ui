@@ -1,5 +1,3 @@
-import {DL} from 'constants/common';
-
 import React from 'react';
 
 import type {History, Location} from 'history';
@@ -8,6 +6,7 @@ import {connect} from 'react-redux';
 import type {DatalensGlobalState} from 'ui';
 import type EntryDialogues from 'ui/components/EntryDialogues/EntryDialogues';
 import {MobileTocToggle} from 'ui/components/MobileTocToggle/MobileTocToggle';
+import {DL} from 'ui/constants/common';
 import type {DashEntry} from 'ui/units/dash/typings/entry';
 import {DashActionPanelMobile} from 'units/dash/components/DashActionPanel/DashActionPanelMobile';
 
