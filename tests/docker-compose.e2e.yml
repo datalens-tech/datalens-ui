@@ -132,3 +132,6 @@ services:
       - datalens-from-image
     networks:
       - default
+
+networks:
+  default:

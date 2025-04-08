@@ -1,0 +1,45 @@
+services:
+  postgres:
+    extends:
+      file: docker-compose.e2e.yml
+      service: postgres
+    ports:
+      - 5432:5432
+    networks:
+      - default
+
+  control-api:
+    extends:
+      file: docker-compose.e2e.yml
+      service: control-api
+    ports:
+      - 8081:8080
+    networks:
+      - default
+
+  data-api:
+    extends:
+      file: docker-compose.e2e.yml
+      service: data-api
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - 8082:8080
+    networks:
+      - default
+
+  us:
+    extends:
+      file: docker-compose.e2e.yml
+      service: us
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - 8083:8080
+    networks:
+      - default
+
+networks:
+  default:
