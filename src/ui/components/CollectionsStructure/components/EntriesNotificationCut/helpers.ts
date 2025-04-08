@@ -1,3 +1,5 @@
+import type {EntryNotification} from 'shared/types/meta-manager';
+
 import type {PreparedNotificationType, TempImportExportDataType} from './types';
 
 // TODO: remove when api will be added
@@ -33,7 +35,7 @@ export const notifications: TempImportExportDataType['notifications'] = [
 ];
 
 export const transformNotifications = (
-    notifications: TempImportExportDataType['notifications'] = [],
+    notifications: EntryNotification[] = [],
 ): PreparedNotificationType[] => {
     const notificationMap = new Map<string, PreparedNotificationType>();
 

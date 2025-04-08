@@ -1,23 +1,10 @@
-import type {ThunkDispatch} from 'redux-thunk';
 import {getSdk} from 'libs/schematic-sdk';
 import logger from 'libs/logger';
-import type {DatalensGlobalState} from 'index';
-import {waitOperation} from '../../utils/waitOperation';
+import {waitOperation} from '../../../utils/waitOperation';
 import {showToast} from 'store/actions/toaster';
 
-import type {
-    EXPORT_WORKBOOK_FAILED,
-    GET_ROOT_COLLECTION_PERMISSIONS_FAILED,
-    IMPORT_WORKBOOK_FAILED,
-} from '../constants/collectionsStructure';
+import type {GET_ROOT_COLLECTION_PERMISSIONS_FAILED} from '../../constants/collectionsStructure';
 import {
-    RESET_IMPORT_PROGRESS,
-    IMPORT_WORKBOOK_SUCCESS,
-    IMPORT_WORKBOOK_LOADING,
-    EXPORT_WORKBOOK_LOADING,
-    DELETE_COLLECTIONS_FAILED,
-    DELETE_COLLECTIONS_LOADING,
-    DELETE_COLLECTIONS_SUCCESS,
     RESET_STATE,
     GET_ROOT_COLLECTION_PERMISSIONS_LOADING,
     GET_ROOT_COLLECTION_PERMISSIONS_SUCCESS,
@@ -59,9 +46,6 @@ import {
     UPDATE_COLLECTION_FAILED,
     UPDATE_COLLECTION_LOADING,
     UPDATE_COLLECTION_SUCCESS,
-    COPY_TEMPLATE_LOADING,
-    COPY_TEMPLATE_SUCCESS,
-    COPY_TEMPLATE_FAILED,
     DELETE_COLLECTION_LOADING,
     DELETE_COLLECTION_SUCCESS,
     DELETE_COLLECTION_FAILED,
@@ -71,18 +55,10 @@ import {
     DELETE_WORKBOOKS_FAILED,
     DELETE_WORKBOOKS_LOADING,
     DELETE_WORKBOOKS_SUCCESS,
-    ADD_DEMO_WORKBOOK_LOADING,
-    ADD_DEMO_WORKBOOK_SUCCESS,
-    ADD_DEMO_WORKBOOK_FAILED,
-    RESET_IMPORT_WORKBOOK,
-    RESET_EXPORT_WORKBOOK,
-    EXPORT_WORKBOOK_SUCCESS,
-    GET_IMPORT_PROGRESS_LOADING,
-    GET_IMPORT_PROGRESS_SUCCESS,
-    GET_EXPORT_PROGRESS_LOADING,
-    RESET_EXPORT_PROGRESS,
-    GET_EXPORT_PROGRESS_SUCCESS,
-} from '../constants/collectionsStructure';
+    DELETE_COLLECTIONS_FAILED,
+    DELETE_COLLECTIONS_LOADING,
+    DELETE_COLLECTIONS_SUCCESS,
+} from '../../constants/collectionsStructure';
 
 import type {
     GetCollectionBreadcrumbsResponse,
@@ -99,17 +75,14 @@ import type {
     CreateWorkbookResponse,
     UpdateWorkbookResponse,
     UpdateCollectionResponse,
-    CopyTemplateResponse,
     DeleteCollectionResponse,
     DeleteWorkbookResponse,
-    CopyWorkbookTemplateResponse,
     DeleteCollectionsResponse,
     DeleteWorkbooksResponse,
-} from '../../../shared/schema';
-import {notifications} from 'ui/components/CollectionsStructure/components/EntriesNotificationCut/helpers';
-import type {TempImportExportDataType} from 'ui/components/CollectionsStructure/components/EntriesNotificationCut/types';
+} from '../../../../shared/schema';
+import type {CollectionsStructureDispatch} from './index';
 
-type ResetStateAction = {
+export type ResetStateAction = {
     type: typeof RESET_STATE;
 };
 
@@ -130,7 +103,7 @@ type GetRootCollectionPermissionsFailedAction = {
     type: typeof GET_ROOT_COLLECTION_PERMISSIONS_FAILED;
     error: Error | null;
 };
-type GetRootCollectionPemissionsAction =
+export type GetRootCollectionPemissionsAction =
     | GetRootCollectionPermissionsLoadingAction
     | GetRootCollectionPermissionsSuccessAction
     | GetRootCollectionPermissionsFailedAction;
@@ -171,7 +144,7 @@ export const getRootCollectionPermissions = () => {
     };
 };
 
-type ResetCollectionBreadcrumbsAction = {
+export type ResetCollectionBreadcrumbsAction = {
     type: typeof RESET_COLLECTION_BREADCRUMBS;
 };
 
@@ -195,7 +168,7 @@ type GetCollectionBreadcrumbsFailedAction = {
     error: Error | null;
 };
 
-type GetCollectionBreadcrumbsAction =
+export type GetCollectionBreadcrumbsAction =
     | GetCollectionBreadcrumbsLoadingAction
     | GetCollectionBreadcrumbsSuccessAction
     | GetCollectionBreadcrumbsFailedAction;
@@ -249,7 +222,7 @@ type GetCollectionFailedAction = {
     type: typeof GET_COLLECTION_FAILED;
     error: Error | null;
 };
-type GetCollectionAction =
+export type GetCollectionAction =
     | GetCollectionLoadingAction
     | GetCollectionSuccessAction
     | GetCollectionFailedAction;
@@ -294,7 +267,7 @@ export const getCollection = ({collectionId}: {collectionId: string}) => {
     };
 };
 
-type ResetStructureItemsAction = {
+export type ResetStructureItemsAction = {
     type: typeof RESET_STRUCTURE_ITEMS;
 };
 
@@ -317,7 +290,7 @@ type GetStructureItemsFailedAction = {
     type: typeof GET_STRUCTURE_ITEMS_FAILED;
     error: Error | null;
 };
-type GetStructureItemsAction =
+export type GetStructureItemsAction =
     | GetStructureItemsLoadingAction
     | GetStructureItemsSuccessAction
     | GetStructureItemsFailedAction;
@@ -390,7 +363,7 @@ type CreateCollectionFailedAction = {
     type: typeof CREATE_COLLECTION_FAILED;
     error: Error | null;
 };
-type CreateCollectionAction =
+export type CreateCollectionAction =
     | CreateCollectionLoadingAction
     | CreateCollectionSuccessAction
     | CreateCollectionFailedAction;
@@ -458,74 +431,6 @@ export const createCollection = ({
     };
 };
 
-type CopyTemplateLoadingAction = {
-    type: typeof COPY_TEMPLATE_LOADING;
-};
-type CopyTemplateSuccessAction = {
-    type: typeof COPY_TEMPLATE_SUCCESS;
-    data: CopyTemplateResponse;
-};
-type CopyTemplateFailedAction = {
-    type: typeof COPY_TEMPLATE_FAILED;
-    error: Error | null;
-};
-type CopyTemplateAction =
-    | CopyTemplateLoadingAction
-    | CopyTemplateSuccessAction
-    | CopyTemplateFailedAction;
-
-export const copyTemplate = ({
-    templateName,
-    productId,
-    workbookId,
-    connectionId,
-}: {
-    templateName: string;
-    workbookId: string;
-    productId?: string;
-    connectionId?: string;
-}) => {
-    return (dispatch: CollectionsStructureDispatch) => {
-        dispatch({
-            type: COPY_TEMPLATE_LOADING,
-        });
-        return getSdk()
-            .sdk.us.copyTemplate({
-                templateName,
-                workbookId,
-                connectionId,
-                meta: {productId},
-            })
-            .then((data) => {
-                dispatch({
-                    type: COPY_TEMPLATE_SUCCESS,
-                    data,
-                });
-                return data;
-            })
-            .catch((error: Error) => {
-                const isCanceled = getSdk().sdk.isCancel(error);
-
-                if (!isCanceled) {
-                    logger.logError('collectionsStructure/copyTemplate failed', error);
-                    dispatch(
-                        showToast({
-                            title: error.message,
-                            error,
-                        }),
-                    );
-                }
-
-                dispatch({
-                    type: COPY_TEMPLATE_FAILED,
-                    error: isCanceled ? null : error,
-                });
-
-                return null;
-            });
-    };
-};
-
 type CreateWorkbookLoadingAction = {
     type: typeof CREATE_WORKBOOK_LOADING;
 };
@@ -537,7 +442,7 @@ type CreateWorkbookFailedAction = {
     type: typeof CREATE_WORKBOOK_FAILED;
     error: Error | null;
 };
-type CreateWorkbookAction =
+export type CreateWorkbookAction =
     | CreateWorkbookLoadingAction
     | CreateWorkbookSuccessAction
     | CreateWorkbookFailedAction;
@@ -616,7 +521,7 @@ type DeleteWorkbooksFailedAction = {
     type: typeof DELETE_WORKBOOKS_FAILED;
     error: Error | null;
 };
-type DeleteWorkbooksAction =
+export type DeleteWorkbooksAction =
     | DeleteWorkbooksLoadingAction
     | DeleteWorkbooksSuccessAction
     | DeleteWorkbooksFailedAction;
@@ -672,7 +577,7 @@ type DeleteCollectionsFailedAction = {
     type: typeof DELETE_COLLECTIONS_FAILED;
     error: Error | null;
 };
-type DeleteCollectionsAction =
+export type DeleteCollectionsAction =
     | DeleteCollectionsLoadingAction
     | DeleteCollectionsSuccessAction
     | DeleteCollectionsFailedAction;
@@ -728,7 +633,7 @@ type MoveCollectionsFailedAction = {
     type: typeof MOVE_COLLECTIONS_FAILED;
     error: Error | null;
 };
-type MoveCollectionsAction =
+export type MoveCollectionsAction =
     | MoveCollectionsLoadingAction
     | MoveCollectionsSuccessAction
     | MoveCollectionsFailedAction;
@@ -791,7 +696,7 @@ type MoveWorkbooksFailedAction = {
     type: typeof MOVE_WORKBOOKS_FAILED;
     error: Error | null;
 };
-type MoveWorkbooksAction =
+export type MoveWorkbooksAction =
     | MoveWorkbooksLoadingAction
     | MoveWorkbooksSuccessAction
     | MoveWorkbooksFailedAction;
@@ -853,7 +758,7 @@ type MoveCollectionFailedAction = {
     type: typeof MOVE_COLLECTION_FAILED;
     error: Error | null;
 };
-type MoveCollectionAction =
+export type MoveCollectionAction =
     | MoveCollectionLoadingAction
     | MoveCollectionSuccessAction
     | MoveCollectionFailedAction;
@@ -918,7 +823,7 @@ type MoveWorkbookFailedAction = {
     type: typeof MOVE_WORKBOOK_FAILED;
     error: Error | null;
 };
-type MoveWorkbookAction =
+export type MoveWorkbookAction =
     | MoveWorkbookLoadingAction
     | MoveWorkbookSuccessAction
     | MoveWorkbookFailedAction;
@@ -983,7 +888,7 @@ type CopyWorkbookFailedAction = {
     type: typeof COPY_WORKBOOK_FAILED;
     error: Error | null;
 };
-type CopyWorkbookAction =
+export type CopyWorkbookAction =
     | CopyWorkbookLoadingAction
     | CopyWorkbookSuccessAction
     | CopyWorkbookFailedAction;
@@ -1063,7 +968,7 @@ type UpdateWorkbookFailedAction = {
     error: Error | null;
 };
 
-type UpdateWorkbookAction =
+export type UpdateWorkbookAction =
     | UpdateWorkbookLoadingAction
     | UpdateWorkbookSuccessAction
     | UpdateWorkbookFailedAction;
@@ -1130,7 +1035,7 @@ type UpdateCollectionFailedAction = {
     error: Error | null;
 };
 
-type UpdateCollectionAction =
+export type UpdateCollectionAction =
     | UpdateCollectionLoadingAction
     | UpdateCollectionSuccessAction
     | UpdateCollectionFailedAction;
@@ -1196,7 +1101,7 @@ type DeleteCollectionFailedAction = {
     type: typeof DELETE_COLLECTION_FAILED;
     error: Error | null;
 };
-type DeleteCollectionAction =
+export type DeleteCollectionAction =
     | DeleteCollectionLoadingAction
     | DeleteCollectionSuccessAction
     | DeleteCollectionFailedAction;
@@ -1251,7 +1156,7 @@ type DeleteWorkbookFailedAction = {
     type: typeof DELETE_WORKBOOK_FAILED;
     error: Error | null;
 };
-type DeleteWorkbookAction =
+export type DeleteWorkbookAction =
     | DeleteWorkbookLoadingAction
     | DeleteWorkbookSuccessAction
     | DeleteWorkbookFailedAction;
@@ -1294,313 +1199,3 @@ export const deleteWorkbook = ({workbookId}: {workbookId: string}) => {
             });
     };
 };
-
-type AddDemoWorkbookLoadingAction = {
-    type: typeof ADD_DEMO_WORKBOOK_LOADING;
-};
-type AddDemoWorkbookSuccessAction = {
-    type: typeof ADD_DEMO_WORKBOOK_SUCCESS;
-    data: CopyWorkbookTemplateResponse;
-};
-type AddDemoWorkbookFailedAction = {
-    type: typeof ADD_DEMO_WORKBOOK_FAILED;
-    error: Error | null;
-};
-type AddDemoWorkbookAction =
-    | AddDemoWorkbookLoadingAction
-    | AddDemoWorkbookSuccessAction
-    | AddDemoWorkbookFailedAction;
-
-export const addDemoWorkbook = ({
-    workbookId,
-    collectionId,
-    title,
-}: {
-    workbookId: string;
-    collectionId: string | null;
-    title: string;
-}) => {
-    return (dispatch: CollectionsStructureDispatch) => {
-        dispatch({
-            type: ADD_DEMO_WORKBOOK_LOADING,
-        });
-        return getSdk()
-            .sdk.us.copyWorkbookTemplate({
-                workbookId,
-                title,
-                collectionId,
-            })
-            .then(async (result) => {
-                const {operation} = result;
-                if (operation && operation.id) {
-                    await waitOperation({
-                        operation,
-                        loader: ({concurrentId}) =>
-                            getSdk().sdk.us.getOperation(
-                                {operationId: operation.id},
-                                {concurrentId},
-                            ),
-                    }).promise;
-                }
-                return result;
-            })
-            .then((data) => {
-                dispatch({
-                    type: ADD_DEMO_WORKBOOK_SUCCESS,
-                    data,
-                });
-                return data;
-            })
-            .catch((error: Error) => {
-                const isCanceled = getSdk().sdk.isCancel(error);
-
-                if (!isCanceled) {
-                    logger.logError('collectionsStructure/addDemoWorkbook failed', error);
-                    dispatch(
-                        showToast({
-                            title: error.message,
-                            error,
-                        }),
-                    );
-                }
-
-                dispatch({
-                    type: ADD_DEMO_WORKBOOK_FAILED,
-                    error: isCanceled ? null : error,
-                });
-
-                return null;
-            });
-    };
-};
-
-type ExportWorkbookLoadingAction = {
-    type: typeof EXPORT_WORKBOOK_LOADING;
-};
-type ExportWorkbookSuccessAction = {
-    type: typeof EXPORT_WORKBOOK_SUCCESS;
-    data: {};
-};
-type ExportWorkbookFailedAction = {
-    type: typeof EXPORT_WORKBOOK_FAILED;
-    error: Error | null;
-};
-type ResetExportWorkbookAction = {
-    type: typeof RESET_EXPORT_WORKBOOK;
-};
-
-type ExportWorkbookAction =
-    | ExportWorkbookLoadingAction
-    | ExportWorkbookSuccessAction
-    | ExportWorkbookFailedAction
-    | ResetExportWorkbookAction;
-
-export const exportWorkbook = (_: {workbookId: string}) => {
-    return (dispatch: CollectionsStructureDispatch) => {
-        dispatch({
-            type: EXPORT_WORKBOOK_LOADING,
-        });
-
-        return new Promise<{exportId: string}>((resolve) => {
-            setTimeout(() => {
-                const exportId = 'test';
-                dispatch({
-                    type: EXPORT_WORKBOOK_SUCCESS,
-                    data: {exportId},
-                });
-                resolve({exportId});
-            }, 500);
-        });
-    };
-};
-export const resetExportWorkbook = () => {
-    return (dispatch: CollectionsStructureDispatch) => {
-        dispatch({
-            type: RESET_EXPORT_WORKBOOK,
-        });
-        dispatch({
-            type: RESET_EXPORT_PROGRESS,
-        });
-    };
-};
-
-type GetExportProgressLoadingAction = {
-    type: typeof GET_EXPORT_PROGRESS_LOADING;
-};
-type GetExportProgressSuccessAction = {
-    type: typeof GET_EXPORT_PROGRESS_SUCCESS;
-    data: TempImportExportDataType;
-};
-type ResetGetExportProgressAction = {
-    type: typeof RESET_EXPORT_PROGRESS;
-};
-type GetExportProgressAction =
-    | GetExportProgressLoadingAction
-    | GetExportProgressSuccessAction
-    | ResetGetExportProgressAction;
-
-export const getExportProgress = (_: {exportId?: string}) => {
-    return (dispatch: CollectionsStructureDispatch, getState: () => DatalensGlobalState) => {
-        const {collectionsStructure} = getState();
-        dispatch({
-            type: GET_EXPORT_PROGRESS_LOADING,
-        });
-        return new Promise<TempImportExportDataType>((resolve) => {
-            // TODO: add api request to get progress
-            const progressData = collectionsStructure.getExportProgress.data?.progress || 0;
-            const nextProgressData = progressData + 30;
-            const exportData: TempImportExportDataType = {
-                status: nextProgressData > 100 ? 'success' : 'pending',
-                progress: nextProgressData,
-                notifications,
-            };
-            dispatch({
-                type: GET_EXPORT_PROGRESS_SUCCESS,
-                data: exportData,
-            });
-            resolve(exportData);
-
-            // if(error) {
-            //     dispatch({
-            //         type: GET_EXPORT_PROGRESS_FAILED,
-            //         error,
-            //     });
-            // }
-        });
-    };
-};
-
-type ImportWorkbookLoadingAction = {
-    type: typeof IMPORT_WORKBOOK_LOADING;
-};
-type ImportWorkbookSuccessAction = {
-    type: typeof IMPORT_WORKBOOK_SUCCESS;
-    data: {};
-};
-type ImportWorkbookFailedAction = {
-    type: typeof IMPORT_WORKBOOK_FAILED;
-    error: Error | null;
-};
-type ResetImportWorkbookAction = {
-    type: typeof RESET_IMPORT_WORKBOOK;
-};
-type ImportWorkbookAction =
-    | ImportWorkbookLoadingAction
-    | ImportWorkbookSuccessAction
-    | ImportWorkbookFailedAction
-    | ResetImportWorkbookAction;
-
-export const importWorkbook = (_: {
-    title: string;
-    description?: string;
-    collectionId: string | null;
-}) => {
-    return (dispatch: CollectionsStructureDispatch) => {
-        dispatch({
-            type: IMPORT_WORKBOOK_LOADING,
-        });
-
-        return new Promise<{importId: string}>((resolve) => {
-            setTimeout(() => {
-                const importId = 'test';
-                dispatch({
-                    type: IMPORT_WORKBOOK_SUCCESS,
-                    data: {importId},
-                });
-                resolve({importId});
-            }, 500);
-        });
-    };
-};
-export const resetImportWorkbook = () => {
-    return (dispatch: CollectionsStructureDispatch) => {
-        dispatch({
-            type: RESET_IMPORT_WORKBOOK,
-        });
-        dispatch({
-            type: RESET_IMPORT_PROGRESS,
-        });
-    };
-};
-
-type GetImportProgressLoadingAction = {
-    type: typeof GET_IMPORT_PROGRESS_LOADING;
-};
-type GetImportProgressSuccessAction = {
-    type: typeof GET_IMPORT_PROGRESS_SUCCESS;
-    data: TempImportExportDataType;
-};
-type ResetGetImportProgressAction = {
-    type: typeof RESET_IMPORT_PROGRESS;
-};
-type GetImportProgressAction =
-    | GetImportProgressLoadingAction
-    | GetImportProgressSuccessAction
-    | ResetGetImportProgressAction;
-
-export const getImportProgress = (_: {importId?: string}) => {
-    return (dispatch: CollectionsStructureDispatch, getState: () => DatalensGlobalState) => {
-        const {collectionsStructure} = getState();
-        dispatch({
-            type: GET_IMPORT_PROGRESS_LOADING,
-        });
-        return new Promise<TempImportExportDataType>((resolve) => {
-            setTimeout(() => {
-                // TODO: add api request to get progress
-                const progressData = collectionsStructure.getImportProgress.data?.progress || 0;
-                const nextProgressData = progressData + 30;
-                const importData: TempImportExportDataType = {
-                    status: nextProgressData > 100 ? 'success' : 'pending',
-                    progress: nextProgressData,
-                    notifications,
-                };
-                dispatch({
-                    type: GET_IMPORT_PROGRESS_SUCCESS,
-                    data: importData,
-                });
-                resolve(importData);
-
-                // if(error) {
-                //     dispatch({
-                //         type: GET_IMPORT_PROGRESS_FAILED,
-                //         error,
-                //     });
-                // }
-            }, 500);
-        });
-    };
-};
-
-export type CollectionsStructureAction =
-    | ResetStateAction
-    | GetRootCollectionPemissionsAction
-    | ResetCollectionBreadcrumbsAction
-    | GetCollectionBreadcrumbsAction
-    | GetCollectionAction
-    | ResetStructureItemsAction
-    | GetStructureItemsAction
-    | CreateCollectionAction
-    | CreateWorkbookAction
-    | CopyTemplateAction
-    | MoveCollectionAction
-    | MoveWorkbookAction
-    | MoveCollectionsAction
-    | MoveWorkbooksAction
-    | DeleteCollectionsAction
-    | DeleteWorkbooksAction
-    | CopyWorkbookAction
-    | UpdateWorkbookAction
-    | UpdateCollectionAction
-    | DeleteCollectionAction
-    | DeleteWorkbookAction
-    | AddDemoWorkbookAction
-    | ExportWorkbookAction
-    | ImportWorkbookAction
-    | GetImportProgressAction
-    | GetExportProgressAction;
-
-export type CollectionsStructureDispatch = ThunkDispatch<
-    DatalensGlobalState,
-    void,
-    CollectionsStructureAction
->;

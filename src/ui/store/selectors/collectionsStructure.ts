@@ -59,6 +59,9 @@ const selectAddDemoWorkbook = (state: DatalensGlobalState) =>
 export const selectExportWorkbook = (state: DatalensGlobalState) =>
     state.collectionsStructure.exportWorkbook;
 
+export const selectGetExportResult = (state: DatalensGlobalState) =>
+    state.collectionsStructure.getExportResult;
+
 export const selectGetExportProgress = (state: DatalensGlobalState) =>
     state.collectionsStructure.getExportProgress;
 
@@ -84,6 +87,18 @@ export const selectImportWorkbookStatus = createSelector(
             initialOperation: importWorkbook,
             progessOperation: getImportProgress,
         }),
+);
+
+// Export result data
+export const selectExportResultData = createSelector(
+    [selectGetExportResult],
+    (getExportResult) => getExportResult.data,
+);
+
+// Export result loading state
+export const selectExportResultIsLoading = createSelector(
+    [selectGetExportResult],
+    (getExportResult) => getExportResult.isLoading,
 );
 
 // Rights at the root of the structure

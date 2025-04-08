@@ -4,6 +4,8 @@ import {CircleExclamation} from '@gravity-ui/icons';
 import type {LabelProps} from '@gravity-ui/uikit';
 import {Disclosure, Flex, Icon, Label, Link, Text, spacing} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import type {EntryScope} from 'shared';
+import type {NotificationLevel} from 'shared/types/meta-manager';
 import {EntryRow} from 'ui/components/EntryRow/EntryRow';
 
 import './EntriesNotificationCut.scss';
@@ -16,8 +18,8 @@ type EntriesNotificationCutProps = {
 } & (
     | {level: 'success'; entries?: never}
     | {
-          level: 'info' | 'warning' | 'critical';
-          entries: {entryId?: string; scope: 'connection' | 'dataset'}[];
+          level: NotificationLevel;
+          entries: {entryId?: string; scope: EntryScope}[];
       }
 );
 
@@ -79,7 +81,9 @@ export const EntriesNotificationCut = ({
                                     scope: entry.scope,
                                     name: entry.entryId,
                                 }}
-                                overrideIconType={entry.scope}
+                                overrideIconType={
+                                    entry.scope === 'connection' ? entry.scope : undefined
+                                }
                             />
                         ))}
                     </div>

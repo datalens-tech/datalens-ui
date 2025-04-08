@@ -139,3 +139,9 @@ export const RESET_IMPORT_PROGRESS = Symbol('collections/RESET_IMPORT_PROGRESS')
 export const GET_EXPORT_PROGRESS_LOADING = Symbol('collections/GET_EXPORT_PROGRESS_LOADING');
 export const GET_EXPORT_PROGRESS_SUCCESS = Symbol('collections/GET_EXPORT_PROGRESS_SUCCESS');
 export const RESET_EXPORT_PROGRESS = Symbol('collections/RESET_EXPORT_PROGRESS');
+
+// Getting export result
+export const GET_EXPORT_RESULT_LOADING = Symbol('collections/GET_EXPORT_RESULT_LOADING');
+export const GET_EXPORT_RESULT_SUCCESS = Symbol('collections/GET_EXPORT_RESULT_SUCCESS');
+export const GET_EXPORT_RESULT_FAILED = Symbol('collections/GET_EXPORT_RESULT_FAILED');
+export const RESET_EXPORT_RESULT = Symbol('collections/RESET_EXPORT_RESULT');

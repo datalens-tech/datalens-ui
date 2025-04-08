@@ -1,4 +1,8 @@
-import type {TempImportExportDataType} from 'ui/components/CollectionsStructure/components/EntriesNotificationCut/types';
+import type {
+    GetWorkbookExportStatusResponse,
+    GetWorkbookImportStatusResponse,
+} from 'shared/schema/meta-manager/types';
+
 import type {ImportExportStatus} from 'ui/components/CollectionsStructure/types';
 
 export const getStatusFromOperation = ({
@@ -7,7 +11,7 @@ export const getStatusFromOperation = ({
 }: {
     progessOperation: {
         error: Error | null;
-        data: TempImportExportDataType | null;
+        data: GetWorkbookExportStatusResponse | GetWorkbookImportStatusResponse | null;
         isLoading: boolean;
     };
     initialOperation: {

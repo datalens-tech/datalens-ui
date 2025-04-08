@@ -45,6 +45,9 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
 
     const {customizeWorkbooksActions, customizeCollectionsActions} =
         registry.collections.functions.getAll();
+    const {getCurrentUserRights} = registry.common.functions.getAll();
+
+    const currentUserRights = getCurrentUserRights();
 
     const history = useHistory();
 
@@ -271,7 +274,7 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
                 });
             }
 
-            if (isEnabledFeature(Feature.EnableExportWorkbookFile) && item.permissions.update) {
+            if (isEnabledFeature(Feature.EnableExportWorkbookFile) && currentUserRights.admin) {
                 actions.push({
                     action: () => {
                         dispatch(

@@ -74,6 +74,8 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
 
     const {useAdditionalWorkbookActions} = registry.workbooks.functions.getAll();
     const {CustomActionPanelWorkbookActions} = registry.workbooks.components.getAll();
+    const {getCurrentUserRights} = registry.common.functions.getAll();
+    const currentUserRights = getCurrentUserRights();
 
     const additionalActions = useAdditionalWorkbookActions(workbook);
 
@@ -125,7 +127,7 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
         });
     }
 
-    if (isEnabledFeature(Feature.EnableExportWorkbookFile) && workbook.permissions.update) {
+    if (isEnabledFeature(Feature.EnableExportWorkbookFile) && currentUserRights.admin) {
         dropdownActions.push({
             action: () => {
                 dispatch(
