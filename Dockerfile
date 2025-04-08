@@ -50,7 +50,9 @@ RUN apt-get update && apt-get -y install nginx supervisor nodejs
 RUN apt-get -y purge curl gnupg gnupg2 && \
     apt-get -y autoremove && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /etc/apt/sources.list.d/nodesource.list && \
+    rm -rf /etc/apt/keyrings/nodesource.gpg
 
 # timezone setting
 ENV TZ="Etc/UTC"
