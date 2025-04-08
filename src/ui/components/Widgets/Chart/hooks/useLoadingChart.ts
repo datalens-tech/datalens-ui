@@ -827,9 +827,17 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                         };
                     }
 
+                    const mapParam = (val: any) => {
+                        if (typeof val === 'string') {
+                            return unescape(val);
+                        }
+
+                        return val;
+                    };
+
                     newParams = Object.entries(changedData.data.params).reduce(
                         (acc, [key, value]) => {
-                            acc[key] = Array.isArray(value) ? value.map(unescape) : unescape(value);
+                            acc[key] = Array.isArray(value) ? value.map(mapParam) : mapParam(value);
                             return acc;
                         },
                         {} as StringParams,

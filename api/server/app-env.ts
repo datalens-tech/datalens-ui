@@ -1,1 +1,7 @@
-export {appEnv, isChartsMode, isDatalensMode, isFullMode} from '../../src/server/app-env';
+export {
+    appEnv,
+    isChartsMode,
+    isDatalensMode,
+    isFullMode,
+    isApiMode,
+} from '../../src/server/app-env';

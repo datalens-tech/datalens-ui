@@ -47,6 +47,8 @@ import type {
     ListDirectoryResponse,
     MoveEntryArgs,
     MoveEntryResponse,
+    PrivateGetEntryArgs,
+    ProxyCreateEntryArgs,
     RenameEntryArgs,
     RenameEntryResponse,
     SwitchPublicationStatusArgs,
@@ -67,6 +69,42 @@ export const entriesActions = {
                 ...headers,
                 ...(includeDlComponentUiData ? {[DL_COMPONENT_HEADER]: DlComponentHeader.UI} : {}),
                 ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
+            },
+        }),
+    }),
+    _proxyGetEntry: createAction<GetEntryResponse, PrivateGetEntryArgs>({
+        method: 'GET',
+        path: ({entryId}) => `${PRIVATE_PATH_PREFIX}/entries/${filterUrlFragment(entryId)}`,
+        params: ({entryId: _entryId, workbookId, usMasterToken, ...query}, headers) => ({
+            query,
+            headers: {
+                ...headers,
+                ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
+                [US_MASTER_TOKEN_HEADER]: usMasterToken,
+            },
+        }),
+    }),
+    _proxyCreateEntry: createAction<GetEntryResponse, ProxyCreateEntryArgs>({
+        method: 'POST',
+        path: () => `${PRIVATE_PATH_PREFIX}/entries/`,
+        params: (
+            {usMasterToken, workbookId, data, name, type, scope, mode, links, key},
+            headers,
+        ) => ({
+            headers: {
+                ...headers,
+                ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
+                [US_MASTER_TOKEN_HEADER]: usMasterToken,
+            },
+            body: {
+                workbookId,
+                data,
+                name,
+                type,
+                scope,
+                mode,
+                links,
+                ...(key ? {key} : {}),
             },
         }),
     }),

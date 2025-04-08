@@ -29,7 +29,7 @@ CREATE TABLE sales (
     sales TEXT NOT NULL 
 );
 
-COPY sales FROM '/docker-entrypoint-initdb.d/superstore-sales.csv' DELIMITER ',' CSV HEADER;
+COPY sales FROM '/init/post-init/superstore-sales.csv' DELIMITER ',' CSV HEADER;
 
 ALTER TABLE ONLY sales ADD CONSTRAINT sales_pkey PRIMARY KEY (id);
 
