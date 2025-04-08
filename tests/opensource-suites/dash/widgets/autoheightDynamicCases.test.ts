@@ -15,6 +15,7 @@ const PARAMS_TEXT = {
     CUT: 'Cut content',
     TAB_1: 'Tab 1 content',
     TAB_2: 'Tab 2 content',
+    MERMAID_NAME: 'Mermaid',
 };
 
 const PARAMS_CODE = {
@@ -38,6 +39,12 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam dictum maximus 
   Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam dictum maximus rutrum. Proin sagittis volutpat rutrum. Mauris vulputate justo vulputate, venenatis orci eu, efficitur nisl. Nulla dignissim rhoncus neque, eget tincidunt nisl maximus ut. Ut aliquam condimentum ex sit amet varius. Maecenas rhoncus pellentesque lacus, at bibendum erat feugiat eget. Cras eu tellus aliquam, tempus enim tempor, lobortis orci.
 
 {% endlist %}`,
+    MERMAID: `\`\`\`mermaid
+sequenceDiagram
+	${PARAMS_TEXT.MERMAID_NAME}->>Bob: Hi Bob
+	Bob->>Alice: Hi Alice
+\`\`\`
+`,
 };
 
 datalensTest.describe('Dashboards - Auto-height of widgets with dynamic content', () => {
@@ -103,6 +110,28 @@ datalensTest.describe('Dashboards - Auto-height of widgets with dynamic content'
 
             const teb2Content = textWrapper.getByText(PARAMS_TEXT.TAB_2);
             await expect(teb2Content).toBeVisible();
+
+            await dashboardPage.checkNoScroll({locator: textContent});
+        },
+    );
+    datalensTest(
+        'When you open mermaid chart, it adjusts without scrolling',
+        async ({page}: {page: Page}) => {
+            const dashboardPage = new DashboardPage({page});
+            await dashboardPage.createDashboard({
+                editDash: async () => {
+                    await dashboardPage.addText({
+                        text: PARAMS_CODE.MERMAID,
+                        options: {autoHeight: true},
+                    });
+                },
+            });
+
+            const textWrapper = page.locator(slct(TextWidgetQa.Wrapper));
+            const mermaidContent = textWrapper.getByText(PARAMS_TEXT.MERMAID_NAME);
+            const textContent = textWrapper.locator('> *');
+
+            await expect(mermaidContent).toBeVisible();
 
             await dashboardPage.checkNoScroll({locator: textContent});
         },
