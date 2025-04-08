@@ -19,6 +19,8 @@ echo "  - links"
 COMPOSE_FILE=$(readlink -f "${SCRIPT_DIR}/../../tests/docker-compose.e2e.yml")
 DUMP_FILE=$(readlink -f "${SCRIPT_DIR}/../../tests/data/us-e2e-data.sql")
 
+echo "BEGIN;" >"${DUMP_FILE}"
+
 docker --log-level error compose -f "${COMPOSE_FILE}" exec \
     --env "POSTGRES_DUMP_CLEAR_META=true" \
     --env "POSTGRES_DUMP_SKIP_CONFLICT=false" \
@@ -29,9 +31,11 @@ docker --log-level error compose -f "${COMPOSE_FILE}" exec \
     sed -E 's|"port": [^,]+,|"port": {{POSTGRES_PORT}},|' |
     sed -E 's|"db_name": "[^"]+"|"db_name": "{{POSTGRES_DB}}"|' |
     sed -E 's|"username": "[^"]+"|"username": "{{POSTGRES_USER}}"|' \
-        >"${DUMP_FILE}"
+        >>"${DUMP_FILE}"
 
 EXIT="$?"
+
+echo "COMMIT;" >>"${DUMP_FILE}"
 
 if [ "${EXIT}" != "0" ]; then
     echo "Dump error, exit..."
