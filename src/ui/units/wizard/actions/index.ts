@@ -1,5 +1,3 @@
-import {GEOLAYER_VISUALIZATION} from 'constants/visualizations';
-
 import {I18n} from 'i18n';
 import cloneDeep from 'lodash/cloneDeep';
 import isEqual from 'lodash/isEqual';
@@ -48,6 +46,7 @@ import {
 } from 'shared';
 import type {DataLensApiError} from 'typings';
 import type {DatalensGlobalState} from 'ui';
+import {GEOLAYER_VISUALIZATION} from 'ui/constants/visualizations';
 import {navigateHelper} from 'ui/libs';
 import {
     getAvailableVisualizations,

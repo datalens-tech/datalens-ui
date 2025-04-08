@@ -1,5 +1,3 @@
-import {DL} from 'constants/common';
-
 import React from 'react';
 
 import {pickExceptActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
@@ -12,6 +10,7 @@ import pick from 'lodash/pick';
 import {useSelector} from 'react-redux';
 import type {StringParams} from 'shared';
 import {DashTabItemControlSourceType} from 'shared';
+import {DL} from 'ui/constants/common';
 import {useChangedValue} from 'ui/hooks/useChangedProp';
 
 import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';

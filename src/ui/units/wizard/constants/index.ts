@@ -8,8 +8,8 @@ import {
     PREFIX,
     PRIMITIVE_DATA_TYPES,
     PRIMITIVE_DATA_TYPES_AND_HIERARCHY,
-} from 'constants/misc';
-import {CHART_SETTINGS, SETTINGS, VISUALIZATION_IDS} from 'constants/visualizations';
+} from 'ui/constants/misc';
+import {CHART_SETTINGS, SETTINGS, VISUALIZATION_IDS} from 'ui/constants/visualizations';
 
 import {AVAILABLE_AGGREGATIONS_BY_COMMON_CAST} from './aggregations';
 import {
