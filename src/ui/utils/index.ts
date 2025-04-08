@@ -7,7 +7,6 @@ export * from './docs';
 export {getWorkbookIdFromPathname} from './workbooks';
 export * from './urlSearch';
 export * from './urlUtils';
-export * from './scrollUtils';
 export * from './icons';
 export * from './colors';
 export * from './collectionFiltersStorage';
