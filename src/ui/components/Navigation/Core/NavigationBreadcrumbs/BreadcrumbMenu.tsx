@@ -1,4 +1,4 @@
-import {DL, Scope} from 'constants/common';
+import {DL} from 'constants/common';
 
 import React from 'react';
 
@@ -10,9 +10,12 @@ import type {EntryDialogues} from 'components/EntryDialogues';
 import {EntryDialogName, EntryDialogResolveStatus} from 'components/EntryDialogues';
 import navigateHelper from 'libs/navigateHelper';
 import {PLACE} from 'shared';
+import {EntryScope} from 'shared/types/common';
 import {registry} from 'ui/registry';
+import {copyTextWithToast} from 'ui/utils/copyText';
 import Utils from 'utils';
 
+import {I18n} from '../../../../../i18n/index';
 import type {
     EntryFields,
     GetEntryResponse,
@@ -21,6 +24,8 @@ import type {
 import type {ChangeLocation, CurrentPageEntry} from '../../types';
 
 import './BreadcrumbMenu.scss';
+
+const contextMenuI18n = I18n.keyset('component.entry-context-menu.view');
 
 const b = block('dl-core-navigation-breadcrumb-menu');
 const placement = ['bottom', 'bottom-start', 'bottom-end'];
@@ -53,7 +58,7 @@ export const BreadcrumbMenu = ({
     const breadCrumbEntry: BreadCrumbEntry = React.useMemo(() => {
         const breadCrumb = breadCrumbs[breadCrumbs.length - 1];
         return {
-            scope: Scope.Folder,
+            scope: EntryScope.Folder,
             entryId: breadCrumb.entryId,
             permissions: breadCrumb.permissions,
             type: '',
@@ -136,6 +141,15 @@ export const BreadcrumbMenu = ({
                 if (response.status === EntryDialogResolveStatus.Success) {
                     refresh?.();
                 }
+                break;
+            }
+            case ENTRY_CONTEXT_MENU_ACTION.COPY_LINK: {
+                copyTextWithToast({
+                    copyText: navigateHelper.redirectUrlSwitcher(entry),
+                    successText: contextMenuI18n('toast_copy-link-success'),
+                    errorText: contextMenuI18n('toast_copy-error'),
+                    toastName: 'toast-menu-copy-link',
+                });
                 break;
             }
             case ENTRY_CONTEXT_MENU_ACTION.DELETE: {
