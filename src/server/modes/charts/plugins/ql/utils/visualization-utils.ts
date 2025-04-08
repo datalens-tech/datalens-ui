@@ -51,6 +51,7 @@ export const migrateOrAutofillVisualization = ({
             WizardVisualizationId.Bar,
             WizardVisualizationId.Bar100p,
             WizardVisualizationId.BarXD3,
+            WizardVisualizationId.BarYD3,
         ]).has(visualizationId as WizardVisualizationId)
     ) {
         if (order) {
