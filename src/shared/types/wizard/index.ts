@@ -15,9 +15,11 @@ import type {
     ColorMode,
     GradientNullMode,
     GradientType,
+    MapCenterModes,
     NavigatorLinesMode,
     NavigatorPeriod,
     WizardVisualizationId,
+    ZoomModes,
 } from '../../constants';
 import type {CommonUpdate, CommonUpdateField} from '../common-update';
 import type {IconId} from '../configs';
@@ -123,6 +125,10 @@ export interface CommonSharedExtraSettings {
     pinnedColumns?: number;
     stacking?: 'on' | 'off';
     size?: WidgetSizeType;
+    zoomMode?: ZoomModes;
+    zoomValue?: number | null;
+    mapCenterMode?: MapCenterModes;
+    mapCenterValue?: string | null;
 }
 
 interface CommonShared {

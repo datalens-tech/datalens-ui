@@ -8,3 +8,29 @@ export function isVisualizationWithLayers(
         visualization?.id as WizardVisualizationId,
     );
 }
+
+export function mapStringToCoordinates(value: string) {
+    return value
+        .split(',')
+        .map((val) => {
+            const res = Number(val);
+            if (Number.isNaN(res)) {
+                return null;
+            }
+
+            return res;
+        })
+        .filter(Boolean) as number[];
+}
+
+export function validateCoordinatesValue(value: string) {
+    let coordinates = [];
+
+    try {
+        coordinates = mapStringToCoordinates(value);
+    } catch (e) {
+        return false;
+    }
+
+    return coordinates.length === 2;
+}
