@@ -6,9 +6,12 @@ import {SmartLoader} from 'components/SmartLoader/SmartLoader';
 import {ViewError} from 'components/ViewError/ViewError';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {useLocation, useParams} from 'react-router-dom';
+import {Redirect, useLocation, useParams} from 'react-router-dom';
+import {Feature} from 'shared';
 import {DL} from 'ui/constants/common';
 import type {AppDispatch} from 'ui/store';
+import {COLLECTIONS_PATH} from 'ui/units/collections-navigation/constants';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import Utils from 'ui/utils/utils';
 
 import {registry} from '../../../../registry';
@@ -48,6 +51,7 @@ export const WorkbookPage = () => {
     const breadcrumbsError = useSelector(selectCollectionBreadcrumbsError);
 
     const [showImportAlert, setShowImportAlert] = React.useState(
+        // TODO (Export workbook): enable when logic of alert is ready
         // isEnabledFeature(Feature.EnableExportWorkbookFile) &&
         //     workbook?.meta &&
         //     'importId' in workbook.meta,
@@ -100,6 +104,24 @@ export const WorkbookPage = () => {
     useLayout({workbookId, refreshWorkbookInfo});
 
     if (
+        isEnabledFeature(Feature.EnableExportWorkbookFile) &&
+        workbook?.status === 'importing' &&
+        workbook?.meta.importId
+    ) {
+        const redirectPath = collectionId
+            ? `${COLLECTIONS_PATH}/${collectionId}`
+            : COLLECTIONS_PATH;
+        return (
+            <Redirect
+                to={{
+                    pathname: `${redirectPath}`,
+                    state: {importId: workbook.meta.importId},
+                }}
+            />
+        );
+    }
+
+    if (
         pageError ||
         (breadcrumbsError && Utils.parseErrorResponse(breadcrumbsError).status !== 403)
     ) {
@@ -120,7 +142,7 @@ export const WorkbookPage = () => {
                 <Button view="normal-contrast" onClick={handleCloseImportAlert}>
                     {i18n('button_import-alert-close')}
                 </Button>
-                {/* TODO: Add after publication of documentation */}
+                {/* TODO (Export workbook): Add after publication of documentation */}
                 {/* <Button view="flat-secondary" href={DL.ENDPOINTS.datalensDocs}>
                     {i18n('button_import-alert-documentation')}
                 </Button> */}
