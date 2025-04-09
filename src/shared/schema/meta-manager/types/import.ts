@@ -23,11 +23,3 @@ export type GetWorkbookImportStatusResponse = {
     progress: number;
     notifications: EntryNotification[] | null;
 };
-
-export type CancelWorkbookImportArgs = {
-    importId: string;
-};
-
-export type CancelWorkbookImportResponse = {
-    importId: string;
-};

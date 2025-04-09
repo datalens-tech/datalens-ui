@@ -1,7 +1,5 @@
 import {createAction} from '../../gateway-utils';
 import type {
-    CancelWorkbookImportArgs,
-    CancelWorkbookImportResponse,
     GetWorkbookImportStatusArgs,
     GetWorkbookImportStatusResponse,
     StartWorkbookImportArgs,
@@ -26,12 +24,6 @@ export const importActions = {
     >({
         method: 'GET',
         path: ({importId}) => `${PATH_PREFIX}/${importId}`,
-        params: (_, headers) => ({headers}),
-    }),
-
-    cancelWorkbookImport: createAction<CancelWorkbookImportResponse, CancelWorkbookImportArgs>({
-        method: 'POST',
-        path: ({importId}) => `${PATH_PREFIX}/${importId}/cancel`,
         params: (_, headers) => ({headers}),
     }),
 };

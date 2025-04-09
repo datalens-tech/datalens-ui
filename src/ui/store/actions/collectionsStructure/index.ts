@@ -28,7 +28,7 @@ import type {
     GetExportProgressAction,
     GetExportResultAction,
 } from './export';
-import type {AddDemoWorkbookAction, CopyTemplateAction} from './templates';
+import type {CopyTemplateAction} from './templates';
 import type {ThunkDispatch} from 'redux-thunk';
 
 export type CollectionsStructureAction =
@@ -53,7 +53,6 @@ export type CollectionsStructureAction =
     | UpdateCollectionAction
     | DeleteCollectionAction
     | DeleteWorkbookAction
-    | AddDemoWorkbookAction
     | ExportWorkbookAction
     | ImportWorkbookAction
     | GetImportProgressAction

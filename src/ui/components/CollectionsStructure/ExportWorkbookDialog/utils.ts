@@ -1,5 +1,5 @@
 export const downloadObjectAsJSON = (obj: Record<string, unknown>, name: string) => {
-    const jsonString = JSON.stringify(obj, null, 2);
+    const jsonString = JSON.stringify(obj);
     const blob = new Blob([jsonString], {type: 'application/json'});
 
     const url = URL.createObjectURL(blob);

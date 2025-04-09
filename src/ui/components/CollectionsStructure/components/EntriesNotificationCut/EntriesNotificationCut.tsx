@@ -81,6 +81,7 @@ export const EntriesNotificationCut = ({
                                     scope: entry.scope,
                                     name: entry.entryId,
                                 }}
+                                // for correct display of the connection icon without a specific type
                                 overrideIconType={
                                     entry.scope === 'connection' ? entry.scope : undefined
                                 }
