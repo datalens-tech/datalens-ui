@@ -1,8 +1,10 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
 
 import type {DashEntry} from '../../shared';
-import {EntryScope, ErrorCode} from '../../shared';
+import {EntryScope, EntryUpdateMode, ErrorCode} from '../../shared';
+import type {EntryFieldData} from '../../shared/schema';
 import {Utils} from '../components';
+import {prepareExportData, prepareImportData} from '../components/charts-engine/controllers/charts';
 import {Dash} from '../components/sdk';
 import {registry} from '../registry';
 import type {DatalensGatewaySchemas} from '../types/gateway';
@@ -49,6 +51,29 @@ export const workbooksExportController = {
                     );
 
                     res.status(200).send(result);
+                    break;
+                }
+                case EntryScope.Widget: {
+                    const {key, type} = entry;
+                    const nameParts = key.split('/');
+                    const name = nameParts[nameParts.length - 1];
+
+                    const data = await prepareExportData(entry, id_mapping);
+                    if (data === null) {
+                        res.status(400).send({
+                            code: ErrorCode.TransferInvalidEntryData,
+                        });
+                    }
+
+                    res.status(200).send({
+                        [EntryScope.Widget]: {
+                            data,
+                            name,
+                            template: data.type,
+                            type,
+                        },
+                        notifications: [],
+                    });
                     break;
                 }
                 case EntryScope.Connection: {
@@ -114,7 +139,7 @@ export const workbooksExportController = {
 
             const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
 
-            if (data.connection) {
+            if (EntryScope.Connection in data) {
                 const {responseData} = await gatewayApi.bi._proxyImportConnection({
                     headers,
                     args: {
@@ -127,7 +152,7 @@ export const workbooksExportController = {
                 });
 
                 res.status(200).send(responseData);
-            } else if (data.dataset) {
+            } else if (EntryScope.Dataset in data) {
                 const {responseData} = await gatewayApi.bi._proxyImportDataset({
                     headers,
                     args: {
@@ -140,7 +165,7 @@ export const workbooksExportController = {
                 });
 
                 res.status(200).send(responseData);
-            } else if (data.dash) {
+            } else if (EntryScope.Dash in data) {
                 const {dash, notifications} = await Dash.prepareImport(data);
 
                 const {responseData} = await gatewayApi.us._proxyCreateEntry({
@@ -157,6 +182,34 @@ export const workbooksExportController = {
                 res.status(200).send({
                     id: responseData.entryId,
                     notifications,
+                });
+            } else if (EntryScope.Widget in data) {
+                const chartsData = await prepareImportData(data.widget, req, id_mapping);
+
+                const {responseData} = await gatewayApi.us._proxyCreateEntry({
+                    headers: {
+                        ...headers,
+                        metadata: ctx.getMetadata(),
+                    },
+                    args: {
+                        workbookId: data.workbook_id,
+                        key: data.widget.key,
+                        name: data.widget.name,
+                        data: chartsData.chart as EntryFieldData,
+                        type: chartsData.type || '',
+                        scope: EntryScope.Widget,
+                        links: chartsData.links || {},
+                        mode: EntryUpdateMode.Publish,
+                        includePermissionsInfo: true,
+                        usMasterToken,
+                    },
+                    ctx,
+                    requestId: req.id,
+                });
+
+                res.status(200).send({
+                    id: responseData.entryId,
+                    notifications: [],
                 });
             } else {
                 res.status(400).send({

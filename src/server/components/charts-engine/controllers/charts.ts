@@ -1,7 +1,11 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
+import forIn from 'lodash/forIn';
+import isArray from 'lodash/isArray';
 
 import type {ChartsEngine} from '..';
-import {EntryUpdateMode} from '../../../../shared';
+import {EntryUpdateMode, ErrorCode} from '../../../../shared';
+import type {EntryFields} from '../../../../shared/schema';
+import type {TransferIdMapping} from '../../../../shared/types';
 import {DeveloperModeCheckStatus} from '../../../../shared/types';
 import Utils from '../../../utils';
 import type {ChartTemplates} from '../components/chart-generator';
@@ -47,18 +51,13 @@ function responseWithError({
     res.status(status).send(readableError);
 }
 
-function prepareChartData(
-    {
-        data,
-        template,
-        type,
-    }: {
-        data: {type?: string; convert?: boolean};
-        template?: keyof ChartTemplates;
-        type: string;
-    },
-    req: Request,
-) {
+type ChartDataOptions = {
+    data: {type?: string; convert?: boolean};
+    template?: keyof ChartTemplates;
+    type: string;
+};
+
+export function prepareChartData({data, template, type}: ChartDataOptions, req: Request) {
     const {ctx} = req;
 
     let chart, links;
@@ -100,11 +99,126 @@ const getHeaders = (req: Request) => {
     return headers;
 };
 
+const prepareCreateParams = async (
+    chartData: ReturnType<typeof prepareChartData>,
+    req: Request,
+) => {
+    const {chart, type, links, template} = chartData;
+    const {key, name, workbookId} = req.body;
+
+    // If we save editor script
+    if (typeof template === 'undefined') {
+        const {checkRequestForDeveloperModeAccess} = req.ctx.get('gateway');
+
+        const checkResult = await checkRequestForDeveloperModeAccess({ctx: req.ctx});
+
+        if (checkResult === DeveloperModeCheckStatus.Forbidden) {
+            return;
+        }
+    }
+
+    const createParams: ProviderCreateParams = {
+        key,
+        name,
+        workbookId,
+        data: chart,
+        type,
+        scope: 'widget',
+        headers: getHeaders(req),
+        includePermissionsInfo: true,
+    };
+
+    if (links) {
+        createParams.links = links;
+    }
+
+    return createParams;
+};
+
+const traverseWizardFields = (obj: any, id_mapping: TransferIdMapping, parent?: any) => {
+    forIn(obj, (val, key) => {
+        if (typeof val === 'object') {
+            // datasetIds: string[]
+            if (isArray(val) && key === 'datasetsIds') {
+                obj[key] = val.map((id) => id_mapping[id]);
+            } else {
+                traverseWizardFields(val, id_mapping, obj);
+            }
+            // Array<{datasetId: string}>
+        } else if (
+            isArray(parent) &&
+            key === 'datasetId' &&
+            typeof val === 'string' &&
+            id_mapping[val]
+        ) {
+            obj[key] = id_mapping[val];
+            // dataset.id
+        } else if (key === 'dataset' && typeof val.id === 'string' && id_mapping[val.id]) {
+            val.id = id_mapping[val];
+        }
+    });
+};
+
+const traverseQlFields = (obj: any, id_mapping: TransferIdMapping) => {
+    const connection = (obj as any).connection;
+
+    const entryId = connection?.entryId;
+    if (connection?.entryId) {
+        connection.entryId = id_mapping[entryId];
+    }
+};
+
+export const prepareImportData = async (
+    chartOptions: ChartDataOptions,
+    req: Request,
+    id_mapping: TransferIdMapping,
+) => {
+    const {type} = chartOptions.data;
+
+    switch (type) {
+        case 'wizard':
+            traverseWizardFields(chartOptions.data, id_mapping);
+            break;
+        case 'ql':
+            traverseQlFields(chartOptions.data, id_mapping);
+            break;
+        default:
+            return {
+                error: new Error(ErrorCode.TransferInvalidEntryData),
+                chart: null,
+                type,
+                links: {},
+            };
+    }
+
+    return prepareChartData(chartOptions, req);
+};
+
+export const prepareExportData = async (entry: EntryFields, id_mapping: TransferIdMapping) => {
+    let data;
+    try {
+        data = JSON.parse((entry.data?.shared || '') as string);
+        switch (data.type) {
+            case 'wizard':
+                traverseWizardFields(data, id_mapping);
+                break;
+            case 'ql':
+                traverseQlFields(data, id_mapping);
+                break;
+            default:
+                return null;
+        }
+    } catch (err) {
+        return null;
+    }
+
+    return data;
+};
+
 export const chartsController = (_chartsEngine: ChartsEngine) => {
     return {
         create: async (req: Request, res: Response) => {
             const {ctx} = req;
-            const {key, name, workbookId} = req.body;
 
             const chartData = prepareChartData(req.body, req);
 
@@ -114,40 +228,19 @@ export const chartsController = (_chartsEngine: ChartsEngine) => {
                 });
                 return;
             }
-            const {chart, type, links, template} = chartData;
 
-            // If we save editor script
-            if (typeof template === 'undefined') {
-                const {checkRequestForDeveloperModeAccess} = req.ctx.get('gateway');
+            const createParams = await prepareCreateParams(chartData, req);
 
-                const checkResult = await checkRequestForDeveloperModeAccess({ctx: req.ctx});
-
-                if (checkResult === DeveloperModeCheckStatus.Forbidden) {
-                    res.status(403).send({
-                        error: {
-                            code: 403,
-                            details: {
-                                message: 'Access to Editor developer mode was denied',
-                            },
+            if (!createParams) {
+                res.status(403).send({
+                    error: {
+                        code: 403,
+                        details: {
+                            message: 'Access to Editor developer mode was denied',
                         },
-                    });
-                    return;
-                }
-            }
-
-            const createParams: ProviderCreateParams = {
-                key,
-                name,
-                workbookId,
-                data: chart,
-                type,
-                scope: 'widget',
-                headers: getHeaders(req),
-                includePermissionsInfo: true,
-            };
-
-            if (links) {
-                createParams.links = links;
+                    },
+                });
+                return;
             }
 
             USProvider.create(ctx, createParams)
