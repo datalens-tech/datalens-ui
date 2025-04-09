@@ -2,8 +2,9 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
-import {useHistory, useParams} from 'react-router-dom';
+import {useHistory, useLocation, useParams} from 'react-router-dom';
 import {Feature} from 'shared';
+import type {CreateWorkbookDialogProps} from 'ui/components/CollectionsStructure/CreateWorkbookDialog/CreateWorkbookDialog';
 import {DL} from 'ui/constants/common';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
@@ -36,13 +37,54 @@ import './CollectionPage.scss';
 
 const b = block('dl-collection-page');
 
+type LocationImportState = {
+    importId?: string;
+};
+
 export const CollectionPage = () => {
     const {collectionId} = useParams<{collectionId?: string}>();
     const curCollectionId = collectionId ?? null;
 
+    const dispatch: AppDispatch = useDispatch();
+
+    const {state: locationState} = useLocation<LocationImportState>();
     const history = useHistory();
 
-    const dispatch: AppDispatch = useDispatch();
+    const handleOpenCreateDialog = React.useCallback(
+        (defaultView?: CreateWorkbookDialogProps['defaultView'], importId?: string) => {
+            dispatch(
+                openDialog({
+                    id: DIALOG_CREATE_WORKBOOK,
+                    props: {
+                        open: true,
+                        collectionId: curCollectionId,
+                        onApply: (result) => {
+                            if (result) {
+                                history.push(`${WORKBOOKS_PATH}/${result.workbookId}`);
+                            }
+                        },
+                        onClose: () => {
+                            dispatch(closeDialog());
+                        },
+                        importId,
+                        defaultView,
+                    },
+                }),
+            );
+        },
+        [curCollectionId, dispatch, history],
+    );
+
+    React.useEffect(() => {
+        const importId = locationState && locationState?.importId;
+        if (importId) {
+            // after the replaceState, the page is re-rendered,
+            // so it is important that the dialog is opened after that.
+            // clearing the state is necessary so that it does not persist when the page is reloaded.
+            history.replace({state: {...locationState, importId: undefined}});
+            handleOpenCreateDialog('import', importId);
+        }
+    }, [handleOpenCreateDialog, history, locationState, locationState?.importId]);
 
     const collection = useSelector(selectCollection);
     const collectionError = useSelector(selectCollectionError);
@@ -92,26 +134,6 @@ export const CollectionPage = () => {
         [dispatch, refreshPage],
     );
 
-    const handleCreateWorkbook = React.useCallback(() => {
-        dispatch(
-            openDialog({
-                id: DIALOG_CREATE_WORKBOOK,
-                props: {
-                    open: true,
-                    collectionId: curCollectionId,
-                    onApply: (result) => {
-                        if (result) {
-                            history.push(`${WORKBOOKS_PATH}/${result.workbookId}`);
-                        }
-                    },
-                    onClose: () => {
-                        dispatch(closeDialog());
-                    },
-                },
-            }),
-        );
-    }, [curCollectionId, dispatch, history]);
-
     const handleShowNoPermissionsDialog = React.useCallback(() => {
         dispatch(
             openDialog({
@@ -126,7 +148,7 @@ export const CollectionPage = () => {
         );
     }, [dispatch]);
 
-    const handleCreateWorkbookWithConnection = React.useCallback(() => {
+    const handleOpenCreateDialogWithConnection = React.useCallback(() => {
         dispatch(
             openDialog({
                 id: DIALOG_CREATE_WORKBOOK,
@@ -260,7 +282,7 @@ export const CollectionPage = () => {
         fetchCollectionInfo,
         fetchStructureItems,
         handleCreateWorkbook: hasPermissionToCreate
-            ? handleCreateWorkbook
+            ? handleOpenCreateDialog
             : handleShowNoPermissionsDialog,
         handeCloseMoveDialog,
         updateAllCheckboxes,
@@ -315,7 +337,7 @@ export const CollectionPage = () => {
                     onCloseMoveDialog={handeCloseMoveDialog}
                     onCreateWorkbookWithConnectionClick={
                         hasPermissionToCreate
-                            ? handleCreateWorkbookWithConnection
+                            ? handleOpenCreateDialogWithConnection
                             : handleShowNoPermissionsDialog
                     }
                     onClearFiltersClick={() => {
