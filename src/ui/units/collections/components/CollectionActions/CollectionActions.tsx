@@ -11,12 +11,10 @@ import {DropdownAction} from 'ui/components/DropdownAction/DropdownAction';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {Feature} from '../../../../../shared';
-import {DL} from '../../../../constants';
 import {registry} from '../../../../registry';
 import {selectCollection} from '../../store/selectors';
 
 import collectionIcon from '../../../../assets/icons/collections/collection.svg';
-import workbookDemoIcon from '../../../../assets/icons/collections/workbook-demo.svg';
 import workbookIcon from '../../../../assets/icons/collections/workbook.svg';
 
 import './CollectionActions.scss';
@@ -28,8 +26,6 @@ const b = block('dl-collection-actions');
 export type Props = {
     className?: string;
     onCreateCollectionClick: () => void;
-    onAddDemoWorkbookClick: () => void;
-    onAddLearningMaterialsWorkbookClick: () => void;
     onCreateWorkbookClick: () => void;
     onEditAccessClick: () => void;
     onMoveClick: () => void;
@@ -41,8 +37,6 @@ export const CollectionActions = React.memo<Props>(
     ({
         className,
         onCreateCollectionClick,
-        onAddDemoWorkbookClick,
-        onAddLearningMaterialsWorkbookClick,
         onCreateWorkbookClick,
         onEditAccessClick,
         onMoveClick,
@@ -55,10 +49,6 @@ export const CollectionActions = React.memo<Props>(
         const showCreateCollection = collection ? collection.permissions?.createCollection : true;
 
         const showCreateWorkbook = collection ? collection.permissions?.createWorkbook : true;
-
-        const showAddDemoWorkbook = showCreateWorkbook && DL.TEMPLATE_WORKBOOK_ID;
-        const showAddLearningMaterialsWorkbook =
-            showCreateWorkbook && DL.LEARNING_MATERIALS_WORKBOOK_ID;
 
         const createActionItems: DropdownMenuItemMixed<unknown>[] = [];
 
@@ -100,35 +90,6 @@ export const CollectionActions = React.memo<Props>(
                 }),
                 action: onCreateCollectionClick,
             });
-        }
-
-        if (showAddDemoWorkbook || showAddLearningMaterialsWorkbook) {
-            const subItems: DropdownMenuItem<unknown>[] = [];
-
-            if (showAddDemoWorkbook) {
-                subItems.push({
-                    text: getItemText({
-                        icon: workbookDemoIcon,
-                        text: i18n('action_add-demo-workbook'),
-                        hint: i18n('action_add-demo-workbook-hint'),
-                    }),
-                    action: onAddDemoWorkbookClick,
-                });
-            }
-
-            if (showAddLearningMaterialsWorkbook) {
-                subItems.push({
-                    text: getItemText({
-                        icon: workbookDemoIcon,
-                        text: i18n('action_add-learning-materials-workbook'),
-                    }),
-                    action: onAddLearningMaterialsWorkbookClick,
-                });
-            }
-
-            if (subItems.length > 0) {
-                createActionItems.push(subItems);
-            }
         }
 
         const collectionsAccessEnabled = isEnabledFeature(Feature.CollectionsAccessEnabled);
