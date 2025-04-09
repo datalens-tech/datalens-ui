@@ -69,9 +69,11 @@ import {
     RESET_IMPORT_WORKBOOK,
     GET_IMPORT_PROGRESS_LOADING,
     GET_IMPORT_PROGRESS_SUCCESS,
+    GET_IMPORT_PROGRESS_FAILED,
     RESET_IMPORT_PROGRESS,
     GET_EXPORT_PROGRESS_LOADING,
     GET_EXPORT_PROGRESS_SUCCESS,
+    GET_EXPORT_PROGRESS_FAILED,
     RESET_EXPORT_PROGRESS,
     GET_EXPORT_RESULT_LOADING,
     GET_EXPORT_RESULT_SUCCESS,
@@ -1107,6 +1109,16 @@ export const collectionsStructure = (
                 },
             };
         }
+        case GET_IMPORT_PROGRESS_FAILED: {
+            return {
+                ...state,
+                getImportProgress: {
+                    ...state.getImportProgress,
+                    isLoading: false,
+                    error: action.error,
+                },
+            };
+        }
         case RESET_IMPORT_PROGRESS: {
             return {
                 ...state,
@@ -1136,6 +1148,16 @@ export const collectionsStructure = (
                     isLoading: false,
                     data: action.data,
                     error: null,
+                },
+            };
+        }
+        case GET_EXPORT_PROGRESS_FAILED: {
+            return {
+                ...state,
+                getExportProgress: {
+                    ...state.getExportProgress,
+                    isLoading: false,
+                    error: action.error,
                 },
             };
         }

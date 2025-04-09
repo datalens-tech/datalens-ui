@@ -9,15 +9,19 @@ import {ProgressBar} from 'ui/components/ProgressBar/ProgressBar';
 import {ViewError} from 'ui/components/ViewError/ViewError';
 import type {AppDispatch} from 'ui/store';
 import {
+    cancelExportProcess,
     exportWorkbook,
     getExportProgress,
+    getExportResult,
     resetExportWorkbook,
 } from 'ui/store/actions/collectionsStructure';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {
-    selectExportWorkbook,
+    selectExportData,
+    selectExportError,
     selectExportWorkbookStatus,
-    selectGetExportProgress,
+    selectGetExportProgressData,
+    selectGetExportResultLoading,
 } from 'ui/store/selectors/collectionsStructure';
 
 import DialogManager from '../../DialogManager/DialogManager';
@@ -26,6 +30,7 @@ import {transformNotifications} from '../components/EntriesNotificationCut/helpe
 import type {ImportExportStatus} from '../types';
 
 import {ExportInfo} from './ExportInfo/ExportInfo';
+import {downloadObjectAsJSON} from './utils';
 
 import './ExportWorkbookDialog.scss';
 
@@ -38,6 +43,7 @@ const GET_EXPORT_PROGRESS_INTERVAL = 1000;
 export type Props = {
     open: boolean;
     workbookId: string;
+    workbookTitle: string;
     onClose: () => void;
 };
 
@@ -79,14 +85,22 @@ const getCaption = (view: DialogView, status: ImportExportStatus) => {
     }
 };
 
-export const ExportWorkbookDialog: React.FC<Props> = ({workbookId, open, onClose}) => {
+export const ExportWorkbookDialog: React.FC<Props> = ({
+    workbookId,
+    workbookTitle,
+    open,
+    onClose,
+}) => {
     const dispatch: AppDispatch = useDispatch();
 
     const [view, setView] = React.useState<DialogView>('info');
     const status = useSelector(selectExportWorkbookStatus);
 
-    const {error} = useSelector(selectExportWorkbook);
-    const {data: progressData} = useSelector(selectGetExportProgress);
+    const error = useSelector(selectExportError);
+    const isResultLoading = useSelector(selectGetExportResultLoading);
+    const exportData = useSelector(selectExportData);
+
+    const progressData = useSelector(selectGetExportProgressData);
     const progress = progressData?.progress;
     const notifications = progressData?.notifications;
 
@@ -101,7 +115,8 @@ export const ExportWorkbookDialog: React.FC<Props> = ({workbookId, open, onClose
         return transformNotifications(notifications);
     }, [notifications]);
 
-    const isLoading = status === 'loading' || status === 'pending';
+    const isExportLoading = status === 'loading' || status === 'pending';
+    const isButtonLoading = isExportLoading || isResultLoading;
 
     React.useEffect(() => {
         if (open) {
@@ -137,16 +152,16 @@ export const ExportWorkbookDialog: React.FC<Props> = ({workbookId, open, onClose
     );
 
     const handleCancel = React.useCallback(() => {
-        if (isLoading) {
+        if (isExportLoading && exportData?.exportId) {
             dispatch(
                 openDialog({
                     id: DIALOG_DEFAULT,
                     props: {
                         open: true,
                         onApply: () => {
-                            // TODO: cancel request
-                            dispatch(closeDialog());
-                            onClose();
+                            dispatch(cancelExportProcess(exportData.exportId)).then(() => {
+                                onClose();
+                            });
                         },
                         onCancel: () => dispatch(closeDialog()),
                         message: i18n('label_cancel-export-description'),
@@ -163,27 +178,39 @@ export const ExportWorkbookDialog: React.FC<Props> = ({workbookId, open, onClose
         }
 
         onClose();
-    }, [dispatch, isLoading, onClose]);
+    }, [dispatch, exportData?.exportId, isExportLoading, onClose]);
+
+    const startExport = React.useCallback(async () => {
+        const exportResult = await dispatch(exportWorkbook({workbookId}));
+        if (exportResult && exportResult.exportId) {
+            pollExportStatus(exportResult.exportId);
+        }
+    }, [dispatch, pollExportStatus, workbookId]);
+
+    const getExportFile = React.useCallback(async () => {
+        if (exportData?.exportId) {
+            const result = await dispatch(getExportResult({exportId: exportData?.exportId}));
+            if (result && result.status === 'success') {
+                downloadObjectAsJSON(result.data, workbookTitle);
+                onClose();
+            }
+        }
+    }, [dispatch, exportData?.exportId, onClose, workbookTitle]);
 
     const handleApply = React.useCallback(async () => {
         if (view === 'info') {
             setView('export');
-            const exportResult = await dispatch(exportWorkbook({workbookId}));
-            if (exportResult && exportResult.exportId) {
-                pollExportStatus(exportResult.exportId);
-            }
+            startExport();
             return;
         }
 
         if (status === 'success') {
-            // await donwload file
-
-            onClose();
+            getExportFile();
         }
-    }, [dispatch, onClose, pollExportStatus, status, view, workbookId]);
+    }, [getExportFile, startExport, status, view]);
 
     const cancelButtonText =
-        view === 'info' || isLoading ? i18n('button_cancel') : i18n('button_close');
+        view === 'info' || isExportLoading ? i18n('button_cancel') : i18n('button_close');
 
     const renderBody = () => {
         if (view === 'info') {
@@ -200,10 +227,7 @@ export const ExportWorkbookDialog: React.FC<Props> = ({workbookId, open, onClose
                 );
             case 'success':
             case 'notification-error':
-                if (!notifications) {
-                    return null;
-                }
-                if (!preparedNotifications.length) {
+                if (!preparedNotifications.length && status === 'success') {
                     return (
                         <EntriesNotificationCut
                             title={i18n('label_success-export')}
@@ -225,7 +249,14 @@ export const ExportWorkbookDialog: React.FC<Props> = ({workbookId, open, onClose
                 );
             case 'fatal-error':
             default:
-                return <ViewError containerClassName={b('error-content')} error={error} size="s" />;
+                return (
+                    <ViewError
+                        showDebugInfo={false}
+                        containerClassName={b('error-content')}
+                        error={error}
+                        size="s"
+                    />
+                );
         }
     };
 
@@ -238,7 +269,7 @@ export const ExportWorkbookDialog: React.FC<Props> = ({workbookId, open, onClose
                 textButtonCancel={cancelButtonText}
                 onClickButtonApply={handleApply}
                 onClickButtonCancel={handleCancel}
-                propsButtonApply={{loading: isLoading}}
+                propsButtonApply={{loading: isButtonLoading}}
             />
         </Dialog>
     );

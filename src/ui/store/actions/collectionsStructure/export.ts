@@ -13,9 +13,11 @@ import {
     RESET_EXPORT_WORKBOOK,
     GET_IMPORT_PROGRESS_LOADING,
     GET_IMPORT_PROGRESS_SUCCESS,
+    GET_IMPORT_PROGRESS_FAILED,
     GET_EXPORT_PROGRESS_LOADING,
     RESET_EXPORT_PROGRESS,
     GET_EXPORT_PROGRESS_SUCCESS,
+    GET_EXPORT_PROGRESS_FAILED,
     IMPORT_WORKBOOK_FAILED,
     GET_EXPORT_RESULT_LOADING,
     GET_EXPORT_RESULT_SUCCESS,
@@ -23,12 +25,14 @@ import {
     RESET_EXPORT_RESULT,
 } from '../../constants/collectionsStructure';
 
-import type {GetWorkbookExportResultResponse} from '../../../../shared/schema';
-
-import {notifications} from 'ui/components/CollectionsStructure/components/EntriesNotificationCut/helpers';
-import type {TempImportExportDataType} from 'ui/components/CollectionsStructure/components/EntriesNotificationCut/types';
+import type {
+    GetWorkbookExportResultResponse,
+    GetWorkbookExportStatusResponse,
+    GetWorkbookImportStatusResponse,
+} from '../../../../shared/schema';
 
 import type {CollectionsStructureDispatch} from './index';
+import {convertFileToJSON} from 'ui/store/utils/collectionStructure';
 
 type ExportWorkbookLoadingAction = {
     type: typeof EXPORT_WORKBOOK_LOADING;
@@ -107,7 +111,11 @@ type GetExportProgressLoadingAction = {
 };
 type GetExportProgressSuccessAction = {
     type: typeof GET_EXPORT_PROGRESS_SUCCESS;
-    data: TempImportExportDataType;
+    data: GetWorkbookExportStatusResponse;
+};
+type GetExportProgressFailedAction = {
+    type: typeof GET_EXPORT_PROGRESS_FAILED;
+    error: Error | null;
 };
 type ResetGetExportProgressAction = {
     type: typeof RESET_EXPORT_PROGRESS;
@@ -115,6 +123,7 @@ type ResetGetExportProgressAction = {
 export type GetExportProgressAction =
     | GetExportProgressLoadingAction
     | GetExportProgressSuccessAction
+    | GetExportProgressFailedAction
     | ResetGetExportProgressAction;
 
 export const getExportProgress = ({exportId}: {exportId: string}) => {
@@ -126,16 +135,11 @@ export const getExportProgress = ({exportId}: {exportId: string}) => {
         return getSdk()
             .sdk.metaManager.getWorkbookExportStatus({exportId})
             .then((data) => {
-                const exportData: TempImportExportDataType = {
-                    status: data.status,
-                    progress: data.progress,
-                    notifications,
-                };
                 dispatch({
                     type: GET_EXPORT_PROGRESS_SUCCESS,
-                    data: exportData,
+                    data,
                 });
-                return exportData;
+                return data;
             })
             .catch((error: Error) => {
                 const isCanceled = getSdk().sdk.isCancel(error);
@@ -144,16 +148,32 @@ export const getExportProgress = ({exportId}: {exportId: string}) => {
                     logger.logError('collectionsStructure/getExportProgress failed', error);
                 }
 
-                const exportData: TempImportExportDataType = {
-                    status: 'error',
-                    progress: 0,
-                    notifications,
-                };
                 dispatch({
-                    type: GET_EXPORT_PROGRESS_SUCCESS,
-                    data: exportData,
+                    type: GET_EXPORT_PROGRESS_FAILED,
+                    error: isCanceled ? null : error,
                 });
-                return exportData;
+            });
+    };
+};
+
+export const cancelExportProcess = (exportId: string) => {
+    return (dispatch: CollectionsStructureDispatch) => {
+        return getSdk()
+            .sdk.metaManager.cancelWorkbookExport({exportId})
+            .then(() => {
+                dispatch(resetExportWorkbook());
+            })
+            .catch((error: Error) => {
+                const isCanceled = getSdk().sdk.isCancel(error);
+
+                if (!isCanceled) {
+                    logger.logError('collectionsStructure/cancelExportProcess failed', error);
+                }
+
+                showToast({
+                    title: error.message,
+                    error,
+                });
             });
     };
 };
@@ -182,29 +202,33 @@ export const importWorkbook = ({
     title,
     description,
     collectionId,
+    importFile,
 }: {
     title: string;
     description?: string;
     collectionId: string | null;
+    importFile: File;
 }) => {
-    return (dispatch: CollectionsStructureDispatch) => {
+    return async (dispatch: CollectionsStructureDispatch) => {
         dispatch({
             type: IMPORT_WORKBOOK_LOADING,
         });
+
+        const data = await convertFileToJSON(importFile);
 
         return getSdk()
             .sdk.metaManager.startWorkbookImport({
                 title,
                 description,
-                collectionId,
-                data: {}, // Empty object as placeholder
+                collectionId: collectionId || 'null',
+                data,
             })
-            .then((data) => {
+            .then((resultData) => {
                 dispatch({
                     type: IMPORT_WORKBOOK_SUCCESS,
-                    data,
+                    data: resultData,
                 });
-                return data;
+                return resultData;
             })
             .catch((error: Error) => {
                 const isCanceled = getSdk().sdk.isCancel(error);
@@ -244,7 +268,11 @@ type GetImportProgressLoadingAction = {
 };
 type GetImportProgressSuccessAction = {
     type: typeof GET_IMPORT_PROGRESS_SUCCESS;
-    data: TempImportExportDataType;
+    data: GetWorkbookImportStatusResponse;
+};
+type GetImportProgressFailedAction = {
+    type: typeof GET_IMPORT_PROGRESS_FAILED;
+    error: Error | null;
 };
 type ResetGetImportProgressAction = {
     type: typeof RESET_IMPORT_PROGRESS;
@@ -252,6 +280,7 @@ type ResetGetImportProgressAction = {
 export type GetImportProgressAction =
     | GetImportProgressLoadingAction
     | GetImportProgressSuccessAction
+    | GetImportProgressFailedAction
     | ResetGetImportProgressAction;
 
 type GetExportResultLoadingAction = {
@@ -323,16 +352,11 @@ export const getImportProgress = ({importId}: {importId: string}) => {
         return getSdk()
             .sdk.metaManager.getWorkbookImportStatus({importId})
             .then((data) => {
-                const importData: TempImportExportDataType = {
-                    status: data.status,
-                    progress: data.progress,
-                    notifications,
-                };
                 dispatch({
                     type: GET_IMPORT_PROGRESS_SUCCESS,
-                    data: importData,
+                    data,
                 });
-                return importData;
+                return data;
             })
             .catch((error: Error) => {
                 const isCanceled = getSdk().sdk.isCancel(error);
@@ -341,16 +365,10 @@ export const getImportProgress = ({importId}: {importId: string}) => {
                     logger.logError('collectionsStructure/getImportProgress failed', error);
                 }
 
-                const importData: TempImportExportDataType = {
-                    status: 'error',
-                    progress: 0,
-                    notifications,
-                };
                 dispatch({
-                    type: GET_IMPORT_PROGRESS_SUCCESS,
-                    data: importData,
+                    type: GET_IMPORT_PROGRESS_FAILED,
+                    error: isCanceled ? null : error,
                 });
-                return importData;
             });
     };
 };

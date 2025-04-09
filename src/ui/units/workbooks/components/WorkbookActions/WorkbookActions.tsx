@@ -136,6 +136,7 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
                         props: {
                             open: true,
                             workbookId: workbook.workbookId,
+                            workbookTitle: workbook.title,
                             onClose: () => {
                                 dispatch(closeDialog());
                             },

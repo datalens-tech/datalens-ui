@@ -283,6 +283,7 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
                                 props: {
                                     open: true,
                                     workbookId: item.workbookId,
+                                    workbookTitle: item.title,
                                     onClose: () => {
                                         dispatch(closeDialog());
                                     },

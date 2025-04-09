@@ -16,7 +16,7 @@ export type GetWorkbookExportStatusResponse = {
     exportId: string;
     status: ProcessStatus;
     progress: number;
-    notifications: EntryNotification[] | null;
+    notifications?: EntryNotification[] | null;
 };
 
 export type GetWorkbookExportResultArgs = {
@@ -25,7 +25,7 @@ export type GetWorkbookExportResultArgs = {
 
 export type GetWorkbookExportResultResponse = {
     exportId: string;
-    data: Record<string, unknown>;
+    data: {export: Record<string, unknown>; hash: string};
     status: ProcessStatus;
 };
 

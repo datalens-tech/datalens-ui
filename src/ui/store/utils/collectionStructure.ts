@@ -1,4 +1,5 @@
 import type {
+    GetWorkbookExportResultResponse,
     GetWorkbookExportStatusResponse,
     GetWorkbookImportStatusResponse,
 } from 'shared/schema/meta-manager/types';
@@ -8,6 +9,7 @@ import type {ImportExportStatus} from 'ui/components/CollectionsStructure/types'
 export const getStatusFromOperation = ({
     progessOperation,
     initialOperation,
+    resultOperation,
 }: {
     progessOperation: {
         error: Error | null;
@@ -18,6 +20,11 @@ export const getStatusFromOperation = ({
         error: Error | null;
         isLoading: boolean;
     };
+    resultOperation?: {
+        error: Error | null;
+        data: GetWorkbookExportResultResponse | null;
+        isLoading: boolean;
+    };
 }): ImportExportStatus => {
     if (
         progessOperation.data?.status === 'error' &&
@@ -25,10 +32,10 @@ export const getStatusFromOperation = ({
     ) {
         return 'notification-error';
     }
-    if (initialOperation.error || progessOperation.error) {
+    if (initialOperation.error || progessOperation.error || resultOperation?.error) {
         return 'fatal-error';
     }
-    if (progessOperation.data?.progress && progessOperation.data.progress < 100) {
+    if (progessOperation.data?.status === 'pending') {
         return 'pending';
     }
     if (initialOperation.isLoading || progessOperation.isLoading) {
@@ -38,4 +45,19 @@ export const getStatusFromOperation = ({
         return 'success';
     }
     return null;
+};
+
+export const convertFileToJSON = (file: File): Promise<Record<string, unknown>> => {
+    return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => {
+            try {
+                const json = JSON.parse(reader.result as string);
+                resolve(json);
+            } catch (error) {
+                reject(error);
+            }
+        };
+        reader.readAsText(file);
+    });
 };

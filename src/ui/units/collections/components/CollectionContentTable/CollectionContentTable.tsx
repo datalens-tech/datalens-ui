@@ -149,7 +149,7 @@ export const CollectionContentTable = React.memo<Props>(
                                 const isImporting =
                                     isEnabledFeature(Feature.EnableExportWorkbookFile) &&
                                     isWorkbookItem &&
-                                    item.status === WORKBOOK_STATUS.IMPORTING;
+                                    item.status === WORKBOOK_STATUS.CREATING;
 
                                 return (
                                     <CollectionLinkRow
