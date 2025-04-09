@@ -1,8 +1,5 @@
 {
   "action_access": "Access",
-  "action_add-demo-workbook": "Sample workbook",
-  "action_add-demo-workbook-hint": "Preconfigured workbook to try out the service",
-  "action_add-learning-materials-workbook": "Add learning materials",
   "action_cancel": "Cancel",
   "action_clear-filters": "Reset filters",
   "action_connect-your-data": "Connect your data",
@@ -19,8 +16,6 @@
   "action_reset-all": "Reset all",
   "action_select": "Select",
   "action_select-all": "Select all",
-  "label_add-demo-workbook": "Add sample workbook",
-  "label_add-learning-materials-workbook": "Add learning materials",
   "label_empty-list": "No collections or workbooks",
   "label_last-modified": "Last modified",
   "label_not-found": "No results",

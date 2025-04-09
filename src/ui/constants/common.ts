@@ -205,12 +205,6 @@ export const DL = {
     get IAM_RESOURCES() {
         return window.DL.iamResources ?? undefined;
     },
-    get TEMPLATE_WORKBOOK_ID() {
-        return window.DL.templateWorkbookId;
-    },
-    get LEARNING_MATERIALS_WORKBOOK_ID() {
-        return window.DL.learningMaterialsWorkbookId;
-    },
     get TITLE() {
         return window.DL.title || '';
     },
