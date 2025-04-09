@@ -42,10 +42,10 @@ export const DIALOG_CREATE_WORKBOOK = Symbol('DIALOG_CREATE_WORKBOOK');
 
 export type OpenDialogCreateWorkbookArgs = {
     id: typeof DIALOG_CREATE_WORKBOOK;
-    props: Props;
+    props: CreateWorkbookDialogProps;
 };
 
-type Props = {
+export type CreateWorkbookDialogProps = {
     collectionId: string | null;
     open: boolean;
     dialogTitle?: string;
@@ -58,7 +58,7 @@ type Props = {
 
 const b = block('create-workbook-dialog');
 
-export const CreateWorkbookDialog: React.FC<Props> = ({
+export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
     collectionId,
     open,
     dialogTitle,

@@ -168,8 +168,6 @@ export type DLGlobalData = {
     authPageSettings?: AuthPageSettings;
     push?: PushServiceConfig;
     metricaCounters?: MetricaCounterConfig[];
-    templateWorkbookId?: string;
-    learningMaterialsWorkbookId?: string;
     isLanding?: boolean;
     publicScope?: 'dash' | 'widget';
     ymapApiKey?: string;

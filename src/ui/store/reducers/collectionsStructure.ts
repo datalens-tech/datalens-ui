@@ -50,9 +50,6 @@ import {
     DELETE_WORKBOOK_FAILED,
     DELETE_WORKBOOK_LOADING,
     DELETE_WORKBOOK_SUCCESS,
-    ADD_DEMO_WORKBOOK_LOADING,
-    ADD_DEMO_WORKBOOK_SUCCESS,
-    ADD_DEMO_WORKBOOK_FAILED,
     DELETE_COLLECTIONS_LOADING,
     DELETE_COLLECTIONS_SUCCESS,
     DELETE_COLLECTIONS_FAILED,
@@ -101,7 +98,6 @@ import type {
     DeleteCollectionResponse,
     DeleteWorkbooksResponse,
     DeleteWorkbookResponse,
-    CopyWorkbookTemplateResponse,
     GetWorkbookExportResultResponse,
     GetWorkbookExportStatusResponse,
     GetWorkbookImportStatusResponse,
@@ -199,11 +195,6 @@ export type CollectionsStructureState = {
     deleteWorkbooks: {
         isLoading: boolean;
         data: DeleteWorkbooksResponse | null;
-        error: Error | null;
-    };
-    addDemoWorkbook: {
-        isLoading: boolean;
-        data: CopyWorkbookTemplateResponse | null;
         error: Error | null;
     };
     exportWorkbook: {
@@ -321,11 +312,6 @@ const initialState: CollectionsStructureState = {
         error: null,
     },
     deleteWorkbooks: {
-        isLoading: false,
-        data: null,
-        error: null,
-    },
-    addDemoWorkbook: {
         isLoading: false,
         data: null,
         error: null,
@@ -966,38 +952,6 @@ export const collectionsStructure = (
                 ...state,
                 deleteWorkbooks: {
                     ...state.deleteWorkbooks,
-                    isLoading: false,
-                    error: action.error,
-                },
-            };
-        }
-
-        // Adding a demo workbook
-        case ADD_DEMO_WORKBOOK_LOADING: {
-            return {
-                ...state,
-                addDemoWorkbook: {
-                    isLoading: true,
-                    data: null,
-                    error: null,
-                },
-            };
-        }
-        case ADD_DEMO_WORKBOOK_SUCCESS: {
-            return {
-                ...state,
-                addDemoWorkbook: {
-                    isLoading: false,
-                    data: action.data,
-                    error: null,
-                },
-            };
-        }
-        case ADD_DEMO_WORKBOOK_FAILED: {
-            return {
-                ...state,
-                addDemoWorkbook: {
-                    ...state.addDemoWorkbook,
                     isLoading: false,
                     error: action.error,
                 },

@@ -1,8 +1,5 @@
 {
   "action_access": "Доступ",
-  "action_add-demo-workbook": "Демонстрационный воркбук",
-  "action_add-demo-workbook-hint": "Готовый воркбук для знакомства с сервисом",
-  "action_add-learning-materials-workbook": "Добавить учебные материалы",
   "action_cancel": "Отменить",
   "action_clear-filters": "Очистить фильтры",
   "action_connect-your-data": "Подключить свои данные",
@@ -19,8 +16,6 @@
   "action_reset-all": "Снять все",
   "action_select": "Выбрать",
   "action_select-all": "Выбрать все",
-  "label_add-demo-workbook": "Добавить пример воркбука",
-  "label_add-learning-materials-workbook": "Добавить учебные материалы",
   "label_empty-list": "Нет коллекций и воркбуков",
   "label_last-modified": "Последнее изменение",
   "label_not-found": "Ничего не найдено",
