@@ -12,14 +12,7 @@
     }
 
     &__controls {
-        &_hidden {
-            visibility: hidden;
-
-            // style below needed to hide datepicker svg clear icon
-            .textinput__clear {
-                display: none;
-            }
-        }
+        top: 5px;
     }
 
     &__loader {
@@ -32,19 +25,6 @@
     &__item {
         margin-top: 5px;
         max-width: 100%;
-
-        // TODO: move styles to Items.scss after removing old selectors code
-        &_button {
-            padding: 5px;
-        }
-
-        &_checkbox {
-            padding: 5px;
-        }
-
-        &:not(:last-child) {
-            margin-right: 10px;
-        }
     }
 
     &__error {
