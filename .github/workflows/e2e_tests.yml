@@ -32,7 +32,7 @@ concurrency:
 jobs:
   run-e2e:
     name: Install Datalens and Run E2E Tests
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: echo distinct ID ${{ github.event.inputs.distinct_id }}
         run: echo ${{ github.event.inputs.distinct_id }}
@@ -41,7 +41,7 @@ jobs:
       - uses: docker/setup-buildx-action@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
           cache-dependency-path: ./package-lock.json
 
@@ -57,11 +57,11 @@ jobs:
             echo "US_VERSION=$US_VERSION" >> "$GITHUB_ENV"
           fi
           if [ -z "${{ env.CONTROL_API_VERSION }}" ]; then
-            CONTROL_API_VERSION=$(echo "${VERSION_CONFIG}" | jq -r '.controlApiVersion')
+            CONTROL_API_VERSION=$(echo "${VERSION_CONFIG}" | jq -r '.backendVersion')
             echo "CONTROL_API_VERSION=$CONTROL_API_VERSION" >> "$GITHUB_ENV"
           fi
           if [ -z "${{ env.DATA_API_VERSION }}" ]; then
-            DATA_API_VERSION=$(echo "${VERSION_CONFIG}" | jq -r '.dataApiVersion')
+            DATA_API_VERSION=$(echo "${VERSION_CONFIG}" | jq -r '.backendVersion')
             echo "DATA_API_VERSION=$DATA_API_VERSION" >> "$GITHUB_ENV"
           fi
           echo "UI_REF=release-$UI_VERSION" >> "$GITHUB_ENV"
