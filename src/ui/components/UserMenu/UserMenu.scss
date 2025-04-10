@@ -44,12 +44,13 @@
         justify-content: center;
     }
 
-    &__user-name {
+    &__user-name,
+    &__user-description {
         @include overflow-ellipsis();
+        max-width: 100%;
     }
 
     &__user-description {
-        @include overflow-ellipsis();
         color: var(--g-color-text-secondary);
     }
 
@@ -60,5 +61,6 @@
     &__user-label {
         margin-top: var(--g-spacing-1);
         width: auto;
+        max-width: 100%;
     }
 }
