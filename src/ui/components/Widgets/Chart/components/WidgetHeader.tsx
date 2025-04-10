@@ -77,7 +77,11 @@ export const WidgetHeader = (props: HeaderProps) => {
         if (DL.IS_MOBILE && (isFullscreen || (!hideTitle && tabsItems?.length === 1))) {
             return (
                 <div className={b('mobile-title')}>
-                    <div className={b('mobile-title-wrap')}>
+                    <div
+                        className={b('mobile-title-wrap', {
+                            'with-hint': Boolean(widgetTitleHint),
+                        })}
+                    >
                         {widgetTitle}
                         {Boolean(widgetTitleHint) && (
                             <MarkdownHelpPopover

@@ -94,8 +94,10 @@
     }
 
     &__mobile-title-wrap {
-        display: flex;
-        align-items: center;
+        &_with-hint {
+            display: flex;
+            align-items: center;
+        }
     }
 
     &__mobile-title-wrap &__chart-title-hint-button,
@@ -128,10 +130,13 @@
         #{$class}__mobile-title {
             line-height: $headerHeight;
             padding: 0 50px 0 45px;
+            height: $headerHeight;
+        }
+
+        #{$class}__mobile-title-wrap {
             text-overflow: ellipsis;
             overflow: hidden;
             white-space: nowrap;
-            height: $headerHeight;
         }
     }
 }
