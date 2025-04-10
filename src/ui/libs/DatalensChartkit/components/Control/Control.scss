@@ -11,10 +11,6 @@
         white-space: normal;
     }
 
-    &_line-breaks_nowrap:not(&_standalone) {
-        white-space: nowrap;
-    }
-
     &__controls {
         &_hidden {
             visibility: hidden;
@@ -24,13 +20,6 @@
                 display: none;
             }
         }
-    }
-
-    &:not(&_standalone) {
-        //border-bottom: 1px solid #e6e6e6;
-        background-color: var(--ck-controls-backgound);
-        max-height: 50%;
-        flex: none;
     }
 
     &__loader {
@@ -43,7 +32,6 @@
     &__item {
         margin-top: 5px;
         max-width: 100%;
-        width: var(--control-custom-width, 'auto');
 
         // TODO: move styles to Items.scss after removing old selectors code
         &_button {
@@ -67,26 +55,10 @@
     }
 
     &__error-icon {
-        color: var(--g-color-text-danger);
         flex: 0 0 auto;
     }
 
     &_mobile {
         min-height: 64px;
-
-        #{$class}__controls {
-            display: flex;
-            flex-direction: column;
-            padding-bottom: 6px;
-        }
-
-        #{$class}__item {
-            margin-right: 0;
-            margin-top: 10px;
-        }
-
-        #{$class}__error {
-            font-size: 13px;
-        }
     }
 }
