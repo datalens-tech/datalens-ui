@@ -1,41 +1,49 @@
 name: i18n-check
 
 on:
-    push:
-        branches:
-            - main
-        paths:
-            - 'src/i18n-keysets/**'
-    workflow_dispatch:
-    # pull_request_target is needed instead of just pull_request
-    # because secret is needed to sync with weblate
-    # Attention! Read more at https://nathandavison.com/blog/github-actions-and-the-threat-of-malicious-pull-requests
-    pull_request_target:
-        types: ['converted_to_draft', 'ready_for_review', 'opened', 'reopened', 'synchronize', 'closed']
-        branches:
-            - main
-        paths:
-            - 'src/i18n-keysets/**'
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/i18n-keysets/**'
+  workflow_dispatch:
+  # pull_request_target is needed instead of just pull_request
+  # because secret is needed to sync with weblate
+  # Attention! Read more at https://nathandavison.com/blog/github-actions-and-the-threat-of-malicious-pull-requests
+  pull_request_target:
+    types:
+      [
+        'converted_to_draft',
+        'ready_for_review',
+        'opened',
+        'reopened',
+        'synchronize',
+        'closed',
+      ]
+    branches:
+      - main
+    paths:
+      - 'src/i18n-keysets/**'
 
 concurrency:
-    group: ${{ github.workflow }}-${{ github.ref }}
-    # It is necessary because we cannot stop the running synchronization process with Weblate
-    cancel-in-progress: false
+  group: ${{ github.workflow }}-${{ github.ref }}
+  # It is necessary because we cannot stop the running synchronization process with Weblate
+  cancel-in-progress: false
 
 jobs:
-    i18n_check:
-        runs-on: ubuntu-latest
-        if: github.actor != 'datalens-weblate-robot' && github.event.pull_request.draft == false
-        steps:
-            - uses: actions/checkout@v4
-              with:
-                  ref: ${{ github.event.pull_request.head.sha }}
+  i18n_check:
+    runs-on: ubuntu-24.04
+    if: github.actor != 'datalens-weblate-robot' && github.event.pull_request.draft == false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
 
-            - name: Verifying changes with Weblate
-              uses: dgaponov/weblate-action@v1.49.0
-              with:
-                  SERVER_URL: "https://weblate.gravity-ui.com"
-                  TOKEN: ${{ secrets.WEBLATE_TOKEN }}
-                  PROJECT: "datalens"
-                  MAIN_LANGUAGE: "ru"
-                  GITHUB_TOKEN: ${{ secrets.WEBLATE_BOT_GITHUB_TOKEN }}
+      - name: Verifying changes with Weblate
+        uses: dgaponov/weblate-action@v1.49.0
+        with:
+          SERVER_URL: 'https://weblate.gravity-ui.com'
+          TOKEN: ${{ secrets.WEBLATE_TOKEN }}
+          PROJECT: 'datalens'
+          MAIN_LANGUAGE: 'ru'
+          GITHUB_TOKEN: ${{ secrets.WEBLATE_BOT_GITHUB_TOKEN }}

@@ -252,7 +252,7 @@
     "workflow": "workflow.json"
   },
   "engines": {
-    "node": "20",
+    "node": ">=20",
     "npm": ">=8"
   },
   "browserslist": [
