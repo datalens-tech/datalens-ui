@@ -5,13 +5,15 @@ import type {DashEntry, TransferNotification} from '../../shared';
 import {EntryScope, ErrorCode} from '../../shared';
 import type {EntryFieldData} from '../../shared/schema';
 import {Utils} from '../components';
-import {prepareExportData, prepareImportData} from '../components/charts-engine/controllers/charts';
-import {Dash} from '../components/sdk';
+import {
+    prepareExportChartData,
+    prepareImportChartData,
+} from '../components/workbook-transfer/charts';
+import {criticalTransferNotification} from '../components/workbook-transfer/create-transfer-notifications';
+import {prepareDashExportData, prepareDashImportData} from '../components/workbook-transfer/dash';
 import {registry} from '../registry';
 import type {DatalensGatewaySchemas} from '../types/gateway';
 import type {GatewayApiErrorResponse} from '../utils/gateway';
-
-import {criticalTransferNotification} from './utils/create-transfer-notifications';
 
 const sendExportResponse = (
     res: Response,
@@ -98,7 +100,7 @@ export const workbooksExportController = {
                         return;
                     }
 
-                    const {dash, notifications} = await Dash.prepareExport(
+                    const {dash, notifications} = await prepareDashExportData(
                         entry as unknown as DashEntry,
                         idMapping,
                     );
@@ -122,7 +124,7 @@ export const workbooksExportController = {
                         return;
                     }
 
-                    const {widget, notifications} = await prepareExportData(entry, idMapping);
+                    const {widget, notifications} = await prepareExportChartData(entry, idMapping);
 
                     sendExportResponse(res, notifications, {widget});
                     break;
@@ -227,7 +229,7 @@ export const workbooksExportController = {
                     break;
                 }
                 case EntryScope.Widget: {
-                    const {widget, notifications} = await prepareImportData(
+                    const {widget, notifications} = await prepareImportChartData(
                         entryData.widget,
                         req,
                         idMapping,
@@ -262,7 +264,7 @@ export const workbooksExportController = {
                     break;
                 }
                 case EntryScope.Dash: {
-                    const {dash, notifications} = await Dash.prepareImport(
+                    const {dash, notifications} = await prepareDashImportData(
                         entryData.dash,
                         idMapping,
                     );
