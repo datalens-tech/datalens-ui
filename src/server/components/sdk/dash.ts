@@ -427,16 +427,13 @@ class Dash {
             type: '',
         };
 
-        processLinks(data, importObject.id_mapping);
-
         try {
+            processLinks(data, importObject.id_mapping);
+
             validateData(data);
         } catch (err) {
             return {
-                dash: {
-                    ...defaults,
-                    data,
-                },
+                dash: null,
                 notifications: [criticalTransferNotification(ErrorCode.TransferInvalidEntryData)],
             };
         }

@@ -149,9 +149,9 @@ const traverseWizardFieldsRecursive = (
 ) => {
     forIn(obj, (val, key) => {
         if (typeof val === 'object') {
-            traverseWizardFieldsRecursive(val, idMapping, obj);
+            traverseWizardFieldsRecursive(val, idMapping, warnings, obj);
             // Array<{datasetId: string}>
-        } else if (isArray(parent) && key === 'datasetId' && typeof val === 'string') {
+        } else if (key === 'datasetId' && typeof val === 'string' && isArray(parent)) {
             if (idMapping[val]) {
                 obj[key] = idMapping[val];
             } else {
@@ -218,10 +218,11 @@ export const prepareImportData = async (
         key: chartOptions.key,
         name: chartOptions.name,
         data: null,
-        type: type || '',
+        type: '',
         links: {},
         scope: EntryScope.Widget,
         mode: EntryUpdateMode.Publish,
+        includePermissionsInfo: true,
     };
     const notifications: TransferNotification[] = [];
     let warnings: MappingWarnings | null = null;
@@ -235,7 +236,7 @@ export const prepareImportData = async (
             break;
         default:
             return {
-                widget: defaults,
+                widget: null,
                 notifications: [criticalTransferNotification(ErrorCode.TransferInvalidEntryData)],
             };
     }
@@ -249,7 +250,7 @@ export const prepareImportData = async (
 
         if (preparedChartData.error) {
             return {
-                widget: defaults,
+                widget: null,
                 notifications: [criticalTransferNotification(ErrorCode.TransferInvalidEntryData)],
             };
         }
@@ -257,16 +258,16 @@ export const prepareImportData = async (
         return {
             widget: {
                 ...defaults,
+                type: preparedChartData.type || '',
                 links: preparedChartData.links || {},
                 data: preparedChartData.chart,
                 template: preparedChartData.template,
-                includePermissionsInfo: true,
             },
             notifications,
         };
     } catch (err) {
         return {
-            widget: defaults,
+            widget: null,
             notifications: [criticalTransferNotification(ErrorCode.TransferInvalidEntryData)],
         };
     }
@@ -300,7 +301,7 @@ export const prepareExportData = async (entry: EntryFields, idMapping: TransferI
                 break;
             default:
                 return {
-                    widget,
+                    widget: null,
                     notifications: [
                         criticalTransferNotification(ErrorCode.TransferInvalidEntryData),
                     ],
@@ -308,7 +309,7 @@ export const prepareExportData = async (entry: EntryFields, idMapping: TransferI
         }
     } catch (err) {
         return {
-            widget,
+            widget: null,
             notifications: [criticalTransferNotification(ErrorCode.TransferInvalidEntryData)],
         };
     }

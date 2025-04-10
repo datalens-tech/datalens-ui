@@ -171,7 +171,7 @@ export const workbooksExportController = {
             }
         } catch (ex) {
             const {error} = ex as GatewayApiErrorResponse;
-            res.status(error.status).send(error);
+            res.status(error?.status || 500).send(error);
         }
     },
     import: async (req: Request, res: Response) => {
@@ -189,7 +189,7 @@ export const workbooksExportController = {
                 return;
             }
 
-            const {idMapping, entryData, workbookId} = req.body;
+            const {idMapping = {}, entryData = {}, workbookId} = req.body;
             const scope = resolveScopeForEntryData(entryData);
 
             const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
@@ -233,6 +233,11 @@ export const workbooksExportController = {
                         idMapping,
                     );
 
+                    if (!widget) {
+                        sendImportResponse(res, notifications);
+                        return;
+                    }
+
                     const {responseData} = await gatewayApi.us._proxyCreateEntry({
                         headers: {
                             ...headers,
@@ -241,11 +246,13 @@ export const workbooksExportController = {
                         args: {
                             workbookId,
                             data: widget.data as EntryFieldData,
+                            key: widget.key,
                             name: widget.name,
                             type: widget.type,
                             scope: widget.scope,
                             mode: widget.mode,
                             links: widget.links,
+                            includePermissionsInfo: widget.includePermissionsInfo,
                             usMasterToken,
                         },
                         ctx,
@@ -257,6 +264,11 @@ export const workbooksExportController = {
                 }
                 case EntryScope.Dash: {
                     const {dash, notifications} = await Dash.prepareImport(entryData.dash);
+
+                    if (!dash) {
+                        sendImportResponse(res, notifications);
+                        return;
+                    }
 
                     const {responseData} = await gatewayApi.us._proxyCreateEntry({
                         headers,
@@ -286,7 +298,7 @@ export const workbooksExportController = {
             }
         } catch (ex) {
             const {error} = ex as GatewayApiErrorResponse;
-            res.status(error.status).send(error);
+            res.status(error?.status || 500).send(error);
         }
     },
 };
