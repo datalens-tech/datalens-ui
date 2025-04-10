@@ -71,9 +71,6 @@ import {
     DELETE_WORKBOOKS_FAILED,
     DELETE_WORKBOOKS_LOADING,
     DELETE_WORKBOOKS_SUCCESS,
-    ADD_DEMO_WORKBOOK_LOADING,
-    ADD_DEMO_WORKBOOK_SUCCESS,
-    ADD_DEMO_WORKBOOK_FAILED,
     RESET_IMPORT_WORKBOOK,
     RESET_EXPORT_WORKBOOK,
     EXPORT_WORKBOOK_SUCCESS,
@@ -102,7 +99,6 @@ import type {
     CopyTemplateResponse,
     DeleteCollectionResponse,
     DeleteWorkbookResponse,
-    CopyWorkbookTemplateResponse,
     DeleteCollectionsResponse,
     DeleteWorkbooksResponse,
 } from '../../../shared/schema';
@@ -1295,85 +1291,6 @@ export const deleteWorkbook = ({workbookId}: {workbookId: string}) => {
     };
 };
 
-type AddDemoWorkbookLoadingAction = {
-    type: typeof ADD_DEMO_WORKBOOK_LOADING;
-};
-type AddDemoWorkbookSuccessAction = {
-    type: typeof ADD_DEMO_WORKBOOK_SUCCESS;
-    data: CopyWorkbookTemplateResponse;
-};
-type AddDemoWorkbookFailedAction = {
-    type: typeof ADD_DEMO_WORKBOOK_FAILED;
-    error: Error | null;
-};
-type AddDemoWorkbookAction =
-    | AddDemoWorkbookLoadingAction
-    | AddDemoWorkbookSuccessAction
-    | AddDemoWorkbookFailedAction;
-
-export const addDemoWorkbook = ({
-    workbookId,
-    collectionId,
-    title,
-}: {
-    workbookId: string;
-    collectionId: string | null;
-    title: string;
-}) => {
-    return (dispatch: CollectionsStructureDispatch) => {
-        dispatch({
-            type: ADD_DEMO_WORKBOOK_LOADING,
-        });
-        return getSdk()
-            .sdk.us.copyWorkbookTemplate({
-                workbookId,
-                title,
-                collectionId,
-            })
-            .then(async (result) => {
-                const {operation} = result;
-                if (operation && operation.id) {
-                    await waitOperation({
-                        operation,
-                        loader: ({concurrentId}) =>
-                            getSdk().sdk.us.getOperation(
-                                {operationId: operation.id},
-                                {concurrentId},
-                            ),
-                    }).promise;
-                }
-                return result;
-            })
-            .then((data) => {
-                dispatch({
-                    type: ADD_DEMO_WORKBOOK_SUCCESS,
-                    data,
-                });
-                return data;
-            })
-            .catch((error: Error) => {
-                const isCanceled = getSdk().sdk.isCancel(error);
-
-                if (!isCanceled) {
-                    logger.logError('collectionsStructure/addDemoWorkbook failed', error);
-                    dispatch(
-                        showToast({
-                            title: error.message,
-                            error,
-                        }),
-                    );
-                }
-
-                dispatch({
-                    type: ADD_DEMO_WORKBOOK_FAILED,
-                    error: isCanceled ? null : error,
-                });
-
-                return null;
-            });
-    };
-};
-
 type ExportWorkbookLoadingAction = {
     type: typeof EXPORT_WORKBOOK_LOADING;
 };
@@ -1593,7 +1510,6 @@ export type CollectionsStructureAction =
     | UpdateCollectionAction
     | DeleteCollectionAction
     | DeleteWorkbookAction
-    | AddDemoWorkbookAction
     | ExportWorkbookAction
     | ImportWorkbookAction
     | GetImportProgressAction

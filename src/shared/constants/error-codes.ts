@@ -68,4 +68,5 @@ export const ErrorContentTypes = {
     NOT_AUTHENTICATED: 'not-authenticated',
     FORBIDDEN_SSO: 'forbidden-sso',
     FORBIDDEN_REPORT_ENTRY: 'forbidden-report-entry',
+    FORBIDDEN_BY_PLAN: 'forbidden-by-plan',
 };

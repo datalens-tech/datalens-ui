@@ -18,7 +18,6 @@ import type {
 import type {StructureItemsFilters} from '../../../../../components/CollectionFilters';
 import {CollectionPageViewMode} from '../../../../../components/CollectionFilters';
 import {
-    DIALOG_ADD_DEMO_WORKBOOK,
     DIALOG_CREATE_COLLECTION,
     DIALOG_DELETE_COLLECTION,
     DIALOG_EDIT_COLLECTION,
@@ -35,7 +34,7 @@ import {
     CollectionBreadcrumbs,
     cutBreadcrumbs,
 } from '../../../../collections-navigation/components/CollectionBreadcrumbs';
-import {COLLECTIONS_PATH, WORKBOOKS_PATH} from '../../../../collections-navigation/constants';
+import {COLLECTIONS_PATH} from '../../../../collections-navigation/constants';
 import {LayoutContext} from '../../../../collections-navigation/contexts/LayoutContext';
 import {setCollectionBreadcrumbs} from '../../../../collections-navigation/store/actions';
 import {
@@ -231,58 +230,6 @@ export const useLayout = ({
                                                     if (result) {
                                                         history.push(
                                                             `${COLLECTIONS_PATH}/${result.collectionId}`,
-                                                        );
-                                                    }
-                                                },
-                                                onClose: () => {
-                                                    dispatch(closeDialog());
-                                                },
-                                            },
-                                        }),
-                                    );
-                                }
-                            }}
-                            onAddDemoWorkbookClick={() => {
-                                if (DL.TEMPLATE_WORKBOOK_ID) {
-                                    dispatch(
-                                        openDialog({
-                                            id: DIALOG_ADD_DEMO_WORKBOOK,
-                                            props: {
-                                                open: true,
-                                                title: i18n('label_add-demo-workbook'),
-                                                collectionId: curCollectionId,
-                                                demoWorkbookId: DL.TEMPLATE_WORKBOOK_ID,
-                                                onSuccessApply: (result) => {
-                                                    if (result) {
-                                                        history.push(
-                                                            `${WORKBOOKS_PATH}/${result.workbookId}`,
-                                                        );
-                                                    }
-                                                },
-                                                onClose: () => {
-                                                    dispatch(closeDialog());
-                                                },
-                                            },
-                                        }),
-                                    );
-                                }
-                            }}
-                            onAddLearningMaterialsWorkbookClick={() => {
-                                if (DL.LEARNING_MATERIALS_WORKBOOK_ID) {
-                                    dispatch(
-                                        openDialog({
-                                            id: DIALOG_ADD_DEMO_WORKBOOK,
-                                            props: {
-                                                open: true,
-                                                title: i18n(
-                                                    'label_add-learning-materials-workbook',
-                                                ),
-                                                collectionId: curCollectionId,
-                                                demoWorkbookId: DL.LEARNING_MATERIALS_WORKBOOK_ID,
-                                                onSuccessApply: (result) => {
-                                                    if (result) {
-                                                        history.push(
-                                                            `${WORKBOOKS_PATH}/${result.workbookId}`,
                                                         );
                                                     }
                                                 },
