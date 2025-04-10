@@ -46,11 +46,13 @@
 
     &__user-name {
         @include overflow-ellipsis();
+        max-width: 100%;
     }
 
     &__user-description {
         @include overflow-ellipsis();
         color: var(--g-color-text-secondary);
+        max-width: 100%;
     }
 
     &__user-avatar {
