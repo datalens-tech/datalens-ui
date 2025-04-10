@@ -63,6 +63,14 @@ type ChartDataOptions = {
     type: string;
 };
 
+type TransferChartDataOptions = {
+    data: ReturnType<typeof prepareChartData>['chart'] & ChartDataOptions['data'];
+    template: keyof ChartTemplates;
+    type: string;
+    key?: string;
+    name: string;
+};
+
 export function prepareChartData({data, template, type}: ChartDataOptions, req: Request) {
     const {ctx} = req;
 
@@ -141,6 +149,21 @@ const prepareCreateParams = async (
     return createParams;
 };
 
+const validateChart = (chartOptions: TransferChartDataOptions) => {
+    const requiredChartOptionsKeys: Array<keyof TransferChartDataOptions> = [
+        'data',
+        'name',
+        'template',
+        'type',
+    ];
+
+    requiredChartOptionsKeys.forEach((key) => {
+        if (!(key in chartOptions)) {
+            throw new Error('Invalid chart options');
+        }
+    });
+};
+
 const traverseWizardFieldsRecursive = (
     obj: any,
     idMapping: TransferIdMapping,
@@ -206,10 +229,7 @@ const traverseQlFields = (obj: any, idMapping: TransferIdMapping) => {
 };
 
 export const prepareImportData = async (
-    chartOptions: ChartDataOptions & {
-        key?: string;
-        name: string;
-    },
+    chartOptions: TransferChartDataOptions,
     req: Request,
     idMapping: TransferIdMapping,
 ) => {
@@ -225,6 +245,15 @@ export const prepareImportData = async (
     };
     const notifications: TransferNotification[] = [];
     let warnings: MappingWarnings | null = null;
+
+    try {
+        validateChart(chartOptions);
+    } catch (err) {
+        return {
+            widget: null,
+            notifications: [criticalTransferNotification(ErrorCode.TransferInvalidEntryData)],
+        };
+    }
 
     switch (type) {
         case 'datalens':
