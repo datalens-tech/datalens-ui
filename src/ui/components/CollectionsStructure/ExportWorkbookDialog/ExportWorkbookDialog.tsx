@@ -273,6 +273,7 @@ export const ExportWorkbookDialog: React.FC<Props> = ({
                 onClickButtonApply={handleApply}
                 onClickButtonCancel={handleCancel}
                 propsButtonApply={{loading: isButtonLoading}}
+                propsButtonCancel={{disabled: isResultLoading}}
             />
         </Dialog>
     );
