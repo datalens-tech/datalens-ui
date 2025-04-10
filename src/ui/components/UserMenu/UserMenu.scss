@@ -59,6 +59,6 @@
 
     &__user-label {
         margin-top: var(--g-spacing-1);
-        width: auto;
+        max-width: 100%;
     }
 }
