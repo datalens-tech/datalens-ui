@@ -393,11 +393,11 @@ class Dash {
         }
     }
 
-    static async prepareExport(entry: DashEntry, id_mapping: TransferIdMapping) {
+    static async prepareExport(entry: DashEntry, idMapping: TransferIdMapping) {
         const data = await Dash.migrate(entry.data);
         const notifications: TransferNotification[] = [];
 
-        processLinks(data, id_mapping);
+        processLinks(data, idMapping);
 
         const nameParts = entry.key.split('/');
         const name = nameParts[nameParts.length - 1];
@@ -413,22 +413,23 @@ class Dash {
         };
     }
 
-    static async prepareImport(importObject: {
-        dash: {data: DashEntry['data']; name: string};
-        id_mapping: TransferIdMapping;
-    }) {
-        const data = await Dash.migrate(importObject.dash.data);
+    static async prepareImport(
+        entryData: {data: DashEntry['data']; name: string},
+        idMapping: TransferIdMapping,
+    ) {
+        const data = await Dash.migrate(entryData.data);
         const notifications: TransferNotification[] = [];
         const defaults = {
-            name: importObject.dash.name,
+            name: entryData.name,
             scope: EntryScope.Dash,
             mode: EntryUpdateMode.Publish,
             links: {},
             type: '',
+            key: '',
         };
 
         try {
-            processLinks(data, importObject.id_mapping);
+            processLinks(data, idMapping);
 
             validateData(data);
         } catch (err) {

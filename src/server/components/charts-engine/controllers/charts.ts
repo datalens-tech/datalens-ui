@@ -222,7 +222,6 @@ export const prepareImportData = async (
         links: {},
         scope: EntryScope.Widget,
         mode: EntryUpdateMode.Publish,
-        includePermissionsInfo: true,
     };
     const notifications: TransferNotification[] = [];
     let warnings: MappingWarnings | null = null;

@@ -252,7 +252,6 @@ export const workbooksExportController = {
                             scope: widget.scope,
                             mode: widget.mode,
                             links: widget.links,
-                            includePermissionsInfo: widget.includePermissionsInfo,
                             usMasterToken,
                         },
                         ctx,
@@ -263,7 +262,10 @@ export const workbooksExportController = {
                     break;
                 }
                 case EntryScope.Dash: {
-                    const {dash, notifications} = await Dash.prepareImport(entryData.dash);
+                    const {dash, notifications} = await Dash.prepareImport(
+                        entryData.dash,
+                        idMapping,
+                    );
 
                     if (!dash) {
                         sendImportResponse(res, notifications);
@@ -275,6 +277,7 @@ export const workbooksExportController = {
                         args: {
                             workbookId,
                             data: dash.data as unknown as EntryFieldData,
+                            key: dash.key,
                             name: dash.name,
                             type: dash.type,
                             scope: dash.scope,
