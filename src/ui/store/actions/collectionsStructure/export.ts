@@ -220,7 +220,7 @@ export const importWorkbook = ({
             .sdk.metaManager.startWorkbookImport({
                 title,
                 description,
-                collectionId: collectionId || 'null',
+                collectionId,
                 data,
             })
             .then((resultData) => {

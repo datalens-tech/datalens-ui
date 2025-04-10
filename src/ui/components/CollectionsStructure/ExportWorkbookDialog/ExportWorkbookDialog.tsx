@@ -160,10 +160,13 @@ export const ExportWorkbookDialog: React.FC<Props> = ({
                         open: true,
                         onApply: () => {
                             dispatch(cancelExportProcess(exportData.exportId)).then(() => {
+                                dispatch(closeDialog());
                                 onClose();
                             });
                         },
-                        onCancel: () => dispatch(closeDialog()),
+                        onCancel: () => {
+                            dispatch(closeDialog());
+                        },
                         message: i18n('label_cancel-export-description'),
                         textButtonApply: i18n('button_cancel-export'),
                         textButtonCancel: i18n('button_back-to-export'),
