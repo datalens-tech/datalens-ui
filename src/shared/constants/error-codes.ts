@@ -44,11 +44,11 @@ export enum ErrorCode {
     ChartEditorNotAvailable = 'ERR.CHARTS.CHART_EDITOR_NOT_AVAILABLE',
     InsufficientServicePlan = 'ERR.CHARTS.INSUFFICIENT_SERVICE_PLAN',
 
-    TransferInvalidVersion = 'ERR.DS_API.UI.INVALID_VERSION',
-    TransferMissingMappingId = 'ERR.DS_API.UI.MISSING_MAPPING_ID',
-    TransferInvalidEntryData = 'ERR.DS_API.UI.INVALID_ENTRY_DATA',
-    TransferInvalidEntryScope = 'ERR.DS_API.UI.INVALID_ENTRY_SCOPE',
-    TransferInvalidToken = 'ERR.DS_API.UI.INVALID_TOKEN',
+    TransferInvalidVersion = 'ERR.CHARTS.TRANSFER_INVALID_VERSION',
+    TransferMissingMappingId = 'ERR.CHARTS.TRANSFER_MISSING_MAPPING_ID',
+    TransferInvalidEntryData = 'ERR.CHARTS.TRANSFER_INVALID_ENTRY_DATA',
+    TransferInvalidEntryScope = 'ERR.CHARTS.TRANSFER_INVALID_ENTRY_SCOPE',
+    TransferInvalidToken = 'ERR.CHARTS.TRANSFER_INVALID_TOKEN',
 }
 
 export const ErrorContentTypes = {
