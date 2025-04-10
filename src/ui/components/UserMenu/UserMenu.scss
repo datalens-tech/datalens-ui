@@ -1,3 +1,5 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
 .dl-user-menu {
     background-color: var(--g-color-base-float);
     padding: var(--g-spacing-2);
@@ -32,6 +34,7 @@
     }
 
     &__user-info {
+        @include text-body-short;
         display: flex;
         flex: auto;
         flex-direction: column;
@@ -42,18 +45,12 @@
     }
 
     &__user-name {
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
-        max-width: 100%;
+        @include overflow-ellipsis();
     }
 
     &__user-description {
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
+        @include overflow-ellipsis();
         color: var(--g-color-text-secondary);
-        max-width: 100%;
     }
 
     &__user-avatar {
@@ -63,6 +60,5 @@
     &__user-label {
         margin-top: var(--g-spacing-1);
         width: auto;
-        max-width: 100%;
     }
 }
