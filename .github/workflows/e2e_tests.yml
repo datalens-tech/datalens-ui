@@ -57,11 +57,11 @@ jobs:
             echo "US_VERSION=$US_VERSION" >> "$GITHUB_ENV"
           fi
           if [ -z "${{ env.CONTROL_API_VERSION }}" ]; then
-            CONTROL_API_VERSION=$(echo "${VERSION_CONFIG}" | jq -r '.controlApiVersion')
+            CONTROL_API_VERSION=$(echo "${VERSION_CONFIG}" | jq -r '.backendVersion')
             echo "CONTROL_API_VERSION=$CONTROL_API_VERSION" >> "$GITHUB_ENV"
           fi
           if [ -z "${{ env.DATA_API_VERSION }}" ]; then
-            DATA_API_VERSION=$(echo "${VERSION_CONFIG}" | jq -r '.dataApiVersion')
+            DATA_API_VERSION=$(echo "${VERSION_CONFIG}" | jq -r '.backendVersion')
             echo "DATA_API_VERSION=$DATA_API_VERSION" >> "$GITHUB_ENV"
           fi
           echo "UI_REF=release-$UI_VERSION" >> "$GITHUB_ENV"
