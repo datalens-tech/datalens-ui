@@ -32,7 +32,6 @@
     }
 
     &__user-info {
-        @include text-body-short;
         display: flex;
         flex: auto;
         flex-direction: column;
