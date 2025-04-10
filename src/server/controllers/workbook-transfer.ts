@@ -1,7 +1,8 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
+import {REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 
-import type {DashEntry} from '../../shared';
-import {EntryScope, EntryUpdateMode, ErrorCode} from '../../shared';
+import type {DashEntry, TransferNotification} from '../../shared';
+import {EntryScope, ErrorCode} from '../../shared';
 import type {EntryFieldData} from '../../shared/schema';
 import {Utils} from '../components';
 import {prepareExportData, prepareImportData} from '../components/charts-engine/controllers/charts';
@@ -9,6 +10,58 @@ import {Dash} from '../components/sdk';
 import {registry} from '../registry';
 import type {DatalensGatewaySchemas} from '../types/gateway';
 import type {GatewayApiErrorResponse} from '../utils/gateway';
+
+import {criticalTransferNotification} from './utils/create-transfer-notifications';
+
+const sendExportResponse = (
+    res: Response,
+    notifications: TransferNotification[] = [],
+    entryData: Record<string, unknown> | null = null,
+) => {
+    res.status(200).send({
+        entryData,
+        notifications,
+    });
+};
+
+const sendImportResponse = (
+    res: Response,
+    notifications: TransferNotification[] = [],
+    id: string | null = null,
+) => {
+    res.status(200).send({
+        id,
+        notifications,
+    });
+};
+
+const getRequestId = (ctx: Request['ctx']) => ctx.get(REQUEST_ID_PARAM_NAME) || '';
+
+const getEntry = (
+    req: Request,
+    args: {
+        usMasterToken: string;
+        workbookId: string | null;
+        entryId: string;
+    },
+) => {
+    const {ctx} = req;
+    const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
+    const headers = {
+        ...Utils.pickHeaders(req),
+    };
+
+    return gatewayApi.us._proxyGetEntry({
+        headers,
+        args,
+        ctx,
+        requestId: getRequestId(ctx),
+    });
+};
+
+const resolveScopeForEntryData = (entryData: Record<keyof EntryScope, unknown>) => {
+    return Object.values(EntryScope).find((key) => key in entryData);
+};
 
 export const workbooksExportController = {
     export: async (req: Request, res: Response) => {
@@ -26,54 +79,52 @@ export const workbooksExportController = {
                 return;
             }
 
-            const {exportId, id_mapping} = req.body;
-            const workbookId = (req.body?.workbookId as string) ?? null;
-
             const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
-
-            const {responseData: entry} = await gatewayApi.us._proxyGetEntry({
-                headers,
-                args: {
-                    entryId: exportId,
-                    workbookId,
-                    usMasterToken,
-                },
-                ctx,
-                requestId: req.id,
-            });
-            const scope = entry.scope;
+            const {exportId, scope, idMapping} = req.body;
+            const workbookId = (req.body?.workbookId as string) ?? null;
 
             switch (scope) {
                 case EntryScope.Dash: {
-                    const result = await Dash.prepareExport(
+                    const {responseData: entry} = await getEntry(req, {
+                        entryId: exportId,
+                        workbookId,
+                        usMasterToken,
+                    });
+
+                    if (entry.scope !== scope) {
+                        sendExportResponse(res, [
+                            criticalTransferNotification(ErrorCode.TransferInvalidEntryData),
+                        ]);
+                        return;
+                    }
+
+                    const {dash, notifications} = await Dash.prepareExport(
                         entry as unknown as DashEntry,
-                        id_mapping,
+                        idMapping,
                     );
 
-                    res.status(200).send(result);
+                    sendExportResponse(res, notifications, {
+                        dash,
+                    });
                     break;
                 }
                 case EntryScope.Widget: {
-                    const {key, type} = entry;
-                    const nameParts = key.split('/');
-                    const name = nameParts[nameParts.length - 1];
+                    const {responseData: entry} = await getEntry(req, {
+                        entryId: exportId,
+                        workbookId,
+                        usMasterToken,
+                    });
 
-                    const data = await prepareExportData(entry, id_mapping);
-                    if (data === null) {
-                        res.status(400).send({
-                            code: ErrorCode.TransferInvalidEntryData,
-                        });
+                    if (entry.scope !== scope) {
+                        sendExportResponse(res, [
+                            criticalTransferNotification(ErrorCode.TransferInvalidEntryData),
+                        ]);
+                        return;
                     }
 
-                    res.status(200).send({
-                        [EntryScope.Widget]: {
-                            data,
-                            name,
-                            template: data.type,
-                            type,
-                        },
-                        notifications: [],
-                    });
+                    const {widget, notifications} = await prepareExportData(entry, idMapping);
+
+                    sendExportResponse(res, notifications, {widget});
                     break;
                 }
                 case EntryScope.Connection: {
@@ -81,15 +132,16 @@ export const workbooksExportController = {
                         headers,
                         args: {
                             connectionId: exportId,
-                            id_mapping,
                             workbookId,
                             usMasterToken,
                         },
                         ctx,
-                        requestId: req.id,
+                        requestId: getRequestId(ctx),
                     });
 
-                    res.status(200).send(responseData);
+                    sendExportResponse(res, responseData.notifications, {
+                        connection: responseData.connection,
+                    });
                     break;
                 }
                 case EntryScope.Dataset: {
@@ -97,21 +149,23 @@ export const workbooksExportController = {
                         headers,
                         args: {
                             datasetId: exportId,
-                            id_mapping,
+                            idMapping,
                             workbookId,
                             usMasterToken,
                         },
                         ctx,
-                        requestId: req.id,
+                        requestId: getRequestId(ctx),
                     });
 
-                    res.status(200).send(responseData);
+                    sendExportResponse(res, responseData.notifications, {
+                        dataset: responseData.dataset,
+                    });
                     break;
                 }
                 default: {
-                    res.status(400).send({
-                        code: ErrorCode.TransferInvalidEntryScope,
-                    });
+                    sendExportResponse(res, [
+                        criticalTransferNotification(ErrorCode.TransferInvalidEntryScope),
+                    ]);
                     break;
                 }
             }
@@ -135,86 +189,100 @@ export const workbooksExportController = {
                 return;
             }
 
-            const {data, id_mapping} = req.body;
+            const {idMapping, entryData, workbookId} = req.body;
+            const scope = resolveScopeForEntryData(entryData);
 
             const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
 
-            if (EntryScope.Connection in data) {
-                const {responseData} = await gatewayApi.bi._proxyImportConnection({
-                    headers,
-                    args: {
-                        data,
-                        id_mapping,
-                        usMasterToken,
-                    },
-                    ctx,
-                    requestId: req.id,
-                });
+            switch (scope) {
+                case EntryScope.Connection: {
+                    const {responseData} = await gatewayApi.bi._proxyImportConnection({
+                        headers,
+                        args: {
+                            workbookId,
+                            connection: entryData.connection,
+                            usMasterToken,
+                        },
+                        ctx,
+                        requestId: getRequestId(ctx),
+                    });
 
-                res.status(200).send(responseData);
-            } else if (EntryScope.Dataset in data) {
-                const {responseData} = await gatewayApi.bi._proxyImportDataset({
-                    headers,
-                    args: {
-                        data,
-                        id_mapping,
-                        usMasterToken,
-                    },
-                    ctx,
-                    requestId: req.id,
-                });
+                    sendImportResponse(res, responseData.notifications, responseData.id);
+                    break;
+                }
+                case EntryScope.Dataset: {
+                    const {responseData} = await gatewayApi.bi._proxyImportDataset({
+                        headers,
+                        args: {
+                            workbookId,
+                            dataset: entryData.dataset,
+                            idMapping,
+                            usMasterToken,
+                        },
+                        ctx,
+                        requestId: getRequestId(ctx),
+                    });
 
-                res.status(200).send(responseData);
-            } else if (EntryScope.Dash in data) {
-                const {dash, notifications} = await Dash.prepareImport(data);
+                    sendImportResponse(res, responseData.notifications, responseData.id);
+                    break;
+                }
+                case EntryScope.Widget: {
+                    const {widget, notifications} = await prepareImportData(
+                        entryData.widget,
+                        req,
+                        idMapping,
+                    );
 
-                const {responseData} = await gatewayApi.us._proxyCreateEntry({
-                    headers,
-                    args: {
-                        workbookId: data.workbook_id,
-                        ...(dash as any),
-                        usMasterToken,
-                    },
-                    ctx,
-                    requestId: req.id,
-                });
+                    const {responseData} = await gatewayApi.us._proxyCreateEntry({
+                        headers: {
+                            ...headers,
+                            metadata: ctx.getMetadata(),
+                        },
+                        args: {
+                            workbookId,
+                            data: widget.data as EntryFieldData,
+                            name: widget.name,
+                            type: widget.type,
+                            scope: widget.scope,
+                            mode: widget.mode,
+                            links: widget.links,
+                            usMasterToken,
+                        },
+                        ctx,
+                        requestId: getRequestId(ctx),
+                    });
 
-                res.status(200).send({
-                    id: responseData.entryId,
-                    notifications,
-                });
-            } else if (EntryScope.Widget in data) {
-                const chartsData = await prepareImportData(data.widget, req, id_mapping);
+                    sendImportResponse(res, notifications, responseData.entryId);
+                    break;
+                }
+                case EntryScope.Dash: {
+                    const {dash, notifications} = await Dash.prepareImport(entryData.dash);
 
-                const {responseData} = await gatewayApi.us._proxyCreateEntry({
-                    headers: {
-                        ...headers,
-                        metadata: ctx.getMetadata(),
-                    },
-                    args: {
-                        workbookId: data.workbook_id,
-                        key: data.widget.key,
-                        name: data.widget.name,
-                        data: chartsData.chart as EntryFieldData,
-                        type: chartsData.type || '',
-                        scope: EntryScope.Widget,
-                        links: chartsData.links || {},
-                        mode: EntryUpdateMode.Publish,
-                        includePermissionsInfo: true,
-                        usMasterToken,
-                    },
-                    ctx,
-                    requestId: req.id,
-                });
+                    const {responseData} = await gatewayApi.us._proxyCreateEntry({
+                        headers,
+                        args: {
+                            workbookId,
+                            data: dash.data as unknown as EntryFieldData,
+                            name: dash.name,
+                            type: dash.type,
+                            scope: dash.scope,
+                            mode: dash.mode,
+                            links: dash.links,
+                            usMasterToken,
+                        },
+                        ctx,
+                        requestId: getRequestId(ctx),
+                    });
 
-                res.status(200).send({
-                    id: responseData.entryId,
-                    notifications: [],
-                });
-            } else {
-                res.status(400).send({
-                    code: ErrorCode.TransferInvalidEntryScope,
-                });
+                    sendImportResponse(res, notifications, responseData.entryId);
+                    break;
+                }
+                default: {
+                    sendImportResponse(res, [
+                        criticalTransferNotification(ErrorCode.TransferInvalidEntryScope),
+                    ]);
+                    break;
+                }
             }
         } catch (ex) {
             const {error} = ex as GatewayApiErrorResponse;

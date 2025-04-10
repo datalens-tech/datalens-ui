@@ -2,25 +2,25 @@ import type {TransferNotification} from '../../../shared';
 
 export const createTransferNotification = (
     level: TransferNotification['level'],
-    message: TransferNotification['message'],
-    code?: TransferNotification['code'],
+    code: TransferNotification['code'],
+    message?: TransferNotification['message'],
 ) => ({
-    ...(code ? {code} : {}),
-    message,
+    code,
     level,
+    ...(message ? {message} : {}),
 });
 
 export const infoTransferNotification = (
-    message: TransferNotification['message'],
-    code?: TransferNotification['code'],
-) => createTransferNotification('info', message, code);
+    code: TransferNotification['code'],
+    message?: TransferNotification['message'],
+) => createTransferNotification('info', code, message);
 
 export const warningTransferNotification = (
-    message: TransferNotification['message'],
-    code?: TransferNotification['code'],
-) => createTransferNotification('warning', message, code);
+    code: TransferNotification['code'],
+    message?: TransferNotification['message'],
+) => createTransferNotification('warning', code, message);
 
 export const criticalTransferNotification = (
-    message: TransferNotification['message'],
-    code?: TransferNotification['code'],
-) => createTransferNotification('critical', message, code);
+    code: TransferNotification['code'],
+    message?: TransferNotification['message'],
+) => createTransferNotification('critical', code, message);
