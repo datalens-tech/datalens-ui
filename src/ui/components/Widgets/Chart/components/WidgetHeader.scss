@@ -91,22 +91,20 @@
         white-space: normal;
         word-break: break-word;
         hyphens: auto;
-    }
 
-    &__mobile-title-wrap {
         &_with-hint {
             display: flex;
             align-items: center;
         }
     }
 
-    &__mobile-title-wrap &__chart-title-hint-button,
-    &__mobile-title-wrap &__chart-title-hint {
+    &__mobile-title_with-hint &__chart-title-hint-button,
+    &__mobile-title_with-hint &__chart-title-hint {
         display: inline-flex;
         align-items: center;
     }
 
-    &__mobile-title-wrap &__chart-title-hint {
+    &__mobile-title_with-hint &__chart-title-hint {
         margin-left: 3px;
 
         & > * {

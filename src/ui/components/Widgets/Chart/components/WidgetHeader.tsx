@@ -76,24 +76,22 @@ export const WidgetHeader = (props: HeaderProps) => {
     const renderTabs = () => {
         if (DL.IS_MOBILE && (isFullscreen || (!hideTitle && tabsItems?.length === 1))) {
             return (
-                <div className={b('mobile-title')}>
-                    <div
-                        className={b('mobile-title-wrap', {
-                            'with-hint': Boolean(widgetTitleHint),
-                        })}
-                    >
-                        {widgetTitle}
-                        {Boolean(widgetTitleHint) && (
-                            <MarkdownHelpPopover
-                                markdown={widgetTitleHint}
-                                className={b('chart-title-hint')}
-                                buttonProps={{
-                                    className: b('chart-title-hint-button'),
-                                }}
-                                onClick={handleClickHint}
-                            />
-                        )}
-                    </div>
+                <div
+                    className={b('mobile-title', {
+                        'with-hint': Boolean(widgetTitleHint),
+                    })}
+                >
+                    <div className={b('mobile-title-wrap')}>{widgetTitle}</div>
+                    {Boolean(widgetTitleHint) && (
+                        <MarkdownHelpPopover
+                            markdown={widgetTitleHint}
+                            className={b('chart-title-hint')}
+                            buttonProps={{
+                                className: b('chart-title-hint-button'),
+                            }}
+                            onClick={handleClickHint}
+                        />
+                    )}
                 </div>
             );
         }
