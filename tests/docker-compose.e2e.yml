@@ -3,7 +3,7 @@ services:
     container_name: e2e-datalens-postgres
     image: ghcr.io/datalens-tech/datalens-postgres:16
     healthcheck:
-      test: ["CMD", "pg_isready", "-d", "pg-us-db"]
+      test: ["CMD", "pg_isready", "-d", "pg-us-db", "-U", "pg-user"]
       interval: 5s
       retries: 10
       start_period: 3s
@@ -21,7 +21,7 @@ services:
 
   control-api:
     container_name: e2e-datalens-control-api
-    image: ghcr.io/datalens-tech/datalens-control-api:${CONTROL_API_VERSION:-0.2139.0}
+    image: ghcr.io/datalens-tech/datalens-control-api:${CONTROL_API_VERSION:-release}
     environment:
       BI_API_UWSGI_WORKERS_COUNT: 4
       RQE_FORCE_OFF: 1
@@ -36,7 +36,7 @@ services:
 
   data-api:
     container_name: e2e-datalens-data-api
-    image: ghcr.io/datalens-tech/datalens-data-api:${DATA_API_VERSION:-0.2139.0}
+    image: ghcr.io/datalens-tech/datalens-data-api:${DATA_API_VERSION:-release}
     environment:
       GUNICORN_WORKERS_COUNT: 5
       RQE_FORCE_OFF: 1
