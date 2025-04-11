@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {Plus} from '@gravity-ui/icons';
 import type {ListSortParams} from '@gravity-ui/uikit';
 import {Button, Card, Checkbox, Dialog, Icon, List, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
@@ -22,8 +23,6 @@ import {PaletteEditorQA} from '../../../../shared';
 import ColorPaletteChartkitPreview from '../ColorPaletteCharkitPreview/ColorPaletteChartkitPreview';
 import ColorTextInput from '../ColorTextInput/ColorTextInput';
 
-import iconPlus from 'ui/assets/icons/plus.svg';
-
 import './PaletteEditor.scss';
 
 const MAX_COLORS_IN_PALETTE = 36;
@@ -32,6 +31,7 @@ const b = block('palette-editor');
 
 type OwnProps = {
     isFavoritesEnabled: boolean;
+    hasEditRights?: boolean;
 };
 
 type StateProps = ReturnType<typeof mapStateToProps>;
@@ -42,7 +42,7 @@ type PaletteEditorProps = OwnProps & StateProps & DispatchProps;
 
 class PaletteEditor extends React.Component<PaletteEditorProps> {
     render() {
-        const {currentColorPalette} = this.props;
+        const {currentColorPalette, hasEditRights} = this.props;
 
         if (currentColorPalette?.isGradient !== false) {
             return null;
@@ -55,31 +55,40 @@ class PaletteEditor extends React.Component<PaletteEditorProps> {
         const isApplyButtonDisabled = currentColorPalette.displayName.trim() === '';
 
         return (
-            <Dialog open={true} size="l" onClose={this.handleCancelClick}>
+            <Dialog
+                open={true}
+                size="l"
+                onClose={this.handleCancelClick}
+                onEscapeKeyDown={this.handleCancelClick}
+            >
                 <Dialog.Header
                     caption={i18n('component.color-palette-editor', 'label_header-caption')}
                 />
-                <Dialog.Body className={b()}>{this.renderDialogBody()}</Dialog.Body>
-                <Dialog.Footer
-                    onClickButtonCancel={this.handleCancelClick}
-                    onClickButtonApply={this.handleApplyClick}
-                    textButtonApply={textButtonApply}
-                    propsButtonApply={{
-                        disabled: isApplyButtonDisabled,
-                        qa: PaletteEditorQA.ApplyButton,
-                    }}
-                    textButtonCancel={i18n('component.color-palette-editor', 'button_cancel')}
-                >
-                    {currentColorPalette.colorPaletteId ? (
-                        <Button
-                            view="outlined-danger"
-                            size="l"
-                            onClick={this.handleDeleteColorPalette}
-                        >
-                            {i18n('component.color-palette-editor', 'button_delete-title')}
-                        </Button>
-                    ) : null}
-                </Dialog.Footer>
+                <Dialog.Body className={b({'no-rights': !hasEditRights})}>
+                    {this.renderDialogBody()}
+                </Dialog.Body>
+                {hasEditRights && (
+                    <Dialog.Footer
+                        onClickButtonCancel={this.handleCancelClick}
+                        onClickButtonApply={this.handleApplyClick}
+                        textButtonApply={textButtonApply}
+                        propsButtonApply={{
+                            disabled: isApplyButtonDisabled,
+                            qa: PaletteEditorQA.ApplyButton,
+                        }}
+                        textButtonCancel={i18n('component.color-palette-editor', 'button_cancel')}
+                    >
+                        {currentColorPalette.colorPaletteId ? (
+                            <Button
+                                view="outlined-danger"
+                                size="l"
+                                onClick={this.handleDeleteColorPalette}
+                            >
+                                {i18n('component.color-palette-editor', 'button_delete-title')}
+                            </Button>
+                        ) : null}
+                    </Dialog.Footer>
+                )}
             </Dialog>
         );
     }
@@ -97,7 +106,7 @@ class PaletteEditor extends React.Component<PaletteEditorProps> {
     };
 
     private renderDialogBody() {
-        const {currentColorPalette, isFavoritesEnabled} = this.props;
+        const {currentColorPalette, isFavoritesEnabled, hasEditRights} = this.props;
 
         if (!currentColorPalette) {
             return null;
@@ -106,7 +115,7 @@ class PaletteEditor extends React.Component<PaletteEditorProps> {
         const isAddColorButtonDisabled = currentColorPalette.colors.length >= MAX_COLORS_IN_PALETTE;
 
         return (
-            <>
+            <React.Fragment>
                 <DialogRow
                     title={i18n('component.color-palette-editor', 'label_palette-name')}
                     setting={
@@ -116,12 +125,18 @@ class PaletteEditor extends React.Component<PaletteEditorProps> {
                                 isGradient={currentColorPalette.isGradient}
                                 colors={currentColorPalette.colors}
                             />
-                            <TextInput
-                                className={b('name-input')}
-                                value={currentColorPalette.displayName}
-                                onUpdate={this.handleDisplayNameUpdate}
-                                qa={PaletteEditorQA.PaletteNameInput}
-                            />
+                            {hasEditRights ? (
+                                <TextInput
+                                    className={b('name-input')}
+                                    value={currentColorPalette.displayName}
+                                    onUpdate={this.handleDisplayNameUpdate}
+                                    qa={PaletteEditorQA.PaletteNameInput}
+                                />
+                            ) : (
+                                <div className={b('name-input')}>
+                                    {currentColorPalette.displayName}
+                                </div>
+                            )}
                         </div>
                     }
                 />
@@ -168,36 +183,38 @@ class PaletteEditor extends React.Component<PaletteEditorProps> {
                         <List<string>
                             virtualized={false}
                             filterable={false}
-                            sortable={true}
+                            sortable={Boolean(hasEditRights)}
                             renderItem={this.renderColorListItem}
                             items={currentColorPalette.colors}
                             itemClassName={b('list-item-wrapper')}
                             onSortEnd={this.handleSortEnd}
                         />
-                        <div className={b('add-color-controls')}>
-                            <Button
-                                className={b('add-color-button')}
-                                view="flat"
-                                onClick={this.handleAddColorClick}
-                                disabled={isAddColorButtonDisabled}
-                                qa={PaletteEditorQA.AddColorButton}
-                            >
-                                <Icon data={iconPlus} />{' '}
-                                {i18n('component.color-palette-editor', 'label_add-color')}
-                            </Button>
-                            {isAddColorButtonDisabled ? (
-                                <span className={b('add-color-disabled-label')}>
-                                    {i18n(
-                                        'component.color-palette-editor',
-                                        'label_add-color-disabled',
-                                        {count: MAX_COLORS_IN_PALETTE},
-                                    )}
-                                </span>
-                            ) : null}
-                        </div>
+                        {hasEditRights && (
+                            <div className={b('add-color-controls')}>
+                                <Button
+                                    className={b('add-color-button')}
+                                    view="flat"
+                                    onClick={this.handleAddColorClick}
+                                    disabled={isAddColorButtonDisabled}
+                                    qa={PaletteEditorQA.AddColorButton}
+                                >
+                                    <Icon data={Plus} />{' '}
+                                    {i18n('component.color-palette-editor', 'label_add-color')}
+                                </Button>
+                                {isAddColorButtonDisabled ? (
+                                    <span className={b('add-color-disabled-label')}>
+                                        {i18n(
+                                            'component.color-palette-editor',
+                                            'label_add-color-disabled',
+                                            {count: MAX_COLORS_IN_PALETTE},
+                                        )}
+                                    </span>
+                                ) : null}
+                            </div>
+                        )}
                     </div>
                 </div>
-            </>
+            </React.Fragment>
         );
     }
 
@@ -210,6 +227,7 @@ class PaletteEditor extends React.Component<PaletteEditorProps> {
                 error={!isStringWithHex(color)}
                 showRemove={showRemove}
                 maxWidth={true}
+                hasEditRights={this.props.hasEditRights}
                 onUpdate={this.handleColorValueUpdate.bind(this, itemIndex)}
                 onRemove={this.handleRemoveColorClick.bind(this, itemIndex)}
             />
