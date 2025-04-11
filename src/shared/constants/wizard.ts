@@ -69,3 +69,17 @@ export enum SortDirection {
     ASC = 'ASC',
     DESC = 'DESC',
 }
+
+export const ZoomMode = {
+    Auto: 'auto',
+    Manual: 'manual',
+} as const;
+
+export type ZoomModes = (typeof ZoomMode)[keyof typeof ZoomMode];
+
+export const MapCenterMode = {
+    Auto: 'auto',
+    Manual: 'manual',
+} as const;
+
+export type MapCenterModes = (typeof MapCenterMode)[keyof typeof MapCenterMode];
