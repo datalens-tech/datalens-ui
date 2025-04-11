@@ -30,6 +30,7 @@ import {getUpdatedUserSettings} from '../../../store/utils/user';
 import {WorkbookEntriesTableTabs} from '../../../units/workbooks/components/Table/WorkbookEntriesTable/WorkbookEntriesTableTabs';
 import {getAllEntryScopes} from '../../../utils/getAllEntryScopes';
 import {getBasicActionPanelItems} from '../../../utils/getBasicActionPanelItems';
+import {getCurrentUserRights} from '../../../utils/getCurrentUserRights';
 import {getRevisionsPanelEntryScopesTexts} from '../../../utils/getRevisionsPanelEntryScopesTexts';
 import {getScopeTypeIcon} from '../../../utils/getScopeTypeIcon';
 import {getTopLevelEntryScopes} from '../../../utils/getTopLevelEntryScopes';
@@ -100,5 +101,6 @@ export const registerCommonPlugins = () => {
         getRevisionsPanelEntryScopesTexts,
         getRestrictedParamNames,
         getAdditionalChartkitErrorContent,
+        getCurrentUserRights,
     });
 };

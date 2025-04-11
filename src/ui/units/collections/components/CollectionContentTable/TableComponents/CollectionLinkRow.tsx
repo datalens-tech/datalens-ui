@@ -2,7 +2,7 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {batch, useDispatch, useSelector} from 'react-redux';
-import {Link} from 'react-router-dom';
+import {Link, useHistory} from 'react-router-dom';
 import {CollectionContentTableQa} from 'shared';
 import type {CollectionWithPermissions, WorkbookWithPermissions} from 'shared/schema/types';
 import {DIALOG_CREATE_WORKBOOK} from 'ui/components/CollectionsStructure/CreateWorkbookDialog/CreateWorkbookDialog';
@@ -30,6 +30,8 @@ export const CollectionLinkRow: React.FC<CollectionLinkRowProps> = ({
     isImporting,
 }) => {
     const dispatch = useDispatch();
+    const history = useHistory();
+
     const breadcrumbs = useSelector(selectCollectionBreadcrumbs) ?? [];
 
     const isWorkbookItem = 'workbookId' in item;
@@ -44,6 +46,11 @@ export const CollectionLinkRow: React.FC<CollectionLinkRowProps> = ({
                             open: true,
                             collectionId: item.collectionId,
                             defaultView: 'import',
+                            onCreateWorkbook: ({workbookId}) => {
+                                if (workbookId) {
+                                    history.push(`${WORKBOOKS_PATH}/${workbookId}`);
+                                }
+                            },
                             onClose: () => {
                                 dispatch(closeDialog());
                             },

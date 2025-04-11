@@ -166,4 +166,5 @@ export const commonFunctionsMap = {
     renderDialogRelatedEntitiesAlertHint:
         makeFunctionTemplate<RenderDialogRelatedEntitiesAlertHint>(),
     getAdditionalChartkitErrorContent: makeFunctionTemplate<GetAdditionalChartkitErrorContent>(),
+    getCurrentUserRights: makeFunctionTemplate<() => {admin: boolean}>(),
 } as const;
