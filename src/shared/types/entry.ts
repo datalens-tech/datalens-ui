@@ -11,5 +11,5 @@ export type TransferIdMapping = Record<string, string>;
 export type TransferNotification = {
     level: 'info' | 'warning' | 'critical';
     code: string;
-    message?: string;
+    details?: object;
 };
