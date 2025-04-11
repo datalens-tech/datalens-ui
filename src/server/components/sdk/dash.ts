@@ -48,7 +48,7 @@ function processControlLinkToResult(
     return result;
 }
 
-export function processLinksForItems(tabData: DashTab, matchCallback?: MatchCallback) {
+function processLinksForItems(tabData: DashTab, matchCallback?: MatchCallback) {
     return tabData.items.reduce((result: Dictionary<string>, item) => {
         const {type, data} = item;
 
@@ -84,7 +84,7 @@ export function processLinksForItems(tabData: DashTab, matchCallback?: MatchCall
     }, {});
 }
 
-export function processLinks(data: DashData, matchCallback?: MatchCallback) {
+function processLinks(data: DashData, matchCallback?: MatchCallback) {
     return data.tabs.reduce(
         (result: Dictionary<string>, tab) => ({
             ...result,
@@ -94,7 +94,7 @@ export function processLinks(data: DashData, matchCallback?: MatchCallback) {
     );
 }
 
-export function gatherLinks(data: DashData) {
+function gatherLinks(data: DashData) {
     return processLinks(data);
 }
 

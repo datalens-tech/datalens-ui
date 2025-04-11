@@ -2,7 +2,8 @@ import type {Request, Response} from '@gravity-ui/expresskit';
 import {REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 
 import type {DashEntry, TransferNotification} from '../../shared';
-import {EntryScope, ErrorCode} from '../../shared';
+import {EntryScope} from '../../shared';
+import {TransferErrorCode} from '../../shared/constants/workbook-transfer';
 import type {EntryFieldData} from '../../shared/schema';
 import {Utils} from '../components';
 import {
@@ -76,7 +77,7 @@ export const workbooksExportController = {
 
             if (!usMasterToken) {
                 res.send(403).send({
-                    code: ErrorCode.TransferInvalidToken,
+                    code: TransferErrorCode.TransferInvalidToken,
                 });
                 return;
             }
@@ -95,7 +96,9 @@ export const workbooksExportController = {
 
                     if (entry.scope !== scope) {
                         sendExportResponse(res, [
-                            criticalTransferNotification(ErrorCode.TransferInvalidEntryData),
+                            criticalTransferNotification(
+                                TransferErrorCode.TransferInvalidEntryData,
+                            ),
                         ]);
                         return;
                     }
@@ -119,7 +122,9 @@ export const workbooksExportController = {
 
                     if (entry.scope !== scope) {
                         sendExportResponse(res, [
-                            criticalTransferNotification(ErrorCode.TransferInvalidEntryData),
+                            criticalTransferNotification(
+                                TransferErrorCode.TransferInvalidEntryData,
+                            ),
                         ]);
                         return;
                     }
@@ -166,7 +171,7 @@ export const workbooksExportController = {
                 }
                 default: {
                     sendExportResponse(res, [
-                        criticalTransferNotification(ErrorCode.TransferInvalidEntryScope),
+                        criticalTransferNotification(TransferErrorCode.TransferInvalidEntryScope),
                     ]);
                     break;
                 }
@@ -186,7 +191,7 @@ export const workbooksExportController = {
 
             if (!usMasterToken) {
                 res.send(403).send({
-                    code: ErrorCode.TransferInvalidToken,
+                    code: TransferErrorCode.TransferInvalidToken,
                 });
                 return;
             }
@@ -296,7 +301,7 @@ export const workbooksExportController = {
                 }
                 default: {
                     sendImportResponse(res, [
-                        criticalTransferNotification(ErrorCode.TransferInvalidEntryScope),
+                        criticalTransferNotification(TransferErrorCode.TransferInvalidEntryScope),
                     ]);
                     break;
                 }

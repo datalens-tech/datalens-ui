@@ -2,10 +2,13 @@ import {
     type DashEntry,
     EntryScope,
     EntryUpdateMode,
-    ErrorCode,
     type TransferIdMapping,
     type TransferNotification,
 } from '../../../shared';
+import {
+    TRANSFER_UNKNOWN_ENTRY_ID,
+    TransferErrorCode,
+} from '../../../shared/constants/workbook-transfer';
 import Dash from '../sdk/dash';
 
 import {
@@ -43,14 +46,18 @@ export async function prepareDashImportData(
         });
 
         if (isMissingMapping) {
-            notifications.push(warningTransferNotification(ErrorCode.TransferMissingMappingId));
+            notifications.push(
+                warningTransferNotification(TransferErrorCode.TransferMissingMappingId),
+            );
         }
 
         Dash.validateData(data);
     } catch (err) {
         return {
             dash: null,
-            notifications: [criticalTransferNotification(ErrorCode.TransferInvalidEntryData)],
+            notifications: [
+                criticalTransferNotification(TransferErrorCode.TransferInvalidEntryData),
+            ],
         };
     }
 
@@ -71,19 +78,19 @@ export async function prepareDashExportData(entry: DashEntry, idMapping: Transfe
     const notifications: TransferNotification[] = [];
     let isMissingMapping = false;
 
-    Dash.processLinks(data, (value, obj, key) => {
-        if (idMapping[value]) {
-            obj[key] = idMapping[value];
-            return idMapping[value];
-        } else {
-            isMissingMapping = true;
+    Dash.processLinks(data, (val, obj, key) => {
+        const mappedValue = idMapping[val];
+        if (mappedValue) {
+            obj[key] = mappedValue;
+            return mappedValue;
         }
 
-        return value;
+        isMissingMapping = true;
+        return TRANSFER_UNKNOWN_ENTRY_ID;
     });
 
     if (isMissingMapping) {
-        notifications.push(warningTransferNotification(ErrorCode.TransferMissingMappingId));
+        notifications.push(warningTransferNotification(TransferErrorCode.TransferMissingMappingId));
     }
 
     const nameParts = entry.key.split('/');

@@ -2,7 +2,10 @@ import type {Request} from '@gravity-ui/expresskit';
 import forIn from 'lodash/forIn';
 import isArray from 'lodash/isArray';
 
-import {ErrorCode} from '../../../shared';
+import {
+    TRANSFER_UNKNOWN_ENTRY_ID,
+    TransferErrorCode,
+} from '../../../shared/constants/workbook-transfer';
 import type {EntryFields} from '../../../shared/schema';
 import {
     EntryScope,
@@ -20,6 +23,8 @@ import {
 } from './create-transfer-notifications';
 
 type MappingWarnings = {missedMapping: boolean};
+
+type MatchCallback = (value: string, obj: Record<string, any>, key: string | number) => string;
 
 type TransferChartDataOptions = {
     data: ReturnType<typeof prepareChartData>['chart'] & ChartDataOptions['data'];
@@ -44,29 +49,16 @@ const validateChart = (chartOptions: TransferChartDataOptions) => {
     });
 };
 
-const traverseWizardFieldsRecursive = (
-    obj: any,
-    idMapping: TransferIdMapping,
-    warnings: MappingWarnings,
-    parent?: any,
-) => {
+const traverseWizardFieldsRecursive = (obj: any, matchCallback: MatchCallback) => {
     forIn(obj, (val, key) => {
         if (typeof val === 'object') {
-            traverseWizardFieldsRecursive(val, idMapping, warnings, obj);
+            traverseWizardFieldsRecursive(val, matchCallback);
             // Array<{datasetId: string}>
-        } else if (key === 'datasetId' && typeof val === 'string' && isArray(parent)) {
-            if (idMapping[val]) {
-                obj[key] = idMapping[val];
-            } else {
-                warnings.missedMapping = true;
-            }
+        } else if (key === 'datasetId' && typeof val === 'string') {
+            obj[key] = matchCallback(val, obj, key);
             // dataset.id
         } else if (key === 'dataset' && typeof val.id === 'string') {
-            if (idMapping[val.id]) {
-                val.id = idMapping[val];
-            } else {
-                warnings.missedMapping = true;
-            }
+            val.id = matchCallback(val.id, val, 'id');
         }
     });
 };
@@ -74,20 +66,26 @@ const traverseWizardFieldsRecursive = (
 const traverseWizardFields = (obj: any, idMapping: TransferIdMapping) => {
     const warnings: MappingWarnings = {missedMapping: false};
 
+    const matchCallback: MatchCallback = (val, obj, key) => {
+        const mappedValue = idMapping[val];
+        if (mappedValue) {
+            obj[key] = mappedValue;
+            return mappedValue;
+        }
+
+        warnings.missedMapping = true;
+        return TRANSFER_UNKNOWN_ENTRY_ID;
+    };
     // datasetsIds: string[]
     if ('datasetsIds' in obj && isArray(obj.datasetsIds)) {
         const {datasetsIds} = obj;
 
-        obj.datasetsIds = (datasetsIds as string[]).map((id) => {
-            if (!idMapping[id]) {
-                warnings.missedMapping = true;
-            }
-
-            return idMapping[id] || id;
+        obj.datasetsIds = (datasetsIds as string[]).map((id, index, list) => {
+            return matchCallback(id, list, index);
         });
     }
 
-    traverseWizardFieldsRecursive(obj, idMapping, warnings);
+    traverseWizardFieldsRecursive(obj, matchCallback);
 
     return warnings;
 };
@@ -131,7 +129,9 @@ export const prepareImportChartData = async (
     } catch (err) {
         return {
             widget: null,
-            notifications: [criticalTransferNotification(ErrorCode.TransferInvalidEntryData)],
+            notifications: [
+                criticalTransferNotification(TransferErrorCode.TransferInvalidEntryData),
+            ],
         };
     }
 
@@ -145,12 +145,14 @@ export const prepareImportChartData = async (
         default:
             return {
                 widget: null,
-                notifications: [criticalTransferNotification(ErrorCode.TransferInvalidEntryData)],
+                notifications: [
+                    criticalTransferNotification(TransferErrorCode.TransferInvalidEntryData),
+                ],
             };
     }
 
     if (warnings && warnings.missedMapping) {
-        notifications.push(warningTransferNotification(ErrorCode.TransferMissingMappingId));
+        notifications.push(warningTransferNotification(TransferErrorCode.TransferMissingMappingId));
     }
 
     try {
@@ -159,7 +161,9 @@ export const prepareImportChartData = async (
         if (preparedChartData.error) {
             return {
                 widget: null,
-                notifications: [criticalTransferNotification(ErrorCode.TransferInvalidEntryData)],
+                notifications: [
+                    criticalTransferNotification(TransferErrorCode.TransferInvalidEntryData),
+                ],
             };
         }
 
@@ -176,7 +180,9 @@ export const prepareImportChartData = async (
     } catch (err) {
         return {
             widget: null,
-            notifications: [criticalTransferNotification(ErrorCode.TransferInvalidEntryData)],
+            notifications: [
+                criticalTransferNotification(TransferErrorCode.TransferInvalidEntryData),
+            ],
         };
     }
 };
@@ -211,19 +217,21 @@ export const prepareExportChartData = async (entry: EntryFields, idMapping: Tran
                 return {
                     widget: null,
                     notifications: [
-                        criticalTransferNotification(ErrorCode.TransferInvalidEntryData),
+                        criticalTransferNotification(TransferErrorCode.TransferInvalidEntryData),
                     ],
                 };
         }
     } catch (err) {
         return {
             widget: null,
-            notifications: [criticalTransferNotification(ErrorCode.TransferInvalidEntryData)],
+            notifications: [
+                criticalTransferNotification(TransferErrorCode.TransferInvalidEntryData),
+            ],
         };
     }
 
     if (warnings && warnings.missedMapping) {
-        notifications.push(warningTransferNotification(ErrorCode.TransferMissingMappingId));
+        notifications.push(warningTransferNotification(TransferErrorCode.TransferMissingMappingId));
     }
 
     return {
