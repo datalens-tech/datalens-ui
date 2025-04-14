@@ -1,5 +1,3 @@
-import {DL} from 'constants/common';
-
 import React from 'react';
 
 import {dateTime} from '@gravity-ui/date-utils';
@@ -11,6 +9,7 @@ import {Link} from 'react-router-dom';
 import {DEFAULT_DATE_FORMAT} from 'shared';
 import {WorkbookPageQa} from 'shared/constants/qa/workbooks';
 import type {WorkbookWithPermissions} from 'shared/schema/us/types/workbooks';
+import {DL} from 'ui/constants/common';
 import {registry} from 'ui/registry/index';
 import type {AppDispatch} from 'ui/store';
 import {changeFavoriteEntry} from 'ui/units/workbooks/store/actions';

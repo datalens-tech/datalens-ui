@@ -1,4 +1,4 @@
-import type {ChartKitWidgetData} from '@gravity-ui/chartkit/build/types/widget-data';
+import type {ChartData} from '@gravity-ui/chartkit/d3';
 
 import type {QlExtendedConfig, ServerChartsConfig} from '../../../../../../shared';
 import {PlaceholderId, WizardVisualizationId, isDateField} from '../../../../../../shared';
@@ -21,7 +21,7 @@ export function buildD3Config(args: BuildD3ConfigArgs) {
     const yPlaceholderSettings = yPlaceholder?.settings || {};
     const yItem = yPlaceholder?.items[0];
 
-    const chartWidgetData: Partial<ChartKitWidgetData> = {
+    const chartWidgetData: Partial<ChartData> = {
         title: getChartTitle(extraSettings),
         tooltip: {enabled: extraSettings?.tooltip !== 'hide'},
         legend: {enabled: isLegendEnabled},

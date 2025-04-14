@@ -1,8 +1,4 @@
-import type {
-    ChartKitWidgetData,
-    LineSeries,
-    LineSeriesData,
-} from '@gravity-ui/chartkit/build/types/widget-data';
+import type {ChartData, LineSeries, LineSeriesData} from '@gravity-ui/chartkit/d3';
 
 import type {
     SeriesExportSettings,
@@ -141,12 +137,12 @@ export function prepareD3Line(args: PrepareFunctionArgs) {
         };
     });
 
-    let legend: ChartKitWidgetData['legend'];
+    let legend: ChartData['legend'];
     if (seriesData.length <= 1) {
         legend = {enabled: false};
     }
 
-    let xAxis: ChartKitWidgetData['xAxis'] = {};
+    let xAxis: ChartData['xAxis'] = {};
     if (isCategoriesXAxis) {
         xAxis = {
             type: 'category',

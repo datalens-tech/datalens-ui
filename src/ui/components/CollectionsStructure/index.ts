@@ -27,7 +27,6 @@ export {
 export {CopyEntriesDialog, DIALOG_COPY_ENTRIES} from './CopyEntriesDialog';
 export {DeleteCollectionDialog, DIALOG_DELETE_COLLECTION} from './DeleteCollectionDialog';
 export {DeleteWorkbookDialog, DIALOG_DELETE_WORKBOOK} from './DeleteWorkbookDialog';
-export {AddDemoWorkbookDialog, DIALOG_ADD_DEMO_WORKBOOK} from './AddDemoWorkbookDialog';
 export {
     CreateEntryInWorkbookDialog,
     DIALOG_CREATE_ENTRY_IN_WORKBOOK,

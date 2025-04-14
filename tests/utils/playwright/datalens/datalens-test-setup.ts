@@ -18,7 +18,7 @@ type DatalensTestSetupArgs = {
 };
 
 export async function datalensTestSetup({config, afterAuth, authSettings}: DatalensTestSetupArgs) {
-    if (fs.existsSync(ARTIFACTS_PATH)) {
+    if (fs.existsSync(ARTIFACTS_PATH) && process.env.CI !== 'true') {
         await fs.rmSync(ARTIFACTS_PATH, {recursive: true});
     }
     const browser = await chromium.launch({

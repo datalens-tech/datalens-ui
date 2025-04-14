@@ -31,7 +31,8 @@ export const QlQueries = {
 
 export const QlQa = {
     visualizationList: [
-        VisualizationsQa.BarD3,
+        VisualizationsQa.BarXD3,
+        VisualizationsQa.BarYD3,
         VisualizationsQa.ScatterD3,
         VisualizationsQa.PieD3,
         VisualizationsQa.DonutD3,

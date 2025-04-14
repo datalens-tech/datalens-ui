@@ -1,5 +1,3 @@
-import {DL} from 'constants/common';
-
 import React from 'react';
 
 import block from 'bem-cn-lite';
@@ -8,6 +6,7 @@ import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import {useLoadingChart} from 'ui/components/Widgets/Chart/hooks/useLoadingChart';
+import {DL} from 'ui/constants/common';
 import {DatalensChartkitContent} from 'ui/libs/DatalensChartkit/components/ChartKitBase/components/Chart/Chart';
 import Loader from 'ui/libs/DatalensChartkit/components/ChartKitBase/components/Loader/Loader';
 import {getDataProviderData} from 'ui/libs/DatalensChartkit/components/ChartKitBase/helpers';
