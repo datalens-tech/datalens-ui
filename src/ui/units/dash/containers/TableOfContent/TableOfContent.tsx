@@ -7,17 +7,18 @@ import type {Hash} from 'history';
 import {useShallowEqualSelector} from 'hooks';
 import {I18n} from 'i18n';
 import type {DatalensGlobalState} from 'index';
-import {useDispatch} from 'react-redux';
+import throttle from 'lodash/throttle';
+import {useDispatch, useSelector} from 'react-redux';
 import {Link, useLocation} from 'react-router-dom';
 import {TableOfContentQa} from 'shared';
 import {DL} from 'ui/constants';
+import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
 import {
     selectHashStates,
     selectShowTableOfContent,
     selectTabId,
     selectTabs,
 } from 'units/dash/store/selectors/dashTypedSelectors';
-import {scrollIntoView} from 'utils';
 
 import {
     appendSearchQuery,
@@ -27,15 +28,16 @@ import {
 } from '../../modules/helpers';
 import {setPageTab, toggleTableOfContent} from '../../store/actions/dashTyped';
 
+import {getUpdatedOffsets} from './helpers';
+
 import './TableOfContent.scss';
 
 const i18n = I18n.keyset('dash.table-of-content.view');
 
 const b = block('table-of-content');
 
-const scrollIntoViewOptions: ScrollIntoViewOptions = {behavior: 'smooth'};
-const dispatchResizeTimeout = 200;
-const scrollDelay = 300;
+const DISPATCH_RESIZE_TIMEOUT = 200;
+const THROTTLE_TIMEOUT = 100;
 
 const getHash = ({
     itemTitle,
@@ -53,22 +55,22 @@ const getHash = ({
     return itemTitle ? `#${encodeURIComponent(itemTitle)}` : '';
 };
 
-const scrollIntoViewWithTimeout = (itemId: string) => {
-    setTimeout(
-        () => scrollIntoView(itemId, scrollIntoViewOptions),
-        // to have time to change the height of the react-grid-layout (200ms)
-        // DashKit rendering ended after location change (with manual page refresh) (50-70ms)
-        // small margin
-        scrollDelay,
-    );
-};
-
-const TableOfContent: React.FC<{disableHashNavigation?: boolean}> = React.memo(
-    ({disableHashNavigation}) => {
+const TableOfContent = React.memo(
+    ({
+        disableHashNavigation,
+        onItemClick,
+    }: {
+        disableHashNavigation?: boolean;
+        onItemClick: (itemTitle: string) => void;
+    }) => {
         const dispatch = useDispatch();
         const location = useLocation();
 
+        const isAsideHeaderCompact = useSelector(selectAsideHeaderIsCompact);
+
+        const containerRef = React.useRef<HTMLDivElement | null>(null);
         const {opened, tabs, currentTabId, hashStates} = useShallowEqualSelector(selectState);
+        const [offsets, setOffsets] = React.useState({top: '0px', bottom: '0px', left: '0px'});
 
         const isSelectedTab = React.useCallback(
             (tabId: string) => tabId === currentTabId,
@@ -97,11 +99,9 @@ const TableOfContent: React.FC<{disableHashNavigation?: boolean}> = React.memo(
                 if (DL.IS_MOBILE) {
                     handleToggleTableOfContent();
                 }
-                if (disableHashNavigation) {
-                    scrollIntoViewWithTimeout(encodeURIComponent(itemTitle));
-                }
+                onItemClick(itemTitle);
             },
-            [isSelectedTab, disableHashNavigation, dispatch, handleToggleTableOfContent],
+            [isSelectedTab, onItemClick, dispatch, handleToggleTableOfContent],
         );
 
         const handleSheetClose = () => {
@@ -125,15 +125,61 @@ const TableOfContent: React.FC<{disableHashNavigation?: boolean}> = React.memo(
             [disableHashNavigation, hashStates, isSelectedTab, location],
         );
 
-        React.useEffect(() => {
-            if (location.hash && !disableHashNavigation) {
-                scrollIntoViewWithTimeout(location.hash.replace('#', ''));
+        const setUpdatedOffsets = React.useCallback(() => {
+            const updatedOffsets = getUpdatedOffsets(containerRef);
+            if (!updatedOffsets) {
+                return;
             }
-        }, [location.hash, disableHashNavigation]);
+            const {topOffset, bottomOffset, leftOffset} = updatedOffsets;
+
+            setOffsets((state) => {
+                if (
+                    state.top !== topOffset ||
+                    state.bottom !== bottomOffset ||
+                    state.left !== leftOffset
+                ) {
+                    return {top: topOffset, bottom: bottomOffset, left: leftOffset};
+                }
+
+                return state;
+            });
+        }, []);
+
         React.useEffect(() => {
             // to recalculate ReactGridLayout
-            dispatchResize(dispatchResizeTimeout);
+            dispatchResize(DISPATCH_RESIZE_TIMEOUT);
         }, [opened]);
+
+        React.useEffect(() => {
+            if (DL.IS_MOBILE || !opened) {
+                return;
+            }
+
+            const handler = throttle(() => {
+                setUpdatedOffsets();
+            }, THROTTLE_TIMEOUT);
+
+            window.addEventListener('scroll', handler);
+            handler();
+
+            const resizeObserver = new ResizeObserver(() => {
+                handler();
+            });
+
+            if (containerRef?.current) {
+                resizeObserver.observe(containerRef?.current || undefined);
+            }
+
+            // eslint-disable-next-line consistent-return
+            return () => {
+                window.removeEventListener('scroll', handler);
+                resizeObserver.disconnect();
+            };
+        }, [opened, setUpdatedOffsets]);
+
+        React.useEffect(() => {
+            requestAnimationFrame(setUpdatedOffsets);
+        }, [isAsideHeaderCompact, setUpdatedOffsets]);
 
         const localTabs = memoizedGetLocalTabs(tabs);
 
@@ -182,9 +228,13 @@ const TableOfContent: React.FC<{disableHashNavigation?: boolean}> = React.memo(
                         <div className={b('tabs')}>{tabsItems}</div>
                     </Sheet>
                 ) : (
-                    <div className={b()} data-qa={TableOfContentQa.TableOfContent}>
+                    <div
+                        className={b()}
+                        ref={containerRef}
+                        data-qa={TableOfContentQa.TableOfContent}
+                    >
                         <div className={b('wrapper', {opened})}>
-                            <div className={b('sidebar', {opened})}>
+                            <div className={b('sidebar', {opened})} style={offsets}>
                                 <div className={b('header')}>
                                     <span className={b('header-title')}>
                                         {i18n('label_table-of-content')}

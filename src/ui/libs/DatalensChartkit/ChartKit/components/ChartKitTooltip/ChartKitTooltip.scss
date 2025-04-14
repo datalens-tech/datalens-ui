@@ -1,4 +1,8 @@
 .chartkit-dl-tooltip {
     padding: 16px;
     max-width: 300px;
+
+    &__popup[data-popper-reference-hidden='true'] {
+        display: none;
+    }
 }

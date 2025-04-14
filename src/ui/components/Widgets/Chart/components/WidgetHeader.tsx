@@ -11,7 +11,7 @@ import {ChartkitMenuDialogsQA, ControlQA, Feature} from 'shared';
 import {DL} from 'ui/constants/common';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
 import {setSkipReload} from 'ui/units/dash/store/actions/dashTyped';
-import Utils from 'ui/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 
 import Loader from '../../../../libs/DatalensChartkit/components/ChartKitBase/components/Loader/Loader';
@@ -22,6 +22,7 @@ import type {
     LoadedWidgetData,
     OnChangeData,
 } from '../../../../libs/DatalensChartkit/types';
+import {MarkdownHelpPopover} from '../../../MarkdownHelpPopover/MarkdownHelpPopover';
 import {DRAGGABLE_HANDLE_CLASS_NAME} from '../helpers/helpers';
 import type {ChartProviderPropsWithRefProps, ChartWidgetDataRef, DataProps} from '../types';
 
@@ -34,6 +35,8 @@ import './WidgetHeader.scss';
 type TabItem = {
     id: string;
     title: string;
+    displayedTitle: React.ReactNode;
+    hint?: string;
     disabled?: boolean;
 };
 
@@ -42,7 +45,7 @@ export type HeaderProps = {
     isFullscreen: boolean;
     onFullscreenClick: () => void;
     editMode: boolean;
-    hideTabs: boolean;
+    hideTitle?: boolean;
     tabsItems?: Array<TabItem>;
     currentTab?: CurrentTab;
     onSelectTab?: (param: string) => void;
@@ -89,7 +92,7 @@ export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
         isFullscreen,
         onFullscreenClick,
         editMode,
-        hideTabs,
+        hideTitle,
         tabsItems,
         currentTab,
         onSelectTab,
@@ -104,11 +107,12 @@ export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
 
     const size = DL.IS_MOBILE ? MOBILE_SIZE.TABS : 'm';
 
-    const showTabs = !hideTabs && tabsItems && currentTab && onSelectTab;
-
     const widgetTitle = currentTab?.title || title;
 
-    const showFloatControls = Utils.isEnabledFeature(Feature.DashFloatControls);
+    const widgetTitleHint =
+        currentTab?.enableHint && currentTab?.hint?.trim() ? currentTab?.hint?.trim() : '';
+
+    const showFloatControls = isEnabledFeature(Feature.DashFloatControls);
 
     const showFiltersClear = showActionParamsFilter && onFiltersClear && !showFloatControls;
 
@@ -126,18 +130,47 @@ export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
     const showContentLoader = headerWithControlsProps.showLoader || isExportLoading;
     const showLoaderVeil = headerWithControlsProps.veil && !isExportLoading;
 
-    const renderTabs = () => (
-        <div
-            className={b(
-                'tabs',
-                {'edit-mode': editMode, 'no-controls': noControls},
-                DRAGGABLE_HANDLE_CLASS_NAME,
-            )}
-        >
-            {showTabs && (
+    const renderTabs = () => {
+        if (DL.IS_MOBILE && (isFullscreen || (!hideTitle && tabsItems?.length === 1))) {
+            return (
+                <div className={b('mobile-title')}>
+                    <div className={b('mobile-title-wrap')}>
+                        {widgetTitle}
+                        {Boolean(widgetTitleHint) && (
+                            <MarkdownHelpPopover
+                                markdown={widgetTitleHint}
+                                className={b('chart-title-hint')}
+                                buttonProps={{
+                                    className: b('chart-title-hint-button'),
+                                }}
+                                onClick={handleClickHint}
+                            />
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        if (hideTitle || !tabsItems || !currentTab || !onSelectTab || !widgetTitle) {
+            return null;
+        }
+
+        const displayedTabItems = tabsItems.map((item) => ({
+            ...item,
+            title: item.displayedTitle || item.title || '',
+        }));
+
+        return (
+            <div
+                className={b(
+                    'tabs',
+                    {'edit-mode': editMode, 'no-controls': noControls},
+                    DRAGGABLE_HANDLE_CLASS_NAME,
+                )}
+            >
                 <AdaptiveTabs
                     size={size}
-                    items={tabsItems}
+                    items={displayedTabItems}
                     activeTab={currentTab.id}
                     onSelectTab={onSelectTab}
                     breakpointsConfig={DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG}
@@ -163,9 +196,9 @@ export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
                         );
                     }}
                 />
-            )}
-        </div>
-    );
+            </div>
+        );
+    };
 
     return (
         <React.Fragment>
@@ -185,7 +218,7 @@ export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
                         <Icon data={ArrowLeft} />
                     </span>
                 )}
-                {isFullscreen ? <div className={b('title')}>{widgetTitle}</div> : renderTabs()}
+                {renderTabs()}
                 {showFiltersClear && (
                     <div className={b('icons')}>
                         <div className={b('filters-controls')}>

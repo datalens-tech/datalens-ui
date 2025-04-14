@@ -11,7 +11,7 @@ type ValidatedWrapFnArgs = {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const isWrapFnArgsValid = (value: any): value is ValidatedWrapFnArgs => {
     if (!value || typeof value !== 'object') {
-        throw new Error('You should pass an object to ChartEditor.wrapFn method');
+        throw new Error('You should pass an object to Editor.wrapFn method');
     }
 
     if (typeof value.fn !== 'function') {
@@ -36,4 +36,30 @@ export function isChartWithJSAndHtmlAllowed(config: {createdAt: string}) {
     }
 
     return new Date(config.createdAt).valueOf() < ESCAPE_CHART_FIELDS_DATE;
+}
+
+export function cleanJSONFn<T>(value: T): T {
+    if (Array.isArray(value)) {
+        return value.map(cleanJSONFn) as T;
+    }
+    if (typeof value === 'object' && value !== null) {
+        const replaced: Record<string, unknown> = {};
+        Object.keys(value).forEach((key) => {
+            const currentValue = (value as Record<string, unknown>)[key];
+            replaced[key] = cleanJSONFn(currentValue);
+        });
+        return replaced as T;
+    }
+    if (typeof value !== 'string') {
+        return value;
+    }
+    if (value.length < 8) {
+        return value;
+    }
+    const prefix = value.substring(0, 8);
+
+    if (prefix === '_NuFrRa_') {
+        return undefined as T;
+    }
+    return value;
 }

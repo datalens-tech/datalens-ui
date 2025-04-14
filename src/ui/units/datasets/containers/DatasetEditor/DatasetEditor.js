@@ -6,18 +6,19 @@ import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
 import {compose} from 'recompose';
 import {createStructuredSelector} from 'reselect';
+import {Feature} from 'shared';
+import {registry} from 'ui/registry';
 import {selectDebugMode} from 'ui/store/selectors/user';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {
     addField,
     batchDeleteFields,
     batchUpdateFields,
-    disableSaveDataset,
     duplicateField,
     editorSetItemsToDisplay,
-    enableSaveDataset,
     toggleFieldEditorModuleLoader,
+    toggleSaveDataset,
     updateDatasetByValidation,
-    updateField,
     updateRLS,
 } from 'units/datasets/store/actions/creators';
 
@@ -25,7 +26,7 @@ import {DIALOG_FIELD_EDITOR} from '../../../../components/DialogFieldEditor/Dial
 import {CounterName, GoalId, reachMetricaGoal} from '../../../../libs/metrica';
 import {closeDialog, openDialog, openDialogConfirm} from '../../../../store/actions/dialog';
 import DatasetTable from '../../components/DatasetTable/DatasetTable';
-import RLSDialog from '../../components/RLSDialog/RLSDialog';
+import {DATASET_VALIDATION_TIMEOUT, TAB_DATASET} from '../../constants';
 import {
     UISelector,
     avatarsSelector,
@@ -58,7 +59,7 @@ class DatasetEditor extends React.Component {
         field: null,
         updates: [],
         visibleRLSDialog: false,
-        currentRLSField: '',
+        currentRLSField: isEnabledFeature(Feature.EnableRLSV2) ? [] : '',
     };
 
     get filteredFields() {
@@ -131,11 +132,11 @@ class DatasetEditor extends React.Component {
         this.props.closeDialog();
     };
 
-    debouncedUpdate2000 = _debounce(this.props.updateDatasetByValidation, 2000);
+    debouncedUpdate = _debounce(this.props.updateDatasetByValidation, DATASET_VALIDATION_TIMEOUT);
 
     updateDataset = ({debounce, updatePreview, validateEnabled}) => {
         if (debounce) {
-            this.debouncedUpdate2000({
+            this.debouncedUpdate({
                 updatePreview,
                 validateEnabled,
             });
@@ -147,14 +148,6 @@ class DatasetEditor extends React.Component {
         }
     };
 
-    setValidateSaveDataset = (validateEnabled) => {
-        if (validateEnabled) {
-            this.props.disableSaveDataset();
-        } else {
-            this.props.enableSaveDataset();
-        }
-    };
-
     batchModifyFields = ({
         actionType,
         fields,
@@ -163,11 +156,12 @@ class DatasetEditor extends React.Component {
         validateEnabled = true,
     }) => {
         if (fields.length > 0 && fields.every(({guid}) => guid)) {
-            this.setValidateSaveDataset(validateEnabled);
+            this.props.toggleSaveDataset({enable: !validateEnabled, validationPending: debounce});
+            const stacked = debounce && this.props.validation.isPending;
 
             switch (actionType) {
                 case 'delete': {
-                    this.props.batchDeleteFields(fields);
+                    this.props.batchDeleteFields(fields, {stacked, tab: TAB_DATASET});
 
                     this.updateDataset({
                         debounce,
@@ -178,7 +172,7 @@ class DatasetEditor extends React.Component {
                     break;
                 }
                 case 'update': {
-                    this.props.batchUpdateFields(fields);
+                    this.props.batchUpdateFields(fields, undefined, {stacked, tab: TAB_DATASET});
 
                     this.updateDataset({
                         debounce,
@@ -192,13 +186,22 @@ class DatasetEditor extends React.Component {
         }
     };
 
-    modifyFields = ({actionType, field, updatePreview = false, validateEnabled = true}) => {
+    modifyFields = ({
+        actionType,
+        field,
+        updatePreview = false,
+        validateEnabled = true,
+        editHistoryOptions,
+    }) => {
         if (field.guid) {
-            this.setValidateSaveDataset(validateEnabled);
+            this.props.toggleSaveDataset({enable: !validateEnabled});
 
             switch (actionType) {
                 case 'duplicate': {
-                    this.props.duplicateField(field);
+                    this.props.duplicateField(field, {
+                        stacked: this.props.validation.isPending,
+                        tab: editHistoryOptions.tab,
+                    });
 
                     this.updateDataset({
                         debounce: true,
@@ -209,7 +212,7 @@ class DatasetEditor extends React.Component {
                     break;
                 }
                 case 'add': {
-                    this.props.addField(field);
+                    this.props.addField(field, false, {tab: TAB_DATASET});
 
                     this.updateDataset({
                         debounce: false,
@@ -296,7 +299,8 @@ class DatasetEditor extends React.Component {
         const {guid} = field;
 
         if (rls && guid) {
-            const rlsField = rls[guid] || '';
+            const rlsFieldDefault = isEnabledFeature(Feature.EnableRLSV2) ? [] : '';
+            const rlsField = rls[guid] || rlsFieldDefault;
 
             this.setState({
                 visibleRLSDialog: true,
@@ -309,7 +313,7 @@ class DatasetEditor extends React.Component {
     closeRLSDialog = () => {
         this.setState({
             visibleRLSDialog: false,
-            currentRLSField: '',
+            currentRLSField: isEnabledFeature(Feature.EnableRLSV2) ? [] : '',
             field: null,
         });
     };
@@ -317,6 +321,7 @@ class DatasetEditor extends React.Component {
     render() {
         const {sourceAvatars, validation, options, itemsToDisplay, rls, permissions} = this.props;
         const {field, visibleRLSDialog, currentRLSField} = this.state;
+        const {renderRLSDialog} = registry.datasets.functions.getAll();
 
         return (
             <div className={b()}>
@@ -340,13 +345,13 @@ class DatasetEditor extends React.Component {
                     openDialogConfirm={this.props.openDialogConfirm}
                     onDisplaySettingsUpdate={this.handleItemsToDisplayUpdate}
                 />
-                <RLSDialog
-                    visible={visibleRLSDialog}
-                    rlsField={currentRLSField}
-                    field={field}
-                    onClose={this.closeRLSDialog}
-                    onSave={this.props.updateRLS}
-                />
+                {renderRLSDialog({
+                    visible: visibleRLSDialog,
+                    rlsField: currentRLSField,
+                    field,
+                    onClose: this.closeRLSDialog,
+                    onSave: this.props.updateRLS,
+                })}
             </div>
         );
     }
@@ -356,9 +361,7 @@ DatasetEditor.propTypes = {
     updateDatasetByValidation: PropTypes.func.isRequired,
     addField: PropTypes.func.isRequired,
     duplicateField: PropTypes.func.isRequired,
-    updateField: PropTypes.func.isRequired,
-    disableSaveDataset: PropTypes.func.isRequired,
-    enableSaveDataset: PropTypes.func.isRequired,
+    toggleSaveDataset: PropTypes.func.isRequired,
     updateRLS: PropTypes.func.isRequired,
     toggleFieldEditorModuleLoader: PropTypes.func.isRequired,
     editorSetItemsToDisplay: PropTypes.func.isRequired,
@@ -411,11 +414,9 @@ const mapDispatchToProps = {
     addField,
     duplicateField,
     batchDeleteFields,
-    updateField,
     batchUpdateFields,
     updateRLS,
-    disableSaveDataset,
-    enableSaveDataset,
+    toggleSaveDataset,
     toggleFieldEditorModuleLoader,
     editorSetItemsToDisplay,
     openDialog,

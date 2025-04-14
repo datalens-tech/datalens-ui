@@ -1,8 +1,9 @@
 {
-  "button_publish": "Publish",
-  "button_published": "Published",
   "button_save": "Save",
-  "button_save-as": "Save as",
+  "button_save-as": "Save as copy",
+  "button_save-as-draft": "Save as draft",
+  "button_save-as-published": "Save and make actual",
   "button_saved": "Saved",
+  "label_widget-name-copy": "{{name}} — copy",
   "toast_warning-not-latest-version": "You are not using the latest chart version. Apply changes?"
 }

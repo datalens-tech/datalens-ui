@@ -1,4 +1,4 @@
-export {CacheClient} from '../../src/server/components/cache-client';
+export {CacheClient, RedisConfig, getRedisConfig} from '../../src/server/components/cache-client';
 export {
     getLandingLayout,
     SDK,

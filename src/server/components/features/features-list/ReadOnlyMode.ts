@@ -1,10 +1,10 @@
-import {Feature} from '../../../../shared';
+import {Feature, isTrueArg} from '../../../../shared';
 import {createFeatureConfig} from '../utils';
 
 export default createFeatureConfig({
     name: Feature.ReadOnlyMode,
     state: {
         development: false,
-        production: false,
+        production: isTrueArg(process.env.READ_ONLY_MODE),
     },
 });

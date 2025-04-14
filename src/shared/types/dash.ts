@@ -1,15 +1,21 @@
 import type {ItemDropProps} from '@gravity-ui/dashkit';
 
-import type {DASH_INFO_HEADER} from '../constants';
 import type {Operations} from '../modules';
 
-import type {ClientChartsConfig, Dictionary, Entry, EntryScope, StringParams} from './index';
+import type {
+    ClientChartsConfig,
+    Dictionary,
+    Entry,
+    EntryScope,
+    StringParams,
+    ValueOf,
+} from './index';
 
 export enum ControlType {
     Dash = 'control_dash',
 }
 
-export type DashChartRequestContext = Record<typeof DASH_INFO_HEADER, string>;
+export type DashChartRequestContext = Record<string, string>;
 
 export enum DashTabItemType {
     Title = 'title',
@@ -20,12 +26,15 @@ export enum DashTabItemType {
     Image = 'image',
 }
 
-export enum DashTabItemTitleSize {
-    L = 'l',
-    M = 'm',
-    S = 's',
-    XS = 'xs',
-}
+export const DashTabItemTitleSizes = {
+    XL: 'xl',
+    L: 'l',
+    M: 'm',
+    S: 's',
+    XS: 'xs',
+} as const;
+
+export type DashTabItemTitleSize = ValueOf<typeof DashTabItemTitleSizes>;
 
 export enum DashTabItemControlSourceType {
     Dataset = 'dataset',
@@ -75,6 +84,7 @@ export type DashSettings = {
     globalParams?: DashSettingsGlobalParams;
     loadPriority?: DashLoadPriority;
     loadOnlyVisibleCharts?: boolean;
+    margins?: [number, number];
 };
 
 export interface DashData {
@@ -93,7 +103,9 @@ export type DashDragOptions = ItemDropProps;
 // config with strict requirements of settings for new dash
 // schemeVersion comes from server
 export type FakeDashData = Omit<DashData, 'schemeVersion'> & {
-    settings: Required<DashSettings>;
+    settings: Required<Omit<DashSettings, 'margins'>> & {
+        margins?: DashSettings['margins'];
+    };
 };
 
 export interface DashTabSettings {
@@ -120,9 +132,9 @@ export type DashTabItem =
     | DashTabItemGroupControl
     | DashTabItemImage;
 
-type BackgroundSettings = {
+export type BackgroundSettings = {
+    enabled?: boolean;
     color: string;
-    enabled: boolean;
 };
 
 export interface DashTabItemBase {
@@ -143,11 +155,18 @@ export interface DashTabItemText extends DashTabItemBase {
     };
 }
 
+export type DashTitleSize =
+    | DashTabItemTitleSize
+    | {
+          fontSize: number;
+          lineHeight?: number;
+      };
+
 export interface DashTabItemTitle extends DashTabItemBase {
     type: DashTabItemType.Title;
     data: {
         text: string;
-        size: DashTabItemTitleSize;
+        size: DashTitleSize;
         showInTOC: boolean;
         autoHeight?: boolean;
         background?: BackgroundSettings;
@@ -163,6 +182,9 @@ export interface DashTabItemWidgetTab {
     id: string;
     title: string;
     description: string;
+    hint?: string;
+    enableHint?: boolean;
+    enableDescription?: boolean;
     chartId: string;
     isDefault: boolean;
     params: StringParams;
@@ -232,6 +254,16 @@ export enum TitlePlacementOption {
     Top = 'top',
 }
 
+export const TitlePlacements = {
+    Hide: 'hide' as const,
+    Left: TitlePlacementOption.Left,
+    Top: TitlePlacementOption.Top,
+};
+
+export type TitlePlacement = ValueOf<typeof TitlePlacements>;
+
+export type AccentTypeValue = 'info' | null;
+
 export interface DashTabItemControlElementBase {
     showTitle: boolean;
     titlePlacement?: TitlePlacementOption;
@@ -243,6 +275,7 @@ export interface DashTabItemControlElementBase {
     required?: boolean;
     showHint?: boolean;
     hint?: string;
+    accentType?: AccentTypeValue;
 }
 
 export interface DashTabItemControlElementSelect extends DashTabItemControlElementBase {
@@ -281,6 +314,8 @@ export interface DashTabItemGroupControl extends DashTabItemBase {
 }
 
 export interface DashTabItemGroupControlData {
+    showGroupName: boolean;
+    groupName?: string;
     autoHeight: boolean;
     buttonApply: boolean;
     buttonReset: boolean;

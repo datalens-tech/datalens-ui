@@ -132,6 +132,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
     const history = useHistory();
 
     const handleUpdate = useBeforeLoad(props.onBeforeLoad);
+    const hideTitle = Boolean(data.hideTitle);
 
     /**
      * debounced call of recalculate widget layout after rerender
@@ -168,11 +169,6 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
 
             adjustLayout(!newAutoHeight);
             setIsRendered(true);
-
-            // Triggering update after chart render
-            if (isReadyToReflowRef.current && handleUpdate) {
-                requestAnimationFrame(() => handleUpdate());
-            }
         },
         [dataProvider, tabs, tabIndex, adjustLayout, loadedWidgetType],
     );
@@ -211,6 +207,13 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         setLoadedWidgetType(data?.loadedData?.type as string);
     }, []);
 
+    /**
+     * Memoised dataProviderContextGetter with widget id
+     */
+    const requestHeadersGetter = React.useMemo(() => {
+        return dataProviderContextGetter?.bind(this, widgetId);
+    }, [widgetId, dataProviderContextGetter]);
+
     const {
         loadedData,
         isLoading,
@@ -235,7 +238,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         dataProps,
     } = useLoadingChart({
         dataProvider,
-        dataProviderContextGetter,
+        requestHeadersGetter,
         initialData,
         requestId,
         requestCancellationRef,
@@ -267,7 +270,6 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         veil,
         showLoader,
         isFullscreen,
-        hideTabs,
         widgetType,
         showOverlayWithControlsOnEdit,
         noControls,
@@ -283,8 +285,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
                 isSilentReload,
                 history,
                 widgetId,
-                hideTitle: Boolean(data.hideTitle),
-                tabsLength: tabs.length,
+                hideTitle,
             }),
         [
             isLoading,
@@ -298,6 +299,8 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
             history.location.search,
             hasHideTitleChanged,
             widgetId,
+            hideTitle,
+            isSilentReload,
         ],
     );
 
@@ -399,15 +402,28 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
     }, [width, height, debouncedChartReflow]);
 
     /**
-     * changed position and loaded state watcher
+     * changed position, title, background, description and loaded state watcher
      */
     const currentLayout = layout.find(({i}) => i === widgetId);
+    const {enableDescription, background, title} = currentTab;
+    const isReadyToHandleUpdate = isInit && !isLoading && isRendered;
     React.useEffect(() => {
-        if (isInit && !isLoading && isRendered) {
+        if (isReadyToHandleUpdate) {
             handleUpdate?.();
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentLayout?.x, currentLayout?.y, isLoading, isInit, isRendered, handleUpdate]);
+    }, [
+        currentLayout?.x,
+        currentLayout?.y,
+        background?.color,
+        background?.enabled,
+        hideTitle,
+        title,
+        enableDescription,
+        description,
+        isReadyToHandleUpdate,
+        handleUpdate,
+    ]);
 
     /**
      * updating widget description by markdown
@@ -543,7 +559,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
      */
     const debouncedMutationsCheck = React.useCallback(
         debounce((mutations: Array<MutationRecord>) => {
-            if (!rootNodeRef.current || !loadedData) {
+            if (!rootNodeRef.current || !loadedWidgetType) {
                 return;
             }
             let needUpdate = false;
@@ -681,7 +697,6 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         error,
         handleRenderChart,
         description,
-        hideTabs,
         handleToggleFullscreenMode,
         handleSelectTab,
         handleChartkitReflow,

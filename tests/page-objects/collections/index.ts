@@ -1,0 +1,1 @@
+export {CollectionsPagePO} from './CollectionsPage';

@@ -51,7 +51,7 @@ export interface IChartEditor {
     ): string;
 
     /**
-     * Return added yav secrets {key: value, ...}
+     * Return added secrets {key: value, ...}
      */
     getSecrets(): {[key: string]: string};
 
@@ -152,6 +152,8 @@ export interface IChartEditor {
     attachFormatter(
         formatterConfig: Record<string, unknown>,
     ): Record<string, unknown> & {__chartkitFormatter: true};
+
+    getId?(key: string): string;
 }
 
 export interface Link {
@@ -273,3 +275,11 @@ export interface ChartsStats extends Timings {
     columnsCount: number | null;
     rowsCount: number | null;
 }
+
+export const MARKUP_TYPE = {
+    none: 'none',
+    markdown: 'md',
+    html: 'html',
+};
+
+export type MarkupType = (typeof MARKUP_TYPE)[keyof typeof MARKUP_TYPE];

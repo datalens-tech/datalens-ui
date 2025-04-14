@@ -1,9 +1,10 @@
 import type React from 'react';
 
 import type {StringParams} from '@gravity-ui/dashkit';
-import type {TitlePlacementOption} from 'shared';
+import type {AccentTypeValue, TitlePlacementOption} from 'shared';
 import type {
     GetDistinctsApiV2Args,
+    GetDistinctsApiV2InfoHeadersArg,
     GetDistinctsApiV2TransformedResponse,
 } from 'shared/schema/types';
 import type {ServerFilter} from 'shared/types/config/wizard';
@@ -55,7 +56,10 @@ export type SelectorError = {
 };
 
 export interface ControlSettings {
-    getDistincts?: (params: GetDistinctsApiV2Args) => Promise<GetDistinctsApiV2TransformedResponse>;
+    getDistincts?: (
+        params: GetDistinctsApiV2Args,
+        headers?: GetDistinctsApiV2InfoHeadersArg,
+    ) => Promise<GetDistinctsApiV2TransformedResponse>;
 }
 
 export interface PluginControlState {
@@ -80,6 +84,7 @@ export interface SelectControlProps {
     innerLabel: string;
     labelPlacement?: TitlePlacementOption;
     limitLabel?: boolean;
+    accentType?: AccentTypeValue;
     param: string;
     multiselect: boolean;
     type: ControlType;

@@ -55,7 +55,11 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
         --w-disabled-item-background: rgba(0, 0, 0, 0.07);
         --dl-color-contrast-4: rgba(0, 0, 0, 0.04);
         --dl-color-base-workbook-icon: #d1dfff;
-        --dl-color-fixed-header-background: rgb(242, 242, 242);
+        --dl-filter-ymap-background: none;
+        --dl-filter-ymap-heatmap: none;
+        --dl-color-ymap-background: #fafafa;
+        --dl-filter-zoom-control: none;
+        --dl-color-fixed-header-background: var(--g-color-private-cool-grey-100-solid);
     }
 
     &_theme_light-hc {
@@ -66,7 +70,11 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
         --w-disabled-item-background: rgba(0, 0, 0, 0.07);
         --dl-color-contrast-4: rgba(0, 0, 0, 0.04);
         --dl-color-base-workbook-icon: #a8c3ff;
-        --dl-color-fixed-header-background: rgb(242, 242, 242);
+        --dl-filter-ymap-background: none;
+        --dl-filter-ymap-heatmap: none;
+        --dl-color-ymap-background: #fafafa;
+        --dl-filter-zoom-control: none;
+        --dl-color-fixed-header-background: var(--g-color-private-cool-grey-150-solid);
     }
 
     &_theme_dark {
@@ -77,7 +85,11 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
         --w-disabled-item-background: rgba(255, 255, 255, 0.07);
         --dl-color-contrast-4: rgba(255, 255, 255, 0.04);
         --dl-color-base-workbook-icon: #c2d0f0;
-        --dl-color-fixed-header-background: rgb(45, 40, 45);
+        --dl-filter-ymap-background: invert(0.9) saturate(0.4) hue-rotate(-30deg);
+        --dl-filter-ymap-heatmap: invert(0.9) saturate(0.4) hue-rotate(-30deg);
+        --dl-color-ymap-background: transparent;
+        --dl-filter-zoom-control: invert(1);
+        --dl-color-fixed-header-background: var(--g-color-base-background);
     }
 
     &_theme_dark-hc {
@@ -88,6 +100,10 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
         --w-disabled-item-background: rgba(255, 255, 255, 0.07);
         --dl-color-contrast-4: rgba(255, 255, 255, 0.04);
         --dl-color-base-workbook-icon: #c0d3fd;
-        --dl-color-fixed-header-background: rgb(30, 29, 30);
+        --dl-filter-ymap-background: invert(0.95) saturate(0.4) hue-rotate(-30deg);
+        --dl-filter-ymap-heatmap: invert(0.95) saturate(0.4) hue-rotate(-30deg);
+        --dl-color-ymap-background: transparent;
+        --dl-filter-zoom-control: invert(1);
+        --dl-color-fixed-header-background: var(--g-color-base-background);
     }
 }

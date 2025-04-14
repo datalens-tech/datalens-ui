@@ -1,7 +1,11 @@
 {
+  "toast_copy-error": "При копировании произошла ошибка",
+  "toast_copy-id-success": "ID скопирован в буфер обмена",
+  "toast_copy-link-success": "Ссылка скопирована в буфер обмена",
   "value_access": "Права доступа",
   "value_add-favorites-alias": "Добавить лейбл",
   "value_copy": "Копировать",
+  "value_copy-id": "Копировать ID",
   "value_copy-link": "Копировать ссылку",
   "value_copy-success": "Объект успешно скопирован",
   "value_delete": "Удалить",

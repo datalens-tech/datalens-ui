@@ -8,6 +8,7 @@ import {DialogEditItem, isDialogEditItemType} from 'ui/components/DialogEditItem
 import {registry} from 'ui/registry';
 
 import {DIALOG_TYPE} from '../../../../constants/dialogs';
+import {selectControlDialogTheme} from '../../../../store/selectors/controlDialog';
 import {changeNavigationPath, setItemData} from '../../store/actions/dashTyped';
 import {closeDialog} from '../../store/actions/dialogs/actions';
 import {
@@ -40,6 +41,7 @@ export function Dialogs() {
     const workbookId = useSelector(selectDashWorkbookId);
     const widgetsCurrentTab = useSelector(selectWidgetsCurrentTab);
     const navigationPath = useSelector(selectNavigationPath);
+    const theme = useSelector(selectControlDialogTheme);
 
     useEffectOnce(() => {
         return () => {
@@ -83,6 +85,7 @@ export function Dialogs() {
                 setItemData={setItemDataHandle}
                 navigationPath={navigationPath}
                 changeNavigationPath={changeNavigationPathHandle}
+                theme={theme}
             />
         );
     }

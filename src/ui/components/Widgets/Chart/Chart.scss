@@ -27,8 +27,10 @@ $fullscreenZIndex: 999;
     position: relative;
     margin: 0;
     padding: 0;
-    border-radius: 3px;
+    border-radius: var(--dl-dk-charts-border-radius, 3px);
     border: none;
+    // fix for cases of chart with display: fixed style
+    filter: opacity(1);
 
     &_fullscreen {
         position: fixed;
@@ -188,6 +190,12 @@ $fullscreenZIndex: 999;
 
     & .chartkit {
         --highcharts-series-border: var(--g-color-base-float);
+    }
+
+    &_default-mobile {
+        #{$class}__container {
+            position: static;
+        }
     }
 
     &_no-tabs {

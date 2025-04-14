@@ -10,7 +10,7 @@ describe('isEntryTypeWithFiltering', () => {
     it('Filtering is allowed for wizard charts', () => {
         expect(isEntryTypeWithFiltering(WizardType.GraphWizardNode)).toBeTruthy();
         expect(isEntryTypeWithFiltering(WizardType.TableWizardNode)).toBeTruthy();
-        expect(isEntryTypeWithFiltering(WizardType.D3WizardNode)).toBeTruthy();
+        expect(isEntryTypeWithFiltering(WizardType.GravityChartsWizardNode)).toBeTruthy();
     });
 
     it('Filtering does not allowed for specific wizard charts', () => {

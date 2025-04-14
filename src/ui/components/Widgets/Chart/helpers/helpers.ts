@@ -10,6 +10,7 @@ import {isExternalControl} from 'ui/components/DashKit/plugins/Control/utils';
 import type DatalensChartkitCustomError from 'ui/libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import {ERROR_CODE} from 'ui/libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import {DASH_WIDGET_TYPES} from 'ui/units/dash/modules/constants';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {ChartsStats} from '../../../../../shared/types/charts';
 import type {ChartKitLoadSuccess} from '../../../../libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
@@ -312,14 +313,12 @@ export const getPreparedConstants = (props: {
     widgetId?: string;
     history?: History<unknown>;
     hideTitle?: boolean | undefined;
-    tabsLength?: number;
     disableChartLoader?: boolean;
     needWaitForDSFields?: boolean;
 }) => {
     const {
         loadedData,
         hideTitle,
-        tabsLength,
         widgetId,
         history,
         isLoading,
@@ -340,8 +339,6 @@ export const getPreparedConstants = (props: {
         noControls = isTrueArg(searchParams.get(URL_OPTIONS.NO_CONTROLS));
     }
 
-    const hideTabs = isFullscreen ? true : Boolean(tabsLength === 1 && hideTitle);
-
     const isFirstLoadOrAfterError = loadedData === null;
 
     const showLoader =
@@ -350,10 +347,11 @@ export const getPreparedConstants = (props: {
         ((!isSilentReload && !noLoader) || isFirstLoadOrAfterError);
 
     const mods = {
-        'no-tabs': !isFullscreen && hideTabs,
+        'no-tabs': !isFullscreen && hideTitle,
         fullscreen: isFullscreen,
         'no-controls': noControls,
         [String(widgetType)]: Boolean(widgetType),
+        'default-mobile': DL.IS_MOBILE && !isFullscreen,
     };
     const hasVeil = Boolean(loadedData && !error && !noVeil && !isReloadWithNoVeil);
 
@@ -368,7 +366,6 @@ export const getPreparedConstants = (props: {
         veil: hasVeil,
         showLoader,
         isFullscreen,
-        hideTabs,
         widgetType,
         showOverlayWithControlsOnEdit,
         noControls,
@@ -406,7 +403,7 @@ export const pushStats = (
     scope: ChartsStats['scope'],
     chartsDataProvider: ChartWithProviderProps['dataProvider'],
 ) => {
-    if (Utils.isEnabledFeature(Feature.EnableDashChartStat)) {
+    if (isEnabledFeature(Feature.EnableDashChartStat)) {
         chartsDataProvider.pushStats?.(data as ChartKitLoadSuccess<ChartsData>, {
             groupId: DL.REQUEST_ID,
             scope,
@@ -482,10 +479,10 @@ export const updateImmediateLayout = ({
 
 export const isAllParamsEmpty = (params?: StringParams | null) => {
     const res = Object.values(params || {}).every((item) => {
-        if (typeof item === 'string') {
-            return isEmpty(item.trim());
+        if (Array.isArray(item)) {
+            return isEmpty(item.filter((val) => !isEmpty(String(val).trim())));
         } else {
-            return isEmpty(item.filter((val) => !isEmpty(val.trim())));
+            return isEmpty(String(item).trim());
         }
     });
     return Boolean(res);

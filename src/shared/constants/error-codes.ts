@@ -26,6 +26,7 @@ export enum ErrorCode {
     ReferencedEntryAccessDenied = 'ERR.DS_API.REFERENCED_ENTRY_ACCESS_DENIED',
     PlatformPermissionRequired = 'ERR.DS_API.PLATFORM_PERMISSION_REQUIRED',
     NeedReset = 'NEED_RESET',
+    AuthNeedReset = 'AUTH.NEED_RESET',
     EntryIsLocked = 'ERR.US.ENTRY_IS_LOCKED',
     EntryAlreadyExists = 'ERR.US.ENTRY_ALREADY_EXISTS',
     UsUniqViolation = 'ERR.US.DB.UNIQUE_VIOLATION',
@@ -39,6 +40,12 @@ export enum ErrorCode {
     IncorrectEntry = 'INCORRECT_ENTRY_ID_FOR_EMBED',
     IncorrectDepsIds = 'INCORRECT_DEPS_IDS_FOR_EMBED',
     IncorrectEntryIdForEmbed = 'ERR.DS_API.US.BAD_REQUEST.INCORRECT_ENTRY_ID_FOR_EMBED',
+
+    ChartEditorNotAvailable = 'ERR.CHARTS.CHART_EDITOR_NOT_AVAILABLE',
+    InsufficientServicePlan = 'ERR.CHARTS.INSUFFICIENT_SERVICE_PLAN',
+
+    TransferInvalidEntryScope = 'ERR.DS_API.UI.INVALID_ENTRY_SCOPE',
+    TransferInvalidToken = 'ERR.DS_API.UI.INVALID_TOKEN',
 }
 
 export const ErrorContentTypes = {

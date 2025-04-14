@@ -17,7 +17,7 @@ jobs:
       pull-requests: write
     steps:
       - name: Download Artifacts
-        uses: dawidd6/action-download-artifact@v3
+        uses: dawidd6/action-download-artifact@v6
         with:
           workflow: ${{ github.event.workflow_run.workflow_id }}
           run_id: ${{ github.event.workflow_run.id }}
@@ -29,7 +29,7 @@ jobs:
       - name: Upload UI report to S3
         id: upload-to-s3
         run: |
-          aws --endpoint-url=${AWS_ENDPOINT} \
+          aws --region ${AWS_DEFAULT_REGION} --endpoint-url=${AWS_ENDPOINT} \
               s3 cp statoscope-report/index.html s3://${AWS_BUCKET}/${{ github.ref }}/; \
               echo "DOWNLOAD_LINK=$(aws --endpoint-url=${AWS_ENDPOINT} s3 presign s3://${AWS_BUCKET}/${{ github.ref }}/index.html)" >> $GITHUB_OUTPUT
         env:
@@ -38,6 +38,8 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.S3_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ru-central1
+          AWS_REQUEST_CHECKSUM_CALCULATION: when_required
+          AWS_RESPONSE_CHECKSUM_VALIDATION: when_required
       - name: Create comment text
         uses: actions/github-script@v7
         id: create-comment-text

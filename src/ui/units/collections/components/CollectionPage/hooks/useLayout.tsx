@@ -7,6 +7,7 @@ import {I18n} from 'i18n';
 import {batch, useDispatch, useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
 import {getParentCollectionPath} from 'ui/units/collections-navigation/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {Feature} from '../../../../../../shared';
 import type {
@@ -22,6 +23,7 @@ import {
     DIALOG_DELETE_COLLECTION,
     DIALOG_EDIT_COLLECTION,
     DIALOG_MOVE_COLLECTION,
+    DIALOG_NO_CREATE_COLLECTION_PERMISSION,
 } from '../../../../../components/CollectionsStructure';
 import {DIALOG_IAM_ACCESS} from '../../../../../components/IamAccessDialog';
 import {DL} from '../../../../../constants';
@@ -29,7 +31,6 @@ import {registry} from '../../../../../registry';
 import {ResourceType} from '../../../../../registry/units/common/types/components/IamAccessDialog';
 import type {AppDispatch} from '../../../../../store';
 import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
-import Utils from '../../../../../utils';
 import {
     CollectionBreadcrumbs,
     cutBreadcrumbs,
@@ -88,7 +89,7 @@ export const useLayout = ({
     handeCloseMoveDialog,
     updateAllCheckboxes,
 }: UseLayoutArgs) => {
-    const collectionsAccessEnabled = Utils.isEnabledFeature(Feature.CollectionsAccessEnabled);
+    const collectionsAccessEnabled = isEnabledFeature(Feature.CollectionsAccessEnabled);
 
     const {ActionPanelEntrySelect} = registry.common.components.getAll();
     const {RootCollectionTitleAction} = registry.collections.components.getAll();
@@ -201,25 +202,45 @@ export const useLayout = ({
                                 }
                             }}
                             onCreateCollectionClick={() => {
-                                dispatch(
-                                    openDialog({
-                                        id: DIALOG_CREATE_COLLECTION,
-                                        props: {
-                                            open: true,
-                                            parentId: curCollectionId,
-                                            onApply: (result: CreateCollectionResponse | null) => {
-                                                if (result) {
-                                                    history.push(
-                                                        `${COLLECTIONS_PATH}/${result.collectionId}`,
-                                                    );
-                                                }
+                                if (
+                                    isRootCollection &&
+                                    Boolean(rootCollectionPermissions?.createCollectionInRoot) ===
+                                        false
+                                ) {
+                                    dispatch(
+                                        openDialog({
+                                            id: DIALOG_NO_CREATE_COLLECTION_PERMISSION,
+                                            props: {
+                                                visible: true,
+                                                onClose: () => {
+                                                    dispatch(closeDialog());
+                                                },
                                             },
-                                            onClose: () => {
-                                                dispatch(closeDialog());
+                                        }),
+                                    );
+                                } else {
+                                    dispatch(
+                                        openDialog({
+                                            id: DIALOG_CREATE_COLLECTION,
+                                            props: {
+                                                open: true,
+                                                parentId: curCollectionId,
+                                                onApply: (
+                                                    result: CreateCollectionResponse | null,
+                                                ) => {
+                                                    if (result) {
+                                                        history.push(
+                                                            `${COLLECTIONS_PATH}/${result.collectionId}`,
+                                                        );
+                                                    }
+                                                },
+                                                onClose: () => {
+                                                    dispatch(closeDialog());
+                                                },
                                             },
-                                        },
-                                    }),
-                                );
+                                        }),
+                                    );
+                                }
                             }}
                             onAddDemoWorkbookClick={() => {
                                 if (DL.TEMPLATE_WORKBOOK_ID) {
@@ -337,6 +358,7 @@ export const useLayout = ({
         curCollectionId,
         rootCollectionPermissions,
         fetchCollectionInfo,
+        goToParentCollection,
     ]);
 
     React.useEffect(() => {

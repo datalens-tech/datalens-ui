@@ -12,13 +12,15 @@ import {
 import type {ConnectorType} from 'shared/constants/connections';
 import {ActionPanelEntryContextMenuQa} from 'shared/constants/qa/action-panel';
 import {S3_BASED_CONNECTORS} from 'ui/constants/connections';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {EntryScope, Feature, PLACE, isUsersFolder} from '../../../shared';
 import {URL_QUERY} from '../../constants';
 import {registry} from '../../registry';
-import Utils from '../../utils/utils';
 
 import type {ContextMenuItem, ContextMenuParams} from './types';
+
+import iconId from 'ui/assets/icons/id-square.svg';
 
 export const ENTRY_CONTEXT_MENU_ACTION = {
     RENAME: 'rename',
@@ -29,6 +31,7 @@ export const ENTRY_CONTEXT_MENU_ACTION = {
     COPY: 'copy',
     ACCESS: 'access',
     COPY_LINK: 'copy-link',
+    COPY_ID: 'copy-id',
     SHARE: 'share',
     REVISIONS: 'revisions',
     MIGRATE_TO_WORKBOOK: 'migrate-to-workbook',
@@ -42,7 +45,7 @@ const CONTEXT_MENU_COPY = {
     icon: Copy,
     qa: ActionPanelEntryContextMenuQa.Copy,
     text: 'value_duplicate',
-    enable: () => Utils.isEnabledFeature(Feature.EntryMenuItemCopy),
+    enable: () => isEnabledFeature(Feature.EntryMenuItemCopy),
     permissions: (entry: ContextMenuParams['entry']) => {
         return entry?.workbookId
             ? {admin: true, edit: true, read: false, execute: false}
@@ -58,6 +61,21 @@ const CONTEXT_MENU_COPY = {
         const revId = searchParams.get(URL_QUERY.REV_ID);
         return showSpecificItems ? !revId : true;
     },
+};
+
+export const CONTEXT_MENU_COPY_LINK = {
+    id: ENTRY_CONTEXT_MENU_ACTION.COPY_LINK,
+    action: ENTRY_CONTEXT_MENU_ACTION.COPY_LINK,
+    icon: Link,
+    text: 'value_copy-link',
+    enable: () => true,
+};
+export const CONTEXT_MENU_COPY_ID = {
+    id: ENTRY_CONTEXT_MENU_ACTION.COPY_ID,
+    action: ENTRY_CONTEXT_MENU_ACTION.COPY_ID,
+    icon: iconId,
+    text: 'value_copy-id',
+    enable: () => true,
 };
 
 const getContextMenuAccess = () => {
@@ -79,7 +97,7 @@ const getAdditionalEntryContextMenuItems = (): ContextMenuItem[] => {
 const isVisibleEntryContextShareItem = ({entry, showSpecificItems}: ContextMenuParams): boolean =>
     entry?.scope === EntryScope.Dash &&
     showSpecificItems &&
-    Utils.isEnabledFeature(Feature.EnableEntryMenuItemShare);
+    isEnabledFeature(Feature.EnableEntryMenuItemShare);
 
 export const getEntryContextMenu = (): ContextMenuItem[] => {
     const {getTopLevelEntryScopes, getAllEntryScopes, getEntryScopesWithRevisionsList} =
@@ -96,6 +114,7 @@ export const getEntryContextMenu = (): ContextMenuItem[] => {
             scopes: getAllEntryScopes(),
             isSpecific: true,
             isOnEditMode: false,
+            permissions: () => ({admin: true, edit: true, read: false, execute: false}),
             isVisible({entry, isLimitedView}: ContextMenuParams) {
                 if (!entry || !entry.scope || isLimitedView) return false;
 
@@ -166,7 +185,7 @@ export const getEntryContextMenu = (): ContextMenuItem[] => {
             action: ENTRY_CONTEXT_MENU_ACTION.MOVE,
             icon: FolderArrowDown,
             text: 'value_move',
-            enable: () => Utils.isEnabledFeature(Feature.EntryMenuItemMove),
+            enable: () => isEnabledFeature(Feature.EntryMenuItemMove),
             permissions: {admin: true, edit: false, read: false, execute: false},
             scopes: getAllEntryScopes(),
             isVisible({entry}: ContextMenuParams) {
@@ -207,13 +226,18 @@ export const getEntryContextMenu = (): ContextMenuItem[] => {
         },
         getContextMenuAccess(),
         {
-            id: ENTRY_CONTEXT_MENU_ACTION.COPY_LINK,
-            action: ENTRY_CONTEXT_MENU_ACTION.COPY_LINK,
-            icon: Link,
-            text: 'value_copy-link',
-            enable: () => true,
+            ...CONTEXT_MENU_COPY_LINK,
             scopes: getAllEntryScopes(),
             isVisible: (params) => !isVisibleEntryContextShareItem(params),
+        },
+        {
+            ...CONTEXT_MENU_COPY_ID,
+            scopes: [
+                EntryScope.Widget,
+                EntryScope.Dataset,
+                EntryScope.Connection,
+                ...getTopLevelEntryScopes(),
+            ],
         },
         {
             id: ENTRY_CONTEXT_MENU_ACTION.SHARE,

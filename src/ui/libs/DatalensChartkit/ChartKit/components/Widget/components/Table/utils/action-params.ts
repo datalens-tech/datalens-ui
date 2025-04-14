@@ -15,7 +15,11 @@ import type {
 } from 'shared';
 import type {DataTableData, TableWidgetData} from 'ui/libs/DatalensChartkit/types';
 
-import {addParams, subtractParameters} from '../../../../../helpers/action-params-handlers';
+import {
+    addParams,
+    getNormalizedParams,
+    subtractParameters,
+} from '../../../../../helpers/action-params-handlers';
 import {hasMatchedActionParams} from '../../../../../helpers/utils';
 
 import {hasGroups} from './misc';
@@ -26,11 +30,11 @@ type ValuesMap = Record<string, {value: number; hashes: string[]}>;
 export function getAdditionalStyles(args: {
     actionParamsData: ActionParamsData;
     row?: DataTableData;
-    rows: TableRow[];
     head?: TableHead[];
     cell?: TableCell;
+    hasSomeCellSelected: boolean;
 }): React.CSSProperties | undefined {
-    const {actionParamsData, rows, row, head, cell} = args;
+    const {actionParamsData, hasSomeCellSelected, row, head, cell} = args;
 
     switch (actionParamsData.scope) {
         case 'row': {
@@ -40,7 +44,7 @@ export function getAdditionalStyles(args: {
             return getAdditionalStylesByCell({
                 actionParams: actionParamsData.params,
                 cell,
-                rows,
+                hasSomeCellSelected,
             });
         }
         // There is no way to reach this code. Just satisfies ts
@@ -79,20 +83,14 @@ function getAdditionalStylesByRow(args: {
 function getAdditionalStylesByCell(args: {
     actionParams: StringParams;
     cell?: TableCell;
-    rows: TableRow[];
+    hasSomeCellSelected: boolean;
 }): React.CSSProperties | undefined {
-    const {actionParams, cell, rows} = args;
+    const {actionParams, cell, hasSomeCellSelected} = args;
 
-    if (cell) {
-        const hasSomeCellSelected = rows.some(
-            (r) => 'cells' in r && r.cells.some((c) => isCellSelected(c, actionParams)),
-        );
-
-        if (hasSomeCellSelected && !isCellSelected(cell, actionParams)) {
-            return {
-                opacity: 0.5,
-            };
-        }
+    if (hasSomeCellSelected && cell && !isCellSelected(cell, actionParams)) {
+        return {
+            opacity: 0.5,
+        };
     }
 
     return undefined;
@@ -157,7 +155,7 @@ export function getActionParams(args: {
     }
 }
 
-function isCellSelected(cell: TableCell, actionParams: StringParams) {
+export function isCellSelected(cell: TableCell, actionParams: StringParams) {
     return hasMatchedActionParams(extractCellActionParams({cell}), actionParams);
 }
 
@@ -264,7 +262,7 @@ function extractCellActionParams(args: {cell: TableCell; head?: TableHead}): Str
     const cellCustomData = get(cell, 'custom');
 
     if (cellCustomData && 'actionParams' in cellCustomData) {
-        return cellCustomData.actionParams;
+        return getNormalizedParams(cellCustomData.actionParams);
     }
 
     if (head?.id) {

@@ -43,4 +43,24 @@
     &__content {
         font-size: 12px;
     }
+
+    &__row {
+        display: flex;
+    }
+
+    &__color {
+        border-radius: 1px;
+        display: inline-block;
+        height: 6px;
+        width: 12px;
+        margin-bottom: 2px;
+    }
+
+    &__block {
+        padding: 0 4px;
+        max-width: 400px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
 }

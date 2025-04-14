@@ -6,6 +6,7 @@ import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
 import get from 'lodash/get';
 import type {DashTabItemText} from 'shared';
+import {CustomPaletteBgColors} from 'shared/constants/widgets';
 import {
     adjustWidgetLayout as dashkitAdjustWidgetLayout,
     getPreparedWrapSettings,
@@ -25,6 +26,52 @@ const b = block('dashkit-plugin-text-container');
 
 const WIDGET_RESIZE_DEBOUNCE_TIMEOUT = 100;
 
+const useWatchDomResizeObserver = ({
+    domNodeGetter,
+    onResize,
+    enable = false,
+}: {
+    domNodeGetter: () => HTMLElement | null;
+    onResize: () => void;
+    enable: boolean;
+}) => {
+    const currentRectRef = React.useRef({width: 0, height: 0});
+    const domElement = enable ? domNodeGetter() : null;
+
+    // using ref to avoil effect calls when function link changed
+    const onResizeRef = React.useRef(onResize);
+    onResizeRef.current = onResize;
+
+    React.useEffect(() => {
+        if (!domElement) {
+            return;
+        }
+
+        const observer = new ResizeObserver((entries) => {
+            if (!entries[0]) {
+                return;
+            }
+
+            const {width, height} = entries[0].contentRect;
+            const currentRect = currentRectRef.current;
+
+            if (currentRect.height !== height || currentRect.width !== width) {
+                currentRect.height = height;
+                currentRect.width = width;
+
+                onResizeRef.current();
+            }
+        });
+
+        observer.observe(domElement);
+
+        // eslint-disable-next-line consistent-return
+        return () => {
+            observer.disconnect();
+        };
+    }, [domElement, onResizeRef]);
+};
+
 const textPlugin = {
     ...pluginText,
     setSettings(settings: PluginTextObjectSettings) {
@@ -37,8 +84,6 @@ const textPlugin = {
         forwardedRef: React.LegacyRef<PluginText> | undefined,
     ) {
         const rootNodeRef = React.useRef<HTMLDivElement>(null);
-        const cutNodesRef = React.useRef<NodeList | null>(null);
-        const mutationObserver = React.useRef<MutationObserver | null>(null);
         const [metaScripts, setMetaScripts] = React.useState<string[] | undefined>();
         const [isPending, setIsPending] = React.useState<boolean>(false);
 
@@ -80,7 +125,7 @@ const textPlugin = {
 
         /**
          * call adjust function after all text was rendered (ketex formulas, markdown, etc)
-         * and after cut opened/closed
+         * and after cut opened/closed, change tabs
          */
         const handleTextRender = React.useCallback(() => {
             adjustLayout(!props.data.autoHeight);
@@ -111,47 +156,27 @@ const textPlugin = {
         }, [props.data.autoHeight]);
 
         /**
-         * watching content changes to check if adjustLayout needed for autoheight widgets update
+         * Watching yfm dom element sizes for update
          */
-        // TODO move this logic in isPending check hook and instead of useEffect use it as callback
-        React.useEffect(() => {
-            if (!mutationObserver) {
-                return;
-            }
-
-            mutationObserver.current = new MutationObserver(() => {
-                requestAnimationFrame(() => handleTextRender());
-            });
-
-            if (mutationObserver.current && cutNodesRef.current) {
-                cutNodesRef.current.forEach((cutNode) => {
-                    mutationObserver.current?.observe(cutNode, {
-                        attributes: true,
-                        attributeFilter: ['class'],
-                    });
-                });
-            }
-
-            // eslint-disable-next-line consistent-return
-            return () => {
-                mutationObserver.current?.disconnect();
-            };
-        }, [handleTextRender, mutationObserver, rootNodeRef, cutNodesRef.current]);
-
-        const nodes = rootNodeRef.current?.querySelectorAll(`.${YFM_MARKDOWN_CLASSNAME}-cut`);
-
-        if (nodes?.length && !cutNodesRef.current) {
-            cutNodesRef.current = nodes;
-        }
+        useWatchDomResizeObserver({
+            domNodeGetter: () =>
+                rootNodeRef.current?.querySelector(
+                    `.${YFM_MARKDOWN_CLASSNAME}.${b()} .${YFM_MARKDOWN_CLASSNAME}`,
+                ) || null,
+            onResize: () => {
+                adjustLayout(false);
+            },
+            enable: props.data.autoHeight as boolean,
+        });
 
         const content = <PluginText {...props} apiHandler={textHandler} ref={forwardedRef} />;
 
         const data = props.data as DashTabItemText['data'];
 
         const showBgColor = Boolean(
-            data.background?.enabled &&
+            data.background?.enabled !== false &&
                 data.background?.color &&
-                data.background?.color !== 'transparent',
+                data.background?.color !== CustomPaletteBgColors.NONE,
         );
 
         const {classMod, style} = getPreparedWrapSettings(showBgColor, data.background?.color);
@@ -186,7 +211,6 @@ const textPlugin = {
             currentLayout.w,
             classMod,
             data.background?.color,
-            data.background?.enabled,
         ]);
 
         /**

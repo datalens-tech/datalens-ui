@@ -1,18 +1,16 @@
 import React from 'react';
 
+import type {RealTheme} from '@gravity-ui/uikit';
 import {Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import type {DatalensGlobalState} from 'index';
-import {Utils} from 'index';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
-import {ControlQA, DashTabItemControlSourceType, Feature} from 'shared';
-import {AppearanceSection} from 'ui/components/ControlComponents/Sections/AppearanceSection/AppearanceSection';
+import {ControlQA} from 'shared';
 import {CommonSettingsSection} from 'ui/components/ControlComponents/Sections/CommonSettingsSection/CommonSettingsSection';
 import {ParametersSection} from 'ui/components/ControlComponents/Sections/ParametersSection/ParametersSection';
 import {SelectorPreview} from 'ui/components/ControlComponents/SelectorPreview/SelectorPreview';
-import {SelectorTypeSelect} from 'ui/components/ControlComponents/SelectorTypeSelect/SelectorTypeSelect';
 import {SectionWrapper} from 'ui/components/SectionWrapper/SectionWrapper';
 import type {AppDispatch} from 'ui/store';
 import {
@@ -44,6 +42,8 @@ type OwnProps = {
     setItemData: (newItemData: SetItemDataArgs) => void;
     navigationPath: string | null;
     changeNavigationPath: (newNavigationPath: string) => void;
+
+    theme?: RealTheme;
 } & DialogExternalControlFeaturesProps;
 
 type Props = OwnProps & DispatchProps & StateProps;
@@ -54,7 +54,6 @@ class DialogExternalControl extends React.Component<Props> {
     render() {
         const {isEdit, validation, dialogIsVisible} = this.props;
         const textButtonApply = isEdit ? controlI18n('button_save') : controlI18n('button_add');
-        //TODO: raname 'label_control' after enabling feature flag
         const caption = dashI18n('button_edit-panel-editor-selector');
 
         return (
@@ -86,7 +85,6 @@ class DialogExternalControl extends React.Component<Props> {
     }
 
     private renderBody() {
-        const showTypeSelect = !Utils.isEnabledFeature(Feature.GroupControls);
         const showParametersSection = this.props.isParametersSectionAvailable;
         const {navigationPath, changeNavigationPath, enableAutoheightDefault} = this.props;
 
@@ -95,11 +93,6 @@ class DialogExternalControl extends React.Component<Props> {
                 <div className={b('section')}>
                     <SelectorPreview />
                 </div>
-                {showTypeSelect && (
-                    <div className={b('section')}>
-                        <SelectorTypeSelect />
-                    </div>
-                )}
                 <div className={b('section')}>
                     <SectionWrapper title={controlI18n('label_common-settings')}>
                         <CommonSettingsSection
@@ -114,22 +107,7 @@ class DialogExternalControl extends React.Component<Props> {
                         <ParametersSection />
                     </div>
                 )}
-                {this.renderAppearanceSection()}
             </React.Fragment>
-        );
-    }
-
-    private renderAppearanceSection() {
-        const {sourceType} = this.props;
-
-        if (sourceType === DashTabItemControlSourceType.External) {
-            return null;
-        }
-
-        return (
-            <div className={b('section')}>
-                <AppearanceSection />
-            </div>
         );
     }
 

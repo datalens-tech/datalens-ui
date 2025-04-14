@@ -1,6 +1,5 @@
 import {dateTime, dateTimeParse} from '@gravity-ui/date-utils';
 import type {DurationUnit} from '@gravity-ui/date-utils';
-import isFunction from 'lodash/isFunction';
 
 import type {ServerDatasetField} from '../types';
 
@@ -208,7 +207,7 @@ export function resolveOperation(
         return null;
     }
 
-    // In an ideal world, urlValue should always be string. However, in ChartEditor, the user can put in params
+    // In an ideal world, urlValue should always be string. However, in Editor, the user can put in params
     // absolutely anything. Therefore, if it is not a string, then we make a fallback to the old behavior.
     if (typeof urlValue !== 'string') {
         return getFallbackForUrlFilters(urlValue, defaultOperation);
@@ -348,8 +347,4 @@ export function isObjectWith(
     }
 
     return false;
-}
-
-export function isObjectWithFunction(value: unknown) {
-    return isObjectWith(value, isFunction, []);
 }

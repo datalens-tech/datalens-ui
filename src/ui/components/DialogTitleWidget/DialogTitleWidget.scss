@@ -1,42 +1,34 @@
 .dialog-title {
     width: 700px;
 
-    &__input {
-        &.g-text-input .g-text-input__control {
-            transition: font-size 0.2s ease;
-            font-weight: 500;
-        }
+    &__row {
+        margin-bottom: var(--g-spacing-2);
 
-        &_size {
-            &_l.g-text-input .g-text-input__control {
-                font-size: var(--g-text-header-2-font-size);
-                line-height: var(--g-text-header-2-line-height);
-            }
-
-            &_m.g-text-input .g-text-input__control {
-                font-size: var(--g-text-header-1-font-size);
-                line-height: var(--g-text-header-1-line-height);
-            }
-
-            &_s.g-text-input .g-text-input__control {
-                font-size: var(--g-text-body-3-font-size);
-                line-height: var(--g-text-body-3-line-height);
-            }
-
-            &_xs.g-text-input .g-text-input__control {
-                font-size: var(--g-text-body-2-font-size);
-                line-height: var(--g-text-body-2-line-height);
-            }
+        &:last-child {
+            margin-bottom: 0;
         }
     }
 
-    &__setting-row {
-        margin-top: 30px;
+    &__controls-wrapper {
         display: flex;
-        align-items: center;
+        align-items: baseline;
+        gap: var(--g-spacing-2);
     }
 
-    &__setting-row + &__setting-row {
-        margin-top: 10px;
+    &__checkbox {
+        margin-block-start: var(--g-spacing-2);
+    }
+
+    &__number-input {
+        width: 80px;
+    }
+
+    &__unit-select {
+        margin-inline-end: -1px;
+        border-inline-start: 1px solid var(--g-color-line-generic-accent);
+    }
+
+    &__unit {
+        margin-inline-start: var(--g-spacing-1);
     }
 }

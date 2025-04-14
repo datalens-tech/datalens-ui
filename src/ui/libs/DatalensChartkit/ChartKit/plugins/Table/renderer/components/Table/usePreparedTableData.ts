@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {ColumnDef, Row, SortingState, Table, TableOptions} from '@tanstack/react-table';
+import type {ColumnDef, Row, SortingState, TableOptions} from '@tanstack/react-table';
 import {
     flexRender,
     getCoreRowModel,
@@ -9,10 +9,12 @@ import {
     useReactTable,
 } from '@tanstack/react-table';
 import {useVirtualizer} from '@tanstack/react-virtual';
+import debounce from 'lodash/debounce';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
-import type {TableCell, TableCellsRow, TableHead} from 'shared';
+import type {TableCell, TableCellsRow, TableCommonCell, TableHead} from 'shared';
 import {i18n} from 'ui/libs/DatalensChartkit/ChartKit/modules/i18n/i18n';
+import {getRandomCKId} from 'ui/libs/DatalensChartkit/helpers/helpers';
 
 import type {TableData} from '../../../../../../types';
 import type {WidgetDimensions} from '../../types';
@@ -58,21 +60,27 @@ function getNoDataRow(colSpan = 1): BodyRowViewData {
 }
 
 function getFooterRows(args: {
-    table: Table<TData>;
+    data: TableData;
     leftPositions: (number | undefined)[];
     bgColor?: string;
+    columns: ColumnDef<TData>[];
 }) {
-    const {table, leftPositions, bgColor} = args;
+    const {data, leftPositions, bgColor, columns} = args;
+    const footerRows = (data.footer ?? []) as TableCellsRow[];
 
-    return table.getFooterGroups().reduce<FooterRowViewData[]>((acc, f) => {
-        const cells = f.headers.map<FooterCellViewData>((cell) => {
-            const columnDef = cell.column.columnDef;
-            const originalHeadData = columnDef.meta?.head;
-            const originalFooterData = columnDef?.meta?.footer;
+    return footerRows.reduce<FooterRowViewData[]>((acc, rowData, rowIndex) => {
+        const cells = rowData.cells.map<FooterCellViewData>((footerCellData, cellIndex) => {
+            const cellData = footerCellData as TableCommonCell;
+            const col = findColumn(columns, (column) => get(column, 'index') === cellIndex);
+            const originalHeadData = col?.meta?.head;
             const pinned = Boolean(originalHeadData?.pinned);
-            const content = cell.isPlaceholder
-                ? null
-                : flexRender(columnDef.footer, cell.getContext());
+            let content = null;
+            if (!get(cellData, 'isPlaceholder')) {
+                const formattedValue = get(cellData, 'formattedValue', String(cellData.value));
+                content = originalHeadData?.cell
+                    ? originalHeadData?.cell(cellData)
+                    : formattedValue;
+            }
 
             const cellStyle: React.CSSProperties = {};
             if (pinned) {
@@ -81,9 +89,9 @@ function getFooterRows(args: {
             }
 
             return {
-                id: cell.id,
+                id: get(cellData, 'id', String(cellIndex)),
                 style: cellStyle,
-                contentStyle: getCellCustomStyle(originalFooterData),
+                contentStyle: getCellCustomStyle(cellData),
                 pinned,
                 type: get(originalHeadData, 'type'),
                 content,
@@ -92,7 +100,7 @@ function getFooterRows(args: {
 
         if (cells.some((c) => c.content)) {
             acc.push({
-                id: f.id,
+                id: String(rowIndex),
                 cells,
             });
         }
@@ -101,26 +109,32 @@ function getFooterRows(args: {
     }, []);
 }
 
-function shouldGroupRow(currentRow: TData, prevRow: TData, cellIndex: number) {
-    const current = currentRow.slice(0, cellIndex + 1).map((cell) => cell?.value ?? '');
-    const prev = prevRow.slice(0, cellIndex + 1).map((cell) => cell?.value ?? '');
+function shouldGroupRow(args: {
+    currentRow: TData;
+    prevRow: TData;
+    cellIndex: number;
+    startIndex?: number;
+}) {
+    const {currentRow, prevRow, cellIndex, startIndex = 0} = args;
+    const current = currentRow.slice(startIndex, cellIndex + 1).map((cell) => cell?.value ?? '');
+    const prev = prevRow.slice(startIndex, cellIndex + 1).map((cell) => cell?.value ?? '');
 
     return isEqual(prev, current);
 }
 
-function findCell(
+function findColumn(
     cols: ColumnDef<TData>[],
     predicate: (col: ColumnDef<TData>) => boolean,
-): THead | undefined {
+): ColumnDef<TData> | undefined {
     for (let i = 0; i < cols.length; i++) {
         const col = cols[i];
         if (predicate(col)) {
-            return col.meta?.head;
+            return col;
         }
 
         const subColumns = get(col, 'columns', []);
         if (subColumns.length) {
-            const subCol = findCell(subColumns, predicate);
+            const subCol = findColumn(subColumns, predicate);
             if (subCol) {
                 return subCol;
             }
@@ -128,6 +142,14 @@ function findCell(
     }
 
     return undefined;
+}
+
+function findCell(
+    cols: ColumnDef<TData>[],
+    predicate: (col: ColumnDef<TData>) => boolean,
+): THead | undefined {
+    const col = findColumn(cols, predicate);
+    return col?.meta?.head;
 }
 
 export const usePreparedTableData = (props: {
@@ -152,9 +174,19 @@ export const usePreparedTableData = (props: {
         sortingState,
         backgroundColor,
     } = props;
+    const [shouldResize, resize] = React.useState<string | null>(null);
+
+    const onRenderCell = React.useCallback(
+        debounce(() => {
+            resize(getRandomCKId());
+        }),
+        [],
+    );
 
     const columns = React.useMemo(() => {
-        const headData = data.head?.map((th) => mapHeadCell(th, dimensions.width));
+        const headData = data.head?.map((th) =>
+            mapHeadCell({th, tableWidth: dimensions.width, onRenderCell}),
+        );
         const footerData = ((data.footer?.[0] as TableCellsRow)?.cells ?? []) as TFoot[];
         return createTableColumns({head: headData, rows: data.rows, footer: footerData});
     }, [data, dimensions.width]);
@@ -188,6 +220,8 @@ export const usePreparedTableData = (props: {
         state: {
             sorting,
         },
+        isMultiSortEvent: (event: React.MouseEvent<HTMLElement, MouseEvent>) =>
+            event.ctrlKey || event.metaKey,
         onSortingChange: (updater) => {
             setSorting(updater);
 
@@ -211,7 +245,7 @@ export const usePreparedTableData = (props: {
 
     const rowMeasures = React.useMemo<Record<string, number>>(() => {
         return {};
-    }, [data, dimensions, cellMinSizes]);
+    }, [data, dimensions, cellMinSizes, shouldResize]);
 
     const rowVirtualizer = useVirtualizer({
         count: tableRows.length,
@@ -230,6 +264,7 @@ export const usePreparedTableData = (props: {
                     const rowSpan = Number(c.getAttribute('rowspan')) || 0;
                     return rowSpan <= 1;
                 });
+
                 return simpleCell?.getBoundingClientRect()?.height ?? 0;
             };
 
@@ -382,30 +417,36 @@ export const usePreparedTableData = (props: {
             const row = tableRows[virtualRow.index] as Row<TData>;
             const rowMeasuredHeight = rowMeasures[row.id];
             const visibleCells = row.getVisibleCells();
+            let groupingStartIndex = 0;
             const cells = visibleCells.reduce<BodyCellViewData[]>((acc, cell, index) => {
                 const originalHeadData = cell.column.columnDef.meta?.head;
                 const enableRowGrouping = get(originalHeadData, 'group', false);
                 const originalCellData = cell.row.original[index] ?? {value: ''};
                 const pinned = Boolean(originalHeadData?.pinned);
 
-                if (enableRowGrouping && typeof prevCells[index] !== 'undefined') {
-                    const prevCellRow = rowsAcc[prevCells[index]];
-                    const prevCell = prevCellRow?.cells?.find((c) => c.index === index);
-                    if (
-                        typeof prevCell?.rowSpan !== 'undefined' &&
-                        shouldGroupRow(
-                            cell.row.original,
-                            tableRows[prevCellRow?.index]?.original,
-                            index,
-                        )
-                    ) {
-                        prevCell.rowSpan += 1;
-                        if (prevCell.maxHeight && rowMeasuredHeight) {
-                            prevCell.maxHeight += rowMeasuredHeight;
-                        }
+                if (enableRowGrouping) {
+                    if (typeof prevCells[index] !== 'undefined') {
+                        const prevCellRow = rowsAcc[prevCells[index]];
+                        const prevCell = prevCellRow?.cells?.find((c) => c.index === index);
+                        if (
+                            typeof prevCell?.rowSpan !== 'undefined' &&
+                            shouldGroupRow({
+                                currentRow: cell.row.original,
+                                prevRow: tableRows[prevCellRow?.index]?.original,
+                                cellIndex: index,
+                                startIndex: groupingStartIndex,
+                            })
+                        ) {
+                            prevCell.rowSpan += 1;
+                            if (prevCell.maxHeight && rowMeasuredHeight) {
+                                prevCell.maxHeight += rowMeasuredHeight;
+                            }
 
-                        return acc;
+                            return acc;
+                        }
                     }
+                } else {
+                    groupingStartIndex = index + 1;
                 }
 
                 const additionalStyles = getCellAdditionStyles
@@ -477,9 +518,9 @@ export const usePreparedTableData = (props: {
 
     const transform = typeof rows[0]?.y !== 'undefined' ? `translateY(${rows[0]?.y}px)` : undefined;
     const isEndOfPage = rows[rows.length - 1]?.index === tableRows.length - 1;
-    const hasFooter = isEndOfPage && columns.some((column) => column.footer);
+    const hasFooter = isEndOfPage && data.footer?.length > 0;
     const footer: TableViewData['footer'] = {
-        rows: hasFooter ? getFooterRows({table, leftPositions, bgColor: tableBgColor}) : [],
+        rows: hasFooter ? getFooterRows({data, columns, leftPositions, bgColor: tableBgColor}) : [],
         style: {gridTemplateColumns, transform},
     };
 

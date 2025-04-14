@@ -74,6 +74,7 @@ export type ChartsInsightsData = {
 };
 
 export type UiSandboxRuntimeOptions = {
+    fnExecTimeLimit?: number;
     totalTimeLimit?: number;
 };
 
@@ -100,6 +101,7 @@ export interface WidgetBase {
         unsafe?: boolean;
         useMarkdown?: boolean;
         useMarkup?: boolean;
+        useHtml?: boolean;
     };
     libraryConfig?: Highcharts.Options | Record<string, any>;
     requestId?: string;
@@ -165,6 +167,7 @@ export type GraphWidget = WidgetBaseWithData &
             };
             useMarkdown?: boolean;
             useMarkup?: boolean;
+            useHtml?: boolean;
         };
         libraryConfig: Highcharts.Options;
         comments?: HighchartsComment[];
@@ -187,9 +190,9 @@ type AlertWidget = WidgetBase & {
     type: 'alert';
 };
 
-type D3Widget = WidgetBase & {type: 'd3'};
+type GravityChartsWidget = WidgetBase & {type: 'd3'};
 
-type BlankChartWidget = WidgetBase & {type: 'blank-chart'};
+type AdvancedChartWidget = WidgetBase & {type: 'advanced-chart'};
 
 type WidgetComponentProps =
     | GraphWidget
@@ -268,6 +271,7 @@ export type TableWidgetData = WidgetBaseWithData &
             };
             useMarkdown?: boolean;
             useMarkup?: boolean;
+            useHtml?: boolean;
             size?: WidgetSizeType;
         };
         unresolvedParams?: StringParams;
@@ -315,6 +319,7 @@ type MetricWidget = WidgetBaseWithData & {
         drillDown?: DrillDownConfig;
         useMarkdown?: boolean;
         useMarkup?: boolean;
+        useHtml?: boolean;
     };
 };
 
@@ -326,6 +331,7 @@ export interface Metric2Widget extends WidgetBaseWithData {
         drillDown?: DrillDownConfig;
         useMarkdown?: boolean;
         useMarkup?: boolean;
+        useHtml?: boolean;
     };
 }
 
@@ -346,7 +352,7 @@ export type MarkupWidget = WidgetBaseWithData & {
 
 export type Widget =
     | GraphWidget
-    | D3Widget
+    | GravityChartsWidget
     | TableWidgetData
     | ControlWidget
     | MapWidget
@@ -357,7 +363,7 @@ export type Widget =
     | TextWidget
     | TimeseriesWidget
     | MarkupWidget
-    | BlankChartWidget;
+    | AdvancedChartWidget;
 
 type ParamsChangedOnChange = {
     type: 'PARAMS_CHANGED';

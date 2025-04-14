@@ -8,7 +8,7 @@ import {openTestPage} from '../../../utils';
 
 datalensTest.describe('Wizard - chart loading', () => {
     datalensTest(
-        'When trying to switch to Wizard from the editor-chart id, a redirect to the ChartEditor page occurs',
+        'When trying to switch to Wizard from the editor-chart id, a redirect to the Editor page occurs',
         async ({page}: {page: Page}) => {
             await openTestPage(page, RobotChartsWizardUrls.WizardWithEditorId);
 

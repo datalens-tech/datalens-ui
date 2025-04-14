@@ -38,7 +38,6 @@ export enum DashRevisions {
     EXPANDABLE_PANEL = 'expandable-panel',
     EXPANDABLE_PANEL_COLLAPSED_BTN = 'expandable-panel-toggle-btn-collapsed',
     EXPANDABLE_PANEL_EXPANDED_BTN = 'expandable-panel-toggle-btn-expanded',
-    EXPANDABLE_PANEL_CLOSE = 'expandable-panel-close',
 }
 
 export enum DashEntryQa {
@@ -49,6 +48,7 @@ export enum DashEntryQa {
 export enum TableOfContentQa {
     TableOfContent = 'table-of-content',
     CloseBtn = 'table-of-content-close',
+    MobileTableOfContent = 'mobile-table-of-content',
 }
 
 export enum DashMetaQa {
@@ -76,12 +76,20 @@ export enum DashCommonQa {
     WidgetSelectBackgroundButton = 'dialog-widget-settings-select-background-button',
     WidgetSelectBackgroundPalleteContainer = 'dialog-widget-settings-select-background-pallete-container',
     RelationsDialogEmptyText = 'dialog-relations-empty-text',
+    RelationsWidgetSelect = 'dialog-relations-widget-select',
     RelationsDisconnectAllSwitcher = 'dialog-relations-disconnect-all-switcher',
     RelationsDisconnectAllSelectors = 'dialog-relations-disconnect-all-selectors',
     RelationsDisconnectAllWidgets = 'dialog-relations-disconnect-all-widgets',
     RelationsDisconnectAllCharts = 'dialog-relations-disconnect-all-charts',
     RelationsListRow = 'dialog-relations-list-row',
     RelationsRowPopover = 'dialog-relations-row-popover',
+}
+
+export enum FixedHeaderQa {
+    Wrapper = 'dash-fixed-header-wrapper',
+    Container = 'dash-fixed-header-containter',
+    Controls = 'dash-fixed-header-controls',
+    ExpandCollapseButton = 'dash-fixed-header-expand-collapse-button',
 }
 
 export enum DashRelationTypes {

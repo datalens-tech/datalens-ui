@@ -15,6 +15,7 @@ import {reducerRegistry} from '../store';
 import {AsideHeaderAdapter} from 'ui/components/AsideHeaderAdapter/AsideHeaderAdapter';
 import {MobileHeaderComponent} from 'ui/components/MobileHeader/MobileHeaderComponent/MobileHeaderComponent';
 import {DL} from 'ui/constants';
+import {useClearReloadedQuery} from '../units/auth/hooks/useClearReloadedQuery';
 
 reducerRegistry.register(coreReducers);
 
@@ -32,9 +33,16 @@ const CollectionsNavigtaionPage = React.lazy(
     () => import('./pages/CollectionsNavigationPage/CollectionsNavigationPage'),
 );
 const ServiceSettings = React.lazy(() => import('./pages/ServiceSettingsPage/ServiceSettingsPage'));
+const UserProfile = React.lazy(() => import('./pages/OwnUserProfilePage/OwnUserProfilePage'));
+
 const LandingPage = React.lazy(() => import('./pages/LandingPage/LandingPage'));
+const AuthPage = React.lazy(
+    () => import(/* webpackChunkName: "auth-page" */ './pages/AuthPage/AuthPage'),
+);
 
 const DatalensPageView = () => {
+    useClearReloadedQuery();
+
     const isLanding = useSelector(selectIsLanding);
 
     if (isLanding) {
@@ -45,9 +53,19 @@ const DatalensPageView = () => {
         );
     }
 
+    if (DL.IS_AUTH_PAGE) {
+        return (
+            <React.Suspense fallback={<FallbackPage />}>
+                <AuthPage />
+            </React.Suspense>
+        );
+    }
+
     return (
         <React.Suspense fallback={<FallbackPage />}>
             <Switch>
+                {DL.AUTH_ENABLED && <Route path="/auth" component={AuthPage} />}
+
                 <Route
                     path={['/workbooks/:workbookId/datasets/new', '/datasets/:id']}
                     component={DatasetPage}
@@ -61,6 +79,8 @@ const DatalensPageView = () => {
                     ]}
                     component={ConnectionsPage}
                 />
+
+                {DL.AUTH_ENABLED && <Route path="/profile" component={UserProfile} />}
 
                 <Route path="/settings" component={ServiceSettings} />
 
@@ -87,7 +107,8 @@ const DatalensPageView = () => {
 
 const DatalensPage: React.FC = () => {
     const showAsideHeaderAdapter = getIsAsideHeaderEnabled() && !isEmbeddedMode() && !isTvMode();
-    const showMobileHeader = !isEmbeddedMode() && DL.IS_MOBILE;
+    const showMobileHeader =
+        !isEmbeddedMode() && DL.IS_MOBILE && !DL.IS_NOT_AUTHENTICATED && !DL.IS_AUTH_PAGE;
 
     if (showMobileHeader) {
         return <MobileHeaderComponent renderContent={() => <DatalensPageView />} />;

@@ -4,7 +4,6 @@ import type {
     CheckboxProps,
     RadioButtonProps,
     RadioGroupProps,
-    SelectOption,
     SelectProps,
     TextAreaProps,
     TextInputProps,
@@ -52,7 +51,7 @@ export type SelectItem = BaseItem &
     BaseControlItem & {
         id: 'select';
         // option.data?.description is occupied for meta information in the select option.
-        availableValues?: SelectOption[];
+        availableValues?: SelectProps['options'];
         hintText?: MarkdownString;
         controlProps?: Partial<SelectProps>;
         loading?: boolean;
@@ -123,6 +122,14 @@ export type HiddenItem = BaseItem & {
     defaultValue?: ConnectionData[keyof ConnectionData];
 };
 
+export type KeyValueItem = BaseItem & {
+    id: 'key_value';
+    keys: SelectProps['options'];
+    keySelectProps?: Partial<SelectProps>;
+    valueInputProps?: Partial<TextInputProps>;
+    secret?: boolean;
+};
+
 export type ConnectorFormItem =
     | LabelItem
     | InputItem
@@ -134,7 +141,8 @@ export type ConnectorFormItem =
     | PlainTextItem
     | DescriptionItem
     | FileInputItem
-    | HiddenItem;
+    | HiddenItem
+    | KeyValueItem;
 
 export type CustomizableRow = {
     items: ConnectorFormItem[];
@@ -162,7 +170,7 @@ export type ValidatedItemAction = 'include' | 'skip';
 export type ValidatedItem = {
     name: string;
     defaultAction: ValidatedItemAction;
-    type?: 'string' | 'boolean'; // default 'string'
+    type?: 'string' | 'boolean' | 'object'; // default 'string'
     required?: boolean;
     nullable?: boolean;
     length?: number;
@@ -195,6 +203,7 @@ type FormApiSchema = {
 type FormUiSchema = {
     showCreateDatasetButton?: boolean;
     showCreateQlChartButton?: boolean;
+    showCreateEditorChartButton?: boolean;
 };
 
 export type FormSchema = {

@@ -4,6 +4,7 @@ import type {ActionPanelItem as DashkitActionPanelItem, ItemDropProps} from '@gr
 import {CopyPlus} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
+import type {DLUserSettings} from 'shared';
 import {DashTabItemType} from 'shared';
 
 import {DIALOG_TYPE} from '../constants/dialogs';
@@ -23,12 +24,7 @@ export const TYPES_TO_DIALOGS_MAP = {
 
 export const ITEM_PASTE_ITEM_ID = 'paste';
 
-export const getActionPanelItems = ({
-    copiedData,
-    onPasteItem,
-    openDialog,
-    filterItem,
-}: {
+export type ActionPanelItemParams = {
     copiedData: CopiedConfigData | null;
     onPasteItem: (item: CopiedConfigData) => void;
     openDialog: (
@@ -36,11 +32,34 @@ export const getActionPanelItems = ({
         dragOperationProps?: ItemDropProps | undefined,
     ) => void;
     filterItem?: (item: DashkitActionPanelItem) => boolean;
-}) => {
-    const {getBasicActionPanelItems} = registry.common.functions.getAll();
-    const items = getBasicActionPanelItems();
+    userSettings?: DLUserSettings;
+    scope?: string;
+    allowedPasteItems?: string[];
+};
 
-    if (copiedData) {
+export const BASE_ITEMS_TO_PASTE = [
+    DashTabItemType.Widget,
+    DashTabItemType.GroupControl,
+    DashTabItemType.Control,
+    DashTabItemType.Text,
+    DashTabItemType.Title,
+];
+
+export const getActionPanelItems = ({
+    copiedData,
+    onPasteItem,
+    openDialog,
+    filterItem,
+    userSettings,
+    scope,
+    allowedPasteItems = BASE_ITEMS_TO_PASTE,
+}: ActionPanelItemParams) => {
+    const {getBasicActionPanelItems} = registry.common.functions.getAll();
+    const items = getBasicActionPanelItems({userSettings, scope});
+
+    const enablePaste = copiedData && allowedPasteItems.includes(copiedData.type);
+
+    if (enablePaste) {
         items.push({
             id: ITEM_PASTE_ITEM_ID,
             icon: <Icon data={CopyPlus} />,

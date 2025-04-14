@@ -1,25 +1,88 @@
 import {I18n} from 'i18n';
+import sortBy from 'lodash/sortBy';
 import {Feature} from 'shared';
 import {EDITOR_TYPE} from 'shared/constants';
 import {registry} from 'ui/registry';
-import Utils from 'ui/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 const i18n = I18n.keyset('editor.templates.view');
 
-export type ChartEditorType = {
+type ChartEditorTab = {
     name: string;
-    tabs: {
-        name: string;
-        id: string;
-        language: string;
-        docs?: {
-            title: string;
-            path: string;
-        }[];
+    id: string;
+    language: string;
+    docs?: {
+        title: string;
+        path: string;
     }[];
 };
 
-// TODO: https://github.com/datalens-tech/datalens-ui/issues/762
+export type ChartEditorType = {
+    name: string;
+    tabs: ChartEditorTab[];
+};
+
+function getMetaTab() {
+    if (isEnabledFeature('EnableChartEditorMetaTab')) {
+        return [
+            {
+                name: 'Meta',
+                id: 'meta',
+                language: 'json',
+            },
+        ];
+    }
+
+    return [];
+}
+
+type DocsLink = {
+    title: string;
+    path: string;
+}[];
+
+function getSharedTab({docs}: {docs: DocsLink}) {
+    if (isEnabledFeature('EnableChartEditorSharedTab')) {
+        return [
+            {
+                name: 'Shared',
+                id: 'shared',
+                language: 'json',
+                docs,
+            },
+        ];
+    }
+
+    return [];
+}
+
+function getSourcesTab({docs}: {docs: DocsLink}) {
+    const tabName = isEnabledFeature('EditorTabNewNaming') ? 'Sources' : 'Urls';
+
+    return [
+        {
+            name: tabName,
+            id: 'sources',
+            language: 'javascript',
+            docs,
+        },
+    ];
+}
+
+function getPrepareTab(args?: {docs: DocsLink}) {
+    const docs = args?.docs;
+    const tabName = isEnabledFeature('EditorTabNewNaming') ? 'Prepare' : 'JavaScript';
+
+    return [
+        {
+            name: tabName,
+            id: 'prepare',
+            language: 'javascript',
+            docs: docs,
+        },
+    ];
+}
+
 export function getChartEditorTypes(type: string) {
     const getDocPathPrefix = registry.common.functions.get('getDocPathPrefix');
     const prefix = getDocPathPrefix();
@@ -77,27 +140,21 @@ export function getChartEditorTypes(type: string) {
     ];
 
     const chartEditorTypes = {
-        graph_node: {
+        [EDITOR_TYPE.GRAPH_NODE]: {
             get name() {
+                //@ts-ignore
                 return i18n('label_graph');
             },
             tabs: [
-                {
-                    name: 'Urls',
-                    id: 'url',
-                    language: 'javascript',
-                    docs: docsUrls,
-                },
+                ...getMetaTab(),
+                ...getSourcesTab({docs: docsUrls}),
                 {
                     name: 'Params',
                     id: 'params',
                     language: 'javascript',
                     docs: docsParams,
                 },
-                {
-                    name: 'JavaScript',
-                    id: 'js',
-                    language: 'javascript',
+                ...getPrepareTab({
                     docs: [
                         {
                             title: 'section_common-information',
@@ -105,10 +162,10 @@ export function getChartEditorTypes(type: string) {
                         },
                         docsVendor,
                     ],
-                },
+                }),
                 {
                     name: 'Controls',
-                    id: 'ui',
+                    id: 'controls',
                     language: 'javascript',
                     docs: docsControls,
                 },
@@ -136,33 +193,23 @@ export function getChartEditorTypes(type: string) {
                         docsVendor,
                     ],
                 },
-                {
-                    name: 'Shared',
-                    id: 'shared',
-                    language: 'json',
-                    docs: docsShare,
-                },
+                ...getSharedTab({docs: docsShare}),
             ],
         },
-        timeseries_node: {
-            name: 'Timeseries',
+        [EDITOR_TYPE.TIMESERIES_NODE]: {
+            get name() {
+                return i18n('label_yagr');
+            },
             tabs: [
-                {
-                    name: 'Urls',
-                    id: 'url',
-                    language: 'javascript',
-                    docs: docsUrls,
-                },
+                ...getMetaTab(),
+                ...getSourcesTab({docs: docsUrls}),
                 {
                     name: 'Params',
                     id: 'params',
                     language: 'javascript',
                     docs: docsParams,
                 },
-                {
-                    name: 'JavaScript',
-                    id: 'js',
-                    language: 'javascript',
+                ...getPrepareTab({
                     docs: [
                         {
                             title: 'section_common-information',
@@ -170,10 +217,10 @@ export function getChartEditorTypes(type: string) {
                         },
                         docsVendor,
                     ],
-                },
+                }),
                 {
                     name: 'Controls',
-                    id: 'ui',
+                    id: 'controls',
                     language: 'javascript',
                     docs: docsControls,
                 },
@@ -194,35 +241,23 @@ export function getChartEditorTypes(type: string) {
                         docsVendor,
                     ],
                 },
-                {
-                    name: 'Shared',
-                    id: 'shared',
-                    language: 'json',
-                    docs: docsShare,
-                },
+                ...getSharedTab({docs: docsShare}),
             ],
         },
-        table_node: {
+        [EDITOR_TYPE.TABLE_NODE]: {
             get name() {
                 return i18n('label_table');
             },
             tabs: [
-                {
-                    name: 'Urls',
-                    id: 'url',
-                    language: 'javascript',
-                    docs: docsUrls,
-                },
+                ...getMetaTab(),
+                ...getSourcesTab({docs: docsUrls}),
                 {
                     name: 'Params',
                     id: 'params',
                     language: 'javascript',
                     docs: docsParams,
                 },
-                {
-                    name: 'JavaScript',
-                    id: 'js',
-                    language: 'javascript',
+                ...getPrepareTab({
                     docs: [
                         {
                             title: 'section_common-information',
@@ -230,16 +265,16 @@ export function getChartEditorTypes(type: string) {
                         },
                         docsVendor,
                     ],
-                },
+                }),
                 {
                     name: 'Controls',
-                    id: 'ui',
+                    id: 'controls',
                     language: 'javascript',
                     docs: docsControls,
                 },
                 {
                     name: 'Config',
-                    id: 'table',
+                    id: 'config',
                     language: 'javascript',
                     docs: [
                         {
@@ -249,68 +284,43 @@ export function getChartEditorTypes(type: string) {
                         docsVendor,
                     ],
                 },
-                {
-                    name: 'Shared',
-                    id: 'shared',
-                    language: 'json',
-                    docs: docsShare,
-                },
+                ...getSharedTab({docs: docsShare}),
             ],
         },
-        text_node: {
+        [EDITOR_TYPE.TEXT_NODE]: {
             name: 'Текст',
             tabs: [
-                {
-                    name: 'Urls',
-                    id: 'url',
-                    language: 'javascript',
-                    docs: docsUrls,
-                },
+                ...getMetaTab(),
+                ...getSourcesTab({docs: docsUrls}),
                 {
                     name: 'Params',
                     id: 'params',
                     language: 'javascript',
                     docs: docsParams,
                 },
-                {
-                    name: 'JavaScript',
-                    id: 'js',
-                    language: 'javascript',
-                },
+                ...getPrepareTab(),
                 {
                     name: 'Config',
                     id: 'statface_text',
                     language: 'javascript',
                 },
-                {
-                    name: 'Shared',
-                    id: 'shared',
-                    language: 'json',
-                    docs: docsShare,
-                },
+                ...getSharedTab({docs: docsShare}),
             ],
         },
-        markdown_node: {
+        [EDITOR_TYPE.MARKDOWN_NODE]: {
             get name() {
                 return i18n('label_markdown');
             },
             tabs: [
-                {
-                    name: 'Urls',
-                    id: 'url',
-                    language: 'javascript',
-                    docs: docsUrls,
-                },
+                ...getMetaTab(),
+                ...getSourcesTab({docs: docsUrls}),
                 {
                     name: 'Params',
                     id: 'params',
                     language: 'javascript',
                     docs: docsParams,
                 },
-                {
-                    name: 'JavaScript',
-                    id: 'js',
-                    language: 'javascript',
+                ...getPrepareTab({
                     docs: [
                         {
                             title: 'section_common-information',
@@ -318,34 +328,24 @@ export function getChartEditorTypes(type: string) {
                         },
                         docsVendor,
                     ],
-                },
-                {
-                    name: 'Shared',
-                    id: 'shared',
-                    language: 'json',
-                    docs: docsShare,
-                },
+                }),
+                ...getSharedTab({docs: docsShare}),
             ],
         },
-        metric_node: {
-            name: 'Показатель',
+        [EDITOR_TYPE.METRIC_NODE]: {
+            get name() {
+                return i18n('label_metric');
+            },
             tabs: [
-                {
-                    name: 'Urls',
-                    id: 'url',
-                    language: 'javascript',
-                    docs: docsUrls,
-                },
+                ...getMetaTab(),
+                ...getSourcesTab({docs: docsUrls}),
                 {
                     name: 'Params',
                     id: 'params',
                     language: 'javascript',
                     docs: docsParams,
                 },
-                {
-                    name: 'JavaScript',
-                    id: 'js',
-                    language: 'javascript',
+                ...getPrepareTab({
                     docs: [
                         {
                             title: 'section_common-information',
@@ -353,39 +353,27 @@ export function getChartEditorTypes(type: string) {
                         },
                         docsVendor,
                     ],
-                },
+                }),
                 {
                     name: 'Config',
                     id: 'statface_metric',
                     language: 'javascript',
                 },
-                {
-                    name: 'Shared',
-                    id: 'shared',
-                    language: 'json',
-                    docs: docsShare,
-                },
+                ...getSharedTab({docs: docsShare}),
             ],
         },
-        map_node: {
+        [EDITOR_TYPE.MAP_NODE]: {
             name: 'Карта',
             tabs: [
-                {
-                    name: 'Urls',
-                    id: 'url',
-                    language: 'javascript',
-                    docs: docsUrls,
-                },
+                ...getMetaTab(),
+                ...getSourcesTab({docs: docsUrls}),
                 {
                     name: 'Params',
                     id: 'params',
                     language: 'javascript',
                     docs: docsParams,
                 },
-                {
-                    name: 'JavaScript',
-                    id: 'js',
-                    language: 'javascript',
+                ...getPrepareTab({
                     docs: [
                         {
                             title: 'section_common-information',
@@ -393,7 +381,7 @@ export function getChartEditorTypes(type: string) {
                         },
                         docsVendor,
                     ],
-                },
+                }),
                 {
                     name: 'Highmaps',
                     id: 'map',
@@ -418,33 +406,23 @@ export function getChartEditorTypes(type: string) {
                         docsVendor,
                     ],
                 },
-                {
-                    name: 'Shared',
-                    id: 'shared',
-                    language: 'json',
-                    docs: docsShare,
-                },
+                ...getSharedTab({docs: docsShare}),
             ],
         },
-        ymap_node: {
-            name: 'Яндекс Карта',
+        [EDITOR_TYPE.YMAP_NODE]: {
+            get name() {
+                return i18n('label_yamaps');
+            },
             tabs: [
-                {
-                    name: 'Urls',
-                    id: 'url',
-                    language: 'javascript',
-                    docs: docsUrls,
-                },
+                ...getMetaTab(),
+                ...getSourcesTab({docs: docsUrls}),
                 {
                     name: 'Params',
                     id: 'params',
                     language: 'javascript',
                     docs: docsParams,
                 },
-                {
-                    name: 'JavaScript',
-                    id: 'js',
-                    language: 'javascript',
+                ...getPrepareTab({
                     docs: [
                         {
                             title: 'section_common-information',
@@ -452,7 +430,7 @@ export function getChartEditorTypes(type: string) {
                         },
                         docsVendor,
                     ],
-                },
+                }),
                 {
                     name: 'Yandex.Maps',
                     id: 'ymap',
@@ -465,67 +443,48 @@ export function getChartEditorTypes(type: string) {
                         docsVendor,
                     ],
                 },
-                {
-                    name: 'Shared',
-                    id: 'shared',
-                    language: 'json',
-                    docs: docsShare,
-                },
+                ...getSharedTab({docs: docsShare}),
             ],
         },
-        control_node: {
+        [EDITOR_TYPE.CONTROL_NODE]: {
             get name() {
                 return i18n('label_control');
             },
             tabs: [
-                {
-                    name: 'Urls',
-                    id: 'url',
-                    language: 'javascript',
-                    docs: docsUrls,
-                },
+                ...getMetaTab(),
+                ...getSourcesTab({docs: docsUrls}),
                 {
                     name: 'Params',
                     id: 'params',
                     language: 'javascript',
                     docs: docsParams,
                 },
-                {
-                    name: 'JavaScript',
-                    id: 'js',
-                    language: 'javascript',
-                    docs: docsControls,
-                },
+                ...(isEnabledFeature('EnableChartEditorControlsJSTab')
+                    ? getPrepareTab({docs: docsControls})
+                    : []),
                 {
                     name: 'Controls',
-                    id: 'ui',
+                    id: 'controls',
                     language: 'javascript',
                     docs: docsControls,
                 },
-                {
-                    name: 'Shared',
-                    id: 'shared',
-                    language: 'json',
-                    docs: docsShare,
-                },
+                ...getSharedTab({docs: docsShare}),
             ],
         },
-        module: {
+        [EDITOR_TYPE.MODULE]: {
             get name() {
                 return i18n('label_module');
             },
             tabs: [
-                {
-                    name: 'JavaScript',
-                    id: 'js',
-                    language: 'javascript',
+                ...getMetaTab(),
+                ...getPrepareTab({
                     docs: [
                         {
                             title: 'section_common-information',
                             path: DOCS_PATH.MODULE,
                         },
                     ],
-                },
+                }),
                 {
                     name: 'Doc Ru',
                     id: 'documentation_ru',
@@ -550,25 +509,18 @@ export function getChartEditorTypes(type: string) {
                 },
             ],
         },
-        markup_node: {
-            name: 'Markup',
+        [EDITOR_TYPE.MARKUP_NODE]: {
+            name: i18n('label_markup'),
             tabs: [
-                {
-                    name: 'Urls',
-                    id: 'url',
-                    language: 'javascript',
-                    docs: docsUrls,
-                },
+                ...getMetaTab(),
+                ...getSourcesTab({docs: docsUrls}),
                 {
                     name: 'Params',
                     id: 'params',
                     language: 'javascript',
                     docs: docsParams,
                 },
-                {
-                    name: 'JavaScript',
-                    id: 'js',
-                    language: 'javascript',
+                ...getPrepareTab({
                     docs: [
                         {
                             title: 'section_common-information',
@@ -576,41 +528,29 @@ export function getChartEditorTypes(type: string) {
                         },
                         docsVendor,
                     ],
-                },
+                }),
                 {
                     name: 'Config',
                     id: 'config',
                     language: 'javascript',
                 },
-                {
-                    name: 'Shared',
-                    id: 'shared',
-                    language: 'json',
-                    docs: docsShare,
-                },
+                ...getSharedTab({docs: docsShare}),
             ],
         },
-        [EDITOR_TYPE.D3_NODE]: {
+        [EDITOR_TYPE.GRAVITY_CHARTS_NODE]: {
             get name() {
-                return i18n('label_graph');
+                return i18n('label_graph-gravity');
             },
             tabs: [
-                {
-                    name: 'Urls',
-                    id: 'url',
-                    language: 'javascript',
-                    docs: docsUrls,
-                },
+                ...getMetaTab(),
+                ...getSourcesTab({docs: docsUrls}),
                 {
                     name: 'Params',
                     id: 'params',
                     language: 'javascript',
                     docs: docsParams,
                 },
-                {
-                    name: 'JavaScript',
-                    id: 'js',
-                    language: 'javascript',
+                ...getPrepareTab({
                     docs: [
                         {
                             title: 'section_common-information',
@@ -618,10 +558,10 @@ export function getChartEditorTypes(type: string) {
                         },
                         docsVendor,
                     ],
-                },
+                }),
                 {
                     name: 'Controls',
-                    id: 'ui',
+                    id: 'controls',
                     language: 'javascript',
                     docs: docsControls,
                 },
@@ -630,66 +570,61 @@ export function getChartEditorTypes(type: string) {
                     id: 'config',
                     language: 'javascript',
                 },
+                ...getSharedTab({docs: docsShare}),
+            ],
+        },
+        [EDITOR_TYPE.ADVANCED_CHART_NODE]: {
+            get name() {
+                // @ts-ignore
+                return i18n('label_advanced-chart');
+            },
+            tabs: [
+                ...getMetaTab(),
+                ...getSourcesTab({docs: docsUrls}),
                 {
-                    name: 'Shared',
-                    id: 'shared',
-                    language: 'json',
-                    docs: docsShare,
+                    name: 'Params',
+                    id: 'params',
+                    language: 'javascript',
+                    docs: docsParams,
                 },
+                ...getPrepareTab({
+                    docs: [
+                        {
+                            title: 'section_common-information',
+                            path: DOCS_PATH.CHART,
+                        },
+                        docsVendor,
+                    ],
+                }),
+                {
+                    name: 'Controls',
+                    id: 'controls',
+                    language: 'javascript',
+                    docs: docsControls,
+                },
+                ...getSharedTab({docs: docsShare}),
             ],
         },
     } as Record<string, ChartEditorType>;
 
-    if (Utils.isEnabledFeature(Feature.BlankChart)) {
-        chartEditorTypes[EDITOR_TYPE.BLANK_CHART_NODE] = {
-            get name() {
-                return i18n('label_graph');
-            },
-            tabs: [
-                {
-                    name: 'Urls',
-                    id: 'url',
-                    language: 'javascript',
-                    docs: docsUrls,
-                },
-                {
-                    name: 'Params',
-                    id: 'params',
-                    language: 'javascript',
-                    docs: docsParams,
-                },
-                {
-                    name: 'JavaScript',
-                    id: 'js',
-                    language: 'javascript',
-                    docs: [
-                        {
-                            title: 'section_common-information',
-                            path: DOCS_PATH.CHART,
-                        },
-                        docsVendor,
-                    ],
-                },
-                {
-                    name: 'Controls',
-                    id: 'ui',
-                    language: 'javascript',
-                    docs: docsControls,
-                },
-                {
-                    name: 'Config',
-                    id: 'config',
-                    language: 'javascript',
-                },
-                {
-                    name: 'Shared',
-                    id: 'shared',
-                    language: 'json',
-                    docs: docsShare,
-                },
-            ],
-        };
+    chartEditorTypes[EDITOR_TYPE.BLANK_CHART_NODE] =
+        chartEditorTypes[EDITOR_TYPE.ADVANCED_CHART_NODE];
+
+    if (isEnabledFeature(Feature.ChartActions)) {
+        chartEditorTypes[EDITOR_TYPE.CONTROL_NODE].tabs.push({
+            name: 'Actions',
+            id: 'actions',
+            language: 'javascript',
+            docs: docsControls,
+        });
     }
+
+    const order = isEnabledFeature('EditorTabNewOrder')
+        ? ['meta', 'shared', 'params', 'sources', 'config', 'prepare', 'controls', 'actions']
+        : [];
+    chartEditorTypes[type].tabs = sortBy(chartEditorTypes[type].tabs, (tab) =>
+        order.indexOf(tab.id),
+    );
 
     return chartEditorTypes[type];
 }

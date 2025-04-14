@@ -10,6 +10,7 @@ export function getEditorDefaultOptions(): MonacoTypes.editor.IEditorConstructio
         lightbulb: {
             enabled: false,
         },
+        automaticLayout: true,
     };
 }
 

@@ -11,6 +11,7 @@ import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
+import unescape from 'lodash/unescape';
 import type {DashChartRequestContext, StringParams} from 'shared';
 import {DashTabItemControlSourceType, SHARED_URL_OPTIONS} from 'shared';
 import {isEmbeddedMode} from 'ui/utils/embedded';
@@ -62,7 +63,7 @@ import {useMemoCallback} from './useMemoCallback';
 
 export type LoadingChartHookProps = {
     dataProvider: ChartWithProviderProps['dataProvider'];
-    dataProviderContextGetter?: () => DashChartRequestContext;
+    requestHeadersGetter?: () => DashChartRequestContext;
     initialData: DataProps;
     requestId: string;
     requestCancellationRef: React.MutableRefObject<CurrentRequestState>;
@@ -123,7 +124,7 @@ const loadingStateReducer = (state: LoadingStateType, newState: Partial<LoadingS
 export const useLoadingChart = (props: LoadingChartHookProps) => {
     const {
         dataProvider,
-        dataProviderContextGetter,
+        requestHeadersGetter,
         initialData,
         requestId,
         requestCancellationRef,
@@ -425,7 +426,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                 requestCancellation:
                     requestCancellationRef.current[requestId]?.requestCancellation ||
                     dataProvider.getRequestCancellation(),
-                ...(dataProviderContextGetter ? {contextHeaders: dataProviderContextGetter()} : {}),
+                ...(requestHeadersGetter ? {contextHeaders: requestHeadersGetter()} : {}),
             });
 
             const isCanceled = requestCancellationRef.current?.[requestId]?.status === 'canceled';
@@ -490,7 +491,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
             resolveMetaDataRef?.current?.(resolveWidgetDataRef?.current?.(null));
         }
     }, [
-        dataProviderContextGetter,
+        requestHeadersGetter,
         dispatch,
         changedInnerFlag,
         usedParamsRef,
@@ -769,9 +770,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                     requestCancellation:
                         requestCancellationRef.current[requestId]?.requestCancellation ||
                         dataProvider.getRequestCancellation(),
-                    ...(dataProviderContextGetter
-                        ? {contextHeaders: dataProviderContextGetter()}
-                        : {}),
+                    ...(requestHeadersGetter ? {contextHeaders: requestHeadersGetter()} : {}),
                 });
                 if (!rootNodeRef.current) {
                     return null;
@@ -786,7 +785,15 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
             }
             return null;
         },
-        [dataProvider, initialData, requestId, requestCancellationRef, rootNodeRef, handleError],
+        [
+            dataProvider,
+            initialData,
+            requestId,
+            requestCancellationRef,
+            rootNodeRef,
+            handleError,
+            requestHeadersGetter,
+        ],
     );
 
     const handleChange = useMemoCallback(
@@ -819,7 +826,24 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                             _page: String(START_PAGE),
                         };
                     }
-                    newParams = {...changedData.data.params, ...additionalParams};
+
+                    const mapParam = (val: any) => {
+                        if (typeof val === 'string') {
+                            return unescape(val);
+                        }
+
+                        return val;
+                    };
+
+                    newParams = Object.entries(changedData.data.params).reduce(
+                        (acc, [key, value]) => {
+                            acc[key] = Array.isArray(value) ? value.map(mapParam) : mapParam(value);
+                            return acc;
+                        },
+                        {} as StringParams,
+                    );
+
+                    newParams = {...newParams, ...additionalParams};
                     if (!enableActionParams) {
                         newParams = pickExceptActionParamsFromParams(newParams);
                     }
@@ -896,16 +920,25 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
     const handleRetry = React.useCallback(
         (data?: OnChangeData['data']) => {
             if (data) {
-                handleChange(
-                    {type: 'PARAMS_CHANGED', data} as OnChangeData,
-                    {forceUpdate: true},
-                    false,
-                );
+                if ('params' in data) {
+                    handleChange({type: 'PARAMS_CHANGED', data}, {forceUpdate: true}, false);
+                }
             } else {
                 loadChartData();
             }
         },
         [loadChartData, handleChange],
+    );
+
+    const runAction = React.useCallback(
+        (params: StringParams) => {
+            return dataProvider.runAction({
+                props: {...initialData, params},
+                requestId,
+                ...(requestHeadersGetter ? {contextHeaders: requestHeadersGetter()} : {}),
+            });
+        },
+        [dataProvider, initialData, requestId, requestHeadersGetter],
     );
 
     return {
@@ -931,5 +964,6 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         isInit,
         dataProps: requestDataProps,
         isWidgetMenuDataChanged,
+        runAction,
     };
 };

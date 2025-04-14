@@ -57,7 +57,7 @@ import Description from './Description';
 import TableOfContent from './TableOfContent';
 import {Locator} from 'playwright-core';
 import {Workbook} from '../workbook/Workbook';
-import {WorkbookPage} from '../../../src/shared/constants/qa/workbooks';
+import {WorkbookPageQa} from '../../../src/shared/constants/qa/workbooks';
 import {ChartkitControl} from './ChartkitControl';
 import {DialogCreateEntry} from '../workbook/DialogCreateEntry';
 import {WorkbookIds, WorkbooksUrls} from '../../constants/constants';
@@ -66,6 +66,7 @@ import {CommonUrls} from '../constants/common-urls';
 import {EditEntityButton} from '../workbook/EditEntityButton';
 import ControlActions from './ControlActions';
 import {getUrlStateParam} from '../../suites/dash/helpers';
+import {FixedHeader} from './FixedHeader';
 
 export const BUTTON_CHECK_TIMEOUT = 3000;
 export const RENDER_TIMEOUT = 4000;
@@ -112,6 +113,7 @@ class DashboardPage extends BasePage {
     dialogCreateEntry: DialogCreateEntry;
     editEntityButton: EditEntityButton;
     controlActions: ControlActions;
+    fixedHeader: FixedHeader;
 
     constructor({page}: DashboardPageProps) {
         super({page});
@@ -123,6 +125,7 @@ class DashboardPage extends BasePage {
         this.dialogCreateEntry = new DialogCreateEntry(page);
         this.editEntityButton = new EditEntityButton(page);
         this.controlActions = new ControlActions(page);
+        this.fixedHeader = new FixedHeader(page);
     }
 
     async waitForResponses(url: string, timeout = API_TIMEOUT): Promise<Array<Response>> {
@@ -217,18 +220,20 @@ class DashboardPage extends BasePage {
     async createDashboard({
         editDash,
         waitingRequestOptions,
+        workbookId,
     }: {
         editDash: () => Promise<void>;
         waitingRequestOptions?: {
             controlTitles: string[];
             waitForLoader?: boolean;
         };
+        workbookId?: string;
     }) {
         // some page need to be loaded so we can get data of feature flag from DL var
         await openTestPage(this.page, '/');
         const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
         const createDashUrl = isEnabledCollections
-            ? `/workbooks/${WorkbookIds.E2EWorkbook}/dashboards`
+            ? `/workbooks/${workbookId ?? WorkbookIds.E2EWorkbook}/dashboards`
             : '/dashboards/new';
         await openTestPage(this.page, createDashUrl);
 
@@ -298,13 +303,13 @@ class DashboardPage extends BasePage {
 
         await workbookPO.openWorkbookItemMenu(dashId);
 
-        await this.page.locator(slct(WorkbookPage.MenuItemDuplicate)).click();
+        await this.page.locator(slct(WorkbookPageQa.MenuItemDuplicate)).click();
 
         // waiting for the dialog to open, specify the name, save
         await workbookPO.dialogCreateEntry.createEntryWithName(newDashName);
 
         await this.page
-            .locator(`${slct(WorkbookPage.ListItem)}:has-text('${newDashName}')`)
+            .locator(`${slct(WorkbookPageQa.ListItem)}:has-text('${newDashName}')`)
             .click();
     }
 
@@ -393,6 +398,25 @@ class DashboardPage extends BasePage {
 
     getDashKitTextItem(text: string) {
         return this.page.locator(slct(DashkitQa.GRID_ITEM)).getByText(text, {exact: true});
+    }
+
+    async getGlobalRelationsDialogType(): Promise<'new' | 'old' | null> {
+        const isEnabledShowNewRelationsButton = await isEnabledFeature(
+            this.page,
+            Feature.ShowNewRelationsButton,
+        );
+
+        if (isEnabledShowNewRelationsButton) {
+            return 'new';
+        }
+
+        const hideOldRelations = await isEnabledFeature(this.page, Feature.HideOldRelations);
+
+        if (!hideOldRelations) {
+            return 'old';
+        }
+
+        return null;
     }
 
     async deleteSelector(controlTitle: string) {
@@ -559,18 +583,35 @@ class DashboardPage extends BasePage {
     }
 
     async setupNewLinks({
-        linkType,
         widgetElem,
+        selectorName,
+
+        linkType,
         firstParamName,
         secondParamName,
     }: {
         linkType: DashRelationTypes;
         firstParamName: string;
-        widgetElem: Locator;
         secondParamName: string;
-    }) {
-        // open dialog relations by click on control item links icon
-        await widgetElem.click();
+    } & (
+        | {widgetElem: Locator; selectorName?: undefined}
+        | {selectorName: string; widgetElem?: undefined}
+    )) {
+        if (widgetElem) {
+            // open dialog relations by click on control item links icon
+            await widgetElem.click();
+        } else if (selectorName) {
+            // click on global links button
+            await this.clickOnLinksBtn();
+
+            await clickGSelectOption({
+                page: this.page,
+                key: DashCommonQa.RelationsWidgetSelect,
+                optionText: selectorName,
+            });
+        } else {
+            throw new Error('Relation dialog needs selectorName or widgetElement param');
+        }
 
         // choose new link
         await this.page.click(slct(DashCommonQa.RelationTypeButton));
@@ -631,6 +672,13 @@ class DashboardPage extends BasePage {
         await this.page.click(slct('connect-by-alias-dialog-apply-button'));
         // applying changes in the communication dialog
         await this.page.click(slct(ConnectionsDialogQA.Apply));
+    }
+
+    async hasChanges() {
+        const saveButton = await this.page.locator(slct(ActionPanelDashSaveControlsQa.Save));
+        const disabledAttribute = await saveButton.getAttribute('disabled');
+
+        return disabledAttribute === null;
     }
 
     async clickSaveButton() {
@@ -711,9 +759,10 @@ class DashboardPage extends BasePage {
         ]);
     }
 
-    async deleteDash() {
+    async deleteDash(args?: {workbookId?: string}) {
+        const {workbookId = WorkbooksUrls.E2EWorkbook} = args ?? {};
         const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
-        const urlOnDelete = isEnabledCollections ? WorkbooksUrls.E2EWorkbook : '/dashboards';
+        const urlOnDelete = isEnabledCollections ? workbookId : '/dashboards';
 
         await deleteEntity(this.page, urlOnDelete);
     }
@@ -988,9 +1037,11 @@ class DashboardPage extends BasePage {
     async disableAutoupdateInFirstControl() {
         await this.enterEditMode();
         await this.clickFirstControlSettingsButton();
+        await this.page.locator(slct(DialogGroupControlQa.extendedSettingsButton)).click();
         await this.page
             .locator(`${slct(DialogGroupControlQa.updateControlOnChangeCheckbox)} input`)
             .setChecked(false);
+        await this.page.locator(slct(DialogGroupControlQa.extendedSettingsApplyButton)).click();
         await this.controlActions.applyControlSettings();
         await this.saveChanges();
     }

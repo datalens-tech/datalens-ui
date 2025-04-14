@@ -9,6 +9,17 @@ export const enum EditorTemplatesQA {
     Markdown = 'editor-templates-markdown-item',
     Timeseries = 'editor-templates-timeseries-item',
     Markup = 'editor-templates-markup-item',
-    D3 = 'editor-templates-d3-item',
-    BlankChart = 'editor-templates-blank-chart-item',
+    GravityCharts = 'editor-templates-gravity-charts-item',
+    AdvancedChart = 'editor-templates-advacned-chart-item',
+}
+
+export enum EditorActionPanelQA {
+    ButtonSave = 'editor-action-panel-button-save',
+    MoreSwitcher = 'editor-action-panel-more-switcher',
+    SaveAsDraftButton = 'editor-action-panel-save-as-draft-button',
+    SaveAndPublishButton = 'editor-action-panel-save-and-publish-button',
+}
+
+export enum EditorPaneQA {
+    Editor = 'editor-pane-editor',
 }

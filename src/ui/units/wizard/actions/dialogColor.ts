@@ -1,6 +1,4 @@
-import {selectAvailableClientGradients} from 'constants/common';
-
-import type {ColorsConfig, Field, GradientType, PartialBy} from 'shared';
+import type {ColorsConfig, Field, GradientNullMode, GradientType, PartialBy} from 'shared';
 import {closeDialog, openDialog} from 'store/actions/dialog';
 import type {DatalensGlobalState} from 'ui';
 
@@ -12,6 +10,7 @@ import {
     selectDialogColorGradientState,
     selectDialogColorPaletteState,
 } from '../selectors/dialogColor';
+import {selectAvailableClientGradients} from '../selectors/gradient';
 
 export interface PaletteState {
     mountedColors: Record<string, string>;
@@ -42,6 +41,7 @@ export interface GradientState {
     rightThreshold?: string;
     gradientPalette: string;
     validationStatus?: ValidationStatus;
+    nullMode?: GradientNullMode;
 }
 
 export const RESET_DIALOG_COLOR_STATE = Symbol('wizard/dialogColor/RESET_DIALOG_COLOR_STATE');
@@ -141,6 +141,7 @@ export function prepareDialogColorState(props: {
             middleThreshold: colorsConfig?.middleThreshold || defaultGradientState.middleThreshold,
             rightThreshold: colorsConfig?.rightThreshold || defaultGradientState.rightThreshold,
             gradientPalette: colorsConfig?.gradientPalette || defaultGradientState.gradientPalette,
+            nullMode: colorsConfig?.nullMode || defaultGradientState.nullMode,
         };
 
         const gradients = selectAvailableClientGradients(getState(), gradientState.gradientMode);

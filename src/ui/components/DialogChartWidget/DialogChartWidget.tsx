@@ -1,7 +1,8 @@
 import React from 'react';
 
-import {HelpPopover} from '@gravity-ui/components';
-import {Checkbox, Dialog, Link, Popup, TextArea, TextInput} from '@gravity-ui/uikit';
+import {FormRow, HelpPopover} from '@gravity-ui/components';
+import type {RealTheme} from '@gravity-ui/uikit';
+import {Checkbox, Dialog, Flex, Link, Popup, Text, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import type {CustomCommands, Spec} from 'immutability-helper';
@@ -9,18 +10,22 @@ import update, {Context} from 'immutability-helper';
 import type {
     DashTabItemWidget,
     DashTabItemWidgetTab,
-    HierarchyField,
     StringParams,
     WidgetKind,
     WidgetType,
     WizardVisualizationId,
 } from 'shared';
 import {DashCommonQa, DialogDashWidgetQA, EntryScope, Feature, ParamsSettingsQA} from 'shared';
-import {getEntryHierarchy, getEntryVisualizationType} from 'shared/schema/mix/helpers';
+import {getEntryVisualizationType} from 'shared/schema/mix/helpers';
 import {Collapse} from 'ui/components/Collapse/Collapse';
 import {Interpolate} from 'ui/components/Interpolate';
+import {TabMenu} from 'ui/components/TabMenu/TabMenu';
+import type {UpdateState} from 'ui/components/TabMenu/types';
+import {TabActionType} from 'ui/components/TabMenu/types';
 import {DL} from 'ui/constants/common';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
+import {registry} from '../../registry';
 import NavigationInput from '../../units/dash/components/NavigationInput/NavigationInput';
 import {ParamsSettings} from '../../units/dash/components/ParamsSettings/ParamsSettings';
 import {
@@ -34,12 +39,7 @@ import {PaletteBackground} from '../../units/dash/containers/Dialogs/components/
 import {isEntryTypeWithFiltering} from '../../units/dash/containers/Dialogs/utils';
 import {DASH_WIDGET_TYPES, EntryTypeNode} from '../../units/dash/modules/constants';
 import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
-import Utils from '../../utils';
 import TwoColumnDialog from '../ControlComponents/TwoColumnDialog/TwoColumnDialog';
-
-import {TabMenu} from './TabMenu/TabMenu';
-import type {UpdateState} from './TabMenu/types';
-import {TabActionType} from './TabMenu/types';
 
 import './DialogChartWidget.scss';
 
@@ -62,21 +62,6 @@ const isWidgetTypeWithAutoHeight = (widgetType?: WidgetKind) => {
     );
 };
 
-type LineProps = {
-    className?: string;
-    caption: React.ReactNode;
-    children?: React.ReactNode;
-};
-
-function Line(props: LineProps) {
-    return (
-        <div className={b('line', props.className)}>
-            <div className={b('line-caption')}>{props.caption}</div>
-            <div className={b('line-content')}>{props.children}</div>
-        </div>
-    );
-}
-
 type AfterSettingsWidgetCallback = ((selectedWidgetType: WidgetKind) => void) | null;
 
 export interface DialogChartWidgetFeatureProps {
@@ -84,6 +69,7 @@ export interface DialogChartWidgetFeatureProps {
 
     enableAutoheight?: boolean;
     enableBackgroundColor?: boolean;
+    enableCustomBgColorSelector?: boolean;
     enableFilteringSetting?: boolean;
 }
 export interface DialogChartWidgetProps extends DialogChartWidgetFeatureProps {
@@ -98,6 +84,8 @@ export interface DialogChartWidgetProps extends DialogChartWidgetFeatureProps {
     widgetsCurrentTab: {
         [key: string]: string;
     };
+
+    theme?: RealTheme;
 
     changeNavigationPath: (newNavigationPath: string) => void;
     closeDialog: () => void;
@@ -119,8 +107,13 @@ type DialogChartWidgetState = {
 
     legacyChanged: number;
     visualizationType?: WizardVisualizationId;
-    hierarchies?: HierarchyField[];
 };
+
+const INPUT_FILTERING_ID = 'chartFilteringField';
+const INPUT_NAME_ID = 'chartNameField';
+const INPUT_DESCRIPTION_ID = 'chartDescriptionField';
+const INPUT_AUTOHEIGHT_ID = 'chartAutoheightField';
+const INPUT_HINT_ID = 'chartHintField';
 
 // TODO: put in defaultPath navigation key from entry
 class DialogChartWidget extends React.PureComponent<
@@ -130,6 +123,7 @@ class DialogChartWidget extends React.PureComponent<
     static defaultProps = {
         enableAutoheight: true,
         enableBackgroundColor: false,
+        enableCustomBgColorSelector: false,
         enableFilteringSetting: true,
         openedItemData: {
             hideTitle: false,
@@ -141,9 +135,11 @@ class DialogChartWidget extends React.PureComponent<
                     isDefault: true,
                     description: '',
                     background: {
-                        enabled: false,
                         color: 'transparent',
                     },
+                    enableHint: false,
+                    hint: '',
+                    enableDescription: false,
                 },
             ],
         } as DashTabItemWidget['data'],
@@ -225,8 +221,21 @@ class DialogChartWidget extends React.PureComponent<
         return Boolean(this.props.openedItemId);
     }
 
+    handleUpdateField = (field: keyof DashTabItemWidgetTab, value: string | boolean) => {
+        const {data, tabIndex} = this.state;
+        this.setState({
+            data: update(data, {
+                tabs: {
+                    [tabIndex]: {
+                        [field]: {$set: value},
+                    },
+                },
+            }),
+        });
+    };
+
     onApply = () => {
-        const isValidateParamTitle = Utils.isEnabledFeature(
+        const isValidateParamTitle = isEnabledFeature(
             Feature.DashBoardWidgetParamsStrictValidation,
         );
 
@@ -353,39 +362,25 @@ class DialogChartWidget extends React.PureComponent<
     };
 
     onAutoHeightRadioButtonChange = () => {
-        const {data, tabIndex} = this.state;
-        const currentCondition = this.state.data.tabs[tabIndex].autoHeight;
+        const currentCondition = this.state.data.tabs[this.state.tabIndex].autoHeight;
 
-        this.setState({
-            data: update(data, {
-                tabs: {
-                    [tabIndex]: {autoHeight: {$set: !currentCondition}},
-                },
-            }),
-        });
+        this.handleUpdateField('autoHeight', !currentCondition);
     };
 
-    handleBackgroundEnabledChanged = () => {
-        const {data, tabIndex} = this.state;
+    handleUpdateEnableDesc = (val: boolean) => {
+        this.handleUpdateField('enableDescription', val);
+    };
 
-        if (!data.tabs[tabIndex].background) {
-            data.tabs[tabIndex].background = {
-                enabled: false,
-                color: 'transparent',
-            };
-        }
+    handleUpdateEnableHint = (val: boolean) => {
+        this.handleUpdateField('enableHint', val);
+    };
 
-        this.setState({
-            data: update(data, {
-                tabs: {
-                    [tabIndex]: {
-                        background: {
-                            enabled: {$set: !data.tabs[tabIndex].background?.enabled},
-                        },
-                    },
-                },
-            }),
-        });
+    handleUpdateDescription = (val: string) => {
+        this.handleUpdateField('description', val);
+    };
+
+    handleUpdateHint = (val: string) => {
+        this.handleUpdateField('hint', val);
     };
 
     handleBackgroundColorSelected = (color: string) => {
@@ -405,16 +400,8 @@ class DialogChartWidget extends React.PureComponent<
     };
 
     handleChangeFiltering = () => {
-        const {data, tabIndex} = this.state;
-        const currentCondition = this.state.data.tabs[tabIndex].enableActionParams;
-
-        this.setState({
-            data: update(data, {
-                tabs: {
-                    [tabIndex]: {enableActionParams: {$set: !currentCondition}},
-                },
-            }),
-        });
+        const currentCondition = this.state.data.tabs[this.state.tabIndex].enableActionParams;
+        this.handleUpdateField('enableActionParams', !currentCondition);
     };
 
     updateTabMenu = ({items, selectedItemIndex, action}: UpdateState<DashTabItemWidgetTab>) => {
@@ -484,12 +471,10 @@ class DialogChartWidget extends React.PureComponent<
         entryMeta: {type: WidgetType};
     }) => {
         const visualizationType = getEntryVisualizationType(entryMeta);
-        const hierarchies = getEntryHierarchy(entryMeta);
         this.setState({
             selectedWidgetType,
             selectedEntryType: entryMeta.type,
             visualizationType,
-            hierarchies,
         });
 
         if (this.afterSettingSelectedWidgetTypeCallback) {
@@ -515,11 +500,8 @@ class DialogChartWidget extends React.PureComponent<
         );
     };
 
-    getHierarchyWarning = () => {
-        const {hierarchies} = this.state;
-        const showFilterHierarchyWarning = Boolean(hierarchies?.length) ?? false;
-
-        if (!showFilterHierarchyWarning || !DL.ENDPOINTS.datalensDocs) {
+    getFiltrationDocsLink = () => {
+        if (!DL.ENDPOINTS.datalensDocs) {
             return null;
         }
 
@@ -551,32 +533,36 @@ class DialogChartWidget extends React.PureComponent<
             canUseFiltration && data.tabs[tabIndex].enableActionParams,
         );
 
-        const caption = (
-            <div className={b('caption')}>
-                <span className={b('caption-text')}>
-                    {i18n('dash.widget-dialog.edit', 'label_filtering-other-charts')}
-                </span>
-                <HelpPopover
-                    className={b('help-tooltip')}
-                    content={i18n('dash.widget-dialog.edit', 'context_filtering-other-charts')}
-                />
-            </div>
+        const helpPopover = (
+            <HelpPopover
+                className={b('help-tooltip')}
+                content={
+                    <React.Fragment>
+                        {i18n('dash.widget-dialog.edit', 'context_filtering-other-charts')}
+                        {this.getFiltrationDocsLink()}
+                    </React.Fragment>
+                }
+            />
         );
 
         return (
-            <Line caption={caption}>
+            <FormRow
+                className={b('row')}
+                fieldId={INPUT_FILTERING_ID}
+                label={i18n('dash.widget-dialog.edit', 'label_filtering-other-charts')}
+                labelHelpPopover={helpPopover}
+            >
                 <div>
                     <Checkbox
+                        className={b('checkbox')}
+                        id={INPUT_FILTERING_ID}
                         size="m"
                         onChange={this.handleChangeFiltering}
                         checked={enableActionParams}
                         disabled={!canUseFiltration}
-                    >
-                        {i18n('dash.widget-dialog.edit', 'field_enable-filtering-other-charts')}
-                    </Checkbox>
-                    {this.getHierarchyWarning()}
+                    />
                 </div>
-            </Line>
+            </FormRow>
         );
     };
 
@@ -587,64 +573,79 @@ class DialogChartWidget extends React.PureComponent<
             navigationPath,
             enableAutoheight,
             enableBackgroundColor,
+            enableCustomBgColorSelector,
             enableFilteringSetting,
             changeNavigationPath,
         } = this.props;
 
-        const autoHeightCheckboxCaption = (
-            <div className={b('caption')}>
-                <span className={b('caption-text')}>
-                    {i18n('dash.widget-dialog.edit', 'field_autoheight')}
-                </span>
-                <HelpPopover
-                    className={b('help-tooltip')}
-                    content={i18n(
-                        'dash.widget-dialog.edit',
-                        'context_autoheight-availability-hint',
-                    )}
-                />
-            </div>
+        const autoHeightHelpPopover = (
+            <HelpPopover
+                className={b('help-tooltip')}
+                content={i18n('dash.widget-dialog.edit', 'context_autoheight-availability-hint')}
+            />
         );
 
-        const {title, chartId, description, autoHeight, background} = data.tabs[tabIndex];
+        const {
+            title,
+            chartId,
+            description,
+            autoHeight,
+            background,
+            hint,
+            enableHint,
+            enableDescription,
+        } = data.tabs[tabIndex];
+
+        const hasDesc =
+            enableDescription === undefined ? Boolean(description) : Boolean(enableDescription);
+
+        const {MarkdownControl} = registry.common.components.getAll();
 
         return (
             <React.Fragment>
-                <Line caption={i18n('dash.widget-dialog.edit', 'field_title')}>
-                    <TextInput
-                        size="m"
-                        className={b('input')}
-                        placeholder={i18n('dash.widget-dialog.edit', 'context_fill-title')}
-                        value={title}
-                        onUpdate={(value) =>
-                            this.setState({
-                                isManualTitle: true,
-                                data: update(data, {
-                                    tabs: {
-                                        [tabIndex]: {
-                                            title: {$set: value},
+                <FormRow
+                    className={b('row')}
+                    fieldId={INPUT_NAME_ID}
+                    label={i18n('dash.widget-dialog.edit', 'field_title')}
+                >
+                    <Flex gap={2}>
+                        <TextInput
+                            id={INPUT_NAME_ID}
+                            size="m"
+                            className={b('input')}
+                            placeholder={i18n('dash.widget-dialog.edit', 'context_fill-title')}
+                            value={title}
+                            onUpdate={(value) =>
+                                this.setState({
+                                    isManualTitle: true,
+                                    data: update(data, {
+                                        tabs: {
+                                            [tabIndex]: {
+                                                title: {$set: value},
+                                            },
                                         },
-                                    },
-                                }),
-                            })
-                        }
-                    />
-                    {data.tabs.length === 1 && (
-                        <div className={b('visibility-toggle')}>
-                            <Checkbox
-                                size="m"
-                                onChange={this.onVisibilityCheckboxToggle}
-                                checked={!this.state.hideTitle}
-                                qa={DashCommonQa.WidgetShowTitleCheckbox}
-                            >
-                                {i18n('dash.widget-dialog.edit', 'field_show-title')}
-                            </Checkbox>
-                        </div>
-                    )}
-                </Line>
-                <Line
-                    caption={i18n('dash.widget-dialog.edit', 'field_widget')}
-                    className={b('line-widget')}
+                                    }),
+                                })
+                            }
+                        />
+                        {data.tabs.length === 1 && (
+                            <div className={b('visibility-toggle')}>
+                                <Checkbox
+                                    className={b('checkbox')}
+                                    size="m"
+                                    onChange={this.onVisibilityCheckboxToggle}
+                                    checked={!this.state.hideTitle}
+                                    qa={DashCommonQa.WidgetShowTitleCheckbox}
+                                >
+                                    {i18n('dash.widget-dialog.edit', 'field_show-title')}
+                                </Checkbox>
+                            </div>
+                        )}
+                    </Flex>
+                </FormRow>
+                <FormRow
+                    className={b('row', {type: 'line-widget'})}
+                    label={i18n('dash.widget-dialog.edit', 'field_widget')}
                 >
                     <div className={b('navigation-input-container')} ref={this.navigationInputRef}>
                         <NavigationInput
@@ -669,48 +670,79 @@ class DialogChartWidget extends React.PureComponent<
                             {i18n('dash.widget-dialog.edit', 'toast_required-field')}
                         </div>
                     </Popup>
-                </Line>
-                <Line caption={i18n('dash.widget-dialog.edit', 'field_description')}>
-                    <div className={b('textarea-wrapper')}>
-                        <TextArea
-                            size="m"
-                            className={b('input')}
-                            value={description}
-                            placeholder={i18n(
-                                'dash.widget-dialog.edit',
-                                'context_fill-description',
-                            )}
-                            onUpdate={(value) =>
-                                this.setState({
-                                    data: update(data, {
-                                        tabs: {
-                                            [tabIndex]: {
-                                                description: {$set: value},
-                                            },
-                                        },
-                                    }),
-                                })
-                            }
-                            rows={3}
-                        />
-                    </div>
-                </Line>
-                {enableAutoheight && (
-                    <Line caption={autoHeightCheckboxCaption}>
+                </FormRow>
+                <FormRow
+                    className={b('row')}
+                    fieldId={INPUT_DESCRIPTION_ID}
+                    label={i18n('dash.widget-dialog.edit', 'field_description')}
+                >
+                    <div className={b('settings-container')}>
                         <Checkbox
+                            onUpdate={this.handleUpdateEnableDesc}
+                            checked={hasDesc}
+                            size="m"
+                            className={b('checkbox')}
+                        />
+                        {hasDesc && (
+                            <MarkdownControl
+                                key={`md-desc-tab-${tabIndex}`}
+                                value={description || ''}
+                                onChange={this.handleUpdateDescription}
+                                disabled={!enableDescription}
+                            />
+                        )}
+                    </div>
+                </FormRow>
+                <FormRow
+                    className={b('row')}
+                    fieldId={INPUT_HINT_ID}
+                    label={i18n('dash.widget-dialog.edit', 'field_hint')}
+                    labelHelpPopover={
+                        <HelpPopover
+                            className={b('help-tooltip')}
+                            content={i18n('dash.widget-dialog.edit', 'context_hint-display-info')}
+                        />
+                    }
+                >
+                    <div className={b('settings-container')}>
+                        <Checkbox
+                            onUpdate={this.handleUpdateEnableHint}
+                            checked={Boolean(enableHint)}
+                            size="m"
+                            className={b('checkbox')}
+                        />
+                        {Boolean(enableHint) && (
+                            <MarkdownControl
+                                key={`md-hint-tab-${tabIndex}`}
+                                value={hint || ''}
+                                onChange={this.handleUpdateHint}
+                                disabled={!enableHint}
+                            />
+                        )}
+                    </div>
+                </FormRow>
+                {enableAutoheight && (
+                    <FormRow
+                        className={b('row')}
+                        fieldId={INPUT_AUTOHEIGHT_ID}
+                        label={i18n('dash.widget-dialog.edit', 'field_autoheight')}
+                        labelHelpPopover={autoHeightHelpPopover}
+                    >
+                        <Checkbox
+                            className={b('checkbox')}
+                            id={INPUT_AUTOHEIGHT_ID}
                             size="m"
                             onChange={this.onAutoHeightRadioButtonChange}
                             disabled={!isWidgetTypeWithAutoHeight(selectedWidgetType)}
                             checked={Boolean(autoHeight)}
                             qa={DashCommonQa.WidgetEnableAutoHeightCheckbox}
-                        >
-                            {i18n('dash.widget-dialog.edit', 'label_autoheight-enable')}
-                        </Checkbox>
-                    </Line>
+                        />
+                    </FormRow>
                 )}
                 {enableBackgroundColor && (
-                    <Line
-                        caption={
+                    <FormRow
+                        className={b('row')}
+                        label={
                             <div className={b('caption')}>
                                 <span className={b('caption-text')}>
                                     {i18n('dash.widget-dialog.edit', 'field_background')}
@@ -718,20 +750,12 @@ class DialogChartWidget extends React.PureComponent<
                             </div>
                         }
                     >
-                        <Checkbox
-                            checked={Boolean(background?.enabled)}
-                            onChange={this.handleBackgroundEnabledChanged}
-                            qa={DashCommonQa.WidgetEnableBackgroundCheckbox}
-                        >
-                            {i18n('dash.widget-dialog.edit', 'field_background-enable')}
-                        </Checkbox>
-                        {Boolean(background?.enabled) && (
-                            <PaletteBackground
-                                color={background?.color}
-                                onSelect={this.handleBackgroundColorSelected}
-                            />
-                        )}
-                    </Line>
+                        <PaletteBackground
+                            color={background?.color}
+                            onSelect={this.handleBackgroundColorSelected}
+                            enableCustomBgColorSelector={enableCustomBgColorSelector}
+                        />
+                    </FormRow>
                 )}
                 {enableFilteringSetting && this.renderFilteringCharts()}
                 {this.renderParams()}
@@ -759,7 +783,7 @@ class DialogChartWidget extends React.PureComponent<
     };
 
     renderParams() {
-        const isValidateParamTitle = Utils.isEnabledFeature(
+        const isValidateParamTitle = isEnabledFeature(
             Feature.DashBoardWidgetParamsStrictValidation,
         );
 
@@ -784,10 +808,9 @@ class DialogChartWidget extends React.PureComponent<
             <Collapse
                 className={b('params-collapse')}
                 title={
-                    <Line
-                        className={b('params-title')}
-                        caption={i18n('dash.widget-dialog.edit', 'field_params')}
-                    />
+                    <Text variant="subheader-3">
+                        {i18n('dash.widget-dialog.edit', 'field_params')}
+                    </Text>
                 }
                 arrowPosition="left"
                 arrowQa={ParamsSettingsQA.Open}

@@ -4,11 +4,12 @@ import thunk from 'redux-thunk';
 import {createLogger} from 'redux-logger';
 import {reducerRegistry} from './reducer-registry';
 import type {DatalensGlobalState} from '../';
+import {editHistoryDsMiddleware} from '../units/datasets/store/edit-history-middleware';
 
 let store: Store<DatalensGlobalState, AnyAction>;
 
 function configureStore(services: unknown = {}) {
-    const middlewares = [thunk.withExtraArgument(services)];
+    const middlewares = [thunk.withExtraArgument(services), editHistoryDsMiddleware];
 
     let composeEnhancers = compose;
 

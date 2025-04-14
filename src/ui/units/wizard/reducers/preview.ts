@@ -272,7 +272,7 @@ function mutateAndValidateVisualization({
 
 const getChartTypeByVisualizationId = (visualizationId: string): WizardType => {
     if (isD3Visualization(visualizationId as WizardVisualizationId)) {
-        return WizardType.D3WizardNode;
+        return WizardType.GravityChartsWizardNode;
     }
 
     switch (visualizationId) {

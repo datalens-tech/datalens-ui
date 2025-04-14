@@ -170,7 +170,7 @@ export default class Utils {
     }
 
     static setSdk() {
-        window.sdk = getSdk();
+        window.sdk = getSdk().sdk;
     }
 
     static setup() {
@@ -209,16 +209,6 @@ export default class Utils {
     static getCSRFToken() {
         const csrfMetaTag: HTMLMetaElement | null = document.querySelector('meta[name=csrf-token]');
         return csrfMetaTag ? csrfMetaTag.content : null;
-    }
-
-    static isEnabledFeature(featureName: string) {
-        const featureDynamicStatus = _get(DL.DYNAMIC_FEATURES, featureName);
-
-        if (typeof featureDynamicStatus !== 'undefined') {
-            return featureDynamicStatus;
-        }
-
-        return Boolean(_get(DL.FEATURES, featureName));
     }
 
     static getOptionsFromSearch(search: string) {

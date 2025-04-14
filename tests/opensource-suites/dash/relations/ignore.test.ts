@@ -7,7 +7,7 @@ import {DashRelationTypes} from '../../../../src/shared';
 import {TestParametrizationConfig} from '../../../types/config';
 
 const SELECTORS = {
-    CHART_LEGEND_ITEM: '.chartkit-d3-legend__item',
+    CHART_LEGEND_ITEM: '.gcharts-d3-legend__item',
     CONTROL_SELECT_ITEMS_KEY: 'chartkit-control-select-items',
 };
 

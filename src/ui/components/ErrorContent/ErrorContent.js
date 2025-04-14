@@ -5,8 +5,10 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import PropTypes from 'prop-types';
 import {ErrorContentTypes, Feature} from 'shared';
-import {DL, Utils} from 'ui';
+import {DL} from 'ui/constants/common';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
+import Utils from 'ui/utils/utils';
 
 import logger from '../../libs/logger';
 import {sdk} from '../../libs/sdk';
@@ -53,6 +55,8 @@ class ErrorContent extends React.PureComponent {
         direction: PropTypes.oneOf(['row', 'column']),
         accessDescription: PropTypes.string,
         hideTitle: PropTypes.bool,
+        style: PropTypes.object,
+        containerClassName: PropTypes.string,
     };
 
     static defaultProps = {
@@ -88,7 +92,7 @@ class ErrorContent extends React.PureComponent {
     }
 
     getAccessDescription() {
-        if (!Utils.isEnabledFeature(Feature.DashBoardAccessDescription)) {
+        if (!isEnabledFeature(Feature.DashBoardAccessDescription)) {
             return '';
         }
 
@@ -257,7 +261,8 @@ class ErrorContent extends React.PureComponent {
     };
 
     render() {
-        const {noControls, className, size, direction, showDebugInfo} = this.props;
+        const {noControls, className, size, direction, showDebugInfo, style, containerClassName} =
+            this.props;
 
         const showDebugActions = showDebugInfo && DL.IS_MOBILE;
 
@@ -293,7 +298,10 @@ class ErrorContent extends React.PureComponent {
         }
 
         return (
-            <div className={b({'no-controls': noControls, mobile: DL.IS_MOBILE, size}, className)}>
+            <div
+                className={b({'no-controls': noControls, mobile: DL.IS_MOBILE, size}, className)}
+                style={style}
+            >
                 <div className={b('illustration-container')} data-qa={`type-${type}`}>
                     <PlaceholderIllustration
                         name={imageName}
@@ -302,6 +310,7 @@ class ErrorContent extends React.PureComponent {
                         renderAction={this.renderAction}
                         size={size}
                         direction={direction}
+                        className={containerClassName}
                     />
                     {DL.IS_MOBILE && this.renderActions()}
                 </div>

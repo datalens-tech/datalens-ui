@@ -1,15 +1,15 @@
 import type {AppMiddleware, Request, Response} from '@gravity-ui/expresskit';
 import type {AppConfig, AppContext} from '@gravity-ui/nodekit';
-import get from 'lodash/get';
-import sizeof from 'object-sizeof';
 
-import {Feature, isEnabledServerFeature, isObjectWithFunction} from '../../../shared';
+import {AppEnvironment} from '../../../shared';
 import CacheClient from '../../components/cache-client';
 import {ChartsEngine} from '../../components/charts-engine';
 import {getDefaultRunners} from '../../components/charts-engine/runners';
-import type {Plugin, TelemetryCallbacks} from '../../components/charts-engine/types';
+import type {Plugin} from '../../components/charts-engine/types';
 import {checkValidation} from '../../lib/validation';
 import type {ExtendedAppRouteDescription} from '../../types/controllers';
+
+import {getTelemetryCallbacks} from './telemetry';
 
 export function initChartsEngine({
     plugins,
@@ -24,141 +24,19 @@ export function initChartsEngine({
     beforeAuth: AppMiddleware[];
     afterAuth: AppMiddleware[];
 }) {
-    const getTime = () => new Date().toISOString().replace('T', ' ').split('.')[0];
-    const shouldLogChartWithFunction = isEnabledServerFeature(ctx, Feature.ChartWithFnLogging);
-
-    const telemetryCallbacks: TelemetryCallbacks = {
-        onConfigFetched: ({id, statusCode, requestId, latency = 0, traceId, tenantId, userId}) => {
-            ctx.stats('apiRequests', {
-                requestId: requestId!,
-                service: 'us',
-                action: 'fetchConfig',
-                responseStatus: statusCode || 200,
-                requestTime: latency,
-                requestMethod: 'POST',
-                requestUrl: id || '',
-                traceId: traceId || '',
-                tenantId: tenantId || '',
-                userId: userId || '',
-            });
-        },
-        onConfigFetchingFailed: (
-            _error,
-            {id, statusCode, requestId, latency = 0, traceId, tenantId, userId},
-        ) => {
-            ctx.stats('apiRequests', {
-                requestId: requestId!,
-                service: 'us',
-                action: 'fetchConfig',
-                responseStatus: statusCode || 500,
-                requestTime: latency,
-                requestMethod: 'POST',
-                requestUrl: id || '',
-                traceId: traceId || '',
-                tenantId: tenantId || '',
-                userId: userId || '',
-            });
-        },
-
-        onDataFetched: ({
-            sourceName,
-            url,
-            requestId,
-            statusCode,
-            latency,
-            traceId,
-            tenantId,
-            userId,
-        }) => {
-            ctx.stats('apiRequests', {
-                requestId,
-                service: sourceName || 'unknown-charts-source',
-                action: 'fetchData',
-                responseStatus: statusCode || 200,
-                requestTime: latency,
-                requestMethod: 'POST',
-                requestUrl: url || '',
-                traceId: traceId || '',
-                tenantId: tenantId || '',
-                userId: userId || '',
-            });
-        },
-        onDataFetchingFailed: (
-            _error,
-            {sourceName, url, requestId, statusCode, latency, traceId, tenantId, userId},
-        ) => {
-            ctx.stats('apiRequests', {
-                requestId,
-                service: sourceName || 'unknown-charts-source',
-                action: 'fetchData',
-                responseStatus: statusCode || 500,
-                requestTime: latency,
-                requestMethod: 'POST',
-                requestUrl: url || '',
-                traceId: traceId || '',
-                tenantId: tenantId || '',
-                userId: userId || '',
-            });
-        },
-
-        onCodeExecuted: ({id, requestId, latency}) => {
-            ctx.stats('executions', {
-                datetime: getTime(),
-                requestId,
-                entryId: id,
-                jsTabExecDuration: Math.ceil(latency),
-            });
-        },
-
-        onTabsExecuted: ({result, entryId}) => {
-            const {
-                config: chartConfig,
-                highchartsConfig,
-                sources,
-                sourceData,
-                processedData,
-            } = result;
-            const chartEntryId = entryId || '';
-            const datetime = Date.now();
-
-            if (
-                shouldLogChartWithFunction &&
-                (isObjectWithFunction(chartConfig) || isObjectWithFunction(highchartsConfig))
-            ) {
-                ctx.stats('chartsWithFn', {datetime, entryId: chartEntryId});
-            }
-
-            let rowsCount = 0;
-            let columnsCount = 0;
-            if (sourceData && typeof sourceData === 'object') {
-                Object.values(sourceData as object).forEach((item) => {
-                    rowsCount += get(item, 'result_data[0].rows.length', 0);
-                    columnsCount = Math.max(
-                        columnsCount,
-                        get(item, 'result_data[0].rows[0].data.length', 0),
-                    );
-                }, 0);
-            }
-
-            ctx.stats('chartSizeStats', {
-                datetime,
-                entryId: chartEntryId,
-                requestedDataSize:
-                    sources && typeof sources === 'object'
-                        ? Object.values(sources as object).reduce<number>(
-                              (sum, item) => sum + get(item, 'size', 0),
-                              0,
-                          )
-                        : 0,
-                requestedDataRowsCount: rowsCount,
-                requestedDataColumnsCount: columnsCount,
-                processedDataSize: sizeof(processedData),
-            });
-        },
-    };
-
+    const telemetryCallbacks = getTelemetryCallbacks(ctx);
     const {appEnv, endpoints, chartsEngineConfig} = config;
-    config.sources = config.getSourcesByEnv(appEnv as string);
+    if (!appEnv) {
+        throw new Error('App environment is not defined');
+    }
+
+    const typedAppEnv = appEnv as AppEnvironment;
+
+    if (!Object.values(AppEnvironment).includes(typedAppEnv)) {
+        throw new Error(`Unknown app environment: ${appEnv}`);
+    }
+
+    config.sources = config.getSourcesByEnv(typedAppEnv);
     config.usEndpoint = endpoints.api.us + chartsEngineConfig.usEndpointPostfix;
 
     const cacheClient = new CacheClient({config});
@@ -170,7 +48,6 @@ export function initChartsEngine({
         plugins,
         telemetryCallbacks: chartsEngineConfig.enableTelemetry ? telemetryCallbacks : undefined,
         cacheClient,
-        nativeModules: chartsEngineConfig.nativeModules,
         beforeAuth,
         afterAuth,
         runners: getDefaultRunners(),

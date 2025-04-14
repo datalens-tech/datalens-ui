@@ -5,8 +5,16 @@ import type {DatalensGlobalState} from 'index';
 import {waitOperation} from '../../utils/waitOperation';
 import {showToast} from 'store/actions/toaster';
 
-import type {GET_ROOT_COLLECTION_PERMISSIONS_FAILED} from '../constants/collectionsStructure';
+import type {
+    EXPORT_WORKBOOK_FAILED,
+    GET_ROOT_COLLECTION_PERMISSIONS_FAILED,
+    IMPORT_WORKBOOK_FAILED,
+} from '../constants/collectionsStructure';
 import {
+    RESET_IMPORT_PROGRESS,
+    IMPORT_WORKBOOK_SUCCESS,
+    IMPORT_WORKBOOK_LOADING,
+    EXPORT_WORKBOOK_LOADING,
     DELETE_COLLECTIONS_FAILED,
     DELETE_COLLECTIONS_LOADING,
     DELETE_COLLECTIONS_SUCCESS,
@@ -66,6 +74,14 @@ import {
     ADD_DEMO_WORKBOOK_LOADING,
     ADD_DEMO_WORKBOOK_SUCCESS,
     ADD_DEMO_WORKBOOK_FAILED,
+    RESET_IMPORT_WORKBOOK,
+    RESET_EXPORT_WORKBOOK,
+    EXPORT_WORKBOOK_SUCCESS,
+    GET_IMPORT_PROGRESS_LOADING,
+    GET_IMPORT_PROGRESS_SUCCESS,
+    GET_EXPORT_PROGRESS_LOADING,
+    RESET_EXPORT_PROGRESS,
+    GET_EXPORT_PROGRESS_SUCCESS,
 } from '../constants/collectionsStructure';
 
 import type {
@@ -90,6 +106,8 @@ import type {
     DeleteCollectionsResponse,
     DeleteWorkbooksResponse,
 } from '../../../shared/schema';
+import {notifications} from 'ui/components/CollectionsStructure/components/EntriesNotificationCut/helpers';
+import type {TempImportExportDataType} from 'ui/components/CollectionsStructure/components/EntriesNotificationCut/types';
 
 type ResetStateAction = {
     type: typeof RESET_STATE;
@@ -123,7 +141,7 @@ export const getRootCollectionPermissions = () => {
             type: GET_ROOT_COLLECTION_PERMISSIONS_LOADING,
         });
         return getSdk()
-            .us.getRootCollectionPermissions()
+            .sdk.us.getRootCollectionPermissions()
             .then((data) => {
                 dispatch({
                     type: GET_ROOT_COLLECTION_PERMISSIONS_SUCCESS,
@@ -133,7 +151,7 @@ export const getRootCollectionPermissions = () => {
                 return data;
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
+                const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
                     logger.logError(
@@ -188,7 +206,7 @@ export const getCollectionBreadcrumbs = ({collectionId}: {collectionId: string})
             type: GET_COLLECTION_BREADCRUMBS_LOADING,
         });
         return getSdk()
-            .us.getCollectionBreadcrumbs({
+            .sdk.us.getCollectionBreadcrumbs({
                 collectionId,
             })
             .then((data) => {
@@ -199,7 +217,7 @@ export const getCollectionBreadcrumbs = ({collectionId}: {collectionId: string})
                 return data;
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
+                const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
                     dispatch(
@@ -242,7 +260,7 @@ export const getCollection = ({collectionId}: {collectionId: string}) => {
             type: GET_COLLECTION_LOADING,
         });
         return getSdk()
-            .us.getCollection({
+            .sdk.us.getCollection({
                 collectionId,
                 includePermissionsInfo: true,
             })
@@ -254,7 +272,7 @@ export const getCollection = ({collectionId}: {collectionId: string}) => {
                 return data as CollectionWithPermissions;
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
+                const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
                     logger.logError('collectionsStructure/getCollection failed', error);
@@ -306,6 +324,7 @@ type GetStructureItemsAction =
 
 export const getStructureItems = ({
     collectionId,
+    includePermissionsInfo,
     page,
     filterString,
     orderField,
@@ -319,9 +338,9 @@ export const getStructureItems = ({
             type: GET_STRUCTURE_ITEMS_LOADING,
         });
         return getSdk()
-            .us.getStructureItems({
+            .sdk.us.getStructureItems({
                 collectionId,
-                includePermissionsInfo: false,
+                includePermissionsInfo,
                 page,
                 filterString,
                 orderField,
@@ -338,7 +357,7 @@ export const getStructureItems = ({
                 return data;
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
+                const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
                     logger.logError('collectionsStructure/getStructureItems failed', error);
@@ -390,7 +409,7 @@ export const createCollection = ({
             type: CREATE_COLLECTION_LOADING,
         });
         return getSdk()
-            .us.createCollection({
+            .sdk.us.createCollection({
                 title,
                 description,
                 parentId,
@@ -401,7 +420,10 @@ export const createCollection = ({
                     await waitOperation({
                         operation,
                         loader: ({concurrentId}) =>
-                            getSdk().us.getOperation({operationId: operation.id}, {concurrentId}),
+                            getSdk().sdk.us.getOperation(
+                                {operationId: operation.id},
+                                {concurrentId},
+                            ),
                     }).promise;
                 }
                 return result;
@@ -414,7 +436,7 @@ export const createCollection = ({
                 return data;
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
+                const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
                     logger.logError('collectionsStructure/createCollection failed', error);
@@ -460,7 +482,7 @@ export const copyTemplate = ({
 }: {
     templateName: string;
     workbookId: string;
-    productId: string;
+    productId?: string;
     connectionId?: string;
 }) => {
     return (dispatch: CollectionsStructureDispatch) => {
@@ -468,7 +490,7 @@ export const copyTemplate = ({
             type: COPY_TEMPLATE_LOADING,
         });
         return getSdk()
-            .us.copyTemplate({
+            .sdk.us.copyTemplate({
                 templateName,
                 workbookId,
                 connectionId,
@@ -482,7 +504,7 @@ export const copyTemplate = ({
                 return data;
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
+                const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
                     logger.logError('collectionsStructure/copyTemplate failed', error);
@@ -534,7 +556,7 @@ export const createWorkbook = ({
             type: CREATE_WORKBOOK_LOADING,
         });
         return getSdk()
-            .us.createWorkbook({
+            .sdk.us.createWorkbook({
                 title,
                 description,
                 collectionId,
@@ -545,7 +567,10 @@ export const createWorkbook = ({
                     await waitOperation({
                         operation,
                         loader: ({concurrentId}) =>
-                            getSdk().us.getOperation({operationId: operation.id}, {concurrentId}),
+                            getSdk().sdk.us.getOperation(
+                                {operationId: operation.id},
+                                {concurrentId},
+                            ),
                     }).promise;
                 }
                 return result;
@@ -558,7 +583,7 @@ export const createWorkbook = ({
                 return data;
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
+                const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
                     logger.logError('collectionsStructure/createWorkbook failed', error);
@@ -603,7 +628,7 @@ export const deleteWorkbooks = ({workbookIds}: {workbookIds: string[]}) => {
         });
 
         return getSdk()
-            .us.deleteWorkbooks({
+            .sdk.us.deleteWorkbooks({
                 workbookIds,
             })
             .then((data) => {
@@ -614,7 +639,7 @@ export const deleteWorkbooks = ({workbookIds}: {workbookIds: string[]}) => {
                 return data;
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
+                const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
                     logger.logError('collectionsStructure/deleteWorkbooks failed', error);
@@ -659,7 +684,7 @@ export const deleteCollections = ({collectionIds}: {collectionIds: string[]}) =>
         });
 
         return getSdk()
-            .us.deleteCollections({
+            .sdk.us.deleteCollections({
                 collectionIds,
             })
             .then((data) => {
@@ -670,7 +695,7 @@ export const deleteCollections = ({collectionIds}: {collectionIds: string[]}) =>
                 return data;
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
+                const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
                     logger.logError('collectionsStructure/deleteCollections failed', error);
@@ -721,7 +746,7 @@ export const moveCollections = ({
         });
 
         return getSdk()
-            .us.moveCollections({
+            .sdk.us.moveCollections({
                 collectionIds,
                 parentId,
             })
@@ -733,7 +758,7 @@ export const moveCollections = ({
                 return data;
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
+                const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
                     logger.logError('collectionsStructure/moveCollections failed', error);
@@ -783,7 +808,7 @@ export const moveWorkbooks = ({
             type: MOVE_WORKBOOKS_LOADING,
         });
         return getSdk()
-            .us.moveWorkbooks({
+            .sdk.us.moveWorkbooks({
                 workbookIds,
                 collectionId,
             })
@@ -795,7 +820,7 @@ export const moveWorkbooks = ({
                 return data;
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
+                const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
                     logger.logError('collectionsStructure/moveWorkbooks failed', error);
@@ -847,7 +872,7 @@ export const moveCollection = ({
             type: MOVE_COLLECTION_LOADING,
         });
         return getSdk()
-            .us.moveCollection({
+            .sdk.us.moveCollection({
                 collectionId,
                 parentId,
                 title,
@@ -860,7 +885,7 @@ export const moveCollection = ({
                 return data;
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
+                const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
                     logger.logError('collectionsStructure/moveCollection failed', error);
@@ -912,7 +937,7 @@ export const moveWorkbook = ({
             type: MOVE_WORKBOOK_LOADING,
         });
         return getSdk()
-            .us.moveWorkbook({
+            .sdk.us.moveWorkbook({
                 workbookId,
                 collectionId,
                 title,
@@ -925,7 +950,7 @@ export const moveWorkbook = ({
                 return data;
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
+                const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
                     logger.logError('collectionsStructure/moveWorkbook failed', error);
@@ -977,7 +1002,7 @@ export const copyWorkbook = ({
             type: COPY_WORKBOOK_LOADING,
         });
         return getSdk()
-            .us.copyWorkbook({
+            .sdk.us.copyWorkbook({
                 workbookId,
                 collectionId,
                 title,
@@ -988,7 +1013,10 @@ export const copyWorkbook = ({
                     await waitOperation({
                         operation,
                         loader: ({concurrentId}) =>
-                            getSdk().us.getOperation({operationId: operation.id}, {concurrentId}),
+                            getSdk().sdk.us.getOperation(
+                                {operationId: operation.id},
+                                {concurrentId},
+                            ),
                     }).promise;
                 }
                 return result;
@@ -1001,7 +1029,7 @@ export const copyWorkbook = ({
                 return data;
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
+                const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
                     logger.logError('collectionsStructure/copyWorkbook failed', error);
@@ -1054,7 +1082,7 @@ export const updateWorkbook = ({
             type: UPDATE_WORKBOOK_LOADING,
         });
         return getSdk()
-            .us.updateWorkbook({
+            .sdk.us.updateWorkbook({
                 workbookId,
                 title,
                 description,
@@ -1068,7 +1096,7 @@ export const updateWorkbook = ({
                 return data;
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
+                const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
                     logger.logError('collectionsStructure/updateWorkbook failed', error);
@@ -1121,7 +1149,7 @@ export const updateCollection = ({
             type: UPDATE_COLLECTION_LOADING,
         });
         return getSdk()
-            .us.updateCollection({
+            .sdk.us.updateCollection({
                 collectionId,
                 title,
                 description,
@@ -1135,7 +1163,7 @@ export const updateCollection = ({
                 return data;
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
+                const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
                     logger.logError('collectionsStructure/updateCollection failed', error);
@@ -1179,7 +1207,7 @@ export const deleteCollection = ({collectionId}: {collectionId: string}) => {
             type: DELETE_COLLECTION_LOADING,
         });
         return getSdk()
-            .us.deleteCollection({
+            .sdk.us.deleteCollection({
                 collectionId,
             })
             .then((data) => {
@@ -1190,7 +1218,7 @@ export const deleteCollection = ({collectionId}: {collectionId: string}) => {
                 return data;
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
+                const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
                     logger.logError('collectionsStructure/deleteCollection failed', error);
@@ -1234,7 +1262,7 @@ export const deleteWorkbook = ({workbookId}: {workbookId: string}) => {
             type: DELETE_WORKBOOK_LOADING,
         });
         return getSdk()
-            .us.deleteWorkbook({
+            .sdk.us.deleteWorkbook({
                 workbookId,
             })
             .then((data) => {
@@ -1245,7 +1273,7 @@ export const deleteWorkbook = ({workbookId}: {workbookId: string}) => {
                 return data;
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
+                const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
                     logger.logError('collectionsStructure/deleteWorkbook failed', error);
@@ -1297,7 +1325,7 @@ export const addDemoWorkbook = ({
             type: ADD_DEMO_WORKBOOK_LOADING,
         });
         return getSdk()
-            .us.copyWorkbookTemplate({
+            .sdk.us.copyWorkbookTemplate({
                 workbookId,
                 title,
                 collectionId,
@@ -1308,7 +1336,10 @@ export const addDemoWorkbook = ({
                     await waitOperation({
                         operation,
                         loader: ({concurrentId}) =>
-                            getSdk().us.getOperation({operationId: operation.id}, {concurrentId}),
+                            getSdk().sdk.us.getOperation(
+                                {operationId: operation.id},
+                                {concurrentId},
+                            ),
                     }).promise;
                 }
                 return result;
@@ -1321,7 +1352,7 @@ export const addDemoWorkbook = ({
                 return data;
             })
             .catch((error: Error) => {
-                const isCanceled = getSdk().isCancel(error);
+                const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
                     logger.logError('collectionsStructure/addDemoWorkbook failed', error);
@@ -1340,6 +1371,203 @@ export const addDemoWorkbook = ({
 
                 return null;
             });
+    };
+};
+
+type ExportWorkbookLoadingAction = {
+    type: typeof EXPORT_WORKBOOK_LOADING;
+};
+type ExportWorkbookSuccessAction = {
+    type: typeof EXPORT_WORKBOOK_SUCCESS;
+    data: {};
+};
+type ExportWorkbookFailedAction = {
+    type: typeof EXPORT_WORKBOOK_FAILED;
+    error: Error | null;
+};
+type ResetExportWorkbookAction = {
+    type: typeof RESET_EXPORT_WORKBOOK;
+};
+
+type ExportWorkbookAction =
+    | ExportWorkbookLoadingAction
+    | ExportWorkbookSuccessAction
+    | ExportWorkbookFailedAction
+    | ResetExportWorkbookAction;
+
+export const exportWorkbook = (_: {workbookId: string}) => {
+    return (dispatch: CollectionsStructureDispatch) => {
+        dispatch({
+            type: EXPORT_WORKBOOK_LOADING,
+        });
+
+        return new Promise<{exportId: string}>((resolve) => {
+            setTimeout(() => {
+                const exportId = 'test';
+                dispatch({
+                    type: EXPORT_WORKBOOK_SUCCESS,
+                    data: {exportId},
+                });
+                resolve({exportId});
+            }, 500);
+        });
+    };
+};
+export const resetExportWorkbook = () => {
+    return (dispatch: CollectionsStructureDispatch) => {
+        dispatch({
+            type: RESET_EXPORT_WORKBOOK,
+        });
+        dispatch({
+            type: RESET_EXPORT_PROGRESS,
+        });
+    };
+};
+
+type GetExportProgressLoadingAction = {
+    type: typeof GET_EXPORT_PROGRESS_LOADING;
+};
+type GetExportProgressSuccessAction = {
+    type: typeof GET_EXPORT_PROGRESS_SUCCESS;
+    data: TempImportExportDataType;
+};
+type ResetGetExportProgressAction = {
+    type: typeof RESET_EXPORT_PROGRESS;
+};
+type GetExportProgressAction =
+    | GetExportProgressLoadingAction
+    | GetExportProgressSuccessAction
+    | ResetGetExportProgressAction;
+
+export const getExportProgress = (_: {exportId?: string}) => {
+    return (dispatch: CollectionsStructureDispatch, getState: () => DatalensGlobalState) => {
+        const {collectionsStructure} = getState();
+        dispatch({
+            type: GET_EXPORT_PROGRESS_LOADING,
+        });
+        return new Promise<TempImportExportDataType>((resolve) => {
+            // TODO: add api request to get progress
+            const progressData = collectionsStructure.getExportProgress.data?.progress || 0;
+            const nextProgressData = progressData + 30;
+            const exportData: TempImportExportDataType = {
+                status: nextProgressData > 100 ? 'success' : 'pending',
+                progress: nextProgressData,
+                notifications,
+            };
+            dispatch({
+                type: GET_EXPORT_PROGRESS_SUCCESS,
+                data: exportData,
+            });
+            resolve(exportData);
+
+            // if(error) {
+            //     dispatch({
+            //         type: GET_EXPORT_PROGRESS_FAILED,
+            //         error,
+            //     });
+            // }
+        });
+    };
+};
+
+type ImportWorkbookLoadingAction = {
+    type: typeof IMPORT_WORKBOOK_LOADING;
+};
+type ImportWorkbookSuccessAction = {
+    type: typeof IMPORT_WORKBOOK_SUCCESS;
+    data: {};
+};
+type ImportWorkbookFailedAction = {
+    type: typeof IMPORT_WORKBOOK_FAILED;
+    error: Error | null;
+};
+type ResetImportWorkbookAction = {
+    type: typeof RESET_IMPORT_WORKBOOK;
+};
+type ImportWorkbookAction =
+    | ImportWorkbookLoadingAction
+    | ImportWorkbookSuccessAction
+    | ImportWorkbookFailedAction
+    | ResetImportWorkbookAction;
+
+export const importWorkbook = (_: {
+    title: string;
+    description?: string;
+    collectionId: string | null;
+}) => {
+    return (dispatch: CollectionsStructureDispatch) => {
+        dispatch({
+            type: IMPORT_WORKBOOK_LOADING,
+        });
+
+        return new Promise<{importId: string}>((resolve) => {
+            setTimeout(() => {
+                const importId = 'test';
+                dispatch({
+                    type: IMPORT_WORKBOOK_SUCCESS,
+                    data: {importId},
+                });
+                resolve({importId});
+            }, 500);
+        });
+    };
+};
+export const resetImportWorkbook = () => {
+    return (dispatch: CollectionsStructureDispatch) => {
+        dispatch({
+            type: RESET_IMPORT_WORKBOOK,
+        });
+        dispatch({
+            type: RESET_IMPORT_PROGRESS,
+        });
+    };
+};
+
+type GetImportProgressLoadingAction = {
+    type: typeof GET_IMPORT_PROGRESS_LOADING;
+};
+type GetImportProgressSuccessAction = {
+    type: typeof GET_IMPORT_PROGRESS_SUCCESS;
+    data: TempImportExportDataType;
+};
+type ResetGetImportProgressAction = {
+    type: typeof RESET_IMPORT_PROGRESS;
+};
+type GetImportProgressAction =
+    | GetImportProgressLoadingAction
+    | GetImportProgressSuccessAction
+    | ResetGetImportProgressAction;
+
+export const getImportProgress = (_: {importId?: string}) => {
+    return (dispatch: CollectionsStructureDispatch, getState: () => DatalensGlobalState) => {
+        const {collectionsStructure} = getState();
+        dispatch({
+            type: GET_IMPORT_PROGRESS_LOADING,
+        });
+        return new Promise<TempImportExportDataType>((resolve) => {
+            setTimeout(() => {
+                // TODO: add api request to get progress
+                const progressData = collectionsStructure.getImportProgress.data?.progress || 0;
+                const nextProgressData = progressData + 30;
+                const importData: TempImportExportDataType = {
+                    status: nextProgressData > 100 ? 'success' : 'pending',
+                    progress: nextProgressData,
+                    notifications,
+                };
+                dispatch({
+                    type: GET_IMPORT_PROGRESS_SUCCESS,
+                    data: importData,
+                });
+                resolve(importData);
+
+                // if(error) {
+                //     dispatch({
+                //         type: GET_IMPORT_PROGRESS_FAILED,
+                //         error,
+                //     });
+                // }
+            }, 500);
+        });
     };
 };
 
@@ -1365,7 +1593,11 @@ export type CollectionsStructureAction =
     | UpdateCollectionAction
     | DeleteCollectionAction
     | DeleteWorkbookAction
-    | AddDemoWorkbookAction;
+    | AddDemoWorkbookAction
+    | ExportWorkbookAction
+    | ImportWorkbookAction
+    | GetImportProgressAction
+    | GetExportProgressAction;
 
 export type CollectionsStructureDispatch = ThunkDispatch<
     DatalensGlobalState,

@@ -6,6 +6,8 @@ import block from 'bem-cn-lite';
 import isObject from 'lodash/isObject';
 import type {ConnectorIconData, ConnectorIconView} from 'shared/schema/types';
 
+import iconUndefined from 'ui/assets/icons/connections/undefined.svg';
+
 import './ConnectorIcon.scss';
 
 const b = block('dl-connector-icon');
@@ -35,7 +37,20 @@ type BIConnectorIconProps = Pick<IconProps, 'className' | 'height' | 'width' | '
 const BIConnectorIcon = (props: BIConnectorIconProps) => {
     const {data, className, height, width, qa, view = 'standard'} = props;
     const [loading, setLoading] = React.useState(true);
+    const [error, setError] = React.useState(false);
     const src = ('data' in data ? data.data : data.url)[view];
+
+    if (error) {
+        return (
+            <Icon
+                className={className}
+                data={iconUndefined}
+                height={height}
+                width={width}
+                qa={qa}
+            />
+        );
+    }
 
     return (
         <React.Fragment>
@@ -46,6 +61,7 @@ const BIConnectorIcon = (props: BIConnectorIconProps) => {
                 width={width}
                 src={src}
                 onLoad={loading ? () => setLoading(false) : undefined}
+                onError={() => setError(true)}
             />
             {loading && <Skeleton className={className} style={{width, height}} />}
         </React.Fragment>

@@ -4,6 +4,7 @@ import type {DatasetField} from 'shared';
 import {DatasetFieldType, DatasetTabSectionQA} from 'shared';
 
 import {openDialogParameter} from '../../../../store/actions/dialog';
+import {TAB_PARAMETERS} from '../../constants';
 import type {DatasetDispatch} from '../../store/actions/creators';
 import {
     deleteFieldWithValidation,
@@ -89,7 +90,8 @@ export const getParameterRowMenuItems = (dispatch: DatasetDispatch): MenuControl
     return [
         {
             text: () => i18n('dataset.dataset-editor.modify', 'button_duplicate'),
-            action: (field: DatasetField) => dispatch(duplicateFieldWithValidation(field)),
+            action: (field: DatasetField) =>
+                dispatch(duplicateFieldWithValidation(field, {tab: TAB_PARAMETERS})),
             qa: DatasetTabSectionQA.DuplicateRow,
         },
         {
@@ -102,7 +104,9 @@ export const getParameterRowMenuItems = (dispatch: DatasetDispatch): MenuControl
                         field,
                         onApply: (updatedField) => {
                             if (updatedField.guid === field.guid) {
-                                dispatch(updateFieldWithValidation(updatedField));
+                                dispatch(
+                                    updateFieldWithValidation(updatedField, {tab: TAB_PARAMETERS}),
+                                );
                             } else {
                                 // We send two field updates. Since title === is the guid for the parameter, you need to update both title and guid at the same time.
                                 // Beck does not know how to do this, so we send 2 updates. First we update the guid, and with the second update we update the rest of the entire field.
@@ -112,10 +116,10 @@ export const getParameterRowMenuItems = (dispatch: DatasetDispatch): MenuControl
                                     new_id: updatedField.guid,
                                 };
                                 dispatch(
-                                    updateFieldWithValidationByMultipleUpdates([
-                                        fieldWithNewGuid,
-                                        updatedField,
-                                    ]),
+                                    updateFieldWithValidationByMultipleUpdates(
+                                        [fieldWithNewGuid, updatedField],
+                                        {tab: TAB_PARAMETERS},
+                                    ),
                                 );
                             }
                         },
@@ -129,7 +133,8 @@ export const getParameterRowMenuItems = (dispatch: DatasetDispatch): MenuControl
         },
         {
             text: () => i18n('dataset.dataset-editor.modify', 'button_remove'),
-            action: (field: DatasetField) => dispatch(deleteFieldWithValidation(field)),
+            action: (field: DatasetField) =>
+                dispatch(deleteFieldWithValidation(field, {tab: TAB_PARAMETERS})),
             qa: DatasetTabSectionQA.RemoveRow,
         },
     ];

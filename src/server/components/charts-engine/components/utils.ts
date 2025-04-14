@@ -131,7 +131,7 @@ export function getDuration(hrStart: [number, number]) {
     return (hrDuration[0] * 1e9 + hrDuration[1]) / 1e6;
 }
 
-type Test = string | Record<string, string> | null | '';
+type Test = string | Record<string, string | Record<string, unknown>> | null | '';
 
 export function hideSensitiveData<T extends Test>(data: T = '' as T): T {
     if (typeof data === 'string') {

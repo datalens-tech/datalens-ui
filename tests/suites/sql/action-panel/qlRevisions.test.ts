@@ -1,8 +1,9 @@
 import {expect} from '@playwright/test';
 import QLPage from '../../../page-objects/ql/QLPage';
-import {openTestPage, waitForCondition} from '../../../utils';
+import {openTestPage, slct, waitForCondition} from '../../../utils';
 import {RobotChartsSQLEditorUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
+import {RevisionsPanelQa} from '../../../../src/shared';
 
 const sqlScript = `
 select built_year, AVG(iznos::float)
@@ -127,7 +128,7 @@ datalensTest.describe('QL - saving when versioning charts', () => {
             await waitForCondition(async () => {
                 const currentScript = (await qlPage.getScript()) || '';
 
-                const revisionPanel = await qlPage.page.$('.revisions-panel__wrap.active');
+                const revisionPanel = await qlPage.page.$(slct(RevisionsPanelQa.RevisionsPanel));
 
                 return qlPage.compareScripts(currentScript, sqlScript3) && revisionPanel;
             }).catch(() => {

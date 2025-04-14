@@ -2,12 +2,14 @@ import React from 'react';
 
 import {ChartMixed, CircleXmark, Database, Lock} from '@gravity-ui/icons';
 import {Button, Icon, Link} from '@gravity-ui/uikit';
+import type {IconProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n, i18n} from 'i18n';
 import isEmpty from 'lodash/isEmpty';
 import uniqBy from 'lodash/uniqBy';
 import {useDispatch} from 'react-redux';
-import {ChartkitMenuDialogsQA, ErrorCode, Feature} from 'shared';
+import {ChartkitMenuDialogsQA, ErrorCode} from 'shared';
+import {registry} from 'ui/registry';
 import {isEmbeddedEntry} from 'ui/utils/embedded';
 
 import {DL, Interpolate, Utils} from '../../..';
@@ -61,21 +63,6 @@ const InterpolatedErrorMessage: React.FC<InterpolatedErrorMessageProps> = (
     );
 };
 
-// interface DatasetSourceError {
-//     message: string;
-//     code: DSAPIErrorCode;
-//     details: unknown;
-//     debug: unknown;
-// }
-
-// interface ChartKitErrorProps {
-//     error: ChartKitCustomError & {
-//         code: 'CHARTS_ERROR_CODE.DATA_FETCHING_ERROR';
-//         details: DatasetSourceError;
-//     };
-//     onAction: (data: object) => void;
-// }
-
 // eslint-disable-next-line complexity
 const ChartKitError: React.FC<any> = (props) => {
     const dispatch = useDispatch();
@@ -124,7 +111,7 @@ const ChartKitError: React.FC<any> = (props) => {
         }
     }
 
-    let iconData = CircleXmark;
+    let iconData: IconProps['data'] = CircleXmark;
     let detailedTitle = title;
     const sourceErrorDetails: {message?: string; code?: string}[] = [];
 
@@ -156,11 +143,11 @@ const ChartKitError: React.FC<any> = (props) => {
             iconModes['no-data'] = true;
             break;
         case ERROR_CODE.TOO_MANY_LINES:
-            iconData = ChartMixed;
-            break;
         case ERROR_CODE.UI_SANDBOX_EXECUTION_TIMEOUT:
+        case ERROR_CODE.UI_SANDBOX_FN_EXECUTION_TIMEOUT: {
             iconData = ChartMixed;
             break;
+        }
         case ERROR_CODE.DATA_PROVIDER_ERROR:
             iconData = Database;
             break;
@@ -169,10 +156,7 @@ const ChartKitError: React.FC<any> = (props) => {
                 iconData = Lock;
                 const entryId = error?.debug?.entryId;
                 if (entryId) {
-                    const endpoint = getEndpointForNavigation(
-                        DL.ENDPOINTS,
-                        Utils.isEnabledFeature(Feature.UseNavigation),
-                    );
+                    const endpoint = getEndpointForNavigation();
                     const text = i18n('component.chartkit-error.codes', code);
                     const href = `${endpoint}/${entryId}`;
 
@@ -183,20 +167,6 @@ const ChartKitError: React.FC<any> = (props) => {
             }
             break;
         case CHARTS_ERROR_CODE.DATA_FETCHING_ERROR: {
-            // details: {
-            //     "report": {
-            //         "message": "Report with name /Morda/Totals/Totals1 and scale - not found: no error",
-            //         "reason": "missing_report",
-            //         "name": "Morda/Totals/Totals1"
-            //     },
-            //     "dataset": {
-            //         "debug": {},
-            //         "message": "Wrong passed entryId (it can be in links)",
-            //         "details": {},
-            //         "code": "ERR.DS_API.US.BAD_REQUEST"
-            //     }
-            // }
-
             const errorDetails: React.ReactNode[] = [];
 
             uniqDetails.forEach((key) => {
@@ -273,6 +243,17 @@ const ChartKitError: React.FC<any> = (props) => {
             detailedTitle = i18n('common.errors', 'label_error-outdated-message');
             break;
         }
+    }
+
+    const getAdditionalChartkitErrorContent = registry.common.functions.get(
+        'getAdditionalChartkitErrorContent',
+    );
+    const additionalContent = getAdditionalChartkitErrorContent({code});
+    if (additionalContent.detailedTitle) {
+        detailedTitle = additionalContent.detailedTitle;
+    }
+    if (additionalContent.iconData) {
+        iconData = additionalContent.iconData;
     }
 
     const renderSourceErrorDetails = () => {

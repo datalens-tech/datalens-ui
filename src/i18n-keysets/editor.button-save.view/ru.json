@@ -1,8 +1,9 @@
 {
-  "button_publish": "Опубликовать",
-  "button_published": "Опубликовано",
   "button_save": "Сохранить",
-  "button_save-as": "Сохранить как",
+  "button_save-as": "Сохранить как копию",
+  "button_save-as-draft": "Сохранить как черновик",
+  "button_save-as-published": "Сохранить и сделать актуальной",
   "button_saved": "Сохранено",
+  "label_widget-name-copy": "{{name}} — копия",
   "toast_warning-not-latest-version": "Вы работаете не с самой последней версией чарта. Хотите применить изменения?"
 }

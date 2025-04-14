@@ -1,10 +1,17 @@
 import {Toaster} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
+import get from 'lodash/get';
+import {batch} from 'react-redux';
 import {TIMEOUT_65_SEC} from 'shared';
+import {resetEditHistoryUnit} from 'ui/store/actions/editHistory';
 
 import logger from '../../../../../libs/logger';
 import {getSdk} from '../../../../../libs/schematic-sdk';
-import {ComponentErrorType, SUBSELECT_SOURCE_TYPES} from '../../../constants';
+import {
+    ComponentErrorType,
+    DATASETS_EDIT_HISTORY_UNIT_ID,
+    SUBSELECT_SOURCE_TYPES,
+} from '../../../constants';
 import {getToastTitle} from '../../../helpers/dataset-error-helpers';
 import {getComponentErrorsByType} from '../../../helpers/datasets';
 import DatasetUtils from '../../../helpers/utils';
@@ -13,15 +20,17 @@ import * as DATASET_ACTION_TYPES from '../types/dataset';
 
 import {
     addAvatarPrototypes,
+    addEditHistoryPointDs,
     clearDatasetPreview,
     clearToasters,
     closePreview,
-    disableSaveDataset,
     fetchPreviewDataset,
     queuePreviewToOpen,
     setFreeformSources,
     setSourcesLoadingError,
     setValidationData,
+    setValidationState,
+    toggleSaveDataset,
     toggleSourcesLoader,
     validateDataset,
 } from './datasetTyped';
@@ -62,6 +71,7 @@ export function updateDatasetByValidation({
         let fetchingPreviewEnabled, updates;
 
         clearToasters(toaster);
+        dispatch(setValidationState({validation: {isPending: false}}));
 
         if (validateEnabled) {
             updates = await dispatch(validateDataset({compareContent}));
@@ -122,7 +132,7 @@ function setInitialSources(ids) {
             if (ids.length) {
                 const result = await Promise.allSettled(
                     ids.map((id) =>
-                        getSdk().us.getEntry({
+                        getSdk().sdk.us.getEntry({
                             entryId: id,
                             includePermissionsInfo: true,
                         }),
@@ -187,10 +197,10 @@ export function initialFetchDataset({datasetId}) {
                 payload: {},
             });
 
-            const meta = await getSdk().us.getEntryMeta({entryId: datasetId});
+            const meta = await getSdk().sdk.us.getEntryMeta({entryId: datasetId});
             const workbookId = meta.workbookId ?? null;
 
-            const dataset = await getSdk().bi.getDatasetByVersion({
+            const dataset = await getSdk().sdk.bi.getDatasetByVersion({
                 datasetId,
                 workbookId,
                 version: 'draft',
@@ -269,7 +279,7 @@ export function fetchDataset({datasetId}) {
 
             const workbookId = workbookIdSelector(getState());
 
-            const dataset = await getSdk().bi.getDatasetByVersion({
+            const dataset = await getSdk().sdk.bi.getDatasetByVersion({
                 datasetId,
                 workbookId,
                 version: 'draft',
@@ -330,11 +340,11 @@ export function saveDataset({
                     creationData.name = nameFromKey;
                 }
 
-                const {id: createdDatasetId} = await getSdk().bi.createDataset(creationData);
+                const {id: createdDatasetId} = await getSdk().sdk.bi.createDataset(creationData);
 
                 datasetId = createdDatasetId;
             } else {
-                const validation = await getSdk().bi.updateDataset({
+                const validation = await getSdk().sdk.bi.updateDataset({
                     datasetId,
                     dataset,
                     multisource: true,
@@ -357,7 +367,7 @@ export function saveDataset({
                 });
             }
 
-            dispatch(disableSaveDataset());
+            dispatch(toggleSaveDataset({enable: false}));
 
             if (isAuto) {
                 history.replace(`/datasets/${datasetId}`);
@@ -365,6 +375,10 @@ export function saveDataset({
             } else if (isCreationProcess) {
                 history.push(`/datasets/${datasetId}`);
             }
+
+            dispatch(resetEditHistoryUnit({unitId: DATASETS_EDIT_HISTORY_UNIT_ID}));
+            // Set initial history point, this is necessary so that the first change after saving can be reversed
+            dispatch(addEditHistoryPointDs());
         } catch (error) {
             logger.logError('dataset: saveDataset failed', error);
             dispatch({
@@ -386,7 +400,7 @@ export function fetchFieldTypes() {
         let types;
 
         try {
-            const response = await getSdk().bi.getFieldTypes();
+            const response = await getSdk().sdk.bi.getFieldTypes();
 
             types = response.types
                 .map((type) => {
@@ -451,13 +465,13 @@ function _getSources() {
 }
 
 export function getSources(connectionId, workbookId) {
-    return async (dispatch) => {
+    return async (dispatch, getState) => {
         dispatch(toggleSourcesLoader(true));
 
         let sources = [];
 
         try {
-            const result = await getSdk().bi.getSources(
+            const result = await getSdk().sdk.bi.getSources(
                 {connectionId, workbookId, limit: 10000},
                 {concurrentId: 'getSources', timeout: TIMEOUT_65_SEC},
             );
@@ -479,13 +493,18 @@ export function getSources(connectionId, workbookId) {
             dispatch(setFreeformSources(freeformSources));
             dispatch(setSourcesLoadingError(null));
         } catch (error) {
-            if (!getSdk().isCancel(error)) {
+            if (!getSdk().sdk.isCancel(error)) {
                 logger.logError('dataset: getSources failed', error);
                 error.connectionId = connectionId;
                 dispatch(setSourcesLoadingError(error));
             }
         } finally {
-            dispatch(toggleSourcesLoader(false));
+            batch(() => {
+                const diffs = get(getState(), 'editHistory.units.datasets.diffs', []);
+                dispatch(toggleSourcesLoader(false));
+                // Set initial history point
+                dispatch(addEditHistoryPointDs({stacked: Boolean(diffs.length)}));
+            });
         }
 
         return sources;

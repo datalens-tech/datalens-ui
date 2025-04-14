@@ -20,7 +20,7 @@ datalensTest.describe('QL', () => {
         datalensTest('"Column names" in Labels section @screenshot', async ({page}) => {
             const qlPage = new QLPage({page});
             const previewLoader = page.locator('.grid-loader');
-            const chart = page.locator('.chartkit-graph,.chartkit-d3');
+            const chart = page.locator('.chartkit-graph,.gcharts-d3');
 
             await qlPage.sectionVisualization.addFieldByClick(PlaceholderName.Labels, 'city');
             await expect(previewLoader).not.toBeVisible();

@@ -2,7 +2,7 @@ import type React from 'react';
 
 import type {PluginWidgetProps} from '@gravity-ui/dashkit';
 import type {DashTabItemControlElement} from 'shared';
-import {CustomPaletteColors} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
+import {CustomPaletteBgColors} from 'shared/constants/widgets';
 
 import {DL} from '../../constants';
 import {
@@ -11,12 +11,7 @@ import {
     CHARTKIT_SCROLLABLE_NODE_CLASSNAME,
 } from '../../libs/DatalensChartkit/ChartKit/helpers/constants';
 
-import {
-    FIXED_GROUP_HEADER_ID,
-    FIXED_HEADER_GROUP_LINE_MAX_ROWS,
-    MAX_AUTO_HEIGHT_PX,
-    MIN_AUTO_HEIGHT_PX,
-} from './constants';
+import {MAX_AUTO_HEIGHT_PX, MIN_AUTO_HEIGHT_PX} from './constants';
 
 /*
     The description is taken from dashkit (removed from there), but the meaning has not changed much.
@@ -138,10 +133,7 @@ export function adjustWidgetLayout({
     scrollableNodeSelector,
     needHeightReset,
 }: AdjustWidgetLayoutProps) {
-    const correspondedLayoutItem = layout.find(({i}) => i === widgetId);
-    const isFixedHeaderGroupLine = correspondedLayoutItem?.parent === FIXED_GROUP_HEADER_ID;
-
-    if (DL.IS_MOBILE || (needSetDefault && !isFixedHeaderGroupLine)) {
+    if (DL.IS_MOBILE || needSetDefault) {
         cb({widgetId, needSetDefault});
         return;
     }
@@ -154,21 +146,6 @@ export function adjustWidgetLayout({
     const prevHeight = '100%';
     if (needHeightReset) {
         setStyle(node, 'height', 'auto');
-    }
-
-    // Disabling auto-size for grid line widgets
-    if (isFixedHeaderGroupLine) {
-        cb({
-            widgetId,
-            needSetDefault: false,
-            adjustedWidgetLayout: {
-                ...correspondedLayoutItem,
-                h: FIXED_HEADER_GROUP_LINE_MAX_ROWS,
-                maxH: FIXED_HEADER_GROUP_LINE_MAX_ROWS,
-                minH: FIXED_HEADER_GROUP_LINE_MAX_ROWS,
-            },
-        });
-        return;
     }
 
     const scrollableNode = node.querySelector(
@@ -293,12 +270,12 @@ export function getControlHint(source: DashTabItemControlElement) {
 export function getPreparedWrapSettings(showBgColor: boolean, color?: string) {
     const wrapperClassMod =
         (showBgColor &&
-            (color === CustomPaletteColors.LIKE_CHART ? 'with-default-color' : 'with-color')) ||
+            (color === CustomPaletteBgColors.LIKE_CHART ? 'with-default-color' : 'with-color')) ||
         '';
 
     const style = showBgColor
         ? {
-              backgroundColor: color === CustomPaletteColors.LIKE_CHART ? undefined : color,
+              backgroundColor: color === CustomPaletteBgColors.LIKE_CHART ? undefined : color,
           }
         : {};
 

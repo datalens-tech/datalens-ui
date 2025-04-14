@@ -6,7 +6,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {DashTabItemControlSourceType, DialogControlQa, Feature} from 'shared';
 import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
 import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
-import Utils from 'ui/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
 
@@ -61,8 +61,8 @@ const SelectorTypeSelect = ({
             [DashTabItemControlSourceType.Dataset]: true,
             [DashTabItemControlSourceType.Manual]: true,
             [DashTabItemControlSourceType.External]:
-                Utils.isEnabledFeature(Feature.ExternalSelectors) && showExternalType,
-            [DashTabItemControlSourceType.Connection]: Utils.isEnabledFeature(
+                isEnabledFeature(Feature.ExternalSelectors) && showExternalType,
+            [DashTabItemControlSourceType.Connection]: isEnabledFeature(
                 Feature.ConnectionBasedControl,
             ),
         };

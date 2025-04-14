@@ -8,6 +8,7 @@ interface WorkbookEntriesTableProps {
     onDuplicateEntry: (data: WorkbookEntry) => void;
     onCopyEntry: (data: WorkbookEntry) => void;
     onShowRelatedClick: (data: WorkbookEntry) => void;
+    onCopyId?: (data: WorkbookEntry) => void;
 }
 
 export {WorkbookEntriesTableProps};

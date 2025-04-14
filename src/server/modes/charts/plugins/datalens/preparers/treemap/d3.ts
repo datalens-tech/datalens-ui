@@ -3,7 +3,6 @@ import type {
     TreemapSeries,
     TreemapSeriesData,
 } from '@gravity-ui/chartkit/build/types/widget-data';
-import escape from 'lodash/escape';
 
 import type {
     ColumnExportSettings,
@@ -11,7 +10,6 @@ import type {
     WrappedMarkdown,
 } from '../../../../../../../shared';
 import {
-    Feature,
     MINIMUM_FRACTION_DIGITS,
     PlaceholderId,
     isDateField,
@@ -52,7 +50,6 @@ export function prepareD3Treemap({
     colorsConfig,
     idToTitle,
     idToDataType,
-    features,
     ChartEditor,
 }: PrepareFunctionArgs): Partial<ChartKitWidgetData> {
     const dimensions = placeholders.find((p) => p.id === PlaceholderId.Dimensions)?.items ?? [];
@@ -76,7 +73,6 @@ export function prepareD3Treemap({
     const hashTable: Record<string, {value: string | null; label: string}> = {};
     const valuesForColorData: Record<string, number> & {colorGuid?: string} = {};
     const isFloat = measures[0] && measures[0].data_type === 'float';
-    const shouldEscapeUserValue = features[Feature.EscapeUserHtmlInDefaultHcTooltip];
     let colorData: Record<string, {backgroundColor: string}> = {};
 
     if (color) {
@@ -123,7 +119,7 @@ export function prepareD3Treemap({
                     ...item.formatting,
                 });
             } else {
-                value = rawValue && shouldEscapeUserValue ? escape(rawValue as string) : rawValue;
+                value = rawValue;
             }
 
             const treemapId =

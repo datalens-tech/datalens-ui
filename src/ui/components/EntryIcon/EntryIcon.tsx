@@ -1,10 +1,9 @@
 import React from 'react';
 
-import type {IconData} from '@gravity-ui/uikit';
 import {Icon} from '@gravity-ui/uikit';
 import type {EntryScope} from 'shared';
-import {ConnectorType, ENTRY_TYPES, Feature} from 'shared';
-import Utils, {getConnectorIconData} from 'ui/utils';
+import {ENTRY_TYPES} from 'shared';
+import {getConnectorIconData} from 'ui/utils';
 
 import {registry} from '../../registry';
 import type {ConnectorIconViewProps} from '../ConnectorIcon/ConnectorIcon';
@@ -13,98 +12,6 @@ import type {EntityIconSize, EntityIconType} from '../EntityIcon/EntityIcon';
 import {EntityIcon, defaultIconSize} from '../EntityIcon/EntityIcon';
 
 import iconFilesBroken from '../../assets/icons/broken.svg';
-import iconMonitoring from '../../assets/icons/connections/monitoring-mini.svg';
-import iconPrometheus from '../../assets/icons/connections/prometheus-mini.svg';
-import iconBigQuery from '../../assets/icons/file-con-bigquery.svg';
-import iconAppmetrica from '../../assets/icons/files-con-appmetrica.svg';
-import iconBitrix from '../../assets/icons/files-con-bitrix.svg';
-import iconChGeoFilterd from '../../assets/icons/files-con-ch-geo-filtered.svg';
-import iconCHYDB from '../../assets/icons/files-con-chydb.svg';
-import iconCHYT from '../../assets/icons/files-con-chyt-token.svg';
-import iconCHYTUser from '../../assets/icons/files-con-chyt-user.svg';
-import iconClickHouse from '../../assets/icons/files-con-clickhouse.svg';
-import iconCSV from '../../assets/icons/files-con-csv.svg';
-import iconFile from '../../assets/icons/files-con-file.svg';
-import iconGreenplum from '../../assets/icons/files-con-greenplum.svg';
-import iconGoogleSheets from '../../assets/icons/files-con-gsheets.svg';
-import iconMetrica from '../../assets/icons/files-con-metrica.svg';
-import iconMoySklad from '../../assets/icons/files-con-moysklad.svg';
-import iconMSSQL from '../../assets/icons/files-con-mssql.svg';
-import iconMySQL from '../../assets/icons/files-con-mysql.svg';
-import iconOracle from '../../assets/icons/files-con-oracle.svg';
-import iconPostgreSQL from '../../assets/icons/files-con-postgresql.svg';
-import iconUsageTrackingYCDetailed from '../../assets/icons/files-con-utyc-detailed.svg';
-import iconUsageTrackingYCLight from '../../assets/icons/files-con-utyc-light.svg';
-import iconUsageTrackingYT from '../../assets/icons/files-con-utyt.svg';
-import iconYaMusicPodcast from '../../assets/icons/files-con-ya-music-podcast.svg';
-import iconYDB from '../../assets/icons/files-con-ydb.svg';
-import iconYQ from '../../assets/icons/files-con-yq.svg';
-import iconYT from '../../assets/icons/files-con-yt.svg';
-import iconCHBA from '../../assets/icons/files-conn-ch-ba.svg';
-import iconChytYC from '../../assets/icons/files-conn-chyt-yc.svg';
-import iconEqueo from '../../assets/icons/files-conn-equeo.svg';
-import iconExtractor1C from '../../assets/icons/files-conn-extractor1c.svg';
-import iconKonturMarket from '../../assets/icons/files-conn-kontur-market.svg';
-import iconKpIndex from '../../assets/icons/files-conn-kp-index.svg';
-import iconSchoolbookJournal from '../../assets/icons/files-conn-schoolbook-journal.svg';
-import iconSmbHeatmaps from '../../assets/icons/files-conn-smb-heatmaps.svg';
-import iconSnowflake from '../../assets/icons/files-conn-snowflake.svg';
-import iconYadocs from '../../assets/icons/files-conn-yadocs.svg';
-
-const typeToIcon: Record<string, IconData> = {
-    [ConnectorType.Csv]: iconCSV,
-    [ConnectorType.Mssql]: iconMSSQL,
-    [ConnectorType.AppMetrica]: iconAppmetrica,
-    [ConnectorType.Postgres]: iconPostgreSQL,
-    [ConnectorType.MetrikaApi]: iconMetrica,
-    [ConnectorType.Oracle]: iconOracle,
-    [ConnectorType.Mysql]: iconMySQL,
-    [ConnectorType.Yt]: iconYT,
-    [ConnectorType.Clickhouse]: iconClickHouse,
-    [ConnectorType.ChBillingAnalytics]: iconCHBA,
-    [ConnectorType.ChFrozenBumpyRoads]: iconClickHouse,
-    [ConnectorType.ChFrozenCovid]: iconClickHouse,
-    [ConnectorType.ChFrozenDemo]: iconClickHouse,
-    [ConnectorType.ChFrozenDtp]: iconClickHouse,
-    [ConnectorType.ChFrozenGkh]: iconClickHouse,
-    [ConnectorType.ChFrozenHoreca]: iconClickHouse,
-    [ConnectorType.ChFrozenSamples]: iconClickHouse,
-    [ConnectorType.ChFrozenTransparency]: iconClickHouse,
-    [ConnectorType.ChFrozenWeather]: iconClickHouse,
-    [ConnectorType.ChGeoFiltered]: iconChGeoFilterd,
-    [ConnectorType.ChOverYt]: iconCHYT,
-    [ConnectorType.ChOverYtUserAuth]: iconCHYTUser,
-    [ConnectorType.Chyt]: iconChytYC,
-    [ConnectorType.ChytNb]: iconChytYC,
-    [ConnectorType.ChytNb_v2]: iconChytYC,
-    [ConnectorType.Chydb]: iconCHYDB,
-    [ConnectorType.Ydb]: iconYDB,
-    [ConnectorType.Yq]: iconYQ,
-    [ConnectorType.ChYaMusicPodcastStats]: iconYaMusicPodcast,
-    [ConnectorType.Gsheets]: iconGoogleSheets,
-    [ConnectorType.GsheetsV2]: iconGoogleSheets,
-    [ConnectorType.Greenplum]: iconGreenplum,
-    [ConnectorType.Moysklad]: iconMoySklad,
-    [ConnectorType.Promql]: iconPrometheus,
-    [ConnectorType.Monitoring]: iconMonitoring,
-    [ConnectorType.MonitoringExt]: iconMonitoring,
-    [ConnectorType.KpInterestIndex]: iconKpIndex,
-    [ConnectorType.Bitrix]: iconBitrix,
-    [ConnectorType.Bitrix24]: iconBitrix,
-    [ConnectorType.SchoolbookJournal]: iconSchoolbookJournal,
-    [ConnectorType.File]: iconFile,
-    [ConnectorType.SmbHeatmaps]: iconSmbHeatmaps,
-    [ConnectorType.Bigquery]: iconBigQuery,
-    [ConnectorType.UsageTrackingYT]: iconUsageTrackingYT,
-    [ConnectorType.UsageAnalyticsDetailed]: iconUsageTrackingYCDetailed,
-    [ConnectorType.UsageAnalyticsLight]: iconUsageTrackingYCLight,
-    [ConnectorType.Snowflake]: iconSnowflake,
-    [ConnectorType.Equeo]: iconEqueo,
-    [ConnectorType.KonturMarket]: iconKonturMarket,
-    [ConnectorType.Extractor1c]: iconExtractor1C,
-    [ConnectorType.Yadocs]: iconYadocs,
-    [ConnectorType.MonitoringV2]: iconMonitoring,
-};
 
 const entityTypeIcons: Record<string, string> = {
     script: 'editor',
@@ -124,6 +31,7 @@ const entityTypeIcons: Record<string, string> = {
 
 const folderIconSize = {
     s: 18,
+    m: 20,
     l: 22,
     xl: 28,
 };
@@ -133,16 +41,11 @@ interface EntryData {
     type?: string;
 }
 
-export const getEntryIconData = ({scope, type}: EntryData) => {
+export const getEntryIconData = ({type}: EntryData) => {
     let iconData: ConnectorIconViewProps['data'] | undefined;
     if (type) {
-        let typeKey = type;
-        if (scope === 'widget' && !Utils.isEnabledFeature(Feature.EntryMenuEditor)) {
-            typeKey = '';
-        }
-        const icon = Utils.isEnabledFeature(Feature.EnableBIConnectorIcons)
-            ? getConnectorIconData(typeKey, true)
-            : typeToIcon[typeKey];
+        const typeKey = type;
+        const icon = getConnectorIconData(typeKey, true);
         if (icon) {
             iconData = icon;
         }
@@ -154,6 +57,7 @@ const getEntityIconType = (
     {scope, type}: EntryData,
     className?: string,
     entityIconSize?: EntityIconSize,
+    overrideIconType?: EntityIconType,
 ) => {
     let iconType;
 
@@ -163,7 +67,7 @@ const getEntityIconType = (
 
     const {getScopeTypeIcon} = registry.common.functions.getAll();
 
-    const entityIconType = iconType || getScopeTypeIcon(scope as EntryScope);
+    const entityIconType = overrideIconType || iconType || getScopeTypeIcon(scope as EntryScope);
     if (entityIconType) {
         const iconSize =
             entityIconType === 'folder'
@@ -184,16 +88,18 @@ const getEntityIconType = (
 interface EntryIconProps extends Partial<ConnectorIconViewProps> {
     entry: EntryData;
     entityIconSize?: EntityIconSize;
+    // can be used to use connection icon without type of connection
+    overrideIconType?: EntityIconType;
 }
 
-export const EntryIcon: React.FC<EntryIconProps> = (props) => {
-    const {entry, className, entityIconSize, ...restProps} = props;
+export const EntryIcon = (props: EntryIconProps) => {
+    const {entry, className, entityIconSize, overrideIconType, ...restProps} = props;
     const iconData = getEntryIconData(entry);
     if (iconData) {
         return <ConnectorIcon data={iconData} className={className} view="nav" {...restProps} />;
     }
     return (
-        getEntityIconType(entry, className, entityIconSize) || (
+        getEntityIconType(entry, className, entityIconSize, overrideIconType) || (
             <Icon data={iconFilesBroken} className={className} {...restProps} />
         )
     );

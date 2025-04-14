@@ -1,7 +1,7 @@
 export type SuggestBatchListMembersArgs = {
     id: string | undefined;
     search: string;
-    subType?: string;
+    tabId?: string;
     pageToken?: string;
     filter?: string;
 };

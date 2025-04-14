@@ -2,7 +2,8 @@ import {DashKit} from '@gravity-ui/dashkit';
 import {generateUniqId} from '@gravity-ui/dashkit/helpers';
 import update from 'immutability-helper';
 import pick from 'lodash/pick';
-import {DashTabItemType} from 'shared';
+import {DashTabItemTitleSizes, DashTabItemType} from 'shared';
+import {CustomPaletteBgColors, WIDGET_BG_COLORS_PRESET} from 'shared/constants/widgets';
 import {migrateConnectionsForGroupControl} from 'ui/store/utils/controlDialog';
 import {getUpdatedConnections} from 'ui/utils/copyItems';
 
@@ -37,6 +38,7 @@ const initialState = {
     convertedEntryData: null,
 
     tabId: null,
+    lastModifiedItemId: null,
 
     hashStates: null,
 
@@ -67,31 +69,6 @@ function dash(state = initialState, action) {
     const tab = tabIndex === -1 ? null : data.tabs[tabIndex];
 
     switch (action.type) {
-        case actionTypes.SAVE_DASH_SUCCESS:
-        case actionTypes.SAVE_DASH_ERROR:
-        case actionTypes.CLOSE_DIALOG: {
-            return {
-                ...state,
-                ...action.payload,
-                dragOperationProps: null,
-            };
-        }
-        case actionTypes.OPEN_ITEM_DIALOG: {
-            const payload = action.payload;
-
-            return {
-                ...state,
-                openedItemId: payload.id ?? null,
-                openedDialog: payload.type,
-            };
-        }
-        case actionTypes.OPEN_DIALOG: {
-            return {
-                ...state,
-                ...action.payload,
-                dragOperationProps: action.payload.dragOperationProps ?? null,
-            };
-        }
         case actionTypes.SET_TABS: {
             let counter = data.counter;
 
@@ -203,6 +180,7 @@ function dash(state = initialState, action) {
             return {
                 ...state,
                 data: update(data, updateData),
+                lastModifiedItemId: null,
                 tabId: newTabId,
             };
         }
@@ -229,8 +207,35 @@ function dash(state = initialState, action) {
                 }),
             };
         case actionTypes.SET_COPIED_ITEM_DATA: {
+            const itemData = action.payload.item.data;
+            const backgroundData =
+                'background' in itemData
+                    ? {
+                          background: {
+                              color:
+                                  itemData.background?.color &&
+                                  itemData.background.enabled !== false &&
+                                  WIDGET_BG_COLORS_PRESET.includes(itemData.background.color)
+                                      ? itemData.background.color
+                                      : CustomPaletteBgColors.NONE,
+                          },
+                      }
+                    : {};
+            const newItem = {
+                ...action.payload.item,
+                data: {
+                    ...itemData,
+                    size:
+                        action.payload.item.type === DashTabItemType.Title &&
+                        typeof itemData.size === 'object'
+                            ? DashTabItemTitleSizes.XL
+                            : itemData.size,
+                    ...backgroundData,
+                },
+            };
+
             const tabData = DashKit.setItem({
-                item: action.payload.item,
+                item: newItem,
                 config: {...tab, salt: data.salt, counter: data.counter},
                 options: {
                     ...action.payload.options,
@@ -299,8 +304,11 @@ function dash(state = initialState, action) {
                 });
             }
 
+            const modifiedItem = tabData.layout[tabData.layout.length - 1];
+
             return {
                 ...state,
+                lastModifiedItemId: modifiedItem.i,
                 data: update(data, {
                     tabs: {
                         [tabIndex]: {$set: pick(tabData, TAB_PROPERTIES)},

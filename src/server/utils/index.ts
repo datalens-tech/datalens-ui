@@ -1,10 +1,10 @@
 import fs from 'fs';
 import type {IncomingHttpHeaders} from 'http';
 
+import type {Request} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
 import type {AxiosResponse} from 'axios';
 import axios from 'axios';
-import type {Request} from 'express';
 import pick from 'lodash/pick';
 
 import {
@@ -16,6 +16,7 @@ import {
     SERVICE_USER_ACCESS_TOKEN_HEADER,
     SuperuserHeader,
     TENANT_ID_HEADER,
+    US_MASTER_TOKEN_HEADER,
 } from '../../shared';
 import {isOpensourceInstallation} from '../app-env';
 
@@ -26,7 +27,7 @@ class Utils {
         return key.split('/').filter(Boolean).pop();
     }
 
-    static pickAuthHeaders(headers: IncomingHttpHeaders, req: Request) {
+    static pickServiceHeaders(headers: IncomingHttpHeaders, req: Request) {
         const {folderId: folderIdHeader, subjectToken: subjectTokenHeader} =
             req.ctx.config.headersMap;
 
@@ -53,6 +54,12 @@ class Utils {
         };
     }
 
+    static pickAuthHeaders(req: Request) {
+        return {
+            [AuthHeader.Authorization]: 'Bearer ' + req.ctx.get('user')?.accessToken,
+        };
+    }
+
     static pickSuperuserHeaders(headers: IncomingHttpHeaders) {
         return pick(headers, [SuperuserHeader.XDlSudo, SuperuserHeader.XDlAllowSuperuser]);
     }
@@ -67,13 +74,23 @@ class Utils {
 
     static pickHeaders(req: Request) {
         return {
-            ...Utils.pickAuthHeaders(req.headers, req),
+            ...Utils.pickServiceHeaders(req.headers, req),
             ...Utils.pickSuperuserHeaders(req.headers),
             ...Utils.pickDlContextHeaders(req.headers),
             ...Utils.pickForwardHeaders(req.headers),
             ...(req.ctx.config.isZitadelEnabled ? {...Utils.pickZitadelHeaders(req)} : {}),
+            ...(req.ctx.config.isAuthEnabled ? {...Utils.pickAuthHeaders(req)} : {}),
             [REQUEST_ID_HEADER]: req.id,
         };
+    }
+
+    static pickUsMasterToken(req: Request) {
+        const token = req.headers[US_MASTER_TOKEN_HEADER];
+        if (typeof token !== 'string') {
+            return null;
+        }
+
+        return token;
     }
 
     static getErrorMessage(error: unknown) {

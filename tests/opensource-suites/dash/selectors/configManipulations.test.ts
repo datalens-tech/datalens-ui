@@ -1,10 +1,10 @@
 import {Page, expect, Request} from '@playwright/test';
 
-import {DashEntryQa, DialogGroupControlQa, Feature, TabMenuQA} from '../../../../src/shared';
+import {DashEntryQa, DialogGroupControlQa, TabMenuQA} from '../../../../src/shared';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {isEnabledFeature, openTestPage, slct} from '../../../utils';
+import {openTestPage, slct} from '../../../utils';
 import {CommonUrls} from '../../../page-objects/constants/common-urls';
 import {TestParametrizationConfig} from '../../../types/config';
 import {SelectorElementType} from '../../../page-objects/dashboard/ControlActions';
@@ -40,25 +40,7 @@ const PARAMS = {
 };
 
 datalensTest.describe('Dashboards - Manipulations with configs', () => {
-    let skipAfterEach = false;
-
-    datalensTest.beforeEach(async ({page}: {page: Page}) => {
-        // some page need to be loaded so we can get data of feature flag from DL var
-        await openTestPage(page, '/');
-
-        const isEnabledGroupControls = await isEnabledFeature(page, Feature.GroupControls);
-
-        if (!isEnabledGroupControls) {
-            skipAfterEach = true;
-            // Test is immediately aborted when you call skip, it goes straight to afterEach
-            datalensTest.skip();
-        }
-    });
     datalensTest.afterEach(async ({page}: {page: Page}) => {
-        if (skipAfterEach) {
-            return;
-        }
-
         const dashboardPage = new DashboardPage({page});
 
         await dashboardPage.deleteDash();

@@ -10,17 +10,16 @@ import {
     TabMenuQA,
 } from '../../../src/shared/constants';
 import DialogControl from '../../page-objects/common/DialogControl';
-import {
-    clickGSelectOption,
-    fillDatePicker,
-    getControlByTitle,
-    isEnabledFeature,
-    slct,
-} from '../../utils';
+import {clickGSelectOption, fillDatePicker, getControlByTitle, slct} from '../../utils';
 
 import {BasePageProps} from '../BasePage';
 
-import {DashTabItemControlSourceType, DialogControlQa, Feature} from '../../../src/shared';
+import {
+    DashTabItemControlSourceType,
+    DialogControlQa,
+    TitlePlacement,
+    TitlePlacements,
+} from '../../../src/shared';
 
 import {
     DashboardAddWidgetQa,
@@ -44,7 +43,7 @@ export type SelectorSettings = {
     elementType?: SelectorElementType;
     appearance?: {
         title?: string;
-        titleEnabled?: boolean;
+        titlePlacement?: TitlePlacement;
         innerTitle?: string;
         innerTitleEnabled?: boolean;
     };
@@ -83,13 +82,7 @@ class ControlActions {
     }
 
     async clickAddSelector() {
-        const isEnabledGroupControls = await isEnabledFeature(this.page, Feature.GroupControls);
-
-        if (isEnabledGroupControls) {
-            await this.page.click(slct(DashboardAddWidgetQa.AddGroupControl));
-            return;
-        }
-        await this.page.click(slct(DashboardAddWidgetQa.AddControl));
+        await this.page.click(slct(DashboardAddWidgetQa.AddGroupControl));
     }
 
     async addDateRangeSelector({
@@ -168,6 +161,7 @@ class ControlActions {
         }
 
         if (options && options.buttonApply) {
+            await this.page.locator(slct(DialogGroupControlQa.extendedSettingsButton)).click();
             await this.page
                 .locator(`${slct(DialogGroupControlQa.applyButtonCheckbox)} input`)
                 .setChecked(true);
@@ -175,6 +169,8 @@ class ControlActions {
             await this.page
                 .locator(`${slct(DialogGroupControlQa.updateControlOnChangeCheckbox)} input`)
                 .setChecked(Boolean(options?.updateControlOnChange));
+
+            await this.page.locator(slct(DialogGroupControlQa.extendedSettingsApplyButton)).click();
         }
 
         // adding a selector to the dashboard
@@ -250,18 +246,11 @@ class ControlActions {
         sourceType = DashTabItemControlSourceType.Manual,
         ...setting
     }: SelectorSettings = {}) {
-        const isEnabledGroupControls = await isEnabledFeature(this.page, Feature.GroupControls);
-
         await this.dialogControl.waitForVisible();
 
         if (sourceType) {
-            if (isEnabledGroupControls) {
-                await this.dialogControl.sourceTypeSelect.click();
-                await this.dialogControl.sourceTypeSelect.selectListItemByQa(slct(sourceType));
-            } else {
-                // will be removed after enabling of GroupControls
-                await this.dialogControl.sourceType.selectByName(sourceType);
-            }
+            await this.dialogControl.sourceTypeSelect.click();
+            await this.dialogControl.sourceTypeSelect.selectListItemByQa(slct(sourceType));
         }
 
         if (sourceType === DashTabItemControlSourceType.Manual) {
@@ -297,9 +286,9 @@ class ControlActions {
             await this.selectElementType(setting.elementType);
         }
 
-        if (typeof setting.appearance?.titleEnabled === 'boolean') {
-            await this.dialogControl.appearanceTitle.checkbox.toggle(
-                setting.appearance.titleEnabled,
+        if (setting.appearance?.titlePlacement) {
+            await this.dialogControl.appearanceTitle.radioGroup.selectByName(
+                setting.appearance.titlePlacement,
             );
         }
 
@@ -334,7 +323,7 @@ class ControlActions {
     async addSelectorWithDefaultSettings(setting: SelectorSettings = {}) {
         const defaultSettings: SelectorSettings = {
             sourceType: DashTabItemControlSourceType.Dataset,
-            appearance: {titleEnabled: true},
+            appearance: {titlePlacement: TitlePlacements.Left},
             dataset: {idx: 0},
             datasetField: {idx: 0},
         };

@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {FormRow, HelpPopover} from '@gravity-ui/components';
+import type {RealTheme} from '@gravity-ui/uikit';
 import {Checkbox, Dialog, Flex, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
@@ -18,17 +19,17 @@ import './DialogImageWidget.scss';
 const b = block('dialog-image');
 const INPUT_SRC_ID = 'dialog-image-input-src';
 const INPUT_ALT_ID = 'dialog-image-input-alt';
-const INPUT_BG_ENABLED_ID = 'dialog-image-input-bg-enabled';
 const INPUT_PRESERVE_ASPECT_RATIO_ID = 'dialog-image-input-preserve-aspect-ratio';
 const DEFAULT_ITEM_DATA: DashTabItemImage['data'] = {
     src: '',
     alt: '',
     background: {
-        enabled: false,
         color: 'transparent',
     },
     preserveAspectRatio: true,
 };
+
+export type DialogImageWidgetFeatureProps = {};
 
 type Props = {
     openedItemId: string | null;
@@ -37,7 +38,8 @@ type Props = {
     onClose: () => void;
     onApply: (newItemData: SetItemDataArgs) => void;
     scope: EntryScope;
-};
+    theme?: RealTheme;
+} & DialogImageWidgetFeatureProps;
 
 const getValidationErrors = (data: DashTabItemImage['data']) => {
     const result: Record<string, string> = {};
@@ -145,30 +147,17 @@ export function DialogImageWidget(props: Props) {
                         id={INPUT_PRESERVE_ASPECT_RATIO_ID}
                         checked={data.preserveAspectRatio}
                         onUpdate={(preserveAspectRatio) => updateData({preserveAspectRatio})}
-                    >
-                        {i18n('dash.widget-dialog.edit', 'field_background-enable')}
-                    </Checkbox>
+                    />
                 </FormRow>
                 <FormRow
                     className={b('row')}
-                    fieldId={INPUT_BG_ENABLED_ID}
                     label={i18n('dash.dashkit-plugin-common.view', 'label_background-checkbox')}
                 >
-                    <Flex>
-                        <Checkbox
-                            id={INPUT_BG_ENABLED_ID}
-                            checked={data.background?.enabled}
-                            onUpdate={(enabled) => updateData({background: {enabled}})}
-                        >
-                            {i18n('dash.widget-dialog.edit', 'field_background-enable')}
-                        </Checkbox>
-                        {data.background?.enabled && (
-                            <PaletteBackground
-                                color={data.background?.color}
-                                onSelect={(color) => updateData({background: {color}})}
-                            />
-                        )}
-                    </Flex>
+                    <PaletteBackground
+                        color={data.background?.color}
+                        onSelect={(color) => updateData({background: {color}})}
+                        enableCustomBgColorSelector
+                    />
                 </FormRow>
             </Dialog.Body>
             <Dialog.Footer

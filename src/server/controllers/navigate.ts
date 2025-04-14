@@ -11,7 +11,7 @@ function navigateDefault(reqPath: string, res: Response) {
 }
 
 // eslint-disable-next-line complexity
-export default async (req: Request, res: Response) => {
+export const navigateController = async (req: Request, res: Response) => {
     const {url: reqUrl} = req;
 
     req.ctx.log('Navigate init', {reqUrl});
@@ -35,6 +35,7 @@ export default async (req: Request, res: Response) => {
                 ...req.headers,
                 [TENANT_ID_HEADER]: res.locals.currentTenantId,
                 ...(req.ctx.config.isZitadelEnabled ? {...Utils.pickZitadelHeaders(req)} : {}),
+                ...(req.ctx.config.isAuthEnabled ? {...Utils.pickAuthHeaders(req)} : {}),
             },
             requestId: req.id,
             authArgs: {iamToken: res.locals.iamToken},
@@ -56,7 +57,7 @@ export default async (req: Request, res: Response) => {
 
                 return res.redirect(302, wizardUrl);
             } else if (ENTRY_TYPES.editor.includes(type)) {
-                const editorUrl = reqUrl.replace('navigate', 'ql');
+                const editorUrl = reqUrl.replace('navigate', 'editor');
 
                 req.ctx.log('Navigate to editor', {editorUrl});
 

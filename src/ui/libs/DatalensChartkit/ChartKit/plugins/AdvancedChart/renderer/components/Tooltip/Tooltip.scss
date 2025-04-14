@@ -1,0 +1,12 @@
+.advanced-chart-tooltip {
+    &[class] {
+        --g-popup-border-width: 0;
+        pointer-events: none;
+
+        > div {
+            animation-duration: unset;
+            animation-timing-function: unset;
+            animation-fill-mode: unset;
+        }
+    }
+}

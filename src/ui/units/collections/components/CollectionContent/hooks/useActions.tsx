@@ -1,10 +1,12 @@
 import React from 'react';
 
-import {ArrowRight, Copy, LockOpen, PencilToLine, TrashBin} from '@gravity-ui/icons';
+import {ArrowRight, Copy, FileArrowUp, LockOpen, PencilToLine, TrashBin} from '@gravity-ui/icons';
 import type {DropdownMenuItem} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {useHistory} from 'react-router-dom';
+import {DIALOG_EXPORT_WORKBOOK} from 'ui/components/CollectionsStructure/ExportWorkbookDialog/ExportWorkbookDialog';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {Feature} from '../../../../../../shared';
 import type {
@@ -28,7 +30,6 @@ import {registry} from '../../../../../registry';
 import {ResourceType} from '../../../../../registry/units/common/types/components/IamAccessDialog';
 import type {AppDispatch} from '../../../../../store';
 import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
-import Utils from '../../../../../utils';
 import {WORKBOOKS_PATH} from '../../../../collections-navigation/constants';
 import {deleteCollectionInItems, deleteWorkbookInItems} from '../../../store/actions';
 
@@ -40,7 +41,7 @@ type UseActionsArgs = {
 };
 
 export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsArgs) => {
-    const collectionsAccessEnabled = Utils.isEnabledFeature(Feature.CollectionsAccessEnabled);
+    const collectionsAccessEnabled = isEnabledFeature(Feature.CollectionsAccessEnabled);
 
     const {customizeWorkbooksActions, customizeCollectionsActions} =
         registry.collections.functions.getAll();
@@ -267,6 +268,26 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
                             }),
                         );
                     },
+                });
+            }
+
+            if (isEnabledFeature(Feature.EnableExportWorkbookFile) && item.permissions.update) {
+                actions.push({
+                    action: () => {
+                        dispatch(
+                            openDialog({
+                                id: DIALOG_EXPORT_WORKBOOK,
+                                props: {
+                                    open: true,
+                                    workbookId: item.workbookId,
+                                    onClose: () => {
+                                        dispatch(closeDialog());
+                                    },
+                                },
+                            }),
+                        );
+                    },
+                    text: <DropdownAction icon={FileArrowUp} text={i18n('action_export')} />,
                 });
             }
 

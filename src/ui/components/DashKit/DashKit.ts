@@ -5,12 +5,13 @@ import {registry} from 'ui/registry';
 import {DL} from '../../constants';
 import MarkdownProvider from '../../modules/markdownProvider';
 
+import {DEFAULT_DASH_MARGINS} from './constants';
 import {DashkitWrapper, getDashKitMenu} from './helpers';
 import pluginControl from './plugins/Control/Control';
 import pluginGroupControl from './plugins/GroupControl/GroupControl';
 import {pluginImage} from './plugins/Image/Image';
 import textPlugin from './plugins/Text/Text';
-import pluginTitle from './plugins/Title/Title';
+import titlePlugin from './plugins/Title/Title';
 import widgetPlugin from './plugins/Widget/WidgetPlugin';
 
 let isConfigured = false;
@@ -33,18 +34,27 @@ const wrapPlugins = (plugins: Plugin[], pluginDefaultsGetter?: typeof currentDef
     });
 };
 
-export const getConfiguredDashKit = (pluginDefaultsGetter: typeof currentDefaultsGetter = null) => {
-    const controlSettings = {
-        getDistincts: getDistinctsAction(),
-    };
-
+export const getConfiguredDashKit = (
+    pluginDefaultsGetter: typeof currentDefaultsGetter = null,
+    options?: {disableHashNavigation?: boolean},
+) => {
     if (currentDefaultsGetter !== pluginDefaultsGetter || !isConfigured) {
+        const titleSettings = {
+            hideAnchor: options?.disableHashNavigation,
+        };
+
+        const textSettings = {
+            apiHandler: MarkdownProvider.getMarkdown,
+        };
+
+        const controlSettings = {
+            getDistincts: getDistinctsAction(),
+        };
+
         const plugins = wrapPlugins(
             [
-                pluginTitle,
-                textPlugin.setSettings({
-                    apiHandler: MarkdownProvider.getMarkdown,
-                }),
+                titlePlugin.setSettings(titleSettings),
+                textPlugin.setSettings(textSettings),
                 pluginControl.setSettings(controlSettings),
                 pluginGroupControl.setSettings(controlSettings),
                 widgetPlugin,
@@ -69,7 +79,7 @@ export const getConfiguredDashKit = (pluginDefaultsGetter: typeof currentDefault
     isConfigured = true;
 
     DashKit.setSettings({
-        gridLayout: {margin: [8, 8]},
+        gridLayout: {margin: DEFAULT_DASH_MARGINS},
         theme: 'datalens',
         isMobile: DL.IS_MOBILE,
         menu: getDashKitMenu(),

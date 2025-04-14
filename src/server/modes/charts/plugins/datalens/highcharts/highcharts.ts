@@ -15,6 +15,7 @@ import {
     WizardVisualizationId,
     isDateField,
 } from '../../../../../../shared';
+import {PERCENT_VISUALIZATIONS} from '../../../../../../shared/constants/visualization';
 import type {IgnoreProps} from '../utils/axis-helpers';
 import {applyPlaceholderSettingsToAxis} from '../utils/axis-helpers';
 import {mapChartsConfigToServerConfig} from '../utils/config-helpers';
@@ -342,6 +343,12 @@ const applyCommonAxisSettings = ({
         });
     }
 
+    // Due to fractional values (presumably) highcharts sometimes incorrectly calculates the maximum
+    // in this case, the chart is displayed correctly, but the maximum value on the y axis becomes more than 100 percent
+    if (PERCENT_VISUALIZATIONS.has(visualization.id) && !('max' in yAxis)) {
+        set(yAxis, 'max', 100);
+    }
+
     return {xAxis, yAxis};
 };
 
@@ -365,6 +372,12 @@ const extendPlotOptions = ({visualizationId, plotOptions}: ExtendPlotOptionsPayl
         case WizardVisualizationId.Column100p:
             plotOptions.column = plotOptions.column || {};
             plotOptions.column.stacking = 'percent';
+            break;
+
+        case 'area':
+            plotOptions.area = {
+                stacking: 'normal',
+            };
             break;
 
         case WizardVisualizationId.Bar100p:

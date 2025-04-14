@@ -4,7 +4,7 @@ export const snakeToCamel = (s: string) =>
     s.toLowerCase().replace(/_\w/g, (m) => m[1].toUpperCase());
 
 export function isEntryLatest(entry: GetRevisionsEntry) {
-    return entry.savedId === entry.revId;
+    return entry.publishedId === entry.revId;
 }
 
 function fallbackCopyTextToClipboard(text: string) {

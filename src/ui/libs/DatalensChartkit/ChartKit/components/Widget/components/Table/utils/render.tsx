@@ -5,8 +5,10 @@ import type {Column, SortOrder} from '@gravity-ui/react-data-table';
 import DataTable from '@gravity-ui/react-data-table';
 import {Button, Icon, Link, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {debounce, isUndefined} from 'lodash';
+import debounce from 'lodash/debounce';
 import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
+import isUndefined from 'lodash/isUndefined';
 import moment from 'moment';
 import type {
     BarTableCell,
@@ -24,6 +26,7 @@ import type {
     TableRow,
 } from 'shared';
 import {ChartKitTableQa, isMarkupItem} from 'shared';
+import {isWrappedHTML} from 'shared/utils/ui-sandbox';
 
 import {MarkdownHelpPopover} from '../../../../../../../../components/MarkdownHelpPopover/MarkdownHelpPopover';
 import {Markup} from '../../../../../../../../components/Markup';
@@ -33,7 +36,7 @@ import {Bar} from '../Bar/Bar';
 import {WrappedHTMLNode} from '../WrappedHTMLNode';
 import type {TableProps} from '../types';
 
-import {getAdditionalStyles, getRowActionParams} from './action-params';
+import {getAdditionalStyles, getRowActionParams, isCellSelected} from './action-params';
 import {getCellClickArgs, getCellOnClickHandler} from './event-handlers';
 import {
     camelCaseCss,
@@ -42,7 +45,6 @@ import {
     getTreeSetColumnSortAscending,
     hasTreeSetColumn,
     isCellValueNullable,
-    isWrappedHTML,
     numberFormatter,
     prepareLinkHref,
     selectBarSettingValue,
@@ -115,7 +117,7 @@ export function valueFormatter(
             type = cell.type;
         }
 
-        // Fallback (needed to support already created ChartEditor charts).
+        // Fallback (needed to support already created Editor charts).
         // type bar is deprecated was merged with number.
         // Now the number column has a prop view that determines whether to show a number or draw a bar
         if (type === 'bar') {
@@ -127,7 +129,11 @@ export function valueFormatter(
             (options as NumberTableColumn).view === 'bar' || (cell as BarTableCell).view === 'bar';
 
         if ('formattedValue' in cell && cell.formattedValue && !shouldUseBar) {
-            resultValue = cell.formattedValue;
+            resultValue = isWrappedHTML(cell.formattedValue) ? (
+                <WrappedHTMLNode value={cell.formattedValue} />
+            ) : (
+                cell.formattedValue
+            );
         } else if (cell.value === null) {
             resultValue = 'null';
         } else if (isMarkupItem(cell.value)) {
@@ -339,6 +345,15 @@ export const getColumnsAndNames = ({
 }) => {
     const resizeTable = debounce(() => tableRef?.resize());
 
+    const hasSomeCellSelected = Boolean(
+        actionParamsData?.params &&
+            !isEmpty(actionParamsData.params) &&
+            rows.some(
+                (r) =>
+                    'cells' in r && r.cells.some((c) => isCellSelected(c, actionParamsData.params)),
+            ),
+    );
+
     return head.reduce(
         // eslint-disable-next-line complexity
         (
@@ -486,9 +501,9 @@ export const getColumnsAndNames = ({
                             additionalStyles = getAdditionalStyles({
                                 actionParamsData,
                                 row,
-                                rows,
                                 head,
                                 cell,
+                                hasSomeCellSelected,
                             });
                         }
 

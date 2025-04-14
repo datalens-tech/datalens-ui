@@ -2,7 +2,7 @@ import React from 'react';
 
 import {Plus} from '@gravity-ui/icons';
 import type {IconData} from '@gravity-ui/uikit';
-import {Popover as CommonTooltip, Icon, Select} from '@gravity-ui/uikit';
+import {Icon, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {AddFieldQA} from 'shared';
 import {matchDatasetFieldFilter} from 'ui/utils/helpers';
@@ -37,8 +37,6 @@ interface OptionData {
 }
 
 const b = block('add-field');
-
-const preventTooltipCloseOnClick = () => false;
 
 export default class AddField extends React.Component<AddFieldProps> {
     render() {
@@ -109,22 +107,12 @@ export default class AddField extends React.Component<AddFieldProps> {
                             },
                         };
                     })}
-                    renderControl={({onClick, ref}) => {
-                        const actionIcon = <PlaceholderActionIcon icon={Plus} />;
+                    renderControl={({triggerProps: {onClick}, ref}) => {
+                        const actionProps = disabled
+                            ? {disabledText: <span data-qa={disabledTextQa}>{disabledText}</span>}
+                            : {qa: AddFieldQA.AddFieldButton, onClick, ref};
 
-                        return disabled ? (
-                            <CommonTooltip
-                                placement={['top', 'bottom']}
-                                content={<span data-qa={disabledTextQa}>{disabledText}</span>}
-                                onClick={preventTooltipCloseOnClick}
-                            >
-                                {actionIcon}
-                            </CommonTooltip>
-                        ) : (
-                            <span data-qa={AddFieldQA.AddFieldButton} onClick={onClick} ref={ref}>
-                                {actionIcon}
-                            </span>
-                        );
+                        return <PlaceholderActionIcon icon={Plus} {...actionProps} />;
                     }}
                 />
             </div>

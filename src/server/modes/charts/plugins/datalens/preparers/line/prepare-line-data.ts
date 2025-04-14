@@ -11,6 +11,7 @@ import {
     getFakeTitleOrTitle,
     getXAxisMode,
     isDateField,
+    isHtmlField,
     isMarkdownField,
     isMarkupField,
     isMeasureField,
@@ -20,13 +21,15 @@ import {
     isPseudoField,
     isVisualizationWithSeveralFieldsXPlaceholder,
 } from '../../../../../../../shared';
+import {wrapHtml} from '../../../../../../../shared/utils/ui-sandbox';
 import {mapAndColorizeGraphsByPalette} from '../../utils/color-helpers';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {
     chartKitFormatNumberWrapper,
     collator,
-    formatDate,
+    getCategoryFormatter,
     getLabelValue,
+    getSeriesTitleFormatter,
     getTimezoneOffsettedTime,
     isGradientMode,
     isNumericalDataType,
@@ -74,6 +77,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
     const xIsNumber = Boolean(xDataType && isNumberField({data_type: xDataType}));
     const chartConfig = getConfigWithActualFieldTypes({config: shared, idToDataType});
     const xAxisMode = getXAxisMode({config: chartConfig});
+    const isHtmlX = isHtmlField(xField);
 
     const x2 = isVisualizationWithSeveralFieldsXPlaceholder(visualizationId)
         ? xPlaceholder?.items[1]
@@ -97,8 +101,10 @@ export function prepareLineData(args: PrepareFunctionArgs) {
 
     const colorItem = colors[0];
     const colorFieldDataType = colorItem ? idToDataType[colorItem.guid] : null;
+    const isHtmlColor = isHtmlField(colorItem);
 
     const shapeItem = shapes[0];
+    const isHtmlShape = isHtmlField(shapeItem);
 
     const gradientMode =
         colorItem &&
@@ -109,11 +115,14 @@ export function prepareLineData(args: PrepareFunctionArgs) {
     const labelsLength = labels && labels.length;
     const isMarkdownLabel = isMarkdownField(labelItem);
     const isMarkupLabel = isMarkupField(labelItem);
+    const isHtmlLabel = isHtmlField(labelItem);
 
     const segmentField = segments[0];
     const segmentIndexInOrder = getSegmentsIndexInOrder(order, segmentField, idToTitle);
     const segmentsMap = getSegmentMap(args);
     const isSegmentsExists = !_isEmpty(segmentsMap);
+    const isHtmlSegment = isHtmlField(segmentField);
+    const segmentTitleFormatter = getSeriesTitleFormatter({fields: [segmentField]});
 
     const isShapeItemExist = Boolean(shapeItem && shapeItem.type !== 'PSEUDO');
     const isColorItemExist = Boolean(colorItem && colorItem.type !== 'PSEUDO');
@@ -137,6 +146,18 @@ export function prepareLineData(args: PrepareFunctionArgs) {
     const nullsY2 = y2Placeholder?.settings?.nulls;
 
     const categoriesMap = new Map<string | number, boolean>();
+    const seriesNameFormatter = getSeriesTitleFormatter({fields: [colorItem, shapeItem]});
+
+    const categoryField = xField
+        ? {...xField, data_type: xDataType ?? xField?.data_type}
+        : undefined;
+    const categoriesFormatter = getCategoryFormatter({
+        field: categoryField,
+    });
+
+    if (isHtmlLabel || isHtmlX || isHtmlColor || isHtmlShape || isHtmlSegment) {
+        ChartEditor.updateConfig({useHtml: true});
+    }
 
     if (mergedYSections.length) {
         let categories: (string | number)[] = [];
@@ -343,9 +364,12 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                 let prevYValue: string | number | null | undefined = null;
                 const graph: any = {
                     id: line.id,
-                    title: line.title || 'Null',
+                    title: seriesNameFormatter(line.title ?? 'Null'),
                     tooltip: line.tooltip,
-                    dataLabels: {...line.dataLabels, useHTML: isMarkdownLabel || isMarkupLabel},
+                    dataLabels: {
+                        ...line.dataLabels,
+                        useHTML: isMarkdownLabel || isMarkupLabel || isHtmlLabel,
+                    },
                     data: categories
                         .map((category, i) => {
                             const lineData = line.data[category];
@@ -389,9 +413,11 @@ export function prepareLineData(args: PrepareFunctionArgs) {
 
                             if (line.segmentNameKey) {
                                 const currentSegment = segmentsMap[line.segmentNameKey];
-                                const tooltipPointName = `${currentSegment.title}: ${line.title}`;
+                                const pointValue = `${currentSegment.title}: ${line.title}`;
                                 point.custom = {
-                                    tooltipPointName,
+                                    tooltipPointName: isHtmlSegment
+                                        ? wrapHtml(pointValue)
+                                        : pointValue,
                                 };
                             }
 
@@ -415,6 +441,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                             point.label = getLabelValue(innerLabels?.[category], {
                                 isMarkdownLabel,
                                 isMarkupLabel,
+                                isHtmlLabel,
                             });
 
                             if (isActionParamsEnable) {
@@ -432,15 +459,20 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                             return point;
                         })
                         .filter((point) => point !== null),
-                    legendTitle: line.legendTitle || line.title || 'Null',
-                    formattedName: colorItem ? undefined : line.formattedName,
+                    legendTitle: line.legendTitle ?? line.title ?? 'Null',
+                    formattedName: colorItem ? undefined : seriesNameFormatter(line.formattedName),
                     drillDownFilterValue: line.drillDownFilterValue,
                     colorKey: line.colorKey,
                     colorGuid: colorItem?.guid || null,
                     shapeGuid: shapeItem?.guid || null,
-                    connectNulls: nulls === AxisNullsMode.Connect,
                     measureFieldTitle: line.fieldTitle,
                 };
+
+                // For one point (non-zero), the setting of the connection empty values has a strange effect:
+                // the value stops being displayed on the graph
+                if (graph.data.length > 1) {
+                    graph.connectNulls = nulls === AxisNullsMode.Connect;
+                }
 
                 if (line.pointConflict) {
                     graph.pointConflict = true;
@@ -450,7 +482,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                     const currentSegment = segmentsMap[line.segmentNameKey];
                     graph.yAxis = currentSegment.index;
 
-                    customSeriesData.segmentTitle = currentSegment.title;
+                    customSeriesData.segmentTitle = segmentTitleFormatter(currentSegment.title);
                 } else if (lineKeysIndex === 0 || ySectionItems.length === 0) {
                     graph.yAxis = 0;
                 } else {
@@ -535,16 +567,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
         if (isXCategoryAxis) {
             return {
                 graphs,
-                categories: categories.map((value) => {
-                    return xIsDate
-                        ? formatDate({
-                              valueType: xDataType!,
-                              value,
-                              format: xField?.format,
-                              utc: true,
-                          })
-                        : value;
-                }),
+                categories: categories.map(categoriesFormatter),
             };
         } else {
             return {graphs};
@@ -603,6 +626,9 @@ export function prepareLineData(args: PrepareFunctionArgs) {
             return {graphs, categories_ms: categories};
         }
 
-        return {graphs, categories};
+        return {
+            graphs,
+            categories: categories.map(categoriesFormatter),
+        };
     }
 }

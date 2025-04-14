@@ -1,4 +1,5 @@
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
+import set from 'lodash/set';
 
 import type {ExtendedExportingCsvOptions} from '../../../../../../../shared';
 import {
@@ -6,10 +7,11 @@ import {
     ChartkitHandlers,
     LegendDisplayMode,
     isDateField,
+    isHtmlField,
     isMarkdownField,
 } from '../../../../../../../shared';
-import {getGradientStops} from '../../utils/color-helpers';
 import {getFieldExportingOptions, getFieldsExportingOptions} from '../../utils/export-helpers';
+import {getGradientStops} from '../../utils/get-gradient-stops';
 import {isGradientMode, isNumericalDataType} from '../../utils/misc-helpers';
 import {getAxisFormattingByField} from '../line/helpers/axis/getAxisFormattingByField';
 import type {ChartKitFormatSettings, PrepareFunctionArgs} from '../types';
@@ -19,8 +21,19 @@ import {prepareScatter} from './prepare-scatter';
 // eslint-disable-next-line complexity
 export function prepareHighchartsScatter(options: PrepareFunctionArgs) {
     const {ChartEditor, shared, placeholders, idToTitle, idToDataType} = options;
-    const {graphs, categories, x, y, z, color, minColorValue, maxColorValue, colorsConfig, size} =
-        prepareScatter(options);
+    const {
+        graphs,
+        categories,
+        x,
+        y,
+        z,
+        color,
+        shape,
+        minColorValue,
+        maxColorValue,
+        colorsConfig,
+        size,
+    } = prepareScatter(options);
 
     const colorFieldDataType = color ? idToDataType[color.guid] : null;
 
@@ -97,22 +110,6 @@ export function prepareHighchartsScatter(options: PrepareFunctionArgs) {
             );
         }
 
-        if (isMarkdownField(x)) {
-            customConfig.xAxis = {
-                ...(customConfig.xAxis ?? {}),
-                labels: {
-                    useHTML: true,
-                },
-            };
-        }
-
-        if (isMarkdownField(color)) {
-            customConfig.legend = {
-                ...(customConfig.legend ?? {}),
-                useHTML: true,
-            };
-        }
-
         if (yPlaceholderSettings?.axisFormatMode === AxisLabelFormatMode.ByField) {
             customConfig.axesFormatting.yAxis.push(
                 getAxisFormattingByField(yPlaceholder, shared.visualization.id),
@@ -128,7 +125,7 @@ export function prepareHighchartsScatter(options: PrepareFunctionArgs) {
                 customConfig.colorAxis = {
                     min: minColorValue,
                     max: maxColorValue,
-                    stops: getGradientStops(colorsConfig, points, minColorValue, maxColorValue),
+                    stops: getGradientStops({colorsConfig, points, minColorValue, maxColorValue}),
                 } as Highcharts.ColorAxisOptions;
             }
 
@@ -137,6 +134,25 @@ export function prepareHighchartsScatter(options: PrepareFunctionArgs) {
                     enabled: true,
                 };
             }
+        }
+
+        const shouldUseHtmlForXAxis = isHtmlField(x) || isMarkdownField(x);
+        if (shouldUseHtmlForXAxis) {
+            set(customConfig, 'xAxis.labels.useHTML', true);
+        }
+
+        const shouldUseHtmlForYAxis = isHtmlField(y) || isMarkdownField(y);
+        if (shouldUseHtmlForYAxis) {
+            set(customConfig, 'yAxis.labels.useHTML', true);
+        }
+
+        const shouldUseHtmlForLegend =
+            isMarkdownField(color) ||
+            isHtmlField(color) ||
+            isMarkdownField(shape) ||
+            isHtmlField(shape);
+        if (shouldUseHtmlForLegend) {
+            set(customConfig, 'legend.useHTML', true);
         }
 
         ChartEditor.updateHighchartsConfig(customConfig);

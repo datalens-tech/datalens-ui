@@ -5,10 +5,9 @@
   "label_no-changes": "No changes yet",
   "label_progress-open": "Opening",
   "label_progress-publishing": "Publishing",
-  "label_progress-reset": "Rolling back",
   "label_status-current": "Current",
   "label_status-draft": "Draft",
-  "label_status-published": "Published",
+  "label_status-published": "Actual",
   "label_status-tooltip-current": "Current",
   "label_status-tooltip-draft": "Draft",
   "label_status-tooltip-not-actual": "Not actual",
@@ -18,6 +17,5 @@
   "toast_get-revisions-failed": "Failed to load change history",
   "toast_warning-has-no-saved-changes": "Any unsaved changes will be lost.",
   "value_open-revision": "Open",
-  "value_publish-reset": "Roll back",
-  "value_publish-revision": "Publish"
+  "value_publish-revision": "Make actual"
 }

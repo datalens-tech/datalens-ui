@@ -2,7 +2,10 @@
     display: inline-flex;
     align-items: center;
     width: 152px;
-    line-height: 16px;
+
+    &_align_start {
+        transform: translateY(5px);
+    }
 
     &__inner-content {
         width: inherit;

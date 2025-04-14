@@ -1,5 +1,13 @@
-import type {Dataset, DatasetField, DatasetFieldCalcMode, DatasetFieldError} from '../../../types';
+import type {
+    Dataset,
+    DatasetField,
+    DatasetFieldCalcMode,
+    DatasetFieldError,
+    TransferIdMapping,
+    TransferNotification,
+} from '../../../types';
 import type {ApiV2RequestBody, ApiV2ResultData} from '../../../types/bi-api/v2';
+import type {EntryFieldData} from '../../types';
 
 import type {WorkbookIdArg} from './common';
 
@@ -73,6 +81,18 @@ export type CheckDatasetsForPublicationResponse = {
 
 export type CheckDatasetsForPublicationArgs = {
     datasetsIds: string[];
+} & WorkbookIdArg;
+
+export type CheckConnectionsForPublicationResponse = {
+    result: {
+        allowed: boolean;
+        connection_id: string;
+        reason: string | null;
+    }[];
+};
+
+export type CheckConnectionsForPublicationArgs = {
+    connectionsIds: string[];
 } & WorkbookIdArg;
 
 export type ValidateDatasetErrorResponse = {
@@ -189,9 +209,37 @@ export type GetDistinctsApiV2TransformedResponse = {
     };
 };
 
+export type GetDistinctsApiV2InfoHeadersArg = Record<string, string>;
+
 export type GetDistinctsApiV2Args = Omit<
     ApiV2RequestBody,
     'pivot' | 'order_by' | 'disable_group_by' | 'with_totals' | 'autofill_legend'
 > &
     DatasetId &
     WorkbookIdArg;
+
+export type ExportDatasetResponse = {
+    dataset: EntryFieldData;
+    notifications: TransferNotification[];
+};
+
+export type ExportDatasetArgs = {
+    usMasterToken: string;
+    datasetId: string;
+    id_mapping: TransferIdMapping;
+    workbookId?: string | null;
+};
+
+export type ImportDatasetResponse = {
+    id: string;
+    notifications: TransferNotification[];
+};
+
+export type ImportDatasetArgs = {
+    usMasterToken: string;
+    data: {
+        workbook_id: string;
+        dataset: EntryFieldData;
+    };
+    id_mapping: TransferIdMapping;
+};

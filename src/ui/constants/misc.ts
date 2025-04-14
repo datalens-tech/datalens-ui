@@ -134,6 +134,7 @@ export const UNDO_HOTKEY = [MOD_KEY, 'z'];
 export const REDO_HOTKEY = [MOD_KEY, 'shift', 'z'];
 
 export const HOTKEYS_SCOPES = {
+    DATASETS: 'datasets',
     GLOBAL: 'global',
     WIZARD: 'wizard',
     QL: 'ql',

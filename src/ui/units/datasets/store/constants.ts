@@ -1,4 +1,8 @@
-import type {Dataset} from '../../../../shared';
+import type {Dataset} from 'shared';
+
+import type {DatasetTab} from '../constants';
+import {DATASET_TABS, TAB_DATASET, TAB_SOURCES} from '../constants';
+import DatasetUtils, {isCreationProcess} from '../helpers/utils';
 
 import type {DatasetReduxState} from './types';
 
@@ -8,12 +12,27 @@ const getDefaultDatasetContent = (): Partial<Dataset['dataset']> => ({
     obligatory_filters: [],
     result_schema: [],
     result_schema_aux: {inter_dependencies: {deps: []}},
-    rls: {},
     source_avatars: [],
     source_features: {},
     sources: [],
     load_preview_by_default: true,
+    rls: {},
 });
+
+const isDatasetTab = (value: unknown): value is DatasetTab => {
+    return typeof value === 'string' && DATASET_TABS.includes(value);
+};
+
+const getCurrentTab = (): DatasetTab => {
+    const defaultTab = isCreationProcess(location.pathname) ? TAB_SOURCES : TAB_DATASET;
+    const queryTab = DatasetUtils.getQueryParam('tab');
+
+    if (isDatasetTab(queryTab)) {
+        return queryTab;
+    }
+
+    return defaultTab;
+};
 
 export const initialPreview: DatasetReduxState['preview'] = {
     previewEnabled: true,
@@ -49,6 +68,7 @@ export const initialState: DatasetReduxState = {
     },
     validation: {
         isLoading: false,
+        isPending: false,
         error: null,
     },
     savingDataset: {
@@ -62,7 +82,6 @@ export const initialState: DatasetReduxState = {
     },
     ui: {
         selectedConnectionId: null,
-        asideHeaderWidth: null,
         isDatasetChanged: false,
         isFieldEditorModuleLoading: false,
         isSourcesLoading: false,
@@ -77,9 +96,12 @@ export const initialState: DatasetReduxState = {
     sourcePrototypes: [],
     sourceTemplate: null,
     error: null,
+    currentTab: getCurrentTab(),
 };
 
 export const getInitialState = (extra?: Partial<DatasetReduxState>): DatasetReduxState => ({
     ...initialState,
     ...extra,
 });
+
+export const EDIT_HISTORY_OPTIONS_KEY = '__editHistoryOptions__';

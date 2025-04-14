@@ -1,3 +1,4 @@
+// TODO: remove after support usage of scrollUtils in dash module
 export const scrollIntoView = (
     id: string,
     options?: ScrollIntoViewOptions,

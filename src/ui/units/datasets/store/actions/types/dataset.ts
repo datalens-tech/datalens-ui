@@ -77,7 +77,6 @@ export const DELETE_OBLIGATORY_FILTER = Symbol('dataset/DELETE_OBLIGATORY_FILTER
 export const TOGGLE_FIELD_EDITOR_MODULE_LOADING = Symbol(
     'dataset/TOGGLE_FIELD_EDITOR_MODULE_LOADING',
 );
-export const SET_ASIDE_HEADER_WIDTH = Symbol('dataset/SET_ASIDE_HEADER_WIDTH');
 
 export const TOGGLE_SOURCES_LOADER = Symbol('dataset/TOGGLE_SOURCES_LOADER');
 export const SET_SOURCES_LOADING_ERROR = Symbol('dataset/SET_SOURCES_LOADING_ERROR');
@@ -87,3 +86,10 @@ export const EDITOR_SET_FILTER = Symbol('dataset/EDITOR_SET_FILTER');
 export const EDITOR_SET_ITEMS_TO_DISPLAY = Symbol('dataset/EDITOR_SET_ITEMS_TO_DISPLAY');
 
 export const RENAME_DATASET = Symbol('dataset/RENAME_DATASET');
+
+export const SET_EDIT_HISTORY_STATE = Symbol('dataset/SET_EDIT_HISTORY_STATE');
+
+export const SET_CURRENT_TAB = Symbol('dataset/SET_CURRENT_TAB');
+export const SET_LAST_MODIFIED_TAB = Symbol('dataset/SET_LAST_MODIFIED_TAB');
+
+export const SET_VALIDATION_STATE = Symbol('dataset/SET_VALIDATION_STATE');

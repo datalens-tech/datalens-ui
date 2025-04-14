@@ -36,7 +36,7 @@ export function umdTemplate(content: string, globalVar: string) {
 `.trim();
 }
 
-async function listKeysetDirNames(keysetsDir: string) {
+export async function listKeysetDirNames(keysetsDir: string) {
     const result: string[] = [];
     const directories = await fs.promises.readdir(keysetsDir, {withFileTypes: true});
 
@@ -49,7 +49,7 @@ async function listKeysetDirNames(keysetsDir: string) {
     return result;
 }
 
-async function loadJson(dirname: string, filename: string) {
+export async function loadJson(dirname: string, filename: string) {
     const fullname = path.resolve(dirname, filename);
     const content = await fs.promises.readFile(fullname, {
         encoding: 'utf-8',
@@ -61,7 +61,7 @@ async function loadJson(dirname: string, filename: string) {
     }
 }
 
-type KeysetsWithLangs = {
+export type KeysetsWithLangs = {
     [lang in string]: {
         [name in string]: {
             content: Record<string, unknown>;
@@ -97,7 +97,7 @@ export async function getKeysets(keysetsDir: string) {
     return keysets;
 }
 
-type KeysetData = {
+export type KeysetData = {
     filename: string;
     keyset: Record<string, Record<string, unknown>>;
 };

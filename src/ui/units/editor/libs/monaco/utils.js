@@ -1,6 +1,7 @@
 import inRange from 'lodash/inRange';
 
 import {DL, URL_QUERY} from '../../../../constants';
+import {getSdk} from '../../../../libs/schematic-sdk';
 import {UrlSearch} from '../../../../utils';
 import {DEFAULT_TAB_ID, EVENT_DRAW_PREVIEW, UNRELEASED_MODULE_MARK} from '../../constants/common';
 import {copyTextToClipboard} from '../../utils/utils';
@@ -94,7 +95,7 @@ export class MonacoUtils {
         );
         const revId = getRevId();
         if (revId) {
-            url.searchParams.set(URL_QUERY.REV_ID_OLD, revId);
+            url.searchParams.set(URL_QUERY.REV_ID, revId);
         }
         copyTextToClipboard(url.href);
     }
@@ -116,13 +117,21 @@ export class MonacoUtils {
     }
 
     static addModuleClickAction(editor, onModuleClick) {
-        editor.onMouseDown(({event, target}) => {
+        editor.onMouseDown(async ({event, target}) => {
             const matchRequire = MonacoUtils.getRequire(editor, target.position);
             if (matchRequire && (event.metaKey || event.ctrlKey)) {
                 if (event.altKey) {
                     onModuleClick(matchRequire);
                 } else {
-                    window.open(`${DL.ENDPOINTS.charts}/editor/${matchRequire.key}`, '_blank');
+                    try {
+                        // fix module resolve without navigation service
+                        const {entryId} = await getSdk().sdk.us.getEntryByKey({
+                            key: matchRequire.key,
+                        });
+                        window.open(`/editor/${entryId}`, '_blank');
+                    } catch (error) {
+                        window.open(`${DL.ENDPOINTS.charts}/editor/${matchRequire.key}`, '_blank');
+                    }
                 }
             }
         });

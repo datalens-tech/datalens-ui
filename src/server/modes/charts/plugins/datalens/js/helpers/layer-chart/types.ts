@@ -6,8 +6,3 @@ export interface ExtendCombinedChartGraphsArgs {
     layers: ServerVisualizationLayer[];
     legendValues: Record<string, string>;
 }
-
-export interface GetLayerChartMetaArgs {
-    layers: ServerVisualizationLayer[];
-    isComboChart: boolean;
-}

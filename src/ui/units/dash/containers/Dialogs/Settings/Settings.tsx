@@ -5,7 +5,9 @@ import block from 'bem-cn-lite';
 import ChartKit from 'libs/DatalensChartkit';
 import {useDispatch, useSelector} from 'react-redux';
 import {DashboardDialogSettingsQa} from 'shared/constants/qa/dash';
+import {DEFAULT_DASH_MARGINS} from 'ui/components/DashKit/constants';
 import {registry} from 'ui/registry';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {DatalensGlobalState} from '../../../../..';
 import {EntryDialogName} from '../../../../..';
@@ -14,7 +16,6 @@ import type {DashSettingsGlobalParams} from '../../../../../../shared';
 import {DashLoadPriority, Feature} from '../../../../../../shared';
 import EntryDialogues from '../../../../../components/EntryDialogues/EntryDialogues';
 import {DIALOG_TYPE} from '../../../../../constants/dialogs';
-import Utils from '../../../../../utils';
 import {validateParamTitle} from '../../../components/ParamsSettings/helpers';
 import {
     setDashAccessDescription,
@@ -76,6 +77,7 @@ const Settings = () => {
     const [expandTOC, setExpandTOC] = React.useState(settings.expandTOC);
     const [accessDescription, setAccessDesc] = React.useState(accessDesc);
     const [supportDescription, setSupportDesc] = React.useState(supportDesc);
+    const [margins, setMargins] = React.useState(settings.margins || DEFAULT_DASH_MARGINS);
 
     const entryDialoguesRef = React.useRef<EntryDialogues>(null);
 
@@ -121,24 +123,35 @@ const Settings = () => {
             !dependentSelectors ||
             confirm(i18n('dash.settings-dialog.edit', 'context_dependent-selectors'))
         ) {
-            dispatch(
-                setSettings({
-                    ...settings,
-                    autoupdateInterval:
-                        (typeof autoupdateInterval === 'string'
-                            ? parseInt(autoupdateInterval)
-                            : autoupdateInterval) || null,
-                    maxConcurrentRequests: maxConcurrentRequests > 0 ? maxConcurrentRequests : null,
-                    loadOnlyVisibleCharts,
-                    silentLoading,
-                    dependentSelectors,
-                    globalParams,
-                    hideTabs,
-                    hideDashTitle,
-                    expandTOC,
-                    loadPriority,
-                }),
-            );
+            const newSettings = {
+                ...settings,
+                autoupdateInterval:
+                    (typeof autoupdateInterval === 'string'
+                        ? parseInt(autoupdateInterval)
+                        : autoupdateInterval) || null,
+                maxConcurrentRequests: maxConcurrentRequests > 0 ? maxConcurrentRequests : null,
+                loadOnlyVisibleCharts,
+                silentLoading,
+                dependentSelectors,
+                globalParams,
+                hideTabs,
+                hideDashTitle,
+                expandTOC,
+                loadPriority,
+            };
+
+            if (
+                margins &&
+                margins[0] !== DEFAULT_DASH_MARGINS[0] &&
+                margins[1] !== DEFAULT_DASH_MARGINS[1]
+            ) {
+                newSettings.margins = margins;
+            } else {
+                // Cleaning default values
+                delete newSettings.margins;
+            }
+
+            dispatch(setSettings(newSettings));
             dispatch(setDashAccessDescription(accessDescription));
             dispatch(setDashSupportDescription(supportDescription));
             dispatch(toggleTableOfContent(Boolean(expandTOC)));
@@ -185,6 +198,14 @@ const Settings = () => {
         setGlobalParams(params);
     }, []);
 
+    const handleMarginsChange = React.useCallback((margins: number | [number, number]) => {
+        if (Array.isArray(margins)) {
+            setMargins(margins);
+        } else {
+            setMargins([margins, margins]);
+        }
+    }, []);
+
     const showDependentSelectors = !settings.dependentSelectors;
 
     return settings ? (
@@ -197,7 +218,7 @@ const Settings = () => {
         >
             <Dialog.Header caption={i18n('dash.settings-dialog.edit', 'label_settings')} />
             <Dialog.Body className={b()}>
-                {Utils.isEnabledFeature(Feature.DashAutorefresh) && (
+                {isEnabledFeature(Feature.DashAutorefresh) && (
                     <AutoRefresh
                         autoUpdateValue={autoupdate}
                         onChangeAutoUpdate={() => {
@@ -216,6 +237,8 @@ const Settings = () => {
                     />
                 )}
                 <Display
+                    margins={margins}
+                    onChangeMargins={handleMarginsChange}
                     hideTabsValue={hideTabs}
                     onChangeHideTabs={() => setHideTabs(!hideTabs)}
                     hideDashTitleValue={hideDashTitle}

@@ -5,10 +5,9 @@
   "label_no-changes": "Изменения отсутствуют",
   "label_progress-open": "Открытие",
   "label_progress-publishing": "Публикация",
-  "label_progress-reset": "Откатываем",
   "label_status-current": "Текущая",
   "label_status-draft": "Черновик",
-  "label_status-published": "Опубликовано",
+  "label_status-published": "Актуальная",
   "label_status-tooltip-current": "Текущая",
   "label_status-tooltip-draft": "Черновик",
   "label_status-tooltip-not-actual": "Неактуальная",
@@ -18,6 +17,5 @@
   "toast_get-revisions-failed": "Не удалось загрузить историю изменений",
   "toast_warning-has-no-saved-changes": "Все не сохраненные изменения будут утеряны.",
   "value_open-revision": "Открыть",
-  "value_publish-reset": "Откатить",
-  "value_publish-revision": "Опубликовать"
+  "value_publish-revision": "Сделать актуальной"
 }

@@ -24,6 +24,7 @@ export type ResolvedConfig = {
         statface_graph: string;
         map?: string;
         ymap?: string;
+        actions?: string;
     };
     key: string;
     links?: string[];
@@ -31,7 +32,6 @@ export type ResolvedConfig = {
         is_release?: boolean;
         stype: ChartStorageType | ControlType.Dash;
         owner?: string;
-        sandbox_version?: string;
     };
     permissions: {execute: boolean; read: boolean; edit: boolean; admin: boolean};
     scope: EntryScope;
@@ -49,6 +49,8 @@ export type ResolvedConfig = {
     template?: keyof ChartTemplates;
     owner?: string;
     publicAuthor?: EntryPublicAuthor;
+    servicePlan?: string;
+    tenantFeatures?: Record<string, unknown>;
 };
 
 export type ReducedResolvedConfig = ResolvedConfig & {data: {shared: string | object}};

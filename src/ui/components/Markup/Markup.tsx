@@ -1,37 +1,42 @@
 import React from 'react';
 
+import {sanitizeUrl} from '@braintree/sanitize-url';
 import {Link} from '@gravity-ui/uikit';
 import merge from 'lodash/merge';
+import omit from 'lodash/omit';
+import type {MarkupItem, MarkupItemType} from 'shared';
+import {MarkupItemTypes, isMarkupItem, markupToRawString} from 'shared';
 
-import type {MarkupItem, MarkupItemType} from '../../../shared';
-import {MarkupItemTypes, isMarkupItem, markupToRawString} from '../../../shared';
+import {getRandomCKId} from '../../libs/DatalensChartkit/helpers/helpers';
+import {ATTR_DATA_TOOLTIP_ANCHOR_ID} from '../../libs/DatalensChartkit/modules/html-generator/constants';
 
-import {UserInfo} from './components/UserInfo/UserInfo';
+import {MarkupTooltip, UserInfo} from './components';
+import type {TemplateItem} from './types';
 import {isNumericCSSValueValid} from './utils';
 
-type TemplateItem = {
-    children: (TemplateItem | string)[];
-    element?: string | React.ComponentClass | React.ExoticComponent | React.FC;
-    props?: {[key: string]: string | Record<string, unknown>};
-};
-
-type Props = {
+type MarkupProps = {
     item: MarkupItem;
     externalProps?: Partial<Record<MarkupItemType, Record<string, unknown>>>;
 };
 
 // eslint-disable-next-line complexity
-const getConfig = (
-    markupItem?: string | MarkupItem,
-    externalProps?: Props['externalProps'],
-    configItem?: TemplateItem,
-    config?: TemplateItem,
-): TemplateItem => {
+function getConfig({
+    markupItem,
+    externalProps,
+    configItem,
+    config,
+}: {
+    markupItem?: string | MarkupItem;
+    externalProps?: MarkupProps['externalProps'];
+    configItem?: TemplateItem;
+    config?: TemplateItem;
+}): TemplateItem {
     if (!markupItem) {
         return config as TemplateItem;
     }
 
     const iteratedConfigItem = configItem || {children: []};
+    const childProps: Record<string, string> = {};
 
     if (typeof markupItem === 'string') {
         iteratedConfigItem.children.push(markupItem);
@@ -75,7 +80,11 @@ const getConfig = (
             if (markupItem.children) {
                 iteratedConfigItem.children.push(
                     ...markupItem.children.map((child) => {
-                        return getConfig(child, externalProps, {children: []});
+                        return getConfig({
+                            markupItem: child,
+                            externalProps,
+                            configItem: {children: []},
+                        });
                     }),
                 );
             }
@@ -97,11 +106,13 @@ const getConfig = (
             break;
         }
         case MarkupItemTypes.Url: {
+            const href = sanitizeUrl(markupItem.url || '');
             iteratedConfigItem.element = Link as TemplateItem['element'];
             iteratedConfigItem.props = merge(iteratedConfigItem.props, {
                 view: 'normal',
-                href: markupItem.url || '',
+                href,
                 target: '_blank',
+                extraProps: omit(iteratedConfigItem.props, 'view', 'href', 'target'),
             });
             break;
         }
@@ -125,6 +136,20 @@ const getConfig = (
             });
             break;
         }
+        case MarkupItemTypes.Tooltip: {
+            iteratedConfigItem.element = MarkupTooltip;
+            const tooltipId = getRandomCKId();
+
+            iteratedConfigItem.props = {
+                tooltipId,
+                content: markupItem.tooltip ?? '',
+                ...(markupItem.placement && {placement: markupItem.placement}),
+            };
+
+            childProps[ATTR_DATA_TOOLTIP_ANCHOR_ID] = tooltipId;
+
+            break;
+        }
     }
 
     if (externalProps?.[markupItem.type]) {
@@ -132,7 +157,7 @@ const getConfig = (
     }
 
     const content = markupItem.content as MarkupItem;
-    let nextConfigItem: TemplateItem = {children: []};
+    let nextConfigItem: TemplateItem = {children: [], props: {...childProps}};
 
     if (content?.type && content.type !== MarkupItemTypes.Text) {
         iteratedConfigItem.children.push(nextConfigItem);
@@ -142,10 +167,15 @@ const getConfig = (
 
     const nextConfig = config || iteratedConfigItem;
 
-    return getConfig(markupItem.content, externalProps, nextConfigItem, nextConfig);
-};
+    return getConfig({
+        markupItem: markupItem.content,
+        externalProps,
+        configItem: nextConfigItem,
+        config: nextConfig,
+    });
+}
 
-const renderTemplate = (templateItem: TemplateItem | string): JSX.Element => {
+export function renderTemplate(templateItem: TemplateItem | string): JSX.Element {
     if (typeof templateItem === 'string') {
         // Part of ReactNode type is undefined, which is not a valid JSX element
         // Wrapping the result in a fragment solves this issue
@@ -157,6 +187,13 @@ const renderTemplate = (templateItem: TemplateItem | string): JSX.Element => {
         templateItem.props,
         ...templateItem.children.map((child) => renderTemplate(child)),
     );
-};
+}
 
-export default (props: Props) => renderTemplate(getConfig(props.item, props.externalProps));
+export function Markup(props: MarkupProps) {
+    const {item: markupItem, externalProps} = props;
+    const template = getConfig({markupItem, externalProps});
+
+    return renderTemplate(template);
+}
+
+export default Markup;

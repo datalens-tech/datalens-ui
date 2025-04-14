@@ -1,51 +1,58 @@
 import React from 'react';
 
-import {Popover} from '@gravity-ui/uikit';
+import type {IconData} from '@gravity-ui/uikit';
+import {Button, Icon, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
 import './PlaceholderActionIcon.scss';
 
 interface PlaceholderActionIconProps {
-    icon: React.ElementType;
-    onClick?: () => void;
+    icon: IconData;
+    iconSize?: number;
+    onClick?: React.MouseEventHandler | VoidFunction;
     className?: string;
-    disabledText?: string;
+    disabledText?: string | React.ReactNode;
     hoverText?: string;
     qa?: string;
     hidden?: boolean;
     isFirstElementInRow?: boolean;
-
-    styles?: React.CSSProperties;
 }
 
 const b = block('placeholder-action-icon');
 
-const PlaceholderActionIcon: React.FC<PlaceholderActionIconProps> = (props) => {
-    if (props.hidden) {
+const PlaceholderActionIcon: React.FC<PlaceholderActionIconProps> = ({
+    icon: iconData,
+    iconSize,
+    onClick,
+    className,
+    disabledText,
+    hoverText,
+    qa,
+    hidden,
+    isFirstElementInRow,
+}) => {
+    if (hidden) {
         return null;
     }
 
-    const Component = props.icon;
+    const icon = <Icon data={iconData} size={iconSize ?? 16} />;
 
-    const icon = <Component width="24" style={props.styles} />;
+    const content = (
+        <Button view="flat-secondary" size="s" onClick={onClick} qa={qa}>
+            {icon}
+        </Button>
+    );
 
-    return (
-        <div
-            className={b({first: props.isFirstElementInRow}, props.className)}
-            onClick={props.onClick}
-            data-qa={props.qa}
+    return disabledText || hoverText ? (
+        <Popover
+            placement={['right', 'top', 'bottom']}
+            content={disabledText || hoverText}
+            className={b({first: isFirstElementInRow}, className)}
         >
-            {props.disabledText || props.hoverText ? (
-                <Popover
-                    placement={['right', 'top', 'bottom']}
-                    content={props.disabledText || props.hoverText}
-                >
-                    {icon}
-                </Popover>
-            ) : (
-                icon
-            )}
-        </div>
+            {content}
+        </Popover>
+    ) : (
+        <div className={b({first: isFirstElementInRow}, className)}>{content}</div>
     );
 };
 

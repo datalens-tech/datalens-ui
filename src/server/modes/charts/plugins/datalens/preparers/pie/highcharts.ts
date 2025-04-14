@@ -1,5 +1,7 @@
-import {PlaceholderId, getFakeTitleOrTitle} from '../../../../../../../shared';
-import {getGradientStops} from '../../utils/color-helpers';
+import set from 'lodash/set';
+
+import {getFakeTitleOrTitle, isHtmlField} from '../../../../../../../shared';
+import {getGradientStops} from '../../utils/get-gradient-stops';
 import {isLegendEnabled} from '../../utils/misc-helpers';
 import type {PrepareFunctionArgs} from '../types';
 
@@ -7,8 +9,8 @@ import preparePieData from './prepare-pie-data';
 import {isColoringByMeasure} from './utils';
 
 export function prepareHighchartsPie(args: PrepareFunctionArgs) {
-    const {ChartEditor, colorsConfig, labels, shared, placeholders} = args;
-    const {graphs, totals, measure, label} = preparePieData(args);
+    const {ChartEditor, colorsConfig, labels, shared} = args;
+    const {graphs, totals, measure, label, color, dimension} = preparePieData(args);
 
     const labelsLength = labels && labels.length;
     const isHideLabel = measure?.hideLabelMode === 'hide';
@@ -26,8 +28,6 @@ export function prepareHighchartsPie(args: PrepareFunctionArgs) {
     const pie = graphs[0];
 
     if (pie && pie.data) {
-        const colorField = placeholders.find((p) => p.id === PlaceholderId.Colors)?.items[0];
-
         if (isColoringByMeasure(args)) {
             pie.showInLegend = false;
 
@@ -42,17 +42,22 @@ export function prepareHighchartsPie(args: PrepareFunctionArgs) {
                 endOnTick: false,
                 min: minColorValue,
                 max: maxColorValue,
-                stops: getGradientStops(colorsConfig, points, minColorValue, maxColorValue),
+                stops: getGradientStops({colorsConfig, points, minColorValue, maxColorValue}),
             };
 
             customConfig.legend = {
                 title: {
-                    text: getFakeTitleOrTitle(colorField),
+                    text: getFakeTitleOrTitle(color),
                 },
                 enabled: isLegendEnabled(shared.extraSettings),
                 symbolWidth: null,
             };
         }
+    }
+
+    const shouldUseHtmlForLegend = [dimension, color].some(isHtmlField);
+    if (shouldUseHtmlForLegend) {
+        set(customConfig, 'legend.useHTML', true);
     }
 
     ChartEditor.updateHighchartsConfig(customConfig);

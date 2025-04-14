@@ -125,7 +125,8 @@ const mapColumnsToRequestFields = (columns: string[]): ApiV2RequestField[] => {
 };
 
 type BuildSourcePayload = {
-    id: string;
+    id?: string;
+    datasetId?: string;
     columns: string[];
     where?: {
         column: string;
@@ -210,15 +211,13 @@ function buildSource(payload: BuildSourcePayload) {
         }
     });
 
-    const apiV2Request: ApiV2Request = {
-        url: `/_bi_datasets/${payload.id}/result`,
-        method: 'POST',
+    return {
+        datasetId: String(payload.id || payload.datasetId),
+        path: 'result',
         data: requestData,
         ui: payload.ui,
         cache: payload.cache,
     };
-
-    return apiV2Request;
 }
 
 function processData(

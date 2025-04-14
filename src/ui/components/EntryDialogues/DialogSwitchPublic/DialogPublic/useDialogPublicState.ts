@@ -126,6 +126,7 @@ function getCurrentEntryDisabled(
                 'component.dialog-switch-public.view',
                 'label_some-entries-not-ready',
             ),
+            hasLockedEntries: true,
         };
     }
     return {
@@ -215,6 +216,7 @@ const getInitialState = (data: Partial<State>): State => {
         error: {
             title: '',
         },
+        hasLockedEntries: false,
     };
 };
 
@@ -373,12 +375,12 @@ export const useDialogPublicState = ({
         async function init() {
             dispatch({type: DIALOG_PUBLIC_SET_LOADING});
             try {
-                const entry = await getSdk().us.getEntry({
+                const entry = await getSdk().sdk.us.getEntry({
                     entryId: propsEntry.entryId,
                     includePermissionsInfo: true,
                     includeDlComponentUiData: true,
                 });
-                const relations = await getSdk().mix.getPublicationPreview({
+                const relations = await getSdk().sdk.mix.getPublicationPreview({
                     entryId: entry.entryId,
                     workbookId: entry.workbookId,
                 });
@@ -391,10 +393,8 @@ export const useDialogPublicState = ({
 
                 if (refMounted.current) {
                     const normalizedRelations = normalizeRelations(relations, extendedEntry);
-                    const {currentEntryDisabled, currentEntryTooltip} = getCurrentEntryDisabled(
-                        extendedEntry,
-                        normalizedRelations,
-                    );
+                    const {currentEntryDisabled, currentEntryTooltip, hasLockedEntries} =
+                        getCurrentEntryDisabled(extendedEntry, normalizedRelations);
                     const entryAuthor = {text: '', link: ''};
                     if (entry.unversionedData) {
                         const unversionedData = entry.unversionedData as {
@@ -419,6 +419,7 @@ export const useDialogPublicState = ({
                             currentEntryDisabled,
                             currentEntryTooltip,
                             entryAuthor,
+                            hasLockedEntries: Boolean(hasLockedEntries),
                         },
                     });
                 }
@@ -472,7 +473,7 @@ export const useDialogPublicState = ({
             });
             const entries = getPublicationEntries(state);
             getSdk()
-                .mix.switchPublicationStatus({
+                .sdk.mix.switchPublicationStatus({
                     entries,
                     mainEntry: {
                         entryId: propsEntry.entryId,
@@ -541,7 +542,7 @@ export const useDialogPublicState = ({
 
     return {
         state,
-        disableBtnApply: (!hasPublishChanges(state) && !hasAuthorChanges(state)) || !isValid(state),
+        disableApply: (!hasPublishChanges(state) && !hasAuthorChanges(state)) || !isValid(state),
         refetch,
         apply,
         dispatchAction,

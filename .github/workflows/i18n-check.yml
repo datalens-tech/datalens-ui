@@ -25,14 +25,14 @@ concurrency:
 jobs:
     i18n_check:
         runs-on: ubuntu-latest
-        if: github.actor != 'WeblateGravity' && github.event.pull_request.draft == false
+        if: github.actor != 'datalens-weblate-robot' && github.event.pull_request.draft == false
         steps:
             - uses: actions/checkout@v4
               with:
                   ref: ${{ github.event.pull_request.head.sha }}
 
             - name: Verifying changes with Weblate
-              uses: dgaponov/weblate-action@v1.43.0
+              uses: dgaponov/weblate-action@v1.49.0
               with:
                   SERVER_URL: "https://weblate.gravity-ui.com"
                   TOKEN: ${{ secrets.WEBLATE_TOKEN }}

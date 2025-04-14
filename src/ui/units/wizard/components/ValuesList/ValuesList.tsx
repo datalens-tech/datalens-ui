@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Loader, TextInput} from '@gravity-ui/uikit';
+import {Alert, Loader, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import _ from 'lodash';
@@ -137,9 +137,11 @@ class ValuesList extends React.Component<Props, State> {
         return (
             <div className={b('values-container')}>
                 {error ? (
-                    <div className={b('error-label')}>
-                        {i18n('wizard', 'label_error-loading-filter-values')}
-                    </div>
+                    <Alert
+                        theme="danger"
+                        className={b('error-label')}
+                        message={i18n('wizard', 'label_error-loading-filter-values')}
+                    />
                 ) : (
                     <React.Fragment>
                         <div className={b('values-search')}>
@@ -253,7 +255,7 @@ class ValuesList extends React.Component<Props, State> {
 
             this.props.onChangeSelectedValue(values[0] || null, shouldClearPalette);
         } catch (error) {
-            if (this.isUnmounted || getSdk().isCancel(error)) {
+            if (this.isUnmounted || getSdk().sdk.isCancel(error)) {
                 return;
             }
             logger.logError('DialogColorPalette: fetchInitialData failed', error);
@@ -307,7 +309,7 @@ class ValuesList extends React.Component<Props, State> {
 
         getSdk().cancelRequest('getDistincts');
 
-        return getSdk().bi.getDistinctsApiV2(
+        return getSdk().sdk.bi.getDistinctsApiV2(
             {
                 updates,
                 datasetId,
@@ -374,7 +376,7 @@ class ValuesList extends React.Component<Props, State> {
 
             this.props.onChangeSelectedValue(values[0] || null);
         } catch (error) {
-            if (this.isUnmounted || getSdk().isCancel(error)) {
+            if (this.isUnmounted || getSdk().sdk.isCancel(error)) {
                 return;
             }
             logger.logError('DialogColorPalette: onChangeSuggest failed', error);

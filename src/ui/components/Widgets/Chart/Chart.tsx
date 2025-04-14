@@ -172,6 +172,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
         dataProps,
         isWidgetMenuDataChanged,
         reloadChart,
+        runAction,
     } = useLoadingChart({
         chartKitRef: forwardedRef,
         dataProvider,
@@ -249,7 +250,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
     }, [reloadChart]);
 
     return (
-        <div ref={rootNodeRef} className={`${b(mods)}`}>
+        <div ref={rootNodeRef} className={b(mods)}>
             <DebugInfoTool data={[{label: 'chartId', value: chartId || ''}]} />
             <Content
                 initialParams={initialParams}
@@ -275,6 +276,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
                 loadedData={loadedData}
                 forwardedRef={forwardedRef}
                 getControls={loadControls}
+                runAction={runAction}
                 drillDownFilters={drillDownFilters}
                 drillDownLevel={drillDownLevel}
                 widgetType={widgetType}

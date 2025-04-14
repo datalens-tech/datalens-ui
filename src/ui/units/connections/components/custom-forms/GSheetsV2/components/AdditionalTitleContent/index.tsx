@@ -5,9 +5,6 @@ import {Button, Checkbox, Icon, Popover} from '@gravity-ui/uikit';
 import type {PopoverInstanceProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {Feature} from 'shared';
-
-import Utils from '../../../../../../../utils';
 
 import {GAuthButton} from './GAuthButton';
 
@@ -44,7 +41,6 @@ export const AdditionalTitleContent = (props: AdditionalTitleContentProps) => {
     const loginButtonRef = React.useRef<HTMLButtonElement>(null);
     const popoverRef = React.useRef<PopoverInstanceProps>(null);
     const {current: initialGAuthPopoverOpen} = React.useRef(!dlGsheetAuthHintShown);
-    const showAuthButton = Utils.isEnabledFeature(Feature.GSheetGoogleAuthEnabled);
 
     React.useEffect(() => {
         if (authorized && initialGAuthPopoverOpen) {
@@ -56,25 +52,21 @@ export const AdditionalTitleContent = (props: AdditionalTitleContentProps) => {
     return (
         <div className={b('title-add')}>
             <div className={b('title-add-content')}>
-                {showAuthButton && (
-                    <React.Fragment>
-                        <GAuthButton
-                            ref={loginButtonRef}
-                            authorized={authorized}
-                            onClick={authorized ? clickGoogleLogoutButton : clickGoogleLoginButton}
-                        />
-                        <Popover
-                            ref={popoverRef}
-                            anchorRef={loginButtonRef}
-                            tooltipClassName={b('gauth-popover')}
-                            content={<div>{i18n('label_google-auth-help')}</div>}
-                            placement="bottom"
-                            initialOpen={initialGAuthPopoverOpen}
-                            hasClose={true}
-                            onCloseClick={handleGAuthPopoverClose}
-                        />
-                    </React.Fragment>
-                )}
+                <GAuthButton
+                    ref={loginButtonRef}
+                    authorized={authorized}
+                    onClick={authorized ? clickGoogleLogoutButton : clickGoogleLoginButton}
+                />
+                <Popover
+                    ref={popoverRef}
+                    anchorRef={loginButtonRef}
+                    tooltipClassName={b('gauth-popover')}
+                    content={<div>{i18n('label_google-auth-help')}</div>}
+                    placement="bottom"
+                    initialOpen={initialGAuthPopoverOpen}
+                    hasClose={true}
+                    onCloseClick={handleGAuthPopoverClose}
+                />
             </div>
             <div className={b('title-add-content')}>
                 <Checkbox

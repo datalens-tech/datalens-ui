@@ -41,7 +41,7 @@ export const enum DialogColumnSettingsQa {
 
 export const enum DialogFieldSettingsQa {
     FieldTitleInput = 'dialog-title-input',
-    MarkdownEnableButton = 'dialog-field-md-switcher',
+    MarkupTypeRadioButtons = 'dialog-field-markup-type',
 }
 
 export const enum DialogFieldBackgroundSettingsQa {

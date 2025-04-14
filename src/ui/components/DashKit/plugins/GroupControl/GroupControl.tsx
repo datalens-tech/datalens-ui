@@ -3,7 +3,7 @@ import React from 'react';
 import {type Plugin, type PluginWidgetProps, type SettingsProps} from '@gravity-ui/dashkit';
 import type {Config, StateAndParamsMetaData} from '@gravity-ui/dashkit/helpers';
 import {getItemsParams, pluginGroupControlBaseDL} from '@gravity-ui/dashkit/helpers';
-import {Loader} from '@gravity-ui/uikit';
+import {Loader, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import debounce from 'lodash/debounce';
@@ -26,7 +26,8 @@ import {
 import {getUrlGlobalParams} from 'ui/units/dash/utils/url';
 
 import {ExtendedDashKitContext} from '../../../../units/dash/utils/context';
-import {DEFAULT_CONTROL_LAYOUT} from '../../constants';
+import {DEBOUNCE_RENDER_TIMEOUT, DEFAULT_CONTROL_LAYOUT} from '../../constants';
+import {useWidgetContext} from '../../context/WidgetContext';
 import {adjustWidgetLayout} from '../../utils';
 import {LOAD_STATUS} from '../Control/constants';
 import type {ControlSettings, LoadStatus} from '../Control/types';
@@ -66,6 +67,19 @@ const i18n = I18n.keyset('dash.dashkit-plugin-control.view');
 
 const LOCAL_META_VERSION = 2;
 
+const GroupControlWrapper = React.forwardRef<
+    HTMLDivElement,
+    {id: string; autoHeight: boolean; children: React.ReactNode}
+>(function GroupControlWrapper(props, nodeRef) {
+    useWidgetContext(props.id, nodeRef as React.RefObject<HTMLElement>);
+
+    return (
+        <div ref={nodeRef} className={b({mobile: DL.IS_MOBILE, static: !props.autoHeight})}>
+            {props.children}
+        </div>
+    );
+});
+
 class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGroupControlState> {
     static contextType = ExtendedDashKitContext;
 
@@ -86,16 +100,20 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
     // a quick loader for imitating action by clicking on apply button
     _quickActionTimer: ReturnType<typeof setTimeout> | null = null;
+    _getDistinctsMemo: ControlSettings['getDistincts'];
 
     // params of current dash state
     initialParams: Record<string, StringParams> = {};
 
     localMeta: GroupControlLocalMeta = {version: LOCAL_META_VERSION, queue: []};
 
+    _onRedraw: null | (() => void) = null;
+
     constructor(props: PluginGroupControlProps) {
         super(props);
-        const {data} = this.props;
-        const controlData = data as unknown as DashTabItemGroupControlData;
+        const controlData = this.propsControlData;
+
+        this._onRedraw = debounce(this.props.onBeforeLoad(), DEBOUNCE_RENDER_TIMEOUT);
 
         this.controlsProgressCount = controlData?.group?.length || 0;
         controlData.group?.forEach((item) => {
@@ -222,9 +240,10 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             this.state.localUpdateLoader;
 
         return (
-            <div
+            <GroupControlWrapper
                 ref={this.rootNode}
-                className={b({mobile: DL.IS_MOBILE, static: !this.props.data.autoHeight})}
+                id={this.props.id}
+                autoHeight={(this.props.data.autoHeight as boolean) ?? false}
             >
                 <div
                     className={b('container', CHARTKIT_SCROLLABLE_NODE_CLASSNAME)}
@@ -242,8 +261,35 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                         </div>
                     )}
                 </div>
-            </div>
+            </GroupControlWrapper>
         );
+    }
+
+    getMeta() {
+        return new Promise((resolve) => {
+            this.resolve = resolve;
+
+            if (this.state.status === LOAD_STATUS.SUCCESS) {
+                this.resolveMetaInControl();
+            }
+        });
+    }
+
+    // need for autoreload from dashkit
+    reload({silentLoading}: {silentLoading?: boolean}) {
+        if (this.context?.skipReload || !this.state.isInit || this._isUnmounted) {
+            return;
+        }
+
+        this.setState({
+            needReload: true,
+            status: LOAD_STATUS.PENDING,
+            silentLoading: Boolean(silentLoading),
+        });
+    }
+
+    private get propsControlData() {
+        return this.props.data as unknown as DashTabItemGroupControlData;
     }
 
     private get dependentSelectors() {
@@ -394,7 +440,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         callChangeByClick?: boolean;
         controlId?: string;
     }) => {
-        const controlData = this.props.data as unknown as DashTabItemGroupControlData;
+        const controlData = this.propsControlData;
 
         // In cases:
         // 1. 'Apply button' is clicked
@@ -491,18 +537,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         return this.getUpdatedGroupParams({params: newParams});
     };
 
-    // public
-    // @ts-ignore
-    private getMeta() {
-        return new Promise((resolve) => {
-            this.resolve = resolve;
-
-            if (this.state.status === LOAD_STATUS.SUCCESS) {
-                this.resolveMetaInControl();
-            }
-        });
-    }
-
     private filterDefaultsBySource(item: DashTabItemControlSingle) {
         const sourcedFieldId =
             item.sourceType === 'dataset'
@@ -524,9 +558,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             label = loadedData.uiScheme.controls[0].label;
         }
 
-        const currentItem = (this.props.data as unknown as DashTabItemGroupControlData).group?.find(
-            (item) => item.id === id,
-        );
+        const currentItem = this.propsControlData.group?.find((item) => item.id === id);
 
         const widgetMetaInfo = {
             layoutId: this.props.id,
@@ -648,6 +680,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             if (loadedData || loadedData === null) {
                 this.controlsData[controlId] = loadedData;
             }
+            this._onRedraw?.();
         } else if (isInitialPending) {
             this.controlsProgressCount++;
         } else if (isReloadPending) {
@@ -679,8 +712,36 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         }
     };
 
+    private getDistinctsWithHeaders() {
+        if (this.props.getDistincts) {
+            this._getDistinctsMemo =
+                this._getDistinctsMemo ||
+                ((params) => {
+                    const {getDistincts} = this.props;
+                    const headers = this?.context?.dataProviderContextGetter?.(this.props.id);
+
+                    return (getDistincts as Exclude<ControlSettings['getDistincts'], void>)?.(
+                        params,
+                        headers,
+                    );
+                });
+        } else {
+            this._getDistinctsMemo = undefined;
+        }
+
+        return this._getDistinctsMemo;
+    }
+
+    private requestHeadersGetter = () => {
+        if (this.context?.dataProviderContextGetter) {
+            return this.context.dataProviderContextGetter(this.props.id);
+        }
+
+        return {};
+    };
+
     private renderControl(item: DashTabItemControlSingle) {
-        const {getDistincts, workbookId} = this.props;
+        const {workbookId} = this.props;
         const {silentLoading} = this.state;
 
         return (
@@ -691,12 +752,13 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 params={this.state.stateParams[item.id] || {}}
                 onStatusChanged={this.handleStatusChanged}
                 silentLoading={silentLoading}
-                getDistincts={getDistincts}
+                getDistincts={this.getDistinctsWithHeaders()}
                 onChange={this.onChange}
                 needReload={this.state.needReload}
                 workbookId={workbookId}
                 dependentSelectors={this.dependentSelectors}
                 groupId={this.props.id}
+                requestHeaders={this.requestHeadersGetter}
             />
         );
     }
@@ -765,9 +827,25 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         this.applyButtonAction(CLICK_ACTION_TYPE.SET_INITIAL_PARAMS);
     };
 
+    private renderSubHeader() {
+        const {showGroupName, groupName} = this.propsControlData;
+        const headerText = groupName || this.context?.selectorsGroupTitlePlaceholder;
+
+        if (showGroupName && headerText) {
+            return (
+                <div className={b('header')}>
+                    <Text variant="subheader-2" className={b('controls-title')}>
+                        {headerText}
+                    </Text>
+                </div>
+            );
+        }
+
+        return null;
+    }
+
     private renderButtons() {
-        const {data} = this.props;
-        const controlData = data as unknown as DashTabItemGroupControlData;
+        const controlData = this.propsControlData;
 
         const resetAction = {action: CLICK_ACTION_TYPE.SET_INITIAL_PARAMS};
 
@@ -801,11 +879,11 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     }
 
     private renderControls() {
-        const {data} = this.props;
-        const controlData = data as unknown as DashTabItemGroupControlData;
+        const controlData = this.propsControlData;
 
         return (
             <div className={b('controls')}>
+                {this.renderSubHeader()}
                 {controlData.group?.map((item: DashTabItemControlSingle) =>
                     this.renderControl(item),
                 )}
@@ -814,27 +892,13 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         );
     }
 
-    // @ts-ignore
-    // need for autoreload from dashkit
-    private reload({silentLoading}: {silentLoading?: boolean}) {
-        if (this.context?.skipReload || !this.state.isInit || this._isUnmounted) {
-            return;
-        }
-
-        this.setState({
-            needReload: true,
-            status: LOAD_STATUS.PENDING,
-            silentLoading: Boolean(silentLoading),
-        });
-    }
-
     private async init() {
         if (this._isUnmounted) {
             return;
         }
 
         let stateParams: Record<string, StringParams>;
-        const controlData = this.props.data as unknown as DashTabItemGroupControlData;
+        const controlData = this.propsControlData;
 
         // to apply initial params from dash state inside group
         if (controlData.updateControlsOnChange) {
@@ -860,7 +924,10 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             rootNode: this.rootNode,
             gridLayout: this.props.gridLayout,
             layout: this.props.layout,
-            cb: this.props.adjustWidgetLayout,
+            cb: (data) => {
+                this.props.adjustWidgetLayout(data);
+                this._onRedraw?.();
+            },
         });
     }
 }

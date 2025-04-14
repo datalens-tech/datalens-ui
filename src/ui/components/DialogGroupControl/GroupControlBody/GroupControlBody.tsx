@@ -5,6 +5,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
 import {Feature} from 'shared';
+import {ColorAccentRow} from 'ui/components/ControlComponents/Sections/AppearanceSection/Rows/ColorAccentRow/ColorAccentRow';
 import {HintRow} from 'ui/components/ControlComponents/Sections/AppearanceSection/Rows/HintRow/HintRow';
 import {InnerTitleRow} from 'ui/components/ControlComponents/Sections/AppearanceSection/Rows/InnerTitleRow/InnerTitleRow';
 import {TitlePlacementRow} from 'ui/components/ControlComponents/Sections/AppearanceSection/Rows/TitlePlacementRow/TitlePlacementRow';
@@ -17,11 +18,13 @@ import {ValueSelector} from 'ui/components/ControlComponents/Sections/ValueSelec
 import {SelectorTypeSelect} from 'ui/components/ControlComponents/SelectorTypeSelect/SelectorTypeSelect';
 import {ELEMENT_TYPE} from 'ui/store/constants/controlDialog';
 import {selectSelectorControlType} from 'ui/store/selectors/controlDialog';
-import Utils from 'ui/utils/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+
+import {FormSection} from '../../FormSection/FormSection';
 
 import '../DialogGroupControl.scss';
 
-const b = block('group-control-dialog');
+export const b = block('group-control-dialog');
 const i18n = I18n.keyset('dash.group-controls-dialog.edit');
 
 export const GroupControlBody: React.FC<{
@@ -34,49 +37,35 @@ export const GroupControlBody: React.FC<{
 
     return (
         <React.Fragment>
-            <FormRow label={i18n('label_source')}>
-                <SelectorTypeSelect showExternalType={false} mode="select" />
-            </FormRow>
-            <div className={b('section')}>
+            <FormSection title={i18n('label_data')}>
+                <FormRow label={i18n('label_source')} className={b('row')}>
+                    <SelectorTypeSelect showExternalType={false} mode="select" />
+                </FormRow>
                 <CommonSettingsSection
-                    hideCommonFields={true}
+                    className={b('row')}
                     navigationPath={props.navigationPath}
                     changeNavigationPath={props.changeNavigationPath}
                 />
-            </div>
-            <div className={b('section', {'top-divider': true})}>
-                <InputTypeSelector />
-            </div>
-            <div className={b('section')}>
-                <TitleRow />
-            </div>
-            {isTypeNotCheckbox && (
-                <React.Fragment>
-                    <div className={b('section')}>
-                        <TitlePlacementRow />
-                    </div>
-                    <div className={b('section')}>
-                        <InnerTitleRow />
-                    </div>
-                </React.Fragment>
-            )}
-            <div className={b('section', {'bottom-divider': true})}>
-                <HintRow />
-            </div>
-
-            {!Utils.isEnabledFeature(Feature.ConnectionBasedControl) && (
-                <div className={b('section')}>
-                    <OperationSelector />
-                </div>
-            )}
-            {isTypeNotCheckbox && (
-                <div className={b('section')}>
-                    <RequiredValueCheckbox />
-                </div>
-            )}
-            <div className={b('section')}>
-                <ValueSelector />
-            </div>
+            </FormSection>
+            <FormSection title={i18n('label_filtration')}>
+                <InputTypeSelector className={b('row')} />
+                {!isEnabledFeature(Feature.ConnectionBasedControl) && (
+                    <OperationSelector className={b('row')} />
+                )}
+                <ValueSelector rowClassName={b('row')} />
+                {isTypeNotCheckbox && <RequiredValueCheckbox className={b('row')} />}
+            </FormSection>
+            <FormSection title={i18n('label_representation')}>
+                <TitleRow className={b('row')} />
+                {isTypeNotCheckbox && (
+                    <React.Fragment>
+                        <TitlePlacementRow className={b('row')} />
+                        <InnerTitleRow className={b('row')} />
+                        <ColorAccentRow className={b('row')} />
+                    </React.Fragment>
+                )}
+                <HintRow className={b('row')} />
+            </FormSection>
         </React.Fragment>
     );
 };

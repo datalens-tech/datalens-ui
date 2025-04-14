@@ -99,6 +99,7 @@ type ControlProps = {
     }) => void;
     silentLoading: boolean;
     getDistincts?: ControlSettings['getDistincts'];
+    requestHeaders?: () => Record<string, string>;
     onChange: ({
         params,
         callChangeByClick,
@@ -121,6 +122,7 @@ export const Control = ({
     silentLoading,
     onStatusChanged,
     getDistincts,
+    requestHeaders,
     onChange,
     needReload,
     workbookId,
@@ -152,48 +154,51 @@ export const Control = ({
 
     let silentLoaderTimer: NodeJS.Timeout | undefined;
 
-    const setErrorState = (newErrorData: ErrorData, errorStatus: LoadStatus) => {
-        const statusResponse = getStatus(errorStatus);
-        if (statusResponse) {
-            dispatch(
-                setErrorData({
-                    status: statusResponse,
-                    errorData: newErrorData,
-                }),
-            );
-            onStatusChanged({controlId: id, status: statusResponse});
-        }
-    };
+    const setErrorState = React.useCallback(
+        (newErrorData: ErrorData, errorStatus: LoadStatus) => {
+            const statusResponse = getStatus(errorStatus);
+            if (statusResponse) {
+                dispatch(
+                    setErrorData({
+                        status: statusResponse,
+                        errorData: newErrorData,
+                    }),
+                );
+                onStatusChanged({controlId: id, status: statusResponse});
+            }
+        },
+        [id, onStatusChanged],
+    );
 
-    const setLoadedDataState = (
-        newLoadedData: ResponseSuccessSingleControl,
-        loadedStatus: LoadStatus,
-    ) => {
-        const statusResponse = getStatus(loadedStatus);
-        if (statusResponse) {
-            // first fill of current params
-            if (!currentSignificantParams.current) {
-                currentSignificantParams.current = filterSignificantParams({
-                    params,
-                    loadedData: newLoadedData,
-                    defaults: data.defaults,
-                    dependentSelectors,
+    const setLoadedDataState = React.useCallback(
+        (newLoadedData: ResponseSuccessSingleControl, loadedStatus: LoadStatus) => {
+            const statusResponse = getStatus(loadedStatus);
+            if (statusResponse) {
+                // first fill of current params
+                if (!currentSignificantParams.current) {
+                    currentSignificantParams.current = filterSignificantParams({
+                        params,
+                        loadedData: newLoadedData,
+                        defaults: data.defaults,
+                        dependentSelectors,
+                    });
+                }
+                dispatch(setLoadedData({status: statusResponse, loadedData: newLoadedData}));
+                onStatusChanged({
+                    controlId: id,
+                    status: statusResponse,
+                    loadedData: newLoadedData
+                        ? {
+                              ...newLoadedData,
+                              sourceType: data.sourceType,
+                              id: data.id,
+                          }
+                        : null,
                 });
             }
-            dispatch(setLoadedData({status: statusResponse, loadedData: newLoadedData}));
-            onStatusChanged({
-                controlId: id,
-                status: statusResponse,
-                loadedData: newLoadedData
-                    ? {
-                          ...newLoadedData,
-                          sourceType: data.sourceType,
-                          id: data.id,
-                      }
-                    : null,
-            });
-        }
-    };
+        },
+        [data.defaults, data.id, data.sourceType, dependentSelectors, id, onStatusChanged, params],
+    );
 
     const cancelCurrentRunRequest = () => {
         if (requestCancellationRef.current) {
@@ -201,7 +206,7 @@ export const Control = ({
         }
     };
 
-    const init = async () => {
+    const init = React.useCallback(async () => {
         try {
             const payloadCancellation = chartsDataProvider.getRequestCancellation();
             const payload: EntityRequestOptions = {
@@ -224,6 +229,7 @@ export const Control = ({
                     ...(workbookId ? {workbookId} : {}),
                 },
                 cancelToken: payloadCancellation.token,
+                headers: requestHeaders?.(),
             };
 
             cancelCurrentRunRequest();
@@ -283,7 +289,21 @@ export const Control = ({
             }
             setErrorState(errorData, LOAD_STATUS.FAIL);
         }
-    };
+    }, [
+        data,
+        extDashkitContext?.config,
+        extDashkitContext?.hideErrorDetails,
+        groupId,
+        id,
+        loadedData,
+        onStatusChanged,
+        params,
+        requestHeaders,
+        setErrorState,
+        setLoadedDataState,
+        status,
+        workbookId,
+    ]);
 
     const reload = () => {
         clearLoaderTimer(silentLoaderTimer);
@@ -349,19 +369,22 @@ export const Control = ({
         init();
     }
 
-    const setItemsLoader = (isLoadingItems: boolean) => {
-        if (!isMounted) {
-            return;
-        }
-        dispatch(setLoadingItems({loadingItems: isLoadingItems}));
-    };
+    const setItemsLoader = React.useCallback(
+        (isLoadingItems: boolean) => {
+            if (!isMounted) {
+                return;
+            }
+            dispatch(setLoadingItems({loadingItems: isLoadingItems}));
+        },
+        [isMounted],
+    );
 
-    const validateValue = (args: ValidationErrorData) => {
+    const validateValue = React.useCallback((args: ValidationErrorData) => {
         const hasError = isValidRequiredValue(args);
         dispatch(setValidationError({hasError}));
 
         return hasError;
-    };
+    }, []);
 
     const getValidationError = ({
         required,
@@ -386,11 +409,14 @@ export const Control = ({
         return activeValidationError;
     };
 
-    const onChangeParams = ({value, param}: {value: string | string[]; param: string}) => {
-        const newParam = {[param]: value};
+    const onChangeParams = React.useCallback(
+        ({value, param}: {value: string | string[]; param: string}) => {
+            const newParam = {[param]: value};
 
-        onChange({params: newParam, controlId: id});
-    };
+            onChange({params: newParam, controlId: id});
+        },
+        [id, onChange],
+    );
 
     const getTypeProps = (
         control: ActiveControl,
@@ -439,7 +465,7 @@ export const Control = ({
         return null;
     };
 
-    const renderOverlay = () => {
+    const renderOverlay = React.useCallback(() => {
         const paramId =
             (data.source as DashTabItemControlDataset['source']).datasetFieldId ||
             (data.source as DashTabItemControlManual['source']).fieldName ||
@@ -457,7 +483,7 @@ export const Control = ({
                 {renderSilentLoader()}
             </React.Fragment>
         );
-    };
+    }, [control?.param, data.source, id, renderSilentLoader]);
 
     const renderLoadingStub = (props: Record<string, unknown>) => {
         const {
@@ -488,15 +514,15 @@ export const Control = ({
         return null;
     };
 
-    const handleClickRetry = () => {
+    const handleClickRetry = React.useCallback(() => {
         reload();
-    };
+    }, [reload]);
 
     const renderControl = () => {
         // data is already in dash config, it's available without '/api/run' requests
         const controlData = data as unknown as DashTabItemControlSingle;
         const {source, placementMode, width} = controlData;
-        const {required, operation, elementType, titlePlacement} = source;
+        const {required, operation, elementType, titlePlacement, accentType} = source;
 
         const {label, innerLabel} = getLabels(controlData);
         const style = getControlWidthStyle(placementMode, width);
@@ -515,6 +541,7 @@ export const Control = ({
             style,
             renderOverlay,
             hint: getControlHint(controlData.source),
+            accentType,
         };
 
         // due to the logic of calculating the content,
@@ -544,6 +571,7 @@ export const Control = ({
                         style,
                         limitLabel: true,
                         labelPlacement: titlePlacement,
+                        accentType,
                     }}
                     renderOverlay={renderOverlay}
                 />

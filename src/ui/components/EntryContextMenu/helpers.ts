@@ -3,13 +3,13 @@ import type React from 'react';
 import type {IconData} from '@gravity-ui/uikit';
 import {registry} from 'ui/registry';
 import type {DialogShareProps} from 'ui/registry/units/common/types/components/DialogShare';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import Utils from 'ui/utils/utils';
 
-import type {EntryScope} from '../../../shared';
 import {Feature, MenuItemsIds, getEntryNameByKey} from '../../../shared';
 import type {GetEntryResponse} from '../../../shared/schema';
 import {DL, URL_OPTIONS} from '../../constants';
 import navigateHelper from '../../libs/navigateHelper';
-import Utils from '../../utils';
 import history from '../../utils/history';
 import type {EntryDialogues} from '../EntryDialogues';
 import {EntryDialogName, EntryDialogResolveStatus} from '../EntryDialogues';
@@ -168,7 +168,7 @@ export async function showShareDialog(
             dialogProps.withFederation = true;
         }
 
-        if (Utils.isEnabledFeature(Feature.EnableEmbedsInDialogShare)) {
+        if (isEnabledFeature(Feature.EnableEmbedsInDialogShare)) {
             dialogProps.initialParams = {
                 [URL_OPTIONS.NO_CONTROLS]: 1,
             };
@@ -194,6 +194,7 @@ type EntryContextMenuIDTypeBase =
     | 'duplicate'
     | 'edit'
     | 'copy-link'
+    | 'copy-id'
     | 'tableOfContent'
     | 'settings'
     | 'fullscreen'
@@ -219,7 +220,7 @@ export type WrapperParams = {
     children: React.ReactElement;
     entry: {
         entryId: string;
-        scope: EntryScope;
+        scope: string;
         type: string;
         key: string;
     };
@@ -256,7 +257,7 @@ const ENTRY_MENU_GROUP_CONFIG: Array<Array<EntryContextMenuIDType>> = [
     ['rename', 'move', 'duplicate', 'copy'],
     ['tableOfContent', 'fullscreen'],
     ['sql', 'materialization'],
-    ['access', 'show-related-entities', 'copy-link', 'public', 'sql-to-monitoring'],
+    ['access', 'show-related-entities', 'copy-link', 'copy-id', 'public', 'sql-to-monitoring'],
     ['edit', 'settings'],
     ['migrate-to-workbook'],
     ['delete'],

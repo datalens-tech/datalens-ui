@@ -7,6 +7,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import get from 'lodash/get';
 import intersection from 'lodash/intersection';
+import keyBy from 'lodash/keyBy';
 import type {
     DATASET_FIELD_TYPES,
     DatasetField,
@@ -26,7 +27,8 @@ import type {
     openDialog,
     openDialogConfirm,
 } from '../../../../store/actions/dialog';
-import type {EditorItemToDisplay} from '../../store/types';
+import {TAB_DATASET} from '../../constants';
+import type {EditHistoryOptions, EditorItemToDisplay} from '../../store/types';
 import {DIALOG_DS_FIELD_INSPECTOR} from '../dialogs';
 
 import {DisplaySettings} from './components';
@@ -60,7 +62,7 @@ type DatasetTableProps = {
         },
     ) => void;
     batchUpdateFields: BatchUpdateFields;
-    duplicateField: (data: {field: DatasetField}) => void;
+    duplicateField: (data: {field: DatasetField; editHistoryOptions?: EditHistoryOptions}) => void;
     removeField: (data: {field: DatasetField}) => void;
     batchRemoveFields: (data: {fields: DatasetField[]}) => void;
     onClickRow: (data: {field: DatasetField}) => void;
@@ -102,6 +104,10 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
                 editableFieldGuid: undefined,
                 waitingForOpenFieldEditor: false,
             });
+        }
+
+        if (this.props.fields !== prevProps.fields && Object.keys(this.state.selectedRows).length) {
+            this.resetSelection();
         }
     }
 
@@ -200,8 +206,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             return memo;
         }, {});
 
-        const selectedItems =
-            options.fields?.items.filter((item) => this.state.selectedRows[item.guid]) || [];
+        const selectedItems = options.fields?.items.filter((item) => selectedRows[item.guid]) || [];
 
         const allowedTypes = intersection(...selectedItems.map((item) => item.casts));
         const allowedAggregations = intersection(...selectedItems.map((item) => item.aggregations));
@@ -218,13 +223,16 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
     }
 
     private getColumns(selectedRows: DatasetSelectionMap = {}) {
+        const filteredFields = keyBy(this.props.fields, 'guid');
         return getColumns({
             selectedRows,
             fieldsCount: this.props.fields.length,
             avatars: this.props.sourceAvatars,
             rls: this.props.rls,
             permissions: this.props.permissions,
-            fields: get(this.props, ['options', 'fields', 'items'], []),
+            fields: get(this.props, ['options', 'fields', 'items'], []).filter(
+                (f) => f.guid in filteredFields,
+            ),
             showFieldsId: this.props.itemsToDisplay.includes('fieldsId'),
             setActiveRow: this.setActiveRow,
             openDialogFieldEditor: this.openDialogFieldEditor,
@@ -495,7 +503,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
     }) => {
         switch (action) {
             case FieldAction.Duplicate: {
-                this.props.duplicateField({field});
+                this.props.duplicateField({field, editHistoryOptions: {tab: TAB_DATASET}});
                 break;
             }
             case FieldAction.Edit: {

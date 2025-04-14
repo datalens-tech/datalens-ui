@@ -75,7 +75,6 @@ export type EditorState = {
             data: Record<string, string>;
             key?: string;
             createdAt?: string;
-            sandbox_version: string;
         };
         updateKey: number;
         logs?: null | string;
@@ -170,7 +169,6 @@ export function editorTypedReducer(state: EditorState, action: EditorActions): E
                                 createdAt: entry.fake ? undefined : entry.createdAt,
                                 data: Helper.formEntryData({scriptsValues, entry}),
                                 key: entry.fake ? undefined : entry.key,
-                                sandbox_version: (entry.meta && entry.meta.sandbox_version) || '0',
                             },
                         },
                         updateKey: {$set: state.chart ? state.chart.updateKey + 1 : 0},

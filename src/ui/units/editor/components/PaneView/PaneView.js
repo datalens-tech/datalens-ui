@@ -3,15 +3,15 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import PropTypes from 'prop-types';
 import {Feature} from 'shared';
-import Utils from 'ui/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {MODULE_TYPE, PANE_VIEWS} from '../../constants/common';
 import Console from '../../containers/Console/Console';
 import PaneEditorDiff from '../../containers/PaneEditorDiff/PaneEditorDiff';
 import Preview from '../../containers/Preview/Preview';
-import ButtonDiff from '../ButtonDiff/ButtonDiff';
-import ButtonDocs from '../ButtonDocs/ButtonDocs';
-import ButtonEditorSearch from '../ButtonEditorSearch/ButtonEditorSearch';
+import {ButtonDiff} from '../ButtonDiff/ButtonDiff';
+import {ButtonDocs} from '../ButtonDocs/ButtonDocs';
+import {ButtonEditorSearch} from '../ButtonEditorSearch/ButtonEditorSearch';
 import Documentation from '../Documentation/Documentation';
 import DragItem from '../DragItem/DragItem';
 import PaneEditor from '../PaneEditor/PaneEditor';
@@ -139,7 +139,7 @@ const PaneView = ({
                             active={state.show === SHOW.DIFF}
                         />
                     )}
-                    {hasDocs && Utils.isEnabledFeature(Feature.EnableChartEditorDocs) && (
+                    {hasDocs && isEnabledFeature(Feature.EnableChartEditorDocs) && (
                         <ButtonDocs
                             onClick={() =>
                                 dispatchAction(ACTION_TYPE.TOGGLE_SHOW, {show: SHOW.DOCS})

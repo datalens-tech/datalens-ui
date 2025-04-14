@@ -14,6 +14,7 @@ export interface CreateEditorChartArgs {
     workbookId?: string;
     name?: string;
     mode?: EntryUpdateMode;
+    links?: EntryFieldLinks;
 }
 
 export interface UpdateEditorChartResponse extends EntryFields {

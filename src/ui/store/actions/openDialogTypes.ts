@@ -17,9 +17,9 @@ import type {OpenDialogConfirmArgs} from '../../components/DialogConfirm/DialogC
 import type {OpenDialogWarningArgs} from '../../components/DialogWarning/DialogWarning';
 import type {OpenDialogDatasetFieldInspectorArgs} from '../../units/datasets/components/dialogs/DatasetFieldInspector/DatasetFieldInspector';
 import type {OpenDialogParameterArgs} from '../../components/DialogParameter/DialogParameter';
-import type {OpenDialogMultidatasetArgs} from 'units/wizard/components/Dialogs/DialogMultidataset';
-import type {OpenDialogRelationsArgs} from '../../units/dash/containers/Dialogs/DialogRelations/DialogRelations';
-import type {OpenDialogAliasesArgs} from '../../units/dash/containers/Dialogs/DialogRelations/components/DialogAliases/DialogAliases';
+import type {OpenDialogMultidatasetArgs} from '../../units/wizard/components/Dialogs/DialogMultidataset';
+import type {OpenDialogRelationsArgs} from '../../components/DialogRelations/DialogRelations';
+import type {OpenDialogAliasesArgs} from '../../components/DialogRelations/components/DialogAliases/DialogAliases';
 import type {OpenDialogColumnSettingsArgs} from '../../units/wizard/components/Dialogs/DialogColumnSettings/DialogColumnSettings';
 import type {OpenDialogFieldEditorArgs} from '../../components/DialogFieldEditor/DialogFieldEditor';
 import type {OpenDialogRenameEntryInNewWorkbookArgs} from '../../units/workbooks/components/RenameEntryDialog/RenameEntryDialog';
@@ -34,7 +34,7 @@ import type {OpenDialogMoveWorkbookArgs} from '../../components/CollectionsStruc
 import type {OpenDialogCopyWorkbookArgs} from '../../components/CollectionsStructure/CopyWorkbookDialog';
 import type {OpenDialogMigrateEntryToWorkbookArgs} from '../../components/CollectionsStructure/MigrateEntryToWorkbookDialog';
 import type {OpenDialogEditWorkbookArgs} from '../../components/CollectionsStructure/EditWorkbookDialog';
-import type {OpenDialogCreateWorkbookArgs} from '../../components/CollectionsStructure/CreateWorkbookDialog';
+import type {OpenDialogCreateWorkbookArgs} from '../../components/CollectionsStructure/CreateWorkbookDialog/CreateWorkbookDialog';
 import type {OpenDialogEditCollectionArgs} from '../../components/CollectionsStructure/EditCollectionDialog';
 import type {OpenDialogCreateCollectionArgs} from '../../components/CollectionsStructure/CreateCollectionDialog';
 import type {OpenDialogCopyEntriesArgs} from '../../components/CollectionsStructure/CopyEntriesDialog';
@@ -42,7 +42,7 @@ import type {OpenDialogQLParameterArgs} from '../../components/DialogQLParameter
 import type {OpenDialogSelectMigrationToWorkbookArgs} from '../../components/SelectMigrationToWorkbookDialog/SelectMigrationToWorkbookDialog';
 import type {OpenDialogMigrateToWorkbookArgs} from '../../components/MigrateToWorkbookDialog/MigrateToWorkbookDialog';
 import type {OpenDialogLabelSettingsArgs} from '../../units/wizard/components/Dialogs/DialogLabelSettings/DialogLabelSettings';
-import type {OpenDialogControlsPlacementArgs} from '../../components/DialogControlsPlacement/DialogControlsPlacement';
+import type {OpenDialogExtendedSettingsArgs} from '../../components/DialogExtendedSettings/DialogExtendedSettings';
 import type {OpenDialogCopyEntriesToWorkbookArgs} from '../../components/CopyEntriesToWorkbookDialog/CopyEntriesToWorkbookDialog';
 import type {OpenDialogConnAddYadocArgs} from '../../units/connections/components/custom-forms/Yadocs/components/DialogAddDocument/DialogAddDocument';
 import type {OpenDialogEditQueryArgs} from '../../units/dash/containers/Dialogs/DialogEditQuery/DialogEditQuery';
@@ -54,8 +54,13 @@ import type {OpenDialogCreateEntryInWorkbookArgs} from '../../components/Collect
 import type {OpenDialogIamAccessArgs} from '../../components/IamAccessDialog';
 import type {OpenDialogTooltipSettingsArgs} from '../../units/wizard/components/Dialogs/DialogTooltipSettings/DialogTooltipSettings';
 import type {OpenDialogChangeDatasetFieldsArgs} from '../../units/datasets/components/DatasetTable/components/BatchActionPanel/components/DialogChangeDatasetFields/DialogChangeDatasetFields';
+import type {OpenDialogCollectionNoCreatePermissionArgs} from 'ui/components/CollectionsStructure/CollectionNoCreatePermissionDialog';
+import type {OpenDialogReleaseVersionArgs} from 'ui/components/AsideHeaderAdapter/VersionDialog/VersionDialog';
+import type {OpenDialogExportWorkbookArgs} from 'ui/components/CollectionsStructure/ExportWorkbookDialog/ExportWorkbookDialog';
+import type {OpenDialogDefaultArgs} from 'ui/components/DialogDefault/DialogDefault';
 
 export type OpenDialogArgs<T = unknown> =
+    | OpenDialogReleaseVersionArgs
     | OpenDialogMetricSettingsArgs
     | OpenDialogColorArgs
     | OpenDialogFieldInspectorArgs
@@ -90,7 +95,7 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogMoveCollectionArgs
     | OpenDialogMoveWorkbookArgs
     | OpenDialogCopyWorkbookArgs
-    | OpenDialogControlsPlacementArgs
+    | OpenDialogExtendedSettingsArgs
     | OpenDialogLabelSettingsArgs
     | OpenDialogEditWorkbookArgs
     | OpenDialogEditCollectionArgs
@@ -109,4 +114,7 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogIamAccessArgs
     | OpenDialogCreateEntryInWorkbookArgs
     | OpenDialogTooltipSettingsArgs
-    | OpenDialogChangeDatasetFieldsArgs;
+    | OpenDialogChangeDatasetFieldsArgs
+    | OpenDialogCollectionNoCreatePermissionArgs
+    | OpenDialogExportWorkbookArgs
+    | OpenDialogDefaultArgs;

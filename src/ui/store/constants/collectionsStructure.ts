@@ -117,3 +117,25 @@ export const DELETE_WORKBOOK_FAILED = Symbol('collectionsStructure/DELETE_WORKBO
 export const ADD_DEMO_WORKBOOK_LOADING = Symbol('collections/ADD_DEMO_WORKBOOK_LOADING');
 export const ADD_DEMO_WORKBOOK_SUCCESS = Symbol('collections/ADD_DEMO_WORKBOOK_SUCCESS');
 export const ADD_DEMO_WORKBOOK_FAILED = Symbol('collections/ADD_DEMO_WORKBOOK_FAILED');
+
+// Exporting a workbook as a file
+export const EXPORT_WORKBOOK_LOADING = Symbol('collections/EXPORT_WORKBOOK_LOADING');
+export const EXPORT_WORKBOOK_SUCCESS = Symbol('collections/EXPORT_WORKBOOK_SUCCESS');
+export const EXPORT_WORKBOOK_FAILED = Symbol('collections/EXPORT_WORKBOOK_FAILED');
+export const RESET_EXPORT_WORKBOOK = Symbol('collections/RESET_EXPORT_WORKBOOK');
+
+// Creating workbook and importing file
+export const IMPORT_WORKBOOK_LOADING = Symbol('collections/IMPORT_WORKBOOK_LOADING');
+export const IMPORT_WORKBOOK_SUCCESS = Symbol('collections/IMPORT_WORKBOOK_SUCCESS');
+export const IMPORT_WORKBOOK_FAILED = Symbol('collections/IMPORT_WORKBOOK_FAILED');
+export const RESET_IMPORT_WORKBOOK = Symbol('collections/RESET_IMPORT_WORKBOOK');
+
+// Getting progress of workbook importing
+export const GET_IMPORT_PROGRESS_LOADING = Symbol('collections/GET_IMPORT_PROGRESS_LOADING');
+export const GET_IMPORT_PROGRESS_SUCCESS = Symbol('collections/GET_IMPORT_PROGRESS_SUCCESS');
+export const RESET_IMPORT_PROGRESS = Symbol('collections/RESET_IMPORT_PROGRESS');
+
+// Getting progress of workbook exporting
+export const GET_EXPORT_PROGRESS_LOADING = Symbol('collections/GET_EXPORT_PROGRESS_LOADING');
+export const GET_EXPORT_PROGRESS_SUCCESS = Symbol('collections/GET_EXPORT_PROGRESS_SUCCESS');
+export const RESET_EXPORT_PROGRESS = Symbol('collections/RESET_EXPORT_PROGRESS');

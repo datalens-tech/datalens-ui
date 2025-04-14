@@ -9,7 +9,7 @@ import {Feature} from 'shared/types';
 import {URL_OPTIONS as COMMON_URL_OPTIONS, DL} from 'ui/constants';
 import {registry} from 'ui/registry';
 import type {DialogShareProps} from 'ui/registry/units/common/types/components/DialogShare';
-import Utils from 'ui/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {socialNets} from '../../modules/constants';
 
@@ -49,7 +49,7 @@ export const ShareButton = ({
 
     const initDialogShareProps: DialogShareProps = {propsData: {}, onClose: handleCloseDialogShare};
 
-    if (Utils.isEnabledFeature(Feature.EnableEmbedsInDialogShare)) {
+    if (isEnabledFeature(Feature.EnableEmbedsInDialogShare)) {
         initDialogShareProps.initialParams = {
             [COMMON_URL_OPTIONS.NO_CONTROLS]: 1,
         };
@@ -63,7 +63,6 @@ export const ShareButton = ({
         if (enablePopover && !DL.IS_MOBILE) {
             return (
                 <SharePopover
-                    useWebShareApi={!DL.IS_MOBILE}
                     url={window.location.href}
                     title={popoverTitle}
                     text={popoverText}

@@ -17,6 +17,7 @@
     cursor: pointer;
     outline: none;
     color: var(--g-color-text-primary);
+    background-color: var(--yc-select-background-color, 'none');
 
     &_size {
         &_xs {
@@ -82,13 +83,16 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: var(--g-color-base-generic-accent-disabled);
+            background-color: var(
+                --yc-select-background-color-disabled,
+                var(--g-color-base-generic-accent-disabled)
+            );
         }
     }
 
     &:hover {
         border-color: var(--g-color-line-generic-hover);
-        background-color: var(--g-color-base-simple-hover);
+        background-color: var(--yc-select-background-color-hover, var(--g-color-base-simple-hover));
     }
 
     &:active:not(#{&}_without-animation) {
@@ -154,7 +158,7 @@
         align-items: center;
         height: 20px;
         padding: 0 6px;
-        background-color: var(--g-color-base-selection);
+        background-color: var(--yc-select-badge-color, var(--g-color-base-selection));
         border-radius: 4px;
         transition: background-color 0.1s linear;
 

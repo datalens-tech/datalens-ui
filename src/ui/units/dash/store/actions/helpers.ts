@@ -1,6 +1,5 @@
 import type {History} from 'history';
 import type {DashData, DashEntry, DashTabItem, DashTabItemWidget} from 'shared';
-import {DashTabItemType} from 'shared';
 import {URL_QUERY} from 'ui/constants/common';
 import {isEmbeddedEntry} from 'ui/utils/embedded';
 
@@ -12,6 +11,9 @@ import type {SetItemDataArgs} from './dashTyped';
 
 export const NOT_FOUND_ERROR_TEXT = 'No entry found';
 export const DOES_NOT_EXIST_ERROR_TEXT = "The entity doesn't exist";
+
+// TODO remove id CHARTS-2692
+export {migrateBgColor, preparedData} from 'shared/modules/dash-scheme-converter';
 
 /**
  * Type guards
@@ -25,23 +27,11 @@ const hasTabs = (data: DashTabItem['data']): data is DashTabItemWidget['data'] =
 // This type guard is to save this behaviour
 export const isCallable = <T extends (args: any) => void>(fn: T | undefined): T => fn as T;
 
-export const prepareLoadedData = (data: DashEntry['data']) => {
-    data.tabs.forEach((dashTabItem) => {
-        dashTabItem.items.forEach((widgetItem) => {
-            if (widgetItem.type !== DashTabItemType.Control) {
-                return widgetItem;
-            }
-            for (const [key, val] of Object.entries(widgetItem.defaults)) {
-                widgetItem.defaults[key] = val === null ? '' : val;
-            }
-            return widgetItem;
-        });
-    });
-    return data;
-};
+// TODO CHARTS-2692 remove after internal update
+export const prepareLoadedData = <T extends any>(data: T): T => data;
 
 export const isDeprecatedDashData = (data?: DashEntry['data'] | null) => {
-    if (!data) return true;
+    if (!data || !data.settings) return true;
 
     return data.settings.dependentSelectors !== true;
 };

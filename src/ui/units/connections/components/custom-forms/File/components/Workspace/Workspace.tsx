@@ -6,6 +6,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {get} from 'lodash';
 import type {NonNullableBy} from 'shared';
+import {ConnectionsWorkspaceQA} from 'shared';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 
 import {Interpolate} from '../../../../../../../components/Interpolate';
@@ -171,7 +172,7 @@ export const Workspace = ({item, columnFilter}: WorkspaceProps) => {
     }
 
     return (
-        <div className={b('workspace', {standalone})}>
+        <div className={b('workspace', {standalone})} data-qa={ConnectionsWorkspaceQA.WORKSPACE}>
             {content}
             {itemPolling && <Veil />}
         </div>

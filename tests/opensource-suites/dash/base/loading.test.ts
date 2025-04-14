@@ -14,7 +14,7 @@ const TEXTS = {
 };
 
 const SELECTORS = {
-    CHART_LINE_ITEM: '.chartkit-d3-axis',
+    CHART_LINE_ITEM: '.gcharts-d3-axis',
 };
 
 const waitForDashFirstResponseSentData = async ({

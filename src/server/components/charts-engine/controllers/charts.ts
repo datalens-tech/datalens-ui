@@ -90,10 +90,11 @@ function prepareChartData(
     return {chart, type, links, template};
 }
 
-export const getHeaders = (req: Request) => {
+const getHeaders = (req: Request) => {
     const headers = {
         ...req.headers,
         ...(req.ctx.config.isZitadelEnabled ? {...Utils.pickZitadelHeaders(req)} : {}),
+        ...(req.ctx.config.isAuthEnabled ? {...Utils.pickAuthHeaders(req)} : {}),
     };
 
     return headers;
@@ -126,7 +127,7 @@ export const chartsController = (_chartsEngine: ChartsEngine) => {
                         error: {
                             code: 403,
                             details: {
-                                message: 'Access to ChartEditor developer mode was denied',
+                                message: 'Access to Editor developer mode was denied',
                             },
                         },
                     });
@@ -188,7 +189,7 @@ export const chartsController = (_chartsEngine: ChartsEngine) => {
                         error: {
                             code: 403,
                             details: {
-                                message: 'Access to ChartEditor developer mode was denied',
+                                message: 'Access to Editor developer mode was denied',
                             },
                         },
                     });

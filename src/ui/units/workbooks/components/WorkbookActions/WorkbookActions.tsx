@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {ArrowRight, Copy, LockOpen, TrashBin} from '@gravity-ui/icons';
+import {ArrowRight, Copy, FileArrowUp, LockOpen, TrashBin} from '@gravity-ui/icons';
 import type {DropdownMenuItem} from '@gravity-ui/uikit';
 import {Button, DropdownMenu, Icon, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
@@ -12,16 +12,17 @@ import {
 import {I18N} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {useHistory, useLocation} from 'react-router-dom';
+import {DIALOG_EXPORT_WORKBOOK} from 'ui/components/CollectionsStructure/ExportWorkbookDialog/ExportWorkbookDialog';
 import {DropdownAction} from 'ui/components/DropdownAction/DropdownAction';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {COLLECTIONS_PATH} from 'ui/units/collections-navigation/constants';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {Feature} from '../../../../../shared';
 import type {WorkbookWithPermissions} from '../../../../../shared/schema';
 import {IamAccessDialog} from '../../../../components/IamAccessDialog/IamAccessDialog';
 import {registry} from '../../../../registry';
 import {ResourceType} from '../../../../registry/units/common/types/components/IamAccessDialog';
-import Utils from '../../../../utils';
 import {CreateEntry} from '../CreateEntry/CreateEntry';
 
 import './WorkbookActions.scss';
@@ -63,7 +64,7 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
         setIamAccessDialogIsOpen(false);
     }, [search, history]);
 
-    const collectionsAccessEnabled = Utils.isEnabledFeature(Feature.CollectionsAccessEnabled);
+    const collectionsAccessEnabled = isEnabledFeature(Feature.CollectionsAccessEnabled);
 
     const onApplyCopy = (workbookId: string | undefined) => {
         if (workbookId) {
@@ -121,6 +122,26 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
                 );
             },
             text: <DropdownAction icon={Copy} text={i18n('action_copy')} />,
+        });
+    }
+
+    if (isEnabledFeature(Feature.EnableExportWorkbookFile) && workbook.permissions.update) {
+        dropdownActions.push({
+            action: () => {
+                dispatch(
+                    openDialog({
+                        id: DIALOG_EXPORT_WORKBOOK,
+                        props: {
+                            open: true,
+                            workbookId: workbook.workbookId,
+                            onClose: () => {
+                                dispatch(closeDialog());
+                            },
+                        },
+                    }),
+                );
+            },
+            text: <DropdownAction icon={FileArrowUp} text={i18n('action_export')} />,
         });
     }
 

@@ -1,0 +1,112 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
+.g-root_theme_dark,
+.g-root_theme_dark-hc {
+    .dialog-relations {
+        &__icon-visualization {
+            filter: contrast(0) brightness(0.85);
+        }
+    }
+}
+
+.g-root_theme_light,
+.g-root_theme_light-hc {
+    .dialog-relations {
+        &__icon-visualization {
+            filter: contrast(0) brightness(1.3);
+        }
+    }
+}
+
+.dialog-relations {
+    min-width: 900px;
+    max-width: 90vw;
+
+    &__caption {
+        word-break: break-word;
+        max-width: 100%;
+        position: relative;
+    }
+
+    &__beta {
+        margin-left: 4px;
+        position: absolute;
+        right: 4px;
+        top: 20px;
+    }
+
+    &__relations-icon {
+        color: var(--g-color-text-hint);
+    }
+
+    &__container {
+        min-height: 353px;
+        max-height: 70vh;
+        display: flex;
+        flex-direction: column;
+        padding-bottom: 0;
+    }
+
+    &__empty-state {
+        flex-grow: 1;
+    }
+
+    &__loader {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100%;
+    }
+
+    &__error-button {
+        margin-left: 8px;
+    }
+
+    &__error-icon {
+        color: var(--g-color-text-danger);
+    }
+
+    &__warn-content {
+        padding: 20px 16px;
+        max-width: calc(100% - 100px);
+    }
+
+    &__warn-title {
+        @include text-subheader-1();
+    }
+
+    &__warn-text {
+        margin: 8px 0 4px;
+    }
+
+    &__invalid-list-popup {
+        max-width: 650px;
+
+        & .dialog-aliases-list__invalid-list-items {
+            max-height: 300px;
+            overflow: auto;
+        }
+    }
+
+    &__invalid-list-popup &__warn-content {
+        max-width: 100%;
+    }
+
+    &__disconnect-text {
+        margin-right: 10px;
+    }
+
+    &__item-select {
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+        border-bottom: 1px solid var(--g-color-line-generic);
+    }
+
+    &__item-select_empty-state {
+        border-bottom-color: transparent;
+    }
+
+    &__item-select-popup {
+        max-height: 320px;
+    }
+}

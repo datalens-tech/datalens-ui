@@ -1,4 +1,3 @@
-import {DATASET_FIELDS_URL, DATASET_ID_PLACEHOLDER} from '../constants';
 import type {SourceControlFieldsRequest} from '../types';
 
 export const prepareFieldsRequest = ({
@@ -7,6 +6,7 @@ export const prepareFieldsRequest = ({
     datasetId: string;
 }): SourceControlFieldsRequest => {
     return {
-        url: DATASET_FIELDS_URL.replace(DATASET_ID_PLACEHOLDER, datasetId),
+        datasetId: datasetId,
+        path: 'fields',
     };
 };

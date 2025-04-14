@@ -2,7 +2,8 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
 import type {AxiosError} from 'axios';
 import jwt from 'jsonwebtoken';
-import {isObject} from 'lodash';
+import get from 'lodash/get';
+import isObject from 'lodash/isObject';
 
 import type {ChartsEngine} from '..';
 import type {
@@ -122,7 +123,8 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                 ...res.locals.subrequestHeaders,
                 ...ctx.getMetadata(),
             },
-            requestId: req.id,
+            includeServicePlan: true,
+            includeTenantFeatures: true,
         };
 
         // 1. it's embedded chart, id is not used, chart is resolved by token
@@ -281,7 +283,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                 ) {
                     ctx.log('CHARTS_ENGINE_EDITOR_DISABLED');
                     return res.status(400).send({
-                        error: 'ChartEditor is disabled',
+                        error: 'Editor is disabled',
                     });
                 }
 
@@ -297,7 +299,15 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                     chartsEngine,
                     req,
                     res,
-                    config: entry,
+                    config: {
+                        ...entry,
+                        data: {
+                            ...entry.data,
+                            url: get(entry.data, 'sources') || get(entry.data, 'url'),
+                            js: get(entry.data, 'prepare') || get(entry.data, 'js'),
+                            ui: get(entry.data, 'controls') || get(entry.data, 'ui'),
+                        },
+                    },
                     configResolving,
                     forbiddenFields: ['_confStorageConfig', 'timings', 'key'],
                 });

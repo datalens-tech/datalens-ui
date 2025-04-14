@@ -44,7 +44,8 @@ import {
     addOperationForValue,
     unwrapFromArrayAndSkipOperation,
 } from '../../../../units/dash/modules/helpers';
-import {DEFAULT_CONTROL_LAYOUT} from '../../constants';
+import {DEBOUNCE_RENDER_TIMEOUT, DEFAULT_CONTROL_LAYOUT} from '../../constants';
+import {useWidgetContext} from '../../context/WidgetContext';
 import {adjustWidgetLayout, getControlHint} from '../../utils';
 import DebugInfoTool from '../DebugInfoTool/DebugInfoTool';
 
@@ -90,6 +91,19 @@ const i18n = I18n.keyset('dash.dashkit-plugin-control.view');
 
 const CONTROL_LAYOUT_DEBOUNCE_TIME = 20;
 
+const ControlWrapper = React.forwardRef<
+    HTMLDivElement,
+    {id: string; children: React.ReactNode; className: string}
+>(function ControlWrapper(props, nodeRef) {
+    useWidgetContext(props.id, nodeRef as React.RefObject<HTMLElement>);
+
+    return (
+        <div ref={nodeRef} className={props.className}>
+            {props.children}
+        </div>
+    );
+});
+
 class Control extends React.PureComponent<PluginControlProps, PluginControlState> {
     static contextType = ExtendedDashKitContext;
 
@@ -103,6 +117,8 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     _cancelSource: any = null;
 
     adjustWidgetLayout = debounce(this.setAdjustWidgetLayout, CONTROL_LAYOUT_DEBOUNCE_TIME);
+    _getDistinctsMemo: ControlSettings['getDistincts'];
+    _onRedraw: null | (() => void) = null;
 
     resolve: ((value: unknown) => void) | null = null;
 
@@ -115,6 +131,8 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
     constructor(props: PluginControlProps) {
         super(props);
+        this._onRedraw = debounce(this.props.onBeforeLoad(), DEBOUNCE_RENDER_TIMEOUT);
+
         this.state = {
             status: LOAD_STATUS.PENDING,
             loadedData: null,
@@ -203,7 +221,10 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             rootNode: this.rootNode,
             gridLayout: this.props.gridLayout,
             layout: this.props.layout,
-            cb: this.props.adjustWidgetLayout,
+            cb: (data) => {
+                this.props.adjustWidgetLayout(data);
+                this._onRedraw?.();
+            },
         });
     }
 
@@ -414,6 +435,8 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             const resolveDataArg = status === LOAD_STATUS.SUCCESS ? loadedData : null;
             this.resolveMeta(resolveDataArg);
         }
+
+        this._onRedraw?.();
     };
 
     init = async () => {
@@ -426,6 +449,9 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             const {workbookId} = this.props;
 
             const payloadCancellation = chartsDataProvider.getRequestCancellation();
+            const dataProviderContextGetter = this.context?.dataProviderContextGetter?.(
+                this.props.id,
+            );
 
             const payload = {
                 data: {
@@ -445,6 +471,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                     ...(workbookId ? {workbookId} : {}),
                 },
                 cancelToken: payloadCancellation.token,
+                headers: dataProviderContextGetter,
             };
 
             if (data.sourceType !== DashTabItemControlSourceType.External) {
@@ -552,9 +579,29 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         return null;
     }
 
+    getDistinctsWithHeaders() {
+        if (this.props.getDistincts) {
+            this._getDistinctsMemo =
+                this._getDistinctsMemo ||
+                ((params) => {
+                    const {getDistincts} = this.props;
+                    const headers = this?.context?.dataProviderContextGetter?.(this.props.id);
+
+                    return (getDistincts as Exclude<ControlSettings['getDistincts'], void>)?.(
+                        params,
+                        headers,
+                    );
+                });
+        } else {
+            this._getDistinctsMemo = undefined;
+        }
+
+        return this._getDistinctsMemo;
+    }
+
     renderSelectControl() {
         const data = this.props.data as unknown as DashTabItemControlSingle;
-        const {id, defaults, getDistincts} = this.props;
+        const {id, defaults} = this.props;
         const {loadedData, status, loadingItems, errorData, validationError} = this.state;
 
         const {label, innerLabel} = getLabels(data);
@@ -575,7 +622,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 validationError={validationError}
                 errorData={errorData}
                 validateValue={this.validateValue}
-                getDistincts={getDistincts}
+                getDistincts={this.getDistinctsWithHeaders()}
                 classMixin={b('item')}
                 selectProps={{label, innerLabel}}
             />
@@ -708,7 +755,8 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             const chartId = source.chartId;
 
             return (
-                <div
+                <ControlWrapper
+                    id={this.props.id}
                     ref={this.rootNode}
                     className={b({
                         external: true,
@@ -740,7 +788,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                         forwardedRef={this.chartKitRef as any}
                         workbookId={workbookId}
                     />
-                </div>
+                </ControlWrapper>
             );
         }
 
@@ -750,7 +798,11 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             '') as string;
 
         return (
-            <div ref={this.rootNode} className={b({mobile: DL.IS_MOBILE})}>
+            <ControlWrapper
+                id={this.props.id}
+                ref={this.rootNode}
+                className={b({mobile: DL.IS_MOBILE})}
+            >
                 {this.renderSilentLoader()}
                 <DebugInfoTool
                     modType={'corner'}
@@ -762,7 +814,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 {source.elementType === TYPE.SELECT
                     ? this.renderSelectControl()
                     : this.renderControls()}
-            </div>
+            </ControlWrapper>
         );
     }
 
@@ -770,6 +822,8 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         if (this._isUnmounted) {
             return;
         }
+
+        this._onRedraw?.();
 
         const statusResponse = getStatus(status);
         if (statusResponse) {

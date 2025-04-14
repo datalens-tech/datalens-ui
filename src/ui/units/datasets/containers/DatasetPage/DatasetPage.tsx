@@ -4,13 +4,11 @@ import block from 'bem-cn-lite';
 import type {RouteComponentProps} from 'react-router-dom';
 import {Feature} from 'shared';
 import type {SDK} from 'ui';
-import {Utils} from 'ui';
 import {registry} from 'ui/registry';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
-import type {AsideHeaderData} from '../../../../store/typings/asideHeader';
-import {DATASET_TABS, TAB_DATASET, TAB_SOURCES} from '../../constants';
 import {ActionQueryParam, QueryParam, mapYTClusterToConnId} from '../../constants/datasets';
-import DatasetUtils from '../../helpers/utils';
+import DatasetUtils, {isCreationProcess} from '../../helpers/utils';
 import Dataset from '../Dataset/Dataset';
 
 import {createDatasetPageContext} from './createDatasetPageContext';
@@ -19,8 +17,8 @@ import './DatasetPage.scss';
 
 interface DatasetPageProps extends RouteComponentProps<Record<string, string>> {
     sdk: SDK;
-    asideHeaderData: AsideHeaderData;
-    isCreationProcess?: boolean;
+    datasetId?: string;
+    workbookId?: string;
 }
 
 export const DatasetPageContext = createDatasetPageContext({sdk: {} as SDK, datasetId: ''});
@@ -29,36 +27,19 @@ export const DatasetPageConsumer = DatasetPageContext.Consumer;
 
 const b = block('dataset-page');
 
-const getDatasetTab = (queryTab?: string, isCreationProcess = false) => {
-    const defaultTab = isCreationProcess ? TAB_SOURCES : TAB_DATASET;
-
-    if (!queryTab) {
-        return defaultTab;
-    }
-
-    if (DATASET_TABS.includes(queryTab)) {
-        return queryTab;
-    }
-
-    return defaultTab;
-};
-
 class DatasetPage extends React.Component<DatasetPageProps> {
     render() {
-        const {sdk, isCreationProcess, history, asideHeaderData} = this.props;
-
         return (
             <div className={b()}>
                 <DatasetPageProvider value={this.providerValue}>
                     <Dataset
-                        sdk={sdk}
-                        datasetId={this.datasetId}
+                        sdk={this.props.sdk}
                         connectionId={this.connectionId}
-                        tab={getDatasetTab(DatasetUtils.getQueryParam('tab'), isCreationProcess)}
-                        history={history}
-                        asideHeaderData={asideHeaderData}
+                        datasetId={this.datasetId}
+                        workbookIdFromPath={this.props.workbookId}
+                        history={this.props.history}
                         ytPath={this.ytPath}
-                        isCreationProcess={isCreationProcess}
+                        isCreationProcess={isCreationProcess(location.pathname)}
                         isAuto={this.isAuto}
                     />
                 </DatasetPageProvider>
@@ -67,7 +48,7 @@ class DatasetPage extends React.Component<DatasetPageProps> {
     }
 
     get isAuto() {
-        if (Utils.isEnabledFeature(Feature.EnableAutocreateDataset) || this.datasetId) {
+        if (isEnabledFeature(Feature.EnableAutocreateDataset) || this.datasetId) {
             return false;
         }
 
@@ -91,15 +72,13 @@ class DatasetPage extends React.Component<DatasetPageProps> {
     }
 
     get datasetId() {
-        const datasetId = this.getParamFromMatch('datasetId');
-
-        if (!datasetId) {
+        if (!this.props.datasetId) {
             return '';
         }
 
         const {extractEntryId} = registry.common.functions.getAll();
 
-        return extractEntryId(datasetId) || '';
+        return extractEntryId(this.props.datasetId) || '';
     }
 
     get ytPath() {
@@ -113,10 +92,6 @@ class DatasetPage extends React.Component<DatasetPageProps> {
             sdk: this.props.sdk,
             datasetId: this.datasetId,
         };
-    }
-
-    private getParamFromMatch(name: string) {
-        return this.props.match.params[name];
     }
 }
 

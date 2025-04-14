@@ -4,6 +4,10 @@
     align-self: center;
     justify-self: center;
 
+    &_disableStretch {
+        flex: 0;
+    }
+
     &__container {
         display: flex;
         flex: 1;

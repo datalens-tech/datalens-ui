@@ -31,6 +31,7 @@ import {
     DatasetFieldType,
     Feature,
     PlaceholderId,
+    QLChartType,
     SortDirection,
     VisualizationItemQa,
     WizardVisualizationId,
@@ -40,7 +41,10 @@ import {
 } from 'shared';
 import {closeDialog, openDialog} from 'store/actions/dialog';
 import type {DatalensGlobalState} from 'ui';
+import {getChartType} from 'ui/units/ql/store/reducers/ql';
 import {selectExtraSettings} from 'ui/units/wizard/selectors/widget';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import Utils from 'ui/utils/utils';
 import {
     createFieldFromVisualization,
     removeQuickFormula,
@@ -80,7 +84,6 @@ import {
     selectSort,
 } from 'units/wizard/selectors/visualization';
 import {getIconForDataType, prepareFieldForUpdate} from 'units/wizard/utils/helpers';
-import Utils from 'utils';
 import {v1 as uuidv1} from 'uuid';
 
 import {DIALOG_FIELD_EDITOR} from '../../../../../../components/DialogFieldEditor/DialogFieldEditor';
@@ -688,7 +691,7 @@ class VisualizationItem extends React.Component<Props, State> {
     };
 
     private openDialogField = (item: Field, extra: any) => {
-        const {visualization, extraSettings, props} = this.props;
+        const {visualization, extraSettings, props, qlChartType} = this.props;
         const {dataset} = this.props;
 
         this.props.actions.openDialog({
@@ -712,6 +715,7 @@ class VisualizationItem extends React.Component<Props, State> {
                 onCancel: this.closeDialogField,
                 extraSettings,
                 fieldIndexInSection: props.index,
+                markupTypeEnabled: qlChartType !== QLChartType.Monitoringql,
             },
         });
     };
@@ -735,7 +739,7 @@ class VisualizationItem extends React.Component<Props, State> {
             backgroundSettings,
             subTotalsSettings,
             hintSettings,
-            isMarkdown,
+            markupType,
         }: DialogFieldState,
     ) => {
         const clientsideProperties = {
@@ -747,7 +751,7 @@ class VisualizationItem extends React.Component<Props, State> {
             backgroundSettings,
             subTotalsSettings,
             hintSettings,
-            isMarkdown,
+            markupType,
         };
 
         const serversideProperties = {
@@ -884,8 +888,8 @@ class VisualizationItem extends React.Component<Props, State> {
         }
 
         target.hintSettings = hintSettings;
-        target.isMarkdown =
-            target.data_type === DATASET_FIELD_TYPES.STRING && isMarkdown ? true : undefined;
+        target.markupType =
+            target.data_type === DATASET_FIELD_TYPES.STRING ? markupType : undefined;
 
         if (isClientSidePropertiesChanged && !isServersidePropertiesChanged) {
             this.props.actions.updatePreviewWithRerender();
@@ -928,7 +932,7 @@ class VisualizationItem extends React.Component<Props, State> {
         } else if (
             filter?.value.length === 1 &&
             filter?.value?.[0] === '' &&
-            Utils.isEnabledFeature(Feature.EmptySelector)
+            isEnabledFeature(Feature.EmptySelector)
         ) {
             return {
                 rawValues: [],
@@ -967,6 +971,7 @@ const mapStateToProps = (state: DatalensGlobalState) => {
         shapesConfig: selectShapesConfig(state),
         extraSettings: selectExtraSettings(state),
         workbookId: selectWizardWorkbookId(state),
+        qlChartType: getChartType(state),
     };
 };
 

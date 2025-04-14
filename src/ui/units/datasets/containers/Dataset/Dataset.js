@@ -2,20 +2,19 @@ import {SPLIT_PANE_RESIZER_CLASSNAME, URL_QUERY} from 'constants/common';
 
 import React from 'react';
 
-import {Gear} from '@gravity-ui/icons';
-import {Button, Icon, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import omit from 'lodash/omit';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import {withRouter} from 'react-router-dom';
 import SplitPane from 'react-split-pane';
 import {compose} from 'recompose';
 import {createStructuredSelector} from 'reselect';
-import {DatasetActionQA, ErrorCode, ErrorContentTypes} from 'shared';
+import {ErrorCode, ErrorContentTypes} from 'shared';
+import {HOTKEYS_SCOPES} from 'ui/constants/misc';
+import {withHotkeysContext} from 'ui/hoc/withHotkeysContext';
 import {openDialogErrorWithTabs} from 'ui/store/actions/dialog';
-import {selectIsRenameWithoutReload} from 'ui/store/selectors/entryContent';
+import {initEditHistoryUnit} from 'ui/store/actions/editHistory';
 import {
     addAvatar,
     addSource,
@@ -28,8 +27,8 @@ import {
     openPreview,
     refreshSources,
     saveDataset,
-    setAsideHeaderWidth,
-    toggleLoadPreviewByDefault,
+    setCurrentTab,
+    setEditHistoryState,
     togglePreview,
     updateDatasetByValidation,
 } from 'units/datasets/store/actions/creators';
@@ -42,20 +41,26 @@ import EntryDialogues, {
     EntryDialogName,
 } from '../../../../components/EntryDialogues/EntryDialogues';
 import ErrorContent from '../../../../components/ErrorContent/ErrorContent';
-import NavigationPrompt from '../../../../components/NavigationPrompt/NavigationPrompt';
 import {PageTitle} from '../../../../components/PageTitle';
 import {SlugifyUrl} from '../../../../components/SlugifyUrl';
 import UIUtils from '../../../../utils/utils';
 import ContainerLoader from '../../components/ContainerLoader/ContainerLoader';
 import DatasetPanel from '../../components/DatasetPanel/DatasetPanel';
 import DialogCreateDataset from '../../components/DialogCreateDataset/DialogCreateDataset';
-import {TAB_DATASET, TAB_SOURCES, VIEW_PREVIEW, getFakeEntry} from '../../constants';
+import {
+    DATASETS_EDIT_HISTORY_UNIT_ID,
+    TAB_DATASET,
+    TAB_SOURCES,
+    VIEW_PREVIEW,
+    getFakeEntry,
+} from '../../constants';
 import DatasetError from '../../containers/DatasetError/DatasetError';
 import DatasetTabViewer from '../../containers/DatasetTabViewer/DatasetTabViewer';
 import {getAutoCreatedYTDatasetKey} from '../../helpers/datasets';
 import DatasetUtils from '../../helpers/utils';
 import {
     UISelector,
+    currentTabSelector,
     datasetErrorSelector,
     datasetKeySelector,
     datasetPermissionsSelector,
@@ -63,19 +68,17 @@ import {
     datasetPreviewSelector,
     datasetSavingErrorSelector,
     datasetValidationErrorSelector,
-    isDatasetChangedDatasetSelector,
     isDatasetRevisionMismatchSelector,
     isFavoriteDatasetSelector,
-    isLoadPreviewByDefaultSelector,
     isLoadingDatasetSelector,
-    isSavingDatasetDisabledSelector,
-    isSavingDatasetSelector,
     previewEnabledSelector,
     sourcePrototypesSelector,
     sourceTemplateSelector,
     workbookIdSelector,
 } from '../../store/selectors';
 import DatasetPreview from '../DatasetPreview/DatasetPreview';
+
+import {ActionPanelRightItems} from './ActionPanelRightItems';
 
 import './Dataset.scss';
 
@@ -85,8 +88,6 @@ const i18nError = I18n.keyset('component.view-error.view');
 const RIGHT_PREVIEW_PANEL_MIN_SIZE = 500;
 const BOTTOM_PREVIEW_PANEL_MIN_SIZE = 48;
 const BOTTOM_PREVIEW_PANEL_DEFAULT_SIZE = 200;
-
-const ITEM_SHOW_PREVIEW_BY_DEFAULT = 'showPreviewByDefault';
 
 class Dataset extends React.Component {
     constructor(props) {
@@ -99,10 +100,19 @@ class Dataset extends React.Component {
             progress: false,
             connectionId: '',
             connectionType: '',
-            tab: this.props.tab,
             propsDatasetCreationDialog: {},
             previewPanelSize: BOTTOM_PREVIEW_PANEL_DEFAULT_SIZE,
         };
+
+        this.props.initEditHistoryUnit({
+            unitId: DATASETS_EDIT_HISTORY_UNIT_ID,
+            setState: (args) => {
+                this.props.setEditHistoryState(args);
+            },
+            options: {
+                pathIgnoreList: ['/isLoading'],
+            },
+        });
     }
 
     componentDidMount() {
@@ -123,22 +133,20 @@ class Dataset extends React.Component {
             initialFetchDataset({datasetId});
         }
 
-        window.addEventListener('beforeunload', this.confirmClosePage);
+        this.props.hotkeysContext?.enableScope(HOTKEYS_SCOPES.DATASETS);
     }
 
     componentDidUpdate(prevProps) {
         const {
             datasetId: prevDatasetId,
             datasetPreview: {view: prevView},
-            asideHeaderData: {size: prevSize} = {},
             ui: {isSourcesLoading: prevIsSourcesLoading},
         } = prevProps;
         const {
-            tab,
+            currentTab,
             ytPath,
             datasetId,
             datasetPreview: {view: curView},
-            asideHeaderData: {size: curSize} = {},
             ui: {isSourcesLoading},
             savingError,
         } = this.props;
@@ -161,17 +169,12 @@ class Dataset extends React.Component {
             this.setState({previewPanelSize});
         }
 
-        // The moment when the side cap's resize ends
-        if (curSize && prevSize !== curSize) {
-            this.props.setAsideHeaderWidth(curSize);
-        }
-
         // Before automatically creating a dataset, we are waiting for the sources to load
         if (prevIsSourcesLoading && !isSourcesLoading && isAuto && ytPath) {
             this.autoCreateYTDataset();
         }
 
-        if (tab === TAB_SOURCES && prevIsSourcesLoading && !isSourcesLoading && !isAuto) {
+        if (currentTab === TAB_SOURCES && prevIsSourcesLoading && !isSourcesLoading && !isAuto) {
             this.addInitialAvatar();
         }
 
@@ -183,7 +186,7 @@ class Dataset extends React.Component {
     }
 
     componentWillUnmount() {
-        window.removeEventListener('beforeunload', this.confirmClosePage);
+        this.props.hotkeysContext?.disableScope(HOTKEYS_SCOPES.DATASETS);
     }
 
     _datasetEditorRef = React.createRef();
@@ -233,14 +236,6 @@ class Dataset extends React.Component {
 
         if (datasetSourcesRef) {
             datasetSourcesRef.addAvatarOnMapAutoIfNeeds(sourcePrototypes);
-        }
-    };
-
-    confirmClosePage = (event) => {
-        const {isDatasetChanged} = this.props;
-
-        if (isDatasetChanged) {
-            event.returnValue = true;
         }
     };
 
@@ -350,10 +345,8 @@ class Dataset extends React.Component {
         };
     }
 
-    switchTab = (tab) => {
-        this.setState({
-            tab,
-        });
+    switchTab = (currentTab) => {
+        this.props.setCurrentTab({currentTab});
     };
 
     openDialogFieldEditor = () => {
@@ -400,104 +393,31 @@ class Dataset extends React.Component {
     };
 
     getWorkbookId() {
-        return this.props.match.params.workbookId || this.props.workbookId;
+        return this.props.workbookIdFromPath || this.props.workbookId;
     }
 
     refreshSources = () => {
-        const {refreshSources, updateDatasetByValidation} = this.props;
-
-        refreshSources();
-        updateDatasetByValidation({
+        this.props.refreshSources();
+        this.props.updateDatasetByValidation({
             updatePreview: true,
             compareContent: true,
         });
     };
 
-    getDatasetSettings = () => {
-        return this.props.isPreviewLoadByDefault ? [ITEM_SHOW_PREVIEW_BY_DEFAULT] : [];
-    };
-
-    setDatasetSettings = (value) => {
-        this.props.toggleLoadPreviewByDefault(value.includes(ITEM_SHOW_PREVIEW_BY_DEFAULT));
-    };
-
     getRightItems = () => {
-        const {
-            isLoading,
-            isDatasetRevisionMismatch,
-            savingDatasetDisabled,
-            isProcessingSavingDataset,
-            saveDataset,
-            isCreationProcess,
-        } = this.props;
-        const saveButtonDisabled = savingDatasetDisabled || isDatasetRevisionMismatch;
+        const {isCreationProcess} = this.props;
 
-        const rightItems = [
-            <Button
-                key="save-dataset"
-                qa={DatasetActionQA.CreateButton}
-                view="action"
-                size="m"
-                loading={isProcessingSavingDataset}
-                disabled={saveButtonDisabled}
-                onClick={() =>
+        return (
+            <ActionPanelRightItems
+                isCreationProcess={isCreationProcess}
+                onClickCreateWidgetButton={this.openCreationWidgetPage}
+                onClickSaveDatasetButton={() =>
                     isCreationProcess
                         ? this.openDialogCreateDataset()
-                        : saveDataset({isCreationProcess, history})
+                        : this.props.saveDataset({isCreationProcess, history})
                 }
-            >
-                {i18n('button_save')}
-            </Button>,
-            <NavigationPrompt
-                key="navigation-prompt"
-                when={!saveButtonDisabled && !this.props.isRenameWithoutReload}
-            />,
-        ];
-
-        const leftItems = [
-            <Select
-                key={'settings'}
-                value={this.getDatasetSettings()}
-                multiple={true}
-                onUpdate={this.setDatasetSettings}
-                popupPlacement={'bottom-end'}
-                renderControl={(args) => {
-                    const {onClick, onKeyDown, ref} = args;
-
-                    return (
-                        <Button
-                            ref={ref}
-                            size="s"
-                            view="flat"
-                            onClick={onClick}
-                            extraProps={{onKeyDown}}
-                        >
-                            <Icon data={Gear} height={18} width={18} />
-                        </Button>
-                    );
-                }}
-                className={b('settings-cog')}
-            >
-                <Select.Option value={ITEM_SHOW_PREVIEW_BY_DEFAULT} disabled={isLoading}>
-                    {i18n('label_load_preview_by_default')}
-                </Select.Option>
-            </Select>,
-        ];
-
-        return [
-            ...leftItems,
-            <Button
-                key="create-widget"
-                className={b('create-widget-btn')}
-                view="normal"
-                size="m"
-                disabled={isCreationProcess}
-                onClick={this.openCreationWidgetPage}
-            >
-                {i18n('button_create-widget')}
-            </Button>,
-            ...rightItems,
-        ];
+            />
+        );
     };
 
     openDialogDetails = () => {
@@ -538,15 +458,16 @@ class Dataset extends React.Component {
             sdk,
             datasetId,
             datasetPreview: {view, isVisible},
+            currentTab,
         } = this.props;
-        const {tab, previewPanelSize} = this.state;
+        const {previewPanelSize} = this.state;
 
         const isRightView = view === VIEW_PREVIEW.RIGHT;
         const mods = {[VIEW_PREVIEW.RIGHT]: isRightView};
         const previewPanelStyles = {};
 
         let minSize = 0;
-        const isSourceOrDatasetTab = tab === TAB_SOURCES || tab === TAB_DATASET;
+        const isSourceOrDatasetTab = currentTab === TAB_SOURCES || currentTab === TAB_DATASET;
 
         if (isVisible && isSourceOrDatasetTab) {
             minSize = isRightView ? RIGHT_PREVIEW_PANEL_MIN_SIZE : BOTTOM_PREVIEW_PANEL_MIN_SIZE;
@@ -572,7 +493,7 @@ class Dataset extends React.Component {
                 >
                     <DatasetTabViewer
                         ref={this._datasetEditorRef}
-                        tab={tab}
+                        tab={currentTab}
                         sdk={sdk}
                         datasetId={datasetId}
                         workbookId={this.getWorkbookId()}
@@ -584,23 +505,16 @@ class Dataset extends React.Component {
     }
 
     renderControls() {
-        const {isCreationProcess, previewEnabled, togglePreview} = this.props;
-        const additionalEntryItems = [];
-
         return (
             <React.Fragment>
-                <ActionPanel
-                    entry={this.getEntry()}
-                    additionalEntryItems={additionalEntryItems}
-                    rightItems={this.getRightItems()}
-                />
+                <ActionPanel entry={this.getEntry()} rightItems={this.getRightItems()} />
                 <DatasetPanel
-                    isCreationProcess={isCreationProcess}
-                    tab={this.state.tab}
-                    previewEnabled={previewEnabled}
+                    isCreationProcess={this.props.isCreationProcess}
+                    tab={this.props.currentTab}
+                    previewEnabled={this.props.previewEnabled}
                     refreshSources={this.refreshSources}
                     switchTab={this.switchTab}
-                    togglePreview={togglePreview}
+                    togglePreview={this.props.togglePreview}
                     openDialogFieldEditor={this.openDialogFieldEditor}
                 />
             </React.Fragment>
@@ -655,7 +569,6 @@ class Dataset extends React.Component {
     }
 
     render() {
-        const {history} = this.props;
         const entry = this.getEntry();
 
         return (
@@ -666,9 +579,9 @@ class Dataset extends React.Component {
                         <SlugifyUrl
                             entryId={entry.entryId}
                             name={CommonUtils.getEntryNameFromKey(entry.key)}
-                            history={history}
+                            history={this.props.history}
                         />
-                        <AccessRightsUrlOpen history={history} />
+                        <AccessRightsUrlOpen history={this.props.history} />
                     </React.Fragment>
                 )}
                 {this.renderBody()}
@@ -687,21 +600,20 @@ Dataset.propTypes = {
     isAuto: PropTypes.bool.isRequired,
     previewEnabled: PropTypes.bool.isRequired,
     isDatasetRevisionMismatch: PropTypes.bool.isRequired,
-    isPreviewLoadByDefault: PropTypes.bool,
     fetchFieldTypes: PropTypes.func.isRequired,
     initializeDataset: PropTypes.func.isRequired,
     initialFetchDataset: PropTypes.func.isRequired,
     fetchDataset: PropTypes.func.isRequired,
     openPreview: PropTypes.func.isRequired,
     closePreview: PropTypes.func.isRequired,
-    toggleLoadPreviewByDefault: PropTypes.func.isRequired,
     togglePreview: PropTypes.func.isRequired,
     updateDatasetByValidation: PropTypes.func.isRequired,
     saveDataset: PropTypes.func.isRequired,
     changeAmountPreviewRows: PropTypes.func.isRequired,
     refreshSources: PropTypes.func.isRequired,
-    setAsideHeaderWidth: PropTypes.func.isRequired,
-    tab: PropTypes.string,
+    openDialogErrorWithTabs: PropTypes.func.isRequired,
+    initEditHistoryUnit: PropTypes.func.isRequired,
+    currentTab: PropTypes.string.isRequired,
     datasetId: PropTypes.string,
     connectionId: PropTypes.string,
     datasetKey: PropTypes.string,
@@ -714,10 +626,9 @@ Dataset.propTypes = {
     sourcePrototypes: PropTypes.array,
     datasetPreview: PropTypes.object.isRequired,
     history: PropTypes.object.isRequired,
-    isRenameWithoutReload: PropTypes.bool,
-    asideHeaderData: PropTypes.shape({
-        size: PropTypes.number.isRequired,
-    }),
+    datasetPermissions: PropTypes.object,
+    workbookId: PropTypes.string,
+    workbookIdFromPath: PropTypes.string,
 };
 
 Dataset.defaultProps = {
@@ -732,19 +643,15 @@ const mapStateToProps = createStructuredSelector({
     savingError: datasetSavingErrorSelector,
     validationError: datasetValidationErrorSelector,
     datasetPreview: datasetPreviewSelector,
-    isDatasetChanged: isDatasetChangedDatasetSelector,
     isLoading: isLoadingDatasetSelector,
     isFavorite: isFavoriteDatasetSelector,
-    savingDatasetDisabled: isSavingDatasetDisabledSelector,
-    isPreviewLoadByDefault: isLoadPreviewByDefaultSelector,
     isDatasetRevisionMismatch: isDatasetRevisionMismatchSelector,
-    isProcessingSavingDataset: isSavingDatasetSelector,
     previewEnabled: previewEnabledSelector,
     sourcePrototypes: sourcePrototypesSelector,
     sourceTemplate: sourceTemplateSelector,
     ui: UISelector,
     workbookId: workbookIdSelector,
-    isRenameWithoutReload: selectIsRenameWithoutReload,
+    currentTab: currentTabSelector,
 });
 const mapDispatchToProps = {
     fetchFieldTypes,
@@ -754,15 +661,16 @@ const mapDispatchToProps = {
     saveDataset,
     openPreview,
     closePreview,
-    toggleLoadPreviewByDefault,
     togglePreview,
     updateDatasetByValidation,
     changeAmountPreviewRows,
     refreshSources,
-    setAsideHeaderWidth,
     addSource,
     addAvatar,
     openDialogErrorWithTabs,
+    initEditHistoryUnit,
+    setEditHistoryState,
+    setCurrentTab,
 };
 
-export default compose(connect(mapStateToProps, mapDispatchToProps))(withRouter(Dataset));
+export default compose(connect(mapStateToProps, mapDispatchToProps))(withHotkeysContext(Dataset));

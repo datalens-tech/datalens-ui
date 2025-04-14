@@ -1,3 +1,5 @@
+import type {WorkbookStatus} from '../../../constants/workbooks';
+
 import type {GetEntryResponse} from './entries';
 import type {GetDatalensOperationResponse} from './operations';
 import type {OrderBasicField, OrderDirection, OrderWorkbookEntriesField} from './sort';
@@ -22,11 +24,12 @@ export type Workbook = {
     description: string | null;
     tenantId: string;
     projectId: string | null;
-    meta: Record<string, unknown>;
+    meta: {importId?: string; [key: string]: unknown};
     createdBy: string;
     createdAt: string;
     updatedBy: string;
     updatedAt: string;
+    status?: WorkbookStatus;
 };
 
 export type WorkbookWithPermissions = Workbook & {

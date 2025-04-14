@@ -1,1 +1,1 @@
-export {default as Markup} from './Markup';
+export {Markup} from './Markup';

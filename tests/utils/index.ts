@@ -9,11 +9,9 @@ import {
     DialogCreateWorkbookEntryQa,
     DlNavigationQA,
     EntryDialogQA,
-    Feature,
     SelectQa,
 } from '../../src/shared';
 import {ActionPanelEntryContextMenuQa} from '../../src/shared/constants/qa/action-panel';
-import {isEnabledFeature} from './helpers';
 export * from './helpers';
 
 export const ROOT_ENV_PATH = path.resolve(__dirname, '..', '..', '.env');
@@ -230,14 +228,13 @@ export async function getControlByTitle(
     page: Page,
     controlTitle: string,
 ): Promise<ElementHandle<HTMLElement>> {
-    const isEnabledGroupControls = await isEnabledFeature(page, Feature.GroupControls);
     let controlTitleElement = await page
         .locator(slct(ControlQA.controlLabel))
         .filter({hasText: controlTitle})
         .elementHandle();
 
     let control = await controlTitleElement?.getProperty('parentNode');
-    if (isEnabledGroupControls && !control) {
+    if (!control) {
         controlTitleElement = await page.waitForSelector(
             slct(ControlQA.chartkitControl, controlTitle),
         );

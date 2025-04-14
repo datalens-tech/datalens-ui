@@ -1,7 +1,7 @@
 import {DL} from 'constants/common';
 
 import type {ChartKitWidgetData} from '@gravity-ui/chartkit';
-import type {AxiosError, AxiosRequestConfig, CancelTokenSource} from 'axios';
+import type {AxiosError, AxiosRequestConfig, AxiosResponse, CancelTokenSource} from 'axios';
 import axios from 'axios';
 import type {Series as HighchartSeries} from 'highcharts';
 import Highcharts from 'highcharts';
@@ -12,7 +12,13 @@ import merge from 'lodash/merge';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import {stringify} from 'qs';
-import type {ChartsStats, DashChartRequestContext, StringParams, WizardType} from 'shared';
+import type {
+    ChartsStats,
+    DashChartRequestContext,
+    StringParams,
+    WizardType,
+    WorkbookId,
+} from 'shared';
 import {
     ControlType,
     DL_COMPONENT_HEADER,
@@ -26,12 +32,12 @@ import {
     WidgetKind,
 } from 'shared';
 import {isEmbeddedEntry} from 'ui/utils/embedded';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {ChartWidgetData} from '../../../../../components/Widgets/Chart/types';
 import {registry} from '../../../../../registry';
 import type {WidgetType} from '../../../../../units/dash/modules/constants';
-import Utils from '../../../../../utils';
-import {chartToTable} from '../../../ChartKit/helpers/d3-chart-to-table';
+import {chartToTable} from '../../../ChartKit/helpers/gravity-charts/chart-to-table';
 import {isNavigatorSerie} from '../../../ChartKit/modules/graph/config/config';
 import type {
     ChartKitLoadSuccess,
@@ -128,14 +134,15 @@ export interface EntityRequestOptions {
         uiOnly?: boolean;
         tabId?: string;
         responseOptions?: {
-            includeConfig: boolean;
-            includeLogs: boolean;
+            includeConfig?: boolean;
+            includeLogs?: boolean;
         };
         controlData?: {
             id: string;
             tabId?: string;
             groupId?: string;
         };
+        workbookId?: WorkbookId;
     };
     headers?: Record<string, any>;
     cancelToken?: CancelTokenSource['token'];
@@ -391,7 +398,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                 case WidgetKind.Graph: {
                     return ChartsDataProvider.graphToTable(processed);
                 }
-                case WidgetKind.D3: {
+                case WidgetKind.GravityCharts: {
                     return {
                         ...processed,
                         type: 'table',
@@ -596,7 +603,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         requestId: string;
         requestCancellation: CancelTokenSource;
     }) {
-        const loaded = await this.load<ResponseSuccess>({
+        const loaded = await this.load({
             data: props,
             contextHeaders,
             requestId,
@@ -626,6 +633,64 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         return null;
     }
 
+    async runAction({
+        props,
+        contextHeaders,
+        requestId,
+    }: {
+        props: ChartsProps;
+        contextHeaders?: DashChartRequestContext;
+        requestId: string;
+    }) {
+        const {
+            id,
+            source,
+            params,
+            widgetType,
+            config: {type, data: configData, key, createdAt} = {},
+            workbookId,
+        } = props;
+
+        const isEditMode = Boolean(type && configData);
+        const includeLogs = this.settings.includeLogs || isEditMode;
+
+        try {
+            const result = await this.makeRequest({
+                url: `${this.requestEndpoint}${DL.API_PREFIX}/run-action`,
+                data: {
+                    id,
+                    key,
+                    path: source,
+                    params,
+                    widgetType,
+                    config: isEditMode
+                        ? {
+                              data: configData,
+                              createdAt: createdAt,
+                              meta: {stype: type},
+                          }
+                        : undefined,
+                    responseOptions: {
+                        includeLogs,
+                    },
+                    workbookId,
+                },
+                headers: this.getLoadHeaders(requestId, contextHeaders),
+            });
+            const responseData: ResponseSuccess = result.data;
+            const headers = result.headers;
+
+            return this.getExtendedResponse({responseData, headers, includeLogs});
+        } catch (error) {
+            return this.processError({
+                error,
+                requestId,
+                includeLogs,
+                isEditMode,
+            });
+        }
+    }
+
     async getControls({
         props,
         contextHeaders,
@@ -637,7 +702,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         requestId: string;
         requestCancellation: CancelTokenSource;
     }) {
-        const loaded = await this.load<ResponseSuccessControls>({
+        const loaded = await this.load({
             data: props,
             contextHeaders,
             requestId,
@@ -699,7 +764,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         return config;
     }
 
-    async makeRequest(requestOptions: EntityRequestOptions) {
+    async makeRequest(requestOptions: EntityRequestOptions & {url?: string}) {
         const stype = (requestOptions.data?.config as EntityConfig)?.meta?.stype;
         const isControlRequest =
             stype === ControlType.Dash ||
@@ -732,12 +797,9 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             headers[DL_EMBED_TOKEN_HEADER] = getSecureEmbeddingToken();
         }
 
-        // TODO: use only api prefix
-        const url = DL.API_PREFIX ? `${DL.API_PREFIX}/run` : DL.RUN_ENDPOINT;
-
         return axiosInstance(
             this.prepareRequestConfig({
-                url: `${this.requestEndpoint}${url}`,
+                url: `${this.requestEndpoint}${DL.API_PREFIX}/run`,
                 method: 'post',
                 ...requestOptions,
                 headers,
@@ -755,7 +817,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         },
         {extraParams = {}, urlPostfix = '', idPrefix = ''},
     ) {
-        let url = this.endpoint + urlPostfix;
+        let url = urlPostfix;
 
         let id = propsData.id;
         if (!id && loadedData && 'entryId' in loadedData) {
@@ -769,19 +831,104 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         return url + query;
     }
 
+    private getExtendedResponse<T extends ResponseSuccess | ResponseSuccessControls>(args: {
+        responseData: T;
+        headers: AxiosResponse<any, any>['headers'];
+        includeLogs: boolean;
+    }) {
+        const {responseData, headers, includeLogs} = args;
+
+        // TODO: return output when receiving onLoad
+        if (includeLogs && 'logs_v2' in responseData) {
+            ChartsDataProvider.printLogs((responseData as ResponseSuccessNodeBase).logs_v2);
+        }
+
+        if (headers[REQUEST_ID_HEADER]) {
+            responseData.requestId = headers[REQUEST_ID_HEADER];
+        }
+
+        if (headers[TRACE_ID_HEADER]) {
+            responseData.traceId = headers[TRACE_ID_HEADER];
+        }
+
+        return responseData;
+    }
+
     private getLoadHeaders(requestId: string, contextHeaders?: DashChartRequestContext) {
         const headers: Record<string, string | null> = {
             ...(contextHeaders ?? {}),
             [REQUEST_ID_HEADER]: requestId,
         };
-        if (Utils.isEnabledFeature(Feature.UseComponentHeader)) {
+        if (isEnabledFeature(Feature.UseComponentHeader)) {
             headers[DL_COMPONENT_HEADER] = DlComponentHeader.UI;
         }
 
         return headers;
     }
 
-    private async load<T extends ResponseSuccess | ResponseSuccessControls>({
+    private processError(args: {
+        error: any;
+        requestId: string;
+        includeLogs?: boolean;
+        isEditMode?: boolean;
+    }) {
+        const {error, requestId, includeLogs, isEditMode = false} = args;
+
+        if (axios.isCancel(error)) {
+            return null;
+        }
+
+        const debug = {requestId};
+        if (!error.response) {
+            throw DatalensChartkitCustomError.wrap(error, {code: ERROR_CODE.NETWORK, debug});
+        }
+
+        const {
+            response: {status, data},
+        }: AxiosError<ResponseError> = error;
+
+        if (includeLogs) {
+            ChartsDataProvider.printLogs(data.logs_v2);
+        }
+
+        if (status === 489) {
+            throw DatalensChartkitCustomError.wrap(error, {
+                code: ERROR_CODE.UNAUTHORIZED,
+                debug,
+            });
+        }
+
+        const extra = {logs_v2: data.logs_v2, sources: data.sources, params: data.params};
+
+        if (data.error) {
+            throw DatalensChartkitCustomError.wrap(
+                error,
+                ChartsDataProvider.formatError(merge({debug, extra}, data.error), isEditMode),
+            );
+        }
+
+        // error loading data in Wizard
+        // @ts-ignore
+        if (data.errorType === 'wizard_data_fetching_error') {
+            throw DatalensChartkitCustomError.wrap(
+                error,
+                ChartsDataProvider.formatError(
+                    {
+                        code: CHARTS_ERROR_CODE.DATA_FETCHING_ERROR,
+                        // @ts-ignore
+                        details: {sources: data.sources},
+                        debug,
+                        extra,
+                    },
+                    isEditMode,
+                ),
+            );
+        }
+
+        throw DatalensChartkitCustomError.wrap(error, {debug, extra});
+    }
+
+    private async load({
         data,
         contextHeaders,
         requestId,
@@ -800,7 +947,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             params,
             widgetType,
             widgetConfig,
-            config: {type, data: configData, key, createdAt, sandbox_version} = {},
+            config: {type, data: configData, key, createdAt} = {},
             workbookId,
         } = data;
 
@@ -819,7 +966,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                     ? {
                           data: configData,
                           createdAt: createdAt,
-                          meta: {stype: type, sandbox_version},
+                          meta: {stype: type},
                       }
                     : undefined,
                 responseOptions: {
@@ -839,23 +986,11 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
 
         try {
             const result = await this.makeRequest(requestOptions);
-            const responseData: T = result.data;
-            const headers = result.headers;
-
-            // TODO: return output when receiving onLoad
-            if (includeLogs && 'logs_v2' in responseData) {
-                // Wizard configs don't have logs_v2
-                // TODO: it's not possible to separate the configs from the Node configs above in the Wizard condition
-                ChartsDataProvider.printLogs((responseData as ResponseSuccessNodeBase).logs_v2);
-            }
-
-            if (headers[REQUEST_ID_HEADER]) {
-                responseData.requestId = headers[REQUEST_ID_HEADER];
-            }
-
-            if (headers[TRACE_ID_HEADER]) {
-                responseData.traceId = headers[TRACE_ID_HEADER];
-            }
+            const responseData = this.getExtendedResponse({
+                responseData: result.data,
+                headers: result.headers,
+                includeLogs,
+            });
 
             if (this.settings.includeUnresolvedParams) {
                 responseData.unresolvedParams = cloneDeep(params);
@@ -863,59 +998,12 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
 
             return responseData;
         } catch (error) {
-            if (axios.isCancel(error)) {
-                return null;
-            }
-
-            const debug = {requestId};
-
-            if (!error.response) {
-                throw DatalensChartkitCustomError.wrap(error, {code: ERROR_CODE.NETWORK, debug});
-            }
-
-            const {
-                response: {status, data},
-            }: AxiosError<ResponseError> = error;
-
-            if (includeLogs) {
-                ChartsDataProvider.printLogs(data.logs_v2);
-            }
-
-            if (status === 489) {
-                throw DatalensChartkitCustomError.wrap(error, {
-                    code: ERROR_CODE.UNAUTHORIZED,
-                    debug,
-                });
-            }
-
-            const extra = {logs_v2: data.logs_v2, sources: data.sources, params: data.params};
-
-            if (data.error) {
-                throw DatalensChartkitCustomError.wrap(
-                    error,
-                    ChartsDataProvider.formatError(merge({debug, extra}, data.error), isEditMode),
-                );
-            }
-
-            // error loading data in Wizard
-            // @ts-ignore
-            if (data.errorType === 'wizard_data_fetching_error') {
-                throw DatalensChartkitCustomError.wrap(
-                    error,
-                    ChartsDataProvider.formatError(
-                        {
-                            code: CHARTS_ERROR_CODE.DATA_FETCHING_ERROR,
-                            // @ts-ignore
-                            details: {sources: data.sources},
-                            debug,
-                            extra,
-                        },
-                        isEditMode,
-                    ),
-                );
-            }
-
-            throw DatalensChartkitCustomError.wrap(error, {debug, extra});
+            return this.processError({
+                error,
+                requestId,
+                includeLogs,
+                isEditMode,
+            });
         }
     }
 

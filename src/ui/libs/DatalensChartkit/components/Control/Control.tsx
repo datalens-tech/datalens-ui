@@ -4,6 +4,7 @@ import {TriangleExclamationFill} from '@gravity-ui/icons';
 import {Icon, Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import type {StringParams} from 'shared';
 import {isValidRequiredValue} from 'ui/components/DashKit/plugins/Control/utils';
@@ -152,6 +153,15 @@ class Control<TProviderData> extends React.PureComponent<
         );
     }
 
+    async runAction(args: StringParams) {
+        if (!this.props.runAction || !this.props.onAction) {
+            return;
+        }
+
+        const responseData = await this.props.runAction({...this.state.params, ...args});
+        this.props.onAction({data: get(responseData, 'data')});
+    }
+
     onChange(control: ActiveControl, value: SimpleControlValue, index: number) {
         const {type, updateControlsOnChange, updateOnChange, postUpdateOnChange} = control;
 
@@ -171,6 +181,11 @@ class Control<TProviderData> extends React.PureComponent<
         this.setValidationError(String(index), hasError);
 
         if (hasError) {
+            return;
+        }
+
+        if (type === 'button' && control.onClick?.action === CLICK_ACTION_TYPE.RUN_ACTION) {
+            this.runAction(control.onClick.args);
             return;
         }
 

@@ -1,7 +1,9 @@
 import _has from 'lodash/has';
 import _xorBy from 'lodash/xorBy';
 import type {DatasetAvatarRelation, DatasetField, DatasetSource, DatasetSourceAvatar} from 'shared';
+import {Feature} from 'shared';
 import {DatasetSDK} from 'ui';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {v1 as uuidv1} from 'uuid';
 
 import {DATASET_UPDATE_ACTIONS} from '../../constants';
@@ -49,13 +51,16 @@ import {
     RELATION_DELETE,
     RELATION_UPDATE,
     RENAME_DATASET,
-    SET_ASIDE_HEADER_WIDTH,
+    SET_CURRENT_TAB,
     SET_DATASET_REVISION_MISMATCH,
+    SET_EDIT_HISTORY_STATE,
     SET_FREEFORM_SOURCES,
     SET_INITIAL_SOURCES,
     SET_IS_DATASET_CHANGED_FLAG,
+    SET_LAST_MODIFIED_TAB,
     SET_QUEUE_TO_LOAD_PREVIEW,
     SET_SOURCES_LOADING_ERROR,
+    SET_VALIDATION_STATE,
     SOURCES_REFRESH,
     SOURCE_ADD,
     SOURCE_DELETE,
@@ -847,7 +852,6 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 ({id}) => id === relationId,
             );
 
-            // TODO: antipattern
             avatarRelations!.splice(updatedAvatarRelationIndex, 1, relation);
 
             const update = {
@@ -978,14 +982,17 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
             };
         }
         case TOGGLE_ALLOWANCE_SAVE: {
-            const {enable} = action.payload;
-            const {savingDataset} = state;
+            const {enable, validationPending} = action.payload;
 
             return {
                 ...state,
                 savingDataset: {
-                    ...savingDataset,
+                    ...state.savingDataset,
                     disabled: !enable,
+                },
+                validation: {
+                    ...state.validation,
+                    ...(typeof validationPending === 'boolean' && {isPending: validationPending}),
                 },
             };
         }
@@ -1143,15 +1150,25 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
         case UPDATE_RLS: {
             const {rls} = action.payload;
             const {content} = state;
+            const updates = isEnabledFeature(Feature.EnableRLSV2)
+                ? {
+                      rls2: {
+                          ...content.rls2,
+                          ...rls,
+                      },
+                  }
+                : {
+                      rls: {
+                          ...content.rls,
+                          ...rls,
+                      },
+                  };
 
             return {
                 ...state,
                 content: {
                     ...content,
-                    rls: {
-                        ...content.rls,
-                        ...rls,
-                    },
+                    ...updates,
                 },
             };
         }
@@ -1258,17 +1275,6 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 },
             };
         }
-        case SET_ASIDE_HEADER_WIDTH: {
-            const {width} = action.payload;
-
-            return {
-                ...state,
-                ui: {
-                    ...state.ui,
-                    asideHeaderWidth: width,
-                },
-            };
-        }
         case TOGGLE_SOURCES_LOADER: {
             const {isSourcesLoading} = action.payload;
 
@@ -1321,6 +1327,27 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
             return {
                 ...state,
                 key: action.payload,
+            };
+        }
+        case SET_EDIT_HISTORY_STATE: {
+            return action.payload.state;
+        }
+        case SET_CURRENT_TAB: {
+            const {currentTab} = action.payload;
+            return {...state, currentTab};
+        }
+        case SET_LAST_MODIFIED_TAB: {
+            const {lastModifiedTab} = action.payload;
+            return {...state, lastModifiedTab};
+        }
+        case SET_VALIDATION_STATE: {
+            const {validation} = action.payload;
+            return {
+                ...state,
+                validation: {
+                    ...state.validation,
+                    ...validation,
+                },
             };
         }
         default: {

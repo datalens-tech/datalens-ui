@@ -4,6 +4,7 @@ import set from 'lodash/set';
 import {LegendDisplayMode, PlaceholderId, QlVisualizationId} from '../../../../../shared';
 import type {IChartEditor, QlConfig, ServerVisualization} from '../../../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../../../shared/modules/config/ql';
+import {getAxisTitle} from '../datalens/utils/axis-helpers';
 
 const applyPlaceholderSettingsToYAxis = ({
     visualization,
@@ -46,6 +47,16 @@ const applyPlaceholderSettingsToYAxis = ({
     return {scale};
 };
 
+function getTitleForAxis(placeholders: ServerVisualization['placeholders'], axis: PlaceholderId) {
+    const placeholder = placeholders?.find((p) => p.id === axis);
+
+    if (!placeholder?.settings) {
+        return undefined;
+    }
+
+    return getAxisTitle(placeholder.settings, placeholder.items[0]) ?? undefined;
+}
+
 export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEditor}) => {
     const config = mapQlConfigToLatestVersion(shared, {i18n: ChartEditor.getTranslation});
 
@@ -87,11 +98,11 @@ export default ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: IChartEdi
         title,
         axes: {
             x: {
-                label: 'UTC',
+                label: getTitleForAxis(visualization.placeholders, PlaceholderId.X),
                 labelSize: 25,
             },
             y: {
-                label: '',
+                label: getTitleForAxis(visualization.placeholders, PlaceholderId.Y),
                 precision: 'auto',
                 scale: 'y',
                 side: 'left',

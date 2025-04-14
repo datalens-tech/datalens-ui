@@ -25,6 +25,7 @@ import {closeDialog, openWarningDialog} from 'ui/store/actions/dialog';
 import {showToast} from 'ui/store/actions/toaster';
 import {addWorkbookInfo, resetWorkbookPermissions} from 'ui/units/workbooks/store/actions';
 import Utils, {formDocsEndpointDL} from 'ui/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 const i18n = I18n.keyset('dash.main.view');
 
@@ -105,7 +106,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
             this.props.setPageTab(tabId);
         }
 
-        if (Utils.isEnabledFeature(Feature.AuthUpdateWithTimeout)) {
+        if (isEnabledFeature(Feature.AuthUpdateWithTimeout)) {
             this.setAuthUpdateTimeout();
         }
 
@@ -229,7 +230,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
             return;
         }
         return getSdk()
-            .us.extendLock({
+            .sdk.us.extendLock({
                 entryId: this.props.entry.entryId,
                 data: {lockToken: this.props.lockToken, duration: LOCK_DURATION},
             })

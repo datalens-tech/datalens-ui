@@ -1,17 +1,28 @@
 import React from 'react';
 
-import {Alert, Dialog, Loader, RadioButton} from '@gravity-ui/uikit';
+import type {DropdownMenuItem} from '@gravity-ui/uikit';
+import {Dialog, DropdownMenu, Icon, Loader, RadioButton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import isEmpty from 'lodash/isEmpty';
-import {EDITOR_TYPE, EntryScope} from 'shared';
+import {EntryScope} from 'shared';
 import type {GetEntryResponse, GetRelationsEntry} from 'shared/schema';
 import {EntitiesList} from 'ui/components/EntitiesList/EntitiesList';
+import {navigateHelper} from 'ui/libs';
 import {getSdk} from 'ui/libs/schematic-sdk';
 import {registry} from 'ui/registry';
+import {copyTextWithToast} from 'ui/utils/copyText';
 import {groupEntitiesByScope} from 'ui/utils/helpers';
 
+import type {RightSectionProps} from '../EntitiesList/types';
+import {
+    CONTEXT_MENU_COPY_ID,
+    CONTEXT_MENU_COPY_LINK,
+    ENTRY_CONTEXT_MENU_ACTION,
+} from '../EntryContextMenu';
+import type {WrapperParams} from '../EntryContextMenu/helpers';
 import {type EntryDialogProps, EntryDialogResolveStatus} from '../EntryDialogues';
+import type {RowEntryData} from '../EntryRow/EntryRow';
 import {PlaceholderIllustration} from '../PlaceholderIllustration/PlaceholderIllustration';
 
 import {Direction} from './constants';
@@ -20,6 +31,7 @@ import type {DirectionValue} from './constants';
 import './DialogRelatedEntities.scss';
 
 const i18n = I18n.keyset('component.dialog-related-entities.view');
+const contextMenuI18n = I18n.keyset('component.entry-context-menu.view');
 
 const b = block('dialog-related-entities');
 
@@ -28,6 +40,45 @@ type DialogRelatedEntitiesProps = EntryDialogProps & {
 };
 
 const CONCURRENT_ID = 'list-related-entities';
+
+const MENU_DEFAULT_ACTIONS = [CONTEXT_MENU_COPY_LINK, CONTEXT_MENU_COPY_ID];
+
+const isEntryWithEntryId = (entry: RowEntryData): entry is WrapperParams['entry'] =>
+    Boolean(entry.entryId);
+
+const RowActions = ({entry}: RightSectionProps) => {
+    if (!isEntryWithEntryId(entry)) {
+        return null;
+    }
+
+    const items: DropdownMenuItem<{}>[] = MENU_DEFAULT_ACTIONS.map(({text, id, icon}) => {
+        let successText;
+        let copyText;
+        let toastName;
+        if (id === ENTRY_CONTEXT_MENU_ACTION.COPY_LINK) {
+            successText = contextMenuI18n('toast_copy-link-success');
+            copyText = navigateHelper.redirectUrlSwitcher(entry);
+            toastName = 'toast-menu-copy-link';
+        } else {
+            successText = contextMenuI18n('toast_copy-id-success');
+            copyText = entry.entryId;
+            toastName = 'toast-menu-copy-id';
+        }
+
+        const action = () => {
+            copyTextWithToast({
+                successText,
+                errorText: contextMenuI18n('toast_copy-error'),
+                toastName,
+                copyText,
+            });
+        };
+
+        return {iconStart: <Icon size={16} data={icon} />, text: contextMenuI18n(text), action};
+    });
+
+    return <DropdownMenu switcherWrapperClassName={b('entry-menu')} items={items} />;
+};
 
 export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEntitiesProps) => {
     const {getTopLevelEntryScopes} = registry.common.functions.getAll();
@@ -46,13 +97,14 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
     );
     const [relationsCount, setRelationsCount] = React.useState<null | number>(null);
     const {DialogRelatedEntitiesRadioHint} = registry.common.components.getAll();
+    const {renderDialogRelatedEntitiesAlertHint} = registry.common.functions.getAll();
 
     React.useEffect(() => {
         setIsLoading(true);
         setIsError(false);
         getSdk().cancelRequest(CONCURRENT_ID);
         getSdk()
-            .mix.getEntryRelations(
+            .sdk.mix.getEntryRelations(
                 {
                     entryId: entry.entryId,
                     workbookId: entry.workbookId,
@@ -108,12 +160,14 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
         }
 
         if (isEmpty(relations)) {
-            if (
-                entry.scope === EntryScope.Widget &&
-                Object.values(EDITOR_TYPE).includes(entry.type) &&
-                currentDirection === Direction.PARENT
-            ) {
-                return <Alert theme="warning" message={i18n('label_editor-hint')} />;
+            const alert = renderDialogRelatedEntitiesAlertHint?.({
+                direction: currentDirection,
+                entryType: entry.type,
+                entryScope: entry.scope,
+            });
+
+            if (alert) {
+                return alert;
             }
 
             return (
@@ -128,7 +182,14 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
         }
 
         return Object.entries(relations || []).map(([key, value]) => (
-            <EntitiesList scope={key} entities={value} key={key} />
+            <EntitiesList
+                enableHover={true}
+                scope={key}
+                entities={value}
+                key={key}
+                rightSectionSlot={RowActions}
+                rowClassName={b('entity-row')}
+            />
         ));
     };
 
@@ -138,7 +199,14 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
         <Dialog onClose={handleClose} open={visible} className={b()}>
             <Dialog.Header caption={i18n('label_title')} />
             <Dialog.Body className={b('body')}>
-                <EntitiesList isCurrent={true} entities={[entry]} />
+                <EntitiesList
+                    isCurrent={true}
+                    enableHover={true}
+                    entities={[entry]}
+                    rightSectionSlot={RowActions}
+                    className={b('current-row')}
+                    rowClassName={b('entity-row')}
+                />
                 {showDirectionControl && (
                     <div className={b('direction-row')}>
                         <RadioButton

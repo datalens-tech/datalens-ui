@@ -14,9 +14,16 @@ import {getChartApiContext} from '../wizard-worker/utils';
 import type {ChartBuilder, ChartBuilderResult} from './types';
 
 const ONE_SECOND = 1000;
-const JS_EXECUTION_TIMEOUT = ONE_SECOND * 9.5;
+const PREPARE_EXECUTION_TIMEOUT = ONE_SECOND * 9.5;
 
 type WizardChartBuilderArgs = {
+    timeouts?: {
+        params?: number;
+        prepare?: number;
+        config?: number;
+        libraryConfig?: number;
+        sources?: number;
+    };
     userLogin: string | null;
     userLang: string;
     config: {
@@ -32,7 +39,7 @@ type WizardChartBuilderArgs = {
 export const getWizardChartBuilder = async (
     args: WizardChartBuilderArgs,
 ): Promise<ChartBuilder> => {
-    const {config, widgetConfig, userLang, worker} = args;
+    const {config, widgetConfig, userLang, worker, timeouts = {}} = args;
     const wizardWorker = worker;
     let shared: Record<string, any>;
 
@@ -64,6 +71,7 @@ export const getWizardChartBuilder = async (
         };
 
     const chartBuilder: ChartBuilder = {
+        type: 'WIZARD',
         buildShared: async () => {
             if (typeof config.data.shared === 'string') {
                 shared = JSON.parse(config.data.shared);
@@ -80,7 +88,7 @@ export const getWizardChartBuilder = async (
                 const timeStart = process.hrtime();
                 const execResult = await wizardWorker
                     .buildParams({shared, userLang})
-                    .timeout(ONE_SECOND);
+                    .timeout(timeouts.params || ONE_SECOND);
 
                 return {
                     executionTiming: process.hrtime(timeStart),
@@ -104,7 +112,7 @@ export const getWizardChartBuilder = async (
                     userLang,
                     palettes,
                 })
-                .timeout(ONE_SECOND);
+                .timeout(timeouts.sources || ONE_SECOND);
 
             return {
                 executionTiming: process.hrtime(timeStart),
@@ -125,7 +133,7 @@ export const getWizardChartBuilder = async (
                     userLang,
                     features,
                 })
-                .timeout(ONE_SECOND);
+                .timeout(timeouts.libraryConfig || ONE_SECOND);
 
             return {
                 executionTiming: process.hrtime(timeStart),
@@ -146,7 +154,7 @@ export const getWizardChartBuilder = async (
                     userLang,
                     features,
                 })
-                .timeout(ONE_SECOND);
+                .timeout(timeouts.config || ONE_SECOND);
 
             return {
                 executionTiming: process.hrtime(timeStart),
@@ -169,7 +177,7 @@ export const getWizardChartBuilder = async (
                     palettes,
                     features,
                 })
-                .timeout(JS_EXECUTION_TIMEOUT);
+                .timeout(timeouts.prepare || PREPARE_EXECUTION_TIMEOUT);
 
             return {
                 executionTiming: process.hrtime(timeStart),

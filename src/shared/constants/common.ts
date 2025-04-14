@@ -18,6 +18,7 @@ export enum AppMode {
     Full = 'full',
     Datalens = 'datalens',
     Charts = 'charts',
+    Api = 'api',
 }
 
 export enum Language {
@@ -54,6 +55,8 @@ export const TIME_FORMAT_24 = 'HH:mm';
 
 export const UPDATE_STATE_DEBOUNCE_TIME = 1000;
 
+export const SCROLL_TITLE_DEBOUNCE_TIME = 400;
+
 export const SHARED_URL_OPTIONS = {
     SAFE_CHART: '_safe_chart',
     WITHOUT_UI_SANDBOX_LIMIT: '_without_sandbox_time_limit',
@@ -88,6 +91,9 @@ export const EDITOR_CHART_NODE = {
     map_node: 'statface_map',
     markup_node: 'config',
     markdown_node: '',
+    'blank-chart_node': 'config',
+    'advanced-chart_node': 'config',
+    d3_node: 'd3',
 };
 
 export const EDITOR_TYPE_CONFIG_TABS = {

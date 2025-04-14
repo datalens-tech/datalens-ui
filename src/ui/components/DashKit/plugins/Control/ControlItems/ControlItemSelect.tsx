@@ -33,8 +33,8 @@ import type {ControlSelect as ControlSelectType} from 'ui/libs/DatalensChartkit/
 import {openDialogErrorWithTabs} from 'ui/store/actions/dialog';
 import {addOperationForValue, unwrapFromArrayAndSkipOperation} from 'ui/units/dash/modules/helpers';
 import {selectDashWorkbookId} from 'ui/units/dash/store/selectors/dashTypedSelectors';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
-import Utils from 'ui/utils/utils';
 
 import logger from '../../../../../libs/logger';
 import {getControlHint} from '../../../utils';
@@ -75,7 +75,7 @@ type ControlItemSelectProps = {
     renderOverlay?: () => React.ReactNode;
     selectProps: Pick<
         SelectControlProps,
-        'style' | 'innerLabel' | 'label' | 'limitLabel' | 'labelPlacement'
+        'style' | 'innerLabel' | 'label' | 'limitLabel' | 'labelPlacement' | 'accentType'
     >;
 };
 
@@ -336,7 +336,7 @@ export const ControlItemSelect = ({
         : null;
     const disabled = loadedData?.uiScheme?.controls[0].disabled;
 
-    const emptyPaceholder = Utils.isEnabledFeature(Feature.EmptySelector)
+    const emptyPaceholder = isEnabledFeature(Feature.EmptySelector)
         ? i18n('placeholder_empty')
         : undefined;
 

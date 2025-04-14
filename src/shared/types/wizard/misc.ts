@@ -1,3 +1,4 @@
+import type {WrappedHTML} from '../..';
 import type {CommonPlaceholders} from '../config/wizard';
 
 export type CommonPlaceholdersKeys = keyof CommonPlaceholders;
@@ -18,6 +19,7 @@ export const MarkupItemTypes = {
     Url: 'url',
     UserInfo: 'user_info',
     Image: 'img',
+    Tooltip: 'tooltip',
 } as const;
 
 export type MarkupItemType = (typeof MarkupItemTypes)[keyof typeof MarkupItemTypes];
@@ -35,10 +37,12 @@ export interface MarkupItem {
     alt?: string;
     width?: number;
     height?: number;
+    placement?: string;
+    tooltip?: MarkupItem;
 }
 
 export type HighchartsSeriesCustomObject = {
-    segmentTitle?: string;
+    segmentTitle?: string | WrappedHTML;
 };
 
 export const enum AxisMode {

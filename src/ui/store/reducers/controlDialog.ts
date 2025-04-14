@@ -5,8 +5,12 @@ import type {
     EntryScope,
     StringParams,
 } from 'shared';
-import {DashTabItemControlSourceType, DashTabItemType, TitlePlacementOption} from 'shared';
-import type {SelectorDialogState, SelectorsGroupDialogState} from '../typings/controlDialog';
+import {DashTabItemControlSourceType, DashTabItemType, TitlePlacements} from 'shared';
+import type {
+    DialogEditItemFeaturesProp,
+    SelectorDialogState,
+    SelectorsGroupDialogState,
+} from '../typings/controlDialog';
 import {getRandomKey} from 'ui/libs/DatalensChartkit/helpers/helpers';
 import {CONTROLS_PLACEMENT_MODE} from 'ui/constants/dialogs';
 import {extractTypedQueryParams} from 'shared/modules/typed-query-api/helpers/parameters';
@@ -33,6 +37,7 @@ import type {
 import {getActualUniqueFieldNameValidation, getInitialDefaultValue} from '../utils/controlDialog';
 import {I18n} from 'i18n';
 import {ELEMENT_TYPE} from '../constants/controlDialog';
+import type {RealTheme} from '@gravity-ui/uikit';
 
 const i18n = I18n.keyset('dash.store.view');
 
@@ -51,6 +56,10 @@ export interface ControlDialogState {
     openedItemId: string | null;
     openedItemData: DashTabItem['data'] | null;
     openedItemMeta: ControlDialogStateItemMeta | null;
+
+    features: DialogEditItemFeaturesProp;
+    titlePlaceholder: string | null;
+    theme?: RealTheme;
 
     lastUsedDatasetId?: string;
     lastUsedConnectionId?: string;
@@ -76,8 +85,8 @@ export function getSelectorDialogInitialState(
         defaults: {},
         datasetId: args.lastUsedDatasetId,
         connectionId: args.lastUsedConnectionId,
-        showTitle: true,
-        titlePlacement: TitlePlacementOption.Left,
+        titlePlacement: TitlePlacements.Left,
+        accentType: null,
         placementMode: CONTROLS_PLACEMENT_MODE.AUTO,
         width: '',
         required: false,
@@ -89,6 +98,7 @@ export function getSelectorDialogInitialState(
 
 export function getGroupSelectorDialogInitialState(): SelectorsGroupDialogState {
     return {
+        showGroupName: false,
         autoHeight: false,
         buttonApply: false,
         buttonReset: false,
@@ -133,8 +143,11 @@ export function getSelectorDialogFromData(
         elementType: data.source.elementType || ELEMENT_TYPE.SELECT,
         defaultValue: data.source.defaultValue,
         datasetFieldId: data.source.datasetFieldId,
-        showTitle: data.source.showTitle,
-        titlePlacement: data.source.titlePlacement,
+        titlePlacement:
+            data.source.showTitle === false || data.source.titlePlacement === TitlePlacements.Hide
+                ? TitlePlacements.Hide
+                : data.source.titlePlacement ?? TitlePlacements.Left,
+        accentType: data.source.accentType,
         multiselectable: data.source.multiselectable,
         isRange: data.source.isRange,
         fieldName: data.source.fieldName,
@@ -173,6 +186,8 @@ const getInitialState = (): ControlDialogState => ({
     openedItemId: null,
     openedItemData: null,
     openedItemMeta: null,
+    titlePlaceholder: null,
+    features: {},
 });
 
 // eslint-disable-next-line complexity
@@ -192,7 +207,16 @@ export function controlDialog(
     switch (type) {
         case INIT_DIALOG: {
             const payload = action.payload;
-            const {id: openedItemId, type: openedDialog, data, defaults, openedItemMeta} = payload;
+            const {
+                id: openedItemId,
+                type: openedDialog,
+                data,
+                defaults,
+                openedItemMeta,
+                features,
+                titlePlaceholder,
+                theme,
+            } = payload;
 
             const newState = {
                 ...state,
@@ -202,6 +226,18 @@ export function controlDialog(
                 openedItemMeta,
                 activeSelectorIndex: 0,
             };
+
+            if (features) {
+                newState.features = features;
+            }
+
+            if (theme) {
+                newState.theme = theme;
+            }
+
+            if (titlePlaceholder) {
+                newState.titlePlaceholder = titlePlaceholder;
+            }
 
             if (
                 openedItemId === null &&
@@ -246,6 +282,27 @@ export function controlDialog(
                     data as unknown as DashTabItemControlData,
                     defaults,
                 );
+            }
+
+            const currentFeatures = features?.[newState.openedDialog] ?? {};
+            if (
+                'enableAutoheightDefault' in currentFeatures &&
+                currentFeatures.enableAutoheightDefault
+            ) {
+                if (openedDialog === DashTabItemType.GroupControl) {
+                    newState.selectorsGroup.autoHeight = true;
+                } else if (openedDialog === DashTabItemType.Control) {
+                    newState.selectorDialog.autoHeight = true;
+                }
+            }
+
+            // Enable show group control title for new group control
+            if (
+                openedItemId === null &&
+                openedDialog === DashTabItemType.GroupControl &&
+                titlePlaceholder
+            ) {
+                newState.selectorsGroup.showGroupName = true;
             }
 
             return newState;
@@ -325,10 +382,18 @@ export function controlDialog(
                       }
                     : {},
             );
+            const {enableAutoheightDefault} = state.features[DashTabItemType.GroupControl] || {};
 
-            // if current length is 1, the added selector will be the second so we enable autoHeight
-            const autoHeight =
-                state.selectorsGroup.group.length === 1 ? true : state.selectorsGroup.autoHeight;
+            let autoHeight: boolean;
+            if (enableAutoheightDefault) {
+                autoHeight = true;
+            } else {
+                // if current length is 1, the added selector will be the second so we enable autoHeight
+                autoHeight =
+                    state.selectorsGroup.group.length === 1
+                        ? true
+                        : state.selectorsGroup.autoHeight;
+            }
 
             return {
                 ...state,
@@ -342,12 +407,26 @@ export function controlDialog(
 
         case UPDATE_SELECTORS_GROUP: {
             const {selectorsGroup} = state;
-            const {group, autoHeight, buttonApply, buttonReset, updateControlsOnChange} =
-                action.payload;
+            const {
+                group,
+                autoHeight,
+                buttonApply,
+                buttonReset,
+                updateControlsOnChange,
+                showGroupName,
+                groupName,
+            } = action.payload;
 
-            // if the number of selectors has increased from 1 to several, we enable autoHeight
-            const updatedAutoHeight =
-                selectorsGroup.group.length === 1 && group.length > 1 ? true : autoHeight;
+            const {enableAutoheightDefault} = state.features[DashTabItemType.GroupControl] || {};
+
+            let updatedAutoHeight;
+            if (enableAutoheightDefault) {
+                updatedAutoHeight = true;
+            } else {
+                // if the number of selectors has increased from 1 to several, we enable autoHeight
+                updatedAutoHeight =
+                    selectorsGroup.group.length === 1 && group.length > 1 ? true : autoHeight;
+            }
 
             return {
                 ...state,
@@ -358,6 +437,8 @@ export function controlDialog(
                     buttonApply,
                     buttonReset,
                     updateControlsOnChange,
+                    showGroupName,
+                    groupName,
                 },
             };
         }

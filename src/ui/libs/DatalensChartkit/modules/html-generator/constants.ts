@@ -6,6 +6,7 @@ export const ATTR_DATA_TOOLTIP_PLACEMENT = 'data-tooltip-placement';
 export const ATTR_DATA_TOOLTIP_ANCHOR_ID = 'data-tooltip-anchor-id';
 export const ATTR_DATA_TOOLTIP_HIDE_DELAY = 'data-tooltip-hide-delay';
 export const ATTR_DATA_TOOLTIP_OPEN_DELAY = 'data-tooltip-open-delay';
+export const ATTR_DATA_ELEMENT_ID = 'data-dl-id';
 
 export const THEME_CSS_VARIABLE_PREFIX = '--ce-theme';
 
@@ -21,6 +22,7 @@ export const ALLOWED_TAGS = [
     'code',
     'dd',
     'defs',
+    'details',
     'div',
     'dl',
     'dt',
@@ -64,6 +66,7 @@ export const ALLOWED_TAGS = [
     'stop',
     'strong',
     'sub',
+    'summary',
     'sup',
     'svg',
     'table',
@@ -83,6 +86,7 @@ export const ALLOWED_TAGS = [
 
 export const ALLOWED_ATTRIBUTES = [
     'alt',
+    'alignment-baseline',
     'aria-controls',
     'aria-describedby',
     'aria-expanded',
@@ -99,6 +103,7 @@ export const ALLOWED_ATTRIBUTES = [
     'clip-rule',
     'color',
     'colspan',
+    'cursor',
     'cx',
     'cy',
     'd',
@@ -113,13 +118,17 @@ export const ALLOWED_ATTRIBUTES = [
     'flood-opacity',
     'font-family',
     'font-size',
+    'font-weight',
     'height',
     'href',
     'in',
+    'name',
     'offset',
     'opacity',
     'orient',
     'padding',
+    'paint-order',
+    'pointer-events',
     'points',
     'r',
     'refX',
@@ -133,6 +142,7 @@ export const ALLOWED_ATTRIBUTES = [
     'stroke',
     'stroke-linecap',
     'stroke-linejoin',
+    'stroke-opacity',
     'stroke-width',
     'result',
     'rowspan',
@@ -141,6 +151,7 @@ export const ALLOWED_ATTRIBUTES = [
     'tabindex',
     'text-align',
     'text-anchor',
+    'text-decoration',
     'title',
     'transform',
     'type',
@@ -156,6 +167,7 @@ export const ALLOWED_ATTRIBUTES = [
     'y1',
     'y2',
     'zindex',
+    'data-id',
     ATTR_DATA_TOOLTIP_CONTENT,
     ATTR_DATA_TOOLTIP_HIDE_DELAY,
     ATTR_DATA_TOOLTIP_OPEN_DELAY,

@@ -1,8 +1,6 @@
-import {DL} from 'constants/common';
-
 import React from 'react';
 
-import type {ConfigItem, DashKitProps, ItemState} from '@gravity-ui/dashkit';
+import type {ConfigItem, DashKitProps, ItemParams, ItemState, MenuItem} from '@gravity-ui/dashkit';
 import {DashKit} from '@gravity-ui/dashkit';
 import {MenuItems} from '@gravity-ui/dashkit/helpers';
 import {Copy, Pencil, TrashBin} from '@gravity-ui/icons';
@@ -10,9 +8,8 @@ import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import type {DashChartRequestContext, StringParams} from 'shared';
-import {DashTabItemControlSourceType, DashTabItemType, Feature} from 'shared';
+import {DashTabItemControlSourceType, DashTabItemType} from 'shared';
 import {DashKitOverlayMenuQa} from 'shared/constants/qa/dash';
-import {Utils} from 'ui';
 import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
 
 import {getEndpointForNavigation} from '../../libs/DatalensChartkit/modules/navigation';
@@ -25,16 +22,16 @@ const b = block('dashkit-plugin-menu');
 
 type TabData = {id: string; chartId: string; params: StringParams; state: ItemState};
 
-const removeEmptyParams = (params: StringParams) => {
+const removeEmptyParams = (params: ItemParams) => {
     return Object.entries(params).reduce((result, [key, value]) => {
         if (value !== null && value !== undefined) {
             result[key] = value;
         }
         return result;
-    }, {} as StringParams);
+    }, {} as ItemParams);
 };
 
-export function getEditLink(configItem: ConfigItem, params: StringParams, state: ItemState) {
+export function getEditLink(configItem: ConfigItem, params: ItemParams, state: ItemState) {
     const {type, data} = configItem;
 
     let entryId: string | undefined;
@@ -58,10 +55,7 @@ export function getEditLink(configItem: ConfigItem, params: StringParams, state:
     }
 
     // does not work properly in DEV mode without navigator
-    const endpoint = getEndpointForNavigation(
-        DL.ENDPOINTS,
-        Utils.isEnabledFeature(Feature.UseNavigation),
-    );
+    const endpoint = getEndpointForNavigation();
 
     const linkParams = removeEmptyParams(params);
 
@@ -70,20 +64,20 @@ export function getEditLink(configItem: ConfigItem, params: StringParams, state:
     return `${endpoint}/${entryId}${queryPrams}`;
 }
 
-export function getDashKitMenu() {
+export function getDashKitMenu(): Array<MenuItem> {
     return [
         {
             id: 'edit',
             title: i18n('label_edit'),
             icon: <Icon data={Pencil} size={16} />,
-            handler: (configItem: ConfigItem, params: StringParams, state: ItemState) => {
+            handler: (configItem, params, state) => {
                 const link = getEditLink(configItem, params, state);
 
                 if (link) {
                     window.open(link, '_blank');
                 }
             },
-            visible: (configItem: ConfigItem) => {
+            visible: (configItem) => {
                 const {type, data} = configItem;
 
                 return (
@@ -118,8 +112,10 @@ interface DashkitWrapperProps extends DashKitProps {
     skipReload?: boolean;
     isNewRelations?: boolean;
     hideErrorDetails?: boolean;
+    selectorsGroupTitlePlaceholder?: string;
     // Extended headers context for widgets
-    dataProviderContextGetter?: () => DashChartRequestContext;
+    dataProviderContextGetter?: (widgetId: string) => DashChartRequestContext;
+    setWidgetCurrentTab?: (payload: {widgetId: string; tabId: string}) => void;
 }
 
 export const DashkitWrapper: React.FC<
@@ -130,7 +126,13 @@ export const DashkitWrapper: React.FC<
         )
 > = React.forwardRef(
     (
-        {skipReload = false, isNewRelations = false, dataProviderContextGetter, ...props},
+        {
+            skipReload = false,
+            isNewRelations = false,
+            dataProviderContextGetter,
+            setWidgetCurrentTab,
+            ...props
+        },
         ref: React.ForwardedRef<DashKit>,
     ) => {
         const contextValue = React.useMemo(() => {
@@ -139,16 +141,20 @@ export const DashkitWrapper: React.FC<
                 defaultGlobalParams: props.defaultGlobalParams,
                 skipReload,
                 isNewRelations,
+                setWidgetCurrentTab,
                 dataProviderContextGetter,
                 hideErrorDetails: props.hideErrorDetails,
+                selectorsGroupTitlePlaceholder: props.selectorsGroupTitlePlaceholder,
             };
         }, [
             props.config,
             props.defaultGlobalParams,
             skipReload,
             isNewRelations,
+            setWidgetCurrentTab,
             dataProviderContextGetter,
             props.hideErrorDetails,
+            props.selectorsGroupTitlePlaceholder,
         ]);
 
         return (

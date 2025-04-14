@@ -23,6 +23,7 @@
         flex: 1;
         flex-direction: column;
         width: 255px;
+        padding-block-end: var(--dialog-footer-vertical-padding, var(--g-spacing-6));
     }
 
     &__add-icon {
@@ -40,21 +41,31 @@
         flex-direction: column;
     }
 
-    &__help-tooltip {
-        line-height: 16px;
-        margin-left: 5px;
-    }
-
     &__navigation-input-container {
         display: grid;
         grid-auto-rows: 40px;
         align-items: center;
     }
 
-    &__textarea-wrapper {
-        display: flex;
+    &__textarea {
         height: 80px;
-        padding: 6px 0;
+        width: 330px;
+    }
+
+    &__row {
+        margin-bottom: var(--g-spacing-2);
+    }
+
+    &__settings-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 5px;
+        gap: 8px;
+    }
+
+    &__checkbox {
+        margin-block-start: var(--g-spacing-2);
     }
 
     .widget-item-dialog__line {
@@ -80,12 +91,6 @@
     .widget-item-dialog__line-content {
         display: flex;
         align-items: center;
-    }
-
-    &__input {
-        width: 330px;
-        margin-right: 10px;
-        display: inline-flex;
     }
 
     &__add-param-button {
@@ -116,17 +121,6 @@
         }
     }
 
-    &__caption {
-        &_inactive {
-            opacity: 0.3;
-        }
-    }
-
-    &__caption-text {
-        position: relative;
-        top: 1px;
-    }
-
     &__error {
         color: var(--g-color-text-danger);
         padding: 10px;
@@ -154,6 +148,6 @@
     &__info-comment {
         color: var(--g-color-text-secondary);
         line-height: var(--g-text-body-1-line-height);
-        margin: 0;
+        margin: var(--g-spacing-2) 0 0 0;
     }
 }

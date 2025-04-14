@@ -6,20 +6,22 @@ import {DropdownMenu} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {Feature} from 'shared';
 import type {ConnectorType} from 'shared/constants/connections';
-import {WorkbookPage} from 'shared/constants/qa/workbooks';
+import {WorkbookPageQa} from 'shared/constants/qa/workbooks';
 import type {WorkbookWithPermissions} from 'shared/schema/us/types';
 import {EntryScope} from 'shared/types/common';
 import {S3_BASED_CONNECTORS} from 'ui/constants';
-import Utils from 'ui/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {DropdownAction} from '../../../../components/DropdownAction/DropdownAction';
 import {registry} from '../../../../registry';
 import type {WorkbookEntry} from '../../types';
 
+import iconId from 'ui/assets/icons/id-square.svg';
+
 const i18n = I18n.keyset('new-workbooks');
 const commonMenuI18n = I18n.keyset('component.entry-context-menu.view');
 
-const copyEntriesToWorkbookEnabled = Utils.isEnabledFeature(Feature.CopyEntriesToWorkbook);
+const copyEntriesToWorkbookEnabled = isEnabledFeature(Feature.CopyEntriesToWorkbook);
 
 type EntryActionsProps = {
     workbook: WorkbookWithPermissions;
@@ -29,6 +31,7 @@ type EntryActionsProps = {
     onDuplicateEntry: () => void;
     onCopyEntry: () => void;
     onShowRelatedClick: () => void;
+    onCopyId: () => void;
 };
 
 export const EntryActions = ({
@@ -39,6 +42,7 @@ export const EntryActions = ({
     onDuplicateEntry,
     onCopyEntry,
     onShowRelatedClick,
+    onCopyId,
 }: EntryActionsProps) => {
     const {useAdditionalWorkbookEntryActions} = registry.workbooks.functions.getAll();
 
@@ -58,7 +62,7 @@ export const EntryActions = ({
                   {
                       action: onDuplicateEntry,
                       text: <DropdownAction icon={Copy} text={i18n('action_duplicate')} />,
-                      qa: WorkbookPage.MenuItemDuplicate,
+                      qa: WorkbookPageQa.MenuItemDuplicate,
                   },
               ]
             : []),
@@ -81,6 +85,20 @@ export const EntryActions = ({
                     />
                 ),
             },
+            ...(onCopyId
+                ? [
+                      {
+                          action: onCopyId,
+                          text: (
+                              <DropdownAction
+                                  size={16}
+                                  icon={iconId}
+                                  text={commonMenuI18n('value_copy-id')}
+                              />
+                          ),
+                      },
+                  ]
+                : []),
         ],
     ];
 
@@ -100,7 +118,7 @@ export const EntryActions = ({
         <DropdownMenu
             size="m"
             items={items}
-            defaultSwitcherProps={{qa: WorkbookPage.MenuDropDownBtn}}
+            defaultSwitcherProps={{qa: WorkbookPageQa.MenuDropDownBtn}}
         />
     );
 };

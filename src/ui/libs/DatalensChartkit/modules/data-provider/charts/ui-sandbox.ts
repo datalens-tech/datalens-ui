@@ -1,12 +1,20 @@
+import {sanitizeUrl} from '@braintree/sanitize-url';
 import type {PointOptionsType} from 'highcharts';
 import escape from 'lodash/escape';
 import get from 'lodash/get';
 import merge from 'lodash/merge';
 import pick from 'lodash/pick';
+import set from 'lodash/set';
 import type {InterruptHandler, QuickJSWASMModule} from 'quickjs-emscripten';
+import {chartStorage} from 'ui/libs/DatalensChartkit/ChartKit/plugins/chart-storage';
 
-import type {ChartKitHtmlItem} from '../../../../../../shared';
-import {WRAPPED_FN_KEY, WRAPPED_HTML_KEY} from '../../../../../../shared';
+import type {ChartKitHtmlItem, StringParams} from '../../../../../../shared';
+import {
+    EditorType,
+    LegacyEditorType,
+    WRAPPED_FN_KEY,
+    WRAPPED_HTML_KEY,
+} from '../../../../../../shared';
 import type {UISandboxWrappedFunction} from '../../../../../../shared/types/ui-sandbox';
 import {wrapHtml} from '../../../../../../shared/utils/ui-sandbox';
 import {getRandomCKId} from '../../../ChartKit/helpers/getRandomCKId';
@@ -17,7 +25,7 @@ import {
 import Performance from '../../../ChartKit/modules/perfomance';
 import type {UiSandboxRuntimeOptions} from '../../../types';
 import {generateHtml} from '../../html-generator';
-import {validateUrl} from '../../html-generator/utils';
+import {getParseHtmlFn} from '../../html-generator/utils';
 
 import {UiSandboxRuntime} from './ui-sandbox-runtime';
 
@@ -66,6 +74,8 @@ const HC_FORBIDDEN_ATTRS = [
 ] as const;
 const ALLOWED_SERIES_ATTRS = ['color', 'name', 'userOptions', 'state'];
 
+const EVENT_KEYS = ['ctrlKey', 'altKey', 'shiftKey', 'metaKey'];
+
 const MAX_NESTING_LEVEL = 5;
 function removeSVGElements(val: unknown, nestingLevel = 0): unknown {
     if (nestingLevel > MAX_NESTING_LEVEL) {
@@ -100,12 +110,19 @@ function getChartProps(chart: unknown) {
     return pick(chart, 'chartHeight', 'chartWidth', 'index');
 }
 
-function clearVmProp(prop: unknown) {
+function clearVmProp(prop: unknown): unknown {
     if (prop && typeof prop === 'object') {
+        if (Array.isArray(prop)) {
+            return prop.map(clearVmProp);
+        }
+
         if ('angular' in prop) {
             // It looks like it's Highcharts.Chart - preparing a minimum of attributes for the entity
             return getChartProps(prop);
         }
+
+        // instanceof Event
+        const eventProps = 'preventDefault' in prop ? pick(prop, EVENT_KEYS) : {};
 
         const item: Record<string, TargetValue> = {...(prop as object)};
         HC_FORBIDDEN_ATTRS.forEach((attr) => {
@@ -135,7 +152,14 @@ function clearVmProp(prop: unknown) {
             points = points.map(clearVmProp);
         }
 
-        return {series, point, points, this: _this, ...(removeSVGElements(other) as object)};
+        return {
+            series,
+            point,
+            points,
+            this: _this,
+            ...(removeSVGElements(other) as object),
+            ...eventProps,
+        };
     }
 
     if (prop && typeof prop === 'function') {
@@ -146,35 +170,40 @@ function clearVmProp(prop: unknown) {
 }
 
 async function getUiSandboxLibs(libs: string[]) {
-    const modules = await Promise.all(
-        libs.map(async (lib) => {
-            switch (lib) {
-                case 'date-utils@2.3.0': {
-                    // eslint-disable-next-line import/no-extraneous-dependencies
-                    const module = await import(
-                        // @ts-ignore
-                        '@datalens-tech/ui-sandbox-modules/dist/@gravity-ui/date-utils/v2.3.0.js?raw'
-                    );
-                    return module.default;
-                }
-                case 'date-utils':
-                case 'date-utils@2.5.3': {
-                    // eslint-disable-next-line import/no-extraneous-dependencies
-                    const module = await import(
-                        // @ts-ignore
-                        '@datalens-tech/ui-sandbox-modules/dist/@gravity-ui/date-utils/v2.5.3.js?raw'
-                    );
-                    return module.default;
-                }
-                default: {
-                    throw new ChartKitCustomError(null, {
-                        details: `The library '${lib}' is not available`,
-                    });
-                }
+    const getModule = (name: string) =>
+        import(`@datalens-tech/ui-sandbox-modules/dist/${name}.js?raw`).then(
+            (module) => module.default,
+        );
+    const additionalModules = libs.map((lib) => {
+        switch (lib) {
+            case 'date-utils@2.3.0': {
+                return getModule('@gravity-ui/date-utils/v2.3.0');
             }
-        }),
-    );
+            case 'date-utils':
+            case 'date-utils@2.5.3': {
+                return getModule('@gravity-ui/date-utils/v2.5.3');
+            }
+            case 'd3@7.9.0':
+            case 'd3': {
+                return getModule('d3/v7.9.0');
+            }
+            case 'd3-chord@3.0.1':
+            case 'd3-chord': {
+                return getModule('d3-chord/v3.0.1');
+            }
+            case 'd3-sankey@0.12.3':
+            case 'd3-sankey': {
+                return getModule('d3-sankey/v0.12.3');
+            }
+            default: {
+                throw new ChartKitCustomError(null, {
+                    details: `The library '${lib}' is not available`,
+                });
+            }
+        }
+    });
 
+    const modules = await Promise.all([getModule('dom-api'), ...additionalModules]);
     return modules.filter(Boolean).join('');
 }
 
@@ -184,16 +213,16 @@ async function getUnwrappedFunction(args: {
     options?: UiSandboxRuntimeOptions;
     entryId: string;
     entryType: string;
+    name?: string;
 }) {
-    const {sandbox, wrappedFn, options, entryId, entryType} = args;
-    const libs = await getUiSandboxLibs(wrappedFn.libs ?? []);
-    return function (this: unknown, ...restArgs: unknown[]) {
-        if (typeof options?.totalTimeLimit === 'number' && options?.totalTimeLimit <= 0) {
-            throw new ChartKitCustomError('The allowed execution time has been exceeded', {
-                code: ERROR_CODE.UI_SANDBOX_EXECUTION_TIMEOUT,
-            });
-        }
+    const {sandbox, wrappedFn, options, entryId, entryType, name} = args;
+    let libs = await getUiSandboxLibs(wrappedFn.libs ?? []);
+    const parseHtml = await getParseHtmlFn();
+    const isAdvancedChart = (
+        [EditorType.AdvancedChartNode, LegacyEditorType.BlankChart] as string[]
+    ).includes(entryType);
 
+    return function (this: unknown, ...restArgs: unknown[]) {
         const runId = getRandomCKId();
         Performance.mark(runId);
 
@@ -202,10 +231,19 @@ async function getUnwrappedFunction(args: {
         if (wrappedFn.args) {
             preparedUserArgs = Array.isArray(wrappedFn.args) ? wrappedFn.args : [wrappedFn.args];
         }
-        const fnArgs = [...restArgs, ...preparedUserArgs].map((a) => clearVmProp(a));
+        let fnArgs: unknown[] = [...restArgs];
+        if (entryType === 'graph_node') {
+            fnArgs = fnArgs.map((a) => clearVmProp(a));
+        }
+
+        fnArgs = [...fnArgs, ...preparedUserArgs];
 
         // prepare function context
-        const fnContext = clearVmProp(this);
+        let fnContext = this;
+
+        if (entryType === 'graph_node') {
+            fnContext = clearVmProp(fnContext);
+        }
 
         // set global api
         const globalApi = {
@@ -215,20 +253,15 @@ async function getUnwrappedFunction(args: {
                 log: (...logArgs: unknown[]) => console.log(...logArgs),
             },
             setTimeout: (handler: TimerHandler, timeout: number) => setTimeout(handler, timeout),
-            window: {
-                open: function (url: string, target?: string) {
-                    try {
-                        validateUrl(url);
-                        window.open(url, target === '_self' ? '_self' : '_blank');
-                    } catch (e) {
-                        console.error(e);
-                    }
-                },
-            },
+            clearTimeout: (timeoutId: number) => clearTimeout(timeoutId),
             ChartEditor: {
                 generateHtml: (value: ChartKitHtmlItem) => wrapHtml(value),
             },
         };
+
+        merge(globalApi, {
+            Editor: globalApi.ChartEditor,
+        });
 
         // extend API for Highcharts charts
         if (entryType === 'graph_node') {
@@ -255,7 +288,9 @@ async function getUnwrappedFunction(args: {
                     appendElements: (node: unknown) => {
                         const chart = getCurrentChart();
 
-                        const html = unwrapHtml(wrapHtml(node as ChartKitHtmlItem)) as string;
+                        const html = unwrapHtml({
+                            value: wrapHtml(node as ChartKitHtmlItem),
+                        }) as string;
                         const container = chart.container;
                         const wrapper = document.createElement('div');
                         wrapper.insertAdjacentHTML('beforeend', html);
@@ -319,26 +354,87 @@ async function getUnwrappedFunction(args: {
                         return null;
                     },
                 },
+                window: {
+                    open: function (url: string, target?: string) {
+                        try {
+                            const href = sanitizeUrl(url);
+                            window.open(href, target === '_self' ? '_self' : '_blank');
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    },
+                },
             });
+        } else if (isAdvancedChart) {
+            const chartId = get(this, 'chartId');
+            const chartContext = chartStorage.get(chartId);
+
+            merge(globalApi, {
+                Chart: {
+                    getState: () => {
+                        return chartContext.getState();
+                    },
+                    setState: (update: any, options?: any) => {
+                        chartContext?.setState(update, options);
+                    },
+                    updateActionParams: (params: StringParams) => {
+                        chartContext?.updateActionParams(params);
+                    },
+                },
+            });
+
+            if (fnContext && typeof fnContext === 'object' && '__innerHTML' in fnContext) {
+                libs += `document.body.innerHTML = (${JSON.stringify(fnContext.__innerHTML)});`;
+            }
         }
 
-        const execTimeout = Math.min(UI_SANDBOX_FN_TIME_LIMIT, options?.totalTimeLimit ?? Infinity);
-        const interruptHandler = getInterruptAfterDeadlineHandler(Date.now() + execTimeout);
-        const runtime = new UiSandboxRuntime({sandbox, interruptHandler});
-        const result = runtime.callFunction({
-            fn: wrappedFn.fn,
-            fnContext,
-            fnArgs,
-            globalApi,
-            libs,
+        const oneRunTimeLimit = options?.fnExecTimeLimit ?? UI_SANDBOX_FN_TIME_LIMIT;
+        const execTimeout = Math.min(oneRunTimeLimit, options?.totalTimeLimit ?? Infinity);
+        const runtime = new UiSandboxRuntime({
+            sandbox,
+            getInterruptAfterDeadlineHandler,
+            timelimit: execTimeout,
         });
+        try {
+            const {result, execTime} = runtime.callFunction({
+                fn: wrappedFn.fn,
+                fnContext,
+                fnArgs,
+                globalApi,
+                libs,
+                name,
+            });
 
-        const performance = Performance.getDuration(runId);
-        if (options?.totalTimeLimit) {
-            options.totalTimeLimit = Math.max(0, options.totalTimeLimit - Number(performance));
+            if (options?.totalTimeLimit) {
+                options.totalTimeLimit = Math.max(0, options.totalTimeLimit - Number(execTime));
+            }
+
+            return unwrapHtml({value: result, parseHtml, addElementId: isAdvancedChart});
+        } catch (e) {
+            const performance = Performance.getDuration(runId);
+            if (performance && e?.message === 'interrupted') {
+                if (options?.totalTimeLimit && performance > options?.totalTimeLimit) {
+                    throw new ChartKitCustomError('The allowed execution time has been exceeded', {
+                        code: ERROR_CODE.UI_SANDBOX_EXECUTION_TIMEOUT,
+                    });
+                }
+
+                if (performance > oneRunTimeLimit) {
+                    const msg = `The "${name}" function takes too long to execute. Try to optimize the code.`;
+                    const error = new ChartKitCustomError(msg, {
+                        code: ERROR_CODE.UI_SANDBOX_FN_EXECUTION_TIMEOUT,
+                        details: {
+                            stackTrace: `Execution time: ${performance}ms`,
+                        },
+                    });
+                    error.stack = undefined;
+
+                    throw error;
+                }
+            }
+
+            throw e;
         }
-
-        return unwrapHtml(result);
     };
 }
 
@@ -370,6 +466,7 @@ export async function unwrapPossibleFunctions(args: {
                     options,
                     entryId,
                     entryType,
+                    name: key,
                 });
             } else if (Array.isArray(value)) {
                 await Promise.all(
@@ -432,42 +529,65 @@ export const shouldUseUISandbox = (target: TargetValue) => {
     return result;
 };
 
-export function processHtmlFields(target: unknown, options?: {allowHtml: boolean}) {
+type ProcessHtmlOptions = {
+    allowHtml: boolean;
+    parseHtml?: (value: string) => unknown;
+    ignoreInvalidValues?: boolean;
+    addElementId?: boolean;
+};
+
+export function processHtmlFields(target: unknown, options?: ProcessHtmlOptions) {
     const allowHtml = Boolean(options?.allowHtml);
+
+    const processValue = (key: string | number, value: unknown, item: object) => {
+        if (value && typeof value === 'object') {
+            if (WRAPPED_HTML_KEY in value) {
+                let content = value[WRAPPED_HTML_KEY];
+                if (typeof content === 'string' && typeof options?.parseHtml === 'function') {
+                    content = options.parseHtml(content);
+                }
+                set(
+                    item,
+                    key,
+                    generateHtml(content as ChartKitHtmlItem, {
+                        ignoreInvalidValues: options?.ignoreInvalidValues,
+                        addElementId: options?.addElementId,
+                    }),
+                );
+            } else {
+                processHtmlFields(value, options);
+            }
+        } else if (typeof value === 'string' && !allowHtml) {
+            set(item, key, escape(value));
+        }
+    };
 
     if (target && typeof target === 'object') {
         if (Array.isArray(target)) {
             target.forEach((item, index) => {
-                if (item && typeof item === 'object') {
-                    if (WRAPPED_HTML_KEY in item) {
-                        target[index] = generateHtml(item[WRAPPED_HTML_KEY] as ChartKitHtmlItem);
-                    } else {
-                        processHtmlFields(item, options);
-                    }
-                } else if (typeof item === 'string' && !allowHtml) {
-                    target[index] = escape(item);
-                }
+                processValue(index, item, target);
             });
         } else {
             const config = target as Record<string, unknown>;
             Object.entries(config).forEach(([key, value]) => {
-                if (value && typeof value === 'object') {
-                    if (WRAPPED_HTML_KEY in value) {
-                        config[key] = generateHtml(value[WRAPPED_HTML_KEY] as ChartKitHtmlItem);
-                    } else {
-                        processHtmlFields(value, options);
-                    }
-                } else if (typeof value === 'string' && !allowHtml) {
-                    config[key] = escape(value);
-                }
+                processValue(key, value, config);
             });
         }
     }
 }
 
-export function unwrapHtml(value: unknown) {
+function unwrapHtml(args: {
+    value: unknown;
+    parseHtml?: (value: string) => unknown;
+    addElementId?: boolean;
+}) {
+    const {value, parseHtml, addElementId} = args;
     if (value && typeof value === 'object' && WRAPPED_HTML_KEY in value) {
-        return generateHtml(value[WRAPPED_HTML_KEY] as ChartKitHtmlItem);
+        let content = value[WRAPPED_HTML_KEY];
+        if (typeof content === 'string' && typeof parseHtml === 'function') {
+            content = parseHtml(content);
+        }
+        return generateHtml(content as ChartKitHtmlItem, {addElementId});
     }
 
     if (typeof value === 'string') {

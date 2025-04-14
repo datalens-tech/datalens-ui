@@ -1,7 +1,7 @@
 import {dateTimeUtc} from '@gravity-ui/date-utils';
 import moment from 'moment';
 import {DL} from 'ui/constants';
-import {chartToTable} from 'ui/libs/DatalensChartkit/ChartKit/helpers/d3-chart-to-table';
+import {chartToTable} from 'ui/libs/DatalensChartkit/ChartKit/helpers/gravity-charts/chart-to-table';
 import {registry} from 'ui/registry';
 import {isEmbeddedEntry} from 'ui/utils/embedded';
 
@@ -41,8 +41,7 @@ const TABLE_DATE_FORMAT_BY_SCALE = {
     y: 'YYYY',
 };
 
-//TODO: use only api_prefix
-const API = DL.API_PREFIX ? `${DL.API_PREFIX}/export` : '/api/export';
+const API = `${DL.API_PREFIX}/export`;
 
 function tableHeadToGraphs(head, prefix) {
     return head.reduce((result, column) => {
@@ -155,7 +154,7 @@ function prepareValues({widget, data, widgetType, extra, options = {}}) {
     const {format} = options;
 
     switch (widgetType) {
-        case WidgetKind.D3: {
+        case WidgetKind.GravityCharts: {
             return prepareValues({
                 widget: {},
                 data: chartToTable({chartData: data}),

@@ -6,9 +6,10 @@ import {connect} from 'react-redux';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
 import type {Field, Shared} from 'shared';
-import {Feature, PlaceholderActionQa, isFieldHierarchy, isMeasureField} from 'shared';
+import {DatasetFieldType, Feature, PlaceholderActionQa, isFieldHierarchy} from 'shared';
 import {isChartSupportMultipleColors} from 'shared/modules/colors/common-helpers';
 import type {DatalensGlobalState} from 'ui';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {selectDataset} from 'units/wizard/selectors/dataset';
 import {
     selectColors,
@@ -16,7 +17,6 @@ import {
     selectFilters,
 } from 'units/wizard/selectors/visualization';
 
-import Utils from '../../../../../../../utils';
 import {getChartType} from '../../../../../../ql/store/reducers/ql';
 import {openDialogColors} from '../../../../../actions/dialog';
 import {updateColors} from '../../../../../actions/placeholder';
@@ -50,14 +50,22 @@ class ColorsPlaceholder extends React.Component<Props> {
         } = this.props;
 
         const colorsContainsHierarchies = colors.some(isFieldHierarchy);
+        const hasStringMeasures = colors.some(
+            (item) => item.type === DatasetFieldType.Measure && item.data_type === 'string',
+        );
 
-        const onActionIconClick = colorsContainsHierarchies ? undefined : this.openDialogColor;
-        const disabledText = colorsContainsHierarchies
-            ? i18n('wizard', 'label_no-colors-setup-for-hierarchy')
-            : undefined;
+        const canChangeColorSettings = !colorsContainsHierarchies && !hasStringMeasures;
+        const onActionIconClick = canChangeColorSettings ? this.openDialogColor : undefined;
+        let disabledText: string | undefined;
+
+        if (colorsContainsHierarchies) {
+            disabledText = i18n('wizard', 'label_no-colors-setup-for-hierarchy');
+        } else if (hasStringMeasures) {
+            disabledText = i18n('wizard', 'label_no-colors-setup-for-string-measures');
+        }
 
         const colorsCapacity =
-            Utils.isEnabledFeature(Feature.MultipleColorsInVisualization) &&
+            isEnabledFeature(Feature.MultipleColorsInVisualization) &&
             isChartSupportMultipleColors(chartType ?? '', visualization.id)
                 ? undefined
                 : visualization.colorsCapacity || 1;
@@ -101,11 +109,7 @@ class ColorsPlaceholder extends React.Component<Props> {
             return false;
         }
 
-        const {globalVisualization, visualization, colors, chartType} = this.props;
-
-        if (globalVisualization?.id === 'combined-chart' && isMeasureField(item)) {
-            return false;
-        }
+        const {visualization, colors, chartType} = this.props;
 
         return Boolean(
             visualization.checkAllowedDesignItems &&
@@ -114,7 +118,7 @@ class ColorsPlaceholder extends React.Component<Props> {
                     visualization,
                     designItems: colors,
                     isMultipleColorsSupported:
-                        Utils.isEnabledFeature(Feature.MultipleColorsInVisualization) &&
+                        isEnabledFeature(Feature.MultipleColorsInVisualization) &&
                         isChartSupportMultipleColors(chartType ?? '', visualization.id),
                 }),
         );
@@ -125,7 +129,7 @@ class ColorsPlaceholder extends React.Component<Props> {
         const {placeholders} = visualization;
 
         const isMultipleColorsSupported =
-            Utils.isEnabledFeature(Feature.MultipleColorsInVisualization) &&
+            isEnabledFeature(Feature.MultipleColorsInVisualization) &&
             isChartSupportMultipleColors(chartType ?? '', visualization.id);
 
         const item = getDialogItem(colors, placeholders);

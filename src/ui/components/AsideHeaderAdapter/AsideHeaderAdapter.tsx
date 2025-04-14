@@ -11,8 +11,9 @@ import {useDispatch, useSelector} from 'react-redux';
 import {Link, useLocation} from 'react-router-dom';
 import {DlNavigationQA, Feature} from 'shared';
 import {DL, PRODUCT_NAME} from 'ui/constants';
+import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
-import Utils from 'ui/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {setAsideHeaderData, updateAsideHeaderIsCompact} from '../../store/actions/asideHeader';
 import type {AsideHeaderData} from '../../store/typings/asideHeader';
@@ -20,6 +21,7 @@ import {UserAvatar} from '../UserMenu/UserAvatar';
 import {UserMenu} from '../UserMenu/UserMenu';
 
 import {Settings as SettingsPanel} from './Settings/Settings';
+import {DIALOG_RELEASE_VERSION} from './VersionDialog/VersionDialog';
 
 import defaultLogoIcon from '../../assets/icons/logo.svg';
 import iconCollection from '../../assets/icons/mono-collection.svg';
@@ -131,7 +133,7 @@ export const AsideHeaderAdapter = ({renderContent, logoIcon}: AsideHeaderAdapter
         setVisiblePanel(undefined);
     }, []);
 
-    const isReadOnly = Utils.isEnabledFeature(Feature.ReadOnlyMode);
+    const isReadOnly = isEnabledFeature(Feature.ReadOnlyMode);
     const topAlert: AsideHeaderTopAlertProps | undefined = isReadOnly
         ? {
               message: baseI18n('common.read-only', 'toast_editing-warning'),
@@ -174,6 +176,37 @@ export const AsideHeaderAdapter = ({renderContent, logoIcon}: AsideHeaderAdapter
         ],
         [visiblePanel],
     );
+
+    const getReliaseVersionWrapper = React.useCallback(
+        ({text}) => {
+            const handleShowReleaseVersion = () => {
+                setCurrentPopup(null);
+                dispatch(
+                    openDialog({
+                        id: DIALOG_RELEASE_VERSION,
+                        props: {
+                            releaseVersion: DL.RELEASE_VERSION || '',
+                            open: true,
+                            onClose: () => {
+                                dispatch(closeDialog());
+                            },
+                        },
+                    }),
+                );
+            };
+
+            return (
+                <div className={b('info-btn')} onClick={handleShowReleaseVersion}>
+                    {text}
+                </div>
+            );
+        },
+        [dispatch],
+    );
+
+    const handleClosePopup = React.useCallback(() => {
+        setCurrentPopup(null);
+    }, []);
 
     const renderFooter = () => {
         return (
@@ -222,15 +255,20 @@ export const AsideHeaderAdapter = ({renderContent, logoIcon}: AsideHeaderAdapter
                                         text: i18n('label_github'),
                                         url: GITHUB_URL,
                                     },
-                                    {
-                                        text: i18n('label_about'),
-                                        url: PROMO_SITE_DOMAIN,
-                                    },
+                                    DL.RELEASE_VERSION
+                                        ? {
+                                              text: i18n('label_about'),
+                                              itemWrapper: getReliaseVersionWrapper,
+                                          }
+                                        : {
+                                              text: i18n('label_about'),
+                                              url: PROMO_SITE_DOMAIN,
+                                          },
                                     {
                                         text: i18n('label_docs'),
                                         url: DOCUMENTATION_LINK,
                                     },
-                                ]}
+                                ].filter(Boolean)}
                                 filterable={false}
                                 virtualized={false}
                                 renderItem={renderDocsItem}
@@ -238,7 +276,7 @@ export const AsideHeaderAdapter = ({renderContent, logoIcon}: AsideHeaderAdapter
                         );
                     }}
                 />
-                {DL.ZITADEL_ENABLED && (
+                {(DL.ZITADEL_ENABLED || DL.AUTH_ENABLED) && (
                     <FooterItem
                         compact={isCompact}
                         item={{
@@ -258,8 +296,8 @@ export const AsideHeaderAdapter = ({renderContent, logoIcon}: AsideHeaderAdapter
                         enableTooltip={false}
                         popupVisible={currentPopup === PopupName.Account}
                         popupOffset={[0, 8]}
-                        onClosePopup={() => setCurrentPopup(null)}
-                        renderPopupContent={() => <UserMenu />}
+                        onClosePopup={handleClosePopup}
+                        renderPopupContent={() => <UserMenu onClose={handleClosePopup} />}
                     />
                 )}
             </React.Fragment>

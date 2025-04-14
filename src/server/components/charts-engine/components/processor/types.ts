@@ -1,4 +1,3 @@
-import type {Request} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
 
 import type {
@@ -110,8 +109,6 @@ export type NativeModule = {
     setConsole?: (console: Console) => void;
 };
 
-export type NativeModulesType = 'BASE_NATIVE_MODULES';
-
 export type RuntimeMetadata = {
     error?: unknown;
     userParamsOverride?: StringParams;
@@ -143,10 +140,10 @@ export type ChartBuilderResult = {
 };
 
 export type ChartBuilder = {
+    type?: 'CHART_EDITOR' | 'WIZARD' | 'CONTROL';
     buildShared: () => Promise<void>;
     buildModules: (args: {
         subrequestHeaders: Record<string, string>;
-        req: Request;
         ctx: AppContext;
         onModuleBuild: (args: {executionTiming: [number, number]; filename: string}) => void;
     }) => Promise<Record<string, ChartBuilderResult>>;

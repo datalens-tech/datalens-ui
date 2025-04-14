@@ -1,5 +1,6 @@
 import React from 'react';
 
+import type {RadioButtonOption} from '@gravity-ui/uikit';
 import {Dialog, Icon, Switch} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
@@ -11,11 +12,13 @@ import type {Dispatch} from 'redux';
 import type {
     CommonSharedExtraSettings,
     HintSettings,
+    MarkupType,
     Placeholder,
     TableFieldBackgroundSettings,
 } from 'shared';
 import {
     DialogFieldSettingsQa,
+    MARKUP_TYPE,
     PlaceholderId,
     WizardVisualizationId,
     getDefaultFormatting,
@@ -47,6 +50,7 @@ import {
     HIDE_LABEL_MODES,
 } from '../../../constants';
 import {getCommonDataType, getIconForDataType} from '../../../utils/helpers';
+import {DialogRadioButtons} from '../components/DialogRadioButtons/DialogRadioButtons';
 
 import {BackgroundSettings} from './components/BackgroundSettings/BackgroundSettings';
 import {BarsSettings} from './components/BarsSettings/BarsSettings';
@@ -62,7 +66,12 @@ import {
     showBackgroundSettingsInDialogField,
 } from './utils/backgroundSettings';
 import {getDefaultBarsSettings, showBarsInDialogField} from './utils/barsSettings';
-import {canUseStringAsMarkdown, getFormattingDataType, isOneOfPropChanged} from './utils/misc';
+import {
+    canUseStringAsHtml,
+    canUseStringAsMarkdown,
+    getFormattingDataType,
+    isOneOfPropChanged,
+} from './utils/misc';
 
 import './DialogField.scss';
 
@@ -80,6 +89,7 @@ type DialogFieldProps = {
     placeholderId?: PlaceholderId;
     options?: DatasetOptions;
     formattingEnabled: boolean;
+    markupTypeEnabled?: boolean;
     onCancel: () => void;
     onApply: (state: DialogFieldState) => void;
     extraSettings?: CommonSharedExtraSettings;
@@ -105,7 +115,7 @@ export type DialogFieldState = Optional<FieldStateExtend> & {
     visualizationId?: string;
     currentPlaceholder?: Placeholder;
     hintSettings?: HintSettings;
-    isMarkdown?: boolean;
+    markupType?: MarkupType;
 };
 
 const b = block('wizard-dialog-field');
@@ -150,7 +160,7 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
             ),
             isErrorOccurred: false,
             currentPlaceholder,
-            isMarkdown: props.item?.isMarkdown,
+            markupType: props.item?.markupType,
         };
 
         if (initialState.isBarsSettingsEnabled && props.item) {
@@ -465,27 +475,47 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
     }
 
     private renderMarkdownSettings() {
-        const {item, placeholderId, visualization} = this.props;
-        const canTransformToMarkdown =
-            item?.data_type === DATASET_FIELD_TYPES.STRING &&
-            canUseStringAsMarkdown(visualization.id as WizardVisualizationId, placeholderId);
+        const {item, placeholderId, visualization, markupTypeEnabled} = this.props;
 
-        if (!canTransformToMarkdown) {
+        if (markupTypeEnabled === false) {
             return null;
+        }
+
+        const isStringField = item?.data_type === DATASET_FIELD_TYPES.STRING;
+        const visualizationId = visualization.id as WizardVisualizationId;
+        const canTransformToMarkdown =
+            isStringField && canUseStringAsMarkdown(visualizationId, placeholderId);
+        const canTransformToHtml = isStringField && canUseStringAsHtml(visualizationId);
+
+        if (!canTransformToMarkdown && !canTransformToHtml) {
+            return null;
+        }
+
+        const items: RadioButtonOption[] = [
+            {value: MARKUP_TYPE.none, content: i18n('wizard', 'label_none')},
+        ];
+
+        if (canTransformToMarkdown) {
+            items.push({value: MARKUP_TYPE.markdown, content: i18n('wizard', 'label_markdown')});
+        }
+
+        if (canTransformToHtml) {
+            items.push({value: MARKUP_TYPE.html, content: i18n('wizard', 'label_html')});
         }
 
         return (
             <React.Fragment>
                 <DialogFieldRow
-                    title={i18n('wizard', 'label_markdown')}
-                    tooltipText={i18n('wizard', 'label_markdown-tooltip')}
+                    title={i18n('wizard', 'label_markup-type')}
+                    tooltipText={i18n('wizard', 'label_markup-type-tooltip')}
                     setting={
-                        <Switch
-                            onUpdate={(checked) => {
-                                this.setState({isMarkdown: checked});
+                        <DialogRadioButtons
+                            qa={DialogFieldSettingsQa.MarkupTypeRadioButtons}
+                            items={items}
+                            value={this.state.markupType}
+                            onUpdate={(value: string) => {
+                                this.setState({markupType: value});
                             }}
-                            checked={this.state.isMarkdown ?? false}
-                            qa={DialogFieldSettingsQa.MarkdownEnableButton}
                         />
                     }
                 />

@@ -1,27 +1,49 @@
 import type {ConnectionQueryTypeValues} from 'shared/constants';
 import type {Operations} from 'shared/modules';
 import type {
+    AccentTypeValue,
     ConnectionQueryContent,
     ConnectionQueryTypeOptions,
     DATASET_FIELD_TYPES,
     DashTabItemControlSourceType,
+    DashTabItemType,
     Dataset,
     DatasetFieldType,
     StringParams,
+    TitlePlacement,
     TitlePlacementOption,
 } from 'shared/types';
+
+import type {DialogTitleWidgetFeatureProps} from 'ui/components/DialogTitleWidget/DialogTitleWidget';
+import type {DialogTextWidgetFeatureProps} from 'ui/components/DialogTextWidget/DialogTextWidget';
+import type {DialogChartWidgetFeatureProps} from 'ui/components/DialogChartWidget/DialogChartWidget';
+import type {DialogGroupControlFeaturesProps} from 'ui/components/DialogGroupControl/DialogGroupControl';
+import type {DialogExternalControlFeaturesProps} from 'ui/components/DialogExternalControl/DialogExternalControl';
+import type {DialogImageWidgetFeatureProps} from 'ui/components/DialogImageWidget';
+
+export type DialogEditItemFeaturesProp = {
+    [DashTabItemType.Title]?: DialogTitleWidgetFeatureProps;
+    [DashTabItemType.Text]?: DialogTextWidgetFeatureProps;
+    [DashTabItemType.Widget]?: DialogChartWidgetFeatureProps;
+    [DashTabItemType.GroupControl]?: DialogGroupControlFeaturesProps;
+    [DashTabItemType.Control]?: DialogExternalControlFeaturesProps;
+    [DashTabItemType.Image]?: DialogImageWidgetFeatureProps;
+};
 
 export type SelectorDialogValidation = {
     title?: string;
     uniqueFieldName?: string;
     fieldName?: string;
     datasetFieldId?: string;
+    chartId?: string;
     defaultValue?: string;
     connectionQueryContent?: string;
     selectorParameters?: string;
 };
 
 export type SelectorsGroupDialogState = {
+    showGroupName: boolean;
+    groupName?: string;
     autoHeight: boolean;
     buttonApply: boolean;
     buttonReset: boolean;
@@ -41,6 +63,7 @@ export type ItemDataSource = {
     chartId?: string;
     showTitle?: boolean;
     titlePlacement?: TitlePlacementOption;
+    accentType?: AccentTypeValue;
     elementType?: string;
     defaultValue?: string | string[];
     datasetId?: string;
@@ -69,12 +92,12 @@ export type AcceptableValue = {
 
 export type SelectorDialogState = {
     title?: string;
-    titlePlacement?: TitlePlacementOption;
+    titlePlacement?: TitlePlacement;
+
     innerTitle?: string;
     sourceType?: SelectorSourceType;
     autoHeight?: boolean;
     chartId?: string;
-    showTitle?: boolean;
     showInnerTitle?: boolean;
     elementType: SelectorElementType;
     defaultValue?: string | string[];
@@ -106,6 +129,7 @@ export type SelectorDialogState = {
     namespace?: string;
     showHint?: boolean;
     hint?: string;
+    accentType?: AccentTypeValue;
     // unique id for manipulating selectors in the creation phase
     draftId?: string;
 };

@@ -54,7 +54,8 @@ export const buildGraph = (...options: JSTabOptions) => {
     if ('shared' in options[0]) {
         data = options[0].data;
         shared = options[0].shared as Shared | ServerChartsConfig;
-        ChartEditor = options[0].ChartEditor as IChartEditor;
+        ChartEditor =
+            (options[0].ChartEditor as IChartEditor) || (options[0].Editor as IChartEditor);
         apiVersion = options[0].apiVersion;
     } else {
         data = options[0];

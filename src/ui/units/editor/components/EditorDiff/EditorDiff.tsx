@@ -41,7 +41,7 @@ const EditorDiff: React.FC<Props> = ({language, original, value, size}) => {
                             onChange={onChangeInline}
                             checked={options.renderSideBySide}
                         >
-                            {i18n('component.editor-diff.view', 'field_split-diff')}
+                            {i18n('component.dialog-revisions-diff.view', 'field_split-diff')}
                         </Checkbox>
                     </div>
                     <div className={b('editor-place')}>
@@ -56,7 +56,7 @@ const EditorDiff: React.FC<Props> = ({language, original, value, size}) => {
                 </React.Fragment>
             ) : (
                 <div className={b('without-diff')}>
-                    {i18n('component.editor-diff.view', 'label_without-diff')}
+                    {i18n('component.dialog-revisions-diff.view', 'label_without-diff')}
                 </div>
             )}
         </div>

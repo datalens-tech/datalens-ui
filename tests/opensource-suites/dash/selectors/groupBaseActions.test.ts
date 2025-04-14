@@ -1,16 +1,10 @@
 import {Page} from '@playwright/test';
 
-import {
-    ControlQA,
-    DashkitQa,
-    DialogGroupControlQa,
-    Feature,
-    TabMenuQA,
-} from '../../../../src/shared';
+import {ControlQA, DashkitQa, DialogGroupControlQa, TabMenuQA} from '../../../../src/shared';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {isEnabledFeature, openTestPage, slct} from '../../../utils';
+import {openTestPage, slct} from '../../../utils';
 import {TestParametrizationConfig} from '../../../types/config';
 import {dragAndDropListItem} from '../../../suites/dash/helpers';
 
@@ -30,25 +24,7 @@ const PARAMS = {
 };
 
 datalensTest.describe('Dashboards - Base actions with group selectors', () => {
-    let skipAfterEach = false;
-
-    datalensTest.beforeEach(async ({page}: {page: Page}) => {
-        // some page need to be loaded so we can get data of feature flag from DL var
-        await openTestPage(page, '/');
-
-        const isEnabledGroupControls = await isEnabledFeature(page, Feature.GroupControls);
-
-        if (!isEnabledGroupControls) {
-            skipAfterEach = true;
-            // Test is immediately aborted when you call skip, it goes straight to afterEach
-            datalensTest.skip();
-        }
-    });
     datalensTest.afterEach(async ({page}: {page: Page}) => {
-        if (skipAfterEach) {
-            return;
-        }
-
         const dashboardPage = new DashboardPage({page});
 
         await dashboardPage.deleteDash();
@@ -157,7 +133,7 @@ datalensTest.describe('Dashboards - Base actions with group selectors', () => {
             await dashboardPage.enterEditMode();
             await dashboardPage.clickFirstControlSettingsButton();
             await dashboardPage.controlActions.waitForDialog();
-            await page.locator(slct(DialogGroupControlQa.placementButton)).click();
+            await page.locator(slct(DialogGroupControlQa.extendedSettingsButton)).click();
 
             // the controls of placement prevent you from clicking on the middle of item, so
             // moveXRation is 3 (x position of click is width of item / 3)
@@ -168,7 +144,7 @@ datalensTest.describe('Dashboards - Base actions with group selectors', () => {
                 moveXRation: 3,
             });
 
-            await page.locator(slct(DialogGroupControlQa.placementApplyButton)).click();
+            await page.locator(slct(DialogGroupControlQa.extendedSettingsApplyButton)).click();
 
             await page.locator(slct(ControlQA.dialogControlApplyBtn)).click();
 
