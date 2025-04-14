@@ -10,6 +10,7 @@ import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
+import {isEnabledFeature} from 'platform/src/ui/utils/isEnabledFeature';
 import type {StringParams} from 'shared';
 import {Feature} from 'shared/types/feature';
 import {DL} from 'ui/constants/common';
@@ -534,7 +535,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
 
     const disableControls = noControls || urlNoControls;
 
-    const showFloatControls = Utils.isEnabledFeature(Feature.DashFloatControls);
+    const showFloatControls = isEnabledFeature(Feature.DashFloatControls);
 
     const commonHeaderContentProps = {
         compactLoader,
@@ -561,7 +562,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
     const widgetHeaderProps = {
         isFullscreen,
         editMode,
-        hideTabs,
+        hideTitle: Boolean(data.hideTitle),
         tabsItems: adaptiveTabsItems,
         currentTab,
         onSelectTab: handleSelectTab,

@@ -9,7 +9,7 @@ import {ChartInfoIcon} from 'ui/components/Widgets/Chart/components/ChartInfoIco
 import type {ChartKitDataProvider} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
 import type {GetChartkitMenuByType} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
 import {selectWorkbookEditPermission} from 'ui/units/workbooks/store/selectors';
-import Utils from 'ui/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {
     drawComments,
@@ -125,7 +125,7 @@ export const Header = (props: HeaderProps) => {
     };
     const safeChartWarning = get(loadedData, 'safeChartInfo');
 
-    const showFloatControls = Utils.isEnabledFeature(Feature.DashFloatControls);
+    const showFloatControls = isEnabledFeature(Feature.DashFloatControls);
     const showFiltersClear = showActionParamsFilter && onFiltersClear && showFloatControls;
 
     return (

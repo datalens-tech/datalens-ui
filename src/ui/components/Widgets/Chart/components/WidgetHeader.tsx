@@ -6,12 +6,12 @@ import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DebugInfoTool from 'components/DashKit/plugins/DebugInfoTool/DebugInfoTool';
 import type {CurrentTab} from 'components/DashKit/plugins/Widget/types';
+import {isEnabledFeature} from 'platform/src/ui/utils/isEnabledFeature';
 import {useDispatch} from 'react-redux';
 import {ChartkitMenuDialogsQA, ControlQA, Feature} from 'shared';
 import {DL} from 'ui/constants/common';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
 import {setSkipReload} from 'ui/units/dash/store/actions/dashTyped';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 
 import Loader from '../../../../libs/DatalensChartkit/components/ChartKitBase/components/Loader/Loader';
@@ -129,6 +129,11 @@ export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
 
     const showContentLoader = headerWithControlsProps.showLoader || isExportLoading;
     const showLoaderVeil = headerWithControlsProps.veil && !isExportLoading;
+
+    const handleClickHint = React.useCallback((e: React.MouseEvent) => {
+        e.stopPropagation();
+        return false;
+    }, []);
 
     const renderTabs = () => {
         if (DL.IS_MOBILE && (isFullscreen || (!hideTitle && tabsItems?.length === 1))) {

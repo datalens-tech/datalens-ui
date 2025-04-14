@@ -6,10 +6,10 @@ import block from 'bem-cn-lite';
 import logger from 'libs/logger';
 import {isEmpty} from 'lodash';
 import moment from 'moment';
+import {isEnabledFeature} from 'platform/src/ui/utils/isEnabledFeature';
 import {useDispatch} from 'react-redux';
 import {type ChartsInsightsItem, Feature} from 'shared';
 import {updateUserSettings} from 'store/actions/user';
-import Utils from 'ui/utils';
 import {fetchBatchRenderedMarkdown} from 'ui/utils/sdkRequests';
 
 import {CounterName, GoalId, reachMetricaGoal} from '../../../../../../../metrica';
@@ -95,7 +95,7 @@ export const ChartsInsights = ({items = [], messagesByLocator, locators, hidden}
         return null;
     }
 
-    const showFlatControls = Utils.isEnabledFeature(Feature.DashFloatControls);
+    const showFlatControls = isEnabledFeature(Feature.DashFloatControls);
     const buttonView = showFlatControls ? 'normal' : 'flat-secondary';
     const buttonSize = showFlatControls ? 'm' : 's';
 
