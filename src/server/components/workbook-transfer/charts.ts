@@ -13,9 +13,7 @@ import {
     type TransferIdMapping,
     type TransferNotification,
 } from '../../../shared/types';
-import type {ChartTemplates} from '../charts-engine/components/chart-generator';
-import type {ChartDataOptions} from '../charts-engine/controllers/charts';
-import {prepareChartData} from '../charts-engine/controllers/charts';
+import {type ChartTemplates, chartGenerator} from '../charts-engine/components/chart-generator';
 
 import {
     criticalTransferNotification,
@@ -27,18 +25,18 @@ type MappingWarnings = {missedMapping: boolean};
 type MatchCallback = (value: string, obj: Record<string, any>, key: string | number) => string;
 
 type TransferChartDataOptions = {
-    data: ReturnType<typeof prepareChartData>['chart'] & ChartDataOptions['data'];
-    template: keyof ChartTemplates;
+    data: {
+        shared: Record<string, any>;
+    };
     type: string;
     key?: string;
     name: string;
 };
 
-const validateChart = (chartOptions: TransferChartDataOptions) => {
+const validateChartShared = (chartOptions: TransferChartDataOptions) => {
     const requiredChartOptionsKeys: Array<keyof TransferChartDataOptions> = [
         'data',
         'name',
-        'template',
         'type',
     ];
 
@@ -47,6 +45,10 @@ const validateChart = (chartOptions: TransferChartDataOptions) => {
             throw new Error('Invalid chart options');
         }
     });
+
+    if (typeof chartOptions.data.shared !== 'object') {
+        throw new Error('Invalid chart chared object');
+    }
 };
 
 const traverseWizardFieldsRecursive = (obj: any, matchCallback: MatchCallback) => {
@@ -111,21 +113,27 @@ export const prepareImportChartData = async (
     req: Request,
     idMapping: TransferIdMapping,
 ) => {
-    const {type} = chartOptions.data;
+    const {ctx} = req;
+
     const defaults = {
         key: chartOptions.key,
         name: chartOptions.name,
         data: null,
-        type: '',
         links: {},
         scope: EntryScope.Widget,
         mode: EntryUpdateMode.Publish,
     };
     const notifications: TransferNotification[] = [];
+
+    let template = '';
+    let shared: Record<string, any> = {};
     let warnings: MappingWarnings | null = null;
 
     try {
-        validateChart(chartOptions);
+        shared = chartOptions.data.shared;
+        template = chartGenerator.identifyChartTemplate({ctx, shared});
+
+        validateChartShared(chartOptions);
     } catch (err) {
         return {
             widget: null,
@@ -135,12 +143,12 @@ export const prepareImportChartData = async (
         };
     }
 
-    switch (type) {
+    switch (template) {
         case 'datalens':
-            warnings = traverseWizardFields(chartOptions.data, idMapping);
+            warnings = traverseWizardFields(shared, idMapping);
             break;
         case 'ql':
-            warnings = traverseQlFields(chartOptions.data, idMapping);
+            warnings = traverseQlFields(shared, idMapping);
             break;
         default:
             return {
@@ -156,24 +164,23 @@ export const prepareImportChartData = async (
     }
 
     try {
-        const preparedChartData = prepareChartData(chartOptions, req);
-
-        if (preparedChartData.error) {
-            return {
-                widget: null,
-                notifications: [
-                    criticalTransferNotification(TransferErrorCode.TransferInvalidEntryData),
-                ],
-            };
-        }
+        const links = chartGenerator.gatherChartLinks({
+            req,
+            ctx,
+            shared,
+        });
+        const serializedData = chartGenerator.serializeShared({
+            ctx,
+            shared,
+            links,
+        });
 
         return {
             widget: {
                 ...defaults,
-                type: preparedChartData.type || '',
-                links: preparedChartData.links || {},
-                data: preparedChartData.chart,
-                template: preparedChartData.template,
+                data: serializedData,
+                type: chartOptions.type,
+                links,
             },
             notifications,
         };
@@ -202,16 +209,18 @@ export const prepareExportChartData = async (entry: EntryFields, idMapping: Tran
 
     const notifications: TransferNotification[] = [];
     let warnings: MappingWarnings | null = null;
+    let shared: Record<string, any> = {};
 
     try {
-        data = JSON.parse((entry.data?.shared || '') as string);
+        shared = JSON.parse((entry.data?.shared || '') as string);
+        const template = (shared?.type || '') as keyof ChartTemplates;
 
-        switch (data.type as keyof ChartTemplates) {
+        switch (template) {
             case 'datalens':
-                warnings = traverseWizardFields(data, idMapping);
+                warnings = traverseWizardFields(shared, idMapping);
                 break;
             case 'ql':
-                warnings = traverseQlFields(data, idMapping);
+                warnings = traverseQlFields(shared, idMapping);
                 break;
             default:
                 return {
@@ -237,8 +246,7 @@ export const prepareExportChartData = async (entry: EntryFields, idMapping: Tran
     return {
         widget: {
             ...widget,
-            data,
-            template: data.type,
+            data: {shared},
         },
         notifications,
     };

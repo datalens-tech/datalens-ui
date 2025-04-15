@@ -152,7 +152,7 @@ type Chart = {
     meta?: string;
 };
 
-function createChartManifect(args: {links?: Record<string, string>}) {
+function createChartManifest(args: {links?: Record<string, string>}) {
     const manifest = {
         links: Object.values(args.links ?? {}),
     };
@@ -160,7 +160,89 @@ function createChartManifect(args: {links?: Record<string, string>}) {
     return JSON.stringify(manifest, null, 4);
 }
 
+function getChartTemplate(ctx: AppContext, chartOldType?: string, template?: keyof ChartTemplates) {
+    const config = ctx.config;
+    const chartTemplates = config.chartTemplates as ChartTemplates;
+
+    if (!template && chartOldType && chartOldType in chartTemplates) {
+        template = chartOldType as keyof ChartTemplates;
+    }
+
+    const chartTemplate = template && chartTemplates[template];
+
+    if (!chartTemplate) {
+        throw new Error('Unknown chart template');
+    }
+
+    return chartTemplate;
+}
+
 export const chartGenerator = {
+    gatherChartLinks: (options: {
+        req: Request;
+        ctx: AppContext;
+        shared: {type?: string};
+        template?: keyof ChartTemplates;
+    }) => {
+        const {req, ctx, shared: data, template} = options;
+        const chartTemplate = getChartTemplate(ctx, data.type, template);
+
+        if (!chartTemplate) {
+            throw new Error('Unknown chart template');
+        }
+
+        let links;
+        if (chartTemplate.identifyLinks) {
+            links = chartTemplate.identifyLinks(data, req);
+        }
+
+        return links;
+    },
+    serializeShared: (options: {
+        ctx: AppContext;
+        shared: {type?: string};
+        links: Record<string, string> | undefined;
+    }) => {
+        const {ctx, shared: data, links} = options;
+        const output: {
+            shared: string;
+            meta?: string;
+        } = {
+            shared: '',
+        };
+
+        try {
+            output.shared = JSON.stringify(data, null, 4);
+        } catch (e) {
+            throw new Error('Invalid chart data');
+        }
+
+        if (isEnabledServerFeature(ctx, 'EnableChartEditorMetaTab')) {
+            output.meta = createChartManifest({links});
+        }
+
+        return output;
+    },
+    identifyChartTemplate: (options: {ctx: AppContext; shared: {type?: string}}) => {
+        const {shared: data, ctx} = options;
+
+        if (!getChartTemplate(ctx, data.type)) {
+            throw new Error('Invalid chart data type');
+        }
+
+        return data.type as string;
+    },
+    identifyChartType: (options: {
+        req: Request;
+        ctx: AppContext;
+        data: {type?: string};
+        template?: keyof ChartTemplates;
+    }) => {
+        const {req, ctx, data, template} = options;
+        const chartTemplate = getChartTemplate(ctx, data.type, template);
+
+        return chartTemplate.identifyChartType(data, req);
+    },
     generateChart: ({
         data,
         template,
@@ -172,36 +254,14 @@ export const chartGenerator = {
         req: Request;
         ctx: AppContext;
     }) => {
-        const config = ctx.config;
-        const chartTemplates = config.chartTemplates as ChartTemplates;
         const chart: Chart = {...commonTemplate};
 
-        const chartOldType = data.type;
-
-        if (!template && chartOldType && chartOldType in chartTemplates) {
-            template = chartOldType as keyof ChartTemplates;
-        }
-
-        const chartTemplate = template && chartTemplates[template];
-
-        if (!chartTemplate) {
-            throw new Error('Unknown chart template');
-        }
-
-        try {
-            chart.shared = JSON.stringify(data, null, 4);
-        } catch (e) {
-            throw new Error('Invalid chart data');
-        }
+        const chartTemplate = getChartTemplate(ctx, data.type, template);
 
         const params = chartTemplate.identifyParams(data, req);
 
-        const type = chartTemplate.identifyChartType(data, req);
-
-        let links;
-        if (chartTemplate.identifyLinks) {
-            links = chartTemplate.identifyLinks(data, req);
-        }
+        const type = chartGenerator.identifyChartType({ctx, req, data, template});
+        const links = chartGenerator.gatherChartLinks({ctx, req, shared: data, template});
 
         chart.params = chart.params.replace('#params', JSON.stringify(params));
         if (chart.params.indexOf('#module') > -1) {
@@ -232,12 +292,11 @@ export const chartGenerator = {
         chart.prepare = chart.prepare.replace('#apiVersion', apiVersion);
         chart.sources = chart.sources.replace('#apiVersion', apiVersion);
 
-        if (isEnabledServerFeature(ctx, 'EnableChartEditorMetaTab')) {
-            chart.meta = createChartManifect({links});
-        }
-
         const chartsWithConfig = isD3Graph || isTable;
-        const {config: _, ...chartWithoutCOnfig} = chart;
+        const {config: _, ...chartWithoutCOnfig} = {
+            ...chart,
+            ...chartGenerator.serializeShared({ctx, shared: data, links}),
+        };
 
         return {chart: chartsWithConfig ? chart : chartWithoutCOnfig, links, type};
     },

@@ -4,7 +4,7 @@ import {REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 import type {DashEntry, TransferNotification} from '../../shared';
 import {EntryScope} from '../../shared';
 import {TransferErrorCode} from '../../shared/constants/workbook-transfer';
-import type {EntryFieldData} from '../../shared/schema';
+import type {EntryFieldData, EntryFieldLinks} from '../../shared/schema';
 import {Utils} from '../components';
 import {
     prepareExportChartData,
@@ -66,7 +66,7 @@ const resolveScopeForEntryData = (entryData: Record<keyof EntryScope, unknown>) 
     return Object.values(EntryScope).find((key) => key in entryData);
 };
 
-export const workbooksExportController = {
+export const workbooksTransferController = {
     export: async (req: Request, res: Response) => {
         try {
             const {ctx} = req;
@@ -76,7 +76,7 @@ export const workbooksExportController = {
             const usMasterToken = Utils.pickUsMasterToken(req);
 
             if (!usMasterToken) {
-                res.send(403).send({
+                res.status(403).send({
                     code: TransferErrorCode.TransferInvalidToken,
                 });
                 return;
@@ -190,7 +190,7 @@ export const workbooksExportController = {
             const usMasterToken = Utils.pickUsMasterToken(req);
 
             if (!usMasterToken) {
-                res.send(403).send({
+                res.status(403).send({
                     code: TransferErrorCode.TransferInvalidToken,
                 });
                 return;
@@ -258,7 +258,7 @@ export const workbooksExportController = {
                             type: widget.type,
                             scope: widget.scope,
                             mode: widget.mode,
-                            links: widget.links,
+                            links: widget.links as EntryFieldLinks,
                             usMasterToken,
                         },
                         ctx,
