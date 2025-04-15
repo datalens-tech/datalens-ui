@@ -1,9 +1,9 @@
 import React from 'react';
 
+import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 import {DL} from 'ui/constants';
-import block from 'bem-cn-lite';
 
 import {MODE_MINIMAL, PLACE} from '../../constants';
 

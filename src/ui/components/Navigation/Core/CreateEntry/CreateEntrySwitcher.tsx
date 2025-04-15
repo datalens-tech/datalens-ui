@@ -1,7 +1,8 @@
 import React from 'react';
 
-import {Button, Icon, ButtonView} from '@gravity-ui/uikit';
 import {ChevronDown} from '@gravity-ui/icons';
+import {Button, Icon} from '@gravity-ui/uikit';
+import type {ButtonView} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {CreateEntityButton} from 'shared';
 
