@@ -32,7 +32,7 @@ concurrency:
 jobs:
   run-e2e:
     name: Install Datalens and Run E2E Tests
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
     steps:
       - name: echo distinct ID ${{ github.event.inputs.distinct_id }}
         run: echo ${{ github.event.inputs.distinct_id }}
@@ -41,34 +41,18 @@ jobs:
       - uses: docker/setup-buildx-action@v3
       - uses: actions/setup-node@v3
         with:
-          node-version: 20
+          node-version: 22
           cache: 'npm'
           cache-dependency-path: ./package-lock.json
 
-      - name: Get last version config
+      - name: Get ui ref version
         run: |
-          VERSION_CONFIG=$(curl -s https://api.github.com/repos/datalens-tech/datalens/contents/versions-config.json | jq -r '.content' | base64 -d)
-          if [ "${{ env.UI_VERSION }}" == "release" ]; then
-            UI_VERSION=$(echo "${VERSION_CONFIG}" | jq -r '.uiVersion')
-            echo "UI_VERSION=$UI_VERSION" >> "$GITHUB_ENV"
+          UI_REF="${{ github.head_ref }}"
+          if [ -z "${UI_REF}" ]; then
+            UI_REF="release-${UI_VERSION}"
           fi
-          if [ -z "${{ env.US_VERSION }}" ]; then
-            US_VERSION=$(echo "${VERSION_CONFIG}" | jq -r '.usVersion')
-            echo "US_VERSION=$US_VERSION" >> "$GITHUB_ENV"
-          fi
-          if [ -z "${{ env.CONTROL_API_VERSION }}" ]; then
-            CONTROL_API_VERSION=$(echo "${VERSION_CONFIG}" | jq -r '.controlApiVersion')
-            echo "CONTROL_API_VERSION=$CONTROL_API_VERSION" >> "$GITHUB_ENV"
-          fi
-          if [ -z "${{ env.DATA_API_VERSION }}" ]; then
-            DATA_API_VERSION=$(echo "${VERSION_CONFIG}" | jq -r '.dataApiVersion')
-            echo "DATA_API_VERSION=$DATA_API_VERSION" >> "$GITHUB_ENV"
-          fi
-          echo "UI_REF=release-$UI_VERSION" >> "$GITHUB_ENV"
+          echo "UI_REF=${UI_REF}" >> "$GITHUB_ENV"
         env:
-          US_VERSION: ${{ env.US_VERSION }}
-          CONTROL_API_VERSION: ${{ env.CONTROL_API_VERSION }}
-          DATA_API_VERSION: ${{ env.DATA_API_VERSION }}
           UI_VERSION: ${{ env.UI_VERSION }}
 
       - uses: actions/checkout@v4

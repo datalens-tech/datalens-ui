@@ -66,10 +66,6 @@ export enum Feature {
     NewTableWidgetForCE = 'NewTableWidgetForCE',
     /** Enable undo/redo buttons & hotkeys in datasets */
     EnableEditHistoryDatasets = 'EnableEditHistoryDataset',
-    /** Depends on US feature UseMovePermAction.
-     * It checks admin permission for move entries instead of edit permission.
-     */
-    UseMovePermAction = 'UseMovePermAction',
     /** An empty chart for drawing something unusual */
     BlankChart = 'BlankChart',
     /** Additional chart config for making requests by widget events */
