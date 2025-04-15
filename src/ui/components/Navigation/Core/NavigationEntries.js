@@ -78,12 +78,15 @@ class NavigationEntries extends React.Component {
         resolveUsersByIds: PropTypes.func,
 
         onPermissionError: PropTypes.func,
+
+        renderEmptyStateAction: PropTypes.func,
     };
     static defaultProps = {
         mode: MODE_FULL,
         place: PLACE.ROOT,
         setBreadCrumbs: noop,
         onChangeLocation: noop,
+        renderEmptyStateAction: noop
     };
     static getDerivedStateFromProps(nextProps, prevState) {
         const {scope, path, place} = nextProps;
@@ -579,6 +582,8 @@ class NavigationEntries extends React.Component {
                     className={b('empty-entries')}
                     mode={mode}
                     isEmptyFolder={isEmptyFolder}
+                    place={place}
+                    renderAction={this.props.renderEmptyStateAction}
                 />
             );
         }

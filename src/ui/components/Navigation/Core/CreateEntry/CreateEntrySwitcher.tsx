@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {Button} from '@gravity-ui/uikit';
+import {Button, Icon, ButtonView} from '@gravity-ui/uikit';
+import {ChevronDown} from '@gravity-ui/icons';
 import block from 'bem-cn-lite';
 import {CreateEntityButton} from 'shared';
 
@@ -14,10 +15,12 @@ export const CreateEntrySwitcher = ({
     place,
     onClick,
     withMenu,
+    buttonView,
 }: {
     place: string;
     onClick: (value: CreateMenuValue, options?: Record<string, unknown>) => void;
     withMenu: boolean;
+    buttonView?: ButtonView;
 }) => {
     const {getNavigationPlacesConfig} = registry.common.functions.getAll();
 
@@ -33,18 +36,18 @@ export const CreateEntrySwitcher = ({
 
     return (
         <Button
-            view="action"
+            view={buttonView}
             qa={CreateEntityButton.Button}
             className={b('button-create')}
             onClick={
                 withMenu
                     ? undefined
                     : () => {
-                          onClick(targetPlace.value);
-                      }
+                        onClick(targetPlace.value);
+                    }
             }
         >
-            {targetPlace.buttonText}
+            {targetPlace.buttonText} {withMenu && <Icon data={ChevronDown} />}
         </Button>
     );
 };
