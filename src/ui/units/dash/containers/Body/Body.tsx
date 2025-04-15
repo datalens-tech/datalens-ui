@@ -533,7 +533,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
 
     getMemoLayoutMap() {
         const widgetsMap = this._memoizedWidgetsMap;
-        const layout = this.getTabConfig().layout;
+        const layout = this.getTabConfig()?.layout || [];
 
         if (widgetsMap.layout !== layout) {
             widgetsMap.layout = layout;

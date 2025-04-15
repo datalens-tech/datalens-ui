@@ -104,7 +104,32 @@ function dash(state = initialState, action) {
 
                         idsMapper[item.id] = itemId;
 
-                        if (item.type === 'widget') {
+                        if (item.type === DashTabItemType.GroupControl) {
+                            widgetItem = {
+                                ...item,
+                                id: itemId,
+                                data: {
+                                    ...item.data,
+                                    group: item.data.group.map((group) => {
+                                        const uniqEntityIdData = generateUniqId({
+                                            salt,
+                                            counter,
+                                            ids: dashDataUniqIds,
+                                        });
+                                        counter = uniqEntityIdData.counter;
+
+                                        const entityId = uniqEntityIdData.id;
+
+                                        idsMapper[group.id] = entityId;
+
+                                        return {
+                                            ...group,
+                                            id: entityId,
+                                        };
+                                    }),
+                                },
+                            };
+                        } else if (item.type === DashTabItemType.Widget) {
                             widgetItem = {
                                 ...item,
                                 id: itemId,
