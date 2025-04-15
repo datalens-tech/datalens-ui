@@ -43,8 +43,8 @@ export const CreateEntrySwitcher = ({
                 withMenu
                     ? undefined
                     : () => {
-                        onClick(targetPlace.value);
-                    }
+                          onClick(targetPlace.value);
+                      }
             }
         >
             {targetPlace.buttonText} {withMenu && <Icon data={ChevronDown} />}

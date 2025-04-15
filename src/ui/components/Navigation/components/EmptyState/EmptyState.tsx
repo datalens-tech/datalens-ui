@@ -33,7 +33,7 @@ const getTitleByPlace = (scope: string) => {
         case PLACE.DASHBOARDS:
             return i18n('label_empty-dashboards');
         default:
-            return i18n('label_empty-folder')
+            return i18n('label_empty-folder');
     }
 };
 
@@ -52,14 +52,30 @@ const getDescriptionByPlace = (scope: string) => {
     }
 };
 
-const TEMPLATE_EMPTY_PLACES: string[] = [PLACE.FAVORITES, PLACE.CONNECTIONS, PLACE.DATASETS, PLACE.WIDGETS, PLACE.DASHBOARDS];
+const TEMPLATE_EMPTY_PLACES: string[] = [
+    PLACE.FAVORITES,
+    PLACE.CONNECTIONS,
+    PLACE.DATASETS,
+    PLACE.WIDGETS,
+    PLACE.DASHBOARDS,
+];
 
-export const EmptyState = ({isEmptyFolder, className, mode, place, renderAction}: EmptyStateProps) => {
+export const EmptyState = ({
+    isEmptyFolder,
+    className,
+    mode,
+    place,
+    renderAction,
+}: EmptyStateProps) => {
     const emptyText = isEmptyFolder ? getTitleByPlace(place) : i18n('label_not-found');
     const emptyDescription = getDescriptionByPlace(place);
 
     const isTemplateEmptyFolder = TEMPLATE_EMPTY_PLACES.includes(place);
-    const name = isEmptyFolder ? isTemplateEmptyFolder ? 'template' : 'emptyDirectory' : 'notFound';
+    const name = isEmptyFolder
+        ? isTemplateEmptyFolder
+            ? 'template'
+            : 'emptyDirectory'
+        : 'notFound';
     const illustrationSize = mode === MODE_MINIMAL && !DL.IS_MOBILE ? 'm' : 'l';
 
     return (
@@ -70,7 +86,11 @@ export const EmptyState = ({isEmptyFolder, className, mode, place, renderAction}
                 description={emptyDescription}
                 direction="column"
                 size={illustrationSize}
-                renderAction={isTemplateEmptyFolder ? () => (<div className={b('action')}>{renderAction()}</div>) : undefined}
+                renderAction={
+                    isTemplateEmptyFolder
+                        ? () => <div className={b('action')}>{renderAction()}</div>
+                        : undefined
+                }
             />
         </div>
     );

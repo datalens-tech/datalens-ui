@@ -116,7 +116,7 @@ class NavigationModal extends React.Component {
             isOnlyCollectionsMode={this.props.isOnlyCollectionsMode}
             buttonView="normal"
         />
-    )
+    );
     render() {
         const {
             linkWrapper,

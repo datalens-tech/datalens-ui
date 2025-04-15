@@ -83,7 +83,7 @@ class NavigationInline extends React.Component {
             isOnlyCollectionsMode={this.props.isOnlyCollectionsMode}
             buttonView="normal"
         />
-    )
+    );
     render() {
         const {linkWrapper, quickItems, onSidebarItemClick, ...props} = this.props;
         return (

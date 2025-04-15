@@ -86,7 +86,7 @@ class NavigationEntries extends React.Component {
         place: PLACE.ROOT,
         setBreadCrumbs: noop,
         onChangeLocation: noop,
-        renderEmptyStateAction: noop
+        renderEmptyStateAction: noop,
     };
     static getDerivedStateFromProps(nextProps, prevState) {
         const {scope, path, place} = nextProps;
