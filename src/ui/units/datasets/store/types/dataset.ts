@@ -143,6 +143,7 @@ type BaseOptions = {
     title: TranslatedItem;
     required?: boolean;
     field_doc_key?: FieldDocKey;
+    template_enabled?: boolean;
 };
 
 export type TextFormOptions = {input_type: 'text'} & BaseOptions;

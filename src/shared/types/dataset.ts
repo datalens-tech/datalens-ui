@@ -156,6 +156,15 @@ export interface ObligatoryDefaultFilter {
     values: string[];
 }
 
+export const DATASET_VALUE_CONSTRAINT_TYPE = {
+    DEFAULT: 'default',
+    NULL: 'null',
+    REGEX: 'regex',
+} as const;
+
+export type DatasetValueConstraintType =
+    (typeof DATASET_VALUE_CONSTRAINT_TYPE)[keyof typeof DATASET_VALUE_CONSTRAINT_TYPE];
+
 export interface DatasetField {
     aggregation: DatasetFieldAggregation;
     type: DatasetFieldType;
@@ -181,6 +190,11 @@ export interface DatasetField {
     valid: boolean;
     hidden: boolean;
     autoaggregated: boolean;
+    template_enabled?: boolean;
+    value_constraint?:
+        | {type: typeof DATASET_VALUE_CONSTRAINT_TYPE.DEFAULT}
+        | {type: typeof DATASET_VALUE_CONSTRAINT_TYPE.NULL}
+        | {type: typeof DATASET_VALUE_CONSTRAINT_TYPE.REGEX; pattern: string};
 }
 
 export interface DatasetFieldError {
