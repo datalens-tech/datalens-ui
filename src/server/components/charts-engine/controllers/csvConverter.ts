@@ -91,7 +91,7 @@ export function csvConverter(
 
         chartData.graphs.forEach((graph) => {
             let currentValue = graph.data[i];
-            let value = '';
+            let value = '""';
 
             if (currentValue || currentValue === 0) {
                 if (graph.type === 'diff' && Array.isArray(currentValue)) {
@@ -102,9 +102,13 @@ export function csvConverter(
                 if (typeof currentValue === 'number') {
                     value = value.replace('.', formSettings.delNumbers || ',');
                 }
+
+                if (typeof currentValue === 'string') {
+                    value = `"${value.replace(/"/g, '""')}"`;
+                }
             }
 
-            line.push(`"${value.replace(/"/g, '""')}"`);
+            line.push(value);
         });
 
         lines.push(line);
