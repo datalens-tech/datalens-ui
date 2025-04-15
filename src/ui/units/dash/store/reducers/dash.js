@@ -110,7 +110,7 @@ function dash(state = initialState, action) {
                                 id: itemId,
                                 data: {
                                     ...item.data,
-                                    group: item.data.group.map((group) => {
+                                    group: item.data.group.map((groupItem) => {
                                         const uniqEntityIdData = generateUniqId({
                                             salt,
                                             counter,
@@ -120,10 +120,10 @@ function dash(state = initialState, action) {
 
                                         const entityId = uniqEntityIdData.id;
 
-                                        idsMapper[group.id] = entityId;
+                                        idsMapper[groupItem.id] = entityId;
 
                                         return {
-                                            ...group,
+                                            ...groupItem,
                                             id: entityId,
                                         };
                                     }),
