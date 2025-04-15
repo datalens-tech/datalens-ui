@@ -39,7 +39,9 @@ export const CreateEntrySwitcher = ({
         <Button
             view={buttonView}
             qa={CreateEntityButton.Button}
-            className={b('button-create')}
+            className={b('button-create', {
+                'with-menu': withMenu,
+            })}
             onClick={
                 withMenu
                     ? undefined
