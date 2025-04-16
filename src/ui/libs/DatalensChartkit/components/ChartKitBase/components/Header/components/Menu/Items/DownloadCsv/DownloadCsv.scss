@@ -1,33 +1,31 @@
-@import '../../../../../../../../../../styles/mixins';
-@import '~@gravity-ui/uikit/styles/mixins';
-
 .download-csv-modal {
     min-height: 340px;
     width: 520px;
     display: flex;
     flex-direction: column;
 
+    &__row {
+        --gc-form-row-label-width: 180px;
+
+        &_labels-align_top {
+            --gc-form-row-field-height: var(--g-text-body-1-line-height);
+        }
+    }
+
     &__content {
         display: flex;
         justify-content: space-between;
         flex-direction: column;
-        gap: 16px;
         flex: 1;
     }
 
-    &__row {
-        display: grid;
-        grid-template-columns: auto 55%;
-        column-gap: 8px;
-        align-items: center;
-    }
-
-    &__hint {
-        @include text-body-short();
-        color: var(--g-color-text-secondary);
-    }
-
     &__attention {
-        @include info-block();
+        padding: var(--g-spacing-3) var(--g-spacing-4);
+        margin-block-end: var(--g-spacing-4);
+    }
+
+    &__radio-group-option {
+        line-height: inherit;
+        align-items: center;
     }
 }
