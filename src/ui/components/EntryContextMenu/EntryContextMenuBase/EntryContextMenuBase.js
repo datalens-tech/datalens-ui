@@ -93,7 +93,7 @@ class EntryContextMenuBase extends React.Component {
                                             key={`${index}-${item.id}`}
                                             {...item}
                                             entry={entry}
-                                            menuItemClassName={b('item')}
+                                            menuItemClassName={(b('item'), item.menuItemClassName)}
                                             onClick={this.onMenuClick}
                                         />
                                     ))}
