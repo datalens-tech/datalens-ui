@@ -125,20 +125,27 @@ export const prepareImportChartData = async (
     };
     const notifications: TransferNotification[] = [];
 
-    let template = '';
+    let template;
+    let chartTemplate;
     let shared: Record<string, any> = {};
     let warnings: MappingWarnings | null = null;
 
     try {
         shared = chartOptions.data.shared;
-        template = chartGenerator.identifyChartTemplate({ctx, shared});
+
+        const chartTemplateObj = chartGenerator.identifyChartTemplate({ctx, shared});
+
+        template = chartTemplateObj.type;
+        chartTemplate = chartTemplateObj.chartTemplate;
 
         validateChartShared(chartOptions);
     } catch (err) {
         return {
             widget: null,
             notifications: [
-                criticalTransferNotification(TransferErrorCode.TransferInvalidEntryData),
+                criticalTransferNotification(TransferErrorCode.TransferInvalidEntryData, {
+                    error: (err as Error).message,
+                }),
             ],
         };
     }
@@ -166,8 +173,8 @@ export const prepareImportChartData = async (
     try {
         const links = chartGenerator.gatherChartLinks({
             req,
-            ctx,
             shared,
+            chartTemplate,
         });
         const serializedData = chartGenerator.serializeShared({
             ctx,
@@ -188,7 +195,9 @@ export const prepareImportChartData = async (
         return {
             widget: null,
             notifications: [
-                criticalTransferNotification(TransferErrorCode.TransferInvalidEntryData),
+                criticalTransferNotification(TransferErrorCode.TransferInvalidEntryData, {
+                    error: (err as Error).message,
+                }),
             ],
         };
     }
@@ -234,7 +243,9 @@ export const prepareExportChartData = async (entry: EntryFields, idMapping: Tran
         return {
             widget: null,
             notifications: [
-                criticalTransferNotification(TransferErrorCode.TransferInvalidEntryData),
+                criticalTransferNotification(TransferErrorCode.TransferInvalidEntryData, {
+                    error: (err as Error).message,
+                }),
             ],
         };
     }

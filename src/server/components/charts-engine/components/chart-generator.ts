@@ -1,7 +1,8 @@
 import type {Request} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
 
-import {type StringParams, isEnabledServerFeature} from '../../../../shared';
+import {isEnabledServerFeature} from '../../../../shared';
+import type {StringParams, ValueOf} from '../../../../shared';
 
 const commonTemplateGraph = `
 const {buildHighchartsConfig, buildLibraryConfig} = require('#module');
@@ -180,20 +181,15 @@ function getChartTemplate(ctx: AppContext, chartOldType?: string, template?: key
 export const chartGenerator = {
     gatherChartLinks: (options: {
         req: Request;
-        ctx: AppContext;
         shared: {type?: string};
-        template?: keyof ChartTemplates;
+        chartTemplate: ValueOf<ChartTemplates>;
     }) => {
-        const {req, ctx, shared: data, template} = options;
-        const chartTemplate = getChartTemplate(ctx, data.type, template);
-
-        if (!chartTemplate) {
-            throw new Error('Unknown chart template');
-        }
+        const {req, shared, chartTemplate} = options;
 
         let links;
+
         if (chartTemplate.identifyLinks) {
-            links = chartTemplate.identifyLinks(data, req);
+            links = chartTemplate.identifyLinks(shared, req);
         }
 
         return links;
@@ -223,25 +219,23 @@ export const chartGenerator = {
 
         return output;
     },
-    identifyChartTemplate: (options: {ctx: AppContext; shared: {type?: string}}) => {
-        const {shared: data, ctx} = options;
+    identifyChartTemplate: (options: {
+        ctx: AppContext;
+        shared: {type?: string};
+        template?: keyof ChartTemplates;
+    }) => {
+        const {shared, ctx, template} = options;
 
-        if (!getChartTemplate(ctx, data.type)) {
+        const chartTemplate = getChartTemplate(ctx, shared.type, template);
+
+        if (!chartTemplate) {
             throw new Error('Invalid chart data type');
         }
 
-        return data.type as string;
-    },
-    identifyChartType: (options: {
-        req: Request;
-        ctx: AppContext;
-        data: {type?: string};
-        template?: keyof ChartTemplates;
-    }) => {
-        const {req, ctx, data, template} = options;
-        const chartTemplate = getChartTemplate(ctx, data.type, template);
-
-        return chartTemplate.identifyChartType(data, req);
+        return {
+            type: shared.type as string,
+            chartTemplate,
+        };
     },
     generateChart: ({
         data,
@@ -256,12 +250,12 @@ export const chartGenerator = {
     }) => {
         const chart: Chart = {...commonTemplate};
 
-        const chartTemplate = getChartTemplate(ctx, data.type, template);
+        const {chartTemplate} = chartGenerator.identifyChartTemplate({ctx, shared: data, template});
 
         const params = chartTemplate.identifyParams(data, req);
+        const type = chartTemplate.identifyChartType(data, req);
 
-        const type = chartGenerator.identifyChartType({ctx, req, data, template});
-        const links = chartGenerator.gatherChartLinks({ctx, req, shared: data, template});
+        const links = chartGenerator.gatherChartLinks({req, shared: data, chartTemplate});
 
         chart.params = chart.params.replace('#params', JSON.stringify(params));
         if (chart.params.indexOf('#module') > -1) {
