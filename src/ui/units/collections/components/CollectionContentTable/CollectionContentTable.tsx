@@ -146,7 +146,7 @@ export const CollectionContentTable = React.memo<Props>(
                                     ? getWorkbookActions(item)
                                     : getCollectionActions(item);
 
-                                const isImporting =
+                                const isDisabled =
                                     isEnabledFeature(Feature.EnableExportWorkbookFile) &&
                                     isWorkbookItem &&
                                     item.status === WORKBOOK_STATUS.IMPORTING;
@@ -159,23 +159,22 @@ export const CollectionContentTable = React.memo<Props>(
                                                 : item.collectionId
                                         }
                                         item={item}
-                                        isImporting={isImporting}
+                                        isDisabled={isDisabled}
                                     >
                                         <CollectionCheckboxCell
                                             item={item}
                                             onUpdateCheckboxClick={onUpdateCheckboxClick}
                                             selectedMap={selectedMap}
-                                            disabled={isImporting}
+                                            disabled={isDisabled}
                                         />
                                         <CollectionTitleCell
                                             isWorkbook={'workbookId' in item}
                                             title={item.title}
                                             collectionId={item.collectionId}
-                                            isImporting={isImporting}
                                         />
 
                                         <div className={b('content-cell', {date: true})}>
-                                            {!isImporting && (
+                                            {!isDisabled && (
                                                 <Tooltip
                                                     content={dateTime({
                                                         input: item.updatedAt,
@@ -193,7 +192,7 @@ export const CollectionContentTable = React.memo<Props>(
                                         <div
                                             className={b('content-cell', {
                                                 control: true,
-                                                import: isImporting,
+                                                import: isDisabled,
                                             })}
                                             onClick={(e) => {
                                                 if (actions.length > 0) {
@@ -206,7 +205,7 @@ export const CollectionContentTable = React.memo<Props>(
                                                 <DropdownMenu
                                                     size="s"
                                                     items={actions}
-                                                    disabled={isImporting}
+                                                    disabled={isDisabled}
                                                 />
                                             )}
                                         </div>

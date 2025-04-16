@@ -162,6 +162,32 @@ export const ExportWorkbookDialog: React.FC<Props> = ({workbookId, open, onClose
             return;
         }
 
+        if (status === 'success' && exportData?.exportId) {
+            dispatch(
+                openDialog({
+                    id: DIALOG_DEFAULT,
+                    props: {
+                        open: true,
+                        onApply: () => {
+                            dispatch(closeDialog());
+                            onClose();
+                        },
+                        onCancel: () => {
+                            dispatch(closeDialog());
+                        },
+                        message: i18n('label_close-export-description'),
+                        textButtonApply: i18n('button_close-export'),
+                        textButtonCancel: i18n('button_back-to-export'),
+                        propsButtonApply: {view: 'outlined-danger'},
+                        caption: i18n('title_close-export'),
+                        className: b('import-cancel-dialog'),
+                    },
+                }),
+            );
+
+            return;
+        }
+
         onClose();
     }, [dispatch, isLoading, onClose]);
 

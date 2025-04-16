@@ -21,22 +21,23 @@ const b = block('dl-collection-content-table');
 
 type CollectionLinkRowProps = {
     item: WorkbookWithPermissions | CollectionWithPermissions;
-    isImporting?: boolean;
+    isDisabled: boolean;
 };
 
 export const CollectionLinkRow: React.FC<CollectionLinkRowProps> = ({
     children,
     item,
-    isImporting,
+    isDisabled,
 }) => {
     const dispatch = useDispatch();
     const breadcrumbs = useSelector(selectCollectionBreadcrumbs) ?? [];
 
     const isWorkbookItem = 'workbookId' in item;
 
-    if (isImporting && isWorkbookItem) {
+    if (isDisabled) {
+        const isImport = Boolean(item.meta.importId);
         const handleImportingWorkbookClick = () => {
-            if (item.meta.importId) {
+            if (isImport) {
                 dispatch(
                     openDialog({
                         id: DIALOG_CREATE_WORKBOOK,
@@ -54,7 +55,11 @@ export const CollectionLinkRow: React.FC<CollectionLinkRowProps> = ({
             }
         };
         return (
-            <div role="button" className={b('content-row')} onClick={handleImportingWorkbookClick}>
+            <div
+                role={isImport ? 'button' : undefined}
+                className={b('content-row')}
+                onClick={isImport ? handleImportingWorkbookClick : undefined}
+            >
                 {children}
             </div>
         );

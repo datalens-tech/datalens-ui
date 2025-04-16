@@ -8,6 +8,8 @@ import {CollectionIcon} from 'ui/components/CollectionIcon/CollectionIcon';
 import {WorkbookIcon} from 'ui/components/WorkbookIcon/WorkbookIcon';
 import {DL} from 'ui/constants/common';
 
+import type {WorkbookStatus} from '../../../../../../shared/constants/workbooks';
+
 import '../CollectionContentTable.scss';
 
 const b = block('dl-collection-content-table');
@@ -18,18 +20,31 @@ type CollectionTitleCellProps = {
     isWorkbook: boolean;
     collectionId: string | null;
     title: string;
-    isImporting?: boolean;
+    status: WorkbookStatus;
+};
+
+const getLabelByStatus = (status: WorkbookStatus) => {
+    switch (status) {
+        case 'deleting':
+            return i18n('label_status-deleting');
+        case 'creating':
+            return i18n('label_status-importing');
+        default:
+            return null;
+    }
 };
 
 export const CollectionTitleCell = ({
     isWorkbook,
     collectionId,
     title,
-    isImporting,
+    status,
 }: CollectionTitleCellProps) => {
     // if it's not mobile set default size
     const workbookSize = DL.IS_MOBILE ? 'mobile' : undefined;
     const collectionSize = DL.IS_MOBILE ? 28 : undefined;
+
+    const label = getLabelByStatus(status);
 
     return (
         <div
@@ -48,9 +63,9 @@ export const CollectionTitleCell = ({
                 <div className={b('title-col-text')} title={title}>
                     {title}
                 </div>
-                {isImporting && (
+                {label && (
                     <Label theme="info" size="xs" className={spacing({ml: 2})}>
-                        {i18n('label_status-importing')}
+                        {label}
                     </Label>
                 )}
             </div>
