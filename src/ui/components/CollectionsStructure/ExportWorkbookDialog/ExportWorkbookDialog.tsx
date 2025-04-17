@@ -192,7 +192,7 @@ export const ExportWorkbookDialog: React.FC<Props> = ({workbookId, open, onClose
         }
 
         onClose();
-    }, [dispatch, isLoading, onClose, status]);
+    }, [dispatch, exportData?.exportId, isLoading, onClose, status]);
 
     const handleApply = React.useCallback(async () => {
         if (view === 'info') {
