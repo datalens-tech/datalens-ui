@@ -569,6 +569,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         widgetId,
         hideDebugTool: true,
         ...commonHeaderContentProps,
+        ...(showFloatControls ? {showLoader, veil} : {}),
     };
 
     return (
