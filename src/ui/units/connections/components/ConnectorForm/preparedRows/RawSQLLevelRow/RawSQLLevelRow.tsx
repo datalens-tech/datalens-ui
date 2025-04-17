@@ -16,7 +16,7 @@ const b = block('conn-form-raw-sql-level');
 type Props = Omit<RawSQLLevelRowItem, 'type'>;
 
 export function RawSQLLevelRow(props: Props) {
-    const {name, label, switchOffValue = 'off', radioGroup, disabled} = props;
+    const {name, label, switchOffValue, radioGroup, disabled} = props;
     const dispatch = useDispatch();
     const form = useSelector(formSelector);
     const value = (form[name] || '') as string;
