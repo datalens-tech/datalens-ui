@@ -1,10 +1,9 @@
-import {CLIPBOARD_TIMEOUT, DL} from 'constants/common';
-
 import React from 'react';
 
 import {Button, CopyToClipboard, TextInput, Toaster} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {CLIPBOARD_TIMEOUT, DL} from 'ui/constants/common';
 
 import type {EntryData} from '../types';
 

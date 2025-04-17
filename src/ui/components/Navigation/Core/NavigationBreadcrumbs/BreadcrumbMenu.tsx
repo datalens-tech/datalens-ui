@@ -1,5 +1,3 @@
-import {DL} from 'constants/common';
-
 import React from 'react';
 
 import {Ellipsis} from '@gravity-ui/icons';
@@ -11,6 +9,7 @@ import {EntryDialogName, EntryDialogResolveStatus} from 'components/EntryDialogu
 import navigateHelper from 'libs/navigateHelper';
 import {PLACE} from 'shared';
 import {EntryScope} from 'shared/types/common';
+import {DL} from 'ui/constants/common';
 import {registry} from 'ui/registry';
 import {copyTextWithToast} from 'ui/utils/copyText';
 import Utils from 'utils';

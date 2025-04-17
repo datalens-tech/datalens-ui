@@ -1,3 +1,4 @@
+import type {Operations} from 'shared';
 import {
     ADDITIONAL_ARRAY_OPERATIONS,
     BASE_ARRAY_OPERATIONS,
@@ -7,9 +8,7 @@ import {
     BASE_NULL_OPERATIONS,
     BASE_SET_OPERATIONS,
     BASE_STRING_OPERATIONS,
-} from 'constants/operations';
-
-import type {Operations} from 'shared';
+} from 'ui/constants/operations';
 
 export interface Operation {
     title: string;

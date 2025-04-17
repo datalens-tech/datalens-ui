@@ -1,5 +1,3 @@
-import {DL} from 'constants/common';
-
 import React from 'react';
 
 import block from 'bem-cn-lite';
@@ -7,6 +5,7 @@ import LocationChange from 'components/LocationChange/LocationChange';
 import type {Location} from 'history';
 import {useDispatch} from 'react-redux';
 import {setIsLanding} from 'store/actions/landing';
+import {DL} from 'ui/constants/common';
 import Utils from 'utils';
 
 import ErrorContent from '../ErrorContent/ErrorContent';

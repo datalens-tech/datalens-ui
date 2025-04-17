@@ -1,5 +1,3 @@
-import {DL} from 'constants/common';
-
 import React from 'react';
 
 import type {TabsItemProps} from '@gravity-ui/uikit';
@@ -9,6 +7,7 @@ import {I18n} from 'i18n';
 import {Feature} from 'shared';
 import type {DataLensApiError} from 'ui';
 import {SHEET_IDS} from 'ui';
+import {DL} from 'ui/constants/common';
 import {registry} from 'ui/registry';
 import type {FetchDocumentationArgs} from 'ui/registry/units/common/types/functions/fetchDocumentation';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';

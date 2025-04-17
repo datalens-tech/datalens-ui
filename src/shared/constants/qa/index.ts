@@ -7,7 +7,6 @@ export * from './control';
 export * from './dash';
 export * from './datasets';
 export * from './dl-navigation';
-export * from './editor';
 export * from './field-editor';
 export * from './ql';
 export * from './settings';

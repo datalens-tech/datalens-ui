@@ -113,11 +113,6 @@ export const DELETE_WORKBOOK_LOADING = Symbol('collectionsStructure/DELETE_WORKB
 export const DELETE_WORKBOOK_SUCCESS = Symbol('collectionsStructure/DELETE_WORKBOOK_SUCCESS');
 export const DELETE_WORKBOOK_FAILED = Symbol('collectionsStructure/DELETE_WORKBOOK_FAILED');
 
-// Adding a demo workbook
-export const ADD_DEMO_WORKBOOK_LOADING = Symbol('collections/ADD_DEMO_WORKBOOK_LOADING');
-export const ADD_DEMO_WORKBOOK_SUCCESS = Symbol('collections/ADD_DEMO_WORKBOOK_SUCCESS');
-export const ADD_DEMO_WORKBOOK_FAILED = Symbol('collections/ADD_DEMO_WORKBOOK_FAILED');
-
 // Exporting a workbook as a file
 export const EXPORT_WORKBOOK_LOADING = Symbol('collections/EXPORT_WORKBOOK_LOADING');
 export const EXPORT_WORKBOOK_SUCCESS = Symbol('collections/EXPORT_WORKBOOK_SUCCESS');

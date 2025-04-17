@@ -49,7 +49,6 @@ import type {OpenDialogEditQueryArgs} from '../../units/dash/containers/Dialogs/
 import type {OpenDialogDeleteCollectionArgs} from '../../components/CollectionsStructure/DeleteCollectionDialog';
 import type {OpenDialogDeleteCollectionsWorkbooksArgs} from '../../components/CollectionsStructure/DeleteCollectionsWorkbooksDialog';
 import type {OpenDialogDeleteWorkbookArgs} from '../../components/CollectionsStructure/DeleteWorkbookDialog';
-import type {OpenDialogAddDemoWorkbookArgs} from '../../components/CollectionsStructure/AddDemoWorkbookDialog';
 import type {OpenDialogCreateEntryInWorkbookArgs} from '../../components/CollectionsStructure/CreateEntryInWorkbookDialog';
 import type {OpenDialogIamAccessArgs} from '../../components/IamAccessDialog';
 import type {OpenDialogTooltipSettingsArgs} from '../../units/wizard/components/Dialogs/DialogTooltipSettings/DialogTooltipSettings';
@@ -110,7 +109,6 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogDeleteCollectionArgs
     | OpenDialogDeleteCollectionsWorkbooksArgs
     | OpenDialogDeleteWorkbookArgs
-    | OpenDialogAddDemoWorkbookArgs
     | OpenDialogIamAccessArgs
     | OpenDialogCreateEntryInWorkbookArgs
     | OpenDialogTooltipSettingsArgs
