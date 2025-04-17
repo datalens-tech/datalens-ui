@@ -12,7 +12,7 @@ import type {ExportActionArgs, ExportChartArgs} from '../Export/types';
 
 import './DownloadCsv.scss';
 
-export const b = block('download-csv-modal');
+const b = block('download-csv-modal');
 
 const i18n = I18n.keyset('chartkit.menu.download-csv');
 
@@ -28,6 +28,7 @@ type DownloadCsvProps = {
     onExportLoading?: (isLoading: boolean) => void;
     additionalControls?: React.ReactNode;
     showWarning?: boolean;
+    className?: string;
 };
 
 const valueDelimiterOptions: SelectOption[] = [
@@ -86,6 +87,7 @@ export const DownloadCsv = ({
     onExportLoading,
     additionalControls,
     showWarning = true,
+    className,
 }: DownloadCsvProps) => {
     const [delValue, setDelValue] = React.useState(';');
     const [delNumber, setDelNumber] = React.useState('.');
@@ -109,7 +111,7 @@ export const DownloadCsv = ({
         <Dialog
             open={true}
             onClose={onClose}
-            className={b()}
+            className={b(null, className)}
             qa={ChartkitMenuDialogsQA.chartMenuExportCsvDialog}
         >
             <Dialog.Header caption={i18n('label_title')} />

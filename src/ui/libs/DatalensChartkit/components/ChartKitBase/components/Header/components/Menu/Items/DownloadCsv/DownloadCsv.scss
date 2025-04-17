@@ -1,3 +1,7 @@
+@mixin download-csv-modal-row {
+    --gc-form-row-label-width: 180px;
+}
+
 .download-csv-modal {
     min-height: 340px;
     width: 520px;
@@ -5,11 +9,7 @@
     flex-direction: column;
 
     &__row {
-        --gc-form-row-label-width: 180px;
-
-        &_labels-align_top {
-            --gc-form-row-field-height: var(--g-text-body-1-line-height);
-        }
+        @include download-csv-modal-row;
     }
 
     &__content {
