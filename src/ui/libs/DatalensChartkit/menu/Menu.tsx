@@ -9,7 +9,7 @@ import {
     getGroupedMenu,
 } from '../../../components/EntryContextMenu/helpers';
 import type {ChartsData} from '../modules/data-provider/charts';
-import type {GraphWidget} from '../types';
+import type {GraphWidget, TableWidget} from '../types';
 
 import type {MenuItemArgs} from './MenuItems';
 import {getWidgetChartMenu} from './helpers';
@@ -22,7 +22,9 @@ export type MenuItemModalProps = {
 
 export type MenuActionComponent = React.ComponentType<MenuItemModalProps>;
 
-export type MenuLoadedData = null | (GraphWidget & ChartsData);
+type ExportableWidget = GraphWidget | TableWidget;
+
+export type MenuLoadedData = null | (ExportableWidget & ChartsData);
 
 export type MenuItemData = {loadedData: MenuLoadedData};
 
