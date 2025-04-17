@@ -74,6 +74,10 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
 
     const {useAdditionalWorkbookActions} = registry.workbooks.functions.getAll();
     const {CustomActionPanelWorkbookActions} = registry.workbooks.components.getAll();
+    const {getGloballyEntrySettings} = registry.common.functions.getAll();
+
+    const globallyEntrySettings = getGloballyEntrySettings();
+    const isWorkbookExportDisabled = Boolean(globallyEntrySettings?.isWorkbookExportDisabled);
 
     const additionalActions = useAdditionalWorkbookActions(workbook);
 
@@ -125,7 +129,11 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
         });
     }
 
-    if (isEnabledFeature(Feature.EnableExportWorkbookFile) && workbook.permissions.update) {
+    if (
+        isEnabledFeature(Feature.EnableExportWorkbookFile) &&
+        workbook.permissions.update &&
+        !isWorkbookExportDisabled
+    ) {
         dropdownActions.push({
             action: () => {
                 dispatch(
