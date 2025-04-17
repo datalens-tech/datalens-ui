@@ -42,6 +42,7 @@ import type {FetchFunctionsDocumentationResponse} from './types/functions/fetchF
 import type {GetAdditionalChartkitErrorContent} from './types/functions/getAdditionalChartkitErrorContent';
 import type {GetBasicActionPanelItems} from './types/functions/getBasicActionPanelItems';
 import type {GetFunctionsDocumentationResponse} from './types/functions/getFunctionsDocumentation';
+import type {GloballyEntrySettings} from './types/functions/getGloballyEntrySettings';
 import type {GetIllustrationStore} from './types/functions/getIllustrationStore';
 import type {GetLoginById} from './types/functions/getLoginById';
 import type {GetUIEntryRouteArgs} from './types/functions/getUIEntryRoute';
@@ -59,7 +60,9 @@ export const commonFunctionsMap = {
     openDialogOrganizationInviteUsers:
         makeFunctionTemplate<() => OpenDialogOrganizationInviteUsers>(),
     getEntryMenuConfig: makeFunctionTemplate<() => MenuGroup[]>(),
+    //** @deprecated use getGloballyEntrySettings */
     getEntryPublishGloballyDisabled: makeFunctionTemplate<() => boolean>(),
+    getGloballyEntrySettings: makeFunctionTemplate<() => GloballyEntrySettings>(),
     getMenuGroupConfig: makeFunctionTemplate<() => Array<MenuGroup>>(),
     getSelectStateMenuItem:
         makeFunctionTemplate<
