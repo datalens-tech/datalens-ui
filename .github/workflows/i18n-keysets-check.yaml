@@ -24,6 +24,10 @@ jobs:
           KEYSET_FILES=$(find src/i18n-keysets -type f -name "*.json" -not -name "keyset.json" -not -name "context.json")
           if [ -n "$KEYSET_FILES" ]; then
             node scripts/i18n-keysets-sorting-check.js $KEYSET_FILES
+            if [ $? -ne 0 ]; then
+              echo "Error: Keysets sorting check failed"
+              exit 1
+            fi
           fi
       - name: Check for prohibited keyset/context files
         run: |
