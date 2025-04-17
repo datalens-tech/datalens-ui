@@ -23,7 +23,6 @@ class EntryContextMenuBaseItem extends React.Component {
         entry: PropTypes.object,
         wrapper: PropTypes.func,
         onClick: PropTypes.func,
-        menuItemClassName: PropTypes.string,
         theme: PropTypes.string,
         qa: PropTypes.string,
     };
@@ -32,13 +31,13 @@ class EntryContextMenuBaseItem extends React.Component {
         this.props.onClick(action);
     };
     render() {
-        const {icon, text, menuItemClassName, theme, qa} = this.props;
+        const {icon, text, theme, qa} = this.props;
         const node = (
             <Menu.Item
                 qa={qa}
                 onClick={this.onClick}
                 icon={icon}
-                className={menuItemClassName || null}
+                className={b('item')}
                 theme={theme}
             >
                 {text}
@@ -95,7 +94,6 @@ class EntryContextMenuBase extends React.Component {
                                             key={`${index}-${item.id}`}
                                             {...item}
                                             entry={entry}
-                                            menuItemClassName={b('item', item.menuItemClassName)}
                                             onClick={this.onMenuClick}
                                         />
                                     ))}
@@ -107,7 +105,6 @@ class EntryContextMenuBase extends React.Component {
                                 key={index}
                                 {...row}
                                 entry={entry}
-                                menuItemClassName={b('item')}
                                 onClick={this.onMenuClick}
                             />
                         );
