@@ -1,6 +1,7 @@
 const {readFileSync} = require('fs');
 
 const keysetFiles = process.argv.slice(2);
+let hasErrors = false;
 
 function readData(filePath) {
     return readFileSync(filePath).toString();
@@ -28,10 +29,10 @@ keysetFiles.forEach((filePath) => {
                 throw Error(`Keyset missmatch for ${lang} for keyset ${filePath}`);
             }
         }
-
-        process.exitCode = 0;
     } catch (e) {
         console.error(e);
-        process.exitCode = 1;
+        hasErrors = true;
     }
 });
+
+process.exitCode = hasErrors ? 1 : 0;

@@ -19,16 +19,13 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Check keysets sorting
-        continue-on-error: false
         run: |
-          set -e
           KEYSET_FILES=$(find src/i18n-keysets -type f -name "*.json" -not -name "keyset.json" -not -name "context.json")
           if [ -n "$KEYSET_FILES" ]; then
             node scripts/i18n-keysets-sorting-check.js $KEYSET_FILES
           fi
       - name: Check for prohibited keyset/context files
         run: |
-          set -e
           PROHIBITED_FILES=$(find src/i18n-keysets -type f \( -name "keyset.json" -o -name "context.json" \))
           if [ -n "$PROHIBITED_FILES" ]; then
             node scripts/i18n-keysets-clear.js $PROHIBITED_FILES
