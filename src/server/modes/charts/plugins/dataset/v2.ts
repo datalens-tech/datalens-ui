@@ -1,3 +1,5 @@
+import {isObject} from 'lodash';
+
 import type {IChartEditor, Update} from '../../../../../shared';
 import type {
     ApiV2Filter,
@@ -241,10 +243,36 @@ function processData(
     return processTableData(dataResult.result_data, dataResult.fields, options);
 }
 
+function getDatasetRows(params: {datasetName: string}) {
+    if (!isObject(params)) {
+        throw new Error('Params should be an object');
+    }
+
+    const {datasetName} = params;
+    if (!datasetName) {
+        throw new Error('datasetName is not defined in params');
+    }
+
+    const EditorAPI = (globalThis as unknown as {Editor: IChartEditor}).Editor;
+
+    if (!EditorAPI) {
+        throw new Error('EditorAPI is not defined');
+    }
+
+    const data = EditorAPI.getLoadedData();
+
+    if (!data[datasetName]) {
+        throw new Error(`Dataset "${datasetName}" is not defined`);
+    }
+
+    return processData(data, datasetName, EditorAPI);
+}
+
 export default {
     buildSource,
     processTableData,
     processData,
+    getDatasetRows,
     OPERATIONS,
     ORDERS,
 };
