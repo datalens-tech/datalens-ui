@@ -20,10 +20,10 @@ type CollectionTitleCellProps = {
     isWorkbook: boolean;
     collectionId: string | null;
     title: string;
-    status: WorkbookStatus;
+    status?: WorkbookStatus | null;
 };
 
-const getLabelByStatus = (status: WorkbookStatus) => {
+const getLabelByStatus = (status: CollectionTitleCellProps['status']) => {
     switch (status) {
         case 'deleting':
             return i18n('label_status-deleting');

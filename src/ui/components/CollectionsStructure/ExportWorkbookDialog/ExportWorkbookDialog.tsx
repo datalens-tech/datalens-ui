@@ -15,6 +15,7 @@ import {
 } from 'ui/store/actions/collectionsStructure';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {
+    selectExportData,
     selectExportWorkbook,
     selectExportWorkbookStatus,
     selectGetExportProgress,
@@ -84,6 +85,8 @@ export const ExportWorkbookDialog: React.FC<Props> = ({workbookId, open, onClose
 
     const [view, setView] = React.useState<DialogView>('info');
     const status = useSelector(selectExportWorkbookStatus);
+
+    const exportData = useSelector(selectExportData);
 
     const {error} = useSelector(selectExportWorkbook);
     const {data: progressData} = useSelector(selectGetExportProgress);
@@ -189,7 +192,7 @@ export const ExportWorkbookDialog: React.FC<Props> = ({workbookId, open, onClose
         }
 
         onClose();
-    }, [dispatch, isLoading, onClose]);
+    }, [dispatch, isLoading, onClose, status]);
 
     const handleApply = React.useCallback(async () => {
         if (view === 'info') {

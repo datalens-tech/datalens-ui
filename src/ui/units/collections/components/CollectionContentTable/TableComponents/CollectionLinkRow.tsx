@@ -4,6 +4,7 @@ import block from 'bem-cn-lite';
 import {batch, useDispatch, useSelector} from 'react-redux';
 import {Link} from 'react-router-dom';
 import {CollectionContentTableQa} from 'shared';
+import {WORKBOOK_STATUS} from 'shared/constants/workbooks';
 import type {CollectionWithPermissions, WorkbookWithPermissions} from 'shared/schema/types';
 import {DIALOG_CREATE_WORKBOOK} from 'ui/components/CollectionsStructure/CreateWorkbookDialog/CreateWorkbookDialog';
 import {DL} from 'ui/constants/common';
@@ -34,26 +35,27 @@ export const CollectionLinkRow: React.FC<CollectionLinkRowProps> = ({
 
     const isWorkbookItem = 'workbookId' in item;
 
-    if (isDisabled) {
-        const isImport = Boolean(item.meta.importId);
+    if (isDisabled && isWorkbookItem) {
+        const isImport = Boolean(item.status === WORKBOOK_STATUS.CREATING && item.meta.importId);
+
         const handleImportingWorkbookClick = () => {
-            if (isImport) {
-                dispatch(
-                    openDialog({
-                        id: DIALOG_CREATE_WORKBOOK,
-                        props: {
-                            open: true,
-                            collectionId: item.collectionId,
-                            defaultView: 'import',
-                            onClose: () => {
-                                dispatch(closeDialog());
-                            },
-                            importId: item.meta.importId,
+            dispatch(
+                openDialog({
+                    id: DIALOG_CREATE_WORKBOOK,
+                    props: {
+                        open: true,
+                        collectionId: item.collectionId,
+                        defaultView: 'import',
+                        onClose: () => {
+                            dispatch(closeDialog());
                         },
-                    }),
-                );
-            }
+                        importId: item.meta.importId,
+                    },
+                }),
+            );
         };
+
+        // possible statuses: interactive 'creating' and non-interactive 'deleting'
         return (
             <div
                 role={isImport ? 'button' : undefined}
