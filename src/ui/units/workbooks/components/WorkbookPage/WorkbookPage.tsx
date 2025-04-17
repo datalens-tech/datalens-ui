@@ -8,6 +8,7 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {Redirect, useLocation, useParams} from 'react-router-dom';
 import {Feature} from 'shared';
+import {WORKBOOK_STATUS} from 'shared/constants/workbooks';
 import {DL} from 'ui/constants/common';
 import type {AppDispatch} from 'ui/store';
 import {COLLECTIONS_PATH} from 'ui/units/collections-navigation/constants';
@@ -105,7 +106,7 @@ export const WorkbookPage = () => {
 
     if (
         isEnabledFeature(Feature.EnableExportWorkbookFile) &&
-        workbook?.status === 'importing' &&
+        workbook?.status === WORKBOOK_STATUS.CREATING &&
         workbook?.meta.importId
     ) {
         const redirectPath = collectionId
