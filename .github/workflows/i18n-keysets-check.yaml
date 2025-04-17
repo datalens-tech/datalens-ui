@@ -21,6 +21,7 @@ jobs:
       - name: Check keysets sorting
         continue-on-error: false
         run: |
+          set -e
           KEYSET_FILES=$(find src/i18n-keysets -type f -name "*.json" -not -name "keyset.json" -not -name "context.json")
           if [ -n "$KEYSET_FILES" ]; then
             node scripts/i18n-keysets-sorting-check.js $KEYSET_FILES
