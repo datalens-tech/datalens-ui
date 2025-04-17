@@ -25,7 +25,7 @@
   "label_menu-popup-open-connection": "Открыть подключение",
   "label_menu-popup-replace-connection": "Заменить подключение",
   "label_optimize-join": "Оптимизировать связь",
-  "label_param-select-empty-placeholder-description": "Используйте параметры, чтобы создавать динамические запросы",
+  "label_param-select-empty-placeholder-description": "Используйте параметры, чтобы выполнять динамические запросы к источнику данных",
   "label_param-select-empty-placeholder-title": "Создайте ваш первый параметр",
   "label_param-select-option-edit": "Редактировать",
   "label_source-editor-header": "Источник",
