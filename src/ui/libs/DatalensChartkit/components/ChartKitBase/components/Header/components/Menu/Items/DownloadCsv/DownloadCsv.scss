@@ -1,5 +1,6 @@
-@import '../../../../../../../../../../styles/mixins';
-@import '~@gravity-ui/uikit/styles/mixins';
+@mixin download-csv-modal-row {
+    --gc-form-row-label-width: 180px;
+}
 
 .download-csv-modal {
     min-height: 340px;
@@ -7,27 +8,24 @@
     display: flex;
     flex-direction: column;
 
+    &__row {
+        @include download-csv-modal-row;
+    }
+
     &__content {
         display: flex;
         justify-content: space-between;
         flex-direction: column;
-        gap: 16px;
         flex: 1;
     }
 
-    &__row {
-        display: grid;
-        grid-template-columns: auto 55%;
-        column-gap: 8px;
-        align-items: center;
-    }
-
-    &__hint {
-        @include text-body-short();
-        color: var(--g-color-text-secondary);
-    }
-
     &__attention {
-        @include info-block();
+        padding: var(--g-spacing-3) var(--g-spacing-4);
+        margin-block-end: var(--g-spacing-4);
+    }
+
+    &__radio-group-option {
+        line-height: inherit;
+        align-items: center;
     }
 }
