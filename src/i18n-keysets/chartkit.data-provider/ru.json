@@ -17,6 +17,6 @@
   "error-runtime-timeout": "Превышено время обработки ответа",
   "error-secrets-access": "Чарт с секретом недоступен для записи",
   "error-too-many-rows": "Превышено рекомендуемое число рядов",
-  "error-unsupported-type": "Неподдерживаемый тип чарта",
-  "error-unsupported-data-type": "Неподдерживаемый тип данных"
+  "error-unsupported-data-type": "Неподдерживаемый тип данных",
+  "error-unsupported-type": "Неподдерживаемый тип чарта"
 }
