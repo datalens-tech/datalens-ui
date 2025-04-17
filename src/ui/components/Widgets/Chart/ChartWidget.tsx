@@ -10,11 +10,11 @@ import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
-import {isEnabledFeature} from 'platform/src/ui/utils/isEnabledFeature';
 import type {StringParams} from 'shared';
 import {Feature} from 'shared/types/feature';
 import {DL} from 'ui/constants/common';
 import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {getDataProviderData} from '../../../libs/DatalensChartkit/components/ChartKitBase/helpers';

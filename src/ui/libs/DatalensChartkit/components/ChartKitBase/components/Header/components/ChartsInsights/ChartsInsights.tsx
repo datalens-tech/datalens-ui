@@ -6,10 +6,10 @@ import block from 'bem-cn-lite';
 import logger from 'libs/logger';
 import {isEmpty} from 'lodash';
 import moment from 'moment';
-import {isEnabledFeature} from 'platform/src/ui/utils/isEnabledFeature';
 import {useDispatch} from 'react-redux';
 import {type ChartsInsightsItem, Feature} from 'shared';
 import {updateUserSettings} from 'store/actions/user';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {fetchBatchRenderedMarkdown} from 'ui/utils/sdkRequests';
 
 import {CounterName, GoalId, reachMetricaGoal} from '../../../../../../../metrica';
