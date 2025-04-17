@@ -139,7 +139,7 @@ export class EntryDialogBase<T> extends React.Component<
             >
                 <Dialog.Header caption={caption} />
                 <Dialog.Body>
-                    <div className={b('content')} data-qa={EntryDialogQA.Content}>
+                    <div data-qa={EntryDialogQA.Content}>
                         {children ? (
                             children
                         ) : (
