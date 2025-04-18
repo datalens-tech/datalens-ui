@@ -7,6 +7,6 @@
   "label_invalid-entry-scope": "Some entities may not work correctly due to an invalid \"scope\" field value",
   "label_invalid-error": "Unknown error",
   "label_invalid-version": "The imported file has an invalid version",
-  "label_missing-mapping-id": "Some entities were not imported",
+  "label_missing-linked-entry": "One of the related entities has been deleted",
   "lable_import-check-delegation": "Delegation may not be completed, please save the connection again"
 }
