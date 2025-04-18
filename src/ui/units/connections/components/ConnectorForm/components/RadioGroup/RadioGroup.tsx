@@ -1,7 +1,8 @@
 import React from 'react';
 
+import {CircleExclamation} from '@gravity-ui/icons';
 import type {RadioGroupProps} from '@gravity-ui/uikit';
-import {RadioGroup as CommonRadioGroup} from '@gravity-ui/uikit';
+import {RadioGroup as CommonRadioGroup, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {get} from 'lodash';
 import {connect} from 'react-redux';
@@ -21,14 +22,34 @@ type DispatchState = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
 type RadioGroupComponentProps = DispatchState & DispatchProps & Omit<RadioGroupItem, 'id'>;
 
+function mapIconNameToIconData(textEndIcon: RadioGroupItemOption['content']['textEndIcon']) {
+    switch (textEndIcon?.name) {
+        case 'CircleExclamation': {
+            return CircleExclamation;
+        }
+        default: {
+            return undefined;
+        }
+    }
+}
+
 const RadioGroupOption = ({content, value}: RadioGroupItemOption) => {
-    const {text, hintText} = content;
+    const {text, textEndIcon, hintText} = content;
+    const textEndIconData = mapIconNameToIconData(textEndIcon);
     return (
         <CommonRadioGroup.Option
             key={value}
             content={
                 <React.Fragment>
-                    <div>{text}</div>
+                    <div>
+                        {text}
+                        {textEndIconData && (
+                            <Icon
+                                className={b('icon', {end: true, view: textEndIcon?.view})}
+                                data={textEndIconData}
+                            />
+                        )}
+                    </div>
                     {hintText && (
                         <div className={b('hint')}>
                             <MarkdownItem text={hintText} />
