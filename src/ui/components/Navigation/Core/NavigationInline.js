@@ -76,6 +76,14 @@ class NavigationInline extends React.Component {
             </div>
         );
     }
+    renderEmptyStateAction = () => (
+        <CreateEntry
+            place={this.props.place}
+            onClick={this.props.onCreateMenuClick}
+            isOnlyCollectionsMode={this.props.isOnlyCollectionsMode}
+            buttonView="normal"
+        />
+    );
     render() {
         const {linkWrapper, quickItems, onSidebarItemClick, ...props} = this.props;
         return (
@@ -101,6 +109,7 @@ class NavigationInline extends React.Component {
                         getPlaceParameters={this.props.getPlaceParameters}
                         setBreadCrumbs={this.setBreadCrumbs}
                         onItemSelect={this.onItemSelect}
+                        renderEmptyStateAction={this.renderEmptyStateAction}
                     />
                 </div>
             </div>
