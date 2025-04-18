@@ -31,6 +31,7 @@ export const CollectionLinkRow: React.FC<CollectionLinkRowProps> = ({
     isDisabled,
 }) => {
     const dispatch = useDispatch();
+
     const breadcrumbs = useSelector(selectCollectionBreadcrumbs) ?? [];
 
     const isWorkbookItem = 'workbookId' in item;

@@ -45,6 +45,9 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
 
     const {customizeWorkbooksActions, customizeCollectionsActions} =
         registry.collections.functions.getAll();
+    const {getCurrentUserRights} = registry.common.functions.getAll();
+
+    const currentUserRights = getCurrentUserRights();
 
     const history = useHistory();
 
@@ -279,7 +282,7 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
 
             if (
                 isEnabledFeature(Feature.EnableExportWorkbookFile) &&
-                item.permissions.update &&
+                currentUserRights.admin &&
                 !isWorkbookExportDisabled
             ) {
                 actions.push({
@@ -290,6 +293,7 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
                                 props: {
                                     open: true,
                                     workbookId: item.workbookId,
+                                    workbookTitle: item.title,
                                     onClose: () => {
                                         dispatch(closeDialog());
                                     },
