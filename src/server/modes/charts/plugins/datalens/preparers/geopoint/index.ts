@@ -11,6 +11,7 @@ import {
     MARKUP_TYPE,
     MINIMUM_FRACTION_DIGITS,
     WRAPPED_MARKDOWN_KEY,
+    ZoomMode,
     getFakeTitleOrTitle,
     isMarkupDataType,
 } from '../../../../../../../shared';
@@ -37,7 +38,7 @@ import {addActionParamValue} from '../helpers/action-params';
 import type {PrepareFunctionArgs} from '../types';
 
 import {DEFAULT_ICON_COLOR, DEFAULT_POINT_RADIUS} from './constants';
-import type {GeopointMapOptions, GeopointPointConfig} from './types';
+import type {GeopointMapOptions, GeopointPointConfig, GeopointPrepareResult} from './types';
 
 type GetPointConfigArgs = {
     stringifyedCoordinates: string;
@@ -439,10 +440,13 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
         }
     }
 
-    const resultData = {
+    const resultData: GeopointPrepareResult = {
         options: mapOptions,
-        bounds: [leftBot, rightTop],
     };
+
+    if (shared?.extraSettings?.zoomMode !== ZoomMode.Manual) {
+        resultData.bounds = [leftBot, rightTop];
+    }
 
     const flatternCoordinates = getFlattenCoordinates(Object.values(allPoints));
 
