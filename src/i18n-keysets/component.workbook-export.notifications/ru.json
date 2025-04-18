@@ -8,5 +8,6 @@
   "label_invalid-error": "Неизвестная ошибка",
   "label_invalid-version": "В импортируемом файле указана неверная версия",
   "label_missing-linked-entry": "Одна из связанных сущностей была удалена",
+  "label_unexpected-workflow-error": "Неизвестная ошибка во время операции",
   "lable_import-check-delegation": "Делегация может быть не проведена, пересохраните подключение"
 }
