@@ -320,12 +320,23 @@ export function sendEmbedDashHeight(wrapRef: React.RefObject<HTMLDivElement>) {
 }
 
 // Sort helpers that are get in focus fixed header elements
-export const getPreparedItems = (items: Array<DashTabItem>, layout: Array<DashTabLayout>) => {
+export const getPreparedItems = (
+    items: Array<DashTabItem>,
+    layout: Array<DashTabLayout>,
+    isMobile = true,
+) => {
     const [layoutMap, layoutColumns] = getLayoutMap(layout);
 
-    const sortedItems = [...items].sort((a, b) =>
-        sortByOrderIdOrLayoutComparator(a, b, layoutMap, layoutColumns),
-    );
+    let sortedItems;
+    if (isMobile) {
+        sortedItems = [...items].sort((a, b) =>
+            sortByOrderIdOrLayoutComparator(a, b, layoutMap, layoutColumns),
+        );
+    } else {
+        sortedItems = [...items].sort((a, b) => {
+            return sortByLayoutComparator(a, b, layoutMap, layoutColumns);
+        });
+    }
 
     return sortedItems.map((item, index) => {
         return {
@@ -336,8 +347,12 @@ export const getPreparedItems = (items: Array<DashTabItem>, layout: Array<DashTa
     });
 };
 
-export const getGroupedItems = (items: Array<DashTabItem>, layout: Array<DashTabLayout>) => {
-    const preparedItems = getPreparedItems(items, layout);
+export const getGroupedItems = (
+    items: Array<DashTabItem>,
+    layout: Array<DashTabLayout>,
+    isMobile?: boolean,
+) => {
+    const preparedItems = getPreparedItems(items, layout, isMobile);
 
     const itemsCountByParent = {
         [FIXED_GROUP_HEADER_ID]: 0,
@@ -387,11 +402,18 @@ export const getGroupedItems = (items: Array<DashTabItem>, layout: Array<DashTab
     });
 };
 
-export const getFlatSortedItems = (items: Array<DashTabItem>, layout: Array<DashTabLayout>) => {
-    return getGroupedItems(items, layout).reduce<Array<DashTabItem>>((memo, items) => {
-        memo.push(...items);
-        return memo;
-    }, []);
+export const getFlatSortedItems = (
+    items: Array<DashTabItem>,
+    layout: Array<DashTabLayout>,
+    isMobile?: boolean,
+) => {
+    return getGroupedItems(items, layout, isMobile).reduce<Array<DashTabItem>>(
+        (memo, groupItems) => {
+            memo.push(...groupItems);
+            return memo;
+        },
+        [],
+    );
 };
 
 type LocalTab = Pick<DashTab, 'id' | 'title'> & {
@@ -405,7 +427,7 @@ export const memoizedGetLocalTabs = memoize((tabs: DashTab[]) => {
         result.push({
             id,
             title,
-            items: getFlatSortedItems(items, layout)
+            items: getFlatSortedItems(items, layout, DL.IS_MOBILE)
                 .filter(({type, data}) => {
                     if ('showInTOC' in data) {
                         return type === ITEM_TYPE.TITLE && data.showInTOC;
