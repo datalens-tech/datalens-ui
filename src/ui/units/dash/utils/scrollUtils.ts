@@ -5,6 +5,8 @@ import {
     TableOfContentQa,
 } from 'shared/constants/qa';
 
+const ELEMENT_MARGIN_OFFSET = 5;
+
 const OFFSETS_QA = [
     ActionPanelQA.ActionPanel,
     TableOfContentQa.MobileTableOfContent,
@@ -30,16 +32,20 @@ export const scrollIntoView = (scrollElement: string | HTMLElement, lastTop?: nu
         return lastTop;
     }
 
-    const offsets = OFFSETS_QA.map((qa) => queryByQA(qa)?.clientHeight);
+    const offsets = [];
 
     const fixedWrapper = queryByQA(FixedHeaderQa.Wrapper);
+
     if (!fixedWrapper?.contains(element)) {
-        offsets.push(fixedWrapper?.clientHeight);
+        offsets.push(
+            fixedWrapper?.clientHeight,
+            ...OFFSETS_QA.map((qa) => queryByQA(qa)?.clientHeight),
+        );
     }
 
     const offset = offsets.reduce((acc: number, cur: number | undefined) => acc + (cur || 0), 0);
     // offset of elements + small indentation from them
-    element.style.scrollMarginTop = offset + 5 + 'px';
+    element.style.scrollMarginTop = offset + ELEMENT_MARGIN_OFFSET + 'px';
 
     element.scrollIntoView();
 
