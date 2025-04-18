@@ -13,9 +13,9 @@
   "label_no-connections": "Нет элементов для связей",
   "label_no-information": "Нет информации",
   "value_connected": "Связь",
+  "value_error": "Ошибка",
   "value_ignore": "Игнор",
   "value_input": "Вх. связь",
   "value_none": "Нет связи",
-  "value_output": "Исх. связь",
-  "value_error": "Ошибка"
+  "value_output": "Исх. связь"
 }

@@ -15,6 +15,7 @@ import {
 } from 'ui/store/actions/collectionsStructure';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {
+    selectExportData,
     selectExportWorkbook,
     selectExportWorkbookStatus,
     selectGetExportProgress,
@@ -84,6 +85,8 @@ export const ExportWorkbookDialog: React.FC<Props> = ({workbookId, open, onClose
 
     const [view, setView] = React.useState<DialogView>('info');
     const status = useSelector(selectExportWorkbookStatus);
+
+    const exportData = useSelector(selectExportData);
 
     const {error} = useSelector(selectExportWorkbook);
     const {data: progressData} = useSelector(selectGetExportProgress);
@@ -162,8 +165,34 @@ export const ExportWorkbookDialog: React.FC<Props> = ({workbookId, open, onClose
             return;
         }
 
+        if (status === 'success' && exportData?.exportId) {
+            dispatch(
+                openDialog({
+                    id: DIALOG_DEFAULT,
+                    props: {
+                        open: true,
+                        onApply: () => {
+                            dispatch(closeDialog());
+                            onClose();
+                        },
+                        onCancel: () => {
+                            dispatch(closeDialog());
+                        },
+                        message: i18n('label_close-export-description'),
+                        textButtonApply: i18n('button_close-export'),
+                        textButtonCancel: i18n('button_back-to-export'),
+                        propsButtonApply: {view: 'outlined-danger'},
+                        caption: i18n('title_close-export'),
+                        className: b('import-cancel-dialog'),
+                    },
+                }),
+            );
+
+            return;
+        }
+
         onClose();
-    }, [dispatch, isLoading, onClose]);
+    }, [dispatch, exportData?.exportId, isLoading, onClose, status]);
 
     const handleApply = React.useCallback(async () => {
         if (view === 'info') {
