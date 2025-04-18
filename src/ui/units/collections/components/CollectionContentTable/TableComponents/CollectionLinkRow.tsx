@@ -2,7 +2,7 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {batch, useDispatch, useSelector} from 'react-redux';
-import {Link, useHistory} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import {CollectionContentTableQa} from 'shared';
 import {WORKBOOK_STATUS} from 'shared/constants/workbooks';
 import type {CollectionWithPermissions, WorkbookWithPermissions} from 'shared/schema/types';
@@ -31,7 +31,6 @@ export const CollectionLinkRow: React.FC<CollectionLinkRowProps> = ({
     isDisabled,
 }) => {
     const dispatch = useDispatch();
-    const history = useHistory();
 
     const breadcrumbs = useSelector(selectCollectionBreadcrumbs) ?? [];
 
