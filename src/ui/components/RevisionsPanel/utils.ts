@@ -1,3 +1,6 @@
+import {URL_QUERY} from 'ui/constants';
+import {getUrlParamFromStr} from 'ui/utils';
+
 import {EntryScope} from '../../../shared';
 
 /**
@@ -13,4 +16,14 @@ export function getEntryScopesWithRevisionsList(): EntryScope[] {
  */
 export function getDraftWarningAvailableScopes() {
     return [EntryScope.Widget];
+}
+
+/**
+ * TODO
+ */
+export function isUnreleasedQueryParam(search: string) {
+    return (
+        getUrlParamFromStr(search, URL_QUERY.UNRELEASED) === '1' &&
+        !getUrlParamFromStr(search, URL_QUERY.REV_ID)
+    );
 }

@@ -19,7 +19,7 @@ import history from '../../utils/history';
 import {getCapitalizedStr} from '../../utils/stringUtils';
 
 import RevisionsControls from './components/RevisionsControls';
-import {getDraftWarningAvailableScopes} from './utils';
+import {getDraftWarningAvailableScopes, isUnreleasedQueryParam} from './utils';
 
 import './RevisionsPanel.scss';
 
@@ -136,6 +136,8 @@ const RevisionsPanel = ({
     const {getEntryScopesWithRevisionsList} = registry.common.functions.getAll();
 
     const urlRevId = getUrlParamFromStr(location.search, URL_QUERY.REV_ID);
+    const isUnreleased = isUnreleasedQueryParam(location.search);
+
     const isInAvailableScopes = React.useMemo(
         () => getEntryScopesWithRevisionsList().includes(scope as EntryScope),
         [location, scope],
@@ -144,7 +146,7 @@ const RevisionsPanel = ({
         () => getDraftWarningAvailableScopes().includes(scope as EntryScope),
         [location, scope],
     );
-    const isCurrentRevDraft = savedId === urlRevId;
+    const isCurrentRevDraft = savedId === urlRevId || isUnreleased;
 
     const showDeprecationMessage = isEditing && Boolean(deprecationMessage);
 
@@ -154,13 +156,13 @@ const RevisionsPanel = ({
         canEdit &&
         currentRevId &&
         currentRevId === publishedId &&
-        savedId !== publishedId &&
+        (savedId !== publishedId || isUnreleased) &&
         isInAvailableScopes &&
         isDraftInAvailableScopes;
 
     const isPanelHidden =
         !currentRevId ||
-        !urlRevId ||
+        (!urlRevId && !isUnreleased) ||
         currentRevId === publishedId ||
         !(typeof scope === 'undefined' || isInAvailableScopes) ||
         isEditing;
@@ -174,6 +176,7 @@ const RevisionsPanel = ({
 
         const searchParams = new URLSearchParams(location.search);
         searchParams.delete(URL_QUERY.REV_ID);
+        searchParams.delete(URL_QUERY.UNRELEASED);
 
         history.push({
             ...location,
@@ -190,6 +193,8 @@ const RevisionsPanel = ({
         onOpenDraftRevision();
 
         const searchParams = new URLSearchParams(location.search);
+        searchParams.delete(URL_QUERY.UNRELEASED);
+
         if (savedId === publishedId) {
             searchParams.delete(URL_QUERY.REV_ID);
         } else {
