@@ -69,6 +69,8 @@ export const Content = (props: ChartContentProps) => {
         rootNodeRef,
         runAction,
         backgroundColor,
+        showActionParamsFilter,
+        onFiltersClear,
     } = props;
 
     const [isExportLoading, setIsExportLoading] = React.useState(false);
@@ -108,32 +110,38 @@ export const Content = (props: ChartContentProps) => {
 
     return (
         <div className={b('container', {[String(widgetType)]: Boolean(widgetType)})}>
-            <Loader
-                visible={showContentLoader}
-                compact={compactLoader}
-                veil={showLoaderVeil}
-                delay={loaderDelay}
-            />
-            <ChartHeader
-                dataProvider={dataProvider}
-                chartsInsightsData={chartsInsightsData}
-                menuType={menuType}
-                customMenuOptions={customMenuOptions}
-                menuChartkitConfig={menuChartkitConfig}
-                isMenuAvailable={!noControls}
-                error={error}
-                dataProps={dataProps}
-                requestId={requestId}
-                loadedData={loadedData}
-                widgetDataRef={widgetDataRef}
-                widgetRenderTimeRef={widgetRenderTimeRef}
-                yandexMapAPIWaiting={yandexMapAPIWaiting}
-                onChange={onChange}
-                isWidgetMenuDataChanged={isWidgetMenuDataChanged}
-                onExportLoading={handleExportLoading}
-                enableActionParams={enableActionParams}
-                onFullscreenClick={onFullscreenClick}
-            />
+            {props.needRenderContentControls && (
+                <React.Fragment>
+                    <Loader
+                        visible={showContentLoader}
+                        compact={compactLoader}
+                        veil={showLoaderVeil}
+                        delay={loaderDelay}
+                    />
+                    <ChartHeader
+                        dataProvider={dataProvider}
+                        chartsInsightsData={chartsInsightsData}
+                        menuType={menuType}
+                        customMenuOptions={customMenuOptions}
+                        menuChartkitConfig={menuChartkitConfig}
+                        isMenuAvailable={!noControls}
+                        error={error}
+                        dataProps={dataProps}
+                        requestId={requestId}
+                        loadedData={loadedData}
+                        widgetDataRef={widgetDataRef}
+                        widgetRenderTimeRef={widgetRenderTimeRef}
+                        yandexMapAPIWaiting={yandexMapAPIWaiting}
+                        onChange={onChange}
+                        isWidgetMenuDataChanged={isWidgetMenuDataChanged}
+                        onExportLoading={handleExportLoading}
+                        enableActionParams={enableActionParams}
+                        onFullscreenClick={onFullscreenClick}
+                        showActionParamsFilter={showActionParamsFilter}
+                        onFiltersClear={onFiltersClear}
+                    />
+                </React.Fragment>
+            )}
             <div
                 className={b(
                     'body',

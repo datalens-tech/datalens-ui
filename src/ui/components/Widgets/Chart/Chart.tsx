@@ -287,6 +287,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
                 paneSplitOrientation={paneSplitOrientation}
                 widgetDashState={widgetDashState}
                 rootNodeRef={rootNodeRef}
+                needRenderContentControls={true}
             />
         </div>
     );

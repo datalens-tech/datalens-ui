@@ -147,6 +147,9 @@ export interface ChartsProps {
     ignoreUsedParams?: boolean;
     workbookId?: WorkbookId;
     forceShowSafeChart?: boolean;
+    showActionParamsFilter?: boolean;
+    onFiltersClear?: () => void;
+    needRenderContentControls?: boolean;
 }
 
 export interface ChartsData extends DashWidgetConfig {

@@ -5,6 +5,8 @@ export enum Feature {
     // Show new relations button in navigation action panel
     ShowNewRelationsButton = 'ShowNewRelationsButton',
     AsideHeaderEnabled = 'AsideHeaderEnabled',
+    /** Enable redesign of dash controls */
+    DashFloatControls = 'DashFloatControls',
     FieldEditorDocSection = 'FieldEditorDocSection',
     UsePublicDistincts = 'UsePublicDistincts',
     EnablePublishEntry = 'EnablePublishEntry',
