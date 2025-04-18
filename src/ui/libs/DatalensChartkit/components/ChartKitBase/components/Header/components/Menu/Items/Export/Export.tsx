@@ -3,7 +3,8 @@ import React from 'react';
 import {ArrowDownToLine, Picture} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
-import {Feature, MenuItemsIds} from 'shared';
+import type {ExportFormatsType} from 'shared';
+import {EXPORT_FORMATS, Feature, MenuItemsIds} from 'shared';
 import {URL_OPTIONS} from 'ui/constants/common';
 import type {MenuItemConfig, MenuItemModalProps} from 'ui/libs/DatalensChartkit/menu/Menu';
 import {registry} from 'ui/registry';
@@ -14,8 +15,6 @@ import {
     ICONS_MENU_DEFAULT_SIZE,
     type MenuItemArgs,
 } from '../../../../../../../../menu/MenuItems';
-import type {ExportFormatsType} from '../../../../../../../../modules/constants/constants';
-import {EXPORT_FORMATS} from '../../../../../../../../modules/constants/constants';
 import type {ChartKitDataProvider} from '../../../../../../types';
 
 import type {ExportActionArgs, ExportChartArgs} from './types';

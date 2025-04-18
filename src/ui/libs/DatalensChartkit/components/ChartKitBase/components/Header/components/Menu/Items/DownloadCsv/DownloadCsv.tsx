@@ -5,8 +5,7 @@ import type {SelectOption} from '@gravity-ui/uikit';
 import {Card, Dialog, Select, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {ChartkitMenuDialogsQA} from 'shared';
-import {EXPORT_FORMATS} from 'ui/libs/DatalensChartkit/modules/constants/constants';
+import {ChartkitMenuDialogsQA, EXPORT_FORMATS} from 'shared';
 
 import type {ExportActionArgs, ExportChartArgs} from '../Export/types';
 

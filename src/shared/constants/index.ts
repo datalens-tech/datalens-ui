@@ -4,6 +4,7 @@ export * from './datasets';
 export * from './dash';
 export * from './ql';
 export * from './entry';
+export * from './exports';
 export * from './old-schema';
 export * from './header';
 export * from './navigation';

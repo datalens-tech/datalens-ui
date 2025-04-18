@@ -1,7 +1,7 @@
 import type {AxiosError} from 'axios';
+import type {ExportFormatsType} from 'shared';
 import type {ChartWidgetDataRef} from 'ui/components/Widgets/Chart/types';
 import type {MenuLoadedData} from 'ui/libs/DatalensChartkit/menu/Menu';
-import type {ExportFormatsType} from 'ui/libs/DatalensChartkit/modules/constants/constants';
 import type {ChartsData, ChartsProps} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
 import type DatalensChartkitCustomError from 'ui/libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import type {WidgetBase} from 'ui/libs/DatalensChartkit/types';
