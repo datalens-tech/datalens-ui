@@ -88,7 +88,19 @@ export const entriesActions = {
         method: 'POST',
         path: () => `${PRIVATE_PATH_PREFIX}/entries/`,
         params: (
-            {usMasterToken, workbookId, data, name, type, scope, mode, links, key},
+            {
+                usMasterToken,
+                workbookId,
+                data,
+                name,
+                type,
+                scope,
+                mode,
+                links,
+                key,
+                recursion,
+                includePermissionsInfo,
+            },
             headers,
         ) => ({
             headers: {
@@ -104,6 +116,8 @@ export const entriesActions = {
                 scope,
                 mode,
                 links,
+                recursion,
+                includePermissionsInfo,
                 ...(key ? {key} : {}),
             },
         }),

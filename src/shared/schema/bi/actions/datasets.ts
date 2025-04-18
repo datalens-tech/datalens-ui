@@ -254,29 +254,32 @@ export const actions = {
     _proxyExportDataset: createAction<ExportDatasetResponse, ExportDatasetArgs>({
         method: 'POST',
         path: ({datasetId}) => `${API_V1}/datasets/export/${datasetId}`,
-        params: ({usMasterToken, workbookId, id_mapping}, headers) => ({
+        params: ({usMasterToken, workbookId, idMapping}, headers) => ({
             headers: {
                 ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
                 ...headers,
                 [US_MASTER_TOKEN_HEADER]: usMasterToken,
             },
             body: {
-                id_mapping,
+                id_mapping: idMapping,
             },
         }),
     }),
     _proxyImportDataset: createAction<ImportDatasetResponse, ImportDatasetArgs>({
         method: 'POST',
         path: () => `${API_V1}/datasets/import`,
-        params: ({usMasterToken, data, id_mapping}, headers) => ({
+        params: ({usMasterToken, workbookId, idMapping, dataset}, headers) => ({
             headers: {
-                ...(data.workbook_id ? {[WORKBOOK_ID_HEADER]: data.workbook_id} : {}),
+                ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
                 ...headers,
                 [US_MASTER_TOKEN_HEADER]: usMasterToken,
             },
             body: {
-                data,
-                id_mapping,
+                data: {
+                    workbook_id: workbookId,
+                    dataset,
+                },
+                id_mapping: idMapping,
             },
         }),
     }),

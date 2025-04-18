@@ -10,7 +10,7 @@ import {getAuthRoutes} from '../../components/auth/routes';
 import type {ChartsEngine} from '../../components/charts-engine';
 import {getZitadelRoutes} from '../../components/zitadel/routes';
 import {ping} from '../../controllers/ping';
-import {workbooksExportController} from '../../controllers/workbook-transfer';
+import {workbooksTransferController} from '../../controllers/workbook-transfer';
 import {getConnectorIconsMiddleware} from '../../middlewares';
 import type {ExtendedAppRouteDescription} from '../../types/controllers';
 import {getConfiguredRoute} from '../../utils/routes';
@@ -74,7 +74,7 @@ function getApiRoutes({
 }) {
     const routes: Record<string, ExtendedAppRouteDescription> = {
         workbooksExport: {
-            handler: workbooksExportController.export,
+            handler: workbooksTransferController.export,
             beforeAuth,
             afterAuth,
             route: 'POST /api/internal/v1/workbooks/export/',
@@ -82,7 +82,7 @@ function getApiRoutes({
             disableCsrf: true,
         },
         workbooksImport: {
-            handler: workbooksExportController.import,
+            handler: workbooksTransferController.import,
             beforeAuth,
             afterAuth,
             route: 'POST /api/internal/v1/workbooks/import/',

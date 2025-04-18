@@ -43,6 +43,8 @@ export interface ProxyCreateEntryArgs {
     mode: string;
     links: EntryFieldLinks;
     key?: string;
+    includePermissionsInfo?: boolean;
+    recursion?: boolean;
 }
 
 export interface GetEntryByKeyResponse extends Omit<GetEntryResponse, 'isFavorite'> {}

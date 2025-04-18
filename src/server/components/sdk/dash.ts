@@ -17,8 +17,6 @@ import type {
     DashTabItemControlData,
     Dictionary,
     EntryReadParams,
-    TransferIdMapping,
-    TransferNotification,
     UpdateEntryRequest,
 } from '../../../shared/types';
 import {
@@ -32,57 +30,53 @@ import {isEnabledServerFeature} from '../../../shared/utils';
 
 import US from './us';
 
+type MatchCallback = (value: string, obj: Record<string, any>, key: string) => string;
+
 function processControlLinkToResult(
     result: Dictionary<string>,
     data: DashTabItemControlData,
-    idMapping?: TransferIdMapping,
+    matchCallback?: MatchCallback,
 ) {
     if (data.sourceType === DashTabItemControlSourceType.Dataset && 'datasetId' in data.source) {
         const {datasetId} = data.source;
-        if (idMapping?.[datasetId]) {
-            result[idMapping[datasetId]] = datasetId;
-            data.source.datasetId = idMapping[datasetId];
-        } else {
-            result[datasetId] = datasetId;
-        }
+
+        result[datasetId] = matchCallback
+            ? matchCallback(datasetId, data.source, 'datasetId')
+            : datasetId;
     }
 
     return result;
 }
 
-export function processLinksForItems(tabData: DashTab, idMapping?: TransferIdMapping) {
+function processLinksForItems(tabData: DashTab, matchCallback?: MatchCallback) {
     return tabData.items.reduce((result: Dictionary<string>, item) => {
         const {type, data} = item;
 
         if (type === DashTabItemType.Widget && 'tabs' in data) {
             return data.tabs.reduce((result, widget) => {
                 const {chartId} = widget;
-                if (idMapping?.[chartId]) {
-                    result[idMapping[chartId]] = chartId;
-                    widget.chartId = idMapping[chartId];
-                } else {
-                    result[chartId] = chartId;
-                }
+
+                result[chartId] = matchCallback
+                    ? matchCallback(chartId, widget, 'chartId')
+                    : chartId;
                 return result;
             }, result);
         } else if (type === DashTabItemType.GroupControl) {
             data.group.forEach((groupItem) => {
-                result = processControlLinkToResult(result, groupItem, idMapping);
+                result = processControlLinkToResult(result, groupItem, matchCallback);
             });
         } else if (type === DashTabItemType.Control && 'sourceType' in data) {
-            result = processControlLinkToResult(result, data);
+            result = processControlLinkToResult(result, data, matchCallback);
 
             if (
                 data.sourceType === DashTabItemControlSourceType.External &&
                 'chartId' in data.source
             ) {
                 const {chartId} = data.source;
-                if (idMapping?.[chartId]) {
-                    result[idMapping[chartId]] = chartId;
-                    data.source.chartId = idMapping[chartId];
-                } else {
-                    result[chartId] = chartId;
-                }
+
+                result[chartId] = matchCallback
+                    ? matchCallback(chartId, data.source, 'chartId')
+                    : chartId;
             }
         }
 
@@ -90,14 +84,17 @@ export function processLinksForItems(tabData: DashTab, idMapping?: TransferIdMap
     }, {});
 }
 
-export function processLinks(data: DashData, idMapping?: TransferIdMapping) {
+function processLinks(data: DashData, matchCallback?: MatchCallback) {
     return data.tabs.reduce(
-        (result: Dictionary<string>, tab) => ({...result, ...processLinksForItems(tab, idMapping)}),
+        (result: Dictionary<string>, tab) => ({
+            ...result,
+            ...processLinksForItems(tab, matchCallback),
+        }),
         {},
     );
 }
 
-export function gatherLinks(data: DashData) {
+function gatherLinks(data: DashData) {
     return processLinks(data);
 }
 
@@ -218,6 +215,10 @@ function validateData(data: DashData) {
 }
 
 class Dash {
+    static validateData = validateData;
+    static processLinks = processLinks;
+    static gatherLinks = gatherLinks;
+
     static async create(
         data: CreateEntryRequest<DashEntry | DashEntryCreateParams>,
         headers: IncomingHttpHeaders,
@@ -386,51 +387,6 @@ class Dash {
 
             throw error;
         }
-    }
-
-    static async prepareExport(entry: DashEntry, id_mapping: TransferIdMapping) {
-        const data = await Dash.migrate(entry.data);
-        const notifications: TransferNotification[] = [];
-
-        processLinks(data, id_mapping);
-
-        const nameParts = entry.key.split('/');
-        const name = nameParts[nameParts.length - 1];
-
-        const dash = {
-            name,
-            data,
-        };
-
-        return {
-            dash,
-            notifications,
-        };
-    }
-
-    static async prepareImport(importObject: {
-        dash: {data: DashEntry['data']; name: string};
-        id_mapping: TransferIdMapping;
-    }) {
-        const data = await Dash.migrate(importObject.dash.data);
-        const notifications: TransferNotification[] = [];
-
-        processLinks(data, importObject.id_mapping);
-        validateData(data);
-
-        const links = gatherLinks(data);
-
-        return {
-            dash: {
-                data,
-                name: importObject.dash.name,
-                scope: EntryScope.Dash,
-                mode: EntryUpdateMode.Publish,
-                type: '',
-                links,
-            },
-            notifications,
-        };
     }
 }
 
