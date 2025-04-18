@@ -49,4 +49,5 @@ export const workbooksFunctionsMap = {
         makeFunctionTemplate<
             (scope: EntryScope | undefined) => {title: string; description: string}
         >(),
+    getNotificationTitleByCode: makeFunctionTemplate<(code: string) => string>(),
 } as const;
