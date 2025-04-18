@@ -25,6 +25,7 @@ import type {
 } from 'shared';
 import {DashTabItemType, resolveOperation} from 'shared';
 import {COPIED_WIDGET_STORAGE_KEY, DL, Utils} from 'ui';
+import {FIXED_GROUP_CONTAINER_ID, FIXED_GROUP_HEADER_ID} from 'ui/components/DashKit/constants';
 import {registry} from 'ui/registry';
 import {collectWidgetItemIds} from 'ui/utils/copyItems';
 
@@ -318,11 +319,84 @@ export function sendEmbedDashHeight(wrapRef: React.RefObject<HTMLDivElement>) {
     }
 }
 
+// Sort helpers that are get in focus fixed header elements
+export const getPreparedItems = (items: Array<DashTabItem>, layout: Array<DashTabLayout>) => {
+    const [layoutMap, layoutColumns] = getLayoutMap(layout);
+
+    const sortedItems = [...items].sort((a, b) =>
+        sortByOrderIdOrLayoutComparator(a, b, layoutMap, layoutColumns),
+    );
+
+    return sortedItems.map((item, index) => {
+        return {
+            ...item,
+            orderId: index,
+            defaultOrderId: index,
+        };
+    });
+};
+
+export const getGroupedItems = (items: Array<DashTabItem>, layout: Array<DashTabLayout>) => {
+    const preparedItems = getPreparedItems(items, layout);
+
+    const itemsCountByParent = {
+        [FIXED_GROUP_HEADER_ID]: 0,
+        [FIXED_GROUP_CONTAINER_ID]: 0,
+        [DEFAULT_GROUP]: 0,
+    };
+    const parentByItem = layout.reduce<Record<string, string>>((memo, item) => {
+        const parent = item.parent ?? DEFAULT_GROUP;
+
+        if (parent in itemsCountByParent) {
+            itemsCountByParent[parent as keyof typeof itemsCountByParent]++;
+        }
+
+        memo[item.i] = parent;
+
+        return memo;
+    }, {});
+
+    const getItemOrder = (item: DashTabItem, index: number) => {
+        const parent = parentByItem[item.id];
+
+        if (parent === FIXED_GROUP_HEADER_ID) {
+            return index;
+        } else if (parent === FIXED_GROUP_CONTAINER_ID) {
+            return index + itemsCountByParent[FIXED_GROUP_HEADER_ID];
+        } else {
+            return (
+                index +
+                itemsCountByParent[FIXED_GROUP_HEADER_ID] +
+                itemsCountByParent[FIXED_GROUP_CONTAINER_ID]
+            );
+        }
+    };
+
+    return [FIXED_GROUP_HEADER_ID, FIXED_GROUP_CONTAINER_ID, DEFAULT_GROUP].map((group) => {
+        return preparedItems
+            .filter((item) => parentByItem[item.id] === group)
+            .map((item, index) => {
+                const orderId = getItemOrder(item, index);
+
+                return {
+                    ...item,
+                    orderId,
+                    defaultOrderId: orderId,
+                };
+            });
+    });
+};
+
+export const getFlatSortedItems = (items: Array<DashTabItem>, layout: Array<DashTabLayout>) => {
+    return getGroupedItems(items, layout).reduce<Array<DashTabItem>>((memo, items) => {
+        memo.push(...items);
+        return memo;
+    }, []);
+};
+
 type LocalTab = Pick<DashTab, 'id' | 'title'> & {
     items: {id: DashTabItemBase['id']; title: string; order: number}[];
 };
-
-const defaultTabItemsOrderYMultiplier = 1000000;
 
 // Lodash.memoize takes into account only the first argument!
 // if in the future it will be necessary to change the function (add parameters), then this should be taken into account
@@ -331,12 +405,7 @@ export const memoizedGetLocalTabs = memoize((tabs: DashTab[]) => {
         result.push({
             id,
             title,
-            items: items
-                .map((item, index) => ({
-                    // tabItemsOrderYMultiplier to explicitly separate the x and y part when sorting by a single number
-                    order: layout[index].x + layout[index].y * defaultTabItemsOrderYMultiplier,
-                    ...item,
-                }))
+            items: getFlatSortedItems(items, layout)
                 .filter(({type, data}) => {
                     if ('showInTOC' in data) {
                         return type === ITEM_TYPE.TITLE && data.showInTOC;
@@ -344,13 +413,14 @@ export const memoizedGetLocalTabs = memoize((tabs: DashTab[]) => {
 
                     return false;
                 })
-                .map(({id: itemId, data, order}) => ({
+                .map(({id: itemId, data, orderId}) => ({
                     id: itemId,
                     title: 'text' in data ? data.text : '',
-                    order,
+                    order: orderId || 0,
                 }))
                 .sort((itemA, itemB) => itemA.order - itemB.order),
         });
+
         return result;
     }, []);
 });

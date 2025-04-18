@@ -7,11 +7,11 @@ import {
 
 const OFFSETS_QA = [
     ActionPanelQA.ActionPanel,
-    FixedHeaderQa.Controls,
-    FixedHeaderQa.Container,
     TableOfContentQa.MobileTableOfContent,
     DatalensHeaderQa.DesktopContainer,
 ];
+
+const queryByQA = (qa: string) => document.querySelector(`[data-qa="${qa}"]`);
 
 export const scrollIntoView = (scrollElement: string | HTMLElement, lastTop?: number | null) => {
     if (!scrollElement) {
@@ -30,9 +30,12 @@ export const scrollIntoView = (scrollElement: string | HTMLElement, lastTop?: nu
         return lastTop;
     }
 
-    const offsets = OFFSETS_QA.map(
-        (qa) => document.querySelector(`[data-qa="${qa}"]`)?.clientHeight,
-    );
+    const offsets = OFFSETS_QA.map((qa) => queryByQA(qa)?.clientHeight);
+
+    const fixedWrapper = queryByQA(FixedHeaderQa.Wrapper);
+    if (!fixedWrapper?.contains(element)) {
+        offsets.push(fixedWrapper?.clientHeight);
+    }
 
     const offset = offsets.reduce((acc: number, cur: number | undefined) => acc + (cur || 0), 0);
     // offset of elements + small indentation from them
