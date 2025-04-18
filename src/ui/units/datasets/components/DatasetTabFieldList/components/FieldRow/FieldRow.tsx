@@ -55,6 +55,7 @@ const FieldRowControl: React.FC<FieldRowControlProps> = ({
                     },
                     text: item.text(field),
                     qa: item.qa,
+                    theme: item.theme,
                 }),
             );
 
