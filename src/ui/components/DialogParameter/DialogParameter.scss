@@ -1,15 +1,15 @@
 @import '../../styles/mixins.scss';
 
 .dialog-parameter {
-    width: 512px;
-    height: 276px;
+    width: 560px;
 
     &__container {
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-        height: 130px;
         align-items: center;
+        row-gap: 20px;
+        overflow: visible;
     }
 
     &__line {
@@ -17,11 +17,45 @@
         justify-content: space-between;
         align-items: center;
         width: 100%;
+        column-gap: 16px;
+        min-height: 28px;
     }
 
     &__line-title {
-        width: 152px;
+        flex: 0 0 180px;
         line-height: 18px;
+
+        &_vertical-align-start {
+            margin-bottom: auto;
+            transform: translateY(5px);
+        }
+    }
+
+    &__line-content {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+
+    &__switch-template {
+        display: flex;
+        align-items: center;
+        height: 28px;
+        margin-right: auto;
+    }
+
+    &__textarea-regex {
+        margin-top: 8px;
+    }
+
+    &__validation-hint {
+        margin-top: 4px;
+        color: var(--g-color-text-hint);
+    }
+
+    &__template-warning {
+        margin-top: 8px;
+        color: var(--g-color-text-warning-heavy);
     }
 
     &__title-tooltip {
@@ -39,16 +73,7 @@
         height: 100%;
     }
 
-    & &__line-item {
-        width: 276px;
-
-        & .dl-data-type-icon {
-            color: var(--g-color-text-secondary);
-        }
-    }
-
     &__dialog-popup {
         @include dl-select-popup;
-        width: 276px;
     }
 }

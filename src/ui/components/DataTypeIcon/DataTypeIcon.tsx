@@ -22,7 +22,7 @@ import './DataTypeIcon.scss';
 
 const b = block('dl-data-type-icon');
 
-interface DataTypeIconProps extends Omit<IconProps, 'data'> {
+export interface DataTypeIconProps extends Omit<IconProps, 'data'> {
     dataType: DATASET_FIELD_TYPES;
     fieldType?: DatasetFieldType;
     className?: string;

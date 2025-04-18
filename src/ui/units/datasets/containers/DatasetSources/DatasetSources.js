@@ -20,6 +20,8 @@ import {
     deleteConnection,
     deleteSource,
     getSources,
+    openDialogParameterCreate,
+    openDialogParameterEdit,
     replaceConnection,
     replaceSource,
     toggleSaveDataset,
@@ -702,6 +704,8 @@ class DatasetSources extends React.Component {
                             onClose={this.closeSourceEditorDialog}
                             onUpdate={this.updateSelectedSource}
                             onApply={this.saveSource}
+                            onParamCreate={this.props.openDialogParameterCreate}
+                            onParamEdit={this.props.openDialogParameterEdit}
                         />
                     )}
                     <RelationDialog
@@ -787,6 +791,8 @@ const mapDispatchToProps = {
     addAvatarPrototypes,
     toggleSaveDataset,
     showToast,
+    openDialogParameterCreate,
+    openDialogParameterEdit,
 };
 
 export default compose(connect(mapStateToProps, mapDispatchToProps, null, {forwardRef: true}))(
