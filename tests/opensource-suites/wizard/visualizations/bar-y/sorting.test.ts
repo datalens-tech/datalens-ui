@@ -21,7 +21,7 @@ datalensTest.describe('Wizard', () => {
             await wizardPage.setVisualization(WizardVisualizationId.BarYD3);
         });
 
-        datalensTest('Sorting by X field', async ({page}) => {
+        datalensTest('Sorting by X field @screenshot', async ({page}) => {
             const wizardPage = new WizardPage({page});
 
             await wizardPage.createNewFieldWithFormula('y', 'str([id])');

@@ -6,12 +6,9 @@ import {Checkbox, DropdownMenu, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
-import {Feature} from 'shared';
 import {CollectionContentTableQa, DEFAULT_DATE_FORMAT} from 'shared/constants';
-import {WORKBOOK_STATUS} from 'shared/constants/workbooks';
 import {DL} from 'ui/constants/common';
 import {selectDateTimeFormat} from 'ui/store/selectors/user';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {
     CollectionWithPermissions,
@@ -24,6 +21,7 @@ import type {SelectedMap, UpdateCheckboxArgs} from '../CollectionPage/hooks';
 import {CollectionCheckboxCell} from './TableComponents/CollectionCheckboxCell';
 import {CollectionLinkRow} from './TableComponents/CollectionLinkRow';
 import {CollectionTitleCell} from './TableComponents/CollectionTitleCell';
+import {getItemParams} from './helpers';
 
 import './CollectionContentTable.scss';
 
@@ -81,27 +79,33 @@ export const CollectionContentTable = React.memo<Props>(
                     <AnimateBlock>
                         <div className={b('table')}>
                             <div className={b('content')}>
-                                {items.map((item) => (
-                                    <CollectionLinkRow
-                                        key={
-                                            'workbookId' in item
-                                                ? item.workbookId
-                                                : item.collectionId
-                                        }
-                                        item={item}
-                                    >
-                                        <CollectionTitleCell
-                                            isWorkbook={'workbookId' in item}
-                                            title={item.title}
-                                            collectionId={item.collectionId}
-                                        />
-                                        <div className={b('content-cell', {date: true})}>
-                                            {dateTime({
-                                                input: item.updatedAt,
-                                            }).format(DEFAULT_DATE_FORMAT)}
-                                        </div>
-                                    </CollectionLinkRow>
-                                ))}
+                                {items.map((item) => {
+                                    const {status, isDisabled} = getItemParams(item);
+
+                                    return (
+                                        <CollectionLinkRow
+                                            key={
+                                                'workbookId' in item
+                                                    ? item.workbookId
+                                                    : item.collectionId
+                                            }
+                                            item={item}
+                                            isDisabled={isDisabled}
+                                        >
+                                            <CollectionTitleCell
+                                                isWorkbook={'workbookId' in item}
+                                                title={item.title}
+                                                collectionId={item.collectionId}
+                                                status={status}
+                                            />
+                                            <div className={b('content-cell', {date: true})}>
+                                                {dateTime({
+                                                    input: item.updatedAt,
+                                                }).format(DEFAULT_DATE_FORMAT)}
+                                            </div>
+                                        </CollectionLinkRow>
+                                    );
+                                })}
                             </div>
                         </div>
                     </AnimateBlock>
@@ -142,14 +146,11 @@ export const CollectionContentTable = React.memo<Props>(
                         <div className={b('content')}>
                             {items.map((item) => {
                                 const isWorkbookItem = 'workbookId' in item;
+                                const {status, isDisabled} = getItemParams(item);
+
                                 const actions = isWorkbookItem
                                     ? getWorkbookActions(item)
                                     : getCollectionActions(item);
-
-                                const isImporting =
-                                    isEnabledFeature(Feature.EnableExportWorkbookFile) &&
-                                    isWorkbookItem &&
-                                    item.status === WORKBOOK_STATUS.CREATING;
 
                                 return (
                                     <CollectionLinkRow
@@ -159,23 +160,23 @@ export const CollectionContentTable = React.memo<Props>(
                                                 : item.collectionId
                                         }
                                         item={item}
-                                        isImporting={isImporting}
+                                        isDisabled={isDisabled}
                                     >
                                         <CollectionCheckboxCell
                                             item={item}
                                             onUpdateCheckboxClick={onUpdateCheckboxClick}
                                             selectedMap={selectedMap}
-                                            disabled={isImporting}
+                                            disabled={isDisabled}
                                         />
                                         <CollectionTitleCell
                                             isWorkbook={'workbookId' in item}
                                             title={item.title}
                                             collectionId={item.collectionId}
-                                            isImporting={isImporting}
+                                            status={status}
                                         />
 
                                         <div className={b('content-cell', {date: true})}>
-                                            {!isImporting && (
+                                            {!isDisabled && (
                                                 <Tooltip
                                                     content={dateTime({
                                                         input: item.updatedAt,
@@ -193,7 +194,7 @@ export const CollectionContentTable = React.memo<Props>(
                                         <div
                                             className={b('content-cell', {
                                                 control: true,
-                                                import: isImporting,
+                                                import: isDisabled,
                                             })}
                                             onClick={(e) => {
                                                 if (actions.length > 0) {
@@ -206,7 +207,7 @@ export const CollectionContentTable = React.memo<Props>(
                                                 <DropdownMenu
                                                     size="s"
                                                     items={actions}
-                                                    disabled={isImporting}
+                                                    disabled={isDisabled}
                                                 />
                                             )}
                                         </div>

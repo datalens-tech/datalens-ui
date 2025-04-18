@@ -99,8 +99,8 @@ export const ExportWorkbookDialog: React.FC<Props> = ({
     const error = useSelector(selectExportError);
     const isResultLoading = useSelector(selectGetExportResultLoading);
     const exportData = useSelector(selectExportData);
-
     const progressData = useSelector(selectGetExportProgressData);
+
     const progress = progressData?.progress;
     const notifications = progressData?.notifications;
 
@@ -180,8 +180,34 @@ export const ExportWorkbookDialog: React.FC<Props> = ({
             return;
         }
 
+        if (status === 'success' && exportData?.exportId) {
+            dispatch(
+                openDialog({
+                    id: DIALOG_DEFAULT,
+                    props: {
+                        open: true,
+                        onApply: () => {
+                            dispatch(closeDialog());
+                            onClose();
+                        },
+                        onCancel: () => {
+                            dispatch(closeDialog());
+                        },
+                        message: i18n('label_close-export-description'),
+                        textButtonApply: i18n('button_close-export'),
+                        textButtonCancel: i18n('button_back-to-export'),
+                        propsButtonApply: {view: 'outlined-danger'},
+                        caption: i18n('title_close-export'),
+                        className: b('import-cancel-dialog'),
+                    },
+                }),
+            );
+
+            return;
+        }
+
         onClose();
-    }, [dispatch, exportData?.exportId, isExportLoading, onClose]);
+    }, [dispatch, exportData?.exportId, isLoading, onClose, status]);
 
     const startExport = React.useCallback(async () => {
         const exportResult = await dispatch(exportWorkbook({workbookId}));

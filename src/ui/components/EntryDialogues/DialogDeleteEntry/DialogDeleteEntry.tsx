@@ -48,6 +48,7 @@ class DialogDeleteEntry extends React.Component<Props> {
                 caption={i18n('section_caption')}
                 textButtonCancel={i18n('button_cancel')}
                 textButtonApply={i18n('button_delete')}
+                confirmButtonView="outlined-danger"
             >
                 {Boolean(this.props.entry) && (
                     <span className={b('entry')}>

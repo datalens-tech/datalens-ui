@@ -45,35 +45,23 @@ jobs:
           cache: 'npm'
           cache-dependency-path: ./package-lock.json
 
-      - name: Get last version config
+      - name: Get ui ref version
         run: |
-          VERSION_CONFIG=$(curl -s https://api.github.com/repos/datalens-tech/datalens/contents/versions-config.json | jq -r '.content' | base64 -d)
-          if [ "${{ env.UI_VERSION }}" == "release" ]; then
-            UI_VERSION=$(echo "${VERSION_CONFIG}" | jq -r '.uiVersion')
-            echo "UI_VERSION=$UI_VERSION" >> "$GITHUB_ENV"
+          UI_REF="${{ github.head_ref }}"
+          if [ -z "${UI_REF}" ]; then
+            if [ "${UI_VERSION}" == "release" ]; then
+              UI_REF="release"
+            else
+              UI_REF="release-${UI_VERSION}"
+            fi
           fi
-          if [ -z "${{ env.US_VERSION }}" ]; then
-            US_VERSION=$(echo "${VERSION_CONFIG}" | jq -r '.usVersion')
-            echo "US_VERSION=$US_VERSION" >> "$GITHUB_ENV"
-          fi
-          if [ -z "${{ env.CONTROL_API_VERSION }}" ]; then
-            CONTROL_API_VERSION=$(echo "${VERSION_CONFIG}" | jq -r '.backendVersion')
-            echo "CONTROL_API_VERSION=$CONTROL_API_VERSION" >> "$GITHUB_ENV"
-          fi
-          if [ -z "${{ env.DATA_API_VERSION }}" ]; then
-            DATA_API_VERSION=$(echo "${VERSION_CONFIG}" | jq -r '.backendVersion')
-            echo "DATA_API_VERSION=$DATA_API_VERSION" >> "$GITHUB_ENV"
-          fi
-          echo "UI_REF=release-$UI_VERSION" >> "$GITHUB_ENV"
+          echo "UI_REF=${UI_REF}" >> "$GITHUB_ENV"
         env:
-          US_VERSION: ${{ env.US_VERSION }}
-          CONTROL_API_VERSION: ${{ env.CONTROL_API_VERSION }}
-          DATA_API_VERSION: ${{ env.DATA_API_VERSION }}
           UI_VERSION: ${{ env.UI_VERSION }}
 
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.head_ref || env.UI_REF }}
+          ref: ${{ env.UI_REF }}
 
       - name: Check docker compose Config
         run: npm run test:e2e:docker:check

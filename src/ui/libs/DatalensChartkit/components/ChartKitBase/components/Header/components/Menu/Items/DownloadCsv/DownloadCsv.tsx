@@ -1,7 +1,8 @@
 import React from 'react';
 
+import {FormRow} from '@gravity-ui/components';
 import type {SelectOption} from '@gravity-ui/uikit';
-import {Dialog, Select} from '@gravity-ui/uikit';
+import {Card, Dialog, Select, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {ChartkitMenuDialogsQA} from 'shared';
@@ -25,6 +26,9 @@ type DownloadCsvProps = {
     chartData: ExportActionArgs;
     path?: string;
     onExportLoading?: (isLoading: boolean) => void;
+    additionalControls?: React.ReactNode;
+    showWarning?: boolean;
+    className?: string;
 };
 
 const valueDelimiterOptions: SelectOption[] = [
@@ -74,15 +78,6 @@ const encodingOptions = [
     },
 ];
 
-const Row: React.FC<{title: string}> = ({title, children}) => {
-    return (
-        <div className={b('row')}>
-            <div className={b('row-header')}>{title}</div>
-            <div className={b('row-body')}>{children}</div>
-        </div>
-    );
-};
-
 export const DownloadCsv = ({
     onApply,
     loading,
@@ -90,12 +85,15 @@ export const DownloadCsv = ({
     chartType,
     chartData,
     onExportLoading,
+    additionalControls,
+    showWarning = true,
+    className,
 }: DownloadCsvProps) => {
     const [delValue, setDelValue] = React.useState(';');
     const [delNumber, setDelNumber] = React.useState('.');
     const [encoding, setEncoding] = React.useState('utf8');
 
-    const showAttention = chartType === EXPORT_WARNING_TYPE;
+    const showAttention = showWarning && chartType === EXPORT_WARNING_TYPE;
 
     const downloadCsv = React.useCallback(() => {
         const params = {
@@ -113,14 +111,18 @@ export const DownloadCsv = ({
         <Dialog
             open={true}
             onClose={onClose}
-            className={b()}
+            className={b(null, className)}
             qa={ChartkitMenuDialogsQA.chartMenuExportCsvDialog}
         >
             <Dialog.Header caption={i18n('label_title')} />
             <Dialog.Body className={b('content')}>
-                {showAttention && <div className={b('attention')}>{i18n('label_attention')}</div>}
-                <div className={b('hint')}>{i18n('label_hint')}</div>
-                <Row title={i18n('label_values-delimiter')}>
+                {showAttention && (
+                    <Card theme="normal" className={b('attention')}>
+                        {i18n('label_attention')}
+                    </Card>
+                )}
+                {additionalControls}
+                <FormRow label={i18n('label_values-delimiter')} className={b('row')}>
                     <Select
                         width="max"
                         qa={ChartkitMenuDialogsQA.chartMenuExportCsvSelectDelimiter}
@@ -128,8 +130,8 @@ export const DownloadCsv = ({
                         options={valueDelimiterOptions}
                         onUpdate={(delValues) => setDelValue(delValues[0])}
                     />
-                </Row>
-                <Row title={i18n('label_decimal-delimiter')}>
+                </FormRow>
+                <FormRow label={i18n('label_decimal-delimiter')} className={b('row')}>
                     <Select
                         width="max"
                         qa={ChartkitMenuDialogsQA.chartMenuExportCsvSelectFloat}
@@ -137,8 +139,8 @@ export const DownloadCsv = ({
                         options={decimalDelimiterOptions}
                         onUpdate={(delNumbers) => setDelNumber(delNumbers[0])}
                     />
-                </Row>
-                <Row title={i18n('label_encoding')}>
+                </FormRow>
+                <FormRow label={i18n('label_encoding')} className={b('row')}>
                     <Select
                         width="max"
                         qa={ChartkitMenuDialogsQA.chartMenuExportCsvSelectCharset}
@@ -146,7 +148,10 @@ export const DownloadCsv = ({
                         options={encodingOptions}
                         onUpdate={(encodingVal) => setEncoding(encodingVal[0])}
                     />
-                </Row>
+                </FormRow>
+                <Text variant="body-1" color="hint">
+                    {i18n('label_hint')}
+                </Text>
             </Dialog.Body>
             <Dialog.Footer
                 onClickButtonCancel={onClose}

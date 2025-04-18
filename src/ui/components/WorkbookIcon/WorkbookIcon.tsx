@@ -21,6 +21,12 @@ type Size = {
 type SizeMap = Record<string, Size>;
 
 const sizesMap: SizeMap = {
+    xs: {
+        size: 18,
+        fontSize: 9,
+        lineHeight: 18,
+        borderRadius: 4,
+    },
     s: {
         size: 20,
         fontSize: 8,
