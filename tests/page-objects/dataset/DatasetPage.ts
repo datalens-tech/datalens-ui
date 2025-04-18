@@ -1,5 +1,6 @@
 import {v1 as uuidv1} from 'uuid';
-import {DatasetActionQA, EntryDialogQA} from '../../../src/shared/constants';
+import {EntryDialogQA} from '../../../src/shared/constants/qa/components';
+import {DatasetPanelQA, DatasetActionQA} from '../../../src/shared/constants/qa/datasets';
 
 import {deleteEntity, slct} from '../../utils';
 import {BasePage, BasePageProps} from '../BasePage';
@@ -64,6 +65,14 @@ class DatasetPage extends BasePage {
 
     async deleteEntry() {
         await deleteEntity(this.page);
+    }
+
+    async getCurrentTabName() {
+        const input = await this.page.waitForSelector(
+            `${slct(DatasetPanelQA.TabRadio)} input[aria-checked="true"]`,
+        );
+
+        return await input.inputValue();
     }
 }
 

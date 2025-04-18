@@ -1,7 +1,7 @@
 import {registry} from 'ui/registry';
 
 import {RESET_DATASET_STATE} from '../actions/types/dataset';
-import {getInitialState, initialPreview} from '../constants';
+import {getCurrentTab, getInitialState, initialPreview} from '../constants';
 import type {DatasetReduxAction, DatasetReduxState} from '../types';
 
 import dataset from './dataset';
@@ -16,6 +16,7 @@ const datasetReducer = (state: DatasetReduxState, action: DatasetReduxAction) =>
                 ...initialPreview,
                 isLoading: false,
             },
+            currentTab: getCurrentTab(),
         });
 
         return dataset(initialState, action);
