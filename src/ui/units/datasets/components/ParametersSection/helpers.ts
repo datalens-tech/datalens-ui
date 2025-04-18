@@ -108,6 +108,7 @@ export const getParameterRowMenuItems = (dispatch: DatasetDispatch): MenuControl
             action: (field: DatasetField) =>
                 dispatch(deleteFieldWithValidation(field, {tab: TAB_PARAMETERS})),
             qa: DatasetTabSectionQA.RemoveRow,
+            theme: 'danger',
         },
     ];
 };

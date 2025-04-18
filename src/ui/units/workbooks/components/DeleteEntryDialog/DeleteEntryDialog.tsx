@@ -52,6 +52,7 @@ const DeleteEntryDialog = React.memo<Props>(({open, data, onClose}) => {
             applyBtnLoadingStatus={isLoading ? DialogConfirmApplyStatus.Loading : undefined}
             onCancel={onClose}
             confirmOnEnterPress={true}
+            confirmButtonView="outlined-danger"
             isWarningConfirm={true}
             cancelButtonView="flat"
             showIcon={false}
