@@ -207,7 +207,7 @@ export const ExportWorkbookDialog: React.FC<Props> = ({
         }
 
         onClose();
-    }, [dispatch, exportData?.exportId, isLoading, onClose, status]);
+    }, [dispatch, exportData?.exportId, isExportLoading, onClose, status]);
 
     const startExport = React.useCallback(async () => {
         const exportResult = await dispatch(exportWorkbook({workbookId}));
