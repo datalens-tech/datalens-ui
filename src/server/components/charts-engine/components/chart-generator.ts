@@ -199,7 +199,7 @@ export const chartGenerator = {
         shared: {type?: string};
         links: Record<string, string> | undefined;
     }) => {
-        const {ctx, shared: data, links} = options;
+        const {ctx, shared, links} = options;
         const output: {
             shared: string;
             meta?: string;
@@ -208,7 +208,7 @@ export const chartGenerator = {
         };
 
         try {
-            output.shared = JSON.stringify(data, null, 4);
+            output.shared = JSON.stringify(shared, null, 4);
         } catch (e) {
             throw new Error('Invalid chart data');
         }
@@ -256,6 +256,13 @@ export const chartGenerator = {
         const type = chartTemplate.identifyChartType(data, req);
 
         const links = chartGenerator.gatherChartLinks({req, shared: data, chartTemplate});
+        const serializedData = chartGenerator.serializeShared({ctx, shared: data, links});
+
+        chart.shared = serializedData.shared;
+
+        if (serializedData.meta) {
+            chart.meta = serializedData.meta;
+        }
 
         chart.params = chart.params.replace('#params', JSON.stringify(params));
         if (chart.params.indexOf('#module') > -1) {
@@ -287,11 +294,8 @@ export const chartGenerator = {
         chart.sources = chart.sources.replace('#apiVersion', apiVersion);
 
         const chartsWithConfig = isD3Graph || isTable;
-        const {config: _, ...chartWithoutCOnfig} = {
-            ...chart,
-            ...chartGenerator.serializeShared({ctx, shared: data, links}),
-        };
+        const {config: _, ...chartWithoutConfig} = chart;
 
-        return {chart: chartsWithConfig ? chart : chartWithoutCOnfig, links, type};
+        return {chart: chartsWithConfig ? chart : chartWithoutConfig, links, type};
     },
 };
