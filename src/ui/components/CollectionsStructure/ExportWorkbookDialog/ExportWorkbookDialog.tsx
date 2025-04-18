@@ -242,12 +242,13 @@ export const ExportWorkbookDialog: React.FC<Props> = ({workbookId, open, onClose
                 }
                 return (
                     <Flex direction="column" gap={4} className={b('notifications')}>
-                        {preparedNotifications.map((notification) => (
+                        {preparedNotifications.map(({code, message, level, entries}) => (
                             <EntriesNotificationCut
-                                key={notification.code}
-                                title={notification.message}
-                                level={notification.level}
-                                entries={notification.entries}
+                                key={code}
+                                title={message}
+                                level={level}
+                                entries={entries}
+                                code={code}
                             />
                         ))}
                     </Flex>

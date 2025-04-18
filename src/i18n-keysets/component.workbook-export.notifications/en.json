@@ -1,0 +1,12 @@
+{
+  "label_export-check-connection-credentials": "When importing, private fields in connections will need to be filled in again",
+  "label_export-rls": "After import, RLS functionality is not guaranteed",
+  "label_import-check-connections-credentials": "Private fields in connections will need to be filled in again",
+  "label_import-rls": "Check RLS functionality in datasets",
+  "label_invalid-entry-data": "Some entities may not work correctly due to corrupted configuration",
+  "label_invalid-entry-scope": "Some entities may not work correctly due to an invalid \"scope\" field value",
+  "label_invalid-error": "Unknown error",
+  "label_invalid-version": "The imported file has an invalid version",
+  "label_missing-mapping-id": "Some entities were not imported",
+  "lable_import-check-delegation": "Delegation may not be completed, please save the connection again"
+}

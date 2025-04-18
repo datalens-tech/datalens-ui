@@ -5,13 +5,13 @@ import type {LabelProps} from '@gravity-ui/uikit';
 import {Disclosure, Flex, Icon, Label, Link, Text, spacing} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {EntryRow} from 'ui/components/EntryRow/EntryRow';
+import {registry} from 'ui/registry';
 
 import './EntriesNotificationCut.scss';
 
 const b = block('entries-notification-cut');
 
 type EntriesNotificationCutProps = {
-    title: string;
     link?: {text: string; url: string};
 } & (
     | {level: 'success'; entries?: never}
@@ -19,7 +19,8 @@ type EntriesNotificationCutProps = {
           level: 'info' | 'warning' | 'critical';
           entries: {entryId?: string; scope: 'connection' | 'dataset'}[];
       }
-);
+) &
+    ({title: string; code?: string} | {title?: never; code: string});
 
 const LEVEL_TO_THEME_MAP: Record<string, LabelProps['theme']> = {
     critical: 'danger',
@@ -54,11 +55,16 @@ const NotificationSummary = ({
 export const EntriesNotificationCut = ({
     level,
     title,
+    code,
     entries,
     link,
 }: EntriesNotificationCutProps) => {
     const defaultExpanded = level === 'critical';
     const theme = LEVEL_TO_THEME_MAP[level] || 'info';
+
+    const {getNotificationTitleByCode} = registry.workbooks.functions.getAll();
+
+    const notificationTitle = code ? getNotificationTitleByCode(code) : title;
 
     return (
         <Flex gap={3} className={b('cut')}>
@@ -67,7 +73,9 @@ export const EntriesNotificationCut = ({
                 <Disclosure
                     defaultExpanded={defaultExpanded}
                     arrowPosition="end"
-                    summary={<NotificationSummary title={title} count={entries.length} />}
+                    summary={
+                        <NotificationSummary title={notificationTitle} count={entries.length} />
+                    }
                     className={b('disclosure')}
                 >
                     <div className={spacing({mt: 3})}>
@@ -91,7 +99,7 @@ export const EntriesNotificationCut = ({
                 </Disclosure>
             ) : (
                 <Flex alignItems="center" className={b('summary')}>
-                    <Text variant="subheader-2">{title}</Text>
+                    <Text variant="subheader-2">{notificationTitle}</Text>
                 </Flex>
             )}
         </Flex>
