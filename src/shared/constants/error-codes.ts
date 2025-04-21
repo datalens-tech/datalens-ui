@@ -43,9 +43,6 @@ export enum ErrorCode {
 
     ChartEditorNotAvailable = 'ERR.CHARTS.CHART_EDITOR_NOT_AVAILABLE',
     InsufficientServicePlan = 'ERR.CHARTS.INSUFFICIENT_SERVICE_PLAN',
-
-    TransferInvalidEntryScope = 'ERR.DS_API.UI.INVALID_ENTRY_SCOPE',
-    TransferInvalidToken = 'ERR.DS_API.UI.INVALID_TOKEN',
 }
 
 export const ErrorContentTypes = {
