@@ -6,9 +6,8 @@ import {Button, Dialog, Loader, Select, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import type {DatasetField} from 'shared';
-import {DATASET_FIELD_TYPES, DialogParameterQA, Feature, isDateField} from 'shared';
+import {DATASET_FIELD_TYPES, DialogParameterQA, isDateField} from 'shared';
 import {registry} from 'ui/registry';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import DialogManager from '../DialogManager/DialogManager';
 import {SelectOptionWithIcon} from '../SelectComponents';
@@ -34,15 +33,14 @@ export type DialogParameterProps = {
     field?: DatasetField;
     onReset?: (fieldId: string) => DatasetField | undefined;
     showTemplateWarn?: boolean;
+    templateEnabled?: boolean;
 };
 
 const b = block('dialog-parameter');
 const i18n = I18n.keyset('component.dialog-parameter');
 
 const DialogParameter: React.FC<DialogParameterProps> = (props: DialogParameterProps) => {
-    const {onApply, onClose, type, field, onReset, showTemplateWarn} = props;
-    // TODO: remove after BI-6211. We should use dataset.template_enabled value here
-    const isTemplateParamsFeatureEnabled = isEnabledFeature(Feature.EnableDsTemplateParams);
+    const {onApply, onClose, type, field, onReset, showTemplateWarn, templateEnabled} = props;
     const {formState, resetFormState, updateFormState, isFormValid, isNameValid} = useParameterForm(
         {
             name: field?.title || '',
@@ -50,6 +48,8 @@ const DialogParameter: React.FC<DialogParameterProps> = (props: DialogParameterP
             type: field?.data_type || DATASET_FIELD_TYPES.STRING,
             getOriginalField: onReset,
             fieldId: field?.guid || '',
+            template_enabled: field?.template_enabled,
+            value_constraint: field?.value_constraint,
         },
     );
     const {tooltipText, isTooltipLoading} = useFetchParameterTooltipMarkdown();
@@ -146,7 +146,7 @@ const DialogParameter: React.FC<DialogParameterProps> = (props: DialogParameterP
                                 />
                             )}
                         </div>
-                        {isTemplateParamsFeatureEnabled && !isEditDefaultValueDialog && (
+                        {templateEnabled && !isEditDefaultValueDialog && (
                             <TemplateSection
                                 formState={formState}
                                 showTemplateWarn={showTemplateWarn}

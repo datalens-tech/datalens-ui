@@ -126,6 +126,7 @@ export interface Dataset {
         sources: DatasetSource[];
         revisionId: string;
         load_preview_by_default: boolean;
+        template_enabled: boolean;
     };
     workbook_id?: string;
     permissions?: Permissions;

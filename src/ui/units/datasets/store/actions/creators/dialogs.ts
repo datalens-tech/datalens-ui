@@ -8,26 +8,29 @@ import {
     updateFieldWithValidation,
     updateFieldWithValidationByMultipleUpdates,
 } from './datasetTyped';
-import type {DatasetDispatch} from './datasetTyped';
+import type {DatasetDispatch, GetState} from './datasetTyped';
 
 export function openDialogParameterCreate(
     args: {tab?: DatasetTab; showTemplateWarn?: boolean} = {},
 ) {
-    return (dispatch: DatasetDispatch) => {
+    return (dispatch: DatasetDispatch, getState: GetState) => {
         const {tab, showTemplateWarn} = args;
+        const templateEnabled = getState().dataset.content.template_enabled;
         dispatch(
             openDialogParameter({
                 type: 'create',
                 onApply: (field) => dispatch(addFieldWithValidation(field, {tab})),
                 showTemplateWarn,
+                templateEnabled,
             }),
         );
     };
 }
 
 export function openDialogParameterEdit(args: {field: DatasetField; tab?: DatasetTab}) {
-    return (dispatch: DatasetDispatch) => {
+    return (dispatch: DatasetDispatch, getState: GetState) => {
         const {field, tab} = args;
+        const templateEnabled = getState().dataset.content.template_enabled;
         dispatch(
             openDialogParameter({
                 type: 'edit',
@@ -51,6 +54,7 @@ export function openDialogParameterEdit(args: {field: DatasetField; tab?: Datase
                         );
                     }
                 },
+                templateEnabled,
             }),
         );
     };

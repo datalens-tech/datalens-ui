@@ -1,6 +1,7 @@
 import type {ApplyData} from 'components/DialogFilter/DialogFilter';
 
 import type {
+    ConnectionData,
     Dataset,
     DatasetAvatarRelation,
     DatasetField,
@@ -64,6 +65,7 @@ import type {
     SET_LAST_MODIFIED_TAB,
     SET_QUEUE_TO_LOAD_PREVIEW,
     SET_SOURCES_LOADING_ERROR,
+    SET_TEMPLATE_ENABLED,
     SET_VALIDATION_STATE,
     SOURCES_REFRESH,
     SOURCE_ADD,
@@ -85,8 +87,8 @@ import type {EDIT_HISTORY_OPTIONS_KEY} from '../constants';
 // TODO: correctly describe the type
 export type DatasetError = any | null;
 
-// TODO: add and take out above
 export type ConnectionEntry = {
+    data: ConnectionData;
     id?: string;
     entryId: string;
     type: string;
@@ -789,6 +791,13 @@ export type SetValidationState = {
     };
 };
 
+export type SetTemplateEnabled = {
+    type: typeof SET_TEMPLATE_ENABLED;
+    payload: {
+        templateEnabled: boolean;
+    } & EditHistoryOptionsProperty;
+};
+
 export type DatasetReduxAction =
     | SetFreeformSources
     | ResetDatasetState
@@ -856,4 +865,5 @@ export type DatasetReduxAction =
     | SetEditHistoryState
     | SetCurrentTab
     | SetLastModifiedTab
-    | SetValidationState;
+    | SetValidationState
+    | SetTemplateEnabled;

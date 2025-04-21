@@ -29,11 +29,25 @@ export type UseParameterFormReturnValue = {
 };
 
 export const useParameterForm = (args: UseParameterFormArgs): UseParameterFormReturnValue => {
-    const {name, fieldId, getOriginalField, type, defaultValue} = args;
+    const {
+        name,
+        fieldId,
+        getOriginalField,
+        type,
+        defaultValue,
+        template_enabled,
+        value_constraint,
+    } = args;
 
     const nameRef = React.useRef(name);
     const prevTypeRef = React.useRef(type);
-    const [state, setState] = React.useState<ParameterFormState>({name, type, defaultValue});
+    const [state, setState] = React.useState<ParameterFormState>({
+        name,
+        type,
+        defaultValue,
+        template_enabled,
+        value_constraint,
+    });
     const [isFormValid, setIsFormValid] = React.useState<boolean>(false);
     const [isNameValid, setIsNameValid] = React.useState<boolean>(true);
 

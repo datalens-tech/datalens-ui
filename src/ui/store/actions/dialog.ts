@@ -214,6 +214,7 @@ export const openDialogParameter = ({
     field,
     onReset,
     showTemplateWarn,
+    templateEnabled,
 }: OpenDialogParameterArguments) => {
     return function (dispatch: AppDispatch) {
         const openDialogParameterParams: DialogParameterProps = {
@@ -235,6 +236,7 @@ export const openDialogParameter = ({
             onReset,
             field,
             showTemplateWarn,
+            templateEnabled,
         };
 
         dispatch(
