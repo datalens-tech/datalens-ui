@@ -4,7 +4,7 @@ import {dateTimeParse} from '@gravity-ui/date-utils';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {type EntryScope, RevisionsPanelQa, isUnreleasedVersion} from 'shared';
+import {type EntryScope, RevisionsPanelQa} from 'shared';
 import type {AppDispatch} from 'store';
 import {closeDialog as closeDialogConfirm, openDialogConfirm} from 'store/actions/dialog';
 import {setRevisionsListMode, setRevisionsMode} from 'store/actions/entryContent';
@@ -14,7 +14,7 @@ import {RevisionsListMode, RevisionsMode} from 'store/typings/entryContent';
 import {TIMESTAMP_FORMAT, URL_QUERY} from 'ui/constants';
 import {registry} from 'ui/registry';
 
-import {getUrlParamFromStr} from '../../utils';
+import {getUrlParamFromStr, isUnreleasedByUrlParams} from '../../utils';
 import history from '../../utils/history';
 import {getCapitalizedStr} from '../../utils/stringUtils';
 
@@ -136,7 +136,7 @@ const RevisionsPanel = ({
     const {getEntryScopesWithRevisionsList} = registry.common.functions.getAll();
 
     const urlRevId = getUrlParamFromStr(location.search, URL_QUERY.REV_ID);
-    const isUnreleased = isUnreleasedVersion(location.search);
+    const isUnreleased = isUnreleasedByUrlParams(location.search);
 
     const isInAvailableScopes = React.useMemo(
         () => getEntryScopesWithRevisionsList().includes(scope as EntryScope),
