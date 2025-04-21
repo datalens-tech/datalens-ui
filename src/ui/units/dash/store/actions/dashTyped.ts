@@ -576,6 +576,10 @@ function saveFailedCallback({
     );
 }
 
+function saveSuccessCallback({dispatch}: {dispatch: DashDispatch}) {
+    dispatch(resetDashEditHistory());
+}
+
 export function setActualDash(setForce?: boolean) {
     return async (dispatch: DashDispatch, getState: () => DatalensGlobalState) => {
         const {dash} = getState();
@@ -612,6 +616,8 @@ export function setActualDash(setForce?: boolean) {
                     }),
                 );
             }
+
+            saveSuccessCallback({dispatch});
         } catch (error) {
             saveFailedCallback({
                 error,
@@ -657,6 +663,8 @@ export function setPublishDraft(setForce?: boolean) {
                     }),
                 );
             }
+
+            saveSuccessCallback({dispatch});
         } catch (error) {
             saveFailedCallback({
                 error,
@@ -696,6 +704,8 @@ export function saveDashAsDraft(setForce?: boolean) {
                 ...location,
                 search: `?${searchParams.toString()}`,
             });
+
+            saveSuccessCallback({dispatch});
         } catch (error) {
             saveFailedCallback({
                 error,
