@@ -1,7 +1,6 @@
 import React from 'react';
 
 import {Icon} from '@gravity-ui/uikit';
-import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Feature} from 'shared';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -18,11 +17,10 @@ import {getFilteredEntryContextMenu} from './helpers';
 import '../EntryContextMenuBase/EntryContextMenuBase.scss';
 
 const i18n = I18n.keyset('component.entry-context-menu.view');
-const b = block('dl-entry-context-menu-base');
 
 const OVERRIDE_CONTEXT_MENU = {
     [ENTRY_CONTEXT_MENU_ACTION.DELETE]: {
-        menuItemClassName: b('item', {danger: true}),
+        theme: 'danger',
     },
 };
 
