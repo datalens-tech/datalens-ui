@@ -1,5 +1,6 @@
 import {dateTimeUtc} from '@gravity-ui/date-utils';
 import moment from 'moment';
+import {EXPORT_FORMATS} from 'shared';
 import {DL} from 'ui/constants';
 import {chartToTable} from 'ui/libs/DatalensChartkit/ChartKit/helpers/gravity-charts/chart-to-table';
 import {registry} from 'ui/registry';
@@ -15,7 +16,6 @@ import {
 import logger from '../../../../libs/logger';
 import {chartsDataProvider} from '../../index';
 import axiosInstance from '../axios/axios';
-import {EXPORT_FORMATS} from '../constants/constants';
 import LocalStorage from '../localStorage';
 import settings from '../settings/settings';
 import {markupToRawString} from '../table';

@@ -8,6 +8,7 @@
   "label_current-entry": "Selected object",
   "label_dashboards": "Dashboards",
   "label_datasets": "Datasets",
+  "label_file-connection-warning": "Copying file connections is not currently supported.",
   "label_linked-objects": "Linked objects",
   "label_no-linked-objects": "Empty",
   "label_objects": [
@@ -17,6 +18,5 @@
     "0 objects"
   ],
   "label_unknown-error": "An error occured during copying. Please try again later.",
-  "label_file-connection-warning": "Copying file connections is not currently supported.",
   "title": "Copy objects to workbooks"
 }
