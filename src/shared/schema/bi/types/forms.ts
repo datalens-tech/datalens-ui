@@ -77,6 +77,10 @@ export type RadioGroupItemOption = {
     content: {
         text: string;
         hintText?: MarkdownString;
+        textEndIcon?: {
+            name: 'CircleExclamation';
+            view?: 'error' | 'warn';
+        };
     };
     value: string;
 };
@@ -161,7 +165,15 @@ export type CollapseRowItem = BaseItem & {
     componentProps?: Partial<CollapseProps>;
 };
 
-export type PreparedRow = CacheTtlRowItem | CollapseRowItem;
+export type RawSQLLevelRowItem = Omit<BaseItem, 'inner'> & {
+    type: 'raw_sql_level';
+    label: Omit<LabelItem, 'id' | 'displayConditions'>;
+    radioGroup: Omit<RadioGroupItem, 'id' | 'displayConditions' | 'inner'>;
+    switchOffValue: string;
+    disabled?: boolean;
+};
+
+export type PreparedRow = CacheTtlRowItem | CollapseRowItem | RawSQLLevelRowItem;
 
 export type Row = CustomizableRow | PreparedRow;
 

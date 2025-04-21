@@ -33,6 +33,7 @@ import type {AppThunkAction} from '../../../store';
 
 import {EXAMPLE_FUNCTION} from './constants/functions';
 import type {CheckCreateEntryButtonVisibility} from './types/functions/checkCreateEntryButtonVisibility';
+import type {CsvExportAction} from './types/functions/csvExportAction';
 import type {
     FetchDocumentationArgs,
     FetchDocumentationResponse,
@@ -41,6 +42,7 @@ import type {FetchFunctionsDocumentationResponse} from './types/functions/fetchF
 import type {GetAdditionalChartkitErrorContent} from './types/functions/getAdditionalChartkitErrorContent';
 import type {GetBasicActionPanelItems} from './types/functions/getBasicActionPanelItems';
 import type {GetFunctionsDocumentationResponse} from './types/functions/getFunctionsDocumentation';
+import type {GloballyEntrySettings} from './types/functions/getGloballyEntrySettings';
 import type {GetIllustrationStore} from './types/functions/getIllustrationStore';
 import type {GetLoginById} from './types/functions/getLoginById';
 import type {GetUIEntryRouteArgs} from './types/functions/getUIEntryRoute';
@@ -58,7 +60,7 @@ export const commonFunctionsMap = {
     openDialogOrganizationInviteUsers:
         makeFunctionTemplate<() => OpenDialogOrganizationInviteUsers>(),
     getEntryMenuConfig: makeFunctionTemplate<() => MenuGroup[]>(),
-    getEntryPublishGloballyDisabled: makeFunctionTemplate<() => boolean>(),
+    getGloballyEntrySettings: makeFunctionTemplate<() => GloballyEntrySettings>(),
     getMenuGroupConfig: makeFunctionTemplate<() => Array<MenuGroup>>(),
     getSelectStateMenuItem:
         makeFunctionTemplate<
@@ -166,4 +168,5 @@ export const commonFunctionsMap = {
     renderDialogRelatedEntitiesAlertHint:
         makeFunctionTemplate<RenderDialogRelatedEntitiesAlertHint>(),
     getAdditionalChartkitErrorContent: makeFunctionTemplate<GetAdditionalChartkitErrorContent>(),
+    csvExportAction: makeFunctionTemplate<CsvExportAction>(),
 } as const;

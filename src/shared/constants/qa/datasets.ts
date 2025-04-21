@@ -36,3 +36,10 @@ export const enum DatasetDialogRelationQA {
     Apply = 'dataset-dialog-relation-save-button',
     DialogTitle = 'dataset-dialog-relation-dialog-title',
 }
+
+export const DATASET_TAB = {
+    DATASET: 'dataset',
+    FILTERS: 'filters',
+    SOURCES: 'sources',
+    PARAMETERS: 'parameters',
+} as const;

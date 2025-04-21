@@ -288,10 +288,9 @@ class ErrorContent extends React.PureComponent {
             case ErrorContentTypes.CREDENTIALS:
                 imageName = 'identity';
                 break;
-            case ErrorContentTypes.FORBIDDEN_SSO:
             case ErrorContentTypes.INACCESSIBLE_ON_MOBILE:
-            case ErrorContentTypes.FORBIDDEN_REPORT_ENTRY:
             case ErrorContentTypes.FORBIDDEN_BY_PLAN:
+            case ErrorContentTypes.FORBIDDEN_AUTH:
                 imageName = 'project';
                 break;
             default:

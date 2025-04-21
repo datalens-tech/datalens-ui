@@ -40,7 +40,7 @@ const ORDERS = {
     ASC: 'ASC',
 };
 
-type Options = {utc?: boolean};
+type Options = {utc?: boolean; disableProcessDates?: boolean};
 
 function getTimezoneOffsettedTime(value: Date) {
     return value.getTime() - value.getTimezoneOffset() * 60 * 1000;
@@ -60,6 +60,9 @@ function convertSimpleType(data: null | string, dataType: string, options: Optio
         case 'datetime':
         case 'genericdatetime':
         case 'datetimetz': {
+            if (options.disableProcessDates) {
+                return data;
+            }
             const date = new Date(data);
 
             if (!options.utc) {
@@ -265,7 +268,7 @@ function getDatasetRows(params: {datasetName: string}) {
         throw new Error(`Dataset "${datasetName}" is not defined`);
     }
 
-    return processData(data, datasetName, EditorAPI);
+    return processData(data, datasetName, EditorAPI, {disableProcessDates: true});
 }
 
 export default {
