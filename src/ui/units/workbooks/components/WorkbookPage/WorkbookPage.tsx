@@ -1,12 +1,18 @@
 import React from 'react';
 
+import {Alert, Button, Flex, spacing} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {SmartLoader} from 'components/SmartLoader/SmartLoader';
 import {ViewError} from 'components/ViewError/ViewError';
+import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {useLocation, useParams} from 'react-router-dom';
+import {Redirect, useLocation, useParams} from 'react-router-dom';
+import {Feature} from 'shared';
+import {WORKBOOK_STATUS} from 'shared/constants/workbooks';
 import {DL} from 'ui/constants/common';
 import type {AppDispatch} from 'ui/store';
+import {COLLECTIONS_PATH} from 'ui/units/collections-navigation/constants';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import Utils from 'ui/utils/utils';
 
 import {registry} from '../../../../registry';
@@ -32,6 +38,7 @@ import {useLayout} from './hooks/useLayout';
 import './WorkbookPage.scss';
 
 const b = block('dl-workbook-page');
+const i18n = I18n.keyset('new-workbooks');
 
 export const WorkbookPage = () => {
     const {search} = useLocation();
@@ -43,6 +50,14 @@ export const WorkbookPage = () => {
     const workbook = useSelector(selectWorkbook);
     const pageError = useSelector(selectPageError);
     const breadcrumbsError = useSelector(selectCollectionBreadcrumbsError);
+
+    const [showImportAlert, setShowImportAlert] = React.useState(
+        // TODO (Export workbook): enable when logic of alert is ready
+        // isEnabledFeature(Feature.EnableExportWorkbookFile) &&
+        //     workbook?.meta &&
+        //     'importId' in workbook.meta,
+        false,
+    );
 
     const {getWorkbookTabs} = registry.workbooks.functions.getAll();
     const availableItems = React.useMemo(() => {
@@ -90,6 +105,24 @@ export const WorkbookPage = () => {
     useLayout({workbookId, refreshWorkbookInfo});
 
     if (
+        isEnabledFeature(Feature.EnableExportWorkbookFile) &&
+        workbook?.status === WORKBOOK_STATUS.CREATING &&
+        workbook?.meta.importId
+    ) {
+        const redirectPath = collectionId
+            ? `${COLLECTIONS_PATH}/${collectionId}`
+            : COLLECTIONS_PATH;
+        return (
+            <Redirect
+                to={{
+                    pathname: `${redirectPath}`,
+                    state: {importId: workbook.meta.importId},
+                }}
+            />
+        );
+    }
+
+    if (
         pageError ||
         (breadcrumbsError && Utils.parseErrorResponse(breadcrumbsError).status !== 403)
     ) {
@@ -99,6 +132,24 @@ export const WorkbookPage = () => {
             </div>
         );
     }
+
+    const handleCloseImportAlert = () => {
+        setShowImportAlert(false);
+    };
+
+    const renderAlertActions = () => {
+        return (
+            <Flex gap={3}>
+                <Button view="normal-contrast" onClick={handleCloseImportAlert}>
+                    {i18n('button_import-alert-close')}
+                </Button>
+                {/* TODO (Export workbook): Add after publication of documentation */}
+                {/* <Button view="flat-secondary" href={DL.ENDPOINTS.datalensDocs}>
+                    {i18n('button_import-alert-documentation')}
+                </Button> */}
+            </Flex>
+        );
+    };
 
     return (
         <div className={b()}>
@@ -112,6 +163,15 @@ export const WorkbookPage = () => {
                                 <WorkbookFilters filters={filters} onChange={handleChangeFilters} />
                             )}
                             {workbook && <WorkbookTabs workbook={workbook} />}
+                            {showImportAlert && (
+                                <Alert
+                                    theme="info"
+                                    title={i18n('label_import-alert-title')}
+                                    actions={renderAlertActions()}
+                                    onClose={handleCloseImportAlert}
+                                    className={spacing({mt: 6})}
+                                />
+                            )}
                         </div>
                         <div className={b('content')}>
                             {isMainTab ? (

@@ -1,8 +1,4 @@
-import type {
-    ChartKitWidgetData,
-    LineSeries,
-    LineSeriesData,
-} from '@gravity-ui/chartkit/build/types/widget-data';
+import type {ChartData, LineSeries, LineSeriesData} from '@gravity-ui/chartkit/d3';
 
 import type {
     SeriesExportSettings,
@@ -10,7 +6,13 @@ import type {
     WrappedHTML,
     WrappedMarkdown,
 } from '../../../../../../../shared';
-import {AxisMode, PlaceholderId, getXAxisMode} from '../../../../../../../shared';
+import {
+    AxisMode,
+    PlaceholderId,
+    getXAxisMode,
+    isDateField,
+    isNumberField,
+} from '../../../../../../../shared';
 import {getFormattedLabel} from '../../d3/utils/dataLabels';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
@@ -135,17 +137,25 @@ export function prepareD3Line(args: PrepareFunctionArgs) {
         };
     });
 
-    let legend: ChartKitWidgetData['legend'];
+    let legend: ChartData['legend'];
     if (seriesData.length <= 1) {
         legend = {enabled: false};
     }
 
-    let xAxis: ChartKitWidgetData['xAxis'];
+    let xAxis: ChartData['xAxis'] = {};
     if (isCategoriesXAxis) {
         xAxis = {
             type: 'category',
             categories: xCategories?.map(String),
         };
+    } else {
+        if (isDateField(xField)) {
+            xAxis.type = 'datetime';
+        }
+
+        if (isNumberField(xField)) {
+            xAxis.type = xPlaceholder?.settings?.type === 'logarithmic' ? 'logarithmic' : 'linear';
+        }
     }
 
     return {

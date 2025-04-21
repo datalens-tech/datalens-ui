@@ -1,5 +1,3 @@
-import {DL} from 'constants/common';
-
 import React from 'react';
 
 import {dateTime} from '@gravity-ui/date-utils';
@@ -11,6 +9,7 @@ import {Link} from 'react-router-dom';
 import {DEFAULT_DATE_FORMAT} from 'shared';
 import {WorkbookPageQa} from 'shared/constants/qa/workbooks';
 import type {WorkbookWithPermissions} from 'shared/schema/us/types/workbooks';
+import {DL} from 'ui/constants/common';
 import {registry} from 'ui/registry/index';
 import type {AppDispatch} from 'ui/store';
 import {changeFavoriteEntry} from 'ui/units/workbooks/store/actions';
@@ -32,6 +31,7 @@ type RowProps = {
     onDuplicateEntry: (data: WorkbookEntry) => void;
     onCopyEntry: (data: WorkbookEntry) => void;
     onShowRelatedClick: (data: WorkbookEntry) => void;
+    onCopyId?: (data: WorkbookEntry) => void;
 };
 
 const onClickStopPropogation: React.MouseEventHandler = (e) => {
@@ -49,6 +49,7 @@ const Row: React.FC<RowProps> = ({
     onDuplicateEntry,
     onCopyEntry,
     onShowRelatedClick,
+    onCopyId,
 }) => {
     const {getWorkbookEntryUrl} = registry.workbooks.functions.getAll();
     const {getLoginById} = registry.common.functions.getAll();
@@ -151,6 +152,9 @@ const Row: React.FC<RowProps> = ({
                                 }}
                                 onShowRelatedClick={() => {
                                     onShowRelatedClick(item);
+                                }}
+                                onCopyId={() => {
+                                    onCopyId?.(item);
                                 }}
                             />
                         </div>

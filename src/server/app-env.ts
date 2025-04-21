@@ -8,4 +8,5 @@ export const releaseVersion = process.env.RELEASE_VERSION;
 export const isFullMode = mode === AppMode.Full;
 export const isDatalensMode = mode === AppMode.Datalens;
 export const isChartsMode = mode === AppMode.Charts;
+export const isApiMode = mode === AppMode.Api;
 export const isOpensourceInstallation = appInstallation === AppInstallation.Opensource;

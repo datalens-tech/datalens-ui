@@ -3,8 +3,12 @@ import React from 'react';
 import {sanitizeUrl} from '@braintree/sanitize-url';
 import {Link} from '@gravity-ui/uikit';
 import merge from 'lodash/merge';
+import omit from 'lodash/omit';
 import type {MarkupItem, MarkupItemType} from 'shared';
 import {MarkupItemTypes, isMarkupItem, markupToRawString} from 'shared';
+
+import {getRandomCKId} from '../../libs/DatalensChartkit/helpers/helpers';
+import {ATTR_DATA_TOOLTIP_ANCHOR_ID} from '../../libs/DatalensChartkit/modules/html-generator/constants';
 
 import {MarkupTooltip, UserInfo} from './components';
 import type {TemplateItem} from './types';
@@ -16,17 +20,23 @@ type MarkupProps = {
 };
 
 // eslint-disable-next-line complexity
-export function getConfig(
-    markupItem?: string | MarkupItem,
-    externalProps?: MarkupProps['externalProps'],
-    configItem?: TemplateItem,
-    config?: TemplateItem,
-): TemplateItem {
+function getConfig({
+    markupItem,
+    externalProps,
+    configItem,
+    config,
+}: {
+    markupItem?: string | MarkupItem;
+    externalProps?: MarkupProps['externalProps'];
+    configItem?: TemplateItem;
+    config?: TemplateItem;
+}): TemplateItem {
     if (!markupItem) {
         return config as TemplateItem;
     }
 
     const iteratedConfigItem = configItem || {children: []};
+    const childProps: Record<string, string> = {};
 
     if (typeof markupItem === 'string') {
         iteratedConfigItem.children.push(markupItem);
@@ -70,7 +80,11 @@ export function getConfig(
             if (markupItem.children) {
                 iteratedConfigItem.children.push(
                     ...markupItem.children.map((child) => {
-                        return getConfig(child, externalProps, {children: []});
+                        return getConfig({
+                            markupItem: child,
+                            externalProps,
+                            configItem: {children: []},
+                        });
                     }),
                 );
             }
@@ -98,6 +112,7 @@ export function getConfig(
                 view: 'normal',
                 href,
                 target: '_blank',
+                extraProps: omit(iteratedConfigItem.props, 'view', 'href', 'target'),
             });
             break;
         }
@@ -123,10 +138,15 @@ export function getConfig(
         }
         case MarkupItemTypes.Tooltip: {
             iteratedConfigItem.element = MarkupTooltip;
+            const tooltipId = getRandomCKId();
+
             iteratedConfigItem.props = {
-                content: renderTemplate(getConfig(markupItem.tooltip, {}, {children: []})),
+                tooltipId,
+                content: markupItem.tooltip ?? '',
                 ...(markupItem.placement && {placement: markupItem.placement}),
             };
+
+            childProps[ATTR_DATA_TOOLTIP_ANCHOR_ID] = tooltipId;
 
             break;
         }
@@ -137,7 +157,7 @@ export function getConfig(
     }
 
     const content = markupItem.content as MarkupItem;
-    let nextConfigItem: TemplateItem = {children: []};
+    let nextConfigItem: TemplateItem = {children: [], props: {...childProps}};
 
     if (content?.type && content.type !== MarkupItemTypes.Text) {
         iteratedConfigItem.children.push(nextConfigItem);
@@ -147,7 +167,12 @@ export function getConfig(
 
     const nextConfig = config || iteratedConfigItem;
 
-    return getConfig(markupItem.content, externalProps, nextConfigItem, nextConfig);
+    return getConfig({
+        markupItem: markupItem.content,
+        externalProps,
+        configItem: nextConfigItem,
+        config: nextConfig,
+    });
 }
 
 export function renderTemplate(templateItem: TemplateItem | string): JSX.Element {
@@ -165,7 +190,10 @@ export function renderTemplate(templateItem: TemplateItem | string): JSX.Element
 }
 
 export function Markup(props: MarkupProps) {
-    return renderTemplate(getConfig(props.item, props.externalProps));
+    const {item: markupItem, externalProps} = props;
+    const template = getConfig({markupItem, externalProps});
+
+    return renderTemplate(template);
 }
 
 export default Markup;

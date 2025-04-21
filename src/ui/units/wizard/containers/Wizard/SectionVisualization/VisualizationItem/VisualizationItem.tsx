@@ -829,11 +829,17 @@ class VisualizationItem extends React.Component<Props, State> {
         }
 
         if (target.cast !== cast) {
-            if (cast === 'date') {
+            if (cast === 'date' && !AVAILABLE_DATE_FORMATS.includes(String(target.format))) {
                 target.format = AVAILABLE_DATE_FORMATS[2];
-            } else if (cast === 'genericdatetime') {
+            } else if (
+                cast === 'genericdatetime' &&
+                !AVAILABLE_DATETIME_FORMATS.includes(String(target.format))
+            ) {
                 target.format = AVAILABLE_DATETIME_FORMATS[5];
-            } else if (cast === 'datetimetz') {
+            } else if (
+                cast === 'datetimetz' &&
+                !AVAILABLE_DATETIMETZ_FORMATS.includes(String(target.format))
+            ) {
                 target.format = AVAILABLE_DATETIMETZ_FORMATS[7];
             }
 

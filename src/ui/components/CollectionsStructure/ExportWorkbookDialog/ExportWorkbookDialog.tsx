@@ -1,20 +1,29 @@
 import React from 'react';
 
-import {Dialog} from '@gravity-ui/uikit';
+import {Dialog, Flex, Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {DIALOG_DEFAULT} from 'ui/components/DialogDefault/DialogDefault';
 import {ProgressBar} from 'ui/components/ProgressBar/ProgressBar';
 import {ViewError} from 'ui/components/ViewError/ViewError';
-import {exportWorkbook, resetExportWorkbook} from 'ui/store/actions/collectionsStructure';
+import type {AppDispatch} from 'ui/store';
+import {
+    exportWorkbook,
+    getExportProgress,
+    resetExportWorkbook,
+} from 'ui/store/actions/collectionsStructure';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {
+    selectExportData,
     selectExportWorkbook,
     selectExportWorkbookStatus,
+    selectGetExportProgress,
 } from 'ui/store/selectors/collectionsStructure';
 
 import DialogManager from '../../DialogManager/DialogManager';
+import {EntriesNotificationCut} from '../components/EntriesNotificationCut/EntriesNotificationCut';
+import {transformNotifications} from '../components/EntriesNotificationCut/helpers';
 import type {ImportExportStatus} from '../types';
 
 import {ExportInfo} from './ExportInfo/ExportInfo';
@@ -24,6 +33,8 @@ import './ExportWorkbookDialog.scss';
 const b = block('export-workbook-file-dialog');
 
 const i18n = I18n.keyset('component.workbook-export-dialog.view');
+
+const GET_EXPORT_PROGRESS_INTERVAL = 1000;
 
 export type Props = {
     open: boolean;
@@ -41,24 +52,26 @@ export type OpenDialogExportWorkbookArgs = {
 type DialogView = 'info' | 'export';
 
 const getApplyButtonText = (view: DialogView, status: ImportExportStatus) => {
-    if (view === 'info' || status === 'loading') {
+    if (view === 'info' || status === 'loading' || status === 'pending') {
         return i18n('button_begin-export');
     }
     switch (status) {
         case 'success':
             return i18n('button_download');
-        case 'error':
+        case 'fatal-error':
+        case 'notification-error':
         default:
             return undefined;
     }
 };
 
 const getCaption = (view: DialogView, status: ImportExportStatus) => {
-    if (view === 'info' || status === 'loading') {
+    if (view === 'info' || status === 'loading' || status === 'pending') {
         return i18n('title_export');
     }
     switch (status) {
-        case 'error':
+        case 'fatal-error':
+        case 'notification-error':
             return i18n('title_fatal-error');
         case 'success':
             return i18n('title_export-success');
@@ -68,13 +81,30 @@ const getCaption = (view: DialogView, status: ImportExportStatus) => {
 };
 
 export const ExportWorkbookDialog: React.FC<Props> = ({workbookId, open, onClose}) => {
-    const dispatch = useDispatch();
+    const dispatch: AppDispatch = useDispatch();
 
     const [view, setView] = React.useState<DialogView>('info');
     const status = useSelector(selectExportWorkbookStatus);
 
-    // TODO: data will be needed for success state
-    const {isLoading, data: _, error} = useSelector(selectExportWorkbook);
+    const exportData = useSelector(selectExportData);
+
+    const {error} = useSelector(selectExportWorkbook);
+    const {data: progressData} = useSelector(selectGetExportProgress);
+    const progress = progressData?.progress;
+    const notifications = progressData?.notifications;
+
+    const exportProgressTimeout = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+    const isMounted = React.useCallback(() => true, []);
+
+    const preparedNotifications = React.useMemo(() => {
+        if (!notifications) {
+            return [];
+        }
+
+        return transformNotifications(notifications);
+    }, [notifications]);
+
+    const isLoading = status === 'loading' || status === 'pending';
 
     React.useEffect(() => {
         if (open) {
@@ -82,8 +112,35 @@ export const ExportWorkbookDialog: React.FC<Props> = ({workbookId, open, onClose
         }
     }, [dispatch, open]);
 
+    const pollExportStatus = React.useCallback(
+        async (currentExportId: string) => {
+            if (exportProgressTimeout.current) {
+                clearTimeout(exportProgressTimeout.current);
+            }
+
+            if (!isMounted()) {
+                return;
+            }
+
+            const startTime = Date.now();
+
+            const result = await dispatch(getExportProgress({exportId: currentExportId}));
+
+            const elapsedTime = Date.now() - startTime;
+
+            if (result && result.status === 'pending') {
+                const nextPollDelay = Math.max(0, GET_EXPORT_PROGRESS_INTERVAL - elapsedTime);
+                exportProgressTimeout.current = setTimeout(
+                    () => pollExportStatus(currentExportId),
+                    nextPollDelay,
+                );
+            }
+        },
+        [dispatch, isMounted],
+    );
+
     const handleCancel = React.useCallback(() => {
-        if (status === 'loading') {
+        if (isLoading) {
             dispatch(
                 openDialog({
                     id: DIALOG_DEFAULT,
@@ -108,13 +165,42 @@ export const ExportWorkbookDialog: React.FC<Props> = ({workbookId, open, onClose
             return;
         }
 
-        onClose();
-    }, [dispatch, onClose, status]);
+        if (status === 'success' && exportData?.exportId) {
+            dispatch(
+                openDialog({
+                    id: DIALOG_DEFAULT,
+                    props: {
+                        open: true,
+                        onApply: () => {
+                            dispatch(closeDialog());
+                            onClose();
+                        },
+                        onCancel: () => {
+                            dispatch(closeDialog());
+                        },
+                        message: i18n('label_close-export-description'),
+                        textButtonApply: i18n('button_close-export'),
+                        textButtonCancel: i18n('button_back-to-export'),
+                        propsButtonApply: {view: 'outlined-danger'},
+                        caption: i18n('title_close-export'),
+                        className: b('import-cancel-dialog'),
+                    },
+                }),
+            );
 
-    const handleApply = React.useCallback(() => {
+            return;
+        }
+
+        onClose();
+    }, [dispatch, exportData?.exportId, isLoading, onClose, status]);
+
+    const handleApply = React.useCallback(async () => {
         if (view === 'info') {
             setView('export');
-            dispatch(exportWorkbook({workbookId}));
+            const exportResult = await dispatch(exportWorkbook({workbookId}));
+            if (exportResult && exportResult.exportId) {
+                pollExportStatus(exportResult.exportId);
+            }
             return;
         }
 
@@ -123,21 +209,50 @@ export const ExportWorkbookDialog: React.FC<Props> = ({workbookId, open, onClose
 
             onClose();
         }
-    }, [dispatch, onClose, status, view, workbookId]);
+    }, [dispatch, onClose, pollExportStatus, status, view, workbookId]);
 
     const cancelButtonText =
-        view === 'info' || status === 'loading' ? i18n('button_cancel') : i18n('button_close');
+        view === 'info' || isLoading ? i18n('button_cancel') : i18n('button_close');
 
     const renderBody = () => {
         if (view === 'info') {
             return <ExportInfo />;
         }
         switch (status) {
+            case 'pending':
+                return <ProgressBar size="s" className={b('progress')} value={progress ?? 0} />;
             case 'loading':
-                return <ProgressBar size="s" className={b('progress')} value={50} />;
+                return (
+                    <Flex alignItems="center" justifyContent="center">
+                        <Loader size="m" />
+                    </Flex>
+                );
             case 'success':
-                return <div>Success</div>;
-            case 'error':
+            case 'notification-error':
+                if (!notifications) {
+                    return null;
+                }
+                if (!preparedNotifications.length) {
+                    return (
+                        <EntriesNotificationCut
+                            title={i18n('label_success-export')}
+                            level="success"
+                        />
+                    );
+                }
+                return (
+                    <Flex direction="column" gap={4} className={b('notifications')}>
+                        {preparedNotifications.map((notification) => (
+                            <EntriesNotificationCut
+                                key={notification.code}
+                                title={notification.message}
+                                level={notification.level}
+                                entries={notification.entries}
+                            />
+                        ))}
+                    </Flex>
+                );
+            case 'fatal-error':
             default:
                 return <ViewError containerClassName={b('error-content')} error={error} size="s" />;
         }

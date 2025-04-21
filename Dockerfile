@@ -1,22 +1,22 @@
-# use native build platform for build js files only once
-FROM --platform=${BUILDPLATFORM} ubuntu:22.04 AS native-build-stage
+ARG UBUNTU_VERSION=24.04
 
-ARG NODE_MAJOR=20
+# use native build platform for build js files only once
+FROM --platform=${BUILDPLATFORM} ubuntu:${UBUNTU_VERSION} AS native-build-stage
+
+ARG NODE_MAJOR=22
 
 ENV DEBIAN_FRONTEND=noninteractive
-ENV NODE_EXTRA_CA_CERTS=/usr/local/share/ca-certificates/cert.pem
 
 RUN apt-get update && apt-get -y upgrade && apt-get -y install ca-certificates curl gnupg
 
 # node
-RUN mkdir -p /etc/apt/keyrings
-RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
-
-RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_${NODE_MAJOR}.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
+RUN mkdir -p /etc/apt/keyrings && \
+    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg && \
+    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_${NODE_MAJOR}.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
 
 RUN apt-get update && apt-get -y install nodejs g++ make
 
-RUN useradd -m -u 1000 app && mkdir /opt/app && chown app:app /opt/app
+RUN useradd -m -u 1001 app && mkdir /opt/app && chown app:app /opt/app
 
 WORKDIR /opt/app
 
@@ -30,19 +30,18 @@ COPY app-builder.config.ts tsconfig.json /opt/app/
 RUN npm run build && chown app /opt/app/dist/run
 
 # runtime base image for both platform
-FROM ubuntu:22.04 AS base-stage
+FROM ubuntu:${UBUNTU_VERSION} AS base-stage
 
-ARG NODE_MAJOR=20
+ARG NODE_MAJOR=22
 
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get -y upgrade && apt-get -y install ca-certificates curl gnupg
 
 # node
-RUN mkdir -p /etc/apt/keyrings
-RUN curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg
-
-RUN echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_${NODE_MAJOR}.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
+RUN mkdir -p /etc/apt/keyrings && \
+    curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg && \
+    echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_${NODE_MAJOR}.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list
 
 RUN apt-get update && apt-get -y install nginx supervisor nodejs
 
@@ -50,14 +49,16 @@ RUN apt-get update && apt-get -y install nginx supervisor nodejs
 RUN apt-get -y purge curl gnupg gnupg2 && \
     apt-get -y autoremove && \
     apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+    rm -rf /var/lib/apt/lists/* && \
+    rm -rf /etc/apt/sources.list.d/nodesource.list && \
+    rm -rf /etc/apt/keyrings/nodesource.gpg
 
 # timezone setting
 ENV TZ="Etc/UTC"
 RUN ln -sf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # user app
-RUN useradd -m -u 1000 app && mkdir /opt/app && chown app:app /opt/app
+RUN useradd -m -u 1001 app && mkdir /opt/app && chown app:app /opt/app
 
 # install package dependencies for production
 FROM base-stage AS install-stage
@@ -74,21 +75,17 @@ RUN npm ci && npm prune --production
 # production running stage
 FROM base-stage AS runtime-stage
 
-# cleanup nginx defaults
-RUN rm -rf /etc/nginx/sites-enabled/default
-
 COPY deploy/nginx /etc/nginx
-COPY deploy/supervisor /etc/supervisor/conf.d
+COPY deploy/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
 
 # prepare rootless permissions for supervisor and nginx
 ARG USER=app
-RUN chown -R ${USER} /var/log/supervisor/ && \
-    mkdir /var/run/supervisor && \
-    chown -R ${USER} /var/run/supervisor && \
-    mkdir -p /var/cache/nginx && chown -R ${USER} /var/cache/nginx && \
-    mkdir -p /var/log/nginx  && chown -R ${USER} /var/log/nginx && \
-    mkdir -p /var/lib/nginx  && chown -R ${USER} /var/lib/nginx && \
-    touch /run/nginx.pid && chown -R ${USER} /run/nginx.pid 
+RUN chown -R ${USER} /etc/nginx && \
+    chown -R ${USER} /etc/supervisor && \
+    rm -rf  /etc/supervisor/conf.d && \
+    rm -rf  /etc/nginx/sites-available && \
+    rm -rf  /etc/nginx/sites-enabled && \
+    rm -rf  /etc/nginx/nginx-default.conf
 
 ARG app_version
 ENV APP_VERSION=$app_version
@@ -96,8 +93,7 @@ ENV TMPDIR=/tmp
 
 WORKDIR /opt/app
 
-COPY package.json package-lock.json /opt/app/
-
+COPY --from=install-stage /opt/app/package.json /opt/app/package-lock.json /opt/app/
 COPY --from=install-stage /opt/app/node_modules /opt/app/node_modules
 COPY --from=native-build-stage /opt/app/dist /opt/app/dist
 
@@ -113,6 +109,7 @@ ENV UI_CORE_CDN=false
 ENV APP_MODE=full
 ENV APP_ENV=production
 ENV APP_INSTALLATION=opensource
+ENV APP_PORT=3030
 
 EXPOSE 8080
 

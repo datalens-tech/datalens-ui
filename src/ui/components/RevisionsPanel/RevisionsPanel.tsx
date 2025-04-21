@@ -148,7 +148,10 @@ const RevisionsPanel = ({
 
     const showDeprecationMessage = isEditing && Boolean(deprecationMessage);
 
+    const canEdit = Boolean(entry.permissions?.edit || !entry.permissions);
+
     const showDraftWarningPanel =
+        canEdit &&
         currentRevId &&
         currentRevId === publishedId &&
         savedId !== publishedId &&
@@ -254,7 +257,7 @@ const RevisionsPanel = ({
                     {loginText}
                 </div>
                 <RevisionsControls
-                    canEdit={Boolean(entry.permissions?.edit || !entry.permissions)}
+                    canEdit={canEdit}
                     onMakeActualClickCallback={handleMakeActualClick}
                     onOpenActualClickCallback={handleOpenActualClick}
                     onOpenRevisionsClickCallback={handleOpenRevisionsClick}

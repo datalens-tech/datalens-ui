@@ -5,24 +5,9 @@ import {I18n} from 'i18n';
 import {EntryScope} from 'shared';
 import {EntryRow} from 'ui/components/EntryRow/EntryRow';
 
-import type {RowEntryData} from '../EntryRow/EntryRow';
+import type {EntitiesListProps} from './types';
 
 import './EntitiesList.scss';
-
-type EntitiesListProps = {
-    entities: RowEntryData[];
-    hideTitle?: boolean;
-} & (CurrentEntity | ScopeEntities);
-
-type CurrentEntity = {
-    isCurrent: true;
-    scope?: string;
-};
-
-type ScopeEntities = {
-    isCurrent?: false;
-    scope: string;
-};
 
 const i18n = I18n.keyset('component.dialog-related-entities.view');
 
@@ -43,18 +28,33 @@ const getLabelByScope = (scope: string) => {
     }
 };
 
-export const EntitiesList = ({scope, entities, isCurrent, hideTitle}: EntitiesListProps) => {
+export const EntitiesList = ({
+    scope,
+    entities,
+    isCurrent,
+    hideTitle,
+    enableHover,
+    rightSectionSlot,
+    rowClassName,
+    className,
+}: EntitiesListProps) => {
     const title = isCurrent ? i18n('label_current-object') : getLabelByScope(scope);
 
+    const RightSectionSlot = rightSectionSlot;
+
     return (
-        <div className={b()}>
+        <div className={b(null, className)}>
             {title && !hideTitle && <div className={b('title')}>{title}</div>}
             {entities.map((entity) => (
                 <EntryRow
-                    className={b('row')}
+                    className={b('row', rowClassName)}
                     key={entity.entryId}
                     entry={entity}
                     nonInteractive={isCurrent}
+                    enableHover={enableHover}
+                    rightSectionSlot={
+                        RightSectionSlot ? <RightSectionSlot entry={entity} /> : undefined
+                    }
                 />
             ))}
         </div>

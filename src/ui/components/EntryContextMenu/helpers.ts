@@ -6,7 +6,6 @@ import type {DialogShareProps} from 'ui/registry/units/common/types/components/D
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import Utils from 'ui/utils/utils';
 
-import type {EntryScope} from '../../../shared';
 import {Feature, MenuItemsIds, getEntryNameByKey} from '../../../shared';
 import type {GetEntryResponse} from '../../../shared/schema';
 import {DL, URL_OPTIONS} from '../../constants';
@@ -195,6 +194,7 @@ type EntryContextMenuIDTypeBase =
     | 'duplicate'
     | 'edit'
     | 'copy-link'
+    | 'copy-id'
     | 'tableOfContent'
     | 'settings'
     | 'fullscreen'
@@ -220,7 +220,7 @@ export type WrapperParams = {
     children: React.ReactElement;
     entry: {
         entryId: string;
-        scope: EntryScope;
+        scope: string;
         type: string;
         key: string;
     };
@@ -232,7 +232,6 @@ export type EntryContextMenuItem<T = unknown> = {
     action: (args?: unknown) => void;
     id: MenuGroupConfigIds<T>; // it is necessary to identify and group menu items (using separators)
     hidden?: boolean;
-    menuItemClassName?: string;
     wrapper?: ({entry, children}: WrapperParams) => JSX.Element;
     qa?: string;
 };
@@ -257,7 +256,7 @@ const ENTRY_MENU_GROUP_CONFIG: Array<Array<EntryContextMenuIDType>> = [
     ['rename', 'move', 'duplicate', 'copy'],
     ['tableOfContent', 'fullscreen'],
     ['sql', 'materialization'],
-    ['access', 'show-related-entities', 'copy-link', 'public', 'sql-to-monitoring'],
+    ['access', 'show-related-entities', 'copy-link', 'copy-id', 'public', 'sql-to-monitoring'],
     ['edit', 'settings'],
     ['migrate-to-workbook'],
     ['delete'],

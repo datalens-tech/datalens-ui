@@ -57,6 +57,7 @@ const getEntityIconType = (
     {scope, type}: EntryData,
     className?: string,
     entityIconSize?: EntityIconSize,
+    overrideIconType?: EntityIconType,
 ) => {
     let iconType;
 
@@ -66,7 +67,7 @@ const getEntityIconType = (
 
     const {getScopeTypeIcon} = registry.common.functions.getAll();
 
-    const entityIconType = iconType || getScopeTypeIcon(scope as EntryScope);
+    const entityIconType = overrideIconType || iconType || getScopeTypeIcon(scope as EntryScope);
     if (entityIconType) {
         const iconSize =
             entityIconType === 'folder'
@@ -87,17 +88,28 @@ const getEntityIconType = (
 interface EntryIconProps extends Partial<ConnectorIconViewProps> {
     entry: EntryData;
     entityIconSize?: EntityIconSize;
+    // can be used to use connection icon without type of connection
+    overrideIconType?: EntityIconType;
 }
 
-export const EntryIcon: React.FC<EntryIconProps> = (props) => {
-    const {entry, className, entityIconSize, ...restProps} = props;
+export const EntryIcon = (props: EntryIconProps) => {
+    const {entry, className, entityIconSize, overrideIconType, size, ...restProps} = props;
     const iconData = getEntryIconData(entry);
+    const iconSize = size ?? defaultIconSize[entityIconSize || 's'];
     if (iconData) {
-        return <ConnectorIcon data={iconData} className={className} view="nav" {...restProps} />;
+        return (
+            <ConnectorIcon
+                data={iconData}
+                className={className}
+                view="nav"
+                size={iconSize}
+                {...restProps}
+            />
+        );
     }
     return (
-        getEntityIconType(entry, className, entityIconSize) || (
-            <Icon data={iconFilesBroken} className={className} {...restProps} />
+        getEntityIconType(entry, className, entityIconSize, overrideIconType) || (
+            <Icon data={iconFilesBroken} className={className} size={iconSize} {...restProps} />
         )
     );
 };

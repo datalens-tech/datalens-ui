@@ -1,11 +1,10 @@
 /* eslint-disable camelcase */
 
-import {DL} from 'constants/common';
-
 import type {AxiosRequestConfig, CancelTokenSource} from 'axios';
 import axios from 'axios';
 import type {DashData, EntryUpdateMode} from 'shared';
 import {ACCEPT_LANGUAGE_HEADER, TIMEZONE_OFFSET_HEADER, oldSchema} from 'shared';
+import {DL} from 'ui/constants/common';
 
 import type {CreateWidgetArgs} from '../../../shared/old-schema/charts';
 import {registry} from '../../registry';

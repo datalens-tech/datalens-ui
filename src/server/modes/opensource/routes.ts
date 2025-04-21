@@ -3,12 +3,14 @@ import {AuthPolicy} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
 import type {PassportStatic} from 'passport';
 
+import {AppEnvironment} from '../../../shared';
 import {getAuthArgs} from '../../../shared/schema/gateway-utils';
-import {isChartsMode, isDatalensMode, isFullMode} from '../../app-env';
+import {appEnv, isApiMode, isChartsMode, isDatalensMode, isFullMode} from '../../app-env';
 import {getAuthRoutes} from '../../components/auth/routes';
 import type {ChartsEngine} from '../../components/charts-engine';
 import {getZitadelRoutes} from '../../components/zitadel/routes';
 import {ping} from '../../controllers/ping';
+import {workbooksTransferController} from '../../controllers/workbook-transfer';
 import {getConnectorIconsMiddleware} from '../../middlewares';
 import type {ExtendedAppRouteDescription} from '../../types/controllers';
 import {getConfiguredRoute} from '../../utils/routes';
@@ -41,6 +43,13 @@ export function getRoutes({
         routes = {...routes, ...getZitadelRoutes({passport, beforeAuth, afterAuth})};
     }
 
+    if (appEnv === AppEnvironment.Development || isApiMode) {
+        routes = {
+            ...routes,
+            ...getApiRoutes({beforeAuth, afterAuth}),
+        };
+    }
+
     if (ctx.config.isAuthEnabled) {
         routes = {...routes, ...getAuthRoutes({routeParams: {beforeAuth, afterAuth}})};
     }
@@ -52,6 +61,35 @@ export function getRoutes({
     if (isFullMode || isChartsMode) {
         routes = {...routes, ...getChartsRoutes({chartsEngine, beforeAuth, afterAuth})};
     }
+
+    return routes;
+}
+
+function getApiRoutes({
+    beforeAuth,
+    afterAuth,
+}: {
+    beforeAuth: AppMiddleware[];
+    afterAuth: AppMiddleware[];
+}) {
+    const routes: Record<string, ExtendedAppRouteDescription> = {
+        workbooksExport: {
+            handler: workbooksTransferController.export,
+            beforeAuth,
+            afterAuth,
+            route: 'POST /api/internal/v1/workbooks/export/',
+            authPolicy: AuthPolicy.disabled,
+            disableCsrf: true,
+        },
+        workbooksImport: {
+            handler: workbooksTransferController.import,
+            beforeAuth,
+            afterAuth,
+            route: 'POST /api/internal/v1/workbooks/import/',
+            authPolicy: AuthPolicy.disabled,
+            disableCsrf: true,
+        },
+    };
 
     return routes;
 }

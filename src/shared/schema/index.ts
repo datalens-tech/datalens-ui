@@ -8,4 +8,3 @@ export const schema = {
 };
 
 export * from './types';
-export * from './constants';
