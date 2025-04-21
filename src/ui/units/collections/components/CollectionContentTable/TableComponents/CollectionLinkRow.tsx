@@ -2,8 +2,9 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {batch, useDispatch, useSelector} from 'react-redux';
-import {Link, useHistory} from 'react-router-dom';
+import {Link} from 'react-router-dom';
 import {CollectionContentTableQa} from 'shared';
+import {WORKBOOK_STATUS} from 'shared/constants/workbooks';
 import type {CollectionWithPermissions, WorkbookWithPermissions} from 'shared/schema/types';
 import {DIALOG_CREATE_WORKBOOK} from 'ui/components/CollectionsStructure/CreateWorkbookDialog/CreateWorkbookDialog';
 import {DL} from 'ui/constants/common';
@@ -21,47 +22,47 @@ const b = block('dl-collection-content-table');
 
 type CollectionLinkRowProps = {
     item: WorkbookWithPermissions | CollectionWithPermissions;
-    isImporting?: boolean;
+    isDisabled: boolean;
 };
 
 export const CollectionLinkRow: React.FC<CollectionLinkRowProps> = ({
     children,
     item,
-    isImporting,
+    isDisabled,
 }) => {
     const dispatch = useDispatch();
-    const history = useHistory();
 
     const breadcrumbs = useSelector(selectCollectionBreadcrumbs) ?? [];
 
     const isWorkbookItem = 'workbookId' in item;
 
-    if (isImporting && isWorkbookItem) {
+    if (isDisabled && isWorkbookItem) {
+        const isImport = Boolean(item.status === WORKBOOK_STATUS.CREATING && item.meta.importId);
+
         const handleImportingWorkbookClick = () => {
-            if (item.meta.importId) {
-                dispatch(
-                    openDialog({
-                        id: DIALOG_CREATE_WORKBOOK,
-                        props: {
-                            open: true,
-                            collectionId: item.collectionId,
-                            defaultView: 'import',
-                            onCreateWorkbook: ({workbookId}) => {
-                                if (workbookId) {
-                                    history.push(`${WORKBOOKS_PATH}/${workbookId}`);
-                                }
-                            },
-                            onClose: () => {
-                                dispatch(closeDialog());
-                            },
-                            importId: item.meta.importId,
+            dispatch(
+                openDialog({
+                    id: DIALOG_CREATE_WORKBOOK,
+                    props: {
+                        open: true,
+                        collectionId: item.collectionId,
+                        defaultView: 'import',
+                        onClose: () => {
+                            dispatch(closeDialog());
                         },
-                    }),
-                );
-            }
+                        importId: item.meta.importId,
+                    },
+                }),
+            );
         };
+
+        // possible statuses: interactive 'creating' and non-interactive 'deleting'
         return (
-            <div role="button" className={b('content-row')} onClick={handleImportingWorkbookClick}>
+            <div
+                role={isImport ? 'button' : undefined}
+                className={b('content-row')}
+                onClick={isImport ? handleImportingWorkbookClick : undefined}
+            >
                 {children}
             </div>
         );

@@ -1,0 +1,46 @@
+import React from 'react';
+
+import type {ChartKitDataProvider} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
+import type {MenuActionComponent, MenuItemModalProps} from 'ui/libs/DatalensChartkit/menu/Menu';
+import {EXPORT_FORMATS} from 'ui/libs/DatalensChartkit/modules/constants/constants';
+
+import {DownloadCsv} from '../../DownloadCsv/DownloadCsv';
+import type {ExportActionArgs, ExportChartArgs} from '../types';
+import {downloadData} from '../utils';
+
+export type CsvExportAction = (
+    chartsDataProvider: ChartKitDataProvider,
+    onExportLoading?: ExportChartArgs['onExportLoading'],
+    isEnabledAsyncChartDataExport?: boolean,
+    hasAccessToBusinessFeature?: boolean,
+) => (chartData: ExportActionArgs) => void | MenuActionComponent;
+
+export const csvExportAction: CsvExportAction = (_chartsDataProvider, onExportLoading) => {
+    return (chartData: ExportActionArgs): void | MenuActionComponent => {
+        const {loadedData, event} = chartData;
+
+        const chartType = loadedData.type;
+
+        const defaultParams = {
+            format: EXPORT_FORMATS.CSV,
+            delValues: ';',
+            delNumbers: '.',
+            encoding: 'utf8',
+        };
+
+        if (!event.ctrlKey && !event.metaKey) {
+            return function DownloadCsvModalRenderer(props: MenuItemModalProps) {
+                return (
+                    <DownloadCsv
+                        onClose={props.onClose}
+                        chartData={chartData}
+                        onApply={downloadData}
+                        chartType={chartType}
+                        onExportLoading={onExportLoading}
+                    />
+                );
+            };
+        }
+        downloadData({chartData, params: defaultParams, onExportLoading});
+    };
+};

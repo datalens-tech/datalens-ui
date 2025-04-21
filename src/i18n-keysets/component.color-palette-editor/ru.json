@@ -1,11 +1,11 @@
 {
-  "button_apply": "Применить",
+  "button_apply": "Сохранить и применить",
   "button_cancel": "Отменить",
   "button_close": "Закрыть",
   "button_delete-cancel": "Отмена",
   "button_delete-confirm": "Удалить ",
   "button_delete-title": "Удалить палитру",
-  "button_save": "Сохранить",
+  "button_save": "Добавить палитру",
   "label_add-color": "Добавить цвет",
   "label_add-color-disabled": "Невозможно добавить более {{count}} цветов",
   "label_add-palette": "Добавить палитру",

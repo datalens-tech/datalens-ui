@@ -36,7 +36,7 @@ export const opensourceEndpoints = {
             endpoint: endpoints.production.api.auth,
         },
         metaManager: {
-            endpoint: endpoints.development.api.metaManager,
+            endpoint: endpoints.production.api.metaManager,
         },
     },
 };
