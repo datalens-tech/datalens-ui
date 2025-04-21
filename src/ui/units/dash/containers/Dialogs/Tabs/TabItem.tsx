@@ -80,6 +80,7 @@ class TabItem extends React.PureComponent<Props> {
         {
             action: () => this.handleRemoveTab(),
             text: i18n('dash.tabs-dialog.edit', 'menu_delete'),
+            theme: 'danger',
         },
     ];
 

@@ -1,0 +1,32 @@
+name: Check i18n keysets
+
+on:
+  pull_request:
+    paths:
+      - 'src/i18n-keysets/**'
+
+jobs:
+  i18n-check-keysets:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Check keysets sorting
+        run: |
+          KEYSET_FILES=$(find src/i18n-keysets -type f -name "*.json" -not -name "keyset.json" -not -name "context.json")
+          if [ -n "$KEYSET_FILES" ]; then
+            node scripts/i18n-keysets-sorting-check.js $KEYSET_FILES
+          fi
+      - name: Check for prohibited keyset/context files
+        run: |
+          PROHIBITED_FILES=$(find src/i18n-keysets -type f \( -name "keyset.json" -o -name "context.json" \))
+          if [ -n "$PROHIBITED_FILES" ]; then
+            node scripts/i18n-keysets-clear.js $PROHIBITED_FILES
+          fi

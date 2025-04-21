@@ -1,6 +1,6 @@
 import type React from 'react';
 
-import type {IconData} from '@gravity-ui/uikit';
+import type {IconData, MenuItemProps} from '@gravity-ui/uikit';
 import type {DatasetField} from 'shared';
 
 import type {TitleColumnProps} from './components/TitleColumn/TitleColumn';
@@ -61,6 +61,7 @@ export type MenuControlItem = {
     action: (field: DatasetField) => void;
     text: (field: DatasetField) => string | React.ReactNode;
     qa?: string;
+    theme?: MenuItemProps['theme'];
 };
 
 export type MenuControlArgs = {
