@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {FormRow} from '@gravity-ui/components';
 import {RadioButton, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
@@ -43,31 +44,25 @@ export const CenterSetting = (props: Props) => {
     };
 
     return (
-        <div className={b()}>
-            <div className={b('row')}>
-                <div className={b('title')}>{i18n('wizard', 'label_center')}</div>
-                <RadioButton value={mode} onUpdate={handleUpdateMode}>
-                    {RADIO_OPTIONS.map((item) => (
-                        <RadioButton.Option key={item.value} value={item.value}>
-                            {item.label}
-                        </RadioButton.Option>
-                    ))}
-                </RadioButton>
-            </div>
+        <FormRow className={b()} label={i18n('wizard', 'label_center')}>
+            <RadioButton value={mode} onUpdate={handleUpdateMode}>
+                {RADIO_OPTIONS.map((item) => (
+                    <RadioButton.Option key={item.value} value={item.value}>
+                        {item.label}
+                    </RadioButton.Option>
+                ))}
+            </RadioButton>
             {mode === MapCenterMode.Manual && (
-                <div className={b('row')}>
-                    <div className={b('title')}>&nbsp;</div>
-                    <TextInput
-                        className={b('input')}
-                        pin="round-round"
-                        size="m"
-                        value={value ?? ''}
-                        onUpdate={handleChangeInput}
-                        validationState={inputValidationState}
-                        errorMessage={i18n('wizard', 'label_field-invalid')}
-                    />
-                </div>
+                <TextInput
+                    className={b('input')}
+                    pin="round-round"
+                    size="m"
+                    value={value ?? ''}
+                    onUpdate={handleChangeInput}
+                    validationState={inputValidationState}
+                    errorMessage={i18n('wizard', 'label_field-invalid')}
+                />
             )}
-        </div>
+        </FormRow>
     );
 };

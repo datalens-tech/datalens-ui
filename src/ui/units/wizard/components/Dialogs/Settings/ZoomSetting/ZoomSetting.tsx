@@ -1,10 +1,12 @@
 import React from 'react';
 
-import {RadioButton, TextInput} from '@gravity-ui/uikit';
+import {FormRow} from '@gravity-ui/components';
+import {RadioButton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 
 import {ZoomMode, type ZoomModes} from '../../../../../../../shared/constants/wizard';
+import {RangeInputPicker} from '../../../../../../components/common/RangeInputPicker';
 
 import './ZoomSetting.scss';
 
@@ -34,35 +36,30 @@ export const ZoomSetting = (props: Props) => {
         onUpdate({mode: mode as ZoomModes, value});
     };
 
-    const handleChangeInput = (value: string) => {
-        onUpdate({mode: mode as ZoomModes, value: Number(value)});
+    const handleChangeInput = (value: number) => {
+        onUpdate({mode: mode as ZoomModes, value});
     };
 
     return (
-        <div className={b()}>
-            <div className={b('row')}>
-                <div className={b('title')}>{i18n('wizard', 'label_zoom')}</div>
-                <RadioButton value={mode} onUpdate={handleUpdateMode}>
-                    {RADIO_OPTIONS.map((item) => (
-                        <RadioButton.Option key={item.value} value={item.value}>
-                            {item.label}
-                        </RadioButton.Option>
-                    ))}
-                </RadioButton>
-            </div>
+        <FormRow className={b()} label={i18n('wizard', 'label_zoom')}>
+            <RadioButton value={mode} onUpdate={handleUpdateMode}>
+                {RADIO_OPTIONS.map((item) => (
+                    <RadioButton.Option key={item.value} value={item.value}>
+                        {item.label}
+                    </RadioButton.Option>
+                ))}
+            </RadioButton>
             {mode === ZoomMode.Manual && (
-                <div className={b('row')}>
-                    <div className={b('title')}>&nbsp;</div>
-                    <TextInput
-                        className={b('input')}
-                        type="number"
-                        pin="round-round"
-                        size="m"
-                        value={String(value ?? '')}
-                        onUpdate={handleChangeInput}
-                    />
-                </div>
+                <RangeInputPicker
+                    size="s"
+                    value={value ?? 1}
+                    minValue={1}
+                    maxValue={21}
+                    step={1}
+                    onUpdate={handleChangeInput}
+                    className={b('input')}
+                />
             )}
-        </div>
+        </FormRow>
     );
 };
