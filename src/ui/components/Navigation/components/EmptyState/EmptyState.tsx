@@ -7,6 +7,8 @@ import {DL} from 'ui/constants';
 
 import {MODE_MINIMAL, PLACE} from '../../constants';
 
+import {getDescriptionByPlace, getTitleByPlace} from './utils';
+
 import './EmptyState.scss';
 
 const i18n = I18n.keyset('component.navigation.view');
@@ -20,45 +22,16 @@ export type EmptyStateProps = {
     renderAction: () => React.ReactNode;
 };
 
-const getTitleByPlace = (scope: string) => {
-    switch (scope) {
-        case PLACE.FAVORITES:
-            return i18n('label_empty-favorites');
-        case PLACE.CONNECTIONS:
-            return i18n('label_empty-connections');
-        case PLACE.DATASETS:
-            return i18n('label_empty-datasets');
-        case PLACE.WIDGETS:
-            return i18n('label_empty-widgets');
-        case PLACE.DASHBOARDS:
-            return i18n('label_empty-dashboards');
-        default:
-            return i18n('label_empty-folder');
-    }
-};
-
-const getDescriptionByPlace = (scope: string) => {
-    switch (scope) {
-        case PLACE.CONNECTIONS:
-            return i18n('label-description_empty-connections');
-        case PLACE.DATASETS:
-            return i18n('label-description_empty-datasets');
-        case PLACE.WIDGETS:
-            return i18n('label-description_empty-widgets');
-        case PLACE.DASHBOARDS:
-            return i18n('label-description_empty-dashboards');
-        default:
-            return '';
-    }
-};
-
 const TEMPLATE_EMPTY_PLACES: string[] = [
     PLACE.FAVORITES,
     PLACE.CONNECTIONS,
     PLACE.DATASETS,
     PLACE.WIDGETS,
     PLACE.DASHBOARDS,
+    PLACE.REPORTS,
 ];
+
+const HIDE_ACTION_PLACES: string[] = [PLACE.FAVORITES];
 
 export const EmptyState = ({
     isEmptyFolder,
@@ -71,11 +44,10 @@ export const EmptyState = ({
     const emptyDescription = getDescriptionByPlace(place);
 
     const isTemplateEmptyFolder = TEMPLATE_EMPTY_PLACES.includes(place);
-    const name = isEmptyFolder
-        ? isTemplateEmptyFolder
-            ? 'template'
-            : 'emptyDirectory'
-        : 'notFound';
+
+    const emptyFolderName = isTemplateEmptyFolder ? 'template' : 'emptyDirectory';
+    const name = isEmptyFolder ? emptyFolderName : 'notFound';
+
     const illustrationSize = mode === MODE_MINIMAL && !DL.IS_MOBILE ? 'm' : 'l';
 
     return (
@@ -87,7 +59,7 @@ export const EmptyState = ({
                 direction="column"
                 size={illustrationSize}
                 renderAction={
-                    isTemplateEmptyFolder
+                    isTemplateEmptyFolder && !HIDE_ACTION_PLACES.includes(place)
                         ? () => <div className={b('action')}>{renderAction()}</div>
                         : undefined
                 }
