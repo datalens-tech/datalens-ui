@@ -85,7 +85,7 @@ export const EditControls = (props: EditControlsProps) => {
                     view="action"
                     size="m"
                     loading={loading}
-                    disabled={!canGoBack}
+                    disabled={!isDraft}
                     onClick={defaultButtonSaveHandler}
                     qa={defaultButtonSaveQA}
                 >
