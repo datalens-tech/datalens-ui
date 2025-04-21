@@ -21,7 +21,6 @@ RUN useradd -m -u 1001 app && mkdir /opt/app && chown app:app /opt/app
 WORKDIR /opt/app
 
 COPY package.json package-lock.json .npmrc /opt/app/
-
 RUN npm ci
 
 COPY ./dist /opt/app/dist
@@ -76,21 +75,17 @@ RUN npm ci && npm prune --production
 # production running stage
 FROM base-stage AS runtime-stage
 
-# cleanup nginx defaults
-RUN rm -rf /etc/nginx/sites-enabled/default
-
 COPY deploy/nginx /etc/nginx
-COPY deploy/supervisor /etc/supervisor/conf.d
+COPY deploy/supervisor/supervisord.conf /etc/supervisor/supervisord.conf
 
 # prepare rootless permissions for supervisor and nginx
 ARG USER=app
-RUN chown -R ${USER} /var/log/supervisor/ && \
-    mkdir /var/run/supervisor && \
-    chown -R ${USER} /var/run/supervisor && \
-    mkdir -p /var/cache/nginx && chown -R ${USER} /var/cache/nginx && \
-    mkdir -p /var/log/nginx  && chown -R ${USER} /var/log/nginx && \
-    mkdir -p /var/lib/nginx  && chown -R ${USER} /var/lib/nginx && \
-    touch /run/nginx.pid && chown -R ${USER} /run/nginx.pid 
+RUN chown -R ${USER} /etc/nginx && \
+    chown -R ${USER} /etc/supervisor && \
+    rm -rf  /etc/supervisor/conf.d && \
+    rm -rf  /etc/nginx/sites-available && \
+    rm -rf  /etc/nginx/sites-enabled && \
+    rm -rf  /etc/nginx/nginx-default.conf
 
 ARG app_version
 ENV APP_VERSION=$app_version
@@ -114,6 +109,7 @@ ENV UI_CORE_CDN=false
 ENV APP_MODE=full
 ENV APP_ENV=production
 ENV APP_INSTALLATION=opensource
+ENV APP_PORT=3030
 
 EXPOSE 8080
 
