@@ -138,6 +138,7 @@ export const HOTKEYS_SCOPES = {
     GLOBAL: 'global',
     WIZARD: 'wizard',
     QL: 'ql',
+    DASH: 'dash',
 };
 
 export {
