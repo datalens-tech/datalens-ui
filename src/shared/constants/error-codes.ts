@@ -43,9 +43,6 @@ export enum ErrorCode {
 
     ChartEditorNotAvailable = 'ERR.CHARTS.CHART_EDITOR_NOT_AVAILABLE',
     InsufficientServicePlan = 'ERR.CHARTS.INSUFFICIENT_SERVICE_PLAN',
-
-    TransferInvalidEntryScope = 'ERR.DS_API.UI.INVALID_ENTRY_SCOPE',
-    TransferInvalidToken = 'ERR.DS_API.UI.INVALID_TOKEN',
 }
 
 export const ErrorContentTypes = {
@@ -63,7 +60,6 @@ export const ErrorContentTypes = {
     NEW_LOCAL_FEDERATION_USER: 'new-local-federation-user',
     INACCESSIBLE_ON_MOBILE: 'inaccessible-on-mobile',
     NOT_AUTHENTICATED: 'not-authenticated',
-    FORBIDDEN_SSO: 'forbidden-sso',
-    FORBIDDEN_REPORT_ENTRY: 'forbidden-report-entry',
     FORBIDDEN_BY_PLAN: 'forbidden-by-plan',
+    FORBIDDEN_AUTH: 'forbidden-auth',
 };

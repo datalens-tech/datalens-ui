@@ -102,6 +102,10 @@ export function csvConverter(
                 if (typeof currentValue === 'number') {
                     value = value.replace('.', formSettings.delNumbers || ',');
                 }
+
+                if (typeof currentValue === 'string') {
+                    value = `"${value.replace(/"/g, '""')}"`;
+                }
             }
 
             line.push(value);
