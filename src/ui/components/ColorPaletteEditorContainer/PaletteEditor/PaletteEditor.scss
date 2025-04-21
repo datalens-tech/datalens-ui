@@ -1,6 +1,10 @@
 .palette-editor {
     --palette-list-width: 172px;
 
+    &_no-rights {
+        padding-bottom: var(--g-spacing-5);
+    }
+
     &__palettes-card {
         margin: 15px 0;
     }

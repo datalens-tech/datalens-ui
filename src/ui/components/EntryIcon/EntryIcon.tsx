@@ -93,14 +93,23 @@ interface EntryIconProps extends Partial<ConnectorIconViewProps> {
 }
 
 export const EntryIcon = (props: EntryIconProps) => {
-    const {entry, className, entityIconSize, overrideIconType, ...restProps} = props;
+    const {entry, className, entityIconSize, overrideIconType, size, ...restProps} = props;
     const iconData = getEntryIconData(entry);
+    const iconSize = size ?? defaultIconSize[entityIconSize || 's'];
     if (iconData) {
-        return <ConnectorIcon data={iconData} className={className} view="nav" {...restProps} />;
+        return (
+            <ConnectorIcon
+                data={iconData}
+                className={className}
+                view="nav"
+                size={iconSize}
+                {...restProps}
+            />
+        );
     }
     return (
         getEntityIconType(entry, className, entityIconSize, overrideIconType) || (
-            <Icon data={iconFilesBroken} className={className} {...restProps} />
+            <Icon data={iconFilesBroken} className={className} size={iconSize} {...restProps} />
         )
     );
 };

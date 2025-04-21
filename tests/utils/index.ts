@@ -86,7 +86,7 @@ export async function copyEntity(page: Page, entryName: string) {
     );
     await page.waitForSelector(slct(EntryDialogQA.Apply));
 
-    await page.fill('.dl-entry-dialog-base__content .g-text-input__control_type_input', entryName);
+    await page.fill(`${slct(EntryDialogQA.Content)} .g-text-input__control_type_input`, entryName);
 
     await Promise.all([page.waitForNavigation(), page.click(slct(EntryDialogQA.Apply))]);
 }

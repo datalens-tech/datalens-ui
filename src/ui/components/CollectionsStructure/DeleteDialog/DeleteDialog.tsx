@@ -32,6 +32,7 @@ export const DeleteDialog = React.memo<Props>(
                 confirmHeaderText={title}
                 applyBtnLoadingStatus={isLoading ? DialogConfirmApplyStatus.Loading : undefined}
                 confirmButtonText={textButtonApply}
+                confirmButtonView="outlined-danger"
                 cancelButtonView="flat"
                 cancelButtonText={i18n('action_cancel')}
                 message={description}

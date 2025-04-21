@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {Alert, Dialog} from '@gravity-ui/uikit';
+import type {ButtonView} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import type {DataLensApiError} from 'typings';
@@ -31,6 +32,7 @@ interface EntryDialogBaseGeneralProps<T> {
     placeholder?: string;
     inactiveEntryKeys?: string[];
     warningMessage?: React.ReactNode;
+    confirmButtonView?: ButtonView;
 }
 
 interface EntryDialogBaseDefaultProps {
@@ -124,6 +126,7 @@ export class EntryDialogBase<T> extends React.Component<
             inactiveEntryKeys,
             children,
             warningMessage,
+            confirmButtonView,
         } = this.props;
 
         return (
@@ -136,7 +139,7 @@ export class EntryDialogBase<T> extends React.Component<
             >
                 <Dialog.Header caption={caption} />
                 <Dialog.Body>
-                    <div className={b('content')} data-qa={EntryDialogQA.Content}>
+                    <div data-qa={EntryDialogQA.Content}>
                         {children ? (
                             children
                         ) : (
@@ -163,7 +166,7 @@ export class EntryDialogBase<T> extends React.Component<
                 <Dialog.Footer
                     onClickButtonCancel={this.onClose}
                     onClickButtonApply={this.onApply}
-                    propsButtonApply={{qa: EntryDialogQA.Apply}}
+                    propsButtonApply={{qa: EntryDialogQA.Apply, view: confirmButtonView}}
                     textButtonApply={textButtonApply}
                     textButtonCancel={textButtonCancel}
                     loading={this.state.progress}

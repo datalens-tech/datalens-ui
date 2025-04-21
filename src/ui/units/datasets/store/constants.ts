@@ -23,7 +23,7 @@ const isDatasetTab = (value: unknown): value is DatasetTab => {
     return typeof value === 'string' && DATASET_TABS.includes(value);
 };
 
-const getCurrentTab = (): DatasetTab => {
+export const getCurrentTab = (): DatasetTab => {
     const defaultTab = isCreationProcess(location.pathname) ? TAB_SOURCES : TAB_DATASET;
     const queryTab = DatasetUtils.getQueryParam('tab');
 
