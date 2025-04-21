@@ -172,6 +172,12 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
         (item: WorkbookWithPermissions): (DropdownMenuItem[] | DropdownMenuItem)[] => {
             const actions: (DropdownMenuItem[] | DropdownMenuItem)[] = [];
 
+            const {getGloballyEntrySettings} = registry.common.functions.getAll();
+            const globallyEntrySettings = getGloballyEntrySettings();
+            const isWorkbookExportDisabled = Boolean(
+                globallyEntrySettings?.isWorkbookExportDisabled,
+            );
+
             if (item.permissions.update) {
                 actions.push({
                     text: <DropdownAction icon={PencilToLine} text={i18n('action_edit')} />,
@@ -271,7 +277,11 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
                 });
             }
 
-            if (isEnabledFeature(Feature.EnableExportWorkbookFile) && item.permissions.update) {
+            if (
+                isEnabledFeature(Feature.EnableExportWorkbookFile) &&
+                item.permissions.update &&
+                !isWorkbookExportDisabled
+            ) {
                 actions.push({
                     action: () => {
                         dispatch(

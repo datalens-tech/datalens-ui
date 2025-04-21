@@ -4,4 +4,18 @@
         line-height: 16px;
         color: var(--g-color-text-secondary);
     }
+
+    &__icon {
+        &_end {
+            margin-left: 5px;
+        }
+
+        &_view_error {
+            color: var(--g-color-text-danger-heavy);
+        }
+
+        &_view_warn {
+            color: var(--g-color-text-warning);
+        }
+    }
 }

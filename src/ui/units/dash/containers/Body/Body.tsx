@@ -80,6 +80,7 @@ import Loader from '../../components/Loader/Loader';
 import {Mode} from '../../modules/constants';
 import type {CopiedConfigContext, CopiedConfigData} from '../../modules/helpers';
 import {
+    getGroupedItems,
     getLayoutMap,
     getLayoutParentId,
     getPastedWidgetData,
@@ -119,7 +120,6 @@ import {
 import {getPropertiesWithResizeHandles} from '../../utils/dashkitProps';
 import {scrollIntoView} from '../../utils/scrollUtils';
 import {DashError} from '../DashError/DashError';
-import {getGroupedItems} from '../Dialogs/Tabs/PopupWidgetsOrder/helpers';
 import {
     FixedHeaderContainer,
     FixedHeaderControls,
@@ -533,7 +533,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
 
     getMemoLayoutMap() {
         const widgetsMap = this._memoizedWidgetsMap;
-        const layout = this.getTabConfig().layout;
+        const layout = this.getTabConfig()?.layout || [];
 
         if (widgetsMap.layout !== layout) {
             widgetsMap.layout = layout;

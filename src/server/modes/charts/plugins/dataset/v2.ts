@@ -1,3 +1,5 @@
+import {isObject} from 'lodash';
+
 import type {IChartEditor, Update} from '../../../../../shared';
 import type {
     ApiV2Filter,
@@ -38,7 +40,7 @@ const ORDERS = {
     ASC: 'ASC',
 };
 
-type Options = {utc?: boolean};
+type Options = {utc?: boolean; disableProcessDates?: boolean};
 
 function getTimezoneOffsettedTime(value: Date) {
     return value.getTime() - value.getTimezoneOffset() * 60 * 1000;
@@ -58,6 +60,9 @@ function convertSimpleType(data: null | string, dataType: string, options: Optio
         case 'datetime':
         case 'genericdatetime':
         case 'datetimetz': {
+            if (options.disableProcessDates) {
+                return data;
+            }
             const date = new Date(data);
 
             if (!options.utc) {
@@ -241,10 +246,36 @@ function processData(
     return processTableData(dataResult.result_data, dataResult.fields, options);
 }
 
+function getDatasetRows(params: {datasetName: string}) {
+    if (!isObject(params)) {
+        throw new Error('Params should be an object');
+    }
+
+    const {datasetName} = params;
+    if (!datasetName) {
+        throw new Error('datasetName is not defined in params');
+    }
+
+    const EditorAPI = (globalThis as unknown as {Editor: IChartEditor}).Editor;
+
+    if (!EditorAPI) {
+        throw new Error('EditorAPI is not defined');
+    }
+
+    const data = EditorAPI.getLoadedData();
+
+    if (!data[datasetName]) {
+        throw new Error(`Dataset "${datasetName}" is not defined`);
+    }
+
+    return processData(data, datasetName, EditorAPI, {disableProcessDates: true});
+}
+
 export default {
     buildSource,
     processTableData,
     processData,
+    getDatasetRows,
     OPERATIONS,
     ORDERS,
 };

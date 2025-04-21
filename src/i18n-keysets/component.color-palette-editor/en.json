@@ -1,11 +1,11 @@
 {
-  "button_apply": "Apply",
+  "button_apply": "Save and apply",
   "button_cancel": "Cancel",
   "button_close": "Cancel",
   "button_delete-cancel": "Cancel",
   "button_delete-confirm": "Delete",
   "button_delete-title": "Delete palette",
-  "button_save": "Save",
+  "button_save": "Add palette",
   "label_add-color": "Add color",
   "label_add-color-disabled": "You can't add more than {{count}} colors",
   "label_add-palette": "Add palette",
