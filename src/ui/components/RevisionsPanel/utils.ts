@@ -1,6 +1,3 @@
-import {URL_QUERY} from 'ui/constants';
-import {getUrlParamFromStr} from 'ui/utils';
-
 import {EntryScope} from '../../../shared';
 
 /**
