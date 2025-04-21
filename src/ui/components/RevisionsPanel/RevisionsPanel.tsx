@@ -4,7 +4,7 @@ import {dateTimeParse} from '@gravity-ui/date-utils';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {type EntryScope, RevisionsPanelQa} from 'shared';
+import {type EntryScope, RevisionsPanelQa, isUnreleasedVersion} from 'shared';
 import type {AppDispatch} from 'store';
 import {closeDialog as closeDialogConfirm, openDialogConfirm} from 'store/actions/dialog';
 import {setRevisionsListMode, setRevisionsMode} from 'store/actions/entryContent';
@@ -19,7 +19,7 @@ import history from '../../utils/history';
 import {getCapitalizedStr} from '../../utils/stringUtils';
 
 import RevisionsControls from './components/RevisionsControls';
-import {getDraftWarningAvailableScopes, isUnreleasedQueryParam} from './utils';
+import {getDraftWarningAvailableScopes} from './utils';
 
 import './RevisionsPanel.scss';
 
@@ -136,7 +136,7 @@ const RevisionsPanel = ({
     const {getEntryScopesWithRevisionsList} = registry.common.functions.getAll();
 
     const urlRevId = getUrlParamFromStr(location.search, URL_QUERY.REV_ID);
-    const isUnreleased = isUnreleasedQueryParam(location.search);
+    const isUnreleased = isUnreleasedVersion(location.search);
 
     const isInAvailableScopes = React.useMemo(
         () => getEntryScopesWithRevisionsList().includes(scope as EntryScope),
@@ -156,7 +156,7 @@ const RevisionsPanel = ({
         canEdit &&
         currentRevId &&
         currentRevId === publishedId &&
-        (savedId !== publishedId || isUnreleased) &&
+        savedId !== publishedId &&
         isInAvailableScopes &&
         isDraftInAvailableScopes;
 

@@ -1,3 +1,5 @@
+import {URL_QUERY} from '../../ui';
+import {getUrlParamFromStr} from '../../ui/utils';
 import type {WizardVisualizationId} from '../constants';
 import {
     ENTRY_ID_LENGTH,
@@ -264,4 +266,11 @@ export function getObjectValueByPossibleKeys<T>(possibleKeys: string[], obj: Rec
 export const isEntryId = (value: string) => {
     const ENTRY_ID_FORMAT = /^[0-9a-z]{13}$/;
     return ENTRY_ID_FORMAT.test(value);
+};
+
+export const isUnreleasedVersion = (search: string) => {
+    return (
+        getUrlParamFromStr(search, URL_QUERY.UNRELEASED) === '1' &&
+        !getUrlParamFromStr(search, URL_QUERY.REV_ID)
+    );
 };

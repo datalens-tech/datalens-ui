@@ -28,6 +28,7 @@ import {
     ENTRY_TYPES,
     Feature,
     QLChartType,
+    isUnreleasedVersion,
     resolveIntervalDate,
     resolveOperation,
 } from '../../../../../shared';
@@ -691,12 +692,14 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
 
         if (urlEntryId) {
             try {
+                const unreleased = isUnreleasedVersion(location.search);
+
                 const getEntryArgs: GetEntryArgs = {
                     entryId: urlEntryId,
                     includePermissionsInfo: true,
                     includeLinks: true,
                     revId: getUrlParamFromStr(location.search, URL_QUERY.REV_ID) || undefined,
-                    branch: 'published',
+                    branch: unreleased ? 'saved' : 'published',
                 };
 
                 const loadedEntry = await getSdk().sdk.us.getEntry(getEntryArgs);

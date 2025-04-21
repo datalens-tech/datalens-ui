@@ -31,7 +31,12 @@ import {
     sdk,
 } from '../../../../';
 import type {DatalensGlobalState} from '../../../../';
-import {ChartSaveControlsQA, EntryUpdateMode, Feature} from '../../../../../shared';
+import {
+    ChartSaveControlsQA,
+    EntryUpdateMode,
+    Feature,
+    isUnreleasedVersion,
+} from '../../../../../shared';
 import type {ChartsConfig} from '../../../../../shared';
 import {AccessRightsUrlOpen} from '../../../../components/AccessRights/AccessRightsUrlOpen';
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
@@ -145,8 +150,9 @@ class Wizard extends React.Component<Props, State> {
             const entryId = extractEntryId(window.location.pathname);
 
             const revId = getUrlParamFromStr(this.props.location.search, URL_QUERY.REV_ID);
+            const unreleased = isUnreleasedVersion(this.props.location.search);
 
-            const params: SetDefaultsArgs = {entryId};
+            const params: SetDefaultsArgs = {entryId, unreleased};
             if (revId) {
                 params.revId = revId;
             }
@@ -252,6 +258,7 @@ class Wizard extends React.Component<Props, State> {
             if (revId) {
                 const searchParams = new URLSearchParams(location.search);
                 searchParams.delete(URL_QUERY.REV_ID);
+                searchParams.delete(URL_QUERY.UNRELEASED);
                 history.replace({
                     ...location,
                     search: `?${searchParams.toString()}`,
