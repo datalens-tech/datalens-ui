@@ -115,33 +115,50 @@ $hintOffset: 3px;
 
     /** styles for flat controls */
     &__controls-corner-wrapper {
-        background-color: transparent;
-        border-radius: var(--g-border-radius-l);
+        background-color: var(--g-color-base-float);
+        border-radius: var(--g-border-radius-m);
         margin-left: 8px;
-        padding: 2px;
+        padding: 0px;
         display: flex;
-        column-gap: 2px;
-        opacity: 0.5;
+        column-gap: 0px;
+        opacity: 1;
         transition: opacity 0.3s ease-out;
 
-        & .chartkit-insights__button::before,
-        & .dl-widget__filter-button::before,
-        & .chartkit-menu__switcher_flat {
-            opacity: 0;
-            transition: opacity 0.3s ease-out;
+        & .dl-widget__filter-button {
+            opacity: 0.75;
         }
     }
 
-    .widget-header_mobile &__controls-corner-wrapper,
-    &:hover &__controls-corner-wrapper {
-        opacity: 1;
-        background-color: var(--g-color-base-background);
-        box-shadow: 0 1px 6px 0 rgba(0, 0, 0, 0.1);
+    & .chartkit-menu__switcher_flat {
+        display: none;
+    }
 
-        & .chartkit-insights__button::before,
-        & .dl-widget__filter-button::before,
-        & .chartkit-menu__switcher_flat {
+    &:hover &__controls-corner-wrapper {
+        background-color: var(--g-color-base-background);
+
+        & .chartkit-insights__button {
             opacity: 1;
+        }
+
+        & .dl-widget__filter-button:hover {
+            opacity: 1;
+        }
+
+        & .chartkit-menu__switcher_flat {
+            display: block;
+        }
+    }
+
+    .widget-header_mobile &__controls-corner-wrapper {
+        background-color: var(--g-color-base-background);
+
+        & .chartkit-insights__button,
+        & .dl-widget__filter-button {
+            opacity: 1;
+        }
+
+        & .chartkit-menu__switcher_flat {
+            display: block;
         }
     }
 }

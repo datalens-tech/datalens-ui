@@ -96,7 +96,6 @@ export const ChartsInsights = ({items = [], messagesByLocator, locators, hidden}
     }
 
     const showFlatControls = isEnabledFeature(Feature.DashFloatControls);
-    const buttonView = showFlatControls ? 'normal' : 'flat-secondary';
     const buttonSize = showFlatControls ? 'm' : 's';
 
     return (
@@ -118,7 +117,7 @@ export const ChartsInsights = ({items = [], messagesByLocator, locators, hidden}
         >
             <Button
                 ref={buttonRef}
-                view={buttonView}
+                view="flat-secondary"
                 size={buttonSize}
                 width="auto"
                 onClick={handleClick}

@@ -20,13 +20,12 @@ const b = block('chartkit-menu');
 
 const SwitcherButton = (props) => {
     const showFlatControls = isEnabledFeature(Feature.DashFloatControls);
-    const view = showFlatControls ? 'normal' : 'flat-secondary';
     const buttonSize = showFlatControls ? 'm' : 'l';
 
     return (
         <Button
             {...props}
-            view={view}
+            view="flat-secondary"
             size={buttonSize}
             className={b('switcher', {flat: showFlatControls})}
         >

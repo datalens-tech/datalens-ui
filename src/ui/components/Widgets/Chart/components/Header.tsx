@@ -146,14 +146,7 @@ export const Header = (props: HeaderProps) => {
             />
 
             <div className={showFloatControls ? b('controls-corner-wrapper') : undefined}>
-                {showFloatControls && chartsInsightsData && (
-                    <ChartsInsights
-                        items={chartsInsightsData.items}
-                        messagesByLocator={chartsInsightsData.messagesByLocator}
-                        locators={chartsInsightsData.locators}
-                    />
-                )}
-                {showFiltersClear && props.showFilters && (
+                {!showFloatControls && showFiltersClear && props.showFilters && (
                     <div className={b('icons')}>
                         <div className={b('filters-controls')}>
                             <Button
@@ -189,6 +182,31 @@ export const Header = (props: HeaderProps) => {
                         /* isWidgetMenuDataChanged - need this flag for extra rerender after widget rendered to check visibility of items (it is not used in component directly) */
                         isWidgetMenuDataChanged={isWidgetMenuDataChanged}
                         chartsDataProvider={dataProvider}
+                    />
+                )}
+                {showFloatControls && showFiltersClear && props.showFilters && (
+                    <div className={b('icons')}>
+                        <div className={b('filters-controls')}>
+                            <Button
+                                qa={ControlQA.filtersClear}
+                                onClick={onFiltersClear}
+                                className={b('filter-button')}
+                                view="flat-secondary"
+                            >
+                                <Icon
+                                    data={iconClearActionParams}
+                                    size={16}
+                                    className={b('icon-filter-clear')}
+                                />
+                            </Button>
+                        </div>
+                    </div>
+                )}
+                {showFloatControls && chartsInsightsData && (
+                    <ChartsInsights
+                        items={chartsInsightsData.items}
+                        messagesByLocator={chartsInsightsData.messagesByLocator}
+                        locators={chartsInsightsData.locators}
                     />
                 )}
             </div>
