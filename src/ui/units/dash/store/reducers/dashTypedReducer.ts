@@ -131,7 +131,10 @@ export function dashTypedReducer(
             };
         }
 
-        case SET_STATE:
+        case SET_STATE: {
+            return {...state, ...action.payload, lastModifiedItemId: null};
+        }
+
         case SET_PAGE_TAB:
         case CHANGE_NAVIGATION_PATH:
         case SET_DASHKIT_REF: {
