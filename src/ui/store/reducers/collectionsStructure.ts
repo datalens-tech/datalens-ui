@@ -103,6 +103,7 @@ import type {
     GetWorkbookImportStatusResponse,
     StartWorkbookExportResponse,
     StartWorkbookImportResponse,
+    GetEntriesEntryResponse,
 } from '../../../shared/schema';
 
 export type CollectionsStructureState = {
@@ -211,6 +212,7 @@ export type CollectionsStructureState = {
         isLoading: boolean;
         data: null | GetWorkbookImportStatusResponse;
         error: Error | null;
+        notificationEntries: null | Record<string, GetEntriesEntryResponse>;
     };
     getExportResult: {
         isLoading: boolean;
@@ -221,6 +223,7 @@ export type CollectionsStructureState = {
         isLoading: boolean;
         data: null | GetWorkbookExportStatusResponse;
         error: Error | null;
+        notificationEntries: null | Record<string, GetEntriesEntryResponse>;
     };
 };
 
@@ -335,11 +338,13 @@ const initialState: CollectionsStructureState = {
         isLoading: false,
         data: null,
         error: null,
+        notificationEntries: null,
     },
     getExportProgress: {
         isLoading: false,
         data: null,
         error: null,
+        notificationEntries: null,
     },
 };
 
@@ -1050,6 +1055,7 @@ export const collectionsStructure = (
                     ...state.getImportProgress,
                     isLoading: true,
                     error: null,
+                    notificationEntries: null,
                 },
             };
         }
@@ -1060,6 +1066,7 @@ export const collectionsStructure = (
                     isLoading: false,
                     data: action.data,
                     error: null,
+                    notificationEntries: action.notificationEntries,
                 },
             };
         }
@@ -1080,6 +1087,7 @@ export const collectionsStructure = (
                     isLoading: false,
                     data: null,
                     error: null,
+                    notificationEntries: null,
                 },
             };
         }
@@ -1092,6 +1100,7 @@ export const collectionsStructure = (
                     ...state.getExportProgress,
                     isLoading: true,
                     error: null,
+                    notificationEntries: null,
                 },
             };
         }
@@ -1102,6 +1111,7 @@ export const collectionsStructure = (
                     isLoading: false,
                     data: action.data,
                     error: null,
+                    notificationEntries: action.notificationEntries,
                 },
             };
         }
@@ -1122,6 +1132,7 @@ export const collectionsStructure = (
                     isLoading: false,
                     data: null,
                     error: null,
+                    notificationEntries: null,
                 },
             };
         }

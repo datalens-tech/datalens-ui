@@ -67,6 +67,11 @@ export const selectGetExportProgressData = createSelector(
     (getExportProgress) => getExportProgress.data,
 );
 
+export const selectGetExportProgressEntriesMap = createSelector(
+    [selectGetExportProgress],
+    (data) => data.notificationEntries,
+);
+
 export const selectGetExportResultLoading = createSelector(
     [selectGetExportResult],
     (getExportResult) => getExportResult.isLoading,
@@ -96,6 +101,11 @@ const selectGetImportProgress = (state: DatalensGlobalState) =>
 export const selectImportWorkbookData = createSelector(
     [selectGetImportProgress],
     (getImportProgress) => getImportProgress.data,
+);
+
+export const selectGetImportProgressEntriesMap = createSelector(
+    [selectGetImportProgress],
+    (data) => data.notificationEntries,
 );
 
 export const selectGetImportProgressData = createSelector(

@@ -26,9 +26,12 @@ import {
 } from '../../constants/collectionsStructure';
 
 import type {
+    GetEntriesEntryResponse,
     GetWorkbookExportResultResponse,
     GetWorkbookExportStatusResponse,
     GetWorkbookImportStatusResponse,
+    StartWorkbookExportResponse,
+    StartWorkbookImportResponse,
 } from '../../../../shared/schema';
 
 import type {CollectionsStructureDispatch} from './index';
@@ -39,7 +42,7 @@ type ExportWorkbookLoadingAction = {
 };
 type ExportWorkbookSuccessAction = {
     type: typeof EXPORT_WORKBOOK_SUCCESS;
-    data: {};
+    data: StartWorkbookExportResponse;
 };
 type ExportWorkbookFailedAction = {
     type: typeof EXPORT_WORKBOOK_FAILED;
@@ -106,12 +109,50 @@ export const resetExportWorkbook = () => {
     };
 };
 
+const getEntriesMap = async (
+    data: GetWorkbookExportStatusResponse | GetWorkbookImportStatusResponse,
+) => {
+    if (data.status !== 'success') {
+        return null;
+    }
+
+    const ids: string[] = [];
+    data.notifications?.forEach((notification) => {
+        if (notification.entryId) {
+            ids.push(notification.entryId);
+        }
+    });
+    try {
+        const notificationEntries = await getSdk().sdk.mix.getBatchEntriesByIds({ids});
+
+        const entriesMap = notificationEntries.entries.reduce(
+            (acc, entry) => {
+                acc[entry.entryId] = entry;
+                return acc;
+            },
+            {} as {[key: string]: GetEntriesEntryResponse},
+        );
+
+        return entriesMap;
+    } catch (error) {
+        const isCanceled = getSdk().sdk.isCancel(error);
+
+        if (!isCanceled) {
+            logger.logError('collectionsStructure/getEntriesMap failed', error);
+        }
+
+        return null;
+    }
+};
+
 type GetExportProgressLoadingAction = {
     type: typeof GET_EXPORT_PROGRESS_LOADING;
 };
 type GetExportProgressSuccessAction = {
     type: typeof GET_EXPORT_PROGRESS_SUCCESS;
+
     data: GetWorkbookExportStatusResponse;
+    notificationEntries: Record<string, GetEntriesEntryResponse> | null;
 };
 type GetExportProgressFailedAction = {
     type: typeof GET_EXPORT_PROGRESS_FAILED;
@@ -134,10 +175,13 @@ export const getExportProgress = ({exportId}: {exportId: string}) => {
 
         return getSdk()
             .sdk.metaManager.getWorkbookExportStatus({exportId})
-            .then((data) => {
+            .then(async (data) => {
+                const notificationEntries = await getEntriesMap(data);
+
                 dispatch({
                     type: GET_EXPORT_PROGRESS_SUCCESS,
                     data,
+                    notificationEntries,
                 });
                 return data;
             })
@@ -183,7 +227,7 @@ type ImportWorkbookLoadingAction = {
 };
 type ImportWorkbookSuccessAction = {
     type: typeof IMPORT_WORKBOOK_SUCCESS;
-    data: {};
+    data: StartWorkbookImportResponse;
 };
 type ImportWorkbookFailedAction = {
     type: typeof IMPORT_WORKBOOK_FAILED;
@@ -268,7 +312,9 @@ type GetImportProgressLoadingAction = {
 };
 type GetImportProgressSuccessAction = {
     type: typeof GET_IMPORT_PROGRESS_SUCCESS;
+
     data: GetWorkbookImportStatusResponse;
+    notificationEntries: Record<string, GetEntriesEntryResponse> | null;
 };
 type GetImportProgressFailedAction = {
     type: typeof GET_IMPORT_PROGRESS_FAILED;
@@ -351,10 +397,12 @@ export const getImportProgress = ({importId}: {importId: string}) => {
 
         return getSdk()
             .sdk.metaManager.getWorkbookImportStatus({importId})
-            .then((data) => {
+            .then(async (data) => {
+                const notificationEntries = await getEntriesMap(data);
                 dispatch({
                     type: GET_IMPORT_PROGRESS_SUCCESS,
                     data,
+                    notificationEntries,
                 });
                 return data;
             })

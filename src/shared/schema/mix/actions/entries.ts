@@ -4,12 +4,18 @@ import type {Required} from 'utility-types';
 import {EntryScope} from '../../../types';
 import {createAction} from '../../gateway-utils';
 import {getTypedApi} from '../../simple-schema';
-import type {GetRelationsEntry, SwitchPublicationStatusResponse} from '../../us/types';
+import type {
+    GetEntriesEntryResponse,
+    GetRelationsEntry,
+    SwitchPublicationStatusResponse,
+} from '../../us/types';
 import {checkEntriesForPublication, escapeStringForLike} from '../helpers';
 import {isValidPublishLink} from '../helpers/validation';
 import type {
     DeleteEntryArgs,
     DeleteEntryResponse,
+    GetBatchEntriesByIdsArgs,
+    GetBatchEntriesByIdsResponse,
     GetEntriesInFolderArgs,
     GetEntriesInFolderResponse,
     GetEntryMetaStatusArgs,
@@ -196,6 +202,41 @@ export const entriesActions = {
                 entryId,
                 direction,
             });
+        },
+    ),
+    getBatchEntriesByIds: createAction<GetBatchEntriesByIdsResponse, GetBatchEntriesByIdsArgs>(
+        async (api, args) => {
+            const typedApi = getTypedApi(api);
+            const {ids, ...restArgs} = args;
+
+            // If we have more than 50 IDs, split them into batches to avoid URL length limitations
+            if (ids.length > 50) {
+                const batches = [];
+                for (let i = 0; i < ids.length; i += 50) {
+                    batches.push(ids.slice(i, i + 50));
+                }
+
+                const batchResults = await Promise.all(
+                    batches.map((batchIds) =>
+                        typedApi.us.getEntries({
+                            ...restArgs,
+                            ids: batchIds,
+                        }),
+                    ),
+                );
+
+                const combinedEntries = batchResults.reduce(
+                    (acc, result) => [...acc, ...result.entries],
+                    [] as GetEntriesEntryResponse[],
+                );
+
+                return {
+                    hasNextPage: batchResults.some((result) => result.hasNextPage),
+                    entries: combinedEntries,
+                };
+            }
+
+            return await typedApi.us.getEntries(args);
         },
     ),
 };

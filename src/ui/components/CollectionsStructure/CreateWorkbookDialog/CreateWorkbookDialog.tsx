@@ -20,7 +20,6 @@ import {
 import {
     selectCreateWorkbookIsLoading,
     selectGetImportProgressData,
-    selectImportError,
     selectImportWorkbookData,
     selectImportWorkbookStatus,
 } from '../../../store/selectors/collectionsStructure';
@@ -81,10 +80,6 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
 
     const importData = useSelector(selectImportWorkbookData);
     const importProgressData = useSelector(selectGetImportProgressData);
-    const importError = useSelector(selectImportError);
-
-    const importProgress = importProgressData?.progress;
-    const importNotifications = importProgressData?.notifications;
 
     const [isExternalLoading, setIsExternalLoading] = React.useState(false);
 
@@ -290,14 +285,7 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
 
     const renderDialogView = () => {
         if (view === 'import') {
-            return (
-                <ImportWorkbookView
-                    error={importError}
-                    notifications={importNotifications}
-                    status={importStatus}
-                    progress={importProgress ?? 0}
-                />
-            );
+            return <ImportWorkbookView status={importStatus} />;
         }
         return null;
     };

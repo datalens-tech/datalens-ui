@@ -21,6 +21,7 @@ import {
     selectExportError,
     selectExportWorkbookStatus,
     selectGetExportProgressData,
+    selectGetExportProgressEntriesMap,
     selectGetExportResultLoading,
 } from 'ui/store/selectors/collectionsStructure';
 
@@ -101,6 +102,7 @@ export const ExportWorkbookDialog: React.FC<Props> = ({
     const exportData = useSelector(selectExportData);
 
     const progressData = useSelector(selectGetExportProgressData);
+    const notificationEntriesMap = useSelector(selectGetExportProgressEntriesMap);
     const progress = progressData?.progress;
     const notifications = progressData?.notifications;
 
@@ -246,6 +248,7 @@ export const ExportWorkbookDialog: React.FC<Props> = ({
                                 title={notification.message}
                                 level={notification.level}
                                 entries={notification.entries}
+                                entriesMap={notificationEntriesMap}
                             />
                         ))}
                     </Flex>
