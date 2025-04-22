@@ -18,7 +18,6 @@ import {
     EntryDialogName,
     EntryDialogResolveStatus,
     Utils,
-    useEffectOnce,
 } from '../../../../../';
 import type {GetEntryResponse} from '../../../../../../shared/schema';
 import {ChartSaveControls} from '../../../../../components/ActionPanel/components/ChartSaveControls/ChartSaveControl';
@@ -103,13 +102,23 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
     const qlState = useSelector((state: DatalensGlobalState) => state.ql);
     const wizardState = useSelector((state: DatalensGlobalState) => state.wizard);
 
-    useEffectOnce(() => {
-        window.addEventListener('beforeunload', (event) => {
+    const handleBeforeunload = React.useCallback(
+        (event: BeforeUnloadEvent) => {
             if (!entryNotChanged) {
                 event.returnValue = true;
             }
-        });
-    });
+        },
+        [entryNotChanged],
+    );
+
+    React.useEffect(() => {
+        window.removeEventListener('beforeunload', handleBeforeunload);
+        window.addEventListener('beforeunload', handleBeforeunload);
+
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeunload);
+        };
+    }, [handleBeforeunload]);
 
     const handleSetActualRevision = React.useCallback(() => {
         if (!entry) {
