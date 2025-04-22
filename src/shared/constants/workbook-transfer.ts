@@ -11,16 +11,10 @@ export enum TransferErrorCode {
 }
 
 export const TransferCapabilities = {
-    exportOrder: {
-        [EntryScope.Connection]: 4,
-        [EntryScope.Dataset]: 3,
-        [EntryScope.Widget]: 2,
-        [EntryScope.Dash]: 1,
-    },
-    importOrder: {
-        [EntryScope.Connection]: 1,
-        [EntryScope.Dataset]: 2,
-        [EntryScope.Widget]: 3,
-        [EntryScope.Dash]: 4,
+    dependencies: {
+        [EntryScope.Connection]: [],
+        [EntryScope.Dataset]: [EntryScope.Connection],
+        [EntryScope.Widget]: [EntryScope.Dataset, EntryScope.Connection],
+        [EntryScope.Dash]: [EntryScope.Widget, EntryScope.Dataset],
     },
 };
