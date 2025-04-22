@@ -87,6 +87,8 @@ export enum Feature {
     EnableCustomDashMargins = 'EnableCustomDashMargins',
     /** Enabled Dash elements auto-focus */
     EnableDashAutoFocus = 'EnableDashAutoFocus',
+    /** Enable using template params in datasets sources */
+    EnableDsTemplateParams = 'EnableDsTemplateParams',
     /** Enable Dash undo\redo */
     EnableDashUndoRedo = 'EnableDashUndoRedo',
 }
