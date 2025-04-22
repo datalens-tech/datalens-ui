@@ -73,13 +73,20 @@ const getEntry = async (
             ctx,
             requestId,
         });
-    } catch (_) {
-        return gatewayApi.us._proxyGetEntry({
-            headers,
-            args,
-            ctx,
-            requestId,
-        });
+    } catch (ex) {
+        const {error} = ex as GatewayApiErrorResponse;
+
+        // If failed to find published entry, at least take current saved
+        if (error.status === 404) {
+            return gatewayApi.us._proxyGetEntry({
+                headers,
+                args,
+                ctx,
+                requestId,
+            });
+        }
+
+        throw ex;
     }
 };
 
