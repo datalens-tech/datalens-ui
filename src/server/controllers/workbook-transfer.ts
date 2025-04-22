@@ -48,7 +48,7 @@ export const sendResponse = (
 
 const getRequestId = (ctx: Request['ctx']) => ctx.get(REQUEST_ID_PARAM_NAME) || '';
 
-const getEntry = async (
+export const proxyGetEntry = async (
     req: Request,
     args: {
         usMasterToken: string;
@@ -106,7 +106,7 @@ export const prepareExportData = async (req: Request, usMasterToken: string) => 
 
     switch (scope) {
         case EntryScope.Dash: {
-            const {responseData: entry} = await getEntry(req, {
+            const {responseData: entry} = await proxyGetEntry(req, {
                 entryId: exportId,
                 workbookId,
                 usMasterToken,
@@ -128,7 +128,7 @@ export const prepareExportData = async (req: Request, usMasterToken: string) => 
             });
         }
         case EntryScope.Widget: {
-            const {responseData: entry} = await getEntry(req, {
+            const {responseData: entry} = await proxyGetEntry(req, {
                 entryId: exportId,
                 workbookId,
                 usMasterToken,
