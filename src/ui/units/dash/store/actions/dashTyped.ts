@@ -13,6 +13,7 @@ import {i18n} from 'i18n';
 import type {DatalensGlobalState} from 'index';
 import {URL_QUERY, sdk} from 'index';
 import isEmpty from 'lodash/isEmpty';
+import {batch} from 'react-redux';
 import type {
     DashData,
     DashEntry,
@@ -27,6 +28,11 @@ import type {
 } from 'shared';
 import {EntryScope, EntryUpdateMode} from 'shared';
 import type {AppDispatch} from 'ui/store';
+import {
+    addEditHistoryPoint,
+    initEditHistoryUnit,
+    resetEditHistoryUnit,
+} from 'ui/store/actions/editHistory';
 import type {ItemDataSource} from 'ui/store/typings/controlDialog';
 import {getLoginOrIdFromLockedError, isEntryIsLockedError} from 'utils/errors/errorByCode';
 
@@ -44,6 +50,7 @@ import {LOCK_DURATION, Mode} from '../../modules/constants';
 import type {CopiedConfigContext} from '../../modules/helpers';
 import {collectDashStats} from '../../modules/pushStats';
 import {DashUpdateStatus} from '../../typings/dash';
+import {DASH_EDIT_HISTORY_UNIT_ID} from '../constants';
 import * as actionTypes from '../constants/dashActionTypes';
 import type {DashState} from '../reducers/dashTypedReducer';
 import {
@@ -72,6 +79,64 @@ export type SetStateAction<T> = {
     type: typeof SET_STATE;
     payload: T;
 };
+
+export function addDashEditHistoryPoint(stacked = false) {
+    return (dispatch: DashDispatch, getState: () => DatalensGlobalState) => {
+        const {data, widgetsCurrentTab, hashStates, tabId, mode} = getState().dash;
+
+        if (mode !== Mode.Edit) {
+            return;
+        }
+
+        dispatch(
+            addEditHistoryPoint({
+                unitId: DASH_EDIT_HISTORY_UNIT_ID,
+                newState: {
+                    data,
+                    widgetsCurrentTab,
+                    hashStates,
+                    tabId,
+                },
+                stacked,
+                skipEmptyDiff: true,
+            }),
+        );
+    };
+}
+
+export const SET_HISTORY_STATE = Symbol('dash/SET_HISTORY_STATE');
+export type SetHistoryStateAction = {
+    type: typeof SET_HISTORY_STATE;
+    payload: Pick<DashState, 'data' | 'tabId' | 'hashStates' | 'widgetsCurrentTab'>;
+};
+export const setHistoryState = (state: SetHistoryStateAction['payload']) => ({
+    type: SET_HISTORY_STATE,
+    payload: state,
+});
+
+export function initDashEditHistory() {
+    return (dispatch: AppDispatch) => {
+        dispatch(
+            initEditHistoryUnit({
+                unitId: DASH_EDIT_HISTORY_UNIT_ID,
+                setState: ({state}) => {
+                    dispatch(setHistoryState(state as any));
+                },
+                options: {
+                    pathIgnoreList: [],
+                },
+            }),
+        );
+    };
+}
+
+export function resetDashEditHistory() {
+    return (dispatch: AppDispatch) => {
+        dispatch(addEditHistoryPoint({unitId: DASH_EDIT_HISTORY_UNIT_ID, newState: {}}));
+        dispatch(resetEditHistoryUnit({unitId: DASH_EDIT_HISTORY_UNIT_ID}));
+        dispatch(addDashEditHistoryPoint());
+    };
+}
 
 export const cleanLock = (): SetStateAction<{lockToken: null}> => ({
     type: SET_STATE,
@@ -147,6 +212,7 @@ export const setPageTab = (tabId: string) => {
             // TODO: if you pass null, then DashKit crashes
             payload: {tabId},
         });
+        dispatch(addDashEditHistoryPoint(true));
     };
 };
 
@@ -229,10 +295,15 @@ export type SetHashStateAction = {
         config: DashTab;
     };
 };
-export const setHashState = (hashStates: TabsHashStates, config: DashTab): SetHashStateAction => ({
-    type: SET_HASH_STATE,
-    payload: {hashStates, config},
-});
+export const setHashState =
+    (hashStates: TabsHashStates, config: DashTab) => (dispatch: DashDispatch) => {
+        dispatch({
+            type: SET_HASH_STATE,
+            payload: {hashStates, config},
+        });
+
+        dispatch(addDashEditHistoryPoint());
+    };
 
 export const SET_TAB_HASH_STATE = Symbol('dash/SET_TAB_HASH_STATE');
 export type SetTabHashStateAction = {
@@ -347,6 +418,7 @@ export const setItemData = (data: SetItemDataArgs) => {
         });
 
         getState().dash.dragOperationProps?.commit();
+        dispatch(addDashEditHistoryPoint());
     };
 };
 
@@ -357,10 +429,14 @@ export type SetViewModeAction = {
         mode: Mode;
     };
 };
-export const setDashViewMode = (payload?: SetViewModeAction['payload']): SetViewModeAction => ({
-    type: SET_DASH_VIEW_MODE,
-    payload,
-});
+export const setDashViewMode =
+    (payload?: SetViewModeAction['payload']) => (dispatch: DashDispatch) => {
+        dispatch({
+            type: SET_DASH_VIEW_MODE,
+            payload,
+        });
+        dispatch(resetDashEditHistory());
+    };
 
 export const SET_DASH_DESC_VIEW_MODE = Symbol('dash/SET_DASH_DESC_VIEW_MODE');
 export type SetDescViewModeAction = {
@@ -385,6 +461,13 @@ export const setDashDescription = (
     type: SET_DASH_DESCRIPTION,
     payload,
 });
+
+export const updateDescription =
+    (description: SetDescriptionAction['payload']) => (dispatch: DashDispatch) => {
+        dispatch(setDashDescription(description));
+        dispatch(setDashDescViewMode(Mode.View));
+        dispatch(addDashEditHistoryPoint());
+    };
 
 export const SET_DASH_ACCESS_DESCRIPTION = Symbol('dash/SET_DASH_ACCESS_DESCRIPTION');
 export type SetAccessDescriptionAction = {
@@ -493,6 +576,10 @@ function saveFailedCallback({
     );
 }
 
+function saveSuccessCallback({dispatch}: {dispatch: DashDispatch}) {
+    dispatch(resetDashEditHistory());
+}
+
 export function setActualDash(setForce?: boolean) {
     return async (dispatch: DashDispatch, getState: () => DatalensGlobalState) => {
         const {dash} = getState();
@@ -529,6 +616,8 @@ export function setActualDash(setForce?: boolean) {
                     }),
                 );
             }
+
+            saveSuccessCallback({dispatch});
         } catch (error) {
             saveFailedCallback({
                 error,
@@ -574,6 +663,8 @@ export function setPublishDraft(setForce?: boolean) {
                     }),
                 );
             }
+
+            saveSuccessCallback({dispatch});
         } catch (error) {
             saveFailedCallback({
                 error,
@@ -613,6 +704,8 @@ export function saveDashAsDraft(setForce?: boolean) {
                 ...location,
                 search: `?${searchParams.toString()}`,
             });
+
+            saveSuccessCallback({dispatch});
         } catch (error) {
             saveFailedCallback({
                 error,
@@ -763,23 +856,41 @@ export function saveDashAsNewDash({entryId, key, workbookId, name}: SaveAsNewDas
     };
 }
 
-export const setTabs = (tabs: DashTabChanged[]) => ({
-    type: actionTypes.SET_TABS,
-    payload: tabs,
-});
+export const setTabs = (tabs: DashTabChanged[]) => {
+    return (dispatch: DashDispatch) => {
+        dispatch({
+            type: actionTypes.SET_TABS as any, // TODO move to TS
+            payload: tabs,
+        });
 
-export const setCurrentTabData = (data: DashTab) => ({
-    type: actionTypes.SET_CURRENT_TAB_DATA,
-    payload: data,
-});
+        dispatch(addDashEditHistoryPoint());
+    };
+};
+
+export const setCurrentTabData = (data: DashTab) => {
+    return (dispatch: DashDispatch) => {
+        dispatch({
+            type: actionTypes.SET_CURRENT_TAB_DATA as any, // TODO move to TS
+            payload: data,
+        });
+
+        dispatch(addDashEditHistoryPoint());
+    };
+};
 
 export const updateCurrentTabData = (data: {
     aliases?: DashTab['aliases'];
     connections?: Config['connections'];
-}) => ({
-    type: actionTypes.UPDATE_CURRENT_TAB_DATA,
-    payload: data,
-});
+}) => {
+    return (dispatch: DashDispatch) => {
+        dispatch({
+            type: actionTypes.UPDATE_CURRENT_TAB_DATA as any, // TODO move to TS
+            payload: data,
+        });
+
+        dispatch(addDashEditHistoryPoint());
+    };
+};
 
 export const SET_SETTINGS = Symbol('dash/SET_SETTINGS');
 export type SetSettingsAction = {
@@ -792,6 +903,21 @@ export const setSettings = (settings: DashSettings): SetSettingsAction => ({
     payload: settings,
 });
 
+export const updateAllDashSettings = (data: {
+    settings: DashSettings;
+    accessDescription?: SetAccessDescriptionAction['payload'];
+    supportDescription?: SetSupportDescriptionAction['payload'];
+}) => {
+    return (dispatch: DashDispatch) => {
+        batch(() => {
+            dispatch(setSettings(data.settings));
+            dispatch(setDashAccessDescription(data.accessDescription));
+            dispatch(setDashSupportDescription(data.supportDescription));
+            dispatch(addDashEditHistoryPoint());
+        });
+    };
+};
+
 export const setCopiedItemData = (payload: {
     item: AddConfigItem;
     context?: CopiedConfigContext;
@@ -803,8 +929,10 @@ export const setCopiedItemData = (payload: {
 
 export const setDefaultViewState = () => {
     return (dispatch: AppDispatch) => {
-        dispatch(setDashViewMode());
-        dispatch(setPageDefaultTabItems());
+        batch(() => {
+            dispatch(setDashViewMode());
+            dispatch(setPageDefaultTabItems());
+        });
     };
 };
 
@@ -862,5 +990,6 @@ export function updateDeprecatedDashConfig() {
         const migratedData = migrateDataSettings(data);
 
         dispatch(setSettings(migratedData.settings));
+        dispatch(addDashEditHistoryPoint());
     };
 }

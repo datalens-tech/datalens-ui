@@ -89,6 +89,8 @@ export enum Feature {
     EnableDashAutoFocus = 'EnableDashAutoFocus',
     /** Enable using template params in datasets sources */
     EnableDsTemplateParams = 'EnableDsTemplateParams',
+    /** Enable Dash undo\redo */
+    EnableDashUndoRedo = 'EnableDashUndoRedo',
 }
 
 export type FeatureConfig = Record<string, boolean>;

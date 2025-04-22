@@ -13,6 +13,7 @@ import type {DatalensGlobalState, EntryDialogues} from 'ui';
 import {ActionPanel, DL, EntryDialogName, EntryDialogResolveStatus} from 'ui';
 import {registry} from 'ui/registry';
 import {closeDialog as closeDialogConfirm, openDialogConfirm} from 'ui/store/actions/dialog';
+import {goBack, goForward} from 'ui/store/actions/editHistory';
 import {selectIsRenameWithoutReload} from 'ui/store/selectors/entryContent';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {isDraftVersion} from 'ui/utils/revisions';
@@ -41,6 +42,7 @@ import {
 } from '../../store/actions/dashTyped';
 import {isDeprecatedDashData} from '../../store/actions/helpers';
 import {openEmptyDialogRelations} from '../../store/actions/relations/actions';
+import {DASH_EDIT_HISTORY_UNIT_ID} from '../../store/constants';
 import {
     selectDashAccessDescription,
     selectDashShowOpenedDescription,
@@ -67,6 +69,8 @@ type OwnProps = {
     canEdit: boolean;
     isEditMode: boolean;
     isDraft: boolean;
+    canGoBack: boolean;
+    canGoForward: boolean;
     hasTableOfContent: boolean;
     history: History;
     location: Location;
@@ -154,6 +158,10 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
                 loading={this.props.progress || this.props.isLoadingEditMode}
                 showCancel={!entry?.fake}
                 showSaveDropdown={!entry?.fake}
+                canGoBack={this.props.canGoBack}
+                canGoForward={this.props.canGoForward}
+                onGoBack={this.handleGoBack}
+                onGoForward={this.handleGoForward}
             />
         ) : (
             <ViewControls
@@ -310,6 +318,17 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
         this.props.toggleTableOfContent();
     };
 
+    private handleGoBack = () => {
+        if (this.props.canGoBack) {
+            this.props.goBack({unitId: DASH_EDIT_HISTORY_UNIT_ID});
+        }
+    };
+    private handleGoForward = () => {
+        if (this.props.canGoForward) {
+            this.props.goForward({unitId: DASH_EDIT_HISTORY_UNIT_ID});
+        }
+    };
+
     private handleSaveDash = async () => {
         const {entry, data} = this.props.dashEntry;
         const {getDashEntryUrl} = registry.dash.functions.getAll();
@@ -360,6 +379,8 @@ const mapDispatchToProps = {
     openDialogConfirm,
     openEmptyDialogRelations,
     closeDialogConfirm,
+    goBack,
+    goForward,
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(DashActionPanel);
