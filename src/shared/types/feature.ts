@@ -87,6 +87,8 @@ export enum Feature {
     EnableCustomDashMargins = 'EnableCustomDashMargins',
     /** Enabled Dash elements auto-focus */
     EnableDashAutoFocus = 'EnableDashAutoFocus',
+    /** Enable Dash undo\redo */
+    EnableDashUndoRedo = 'EnableDashUndoRedo',
 }
 
 export type FeatureConfig = Record<string, boolean>;
