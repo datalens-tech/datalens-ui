@@ -48,7 +48,7 @@ export const sendResponse = (
 
 const getRequestId = (ctx: Request['ctx']) => ctx.get(REQUEST_ID_PARAM_NAME) || '';
 
-const getEntry = (
+const getEntry = async (
     req: Request,
     args: {
         usMasterToken: string;
@@ -61,13 +61,26 @@ const getEntry = (
     const headers = {
         ...Utils.pickHeaders(req),
     };
+    const requestId = getRequestId(ctx);
 
-    return gatewayApi.us._proxyGetEntry({
-        headers,
-        args,
-        ctx,
-        requestId: getRequestId(ctx),
-    });
+    try {
+        return await gatewayApi.us._proxyGetEntry({
+            headers,
+            args: {
+                ...args,
+                branch: 'published',
+            },
+            ctx,
+            requestId,
+        });
+    } catch (_) {
+        return gatewayApi.us._proxyGetEntry({
+            headers,
+            args,
+            ctx,
+            requestId,
+        });
+    }
 };
 
 const resolveScopeForEntryData = (entryData: Record<keyof EntryScope, unknown>) => {
