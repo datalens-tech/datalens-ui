@@ -1096,8 +1096,8 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
                 {this.renderQlAutoExecutionChart()}
                 {this.renderInlineSortSwitch()}
                 {this.renderStackingSwitch()}
-                {this.renderZoom()}
                 {this.renderMapCenterSetting()}
+                {this.renderZoom()}
             </div>
         );
     }
