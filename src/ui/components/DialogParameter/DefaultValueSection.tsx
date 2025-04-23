@@ -63,6 +63,7 @@ export function DefaultValueSection({formState, updateFormState}: Props) {
                 onUpdate={(value) => {
                     updateFormState({defaultValue: value});
                 }}
+                qa={DialogParameterQA.DefaultValueRadioGroup}
             >
                 <RadioGroup.Option value={BOOLEAN_STRING.TRUE}>
                     {i18n('parameter_true')}
