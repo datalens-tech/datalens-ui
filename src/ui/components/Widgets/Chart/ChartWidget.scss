@@ -99,8 +99,8 @@ $hintOffset: 3px;
 
     // styles for mobile dash widgets chart header
     // for supporting full display of titles
-    #{$dashPublicContainerClassName} &_default-mobile &__chart-header,
-    #{$dashContainerClassName} &_default-mobile &__chart-header {
+    #{$dashPublicContainerClassName} &_default-mobile &__chart-header:not(&__chart-header_float),
+    #{$dashContainerClassName} &_default-mobile &__chart-header:not(&__chart-header_float) {
         top: 2px;
     }
 
