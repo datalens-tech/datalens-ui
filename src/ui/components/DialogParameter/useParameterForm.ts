@@ -14,14 +14,13 @@ export type ParameterFormState = {
     name: string;
     type: DATASET_FIELD_TYPES;
     defaultValue: string;
-};
+} & Pick<DatasetField, 'template_enabled' | 'value_constraint'>;
 
 type UpdateParameterArgs = {
-    key: keyof ParameterFormState;
-    value: string;
+    [K in keyof ParameterFormState]?: ParameterFormState[K];
 };
 
-type UseParameterFormReturnValue = {
+export type UseParameterFormReturnValue = {
     formState: ParameterFormState;
     updateFormState: (args: UpdateParameterArgs) => void;
     resetFormState: () => void;
@@ -30,11 +29,25 @@ type UseParameterFormReturnValue = {
 };
 
 export const useParameterForm = (args: UseParameterFormArgs): UseParameterFormReturnValue => {
-    const {name, fieldId, getOriginalField, type, defaultValue} = args;
+    const {
+        name,
+        fieldId,
+        getOriginalField,
+        type,
+        defaultValue,
+        template_enabled,
+        value_constraint,
+    } = args;
 
     const nameRef = React.useRef(name);
     const prevTypeRef = React.useRef(type);
-    const [state, setState] = React.useState<ParameterFormState>({name, type, defaultValue});
+    const [state, setState] = React.useState<ParameterFormState>({
+        name,
+        type,
+        defaultValue,
+        template_enabled,
+        value_constraint,
+    });
     const [isFormValid, setIsFormValid] = React.useState<boolean>(false);
     const [isNameValid, setIsNameValid] = React.useState<boolean>(true);
 
@@ -58,8 +71,8 @@ export const useParameterForm = (args: UseParameterFormArgs): UseParameterFormRe
         prevTypeRef.current = state.type;
     }, [state.type]);
 
-    const updateParameterForm = React.useCallback(({key, value}: UpdateParameterArgs) => {
-        setState((prevState) => ({...prevState, [key]: value}));
+    const updateParameterForm = React.useCallback((updates: UpdateParameterArgs) => {
+        setState((prevState) => ({...prevState, ...updates}));
     }, []);
 
     const resetParameterForm = React.useCallback(() => {
