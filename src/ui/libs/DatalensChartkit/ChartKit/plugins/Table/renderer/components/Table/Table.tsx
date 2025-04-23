@@ -34,7 +34,6 @@ import {TableFooter} from './TableFooter';
 import {TableHead} from './TableHead';
 import type {TData} from './types';
 import {usePreparedTableData} from './usePreparedTableData';
-import {useTableHeight} from './useTableHeight';
 import {getTableTitle} from './utils';
 
 import './Table.scss';
@@ -176,11 +175,6 @@ export const Table = React.memo<Props>((props: Props) => {
     }, [onReady, cellMinSizes]);
 
     const highlightRows = get(config, 'settings.highlightRows') ?? !hasGroups(data.head);
-    const tableActualHeight = useTableHeight({
-        ref: tableRef,
-        ready: Boolean(cellMinSizes),
-        totalSize,
-    });
     const noData = !props.widgetData.data?.head?.length;
 
     const handleCellClick = React.useCallback(
@@ -287,7 +281,6 @@ export const Table = React.memo<Props>((props: Props) => {
                                         sticky={true}
                                         rows={header.rows}
                                         style={header.style}
-                                        tableHeight={tableActualHeight}
                                     />
                                     <TableBody
                                         rows={body.rows}
