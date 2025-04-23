@@ -91,6 +91,8 @@ export enum Feature {
     EnableDsTemplateParams = 'EnableDsTemplateParams',
     /** Enable Dash undo\redo */
     EnableDashUndoRedo = 'EnableDashUndoRedo',
+    /** Enable public gallery unit */
+    EnablePublicGallery = 'EnablePublicGallery',
 }
 
 export type FeatureConfig = Record<string, boolean>;
