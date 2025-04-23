@@ -287,6 +287,7 @@ export function setChartsEntryContent(entry: GetEntryResponse) {
         dispatch(setEntryContent(entry));
 
         const searchParams = new URLSearchParams(location.search);
+        searchParams.delete(URL_QUERY.UNRELEASED);
         if (entry.publishedId) {
             if (entry.revId === entry.publishedId) {
                 searchParams.delete(URL_QUERY.REV_ID);

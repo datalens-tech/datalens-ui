@@ -1,3 +1,4 @@
+import get from 'lodash/get';
 import {createSelector} from 'reselect';
 import {Feature} from 'shared';
 import type {DatasetField} from 'shared';
@@ -183,3 +184,22 @@ export const workbookIdSelector = (state: DatalensGlobalState) => {
 };
 
 export const currentTabSelector = (state: DatalensGlobalState) => state.dataset.currentTab;
+
+export const templateEnabledSelector = (state: DatalensGlobalState) =>
+    state.dataset.content.template_enabled;
+
+export const rawSqlLevelSelector = createSelector(
+    connectionsSelector,
+    (connections: ReturnType<typeof connectionsSelector>) => {
+        let rawSqlLevel = '';
+
+        for (const connection of connections) {
+            const possibleValue = get(connection, ['data', 'raw_sql_level'], '') as string;
+            if (possibleValue) {
+                rawSqlLevel = possibleValue;
+            }
+        }
+
+        return rawSqlLevel;
+    },
+);

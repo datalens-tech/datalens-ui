@@ -16,6 +16,8 @@ export const enum DashKitOverlayMenuQa {
 
 export const enum DashboardActionPanelControlsQa {
     SettingsButton = 'dashboard-action-panel-settings-button',
+    UndoButton = 'dashboard-action-panel-undo-button',
+    RedoButton = 'dashboard-action-panel-redo-button',
 }
 
 export const enum DashboardDialogSettingsQa {

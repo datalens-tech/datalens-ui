@@ -217,6 +217,7 @@ function validateData(data: DashData) {
 class Dash {
     static validateData = validateData;
     static processLinks = processLinks;
+    static processLinksForItems = processLinksForItems;
     static gatherLinks = gatherLinks;
 
     static async create(

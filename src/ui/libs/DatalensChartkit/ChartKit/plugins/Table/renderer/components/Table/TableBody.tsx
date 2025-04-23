@@ -17,8 +17,9 @@ type Props = {
 const TableBodyCell = (props: {
     cell: BodyCellViewData;
     onClick?: (event: React.MouseEvent) => void;
+    isLastPinnedCell?: boolean;
 }) => {
-    const {cell, onClick} = props;
+    const {cell, isLastPinnedCell, onClick} = props;
 
     return (
         <td
@@ -40,6 +41,7 @@ const TableBodyCell = (props: {
             rowSpan={cell.rowSpan}
             colSpan={cell.colSpan}
         >
+            {isLastPinnedCell && <div className={b('shadow')} />}
             <div
                 className={b('cell-content', {type: cell.contentType})}
                 data-qa={ChartKitTableQa.CellContent}
@@ -59,7 +61,10 @@ export const TableBody = React.memo<Props>((props: Props) => {
             {rows.map((row) => {
                 return (
                     <tr data-index={row.index} key={row.id} className={b('tr')} ref={rowRef}>
-                        {row.cells.map((cell) => {
+                        {row.cells.map((cell, index) => {
+                            const nextCellData = row.cells[index + 1];
+                            const isLastPinnedCell = cell.pinned && !nextCellData?.pinned;
+
                             return (
                                 <TableBodyCell
                                     key={cell.id}
@@ -69,6 +74,7 @@ export const TableBody = React.memo<Props>((props: Props) => {
                                             onCellClick(event, cell.data, row.id);
                                         }
                                     }}
+                                    isLastPinnedCell={isLastPinnedCell}
                                 />
                             );
                         })}

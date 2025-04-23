@@ -40,7 +40,7 @@ import {getSdk} from '../../../../libs/schematic-sdk';
 import {registry} from '../../../../registry';
 import type {AppDispatch} from '../../../../store';
 import {saveWidget, setActualChart} from '../../../../store/actions/chartWidget';
-import {UrlSearch, getUrlParamFromStr} from '../../../../utils';
+import {UrlSearch, getUrlParamFromStr, isUnreleasedByUrlParams} from '../../../../utils';
 import {
     resetWizardStore,
     setVisualizationPlaceholderItems,
@@ -691,12 +691,14 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
 
         if (urlEntryId) {
             try {
+                const unreleased = isUnreleasedByUrlParams(location.search);
+
                 const getEntryArgs: GetEntryArgs = {
                     entryId: urlEntryId,
                     includePermissionsInfo: true,
                     includeLinks: true,
                     revId: getUrlParamFromStr(location.search, URL_QUERY.REV_ID) || undefined,
-                    branch: 'published',
+                    branch: unreleased ? 'saved' : 'published',
                 };
 
                 const loadedEntry = await getSdk().sdk.us.getEntry(getEntryArgs);
