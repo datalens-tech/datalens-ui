@@ -194,6 +194,7 @@ class Revisions extends React.Component<Props, State> {
         setCurrentRevId(revId);
 
         const searchParams = new URLSearchParams(location.search);
+        searchParams.delete(URL_QUERY.UNRELEASED);
         if (revId === actualRevId) {
             searchParams.delete(URL_QUERY.REV_ID);
         } else {

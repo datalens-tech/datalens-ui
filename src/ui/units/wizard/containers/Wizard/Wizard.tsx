@@ -53,7 +53,7 @@ import {
     setRevisionsMode,
 } from '../../../../store/actions/entryContent';
 import {RevisionsMode} from '../../../../store/typings/entryContent';
-import {getUrlParamFromStr} from '../../../../utils';
+import {getUrlParamFromStr, isUnreleasedByUrlParams} from '../../../../utils';
 import history from '../../../../utils/history';
 import {isDraft, isEditMode} from '../../../dash/store/selectors/dashTypedSelectors';
 import type {SetDefaultsArgs} from '../../actions';
@@ -145,8 +145,9 @@ class Wizard extends React.Component<Props, State> {
             const entryId = extractEntryId(window.location.pathname);
 
             const revId = getUrlParamFromStr(this.props.location.search, URL_QUERY.REV_ID);
+            const unreleased = isUnreleasedByUrlParams(this.props.location.search);
 
-            const params: SetDefaultsArgs = {entryId};
+            const params: SetDefaultsArgs = {entryId, unreleased};
             if (revId) {
                 params.revId = revId;
             }
@@ -252,6 +253,7 @@ class Wizard extends React.Component<Props, State> {
             if (revId) {
                 const searchParams = new URLSearchParams(location.search);
                 searchParams.delete(URL_QUERY.REV_ID);
+                searchParams.delete(URL_QUERY.UNRELEASED);
                 history.replace({
                     ...location,
                     search: `?${searchParams.toString()}`,
