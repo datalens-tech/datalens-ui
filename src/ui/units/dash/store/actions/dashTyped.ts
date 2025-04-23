@@ -925,10 +925,17 @@ export const setCopiedItemData = (payload: {
     item: AddConfigItem;
     context?: CopiedConfigContext;
     options: AddNewItemOptions;
-}) => ({
-    type: actionTypes.SET_COPIED_ITEM_DATA,
-    payload,
-});
+}) => {
+    return (dispatch: DashDispatch) => {
+        batch(() => {
+            dispatch({
+                type: actionTypes.SET_COPIED_ITEM_DATA as any, // TODO move to TS,
+                payload,
+            });
+            dispatch(addDashEditHistoryPoint());
+        });
+    };
+};
 
 export const setDefaultViewState = () => {
     return (dispatch: AppDispatch) => {
