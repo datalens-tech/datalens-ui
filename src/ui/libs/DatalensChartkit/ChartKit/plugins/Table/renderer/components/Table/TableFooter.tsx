@@ -22,7 +22,10 @@ export const TableFooter = React.memo<Props>((props: Props) => {
         <tfoot className={b('footer')} style={style}>
             {rows.map((row) => (
                 <tr key={row.id} className={b('tr')}>
-                    {row.cells.map((cell) => {
+                    {row.cells.map((cell, index) => {
+                        const nextCellData = row.cells[index + 1];
+                        const isLastPinnedCell = cell.pinned && !nextCellData?.pinned;
+
                         return (
                             <td
                                 key={cell.id}
@@ -34,6 +37,7 @@ export const TableFooter = React.memo<Props>((props: Props) => {
                                     ...cell.style,
                                 }}
                             >
+                                {isLastPinnedCell && <div className={b('shadow')} />}
                                 <div style={cell.contentStyle} className={b('footer-cell-content')}>
                                     {cell.content}
                                 </div>

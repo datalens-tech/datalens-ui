@@ -93,3 +93,5 @@ export const SET_CURRENT_TAB = Symbol('dataset/SET_CURRENT_TAB');
 export const SET_LAST_MODIFIED_TAB = Symbol('dataset/SET_LAST_MODIFIED_TAB');
 
 export const SET_VALIDATION_STATE = Symbol('dataset/SET_VALIDATION_STATE');
+
+export const SET_TEMPLATE_ENABLED = Symbol('dataset/SET_TEMPLATE_ENABLED');

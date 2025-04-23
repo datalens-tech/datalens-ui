@@ -12,6 +12,7 @@ import {registry} from 'ui/registry';
 import DialogManager from '../DialogManager/DialogManager';
 import {SelectOptionWithIcon} from '../SelectComponents';
 
+import {TemplateSection} from './TemplateSection';
 import {createParameterField, getDatepickerFormat, getTypesList} from './helpers';
 import {useParameterForm} from './useParameterForm';
 import {useFetchParameterTooltipMarkdown} from './useParameterTooltipMarkdown';
@@ -19,6 +20,7 @@ import {useFetchParameterTooltipMarkdown} from './useParameterTooltipMarkdown';
 import './DialogParameter.scss';
 
 export const DIALOG_PARAMETER = Symbol('DIALOG_PARAMETER');
+
 export type OpenDialogParameterArgs = {
     id: typeof DIALOG_PARAMETER;
     props: DialogParameterProps;
@@ -30,14 +32,15 @@ export type DialogParameterProps = {
     type: 'create' | 'edit' | 'edit-default-value';
     field?: DatasetField;
     onReset?: (fieldId: string) => DatasetField | undefined;
+    showTemplateWarn?: boolean;
+    templateEnabled?: boolean;
 };
 
 const b = block('dialog-parameter');
 const i18n = I18n.keyset('component.dialog-parameter');
 
 const DialogParameter: React.FC<DialogParameterProps> = (props: DialogParameterProps) => {
-    const {onApply, onClose, type, field, onReset} = props;
-
+    const {onApply, onClose, type, field, onReset, showTemplateWarn, templateEnabled} = props;
     const {formState, resetFormState, updateFormState, isFormValid, isNameValid} = useParameterForm(
         {
             name: field?.title || '',
@@ -45,24 +48,29 @@ const DialogParameter: React.FC<DialogParameterProps> = (props: DialogParameterP
             type: field?.data_type || DATASET_FIELD_TYPES.STRING,
             getOriginalField: onReset,
             fieldId: field?.guid || '',
+            template_enabled: field?.template_enabled,
+            value_constraint: field?.value_constraint,
         },
     );
-
     const {tooltipText, isTooltipLoading} = useFetchParameterTooltipMarkdown();
-
     const isCreateDialog = type === 'create';
     const isEditDefaultValueDialog = type === 'edit-default-value';
-
     const title = isCreateDialog ? i18n('title_create-parameter') : i18n('title_edit-parameter');
     const applyButtonText = isCreateDialog ? i18n('button_create') : i18n('button_edit');
-
     const typeItems: SelectOption[] = getTypesList();
 
     const renderOptions = (option: SelectOption) => <SelectOptionWithIcon option={option} />;
 
     const {Datepicker} = registry.common.components.getAll();
+
     return (
-        <Dialog onClose={onClose} open={true} className={b()} qa={DialogParameterQA.Dialog}>
+        <Dialog
+            onClose={onClose}
+            open={true}
+            className={b()}
+            qa={DialogParameterQA.Dialog}
+            contentOverflow="visible"
+        >
             <Dialog.Header caption={title} />
             <Dialog.Body className={b('container')}>
                 {isTooltipLoading ? (
@@ -88,9 +96,8 @@ const DialogParameter: React.FC<DialogParameterProps> = (props: DialogParameterP
                                 qa={DialogParameterQA.NameInput}
                                 pin="round-round"
                                 size="m"
-                                className={b('line-item')}
                                 onUpdate={(value) => {
-                                    updateFormState({key: 'name', value});
+                                    updateFormState({name: value});
                                 }}
                             />
                         </div>
@@ -98,12 +105,11 @@ const DialogParameter: React.FC<DialogParameterProps> = (props: DialogParameterP
                             <span className={b('line-title')}>{i18n('parameter_type')}</span>
                             <Select
                                 disabled={isEditDefaultValueDialog}
-                                size="m"
+                                width="max"
                                 options={typeItems}
-                                className={b('line-item')}
                                 qa={DialogParameterQA.TypeSelector}
                                 onUpdate={(value) => {
-                                    updateFormState({key: 'type', value: value[0]});
+                                    updateFormState({type: value[0] as DATASET_FIELD_TYPES});
                                 }}
                                 value={[formState.type]}
                                 renderSelectedOption={renderOptions}
@@ -124,9 +130,8 @@ const DialogParameter: React.FC<DialogParameterProps> = (props: DialogParameterP
                                     timezoneOffset={0}
                                     onUpdate={(value) => {
                                         const {from} = value;
-                                        updateFormState({key: 'defaultValue', value: from || ''});
+                                        updateFormState({defaultValue: from || ''});
                                     }}
-                                    className={b('line-item')}
                                 />
                             ) : (
                                 <TextInput
@@ -135,19 +140,24 @@ const DialogParameter: React.FC<DialogParameterProps> = (props: DialogParameterP
                                     qa={DialogParameterQA.DefaultValueInput}
                                     pin="round-round"
                                     size="m"
-                                    className={b('line-item')}
                                     onUpdate={(value) => {
-                                        updateFormState({key: 'defaultValue', value});
+                                        updateFormState({defaultValue: value});
                                     }}
                                 />
                             )}
                         </div>
+                        {templateEnabled && !isEditDefaultValueDialog && (
+                            <TemplateSection
+                                formState={formState}
+                                showTemplateWarn={showTemplateWarn}
+                                updateFormState={updateFormState}
+                            />
+                        )}
                     </>
                 )}
             </Dialog.Body>
             <Dialog.Footer
                 preset="default"
-                listenKeyEnter={true}
                 showError={false}
                 textButtonCancel={i18n('button_cancel')}
                 textButtonApply={applyButtonText}

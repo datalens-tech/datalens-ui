@@ -1107,3 +1107,23 @@ export function setValidationState(payload: SetValidationState['payload']): SetV
         payload,
     };
 }
+
+export function toggletTemplateEnabled(
+    templateEnabled: boolean,
+    editHistoryOptions?: EditHistoryOptions,
+) {
+    return (dispatch: Dispatch<DatasetReduxAction>) => {
+        batch(() => {
+            dispatch({
+                type: DATASET_ACTION_TYPES.SET_TEMPLATE_ENABLED,
+                payload: {
+                    templateEnabled,
+                    [EDIT_HISTORY_OPTIONS_KEY]: {
+                        ...editHistoryOptions,
+                    },
+                },
+            });
+            dispatch(toggleSaveDataset({enable: true}));
+        });
+    };
+}
