@@ -4,4 +4,5 @@ export enum DatasetFieldListColumnType {
     Type = 'type',
     Custom = 'custom',
     Text = 'text',
+    Validation = 'validation',
 }

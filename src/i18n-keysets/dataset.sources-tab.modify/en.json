@@ -27,6 +27,7 @@
   "label_optimize-join": "Optimize link",
   "label_param-select-empty-placeholder-description": "Use parameters to make dynamic queries to a data source",
   "label_param-select-empty-placeholder-title": "Create your first parameter",
+  "label_param-select-option-disabled": "Настройки параметра запрещают использование этого параметра в источнике",
   "label_param-select-option-edit": "Edit",
   "label_source-editor-header": "Source",
   "label_source-relation": "Link",

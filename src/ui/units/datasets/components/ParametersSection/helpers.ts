@@ -21,8 +21,9 @@ import type {
 import {renderClipboardButton} from './components/CopyToClipboard/CopyToClipboardMenuItem';
 import {getHeaderWithTooltipNode} from './components/HeaderWithTooltip/HeaderWithTooltip';
 
-const PARAMETER_NAME_COLUMN_WIDTH = 355;
-const PARAMETER_TYPE_COLUMN_WIDTH = 190;
+const PARAMETER_NAME_COLUMN_WIDTH = 318;
+const PARAMETER_TYPE_COLUMN_WIDTH = 140;
+const PARAMETER_VALUE_COLUMN_WIDTH = 318;
 
 export const getParametersTableHeaders = async (): Promise<FieldHeaderColumn[]> => {
     return [
@@ -40,11 +41,16 @@ export const getParametersTableHeaders = async (): Promise<FieldHeaderColumn[]> 
             columnType: DatasetFieldListColumnType.Type,
         },
         {
+            width: PARAMETER_VALUE_COLUMN_WIDTH,
             node: await getHeaderWithTooltipNode(
                 i18n('dataset.parameters-tab.modify', 'label_parameter-value-column'),
                 i18n('dataset.parameters-tab.modify', 'label_parameter-value-column-description'),
             ),
             columnType: DatasetFieldListColumnType.Value,
+        },
+        {
+            text: i18n('dataset.parameters-tab.modify', 'label_parameter-validation-column'),
+            columnType: DatasetFieldListColumnType.Validation,
         },
     ];
 };
@@ -77,6 +83,13 @@ export const getParameterRowColumn = (
                 getTypeProps: (item: DatasetField) => ({
                     type: item.data_type,
                     datasetFieldType: DatasetFieldType.Parameter,
+                }),
+            };
+        case DatasetFieldListColumnType.Validation:
+            return {
+                columnType: DatasetFieldListColumnType.Validation,
+                getValidationProps: (item: DatasetField) => ({
+                    templateEnabled: item.template_enabled,
                 }),
             };
         default:

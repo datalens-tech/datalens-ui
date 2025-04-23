@@ -11,7 +11,7 @@ import type {DatasetComponentError} from '../../../../../shared';
 import DialogConfirm from '../../../../components/DialogConfirm/DialogConfirm';
 import type {FormValidationError} from '../../helpers/validation';
 import {VALIDATION_ERROR} from '../../helpers/validation';
-import {filteredDatasetParametersSelector} from '../../store/selectors';
+import {filteredDatasetParametersSelector, templateEnabledSelector} from '../../store/selectors';
 import type {FormOptions, StandaloneSource, Update} from '../../store/types';
 
 import {Form, InputFormItem, ParamSelector, SourceError, SourceSwitcher} from './components';
@@ -66,6 +66,7 @@ const SourceEditorDialog: React.FC<SourceEditorDialogProps> = (props) => {
         freeformSources,
         componentErrors,
         parameters,
+        templateEnabled,
     } = props;
     const [source, setSource] = React.useState(propsSource);
     const [selectedFreeformSource, setSelectedFreeformSource] = React.useState(
@@ -240,6 +241,7 @@ const SourceEditorDialog: React.FC<SourceEditorDialogProps> = (props) => {
                     validationErrors={validationErrors}
                     onUpdate={onSourceUpdate}
                     renderParamSelector={renderParamSelector}
+                    templateEnabled={templateEnabled}
                 />
                 {componentErrors && (
                     <SourceError source={source} componentErrors={componentErrors} />
@@ -270,6 +272,7 @@ const mapStateToProps = (store: DatalensGlobalState) => ({
     componentErrors: store.dataset.content.component_errors,
     sources: store.dataset.content.sources,
     parameters: filteredDatasetParametersSelector(store),
+    templateEnabled: templateEnabledSelector(store),
 });
 
 export default connect(mapStateToProps)(SourceEditorDialog);

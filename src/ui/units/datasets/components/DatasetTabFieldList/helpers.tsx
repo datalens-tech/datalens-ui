@@ -5,6 +5,7 @@ import type {DatasetField} from 'shared';
 
 import {TitleColumn} from './components/TitleColumn/TitleColumn';
 import {TypeColumn} from './components/TypeColumn/TypeColumn';
+import {ValidationColumn} from './components/ValidationColumn/ValidationColumn';
 import {ValueColumn} from './components/ValueColumn/ValueColumn';
 import type {FieldColumn, FieldListColumn} from './types';
 
@@ -51,6 +52,12 @@ export const getFieldRowColumns = (
                 return {
                     text: value,
                     width,
+                };
+            }
+            case 'validation': {
+                const {templateEnabled} = column.getValidationProps(item);
+                return {
+                    node: <ValidationColumn templateEnabled={templateEnabled} />,
                 };
             }
             default:

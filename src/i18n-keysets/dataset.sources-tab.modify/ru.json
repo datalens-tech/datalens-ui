@@ -27,6 +27,7 @@
   "label_optimize-join": "Оптимизировать связь",
   "label_param-select-empty-placeholder-description": "Используйте параметры, чтобы выполнять динамические запросы к источнику данных",
   "label_param-select-empty-placeholder-title": "Создайте ваш первый параметр",
+  "label_param-select-option-disabled": "Настройки параметра запрещают использование этого параметра в источнике",
   "label_param-select-option-edit": "Редактировать",
   "label_source-editor-header": "Источник",
   "label_source-relation": "Связь",
