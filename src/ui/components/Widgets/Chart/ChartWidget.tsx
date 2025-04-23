@@ -559,6 +559,15 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         onFiltersClear: handleFiltersClear,
     };
 
+    const withInsights = Boolean(loadedData?.chartsInsightsData);
+    const withFiltering = Boolean(showActionParamsFilter);
+    const withBtnsMod =
+        withInsights && withFiltering
+            ? 'btns-full'
+            : withInsights || withFiltering
+              ? 'btns-partly'
+              : '';
+
     const widgetHeaderProps = {
         isFullscreen,
         editMode,
@@ -569,7 +578,13 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         widgetId,
         hideDebugTool: true,
         ...commonHeaderContentProps,
-        ...(showFloatControls ? {showLoader, veil} : {}),
+        ...(showFloatControls
+            ? {
+                  showLoader,
+                  veil,
+                  extraMod: withBtnsMod,
+              }
+            : {}),
     };
 
     return (

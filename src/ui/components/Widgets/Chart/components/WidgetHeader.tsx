@@ -54,6 +54,7 @@ export type HeaderProps = {
     onFiltersClear?: () => void;
     title?: string;
     noControls?: boolean;
+    extraMod?: string;
 };
 
 export type HeaderWithControlsProps = HeaderProps &
@@ -101,6 +102,7 @@ export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
         onFiltersClear,
         title,
         noControls,
+        extraMod,
     } = props;
 
     const headerWithControlsProps = props as HeaderWithControlsProps;
@@ -214,6 +216,7 @@ export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
                 className={b({
                     mobile: DL.IS_MOBILE,
                     fullscreen: isFullscreen,
+                    ...{[String(extraMod)]: Boolean(extraMod)},
                 })}
             >
                 {isFullscreen && (
