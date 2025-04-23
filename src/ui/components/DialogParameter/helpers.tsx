@@ -18,7 +18,7 @@ const NEW_PARAMETER_FIELD = {
     type: DatasetFieldType.Dimension,
     aggregation: DatasetFieldAggregation.None,
     hidden: false,
-};
+} as DatasetField;
 
 export const getTypesList = (): SelectOption[] => {
     const items = getTypeSelectOptions([...AVAILABLE_FIELD_TYPES]);
@@ -36,7 +36,9 @@ export const createParameterField = (
         title: formState.name,
         cast: formState.type,
         default_value: formState.defaultValue,
-    } as DatasetField;
+        template_enabled: formState.template_enabled,
+        value_constraint: formState.value_constraint,
+    } satisfies DatasetField;
 };
 
 export const getDatepickerFormat = (type: DATASET_FIELD_TYPES): string | undefined => {

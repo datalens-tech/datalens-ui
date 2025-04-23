@@ -3,14 +3,12 @@ import isNil from 'lodash/isNil';
 import type {DatasetField} from 'shared';
 import {DatasetFieldType, DatasetTabSectionQA} from 'shared';
 
-import {openDialogParameter} from '../../../../store/actions/dialog';
 import {TAB_PARAMETERS} from '../../constants';
 import type {DatasetDispatch} from '../../store/actions/creators';
 import {
     deleteFieldWithValidation,
     duplicateFieldWithValidation,
-    updateFieldWithValidation,
-    updateFieldWithValidationByMultipleUpdates,
+    openDialogParameterEdit,
 } from '../../store/actions/creators';
 import {DatasetFieldListColumnType} from '../DatasetTabFieldList/constants';
 import type {
@@ -98,33 +96,7 @@ export const getParameterRowMenuItems = (dispatch: DatasetDispatch): MenuControl
             qa: DatasetTabSectionQA.EditRow,
             text: () => i18n('dataset.dataset-editor.modify', 'button_edit'),
             action: (field: DatasetField) =>
-                dispatch(
-                    openDialogParameter({
-                        type: 'edit',
-                        field,
-                        onApply: (updatedField) => {
-                            if (updatedField.guid === field.guid) {
-                                dispatch(
-                                    updateFieldWithValidation(updatedField, {tab: TAB_PARAMETERS}),
-                                );
-                            } else {
-                                // We send two field updates. Since title === is the guid for the parameter, you need to update both title and guid at the same time.
-                                // Beck does not know how to do this, so we send 2 updates. First we update the guid, and with the second update we update the rest of the entire field.
-                                const fieldWithNewGuid = {
-                                    ...updatedField,
-                                    guid: field.guid,
-                                    new_id: updatedField.guid,
-                                };
-                                dispatch(
-                                    updateFieldWithValidationByMultipleUpdates(
-                                        [fieldWithNewGuid, updatedField],
-                                        {tab: TAB_PARAMETERS},
-                                    ),
-                                );
-                            }
-                        },
-                    }),
-                ),
+                dispatch(openDialogParameterEdit({field, tab: TAB_PARAMETERS})),
         },
         {
             text: renderClipboardButton,
