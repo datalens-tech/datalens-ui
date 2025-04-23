@@ -247,13 +247,17 @@
 
     &__shadow {
         position: absolute;
-        top: 0;
+        top: 0px;
         pointer-events: none;
         left: 100%;
         border-left: 1px solid var(--g-color-text-hint);
         width: 6px;
         height: calc(100% + 1px);
         background: linear-gradient(90deg, var(--g-color-sfx-shadow-light), transparent);
+    }
+
+    &__header &__shadow {
+        height: 100%;
     }
 
     &__no-data {
