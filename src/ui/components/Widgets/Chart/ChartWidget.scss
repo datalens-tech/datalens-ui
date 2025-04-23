@@ -149,6 +149,11 @@ $hintOffset: 3px;
         }
     }
 
+    &__controls-corner-wrapper:has(.chartkit-menu__switcher-button_opened)
+        .chartkit-menu__switcher_flat {
+        display: block;
+    }
+
     .widget-header_mobile &__controls-corner-wrapper {
         background-color: var(--g-color-base-background);
 
