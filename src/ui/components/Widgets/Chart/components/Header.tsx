@@ -53,7 +53,7 @@ export type HeaderProps = Pick<
     isWidgetMenuDataChanged?: boolean;
     onExportLoading: (isLoading: boolean) => void;
     onFullscreenClick?: () => void;
-    showFilters?: boolean;
+    canBeDisplayedFilters?: boolean;
 };
 
 const b = block('dl-widget');
@@ -146,7 +146,7 @@ export const Header = (props: HeaderProps) => {
             />
 
             <div className={showFloatControls ? b('controls-corner-wrapper') : undefined}>
-                {!showFloatControls && showFiltersClear && props.showFilters && (
+                {!showFloatControls && showFiltersClear && props.canBeDisplayedFilters && (
                     <div className={b('icons')}>
                         <div className={b('filters-controls')}>
                             <Button
@@ -184,7 +184,7 @@ export const Header = (props: HeaderProps) => {
                         chartsDataProvider={dataProvider}
                     />
                 )}
-                {showFloatControls && showFiltersClear && props.showFilters && (
+                {showFloatControls && showFiltersClear && props.canBeDisplayedFilters && (
                     <div className={b('icons')}>
                         <div className={b('filters-controls')}>
                             <Button

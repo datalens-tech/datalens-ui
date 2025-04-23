@@ -278,7 +278,7 @@ export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
                             onFullscreenClick={onFullscreenClick}
                             showActionParamsFilter={showActionParamsFilter}
                             onFiltersClear={onFiltersClear}
-                            showFilters={true}
+                            canBeDisplayedFilters={true}
                         />
                     </React.Fragment>
                 )}
