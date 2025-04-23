@@ -598,6 +598,7 @@ export function setActualDash(setForce?: boolean) {
             }
             const searchParams = new URLSearchParams(location.search);
             searchParams.delete(URL_QUERY.REV_ID);
+            searchParams.delete(URL_QUERY.UNRELEASED);
             history.push({
                 ...location,
                 search: `?${searchParams.toString()}`,
@@ -645,6 +646,7 @@ export function setPublishDraft(setForce?: boolean) {
 
             const searchParams = new URLSearchParams(location.search);
             searchParams.delete(URL_QUERY.REV_ID);
+            searchParams.delete(URL_QUERY.UNRELEASED);
             history.push({
                 ...location,
                 search: `?${searchParams.toString()}`,
@@ -699,6 +701,7 @@ export function saveDashAsDraft(setForce?: boolean) {
             const newState = getState();
             await dispatch(setEntryContent(newState.dash.entry as unknown as EntryGlobalState));
             const searchParams = new URLSearchParams(location.search);
+            searchParams.delete(URL_QUERY.UNRELEASED);
             searchParams.set(URL_QUERY.REV_ID, newState.dash.entry.savedId);
             history.push({
                 ...location,
