@@ -17,6 +17,7 @@ import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
+import Loader from '../../../libs/DatalensChartkit/components/ChartKitBase/components/Loader/Loader';
 import {getDataProviderData} from '../../../libs/DatalensChartkit/components/ChartKitBase/helpers';
 import settings from '../../../libs/DatalensChartkit/modules/settings/settings';
 import DebugInfoTool from '../../DashKit/plugins/DebugInfoTool/DebugInfoTool';
@@ -335,6 +336,8 @@ export const ChartWidget = (props: ChartWidgetProps) => {
 
     const [initialParams, setInitialParams] = React.useState<StringParams>({});
 
+    const [isExportLoading, setIsExportLoading] = React.useState(false);
+
     const {
         loadedData,
         error,
@@ -578,6 +581,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         widgetId,
         hideDebugTool: true,
         ...commonHeaderContentProps,
+        setIsExportLoading,
         ...(showFloatControls
             ? {
                   showLoader,
@@ -586,6 +590,11 @@ export const ChartWidget = (props: ChartWidgetProps) => {
               }
             : {}),
     };
+
+    const showContentLoader = widgetHeaderProps.showLoader || isExportLoading;
+    const showLoaderVeil =
+        widgetHeaderProps.showLoader && widgetHeaderProps.veil && !isExportLoading;
+    const isFirstLoadingFloat = showFloatControls && loadedData === null;
 
     return (
         <div
@@ -596,6 +605,8 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 classMod,
                 ['wait-for-init']: !isInit,
                 'default-mobile': DL.IS_MOBILE && !isFullscreen,
+                pulsate: (showContentLoader || showLoaderVeil) && !isFirstLoadingFloat,
+                'loading-mobile-height': DL.IS_MOBILE && isFirstLoadingFloat,
             })}`}
             style={style}
             data-qa={ChartkitMenuDialogsQA.chartWidget}
@@ -609,6 +620,15 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 ]}
             />
             <WidgetHeader {...(widgetHeaderProps as HeaderWithControlsProps)} />
+            {isFirstLoadingFloat && (
+                <Loader
+                    visible={showContentLoader}
+                    compact={false}
+                    size="s"
+                    veil={false}
+                    delay={1000}
+                />
+            )}
             <Content
                 initialParams={initialParams}
                 showLoader={showLoader}

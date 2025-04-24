@@ -9,9 +9,10 @@ import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import {useSelector} from 'react-redux';
 import type {StringParams} from 'shared';
-import {DashTabItemControlSourceType} from 'shared';
+import {DashTabItemControlSourceType, Feature} from 'shared';
 import {DL} from 'ui/constants/common';
 import {useChangedValue} from 'ui/hooks/useChangedProp';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import type {ChartInitialParams} from '../../../libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
@@ -313,6 +314,8 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
         error || (loadedData as unknown as AxiosResponse<ResponseError>)?.data?.error,
     );
 
+    const showFloatControls = isEnabledFeature(Feature.DashFloatControls);
+
     return (
         <div
             ref={rootNodeRef}
@@ -329,7 +332,9 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
                 ]}
             />
             <div className={b('container', {[String(widgetType)]: Boolean(widgetType)})}>
-                <Loader visible={showLoader} veil={veil} delay={loaderDelay} />
+                {!showFloatControls && (
+                    <Loader visible={showLoader} veil={veil} delay={loaderDelay} />
+                )}
                 <div
                     className={b(
                         'body',

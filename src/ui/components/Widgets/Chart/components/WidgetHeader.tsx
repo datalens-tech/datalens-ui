@@ -14,7 +14,6 @@ import {setSkipReload} from 'ui/units/dash/store/actions/dashTyped';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 
-import Loader from '../../../../libs/DatalensChartkit/components/ChartKitBase/components/Loader/Loader';
 import type {ChartsData} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
 import type {
     CombinedError,
@@ -54,6 +53,7 @@ export type HeaderProps = {
     onFiltersClear?: () => void;
     title?: string;
     noControls?: boolean;
+    setIsExportLoading?: (arg: boolean) => void;
     extraMod?: string;
 };
 
@@ -83,6 +83,8 @@ export type HeaderWithControlsProps = HeaderProps &
             callExternalOnChange?: boolean,
             callChangeByClick?: boolean,
         ) => void;
+
+        setIsExportLoading: (arg: boolean) => void;
     };
 
 const b = block('widget-header');
@@ -102,6 +104,7 @@ export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
         onFiltersClear,
         title,
         noControls,
+        setIsExportLoading,
         extraMod,
     } = props;
 
@@ -118,19 +121,15 @@ export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
 
     const showFiltersClear = showActionParamsFilter && onFiltersClear && !showFloatControls;
 
-    const [isExportLoading, setIsExportLoading] = React.useState(false);
     const dispatch = useDispatch();
 
     const handleExportLoading = React.useCallback(
         (isLoading: boolean) => {
-            setIsExportLoading(isLoading);
+            setIsExportLoading?.(isLoading);
             dispatch(setSkipReload(isLoading));
         },
-        [dispatch],
+        [dispatch, setIsExportLoading],
     );
-
-    const showContentLoader = headerWithControlsProps.showLoader || isExportLoading;
-    const showLoaderVeil = headerWithControlsProps.veil && !isExportLoading;
 
     const handleClickHint = React.useCallback((e: React.MouseEvent) => {
         e.stopPropagation();
@@ -244,13 +243,6 @@ export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
                 )}
                 {showFloatControls && (
                     <React.Fragment>
-                        <Loader
-                            visible={showContentLoader}
-                            compact={headerWithControlsProps.compactLoader}
-                            veil={showLoaderVeil}
-                            delay={headerWithControlsProps.loaderDelay}
-                            classNameMod={'widget float'}
-                        />
                         <ChartHeader
                             dataProvider={headerWithControlsProps.dataProvider}
                             chartsInsightsData={

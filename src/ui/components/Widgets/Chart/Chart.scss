@@ -137,17 +137,6 @@ $fullscreenZIndex: 999;
         top: 7px;
     }
 
-    & .chartkit-loader.chartkit-loader_widget.float {
-        z-index: 5;
-
-        & .chartkit-loader__loader_compact {
-            position: absolute;
-            z-index: 100;
-            right: 8px;
-            top: 7px;
-        }
-    }
-
     // for widgets-metrics indentation should be different
     #{$class}__body {
         padding: 0 var(--dl-dk-charts-padding) var(--dl-dk-charts-padding);

@@ -166,4 +166,29 @@ $hintOffset: 3px;
             display: block;
         }
     }
+
+    #{$dashPublicContainerClassName} &_pulsate &__container,
+    #{$dashContainerClassName} &_pulsate &__container {
+        background-color: #fff;
+        animation: pulseAnimation 1.5s ease-in-out infinite;
+    }
+
+    &__chartkit-inner-loader,
+    &__mobile-loading-dummy,
+    #{$dashPublicContainerClassName} &_loading-mobile-height,
+    #{$dashContainerClassName} &_loading-mobile-height {
+        min-height: 400px;
+    }
+}
+
+@keyframes pulseAnimation {
+    0% {
+        opacity: 0.65;
+    }
+    50% {
+        opacity: 0.35;
+    }
+    100% {
+        opacity: 0.65;
+    }
 }
