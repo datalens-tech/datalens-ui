@@ -200,7 +200,7 @@ function prepareHeatmap(options: PrepareFunctionArgs) {
         shared?.extraSettings?.mapCenterMode !== ZoomMode.Manual;
     const {zoom, center} = getMapState(shared, [leftBot, rightTop]);
 
-    ChartEditor.updateHighchartsConfig({state: {zoom, center}});
+    ChartEditor?.updateHighchartsConfig({state: {zoom, center}});
 
     return [
         {

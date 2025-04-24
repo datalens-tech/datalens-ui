@@ -449,7 +449,7 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
         shared?.extraSettings?.mapCenterMode !== ZoomMode.Manual;
     const {zoom, center} = getMapState(shared, [leftBot, rightTop]);
 
-    ChartEditor.updateHighchartsConfig({state: {zoom, center}});
+    ChartEditor?.updateHighchartsConfig({state: {zoom, center}});
 
     if (gradientMode) {
         const colorTitle = color.fakeTitle || idToTitle[color.guid] || color.title;

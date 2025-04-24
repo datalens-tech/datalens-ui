@@ -417,7 +417,7 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
         shared?.extraSettings?.mapCenterMode !== ZoomMode.Manual;
     const {zoom, center} = getMapState(shared, [leftBot, rightTop]);
 
-    ChartEditor.updateHighchartsConfig({state: {zoom, center}});
+    ChartEditor?.updateHighchartsConfig({state: {zoom, center}});
 
     if (gradientOptions) {
         const colorTitle = color.fakeTitle || idToTitle[color.guid] || color.title;
