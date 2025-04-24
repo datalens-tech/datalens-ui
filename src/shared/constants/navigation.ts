@@ -7,8 +7,6 @@ export const PLACE = {
     CONNECTIONS: 'connections',
     CLUSTERS: 'clusters',
     REPORTS: 'reports',
-    // TODO delete after update
-    PRESENTATIONS: 'presentations',
 } as const;
 
 export const MAP_PLACE_TO_SCOPE = {
@@ -20,6 +18,4 @@ export const MAP_PLACE_TO_SCOPE = {
     [PLACE.CONNECTIONS]: 'connection',
     [PLACE.CLUSTERS]: 'clusters',
     [PLACE.REPORTS]: 'report',
-    // TODO delete after update
-    [PLACE.PRESENTATIONS]: 'presentations',
 } as const;

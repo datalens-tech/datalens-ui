@@ -2,6 +2,8 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import _get from 'lodash/get';
+import {Feature} from 'shared';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {FormValidationError} from '../../../helpers/validation';
 import type {FreeformSource} from '../../../store/types';
@@ -10,6 +12,7 @@ import {TITLE_INPUT, getErrorText} from '../utils';
 
 import {EditorFormItem} from './EditorFormItem';
 import {InputFormItem} from './InputFormItem';
+import type {RenderParamSelector} from './ParamSelector';
 import {SelectFormItem} from './SelectFormItem';
 
 const b = block('source-editor-dialog');
@@ -19,6 +22,7 @@ type FormProps = {
     freeformSource: FreeformSource;
     source: EditedSource;
     validationErrors: FormValidationError[];
+    renderParamSelector: RenderParamSelector;
 };
 
 const getFormItemValue = (opt: {
@@ -37,7 +41,15 @@ const getFormItemValue = (opt: {
     }
 };
 
-export const Form: React.FC<FormProps> = ({onUpdate, freeformSource, source, validationErrors}) => {
+export const Form: React.FC<FormProps> = ({
+    onUpdate,
+    freeformSource,
+    source,
+    validationErrors,
+    renderParamSelector,
+}) => {
+    // TODO: remove after BI-6211
+    const isTemplateParamsFeatureEnabled = isEnabledFeature(Feature.EnableDsTemplateParams);
     const formItems = React.useMemo(() => {
         return freeformSource.form.map((formOptions) => {
             const key = formOptions.name;
@@ -55,6 +67,12 @@ export const Form: React.FC<FormProps> = ({onUpdate, freeformSource, source, val
                             sourceType={source.source_type}
                             error={errorText}
                             onUpdate={onUpdate}
+                            // TODO: we should set renderParamSelector in case of:
+                            // - dataset.template_enabled === true (after BI-6211)
+                            // - formOptions.template_enabled === true (after BI-6190)
+                            renderParamSelector={
+                                isTemplateParamsFeatureEnabled ? renderParamSelector : undefined
+                            }
                             {...formOptions}
                         />
                     );
@@ -77,6 +95,12 @@ export const Form: React.FC<FormProps> = ({onUpdate, freeformSource, source, val
                             value={value}
                             error={errorText}
                             onUpdate={onUpdate}
+                            // TODO: we should set renderParamSelector in case of:
+                            // - dataset.template_enabled === true (after BI-6211)
+                            // - formOptions.template_enabled === true (after BI-6190)
+                            renderParamSelector={
+                                isTemplateParamsFeatureEnabled ? renderParamSelector : undefined
+                            }
                             {...formOptions}
                         />
                     );
@@ -86,7 +110,14 @@ export const Form: React.FC<FormProps> = ({onUpdate, freeformSource, source, val
                 }
             }
         });
-    }, [onUpdate, freeformSource, source, validationErrors]);
+    }, [
+        onUpdate,
+        renderParamSelector,
+        freeformSource,
+        source,
+        validationErrors,
+        isTemplateParamsFeatureEnabled,
+    ]);
 
     return <div className={b('params')}>{formItems}</div>;
 };

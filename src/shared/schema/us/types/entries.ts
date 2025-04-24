@@ -31,6 +31,7 @@ export interface GetEntryArgs {
 
 export interface PrivateGetEntryArgs extends GetEntryArgs {
     usMasterToken: string;
+    branch?: 'published' | 'saved';
 }
 
 export interface ProxyCreateEntryArgs {

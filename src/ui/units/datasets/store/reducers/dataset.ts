@@ -60,6 +60,7 @@ import {
     SET_LAST_MODIFIED_TAB,
     SET_QUEUE_TO_LOAD_PREVIEW,
     SET_SOURCES_LOADING_ERROR,
+    SET_TEMPLATE_ENABLED,
     SET_VALIDATION_STATE,
     SOURCES_REFRESH,
     SOURCE_ADD,
@@ -1347,6 +1348,16 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 validation: {
                     ...state.validation,
                     ...validation,
+                },
+            };
+        }
+        case SET_TEMPLATE_ENABLED: {
+            const {templateEnabled} = action.payload;
+            return {
+                ...state,
+                content: {
+                    ...state.content,
+                    template_enabled: templateEnabled,
                 },
             };
         }
