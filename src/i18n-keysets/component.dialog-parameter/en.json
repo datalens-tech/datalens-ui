@@ -13,7 +13,7 @@
   "parameter_default-value": "Default value",
   "parameter_false": "False",
   "parameter_name": "Name",
-  "parameter_name-error": "Некорректное название параметра",
+  "parameter_name-error": "Incorrect parameter name",
   "parameter_name-note": "Parameter name restrictions: \n* Lowercase Latin letters, digits, hyphens, and underscores are acceptable. The first character can't be an underscore: `_name`. \n* Parameter name length should not exceed 36 characters. \n* Reserved parameter names that cannot be used: `tab`, `state`, `mode`, `focus`, `grid`, `tz`, `from`, `to`.",
   "parameter_true": "True",
   "parameter_type": "Type",
