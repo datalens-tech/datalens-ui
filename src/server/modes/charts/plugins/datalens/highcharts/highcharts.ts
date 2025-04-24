@@ -11,12 +11,9 @@ import {
     ChartkitHandlers,
     LabelsPositions,
     LegendDisplayMode,
-    MapCenterMode,
     VISUALIZATIONS_WITH_LABELS_POSITION,
     WizardVisualizationId,
-    ZoomMode,
     isDateField,
-    mapStringToCoordinates,
 } from '../../../../../../shared';
 import {PERCENT_VISUALIZATIONS} from '../../../../../../shared/constants/visualization';
 import type {IgnoreProps} from '../utils/axis-helpers';
@@ -46,33 +43,12 @@ export const buildHighchartsConfigPrivate = (args: {
             shared.visualization.id,
         )
     ) {
-        let zoom = 8;
-        if (
-            shared?.extraSettings?.zoomMode === ZoomMode.Manual &&
-            shared?.extraSettings?.zoomValue
-        ) {
-            zoom = Math.max(1, shared.extraSettings.zoomValue);
-        }
-
-        let center = [55.76, 37.64];
-        try {
-            const centerValue = shared?.extraSettings?.mapCenterValue;
-            const mapCenterValue =
-                shared?.extraSettings?.mapCenterMode === MapCenterMode.Manual && centerValue
-                    ? mapStringToCoordinates(centerValue)
-                    : null;
-
-            if (mapCenterValue?.length === 2) {
-                center = mapCenterValue;
-            }
-        } catch (e) {}
-
         // center and zoom are specified as the default value if bounds does not arrive
         // if bounds comes, then center and zoom are ignored
         return {
             state: {
-                center,
-                zoom,
+                center: [55.76, 37.64],
+                zoom: 8,
                 controls: ['zoomControl'],
                 behaviors: ['drag', 'scrollZoom', 'multiTouch'],
             },

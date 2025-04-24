@@ -1,4 +1,5 @@
-import type {RGBGradient} from '../../../../../../shared';
+import {MapCenterMode, ZoomMode, mapStringToCoordinates} from '../../../../../../shared';
+import type {type RGBGradient, ServerChartsConfig} from '../../../../../../shared';
 import type {ChartColorsConfig} from '../types';
 
 import {
@@ -175,6 +176,30 @@ function getGradientMapOptions(
     }
 
     return mapOptions;
+}
+
+export function getMapState(shared: ServerChartsConfig, bounds: (Coordinate | undefined)[]) {
+    const [leftBot, rightTop] = bounds;
+    const shouldSetBounds =
+        shared?.extraSettings?.zoomMode !== ZoomMode.Manual &&
+        shared?.extraSettings?.mapCenterMode !== ZoomMode.Manual;
+
+    let center: Coordinate = [55.76, 37.64];
+    const centerValue = shared?.extraSettings?.mapCenterValue;
+    const mapCenterValue = centerValue ? (mapStringToCoordinates(centerValue) as Coordinate) : null;
+
+    if (shared?.extraSettings?.mapCenterMode === MapCenterMode.Manual && mapCenterValue) {
+        center = mapCenterValue;
+    } else if (leftBot && rightTop && !shouldSetBounds) {
+        center = [leftBot[0] / 2 + rightTop[0] / 2, leftBot[1] / 2 + rightTop[1] / 2];
+    }
+
+    let zoom = 8;
+    if (shared?.extraSettings?.zoomMode === ZoomMode.Manual && shared?.extraSettings?.zoomValue) {
+        zoom = Math.max(1, shared.extraSettings.zoomValue);
+    }
+
+    return {zoom, center};
 }
 
 export {

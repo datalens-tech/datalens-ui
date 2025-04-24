@@ -30,29 +30,29 @@ type Props = {
 const b = block('zoom-setting');
 
 export const ZoomSetting = (props: Props) => {
-    const {mode, value, onUpdate} = props;
+    const {mode: zoomMode, value: zoomValue, onUpdate} = props;
 
     const handleUpdateMode = (mode: string) => {
-        onUpdate({mode: mode as ZoomModes, value});
+        onUpdate({mode: mode as ZoomModes, value: zoomValue});
     };
 
     const handleChangeInput = (value: number) => {
-        onUpdate({mode: mode as ZoomModes, value});
+        onUpdate({mode: zoomMode as ZoomModes, value});
     };
 
     return (
         <FormRow className={b()} label={i18n('wizard', 'label_zoom')}>
-            <RadioButton value={mode} onUpdate={handleUpdateMode}>
+            <RadioButton value={zoomMode} onUpdate={handleUpdateMode}>
                 {RADIO_OPTIONS.map((item) => (
                     <RadioButton.Option key={item.value} value={item.value}>
                         {item.label}
                     </RadioButton.Option>
                 ))}
             </RadioButton>
-            {mode === ZoomMode.Manual && (
+            {zoomMode === ZoomMode.Manual && (
                 <RangeInputPicker
                     size="s"
-                    value={value ?? 1}
+                    value={zoomValue ?? 1}
                     minValue={1}
                     maxValue={21}
                     step={1}

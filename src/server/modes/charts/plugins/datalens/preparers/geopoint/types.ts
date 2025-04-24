@@ -36,6 +36,9 @@ export type GeopointMapOptions = {
 };
 
 export type GeopointPrepareResult = {
-    options: GeopointMapOptions;
+    options?: GeopointMapOptions;
     bounds?: (Coordinate | undefined)[];
+    collection?: {
+        children: unknown[];
+    };
 };

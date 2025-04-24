@@ -10,17 +10,14 @@ export function isVisualizationWithLayers(
 }
 
 export function mapStringToCoordinates(value: string) {
-    return value
-        .split(',')
-        .map((val) => {
-            const res = Number(val);
-            if (Number.isNaN(res)) {
-                return null;
-            }
+    return value.split(',').reduce<number[]>((acc, val) => {
+        const res = Number(val);
+        if (!Number.isNaN(res)) {
+            acc.push(res);
+        }
 
-            return res;
-        })
-        .filter(Boolean) as number[];
+        return acc;
+    }, []);
 }
 
 export function validateCoordinatesValue(value: string) {

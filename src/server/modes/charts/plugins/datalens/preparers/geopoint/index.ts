@@ -25,6 +25,7 @@ import {
     getGradientMapOptions,
     getLayerAlpha,
     getMapBounds,
+    getMapState,
 } from '../../utils/geo-helpers';
 import {
     chartKitFormatNumberWrapper,
@@ -411,6 +412,13 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
         };
     }
 
+    const shouldSetBounds =
+        shared?.extraSettings?.zoomMode !== ZoomMode.Manual &&
+        shared?.extraSettings?.mapCenterMode !== ZoomMode.Manual;
+    const {zoom, center} = getMapState(shared, [leftBot, rightTop]);
+
+    ChartEditor.updateHighchartsConfig({state: {zoom, center}});
+
     if (gradientOptions) {
         const colorTitle = color.fakeTitle || idToTitle[color.guid] || color.title;
 
@@ -419,15 +427,17 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
             ...getGradientMapOptions(colorsConfig, colorTitle, gradientOptions),
         };
 
-        return [
-            {
-                collection: {
-                    children: getFlattenCoordinates(Object.values(allPoints)),
-                },
-                options: mapOptions,
-                bounds: [leftBot, rightTop],
+        const resultData: GeopointPrepareResult = {
+            collection: {
+                children: getFlattenCoordinates(Object.values(allPoints)),
             },
-        ];
+            options: mapOptions,
+        };
+        if (shouldSetBounds) {
+            resultData.bounds = [leftBot, rightTop];
+        }
+
+        return [resultData];
     } else {
         mapOptions = {
             ...mapOptions,
@@ -444,7 +454,7 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
         options: mapOptions,
     };
 
-    if (shared?.extraSettings?.zoomMode !== ZoomMode.Manual) {
+    if (shouldSetBounds) {
         resultData.bounds = [leftBot, rightTop];
     }
 

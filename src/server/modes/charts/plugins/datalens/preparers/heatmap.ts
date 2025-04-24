@@ -1,4 +1,4 @@
-import type {RGBColor, VisualizationLayerShared} from '../../../../../../shared';
+import {type RGBColor, type VisualizationLayerShared, ZoomMode} from '../../../../../../shared';
 import {getCurrentGradient, getRgbColors, getThresholdValues} from '../utils/color-helpers';
 import type {Coordinate} from '../utils/geo-helpers';
 import {
@@ -6,6 +6,7 @@ import {
     getFlattenCoordinates,
     getLayerAlpha,
     getMapBounds,
+    getMapState,
 } from '../utils/geo-helpers';
 import {getTitleInOrder} from '../utils/misc-helpers';
 
@@ -45,6 +46,7 @@ function prepareHeatmap(options: PrepareFunctionArgs) {
         idToTitle,
         shared,
         colorsConfig,
+        ChartEditor,
     } = options;
     const layerSettings = (options.layerSettings ||
         {}) as VisualizationLayerShared['visualization']['layerSettings'];
@@ -193,11 +195,18 @@ function prepareHeatmap(options: PrepareFunctionArgs) {
         layerSettings.name ||
         options.ChartEditor.getTranslation('wizard.prepares', 'label_new-layer');
 
+    const shouldSetBounds =
+        shared?.extraSettings?.zoomMode !== ZoomMode.Manual &&
+        shared?.extraSettings?.mapCenterMode !== ZoomMode.Manual;
+    const {zoom, center} = getMapState(shared, [leftBot, rightTop]);
+
+    ChartEditor.updateHighchartsConfig({state: {zoom, center}});
+
     return [
         {
             heatmap: getFlattenCoordinates(Object.values(allPoints)),
             options: mapOptions,
-            bounds: [leftBot, rightTop],
+            bounds: shouldSetBounds ? [leftBot, rightTop] : undefined,
         },
     ];
 }

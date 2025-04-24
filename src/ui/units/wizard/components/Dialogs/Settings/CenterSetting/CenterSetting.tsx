@@ -30,34 +30,34 @@ type Props = {
 const b = block('center-setting');
 
 export const CenterSetting = (props: Props) => {
-    const {mode, value, onUpdate} = props;
+    const {mode: centerMode, value: centerValue, onUpdate} = props;
     const inputValidationState = React.useMemo(() => {
-        return value && !validateCoordinatesValue(value) ? 'invalid' : undefined;
-    }, [value]);
+        return centerValue && !validateCoordinatesValue(centerValue) ? 'invalid' : undefined;
+    }, [centerValue]);
 
     const handleUpdateMode = (mode: string) => {
-        onUpdate({mode: mode as MapCenterModes, value});
+        onUpdate({mode: mode as MapCenterModes, value: centerValue});
     };
 
     const handleChangeInput = (value: string) => {
-        onUpdate({mode: mode as MapCenterModes, value});
+        onUpdate({mode: centerMode as MapCenterModes, value});
     };
 
     return (
         <FormRow className={b()} label={i18n('wizard', 'label_center')}>
-            <RadioButton value={mode} onUpdate={handleUpdateMode}>
+            <RadioButton value={centerMode} onUpdate={handleUpdateMode}>
                 {RADIO_OPTIONS.map((item) => (
                     <RadioButton.Option key={item.value} value={item.value}>
                         {item.label}
                     </RadioButton.Option>
                 ))}
             </RadioButton>
-            {mode === MapCenterMode.Manual && (
+            {centerMode === MapCenterMode.Manual && (
                 <TextInput
                     className={b('input')}
                     pin="round-round"
                     size="m"
-                    value={value ?? ''}
+                    value={centerValue ?? ''}
                     onUpdate={handleChangeInput}
                     validationState={inputValidationState}
                     errorMessage={i18n('wizard', 'label_field-invalid')}
