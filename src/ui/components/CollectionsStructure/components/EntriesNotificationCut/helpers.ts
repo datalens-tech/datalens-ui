@@ -47,6 +47,7 @@ const NOTIFICATIONS_BY_CODE: Record<string, string> = {
     'ERR.UI_API.TRANSFER_INVALID_ENTRY_DATA': i18n('label_invalid-entry-data'),
     'ERR.UI_API.TRANSFER_INVALID_ENTRY_SCOPE': i18n('label_invalid-entry-scope'),
     UNEXPECTED_WORKFLOW_ERROR: i18n('label_unexpected-workflow-error'),
+    SCOPE_NOT_AVAILABLE_FOR_INSTALLATION: i18n('label_scope-not-available-for-installation'),
 };
 
 export const transformNotifications = (

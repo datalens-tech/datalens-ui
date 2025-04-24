@@ -8,6 +8,7 @@
   "label_invalid-error": "Unknown error",
   "label_invalid-version": "The imported file has an invalid version",
   "label_missing-linked-entry": "One of the related entities has been deleted",
+  "label_scope-not-available-for-installation": "The entity type is not available for the current installation",
   "label_unexpected-workflow-error": "Unexpected error during operation",
   "lable_import-check-delegation": "Delegation may not be completed, please save the connection again"
 }
