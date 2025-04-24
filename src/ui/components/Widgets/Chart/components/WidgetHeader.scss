@@ -136,5 +136,17 @@
             overflow: hidden;
             white-space: nowrap;
         }
+
+        &#{$class}_btns-full #{$class}__mobile-title {
+            padding-right: 94px;
+        }
+
+        &#{$class}_btns-partly #{$class}__mobile-title {
+            padding-right: 67px;
+        }
+    }
+
+    &:has(+ .chartkit-loader) {
+        z-index: 5;
     }
 }
