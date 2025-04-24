@@ -202,7 +202,8 @@ export type DLGlobalData = {
             };
         };
     };
-    authRoles?: Record<`${UserRole}`, number>;
+    // sorted roles from the role with the most rights to the role with the least
+    orderedAuthRoles?: `${UserRole}`[];
     embed?:
         | {
               mode: 'chart';

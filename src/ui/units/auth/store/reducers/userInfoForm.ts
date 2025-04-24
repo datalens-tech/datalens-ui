@@ -1,4 +1,4 @@
-import {getSortedUsersRoles} from '../../utils/getSortedUsersRoles';
+import {getUsersRoles} from '../../utils/getUsersRoles';
 import type {UserInfoFormAction} from '../actions/userInfoForm';
 import {
     RESET_FORM,
@@ -14,7 +14,7 @@ type UserInfoFormState = {
 };
 
 const getInitialRoles = () => {
-    const rolesList = getSortedUsersRoles();
+    const rolesList = getUsersRoles();
     // take the role with the least rights
     const defaultRole = rolesList[rolesList.length - 1];
 

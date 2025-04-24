@@ -8,12 +8,12 @@ import type {AppDispatch} from 'ui/store';
 
 import {updateUserRoles} from '../../store/actions/userProfile';
 import {selectUpdateUserRoleIsLoading} from '../../store/selectors/userProfile';
-import {getSortedUsersRoles} from '../../utils/getSortedUsersRoles';
+import {getUsersRoles} from '../../utils/getUsersRoles';
 import {getRoleByKey} from '../../utils/userProfile';
 
 const i18n = I18n.keyset('auth.dialog-change-user-role');
 
-const EXISITING_ROLES = getSortedUsersRoles();
+const EXISITING_ROLES = getUsersRoles();
 
 const ROLES_OPTIONS = EXISITING_ROLES.map((key) => ({
     value: key,

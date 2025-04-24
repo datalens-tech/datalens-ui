@@ -6,7 +6,7 @@ import {I18n} from 'i18n';
 import debounce from 'lodash/debounce';
 import type {UserRole} from 'shared/components/auth/constants/role';
 import {registry} from 'ui/registry';
-import {getSortedUsersRoles} from 'ui/units/auth/utils/getSortedUsersRoles';
+import {getUsersRoles} from 'ui/units/auth/utils/getUsersRoles';
 import {getRoleByKey} from 'ui/units/auth/utils/userProfile';
 
 import {BASE_USER_FILTERS} from '../constants';
@@ -16,7 +16,7 @@ import './UsersFilters.scss';
 const b = block('service-settings-users-list-filters');
 const i18n = I18n.keyset('service-settings.users-list.view');
 
-const ROLES_OPTIONS = getSortedUsersRoles().map((key) => ({
+const ROLES_OPTIONS = getUsersRoles().map((key) => ({
     value: key,
     content: getRoleByKey(key),
 }));

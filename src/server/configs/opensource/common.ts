@@ -150,11 +150,7 @@ export default {
         },
     },
 
-    authRoles: {
-        [UserRole.Admin]: 0,
-        [UserRole.Editor]: 1,
-        [UserRole.Viewer]: 2,
-    },
+    orderedAuthRoles: [UserRole.Admin, UserRole.Editor, UserRole.Viewer],
 
     chartsEngineConfig: {
         secrets: {},

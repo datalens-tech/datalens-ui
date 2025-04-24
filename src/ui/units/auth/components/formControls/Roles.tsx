@@ -9,7 +9,7 @@ import type {UserRole} from 'shared/components/auth/constants/role';
 
 import {updateFormValues} from '../../store/actions/userInfoForm';
 import {selectRoles} from '../../store/selectors/userInfoForm';
-import {getSortedUsersRoles} from '../../utils/getSortedUsersRoles';
+import {getUsersRoles} from '../../utils/getUsersRoles';
 import {getRoleByKey} from '../../utils/userProfile';
 
 import type {UserFormSelectProps} from './types';
@@ -24,7 +24,7 @@ export const Roles = (props: UserFormSelectProps) => {
     const dispatch = useDispatch();
 
     const rolesOptions = React.useMemo(() => {
-        const availableRoles = getSortedUsersRoles();
+        const availableRoles = getUsersRoles();
         return Object.values(availableRoles).map((key) => ({
             value: key,
             content: getRoleByKey(key),
