@@ -82,7 +82,8 @@ export type SetStateAction<T> = {
 
 export function addDashEditHistoryPoint(stacked = false) {
     return (dispatch: DashDispatch, getState: () => DatalensGlobalState) => {
-        const {data, widgetsCurrentTab, hashStates, tabId, mode} = getState().dash;
+        const {data, widgetsCurrentTab, hashStates, tabId, mode, showTableOfContent} =
+            getState().dash;
 
         if (mode !== Mode.Edit) {
             return;
@@ -96,6 +97,7 @@ export function addDashEditHistoryPoint(stacked = false) {
                     widgetsCurrentTab,
                     hashStates,
                     tabId,
+                    showTableOfContent,
                 },
                 stacked,
                 skipEmptyDiff: true,
