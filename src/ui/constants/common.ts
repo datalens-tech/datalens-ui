@@ -323,6 +323,7 @@ export const URL_QUERY = {
     CONNECTION_ID: 'connectionId',
     DEBUG: '_debug',
     OPEN_DASH_INFO: '_opened_info',
+    UNRELEASED: 'unreleased',
 };
 
 const GRADIENT_ICONS = {
