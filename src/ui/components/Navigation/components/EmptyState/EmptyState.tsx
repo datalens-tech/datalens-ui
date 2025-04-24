@@ -22,15 +22,6 @@ export type EmptyStateProps = {
     renderAction: () => React.ReactNode;
 };
 
-const TEMPLATE_PLACES: string[] = [
-    PLACE.FAVORITES,
-    PLACE.CONNECTIONS,
-    PLACE.DATASETS,
-    PLACE.WIDGETS,
-    PLACE.DASHBOARDS,
-    PLACE.REPORTS,
-];
-
 const HIDE_ACTION_PLACES: string[] = [PLACE.FAVORITES];
 
 export const EmptyState = ({
@@ -43,12 +34,17 @@ export const EmptyState = ({
     const emptyText = isEmptyFolder ? getTitleByPlace(place) : i18n('label_not-found');
     const emptyDescription = isEmptyFolder ? getDescriptionByPlace(place) : '';
 
-    const isTemplatePlace = TEMPLATE_PLACES.includes(place);
+    const isTemplatePlace = place !== PLACE.ROOT;
 
     const emptyFolderName = isTemplatePlace ? 'template' : 'emptyDirectory';
     const name = isEmptyFolder ? emptyFolderName : 'notFound';
 
     const illustrationSize = mode === MODE_MINIMAL && !DL.IS_MOBILE ? 'm' : 'l';
+
+    const renderTemplateAction =
+        isEmptyFolder && isTemplatePlace && !HIDE_ACTION_PLACES.includes(place)
+            ? () => <div className={b('action')}>{renderAction()}</div>
+            : undefined;
 
     return (
         <div className={className}>
@@ -58,11 +54,7 @@ export const EmptyState = ({
                 description={emptyDescription}
                 direction="column"
                 size={illustrationSize}
-                renderAction={
-                    isEmptyFolder && isTemplatePlace && !HIDE_ACTION_PLACES.includes(place)
-                        ? () => <div className={b('action')}>{renderAction()}</div>
-                        : undefined
-                }
+                renderAction={renderTemplateAction}
             />
         </div>
     );
