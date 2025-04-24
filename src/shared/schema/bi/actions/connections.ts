@@ -154,14 +154,17 @@ export const actions = {
     _proxyImportConnection: createAction<ImportConnectionResponse, ImportConnectionArgs>({
         method: 'POST',
         path: () => `${PATH_PREFIX}/connections/import`,
-        params: ({usMasterToken, data}, headers) => ({
+        params: ({usMasterToken, workbookId, connection}, headers) => ({
             headers: {
-                ...(data.workbook_id ? {[WORKBOOK_ID_HEADER]: data.workbook_id} : {}),
+                ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
                 ...headers,
                 [US_MASTER_TOKEN_HEADER]: usMasterToken,
             },
             body: {
-                data,
+                data: {
+                    workbook_id: workbookId,
+                    connection,
+                },
                 id_mapping: {},
             },
         }),

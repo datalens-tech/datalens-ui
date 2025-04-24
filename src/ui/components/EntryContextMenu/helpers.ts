@@ -232,7 +232,6 @@ export type EntryContextMenuItem<T = unknown> = {
     action: (args?: unknown) => void;
     id: MenuGroupConfigIds<T>; // it is necessary to identify and group menu items (using separators)
     hidden?: boolean;
-    menuItemClassName?: string;
     wrapper?: ({entry, children}: WrapperParams) => JSX.Element;
     qa?: string;
 };

@@ -83,6 +83,11 @@ export const selectImportWorkbookStatus = createSelector(
         }),
 );
 
+export const selectExportData = createSelector(
+    [selectExportWorkbook],
+    (exportWorkbook) => exportWorkbook.data,
+);
+
 // Rights at the root of the structure
 export const selectRootPermissionsData = createSelector(
     [selectGetRootCollectionPermissions],

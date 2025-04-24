@@ -13,9 +13,9 @@
   "label_no-connections": "No elements for links",
   "label_no-information": "No information",
   "value_connected": "Link",
+  "value_error": "Error",
   "value_ignore": "Ignore",
   "value_input": "Incoming link",
   "value_none": "No link",
-  "value_output": "Outgoing link",
-  "value_error": "Error"
+  "value_output": "Outgoing link"
 }
