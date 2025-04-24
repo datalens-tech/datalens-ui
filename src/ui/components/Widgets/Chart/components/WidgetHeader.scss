@@ -145,4 +145,8 @@
             padding-right: 67px;
         }
     }
+
+    &:has(+ .chartkit-loader) {
+        z-index: 5;
+    }
 }
