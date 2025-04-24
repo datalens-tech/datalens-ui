@@ -1,4 +1,5 @@
 import {ENTRY_TYPES, EntryScope, getEntryNameByKey, makeSlugName} from 'shared';
+import {URL_QUERY} from 'ui/constants';
 
 import type {GetUIEntryRouteArgs} from '../registry/units/common/types/functions/getUIEntryRoute';
 
@@ -44,3 +45,10 @@ export function getUIEntryRoute({entry, origin, endpoints}: GetUIEntryRouteArgs)
 
     return new URL(url, origin).toString();
 }
+
+export const isUnreleasedByUrlParams = (search: string) => {
+    return (
+        getUrlParamFromStr(search, URL_QUERY.UNRELEASED) === '1' &&
+        !getUrlParamFromStr(search, URL_QUERY.REV_ID)
+    );
+};
