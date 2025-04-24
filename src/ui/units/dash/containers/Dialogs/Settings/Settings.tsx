@@ -3,7 +3,7 @@ import React from 'react';
 import {Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import ChartKit from 'libs/DatalensChartkit';
-import {useDispatch, useSelector} from 'react-redux';
+import {batch, useDispatch, useSelector} from 'react-redux';
 import {DashboardDialogSettingsQa} from 'shared/constants/qa/dash';
 import {DEFAULT_DASH_MARGINS} from 'ui/components/DashKit/constants';
 import {registry} from 'ui/registry';
@@ -146,14 +146,16 @@ const Settings = () => {
                 delete newSettings.margins;
             }
 
-            dispatch(
-                updateAllDashSettings({
-                    settings: newSettings,
-                    accessDescription,
-                    supportDescription,
-                }),
-            );
-            dispatch(toggleTableOfContent(Boolean(expandTOC)));
+            batch(() => {
+                dispatch(toggleTableOfContent(Boolean(expandTOC)));
+                dispatch(
+                    updateAllDashSettings({
+                        settings: newSettings,
+                        accessDescription,
+                        supportDescription,
+                    }),
+                );
+            });
 
             ChartKit?.setDataProviderSettings?.({
                 loadPriority,
