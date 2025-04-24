@@ -167,7 +167,9 @@ export const prepareImportChartData = async (
     }
 
     if (warnings && warnings.missedMapping) {
-        notifications.push(warningTransferNotification(TransferErrorCode.TransferMissingMappingId));
+        notifications.push(
+            warningTransferNotification(TransferErrorCode.TransferMissingLinkedEndtry),
+        );
     }
 
     try {
@@ -251,7 +253,9 @@ export const prepareExportChartData = async (entry: EntryFields, idMapping: Tran
     }
 
     if (warnings && warnings.missedMapping) {
-        notifications.push(warningTransferNotification(TransferErrorCode.TransferMissingMappingId));
+        notifications.push(
+            warningTransferNotification(TransferErrorCode.TransferMissingLinkedEndtry),
+        );
     }
 
     return {
