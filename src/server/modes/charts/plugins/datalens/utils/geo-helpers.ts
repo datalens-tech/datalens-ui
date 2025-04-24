@@ -1,5 +1,5 @@
 import {MapCenterMode, ZoomMode, mapStringToCoordinates} from '../../../../../../shared';
-import type {type RGBGradient, ServerChartsConfig} from '../../../../../../shared';
+import type {RGBGradient, ServerChartsConfig} from '../../../../../../shared';
 import type {ChartColorsConfig} from '../types';
 
 import {
