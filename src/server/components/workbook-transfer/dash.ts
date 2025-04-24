@@ -47,7 +47,7 @@ export async function prepareDashImportData(
 
         if (isMissingMapping) {
             notifications.push(
-                warningTransferNotification(TransferErrorCode.TransferMissingMappingId),
+                warningTransferNotification(TransferErrorCode.TransferMissingLinkedEndtry),
             );
         }
 
@@ -90,7 +90,9 @@ export async function prepareDashExportData(entry: DashEntry, idMapping: Transfe
     });
 
     if (isMissingMapping) {
-        notifications.push(warningTransferNotification(TransferErrorCode.TransferMissingMappingId));
+        notifications.push(
+            warningTransferNotification(TransferErrorCode.TransferMissingLinkedEndtry),
+        );
     }
 
     const nameParts = entry.key.split('/');
