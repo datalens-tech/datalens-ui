@@ -74,6 +74,8 @@ export interface SharedAppConfig {
         };
     };
 
+    authRoles?: Record<`${UserRole}`, number>;
+
     // zitadel
     isZitadelEnabled: boolean;
     clientId?: string;

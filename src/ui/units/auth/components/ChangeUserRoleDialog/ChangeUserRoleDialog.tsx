@@ -4,18 +4,16 @@ import {Dialog, Flex, Select, Text, spacing} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import type {UserRole} from 'shared/components/auth/constants/role';
-import {registry} from 'ui/registry';
 import type {AppDispatch} from 'ui/store';
 
 import {updateUserRoles} from '../../store/actions/userProfile';
 import {selectUpdateUserRoleIsLoading} from '../../store/selectors/userProfile';
+import {getSortedUsersRoles} from '../../utils/getSortedUsersRoles';
 import {getRoleByKey} from '../../utils/userProfile';
 
 const i18n = I18n.keyset('auth.dialog-change-user-role');
 
-const {getUsersRoles} = registry.auth.functions.getAll();
-
-const EXISITING_ROLES = getUsersRoles().reverse();
+const EXISITING_ROLES = getSortedUsersRoles();
 
 const ROLES_OPTIONS = EXISITING_ROLES.map((key) => ({
     value: key,

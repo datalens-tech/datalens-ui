@@ -1,6 +1,4 @@
-import {UserRole} from 'shared/components/auth/constants/role';
-import {registry} from 'ui/registry';
-
+import {getSortedUsersRoles} from '../../utils/getSortedUsersRoles';
 import type {UserInfoFormAction} from '../actions/userInfoForm';
 import {
     RESET_FORM,
@@ -16,12 +14,9 @@ type UserInfoFormState = {
 };
 
 const getInitialRoles = () => {
-    const {getUsersRoles} = registry.auth.functions.getAll();
-
-    // TODO: Add sort by access level
-    const defaultRole = getUsersRoles().includes(UserRole.Viewer)
-        ? UserRole.Viewer
-        : UserRole.Visitor;
+    const rolesList = getSortedUsersRoles();
+    // take the role with the least rights
+    const defaultRole = rolesList[rolesList.length - 1];
 
     return [defaultRole];
 };

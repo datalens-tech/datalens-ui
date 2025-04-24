@@ -202,6 +202,7 @@ export type DLGlobalData = {
             };
         };
     };
+    authRoles?: Record<`${UserRole}`, number>;
     embed?:
         | {
               mode: 'chart';

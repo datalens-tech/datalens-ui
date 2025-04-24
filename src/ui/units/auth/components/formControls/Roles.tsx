@@ -6,10 +6,10 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import type {UserRole} from 'shared/components/auth/constants/role';
-import {registry} from 'ui/registry';
 
 import {updateFormValues} from '../../store/actions/userInfoForm';
 import {selectRoles} from '../../store/selectors/userInfoForm';
+import {getSortedUsersRoles} from '../../utils/getSortedUsersRoles';
 import {getRoleByKey} from '../../utils/userProfile';
 
 import type {UserFormSelectProps} from './types';
@@ -24,8 +24,7 @@ export const Roles = (props: UserFormSelectProps) => {
     const dispatch = useDispatch();
 
     const rolesOptions = React.useMemo(() => {
-        const {getUsersRoles} = registry.auth.functions.getAll();
-        const availableRoles = getUsersRoles();
+        const availableRoles = getSortedUsersRoles();
         return Object.values(availableRoles).map((key) => ({
             value: key,
             content: getRoleByKey(key),
