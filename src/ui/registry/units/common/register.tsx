@@ -1,5 +1,6 @@
 import {extractEntryId, isEntryId} from 'shared';
 import {getEntryScopesWithRevisionsList} from 'ui/components/RevisionsPanel/utils';
+import {DL} from 'ui/constants';
 import {getAdditionalChartkitErrorContent} from 'ui/libs/DatalensChartkit/Error/getAdditionalChartkitErrorContent';
 import {csvExportAction} from 'ui/libs/DatalensChartkit/components/ChartKitBase/components/Header/components/Menu/Items/Export/CsvExport/CsvExport';
 import {getIsCompact, updateIsCompact} from 'ui/store/utils/asideHeader';
@@ -103,6 +104,9 @@ export const registerCommonPlugins = () => {
         getRestrictedParamNames,
         getAdditionalChartkitErrorContent,
         csvExportAction,
-        resolveUsersByIds,
     });
+
+    if (DL.AUTH_ENABLED) {
+        registry.common.functions.register({resolveUsersByIds});
+    }
 };
