@@ -80,12 +80,12 @@ export interface IChartEditor {
      */
     getParam(paramName: string): string | string[];
     /**
-     * Return current page number (only for tabs 'Urls' & 'JavaScript')
+     * Return current page number (only for tabs 'Sources' & 'Prepare')
      */
     getCurrentPage(): number;
 
     /**
-     * Return current clicked column id and sort order (only for tab 'Urls')
+     * Return current clicked column id and sort order (only for tab 'Sources')
      */
     getSortParams(): SortParams;
 
@@ -107,7 +107,7 @@ export interface IChartEditor {
     resolveOperation(input: string): any;
 
     /**
-     * Update ChartKit config (only for tab 'JavaScript')
+     * Update ChartKit config (only for tab 'Prepare')
      */
     updateConfig(updatedFragment: object): void;
 

@@ -101,23 +101,15 @@ export const getChartApiContext = (args: GetChartApiContextArgs): ChartApiContex
         api.getParam = (paramName: string) => getParam(paramName, params);
     }
 
-    if (name === 'Urls' || name === 'Sources') {
+    if (name === 'Sources') {
         api.getSortParams = () => getSortParams(params);
     }
 
-    if (name === 'Urls' || name === 'Sources' || name === 'JavaScript' || name === 'Prepare') {
+    if (name === 'Sources' || name === 'Prepare') {
         api.getCurrentPage = () => getCurrentPage(params);
     }
 
-    if (
-        name === 'Params' ||
-        name === 'JavaScript' ||
-        name === 'Prepare' ||
-        name === 'UI' ||
-        name === 'Controls' ||
-        name === 'Urls' ||
-        name === 'Sources'
-    ) {
+    if (name === 'Params' || name === 'Prepare' || name === 'Controls' || name === 'Sources') {
         api.updateParams = (updatedParams) => {
             context.__runtimeMetadata.userParamsOverride = Object.assign(
                 {},
@@ -134,14 +126,14 @@ export const getChartApiContext = (args: GetChartApiContextArgs): ChartApiContex
         };
     }
 
-    if (name === 'UI' || name === 'Controls' || name === 'JavaScript' || name === 'Prepare') {
+    if (name === 'Controls' || name === 'Prepare') {
         api.getLoadedData = () => data || {};
         api.getLoadedDataStats = () => dataStats || {};
         api.setDataSourceInfo = (dataSourceKey, info) => {
             context.__runtimeMetadata.dataSourcesInfos[dataSourceKey] = {info};
         };
 
-        if (name === 'JavaScript' || name === 'Prepare') {
+        if (name === 'Prepare') {
             api.updateConfig = (updatedFragment) => {
                 context.__runtimeMetadata.userConfigOverride = Object.assign(
                     {},
