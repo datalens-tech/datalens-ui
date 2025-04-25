@@ -18,6 +18,7 @@ const b = block('dl-users-suggest');
 const i18n = I18n.keyset('component.users-suggest.view');
 
 const getOptionHeight = () => 48;
+const filterOption = () => true;
 interface UsersSuggestProps extends Partial<Omit<SelectProps, 'value' | 'onUpdate'>> {
     getSuggestItems: GetUsersSuggestItems;
     items: ListSuggestUser[];
@@ -30,7 +31,6 @@ export function UsersSuggest({
     getSuggestItems,
     items,
     onItemsFetched,
-    multiple = false,
     selectedItems,
     onSelectedItemsUpdate,
     ...props
@@ -101,11 +101,10 @@ export function UsersSuggest({
 
     return (
         <Select
+            {...props}
             popupClassName={b('popup')}
-            width="max"
             hasCounter={true}
             onOpenChange={handleOpenChange}
-            multiple={multiple}
             options={resultItems.map((item) => ({
                 value: item.id,
                 content: item.name,
@@ -116,6 +115,7 @@ export function UsersSuggest({
             loading={loading}
             filterable
             filter={filter}
+            filterOption={filterOption}
             onFilterChange={handleFilterUpdate}
             renderEmptyOptions={() => (
                 <Flex alignItems="center" justifyContent="center">
@@ -126,7 +126,6 @@ export function UsersSuggest({
             renderOption={renderUser}
             renderSelectedOption={renderSelectedUser(selectedItems)}
             onUpdate={handleUpdate}
-            {...props}
         />
     );
 }
