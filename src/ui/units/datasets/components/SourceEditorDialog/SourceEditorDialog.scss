@@ -49,10 +49,6 @@
     &__param-select-popup {
         border-radius: var(--g-border-radius-m);
         width: 320px;
-
-        & [data-qa='list-active-item'] #{$baseClass}__param-select-option-dropdown {
-            opacity: 1;
-        }
     }
 
     &__param-select-filter {
@@ -77,6 +73,10 @@
         display: flex;
         align-items: center;
         gap: 10px;
+
+        &:hover #{$baseClass}__param-select-option-dropdown {
+            opacity: 1;
+        }
     }
 
     &__param-select-option-dropdown {

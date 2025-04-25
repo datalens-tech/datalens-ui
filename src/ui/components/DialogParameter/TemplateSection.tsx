@@ -93,44 +93,42 @@ export function TemplateSection(props: TemplateSectionProps) {
             </div>
             {formState.value_constraint &&
                 shouldShowValueConstraintSection(formState.value_constraint?.type) && (
-                    <React.Fragment>
-                        <div className={b('line')}>
-                            <span className={b('line-title', {'vertical-align-start': true})}>
-                                {i18n('label_select-validation-type')}
-                            </span>
-                            <div className={b('line-content')}>
-                                <Select
-                                    width="max"
-                                    value={[formState.value_constraint.type]}
-                                    onUpdate={handleSelectValidationTypeUpdate}
-                                    popupClassName={b('dialog-popup')}
-                                >
-                                    <Select.Option value={DATASET_VALUE_CONSTRAINT_TYPE.DEFAULT}>
-                                        {i18n('label_select-validation-type-default')}
-                                    </Select.Option>
-                                    <Select.Option value={DATASET_VALUE_CONSTRAINT_TYPE.REGEX}>
-                                        {i18n('label_select-validation-type-regex')}
-                                    </Select.Option>
-                                </Select>
-                                {formState.value_constraint.type ===
-                                    DATASET_VALUE_CONSTRAINT_TYPE.REGEX && (
-                                    <TextArea
-                                        className={b('textarea-regex')}
-                                        rows={4}
-                                        value={formState.value_constraint.pattern}
-                                        onUpdate={handleTextAreaRegexUpdate}
-                                        placeholder={i18n('label_textarea-regex-placeholder')}
-                                    />
-                                )}
-                                {formState.value_constraint?.type ===
-                                    DATASET_VALUE_CONSTRAINT_TYPE.DEFAULT && (
-                                    <span className={b('validation-hint')}>
-                                        {i18n('label_select-validation-type-default-hint')}
-                                    </span>
-                                )}
-                            </div>
+                    <div className={b('line')}>
+                        <span className={b('line-title', {'vertical-align-start': true})}>
+                            {i18n('label_select-validation-type')}
+                        </span>
+                        <div className={b('line-content')}>
+                            <Select
+                                width="max"
+                                value={[formState.value_constraint.type]}
+                                onUpdate={handleSelectValidationTypeUpdate}
+                                popupClassName={b('dialog-popup')}
+                            >
+                                <Select.Option value={DATASET_VALUE_CONSTRAINT_TYPE.DEFAULT}>
+                                    {i18n('label_select-validation-type-default')}
+                                </Select.Option>
+                                <Select.Option value={DATASET_VALUE_CONSTRAINT_TYPE.REGEX}>
+                                    {i18n('label_select-validation-type-regex')}
+                                </Select.Option>
+                            </Select>
+                            {formState.value_constraint.type ===
+                                DATASET_VALUE_CONSTRAINT_TYPE.REGEX && (
+                                <TextArea
+                                    className={b('textarea-regex')}
+                                    rows={4}
+                                    value={formState.value_constraint.pattern}
+                                    onUpdate={handleTextAreaRegexUpdate}
+                                    placeholder={i18n('label_textarea-regex-placeholder')}
+                                />
+                            )}
+                            {formState.value_constraint?.type ===
+                                DATASET_VALUE_CONSTRAINT_TYPE.DEFAULT && (
+                                <span className={b('validation-hint')}>
+                                    {i18n('label_select-validation-type-default-hint')}
+                                </span>
+                            )}
                         </div>
-                    </React.Fragment>
+                    </div>
                 )}
         </React.Fragment>
     );

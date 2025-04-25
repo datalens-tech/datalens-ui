@@ -6,14 +6,14 @@ import {Button, Dialog, Loader, Select, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import type {DatasetField} from 'shared';
-import {DATASET_FIELD_TYPES, DialogParameterQA, isDateField} from 'shared';
-import {registry} from 'ui/registry';
+import {DATASET_FIELD_TYPES, DialogParameterQA} from 'shared';
 
 import DialogManager from '../DialogManager/DialogManager';
 import {SelectOptionWithIcon} from '../SelectComponents';
 
+import {DefaultValueSection} from './DefaultValueSection';
 import {TemplateSection} from './TemplateSection';
-import {createParameterField, getDatepickerFormat, getTypesList} from './helpers';
+import {createParameterField, getTypesList} from './helpers';
 import {useParameterForm} from './useParameterForm';
 import {useFetchParameterTooltipMarkdown} from './useParameterTooltipMarkdown';
 
@@ -61,8 +61,6 @@ const DialogParameter: React.FC<DialogParameterProps> = (props: DialogParameterP
 
     const renderOptions = (option: SelectOption) => <SelectOptionWithIcon option={option} />;
 
-    const {Datepicker} = registry.common.components.getAll();
-
     return (
         <Dialog
             onClose={onClose}
@@ -91,7 +89,18 @@ const DialogParameter: React.FC<DialogParameterProps> = (props: DialogParameterP
                                 disabled={isEditDefaultValueDialog}
                                 value={formState.name}
                                 type="text"
-                                error={!isNameValid}
+                                validationState={isNameValid ? undefined : 'invalid'}
+                                errorPlacement="inside"
+                                errorMessage={
+                                    <React.Fragment>
+                                        {i18n('parameter_name-error')}
+                                        <HelpPopover
+                                            size="s"
+                                            content={tooltipText}
+                                            className={b('title-tooltip')}
+                                        />
+                                    </React.Fragment>
+                                }
                                 autoComplete={false}
                                 qa={DialogParameterQA.NameInput}
                                 pin="round-round"
@@ -117,35 +126,10 @@ const DialogParameter: React.FC<DialogParameterProps> = (props: DialogParameterP
                                 popupClassName={b('dialog-popup')}
                             />
                         </div>
-                        <div className={b('line')}>
-                            <span className={b('line-title')}>
-                                {i18n('parameter_default-value')}
-                            </span>
-                            {isDateField({data_type: formState.type}) ? (
-                                <Datepicker
-                                    from={formState.defaultValue}
-                                    format={getDatepickerFormat(formState.type)}
-                                    range={false}
-                                    outputFormat={formState.type}
-                                    timezoneOffset={0}
-                                    onUpdate={(value) => {
-                                        const {from} = value;
-                                        updateFormState({defaultValue: from || ''});
-                                    }}
-                                />
-                            ) : (
-                                <TextInput
-                                    value={formState.defaultValue}
-                                    type="text"
-                                    qa={DialogParameterQA.DefaultValueInput}
-                                    pin="round-round"
-                                    size="m"
-                                    onUpdate={(value) => {
-                                        updateFormState({defaultValue: value});
-                                    }}
-                                />
-                            )}
-                        </div>
+                        <DefaultValueSection
+                            formState={formState}
+                            updateFormState={updateFormState}
+                        />
                         {templateEnabled && !isEditDefaultValueDialog && (
                             <TemplateSection
                                 formState={formState}
