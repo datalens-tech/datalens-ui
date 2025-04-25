@@ -68,6 +68,7 @@ export const CollectionPage = () => {
                         },
                         importId,
                         defaultView,
+                        showImport: true,
                     },
                 }),
             );

@@ -123,6 +123,10 @@ const getEntriesMap = async (
         }
     });
     try {
+        if (ids.length === 0) {
+            return null;
+        }
+
         const notificationEntries = await getSdk().sdk.mix.getBatchEntriesByIds({ids});
 
         const entriesMap = notificationEntries.entries.reduce(

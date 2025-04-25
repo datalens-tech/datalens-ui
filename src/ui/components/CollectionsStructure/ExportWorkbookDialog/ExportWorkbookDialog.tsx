@@ -97,6 +97,8 @@ export const ExportWorkbookDialog: React.FC<Props> = ({
     const [view, setView] = React.useState<DialogView>('info');
     const status = useSelector(selectExportWorkbookStatus);
 
+    const dialogRef = React.useRef<HTMLDivElement>(null);
+
     const error = useSelector(selectExportError);
     const isResultLoading = useSelector(selectGetExportResultLoading);
     const exportData = useSelector(selectExportData);
@@ -221,7 +223,7 @@ export const ExportWorkbookDialog: React.FC<Props> = ({
         if (exportData?.exportId) {
             const result = await dispatch(getExportResult({exportId: exportData?.exportId}));
             if (result && result.status === 'success') {
-                downloadObjectAsJSON(result.data, workbookTitle);
+                downloadObjectAsJSON({obj: result.data, name: workbookTitle, dialogRef});
                 onClose();
             }
         }
@@ -294,7 +296,9 @@ export const ExportWorkbookDialog: React.FC<Props> = ({
     return (
         <Dialog className={b()} open={open} onClose={handleCancel} onEscapeKeyDown={handleCancel}>
             <Dialog.Header caption={getCaption(view, status)} />
-            <Dialog.Body>{renderBody()}</Dialog.Body>
+            <Dialog.Body>
+                <div ref={dialogRef}>{renderBody()}</div>
+            </Dialog.Body>
             <Dialog.Footer
                 textButtonApply={getApplyButtonText(view, status)}
                 textButtonCancel={cancelButtonText}

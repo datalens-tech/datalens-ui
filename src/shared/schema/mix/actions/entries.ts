@@ -209,6 +209,12 @@ export const entriesActions = {
             const typedApi = getTypedApi(api);
             const {ids, ...restArgs} = args;
 
+            if (ids.length === 0) {
+                return {
+                    entries: [],
+                };
+            }
+
             // If we have more than 50 IDs, split them into batches to avoid URL length limitations
             if (ids.length > 50) {
                 const batches = [];
@@ -231,12 +237,13 @@ export const entriesActions = {
                 );
 
                 return {
-                    hasNextPage: batchResults.some((result) => result.hasNextPage),
                     entries: combinedEntries,
                 };
             }
 
-            return await typedApi.us.getEntries(args);
+            const entriesResponse = await typedApi.us.getEntries(args);
+
+            return {entries: entriesResponse.entries};
         },
     ),
 };
