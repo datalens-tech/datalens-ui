@@ -118,7 +118,7 @@ export function UsersSuggest({
             filterOption={filterOption}
             onFilterChange={handleFilterUpdate}
             renderEmptyOptions={() => (
-                <Flex alignItems="center" justifyContent="center">
+                <Flex alignItems="center" justifyContent="center" className={b('empty-state')}>
                     {emptyPlaceholder}
                 </Flex>
             )}
@@ -152,11 +152,12 @@ function renderUser(user: SelectOption<ListSuggestUser>) {
 
 function renderSelectedUser(selectedItems: ListSuggestUser[]) {
     return function SelectedUser(user: SelectOption<ListSuggestUser>, index: number) {
+        const userNameFromSelectedItems = selectedItems.find(
+            (item) => item.id === user.value,
+        )?.name;
         return (
             <div className={b('selected-user', {hidden: index > 0})}>
-                {user.data?.name ??
-                    selectedItems.find((item) => item.id === user.value)?.name ??
-                    user.value}
+                {user.data?.name ?? userNameFromSelectedItems ?? user.value}
             </div>
         );
     };
