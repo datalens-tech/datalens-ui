@@ -1,0 +1,7 @@
+{
+  "label_empty-state-not-found-description": "Проверьте поиск на наличие опечаток",
+  "label_empty-state-not-found-title": "Ничего не найдено",
+  "label_empty-state-template-description": "Ищите по имени, логину или почте",
+  "label_empty-state-template-title": "Пока ничего нет",
+  "label_filter-placeholder": "Поиск"
+}

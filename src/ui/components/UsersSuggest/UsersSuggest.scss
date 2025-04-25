@@ -1,0 +1,25 @@
+.dl-users-suggest {
+    &__popup {
+        height: 352px;
+        width: 340px;
+    }
+
+    &__user {
+        overflow: hidden;
+    }
+
+    &__user-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+    }
+
+    &__selected-user {
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &_hidden {
+            display: none;
+        }
+    }
+}
