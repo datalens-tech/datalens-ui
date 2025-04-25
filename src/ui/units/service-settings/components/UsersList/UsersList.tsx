@@ -20,13 +20,11 @@ import {Link} from 'react-router-dom';
 import type {ListUser} from 'shared/schema/auth/types/users';
 import {DL} from 'ui/constants';
 import {registry} from 'ui/registry';
-import {reducerRegistry} from 'ui/store';
 import {ChangePasswordDialog} from 'ui/units/auth/components/ChangePasswordDialog/ChangePasswordDialog';
 import {ChangeUserRoleDialog} from 'ui/units/auth/components/ChangeUserRoleDialog/ChangeUserRoleDialog';
 import {DeleteUserDialog} from 'ui/units/auth/components/DeleteUserDialog/DeleteUserDialog';
 import {EditUserProfileDialog} from 'ui/units/auth/components/EditUserProfileDialog/EditUserProfileDialog';
 
-import {reducer} from '../../../../units/auth/store/reducers';
 import type {ServiceSettingsDispatch} from '../../store/actions/serviceSettings';
 import {getUsersList, resetServiceUsersList} from '../../store/actions/serviceSettings';
 import {
@@ -40,7 +38,6 @@ import type {BaseFiltersNames} from './constants';
 
 import './UsersList.scss';
 
-reducerRegistry.register({auth: reducer});
 const b = block('service-settings-users-list');
 const i18nMain = I18n.keyset('service-settings.main.view');
 const i18n = I18n.keyset('service-settings.users-list.view');

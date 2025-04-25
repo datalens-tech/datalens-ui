@@ -205,6 +205,9 @@ export const DL = {
     get IAM_RESOURCES() {
         return window.DL.iamResources ?? undefined;
     },
+    get ORDERED_AUTH_ROLES() {
+        return window.DL.orderedAuthRoles ?? undefined;
+    },
     get TITLE() {
         return window.DL.title || '';
     },
