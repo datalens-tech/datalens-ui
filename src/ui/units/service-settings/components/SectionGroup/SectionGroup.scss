@@ -1,0 +1,23 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
+.dl-settings-section-group {
+    &__row {
+        display: flex;
+        flex-direction: row;
+    }
+
+    &__title {
+        width: 264px;
+        padding-right: var(--g-spacing-7);
+        flex-shrink: 0;
+    }
+
+    &__header {
+        @include text-subheader-2;
+        margin: 0;
+    }
+
+    &__content {
+        flex-grow: 1;
+    }
+}
