@@ -34,3 +34,11 @@ export type GeopointMapOptions = {
     sizeTitle?: string;
     tooltipConfig?: ServerTooltipConfig;
 };
+
+export type GeopointPrepareResult = {
+    options?: GeopointMapOptions;
+    bounds?: (Coordinate | undefined)[];
+    collection?: {
+        children: unknown[];
+    };
+};

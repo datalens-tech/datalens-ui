@@ -10,6 +10,7 @@ import {
     SERVICE_USER_ACCESS_TOKEN_HEADER,
     isTrueArg,
 } from '../../../shared';
+import {UserRole} from '../../../shared/components/auth/constants/role';
 import {resolveSource} from '../../../shared/endpoints/sources';
 import type {SourceConfig} from '../../components/charts-engine/types';
 import {SERVICE_NAME_DATALENS} from '../../constants';
@@ -148,6 +149,8 @@ export default {
             },
         },
     },
+
+    orderedAuthRoles: [UserRole.Admin, UserRole.Editor, UserRole.Viewer],
 
     chartsEngineConfig: {
         secrets: {},

@@ -9,17 +9,13 @@ import {useHistory, useParams} from 'react-router';
 import {ActionPanel} from 'ui/components/ActionPanel';
 import {PageTitle} from 'ui/components/PageTitle';
 import {DL} from 'ui/constants/common';
-import {reducerRegistry} from 'ui/store';
 import {UserProfile} from 'ui/units/auth/containers/UserProfile/UserProfile';
 import {selectUserProfile} from 'ui/units/auth/store/selectors/userProfile';
 import {getUserDisplayName} from 'ui/units/auth/utils/userProfile';
 
-import {reducer} from '../../../../units/auth/store/reducers';
 import AccessErrorPage from '../AccessErrorPage/AccessErrorPage';
 
 import './UserProfilePage.scss';
-
-reducerRegistry.register({auth: reducer});
 
 const i18n = I18n.keyset('auth.user-profile.view');
 

@@ -16,8 +16,10 @@ import {AsideHeaderAdapter} from 'ui/components/AsideHeaderAdapter/AsideHeaderAd
 import {MobileHeaderComponent} from 'ui/components/MobileHeader/MobileHeaderComponent/MobileHeaderComponent';
 import {DL} from 'ui/constants';
 import {useClearReloadedQuery} from '../units/auth/hooks/useClearReloadedQuery';
+import {reducer} from 'ui/units/auth/store/reducers';
 
 reducerRegistry.register(coreReducers);
+reducerRegistry.register({auth: reducer});
 
 const DatasetPage = React.lazy(() => import('./pages/DatasetPage/DatasetPage'));
 const PreviewPage = React.lazy(() => import('./pages/PreviewPage/PreviewPage'));

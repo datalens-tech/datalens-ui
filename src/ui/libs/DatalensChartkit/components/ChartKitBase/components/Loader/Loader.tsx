@@ -1,5 +1,6 @@
 import React from 'react';
 
+import type {LoaderSize} from '@gravity-ui/uikit';
 import {Loader as CommonLoader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
@@ -12,11 +13,13 @@ interface LoaderProps {
     compact?: boolean;
     veil?: boolean;
     delay?: number;
+    classNameMod?: string;
+    size?: LoaderSize;
 }
 
 const b = block('chartkit-loader');
 
-const Loader: React.FC<LoaderProps> = ({visible, compact, veil, delay}) => {
+const Loader: React.FC<LoaderProps> = ({visible, compact, veil, delay, classNameMod, size}) => {
     const [showLoader, setShowLoader] = React.useState(typeof delay !== 'number');
 
     React.useEffect(() => {
@@ -32,9 +35,12 @@ const Loader: React.FC<LoaderProps> = ({visible, compact, veil, delay}) => {
     }
 
     return (
-        <div className={b({veil})} data-qa={ChartKitQa.Loader}>
+        <div
+            className={b({veil, [String(classNameMod)]: Boolean(classNameMod)})}
+            data-qa={ChartKitQa.Loader}
+        >
             <div className={b('loader', {compact})}>
-                <CommonLoader size="m" />
+                <CommonLoader size={`${size || 'm'}`} />
             </div>
         </div>
     );

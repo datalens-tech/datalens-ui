@@ -3,17 +3,13 @@ import {I18n} from 'i18n';
 import React from 'react';
 import block from 'bem-cn-lite';
 import {UserProfile} from 'ui/units/auth/containers/UserProfile/UserProfile';
-import {reducer} from '../../../units/auth/store/reducers';
 
-import {reducerRegistry} from 'ui/store';
 import {Flex} from '@gravity-ui/uikit';
 import {DL} from 'ui/constants';
 import {PageTitle} from 'ui/components/PageTitle';
 import {ActionPanel} from 'ui/components/ActionPanel';
 
 import './OwnUserProfilePage.scss';
-
-reducerRegistry.register({auth: reducer});
 
 const b = block('dl-own-user-profile-page');
 

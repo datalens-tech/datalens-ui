@@ -117,6 +117,11 @@ type ChartKitBaseWrapperProps = ChartsProps & {
     actionParamsEnabled?: boolean;
     paneSplitOrientation?: Split;
     widgetDashState?: WidgetDashState;
+
+    showActionParamsFilter?: boolean;
+    onFiltersClear?: () => void;
+
+    needRenderContentControls?: boolean;
 };
 
 export type ChartWidgetProviderPropsWithRefProps = Omit<
@@ -262,6 +267,9 @@ export type ChartContentProps = Pick<
     | 'hideMenu'
     | 'renderPluginLoader'
     | 'forceShowSafeChart'
+    | 'showActionParamsFilter'
+    | 'onFiltersClear'
+    | 'needRenderContentControls'
 > &
     ChartKitWrapperParams & {
         hasHiddenClassMod: boolean;

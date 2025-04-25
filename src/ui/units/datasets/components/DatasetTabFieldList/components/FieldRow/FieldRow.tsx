@@ -91,7 +91,6 @@ export const FieldRow: React.FC<FieldRowProps> = (props: FieldRowProps) => {
         >
             {columns.map((column, index) => {
                 const content = 'text' in column ? column.text : column.node;
-                const isFirstColumn = index === 0;
                 let style: React.CSSProperties | undefined;
 
                 if (column.width) {
@@ -105,10 +104,7 @@ export const FieldRow: React.FC<FieldRowProps> = (props: FieldRowProps) => {
                         key={index}
                         data-qa={column.qa}
                         style={style}
-                        className={b('row-content', {
-                            header: isHeader,
-                            'first-column': isFirstColumn,
-                        })}
+                        className={b('row-content', {header: isHeader})}
                     >
                         {content}
                     </span>

@@ -35,6 +35,13 @@ export default class DialogParameter {
         await this.page.fill(`${slct(DialogParameterQA.DefaultValueInput)} input`, value);
     }
 
+    async setDefaultValueBoolean(value: 'true' | 'false') {
+        await this.waitForDialogParameter();
+        await this.page.click(
+            `${slct(DialogParameterQA.DefaultValueRadioGroup)} input[value="${value}"]`,
+        );
+    }
+
     async selectType(type: DialogParameterDataTypes) {
         await this.waitForDialogParameter();
         await this.page.click(slct(DialogParameterQA.TypeSelector));
