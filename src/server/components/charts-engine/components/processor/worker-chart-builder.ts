@@ -116,7 +116,7 @@ export const getWizardChartBuilder = async (
 
             return {
                 executionTiming: process.hrtime(timeStart),
-                name: 'Urls',
+                name: 'Sources',
                 ...execResult,
             };
         },
@@ -181,12 +181,12 @@ export const getWizardChartBuilder = async (
 
             return {
                 executionTiming: process.hrtime(timeStart),
-                name: 'JavaScript',
+                name: 'Prepare',
                 ...execResult,
             };
         },
 
-        buildUI: emptyStep('UI'),
+        buildUI: emptyStep('Controls'),
         dispose: () => {},
     };
 

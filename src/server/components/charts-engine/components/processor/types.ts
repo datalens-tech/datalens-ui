@@ -84,11 +84,11 @@ export type ProcessorSuccessResponse = {
 export type ProcessorFiles =
     | 'Shared'
     | 'Params'
-    | 'Urls'
+    | 'Sources'
     | 'Highcharts'
     | 'Config'
-    | 'JavaScript'
-    | 'UI';
+    | 'Prepare'
+    | 'Controls';
 export type ProcessorLogs = {modules: LogItem[][]} & Partial<
     Record<ProcessorFiles | 'failed', LogItem[][]>
 >;
