@@ -5,9 +5,20 @@
         color: var(--g-color-text-secondary);
     }
 
+    &__text-container {
+        display: flex;
+    }
+
+    &__text {
+        display: inline-flex;
+        align-items: center;
+        white-space: nowrap;
+    }
+
     &__icon {
         &_end {
-            margin-left: 5px;
+            margin-left: 4px;
+            display: inline-flex;
         }
 
         &_view_error {
