@@ -39,7 +39,11 @@ export function TemplateSection(props: TemplateSectionProps) {
         let nextValueConstraint: DatasetField['value_constraint'];
 
         if (valueConstraintEnabled) {
-            nextValueConstraint = memoizedValueConstraintRef.current || {
+            const memoizedValueConstraint =
+                memoizedValueConstraintRef.current?.type === DATASET_VALUE_CONSTRAINT_TYPE.NULL
+                    ? undefined
+                    : memoizedValueConstraintRef.current;
+            nextValueConstraint = memoizedValueConstraint || {
                 type: DATASET_VALUE_CONSTRAINT_TYPE.DEFAULT,
             };
         } else {
@@ -106,7 +110,7 @@ export function TemplateSection(props: TemplateSectionProps) {
                 </div>
             </div>
             {formState.type === DATASET_FIELD_TYPES.STRING &&
-                formState.value_constraint &&
+                formState.template_enabled &&
                 shouldShowValueConstraintSection(formState.value_constraint?.type) && (
                     <div className={b('line')}>
                         <span className={b('line-title', {'vertical-align-start': true})}>
@@ -115,7 +119,7 @@ export function TemplateSection(props: TemplateSectionProps) {
                         <div className={b('line-content')}>
                             <Select
                                 width="max"
-                                value={[formState.value_constraint.type]}
+                                value={[formState.value_constraint?.type || '']}
                                 onUpdate={handleSelectValidationTypeUpdate}
                                 popupClassName={b('dialog-popup')}
                             >
@@ -126,7 +130,7 @@ export function TemplateSection(props: TemplateSectionProps) {
                                     {i18n('label_select-validation-type-regex')}
                                 </Select.Option>
                             </Select>
-                            {formState.value_constraint.type ===
+                            {formState.value_constraint?.type ===
                                 DATASET_VALUE_CONSTRAINT_TYPE.REGEX && (
                                 <TextArea
                                     className={b('textarea-regex')}
