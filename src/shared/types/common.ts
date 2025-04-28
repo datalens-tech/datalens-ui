@@ -168,8 +168,6 @@ export type DLGlobalData = {
     authPageSettings?: AuthPageSettings;
     push?: PushServiceConfig;
     metricaCounters?: MetricaCounterConfig[];
-    templateWorkbookId?: string;
-    learningMaterialsWorkbookId?: string;
     isLanding?: boolean;
     publicScope?: 'dash' | 'widget';
     ymapApiKey?: string;
@@ -204,6 +202,8 @@ export type DLGlobalData = {
             };
         };
     };
+    // sorted roles from the role with the most rights to the role with the least
+    orderedAuthRoles?: `${UserRole}`[];
     embed?:
         | {
               mode: 'chart';

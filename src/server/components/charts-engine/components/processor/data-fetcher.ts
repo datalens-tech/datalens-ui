@@ -28,6 +28,7 @@ import {Request as RequestPromise} from '../request';
 import {hideSensitiveData} from '../utils';
 
 import {getApiConnectorParamsFromSource, isAPIConnectorSource, prepareSource} from './sources';
+import {getMessageFromUnknownError} from './utils';
 
 const {
     ALL_REQUESTS_SIZE_LIMIT_EXCEEDED,
@@ -162,6 +163,7 @@ export type DataFetcherResult = {
     message?: string;
     code?: string;
     data?: any;
+    details?: string;
 };
 
 export type ZitadelParams = {
@@ -308,6 +310,7 @@ export class DataFetcher {
                                 hideInInspector: result.hideInInspector,
                                 /** @deprecated use uiUrl and dataUrl */
                                 url: result.url,
+                                details: result.details,
                             };
 
                             if (result.body) {
@@ -523,12 +526,13 @@ export class DataFetcher {
             ctx.config.singleFetchingTimeout || DEFAULT_SINGLE_FETCHING_TIMEOUT;
 
         try {
-            source = prepareSource(source, ctx);
-        } catch {
+            source = prepareSource(source);
+        } catch (e) {
             return {
                 sourceId: sourceName,
                 sourceType: 'Unresolved',
-                code: 'UNKNOWN_SOURCE',
+                code: 'INVALID_SOURCE_CONFIG',
+                details: getMessageFromUnknownError(e),
             };
         }
 
@@ -662,7 +666,7 @@ export class DataFetcher {
                 sourceType,
             });
             if (result.valid === false) {
-                return result;
+                return result.meta;
             }
         }
 

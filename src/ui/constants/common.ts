@@ -205,11 +205,8 @@ export const DL = {
     get IAM_RESOURCES() {
         return window.DL.iamResources ?? undefined;
     },
-    get TEMPLATE_WORKBOOK_ID() {
-        return window.DL.templateWorkbookId;
-    },
-    get LEARNING_MATERIALS_WORKBOOK_ID() {
-        return window.DL.learningMaterialsWorkbookId;
+    get ORDERED_AUTH_ROLES() {
+        return window.DL.orderedAuthRoles ?? undefined;
     },
     get TITLE() {
         return window.DL.title || '';
@@ -366,8 +363,11 @@ export const URL_QUERY = {
     CHART_TYPE: 'chartType',
     TAB_ID: 'tab',
     CONNECTION_FORM: '_form',
+    API_CONNECTION_ID: 'apiConnectionId',
+    CONNECTION_ID: 'connectionId',
     DEBUG: '_debug',
     OPEN_DASH_INFO: '_opened_info',
+    UNRELEASED: 'unreleased',
 };
 
 const GRADIENT_ICONS = {

@@ -1,10 +1,12 @@
 import React from 'react';
 
+import {I18n} from 'i18n';
 import {connect} from 'react-redux';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
-import type {DatalensGlobalState} from 'ui';
+import {type DatalensGlobalState, navigateHelper} from 'ui';
 import {selectWorkbookLimitedView} from 'ui/units/workbooks/store/selectors';
+import {copyTextWithToast} from 'ui/utils/copyText';
 
 import type {GetEntryResponse} from '../../../shared/schema';
 import {registry} from '../../registry';
@@ -33,6 +35,7 @@ import {closeDialog, openDialog} from 'store/actions/dialog';
 import { WorkbookId } from 'shared';
 import { DIALOG_SHARE_WIDGET } from '../OpenDialogShare/OpenDialogShare';
 
+const contextMenuI18n = I18n.keyset('component.entry-context-menu.view');
 
 const ConfiguredEntryContextMenu = withConfiguredEntryContextMenu(EntryContextMenuBase);
 const defaultPopupPlacement = ['bottom', 'bottom-start', 'bottom-end'];
@@ -148,7 +151,21 @@ class EntryContextMenu extends React.PureComponent<Props> {
                 break;
             }
             case ENTRY_CONTEXT_MENU_ACTION.COPY_LINK: {
-                // do nothing
+                copyTextWithToast({
+                    copyText: navigateHelper.redirectUrlSwitcher(entry),
+                    successText: contextMenuI18n('toast_copy-link-success'),
+                    errorText: contextMenuI18n('toast_copy-error'),
+                    toastName: 'toast-menu-copy-link',
+                });
+                break;
+            }
+            case ENTRY_CONTEXT_MENU_ACTION.COPY_ID: {
+                copyTextWithToast({
+                    copyText: entry.entryId,
+                    successText: contextMenuI18n('toast_copy-id-success'),
+                    errorText: contextMenuI18n('toast_copy-error'),
+                    toastName: 'toast-menu-copy-link',
+                });
                 break;
             }
             case ENTRY_CONTEXT_MENU_ACTION.SHARE: {

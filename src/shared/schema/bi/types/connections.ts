@@ -3,6 +3,7 @@ import type {
     ConnectionData,
     ConnectionTypedQueryApiRequest,
     ConnectionTypedQueryApiResponse,
+    TransferNotification,
 } from '../../../types';
 
 import type {WorkbookIdArg} from './common';
@@ -154,4 +155,26 @@ export type ConnectorIconData = {conn_type: string} & (
 
 export type ListConnectorIconsResponse = {
     icons: ConnectorIconData[];
+};
+
+export type ExportConnectionArgs = {
+    usMasterToken: string;
+    connectionId: string;
+    workbookId?: string | null;
+};
+
+export type ExportConnectionResponse = {
+    connection: ConnectionData;
+    notifications: TransferNotification[];
+};
+
+export type ImportConnectionResponse = {
+    id: string;
+    notifications: TransferNotification[];
+};
+
+export type ImportConnectionArgs = {
+    usMasterToken: string;
+    workbookId: string;
+    connection: ConnectionData;
 };

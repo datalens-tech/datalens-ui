@@ -1,5 +1,3 @@
-import {DL} from 'constants/common';
-
 import React from 'react';
 
 import block from 'bem-cn-lite';
@@ -7,7 +5,8 @@ import {usePrevious} from 'hooks';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
-import type {StringParams} from 'shared';
+import {ChartkitMenuDialogsQA, type StringParams} from 'shared';
+import {DL} from 'ui/constants/common';
 import {getDataProviderData} from 'ui/libs/DatalensChartkit/components/ChartKitBase/helpers';
 import {CHART_RELOAD_EVENT} from 'ui/units/preview/modules/constants/constants';
 import {isEmbeddedMode} from 'ui/utils/embedded';
@@ -248,7 +247,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
     }, [reloadChart]);
 
     return (
-        <div ref={rootNodeRef} className={b(mods)}>
+        <div ref={rootNodeRef} className={b(mods)} data-qa={ChartkitMenuDialogsQA.chartWidget}>
             <DebugInfoTool data={[{label: 'chartId', value: chartId || ''}]} />
             <Content
                 initialParams={initialParams}
@@ -288,6 +287,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
                 paneSplitOrientation={paneSplitOrientation}
                 widgetDashState={widgetDashState}
                 rootNodeRef={rootNodeRef}
+                needRenderContentControls={true}
             />
         </div>
     );

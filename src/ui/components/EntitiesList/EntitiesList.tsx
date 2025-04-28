@@ -6,28 +6,9 @@ import {EntryScope} from 'shared';
 import {EntryRow} from 'ui/components/EntryRow/EntryRow';
 import {Switch} from '@gravity-ui/uikit';
 
-import type {RowEntryData} from '../EntryRow/EntryRow';
+import type {EntitiesListProps} from './types';
 
 import './EntitiesList.scss';
-
-type EntitiesListProps = {
-    entities: RowEntryData[];
-    hideTitle?: boolean;
-    updatedEntities?: Record<string, boolean>;
-    setUpdatedEntities?: any;
-} & (CurrentEntity | ScopeEntities);
-
-type CurrentEntity = {
-    isCurrent: true;
-    scope?: string;
-};
-
-type ScopeEntities = {
-    isCurrent?: false;
-    scope: string;
-    updatedEntities?: Record<string, boolean>;
-    setUpdatedEntities?: any;
-};
 
 const i18n = I18n.keyset('component.dialog-related-entities.view');
 
@@ -48,13 +29,13 @@ const getLabelByScope = (scope: string) => {
     }
 };
 
-export const EntitiesList = ({scope, entities, isCurrent, hideTitle, updatedEntities, setUpdatedEntities}: EntitiesListProps) => {
+export const EntitiesList = ({scope, entities, isCurrent, hideTitle, enableHover, rightSectionSlot, rowClassName, className, updatedEntities, setUpdatedEntities}: EntitiesListProps) => {
     const title = isCurrent ? i18n('label_current-object') : getLabelByScope(scope);
 
     let checkedCount = 0;
     for (const key in entities) {
         const item = entities[key];
-        if (updatedEntities?.[item.entryId]) {
+        if (item.entryId && updatedEntities?.[item.entryId]) {
             checkedCount++;
         }
     }
@@ -63,14 +44,16 @@ export const EntitiesList = ({scope, entities, isCurrent, hideTitle, updatedEnti
         const _updatedEntities: Record<string, boolean> = {}
         for (const key in entities) {
             const item = entities[key];
-            _updatedEntities[item.entryId] = value
+            if(item.entryId)
+                _updatedEntities[item.entryId] = value
         }
         setUpdatedEntities({...updatedEntities, ..._updatedEntities});
     }
 
+    const RightSectionSlot = rightSectionSlot;
+
     return (
-        <div className={b()}>
-            <div className={b('title-wrapper')}>
+        <div className={b(null, className)}>
             {title && !hideTitle && <div className={b('title')}>{title}</div>}
             {isCurrent || !updatedEntities ? null : 
                 <Switch size="m" 
@@ -80,22 +63,25 @@ export const EntitiesList = ({scope, entities, isCurrent, hideTitle, updatedEnti
                         handleCheckAll(value);
                     }}>
                 </Switch>}
-            </div>
             {entities.map((entity) => (
                 <EntryRow
-                    className={b('row')}
+                    className={b('row', rowClassName)}
                     key={entity.entryId}
                     entry={entity}
                     nonInteractive={isCurrent}
                     disableHover={true}
-                    rightSectionSlot={isCurrent || !updatedEntities ? null : 
-                        <Switch size="m" 
-                            className={b('switch')}
-                            checked={Boolean(updatedEntities?.[entity.entryId])} 
-                            onUpdate={(value)=>{
-                                setUpdatedEntities({...updatedEntities, [entity.entryId]: value})
-                            }}>
-                        </Switch>}
+                    // rightSectionSlot={isCurrent || !updatedEntities ? null : 
+                    //     <Switch size="m" 
+                    //         className={b('switch')}
+                    //         checked={Boolean(entity.entryId && updatedEntities?.[entity.entryId])} 
+                    //         onUpdate={(value)=>{
+                    //             setUpdatedEntities({...updatedEntities, [entity.entryId || ""]: value})
+                    //         }}>
+                    //     </Switch>}
+                    enableHover={enableHover}
+                    rightSectionSlot={
+                        RightSectionSlot ? <RightSectionSlot entry={entity} /> : undefined
+                    }
                 />
             ))}
         </div>

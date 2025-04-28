@@ -6,8 +6,9 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import isEmpty from 'lodash/isEmpty';
 import PropTypes from 'prop-types';
-import {ChartkitMenuDialogsQA, MenuItemsIds} from 'shared';
+import {ChartkitMenuDialogsQA, Feature, MenuItemsIds} from 'shared';
 import {DL, SHEET_IDS} from 'ui/constants';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {getVisibleItems} from '../../../../helpers';
 
@@ -18,8 +19,16 @@ const i18n = I18n.keyset('chartkit.menu');
 const b = block('chartkit-menu');
 
 const SwitcherButton = (props) => {
+    const showFlatControls = isEnabledFeature(Feature.DashFloatControls);
+    const buttonSize = showFlatControls ? 'm' : 'l';
+
     return (
-        <Button {...props} view="flat-secondary" size="l" className={b('switcher')}>
+        <Button
+            {...props}
+            view="flat-secondary"
+            size={buttonSize}
+            className={b('switcher', {flat: showFlatControls})}
+        >
             <Icon data={Ellipsis} size={16} />
         </Button>
     );
@@ -59,6 +68,7 @@ class _Menu extends React.PureComponent {
         modal: null,
         isSheetVisible: false,
         sheetCloseCb: null,
+        isMenuOpened: false,
     };
 
     modalRef = React.createRef();
@@ -180,6 +190,10 @@ class _Menu extends React.PureComponent {
         };
     };
 
+    handleMenuBtnCLick = (isOpened) => {
+        this.setState({isMenuOpened: Boolean(isOpened)});
+    };
+
     renderSheet = (menuItems) => (
         <React.Fragment>
             <SwitcherButton onClick={this.handleMobileSwitchClick} />
@@ -277,7 +291,7 @@ class _Menu extends React.PureComponent {
 
         return (
             <div
-                className={b('switcher-button')}
+                className={b('switcher-button', {['opened']: this.state.isMenuOpened})}
                 data-qa={ChartkitMenuDialogsQA.chartMenuDropDownSwitcher}
             >
                 {DL.IS_MOBILE ? (
@@ -290,6 +304,7 @@ class _Menu extends React.PureComponent {
                         menuProps={{
                             qa: ChartkitMenuDialogsQA.chartMenuDropDown,
                         }}
+                        onOpenToggle={this.handleMenuBtnCLick}
                     />
                 )}
                 <div className={b('modal-anchor')} ref={this.modalRef} />

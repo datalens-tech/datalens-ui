@@ -1,5 +1,3 @@
-import {GEOLAYER_VISUALIZATION} from 'constants/visualizations';
-
 import {I18n} from 'i18n';
 import cloneDeep from 'lodash/cloneDeep';
 import isEqual from 'lodash/isEqual';
@@ -48,6 +46,7 @@ import {
 } from 'shared';
 import type {DataLensApiError} from 'typings';
 import type {DatalensGlobalState} from 'ui';
+import {GEOLAYER_VISUALIZATION} from 'ui/constants/visualizations';
 import {navigateHelper} from 'ui/libs';
 import {
     getAvailableVisualizations,
@@ -1756,6 +1755,7 @@ type FetchWidgetArgs = {
     entryId: string;
     revId?: string;
     datasetsIds?: string[];
+    unreleased?: boolean;
 };
 
 export function resetWizardStore() {
@@ -2094,11 +2094,9 @@ export function processCurrentWidgetWithDatasets({datasetsIds}: {datasetsIds: st
     };
 }
 
-export function fetchWidget({entryId, revId, datasetsIds}: FetchWidgetArgs) {
+export function fetchWidget({entryId, revId, datasetsIds, unreleased}: FetchWidgetArgs) {
     return function (dispatch: WizardDispatch, getState: () => DatalensGlobalState) {
         dispatch(setWidgetLoadStatus({isLoading: true}));
-
-        const unreleased = false;
 
         oldSdk.charts
             .getWidget({entryId, unreleased, revId}, {cancelable: true})
@@ -2138,9 +2136,10 @@ export type SetDefaultsArgs = {
     entryId: string | null;
     revId?: string;
     routeWorkbookId?: WorkbookId;
+    unreleased?: boolean;
 };
 
-export function setDefaults({entryId, revId, routeWorkbookId}: SetDefaultsArgs) {
+export function setDefaults({entryId, revId, routeWorkbookId, unreleased}: SetDefaultsArgs) {
     return function (dispatch: WizardDispatch) {
         if (routeWorkbookId) {
             dispatch(setRouteWorkbookId(routeWorkbookId));
@@ -2151,6 +2150,7 @@ export function setDefaults({entryId, revId, routeWorkbookId}: SetDefaultsArgs) 
                 fetchWidget({
                     entryId,
                     revId,
+                    unreleased,
                 }),
             );
         } else {

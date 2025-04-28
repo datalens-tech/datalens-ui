@@ -14,7 +14,7 @@ import {RevisionsListMode, RevisionsMode} from 'store/typings/entryContent';
 import {TIMESTAMP_FORMAT, URL_QUERY} from 'ui/constants';
 import {registry} from 'ui/registry';
 
-import {getUrlParamFromStr} from '../../utils';
+import {getUrlParamFromStr, isUnreleasedByUrlParams} from '../../utils';
 import history from '../../utils/history';
 import {getCapitalizedStr} from '../../utils/stringUtils';
 
@@ -136,6 +136,8 @@ const RevisionsPanel = ({
     const {getEntryScopesWithRevisionsList} = registry.common.functions.getAll();
 
     const urlRevId = getUrlParamFromStr(location.search, URL_QUERY.REV_ID);
+    const isUnreleased = isUnreleasedByUrlParams(location.search);
+
     const isInAvailableScopes = React.useMemo(
         () => getEntryScopesWithRevisionsList().includes(scope as EntryScope),
         [location, scope],
@@ -144,11 +146,14 @@ const RevisionsPanel = ({
         () => getDraftWarningAvailableScopes().includes(scope as EntryScope),
         [location, scope],
     );
-    const isCurrentRevDraft = savedId === urlRevId;
+    const isCurrentRevDraft = savedId === urlRevId || isUnreleased;
 
     const showDeprecationMessage = isEditing && Boolean(deprecationMessage);
 
+    const canEdit = Boolean(entry.permissions?.edit || !entry.permissions);
+
     const showDraftWarningPanel =
+        canEdit &&
         currentRevId &&
         currentRevId === publishedId &&
         savedId !== publishedId &&
@@ -157,7 +162,7 @@ const RevisionsPanel = ({
 
     const isPanelHidden =
         !currentRevId ||
-        !urlRevId ||
+        (!urlRevId && !isUnreleased) ||
         currentRevId === publishedId ||
         !(typeof scope === 'undefined' || isInAvailableScopes) ||
         isEditing;
@@ -171,6 +176,7 @@ const RevisionsPanel = ({
 
         const searchParams = new URLSearchParams(location.search);
         searchParams.delete(URL_QUERY.REV_ID);
+        searchParams.delete(URL_QUERY.UNRELEASED);
 
         history.push({
             ...location,
@@ -187,6 +193,8 @@ const RevisionsPanel = ({
         onOpenDraftRevision();
 
         const searchParams = new URLSearchParams(location.search);
+        searchParams.delete(URL_QUERY.UNRELEASED);
+
         if (savedId === publishedId) {
             searchParams.delete(URL_QUERY.REV_ID);
         } else {
@@ -254,7 +262,7 @@ const RevisionsPanel = ({
                     {loginText}
                 </div>
                 <RevisionsControls
-                    canEdit={Boolean(entry.permissions?.edit || !entry.permissions)}
+                    canEdit={canEdit}
                     onMakeActualClickCallback={handleMakeActualClick}
                     onOpenActualClickCallback={handleOpenActualClick}
                     onOpenRevisionsClickCallback={handleOpenRevisionsClick}

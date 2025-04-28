@@ -16,6 +16,7 @@ import {AsideHeaderAdapter} from 'ui/components/AsideHeaderAdapter/AsideHeaderAd
 import {MobileHeaderComponent} from 'ui/components/MobileHeader/MobileHeaderComponent/MobileHeaderComponent';
 import {DL} from 'ui/constants';
 import {useClearReloadedQuery} from '../units/auth/hooks/useClearReloadedQuery';
+import {reducer} from 'ui/units/auth/store/reducers';
 
 import {getSdk} from '../libs/schematic-sdk';
 import {
@@ -26,6 +27,7 @@ import CustomAuthPage from './pages/AuthPage/CustomAuthPage';
 import Utils from 'ui/utils';
 
 reducerRegistry.register(coreReducers);
+reducerRegistry.register({auth: reducer});
 
 const DatasetPage = React.lazy(() => import('./pages/DatasetPage/DatasetPage'));
 const PreviewPage = React.lazy(() => import('./pages/PreviewPage/PreviewPage'));

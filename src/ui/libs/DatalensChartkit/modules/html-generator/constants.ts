@@ -82,7 +82,7 @@ export const ALLOWED_TAGS = [
     'u',
     'ul',
     TAG_DL_TOOLTIP,
-];
+].map((tag) => tag.toLowerCase());
 
 export const ALLOWED_ATTRIBUTES = [
     'alt',
@@ -118,6 +118,7 @@ export const ALLOWED_ATTRIBUTES = [
     'flood-opacity',
     'font-family',
     'font-size',
+    'font-weight',
     'height',
     'href',
     'in',
@@ -125,6 +126,7 @@ export const ALLOWED_ATTRIBUTES = [
     'offset',
     'opacity',
     'orient',
+    'overflow',
     'padding',
     'paint-order',
     'pointer-events',
@@ -150,6 +152,7 @@ export const ALLOWED_ATTRIBUTES = [
     'tabindex',
     'text-align',
     'text-anchor',
+    'text-decoration',
     'title',
     'transform',
     'type',
@@ -161,6 +164,7 @@ export const ALLOWED_ATTRIBUTES = [
     'x2',
     'xlink:href',
     'xmlns',
+    'xmlns:xlink',
     'y',
     'y1',
     'y2',
@@ -170,6 +174,6 @@ export const ALLOWED_ATTRIBUTES = [
     ATTR_DATA_TOOLTIP_HIDE_DELAY,
     ATTR_DATA_TOOLTIP_OPEN_DELAY,
     ATTR_DATA_TOOLTIP_PLACEMENT,
-];
+].map((attr) => attr.toLowerCase());
 
 export const ALLOWED_REFERENCES = ['https://', 'http://', 'mailto:', '#'];

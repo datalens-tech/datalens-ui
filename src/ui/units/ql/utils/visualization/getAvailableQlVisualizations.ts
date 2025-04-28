@@ -8,6 +8,7 @@ import {
     BAR_100P_VISUALIZATION,
     BAR_VISUALIZATION,
     BAR_X_D3_VISUALIZATION,
+    BAR_Y_D3_VISUALIZATION,
     COLUMN_100P_VISUALIZATION,
     COLUMN_VISUALIZATION,
     DONUT_D3_VISUALIZATION,
@@ -57,6 +58,10 @@ export function getAvailableQlVisualizations(
         {
             value: BAR_VISUALIZATION,
             enabled: isHighchartsEnabled,
+        },
+        {
+            value: {...BAR_Y_D3_VISUALIZATION, hidden: isHighchartsEnabled},
+            enabled: true,
         },
         {
             value: BAR_100P_VISUALIZATION,

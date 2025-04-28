@@ -2,6 +2,7 @@ import type {ReactElement} from 'react';
 
 import {dateTime} from '@gravity-ui/date-utils';
 import {Toaster} from '@gravity-ui/uikit';
+import copy from 'copy-to-clipboard';
 import {I18n} from 'i18n';
 import {isObject} from 'lodash';
 import isEmpty from 'lodash/isEmpty';
@@ -12,7 +13,10 @@ import {DL} from 'ui/constants/common';
 import type {MenuLoadedData} from 'ui/libs/DatalensChartkit/menu/Menu';
 import type DatalensChartkitCustomError from 'ui/libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 
-import type {ExportResultType} from './types';
+import exportWidget from '../../../../../../../../modules/export/export';
+
+import {setLoadingToast, updateLoadingToast} from './ToastContent/ToastContent';
+import type {ExportChartArgs, ExportResultType} from './types';
 
 const i18n = I18n.keyset('chartkit.menu.export');
 
@@ -85,7 +89,7 @@ export const getFileName = (key: string) => {
     return fileName;
 };
 
-export const setErrorToast = async (exportResult: ExportResultType) => {
+const setErrorToast = async (exportResult: ExportResultType) => {
     let errorStatusText = `(${
         exportResult?.error?.response?.statusText || exportResult?.error?.message
     })`;
@@ -109,7 +113,7 @@ export const setErrorToast = async (exportResult: ExportResultType) => {
     });
 };
 
-export const setSuccessToast = () => {
+const setSuccessToast = () => {
     toaster.add({
         theme: 'success',
         name: 'toastAfterExport',
@@ -156,4 +160,57 @@ export const isExportVisible = ({
             type,
         )
     );
+};
+
+const getExportResult = async ({chartData, params}: ExportChartArgs) => {
+    const {widgetDataRef, loadedData, widget} = chartData;
+
+    const fileName = getFileName(loadedData.key);
+    const exportName = `${fileName}.${params?.format}`;
+
+    const exportResult = (await exportWidget({
+        widgetDataRef: widgetDataRef?.current,
+        widget: widgetDataRef?.current || widget,
+        data: loadedData.data,
+        widgetType: loadedData.type,
+        options: params,
+        exportFilename: loadedData.exportFilename,
+        extra: loadedData.extra,
+        downloadName: exportName,
+    })) as ExportResultType;
+
+    if (exportResult.status === 'fail') {
+        await setErrorToast(exportResult);
+        return null;
+    }
+
+    return exportResult;
+};
+
+export const copyData = async ({chartData, params}: ExportChartArgs) => {
+    const exportResult = await getExportResult({chartData, params});
+    if (!exportResult) {
+        return;
+    }
+
+    if (exportResult.data) {
+        copy(exportResult.data);
+        setSuccessToast();
+    }
+};
+
+export const downloadData = async ({chartData, params, onExportLoading}: ExportChartArgs) => {
+    const {loadedData} = chartData;
+    const fileName = getFileName(loadedData.key) + '.';
+    setLoadingToast(fileName, params?.format || '');
+    onExportLoading?.(true);
+
+    const exportResult = await getExportResult({chartData, params});
+    if (!exportResult) {
+        toaster.remove(fileName);
+        onExportLoading?.(false);
+        return;
+    }
+
+    updateLoadingToast(fileName, onExportLoading);
 };

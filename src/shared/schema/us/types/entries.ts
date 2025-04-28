@@ -29,6 +29,25 @@ export interface GetEntryArgs {
     includeDlComponentUiData?: boolean;
 }
 
+export interface PrivateGetEntryArgs extends GetEntryArgs {
+    usMasterToken: string;
+    branch?: 'published' | 'saved';
+}
+
+export interface ProxyCreateEntryArgs {
+    usMasterToken?: string;
+    workbookId?: string;
+    data: EntryFieldData;
+    name: string;
+    type: string;
+    scope: string;
+    mode: string;
+    links: EntryFieldLinks;
+    key?: string;
+    includePermissionsInfo?: boolean;
+    recursion?: boolean;
+}
+
 export interface GetEntryByKeyResponse extends Omit<GetEntryResponse, 'isFavorite'> {}
 export interface GetEntryByKeyArgs extends Omit<GetEntryArgs, 'entryId'> {
     key: string;

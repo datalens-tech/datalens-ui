@@ -5,6 +5,8 @@ export enum Feature {
     // Show new relations button in navigation action panel
     ShowNewRelationsButton = 'ShowNewRelationsButton',
     AsideHeaderEnabled = 'AsideHeaderEnabled',
+    /** Enable redesign of dash controls */
+    DashFloatControls = 'DashFloatControls',
     FieldEditorDocSection = 'FieldEditorDocSection',
     UsePublicDistincts = 'UsePublicDistincts',
     EnablePublishEntry = 'EnablePublishEntry',
@@ -66,10 +68,6 @@ export enum Feature {
     NewTableWidgetForCE = 'NewTableWidgetForCE',
     /** Enable undo/redo buttons & hotkeys in datasets */
     EnableEditHistoryDatasets = 'EnableEditHistoryDataset',
-    /** Depends on US feature UseMovePermAction.
-     * It checks admin permission for move entries instead of edit permission.
-     */
-    UseMovePermAction = 'UseMovePermAction',
     /** An empty chart for drawing something unusual */
     BlankChart = 'BlankChart',
     /** Additional chart config for making requests by widget events */
@@ -89,6 +87,14 @@ export enum Feature {
     DashServerMigrationEnable = 'DashServerMigrationEnable',
     /** Enable custom dashboard gaps */
     EnableCustomDashMargins = 'EnableCustomDashMargins',
+    /** Enabled Dash elements auto-focus */
+    EnableDashAutoFocus = 'EnableDashAutoFocus',
+    /** Enable using template params in datasets sources */
+    EnableDsTemplateParams = 'EnableDsTemplateParams',
+    /** Enable Dash undo\redo */
+    EnableDashUndoRedo = 'EnableDashUndoRedo',
+    /** Enable public gallery unit */
+    EnablePublicGallery = 'EnablePublicGallery',
 }
 
 export type FeatureConfig = Record<string, boolean>;

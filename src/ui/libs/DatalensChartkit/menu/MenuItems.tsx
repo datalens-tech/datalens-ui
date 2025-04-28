@@ -21,7 +21,8 @@ import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {ChartWidgetDataRef} from '../../../components/Widgets/Chart/types';
 import {CHARTKIT_WIDGET_TYPE} from '../ChartKit/components/Widget/Widget';
-import {getExportItem, getExportPDF} from '../components/ChartKitBase/components/Header/components/Menu/Items/Export/Export';
+//import {getExportItem, getExportPDF} from '../components/ChartKitBase/components/Header/components/Menu/Items/Export/Export';
+import {getExportItem} from '../components/ChartKitBase/components/Header/components/Menu/Items/Export/Export';
 import Inspector from '../components/ChartKitBase/components/Header/components/Menu/Items/Inspector/Inspector';
 import type {ChartKitDataProvider} from '../components/ChartKitBase/types';
 import ChartKitIcon from '../components/ChartKitIcon/ChartKitIcon';
@@ -57,7 +58,7 @@ export type MenuCommentsItemVisibleArgs = {
 
 export const getExportMenuItem = getExportItem;
 
-export const getExportMenuPDF = getExportPDF;
+//export const getExportMenuPDF = getExportPDF;
 
 export const getInspectorMenuItem: () => MenuItemConfig = Inspector;
 

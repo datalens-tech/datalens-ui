@@ -4,7 +4,6 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: 6px;
 
     &__title-wrapper {
         display: flex;
@@ -12,10 +11,11 @@
     }
     &__title {
         @include text-subheader-1;
+        margin-bottom: var(--g-spacing-1);
     }
 
     &__row {
-        height: 28px;
+        height: 34px;
         padding-left: 0;
     }
     &__switch {

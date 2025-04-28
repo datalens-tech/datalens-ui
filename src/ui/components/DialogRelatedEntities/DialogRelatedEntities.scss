@@ -2,6 +2,7 @@
 @import '../../styles/mixins.scss';
 
 .dialog-related-entities {
+    $class: &;
     width: 720px;
     max-height: 95vh;
     min-height: 590px;
@@ -9,9 +10,9 @@
     &__body {
         display: flex;
         flex-direction: column;
-        gap: 24px;
+        gap: var(--g-spacing-5);
         align-items: flex-start;
-        padding-bottom: 32px;
+        padding: 0 var(--g-spacing-3) 0 var(--g-spacing-8);
     }
 
     &__loader {
@@ -24,11 +25,10 @@
     }
 
     &__list {
-        overflow: hidden auto;
         width: 100%;
         display: flex;
         flex-direction: column;
-        gap: 24px;
+        gap: var(--g-spacing-6);
         flex: 1;
     }
 
@@ -48,11 +48,17 @@
 
     &__relations-count {
         @include text-subheader-1;
+        position: sticky;
+        bottom: 0;
+        background-color: var(--g-color-base-modal);
+        padding: var(--g-spacing-3) 0 var(--g-spacing-8) 0;
+        width: 100%;
     }
 
     &__relations-title {
         @include text-subheader-2;
     }
+
     &__refresh-button {
         margin: 0 auto 0 0;
     }
@@ -62,5 +68,27 @@
     &__warning-card {
         width: 100%;
         padding: 10px;
+    }
+    &__current-row {
+        position: sticky;
+        top: 0;
+        background-color: var(--g-color-base-modal);
+        padding-top: var(--g-spacing-3);
+        padding-bottom: var(--g-spacing-1);
+    }
+
+    &__entry-menu {
+        margin-left: auto;
+        padding-right: var(--g-spacing-1);
+        opacity: 0;
+        transition: opacity 0.2s ease-in-out;
+    }
+
+    &__entity-row {
+        &:hover #{$class}__entry-menu {
+            opacity: 1;
+        }
+
+        padding-left: var(--g-spacing-half);
     }
 }

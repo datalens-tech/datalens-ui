@@ -2,9 +2,8 @@ import {Toaster} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
 import get from 'lodash/get';
 import {batch} from 'react-redux';
-import {Feature, TIMEOUT_65_SEC} from 'shared';
+import {TIMEOUT_65_SEC} from 'shared';
 import {resetEditHistoryUnit} from 'ui/store/actions/editHistory';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import logger from '../../../../../libs/logger';
 import {getSdk} from '../../../../../libs/schematic-sdk';
@@ -323,12 +322,6 @@ export function saveDataset({
 
             const {dataset: {id, content: dataset} = {}} = getState();
             let datasetId = id;
-
-            if (isEnabledFeature(Feature.EnableRLSV2)) {
-                delete dataset.rls;
-            } else {
-                delete dataset.rls2;
-            }
 
             if (isCreationProcess) {
                 const creationData = {

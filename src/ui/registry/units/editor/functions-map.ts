@@ -4,7 +4,6 @@ import {makeFunctionTemplate} from '../../../../shared/utils/makeFunctionTemplat
 
 import {EXAMPLE_FUNCTION} from './constants/functions';
 import type {FetchEditorDocumentationResponse} from './types/functions/fetchEditorDocumentation';
-import type {GetEditorTemplatesResponse} from './types/functions/getEditorTemplates';
 
 export const editorFunctionsMap = {
     [EXAMPLE_FUNCTION]: makeFunctionTemplate<(arg: number) => string>(),
@@ -12,6 +11,4 @@ export const editorFunctionsMap = {
         makeFunctionTemplate<
             (activeTab: string) => CancellablePromise<FetchEditorDocumentationResponse>
         >(),
-    getEditorTemplates: makeFunctionTemplate<() => GetEditorTemplatesResponse>(),
-    getEmptyTemplateType: makeFunctionTemplate<() => string>(),
 } as const;

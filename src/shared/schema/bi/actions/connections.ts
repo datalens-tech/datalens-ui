@@ -1,4 +1,4 @@
-import {WORKBOOK_ID_HEADER} from '../../../constants';
+import {US_MASTER_TOKEN_HEADER, WORKBOOK_ID_HEADER} from '../../../constants';
 import {createAction} from '../../gateway-utils';
 import {filterUrlFragment} from '../../utils';
 import {transformConnectionResponseError} from '../helpers';
@@ -9,6 +9,8 @@ import type {
     DeleteConnectionResponse,
     EnsureUploadRobotArgs,
     EnsureUploadRobotResponse,
+    ExportConnectionArgs,
+    ExportConnectionResponse,
     GetAvailableCountersArgs,
     GetAvailableCountersResponse,
     GetConnectionArgs,
@@ -22,6 +24,8 @@ import type {
     GetConnectorSchemaArgs,
     GetConnectorSchemaResponse,
     GetConnectorsResponse,
+    ImportConnectionArgs,
+    ImportConnectionResponse,
     ListConnectorIconsResponse,
     UpdateConnectionArgs,
     UpdateConnectionResponse,
@@ -135,5 +139,34 @@ export const actions = {
         method: 'GET',
         path: () => `${PATH_PREFIX}/info/connectors/icons`,
         params: (_, headers) => ({headers}),
+    }),
+    _proxyExportConnection: createAction<ExportConnectionResponse, ExportConnectionArgs>({
+        method: 'GET',
+        path: ({connectionId}) => `${PATH_PREFIX}/connections/export/${connectionId}`,
+        params: ({usMasterToken, workbookId}, headers) => ({
+            headers: {
+                ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
+                ...headers,
+                [US_MASTER_TOKEN_HEADER]: usMasterToken,
+            },
+        }),
+    }),
+    _proxyImportConnection: createAction<ImportConnectionResponse, ImportConnectionArgs>({
+        method: 'POST',
+        path: () => `${PATH_PREFIX}/connections/import`,
+        params: ({usMasterToken, workbookId, connection}, headers) => ({
+            headers: {
+                ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
+                ...headers,
+                [US_MASTER_TOKEN_HEADER]: usMasterToken,
+            },
+            body: {
+                data: {
+                    workbook_id: workbookId,
+                    connection,
+                },
+                id_mapping: {},
+            },
+        }),
     }),
 };

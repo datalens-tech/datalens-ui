@@ -6,13 +6,26 @@ import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DebugInfoTool from 'components/DashKit/plugins/DebugInfoTool/DebugInfoTool';
 import type {CurrentTab} from 'components/DashKit/plugins/Widget/types';
-import {ChartkitMenuDialogsQA, ControlQA} from 'shared';
+import {useDispatch} from 'react-redux';
+import {ChartkitMenuDialogsQA, ControlQA, Feature} from 'shared';
 import {DL} from 'ui/constants/common';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
+import {setSkipReload} from 'ui/units/dash/store/actions/dashTyped';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 
+import type {ChartsData} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
+import type {
+    CombinedError,
+    ControlWidget,
+    LoadedWidgetData,
+    OnChangeData,
+} from '../../../../libs/DatalensChartkit/types';
 import {MarkdownHelpPopover} from '../../../MarkdownHelpPopover/MarkdownHelpPopover';
 import {DRAGGABLE_HANDLE_CLASS_NAME} from '../helpers/helpers';
+import type {ChartProviderPropsWithRefProps, ChartWidgetDataRef, DataProps} from '../types';
+
+import {Header as ChartHeader} from './Header';
 
 import iconClearActionParams from '../../../../assets/icons/funnel-clear.svg';
 
@@ -26,7 +39,7 @@ type TabItem = {
     disabled?: boolean;
 };
 
-type HeaderProps = {
+export type HeaderProps = {
     widgetId: string;
     isFullscreen: boolean;
     onFullscreenClick: () => void;
@@ -41,11 +54,43 @@ type HeaderProps = {
     title?: string;
     warning?: string;
     noControls?: boolean;
+    setIsExportLoading?: (arg: boolean) => void;
+    extraMod?: string;
 };
+
+export type HeaderWithControlsProps = HeaderProps &
+    Pick<
+        ChartProviderPropsWithRefProps,
+        'compactLoader' | 'loaderDelay' | 'menuType' | 'menuChartkitConfig' | 'dataProvider'
+    > & {
+        error: CombinedError | null;
+        dataProps?: DataProps;
+        requestId: ChartsData['requestId'];
+
+        loadedData:
+            | LoadedWidgetData<ChartsData>
+            | (LoadedWidgetData<ChartsData> & ControlWidget & ChartsData['extra']);
+        widgetDataRef: ChartWidgetDataRef;
+        widgetRenderTimeRef: React.MutableRefObject<number | null>;
+        yandexMapAPIWaiting?: number | null;
+        enableActionParams?: boolean;
+        isWidgetMenuDataChanged?: boolean;
+        showLoader?: boolean;
+        veil?: boolean;
+
+        onChange: (
+            changedData: OnChangeData,
+            _state: {forceUpdate: boolean},
+            callExternalOnChange?: boolean,
+            callChangeByClick?: boolean,
+        ) => void;
+
+        setIsExportLoading: (arg: boolean) => void;
+    };
 
 const b = block('widget-header');
 
-export const WidgetHeader = (props: HeaderProps) => {
+export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
     const {
         widgetId,
         isFullscreen,
@@ -60,14 +105,32 @@ export const WidgetHeader = (props: HeaderProps) => {
         onFiltersClear,
         title,
         noControls,
+        setIsExportLoading,
+        extraMod,
     } = props;
+
+    const headerWithControlsProps = props as HeaderWithControlsProps;
 
     const size = DL.IS_MOBILE ? MOBILE_SIZE.TABS : 'm';
 
     const widgetTitle = currentTab?.title || title;
+
     const widgetTitleHint =
         currentTab?.enableHint && currentTab?.hint?.trim() ? currentTab?.hint?.trim() : '';
-    const showFiltersClear = showActionParamsFilter && onFiltersClear;
+
+    const showFloatControls = isEnabledFeature(Feature.DashFloatControls);
+
+    const showFiltersClear = showActionParamsFilter && onFiltersClear && !showFloatControls;
+
+    const dispatch = useDispatch();
+
+    const handleExportLoading = React.useCallback(
+        (isLoading: boolean) => {
+            setIsExportLoading?.(isLoading);
+            dispatch(setSkipReload(isLoading));
+        },
+        [dispatch, setIsExportLoading],
+    );
 
     const handleClickHint = React.useCallback((e: React.MouseEvent) => {
         e.stopPropagation();
@@ -77,20 +140,22 @@ export const WidgetHeader = (props: HeaderProps) => {
     const renderTabs = () => {
         if (DL.IS_MOBILE && (isFullscreen || (!hideTitle && tabsItems?.length === 1))) {
             return (
-                <div className={b('mobile-title')}>
-                    <div className={b('mobile-title-wrap')}>
-                        {widgetTitle}
-                        {Boolean(widgetTitleHint) && (
-                            <MarkdownHelpPopover
-                                markdown={widgetTitleHint}
-                                className={b('chart-title-hint')}
-                                buttonProps={{
-                                    className: b('chart-title-hint-button'),
-                                }}
-                                onClick={handleClickHint}
-                            />
-                        )}
-                    </div>
+                <div
+                    className={b('mobile-title', {
+                        'with-hint': Boolean(widgetTitleHint),
+                    })}
+                >
+                    <div className={b('mobile-title-wrap')}>{widgetTitle}</div>
+                    {Boolean(widgetTitleHint) && (
+                        <MarkdownHelpPopover
+                            markdown={widgetTitleHint}
+                            className={b('chart-title-hint')}
+                            buttonProps={{
+                                className: b('chart-title-hint-button'),
+                            }}
+                            onClick={handleClickHint}
+                        />
+                    )}
                 </div>
             );
         }
@@ -146,11 +211,12 @@ export const WidgetHeader = (props: HeaderProps) => {
 
     return (
         <React.Fragment>
-            {!hideDebugTool && <DebugInfoTool label="id" value={widgetId} modType="outer" />}
+            {!hideDebugTool && <DebugInfoTool label="id" value={widgetId || ''} modType="outer" />}
             <div
                 className={b({
                     mobile: DL.IS_MOBILE,
                     fullscreen: isFullscreen,
+                    ...{[String(extraMod)]: Boolean(extraMod)},
                 })}
             >
                 {isFullscreen && (
@@ -175,6 +241,39 @@ export const WidgetHeader = (props: HeaderProps) => {
                             </Button>
                         </div>
                     </div>
+                )}
+                {showFloatControls && (
+                    <React.Fragment>
+                        <ChartHeader
+                            dataProvider={headerWithControlsProps.dataProvider}
+                            chartsInsightsData={
+                                headerWithControlsProps.loadedData?.chartsInsightsData
+                            }
+                            menuType={headerWithControlsProps.menuType}
+                            customMenuOptions={
+                                {} as unknown as ChartProviderPropsWithRefProps['customMenuOptions']
+                            }
+                            menuChartkitConfig={headerWithControlsProps.menuChartkitConfig}
+                            isMenuAvailable={!noControls}
+                            error={headerWithControlsProps.error || null}
+                            dataProps={headerWithControlsProps.dataProps}
+                            requestId={headerWithControlsProps.requestId || ''}
+                            loadedData={headerWithControlsProps.loadedData}
+                            widgetDataRef={headerWithControlsProps.widgetDataRef}
+                            widgetRenderTimeRef={headerWithControlsProps.widgetRenderTimeRef}
+                            yandexMapAPIWaiting={headerWithControlsProps.yandexMapAPIWaiting}
+                            onChange={headerWithControlsProps.onChange}
+                            isWidgetMenuDataChanged={
+                                headerWithControlsProps.isWidgetMenuDataChanged
+                            }
+                            onExportLoading={handleExportLoading}
+                            enableActionParams={headerWithControlsProps.enableActionParams}
+                            onFullscreenClick={onFullscreenClick}
+                            showActionParamsFilter={showActionParamsFilter}
+                            onFiltersClear={onFiltersClear}
+                            canBeDisplayedFilters={true}
+                        />
+                    </React.Fragment>
                 )}
             </div>
         </React.Fragment>

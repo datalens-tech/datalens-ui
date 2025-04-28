@@ -16,6 +16,8 @@ export const enum DashKitOverlayMenuQa {
 
 export const enum DashboardActionPanelControlsQa {
     SettingsButton = 'dashboard-action-panel-settings-button',
+    UndoButton = 'dashboard-action-panel-undo-button',
+    RedoButton = 'dashboard-action-panel-redo-button',
 }
 
 export const enum DashboardDialogSettingsQa {
@@ -85,6 +87,13 @@ export enum DashCommonQa {
     RelationsRowPopover = 'dialog-relations-row-popover',
 }
 
+export enum FixedHeaderQa {
+    Wrapper = 'dash-fixed-header-wrapper',
+    Container = 'dash-fixed-header-containter',
+    Controls = 'dash-fixed-header-controls',
+    ExpandCollapseButton = 'dash-fixed-header-expand-collapse-button',
+}
+
 export enum DashRelationTypes {
     output = 'relation-type-option-output',
     input = 'relation-type-option-input',
@@ -100,11 +109,6 @@ export enum DashkitQa {
 export enum DashBodyQa {
     App = 'dash-app',
     ContentWrapper = 'dash-body-content-wrapper',
-}
-
-export enum FixedHeaderQa {
-    Container = 'dash-fixed-header-containter',
-    Controls = 'dash-fixed-header-controls',
 }
 
 export enum DashTabsQA {

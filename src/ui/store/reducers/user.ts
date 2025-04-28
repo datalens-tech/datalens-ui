@@ -1,4 +1,4 @@
-import {DL} from 'constants/common';
+import {DL} from 'ui/constants/common';
 import type {UserState} from '../typings/user';
 import type {UserAction} from '../actions/user';
 import {UPDATE_USER_SETTINGS, SET_THEME} from '../actions/user';

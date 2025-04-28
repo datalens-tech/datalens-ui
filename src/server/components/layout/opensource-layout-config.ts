@@ -100,6 +100,7 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         apiPrefix: config.apiPrefix,
         releaseVersion: config.releaseVersion,
         exportDashExcel: req.ctx.config.exportDashExcel,
+        orderedAuthRoles: config.orderedAuthRoles,
         ...appLayoutSettings.DL,
     };
     const renderConfig: RenderParams<{DL: DLGlobalData}> = {

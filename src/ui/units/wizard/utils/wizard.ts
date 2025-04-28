@@ -1,22 +1,3 @@
-import {
-    DEFAULT_BAR_EXTRA_SETTINGS,
-    DEFAULT_DATETIME_FORMAT,
-    DEFAULT_DATE_FORMAT,
-    DEFAULT_DONUT_EXTRA_SETTINGS,
-    DEFAULT_FLAT_TABLE_EXTRA_SETTINGS,
-} from 'constants/misc';
-import {
-    AREA_VISUALIZATION,
-    COLUMN_VISUALIZATION,
-    GEOPOINT_VISUALIZATION,
-    GEOPOINT_WITH_CLUSTER_VISUALIZATION,
-    GEOPOLYGON_VISUALIZATION,
-    HEATMAP_VISUALIZATION,
-    LINE_VISUALIZATION,
-    POLYLINE_VISUALIZATION,
-    VISUALIZATION_IDS,
-} from 'constants/visualizations';
-
 import {I18n} from 'i18n';
 import lodash from 'lodash';
 import moment from 'moment';
@@ -39,6 +20,24 @@ import {
     resolveOperation,
     resolveRelativeDate,
 } from 'shared';
+import {
+    DEFAULT_BAR_EXTRA_SETTINGS,
+    DEFAULT_DATETIME_FORMAT,
+    DEFAULT_DATE_FORMAT,
+    DEFAULT_DONUT_EXTRA_SETTINGS,
+    DEFAULT_FLAT_TABLE_EXTRA_SETTINGS,
+} from 'ui/constants/misc';
+import {
+    AREA_VISUALIZATION,
+    COLUMN_VISUALIZATION,
+    GEOPOINT_VISUALIZATION,
+    GEOPOINT_WITH_CLUSTER_VISUALIZATION,
+    GEOPOLYGON_VISUALIZATION,
+    HEATMAP_VISUALIZATION,
+    LINE_VISUALIZATION,
+    POLYLINE_VISUALIZATION,
+    VISUALIZATION_IDS,
+} from 'ui/constants/visualizations';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {v1 as uuidv1} from 'uuid';
 
