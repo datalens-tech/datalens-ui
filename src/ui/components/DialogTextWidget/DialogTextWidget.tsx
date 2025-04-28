@@ -71,6 +71,20 @@ class DialogTextWidget extends React.PureComponent<DialogTextWidgetProps, Dialog
 
     state: DialogTextWidgetState = {};
 
+    private textEditor: React.RefObject<HTMLTextAreaElement> = React.createRef();
+
+    componentDidMount() {
+        // delay is needed so that the autofocus of the dialog does not interrupt the focus on the input
+        setTimeout(() => {
+            this.textEditor.current?.focus();
+
+            const inputValue = this.state.text;
+            if (inputValue) {
+                this.textEditor.current?.setSelectionRange(inputValue.length, inputValue.length);
+            }
+        });
+    }
+
     render() {
         const {openedItemId, dialogIsVisible, enableAutoheight, enableCustomBgColorSelector} =
             this.props;
@@ -98,6 +112,7 @@ class DialogTextWidget extends React.PureComponent<DialogTextWidgetProps, Dialog
                             autofocus
                             onTextUpdate={this.onTextUpdate}
                             text={text}
+                            controlRef={this.textEditor}
                         />
                     </FormRow>
                     <FormRow
