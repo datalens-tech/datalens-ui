@@ -1,10 +1,11 @@
-import {isDateField} from '../../../../../../shared';
+import {ZoomMode, isDateField} from '../../../../../../shared';
 import {GEO_MAP_LAYERS_LEVEL} from '../utils/constants';
 import {
     colorizeGeoByGradient,
     colorizeGeoByPalette,
     getLayerAlpha,
     getMapBounds,
+    getMapState,
 } from '../utils/geo-helpers';
 import {findIndexInOrder, formatDate, isGradientMode} from '../utils/misc-helpers';
 
@@ -83,8 +84,9 @@ const getFieldData = (
 };
 
 const preparePolyline = (options: PrepareFunctionArgs) => {
+    const {shared, ChartEditor} = options;
     const i18n = (key: string, params?: Record<string, string | string[]>) =>
-        options.ChartEditor.getTranslation('wizard.prepares', key, params);
+        ChartEditor.getTranslation('wizard.prepares', key, params);
 
     const {idToDataType} = options;
 
@@ -347,13 +349,20 @@ const preparePolyline = (options: PrepareFunctionArgs) => {
         }
     });
 
+    const shouldSetBounds =
+        shared?.extraSettings?.zoomMode !== ZoomMode.Manual &&
+        shared?.extraSettings?.mapCenterMode !== ZoomMode.Manual;
+    const {zoom, center} = getMapState(shared, [leftBot, rightTop]);
+
+    ChartEditor?.updateHighchartsConfig({state: {zoom, center}});
+
     return [
         {
             collection: {
                 children,
             },
             options: mapOptions,
-            bounds: [leftBot, rightTop],
+            bounds: shouldSetBounds ? [leftBot, rightTop] : undefined,
         },
     ];
 };

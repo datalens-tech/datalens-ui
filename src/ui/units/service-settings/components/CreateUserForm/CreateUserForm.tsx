@@ -6,7 +6,6 @@ import {useDispatch, useSelector} from 'react-redux';
 import {Link, useHistory, useLocation} from 'react-router-dom';
 import {InterpolatedText} from 'ui/components/InterpolatedText/InterpolatedText';
 import {showToast} from 'ui/store/actions/toaster';
-import {reducerRegistry} from 'ui/store/reducer-registry';
 import {Email} from 'ui/units/auth/components/formControls/Email';
 import {FirstName} from 'ui/units/auth/components/formControls/FirstName';
 import {LastName} from 'ui/units/auth/components/formControls/LastName';
@@ -18,13 +17,10 @@ import {
     resetUserInfoFormValidation,
     validateFormValues,
 } from 'ui/units/auth/store/actions/userInfoForm';
-import {reducer} from 'ui/units/auth/store/reducers';
 import {selectUserInfoFormValues} from 'ui/units/auth/store/selectors/userInfoForm';
 
 import {createUser, resetCreateUser} from '../../store/actions/serviceSettings';
 import {selecCreateUserIsLoading} from '../../store/selectors/serviceSettings';
-
-reducerRegistry.register({auth: reducer});
 
 const i18n = I18n.keyset('service-settings.create-user.view');
 

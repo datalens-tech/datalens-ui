@@ -9,4 +9,15 @@
     max-height: calc(100% - 35px);
 
     overflow-x: hidden;
+
+    &_float {
+        top: 44px;
+        right: 8px;
+        max-height: calc(100% - 44px - 8px);
+    }
+}
+
+.dl-widget_ymap:has(.widget-header__tabs) .chartkit-ymap-legend_float {
+    max-height: calc(100% - 8px - 8px);
+    top: 8px;
 }

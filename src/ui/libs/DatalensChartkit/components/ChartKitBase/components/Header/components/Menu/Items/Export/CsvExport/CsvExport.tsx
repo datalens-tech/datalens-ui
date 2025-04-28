@@ -2,9 +2,9 @@ import React from 'react';
 
 import type {ChartKitDataProvider} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
 import type {MenuActionComponent, MenuItemModalProps} from 'ui/libs/DatalensChartkit/menu/Menu';
-import {EXPORT_FORMATS} from 'ui/libs/DatalensChartkit/modules/constants/constants';
 
 import {DownloadCsv} from '../../DownloadCsv/DownloadCsv';
+import {DEFAULT_CSV_EXPORT_PARAMS} from '../../constants';
 import type {ExportActionArgs, ExportChartArgs} from '../types';
 import {downloadData} from '../utils';
 
@@ -21,13 +21,6 @@ export const csvExportAction: CsvExportAction = (_chartsDataProvider, onExportLo
 
         const chartType = loadedData.type;
 
-        const defaultParams = {
-            format: EXPORT_FORMATS.CSV,
-            delValues: ';',
-            delNumbers: '.',
-            encoding: 'utf8',
-        };
-
         if (!event.ctrlKey && !event.metaKey) {
             return function DownloadCsvModalRenderer(props: MenuItemModalProps) {
                 return (
@@ -41,6 +34,6 @@ export const csvExportAction: CsvExportAction = (_chartsDataProvider, onExportLo
                 );
             };
         }
-        downloadData({chartData, params: defaultParams, onExportLoading});
+        downloadData({chartData, params: DEFAULT_CSV_EXPORT_PARAMS, onExportLoading});
     };
 };

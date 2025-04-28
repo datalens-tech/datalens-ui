@@ -87,6 +87,7 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         connectorIcons: res.locals.connectorIcons,
         apiPrefix: config.apiPrefix,
         releaseVersion: config.releaseVersion,
+        orderedAuthRoles: config.orderedAuthRoles,
         ...appLayoutSettings.DL,
     };
     const renderConfig: RenderParams<{DL: DLGlobalData}> = {

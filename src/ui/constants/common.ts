@@ -205,6 +205,9 @@ export const DL = {
     get IAM_RESOURCES() {
         return window.DL.iamResources ?? undefined;
     },
+    get ORDERED_AUTH_ROLES() {
+        return window.DL.orderedAuthRoles ?? undefined;
+    },
     get TITLE() {
         return window.DL.title || '';
     },
@@ -320,6 +323,7 @@ export const URL_QUERY = {
     CONNECTION_ID: 'connectionId',
     DEBUG: '_debug',
     OPEN_DASH_INFO: '_opened_info',
+    UNRELEASED: 'unreleased',
 };
 
 const GRADIENT_ICONS = {

@@ -510,8 +510,8 @@ export class Processor {
             });
 
             logSandboxDuration(sourcesTabResults.executionTiming, sourcesTabResults.name, ctx);
-            ctx.log('EditorEngine::Urls', {duration: getDuration(hrStart)});
-            logs.Urls = sourcesTabResults.logs;
+            ctx.log('EditorEngine::Sources', {duration: getDuration(hrStart)});
+            logs.Sources = sourcesTabResults.logs;
 
             try {
                 hrStart = process.hrtime();
@@ -721,10 +721,10 @@ export class Processor {
                     latency: (hrDuration[0] * 1e9 + hrDuration[1]) / 1e6,
                 });
 
-                ctx.log('EditorEngine::JS', {duration: getDuration(hrStart)});
+                ctx.log('EditorEngine::Prepare', {duration: getDuration(hrStart)});
 
                 processedData = jsTabResults.exports;
-                logs.JavaScript = jsTabResults.logs;
+                logs.Prepare = jsTabResults.logs;
 
                 const jsError = jsTabResults.runtimeMetadata.error;
                 if (jsError) {
@@ -762,8 +762,8 @@ export class Processor {
                 uiScheme = uiTabExports as UiTabExports;
             }
 
-            logs.UI = uiTabResults.logs;
-            ctx.log('EditorEngine::UI', {duration: getDuration(hrStart)});
+            logs.Controls = uiTabResults.logs;
+            ctx.log('EditorEngine::Controls', {duration: getDuration(hrStart)});
 
             // Editor.updateParams() has the highest priority,
             // so now we take the parameters set through this method

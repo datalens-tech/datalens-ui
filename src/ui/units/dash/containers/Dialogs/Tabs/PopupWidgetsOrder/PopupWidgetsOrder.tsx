@@ -8,9 +8,9 @@ import type {DashTabItem, DashTabLayout} from 'shared';
 import {DialogTabsQA, EntryDialogQA} from 'shared';
 import {registry} from 'ui/registry';
 
-import {getLayoutMap, sortByLayoutComparator} from '../../../../modules/helpers';
+import {getGroupedItems, getLayoutMap, sortByLayoutComparator} from '../../../../modules/helpers';
 
-import {getGroupedItems, getUpdatedItems, getWidgetRowText} from './helpers';
+import {getUpdatedItems, getWidgetRowText} from './helpers';
 
 import './PopupWidgetsOrder.scss';
 

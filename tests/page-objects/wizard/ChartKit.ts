@@ -50,7 +50,9 @@ export default class ChartKit {
     }
 
     async openChartMenu() {
-        await this.page.click(this.chartMenuSwitcher);
+        await this.page.hover(slct(ChartkitMenuDialogsQA.chartWidget));
+        await this.page.waitForSelector(this.chartMenuSwitcher);
+        await this.page.locator(this.chartMenuSwitcher).click();
     }
 
     async waitForItemInMenu(qaName: string) {

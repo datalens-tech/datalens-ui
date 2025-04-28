@@ -30,6 +30,7 @@ import {
     SET_DASH_VIEW_MODE,
     SET_ERROR_MODE,
     SET_HASH_STATE,
+    SET_HISTORY_STATE,
     SET_INITIAL_PAGE_TABS_ITEMS,
     SET_LOADING_EDIT_MODE,
     SET_PAGE_DEFAULT_TAB_ITEMS,
@@ -130,7 +131,10 @@ export function dashTypedReducer(
             };
         }
 
-        case SET_STATE:
+        case SET_STATE: {
+            return {...state, ...action.payload, lastModifiedItemId: null};
+        }
+
         case SET_PAGE_TAB:
         case CHANGE_NAVIGATION_PATH:
         case SET_DASHKIT_REF: {
@@ -365,6 +369,13 @@ export function dashTypedReducer(
                     ...state.widgetsCurrentTab,
                     [action.payload.widgetId]: action.payload.tabId,
                 },
+            };
+        }
+
+        case SET_HISTORY_STATE: {
+            return {
+                ...state,
+                ...action.payload,
             };
         }
 

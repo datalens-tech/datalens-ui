@@ -31,6 +31,7 @@ export interface GetEntryArgs {
 
 export interface PrivateGetEntryArgs extends GetEntryArgs {
     usMasterToken: string;
+    branch?: 'published' | 'saved';
 }
 
 export interface ProxyCreateEntryArgs {
@@ -43,6 +44,8 @@ export interface ProxyCreateEntryArgs {
     mode: string;
     links: EntryFieldLinks;
     key?: string;
+    includePermissionsInfo?: boolean;
+    recursion?: boolean;
 }
 
 export interface GetEntryByKeyResponse extends Omit<GetEntryResponse, 'isFavorite'> {}

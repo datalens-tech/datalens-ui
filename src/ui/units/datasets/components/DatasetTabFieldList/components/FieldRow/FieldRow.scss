@@ -36,9 +36,5 @@
         &_header {
             font-weight: 500;
         }
-
-        &_first-column:not(&_header) {
-            padding-left: 5px;
-        }
     }
 }

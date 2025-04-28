@@ -31,6 +31,7 @@ export enum DialogParameterQA {
     Cancel = 'dialog_parameter-cancel-btn',
     Reset = 'dialog_parameter-reset-btn',
     DefaultValueInput = 'dialog_parameter-default-value-input',
+    DefaultValueRadioGroup = 'dialog_parameter-default-value-radio-group',
     NameInput = 'dialog_parameter-name-input',
     TypeSelector = 'dialog_parameter-type_selector',
     Dialog = 'dialog-parameter',
