@@ -263,6 +263,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
     const inputRef: React.Ref<HTMLInputElement> = React.useRef(null);
 
     React.useEffect(() => {
+        // TODO remove and use "initialFocus={inputRef}" in Dialog props when switch to uikit7
         // delay is needed so that the autofocus of the dialog does not interrupt the focus on the input
         setTimeout(() => {
             inputRef.current?.focus();
