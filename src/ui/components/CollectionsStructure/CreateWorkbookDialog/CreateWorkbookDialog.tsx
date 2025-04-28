@@ -19,8 +19,8 @@ import {
 } from '../../../store/actions/collectionsStructure';
 import {
     selectCreateWorkbookIsLoading,
-    selectGetImportProgress,
-    selectImportWorkbook,
+    selectGetImportProgressData,
+    selectImportWorkbookData,
     selectImportWorkbookStatus,
 } from '../../../store/selectors/collectionsStructure';
 import DialogManager from '../../DialogManager/DialogManager';
@@ -50,9 +50,12 @@ export type CreateWorkbookDialogProps = {
     dialogTitle?: string;
     defaultWorkbookTitle?: string;
     onClose: () => void;
-    onApply?: (result: CreateWorkbookResponse | null) => void | Promise<void>;
+    // TODO: remove and use onCreateWorkbook
+    onApply?: (result: {workbookId?: string}) => void | Promise<void>;
+    onCreateWorkbook?: ({workbookId}: {workbookId?: string}) => void | Promise<void>;
     defaultView?: 'default' | 'import';
     importId?: string;
+    showImport?: boolean;
 };
 
 const b = block('create-workbook-dialog');
@@ -63,21 +66,22 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
     dialogTitle,
     defaultWorkbookTitle,
     onClose,
+    onCreateWorkbook,
     onApply,
     defaultView = 'default',
     importId,
+    showImport,
 }) => {
     const dispatch: AppDispatch = useDispatch();
 
     const isCreatingLoading = useSelector(selectCreateWorkbookIsLoading);
 
-    const {error: importError, data: importData} = useSelector(selectImportWorkbook);
-    const {data: importProgressData} = useSelector(selectGetImportProgress);
-    const importProgress = importProgressData?.progress;
+    const importStatus = useSelector(selectImportWorkbookStatus);
+
+    const importData = useSelector(selectImportWorkbookData);
+    const importProgressData = useSelector(selectGetImportProgressData);
 
     const [isExternalLoading, setIsExternalLoading] = React.useState(false);
-
-    const importStatus = useSelector(selectImportWorkbookStatus);
 
     const isImportLoading = importStatus === 'loading' || importStatus === 'pending';
     const isLoading = isCreatingLoading || isImportLoading || isExternalLoading;
@@ -169,6 +173,21 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
         onClose();
     }, [dispatch, importStatus, onClose]);
 
+    const handleCreateCallback = React.useCallback(
+        async (workbookId?: string) => {
+            const onCreateCallback = onApply || onCreateWorkbook;
+            if (onCreateCallback) {
+                const promise = onCreateCallback({workbookId});
+                if (promise) {
+                    setIsExternalLoading(true);
+                    await promise;
+                    setIsExternalLoading(false);
+                }
+            }
+        },
+        [onApply, onCreateWorkbook],
+    );
+
     const handleApply = React.useCallback(
         async ({
             title,
@@ -179,16 +198,20 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
             description?: string;
             onClose: () => void;
         }) => {
-            if (importStatus === 'success') {
-                // TODO: Add switching to workbook page
+            if (isEnabledFeature(Feature.EnableExportWorkbookFile) && importStatus === 'success') {
                 onClose();
+                handleCreateCallback(importProgressData?.workbookId);
+                return;
             }
-            if (importFiles.length > 0 && !importFiles[0].name.toLowerCase().endsWith('.json')) {
+            if (
+                isEnabledFeature(Feature.EnableExportWorkbookFile) &&
+                importFiles.length > 0 &&
+                !importFiles[0].name.toLowerCase().endsWith('.json')
+            ) {
                 setImportValidationError(i18n('label_error-file-type'));
                 return;
             }
 
-            let result: CreateWorkbookResponse | null = null;
             const workbookData = {
                 title,
                 description: description ?? '',
@@ -197,28 +220,32 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
 
             if (isEnabledFeature(Feature.EnableExportWorkbookFile) && importFiles.length > 0) {
                 setView('import');
-                const importResult = await dispatch(importWorkbook(workbookData));
+                const importResult = await dispatch(
+                    importWorkbook({...workbookData, importFile: importFiles[0]}),
+                );
                 if (importResult && importResult.importId) {
                     pollImportStatus(importResult.importId);
                 }
                 return;
-            } else {
-                result = await dispatch(createWorkbook(workbookData));
             }
 
-            // TODO: add importProgressData type in onApply type func
-            if (onApply) {
-                const promise = onApply(result);
-                if (promise) {
-                    setIsExternalLoading(true);
-                    await promise;
-                    setIsExternalLoading(false);
-                }
-            }
+            const result: CreateWorkbookResponse | null = await dispatch(
+                createWorkbook(workbookData),
+            );
+
+            handleCreateCallback(result?.workbookId);
 
             onClose();
         },
-        [collectionId, dispatch, importFiles, importStatus, onApply, pollImportStatus],
+        [
+            collectionId,
+            dispatch,
+            handleCreateCallback,
+            importFiles,
+            importProgressData?.workbookId,
+            importStatus,
+            pollImportStatus,
+        ],
     );
 
     const getDialogFooterPropsOverride = React.useCallback<GetDialogFooterPropsOverride>(
@@ -243,7 +270,7 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
     );
 
     const renderImportSection = () => {
-        if (!isEnabledFeature(Feature.EnableExportWorkbookFile)) {
+        if (!isEnabledFeature(Feature.EnableExportWorkbookFile) || !showImport) {
             return null;
         }
         return (
@@ -258,14 +285,7 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
 
     const renderDialogView = () => {
         if (view === 'import') {
-            return (
-                <ImportWorkbookView
-                    error={importError}
-                    data={importProgressData}
-                    status={importStatus}
-                    progress={importProgress ?? 0}
-                />
-            );
+            return <ImportWorkbookView status={importStatus} />;
         }
         return null;
     };

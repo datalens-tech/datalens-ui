@@ -1,25 +1,13 @@
-// TODO: use type from api request
-export type TempImportExportDataType = {
-    importId?: string;
-    exportId?: string;
-    status: 'pending' | 'success' | 'error';
-    progress: number;
-    notifications?: {
-        entryId?: string;
-        scope?: 'connection' | 'dataset';
-        code: string;
-        message: string;
-        level: 'warning' | 'info' | 'critical';
-    }[];
-};
+import type {EntryScope} from 'shared';
+import type {NotificationLevel} from 'shared/types/meta-manager';
 
 export type PreparedNotificationType = {
     code: string;
     message: string;
-    level: 'warning' | 'info' | 'critical';
+    level: NotificationLevel;
     entries: {
         entryId: string;
-        scope: 'connection' | 'dataset';
+        scope: EntryScope;
     }[];
     entryId?: string;
 };
