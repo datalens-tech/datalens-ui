@@ -68,8 +68,8 @@ demo
 ## Сборка
 <pre>
 docker login -u [username]
-docker build -t akrasnov87/datalens-ui:0.2520.0 .
-docker push akrasnov87/datalens-ui:0.2520.0
+docker build -t akrasnov87/datalens-ui:0.2864.0 .
+docker push akrasnov87/datalens-ui:0.2864.0
 </pre>
 
 ## Тестирование
