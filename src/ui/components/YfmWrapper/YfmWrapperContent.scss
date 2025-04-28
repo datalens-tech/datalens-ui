@@ -63,6 +63,11 @@
     .yfm:not(.yfm-term_title):not(.yfm-term_dfn) {
         width: 100%;
     }
+
+    .yfm-clipboard:hover .yfm-clipboard-button {
+        min-height: unset;
+        min-width: unset;
+    }
 }
 
 .g-root .yfm:not(.yfm_only-light) {
