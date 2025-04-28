@@ -14,9 +14,10 @@ export type IllustrationName =
 export type IllustrationProps = {
     name: IllustrationName;
     illustrationStore: IllustrationStore;
+    showSkeleton?: boolean;
     [prop: string]: unknown;
 };
 
 export type CreateIllustrationProps = Omit<IllustrationProps, 'name'> & {
-    name: IllustrationName | 'barchar' | 'logo' | 'logoShort' | 'logoInit';
+    name: IllustrationName | 'barchar' | 'logo' | 'logoShort' | 'logoInit' | 'galleryHeader';
 };
