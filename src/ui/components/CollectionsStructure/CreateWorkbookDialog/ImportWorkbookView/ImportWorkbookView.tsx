@@ -50,10 +50,10 @@ export const ImportWorkbookView = ({status, error, progress, data}: ImportWorkbo
                 const preparedNotifications = transformNotifications(data.notifications);
                 return (
                     <Flex direction="column" gap={4}>
-                        {preparedNotifications.map(({code, message, level, entries}) => (
+                        {preparedNotifications.map(({code, level, entries}) => (
                             <EntriesNotificationCut
                                 key={code}
-                                title={message}
+                                code={code}
                                 level={level}
                                 entries={entries}
                             />
