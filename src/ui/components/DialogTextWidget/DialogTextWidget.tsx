@@ -109,7 +109,6 @@ class DialogTextWidget extends React.PureComponent<DialogTextWidgetProps, Dialog
                     >
                         <TextEditor
                             id={INPUT_TEXT_ID}
-                            autofocus
                             onTextUpdate={this.onTextUpdate}
                             text={text}
                             controlRef={this.textEditor}
