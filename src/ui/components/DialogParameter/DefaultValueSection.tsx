@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {DatePicker} from '@gravity-ui/date-components';
-import {dateTimeUtc} from '@gravity-ui/date-utils';
+import {dateTimeUtc, isValid} from '@gravity-ui/date-utils';
 import {RadioGroup, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -42,7 +42,11 @@ export function DefaultValueSection({formState, updateFormState}: Props) {
     if (isDateField({data_type: formState.type})) {
         content = (
             <DatePicker
-                value={formState.defaultValue ? dateTimeUtc({input: formState.defaultValue}) : null}
+                value={
+                    isValid(formState.defaultValue)
+                        ? dateTimeUtc({input: formState.defaultValue})
+                        : null
+                }
                 format={getDatePickerFormat(formState.type, 'input')}
                 onUpdate={(dateTime) => {
                     let value = '';
