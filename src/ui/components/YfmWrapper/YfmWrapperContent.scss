@@ -64,6 +64,10 @@
         width: 100%;
     }
 
+    /**
+     * unset styles from @diplodoc/transform to fix clipboard button position on hover
+     * https://github.com/diplodoc-platform/transform/issues/700
+     */
     .yfm-clipboard:hover .yfm-clipboard-button {
         min-height: unset;
         min-width: unset;
