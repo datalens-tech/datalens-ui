@@ -35,6 +35,7 @@ import {
     WizardVisualizationId,
     createMeasureNames,
     filterUpdatesByDatasetId,
+    getEntryNameByKey,
     getResultSchemaFromDataset,
     isMeasureName,
     isMeasureValue,
@@ -172,8 +173,7 @@ function getDataset({id, workbookId}: GetDatasetArgs) {
         })
         .then((dataset) => {
             if (dataset && dataset.key) {
-                const keyParts = dataset.key.split('/');
-                dataset.realName = keyParts[keyParts.length - 1];
+                dataset.realName = getEntryNameByKey({key: dataset.key});
             }
 
             if (dataset.result_schema) {

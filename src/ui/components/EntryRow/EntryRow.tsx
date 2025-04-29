@@ -45,7 +45,7 @@ const getName = (entry?: RowEntryData, name?: string) => {
     if (!entry.key) {
         return entry.name;
     }
-    return entry.name ? entry.name : getEntryNameByKey({key: entry.key, index: -1});
+    return entry.name ? entry.name : getEntryNameByKey({key: entry.key});
 };
 
 // Type guard to ensure entry has all required properties for redirectUrlSwitcher

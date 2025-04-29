@@ -4,6 +4,7 @@ import {
     EntryUpdateMode,
     type TransferIdMapping,
     type TransferNotification,
+    getEntryNameByKey,
 } from '../../../shared';
 import {
     TRANSFER_UNKNOWN_ENTRY_ID,
@@ -94,9 +95,7 @@ export async function prepareDashExportData(entry: DashEntry, idMapping: Transfe
             warningTransferNotification(TransferErrorCode.TransferMissingLinkedEndtry),
         );
     }
-
-    const nameParts = entry.key.split('/');
-    const name = nameParts[nameParts.length - 1];
+    const name = getEntryNameByKey({key: entry.key});
 
     const dash = {
         name,

@@ -28,6 +28,7 @@ import {
     ENTRY_TYPES,
     Feature,
     QLChartType,
+    getEntryNameByKey,
     resolveIntervalDate,
     resolveOperation,
 } from '../../../../../shared';
@@ -753,8 +754,7 @@ export const initializeApplication = (args: InitializeApplicationArgs) => {
                     if (loadedConnectionEntry) {
                         connection = loadedConnectionEntry as QLConnectionEntry;
 
-                        const keyParts = connection.key.split('/');
-                        connection.name = keyParts[keyParts.length - 1];
+                        connection.name = getEntryNameByKey({key: connection.key});
 
                         dispatch(setConnection(connection));
 
@@ -1153,8 +1153,7 @@ export const performManualConfiguration = ({
             }),
         );
 
-        const keyParts = connection.key.split('/');
-        connection.name = keyParts[keyParts.length - 1];
+        connection.name = getEntryNameByKey({key: connection.key});
 
         dispatch(setConnection(connection));
 
