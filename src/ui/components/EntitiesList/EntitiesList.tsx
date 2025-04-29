@@ -51,18 +51,21 @@ export const EntitiesList = ({scope, entities, isCurrent, hideTitle, enableHover
     }
 
     const RightSectionSlot = rightSectionSlot;
+    console.log(RightSectionSlot);
 
     return (
         <div className={b(null, className)}>
-            {title && !hideTitle && <div className={b('title')}>{title}</div>}
-            {isCurrent || !updatedEntities ? null : 
-                <Switch size="m" 
-                    className={b('switch')}
-                    checked={checkedCount == entities.length} 
-                    onUpdate={(value)=>{
-                        handleCheckAll(value);
-                    }}>
-                </Switch>}
+            {title && !hideTitle && <div className={b('title')}>
+                <div className={b('title-wrapper')}>{title}</div>
+                {isCurrent || !updatedEntities ? null : 
+                    <Switch size="m" 
+                        className={b('switch')}
+                        checked={checkedCount == entities.length} 
+                        onUpdate={(value)=>{
+                            handleCheckAll(value);
+                        }}>
+                    </Switch>}
+            </div>}
             {entities.map((entity) => (
                 <EntryRow
                     className={b('row', rowClassName)}
@@ -70,18 +73,18 @@ export const EntitiesList = ({scope, entities, isCurrent, hideTitle, enableHover
                     entry={entity}
                     nonInteractive={isCurrent}
                     disableHover={true}
-                    // rightSectionSlot={isCurrent || !updatedEntities ? null : 
-                    //     <Switch size="m" 
-                    //         className={b('switch')}
-                    //         checked={Boolean(entity.entryId && updatedEntities?.[entity.entryId])} 
-                    //         onUpdate={(value)=>{
-                    //             setUpdatedEntities({...updatedEntities, [entity.entryId || ""]: value})
-                    //         }}>
-                    //     </Switch>}
+                    rightSectionSlot={isCurrent || !updatedEntities ? null : 
+                        <Switch size="m" 
+                            className={b('switch')}
+                            checked={Boolean(entity.entryId && updatedEntities?.[entity.entryId])} 
+                            onUpdate={(value)=>{
+                                setUpdatedEntities({...updatedEntities, [entity.entryId || ""]: value})
+                            }}>
+                        </Switch>}
                     enableHover={enableHover}
-                    rightSectionSlot={
-                        RightSectionSlot ? <RightSectionSlot entry={entity} /> : undefined
-                    }
+                    // rightSectionSlot={
+                    //     RightSectionSlot ? <RightSectionSlot entry={entity} /> : undefined
+                    // }
                 />
             ))}
         </div>

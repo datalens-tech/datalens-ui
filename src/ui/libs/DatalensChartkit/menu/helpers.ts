@@ -14,7 +14,7 @@ import {
     getNewWindowMenuItem,
     getOpenAsTableMenuItem,
     getLinkMenuItem,
-    //getExportMenuPDF,
+    getExportMenuPDF,
     //getEmbeddedMenuItem
 } from './MenuItems';
 
@@ -109,10 +109,10 @@ export const getDefaultChartMenu = ({
             chartsDataProvider,
             customConfig: customOptions[MenuItemsIds.EXPORT],
         }),
-        // getExportMenuPDF({
-        //     chartsDataProvider,
-        //     customConfig: customOptions[MenuItemsIds.EXPORT_PDF],
-        // }),
+        getExportMenuPDF({
+            chartsDataProvider,
+            customConfig: customOptions[MenuItemsIds.EXPORT_PDF],
+        }),
         getNewWindowMenuItem({
             chartsDataProvider,
             customConfig: customOptions[MenuItemsIds.NEW_WINDOW],
