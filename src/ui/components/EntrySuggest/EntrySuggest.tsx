@@ -5,7 +5,6 @@ import {Flex, Select, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import debounce from 'lodash/debounce';
-import uniqBy from 'lodash/uniqBy';
 import type {ValueOf} from 'shared';
 import {makeUserId} from 'shared';
 import type {GetEntriesEntryResponse} from 'shared/schema';
@@ -22,7 +21,7 @@ const i18n = I18n.keyset('component.entry-suggest.view');
 
 const getOptionHeight = () => 48;
 const filterOption = () => true;
-const defaultIsOptionDisabled = (_option: SuggestEntry) => false;
+const defaultIsOptionDisabled = (_option: EntrySuggestItem) => false;
 
 const OBJECT_TYPE_OPTIONS = {
     CONNECTIONS: 'connection',
@@ -30,8 +29,8 @@ const OBJECT_TYPE_OPTIONS = {
     WIDGETS: 'widget',
 } as const;
 
-type ObjectTypeOption = ValueOf<typeof OBJECT_TYPE_OPTIONS>;
-export type SuggestEntry = GetEntriesEntryResponse;
+type EntryOptionType = ValueOf<typeof OBJECT_TYPE_OPTIONS>;
+export type EntrySuggestItem = GetEntriesEntryResponse;
 
 const objectTypeSelectOptions = [
     {value: OBJECT_TYPE_OPTIONS.CONNECTIONS, content: i18n('label_option-connections')},
@@ -41,25 +40,30 @@ const objectTypeSelectOptions = [
 
 interface EntrySuggestProps extends Partial<Omit<SelectProps, 'value' | 'onUpdate'>> {
     showOnlyOwnedEntries?: boolean;
-    selectedItems: SuggestEntry[];
-    onSelectedItemsUpdate: (items: SuggestEntry[]) => void;
-    isOptionDisabled?: (option: SuggestEntry) => boolean;
+    selectedItem?: EntrySuggestItem;
+    onSelectedItemUpdate: (item: EntrySuggestItem | undefined) => void;
+    isOptionDisabled?: (option: EntrySuggestItem) => boolean;
 }
 
 export function EntrySuggest({
     className,
     showOnlyOwnedEntries = true,
-    selectedItems,
-    onSelectedItemsUpdate,
+    selectedItem,
+    onSelectedItemUpdate,
     isOptionDisabled = defaultIsOptionDisabled,
     ...props
 }: EntrySuggestProps) {
     const [paginationParams, setPaginationParams] = React.useState({page: 0, hasNextPage: false});
     const [filter, setFilter] = React.useState('');
     const [loading, setLoading] = React.useState(false);
-    const [entryType, setEntryType] = React.useState<ObjectTypeOption>(OBJECT_TYPE_OPTIONS.WIDGETS);
+    const [entryType, setEntryType] = React.useState<EntryOptionType>(OBJECT_TYPE_OPTIONS.WIDGETS);
 
-    const [items, setItems] = React.useState<SuggestEntry[]>([]);
+    const [items, setItems] = React.useState<EntrySuggestItem[]>([]);
+
+    const selectedItemMemo = React.useMemo(
+        () => (selectedItem ? [selectedItem] : []),
+        [selectedItem],
+    );
 
     const fetchEntries = React.useMemo(
         () =>
@@ -71,7 +75,7 @@ export function EntrySuggest({
                 }: {
                     search: string;
                     page?: number;
-                    entryType: ObjectTypeOption;
+                    entryType: EntryOptionType;
                 }) => {
                     setLoading(true);
                     if (page === 0) {
@@ -134,7 +138,7 @@ export function EntrySuggest({
 
     const handleFilterEntryTypeUpdate = React.useCallback(
         (nextEntryType: string[]) => {
-            const nextEntry = nextEntryType[0] as ObjectTypeOption;
+            const nextEntry = nextEntryType[0] as EntryOptionType;
             setEntryType(nextEntry);
             setItems([]);
             fetchEntries({search: filter, page: 0, entryType: nextEntry});
@@ -151,15 +155,12 @@ export function EntrySuggest({
     };
 
     const handleUpdate = (nextValue: string[]) => {
-        onSelectedItemsUpdate(
-            uniqBy(
-                selectedItems.concat(items).filter((item) => nextValue.includes(item.entryId)),
-                'entryId',
-            ),
+        onSelectedItemUpdate(
+            selectedItemMemo.concat(items).find((item) => nextValue.includes(item.entryId)),
         );
     };
 
-    const resultItems = filter ? items : selectedItems;
+    const resultItems = filter ? items : selectedItemMemo;
 
     return (
         <Select
@@ -207,7 +208,7 @@ export function EntrySuggest({
     );
 }
 
-function renderEntryOption({data, value, content, disabled}: SelectOption<SuggestEntry>) {
+function renderEntryOption({data, value, content, disabled}: SelectOption<EntrySuggestItem>) {
     return (
         <Flex alignItems="center" gap={2} className={b('entry-option', {disabled})}>
             {data ? (
