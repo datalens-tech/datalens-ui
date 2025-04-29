@@ -1,7 +1,7 @@
 .color-palette-editor-container {
     &__color-palettes-card {
         width: 460px;
-        margin-bottom: 12px;
+        margin-bottom: var(--g-spacing-5);
     }
 
     &__color-palettes-card:last-child {
