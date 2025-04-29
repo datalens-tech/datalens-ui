@@ -21,22 +21,19 @@ const getOptionHeight = () => 48;
 const filterOption = () => true;
 interface UsersSuggestProps extends Partial<Omit<SelectProps, 'value' | 'onUpdate'>> {
     getSuggestItems: GetUsersSuggestItems;
-    items: ListSuggestUser[];
-    onItemsFetched: (items: ListSuggestUser[]) => void;
     selectedItems: ListSuggestUser[];
     onSelectedItemsUpdate: (items: ListSuggestUser[]) => void;
 }
 
 export function UsersSuggest({
     getSuggestItems,
-    items,
-    onItemsFetched,
     selectedItems,
     onSelectedItemsUpdate,
     ...props
 }: UsersSuggestProps) {
     const [filter, setFilter] = React.useState('');
     const [loading, setLoading] = React.useState(false);
+    const [items, setItems] = React.useState<ListSuggestUser[]>([]);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
     const debouncedGetSuggestItems = React.useCallback(debounce(getSuggestItems, 300), [
@@ -47,9 +44,9 @@ export function UsersSuggest({
         (nextFilter: string) => {
             setLoading(true);
             setFilter(nextFilter);
-            debouncedGetSuggestItems(nextFilter, onItemsFetched, () => setLoading(false));
+            debouncedGetSuggestItems(nextFilter, setItems, () => setLoading(false));
         },
-        [debouncedGetSuggestItems, onItemsFetched],
+        [debouncedGetSuggestItems],
     );
 
     const handleOpenChange = (nextOpen: boolean) => {
@@ -73,32 +70,6 @@ export function UsersSuggest({
         resultItems = filter ? items : selectedItems;
     }
 
-    let emptyPlaceholder: React.ReactNode = null;
-
-    if (!loading && !filter) {
-        emptyPlaceholder = (
-            <PlaceholderIllustration
-                name="template"
-                size="s"
-                direction="column"
-                className={b('placeholder')}
-                title={i18n('label_empty-state-template-title')}
-                description={i18n('label_empty-state-template-description')}
-            />
-        );
-    } else if (!loading && filter) {
-        emptyPlaceholder = (
-            <PlaceholderIllustration
-                name="notFound"
-                size="s"
-                direction="column"
-                className={b('placeholder')}
-                title={i18n('label_empty-state-not-found-title')}
-                description={i18n('label_empty-state-not-found-description')}
-            />
-        );
-    }
-
     return (
         <Select
             {...props}
@@ -115,13 +86,10 @@ export function UsersSuggest({
             loading={loading}
             filterable
             filter={filter}
+            filterPlaceholder={i18n('label_filter-placeholder')}
             filterOption={filterOption}
             onFilterChange={handleFilterUpdate}
-            renderEmptyOptions={() => (
-                <Flex alignItems="center" justifyContent="center" className={b('empty-state')}>
-                    {emptyPlaceholder}
-                </Flex>
-            )}
+            renderEmptyOptions={() => getEmptyStatePlaceholder({loading, filter})}
             getOptionHeight={getOptionHeight}
             renderOption={renderUser}
             renderSelectedOption={renderSelectedUser(selectedItems)}
@@ -161,4 +129,38 @@ function renderSelectedUser(selectedItems: ListSuggestUser[]) {
             </div>
         );
     };
+}
+
+function getEmptyStatePlaceholder({loading, filter}: {loading: boolean; filter: string}) {
+    let emptyPlaceholder: React.ReactNode = null;
+
+    if (!loading && !filter) {
+        emptyPlaceholder = (
+            <PlaceholderIllustration
+                name="template"
+                size="s"
+                direction="column"
+                className={b('placeholder')}
+                title={i18n('label_empty-state-template-title')}
+                description={i18n('label_empty-state-template-description')}
+            />
+        );
+    } else if (!loading && filter) {
+        emptyPlaceholder = (
+            <PlaceholderIllustration
+                name="notFound"
+                size="s"
+                direction="column"
+                className={b('placeholder')}
+                title={i18n('label_empty-state-not-found-title')}
+                description={i18n('label_empty-state-not-found-description')}
+            />
+        );
+    }
+
+    return (
+        <Flex alignItems="center" justifyContent="center">
+            {emptyPlaceholder}
+        </Flex>
+    );
 }
