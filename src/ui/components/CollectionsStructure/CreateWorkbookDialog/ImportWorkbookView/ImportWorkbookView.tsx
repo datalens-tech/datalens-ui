@@ -3,12 +3,17 @@ import React from 'react';
 import {Flex, Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {useSelector} from 'react-redux';
 import {ProgressBar} from 'ui/components/ProgressBar/ProgressBar';
 import ViewError from 'ui/components/ViewError/ViewError';
+import {
+    selectGetImportProgressData,
+    selectGetImportProgressEntriesMap,
+    selectImportError,
+} from 'ui/store/selectors/collectionsStructure';
 
 import {EntriesNotificationCut} from '../../components/EntriesNotificationCut/EntriesNotificationCut';
 import {transformNotifications} from '../../components/EntriesNotificationCut/helpers';
-import type {TempImportExportDataType} from '../../components/EntriesNotificationCut/types';
 import type {ImportExportStatus} from '../../types';
 
 import './ImportWorkbookView.scss';
@@ -18,16 +23,20 @@ const b = block('import-workbook-file-view');
 const i18n = I18n.keyset('component.workbook-import-view.view');
 
 export type ImportWorkbookViewProps = {
-    error: null | Error;
-    data: TempImportExportDataType | null;
     status: ImportExportStatus;
-    progress: number;
 };
 
-export const ImportWorkbookView = ({status, error, progress, data}: ImportWorkbookViewProps) => {
+export const ImportWorkbookView = ({status}: ImportWorkbookViewProps) => {
+    const importProgressData = useSelector(selectGetImportProgressData);
+    const notificationEntriesMap = useSelector(selectGetImportProgressEntriesMap);
+    const error = useSelector(selectImportError);
+
+    const progress = importProgressData?.progress;
+    const notifications = importProgressData?.notifications;
+
     switch (status) {
         case 'pending':
-            return <ProgressBar size="s" className={b('progress')} value={progress} />;
+            return <ProgressBar size="s" className={b('progress')} value={progress ?? 0} />;
 
         case 'loading':
             return (
@@ -37,17 +46,16 @@ export const ImportWorkbookView = ({status, error, progress, data}: ImportWorkbo
             );
         case 'success':
         case 'notification-error':
-            if (!data) {
-                return null;
-            }
-            if (data.status !== 'error' && !data.notifications) {
+            if (status === 'success' && !notifications) {
                 return (
                     <EntriesNotificationCut title={i18n('label_success-import')} level="success" />
                 );
             }
 
             {
-                const preparedNotifications = transformNotifications(data.notifications);
+                const preparedNotifications = notifications
+                    ? transformNotifications(notifications)
+                    : [];
                 return (
                     <Flex direction="column" gap={4}>
                         {preparedNotifications.map(({code, message, level, entries}) => (
@@ -56,6 +64,7 @@ export const ImportWorkbookView = ({status, error, progress, data}: ImportWorkbo
                                 title={message}
                                 level={level}
                                 entries={entries}
+                                entriesMap={notificationEntriesMap}
                             />
                         ))}
                     </Flex>
@@ -63,6 +72,13 @@ export const ImportWorkbookView = ({status, error, progress, data}: ImportWorkbo
             }
         case 'fatal-error':
         default:
-            return <ViewError containerClassName={b('error-content')} error={error} size="s" />;
+            return (
+                <ViewError
+                    showDebugInfo={false}
+                    containerClassName={b('error-content')}
+                    error={error}
+                    size="s"
+                />
+            );
     }
 };

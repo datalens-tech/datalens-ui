@@ -21,9 +21,9 @@ import type {
 import {renderClipboardButton} from './components/CopyToClipboard/CopyToClipboardMenuItem';
 import {getHeaderWithTooltipNode} from './components/HeaderWithTooltip/HeaderWithTooltip';
 
-const PARAMETER_NAME_COLUMN_WIDTH = 318;
+const PARAMETER_NAME_COLUMN_WIDTH = 312;
 const PARAMETER_TYPE_COLUMN_WIDTH = 140;
-const PARAMETER_VALUE_COLUMN_WIDTH = 318;
+const PARAMETER_VALUE_COLUMN_WIDTH = 312;
 
 export const getParametersTableHeaders = async (): Promise<FieldHeaderColumn[]> => {
     return [
