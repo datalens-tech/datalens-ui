@@ -5,14 +5,15 @@ import {Flex, Select, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import debounce from 'lodash/debounce';
-import type {ValueOf} from 'shared';
 import {makeUserId} from 'shared';
-import type {GetEntriesEntryResponse} from 'shared/schema';
 import {DL} from 'ui/constants';
 import {getSdk} from 'ui/libs/schematic-sdk';
 
 import {EntryIcon} from '../EntryIcon/EntryIcon';
 import {PlaceholderIllustration} from '../PlaceholderIllustration/PlaceholderIllustration';
+
+import type {EntryOptionScope, EntrySuggestItem} from './types';
+import {ENTRY_SCOPE_OPTIONS, isEntryOptionScope} from './types';
 
 import './EntrySuggest.scss';
 
@@ -23,19 +24,10 @@ const getOptionHeight = () => 48;
 const filterOption = () => true;
 const defaultIsOptionDisabled = (_option: EntrySuggestItem) => false;
 
-const OBJECT_TYPE_OPTIONS = {
-    CONNECTIONS: 'connection',
-    DATASETS: 'dataset',
-    WIDGETS: 'widget',
-} as const;
-
-type EntryOptionType = ValueOf<typeof OBJECT_TYPE_OPTIONS>;
-export type EntrySuggestItem = GetEntriesEntryResponse;
-
 const objectTypeSelectOptions = [
-    {value: OBJECT_TYPE_OPTIONS.CONNECTIONS, content: i18n('label_option-connections')},
-    {value: OBJECT_TYPE_OPTIONS.DATASETS, content: i18n('label_option-datasets')},
-    {value: OBJECT_TYPE_OPTIONS.WIDGETS, content: i18n('label_option-widgets')},
+    {value: ENTRY_SCOPE_OPTIONS.CONNECTIONS, content: i18n('label_option-connections')},
+    {value: ENTRY_SCOPE_OPTIONS.DATASETS, content: i18n('label_option-datasets')},
+    {value: ENTRY_SCOPE_OPTIONS.WIDGETS, content: i18n('label_option-widgets')},
 ];
 
 interface EntrySuggestProps extends Partial<Omit<SelectProps, 'value' | 'onUpdate'>> {
@@ -56,7 +48,11 @@ export function EntrySuggest({
     const [paginationParams, setPaginationParams] = React.useState({page: 0, hasNextPage: false});
     const [filter, setFilter] = React.useState('');
     const [loading, setLoading] = React.useState(false);
-    const [entryType, setEntryType] = React.useState<EntryOptionType>(OBJECT_TYPE_OPTIONS.WIDGETS);
+    const [entryScope, setEntryScope] = React.useState<EntryOptionScope>(
+        selectedItem && isEntryOptionScope(selectedItem.scope)
+            ? selectedItem.scope
+            : ENTRY_SCOPE_OPTIONS.WIDGETS,
+    );
 
     const [items, setItems] = React.useState<EntrySuggestItem[]>([]);
 
@@ -71,11 +67,11 @@ export function EntrySuggest({
                 async ({
                     search,
                     page = 0,
-                    entryType,
+                    scope,
                 }: {
                     search: string;
                     page?: number;
-                    entryType: EntryOptionType;
+                    scope: EntryOptionScope;
                 }) => {
                     setLoading(true);
                     if (page === 0) {
@@ -84,7 +80,7 @@ export function EntrySuggest({
                     try {
                         const {entries, hasNextPage} = await getSdk().sdk.us.getEntries(
                             {
-                                scope: entryType,
+                                scope,
                                 orderBy: {field: 'createdAt', direction: 'desc'},
                                 createdBy: showOnlyOwnedEntries
                                     ? [DL.USER_LOGIN, makeUserId(DL.USER_ID)]
@@ -121,27 +117,27 @@ export function EntrySuggest({
     const handleLoadMore = React.useCallback(() => {
         setPaginationParams((prevPaginationParams) => {
             const nextPage = prevPaginationParams.page + 1;
-            fetchEntries({search: filter, page: nextPage, entryType});
+            fetchEntries({search: filter, page: nextPage, scope: entryScope});
 
             return {page: nextPage, hasNextPage: false};
         });
-    }, [entryType, fetchEntries, filter]);
+    }, [entryScope, fetchEntries, filter]);
 
     const handleFilterSearchUpdate = React.useCallback(
         (nextFilter: string) => {
             setPaginationParams({page: 0, hasNextPage: false});
             setFilter(nextFilter);
-            fetchEntries({search: nextFilter, entryType});
+            fetchEntries({search: nextFilter, scope: entryScope});
         },
-        [entryType, fetchEntries],
+        [entryScope, fetchEntries],
     );
 
-    const handleFilterEntryTypeUpdate = React.useCallback(
+    const handleFilterEntryScopeUpdate = React.useCallback(
         (nextEntryType: string[]) => {
-            const nextEntry = nextEntryType[0] as EntryOptionType;
-            setEntryType(nextEntry);
+            const nextEntry = nextEntryType[0] as EntryOptionScope;
+            setEntryScope(nextEntry);
             setItems([]);
-            fetchEntries({search: filter, page: 0, entryType: nextEntry});
+            fetchEntries({search: filter, page: 0, scope: nextEntry});
         },
         [fetchEntries, filter],
     );
@@ -192,8 +188,8 @@ export function EntrySuggest({
                     <TextInput {...inputProps} />
                     <Select
                         className={b('type-select')}
-                        value={[entryType]}
-                        onUpdate={handleFilterEntryTypeUpdate}
+                        value={[entryScope]}
+                        onUpdate={handleFilterEntryScopeUpdate}
                         placeholder={i18n('label_type-select-placeholder')}
                         options={objectTypeSelectOptions}
                     />
