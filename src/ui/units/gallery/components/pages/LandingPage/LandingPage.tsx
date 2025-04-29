@@ -48,26 +48,13 @@ interface SectionHeaderProps {
 }
 
 function SectionHeader({activeMediaQuery, title}: SectionHeaderProps) {
-    if (activeMediaQuery === 's') {
-        return (
-            <Flex className={b('section-header', {media: activeMediaQuery})}>
-                {title}
-                <Button view="flat" size="l">
-                    <Button.Icon>
-                        <ChevronRight />
-                    </Button.Icon>
-                </Button>
-            </Flex>
-        );
-    }
+    const icon = activeMediaQuery === 's' ? <ChevronRight /> : <ArrowRight />;
 
     return (
-        <Flex className={b('section-header')}>
+        <Flex className={b('section-header', {media: activeMediaQuery})}>
             {title}
             <Button view="flat" size="l">
-                <Button.Icon>
-                    <ArrowRight />
-                </Button.Icon>
+                <Button.Icon>{icon}</Button.Icon>
             </Button>
         </Flex>
     );
@@ -314,7 +301,7 @@ export function LandingPage() {
                             }}
                         >
                             <AsyncImage
-                                src="https://storage.yandexcloud.net/gravity-ui-assets/gallery_1.png"
+                                src="https://storage.yandexcloud.net/gravity-ui-assets/datalens.yandex_9fms9uae7ip02__embedded%3D1.png"
                                 style={{
                                     width: '100%',
                                     borderRadius: 4,

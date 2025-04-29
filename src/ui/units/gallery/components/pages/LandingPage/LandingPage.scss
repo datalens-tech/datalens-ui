@@ -230,6 +230,12 @@ $block: '.#{variables.$ns}-landing';
         color: var(--g-color-text-secondary);
     }
 
+    &__gallery-card-info-labels {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
     &__add-card {
         background-color: var(--g-color-base-generic);
         border-radius: 24px;
