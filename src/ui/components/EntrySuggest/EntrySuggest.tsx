@@ -171,6 +171,7 @@ export function EntrySuggest({
                 disabled: isOptionDisabled(item),
                 data: item,
             }))}
+            value={selectedItemMemo.map((item) => item.entryId)}
             hasClear
             loading={loading || paginationParams.hasNextPage}
             filterable

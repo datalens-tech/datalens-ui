@@ -13,6 +13,6 @@ export function isEntryOptionScope(scope: string): scope is EntryOptionScope {
     return Object.values(ENTRY_SCOPE_OPTIONS).includes(scope as EntryOptionScope);
 }
 
-export type EntrySuggestItem = EntryMetaFields & {
+export type EntrySuggestItem = Omit<EntryMetaFields, 'tenantId'> & {
     name: string;
 };
