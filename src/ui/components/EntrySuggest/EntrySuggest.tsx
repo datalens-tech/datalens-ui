@@ -93,13 +93,13 @@ export function EntrySuggest({
                                 includePermissionsInfo: true,
                                 excludeLocked: true,
                             },
-                            {concurrentId: 'getNavigationList'},
+                            {concurrentId: 'getEntries'},
                         );
 
-                        setPaginationParams((prevPaginationParams) => ({
-                            ...prevPaginationParams,
+                        setPaginationParams({
+                            page: page + 1,
                             hasNextPage,
-                        }));
+                        });
 
                         setItems((prevItems) =>
                             page === 0 ? entries : [...prevItems, ...entries],
@@ -115,13 +115,9 @@ export function EntrySuggest({
     );
 
     const handleLoadMore = React.useCallback(() => {
-        setPaginationParams((prevPaginationParams) => {
-            const nextPage = prevPaginationParams.page + 1;
-            fetchEntries({search: filter, page: nextPage, scope: entryScope});
-
-            return {page: nextPage, hasNextPage: false};
-        });
-    }, [entryScope, fetchEntries, filter]);
+        const nextPage = paginationParams.page + 1;
+        fetchEntries({search: filter, page: nextPage, scope: entryScope});
+    }, [entryScope, fetchEntries, filter, paginationParams]);
 
     const handleFilterSearchUpdate = React.useCallback(
         (nextFilter: string) => {
@@ -136,7 +132,6 @@ export function EntrySuggest({
         (nextEntryType: string[]) => {
             const nextEntry = nextEntryType[0] as EntryOptionScope;
             setEntryScope(nextEntry);
-            setItems([]);
             fetchEntries({search: filter, page: 0, scope: nextEntry});
         },
         [fetchEntries, filter],
