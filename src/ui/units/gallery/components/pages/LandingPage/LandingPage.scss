@@ -201,41 +201,6 @@ $block: '.#{variables.$ns}-landing';
         column-gap: 12px;
     }
 
-    &__gallery-card {
-        border: 1px solid var(--g-color-line-generic);
-        overflow: hidden;
-        line-height: 0;
-
-        &:not(:hover) {
-            box-shadow: none;
-        }
-    }
-
-    &__gallery-card-info {
-        height: 110px;
-        padding: 16px;
-        border-top: 1px solid var(--g-color-line-generic);
-    }
-
-    &__gallery-card-info-title {
-        @include text-subheader-2();
-
-        margin-bottom: 4px;
-    }
-
-    &__gallery-card-info-created-by {
-        @include text-body-2();
-
-        margin-bottom: 10px;
-        color: var(--g-color-text-secondary);
-    }
-
-    &__gallery-card-info-labels {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-    }
-
     &__add-card {
         background-color: var(--g-color-base-generic);
         border-radius: 24px;
