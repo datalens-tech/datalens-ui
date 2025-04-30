@@ -203,10 +203,10 @@ export type Logs = {
     [key in
         | 'Config'
         | 'Highcharts'
-        | 'JavaScript'
+        | 'Prepare'
         | 'Params'
-        | 'UI'
-        | 'Urls'
+        | 'Controls'
+        | 'Sources'
         | 'modules']?: LogItem[][];
 };
 

@@ -58,9 +58,9 @@ export const CollectionPage = () => {
                     props: {
                         open: true,
                         collectionId: curCollectionId,
-                        onApply: (result) => {
-                            if (result) {
-                                history.push(`${WORKBOOKS_PATH}/${result.workbookId}`);
+                        onCreateWorkbook: ({workbookId}) => {
+                            if (workbookId) {
+                                history.push(`${WORKBOOKS_PATH}/${workbookId}`);
                             }
                         },
                         onClose: () => {
@@ -68,6 +68,7 @@ export const CollectionPage = () => {
                         },
                         importId,
                         defaultView,
+                        showImport: true,
                     },
                 }),
             );
@@ -155,9 +156,9 @@ export const CollectionPage = () => {
                 props: {
                     open: true,
                     collectionId: curCollectionId,
-                    onApply: (result) => {
-                        if (result) {
-                            history.push(`${WORKBOOKS_PATH}/${result.workbookId}/connections/new`);
+                    onCreateWorkbook: ({workbookId}) => {
+                        if (workbookId) {
+                            history.push(`${WORKBOOKS_PATH}/${workbookId}/connections/new`);
                         }
                     },
                     onClose: () => {

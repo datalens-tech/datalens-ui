@@ -11,12 +11,17 @@ import './MainPage.scss';
 const b = block('service-settings');
 const i18n = I18n.keyset('service-settings.main.view');
 
-const ColorPaintsPage = React.lazy(
-    () => import('../../components/SectionColorPalettes/SectionColorPalettes'),
+const GeneralSettings = React.lazy(
+    () => import('../../components/GeneralSettings/GeneralSettings'),
 );
 const UsersList = React.lazy(() => import('../../components/UsersList/UsersList'));
 
-const MainPage = () => {
+type MainPageProps = {
+    customGeneralSettings?: React.ReactNode;
+    disablePalettesEdit?: boolean;
+};
+
+const MainPage = ({customGeneralSettings, disablePalettesEdit}: MainPageProps) => {
     const history = useHistory();
     const {tab} = useParams<{tab: string}>();
 
@@ -35,7 +40,10 @@ const MainPage = () => {
                     {i18n('label_header')}
                 </Text>
                 <main className={b('section')}>
-                    <ColorPaintsPage />
+                    <GeneralSettings
+                        customSettings={customGeneralSettings}
+                        disablePalettesEdit={disablePalettesEdit}
+                    />
                 </main>
             </div>
         );
@@ -61,8 +69,8 @@ const MainPage = () => {
                 <Tabs
                     items={[
                         {
-                            id: 'palettes',
-                            title: i18n('section_color-palettes'),
+                            id: 'general',
+                            title: i18n('section_general'),
                         },
                         {id: 'users', title: i18n('section_users')},
                     ]}
@@ -74,9 +82,19 @@ const MainPage = () => {
             <main className={b('tabs-content')}>
                 <React.Suspense fallback={<Loader size="m" className={b('loader')} />}>
                     <Switch>
-                        <Route exact path={'/settings/palettes'} component={ColorPaintsPage} />
+                        <Route
+                            exact
+                            path={'/settings/general'}
+                            render={(routeProps) => (
+                                <GeneralSettings
+                                    customSettings={customGeneralSettings}
+                                    disablePalettesEdit={disablePalettesEdit}
+                                    {...routeProps}
+                                />
+                            )}
+                        />
                         <Route exact path={'/settings/users'} component={UsersList} />
-                        <Redirect to="/settings/palettes" />
+                        <Redirect to="/settings/general" />
                     </Switch>
                 </React.Suspense>
             </main>

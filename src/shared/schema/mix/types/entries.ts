@@ -7,6 +7,8 @@ import type {CheckStatReportExistsArgs, CheckStatReportExistsResponse} from '../
 import type {
     DeleteUSEntryResponse,
     EntryByKeyPattern,
+    GetEntriesArgs,
+    GetEntriesResponse,
     GetEntryByKeyArgs,
     GetEntryByKeyResponse,
     GetEntryMetaArgs,
@@ -96,3 +98,7 @@ export type GetEntriesInFolderArgs = {
 };
 
 export type GetEntriesInFolderResponse = EntryByKeyPattern[];
+
+export type GetBatchEntriesByIdsArgs = Omit<GetEntriesArgs, 'ids'> & {ids: string[]};
+
+export type GetBatchEntriesByIdsResponse = Pick<GetEntriesResponse, 'entries'>;

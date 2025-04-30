@@ -3,6 +3,7 @@ import {transform as latex} from '@diplodoc/latex-extension/plugin';
 import {transform as mermaid} from '@diplodoc/mermaid-extension/plugin';
 import {transform as yfmTabs} from '@diplodoc/tabs-extension';
 import yfmTransform from '@diplodoc/transform';
+import code from '@diplodoc/transform/lib/plugins/code';
 import deflist from '@diplodoc/transform/lib/plugins/deflist';
 import imsize from '@diplodoc/transform/lib/plugins/imsize';
 import monospace from '@diplodoc/transform/lib/plugins/monospace';
@@ -93,6 +94,7 @@ export function renderHTML(args: RenderHtmlArgs): RenderHtmlOutput {
             bundle: false,
             runtime: YfmMetaScripts.MERMAID,
         }),
+        code,
     ];
 
     if (additionalPlugins) {

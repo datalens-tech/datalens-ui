@@ -30,7 +30,6 @@
     &__add-palette-button {
         margin-top: 6px;
         margin-left: 8px;
-        margin-bottom: 10px;
     }
 
     &__add-palette-button_condensed {
@@ -71,5 +70,9 @@
         right: 8px;
         align-items: center;
         display: flex;
+    }
+
+    &__tooltip-anchor {
+        width: fit-content;
     }
 }

@@ -1,16 +1,19 @@
 import React from 'react';
 
+import {Skeleton} from '@gravity-ui/uikit';
 import isNil from 'lodash/isNil';
 
-type SvgImageProps = Omit<
+export type AsyncImageProps = Omit<
     React.DetailedHTMLProps<React.ImgHTMLAttributes<HTMLImageElement>, HTMLImageElement>,
     'src'
 > & {
     src: string | (() => Promise<{default: string}>);
+    showSkeleton?: boolean;
 };
 
-export function SvgImage({src, alt, ...restProps}: SvgImageProps) {
+export function AsyncImage({src, alt, style, showSkeleton, ...restProps}: AsyncImageProps) {
     const [finalSrc, setFinalSrc] = React.useState(typeof src === 'string' ? src : undefined);
+    const [loading, setLoading] = React.useState(showSkeleton);
 
     React.useEffect(() => {
         let isCancelled = false;
@@ -37,5 +40,24 @@ export function SvgImage({src, alt, ...restProps}: SvgImageProps) {
         };
     }, [src]);
 
-    return isNil(finalSrc) ? null : <img src={finalSrc} alt={alt} {...restProps} />;
+    const skeleton = loading ? <Skeleton className={restProps.className} style={style} /> : null;
+
+    return isNil(finalSrc) ? (
+        skeleton
+    ) : (
+        <React.Fragment>
+            <img
+                src={finalSrc}
+                alt={alt}
+                style={{
+                    ...style,
+                    ...(loading && {display: 'none'}),
+                }}
+                {...restProps}
+                onLoad={loading ? () => setLoading(false) : undefined}
+                onError={() => setLoading(false)}
+            />
+            {skeleton}
+        </React.Fragment>
+    );
 }

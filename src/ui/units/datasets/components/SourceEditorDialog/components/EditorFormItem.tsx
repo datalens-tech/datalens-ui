@@ -92,7 +92,7 @@ export const EditorFormItem: React.FC<EditorFormItemProps> = (props) => {
             const endOffset = model.getOffsetAt({lineNumber: endLineNumber, column: endColumn});
 
             const currentValue = model.getValue();
-            const nextValue = `${currentValue.substring(0, startOffset)}{${param.title}}${currentValue.substring(endOffset)}`;
+            const nextValue = `${currentValue.substring(0, startOffset)}{{${param.title}}}${currentValue.substring(endOffset)}`;
             onUpdate({[name]: prepareCode(nextValue)});
 
             const newPosition = model.getPositionAt(startOffset + param.title.length + 2); // +2 for the {} brackets
