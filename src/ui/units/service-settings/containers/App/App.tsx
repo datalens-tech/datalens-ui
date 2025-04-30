@@ -22,7 +22,12 @@ const MainPage = React.lazy(() => import('../MainPage/MainPage'));
 const UserProfilePage = React.lazy(() => import('../UserProfilePage/UserProfilePage'));
 const CreateProfilePage = React.lazy(() => import('../CreateProfilePage/CreateProfilePage'));
 
-export const App = () => (
+type ServiceSettingsProps = {
+    customGeneralSettings?: React.ReactNode;
+    disablePalettesEdit?: boolean;
+};
+
+export const App = ({customGeneralSettings, disablePalettesEdit}: ServiceSettingsProps) => (
     <React.Suspense fallback={<Loader size="l" className={b('loader')} />}>
         <PageTitle entry={{key: i18n('label_header')}} />
         <Switch>
@@ -32,7 +37,17 @@ export const App = () => (
             {DL.AUTH_ENABLED && (
                 <Route path={'/settings/users/:userId'} component={UserProfilePage} />
             )}
-            <Route path={'/settings/:tab?'} component={MainPage} />
+            <Route
+                path={'/settings/:tab?'}
+                render={(routeProps) => (
+                    <MainPage
+                        customGeneralSettings={customGeneralSettings}
+                        disablePalettesEdit={disablePalettesEdit}
+                        {...routeProps}
+                    />
+                )}
+            />
+
             <Redirect to="/settings" />
         </Switch>
     </React.Suspense>
