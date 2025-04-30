@@ -117,6 +117,20 @@ COPY --from=install-stage /opt/app/package.json /opt/app/package-lock.json /opt/
 COPY --from=install-stage /opt/app/node_modules /opt/app/node_modules
 COPY --from=native-build-stage /opt/app/dist /opt/app/dist
 
+# Running Puppeteer (https://github.com/puppeteer/puppeteer/blob/main/docs/troubleshooting.md#running-puppeteer-in-docker)
+RUN apt-get update \
+    && apt-get install -y wget gnupg \
+    && wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - \
+    && sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list' \
+    && apt-get update \
+    && apt-get install -y google-chrome-stable fonts-ipafont-gothic fonts-wqy-zenhei fonts-thai-tlwg fonts-kacst fonts-freefont-ttf libxss1 \
+      --no-install-recommends \
+    && rm -rf /var/lib/apt/lists/*
+
+# Версия пакета брать из package.json
+RUN npm remove puppeteer@23.4.0
+RUN PUPPETEER_CACHE_DIR=$(pwd) npm install puppeteer@23.4.0
+
 RUN chown -R ${USER} /opt/app/dist/run
 RUN chown -R ${USER} /opt/app/export 
 
