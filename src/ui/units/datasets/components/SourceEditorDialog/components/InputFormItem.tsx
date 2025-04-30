@@ -62,7 +62,7 @@ export const InputFormItem: React.FC<InputFormItemProps> = (props) => {
     const handleSelectParam = React.useCallback<ParamSelectorProps['onParamSelect']>(
         (param) => {
             const {start, end} = selection.current;
-            const nextValue = `${value.substring(0, start)}{${param.title}}${value.substring(end)}`;
+            const nextValue = `${value.substring(0, start)}{{${param.title}}}${value.substring(end)}`;
             onUpdate({[name]: nextValue});
         },
         [name, value, onUpdate],

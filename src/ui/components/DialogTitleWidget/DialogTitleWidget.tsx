@@ -260,6 +260,16 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         setState((prevState) => ({...prevState, backgroundColor: color}));
     }, []);
 
+    const inputRef: React.Ref<HTMLInputElement> = React.useRef(null);
+
+    React.useEffect(() => {
+        // TODO remove and use "initialFocus={inputRef}" in Dialog props when switch to uikit7
+        // delay is needed so that the autofocus of the dialog does not interrupt the focus on the input
+        setTimeout(() => {
+            inputRef.current?.focus();
+        });
+    }, []);
+
     return (
         <Dialog
             open={dialogIsVisible}
@@ -278,10 +288,10 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
                         <TextInput
                             id={INPUT_TITLE_ID}
                             value={text}
-                            autoFocus
                             placeholder={i18n('dash.title-dialog.edit', 'context_fill-title')}
                             onUpdate={onTextUpdate}
                             qa={DialogDashTitleQA.Input}
+                            controlRef={inputRef}
                         />
                     </FieldWrapper>
                 </FormRow>

@@ -74,7 +74,7 @@ export const getControlBuilder = async (args: ChartBuilderArgs): Promise<ChartBu
             const timeStart = process.hrtime();
 
             const context = getChartApiContext({
-                name: 'Urls',
+                name: 'Sources',
                 shared,
                 params,
                 actionParams: {} as Record<string, string | string[]>,
@@ -87,7 +87,7 @@ export const getControlBuilder = async (args: ChartBuilderArgs): Promise<ChartBu
                     params,
                 }),
                 executionTiming: process.hrtime(timeStart),
-                name: 'Urls',
+                name: 'Sources',
                 runtimeMetadata: context.__runtimeMetadata,
             };
         },
@@ -101,7 +101,7 @@ export const getControlBuilder = async (args: ChartBuilderArgs): Promise<ChartBu
             const timeStart = process.hrtime();
 
             const context = getChartApiContext({
-                name: 'JavaScript',
+                name: 'Prepare',
                 shared,
                 params,
                 actionParams: {} as Record<string, string | string[]>,
@@ -118,7 +118,7 @@ export const getControlBuilder = async (args: ChartBuilderArgs): Promise<ChartBu
             return {
                 exports: {},
                 executionTiming: process.hrtime(timeStart),
-                name: 'JavaScript',
+                name: 'Prepare',
                 runtimeMetadata: context.__runtimeMetadata,
             };
         },
@@ -128,7 +128,7 @@ export const getControlBuilder = async (args: ChartBuilderArgs): Promise<ChartBu
             const timeStart = process.hrtime();
 
             const context = getChartApiContext({
-                name: 'UI',
+                name: 'Controls',
                 shared: shared,
                 params: params,
                 actionParams: {} as Record<string, string | string[]>,
@@ -140,7 +140,7 @@ export const getControlBuilder = async (args: ChartBuilderArgs): Promise<ChartBu
                     shared: shared,
                 }),
                 executionTiming: process.hrtime(timeStart),
-                name: 'UI',
+                name: 'Controls',
                 runtimeMetadata: context.__runtimeMetadata,
             };
         },
