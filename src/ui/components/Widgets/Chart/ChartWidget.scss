@@ -169,7 +169,7 @@ $hintOffset: 3px;
 
     #{$dashPublicContainerClassName} &_pulsate &__container,
     #{$dashContainerClassName} &_pulsate &__container {
-        background-color: #fff;
+        background-color: var(--g-color-base-background);
         animation: pulseAnimation 1.5s ease-in-out infinite;
     }
 
