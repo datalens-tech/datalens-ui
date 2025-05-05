@@ -22,6 +22,7 @@ import type {
     ZoomModes,
 } from 'shared';
 import {
+    ChartSettingsDialogQA,
     DEFAULT_WIDGET_SIZE,
     Feature,
     IndicatorTitleMode,
@@ -88,6 +89,7 @@ const BASE_SETTINGS_KEYS: SettingsKeys[] = [
     'zoomValue',
     'mapCenterMode',
     'mapCenterValue',
+    'preserveWhiteSpace',
 ];
 
 const QL_SETTINGS_KEYS: SettingsKeys[] = [...BASE_SETTINGS_KEYS, 'qlAutoExecuteChart'];
@@ -205,6 +207,7 @@ interface State {
     zoomValue?: number | null;
     mapCenterMode: MapCenterModes;
     mapCenterValue?: string | null;
+    preserveWhiteSpace?: boolean;
 }
 
 export const DIALOG_CHART_SETTINGS = Symbol('DIALOG_CHART_SETTINGS');
@@ -259,6 +262,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
             zoomValue,
             mapCenterMode = MapCenterMode.Auto,
             mapCenterValue,
+            preserveWhiteSpace,
         } = extraSettings;
 
         const navigatorSettings = this.prepareNavigatorSettings(visualization, extraSettings);
@@ -323,6 +327,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
             zoomValue,
             mapCenterMode,
             mapCenterValue,
+            preserveWhiteSpace,
         };
     }
 
@@ -894,6 +899,34 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
         );
     }
 
+    renderTableWhiteSpace() {
+        const {visualization} = this.props;
+        const {preserveWhiteSpace} = this.state;
+        const visualizationId = visualization.id as WizardVisualizationId;
+
+        const isSettingAvailable = [
+            WizardVisualizationId.FlatTable,
+            WizardVisualizationId.PivotTable,
+        ].includes(visualizationId);
+
+        if (!isSettingAvailable) {
+            return null;
+        }
+
+        return (
+            <SettingSwitcher
+                currentValue={preserveWhiteSpace ? 'on' : 'off'}
+                checkedValue={'on'}
+                uncheckedValue={'off'}
+                onChange={(value: string) => {
+                    this.setState({preserveWhiteSpace: value === 'on'});
+                }}
+                title={i18n('wizard', 'label_preserve-whitespace')}
+                qa={ChartSettingsDialogQA.PreserveWhiteSpace}
+            />
+        );
+    }
+
     renderLoader() {
         return (
             <div className={b('loader')}>
@@ -1089,6 +1122,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
                 {this.renderLimit()}
                 {this.renderGrouping()}
                 {this.renderTotals()}
+                {this.renderTableWhiteSpace()}
                 {this.renderFeed()}
                 {this.renderPivotFallback()}
                 {this.renderNavigator()}
