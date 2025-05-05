@@ -62,7 +62,7 @@ const b = block('dl-widget');
 function hasNoControlsParamVal(val: string) {
     const paramVal = Array.isArray(val) ? val[0] : val;
     // in case of setting params directly (ex. on Params tab)
-    return paramVal === '1' || paramVal === 'true' || paramVal === 1 || paramVal === true;
+    return ['1', 'true', 1, true].includes(paramVal);
 }
 
 export const Header = (props: HeaderProps) => {
@@ -109,7 +109,7 @@ export const Header = (props: HeaderProps) => {
      */
     const hideChartComments = Boolean((loadedData?.config as GraphWidget['config'])?.hideComments);
     const hideControlsByParam = hasNoControlsParamVal(
-        get(loadedData?.params || '', URL_OPTIONS.NO_CONTROLS),
+        get(dataProps?.params || '', URL_OPTIONS.NO_CONTROLS),
     );
 
     const canBeShownMenu = isMenuAvailable && widgetDataRef && !hideControlsByParam;
