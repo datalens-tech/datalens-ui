@@ -1,5 +1,5 @@
 import type {AxiosError} from 'axios';
-import type {ExportFormatsType} from 'shared';
+import type {ExportParams} from 'shared';
 import type {ChartWidgetDataRef} from 'ui/components/Widgets/Chart/types';
 import type {MenuLoadedData} from 'ui/libs/DatalensChartkit/menu/Menu';
 import type {ChartsData, ChartsProps} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
@@ -14,13 +14,6 @@ export type ExportResultType = {
     isCopyToClipboard?: boolean;
     data?: string;
     error?: AxiosError<Body>;
-};
-
-export type ExportParams = {
-    format: ExportFormatsType;
-    delValues: string | null;
-    delNumbers: string | null;
-    encoding: string | null;
 };
 
 export type ExportActionArgs = {
