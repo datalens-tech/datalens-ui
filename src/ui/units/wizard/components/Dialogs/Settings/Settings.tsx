@@ -909,7 +909,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
             WizardVisualizationId.PivotTable,
         ].includes(visualizationId);
 
-        if (!isSettingAvailable) {
+        if (!isSettingAvailable || !isEnabledFeature(Feature.PreWrapTableSetting)) {
             return null;
         }
 
