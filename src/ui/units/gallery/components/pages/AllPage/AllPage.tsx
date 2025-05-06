@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Col, Container, Row, Select, TextInput, text, useLayoutContext} from '@gravity-ui/uikit';
+import {Col, Container, Row, Select, Text, TextInput, useLayoutContext} from '@gravity-ui/uikit';
 import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
 import {useHistory} from 'react-router-dom';
 import {ActionPanel} from 'ui/components/ActionPanel';
@@ -72,6 +72,26 @@ function useFilteredGalleryItems({category, items, search}: UseGalleryItemsProps
     return {filteredItems};
 }
 
+function getCategorySelectOptionContent(value: string) {
+    let content = '';
+
+    switch (value) {
+        case SPECIAL_CATEGORY.ALL: {
+            content = 'All categories';
+            break;
+        }
+        case SPECIAL_CATEGORY.EDITORS_CHOICE: {
+            content = 'Editors choice';
+            break;
+        }
+        default: {
+            content = getCategoryLabelTitle(value);
+        }
+    }
+
+    return content;
+}
+
 export function AllPage() {
     const {activeMediaQuery} = useLayoutContext();
     const history = useHistory();
@@ -97,7 +117,7 @@ export function AllPage() {
             <Container className={b('container', baseMods)}>
                 <Row space="0" style={{marginTop: 24}}>
                     <Col s="12">
-                        <div className={text({variant: 'header-2'})}>All entries</div>
+                        <Text variant="header-2">All entries</Text>
                     </Col>
                 </Row>
                 <Row space="6" style={{marginTop: 0, marginBottom: 24}}>
@@ -113,24 +133,9 @@ export function AllPage() {
                             width="max"
                         >
                             {CATEGORIES_SELECT_VALUES.map((value) => {
-                                let content = '';
-                                switch (value) {
-                                    case SPECIAL_CATEGORY.ALL: {
-                                        content = 'All categories';
-                                        break;
-                                    }
-                                    case SPECIAL_CATEGORY.EDITORS_CHOICE: {
-                                        content = 'Editors choice';
-                                        break;
-                                    }
-                                    default: {
-                                        content = getCategoryLabelTitle(value);
-                                    }
-                                }
-
                                 return (
                                     <Select.Option key={value} value={value}>
-                                        {content}
+                                        {getCategorySelectOptionContent(value)}
                                     </Select.Option>
                                 );
                             })}
