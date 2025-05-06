@@ -27,7 +27,7 @@ export const ExportInfo = () => {
                 text={<InterpolatedText disableLink text={i18n('label_info-versions')} />}
                 icon={Thunderbolt}
             />
-            {/* add it when the documentation is available. */}
+            {/* TODO (Export workbook): add it when the documentation is available. */}
             {/* <Link href="#" className={spacing({mt: 1})}>
                 {i18n('label_info-documentation')}
             </Link> */}

@@ -1,7 +1,6 @@
 import React from 'react';
 
 import type {DATASET_FIELD_TYPES, DatasetField} from 'shared';
-import {isDateField} from 'shared';
 
 import {validateParameterName} from '../../utils/validation';
 
@@ -40,7 +39,6 @@ export const useParameterForm = (args: UseParameterFormArgs): UseParameterFormRe
     } = args;
 
     const nameRef = React.useRef(name);
-    const prevTypeRef = React.useRef(type);
     const [state, setState] = React.useState<ParameterFormState>({
         name,
         type,
@@ -60,16 +58,6 @@ export const useParameterForm = (args: UseParameterFormArgs): UseParameterFormRe
         const isFieldsEmpty = state.name === '' || state.defaultValue === '';
         setIsFormValid(!isFieldsEmpty && isNameValid);
     }, [isNameValid, state]);
-
-    React.useEffect(() => {
-        const isCurrentTypeDate = isDateField({data_type: state.type});
-        const isPrevTypeDate = isDateField({data_type: prevTypeRef.current});
-
-        if (isCurrentTypeDate || isPrevTypeDate) {
-            setState((prevState) => ({...prevState, defaultValue: ''}));
-        }
-        prevTypeRef.current = state.type;
-    }, [state.type]);
 
     const updateParameterForm = React.useCallback((updates: UpdateParameterArgs) => {
         setState((prevState) => ({...prevState, ...updates}));

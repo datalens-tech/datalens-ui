@@ -73,6 +73,7 @@ export default class ChartKit {
     }
 
     async clickMenuItem(qaSelector: string) {
+        await this.page.locator(slct(ChartkitMenuDialogsQA.chartWidget)).hover();
         await this.page.waitForSelector(this.chartMenuSwitcher);
         await this.openChartMenu();
         await this.waitForItemInMenu(qaSelector);

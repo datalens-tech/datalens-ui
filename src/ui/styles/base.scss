@@ -37,7 +37,9 @@ body.g-root {
     overscroll-behavior: none;
 }
 
+// Enable overscroll for mobile and iframe
+
+body.dl-iframe,
 body.g-root_mobile {
-    // Enable overscroll for mobile
     overscroll-behavior: auto;
 }

@@ -5,7 +5,8 @@ import {Select, Switch, TextArea} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import type {DatasetField, DatasetValueConstraintType} from 'shared';
-import {DATASET_VALUE_CONSTRAINT_TYPE} from 'shared';
+import {DATASET_FIELD_TYPES, DATASET_VALUE_CONSTRAINT_TYPE} from 'shared';
+import {usePrevious} from 'ui/hooks';
 
 import type {UseParameterFormReturnValue} from './useParameterForm';
 
@@ -31,33 +32,44 @@ export function TemplateSection(props: TemplateSectionProps) {
     const memoizedValueConstraintRef = React.useRef<DatasetField['value_constraint']>(
         formState.value_constraint,
     );
+    const type = formState.type;
+    const prevType = usePrevious(type);
 
-    const handleSwitchTemplateUpdate: SwitchProps['onUpdate'] = (value) => {
+    const getNextValueConstraint = (valueConstraintEnabled: boolean) => {
         let nextValueConstraint: DatasetField['value_constraint'];
 
-        if (value) {
-            nextValueConstraint = memoizedValueConstraintRef.current || {
+        if (valueConstraintEnabled) {
+            const memoizedValueConstraint =
+                memoizedValueConstraintRef.current?.type === DATASET_VALUE_CONSTRAINT_TYPE.NULL
+                    ? undefined
+                    : memoizedValueConstraintRef.current;
+            nextValueConstraint = memoizedValueConstraint || {
                 type: DATASET_VALUE_CONSTRAINT_TYPE.DEFAULT,
             };
         } else {
             nextValueConstraint = {type: DATASET_VALUE_CONSTRAINT_TYPE.NULL};
         }
 
+        return nextValueConstraint;
+    };
+
+    const handleSwitchTemplateUpdate: SwitchProps['onUpdate'] = (value) => {
+        const valueConstraintEnabled = value && type === DATASET_FIELD_TYPES.STRING;
         updateFormState({
             template_enabled: value,
-            value_constraint: nextValueConstraint,
+            value_constraint: getNextValueConstraint(valueConstraintEnabled),
         });
     };
 
     const handleSelectValidationTypeUpdate: SelectProps['onUpdate'] = (value) => {
-        const type = value[0] as DatasetValueConstraintType;
+        const valueConstraintType = value[0] as DatasetValueConstraintType;
         const pattern =
             memoizedValueConstraintRef.current?.type === DATASET_VALUE_CONSTRAINT_TYPE.REGEX &&
             memoizedValueConstraintRef.current.pattern;
         const nextValueConstraint: DatasetField['value_constraint'] = {
-            ...(type === DATASET_VALUE_CONSTRAINT_TYPE.DEFAULT
-                ? {type}
-                : {type, pattern: pattern || ''}),
+            ...(valueConstraintType === DATASET_VALUE_CONSTRAINT_TYPE.DEFAULT
+                ? {type: valueConstraintType}
+                : {type: valueConstraintType, pattern: pattern || ''}),
         };
         memoizedValueConstraintRef.current = nextValueConstraint;
         updateFormState({value_constraint: nextValueConstraint});
@@ -71,6 +83,12 @@ export function TemplateSection(props: TemplateSectionProps) {
         memoizedValueConstraintRef.current = nextValueConstraint;
         updateFormState({value_constraint: nextValueConstraint});
     };
+
+    if (prevType && type && prevType !== type) {
+        updateFormState({
+            value_constraint: getNextValueConstraint(type === DATASET_FIELD_TYPES.STRING),
+        });
+    }
 
     return (
         <React.Fragment>
@@ -91,46 +109,45 @@ export function TemplateSection(props: TemplateSectionProps) {
                     )}
                 </div>
             </div>
-            {formState.value_constraint &&
+            {formState.type === DATASET_FIELD_TYPES.STRING &&
+                formState.template_enabled &&
                 shouldShowValueConstraintSection(formState.value_constraint?.type) && (
-                    <React.Fragment>
-                        <div className={b('line')}>
-                            <span className={b('line-title', {'vertical-align-start': true})}>
-                                {i18n('label_select-validation-type')}
-                            </span>
-                            <div className={b('line-content')}>
-                                <Select
-                                    width="max"
-                                    value={[formState.value_constraint.type]}
-                                    onUpdate={handleSelectValidationTypeUpdate}
-                                    popupClassName={b('dialog-popup')}
-                                >
-                                    <Select.Option value={DATASET_VALUE_CONSTRAINT_TYPE.DEFAULT}>
-                                        {i18n('label_select-validation-type-default')}
-                                    </Select.Option>
-                                    <Select.Option value={DATASET_VALUE_CONSTRAINT_TYPE.REGEX}>
-                                        {i18n('label_select-validation-type-regex')}
-                                    </Select.Option>
-                                </Select>
-                                {formState.value_constraint.type ===
-                                    DATASET_VALUE_CONSTRAINT_TYPE.REGEX && (
-                                    <TextArea
-                                        className={b('textarea-regex')}
-                                        rows={4}
-                                        value={formState.value_constraint.pattern}
-                                        onUpdate={handleTextAreaRegexUpdate}
-                                        placeholder={i18n('label_textarea-regex-placeholder')}
-                                    />
-                                )}
-                                {formState.value_constraint?.type ===
-                                    DATASET_VALUE_CONSTRAINT_TYPE.DEFAULT && (
-                                    <span className={b('validation-hint')}>
-                                        {i18n('label_select-validation-type-default-hint')}
-                                    </span>
-                                )}
-                            </div>
+                    <div className={b('line')}>
+                        <span className={b('line-title', {'vertical-align-start': true})}>
+                            {i18n('label_select-validation-type')}
+                        </span>
+                        <div className={b('line-content')}>
+                            <Select
+                                width="max"
+                                value={[formState.value_constraint?.type || '']}
+                                onUpdate={handleSelectValidationTypeUpdate}
+                                popupClassName={b('dialog-popup')}
+                            >
+                                <Select.Option value={DATASET_VALUE_CONSTRAINT_TYPE.DEFAULT}>
+                                    {i18n('label_select-validation-type-default')}
+                                </Select.Option>
+                                <Select.Option value={DATASET_VALUE_CONSTRAINT_TYPE.REGEX}>
+                                    {i18n('label_select-validation-type-regex')}
+                                </Select.Option>
+                            </Select>
+                            {formState.value_constraint?.type ===
+                                DATASET_VALUE_CONSTRAINT_TYPE.REGEX && (
+                                <TextArea
+                                    className={b('textarea-regex')}
+                                    rows={4}
+                                    value={formState.value_constraint.pattern}
+                                    onUpdate={handleTextAreaRegexUpdate}
+                                    placeholder={i18n('label_textarea-regex-placeholder')}
+                                />
+                            )}
+                            {formState.value_constraint?.type ===
+                                DATASET_VALUE_CONSTRAINT_TYPE.DEFAULT && (
+                                <span className={b('validation-hint')}>
+                                    {i18n('label_select-validation-type-default-hint')}
+                                </span>
+                            )}
                         </div>
-                    </React.Fragment>
+                    </div>
                 )}
         </React.Fragment>
     );

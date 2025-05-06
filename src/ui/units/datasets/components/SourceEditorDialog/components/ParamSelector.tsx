@@ -2,6 +2,7 @@ import React from 'react';
 
 import {Plus} from '@gravity-ui/icons';
 import {
+    ActionTooltip,
     Button,
     DropdownMenu,
     Select,
@@ -144,35 +145,55 @@ export function ParamSelector(props: ParamSelectorProps) {
             }}
         >
             {filteredOptions.map((option) => {
-                return (
-                    <Select.Option key={option.value} value={option.value}>
-                        <div className={b('param-select-option')}>
-                            {option.data?.iconProps && <DataTypeIcon {...option.data.iconProps} />}
-                            {option.content}
-                            <DropdownMenu
-                                switcherWrapperClassName={b('param-select-option-dropdown')}
-                                size="s"
-                                popupProps={{
-                                    offset: [0, 0],
-                                }}
-                                onSwitcherClick={(e) => {
-                                    e.stopPropagation();
-                                }}
-                                items={[
-                                    {
-                                        text: i18n('label_param-select-option-edit'),
-                                        action: (e) => {
-                                            e.stopPropagation();
-                                            const field = option.data?.param;
-                                            if (!field) {
-                                                return;
-                                            }
-                                            onParamEdit({field});
-                                        },
+                const field = option.data?.param;
+                const templateEnabled = field?.template_enabled;
+                const content = (
+                    <div className={b('param-select-option')}>
+                        {option.data?.iconProps && <DataTypeIcon {...option.data.iconProps} />}
+                        {option.content}
+                        <DropdownMenu
+                            switcherWrapperClassName={b('param-select-option-dropdown')}
+                            size="s"
+                            popupProps={{
+                                offset: [0, 0],
+                            }}
+                            onSwitcherClick={(e) => {
+                                e.stopPropagation();
+                            }}
+                            items={[
+                                {
+                                    text: i18n('label_param-select-option-edit'),
+                                    action: (e) => {
+                                        e.stopPropagation();
+
+                                        if (!field) {
+                                            return;
+                                        }
+
+                                        onParamEdit({field});
                                     },
-                                ]}
-                            />
-                        </div>
+                                },
+                            ]}
+                        />
+                    </div>
+                );
+                return (
+                    <Select.Option
+                        key={option.value}
+                        value={option.value}
+                        disabled={!templateEnabled}
+                    >
+                        {templateEnabled ? (
+                            content
+                        ) : (
+                            <ActionTooltip
+                                className={b('settings-templating-disable-hint')}
+                                title={i18n('label_param-select-option-disabled')}
+                                placement={['left', 'right']}
+                            >
+                                {content}
+                            </ActionTooltip>
+                        )}
                     </Select.Option>
                 );
             })}

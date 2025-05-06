@@ -12,7 +12,7 @@ export function getUIEntryRoute({entry, origin, endpoints}: GetUIEntryRouteArgs)
     const {entryId, scope, type, key} = entry;
 
     const defaultUrl = `${endpoints.navigation}/${entryId}`;
-    const name = getEntryNameByKey({key, index: -1});
+    const name = getEntryNameByKey({key});
 
     const slugName = makeSlugName(entryId, name);
 
