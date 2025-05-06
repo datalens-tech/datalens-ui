@@ -146,7 +146,7 @@ export const entriesActions = {
         path: ({entryId}) => `${PATH_PREFIX}/entries/${filterUrlFragment(entryId)}/revisions`,
         params: (args, headers, {ctx}) => {
             let updatedAfter;
-            if (!isEnabledServerFeature(ctx, Feature.RevisionsListNoLimit) && !args.revIds) {
+            if (!ctx.get('isEnabledServerFeature')(Feature.RevisionsListNoLimit) && !args.revIds) {
                 const date = new Date();
                 date.setMonth(date.getMonth() - 3);
                 updatedAfter = date.toISOString();
