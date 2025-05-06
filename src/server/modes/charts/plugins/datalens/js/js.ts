@@ -961,7 +961,6 @@ export const buildGraphPrivate = (args: {
         const resultData = mergedData[0].result;
         const fields = mergedData[0].fields;
         const notifications = mergedData[0].notifications;
-        bounds = result && result[0] && result[0].bounds;
 
         result = prepareSingleResult({
             resultData,
@@ -977,6 +976,10 @@ export const buildGraphPrivate = (args: {
             palettes,
             features,
         });
+
+        if (result?.[0]?.bounds) {
+            bounds = result[0].bounds;
+        }
     }
 
     if (bounds) {
