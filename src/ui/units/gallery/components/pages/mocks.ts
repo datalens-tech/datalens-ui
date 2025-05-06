@@ -1,59 +1,23 @@
-import type {GalleryItem} from '../../../types';
+import type {GalleryItem} from '../../types';
+
+export const EDITORS_CHOICE_ITEM_IDS = [
+    'education-1',
+    'finance-1',
+    'hr-1',
+    'it-1',
+    'retail-1',
+    'sports-1',
+];
 
 export const MOCKED_GALLERY_ITEMS: GalleryItem[] = [
-    // Editor's Choice
-    {
-        id: 'editors-choice-1',
-        title: 'Revenue Analytics Dashboard',
-        description: 'Comprehensive revenue analysis and forecasting',
-        createdBy: 'Editorial Team',
-        labels: ['editors choice', 'finance'],
-        images: {
-            light: [
-                'https://storage.yandexcloud.net/gravity-ui-assets/datalens.yandex_9fms9uae7ip02__embedded%3D1.png',
-            ],
-            dark: [
-                'https://storage.yandexcloud.net/gravity-ui-assets/datalens.yandex_9fms9uae7ip02__embedded%3D1.png',
-            ],
-        },
-    },
-    {
-        id: 'editors-choice-2',
-        title: 'Marketing Campaign Performance',
-        description: 'Multi-channel campaign analytics and ROI tracking',
-        createdBy: 'Editorial Team',
-        labels: ['editors choice'],
-        images: {
-            light: [
-                'https://storage.yandexcloud.net/gravity-ui-assets/datalens.yandex_9fms9uae7ip02__embedded%3D1.png',
-            ],
-            dark: [
-                'https://storage.yandexcloud.net/gravity-ui-assets/datalens.yandex_9fms9uae7ip02__embedded%3D1.png',
-            ],
-        },
-    },
-    {
-        id: 'editors-choice-3',
-        title: 'Customer Journey Analytics',
-        description: 'End-to-end customer experience visualization',
-        createdBy: 'Editorial Team',
-        labels: ['editors choice'],
-        images: {
-            light: [
-                'https://storage.yandexcloud.net/gravity-ui-assets/datalens.yandex_9fms9uae7ip02__embedded%3D1.png',
-            ],
-            dark: [
-                'https://storage.yandexcloud.net/gravity-ui-assets/datalens.yandex_9fms9uae7ip02__embedded%3D1.png',
-            ],
-        },
-    },
     // Education
     {
         id: 'education-1',
         title: 'Student Performance Dashboard',
         description: 'Track student grades and attendance',
         createdBy: 'Anna Smith',
-        labels: ['education'],
+        createdAt: Date.now(),
+        labels: ['education', 'editor'],
         images: {
             light: [
                 'https://storage.yandexcloud.net/gravity-ui-assets/datalens.yandex_9fms9uae7ip02__embedded%3D1.png',
@@ -68,6 +32,7 @@ export const MOCKED_GALLERY_ITEMS: GalleryItem[] = [
         title: 'Course Analytics',
         description: 'Course completion and engagement metrics',
         createdBy: 'Mike Johnson',
+        createdAt: Date.now(),
         labels: ['education'],
         images: {
             light: [
@@ -84,6 +49,7 @@ export const MOCKED_GALLERY_ITEMS: GalleryItem[] = [
         title: 'Investment Portfolio',
         description: 'Asset allocation and returns',
         createdBy: 'John Doe',
+        createdAt: Date.now(),
         labels: ['finance'],
         images: {
             light: [
@@ -100,6 +66,7 @@ export const MOCKED_GALLERY_ITEMS: GalleryItem[] = [
         title: 'Employee Satisfaction',
         description: 'Survey results and trends',
         createdBy: 'Emily Brown',
+        createdAt: Date.now(),
         labels: ['hr'],
         images: {
             light: [
@@ -115,6 +82,7 @@ export const MOCKED_GALLERY_ITEMS: GalleryItem[] = [
         title: 'Recruitment Metrics',
         description: 'Hiring funnel analysis',
         createdBy: 'David Lee',
+        createdAt: Date.now(),
         labels: ['hr'],
         images: {
             light: [
@@ -131,6 +99,7 @@ export const MOCKED_GALLERY_ITEMS: GalleryItem[] = [
         title: 'System Performance',
         description: 'Server metrics dashboard',
         createdBy: 'Alex Chen',
+        createdAt: Date.now(),
         labels: ['it'],
         images: {
             light: [
@@ -146,7 +115,8 @@ export const MOCKED_GALLERY_ITEMS: GalleryItem[] = [
         title: 'Security Overview',
         description: 'Security incidents tracking',
         createdBy: 'Lisa Wang',
-        labels: ['it'],
+        createdAt: Date.now(),
+        labels: ['it', 'editor'],
         images: {
             light: [
                 'https://storage.yandexcloud.net/gravity-ui-assets/datalens.yandex_9fms9uae7ip02__embedded%3D1.png',
@@ -161,6 +131,7 @@ export const MOCKED_GALLERY_ITEMS: GalleryItem[] = [
         title: 'Network Traffic Analysis',
         description: 'Real-time network monitoring',
         createdBy: 'Michael Zhang',
+        createdAt: Date.now(),
         labels: ['it'],
         images: {
             light: [
@@ -177,6 +148,7 @@ export const MOCKED_GALLERY_ITEMS: GalleryItem[] = [
         title: 'Sales Performance',
         description: 'Daily sales tracking',
         createdBy: 'Robert Taylor',
+        createdAt: Date.now(),
         labels: ['retail'],
         images: {
             light: [
@@ -192,6 +164,7 @@ export const MOCKED_GALLERY_ITEMS: GalleryItem[] = [
         title: 'Inventory Management',
         description: 'Stock levels and turnover',
         createdBy: 'Karen White',
+        createdAt: Date.now(),
         labels: ['retail'],
         images: {
             light: [
@@ -208,7 +181,8 @@ export const MOCKED_GALLERY_ITEMS: GalleryItem[] = [
         title: 'Team Statistics',
         description: 'Player performance metrics',
         createdBy: 'James Miller',
-        labels: ['sports'],
+        createdAt: Date.now(),
+        labels: ['sports', 'editor'],
         images: {
             light: [
                 'https://storage.yandexcloud.net/gravity-ui-assets/datalens.yandex_9fms9uae7ip02__embedded%3D1.png',
