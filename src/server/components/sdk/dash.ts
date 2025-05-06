@@ -26,7 +26,6 @@ import {
     EntryUpdateMode,
     Feature,
 } from '../../../shared/types';
-import {isEnabledServerFeature} from '../../../shared/utils';
 
 import US from './us';
 
@@ -244,9 +243,9 @@ class Dash {
             } else if (needSetDefaultData(usData.data)) {
                 usData.data = setDefaultData(I18n, usData.data);
             }
-
+            const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
             const isServerMigrationEnabled = Boolean(
-                isEnabledServerFeature(ctx, Feature.DashServerMigrationEnable),
+                isEnabledServerFeature(Feature.DashServerMigrationEnable),
             );
             if (isServerMigrationEnabled && DashSchemeConverter.isUpdateNeeded(usData.data)) {
                 usData.data = await DashSchemeConverter.update(usData.data);
@@ -297,8 +296,9 @@ class Dash {
                 ctx,
             )) as DashEntry;
 
+            const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
             const isServerMigrationEnabled = Boolean(
-                isEnabledServerFeature(ctx, Feature.DashServerMigrationEnable),
+                isEnabledServerFeature(Feature.DashServerMigrationEnable),
             );
             if (isServerMigrationEnabled && DashSchemeConverter.isUpdateNeeded(result.data)) {
                 result.data = await Dash.migrate(result.data);

@@ -1,7 +1,6 @@
 import type {Request} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
 
-import {isEnabledServerFeature} from '../../../../shared';
 import type {StringParams, ValueOf} from '../../../../shared';
 
 const commonTemplateGraph = `
@@ -213,7 +212,8 @@ export const chartGenerator = {
             throw new Error('Invalid chart data');
         }
 
-        if (isEnabledServerFeature(ctx, 'EnableChartEditorMetaTab')) {
+        const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
+        if (isEnabledServerFeature('EnableChartEditorMetaTab')) {
             output.meta = createChartManifest({links});
         }
 

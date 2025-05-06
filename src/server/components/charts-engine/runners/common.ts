@@ -8,7 +8,6 @@ import {
     DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME,
     DL_EMBED_TOKEN_HEADER,
     Feature,
-    isEnabledServerFeature,
 } from '../../../../shared';
 import type {ProcessorParams, SerializableProcessorParams} from '../components/processor';
 import {Processor} from '../components/processor';
@@ -34,10 +33,11 @@ export function engineProcessingCallback({
     processorParams: Omit<ProcessorParams, 'ctx'>;
     runnerType: Runners;
 }): Promise<{status: number; payload: unknown}> {
+    const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
     const enableChartEditor =
-        isEnabledServerFeature(ctx, 'EnableChartEditor') && runnerType === 'Editor';
+        isEnabledServerFeature('EnableChartEditor') && runnerType === 'Editor';
     const showChartsEngineDebugInfo = Boolean(
-        isEnabledServerFeature(ctx, Feature.ShowChartsEngineDebugInfo),
+        isEnabledServerFeature(Feature.ShowChartsEngineDebugInfo),
     );
 
     return Processor.process({...processorParams, ctx: ctx})
