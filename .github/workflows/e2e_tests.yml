@@ -139,7 +139,7 @@ jobs:
         if: always()
         run: |
           mkdir -p ./tests/logs
-          npm run test:e2e:docker:logs > docker-compose.log
+          npm run test:e2e:docker:logs > ./tests/logs/docker-compose.log
 
       - name: Run docker compose down
         if: always()
