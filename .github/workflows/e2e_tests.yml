@@ -135,6 +135,12 @@ jobs:
           DATA_API_VERSION: ${{ env.DATA_API_VERSION }}
           UI_VERSION: ${{ env.UI_VERSION }}
 
+      - name: Get docker compose logs
+        if: always()
+        run: |
+          mkdir -p ./tests/logs
+          npm run test:e2e:docker:logs > docker-compose.log
+
       - name: Run docker compose down
         if: always()
         run: |
@@ -157,4 +163,11 @@ jobs:
         with:
           name: playwright-report
           path: ./tests/artifacts/
+          retention-days: 30
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: docker-compose-logs
+          path: ./tests/logs/
           retention-days: 30
