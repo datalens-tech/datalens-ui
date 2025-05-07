@@ -162,6 +162,7 @@ export const usePreparedTableData = (props: {
     cellMinSizes: number[] | null;
     sortingState?: SortingState;
     backgroundColor?: string;
+    preserveWhiteSpace?: boolean;
 }): TableViewData => {
     const {
         dimensions,
@@ -173,6 +174,7 @@ export const usePreparedTableData = (props: {
         cellMinSizes,
         sortingState,
         backgroundColor,
+        preserveWhiteSpace,
     } = props;
     const [shouldResize, resize] = React.useState<string | null>(null);
 
@@ -331,6 +333,8 @@ export const usePreparedTableData = (props: {
         ? toSolidColor(backgroundColor)
         : getElementBackgroundColor(tableContainerRef.current);
 
+    const whiteSpace = preserveWhiteSpace ? 'pre-wrap' : 'normal';
+
     const headerRows = React.useMemo(() => {
         return headers
             .map((headerGroup) => {
@@ -365,7 +369,7 @@ export const usePreparedTableData = (props: {
                         }
 
                         if (typeof originalCellData?.width !== 'undefined') {
-                            cellStyle.whiteSpace = cellStyle.whiteSpace ?? 'normal';
+                            cellStyle.whiteSpace = cellStyle.whiteSpace ?? whiteSpace;
                             cellStyle.wordBreak = cellStyle.wordBreak ?? 'break-word';
                         }
 
@@ -467,7 +471,7 @@ export const usePreparedTableData = (props: {
                 }
 
                 if (typeof originalHeadData?.width !== 'undefined') {
-                    cellStyle.whiteSpace = 'normal';
+                    cellStyle.whiteSpace = whiteSpace;
                     cellStyle.wordBreak = 'break-word';
                 }
 

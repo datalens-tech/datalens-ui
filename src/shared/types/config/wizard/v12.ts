@@ -82,6 +82,7 @@ export interface V12CommonSharedExtraSettings {
     zoomValue?: number | null;
     mapCenterMode?: MapCenterModes;
     mapCenterValue?: string | null;
+    preserveWhiteSpace?: boolean;
 }
 
 export type V12NavigatorSettings = {

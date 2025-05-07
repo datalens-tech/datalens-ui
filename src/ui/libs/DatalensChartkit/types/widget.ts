@@ -273,6 +273,7 @@ export type TableWidgetData = WidgetBaseWithData &
             useMarkup?: boolean;
             useHtml?: boolean;
             size?: WidgetSizeType;
+            preserveWhiteSpace?: boolean;
         };
         unresolvedParams?: StringParams;
     };

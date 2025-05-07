@@ -240,6 +240,7 @@
   "label_pivot-table-title-dialog-column-settings": "Настройка столбцов и строк",
   "label_pixels-shortname": "px",
   "label_polyline-points": "Точки полилинии",
+  "label_preserve-whitespace": "Сохранять пробелы и переносы",
   "label_preview-dataset-error": "Невозможно отобразить график",
   "label_preview-dataset-stub": "Перетащите измерения и показатели в соответствующие секции, чтобы построить визуализацию",
   "label_quarter": "Квартал",

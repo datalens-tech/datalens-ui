@@ -61,6 +61,7 @@ type GraphConfig = BaseConfig &
 export type TableConfig = BaseConfig & {
     settings: {
         externalSort?: boolean;
+        preserveWhiteSpace?: boolean;
     };
     paginator?: {
         enabled: boolean;

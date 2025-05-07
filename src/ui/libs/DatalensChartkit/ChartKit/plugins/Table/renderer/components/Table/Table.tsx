@@ -166,6 +166,7 @@ export const Table = React.memo<Props>((props: Props) => {
         cellMinSizes,
         sortingState: initialSortingState,
         backgroundColor,
+        preserveWhiteSpace: config?.preserveWhiteSpace,
     });
 
     React.useEffect(() => {
@@ -246,6 +247,16 @@ export const Table = React.memo<Props>((props: Props) => {
         [changeParams],
     );
 
+    const tableStyle: React.CSSProperties = React.useMemo(() => {
+        const style: React.CSSProperties = {minHeight: totalSize};
+
+        if (config?.preserveWhiteSpace) {
+            style.whiteSpace = 'pre-wrap';
+        }
+
+        return style;
+    }, [totalSize, config?.preserveWhiteSpace]);
+
     return (
         <React.Fragment>
             <div
@@ -263,11 +274,7 @@ export const Table = React.memo<Props>((props: Props) => {
                         </div>
                     )}
                     {!noData && (
-                        <table
-                            className={b({prepared: true})}
-                            style={{minHeight: totalSize}}
-                            ref={tableRef}
-                        >
+                        <table className={b({prepared: true})} style={tableStyle} ref={tableRef}>
                             {colgroup && (
                                 <colgroup>
                                     {colgroup.map((col, index) => (
@@ -315,6 +322,7 @@ export const Table = React.memo<Props>((props: Props) => {
                 }}
                 size={size}
                 width={config?.settings?.width ?? 'auto'}
+                whiteSpace={config?.preserveWhiteSpace ? 'pre-wrap' : undefined}
             />
         </React.Fragment>
     );

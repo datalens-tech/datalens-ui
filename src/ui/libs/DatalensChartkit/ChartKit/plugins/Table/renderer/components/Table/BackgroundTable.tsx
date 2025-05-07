@@ -22,6 +22,7 @@ type Props = {
     size: WidgetSizeType;
     onChangeMinWidth?: (cellSizes: number[]) => void;
     width?: 'auto' | 'max-content';
+    whiteSpace?: 'pre-wrap';
 };
 
 export const BackgroundTable = React.memo<Props>((props: Props) => {
@@ -31,6 +32,7 @@ export const BackgroundTable = React.memo<Props>((props: Props) => {
         onChangeMinWidth,
         size,
         width,
+        whiteSpace,
     } = props;
 
     const containerRef = React.useRef<HTMLDivElement | null>(null);
@@ -75,7 +77,7 @@ export const BackgroundTable = React.memo<Props>((props: Props) => {
                 style={{height: dimensions?.height, width: dimensions?.width}}
                 ref={containerRef}
             >
-                <table className={b({prepared: false})} ref={tableRef} style={{width}}>
+                <table className={b({prepared: false})} ref={tableRef} style={{width, whiteSpace}}>
                     <TableHead rows={header.rows} />
                     <TableBody rows={body.rows} />
                     <TableFooter rows={footer.rows} />

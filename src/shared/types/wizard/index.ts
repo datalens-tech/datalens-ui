@@ -129,6 +129,7 @@ export interface CommonSharedExtraSettings {
     zoomValue?: number | null;
     mapCenterMode?: MapCenterModes;
     mapCenterValue?: string | null;
+    preserveWhiteSpace?: boolean;
 }
 
 interface CommonShared {
