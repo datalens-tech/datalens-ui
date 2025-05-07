@@ -14,7 +14,6 @@ dist/i18n
 dist/shared
 dist/public/build
 dist/run/*
-artifacts
 
 build/
 
@@ -27,8 +26,9 @@ src/i18n/keysets
 tests/metadata
 tests/certs
 tests/test-results
+tests/artifacts
+tests/logs
 
-report
 reference.json
 input.json
 result.json

@@ -10,7 +10,7 @@ import {connect} from 'react-redux';
 import type {
     CommonSharedExtraSettings,
     Dataset,
-    GraphShared,
+    MapCenterModes,
     NavigatorPeriod,
     NavigatorSettings,
     Period,
@@ -18,15 +18,18 @@ import type {
     QLChartType,
     Shared,
     WidgetSizeType,
+    ZoomModes,
 } from 'shared';
 import {
     DEFAULT_WIDGET_SIZE,
     Feature,
     IndicatorTitleMode,
+    MapCenterMode,
     NavigatorLinesMode,
     PlaceholderId,
     WidgetSize,
     WizardVisualizationId,
+    ZoomMode,
     getIsNavigatorAvailable,
     isD3Visualization,
     isDateField,
@@ -49,6 +52,7 @@ import {
     getHighchartsAnalog,
 } from '../../../utils/visualization';
 
+import {CenterSetting} from './CenterSetting/CenterSetting';
 import IndicatorTitleSetting from './IndicatorTitleSetting/IndicatorTitleSetting';
 import LimitInput from './LimitInput/LimitInput';
 import SettingFeed from './SettingFeed/SettingFeed';
@@ -56,6 +60,7 @@ import SettingNavigator from './SettingNavigator/SettingNavigator';
 import SettingPagination from './SettingPagination/SettingPagination';
 import SettingSwitcher from './SettingSwitcher/SettingSwitcher';
 import SettingTitleMode from './SettingTitleMode/SettingTitleMode';
+import {ZoomSetting} from './ZoomSetting/ZoomSetting';
 
 import './Settings.scss';
 
@@ -78,6 +83,10 @@ const BASE_SETTINGS_KEYS: SettingsKeys[] = [
     'pivotInlineSort',
     'size',
     'stacking',
+    'zoomMode',
+    'zoomValue',
+    'mapCenterMode',
+    'mapCenterValue',
 ];
 
 const QL_SETTINGS_KEYS: SettingsKeys[] = [...BASE_SETTINGS_KEYS, 'qlAutoExecuteChart'];
@@ -191,6 +200,10 @@ interface State {
     pivotInlineSort: string;
     stacking: string;
     size?: WidgetSizeType;
+    zoomMode: ZoomModes;
+    zoomValue?: number | null;
+    mapCenterMode: MapCenterModes;
+    mapCenterValue?: string | null;
 }
 
 export const DIALOG_CHART_SETTINGS = Symbol('DIALOG_CHART_SETTINGS');
@@ -241,6 +254,10 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
             stacking = CHART_SETTINGS.STACKING.ON,
             tooltip,
             size,
+            zoomMode = ZoomMode.Auto,
+            zoomValue,
+            mapCenterMode = MapCenterMode.Auto,
+            mapCenterValue,
         } = extraSettings;
 
         const navigatorSettings = this.prepareNavigatorSettings(visualization, extraSettings);
@@ -301,6 +318,10 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
             tooltip,
             stacking,
             size,
+            zoomMode,
+            zoomValue,
+            mapCenterMode,
+            mapCenterValue,
         };
     }
 
@@ -626,6 +647,48 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
         );
     }
 
+    renderZoom() {
+        const {zoomMode, zoomValue} = this.state;
+
+        const {visualization} = this.props;
+
+        if (visualization.id !== WizardVisualizationId.Geolayer) {
+            return null;
+        }
+
+        return (
+            <ZoomSetting
+                mode={zoomMode}
+                value={zoomValue}
+                onUpdate={(settings) => {
+                    this.setState({zoomMode: settings.mode, zoomValue: settings.value ?? null});
+                }}
+            />
+        );
+    }
+
+    renderMapCenterSetting() {
+        const {mapCenterMode, mapCenterValue} = this.state;
+
+        const {visualization} = this.props;
+
+        if (visualization.id !== WizardVisualizationId.Geolayer) {
+            return null;
+        }
+
+        return (
+            <CenterSetting
+                mode={mapCenterMode}
+                value={mapCenterValue}
+                onUpdate={(settings) => {
+                    this.setState({
+                        mapCenterMode: settings.mode,
+                        mapCenterValue: settings.value ?? null,
+                    });
+                }}
+            />
+        );
+    }
     renderTooltip() {
         const {visualization} = this.props;
 
@@ -839,8 +902,13 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
     }
 
     renderFeed() {
-        const visualization = this.props.visualization as GraphShared['visualization'];
-        const placeholders = visualization.placeholders;
+        const visualization = this.props.visualization;
+        const placeholders = [
+            ...('layers' in visualization
+                ? visualization.layers?.map((l) => l.placeholders).flat() ?? []
+                : []),
+            ...visualization.placeholders,
+        ];
 
         const isInvertedXYAxis =
             visualization.id === WizardVisualizationId.Bar ||
@@ -854,7 +922,10 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
             (p) => p.id === placeholderIdWithDimensionField,
         );
 
-        if (!placeholderWithDimensionField || visualization.allowComments === false) {
+        if (
+            !placeholderWithDimensionField ||
+            ('allowComments' in visualization && visualization.allowComments === false)
+        ) {
             return null;
         }
 
@@ -1032,6 +1103,8 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
                 {this.renderQlAutoExecutionChart()}
                 {this.renderInlineSortSwitch()}
                 {this.renderStackingSwitch()}
+                {this.renderMapCenterSetting()}
+                {this.renderZoom()}
             </div>
         );
     }

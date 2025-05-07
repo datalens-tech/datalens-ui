@@ -13,7 +13,7 @@ const navigateHelper = {
         const {getUIEntryRoute} = registry.common.functions.getAll();
 
         if (DL.IS_MOBILE && scope === EntryScope.Widget) {
-            const name = getEntryNameByKey({key, index: -1});
+            const name = getEntryNameByKey({key});
             const slugName = makeSlugName(entryId, name);
 
             return `/preview/${slugName}`;

@@ -1,6 +1,5 @@
-import {UserRole} from 'shared/components/auth/constants/role';
-import type {GetUsersRoles} from 'ui/registry/units/auth/types/functions/getUsersRoles';
+import {DL} from 'ui/constants/common';
 
-export const getUsersRoles: GetUsersRoles = () => {
-    return [UserRole.Admin, UserRole.Editor, UserRole.Viewer];
+export const getUsersRoles = () => {
+    return DL.ORDERED_AUTH_ROLES || [];
 };

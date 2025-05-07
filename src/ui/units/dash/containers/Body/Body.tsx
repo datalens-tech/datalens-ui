@@ -678,9 +678,8 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         hasFixedHeaderControlsElements: boolean,
         hasFixedContainerElements: boolean,
     ) => {
-        const {mode} = this.props;
         const config = this.getTabConfig();
-        const isEditMode = mode === Mode.Edit;
+        const isEditMode = this.isEditMode();
 
         const {expandIcon, collapseIcon} =
             hasFixedHeaderControlsElements || isEditMode
@@ -997,6 +996,11 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             [DASH_INFO_HEADER]: new URLSearchParams(dashInfo).toString(),
         };
     };
+
+    private isEditMode() {
+        return this.props.mode === Mode.Edit;
+    }
+
     private getConfig = () => {
         const {tabData} = this.props;
         const tabDataConfig = tabData;
@@ -1038,8 +1042,9 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
 
     private itemAddHandler = (isMounted: boolean, id: string, domElement: HTMLElement) => {
         if (
-            isEnabledFeature(Feature.EnableDashAutoFocus) &&
+            this.isEditMode() &&
             isMounted &&
+            isEnabledFeature(Feature.EnableDashAutoFocus) &&
             this.props.lastModifiedItem === id
         ) {
             const lastDelayedScrollTop = scrollIntoView(domElement, null);
@@ -1054,7 +1059,6 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
     private renderDashkit = () => {
         const {isGlobalDragging} = this.state;
         const {
-            mode,
             settings,
             tabs,
             handlerEditClick,
@@ -1068,7 +1072,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
 
         const tabDataConfig = this.getConfig();
         const fixedHeaderCollapsed = context.fixedHeaderCollapsed || false;
-        const isEditMode = mode === Mode.Edit;
+        const isEditMode = this.isEditMode();
 
         const isEmptyTab = !tabDataConfig?.items.length;
 
@@ -1077,7 +1081,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         const hasFixedHeaderControlsElements = Boolean(
             this.getWidgetLayoutByGroup(FIXED_GROUP_HEADER_ID)?.length,
         );
-        const hasFixedHeaderCotainerElements = Boolean(
+        const hasFixedHeaderContainerElements = Boolean(
             this.getWidgetLayoutByGroup(FIXED_GROUP_CONTAINER_ID)?.length,
         );
 
@@ -1105,7 +1109,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                     isCollapsed={fixedHeaderCollapsed}
                     editMode={isEditMode}
                     isControlsGroupEmpty={!hasFixedHeaderControlsElements}
-                    isContainerGroupEmpty={!hasFixedHeaderCotainerElements}
+                    isContainerGroupEmpty={!hasFixedHeaderContainerElements}
                 />
                 {canRenderDashkit ? (
                     <DashKit
@@ -1224,7 +1228,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
 
         const hasTableOfContent = !(localTabs.length === 1 && !localTabs[0].items.length);
 
-        const showEditActionPanel = mode === Mode.Edit;
+        const showEditActionPanel = this.isEditMode();
 
         const loadedMixin = loaded ? LOADED_DASH_CLASS : undefined;
 

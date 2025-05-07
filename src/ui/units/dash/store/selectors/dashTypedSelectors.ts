@@ -34,6 +34,9 @@ export const selectEntryData = (state: DatalensGlobalState) =>
 
 export const selectSettings = (state: DatalensGlobalState) => state.dash?.data?.settings || {};
 
+export const selectHasOpenedDialog = (state: DatalensGlobalState) =>
+    Boolean(state.dash.openedDialog) || state.dialog?.dialogs?.length > 0;
+
 export const selectIsDialogVisible = (state: DatalensGlobalState, dialogType: string) =>
     state.dash.openedDialog === dialogType;
 

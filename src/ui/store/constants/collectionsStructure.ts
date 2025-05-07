@@ -128,9 +128,17 @@ export const RESET_IMPORT_WORKBOOK = Symbol('collections/RESET_IMPORT_WORKBOOK')
 // Getting progress of workbook importing
 export const GET_IMPORT_PROGRESS_LOADING = Symbol('collections/GET_IMPORT_PROGRESS_LOADING');
 export const GET_IMPORT_PROGRESS_SUCCESS = Symbol('collections/GET_IMPORT_PROGRESS_SUCCESS');
+export const GET_IMPORT_PROGRESS_FAILED = Symbol('collections/GET_IMPORT_PROGRESS_FAILED');
 export const RESET_IMPORT_PROGRESS = Symbol('collections/RESET_IMPORT_PROGRESS');
 
 // Getting progress of workbook exporting
 export const GET_EXPORT_PROGRESS_LOADING = Symbol('collections/GET_EXPORT_PROGRESS_LOADING');
 export const GET_EXPORT_PROGRESS_SUCCESS = Symbol('collections/GET_EXPORT_PROGRESS_SUCCESS');
+export const GET_EXPORT_PROGRESS_FAILED = Symbol('collections/GET_EXPORT_PROGRESS_FAILED');
 export const RESET_EXPORT_PROGRESS = Symbol('collections/RESET_EXPORT_PROGRESS');
+
+// Getting export result
+export const GET_EXPORT_RESULT_LOADING = Symbol('collections/GET_EXPORT_RESULT_LOADING');
+export const GET_EXPORT_RESULT_SUCCESS = Symbol('collections/GET_EXPORT_RESULT_SUCCESS');
+export const GET_EXPORT_RESULT_FAILED = Symbol('collections/GET_EXPORT_RESULT_FAILED');
+export const RESET_EXPORT_RESULT = Symbol('collections/RESET_EXPORT_RESULT');

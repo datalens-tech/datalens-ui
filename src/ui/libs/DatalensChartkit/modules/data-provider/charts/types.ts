@@ -147,6 +147,9 @@ export interface ChartsProps {
     ignoreUsedParams?: boolean;
     workbookId?: WorkbookId;
     forceShowSafeChart?: boolean;
+    showActionParamsFilter?: boolean;
+    onFiltersClear?: () => void;
+    needRenderContentControls?: boolean;
 }
 
 export interface ChartsData extends DashWidgetConfig {
@@ -157,7 +160,7 @@ export interface ChartsData extends DashWidgetConfig {
     defaultParams?: StringParams;
     logs_v2?: string;
     // sources: {} when there are no sources
-    sources: object | ResponseSourcesSuccess;
+    sources: {} | ResponseSourcesSuccess;
     // the old wizard doesn't have timings
     timings?: Timings;
     requestId: string;
@@ -200,10 +203,10 @@ export type Logs = {
     [key in
         | 'Config'
         | 'Highcharts'
-        | 'JavaScript'
+        | 'Prepare'
         | 'Params'
-        | 'UI'
-        | 'Urls'
+        | 'Controls'
+        | 'Sources'
         | 'modules']?: LogItem[][];
 };
 

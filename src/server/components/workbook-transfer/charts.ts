@@ -2,6 +2,7 @@ import type {Request} from '@gravity-ui/expresskit';
 import forIn from 'lodash/forIn';
 import isArray from 'lodash/isArray';
 
+import {getEntryNameByKey} from '../../../shared';
 import {
     TRANSFER_UNKNOWN_ENTRY_ID,
     TransferErrorCode,
@@ -167,7 +168,9 @@ export const prepareImportChartData = async (
     }
 
     if (warnings && warnings.missedMapping) {
-        notifications.push(warningTransferNotification(TransferErrorCode.TransferMissingMappingId));
+        notifications.push(
+            warningTransferNotification(TransferErrorCode.TransferMissingLinkedEndtry),
+        );
     }
 
     try {
@@ -207,8 +210,7 @@ export const prepareExportChartData = async (entry: EntryFields, idMapping: Tran
     let data;
 
     const {key, type} = entry;
-    const nameParts = key.split('/');
-    const name = nameParts[nameParts.length - 1];
+    const name = getEntryNameByKey({key});
 
     const widget = {
         data,
@@ -251,7 +253,9 @@ export const prepareExportChartData = async (entry: EntryFields, idMapping: Tran
     }
 
     if (warnings && warnings.missedMapping) {
-        notifications.push(warningTransferNotification(TransferErrorCode.TransferMissingMappingId));
+        notifications.push(
+            warningTransferNotification(TransferErrorCode.TransferMissingLinkedEndtry),
+        );
     }
 
     return {

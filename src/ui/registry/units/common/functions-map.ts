@@ -60,8 +60,6 @@ export const commonFunctionsMap = {
     openDialogOrganizationInviteUsers:
         makeFunctionTemplate<() => OpenDialogOrganizationInviteUsers>(),
     getEntryMenuConfig: makeFunctionTemplate<() => MenuGroup[]>(),
-    //** @deprecated use getGloballyEntrySettings */
-    getEntryPublishGloballyDisabled: makeFunctionTemplate<() => boolean>(),
     getGloballyEntrySettings: makeFunctionTemplate<() => GloballyEntrySettings>(),
     getMenuGroupConfig: makeFunctionTemplate<() => Array<MenuGroup>>(),
     getSelectStateMenuItem:
@@ -170,5 +168,6 @@ export const commonFunctionsMap = {
     renderDialogRelatedEntitiesAlertHint:
         makeFunctionTemplate<RenderDialogRelatedEntitiesAlertHint>(),
     getAdditionalChartkitErrorContent: makeFunctionTemplate<GetAdditionalChartkitErrorContent>(),
+    getCurrentUserRights: makeFunctionTemplate<() => {admin: boolean}>(),
     csvExportAction: makeFunctionTemplate<CsvExportAction>(),
 } as const;

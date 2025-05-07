@@ -205,6 +205,9 @@ export const DL = {
     get IAM_RESOURCES() {
         return window.DL.iamResources ?? undefined;
     },
+    get ORDERED_AUTH_ROLES() {
+        return window.DL.orderedAuthRoles ?? undefined;
+    },
     get TITLE() {
         return window.DL.title || '';
     },
@@ -299,6 +302,8 @@ export const QL_LANGUAGE_ID = 'datalens-ql';
 
 export const SPLIT_PANE_RESIZER_CLASSNAME = 'dl-resizer';
 
+export const DATALENS_IFRAME_CLASSNAME = 'dl-iframe';
+
 export const BI_ERRORS = {
     MATERIALIZATION_NOT_FINISHED: 'ERR.DS_API.DB.MATERIALIZATION_NOT_FINISHED',
     NO_AVAILABLE_SUBPRODUCTS: 'ERR.DS_API.NO_AVAILABLE_SUBPRODUCTS',
@@ -320,6 +325,7 @@ export const URL_QUERY = {
     CONNECTION_ID: 'connectionId',
     DEBUG: '_debug',
     OPEN_DASH_INFO: '_opened_info',
+    UNRELEASED: 'unreleased',
 };
 
 const GRADIENT_ICONS = {

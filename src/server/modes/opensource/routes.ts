@@ -73,6 +73,14 @@ function getApiRoutes({
     afterAuth: AppMiddleware[];
 }) {
     const routes: Record<string, ExtendedAppRouteDescription> = {
+        workbooksMetaManagerCapabilities: {
+            handler: workbooksTransferController.capabilities,
+            beforeAuth,
+            afterAuth,
+            route: 'GET /api/internal/v1/workbooks/meta-manager/capabilities/',
+            authPolicy: AuthPolicy.disabled,
+            disableCsrf: true,
+        },
         workbooksExport: {
             handler: workbooksTransferController.export,
             beforeAuth,

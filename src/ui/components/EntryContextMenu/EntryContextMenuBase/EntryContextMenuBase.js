@@ -37,7 +37,7 @@ class EntryContextMenuBaseItem extends React.Component {
                 qa={qa}
                 onClick={this.onClick}
                 icon={icon}
-                className={b('item')}
+                className={b('item', {danger: theme === 'danger'})}
                 theme={theme}
             >
                 {text}

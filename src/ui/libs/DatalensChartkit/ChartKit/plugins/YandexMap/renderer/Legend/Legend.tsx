@@ -1,6 +1,8 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
+import {Feature} from 'shared';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {GEO_OBJECT_TYPE} from '../../../../modules/yandex-map/yandex-map';
 
@@ -34,9 +36,10 @@ const Legend: React.FC<LegendProps> = ({geoObjects, onSetVisibility}) => {
     }
 
     const singleLayerMode = filteredGeoObjects.length === 1;
+    const showFloatControls = isEnabledFeature(Feature.DashFloatControls);
 
     return (
-        <div className={b()}>
+        <div className={b({float: showFloatControls})}>
             {filteredGeoObjects.map((geoObject, index) => (
                 <Layer
                     geoObject={geoObject}

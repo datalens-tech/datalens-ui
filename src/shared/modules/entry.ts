@@ -1,4 +1,4 @@
-export function getEntryNameByKey({key, index}: {key: string; index: number}) {
+export function getEntryNameByKey({key, index = -1}: {key: string; index?: number}) {
     let name = '';
 
     if (key && typeof key === 'string') {
