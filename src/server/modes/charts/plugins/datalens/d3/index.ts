@@ -24,7 +24,12 @@ export function buildD3Config(args: BuildD3ConfigArgs) {
     const chartWidgetData: Partial<ChartData> = {
         title: getChartTitle(extraSettings),
         tooltip: {enabled: extraSettings?.tooltip !== 'hide'},
-        legend: {enabled: isLegendEnabled},
+        legend: {
+            enabled: isLegendEnabled,
+            itemStyle: {
+                fontSize: '13px',
+            },
+        },
         xAxis: {
             labels: {
                 enabled: xPlaceholderSettings?.hideLabels !== 'yes',
@@ -76,10 +81,10 @@ export function buildD3Config(args: BuildD3ConfigArgs) {
         },
         chart: {
             margin: {
-                top: 10,
+                top: 15,
                 left: 10,
                 right: 10,
-                bottom: 15,
+                bottom: 20,
             },
         },
     };
