@@ -24,6 +24,11 @@
         font-weight: 500;
     }
 
+    h6 {
+        // reset to the default value in most browsers, because the default value for Mac OS is too high
+        margin-block-start: 1.67em;
+    }
+
     img {
         background: transparent;
     }
