@@ -1,0 +1,12 @@
+{
+  "label_empty-state-not-found-description": "Попробуйте ввести другое значение",
+  "label_empty-state-not-found-title": "Ничего не найдено",
+  "label_empty-state-template-description": "Начните вводить название объекта",
+  "label_empty-state-template-title": "Пока ничего нет",
+  "label_option-all": "Все типы",
+  "label_option-connections": "Подключения",
+  "label_option-datasets": "Датасеты",
+  "label_option-widgets": "Чарты",
+  "label_search-filter-placeholder": "Искать по названию",
+  "label_type-select-placeholder": "Выберите тип"
+}

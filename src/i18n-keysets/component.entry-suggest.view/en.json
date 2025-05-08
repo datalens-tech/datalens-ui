@@ -1,0 +1,12 @@
+{
+  "label_empty-state-not-found-description": "Try to enter another value",
+  "label_empty-state-not-found-title": "Nothing was found",
+  "label_empty-state-template-description": "Start to type entity name",
+  "label_empty-state-template-title": "There is nothing yet",
+  "label_option-all": "All types",
+  "label_option-connections": "Connections",
+  "label_option-datasets": "Datasets",
+  "label_option-widgets": "Charts",
+  "label_search-filter-placeholder": "Search by name",
+  "label_type-select-placeholder": "Select type"
+}
