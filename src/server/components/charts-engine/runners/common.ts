@@ -153,6 +153,7 @@ export const getSerializableProcessorParams = ({
     localConfig,
     subrequestHeadersKind,
     forbiddenFields,
+    secureConfig,
 }: {
     res: Response;
     req: Request;
@@ -169,6 +170,7 @@ export const getSerializableProcessorParams = ({
     workbookId?: WorkbookId;
     subrequestHeadersKind?: string;
     forbiddenFields?: ProcessorParams['forbiddenFields'];
+    secureConfig?: ProcessorParams['secureConfig'];
 }): SerializableProcessorParams => {
     const {params, actionParams, widgetConfig} = req.body;
 
@@ -226,6 +228,7 @@ export const getSerializableProcessorParams = ({
         configResolving,
         cacheToken: req.headers['x-charts-cache-token'] || null,
         forbiddenFields,
+        secureConfig,
         configName,
         configId,
         disableJSONFnByCookie,
@@ -282,6 +285,7 @@ export function commonRunner({
     hrStart,
     subrequestHeadersKind,
     forbiddenFields,
+    secureConfig,
 }: {
     res: Response;
     req: Request;
@@ -303,6 +307,7 @@ export function commonRunner({
     hrStart: [number, number];
     subrequestHeadersKind?: string;
     forbiddenFields?: ProcessorParams['forbiddenFields'];
+    secureConfig?: ProcessorParams['secureConfig'];
 }) {
     const telemetryCallbacks = chartsEngine.telemetryCallbacks;
     const cacheClient = chartsEngine.cacheClient;
@@ -337,6 +342,7 @@ export function commonRunner({
                     builder,
                     hooks,
                     sourcesConfig,
+                    secureConfig,
                 },
                 runnerType: runnerType as Runners,
             });

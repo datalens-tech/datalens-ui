@@ -23,6 +23,7 @@ export type UiTabExportsControl = {
     updateOnChange?: boolean;
     postUpdateOnChange?: boolean;
     updateControlsOnChange?: boolean;
+    disabled?: boolean;
 };
 
 export type UiTabExports =

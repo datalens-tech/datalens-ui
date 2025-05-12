@@ -1,21 +1,16 @@
 /* eslint-disable complexity */
 import type {Request, Response} from '@gravity-ui/expresskit';
+import type {AppContext} from '@gravity-ui/nodekit';
 import type {AxiosError} from 'axios';
 import jwt from 'jsonwebtoken';
 import get from 'lodash/get';
 import isObject from 'lodash/isObject';
 
 import type {ChartsEngine} from '..';
-import type {
-    DashTab,
-    DashTabItemControlData,
-    DashTabItemControlDataset,
-    DashTabItemControlManual,
-} from '../../../../shared';
+import type {DashTabItemControlData} from '../../../../shared';
 import {
     ControlType,
     DL_EMBED_TOKEN_HEADER,
-    DashTabItemControlSourceType,
     DashTabItemType,
     EntryScope,
     ErrorCode,
@@ -30,39 +25,306 @@ const isResponseError = (error: unknown): error is AxiosError<{code: string}> =>
     return Boolean(isObject(error) && 'response' in error && error.response);
 };
 
-const isControlDisabled = (
-    controlData: DashTabItemControlData,
-    embeddingInfo: EmbeddingInfo,
-    controlTab: DashTab,
-) => {
-    if (
-        controlData.sourceType !== DashTabItemControlSourceType.Dataset &&
-        controlData.sourceType !== DashTabItemControlSourceType.Manual
-    ) {
-        return false;
+function validateEmbedToken(
+    req: Request,
+    ctx: AppContext,
+    res: Response,
+): {embedToken: string; embedId: string} | null {
+    const embedToken = Array.isArray(req.headers[DL_EMBED_TOKEN_HEADER])
+        ? ''
+        : req.headers[DL_EMBED_TOKEN_HEADER];
+
+    if (!embedToken) {
+        ctx.log('CHARTS_ENGINE_NO_TOKEN');
+        res.status(400).send({
+            code: ErrorCode.TokenNotFound,
+            extra: {
+                message: 'You must provide embedToken',
+                hideRetry: true,
+                hideDebugInfo: true,
+            },
+        });
+        return null;
     }
-    const controlSource = controlData.source as
-        | DashTabItemControlDataset['source']
-        | DashTabItemControlManual['source'];
 
-    const controlParam =
-        'datasetFieldId' in controlSource ? controlSource.datasetFieldId : controlSource.fieldName;
+    const payload = jwt.decode(embedToken);
 
-    const tabAliases = controlTab.aliases[controlData.namespace];
+    if (!payload || typeof payload === 'string' || !('embedId' in payload)) {
+        ctx.log('CHARTS_ENGINE_WRONG_TOKEN');
+        res.status(400).send({
+            code: ErrorCode.InvalidToken,
+            extra: {message: 'Wrong token format', hideRetry: true, hideDebugInfo: true},
+        });
+        return null;
+    }
 
-    const aliasesParamsList = tabAliases
-        ? tabAliases.find((alias) => alias.includes(controlParam))
-        : null;
+    const embedId = payload.embedId;
+
+    // Update subrequest headers
+    res.locals.subrequestHeaders = {
+        ...res.locals.subrequestHeaders,
+        [DL_EMBED_TOKEN_HEADER]: embedToken,
+    };
+
+    return {embedToken, embedId};
+}
+
+function handleError(
+    error: unknown,
+    ctx: any,
+    res: Response,
+    defaultStatus = 500,
+    defaultCode = 'ERR.CHARTS.CONFIG_LOADING_ERROR',
+): void {
+    // Handle specific error cases for outdated dependencies
+    if (
+        isResponseError(error) &&
+        (error.response?.data.code === ErrorCode.IncorrectEntry ||
+            error.response?.data.code === ErrorCode.IncorrectDepsIds)
+    ) {
+        res.status(409).send({
+            code: ErrorCode.OutdatedDependencies,
+            extra: {
+                message: 'Dependencies of embed are outdated',
+                hideRetry: true,
+                hideDebugInfo: true,
+            },
+        });
+        return;
+    }
+
+    const typedError: ResolveConfigError =
+        isObject(error) && 'message' in error ? (error as Error) : new Error(error as string);
+
+    const status =
+        (typedError.response && typedError.response.status) || typedError.status || defaultStatus;
+
+    const errorCode =
+        (typedError.response && typedError.response.status) || typedError.status || defaultCode;
+
+    ctx.logError(`CHARTS_ENGINE_ERROR: ${errorCode}`, typedError);
+
+    res.status(status).send({
+        code: errorCode,
+        error: {
+            code: errorCode,
+            details: {
+                code: status,
+            },
+            extra: {
+                hideRetry: false,
+                hideDebugInfo: true,
+            },
+        },
+    });
+}
+
+function processControlWidget(
+    controlData: {
+        id: string;
+        widgetId?: string;
+        tabId: string;
+    },
+    embeddingInfo: EmbeddingInfo,
+    res: Response,
+): ReducedResolvedConfig | null {
+    if (!isDashEntry(embeddingInfo.entry)) {
+        return null;
+    }
+
+    // Support group and old single selectors
+    const controlWidgetId = controlData.widgetId || controlData.id;
+    const controlTab = embeddingInfo.entry.data.tabs.find(
+        ({id}: {id: string}) => id === controlData.tabId,
+    );
+
+    const controlWidgetConfig = controlTab?.items.find(
+        ({id}: {id: string}) => id === controlWidgetId,
+    );
+
+    // Early return if control widget config is not found or has invalid type
+    if (
+        !controlTab ||
+        !controlWidgetConfig ||
+        (controlWidgetConfig.type !== DashTabItemType.Control &&
+            controlWidgetConfig.type !== DashTabItemType.GroupControl)
+    ) {
+        res.status(404).send({
+            error: 'Сonfig was not found',
+        });
+        return null;
+    }
+
+    const sharedData: (DashTabItemControlData & {disabled?: boolean}) | undefined =
+        controlWidgetConfig.type === DashTabItemType.GroupControl
+            ? controlWidgetConfig.data.group.find(({id}: {id: string}) => id === controlData.id)
+            : controlWidgetConfig.data;
+
+    if (!sharedData) {
+        res.status(404).send({
+            error: 'Сonfig was not found',
+        });
+        return null;
+    }
+
+    // sharedData.disabled = isControlDisabled(sharedData, embeddingInfo, controlTab);
+
+    return {
+        data: {shared: sharedData},
+        meta: {stype: ControlType.Dash},
+    } as ReducedResolvedConfig;
+}
+
+function processEntry(
+    controlData:
+        | {
+              id: string;
+              widgetId?: string;
+              tabId: string;
+          }
+        | undefined,
+    embeddingInfo: EmbeddingInfo,
+    res: Response,
+): ReducedResolvedConfig | null {
+    if (controlData && isDashEntry(embeddingInfo.entry)) {
+        return processControlWidget(controlData, embeddingInfo, res);
+    }
+
+    if (embeddingInfo.entry.scope === EntryScope.Widget) {
+        return embeddingInfo.entry;
+    }
+
+    // Invalid entry type
+    res.status(400).send({
+        code: ErrorCode.InvalidToken,
+        extra: {
+            message: 'Invalid token',
+            hideRetry: true,
+            hideDebugInfo: true,
+        },
+    });
+    return null;
+}
+
+function filterParameters(
+    params: Record<string, unknown> = {},
+    embeddingInfo: EmbeddingInfo,
+): {params: Record<string, unknown>; privateParams?: Set<string>} {
+    if (Object.keys(params).length === 0) {
+        return {params: {...embeddingInfo.token.params}};
+    }
+
+    const filteredParams: Record<string, unknown> = {};
+
+    const forbiddenParamsSet = new Set(embeddingInfo.embed.privateParams);
 
     if (embeddingInfo.embed.publicParamsMode) {
-        // dash doesn't support publicParamsMode
-        return false;
-    } else {
-        return aliasesParamsList
-            ? aliasesParamsList.some((alias) => embeddingInfo.embed.privateParams.includes(alias))
-            : embeddingInfo.embed.privateParams.includes(controlParam);
+        const unsignedParamsSet = new Set(embeddingInfo.embed.unsignedParams);
+
+        for (const [key, value] of Object.entries(params)) {
+            if (unsignedParamsSet.has(key)) {
+                filteredParams[key] = value;
+            }
+        }
+    } else if (isDashEntry(embeddingInfo.entry)) {
+        // const entryTab = embeddingInfo.entry.data.tabs.find(
+        //     ({id}: {id: string}) => id === embeddingInfo.embed.entryId,
+        // );
+
+        embeddingInfo.entry.data.tabs.forEach((entryTab) => {
+            Object.keys(entryTab.aliases).forEach((namespace) => {
+                entryTab.aliases[namespace].forEach((alias) => {
+                    const hasPrivateParam = alias.some((item) => forbiddenParamsSet.has(item));
+
+                    if (hasPrivateParam) {
+                        // Add all items in alias to forbidden set
+                        for (const item of alias) {
+                            forbiddenParamsSet.add(item);
+                        }
+                    }
+                });
+            });
+        });
+
+        for (const [key, value] of Object.entries(params)) {
+            if (!forbiddenParamsSet.has(key)) {
+                filteredParams[key] = value;
+            }
+        }
     }
-};
+
+    // token params is written in globalParams and usually applied by dashkit
+    // we use them again after filtering the user parameters from the chart/dashboard
+    // in case there are forbidden parameters among them.
+    return {
+        params: {
+            ...embeddingInfo.token.params,
+            ...filteredParams,
+        },
+        privateParams: forbiddenParamsSet,
+    };
+}
+
+function findAndExecuteRunner(
+    entry: ReducedResolvedConfig,
+    chartsEngine: ChartsEngine,
+    ctx: AppContext,
+    req: Request,
+    res: Response,
+    configResolving: number,
+    embeddingInfo: EmbeddingInfo,
+    privateParams?: Set<string>,
+) {
+    const configType = entry?.meta?.stype;
+
+    ctx.log('CHARTS_ENGINE_CONFIG_TYPE', {configType});
+
+    const runnerFound = chartsEngine.runners.find((runner) => {
+        return runner.trigger.has(configType);
+    });
+
+    if (!runnerFound) {
+        ctx.log('CHARTS_ENGINE_UNKNOWN_CONFIG_TYPE', {configType});
+        res.status(400).send({
+            error: `Unknown config type ${configType}`,
+        });
+        return Promise.resolve(null);
+    }
+
+    if (!isEnabledServerFeature(ctx, 'EnableChartEditor') && runnerFound.name === 'editor') {
+        ctx.log('CHARTS_ENGINE_EDITOR_DISABLED');
+        res.status(400).send({
+            error: 'Editor is disabled',
+        });
+        return Promise.resolve(null);
+    }
+
+    req.body.config = entry;
+    req.body.key = entry.key;
+
+    req.body.widgetConfig = {
+        ...req.body.widgetConfig,
+        enableExport: embeddingInfo.embed.settings?.enableExport === true,
+    };
+
+    return runnerFound.handler(ctx, {
+        chartsEngine,
+        req,
+        res,
+        config: {
+            ...entry,
+            data: {
+                ...entry.data,
+                url: get(entry.data, 'sources') || get(entry.data, 'url'),
+                js: get(entry.data, 'prepare') || get(entry.data, 'js'),
+                ui: get(entry.data, 'controls') || get(entry.data, 'ui'),
+            },
+        },
+        configResolving,
+        secureConfig: {privateParams: privateParams ? Array.from(privateParams) : undefined},
+        forbiddenFields: ['_confStorageConfig', 'timings', 'key'],
+    });
+}
 
 export const embedsController = (chartsEngine: ChartsEngine) => {
     return function chartsRunController(req: Request, res: Response) {
@@ -76,42 +338,12 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
 
         const {id, controlData} = req.body;
 
-        const embedToken = Array.isArray(req.headers[DL_EMBED_TOKEN_HEADER])
-            ? ''
-            : req.headers[DL_EMBED_TOKEN_HEADER];
-
-        if (!embedToken) {
-            ctx.log('CHARTS_ENGINE_NO_TOKEN');
-            res.status(400).send({
-                code: ErrorCode.TokenNotFound,
-                extra: {
-                    message: 'You must provide embedToken',
-                    hideRetry: true,
-                    hideDebugInfo: true,
-                },
-            });
-
-            return;
+        const tokenData = validateEmbedToken(req, ctx, res);
+        if (!tokenData) {
+            return; // Token validation failed, response already sent
         }
 
-        const payload = jwt.decode(embedToken);
-
-        if (!payload || typeof payload === 'string' || !('embedId' in payload)) {
-            ctx.log('CHARTS_ENGINE_WRONG_TOKEN');
-            res.status(400).send({
-                code: ErrorCode.InvalidToken,
-                extra: {message: 'Wrong token format', hideRetry: true, hideDebugInfo: true},
-            });
-
-            return;
-        }
-
-        const embedId = payload.embedId;
-
-        res.locals.subrequestHeaders = {
-            ...res.locals.subrequestHeaders,
-            [DL_EMBED_TOKEN_HEADER]: embedToken,
-        };
+        const {embedToken, embedId} = tokenData;
 
         const configResolveArgs: EmbedResolveConfigProps = {
             id,
@@ -140,186 +372,39 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
 
         Promise.resolve(configPromise)
             .catch((err: unknown) => {
-                if (
-                    isResponseError(err) &&
-                    (err.response?.data.code === ErrorCode.IncorrectEntry ||
-                        err.response?.data.code === ErrorCode.IncorrectDepsIds)
-                ) {
-                    res.status(409).send({
-                        code: ErrorCode.OutdatedDependencies,
-                        extra: {
-                            message: 'Dependecies of embed are outdated',
-                            hideRetry: true,
-                            hideDebugInfo: true,
-                        },
-                    });
-
-                    return;
-                }
-                const error: ResolveConfigError =
-                    isObject(err) && 'message' in err ? (err as Error) : new Error(err as string);
-                const result: {
-                    error: {
-                        code: string;
-                        details: {
-                            code: number | null;
-                        };
-                        extra?: {hideRetry: boolean; hideDebugInfo: boolean};
-                    };
-                } = {
-                    error: {
-                        code: 'ERR.CHARTS.CONFIG_LOADING_ERROR',
-                        details: {
-                            code: (error.response && error.response.status) || error.status || null,
-                        },
-                        extra: {hideRetry: false, hideDebugInfo: true},
-                    },
-                };
-
-                ctx.logError(`CHARTS_ENGINE_CONFIG_LOADING_ERROR "token"`, error);
-                const status = (error.response && error.response.status) || error.status || 500;
-                res.status(status).send(result);
+                handleError(err, ctx, res, 500, 'ERR.CHARTS.CONFIG_LOADING_ERROR');
             })
             .then(async (embeddingInfo) => {
                 if (!embeddingInfo || !('token' in embeddingInfo)) {
                     return null;
                 }
 
-                const params: Record<string, unknown> = req.body.params || {};
-                const filteredParams: Record<string, unknown> = {};
+                const {params, privateParams} = filterParameters(req.body.params, embeddingInfo);
+                req.body.params = params;
 
-                if (embeddingInfo.embed.publicParamsMode) {
-                    Object.keys(params).forEach((key) => {
-                        if (embeddingInfo.embed.unsignedParams.includes(key)) {
-                            filteredParams[key] = params[key];
-                        }
-                    });
-                } else {
-                    Object.keys(params).forEach((key) => {
-                        if (!embeddingInfo.embed.privateParams.includes(key)) {
-                            filteredParams[key] = params[key];
-                        }
-                    });
-                }
+                const entry = processEntry(controlData, embeddingInfo, res);
 
-                // token params is written in defaultGlobalParams and usually applied by dashkit
-                // we use them again after filtering the user parameters from the chart/dashboard
-                // in case there are forbidden parameters among them.
-                req.body.params = {
-                    ...embeddingInfo.token.params,
-                    ...filteredParams,
-                };
-
-                let entry;
-
-                if (controlData && isDashEntry(embeddingInfo.entry)) {
-                    // support group and old single selectors
-                    const controlWidgetId = controlData.groupId || controlData.id;
-                    const controlTab = embeddingInfo.entry?.data.tabs.find(
-                        ({id}) => id === controlData.tabId,
-                    );
-
-                    const controlWidgetConfig = controlTab?.items.find(
-                        ({id}) => id === controlWidgetId,
-                    );
-
-                    if (
-                        !controlTab ||
-                        !controlWidgetConfig ||
-                        (controlWidgetConfig.type !== DashTabItemType.Control &&
-                            controlWidgetConfig.type !== DashTabItemType.GroupControl)
-                    ) {
-                        return res.status(404).send({
-                            error: 'Сonfig was not found',
-                        });
-                    }
-
-                    const sharedData: (DashTabItemControlData & {disabled?: boolean}) | undefined =
-                        controlWidgetConfig.type === DashTabItemType.GroupControl
-                            ? controlWidgetConfig.data.group.find(({id}) => id === controlData.id)
-                            : controlWidgetConfig.data;
-
-                    if (!sharedData) {
-                        return res.status(404).send({
-                            error: 'Сonfig was not found',
-                        });
-                    }
-
-                    sharedData.disabled = isControlDisabled(sharedData, embeddingInfo, controlTab);
-
-                    entry = {
-                        data: {shared: sharedData},
-                        meta: {stype: ControlType.Dash},
-                    } as ReducedResolvedConfig;
-                } else if (embeddingInfo.entry.scope === EntryScope.Widget) {
-                    entry = embeddingInfo.entry;
-                } else {
-                    return res.status(400).send({
-                        code: ErrorCode.InvalidToken,
-                        extra: {
-                            message: 'Invalid token',
-                            hideRetry: true,
-                            hideDebugInfo: true,
-                        },
-                    });
+                // If entry processing failed, the response has already been sent
+                if (!entry) {
+                    return null;
                 }
 
                 const configResolving = getDuration(hrStart);
-                const configType = entry && entry.meta && entry.meta.stype;
 
-                ctx.log('CHARTS_ENGINE_CONFIG_TYPE', {configType});
-
-                const runnerFound = chartsEngine.runners.find((runner) => {
-                    return runner.trigger.has(configType);
-                });
-
-                if (!runnerFound) {
-                    ctx.log('CHARTS_ENGINE_UNKNOWN_CONFIG_TYPE', {configType});
-                    return res.status(400).send({
-                        error: `Unknown config type ${configType}`,
-                    });
-                }
-
-                if (
-                    !isEnabledServerFeature(ctx, 'EnableChartEditor') &&
-                    runnerFound.name === 'editor'
-                ) {
-                    ctx.log('CHARTS_ENGINE_EDITOR_DISABLED');
-                    return res.status(400).send({
-                        error: 'Editor is disabled',
-                    });
-                }
-
-                req.body.config = entry;
-                req.body.key = entry.key;
-
-                req.body.widgetConfig = {
-                    ...req.body.widgetConfig,
-                    enableExport: embeddingInfo.embed.settings?.enableExport === true,
-                };
-
-                return runnerFound.handler(ctx, {
+                return findAndExecuteRunner(
+                    entry,
                     chartsEngine,
+                    ctx,
                     req,
                     res,
-                    config: {
-                        ...entry,
-                        data: {
-                            ...entry.data,
-                            url: get(entry.data, 'sources') || get(entry.data, 'url'),
-                            js: get(entry.data, 'prepare') || get(entry.data, 'js'),
-                            ui: get(entry.data, 'controls') || get(entry.data, 'ui'),
-                        },
-                    },
                     configResolving,
-                    forbiddenFields: ['_confStorageConfig', 'timings', 'key'],
-                });
+                    embeddingInfo,
+                    privateParams,
+                );
             })
             .catch((error) => {
-                ctx.logError('CHARTS_ENGINE_RUNNER_ERROR', error);
-                res.status(500).send({
-                    error: 'Internal error',
-                });
+                // Use standardized error handling for runner errors
+                handleError(error, ctx, res, 500, 'CHARTS_ENGINE_RUNNER_ERROR');
             });
     };
 };

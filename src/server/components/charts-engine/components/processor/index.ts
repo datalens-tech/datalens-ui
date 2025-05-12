@@ -147,6 +147,7 @@ export type ProcessorParams = {
 } & SerializableProcessorParams;
 
 export type SerializableProcessorParams = {
+    secureConfig?: {privateParams?: string[]};
     subrequestHeaders: Record<string, string>;
     paramsOverride: Record<string, string | string[]>;
     actionParamsOverride: Record<string, string | string[]>;
@@ -213,6 +214,7 @@ export class Processor {
         cacheClient,
         hooks,
         sourcesConfig,
+        secureConfig,
     }: ProcessorParams): Promise<
         ProcessorSuccessResponse | ProcessorErrorResponse | {error: string}
     > {
@@ -760,6 +762,17 @@ export class Processor {
                         Array.isArray(uiTabExports.controls)))
             ) {
                 uiScheme = uiTabExports as UiTabExports;
+
+                const controls = Array.isArray(uiScheme) ? uiScheme : uiScheme.controls;
+
+                controls.forEach((control) => {
+                    if (
+                        secureConfig?.privateParams &&
+                        secureConfig?.privateParams.includes(control.param)
+                    ) {
+                        control.disabled = true;
+                    }
+                });
             }
 
             logs.Controls = uiTabResults.logs;
