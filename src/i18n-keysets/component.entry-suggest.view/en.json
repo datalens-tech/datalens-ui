@@ -1,7 +1,7 @@
 {
-  "label_empty-state-not-found-description": "Try to enter another value",
-  "label_empty-state-not-found-title": "Nothing was found",
-  "label_empty-state-template-description": "Start to type entity name",
+  "label_empty-state-not-found-description": "Try entering another value",
+  "label_empty-state-not-found-title": "Nothing found",
+  "label_empty-state-template-description": "Start entering an entity name",
   "label_empty-state-template-title": "There is nothing yet",
   "label_option-all": "All types",
   "label_option-connections": "Connections",
