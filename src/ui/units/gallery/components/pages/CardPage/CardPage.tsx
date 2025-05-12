@@ -110,7 +110,13 @@ function CardActionPanel({
                     </Button.Icon>
                 </Button>
                 <Button view={showPreview ? 'normal' : 'action'} onClick={togglePreview}>
-                    {showPreview ? <Icon data={Xmark} /> : 'Open'}
+                    {showPreview ? (
+                        <Button.Icon>
+                            <Icon data={Xmark} />
+                        </Button.Icon>
+                    ) : (
+                        'Open'
+                    )}
                 </Button>
             </Flex>
         );
@@ -183,21 +189,22 @@ function CardDescription({lang, description, shortDescription}: CardDescriptionP
     const getTranslation = (dict?: TranslationsDict) => dict?.[lang] || '';
 
     return (
-        <div className={b()}>
-            <Text variant="body-2">
-                {shortDescription && getTranslation(shortDescription)}
-                {isExpanded && description && getTranslation(description)}
-                {shouldShowButton && (
-                    <Button
-                        size="xs"
-                        view="flat-secondary"
-                        onClick={() => setIsExpanded(!isExpanded)}
-                    >
-                        {isExpanded ? 'Collapse' : 'Show full'}
-                    </Button>
-                )}
-            </Text>
-        </div>
+        <Flex direction="column">
+            {shortDescription && <Text variant="body-2">{getTranslation(shortDescription)}</Text>}
+            {isExpanded && description && (
+                <Text variant="body-2">{getTranslation(description)}</Text>
+            )}
+            {shouldShowButton && (
+                <Button
+                    className={b('card-description-collapse-button')}
+                    size="xs"
+                    view="flat-secondary"
+                    onClick={() => setIsExpanded(!isExpanded)}
+                >
+                    {isExpanded ? 'Collapse' : 'Show full'}
+                </Button>
+            )}
+        </Flex>
     );
 }
 
@@ -228,7 +235,7 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang}: CardContent
                         <Flex className={b('actions-right-flex', mods)}>
                             <Button size="xl" onClick={togglePreview}>
                                 <Button.Icon>
-                                    <Icon data={ArrowShapeTurnUpRight} />
+                                    <Icon data={ArrowShapeTurnUpRight} size={20} />
                                 </Button.Icon>
                             </Button>
                             <Button view="action" size="xl" width="max" onClick={togglePreview}>

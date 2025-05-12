@@ -82,6 +82,10 @@ $block: '.#{variables.$ns}-card';
         margin: 6px;
     }
 
+    &__card-description-collapse-button {
+        width: fit-content;
+    }
+
     &__card-info-flex {
         column-gap: 12px;
 

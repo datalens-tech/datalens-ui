@@ -1,14 +1,8 @@
 import React from 'react';
 
 import {ArrowRight, ChevronRight} from '@gravity-ui/icons';
-import {Button, Flex} from '@gravity-ui/uikit';
-import type {useLayoutContext} from '@gravity-ui/uikit';
-
-import {block} from '../../utils';
-
-import './SectionHeader.scss';
-
-const b = block('section-header');
+import {Button, Flex, Text} from '@gravity-ui/uikit';
+import type {TextProps, useLayoutContext} from '@gravity-ui/uikit';
 
 interface SectionHeaderProps {
     title: string;
@@ -16,11 +10,13 @@ interface SectionHeaderProps {
 }
 
 export function SectionHeader({activeMediaQuery, title}: SectionHeaderProps) {
-    const icon = activeMediaQuery === 's' ? <ChevronRight /> : <ArrowRight />;
+    const isActiveMediaQueryS = activeMediaQuery === 's';
+    const textVariant: TextProps['variant'] = isActiveMediaQueryS ? 'header-2' : 'header-1';
+    const icon = isActiveMediaQueryS ? <ChevronRight /> : <ArrowRight />;
 
     return (
-        <Flex className={b({media: activeMediaQuery})}>
-            {title}
+        <Flex alignItems="center" justifyContent="space-between">
+            <Text variant={textVariant}>{title}</Text>
             <Button view="flat" size="l">
                 <Button.Icon>{icon}</Button.Icon>
             </Button>
