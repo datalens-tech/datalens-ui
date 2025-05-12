@@ -36,7 +36,7 @@ export const EntryRow: React.FC<EntryRowProps> = ({className, entry, isTargetEnt
     const link = navigateHelper.redirectUrlSwitcher(entry);
     const isFileConnection =
         entry.scope === EntryScope.Connection &&
-        (entry.type === 'file' || entry.type === 'gsheets_v2');
+        (entry.type === 'file' || entry.type === 'gsheets_v2' || entry.type === 'yadocs');
 
     return (
         <div className={b(null, className)}>
