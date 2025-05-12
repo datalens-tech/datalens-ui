@@ -26,16 +26,6 @@ export const LINE_BREAKS_OPTIONS = {
     NOWRAP: 'nowrap',
 };
 
-export const EXPORT_FORMATS = {
-    XLSX: 'xlsx',
-    CSV: 'csv',
-    MARKDOWN: 'markdown',
-    WIKI: 'wiki',
-    SCREENSHOT: 'screenshort',
-};
-
-export type ExportFormatsType = (typeof EXPORT_FORMATS)[keyof typeof EXPORT_FORMATS];
-
 export const CLICK_ACTION_TYPE = {
     SET_PARAMS: 'setParams',
     SET_INITIAL_PARAMS: 'setInitialParams',

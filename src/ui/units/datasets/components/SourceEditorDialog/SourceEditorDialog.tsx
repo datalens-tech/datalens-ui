@@ -11,10 +11,12 @@ import type {DatasetComponentError} from '../../../../../shared';
 import DialogConfirm from '../../../../components/DialogConfirm/DialogConfirm';
 import type {FormValidationError} from '../../helpers/validation';
 import {VALIDATION_ERROR} from '../../helpers/validation';
+import {filteredDatasetParametersSelector, templateEnabledSelector} from '../../store/selectors';
 import type {FormOptions, StandaloneSource, Update} from '../../store/types';
 
-import {Form, InputFormItem, SourceError, SourceSwitcher} from './components';
-import type {EditedSource, OnSourceUpdate} from './types';
+import {Form, InputFormItem, ParamSelector, SourceError, SourceSwitcher} from './components';
+import type {RenderParamSelector} from './components';
+import type {EditedSource, OnParamCreate, OnParamEdit, OnSourceUpdate} from './types';
 import {
     BASE_TITLE_FORM_OPTIONS,
     TITLE_INPUT,
@@ -44,6 +46,8 @@ type SourceEditorDialogProps = {
     ) => Promise<{updates: Update[]; sourceErrors: DatasetComponentError[]}>;
     onUpdate: (source: EditedSource) => void;
     onClose: () => void;
+    onParamCreate: OnParamCreate;
+    onParamEdit: OnParamEdit;
     open: boolean;
     source: EditedSource;
     error?: Error;
@@ -54,11 +58,15 @@ const SourceEditorDialog: React.FC<SourceEditorDialogProps> = (props) => {
         onApply,
         onUpdate,
         onClose,
+        onParamCreate,
+        onParamEdit,
         open,
         sources,
         source: propsSource,
         freeformSources,
         componentErrors,
+        parameters,
+        templateEnabled,
     } = props;
     const [source, setSource] = React.useState(propsSource);
     const [selectedFreeformSource, setSelectedFreeformSource] = React.useState(
@@ -170,6 +178,20 @@ const SourceEditorDialog: React.FC<SourceEditorDialogProps> = (props) => {
         }
     }, [onApply, onUpdate, onClose, isValid, source, selectedFreeformSource]);
 
+    const renderParamSelector = React.useCallback<RenderParamSelector>(
+        (args) => {
+            return (
+                <ParamSelector
+                    {...args}
+                    parameters={parameters}
+                    onParamCreate={onParamCreate}
+                    onParamEdit={onParamEdit}
+                />
+            );
+        },
+        [parameters, onParamCreate, onParamEdit],
+    );
+
     React.useEffect(() => {
         setSource(propsSource);
     }, [propsSource]);
@@ -218,6 +240,8 @@ const SourceEditorDialog: React.FC<SourceEditorDialogProps> = (props) => {
                     source={source}
                     validationErrors={validationErrors}
                     onUpdate={onSourceUpdate}
+                    renderParamSelector={renderParamSelector}
+                    templateEnabled={templateEnabled}
                 />
                 {componentErrors && (
                     <SourceError source={source} componentErrors={componentErrors} />
@@ -247,6 +271,8 @@ const mapStateToProps = (store: DatalensGlobalState) => ({
     freeformSources: store.dataset.freeformSources,
     componentErrors: store.dataset.content.component_errors,
     sources: store.dataset.content.sources,
+    parameters: filteredDatasetParametersSelector(store),
+    templateEnabled: templateEnabledSelector(store),
 });
 
 export default connect(mapStateToProps)(SourceEditorDialog);

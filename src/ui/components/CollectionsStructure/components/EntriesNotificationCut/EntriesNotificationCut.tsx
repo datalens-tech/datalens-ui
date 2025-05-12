@@ -4,6 +4,9 @@ import {CircleExclamation} from '@gravity-ui/icons';
 import type {LabelProps} from '@gravity-ui/uikit';
 import {Disclosure, Flex, Icon, Label, Link, Text, spacing} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import type {EntryScope} from 'shared';
+import type {GetEntriesEntryResponse} from 'shared/schema/us/types';
+import type {NotificationLevel} from 'shared/types/meta-manager';
 import {EntryRow} from 'ui/components/EntryRow/EntryRow';
 import {registry} from 'ui/registry';
 
@@ -13,14 +16,33 @@ const b = block('entries-notification-cut');
 
 type EntriesNotificationCutProps = {
     link?: {text: string; url: string};
+    entriesMap?: Record<string, GetEntriesEntryResponse> | null;
 } & (
     | {level: 'success'; entries?: never}
     | {
-          level: 'info' | 'warning' | 'critical';
-          entries: {entryId?: string; scope: 'connection' | 'dataset'}[];
+          level: NotificationLevel;
+          entries: {entryId?: string; scope: EntryScope}[];
       }
 ) &
     ({title: string; code?: string} | {title?: never; code: string});
+
+const getEntry = (
+    entriesMap: EntriesNotificationCutProps['entriesMap'],
+    entry: {
+        entryId?: string;
+        scope: EntryScope;
+    },
+) => {
+    if (!entry.entryId || !entriesMap) {
+        return {
+            entryId: entry.entryId,
+            scope: entry.scope,
+            name: entry.entryId,
+        };
+    }
+
+    return entriesMap[entry.entryId];
+};
 
 const LEVEL_TO_THEME_MAP: Record<string, LabelProps['theme']> = {
     critical: 'danger',
@@ -58,6 +80,7 @@ export const EntriesNotificationCut = ({
     code,
     entries,
     link,
+    entriesMap,
 }: EntriesNotificationCutProps) => {
     const defaultExpanded = level === 'critical';
     const theme = LEVEL_TO_THEME_MAP[level] || 'info';
@@ -79,17 +102,23 @@ export const EntriesNotificationCut = ({
                     className={b('disclosure')}
                 >
                     <div className={spacing({mt: 3})}>
-                        {entries.map((entry) => (
-                            <EntryRow
-                                key={entry.entryId}
-                                entry={{
-                                    entryId: entry.entryId,
-                                    scope: entry.scope,
-                                    name: entry.entryId,
-                                }}
-                                overrideIconType={entry.scope}
-                            />
-                        ))}
+                        {entries.map((entry) => {
+                            const resolvedEntry = getEntry(entriesMap, entry);
+
+                            const overrideIconType =
+                                !('type' in resolvedEntry) && entry.scope === 'connection'
+                                    ? entry.scope
+                                    : undefined;
+
+                            return (
+                                <EntryRow
+                                    key={entry.entryId}
+                                    entry={resolvedEntry}
+                                    // for correct display of the connection icon without a specific type
+                                    overrideIconType={overrideIconType}
+                                />
+                            );
+                        })}
                     </div>
                     {link && (
                         <Link href={link.url} className={spacing({mt: 3})}>

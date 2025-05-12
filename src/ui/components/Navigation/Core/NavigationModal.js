@@ -109,6 +109,14 @@ class NavigationModal extends React.Component {
     onItemSelect = ({selectedItemsIds}) => {
         this.setState({isSomeItemSelected: selectedItemsIds.size > 0});
     };
+    renderEmptyStateAction = () => (
+        <CreateEntry
+            place={this.props.place}
+            onClick={this.props.onCreateMenuClick}
+            isOnlyCollectionsMode={this.props.isOnlyCollectionsMode}
+            buttonView="normal"
+        />
+    );
     render() {
         const {
             linkWrapper,
@@ -165,6 +173,7 @@ class NavigationModal extends React.Component {
                         mode={MODE_MODAL}
                         setBreadCrumbs={this.setBreadCrumbs}
                         onItemSelect={this.onItemSelect}
+                        renderEmptyStateAction={this.renderEmptyStateAction}
                     >
                         <CreateEntry
                             place={place}

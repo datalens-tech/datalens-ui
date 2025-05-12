@@ -66,10 +66,16 @@ import {
     RESET_IMPORT_WORKBOOK,
     GET_IMPORT_PROGRESS_LOADING,
     GET_IMPORT_PROGRESS_SUCCESS,
+    GET_IMPORT_PROGRESS_FAILED,
     RESET_IMPORT_PROGRESS,
     GET_EXPORT_PROGRESS_LOADING,
     GET_EXPORT_PROGRESS_SUCCESS,
+    GET_EXPORT_PROGRESS_FAILED,
     RESET_EXPORT_PROGRESS,
+    GET_EXPORT_RESULT_LOADING,
+    GET_EXPORT_RESULT_SUCCESS,
+    GET_EXPORT_RESULT_FAILED,
+    RESET_EXPORT_RESULT,
 } from '../constants/collectionsStructure';
 import type {CollectionsStructureAction} from '../actions/collectionsStructure';
 import type {
@@ -92,8 +98,13 @@ import type {
     DeleteCollectionResponse,
     DeleteWorkbooksResponse,
     DeleteWorkbookResponse,
+    GetWorkbookExportResultResponse,
+    GetWorkbookExportStatusResponse,
+    GetWorkbookImportStatusResponse,
+    StartWorkbookExportResponse,
+    StartWorkbookImportResponse,
+    GetEntriesEntryResponse,
 } from '../../../shared/schema';
-import type {TempImportExportDataType} from 'ui/components/CollectionsStructure/components/EntriesNotificationCut/types';
 
 export type CollectionsStructureState = {
     getRootCollectionPermissions: {
@@ -189,23 +200,30 @@ export type CollectionsStructureState = {
     };
     exportWorkbook: {
         isLoading: boolean;
-        data: null | {exportId: string};
+        data: null | StartWorkbookExportResponse;
         error: Error | null;
     };
     importWorkbook: {
         isLoading: boolean;
-        data: null | {importId: string};
+        data: null | StartWorkbookImportResponse;
         error: Error | null;
     };
     getImportProgress: {
         isLoading: boolean;
-        data: null | TempImportExportDataType;
+        data: null | GetWorkbookImportStatusResponse;
+        error: Error | null;
+        notificationEntries: null | Record<string, GetEntriesEntryResponse>;
+    };
+    getExportResult: {
+        isLoading: boolean;
+        data: null | GetWorkbookExportResultResponse;
         error: Error | null;
     };
     getExportProgress: {
         isLoading: boolean;
-        data: null | TempImportExportDataType;
+        data: null | GetWorkbookExportStatusResponse;
         error: Error | null;
+        notificationEntries: null | Record<string, GetEntriesEntryResponse>;
     };
 };
 
@@ -311,15 +329,22 @@ const initialState: CollectionsStructureState = {
         data: null,
         error: null,
     },
+    getExportResult: {
+        isLoading: false,
+        data: null,
+        error: null,
+    },
     getImportProgress: {
         isLoading: false,
         data: null,
         error: null,
+        notificationEntries: null,
     },
     getExportProgress: {
         isLoading: false,
         data: null,
         error: null,
+        notificationEntries: null,
     },
 };
 
@@ -1030,6 +1055,7 @@ export const collectionsStructure = (
                     ...state.getImportProgress,
                     isLoading: true,
                     error: null,
+                    notificationEntries: null,
                 },
             };
         }
@@ -1040,6 +1066,17 @@ export const collectionsStructure = (
                     isLoading: false,
                     data: action.data,
                     error: null,
+                    notificationEntries: action.notificationEntries,
+                },
+            };
+        }
+        case GET_IMPORT_PROGRESS_FAILED: {
+            return {
+                ...state,
+                getImportProgress: {
+                    ...state.getImportProgress,
+                    isLoading: false,
+                    error: action.error,
                 },
             };
         }
@@ -1050,6 +1087,7 @@ export const collectionsStructure = (
                     isLoading: false,
                     data: null,
                     error: null,
+                    notificationEntries: null,
                 },
             };
         }
@@ -1062,6 +1100,7 @@ export const collectionsStructure = (
                     ...state.getExportProgress,
                     isLoading: true,
                     error: null,
+                    notificationEntries: null,
                 },
             };
         }
@@ -1072,6 +1111,17 @@ export const collectionsStructure = (
                     isLoading: false,
                     data: action.data,
                     error: null,
+                    notificationEntries: action.notificationEntries,
+                },
+            };
+        }
+        case GET_EXPORT_PROGRESS_FAILED: {
+            return {
+                ...state,
+                getExportProgress: {
+                    ...state.getExportProgress,
+                    isLoading: false,
+                    error: action.error,
                 },
             };
         }
@@ -1082,7 +1132,46 @@ export const collectionsStructure = (
                     isLoading: false,
                     data: null,
                     error: null,
+                    notificationEntries: null,
                 },
+            };
+        }
+
+        // Getting export result
+        case GET_EXPORT_RESULT_LOADING: {
+            return {
+                ...state,
+                getExportResult: {
+                    ...state.getExportResult,
+                    isLoading: true,
+                    error: null,
+                },
+            };
+        }
+        case GET_EXPORT_RESULT_SUCCESS: {
+            return {
+                ...state,
+                getExportResult: {
+                    isLoading: false,
+                    data: action.data,
+                    error: null,
+                },
+            };
+        }
+        case GET_EXPORT_RESULT_FAILED: {
+            return {
+                ...state,
+                getExportResult: {
+                    ...state.getExportResult,
+                    isLoading: false,
+                    error: action.error,
+                },
+            };
+        }
+        case RESET_EXPORT_RESULT: {
+            return {
+                ...state,
+                getExportResult: initialState.getExportResult,
             };
         }
 

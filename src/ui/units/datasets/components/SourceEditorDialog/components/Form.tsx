@@ -10,6 +10,7 @@ import {TITLE_INPUT, getErrorText} from '../utils';
 
 import {EditorFormItem} from './EditorFormItem';
 import {InputFormItem} from './InputFormItem';
+import type {RenderParamSelector} from './ParamSelector';
 import {SelectFormItem} from './SelectFormItem';
 
 const b = block('source-editor-dialog');
@@ -19,6 +20,8 @@ type FormProps = {
     freeformSource: FreeformSource;
     source: EditedSource;
     validationErrors: FormValidationError[];
+    renderParamSelector: RenderParamSelector;
+    templateEnabled?: boolean;
 };
 
 const getFormItemValue = (opt: {
@@ -37,12 +40,20 @@ const getFormItemValue = (opt: {
     }
 };
 
-export const Form: React.FC<FormProps> = ({onUpdate, freeformSource, source, validationErrors}) => {
+export const Form = ({
+    onUpdate,
+    freeformSource,
+    source,
+    validationErrors,
+    renderParamSelector,
+    templateEnabled,
+}: FormProps) => {
     const formItems = React.useMemo(() => {
         return freeformSource.form.map((formOptions) => {
             const key = formOptions.name;
             const value = getFormItemValue({source, freeformSource, key});
             const errorText = getErrorText(validationErrors, key);
+            const showParamSelector = templateEnabled && formOptions.template_enabled;
 
             switch (formOptions.input_type) {
                 case 'text':
@@ -55,6 +66,9 @@ export const Form: React.FC<FormProps> = ({onUpdate, freeformSource, source, val
                             sourceType={source.source_type}
                             error={errorText}
                             onUpdate={onUpdate}
+                            renderParamSelector={
+                                showParamSelector ? renderParamSelector : undefined
+                            }
                             {...formOptions}
                         />
                     );
@@ -77,6 +91,9 @@ export const Form: React.FC<FormProps> = ({onUpdate, freeformSource, source, val
                             value={value}
                             error={errorText}
                             onUpdate={onUpdate}
+                            renderParamSelector={
+                                showParamSelector ? renderParamSelector : undefined
+                            }
                             {...formOptions}
                         />
                     );
@@ -86,7 +103,7 @@ export const Form: React.FC<FormProps> = ({onUpdate, freeformSource, source, val
                 }
             }
         });
-    }, [onUpdate, freeformSource, source, validationErrors]);
+    }, [onUpdate, renderParamSelector, freeformSource, source, validationErrors, templateEnabled]);
 
     return <div className={b('params')}>{formItems}</div>;
 };

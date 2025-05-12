@@ -217,10 +217,9 @@ class ActionPanel extends React.Component<Props, State> {
     }
 
     private getEnablePublish() {
-        const getEntryPublishGloballyDisabledFn = registry.common.functions.get(
-            'getEntryPublishGloballyDisabled',
-        );
-        if (getEntryPublishGloballyDisabledFn()) {
+        const getGloballyEntrySettings = registry.common.functions.get('getGloballyEntrySettings');
+        const globallyEntrySettings = getGloballyEntrySettings();
+        if (globallyEntrySettings?.isPublishDisabled) {
             return false;
         }
 

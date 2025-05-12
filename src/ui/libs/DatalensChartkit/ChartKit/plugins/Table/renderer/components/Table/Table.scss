@@ -113,8 +113,6 @@
 
     &__th-content {
         display: inline-block;
-        width: min-content;
-        min-width: fit-content;
 
         &_sortable {
             position: relative;
@@ -247,14 +245,17 @@
 
     &__shadow {
         position: absolute;
-        top: 0;
-        right: -1px;
-        width: 10000px;
-        box-shadow:
-            0 1px 6px 0 var(--g-color-sfx-shadow-light),
-            1px 3px 13px 0 var(--g-color-sfx-shadow-light);
-        border-right: 1px solid var(--g-color-text-hint);
+        top: 0px;
         pointer-events: none;
+        left: 100%;
+        border-left: 1px solid var(--g-color-text-hint);
+        width: 6px;
+        height: calc(100% + 1px);
+        background: linear-gradient(90deg, var(--g-color-sfx-shadow-light), transparent);
+    }
+
+    &__header &__shadow {
+        height: 100%;
     }
 
     &__no-data {
@@ -289,6 +290,10 @@
 
         tbody td {
             white-space: nowrap;
+        }
+
+        .dl-table__th-content {
+            width: min-content;
         }
     }
 

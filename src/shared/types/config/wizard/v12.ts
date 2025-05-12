@@ -1,4 +1,10 @@
-import type {GradientNullMode, MarkupType, WidgetSizeType} from '../../..';
+import type {
+    GradientNullMode,
+    MapCenterModes,
+    MarkupType,
+    WidgetSizeType,
+    ZoomModes,
+} from '../../..';
 import type {ColorMode} from '../../../constants';
 import type {DatasetFieldCalcMode, ParameterDefaultValue} from '../../dataset';
 import type {
@@ -72,6 +78,10 @@ export interface V12CommonSharedExtraSettings {
     labelsPosition?: LabelsPositions;
     pinnedColumns?: number;
     size?: WidgetSizeType;
+    zoomMode?: ZoomModes;
+    zoomValue?: number | null;
+    mapCenterMode?: MapCenterModes;
+    mapCenterValue?: string | null;
 }
 
 export type V12NavigatorSettings = {

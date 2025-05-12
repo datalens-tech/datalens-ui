@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {LogoMarkdown} from '@gravity-ui/icons';
+import type {TextAreaProps} from '@gravity-ui/uikit';
 import {TextArea} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
@@ -14,10 +15,11 @@ export type TextareaEditorProps = {
     onTextUpdate: (val: string) => void;
     text?: string;
     id?: string;
+    controlRef?: TextAreaProps['controlRef'];
 };
 const b = block('text-editor');
 export const TextEditor = (props: TextareaEditorProps) => {
-    const {autofocus, placeholder, onTextUpdate, text, id, className} = props;
+    const {autofocus, placeholder, onTextUpdate, text, id, className, controlRef} = props;
 
     const handleUpdate = React.useCallback(
         (val) => {
@@ -39,6 +41,7 @@ export const TextEditor = (props: TextareaEditorProps) => {
                 controlProps={{
                     className: b('textarea-control'),
                 }}
+                controlRef={controlRef}
             />
             <div className={b('info')}>
                 <span className={b('info-text')}>

@@ -1,15 +1,15 @@
 import {expect} from '@playwright/test';
 
-import datalensTest from '../../../../utils/playwright/globalTestDefinition';
-import {openTestPage, slct} from '../../../../utils';
 import {
     ChartKitQa,
     Operations,
     WizardPageQa,
     WizardVisualizationId,
 } from '../../../../../src/shared';
-import WizardPage from '../../../../page-objects/wizard/WizardPage';
 import {PlaceholderName} from '../../../../page-objects/wizard/SectionVisualization';
+import WizardPage from '../../../../page-objects/wizard/WizardPage';
+import {openTestPage, slct} from '../../../../utils';
+import datalensTest from '../../../../utils/playwright/globalTestDefinition';
 import {SMALL_SCREENSHOT_VIEWPORT_SIZE} from '../constants';
 
 datalensTest.describe('Wizard', () => {
@@ -49,7 +49,6 @@ datalensTest.describe('Wizard', () => {
             );
 
             await expect(previewLoader).not.toBeVisible();
-
             await expect(preview).toHaveScreenshot();
         });
     });

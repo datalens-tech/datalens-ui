@@ -3,7 +3,7 @@ import React from 'react';
 import {Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import ChartKit from 'libs/DatalensChartkit';
-import {useDispatch, useSelector} from 'react-redux';
+import {batch, useDispatch, useSelector} from 'react-redux';
 import {DashboardDialogSettingsQa} from 'shared/constants/qa/dash';
 import {DEFAULT_DASH_MARGINS} from 'ui/components/DashKit/constants';
 import {registry} from 'ui/registry';
@@ -17,12 +17,7 @@ import {DashLoadPriority, Feature} from '../../../../../../shared';
 import EntryDialogues from '../../../../../components/EntryDialogues/EntryDialogues';
 import {DIALOG_TYPE} from '../../../../../constants/dialogs';
 import {validateParamTitle} from '../../../components/ParamsSettings/helpers';
-import {
-    setDashAccessDescription,
-    setDashSupportDescription,
-    setSettings,
-    toggleTableOfContent,
-} from '../../../store/actions/dashTyped';
+import {toggleTableOfContent, updateAllDashSettings} from '../../../store/actions/dashTyped';
 import {closeDialog} from '../../../store/actions/dialogs/actions';
 import {
     selectDashAccessDescription,
@@ -151,10 +146,16 @@ const Settings = () => {
                 delete newSettings.margins;
             }
 
-            dispatch(setSettings(newSettings));
-            dispatch(setDashAccessDescription(accessDescription));
-            dispatch(setDashSupportDescription(supportDescription));
-            dispatch(toggleTableOfContent(Boolean(expandTOC)));
+            batch(() => {
+                dispatch(toggleTableOfContent(Boolean(expandTOC)));
+                dispatch(
+                    updateAllDashSettings({
+                        settings: newSettings,
+                        accessDescription,
+                        supportDescription,
+                    }),
+                );
+            });
 
             ChartKit?.setDataProviderSettings?.({
                 loadPriority,

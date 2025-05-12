@@ -26,7 +26,7 @@ datalensTest.describe('Datasets - Adding a new parameter', () => {
 
         await datasetPage.dialogParameter.selectType(PARAMETER_TYPE);
 
-        await datasetPage.dialogParameter.setDefaultValue(PARAMETER_VALUE);
+        await datasetPage.dialogParameter.setDefaultValueBoolean(PARAMETER_VALUE);
 
         await datasetPage.dialogParameter.apply();
 
