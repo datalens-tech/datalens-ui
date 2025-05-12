@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {Link} from '@gravity-ui/uikit';
+import {getEntryNameByKey} from 'shared/modules/entry';
 
 import {getSdk} from '../../../../../../../../../../schematic-sdk';
 
@@ -35,7 +36,7 @@ const Datalens: React.FC<Props> = ({datasetId, setStatus, uiUrl}) => {
     }, [datasetId, setStatus, uiUrl]);
 
     if (data) {
-        const sourceName = data.key.split('/').pop();
+        const sourceName = getEntryNameByKey({key: data.key});
         const sourceLink =
             data.scope === 'dataset' ? `/datasets/${data.entryId}` : `/connections/${data.entryId}`;
 

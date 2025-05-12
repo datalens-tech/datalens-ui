@@ -174,7 +174,7 @@ export const entriesActions = {
             breadCrumbs: data.breadCrumbs,
             entries: data.entries.map((entry) => ({
                 ...entry,
-                name: getEntryNameByKey({key: entry.key, index: -1}),
+                name: getEntryNameByKey({key: entry.key}),
             })),
         }),
         paramsSerializer: defaultParamsSerializer,
@@ -187,7 +187,7 @@ export const entriesActions = {
             hasNextPage: Boolean(data.nextPageToken),
             entries: data.entries.map((entry) => ({
                 ...entry,
-                name: getEntryNameByKey({key: entry.key, index: -1}),
+                name: getEntryNameByKey({key: entry.key}),
             })),
         }),
         paramsSerializer: defaultParamsSerializer,
@@ -203,7 +203,7 @@ export const entriesActions = {
             let uniqRelations = uniqBy(
                 data.map((relationEntry) => ({
                     ...relationEntry,
-                    name: getEntryNameByKey({key: relationEntry.key, index: -1}),
+                    name: getEntryNameByKey({key: relationEntry.key}),
                 })),
                 (relationEntry) => relationEntry.entryId,
             );

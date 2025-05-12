@@ -12,6 +12,7 @@ import {DEFAULT_GROUP, extractIdsFromConfig} from '@gravity-ui/dashkit/helpers';
 import assignWith from 'lodash/assignWith';
 import memoize from 'lodash/memoize';
 import throttle from 'lodash/throttle';
+import {DashTabItemControlSourceType, DashTabItemType, resolveOperation} from 'shared';
 import type {
     DashData,
     DashSettings,
@@ -23,7 +24,6 @@ import type {
     StringParams,
     WorkbookId,
 } from 'shared';
-import {DashTabItemType, resolveOperation} from 'shared';
 import {COPIED_WIDGET_STORAGE_KEY, DL, Utils} from 'ui';
 import {FIXED_GROUP_CONTAINER_ID, FIXED_GROUP_HEADER_ID} from 'ui/components/DashKit/constants';
 import {registry} from 'ui/registry';
@@ -66,10 +66,20 @@ export const getPastedWidgetData: () => CopiedConfigData | null = () => {
 export const isItemPasteAllowed = (itemData: CopiedConfigData, workbookId?: string | null) => {
     if (
         CROSS_PASTE_ITEMS_ALLOWED.includes(itemData.type as DashTabItemType) ||
-        (itemData.type === DashTabItemType.Control && itemData.data.sourceType === 'manual')
+        (itemData.type === DashTabItemType.Control &&
+            itemData.data.sourceType === DashTabItemControlSourceType.Manual)
     ) {
         return true;
     }
+
+    if (itemData.type === DashTabItemType.GroupControl) {
+        return (
+            itemData.data.group?.every(
+                (groupItem) => groupItem.sourceType === DashTabItemControlSourceType.Manual,
+            ) || false
+        );
+    }
+
     const itemWorkbookId = itemData.copyContext?.workbookId ?? null;
     const dashWorkbookId = workbookId ?? null;
 
