@@ -2,6 +2,7 @@
   "label_export-check-connection-credentials": "При импорте в подключениях нужно будет заново заполнить приватные поля",
   "label_export-rls": "После импорта работоспособность RLS не гарантируется",
   "label_import-check-connections-credentials": "В подключениях нужно будет заново заполнить приватные поля",
+  "label_import-check-delegation": "Делегация может быть не проведена, пересохраните подключение",
   "label_import-rls": "Проверьте работоспособность RLS в датасетах",
   "label_invalid-entry-data": "Некоторые сущности могут работать неправильно из-за повреждённой конфигурации",
   "label_invalid-entry-scope": "Некоторые сущности могут работать неправильно из-за неверного значения поля \"scope\"",
@@ -9,6 +10,5 @@
   "label_invalid-version": "В импортируемом файле указана неверная версия",
   "label_missing-linked-entry": "Одна из связанных сущностей была удалена",
   "label_scope-not-available-for-installation": "Тип сущности не доступен для текущей инсталляции",
-  "label_unexpected-workflow-error": "Неизвестная ошибка во время операции",
-  "lable_import-check-delegation": "Делегация может быть не проведена, пересохраните подключение"
+  "label_unexpected-workflow-error": "Неизвестная ошибка во время операции"
 }

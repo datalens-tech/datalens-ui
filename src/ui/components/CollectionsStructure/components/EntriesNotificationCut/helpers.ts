@@ -10,7 +10,7 @@ const NOTIFICATIONS_BY_CODE: Record<string, string> = {
     'NOTIF.WB_IMPORT.DS.RLS': i18n('label_import-rls'),
     'NOTIF.WB_EXPORT.CONN.CHECK_CREDENTIALS': i18n('label_export-check-connection-credentials'),
     'NOTIF.WB_IMPORT.CONN.CHECK_CREDENTIALS': i18n('label_import-check-connections-credentials'),
-    'NOTIF.WB_IMPORT.CONN.CHECK_DELEGATION': i18n('lable_import-check-delegation'),
+    'NOTIF.WB_IMPORT.CONN.CHECK_DELEGATION': i18n('label_import-check-delegation'),
     'ERR.UI_API.TRANSFER_INVALID_VERSION': i18n('label_invalid-version'),
     'ERR.UI_API.TRANSFER_MISSING_LINKED_ENTRY': i18n('label_missing-linked-entry'),
     'ERR.UI_API.TRANSFER_INVALID_ENTRY_DATA': i18n('label_invalid-entry-data'),

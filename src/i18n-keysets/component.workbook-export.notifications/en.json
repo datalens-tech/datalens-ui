@@ -2,6 +2,7 @@
   "label_export-check-connection-credentials": "When importing, private fields in connections will need to be filled in again",
   "label_export-rls": "After import, RLS functionality is not guaranteed",
   "label_import-check-connections-credentials": "Private fields in connections will need to be filled in again",
+  "label_import-check-delegation": "Delegation may not be completed, please save the connection again",
   "label_import-rls": "Check RLS functionality in datasets",
   "label_invalid-entry-data": "Some entities may not work correctly due to corrupted configuration",
   "label_invalid-entry-scope": "Some entities may not work correctly due to an invalid \"scope\" field value",
@@ -9,6 +10,5 @@
   "label_invalid-version": "The imported file has an invalid version",
   "label_missing-linked-entry": "One of the related entities has been deleted",
   "label_scope-not-available-for-installation": "The entity type is not available for the current installation",
-  "label_unexpected-workflow-error": "Unexpected error during operation",
-  "lable_import-check-delegation": "Delegation may not be completed, please save the connection again"
+  "label_unexpected-workflow-error": "Unexpected error during operation"
 }
