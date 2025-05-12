@@ -1,0 +1,93 @@
+@use '../../variables';
+
+@import '~@gravity-ui/uikit/styles/mixins';
+@import '../../../../../styles/variables.scss';
+
+$block: '.#{variables.$ns}-card';
+
+#{$block} {
+    &__iframe {
+        width: 100%;
+        border: none;
+        height: calc(100% - #{$actionPanelHeight} - 5px);
+    }
+    &__container {
+        height: calc(100% - #{$actionPanelHeight});
+        max-width: 1032px;
+        padding-left: 48px;
+        padding-right: 48px;
+        display: flex;
+        flex-direction: column;
+
+        &_media_s,
+        &_media_m {
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+    }
+
+    &__actions-left-flex {
+        align-items: center;
+        column-gap: 8px;
+        max-width: calc(100% - 2 * #{$actionPanelHorizontalPadding});
+    }
+
+    &__actions-right-flex {
+        column-gap: 8px;
+        margin-left: auto;
+
+        &_media_s {
+            flex-direction: row-reverse;
+        }
+    }
+
+    &__image-card {
+        line-height: 0;
+        padding: 6px;
+
+        &_preview {
+            padding: 4px;
+        }
+    }
+
+    &__image-card-content {
+        width: 100%;
+        height: 418px;
+        object-fit: cover;
+        border-radius: 6px;
+
+        &_preview {
+            height: 74px;
+        }
+
+        &_media_s {
+            width: 144px;
+        }
+    }
+
+    &__image-card-preview-flex {
+        flex-direction: column;
+        height: 432px;
+        overflow: auto;
+        row-gap: 16px;
+
+        &_media_s {
+            flex-direction: row;
+            height: 96px;
+            column-gap: 16px;
+        }
+    }
+
+    &__icon-with-text-icon {
+        margin: 6px;
+    }
+
+    &__card-info-flex {
+        column-gap: 12px;
+
+        &_media_s {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+}
