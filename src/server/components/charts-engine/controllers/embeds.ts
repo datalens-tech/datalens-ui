@@ -202,6 +202,9 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                     });
                 }
 
+                // token params is written in defaultGlobalParams and usually applied by dashkit
+                // we use them again after filtering the user parameters from the chart/dashboard
+                // in case there are forbidden parameters among them.
                 req.body.params = {
                     ...embeddingInfo.token.params,
                     ...filteredParams,
