@@ -108,8 +108,6 @@
 
     &__th-content {
         display: inline-block;
-        width: min-content;
-        min-width: fit-content;
 
         &_sortable {
             position: relative;
@@ -283,6 +281,10 @@
 
         table {
             min-width: auto;
+        }
+
+        .dl-table__th-content {
+            width: min-content;
         }
     }
 

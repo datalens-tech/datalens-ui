@@ -10,7 +10,6 @@ import {connect} from 'react-redux';
 import type {
     CommonSharedExtraSettings,
     Dataset,
-    GraphShared,
     MapCenterModes,
     NavigatorPeriod,
     NavigatorSettings,
@@ -936,8 +935,13 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
     }
 
     renderFeed() {
-        const visualization = this.props.visualization as GraphShared['visualization'];
-        const placeholders = visualization.placeholders;
+        const visualization = this.props.visualization;
+        const placeholders = [
+            ...('layers' in visualization
+                ? visualization.layers?.map((l) => l.placeholders).flat() ?? []
+                : []),
+            ...visualization.placeholders,
+        ];
 
         const isInvertedXYAxis =
             visualization.id === WizardVisualizationId.Bar ||
@@ -951,7 +955,10 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
             (p) => p.id === placeholderIdWithDimensionField,
         );
 
-        if (!placeholderWithDimensionField || visualization.allowComments === false) {
+        if (
+            !placeholderWithDimensionField ||
+            ('allowComments' in visualization && visualization.allowComments === false)
+        ) {
             return null;
         }
 

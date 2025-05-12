@@ -7,6 +7,10 @@ import block from 'bem-cn-lite';
 import {isMarkupItem} from '../../../../../../shared';
 import {getRenderMarkupToStringFn} from '../../../../../utils/markup';
 import {generateHtml} from '../../../modules/html-generator';
+import {
+    ATTR_DATA_TOOLTIP_ANCHOR_ID,
+    ATTR_DATA_TOOLTIP_CONTENT,
+} from '../../../modules/html-generator/constants';
 import {getParseHtmlFn} from '../../../modules/html-generator/utils';
 
 import './ChartKitTooltip.scss';
@@ -95,9 +99,14 @@ const ChartKitTooltipComponent = React.forwardRef<ChartKitTooltipRef | undefined
                         return;
                     }
 
-                    let node = e.target as HTMLElement | null;
+                    let node = (e.target as HTMLElement)?.closest(
+                        `[${ATTR_DATA_TOOLTIP_CONTENT}],[${ATTR_DATA_TOOLTIP_ANCHOR_ID}]`,
+                    ) as HTMLElement;
 
                     if (!node) {
+                        if (anchor !== null) {
+                            setOpenAsync(false, anchor.hideDelay);
+                        }
                         return;
                     }
 
