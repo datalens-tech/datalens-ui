@@ -134,7 +134,7 @@ $hintOffset: 3px;
     }
 
     &:hover &__controls-corner-wrapper {
-        background-color: var(--g-color-base-background);
+        background-color: transparent;
 
         & .chartkit-insights__button {
             opacity: 1;
