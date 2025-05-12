@@ -39,7 +39,6 @@ export type ValueColumnType = {
     width?: ColumnWidth;
     getValueProps: (item: DatasetField) => ValueColumnProps;
 };
-
 export type TextColumnType = {
     columnType: DatasetFieldListColumnType.Text;
     width?: ColumnWidth;
@@ -48,6 +47,10 @@ export type TextColumnType = {
 export type CustomNodeColumnType = {
     columnType: DatasetFieldListColumnType.Custom;
     getCustomNodeProps: (item: DatasetField) => {node?: React.ReactNode; width?: number | string};
+};
+export type ValidationColumnType = {
+    columnType: DatasetFieldListColumnType.Validation;
+    getValidationProps: (item: DatasetField) => {node?: React.ReactNode; templateEnabled?: boolean};
 };
 
 export type ButtonControlArgs = {
@@ -76,4 +79,5 @@ export type FieldListColumn =
     | FieldTypeColumnType
     | ValueColumnType
     | TextColumnType
-    | CustomNodeColumnType;
+    | CustomNodeColumnType
+    | ValidationColumnType;

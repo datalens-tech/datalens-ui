@@ -20,7 +20,7 @@ const worker: WizardWorker = {
     buildSources: async (args: BuildSourceArgs) => {
         const {shared, params, actionParams, widgetConfig, userLang, palettes} = args;
         const context = getChartApiContext({
-            name: 'Urls',
+            name: 'Sources',
             shared,
             params,
             actionParams,
@@ -116,7 +116,7 @@ const worker: WizardWorker = {
         const {shared, params, actionParams, widgetConfig, userLang, data, palettes, features} =
             args;
         const context = getChartApiContext({
-            name: 'JavaScript',
+            name: 'Prepare',
             shared,
             params,
             actionParams,

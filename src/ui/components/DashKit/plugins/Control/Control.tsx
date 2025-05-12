@@ -18,13 +18,14 @@ import type {
     StringParams,
     WorkbookId,
 } from 'shared';
-import {ControlType, DATASET_FIELD_TYPES, DashTabItemControlSourceType} from 'shared';
+import {ControlType, DATASET_FIELD_TYPES, DashTabItemControlSourceType, Feature} from 'shared';
 import {ChartWrapper} from 'ui/components/Widgets/Chart/ChartWidgetWithProvider';
 import {DL} from 'ui/constants/common';
 import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import type {ChartKitWrapperOnLoadProps} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
 import type {ChartsChartKit} from 'ui/libs/DatalensChartkit/types/charts';
 import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {chartsDataProvider} from '../../../../libs/DatalensChartkit';
 import {
@@ -634,9 +635,22 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
         const {sourceType} = data;
         const {id} = this.props;
+        const showFloatControls = isEnabledFeature(Feature.DashFloatControls);
 
         switch (this.state.status) {
             case LOAD_STATUS.PENDING:
+                if (showFloatControls) {
+                    if (!this.state.loadedData) {
+                        return (
+                            <div className={b()}>
+                                <Loader size="s" />
+                            </div>
+                        );
+                    }
+                    return;
+                }
+
+                // save previous logic without flag
                 if (
                     !this.state.silentLoading ||
                     !this.state.loadedData ||

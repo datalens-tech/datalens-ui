@@ -2,12 +2,14 @@ import React from 'react';
 
 import type {PopoverInstanceProps} from '@gravity-ui/uikit';
 import {Button, Loader, Popover} from '@gravity-ui/uikit';
+import block from 'bem-cn-lite';
 import logger from 'libs/logger';
 import {isEmpty} from 'lodash';
 import moment from 'moment';
 import {useDispatch} from 'react-redux';
-import type {ChartsInsightsItem} from 'shared';
+import {type ChartsInsightsItem, Feature} from 'shared';
 import {updateUserSettings} from 'store/actions/user';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {fetchBatchRenderedMarkdown} from 'ui/utils/sdkRequests';
 
 import {CounterName, GoalId, reachMetricaGoal} from '../../../../../../../metrica';
@@ -18,6 +20,8 @@ import {TooltipContent} from './components/TooltipContent/TooltipContent';
 import {getIconLevel} from './helpers/getIconLevel';
 
 type Props = ChartsInsightsData & {hidden?: boolean};
+
+const b = block('chartkit-insights');
 
 export const ChartsInsights = ({items = [], messagesByLocator, locators, hidden}: Props) => {
     const dispatch = useDispatch();
@@ -91,6 +95,9 @@ export const ChartsInsights = ({items = [], messagesByLocator, locators, hidden}
         return null;
     }
 
+    const showFlatControls = isEnabledFeature(Feature.DashFloatControls);
+    const buttonSize = showFlatControls ? 'm' : 's';
+
     return (
         <Popover
             ref={tooltipRef}
@@ -111,10 +118,11 @@ export const ChartsInsights = ({items = [], messagesByLocator, locators, hidden}
             <Button
                 ref={buttonRef}
                 view="flat-secondary"
-                size="s"
+                size={buttonSize}
                 width="auto"
                 onClick={handleClick}
                 onMouseEnter={handleMouseEnter}
+                className={b('button')}
             >
                 <ChartsInsightsIcon level={level} />
             </Button>

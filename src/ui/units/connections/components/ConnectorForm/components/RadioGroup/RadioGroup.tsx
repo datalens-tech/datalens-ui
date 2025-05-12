@@ -41,14 +41,16 @@ const RadioGroupOption = ({content, value}: RadioGroupItemOption) => {
             key={value}
             content={
                 <React.Fragment>
-                    <div>
-                        {text}
-                        {textEndIconData && (
-                            <Icon
-                                className={b('icon', {end: true, view: textEndIcon?.view})}
-                                data={textEndIconData}
-                            />
-                        )}
+                    <div className={b('text-container')}>
+                        <span className={b('text')}>
+                            {text}
+                            {textEndIconData && (
+                                <Icon
+                                    className={b('icon', {end: true, view: textEndIcon?.view})}
+                                    data={textEndIconData}
+                                />
+                            )}
+                        </span>
                     </div>
                     {hintText && (
                         <div className={b('hint')}>

@@ -4,6 +4,7 @@ import {
     EntryUpdateMode,
     type TransferIdMapping,
     type TransferNotification,
+    getEntryNameByKey,
 } from '../../../shared';
 import {
     TRANSFER_UNKNOWN_ENTRY_ID,
@@ -47,7 +48,7 @@ export async function prepareDashImportData(
 
         if (isMissingMapping) {
             notifications.push(
-                warningTransferNotification(TransferErrorCode.TransferMissingMappingId),
+                warningTransferNotification(TransferErrorCode.TransferMissingLinkedEndtry),
             );
         }
 
@@ -90,11 +91,11 @@ export async function prepareDashExportData(entry: DashEntry, idMapping: Transfe
     });
 
     if (isMissingMapping) {
-        notifications.push(warningTransferNotification(TransferErrorCode.TransferMissingMappingId));
+        notifications.push(
+            warningTransferNotification(TransferErrorCode.TransferMissingLinkedEndtry),
+        );
     }
-
-    const nameParts = entry.key.split('/');
-    const name = nameParts[nameParts.length - 1];
+    const name = getEntryNameByKey({key: entry.key});
 
     const dash = {
         name,

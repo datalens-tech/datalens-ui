@@ -6,6 +6,7 @@ import type {RedisConfig} from '../server/components/cache-client';
 import type {ChartTemplates} from '../server/components/charts-engine/components/chart-generator';
 import type {SourceConfig} from '../server/components/charts-engine/types';
 import type {AppEnvironment, LandingPageSettings} from '../shared';
+import type {UserRole} from '../shared/components/auth/constants/role';
 import type {FeatureConfig} from '../shared/types';
 
 export interface SharedAppConfig {
@@ -73,6 +74,9 @@ export interface SharedAppConfig {
             };
         };
     };
+
+    // sorted roles from the role with the most rights to the role with the least
+    orderedAuthRoles?: `${UserRole}`[];
 
     // zitadel
     isZitadelEnabled: boolean;

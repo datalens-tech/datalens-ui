@@ -17,7 +17,10 @@ const reHasRegExpChar = RegExp(reRegExpChar.source);
 
 export const getTokenColor = (token: string) => {
     const preparedToken = token.split('.').join('-');
-    return computedStyle.getPropertyValue(`--dl-color-monaco-${preparedToken}`).substring(1);
+    return (
+        computedStyle.getPropertyValue(`--dl-color-monaco-${preparedToken}`).substring(1) ||
+        undefined
+    );
 };
 
 export const isLanguageAlreadyRegister = (
