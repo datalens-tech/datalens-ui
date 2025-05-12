@@ -61,56 +61,54 @@ export function EntrySuggest({
         [selectedItem],
     );
 
-    const fetchEntries = React.useMemo(
-        () =>
-            debounce(
-                async ({
-                    search,
-                    page = 0,
-                    scope,
-                }: {
-                    search: string;
-                    page?: number;
-                    scope: EntryOptionScope;
-                }) => {
-                    setLoading(true);
-                    if (page === 0) {
-                        setItems([]);
-                    }
-                    try {
-                        const {entries, hasNextPage} = await getSdk().sdk.us.getEntries(
-                            {
-                                scope,
-                                orderBy: {field: 'createdAt', direction: 'desc'},
-                                createdBy: showOnlyOwnedEntries
-                                    ? [DL.USER_LOGIN, makeUserId(DL.USER_ID)]
-                                    : undefined,
-                                pageSize: 20,
-                                page,
-                                filters: {
-                                    name: search,
-                                },
-                                includePermissionsInfo: true,
-                                excludeLocked: true,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    const fetchEntries = React.useCallback(
+        debounce(
+            async ({
+                search,
+                page = 0,
+                scope,
+            }: {
+                search: string;
+                page?: number;
+                scope: EntryOptionScope;
+            }) => {
+                setLoading(true);
+                if (page === 0) {
+                    setItems([]);
+                }
+                try {
+                    const {entries, hasNextPage} = await getSdk().sdk.us.getEntries(
+                        {
+                            scope,
+                            orderBy: {field: 'createdAt', direction: 'desc'},
+                            createdBy: showOnlyOwnedEntries
+                                ? [DL.USER_LOGIN, makeUserId(DL.USER_ID)]
+                                : undefined,
+                            pageSize: 20,
+                            page,
+                            filters: {
+                                name: search,
                             },
-                            {concurrentId: 'getEntries'},
-                        );
+                            includePermissionsInfo: true,
+                            excludeLocked: true,
+                        },
+                        {concurrentId: 'getEntries'},
+                    );
 
-                        setPaginationParams({
-                            page: page + 1,
-                            hasNextPage,
-                        });
+                    setPaginationParams({
+                        page: page + 1,
+                        hasNextPage,
+                    });
 
-                        setItems((prevItems) =>
-                            page === 0 ? entries : [...prevItems, ...entries],
-                        );
-                    } catch (_e) {
-                    } finally {
-                        setLoading(false);
-                    }
-                },
-                300,
-            ),
+                    setItems((prevItems) => (page === 0 ? entries : [...prevItems, ...entries]));
+                } catch (_e) {
+                } finally {
+                    setLoading(false);
+                }
+            },
+            300,
+        ),
         [showOnlyOwnedEntries],
     );
 
