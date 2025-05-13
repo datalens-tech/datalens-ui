@@ -13,24 +13,44 @@ export const MOCKED_GALLERY_ITEMS: GalleryItem[] = [
     // Education
     {
         id: 'education-1',
-        title: 'Student Performance Dashboard',
-        description: 'Track student grades and attendance',
+        title: {
+            en: 'Student Performance Dashboard',
+            ru: 'Панель успеваемости студентов',
+        },
+        description: {
+            en: 'Track student grades and attendance',
+            ru: 'Отслеживание оценок и посещаемости студентов',
+        },
+        shortDescription: {
+            en: 'Comprehensive student analytics',
+            ru: 'Комплексная аналитика студентов',
+        },
         createdBy: 'Anna Smith',
         createdAt: Date.now(),
         labels: ['education', 'editor'],
         images: {
             light: [
                 'https://storage.yandexcloud.net/gravity-ui-assets/datalens.yandex_9fms9uae7ip02__embedded%3D1.png',
+                'https://storage.yandexcloud.net/gravity-ui-assets/datalens.yandex_9fms9uae7ip02__embedded%3D1_3.png',
+                'https://storage.yandexcloud.net/gravity-ui-assets/datalens.yandex_9fms9uae7ip02__embedded%3D1_4.png',
+                'https://storage.yandexcloud.net/gravity-ui-assets/datalens.yandex_9fms9uae7ip02__embedded%3D1_5.png',
             ],
             dark: [
                 'https://storage.yandexcloud.net/gravity-ui-assets/datalens.yandex_9fms9uae7ip02__embedded%3D1.png',
             ],
         },
+        publicUrl: 'https://datalens.yandex/9fms9uae7ip02',
     },
     {
         id: 'education-2',
-        title: 'Course Analytics',
-        description: 'Course completion and engagement metrics',
+        title: {
+            en: 'Course Analytics',
+            ru: 'Аналитика курсов',
+        },
+        description: {
+            en: 'Course completion and engagement metrics',
+            ru: 'Метрики завершения и вовлеченности в курсах',
+        },
         createdBy: 'Mike Johnson',
         createdAt: Date.now(),
         labels: ['education'],
@@ -46,8 +66,18 @@ export const MOCKED_GALLERY_ITEMS: GalleryItem[] = [
     // Finance
     {
         id: 'finance-1',
-        title: 'Investment Portfolio',
-        description: 'Asset allocation and returns',
+        title: {
+            en: 'Investment Portfolio',
+            ru: 'Инвестиционный портфель',
+        },
+        description: {
+            en: 'Asset allocation and returns',
+            ru: 'Распределение активов и доходность',
+        },
+        shortDescription: {
+            en: 'Track your investments',
+            ru: 'Отслеживайте свои инвестиции',
+        },
         createdBy: 'John Doe',
         createdAt: Date.now(),
         labels: ['finance'],
@@ -59,12 +89,19 @@ export const MOCKED_GALLERY_ITEMS: GalleryItem[] = [
                 'https://storage.yandexcloud.net/gravity-ui-assets/datalens.yandex_9fms9uae7ip02__embedded%3D1.png',
             ],
         },
+        publicUrl: 'https://datalens.yandex.ru/finance-1',
     },
     // HR
     {
         id: 'hr-1',
-        title: 'Employee Satisfaction',
-        description: 'Survey results and trends',
+        title: {
+            en: 'Employee Satisfaction',
+            ru: 'Удовлетворенность сотрудников',
+        },
+        description: {
+            en: 'Survey results and trends',
+            ru: 'Результаты опросов и тренды',
+        },
         createdBy: 'Emily Brown',
         createdAt: Date.now(),
         labels: ['hr'],
@@ -76,11 +113,18 @@ export const MOCKED_GALLERY_ITEMS: GalleryItem[] = [
                 'https://storage.yandexcloud.net/gravity-ui-assets/datalens.yandex_9fms9uae7ip02__embedded%3D1.png',
             ],
         },
+        publicUrl: 'https://datalens.yandex.ru/hr-1',
     },
     {
         id: 'hr-2',
-        title: 'Recruitment Metrics',
-        description: 'Hiring funnel analysis',
+        title: {
+            en: 'Recruitment Metrics',
+            ru: 'Метрики найма',
+        },
+        description: {
+            en: 'Hiring funnel analysis',
+            ru: 'Анализ воронки найма',
+        },
         createdBy: 'David Lee',
         createdAt: Date.now(),
         labels: ['hr'],
@@ -96,8 +140,14 @@ export const MOCKED_GALLERY_ITEMS: GalleryItem[] = [
     // IT
     {
         id: 'it-1',
-        title: 'System Performance',
-        description: 'Server metrics dashboard',
+        title: {
+            en: 'System Performance',
+            ru: 'Производительность системы',
+        },
+        description: {
+            en: 'Server metrics dashboard',
+            ru: 'Панель метрик серверов',
+        },
         createdBy: 'Alex Chen',
         createdAt: Date.now(),
         labels: ['it'],
@@ -109,11 +159,22 @@ export const MOCKED_GALLERY_ITEMS: GalleryItem[] = [
                 'https://storage.yandexcloud.net/gravity-ui-assets/datalens.yandex_9fms9uae7ip02__embedded%3D1.png',
             ],
         },
+        publicUrl: 'https://datalens.yandex.ru/it-1',
     },
     {
         id: 'it-2',
-        title: 'Security Overview',
-        description: 'Security incidents tracking',
+        title: {
+            en: 'Security Overview',
+            ru: 'Обзор безопасности',
+        },
+        description: {
+            en: 'Security incidents tracking',
+            ru: 'Отслеживание инцидентов безопасности',
+        },
+        shortDescription: {
+            en: 'Monitor security threats',
+            ru: 'Мониторинг угроз безопасности',
+        },
         createdBy: 'Lisa Wang',
         createdAt: Date.now(),
         labels: ['it', 'editor'],
@@ -128,8 +189,14 @@ export const MOCKED_GALLERY_ITEMS: GalleryItem[] = [
     },
     {
         id: 'it-3',
-        title: 'Network Traffic Analysis',
-        description: 'Real-time network monitoring',
+        title: {
+            en: 'Network Traffic Analysis',
+            ru: 'Анализ сетевого трафика',
+        },
+        description: {
+            en: 'Real-time network monitoring',
+            ru: 'Мониторинг сети в реальном времени',
+        },
         createdBy: 'Michael Zhang',
         createdAt: Date.now(),
         labels: ['it'],
@@ -145,8 +212,14 @@ export const MOCKED_GALLERY_ITEMS: GalleryItem[] = [
     // Retail
     {
         id: 'retail-1',
-        title: 'Sales Performance',
-        description: 'Daily sales tracking',
+        title: {
+            en: 'Sales Performance',
+            ru: 'Продажи',
+        },
+        description: {
+            en: 'Daily sales tracking',
+            ru: 'Ежедневный учет продаж',
+        },
         createdBy: 'Robert Taylor',
         createdAt: Date.now(),
         labels: ['retail'],
@@ -158,11 +231,18 @@ export const MOCKED_GALLERY_ITEMS: GalleryItem[] = [
                 'https://storage.yandexcloud.net/gravity-ui-assets/datalens.yandex_9fms9uae7ip02__embedded%3D1.png',
             ],
         },
+        publicUrl: 'https://datalens.yandex.ru/retail-1',
     },
     {
         id: 'retail-2',
-        title: 'Inventory Management',
-        description: 'Stock levels and turnover',
+        title: {
+            en: 'Inventory Management',
+            ru: 'Управление запасами',
+        },
+        description: {
+            en: 'Stock levels and turnover',
+            ru: 'Уровни запасов и оборот',
+        },
         createdBy: 'Karen White',
         createdAt: Date.now(),
         labels: ['retail'],
@@ -178,8 +258,18 @@ export const MOCKED_GALLERY_ITEMS: GalleryItem[] = [
     // Sports
     {
         id: 'sports-1',
-        title: 'Team Statistics',
-        description: 'Player performance metrics',
+        title: {
+            en: 'Team Statistics',
+            ru: 'Статистика команды',
+        },
+        description: {
+            en: 'Player performance metrics',
+            ru: 'Метрики производительности игроков',
+        },
+        shortDescription: {
+            en: 'Track team performance',
+            ru: 'Отслеживайте производительность команды',
+        },
         createdBy: 'James Miller',
         createdAt: Date.now(),
         labels: ['sports', 'editor'],
@@ -191,5 +281,6 @@ export const MOCKED_GALLERY_ITEMS: GalleryItem[] = [
                 'https://storage.yandexcloud.net/gravity-ui-assets/datalens.yandex_9fms9uae7ip02__embedded%3D1.png',
             ],
         },
+        publicUrl: 'https://datalens.yandex.ru/sports-1',
     },
 ];

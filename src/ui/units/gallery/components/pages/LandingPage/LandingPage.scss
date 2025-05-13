@@ -72,19 +72,6 @@ $block: '.#{variables.$ns}-landing';
         }
     }
 
-    &__section-header {
-        @include text-header-1();
-
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        line-height: 36px;
-
-        &_media_s {
-            @include text-header-2();
-        }
-    }
-
     &__promo-block {
         margin-bottom: 48px;
 
