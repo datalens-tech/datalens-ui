@@ -275,12 +275,19 @@
         overflow: auto;
         font-size: var(--g-text-body-1-font-size);
         user-select: none;
-        white-space: nowrap;
 
         @include tableSize();
 
         table {
             min-width: auto;
+        }
+
+        tbody td {
+            white-space: nowrap;
+        }
+
+        &_preWrap tbody td {
+            white-space: pre-wrap;
         }
 
         .dl-table__th-content {
