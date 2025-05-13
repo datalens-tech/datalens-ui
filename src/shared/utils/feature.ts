@@ -3,7 +3,9 @@ import merge from 'lodash/merge';
 
 import type {FeatureConfig} from '../types';
 
-// @depecated You should use ctx.get('getServerFeatures') instead
+/**
+ * @deprecated You should use ctx.get('getServerFeatures') instead
+ */
 export const getServerFeatures = (ctx: AppContext): FeatureConfig => {
     return merge({}, ctx.config.features, ctx.dynamicConfig?.features);
 };
@@ -12,7 +14,9 @@ export const getServerFeaturesWithBoundContext = (ctx: AppContext): (() => Featu
     return () => merge({}, ctx.config.features, ctx.dynamicConfig?.features);
 };
 
-// @depecated You should use ctx.get('isEnabledServerFeature') instead
+/**
+ * @deprecated You should use ctx.get('isEnabledServerFeature') instead
+ */
 export const isEnabledServerFeature = (ctx: AppContext, feature: string) => {
     return getServerFeatures(ctx)[feature];
 };
