@@ -326,6 +326,7 @@ export const URL_QUERY = {
     DEBUG: '_debug',
     OPEN_DASH_INFO: '_opened_info',
     UNRELEASED: 'unreleased',
+    ENTRY_CONFIG: '_entry_config',
 };
 
 const GRADIENT_ICONS = {
