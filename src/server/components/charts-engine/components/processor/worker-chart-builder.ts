@@ -1,10 +1,11 @@
 import type {Proxy} from 'workerpool';
 
-import type {
-    DashWidgetConfig,
-    ServerChartsConfig,
-    Shared,
-    StringParams,
+import {
+    type DashWidgetConfig,
+    type ServerChartsConfig,
+    type Shared,
+    type StringParams,
+    getServerFeatures,
 } from '../../../../../shared';
 import {registry} from '../../../../registry';
 import type {WizardWorker} from '../wizard-worker/types';
@@ -43,7 +44,7 @@ export const getWizardChartBuilder = async (
     let shared: Record<string, any>;
 
     const app = registry.getApp();
-    const features = app.nodekit.ctx.get('getServerFeatures')();
+    const features = getServerFeatures(app.nodekit.ctx);
     const {getAvailablePalettesMap} = registry.common.functions.getAll();
     const palettes = getAvailablePalettesMap();
 

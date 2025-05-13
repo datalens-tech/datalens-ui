@@ -1,4 +1,9 @@
-import type {DashWidgetConfig, ServerChartsConfig, StringParams} from '../../../../../../shared';
+import {
+    type DashWidgetConfig,
+    type ServerChartsConfig,
+    type StringParams,
+    getServerFeatures,
+} from '../../../../../../shared';
 import {registry} from '../../../../../registry';
 
 import {buildChartsConfigPrivate} from './config';
@@ -26,6 +31,6 @@ export const buildChartsConfig = (
         shared,
         params,
         widgetConfig,
-        features: app.nodekit.ctx.get('getServerFeatures')(),
+        features: getServerFeatures(app.nodekit.ctx),
     });
 };

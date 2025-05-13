@@ -1,4 +1,4 @@
-import type {ServerChartsConfig} from '../../../../../../shared';
+import {type ServerChartsConfig, getServerFeatures} from '../../../../../../shared';
 import {registry} from '../../../../../registry';
 
 import {buildHighchartsConfigPrivate} from './highcharts';
@@ -16,6 +16,6 @@ export function buildHighchartsConfig(
 
     return buildHighchartsConfigPrivate({
         shared,
-        features: app.nodekit.ctx.get('getServerFeatures')(),
+        features: getServerFeatures(app.nodekit.ctx),
     });
 }
