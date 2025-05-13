@@ -10,7 +10,7 @@ export const getServerFeatures = (ctx: AppContext): FeatureConfig => {
     return merge({}, ctx.config.features, ctx.dynamicConfig?.features);
 };
 
-export const getServerFeaturesWithBoundContext = (ctx: AppContext): (() => FeatureConfig) => {
+export const getServerFeaturesWithBoundedContext = (ctx: AppContext): (() => FeatureConfig) => {
     return () => merge({}, ctx.config.features, ctx.dynamicConfig?.features);
 };
 
@@ -21,6 +21,6 @@ export const isEnabledServerFeature = (ctx: AppContext, feature: string) => {
     return getServerFeatures(ctx)[feature];
 };
 
-export const getEnabledServerFeatureWithBoundContext = (ctx: AppContext) => {
+export const getEnabledServerFeatureWithBoundedContext = (ctx: AppContext) => {
     return (feature: string) => ctx.get('getServerFeatures')()[feature];
 };

@@ -2,8 +2,8 @@ import type {NextFunction, Request, Response} from '@gravity-ui/expresskit';
 import {type AppContextParams, REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 
 import {
-    getEnabledServerFeatureWithBoundContext,
-    getServerFeaturesWithBoundContext,
+    getEnabledServerFeatureWithBoundedContext,
+    getServerFeaturesWithBoundedContext,
 } from '../../shared';
 import {checkRequestForDeveloperModeAccess} from '../components/chart-editor-developer-mode-access-check';
 import {renderHTML} from '../components/charts-engine/components/markdown';
@@ -23,12 +23,12 @@ export function getCtxMiddleware() {
 
         req.originalContext.set(
             'isEnabledServerFeature',
-            getEnabledServerFeatureWithBoundContext(req.originalContext),
+            getEnabledServerFeatureWithBoundedContext(req.originalContext),
         );
 
         req.originalContext.set(
             'getServerFeatures',
-            getServerFeaturesWithBoundContext(req.originalContext),
+            getServerFeaturesWithBoundedContext(req.originalContext),
         );
 
         next();
