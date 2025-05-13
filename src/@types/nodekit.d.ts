@@ -135,6 +135,7 @@ export interface SharedAppContextParams {
     user?: CtxUser;
 
     isEnabledServerFeature: (feature: string) => boolean;
+    getServerFeatures: () => FeatureConfig;
 }
 
 declare module '@gravity-ui/nodekit' {

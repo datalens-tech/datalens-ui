@@ -1,5 +1,4 @@
 import type {IChartEditor, ServerChartsConfig, Shared} from '../../../../../../shared';
-import {getServerFeatures} from '../../../../../../shared';
 import {registry} from '../../../../../registry';
 
 import {buildGraphPrivate} from './js';
@@ -38,6 +37,6 @@ export const buildGraph = (...options: JSTabOptions) => {
         ChartEditor,
         data,
         palettes: getAvailablePalettesMap(),
-        features: getServerFeatures(registry.getApp().nodekit.ctx),
+        features: registry.getApp().nodekit.ctx.get('getServerFeatures')(),
     });
 };

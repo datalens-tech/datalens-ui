@@ -6,7 +6,6 @@ import type {
     Shared,
     StringParams,
 } from '../../../../../shared';
-import {getServerFeatures} from '../../../../../shared';
 import {registry} from '../../../../registry';
 import type {WizardWorker} from '../wizard-worker/types';
 import {getChartApiContext} from '../wizard-worker/utils';
@@ -44,7 +43,7 @@ export const getWizardChartBuilder = async (
     let shared: Record<string, any>;
 
     const app = registry.getApp();
-    const features = getServerFeatures(app.nodekit.ctx);
+    const features = app.nodekit.ctx.get('getServerFeatures')();
     const {getAvailablePalettesMap} = registry.common.functions.getAll();
     const palettes = getAvailablePalettesMap();
 

@@ -5,7 +5,6 @@ import type {Headers as DebugHeaders, GatewayConfig, GatewayError} from '@gravit
 import type {AppContext, NodeKit} from '@gravity-ui/nodekit';
 import {AppError} from '@gravity-ui/nodekit';
 
-import {Feature} from '../../shared';
 import {getAuthArgs, getAuthHeaders} from '../../shared/schema/gateway-utils';
 import {IPV6_AXIOS_OPTIONS} from '../constants/axios';
 
@@ -14,11 +13,6 @@ export type GatewayApiErrorResponse<T = GatewayError> = {
     debugHeaders?: DebugHeaders;
 };
 
-const GRPC_OPTIONS = {
-    'grpc.keepalive_time_ms': 10000,
-    'grpc.keepalive_timeout_ms': 1000,
-    'grpc.keepalive_permit_without_calls': 1,
-};
 export const isGatewayError = (error: any): error is GatewayApiErrorResponse => {
     if (!error || typeof error !== 'object') {
         return false;
@@ -41,10 +35,6 @@ export const getGatewayConfig = (
     config?: Partial<GatewayConfig<AppContext, Request, Response>>,
 ): GatewayConfig<AppContext, Request, Response> => {
     const axiosConfig = nodekit.config.useIPV6 ? IPV6_AXIOS_OPTIONS : {};
-
-    const isEnabledServerFeature = nodekit.ctx.get('isEnabledServerFeature');
-
-    const useGrpcOptions = Boolean(isEnabledServerFeature(Feature.UseGrpcOptions));
 
     return {
         installation: nodekit.config.appInstallation || UNKNOWN_TYPE,
@@ -80,7 +70,6 @@ export const getGatewayConfig = (
             return preparedHeaders;
         },
         caCertificatePath: null,
-        grpcOptions: useGrpcOptions ? GRPC_OPTIONS : undefined,
         axiosConfig,
         withDebugHeaders: false,
         getAuthArgs,
