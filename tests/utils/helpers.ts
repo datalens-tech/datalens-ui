@@ -74,15 +74,17 @@ export async function waitForValidSearchParams({
 }
 
 export const hoverTooltip = async (page: Page, chartId: string) => {
-    const chartkitBody = slct(`chartkit-body-entry-${chartId}`);
+    const plot = page.locator(slct(`chartkit-body-entry-${chartId}`)).locator('.chartkit-graph');
+    await plot.waitFor({state: 'visible'});
 
-    await page.hover(chartkitBody);
+    const plotBox = await plot.boundingBox();
+    if (!plotBox) {
+        throw Error('Chart boundingBox is null');
+    }
 
-    const plot = (await page.$(chartkitBody))!;
-    const plotBox = (await plot.boundingBox())!;
-
-    await page.mouse.move(plotBox.x + plotBox.width / 4, plotBox.y + plotBox.height / 4);
-    await page.hover(chartkitBody);
+    const [x, y] = [plotBox.width / 2, plotBox.height / 2];
+    await plot.hover({position: {x, y}});
+    await plot.hover({position: {x: x + 1, y: y + 1}});
 };
 
 export async function isEnabledFeature(page: Page, featureName: string) {
