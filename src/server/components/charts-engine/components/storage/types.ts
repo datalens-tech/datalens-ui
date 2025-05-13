@@ -85,5 +85,5 @@ type EmbeddingToken = {
     embedId: string;
     iat: number;
     exp: number;
-    params: Record<string, unknown>;
+    params: Record<string, string>;
 };

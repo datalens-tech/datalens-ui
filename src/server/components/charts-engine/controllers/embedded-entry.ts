@@ -90,11 +90,7 @@ export const embeddedEntryController = (req: Request, res: Response) => {
                         entry: {entryId, scope, data},
                     } = response;
 
-                    if (!data.settings.globalParams) {
-                        data.settings.globalParams = {};
-                    }
-
-                    Object.assign(data.settings.globalParams, response.token.params);
+                    data.settings.secureGlobalParams = response.token.params;
 
                     // Add only necessary fields without personal info like createdBy
                     res.status(200).send({
