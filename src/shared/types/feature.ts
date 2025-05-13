@@ -52,7 +52,6 @@ export enum Feature {
     HideMultitenant = 'HideMultitenant',
     EnableMobileHeader = 'EnableMobileHeader',
     UseYqlFolderKey = 'UseYqlFolderKey',
-    UseGrpcOptions = 'UseGrpcOptions',
     ShowChartsEngineDebugInfo = 'ShowChartsEngineDebugInfo',
     UseChartsEngineResponseConfig = 'UseChartsEngineResponseConfig',
     UseChartsEngineLogin = 'UseChartsEngineLogin',
