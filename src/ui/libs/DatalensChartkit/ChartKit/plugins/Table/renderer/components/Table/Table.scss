@@ -90,11 +90,6 @@
             cursor: pointer;
         }
 
-        &_fixed-size {
-            white-space: normal;
-            word-break: break-word;
-        }
-
         &_align_left {
             text-align: left;
             justify-content: flex-start;
@@ -221,7 +216,6 @@
         padding: var(--dl-table-cell-vertical-padding) var(--dl-table-cell-horizontal-padding);
         text-overflow: ellipsis;
         vertical-align: var(--dl-table-footer-cell-vertical-align);
-        white-space: nowrap;
         font-weight: 500;
     }
 
@@ -281,15 +275,12 @@
         overflow: auto;
         font-size: var(--g-text-body-1-font-size);
         user-select: none;
+        white-space: nowrap;
 
         @include tableSize();
 
         table {
             min-width: auto;
-        }
-
-        tbody td {
-            white-space: nowrap;
         }
 
         .dl-table__th-content {
