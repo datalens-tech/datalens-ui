@@ -167,8 +167,6 @@ function processControlWidget(
         return null;
     }
 
-    // sharedData.disabled = isControlDisabled(sharedData, embeddingInfo, controlTab);
-
     return {
         data: {shared: sharedData},
         meta: {stype: ControlType.Dash},
@@ -206,7 +204,7 @@ function processEntry(
     return null;
 }
 
-function filterParameters(
+function filterParams(
     params: Record<string, unknown> = {},
     embeddingInfo: EmbeddingInfo,
 ): {params: Record<string, unknown>; privateParams?: Set<string>} {
@@ -216,41 +214,48 @@ function filterParameters(
 
     const filteredParams: Record<string, unknown> = {};
 
-    const forbiddenParamsSet = new Set(embeddingInfo.embed.privateParams);
+    let forbiddenParamsSet: Set<string> | undefined;
 
-    if (embeddingInfo.embed.publicParamsMode) {
+    if (embeddingInfo.embed.publicParamsMode && embeddingInfo.embed.unsignedParams.length > 0) {
         const unsignedParamsSet = new Set(embeddingInfo.embed.unsignedParams);
-
         for (const [key, value] of Object.entries(params)) {
             if (unsignedParamsSet.has(key)) {
                 filteredParams[key] = value;
             }
         }
-    } else if (isDashEntry(embeddingInfo.entry)) {
-        // const entryTab = embeddingInfo.entry.data.tabs.find(
-        //     ({id}: {id: string}) => id === embeddingInfo.embed.entryId,
-        // );
+    } else if (!embeddingInfo.embed.publicParamsMode) {
+        if (embeddingInfo.embed.privateParams.length === 0) {
+            Object.assign(filteredParams, params);
+        }
 
-        embeddingInfo.entry.data.tabs.forEach((entryTab) => {
-            Object.keys(entryTab.aliases).forEach((namespace) => {
-                entryTab.aliases[namespace].forEach((alias) => {
-                    const hasPrivateParam = alias.some((item) => forbiddenParamsSet.has(item));
+        const fillingForbiddenParamsSet = new Set(embeddingInfo.embed.privateParams);
 
-                    if (hasPrivateParam) {
-                        // Add all items in alias to forbidden set
-                        for (const item of alias) {
-                            forbiddenParamsSet.add(item);
+        if (isDashEntry(embeddingInfo.entry)) {
+            embeddingInfo.entry.data.tabs.forEach((entryTab) => {
+                Object.keys(entryTab.aliases).forEach((namespace) => {
+                    entryTab.aliases[namespace].forEach((alias) => {
+                        const hasPrivateParam = alias.some((item) =>
+                            fillingForbiddenParamsSet.has(item),
+                        );
+
+                        if (hasPrivateParam) {
+                            // Add all items in alias to forbidden set
+                            for (const item of alias) {
+                                fillingForbiddenParamsSet.add(item);
+                            }
                         }
-                    }
+                    });
                 });
             });
-        });
+        }
 
         for (const [key, value] of Object.entries(params)) {
-            if (!forbiddenParamsSet.has(key)) {
+            if (!fillingForbiddenParamsSet.has(key)) {
                 filteredParams[key] = value;
             }
         }
+
+        forbiddenParamsSet = fillingForbiddenParamsSet;
     }
 
     // token params is written in globalParams and usually applied by dashkit
@@ -379,7 +384,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                     return null;
                 }
 
-                const {params, privateParams} = filterParameters(req.body.params, embeddingInfo);
+                const {params, privateParams} = filterParams(req.body.params, embeddingInfo);
                 req.body.params = params;
 
                 const entry = processEntry(controlData, embeddingInfo, res);

@@ -371,26 +371,48 @@ export const ControlItemSelect = ({
         onChange({param: fieldId, value: valueWithOperation});
     };
 
+    // appearance props to help display the control before it is loaded
+    const initialProps: ControlItemSelectProps['selectProps'] &
+        Pick<
+            SelectControlProps,
+            'className' | 'labelClassName' | 'renderOverlay' | 'hint' | 'type' | 'placeholder'
+        > = {
+        ...selectProps,
+        className: b(null, classMixin),
+        labelClassName: b(null, labelMixin),
+        type: TYPE.SELECT,
+        renderOverlay,
+        hint: getControlHint(source),
+        placeholder,
+    };
+
+    // stub for initial loading
+    if (!loadedData) {
+        return (
+            <ControlSelect
+                {...initialProps}
+                value=""
+                param=""
+                content={preselectedContent}
+                onChange={() => {}}
+            />
+        );
+    }
+
     const props: SelectControlProps = {
+        ...initialProps,
         widgetId: id,
         content: content || preselectedContent,
         param: fieldId,
         multiselect: (source as DashTabItemControlElementSelect).multiselectable,
-        type: TYPE.SELECT,
-        className: b(null, classMixin),
-        labelClassName: b(null, labelMixin),
         key: fieldId,
         value: disabled ? '' : (preparedValue as string),
         onChange: onSelectChange,
         onOpenChange,
         loadingItems,
-        placeholder,
         required: source.required,
-        hint: getControlHint(source),
         hasValidationError: Boolean(selectValidationError),
-        renderOverlay,
         disabled,
-        ...selectProps,
     };
 
     if (status === LOAD_STATUS.FAIL) {
