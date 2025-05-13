@@ -25,7 +25,6 @@ import {
     filterUpdatesByDatasetId,
     getItemLinkWithDatasets,
     isDateField,
-    isEnabledServerFeature,
     isMeasureField,
     isParameter,
     prepareFilterValues,
@@ -372,7 +371,9 @@ function formatFilters({
 
     let resultFilters = getMergedChartAndParamsFilters({chartFilters, paramsFilters});
 
-    if (isEnabledServerFeature(app.nodekit.ctx, Feature.EmptySelector)) {
+    const isEnabledServerFeature = app.nodekit.ctx.get('isEnabledServerFeature');
+
+    if (isEnabledServerFeature(Feature.EmptySelector)) {
         resultFilters = resultFilters.filter((filter) => {
             if (filter.operation === Operations.NO_SELECTED_VALUES) {
                 return false;

@@ -5,7 +5,7 @@ import type {Headers as DebugHeaders, GatewayConfig, GatewayError} from '@gravit
 import type {AppContext, NodeKit} from '@gravity-ui/nodekit';
 import {AppError} from '@gravity-ui/nodekit';
 
-import {Feature, isEnabledServerFeature} from '../../shared';
+import {Feature} from '../../shared';
 import {getAuthArgs, getAuthHeaders} from '../../shared/schema/gateway-utils';
 import {IPV6_AXIOS_OPTIONS} from '../constants/axios';
 
@@ -42,7 +42,9 @@ export const getGatewayConfig = (
 ): GatewayConfig<AppContext, Request, Response> => {
     const axiosConfig = nodekit.config.useIPV6 ? IPV6_AXIOS_OPTIONS : {};
 
-    const useGrpcOptions = Boolean(isEnabledServerFeature(nodekit.ctx, Feature.UseGrpcOptions));
+    const isEnabledServerFeature = nodekit.ctx.get('isEnabledServerFeature');
+
+    const useGrpcOptions = Boolean(isEnabledServerFeature(Feature.UseGrpcOptions));
 
     return {
         installation: nodekit.config.appInstallation || UNKNOWN_TYPE,
