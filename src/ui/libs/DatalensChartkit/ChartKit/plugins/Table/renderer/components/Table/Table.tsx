@@ -322,7 +322,7 @@ export const Table = React.memo<Props>((props: Props) => {
                 }}
                 size={size}
                 width={config?.settings?.width ?? 'auto'}
-                whiteSpace={config?.preserveWhiteSpace ? 'pre-wrap' : undefined}
+                preserveWhiteSpace={config?.preserveWhiteSpace}
             />
         </React.Fragment>
     );
