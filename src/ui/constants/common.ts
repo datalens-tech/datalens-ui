@@ -302,6 +302,8 @@ export const QL_LANGUAGE_ID = 'datalens-ql';
 
 export const SPLIT_PANE_RESIZER_CLASSNAME = 'dl-resizer';
 
+export const DATALENS_IFRAME_CLASSNAME = 'dl-iframe';
+
 export const BI_ERRORS = {
     MATERIALIZATION_NOT_FINISHED: 'ERR.DS_API.DB.MATERIALIZATION_NOT_FINISHED',
     NO_AVAILABLE_SUBPRODUCTS: 'ERR.DS_API.NO_AVAILABLE_SUBPRODUCTS',
@@ -324,6 +326,7 @@ export const URL_QUERY = {
     DEBUG: '_debug',
     OPEN_DASH_INFO: '_opened_info',
     UNRELEASED: 'unreleased',
+    ENTRY_CONFIG: '_entry_config',
 };
 
 const GRADIENT_ICONS = {

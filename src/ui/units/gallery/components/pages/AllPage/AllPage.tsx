@@ -1,0 +1,165 @@
+import React from 'react';
+
+import {Col, Container, Row, Select, Text, TextInput, useLayoutContext} from '@gravity-ui/uikit';
+import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
+import {useHistory} from 'react-router-dom';
+import {ActionPanel} from 'ui/components/ActionPanel';
+
+import {GALLERY_ITEM_CATEGORY} from '../../../constants/gallery-item';
+import type {GalleryItem} from '../../../types';
+import {GalleryCardPreview} from '../../blocks';
+import {block, getCategoryLabelTitle, getLang} from '../../utils';
+import type {CnMods} from '../../utils';
+import {EDITORS_CHOICE_ITEM_IDS, MOCKED_GALLERY_ITEMS} from '../mocks';
+
+import './AllPage.scss';
+
+const b = block('all');
+const SPECIAL_CATEGORY = {
+    ALL: 'all',
+    EDITORS_CHOICE: 'editors-choice',
+};
+const CATEGORIES_SELECT_VALUES = [
+    SPECIAL_CATEGORY.ALL,
+    SPECIAL_CATEGORY.EDITORS_CHOICE,
+    GALLERY_ITEM_CATEGORY.EDITOR,
+    GALLERY_ITEM_CATEGORY.EDUCATION,
+    GALLERY_ITEM_CATEGORY.FINANCE,
+    GALLERY_ITEM_CATEGORY.HR,
+    GALLERY_ITEM_CATEGORY.IT,
+    GALLERY_ITEM_CATEGORY.RETAIL,
+    GALLERY_ITEM_CATEGORY.SPORTS,
+];
+
+interface UseGalleryItemsProps {
+    items: GalleryItem[];
+    search: string;
+    category: string;
+    lang: string;
+}
+
+function useFilteredGalleryItems({category, items, search, lang}: UseGalleryItemsProps) {
+    const filteredItems = React.useMemo(() => {
+        return items.reduce<GalleryItem[]>((acc, item) => {
+            const matchesSearchValue =
+                !search || item.title[lang]?.toLowerCase().startsWith(search.toLowerCase());
+
+            if (!matchesSearchValue) {
+                return acc;
+            }
+
+            let matchesCategory = true;
+
+            if (item.labels && category !== SPECIAL_CATEGORY.ALL) {
+                switch (category) {
+                    case SPECIAL_CATEGORY.EDITORS_CHOICE: {
+                        matchesCategory = EDITORS_CHOICE_ITEM_IDS.includes(item.id);
+                        break;
+                    }
+                    default: {
+                        matchesCategory = item.labels.includes(category);
+                    }
+                }
+            }
+
+            if (matchesCategory) {
+                acc.push(item);
+            }
+
+            return acc;
+        }, []);
+    }, [category, items, search, lang]);
+
+    return {filteredItems};
+}
+
+function getCategorySelectOptionContent(value: string) {
+    let content = '';
+
+    switch (value) {
+        case SPECIAL_CATEGORY.ALL: {
+            content = 'All categories';
+            break;
+        }
+        case SPECIAL_CATEGORY.EDITORS_CHOICE: {
+            content = 'Editors choice';
+            break;
+        }
+        default: {
+            content = getCategoryLabelTitle(value);
+        }
+    }
+
+    return content;
+}
+
+export function AllPage() {
+    const {activeMediaQuery} = useLayoutContext();
+    const history = useHistory();
+    const baseMods: CnMods = {media: activeMediaQuery};
+    const [search, setSearch] = React.useState('');
+    const [category, setCategory] = React.useState<string>(SPECIAL_CATEGORY.ALL);
+    const lang = getLang();
+    const {filteredItems} = useFilteredGalleryItems({
+        category,
+        items: MOCKED_GALLERY_ITEMS,
+        search,
+        lang,
+    });
+
+    return (
+        <React.Fragment>
+            <ActionPanel
+                leftItems={
+                    <Breadcrumbs navigate={(href) => history.push(href)}>
+                        <Breadcrumbs.Item href="/gallery">Gallery</Breadcrumbs.Item>
+                        <Breadcrumbs.Item disabled={true}>All entries</Breadcrumbs.Item>
+                    </Breadcrumbs>
+                }
+            />
+            <Container className={b('container', baseMods)}>
+                <Row space="0" style={{marginTop: 24}}>
+                    <Col s="12">
+                        <Text variant="header-2">All entries</Text>
+                    </Col>
+                </Row>
+                <Row space="6" style={{marginTop: 0, marginBottom: 24}}>
+                    <Col m="8" s="12">
+                        <TextInput size="l" placeholder="Search by name" onUpdate={setSearch} />
+                    </Col>
+                    <Col m="4" s="12">
+                        <Select
+                            onUpdate={(value) => setCategory(value[0])}
+                            placeholder="Category"
+                            size="l"
+                            value={[category]}
+                            width="max"
+                        >
+                            {CATEGORIES_SELECT_VALUES.map((value) => {
+                                return (
+                                    <Select.Option key={value} value={value}>
+                                        {getCategorySelectOptionContent(value)}
+                                    </Select.Option>
+                                );
+                            })}
+                        </Select>
+                    </Col>
+                </Row>
+                <Row space="6" spaceRow="8">
+                    {filteredItems.map((item) => {
+                        return (
+                            <Col key={item.id} l="4" m="4" s="12">
+                                <GalleryCardPreview
+                                    title={item.title}
+                                    createdBy={item.createdBy}
+                                    labels={item.labels}
+                                    imageSrc={item.images?.light?.[0] || ''}
+                                />
+                            </Col>
+                        );
+                    })}
+                </Row>
+            </Container>
+        </React.Fragment>
+    );
+}

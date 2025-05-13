@@ -186,4 +186,5 @@ export const enum ChartSaveControlsQA {
 
 export const enum ChartSettingsDialogQA {
     IndicatorTitleMode = 'indicator-title-mode',
+    PreserveWhiteSpace = 'preserve-white-space',
 }

@@ -1,0 +1,11 @@
+@use '../../variables';
+
+@import '~@gravity-ui/uikit/styles/mixins';
+
+$block: '.#{variables.$ns}-card-labels';
+
+#{$block} {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}

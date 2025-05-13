@@ -1,27 +1,18 @@
 import React from 'react';
 
-import {ArrowRight, ChevronRight, Medal} from '@gravity-ui/icons';
-import {
-    Button,
-    Card,
-    Col,
-    Container,
-    Flex,
-    Icon,
-    Label,
-    Row,
-    useLayoutContext,
-} from '@gravity-ui/uikit';
+import {ArrowRight, Medal} from '@gravity-ui/icons';
+import {Button, Card, Col, Container, Flex, Icon, Row, useLayoutContext} from '@gravity-ui/uikit';
 import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 import type {AsyncImageProps} from 'ui/components/AsyncImage/AsyncImage';
 import type {CreateIllustrationProps} from 'ui/components/Illustration/types';
 import {createIllustration} from 'ui/components/Illustration/utils';
 
 import type {GalleryItem} from '../../../types';
+import {GalleryCardPreview, SectionHeader} from '../../blocks';
+import type {ActiveMediaQuery} from '../../types';
 import {block, groupGalleryItemsByLabels} from '../../utils';
 import type {CnMods} from '../../utils';
-
-import {MOCKED_GALLERY_ITEMS} from './mocks';
+import {EDITORS_CHOICE_ITEM_IDS, MOCKED_GALLERY_ITEMS} from '../mocks';
 
 import './LandingPage.scss';
 
@@ -36,28 +27,8 @@ const galleryIllustrationStore = {
 };
 const BaseIllustration = createIllustration([galleryIllustrationStore]);
 
-type ActiveMediaQuery = ReturnType<typeof useLayoutContext>['activeMediaQuery'];
-
 function GalleryIllustration(props: Omit<CreateIllustrationProps, 'name'>) {
     return <BaseIllustration name="galleryHeader" {...props} />;
-}
-
-interface SectionHeaderProps {
-    title: string;
-    activeMediaQuery?: ActiveMediaQuery;
-}
-
-function SectionHeader({activeMediaQuery, title}: SectionHeaderProps) {
-    const icon = activeMediaQuery === 's' ? <ChevronRight /> : <ArrowRight />;
-
-    return (
-        <Flex className={b('section-header', {media: activeMediaQuery})}>
-            {title}
-            <Button view="flat" size="l">
-                <Button.Icon>{icon}</Button.Icon>
-            </Button>
-        </Flex>
-    );
 }
 
 interface PromoBlockItemProps {
@@ -102,40 +73,6 @@ function PromoBlockItem({
     );
 }
 
-interface GalleryCardProps {
-    title: string;
-    createdBy: string;
-    labels?: string[];
-    imageSrc: string;
-}
-
-function GalleryCard({title, createdBy, labels, imageSrc}: GalleryCardProps) {
-    return (
-        <Card className={b('gallery-card')} type="action" view="outlined" onClick={() => {}}>
-            <AsyncImage
-                showSkeleton={true}
-                src={imageSrc}
-                style={{
-                    width: '100%',
-                    height: '166px',
-                    objectFit: 'cover',
-                }}
-            />
-            <div className={b('gallery-card-info')}>
-                <div className={b('gallery-card-info-title')}>{title}</div>
-                <div className={b('gallery-card-info-created-by')}>{createdBy}</div>
-                <div className={b('gallery-card-info-labels')}>
-                    {labels?.map((label, index) => (
-                        <Label size="s" theme="clear" key={`gallery-card-${label}-${index}`}>
-                            {label}
-                        </Label>
-                    ))}
-                </div>
-            </div>
-        </Card>
-    );
-}
-
 interface PromoBlockRowProps {
     title: string;
     galleryItems: GalleryItem[];
@@ -144,41 +81,36 @@ interface PromoBlockRowProps {
 
 function PromoBlockRow({title, galleryItems, activeMediaQuery}: PromoBlockRowProps) {
     const itemsByLabels = groupGalleryItemsByLabels(galleryItems);
-    const itemsByLabelsWithoutPrimary = Object.fromEntries(
-        Object.entries(itemsByLabels).filter(([key]) => key !== 'editors choice'),
-    );
-    const primaryImagesProps: AsyncImageProps[] = itemsByLabels['editors choice']?.map(
-        (itemIndex) => {
-            const item = galleryItems[itemIndex];
-            const baseStyle: React.CSSProperties = {
-                width: '76%',
-                objectFit: 'cover',
+    const primaryItems = galleryItems.filter((item) => EDITORS_CHOICE_ITEM_IDS.includes(item.id));
+    const primaryImagesProps: AsyncImageProps[] = primaryItems.map((item, index) => {
+        const baseStyle: React.CSSProperties = {
+            width: '76%',
+            objectFit: 'cover',
+        };
+        let stylesByImageIndex: React.CSSProperties = {};
+        if (index === 0) {
+            stylesByImageIndex = {
+                ...stylesByImageIndex,
+                left: '30%',
+                top: '45%',
+                opacity: 0.8,
             };
-            let stylesByImageIndex: React.CSSProperties = {};
-            if (itemIndex === 1) {
-                stylesByImageIndex = {
-                    ...stylesByImageIndex,
-                    left: '30%',
-                    top: '45%',
-                    opacity: 0.8,
-                };
-            } else if (itemIndex === 2) {
-                stylesByImageIndex = {
-                    ...stylesByImageIndex,
-                    left: '15%',
-                    top: '25%',
-                    opacity: 0.9,
-                };
-            }
-            return {
-                src: item.images?.light?.[0] || '',
-                style: {
-                    ...baseStyle,
-                    ...stylesByImageIndex,
-                },
+        } else if (index === 1) {
+            stylesByImageIndex = {
+                ...stylesByImageIndex,
+                left: '15%',
+                top: '25%',
+                opacity: 0.9,
             };
-        },
-    );
+        }
+        return {
+            src: item.images?.light?.[0] || '',
+            style: {
+                ...baseStyle,
+                ...stylesByImageIndex,
+            },
+        };
+    });
     return (
         <Row className={b('promo-block', {media: activeMediaQuery})} space="6">
             {activeMediaQuery !== 's' && (
@@ -189,13 +121,13 @@ function PromoBlockRow({title, galleryItems, activeMediaQuery}: PromoBlockRowPro
             <Col l="6" m="6" s="12">
                 <PromoBlockItem
                     title="Editor's choice"
-                    counter={itemsByLabels['editors choice']?.length}
+                    counter={EDITORS_CHOICE_ITEM_IDS.length}
                     primary={true}
                     activeMediaQuery={activeMediaQuery}
                     imageProps={primaryImagesProps}
                 />
             </Col>
-            {Object.entries(itemsByLabelsWithoutPrimary).map(([key, indexes]) => {
+            {Object.entries(itemsByLabels).map(([key, indexes]) => {
                 const imageSrc = galleryItems[indexes[0]].images?.light?.[0] || '';
                 return (
                     <Col key={`${key}`} l="3" m="3" s="12">
@@ -332,7 +264,7 @@ export function LandingPage() {
                 {MOCKED_GALLERY_ITEMS.slice(0, 3).map((item) => {
                     return (
                         <Col key={item.id} l="4" m="4" s="12">
-                            <GalleryCard
+                            <GalleryCardPreview
                                 title={item.title}
                                 createdBy={item.createdBy}
                                 labels={item.labels}
@@ -353,7 +285,7 @@ export function LandingPage() {
                 {MOCKED_GALLERY_ITEMS.slice(3, 6).map((item) => {
                     return (
                         <Col key={item.id} l="4" m="4" s="12">
-                            <GalleryCard
+                            <GalleryCardPreview
                                 title={item.title}
                                 createdBy={item.createdBy}
                                 labels={item.labels}
@@ -371,7 +303,7 @@ export function LandingPage() {
                 {MOCKED_GALLERY_ITEMS.slice(6, 9).map((item) => {
                     return (
                         <Col key={item.id} l="4" m="4" s="12">
-                            <GalleryCard
+                            <GalleryCardPreview
                                 title={item.title}
                                 createdBy={item.createdBy}
                                 labels={item.labels}
