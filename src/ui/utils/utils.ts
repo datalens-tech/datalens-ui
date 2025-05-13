@@ -251,8 +251,12 @@ export default class Utils {
     }
 
     static downloadFile(data: Blob, fileName: string) {
+        Utils.downloadFileByUrl(URL.createObjectURL(data), fileName);
+    }
+
+    static downloadFileByUrl(url: string, fileName: string) {
         const a = document.createElement('a');
-        a.href = URL.createObjectURL(data);
+        a.href = url;
         a.download = fileName;
         a.click();
         a.remove();
