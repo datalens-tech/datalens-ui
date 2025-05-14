@@ -1,12 +1,16 @@
+@import '../../../styles/mixins.scss';
+
 $dashContainerClassName: '.dash-body';
 $dashPublicContainerClassName: '.dash';
 
 $hintOffset: 3px;
 
+$widgetBgColor: var(--g-color-base-float);
+
 .dl-widget {
     #{$dashContainerClassName} &,
     #{$dashPublicContainerClassName} & {
-        background-color: var(--g-color-base-float);
+        background-color: $widgetBgColor;
     }
 
     &__overlay {
@@ -115,7 +119,7 @@ $hintOffset: 3px;
 
     /** styles for flat controls */
     &__controls-corner-wrapper {
-        background-color: var(--g-color-base-float);
+        background-color: $widgetBgColor;
         border-radius: var(--g-border-radius-m);
         margin-left: 8px;
         padding: 0px;
@@ -134,7 +138,7 @@ $hintOffset: 3px;
     }
 
     &:hover &__controls-corner-wrapper {
-        background-color: var(--g-color-base-float);
+        background-color: $widgetBgColor;
 
         & .chartkit-insights__button {
             opacity: 1;
@@ -155,7 +159,7 @@ $hintOffset: 3px;
     }
 
     .widget-header_mobile &__controls-corner-wrapper {
-        background-color: var(--g-color-base-float);
+        background-color: $widgetBgColor;
 
         & .chartkit-insights__button,
         & .dl-widget__filter-button {
@@ -169,8 +173,8 @@ $hintOffset: 3px;
 
     #{$dashPublicContainerClassName} &_pulsate &__container,
     #{$dashContainerClassName} &_pulsate &__container {
-        background-color: var(--g-color-base-float);
-        animation: pulseAnimation 1.5s ease-in-out infinite;
+        background-color: $widgetBgColor;
+        @include loading-pulsate-animation-style();
     }
 
     &__chartkit-inner-loader,
@@ -178,17 +182,5 @@ $hintOffset: 3px;
     #{$dashPublicContainerClassName} &_loading-mobile-height,
     #{$dashContainerClassName} &_loading-mobile-height {
         min-height: 400px;
-    }
-}
-
-@keyframes pulseAnimation {
-    0% {
-        opacity: 0.65;
-    }
-    50% {
-        opacity: 0.35;
-    }
-    100% {
-        opacity: 0.65;
     }
 }

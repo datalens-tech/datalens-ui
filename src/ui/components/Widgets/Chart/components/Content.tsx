@@ -45,7 +45,6 @@ export const Content = (props: ChartContentProps) => {
     const {
         hasHiddenClassMod,
         showLoader,
-        veil,
         loaderDelay,
         widgetBodyClassName,
         forwardedRef,
@@ -119,7 +118,7 @@ export const Content = (props: ChartContentProps) => {
     } as ChartInitialParams;
 
     const showContentLoader = showLoader || isExportLoading;
-    const showLoaderVeil = veil && !isExportLoading;
+    const showLoaderVeil = isExportLoading;
 
     const {onAction} = useChartActions({onChange});
 
