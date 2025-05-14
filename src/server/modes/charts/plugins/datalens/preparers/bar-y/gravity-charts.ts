@@ -9,7 +9,7 @@ import {prepareBarYData} from './prepare-bar-y-data';
 
 type BarYPoint = {x: number; y: number} & Record<string, unknown>;
 
-export function prepareD3BarY(args: PrepareFunctionArgs): ChartData {
+export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
     const {visualizationId, colors, placeholders} = args;
     const {graphs, categories} = prepareBarYData(args);
     const hasCategories = Boolean(categories?.length);
@@ -40,7 +40,7 @@ export function prepareD3BarY(args: PrepareFunctionArgs): ChartData {
             stacking: visualizationId === WizardVisualizationId.BarY100pD3 ? 'percent' : 'normal',
             name: graph.title,
             data: graph.data
-                .filter((d: unknown) => d !== null)
+                .filter((d: BarYPoint) => d !== null && d.y !== null)
                 .map((d: BarYPoint) => {
                     const {x, y, ...other} = d;
 
