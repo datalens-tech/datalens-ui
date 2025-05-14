@@ -134,7 +134,7 @@ $hintOffset: 3px;
     }
 
     &:hover &__controls-corner-wrapper {
-        background-color: var(--g-color-base-background);
+        background-color: var(--g-color-base-float);
 
         & .chartkit-insights__button {
             opacity: 1;
@@ -155,7 +155,7 @@ $hintOffset: 3px;
     }
 
     .widget-header_mobile &__controls-corner-wrapper {
-        background-color: var(--g-color-base-background);
+        background-color: var(--g-color-base-float);
 
         & .chartkit-insights__button,
         & .dl-widget__filter-button {

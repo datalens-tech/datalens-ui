@@ -52,7 +52,6 @@ export enum Feature {
     HideMultitenant = 'HideMultitenant',
     EnableMobileHeader = 'EnableMobileHeader',
     UseYqlFolderKey = 'UseYqlFolderKey',
-    UseGrpcOptions = 'UseGrpcOptions',
     ShowChartsEngineDebugInfo = 'ShowChartsEngineDebugInfo',
     UseChartsEngineResponseConfig = 'UseChartsEngineResponseConfig',
     UseChartsEngineLogin = 'UseChartsEngineLogin',
@@ -95,6 +94,8 @@ export enum Feature {
     EnableDashUndoRedo = 'EnableDashUndoRedo',
     /** Enable public gallery unit */
     EnablePublicGallery = 'EnablePublicGallery',
+    /** Setting in the table to preserve spaces and line breaks */
+    PreWrapTableSetting = 'PreWrapTableSetting',
 }
 
 export type FeatureConfig = Record<string, boolean>;
