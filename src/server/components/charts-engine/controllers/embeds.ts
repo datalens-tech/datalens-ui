@@ -71,10 +71,10 @@ function validateEmbedToken(
 
 function handleError(
     error: unknown,
-    ctx: any,
+    ctx: AppContext,
     res: Response,
-    defaultStatus = 500,
     defaultCode = 'ERR.CHARTS.CONFIG_LOADING_ERROR',
+    errorLog = 'CHARTS_ENGINE_RUNNER_ERROR',
 ): void {
     // Handle specific error cases for outdated dependencies
     if (
@@ -96,13 +96,12 @@ function handleError(
     const typedError: ResolveConfigError =
         isObject(error) && 'message' in error ? (error as Error) : new Error(error as string);
 
-    const status =
-        (typedError.response && typedError.response.status) || typedError.status || defaultStatus;
+    const status = (typedError.response && typedError.response.status) || typedError.status || 500;
 
     const errorCode =
         (typedError.response && typedError.response.status) || typedError.status || defaultCode;
 
-    ctx.logError(`CHARTS_ENGINE_ERROR: ${errorCode}`, typedError);
+    ctx.logError(errorLog, typedError);
 
     res.status(status).send({
         code: errorCode,
@@ -155,7 +154,7 @@ function processControlWidget(
         return null;
     }
 
-    const sharedData: (DashTabItemControlData & {disabled?: boolean}) | undefined =
+    const sharedData: DashTabItemControlData | undefined =
         controlWidgetConfig.type === DashTabItemType.GroupControl
             ? controlWidgetConfig.data.group.find(({id}: {id: string}) => id === controlData.id)
             : controlWidgetConfig.data;
@@ -218,44 +217,45 @@ function filterParams(
 
     if (embeddingInfo.embed.publicParamsMode && embeddingInfo.embed.unsignedParams.length > 0) {
         const unsignedParamsSet = new Set(embeddingInfo.embed.unsignedParams);
-        for (const [key, value] of Object.entries(params)) {
+
+        Object.keys(params).forEach((key) => {
             if (unsignedParamsSet.has(key)) {
-                filteredParams[key] = value;
+                filteredParams[key] = params[key];
             }
-        }
+        });
     } else if (!embeddingInfo.embed.publicParamsMode) {
         if (embeddingInfo.embed.privateParams.length === 0) {
             Object.assign(filteredParams, params);
-        }
+        } else {
+            const fillingForbiddenParamsSet = new Set(embeddingInfo.embed.privateParams);
 
-        const fillingForbiddenParamsSet = new Set(embeddingInfo.embed.privateParams);
+            if (isDashEntry(embeddingInfo.entry)) {
+                embeddingInfo.entry.data.tabs.forEach((entryTab) => {
+                    Object.keys(entryTab.aliases).forEach((namespace) => {
+                        entryTab.aliases[namespace].forEach((alias) => {
+                            const hasPrivateParam = alias.some((item) =>
+                                fillingForbiddenParamsSet.has(item),
+                            );
 
-        if (isDashEntry(embeddingInfo.entry)) {
-            embeddingInfo.entry.data.tabs.forEach((entryTab) => {
-                Object.keys(entryTab.aliases).forEach((namespace) => {
-                    entryTab.aliases[namespace].forEach((alias) => {
-                        const hasPrivateParam = alias.some((item) =>
-                            fillingForbiddenParamsSet.has(item),
-                        );
-
-                        if (hasPrivateParam) {
-                            // Add all items in alias to forbidden set
-                            for (const item of alias) {
-                                fillingForbiddenParamsSet.add(item);
+                            if (hasPrivateParam) {
+                                // Add all items in alias to forbidden set
+                                for (const item of alias) {
+                                    fillingForbiddenParamsSet.add(item);
+                                }
                             }
-                        }
+                        });
                     });
                 });
-            });
-        }
-
-        for (const [key, value] of Object.entries(params)) {
-            if (!fillingForbiddenParamsSet.has(key)) {
-                filteredParams[key] = value;
             }
-        }
 
-        forbiddenParamsSet = fillingForbiddenParamsSet;
+            for (const [key, value] of Object.entries(params)) {
+                if (!fillingForbiddenParamsSet.has(key)) {
+                    filteredParams[key] = value;
+                }
+            }
+
+            forbiddenParamsSet = fillingForbiddenParamsSet;
+        }
     }
 
     // token params is written in globalParams and usually applied by dashkit
@@ -326,6 +326,7 @@ function findAndExecuteRunner(
             },
         },
         configResolving,
+        // converting it to an array, since for some runners the fields must be serializable
         secureConfig: {privateParams: privateParams ? Array.from(privateParams) : undefined},
         forbiddenFields: ['_confStorageConfig', 'timings', 'key'],
     });
@@ -377,7 +378,13 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
 
         Promise.resolve(configPromise)
             .catch((err: unknown) => {
-                handleError(err, ctx, res, 500, 'ERR.CHARTS.CONFIG_LOADING_ERROR');
+                handleError(
+                    err,
+                    ctx,
+                    res,
+                    'ERR.CHARTS.CONFIG_LOADING_ERROR',
+                    'CHARTS_ENGINE_CONFIG_LOADING_ERROR "token"',
+                );
             })
             .then(async (embeddingInfo) => {
                 if (!embeddingInfo || !('token' in embeddingInfo)) {
@@ -408,8 +415,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                 );
             })
             .catch((error) => {
-                // Use standardized error handling for runner errors
-                handleError(error, ctx, res, 500, 'CHARTS_ENGINE_RUNNER_ERROR');
+                handleError(error, ctx, res, 'ERR.CHARTS.CHARTS_ENGINE_RUNNER_ERROR');
             });
     };
 };

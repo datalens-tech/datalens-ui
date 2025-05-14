@@ -763,16 +763,15 @@ export class Processor {
             ) {
                 uiScheme = uiTabExports as UiTabExports;
 
-                const controls = Array.isArray(uiScheme) ? uiScheme : uiScheme.controls;
+                if (secureConfig?.privateParams) {
+                    const controls = Array.isArray(uiScheme) ? uiScheme : uiScheme.controls;
 
-                controls.forEach((control) => {
-                    if (
-                        secureConfig?.privateParams &&
-                        secureConfig?.privateParams.includes(control.param)
-                    ) {
-                        control.disabled = true;
-                    }
-                });
+                    controls.forEach((control) => {
+                        if (secureConfig.privateParams?.includes(control.param)) {
+                            control.disabled = true;
+                        }
+                    });
+                }
             }
 
             logs.Controls = uiTabResults.logs;
