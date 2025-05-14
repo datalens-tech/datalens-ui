@@ -20,11 +20,14 @@ export const {
     YMapDefaultSchemeLayer,
     YMapDefaultFeaturesLayer,
     YMapMarker,
+    YMapControls,
 } = reactify.module(ymaps3);
 const {YMapHint, YMapHintContext} = reactify.module(
     await ymaps3.import('@yandex/ymaps3-hint@0.0.1'),
 );
-const {YMapDefaultMarker} = reactify.module(await import('@yandex/ymaps3-default-ui-theme'));
+const {YMapDefaultMarker, YMapZoomControl} = reactify.module(
+    await import('@yandex/ymaps3-default-ui-theme'),
+);
 
 const clustererModule = await ymaps3.import('@yandex/ymaps3-clusterer@0.0.1');
 const {clusterByGrid} = clustererModule;
@@ -88,6 +91,9 @@ export const Map = (props: Props) => {
             <YMapHint hint={getHint}>
                 <Tooltip context={YMapHintContext} />
             </YMapHint>
+            <YMapControls position="left">
+                <YMapZoomControl />
+            </YMapControls>
             {features.map((feature, index) => {
                 return (
                     <YMapFeature
