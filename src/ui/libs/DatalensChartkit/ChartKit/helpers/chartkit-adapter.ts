@@ -66,7 +66,15 @@ export const getChartkitType = (data?: LoadedWidgetData): ChartKitType | undefin
         }
 
         case 'ymap': {
-            chartkitType = 'yandexmap';
+            chartkitType = 'yandexmap_v3';
+            const isWizardOrQl = get(data, 'isNewWizard') || get(data, 'isQL');
+            if (isWizardOrQl) {
+                chartkitType = 'yandexmap';
+            } else {
+                chartkitType = isEnabledFeature('EnableYandexMapV3CEWidget')
+                    ? 'yandexmap_v3'
+                    : 'yandexmap';
+            }
 
             break;
         }
@@ -138,7 +146,8 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
 
             return data;
         }
-        case 'yandexmap': {
+        case 'yandexmap':
+        case 'yandexmap_v3': {
             const data = {...(loadedData as ChartKitProps<'yandexmap'>['data'])};
 
             return data;

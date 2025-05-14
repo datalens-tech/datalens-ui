@@ -1,8 +1,8 @@
 import type {ChartKitOnLoadData, ChartKitProps, ChartKitType} from '@gravity-ui/chartkit';
+import type {StringParams} from '@gravity-ui/chartkit/highcharts';
 import type {Language} from 'shared';
 
 import type {OnChangeData} from '../../../types';
-import {StringParams} from '@gravity-ui/chartkit/highcharts';
 
 type GeometryCircle = {
     type: 'Circle';
@@ -56,7 +56,7 @@ type ItemCollection = {
 type ItemClusterer = {
     clusterer: SingleItem[];
     options: YmapItemOptions;
-}
+};
 
 export type YandexMapWidgetDataItem = SingleItem | ItemCollection | ItemClusterer;
 
