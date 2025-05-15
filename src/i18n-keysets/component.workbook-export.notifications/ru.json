@@ -1,14 +1,14 @@
 {
-  "label_export-check-connection-credentials": "При импорте в подключениях нужно будет заново заполнить приватные поля",
-  "label_export-rls": "После импорта работоспособность RLS не гарантируется",
-  "label_import-check-connections-credentials": "В подключениях нужно будет заново заполнить приватные поля",
-  "label_import-check-delegation": "Делегация может быть не проведена, пересохраните подключение",
-  "label_import-rls": "Проверьте работоспособность RLS в датасетах",
-  "label_invalid-entry-data": "Некоторые сущности могут работать неправильно из-за повреждённой конфигурации",
-  "label_invalid-entry-scope": "Некоторые сущности могут работать неправильно из-за неверного значения поля \"scope\"",
+  "label_export-check-connection-credentials": "В подключениях значения полей с паролями и токенами не экспортируются, после импорта их потребуется заполнить",
+  "label_export-rls": "В экспортированных датасетах не гарантируется корректная работа RLS",
+  "label_import-check-connections-credentials": "Проверьте настройки подключений и при необходимости заново укажите пароли и токены",
+  "label_import-check-delegation": "Настройка подключений не завершена, измените или повторно сохраните настройки подключений",
+  "label_import-rls": "Убедитесь, что RLS в датасетах работает корректно",
+  "label_invalid-entry-data": "Конфигурация воркбука нарушена",
+  "label_invalid-entry-scope": "В воркбуке содержатся объекты с некорректным типом",
   "label_invalid-error": "Неизвестная ошибка",
-  "label_invalid-version": "В импортируемом файле указана неверная версия",
-  "label_missing-linked-entry": "Одна из связанных сущностей была удалена",
-  "label_scope-not-available-for-installation": "Тип сущности не доступен для текущей инсталляции",
-  "label_unexpected-workflow-error": "Неизвестная ошибка во время операции"
+  "label_invalid-version": "Инсталляция DataLens не поддерживает конфигурацию воркбука",
+  "label_missing-linked-entry": "В воркбуке есть объекты, связанные с несуществующими объектами",
+  "label_scope-not-available-for-installation": "В воркбуке есть объекты, которые не поддерживаются в вашей инсталляции DataLens",
+  "label_unexpected-workflow-error": "Операция прервана из-за неизвестной ошибки"
 }
