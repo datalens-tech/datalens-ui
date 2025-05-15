@@ -24,7 +24,7 @@ export const YandexMapWidget = React.forwardRef<
     const {
         id,
         lang,
-        // onLoad,
+        onLoad,
         data: {data: originalData, config, libraryConfig},
     } = props;
 
@@ -51,11 +51,19 @@ export const YandexMapWidget = React.forwardRef<
         } catch (e) {
             setLoading(false);
         }
-    }, [libraryConfig?.apiKey]);
+    }, [libraryConfig?.apiKey, lang]);
 
     React.useEffect(() => {
         loadYmap();
     }, [loadYmap]);
+
+    const handleMapReady = React.useCallback(() => {
+        const widgetRendering = Performance.getDuration(generatedId);
+
+        if (onLoad && widgetRendering) {
+            onLoad({widget: props.data, widgetRendering});
+        }
+    }, [generatedId, onLoad, props.data]);
 
     if (!originalData || (typeof originalData === 'object' && !Object.keys(originalData).length)) {
         throw new ChartKitError({
@@ -77,7 +85,7 @@ export const YandexMapWidget = React.forwardRef<
 
     return (
         <div className={b()}>
-            <Map {...props.data} />
+            <Map {...props.data} onReady={handleMapReady} />
         </div>
     );
 });

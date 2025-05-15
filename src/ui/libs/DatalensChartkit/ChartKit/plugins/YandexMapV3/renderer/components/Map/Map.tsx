@@ -35,13 +35,22 @@ const {YMapClusterer} = reactify.module(clustererModule);
 
 import '@yandex/ymaps3-default-ui-theme/dist/esm/index.css';
 
-export type Props = YandexMapWidgetData;
+export type Props = YandexMapWidgetData & {
+    onReady?: () => void;
+};
 
 const clusterSource = 'clusterer-source';
 
 export const Map = (props: Props) => {
+    const {onReady} = props;
     const mapConfig = getMapConfig(props);
     const {location, features = [], points = [], clusteredPoints = []} = mapConfig;
+
+    React.useEffect(() => {
+        if (onReady) {
+            setTimeout(onReady, 0);
+        }
+    }, [onReady]);
 
     const getHint = React.useCallback(
         (mapObject: unknown) => get(mapObject, 'properties.hint'),

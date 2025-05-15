@@ -1,5 +1,5 @@
 import * as turf from '@turf/circle';
-import type {LngLat, PolygonGeometry} from '@yandex/ymaps3-types';
+import type {BehaviorType, LngLat, PolygonGeometry} from '@yandex/ymaps3-types';
 
 import type {SingleItem, YandexMapWidgetData} from '../types';
 
@@ -147,15 +147,14 @@ export function getMapConfig(args: YandexMapWidgetData): YMapConfig {
         return acc;
     }, [] as any[]);
 
-    const mapProps: any = {
+    return {
         location: {
             center,
             zoom: libraryConfig?.state?.zoom ?? 10,
         },
+        behaviors: libraryConfig?.state?.behaviors as BehaviorType[],
         features,
         points,
         clusteredPoints,
     };
-
-    return mapProps;
 }

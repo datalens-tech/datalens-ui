@@ -1,5 +1,6 @@
 import type {ChartKitOnLoadData, ChartKitProps, ChartKitType} from '@gravity-ui/chartkit';
 import type {StringParams} from '@gravity-ui/chartkit/highcharts';
+import type {BehaviorType, LngLat} from '@yandex/ymaps3-types';
 import type {Language} from 'shared';
 
 import type {OnChangeData} from '../../../types';
@@ -60,12 +61,19 @@ type ItemClusterer = {
 
 export type YandexMapWidgetDataItem = SingleItem | ItemCollection | ItemClusterer;
 
+export type YandexMapControlType = 'zoomControl';
+
 export type YandexMapWidgetData = {
     data?: YandexMapWidgetDataItem[];
     config?: Record<string, unknown>;
     libraryConfig?: {
         apiKey?: string;
-        state?: Record<string, unknown>;
+        state?: {
+            center?: LngLat;
+            zoom?: number;
+            controls: YandexMapControlType[];
+            behaviors?: BehaviorType[];
+        };
         options?: Record<string, unknown>;
     };
     unresolvedParams?: StringParams;

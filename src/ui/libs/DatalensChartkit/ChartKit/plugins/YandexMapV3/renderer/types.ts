@@ -1,4 +1,5 @@
 import type {
+    BehaviorType,
     DrawingStyle,
     GenericGeometry,
     LngLat,
@@ -14,4 +15,5 @@ export type YMapConfig = {
     }[];
     points: any[];
     clusteredPoints: any[];
+    behaviors?: BehaviorType[];
 };
