@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {useThemeType} from '@gravity-ui/uikit';
 import type {Feature as ClusterFeature} from '@yandex/ymaps3-types/packages/clusterer';
 import get from 'lodash/get';
 import ReactDom from 'react-dom';
@@ -21,6 +22,7 @@ export const {
     YMapDefaultFeaturesLayer,
     YMapMarker,
     YMapControls,
+    YMapScaleControl,
 } = reactify.module(ymaps3);
 const {YMapHint, YMapHintContext} = reactify.module(
     await ymaps3.import('@yandex/ymaps3-hint@0.0.1'),
@@ -45,6 +47,8 @@ export const Map = (props: Props) => {
     const {onReady} = props;
     const mapConfig = getMapConfig(props);
     const {location, features = [], points = [], clusteredPoints = []} = mapConfig;
+
+    const theme = useThemeType();
 
     React.useEffect(() => {
         if (onReady) {
@@ -93,15 +97,20 @@ export const Map = (props: Props) => {
         [],
     );
 
+    const controls = new Set(mapConfig.controls ?? []);
+
     return (
-        <YMap location={location} copyrights={false}>
+        <YMap location={location} copyrights={false} theme={theme}>
             <YMapDefaultSchemeLayer />
             <YMapDefaultFeaturesLayer />
             <YMapHint hint={getHint}>
                 <Tooltip context={YMapHintContext} />
             </YMapHint>
             <YMapControls position="left">
-                <YMapZoomControl />
+                {controls.has('zoomControl') && <YMapZoomControl />}
+            </YMapControls>
+            <YMapControls position="bottom right">
+                {controls.has('scaleControl') && <YMapScaleControl />}
             </YMapControls>
             {features.map((feature, index) => {
                 return (

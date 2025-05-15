@@ -61,7 +61,7 @@ type ItemClusterer = {
 
 export type YandexMapWidgetDataItem = SingleItem | ItemCollection | ItemClusterer;
 
-export type YandexMapControlType = 'zoomControl';
+export type YandexMapControlType = 'zoomControl' | 'scaleControl';
 
 export type YandexMapWidgetData = {
     data?: YandexMapWidgetDataItem[];

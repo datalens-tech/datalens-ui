@@ -6,6 +6,8 @@ import type {
     YMapLocationRequest,
 } from '@yandex/ymaps3-types';
 
+import type {YandexMapControlType} from '../types';
+
 export type YMapConfig = {
     location: YMapLocationRequest;
     features: {
@@ -16,4 +18,5 @@ export type YMapConfig = {
     points: any[];
     clusteredPoints: any[];
     behaviors?: BehaviorType[];
+    controls?: YandexMapControlType[];
 };

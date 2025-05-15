@@ -1,5 +1,5 @@
 import * as turf from '@turf/circle';
-import type {BehaviorType, LngLat, PolygonGeometry} from '@yandex/ymaps3-types';
+import type {LngLat, PolygonGeometry} from '@yandex/ymaps3-types';
 
 import type {SingleItem, YandexMapWidgetData} from '../types';
 
@@ -98,7 +98,9 @@ function getPointObject(item: SingleItem) {
 
 export function getMapConfig(args: YandexMapWidgetData): YMapConfig {
     const {data: originalData = [], libraryConfig} = args;
-    const center = reverseCoordinates(libraryConfig?.state?.center);
+    const center = reverseCoordinates(libraryConfig?.state?.center) as LngLat;
+    const zoom = libraryConfig?.state?.zoom ?? 10;
+
     const features = originalData.reduce((acc, item) => {
         if ('feature' in item) {
             const mapObject = getMapObject(item);
@@ -150,9 +152,10 @@ export function getMapConfig(args: YandexMapWidgetData): YMapConfig {
     return {
         location: {
             center,
-            zoom: libraryConfig?.state?.zoom ?? 10,
+            zoom,
         },
-        behaviors: libraryConfig?.state?.behaviors as BehaviorType[],
+        behaviors: libraryConfig?.state?.behaviors,
+        controls: libraryConfig?.state?.controls,
         features,
         points,
         clusteredPoints,
