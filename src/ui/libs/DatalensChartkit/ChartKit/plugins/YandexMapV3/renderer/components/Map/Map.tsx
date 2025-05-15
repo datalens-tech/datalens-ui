@@ -123,7 +123,16 @@ export const Map = (props: Props) => {
                 );
             })}
             {points.map((point, index) => {
-                return <YMapDefaultMarker staticHint={false} key={index} {...point} />;
+                return (
+                    <YMapDefaultMarker
+                        staticHint={false}
+                        key={index}
+                        coordinates={point.coordinates}
+                        properties={point.properties}
+                        color={point.color}
+                        zIndex={point.zIndex}
+                    />
+                );
             })}
             <YMapFeatureDataSource id={clusterSource} />
             <YMapLayer source={clusterSource} type="markers" />

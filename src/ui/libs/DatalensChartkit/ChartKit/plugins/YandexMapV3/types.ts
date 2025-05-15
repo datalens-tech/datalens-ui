@@ -32,9 +32,11 @@ type Point = {
 };
 
 type YmapItemOptions = {
+    iconColor?: string;
     fillColor?: string;
     opacity?: number;
     strokeWidth?: number;
+    zIndex?: number;
 };
 
 type GeometryType = GeometryCircle | GeometryRectangle | GeometryPolygon | GeometryPolyline | Point;

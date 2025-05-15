@@ -4,12 +4,12 @@ import type {LngLat, LngLatBounds, PolygonGeometry} from '@yandex/ymaps3-types';
 import type {SingleItem, YandexMapWidgetData} from '../types';
 
 import {DEFAULT_CENTER, DEFAULT_ZOOM} from './constants';
-import type {YMapConfig} from './types';
+import type {YMapConfig, YMapPoint} from './types';
 
-function reverseCoordinates(data: unknown): unknown {
+function reverseCoordinates(data: unknown): LngLat | LngLat[] {
     if (Array.isArray(data)) {
         if (Array.isArray(data[0])) {
-            return data.map(reverseCoordinates);
+            return data.map(reverseCoordinates) as LngLat[];
         }
 
         return [...data].reverse();
@@ -88,12 +88,20 @@ function getMapObject(item: SingleItem) {
     }
 }
 
-function getPointObject(item: SingleItem) {
+function getPointObject(item: SingleItem): YMapPoint {
+    const iconColor = item.options.iconColor ?? '';
     return {
-        coordinates: reverseCoordinates(item.feature.geometry.coordinates),
+        coordinates: reverseCoordinates(item.feature.geometry.coordinates) as LngLat,
         properties: {
             hint: item.feature.properties,
         },
+        color: {
+            day: iconColor,
+            night: iconColor,
+            strokeDay: 'transparent',
+            strokeNight: 'transparent',
+        },
+        zIndex: item.options.zIndex,
     };
 }
 
@@ -123,7 +131,7 @@ export function getMapConfig(args: YandexMapWidgetData): YMapConfig {
         return acc;
     }, [] as any[]);
 
-    const points = originalData.reduce((acc, item) => {
+    const points = originalData.reduce<YMapPoint[]>((acc, item) => {
         if ('feature' in item && item.feature.geometry.type === 'Point') {
             acc.push(getPointObject(item));
         }
@@ -137,7 +145,7 @@ export function getMapConfig(args: YandexMapWidgetData): YMapConfig {
         }
 
         return acc;
-    }, [] as any[]);
+    }, []);
 
     const clusteredPoints = originalData.reduce((acc, item) => {
         if ('clusterer' in item) {
