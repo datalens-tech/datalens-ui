@@ -1,6 +1,6 @@
 import type {ChartKitOnLoadData, ChartKitProps, ChartKitType} from '@gravity-ui/chartkit';
 import type {StringParams} from '@gravity-ui/chartkit/highcharts';
-import type {BehaviorType, LngLat} from '@yandex/ymaps3-types';
+import type {BehaviorType, LngLat, LngLatBounds} from '@yandex/ymaps3-types';
 import type {Language} from 'shared';
 
 import type {OnChangeData} from '../../../types';
@@ -73,6 +73,7 @@ export type YandexMapWidgetData = {
             zoom?: number;
             controls: YandexMapControlType[];
             behaviors?: BehaviorType[];
+            bounds?: LngLatBounds;
         };
         options?: Record<string, unknown>;
     };

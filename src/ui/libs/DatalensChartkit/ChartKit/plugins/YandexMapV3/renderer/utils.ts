@@ -1,8 +1,9 @@
 import * as turf from '@turf/circle';
-import type {LngLat, PolygonGeometry} from '@yandex/ymaps3-types';
+import type {LngLat, LngLatBounds, PolygonGeometry} from '@yandex/ymaps3-types';
 
 import type {SingleItem, YandexMapWidgetData} from '../types';
 
+import {DEFAULT_CENTER, DEFAULT_ZOOM} from './constants';
 import type {YMapConfig} from './types';
 
 function reverseCoordinates(data: unknown): unknown {
@@ -98,8 +99,9 @@ function getPointObject(item: SingleItem) {
 
 export function getMapConfig(args: YandexMapWidgetData): YMapConfig {
     const {data: originalData = [], libraryConfig} = args;
-    const center = reverseCoordinates(libraryConfig?.state?.center) as LngLat;
-    const zoom = libraryConfig?.state?.zoom ?? 10;
+    const center = reverseCoordinates(libraryConfig?.state?.center ?? DEFAULT_CENTER) as LngLat;
+    const zoom = libraryConfig?.state?.zoom ?? DEFAULT_ZOOM;
+    const bounds = reverseCoordinates(libraryConfig?.state?.bounds) as LngLatBounds;
 
     const features = originalData.reduce((acc, item) => {
         if ('feature' in item) {
@@ -153,9 +155,10 @@ export function getMapConfig(args: YandexMapWidgetData): YMapConfig {
         location: {
             center,
             zoom,
+            bounds,
         },
         behaviors: libraryConfig?.state?.behaviors,
-        controls: libraryConfig?.state?.controls,
+        controls: libraryConfig?.state?.controls ?? ['zoomControl'],
         features,
         points,
         clusteredPoints,

@@ -12,6 +12,10 @@ type HintProps = {
     name?: string;
     value?: number;
     text?: string;
+    data?: {
+        text?: string;
+        color?: string;
+    }[];
 };
 
 type Props = {context: React.Context<unknown>};
@@ -24,7 +28,7 @@ export const Tooltip = (props: Props) => {
         return null;
     }
 
-    const {name: title, value, text} = hintContext.hint;
+    const {name: title, value, text, data} = hintContext.hint;
     const formattedValue = typeof value === 'number' ? formatNumber(value) : null;
 
     return (
@@ -34,6 +38,16 @@ export const Tooltip = (props: Props) => {
                 {formattedValue && <div className={b('cell')}>{formattedValue}</div>}
                 {text && <div className={b('cell')}>{text}</div>}
             </div>
+            {data?.map((d, index) => (
+                <div key={`data-${index}`} className={b('row')}>
+                    {d.color && (
+                        <div className={b('cell')}>
+                            <span className={b('color')} style={{backgroundColor: d.color}} />
+                        </div>
+                    )}
+                    {d.text && <div className={b('cell')}>{d.text}</div>}
+                </div>
+            ))}
         </div>
     );
 };

@@ -26,4 +26,14 @@
         text-overflow: ellipsis;
         overflow: hidden;
     }
+
+    &__color {
+        position: relative;
+        top: -1px;
+        width: 12px;
+        height: 6px;
+        margin-right: 3px;
+        border-radius: 1px;
+        display: inline-block;
+    }
 }
