@@ -1,14 +1,14 @@
 {
-  "label_export-check-connection-credentials": "When importing, private fields in connections will need to be filled in again",
-  "label_export-rls": "After import, RLS functionality is not guaranteed",
-  "label_import-check-connections-credentials": "Private fields in connections will need to be filled in again",
-  "label_import-check-delegation": "Delegation may not be completed, please save the connection again",
+  "label_export-check-connection-credentials": "Values of fields in connections with passwords and tokens are not exported. After importing, they will need to be filled in",
+  "label_export-rls": "RLS is not guaranteed to work correctly in exported datasets",
+  "label_import-check-connections-credentials": "Check the connection settings and re-enter passwords and tokens if necessary",
+  "label_import-check-delegation": "Connection configuration is not complete, change or save the connection settings again",
   "label_import-rls": "Check RLS functionality in datasets",
-  "label_invalid-entry-data": "Some entities may not work correctly due to corrupted configuration",
-  "label_invalid-entry-scope": "Some entities may not work correctly due to an invalid \"scope\" field value",
+  "label_invalid-entry-data": "Workbook configuration was corrupted",
+  "label_invalid-entry-scope": "The workbook contains entities with an incorrect type",
   "label_invalid-error": "Unknown error",
-  "label_invalid-version": "The imported file has an invalid version",
-  "label_missing-linked-entry": "One of the related entities has been deleted",
-  "label_scope-not-available-for-installation": "The entity type is not available for the current installation",
+  "label_invalid-version": "The DataLens installation does not support the workbook configuration",
+  "label_missing-linked-entry": "The workbook contains entities linked to nonexistent entities",
+  "label_scope-not-available-for-installation": "The workbook contains entities not supported in your DataLens installation",
   "label_unexpected-workflow-error": "Unexpected error during operation"
 }
