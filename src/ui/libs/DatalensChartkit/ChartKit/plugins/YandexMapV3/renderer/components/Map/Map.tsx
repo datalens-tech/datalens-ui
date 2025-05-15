@@ -3,39 +3,29 @@ import React from 'react';
 import {useThemeType} from '@gravity-ui/uikit';
 import type {Feature as ClusterFeature} from '@yandex/ymaps3-types/packages/clusterer';
 import get from 'lodash/get';
-import ReactDom from 'react-dom';
 
 import type {YandexMapWidgetData} from '../../../types';
 import {getMapConfig} from '../../utils';
 import {ClusterMarker} from '../ClusterMarker/ClusterMarker';
+import {YandexMapLayer} from '../Layer/Layer';
 import {Tooltip} from '../Tooltip/Tooltip';
-
-const [ymaps3React] = await Promise.all([ymaps3.import('@yandex/ymaps3-reactify'), ymaps3.ready]);
-
-export const reactify = ymaps3React.reactify.bindTo(React, ReactDom);
-export const {
+import {
     YMap,
-    YMapFeatureDataSource,
-    YMapLayer,
-    YMapFeature,
-    YMapDefaultSchemeLayer,
-    YMapDefaultFeaturesLayer,
-    YMapMarker,
+    YMapClusterer,
     YMapControls,
+    YMapDefaultFeaturesLayer,
+    YMapDefaultMarker,
+    YMapDefaultSchemeLayer,
+    YMapFeature,
+    YMapFeatureDataSource,
+    YMapHint,
+    YMapHintContext,
+    YMapLayer,
+    YMapMarker,
     YMapScaleControl,
-} = reactify.module(ymaps3);
-const {YMapHint, YMapHintContext} = reactify.module(
-    await ymaps3.import('@yandex/ymaps3-hint@0.0.1'),
-);
-const {YMapDefaultMarker, YMapZoomControl} = reactify.module(
-    await import('@yandex/ymaps3-default-ui-theme'),
-);
-
-const clustererModule = await ymaps3.import('@yandex/ymaps3-clusterer@0.0.1');
-const {clusterByGrid} = clustererModule;
-const {YMapClusterer} = reactify.module(clustererModule);
-
-import '@yandex/ymaps3-default-ui-theme/dist/esm/index.css';
+    YMapZoomControl,
+    clusterByGrid,
+} from '../ymaps3';
 
 export type Props = YandexMapWidgetData & {
     onReady?: () => void;
@@ -46,7 +36,11 @@ const clusterSource = 'clusterer-source';
 export const Map = (props: Props) => {
     const {onReady} = props;
     const mapConfig = getMapConfig(props);
-    const {location, features = [], points = [], clusteredPoints = []} = mapConfig;
+    const {
+        location,
+        layers: [{features = [], clusteredPoints = []}],
+    } = mapConfig;
+    const controls = new Set(mapConfig.controls ?? []);
 
     const theme = useThemeType();
 
@@ -97,8 +91,6 @@ export const Map = (props: Props) => {
         [],
     );
 
-    const controls = new Set(mapConfig.controls ?? []);
-
     return (
         <YMap location={location} copyrights={false} theme={theme}>
             <YMapDefaultSchemeLayer />
@@ -122,18 +114,9 @@ export const Map = (props: Props) => {
                     />
                 );
             })}
-            {points.map((point, index) => {
-                return (
-                    <YMapDefaultMarker
-                        staticHint={false}
-                        key={index}
-                        coordinates={point.coordinates}
-                        properties={point.properties}
-                        color={point.color}
-                        zIndex={point.zIndex}
-                    />
-                );
-            })}
+            {mapConfig.layers.map((layer, index) => (
+                <YandexMapLayer key={`layer-${index}`} {...layer} />
+            ))}
             <YMapFeatureDataSource id={clusterSource} />
             <YMapLayer source={clusterSource} type="markers" />
             <YMapClusterer

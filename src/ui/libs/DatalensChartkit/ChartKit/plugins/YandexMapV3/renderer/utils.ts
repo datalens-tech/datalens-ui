@@ -4,7 +4,7 @@ import type {LngLat, LngLatBounds, PolygonGeometry} from '@yandex/ymaps3-types';
 import type {SingleItem, YandexMapWidgetData} from '../types';
 
 import {DEFAULT_CENTER, DEFAULT_ZOOM} from './constants';
-import type {YMapConfig, YMapPoint} from './types';
+import type {YMapConfig, YMapFeature, YMapPoint} from './types';
 
 function reverseCoordinates(data: unknown): LngLat | LngLat[] {
     if (Array.isArray(data)) {
@@ -34,9 +34,7 @@ function getMapObject(item: SingleItem) {
                     fill: item.options?.fillColor,
                     fillOpacity: item.options?.opacity,
                 },
-                properties: {
-                    hint: item.feature.properties,
-                },
+                properties: getMapOpjectProperties(item),
             };
         }
         case 'Rectangle': {
@@ -58,9 +56,7 @@ function getMapObject(item: SingleItem) {
                     fill: item.options?.fillColor,
                     fillOpacity: item.options?.opacity,
                 },
-                properties: {
-                    hint: item.feature.properties,
-                },
+                properties: getMapOpjectProperties(item),
             };
         }
         case 'LineString':
@@ -77,9 +73,7 @@ function getMapObject(item: SingleItem) {
                         },
                     ],
                 },
-                properties: {
-                    hint: item.feature.properties,
-                },
+                properties: getMapOpjectProperties(item),
             };
         }
         default: {
@@ -88,20 +82,25 @@ function getMapObject(item: SingleItem) {
     }
 }
 
+function getMapOpjectProperties(item: SingleItem) {
+    const props = item.feature.properties ?? {};
+    const result: Record<string, unknown> = {};
+
+    if (['name', 'value', 'text', 'data'].some((field) => field in props)) {
+        result.hint = item.feature.properties;
+    }
+
+    return result;
+}
+
 function getPointObject(item: SingleItem): YMapPoint {
     const iconColor = item.options.iconColor ?? '';
     return {
         coordinates: reverseCoordinates(item.feature.geometry.coordinates) as LngLat,
-        properties: {
-            hint: item.feature.properties,
-        },
-        color: {
-            day: iconColor,
-            night: iconColor,
-            strokeDay: 'transparent',
-            strokeNight: 'transparent',
-        },
+        properties: getMapOpjectProperties(item),
+        color: iconColor,
         zIndex: item.options.zIndex,
+        radius: Number(item.feature.properties?.radius ?? 2),
     };
 }
 
@@ -111,54 +110,6 @@ export function getMapConfig(args: YandexMapWidgetData): YMapConfig {
     const zoom = libraryConfig?.state?.zoom ?? DEFAULT_ZOOM;
     const bounds = reverseCoordinates(libraryConfig?.state?.bounds) as LngLatBounds;
 
-    const features = originalData.reduce((acc, item) => {
-        if ('feature' in item) {
-            const mapObject = getMapObject(item);
-            if (mapObject) {
-                acc.push(mapObject);
-            }
-        }
-
-        if ('collection' in item) {
-            item.collection.children.forEach((d) => {
-                const mapObject = getMapObject(d);
-                if (mapObject) {
-                    acc.push(mapObject);
-                }
-            });
-        }
-
-        return acc;
-    }, [] as any[]);
-
-    const points = originalData.reduce<YMapPoint[]>((acc, item) => {
-        if ('feature' in item && item.feature.geometry.type === 'Point') {
-            acc.push(getPointObject(item));
-        }
-
-        if ('collection' in item) {
-            item.collection.children.forEach((d) => {
-                if (d.feature.geometry.type === 'Point') {
-                    acc.push(getPointObject(d));
-                }
-            });
-        }
-
-        return acc;
-    }, []);
-
-    const clusteredPoints = originalData.reduce((acc, item) => {
-        if ('clusterer' in item) {
-            item.clusterer.forEach((d) => {
-                if (d.feature.geometry.type === 'Point') {
-                    acc.push(getPointObject(d));
-                }
-            });
-        }
-
-        return acc;
-    }, [] as any[]);
-
     return {
         location: {
             center,
@@ -167,8 +118,53 @@ export function getMapConfig(args: YandexMapWidgetData): YMapConfig {
         },
         behaviors: libraryConfig?.state?.behaviors,
         controls: libraryConfig?.state?.controls ?? ['zoomControl'],
-        features,
-        points,
-        clusteredPoints,
+        layers: originalData.map((item) => {
+            const points = [];
+            const clusteredPoints: any[] = [];
+            const features: YMapFeature[] = [];
+
+            if ('feature' in item && item.feature.geometry.type === 'Point') {
+                points.push(getPointObject(item));
+            }
+
+            if ('collection' in item) {
+                item.collection.children.forEach((d) => {
+                    if (d.feature.geometry.type === 'Point') {
+                        points.push(getPointObject(d));
+                    }
+                });
+            }
+
+            if ('clusterer' in item) {
+                item.clusterer.forEach((d) => {
+                    if (d.feature.geometry.type === 'Point') {
+                        clusteredPoints.push(getPointObject(d));
+                    }
+                });
+            }
+
+            if ('feature' in item) {
+                const mapObject = getMapObject(item);
+                if (mapObject) {
+                    features.push(mapObject);
+                }
+            }
+
+            if ('collection' in item) {
+                item.collection.children.forEach((d) => {
+                    const mapObject = getMapObject(d);
+                    if (mapObject) {
+                        features.push(mapObject);
+                    }
+                });
+            }
+
+            return {
+                opacity: item.options.opacity,
+                points,
+                clusteredPoints,
+                features,
+            };
+        }),
     };
 }

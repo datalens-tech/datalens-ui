@@ -1,4 +1,3 @@
-import type {MarkerColorProps} from '@yandex/ymaps3-default-ui-theme';
 import type {
     BehaviorType,
     DrawingStyle,
@@ -12,19 +11,27 @@ import type {YandexMapControlType} from '../types';
 export type YMapPoint = {
     coordinates: LngLat;
     properties?: Record<string, unknown>;
-    color?: MarkerColorProps;
+    color?: string;
     zIndex?: number;
+    radius?: number;
+};
+
+export type YMapFeature = {
+    geometry: GenericGeometry<LngLat>;
+    style?: DrawingStyle;
+    properties?: Record<string, unknown>;
+};
+
+export type YMapLayerConfig = {
+    opacity?: number;
+    features: YMapFeature[];
+    points: YMapPoint[];
+    clusteredPoints: any[];
 };
 
 export type YMapConfig = {
     location: YMapLocationRequest;
-    features: {
-        geometry: GenericGeometry<LngLat>;
-        style?: DrawingStyle;
-        properties?: Record<string, unknown>;
-    }[];
-    points: YMapPoint[];
-    clusteredPoints: any[];
     behaviors?: BehaviorType[];
     controls?: YandexMapControlType[];
+    layers: YMapLayerConfig[];
 };
