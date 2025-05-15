@@ -8,6 +8,6 @@ export type EntryNotification = {
     entryId?: string;
     scope?: EntryScope;
     code: string;
-    message: string;
+    message?: string;
     level: NotificationLevel;
 };

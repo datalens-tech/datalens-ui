@@ -58,10 +58,10 @@ export const ImportWorkbookView = ({status}: ImportWorkbookViewProps) => {
                     : [];
                 return (
                     <Flex direction="column" gap={4}>
-                        {preparedNotifications.map(({code, message, level, entries}) => (
+                        {preparedNotifications.map(({code, level, entries}) => (
                             <EntriesNotificationCut
                                 key={code}
-                                title={message}
+                                code={code}
                                 level={level}
                                 entries={entries}
                                 entriesMap={notificationEntriesMap}

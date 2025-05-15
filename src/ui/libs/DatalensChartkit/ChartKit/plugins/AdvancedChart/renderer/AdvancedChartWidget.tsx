@@ -79,6 +79,11 @@ const AdvancedChartWidget = (props: AdvancedChartWidgetProps) => {
                     );
                 }
             },
+            updateParams: (params: StringParams) => {
+                if (onChange) {
+                    onChange({type: 'PARAMS_CHANGED', data: {params}}, {forceUpdate: true}, true);
+                }
+            },
         });
 
         return () => {
@@ -108,28 +113,34 @@ const AdvancedChartWidget = (props: AdvancedChartWidgetProps) => {
         }
     }, [dimensions, generatedId, onLoad, props.data]);
 
-    const handleClick = React.useCallback((event) => {
-        if (originalData?.events?.click) {
-            const context = chartStorage.get(generatedId);
-            if (context) {
-                context.__innerHTML = ref.current?.innerHTML;
-                const target = {
-                    [ATTR_DATA_ELEMENT_ID]: event.target.getAttribute(ATTR_DATA_ELEMENT_ID),
-                };
-                originalData.events.click.call(context, {
-                    target,
-                });
+    const handleClick = React.useCallback(
+        (event) => {
+            if (originalData?.events?.click) {
+                const context = chartStorage.get(generatedId);
+                if (context) {
+                    context.__innerHTML = ref.current?.innerHTML;
+                    const target = {
+                        [ATTR_DATA_ELEMENT_ID]: event.target.getAttribute(ATTR_DATA_ELEMENT_ID),
+                    };
+                    originalData.events.click.call(context, {
+                        target,
+                    });
+                }
             }
-        }
-    }, []);
+        },
+        [generatedId, originalData.events?.click],
+    );
 
-    const handleKeyDown = React.useCallback((event) => {
-        if (originalData?.events?.keydown) {
-            const context = chartStorage.get(generatedId);
-            const eventProps = pick(event, 'which');
-            originalData.events.keydown.call(context, eventProps);
-        }
-    }, []);
+    const handleKeyDown = React.useCallback(
+        (event) => {
+            if (originalData?.events?.keydown) {
+                const context = chartStorage.get(generatedId);
+                const eventProps = pick(event, 'which');
+                originalData.events.keydown.call(context, eventProps);
+            }
+        },
+        [generatedId, originalData.events?.keydown],
+    );
 
     const debuncedHandleResize = React.useMemo(() => debounce(handleResize, 100), [handleResize]);
 
