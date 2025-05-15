@@ -1,6 +1,6 @@
 import {createUikitPlugin} from '@gravity-ui/app-layout';
-import type {AppMiddleware, AppRoutes} from '@gravity-ui/expresskit';
-import {AuthPolicy, ExpressKit} from '@gravity-ui/expresskit';
+import type {AppMiddleware} from '@gravity-ui/expresskit';
+import {AuthPolicy} from '@gravity-ui/expresskit';
 import type {NodeKit} from '@gravity-ui/nodekit';
 import passport from 'passport';
 
@@ -11,6 +11,7 @@ import {createLayoutPlugin} from '../../components/app-layout/plugins/layout';
 import type {ChartsEngine} from '../../components/charts-engine';
 import {initZitadel} from '../../components/zitadel/init-zitadel';
 import {xlsxConverter} from '../../controllers/xlsx-converter';
+import {getExpressKit} from '../../expresskit';
 import {
     beforeAuthDefaults,
     createAppLayoutMiddleware,
@@ -55,13 +56,7 @@ export default function initApp(nodekit: NodeKit) {
         afterAuth,
     });
 
-    const routes: AppRoutes = {};
-    Object.keys(extendedRoutes).forEach((key) => {
-        const {route, ...params} = extendedRoutes[key];
-        routes[route] = params;
-    });
-
-    return new ExpressKit(nodekit, routes);
+    return getExpressKit({extendedRoutes, nodekit});
 }
 
 function initDataLensApp({

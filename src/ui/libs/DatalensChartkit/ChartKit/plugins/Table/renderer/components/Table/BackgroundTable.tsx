@@ -22,6 +22,7 @@ type Props = {
     size: WidgetSizeType;
     onChangeMinWidth?: (cellSizes: number[]) => void;
     width?: 'auto' | 'max-content';
+    preserveWhiteSpace?: boolean;
 };
 
 export const BackgroundTable = React.memo<Props>((props: Props) => {
@@ -31,6 +32,7 @@ export const BackgroundTable = React.memo<Props>((props: Props) => {
         onChangeMinWidth,
         size,
         width,
+        preserveWhiteSpace,
     } = props;
 
     const containerRef = React.useRef<HTMLDivElement | null>(null);
@@ -71,7 +73,11 @@ export const BackgroundTable = React.memo<Props>((props: Props) => {
     return (
         <Portal>
             <div
-                className={b('background-table', {size}, COMPONENT_CLASSNAME)}
+                className={b(
+                    'background-table',
+                    {size, preWrap: preserveWhiteSpace},
+                    COMPONENT_CLASSNAME,
+                )}
                 style={{height: dimensions?.height, width: dimensions?.width}}
                 ref={containerRef}
             >

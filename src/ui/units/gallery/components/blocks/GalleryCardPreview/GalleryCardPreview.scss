@@ -39,10 +39,4 @@ $block: '.#{variables.$ns}-card-preview';
         margin-bottom: 10px;
         color: var(--g-color-text-secondary);
     }
-
-    &__info-labels {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 6px;
-    }
 }
