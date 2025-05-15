@@ -23,6 +23,7 @@ export const YandexMapWidget = React.forwardRef<
 >((props, forwardedRef) => {
     const {
         id,
+        lang,
         // onLoad,
         data: {data: originalData, config, libraryConfig},
     } = props;
@@ -44,6 +45,7 @@ export const YandexMapWidget = React.forwardRef<
         try {
             await isYmapsReady({
                 apiKey: libraryConfig?.apiKey ?? '',
+                lang,
             });
             setLoading(false);
         } catch (e) {
