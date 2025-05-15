@@ -5,7 +5,7 @@ import type {NodeKit} from '@gravity-ui/nodekit';
 import passport from 'passport';
 
 import {DASH_API_BASE_URL, PUBLIC_API_DASH_API_BASE_URL} from '../../../shared';
-import {isChartsMode, isDatalensMode, isFullMode} from '../../app-env';
+import {isApiMode, isChartsMode, isDatalensMode, isFullMode} from '../../app-env';
 import {getAppLayoutSettings} from '../../components/app-layout/app-layout-settings';
 import {createLayoutPlugin} from '../../components/app-layout/plugins/layout';
 import type {ChartsEngine} from '../../components/charts-engine';
@@ -46,6 +46,10 @@ export default function initApp(nodekit: NodeKit) {
 
     if (isFullMode || isChartsMode) {
         chartsEngine = initChartsApp({nodekit, beforeAuth, afterAuth});
+    }
+
+    if (isFullMode || isApiMode) {
+        initApiApp({beforeAuth, afterAuth});
     }
 
     const extendedRoutes = getRoutes({
@@ -126,4 +130,18 @@ function initChartsApp({
         chartsEngine.initPreloading(nodekit.ctx);
     }
     return chartsEngine;
+}
+
+function initApiApp({
+    beforeAuth,
+    afterAuth,
+}: {
+    beforeAuth: AppMiddleware[];
+    afterAuth: AppMiddleware[];
+}) {
+    // As charts app execpt chartEngine
+    if (isApiMode) {
+        afterAuth.push(xDlContext(), setSubrequestHeaders, patchLogger, getCtxMiddleware());
+        beforeAuth.push(beforeAuthDefaults);
+    }
 }
