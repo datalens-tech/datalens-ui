@@ -57,7 +57,7 @@ const traverseWizardFieldsRecursive = (obj: any, matchCallback: MatchCallback) =
         if (key === 'datasetId' && typeof val === 'string') {
             // Array<{datasetId: string}>
             obj[key] = matchCallback(val, obj, key);
-        } else if (key === 'dataset' && typeof val.id === 'string') {
+        } else if (key === 'dataset' && typeof val === 'object' && typeof val.id === 'string') {
             // dataset.id
             val.id = matchCallback(val.id, val, 'id');
         } else if (typeof val === 'object') {
