@@ -96,6 +96,8 @@ export enum Feature {
     EnablePublicGallery = 'EnablePublicGallery',
     /** Setting in the table to preserve spaces and line breaks */
     PreWrapTableSetting = 'PreWrapTableSetting',
+    /** Use yandex-map api v3 for wizard geo visualizations */
+    YMapV3ForWizard = 'YMapV3ForWizard',
 }
 
 export type FeatureConfig = Record<string, boolean>;

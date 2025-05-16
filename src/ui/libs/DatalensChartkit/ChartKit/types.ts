@@ -56,6 +56,10 @@ declare module '@gravity-ui/chartkit' {
             data: YandexMapWidgetData;
             widget: YandexMap;
         };
+        yandexmap_v3: {
+            data: YandexMapWidgetData;
+            widget: unknown;
+        };
         markup: {
             data: MarkupWidgetData;
             widget: never;

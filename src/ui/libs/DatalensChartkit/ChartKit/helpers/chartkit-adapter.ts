@@ -28,6 +28,7 @@ export const getChartkitType = (data?: LoadedWidgetData): ChartKitType | undefin
         return undefined;
     }
 
+    const isWizardOrQl = get(data, 'isNewWizard') || get(data, 'isQL');
     let chartkitType: ChartKitType | undefined;
 
     switch (type) {
@@ -66,7 +67,15 @@ export const getChartkitType = (data?: LoadedWidgetData): ChartKitType | undefin
         }
 
         case 'ymap': {
-            chartkitType = 'yandexmap';
+            if (isWizardOrQl) {
+                chartkitType = isEnabledFeature(Feature.YMapV3ForWizard)
+                    ? 'yandexmap_v3'
+                    : 'yandexmap';
+            } else {
+                chartkitType = isEnabledFeature('EnableYandexMapV3CEWidget')
+                    ? 'yandexmap_v3'
+                    : 'yandexmap';
+            }
 
             break;
         }
@@ -84,8 +93,6 @@ export const getChartkitType = (data?: LoadedWidgetData): ChartKitType | undefin
         }
 
         case 'table': {
-            const isWizardOrQl = get(data, 'isNewWizard') || get(data, 'isQL');
-
             if (isWizardOrQl || isEnabledFeature(Feature.NewTableWidgetForCE)) {
                 chartkitType = 'table';
             }
@@ -138,7 +145,8 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
 
             return data;
         }
-        case 'yandexmap': {
+        case 'yandexmap':
+        case 'yandexmap_v3': {
             const data = {...(loadedData as ChartKitProps<'yandexmap'>['data'])};
 
             return data;

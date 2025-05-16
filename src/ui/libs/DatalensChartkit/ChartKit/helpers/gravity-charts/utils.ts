@@ -11,7 +11,7 @@ const Opacity = {
     UNSELECTED: 0.5,
 };
 
-const SVG_NAMESPACE_URI = 'http://www.w3.org/2000/svg';
+export const SVG_NAMESPACE_URI = 'http://www.w3.org/2000/svg';
 
 export function getPointActionParams(
     point: ChartSeriesData,
