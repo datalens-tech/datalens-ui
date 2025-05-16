@@ -26,19 +26,21 @@ export const ClusterMarker = (props: Props) => {
     const size = radius * 20;
 
     const backgroundImage = React.useMemo(() => {
+        let angle = 0;
         const segments = Object.entries(groupBy(points, (p) => p.properties?.color)).map(
             ([pointColor, items]) => {
+                angle = angle + (360 * items.length) / points.length;
                 return {
                     color: pointColor,
-                    angle: (360 * items.length) / points.length,
+                    angle,
                 };
             },
         );
 
         return `conic-gradient(${segments
             .map((s, index) => {
-                const startAngle = index === 0 ? 0 : segments[index - 1].angle;
-                return `${s.color} ${startAngle}deg ${s.angle}deg`;
+                const prevAngle = index === 0 ? 0 : segments[index - 1].angle;
+                return `${s.color} ${prevAngle}deg ${s.angle}deg`;
             })
             .join(', ')})`;
     }, [points]);
