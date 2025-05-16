@@ -14,7 +14,6 @@ import {
     DashTabItemType,
     EntryScope,
     ErrorCode,
-    isEnabledServerFeature,
 } from '../../../../shared';
 import {resolveEmbedConfig} from '../components/storage';
 import type {EmbedResolveConfigProps, ResolveConfigError} from '../components/storage/base';
@@ -296,7 +295,8 @@ function findAndExecuteRunner(
         return Promise.resolve(null);
     }
 
-    if (!isEnabledServerFeature(ctx, 'EnableChartEditor') && runnerFound.name === 'editor') {
+    const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
+    if (!isEnabledServerFeature('EnableChartEditor') && runnerFound.name === 'editor') {
         ctx.log('CHARTS_ENGINE_EDITOR_DISABLED');
         res.status(400).send({
             error: 'Editor is disabled',
