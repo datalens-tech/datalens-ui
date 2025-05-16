@@ -6,6 +6,16 @@ import {DL_EMBED_TOKEN_HEADER, EntryScope, ErrorCode} from '../../../../shared';
 import {resolveEmbedConfig} from '../components/storage';
 import type {EmbedResolveConfigProps, ResolveConfigError} from '../components/storage/base';
 
+function validateSignedParams(
+    record: Record<string, unknown>,
+): record is Record<string, string | string[]> {
+    return Object.values(record).every(
+        (value) =>
+            typeof value === 'string' ||
+            (Array.isArray(value) && value.every((item) => typeof item === 'string')),
+    );
+}
+
 export const embeddedEntryController = (req: Request, res: Response) => {
     const {ctx} = req;
 
@@ -89,6 +99,10 @@ export const embeddedEntryController = (req: Request, res: Response) => {
                     const {
                         entry: {entryId, scope, data},
                     } = response;
+
+                    if (validateSignedParams(response.token.params)) {
+                        data.settings.signedGlobalParams = response.token.params;
+                    }
 
                     // Add only necessary fields without personal info like createdBy
                     res.status(200).send({
