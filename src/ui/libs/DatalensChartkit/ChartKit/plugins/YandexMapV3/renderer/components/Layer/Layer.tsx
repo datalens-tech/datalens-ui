@@ -3,12 +3,18 @@ import React from 'react';
 import type {YMapLayerConfig} from '../../types';
 import {ClusterMarker} from '../ClusterMarker/ClusterMarker';
 import {PointMarker} from '../PointMarker/PointMarker';
-import {YMapClusterer, YMapFeatureDataSource, YMapLayer, clusterByGrid} from '../ymaps3';
+import {
+    YMapClusterer,
+    YMapFeature,
+    YMapFeatureDataSource,
+    YMapLayer,
+    clusterByGrid,
+} from '../ymaps3';
 
 type Props = YMapLayerConfig & {};
 
 export const YandexMapLayer = (props: Props) => {
-    const {id: layerId, points, opacity, clusteredPoints} = props;
+    const {id: layerId, points, opacity, clusteredPoints, features} = props;
     const clusterSource = `${layerId}_clusterer-source`;
     const gridSizedMethod = clusterByGrid({gridSize: 64});
 
@@ -57,6 +63,20 @@ export const YandexMapLayer = (props: Props) => {
                 method={gridSizedMethod}
                 features={clusteredPoints}
             />
+            {features.map((feature, index) => {
+                const style = {
+                    ...feature.style,
+                    stroke: feature.style?.stroke?.map((s) => ({...s, opacity})),
+                };
+                return (
+                    <YMapFeature
+                        key={index}
+                        geometry={feature.geometry}
+                        style={style}
+                        properties={feature.properties}
+                    />
+                );
+            })}
         </React.Fragment>
     );
 };

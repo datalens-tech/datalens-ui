@@ -68,6 +68,7 @@ function getMapFeatureObject(item: SingleItem): YMapFeature | null {
                     coordinates: reverseCoordinates(item.feature.geometry.coordinates),
                 } as GenericGeometry<LngLat>,
                 style: {
+                    zIndex: item.options?.zIndex,
                     stroke: [
                         {
                             width: item.options?.strokeWidth,

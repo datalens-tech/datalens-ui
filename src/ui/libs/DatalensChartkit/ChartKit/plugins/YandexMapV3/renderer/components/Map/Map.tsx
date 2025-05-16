@@ -12,7 +12,6 @@ import {
     YMapControls,
     YMapDefaultFeaturesLayer,
     YMapDefaultSchemeLayer,
-    YMapFeature,
     YMapHint,
     YMapHintContext,
     YMapScaleControl,
@@ -26,10 +25,7 @@ export type Props = YandexMapWidgetData & {
 export const Map = (props: Props) => {
     const {onReady} = props;
     const mapConfig = getMapConfig(props);
-    const {
-        location,
-        layers: [{features = []}],
-    } = mapConfig;
+    const {location} = mapConfig;
     const controls = new Set(mapConfig.controls ?? []);
 
     const theme = useThemeType();
@@ -58,16 +54,6 @@ export const Map = (props: Props) => {
             <YMapControls position="bottom right">
                 {controls.has('scaleControl') && <YMapScaleControl />}
             </YMapControls>
-            {features.map((feature, index) => {
-                return (
-                    <YMapFeature
-                        key={index}
-                        geometry={feature.geometry}
-                        style={feature.style}
-                        properties={feature.properties}
-                    />
-                );
-            })}
             {mapConfig.layers.map((layer, index) => (
                 <YandexMapLayer key={`layer-${index}`} {...layer} />
             ))}
