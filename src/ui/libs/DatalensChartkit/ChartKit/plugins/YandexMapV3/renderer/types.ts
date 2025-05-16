@@ -8,6 +8,8 @@ import type {
 
 import type {YandexMapControlType} from '../types';
 
+import type {ClusterFeature} from './components/ymaps3';
+
 export type YMapPoint = {
     coordinates: LngLat;
     properties?: Record<string, unknown>;
@@ -23,10 +25,11 @@ export type YMapFeature = {
 };
 
 export type YMapLayerConfig = {
+    id: string;
     opacity?: number;
     features: YMapFeature[];
     points: YMapPoint[];
-    clusteredPoints: YMapPoint[];
+    clusteredPoints: ClusterFeature[];
 };
 
 export type YMapConfig = {

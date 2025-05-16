@@ -27,4 +27,6 @@ const clustererModule = await ymaps3.import('@yandex/ymaps3-clusterer@0.0.1');
 export const {clusterByGrid} = clustererModule;
 export const {YMapClusterer} = reactify.module(clustererModule);
 
+export type {Feature as ClusterFeature} from '@yandex/ymaps3-types/packages/clusterer';
+
 import '@yandex/ymaps3-default-ui-theme/dist/esm/index.css';

@@ -3,6 +3,7 @@ import type {GenericGeometry, LngLat, LngLatBounds, PolygonGeometry} from '@yand
 
 import type {SingleItem, YandexMapWidgetData} from '../types';
 
+import type {ClusterFeature} from './components/ymaps3';
 import {DEFAULT_CENTER, DEFAULT_ZOOM} from './constants';
 import type {YMapConfig, YMapFeature, YMapPoint} from './types';
 
@@ -84,7 +85,11 @@ function getMapFeatureObject(item: SingleItem): YMapFeature | null {
 
 function getMapOpjectProperties(item: SingleItem) {
     const props = item.feature.properties ?? {};
-    const result: Record<string, unknown> = {};
+    const result: Record<string, unknown> = {
+        color: item.options.iconColor ?? '',
+        zIndex: item.options.zIndex,
+        radius: Number(item.feature.properties?.radius ?? 2),
+    };
 
     if (['name', 'value', 'text', 'data'].some((field) => field in props)) {
         result.hint = item.feature.properties;
@@ -94,11 +99,10 @@ function getMapOpjectProperties(item: SingleItem) {
 }
 
 function getPointObject(item: SingleItem): YMapPoint {
-    const iconColor = item.options.iconColor ?? '';
     return {
         coordinates: reverseCoordinates(item.feature.geometry.coordinates) as LngLat,
         properties: getMapOpjectProperties(item),
-        color: iconColor,
+        color: item.options.iconColor ?? '',
         zIndex: item.options.zIndex,
         radius: Number(item.feature.properties?.radius ?? 2),
     };
@@ -118,9 +122,9 @@ export function getMapConfig(args: YandexMapWidgetData): YMapConfig {
         },
         behaviors: libraryConfig?.state?.behaviors,
         controls: libraryConfig?.state?.controls ?? ['zoomControl'],
-        layers: originalData.map((item) => {
+        layers: originalData.map((item, index) => {
             const points: YMapPoint[] = [];
-            const clusteredPoints: YMapPoint[] = [];
+            const clusteredPoints: ClusterFeature[] = [];
             const features: YMapFeature[] = [];
 
             if ('feature' in item) {
@@ -148,14 +152,25 @@ export function getMapConfig(args: YandexMapWidgetData): YMapConfig {
             }
 
             if ('clusterer' in item) {
-                item.clusterer.forEach((d) => {
+                item.clusterer.forEach((d, pointIndex) => {
                     if (d.feature.geometry.type === 'Point') {
-                        clusteredPoints.push(getPointObject(d));
+                        clusteredPoints.push({
+                            id: String(pointIndex),
+                            geometry: {
+                                type: 'Point',
+                                coordinates: reverseCoordinates(
+                                    d.feature.geometry.coordinates,
+                                ) as LngLat,
+                            },
+                            properties: getMapOpjectProperties(d),
+                            type: 'Feature',
+                        });
                     }
                 });
             }
 
             return {
+                id: `layer-${index}`,
                 opacity: item.options.opacity,
                 points,
                 clusteredPoints,

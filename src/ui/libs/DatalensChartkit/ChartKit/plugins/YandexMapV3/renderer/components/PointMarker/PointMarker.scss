@@ -1,8 +1,9 @@
 .ymap-point-marker {
+    background-color: 5px solid var(--g-color-base-brand);
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 46px;
-    width: 46px;
     border-radius: 50%;
+    margin-top: -50%;
+    margin-left: -50%;
 }
