@@ -1,13 +1,14 @@
 import * as turf from '@turf/circle';
 import type {GenericGeometry, LngLat, LngLatBounds, PolygonGeometry} from '@yandex/ymaps3-types';
+import get from 'lodash/get';
 
-import type {SingleItem, YandexMapWidgetData} from '../types';
+import type {SingleItem, YandexMapWidgetData, YmapItemOptions} from '../types';
 
 import type {ClusterFeature} from './components/ymaps3';
 import {DEFAULT_CENTER, DEFAULT_ZOOM} from './constants';
 import type {YMapConfig, YMapFeature, YMapPoint} from './types';
 
-function reverseCoordinates(data: unknown): LngLat | LngLat[] {
+function reverseCoordinates(data: unknown): LngLat | LngLat[] | LngLat[][] {
     if (Array.isArray(data)) {
         if (Array.isArray(data[0])) {
             return data.map(reverseCoordinates) as LngLat[];
@@ -24,7 +25,7 @@ function getCircleGeoJSON(center: LngLat, radiusMeters: number): PolygonGeometry
     return geometry as PolygonGeometry;
 }
 
-function getMapFeatureObject(item: SingleItem): YMapFeature | null {
+function getMapFeatureObject(item: SingleItem, layerOptions?: YmapItemOptions): YMapFeature | null {
     switch (item.feature.geometry.type) {
         case 'Circle': {
             const center = reverseCoordinates(item.feature.geometry.coordinates);
@@ -60,8 +61,7 @@ function getMapFeatureObject(item: SingleItem): YMapFeature | null {
                 properties: getMapOpjectProperties(item),
             };
         }
-        case 'LineString':
-        case 'Polygon': {
+        case 'LineString': {
             return {
                 geometry: {
                     ...item.feature.geometry,
@@ -74,6 +74,29 @@ function getMapFeatureObject(item: SingleItem): YMapFeature | null {
                             width: item.options?.strokeWidth,
                         },
                     ],
+                    fillOpacity: layerOptions?.opacity,
+                },
+                properties: getMapOpjectProperties(item),
+            };
+        }
+        case 'Polygon': {
+            return {
+                geometry: {
+                    type: 'Polygon',
+                    coordinates: reverseCoordinates(
+                        item.feature.geometry.coordinates,
+                    ) as LngLat[][],
+                },
+                style: {
+                    zIndex: item.options?.zIndex,
+                    stroke: [
+                        {
+                            width: item.options?.strokeWidth ?? 1,
+                            color: item.options?.strokeColor,
+                        },
+                    ],
+                    fill: item.options?.fillColor ?? layerOptions?.fillColorEmptyPolygon,
+                    fillOpacity: layerOptions?.fillOpacity,
                 },
                 properties: getMapOpjectProperties(item),
             };
@@ -137,6 +160,16 @@ export function getMapConfig(args: YandexMapWidgetData): YMapConfig {
                 if (mapObject) {
                     features.push(mapObject);
                 }
+            }
+
+            if ('polygonmap' in item) {
+                const polygons = get(item, 'polygonmap.polygons.features');
+                polygons.forEach((d: any) => {
+                    const mapObject = getMapFeatureObject({...d, feature: d}, item.options);
+                    if (mapObject) {
+                        features.push(mapObject);
+                    }
+                });
             }
 
             if ('collection' in item) {

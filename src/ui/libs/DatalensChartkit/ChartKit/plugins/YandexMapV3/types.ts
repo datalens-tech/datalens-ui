@@ -31,12 +31,15 @@ type Point = {
     coordinates: [number, number];
 };
 
-type YmapItemOptions = {
+export type YmapItemOptions = {
     iconColor?: string;
     fillColor?: string;
     opacity?: number;
     strokeWidth?: number;
+    strokeColor?: string;
     zIndex?: number;
+    fillOpacity?: number;
+    fillColorEmptyPolygon?: string;
 };
 
 type GeometryType = GeometryCircle | GeometryRectangle | GeometryPolygon | GeometryPolyline | Point;

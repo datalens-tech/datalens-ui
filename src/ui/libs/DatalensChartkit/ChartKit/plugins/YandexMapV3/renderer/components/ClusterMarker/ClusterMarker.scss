@@ -1,9 +1,18 @@
 .ymap-cluster-marker {
-    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin-top: -50%;
     margin-left: -50%;
-    padding: 5px;
+    border-radius: 50%;
     overflow: hidden;
+    border: 1px solid var(--g-color-base-background);
+
+    &__pie {
+        padding: 5px;
+        width: 100%;
+        height: 100%;
+    }
 
     &__content {
         display: flex;

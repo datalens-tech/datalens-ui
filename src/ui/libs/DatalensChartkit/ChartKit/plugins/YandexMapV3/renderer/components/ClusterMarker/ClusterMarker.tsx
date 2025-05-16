@@ -22,7 +22,7 @@ type Props = {
 
 export const ClusterMarker = (props: Props) => {
     const {coordinates, properties, source, opacity, radius = 2, points} = props;
-    const {properties: {color, zIndex} = {}} = points[0];
+    const {properties: {zIndex} = {}} = points[0];
     const size = radius * 20;
 
     const backgroundImage = React.useMemo(() => {
@@ -55,15 +55,20 @@ export const ClusterMarker = (props: Props) => {
             <div
                 className={b()}
                 style={{
-                    borderColor: color as string,
                     opacity,
                     height: `${size}px`,
                     width: `${size}px`,
-                    backgroundImage,
                 }}
             >
-                <div className={b('content')}>
-                    <span className={b('text')}>{points.length}</span>
+                <div
+                    className={b('pie')}
+                    style={{
+                        backgroundImage,
+                    }}
+                >
+                    <div className={b('content')}>
+                        <span className={b('text')}>{points.length}</span>
+                    </div>
                 </div>
             </div>
         </YMapMarker>
