@@ -26,7 +26,7 @@ export type YMapLayerConfig = {
     opacity?: number;
     features: YMapFeature[];
     points: YMapPoint[];
-    clusteredPoints: any[];
+    clusteredPoints: YMapPoint[];
 };
 
 export type YMapConfig = {

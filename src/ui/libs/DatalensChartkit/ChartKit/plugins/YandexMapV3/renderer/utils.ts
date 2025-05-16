@@ -1,5 +1,5 @@
 import * as turf from '@turf/circle';
-import type {LngLat, LngLatBounds, PolygonGeometry} from '@yandex/ymaps3-types';
+import type {GenericGeometry, LngLat, LngLatBounds, PolygonGeometry} from '@yandex/ymaps3-types';
 
 import type {SingleItem, YandexMapWidgetData} from '../types';
 
@@ -23,7 +23,7 @@ function getCircleGeoJSON(center: LngLat, radiusMeters: number): PolygonGeometry
     return geometry as PolygonGeometry;
 }
 
-function getMapObject(item: SingleItem) {
+function getMapFeatureObject(item: SingleItem): YMapFeature | null {
     switch (item.feature.geometry.type) {
         case 'Circle': {
             const center = reverseCoordinates(item.feature.geometry.coordinates);
@@ -65,7 +65,7 @@ function getMapObject(item: SingleItem) {
                 geometry: {
                     ...item.feature.geometry,
                     coordinates: reverseCoordinates(item.feature.geometry.coordinates),
-                },
+                } as GenericGeometry<LngLat>,
                 style: {
                     stroke: [
                         {
@@ -119,18 +119,30 @@ export function getMapConfig(args: YandexMapWidgetData): YMapConfig {
         behaviors: libraryConfig?.state?.behaviors,
         controls: libraryConfig?.state?.controls ?? ['zoomControl'],
         layers: originalData.map((item) => {
-            const points = [];
-            const clusteredPoints: any[] = [];
+            const points: YMapPoint[] = [];
+            const clusteredPoints: YMapPoint[] = [];
             const features: YMapFeature[] = [];
 
-            if ('feature' in item && item.feature.geometry.type === 'Point') {
-                points.push(getPointObject(item));
+            if ('feature' in item) {
+                if (item.feature.geometry.type === 'Point') {
+                    points.push(getPointObject(item));
+                }
+
+                const mapObject = getMapFeatureObject(item);
+                if (mapObject) {
+                    features.push(mapObject);
+                }
             }
 
             if ('collection' in item) {
                 item.collection.children.forEach((d) => {
                     if (d.feature.geometry.type === 'Point') {
                         points.push(getPointObject(d));
+                    }
+
+                    const mapObject = getMapFeatureObject(d);
+                    if (mapObject) {
+                        features.push(mapObject);
                     }
                 });
             }
@@ -139,22 +151,6 @@ export function getMapConfig(args: YandexMapWidgetData): YMapConfig {
                 item.clusterer.forEach((d) => {
                     if (d.feature.geometry.type === 'Point') {
                         clusteredPoints.push(getPointObject(d));
-                    }
-                });
-            }
-
-            if ('feature' in item) {
-                const mapObject = getMapObject(item);
-                if (mapObject) {
-                    features.push(mapObject);
-                }
-            }
-
-            if ('collection' in item) {
-                item.collection.children.forEach((d) => {
-                    const mapObject = getMapObject(d);
-                    if (mapObject) {
-                        features.push(mapObject);
                     }
                 });
             }
