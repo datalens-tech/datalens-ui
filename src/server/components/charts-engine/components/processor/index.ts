@@ -14,7 +14,7 @@ import type {
     StringParams,
     WorkbookId,
 } from '../../../../../shared';
-import {DL_CONTEXT_HEADER, Feature, isEnabledServerFeature} from '../../../../../shared';
+import {DL_CONTEXT_HEADER, Feature} from '../../../../../shared';
 import {renderHTML} from '../../../../../shared/modules/markdown/markdown';
 import {registry} from '../../../../registry';
 import type {CacheClient} from '../../../cache-client';
@@ -147,6 +147,7 @@ export type ProcessorParams = {
 } & SerializableProcessorParams;
 
 export type SerializableProcessorParams = {
+    secureConfig?: {privateParams?: string[]};
     subrequestHeaders: Record<string, string>;
     paramsOverride: Record<string, string | string[]>;
     actionParamsOverride: Record<string, string | string[]>;
@@ -213,6 +214,7 @@ export class Processor {
         cacheClient,
         hooks,
         sourcesConfig,
+        secureConfig,
     }: ProcessorParams): Promise<
         ProcessorSuccessResponse | ProcessorErrorResponse | {error: string}
     > {
@@ -243,8 +245,9 @@ export class Processor {
 
         function injectConfigAndParams({target}: {target: ProcessorSuccessResponse}) {
             let responseConfig;
+            const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
             const useChartsEngineResponseConfig = Boolean(
-                isEnabledServerFeature(ctx, Feature.UseChartsEngineResponseConfig),
+                isEnabledServerFeature(Feature.UseChartsEngineResponseConfig),
             );
 
             if (useChartsEngineResponseConfig && responseOptions.includeConfig && config) {
@@ -760,6 +763,16 @@ export class Processor {
                         Array.isArray(uiTabExports.controls)))
             ) {
                 uiScheme = uiTabExports as UiTabExports;
+
+                if (secureConfig?.privateParams) {
+                    const controls = Array.isArray(uiScheme) ? uiScheme : uiScheme.controls;
+
+                    controls.forEach((control) => {
+                        if (secureConfig.privateParams?.includes(control.param)) {
+                            control.disabled = true;
+                        }
+                    });
+                }
             }
 
             logs.Controls = uiTabResults.logs;
@@ -825,7 +838,8 @@ export class Processor {
                     entryId: config.entryId || configId,
                 });
 
-                const disableFnAndHtml = isEnabledServerFeature(ctx, Feature.DisableFnAndHtml);
+                const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
+                const disableFnAndHtml = isEnabledServerFeature(Feature.DisableFnAndHtml);
                 if (
                     disableFnAndHtml ||
                     !isChartWithJSAndHtmlAllowed({createdAt: config.createdAt})
@@ -834,7 +848,7 @@ export class Processor {
                 }
                 const enableJsAndHtml = get(resultConfig, 'enableJsAndHtml', false);
                 const disableJSONFn =
-                    isEnabledServerFeature(ctx, Feature.NoJsonFn) ||
+                    isEnabledServerFeature(Feature.NoJsonFn) ||
                     disableJSONFnByCookie ||
                     enableJsAndHtml === false;
                 const stringify = disableJSONFn ? JSON.stringify : JSONfn.stringify;

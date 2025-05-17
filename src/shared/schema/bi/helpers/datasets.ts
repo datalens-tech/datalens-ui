@@ -3,7 +3,6 @@ import type {AppContext} from '@gravity-ui/nodekit';
 
 import type {Dataset} from '../../../types';
 import {Feature} from '../../../types/feature';
-import {isEnabledServerFeature} from '../../../utils/feature';
 import type {
     ConnectionErrorResponse,
     GetDistinctsApiV2Response,
@@ -61,7 +60,7 @@ export const transformApiV2DistinctsResponse = (
 
 export const prepareDatasetProperty = (ctx: AppContext, dataset: Partial<Dataset['dataset']>) => {
     const result = {...dataset};
-    const keyToDelete = isEnabledServerFeature(ctx, Feature.EnableRLSV2) ? 'rls' : 'rls2';
+    const keyToDelete = ctx.get('isEnabledServerFeature')(Feature.EnableRLSV2) ? 'rls' : 'rls2';
 
     delete result[keyToDelete];
 

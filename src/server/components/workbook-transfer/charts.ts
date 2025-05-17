@@ -54,14 +54,14 @@ const validateChartShared = (chartOptions: TransferChartDataOptions) => {
 
 const traverseWizardFieldsRecursive = (obj: any, matchCallback: MatchCallback) => {
     forIn(obj, (val, key) => {
-        if (typeof val === 'object') {
-            traverseWizardFieldsRecursive(val, matchCallback);
+        if (key === 'datasetId' && typeof val === 'string') {
             // Array<{datasetId: string}>
-        } else if (key === 'datasetId' && typeof val === 'string') {
             obj[key] = matchCallback(val, obj, key);
+        } else if (key === 'dataset' && typeof val === 'object' && typeof val.id === 'string') {
             // dataset.id
-        } else if (key === 'dataset' && typeof val.id === 'string') {
             val.id = matchCallback(val.id, val, 'id');
+        } else if (typeof val === 'object') {
+            traverseWizardFieldsRecursive(val, matchCallback);
         }
     });
 };

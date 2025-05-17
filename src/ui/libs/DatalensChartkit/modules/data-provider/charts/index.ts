@@ -139,7 +139,7 @@ export interface EntityRequestOptions {
         controlData?: {
             id: string;
             tabId?: string;
-            groupId?: string;
+            widgetId?: string;
         };
         workbookId?: WorkbookId;
     };

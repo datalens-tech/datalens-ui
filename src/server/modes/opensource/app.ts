@@ -1,16 +1,17 @@
 import {createUikitPlugin} from '@gravity-ui/app-layout';
-import type {AppMiddleware, AppRoutes} from '@gravity-ui/expresskit';
-import {AuthPolicy, ExpressKit} from '@gravity-ui/expresskit';
+import type {AppMiddleware} from '@gravity-ui/expresskit';
+import {AuthPolicy} from '@gravity-ui/expresskit';
 import type {NodeKit} from '@gravity-ui/nodekit';
 import passport from 'passport';
 
 import {DASH_API_BASE_URL, PUBLIC_API_DASH_API_BASE_URL} from '../../../shared';
-import {isChartsMode, isDatalensMode, isFullMode} from '../../app-env';
+import {isApiMode, isChartsMode, isDatalensMode, isFullMode} from '../../app-env';
 import {getAppLayoutSettings} from '../../components/app-layout/app-layout-settings';
 import {createLayoutPlugin} from '../../components/app-layout/plugins/layout';
 import type {ChartsEngine} from '../../components/charts-engine';
 import {initZitadel} from '../../components/zitadel/init-zitadel';
 import {xlsxConverter} from '../../controllers/xlsx-converter';
+import {getExpressKit} from '../../expresskit';
 import {
     beforeAuthDefaults,
     createAppLayoutMiddleware,
@@ -47,6 +48,10 @@ export default function initApp(nodekit: NodeKit) {
         chartsEngine = initChartsApp({nodekit, beforeAuth, afterAuth});
     }
 
+    if (isFullMode || isApiMode) {
+        initApiApp({beforeAuth, afterAuth});
+    }
+
     const extendedRoutes = getRoutes({
         ctx: nodekit.ctx,
         chartsEngine,
@@ -55,13 +60,7 @@ export default function initApp(nodekit: NodeKit) {
         afterAuth,
     });
 
-    const routes: AppRoutes = {};
-    Object.keys(extendedRoutes).forEach((key) => {
-        const {route, ...params} = extendedRoutes[key];
-        routes[route] = params;
-    });
-
-    return new ExpressKit(nodekit, routes);
+    return getExpressKit({extendedRoutes, nodekit});
 }
 
 function initDataLensApp({
@@ -131,4 +130,18 @@ function initChartsApp({
         chartsEngine.initPreloading(nodekit.ctx);
     }
     return chartsEngine;
+}
+
+function initApiApp({
+    beforeAuth,
+    afterAuth,
+}: {
+    beforeAuth: AppMiddleware[];
+    afterAuth: AppMiddleware[];
+}) {
+    // As charts app execpt chartEngine
+    if (isApiMode) {
+        afterAuth.push(xDlContext(), setSubrequestHeaders, patchLogger, getCtxMiddleware());
+        beforeAuth.push(beforeAuthDefaults);
+    }
 }

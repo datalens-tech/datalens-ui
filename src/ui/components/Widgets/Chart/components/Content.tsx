@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import React from 'react';
 
 import block from 'bem-cn-lite';
@@ -125,7 +126,10 @@ export const Content = (props: ChartContentProps) => {
     const showFloatControls = isEnabledFeature(Feature.DashFloatControls);
     const isFirstLoadingFloat = showFloatControls && loadedData === null;
 
-    const [hasDummy, setHasDummy] = React.useState<boolean>(DL.IS_MOBILE && showFloatControls);
+    // chartkit doesn't call onLoad when spltTooltip is enabled
+    const [hasDummy, setHasDummy] = React.useState<boolean>(
+        DL.IS_MOBILE && showFloatControls && !splitTooltip,
+    );
 
     const chartInnerLoaderComponent = isFirstLoadingFloat
         ? emptyLoaderComponent

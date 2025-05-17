@@ -112,7 +112,7 @@ type ControlProps = {
     needReload: boolean;
     workbookId?: WorkbookId;
     dependentSelectors?: boolean;
-    groupId: string;
+    widgetId: string;
 };
 
 export const Control = ({
@@ -127,7 +127,7 @@ export const Control = ({
     needReload,
     workbookId,
     dependentSelectors,
-    groupId,
+    widgetId,
 }: ControlProps) => {
     const extDashkitContext = React.useContext(ExtendedDashKitContext);
 
@@ -221,7 +221,7 @@ export const Control = ({
                     },
                     controlData: {
                         id,
-                        groupId,
+                        widgetId,
                         tabId: (extDashkitContext?.config as DashTab)?.id,
                     },
                     // currentParams are filled in after the first receiving of loadedData
@@ -293,7 +293,7 @@ export const Control = ({
         data,
         extDashkitContext?.config,
         extDashkitContext?.hideErrorDetails,
-        groupId,
+        widgetId,
         id,
         loadedData,
         onStatusChanged,

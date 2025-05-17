@@ -1,6 +1,7 @@
 /* eslint-disable camelcase */
 
 import {dateTimeParse} from '@gravity-ui/date-utils';
+import type {AppContext} from '@gravity-ui/nodekit';
 
 import type {
     ApiV2RequestBody,
@@ -25,7 +26,6 @@ import {
     filterUpdatesByDatasetId,
     getItemLinkWithDatasets,
     isDateField,
-    isEnabledServerFeature,
     isMeasureField,
     isParameter,
     prepareFilterValues,
@@ -35,7 +35,6 @@ import {
     transformParamsToUrlParams,
     transformUrlParamsToParams,
 } from '../../../../../../../shared';
-import {registry} from '../../../../../../registry';
 import type {ApiVersion, BaseUrlPayload, PayloadParameter} from '../../types';
 import {mapChartsConfigToServerConfig} from '../../utils/config-helpers';
 import {DEFAULT_DATETIME_FORMAT, DEFAULT_DATE_FORMAT, SORT_ORDER} from '../../utils/constants';
@@ -230,6 +229,7 @@ function formatFilters({
     datasetSchema,
     filterParams,
     drillDownData,
+    ctx,
 }: {
     filters: ServerChartsConfig['filters'];
     links: Link[];
@@ -237,8 +237,8 @@ function formatFilters({
     datasetSchema: ServerDatasetField[];
     filterParams: StringParams;
     drillDownData?: DrillDownData;
+    ctx: AppContext;
 }): PayloadFilter[] | undefined {
-    const app = registry.getApp();
     let chartFilters: PayloadFilter[] = [];
 
     let paramsFilters = formatParamsFilters({
@@ -372,7 +372,9 @@ function formatFilters({
 
     let resultFilters = getMergedChartAndParamsFilters({chartFilters, paramsFilters});
 
-    if (isEnabledServerFeature(app.nodekit.ctx, Feature.EmptySelector)) {
+    const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
+
+    if (isEnabledServerFeature(Feature.EmptySelector)) {
         resultFilters = resultFilters.filter((filter) => {
             if (filter.operation === Operations.NO_SELECTED_VALUES) {
                 return false;
@@ -419,6 +421,7 @@ export function prepareSingleRequest({
     extraSettings,
     sharedData,
     revisionId,
+    ctx,
 }: {
     apiVersion: ApiVersion;
     datasetId: string;
@@ -439,6 +442,7 @@ export function prepareSingleRequest({
     extraSettings?: ServerChartsConfig['extraSettings'];
     sharedData: SharedData;
     revisionId: string;
+    ctx: AppContext;
 }): ApiV2RequestBody {
     preprocessHierarchies({
         visualizationId: visualization.id,
@@ -641,6 +645,7 @@ export function prepareSingleRequest({
         datasetId,
         filterParams: transformedFilterParams,
         drillDownData: sharedData.drillDownData,
+        ctx,
     });
 
     if (formattedFilters) {
@@ -688,8 +693,9 @@ export const getUrlsRequestBody = (args: {
     datasetId: string;
     layerId: string;
     revisionId: string;
+    ctx: AppContext;
 }): ApiV2RequestBody => {
-    const {params, shared, datasetId, layerId, revisionId} = args;
+    const {params, shared, datasetId, layerId, revisionId, ctx} = args;
 
     const apiVersion = args.apiVersion || '1.5';
 
@@ -755,6 +761,7 @@ export const getUrlsRequestBody = (args: {
         layerId,
         revisionId,
         segments,
+        ctx,
     });
 
     log(`REQUEST`);

@@ -259,10 +259,6 @@ async function getUnwrappedFunction(args: {
             },
         };
 
-        merge(globalApi, {
-            Editor: globalApi.ChartEditor,
-        });
-
         // extend API for Highcharts charts
         if (entryType === 'graph_node') {
             const getCurrentChart = () => {
@@ -381,12 +377,24 @@ async function getUnwrappedFunction(args: {
                         chartContext?.updateActionParams(params);
                     },
                 },
+                ChartEditor: {
+                    updateActionParams: (params: StringParams) => {
+                        chartContext?.updateActionParams(params);
+                    },
+                    updateParams: (params: StringParams) => {
+                        chartContext?.updateParams(params);
+                    },
+                },
             });
 
             if (fnContext && typeof fnContext === 'object' && '__innerHTML' in fnContext) {
                 libs += `document.body.innerHTML = (${JSON.stringify(fnContext.__innerHTML)});`;
             }
         }
+
+        merge(globalApi, {
+            Editor: globalApi.ChartEditor,
+        });
 
         const oneRunTimeLimit = options?.fnExecTimeLimit ?? UI_SANDBOX_FN_TIME_LIMIT;
         const execTimeout = Math.min(oneRunTimeLimit, options?.totalTimeLimit ?? Infinity);
