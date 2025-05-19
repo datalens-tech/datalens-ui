@@ -20,7 +20,6 @@ import type {WizardGlobalState} from 'units/wizard/reducers';
 import type {WorkbooksState} from 'units/workbooks/store/reducers';
 
 import type {CollectionsNavigationState} from './units/collections-navigation/store/reducers';
-import type {GalleryState} from './units/gallery/store/types';
 import type {ServiceSettingsState} from './units/service-settings/store/typings/serviceSettings';
 
 export {default as ActionPanel} from './components/ActionPanel/ActionPanel';
@@ -76,5 +75,4 @@ export type DatalensGlobalState = {
     iamAccessDialog: IamAccessDialogState;
     auth: AuthState;
     serviceSettings: ServiceSettingsState;
-    gallery: GalleryState;
 };
