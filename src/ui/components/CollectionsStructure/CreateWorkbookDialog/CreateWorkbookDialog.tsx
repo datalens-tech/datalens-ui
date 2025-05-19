@@ -219,11 +219,15 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
             };
 
             if (isEnabledFeature(Feature.EnableExportWorkbookFile) && importFiles.length > 0) {
-                setView('import');
+                // include loading of parsing JSON file
+                setIsExternalLoading(true);
                 const importResult = await dispatch(
                     importWorkbook({...workbookData, importFile: importFiles[0]}),
                 );
+                setIsExternalLoading(false);
+
                 if (importResult && importResult.importId) {
+                    setView('import');
                     pollImportStatus(importResult.importId);
                 }
                 return;
