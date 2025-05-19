@@ -57,9 +57,23 @@ const traverseWizardFieldsRecursive = (obj: any, matchCallback: MatchCallback) =
         if (key === 'datasetId' && typeof val === 'string') {
             // Array<{datasetId: string}>
             obj[key] = matchCallback(val, obj, key);
+        } else if (key === 'datasets' && Array.isArray(val)) {
+            // datasets: [{id: string}]
+            for (let i = 0; i <= val.length; i++) {
+                const item = val[i];
+                item.id = matchCallback(item.id, item, 'id');
+
+                if (item.result_schema) {
+                    traverseWizardFieldsRecursive(item.result_schema, matchCallback);
+                }
+            }
         } else if (key === 'dataset' && typeof val === 'object' && typeof val.id === 'string') {
-            // dataset.id
+            // dataset: {id: string}
             val.id = matchCallback(val.id, val, 'id');
+
+            if (val.result_schema) {
+                traverseWizardFieldsRecursive(val.result_schema, matchCallback);
+            }
         } else if (typeof val === 'object') {
             traverseWizardFieldsRecursive(val, matchCallback);
         }
