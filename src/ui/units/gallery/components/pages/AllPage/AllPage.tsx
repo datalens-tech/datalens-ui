@@ -20,20 +20,13 @@ import type {GalleryItem} from '../../../types';
 import {GalleryCardPreview} from '../../blocks';
 import {block, getCategoryLabelTitle, getLang} from '../../utils';
 import type {CnMods} from '../../utils';
+import {SPECIAL_CATEGORY, URL_FILTER_PARAMS} from '../constants';
 import {EDITORS_CHOICE_ITEM_IDS} from '../mocks';
 
 import './AllPage.scss';
 
-const URL_FILTER_PARAMS = {
-    SEARCH_TEXT: 'search',
-    CATEGORY: 'category',
-};
-
 const b = block('all');
-const SPECIAL_CATEGORY = {
-    ALL: 'all',
-    EDITORS_CHOICE: 'editors-choice',
-};
+
 const CATEGORIES_SELECT_VALUES = [
     SPECIAL_CATEGORY.ALL,
     SPECIAL_CATEGORY.EDITORS_CHOICE,
