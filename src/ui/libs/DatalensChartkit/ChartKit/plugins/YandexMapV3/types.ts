@@ -44,12 +44,14 @@ export type YmapItemOptions = {
 
 type GeometryType = GeometryCircle | GeometryRectangle | GeometryPolygon | GeometryPolyline | Point;
 
+type MapFeature = {
+    geometry: GeometryType;
+    properties?: Record<string, unknown>;
+};
+
 export type SingleItem = {
-    feature: {
-        geometry: GeometryType;
-        properties?: Record<string, unknown>;
-    };
-    options: YmapItemOptions;
+    feature: MapFeature;
+    options?: YmapItemOptions;
 };
 
 type ItemCollection = {
@@ -64,7 +66,12 @@ type ItemClusterer = {
     options: YmapItemOptions;
 };
 
-export type YandexMapWidgetDataItem = SingleItem | ItemCollection | ItemClusterer;
+type Heatmap = {
+    heatmap: MapFeature[];
+    options?: YmapItemOptions;
+};
+
+export type YandexMapWidgetDataItem = SingleItem | ItemCollection | ItemClusterer | Heatmap;
 
 export type YandexMapControlType = 'zoomControl' | 'scaleControl';
 

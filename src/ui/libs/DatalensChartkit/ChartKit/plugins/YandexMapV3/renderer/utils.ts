@@ -110,8 +110,8 @@ function getMapFeatureObject(item: SingleItem, layerOptions?: YmapItemOptions): 
 function getMapOpjectProperties(item: SingleItem) {
     const props = item.feature.properties ?? {};
     const result: Record<string, unknown> = {
-        color: item.options.iconColor ?? '',
-        zIndex: item.options.zIndex,
+        color: item.options?.iconColor ?? '',
+        zIndex: item.options?.zIndex,
         radius: Number(item.feature.properties?.radius ?? 2),
     };
 
@@ -126,8 +126,8 @@ function getPointObject(item: SingleItem): YMapPoint {
     return {
         coordinates: reverseCoordinates(item.feature.geometry.coordinates) as LngLat,
         properties: getMapOpjectProperties(item),
-        color: item.options.iconColor ?? '',
-        zIndex: item.options.zIndex,
+        color: item.options?.iconColor ?? 'var(--g-color-base-brand)',
+        zIndex: item.options?.zIndex,
         radius: Number(item.feature.properties?.radius ?? 2),
     };
 }
@@ -172,6 +172,14 @@ export function getMapConfig(args: YandexMapWidgetData): YMapConfig {
                 });
             }
 
+            if ('heatmap' in item) {
+                item.heatmap.forEach((d) => {
+                    if (d.geometry.type === 'Point') {
+                        points.push(getPointObject({...d, feature: d}));
+                    }
+                });
+            }
+
             if ('collection' in item) {
                 item.collection.children.forEach((d) => {
                     if (d.feature.geometry.type === 'Point') {
@@ -205,7 +213,7 @@ export function getMapConfig(args: YandexMapWidgetData): YMapConfig {
 
             return {
                 id: `layer-${index}`,
-                opacity: item.options.opacity,
+                opacity: item.options?.opacity,
                 points,
                 clusteredPoints,
                 features,
