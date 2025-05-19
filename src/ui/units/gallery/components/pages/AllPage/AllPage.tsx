@@ -1,16 +1,28 @@
 import React from 'react';
 
-import {Col, Container, Row, Select, Text, TextInput, useLayoutContext} from '@gravity-ui/uikit';
+import {
+    Col,
+    Container,
+    Loader,
+    Row,
+    Select,
+    Text,
+    TextInput,
+    useLayoutContext,
+} from '@gravity-ui/uikit';
 import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
+import {useDispatch, useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
 import {ActionPanel} from 'ui/components/ActionPanel';
 
 import {GALLERY_ITEM_CATEGORY} from '../../../constants/gallery-item';
+import {loadGalleryItems} from '../../../store/actions';
+import {getGalleryItems, getGalleryItemsLoadingStatus} from '../../../store/selectors';
 import type {GalleryItem} from '../../../types';
 import {GalleryCardPreview} from '../../blocks';
 import {block, getCategoryLabelTitle, getLang} from '../../utils';
 import type {CnMods} from '../../utils';
-import {EDITORS_CHOICE_ITEM_IDS, MOCKED_GALLERY_ITEMS} from '../mocks';
+import {EDITORS_CHOICE_ITEM_IDS} from '../mocks';
 
 import './AllPage.scss';
 
@@ -100,12 +112,27 @@ export function AllPage() {
     const [search, setSearch] = React.useState('');
     const [category, setCategory] = React.useState<string>(SPECIAL_CATEGORY.ALL);
     const lang = getLang();
+    const items = useSelector(getGalleryItems);
+    const loadingStatus = useSelector(getGalleryItemsLoadingStatus);
     const {filteredItems} = useFilteredGalleryItems({
         category,
-        items: MOCKED_GALLERY_ITEMS,
+        items,
         search,
         lang,
     });
+    const dispatch = useDispatch();
+
+    React.useEffect(() => {
+        dispatch(loadGalleryItems());
+    }, [dispatch]);
+
+    if (loadingStatus === 'loading') {
+        return (
+            <div className={b('loader')}>
+                <Loader size="m" />
+            </div>
+        );
+    }
 
     return (
         <React.Fragment>
