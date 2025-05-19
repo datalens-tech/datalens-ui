@@ -207,7 +207,7 @@ function filterParams(
     params: Record<string, unknown> = {},
     embeddingInfo: EmbeddingInfo,
 ): {params: Record<string, unknown>; privateParams?: Set<string>} {
-    if (Object.keys(params).length === 0) {
+    if (!params || Object.keys(params).length === 0) {
         return {params: {...embeddingInfo.token.params}};
     }
 
@@ -231,20 +231,22 @@ function filterParams(
 
             if (isDashEntry(embeddingInfo.entry)) {
                 embeddingInfo.entry.data.tabs.forEach((entryTab) => {
-                    Object.keys(entryTab.aliases).forEach((namespace) => {
-                        entryTab.aliases[namespace].forEach((alias) => {
-                            const hasPrivateParam = alias.some((item) =>
-                                fillingForbiddenParamsSet.has(item),
-                            );
+                    if (entryTab.aliases) {
+                        Object.keys(entryTab.aliases).forEach((namespace) => {
+                            entryTab.aliases[namespace].forEach((alias) => {
+                                const hasPrivateParam = alias.some((item) =>
+                                    fillingForbiddenParamsSet.has(item),
+                                );
 
-                            if (hasPrivateParam) {
-                                // Add all items in alias to forbidden set
-                                for (const item of alias) {
-                                    fillingForbiddenParamsSet.add(item);
+                                if (hasPrivateParam) {
+                                    // Add all items in alias to forbidden set
+                                    for (const item of alias) {
+                                        fillingForbiddenParamsSet.add(item);
+                                    }
                                 }
-                            }
+                            });
                         });
-                    });
+                    }
                 });
             }
 

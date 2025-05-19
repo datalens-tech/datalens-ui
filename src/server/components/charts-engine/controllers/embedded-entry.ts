@@ -1,6 +1,6 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
 import jwt from 'jsonwebtoken';
-import {isObject} from 'lodash';
+import isObject from 'lodash/isObject';
 
 import {DL_EMBED_TOKEN_HEADER, EntryScope, ErrorCode} from '../../../../shared';
 import {resolveEmbedConfig} from '../components/storage';
@@ -9,6 +9,10 @@ import type {EmbedResolveConfigProps, ResolveConfigError} from '../components/st
 function validateSignedParams(
     record: Record<string, unknown>,
 ): record is Record<string, string | string[]> {
+    if (!record) {
+        return false;
+    }
+
     return Object.values(record).every(
         (value) =>
             typeof value === 'string' ||
