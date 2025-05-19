@@ -5,7 +5,7 @@ import type {Request, Response} from '@gravity-ui/expresskit';
 import get from 'lodash/get';
 
 import type {ChartsEngine} from '..';
-import {Feature, isEnabledServerFeature} from '../../../../shared';
+import {Feature} from '../../../../shared';
 import {DeveloperModeCheckStatus} from '../../../../shared/types';
 import type {ResolvedConfig} from '../components/storage/types';
 import {getDuration} from '../components/utils';
@@ -119,8 +119,9 @@ export const runController = (
                     return;
                 }
 
+                const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
                 if (
-                    isEnabledServerFeature(ctx, Feature.ShouldCheckEditorAccess) &&
+                    isEnabledServerFeature(Feature.ShouldCheckEditorAccess) &&
                     runnerFound.name === 'editor'
                 ) {
                     const {checkRequestForDeveloperModeAccess} = ctx.get('gateway');

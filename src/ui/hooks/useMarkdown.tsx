@@ -5,6 +5,7 @@ import {getRenderMarkdownFn} from '../utils/markdown/get-render-markdown-fn';
 
 type Props = {
     value: string;
+    className?: string;
 };
 
 const MD_COLLECTION_MAX_SIZE = 1000;
@@ -28,7 +29,7 @@ async function renderMarkdown(value: string) {
 }
 
 export const useMarkdown = (props: Props) => {
-    const {value} = props;
+    const {value, className} = props;
     const [markdown, setMarkdown] = React.useState('');
     const [isLoading, setIsLoading] = React.useState<boolean>(true);
 
@@ -43,5 +44,8 @@ export const useMarkdown = (props: Props) => {
         });
     }, [value]);
 
-    return {markdown: <YfmWrapper content={markdown} setByInnerHtml={true} />, isLoading};
+    return {
+        markdown: <YfmWrapper className={className} content={markdown} setByInnerHtml={true} />,
+        isLoading,
+    };
 };
