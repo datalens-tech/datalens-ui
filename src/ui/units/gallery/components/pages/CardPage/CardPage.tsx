@@ -199,9 +199,7 @@ function CardDescription({lang, description, shortDescription}: CardDescriptionP
         <Flex direction="column">
             {shortDescription && <Text variant="body-2">{getTranslation(shortDescription)}</Text>}
             {isExpanded && description && (
-                <Text variant="body-2">
-                    <MarkdownContent>{getTranslation(description)}</MarkdownContent>
-                </Text>
+                <MarkdownContent>{getTranslation(description)}</MarkdownContent>
             )}
             {shouldShowButton && (
                 <Button
