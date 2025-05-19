@@ -19,7 +19,7 @@ export const MOCKED_GALLERY_ITEMS: GalleryItem[] = [
         },
         description: {
             en: 'Track student grades and attendance',
-            ru: 'Отслеживание оценок и посещаемости студентов',
+            ru: 'Отслеживание оценок и посещаемости **студентов**',
         },
         shortDescription: {
             en: 'Comprehensive student analytics',

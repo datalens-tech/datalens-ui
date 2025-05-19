@@ -9,7 +9,6 @@ import {
 } from '../../../constants';
 import {getEntryNameByKey, normalizeDestination} from '../../../modules';
 import {Feature} from '../../../types/feature';
-import {isEnabledServerFeature} from '../../../utils/feature';
 import {createAction} from '../../gateway-utils';
 import {defaultParamsSerializer, filterUrlFragment} from '../../utils';
 import type {
@@ -147,7 +146,8 @@ export const entriesActions = {
         path: ({entryId}) => `${PATH_PREFIX}/entries/${filterUrlFragment(entryId)}/revisions`,
         params: (args, headers, {ctx}) => {
             let updatedAfter;
-            if (!isEnabledServerFeature(ctx, Feature.RevisionsListNoLimit) && !args.revIds) {
+            const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
+            if (!isEnabledServerFeature(Feature.RevisionsListNoLimit) && !args.revIds) {
                 const date = new Date();
                 date.setMonth(date.getMonth() - 3);
                 updatedAfter = date.toISOString();
@@ -208,7 +208,8 @@ export const entriesActions = {
                 (relationEntry) => relationEntry.entryId,
             );
             if (args.excludeUnregistredDlsEntries) {
-                if (isEnabledServerFeature(ctx, Feature.UseYqlFolderKey)) {
+                const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
+                if (isEnabledServerFeature(Feature.UseYqlFolderKey)) {
                     const yqlFolderKey = 'yql/charts/';
                     uniqRelations = uniqRelations.filter(
                         ({key}) => !key.toLowerCase().startsWith(yqlFolderKey),

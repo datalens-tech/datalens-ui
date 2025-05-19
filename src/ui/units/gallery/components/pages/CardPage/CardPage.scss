@@ -94,4 +94,8 @@ $block: '.#{variables.$ns}-card';
             align-items: flex-start;
         }
     }
+
+    &__md.yfm {
+        @include text-body-2();
+    }
 }
