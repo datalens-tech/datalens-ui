@@ -1,18 +1,29 @@
 import React from 'react';
 
 import {ArrowRight, Medal} from '@gravity-ui/icons';
-import {Button, Card, Col, Container, Flex, Icon, Row, useLayoutContext} from '@gravity-ui/uikit';
+import {
+    Button,
+    Card,
+    Col,
+    Container,
+    Flex,
+    Icon,
+    Loader,
+    Row,
+    useLayoutContext,
+} from '@gravity-ui/uikit';
 import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 import type {AsyncImageProps} from 'ui/components/AsyncImage/AsyncImage';
 import type {CreateIllustrationProps} from 'ui/components/Illustration/types';
 import {createIllustration} from 'ui/components/Illustration/utils';
 
+import {useGetGalleryItemsQuery} from '../../../store/api';
 import type {GalleryItem} from '../../../types';
 import {GalleryCardPreview, SectionHeader} from '../../blocks';
 import type {ActiveMediaQuery} from '../../types';
 import {block, groupGalleryItemsByLabels} from '../../utils';
 import type {CnMods} from '../../utils';
-import {EDITORS_CHOICE_ITEM_IDS, MOCKED_GALLERY_ITEMS} from '../mocks';
+import {EDITORS_CHOICE_ITEM_IDS} from '../mocks';
 
 import './LandingPage.scss';
 
@@ -159,6 +170,18 @@ export function LandingPage() {
     const isActiveMediaQueryS = activeMediaQuery === 's';
     const baseMods: CnMods = {media: activeMediaQuery};
 
+    const {isLoading, data} = useGetGalleryItemsQuery({});
+
+    if (isLoading) {
+        return (
+            <div className={b('loader')}>
+                <Loader size="m" />
+            </div>
+        );
+    }
+
+    const galleryItems = data ?? [];
+
     return (
         <Container className={b('container', baseMods)}>
             {/* Header */}
@@ -185,7 +208,7 @@ export function LandingPage() {
             {/* Promo block */}
             <PromoBlockRow
                 title="Industries"
-                galleryItems={MOCKED_GALLERY_ITEMS}
+                galleryItems={galleryItems}
                 activeMediaQuery={activeMediaQuery}
             />
             {/* Work of the month */}
@@ -261,7 +284,7 @@ export function LandingPage() {
                 <Col s="12">
                     <SectionHeader activeMediaQuery={activeMediaQuery} title="The best of 2024" />
                 </Col>
-                {MOCKED_GALLERY_ITEMS.slice(0, 3).map((item) => {
+                {galleryItems.slice(0, 3).map((item) => {
                     return (
                         <Col key={item.id} l="4" m="4" s="12">
                             <GalleryCardPreview
@@ -282,7 +305,7 @@ export function LandingPage() {
                         title="What can be done in the editor"
                     />
                 </Col>
-                {MOCKED_GALLERY_ITEMS.slice(3, 6).map((item) => {
+                {galleryItems.slice(3, 6).map((item) => {
                     return (
                         <Col key={item.id} l="4" m="4" s="12">
                             <GalleryCardPreview
@@ -300,7 +323,7 @@ export function LandingPage() {
                 <Col s="12">
                     <SectionHeader activeMediaQuery={activeMediaQuery} title="With maps" />
                 </Col>
-                {MOCKED_GALLERY_ITEMS.slice(6, 9).map((item) => {
+                {galleryItems.slice(6, 9).map((item) => {
                     return (
                         <Col key={item.id} l="4" m="4" s="12">
                             <GalleryCardPreview
