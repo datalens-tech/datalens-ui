@@ -45,6 +45,36 @@ function IconWithText(props: IconWithTextProps) {
     );
 }
 
+function ContactPartnerButton(props: {partnerId?: string | null; mods?: CnMods}) {
+    const {partnerId = '12', mods} = props;
+    const isActiveMediaQueryS = activeMediaQuery === 's';
+
+    const handleClick = React.useCallback(() => {
+        if (!partnerId) {
+            return;
+        }
+
+        const formUrl = new URL(
+            'https://forms.yandex.ru/surveys/13751079.3e99c7a8580e57d0da33da837f0d634a7d853446/',
+        );
+        formUrl.searchParams.append('partner', partnerId);
+        formUrl.searchParams.append('link', window.location.href);
+        window.open(formUrl, '_blank');
+    }, [partnerId]);
+
+    if (!partnerId) {
+        return null;
+    }
+
+    const buttonProps = isActiveMediaQueryS ? {width: 'max', size: 'xl'} : {};
+
+    return (
+        <Button className={b('contact-partner-btn', mods)} {...buttonProps} onClick={handleClick}>
+            Contact a partner
+        </Button>
+    );
+}
+
 interface CardActionPanelProps {
     activeMediaQuery: ActiveMediaQuery;
     entry: GalleryItem;
@@ -110,6 +140,7 @@ function CardActionPanel({
                         <Icon data={ArrowShapeTurnUpRight} />
                     </Button.Icon>
                 </Button>
+                <ContactPartnerButton partnerId={entry.partnerId} mods={mods} />
                 <Button view={showPreview ? 'normal' : 'action'} onClick={togglePreview}>
                     {showPreview ? (
                         <Button.Icon>
@@ -249,6 +280,7 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang}: CardContent
                                 Open
                             </Button>
                         </Flex>
+                        <ContactPartnerButton partnerId={entry.partnerId} mods={mods} />
                     </Col>
                 </Row>
             )}
