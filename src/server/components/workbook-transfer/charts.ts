@@ -55,6 +55,7 @@ const validateChartShared = (chartOptions: TransferChartDataOptions) => {
 const traverseDatasetFields = (obj: any, matchCallback: MatchCallback) => {
     const {result_schema, sources} = obj || {};
 
+    // Legacy dataset properties placeholder replacer
     if (result_schema && Array.isArray(result_schema)) {
         for (let i = 0; i <= result_schema.length; i++) {
             const item = result_schema[i];
@@ -65,6 +66,8 @@ const traverseDatasetFields = (obj: any, matchCallback: MatchCallback) => {
         }
     }
 
+    // This is v1 field schema but saved and cause we are not migrating wizard charts
+    // we need to migrate this fields before export\import
     if (sources && Array.isArray(sources)) {
         for (let i = 0; i <= sources.length; i++) {
             const item = sources[i];
