@@ -73,6 +73,9 @@ export function EntrySuggest({
                 page?: number;
                 scope: EntryOptionScope;
             }) => {
+                if (!search) {
+                    return;
+                }
                 setLoading(true);
                 if (page === 0) {
                     setItems([]);
@@ -97,7 +100,7 @@ export function EntrySuggest({
                     );
 
                     setPaginationParams({
-                        page: page + 1,
+                        page,
                         hasNextPage,
                     });
 
