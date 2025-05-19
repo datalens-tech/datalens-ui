@@ -18,6 +18,7 @@ import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
 import {useHistory} from 'react-router-dom';
 import {ActionPanel} from 'ui/components/ActionPanel';
 import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
+import {useMarkdown} from 'ui/hooks/useMarkdown';
 
 import type {GalleryItem, TranslationsDict} from '../../../types';
 import {GalleryCardLabels, GalleryCardPreview, SectionHeader} from '../../blocks';
@@ -182,6 +183,12 @@ interface CardDescriptionProps {
     shortDescription?: TranslationsDict;
 }
 
+const MarkdownContent = (props: {children: string}) => {
+    const {markdown} = useMarkdown({value: props.children, className: b('md')});
+
+    return markdown;
+};
+
 function CardDescription({lang, description, shortDescription}: CardDescriptionProps) {
     const [isExpanded, setIsExpanded] = React.useState(false);
     const shouldShowButton = Boolean(description);
@@ -192,7 +199,9 @@ function CardDescription({lang, description, shortDescription}: CardDescriptionP
         <Flex direction="column">
             {shortDescription && <Text variant="body-2">{getTranslation(shortDescription)}</Text>}
             {isExpanded && description && (
-                <Text variant="body-2">{getTranslation(description)}</Text>
+                <Text variant="body-2">
+                    <MarkdownContent>{getTranslation(description)}</MarkdownContent>
+                </Text>
             )}
             {shouldShowButton && (
                 <Button
