@@ -90,3 +90,17 @@ export async function resolveChartConfig(args: LoadChartConfigArgs) {
         return result;
     }
 }
+
+export function validateSignedParams(
+    record: Record<string, unknown>,
+): record is Record<string, string | string[]> {
+    if (!record) {
+        return false;
+    }
+
+    return Object.values(record).every(
+        (value) =>
+            typeof value === 'string' ||
+            (Array.isArray(value) && value.every((item) => typeof item === 'string')),
+    );
+}

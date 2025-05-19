@@ -20,6 +20,8 @@ import type {EmbedResolveConfigProps, ResolveConfigError} from '../components/st
 import type {EmbeddingInfo, ReducedResolvedConfig} from '../components/storage/types';
 import {getDuration, isDashEntry} from '../components/utils';
 
+import {validateSignedParams} from './utils';
+
 const isResponseError = (error: unknown): error is AxiosError<{code: string}> => {
     return Boolean(isObject(error) && 'response' in error && error.response);
 };
@@ -259,14 +261,21 @@ function filterParams(
         }
     }
 
-    // token params is written in globalParams and usually applied by dashkit
-    // we use them again after filtering the user parameters from the chart/dashboard
-    // in case there are forbidden parameters among them.
-    return {
-        params: {
+    let finalParams;
+    if (validateSignedParams(embeddingInfo.token.params)) {
+        // token params is written in globalParams and usually applied by dashkit
+        // we use them again after filtering the user parameters from the chart/dashboard
+        // in case there are forbidden parameters among them.
+        finalParams = {
             ...embeddingInfo.token.params,
             ...filteredParams,
-        },
+        };
+    } else {
+        finalParams = filteredParams;
+    }
+
+    return {
+        params: finalParams,
         privateParams: forbiddenParamsSet,
     };
 }

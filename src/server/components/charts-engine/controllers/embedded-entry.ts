@@ -6,19 +6,7 @@ import {DL_EMBED_TOKEN_HEADER, EntryScope, ErrorCode} from '../../../../shared';
 import {resolveEmbedConfig} from '../components/storage';
 import type {EmbedResolveConfigProps, ResolveConfigError} from '../components/storage/base';
 
-function validateSignedParams(
-    record: Record<string, unknown>,
-): record is Record<string, string | string[]> {
-    if (!record) {
-        return false;
-    }
-
-    return Object.values(record).every(
-        (value) =>
-            typeof value === 'string' ||
-            (Array.isArray(value) && value.every((item) => typeof item === 'string')),
-    );
-}
+import {validateSignedParams} from './utils';
 
 export const embeddedEntryController = (req: Request, res: Response) => {
     const {ctx} = req;
