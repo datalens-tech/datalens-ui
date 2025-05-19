@@ -1,9 +1,9 @@
 import {reducerRegistry} from '../../../store';
 import {App} from '../../../units/gallery';
-import {reducer} from '../../../units/gallery/store/reducer';
+import {galleryApi} from '../../../units/gallery/store/api';
 
 reducerRegistry.register({
-    gallery: reducer,
+    [galleryApi.reducerPath]: galleryApi.reducer,
 });
 
 export default App;

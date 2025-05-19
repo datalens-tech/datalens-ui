@@ -12,14 +12,12 @@ import {
     Row,
     useLayoutContext,
 } from '@gravity-ui/uikit';
-import {useDispatch, useSelector} from 'react-redux';
 import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 import type {AsyncImageProps} from 'ui/components/AsyncImage/AsyncImage';
 import type {CreateIllustrationProps} from 'ui/components/Illustration/types';
 import {createIllustration} from 'ui/components/Illustration/utils';
 
-import {loadGalleryItems} from '../../../store/actions';
-import {getGalleryItems, getGalleryItemsLoadingStatus} from '../../../store/selectors';
+import {useGetGalleryItemsQuery} from '../../../store/api';
 import type {GalleryItem} from '../../../types';
 import {GalleryCardPreview, SectionHeader} from '../../blocks';
 import type {ActiveMediaQuery} from '../../types';
@@ -171,21 +169,18 @@ export function LandingPage() {
     const {activeMediaQuery} = useLayoutContext();
     const isActiveMediaQueryS = activeMediaQuery === 's';
     const baseMods: CnMods = {media: activeMediaQuery};
-    const loadingStatus = useSelector(getGalleryItemsLoadingStatus);
-    const galleryItems = useSelector(getGalleryItems);
-    const dispatch = useDispatch();
 
-    React.useEffect(() => {
-        dispatch(loadGalleryItems());
-    }, [dispatch]);
+    const {isLoading, data} = useGetGalleryItemsQuery({});
 
-    if (loadingStatus === 'loading') {
+    if (isLoading) {
         return (
             <div className={b('loader')}>
                 <Loader size="m" />
             </div>
         );
     }
+
+    const galleryItems = data ?? [];
 
     return (
         <Container className={b('container', baseMods)}>

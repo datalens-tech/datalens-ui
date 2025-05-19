@@ -11,13 +11,11 @@ import {
     useLayoutContext,
 } from '@gravity-ui/uikit';
 import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
-import {useDispatch, useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
 import {ActionPanel} from 'ui/components/ActionPanel';
 
 import {GALLERY_ITEM_CATEGORY} from '../../../constants/gallery-item';
-import {loadGalleryItems} from '../../../store/actions';
-import {getGalleryItems, getGalleryItemsLoadingStatus} from '../../../store/selectors';
+import {useGetGalleryItemsQuery} from '../../../store/api';
 import type {GalleryItem} from '../../../types';
 import {GalleryCardPreview} from '../../blocks';
 import {block, getCategoryLabelTitle, getLang} from '../../utils';
@@ -112,21 +110,16 @@ export function AllPage() {
     const [search, setSearch] = React.useState('');
     const [category, setCategory] = React.useState<string>(SPECIAL_CATEGORY.ALL);
     const lang = getLang();
-    const items = useSelector(getGalleryItems);
-    const loadingStatus = useSelector(getGalleryItemsLoadingStatus);
+
+    const {isLoading, data: items = []} = useGetGalleryItemsQuery({});
     const {filteredItems} = useFilteredGalleryItems({
         category,
         items,
         search,
         lang,
     });
-    const dispatch = useDispatch();
 
-    React.useEffect(() => {
-        dispatch(loadGalleryItems());
-    }, [dispatch]);
-
-    if (loadingStatus === 'loading') {
+    if (isLoading) {
         return (
             <div className={b('loader')}>
                 <Loader size="m" />
