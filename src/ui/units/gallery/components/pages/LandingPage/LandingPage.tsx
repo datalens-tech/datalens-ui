@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {ArrowRight, ChevronRight, Medal} from '@gravity-ui/icons';
+import {ArrowRight, Medal} from '@gravity-ui/icons';
 import {Button, Card, Col, Container, Flex, Icon, Row, useLayoutContext} from '@gravity-ui/uikit';
 import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 import type {AsyncImageProps} from 'ui/components/AsyncImage/AsyncImage';
@@ -8,7 +8,8 @@ import type {CreateIllustrationProps} from 'ui/components/Illustration/types';
 import {createIllustration} from 'ui/components/Illustration/utils';
 
 import type {GalleryItem} from '../../../types';
-import {GalleryCardPreview} from '../../blocks';
+import {GalleryCardPreview, SectionHeader} from '../../blocks';
+import type {ActiveMediaQuery} from '../../types';
 import {block, groupGalleryItemsByLabels} from '../../utils';
 import type {CnMods} from '../../utils';
 import {EDITORS_CHOICE_ITEM_IDS, MOCKED_GALLERY_ITEMS} from '../mocks';
@@ -26,28 +27,8 @@ const galleryIllustrationStore = {
 };
 const BaseIllustration = createIllustration([galleryIllustrationStore]);
 
-type ActiveMediaQuery = ReturnType<typeof useLayoutContext>['activeMediaQuery'];
-
 function GalleryIllustration(props: Omit<CreateIllustrationProps, 'name'>) {
     return <BaseIllustration name="galleryHeader" {...props} />;
-}
-
-interface SectionHeaderProps {
-    title: string;
-    activeMediaQuery?: ActiveMediaQuery;
-}
-
-function SectionHeader({activeMediaQuery, title}: SectionHeaderProps) {
-    const icon = activeMediaQuery === 's' ? <ChevronRight /> : <ArrowRight />;
-
-    return (
-        <Flex className={b('section-header', {media: activeMediaQuery})}>
-            {title}
-            <Button view="flat" size="l">
-                <Button.Icon>{icon}</Button.Icon>
-            </Button>
-        </Flex>
-    );
 }
 
 interface PromoBlockItemProps {
@@ -91,6 +72,7 @@ function PromoBlockItem({
         </Card>
     );
 }
+
 interface PromoBlockRowProps {
     title: string;
     galleryItems: GalleryItem[];

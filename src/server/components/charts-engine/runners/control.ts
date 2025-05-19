@@ -9,7 +9,16 @@ import {commonRunner} from './common';
 import type {RunnerHandler, RunnerHandlerProps} from '.';
 
 export const runControl: RunnerHandler = async (cx: AppContext, props: RunnerHandlerProps) => {
-    const {chartsEngine, req, res, config, configResolving, workbookId, forbiddenFields} = props;
+    const {
+        chartsEngine,
+        req,
+        res,
+        config,
+        configResolving,
+        workbookId,
+        forbiddenFields,
+        secureConfig,
+    } = props;
 
     const ctx = cx.create('templateControlRunner');
 
@@ -65,5 +74,6 @@ export const runControl: RunnerHandler = async (cx: AppContext, props: RunnerHan
         hrStart,
         localConfig: config,
         forbiddenFields,
+        secureConfig,
     });
 };

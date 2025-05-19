@@ -1,10 +1,11 @@
 import React from 'react';
 
-import {Card, Label} from '@gravity-ui/uikit';
+import {Card} from '@gravity-ui/uikit';
 import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 
 import type {GalleryItem} from '../../../types';
-import {block, getCategoryLabelTitle} from '../../utils';
+import {block, getLang} from '../../utils';
+import {GalleryCardLabels} from '../GalleryCardLabels/GalleryCardLabels';
 
 import './GalleryCardPreview.scss';
 
@@ -15,23 +16,18 @@ interface GalleryCardPreviewProps extends Pick<GalleryItem, 'createdBy' | 'label
 }
 
 export function GalleryCardPreview({title, createdBy, labels, imageSrc}: GalleryCardPreviewProps) {
+    const lang = getLang();
     return (
         <Card className={b()} type="action" view="outlined" onClick={() => {}}>
             <AsyncImage className={b('image')} showSkeleton={true} src={imageSrc} />
             <div className={b('info')}>
-                <div className={b('info-title')} title={title}>
-                    {title}
+                <div className={b('info-title')} title={title[lang]}>
+                    {title[lang]}
                 </div>
                 <div className={b('info-created-by')} title={createdBy}>
                     {createdBy}
                 </div>
-                <div className={b('info-labels')}>
-                    {labels?.map((label, index) => (
-                        <Label size="s" theme="clear" key={`${createdBy}-${label}-${index}`}>
-                            {getCategoryLabelTitle(label)}
-                        </Label>
-                    ))}
-                </div>
+                <GalleryCardLabels labels={labels} id={createdBy} />
             </div>
         </Card>
     );

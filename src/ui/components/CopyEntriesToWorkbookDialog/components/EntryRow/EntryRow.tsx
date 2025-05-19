@@ -4,10 +4,10 @@ import {Icon, Link} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import type {WorkbookId} from 'shared';
-import {EntryScope} from 'shared';
 
 import navigateHelper from '../../../../libs/navigateHelper';
 import {EntryIcon} from '../../../EntryIcon/EntryIcon';
+import {checkFileConnection} from '../../utils';
 
 import WarningColoredIcon from '../../../../assets/icons/warning-colored.svg';
 
@@ -34,14 +34,12 @@ export type EntryRowProps = {
 
 export const EntryRow: React.FC<EntryRowProps> = ({className, entry, isTargetEntry}) => {
     const link = navigateHelper.redirectUrlSwitcher(entry);
-    const isFileConnection =
-        entry.scope === EntryScope.Connection &&
-        (entry.type === 'file' || entry.type === 'gsheets_v2');
+    const isFileConnection = checkFileConnection(entry);
 
     return (
         <div className={b(null, className)}>
             <div className={b('icon')}>
-                <EntryIcon entry={entry} />
+                <EntryIcon entry={entry} size="s" />
             </div>
             <Link
                 className={b('name', {

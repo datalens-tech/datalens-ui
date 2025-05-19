@@ -238,7 +238,7 @@ class Control<TProviderData> extends React.PureComponent<
             ...control,
             className: b('item'),
             key: index + (param || (isNotSingleParam(control) && control.paramFrom) || label),
-            value,
+            value: control.disabled ? '' : value,
             onChange: (value: SimpleControlValue) => this.onChange(control, value, index),
         };
 

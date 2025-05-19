@@ -54,7 +54,9 @@ export function receiveWidgetAndPrepareMetadata({
                 resultPath += 'preview/';
             }
 
-            resultPath += entryId;
+            if (entryId) {
+                resultPath += entryId;
+            }
 
             if (!pathname.includes(entryId)) {
                 const updatedUrl = `${resultPath}${url.search}${url.hash}`;

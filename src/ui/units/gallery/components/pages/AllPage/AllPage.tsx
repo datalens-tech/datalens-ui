@@ -8,7 +8,7 @@ import {ActionPanel} from 'ui/components/ActionPanel';
 import {GALLERY_ITEM_CATEGORY} from '../../../constants/gallery-item';
 import type {GalleryItem} from '../../../types';
 import {GalleryCardPreview} from '../../blocks';
-import {block, getCategoryLabelTitle} from '../../utils';
+import {block, getCategoryLabelTitle, getLang} from '../../utils';
 import type {CnMods} from '../../utils';
 import {EDITORS_CHOICE_ITEM_IDS, MOCKED_GALLERY_ITEMS} from '../mocks';
 
@@ -35,13 +35,14 @@ interface UseGalleryItemsProps {
     items: GalleryItem[];
     search: string;
     category: string;
+    lang: string;
 }
 
-function useFilteredGalleryItems({category, items, search}: UseGalleryItemsProps) {
+function useFilteredGalleryItems({category, items, search, lang}: UseGalleryItemsProps) {
     const filteredItems = React.useMemo(() => {
         return items.reduce<GalleryItem[]>((acc, item) => {
             const matchesSearchValue =
-                !search || item.title.toLowerCase().startsWith(search.toLowerCase());
+                !search || item.title[lang]?.toLowerCase().startsWith(search.toLowerCase());
 
             if (!matchesSearchValue) {
                 return acc;
@@ -67,7 +68,7 @@ function useFilteredGalleryItems({category, items, search}: UseGalleryItemsProps
 
             return acc;
         }, []);
-    }, [category, items, search]);
+    }, [category, items, search, lang]);
 
     return {filteredItems};
 }
@@ -98,10 +99,12 @@ export function AllPage() {
     const baseMods: CnMods = {media: activeMediaQuery};
     const [search, setSearch] = React.useState('');
     const [category, setCategory] = React.useState<string>(SPECIAL_CATEGORY.ALL);
+    const lang = getLang();
     const {filteredItems} = useFilteredGalleryItems({
         category,
         items: MOCKED_GALLERY_ITEMS,
         search,
+        lang,
     });
 
     return (

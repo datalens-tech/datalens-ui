@@ -72,16 +72,16 @@ export const isItemPasteAllowed = (itemData: CopiedConfigData, workbookId?: stri
         return true;
     }
 
-    if (itemData.type === DashTabItemType.GroupControl) {
+    const itemWorkbookId = itemData.copyContext?.workbookId ?? null;
+    const dashWorkbookId = workbookId ?? null;
+
+    if (itemWorkbookId !== dashWorkbookId && itemData.type === DashTabItemType.GroupControl) {
         return (
             itemData.data.group?.every(
                 (groupItem) => groupItem.sourceType === DashTabItemControlSourceType.Manual,
             ) || false
         );
     }
-
-    const itemWorkbookId = itemData.copyContext?.workbookId ?? null;
-    const dashWorkbookId = workbookId ?? null;
 
     return itemWorkbookId === dashWorkbookId;
 };
