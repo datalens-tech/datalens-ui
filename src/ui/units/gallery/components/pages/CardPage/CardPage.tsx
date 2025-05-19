@@ -13,7 +13,7 @@ import {
     Text,
     useLayoutContext,
 } from '@gravity-ui/uikit';
-import type {IconData} from '@gravity-ui/uikit';
+import type {ButtonProps, IconData} from '@gravity-ui/uikit';
 import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
 import {useHistory} from 'react-router-dom';
 import {ActionPanel} from 'ui/components/ActionPanel';
@@ -45,8 +45,12 @@ function IconWithText(props: IconWithTextProps) {
     );
 }
 
-function ContactPartnerButton(props: {partnerId?: string | null; mods?: CnMods}) {
-    const {partnerId = '12', mods} = props;
+function ContactPartnerButton(props: {
+    partnerId?: string | null;
+    activeMediaQuery: ActiveMediaQuery;
+}) {
+    const {partnerId = '12', activeMediaQuery} = props;
+    const mods: CnMods = {media: activeMediaQuery};
     const isActiveMediaQueryS = activeMediaQuery === 's';
 
     const handleClick = React.useCallback(() => {
@@ -66,7 +70,7 @@ function ContactPartnerButton(props: {partnerId?: string | null; mods?: CnMods})
         return null;
     }
 
-    const buttonProps = isActiveMediaQueryS ? {width: 'max', size: 'xl'} : {};
+    const buttonProps: ButtonProps = isActiveMediaQueryS ? {width: 'max', size: 'xl'} : {};
 
     return (
         <Button className={b('contact-partner-btn', mods)} {...buttonProps} onClick={handleClick}>
@@ -140,7 +144,10 @@ function CardActionPanel({
                         <Icon data={ArrowShapeTurnUpRight} />
                     </Button.Icon>
                 </Button>
-                <ContactPartnerButton partnerId={entry.partnerId} mods={mods} />
+                <ContactPartnerButton
+                    partnerId={entry.partnerId}
+                    activeMediaQuery={activeMediaQuery}
+                />
                 <Button view={showPreview ? 'normal' : 'action'} onClick={togglePreview}>
                     {showPreview ? (
                         <Button.Icon>
@@ -280,7 +287,10 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang}: CardContent
                                 Open
                             </Button>
                         </Flex>
-                        <ContactPartnerButton partnerId={entry.partnerId} mods={mods} />
+                        <ContactPartnerButton
+                            partnerId={entry.partnerId}
+                            activeMediaQuery={activeMediaQuery}
+                        />
                     </Col>
                 </Row>
             )}
