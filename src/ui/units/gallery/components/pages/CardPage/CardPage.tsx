@@ -13,7 +13,7 @@ import {
     Text,
     useLayoutContext,
 } from '@gravity-ui/uikit';
-import type {IconData} from '@gravity-ui/uikit';
+import type {ButtonProps, IconData} from '@gravity-ui/uikit';
 import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
 import {useHistory} from 'react-router-dom';
 import {ActionPanel} from 'ui/components/ActionPanel';
@@ -25,6 +25,7 @@ import {GalleryCardLabels, GalleryCardPreview, SectionHeader} from '../../blocks
 import type {ActiveMediaQuery} from '../../types';
 import {block, getLang} from '../../utils';
 import type {CnMods} from '../../utils';
+import {PARTNER_FORM_LINK} from '../constants';
 import {MOCKED_GALLERY_ITEMS} from '../mocks';
 
 import './CardPage.scss';
@@ -42,6 +43,38 @@ function IconWithText(props: IconWithTextProps) {
             <Icon size={16} data={props.iconData} className={b('icon-with-text-icon')} />
             <Text variant="body-2">{props.text}</Text>
         </Flex>
+    );
+}
+
+function ContactPartnerButton(props: {
+    partnerId?: string | null;
+    activeMediaQuery: ActiveMediaQuery;
+}) {
+    const {partnerId, activeMediaQuery} = props;
+
+    const handleClick = React.useCallback(() => {
+        if (!partnerId) {
+            return;
+        }
+
+        const formUrl = new URL(PARTNER_FORM_LINK);
+        formUrl.searchParams.append('partner', partnerId);
+        formUrl.searchParams.append('link', window.location.href);
+        window.open(formUrl, '_blank');
+    }, [partnerId]);
+
+    if (!partnerId) {
+        return null;
+    }
+
+    const mods: CnMods = {media: activeMediaQuery};
+    const isActiveMediaQueryS = activeMediaQuery === 's';
+    const buttonProps: ButtonProps = isActiveMediaQueryS ? {width: 'max', size: 'xl'} : {};
+
+    return (
+        <Button className={b('contact-partner-btn', mods)} {...buttonProps} onClick={handleClick}>
+            Contact a partner
+        </Button>
     );
 }
 
@@ -110,6 +143,10 @@ function CardActionPanel({
                         <Icon data={ArrowShapeTurnUpRight} />
                     </Button.Icon>
                 </Button>
+                <ContactPartnerButton
+                    partnerId={entry.partnerId}
+                    activeMediaQuery={activeMediaQuery}
+                />
                 <Button view={showPreview ? 'normal' : 'action'} onClick={togglePreview}>
                     {showPreview ? (
                         <Button.Icon>
@@ -249,6 +286,10 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang}: CardContent
                                 Open
                             </Button>
                         </Flex>
+                        <ContactPartnerButton
+                            partnerId={entry.partnerId}
+                            activeMediaQuery={activeMediaQuery}
+                        />
                     </Col>
                 </Row>
             )}
