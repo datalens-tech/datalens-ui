@@ -34,6 +34,7 @@ const CustomAuthPage = ({setToken}) => {
     var oidc_4 = DL.OIDC_4;
     var oidc_name_4 = DL.OIDC_NAME_4;
     var oidc_base_url_4 = DL.OIDC_BASE_URL_4;
+    var releaseVersion = DL.RELEASE_VERSION;
 
     function onAuth() {
         Utils.getAuthToken({login: encodeURIComponent(login), password: encodeURIComponent(password)}).then((response)=> {
@@ -117,6 +118,15 @@ const CustomAuthPage = ({setToken}) => {
                             {i18n('label_oidc', {oidcName: oidc_name_4})}
                         </Button>
             )}
+        </div>
+
+        <div style={{
+            position: 'absolute',
+            display: 'block',
+            bottom: '0px',
+            left: '0px'
+        }}>
+            Версия: {releaseVersion}
         </div>
     </div>
 }

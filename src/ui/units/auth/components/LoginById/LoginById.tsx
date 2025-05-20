@@ -2,7 +2,7 @@ import React from 'react';
 
 import {Skeleton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {DL} from 'ui/constants';
+//import {DL} from 'ui/constants';
 import type {LoginByIdProps} from 'ui/registry/units/common/types/components/LoginById';
 
 import {useUserById} from '../../hooks/useUserById';
@@ -14,9 +14,9 @@ const b = block('dl-login-by-id');
 export const LoginById = ({loginOrId, className, view = 'primary'}: LoginByIdProps) => {
     const user = useUserById(loginOrId);
 
-    if (!DL.AUTH_ENABLED) {
-        return null;
-    }
+    // if (!DL.AUTH_ENABLED) {
+    //     return null;
+    // }
 
     let node: React.ReactNode = null;
 
