@@ -17,4 +17,5 @@ export type GalleryItem = {
     labels?: GalleryItemCategory[];
     shortDescription?: TranslationsDict;
     publicUrl?: string;
+    partnerId?: string;
 };

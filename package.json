@@ -136,6 +136,7 @@
     "@jest/types": "^29.6.3",
     "@microsoft/fetch-event-source": "^2.0.1",
     "@playwright/test": "^1.48.2",
+    "@reduxjs/toolkit": "^1.8.3",
     "@statoscope/cli": "^5.28.2",
     "@statoscope/stats-validator-plugin-webpack": "^5.28.2",
     "@statoscope/webpack-ui": "^5.28.2",

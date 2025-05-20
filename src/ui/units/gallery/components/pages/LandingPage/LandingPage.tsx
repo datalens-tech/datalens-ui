@@ -1,18 +1,33 @@
 import React from 'react';
 
 import {ArrowRight, Medal} from '@gravity-ui/icons';
-import {Button, Card, Col, Container, Flex, Icon, Row, useLayoutContext} from '@gravity-ui/uikit';
+import {
+    Button,
+    Card,
+    Col,
+    Container,
+    Flex,
+    Icon,
+    Loader,
+    Row,
+    useLayoutContext,
+    useThemeType,
+} from '@gravity-ui/uikit';
+import {useHistory} from 'react-router';
 import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 import type {AsyncImageProps} from 'ui/components/AsyncImage/AsyncImage';
 import type {CreateIllustrationProps} from 'ui/components/Illustration/types';
 import {createIllustration} from 'ui/components/Illustration/utils';
+import {GALLERY_ITEM_CATEGORY} from 'ui/units/gallery/constants/gallery-item';
 
+import {useGetGalleryItemsQuery} from '../../../store/api';
 import type {GalleryItem} from '../../../types';
 import {GalleryCardPreview, SectionHeader} from '../../blocks';
 import type {ActiveMediaQuery} from '../../types';
-import {block, groupGalleryItemsByLabels} from '../../utils';
+import {block, getAllPageUrl, groupGalleryItemsByLabels} from '../../utils';
 import type {CnMods} from '../../utils';
-import {EDITORS_CHOICE_ITEM_IDS, MOCKED_GALLERY_ITEMS} from '../mocks';
+import {SPECIAL_CATEGORY} from '../constants';
+import {EDITORS_CHOICE_ITEM_IDS} from '../mocks';
 
 import './LandingPage.scss';
 
@@ -37,6 +52,7 @@ interface PromoBlockItemProps {
     counter?: number;
     primary?: boolean;
     imageProps?: AsyncImageProps[];
+    category?: string;
 }
 
 function PromoBlockItem({
@@ -45,13 +61,21 @@ function PromoBlockItem({
     counter = 0,
     primary,
     imageProps = [],
+    category,
 }: PromoBlockItemProps) {
+    const history = useHistory();
+
+    const handleClick = React.useCallback(() => {
+        const url = getAllPageUrl({category});
+        history.push(url);
+    }, [history, category]);
+
     return (
         <Card
             className={b('promo-block-item-flex', {primary, media: activeMediaQuery})}
             view="clear"
             type="action"
-            onClick={() => {}}
+            onClick={handleClick}
         >
             <div className={b('promo-block-item-title', {primary})}>
                 {title}
@@ -80,6 +104,7 @@ interface PromoBlockRowProps {
 }
 
 function PromoBlockRow({title, galleryItems, activeMediaQuery}: PromoBlockRowProps) {
+    const themeType = useThemeType();
     const itemsByLabels = groupGalleryItemsByLabels(galleryItems);
     const primaryItems = galleryItems.filter((item) => EDITORS_CHOICE_ITEM_IDS.includes(item.id));
     const primaryImagesProps: AsyncImageProps[] = primaryItems.map((item, index) => {
@@ -104,7 +129,7 @@ function PromoBlockRow({title, galleryItems, activeMediaQuery}: PromoBlockRowPro
             };
         }
         return {
-            src: item.images?.light?.[0] || '',
+            src: item.images?.[themeType]?.[0] || '',
             style: {
                 ...baseStyle,
                 ...stylesByImageIndex,
@@ -125,10 +150,11 @@ function PromoBlockRow({title, galleryItems, activeMediaQuery}: PromoBlockRowPro
                     primary={true}
                     activeMediaQuery={activeMediaQuery}
                     imageProps={primaryImagesProps}
+                    category={SPECIAL_CATEGORY.EDITORS_CHOICE}
                 />
             </Col>
             {Object.entries(itemsByLabels).map(([key, indexes]) => {
-                const imageSrc = galleryItems[indexes[0]].images?.light?.[0] || '';
+                const imageSrc = galleryItems[indexes[0]].images?.[themeType]?.[0] || '';
                 return (
                     <Col key={`${key}`} l="3" m="3" s="12">
                         <PromoBlockItem
@@ -146,6 +172,7 @@ function PromoBlockRow({title, galleryItems, activeMediaQuery}: PromoBlockRowPro
                                     },
                                 },
                             ]}
+                            category={key}
                         />
                     </Col>
                 );
@@ -158,6 +185,18 @@ export function LandingPage() {
     const {activeMediaQuery} = useLayoutContext();
     const isActiveMediaQueryS = activeMediaQuery === 's';
     const baseMods: CnMods = {media: activeMediaQuery};
+    const themeType = useThemeType();
+    const {isLoading, data} = useGetGalleryItemsQuery({});
+
+    if (isLoading) {
+        return (
+            <div className={b('loader')}>
+                <Loader size="m" />
+            </div>
+        );
+    }
+
+    const galleryItems = data ?? [];
 
     return (
         <Container className={b('container', baseMods)}>
@@ -185,7 +224,7 @@ export function LandingPage() {
             {/* Promo block */}
             <PromoBlockRow
                 title="Industries"
-                galleryItems={MOCKED_GALLERY_ITEMS}
+                galleryItems={galleryItems}
                 activeMediaQuery={activeMediaQuery}
             />
             {/* Work of the month */}
@@ -261,14 +300,14 @@ export function LandingPage() {
                 <Col s="12">
                     <SectionHeader activeMediaQuery={activeMediaQuery} title="The best of 2024" />
                 </Col>
-                {MOCKED_GALLERY_ITEMS.slice(0, 3).map((item) => {
+                {galleryItems.slice(0, 3).map((item) => {
                     return (
                         <Col key={item.id} l="4" m="4" s="12">
                             <GalleryCardPreview
                                 title={item.title}
                                 createdBy={item.createdBy}
                                 labels={item.labels}
-                                imageSrc={item.images?.light?.[0] || ''}
+                                imageSrc={item.images?.[themeType]?.[0] || ''}
                             />
                         </Col>
                     );
@@ -280,16 +319,17 @@ export function LandingPage() {
                     <SectionHeader
                         activeMediaQuery={activeMediaQuery}
                         title="What can be done in the editor"
+                        category={GALLERY_ITEM_CATEGORY.EDITOR}
                     />
                 </Col>
-                {MOCKED_GALLERY_ITEMS.slice(3, 6).map((item) => {
+                {galleryItems.slice(3, 6).map((item) => {
                     return (
                         <Col key={item.id} l="4" m="4" s="12">
                             <GalleryCardPreview
                                 title={item.title}
                                 createdBy={item.createdBy}
                                 labels={item.labels}
-                                imageSrc={item.images?.light?.[0] || ''}
+                                imageSrc={item.images?.[themeType]?.[0] || ''}
                             />
                         </Col>
                     );
@@ -298,16 +338,20 @@ export function LandingPage() {
             {/* Maps examples */}
             <Row space="6" style={{marginTop: 24, marginBottom: 48}}>
                 <Col s="12">
-                    <SectionHeader activeMediaQuery={activeMediaQuery} title="With maps" />
+                    <SectionHeader
+                        activeMediaQuery={activeMediaQuery}
+                        title="With maps"
+                        category={GALLERY_ITEM_CATEGORY.GEO}
+                    />
                 </Col>
-                {MOCKED_GALLERY_ITEMS.slice(6, 9).map((item) => {
+                {galleryItems.slice(6, 9).map((item) => {
                     return (
                         <Col key={item.id} l="4" m="4" s="12">
                             <GalleryCardPreview
                                 title={item.title}
                                 createdBy={item.createdBy}
                                 labels={item.labels}
-                                imageSrc={item.images?.light?.[0] || ''}
+                                imageSrc={item.images?.[themeType]?.[0] || ''}
                             />
                         </Col>
                     );

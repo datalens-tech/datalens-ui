@@ -7,6 +7,7 @@ export const GALLERY_ITEM_CATEGORY = {
     RETAIL: 'retail',
     SPORTS: 'sports',
     EDITOR: 'editor',
+    GEO: 'geo',
 } as const;
 export type GalleryItemCategory = StringWithSuggest<
     (typeof GALLERY_ITEM_CATEGORY)[keyof typeof GALLERY_ITEM_CATEGORY]

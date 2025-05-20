@@ -29,6 +29,7 @@ const CATEGORY_TO_LABEL_TITLE: Record<GalleryItemCategory, string> = {
     [GALLERY_ITEM_CATEGORY.RETAIL]: 'Retail',
     [GALLERY_ITEM_CATEGORY.SPORTS]: 'Sports',
     [GALLERY_ITEM_CATEGORY.EDITOR]: 'Editor',
+    [GALLERY_ITEM_CATEGORY.GEO]: 'Geo',
 };
 
 export function getCategoryLabelTitle(category = '') {
