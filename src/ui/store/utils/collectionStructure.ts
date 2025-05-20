@@ -16,7 +16,7 @@ export const getStatusFromOperation = ({
         data: GetWorkbookExportStatusResponse | GetWorkbookImportStatusResponse | null;
         isLoading: boolean;
     };
-    initialOperation: {
+    initialOperation?: {
         error: Error | null;
         isLoading: boolean;
     };
@@ -32,13 +32,13 @@ export const getStatusFromOperation = ({
     ) {
         return 'notification-error';
     }
-    if (initialOperation.error || progessOperation.error || resultOperation?.error) {
+    if (initialOperation?.error || progessOperation.error || resultOperation?.error) {
         return 'fatal-error';
     }
     if (progessOperation.data?.status === 'pending') {
         return 'pending';
     }
-    if (initialOperation.isLoading || progessOperation.isLoading) {
+    if (initialOperation?.isLoading || progessOperation.isLoading) {
         return 'loading';
     }
     if (progessOperation.data?.status === 'success') {

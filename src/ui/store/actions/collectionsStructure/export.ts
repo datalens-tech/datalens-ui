@@ -1,4 +1,4 @@
-import {getSdk} from 'libs/schematic-sdk';
+import {getSdk, isSdkError} from 'libs/schematic-sdk';
 import logger from 'libs/logger';
 import {showToast} from 'store/actions/toaster';
 
@@ -429,6 +429,16 @@ export const getImportProgress = ({importId}: {importId: string}) => {
                 const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
+                    if (isSdkError(error) && error.status === 404) {
+                        dispatch(
+                            showToast({
+                                title: i18n('toast_outdated-workbook-info'),
+                                type: 'danger',
+                            }),
+                        );
+                        return;
+                    }
+
                     logger.logError('collectionsStructure/getImportProgress failed', error);
                 }
 

@@ -39,5 +39,6 @@
   "section_delete-collection": "Вы действительно хотите удалить коллекцию \"{{name}}\"?",
   "section_delete-workbook": "Вы действительно хотите удалить воркбук \"{{name}}\"?",
   "title_import-exit": "Закрыть окно импорта?",
-  "toast_get-json-error": "Ошибка при попытке получить JSON из файла"
+  "toast_get-json-error": "Ошибка при попытке получить JSON из файла",
+  "toast_outdated-workbook-info": "Информация о воркбуке устарела. Пожалуйста, обновите страницу"
 }
