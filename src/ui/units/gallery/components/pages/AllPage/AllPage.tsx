@@ -9,6 +9,7 @@ import {
     Text,
     TextInput,
     useLayoutContext,
+    useThemeType,
 } from '@gravity-ui/uikit';
 import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
 import {useHistory, useLocation} from 'react-router-dom';
@@ -118,6 +119,7 @@ export function AllPage() {
     const [search, setSearch] = React.useState(defaultFilterValues.search);
     const [category, setCategory] = React.useState<string>(defaultFilterValues.category);
     const lang = getLang();
+    const themeType = useThemeType();
 
     const {isLoading, data: items = []} = useGetGalleryItemsQuery({});
     const {filteredItems} = useFilteredGalleryItems({
@@ -186,7 +188,7 @@ export function AllPage() {
                                     title={item.title}
                                     createdBy={item.createdBy}
                                     labels={item.labels}
-                                    imageSrc={item.images?.light?.[0] || ''}
+                                    imageSrc={item.images?.[themeType]?.[0] || ''}
                                 />
                             </Col>
                         );
