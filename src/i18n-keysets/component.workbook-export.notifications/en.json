@@ -1,4 +1,5 @@
 {
+  "button_show-details": "Show details",
   "label_export-check-connection-credentials": "Values of fields in connections with passwords and tokens are not exported. After importing, they will need to be filled in",
   "label_export-rls": "RLS is not guaranteed to work correctly in exported datasets",
   "label_import-check-connections-credentials": "Check the connection settings and re-enter passwords and tokens if necessary",
@@ -10,5 +11,6 @@
   "label_invalid-version": "The DataLens installation does not support the workbook configuration",
   "label_missing-linked-entry": "The workbook contains entities linked to nonexistent entities",
   "label_scope-not-available-for-installation": "The workbook contains entities not supported in your DataLens installation",
-  "label_unexpected-workflow-error": "Unexpected error during operation"
+  "label_unexpected-workflow-error": "Unexpected error during operation",
+  "title_error-details": "Errors details"
 }

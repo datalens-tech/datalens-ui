@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
@@ -26,6 +27,7 @@ import {
 import DialogManager from '../../DialogManager/DialogManager';
 import type {GetDialogFooterPropsOverride} from '../WorkbookDialog';
 import {WorkbookDialog} from '../WorkbookDialog';
+import {useNotificationsAndDetails} from '../hooks/useNotificationsAndDetails';
 
 import {ImportFileField} from './ImportFileField/ImportFileField';
 import {ImportWorkbookView} from './ImportWorkbookView/ImportWorkbookView';
@@ -34,6 +36,7 @@ import {getApplyButtonText, getCancelButtonText, getCaption} from './utils';
 import './CreateWorkbookDialog.scss';
 
 const i18n = I18n.keyset('component.collections-structure');
+const notificationsI18n = I18n.keyset('component.workbook-export.notifications');
 
 const GET_IMPORT_PROGRESS_INTERVAL = 1000;
 
@@ -80,6 +83,7 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
 
     const importData = useSelector(selectImportWorkbookData);
     const importProgressData = useSelector(selectGetImportProgressData);
+    const notifications = importProgressData?.notifications;
 
     const [isExternalLoading, setIsExternalLoading] = React.useState(false);
 
@@ -93,6 +97,11 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
     const importProgressTimeout = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const isMounted = useMountedState();
+
+    const {notificationDetails, handleShowDetails} = useNotificationsAndDetails({
+        notifications,
+        importId: importData?.importId,
+    });
 
     React.useEffect(() => {
         if (open) {
@@ -264,9 +273,15 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
                 textButtonCancel: importStatus
                     ? getCancelButtonText(importStatus, textButtonCancel)
                     : textButtonCancel,
+                children:
+                    importStatus && notificationDetails ? (
+                        <Button size="l" view="outlined" onClick={handleShowDetails}>
+                            {notificationsI18n('button_show-details')}
+                        </Button>
+                    ) : undefined,
             };
         },
-        [handleClose, importStatus, isImportLoading, isLoading],
+        [handleClose, importStatus, isImportLoading, isLoading, notificationDetails],
     );
 
     const renderImportSection = () => {

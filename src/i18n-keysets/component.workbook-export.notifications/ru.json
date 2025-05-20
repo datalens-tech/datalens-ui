@@ -1,4 +1,5 @@
 {
+  "button_show-details": "Показать детали",
   "label_export-check-connection-credentials": "В подключениях значения полей с паролями и токенами не экспортируются, после импорта их потребуется заполнить",
   "label_export-rls": "В экспортированных датасетах не гарантируется корректная работа RLS",
   "label_import-check-connections-credentials": "Проверьте настройки подключений и при необходимости заново укажите пароли и токены",
@@ -10,5 +11,6 @@
   "label_invalid-version": "Инсталляция DataLens не поддерживает конфигурацию воркбука",
   "label_missing-linked-entry": "В воркбуке есть объекты, связанные с несуществующими объектами",
   "label_scope-not-available-for-installation": "В воркбуке есть объекты, которые не поддерживаются в вашей инсталляции DataLens",
-  "label_unexpected-workflow-error": "Операция прервана из-за неизвестной ошибки"
+  "label_unexpected-workflow-error": "Операция прервана из-за неизвестной ошибки",
+  "title_error-details": "Детали ошибок"
 }

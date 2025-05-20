@@ -54,7 +54,7 @@ export const ImportWorkbookView = ({status}: ImportWorkbookViewProps) => {
 
             {
                 const preparedNotifications = notifications
-                    ? transformNotifications(notifications)
+                    ? transformNotifications(notifications).notifications
                     : [];
                 return (
                     <Flex direction="column" gap={4}>

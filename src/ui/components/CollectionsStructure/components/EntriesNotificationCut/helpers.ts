@@ -21,11 +21,14 @@ const NOTIFICATIONS_BY_CODE: Record<string, string> = {
 
 export const transformNotifications = (
     notifications: EntryNotification[] = [],
-): PreparedNotificationType[] => {
+): {notifications: PreparedNotificationType[]; details: string} => {
     const notificationMap = new Map<string, PreparedNotificationType>();
+    const details: string[] = [];
 
     notifications.forEach((notification) => {
         const key = notification.code;
+
+        details.push(JSON.stringify(notification.details));
 
         if (!notificationMap.has(key)) {
             notificationMap.set(key, {
@@ -44,7 +47,7 @@ export const transformNotifications = (
         }
     });
 
-    return Array.from(notificationMap.values());
+    return {notifications: Array.from(notificationMap.values()), details: details.join('\n')};
 };
 
 export const getNotificationTitleByCode = (code: string) => {
