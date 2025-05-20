@@ -271,6 +271,7 @@ export const chartGenerator = {
 
         const isD3Graph = type.indexOf('d3') > -1;
         const isTable = type.indexOf('table') > -1;
+        const isYmap = type.indexOf('ymap') > -1;
         if (type.indexOf('metric') > -1) {
             chart.statface_metric = chart.config.replace('#module', chartTemplate.module);
         } else if (type.indexOf('markup') > -1 || isTable) {
@@ -293,7 +294,7 @@ export const chartGenerator = {
         chart.prepare = chart.prepare.replace('#apiVersion', apiVersion);
         chart.sources = chart.sources.replace('#apiVersion', apiVersion);
 
-        const chartsWithConfig = isD3Graph || isTable;
+        const chartsWithConfig = isD3Graph || isTable || isYmap;
         const {config: _, ...chartWithoutConfig} = chart;
 
         return {chart: chartsWithConfig ? chart : chartWithoutConfig, links, type};

@@ -9,6 +9,7 @@ import {MarkupPlugin} from './Markup';
 import {MetricPlugin} from './Metric';
 import {TablePlugin} from './Table';
 import {YandexMapPlugin} from './YandexMap';
+import {YandexMapV3Plugin} from './YandexMapV3';
 
 export {MetricPlugin} from './Metric';
 export {HighchartsMapPlugin} from './HighchartsMap';
@@ -18,15 +19,18 @@ export type {HighchartsMapWidgetData, HighchartsMapWidgetProps} from './Highchar
 export type {YandexMapWidgetData, YandexMapWidgetProps} from './YandexMap/types';
 export type {MarkupWidgetData, MarkupWidgetProps} from './Markup/types';
 
-export const getChartkitPlugins = () => [
-    YagrPlugin,
-    IndicatorPlugin,
-    MetricPlugin,
-    HighchartsMapPlugin,
-    YandexMapPlugin,
-    HighchartsPlugin,
-    D3Plugin,
-    MarkupPlugin,
-    TablePlugin,
-    AdvancedChartPlugin,
-];
+export const getChartkitPlugins = () => {
+    return [
+        YagrPlugin,
+        IndicatorPlugin,
+        MetricPlugin,
+        HighchartsMapPlugin,
+        YandexMapPlugin,
+        YandexMapV3Plugin,
+        HighchartsPlugin,
+        D3Plugin,
+        MarkupPlugin,
+        TablePlugin,
+        AdvancedChartPlugin,
+    ];
+};

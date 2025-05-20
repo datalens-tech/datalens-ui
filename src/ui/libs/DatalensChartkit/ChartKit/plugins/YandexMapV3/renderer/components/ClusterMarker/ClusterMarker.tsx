@@ -1,0 +1,76 @@
+import React from 'react';
+
+import type {LngLat} from '@yandex/ymaps3-types';
+import block from 'bem-cn-lite';
+import {groupBy} from 'lodash';
+
+import type {ClusterFeature} from '../ymaps3';
+import {YMapMarker} from '../ymaps3';
+
+import './ClusterMarker.scss';
+
+const b = block('ymap-cluster-marker');
+
+type Props = {
+    coordinates: LngLat;
+    properties?: Record<string, unknown>;
+    source: string;
+    opacity?: number;
+    radius?: number;
+    points: ClusterFeature[];
+};
+
+export const ClusterMarker = (props: Props) => {
+    const {coordinates, properties, source, opacity, radius = 2, points} = props;
+    const {properties: {zIndex} = {}} = points[0];
+    const size = radius * 20;
+
+    const backgroundImage = React.useMemo(() => {
+        let angle = 0;
+        const segments = Object.entries(groupBy(points, (p) => p.properties?.color)).map(
+            ([pointColor, items]) => {
+                angle = angle + (360 * items.length) / points.length;
+                return {
+                    color: pointColor,
+                    angle,
+                };
+            },
+        );
+
+        return `conic-gradient(${segments
+            .map((s, index) => {
+                const prevAngle = index === 0 ? 0 : segments[index - 1].angle;
+                return `${s.color} ${prevAngle}deg ${s.angle}deg`;
+            })
+            .join(', ')})`;
+    }, [points]);
+
+    return (
+        <YMapMarker
+            properties={properties}
+            coordinates={coordinates}
+            source={source}
+            zIndex={Number(zIndex)}
+        >
+            <div
+                className={b()}
+                style={{
+                    opacity,
+                    height: `${size}px`,
+                    width: `${size}px`,
+                }}
+            >
+                <div
+                    className={b('pie')}
+                    style={{
+                        backgroundImage,
+                    }}
+                >
+                    <div className={b('content')}>
+                        <span className={b('text')}>{points.length}</span>
+                    </div>
+                </div>
+            </div>
+        </YMapMarker>
+    );
+};
