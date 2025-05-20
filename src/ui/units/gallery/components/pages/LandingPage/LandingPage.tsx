@@ -11,6 +11,7 @@ import {
     Loader,
     Row,
     useLayoutContext,
+    useThemeType,
 } from '@gravity-ui/uikit';
 import {useHistory} from 'react-router';
 import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
@@ -103,6 +104,7 @@ interface PromoBlockRowProps {
 }
 
 function PromoBlockRow({title, galleryItems, activeMediaQuery}: PromoBlockRowProps) {
+    const themeType = useThemeType();
     const itemsByLabels = groupGalleryItemsByLabels(galleryItems);
     const primaryItems = galleryItems.filter((item) => EDITORS_CHOICE_ITEM_IDS.includes(item.id));
     const primaryImagesProps: AsyncImageProps[] = primaryItems.map((item, index) => {
@@ -127,7 +129,7 @@ function PromoBlockRow({title, galleryItems, activeMediaQuery}: PromoBlockRowPro
             };
         }
         return {
-            src: item.images?.light?.[0] || '',
+            src: item.images?.[themeType]?.[0] || '',
             style: {
                 ...baseStyle,
                 ...stylesByImageIndex,
@@ -152,7 +154,7 @@ function PromoBlockRow({title, galleryItems, activeMediaQuery}: PromoBlockRowPro
                 />
             </Col>
             {Object.entries(itemsByLabels).map(([key, indexes]) => {
-                const imageSrc = galleryItems[indexes[0]].images?.light?.[0] || '';
+                const imageSrc = galleryItems[indexes[0]].images?.[themeType]?.[0] || '';
                 return (
                     <Col key={`${key}`} l="3" m="3" s="12">
                         <PromoBlockItem
@@ -183,7 +185,7 @@ export function LandingPage() {
     const {activeMediaQuery} = useLayoutContext();
     const isActiveMediaQueryS = activeMediaQuery === 's';
     const baseMods: CnMods = {media: activeMediaQuery};
-
+    const themeType = useThemeType();
     const {isLoading, data} = useGetGalleryItemsQuery({});
 
     if (isLoading) {
@@ -305,7 +307,7 @@ export function LandingPage() {
                                 title={item.title}
                                 createdBy={item.createdBy}
                                 labels={item.labels}
-                                imageSrc={item.images?.light?.[0] || ''}
+                                imageSrc={item.images?.[themeType]?.[0] || ''}
                             />
                         </Col>
                     );
@@ -327,7 +329,7 @@ export function LandingPage() {
                                 title={item.title}
                                 createdBy={item.createdBy}
                                 labels={item.labels}
-                                imageSrc={item.images?.light?.[0] || ''}
+                                imageSrc={item.images?.[themeType]?.[0] || ''}
                             />
                         </Col>
                     );
@@ -349,7 +351,7 @@ export function LandingPage() {
                                 title={item.title}
                                 createdBy={item.createdBy}
                                 labels={item.labels}
-                                imageSrc={item.images?.light?.[0] || ''}
+                                imageSrc={item.images?.[themeType]?.[0] || ''}
                             />
                         </Col>
                     );

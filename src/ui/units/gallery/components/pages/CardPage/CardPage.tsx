@@ -12,6 +12,7 @@ import {
     Row,
     Text,
     useLayoutContext,
+    useThemeType,
 } from '@gravity-ui/uikit';
 import type {ButtonProps, IconData} from '@gravity-ui/uikit';
 import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
@@ -169,8 +170,12 @@ interface CardPreviewProps {
 }
 
 function CardPreview({activeMediaQuery, images}: CardPreviewProps) {
-    const [selectedImage, setSelectedImage] = React.useState(images?.light?.[0] || '');
     const mods: CnMods = {media: activeMediaQuery};
+    const themeType = useThemeType();
+    const themeImages = React.useMemo(() => {
+        return images?.[themeType] ?? [];
+    }, [themeType, images]);
+    const [selectedImage, setSelectedImage] = React.useState(themeImages[0] || '');
 
     return (
         <React.Fragment>
@@ -185,7 +190,7 @@ function CardPreview({activeMediaQuery, images}: CardPreviewProps) {
             </Col>
             <Col m="2" s="12">
                 <Flex className={b('image-card-preview-flex', mods)}>
-                    {images?.light?.map((image, i) => {
+                    {themeImages.map((image, i) => {
                         return (
                             <Card
                                 key={i}
@@ -262,6 +267,7 @@ interface CardContentProps {
 function CardContent({activeMediaQuery, entry, togglePreview, lang}: CardContentProps) {
     const isActiveMediaQueryS = activeMediaQuery === 's';
     const mods: CnMods = {media: activeMediaQuery};
+    const themeType = useThemeType();
 
     return (
         <Container className={b('container', mods)}>
@@ -325,7 +331,7 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang}: CardContent
                                 title={item.title}
                                 createdBy={item.createdBy}
                                 labels={item.labels}
-                                imageSrc={item.images?.light?.[0] || ''}
+                                imageSrc={item.images?.[themeType]?.[0] || ''}
                             />
                         </Col>
                     );
