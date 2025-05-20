@@ -25,6 +25,7 @@ import {GalleryCardLabels, GalleryCardPreview, SectionHeader} from '../../blocks
 import type {ActiveMediaQuery} from '../../types';
 import {block, getLang} from '../../utils';
 import type {CnMods} from '../../utils';
+import {PARTNER_FORM_LINK} from '../constants';
 import {MOCKED_GALLERY_ITEMS} from '../mocks';
 
 import './CardPage.scss';
@@ -49,18 +50,14 @@ function ContactPartnerButton(props: {
     partnerId?: string | null;
     activeMediaQuery: ActiveMediaQuery;
 }) {
-    const {partnerId = '12', activeMediaQuery} = props;
-    const mods: CnMods = {media: activeMediaQuery};
-    const isActiveMediaQueryS = activeMediaQuery === 's';
+    const {partnerId, activeMediaQuery} = props;
 
     const handleClick = React.useCallback(() => {
         if (!partnerId) {
             return;
         }
 
-        const formUrl = new URL(
-            'https://forms.yandex.ru/surveys/13751079.3e99c7a8580e57d0da33da837f0d634a7d853446/',
-        );
+        const formUrl = new URL(PARTNER_FORM_LINK);
         formUrl.searchParams.append('partner', partnerId);
         formUrl.searchParams.append('link', window.location.href);
         window.open(formUrl, '_blank');
@@ -70,6 +67,8 @@ function ContactPartnerButton(props: {
         return null;
     }
 
+    const mods: CnMods = {media: activeMediaQuery};
+    const isActiveMediaQueryS = activeMediaQuery === 's';
     const buttonProps: ButtonProps = isActiveMediaQueryS ? {width: 'max', size: 'xl'} : {};
 
     return (
