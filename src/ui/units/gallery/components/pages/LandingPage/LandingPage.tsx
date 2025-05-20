@@ -12,17 +12,20 @@ import {
     Row,
     useLayoutContext,
 } from '@gravity-ui/uikit';
+import {useHistory} from 'react-router';
 import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 import type {AsyncImageProps} from 'ui/components/AsyncImage/AsyncImage';
 import type {CreateIllustrationProps} from 'ui/components/Illustration/types';
 import {createIllustration} from 'ui/components/Illustration/utils';
+import {GALLERY_ITEM_CATEGORY} from 'ui/units/gallery/constants/gallery-item';
 
 import {useGetGalleryItemsQuery} from '../../../store/api';
 import type {GalleryItem} from '../../../types';
 import {GalleryCardPreview, SectionHeader} from '../../blocks';
 import type {ActiveMediaQuery} from '../../types';
-import {block, groupGalleryItemsByLabels} from '../../utils';
+import {block, getAllPageUrl, groupGalleryItemsByLabels} from '../../utils';
 import type {CnMods} from '../../utils';
+import {SPECIAL_CATEGORY} from '../constants';
 import {EDITORS_CHOICE_ITEM_IDS} from '../mocks';
 
 import './LandingPage.scss';
@@ -48,6 +51,7 @@ interface PromoBlockItemProps {
     counter?: number;
     primary?: boolean;
     imageProps?: AsyncImageProps[];
+    category?: string;
 }
 
 function PromoBlockItem({
@@ -56,13 +60,21 @@ function PromoBlockItem({
     counter = 0,
     primary,
     imageProps = [],
+    category,
 }: PromoBlockItemProps) {
+    const history = useHistory();
+
+    const handleClick = React.useCallback(() => {
+        const url = getAllPageUrl({category});
+        history.push(url);
+    }, [history, category]);
+
     return (
         <Card
             className={b('promo-block-item-flex', {primary, media: activeMediaQuery})}
             view="clear"
             type="action"
-            onClick={() => {}}
+            onClick={handleClick}
         >
             <div className={b('promo-block-item-title', {primary})}>
                 {title}
@@ -136,6 +148,7 @@ function PromoBlockRow({title, galleryItems, activeMediaQuery}: PromoBlockRowPro
                     primary={true}
                     activeMediaQuery={activeMediaQuery}
                     imageProps={primaryImagesProps}
+                    category={SPECIAL_CATEGORY.EDITORS_CHOICE}
                 />
             </Col>
             {Object.entries(itemsByLabels).map(([key, indexes]) => {
@@ -157,6 +170,7 @@ function PromoBlockRow({title, galleryItems, activeMediaQuery}: PromoBlockRowPro
                                     },
                                 },
                             ]}
+                            category={key}
                         />
                     </Col>
                 );
@@ -303,6 +317,7 @@ export function LandingPage() {
                     <SectionHeader
                         activeMediaQuery={activeMediaQuery}
                         title="What can be done in the editor"
+                        category={GALLERY_ITEM_CATEGORY.EDITOR}
                     />
                 </Col>
                 {galleryItems.slice(3, 6).map((item) => {
@@ -321,7 +336,11 @@ export function LandingPage() {
             {/* Maps examples */}
             <Row space="6" style={{marginTop: 24, marginBottom: 48}}>
                 <Col s="12">
-                    <SectionHeader activeMediaQuery={activeMediaQuery} title="With maps" />
+                    <SectionHeader
+                        activeMediaQuery={activeMediaQuery}
+                        title="With maps"
+                        category={GALLERY_ITEM_CATEGORY.GEO}
+                    />
                 </Col>
                 {galleryItems.slice(6, 9).map((item) => {
                     return (
