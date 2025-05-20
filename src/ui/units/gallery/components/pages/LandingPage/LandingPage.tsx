@@ -8,6 +8,7 @@ import {
     Container,
     Flex,
     Icon,
+    Link,
     Loader,
     Row,
     useLayoutContext,
@@ -26,7 +27,7 @@ import {GalleryCardPreview, SectionHeader} from '../../blocks';
 import type {ActiveMediaQuery} from '../../types';
 import {block, getAllPageUrl, groupGalleryItemsByLabels} from '../../utils';
 import type {CnMods} from '../../utils';
-import {SPECIAL_CATEGORY} from '../constants';
+import {ADD_DASH_FORM_LINK, SPECIAL_CATEGORY} from '../constants';
 import {EDITORS_CHOICE_ITEM_IDS} from '../mocks';
 
 import './LandingPage.scss';
@@ -358,24 +359,18 @@ export function LandingPage() {
                 })}
             </Row>
             {/* Add your example */}
-            <Row
-                className={b('add-card')}
-                space="0"
-                style={{
-                    padding: '52px 100px',
-                    marginTop: 48,
-                    marginBottom: 48,
-                }}
-            >
+            <Row className={b('add-card', baseMods)} space="0">
                 <Col s="12">
                     <Flex className={b('add-card-flex')}>
                         <div className={b('add-card-title')}>Add your example</div>
                         <div className={b('add-card-description')}>
                             Share your solutions and inspire others
                         </div>
-                        <Button className={b('add-card-button')} size="xl" view="action">
-                            Add dashboard
-                        </Button>
+                        <Link view="normal" target="_blank" href={ADD_DASH_FORM_LINK}>
+                            <Button className={b('add-card-button')} size="xl" view="action">
+                                Add dashboard
+                            </Button>
+                        </Link>
                     </Flex>
                 </Col>
             </Row>
