@@ -1,8 +1,8 @@
 import React from 'react';
 
-import {FormRow, HelpPopover} from '@gravity-ui/components';
+import {FormRow} from '@gravity-ui/components';
 import type {RealTheme} from '@gravity-ui/uikit';
-import {Checkbox, Dialog, Flex, TextInput} from '@gravity-ui/uikit';
+import {Checkbox, Dialog, Flex, HelpMark, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import cloneDeep from 'lodash/cloneDeep';
@@ -123,11 +123,13 @@ export function DialogImageWidget(props: Props) {
                     label={
                         <Flex gap={1}>
                             {i18n('dash.image-dialog.edit', 'label_alt-text')}
-                            <HelpPopover
-                                content={i18n(
-                                    'dash.image-dialog.edit',
-                                    'label_alt-text-description',
-                                )}
+                            <HelpMark
+                                popoverProps={{
+                                    content: i18n(
+                                        'dash.image-dialog.edit',
+                                        'label_alt-text-description',
+                                    ),
+                                }}
                             />
                         </Flex>
                     }

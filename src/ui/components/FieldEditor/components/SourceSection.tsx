@@ -1,8 +1,7 @@
 import React from 'react';
 
-import {HelpPopover} from '@gravity-ui/components';
 import type {SelectOption, SelectProps} from '@gravity-ui/uikit';
-import {Select, TextInput} from '@gravity-ui/uikit';
+import {HelpMark, Select, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import type {
@@ -154,9 +153,9 @@ const SourceSection: React.FC<SourceSectionProps> = (props) => {
             <div className={b('row')}>
                 <div className={b('label')}>
                     {i18n('label_field-id')}
-                    <HelpPopover
+                    <HelpMark
                         className={b('source-section-hint')}
-                        content={i18n('label_field-id-hint')}
+                        popoverProps={{content: i18n('label_field-id-hint')}}
                     />
                 </div>
                 <TextInput

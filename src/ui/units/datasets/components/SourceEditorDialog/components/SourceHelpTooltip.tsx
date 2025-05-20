@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {HelpPopover} from '@gravity-ui/components';
+import {HelpMark} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
 import {I18n} from '../../../../../../i18n';
@@ -45,7 +45,7 @@ const RegularTooltip: React.FC<RegularTooltipProps> = (props) => {
         </div>
     );
 
-    return <HelpPopover content={renderContent()} />;
+    return <HelpMark popoverProps={{content: renderContent()}} />;
 };
 
 const getStyledTextWithCode = (key: string) => {
@@ -120,47 +120,53 @@ export const SourceHelpTooltip: React.FC<SourceHelpTooltipProps> = ({fieldDocKey
             return <RegularTooltip example={i18n('label_chydb-database-example')} />;
         }
         case 'ANY_SUBSELECT/subsql': {
-            return <HelpPopover content={getCommonSubselectContent()} />;
+            return <HelpMark popoverProps={{content: getCommonSubselectContent()}} />;
         }
         case 'CHYT_SUBSELECT/subsql': {
             return (
-                <HelpPopover
-                    content={
-                        <React.Fragment>
-                            {getCommonSubselectContent()}
-                            <div className={b('tooltip-item')}>
-                                {getStyledTextWithCode('label_subselect-form-tooltip-chyt')}
-                            </div>
-                        </React.Fragment>
-                    }
+                <HelpMark
+                    popoverProps={{
+                        content: (
+                            <React.Fragment>
+                                {getCommonSubselectContent()}
+                                <div className={b('tooltip-item')}>
+                                    {getStyledTextWithCode('label_subselect-form-tooltip-chyt')}
+                                </div>
+                            </React.Fragment>
+                        ),
+                    }}
                 />
             );
         }
         case 'MSSQL_SUBSELECT/subsql': {
             return (
-                <HelpPopover
-                    content={
-                        <React.Fragment>
-                            {getCommonSubselectContent()}
-                            <div className={b('tooltip-item')}>
-                                {i18n('label_subselect-form-tooltip-mssql')}
-                            </div>
-                        </React.Fragment>
-                    }
+                <HelpMark
+                    popoverProps={{
+                        content: (
+                            <React.Fragment>
+                                {getCommonSubselectContent()}
+                                <div className={b('tooltip-item')}>
+                                    {i18n('label_subselect-form-tooltip-mssql')}
+                                </div>
+                            </React.Fragment>
+                        ),
+                    }}
                 />
             );
         }
         case 'PG_SUBSELECT/subsql': {
             return (
-                <HelpPopover
-                    content={
-                        <React.Fragment>
-                            {getCommonSubselectContent()}
-                            <div className={b('tooltip-item')}>
-                                {getStyledTextWithCode('label_subselect-form-tooltip-pg')}
-                            </div>
-                        </React.Fragment>
-                    }
+                <HelpMark
+                    popoverProps={{
+                        content: (
+                            <React.Fragment>
+                                {getCommonSubselectContent()}
+                                <div className={b('tooltip-item')}>
+                                    {getStyledTextWithCode('label_subselect-form-tooltip-pg')}
+                                </div>
+                            </React.Fragment>
+                        ),
+                    }}
                 />
             );
         }

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {HelpPopover} from '@gravity-ui/components';
+import {HelpMark} from '@gravity-ui/uikit';
 import type {PopupPlacement} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
@@ -26,7 +26,13 @@ export const TitleWithTooltip: React.FC<TitleWithTooltipProps> = ({
     return (
         <div className={b()}>
             <span className={b('title', titleClassName)}>{title}</span>
-            <HelpPopover title={tooltipTitle} content={text} placement={placement || 'right'} />
+            <HelpMark
+                popoverProps={{
+                    title: tooltipTitle,
+                    content: text,
+                    placement: placement || 'right',
+                }}
+            />
         </div>
     );
 };

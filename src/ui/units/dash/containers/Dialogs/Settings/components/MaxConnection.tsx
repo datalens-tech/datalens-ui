@@ -1,8 +1,7 @@
 import React from 'react';
 
-import {HelpPopover} from '@gravity-ui/components';
 import type {SelectProps} from '@gravity-ui/uikit';
-import {Select} from '@gravity-ui/uikit';
+import {HelpMark, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 
@@ -39,11 +38,13 @@ export const MaxConnection = ({maxValue, onUpdate}: MaxConnectionProps) => {
     return (
         <Row alignTop={true}>
             <Title text={i18n('dash.settings-dialog.edit', 'label_max-concurrent-requests')}>
-                <HelpPopover
-                    htmlContent={i18n(
-                        'dash.settings-dialog.edit',
-                        'context_max-concurrent-requests-hint',
-                    )}
+                <HelpMark
+                    popoverProps={{
+                        content: i18n(
+                            'dash.settings-dialog.edit',
+                            'context_max-concurrent-requests-hint',
+                        ),
+                    }}
                 />
             </Title>
             <div>

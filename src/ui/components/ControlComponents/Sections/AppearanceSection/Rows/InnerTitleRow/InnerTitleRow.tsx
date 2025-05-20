@@ -1,7 +1,7 @@
 import React from 'react';
 
-import {FormRow, HelpPopover} from '@gravity-ui/components';
-import {Checkbox, TextInput} from '@gravity-ui/uikit';
+import {FormRow} from '@gravity-ui/components';
+import {Checkbox, HelpMark, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
@@ -54,10 +54,12 @@ export const InnerTitleRow = ({className}: {className?: string}) => {
     const label = (
         <React.Fragment>
             <span>{i18n('field_inner-title')}</span>
-            <HelpPopover
-                htmlContent={getHelpPopoverText(sourceType)}
-                placement={['bottom', 'top']}
-                offset={{top: -1, left: 5}}
+            <HelpMark
+                popoverProps={{
+                    placement: ['bottom', 'top'],
+                    offset: {top: -1, left: 5},
+                    content: getHelpPopoverText(sourceType),
+                }}
             />
         </React.Fragment>
     );

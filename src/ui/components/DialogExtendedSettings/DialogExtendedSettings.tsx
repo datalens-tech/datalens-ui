@@ -1,7 +1,7 @@
 import React from 'react';
 
-import {FormRow, HelpPopover} from '@gravity-ui/components';
-import {Checkbox, Dialog, Flex, List, TextInput} from '@gravity-ui/uikit';
+import {FormRow} from '@gravity-ui/components';
+import {Checkbox, Dialog, Flex, HelpMark, List, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {I18n} from 'i18n';
@@ -262,9 +262,9 @@ const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                         label={
                             <React.Fragment>
                                 {i18n('label_apply-button-checkbox')}
-                                <HelpPopover
+                                <HelpMark
                                     className={b('help-icon')}
-                                    htmlContent={i18n('context_apply-button')}
+                                    popoverProps={{content: i18n('context_apply-button')}}
                                 />
                             </React.Fragment>
                         }
@@ -282,9 +282,9 @@ const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                         label={
                             <React.Fragment>
                                 {i18n('label_reset-button-checkbox')}
-                                <HelpPopover
+                                <HelpMark
                                     className={b('help-icon')}
-                                    htmlContent={i18n('context_reset-button')}
+                                    popoverProps={{content: i18n('context_reset-button')}}
                                 />
                             </React.Fragment>
                         }
@@ -314,9 +314,11 @@ const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                             label={
                                 <React.Fragment>
                                     {i18n('label_update-controls-on-change')}
-                                    <HelpPopover
+                                    <HelpMark
                                         className={b('help-icon')}
-                                        htmlContent={i18n('context_update-controls-on-change')}
+                                        popoverProps={{
+                                            content: i18n('context_update-controls-on-change'),
+                                        }}
                                     />
                                 </React.Fragment>
                             }

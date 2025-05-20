@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {FormRow, HelpPopover} from '@gravity-ui/components';
+import {FormRow} from '@gravity-ui/components';
+import {HelpMark} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import type {Operations} from 'shared';
@@ -58,10 +59,12 @@ const OperationSelector = ({className}: {className?: string}) => {
     const label = (
         <React.Fragment>
             <span>{i18n('field_operation')}</span>
-            <HelpPopover
-                htmlContent={i18n('field_operation-note')}
-                placement={['bottom', 'top']}
-                offset={{top: -1, left: 5}}
+            <HelpMark
+                popoverProps={{
+                    content: i18n('field_operation-note'),
+                    placement: ['bottom', 'top'],
+                    offset: {top: -1, left: 5},
+                }}
             />
         </React.Fragment>
     );

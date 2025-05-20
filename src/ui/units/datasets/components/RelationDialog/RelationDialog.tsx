@@ -1,7 +1,6 @@
 import React from 'react';
 
-import {HelpPopover} from '@gravity-ui/components';
-import {Button, Checkbox, Dialog, Icon, Select} from '@gravity-ui/uikit';
+import {Button, Checkbox, Dialog, HelpMark, Icon, Select} from '@gravity-ui/uikit';
 import type {SelectOption, SelectRenderControlProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -641,9 +640,9 @@ class SourceRelationDialog extends React.Component<Props, State> {
                                     onUpdate={this.changeOptimized}
                                 >
                                     {i18n('label_optimize-join')}
-                                    <HelpPopover
+                                    <HelpMark
                                         className={b('hint-optimize-join')}
-                                        content={i18n('hint_optimize-join')}
+                                        popoverProps={{content: i18n('hint_optimize-join')}}
                                     />
                                 </Checkbox>
                             </div>

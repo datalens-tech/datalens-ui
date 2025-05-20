@@ -1,11 +1,10 @@
 import React from 'react';
 
-import {HelpPopover} from '@gravity-ui/components';
 import {DatePicker} from '@gravity-ui/date-components';
 import type {DatePickerProps} from '@gravity-ui/date-components';
 import {dateTimeUtc} from '@gravity-ui/date-utils';
 import {TriangleExclamationFill} from '@gravity-ui/icons';
-import {Checkbox, Icon, RadioGroup, Select, TextInput} from '@gravity-ui/uikit';
+import {Checkbox, HelpMark, Icon, RadioGroup, Select, TextInput} from '@gravity-ui/uikit';
 import type {RadioGroupProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -620,10 +619,12 @@ class RelativeDatesPicker extends React.Component<Props, State> {
                     </RadioGroup.Option>
                     <RadioGroup.Option value={DATE_TYPES.RELATIVE}>
                         {i18n('label_relative-date')}
-                        <HelpPopover
-                            delayClosing={TOOLTIP_DELAY_CLOSING}
-                            placement={['right']}
-                            content={<span>{i18n('label_tooltip-utc')}</span>}
+                        <HelpMark
+                            popoverProps={{
+                                closeDelay: TOOLTIP_DELAY_CLOSING,
+                                placement: ['right'],
+                                content: <span>{i18n('label_tooltip-utc')}</span>,
+                            }}
                             className={b('help-icon')}
                         />
                     </RadioGroup.Option>

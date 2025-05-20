@@ -101,7 +101,7 @@ export const ChartsInsights = ({items = [], messagesByLocator, locators, hidden}
     return (
         <Popover
             ref={tooltipRef}
-            openOnHover={false}
+            trigger="click"
             placement={['left', 'right']}
             content={
                 isEmpty(messages) ? (

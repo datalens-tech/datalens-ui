@@ -1,8 +1,8 @@
 import React from 'react';
 
-import {FormRow, HelpPopover} from '@gravity-ui/components';
+import {FormRow} from '@gravity-ui/components';
 import type {RealTheme} from '@gravity-ui/uikit';
-import {Checkbox, Dialog, Flex, Link, Popup, Text, TextInput} from '@gravity-ui/uikit';
+import {Checkbox, Dialog, Flex, HelpMark, Link, Popup, Text, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import type {CustomCommands, Spec} from 'immutability-helper';
@@ -534,14 +534,16 @@ class DialogChartWidget extends React.PureComponent<
         );
 
         const helpPopover = (
-            <HelpPopover
+            <HelpMark
                 className={b('help-tooltip')}
-                content={
-                    <React.Fragment>
-                        {i18n('dash.widget-dialog.edit', 'context_filtering-other-charts')}
-                        {this.getFiltrationDocsLink()}
-                    </React.Fragment>
-                }
+                popoverProps={{
+                    content: (
+                        <React.Fragment>
+                            {i18n('dash.widget-dialog.edit', 'context_filtering-other-charts')}
+                            {this.getFiltrationDocsLink()}
+                        </React.Fragment>
+                    ),
+                }}
             />
         );
 
@@ -579,9 +581,14 @@ class DialogChartWidget extends React.PureComponent<
         } = this.props;
 
         const autoHeightHelpPopover = (
-            <HelpPopover
+            <HelpMark
                 className={b('help-tooltip')}
-                content={i18n('dash.widget-dialog.edit', 'context_autoheight-availability-hint')}
+                popoverProps={{
+                    content: i18n(
+                        'dash.widget-dialog.edit',
+                        'context_autoheight-availability-hint',
+                    ),
+                }}
             />
         );
 
@@ -698,9 +705,14 @@ class DialogChartWidget extends React.PureComponent<
                     fieldId={INPUT_HINT_ID}
                     label={i18n('dash.widget-dialog.edit', 'field_hint')}
                     labelHelpPopover={
-                        <HelpPopover
+                        <HelpMark
                             className={b('help-tooltip')}
-                            content={i18n('dash.widget-dialog.edit', 'context_hint-display-info')}
+                            popoverProps={{
+                                content: i18n(
+                                    'dash.widget-dialog.edit',
+                                    'context_hint-display-info',
+                                ),
+                            }}
                         />
                     }
                 >

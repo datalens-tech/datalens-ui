@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {HelpPopover} from '@gravity-ui/components';
+import {HelpMark} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
 import './Subheader.scss';
@@ -18,7 +18,7 @@ export const Subheader = (props: Props) => {
     return (
         <div>
             <span className={b('subheader')}>{title}</span>
-            {tooltip && <HelpPopover content={tooltip} placement={'right'} />}
+            {tooltip && <HelpMark popoverProps={{content: tooltip, placement: 'right'}} />}
         </div>
     );
 };

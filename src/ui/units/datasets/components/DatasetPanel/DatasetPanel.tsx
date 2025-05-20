@@ -1,8 +1,7 @@
 import React from 'react';
 
-import {HelpPopover} from '@gravity-ui/components';
 import {ArrowsRotateRight, Plus} from '@gravity-ui/icons';
-import {Button, Icon, RadioButton, TextInput} from '@gravity-ui/uikit';
+import {Button, HelpMark, Icon, RadioButton, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {connect, useDispatch} from 'react-redux';
@@ -113,10 +112,15 @@ const DatasetPanel = (props: DatasetPanelProps) => {
                         </Button>
                         {!previewEnabled && (
                             <div className={b('preview-btn-tooltip')}>
-                                <HelpPopover
-                                    contentClassName={b('preview-btn-tooltip-content')}
-                                    placement={['right', 'left']}
-                                    content={<span>{i18n('label_preview-not-supported')}</span>}
+                                <HelpMark
+                                    popoverProps={{
+                                        content: (
+                                            <div className={b('preview-btn-tooltip-content')}>
+                                                <span>{i18n('label_preview-not-supported')}</span>
+                                            </div>
+                                        ),
+                                        placement: ['right', 'left'],
+                                    }}
                                 />
                             </div>
                         )}

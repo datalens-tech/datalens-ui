@@ -1,7 +1,6 @@
 import React from 'react';
 
-import {HelpPopover} from '@gravity-ui/components';
-import {Select} from '@gravity-ui/uikit';
+import {HelpMark, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {DashLoadPrioritySettings} from 'shared';
@@ -28,8 +27,10 @@ export const LoadPriority = ({value, onUpdate}: LoadPriorityProps) => {
     return (
         <Row>
             <Title text={i18n('dash.settings-dialog.edit', 'label_load-priority')}>
-                <HelpPopover
-                    htmlContent={i18n('dash.settings-dialog.edit', 'label_load-priority-hint')}
+                <HelpMark
+                    popoverProps={{
+                        content: i18n('dash.settings-dialog.edit', 'label_load-priority-hint'),
+                    }}
                 />
             </Title>
             <div>

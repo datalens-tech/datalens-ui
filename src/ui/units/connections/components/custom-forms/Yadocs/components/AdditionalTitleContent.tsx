@@ -1,7 +1,6 @@
 import React from 'react';
 
-import {HelpPopover} from '@gravity-ui/components';
-import {Button, Checkbox, Icon} from '@gravity-ui/uikit';
+import {Button, Checkbox, HelpMark, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {ConnectorType} from 'shared';
@@ -58,9 +57,11 @@ export const AdditionalTitleContent = (props: Props) => {
                 >
                     {i18n('label_auto-update')}
                 </Checkbox>
-                <HelpPopover
+                <HelpMark
                     className={b('help-btn', {'with-margin-right': true})}
-                    content={i18n('label_auto-update-help')}
+                    popoverProps={{
+                        content: i18n('label_auto-update-help'),
+                    }}
                 />
                 <Button disabled={disableControls} onClick={updateData}>
                     <Icon data={iconSync} size={ICON_SIZE} />

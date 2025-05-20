@@ -1,8 +1,7 @@
 import React from 'react';
 
-import {HelpPopover} from '@gravity-ui/components';
 import type {PopoverInstanceProps, RadioButtonOption} from '@gravity-ui/uikit';
-import {Dialog, Icon, Popover, TextInput} from '@gravity-ui/uikit';
+import {Dialog, HelpMark, Icon, Popover, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {i18n} from 'i18n';
@@ -305,9 +304,11 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                             />
                         </div>
                         {shouldDisabledManualButton && (
-                            <HelpPopover
+                            <HelpMark
                                 className={b('title-popover')}
-                                content={i18n('wizard', 'label_axis-title-manual-warning')}
+                                popoverProps={{
+                                    content: i18n('wizard', 'label_axis-title-manual-warning'),
+                                }}
                             />
                         )}
                         {title === SETTINGS.TITLE.MANUAL && (
@@ -452,9 +453,9 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                                 qa={'axis-mode-radio-buttons'}
                             />
                             {disabledTooltipContent && (
-                                <HelpPopover
+                                <HelpMark
                                     className={b('title-popover')}
-                                    content={i18n('wizard', disabledTooltipContent)}
+                                    popoverProps={{content: i18n('wizard', disabledTooltipContent)}}
                                 />
                             )}
                         </React.Fragment>
