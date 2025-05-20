@@ -92,7 +92,7 @@ export async function resolveChartConfig(args: LoadChartConfigArgs) {
 }
 
 export function validateSignedParams(
-    record: Record<string, unknown>,
+    record?: Record<string, unknown>,
 ): record is Record<string, string | string[]> {
     if (!record) {
         return false;
