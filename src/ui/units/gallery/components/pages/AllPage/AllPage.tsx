@@ -1,24 +1,33 @@
 import React from 'react';
 
-import {Col, Container, Row, Select, Text, TextInput, useLayoutContext} from '@gravity-ui/uikit';
+import {
+    Col,
+    Container,
+    Loader,
+    Row,
+    Select,
+    Text,
+    TextInput,
+    useLayoutContext,
+    useThemeType,
+} from '@gravity-ui/uikit';
 import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
-import {useHistory} from 'react-router-dom';
+import {useHistory, useLocation} from 'react-router-dom';
 import {ActionPanel} from 'ui/components/ActionPanel';
 
 import {GALLERY_ITEM_CATEGORY} from '../../../constants/gallery-item';
+import {useGetGalleryItemsQuery} from '../../../store/api';
 import type {GalleryItem} from '../../../types';
 import {GalleryCardPreview} from '../../blocks';
 import {block, getCategoryLabelTitle, getLang} from '../../utils';
 import type {CnMods} from '../../utils';
-import {EDITORS_CHOICE_ITEM_IDS, MOCKED_GALLERY_ITEMS} from '../mocks';
+import {SPECIAL_CATEGORY, URL_FILTER_PARAMS} from '../constants';
+import {EDITORS_CHOICE_ITEM_IDS} from '../mocks';
 
 import './AllPage.scss';
 
 const b = block('all');
-const SPECIAL_CATEGORY = {
-    ALL: 'all',
-    EDITORS_CHOICE: 'editors-choice',
-};
+
 const CATEGORIES_SELECT_VALUES = [
     SPECIAL_CATEGORY.ALL,
     SPECIAL_CATEGORY.EDITORS_CHOICE,
@@ -96,16 +105,37 @@ function getCategorySelectOptionContent(value: string) {
 export function AllPage() {
     const {activeMediaQuery} = useLayoutContext();
     const history = useHistory();
+    const {search: searchParams} = useLocation();
+    const defaultFilterValues = React.useMemo(() => {
+        const urlSearchParams = new URLSearchParams(searchParams);
+        const value = urlSearchParams.get(URL_FILTER_PARAMS.CATEGORY) ?? '';
+
+        return {
+            category: CATEGORIES_SELECT_VALUES.includes(value) ? value : SPECIAL_CATEGORY.ALL,
+            search: urlSearchParams.get(URL_FILTER_PARAMS.SEARCH_TEXT) ?? '',
+        };
+    }, [searchParams]);
     const baseMods: CnMods = {media: activeMediaQuery};
-    const [search, setSearch] = React.useState('');
-    const [category, setCategory] = React.useState<string>(SPECIAL_CATEGORY.ALL);
+    const [search, setSearch] = React.useState(defaultFilterValues.search);
+    const [category, setCategory] = React.useState<string>(defaultFilterValues.category);
     const lang = getLang();
+    const themeType = useThemeType();
+
+    const {isLoading, data: items = []} = useGetGalleryItemsQuery({});
     const {filteredItems} = useFilteredGalleryItems({
         category,
-        items: MOCKED_GALLERY_ITEMS,
+        items,
         search,
         lang,
     });
+
+    if (isLoading) {
+        return (
+            <div className={b('loader')}>
+                <Loader size="m" />
+            </div>
+        );
+    }
 
     return (
         <React.Fragment>
@@ -125,7 +155,12 @@ export function AllPage() {
                 </Row>
                 <Row space="6" style={{marginTop: 0, marginBottom: 24}}>
                     <Col m="8" s="12">
-                        <TextInput size="l" placeholder="Search by name" onUpdate={setSearch} />
+                        <TextInput
+                            defaultValue={search}
+                            size="l"
+                            placeholder="Search by name"
+                            onUpdate={setSearch}
+                        />
                     </Col>
                     <Col m="4" s="12">
                         <Select
@@ -153,7 +188,7 @@ export function AllPage() {
                                     title={item.title}
                                     createdBy={item.createdBy}
                                     labels={item.labels}
-                                    imageSrc={item.images?.light?.[0] || ''}
+                                    imageSrc={item.images?.[themeType]?.[0] || ''}
                                 />
                             </Col>
                         );

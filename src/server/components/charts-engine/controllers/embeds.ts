@@ -14,12 +14,13 @@ import {
     DashTabItemType,
     EntryScope,
     ErrorCode,
-    isEnabledServerFeature,
 } from '../../../../shared';
 import {resolveEmbedConfig} from '../components/storage';
 import type {EmbedResolveConfigProps, ResolveConfigError} from '../components/storage/base';
 import type {EmbeddingInfo, ReducedResolvedConfig} from '../components/storage/types';
 import {getDuration, isDashEntry} from '../components/utils';
+
+import {validateSignedParams} from './utils';
 
 const isResponseError = (error: unknown): error is AxiosError<{code: string}> => {
     return Boolean(isObject(error) && 'response' in error && error.response);
@@ -207,7 +208,7 @@ function filterParams(
     params: Record<string, unknown> = {},
     embeddingInfo: EmbeddingInfo,
 ): {params: Record<string, unknown>; privateParams?: Set<string>} {
-    if (Object.keys(params).length === 0) {
+    if (!params || Object.keys(params).length === 0) {
         return {params: {...embeddingInfo.token.params}};
     }
 
@@ -231,20 +232,22 @@ function filterParams(
 
             if (isDashEntry(embeddingInfo.entry)) {
                 embeddingInfo.entry.data.tabs.forEach((entryTab) => {
-                    Object.keys(entryTab.aliases).forEach((namespace) => {
-                        entryTab.aliases[namespace].forEach((alias) => {
-                            const hasPrivateParam = alias.some((item) =>
-                                fillingForbiddenParamsSet.has(item),
-                            );
+                    if (entryTab.aliases) {
+                        Object.keys(entryTab.aliases).forEach((namespace) => {
+                            entryTab.aliases[namespace].forEach((alias) => {
+                                const hasPrivateParam = alias.some((item) =>
+                                    fillingForbiddenParamsSet.has(item),
+                                );
 
-                            if (hasPrivateParam) {
-                                // Add all items in alias to forbidden set
-                                for (const item of alias) {
-                                    fillingForbiddenParamsSet.add(item);
+                                if (hasPrivateParam) {
+                                    // Add all items in alias to forbidden set
+                                    for (const item of alias) {
+                                        fillingForbiddenParamsSet.add(item);
+                                    }
                                 }
-                            }
+                            });
                         });
-                    });
+                    }
                 });
             }
 
@@ -258,14 +261,21 @@ function filterParams(
         }
     }
 
-    // token params is written in globalParams and usually applied by dashkit
-    // we use them again after filtering the user parameters from the chart/dashboard
-    // in case there are forbidden parameters among them.
-    return {
-        params: {
+    let finalParams;
+    if (validateSignedParams(embeddingInfo.token.params)) {
+        // token params is written in globalParams and usually applied by dashkit
+        // we use them again after filtering the user parameters from the chart/dashboard
+        // in case there are forbidden parameters among them.
+        finalParams = {
             ...embeddingInfo.token.params,
             ...filteredParams,
-        },
+        };
+    } else {
+        finalParams = filteredParams;
+    }
+
+    return {
+        params: finalParams,
         privateParams: forbiddenParamsSet,
     };
 }
@@ -296,7 +306,8 @@ function findAndExecuteRunner(
         return Promise.resolve(null);
     }
 
-    if (!isEnabledServerFeature(ctx, 'EnableChartEditor') && runnerFound.name === 'editor') {
+    const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
+    if (!isEnabledServerFeature('EnableChartEditor') && runnerFound.name === 'editor') {
         ctx.log('CHARTS_ENGINE_EDITOR_DISABLED');
         res.status(400).send({
             error: 'Editor is disabled',

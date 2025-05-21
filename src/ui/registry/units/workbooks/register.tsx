@@ -1,4 +1,3 @@
-import {getNotificationTitleByCode} from '../../../components/CollectionsStructure/components/EntriesNotificationCut/helpers';
 import {useCreateEntryOptions} from '../../../units/workbooks/components/CreateEntry/utils';
 import {
     getNewDashUrl,
@@ -23,6 +22,5 @@ export const registerWorkbooksPlugins = () => {
         useAdditionalWorkbookActions,
         useCreateEntryOptions,
         getWorkbookEmptyStateTexts: getText,
-        getNotificationTitleByCode,
     });
 };

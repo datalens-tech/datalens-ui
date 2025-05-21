@@ -52,14 +52,53 @@ const validateChartShared = (chartOptions: TransferChartDataOptions) => {
     }
 };
 
+const traverseDatasetFields = (obj: any, matchCallback: MatchCallback) => {
+    const {result_schema, sources} = obj || {};
+
+    // Legacy dataset properties placeholder replacer
+    if (result_schema && Array.isArray(result_schema)) {
+        for (let i = 0; i <= result_schema.length; i++) {
+            const item = result_schema[i];
+
+            if (item?.datasetId) {
+                item.datasetId = matchCallback(item.datasetId, item, 'datasetId');
+            }
+        }
+    }
+
+    // This is v1 field schema but saved and cause we are not migrating wizard charts
+    // we need to migrate this fields before export\import
+    if (sources && Array.isArray(sources)) {
+        for (let i = 0; i <= sources.length; i++) {
+            const item = sources[i];
+
+            if (item?.connection_id) {
+                item.connection_id = matchCallback(item.connection_id, item, 'connection_id');
+            }
+        }
+    }
+};
+
 const traverseWizardFieldsRecursive = (obj: any, matchCallback: MatchCallback) => {
     forIn(obj, (val, key) => {
         if (key === 'datasetId' && typeof val === 'string') {
             // Array<{datasetId: string}>
             obj[key] = matchCallback(val, obj, key);
+        } else if (key === 'datasets' && Array.isArray(val)) {
+            // datasets: [{id: string}]
+            for (let i = 0; i <= val.length; i++) {
+                const item = val[i];
+                if (item?.id) {
+                    item.id = matchCallback(item.id, item, 'id');
+                }
+
+                traverseDatasetFields(item, matchCallback);
+            }
         } else if (key === 'dataset' && typeof val === 'object' && typeof val.id === 'string') {
-            // dataset.id
+            // dataset: {id: string}
             val.id = matchCallback(val.id, val, 'id');
+
+            traverseDatasetFields(val, matchCallback);
         } else if (typeof val === 'object') {
             traverseWizardFieldsRecursive(val, matchCallback);
         }
