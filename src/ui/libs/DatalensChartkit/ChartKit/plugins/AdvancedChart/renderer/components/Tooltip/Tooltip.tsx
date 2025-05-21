@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {preventOverflow} from '@floating-ui/react';
 import {Popup, useVirtualElementRef} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
@@ -30,12 +31,11 @@ export const Tooltip = (props: TooltipProps) => {
     return content ? (
         <Popup
             className={b({})}
-            contentClassName={b('popup-content')}
             open={true}
-            anchorRef={anchorRef}
-            offset={[0, 20]}
+            anchorElement={anchorRef.current}
+            offset={{mainAxis: 0, crossAxis: 10}}
             placement={['right', 'left', 'top', 'bottom']}
-            modifiers={[{name: 'preventOverflow', options: {padding: 10, altAxis: true}}]}
+            floatingMiddlewares={[preventOverflow({padding: 10, altAxis: true})]}
         >
             <div
                 className={b('content')}

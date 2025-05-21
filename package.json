@@ -120,6 +120,7 @@
     "workerpool": "^9.1.1"
   },
   "devDependencies": {
+    "@floating-ui/react": "^0.27.8",
     "@gravity-ui/app-builder": "^0.26.0",
     "@gravity-ui/components": "^3.12.5",
     "@gravity-ui/date-components": "^2.11.0",

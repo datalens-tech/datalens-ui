@@ -77,8 +77,12 @@ class EntryContextMenuBase extends React.Component {
                 hasArrow={this.props.hasTail}
                 placement={this.props.popupPlacement}
                 open={this.props.visible}
-                anchorRef={this.props.anchorRef}
-                onClose={this.props.onClose}
+                anchorElement={this.props.anchorRef}
+                onOpenChange={(open) => {
+                    if (!open) {
+                        this.props.onClose();
+                    }
+                }}
             >
                 <Menu
                     qa={ActionPanelEntryContextMenuQa.Menu}

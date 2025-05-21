@@ -667,11 +667,15 @@ class DialogChartWidget extends React.PureComponent<
                         />
                     </div>
                     <Popup
-                        anchorRef={this.navigationInputRef}
+                        anchorElement={this.navigationInputRef.current}
                         open={this.state.error}
                         placement="left-start"
                         hasArrow={true}
-                        onClose={() => this.setState({error: false})}
+                        onOpenChange={(open) => {
+                            if (!open) {
+                                this.setState({error: false});
+                            }
+                        }}
                     >
                         <div className={b('error')}>
                             {i18n('dash.widget-dialog.edit', 'toast_required-field')}

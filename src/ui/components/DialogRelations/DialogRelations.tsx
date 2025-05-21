@@ -619,7 +619,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                                 </Button>
                                 <Popup
                                     hasArrow={true}
-                                    anchorRef={aliasWarnButtonRef}
+                                    anchorElement={aliasWarnButtonRef.current}
                                     open={aliasWarnPopupOpen}
                                     placement="right"
                                     className={b('invalid-list-popup')}
