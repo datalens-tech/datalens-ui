@@ -150,7 +150,6 @@ class DialogErrorWithTabs extends React.Component<Props, State> {
                 dialogFooterProps={{
                     preset: 'default',
                     showError: false,
-                    listenKeyEnter: false,
                     onClickButtonCancel: this.onClose,
                     textButtonCancel: i18n('button_close'),
                     loading: false,
