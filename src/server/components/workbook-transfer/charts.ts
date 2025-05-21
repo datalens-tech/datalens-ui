@@ -88,7 +88,7 @@ const traverseWizardFieldsRecursive = (obj: any, matchCallback: MatchCallback) =
             // datasets: [{id: string}]
             for (let i = 0; i <= val.length; i++) {
                 const item = val[i];
-                if (item.id) {
+                if (item?.id) {
                     item.id = matchCallback(item.id, item, 'id');
                 }
 
