@@ -141,6 +141,8 @@ const PageComponent = (props: PageProps) => {
         isShowCreateButtons = Boolean(entry.permissions?.edit);
     }
 
+    const {AdditionalConnectionFormActions} = registry.connections.components.getAll();
+
     React.useEffect(() => {
         return () => {
             actions.setInitialState();
@@ -170,16 +172,22 @@ const PageComponent = (props: PageProps) => {
                 {entry && (
                     <ActionPanel
                         entry={entry}
-                        rightItems={
+                        rightItems={[
+                            <AdditionalConnectionFormActions
+                                key="additional-actions"
+                                entry={entry}
+                                connectorType={type}
+                            />,
                             isShowCreateButtons && (
                                 <ConnPanelActions
+                                    key="conn-panel-actions"
                                     entryId={extractedEntryId}
                                     entryKey={(connectionData[FieldKey.Key] as string) || ''}
                                     s3BasedFormOpened={s3BasedFormOpened}
                                     workbookId={workbookId || entry?.workbookId}
                                 />
-                            )
-                        }
+                            ),
+                        ]}
                     />
                 )}
                 {loading || !entry ? (
