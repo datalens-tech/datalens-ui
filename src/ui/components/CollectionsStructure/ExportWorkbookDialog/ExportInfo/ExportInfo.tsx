@@ -27,7 +27,13 @@ export const ExportInfo = () => {
             <InfoRow text={i18n('label_info-time')} icon={Clock} />
             <InfoRow text={i18n('label_info-secrets')} icon={Key} />
             <InfoRow
-                text={<InterpolatedText disableLink text={i18n('label_info-versions')} />}
+                text={
+                    <InterpolatedText
+                        disableLink={!docsUrl}
+                        href={`${docsUrl}#restrictions`}
+                        text={i18n('label_info-versions')}
+                    />
+                }
                 icon={Thunderbolt}
             />
             {docsUrl && (
