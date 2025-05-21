@@ -22,6 +22,7 @@ const TypesHeaderWithoutHelpCenter = [
     ErrorContentTypes.AUTH_DENIED,
     ErrorContentTypes.NOT_FOUND_BY_RESOLVE_TENANT,
     ErrorContentTypes.NOT_AUTHENTICATED,
+    ErrorContentTypes.NOT_AUTHENTICATED_GALLERY,
 ];
 
 const TypesHeaderWithoutNavigation = [
@@ -34,6 +35,7 @@ const TypesHeaderWithoutNavigation = [
     ErrorContentTypes.NOT_FOUND_BY_RESOLVE_TENANT,
     ErrorContentTypes.NOT_AUTHENTICATED,
     ErrorContentTypes.FORBIDDEN_AUTH,
+    ErrorContentTypes.NOT_AUTHENTICATED_GALLERY,
 ];
 
 export function getLandingNavigationSettings() {
