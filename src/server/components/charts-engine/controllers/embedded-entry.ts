@@ -2,11 +2,11 @@ import type {Request, Response} from '@gravity-ui/expresskit';
 import jwt from 'jsonwebtoken';
 import isObject from 'lodash/isObject';
 
-import {DL_EMBED_TOKEN_HEADER, EntryScope, ErrorCode} from '../../../../shared';
+import {DL_EMBED_TOKEN_HEADER, EntryScope, ErrorCode, Feature} from '../../../../shared';
 import {resolveEmbedConfig} from '../components/storage';
 import type {EmbedResolveConfigProps, ResolveConfigError} from '../components/storage/base';
 
-import {validateSignedParams} from './utils';
+import {getValidatedSignedParams} from './utils';
 
 export const embeddedEntryController = (req: Request, res: Response) => {
     const {ctx} = req;
@@ -92,8 +92,14 @@ export const embeddedEntryController = (req: Request, res: Response) => {
                         entry: {entryId, scope, data},
                     } = response;
 
-                    if (validateSignedParams(response.token.params)) {
-                        data.settings.signedGlobalParams = response.token.params;
+                    const isSecureParamsV2Enabled = ctx.get('isEnabledServerFeature')(
+                        Feature.EnableSecureParamsV2,
+                    );
+
+                    if (isSecureParamsV2Enabled) {
+                        data.settings.signedGlobalParams = getValidatedSignedParams(
+                            response.token.params,
+                        );
                     }
 
                     // Add only necessary fields without personal info like createdBy
