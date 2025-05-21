@@ -1,11 +1,10 @@
 import React from 'react';
 
-import {Breadcrumbs, FirstDisplayedItemsCount, LastDisplayedItemsCount} from '@gravity-ui/uikit';
+import {Breadcrumbs} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {Link, useHistory, useLocation} from 'react-router-dom';
 import type {EntryBreadcrumbsProps} from 'ui/registry/units/common/types/components/EntryBreadcrumbs';
 
-import type {BreadcrumbsItem} from './helpers';
 import {getWorkbookBreadcrumbsItems} from './helpers';
 
 import './EntryBreadcrumbs.scss';
@@ -34,8 +33,6 @@ export const EntryBreadcrumbs = (props: EntryBreadcrumbsProps) => {
         <Breadcrumbs
             className={b()}
             items={breadcrumbsItems}
-            firstDisplayedItemsCount={FirstDisplayedItemsCount.One}
-            lastDisplayedItemsCount={LastDisplayedItemsCount.One}
             renderRootContent={entry?.workbookId ? undefined : renderRootContent}
             renderItemContent={(item: BreadcrumbsItem, isCurrent: boolean) => {
                 if (isCurrent) {

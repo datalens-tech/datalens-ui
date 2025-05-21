@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Loader, SegmentedRadioGroup as RadioButton} from '@gravity-ui/uik, SegmentedRadioGroupit';
+import {Loader, SegmentedRadioGroup as RadioButton} from '@gravity-ui/uikit';
 import cn from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import debounce from 'lodash/debounce';

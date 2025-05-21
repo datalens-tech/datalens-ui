@@ -1,7 +1,6 @@
 import React from 'react';
 
 import {Ellipsis, Globe} from '@gravity-ui/icons';
-import type {BreadcrumbsItem} from '@gravity-ui/uikit';
 import {Button, Icon, Link} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {EntryDialogName, EntryDialogResolveStatus} from 'components/EntryDialogues';
@@ -15,6 +14,7 @@ import {ActionPanelQA, EntryScope} from 'shared';
 import type {DatalensGlobalState, EntryDialogues} from 'ui';
 import {CounterName, GoalId, reachMetricaGoal} from 'ui/libs/metrica';
 import {registry} from 'ui/registry';
+import type {BreadcrumbsItem} from 'ui/registry/units/common/types/components/EntryBreadcrumbs';
 import {addWorkbookInfo, resetWorkbookPermissions} from 'units/workbooks/store/actions';
 import {selectWorkbookBreadcrumbs, selectWorkbookName} from 'units/workbooks/store/selectors';
 
