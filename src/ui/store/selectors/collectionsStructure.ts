@@ -119,10 +119,9 @@ export const selectImportError = createSelector(
 );
 
 export const selectImportWorkbookStatus = createSelector(
-    [selectImportWorkbook, selectGetImportProgress],
-    (importWorkbook, getImportProgress) =>
+    [selectGetImportProgress],
+    (getImportProgress) =>
         getStatusFromOperation({
-            initialOperation: importWorkbook,
             progessOperation: getImportProgress,
         }),
 );
