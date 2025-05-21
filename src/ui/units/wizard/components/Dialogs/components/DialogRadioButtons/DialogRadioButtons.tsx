@@ -1,7 +1,7 @@
 import React from 'react';
 
-import type {RadioButtonOption} from '@gravity-ui/uikit';
-import {RadioButton} from '@gravity-ui/uikit';
+import type {SegmentedRadioGroupOption as RadioButtonOption} from '@gravity-ui/uikit';
+import {SegmentedRadioGroup as RadioButton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
 import './DialogRadioButtons.scss';

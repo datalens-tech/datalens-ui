@@ -1,7 +1,13 @@
 import React from 'react';
 
 import {ArrowsRotateRight, Plus} from '@gravity-ui/icons';
-import {Button, HelpMark, Icon, RadioButton, TextInput} from '@gravity-ui/uikit';
+import {
+    Button,
+    HelpMark,
+    Icon,
+    SegmentedRadioGroup as RadioButton,
+    TextInput,
+} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {connect, useDispatch} from 'react-redux';

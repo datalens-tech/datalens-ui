@@ -3,13 +3,13 @@ import React from 'react';
 import {FormRow} from '@gravity-ui/components';
 import {TITLE_DEFAULT_SIZES} from '@gravity-ui/dashkit';
 import {ChevronDown, PencilToLine} from '@gravity-ui/icons';
-import type {RadioButtonOption, RealTheme} from '@gravity-ui/uikit';
+import type {SegmentedRadioGroupOption as RadioButtonOption, RealTheme} from '@gravity-ui/uikit';
 import {
     Button,
     Checkbox,
     Dialog,
     Icon,
-    RadioButton,
+    SegmentedRadioGroup as RadioButton,
     Select,
     Text,
     TextInput,

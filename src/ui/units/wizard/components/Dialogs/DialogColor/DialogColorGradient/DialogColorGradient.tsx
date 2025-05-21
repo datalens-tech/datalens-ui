@@ -8,7 +8,7 @@ import {
     Flex,
     HelpMark,
     Icon,
-    RadioButton,
+    SegmentedRadioGroup as RadioButton,
     Select,
     TextInput,
 } from '@gravity-ui/uikit';

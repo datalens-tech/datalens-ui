@@ -1,6 +1,13 @@
 import React from 'react';
 
-import {Alert, Dialog, HelpMark, Link, RadioButton, TextInput} from '@gravity-ui/uikit';
+import {
+    Alert,
+    Dialog,
+    HelpMark,
+    Link,
+    SegmentedRadioGroup as RadioButton,
+    TextInput,
+} from '@gravity-ui/uikit';
 import type {AlertProps, ButtonProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
-import {Dialog, Loader, RadioButton} from '@gravity-ui/uikit';
+import {Dialog, Loader, SegmentedRadioGroup as RadioButton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import _isEqual from 'lodash/isEqual';
