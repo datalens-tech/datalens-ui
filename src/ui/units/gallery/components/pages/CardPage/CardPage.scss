@@ -6,6 +6,17 @@
 $block: '.#{variables.$ns}-card';
 
 #{$block} {
+    &__loader {
+        height: 100%;
+    }
+
+    &__error {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
     &__iframe {
         width: 100%;
         border: none;
