@@ -96,6 +96,8 @@ export enum Feature {
     EnablePublicGallery = 'EnablePublicGallery',
     /** Setting in the table to preserve spaces and line breaks */
     PreWrapTableSetting = 'PreWrapTableSetting',
+    /** Enable new secure parameters behavior */
+    EnableSecureParamsV2 = 'EnableSecureParamsV2',
 }
 
 export type FeatureConfig = Record<string, boolean>;

@@ -14,13 +14,14 @@ import {
     DashTabItemType,
     EntryScope,
     ErrorCode,
+    Feature,
 } from '../../../../shared';
 import {resolveEmbedConfig} from '../components/storage';
 import type {EmbedResolveConfigProps, ResolveConfigError} from '../components/storage/base';
 import type {EmbeddingInfo, ReducedResolvedConfig} from '../components/storage/types';
 import {getDuration, isDashEntry} from '../components/utils';
 
-import {validateSignedParams} from './utils';
+import {getValidatedSignedParams} from './utils';
 
 const isResponseError = (error: unknown): error is AxiosError<{code: string}> => {
     return Boolean(isObject(error) && 'response' in error && error.response);
@@ -207,6 +208,7 @@ function processEntry(
 function filterParams(
     params: Record<string, unknown> = {},
     embeddingInfo: EmbeddingInfo,
+    ctx: AppContext,
 ): {params: Record<string, unknown>; privateParams?: Set<string>} {
     if (!params || Object.keys(params).length === 0) {
         return {params: {...embeddingInfo.token.params}};
@@ -262,7 +264,15 @@ function filterParams(
     }
 
     let finalParams;
-    if (validateSignedParams(embeddingInfo.token.params)) {
+    const isSecureParamsV2Enabled = ctx.get('isEnabledServerFeature')(Feature.EnableSecureParamsV2);
+
+    if (isSecureParamsV2Enabled) {
+        const validatedParams = getValidatedSignedParams(embeddingInfo.token.params);
+        finalParams = {
+            ...validatedParams,
+            ...filteredParams,
+        };
+    } else {
         // token params is written in globalParams and usually applied by dashkit
         // we use them again after filtering the user parameters from the chart/dashboard
         // in case there are forbidden parameters among them.
@@ -270,8 +280,6 @@ function filterParams(
             ...embeddingInfo.token.params,
             ...filteredParams,
         };
-    } else {
-        finalParams = filteredParams;
     }
 
     return {
@@ -402,7 +410,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                     return null;
                 }
 
-                const {params, privateParams} = filterParams(req.body.params, embeddingInfo);
+                const {params, privateParams} = filterParams(req.body.params, embeddingInfo, ctx);
                 req.body.params = params;
 
                 const entry = processEntry(controlData, embeddingInfo, res);
