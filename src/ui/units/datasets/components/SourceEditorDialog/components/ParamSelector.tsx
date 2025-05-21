@@ -93,13 +93,12 @@ export function ParamSelector(props: ParamSelectorProps) {
                 onParamSelect(selectedOption.data.param);
             }}
             popupClassName={b('param-select-popup')}
-            renderControl={({triggerProps: {onKeyDown, ...restTriggerProps}, ref}) => {
+            renderControl={({triggerProps, ref}) => {
                 return (
                     <Button
-                        {...restTriggerProps}
+                        {...triggerProps}
                         ref={ref}
                         className={b('param-add-button', className)}
-                        extraProps={{onKeyDown}}
                     >
                         <Button.Icon>
                             <Plus />

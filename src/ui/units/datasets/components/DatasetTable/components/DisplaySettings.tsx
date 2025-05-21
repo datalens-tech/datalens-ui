@@ -13,10 +13,13 @@ const ITEM_HIDDEN_FIELDS: EditorItemToDisplay = 'hiddenFields';
 const ITEM_FIELDS_ID: EditorItemToDisplay = 'fieldsId';
 
 const renderControl: SelectProps['renderControl'] = (args) => {
-    const {onClick, onKeyDown, ref} = args;
+    const {
+        triggerProps: {onClick, onKeyDown},
+        ref,
+    } = args;
 
     return (
-        <Button ref={ref} size="s" view="flat" onClick={onClick} extraProps={{onKeyDown}}>
+        <Button ref={ref} size="s" view="flat" onClick={onClick} onKeyDown={onKeyDown}>
             <Icon data={Gear} height={18} width={18} />
         </Button>
     );

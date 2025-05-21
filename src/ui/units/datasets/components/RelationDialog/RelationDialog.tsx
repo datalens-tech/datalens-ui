@@ -107,7 +107,8 @@ const renderCustomControl = (
     options: SelectOption[],
     renderOptions: {style?: React.CSSProperties; className?: string},
 ) => {
-    const {onClick, ref, onKeyDown} = args;
+    const {ref, triggerProps} = args;
+    const {onClick, onKeyDown} = triggerProps ?? {};
     const {style, className} = renderOptions;
 
     const selectedOption = options.find((o) => o.value === selectedValue);
@@ -119,7 +120,7 @@ const renderCustomControl = (
             className={className}
             ref={ref}
             onClick={onClick}
-            extraProps={{onKeyDown}}
+            onKeyDown={onKeyDown}
         >
             {selectedOption?.data?.iconNode || selectedOption?.content}
         </Button>

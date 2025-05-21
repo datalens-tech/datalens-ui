@@ -332,7 +332,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
                                             popupPlacement={['bottom-end', 'top-end']}
                                             renderControl={(selectControlProps) => (
                                                 <Button
-                                                    {...selectControlProps}
+                                                    {...selectControlProps?.triggerProps}
                                                     view="flat"
                                                     pin="brick-brick"
                                                 >
