@@ -281,7 +281,14 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
                     ) : undefined,
             };
         },
-        [handleClose, importStatus, isImportLoading, isLoading, notificationDetails],
+        [
+            handleClose,
+            handleShowDetails,
+            importStatus,
+            isImportLoading,
+            isLoading,
+            notificationDetails,
+        ],
     );
 
     const renderImportSection = () => {
@@ -300,7 +307,7 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
 
     const renderDialogView = () => {
         if (view === 'import') {
-            return <ImportWorkbookView status={importStatus} />;
+            return <ImportWorkbookView status={importStatus} importId={importData?.importId} />;
         }
         return null;
     };

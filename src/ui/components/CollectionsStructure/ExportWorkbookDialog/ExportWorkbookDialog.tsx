@@ -288,6 +288,7 @@ export const ExportWorkbookDialog: React.FC<Props> = ({
                         containerClassName={b('error-content')}
                         error={error}
                         size="s"
+                        exportId={exportData?.exportId}
                     />
                 );
         }
