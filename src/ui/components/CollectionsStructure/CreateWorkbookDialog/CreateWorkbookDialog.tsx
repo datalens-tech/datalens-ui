@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {Flex} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
@@ -307,7 +308,11 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
 
     const renderDialogView = () => {
         if (view === 'import') {
-            return <ImportWorkbookView status={importStatus} />;
+            return (
+                <Flex direction="column">
+                    <ImportWorkbookView status={importStatus} />
+                </Flex>
+            );
         }
         return null;
     };

@@ -4,6 +4,7 @@
   "label_import-check-connections-credentials": "Check the connection settings and re-enter passwords and tokens if necessary",
   "label_import-check-delegation": "Connection configuration is not complete, change or save the connection settings again",
   "label_import-rls": "Check RLS functionality in datasets",
+  "label_info-documentation-notifications": "Detailed information about errors and warnings",
   "label_invalid-entry-data": "Workbook configuration was corrupted",
   "label_invalid-entry-scope": "The workbook contains entities with an incorrect type",
   "label_invalid-error": "Unknown error",
