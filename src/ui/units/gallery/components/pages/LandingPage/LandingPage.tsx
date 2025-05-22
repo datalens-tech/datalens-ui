@@ -15,14 +15,14 @@ import {
     useThemeType,
 } from '@gravity-ui/uikit';
 import {useHistory} from 'react-router';
+import {GALLERY_ITEM_CATEGORY} from 'shared/constants';
+import type {GalleryItemShort} from 'shared/types';
 import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 import type {AsyncImageProps} from 'ui/components/AsyncImage/AsyncImage';
 import type {CreateIllustrationProps} from 'ui/components/Illustration/types';
 import {createIllustration} from 'ui/components/Illustration/utils';
-import {GALLERY_ITEM_CATEGORY} from 'ui/units/gallery/constants/gallery-item';
 
 import {useGetGalleryItemsQuery} from '../../../store/api';
-import type {GalleryItem} from '../../../types';
 import {GalleryCardPreview, SectionHeader} from '../../blocks';
 import type {ActiveMediaQuery} from '../../types';
 import {block, getAllPageUrl, groupGalleryItemsByLabels} from '../../utils';
@@ -100,7 +100,7 @@ function PromoBlockItem({
 
 interface PromoBlockRowProps {
     title: string;
-    galleryItems: GalleryItem[];
+    galleryItems: GalleryItemShort[];
     activeMediaQuery?: ActiveMediaQuery;
 }
 

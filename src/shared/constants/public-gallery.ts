@@ -1,4 +1,3 @@
-import type {StringWithSuggest} from '@gravity-ui/uikit';
 export const GALLERY_ITEM_CATEGORY = {
     EDUCATION: 'education',
     FINANCE: 'finance',
@@ -9,6 +8,3 @@ export const GALLERY_ITEM_CATEGORY = {
     EDITOR: 'editor',
     GEO: 'geo',
 } as const;
-export type GalleryItemCategory = StringWithSuggest<
-    (typeof GALLERY_ITEM_CATEGORY)[keyof typeof GALLERY_ITEM_CATEGORY]
->;
