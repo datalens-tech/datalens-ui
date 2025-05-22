@@ -6,6 +6,7 @@ import bi from './bi';
 import biConverter from './bi-converter';
 import extensions from './extensions';
 import metaManager from './meta-manager';
+import publicGallery from './public-gallery';
 import us from './us';
 
 // Scheme for all local requests except mix
@@ -16,6 +17,7 @@ export const simpleSchema = {
     extensions,
     auth,
     metaManager,
+    publicGallery,
 };
 
 export const getTypedApi = getTypedApiFactory<{

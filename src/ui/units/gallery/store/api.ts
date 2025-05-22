@@ -1,7 +1,7 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
+import type {GalleryItem} from 'shared/types';
 
 import {MOCKED_GALLERY_ITEMS} from '../components/pages/mocks';
-import type {GalleryItem} from '../types';
 
 export const galleryApi = createApi({
     reducerPath: 'galleryApi',

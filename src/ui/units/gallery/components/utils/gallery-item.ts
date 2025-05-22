@@ -1,6 +1,5 @@
-import {GALLERY_ITEM_CATEGORY} from '../../constants/gallery-item';
-import type {GalleryItemCategory} from '../../constants/gallery-item';
-import type {GalleryItem} from '../../types';
+import {GALLERY_ITEM_CATEGORY} from 'shared/constants';
+import type {GalleryItem, GalleryItemCategory} from 'shared/types';
 
 type GalleryItemsByLabel = Record<string, number[]>;
 

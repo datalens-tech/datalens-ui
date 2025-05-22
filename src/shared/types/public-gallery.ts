@@ -1,11 +1,15 @@
-import type {RealTheme} from '@gravity-ui/uikit';
+import type {RealTheme, StringWithSuggest} from '@gravity-ui/uikit';
 
-import type {GalleryItemCategory} from '../constants/gallery-item';
+import type {GALLERY_ITEM_CATEGORY} from '../constants';
 
 type LinkToS3 = string;
 type ImagesDict = Partial<Record<RealTheme, LinkToS3[]>>;
 
 export type TranslationsDict = Record<string, string>;
+
+export type GalleryItemCategory = StringWithSuggest<
+    (typeof GALLERY_ITEM_CATEGORY)[keyof typeof GALLERY_ITEM_CATEGORY]
+>;
 
 export type GalleryItem = {
     createdAt: number;
@@ -19,3 +23,8 @@ export type GalleryItem = {
     publicUrl?: string;
     partnerId?: string;
 };
+
+export type GalleryItemList = Pick<
+    GalleryItem,
+    'createdBy' | 'id' | 'images' | 'labels' | 'title'
+>[];
