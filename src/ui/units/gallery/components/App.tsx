@@ -17,4 +17,4 @@ function AppContent() {
     );
 }
 
-export const App = withErrorPage(AppContent);
+export const App = withErrorPage(AppContent, undefined, {height: '100%'});

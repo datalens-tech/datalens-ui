@@ -16,10 +16,11 @@ export interface ErrorPageProps {
         content: React.ReactNode;
         handler: ButtonProps['onClick'];
     };
+    style?: React.CSSProperties;
 }
 
 const ErrorPage: React.FC<ErrorPageProps> = (props) => {
-    return <ErrorContent error={props.error} action={props.action} />;
+    return <ErrorContent error={props.error} action={props.action} style={props.style} />;
 };
 
 export default ErrorPage;
