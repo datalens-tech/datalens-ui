@@ -91,16 +91,22 @@ export async function resolveChartConfig(args: LoadChartConfigArgs) {
     }
 }
 
-export function validateSignedParams(
+export function getValidatedSignedParams(
     record?: Record<string, unknown>,
-): record is Record<string, string | string[]> {
+): Record<string, string[] | string> {
     if (!record) {
-        return false;
+        return {};
     }
 
-    return Object.values(record).every(
-        (value) =>
-            typeof value === 'string' ||
-            (Array.isArray(value) && value.every((item) => typeof item === 'string')),
-    );
+    const validatedParams: Record<string, string[] | string> = {};
+
+    for (const key in record) {
+        if (Array.isArray(record[key])) {
+            validatedParams[key] = record[key].map((item) => String(item));
+        } else if (record[key] !== undefined && record[key] !== null) {
+            validatedParams[key] = String(record[key]);
+        }
+    }
+
+    return validatedParams;
 }

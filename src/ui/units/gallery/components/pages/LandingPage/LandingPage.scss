@@ -23,6 +23,7 @@ $block: '.#{variables.$ns}-landing';
 
         &_media_s,
         &_media_m {
+            height: auto;
             padding-left: 20px;
             padding-right: 20px;
         }
@@ -200,6 +201,13 @@ $block: '.#{variables.$ns}-landing';
     &__add-card {
         background-color: var(--g-color-base-generic);
         border-radius: 24px;
+        padding: 52px 100px;
+        margin: 48px 0;
+
+        &_media_s {
+            padding: 32px;
+            margin: 24px 0;
+        }
     }
 
     &__add-card-flex {

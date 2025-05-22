@@ -16,10 +16,15 @@ import {
 } from '@gravity-ui/uikit';
 import type {ButtonProps, IconData} from '@gravity-ui/uikit';
 import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
-import {useHistory} from 'react-router-dom';
+import {useHistory, useParams} from 'react-router-dom';
 import {ActionPanel} from 'ui/components/ActionPanel';
 import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
+import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
+import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
 import {useMarkdown} from 'ui/hooks/useMarkdown';
+import type {DataLensApiError} from 'ui/typings';
+import {useGetGalleryItemQuery} from 'ui/units/gallery/store/api';
+import Utils from 'ui/utils';
 
 import type {GalleryItem, TranslationsDict} from '../../../types';
 import {GalleryCardLabels, GalleryCardPreview, SectionHeader} from '../../blocks';
@@ -32,6 +37,18 @@ import {MOCKED_GALLERY_ITEMS} from '../mocks';
 import './CardPage.scss';
 
 const b = block('card');
+
+// TODO: CHARTS-11481
+const i18n = (key: string) => {
+    switch (key) {
+        case 'label_unknown-error':
+            return 'An error occured';
+        case 'label_retry':
+            return 'Retry';
+        default:
+            return key;
+    }
+};
 
 interface IconWithTextProps {
     iconData: IconData;
@@ -345,28 +362,64 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang}: CardContent
 export function CardPage() {
     const {activeMediaQuery} = useLayoutContext();
     const [showPreview, setShowPreview] = React.useState(false);
-    const MOCKED_CARD = MOCKED_GALLERY_ITEMS[0];
+
+    const {id} = useParams<{id: string}>();
+
+    const {isLoading, data, error, refetch} = useGetGalleryItemQuery({id});
+
     const lang = getLang();
 
     const togglePreview = () => {
         setShowPreview(!showPreview);
     };
 
+    if (isLoading) {
+        return <SmartLoader className={b('loader')} size="m" />;
+    }
+
+    if (error || !data) {
+        const {
+            code,
+            status,
+            message = i18n('label_unknown-error'),
+            details,
+        } = error && 'message' in error ? Utils.parseErrorResponse(error as DataLensApiError) : {};
+
+        const isNotFound = code === 'NOT_FOUND' || status === 404;
+        const name = isNotFound ? 'notFound' : 'error';
+        const canRetry = !isNotFound;
+
+        return (
+            <div className={b('error')}>
+                <PlaceholderIllustration
+                    name={name}
+                    title={details?.title ?? message}
+                    description={details?.description}
+                    renderAction={
+                        canRetry
+                            ? () => <Button onClick={refetch}>{i18n('label_retry')}</Button>
+                            : undefined
+                    }
+                />
+            </div>
+        );
+    }
+
     return (
         <React.Fragment>
             <CardActionPanel
                 activeMediaQuery={activeMediaQuery}
-                entry={MOCKED_CARD}
+                entry={data}
                 showPreview={showPreview}
                 togglePreview={togglePreview}
                 lang={lang}
             />
             {showPreview ? (
-                <iframe className={b('iframe')} src={MOCKED_CARD.publicUrl} />
+                <iframe className={b('iframe')} src={data.publicUrl} />
             ) : (
                 <CardContent
                     activeMediaQuery={activeMediaQuery}
-                    entry={MOCKED_CARD}
+                    entry={data}
                     togglePreview={togglePreview}
                     lang={lang}
                 />

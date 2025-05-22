@@ -25,6 +25,8 @@ export const transformNotifications = (
     const notificationMap = new Map<string, PreparedNotificationType>();
     const details: string[] = [];
 
+    let hasCritical = false;
+
     notifications.forEach((notification) => {
         const key = notification.code;
 
@@ -39,6 +41,10 @@ export const transformNotifications = (
             });
         }
 
+        if (notification.level === 'critical') {
+            hasCritical = true;
+        }
+
         if (notification.scope && notification.entryId) {
             notificationMap.get(key)?.entries.push({
                 entryId: notification.entryId,
@@ -47,7 +53,19 @@ export const transformNotifications = (
         }
     });
 
-    return {notifications: Array.from(notificationMap.values()), details: details.join('\n')};
+    const preparedNotifications: PreparedNotificationType[] = Array.from(notificationMap.values());
+    const preparedDetails = details.join('\n');
+
+    if (hasCritical) {
+        return {
+            notifications: preparedNotifications.filter(
+                (notification) => notification.level === 'critical',
+            ),
+            details: preparedDetails,
+        };
+    }
+
+    return {notifications: preparedNotifications, details: preparedDetails};
 };
 
 export const getNotificationTitleByCode = (code: string) => {

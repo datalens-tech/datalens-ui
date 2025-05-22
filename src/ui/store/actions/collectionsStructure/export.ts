@@ -1,4 +1,4 @@
-import {getSdk} from 'libs/schematic-sdk';
+import {getSdk, isSdkError} from 'libs/schematic-sdk';
 import logger from 'libs/logger';
 import {showToast} from 'store/actions/toaster';
 
@@ -36,6 +36,9 @@ import type {
 
 import type {CollectionsStructureDispatch} from './index';
 import {convertFileToJSON} from 'ui/store/utils/collectionStructure';
+import {I18n} from 'i18n';
+
+const i18n = I18n.keyset('component.collections-structure');
 
 type ExportWorkbookLoadingAction = {
     type: typeof EXPORT_WORKBOOK_LOADING;
@@ -258,11 +261,23 @@ export const importWorkbook = ({
     importFile: File;
 }) => {
     return async (dispatch: CollectionsStructureDispatch) => {
+        let data;
+
+        try {
+            data = await convertFileToJSON(importFile);
+        } catch (err) {
+            dispatch(
+                showToast({
+                    title: i18n('toast_get-json-error'),
+                    error: err,
+                }),
+            );
+            return Promise.resolve();
+        }
+
         dispatch({
             type: IMPORT_WORKBOOK_LOADING,
         });
-
-        const data = await convertFileToJSON(importFile);
 
         return getSdk()
             .sdk.metaManager.startWorkbookImport({
@@ -414,6 +429,16 @@ export const getImportProgress = ({importId}: {importId: string}) => {
                 const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
+                    if (isSdkError(error) && error.status === 404) {
+                        dispatch(
+                            showToast({
+                                title: i18n('toast_outdated-workbook-info'),
+                                type: 'danger',
+                            }),
+                        );
+                        return;
+                    }
+
                     logger.logError('collectionsStructure/getImportProgress failed', error);
                 }
 
