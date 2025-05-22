@@ -19,13 +19,20 @@ import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 import type {AsyncImageProps} from 'ui/components/AsyncImage/AsyncImage';
 import type {CreateIllustrationProps} from 'ui/components/Illustration/types';
 import {createIllustration} from 'ui/components/Illustration/utils';
+import {InterpolatedText} from 'ui/components/InterpolatedText/InterpolatedText';
 import {GALLERY_ITEM_CATEGORY} from 'ui/units/gallery/constants/gallery-item';
 
 import {useGetGalleryItemsQuery} from '../../../store/api';
 import type {GalleryItem} from '../../../types';
 import {GalleryCardPreview, SectionHeader} from '../../blocks';
 import type {ActiveMediaQuery} from '../../types';
-import {block, getAllPageUrl, groupGalleryItemsByLabels} from '../../utils';
+import {
+    block,
+    galleryI18n,
+    getAllPageUrl,
+    groupGalleryItemsByLabels,
+    galleryLandingI18n as i18n,
+} from '../../utils';
 import type {CnMods} from '../../utils';
 import {ADD_DASH_FORM_LINK, SPECIAL_CATEGORY} from '../constants';
 import {EDITORS_CHOICE_ITEM_IDS} from '../mocks';
@@ -146,7 +153,7 @@ function PromoBlockRow({title, galleryItems, activeMediaQuery}: PromoBlockRowPro
             )}
             <Col l="6" m="6" s="12">
                 <PromoBlockItem
-                    title="Editor's choice"
+                    title={galleryI18n('label_best-works')}
                     counter={EDITORS_CHOICE_ITEM_IDS.length}
                     primary={true}
                     activeMediaQuery={activeMediaQuery}
@@ -214,10 +221,9 @@ export function LandingPage() {
                 </Col>
                 <Col l="6" m="6" s="12">
                     <Flex className={b('header-title-flex', baseMods)}>
-                        <h1 className={b('header-title')}>Gallery</h1>
+                        <h1 className={b('header-title')}>{i18n('header_title')}</h1>
                         <span className={b('header-description')}>
-                            Use ready-made dashboards and charts,
-                            <br /> share your work with the community
+                            <InterpolatedText br text={i18n('header_description')} />
                         </span>
                     </Flex>
                 </Col>
@@ -234,7 +240,7 @@ export function LandingPage() {
                     <Flex className={b('work-of-the-month-flex', baseMods)}>
                         <span className={b('work-of-the-month-medal', {media: activeMediaQuery})}>
                             <Icon data={Medal} />
-                            Work of the month
+                            {i18n('section_work_of_month')}
                         </span>
                         <div className={b('work-of-the-month-title', {media: activeMediaQuery})}>
                             COVID-19 Statistics
@@ -248,10 +254,10 @@ export function LandingPage() {
                         {!isActiveMediaQueryS && (
                             <div className={b('work-of-the-month-actions')}>
                                 <Button size="l" view="action">
-                                    Open
+                                    {galleryI18n('button_open')}
                                 </Button>
                                 <Button size="l" view="flat">
-                                    Learn more
+                                    {galleryI18n('button_learn_more')}
                                     <Button.Icon>
                                         <ArrowRight />
                                     </Button.Icon>
@@ -287,10 +293,10 @@ export function LandingPage() {
                     <Col s="12">
                         <div className={b('work-of-the-month-actions')}>
                             <Button size="xl" view="action" style={{width: '50%'}}>
-                                Open
+                                {galleryI18n('button_open')}
                             </Button>
                             <Button size="xl" view="flat" style={{width: '50%'}}>
-                                Learn more
+                                {galleryI18n('button_learn_more')}
                             </Button>
                         </div>
                     </Col>
@@ -362,13 +368,13 @@ export function LandingPage() {
             <Row className={b('add-card', baseMods)} space="0">
                 <Col s="12">
                     <Flex className={b('add-card-flex')}>
-                        <div className={b('add-card-title')}>Add your example</div>
+                        <div className={b('add-card-title')}>{i18n('section_add_example')}</div>
                         <div className={b('add-card-description')}>
-                            Share your solutions and inspire others
+                            {i18n('section_add_description')}
                         </div>
                         <Link view="normal" target="_blank" href={ADD_DASH_FORM_LINK}>
                             <Button className={b('add-card-button')} size="xl" view="action">
-                                Add dashboard
+                                {i18n('button_add_dashboard')}
                             </Button>
                         </Link>
                     </Flex>
