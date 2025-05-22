@@ -62,7 +62,16 @@ export async function prepareDashImportData(
         };
     }
 
-    const links = Dash.gatherLinks(data);
+    const links = Object.entries(Dash.gatherLinks(data) || {}).reduce<Record<string, string>>(
+        (acc, [key, value]) => {
+            if (value !== TRANSFER_UNKNOWN_ENTRY_ID) {
+                acc[key] = value;
+            }
+
+            return acc;
+        },
+        {},
+    );
 
     return {
         dash: {
