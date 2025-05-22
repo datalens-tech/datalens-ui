@@ -124,12 +124,14 @@ export const NavigationBreadcrumbs = ({
                 <div className={b('line')}>
                     <Breadcrumbs className={b('component', {showMenu})}>
                         {items.map((item, index) => {
+                            const last = index === items.length - 1;
                             return (
                                 <Breadcrumbs.Item
                                     key={index}
                                     data-qa={item.qa}
+                                    className={b('item', {last})}
                                     onClick={(event) => {
-                                        onClick(item.item, event, index === items.length - 1);
+                                        onClick(item.item, event, last);
                                     }}
                                 >
                                     {item.text}

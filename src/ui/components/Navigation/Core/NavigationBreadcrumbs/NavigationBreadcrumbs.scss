@@ -1,3 +1,5 @@
+@import '../../../../styles/mixins';
+
 .dl-core-navigation-breadcrumbs {
     flex: 1 1 0;
     position: relative;
@@ -24,6 +26,11 @@
         &_showMenu {
             max-width: calc(100% - 40px);
         }
+    }
+
+    &__item {
+        @include dl-breadcrumbs-items-style;
+        height: 100%;
     }
 
     &__item_last {
