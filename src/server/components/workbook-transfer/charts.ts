@@ -213,11 +213,20 @@ export const prepareImportChartData = async (
     }
 
     try {
-        const links = chartGenerator.gatherChartLinks({
-            req,
-            shared,
-            chartTemplate,
-        });
+        const links = Object.entries(
+            chartGenerator.gatherChartLinks({
+                req,
+                shared,
+                chartTemplate,
+            }) || {},
+        ).reduce<Record<string, string>>((acc, [key, value]) => {
+            if (value !== TRANSFER_UNKNOWN_ENTRY_ID) {
+                acc[key] = value;
+            }
+
+            return acc;
+        }, {});
+
         const serializedData = chartGenerator.serializeShared({
             ctx,
             shared,

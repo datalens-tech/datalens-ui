@@ -18,7 +18,24 @@ export const galleryApi = createApi({
                 });
             },
         }),
+        getGalleryItem: builder.query<GalleryItem, {id: string}>({
+            async queryFn({id}) {
+                return new Promise((resolve, reject) => {
+                    const data = MOCKED_GALLERY_ITEMS.find((item) => item.id === id);
+
+                    setTimeout(() => {
+                        if (data) {
+                            resolve({
+                                data,
+                            });
+                        } else {
+                            reject({message: 'Item not found', code: 'NOT_FOUND', status: 404});
+                        }
+                    }, 500);
+                });
+            },
+        }),
     }),
 });
 
-export const {useGetGalleryItemsQuery} = galleryApi;
+export const {useGetGalleryItemsQuery, useGetGalleryItemQuery} = galleryApi;

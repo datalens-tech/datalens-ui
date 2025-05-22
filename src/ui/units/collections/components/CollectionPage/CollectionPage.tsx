@@ -76,6 +76,10 @@ export const CollectionPage = () => {
         [curCollectionId, dispatch, history],
     );
 
+    const handleCreateDialogAction = React.useCallback(() => {
+        handleOpenCreateDialog();
+    }, [handleOpenCreateDialog]);
+
     React.useEffect(() => {
         const importId = locationState && locationState?.importId;
         if (importId) {
@@ -283,7 +287,7 @@ export const CollectionPage = () => {
         fetchCollectionInfo,
         fetchStructureItems,
         handleCreateWorkbook: hasPermissionToCreate
-            ? handleOpenCreateDialog
+            ? handleCreateDialogAction
             : handleShowNoPermissionsDialog,
         handeCloseMoveDialog,
         updateAllCheckboxes,

@@ -295,7 +295,7 @@ export const ExportWorkbookDialog: React.FC<Props> = ({
     };
 
     return (
-        <Dialog className={b()} open={open} onClose={handleCancel} onEscapeKeyDown={handleCancel}>
+        <Dialog className={b()} open={open} onClose={handleCancel}>
             <Dialog.Header caption={getCaption(view, status)} />
             <Dialog.Body>
                 <div ref={dialogRef}>{renderBody()}</div>

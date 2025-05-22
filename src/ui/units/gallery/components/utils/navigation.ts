@@ -9,3 +9,7 @@ export function getAllPageUrl(filters: {category?: string}) {
 
     return `${UNIT_ROUTE.ALL}?${searchParams}`;
 }
+
+export function getGalleryItemUrl({id}: {id: string}) {
+    return `${UNIT_ROUTE.ROOT}/${id}`;
+}

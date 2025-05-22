@@ -1,9 +1,11 @@
 import React from 'react';
 
 import {Paperclip} from '@gravity-ui/icons';
-import {Button, Flex, Icon, Label, Text, useFileInput} from '@gravity-ui/uikit';
+import {Button, Flex, HelpMark, Icon, Label, Text, useFileInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {InterpolatedText} from 'ui/components/InterpolatedText/InterpolatedText';
+import {formDocsEndpointDL} from 'ui/utils';
 
 import './ImportFileField.scss';
 
@@ -29,9 +31,20 @@ export const ImportFileField = ({onUpload, onRemove, files, error}: ImportFileFi
 
     const {triggerProps, controlProps} = useFileInput({onUpdate: handleFileUploading});
 
+    const docsUrl = formDocsEndpointDL('/workbooks-collections/export-and-import');
+
     return (
         <Flex spacing={{mt: 3}} className={b()} gap={2} direction="column" alignItems="flex-start">
-            <Text variant="body-1">{i18n('label_import-from-file')}</Text>
+            <Flex gap={1}>
+                <Text variant="body-1">{i18n('label_import-from-file')}</Text>
+                <HelpMark>
+                    <InterpolatedText
+                        href={docsUrl}
+                        disableLink={!docsUrl}
+                        text={i18n('label_help-import-hint')}
+                    />
+                </HelpMark>
+            </Flex>
             <input {...controlProps} accept=".json" />
             <Flex gap={2} width="100%">
                 <Button {...triggerProps}>
