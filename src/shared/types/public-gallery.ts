@@ -24,7 +24,9 @@ export type GalleryItem = {
     partnerId?: string;
 };
 
-export type GalleryItemList = Pick<
+export type GalleryItemShort = Pick<
     GalleryItem,
     'createdBy' | 'id' | 'images' | 'labels' | 'title'
->[];
+>;
+
+export type GalleryItemList = GalleryItemShort[];

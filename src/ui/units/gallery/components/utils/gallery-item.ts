@@ -1,9 +1,9 @@
 import {GALLERY_ITEM_CATEGORY} from 'shared/constants';
-import type {GalleryItem, GalleryItemCategory} from 'shared/types';
+import type {GalleryItemCategory, GalleryItemShort} from 'shared/types';
 
 type GalleryItemsByLabel = Record<string, number[]>;
 
-export function groupGalleryItemsByLabels(items: GalleryItem[]): GalleryItemsByLabel {
+export function groupGalleryItemsByLabels(items: GalleryItemShort[]): GalleryItemsByLabel {
     const result: GalleryItemsByLabel = {};
 
     items.forEach((item, index) => {

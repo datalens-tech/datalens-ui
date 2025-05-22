@@ -16,7 +16,7 @@ import {
 } from '@gravity-ui/uikit';
 import {useHistory} from 'react-router';
 import {GALLERY_ITEM_CATEGORY} from 'shared/constants';
-import type {GalleryItem} from 'shared/types';
+import type {GalleryItemShort} from 'shared/types';
 import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 import type {AsyncImageProps} from 'ui/components/AsyncImage/AsyncImage';
 import type {CreateIllustrationProps} from 'ui/components/Illustration/types';
@@ -100,7 +100,7 @@ function PromoBlockItem({
 
 interface PromoBlockRowProps {
     title: string;
-    galleryItems: GalleryItem[];
+    galleryItems: GalleryItemShort[];
     activeMediaQuery?: ActiveMediaQuery;
 }
 
