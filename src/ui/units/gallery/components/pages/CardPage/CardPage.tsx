@@ -22,6 +22,7 @@ import {ActionPanel} from 'ui/components/ActionPanel';
 import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
+import {URL_OPTIONS} from 'ui/constants';
 import {useMarkdown} from 'ui/hooks/useMarkdown';
 import type {DataLensApiError} from 'ui/typings';
 import {useGetGalleryItemQuery} from 'ui/units/gallery/store/api';
@@ -388,6 +389,7 @@ export function CardPage() {
     const {isLoading, data, error, refetch} = useGetGalleryItemQuery({id});
 
     const lang = getLang();
+    const themeType = useThemeType();
 
     const togglePreview = () => {
         setShowPreview(!showPreview);
@@ -425,6 +427,17 @@ export function CardPage() {
         );
     }
 
+    const iframeUrl = data.publicUrl
+        ? ((publicUrl: string) => {
+              const url = new URL(publicUrl);
+
+              url.searchParams.set(URL_OPTIONS.LANGUAGE, lang);
+              url.searchParams.set(URL_OPTIONS.THEME, themeType);
+
+              return url.toString();
+          })(data.publicUrl)
+        : data.publicUrl;
+
     return (
         <React.Fragment>
             <CardActionPanel
@@ -435,7 +448,7 @@ export function CardPage() {
                 lang={lang}
             />
             {showPreview ? (
-                <iframe className={b('iframe')} src={data.publicUrl} />
+                <iframe className={b('iframe')} src={iframeUrl} />
             ) : (
                 <CardContent
                     activeMediaQuery={activeMediaQuery}
