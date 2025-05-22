@@ -7,7 +7,7 @@ export type GetAllItemsResponse = {
 
 export type GetItemResponse = GalleryItem;
 export type GetItemArgs = {
-    entryId: string;
+    fileId: string;
 };
 
 export type GetMetaRespose = {
