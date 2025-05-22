@@ -29,7 +29,7 @@ import Utils from 'ui/utils';
 import type {GalleryItem, TranslationsDict} from '../../../types';
 import {GalleryCardLabels, GalleryCardPreview, SectionHeader} from '../../blocks';
 import type {ActiveMediaQuery} from '../../types';
-import {block, getLang} from '../../utils';
+import {block, galleryI18n, getLang, galleryCardPageI18n as i18n} from '../../utils';
 import type {CnMods} from '../../utils';
 import {PARTNER_FORM_LINK} from '../constants';
 import {MOCKED_GALLERY_ITEMS} from '../mocks';
@@ -40,18 +40,6 @@ import {PreviewCard} from './PreviewCard/PreviewCard';
 import './CardPage.scss';
 
 const b = block('card');
-
-// TODO: CHARTS-11481
-const i18n = (key: string) => {
-    switch (key) {
-        case 'label_unknown-error':
-            return 'An error occured';
-        case 'label_retry':
-            return 'Retry';
-        default:
-            return key;
-    }
-};
 
 interface IconWithTextProps {
     iconData: IconData;
@@ -94,7 +82,7 @@ function ContactPartnerButton(props: {
 
     return (
         <Button className={b('contact-partner-btn', mods)} {...buttonProps} onClick={handleClick}>
-            Contact a partner
+            {i18n('button_contact_partner')}
         </Button>
     );
 }
@@ -138,7 +126,7 @@ function CardActionPanel({
     } else {
         leftItems = (
             <Breadcrumbs navigate={(href) => history.push(href)}>
-                <Breadcrumbs.Item href="/gallery">Gallery</Breadcrumbs.Item>
+                <Breadcrumbs.Item href="/gallery">{galleryI18n('label_gallery')}</Breadcrumbs.Item>
                 <Breadcrumbs.Item disabled={true}>{entry.title[lang]}</Breadcrumbs.Item>
             </Breadcrumbs>
         );
@@ -174,7 +162,7 @@ function CardActionPanel({
                             <Icon data={Xmark} />
                         </Button.Icon>
                     ) : (
-                        'Open'
+                        galleryI18n('button_open')
                     )}
                 </Button>
             </Flex>
@@ -287,7 +275,7 @@ function CardDescription({lang, description, shortDescription}: CardDescriptionP
                     view="flat-secondary"
                     onClick={() => setIsExpanded(!isExpanded)}
                 >
-                    {isExpanded ? 'Collapse' : 'Show full'}
+                    {isExpanded ? i18n('button_collapse') : i18n('button_show_full')}
                 </Button>
             )}
         </Flex>
@@ -326,7 +314,7 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang}: CardContent
                                 </Button.Icon>
                             </Button>
                             <Button view="action" size="xl" width="max" onClick={togglePreview}>
-                                Open
+                                {galleryI18n('button_open')}
                             </Button>
                         </Flex>
                         <ContactPartnerButton
@@ -359,7 +347,10 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang}: CardContent
             </Row>
             <Row space="6" style={{marginTop: 24}}>
                 <Col s="12">
-                    <SectionHeader activeMediaQuery={activeMediaQuery} title="Other works" />
+                    <SectionHeader
+                        activeMediaQuery={activeMediaQuery}
+                        title={i18n('section_other_works')}
+                    />
                 </Col>
                 {MOCKED_GALLERY_ITEMS.slice(0, 3).map((item) => {
                     return (
@@ -401,7 +392,7 @@ export function CardPage() {
         const {
             code,
             status,
-            message = i18n('label_unknown-error'),
+            message = galleryI18n('label_error'),
             details,
         } = error && 'message' in error ? Utils.parseErrorResponse(error as DataLensApiError) : {};
 
@@ -417,7 +408,7 @@ export function CardPage() {
                     description={details?.description}
                     renderAction={
                         canRetry
-                            ? () => <Button onClick={refetch}>{i18n('label_retry')}</Button>
+                            ? () => <Button onClick={refetch}>{galleryI18n('button_retry')}</Button>
                             : undefined
                     }
                 />
