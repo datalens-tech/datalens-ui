@@ -7,9 +7,9 @@ on:
     types:
       - completed
 
-concurrency:
-  group: ${{ github.workflow }}
-  cancel-in-progress: false
+# concurrency:
+#   group: ${{ github.workflow }}
+#   cancel-in-progress: false
 
 name: E2E Build Application Docker
 

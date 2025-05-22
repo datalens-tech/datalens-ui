@@ -34,6 +34,9 @@ import type {CnMods} from '../../utils';
 import {PARTNER_FORM_LINK} from '../constants';
 import {MOCKED_GALLERY_ITEMS} from '../mocks';
 
+import {FullscreenGallery} from './FullscreenGallery/FullscreenGallery';
+import {PreviewCard} from './PreviewCard/PreviewCard';
+
 import './CardPage.scss';
 
 const b = block('card');
@@ -193,11 +196,38 @@ function CardPreview({activeMediaQuery, images}: CardPreviewProps) {
         return images?.[themeType] ?? [];
     }, [themeType, images]);
     const [selectedImage, setSelectedImage] = React.useState(themeImages[0] || '');
+    const [showFullscreenGallery, setShowFullscreenGallery] = React.useState(false);
+
+    const isActiveMediaQueryS = activeMediaQuery === 's';
+
+    const handleImageClick = () => {
+        if (isActiveMediaQueryS) {
+            setShowFullscreenGallery(true);
+        }
+    };
+
+    const handleCloseFullscreenGallery = () => {
+        setShowFullscreenGallery(false);
+    };
+
+    const selectedImageIndex = themeImages.findIndex((img) => img === selectedImage);
 
     return (
         <React.Fragment>
+            {showFullscreenGallery && isActiveMediaQueryS && (
+                <FullscreenGallery
+                    images={themeImages}
+                    initialImageIndex={selectedImageIndex === -1 ? 0 : selectedImageIndex}
+                    onClose={handleCloseFullscreenGallery}
+                />
+            )}
             <Col m="10" s="12">
-                <Card className={b('image-card')} type="action" view="outlined">
+                <Card
+                    className={b('image-card')}
+                    type="action"
+                    view="outlined"
+                    onClick={handleImageClick}
+                >
                     <AsyncImage
                         className={b('image-card-content')}
                         showSkeleton={true}
@@ -209,25 +239,15 @@ function CardPreview({activeMediaQuery, images}: CardPreviewProps) {
                 <Flex className={b('image-card-preview-flex', mods)}>
                     {themeImages.map((image, i) => {
                         return (
-                            <Card
+                            <PreviewCard
                                 key={i}
                                 selected={selectedImage === image}
-                                className={b('image-card', {preview: true})}
-                                type="selection"
-                                view="outlined"
-                                onClick={() => {
-                                    setSelectedImage(image);
+                                onSelected={(newSelectedImage) => {
+                                    setSelectedImage(newSelectedImage);
                                 }}
-                            >
-                                <AsyncImage
-                                    className={b('image-card-content', {
-                                        ...mods,
-                                        preview: true,
-                                    })}
-                                    showSkeleton={true}
-                                    src={image}
-                                />
-                            </Card>
+                                image={image}
+                                size={isActiveMediaQueryS ? 's' : 'auto'}
+                            />
                         );
                     })}
                 </Flex>
