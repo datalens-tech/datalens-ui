@@ -8,13 +8,13 @@ export const galleryApi = createApi({
     endpoints: (builder) => ({
         getGalleryItems: builder.query<GalleryItemShort[], {}>({
             async queryFn() {
-                const {entries: data} = await getSdk().sdk.publicGallery.getAllItems();
+                const {entries: data} = await getSdk().sdk.anonymous.publicGallery.getAllItems();
                 return {data};
             },
         }),
         getGalleryItem: builder.query<GalleryItem, {id: string}>({
             async queryFn({id}) {
-                const data = await getSdk().sdk.publicGallery.getItem({entryId: id});
+                const data = await getSdk().sdk.anonymous.publicGallery.getItem({entryId: id});
                 return {data};
             },
         }),

@@ -1,5 +1,5 @@
-import type {GalleryItem, GalleryItemList} from '../../types/public-gallery';
-import {createAction} from '../gateway-utils';
+import type {GalleryItem, GalleryItemList} from '../../../types/public-gallery';
+import {createAction} from '../../gateway-utils';
 
 export type GetAllItemsResponse = {
     entries: GalleryItemList;
