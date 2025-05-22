@@ -59,6 +59,19 @@ interface IconWithTextProps {
     text: string;
 }
 
+function getIframeUrl({publicUrl, lang, theme}: {publicUrl?: string; lang: string; theme: string}) {
+    if (!publicUrl) {
+        return publicUrl;
+    }
+
+    const url = new URL(publicUrl);
+
+    url.searchParams.set(URL_OPTIONS.LANGUAGE, lang);
+    url.searchParams.set(URL_OPTIONS.THEME, theme);
+
+    return url.toString();
+}
+
 function IconWithText(props: IconWithTextProps) {
     return (
         <Flex justifyContent="center" alignItems="center" style={{columnGap: 4}}>
@@ -427,17 +440,6 @@ export function CardPage() {
         );
     }
 
-    const iframeUrl = data.publicUrl
-        ? ((publicUrl: string) => {
-              const url = new URL(publicUrl);
-
-              url.searchParams.set(URL_OPTIONS.LANGUAGE, lang);
-              url.searchParams.set(URL_OPTIONS.THEME, themeType);
-
-              return url.toString();
-          })(data.publicUrl)
-        : data.publicUrl;
-
     return (
         <React.Fragment>
             <CardActionPanel
@@ -448,7 +450,10 @@ export function CardPage() {
                 lang={lang}
             />
             {showPreview ? (
-                <iframe className={b('iframe')} src={iframeUrl} />
+                <iframe
+                    className={b('iframe')}
+                    src={getIframeUrl({publicUrl: data.publicUrl, theme: themeType, lang})}
+                />
             ) : (
                 <CardContent
                     activeMediaQuery={activeMediaQuery}
