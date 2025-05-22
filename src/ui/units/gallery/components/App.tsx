@@ -1,12 +1,13 @@
 import React from 'react';
 
 import {Route, Switch} from 'react-router-dom';
+import withErrorPage from 'ui/components/ErrorPage/withErrorPage';
 
 import {UNIT_ROUTE} from '../constants/routes';
 
 import {AllPage, CardPage, LandingPage} from './pages';
 
-export function App() {
+function AppContent() {
     return (
         <Switch>
             <Route exact path={UNIT_ROUTE.ROOT} render={() => <LandingPage />} />
@@ -15,3 +16,5 @@ export function App() {
         </Switch>
     );
 }
+
+export const App = withErrorPage(AppContent);

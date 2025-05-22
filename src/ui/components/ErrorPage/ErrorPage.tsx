@@ -1,5 +1,7 @@
 import React from 'react';
 
+import type {ButtonProps} from '@gravity-ui/uikit';
+
 import {ErrorContent} from '../../';
 
 // TODO: in theory, LandingPage will have to use this component for errors
@@ -12,7 +14,7 @@ export interface ErrorPageProps {
     action?: {
         text: string;
         content: React.ReactNode;
-        handler: Function;
+        handler: ButtonProps['onClick'];
     };
 }
 
