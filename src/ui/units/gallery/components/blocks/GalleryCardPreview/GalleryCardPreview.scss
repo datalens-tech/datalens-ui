@@ -20,6 +20,8 @@ $block: '.#{variables.$ns}-card-preview';
     }
 
     &__info {
+        display: flex;
+        flex-direction: column;
         height: 110px;
         padding: 16px;
         border-top: 1px solid var(--g-color-line-generic);
