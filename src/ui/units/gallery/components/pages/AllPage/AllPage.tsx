@@ -147,7 +147,7 @@ export function AllPage() {
                     </Breadcrumbs>
                 }
             />
-            <Container className={b('container', baseMods)}>
+            <Container className={b('container', baseMods)} style={{maxWidth: '1032px'}}>
                 <Row space="0" style={{marginTop: 24}}>
                     <Col s="12">
                         <Text variant="header-2">All entries</Text>
