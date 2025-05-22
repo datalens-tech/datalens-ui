@@ -1,38 +1,21 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
-
-import {MOCKED_GALLERY_ITEMS} from '../components/pages/mocks';
-import type {GalleryItem} from '../types';
+import type {GalleryItem, GalleryItemShort} from 'shared/types';
+import {getSdk} from 'ui/libs/schematic-sdk';
 
 export const galleryApi = createApi({
     reducerPath: 'galleryApi',
     baseQuery: fetchBaseQuery({baseUrl: '/'}),
     endpoints: (builder) => ({
-        getGalleryItems: builder.query<GalleryItem[], {}>({
+        getGalleryItems: builder.query<GalleryItemShort[], {}>({
             async queryFn() {
-                return new Promise((resolve) => {
-                    setTimeout(() => {
-                        resolve({
-                            data: MOCKED_GALLERY_ITEMS,
-                        });
-                    }, 500);
-                });
+                const {entries: data} = await getSdk().sdk.anonymous.publicGallery.getAllItems();
+                return {data};
             },
         }),
         getGalleryItem: builder.query<GalleryItem, {id: string}>({
             async queryFn({id}) {
-                return new Promise((resolve, reject) => {
-                    const data = MOCKED_GALLERY_ITEMS.find((item) => item.id === id);
-
-                    setTimeout(() => {
-                        if (data) {
-                            resolve({
-                                data,
-                            });
-                        } else {
-                            reject({message: 'Item not found', code: 'NOT_FOUND', status: 404});
-                        }
-                    }, 500);
-                });
+                const data = await getSdk().sdk.anonymous.publicGallery.getItem({entryId: id});
+                return {data};
             },
         }),
     }),

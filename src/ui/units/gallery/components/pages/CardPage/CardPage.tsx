@@ -17,6 +17,7 @@ import {
 import type {ButtonProps, IconData} from '@gravity-ui/uikit';
 import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
 import {useHistory, useParams} from 'react-router-dom';
+import type {GalleryItem, TranslationsDict} from 'shared/types';
 import {ActionPanel} from 'ui/components/ActionPanel';
 import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
@@ -26,7 +27,6 @@ import type {DataLensApiError} from 'ui/typings';
 import {useGetGalleryItemQuery} from 'ui/units/gallery/store/api';
 import Utils from 'ui/utils';
 
-import type {GalleryItem, TranslationsDict} from '../../../types';
 import {GalleryCardLabels, GalleryCardPreview, SectionHeader} from '../../blocks';
 import type {ActiveMediaQuery} from '../../types';
 import {block, getLang} from '../../utils';

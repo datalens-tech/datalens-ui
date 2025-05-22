@@ -1,9 +1,9 @@
 import React from 'react';
 
 import {Card} from '@gravity-ui/uikit';
+import type {GalleryItem} from 'shared/types';
 import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 
-import type {GalleryItem} from '../../../types';
 import {block, getLang} from '../../utils';
 import {GalleryCardLabels} from '../GalleryCardLabels/GalleryCardLabels';
 

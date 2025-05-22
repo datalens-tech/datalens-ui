@@ -1,4 +1,4 @@
-import type {GalleryItem} from '../../types';
+import type {GalleryItem} from 'shared/types';
 
 export const EDITORS_CHOICE_ITEM_IDS = [
     'education-1',

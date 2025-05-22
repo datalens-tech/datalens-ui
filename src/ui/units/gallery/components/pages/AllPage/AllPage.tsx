@@ -13,11 +13,11 @@ import {
 } from '@gravity-ui/uikit';
 import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
 import {useHistory, useLocation} from 'react-router-dom';
+import {GALLERY_ITEM_CATEGORY} from 'shared/constants';
+import type {GalleryItemShort} from 'shared/types';
 import {ActionPanel} from 'ui/components/ActionPanel';
 
-import {GALLERY_ITEM_CATEGORY} from '../../../constants/gallery-item';
 import {useGetGalleryItemsQuery} from '../../../store/api';
-import type {GalleryItem} from '../../../types';
 import {GalleryCardPreview} from '../../blocks';
 import {block, getCategoryLabelTitle, getLang} from '../../utils';
 import type {CnMods} from '../../utils';
@@ -41,7 +41,7 @@ const CATEGORIES_SELECT_VALUES = [
 ];
 
 interface UseGalleryItemsProps {
-    items: GalleryItem[];
+    items: GalleryItemShort[];
     search: string;
     category: string;
     lang: string;
@@ -49,7 +49,7 @@ interface UseGalleryItemsProps {
 
 function useFilteredGalleryItems({category, items, search, lang}: UseGalleryItemsProps) {
     const filteredItems = React.useMemo(() => {
-        return items.reduce<GalleryItem[]>((acc, item) => {
+        return items.reduce<GalleryItemShort[]>((acc, item) => {
             const matchesSearchValue =
                 !search || item.title[lang]?.toLowerCase().startsWith(search.toLowerCase());
 
