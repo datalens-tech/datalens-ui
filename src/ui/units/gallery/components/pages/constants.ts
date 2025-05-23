@@ -9,6 +9,10 @@ export const URL_FILTER_PARAMS = {
     CATEGORY: 'category',
 };
 
+export const CARD_PAGE_URL_PARAMS = {
+    PREVIEW: 'preview',
+};
+
 export const SPECIAL_CATEGORY = {
     ALL: 'all',
     EDITORS_CHOICE: 'editors-choice',
