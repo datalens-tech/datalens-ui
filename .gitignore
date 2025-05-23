@@ -39,3 +39,5 @@ input.json
 result.json
 export/temp
 .last-run.json
+
+table-report-headers

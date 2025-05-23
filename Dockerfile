@@ -131,6 +131,9 @@ RUN apt-get update \
 RUN npm remove puppeteer@23.4.0
 RUN PUPPETEER_CACHE_DIR=$(pwd) npm install puppeteer@23.4.0
 
+RUN mkdir /opt/app/table-report-headers
+RUN chown -R ${USER} /opt/app/table-report-headers
+
 RUN chown -R ${USER} /opt/app/dist/run
 RUN chown -R ${USER} /opt/app/export 
 
