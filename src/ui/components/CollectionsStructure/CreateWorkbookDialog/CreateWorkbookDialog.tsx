@@ -335,7 +335,7 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
         if (view === 'import') {
             return (
                 <Flex direction="column">
-                    <ImportWorkbookView status={importStatus} importId={importData?.importId}/>
+                    <ImportWorkbookView status={importStatus} importId={importData?.importId} />
                 </Flex>
             );
         }
