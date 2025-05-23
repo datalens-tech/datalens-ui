@@ -83,7 +83,7 @@ function useFilteredGalleryItems({
 
             return acc;
         }, []);
-    }, [category, items, search, lang]);
+    }, [items, search, lang, category, editorChoiceIds]);
 
     return {filteredItems};
 }
@@ -128,7 +128,10 @@ export function AllPage() {
             const urlSearchParams = new URLSearchParams(searchParams);
             const selectedCategory = urlSearchParams.get(URL_FILTER_PARAMS.CATEGORY) ?? '';
 
-            if (availableCategories.some((d) => d === selectedCategory.toLowerCase())) {
+            if (
+                availableCategories.some((d) => d === selectedCategory.toLowerCase()) ||
+                Object.values(SPECIAL_CATEGORY).includes(selectedCategory)
+            ) {
                 setCategory(selectedCategory);
             }
 
