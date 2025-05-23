@@ -365,6 +365,7 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang}: CardContent
                     return (
                         <Col key={item.id} l="4" m="4" s="12">
                             <GalleryCardPreview
+                                id={item.id}
                                 title={item.title}
                                 createdBy={item.createdBy}
                                 labels={item.labels}
