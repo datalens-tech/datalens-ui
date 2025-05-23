@@ -12,11 +12,11 @@ import './GalleryCardPreview.scss';
 
 const b = block('card-preview');
 
-interface GalleryCardPreviewProps
-    extends Pick<GalleryItem, 'createdBy' | 'labels' | 'title' | 'id'> {
+interface GalleryCardPreviewProps extends Pick<GalleryItem, 'createdBy' | 'labels' | 'title'> {
     imageSrc: string;
     onClick?: (event: React.MouseEvent<HTMLDivElement>) => void;
     className?: string;
+    id?: string;
 }
 
 export function GalleryCardPreview({
@@ -32,7 +32,7 @@ export function GalleryCardPreview({
     const history = useHistory();
 
     const handleClick = (event: React.MouseEvent<HTMLDivElement>) => {
-        const link = getGalleryItemUrl({id});
+        const link = getGalleryItemUrl({id: id || ''});
         history.push(link);
         onClick?.(event);
     };
