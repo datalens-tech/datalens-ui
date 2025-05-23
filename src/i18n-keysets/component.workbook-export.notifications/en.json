@@ -1,5 +1,10 @@
 {
   "button_show-details": "Show details",
+  "label_bad-connection-type": "This type of connection is not supported in the current version of the service",
+  "label_error-export-connection": "Error exporting connection",
+  "label_error-export-dataset": "Error exporting dataset",
+  "label_error-import-connection": "Error importing connection",
+  "label_error-import-dataset": "Error importing dataset",
   "label_export-check-connection-credentials": "In connections, the values of fields with passwords and tokens are not exported. They should be checked and replaced if necessary after being imported",
   "label_export-rls": "RLS is not guaranteed to work correctly in exported datasets",
   "label_import-check-connections-credentials": "Check the connection settings and re-enter passwords and tokens if necessary",
@@ -12,5 +17,6 @@
   "label_missing-linked-entry": "The workbook contains entities linked to nonexistent entities",
   "label_scope-not-available-for-installation": "The workbook contains entities not supported in your DataLens installation",
   "label_unexpected-workflow-error": "Unexpected error during operation",
+  "label_unsupported-objects": "Objects of this type are not available for export and import",
   "title_error-details": "Error details"
 }
