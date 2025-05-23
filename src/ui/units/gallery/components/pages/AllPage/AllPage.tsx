@@ -121,7 +121,7 @@ export function AllPage() {
     const lang = getLang();
     const themeType = useThemeType();
 
-    const {isLoading, data: items = []} = useGetGalleryItemsQuery({});
+    const {isLoading, data: items = []} = useGetGalleryItemsQuery();
     const {filteredItems} = useFilteredGalleryItems({
         category,
         items,

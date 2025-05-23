@@ -14,6 +14,7 @@ import {
     useLayoutContext,
     useThemeType,
 } from '@gravity-ui/uikit';
+import sortBy from 'lodash/sortBy';
 import {useHistory} from 'react-router';
 import {GALLERY_ITEM_CATEGORY} from 'shared/constants';
 import type {GalleryItemShort} from 'shared/types';
@@ -22,13 +23,12 @@ import type {AsyncImageProps} from 'ui/components/AsyncImage/AsyncImage';
 import type {CreateIllustrationProps} from 'ui/components/Illustration/types';
 import {createIllustration} from 'ui/components/Illustration/utils';
 
-import {useGetGalleryItemsQuery} from '../../../store/api';
+import {useGetGalleryItemsQuery, useGetGalleryMetaQuery} from '../../../store/api';
 import {GalleryCardPreview, SectionHeader} from '../../blocks';
 import type {ActiveMediaQuery} from '../../types';
 import {block, getAllPageUrl, groupGalleryItemsByLabels} from '../../utils';
 import type {CnMods} from '../../utils';
-import {ADD_DASH_FORM_LINK, SPECIAL_CATEGORY} from '../constants';
-import {EDITORS_CHOICE_ITEM_IDS} from '../mocks';
+import {ADD_DASH_FORM_LINK, PROMO_BLOCK_CATEGORIES, SPECIAL_CATEGORY} from '../constants';
 
 import './LandingPage.scss';
 
@@ -49,6 +49,7 @@ function GalleryIllustration(props: Omit<CreateIllustrationProps, 'name'>) {
 
 interface PromoBlockItemProps {
     title: string;
+    icon?: boolean;
     activeMediaQuery?: ActiveMediaQuery;
     counter?: number;
     primary?: boolean;
@@ -63,6 +64,7 @@ function PromoBlockItem({
     primary,
     imageProps = [],
     category,
+    icon,
 }: PromoBlockItemProps) {
     const history = useHistory();
 
@@ -83,79 +85,115 @@ function PromoBlockItem({
                 <span className={b('promo-block-item-title-counter', {primary})}>
                     &nbsp;·&nbsp;{counter}
                 </span>
+                {icon && (
+                    <Button size="l" view="flat">
+                        <Button.Icon>
+                            <ArrowRight />
+                        </Button.Icon>
+                    </Button>
+                )}
             </div>
-            <div className={b('promo-block-item-image-container', {primary})}>
-                {imageProps.map((props, index) => (
-                    <AsyncImage
-                        key={`promo-image-${index}`}
-                        className={b('promo-block-item-image', {primary})}
-                        showSkeleton={true}
-                        {...props}
-                    />
-                ))}
+            <div className={b('promo-block-item-images-container', {primary})}>
+                {imageProps.map((props, index) => {
+                    let style: React.CSSProperties = {};
+                    if (imageProps.length > 1) {
+                        style = primary
+                            ? {
+                                  top: `${(imageProps.length - 1 - index) * 20}%`,
+                                  left: `${(imageProps.length - 1 - index) * 18}%`,
+                                  ...(activeMediaQuery === 's' ? {width: '75%'} : {height: '110%'}),
+                              }
+                            : {
+                                  top: `${index * 20}%`,
+                                  left: `${(imageProps.length - 1 - index) * 20}%`,
+                                  ...(activeMediaQuery === 's' ? {width: '90%'} : {height: '110%'}),
+                              };
+                    } else {
+                        style = {
+                            ...(activeMediaQuery === 's' ? {width: '105%'} : {height: '110%'}),
+                        };
+                    }
+
+                    return (
+                        <div
+                            key={`promo-image-${index}`}
+                            className={b('promo-block-item-image-container', {primary})}
+                            style={style}
+                        >
+                            <AsyncImage
+                                className={b('promo-block-item-image', {
+                                    primary,
+                                    media: activeMediaQuery,
+                                })}
+                                showSkeleton={true}
+                                {...props}
+                            />
+                        </div>
+                    );
+                })}
             </div>
         </Card>
     );
 }
 
 interface PromoBlockRowProps {
-    title: string;
     galleryItems: GalleryItemShort[];
     activeMediaQuery?: ActiveMediaQuery;
+    editorChoice?: {
+        ids: string[];
+    };
 }
 
-function PromoBlockRow({title, galleryItems, activeMediaQuery}: PromoBlockRowProps) {
+function PromoBlockRow({galleryItems, activeMediaQuery, editorChoice}: PromoBlockRowProps) {
     const themeType = useThemeType();
     const itemsByLabels = groupGalleryItemsByLabels(galleryItems);
-    const primaryItems = galleryItems.filter((item) => EDITORS_CHOICE_ITEM_IDS.includes(item.id));
-    const primaryImagesProps: AsyncImageProps[] = primaryItems.map((item, index) => {
-        const baseStyle: React.CSSProperties = {
-            width: '76%',
-            objectFit: 'cover',
-        };
-        let stylesByImageIndex: React.CSSProperties = {};
-        if (index === 0) {
-            stylesByImageIndex = {
-                ...stylesByImageIndex,
-                left: '30%',
-                top: '45%',
-                opacity: 0.8,
+    const primaryItems = galleryItems.filter((item) => editorChoice?.ids.includes(item.id));
+    const primaryImagesProps: AsyncImageProps[] = primaryItems
+        .slice(0, 3)
+        .map((item, index, list) => {
+            const opacity = activeMediaQuery === 's' ? 1 : 1 - (list.length - 1 - index) * 0.1;
+            return {
+                src: item.images?.[themeType]?.[0] || '',
+                style: {
+                    opacity,
+                },
             };
-        } else if (index === 1) {
-            stylesByImageIndex = {
-                ...stylesByImageIndex,
-                left: '15%',
-                top: '25%',
-                opacity: 0.9,
-            };
-        }
+        });
+
+    const selectedCategories = sortBy(
+        Object.keys(itemsByLabels),
+        (label) => -1 * PROMO_BLOCK_CATEGORIES.indexOf(label.toLowerCase()),
+    ).slice(0, 5);
+
+    const others = galleryItems
+        .filter((item) => selectedCategories.every((category) => !item?.labels?.includes(category)))
+        .slice(0, 3);
+
+    const othersImageProps: AsyncImageProps[] = others.map((item, index, list) => {
         return {
             src: item.images?.[themeType]?.[0] || '',
             style: {
-                ...baseStyle,
-                ...stylesByImageIndex,
+                opacity: 1 - (list.length - 1 - index) * 0.35,
             },
         };
     });
+
     return (
         <Row className={b('promo-block', {media: activeMediaQuery})} space="6">
-            {activeMediaQuery !== 's' && (
-                <Col s="12">
-                    <SectionHeader activeMediaQuery={activeMediaQuery} title={title} />
-                </Col>
-            )}
             <Col l="6" m="6" s="12">
                 <PromoBlockItem
                     title="Editor's choice"
-                    counter={EDITORS_CHOICE_ITEM_IDS.length}
+                    counter={editorChoice?.ids.length}
                     primary={true}
                     activeMediaQuery={activeMediaQuery}
                     imageProps={primaryImagesProps}
                     category={SPECIAL_CATEGORY.EDITORS_CHOICE}
                 />
             </Col>
-            {Object.entries(itemsByLabels).map(([key, indexes]) => {
-                const imageSrc = galleryItems[indexes[0]].images?.[themeType]?.[0] || '';
+            {selectedCategories.map((key) => {
+                const indexes = itemsByLabels[key] ?? [];
+                const imageSrc = galleryItems[indexes[0]]?.images?.[themeType]?.[0] || '';
+
                 return (
                     <Col key={`${key}`} l="3" m="3" s="12">
                         <PromoBlockItem
@@ -165,12 +203,6 @@ function PromoBlockRow({title, galleryItems, activeMediaQuery}: PromoBlockRowPro
                             imageProps={[
                                 {
                                     src: imageSrc,
-                                    style: {
-                                        objectFit: 'cover',
-                                        ...(activeMediaQuery === 's'
-                                            ? {width: '110%'}
-                                            : {height: '110%'}),
-                                    },
                                 },
                             ]}
                             category={key}
@@ -178,6 +210,15 @@ function PromoBlockRow({title, galleryItems, activeMediaQuery}: PromoBlockRowPro
                     </Col>
                 );
             })}
+            <Col l="3" m="3" s="12">
+                <PromoBlockItem
+                    icon={true}
+                    title={`Показать все`}
+                    counter={galleryItems.length}
+                    activeMediaQuery={activeMediaQuery}
+                    imageProps={othersImageProps}
+                />
+            </Col>
         </Row>
     );
 }
@@ -187,9 +228,10 @@ export function LandingPage() {
     const isActiveMediaQueryS = activeMediaQuery === 's';
     const baseMods: CnMods = {media: activeMediaQuery};
     const themeType = useThemeType();
-    const {isLoading, data} = useGetGalleryItemsQuery({});
+    const {isLoading: isDataLoading, data} = useGetGalleryItemsQuery();
+    const {isLoading: isMetaLoading, data: metaData} = useGetGalleryMetaQuery();
 
-    if (isLoading) {
+    if (isDataLoading || isMetaLoading) {
         return (
             <div className={b('loader')}>
                 <Loader size="m" />
@@ -224,9 +266,9 @@ export function LandingPage() {
             </Row>
             {/* Promo block */}
             <PromoBlockRow
-                title="Industries"
                 galleryItems={galleryItems}
                 activeMediaQuery={activeMediaQuery}
+                editorChoice={metaData?.editorChoice}
             />
             {/* Work of the month */}
             <Row className={b('work-of-the-month', baseMods)} space="0">
