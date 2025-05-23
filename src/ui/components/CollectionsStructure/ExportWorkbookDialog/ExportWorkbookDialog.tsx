@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Dialog, Flex, Link, Loader, spacing} from '@gravity-ui/uikit';
+import {Button, Dialog, Flex, Link, Loader, spacing} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
@@ -28,7 +28,7 @@ import {formDocsEndpointDL} from 'ui/utils/docs';
 
 import DialogManager from '../../DialogManager/DialogManager';
 import {EntriesNotificationCut} from '../components/EntriesNotificationCut/EntriesNotificationCut';
-import {transformNotifications} from '../components/EntriesNotificationCut/helpers';
+import {useNotificationsAndDetails} from '../hooks/useNotificationsAndDetails';
 import type {ImportExportStatus} from '../types';
 
 import {ExportInfo} from './ExportInfo/ExportInfo';
@@ -112,13 +112,11 @@ export const ExportWorkbookDialog: React.FC<Props> = ({
     const exportProgressTimeout = React.useRef<ReturnType<typeof setTimeout> | null>(null);
     const isMounted = React.useCallback(() => true, []);
 
-    const preparedNotifications = React.useMemo(() => {
-        if (!notifications) {
-            return [];
-        }
-
-        return transformNotifications(notifications);
-    }, [notifications]);
+    const {notificationDetails, preparedNotifications, handleShowDetails} =
+        useNotificationsAndDetails({
+            notifications,
+            exportId: exportData?.exportId,
+        });
 
     const isExportLoading = status === 'loading' || status === 'pending';
     const isButtonLoading = isExportLoading || isResultLoading;
@@ -304,6 +302,7 @@ export const ExportWorkbookDialog: React.FC<Props> = ({
                         containerClassName={b('error-content')}
                         error={error}
                         size="s"
+                        exportId={exportData?.exportId}
                     />
                 );
         }
@@ -324,7 +323,13 @@ export const ExportWorkbookDialog: React.FC<Props> = ({
                 onClickButtonCancel={handleCancel}
                 propsButtonApply={{loading: isButtonLoading}}
                 propsButtonCancel={{disabled: isResultLoading}}
-            />
+            >
+                {notificationDetails && (
+                    <Button size="l" view="outlined" onClick={handleShowDetails}>
+                        {notificationsI18n('button_show-details')}
+                    </Button>
+                )}
+            </Dialog.Footer>
         </Dialog>
     );
 };

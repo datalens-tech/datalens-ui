@@ -21,12 +21,16 @@ const NOTIFICATIONS_BY_CODE: Record<string, string> = {
 
 export const transformNotifications = (
     notifications: EntryNotification[] = [],
-): PreparedNotificationType[] => {
+): {notifications: PreparedNotificationType[]; details: string} => {
     const notificationMap = new Map<string, PreparedNotificationType>();
+    const details: string[] = [];
+
     let hasCritical = false;
 
     notifications.forEach((notification) => {
         const key = notification.code;
+
+        details.push(JSON.stringify(notification.details));
 
         if (!notificationMap.has(key)) {
             notificationMap.set(key, {
@@ -50,12 +54,18 @@ export const transformNotifications = (
     });
 
     const preparedNotifications: PreparedNotificationType[] = Array.from(notificationMap.values());
+    const preparedDetails = details.join('\n');
 
     if (hasCritical) {
-        return preparedNotifications.filter((notification) => notification.level === 'critical');
+        return {
+            notifications: preparedNotifications.filter(
+                (notification) => notification.level === 'critical',
+            ),
+            details: preparedDetails,
+        };
     }
 
-    return preparedNotifications;
+    return {notifications: preparedNotifications, details: preparedDetails};
 };
 
 export const getNotificationTitleByCode = (code: string) => {

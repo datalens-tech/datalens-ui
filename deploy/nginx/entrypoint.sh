@@ -11,7 +11,7 @@ if [ -f "/proc/net/if_inet6" ]; then
     # check write permission
     if touch /$DEFAULT_CONF_FILE 2>/dev/null; then
       # enable ipv6 on nginx.conf listen sockets
-      sed -i -E 's|listen 80;|listen 80;\n        listen [::]:80;|' /$DEFAULT_CONF_FILE
+      sed -i -E 's|listen 8080;|listen 8080;\n        listen [::]:8080;|' /$DEFAULT_CONF_FILE
     else
       echo '{"level":"INFO","msg":"can not modify /'"${DEFAULT_CONF_FILE}"' (read-only file system?)"}'
     fi

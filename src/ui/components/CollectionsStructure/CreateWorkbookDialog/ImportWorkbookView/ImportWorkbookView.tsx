@@ -26,9 +26,10 @@ const notificationsI18n = I18n.keyset('component.workbook-export.notifications')
 
 export type ImportWorkbookViewProps = {
     status: ImportExportStatus;
+    importId?: string;
 };
 
-export const ImportWorkbookView = ({status}: ImportWorkbookViewProps) => {
+export const ImportWorkbookView = ({status, importId}: ImportWorkbookViewProps) => {
     const importProgressData = useSelector(selectGetImportProgressData);
     const notificationEntriesMap = useSelector(selectGetImportProgressEntriesMap);
     const error = useSelector(selectImportError);
@@ -57,7 +58,7 @@ export const ImportWorkbookView = ({status}: ImportWorkbookViewProps) => {
             {
                 const docsUrl = formDocsEndpointDL('/workbooks-collections/export-and-import');
                 const preparedNotifications = notifications
-                    ? transformNotifications(notifications)
+                    ? transformNotifications(notifications).notifications
                     : [];
                 return (
                     <React.Fragment>
@@ -92,6 +93,7 @@ export const ImportWorkbookView = ({status}: ImportWorkbookViewProps) => {
                     containerClassName={b('error-content')}
                     error={error}
                     size="s"
+                    importId={importId}
                 />
             );
     }
