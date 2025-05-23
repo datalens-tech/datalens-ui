@@ -11,7 +11,9 @@ export type GetItemArgs = {
 };
 
 export type GetMetaRespose = {
-    editorChoice: string[];
+    editorChoice: {
+        ids: string[];
+    };
     workOfTheMonth: {title: 'string'; desctiption: string; entryId: string};
 };
 

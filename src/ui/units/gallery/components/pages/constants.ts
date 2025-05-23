@@ -13,3 +13,5 @@ export const SPECIAL_CATEGORY = {
     ALL: 'all',
     EDITORS_CHOICE: 'editors-choice',
 };
+
+export const PROMO_BLOCK_CATEGORIES = ['sales', 'marketing', 'hr', 'geo', 'marketplace'];
