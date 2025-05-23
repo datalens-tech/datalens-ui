@@ -1,13 +1,12 @@
 import React from 'react';
 
-import {ArrowRight, Medal} from '@gravity-ui/icons';
+import {ArrowRight} from '@gravity-ui/icons';
 import {
     Button,
     Card,
     Col,
     Container,
     Flex,
-    Icon,
     Link,
     Loader,
     Row,
@@ -25,6 +24,7 @@ import {createIllustration} from 'ui/components/Illustration/utils';
 
 import {useGetGalleryItemsQuery, useGetGalleryMetaQuery} from '../../../store/api';
 import {GalleryCardPreview, SectionHeader} from '../../blocks';
+import {WorkOfMonth} from '../../blocks/WorkOfMonth/WorkOfMonth';
 import type {ActiveMediaQuery} from '../../types';
 import {block, getAllPageUrl, groupGalleryItemsByLabels} from '../../utils';
 import type {CnMods} from '../../utils';
@@ -85,13 +85,7 @@ function PromoBlockItem({
                 <span className={b('promo-block-item-title-counter', {primary})}>
                     &nbsp;·&nbsp;{counter}
                 </span>
-                {icon && (
-                    <Button size="l" view="flat">
-                        <Button.Icon>
-                            <ArrowRight />
-                        </Button.Icon>
-                    </Button>
-                )}
+                {icon && <ArrowRight />}
             </div>
             <div className={b('promo-block-item-images-container', {primary})}>
                 {imageProps.map((props, index) => {
@@ -239,6 +233,7 @@ export function LandingPage() {
     }
 
     const galleryItems = data ?? [];
+    const workOfMonthId = metaData?.workOfTheMonth.id;
 
     return (
         <Container className={b('container', baseMods)}>
@@ -270,73 +265,7 @@ export function LandingPage() {
                 editorChoice={metaData?.editorChoice}
             />
             {/* Work of the month */}
-            <Row className={b('work-of-the-month', baseMods)} space="0">
-                <Col m="6" s="12">
-                    <Flex className={b('work-of-the-month-flex', baseMods)}>
-                        <span className={b('work-of-the-month-medal', {media: activeMediaQuery})}>
-                            <Icon data={Medal} />
-                            Work of the month
-                        </span>
-                        <div className={b('work-of-the-month-title', {media: activeMediaQuery})}>
-                            COVID-19 Statistics
-                        </div>
-                        {!isActiveMediaQueryS && (
-                            <div className={b('work-of-the-month-description')}>
-                                Up-to-date statistics with real-time data on the number of cases,
-                                recoveries and vaccinations
-                            </div>
-                        )}
-                        {!isActiveMediaQueryS && (
-                            <div className={b('work-of-the-month-actions')}>
-                                <Button size="l" view="action">
-                                    Open
-                                </Button>
-                                <Button size="l" view="flat">
-                                    Learn more
-                                    <Button.Icon>
-                                        <ArrowRight />
-                                    </Button.Icon>
-                                </Button>
-                            </div>
-                        )}
-                    </Flex>
-                </Col>
-                <Col m="6" s="12">
-                    <Flex style={{alignItems: 'center', height: '100%'}}>
-                        <Card
-                            view="clear"
-                            type="action"
-                            style={{
-                                overflow: 'hidden',
-                                height: 'max-content',
-                                lineHeight: 0,
-                                maxHeight: '100%',
-                            }}
-                        >
-                            <AsyncImage
-                                src="https://storage.yandexcloud.net/gravity-ui-assets/datalens.yandex_9fms9uae7ip02__embedded%3D1.png"
-                                style={{
-                                    width: '100%',
-                                    borderRadius: 4,
-                                }}
-                                showSkeleton={true}
-                            />
-                        </Card>
-                    </Flex>
-                </Col>
-                {isActiveMediaQueryS && (
-                    <Col s="12">
-                        <div className={b('work-of-the-month-actions')}>
-                            <Button size="xl" view="action" style={{width: '50%'}}>
-                                Open
-                            </Button>
-                            <Button size="xl" view="flat" style={{width: '50%'}}>
-                                Learn more
-                            </Button>
-                        </div>
-                    </Col>
-                )}
-            </Row>
+            {workOfMonthId && <WorkOfMonth id={workOfMonthId} />}
             {/* The best of 2024 */}
             <Row space="6" style={{marginTop: 24, marginBottom: isActiveMediaQueryS ? 24 : 48}}>
                 <Col s="12">
@@ -365,19 +294,22 @@ export function LandingPage() {
                         category={GALLERY_ITEM_CATEGORY.EDITOR}
                     />
                 </Col>
-                {galleryItems.slice(3, 6).map((item) => {
-                    return (
-                        <Col key={item.id} l="4" m="4" s="12">
-                            <GalleryCardPreview
-                                id={item.id}
-                                title={item.title}
-                                createdBy={item.createdBy}
-                                labels={item.labels}
-                                imageSrc={item.images?.[themeType]?.[0] || ''}
-                            />
-                        </Col>
-                    );
-                })}
+                {galleryItems
+                    .filter((item) => item.labels?.includes(GALLERY_ITEM_CATEGORY.EDITOR))
+                    .slice(0, 3)
+                    .map((item) => {
+                        return (
+                            <Col key={item.id} l="4" m="4" s="12">
+                                <GalleryCardPreview
+                                    id={item.id}
+                                    title={item.title}
+                                    createdBy={item.createdBy}
+                                    labels={item.labels}
+                                    imageSrc={item.images?.[themeType]?.[0] || ''}
+                                />
+                            </Col>
+                        );
+                    })}
             </Row>
             {/* Maps examples */}
             <Row space="6" style={{marginTop: 24, marginBottom: 48}}>
@@ -388,19 +320,22 @@ export function LandingPage() {
                         category={GALLERY_ITEM_CATEGORY.GEO}
                     />
                 </Col>
-                {galleryItems.slice(6, 9).map((item) => {
-                    return (
-                        <Col key={item.id} l="4" m="4" s="12">
-                            <GalleryCardPreview
-                                id={item.id}
-                                title={item.title}
-                                createdBy={item.createdBy}
-                                labels={item.labels}
-                                imageSrc={item.images?.[themeType]?.[0] || ''}
-                            />
-                        </Col>
-                    );
-                })}
+                {galleryItems
+                    .filter((item) => item.labels?.includes(GALLERY_ITEM_CATEGORY.GEO))
+                    .slice(0, 3)
+                    .map((item) => {
+                        return (
+                            <Col key={item.id} l="4" m="4" s="12">
+                                <GalleryCardPreview
+                                    id={item.id}
+                                    title={item.title}
+                                    createdBy={item.createdBy}
+                                    labels={item.labels}
+                                    imageSrc={item.images?.[themeType]?.[0] || ''}
+                                />
+                            </Col>
+                        );
+                    })}
             </Row>
             {/* Add your example */}
             <Row className={b('add-card', baseMods)} space="0">
