@@ -5,6 +5,7 @@
   "label_import-check-connections-credentials": "Проверьте настройки подключений и при необходимости заново укажите пароли и токены",
   "label_import-check-delegation": "Настройка подключений не завершена, измените или повторно сохраните настройки подключений",
   "label_import-rls": "Убедитесь, что RLS в датасетах работает корректно",
+  "label_info-documentation-notifications": "Описание ошибок и предупреждений",
   "label_invalid-entry-data": "Конфигурация воркбука нарушена",
   "label_invalid-entry-scope": "В воркбуке содержатся объекты с некорректным типом",
   "label_invalid-error": "Неизвестная ошибка",
