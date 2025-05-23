@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {dateTime} from '@gravity-ui/date-utils';
-import {ArrowLeft, Calendar, Link, Person, Xmark} from '@gravity-ui/icons';
+import {ArrowLeft, Calendar, Link as LinkIcon, Person, Xmark} from '@gravity-ui/icons';
 import {
     Button,
     Card,
@@ -10,6 +10,7 @@ import {
     CopyToClipboard,
     Flex,
     Icon,
+    Link,
     Row,
     Text,
     useLayoutContext,
@@ -101,7 +102,7 @@ function LinkButton(props: ButtonProps & {entryId: string}) {
                 return (
                     <Button {...buttonProps}>
                         <Button.Icon>
-                            <Icon data={Link} />
+                            <Icon data={LinkIcon} />
                         </Button.Icon>
                     </Button>
                 );
@@ -247,6 +248,10 @@ function CardPreview({activeMediaQuery, images}: CardPreviewProps) {
 
     const selectedImageIndex = themeImages.findIndex((img) => img === selectedImage);
 
+    React.useEffect(() => {
+        setSelectedImage(themeImages[0] || '');
+    }, [themeImages]);
+
     return (
         <React.Fragment>
             {showFullscreenGallery && isActiveMediaQueryS && (
@@ -297,33 +302,36 @@ interface CardDescriptionProps {
     shortDescription?: TranslationsDict;
 }
 
-const MarkdownContent = (props: {children: string}) => {
-    const {markdown} = useMarkdown({value: props.children, className: b('md')});
-
-    return markdown;
-};
-
 function CardDescription({lang, description, shortDescription}: CardDescriptionProps) {
     const [isExpanded, setIsExpanded] = React.useState(false);
+    const {markdown} = useMarkdown({value: getTranslation(description), className: b('md')});
     const shouldShowButton = Boolean(description);
 
-    const getTranslation = (dict?: TranslationsDict) => dict?.[lang] || '';
+    function getTranslation(dict?: TranslationsDict) {
+        return dict?.[lang] || '';
+    }
+
+    React.useEffect(() => {
+        setIsExpanded(false);
+    }, [description, shortDescription]);
 
     return (
         <Flex direction="column">
             {shortDescription && <Text variant="body-2">{getTranslation(shortDescription)}</Text>}
-            {isExpanded && description && (
-                <MarkdownContent>{getTranslation(description)}</MarkdownContent>
-            )}
+            {isExpanded && description && markdown}
             {shouldShowButton && (
-                <Button
-                    className={b('card-description-collapse-button')}
-                    size="xs"
-                    view="flat-secondary"
-                    onClick={() => setIsExpanded(!isExpanded)}
+                <Link
+                    className={b('card-description-collapse')}
+                    href="#"
+                    onClick={(event) => {
+                        event.preventDefault();
+                        setIsExpanded(!isExpanded);
+                    }}
+                    view="secondary"
+                    visitable={false}
                 >
                     {isExpanded ? 'Collapse' : 'Show full'}
-                </Button>
+                </Link>
             )}
         </Flex>
     );
