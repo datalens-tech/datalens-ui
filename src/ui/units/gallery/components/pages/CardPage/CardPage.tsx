@@ -25,7 +25,7 @@ import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
 import {URL_OPTIONS} from 'ui/constants';
 import {useMarkdown} from 'ui/hooks/useMarkdown';
 import type {DataLensApiError} from 'ui/typings';
-import {useGetGalleryItemQuery} from 'ui/units/gallery/store/api';
+import {useGetGalleryItemQuery, useGetGalleryItemsQuery} from 'ui/units/gallery/store/api';
 import Utils from 'ui/utils';
 
 import {GalleryCardLabels, GalleryCardPreview, SectionHeader} from '../../blocks';
@@ -33,7 +33,6 @@ import type {ActiveMediaQuery} from '../../types';
 import {block, getLang} from '../../utils';
 import type {CnMods} from '../../utils';
 import {PARTNER_FORM_LINK} from '../constants';
-import {MOCKED_GALLERY_ITEMS} from '../mocks';
 
 import {FullscreenGallery} from './FullscreenGallery/FullscreenGallery';
 import {PreviewCard} from './PreviewCard/PreviewCard';
@@ -319,6 +318,11 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang}: CardContent
     const isActiveMediaQueryS = activeMediaQuery === 's';
     const mods: CnMods = {media: activeMediaQuery};
     const themeType = useThemeType();
+    const {data: galleryItems = []} = useGetGalleryItemsQuery();
+    const otherWorks = galleryItems
+        .slice(0, 4)
+        .filter((item) => item.id !== entry.id)
+        .slice(0, 3);
 
     return (
         <Container className={b('container', mods)}>
@@ -375,7 +379,7 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang}: CardContent
                 <Col s="12">
                     <SectionHeader activeMediaQuery={activeMediaQuery} title="Other works" />
                 </Col>
-                {MOCKED_GALLERY_ITEMS.slice(0, 3).map((item) => {
+                {otherWorks.map((item) => {
                     return (
                         <Col key={item.id} l="4" m="4" s="12">
                             <GalleryCardPreview

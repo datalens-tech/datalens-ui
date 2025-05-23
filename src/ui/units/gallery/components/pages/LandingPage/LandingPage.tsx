@@ -165,18 +165,17 @@ function PromoBlockRow({galleryItems, activeMediaQuery, editorChoice}: PromoBloc
         (label) => -1 * PROMO_BLOCK_CATEGORIES.indexOf(label.toLowerCase()),
     ).slice(0, 5);
 
-    const others = galleryItems
+    const othersImageProps: AsyncImageProps[] = galleryItems
         .filter((item) => selectedCategories.every((category) => !item?.labels?.includes(category)))
-        .slice(0, 3);
-
-    const othersImageProps: AsyncImageProps[] = others.map((item, index, list) => {
-        return {
-            src: item.images?.[themeType]?.[0] || '',
-            style: {
-                opacity: 1 - (list.length - 1 - index) * 0.35,
-            },
-        };
-    });
+        .slice(0, 3)
+        .map((item, index, list) => {
+            return {
+                src: item.images?.[themeType]?.[0] || '',
+                style: {
+                    opacity: 1 - (list.length - 1 - index) * 0.35,
+                },
+            };
+        });
 
     return (
         <Row className={b('promo-block', {media: activeMediaQuery})} space="6">
