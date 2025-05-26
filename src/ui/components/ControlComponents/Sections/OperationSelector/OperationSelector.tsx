@@ -61,11 +61,12 @@ const OperationSelector = ({className}: {className?: string}) => {
             <span>{i18n('field_operation')}</span>
             <HelpMark
                 popoverProps={{
-                    content: i18n('field_operation-note'),
                     placement: ['bottom', 'top'],
-                    offset: {top: -1, left: 5},
+                    offset: {mainAxis: -1, crossAxis: 5},
                 }}
-            />
+            >
+                {i18n('field_operation-note')}
+            </HelpMark>
         </React.Fragment>
     );
 

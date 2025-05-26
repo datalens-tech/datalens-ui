@@ -41,10 +41,11 @@ export const ColorAccentRow = ({className}: {className?: string}) => {
             <HelpMark
                 popoverProps={{
                     placement: ['bottom', 'top'],
-                    offset: {top: -1, left: 5},
-                    content: i18n('field_color-accent-note'),
+                    offset: {mainAxis: -1, crossAxis: 5},
                 }}
-            />
+            >
+                {i18n('field_color-accent-note')}
+            </HelpMark>
         </React.Fragment>
     );
 

@@ -87,17 +87,10 @@ const DialogAliases = (props: DialogAliasesProps) => {
     const caption = (
         <React.Fragment>
             {i18n('title_add-alias')}
-            <HelpMark
-                className={b('info')}
-                popoverProps={{
-                    content: (
-                        <React.Fragment>
-                            <p className={b('info-text')}>{i18n('label_info_1')}</p>
-                            <p className={b('info-text')}>{i18n('label_info_2')}</p>
-                        </React.Fragment>
-                    ),
-                }}
-            />
+            <HelpMark className={b('info')}>
+                <p className={b('info-text')}>{i18n('label_info_1')}</p>
+                <p className={b('info-text')}>{i18n('label_info_2')}</p>
+            </HelpMark>
         </React.Fragment>
     );
 

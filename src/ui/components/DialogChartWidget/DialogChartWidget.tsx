@@ -533,17 +533,10 @@ class DialogChartWidget extends React.PureComponent<
         );
 
         const helpPopover = (
-            <HelpMark
-                className={b('help-tooltip')}
-                popoverProps={{
-                    content: (
-                        <React.Fragment>
-                            {i18n('dash.widget-dialog.edit', 'context_filtering-other-charts')}
-                            {this.getFiltrationDocsLink()}
-                        </React.Fragment>
-                    ),
-                }}
-            />
+            <HelpMark className={b('help-tooltip')}>
+                {i18n('dash.widget-dialog.edit', 'context_filtering-other-charts')}
+                {this.getFiltrationDocsLink()}
+            </HelpMark>
         );
 
         return (
@@ -580,15 +573,9 @@ class DialogChartWidget extends React.PureComponent<
         } = this.props;
 
         const autoHeightHelpPopover = (
-            <HelpMark
-                className={b('help-tooltip')}
-                popoverProps={{
-                    content: i18n(
-                        'dash.widget-dialog.edit',
-                        'context_autoheight-availability-hint',
-                    ),
-                }}
-            />
+            <HelpMark className={b('help-tooltip')}>
+                {i18n('dash.widget-dialog.edit', 'context_autoheight-availability-hint')}
+            </HelpMark>
         );
 
         const {
@@ -708,15 +695,9 @@ class DialogChartWidget extends React.PureComponent<
                     fieldId={INPUT_HINT_ID}
                     label={i18n('dash.widget-dialog.edit', 'field_hint')}
                     labelHelpPopover={
-                        <HelpMark
-                            className={b('help-tooltip')}
-                            popoverProps={{
-                                content: i18n(
-                                    'dash.widget-dialog.edit',
-                                    'context_hint-display-info',
-                                ),
-                            }}
-                        />
+                        <HelpMark className={b('help-tooltip')}>
+                            {i18n('dash.widget-dialog.edit', 'context_hint-display-info')}
+                        </HelpMark>
                     }
                 >
                     <div className={b('settings-container')}>

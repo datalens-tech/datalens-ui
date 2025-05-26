@@ -262,10 +262,9 @@ const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                         label={
                             <React.Fragment>
                                 {i18n('label_apply-button-checkbox')}
-                                <HelpMark
-                                    className={b('help-icon')}
-                                    popoverProps={{content: i18n('context_apply-button')}}
-                                />
+                                <HelpMark className={b('help-icon')}>
+                                    {i18n('context_apply-button')}
+                                </HelpMark>
                             </React.Fragment>
                         }
                     >
@@ -282,10 +281,9 @@ const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                         label={
                             <React.Fragment>
                                 {i18n('label_reset-button-checkbox')}
-                                <HelpMark
-                                    className={b('help-icon')}
-                                    popoverProps={{content: i18n('context_reset-button')}}
-                                />
+                                <HelpMark className={b('help-icon')}>
+                                    {i18n('context_reset-button')}
+                                </HelpMark>
                             </React.Fragment>
                         }
                     >
@@ -314,12 +312,9 @@ const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                             label={
                                 <React.Fragment>
                                     {i18n('label_update-controls-on-change')}
-                                    <HelpMark
-                                        className={b('help-icon')}
-                                        popoverProps={{
-                                            content: i18n('context_update-controls-on-change'),
-                                        }}
-                                    />
+                                    <HelpMark className={b('help-icon')}>
+                                        {i18n('context_update-controls-on-change')}
+                                    </HelpMark>
                                 </React.Fragment>
                             }
                         >

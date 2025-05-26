@@ -304,12 +304,9 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                             />
                         </div>
                         {shouldDisabledManualButton && (
-                            <HelpMark
-                                className={b('title-popover')}
-                                popoverProps={{
-                                    content: i18n('wizard', 'label_axis-title-manual-warning'),
-                                }}
-                            />
+                            <HelpMark className={b('title-popover')}>
+                                {i18n('wizard', 'label_axis-title-manual-warning')}
+                            </HelpMark>
                         )}
                         {title === SETTINGS.TITLE.MANUAL && (
                             <TextInput
@@ -453,10 +450,9 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                                 qa={'axis-mode-radio-buttons'}
                             />
                             {disabledTooltipContent && (
-                                <HelpMark
-                                    className={b('title-popover')}
-                                    popoverProps={{content: i18n('wizard', disabledTooltipContent)}}
-                                />
+                                <HelpMark className={b('title-popover')}>
+                                    {i18n('wizard', disabledTooltipContent)}
+                                </HelpMark>
                             )}
                         </React.Fragment>
                     }

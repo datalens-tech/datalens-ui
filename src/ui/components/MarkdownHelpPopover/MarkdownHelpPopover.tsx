@@ -24,11 +24,6 @@ export const MarkdownHelpPopover = (props: Props) => {
     return (
         <HelpMark
             popoverProps={{
-                content: (
-                    <div className={b('content')}>
-                        <Content value={markdown} onRender={() => setLoaded(true)} />
-                    </div>
-                ),
                 className: b('tooltip', {hidden: !isLoaded}),
                 open: isLoaded,
             }}
@@ -36,6 +31,10 @@ export const MarkdownHelpPopover = (props: Props) => {
             key={String(isLoaded)}
             {...(buttonProps ? {buttonProps} : {})}
             {...(onClick ? {onClick} : {})}
-        />
+        >
+            <div className={b('content')}>
+                <Content value={markdown} onRender={() => setLoaded(true)} />
+            </div>
+        </HelpMark>
     );
 };

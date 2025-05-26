@@ -62,12 +62,9 @@ class HierarchyEditor extends React.Component<Props, State> {
                         caption={
                             <span>
                                 {i18n('wizard.hierarchy-editor', 'caption')}
-                                <HelpMark
-                                    className={b('help-icon')}
-                                    popoverProps={{
-                                        content: i18n('wizard.hierarchy-editor', 'help_tooltip'),
-                                    }}
-                                />
+                                <HelpMark className={b('help-icon')}>
+                                    {i18n('wizard.hierarchy-editor', 'help_tooltip')}
+                                </HelpMark>
                             </span>
                         }
                     />

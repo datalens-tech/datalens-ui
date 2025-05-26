@@ -27,11 +27,7 @@ export const LoadPriority = ({value, onUpdate}: LoadPriorityProps) => {
     return (
         <Row>
             <Title text={i18n('dash.settings-dialog.edit', 'label_load-priority')}>
-                <HelpMark
-                    popoverProps={{
-                        content: i18n('dash.settings-dialog.edit', 'label_load-priority-hint'),
-                    }}
-                />
+                <HelpMark>{i18n('dash.settings-dialog.edit', 'label_load-priority-hint')}</HelpMark>
             </Title>
             <div>
                 <div className={b('sub-row')}>

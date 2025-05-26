@@ -38,14 +38,9 @@ export const MaxConnection = ({maxValue, onUpdate}: MaxConnectionProps) => {
     return (
         <Row alignTop={true}>
             <Title text={i18n('dash.settings-dialog.edit', 'label_max-concurrent-requests')}>
-                <HelpMark
-                    popoverProps={{
-                        content: i18n(
-                            'dash.settings-dialog.edit',
-                            'context_max-concurrent-requests-hint',
-                        ),
-                    }}
-                />
+                <HelpMark>
+                    {i18n('dash.settings-dialog.edit', 'context_max-concurrent-requests-hint')}
+                </HelpMark>
             </Title>
             <div>
                 <div className={b('sub-row')}>

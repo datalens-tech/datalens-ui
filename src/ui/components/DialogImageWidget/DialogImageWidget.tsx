@@ -123,14 +123,9 @@ export function DialogImageWidget(props: Props) {
                     label={
                         <Flex gap={1}>
                             {i18n('dash.image-dialog.edit', 'label_alt-text')}
-                            <HelpMark
-                                popoverProps={{
-                                    content: i18n(
-                                        'dash.image-dialog.edit',
-                                        'label_alt-text-description',
-                                    ),
-                                }}
-                            />
+                            <HelpMark>
+                                {i18n('dash.image-dialog.edit', 'label_alt-text-description')}
+                            </HelpMark>
                         </Flex>
                     }
                 >

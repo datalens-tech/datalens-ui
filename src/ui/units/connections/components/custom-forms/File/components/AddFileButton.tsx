@@ -28,7 +28,7 @@ export const AddFileButton = () => {
                 <Icon data={Plus} size={ICON_SIZE} />
                 <span>{i18n('button_add-file')}</span>
             </Button>
-            <HelpMark popoverProps={{content: hintContent}} />
+            <HelpMark>{hintContent}</HelpMark>
         </div>
     );
 };

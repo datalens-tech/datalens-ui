@@ -18,7 +18,7 @@ export const Subheader = (props: Props) => {
     return (
         <div>
             <span className={b('subheader')}>{title}</span>
-            {tooltip && <HelpMark popoverProps={{content: tooltip, placement: 'right'}} />}
+            {tooltip && <HelpMark popoverProps={{placement: 'right'}}>{tooltip}</HelpMark>}
         </div>
     );
 };

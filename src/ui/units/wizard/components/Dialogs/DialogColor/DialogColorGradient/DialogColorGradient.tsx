@@ -205,7 +205,9 @@ class DialogColorGradientBody extends React.Component<Props> {
                                         }}
                                         className={b('hint-icon')}
                                     >
-                                        {i18n('wizard', 'label_tooltip-thresholds')}
+                                        <div className={b('hint-icon-tooltip')}>
+                                            {i18n('wizard', 'label_tooltip-thresholds')}
+                                        </div>
                                     </HelpMark>
                                 </span>
                             </Checkbox>
@@ -285,7 +287,7 @@ class DialogColorGradientBody extends React.Component<Props> {
                     <FormRow className={b('row')} label={i18n('wizard', 'label_nulls')}>
                         <RadioButton
                             options={NULLS_OPTIONS}
-                            value={this.props.gradientState.nullMode}
+                            value={this.props.gradientState.nullMode ?? NULLS_OPTIONS[0].value}
                             onUpdate={(nullMode) => {
                                 this.props.setGradientState({
                                     nullMode,

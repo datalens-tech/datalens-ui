@@ -22,12 +22,13 @@ const HeaderWithTooltip: React.FC<HeaderTooltipProps> = (props: HeaderTooltipPro
             {title}
             <HelpMark
                 popoverProps={{
-                    content: <YfmWrapper content={yfmString} setByInnerHtml={true} />,
                     placement: ['bottom', 'right'],
                     className: b('tooltip'),
                 }}
                 className={b('tooltip-anchor')}
-            />
+            >
+                <YfmWrapper content={yfmString} setByInnerHtml={true} />
+            </HelpMark>
         </span>
     );
 };

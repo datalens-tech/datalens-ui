@@ -623,10 +623,11 @@ class RelativeDatesPicker extends React.Component<Props, State> {
                             popoverProps={{
                                 closeDelay: TOOLTIP_DELAY_CLOSING,
                                 placement: ['right'],
-                                content: <span>{i18n('label_tooltip-utc')}</span>,
                             }}
                             className={b('help-icon')}
-                        />
+                        >
+                            <span>{i18n('label_tooltip-utc')}</span>
+                        </HelpMark>
                     </RadioGroup.Option>
                 </RadioGroup>
                 {isRelative && (

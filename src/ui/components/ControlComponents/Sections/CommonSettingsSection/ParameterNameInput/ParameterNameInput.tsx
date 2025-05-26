@@ -35,11 +35,12 @@ export const ParameterNameInput: React.FC<ParameterNameInputProps> = (
             <span>{props.label}</span>
             <HelpMark
                 popoverProps={{
-                    content: props.note,
                     placement: ['bottom', 'top'],
-                    offset: {top: -1, left: 5},
+                    offset: {mainAxis: -1, crossAxis: 5},
                 }}
-            />
+            >
+                {props.note}
+            </HelpMark>
         </React.Fragment>
     ) : (
         props.label

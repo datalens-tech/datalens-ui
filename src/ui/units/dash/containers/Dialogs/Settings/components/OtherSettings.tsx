@@ -53,7 +53,7 @@ export const OtherSettings = ({
         <SectionWrapper title={i18n('label_other-settings')} titleMods={b('section-title')}>
             <Row>
                 <Title text={i18n('label_load-only-visible-charts')}>
-                    <HelpMark popoverProps={{content: i18n('hint_load-only-visible-charts')}} />
+                    <HelpMark>{i18n('hint_load-only-visible-charts')}</HelpMark>
                 </Title>
                 <Checkbox
                     size="l"

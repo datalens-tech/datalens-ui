@@ -57,10 +57,11 @@ export const InnerTitleRow = ({className}: {className?: string}) => {
             <HelpMark
                 popoverProps={{
                     placement: ['bottom', 'top'],
-                    offset: {top: -1, left: 5},
-                    content: getHelpPopoverText(sourceType),
+                    offset: {mainAxis: -1, crossAxis: 5},
                 }}
-            />
+            >
+                {getHelpPopoverText(sourceType)}
+            </HelpMark>
         </React.Fragment>
     );
 

@@ -217,14 +217,10 @@ const Timings: React.FC<
                 <div className={b('metric-title')}>
                     {i18n('chartkit.menu.inspector', 'label_data-fetching')}
                     {dataFetchingWarning && !dataFetchingDanger && (
-                        <HelpMark
-                            popoverProps={{content: BASELINE.DATA_FETCHING.WARNING.message()}}
-                        />
+                        <HelpMark>{BASELINE.DATA_FETCHING.WARNING.message()}</HelpMark>
                     )}
                     {dataFetchingDanger && (
-                        <HelpMark
-                            popoverProps={{content: BASELINE.DATA_FETCHING.DANGER.message()}}
-                        />
+                        <HelpMark>{BASELINE.DATA_FETCHING.DANGER.message()}</HelpMark>
                     )}
                 </div>
             </div>
@@ -233,14 +229,10 @@ const Timings: React.FC<
                 <div className={b('metric-title')}>
                     {i18n('chartkit.menu.inspector', 'label_js-execution')}
                     {jsExecutionWarning && !jsExecutionDanger && (
-                        <HelpMark
-                            popoverProps={{content: BASELINE.JS_EXECUTION.WARNING.message()}}
-                        />
+                        <HelpMark>{BASELINE.JS_EXECUTION.WARNING.message()}</HelpMark>
                     )}
                     {jsExecutionDanger && (
-                        <HelpMark
-                            popoverProps={{content: BASELINE.JS_EXECUTION.DANGER.message()}}
-                        />
+                        <HelpMark>{BASELINE.JS_EXECUTION.DANGER.message()}</HelpMark>
                     )}
                 </div>
             </div>
@@ -299,13 +291,10 @@ const Timings: React.FC<
                     <div className={b('metric-title')}>
                         {inspectorLabelApiWaitingText ??
                             i18n('chartkit.menu.inspector', 'label_api-waiting')}
-                        <HelpMark
-                            popoverProps={{
-                                content:
-                                    inspectorLabelApiWaitingHintText ??
-                                    i18n('chartkit.menu.inspector', 'label_api-waiting-hint'),
-                            }}
-                        />
+                        <HelpMark>
+                            {inspectorLabelApiWaitingHintText ??
+                                i18n('chartkit.menu.inspector', 'label_api-waiting-hint')}
+                        </HelpMark>
                     </div>
                 </div>
             )}

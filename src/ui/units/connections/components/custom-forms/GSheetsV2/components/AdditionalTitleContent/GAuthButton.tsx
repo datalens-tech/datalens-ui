@@ -48,10 +48,7 @@ export const GAuthButton = React.forwardRef<HTMLButtonElement, GAuthButtonProps>
             <button ref={ref} className={b('gauth-btn')} onClick={onClick}>
                 <Icon data={getGAuthIconData({themeType, lang: DL.USER_LANG})} />
             </button>
-            <HelpMark
-                className={b('help-btn')}
-                popoverProps={{content: i18n('label_google-auth-help')}}
-            />
+            <HelpMark className={b('help-btn')}>{i18n('label_google-auth-help')}</HelpMark>
         </React.Fragment>
     );
 });

@@ -176,40 +176,34 @@ const DialogAddYadoc = <T extends unknown>(props: DialogAddYadocProps<T>) => {
                                 ),
                             }}
                         />
-                        <HelpMark
-                            className={b('add-help-btn')}
-                            popoverProps={{
-                                content: (
-                                    <Interpolate
-                                        text={inputHelp}
-                                        matches={{
-                                            code: (match) => (
-                                                <code
-                                                    style={{
-                                                        color: 'var(--g-color-text-misc)',
-                                                        backgroundColor:
-                                                            'var(--g-color-base-misc-light)',
-                                                        lineHeight: '16px',
-                                                        borderRadius: '4px',
-                                                        padding: '1px 4px',
-                                                    }}
-                                                >
-                                                    {match}
-                                                </code>
-                                            ),
-                                            link: (match) => (
-                                                <Link
-                                                    href={`${docsEndpoint}/operations/connection/create-yadocs`}
-                                                    target="_blank"
-                                                >
-                                                    {match}
-                                                </Link>
-                                            ),
-                                        }}
-                                    />
-                                ),
-                            }}
-                        />
+                        <HelpMark className={b('add-help-btn')}>
+                            <Interpolate
+                                text={inputHelp}
+                                matches={{
+                                    code: (match) => (
+                                        <code
+                                            style={{
+                                                color: 'var(--g-color-text-misc)',
+                                                backgroundColor: 'var(--g-color-base-misc-light)',
+                                                lineHeight: '16px',
+                                                borderRadius: '4px',
+                                                padding: '1px 4px',
+                                            }}
+                                        >
+                                            {match}
+                                        </code>
+                                    ),
+                                    link: (match) => (
+                                        <Link
+                                            href={`${docsEndpoint}/operations/connection/create-yadocs`}
+                                            target="_blank"
+                                        >
+                                            {match}
+                                        </Link>
+                                    ),
+                                }}
+                            />
+                        </HelpMark>
                     </label>
                     <TextInput
                         value={value}

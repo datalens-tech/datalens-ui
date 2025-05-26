@@ -56,4 +56,8 @@
     &__hint-icon {
         margin-left: var(--g-spacing-1);
     }
+
+    &__hint-icon-tooltip {
+        max-width: 280px;
+    }
 }

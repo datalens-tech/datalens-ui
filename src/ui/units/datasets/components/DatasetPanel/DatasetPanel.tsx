@@ -120,14 +120,13 @@ const DatasetPanel = (props: DatasetPanelProps) => {
                             <div className={b('preview-btn-tooltip')}>
                                 <HelpMark
                                     popoverProps={{
-                                        content: (
-                                            <div className={b('preview-btn-tooltip-content')}>
-                                                <span>{i18n('label_preview-not-supported')}</span>
-                                            </div>
-                                        ),
                                         placement: ['right', 'left'],
                                     }}
-                                />
+                                >
+                                    <div className={b('preview-btn-tooltip-content')}>
+                                        <span>{i18n('label_preview-not-supported')}</span>
+                                    </div>
+                                </HelpMark>
                             </div>
                         )}
                     </div>

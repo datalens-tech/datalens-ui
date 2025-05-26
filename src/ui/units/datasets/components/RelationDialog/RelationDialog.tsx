@@ -641,10 +641,9 @@ class SourceRelationDialog extends React.Component<Props, State> {
                                     onUpdate={this.changeOptimized}
                                 >
                                     {i18n('label_optimize-join')}
-                                    <HelpMark
-                                        className={b('hint-optimize-join')}
-                                        popoverProps={{content: i18n('hint_optimize-join')}}
-                                    />
+                                    <HelpMark className={b('hint-optimize-join')}>
+                                        {i18n('hint_optimize-join')}
+                                    </HelpMark>
                                 </Checkbox>
                             </div>
                         </div>

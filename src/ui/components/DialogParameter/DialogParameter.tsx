@@ -80,11 +80,12 @@ const DialogParameter: React.FC<DialogParameterProps> = (props: DialogParameterP
                                 <HelpMark
                                     iconSize="s"
                                     popoverProps={{
-                                        content: tooltipText,
                                         placement: 'right',
                                     }}
                                     className={b('title-tooltip')}
-                                />
+                                >
+                                    {tooltipText}
+                                </HelpMark>
                             </span>
                             <TextInput
                                 disabled={isEditDefaultValueDialog}
@@ -95,11 +96,9 @@ const DialogParameter: React.FC<DialogParameterProps> = (props: DialogParameterP
                                 errorMessage={
                                     <React.Fragment>
                                         {i18n('parameter_name-error')}
-                                        <HelpMark
-                                            iconSize="s"
-                                            popoverProps={{content: tooltipText}}
-                                            className={b('title-tooltip')}
-                                        />
+                                        <HelpMark iconSize="s" className={b('title-tooltip')}>
+                                            {tooltipText}
+                                        </HelpMark>
                                     </React.Fragment>
                                 }
                                 autoComplete={false}
