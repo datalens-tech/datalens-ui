@@ -1,11 +1,6 @@
 import React from 'react';
 
-import type {BreadcrumbsItem} from '@gravity-ui/uikit';
-import {
-    FirstDisplayedItemsCount,
-    LastDisplayedItemsCount,
-    Breadcrumbs as UIKitBreadcrumbs,
-} from '@gravity-ui/uikit';
+import {Breadcrumbs} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 
@@ -22,8 +17,13 @@ export type Props = {
     onChange: (collectionId: string | null) => void;
 };
 
+type BreadcrumbsItemData = {
+    text: string;
+    action: () => void;
+};
+
 export const CollectionsStructureBreadcrumbs: React.FC<Props> = ({items, onChange}) => {
-    const preparedItems: BreadcrumbsItem[] = [
+    const preparedItems: BreadcrumbsItemData[] = [
         {
             text: i18n('label_root-title'),
             action: () => {
@@ -45,18 +45,17 @@ export const CollectionsStructureBreadcrumbs: React.FC<Props> = ({items, onChang
 
     return (
         <div className={b()}>
-            <UIKitBreadcrumbs
-                items={preparedItems}
-                firstDisplayedItemsCount={FirstDisplayedItemsCount.One}
-                lastDisplayedItemsCount={LastDisplayedItemsCount.One}
-                renderItemContent={(item: BreadcrumbsItem) => {
+            <Breadcrumbs>
+                {preparedItems.map((item, index) => {
                     return (
-                        <div className={b('item')} onClick={item.action}>
-                            {item.text}
-                        </div>
+                        <Breadcrumbs.Item key={index}>
+                            <div className={b('item')} onClick={item.action}>
+                                {item.text}
+                            </div>
+                        </Breadcrumbs.Item>
                     );
-                }}
-            />
+                })}
+            </Breadcrumbs>
         </div>
     );
 };

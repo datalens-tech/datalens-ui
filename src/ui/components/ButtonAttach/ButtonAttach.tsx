@@ -1,7 +1,7 @@
 import type {ChangeEvent} from 'react';
 import React from 'react';
 
-import type {ButtonProps} from '@gravity-ui/uikit';
+import type {ButtonButtonProps as ButtonProps} from '@gravity-ui/uikit';
 import {Button, useFileInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
