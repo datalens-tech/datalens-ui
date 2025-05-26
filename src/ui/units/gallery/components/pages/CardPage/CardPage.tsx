@@ -160,7 +160,7 @@ function CardActionPanel({
     const isActiveMediaQueryS = activeMediaQuery === 's';
     const mods: CnMods = {media: activeMediaQuery};
 
-    const {styles, actionPanelRef} = useActionPanelLayout();
+    const {style, actionPanelRef} = useActionPanelLayout();
 
     let leftItems: React.ReactNode = null;
 
@@ -222,7 +222,7 @@ function CardActionPanel({
             leftItems={leftItems}
             rightItems={rightItems}
             wrapperRef={isPromo ? actionPanelRef : undefined}
-            styles={isPromo ? styles : undefined}
+            style={isPromo ? style : undefined}
         />
     );
 }

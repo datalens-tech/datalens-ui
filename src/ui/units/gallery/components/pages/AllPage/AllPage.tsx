@@ -168,7 +168,7 @@ export function AllPage() {
         new Set([...CATEGORIES_SELECT_VALUES, ...availableCategories]),
     );
 
-    const {styles, actionPanelRef} = useActionPanelLayout();
+    const {style, actionPanelRef} = useActionPanelLayout();
 
     if (isLoading || isMetaLoading) {
         return (
@@ -192,7 +192,7 @@ export function AllPage() {
                     </Breadcrumbs>
                 }
                 wrapperRef={isPromo ? actionPanelRef : undefined}
-                styles={isPromo ? styles : undefined}
+                style={isPromo ? style : undefined}
             />
             <Container
                 className={b('container', baseMods)}
