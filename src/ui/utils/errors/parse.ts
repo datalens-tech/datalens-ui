@@ -11,7 +11,7 @@ import type {
 import {isOperationError, isSdkError} from '../../libs/schematic-sdk';
 import type {DataLensApiError} from '../../typings';
 
-function isCustomError(error: Error): error is ChartKitCustomError {
+function isCustomError(error: DataLensApiError): error is ChartKitCustomError {
     return Boolean((error as Error & {isCustomError?: boolean}).isCustomError);
 }
 
@@ -66,6 +66,9 @@ export function parseError(apiError: DataLensApiError) {
         debug = debugFull;
         traceId = debugFull?.traceId;
     } else {
+        if ('code' in error && typeof error.code === 'string') {
+            code = error.code;
+        }
         message = error.message || '';
         stack = error.stack;
     }

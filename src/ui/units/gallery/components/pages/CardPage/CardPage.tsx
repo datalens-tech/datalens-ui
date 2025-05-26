@@ -13,24 +13,24 @@ import {
     Link,
     Row,
     Text,
-    spacing,
     useLayoutContext,
     useThemeType,
 } from '@gravity-ui/uikit';
 import type {ButtonProps, IconData} from '@gravity-ui/uikit';
 import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
+import type {SerializedError} from '@reduxjs/toolkit';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {useHistory, useLocation, useParams} from 'react-router-dom';
+import {ErrorContentTypes} from 'shared';
 import type {GalleryItem, TranslationsDict} from 'shared/types';
 import {ActionPanel} from 'ui/components/ActionPanel';
 import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
-import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
+import ErrorContent from 'ui/components/ErrorContent/ErrorContent';
 import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
 import {DL, URL_OPTIONS} from 'ui/constants';
 import {useMarkdown} from 'ui/hooks/useMarkdown';
 import {showToast} from 'ui/store/actions/toaster';
-import type {DataLensApiError} from 'ui/typings';
 import {useGetGalleryItemQuery, useGetGalleryItemsQuery} from 'ui/units/gallery/store/api';
 import Utils from 'ui/utils';
 
@@ -469,30 +469,28 @@ export function CardPage() {
     }
 
     if (error || !data) {
-        const {
-            code,
-            status,
-            message = galleryI18n('label_error'),
-            details,
-        } = error && 'message' in error ? Utils.parseErrorResponse(error as DataLensApiError) : {};
+        const parsedError = Utils.parseErrorResponse(error || ({} satisfies SerializedError));
 
-        const isNotFound = code === 'NOT_FOUND' || status === 404;
-        const name = isNotFound ? 'notFound' : 'error';
+        const {status, code, message = galleryI18n('label_error'), details} = parsedError;
+
+        const isNotFound = code === ErrorContentTypes.NOT_FOUND || status === 404;
+
         const canRetry = !isNotFound;
 
         return (
             <div className={b('error')}>
-                <PlaceholderIllustration
-                    name={name}
+                <ErrorContent
+                    error={parsedError}
+                    type={code}
                     title={details?.title ?? message}
-                    description={details?.description}
-                    renderAction={
+                    showDebugInfo={!isNotFound}
+                    action={
                         canRetry
-                            ? () => (
-                                  <Button className={spacing({mt: 2})} onClick={refetch}>
-                                      {galleryI18n('button_retry')}
-                                  </Button>
-                              )
+                            ? {
+                                  text: galleryI18n('button_retry'),
+                                  handler: refetch,
+                                  buttonProps: {view: 'normal'},
+                              }
                             : undefined
                     }
                 />

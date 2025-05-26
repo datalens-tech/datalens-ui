@@ -7,7 +7,7 @@ import {I18n} from 'i18n';
 import type {ValueOf} from 'shared';
 import {ErrorContentTypes, Feature} from 'shared';
 import {DL} from 'ui/constants/common';
-import type {DataLensApiError} from 'ui/typings';
+import type {DataLensApiError, ParsedError} from 'ui/typings';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 import Utils from 'ui/utils/utils';
@@ -42,7 +42,7 @@ interface ErrorContentProps {
     };
     reqId?: string;
     traceId?: string;
-    error?: DataLensApiError | null;
+    error?: DataLensApiError | ParsedError | null;
     /** @deprecated
      * this props is passed from some other components, but is not used in ErrorContent component
      */

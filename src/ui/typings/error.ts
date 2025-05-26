@@ -1,3 +1,4 @@
+import type {SerializedError} from '@reduxjs/toolkit';
 import type {AxiosError} from 'axios';
 import type {ManualError} from 'utils/errors/manual';
 
@@ -10,4 +11,16 @@ export type DataLensApiError =
     | SdkError
     | AxiosError<{message?: string; details?: object; code?: string; debug?: unknown}>
     | Error
-    | ChartKitCustomError;
+    | ChartKitCustomError
+    | SerializedError;
+
+export interface ParsedError {
+    status: number | null;
+    code: string;
+    requestId: string;
+    message: string;
+    details: Record<string, string>;
+    debug: unknown;
+    traceId: string | undefined;
+    stack: string | undefined;
+}
