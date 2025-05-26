@@ -2,10 +2,15 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
+import type {RouteComponentProps} from 'react-router-dom';
 import {useHistory, useLocation, useParams} from 'react-router-dom';
 import {Feature} from 'shared';
-import type {CreateWorkbookDialogProps} from 'ui/components/CollectionsStructure/CreateWorkbookDialog/CreateWorkbookDialog';
+import type {
+    CreateWorkbookDialogProps,
+    PublicGalleryData,
+} from 'ui/components/CollectionsStructure/CreateWorkbookDialog/CreateWorkbookDialog';
 import {DL} from 'ui/constants/common';
+import {getSdk} from 'ui/libs/schematic-sdk';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {AnimateBlock} from '../../../../components/AnimateBlock';
@@ -29,7 +34,7 @@ import {
     selectStructureItems,
 } from '../../store/selectors';
 import {CollectionContent} from '../CollectionContent';
-import {DEFAULT_FILTERS} from '../constants';
+import {DEFAULT_FILTERS, PUBLIC_GALLERY_ID_SEARCH_PARAM} from '../constants';
 
 import {useData, useFilters, useLayout, useSelection, useViewMode} from './hooks';
 
@@ -41,7 +46,7 @@ type LocationImportState = {
     importId?: string;
 };
 
-export const CollectionPage = () => {
+export const CollectionPage = (props: RouteComponentProps) => {
     const {collectionId} = useParams<{collectionId?: string}>();
     const curCollectionId = collectionId ?? null;
 
@@ -51,7 +56,10 @@ export const CollectionPage = () => {
     const history = useHistory();
 
     const handleOpenCreateDialog = React.useCallback(
-        (defaultView?: CreateWorkbookDialogProps['defaultView'], importId?: string) => {
+        (
+            defaultView?: CreateWorkbookDialogProps['defaultView'],
+            options?: {importId?: string; publicGallery?: PublicGalleryData},
+        ) => {
             dispatch(
                 openDialog({
                     id: DIALOG_CREATE_WORKBOOK,
@@ -65,10 +73,14 @@ export const CollectionPage = () => {
                         },
                         onClose: () => {
                             dispatch(closeDialog());
+                            // Clean up url
+                            if (options?.publicGallery) {
+                                history.replace(location.pathname);
+                            }
                         },
-                        importId,
                         defaultView,
                         showImport: true,
+                        ...options,
                     },
                 }),
             );
@@ -87,9 +99,34 @@ export const CollectionPage = () => {
             // so it is important that the dialog is opened after that.
             // clearing the state is necessary so that it does not persist when the page is reloaded.
             history.replace({state: {...locationState, importId: undefined}});
-            handleOpenCreateDialog('import', importId);
+            handleOpenCreateDialog('import', {importId});
         }
     }, [handleOpenCreateDialog, history, locationState, locationState?.importId]);
+
+    const {search} = props.location;
+    React.useEffect(() => {
+        const searchParams = new URLSearchParams(search);
+        const publicGalleryId = searchParams.get(PUBLIC_GALLERY_ID_SEARCH_PARAM);
+
+        if (!publicGalleryId) {
+            return;
+        }
+
+        getSdk()
+            .sdk.anonymous.publicGallery.getItem({fileId: publicGalleryId})
+            .then((publicGalleryEntry) => {
+                if (publicGalleryEntry.data) {
+                    handleOpenCreateDialog('default', {
+                        publicGallery: {
+                            id: publicGalleryEntry.id,
+                            title: publicGalleryEntry.title[DL.USER_LANG] || '',
+                            description: publicGalleryEntry.description?.[DL.USER_LANG] || '',
+                            data: publicGalleryEntry.data,
+                        },
+                    });
+                }
+            });
+    }, [handleOpenCreateDialog, search]);
 
     const collection = useSelector(selectCollection);
     const collectionError = useSelector(selectCollectionError);

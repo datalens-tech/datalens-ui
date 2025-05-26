@@ -22,6 +22,7 @@ export type GalleryItem = {
     shortDescription?: TranslationsDict;
     publicUrl?: string;
     partnerId?: string;
+    data?: string;
 };
 
 export type GalleryItemShort = Pick<
