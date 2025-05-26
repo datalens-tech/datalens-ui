@@ -5,5 +5,6 @@
   "label_all_entries": "Все работы",
   "label_best-works": "Лучшие работы",
   "label_error": "Произошла ошибка",
-  "label_gallery": "DataLens Gallery"
+  "label_gallery": "DataLens Gallery",
+  "label_not_found": "Работа не найдена"
 }

@@ -7,7 +7,7 @@ import {I18n} from 'i18n';
 import type {ValueOf} from 'shared';
 import {ErrorContentTypes, Feature} from 'shared';
 import {DL} from 'ui/constants/common';
-import type {DataLensApiError, ParsedError} from 'ui/typings';
+import {type DataLensApiError, type ParsedError, isParsedError} from 'ui/typings';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 import Utils from 'ui/utils/utils';
@@ -156,9 +156,12 @@ class ErrorContent extends React.PureComponent<ErrorContentProps> {
 
     renderDebugInfo() {
         const {error, noControls = false} = this.props;
-        const {requestId, traceId: traceIdFromResponse} = error
-            ? Utils.parseErrorResponse(error)
-            : {};
+
+        let parsedError: ParsedError | undefined;
+        if (error) {
+            parsedError = isParsedError(error) ? error : Utils.parseErrorResponse(error);
+        }
+        const {requestId, traceId: traceIdFromResponse} = parsedError || {};
 
         const reqId = this.props.reqId || requestId;
         const traceId = this.props.traceId || traceIdFromResponse;

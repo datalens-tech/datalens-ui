@@ -18,7 +18,6 @@ import {
 } from '@gravity-ui/uikit';
 import type {ButtonProps, IconData} from '@gravity-ui/uikit';
 import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
-import type {SerializedError} from '@reduxjs/toolkit';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {useHistory, useLocation, useParams} from 'react-router-dom';
@@ -469,20 +468,21 @@ export function CardPage() {
     }
 
     if (error || !data) {
-        const parsedError = Utils.parseErrorResponse(error || ({} satisfies SerializedError));
+        const parsedError = Utils.parseRtkQueryError(error);
 
         const {status, code, message = galleryI18n('label_error'), details} = parsedError;
 
         const isNotFound = code === ErrorContentTypes.NOT_FOUND || status === 404;
 
         const canRetry = !isNotFound;
+        const errorTitle = isNotFound ? galleryI18n('label_not_found') : details?.title ?? message;
 
         return (
             <div className={b('error')}>
                 <ErrorContent
                     error={parsedError}
                     type={code}
-                    title={details?.title ?? message}
+                    title={errorTitle}
                     showDebugInfo={!isNotFound}
                     action={
                         canRetry
