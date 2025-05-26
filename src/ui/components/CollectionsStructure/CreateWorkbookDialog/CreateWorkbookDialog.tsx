@@ -50,7 +50,7 @@ export type OpenDialogCreateWorkbookArgs = {
 export type PublicGalleryData = {
     title: string;
     id: string;
-    desctioption?: string;
+    description?: string;
     data: string;
 };
 
@@ -380,7 +380,7 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
         <WorkbookDialog
             title={title}
             titleValue={workbookInitialTitle}
-            descriptionValue={publicGalleryState?.desctioption || ''}
+            descriptionValue={publicGalleryState?.description || ''}
             textButtonApply={i18n('action_create')}
             open={open}
             isLoading={isLoading}

@@ -120,7 +120,7 @@ export const CollectionPage = (props: RouteComponentProps) => {
                         publicGallery: {
                             id: publicGalleryEntry.id,
                             title: publicGalleryEntry.title[DL.USER_LANG] || '',
-                            desctioption: publicGalleryEntry.description?.[DL.USER_LANG] || '',
+                            description: publicGalleryEntry.description?.[DL.USER_LANG] || '',
                             data: publicGalleryEntry.data,
                         },
                     });
