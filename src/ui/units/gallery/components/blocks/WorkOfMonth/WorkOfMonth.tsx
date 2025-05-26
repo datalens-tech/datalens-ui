@@ -66,8 +66,8 @@ export const WorkOfMonth = ({id}: {id: string}) => {
                     <div className={b('title', {media: activeMediaQuery})}>{title}</div>
                     {!isActiveMediaQueryS && <div className={b('description')}>{description}</div>}
                     {!isActiveMediaQueryS && (
-                        <div className={b('actions')} onClick={handleOpen}>
-                            <Button size="l" view="action">
+                        <div className={b('actions')}>
+                            <Button size="l" view="action" onClick={handleOpen}>
                                 {i18n('button_open')}
                             </Button>
                             <Button size="l" view="flat" onClick={handleClick}>

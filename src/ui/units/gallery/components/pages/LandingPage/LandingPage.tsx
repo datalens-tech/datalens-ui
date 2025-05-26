@@ -148,7 +148,9 @@ function PromoBlockRow({galleryItems, activeMediaQuery, editorChoiceIds}: PromoB
     const themeType = useThemeType();
     const itemsByLabels = groupGalleryItemsByLabels(galleryItems);
     const primaryItems = galleryItems.filter((item) => editorChoiceIds?.includes(item.id));
-    const primaryImagesProps: AsyncImageProps[] = primaryItems
+    const primaryImagesProps: AsyncImageProps[] = sortBy(primaryItems, (item) =>
+        editorChoiceIds?.indexOf(item.id),
+    )
         .slice(0, 3)
         .map((item, index, list) => {
             const opacity = activeMediaQuery === 's' ? 1 : 1 - (list.length - 1 - index) * 0.1;
