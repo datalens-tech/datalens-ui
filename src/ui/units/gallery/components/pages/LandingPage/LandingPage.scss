@@ -95,6 +95,11 @@ $block: '.#{variables.$ns}-landing';
         }
     }
 
+    &__promo-block-link-wrapper {
+        text-decoration: none;
+        color: inherit;
+    }
+
     &__promo-block-item-flex {
         display: flex;
         flex-direction: column;

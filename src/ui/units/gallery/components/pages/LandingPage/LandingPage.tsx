@@ -14,7 +14,7 @@ import {
     useThemeType,
 } from '@gravity-ui/uikit';
 import sortBy from 'lodash/sortBy';
-import {useHistory} from 'react-router';
+import {Link as RouterLink} from 'react-router-dom';
 import type {GalleryItemShort} from 'shared/types';
 import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 import type {AsyncImageProps} from 'ui/components/AsyncImage/AsyncImage';
@@ -74,67 +74,65 @@ function PromoBlockItem({
     category,
     icon,
 }: PromoBlockItemProps) {
-    const history = useHistory();
-
-    const handleClick = React.useCallback(() => {
-        const url = getAllPageUrl({category});
-        history.push(url);
-    }, [history, category]);
-
     return (
-        <Card
-            className={b('promo-block-item-flex', {primary, media: activeMediaQuery})}
-            view="clear"
-            type="action"
-            onClick={handleClick}
-        >
-            <div className={b('promo-block-item-title', {primary})}>
-                {title}
-                <span className={b('promo-block-item-title-counter', {primary})}>
-                    &nbsp;·&nbsp;{counter}
-                </span>
-                {icon && <ArrowRight />}
-            </div>
-            <div className={b('promo-block-item-images-container', {primary})}>
-                {imageProps.map((props, index) => {
-                    let style: React.CSSProperties = {};
-                    if (imageProps.length > 1) {
-                        style = primary
-                            ? {
-                                  top: `${(imageProps.length - 1 - index) * 20}%`,
-                                  left: `${(imageProps.length - 1 - index) * 18}%`,
-                                  ...(activeMediaQuery === 's' ? {width: '75%'} : {height: '110%'}),
-                              }
-                            : {
-                                  top: `${index * 20}%`,
-                                  left: `${(imageProps.length - 1 - index) * 20}%`,
-                                  ...(activeMediaQuery === 's' ? {width: '90%'} : {height: '110%'}),
-                              };
-                    } else {
-                        style = {
-                            ...(activeMediaQuery === 's' ? {width: '105%'} : {height: '110%'}),
-                        };
-                    }
+        <RouterLink className={b('promo-block-link-wrapper')} to={getAllPageUrl({category})}>
+            <Card
+                className={b('promo-block-item-flex', {primary, media: activeMediaQuery})}
+                view="clear"
+                type="action"
+            >
+                <div className={b('promo-block-item-title', {primary})}>
+                    {title}
+                    <span className={b('promo-block-item-title-counter', {primary})}>
+                        &nbsp;·&nbsp;{counter}
+                    </span>
+                    {icon && <ArrowRight />}
+                </div>
+                <div className={b('promo-block-item-images-container', {primary})}>
+                    {imageProps.map((props, index) => {
+                        let style: React.CSSProperties = {};
+                        if (imageProps.length > 1) {
+                            style = primary
+                                ? {
+                                      top: `${(imageProps.length - 1 - index) * 20}%`,
+                                      left: `${(imageProps.length - 1 - index) * 18}%`,
+                                      ...(activeMediaQuery === 's'
+                                          ? {width: '75%'}
+                                          : {height: '110%'}),
+                                  }
+                                : {
+                                      top: `${index * 20}%`,
+                                      left: `${(imageProps.length - 1 - index) * 20}%`,
+                                      ...(activeMediaQuery === 's'
+                                          ? {width: '90%'}
+                                          : {height: '110%'}),
+                                  };
+                        } else {
+                            style = {
+                                ...(activeMediaQuery === 's' ? {width: '105%'} : {height: '110%'}),
+                            };
+                        }
 
-                    return (
-                        <div
-                            key={`promo-image-${index}`}
-                            className={b('promo-block-item-image-container', {primary})}
-                            style={style}
-                        >
-                            <AsyncImage
-                                className={b('promo-block-item-image', {
-                                    primary,
-                                    media: activeMediaQuery,
-                                })}
-                                showSkeleton={true}
-                                {...props}
-                            />
-                        </div>
-                    );
-                })}
-            </div>
-        </Card>
+                        return (
+                            <div
+                                key={`promo-image-${index}`}
+                                className={b('promo-block-item-image-container', {primary})}
+                                style={style}
+                            >
+                                <AsyncImage
+                                    className={b('promo-block-item-image', {
+                                        primary,
+                                        media: activeMediaQuery,
+                                    })}
+                                    showSkeleton={true}
+                                    {...props}
+                                />
+                            </div>
+                        );
+                    })}
+                </div>
+            </Card>
+        </RouterLink>
     );
 }
 

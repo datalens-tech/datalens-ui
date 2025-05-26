@@ -255,7 +255,19 @@ export function AllPage() {
                     <Col m="4" s="12">
                         <Select
                             filterable={true}
-                            onUpdate={(value) => setCategory(value[0])}
+                            onUpdate={(value) => {
+                                const newCategory = value[0];
+                                const urlSearchParams = new URLSearchParams(searchParams);
+
+                                if (newCategory === SPECIAL_CATEGORY.ALL) {
+                                    urlSearchParams.delete(URL_FILTER_PARAMS.CATEGORY);
+                                } else {
+                                    urlSearchParams.set(URL_FILTER_PARAMS.CATEGORY, newCategory);
+                                }
+
+                                history.push(`?${urlSearchParams.toString()}`);
+                                setCategory(newCategory);
+                            }}
                             placeholder={i18n('filter_category_placeholder')}
                             size="l"
                             value={[category]}
