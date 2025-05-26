@@ -26,7 +26,7 @@ export type GalleryItem = {
 
 export type GalleryItemShort = Pick<
     GalleryItem,
-    'createdBy' | 'id' | 'images' | 'labels' | 'title'
+    'createdAt' | 'createdBy' | 'id' | 'images' | 'labels' | 'title'
 >;
 
 export type GalleryItemList = GalleryItemShort[];
