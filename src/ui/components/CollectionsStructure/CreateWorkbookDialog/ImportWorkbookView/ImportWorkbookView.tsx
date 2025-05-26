@@ -56,7 +56,9 @@ export const ImportWorkbookView = ({status, importId}: ImportWorkbookViewProps) 
             }
 
             {
-                const docsUrl = formDocsEndpointDL('/workbooks-collections/export-and-import');
+                const docsUrl = formDocsEndpointDL(
+                    '/workbooks-collections/export-import-notifications',
+                );
                 const preparedNotifications = notifications
                     ? transformNotifications(notifications).notifications
                     : [];
@@ -74,11 +76,7 @@ export const ImportWorkbookView = ({status, importId}: ImportWorkbookViewProps) 
                             ))}
                         </Flex>
                         {docsUrl && (
-                            <Link
-                                target="_blank"
-                                href={`${docsUrl}#notifications`}
-                                className={spacing({mt: 4})}
-                            >
+                            <Link target="_blank" href={docsUrl} className={spacing({mt: 4})}>
                                 {notificationsI18n('label_info-documentation-notifications')}
                             </Link>
                         )}

@@ -9,7 +9,7 @@ import type {GetEntriesEntryResponse} from 'shared/schema/us/types';
 import type {NotificationLevel} from 'shared/types/meta-manager';
 import {EntryRow} from 'ui/components/EntryRow/EntryRow';
 
-import {getNotificationTitleByCode} from './helpers';
+import {getNotificationTitle} from './helpers';
 
 import './EntriesNotificationCut.scss';
 
@@ -86,7 +86,7 @@ export const EntriesNotificationCut = ({
     const defaultExpanded = level === 'critical';
     const theme = LEVEL_TO_THEME_MAP[level] || 'info';
 
-    const notificationTitle = code ? getNotificationTitleByCode(code) : title;
+    const notificationTitle = getNotificationTitle(code, title);
 
     return (
         <Flex gap={3} className={b('cut')}>
