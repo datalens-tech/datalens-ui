@@ -247,6 +247,7 @@ export function AllPage() {
                     <Col m="8" s="12">
                         <TextInput
                             defaultValue={search}
+                            hasClear={true}
                             size="l"
                             placeholder={i18n('filter_search_placeholder')}
                             onUpdate={setSearch}
