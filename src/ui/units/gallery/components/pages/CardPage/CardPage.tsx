@@ -13,6 +13,7 @@ import {
     Link,
     Row,
     Text,
+    spacing,
     useLayoutContext,
     useThemeType,
 } from '@gravity-ui/uikit';
@@ -490,7 +491,11 @@ export function CardPage({isPromo}: {isPromo?: boolean}) {
                     description={details?.description}
                     renderAction={
                         canRetry
-                            ? () => <Button onClick={refetch}>{i18n('label_retry')}</Button>
+                            ? () => (
+                                  <Button className={spacing({mt: 2})} onClick={refetch}>
+                                      {i18n('label_retry')}
+                                  </Button>
+                              )
                             : undefined
                     }
                 />
