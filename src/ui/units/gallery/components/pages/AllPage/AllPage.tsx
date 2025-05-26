@@ -16,12 +16,20 @@ import {useHistory, useLocation} from 'react-router-dom';
 import {GALLERY_ITEM_CATEGORY} from 'shared/constants';
 import type {GalleryItemShort} from 'shared/types';
 import {ActionPanel} from 'ui/components/ActionPanel';
+import {DL} from 'ui/constants';
 
 import {useGetGalleryItemsQuery, useGetGalleryMetaQuery} from '../../../store/api';
 import {GalleryCardPreview} from '../../blocks';
-import {block, getCategoryLabelTitle, getLang} from '../../utils';
+import {
+    block,
+    galleryI18n,
+    getCategoryLabelTitle,
+    getLang,
+    galleryAllPageI18n as i18n,
+} from '../../utils';
 import type {CnMods} from '../../utils';
 import {SPECIAL_CATEGORY, URL_FILTER_PARAMS} from '../constants';
+import {useActionPanelLayout} from '../hooks/useActionPanelLayout';
 
 import './AllPage.scss';
 
@@ -93,11 +101,11 @@ function getCategorySelectOptionContent(value: string) {
 
     switch (value) {
         case SPECIAL_CATEGORY.ALL: {
-            content = 'All categories';
+            content = i18n('category_all');
             break;
         }
         case SPECIAL_CATEGORY.EDITORS_CHOICE: {
-            content = 'Editors choice';
+            content = galleryI18n('label_best-works');
             break;
         }
         default: {
@@ -141,7 +149,9 @@ export function AllPage() {
             }
         }
     }, [availableCategories, isLoading, items.length, searchParams]);
-    const baseMods: CnMods = {media: activeMediaQuery};
+
+    const isPromo = DL.IS_NOT_AUTHENTICATED;
+    const baseMods: CnMods = {media: activeMediaQuery, maxWidth: isPromo};
 
     const lang = getLang();
     const themeType = useThemeType();
@@ -158,6 +168,8 @@ export function AllPage() {
         new Set([...CATEGORIES_SELECT_VALUES, ...availableCategories]),
     );
 
+    const {pageOffset, actionPanelRef} = useActionPanelLayout();
+
     if (isLoading || isMetaLoading) {
         return (
             <div className={b('loader')}>
@@ -171,15 +183,24 @@ export function AllPage() {
             <ActionPanel
                 leftItems={
                     <Breadcrumbs navigate={(href) => history.push(href)}>
-                        <Breadcrumbs.Item href="/gallery">Gallery</Breadcrumbs.Item>
-                        <Breadcrumbs.Item disabled={true}>All entries</Breadcrumbs.Item>
+                        <Breadcrumbs.Item href="/gallery">
+                            {galleryI18n('label_gallery')}
+                        </Breadcrumbs.Item>
+                        <Breadcrumbs.Item disabled={true}>
+                            {galleryI18n('label_all_entries')}
+                        </Breadcrumbs.Item>
                     </Breadcrumbs>
                 }
+                wrapperRef={isPromo ? actionPanelRef : undefined}
+                pageOffset={isPromo ? pageOffset : undefined}
             />
-            <Container className={b('container', baseMods)} style={{maxWidth: '1032px'}}>
+            <Container
+                className={b('container', baseMods)}
+                style={{maxWidth: isPromo ? undefined : '1032px'}}
+            >
                 <Row space="0" style={{marginTop: 24}}>
                     <Col s="12">
-                        <Text variant="header-2">All entries</Text>
+                        <Text variant="header-2">{i18n('title_all_entries')}</Text>
                     </Col>
                 </Row>
                 <Row space="6" style={{marginTop: 0, marginBottom: 24}}>
@@ -187,14 +208,14 @@ export function AllPage() {
                         <TextInput
                             defaultValue={search}
                             size="l"
-                            placeholder="Search by name"
+                            placeholder={i18n('filter_search_placeholder')}
                             onUpdate={setSearch}
                         />
                     </Col>
                     <Col m="4" s="12">
                         <Select
                             onUpdate={(value) => setCategory(value[0])}
-                            placeholder="Category"
+                            placeholder={i18n('filter_category_placeholder')}
                             size="l"
                             value={[category]}
                             width="max"

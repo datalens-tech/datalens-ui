@@ -13,6 +13,7 @@ import {
     Link,
     Row,
     Text,
+    spacing,
     useLayoutContext,
     useThemeType,
 } from '@gravity-ui/uikit';
@@ -26,7 +27,7 @@ import {ActionPanel} from 'ui/components/ActionPanel';
 import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
-import {URL_OPTIONS} from 'ui/constants';
+import {DL, URL_OPTIONS} from 'ui/constants';
 import {useMarkdown} from 'ui/hooks/useMarkdown';
 import {showToast} from 'ui/store/actions/toaster';
 import type {DataLensApiError} from 'ui/typings';
@@ -35,9 +36,16 @@ import Utils from 'ui/utils';
 
 import {GalleryCardLabels, GalleryCardPreview, SectionHeader} from '../../blocks';
 import type {ActiveMediaQuery} from '../../types';
-import {block, getGalleryItemUrl, getLang} from '../../utils';
+import {
+    block,
+    galleryI18n,
+    getGalleryItemUrl,
+    getLang,
+    galleryCardPageI18n as i18n,
+} from '../../utils';
 import type {CnMods} from '../../utils';
 import {CARD_PAGE_URL_PARAMS, PARTNER_FORM_LINK} from '../constants';
+import {useActionPanelLayout} from '../hooks/useActionPanelLayout';
 
 import {FullscreenGallery} from './FullscreenGallery/FullscreenGallery';
 import {PreviewCard} from './PreviewCard/PreviewCard';
@@ -47,17 +55,7 @@ import './CardPage.scss';
 const b = block('card');
 const toasterI18n = I18n.keyset('component.entry-context-menu.view');
 
-// TODO: CHARTS-11481
-const i18n = (key: string) => {
-    switch (key) {
-        case 'label_unknown-error':
-            return 'An error occured';
-        case 'label_retry':
-            return 'Retry';
-        default:
-            return key;
-    }
-};
+const isPromo = DL.IS_NOT_AUTHENTICATED;
 
 interface IconWithTextProps {
     iconData: IconData;
@@ -138,7 +136,7 @@ function ContactPartnerButton(props: {
 
     return (
         <Button className={b('contact-partner-btn', mods)} {...buttonProps} onClick={handleClick}>
-            Contact a partner
+            {i18n('button_contact_partner')}
         </Button>
     );
 }
@@ -162,6 +160,8 @@ function CardActionPanel({
     const isActiveMediaQueryS = activeMediaQuery === 's';
     const mods: CnMods = {media: activeMediaQuery};
 
+    const {pageOffset, actionPanelRef} = useActionPanelLayout();
+
     let leftItems: React.ReactNode = null;
 
     if (showPreview) {
@@ -182,7 +182,7 @@ function CardActionPanel({
     } else {
         leftItems = (
             <Breadcrumbs navigate={(href) => history.push(href)}>
-                <Breadcrumbs.Item href="/gallery">Gallery</Breadcrumbs.Item>
+                <Breadcrumbs.Item href="/gallery">{galleryI18n('label_gallery')}</Breadcrumbs.Item>
                 <Breadcrumbs.Item disabled={true}>{entry.title[lang]}</Breadcrumbs.Item>
             </Breadcrumbs>
         );
@@ -210,14 +210,21 @@ function CardActionPanel({
                             <Icon data={Xmark} />
                         </Button.Icon>
                     ) : (
-                        'Open'
+                        galleryI18n('button_open')
                     )}
                 </Button>
             </Flex>
         );
     }
 
-    return <ActionPanel leftItems={leftItems} rightItems={rightItems} />;
+    return (
+        <ActionPanel
+            leftItems={leftItems}
+            rightItems={rightItems}
+            wrapperRef={isPromo ? actionPanelRef : undefined}
+            pageOffset={isPromo ? pageOffset : undefined}
+        />
+    );
 }
 
 interface CardPreviewProps {
@@ -330,7 +337,7 @@ function CardDescription({lang, description, shortDescription}: CardDescriptionP
                     view="secondary"
                     visitable={false}
                 >
-                    {isExpanded ? 'Collapse' : 'Show full'}
+                    {isExpanded ? i18n('button_collapse') : i18n('button_show_full')}
                 </Link>
             )}
         </Flex>
@@ -342,11 +349,12 @@ interface CardContentProps {
     entry: GalleryItem;
     togglePreview: () => void;
     lang: string;
+    maxWidth?: boolean;
 }
 
-function CardContent({activeMediaQuery, entry, togglePreview, lang}: CardContentProps) {
+function CardContent({activeMediaQuery, entry, togglePreview, lang, maxWidth}: CardContentProps) {
     const isActiveMediaQueryS = activeMediaQuery === 's';
-    const mods: CnMods = {media: activeMediaQuery};
+    const mods: CnMods = {media: activeMediaQuery, maxWidth};
     const themeType = useThemeType();
     const {data: galleryItems = []} = useGetGalleryItemsQuery();
     const otherWorks = galleryItems
@@ -370,7 +378,7 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang}: CardContent
                         <Flex className={b('actions-right-flex', mods)}>
                             <LinkButton entryId={entry.id} size="xl" />
                             <Button view="action" size="xl" width="max" onClick={togglePreview}>
-                                Open
+                                {galleryI18n('button_open')}
                             </Button>
                         </Flex>
                         <ContactPartnerButton
@@ -403,7 +411,10 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang}: CardContent
             </Row>
             <Row space="6" style={{marginTop: 24}}>
                 <Col s="12">
-                    <SectionHeader activeMediaQuery={activeMediaQuery} title="Other works" />
+                    <SectionHeader
+                        activeMediaQuery={activeMediaQuery}
+                        title={i18n('section_other_works')}
+                    />
                 </Col>
                 {otherWorks.map((item) => {
                     return (
@@ -461,7 +472,7 @@ export function CardPage() {
         const {
             code,
             status,
-            message = i18n('label_unknown-error'),
+            message = galleryI18n('label_error'),
             details,
         } = error && 'message' in error ? Utils.parseErrorResponse(error as DataLensApiError) : {};
 
@@ -477,7 +488,11 @@ export function CardPage() {
                     description={details?.description}
                     renderAction={
                         canRetry
-                            ? () => <Button onClick={refetch}>{i18n('label_retry')}</Button>
+                            ? () => (
+                                  <Button className={spacing({mt: 2})} onClick={refetch}>
+                                      {galleryI18n('button_retry')}
+                                  </Button>
+                              )
                             : undefined
                     }
                 />
@@ -505,6 +520,7 @@ export function CardPage() {
                     entry={data}
                     togglePreview={togglePreview}
                     lang={lang}
+                    maxWidth={isPromo}
                 />
             )}
         </React.Fragment>

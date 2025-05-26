@@ -27,6 +27,11 @@ $block: '.#{variables.$ns}-landing';
             padding-left: 20px;
             padding-right: 20px;
         }
+
+        &_maxWidth {
+            max-width: unset;
+            padding-inline: 0;
+        }
     }
 
     &__header {
@@ -193,6 +198,7 @@ $block: '.#{variables.$ns}-landing';
 
     &__add-card-description {
         @include text-body-3();
+        text-align: center;
     }
 
     &__add-card-button {
