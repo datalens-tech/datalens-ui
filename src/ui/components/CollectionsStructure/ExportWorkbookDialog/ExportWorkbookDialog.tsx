@@ -244,7 +244,7 @@ export const ExportWorkbookDialog: React.FC<Props> = ({
     const cancelButtonText =
         view === 'info' || isExportLoading ? i18n('button_cancel') : i18n('button_close');
 
-    const docsUrl = formDocsEndpointDL('/workbooks-collections/export-and-import');
+    const docsUrl = formDocsEndpointDL('/workbooks-collections/export-import-notifications');
 
     const renderBody = () => {
         if (view === 'info') {
@@ -284,11 +284,7 @@ export const ExportWorkbookDialog: React.FC<Props> = ({
                             ))}
                         </Flex>
                         {docsUrl && (
-                            <Link
-                                target="_blank"
-                                href={`${docsUrl}#notifications`}
-                                className={spacing({mt: 4})}
-                            >
+                            <Link target="_blank" href={docsUrl} className={spacing({mt: 4})}>
                                 {notificationsI18n('label_info-documentation-notifications')}
                             </Link>
                         )}
