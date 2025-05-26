@@ -57,7 +57,7 @@ type OwnProps = {
     };
     renderRevisionItemActions?: (item: GetRevisionsEntry, currentRevId: string) => React.ReactNode;
     wrapperRef?: React.Ref<HTMLDivElement>;
-    pageOffset?: string;
+    styles?: React.CSSProperties;
 };
 
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
@@ -156,10 +156,10 @@ class ActionPanel extends React.Component<Props, State> {
             deprecationWarning,
             renderRevisionItemActions,
             wrapperRef,
-            pageOffset,
+            styles,
         } = this.props;
 
-        const style: React.CSSProperties = {left: sidebarSize, paddingInline: pageOffset};
+        const style: React.CSSProperties = {left: sidebarSize, ...styles};
 
         const entry = this.getEntry();
 
