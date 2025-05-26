@@ -115,7 +115,7 @@ export const resetExportWorkbook = () => {
 const getEntriesMap = async (
     data: GetWorkbookExportStatusResponse | GetWorkbookImportStatusResponse,
 ) => {
-    if (data.status !== 'success') {
+    if (data.status === 'pending') {
         return null;
     }
 
