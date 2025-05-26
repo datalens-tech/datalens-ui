@@ -244,8 +244,12 @@ export const AsideHeaderAdapter = ({renderContent, logoIcon}: AsideHeaderAdapter
                     }}
                     enableTooltip={false}
                     popupVisible={currentPopup === PopupName.Main}
-                    popupOffset={[0, 8]}
-                    onClosePopup={() => setCurrentPopup(null)}
+                    popupOffset={{mainAxis: 0, crossAxis: 8}}
+                    onOpenChangePopup={(isOpen) => {
+                        if (!isOpen) {
+                            setCurrentPopup(null);
+                        }
+                    }}
                     renderPopupContent={() => {
                         return (
                             <List
@@ -295,8 +299,12 @@ export const AsideHeaderAdapter = ({renderContent, logoIcon}: AsideHeaderAdapter
                         }}
                         enableTooltip={false}
                         popupVisible={currentPopup === PopupName.Account}
-                        popupOffset={[0, 8]}
-                        onClosePopup={handleClosePopup}
+                        popupOffset={{mainAxis: 0, crossAxis: 8}}
+                        onOpenChangePopup={(isOpen) => {
+                            if (!isOpen) {
+                                handleClosePopup();
+                            }
+                        }}
                         renderPopupContent={() => <UserMenu onClose={handleClosePopup} />}
                     />
                 )}

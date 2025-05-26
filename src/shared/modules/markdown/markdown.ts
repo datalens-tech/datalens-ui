@@ -31,7 +31,7 @@ import {unifyTermIds} from './markdown-plugins/unify-terms';
 
 type RenderHtmlArgs = {
     text?: string;
-    lang: Lang;
+    lang: string;
     plugins?: MarkdownItPluginCb[];
 };
 
@@ -116,7 +116,7 @@ export function renderHTML(args: RenderHtmlArgs): RenderHtmlOutput {
         result: {html, meta},
     } = yfmTransform(preparedTextWithTermLinks, {
         plugins,
-        lang,
+        lang: lang as Lang,
         vars: {},
         disableLiquid: true,
         needToSanitizeHtml: true,
