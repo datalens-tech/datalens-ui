@@ -27,7 +27,7 @@ const NOTIFICATIONS_BY_CODE: Record<string, string> = {
 
 export const transformNotifications = (
     notifications: EntryNotification[] = [],
-): {notifications: PreparedNotificationType[]; details: string} => {
+): {notifications: PreparedNotificationType[]; details: string | null} => {
     const notificationMap = new Map<string, PreparedNotificationType>();
     const details: string[] = [];
 
@@ -36,7 +36,9 @@ export const transformNotifications = (
     notifications.forEach((notification) => {
         const key = notification.code;
 
-        details.push(JSON.stringify(notification.details));
+        if (notification.details) {
+            details.push(JSON.stringify(notification.details));
+        }
 
         if (!notificationMap.has(key)) {
             notificationMap.set(key, {
@@ -60,7 +62,7 @@ export const transformNotifications = (
     });
 
     const preparedNotifications: PreparedNotificationType[] = Array.from(notificationMap.values());
-    const preparedDetails = details.join('\n');
+    const preparedDetails = details.length > 0 ? details.join('\n') : null;
 
     if (hasCritical) {
         return {
