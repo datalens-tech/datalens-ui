@@ -20,13 +20,21 @@ import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 import type {AsyncImageProps} from 'ui/components/AsyncImage/AsyncImage';
 import type {CreateIllustrationProps} from 'ui/components/Illustration/types';
 import {createIllustration} from 'ui/components/Illustration/utils';
+import {InterpolatedText} from 'ui/components/InterpolatedText/InterpolatedText';
 import {DL} from 'ui/constants';
 
 import {useGetGalleryItemsQuery, useGetGalleryMetaQuery} from '../../../store/api';
 import {GalleryCardPreview, SectionHeader} from '../../blocks';
 import {WorkOfMonth} from '../../blocks/WorkOfMonth/WorkOfMonth';
 import type {ActiveMediaQuery} from '../../types';
-import {block, getAllPageUrl, getLang, groupGalleryItemsByLabels} from '../../utils';
+import {
+    block,
+    galleryI18n,
+    getAllPageUrl,
+    getLang,
+    groupGalleryItemsByLabels,
+    galleryLandingI18n as i18n,
+} from '../../utils';
 import type {CnMods} from '../../utils';
 import {ADD_DASH_FORM_LINK, PROMO_BLOCK_CATEGORIES, SPECIAL_CATEGORY} from '../constants';
 
@@ -173,7 +181,7 @@ function PromoBlockRow({galleryItems, activeMediaQuery, editorChoiceIds}: PromoB
         <Row className={b('promo-block', {media: activeMediaQuery})} space="6">
             <Col l="6" m="6" s="12">
                 <PromoBlockItem
-                    title="Editor's choice"
+                    title={galleryI18n('label_best-works')}
                     counter={editorChoiceIds?.length}
                     primary={true}
                     activeMediaQuery={activeMediaQuery}
@@ -254,10 +262,9 @@ export function LandingPage() {
                 </Col>
                 <Col l="6" m="6" s="12">
                     <Flex className={b('header-title-flex', baseMods)}>
-                        <h1 className={b('header-title')}>Gallery</h1>
+                        <h1 className={b('header-title')}>{i18n('header_title')}</h1>
                         <span className={b('header-description')}>
-                            Use ready-made dashboards and charts,
-                            <br /> share your work with the community
+                            {i18n('header_description')}
                         </span>
                     </Flex>
                 </Col>
@@ -316,13 +323,13 @@ export function LandingPage() {
             <Row className={b('add-card', baseMods)} space="0">
                 <Col s="12">
                     <Flex className={b('add-card-flex')}>
-                        <div className={b('add-card-title')}>Add your example</div>
+                        <div className={b('add-card-title')}>{i18n('section_add_example')}</div>
                         <div className={b('add-card-description')}>
-                            Share your solutions and inspire others
+                            <InterpolatedText br text={i18n('section_add_description')} />
                         </div>
                         <Link view="normal" target="_blank" href={ADD_DASH_FORM_LINK}>
                             <Button className={b('add-card-button')} size="xl" view="action">
-                                Add dashboard
+                                {i18n('button_add_dashboard')}
                             </Button>
                         </Link>
                     </Flex>
