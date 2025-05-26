@@ -198,6 +198,7 @@ $block: '.#{variables.$ns}-landing';
 
     &__add-card-description {
         @include text-body-3();
+        text-align: center;
     }
 
     &__add-card-button {
