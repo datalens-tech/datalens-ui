@@ -2,7 +2,7 @@ import type {DatePickerProps} from '@gravity-ui/date-components';
 import type {
     ButtonProps,
     CheckboxProps,
-    RadioButtonProps,
+    SegmentedRadioGroupProps as RadioButtonProps,
     RadioGroupProps,
     SelectProps,
     TextAreaProps,

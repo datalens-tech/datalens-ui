@@ -200,16 +200,13 @@ class DialogColorGradientBody extends React.Component<Props> {
                                     {i18n('wizard', 'label_thresholds')}
                                     <HelpMark
                                         popoverProps={{
-                                            content: (
-                                                <span>
-                                                    {i18n('wizard', 'label_tooltip-thresholds')}
-                                                </span>
-                                            ),
                                             placement: ['bottom'],
                                             closeDelay: TOOLTIP_DELAY_CLOSING,
                                         }}
                                         className={b('hint-icon')}
-                                    />
+                                    >
+                                        {i18n('wizard', 'label_tooltip-thresholds')}
+                                    </HelpMark>
                                 </span>
                             </Checkbox>
                         }

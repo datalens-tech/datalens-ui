@@ -43,8 +43,8 @@ export const ActionErrorView = <T extends unknown>({
     return (
         <Popover
             ref={ref}
-            className={b('alert')}
-            tooltipClassName={b('alert-tooltip')}
+            floatingClassName={b('alert')}
+            className={b('alert-tooltip')}
             contentClassName={b('alert-tooltip-content')}
             content={content}
             placement={POPOVER_PLACEMENT}

@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {
+    Breadcrumbs,
     Col,
     Container,
     Loader,
@@ -11,7 +12,6 @@ import {
     useLayoutContext,
     useThemeType,
 } from '@gravity-ui/uikit';
-import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
 import {useHistory, useLocation} from 'react-router-dom';
 import {ActionPanel} from 'ui/components/ActionPanel';
 

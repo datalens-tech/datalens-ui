@@ -1147,12 +1147,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
         const {valid} = this.state;
 
         return (
-            <Dialog
-                open={true}
-                className={b()}
-                onClose={this.props.onCancel}
-                disableFocusTrap={true}
-            >
+            <Dialog open={true} className={b()} onClose={this.props.onCancel}>
                 <div className={b('content')}>
                     <Dialog.Header caption={i18n('wizard', 'label_chart-settings')} />
                     <Dialog.Body>{this.renderModalBody()}</Dialog.Body>

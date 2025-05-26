@@ -59,7 +59,7 @@ export const AdditionalTitleContent = (props: AdditionalTitleContentProps) => {
                 <Popover
                     ref={popoverRef}
                     anchorRef={loginButtonRef}
-                    tooltipClassName={b('gauth-popover')}
+                    className={b('gauth-popover')}
                     content={<div>{i18n('label_google-auth-help')}</div>}
                     placement="bottom"
                     initialOpen={initialGAuthPopoverOpen}

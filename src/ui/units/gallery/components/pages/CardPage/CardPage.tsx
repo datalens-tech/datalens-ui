@@ -3,6 +3,7 @@ import React from 'react';
 import {dateTime} from '@gravity-ui/date-utils';
 import {ArrowLeft, ArrowShapeTurnUpRight, Calendar, Person, Xmark} from '@gravity-ui/icons';
 import {
+    Breadcrumbs,
     Button,
     Card,
     Col,
@@ -15,7 +16,6 @@ import {
     useThemeType,
 } from '@gravity-ui/uikit';
 import type {ButtonProps, IconData} from '@gravity-ui/uikit';
-import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
 import {useHistory} from 'react-router-dom';
 import {ActionPanel} from 'ui/components/ActionPanel';
 import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';

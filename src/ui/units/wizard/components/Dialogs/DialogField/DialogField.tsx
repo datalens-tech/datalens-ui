@@ -288,12 +288,7 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
         }
 
         return (
-            <Dialog
-                open={true}
-                onClose={this.props.onCancel}
-                disableFocusTrap={true}
-                className={b()}
-            >
+            <Dialog open={true} onClose={this.props.onCancel} className={b()}>
                 <div className={b(itemType)}>
                     <Dialog.Header
                         caption={item.fakeTitle || item.title}

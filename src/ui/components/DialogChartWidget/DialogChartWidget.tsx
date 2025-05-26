@@ -210,7 +210,6 @@ class DialogChartWidget extends React.PureComponent<
                 sidebarClassMixin={b('dialog-sidebar')}
                 contentClassMixin={b('content')}
                 bodyClassMixin={b('content-body')}
-                disableFocusTrap={true}
                 disableEscapeKeyDown={true}
                 withoutSidebar={withoutSidebar}
             />

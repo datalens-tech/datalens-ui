@@ -3,18 +3,21 @@ import React from 'react';
 import {FormRow} from '@gravity-ui/components';
 import {TITLE_DEFAULT_SIZES} from '@gravity-ui/dashkit';
 import {ChevronDown, PencilToLine} from '@gravity-ui/icons';
-import type {SegmentedRadioGroupOption as RadioButtonOption, RealTheme} from '@gravity-ui/uikit';
+import type {
+    SegmentedRadioGroupOptionProps as RadioButtonOptionProps,
+    RealTheme,
+} from '@gravity-ui/uikit';
 import {
     Button,
     Checkbox,
     Dialog,
     Icon,
+    NumberInput,
     SegmentedRadioGroup as RadioButton,
     Select,
     Text,
     TextInput,
 } from '@gravity-ui/uikit';
-import {unstable_NumberInput as NumberInput} from '@gravity-ui/uikit/unstable';
 import block from 'bem-cn-lite';
 import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
 import {i18n} from 'i18n';
@@ -34,7 +37,7 @@ import './DialogTitleWidget.scss';
 
 type RadioButtonFontSizeOption = DashTabItemTitleSize | 'custom';
 
-const FONT_SIZE_OPTIONS: RadioButtonOption<DashTabItemTitleSize>[] = [
+const FONT_SIZE_OPTIONS: RadioButtonOptionProps<DashTabItemTitleSize>[] = [
     {value: DashTabItemTitleSizes.XS, content: 'XS'},
     {value: DashTabItemTitleSizes.S, content: 'S'},
     {value: DashTabItemTitleSizes.M, content: 'M'},
@@ -42,7 +45,7 @@ const FONT_SIZE_OPTIONS: RadioButtonOption<DashTabItemTitleSize>[] = [
     {value: DashTabItemTitleSizes.XL, content: 'XL'},
 ];
 
-const CUSTOM_FONT_SIZE_OPTION: RadioButtonOption<RadioButtonFontSizeOption> = {
+const CUSTOM_FONT_SIZE_OPTION: RadioButtonOptionProps<RadioButtonFontSizeOption> = {
     value: 'custom',
     content: <Icon data={PencilToLine} size={16} />,
 };
@@ -151,7 +154,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
     const enableCustomFontSize =
         props.enableCustomFontSize || typeof openedItemData?.size === 'object';
 
-    const fontSizeOptions = React.useMemo<RadioButtonOption<RadioButtonFontSizeOption>[]>(
+    const fontSizeOptions = React.useMemo<RadioButtonOptionProps<RadioButtonFontSizeOption>[]>(
         () =>
             enableCustomFontSize
                 ? [...FONT_SIZE_OPTIONS, CUSTOM_FONT_SIZE_OPTION]

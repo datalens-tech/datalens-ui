@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {CircleQuestion, Gear, Sliders} from '@gravity-ui/icons';
-import type {AsideHeaderProps, AsideHeaderTopAlertProps, MenuItem} from '@gravity-ui/navigation';
+import type {AsideHeaderProps, MenuItem, TopAlertProps} from '@gravity-ui/navigation';
 import {AsideHeader, FooterItem} from '@gravity-ui/navigation';
 import type {IconData} from '@gravity-ui/uikit';
 import {List} from '@gravity-ui/uikit';
@@ -134,7 +134,7 @@ export const AsideHeaderAdapter = ({renderContent, logoIcon}: AsideHeaderAdapter
     }, []);
 
     const isReadOnly = isEnabledFeature(Feature.ReadOnlyMode);
-    const topAlert: AsideHeaderTopAlertProps | undefined = isReadOnly
+    const topAlert: TopAlertProps | undefined = isReadOnly
         ? {
               message: baseI18n('common.read-only', 'toast_editing-warning'),
           }
