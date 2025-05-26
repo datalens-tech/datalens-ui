@@ -178,8 +178,8 @@ export function AllPage({isPromo}: {isPromo?: boolean}) {
                         <Breadcrumbs.Item disabled={true}>All entries</Breadcrumbs.Item>
                     </Breadcrumbs>
                 }
-                pageOffset={pageOffset}
-                wrapperRef={actionPanelRef}
+                wrapperRef={isPromo ? actionPanelRef : undefined}
+                pageOffset={isPromo ? pageOffset : undefined}
             />
             <Container
                 className={b('container', baseMods)}

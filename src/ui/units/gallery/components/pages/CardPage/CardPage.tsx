@@ -150,6 +150,7 @@ interface CardActionPanelProps {
     showPreview: boolean;
     togglePreview: () => void;
     lang: string;
+    isPromo?: boolean;
 }
 
 function CardActionPanel({
@@ -158,6 +159,7 @@ function CardActionPanel({
     showPreview,
     togglePreview,
     lang,
+    isPromo,
 }: CardActionPanelProps) {
     const history = useHistory();
     const isActiveMediaQueryS = activeMediaQuery === 's';
@@ -224,8 +226,8 @@ function CardActionPanel({
         <ActionPanel
             leftItems={leftItems}
             rightItems={rightItems}
-            wrapperRef={actionPanelRef}
-            pageOffset={pageOffset}
+            wrapperRef={isPromo ? actionPanelRef : undefined}
+            pageOffset={isPromo ? pageOffset : undefined}
         />
     );
 }
@@ -504,6 +506,7 @@ export function CardPage({isPromo}: {isPromo?: boolean}) {
                 showPreview={showPreview}
                 togglePreview={togglePreview}
                 lang={lang}
+                isPromo={isPromo}
             />
             {showPreview ? (
                 <iframe
