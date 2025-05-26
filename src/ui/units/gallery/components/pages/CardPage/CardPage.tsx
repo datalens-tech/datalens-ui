@@ -27,7 +27,7 @@ import {ActionPanel} from 'ui/components/ActionPanel';
 import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
-import {URL_OPTIONS} from 'ui/constants';
+import {DL, URL_OPTIONS} from 'ui/constants';
 import {useMarkdown} from 'ui/hooks/useMarkdown';
 import {showToast} from 'ui/store/actions/toaster';
 import type {DataLensApiError} from 'ui/typings';
@@ -48,6 +48,8 @@ import './CardPage.scss';
 
 const b = block('card');
 const toasterI18n = I18n.keyset('component.entry-context-menu.view');
+
+const isPromo = DL.IS_NOT_AUTHENTICATED;
 
 // TODO: CHARTS-11481
 const i18n = (key: string) => {
@@ -151,7 +153,6 @@ interface CardActionPanelProps {
     showPreview: boolean;
     togglePreview: () => void;
     lang: string;
-    isPromo?: boolean;
 }
 
 function CardActionPanel({
@@ -160,7 +161,6 @@ function CardActionPanel({
     showPreview,
     togglePreview,
     lang,
-    isPromo,
 }: CardActionPanelProps) {
     const history = useHistory();
     const isActiveMediaQueryS = activeMediaQuery === 's';
@@ -438,7 +438,7 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang, maxWidth}: C
     );
 }
 
-export function CardPage({isPromo}: {isPromo?: boolean}) {
+export function CardPage() {
     const {activeMediaQuery} = useLayoutContext();
     const {search: searchParams} = useLocation();
     const history = useHistory();
@@ -511,7 +511,6 @@ export function CardPage({isPromo}: {isPromo?: boolean}) {
                 showPreview={showPreview}
                 togglePreview={togglePreview}
                 lang={lang}
-                isPromo={isPromo}
             />
             {showPreview ? (
                 <iframe

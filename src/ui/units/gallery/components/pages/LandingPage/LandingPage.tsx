@@ -20,6 +20,7 @@ import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 import type {AsyncImageProps} from 'ui/components/AsyncImage/AsyncImage';
 import type {CreateIllustrationProps} from 'ui/components/Illustration/types';
 import {createIllustration} from 'ui/components/Illustration/utils';
+import {DL} from 'ui/constants';
 
 import {useGetGalleryItemsQuery, useGetGalleryMetaQuery} from '../../../store/api';
 import {GalleryCardPreview, SectionHeader} from '../../blocks';
@@ -213,7 +214,7 @@ function PromoBlockRow({galleryItems, activeMediaQuery, editorChoiceIds}: PromoB
     );
 }
 
-export function LandingPage({isPromo}: {isPromo?: boolean}) {
+export function LandingPage() {
     const {activeMediaQuery} = useLayoutContext();
 
     const themeType = useThemeType();
@@ -230,6 +231,7 @@ export function LandingPage({isPromo}: {isPromo?: boolean}) {
 
     const galleryItems = data ?? [];
     const isActiveMediaQueryS = activeMediaQuery === 's';
+    const isPromo = DL.IS_NOT_AUTHENTICATED;
     const baseMods: CnMods = {media: activeMediaQuery, maxWidth: isPromo};
     const lang = getLang();
     const landingCategories = Array.isArray(metaData?.landingCategories)

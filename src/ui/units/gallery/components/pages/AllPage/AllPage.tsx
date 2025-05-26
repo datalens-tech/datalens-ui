@@ -16,6 +16,7 @@ import {useHistory, useLocation} from 'react-router-dom';
 import {GALLERY_ITEM_CATEGORY} from 'shared/constants';
 import type {GalleryItemShort} from 'shared/types';
 import {ActionPanel} from 'ui/components/ActionPanel';
+import {DL} from 'ui/constants';
 
 import {useGetGalleryItemsQuery, useGetGalleryMetaQuery} from '../../../store/api';
 import {GalleryCardPreview} from '../../blocks';
@@ -109,7 +110,7 @@ function getCategorySelectOptionContent(value: string) {
     return content;
 }
 
-export function AllPage({isPromo}: {isPromo?: boolean}) {
+export function AllPage() {
     const {activeMediaQuery} = useLayoutContext();
     const history = useHistory();
     const {search: searchParams} = useLocation();
@@ -142,6 +143,8 @@ export function AllPage({isPromo}: {isPromo?: boolean}) {
             }
         }
     }, [availableCategories, isLoading, items.length, searchParams]);
+
+    const isPromo = DL.IS_NOT_AUTHENTICATED;
     const baseMods: CnMods = {media: activeMediaQuery, maxWidth: isPromo};
 
     const lang = getLang();
