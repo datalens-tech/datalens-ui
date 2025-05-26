@@ -16,7 +16,6 @@ import {
 } from '@gravity-ui/uikit';
 import sortBy from 'lodash/sortBy';
 import {useHistory} from 'react-router';
-import {GALLERY_ITEM_CATEGORY} from 'shared/constants';
 import type {GalleryItemShort} from 'shared/types';
 import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 import type {AsyncImageProps} from 'ui/components/AsyncImage/AsyncImage';
@@ -26,7 +25,7 @@ import {createIllustration} from 'ui/components/Illustration/utils';
 import {useGetGalleryItemsQuery, useGetGalleryMetaQuery} from '../../../store/api';
 import {GalleryCardPreview, SectionHeader} from '../../blocks';
 import type {ActiveMediaQuery} from '../../types';
-import {block, getAllPageUrl, groupGalleryItemsByLabels} from '../../utils';
+import {block, getAllPageUrl, getLang, groupGalleryItemsByLabels} from '../../utils';
 import type {CnMods} from '../../utils';
 import {ADD_DASH_FORM_LINK, PROMO_BLOCK_CATEGORIES, SPECIAL_CATEGORY} from '../constants';
 
@@ -139,15 +138,13 @@ function PromoBlockItem({
 interface PromoBlockRowProps {
     galleryItems: GalleryItemShort[];
     activeMediaQuery?: ActiveMediaQuery;
-    editorChoice?: {
-        ids: string[];
-    };
+    editorChoiceIds?: string[];
 }
 
-function PromoBlockRow({galleryItems, activeMediaQuery, editorChoice}: PromoBlockRowProps) {
+function PromoBlockRow({galleryItems, activeMediaQuery, editorChoiceIds}: PromoBlockRowProps) {
     const themeType = useThemeType();
     const itemsByLabels = groupGalleryItemsByLabels(galleryItems);
-    const primaryItems = galleryItems.filter((item) => editorChoice?.ids.includes(item.id));
+    const primaryItems = galleryItems.filter((item) => editorChoiceIds?.includes(item.id));
     const primaryImagesProps: AsyncImageProps[] = primaryItems
         .slice(0, 3)
         .map((item, index, list) => {
@@ -182,7 +179,7 @@ function PromoBlockRow({galleryItems, activeMediaQuery, editorChoice}: PromoBloc
             <Col l="6" m="6" s="12">
                 <PromoBlockItem
                     title="Editor's choice"
-                    counter={editorChoice?.ids.length}
+                    counter={editorChoiceIds?.length}
                     primary={true}
                     activeMediaQuery={activeMediaQuery}
                     imageProps={primaryImagesProps}
@@ -224,8 +221,6 @@ function PromoBlockRow({galleryItems, activeMediaQuery, editorChoice}: PromoBloc
 
 export function LandingPage() {
     const {activeMediaQuery} = useLayoutContext();
-    const isActiveMediaQueryS = activeMediaQuery === 's';
-    const baseMods: CnMods = {media: activeMediaQuery};
     const themeType = useThemeType();
     const {isLoading: isDataLoading, data} = useGetGalleryItemsQuery();
     const {isLoading: isMetaLoading, data: metaData} = useGetGalleryMetaQuery();
@@ -239,6 +234,12 @@ export function LandingPage() {
     }
 
     const galleryItems = data ?? [];
+    const isActiveMediaQueryS = activeMediaQuery === 's';
+    const baseMods: CnMods = {media: activeMediaQuery};
+    const lang = getLang();
+    const landingCategories = Array.isArray(metaData?.landingCategories)
+        ? metaData.landingCategories
+        : [];
 
     return (
         <Container className={b('container', baseMods)}>
@@ -267,7 +268,7 @@ export function LandingPage() {
             <PromoBlockRow
                 galleryItems={galleryItems}
                 activeMediaQuery={activeMediaQuery}
-                editorChoice={metaData?.editorChoice}
+                editorChoiceIds={metaData?.editorChoice?.ids}
             />
             {/* Work of the month */}
             <Row className={b('work-of-the-month', baseMods)} space="0">
@@ -337,71 +338,48 @@ export function LandingPage() {
                     </Col>
                 )}
             </Row>
-            {/* The best of 2024 */}
-            <Row space="6" style={{marginTop: 24, marginBottom: isActiveMediaQueryS ? 24 : 48}}>
-                <Col s="12">
-                    <SectionHeader activeMediaQuery={activeMediaQuery} title="The best of 2024" />
-                </Col>
-                {galleryItems.slice(0, 3).map((item) => {
-                    return (
-                        <Col key={item.id} l="4" m="4" s="12">
-                            <GalleryCardPreview
-                                id={item.id}
-                                title={item.title}
-                                createdBy={item.createdBy}
-                                labels={item.labels}
-                                imageSrc={item.images?.[themeType]?.[0] || ''}
+            {landingCategories.map((landingCategoriy, i) => {
+                const isLastCategory = i === landingCategories.length - 1;
+                return (
+                    <Row
+                        key={`landing-category-${landingCategoriy}-${i}`}
+                        space="6"
+                        style={{
+                            marginTop: 24,
+                            marginBottom: isActiveMediaQueryS && !isLastCategory ? 24 : 48,
+                        }}
+                    >
+                        <Col s="12">
+                            <SectionHeader
+                                activeMediaQuery={activeMediaQuery}
+                                title={landingCategoriy.title[lang]}
+                                category={landingCategoriy.category}
                             />
                         </Col>
-                    );
-                })}
-            </Row>
-            {/* Editor examples */}
-            <Row space="6" style={{marginTop: 24, marginBottom: isActiveMediaQueryS ? 24 : 48}}>
-                <Col s="12">
-                    <SectionHeader
-                        activeMediaQuery={activeMediaQuery}
-                        title="What can be done in the editor"
-                        category={GALLERY_ITEM_CATEGORY.EDITOR}
-                    />
-                </Col>
-                {galleryItems.slice(3, 6).map((item) => {
-                    return (
-                        <Col key={item.id} l="4" m="4" s="12">
-                            <GalleryCardPreview
-                                id={item.id}
-                                title={item.title}
-                                createdBy={item.createdBy}
-                                labels={item.labels}
-                                imageSrc={item.images?.[themeType]?.[0] || ''}
-                            />
-                        </Col>
-                    );
-                })}
-            </Row>
-            {/* Maps examples */}
-            <Row space="6" style={{marginTop: 24, marginBottom: 48}}>
-                <Col s="12">
-                    <SectionHeader
-                        activeMediaQuery={activeMediaQuery}
-                        title="With maps"
-                        category={GALLERY_ITEM_CATEGORY.GEO}
-                    />
-                </Col>
-                {galleryItems.slice(6, 9).map((item) => {
-                    return (
-                        <Col key={item.id} l="4" m="4" s="12">
-                            <GalleryCardPreview
-                                id={item.id}
-                                title={item.title}
-                                createdBy={item.createdBy}
-                                labels={item.labels}
-                                imageSrc={item.images?.[themeType]?.[0] || ''}
-                            />
-                        </Col>
-                    );
-                })}
-            </Row>
+                        {galleryItems
+                            .filter((item) => {
+                                if (landingCategoriy.category === SPECIAL_CATEGORY.EDITORS_CHOICE) {
+                                    return metaData?.editorChoice?.ids.includes(item.id);
+                                }
+                                return item.labels?.includes(landingCategoriy.category);
+                            })
+                            .slice(0, 3)
+                            .map((item) => {
+                                return (
+                                    <Col key={item.id} l="4" m="4" s="12">
+                                        <GalleryCardPreview
+                                            id={item.id}
+                                            title={item.title}
+                                            createdBy={item.createdBy}
+                                            labels={item.labels}
+                                            imageSrc={item.images?.[themeType]?.[0] || ''}
+                                        />
+                                    </Col>
+                                );
+                            })}
+                    </Row>
+                );
+            })}
             {/* Add your example */}
             <Row className={b('add-card', baseMods)} space="0">
                 <Col s="12">

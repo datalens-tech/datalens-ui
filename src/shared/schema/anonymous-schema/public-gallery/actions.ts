@@ -1,4 +1,4 @@
-import type {GalleryItem, GalleryItemList} from '../../../types/public-gallery';
+import type {GalleryItem, GalleryItemList, TranslationsDict} from '../../../types/public-gallery';
 import {createAction} from '../../gateway-utils';
 
 export type GetAllItemsResponse = {
@@ -15,6 +15,10 @@ export type GetMetaRespose = {
         ids: string[];
     };
     workOfTheMonth: {title: 'string'; desctiption: string; entryId: string};
+    landingCategories: {
+        category: string;
+        title: TranslationsDict;
+    }[];
 };
 
 class NotImplementedError extends Error {
