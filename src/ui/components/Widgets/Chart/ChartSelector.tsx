@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {pickExceptActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
+import {Loader as CommonLoader} from '@gravity-ui/uikit';
 import type {AxiosResponse} from 'axios';
 import block from 'bem-cn-lite';
 import {usePrevious} from 'hooks';
@@ -334,6 +335,11 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
             <div className={b('container', {[String(widgetType)]: Boolean(widgetType)})}>
                 {!showFloatControls && (
                     <Loader visible={showLoader} veil={veil} delay={loaderDelay} />
+                )}
+                {showFloatControls && !hasError && !hasControl && showLoader && (
+                    <div className={b('loader')}>
+                        <CommonLoader size="s" />
+                    </div>
                 )}
                 <div
                     className={b(
