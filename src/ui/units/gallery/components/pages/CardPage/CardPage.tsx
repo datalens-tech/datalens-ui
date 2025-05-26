@@ -141,7 +141,11 @@ function UseButton(props: {url: string; entryId: string}) {
                     action: () => {
                         Utils.downloadFileByUrl(props.url, `${props.entryId}.json`);
                     },
-                    text: getDropdownItem({text: i18n('button_download'), icon: Copy}),
+                    text: getDropdownItem({
+                        text: i18n('button_download'),
+                        hint: i18n('text_download-desctiption'),
+                        icon: Copy,
+                    }),
                 },
                 {
                     action: () => {

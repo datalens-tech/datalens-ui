@@ -113,7 +113,6 @@ $block: '.#{variables.$ns}-card';
     }
 
     &__dropdown-item {
-        padding-block: 4px;
         display: flex;
     }
 
@@ -126,6 +125,7 @@ $block: '.#{variables.$ns}-card';
     }
 
     &__dropdown-hint {
+        padding-bottom: 4px;
         max-width: 200px;
         line-height: normal;
         color: var(--g-color-text-hint);

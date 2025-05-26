@@ -8,5 +8,6 @@
   "button_show_full": "Показать полностью",
   "button_use": "Использовать",
   "section_other_works": "Другие работы",
-  "text_import-desctiption": "Импортировать при создании воркбука"
+  "text_download-desctiption": "Скачать файл для импорта",
+  "text_import-desctiption": "Создать аналогичный воркбук"
 }

@@ -8,5 +8,6 @@
   "button_show_full": "Show full",
   "button_use": "Use",
   "section_other_works": "Other creations",
-  "text_import-desctiption": "Import while workbook creation"
+  "text_download-desctiption": "Download import file",
+  "text_import-desctiption": "Create similar workbook"
 }
