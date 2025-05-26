@@ -5,5 +5,6 @@
   "label_all_entries": "All creations",
   "label_best-works": "The best creations",
   "label_error": "An error occurred",
-  "label_gallery": "DataLens Gallery"
+  "label_gallery": "DataLens Gallery",
+  "label_not_found": "Creation not found"
 }
