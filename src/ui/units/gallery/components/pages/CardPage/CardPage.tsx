@@ -13,6 +13,7 @@ import {
     Link,
     Row,
     Text,
+    spacing,
     useLayoutContext,
     useThemeType,
 } from '@gravity-ui/uikit';
@@ -26,7 +27,7 @@ import {ActionPanel} from 'ui/components/ActionPanel';
 import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
-import {URL_OPTIONS} from 'ui/constants';
+import {DL, URL_OPTIONS} from 'ui/constants';
 import {useMarkdown} from 'ui/hooks/useMarkdown';
 import {showToast} from 'ui/store/actions/toaster';
 import type {DataLensApiError} from 'ui/typings';
@@ -38,6 +39,7 @@ import type {ActiveMediaQuery} from '../../types';
 import {block, getGalleryItemUrl, getLang} from '../../utils';
 import type {CnMods} from '../../utils';
 import {CARD_PAGE_URL_PARAMS, PARTNER_FORM_LINK} from '../constants';
+import {useActionPanelLayout} from '../hooks/useActionPanelLayout';
 
 import {FullscreenGallery} from './FullscreenGallery/FullscreenGallery';
 import {PreviewCard} from './PreviewCard/PreviewCard';
@@ -46,6 +48,8 @@ import './CardPage.scss';
 
 const b = block('card');
 const toasterI18n = I18n.keyset('component.entry-context-menu.view');
+
+const isPromo = DL.IS_NOT_AUTHENTICATED;
 
 // TODO: CHARTS-11481
 const i18n = (key: string) => {
@@ -162,6 +166,8 @@ function CardActionPanel({
     const isActiveMediaQueryS = activeMediaQuery === 's';
     const mods: CnMods = {media: activeMediaQuery};
 
+    const {pageOffset, actionPanelRef} = useActionPanelLayout();
+
     let leftItems: React.ReactNode = null;
 
     if (showPreview) {
@@ -217,7 +223,14 @@ function CardActionPanel({
         );
     }
 
-    return <ActionPanel leftItems={leftItems} rightItems={rightItems} />;
+    return (
+        <ActionPanel
+            leftItems={leftItems}
+            rightItems={rightItems}
+            wrapperRef={isPromo ? actionPanelRef : undefined}
+            pageOffset={isPromo ? pageOffset : undefined}
+        />
+    );
 }
 
 interface CardPreviewProps {
@@ -342,11 +355,12 @@ interface CardContentProps {
     entry: GalleryItem;
     togglePreview: () => void;
     lang: string;
+    maxWidth?: boolean;
 }
 
-function CardContent({activeMediaQuery, entry, togglePreview, lang}: CardContentProps) {
+function CardContent({activeMediaQuery, entry, togglePreview, lang, maxWidth}: CardContentProps) {
     const isActiveMediaQueryS = activeMediaQuery === 's';
-    const mods: CnMods = {media: activeMediaQuery};
+    const mods: CnMods = {media: activeMediaQuery, maxWidth};
     const themeType = useThemeType();
     const {data: galleryItems = []} = useGetGalleryItemsQuery();
     const otherWorks = galleryItems
@@ -477,7 +491,11 @@ export function CardPage() {
                     description={details?.description}
                     renderAction={
                         canRetry
-                            ? () => <Button onClick={refetch}>{i18n('label_retry')}</Button>
+                            ? () => (
+                                  <Button className={spacing({mt: 2})} onClick={refetch}>
+                                      {i18n('label_retry')}
+                                  </Button>
+                              )
                             : undefined
                     }
                 />
@@ -505,6 +523,7 @@ export function CardPage() {
                     entry={data}
                     togglePreview={togglePreview}
                     lang={lang}
+                    maxWidth={isPromo}
                 />
             )}
         </React.Fragment>

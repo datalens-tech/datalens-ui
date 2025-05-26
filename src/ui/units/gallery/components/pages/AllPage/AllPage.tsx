@@ -16,12 +16,14 @@ import {useHistory, useLocation} from 'react-router-dom';
 import {GALLERY_ITEM_CATEGORY} from 'shared/constants';
 import type {GalleryItemShort} from 'shared/types';
 import {ActionPanel} from 'ui/components/ActionPanel';
+import {DL} from 'ui/constants';
 
 import {useGetGalleryItemsQuery, useGetGalleryMetaQuery} from '../../../store/api';
 import {GalleryCardPreview} from '../../blocks';
 import {block, getCategoryLabelTitle, getLang} from '../../utils';
 import type {CnMods} from '../../utils';
 import {SPECIAL_CATEGORY, URL_FILTER_PARAMS} from '../constants';
+import {useActionPanelLayout} from '../hooks/useActionPanelLayout';
 
 import './AllPage.scss';
 
@@ -141,7 +143,9 @@ export function AllPage() {
             }
         }
     }, [availableCategories, isLoading, items.length, searchParams]);
-    const baseMods: CnMods = {media: activeMediaQuery};
+
+    const isPromo = DL.IS_NOT_AUTHENTICATED;
+    const baseMods: CnMods = {media: activeMediaQuery, maxWidth: isPromo};
 
     const lang = getLang();
     const themeType = useThemeType();
@@ -157,6 +161,8 @@ export function AllPage() {
     const selectOptions = Array.from(
         new Set([...CATEGORIES_SELECT_VALUES, ...availableCategories]),
     );
+
+    const {pageOffset, actionPanelRef} = useActionPanelLayout();
 
     if (isLoading || isMetaLoading) {
         return (
@@ -175,8 +181,13 @@ export function AllPage() {
                         <Breadcrumbs.Item disabled={true}>All entries</Breadcrumbs.Item>
                     </Breadcrumbs>
                 }
+                wrapperRef={isPromo ? actionPanelRef : undefined}
+                pageOffset={isPromo ? pageOffset : undefined}
             />
-            <Container className={b('container', baseMods)} style={{maxWidth: '1032px'}}>
+            <Container
+                className={b('container', baseMods)}
+                style={{maxWidth: isPromo ? undefined : '1032px'}}
+            >
                 <Row space="0" style={{marginTop: 24}}>
                     <Col s="12">
                         <Text variant="header-2">All entries</Text>
