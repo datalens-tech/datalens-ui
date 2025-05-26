@@ -74,6 +74,47 @@ function PromoBlockItem({
     category,
     icon,
 }: PromoBlockItemProps) {
+    const renderImage = React.useCallback(
+        (props: AsyncImageProps, index: number) => {
+            let style: React.CSSProperties = {};
+            if (imageProps.length > 1) {
+                style = primary
+                    ? {
+                          top: `${(imageProps.length - 1 - index) * 20}%`,
+                          left: `${(imageProps.length - 1 - index) * 18}%`,
+                          ...(activeMediaQuery === 's' ? {width: '75%'} : {height: '110%'}),
+                      }
+                    : {
+                          top: `${index * 20}%`,
+                          left: `${(imageProps.length - 1 - index) * 20}%`,
+                          ...(activeMediaQuery === 's' ? {width: '90%'} : {height: '110%'}),
+                      };
+            } else {
+                style = {
+                    ...(activeMediaQuery === 's' ? {width: '105%'} : {height: '110%'}),
+                };
+            }
+
+            return (
+                <div
+                    key={`promo-image-${index}`}
+                    className={b('promo-block-item-image-container', {primary})}
+                    style={style}
+                >
+                    <AsyncImage
+                        className={b('promo-block-item-image', {
+                            primary,
+                            media: activeMediaQuery,
+                        })}
+                        showSkeleton={true}
+                        {...props}
+                    />
+                </div>
+            );
+        },
+        [activeMediaQuery, imageProps, primary],
+    );
+
     return (
         <RouterLink className={b('promo-block-link-wrapper')} to={getAllPageUrl({category})}>
             <Card
@@ -89,47 +130,7 @@ function PromoBlockItem({
                     {icon && <ArrowRight />}
                 </div>
                 <div className={b('promo-block-item-images-container', {primary})}>
-                    {imageProps.map((props, index) => {
-                        let style: React.CSSProperties = {};
-                        if (imageProps.length > 1) {
-                            style = primary
-                                ? {
-                                      top: `${(imageProps.length - 1 - index) * 20}%`,
-                                      left: `${(imageProps.length - 1 - index) * 18}%`,
-                                      ...(activeMediaQuery === 's'
-                                          ? {width: '75%'}
-                                          : {height: '110%'}),
-                                  }
-                                : {
-                                      top: `${index * 20}%`,
-                                      left: `${(imageProps.length - 1 - index) * 20}%`,
-                                      ...(activeMediaQuery === 's'
-                                          ? {width: '90%'}
-                                          : {height: '110%'}),
-                                  };
-                        } else {
-                            style = {
-                                ...(activeMediaQuery === 's' ? {width: '105%'} : {height: '110%'}),
-                            };
-                        }
-
-                        return (
-                            <div
-                                key={`promo-image-${index}`}
-                                className={b('promo-block-item-image-container', {primary})}
-                                style={style}
-                            >
-                                <AsyncImage
-                                    className={b('promo-block-item-image', {
-                                        primary,
-                                        media: activeMediaQuery,
-                                    })}
-                                    showSkeleton={true}
-                                    {...props}
-                                />
-                            </div>
-                        );
-                    })}
+                    {imageProps.map(renderImage)}
                 </div>
             </Card>
         </RouterLink>
