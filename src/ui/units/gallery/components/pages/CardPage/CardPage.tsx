@@ -1,12 +1,13 @@
 import React from 'react';
 
 import {dateTime} from '@gravity-ui/date-utils';
-import {ArrowLeft, ArrowShapeTurnUpRight, Calendar, Person, Xmark} from '@gravity-ui/icons';
+import {ArrowLeft, Calendar, Link, Person, Xmark} from '@gravity-ui/icons';
 import {
     Button,
     Card,
     Col,
     Container,
+    CopyToClipboard,
     Flex,
     Icon,
     Row,
@@ -16,6 +17,8 @@ import {
 } from '@gravity-ui/uikit';
 import type {ButtonProps, IconData} from '@gravity-ui/uikit';
 import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
+import {I18n} from 'i18n';
+import {useDispatch} from 'react-redux';
 import {useHistory, useParams} from 'react-router-dom';
 import type {GalleryItem, TranslationsDict} from 'shared/types';
 import {ActionPanel} from 'ui/components/ActionPanel';
@@ -24,16 +27,16 @@ import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/Pla
 import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
 import {URL_OPTIONS} from 'ui/constants';
 import {useMarkdown} from 'ui/hooks/useMarkdown';
+import {showToast} from 'ui/store/actions/toaster';
 import type {DataLensApiError} from 'ui/typings';
-import {useGetGalleryItemQuery} from 'ui/units/gallery/store/api';
+import {useGetGalleryItemQuery, useGetGalleryItemsQuery} from 'ui/units/gallery/store/api';
 import Utils from 'ui/utils';
 
 import {GalleryCardLabels, GalleryCardPreview, SectionHeader} from '../../blocks';
 import type {ActiveMediaQuery} from '../../types';
-import {block, getLang} from '../../utils';
+import {block, getGalleryItemUrl, getLang} from '../../utils';
 import type {CnMods} from '../../utils';
 import {PARTNER_FORM_LINK} from '../constants';
-import {MOCKED_GALLERY_ITEMS} from '../mocks';
 
 import {FullscreenGallery} from './FullscreenGallery/FullscreenGallery';
 import {PreviewCard} from './PreviewCard/PreviewCard';
@@ -41,6 +44,7 @@ import {PreviewCard} from './PreviewCard/PreviewCard';
 import './CardPage.scss';
 
 const b = block('card');
+const toasterI18n = I18n.keyset('component.entry-context-menu.view');
 
 // TODO: CHARTS-11481
 const i18n = (key: string) => {
@@ -78,6 +82,31 @@ function IconWithText(props: IconWithTextProps) {
             <Icon size={16} data={props.iconData} className={b('icon-with-text-icon')} />
             <Text variant="body-2">{props.text}</Text>
         </Flex>
+    );
+}
+
+function LinkButton(props: ButtonProps & {entryId: string}) {
+    const {entryId, ...buttonProps} = props;
+    const dispatch = useDispatch();
+    const text = `${window.location.origin}${getGalleryItemUrl({id: entryId})}`;
+
+    return (
+        <CopyToClipboard
+            text={text}
+            onCopy={() => {
+                dispatch(showToast({title: toasterI18n('toast_copy-link-success')}));
+            }}
+        >
+            {() => {
+                return (
+                    <Button {...buttonProps}>
+                        <Button.Icon>
+                            <Icon data={Link} />
+                        </Button.Icon>
+                    </Button>
+                );
+            }}
+        </CopyToClipboard>
     );
 }
 
@@ -163,21 +192,13 @@ function CardActionPanel({
     if (isActiveMediaQueryS) {
         rightItems = (
             <Flex className={b('actions-right-flex', mods)}>
-                <Button>
-                    <Button.Icon>
-                        <Icon data={ArrowShapeTurnUpRight} />
-                    </Button.Icon>
-                </Button>
+                <LinkButton entryId={entry.id} />
             </Flex>
         );
     } else {
         rightItems = (
             <Flex className={b('actions-right-flex', mods)}>
-                <Button>
-                    <Button.Icon>
-                        <Icon data={ArrowShapeTurnUpRight} />
-                    </Button.Icon>
-                </Button>
+                <LinkButton entryId={entry.id} />
                 <ContactPartnerButton
                     partnerId={entry.partnerId}
                     activeMediaQuery={activeMediaQuery}
@@ -319,6 +340,11 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang}: CardContent
     const isActiveMediaQueryS = activeMediaQuery === 's';
     const mods: CnMods = {media: activeMediaQuery};
     const themeType = useThemeType();
+    const {data: galleryItems = []} = useGetGalleryItemsQuery();
+    const otherWorks = galleryItems
+        .slice(0, 4)
+        .filter((item) => item.id !== entry.id)
+        .slice(0, 3);
 
     return (
         <Container className={b('container', mods)}>
@@ -334,11 +360,7 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang}: CardContent
                 <Row space="0" spaceRow="4" style={{marginTop: 48, marginBottom: 28}}>
                     <Col s="12">
                         <Flex className={b('actions-right-flex', mods)}>
-                            <Button size="xl" onClick={togglePreview}>
-                                <Button.Icon>
-                                    <Icon data={ArrowShapeTurnUpRight} size={20} />
-                                </Button.Icon>
-                            </Button>
+                            <LinkButton entryId={entry.id} size="xl" />
                             <Button view="action" size="xl" width="max" onClick={togglePreview}>
                                 Open
                             </Button>
@@ -375,10 +397,11 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang}: CardContent
                 <Col s="12">
                     <SectionHeader activeMediaQuery={activeMediaQuery} title="Other works" />
                 </Col>
-                {MOCKED_GALLERY_ITEMS.slice(0, 3).map((item) => {
+                {otherWorks.map((item) => {
                     return (
                         <Col key={item.id} l="4" m="4" s="12">
                             <GalleryCardPreview
+                                id={item.id}
                                 title={item.title}
                                 createdBy={item.createdBy}
                                 labels={item.labels}

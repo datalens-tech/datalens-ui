@@ -64,7 +64,7 @@ const NotificationSummary = ({
             grow={1}
             className={b('summary')}
         >
-            <Text className={b('title')} variant="subheader-2">
+            <Text className={b('title')} variant="subheader-1">
                 {title}
             </Text>
 

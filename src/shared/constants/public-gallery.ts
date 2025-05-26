@@ -4,7 +4,7 @@ export const GALLERY_ITEM_CATEGORY = {
     HR: 'hr',
     IT: 'it',
     RETAIL: 'retail',
-    SPORTS: 'sports',
+    SPORTS: 'sport',
     EDITOR: 'editor',
     GEO: 'geo',
 } as const;
