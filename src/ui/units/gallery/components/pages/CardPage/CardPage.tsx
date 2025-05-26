@@ -38,6 +38,7 @@ import type {ActiveMediaQuery} from '../../types';
 import {block, getGalleryItemUrl, getLang} from '../../utils';
 import type {CnMods} from '../../utils';
 import {CARD_PAGE_URL_PARAMS, PARTNER_FORM_LINK} from '../constants';
+import {useActionPanelLayout} from '../hooks/useActionPanelLayout';
 
 import {FullscreenGallery} from './FullscreenGallery/FullscreenGallery';
 import {PreviewCard} from './PreviewCard/PreviewCard';
@@ -162,6 +163,8 @@ function CardActionPanel({
     const isActiveMediaQueryS = activeMediaQuery === 's';
     const mods: CnMods = {media: activeMediaQuery};
 
+    const {pageOffset, actionPanelRef} = useActionPanelLayout();
+
     let leftItems: React.ReactNode = null;
 
     if (showPreview) {
@@ -217,7 +220,14 @@ function CardActionPanel({
         );
     }
 
-    return <ActionPanel leftItems={leftItems} rightItems={rightItems} />;
+    return (
+        <ActionPanel
+            leftItems={leftItems}
+            rightItems={rightItems}
+            wrapperRef={actionPanelRef}
+            pageOffset={pageOffset}
+        />
+    );
 }
 
 interface CardPreviewProps {
@@ -342,11 +352,12 @@ interface CardContentProps {
     entry: GalleryItem;
     togglePreview: () => void;
     lang: string;
+    maxWidth?: boolean;
 }
 
-function CardContent({activeMediaQuery, entry, togglePreview, lang}: CardContentProps) {
+function CardContent({activeMediaQuery, entry, togglePreview, lang, maxWidth}: CardContentProps) {
     const isActiveMediaQueryS = activeMediaQuery === 's';
-    const mods: CnMods = {media: activeMediaQuery};
+    const mods: CnMods = {media: activeMediaQuery, maxWidth};
     const themeType = useThemeType();
     const {data: galleryItems = []} = useGetGalleryItemsQuery();
     const otherWorks = galleryItems
@@ -424,7 +435,7 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang}: CardContent
     );
 }
 
-export function CardPage() {
+export function CardPage({isPromo}: {isPromo?: boolean}) {
     const {activeMediaQuery} = useLayoutContext();
     const {search: searchParams} = useLocation();
     const history = useHistory();
@@ -505,6 +516,7 @@ export function CardPage() {
                     entry={data}
                     togglePreview={togglePreview}
                     lang={lang}
+                    maxWidth={isPromo}
                 />
             )}
         </React.Fragment>

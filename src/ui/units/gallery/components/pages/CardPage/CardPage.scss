@@ -38,6 +38,11 @@ $block: '.#{variables.$ns}-card';
             padding-left: 20px;
             padding-right: 20px;
         }
+
+        &_maxWidth {
+            max-width: unset;
+            padding-inline: 0;
+        }
     }
 
     &__actions-left-flex {

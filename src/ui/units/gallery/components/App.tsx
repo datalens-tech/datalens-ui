@@ -7,12 +7,12 @@ import {UNIT_ROUTE} from '../constants/routes';
 
 import {AllPage, CardPage, LandingPage} from './pages';
 
-function AppContent() {
+function AppContent({isPromo}: {isPromo?: boolean}) {
     return (
         <Switch>
-            <Route exact path={UNIT_ROUTE.ROOT} render={() => <LandingPage />} />
-            <Route exact path={UNIT_ROUTE.ALL} render={() => <AllPage />} />
-            <Route exact path={UNIT_ROUTE.ENTRY} render={() => <CardPage />} />
+            <Route exact path={UNIT_ROUTE.ROOT} render={() => <LandingPage isPromo={isPromo} />} />
+            <Route exact path={UNIT_ROUTE.ALL} render={() => <AllPage isPromo={isPromo} />} />
+            <Route exact path={UNIT_ROUTE.ENTRY} render={() => <CardPage isPromo={isPromo} />} />
         </Switch>
     );
 }
