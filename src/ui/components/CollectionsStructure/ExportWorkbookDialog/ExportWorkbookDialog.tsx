@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Dialog, Flex, Loader} from '@gravity-ui/uikit';
+import {Button, Dialog, Flex, Link, Loader, spacing} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
@@ -24,10 +24,11 @@ import {
     selectGetExportProgressEntriesMap,
     selectGetExportResultLoading,
 } from 'ui/store/selectors/collectionsStructure';
+import {formDocsEndpointDL} from 'ui/utils/docs';
 
 import DialogManager from '../../DialogManager/DialogManager';
 import {EntriesNotificationCut} from '../components/EntriesNotificationCut/EntriesNotificationCut';
-import {transformNotifications} from '../components/EntriesNotificationCut/helpers';
+import {useNotificationsAndDetails} from '../hooks/useNotificationsAndDetails';
 import type {ImportExportStatus} from '../types';
 
 import {ExportInfo} from './ExportInfo/ExportInfo';
@@ -38,6 +39,7 @@ import './ExportWorkbookDialog.scss';
 const b = block('export-workbook-file-dialog');
 
 const i18n = I18n.keyset('component.workbook-export-dialog.view');
+const notificationsI18n = I18n.keyset('component.workbook-export.notifications');
 
 const GET_EXPORT_PROGRESS_INTERVAL = 1000;
 
@@ -110,13 +112,11 @@ export const ExportWorkbookDialog: React.FC<Props> = ({
     const exportProgressTimeout = React.useRef<ReturnType<typeof setTimeout> | null>(null);
     const isMounted = React.useCallback(() => true, []);
 
-    const preparedNotifications = React.useMemo(() => {
-        if (!notifications) {
-            return [];
-        }
-
-        return transformNotifications(notifications);
-    }, [notifications]);
+    const {notificationDetails, preparedNotifications, handleShowDetails} =
+        useNotificationsAndDetails({
+            notifications,
+            exportId: exportData?.exportId,
+        });
 
     const isExportLoading = status === 'loading' || status === 'pending';
     const isButtonLoading = isExportLoading || isResultLoading;
@@ -244,6 +244,8 @@ export const ExportWorkbookDialog: React.FC<Props> = ({
     const cancelButtonText =
         view === 'info' || isExportLoading ? i18n('button_cancel') : i18n('button_close');
 
+    const docsUrl = formDocsEndpointDL('/workbooks-collections/export-import-notifications');
+
     const renderBody = () => {
         if (view === 'info') {
             return <ExportInfo />;
@@ -268,18 +270,25 @@ export const ExportWorkbookDialog: React.FC<Props> = ({
                     );
                 }
                 return (
-                    <Flex direction="column" gap={4} className={b('notifications')}>
-                        {preparedNotifications.map(({code, message, level, entries}) => (
-                            <EntriesNotificationCut
-                                key={code}
-                                title={message}
-                                level={level}
-                                entries={entries}
-                                code={code}
-                                entriesMap={notificationEntriesMap}
-                            />
-                        ))}
-                    </Flex>
+                    <React.Fragment>
+                        <Flex direction="column" gap={4} className={b('notifications')}>
+                            {preparedNotifications.map(({code, message, level, entries}) => (
+                                <EntriesNotificationCut
+                                    key={code}
+                                    title={message}
+                                    level={level}
+                                    entries={entries}
+                                    code={code}
+                                    entriesMap={notificationEntriesMap}
+                                />
+                            ))}
+                        </Flex>
+                        {docsUrl && (
+                            <Link target="_blank" href={docsUrl} className={spacing({mt: 4})}>
+                                {notificationsI18n('label_info-documentation-notifications')}
+                            </Link>
+                        )}
+                    </React.Fragment>
                 );
             case 'fatal-error':
             default:
@@ -289,6 +298,7 @@ export const ExportWorkbookDialog: React.FC<Props> = ({
                         containerClassName={b('error-content')}
                         error={error}
                         size="s"
+                        exportId={exportData?.exportId}
                     />
                 );
         }
@@ -298,7 +308,9 @@ export const ExportWorkbookDialog: React.FC<Props> = ({
         <Dialog className={b()} open={open} onClose={handleCancel}>
             <Dialog.Header caption={getCaption(view, status)} />
             <Dialog.Body>
-                <div ref={dialogRef}>{renderBody()}</div>
+                <Flex direction="column" ref={dialogRef}>
+                    {renderBody()}
+                </Flex>
             </Dialog.Body>
             <Dialog.Footer
                 textButtonApply={getApplyButtonText(view, status)}
@@ -307,7 +319,13 @@ export const ExportWorkbookDialog: React.FC<Props> = ({
                 onClickButtonCancel={handleCancel}
                 propsButtonApply={{loading: isButtonLoading}}
                 propsButtonCancel={{disabled: isResultLoading}}
-            />
+            >
+                {notificationDetails && (
+                    <Button size="l" view="outlined" onClick={handleShowDetails}>
+                        {notificationsI18n('button_show-details')}
+                    </Button>
+                )}
+            </Dialog.Footer>
         </Dialog>
     );
 };

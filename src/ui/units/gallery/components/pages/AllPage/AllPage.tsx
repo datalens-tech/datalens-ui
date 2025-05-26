@@ -13,11 +13,12 @@ import {
 } from '@gravity-ui/uikit';
 import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
 import {useHistory, useLocation} from 'react-router-dom';
+import {GALLERY_ITEM_CATEGORY} from 'shared/constants';
+import type {GalleryItemShort} from 'shared/types';
 import {ActionPanel} from 'ui/components/ActionPanel';
+import {DL} from 'ui/constants';
 
-import {GALLERY_ITEM_CATEGORY} from '../../../constants/gallery-item';
-import {useGetGalleryItemsQuery} from '../../../store/api';
-import type {GalleryItem} from '../../../types';
+import {useGetGalleryItemsQuery, useGetGalleryMetaQuery} from '../../../store/api';
 import {GalleryCardPreview} from '../../blocks';
 import {
     block,
@@ -28,7 +29,7 @@ import {
 } from '../../utils';
 import type {CnMods} from '../../utils';
 import {SPECIAL_CATEGORY, URL_FILTER_PARAMS} from '../constants';
-import {EDITORS_CHOICE_ITEM_IDS} from '../mocks';
+import {useActionPanelLayout} from '../hooks/useActionPanelLayout';
 
 import './AllPage.scss';
 
@@ -38,24 +39,29 @@ const CATEGORIES_SELECT_VALUES = [
     SPECIAL_CATEGORY.ALL,
     SPECIAL_CATEGORY.EDITORS_CHOICE,
     GALLERY_ITEM_CATEGORY.EDITOR,
-    GALLERY_ITEM_CATEGORY.EDUCATION,
     GALLERY_ITEM_CATEGORY.FINANCE,
     GALLERY_ITEM_CATEGORY.HR,
-    GALLERY_ITEM_CATEGORY.IT,
     GALLERY_ITEM_CATEGORY.RETAIL,
     GALLERY_ITEM_CATEGORY.SPORTS,
 ];
 
 interface UseGalleryItemsProps {
-    items: GalleryItem[];
+    items: GalleryItemShort[];
+    editorChoiceIds: string[];
     search: string;
     category: string;
     lang: string;
 }
 
-function useFilteredGalleryItems({category, items, search, lang}: UseGalleryItemsProps) {
+function useFilteredGalleryItems({
+    category,
+    items,
+    search,
+    lang,
+    editorChoiceIds,
+}: UseGalleryItemsProps) {
     const filteredItems = React.useMemo(() => {
-        return items.reduce<GalleryItem[]>((acc, item) => {
+        return items.reduce<GalleryItemShort[]>((acc, item) => {
             const matchesSearchValue =
                 !search || item.title[lang]?.toLowerCase().startsWith(search.toLowerCase());
 
@@ -68,11 +74,13 @@ function useFilteredGalleryItems({category, items, search, lang}: UseGalleryItem
             if (item.labels && category !== SPECIAL_CATEGORY.ALL) {
                 switch (category) {
                     case SPECIAL_CATEGORY.EDITORS_CHOICE: {
-                        matchesCategory = EDITORS_CHOICE_ITEM_IDS.includes(item.id);
+                        matchesCategory = editorChoiceIds.includes(item.id);
                         break;
                     }
                     default: {
-                        matchesCategory = item.labels.includes(category);
+                        matchesCategory = item.labels.some(
+                            (label) => label.toLowerCase() === category?.toLowerCase(),
+                        );
                     }
                 }
             }
@@ -83,7 +91,7 @@ function useFilteredGalleryItems({category, items, search, lang}: UseGalleryItem
 
             return acc;
         }, []);
-    }, [category, items, search, lang]);
+    }, [items, search, lang, category, editorChoiceIds]);
 
     return {filteredItems};
 }
@@ -112,30 +120,57 @@ export function AllPage() {
     const {activeMediaQuery} = useLayoutContext();
     const history = useHistory();
     const {search: searchParams} = useLocation();
-    const defaultFilterValues = React.useMemo(() => {
-        const urlSearchParams = new URLSearchParams(searchParams);
-        const value = urlSearchParams.get(URL_FILTER_PARAMS.CATEGORY) ?? '';
+    const {isLoading, data: items = []} = useGetGalleryItemsQuery();
+    const availableCategories = React.useMemo(() => {
+        return Array.from(
+            new Set(
+                items.map((item) => item.labels?.map((label) => label.toLowerCase()) ?? []).flat(),
+            ),
+        );
+    }, [items]);
+    const [search, setSearch] = React.useState('');
+    const [category, setCategory] = React.useState<string>(SPECIAL_CATEGORY.ALL);
 
-        return {
-            category: CATEGORIES_SELECT_VALUES.includes(value) ? value : SPECIAL_CATEGORY.ALL,
-            search: urlSearchParams.get(URL_FILTER_PARAMS.SEARCH_TEXT) ?? '',
-        };
-    }, [searchParams]);
-    const baseMods: CnMods = {media: activeMediaQuery};
-    const [search, setSearch] = React.useState(defaultFilterValues.search);
-    const [category, setCategory] = React.useState<string>(defaultFilterValues.category);
+    React.useEffect(() => {
+        if (!isLoading && items.length > 0) {
+            const urlSearchParams = new URLSearchParams(searchParams);
+            const selectedCategory = urlSearchParams.get(URL_FILTER_PARAMS.CATEGORY) ?? '';
+
+            if (
+                availableCategories.some((d) => d === selectedCategory.toLowerCase()) ||
+                Object.values(SPECIAL_CATEGORY).includes(selectedCategory)
+            ) {
+                setCategory(selectedCategory);
+            }
+
+            const searchValue = urlSearchParams.get(URL_FILTER_PARAMS.SEARCH_TEXT);
+            if (searchValue) {
+                setSearch(searchValue);
+            }
+        }
+    }, [availableCategories, isLoading, items.length, searchParams]);
+
+    const isPromo = DL.IS_NOT_AUTHENTICATED;
+    const baseMods: CnMods = {media: activeMediaQuery, maxWidth: isPromo};
+
     const lang = getLang();
     const themeType = useThemeType();
 
-    const {isLoading, data: items = []} = useGetGalleryItemsQuery({});
+    const {isLoading: isMetaLoading, data: metaData} = useGetGalleryMetaQuery();
     const {filteredItems} = useFilteredGalleryItems({
         category,
         items,
         search,
         lang,
+        editorChoiceIds: metaData?.editorChoice.ids ?? [],
     });
+    const selectOptions = Array.from(
+        new Set([...CATEGORIES_SELECT_VALUES, ...availableCategories]),
+    );
 
-    if (isLoading) {
+    const {pageOffset, actionPanelRef} = useActionPanelLayout();
+
+    if (isLoading || isMetaLoading) {
         return (
             <div className={b('loader')}>
                 <Loader size="m" />
@@ -156,8 +191,13 @@ export function AllPage() {
                         </Breadcrumbs.Item>
                     </Breadcrumbs>
                 }
+                wrapperRef={isPromo ? actionPanelRef : undefined}
+                pageOffset={isPromo ? pageOffset : undefined}
             />
-            <Container className={b('container', baseMods)} style={{maxWidth: '1032px'}}>
+            <Container
+                className={b('container', baseMods)}
+                style={{maxWidth: isPromo ? undefined : '1032px'}}
+            >
                 <Row space="0" style={{marginTop: 24}}>
                     <Col s="12">
                         <Text variant="header-2">{i18n('title_all_entries')}</Text>
@@ -180,7 +220,7 @@ export function AllPage() {
                             value={[category]}
                             width="max"
                         >
-                            {CATEGORIES_SELECT_VALUES.map((value) => {
+                            {selectOptions.map((value) => {
                                 return (
                                     <Select.Option key={value} value={value}>
                                         {getCategorySelectOptionContent(value)}
@@ -195,6 +235,7 @@ export function AllPage() {
                         return (
                             <Col key={item.id} l="4" m="4" s="12">
                                 <GalleryCardPreview
+                                    id={item.id}
                                     title={item.title}
                                     createdBy={item.createdBy}
                                     labels={item.labels}

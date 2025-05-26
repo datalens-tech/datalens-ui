@@ -16,6 +16,10 @@ interface GalleryCardLabelsProps {
 }
 
 export function GalleryCardLabels({id, labels, labelProps}: GalleryCardLabelsProps) {
+    if (!labels) {
+        return null;
+    }
+
     return (
         <div className={b()}>
             {labels?.map((label, index) => (

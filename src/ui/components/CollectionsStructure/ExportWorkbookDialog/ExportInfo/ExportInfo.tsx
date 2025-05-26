@@ -37,7 +37,7 @@ export const ExportInfo = () => {
                 icon={Thunderbolt}
             />
             {docsUrl && (
-                <Link href={docsUrl} className={spacing({mt: 1})}>
+                <Link href={docsUrl} target="_blank" className={spacing({mt: 1})}>
                     {i18n('label_info-documentation')}
                 </Link>
             )}

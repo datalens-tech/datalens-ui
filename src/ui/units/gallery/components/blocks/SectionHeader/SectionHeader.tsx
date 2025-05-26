@@ -11,9 +11,10 @@ interface SectionHeaderProps {
     title: string;
     activeMediaQuery?: ReturnType<typeof useLayoutContext>['activeMediaQuery'];
     category?: string;
+    className?: string;
 }
 
-export function SectionHeader({activeMediaQuery, title, category}: SectionHeaderProps) {
+export function SectionHeader({activeMediaQuery, title, category, className}: SectionHeaderProps) {
     const isActiveMediaQueryS = activeMediaQuery === 's';
     const textVariant: TextProps['variant'] = isActiveMediaQueryS ? 'header-2' : 'header-1';
     const icon = isActiveMediaQueryS ? <ChevronRight /> : <ArrowRight />;
@@ -26,7 +27,7 @@ export function SectionHeader({activeMediaQuery, title, category}: SectionHeader
     }, [history, category]);
 
     return (
-        <Flex alignItems="center" justifyContent="space-between">
+        <Flex alignItems="center" justifyContent="space-between" className={className}>
             <Text variant={textVariant}>{title}</Text>
             <Button view="flat" size="l" onClick={handleClick}>
                 <Button.Icon>{icon}</Button.Icon>

@@ -1,41 +1,42 @@
 import React from 'react';
 
-import {ArrowRight, Medal} from '@gravity-ui/icons';
+import {ArrowRight} from '@gravity-ui/icons';
 import {
     Button,
     Card,
     Col,
     Container,
     Flex,
-    Icon,
     Link,
     Loader,
     Row,
     useLayoutContext,
     useThemeType,
 } from '@gravity-ui/uikit';
+import sortBy from 'lodash/sortBy';
 import {useHistory} from 'react-router';
+import type {GalleryItemShort} from 'shared/types';
 import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 import type {AsyncImageProps} from 'ui/components/AsyncImage/AsyncImage';
 import type {CreateIllustrationProps} from 'ui/components/Illustration/types';
 import {createIllustration} from 'ui/components/Illustration/utils';
 import {InterpolatedText} from 'ui/components/InterpolatedText/InterpolatedText';
-import {GALLERY_ITEM_CATEGORY} from 'ui/units/gallery/constants/gallery-item';
+import {DL} from 'ui/constants';
 
-import {useGetGalleryItemsQuery} from '../../../store/api';
-import type {GalleryItem} from '../../../types';
+import {useGetGalleryItemsQuery, useGetGalleryMetaQuery} from '../../../store/api';
 import {GalleryCardPreview, SectionHeader} from '../../blocks';
+import {WorkOfMonth} from '../../blocks/WorkOfMonth/WorkOfMonth';
 import type {ActiveMediaQuery} from '../../types';
 import {
     block,
     galleryI18n,
     getAllPageUrl,
+    getLang,
     groupGalleryItemsByLabels,
     galleryLandingI18n as i18n,
 } from '../../utils';
 import type {CnMods} from '../../utils';
-import {ADD_DASH_FORM_LINK, SPECIAL_CATEGORY} from '../constants';
-import {EDITORS_CHOICE_ITEM_IDS} from '../mocks';
+import {ADD_DASH_FORM_LINK, PROMO_BLOCK_CATEGORIES, SPECIAL_CATEGORY} from '../constants';
 
 import './LandingPage.scss';
 
@@ -56,6 +57,7 @@ function GalleryIllustration(props: Omit<CreateIllustrationProps, 'name'>) {
 
 interface PromoBlockItemProps {
     title: string;
+    icon?: boolean;
     activeMediaQuery?: ActiveMediaQuery;
     counter?: number;
     primary?: boolean;
@@ -70,6 +72,7 @@ function PromoBlockItem({
     primary,
     imageProps = [],
     category,
+    icon,
 }: PromoBlockItemProps) {
     const history = useHistory();
 
@@ -90,79 +93,106 @@ function PromoBlockItem({
                 <span className={b('promo-block-item-title-counter', {primary})}>
                     &nbsp;·&nbsp;{counter}
                 </span>
+                {icon && <ArrowRight />}
             </div>
-            <div className={b('promo-block-item-image-container', {primary})}>
-                {imageProps.map((props, index) => (
-                    <AsyncImage
-                        key={`promo-image-${index}`}
-                        className={b('promo-block-item-image', {primary})}
-                        showSkeleton={true}
-                        {...props}
-                    />
-                ))}
+            <div className={b('promo-block-item-images-container', {primary})}>
+                {imageProps.map((props, index) => {
+                    let style: React.CSSProperties = {};
+                    if (imageProps.length > 1) {
+                        style = primary
+                            ? {
+                                  top: `${(imageProps.length - 1 - index) * 20}%`,
+                                  left: `${(imageProps.length - 1 - index) * 18}%`,
+                                  ...(activeMediaQuery === 's' ? {width: '75%'} : {height: '110%'}),
+                              }
+                            : {
+                                  top: `${index * 20}%`,
+                                  left: `${(imageProps.length - 1 - index) * 20}%`,
+                                  ...(activeMediaQuery === 's' ? {width: '90%'} : {height: '110%'}),
+                              };
+                    } else {
+                        style = {
+                            ...(activeMediaQuery === 's' ? {width: '105%'} : {height: '110%'}),
+                        };
+                    }
+
+                    return (
+                        <div
+                            key={`promo-image-${index}`}
+                            className={b('promo-block-item-image-container', {primary})}
+                            style={style}
+                        >
+                            <AsyncImage
+                                className={b('promo-block-item-image', {
+                                    primary,
+                                    media: activeMediaQuery,
+                                })}
+                                showSkeleton={true}
+                                {...props}
+                            />
+                        </div>
+                    );
+                })}
             </div>
         </Card>
     );
 }
 
 interface PromoBlockRowProps {
-    title: string;
-    galleryItems: GalleryItem[];
+    galleryItems: GalleryItemShort[];
     activeMediaQuery?: ActiveMediaQuery;
+    editorChoiceIds?: string[];
 }
 
-function PromoBlockRow({title, galleryItems, activeMediaQuery}: PromoBlockRowProps) {
+function PromoBlockRow({galleryItems, activeMediaQuery, editorChoiceIds}: PromoBlockRowProps) {
     const themeType = useThemeType();
     const itemsByLabels = groupGalleryItemsByLabels(galleryItems);
-    const primaryItems = galleryItems.filter((item) => EDITORS_CHOICE_ITEM_IDS.includes(item.id));
-    const primaryImagesProps: AsyncImageProps[] = primaryItems.map((item, index) => {
-        const baseStyle: React.CSSProperties = {
-            width: '76%',
-            objectFit: 'cover',
-        };
-        let stylesByImageIndex: React.CSSProperties = {};
-        if (index === 0) {
-            stylesByImageIndex = {
-                ...stylesByImageIndex,
-                left: '30%',
-                top: '45%',
-                opacity: 0.8,
+    const primaryItems = galleryItems.filter((item) => editorChoiceIds?.includes(item.id));
+    const primaryImagesProps: AsyncImageProps[] = primaryItems
+        .slice(0, 3)
+        .map((item, index, list) => {
+            const opacity = activeMediaQuery === 's' ? 1 : 1 - (list.length - 1 - index) * 0.1;
+            return {
+                src: item.images?.[themeType]?.[0] || '',
+                style: {
+                    opacity,
+                },
             };
-        } else if (index === 1) {
-            stylesByImageIndex = {
-                ...stylesByImageIndex,
-                left: '15%',
-                top: '25%',
-                opacity: 0.9,
+        });
+
+    const selectedCategories = sortBy(
+        Object.keys(itemsByLabels),
+        (label) => -1 * PROMO_BLOCK_CATEGORIES.indexOf(label.toLowerCase()),
+    ).slice(0, 5);
+
+    const othersImageProps: AsyncImageProps[] = galleryItems
+        .filter((item) => selectedCategories.every((category) => !item?.labels?.includes(category)))
+        .slice(0, 3)
+        .map((item, index, list) => {
+            return {
+                src: item.images?.[themeType]?.[0] || '',
+                style: {
+                    opacity: 1 - (list.length - 1 - index) * 0.35,
+                },
             };
-        }
-        return {
-            src: item.images?.[themeType]?.[0] || '',
-            style: {
-                ...baseStyle,
-                ...stylesByImageIndex,
-            },
-        };
-    });
+        });
+
     return (
         <Row className={b('promo-block', {media: activeMediaQuery})} space="6">
-            {activeMediaQuery !== 's' && (
-                <Col s="12">
-                    <SectionHeader activeMediaQuery={activeMediaQuery} title={title} />
-                </Col>
-            )}
             <Col l="6" m="6" s="12">
                 <PromoBlockItem
                     title={galleryI18n('label_best-works')}
-                    counter={EDITORS_CHOICE_ITEM_IDS.length}
+                    counter={editorChoiceIds?.length}
                     primary={true}
                     activeMediaQuery={activeMediaQuery}
                     imageProps={primaryImagesProps}
                     category={SPECIAL_CATEGORY.EDITORS_CHOICE}
                 />
             </Col>
-            {Object.entries(itemsByLabels).map(([key, indexes]) => {
-                const imageSrc = galleryItems[indexes[0]].images?.[themeType]?.[0] || '';
+            {selectedCategories.map((key) => {
+                const indexes = itemsByLabels[key] ?? [];
+                const imageSrc = galleryItems[indexes[0]]?.images?.[themeType]?.[0] || '';
+
                 return (
                     <Col key={`${key}`} l="3" m="3" s="12">
                         <PromoBlockItem
@@ -172,12 +202,6 @@ function PromoBlockRow({title, galleryItems, activeMediaQuery}: PromoBlockRowPro
                             imageProps={[
                                 {
                                     src: imageSrc,
-                                    style: {
-                                        objectFit: 'cover',
-                                        ...(activeMediaQuery === 's'
-                                            ? {width: '110%'}
-                                            : {height: '110%'}),
-                                    },
                                 },
                             ]}
                             category={key}
@@ -185,18 +209,27 @@ function PromoBlockRow({title, galleryItems, activeMediaQuery}: PromoBlockRowPro
                     </Col>
                 );
             })}
+            <Col l="3" m="3" s="12">
+                <PromoBlockItem
+                    icon={true}
+                    title={`Показать все`}
+                    counter={galleryItems.length}
+                    activeMediaQuery={activeMediaQuery}
+                    imageProps={othersImageProps}
+                />
+            </Col>
         </Row>
     );
 }
 
 export function LandingPage() {
     const {activeMediaQuery} = useLayoutContext();
-    const isActiveMediaQueryS = activeMediaQuery === 's';
-    const baseMods: CnMods = {media: activeMediaQuery};
-    const themeType = useThemeType();
-    const {isLoading, data} = useGetGalleryItemsQuery({});
 
-    if (isLoading) {
+    const themeType = useThemeType();
+    const {isLoading: isDataLoading, data} = useGetGalleryItemsQuery();
+    const {isLoading: isMetaLoading, data: metaData} = useGetGalleryMetaQuery();
+
+    if (isDataLoading || isMetaLoading) {
         return (
             <div className={b('loader')}>
                 <Loader size="m" />
@@ -205,6 +238,14 @@ export function LandingPage() {
     }
 
     const galleryItems = data ?? [];
+    const isActiveMediaQueryS = activeMediaQuery === 's';
+    const isPromo = DL.IS_NOT_AUTHENTICATED;
+    const baseMods: CnMods = {media: activeMediaQuery, maxWidth: isPromo};
+    const lang = getLang();
+    const landingCategories = Array.isArray(metaData?.landingCategories)
+        ? metaData.landingCategories
+        : [];
+    const workOfMonthId = metaData?.workOfTheMonth.id;
 
     return (
         <Container className={b('container', baseMods)}>
@@ -230,140 +271,54 @@ export function LandingPage() {
             </Row>
             {/* Promo block */}
             <PromoBlockRow
-                title="Industries"
                 galleryItems={galleryItems}
                 activeMediaQuery={activeMediaQuery}
+                editorChoiceIds={metaData?.editorChoice?.ids}
             />
             {/* Work of the month */}
-            <Row className={b('work-of-the-month', baseMods)} space="0">
-                <Col m="6" s="12">
-                    <Flex className={b('work-of-the-month-flex', baseMods)}>
-                        <span className={b('work-of-the-month-medal', {media: activeMediaQuery})}>
-                            <Icon data={Medal} />
-                            {i18n('section_work_of_month')}
-                        </span>
-                        <div className={b('work-of-the-month-title', {media: activeMediaQuery})}>
-                            COVID-19 Statistics
-                        </div>
-                        {!isActiveMediaQueryS && (
-                            <div className={b('work-of-the-month-description')}>
-                                Up-to-date statistics with real-time data on the number of cases,
-                                recoveries and vaccinations
-                            </div>
-                        )}
-                        {!isActiveMediaQueryS && (
-                            <div className={b('work-of-the-month-actions')}>
-                                <Button size="l" view="action">
-                                    {galleryI18n('button_open')}
-                                </Button>
-                                <Button size="l" view="flat">
-                                    {galleryI18n('button_learn_more')}
-                                    <Button.Icon>
-                                        <ArrowRight />
-                                    </Button.Icon>
-                                </Button>
-                            </div>
-                        )}
-                    </Flex>
-                </Col>
-                <Col m="6" s="12">
-                    <Flex style={{alignItems: 'center', height: '100%'}}>
-                        <Card
-                            view="clear"
-                            type="action"
-                            style={{
-                                overflow: 'hidden',
-                                height: 'max-content',
-                                lineHeight: 0,
-                                maxHeight: '100%',
-                            }}
-                        >
-                            <AsyncImage
-                                src="https://storage.yandexcloud.net/gravity-ui-assets/datalens.yandex_9fms9uae7ip02__embedded%3D1.png"
-                                style={{
-                                    width: '100%',
-                                    borderRadius: 4,
-                                }}
-                                showSkeleton={true}
-                            />
-                        </Card>
-                    </Flex>
-                </Col>
-                {isActiveMediaQueryS && (
-                    <Col s="12">
-                        <div className={b('work-of-the-month-actions')}>
-                            <Button size="xl" view="action" style={{width: '50%'}}>
-                                {galleryI18n('button_open')}
-                            </Button>
-                            <Button size="xl" view="flat" style={{width: '50%'}}>
-                                {galleryI18n('button_learn_more')}
-                            </Button>
-                        </div>
-                    </Col>
-                )}
-            </Row>
-            {/* The best of 2024 */}
-            <Row space="6" style={{marginTop: 24, marginBottom: isActiveMediaQueryS ? 24 : 48}}>
-                <Col s="12">
-                    <SectionHeader activeMediaQuery={activeMediaQuery} title="The best of 2024" />
-                </Col>
-                {galleryItems.slice(0, 3).map((item) => {
-                    return (
-                        <Col key={item.id} l="4" m="4" s="12">
-                            <GalleryCardPreview
-                                title={item.title}
-                                createdBy={item.createdBy}
-                                labels={item.labels}
-                                imageSrc={item.images?.[themeType]?.[0] || ''}
+            {workOfMonthId && <WorkOfMonth id={workOfMonthId} />}
+            {landingCategories.map((landingCategoriy, i) => {
+                const isLastCategory = i === landingCategories.length - 1;
+                return (
+                    <Row
+                        key={`landing-category-${landingCategoriy}-${i}`}
+                        space="6"
+                        style={{
+                            marginTop: 24,
+                            marginBottom: isActiveMediaQueryS && !isLastCategory ? 24 : 48,
+                        }}
+                    >
+                        <Col s="12">
+                            <SectionHeader
+                                activeMediaQuery={activeMediaQuery}
+                                title={landingCategoriy.title[lang]}
+                                category={landingCategoriy.category}
                             />
                         </Col>
-                    );
-                })}
-            </Row>
-            {/* Editor examples */}
-            <Row space="6" style={{marginTop: 24, marginBottom: isActiveMediaQueryS ? 24 : 48}}>
-                <Col s="12">
-                    <SectionHeader
-                        activeMediaQuery={activeMediaQuery}
-                        title="What can be done in the editor"
-                        category={GALLERY_ITEM_CATEGORY.EDITOR}
-                    />
-                </Col>
-                {galleryItems.slice(3, 6).map((item) => {
-                    return (
-                        <Col key={item.id} l="4" m="4" s="12">
-                            <GalleryCardPreview
-                                title={item.title}
-                                createdBy={item.createdBy}
-                                labels={item.labels}
-                                imageSrc={item.images?.[themeType]?.[0] || ''}
-                            />
-                        </Col>
-                    );
-                })}
-            </Row>
-            {/* Maps examples */}
-            <Row space="6" style={{marginTop: 24, marginBottom: 48}}>
-                <Col s="12">
-                    <SectionHeader
-                        activeMediaQuery={activeMediaQuery}
-                        title="With maps"
-                        category={GALLERY_ITEM_CATEGORY.GEO}
-                    />
-                </Col>
-                {galleryItems.slice(6, 9).map((item) => {
-                    return (
-                        <Col key={item.id} l="4" m="4" s="12">
-                            <GalleryCardPreview
-                                title={item.title}
-                                createdBy={item.createdBy}
-                                labels={item.labels}
-                                imageSrc={item.images?.[themeType]?.[0] || ''}
-                            />
-                        </Col>
-                    );
-                })}
-            </Row>
+                        {galleryItems
+                            .filter((item) => {
+                                if (landingCategoriy.category === SPECIAL_CATEGORY.EDITORS_CHOICE) {
+                                    return metaData?.editorChoice?.ids.includes(item.id);
+                                }
+                                return item.labels?.includes(landingCategoriy.category);
+                            })
+                            .slice(0, 3)
+                            .map((item) => {
+                                return (
+                                    <Col key={item.id} l="4" m="4" s="12">
+                                        <GalleryCardPreview
+                                            id={item.id}
+                                            title={item.title}
+                                            createdBy={item.createdBy}
+                                            labels={item.labels}
+                                            imageSrc={item.images?.[themeType]?.[0] || ''}
+                                        />
+                                    </Col>
+                                );
+                            })}
+                    </Row>
+                );
+            })}
             {/* Add your example */}
             <Row className={b('add-card', baseMods)} space="0">
                 <Col s="12">

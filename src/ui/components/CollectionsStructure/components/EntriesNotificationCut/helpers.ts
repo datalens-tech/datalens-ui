@@ -17,16 +17,28 @@ const NOTIFICATIONS_BY_CODE: Record<string, string> = {
     'ERR.UI_API.TRANSFER_INVALID_ENTRY_SCOPE': i18n('label_invalid-entry-scope'),
     UNEXPECTED_WORKFLOW_ERROR: i18n('label_unexpected-workflow-error'),
     SCOPE_NOT_AVAILABLE_FOR_INSTALLATION: i18n('label_scope-not-available-for-installation'),
+    'ERR.DS_API.BAD_CONN_TYPE': i18n('label_bad-connection-type'),
+    'ERR.DS_API.UNSUPPORTED': i18n('label_unsupported-objects'),
+    'ERR.DS_API.WB_EXPORT.DS': i18n('label_error-export-dataset'),
+    'ERR.DS_API.WB_EXPORT.CONN': i18n('label_error-export-connection'),
+    'ERR.DS_API.WB_IMPORT.DS': i18n('label_error-import-dataset'),
+    'ERR.DS_API.WB_IMPORT.CONN': i18n('label_error-import-connection'),
 };
 
 export const transformNotifications = (
     notifications: EntryNotification[] = [],
-): PreparedNotificationType[] => {
+): {notifications: PreparedNotificationType[]; details: string | null} => {
     const notificationMap = new Map<string, PreparedNotificationType>();
+    const details: string[] = [];
+
     let hasCritical = false;
 
     notifications.forEach((notification) => {
         const key = notification.code;
+
+        if (notification.details) {
+            details.push(JSON.stringify(notification.details));
+        }
 
         if (!notificationMap.has(key)) {
             notificationMap.set(key, {
@@ -50,14 +62,23 @@ export const transformNotifications = (
     });
 
     const preparedNotifications: PreparedNotificationType[] = Array.from(notificationMap.values());
+    const preparedDetails = details.length > 0 ? details.join('\n') : null;
 
     if (hasCritical) {
-        return preparedNotifications.filter((notification) => notification.level === 'critical');
+        return {
+            notifications: preparedNotifications.filter(
+                (notification) => notification.level === 'critical',
+            ),
+            details: preparedDetails,
+        };
     }
 
-    return preparedNotifications;
+    return {notifications: preparedNotifications, details: preparedDetails};
 };
 
-export const getNotificationTitleByCode = (code: string) => {
-    return NOTIFICATIONS_BY_CODE[code] || i18n('label_invalid-error');
+export const getNotificationTitle = (code?: string, message?: string) => {
+    if (!code) {
+        return message;
+    }
+    return NOTIFICATIONS_BY_CODE[code] || message || i18n('label_invalid-error');
 };

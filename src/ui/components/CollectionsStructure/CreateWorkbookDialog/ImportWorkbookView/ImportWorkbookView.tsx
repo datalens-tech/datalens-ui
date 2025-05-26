@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Flex, Loader} from '@gravity-ui/uikit';
+import {Flex, Link, Loader, spacing} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
@@ -11,6 +11,7 @@ import {
     selectGetImportProgressEntriesMap,
     selectImportError,
 } from 'ui/store/selectors/collectionsStructure';
+import {formDocsEndpointDL} from 'ui/utils/docs';
 
 import {EntriesNotificationCut} from '../../components/EntriesNotificationCut/EntriesNotificationCut';
 import {transformNotifications} from '../../components/EntriesNotificationCut/helpers';
@@ -21,12 +22,14 @@ import './ImportWorkbookView.scss';
 const b = block('import-workbook-file-view');
 
 const i18n = I18n.keyset('component.workbook-import-view.view');
+const notificationsI18n = I18n.keyset('component.workbook-export.notifications');
 
 export type ImportWorkbookViewProps = {
     status: ImportExportStatus;
+    importId?: string;
 };
 
-export const ImportWorkbookView = ({status}: ImportWorkbookViewProps) => {
+export const ImportWorkbookView = ({status, importId}: ImportWorkbookViewProps) => {
     const importProgressData = useSelector(selectGetImportProgressData);
     const notificationEntriesMap = useSelector(selectGetImportProgressEntriesMap);
     const error = useSelector(selectImportError);
@@ -53,21 +56,31 @@ export const ImportWorkbookView = ({status}: ImportWorkbookViewProps) => {
             }
 
             {
+                const docsUrl = formDocsEndpointDL(
+                    '/workbooks-collections/export-import-notifications',
+                );
                 const preparedNotifications = notifications
-                    ? transformNotifications(notifications)
+                    ? transformNotifications(notifications).notifications
                     : [];
                 return (
-                    <Flex direction="column" gap={4}>
-                        {preparedNotifications.map(({code, level, entries}) => (
-                            <EntriesNotificationCut
-                                key={code}
-                                code={code}
-                                level={level}
-                                entries={entries}
-                                entriesMap={notificationEntriesMap}
-                            />
-                        ))}
-                    </Flex>
+                    <React.Fragment>
+                        <Flex direction="column" gap={4}>
+                            {preparedNotifications.map(({code, level, entries}) => (
+                                <EntriesNotificationCut
+                                    key={code}
+                                    code={code}
+                                    level={level}
+                                    entries={entries}
+                                    entriesMap={notificationEntriesMap}
+                                />
+                            ))}
+                        </Flex>
+                        {docsUrl && (
+                            <Link target="_blank" href={docsUrl} className={spacing({mt: 4})}>
+                                {notificationsI18n('label_info-documentation-notifications')}
+                            </Link>
+                        )}
+                    </React.Fragment>
                 );
             }
         case 'fatal-error':
@@ -78,6 +91,7 @@ export const ImportWorkbookView = ({status}: ImportWorkbookViewProps) => {
                     containerClassName={b('error-content')}
                     error={error}
                     size="s"
+                    importId={importId}
                 />
             );
     }
