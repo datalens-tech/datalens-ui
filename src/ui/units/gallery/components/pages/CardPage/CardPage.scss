@@ -111,4 +111,23 @@ $block: '.#{variables.$ns}-card';
             margin-top: 8px;
         }
     }
+
+    &__dropdown-item {
+        padding-block: 4px;
+        display: flex;
+    }
+
+    &__dropdown-icon {
+        margin-top: 3px;
+    }
+
+    &__dropdown-text {
+        margin-left: 8px;
+    }
+
+    &__dropdown-hint {
+        max-width: 200px;
+        line-height: normal;
+        color: var(--g-color-text-hint);
+    }
 }
