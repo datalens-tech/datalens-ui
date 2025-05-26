@@ -18,9 +18,12 @@ $block: '.#{variables.$ns}-card';
     }
 
     &__iframe {
+        $promoHeaderHeight: 64px;
+
         width: 100%;
         border: none;
         height: calc(100% - #{$actionPanelHeight} - 5px);
+        min-height: max(600px, calc(100vh - #{$actionPanelHeight} - #{$promoHeaderHeight} - 5px));
     }
     &__container {
         height: calc(100% - #{$actionPanelHeight});
