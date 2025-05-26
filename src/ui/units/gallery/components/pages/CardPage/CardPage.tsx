@@ -20,7 +20,7 @@ import type {ButtonProps, IconData} from '@gravity-ui/uikit';
 import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
-import {useHistory, useParams} from 'react-router-dom';
+import {useHistory, useLocation, useParams} from 'react-router-dom';
 import type {GalleryItem, TranslationsDict} from 'shared/types';
 import {ActionPanel} from 'ui/components/ActionPanel';
 import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
@@ -37,7 +37,7 @@ import {GalleryCardLabels, GalleryCardPreview, SectionHeader} from '../../blocks
 import type {ActiveMediaQuery} from '../../types';
 import {block, getGalleryItemUrl, getLang} from '../../utils';
 import type {CnMods} from '../../utils';
-import {PARTNER_FORM_LINK} from '../constants';
+import {CARD_PAGE_URL_PARAMS, PARTNER_FORM_LINK} from '../constants';
 
 import {FullscreenGallery} from './FullscreenGallery/FullscreenGallery';
 import {PreviewCard} from './PreviewCard/PreviewCard';
@@ -426,7 +426,11 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang}: CardContent
 
 export function CardPage() {
     const {activeMediaQuery} = useLayoutContext();
-    const [showPreview, setShowPreview] = React.useState(false);
+    const {search: searchParams} = useLocation();
+    const history = useHistory();
+    const urlSearchParams = new URLSearchParams(searchParams);
+    const shouldShowPreview = urlSearchParams.has(CARD_PAGE_URL_PARAMS.PREVIEW);
+    const [showPreview, setShowPreview] = React.useState(shouldShowPreview);
 
     const {id} = useParams<{id: string}>();
 
@@ -438,6 +442,16 @@ export function CardPage() {
     const togglePreview = () => {
         setShowPreview(!showPreview);
     };
+
+    React.useEffect(() => {
+        const urlParams = new URLSearchParams(searchParams);
+        if (urlParams.has(CARD_PAGE_URL_PARAMS.PREVIEW)) {
+            urlParams.delete(CARD_PAGE_URL_PARAMS.PREVIEW);
+            history.replace({
+                search: `?${urlParams.toString()}`,
+            });
+        }
+    }, [history, shouldShowPreview, searchParams]);
 
     if (isLoading) {
         return <SmartLoader className={b('loader')} size="m" />;
