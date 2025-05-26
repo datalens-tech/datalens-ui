@@ -223,7 +223,7 @@ export function LandingPage() {
                     <Flex className={b('header-title-flex', baseMods)}>
                         <h1 className={b('header-title')}>{i18n('header_title')}</h1>
                         <span className={b('header-description')}>
-                            <InterpolatedText br text={i18n('header_description')} />
+                            {i18n('header_description')}
                         </span>
                     </Flex>
                 </Col>
@@ -370,7 +370,7 @@ export function LandingPage() {
                     <Flex className={b('add-card-flex')}>
                         <div className={b('add-card-title')}>{i18n('section_add_example')}</div>
                         <div className={b('add-card-description')}>
-                            {i18n('section_add_description')}
+                            <InterpolatedText br text={i18n('section_add_description')} />
                         </div>
                         <Link view="normal" target="_blank" href={ADD_DASH_FORM_LINK}>
                             <Button className={b('add-card-button')} size="xl" view="action">
