@@ -32,6 +32,7 @@ import {
     galleryAllPageI18n,
     galleryI18n,
     getAllPageUrl,
+    getCategoryLabelTitle,
     getLang,
     groupGalleryItemsByLabels,
     galleryLandingI18n as i18n,
@@ -198,7 +199,7 @@ function PromoBlockRow({galleryItems, activeMediaQuery, editorChoiceIds}: PromoB
                 return (
                     <Col key={`${key}`} l="3" m="3" s="12">
                         <PromoBlockItem
-                            title={`${key.charAt(0).toUpperCase()}${key.slice(1)}`}
+                            title={getCategoryLabelTitle(key)}
                             counter={indexes.length}
                             activeMediaQuery={activeMediaQuery}
                             imageProps={[
