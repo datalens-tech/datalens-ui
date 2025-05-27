@@ -158,7 +158,6 @@ function UseButton(props: {url: string; entryId: string}) {
                         hint: i18n('text_import-desctiption'),
                         icon: FileArrowUp,
                     }),
-                    title: 'Test',
                 },
             ]}
             renderSwitcher={(props) => <Button {...props}>{i18n('button_use')}</Button>}
