@@ -189,7 +189,7 @@ export function AllPage() {
     const isPromo = DL.IS_NOT_AUTHENTICATED;
     const baseMods: CnMods = {media: activeMediaQuery, maxWidth: isPromo};
 
-    const {pageOffset, actionPanelRef} = useActionPanelLayout();
+    const {style, actionPanelRef} = useActionPanelLayout();
 
     const handleCategorySelectUpdate = React.useCallback(
         (value: string[]) => {
@@ -249,7 +249,7 @@ export function AllPage() {
                     </Breadcrumbs>
                 }
                 wrapperRef={isPromo ? actionPanelRef : undefined}
-                pageOffset={isPromo ? pageOffset : undefined}
+                style={isPromo ? style : undefined}
             />
             <Container
                 className={b('container', baseMods)}

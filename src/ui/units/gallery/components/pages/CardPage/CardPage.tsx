@@ -224,7 +224,7 @@ function CardActionPanel({
     const isActiveMediaQueryS = activeMediaQuery === 's';
     const mods: CnMods = {media: activeMediaQuery};
 
-    const {pageOffset, actionPanelRef} = useActionPanelLayout();
+    const {style, actionPanelRef} = useActionPanelLayout();
 
     let leftItems: React.ReactNode = null;
 
@@ -288,7 +288,7 @@ function CardActionPanel({
             leftItems={leftItems}
             rightItems={rightItems}
             wrapperRef={isPromo ? actionPanelRef : undefined}
-            pageOffset={isPromo ? pageOffset : undefined}
+            style={isPromo ? style : undefined}
         />
     );
 }

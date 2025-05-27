@@ -2,13 +2,19 @@ import React from 'react';
 
 import {useResizeObserver} from '@gravity-ui/uikit';
 
-export function useActionPanelLayout() {
+export function useActionPanelLayout(): {
+    style: React.CSSProperties | undefined;
+    actionPanelRef: React.RefObject<HTMLDivElement>;
+} {
     const actionPanelRef = React.useRef<HTMLDivElement>(null);
-    const [pageOffset, setPageOffset] = React.useState<number | undefined>(undefined);
+    const [actionPanelStyle, setActionPanelStyle] = React.useState<React.CSSProperties | undefined>(
+        undefined,
+    );
 
     const recomputePageOffset = React.useCallback(() => {
         if (actionPanelRef.current) {
-            setPageOffset(actionPanelRef.current.getBoundingClientRect().left);
+            const pageOffset = actionPanelRef.current.getBoundingClientRect().left;
+            setActionPanelStyle({paddingInline: `${pageOffset}px`});
         }
     }, [actionPanelRef.current]);
 
@@ -21,5 +27,5 @@ export function useActionPanelLayout() {
         onResize: () => recomputePageOffset(),
     });
 
-    return {pageOffset: pageOffset ? `${pageOffset}px` : undefined, actionPanelRef};
+    return {style: actionPanelStyle, actionPanelRef};
 }
