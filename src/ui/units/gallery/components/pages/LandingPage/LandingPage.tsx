@@ -7,14 +7,14 @@ import {
     Col,
     Container,
     Flex,
-    Link,
     Loader,
     Row,
     useLayoutContext,
     useThemeType,
 } from '@gravity-ui/uikit';
+import type {ButtonProps} from '@gravity-ui/uikit';
 import sortBy from 'lodash/sortBy';
-import {useHistory} from 'react-router';
+import {Link as RouterLink} from 'react-router-dom';
 import type {GalleryItemShort} from 'shared/types';
 import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 import type {AsyncImageProps} from 'ui/components/AsyncImage/AsyncImage';
@@ -29,6 +29,7 @@ import {WorkOfMonth} from '../../blocks/WorkOfMonth/WorkOfMonth';
 import type {ActiveMediaQuery} from '../../types';
 import {
     block,
+    galleryAllPageI18n,
     galleryI18n,
     getAllPageUrl,
     getLang,
@@ -43,10 +44,10 @@ import './LandingPage.scss';
 const b = block('landing');
 const galleryIllustrationStore = {
     dark: {
-        header: () => import('../../../../../assets/images/illustration/dark/gallery-header.svg'),
+        header: () => import('../../../../../assets/images/illustration/dark/gallery-header.png'),
     },
     light: {
-        header: () => import('../../../../../assets/images/illustration/light/gallery-header.svg'),
+        header: () => import('../../../../../assets/images/illustration/light/gallery-header.png'),
     },
 };
 const BaseIllustration = createIllustration([galleryIllustrationStore]);
@@ -74,67 +75,66 @@ function PromoBlockItem({
     category,
     icon,
 }: PromoBlockItemProps) {
-    const history = useHistory();
+    const renderImage = React.useCallback(
+        (props: AsyncImageProps, index: number) => {
+            let style: React.CSSProperties = {};
+            if (imageProps.length > 1) {
+                style = primary
+                    ? {
+                          top: `${(imageProps.length - 1 - index) * 20}%`,
+                          left: `${(imageProps.length - 1 - index) * 18}%`,
+                          ...(activeMediaQuery === 's' ? {width: '75%'} : {height: '110%'}),
+                      }
+                    : {
+                          top: `${index * 20}%`,
+                          left: `${(imageProps.length - 1 - index) * 20}%`,
+                          ...(activeMediaQuery === 's' ? {width: '90%'} : {height: '110%'}),
+                      };
+            } else {
+                style = {
+                    ...(activeMediaQuery === 's' ? {width: '105%'} : {height: '110%'}),
+                };
+            }
 
-    const handleClick = React.useCallback(() => {
-        const url = getAllPageUrl({category});
-        history.push(url);
-    }, [history, category]);
+            return (
+                <div
+                    key={`promo-image-${index}`}
+                    className={b('promo-block-item-image-container', {primary})}
+                    style={style}
+                >
+                    <AsyncImage
+                        className={b('promo-block-item-image', {
+                            primary,
+                            media: activeMediaQuery,
+                        })}
+                        showSkeleton={true}
+                        {...props}
+                    />
+                </div>
+            );
+        },
+        [activeMediaQuery, imageProps, primary],
+    );
 
     return (
-        <Card
-            className={b('promo-block-item-flex', {primary, media: activeMediaQuery})}
-            view="clear"
-            type="action"
-            onClick={handleClick}
-        >
-            <div className={b('promo-block-item-title', {primary})}>
-                {title}
-                <span className={b('promo-block-item-title-counter', {primary})}>
-                    &nbsp;·&nbsp;{counter}
-                </span>
-                {icon && <ArrowRight />}
-            </div>
-            <div className={b('promo-block-item-images-container', {primary})}>
-                {imageProps.map((props, index) => {
-                    let style: React.CSSProperties = {};
-                    if (imageProps.length > 1) {
-                        style = primary
-                            ? {
-                                  top: `${(imageProps.length - 1 - index) * 20}%`,
-                                  left: `${(imageProps.length - 1 - index) * 18}%`,
-                                  ...(activeMediaQuery === 's' ? {width: '75%'} : {height: '110%'}),
-                              }
-                            : {
-                                  top: `${index * 20}%`,
-                                  left: `${(imageProps.length - 1 - index) * 20}%`,
-                                  ...(activeMediaQuery === 's' ? {width: '90%'} : {height: '110%'}),
-                              };
-                    } else {
-                        style = {
-                            ...(activeMediaQuery === 's' ? {width: '105%'} : {height: '110%'}),
-                        };
-                    }
-
-                    return (
-                        <div
-                            key={`promo-image-${index}`}
-                            className={b('promo-block-item-image-container', {primary})}
-                            style={style}
-                        >
-                            <AsyncImage
-                                className={b('promo-block-item-image', {
-                                    primary,
-                                    media: activeMediaQuery,
-                                })}
-                                showSkeleton={true}
-                                {...props}
-                            />
-                        </div>
-                    );
-                })}
-            </div>
-        </Card>
+        <RouterLink className={b('promo-block-link-wrapper')} to={getAllPageUrl({category})}>
+            <Card
+                className={b('promo-block-item-flex', {primary, media: activeMediaQuery})}
+                view="clear"
+                type="action"
+            >
+                <div className={b('promo-block-item-title', {primary})}>
+                    {title}
+                    <span className={b('promo-block-item-title-counter', {primary})}>
+                        &nbsp;·&nbsp;{counter}
+                    </span>
+                    {icon && <ArrowRight />}
+                </div>
+                <div className={b('promo-block-item-images-container', {primary})}>
+                    {imageProps.map(renderImage)}
+                </div>
+            </Card>
+        </RouterLink>
     );
 }
 
@@ -148,7 +148,9 @@ function PromoBlockRow({galleryItems, activeMediaQuery, editorChoiceIds}: PromoB
     const themeType = useThemeType();
     const itemsByLabels = groupGalleryItemsByLabels(galleryItems);
     const primaryItems = galleryItems.filter((item) => editorChoiceIds?.includes(item.id));
-    const primaryImagesProps: AsyncImageProps[] = primaryItems
+    const primaryImagesProps: AsyncImageProps[] = sortBy(primaryItems, (item) =>
+        editorChoiceIds?.indexOf(item.id),
+    )
         .slice(0, 3)
         .map((item, index, list) => {
             const opacity = activeMediaQuery === 's' ? 1 : 1 - (list.length - 1 - index) * 0.1;
@@ -222,9 +224,38 @@ function PromoBlockRow({galleryItems, activeMediaQuery, editorChoiceIds}: PromoB
     );
 }
 
+interface HeaderActionsProps {
+    activeMediaQuery?: ActiveMediaQuery;
+}
+
+function HeaderActions({activeMediaQuery}: HeaderActionsProps) {
+    const isActiveMediaQueryS = activeMediaQuery === 's';
+    const mods: CnMods = {media: activeMediaQuery};
+    const buttonSize: ButtonProps['size'] = isActiveMediaQueryS ? 'xl' : 'l';
+    const buttonWidth: ButtonProps['width'] = isActiveMediaQueryS ? 'max' : undefined;
+
+    return (
+        <div className={b('header-actions')}>
+            <RouterLink className={b('header-actions-link', mods)} to={getAllPageUrl()}>
+                <Button width={buttonWidth} size={buttonSize} view="action">
+                    {galleryAllPageI18n('title_all_entries')}
+                </Button>
+            </RouterLink>
+            <Button
+                href={ADD_DASH_FORM_LINK}
+                target="_blank"
+                size={buttonSize}
+                width={buttonWidth}
+                view={isActiveMediaQueryS ? 'outlined' : 'flat'}
+            >
+                {i18n('button_add_dashboard')}
+            </Button>
+        </div>
+    );
+}
+
 export function LandingPage() {
     const {activeMediaQuery} = useLayoutContext();
-
     const themeType = useThemeType();
     const {isLoading: isDataLoading, data} = useGetGalleryItemsQuery();
     const {isLoading: isMetaLoading, data: metaData} = useGetGalleryMetaQuery();
@@ -246,6 +277,7 @@ export function LandingPage() {
         ? metaData.landingCategories
         : [];
     const workOfMonthId = metaData?.workOfTheMonth.id;
+    const buttonSize: ButtonProps['size'] = isActiveMediaQueryS ? 'xl' : 'l';
 
     return (
         <Container className={b('container', baseMods)}>
@@ -264,8 +296,9 @@ export function LandingPage() {
                     <Flex className={b('header-title-flex', baseMods)}>
                         <h1 className={b('header-title')}>{i18n('header_title')}</h1>
                         <span className={b('header-description')}>
-                            {i18n('header_description')}
+                            <InterpolatedText br text={i18n('header_description')} />
                         </span>
+                        <HeaderActions activeMediaQuery={activeMediaQuery} />
                     </Flex>
                 </Col>
             </Row>
@@ -327,11 +360,15 @@ export function LandingPage() {
                         <div className={b('add-card-description')}>
                             <InterpolatedText br text={i18n('section_add_description')} />
                         </div>
-                        <Link view="normal" target="_blank" href={ADD_DASH_FORM_LINK}>
-                            <Button className={b('add-card-button')} size="xl" view="action">
-                                {i18n('button_add_dashboard')}
-                            </Button>
-                        </Link>
+                        <Button
+                            className={b('add-card-button')}
+                            href={ADD_DASH_FORM_LINK}
+                            size={buttonSize}
+                            target="_blank"
+                            view="action"
+                        >
+                            {i18n('button_add_dashboard')}
+                        </Button>
                     </Flex>
                 </Col>
             </Row>

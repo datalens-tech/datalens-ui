@@ -18,6 +18,9 @@ export type GetMetaRespose = {
         category: string;
         title: TranslationsDict;
     }[];
+    mainPage: {
+        ids: string[];
+    };
     workOfTheMonth: {id: string};
 };
 

@@ -11,6 +11,7 @@ import {
     useLayoutContext,
     useThemeType,
 } from '@gravity-ui/uikit';
+import type {SelectOption} from '@gravity-ui/uikit';
 import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
 import {useHistory, useLocation} from 'react-router-dom';
 import {GALLERY_ITEM_CATEGORY} from 'shared/constants';
@@ -51,6 +52,25 @@ interface UseGalleryItemsProps {
     search: string;
     category: string;
     lang: string;
+}
+
+function useSortedGalleryItems({items}: {items: GalleryItemShort[]}) {
+    const sortedItems = React.useMemo(() => {
+        return [...items].sort((item1, item2) => {
+            if (item1.createdAt === undefined && item2.createdAt === undefined) {
+                return 0;
+            }
+            if (item1.createdAt === undefined) {
+                return 1;
+            }
+            if (item2.createdAt === undefined) {
+                return -1;
+            }
+            return item2.createdAt - item1.createdAt;
+        });
+    }, [items]);
+
+    return {sortedItems};
 }
 
 function useFilteredGalleryItems({
@@ -121,6 +141,19 @@ export function AllPage() {
     const history = useHistory();
     const {search: searchParams} = useLocation();
     const {isLoading, data: items = []} = useGetGalleryItemsQuery();
+    const themeType = useThemeType();
+    const {isLoading: isMetaLoading, data: metaData} = useGetGalleryMetaQuery();
+    const [search, setSearch] = React.useState('');
+    const [category, setCategory] = React.useState<string>(SPECIAL_CATEGORY.ALL);
+    const lang = getLang();
+    const {sortedItems} = useSortedGalleryItems({items});
+    const {filteredItems} = useFilteredGalleryItems({
+        category,
+        items: sortedItems,
+        search,
+        lang,
+        editorChoiceIds: metaData?.editorChoice.ids ?? [],
+    });
     const availableCategories = React.useMemo(() => {
         return Array.from(
             new Set(
@@ -128,8 +161,52 @@ export function AllPage() {
             ),
         );
     }, [items]);
-    const [search, setSearch] = React.useState('');
-    const [category, setCategory] = React.useState<string>(SPECIAL_CATEGORY.ALL);
+    const selectOptions: SelectOption[] = React.useMemo(() => {
+        const allOptions = Array.from(
+            new Set([...CATEGORIES_SELECT_VALUES, ...availableCategories]),
+        );
+        const sortedOptions = allOptions
+            .filter((option) => option !== SPECIAL_CATEGORY.ALL)
+            .sort((option1, option2) => {
+                const content1 = getCategorySelectOptionContent(option1);
+                const content2 = getCategorySelectOptionContent(option2);
+                return content1.localeCompare(content2);
+            })
+            .map((value) => ({
+                value,
+                content: getCategorySelectOptionContent(value),
+            }));
+
+        return [
+            {
+                value: SPECIAL_CATEGORY.ALL,
+                content: getCategorySelectOptionContent(SPECIAL_CATEGORY.ALL),
+            },
+            ...sortedOptions,
+        ];
+    }, [availableCategories]);
+
+    const isPromo = DL.IS_NOT_AUTHENTICATED;
+    const baseMods: CnMods = {media: activeMediaQuery, maxWidth: isPromo};
+
+    const {style, actionPanelRef} = useActionPanelLayout();
+
+    const handleCategorySelectUpdate = React.useCallback(
+        (value: string[]) => {
+            const newCategory = value[0];
+            const urlSearchParams = new URLSearchParams(searchParams);
+
+            if (newCategory === SPECIAL_CATEGORY.ALL) {
+                urlSearchParams.delete(URL_FILTER_PARAMS.CATEGORY);
+            } else {
+                urlSearchParams.set(URL_FILTER_PARAMS.CATEGORY, newCategory);
+            }
+
+            history.push(`?${urlSearchParams.toString()}`);
+            setCategory(newCategory);
+        },
+        [history, searchParams],
+    );
 
     React.useEffect(() => {
         if (!isLoading && items.length > 0) {
@@ -149,26 +226,6 @@ export function AllPage() {
             }
         }
     }, [availableCategories, isLoading, items.length, searchParams]);
-
-    const isPromo = DL.IS_NOT_AUTHENTICATED;
-    const baseMods: CnMods = {media: activeMediaQuery, maxWidth: isPromo};
-
-    const lang = getLang();
-    const themeType = useThemeType();
-
-    const {isLoading: isMetaLoading, data: metaData} = useGetGalleryMetaQuery();
-    const {filteredItems} = useFilteredGalleryItems({
-        category,
-        items,
-        search,
-        lang,
-        editorChoiceIds: metaData?.editorChoice.ids ?? [],
-    });
-    const selectOptions = Array.from(
-        new Set([...CATEGORIES_SELECT_VALUES, ...availableCategories]),
-    );
-
-    const {style, actionPanelRef} = useActionPanelLayout();
 
     if (isLoading || isMetaLoading) {
         return (
@@ -207,6 +264,7 @@ export function AllPage() {
                     <Col m="8" s="12">
                         <TextInput
                             defaultValue={search}
+                            hasClear={true}
                             size="l"
                             placeholder={i18n('filter_search_placeholder')}
                             onUpdate={setSearch}
@@ -214,7 +272,8 @@ export function AllPage() {
                     </Col>
                     <Col m="4" s="12">
                         <Select
-                            onUpdate={(value) => setCategory(value[0])}
+                            filterable={true}
+                            onUpdate={handleCategorySelectUpdate}
                             placeholder={i18n('filter_category_placeholder')}
                             size="l"
                             value={[category]}
@@ -222,8 +281,8 @@ export function AllPage() {
                         >
                             {selectOptions.map((value) => {
                                 return (
-                                    <Select.Option key={value} value={value}>
-                                        {getCategorySelectOptionContent(value)}
+                                    <Select.Option key={value.value} value={value.value}>
+                                        {value.content}
                                     </Select.Option>
                                 );
                             })}
