@@ -2,9 +2,9 @@ import React from 'react';
 
 import {dateTime} from '@gravity-ui/date-utils';
 import {
+    ArrowDownToLine,
     ArrowLeft,
     Calendar,
-    Copy,
     FileArrowUp,
     Link as LinkIcon,
     Person,
@@ -16,7 +16,6 @@ import {
     Card,
     Col,
     Container,
-    CopyToClipboard,
     DropdownMenu,
     Flex,
     Icon,
@@ -30,7 +29,6 @@ import {
 import type {ButtonProps, IconData} from '@gravity-ui/uikit';
 import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
 import {I18n} from 'i18n';
-import {useDispatch} from 'react-redux';
 import {useHistory, useLocation, useParams} from 'react-router-dom';
 import {ErrorContentTypes} from 'shared';
 import type {GalleryItem, TranslationsDict} from 'shared/types';
@@ -40,10 +38,10 @@ import ErrorContent from 'ui/components/ErrorContent/ErrorContent';
 import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
 import {DL, URL_OPTIONS} from 'ui/constants';
 import {useMarkdown} from 'ui/hooks/useMarkdown';
-import {showToast} from 'ui/store/actions/toaster';
 import {PUBLIC_GALLERY_ID_SEARCH_PARAM} from 'ui/units/collections/components/constants';
 import {useGetGalleryItemQuery, useGetGalleryItemsQuery} from 'ui/units/gallery/store/api';
 import Utils from 'ui/utils';
+import {copyTextWithToast} from 'ui/utils/copyText';
 
 import {GalleryCardLabels, GalleryCardPreview, PageHeader, SectionHeader} from '../../blocks';
 import type {ActiveMediaQuery} from '../../types';
@@ -99,32 +97,30 @@ function IconWithText(props: IconWithTextProps) {
 
 function LinkButton(props: ButtonProps & {entryId: string}) {
     const {entryId, ...buttonProps} = props;
-    const dispatch = useDispatch();
     const mobile = useMobile();
     const text = `${window.location.origin}${getGalleryItemUrl({id: entryId})}`;
     const button = (
-        <Button {...buttonProps}>
+        <Button
+            {...buttonProps}
+            onClick={() => {
+                copyTextWithToast({
+                    copyText: text,
+                    errorText: toasterI18n('toast_copy-error'),
+                    successText: toasterI18n('toast_copy-link-success'),
+                    toastName: 'dl-gallery-copy-link',
+                });
+            }}
+        >
             <Button.Icon>
                 <Icon data={LinkIcon} />
             </Button.Icon>
         </Button>
     );
 
-    return (
-        <CopyToClipboard
-            text={text}
-            onCopy={() => {
-                dispatch(showToast({title: toasterI18n('toast_copy-link-success')}));
-            }}
-        >
-            {() => {
-                return mobile ? (
-                    button
-                ) : (
-                    <ActionTooltip title={utilityI18n('button_copy')}>{button}</ActionTooltip>
-                );
-            }}
-        </CopyToClipboard>
+    return mobile ? (
+        button
+    ) : (
+        <ActionTooltip title={utilityI18n('button_copy')}>{button}</ActionTooltip>
     );
 }
 
@@ -153,7 +149,7 @@ function UseButton(props: {url: string; entryId: string}) {
                     text: getDropdownItem({
                         text: i18n('button_download'),
                         hint: i18n('text_download-desctiption'),
-                        icon: Copy,
+                        icon: ArrowDownToLine,
                     }),
                 },
                 {
@@ -239,17 +235,25 @@ function CardActionPanel({
                         </Button.Icon>
                     </Button>
                 )}
-                <Text variant={isActiveMediaQueryS ? 'subheader-2' : 'header-1'} ellipsis={true}>
+                <Text
+                    variant={isActiveMediaQueryS ? 'subheader-2' : 'header-1'}
+                    ellipsis={true}
+                    style={{minWidth: 0}}
+                >
                     {entry.title[lang]}
                 </Text>
             </Flex>
         );
     } else {
         leftItems = (
-            <Breadcrumbs navigate={(href) => history.push(href)}>
-                <Breadcrumbs.Item href="/gallery">{galleryI18n('label_gallery')}</Breadcrumbs.Item>
-                <Breadcrumbs.Item disabled={true}>{entry.title[lang]}</Breadcrumbs.Item>
-            </Breadcrumbs>
+            <Flex style={{minWidth: 0, flex: 1}}>
+                <Breadcrumbs className={b('breadcrumbs')} navigate={(href) => history.push(href)}>
+                    <Breadcrumbs.Item href="/gallery">
+                        {galleryI18n('label_gallery')}
+                    </Breadcrumbs.Item>
+                    <Breadcrumbs.Item disabled={true}>{entry.title[lang]}</Breadcrumbs.Item>
+                </Breadcrumbs>
+            </Flex>
         );
     }
 
@@ -257,14 +261,14 @@ function CardActionPanel({
 
     if (isActiveMediaQueryS) {
         rightItems = (
-            <Flex className={b('actions-right-flex', mods)}>
+            <Flex className={b('actions-right-flex', mods)} style={{flexShrink: 0}}>
                 <LinkButton entryId={entry.id} />
                 {entry.data && <UseButton entryId={entry.id} url={entry.data} />}
             </Flex>
         );
     } else {
         rightItems = (
-            <Flex className={b('actions-right-flex', mods)}>
+            <Flex className={b('actions-right-flex', mods)} style={{flexShrink: 0}}>
                 <LinkButton entryId={entry.id} />
                 <ContactPartnerButton
                     partnerId={entry.partnerId}
@@ -289,7 +293,11 @@ function CardActionPanel({
             leftItems={leftItems}
             rightItems={rightItems}
             wrapperRef={isPromo ? actionPanelRef : undefined}
-            style={isPromo ? style : undefined}
+            style={{
+                ...(isPromo ? style : {}),
+                maxWidth: '100vw',
+                overflow: 'hidden',
+            }}
         />
     );
 }
@@ -431,7 +439,7 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang, maxWidth}: C
 
     return (
         <Container className={b('container', mods)}>
-            <Row space="0" style={{marginTop: 28, marginBottom: 28}}>
+            <Row space="0" style={{marginTop: 24, marginBottom: 24}}>
                 <Col s="12">
                     <PageHeader title={entry.title[lang]} to={getAllPageUrl()} />
                 </Col>
