@@ -1,6 +1,8 @@
 import {GALLERY_ITEM_CATEGORY} from 'shared/constants';
 import type {GalleryItemCategory, GalleryItemShort} from 'shared/types';
 
+import {galleryAllPageI18n} from './i18n';
+
 type GalleryItemsByLabel = Record<string, number[]>;
 
 export function groupGalleryItemsByLabels(items: GalleryItemShort[]): GalleryItemsByLabel {
@@ -21,14 +23,23 @@ export function groupGalleryItemsByLabels(items: GalleryItemShort[]): GalleryIte
 }
 
 const CATEGORY_TO_LABEL_TITLE: Record<GalleryItemCategory, string> = {
-    [GALLERY_ITEM_CATEGORY.EDUCATION]: 'Education',
-    [GALLERY_ITEM_CATEGORY.FINANCE]: 'Finance',
-    [GALLERY_ITEM_CATEGORY.HR]: 'HR',
-    [GALLERY_ITEM_CATEGORY.IT]: 'IT',
-    [GALLERY_ITEM_CATEGORY.RETAIL]: 'Retail',
-    [GALLERY_ITEM_CATEGORY.SPORTS]: 'Sports',
-    [GALLERY_ITEM_CATEGORY.EDITOR]: 'Editor',
-    [GALLERY_ITEM_CATEGORY.GEO]: 'Geo',
+    [GALLERY_ITEM_CATEGORY.EDITOR]: galleryAllPageI18n('category_editor'),
+    [GALLERY_ITEM_CATEGORY.EDUCATION]: galleryAllPageI18n('category_education'),
+    [GALLERY_ITEM_CATEGORY.FINANCE]: galleryAllPageI18n('category_finance'),
+    [GALLERY_ITEM_CATEGORY.GEO]: galleryAllPageI18n('category_geo'),
+    [GALLERY_ITEM_CATEGORY.HEALTHCARE]: galleryAllPageI18n('category_healthcare'),
+    [GALLERY_ITEM_CATEGORY.HR]: galleryAllPageI18n('category_hr'),
+    [GALLERY_ITEM_CATEGORY.IT]: galleryAllPageI18n('category_it'),
+    [GALLERY_ITEM_CATEGORY.MARKETING]: galleryAllPageI18n('category_marketing'),
+    [GALLERY_ITEM_CATEGORY.MARKETPLACE]: galleryAllPageI18n('category_marketplace'),
+    [GALLERY_ITEM_CATEGORY.PHARMA]: galleryAllPageI18n('category_pharma'),
+    [GALLERY_ITEM_CATEGORY.PRODUCT]: galleryAllPageI18n('category_product'),
+    [GALLERY_ITEM_CATEGORY.PRODUCTION]: galleryAllPageI18n('category_production'),
+    [GALLERY_ITEM_CATEGORY.RETAIL]: galleryAllPageI18n('category_retail'),
+    [GALLERY_ITEM_CATEGORY.SALES]: galleryAllPageI18n('category_sales'),
+    [GALLERY_ITEM_CATEGORY.SERVICE]: galleryAllPageI18n('category_service'),
+    [GALLERY_ITEM_CATEGORY.SOCIAL]: galleryAllPageI18n('category_social'),
+    [GALLERY_ITEM_CATEGORY.SPORTS]: galleryAllPageI18n('category_sports'),
 };
 
 export function getCategoryLabelTitle(category = '') {

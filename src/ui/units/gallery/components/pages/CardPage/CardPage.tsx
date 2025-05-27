@@ -45,11 +45,12 @@ import {PUBLIC_GALLERY_ID_SEARCH_PARAM} from 'ui/units/collections/components/co
 import {useGetGalleryItemQuery, useGetGalleryItemsQuery} from 'ui/units/gallery/store/api';
 import Utils from 'ui/utils';
 
-import {GalleryCardLabels, GalleryCardPreview, SectionHeader} from '../../blocks';
+import {GalleryCardLabels, GalleryCardPreview, PageHeader, SectionHeader} from '../../blocks';
 import type {ActiveMediaQuery} from '../../types';
 import {
     block,
     galleryI18n,
+    getAllPageUrl,
     getGalleryItemUrl,
     getLang,
     galleryCardPageI18n as i18n,
@@ -432,7 +433,7 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang, maxWidth}: C
         <Container className={b('container', mods)}>
             <Row space="0" style={{marginTop: 28, marginBottom: 28}}>
                 <Col s="12">
-                    <Text variant="header-2">{entry.title[lang]}</Text>
+                    <PageHeader title={entry.title[lang]} to={getAllPageUrl()} />
                 </Col>
             </Row>
             <Row space="4" spaceRow="4" style={{marginTop: 0, marginBottom: 32}}>

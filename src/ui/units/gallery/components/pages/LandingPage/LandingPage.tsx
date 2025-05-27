@@ -214,7 +214,7 @@ function PromoBlockRow({galleryItems, activeMediaQuery, editorChoiceIds}: PromoB
             <Col l="3" m="3" s="12">
                 <PromoBlockItem
                     icon={true}
-                    title={`Показать все`}
+                    title={i18n('label_show-all')}
                     counter={galleryItems.length}
                     activeMediaQuery={activeMediaQuery}
                     imageProps={othersImageProps}
