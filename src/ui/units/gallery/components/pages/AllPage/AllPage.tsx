@@ -293,7 +293,7 @@ export function AllPage() {
                             onUpdate={setSearch}
                         />
                     </Col>
-                    <Col m="6" s="12" className={b('filters')}>
+                    <Col m="6" s="12" className={b('filters', {mobile: DL.IS_MOBILE})}>
                         <div className={b('filter-category', {mobile: DL.IS_MOBILE})}>
                             <Select
                                 filterable={true}

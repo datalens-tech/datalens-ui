@@ -42,6 +42,10 @@ $block: '.#{variables.$ns}-all';
         @media (max-width: 577px) {
             flex-direction: column;
         }
+
+        &_mobile {
+            flex-direction: column;
+        }
     }
 
     &__filter-category {
