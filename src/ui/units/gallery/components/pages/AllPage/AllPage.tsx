@@ -83,7 +83,7 @@ function useFilteredGalleryItems({
     const filteredItems = React.useMemo(() => {
         return items.reduce<GalleryItemShort[]>((acc, item) => {
             const matchesSearchValue =
-                !search || item.title[lang]?.toLowerCase().startsWith(search.toLowerCase());
+                !search || item.title[lang]?.toLowerCase().includes(search.toLowerCase());
 
             if (!matchesSearchValue) {
                 return acc;
