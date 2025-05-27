@@ -589,7 +589,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                                     qa: DashCommonQa.RelationsDisconnectAllSelectors,
                                 },
                             ]}
-                            switcher={
+                            renderSwitcher={() => (
                                 <Button
                                     className={b('switcher-button')}
                                     view="normal"
@@ -602,7 +602,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                                         size={ICON_SIZE}
                                     />
                                 </Button>
-                            }
+                            )}
                         />
                         {Boolean(shownInvalidAliases?.length) && (
                             <React.Fragment>

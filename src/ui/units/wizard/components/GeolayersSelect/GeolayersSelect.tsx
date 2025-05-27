@@ -268,7 +268,7 @@ class GeolayersSelect extends React.Component<GeolayersSelectProps, GeolayersSel
                 <DropdownMenu
                     size="s"
                     data={item.id}
-                    switcher={this.renderDotsButton()}
+                    renderSwitcher={this.renderDotsButton}
                     items={this.dropdownItems}
                     onSwitcherClick={this.onSwitcherClick}
                 />

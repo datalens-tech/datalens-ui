@@ -88,11 +88,11 @@ function ConnectionMenu(props) {
             <DropdownMenu
                 size="s"
                 switcherWrapperClassName={b('btn-menu-control')}
-                switcher={
+                renderSwitcher={() => (
                     <Button ref={menuControlBtnRef} size="s" view="flat">
                         <Icon className={b('icon-more')} data={Ellipsis} width={14} />
                     </Button>
-                }
+                )}
                 popupProps={{placement: ['bottom-start', 'top-start']}}
                 items={[
                     {

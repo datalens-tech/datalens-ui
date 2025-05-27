@@ -146,12 +146,12 @@ export const CollectionActions = React.memo<Props>(
                         size="s"
                         items={createActionItems}
                         switcherWrapperClassName={b('create-wrapper')}
-                        switcher={
+                        renderSwitcher={() => (
                             <Button view="action" className={b('create')}>
                                 {i18n('action_create')}
                                 <Icon data={ChevronDown} />
                             </Button>
-                        }
+                        )}
                     />
                 )}
             </div>

@@ -169,7 +169,7 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
                 <DropdownMenu
                     size="s"
                     switcherWrapperClassName={b('action-bar-top_connection-select-btn_more')}
-                    switcher={
+                    renderSwitcher={() => (
                         <Button
                             className={b('action-bar-top_connection-select-btn')}
                             view="flat"
@@ -180,7 +180,7 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
                             <EntryIcon entry={connection} size={24} className={b('entry-icon')} />
                             {connection.name}
                         </Button>
-                    }
+                    )}
                     items={[
                         {
                             action: () => {

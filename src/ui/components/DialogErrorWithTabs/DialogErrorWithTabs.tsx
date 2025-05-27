@@ -1,7 +1,6 @@
 import React from 'react';
 
-import type {TabsItemProps} from '@gravity-ui/uikit';
-import {Button, Loader, Tabs} from '@gravity-ui/uikit';
+import {Button, Loader, Tab, TabList, TabProvider} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Feature} from 'shared';
@@ -35,8 +34,9 @@ enum DialogErrorTabId {
     Debug = 'tab_debug',
 }
 
-type DialogErrorTabItemProps = TabsItemProps & {
+type DialogErrorTabItemProps = {
     id: DialogErrorTabId;
+    title: string;
 };
 
 type DatabaseErrorDetails = {
@@ -255,13 +255,18 @@ class DialogErrorWithTabs extends React.Component<Props, State> {
         return (
             <React.Fragment>
                 <DebugInfo requestId={this.state.requestId} traceId={this.state.traceId} />
-                <Tabs
-                    items={this.state.tabsList}
-                    className={b('tab-navigation')}
-                    onSelectTab={this.onTabClick}
-                    activeTab={this.state.activeTabId}
-                    size={DL.IS_MOBILE ? MOBILE_SIZE.TABS : 'm'}
-                />
+                <TabProvider value={this.state.activeTabId} onUpdate={this.onTabClick}>
+                    <TabList
+                        className={b('tab-navigation')}
+                        size={DL.IS_MOBILE ? MOBILE_SIZE.TABS : 'm'}
+                    >
+                        {this.state.tabsList.map((item) => (
+                            <Tab key={item.id} value={item.id}>
+                                {item.title}
+                            </Tab>
+                        ))}
+                    </TabList>
+                </TabProvider>
                 {this.renderTabContent(this.state.activeTabId)}
             </React.Fragment>
         );
@@ -310,8 +315,8 @@ class DialogErrorWithTabs extends React.Component<Props, State> {
         this.props.onCancel();
     };
 
-    private onTabClick = (tabId: DialogErrorTabId) => {
-        this.setState({activeTabId: tabId});
+    private onTabClick = (tabId: string) => {
+        this.setState({activeTabId: tabId as DialogErrorTabId});
     };
 
     private addTabToList(

@@ -112,11 +112,11 @@ const DatasetSelectItem: React.FC<DatasetSelectItemProps> = (props) => {
                         popupProps={{
                             qa: SectionDatasetQA.DatasetSelectMoreMenu,
                         }}
-                        switcher={
+                        renderSwitcher={() => (
                             <Button view="flat-secondary" qa={SectionDatasetQA.DatasetSelectMore}>
                                 <Icon data={Ellipsis} size={16} />
                             </Button>
-                        }
+                        )}
                         items={props.items}
                     />
                 </div>

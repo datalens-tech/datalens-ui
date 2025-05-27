@@ -154,7 +154,7 @@ export function ParamSelector(props: ParamSelectorProps) {
                             switcherWrapperClassName={b('param-select-option-dropdown')}
                             size="s"
                             popupProps={{
-                                offset: [0, 0],
+                                offset: {mainAxis: 0, crossAxis: 0},
                             }}
                             onSwitcherClick={(e) => {
                                 e.stopPropagation();

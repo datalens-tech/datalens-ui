@@ -109,7 +109,7 @@ export class Menu extends React.PureComponent {
             },
             text: titleStr,
             items: subItems,
-            icon: itemIcon,
+            iconStart: itemIcon,
             className: b('popup-item'),
         };
     };
