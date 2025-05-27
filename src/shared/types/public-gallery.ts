@@ -28,6 +28,8 @@ export type GalleryItem = {
 export type GalleryItemShort = Pick<
     GalleryItem,
     'createdAt' | 'createdBy' | 'id' | 'images' | 'labels' | 'title'
->;
+> & {
+    canBeUsed: boolean;
+};
 
 export type GalleryItemList = GalleryItemShort[];
