@@ -7,7 +7,6 @@ import {
     Row,
     Select,
     Switch,
-    Text,
     TextInput,
     useLayoutContext,
     useThemeType,
@@ -20,8 +19,9 @@ import type {GalleryItemShort} from 'shared/types';
 import {ActionPanel} from 'ui/components/ActionPanel';
 import {DL} from 'ui/constants';
 
+import {UNIT_ROUTE} from '../../../constants/routes';
 import {useGetGalleryItemsQuery, useGetGalleryMetaQuery} from '../../../store/api';
-import {GalleryCardPreview} from '../../blocks';
+import {GalleryCardPreview, PageHeader} from '../../blocks';
 import {
     block,
     galleryI18n,
@@ -40,21 +40,8 @@ const b = block('all');
 const CATEGORIES_SELECT_VALUES = [
     SPECIAL_CATEGORY.ALL,
     SPECIAL_CATEGORY.EDITORS_CHOICE,
-    GALLERY_ITEM_CATEGORY.EDITOR,
-    GALLERY_ITEM_CATEGORY.FINANCE,
-    GALLERY_ITEM_CATEGORY.HR,
-    GALLERY_ITEM_CATEGORY.RETAIL,
-    GALLERY_ITEM_CATEGORY.SPORTS,
+    ...Object.values(GALLERY_ITEM_CATEGORY),
 ];
-
-interface UseGalleryItemsProps {
-    items: GalleryItemShort[];
-    editorChoiceIds: string[];
-    search: string;
-    category: string;
-    lang: string;
-    canBeUsed: boolean;
-}
 
 function useSortedGalleryItems({items}: {items: GalleryItemShort[]}) {
     const sortedItems = React.useMemo(() => {
@@ -74,6 +61,14 @@ function useSortedGalleryItems({items}: {items: GalleryItemShort[]}) {
 
     return {sortedItems};
 }
+interface UseFilteredGalleryItemsProps {
+    items: GalleryItemShort[];
+    editorChoiceIds: string[];
+    search: string;
+    category: string;
+    lang: string;
+    canBeUsed: boolean;
+}
 
 function useFilteredGalleryItems({
     category,
@@ -82,7 +77,7 @@ function useFilteredGalleryItems({
     lang,
     editorChoiceIds,
     canBeUsed,
-}: UseGalleryItemsProps) {
+}: UseFilteredGalleryItemsProps) {
     const filteredItems = React.useMemo(() => {
         return items.reduce<GalleryItemShort[]>((acc, item) => {
             if (canBeUsed && !item.canBeUsed) {
@@ -280,7 +275,7 @@ export function AllPage() {
             >
                 <Row space="0" style={{marginTop: 24}}>
                     <Col s="12">
-                        <Text variant="header-2">{i18n('title_all_entries')}</Text>
+                        <PageHeader title={i18n('title_all_entries')} to={UNIT_ROUTE.ROOT} />
                     </Col>
                 </Row>
                 <Row space="6" style={{marginTop: 0, marginBottom: 24}}>

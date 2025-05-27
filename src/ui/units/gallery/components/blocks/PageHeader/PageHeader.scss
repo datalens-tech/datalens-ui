@@ -1,0 +1,8 @@
+@use '../../variables';
+
+$block: '.#{variables.$ns}-page-header';
+
+#{$block} {
+    display: flex;
+    column-gap: 6px;
+}
