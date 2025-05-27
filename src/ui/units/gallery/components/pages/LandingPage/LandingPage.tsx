@@ -7,12 +7,12 @@ import {
     Col,
     Container,
     Flex,
-    Link,
     Loader,
     Row,
     useLayoutContext,
     useThemeType,
 } from '@gravity-ui/uikit';
+import type {ButtonProps} from '@gravity-ui/uikit';
 import sortBy from 'lodash/sortBy';
 import {Link as RouterLink} from 'react-router-dom';
 import type {GalleryItemShort} from 'shared/types';
@@ -29,6 +29,7 @@ import {WorkOfMonth} from '../../blocks/WorkOfMonth/WorkOfMonth';
 import type {ActiveMediaQuery} from '../../types';
 import {
     block,
+    galleryAllPageI18n,
     galleryI18n,
     getAllPageUrl,
     getLang,
@@ -43,10 +44,10 @@ import './LandingPage.scss';
 const b = block('landing');
 const galleryIllustrationStore = {
     dark: {
-        header: () => import('../../../../../assets/images/illustration/dark/gallery-header.svg'),
+        header: () => import('../../../../../assets/images/illustration/dark/gallery-header.png'),
     },
     light: {
-        header: () => import('../../../../../assets/images/illustration/light/gallery-header.svg'),
+        header: () => import('../../../../../assets/images/illustration/light/gallery-header.png'),
     },
 };
 const BaseIllustration = createIllustration([galleryIllustrationStore]);
@@ -223,9 +224,38 @@ function PromoBlockRow({galleryItems, activeMediaQuery, editorChoiceIds}: PromoB
     );
 }
 
+interface HeaderActionsProps {
+    activeMediaQuery?: ActiveMediaQuery;
+}
+
+function HeaderActions({activeMediaQuery}: HeaderActionsProps) {
+    const isActiveMediaQueryS = activeMediaQuery === 's';
+    const mods: CnMods = {media: activeMediaQuery};
+    const buttonSize: ButtonProps['size'] = isActiveMediaQueryS ? 'xl' : 'l';
+    const buttonWidth: ButtonProps['width'] = isActiveMediaQueryS ? 'max' : undefined;
+
+    return (
+        <div className={b('header-actions')}>
+            <RouterLink className={b('header-actions-link', mods)} to={getAllPageUrl()}>
+                <Button width={buttonWidth} size={buttonSize} view="action">
+                    {galleryAllPageI18n('title_all_entries')}
+                </Button>
+            </RouterLink>
+            <Button
+                href={ADD_DASH_FORM_LINK}
+                target="_blank"
+                size={buttonSize}
+                width={buttonWidth}
+                view={isActiveMediaQueryS ? 'outlined' : 'flat'}
+            >
+                {i18n('button_add_dashboard')}
+            </Button>
+        </div>
+    );
+}
+
 export function LandingPage() {
     const {activeMediaQuery} = useLayoutContext();
-
     const themeType = useThemeType();
     const {isLoading: isDataLoading, data} = useGetGalleryItemsQuery();
     const {isLoading: isMetaLoading, data: metaData} = useGetGalleryMetaQuery();
@@ -247,6 +277,7 @@ export function LandingPage() {
         ? metaData.landingCategories
         : [];
     const workOfMonthId = metaData?.workOfTheMonth.id;
+    const buttonSize: ButtonProps['size'] = isActiveMediaQueryS ? 'xl' : 'l';
 
     return (
         <Container className={b('container', baseMods)}>
@@ -265,8 +296,9 @@ export function LandingPage() {
                     <Flex className={b('header-title-flex', baseMods)}>
                         <h1 className={b('header-title')}>{i18n('header_title')}</h1>
                         <span className={b('header-description')}>
-                            {i18n('header_description')}
+                            <InterpolatedText br text={i18n('header_description')} />
                         </span>
+                        <HeaderActions activeMediaQuery={activeMediaQuery} />
                     </Flex>
                 </Col>
             </Row>
@@ -328,11 +360,15 @@ export function LandingPage() {
                         <div className={b('add-card-description')}>
                             <InterpolatedText br text={i18n('section_add_description')} />
                         </div>
-                        <Link view="normal" target="_blank" href={ADD_DASH_FORM_LINK}>
-                            <Button className={b('add-card-button')} size="xl" view="action">
-                                {i18n('button_add_dashboard')}
-                            </Button>
-                        </Link>
+                        <Button
+                            className={b('add-card-button')}
+                            href={ADD_DASH_FORM_LINK}
+                            size={buttonSize}
+                            target="_blank"
+                            view="action"
+                        >
+                            {i18n('button_add_dashboard')}
+                        </Button>
                     </Flex>
                 </Col>
             </Row>

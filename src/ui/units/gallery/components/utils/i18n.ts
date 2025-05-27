@@ -9,3 +9,4 @@ export const galleryI18n = I18n.keyset('gallery.view');
 export const galleryLandingI18n = I18n.keyset('gallery.landing.view');
 export const galleryAllPageI18n = I18n.keyset('gallery.all-page.view');
 export const galleryCardPageI18n = I18n.keyset('gallery.card-page.view');
+export const utilityI18n = I18n.keyset('component.dialog-switch-public.view');

@@ -11,6 +11,7 @@ import {
     Xmark,
 } from '@gravity-ui/icons';
 import {
+    ActionTooltip,
     Button,
     Card,
     Col,
@@ -24,6 +25,7 @@ import {
     Text,
     spacing,
     useLayoutContext,
+    useMobile,
     useThemeType,
 } from '@gravity-ui/uikit';
 import type {ButtonProps, IconData} from '@gravity-ui/uikit';
@@ -52,6 +54,7 @@ import {
     getGalleryItemUrl,
     getLang,
     galleryCardPageI18n as i18n,
+    utilityI18n,
 } from '../../utils';
 import type {CnMods} from '../../utils';
 import {CARD_PAGE_URL_PARAMS, PARTNER_FORM_LINK} from '../constants';
@@ -97,7 +100,15 @@ function IconWithText(props: IconWithTextProps) {
 function LinkButton(props: ButtonProps & {entryId: string}) {
     const {entryId, ...buttonProps} = props;
     const dispatch = useDispatch();
+    const mobile = useMobile();
     const text = `${window.location.origin}${getGalleryItemUrl({id: entryId})}`;
+    const button = (
+        <Button {...buttonProps}>
+            <Button.Icon>
+                <Icon data={LinkIcon} />
+            </Button.Icon>
+        </Button>
+    );
 
     return (
         <CopyToClipboard
@@ -107,12 +118,10 @@ function LinkButton(props: ButtonProps & {entryId: string}) {
             }}
         >
             {() => {
-                return (
-                    <Button {...buttonProps}>
-                        <Button.Icon>
-                            <Icon data={LinkIcon} />
-                        </Button.Icon>
-                    </Button>
+                return mobile ? (
+                    button
+                ) : (
+                    <ActionTooltip title={utilityI18n('button_copy')}>{button}</ActionTooltip>
                 );
             }}
         </CopyToClipboard>
