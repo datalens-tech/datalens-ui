@@ -314,8 +314,7 @@ export function AllPage() {
                         </div>
                         <div className={b('filter-can-be-used', {mobile: DL.IS_MOBILE})}>
                             <Switch size="l" checked={canBeUsed} onChange={handleCanBeUsedUpdate}>
-                                {/* {i18n('filter_can-be-used')} */}
-                                Доступно для использования
+                                {i18n('filter_can-be-used')}
                             </Switch>
                         </div>
                     </Col>
