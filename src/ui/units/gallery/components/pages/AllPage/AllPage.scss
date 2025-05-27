@@ -34,4 +34,36 @@ $block: '.#{variables.$ns}-all';
             padding-inline: 0;
         }
     }
+
+    &__filters {
+        display: flex;
+        gap: var(--g-spacing-6);
+
+        @media (max-width: 577px) {
+            flex-direction: column;
+        }
+
+        &_mobile {
+            flex-direction: column;
+        }
+    }
+
+    &__filter-category {
+        flex-grow: 1;
+    }
+
+    &__filter-can-be-used {
+        display: flex;
+        justify-content: end;
+        align-items: center;
+        flex-shrink: 0;
+
+        @media (max-width: 577px) {
+            justify-content: start;
+        }
+
+        &_mobile {
+            justify-content: start;
+        }
+    }
 }

@@ -6,6 +6,7 @@ import {
     Loader,
     Row,
     Select,
+    Switch,
     Text,
     TextInput,
     useLayoutContext,
@@ -52,6 +53,7 @@ interface UseGalleryItemsProps {
     search: string;
     category: string;
     lang: string;
+    canBeUsed: boolean;
 }
 
 function useSortedGalleryItems({items}: {items: GalleryItemShort[]}) {
@@ -79,9 +81,14 @@ function useFilteredGalleryItems({
     search,
     lang,
     editorChoiceIds,
+    canBeUsed,
 }: UseGalleryItemsProps) {
     const filteredItems = React.useMemo(() => {
         return items.reduce<GalleryItemShort[]>((acc, item) => {
+            if (canBeUsed && !item.canBeUsed) {
+                return acc;
+            }
+
             const matchesSearchValue =
                 !search || item.title[lang]?.toLowerCase().includes(search.toLowerCase());
 
@@ -111,7 +118,7 @@ function useFilteredGalleryItems({
 
             return acc;
         }, []);
-    }, [items, search, lang, category, editorChoiceIds]);
+    }, [items, search, lang, category, editorChoiceIds, canBeUsed]);
 
     return {filteredItems};
 }
@@ -145,6 +152,7 @@ export function AllPage() {
     const {isLoading: isMetaLoading, data: metaData} = useGetGalleryMetaQuery();
     const [search, setSearch] = React.useState('');
     const [category, setCategory] = React.useState<string>(SPECIAL_CATEGORY.ALL);
+    const [canBeUsed, setCanBeUsed] = React.useState<boolean>(false);
     const lang = getLang();
     const {sortedItems} = useSortedGalleryItems({items});
     const {filteredItems} = useFilteredGalleryItems({
@@ -153,6 +161,7 @@ export function AllPage() {
         search,
         lang,
         editorChoiceIds: metaData?.editorChoice.ids ?? [],
+        canBeUsed,
     });
     const availableCategories = React.useMemo(() => {
         return Array.from(
@@ -208,6 +217,18 @@ export function AllPage() {
         [history, searchParams],
     );
 
+    const handleCanBeUsedUpdate = React.useCallback(() => {
+        const urlSearchParams = new URLSearchParams(searchParams);
+
+        if (urlSearchParams.has(URL_FILTER_PARAMS.CAN_BE_USED)) {
+            urlSearchParams.delete(URL_FILTER_PARAMS.CAN_BE_USED);
+        } else {
+            urlSearchParams.set(URL_FILTER_PARAMS.CAN_BE_USED, 'true');
+        }
+
+        history.push(`?${urlSearchParams.toString()}`);
+    }, [history, searchParams]);
+
     React.useEffect(() => {
         if (!isLoading && items.length > 0) {
             const urlSearchParams = new URLSearchParams(searchParams);
@@ -224,6 +245,8 @@ export function AllPage() {
             if (searchValue) {
                 setSearch(searchValue);
             }
+
+            setCanBeUsed(urlSearchParams.has(URL_FILTER_PARAMS.CAN_BE_USED));
         }
     }, [availableCategories, isLoading, items.length, searchParams]);
 
@@ -261,7 +284,7 @@ export function AllPage() {
                     </Col>
                 </Row>
                 <Row space="6" style={{marginTop: 0, marginBottom: 24}}>
-                    <Col m="8" s="12">
+                    <Col m="6" s="12">
                         <TextInput
                             defaultValue={search}
                             hasClear={true}
@@ -270,23 +293,30 @@ export function AllPage() {
                             onUpdate={setSearch}
                         />
                     </Col>
-                    <Col m="4" s="12">
-                        <Select
-                            filterable={true}
-                            onUpdate={handleCategorySelectUpdate}
-                            placeholder={i18n('filter_category_placeholder')}
-                            size="l"
-                            value={[category]}
-                            width="max"
-                        >
-                            {selectOptions.map((value) => {
-                                return (
-                                    <Select.Option key={value.value} value={value.value}>
-                                        {value.content}
-                                    </Select.Option>
-                                );
-                            })}
-                        </Select>
+                    <Col m="6" s="12" className={b('filters', {mobile: DL.IS_MOBILE})}>
+                        <div className={b('filter-category', {mobile: DL.IS_MOBILE})}>
+                            <Select
+                                filterable={true}
+                                onUpdate={handleCategorySelectUpdate}
+                                placeholder={i18n('filter_category_placeholder')}
+                                size="l"
+                                value={[category]}
+                                width="max"
+                            >
+                                {selectOptions.map((value) => {
+                                    return (
+                                        <Select.Option key={value.value} value={value.value}>
+                                            {value.content}
+                                        </Select.Option>
+                                    );
+                                })}
+                            </Select>
+                        </div>
+                        <div className={b('filter-can-be-used', {mobile: DL.IS_MOBILE})}>
+                            <Switch size="l" checked={canBeUsed} onChange={handleCanBeUsedUpdate}>
+                                {i18n('filter_can-be-used')}
+                            </Switch>
+                        </div>
                     </Col>
                 </Row>
                 <Row space="6" spaceRow="8">
