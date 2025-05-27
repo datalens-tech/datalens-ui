@@ -501,13 +501,22 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang, maxWidth}: C
     );
 }
 
+const isActivePreview = (urlSearchParams: URLSearchParams) => {
+    return (
+        urlSearchParams.has(CARD_PAGE_URL_PARAMS.PREVIEW, '1') ||
+        urlSearchParams.has(CARD_PAGE_URL_PARAMS.PREVIEW, 'true') ||
+        urlSearchParams.has(CARD_PAGE_URL_PARAMS.PREVIEW, '')
+    );
+};
+
 export function CardPage() {
     const {activeMediaQuery} = useLayoutContext();
-    const {search: searchParams} = useLocation();
+
+    const location = useLocation();
+    const {search: searchParams} = location;
     const history = useHistory();
     const urlSearchParams = new URLSearchParams(searchParams);
-    const shouldShowPreview = urlSearchParams.has(CARD_PAGE_URL_PARAMS.PREVIEW);
-    const [showPreview, setShowPreview] = React.useState(shouldShowPreview);
+    const showPreview = isActivePreview(urlSearchParams);
 
     const {id} = useParams<{id: string}>();
 
@@ -517,18 +526,19 @@ export function CardPage() {
     const themeType = useThemeType();
 
     const togglePreview = () => {
-        setShowPreview(!showPreview);
-    };
-
-    React.useEffect(() => {
         const urlParams = new URLSearchParams(searchParams);
-        if (urlParams.has(CARD_PAGE_URL_PARAMS.PREVIEW)) {
+        const hasPreviewParam = isActivePreview(urlParams);
+
+        if (hasPreviewParam) {
             urlParams.delete(CARD_PAGE_URL_PARAMS.PREVIEW);
-            history.replace({
-                search: `?${urlParams.toString()}`,
-            });
+        } else {
+            urlParams.set(CARD_PAGE_URL_PARAMS.PREVIEW, '1');
         }
-    }, [history, shouldShowPreview, searchParams]);
+
+        history.replace({
+            search: `?${urlParams.toString()}`,
+        });
+    };
 
     if (isLoading) {
         return <SmartLoader className={b('loader')} size="m" />;
