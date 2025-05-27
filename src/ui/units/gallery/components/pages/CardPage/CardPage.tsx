@@ -1,13 +1,22 @@
 import React from 'react';
 
 import {dateTime} from '@gravity-ui/date-utils';
-import {ArrowLeft, Calendar, Link as LinkIcon, Person, Xmark} from '@gravity-ui/icons';
+import {
+    ArrowLeft,
+    Calendar,
+    Copy,
+    FileArrowUp,
+    Link as LinkIcon,
+    Person,
+    Xmark,
+} from '@gravity-ui/icons';
 import {
     Button,
     Card,
     Col,
     Container,
     CopyToClipboard,
+    DropdownMenu,
     Flex,
     Icon,
     Link,
@@ -31,6 +40,7 @@ import {DL, URL_OPTIONS} from 'ui/constants';
 import {useMarkdown} from 'ui/hooks/useMarkdown';
 import {showToast} from 'ui/store/actions/toaster';
 import type {DataLensApiError} from 'ui/typings';
+import {PUBLIC_GALLERY_ID_SEARCH_PARAM} from 'ui/units/collections/components/constants';
 import {useGetGalleryItemQuery, useGetGalleryItemsQuery} from 'ui/units/gallery/store/api';
 import Utils from 'ui/utils';
 
@@ -106,6 +116,52 @@ function LinkButton(props: ButtonProps & {entryId: string}) {
                 );
             }}
         </CopyToClipboard>
+    );
+}
+
+const getDropdownItem = ({icon, text, hint}: {icon: IconData; text: string; hint?: string}) => {
+    return (
+        <div className={b('dropdown-item')}>
+            <Icon className={b('dropdown-icon')} data={icon} />
+            <div className={b('dropdown-text')}>
+                {text}
+                {hint && <div className={b('dropdown-hint')}>{hint}</div>}
+            </div>
+        </div>
+    );
+};
+
+function UseButton(props: {url: string; entryId: string}) {
+    const history = useHistory();
+
+    return (
+        <DropdownMenu
+            items={[
+                {
+                    action: () => {
+                        Utils.downloadFileByUrl(props.url, `${props.entryId}.json`);
+                    },
+                    text: getDropdownItem({
+                        text: i18n('button_download'),
+                        hint: i18n('text_download-desctiption'),
+                        icon: Copy,
+                    }),
+                },
+                {
+                    action: () => {
+                        history.push(
+                            `/collections/?${PUBLIC_GALLERY_ID_SEARCH_PARAM}=${props.entryId}`,
+                        );
+                    },
+                    text: getDropdownItem({
+                        text: i18n('button_import'),
+                        hint: i18n('text_import-desctiption'),
+                        icon: FileArrowUp,
+                    }),
+                },
+            ]}
+            renderSwitcher={(props) => <Button {...props}>{i18n('button_use')}</Button>}
+        />
     );
 }
 
@@ -194,6 +250,7 @@ function CardActionPanel({
         rightItems = (
             <Flex className={b('actions-right-flex', mods)}>
                 <LinkButton entryId={entry.id} />
+                {entry.data && <UseButton entryId={entry.id} url={entry.data} />}
             </Flex>
         );
     } else {
@@ -204,6 +261,7 @@ function CardActionPanel({
                     partnerId={entry.partnerId}
                     activeMediaQuery={activeMediaQuery}
                 />
+                {entry.data && <UseButton entryId={entry.id} url={entry.data} />}
                 <Button view={showPreview ? 'normal' : 'action'} onClick={togglePreview}>
                     {showPreview ? (
                         <Button.Icon>
