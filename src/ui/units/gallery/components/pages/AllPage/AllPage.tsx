@@ -191,6 +191,23 @@ export function AllPage() {
 
     const {pageOffset, actionPanelRef} = useActionPanelLayout();
 
+    const handleCategorySelectUpdate = React.useCallback(
+        (value: string[]) => {
+            const newCategory = value[0];
+            const urlSearchParams = new URLSearchParams(searchParams);
+
+            if (newCategory === SPECIAL_CATEGORY.ALL) {
+                urlSearchParams.delete(URL_FILTER_PARAMS.CATEGORY);
+            } else {
+                urlSearchParams.set(URL_FILTER_PARAMS.CATEGORY, newCategory);
+            }
+
+            history.push(`?${urlSearchParams.toString()}`);
+            setCategory(newCategory);
+        },
+        [history, searchParams],
+    );
+
     React.useEffect(() => {
         if (!isLoading && items.length > 0) {
             const urlSearchParams = new URLSearchParams(searchParams);
@@ -247,6 +264,7 @@ export function AllPage() {
                     <Col m="8" s="12">
                         <TextInput
                             defaultValue={search}
+                            hasClear={true}
                             size="l"
                             placeholder={i18n('filter_search_placeholder')}
                             onUpdate={setSearch}
@@ -255,7 +273,7 @@ export function AllPage() {
                     <Col m="4" s="12">
                         <Select
                             filterable={true}
-                            onUpdate={(value) => setCategory(value[0])}
+                            onUpdate={handleCategorySelectUpdate}
                             placeholder={i18n('filter_category_placeholder')}
                             size="l"
                             value={[category]}
