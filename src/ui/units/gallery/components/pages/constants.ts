@@ -7,6 +7,7 @@ export const ADD_DASH_FORM_LINK =
 export const URL_FILTER_PARAMS = {
     SEARCH_TEXT: 'search',
     CATEGORY: 'category',
+    CAN_BE_USED: 'can_be_used',
 };
 
 export const CARD_PAGE_URL_PARAMS = {
