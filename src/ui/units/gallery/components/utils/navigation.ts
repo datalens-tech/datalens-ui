@@ -1,7 +1,7 @@
 import {UNIT_ROUTE} from '../../constants/routes';
 import {CARD_PAGE_URL_PARAMS, URL_FILTER_PARAMS} from '../pages/constants';
 
-export function getAllPageUrl(filters: {category?: string}) {
+export function getAllPageUrl(filters: {category?: string} = {}) {
     const searchParams = new URLSearchParams();
     if (filters.category) {
         searchParams.append(URL_FILTER_PARAMS.CATEGORY, filters.category);

@@ -7,12 +7,12 @@ import {
     Col,
     Container,
     Flex,
-    Link,
     Loader,
     Row,
     useLayoutContext,
     useThemeType,
 } from '@gravity-ui/uikit';
+import type {ButtonProps} from '@gravity-ui/uikit';
 import sortBy from 'lodash/sortBy';
 import {Link as RouterLink} from 'react-router-dom';
 import type {GalleryItemShort} from 'shared/types';
@@ -29,6 +29,7 @@ import {WorkOfMonth} from '../../blocks/WorkOfMonth/WorkOfMonth';
 import type {ActiveMediaQuery} from '../../types';
 import {
     block,
+    galleryAllPageI18n,
     galleryI18n,
     getAllPageUrl,
     getLang,
@@ -43,10 +44,10 @@ import './LandingPage.scss';
 const b = block('landing');
 const galleryIllustrationStore = {
     dark: {
-        header: () => import('../../../../../assets/images/illustration/dark/gallery-header.svg'),
+        header: () => import('../../../../../assets/images/illustration/dark/gallery-header.png'),
     },
     light: {
-        header: () => import('../../../../../assets/images/illustration/light/gallery-header.svg'),
+        header: () => import('../../../../../assets/images/illustration/light/gallery-header.png'),
     },
 };
 const BaseIllustration = createIllustration([galleryIllustrationStore]);
@@ -225,7 +226,6 @@ function PromoBlockRow({galleryItems, activeMediaQuery, editorChoiceIds}: PromoB
 
 export function LandingPage() {
     const {activeMediaQuery} = useLayoutContext();
-
     const themeType = useThemeType();
     const {isLoading: isDataLoading, data} = useGetGalleryItemsQuery();
     const {isLoading: isMetaLoading, data: metaData} = useGetGalleryMetaQuery();
@@ -247,6 +247,7 @@ export function LandingPage() {
         ? metaData.landingCategories
         : [];
     const workOfMonthId = metaData?.workOfTheMonth.id;
+    const buttonSize: ButtonProps['size'] = isActiveMediaQueryS ? 'xl' : 'l';
 
     return (
         <Container className={b('container', baseMods)}>
@@ -267,6 +268,21 @@ export function LandingPage() {
                         <span className={b('header-description')}>
                             {i18n('header_description')}
                         </span>
+                        <div style={{display: 'flex', columnGap: 12}}>
+                            <RouterLink to={getAllPageUrl()}>
+                                <Button size={buttonSize} view="action">
+                                    {galleryAllPageI18n('title_all_entries')}
+                                </Button>
+                            </RouterLink>
+                            <Button
+                                href={ADD_DASH_FORM_LINK}
+                                target="_blank"
+                                size={buttonSize}
+                                view="flat"
+                            >
+                                {i18n('button_add_dashboard')}
+                            </Button>
+                        </div>
                     </Flex>
                 </Col>
             </Row>
@@ -328,11 +344,15 @@ export function LandingPage() {
                         <div className={b('add-card-description')}>
                             <InterpolatedText br text={i18n('section_add_description')} />
                         </div>
-                        <Link view="normal" target="_blank" href={ADD_DASH_FORM_LINK}>
-                            <Button className={b('add-card-button')} size="xl" view="action">
-                                {i18n('button_add_dashboard')}
-                            </Button>
-                        </Link>
+                        <Button
+                            className={b('add-card-button')}
+                            href={ADD_DASH_FORM_LINK}
+                            size={buttonSize}
+                            target="_blank"
+                            view="action"
+                        >
+                            {i18n('button_add_dashboard')}
+                        </Button>
                     </Flex>
                 </Col>
             </Row>
