@@ -15,17 +15,41 @@ const i18n = I18n.keyset('component.collections-structure');
 
 type ImportFileFieldProps = {
     onUpload: (file: File) => void;
-    onRemove: (index: number) => void;
+    onRemove: (index: number | 'publicGallery') => void;
     files: File[];
     error: string | null;
+    publicGalleryFile?: string;
 };
 
-export const ImportFileField = ({onUpload, onRemove, files, error}: ImportFileFieldProps) => {
+const FileLabel: React.FC<{filename: string; handler: () => unknown}> = ({filename, handler}) => {
+    return (
+        <Label
+            size="m"
+            theme="clear"
+            onCloseClick={handler}
+            type="close"
+            className={b('file-label')}
+            title={filename}
+        >
+            <Text color="complementary" variant="body-1">
+                {filename}
+            </Text>
+        </Label>
+    );
+};
+
+export const ImportFileField = ({
+    onUpload,
+    onRemove,
+    files,
+    error,
+    publicGalleryFile,
+}: ImportFileFieldProps) => {
     const handleFileUploading = (file: File[]) => {
         onUpload(file[0]);
     };
 
-    const handleRemoveFile = (index: number) => {
+    const handleRemoveFile = (index: number | 'publicGallery') => {
         onRemove(index);
     };
 
@@ -51,20 +75,18 @@ export const ImportFileField = ({onUpload, onRemove, files, error}: ImportFileFi
                     <Icon data={Paperclip} /> {i18n('button_choose-file')}
                 </Button>
                 {files.map((file, index) => (
-                    <Label
-                        size="m"
-                        theme="clear"
+                    <FileLabel
                         key={file.name}
-                        onCloseClick={() => handleRemoveFile(index)}
-                        type="close"
-                        className={b('file-label')}
-                        title={file.name}
-                    >
-                        <Text color="complementary" variant="body-1">
-                            {file.name}
-                        </Text>
-                    </Label>
+                        filename={file.name}
+                        handler={() => handleRemoveFile(index)}
+                    />
                 ))}
+                {publicGalleryFile && (
+                    <FileLabel
+                        filename={publicGalleryFile}
+                        handler={() => handleRemoveFile('publicGallery')}
+                    />
+                )}
             </Flex>
             {error && (
                 <Text variant="body-1" color="danger">

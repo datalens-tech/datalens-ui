@@ -5,12 +5,20 @@
 $block: '.#{variables.$ns}-card-preview';
 
 #{$block} {
-    border: 1px solid var(--g-color-line-generic);
-    overflow: hidden;
-    line-height: 0;
+    text-decoration: none;
+    color: inherit;
 
-    &:not(:hover) {
-        box-shadow: none;
+    &__card {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        border: 1px solid var(--g-color-line-generic);
+        overflow: hidden;
+        line-height: 0;
+
+        &:not(:hover) {
+            box-shadow: none;
+        }
     }
 
     &__image {

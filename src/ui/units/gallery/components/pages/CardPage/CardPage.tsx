@@ -1,43 +1,62 @@
 import React from 'react';
 
 import {dateTime} from '@gravity-ui/date-utils';
-import {ArrowLeft, Calendar, Link as LinkIcon, Person, Xmark} from '@gravity-ui/icons';
 import {
+    ArrowDownToLine,
+    ArrowLeft,
+    Calendar,
+    FileArrowUp,
+    Link as LinkIcon,
+    Person,
+    Xmark,
+} from '@gravity-ui/icons';
+import {
+    ActionTooltip,
     Button,
     Card,
     Col,
     Container,
-    CopyToClipboard,
+    DropdownMenu,
     Flex,
     Icon,
     Link,
     Row,
     Text,
     useLayoutContext,
+    useMobile,
     useThemeType,
 } from '@gravity-ui/uikit';
 import type {ButtonProps, IconData} from '@gravity-ui/uikit';
 import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
 import {I18n} from 'i18n';
-import {useDispatch} from 'react-redux';
-import {useHistory, useParams} from 'react-router-dom';
+import {useHistory, useLocation, useParams} from 'react-router-dom';
+import {ErrorContentTypes} from 'shared';
 import type {GalleryItem, TranslationsDict} from 'shared/types';
 import {ActionPanel} from 'ui/components/ActionPanel';
 import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
-import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
+import ErrorContent from 'ui/components/ErrorContent/ErrorContent';
 import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
-import {URL_OPTIONS} from 'ui/constants';
+import {DL, URL_OPTIONS} from 'ui/constants';
 import {useMarkdown} from 'ui/hooks/useMarkdown';
-import {showToast} from 'ui/store/actions/toaster';
-import type {DataLensApiError} from 'ui/typings';
+import {PUBLIC_GALLERY_ID_SEARCH_PARAM} from 'ui/units/collections/components/constants';
 import {useGetGalleryItemQuery, useGetGalleryItemsQuery} from 'ui/units/gallery/store/api';
 import Utils from 'ui/utils';
+import {copyTextWithToast} from 'ui/utils/copyText';
 
-import {GalleryCardLabels, GalleryCardPreview, SectionHeader} from '../../blocks';
+import {GalleryCardLabels, GalleryCardPreview, PageHeader, SectionHeader} from '../../blocks';
 import type {ActiveMediaQuery} from '../../types';
-import {block, getGalleryItemUrl, getLang} from '../../utils';
+import {
+    block,
+    galleryI18n,
+    getAllPageUrl,
+    getGalleryItemUrl,
+    getLang,
+    galleryCardPageI18n as i18n,
+    utilityI18n,
+} from '../../utils';
 import type {CnMods} from '../../utils';
-import {PARTNER_FORM_LINK} from '../constants';
+import {CARD_PAGE_URL_PARAMS, PARTNER_FORM_LINK} from '../constants';
+import {useActionPanelLayout} from '../hooks/useActionPanelLayout';
 
 import {FullscreenGallery} from './FullscreenGallery/FullscreenGallery';
 import {PreviewCard} from './PreviewCard/PreviewCard';
@@ -47,17 +66,7 @@ import './CardPage.scss';
 const b = block('card');
 const toasterI18n = I18n.keyset('component.entry-context-menu.view');
 
-// TODO: CHARTS-11481
-const i18n = (key: string) => {
-    switch (key) {
-        case 'label_unknown-error':
-            return 'An error occured';
-        case 'label_retry':
-            return 'Retry';
-        default:
-            return key;
-    }
-};
+const isPromo = DL.IS_NOT_AUTHENTICATED;
 
 interface IconWithTextProps {
     iconData: IconData;
@@ -88,26 +97,80 @@ function IconWithText(props: IconWithTextProps) {
 
 function LinkButton(props: ButtonProps & {entryId: string}) {
     const {entryId, ...buttonProps} = props;
-    const dispatch = useDispatch();
+    const mobile = useMobile();
     const text = `${window.location.origin}${getGalleryItemUrl({id: entryId})}`;
-
-    return (
-        <CopyToClipboard
-            text={text}
-            onCopy={() => {
-                dispatch(showToast({title: toasterI18n('toast_copy-link-success')}));
+    const button = (
+        <Button
+            {...buttonProps}
+            onClick={() => {
+                copyTextWithToast({
+                    copyText: text,
+                    errorText: toasterI18n('toast_copy-error'),
+                    successText: toasterI18n('toast_copy-link-success'),
+                    toastName: 'dl-gallery-copy-link',
+                });
             }}
         >
-            {() => {
-                return (
-                    <Button {...buttonProps}>
-                        <Button.Icon>
-                            <Icon data={LinkIcon} />
-                        </Button.Icon>
-                    </Button>
-                );
-            }}
-        </CopyToClipboard>
+            <Button.Icon>
+                <Icon data={LinkIcon} />
+            </Button.Icon>
+        </Button>
+    );
+
+    return mobile ? (
+        button
+    ) : (
+        <ActionTooltip title={utilityI18n('button_copy')}>{button}</ActionTooltip>
+    );
+}
+
+const getDropdownItem = ({icon, text, hint}: {icon: IconData; text: string; hint?: string}) => {
+    return (
+        <div className={b('dropdown-item')}>
+            <Icon className={b('dropdown-icon')} data={icon} />
+            <div className={b('dropdown-text')}>
+                {text}
+                {hint && <div className={b('dropdown-hint')}>{hint}</div>}
+            </div>
+        </div>
+    );
+};
+
+function UseButton(props: {url: string; entryId: string}) {
+    const history = useHistory();
+
+    return (
+        <DropdownMenu
+            items={[
+                {
+                    action: () => {
+                        Utils.downloadFileByUrl(props.url, `${props.entryId}.json`);
+                    },
+                    text: getDropdownItem({
+                        text: i18n('button_download'),
+                        hint: i18n('text_download-desctiption'),
+                        icon: ArrowDownToLine,
+                    }),
+                },
+                {
+                    action: () => {
+                        const redirectUrl = `/collections/?${PUBLIC_GALLERY_ID_SEARCH_PARAM}=${props.entryId}`;
+
+                        if (DL.IS_NOT_AUTHENTICATED) {
+                            window.location.href = redirectUrl;
+                        } else {
+                            history.push(redirectUrl);
+                        }
+                    },
+                    text: getDropdownItem({
+                        text: i18n('button_import'),
+                        hint: i18n('text_import-desctiption'),
+                        icon: FileArrowUp,
+                    }),
+                },
+            ]}
+            renderSwitcher={(props) => <Button {...props}>{i18n('button_use')}</Button>}
+        />
     );
 }
 
@@ -138,7 +201,7 @@ function ContactPartnerButton(props: {
 
     return (
         <Button className={b('contact-partner-btn', mods)} {...buttonProps} onClick={handleClick}>
-            Contact a partner
+            {i18n('button_contact_partner')}
         </Button>
     );
 }
@@ -162,6 +225,8 @@ function CardActionPanel({
     const isActiveMediaQueryS = activeMediaQuery === 's';
     const mods: CnMods = {media: activeMediaQuery};
 
+    const {style, actionPanelRef} = useActionPanelLayout();
+
     let leftItems: React.ReactNode = null;
 
     if (showPreview) {
@@ -174,17 +239,25 @@ function CardActionPanel({
                         </Button.Icon>
                     </Button>
                 )}
-                <Text variant={isActiveMediaQueryS ? 'subheader-2' : 'header-1'} ellipsis={true}>
+                <Text
+                    variant={isActiveMediaQueryS ? 'subheader-2' : 'header-1'}
+                    ellipsis={true}
+                    style={{minWidth: 0}}
+                >
                     {entry.title[lang]}
                 </Text>
             </Flex>
         );
     } else {
         leftItems = (
-            <Breadcrumbs navigate={(href) => history.push(href)}>
-                <Breadcrumbs.Item href="/gallery">Gallery</Breadcrumbs.Item>
-                <Breadcrumbs.Item disabled={true}>{entry.title[lang]}</Breadcrumbs.Item>
-            </Breadcrumbs>
+            <Flex style={{minWidth: 0, flex: 1}}>
+                <Breadcrumbs className={b('breadcrumbs')} navigate={(href) => history.push(href)}>
+                    <Breadcrumbs.Item href="/gallery">
+                        {galleryI18n('label_gallery')}
+                    </Breadcrumbs.Item>
+                    <Breadcrumbs.Item disabled={true}>{entry.title[lang]}</Breadcrumbs.Item>
+                </Breadcrumbs>
+            </Flex>
         );
     }
 
@@ -192,32 +265,45 @@ function CardActionPanel({
 
     if (isActiveMediaQueryS) {
         rightItems = (
-            <Flex className={b('actions-right-flex', mods)}>
+            <Flex className={b('actions-right-flex', mods)} style={{flexShrink: 0}}>
                 <LinkButton entryId={entry.id} />
+                {entry.data && <UseButton entryId={entry.id} url={entry.data} />}
             </Flex>
         );
     } else {
         rightItems = (
-            <Flex className={b('actions-right-flex', mods)}>
+            <Flex className={b('actions-right-flex', mods)} style={{flexShrink: 0}}>
                 <LinkButton entryId={entry.id} />
                 <ContactPartnerButton
                     partnerId={entry.partnerId}
                     activeMediaQuery={activeMediaQuery}
                 />
+                {entry.data && <UseButton entryId={entry.id} url={entry.data} />}
                 <Button view={showPreview ? 'normal' : 'action'} onClick={togglePreview}>
                     {showPreview ? (
                         <Button.Icon>
                             <Icon data={Xmark} />
                         </Button.Icon>
                     ) : (
-                        'Open'
+                        galleryI18n('button_open')
                     )}
                 </Button>
             </Flex>
         );
     }
 
-    return <ActionPanel leftItems={leftItems} rightItems={rightItems} />;
+    return (
+        <ActionPanel
+            leftItems={leftItems}
+            rightItems={rightItems}
+            wrapperRef={isPromo ? actionPanelRef : undefined}
+            style={{
+                ...(isPromo ? style : {}),
+                maxWidth: '100vw',
+                overflow: 'hidden',
+            }}
+        />
+    );
 }
 
 interface CardPreviewProps {
@@ -330,7 +416,7 @@ function CardDescription({lang, description, shortDescription}: CardDescriptionP
                     view="secondary"
                     visitable={false}
                 >
-                    {isExpanded ? 'Collapse' : 'Show full'}
+                    {isExpanded ? i18n('button_collapse') : i18n('button_show_full')}
                 </Link>
             )}
         </Flex>
@@ -342,11 +428,12 @@ interface CardContentProps {
     entry: GalleryItem;
     togglePreview: () => void;
     lang: string;
+    maxWidth?: boolean;
 }
 
-function CardContent({activeMediaQuery, entry, togglePreview, lang}: CardContentProps) {
+function CardContent({activeMediaQuery, entry, togglePreview, lang, maxWidth}: CardContentProps) {
     const isActiveMediaQueryS = activeMediaQuery === 's';
-    const mods: CnMods = {media: activeMediaQuery};
+    const mods: CnMods = {media: activeMediaQuery, maxWidth};
     const themeType = useThemeType();
     const {data: galleryItems = []} = useGetGalleryItemsQuery();
     const otherWorks = galleryItems
@@ -356,9 +443,9 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang}: CardContent
 
     return (
         <Container className={b('container', mods)}>
-            <Row space="0" style={{marginTop: 28, marginBottom: 28}}>
+            <Row space="0" style={{marginTop: 24, marginBottom: 24}}>
                 <Col s="12">
-                    <Text variant="header-2">{entry.title[lang]}</Text>
+                    <PageHeader title={entry.title[lang]} to={getAllPageUrl()} />
                 </Col>
             </Row>
             <Row space="4" spaceRow="4" style={{marginTop: 0, marginBottom: 32}}>
@@ -370,7 +457,7 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang}: CardContent
                         <Flex className={b('actions-right-flex', mods)}>
                             <LinkButton entryId={entry.id} size="xl" />
                             <Button view="action" size="xl" width="max" onClick={togglePreview}>
-                                Open
+                                {galleryI18n('button_open')}
                             </Button>
                         </Flex>
                         <ContactPartnerButton
@@ -403,7 +490,10 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang}: CardContent
             </Row>
             <Row space="6" style={{marginTop: 24}}>
                 <Col s="12">
-                    <SectionHeader activeMediaQuery={activeMediaQuery} title="Other works" />
+                    <SectionHeader
+                        activeMediaQuery={activeMediaQuery}
+                        title={i18n('section_other_works')}
+                    />
                 </Col>
                 {otherWorks.map((item) => {
                     return (
@@ -424,9 +514,22 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang}: CardContent
     );
 }
 
+const isActivePreview = (urlSearchParams: URLSearchParams) => {
+    return (
+        urlSearchParams.has(CARD_PAGE_URL_PARAMS.PREVIEW, '1') ||
+        urlSearchParams.has(CARD_PAGE_URL_PARAMS.PREVIEW, 'true') ||
+        urlSearchParams.has(CARD_PAGE_URL_PARAMS.PREVIEW, '')
+    );
+};
+
 export function CardPage() {
     const {activeMediaQuery} = useLayoutContext();
-    const [showPreview, setShowPreview] = React.useState(false);
+
+    const location = useLocation();
+    const {search: searchParams} = location;
+    const history = useHistory();
+    const urlSearchParams = new URLSearchParams(searchParams);
+    const showPreview = isActivePreview(urlSearchParams);
 
     const {id} = useParams<{id: string}>();
 
@@ -436,7 +539,18 @@ export function CardPage() {
     const themeType = useThemeType();
 
     const togglePreview = () => {
-        setShowPreview(!showPreview);
+        const urlParams = new URLSearchParams(searchParams);
+        const hasPreviewParam = isActivePreview(urlParams);
+
+        if (hasPreviewParam) {
+            urlParams.delete(CARD_PAGE_URL_PARAMS.PREVIEW);
+        } else {
+            urlParams.set(CARD_PAGE_URL_PARAMS.PREVIEW, '1');
+        }
+
+        history.replace({
+            search: `?${urlParams.toString()}`,
+        });
     };
 
     if (isLoading) {
@@ -444,26 +558,29 @@ export function CardPage() {
     }
 
     if (error || !data) {
-        const {
-            code,
-            status,
-            message = i18n('label_unknown-error'),
-            details,
-        } = error && 'message' in error ? Utils.parseErrorResponse(error as DataLensApiError) : {};
+        const parsedError = Utils.parseRtkQueryError(error);
 
-        const isNotFound = code === 'NOT_FOUND' || status === 404;
-        const name = isNotFound ? 'notFound' : 'error';
+        const {status, code, message = galleryI18n('label_error'), details} = parsedError;
+
+        const isNotFound = code === ErrorContentTypes.NOT_FOUND || status === 404;
+
         const canRetry = !isNotFound;
+        const errorTitle = isNotFound ? galleryI18n('label_not_found') : details?.title ?? message;
 
         return (
             <div className={b('error')}>
-                <PlaceholderIllustration
-                    name={name}
-                    title={details?.title ?? message}
-                    description={details?.description}
-                    renderAction={
+                <ErrorContent
+                    error={parsedError}
+                    type={code}
+                    title={errorTitle}
+                    showDebugInfo={!isNotFound}
+                    action={
                         canRetry
-                            ? () => <Button onClick={refetch}>{i18n('label_retry')}</Button>
+                            ? {
+                                  text: galleryI18n('button_retry'),
+                                  handler: refetch,
+                                  buttonProps: {view: 'normal'},
+                              }
                             : undefined
                     }
                 />
@@ -491,6 +608,7 @@ export function CardPage() {
                     entry={data}
                     togglePreview={togglePreview}
                     lang={lang}
+                    maxWidth={isPromo}
                 />
             )}
         </React.Fragment>

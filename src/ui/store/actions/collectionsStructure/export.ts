@@ -254,25 +254,43 @@ export const importWorkbook = ({
     description,
     collectionId,
     importFile,
+    publicGalleryUrl,
 }: {
     title: string;
     description?: string;
     collectionId: string | null;
-    importFile: File;
-}) => {
+} & (
+    | {importFile: File; publicGalleryUrl?: undefined}
+    | {publicGalleryUrl: string; importFile?: undefined}
+)) => {
     return async (dispatch: CollectionsStructureDispatch) => {
         let data;
 
-        try {
-            data = await convertFileToJSON(importFile);
-        } catch (err) {
-            dispatch(
-                showToast({
-                    title: i18n('toast_get-json-error'),
-                    error: err,
-                }),
-            );
-            return Promise.resolve();
+        if (importFile) {
+            try {
+                data = await convertFileToJSON(importFile);
+            } catch (err) {
+                dispatch(
+                    showToast({
+                        title: i18n('toast_get-json-error'),
+                        error: err,
+                    }),
+                );
+                return Promise.resolve();
+            }
+        } else {
+            try {
+                const request = await fetch(publicGalleryUrl);
+                data = await request.json();
+            } catch (err) {
+                dispatch(
+                    showToast({
+                        title: i18n('toast_get-json-error'),
+                        error: err,
+                    }),
+                );
+                return Promise.resolve();
+            }
         }
 
         dispatch({

@@ -14,11 +14,14 @@ export type GetMetaRespose = {
     editorChoice: {
         ids: string[];
     };
-    workOfTheMonth: {title: 'string'; desctiption: string; entryId: string};
     landingCategories: {
         category: string;
         title: TranslationsDict;
     }[];
+    mainPage: {
+        ids: string[];
+    };
+    workOfTheMonth: {id: string};
 };
 
 class NotImplementedError extends Error {

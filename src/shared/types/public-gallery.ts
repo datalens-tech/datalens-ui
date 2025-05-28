@@ -22,11 +22,14 @@ export type GalleryItem = {
     shortDescription?: TranslationsDict;
     publicUrl?: string;
     partnerId?: string;
+    data?: string;
 };
 
 export type GalleryItemShort = Pick<
     GalleryItem,
-    'createdBy' | 'id' | 'images' | 'labels' | 'title'
->;
+    'createdAt' | 'createdBy' | 'id' | 'images' | 'labels' | 'title'
+> & {
+    canBeUsed: boolean;
+};
 
 export type GalleryItemList = GalleryItemShort[];
