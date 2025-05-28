@@ -157,9 +157,13 @@ function UseButton(props: {url: string; entryId: string}) {
                 },
                 {
                     action: () => {
-                        history.push(
-                            `/collections/?${PUBLIC_GALLERY_ID_SEARCH_PARAM}=${props.entryId}`,
-                        );
+                        const redirectUrl = `/collections/?${PUBLIC_GALLERY_ID_SEARCH_PARAM}=${props.entryId}`;
+
+                        if (DL.IS_NOT_AUTHENTICATED) {
+                            window.location.href = redirectUrl;
+                        } else {
+                            history.push(redirectUrl);
+                        }
                     },
                     text: getDropdownItem({
                         text: i18n('button_import'),
