@@ -316,6 +316,9 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
     );
 
     const showFloatControls = isEnabledFeature(Feature.DashFloatControls);
+    const isLoading = showFloatControls && showLoader && !hasError;
+    const pulsate = isLoading && hasControl;
+    const showSpinner = isLoading && !hasControl;
 
     return (
         <div
@@ -323,6 +326,7 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
             className={`${b({
                 ...mods,
                 autoheight: isAutoHeightEnabled,
+                pulsate,
             })}`}
             data-qa="chart-widget-selectors"
         >
@@ -336,7 +340,7 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
                 {!showFloatControls && (
                     <Loader visible={showLoader} veil={veil} delay={loaderDelay} />
                 )}
-                {showFloatControls && !hasError && !hasControl && showLoader && (
+                {showSpinner && (
                     <div className={b('loader')}>
                         <CommonLoader size="s" />
                     </div>

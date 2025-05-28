@@ -15,7 +15,7 @@ import type {
     DashTabItemGroupControlData,
     StringParams,
 } from 'shared';
-import {ControlQA, DashTabItemType} from 'shared';
+import {ControlQA, DashTabItemType, Feature} from 'shared';
 import {DL} from 'ui/constants/common';
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from 'ui/libs/DatalensChartkit/ChartKit/helpers/constants';
 import {ControlButton} from 'ui/libs/DatalensChartkit/components/Control/Items/Items';
@@ -24,6 +24,7 @@ import {
     CONTROL_TYPE,
 } from 'ui/libs/DatalensChartkit/modules/constants/constants';
 import {getUrlGlobalParams} from 'ui/units/dash/utils/url';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {ExtendedDashKitContext} from '../../../../units/dash/utils/context';
 import {DEBOUNCE_RENDER_TIMEOUT, DEFAULT_CONTROL_LAYOUT} from '../../constants';
@@ -69,12 +70,15 @@ const LOCAL_META_VERSION = 2;
 
 const GroupControlWrapper = React.forwardRef<
     HTMLDivElement,
-    {id: string; autoHeight: boolean; children: React.ReactNode}
+    {id: string; autoHeight: boolean; children: React.ReactNode; pulsate?: boolean}
 >(function GroupControlWrapper(props, nodeRef) {
     useWidgetContext(props.id, nodeRef as React.RefObject<HTMLElement>);
 
     return (
-        <div ref={nodeRef} className={b({mobile: DL.IS_MOBILE, static: !props.autoHeight})}>
+        <div
+            ref={nodeRef}
+            className={b({mobile: DL.IS_MOBILE, static: !props.autoHeight, pulsate: props.pulsate})}
+        >
             {props.children}
         </div>
     );
@@ -234,16 +238,21 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     }
 
     render() {
+        const showFloatControls = isEnabledFeature(Feature.DashFloatControls);
         const isLoading =
             (this.state.status === LOAD_STATUS.PENDING && !this.state.silentLoading) ||
             this.state.quickActionLoader ||
             this.state.localUpdateLoader;
+
+        const showSpinner = !showFloatControls && isLoading;
+        const pulsate = showFloatControls && isLoading;
 
         return (
             <GroupControlWrapper
                 ref={this.rootNode}
                 id={this.props.id}
                 autoHeight={(this.props.data.autoHeight as boolean) ?? false}
+                pulsate={pulsate}
             >
                 <div
                     className={b('container', CHARTKIT_SCROLLABLE_NODE_CLASSNAME)}
@@ -255,11 +264,12 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                         modType="bottom-right-corner"
                     />
                     {this.renderControls()}
-                    {isLoading && (
+                    {showSpinner && (
                         <div className={b('loader')}>
                             <Loader size="s" qa={ControlQA.groupCommonLoader} />
                         </div>
                     )}
+                    {pulsate && <div className={b('locked')} />}
                 </div>
             </GroupControlWrapper>
         );
