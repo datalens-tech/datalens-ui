@@ -6,7 +6,7 @@ import {
     Loader,
     Row,
     Select,
-    Text,
+    Switch,
     TextInput,
     useLayoutContext,
     useThemeType,
@@ -14,13 +14,13 @@ import {
 import type {SelectOption} from '@gravity-ui/uikit';
 import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
 import {useHistory, useLocation} from 'react-router-dom';
-import {GALLERY_ITEM_CATEGORY} from 'shared/constants';
 import type {GalleryItemShort} from 'shared/types';
 import {ActionPanel} from 'ui/components/ActionPanel';
 import {DL} from 'ui/constants';
 
+import {UNIT_ROUTE} from '../../../constants/routes';
 import {useGetGalleryItemsQuery, useGetGalleryMetaQuery} from '../../../store/api';
-import {GalleryCardPreview} from '../../blocks';
+import {GalleryCardPreview, PageHeader} from '../../blocks';
 import {
     block,
     galleryI18n,
@@ -35,24 +35,6 @@ import {useActionPanelLayout} from '../hooks/useActionPanelLayout';
 import './AllPage.scss';
 
 const b = block('all');
-
-const CATEGORIES_SELECT_VALUES = [
-    SPECIAL_CATEGORY.ALL,
-    SPECIAL_CATEGORY.EDITORS_CHOICE,
-    GALLERY_ITEM_CATEGORY.EDITOR,
-    GALLERY_ITEM_CATEGORY.FINANCE,
-    GALLERY_ITEM_CATEGORY.HR,
-    GALLERY_ITEM_CATEGORY.RETAIL,
-    GALLERY_ITEM_CATEGORY.SPORTS,
-];
-
-interface UseGalleryItemsProps {
-    items: GalleryItemShort[];
-    editorChoiceIds: string[];
-    search: string;
-    category: string;
-    lang: string;
-}
 
 function useSortedGalleryItems({items}: {items: GalleryItemShort[]}) {
     const sortedItems = React.useMemo(() => {
@@ -72,6 +54,14 @@ function useSortedGalleryItems({items}: {items: GalleryItemShort[]}) {
 
     return {sortedItems};
 }
+interface UseFilteredGalleryItemsProps {
+    items: GalleryItemShort[];
+    editorChoiceIds: string[];
+    search: string;
+    category: string;
+    lang: string;
+    canBeUsed: boolean;
+}
 
 function useFilteredGalleryItems({
     category,
@@ -79,11 +69,16 @@ function useFilteredGalleryItems({
     search,
     lang,
     editorChoiceIds,
-}: UseGalleryItemsProps) {
+    canBeUsed,
+}: UseFilteredGalleryItemsProps) {
     const filteredItems = React.useMemo(() => {
         return items.reduce<GalleryItemShort[]>((acc, item) => {
+            if (canBeUsed && !item.canBeUsed) {
+                return acc;
+            }
+
             const matchesSearchValue =
-                !search || item.title[lang]?.toLowerCase().startsWith(search.toLowerCase());
+                !search || item.title[lang]?.toLowerCase().includes(search.toLowerCase());
 
             if (!matchesSearchValue) {
                 return acc;
@@ -111,7 +106,7 @@ function useFilteredGalleryItems({
 
             return acc;
         }, []);
-    }, [items, search, lang, category, editorChoiceIds]);
+    }, [items, search, lang, category, editorChoiceIds, canBeUsed]);
 
     return {filteredItems};
 }
@@ -145,6 +140,7 @@ export function AllPage() {
     const {isLoading: isMetaLoading, data: metaData} = useGetGalleryMetaQuery();
     const [search, setSearch] = React.useState('');
     const [category, setCategory] = React.useState<string>(SPECIAL_CATEGORY.ALL);
+    const [canBeUsed, setCanBeUsed] = React.useState<boolean>(false);
     const lang = getLang();
     const {sortedItems} = useSortedGalleryItems({items});
     const {filteredItems} = useFilteredGalleryItems({
@@ -153,6 +149,7 @@ export function AllPage() {
         search,
         lang,
         editorChoiceIds: metaData?.editorChoice.ids ?? [],
+        canBeUsed,
     });
     const availableCategories = React.useMemo(() => {
         return Array.from(
@@ -163,7 +160,11 @@ export function AllPage() {
     }, [items]);
     const selectOptions: SelectOption[] = React.useMemo(() => {
         const allOptions = Array.from(
-            new Set([...CATEGORIES_SELECT_VALUES, ...availableCategories]),
+            new Set([
+                SPECIAL_CATEGORY.ALL,
+                SPECIAL_CATEGORY.EDITORS_CHOICE,
+                ...availableCategories,
+            ]),
         );
         const sortedOptions = allOptions
             .filter((option) => option !== SPECIAL_CATEGORY.ALL)
@@ -189,7 +190,7 @@ export function AllPage() {
     const isPromo = DL.IS_NOT_AUTHENTICATED;
     const baseMods: CnMods = {media: activeMediaQuery, maxWidth: isPromo};
 
-    const {pageOffset, actionPanelRef} = useActionPanelLayout();
+    const {style, actionPanelRef} = useActionPanelLayout();
 
     const handleCategorySelectUpdate = React.useCallback(
         (value: string[]) => {
@@ -208,6 +209,18 @@ export function AllPage() {
         [history, searchParams],
     );
 
+    const handleCanBeUsedUpdate = React.useCallback(() => {
+        const urlSearchParams = new URLSearchParams(searchParams);
+
+        if (urlSearchParams.has(URL_FILTER_PARAMS.CAN_BE_USED)) {
+            urlSearchParams.delete(URL_FILTER_PARAMS.CAN_BE_USED);
+        } else {
+            urlSearchParams.set(URL_FILTER_PARAMS.CAN_BE_USED, 'true');
+        }
+
+        history.push(`?${urlSearchParams.toString()}`);
+    }, [history, searchParams]);
+
     React.useEffect(() => {
         if (!isLoading && items.length > 0) {
             const urlSearchParams = new URLSearchParams(searchParams);
@@ -224,6 +237,8 @@ export function AllPage() {
             if (searchValue) {
                 setSearch(searchValue);
             }
+
+            setCanBeUsed(urlSearchParams.has(URL_FILTER_PARAMS.CAN_BE_USED));
         }
     }, [availableCategories, isLoading, items.length, searchParams]);
 
@@ -249,7 +264,7 @@ export function AllPage() {
                     </Breadcrumbs>
                 }
                 wrapperRef={isPromo ? actionPanelRef : undefined}
-                pageOffset={isPromo ? pageOffset : undefined}
+                style={isPromo ? style : undefined}
             />
             <Container
                 className={b('container', baseMods)}
@@ -257,11 +272,11 @@ export function AllPage() {
             >
                 <Row space="0" style={{marginTop: 24}}>
                     <Col s="12">
-                        <Text variant="header-2">{i18n('title_all_entries')}</Text>
+                        <PageHeader title={i18n('title_all_entries')} to={UNIT_ROUTE.ROOT} />
                     </Col>
                 </Row>
                 <Row space="6" style={{marginTop: 0, marginBottom: 24}}>
-                    <Col m="8" s="12">
+                    <Col m="6" s="12">
                         <TextInput
                             defaultValue={search}
                             hasClear={true}
@@ -270,23 +285,30 @@ export function AllPage() {
                             onUpdate={setSearch}
                         />
                     </Col>
-                    <Col m="4" s="12">
-                        <Select
-                            filterable={true}
-                            onUpdate={handleCategorySelectUpdate}
-                            placeholder={i18n('filter_category_placeholder')}
-                            size="l"
-                            value={[category]}
-                            width="max"
-                        >
-                            {selectOptions.map((value) => {
-                                return (
-                                    <Select.Option key={value.value} value={value.value}>
-                                        {value.content}
-                                    </Select.Option>
-                                );
-                            })}
-                        </Select>
+                    <Col m="6" s="12" className={b('filters', {mobile: DL.IS_MOBILE})}>
+                        <div className={b('filter-category', {mobile: DL.IS_MOBILE})}>
+                            <Select
+                                filterable={true}
+                                onUpdate={handleCategorySelectUpdate}
+                                placeholder={i18n('filter_category_placeholder')}
+                                size="l"
+                                value={[category]}
+                                width="max"
+                            >
+                                {selectOptions.map((value) => {
+                                    return (
+                                        <Select.Option key={value.value} value={value.value}>
+                                            {value.content}
+                                        </Select.Option>
+                                    );
+                                })}
+                            </Select>
+                        </div>
+                        <div className={b('filter-can-be-used', {mobile: DL.IS_MOBILE})}>
+                            <Switch size="l" checked={canBeUsed} onChange={handleCanBeUsedUpdate}>
+                                {i18n('filter_can-be-used')}
+                            </Switch>
+                        </div>
                     </Col>
                 </Row>
                 <Row space="6" spaceRow="8">
