@@ -239,6 +239,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
     render() {
         const showFloatControls = isEnabledFeature(Feature.DashFloatControls);
+        const lockWhileLoading = isEnabledFeature(Feature.GroupControlsLoadingLock);
         const isLoading =
             (this.state.status === LOAD_STATUS.PENDING && !this.state.silentLoading) ||
             this.state.quickActionLoader ||
@@ -269,7 +270,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                             <Loader size="s" qa={ControlQA.groupCommonLoader} />
                         </div>
                     )}
-                    {pulsate && <div className={b('locked')} />}
+                    {pulsate && lockWhileLoading && <div className={b('locked')} />}
                 </div>
             </GroupControlWrapper>
         );
