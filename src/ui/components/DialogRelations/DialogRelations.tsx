@@ -98,7 +98,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
     const dispatch = useDispatch();
     const showDebugInfo = useSelector(selectDebugMode);
 
-    const aliasWarnButtonRef = React.useRef<HTMLElement | null>(null);
+    const aliasWarnButtonRef = React.useRef<HTMLButtonElement | null>(null);
 
     const [aliasWarnPopupOpen, setAliasWarnPopupOpen] = React.useState(false);
     const [searchValue, setSearchValue] = React.useState('');

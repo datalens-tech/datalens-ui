@@ -3,7 +3,10 @@ import React from 'react';
 import {Breadcrumbs} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {Link, useHistory, useLocation} from 'react-router-dom';
-import type {EntryBreadcrumbsProps} from 'ui/registry/units/common/types/components/EntryBreadcrumbs';
+import type {
+    BreadcrumbsItem,
+    EntryBreadcrumbsProps,
+} from 'ui/registry/units/common/types/components/EntryBreadcrumbs';
 
 import {getWorkbookBreadcrumbsItems} from './helpers';
 
@@ -30,16 +33,15 @@ export const EntryBreadcrumbs = (props: EntryBreadcrumbsProps) => {
     }
 
     return (
-        <Breadcrumbs
-            className={b()}
-            items={breadcrumbsItems}
-            renderRootContent={entry?.workbookId ? undefined : renderRootContent}
-            renderItemContent={(item: BreadcrumbsItem, isCurrent: boolean) => {
-                if (isCurrent) {
-                    return item.text;
+        <Breadcrumbs className={b()}>
+            {breadcrumbsItems.map((item, index) => {
+                let content: React.ReactNode = null;
+
+                if (index === 0 && !entry?.workbookId && renderRootContent) {
+                    content = renderRootContent(item);
                 }
 
-                return item.path ? (
+                content = item.path ? (
                     <Link
                         to={item.path}
                         className={b('item', {link: true})}
@@ -52,7 +54,17 @@ export const EntryBreadcrumbs = (props: EntryBreadcrumbsProps) => {
                 ) : (
                     <div className={b('item')}>{item.text}</div>
                 );
-            }}
-        />
+
+                return (
+                    <Breadcrumbs.Item
+                        key={index}
+                        onClick={item.action}
+                        className={b('item', {link: Boolean(item.path)})}
+                    >
+                        {content}
+                    </Breadcrumbs.Item>
+                );
+            })}
+        </Breadcrumbs>
     );
 };

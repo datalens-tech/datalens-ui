@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {RadioButtonOption} from '@gravity-ui/uikit';
+import type {SegmentedRadioGroupOptionProps} from '@gravity-ui/uikit';
 import {Dialog, Icon, Switch} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
@@ -486,7 +486,7 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
             return null;
         }
 
-        const items: RadioButtonOption[] = [
+        const items: SegmentedRadioGroupOptionProps[] = [
             {value: MARKUP_TYPE.none, content: i18n('wizard', 'label_none')},
         ];
 
