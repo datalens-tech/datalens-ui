@@ -13,13 +13,14 @@ import {ENABLE, SHARED_URL_OPTIONS, SUPERUSER_SWITCH_MODE_COOKIE_NAME, SYSTEM_TH
 
 import {DL, URL_OPTIONS} from '../constants';
 import {getSdk} from '../libs/schematic-sdk';
-import type {DataLensApiError} from '../typings';
+import type {DataLensApiError, ParsedError} from '../typings';
 
-import {parseError} from './errors/parse';
+import {parseError, parseRtkQueryError} from './errors/parse';
 
 let isSuperUser: undefined | boolean;
 export default class Utils {
-    static parseErrorResponse = parseError;
+    static parseErrorResponse: (apiError: DataLensApiError) => ParsedError = parseError;
+    static parseRtkQueryError = parseRtkQueryError;
 
     static getPathBefore({path}: {path: string}) {
         let pathBefore = '/';

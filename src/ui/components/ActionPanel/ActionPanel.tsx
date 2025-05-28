@@ -56,6 +56,8 @@ type OwnProps = {
         onConfirm?: () => void;
     };
     renderRevisionItemActions?: (item: GetRevisionsEntry, currentRevId: string) => React.ReactNode;
+    wrapperRef?: React.Ref<HTMLDivElement>;
+    style?: React.CSSProperties;
 };
 
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
@@ -153,16 +155,18 @@ class ActionPanel extends React.Component<Props, State> {
             isEditing,
             deprecationWarning,
             renderRevisionItemActions,
+            wrapperRef,
+            style: externalStyle,
         } = this.props;
 
-        const leftStyle: React.CSSProperties = {left: sidebarSize};
+        const style: React.CSSProperties = {left: sidebarSize, ...externalStyle};
 
         const entry = this.getEntry();
 
         return (
-            <div className={b()}>
+            <div className={b()} ref={wrapperRef}>
                 <div className={b('wrapper')} data-qa={ActionPanelQA.ActionPanel}>
-                    <div className={b('container', {mobile: DL.IS_MOBILE}, mix)} style={leftStyle}>
+                    <div className={b('container', {mobile: DL.IS_MOBILE}, mix)} style={style}>
                         {Array.isArray(leftItems)
                             ? leftItems.map((LeftItems) => LeftItems)
                             : leftItems}
@@ -185,7 +189,7 @@ class ActionPanel extends React.Component<Props, State> {
                         <RevisionsPanel
                             className={b('revisions-panel')}
                             entry={entry}
-                            leftStyle={leftStyle}
+                            leftStyle={style}
                             onSetActualRevision={setActualVersion}
                             onOpenActualRevision={this.handleOpenCurrentRevision}
                             onOpenDraftRevision={this.handleOpenDraftRevision}

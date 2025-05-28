@@ -16,7 +16,13 @@ import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 import {useGetGalleryItemQuery} from 'ui/units/gallery/store/api';
 
 import type {CnMods} from '../../utils';
-import {block, getGalleryItemUrl, getLang} from '../../utils';
+import {
+    block,
+    galleryLandingI18n,
+    getGalleryItemUrl,
+    getLang,
+    galleryI18n as i18n,
+} from '../../utils';
 
 import './WorkOfMonth.scss';
 
@@ -55,17 +61,17 @@ export const WorkOfMonth = ({id}: {id: string}) => {
                 <Flex className={b('flex', baseMods)}>
                     <span className={b('medal', {media: activeMediaQuery})}>
                         <Icon data={Medal} />
-                        Work of the month
+                        {galleryLandingI18n('section_work_of_month')}
                     </span>
                     <div className={b('title', {media: activeMediaQuery})}>{title}</div>
                     {!isActiveMediaQueryS && <div className={b('description')}>{description}</div>}
                     {!isActiveMediaQueryS && (
-                        <div className={b('actions')} onClick={handleOpen}>
-                            <Button size="l" view="action">
-                                Open
+                        <div className={b('actions')}>
+                            <Button size="l" view="action" onClick={handleOpen}>
+                                {i18n('button_open')}
                             </Button>
                             <Button size="l" view="flat" onClick={handleClick}>
-                                Learn more
+                                {i18n('button_learn_more')}
                                 <Button.Icon>
                                     <ArrowRight />
                                 </Button.Icon>
@@ -87,10 +93,10 @@ export const WorkOfMonth = ({id}: {id: string}) => {
                 <Col s="12">
                     <div className={b('actions')}>
                         <Button size="xl" view="action" style={{width: '50%'}} onClick={handleOpen}>
-                            Open
+                            {i18n('button_open')}
                         </Button>
                         <Button size="xl" view="flat" style={{width: '50%'}} onClick={handleClick}>
-                            Learn more
+                            {i18n('button_learn_more')}
                         </Button>
                     </div>
                 </Col>

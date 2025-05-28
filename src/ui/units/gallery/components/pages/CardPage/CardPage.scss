@@ -18,9 +18,12 @@ $block: '.#{variables.$ns}-card';
     }
 
     &__iframe {
+        $promoHeaderHeight: 64px;
+
         width: 100%;
         border: none;
         height: calc(100% - #{$actionPanelHeight} - 5px);
+        min-height: max(600px, calc(100vh - #{$actionPanelHeight} - #{$promoHeaderHeight} - 5px));
     }
     &__container {
         height: calc(100% - #{$actionPanelHeight});
@@ -35,12 +38,18 @@ $block: '.#{variables.$ns}-card';
             padding-left: 20px;
             padding-right: 20px;
         }
+
+        &_maxWidth {
+            max-width: unset;
+            padding-inline: 0;
+        }
     }
 
     &__actions-left-flex {
         align-items: center;
         column-gap: 8px;
         max-width: calc(100% - 2 * #{$actionPanelHorizontalPadding});
+        min-width: 0;
     }
 
     &__actions-right-flex {
@@ -50,6 +59,10 @@ $block: '.#{variables.$ns}-card';
         &_media_s {
             flex-direction: row-reverse;
         }
+    }
+
+    &__breadcrumbs {
+        min-width: 0;
     }
 
     &__image-card {
@@ -102,5 +115,24 @@ $block: '.#{variables.$ns}-card';
         &_media_s {
             margin-top: 8px;
         }
+    }
+
+    &__dropdown-item {
+        display: flex;
+    }
+
+    &__dropdown-icon {
+        margin-top: 3px;
+    }
+
+    &__dropdown-text {
+        margin-left: 8px;
+    }
+
+    &__dropdown-hint {
+        padding-bottom: 4px;
+        max-width: 200px;
+        line-height: normal;
+        color: var(--g-color-text-hint);
     }
 }
