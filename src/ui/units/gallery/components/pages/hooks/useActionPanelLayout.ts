@@ -24,7 +24,7 @@ export function useActionPanelLayout(): {
 
     useResizeObserver({
         ref: actionPanelRef,
-        onResize: () => recomputePageOffset(),
+        onResize: recomputePageOffset,
     });
 
     return {style: actionPanelStyle, actionPanelRef};
