@@ -216,11 +216,6 @@ export const cancelExportProcess = (exportId: string) => {
                 if (!isCanceled) {
                     logger.logError('collectionsStructure/cancelExportProcess failed', error);
                 }
-
-                showToast({
-                    title: error.message,
-                    error,
-                });
             });
     };
 };

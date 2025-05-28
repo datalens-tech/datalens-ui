@@ -344,6 +344,13 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
         ],
     );
 
+    const handleRetry = React.useCallback(() => {
+        if (importStatus === 'fatal-error' && importData?.importId) {
+            pollImportStatus(importData.importId);
+            return;
+        }
+    }, [importData?.importId, importStatus, pollImportStatus]);
+
     const renderImportSection = () => {
         if (!isEnabledFeature(Feature.EnableExportWorkbookFile) || !showImport) {
             return null;
@@ -364,9 +371,16 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
 
     const renderDialogView = () => {
         if (view === 'import') {
+            const canProgressBeRetried = importStatus === 'fatal-error' && importData?.importId;
+
+            const handleRetryFn = canProgressBeRetried ? handleRetry : undefined;
             return (
                 <Flex direction="column">
-                    <ImportWorkbookView status={importStatus} importId={importData?.importId} />
+                    <ImportWorkbookView
+                        onRetry={handleRetryFn}
+                        status={importStatus}
+                        importId={importData?.importId}
+                    />
                 </Flex>
             );
         }
