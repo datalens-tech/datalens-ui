@@ -1,5 +1,6 @@
 import React from 'react';
 
+import type {PopupAnchorElement} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {connect} from 'react-redux';
 import type {Dispatch} from 'redux';
@@ -45,7 +46,7 @@ type RefProps = {
 
 type OwnProps = {
     onClose: EntryDialogOnClose;
-    anchorRef: React.RefObject<HTMLButtonElement>;
+    anchorElement: PopupAnchorElement;
     visible?: boolean;
     entry?: GetEntryResponse;
 };
@@ -83,14 +84,14 @@ class EntryContextMenu extends React.PureComponent<Props> {
 
     render() {
         return (
-            Boolean(this.props.anchorRef.current) && (
+            Boolean(this.props.anchorElement) && (
                 <React.Fragment>
                     <ConfiguredEntryContextMenu
                         hasTail={this.props.hasTail}
                         visible={this.props.visible}
                         entry={this.props.entry}
                         isEditMode={this.props.isEditMode}
-                        anchorRef={this.props.anchorRef}
+                        anchorElement={this.props.anchorElement}
                         onMenuClick={this.handlerMenuClick}
                         onClose={this.props.onClose}
                         popupPlacement={this.props.popupPlacement}

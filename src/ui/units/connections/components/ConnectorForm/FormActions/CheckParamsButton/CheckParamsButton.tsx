@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {ButtonProps} from '@gravity-ui/uikit';
+import type {ButtonButtonProps} from '@gravity-ui/uikit';
 import {Button, Icon, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -20,7 +20,7 @@ type OwnProps = {
     checkData: CheckData;
     onTooltipActionButtonClick: () => void;
 };
-type CheckParamsButtonProps = ButtonProps & OwnProps;
+type CheckParamsButtonProps = ButtonButtonProps & OwnProps;
 
 export const CheckParamsButton = (props: CheckParamsButtonProps) => {
     const {checkData, loading, disabled, onClick, onTooltipActionButtonClick} = props;

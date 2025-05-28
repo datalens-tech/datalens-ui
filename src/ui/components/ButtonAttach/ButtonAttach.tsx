@@ -1,13 +1,13 @@
 import type {ChangeEvent} from 'react';
 import React from 'react';
 
-import type {ButtonButtonProps as ButtonProps} from '@gravity-ui/uikit';
+import type {ButtonButtonProps, ButtonProps} from '@gravity-ui/uikit';
 import {Button, useFileInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
 import './ButtonAttach.scss';
 
-export type ButtonAttachProps = Omit<ButtonProps, 'onClick'> & {
+export type ButtonAttachProps = Omit<ButtonProps<'input'>, 'onClick'> & {
     onUpdate?: (files: File[]) => void;
     onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
     accept?: string;
@@ -27,7 +27,7 @@ export const ButtonAttach = React.forwardRef<HTMLButtonElement, ButtonAttachProp
 
         return (
             <div className={cnButtonAttach()}>
-                <Button {...buttonProps} ref={ref} />
+                <Button {...(buttonProps as ButtonButtonProps)} ref={ref} />
                 <input
                     {...controlProps}
                     accept={accept}

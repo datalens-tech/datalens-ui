@@ -220,7 +220,7 @@ const DialogAddYadoc = <T extends unknown>(props: DialogAddYadocProps<T>) => {
                 onClickButtonApply={handleApply}
                 textButtonApply={i18n('button_add')}
                 textButtonCancel={i18n('button_cancel')}
-                propsButtonApply={propsButtonApply}
+                propsButtonApply={propsButtonApply as ButtonProps}
             />
         </Dialog>
     );

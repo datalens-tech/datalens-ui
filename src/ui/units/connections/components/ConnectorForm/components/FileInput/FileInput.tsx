@@ -81,7 +81,11 @@ export const FileInputComponent = (props: FileInputProps) => {
             {i18n('label_file-input-label', {fileName})}
         </Label>
     ) : (
-        <ButtonAttach {...controlProps} multiple={false} onUpdate={handleFileUploding}>
+        <ButtonAttach
+            {...(controlProps as ButtonProps<'input'>)}
+            multiple={false}
+            onUpdate={handleFileUploding}
+        >
             {i18n('button_attach-file')}
         </ButtonAttach>
     );

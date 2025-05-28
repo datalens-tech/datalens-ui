@@ -118,7 +118,7 @@ export type DescriptionItem = Pick<BaseItem, 'displayConditions'> & {
 
 export type FileInputItem = BaseItem & {
     id: 'file-input';
-    controlProps?: Partial<ButtonProps>;
+    controlProps?: Partial<ButtonProps<'input'>>;
 };
 
 export type HiddenItem = BaseItem & {

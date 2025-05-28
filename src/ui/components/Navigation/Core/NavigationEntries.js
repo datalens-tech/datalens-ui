@@ -557,7 +557,7 @@ class NavigationEntries extends React.Component {
                 <EntryContextMenuBase
                     visible={true}
                     entry={this.state.currentEntryContext}
-                    anchorRef={this.state.currentEntryContextButton}
+                    anchorRef={this.state.currentEntryContextButton.current}
                     items={this.props.getContextMenuItems({
                         entry: this.state.currentEntryContext,
                         place: this.state.place,

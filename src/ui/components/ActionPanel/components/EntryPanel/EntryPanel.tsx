@@ -161,16 +161,18 @@ class EntryPanel extends React.Component<Props, State> {
                                     <Icon className={b('more')} data={Ellipsis} size={18} />
                                 </Button>
                             ) : null}
-                            <EntryContextMenu
-                                entryDialogsRef={this.entryDialogsRef}
-                                forwardRef={this.entryContextMenuRef}
-                                onClose={this.onCloseEntryContextMenu}
-                                anchorRef={this.btnEntryContextMenuRef}
-                                visible={this.state.visibleEntryContextMenu}
-                                entry={entry}
-                                additionalItems={additionalItems}
-                                showSpecificItems={true}
-                            />
+                            {this.btnEntryContextMenuRef.current && (
+                                <EntryContextMenu
+                                    entryDialogsRef={this.entryDialogsRef}
+                                    forwardRef={this.entryContextMenuRef}
+                                    onClose={this.onCloseEntryContextMenu}
+                                    anchorElement={this.btnEntryContextMenuRef.current}
+                                    visible={this.state.visibleEntryContextMenu}
+                                    entry={entry}
+                                    additionalItems={additionalItems}
+                                    showSpecificItems={true}
+                                />
+                            )}
                         </div>
                     )}
                     {children}

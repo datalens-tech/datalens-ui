@@ -194,11 +194,11 @@ export const BreadcrumbMenu = ({
             >
                 <Icon data={Ellipsis} size={16} className={b('icon')} />
             </Button>
-            {btnRef.current && (
+            {show && (
                 <EntryContextMenuBase
                     visible={show}
                     entry={breadCrumbEntry}
-                    anchorRef={btnRef}
+                    anchorRef={btnRef.current}
                     items={getContextMenuItems({entry: breadCrumbEntry})}
                     onMenuClick={handleMenuClick}
                     onClose={() => setShow(false)}
