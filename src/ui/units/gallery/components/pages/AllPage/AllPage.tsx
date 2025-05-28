@@ -14,7 +14,6 @@ import {
 import type {SelectOption} from '@gravity-ui/uikit';
 import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
 import {useHistory, useLocation} from 'react-router-dom';
-import {GALLERY_ITEM_CATEGORY} from 'shared/constants';
 import type {GalleryItemShort} from 'shared/types';
 import {ActionPanel} from 'ui/components/ActionPanel';
 import {DL} from 'ui/constants';
@@ -36,12 +35,6 @@ import {useActionPanelLayout} from '../hooks/useActionPanelLayout';
 import './AllPage.scss';
 
 const b = block('all');
-
-const CATEGORIES_SELECT_VALUES = [
-    SPECIAL_CATEGORY.ALL,
-    SPECIAL_CATEGORY.EDITORS_CHOICE,
-    ...Object.values(GALLERY_ITEM_CATEGORY),
-];
 
 function useSortedGalleryItems({items}: {items: GalleryItemShort[]}) {
     const sortedItems = React.useMemo(() => {
@@ -167,7 +160,11 @@ export function AllPage() {
     }, [items]);
     const selectOptions: SelectOption[] = React.useMemo(() => {
         const allOptions = Array.from(
-            new Set([...CATEGORIES_SELECT_VALUES, ...availableCategories]),
+            new Set([
+                SPECIAL_CATEGORY.ALL,
+                SPECIAL_CATEGORY.EDITORS_CHOICE,
+                ...availableCategories,
+            ]),
         );
         const sortedOptions = allOptions
             .filter((option) => option !== SPECIAL_CATEGORY.ALL)

@@ -49,6 +49,7 @@ $block: '.#{variables.$ns}-card';
         align-items: center;
         column-gap: 8px;
         max-width: calc(100% - 2 * #{$actionPanelHorizontalPadding});
+        min-width: 0;
     }
 
     &__actions-right-flex {
@@ -58,6 +59,10 @@ $block: '.#{variables.$ns}-card';
         &_media_s {
             flex-direction: row-reverse;
         }
+    }
+
+    &__breadcrumbs {
+        min-width: 0;
     }
 
     &__image-card {

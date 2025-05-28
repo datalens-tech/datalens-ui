@@ -43,8 +43,9 @@ const CATEGORY_TO_LABEL_TITLE: Record<GalleryItemCategory, string> = {
 };
 
 export function getCategoryLabelTitle(category = '') {
+    const normalizedCategory = category.toLowerCase();
     return (
-        CATEGORY_TO_LABEL_TITLE[category as GalleryItemCategory] ||
+        CATEGORY_TO_LABEL_TITLE[normalizedCategory as GalleryItemCategory] ||
         `${category.charAt(0).toUpperCase()}${category.slice(1)}`
     );
 }
