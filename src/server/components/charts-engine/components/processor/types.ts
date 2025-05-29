@@ -77,6 +77,7 @@ export type ProcessorSuccessResponse = {
     comments?: CommentsFetcherFetchResult;
     publicAuthor?: EntryPublicAuthor;
     id?: string;
+    revId?: string;
     _confStorageConfig?: object;
     key?: string;
     type?: string;
