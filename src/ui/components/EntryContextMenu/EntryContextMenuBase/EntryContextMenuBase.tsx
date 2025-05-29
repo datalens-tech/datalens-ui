@@ -4,9 +4,14 @@ import {Menu, Popup} from '@gravity-ui/uikit';
 import type {MenuItemProps, PopupAnchorElement, PopupPlacement} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {ActionPanelEntryContextMenuQa} from 'shared/constants/qa/action-panel';
-import type {GetEntryResponse} from 'shared/schema';
 
-import type {EntryContextMenuItem, EntryContextMenuItems, WrapperParams} from '../helpers';
+import type {MenuClickHandler} from '../EntryContextMenu';
+import type {
+    EntryContextMenuItem,
+    EntryContextMenuItems,
+    ShortEntry,
+    WrapperParams,
+} from '../helpers';
 
 import './EntryContextMenuBase.scss';
 
@@ -18,18 +23,20 @@ const defaultPopupPlacement: PopupPlacement = ['left-start', 'left', 'left-end']
 
 // Base is used in navigation
 
-type EntryContextMenuBaseItemProps = {
+type EntryContextMenuBaseItemProps<T extends ShortEntry> = {
     icon?: React.ReactNode;
     text: string;
     action: EntryContextMenuItem['action'];
-    entry?: GetEntryResponse;
+    entry?: T;
     wrapper?: (args: WrapperParams) => JSX.Element;
-    onClick: (action: EntryContextMenuBaseItemProps['action']) => void;
+    onClick: (action: EntryContextMenuItem['action']) => void;
     qa?: string;
     theme?: MenuItemProps['theme'];
 };
 
-const EntryContextMenuBaseItem = (props: EntryContextMenuBaseItemProps) => {
+const EntryContextMenuBaseItem = <T extends ShortEntry>(
+    props: EntryContextMenuBaseItemProps<T>,
+) => {
     const {icon, text, action, entry, wrapper, onClick, theme, qa} = props;
 
     const handleClick = React.useCallback(() => {
@@ -50,18 +57,18 @@ const EntryContextMenuBaseItem = (props: EntryContextMenuBaseItemProps) => {
     return wrapper && entry ? wrapper({entry, children: node}) : node;
 };
 
-type EntryContextMenuBaseProps = {
+type EntryContextMenuBaseProps<T> = {
     visible?: boolean;
     hasTail?: boolean;
     anchorElement?: PopupAnchorElement;
     items?: EntryContextMenuItems;
     popupPlacement?: PopupPlacement;
-    entry?: GetEntryResponse;
-    onMenuClick: (args: {entry?: GetEntryResponse; action: EntryContextMenuItem['action']}) => void;
+    entry?: T;
+    onMenuClick: MenuClickHandler<T>;
     onClose: () => void;
 };
 
-export const EntryContextMenuBase = (props: EntryContextMenuBaseProps) => {
+export const EntryContextMenuBase = <T extends ShortEntry>(props: EntryContextMenuBaseProps<T>) => {
     const {
         visible,
         anchorElement,
@@ -76,7 +83,9 @@ export const EntryContextMenuBase = (props: EntryContextMenuBaseProps) => {
     const handleMenuClick = React.useCallback(
         (action: EntryContextMenuItem['action']) => {
             onClose();
-            onMenuClick({entry, action});
+            if (entry) {
+                onMenuClick({entry, action});
+            }
         },
         [entry, onClose, onMenuClick],
     );

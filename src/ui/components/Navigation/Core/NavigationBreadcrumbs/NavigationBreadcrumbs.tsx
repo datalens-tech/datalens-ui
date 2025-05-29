@@ -3,6 +3,7 @@ import React from 'react';
 import {Breadcrumbs} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {EntryDialogues} from 'components/EntryDialogues';
+import type {EntryContextMenuItems} from 'ui/components/EntryContextMenu/helpers';
 
 import type {ListDirectoryBreadCrumb} from '../../../../../shared/schema';
 import type {ChangeLocation, CurrentPageEntry, PlaceParameterItem} from '../../types';
@@ -30,7 +31,7 @@ type Props = {
         event: React.MouseEvent<HTMLElement, MouseEvent> | KeyboardEvent,
         last: boolean,
     ) => void;
-    getContextMenuItems: (data: {entry: unknown}) => unknown;
+    getContextMenuItems: (data: {entry: unknown}) => EntryContextMenuItems;
     refresh?: () => void;
     onChangeLocation?: ChangeLocation;
     className?: string;

@@ -1,11 +1,6 @@
 import React from 'react';
 
-import {
-    FirstDisplayedItemsCount,
-    LastDisplayedItemsCount,
-    Skeleton,
-    Breadcrumbs as UIKitBreadcrumbs,
-} from '@gravity-ui/uikit';
+import {Breadcrumbs, Skeleton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Link, useHistory} from 'react-router-dom';
@@ -93,33 +88,42 @@ export const CollectionBreadcrumbs = React.memo<Props>(
 
         return (
             <div className={b(null, className)}>
-                <UIKitBreadcrumbs
-                    items={items}
-                    firstDisplayedItemsCount={FirstDisplayedItemsCount.One}
-                    lastDisplayedItemsCount={LastDisplayedItemsCount.One}
-                    className={b('container')}
-                    renderItemContent={(item: BreadcrumbsItem, isCurrent: boolean) => {
+                <Breadcrumbs className={b('container')}>
+                    {items.map((item, index, list) => {
+                        const isLast = index === list.length - 1;
+
+                        let content: JSX.Element;
                         if (item.id === LOADING_ITEM_ID) {
-                            return <Skeleton className={b('skeleton')} />;
+                            content = <Skeleton className={b('skeleton')} />;
+                        } else {
+                            content = (
+                                <Link
+                                    className={b('item', {last: isLast, link: true})}
+                                    to={item.path}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+
+                                        if (!e.metaKey && onItemClick) {
+                                            onItemClick({id: item.id, isCurrent: isLast});
+                                        }
+                                    }}
+                                >
+                                    {item.text}
+                                </Link>
+                            );
                         }
 
                         return (
-                            <Link
-                                className={b('item', {last: isCurrent, link: true})}
-                                to={item.path}
-                                onClick={(e) => {
-                                    e.stopPropagation();
-
-                                    if (!e.metaKey && onItemClick) {
-                                        onItemClick({id: item.id, isCurrent});
-                                    }
-                                }}
+                            <Breadcrumbs.Item
+                                key={index}
+                                onClick={item.action}
+                                className={b('item', {link: Boolean(item.path)})}
                             >
-                                {item.text}
-                            </Link>
+                                {content}
+                            </Breadcrumbs.Item>
                         );
-                    }}
-                />
+                    })}
+                </Breadcrumbs>
             </div>
         );
     },

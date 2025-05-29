@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Breadcrumbs, FirstDisplayedItemsCount, LastDisplayedItemsCount} from '@gravity-ui/uikit';
+import {Breadcrumbs} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {IS_NULL_FILTER_TEMPLATE, PRINT_HIDDEN_ATTR} from 'shared';
 
@@ -69,11 +69,16 @@ class Drill extends React.Component<Props> {
                 <div className={b('separator')} {...{[PRINT_HIDDEN_ATTR]: true}} />
                 <Breadcrumbs
                     className={b('breadcrumbs')}
-                    firstDisplayedItemsCount={FirstDisplayedItemsCount.Zero}
-                    lastDisplayedItemsCount={LastDisplayedItemsCount.One}
-                    items={this.getItems()}
                     popupPlacement={['bottom', 'top', 'bottom-start']}
-                />
+                >
+                    {this.getItems().map((item, index) => {
+                        return (
+                            <Breadcrumbs.Item key={index} onClick={item.action}>
+                                {item.text}
+                            </Breadcrumbs.Item>
+                        );
+                    })}
+                </Breadcrumbs>
             </div>
         );
     }

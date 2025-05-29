@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {Ellipsis} from '@gravity-ui/icons';
+import type {PopupPlacement} from '@gravity-ui/uikit';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {ENTRY_CONTEXT_MENU_ACTION, EntryContextMenuBase} from 'components/EntryContextMenu';
@@ -9,6 +10,8 @@ import {EntryDialogName, EntryDialogResolveStatus} from 'components/EntryDialogu
 import navigateHelper from 'libs/navigateHelper';
 import {PLACE} from 'shared';
 import {EntryScope} from 'shared/types/common';
+import type {MenuClickHandler} from 'ui/components/EntryContextMenu/EntryContextMenu';
+import type {EntryContextMenuItems} from 'ui/components/EntryContextMenu/helpers';
 import {DL} from 'ui/constants/common';
 import {registry} from 'ui/registry';
 import {copyTextWithToast} from 'ui/utils/copyText';
@@ -27,12 +30,12 @@ import './BreadcrumbMenu.scss';
 const contextMenuI18n = I18n.keyset('component.entry-context-menu.view');
 
 const b = block('dl-core-navigation-breadcrumb-menu');
-const placement = ['bottom', 'bottom-start', 'bottom-end'];
+const placement: PopupPlacement = ['bottom', 'bottom-start', 'bottom-end'];
 
 type Props = {
     breadCrumbs: ListDirectoryBreadCrumb[];
     entryDialoguesRef: React.RefObject<EntryDialogues>;
-    getContextMenuItems: (data: {entry: unknown}) => unknown;
+    getContextMenuItems: (data: {entry: unknown}) => EntryContextMenuItems;
     currentPageEntry?: CurrentPageEntry;
     refresh?: () => void;
     onChangeLocation?: ChangeLocation;
@@ -69,7 +72,7 @@ export const BreadcrumbMenu = ({
     }, [breadCrumbs]);
 
     // eslint-disable-next-line complexity
-    const handleMenuClick = async ({entry, action}: {entry: BreadCrumbEntry; action: string}) => {
+    const handleMenuClick: MenuClickHandler<BreadCrumbEntry> = async ({entry, action}) => {
         if (!entryDialoguesRef.current) {
             return;
         }
@@ -198,7 +201,7 @@ export const BreadcrumbMenu = ({
                 <EntryContextMenuBase
                     visible={show}
                     entry={breadCrumbEntry}
-                    anchorRef={btnRef.current}
+                    anchorElement={btnRef.current ?? undefined}
                     items={getContextMenuItems({entry: breadCrumbEntry})}
                     onMenuClick={handleMenuClick}
                     onClose={() => setShow(false)}

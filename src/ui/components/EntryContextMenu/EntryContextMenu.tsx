@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {PopupAnchorElement} from '@gravity-ui/uikit';
+import type {PopupAnchorElement, PopupPlacement} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {connect} from 'react-redux';
 import type {Dispatch} from 'redux';
@@ -13,7 +13,6 @@ import type {GetEntryResponse} from '../../../shared/schema';
 import {registry} from '../../registry';
 import {toggleRevisionsMode} from '../../store/actions/entryContent';
 import {selectIsEditMode} from '../../store/selectors/entryContent';
-import type {EntryDialogOnClose} from '../EntryDialogues';
 import {EntryDialogues} from '../EntryDialogues';
 
 import EntryContextMenuBase from './EntryContextMenuBase/EntryContextMenuBase';
@@ -34,7 +33,7 @@ import {withConfiguredEntryContextMenu} from './withConfiguredEntryContextMenu/w
 const contextMenuI18n = I18n.keyset('component.entry-context-menu.view');
 
 const ConfiguredEntryContextMenu = withConfiguredEntryContextMenu(EntryContextMenuBase);
-const defaultPopupPlacement = ['bottom', 'bottom-start', 'bottom-end'];
+const defaultPopupPlacement: PopupPlacement = ['bottom', 'bottom-start', 'bottom-end'];
 
 type StateProps = ReturnType<typeof mapsStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
@@ -45,14 +44,14 @@ type RefProps = {
 };
 
 type OwnProps = {
-    onClose: EntryDialogOnClose;
+    onClose: () => void;
     anchorElement: PopupAnchorElement;
     visible?: boolean;
     entry?: GetEntryResponse;
 };
 
 type EntryContextMenuDefaultProps = {
-    popupPlacement: typeof defaultPopupPlacement;
+    popupPlacement: PopupPlacement;
     hasTail: boolean;
     additionalItems: EntryContextMenuItems;
     showSpecificItems: boolean;
@@ -66,11 +65,11 @@ export interface EntryContextMenuProps extends OwnProps, Partial<EntryContextMen
     entryDialoguesRef: EntryDialoguesRef;
 }
 
-type ActionFunctionType = (param: GetEntryResponse) => void;
-type ActionType = string | ActionFunctionType;
+type ActionFunctionType<T> = (param: T) => void;
+type ActionType<T> = string | ActionFunctionType<T>;
 
-type MenuClickParams = {entry: GetEntryResponse; action: ActionType};
-export type MenuClickHandler = (params: MenuClickParams) => void;
+type MenuClickParams<T> = {entry: T; action: ActionType<T>};
+export type MenuClickHandler<T> = (params: MenuClickParams<T>) => void;
 
 class EntryContextMenu extends React.PureComponent<Props> {
     static defaultProps: EntryContextMenuDefaultProps = {
@@ -105,7 +104,7 @@ class EntryContextMenu extends React.PureComponent<Props> {
         );
     }
 
-    handlerMenuClick: MenuClickHandler = (params: MenuClickParams) => {
+    handlerMenuClick: MenuClickHandler<GetEntryResponse> = (params) => {
         const {entry, action} = params;
 
         if (typeof action === 'function') {
