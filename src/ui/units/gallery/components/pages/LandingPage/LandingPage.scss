@@ -27,6 +27,11 @@ $block: '.#{variables.$ns}-landing';
             padding-left: 20px;
             padding-right: 20px;
         }
+
+        &_maxWidth {
+            max-width: unset;
+            padding-inline: 0;
+        }
     }
 
     &__header {
@@ -61,6 +66,17 @@ $block: '.#{variables.$ns}-landing';
         font-weight: var(--g-text-body-font-weight);
     }
 
+    &__header-actions {
+        display: flex;
+        column-gap: 12px;
+    }
+
+    &__header-actions-link {
+        &_media_s {
+            width: 100%;
+        }
+    }
+
     &__header-illustration-flex {
         height: 100%;
         justify-content: end;
@@ -73,12 +89,10 @@ $block: '.#{variables.$ns}-landing';
     }
 
     &__header-illustration {
-        width: 277px;
-        height: 192px;
+        height: 290px;
 
         &_media_s {
-            width: 180px;
-            height: 124px;
+            height: 210px;
         }
     }
 
@@ -90,6 +104,11 @@ $block: '.#{variables.$ns}-landing';
         }
     }
 
+    &__promo-block-link-wrapper {
+        text-decoration: none;
+        color: inherit;
+    }
+
     &__promo-block-item-flex {
         display: flex;
         flex-direction: column;
@@ -99,7 +118,7 @@ $block: '.#{variables.$ns}-landing';
         padding-left: 20px;
         padding-top: 16px;
         overflow: hidden;
-        background-color: var(--g-color-base-generic);
+        background-color: var(--g-color-base-float-announcement);
 
         &:not(:hover) {
             box-shadow: none;
@@ -121,12 +140,18 @@ $block: '.#{variables.$ns}-landing';
     }
 
     &__promo-block-item-title {
+        display: flex;
+        justify-content: space-between;
+        padding-right: 20px;
+        align-items: center;
+
         &_primary {
             color: var(--g-color-text-light-primary);
         }
     }
 
     &__promo-block-item-title-counter {
+        margin-right: auto;
         color: var(--g-color-text-secondary);
 
         &_primary {
@@ -134,68 +159,33 @@ $block: '.#{variables.$ns}-landing';
         }
     }
 
-    &__promo-block-item-image-container {
+    &__promo-block-item-images-container {
         position: relative;
         width: 100%;
         height: 100%;
     }
 
-    &__promo-block-item-image {
+    &__promo-block-item-image-container {
+        display: flex;
         position: absolute;
         left: 0;
         top: 0;
         border-radius: 8px;
-    }
+        background-color: var(--g-color-base-float-announcement);
 
-    &__work-of-the-month {
-        background-color: var(--g-color-base-generic);
-        border-radius: 24px;
-        margin-top: 48px;
-        margin-bottom: 48px;
-        padding: 36px 44px;
-        row-gap: 24px;
-
-        &_media_s {
-            margin-top: 24px;
-            margin-bottom: 24px;
-            padding: 24px 32px;
+        &_primary {
+            background-color: var(--g-color-base-brand);
         }
     }
 
-    &__work-of-the-month-flex {
-        flex-direction: column;
-        row-gap: 16px;
+    &__promo-block-item-image {
+        border-radius: 8px;
         height: 100%;
-        justify-content: center;
-    }
-
-    &__work-of-the-month-medal {
-        @include text-subheader-3();
-
-        display: flex;
-        align-items: center;
-        gap: 8px;
+        object-fit: cover;
 
         &_media_s {
-            justify-content: center;
+            width: 100%;
         }
-    }
-
-    &__work-of-the-month-title {
-        @include text-header-2();
-
-        &_media_s {
-            text-align: center;
-        }
-    }
-
-    &__work-of-the-month-description {
-        @include text-body-2();
-    }
-
-    &__work-of-the-month-actions {
-        display: flex;
-        column-gap: 12px;
     }
 
     &__add-card {
@@ -222,6 +212,7 @@ $block: '.#{variables.$ns}-landing';
 
     &__add-card-description {
         @include text-body-3();
+        text-align: center;
     }
 
     &__add-card-button {

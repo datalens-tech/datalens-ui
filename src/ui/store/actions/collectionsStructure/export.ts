@@ -1,4 +1,4 @@
-import {getSdk} from 'libs/schematic-sdk';
+import {getSdk, isSdkError} from 'libs/schematic-sdk';
 import logger from 'libs/logger';
 import {showToast} from 'store/actions/toaster';
 
@@ -36,6 +36,9 @@ import type {
 
 import type {CollectionsStructureDispatch} from './index';
 import {convertFileToJSON} from 'ui/store/utils/collectionStructure';
+import {I18n} from 'i18n';
+
+const i18n = I18n.keyset('component.collections-structure');
 
 type ExportWorkbookLoadingAction = {
     type: typeof EXPORT_WORKBOOK_LOADING;
@@ -112,10 +115,6 @@ export const resetExportWorkbook = () => {
 const getEntriesMap = async (
     data: GetWorkbookExportStatusResponse | GetWorkbookImportStatusResponse,
 ) => {
-    if (data.status !== 'success') {
-        return null;
-    }
-
     const ids: string[] = [];
     data.notifications?.forEach((notification) => {
         if (notification.entryId) {
@@ -217,11 +216,6 @@ export const cancelExportProcess = (exportId: string) => {
                 if (!isCanceled) {
                     logger.logError('collectionsStructure/cancelExportProcess failed', error);
                 }
-
-                showToast({
-                    title: error.message,
-                    error,
-                });
             });
     };
 };
@@ -251,18 +245,48 @@ export const importWorkbook = ({
     description,
     collectionId,
     importFile,
+    publicGalleryUrl,
 }: {
     title: string;
     description?: string;
     collectionId: string | null;
-    importFile: File;
-}) => {
+} & (
+    | {importFile: File; publicGalleryUrl?: undefined}
+    | {publicGalleryUrl: string; importFile?: undefined}
+)) => {
     return async (dispatch: CollectionsStructureDispatch) => {
+        let data;
+
+        if (importFile) {
+            try {
+                data = await convertFileToJSON(importFile);
+            } catch (err) {
+                dispatch(
+                    showToast({
+                        title: i18n('toast_get-json-error'),
+                        error: err,
+                    }),
+                );
+                return Promise.resolve();
+            }
+        } else {
+            try {
+                const request = await fetch(publicGalleryUrl);
+                data = await request.json();
+            } catch (err) {
+                dispatch(
+                    showToast({
+                        title: i18n('toast_get-json-error'),
+                        error: err,
+                    }),
+                );
+                return Promise.resolve();
+            }
+        }
+
         dispatch({
             type: IMPORT_WORKBOOK_LOADING,
         });
-
-        const data = await convertFileToJSON(importFile);
 
         return getSdk()
             .sdk.metaManager.startWorkbookImport({
@@ -414,6 +438,16 @@ export const getImportProgress = ({importId}: {importId: string}) => {
                 const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
+                    if (isSdkError(error) && error.status === 404) {
+                        dispatch(
+                            showToast({
+                                title: i18n('toast_outdated-workbook-info'),
+                                type: 'danger',
+                            }),
+                        );
+                        return;
+                    }
+
                     logger.logError('collectionsStructure/getImportProgress failed', error);
                 }
 

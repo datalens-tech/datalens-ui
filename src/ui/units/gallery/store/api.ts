@@ -1,24 +1,31 @@
 import {createApi, fetchBaseQuery} from '@reduxjs/toolkit/query/react';
-
-import {MOCKED_GALLERY_ITEMS} from '../components/pages/mocks';
-import type {GalleryItem} from '../types';
+import type {GetMetaRespose} from 'shared/schema/anonymous-schema/public-gallery/actions';
+import type {GalleryItem, GalleryItemShort} from 'shared/types';
+import {getSdk} from 'ui/libs/schematic-sdk';
 
 export const galleryApi = createApi({
     reducerPath: 'galleryApi',
     baseQuery: fetchBaseQuery({baseUrl: '/'}),
     endpoints: (builder) => ({
-        getGalleryItems: builder.query<GalleryItem[], {}>({
+        getGalleryItems: builder.query<GalleryItemShort[], void>({
             async queryFn() {
-                return new Promise((resolve) => {
-                    setTimeout(() => {
-                        resolve({
-                            data: MOCKED_GALLERY_ITEMS,
-                        });
-                    }, 500);
-                });
+                const {entries: data} = await getSdk().sdk.anonymous.publicGallery.getAllItems();
+                return {data};
+            },
+        }),
+        getGalleryItem: builder.query<GalleryItem, {id: string}>({
+            async queryFn({id}) {
+                const data = await getSdk().sdk.anonymous.publicGallery.getItem({fileId: id});
+                return {data};
+            },
+        }),
+        getGalleryMeta: builder.query<GetMetaRespose, void>({
+            async queryFn() {
+                const data = await getSdk().sdk.anonymous.publicGallery.getMeta();
+                return {data};
             },
         }),
     }),
 });
 
-export const {useGetGalleryItemsQuery} = galleryApi;
+export const {useGetGalleryItemsQuery, useGetGalleryItemQuery, useGetGalleryMetaQuery} = galleryApi;

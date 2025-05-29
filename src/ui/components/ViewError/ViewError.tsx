@@ -34,6 +34,8 @@ export interface ViewErrorProps {
     size?: PlaceholderIllustrationProps['size'];
     containerClassName?: string;
     showDebugInfo?: boolean;
+    exportId?: string;
+    importId?: string;
 }
 
 export const ViewError = ({
@@ -50,6 +52,8 @@ export const ViewError = ({
     size,
     containerClassName,
     showDebugInfo = !hideDetails,
+    exportId,
+    importId,
 }: ViewErrorProps) => {
     const dispatch = useDispatch();
 
@@ -101,6 +105,8 @@ export const ViewError = ({
                 title: resultTitle,
                 error,
                 withReport,
+                exportId,
+                importId,
             }),
         );
     };

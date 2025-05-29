@@ -17,7 +17,6 @@ $block: '.#{variables.$ns}-all';
 
     &__container {
         height: calc(100% - #{$actionPanelHeight});
-        max-width: 1032px;
         padding-left: 48px;
         padding-right: 48px;
         padding-bottom: 48px;
@@ -28,6 +27,43 @@ $block: '.#{variables.$ns}-all';
         &_media_m {
             padding-left: 20px;
             padding-right: 20px;
+        }
+
+        &_maxWidth {
+            max-width: unset;
+            padding-inline: 0;
+        }
+    }
+
+    &__filters {
+        display: flex;
+        gap: var(--g-spacing-6);
+
+        @media (max-width: 577px) {
+            flex-direction: column;
+        }
+
+        &_mobile {
+            flex-direction: column;
+        }
+    }
+
+    &__filter-category {
+        flex-grow: 1;
+    }
+
+    &__filter-can-be-used {
+        display: flex;
+        justify-content: end;
+        align-items: center;
+        flex-shrink: 0;
+
+        @media (max-width: 577px) {
+            justify-content: start;
+        }
+
+        &_mobile {
+            justify-content: start;
         }
     }
 }

@@ -62,4 +62,5 @@ export const ErrorContentTypes = {
     NOT_AUTHENTICATED: 'not-authenticated',
     FORBIDDEN_BY_PLAN: 'forbidden-by-plan',
     FORBIDDEN_AUTH: 'forbidden-auth',
+    NOT_AUTHENTICATED_GALLERY: 'not-authenticated-gallery',
 };

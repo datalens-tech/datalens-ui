@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {Button, Flex} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
@@ -26,6 +27,7 @@ import {
 import DialogManager from '../../DialogManager/DialogManager';
 import type {GetDialogFooterPropsOverride} from '../WorkbookDialog';
 import {WorkbookDialog} from '../WorkbookDialog';
+import {useNotificationsAndDetails} from '../hooks/useNotificationsAndDetails';
 
 import {ImportFileField} from './ImportFileField/ImportFileField';
 import {ImportWorkbookView} from './ImportWorkbookView/ImportWorkbookView';
@@ -34,6 +36,7 @@ import {getApplyButtonText, getCancelButtonText, getCaption} from './utils';
 import './CreateWorkbookDialog.scss';
 
 const i18n = I18n.keyset('component.collections-structure');
+const notificationsI18n = I18n.keyset('component.workbook-export.notifications');
 
 const GET_IMPORT_PROGRESS_INTERVAL = 1000;
 
@@ -42,6 +45,13 @@ export const DIALOG_CREATE_WORKBOOK = Symbol('DIALOG_CREATE_WORKBOOK');
 export type OpenDialogCreateWorkbookArgs = {
     id: typeof DIALOG_CREATE_WORKBOOK;
     props: CreateWorkbookDialogProps;
+};
+
+export type PublicGalleryData = {
+    title: string;
+    id: string;
+    description?: string;
+    data: string;
 };
 
 export type CreateWorkbookDialogProps = {
@@ -56,6 +66,7 @@ export type CreateWorkbookDialogProps = {
     defaultView?: 'default' | 'import';
     importId?: string;
     showImport?: boolean;
+    publicGallery?: PublicGalleryData;
 };
 
 const b = block('create-workbook-dialog');
@@ -71,6 +82,7 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
     defaultView = 'default',
     importId,
     showImport,
+    publicGallery,
 }) => {
     const dispatch: AppDispatch = useDispatch();
 
@@ -80,6 +92,7 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
 
     const importData = useSelector(selectImportWorkbookData);
     const importProgressData = useSelector(selectGetImportProgressData);
+    const notifications = importProgressData?.notifications;
 
     const [isExternalLoading, setIsExternalLoading] = React.useState(false);
 
@@ -90,9 +103,22 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
     const [importFiles, setImportFiles] = React.useState<File[]>([]);
     const [importValidationError, setImportValidationError] = React.useState<null | string>(null);
 
+    const [publicGalleryState, setPublicGalleryState] = React.useState<PublicGalleryData | null>(
+        publicGallery || null,
+    );
+
+    const [workbookInitialTitle, setWorkbookInitialTitle] = React.useState<string | undefined>(
+        publicGalleryState?.title || defaultWorkbookTitle,
+    );
+
     const importProgressTimeout = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const isMounted = useMountedState();
+
+    const {notificationDetails, handleShowDetails} = useNotificationsAndDetails({
+        notifications,
+        importId: importData?.importId,
+    });
 
     React.useEffect(() => {
         if (open) {
@@ -102,6 +128,12 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
             setImportValidationError(null);
         }
     }, [defaultView, dispatch, open]);
+
+    React.useEffect(() => {
+        if (importFiles[0] && importFiles[0].name.toLowerCase().endsWith('.json')) {
+            setWorkbookInitialTitle(importFiles[0].name.replace(/\.json$/i, ''));
+        }
+    }, [defaultWorkbookTitle, importFiles, workbookInitialTitle]);
 
     const pollImportStatus = React.useCallback(
         async (currentImportId: string) => {
@@ -135,16 +167,22 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
         if (importId) {
             pollImportStatus(importId);
         }
-    }, [importData?.importId, pollImportStatus, importId]);
+    }, [pollImportStatus, importId]);
 
     const handleFileUploding = (file: File) => {
         setImportFiles([file]);
         setImportValidationError(null);
+        setPublicGalleryState(null);
     };
 
-    const handleRemoveFile = (index: number) => {
-        setImportFiles((prev) => prev.filter((_, i) => i !== index));
-        setImportValidationError(null);
+    const handleRemoveFile = (index: number | 'publicGallery') => {
+        if (index === 'publicGallery') {
+            setPublicGalleryState(null);
+            setWorkbookInitialTitle('');
+        } else {
+            setImportFiles((prev) => prev.filter((_, i) => i !== index));
+            setImportValidationError(null);
+        }
     };
 
     const handleClose = React.useCallback(() => {
@@ -188,6 +226,27 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
         [onApply, onCreateWorkbook],
     );
 
+    const startImport = React.useCallback(
+        async (workbookData: {title: string; description: string; collectionId: string | null}) => {
+            // include loading of parsing JSON file
+            setIsExternalLoading(true);
+            const importResult = await dispatch(
+                importWorkbook(
+                    publicGalleryState
+                        ? {...workbookData, publicGalleryUrl: publicGalleryState.data}
+                        : {...workbookData, importFile: importFiles[0]},
+                ),
+            );
+            setIsExternalLoading(false);
+
+            if (importResult && importResult.importId) {
+                setView('import');
+                pollImportStatus(importResult.importId);
+            }
+        },
+        [dispatch, importFiles, pollImportStatus, publicGalleryState],
+    );
+
     const handleApply = React.useCallback(
         async ({
             title,
@@ -218,14 +277,11 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
                 collectionId,
             };
 
-            if (isEnabledFeature(Feature.EnableExportWorkbookFile) && importFiles.length > 0) {
-                setView('import');
-                const importResult = await dispatch(
-                    importWorkbook({...workbookData, importFile: importFiles[0]}),
-                );
-                if (importResult && importResult.importId) {
-                    pollImportStatus(importResult.importId);
-                }
+            if (
+                isEnabledFeature(Feature.EnableExportWorkbookFile) &&
+                (importFiles.length > 0 || publicGalleryState)
+            ) {
+                startImport(workbookData);
                 return;
             }
 
@@ -244,7 +300,8 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
             importFiles,
             importProgressData?.workbookId,
             importStatus,
-            pollImportStatus,
+            publicGalleryState,
+            startImport,
         ],
     );
 
@@ -256,7 +313,10 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
                 textButtonApply: importStatus
                     ? getApplyButtonText(importStatus, textButtonApply)
                     : textButtonApply,
-                propsButtonApply: {disabled: propsButtonApply?.disabled, loading: isLoading},
+                propsButtonApply: {
+                    disabled: importData?.importId ? false : propsButtonApply?.disabled,
+                    loading: isLoading,
+                },
                 propsButtonCancel: {
                     view: importStatus?.endsWith('error') ? 'normal' : 'flat',
                     disabled: isLoading && !isImportLoading,
@@ -264,28 +324,65 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
                 textButtonCancel: importStatus
                     ? getCancelButtonText(importStatus, textButtonCancel)
                     : textButtonCancel,
+                children:
+                    importStatus && notificationDetails ? (
+                        <Button size="l" view="outlined" onClick={handleShowDetails}>
+                            {notificationsI18n('button_show-details')}
+                        </Button>
+                    ) : undefined,
             };
         },
-        [handleClose, importStatus, isImportLoading, isLoading],
+
+        [
+            handleClose,
+            handleShowDetails,
+            importData?.importId,
+            importStatus,
+            isImportLoading,
+            isLoading,
+            notificationDetails,
+        ],
     );
+
+    const handleRetry = React.useCallback(() => {
+        if (importStatus === 'fatal-error' && importData?.importId) {
+            pollImportStatus(importData.importId);
+            return;
+        }
+    }, [importData?.importId, importStatus, pollImportStatus]);
 
     const renderImportSection = () => {
         if (!isEnabledFeature(Feature.EnableExportWorkbookFile) || !showImport) {
             return null;
         }
+
+        const publicGalleryFile = publicGalleryState?.data?.split('/').pop() || undefined;
+
         return (
             <ImportFileField
                 onUpload={handleFileUploding}
                 onRemove={handleRemoveFile}
                 files={importFiles}
                 error={importValidationError}
+                publicGalleryFile={publicGalleryFile}
             />
         );
     };
 
     const renderDialogView = () => {
         if (view === 'import') {
-            return <ImportWorkbookView status={importStatus} />;
+            const canProgressBeRetried = importStatus === 'fatal-error' && importData?.importId;
+
+            const handleRetryFn = canProgressBeRetried ? handleRetry : undefined;
+            return (
+                <Flex direction="column">
+                    <ImportWorkbookView
+                        onRetry={handleRetryFn}
+                        status={importStatus}
+                        importId={importData?.importId}
+                    />
+                </Flex>
+            );
         }
         return null;
     };
@@ -296,10 +393,11 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
     return (
         <WorkbookDialog
             title={title}
+            titleValue={workbookInitialTitle}
+            descriptionValue={publicGalleryState?.description || ''}
             textButtonApply={i18n('action_create')}
             open={open}
             isLoading={isLoading}
-            titleValue={defaultWorkbookTitle}
             onApply={handleApply}
             onClose={handleClose}
             titleAutoFocus

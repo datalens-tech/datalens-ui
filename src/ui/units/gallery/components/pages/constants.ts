@@ -7,9 +7,16 @@ export const ADD_DASH_FORM_LINK =
 export const URL_FILTER_PARAMS = {
     SEARCH_TEXT: 'search',
     CATEGORY: 'category',
+    CAN_BE_USED: 'can_be_used',
+};
+
+export const CARD_PAGE_URL_PARAMS = {
+    PREVIEW: 'preview',
 };
 
 export const SPECIAL_CATEGORY = {
     ALL: 'all',
     EDITORS_CHOICE: 'editors-choice',
 };
+
+export const PROMO_BLOCK_CATEGORIES = ['sales', 'marketing', 'hr', 'geo', 'marketplace'];

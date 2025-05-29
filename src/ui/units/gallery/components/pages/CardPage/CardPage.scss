@@ -6,10 +6,24 @@
 $block: '.#{variables.$ns}-card';
 
 #{$block} {
+    &__loader {
+        height: 100%;
+    }
+
+    &__error {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
     &__iframe {
+        $promoHeaderHeight: 64px;
+
         width: 100%;
         border: none;
         height: calc(100% - #{$actionPanelHeight} - 5px);
+        min-height: max(600px, calc(100vh - #{$actionPanelHeight} - #{$promoHeaderHeight} - 5px));
     }
     &__container {
         height: calc(100% - #{$actionPanelHeight});
@@ -24,12 +38,18 @@ $block: '.#{variables.$ns}-card';
             padding-left: 20px;
             padding-right: 20px;
         }
+
+        &_maxWidth {
+            max-width: unset;
+            padding-inline: 0;
+        }
     }
 
     &__actions-left-flex {
         align-items: center;
         column-gap: 8px;
         max-width: calc(100% - 2 * #{$actionPanelHorizontalPadding});
+        min-width: 0;
     }
 
     &__actions-right-flex {
@@ -41,28 +61,20 @@ $block: '.#{variables.$ns}-card';
         }
     }
 
+    &__breadcrumbs {
+        min-width: 0;
+    }
+
     &__image-card {
         line-height: 0;
         padding: 6px;
-
-        &_preview {
-            padding: 4px;
-        }
     }
 
     &__image-card-content {
         width: 100%;
         height: 418px;
         object-fit: cover;
-        border-radius: 6px;
-
-        &_preview {
-            height: 74px;
-        }
-
-        &_media_s {
-            width: 144px;
-        }
+        border-radius: var(--g-border-radius-l);
     }
 
     &__image-card-preview-flex {
@@ -82,7 +94,7 @@ $block: '.#{variables.$ns}-card';
         margin: 6px;
     }
 
-    &__card-description-collapse-button {
+    &__card-description-collapse {
         width: fit-content;
     }
 
@@ -103,5 +115,24 @@ $block: '.#{variables.$ns}-card';
         &_media_s {
             margin-top: 8px;
         }
+    }
+
+    &__dropdown-item {
+        display: flex;
+    }
+
+    &__dropdown-icon {
+        margin-top: 3px;
+    }
+
+    &__dropdown-text {
+        margin-left: 8px;
+    }
+
+    &__dropdown-hint {
+        padding-bottom: 4px;
+        max-width: 200px;
+        line-height: normal;
+        color: var(--g-color-text-hint);
     }
 }

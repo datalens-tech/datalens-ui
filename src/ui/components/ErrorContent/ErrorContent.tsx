@@ -1,11 +1,13 @@
 import React from 'react';
 
+import type {ButtonProps, ButtonWidth} from '@gravity-ui/uikit';
 import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import PropTypes from 'prop-types';
+import type {ValueOf} from 'shared';
 import {ErrorContentTypes, Feature} from 'shared';
 import {DL} from 'ui/constants/common';
+import {type DataLensApiError, type ParsedError, isParsedError} from 'ui/typings';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 import Utils from 'ui/utils/utils';
@@ -14,6 +16,7 @@ import logger from '../../libs/logger';
 import {sdk} from '../../libs/sdk';
 import MarkdownProvider from '../../modules/markdownProvider';
 import {EntryDialogName, EntryDialogues} from '../EntryDialogues';
+import type {IllustrationName} from '../Illustration/types';
 import {PlaceholderIllustration} from '../PlaceholderIllustration/PlaceholderIllustration';
 import {YfmWrapper} from '../YfmWrapper/YfmWrapper';
 
@@ -24,41 +27,45 @@ import './ErrorContent.scss';
 const i18n = I18n.keyset('component.error-content.view');
 const b = block('error-content');
 
-class ErrorContent extends React.PureComponent {
-    static propTypes = {
-        className: PropTypes.string,
-        title: PropTypes.string,
-        isHtmlInTitle: PropTypes.bool,
-        isHtmlInDescription: PropTypes.bool,
-        description: PropTypes.node,
-        type: PropTypes.oneOf(Object.values(ErrorContentTypes)),
-        action: PropTypes.shape({
-            text: PropTypes.string,
-            content: PropTypes.node,
-            handler: PropTypes.func,
-            buttonProps: PropTypes.object,
-        }),
-        reqId: PropTypes.string,
-        traceId: PropTypes.string,
-        error: PropTypes.object,
-        entryMeta: PropTypes.shape({
-            entryId: PropTypes.string.isRequired,
-            scope: PropTypes.string.isRequired,
-            key: PropTypes.string.isRequired,
-            type: PropTypes.string,
-            workbookId: PropTypes.string,
-        }),
-        noControls: PropTypes.bool,
-        showDebugInfo: PropTypes.bool,
-        noActions: PropTypes.bool,
-        size: PropTypes.oneOf(['s', 'm', 'l', 'promo']),
-        direction: PropTypes.oneOf(['row', 'column']),
-        accessDescription: PropTypes.string,
-        hideTitle: PropTypes.bool,
-        style: PropTypes.object,
-        containerClassName: PropTypes.string,
+interface ErrorContentProps {
+    className?: string;
+    title?: string;
+    isHtmlInTitle?: boolean;
+    isHtmlInDescription?: boolean;
+    description?: React.ReactNode;
+    type?: ValueOf<typeof ErrorContentTypes>;
+    action?: {
+        text?: string;
+        content?: React.ReactNode;
+        handler?: ButtonProps['onClick'];
+        buttonProps?: Omit<ButtonProps, 'onClick' | 'width' | 'size'>;
     };
+    reqId?: string;
+    traceId?: string;
+    error?: DataLensApiError | ParsedError | null;
+    /** @deprecated
+     * this props is passed from some other components, but is not used in ErrorContent component
+     */
+    entryId?: string | null;
+    entryMeta?: {
+        entryId: string;
+        scope: string;
+        key: string;
+        type: string;
+        workbookId?: string;
+    };
+    noControls?: boolean;
+    showDebugInfo?: boolean;
+    noActions?: boolean;
+    size?: 's' | 'm' | 'l' | 'promo';
+    direction?: 'row' | 'column';
+    accessDescription?: string;
+    hideTitle?: boolean;
+    style?: React.CSSProperties;
+    containerClassName?: string;
+}
 
+class ErrorContent extends React.PureComponent<ErrorContentProps> {
     static defaultProps = {
         type: ErrorContentTypes.ERROR,
         showDebugInfo: true,
@@ -70,13 +77,13 @@ class ErrorContent extends React.PureComponent {
         accessDescriptionMd: '',
     };
 
+    entryDialoguesRef = React.createRef<EntryDialogues>();
+    buttonSize = DL.IS_MOBILE ? MOBILE_SIZE.BUTTON : 'm';
+    buttonWidth: ButtonWidth = DL.IS_MOBILE ? 'max' : 'auto';
+
     async componentDidMount() {
         await this.getAccessDescriptionMD();
     }
-
-    entryDialoguesRef = React.createRef();
-    buttonSize = DL.IS_MOBILE ? MOBILE_SIZE.BUTTON : 'm';
-    buttonWidth = DL.IS_MOBILE ? 'max' : 'auto';
 
     async getAccessDescriptionMD() {
         const customText = this.getAccessDescription();
@@ -138,6 +145,7 @@ class ErrorContent extends React.PureComponent {
             return (
                 <div
                     className={b('description')}
+                    // @ts-expect-error string type of description is expected
                     dangerouslySetInnerHTML={{__html: description}}
                 ></div>
             );
@@ -147,8 +155,13 @@ class ErrorContent extends React.PureComponent {
     }
 
     renderDebugInfo() {
-        const {error, noControls} = this.props;
-        const {requestId, traceId: traceIdFromResponse} = Utils.parseErrorResponse(error);
+        const {error, noControls = false} = this.props;
+
+        let parsedError: ParsedError | undefined;
+        if (error) {
+            parsedError = isParsedError(error) ? error : Utils.parseErrorResponse(error);
+        }
+        const {requestId, traceId: traceIdFromResponse} = parsedError || {};
 
         const reqId = this.props.reqId || requestId;
         const traceId = this.props.traceId || traceIdFromResponse;
@@ -267,7 +280,7 @@ class ErrorContent extends React.PureComponent {
         const showDebugActions = showDebugInfo && DL.IS_MOBILE;
 
         const {type} = this.props;
-        let imageName = '';
+        let imageName: IllustrationName = 'error';
 
         switch (type) {
             case ErrorContentTypes.NOT_FOUND:
@@ -305,6 +318,7 @@ class ErrorContent extends React.PureComponent {
                 <div className={b('illustration-container')} data-qa={`type-${type}`}>
                     <PlaceholderIllustration
                         name={imageName}
+                        // @ts-expect-error string type is expected
                         title={this.renderTitle()}
                         description={this.renderDescription()}
                         renderAction={this.renderAction}

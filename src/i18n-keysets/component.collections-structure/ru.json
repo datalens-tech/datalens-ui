@@ -27,6 +27,7 @@
   "label_description": "Описание",
   "label_empty-collection": "В коллекции пусто или не удалось ничего найти по условиям в фильтрах",
   "label_error-file-type": "Файл должен быть в формате JSON",
+  "label_help-import-hint": "Используйте файл с конфигурацией воркбука в формате JSON. Получить такой файл можно при <link>экспорте воркбука</link>.",
   "label_import-exit-description": "На процесс импорта это не повлияет. Окно импорта можно снова открыть, нажав на воркбук в списке.",
   "label_import-from-file": "Импорт из файла",
   "label_move": "Куда переместить",
@@ -37,5 +38,7 @@
   "label_wizard": "чарта",
   "section_delete-collection": "Вы действительно хотите удалить коллекцию \"{{name}}\"?",
   "section_delete-workbook": "Вы действительно хотите удалить воркбук \"{{name}}\"?",
-  "title_import-exit": "Закрыть окно импорта?"
+  "title_import-exit": "Закрыть окно импорта?",
+  "toast_get-json-error": "Ошибка при попытке получить JSON из файла",
+  "toast_outdated-workbook-info": "Информация о воркбуке устарела. Пожалуйста, обновите страницу."
 }

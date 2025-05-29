@@ -38,6 +38,7 @@ export enum ConnectorType {
     Oracle = 'oracle',
     Postgres = 'postgres',
     Snowflake = 'snowflake',
+    Trino = 'trino',
     UsageAnalyticsDetailed = 'usage_analytics_detailed',
     UsageAnalyticsLight = 'usage_analytics_light',
     UsageTrackingYT = 'usage_tracking_ya_team',

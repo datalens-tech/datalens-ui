@@ -63,6 +63,7 @@ export const AVAILABLE_SQL_CONNECTION_TYPES = [
     ConnectorType.Mysql,
     ConnectorType.Oracle,
     ConnectorType.Postgres,
+    ConnectorType.Trino,
     ConnectorType.Ydb,
     ConnectorType.Chyt,
     ConnectorType.ChytNb,
