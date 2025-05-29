@@ -7,6 +7,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {DatasetActionQA, Feature, RAW_SQL_LEVEL} from 'shared';
+import {registry} from 'ui/registry';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {toggleLoadPreviewByDefault, toggletTemplateEnabled} from '../../store/actions/creators';
@@ -62,6 +63,8 @@ export function ActionPanelRightItems(props: Props) {
 
         return nextValue;
     }, [isLoadPreviewByDefault, templateEnabled, isRawSqlLevelEnableTemplating]);
+
+    const {AdditionalDatasetActions} = registry.datasets.components.getAll();
 
     const handleUpdateSettings = React.useCallback(
         (value: string[]) => {
@@ -146,6 +149,7 @@ export function ActionPanelRightItems(props: Props) {
             >
                 {settingsSelectOptions}
             </Select>
+            <AdditionalDatasetActions />
             <Button
                 view="normal"
                 size="m"
