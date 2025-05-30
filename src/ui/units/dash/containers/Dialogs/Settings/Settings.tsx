@@ -213,7 +213,6 @@ const Settings = () => {
         <Dialog
             open={visible}
             onClose={() => dispatch(closeDialog())}
-            disableFocusTrap={true}
             disableEscapeKeyDown={true}
             qa={DashboardDialogSettingsQa.DialogRoot}
         >

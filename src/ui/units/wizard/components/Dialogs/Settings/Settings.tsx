@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
-import {Dialog, Loader, RadioButton} from '@gravity-ui/uikit';
+import {Dialog, Loader, SegmentedRadioGroup as RadioButton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import _isEqual from 'lodash/isEqual';
@@ -1147,12 +1147,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
         const {valid} = this.state;
 
         return (
-            <Dialog
-                open={true}
-                className={b()}
-                onClose={this.props.onCancel}
-                disableFocusTrap={true}
-            >
+            <Dialog open={true} className={b()} onClose={this.props.onCancel}>
                 <div className={b('content')}>
                     <Dialog.Header caption={i18n('wizard', 'label_chart-settings')} />
                     <Dialog.Body>{this.renderModalBody()}</Dialog.Body>

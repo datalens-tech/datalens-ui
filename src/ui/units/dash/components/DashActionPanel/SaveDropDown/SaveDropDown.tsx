@@ -45,13 +45,13 @@ export const SaveDropDown: React.FC<SaveDropDownProps> = ({
             size="s"
             items={items}
             popupProps={{
-                contentClassName: 'data-qa-action-save-menu',
+                className: 'data-qa-action-save-menu',
             }}
-            switcher={
+            renderSwitcher={() => (
                 <Button view="action" size="m" qa="action-button-save-as">
                     <Icon data={ChevronDown} />
                 </Button>
-            }
+            )}
         />
     );
 };

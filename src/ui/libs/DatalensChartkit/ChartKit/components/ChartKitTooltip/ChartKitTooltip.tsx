@@ -148,19 +148,12 @@ const ChartKitTooltipComponent = React.forwardRef<ChartKitTooltipRef | undefined
         return (
             <Popup
                 key={anchor?.ref.current.id}
-                anchorRef={anchor?.ref}
+                anchorElement={anchor?.ref.current}
                 placement={anchor?.placement}
                 className={b('popup')}
                 open={open}
                 hasArrow={true}
-                onMouseEnter={() => setHover(true)}
-                onMouseLeave={() => {
-                    setHover(false);
-                    if (anchor) {
-                        setOpenAsync(false, anchor.hideDelay);
-                    }
-                }}
-                onTransitionExited={() => {
+                onTransitionOutComplete={() => {
                     setHover(false);
                     setAnchor(null);
                 }}

@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {
+    Breadcrumbs,
     Col,
     Container,
     Loader,
@@ -12,7 +13,6 @@ import {
     useThemeType,
 } from '@gravity-ui/uikit';
 import type {SelectOption} from '@gravity-ui/uikit';
-import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
 import {useHistory, useLocation} from 'react-router-dom';
 import type {GalleryItemShort} from 'shared/types';
 import {ActionPanel} from 'ui/components/ActionPanel';

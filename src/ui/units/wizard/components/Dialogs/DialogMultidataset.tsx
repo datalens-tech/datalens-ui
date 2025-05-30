@@ -179,7 +179,7 @@ class DialogMultidataset extends PureComponent<Props, State> {
                                             <div className={b('left-dataset-more')}>
                                                 <DropdownMenu
                                                     size="s"
-                                                    switcher={
+                                                    renderSwitcher={() => (
                                                         <Button
                                                             qa={`dataset-${dataset.realName}`}
                                                             size="s"
@@ -188,7 +188,7 @@ class DialogMultidataset extends PureComponent<Props, State> {
                                                         >
                                                             <Icon data={Ellipsis} width="16" />
                                                         </Button>
-                                                    }
+                                                    )}
                                                     items={[
                                                         {
                                                             action: () => {

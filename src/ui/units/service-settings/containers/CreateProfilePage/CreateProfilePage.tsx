@@ -1,7 +1,6 @@
 import React from 'react';
 
-import {Flex} from '@gravity-ui/uikit';
-import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
+import {Breadcrumbs, Flex} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useHistory} from 'react-router-dom';

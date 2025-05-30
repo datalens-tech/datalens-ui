@@ -12,6 +12,7 @@ import {
 } from '@gravity-ui/icons';
 import {
     ActionTooltip,
+    Breadcrumbs,
     Button,
     Card,
     Col,
@@ -27,7 +28,6 @@ import {
     useThemeType,
 } from '@gravity-ui/uikit';
 import type {ButtonProps, IconData} from '@gravity-ui/uikit';
-import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
 import {I18n} from 'i18n';
 import {useHistory, useLocation, useParams} from 'react-router-dom';
 import {ErrorContentTypes} from 'shared';

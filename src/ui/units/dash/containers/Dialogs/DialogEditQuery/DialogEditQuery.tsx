@@ -114,7 +114,6 @@ const DialogEditQuery: React.FC = () => {
                 preset="default"
                 loading={loading}
                 showError={false}
-                listenKeyEnter={false}
                 propsButtonApply={{disabled}}
                 onClickButtonCancel={handleClose}
                 onClickButtonApply={handleApply}

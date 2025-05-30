@@ -146,10 +146,13 @@ class NavigationMinimal extends React.Component {
             <Popup
                 hasArrow={hasTail}
                 placement={popupPlacement}
-                onClose={this.onClose}
+                onOpenChange={(open) => {
+                    if (!open) {
+                        this.onClose();
+                    }
+                }}
                 open={visible}
-                anchorRef={anchor}
-                contentClassName={b('popup')}
+                anchorElement={anchor}
             >
                 {visible && (
                     <div className={b(null, className)} data-qa={DlNavigationQA.NavigationMinimal}>

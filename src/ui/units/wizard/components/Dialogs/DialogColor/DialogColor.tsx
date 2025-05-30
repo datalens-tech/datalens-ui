@@ -114,7 +114,7 @@ class DialogColorComponent extends React.Component<Props, State> {
             (ALLOWED_FOR_NULL_MODE_VISUALIZATIONS as string[]).includes(visualization.id);
 
         return (
-            <Dialog open={true} onClose={this.onClose} disableFocusTrap={true}>
+            <Dialog open={true} onClose={this.onClose}>
                 <div className={b({[`${colorMode}-mode`]: true})}>
                     <Dialog.Header
                         insertBefore={

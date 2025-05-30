@@ -155,7 +155,7 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
                                             />
                                             <DropdownMenu
                                                 size="s"
-                                                switcher={
+                                                renderSwitcher={() => (
                                                     <Button
                                                         view="flat-secondary"
                                                         size="s"
@@ -164,7 +164,7 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
                                                     >
                                                         <Icon size={14} data={Ellipsis} />
                                                     </Button>
-                                                }
+                                                )}
                                                 items={[
                                                     {
                                                         action: () => {

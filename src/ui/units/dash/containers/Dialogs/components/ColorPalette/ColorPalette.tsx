@@ -264,9 +264,13 @@ export function ColorPalette({
             </Tooltip>
             <Popup
                 open={openPopup}
-                anchorRef={anchorRef}
+                anchorElement={anchorRef.current}
                 hasArrow
-                onOutsideClick={handleClosePopup}
+                onOpenChange={(open, _event, reason) => {
+                    if (!open && reason === 'outside-press') {
+                        handleClosePopup();
+                    }
+                }}
                 className={b('popup')}
             >
                 <PaletteList

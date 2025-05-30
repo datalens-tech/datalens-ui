@@ -1,8 +1,7 @@
 import React from 'react';
 
-import {HelpPopover} from '@gravity-ui/components';
-import type {PopoverInstanceProps, RadioButtonOption} from '@gravity-ui/uikit';
-import {Dialog, Icon, Popover, TextInput} from '@gravity-ui/uikit';
+import type {PopoverInstanceProps, SegmentedRadioGroupOptionProps} from '@gravity-ui/uikit';
+import {Dialog, HelpMark, Icon, Popover, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {i18n} from 'i18n';
@@ -198,9 +197,11 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
         const isAreaChart = AREA_OR_AREA100P.has(visualizationId);
         const shouldHideConnectOption = isAreaChart && nulls !== SETTINGS.NULLS.CONNECT;
 
-        const nullsOptions: RadioButtonOption[] = [...DEFAULT_NULLS_OPTIONS_RADIO_BUTTON_OPTIONS];
+        const nullsOptions: SegmentedRadioGroupOptionProps[] = [
+            ...DEFAULT_NULLS_OPTIONS_RADIO_BUTTON_OPTIONS,
+        ];
         if (!shouldHideConnectOption) {
-            const connectOption: RadioButtonOption = {
+            const connectOption: SegmentedRadioGroupOptionProps = {
                 value: SETTINGS.NULLS.CONNECT,
                 content: i18n('wizard', 'label_connect'),
             };
@@ -305,10 +306,9 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                             />
                         </div>
                         {shouldDisabledManualButton && (
-                            <HelpPopover
-                                className={b('title-popover')}
-                                content={i18n('wizard', 'label_axis-title-manual-warning')}
-                            />
+                            <HelpMark className={b('title-popover')}>
+                                {i18n('wizard', 'label_axis-title-manual-warning')}
+                            </HelpMark>
                         )}
                         {title === SETTINGS.TITLE.MANUAL && (
                             <TextInput
@@ -452,10 +452,9 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                                 qa={'axis-mode-radio-buttons'}
                             />
                             {disabledTooltipContent && (
-                                <HelpPopover
-                                    className={b('title-popover')}
-                                    content={i18n('wizard', disabledTooltipContent)}
-                                />
+                                <HelpMark className={b('title-popover')}>
+                                    {i18n('wizard', disabledTooltipContent)}
+                                </HelpMark>
                             )}
                         </React.Fragment>
                     }

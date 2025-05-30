@@ -130,13 +130,7 @@ export class EntryDialogBase<T> extends React.Component<
         } = this.props;
 
         return (
-            <Dialog
-                size="s"
-                open={visible}
-                onClose={this.onClose}
-                onEnterKeyDown={this.onApply}
-                disableFocusTrap={true}
-            >
+            <Dialog size="s" open={visible} onClose={this.onClose} onEnterKeyDown={this.onApply}>
                 <Dialog.Header caption={caption} />
                 <Dialog.Body>
                     <div data-qa={EntryDialogQA.Content}>

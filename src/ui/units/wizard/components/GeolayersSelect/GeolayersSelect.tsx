@@ -154,15 +154,18 @@ class GeolayersSelect extends React.Component<GeolayersSelectProps, GeolayersSel
 
         return (
             <Popup
-                contentClassName={b('popup')}
                 style={{
                     minWidth: this.controlWidth,
                 }}
                 open={active}
-                anchorRef={this.controlRef}
-                offset={[0, POPUP_OFFSET]}
+                anchorElement={this.controlRef.current}
+                offset={{mainAxis: 0, crossAxis: POPUP_OFFSET}}
                 placement={'bottom-start'}
-                onClose={this.togglePopupVisibility}
+                onOpenChange={(open) => {
+                    if (!open) {
+                        this.togglePopupVisibility();
+                    }
+                }}
             >
                 {this.renderPopupContent()}
             </Popup>
@@ -265,7 +268,7 @@ class GeolayersSelect extends React.Component<GeolayersSelectProps, GeolayersSel
                 <DropdownMenu
                     size="s"
                     data={item.id}
-                    switcher={this.renderDotsButton()}
+                    renderSwitcher={this.renderDotsButton}
                     items={this.dropdownItems}
                     onSwitcherClick={this.onSwitcherClick}
                 />

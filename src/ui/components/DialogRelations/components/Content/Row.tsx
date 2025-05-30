@@ -470,7 +470,7 @@ export const Row = ({
                         <DropdownMenu
                             size="l"
                             items={items}
-                            switcher={
+                            renderSwitcher={() => (
                                 <Button
                                     view="flat"
                                     className={b('button-link')}
@@ -485,7 +485,7 @@ export const Row = ({
                                     </span>
                                     {relationTypeText}
                                 </Button>
-                            }
+                            )}
                         />
                         <Popover
                             content={<div title={tooltipTitle}>{tooltipContent}</div>}

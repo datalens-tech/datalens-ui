@@ -1,4 +1,4 @@
-import type {ChartData} from '@gravity-ui/chartkit/d3';
+import type {ChartData} from '@gravity-ui/chartkit/gravity-charts';
 import type {AxiosError, AxiosRequestConfig, AxiosResponse, CancelTokenSource} from 'axios';
 import axios from 'axios';
 import type {Series as HighchartSeries} from 'highcharts';
