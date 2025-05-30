@@ -115,10 +115,6 @@ export const resetExportWorkbook = () => {
 const getEntriesMap = async (
     data: GetWorkbookExportStatusResponse | GetWorkbookImportStatusResponse,
 ) => {
-    if (data.status !== 'success') {
-        return null;
-    }
-
     const ids: string[] = [];
     data.notifications?.forEach((notification) => {
         if (notification.entryId) {
@@ -220,11 +216,6 @@ export const cancelExportProcess = (exportId: string) => {
                 if (!isCanceled) {
                     logger.logError('collectionsStructure/cancelExportProcess failed', error);
                 }
-
-                showToast({
-                    title: error.message,
-                    error,
-                });
             });
     };
 };

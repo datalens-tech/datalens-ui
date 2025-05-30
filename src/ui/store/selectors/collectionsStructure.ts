@@ -83,12 +83,11 @@ export const selectExportError = createSelector(
 );
 
 export const selectExportWorkbookStatus = createSelector(
-    [selectExportWorkbook, selectGetExportProgress, selectGetExportResult],
-    (exportWorkbook, getExportProgress, getExportResult) =>
+    [selectExportWorkbook, selectGetExportProgress],
+    (exportWorkbook, getExportProgress) =>
         getStatusFromOperation({
             initialOperation: exportWorkbook,
             progessOperation: getExportProgress,
-            resultOperation: getExportResult,
         }),
 );
 
@@ -99,8 +98,8 @@ const selectGetImportProgress = (state: DatalensGlobalState) =>
     state.collectionsStructure.getImportProgress;
 
 export const selectImportWorkbookData = createSelector(
-    [selectGetImportProgress],
-    (getImportProgress) => getImportProgress.data,
+    [selectImportWorkbook],
+    (importWorkbook) => importWorkbook.data,
 );
 
 export const selectGetImportProgressEntriesMap = createSelector(

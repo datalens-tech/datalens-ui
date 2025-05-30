@@ -58,6 +58,18 @@ const AdvancedChartWidget = (props: AdvancedChartWidgetProps) => {
 
     const chartState = React.useRef<any>({});
 
+    const render = () => {
+        if (!originalData?.render) {
+            return;
+        }
+
+        if (contentRef.current && dimensions) {
+            const context = chartStorage.get(generatedId);
+            const content = originalData.render.call(context, dimensions);
+            contentRef.current.innerHTML = String(content ?? '');
+        }
+    };
+
     React.useEffect(() => {
         chartStorage.set(generatedId, {
             chartId: generatedId,
@@ -66,7 +78,7 @@ const AdvancedChartWidget = (props: AdvancedChartWidgetProps) => {
                 chartState.current = {...chartState.current, ...value};
 
                 if (!options?.silent) {
-                    render();
+                    setTimeout(render, 0);
                 }
             },
             updateActionParams: (params: StringParams) => {
@@ -90,18 +102,6 @@ const AdvancedChartWidget = (props: AdvancedChartWidgetProps) => {
             chartStorage.delete(generatedId);
         };
     }, [generatedId, dimensions, onChange]);
-
-    const render = () => {
-        if (!originalData?.render) {
-            return;
-        }
-
-        if (contentRef.current && dimensions) {
-            const context = chartStorage.get(generatedId);
-            const content = originalData.render.call(context, dimensions);
-            contentRef.current.innerHTML = String(content ?? '');
-        }
-    };
 
     React.useEffect(() => {
         if (dimensions) {
