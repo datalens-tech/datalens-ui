@@ -221,7 +221,6 @@ function CardActionPanel({
     togglePreview,
     lang,
 }: CardActionPanelProps) {
-    const history = useHistory();
     const isActiveMediaQueryS = activeMediaQuery === 's';
     const mods: CnMods = {media: activeMediaQuery};
 
@@ -251,7 +250,7 @@ function CardActionPanel({
     } else {
         leftItems = (
             <Flex style={{minWidth: 0, flex: 1}}>
-                <Breadcrumbs className={b('breadcrumbs')} navigate={(href) => history.push(href)}>
+                <Breadcrumbs className={b('breadcrumbs')}>
                     <Breadcrumbs.Item href="/gallery">
                         {galleryI18n('label_gallery')}
                     </Breadcrumbs.Item>

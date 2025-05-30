@@ -2,7 +2,7 @@ import React from 'react';
 
 import {ArrowLeft} from '@gravity-ui/icons';
 import {Button, Text} from '@gravity-ui/uikit';
-import type {ButtonProps, TextProps} from '@gravity-ui/uikit';
+import type {ButtonButtonProps, TextProps} from '@gravity-ui/uikit';
 import {Link} from 'react-router-dom';
 
 import {block} from '../../utils';
@@ -14,7 +14,7 @@ const b = block('page-header');
 interface PageHeaderProps {
     title: string;
     to: string;
-    buttonProps?: Partial<ButtonProps>;
+    buttonProps?: Partial<ButtonButtonProps>;
     textProps?: Partial<TextProps>;
 }
 

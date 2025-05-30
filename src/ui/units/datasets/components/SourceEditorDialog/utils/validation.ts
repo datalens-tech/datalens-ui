@@ -41,7 +41,7 @@ export const createValidationSchema = (items: FormOptions[] = []) => {
         {} as Record<string, yup.StringSchema>,
     );
 
-    return yup.object(schemaOptions);
+    return yup.object<Record<string, yup.StringSchema>>(schemaOptions);
 };
 
 export const getDataForValidation = (source: EditedSource, freeformSource?: FreeformSource) => {

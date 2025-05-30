@@ -97,7 +97,7 @@ export function ParamSelector(props: ParamSelectorProps) {
                 return (
                     <Button
                         {...triggerProps}
-                        ref={ref}
+                        ref={ref as React.Ref<HTMLButtonElement>}
                         className={b('param-add-button', className)}
                     >
                         <Button.Icon>

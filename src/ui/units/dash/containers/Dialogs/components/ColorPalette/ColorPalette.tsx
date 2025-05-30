@@ -236,7 +236,7 @@ export function ColorPalette({
         color || CustomPaletteBgColors.NONE,
     );
 
-    const anchorRef = React.useRef<HTMLElement>(null);
+    const anchorRef = React.useRef<HTMLButtonElement>(null);
     const [openPopup, setOpenPopup] = React.useState(false);
 
     const handleClosePopup = React.useCallback(() => {

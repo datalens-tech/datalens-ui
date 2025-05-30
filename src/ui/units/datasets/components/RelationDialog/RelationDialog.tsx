@@ -118,7 +118,7 @@ const renderCustomControl = (
             style={style}
             view="outlined"
             className={className}
-            ref={ref}
+            ref={ref as React.Ref<HTMLButtonElement>}
             onClick={onClick}
             onKeyDown={onKeyDown}
         >

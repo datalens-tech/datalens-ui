@@ -19,7 +19,13 @@ const renderControl: SelectProps['renderControl'] = (args) => {
     } = args;
 
     return (
-        <Button ref={ref} size="s" view="flat" onClick={onClick} onKeyDown={onKeyDown}>
+        <Button
+            ref={ref as React.Ref<HTMLButtonElement>}
+            size="s"
+            view="flat"
+            onClick={onClick}
+            onKeyDown={onKeyDown}
+        >
             <Icon data={Gear} height={18} width={18} />
         </Button>
     );
