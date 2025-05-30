@@ -206,7 +206,7 @@ export const buildChartsConfigPrivate = (
 
         set(config, 'settings.width', 'max-content');
 
-        if (shared?.extraSettings?.preserveWhiteSpace && features[Feature.PreWrapTableSetting]) {
+        if (shared?.extraSettings?.preserveWhiteSpace) {
             set(config, 'preserveWhiteSpace', true);
         }
     }
