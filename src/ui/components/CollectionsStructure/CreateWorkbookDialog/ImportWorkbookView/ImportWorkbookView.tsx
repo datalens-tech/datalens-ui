@@ -27,9 +27,10 @@ const notificationsI18n = I18n.keyset('component.workbook-export.notifications')
 export type ImportWorkbookViewProps = {
     status: ImportExportStatus;
     importId?: string;
+    onRetry?: () => void;
 };
 
-export const ImportWorkbookView = ({status, importId}: ImportWorkbookViewProps) => {
+export const ImportWorkbookView = ({status, importId, onRetry}: ImportWorkbookViewProps) => {
     const importProgressData = useSelector(selectGetImportProgressData);
     const notificationEntriesMap = useSelector(selectGetImportProgressEntriesMap);
     const error = useSelector(selectImportError);
@@ -92,6 +93,7 @@ export const ImportWorkbookView = ({status, importId}: ImportWorkbookViewProps) 
                     error={error}
                     size="s"
                     importId={importId}
+                    retry={onRetry}
                 />
             );
     }

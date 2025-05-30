@@ -216,13 +216,14 @@ async function getUnwrappedFunction(args: {
     name?: string;
 }) {
     const {sandbox, wrappedFn, options, entryId, entryType, name} = args;
-    let libs = await getUiSandboxLibs(wrappedFn.libs ?? []);
+    const uiSandboxLibs = await getUiSandboxLibs(wrappedFn.libs ?? []);
     const parseHtml = await getParseHtmlFn();
     const isAdvancedChart = (
         [EditorType.AdvancedChartNode, LegacyEditorType.BlankChart] as string[]
     ).includes(entryType);
 
     return function (this: unknown, ...restArgs: unknown[]) {
+        let libs = uiSandboxLibs;
         const runId = getRandomCKId();
         Performance.mark(runId);
 

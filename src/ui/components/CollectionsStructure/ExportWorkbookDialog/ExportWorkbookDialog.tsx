@@ -7,6 +7,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {DIALOG_DEFAULT} from 'ui/components/DialogDefault/DialogDefault';
 import {ProgressBar} from 'ui/components/ProgressBar/ProgressBar';
 import {ViewError} from 'ui/components/ViewError/ViewError';
+import {useMountedState} from 'ui/hooks';
 import type {AppDispatch} from 'ui/store';
 import {
     cancelExportProcess,
@@ -106,11 +107,12 @@ export const ExportWorkbookDialog: React.FC<Props> = ({
     const exportData = useSelector(selectExportData);
     const progressData = useSelector(selectGetExportProgressData);
     const notificationEntriesMap = useSelector(selectGetExportProgressEntriesMap);
+
     const progress = progressData?.progress;
     const notifications = progressData?.notifications;
 
     const exportProgressTimeout = React.useRef<ReturnType<typeof setTimeout> | null>(null);
-    const isMounted = React.useCallback(() => true, []);
+    const isMounted = useMountedState();
 
     const {notificationDetails, preparedNotifications, handleShowDetails} =
         useNotificationsAndDetails({
@@ -162,10 +164,9 @@ export const ExportWorkbookDialog: React.FC<Props> = ({
                     props: {
                         open: true,
                         onApply: () => {
-                            dispatch(cancelExportProcess(exportData.exportId)).then(() => {
-                                dispatch(closeDialog());
-                                onClose();
-                            });
+                            dispatch(cancelExportProcess(exportData.exportId));
+                            dispatch(closeDialog());
+                            onClose();
                         },
                         onCancel: () => {
                             dispatch(closeDialog());
@@ -215,6 +216,7 @@ export const ExportWorkbookDialog: React.FC<Props> = ({
     const startExport = React.useCallback(async () => {
         const exportResult = await dispatch(exportWorkbook({workbookId}));
         if (exportResult && exportResult.exportId) {
+            setView('export');
             pollExportStatus(exportResult.exportId);
         }
     }, [dispatch, pollExportStatus, workbookId]);
@@ -231,7 +233,6 @@ export const ExportWorkbookDialog: React.FC<Props> = ({
 
     const handleApply = React.useCallback(async () => {
         if (view === 'info') {
-            setView('export');
             startExport();
             return;
         }
@@ -240,6 +241,12 @@ export const ExportWorkbookDialog: React.FC<Props> = ({
             getExportFile();
         }
     }, [getExportFile, startExport, status, view]);
+
+    const handleRetry = React.useCallback(() => {
+        if (exportData?.exportId) {
+            pollExportStatus(exportData.exportId);
+        }
+    }, [exportData?.exportId, pollExportStatus]);
 
     const cancelButtonText =
         view === 'info' || isExportLoading ? i18n('button_cancel') : i18n('button_close');
@@ -291,7 +298,9 @@ export const ExportWorkbookDialog: React.FC<Props> = ({
                     </React.Fragment>
                 );
             case 'fatal-error':
-            default:
+            default: {
+                const handleRetryFn = exportData?.exportId ? handleRetry : undefined;
+
                 return (
                     <ViewError
                         showDebugInfo={false}
@@ -299,8 +308,10 @@ export const ExportWorkbookDialog: React.FC<Props> = ({
                         error={error}
                         size="s"
                         exportId={exportData?.exportId}
+                        retry={handleRetryFn}
                     />
                 );
+            }
         }
     };
 

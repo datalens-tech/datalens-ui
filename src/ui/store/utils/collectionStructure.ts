@@ -1,5 +1,4 @@
 import type {
-    GetWorkbookExportResultResponse,
     GetWorkbookExportStatusResponse,
     GetWorkbookImportStatusResponse,
 } from 'shared/schema/meta-manager/types';
@@ -9,7 +8,6 @@ import type {ImportExportStatus} from 'ui/components/CollectionsStructure/types'
 export const getStatusFromOperation = ({
     progessOperation,
     initialOperation,
-    resultOperation,
 }: {
     progessOperation: {
         error: Error | null;
@@ -20,11 +18,6 @@ export const getStatusFromOperation = ({
         error: Error | null;
         isLoading: boolean;
     };
-    resultOperation?: {
-        error: Error | null;
-        data: GetWorkbookExportResultResponse | null;
-        isLoading: boolean;
-    };
 }): ImportExportStatus => {
     if (
         progessOperation.data?.status === 'error' &&
@@ -32,7 +25,7 @@ export const getStatusFromOperation = ({
     ) {
         return 'notification-error';
     }
-    if (initialOperation?.error || progessOperation.error || resultOperation?.error) {
+    if (progessOperation.error) {
         return 'fatal-error';
     }
     if (progessOperation.data?.status === 'pending') {
