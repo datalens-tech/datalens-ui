@@ -343,3 +343,7 @@ export type ChartSelectorWithWrapRefProps = {
     getCurrentTabChartId: () => string;
     getMeta: () => Promise<ResolveWidgetControlDataRefArgs | null>;
 };
+
+export type ChartWithWrapRefProps = {
+    reload: () => void;
+};
