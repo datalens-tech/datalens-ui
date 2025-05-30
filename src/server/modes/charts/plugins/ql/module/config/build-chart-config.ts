@@ -61,6 +61,10 @@ export function buildChartConfig(args: BuildChartsConfigArgs) {
         }
 
         set(config, 'settings.width', 'max-content');
+
+        if (shared?.extraSettings?.preserveWhiteSpace) {
+            set(config, 'preserveWhiteSpace', true);
+        }
     }
 
     config.hideHolidaysBands = !features[Feature.HolidaysOnChart];
