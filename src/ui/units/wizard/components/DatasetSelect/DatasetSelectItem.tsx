@@ -71,11 +71,15 @@ const ErrorIcon: React.FC<DatasetSelectItemProps> = (props) => {
 
     return (
         <Popover
-            content={i18n('tooltip_dataset-fetch-failed')}
-            tooltipActionButton={{
-                text: i18n('tooltip_dataset-fetch-failed-details-label'),
-                onClick: handleClickDetails,
-            }}
+            hasArrow={true}
+            content={
+                <div className={b('popover-content')}>
+                    {i18n('tooltip_dataset-fetch-failed')}
+                    <Button onClick={handleClickDetails}>
+                        {i18n('tooltip_dataset-fetch-failed-details-label')}
+                    </Button>
+                </div>
+            }
         >
             <Icon
                 qa="dataset-error-icon"
@@ -88,7 +92,7 @@ const ErrorIcon: React.FC<DatasetSelectItemProps> = (props) => {
     );
 };
 
-const DatasetSelectItem: React.FC<DatasetSelectItemProps> = (props) => {
+const DatasetSelectItem = (props: DatasetSelectItemProps) => {
     return (
         <div
             className={b({

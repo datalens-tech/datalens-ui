@@ -40,11 +40,14 @@ export const CheckParamsButton = (props: CheckParamsButtonProps) => {
                 <Popover
                     disabled={checkData.status !== 'error'}
                     className={b('tooltip')}
-                    tooltipActionButton={{
-                        text: i18n('button_details'),
-                        onClick: onTooltipActionButtonClick,
-                    }}
-                    content={i18n('toast_verify-error')}
+                    content={
+                        <div className={b('tooltip-content')}>
+                            {i18n('toast_verify-error')}
+                            <Button onClick={onTooltipActionButtonClick}>
+                                {i18n('button_details')}
+                            </Button>
+                        </div>
+                    }
                 >
                     <Icon
                         className={b('icon')}

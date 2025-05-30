@@ -7,7 +7,7 @@ import block from 'bem-cn-lite';
 
 import './ButtonAttach.scss';
 
-export type ButtonAttachProps = Omit<ButtonProps<'input'>, 'onClick'> & {
+export type ButtonAttachProps = Omit<ButtonProps<'input'>, 'onChange'> & {
     onUpdate?: (files: File[]) => void;
     onChange?: (event: ChangeEvent<HTMLInputElement>) => void;
     accept?: string;

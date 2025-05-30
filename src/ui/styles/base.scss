@@ -32,7 +32,7 @@ body.js-screenshot-mode * {
 
 body.g-root {
     --g-font-family-sans: 'YS Text', 'Helvetica Neue', 'Arial', 'Helvetica', sans-serif;
-    --gn-aside-top-panel-height: 0px;
+    --gn-top-alert-height: 0px;
     // Disable overscroll for desktop cause sticky and fixed navigation elements has different behavior
     overscroll-behavior: none;
 }

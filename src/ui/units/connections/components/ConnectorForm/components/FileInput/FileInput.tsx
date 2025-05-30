@@ -82,7 +82,7 @@ export const FileInputComponent = (props: FileInputProps) => {
         </Label>
     ) : (
         <ButtonAttach
-            {...(controlProps as ButtonProps<'input'>)}
+            {...(controlProps as ButtonAttachProps)}
             multiple={false}
             onUpdate={handleFileUploding}
         >
