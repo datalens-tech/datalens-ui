@@ -2,8 +2,8 @@ import React from 'react';
 
 import type {SegmentedRadioGroupOptionProps} from '@gravity-ui/uikit';
 import {Dialog, HelpMark, Icon, TextInput} from '@gravity-ui/uikit';
-import {Popover as LegacyPopover} from '@gravity-ui/uikit/build/esm/legacy';
-import type {PopoverInstanceProps} from '@gravity-ui/uikit/build/esm/legacy';
+import {Popover as LegacyPopover} from '@gravity-ui/uikit/legacy';
+import type {PopoverInstanceProps} from '@gravity-ui/uikit/legacy';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {i18n} from 'i18n';

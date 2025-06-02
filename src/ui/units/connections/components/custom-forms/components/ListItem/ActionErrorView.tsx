@@ -2,8 +2,8 @@ import React from 'react';
 
 import type {PopupPlacement} from '@gravity-ui/uikit';
 import {Button, Icon} from '@gravity-ui/uikit';
-import {Popover as LegacyPopover} from '@gravity-ui/uikit/build/esm/legacy';
-import type {PopoverInstanceProps} from '@gravity-ui/uikit/build/esm/legacy';
+import {Popover as LegacyPopover} from '@gravity-ui/uikit/legacy';
+import type {PopoverInstanceProps} from '@gravity-ui/uikit/legacy';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 

@@ -1,14 +1,13 @@
 import React from 'react';
 
-import type {IconProps} from '@gravity-ui/uikit';
+import type {IconData, IconProps} from '@gravity-ui/uikit';
 import {Icon} from '@gravity-ui/uikit';
-import type {SVGIconData} from '@gravity-ui/uikit/build/esm/components/Icon/types';
 import block from 'bem-cn-lite';
 
 import './DropdownAction.scss';
 
 type DropdownActionProps = {
-    icon: SVGIconData;
+    icon: IconData;
     text: string;
     size?: IconProps['size'];
 };

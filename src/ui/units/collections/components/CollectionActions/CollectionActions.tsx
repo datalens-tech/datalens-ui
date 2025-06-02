@@ -5,9 +5,9 @@ import type {
     DropdownMenuItem,
     DropdownMenuItemAction,
     DropdownMenuItemMixed,
+    IconData,
 } from '@gravity-ui/uikit';
 import {Button, DropdownMenu, Icon, Tooltip} from '@gravity-ui/uikit';
-import type {SVGIconData} from '@gravity-ui/uikit/build/esm/components/Icon/types';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
@@ -56,15 +56,7 @@ export const CollectionActions = React.memo<Props>(
 
         const createActionItems: DropdownMenuItemMixed<void>[] = [];
 
-        const getItemText = ({
-            icon,
-            text,
-            hint,
-        }: {
-            icon: SVGIconData;
-            text: string;
-            hint?: string;
-        }) => (
+        const getItemText = ({icon, text, hint}: {icon: IconData; text: string; hint?: string}) => (
             <div className={b('dropdown-item')}>
                 <Icon className={b('dropdown-icon')} data={icon} />
                 <div className={b('dropdown-text')}>
