@@ -1,7 +1,8 @@
 import React from 'react';
 
-import {Button, Checkbox, HelpMark, Icon, Popover} from '@gravity-ui/uikit';
-import type {PopoverInstanceProps} from '@gravity-ui/uikit';
+import {Button, Checkbox, HelpMark, Icon} from '@gravity-ui/uikit';
+import {Popover as LegacyPopover} from '@gravity-ui/uikit/build/esm/legacy';
+import type {PopoverInstanceProps} from '@gravity-ui/uikit/build/esm/legacy';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 
@@ -56,7 +57,7 @@ export const AdditionalTitleContent = (props: AdditionalTitleContentProps) => {
                     authorized={authorized}
                     onClick={authorized ? clickGoogleLogoutButton : clickGoogleLoginButton}
                 />
-                <Popover
+                <LegacyPopover
                     ref={popoverRef}
                     anchorRef={loginButtonRef}
                     className={b('gauth-popover')}

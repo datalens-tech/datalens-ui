@@ -13,7 +13,7 @@ type SchemaOptions = Record<
     string,
     | yup.StringSchema<string | null | undefined, Record<string, any>, string | null | undefined>
     | yup.BooleanSchema<boolean | null | undefined, Record<string, any>, boolean | null | undefined>
-    | yup.ObjectSchema<Record<string, any>>
+    | yup.ObjectSchema<Record<string, any> | null>
 >;
 
 type ValidationArgs = {
@@ -74,13 +74,13 @@ const createValidationSchema = (args: PartialBy<ValidationArgs, 'innerForm'>) =>
         }
 
         if (nullable) {
-            acc[name] = acc[name].nullable(true);
+            acc[name] = acc[name].nullable();
         }
 
         return acc;
     }, {} as SchemaOptions);
 
-    return yup.object(schemaOptions);
+    return yup.object<SchemaOptions>(schemaOptions);
 };
 
 const createValidationData = (args: PartialBy<ValidationArgs, 'innerForm'>): FormDict => {

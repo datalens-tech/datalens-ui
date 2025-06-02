@@ -8,8 +8,9 @@ import {
     Function,
     Xmark,
 } from '@gravity-ui/icons';
-import type {PopoverInstanceProps} from '@gravity-ui/uikit';
-import {DropdownMenu, Icon, Popover} from '@gravity-ui/uikit';
+import {DropdownMenu, Icon} from '@gravity-ui/uikit';
+import {Popover as LegacyPopover} from '@gravity-ui/uikit/build/esm/legacy';
+import type {PopoverInstanceProps} from '@gravity-ui/uikit/build/esm/legacy';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import type {SDK} from 'libs';
@@ -453,7 +454,7 @@ class VisualizationItem extends React.Component<Props, State> {
                         <Icon data={CircleExclamationFill} size={18} />
                     </div>
                     {item.conflict ? (
-                        <Popover
+                        <LegacyPopover
                             ref={ref}
                             content={i18n(
                                 'wizard',

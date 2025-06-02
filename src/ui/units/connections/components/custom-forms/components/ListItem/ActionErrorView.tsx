@@ -1,7 +1,9 @@
 import React from 'react';
 
-import type {PopoverInstanceProps, PopupPlacement} from '@gravity-ui/uikit';
-import {Button, Icon, Popover} from '@gravity-ui/uikit';
+import type {PopupPlacement} from '@gravity-ui/uikit';
+import {Button, Icon} from '@gravity-ui/uikit';
+import {Popover as LegacyPopover} from '@gravity-ui/uikit/build/esm/legacy';
+import type {PopoverInstanceProps} from '@gravity-ui/uikit/build/esm/legacy';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 
@@ -41,15 +43,15 @@ export const ActionErrorView = <T extends unknown>({
     }, [message, showAction, handleRetryUpload]);
 
     return (
-        <Popover
+        <LegacyPopover
             ref={ref}
-            floatingClassName={b('alert')}
-            className={b('alert-tooltip')}
+            className={b('alert')}
+            tooltipClassName={b('alert-tooltip')}
             contentClassName={b('alert-tooltip-content')}
             content={content}
             placement={POPOVER_PLACEMENT}
         >
             <Icon className={b('alert-icon')} data={iconAlert} size={ICON_SIZE} />
-        </Popover>
+        </LegacyPopover>
     );
 };
