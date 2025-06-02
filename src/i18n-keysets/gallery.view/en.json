@@ -8,9 +8,9 @@
     "{{count}} category",
     "{{count}} categories",
     "{{count}} categories",
-    "zero categories"
+    "no categories"
   ],
-  "label_card-labels-more": "More {{count}}",
+  "label_card-labels-more": "{{count}} more",
   "label_error": "An error occurred",
   "label_gallery": "DataLens Gallery",
   "label_not_found": "Creation not found"
