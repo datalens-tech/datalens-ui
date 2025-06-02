@@ -1,5 +1,6 @@
 import React from 'react';
 
+import type {ChartKitRef} from '@gravity-ui/chartkit';
 import block from 'bem-cn-lite';
 import {usePrevious} from 'hooks';
 import isEqual from 'lodash/isEqual';
@@ -250,7 +251,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
         return undefined;
     }, [reloadChart]);
 
-    React.useImperativeHandle<unknown, ChartWithWrapRefProps>(
+    React.useImperativeHandle<ChartKit | ChartKitRef, ChartWithWrapRefProps>(
         forwardedRef,
         () => ({
             reflow: handleChartkitReflow,

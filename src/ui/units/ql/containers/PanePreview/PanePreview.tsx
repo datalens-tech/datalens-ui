@@ -12,7 +12,10 @@ import {EntryUpdateMode, MenuItemsIds} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {Utils} from 'ui';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
-import type {ChartProviderPropsWithRefProps} from 'ui/components/Widgets/Chart/types';
+import type {
+    ChartProviderPropsWithRefProps,
+    ChartWithWrapRefProps,
+} from 'ui/components/Widgets/Chart/types';
 import {openDialogSaveChartConfirm} from 'ui/store/actions/dialog';
 import {getCustomExportActionWrapperWithSave} from 'ui/utils/custom-export-menu-item';
 
@@ -46,15 +49,10 @@ import './PanePreview.scss';
 
 const b = block('ql-pane-preview');
 
-// TODO: it's very difficult to type here, since ChartKit has a complex type
-// It requires a lot of scary-looking imports from the bowels of the chartkit to support it
-// Everything is any in this file (and this is any for ref types) because of this
 interface PreviewProps {
     chartData: QLChart | null;
 
-    // TODO: problems in the chartkit with types
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    setWidgetRef: (ref: any) => void;
+    setWidgetRef: (ref: ChartWithWrapRefProps | null) => void;
 
     mode: 'preview' | 'chart';
     entry: QLEntry | null;
@@ -74,9 +72,7 @@ interface PreviewState {
 }
 
 class Preview extends React.PureComponent<PreviewProps, PreviewState> {
-    // TODO: problems in the chartkit with types
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    chartKitRef: any = React.createRef();
+    chartKitRef = React.createRef<ChartWithWrapRefProps>();
 
     constructor(props: PreviewProps) {
         super(props);
@@ -126,7 +122,6 @@ class Preview extends React.PureComponent<PreviewProps, PreviewState> {
 
         const params = Utils.getParamsFromSearch(window.location.search);
 
-        // TODO: problems in the chartkit with types
         return (
             <div className={b()}>
                 <ChartWrapper
@@ -135,7 +130,6 @@ class Preview extends React.PureComponent<PreviewProps, PreviewState> {
                     config={previewConfig}
                     params={params}
                     onChartLoad={this.onChartLoad}
-                    ref={this.chartKitRef}
                     disableChartLoader={true}
                     noVeil={true}
                     menuType={this.getMenuType()}
@@ -263,9 +257,7 @@ type PanePreviewInnerProps = PanePreviewStateProps & PanePreviewDispatchProps;
 type PanePreviewProps = PanePreviewInnerProps & PanePreviewOuterProps;
 
 class PanePreview extends React.PureComponent<PanePreviewProps> {
-    // TODO: problems in the chartkit with types
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    widgetRef: any;
+    widgetRef: React.RefObject<ChartWithWrapRefProps>;
 
     constructor(props: PanePreviewProps) {
         super(props);
@@ -287,10 +279,9 @@ class PanePreview extends React.PureComponent<PanePreviewProps> {
         return <Preview key={this.props.mode} {...restProps} setWidgetRef={this.setWidgetRef} />;
     }
 
-    // TODO: problems in the chartkit with types
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    private setWidgetRef = (widget: any) => {
-        this.widgetRef.current = widget;
+    private setWidgetRef = (widget: ChartWithWrapRefProps | null) => {
+        // TODO: to use mutable type the component needs to be functional, not class-based
+        (this.widgetRef as React.MutableRefObject<ChartWithWrapRefProps | null>).current = widget;
     };
 }
 
