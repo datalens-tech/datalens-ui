@@ -20,7 +20,7 @@
   "filter_can-be-used": "Available for use",
   "filter_category_placeholder": "Category",
   "filter_search_placeholder": "Search by name",
-  "label_empty-state-description": "Try to change the search query or select another category",
+  "label_empty-state-description": "Try editing your search query or select another category",
   "label_empty-state-title": "Nothing was found",
   "title_all_entries": "All creations"
 }
