@@ -20,5 +20,7 @@
   "filter_can-be-used": "Можно использовать",
   "filter_category_placeholder": "Категория",
   "filter_search_placeholder": "Найти по названию",
+  "label_empty-state-description": "Попробуйте ввести другое значение или выберите другую категорию",
+  "label_empty-state-title": "Ничего не найдено",
   "title_all_entries": "Все работы"
 }

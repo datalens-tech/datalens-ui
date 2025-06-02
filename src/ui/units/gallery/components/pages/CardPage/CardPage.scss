@@ -19,12 +19,25 @@ $block: '.#{variables.$ns}-card';
 
     &__iframe {
         $promoHeaderHeight: 64px;
+        $mobileHeaderHeight: 50px;
 
+        display: block;
         width: 100%;
         border: none;
-        height: calc(100% - #{$actionPanelHeight} - 5px);
-        min-height: max(600px, calc(100vh - #{$actionPanelHeight} - #{$promoHeaderHeight} - 5px));
+        height: calc(100vh - #{$actionPanelHeight});
+
+        &_mobile {
+            height: calc(100vh - #{$actionPanelHeight} - #{$mobileHeaderHeight});
+        }
+
+        &_promo {
+            height: calc(100vh - #{$actionPanelHeight} - #{$promoHeaderHeight});
+            width: 100vw;
+            position: fixed;
+            left: 0;
+        }
     }
+
     &__container {
         height: calc(100% - #{$actionPanelHeight});
         max-width: 1032px;
@@ -48,6 +61,7 @@ $block: '.#{variables.$ns}-card';
     &__actions-left-flex {
         align-items: center;
         column-gap: 8px;
+        flex: 1 1 auto;
         max-width: calc(100% - 2 * #{$actionPanelHorizontalPadding});
         min-width: 0;
     }
@@ -74,6 +88,7 @@ $block: '.#{variables.$ns}-card';
         width: 100%;
         height: 418px;
         object-fit: cover;
+        object-position: top;
         border-radius: var(--g-border-radius-l);
     }
 
@@ -134,5 +149,9 @@ $block: '.#{variables.$ns}-card';
         max-width: 200px;
         line-height: normal;
         color: var(--g-color-text-hint);
+    }
+
+    &__pc-layout-without-min-height.pc-layout {
+        min-height: unset;
     }
 }

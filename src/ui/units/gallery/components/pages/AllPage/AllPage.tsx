@@ -3,7 +3,6 @@ import React from 'react';
 import {
     Col,
     Container,
-    Loader,
     Row,
     Select,
     Switch,
@@ -11,11 +10,12 @@ import {
     useLayoutContext,
     useThemeType,
 } from '@gravity-ui/uikit';
-import type {SelectOption} from '@gravity-ui/uikit';
+import type {SelectOptionGroup} from '@gravity-ui/uikit';
 import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
 import {useHistory, useLocation} from 'react-router-dom';
-import type {GalleryItemShort} from 'shared/types';
 import {ActionPanel} from 'ui/components/ActionPanel';
+import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
+import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
 import {DL} from 'ui/constants';
 
 import {UNIT_ROUTE} from '../../../constants/routes';
@@ -30,86 +30,13 @@ import {
 } from '../../utils';
 import type {CnMods} from '../../utils';
 import {SPECIAL_CATEGORY, URL_FILTER_PARAMS} from '../constants';
-import {useActionPanelLayout} from '../hooks/useActionPanelLayout';
+import {useElementRect} from '../hooks/useElementRect';
+
+import {useFilteredGalleryItems, useSortedGalleryItems} from './hooks';
 
 import './AllPage.scss';
 
 const b = block('all');
-
-function useSortedGalleryItems({items}: {items: GalleryItemShort[]}) {
-    const sortedItems = React.useMemo(() => {
-        return [...items].sort((item1, item2) => {
-            if (item1.createdAt === undefined && item2.createdAt === undefined) {
-                return 0;
-            }
-            if (item1.createdAt === undefined) {
-                return 1;
-            }
-            if (item2.createdAt === undefined) {
-                return -1;
-            }
-            return item2.createdAt - item1.createdAt;
-        });
-    }, [items]);
-
-    return {sortedItems};
-}
-interface UseFilteredGalleryItemsProps {
-    items: GalleryItemShort[];
-    editorChoiceIds: string[];
-    search: string;
-    category: string;
-    lang: string;
-    canBeUsed: boolean;
-}
-
-function useFilteredGalleryItems({
-    category,
-    items,
-    search,
-    lang,
-    editorChoiceIds,
-    canBeUsed,
-}: UseFilteredGalleryItemsProps) {
-    const filteredItems = React.useMemo(() => {
-        return items.reduce<GalleryItemShort[]>((acc, item) => {
-            if (canBeUsed && !item.canBeUsed) {
-                return acc;
-            }
-
-            const matchesSearchValue =
-                !search || item.title[lang]?.toLowerCase().includes(search.toLowerCase());
-
-            if (!matchesSearchValue) {
-                return acc;
-            }
-
-            let matchesCategory = true;
-
-            if (item.labels && category !== SPECIAL_CATEGORY.ALL) {
-                switch (category) {
-                    case SPECIAL_CATEGORY.EDITORS_CHOICE: {
-                        matchesCategory = editorChoiceIds.includes(item.id);
-                        break;
-                    }
-                    default: {
-                        matchesCategory = item.labels.some(
-                            (label) => label.toLowerCase() === category?.toLowerCase(),
-                        );
-                    }
-                }
-            }
-
-            if (matchesCategory) {
-                acc.push(item);
-            }
-
-            return acc;
-        }, []);
-    }, [items, search, lang, category, editorChoiceIds, canBeUsed]);
-
-    return {filteredItems};
-}
 
 function getCategorySelectOptionContent(value: string) {
     let content = '';
@@ -141,6 +68,18 @@ export function AllPage() {
     const [search, setSearch] = React.useState('');
     const [category, setCategory] = React.useState<string>(SPECIAL_CATEGORY.ALL);
     const [canBeUsed, setCanBeUsed] = React.useState<boolean>(false);
+    const [actionPanelNode, setActionPanelNode] = React.useState<HTMLDivElement | null>(null);
+    const {rect} = useElementRect({node: actionPanelNode});
+    const actionPanelStyle = React.useMemo(() => {
+        const style: React.CSSProperties = {};
+        const offset = rect?.left;
+
+        if (typeof offset === 'number') {
+            style.paddingInline = `${offset}px`;
+        }
+
+        return style;
+    }, [rect]);
     const lang = getLang();
     const {sortedItems} = useSortedGalleryItems({items});
     const {filteredItems} = useFilteredGalleryItems({
@@ -158,16 +97,9 @@ export function AllPage() {
             ),
         );
     }, [items]);
-    const selectOptions: SelectOption[] = React.useMemo(() => {
-        const allOptions = Array.from(
-            new Set([
-                SPECIAL_CATEGORY.ALL,
-                SPECIAL_CATEGORY.EDITORS_CHOICE,
-                ...availableCategories,
-            ]),
-        );
+    const selectOptions: SelectOptionGroup[] = React.useMemo(() => {
+        const allOptions = Array.from(new Set([...availableCategories]));
         const sortedOptions = allOptions
-            .filter((option) => option !== SPECIAL_CATEGORY.ALL)
             .sort((option1, option2) => {
                 const content1 = getCategorySelectOptionContent(option1);
                 const content2 = getCategorySelectOptionContent(option2);
@@ -180,17 +112,27 @@ export function AllPage() {
 
         return [
             {
-                value: SPECIAL_CATEGORY.ALL,
-                content: getCategorySelectOptionContent(SPECIAL_CATEGORY.ALL),
+                label: '',
+                options: [
+                    {
+                        value: SPECIAL_CATEGORY.ALL,
+                        content: getCategorySelectOptionContent(SPECIAL_CATEGORY.ALL),
+                    },
+                    {
+                        value: SPECIAL_CATEGORY.EDITORS_CHOICE,
+                        content: getCategorySelectOptionContent(SPECIAL_CATEGORY.EDITORS_CHOICE),
+                    },
+                ],
             },
-            ...sortedOptions,
+            {
+                label: '',
+                options: sortedOptions,
+            },
         ];
     }, [availableCategories]);
 
     const isPromo = DL.IS_NOT_AUTHENTICATED;
     const baseMods: CnMods = {media: activeMediaQuery, maxWidth: isPromo};
-
-    const {style, actionPanelRef} = useActionPanelLayout();
 
     const handleCategorySelectUpdate = React.useCallback(
         (value: string[]) => {
@@ -243,10 +185,35 @@ export function AllPage() {
     }, [availableCategories, isLoading, items.length, searchParams]);
 
     if (isLoading || isMetaLoading) {
-        return (
-            <div className={b('loader')}>
-                <Loader size="m" />
-            </div>
+        return <SmartLoader className={b('loader')} size="m" />;
+    }
+
+    let content: React.ReactNode = null;
+
+    if (filteredItems.length > 0) {
+        content = filteredItems.map((item) => {
+            return (
+                <Col key={item.id} l="4" m="4" s="12">
+                    <GalleryCardPreview
+                        id={item.id}
+                        title={item.title}
+                        createdBy={item.createdBy}
+                        labels={item.labels}
+                        imageSrc={item.images?.[themeType]?.[0] || ''}
+                    />
+                </Col>
+            );
+        });
+    } else {
+        content = (
+            <PlaceholderIllustration
+                className={b('placeholder-empty')}
+                description={i18n('label_empty-state-description')}
+                direction="column"
+                name="notFound"
+                size="l"
+                title={i18n('label_empty-state-title')}
+            />
         );
     }
 
@@ -263,8 +230,8 @@ export function AllPage() {
                         </Breadcrumbs.Item>
                     </Breadcrumbs>
                 }
-                wrapperRef={isPromo ? actionPanelRef : undefined}
-                style={isPromo ? style : undefined}
+                wrapperRef={isPromo ? setActionPanelNode : undefined}
+                style={actionPanelStyle}
             />
             <Container
                 className={b('container', baseMods)}
@@ -291,40 +258,41 @@ export function AllPage() {
                                 filterable={true}
                                 onUpdate={handleCategorySelectUpdate}
                                 placeholder={i18n('filter_category_placeholder')}
+                                popupClassName={b('category-select-popup')}
                                 size="l"
                                 value={[category]}
                                 width="max"
                             >
-                                {selectOptions.map((value) => {
+                                {selectOptions.map((group, i) => {
                                     return (
-                                        <Select.Option key={value.value} value={value.value}>
-                                            {value.content}
-                                        </Select.Option>
+                                        <Select.OptionGroup
+                                            label={group.label}
+                                            key={`${group.label}-${i}`}
+                                        >
+                                            {group.options?.map((option) => {
+                                                return (
+                                                    <Select.Option
+                                                        key={option.value}
+                                                        value={option.value}
+                                                    >
+                                                        {option.content}
+                                                    </Select.Option>
+                                                );
+                                            })}
+                                        </Select.OptionGroup>
                                     );
                                 })}
                             </Select>
                         </div>
                         <div className={b('filter-can-be-used', {mobile: DL.IS_MOBILE})}>
-                            <Switch size="l" checked={canBeUsed} onChange={handleCanBeUsedUpdate}>
+                            <Switch checked={canBeUsed} onChange={handleCanBeUsedUpdate}>
                                 {i18n('filter_can-be-used')}
                             </Switch>
                         </div>
                     </Col>
                 </Row>
                 <Row space="6" spaceRow="8">
-                    {filteredItems.map((item) => {
-                        return (
-                            <Col key={item.id} l="4" m="4" s="12">
-                                <GalleryCardPreview
-                                    id={item.id}
-                                    title={item.title}
-                                    createdBy={item.createdBy}
-                                    labels={item.labels}
-                                    imageSrc={item.images?.[themeType]?.[0] || ''}
-                                />
-                            </Col>
-                        );
-                    })}
+                    {content}
                 </Row>
             </Container>
         </React.Fragment>
