@@ -78,10 +78,10 @@ export const CreateEntry: React.FC<CreateEntryProps> = ({
                 placement: popupPlacement,
             }}
             menuProps={{className: b('popup-menu')}}
-            renderSwitcher={() => (
+            renderSwitcher={(args) => (
                 <CreateEntrySwitcher
                     place={place}
-                    onClick={onClick}
+                    onClick={args.onClick}
                     withMenu={withMenu}
                     buttonView={buttonView}
                 />

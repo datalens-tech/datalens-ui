@@ -148,6 +148,7 @@
     &:visited,
     &:active {
         color: var(--g-color-text-secondary);
+        font-weight: var(--g-text-body-font-weight);
     }
     & {
         height: 100%;
@@ -161,6 +162,10 @@
 
     &_link:hover {
         color: var(--g-color-text-link-hover);
+    }
+
+    &_last {
+        color: var(--g-color-text-primary);
     }
 }
 

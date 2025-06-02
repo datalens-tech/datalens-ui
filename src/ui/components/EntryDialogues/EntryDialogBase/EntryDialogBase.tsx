@@ -40,6 +40,7 @@ interface EntryDialogBaseDefaultProps {
     defaultName: string;
     path: string;
     withInput: boolean;
+    confirmButtonView: ButtonView;
 }
 
 export interface EntryDialogBaseProps<T>
@@ -67,6 +68,7 @@ export class EntryDialogBase<T> extends React.Component<
         defaultName: '',
         path: '/',
         withInput: true,
+        confirmButtonView: 'action',
     };
 
     static getDerivedStateFromProps<T>(
