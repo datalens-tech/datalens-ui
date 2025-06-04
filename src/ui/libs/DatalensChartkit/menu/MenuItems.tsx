@@ -145,8 +145,7 @@ export const getNewWindowMenuItem = ({
             const link = (dataProvider || chartsDataProvider)?.getGoAwayLink(
                 {loadedData, propsData},
                 {
-                    urlPostfix: '/preview',
-                    idPrefix: '/editor/',
+                    idPrefix: '/preview/',
                     extraParams: enableAP ? {[COMMON_URL_OPTIONS.ACTION_PARAMS_ENABLED]: '1'} : {},
                 },
             );
@@ -219,8 +218,7 @@ export const getOpenAsTableMenuItem = ({
                     {loadedData, propsData},
                     {
                         extraParams: {_chart_type: 'table'},
-                        urlPostfix: '/preview',
-                        idPrefix: '/editor/',
+                        idPrefix: '/preview/',
                     },
                 ),
             );
