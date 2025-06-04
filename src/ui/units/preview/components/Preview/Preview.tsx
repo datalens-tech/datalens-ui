@@ -33,7 +33,7 @@ import 'ui/components/Widgets/Chart/Chart.scss';
 
 const b = block('preview');
 
-interface PreviewProps extends RouteComponentProps<{idOrSource: string}> {
+interface PreviewProps extends RouteComponentProps<{id: string}> {
     asideHeaderSize: number;
     setPageEntry: (pageEntry: {entryId: string; key: string}) => void;
     isEmbedded?: boolean;
@@ -45,7 +45,7 @@ const Preview: React.FC<PreviewProps> = (props) => {
     const {
         location: {search},
         match: {
-            params: {idOrSource},
+            params: {id},
         },
         history,
         asideHeaderSize,
@@ -56,9 +56,9 @@ const Preview: React.FC<PreviewProps> = (props) => {
     const {noControls, actionParamsEnabled} = Utils.getOptionsFromSearch(search);
 
     const {extractEntryId} = registry.common.functions.getAll();
-    const possibleEntryId = React.useMemo(() => extractEntryId(idOrSource), [idOrSource]);
+    const possibleEntryId = React.useMemo(() => extractEntryId(id), [id]);
 
-    const [title, setTitle] = React.useState(idOrSource);
+    const [title, setTitle] = React.useState(id);
 
     const [name, setName] = React.useState<string | null>(null);
 
@@ -208,7 +208,7 @@ const Preview: React.FC<PreviewProps> = (props) => {
     if (possibleEntryId) {
         chartKitProps.id = possibleEntryId;
     } else {
-        chartKitProps.source = '/' + idOrSource;
+        chartKitProps.source = '/' + id;
     }
 
     const entry = React.useMemo(() => ({key: title}), [title]);
