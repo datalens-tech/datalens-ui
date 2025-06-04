@@ -8,7 +8,7 @@
   "description": "DataLens",
   "scripts": {
     "i18n:prepare": "tsc src/i18n/prepare-keysets/index.ts --esModuleInterop --outDir dist/i18n && node dist/i18n/prepare-keysets/index.js",
-    "dev": "npm run i18n:prepare && SETUP_DEV_ENV_INSTALLATION=opensource node ./scripts/setup-dev-env.js && APP_BUILDER_ENTRY_FILTER=dl-main LOCAL_DEV_PORT=3030 app-builder dev",
+    "dev": "npm run i18n:prepare && SETUP_DEV_ENV_INSTALLATION=opensource node ./scripts/setup-dev-env.js && APP_BUILDER_ENTRY_FILTER=dl-main LOCAL_DEV_PORT=8080 app-builder dev",
     "build": "npm run i18n:prepare && NODE_ENV=production NODE_OPTIONS=--max_old_space_size=4096 APP_BUILDER_CDN=false app-builder build",
     "build:analyze": "npm run i18n:prepare && APP_BUILDER_ANALYZE_BUNDLE=statoscope UI_CORE_CDN=false APP_BUILDER_CDN=false NODE_ENV=production NODE_ENV=production NODE_OPTIONS=--max_old_space_size=4096 app-builder build",
     "cdn": "npm run i18n:prepare && NODE_ENV=production NODE_OPTIONS=--max_old_space_size=4096 app-builder build",

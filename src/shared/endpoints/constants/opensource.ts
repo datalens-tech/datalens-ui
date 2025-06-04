@@ -1,9 +1,9 @@
 export const opensourceEndpoints = {
     development: {
         api: {
-            us: process.env.US_ENDPOINT || 'http://localhost:8083',
-            bi: process.env.BI_API_ENDPOINT || 'http://localhost:8081',
-            biData: process.env.BI_DATA_ENDPOINT || 'http://localhost:8082',
+            us: process.env.US_ENDPOINT || 'http://localhost:3030',
+            bi: process.env.BI_API_ENDPOINT || 'http://localhost:8010',
+            biData: process.env.BI_DATA_ENDPOINT || 'http://localhost:8020',
             biConverter: process.env.BI_FILE_UPLOADER_ENDPOINT || 'http://localhost:8084',
             csvConverter: process.env.BI_FILE_UPLOADER_ENDPOINT || 'http://localhost:8084',
             metaManager: process.env.META_MANAGER_ENDPOINT || 'http://localhost:3040',
@@ -32,17 +32,17 @@ export const opensourceEndpoints = {
     },
     production: {
         api: {
-            us: process.env.US_ENDPOINT || 'http://us:8083',
+            us: process.env.US_ENDPOINT || 'http://us:8080',
             bi: process.env.BI_API_ENDPOINT || 'http://control-api:8080',
             biData: process.env.BI_DATA_ENDPOINT || 'http://data-api:8080',
             biConverter: process.env.BI_FILE_UPLOADER_ENDPOINT || 'http://file-uploader-api:8080',
             csvConverter: process.env.BI_FILE_UPLOADER_ENDPOINT || 'http://file-uploader-api:8080',
-            metaManager: process.env.META_MANAGER_ENDPOINT || 'http://meta-manager:3040',
+            metaManager: process.env.META_MANAGER_ENDPOINT || 'http://meta-manager:8080',
 
             charts: process.env.CHARTS_ENDPOINT || '/',
             uploader: process.env.UI_UPLOADER_ENDPOINT || '/uploader',
 
-            auth: process.env.AUTH_ENDPOINT || 'http://auth:8088',
+            auth: process.env.AUTH_ENDPOINT || 'http://auth:8080',
         },
         ui: {
             gateway: process.env.UI_GATEWAY_ENDPOINT || '/gateway',
