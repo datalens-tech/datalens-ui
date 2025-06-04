@@ -97,7 +97,7 @@ export function EntrySuggest({
                     );
 
                     setPaginationParams({
-                        page: page + 1,
+                        page,
                         hasNextPage,
                     });
 
@@ -136,7 +136,9 @@ export function EntrySuggest({
     );
 
     const handleOpenChange = (nextOpen: boolean) => {
-        if (!nextOpen) {
+        if (nextOpen && !selectedItem) {
+            fetchEntries({search: filter, page: 0, scope: entryScope});
+        } else {
             setFilter('');
             setLoading(false);
             setPaginationParams({page: 0, hasNextPage: false});
@@ -144,12 +146,18 @@ export function EntrySuggest({
     };
 
     const handleUpdate = (nextValue: string[]) => {
-        onSelectedItemUpdate(
-            selectedItemMemo.concat(items).find((item) => nextValue.includes(item.entryId)),
-        );
+        const newValue = selectedItemMemo
+            .concat(items)
+            .find((item) => nextValue.includes(item.entryId));
+        onSelectedItemUpdate(newValue);
+
+        if (!newValue) {
+            fetchEntries({search: filter, page: 0, scope: entryScope});
+        }
     };
 
-    const resultItems = filter ? items : selectedItemMemo;
+    const resultItems = filter || !selectedItem ? items : selectedItemMemo;
+    const shouldLoadMore = !selectedItem && paginationParams.hasNextPage;
 
     return (
         <Select
@@ -166,7 +174,7 @@ export function EntrySuggest({
             }))}
             value={selectedItemMemo.map((item) => item.entryId)}
             hasClear
-            loading={loading || paginationParams.hasNextPage}
+            loading={loading || shouldLoadMore}
             filterable
             filter={filter}
             filterPlaceholder={i18n('label_search-filter-placeholder')}
