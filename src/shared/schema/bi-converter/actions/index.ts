@@ -73,6 +73,18 @@ export const actions = {
         method: 'GET',
         path: () => `${PATH_PREFIX_V2}/make_presigned_url`,
         params: (_, headers) => ({headers}),
+        transformResponseData(data, config) {
+            const s3Endpoint: string = config.ctx.config.endpoints.api?.s3;
+            // fix s3 endpoint with reverse proxy in k8s or docker internal service
+            // more details: https://github.com/minio/minio-js/issues/514
+            if (s3Endpoint) {
+                return {
+                    ...data,
+                    url: data.url.replace(/^https?:\/\/.+?\//, `${s3Endpoint}/`),
+                };
+            }
+            return data;
+        },
     }),
     downloadPresignedUrl: createAction<DownloadPresignedUrlResponse, DownloadPresignedUrlArgs>({
         method: 'POST',
