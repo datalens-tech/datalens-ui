@@ -1,10 +1,11 @@
 import React from 'react';
 
 import {Xmark} from '@gravity-ui/icons';
-import {Button, Flex, Icon, spacing} from '@gravity-ui/uikit';
+import {Button, Icon, spacing} from '@gravity-ui/uikit';
 import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 
 import {block} from '../../../utils';
+import {FlexWithScrollShades} from '../FlexWithScrollShades';
 import {PreviewCard} from '../PreviewCard/PreviewCard';
 
 import './FullscreenGallery.scss';
@@ -42,6 +43,7 @@ export function FullscreenGallery({images, initialImageIndex, onClose}: Fullscre
     const [isHorizontalOrientation, setIsHorizontalOrientation] = React.useState(false);
     const imageRef = React.useRef<HTMLDivElement>(null);
     const thumbnailRefs = React.useRef<(HTMLDivElement | null)[]>([]);
+    const controlsRef = React.useRef<HTMLDivElement>(null);
 
     // Detect orientation changes
     React.useEffect(() => {
@@ -232,7 +234,14 @@ export function FullscreenGallery({images, initialImageIndex, onClose}: Fullscre
             </div>
 
             <div className={b('controls')}>
-                <Flex gap={4} overflow="y" className={spacing({py: 2})}>
+                <FlexWithScrollShades
+                    className={spacing({py: 2})}
+                    gap={4}
+                    isActiveMediaQueryS={true}
+                    overflow="y"
+                    styleClassName={b('controls-flex')}
+                    ref={controlsRef}
+                >
                     {images.map((image, i) => (
                         <PreviewCard
                             key={i}
@@ -245,7 +254,7 @@ export function FullscreenGallery({images, initialImageIndex, onClose}: Fullscre
                             }}
                         />
                     ))}
-                </Flex>
+                </FlexWithScrollShades>
             </div>
         </div>
     );
