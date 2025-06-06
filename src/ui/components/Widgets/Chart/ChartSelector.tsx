@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {pickExceptActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
+import {Loader as CommonLoader} from '@gravity-ui/uikit';
 import type {AxiosResponse} from 'axios';
 import block from 'bem-cn-lite';
 import {usePrevious} from 'hooks';
@@ -315,6 +316,9 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
     );
 
     const showFloatControls = isEnabledFeature(Feature.DashFloatControls);
+    const isLoading = showFloatControls && showLoader && !hasError;
+    const pulsate = isLoading && hasControl;
+    const showSpinner = isLoading && !hasControl;
 
     return (
         <div
@@ -322,6 +326,7 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
             className={`${b({
                 ...mods,
                 autoheight: isAutoHeightEnabled,
+                pulsate,
             })}`}
             data-qa="chart-widget-selectors"
         >
@@ -334,6 +339,11 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
             <div className={b('container', {[String(widgetType)]: Boolean(widgetType)})}>
                 {!showFloatControls && (
                     <Loader visible={showLoader} veil={veil} delay={loaderDelay} />
+                )}
+                {showSpinner && (
+                    <div className={b('loader')}>
+                        <CommonLoader size="s" />
+                    </div>
                 )}
                 <div
                     className={b(
