@@ -154,7 +154,7 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
 
     if (
         isEnabledFeature(Feature.EnableExportWorkbookFile) &&
-        currentUserRights.admin &&
+        workbook.permissions.listAccessBindings &&
         !isWorkbookExportDisabled
     ) {
         dropdownActions.push({

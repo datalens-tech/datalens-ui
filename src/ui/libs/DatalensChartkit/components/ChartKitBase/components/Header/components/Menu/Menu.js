@@ -1,5 +1,5 @@
 import React from 'react';
-import { connect } from 'react-redux';
+
 import {Ellipsis} from '@gravity-ui/icons';
 import {Button, DropdownMenu, Icon, Menu as ListMenu, Portal, Sheet} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
@@ -34,7 +34,7 @@ const SwitcherButton = (props) => {
     );
 };
 
-class _Menu extends React.PureComponent {
+export class Menu extends React.PureComponent {
     static propTypes = {
         items: PropTypes.array,
         /**
@@ -103,7 +103,6 @@ class _Menu extends React.PureComponent {
                     event,
                     onChange,
                     anchorNode: this.modalRef.current,
-                    dispatch: this.props.dispatch
                 });
 
                 this.setState({modal: component});
@@ -317,11 +316,3 @@ class _Menu extends React.PureComponent {
         );
     }
 }
-
-const mapDispatchToProps = (dispatch) => {
-    return {
-        dispatch: dispatch
-    }
-};
-
-export const Menu = connect(null, mapDispatchToProps)(_Menu)

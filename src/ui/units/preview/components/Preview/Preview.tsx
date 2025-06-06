@@ -250,13 +250,10 @@ const Preview: React.FC<PreviewProps> = (props) => {
                         params={params}
                         onChartLoad={onChartLoad}
                         onChartRender={onChartRender}
-                        // to remove all controls
                         noControls={noControls}
                         actionParamsEnabled={actionParamsEnabled}
                         forwardedRef={chartKitRef as unknown as React.RefObject<ChartKitType>}
                         splitTooltip={hasSplitTooltip}
-                        // select menu type
-                        // src/ui/libs/DatalensChartkit/menu/helpers.ts
                         menuType="preview"
                         isPageHidden={isPageHidden}
                         autoupdateInterval={autoupdateInterval}
