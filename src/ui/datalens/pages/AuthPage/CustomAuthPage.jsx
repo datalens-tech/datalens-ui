@@ -123,8 +123,8 @@ const CustomAuthPage = ({setToken}) => {
         <div style={{
             position: 'absolute',
             display: 'block',
-            bottom: '0px',
-            left: '0px'
+            bottom: '10px',
+            left: '10px'
         }}>
             Версия: {releaseVersion}
         </div>
