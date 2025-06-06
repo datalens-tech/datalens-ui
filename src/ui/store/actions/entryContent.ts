@@ -8,8 +8,8 @@ import {getSdk} from '../../libs/schematic-sdk';
 import {REVISIONS_LIST_PART_SIZE} from '../../components/Revisions/helpers';
 import type {EntryContentState} from '../reducers/entryContent';
 import history from '../../utils/history';
-import {filterUsersIds} from '../../../shared';
-import {getResolveUsersByIdsAction} from './usersByIds';
+// import {filterUsersIds} from '../../../shared';
+// import {getResolveUsersByIdsAction} from './usersByIds';
 
 export function fetchEntryById(
     entryId: string,
@@ -148,13 +148,13 @@ export function loadRevisions({
             }
         }
 
-        const ids = filterUsersIds(fetchedRevisions.map((item) => item.updatedBy));
+        //const ids = filterUsersIds(fetchedRevisions.map((item) => item.updatedBy));
 
-        const resolveUsersByIds = getResolveUsersByIdsAction();
-        const dispatchResolveUsersByIds = resolveUsersByIds(ids);
-        if (dispatchResolveUsersByIds) {
-            dispatch(dispatchResolveUsersByIds);
-        }
+        // const resolveUsersByIds = getResolveUsersByIdsAction();
+        // const dispatchResolveUsersByIds = resolveUsersByIds(ids);
+        // if (dispatchResolveUsersByIds) {
+        //     dispatch(dispatchResolveUsersByIds);
+        // }
 
         dispatch(
             setRevisions({

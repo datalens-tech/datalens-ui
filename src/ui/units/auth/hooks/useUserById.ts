@@ -2,7 +2,7 @@ import React from 'react';
 
 import {useDispatch, useSelector} from 'react-redux';
 import {getUserId, isUserId} from 'shared';
-//import {DL} from 'ui/constants';
+import {DL} from 'ui/constants';
 
 import {resolveUsers} from '../store/actions/usersByIds';
 import {selectUsersByIds} from '../store/selectors/usersByIds';
@@ -60,9 +60,9 @@ export function useUserById(loginOrId: string): User {
     }, [usersByIds, loginOrId]);
 
     React.useEffect(() => {
-        // if (!DL.AUTH_ENABLED) {
-        //     return;
-        // }
+        if (!DL.AUTH_ENABLED) {
+            return;
+        }
         const userId = user.userId;
         if (userId && !(userId in usersByIds)) {
             dispatch(resolveUsers([userId]));
