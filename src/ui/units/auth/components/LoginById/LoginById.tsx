@@ -20,6 +20,7 @@ export const LoginById = ({loginOrId, className, view = 'primary'}: LoginByIdPro
 
     let node: React.ReactNode = null;
 
+
     if (user.status === 'loading') {
         node = <Skeleton className={b('skeleton')} />;
     } else {
