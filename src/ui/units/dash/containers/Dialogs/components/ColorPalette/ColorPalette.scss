@@ -25,6 +25,10 @@
         flex-shrink: 0;
     }
 
+    &__palette-trigger {
+        overflow: hidden;
+    }
+
     &__palette-list-btn,
     &__custom-palette-bg-btn {
         // disable selected additional background on button
@@ -62,7 +66,7 @@
 
         &_selected,
         &:hover {
-            --g-button-border-color: transparrent;
+            --g-button-border-color: transparent;
 
             #{$btnWithBorder} #{$colorItem} {
                 border: none;
