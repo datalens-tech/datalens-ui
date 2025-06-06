@@ -127,6 +127,7 @@ export interface Dataset {
         revisionId: string;
         load_preview_by_default: boolean;
         template_enabled: boolean;
+        data_export_forbidden?: boolean;
     };
     workbook_id?: string;
     permissions?: Permissions;

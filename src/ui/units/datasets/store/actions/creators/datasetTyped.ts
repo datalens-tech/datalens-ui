@@ -1127,3 +1127,23 @@ export function toggletTemplateEnabled(
         });
     };
 }
+
+export function toggletDataExportEnabled(
+    dataExportEnabled: boolean,
+    editHistoryOptions?: EditHistoryOptions,
+) {
+    return (dispatch: Dispatch<DatasetReduxAction>) => {
+        batch(() => {
+            dispatch({
+                type: DATASET_ACTION_TYPES.SET_DATA_EXPORT_ENABLED,
+                payload: {
+                    dataExportEnabled,
+                    [EDIT_HISTORY_OPTIONS_KEY]: {
+                        ...editHistoryOptions,
+                    },
+                },
+            });
+            dispatch(toggleSaveDataset({enable: true}));
+        });
+    };
+}
