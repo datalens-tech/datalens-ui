@@ -23,6 +23,8 @@ datalensTest.describe('Dashboards - Markdown cases screenshots', () => {
 
             await dashboardPage.changeTab({tabName: PARAMS.TAB_MARKDOWN_NAME});
 
+            await page.waitForLoadState('networkidle', {timeout: 10000});
+
             await dashboardPage.waitForWidgetsRender();
 
             const contentContainer = page.locator(slct(DashBodyQa.ContentWrapper));
