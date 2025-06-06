@@ -100,9 +100,9 @@
     }
 }
 
-@mixin dl-select-popup() {
-    max-height: 40vh;
-    max-width: 400px;
+@mixin dl-select-popup($mh: 40vh, $mw: 400px) {
+    max-height: $mh;
+    max-width: $mw;
 }
 
 @mixin dl-select-disabled-option() {

@@ -56,10 +56,11 @@ import {
 } from '../../utils';
 import type {CnMods} from '../../utils';
 import {CARD_PAGE_URL_PARAMS, PARTNER_FORM_LINK} from '../constants';
-import {useActionPanelLayout} from '../hooks/useActionPanelLayout';
+import {useElementRect} from '../hooks/useElementRect';
 
 import {FullscreenGallery} from './FullscreenGallery/FullscreenGallery';
 import {PreviewCard} from './PreviewCard/PreviewCard';
+import {useErrorLayoutAdjustment} from './hooks/useErrorLayoutAdjustment';
 
 import './CardPage.scss';
 
@@ -221,11 +222,21 @@ function CardActionPanel({
     togglePreview,
     lang,
 }: CardActionPanelProps) {
+    const [actionPanelNode, setActionPanelNode] = React.useState<HTMLDivElement | null>(null);
+    const {rect} = useElementRect({node: actionPanelNode});
+    const actionPanelStyle = React.useMemo(() => {
+        const style: React.CSSProperties = {};
+        const offset = rect?.left;
+
+        if (typeof offset === 'number') {
+            style.paddingInline = `${offset}px`;
+        }
+
+        return style;
+    }, [rect]);
+
     const isActiveMediaQueryS = activeMediaQuery === 's';
     const mods: CnMods = {media: activeMediaQuery};
-
-    const {style, actionPanelRef} = useActionPanelLayout();
-
     let leftItems: React.ReactNode = null;
 
     if (showPreview) {
@@ -249,7 +260,7 @@ function CardActionPanel({
         );
     } else {
         leftItems = (
-            <Flex style={{minWidth: 0, flex: 1}}>
+            <Flex style={{minWidth: 0, flexGrow: 1, flexShrink: 1, flexBasis: 'auto'}}>
                 <Breadcrumbs className={b('breadcrumbs')}>
                     <Breadcrumbs.Item href="/gallery">
                         {galleryI18n('label_gallery')}
@@ -295,9 +306,9 @@ function CardActionPanel({
         <ActionPanel
             leftItems={leftItems}
             rightItems={rightItems}
-            wrapperRef={isPromo ? actionPanelRef : undefined}
+            wrapperRef={isPromo ? setActionPanelNode : undefined}
             style={{
-                ...(isPromo ? style : {}),
+                ...actionPanelStyle,
                 maxWidth: '100vw',
                 overflow: 'hidden',
             }}
@@ -477,14 +488,20 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang, maxWidth}: C
                 <Col s="12">
                     <Flex className={b('card-info-flex', mods)}>
                         <IconWithText iconData={Person} text={entry.createdBy} />
-                        <IconWithText
-                            iconData={Calendar}
-                            text={dateTime({input: entry.createdAt}).format('DD MMMM YYYY')}
-                        />
+                        {Boolean(entry.createdAt) && (
+                            <IconWithText
+                                iconData={Calendar}
+                                text={dateTime({input: entry.createdAt}).format('DD MMMM YYYY')}
+                            />
+                        )}
                     </Flex>
                 </Col>
                 <Col s="12">
-                    <GalleryCardLabels labels={entry.labels} />
+                    <GalleryCardLabels
+                        labels={entry.labels}
+                        labelProps={{interactive: true}}
+                        getUrl={(category) => getAllPageUrl({category})}
+                    />
                 </Col>
             </Row>
             <Row space="6" style={{marginTop: 24}}>
@@ -513,7 +530,7 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang, maxWidth}: C
     );
 }
 
-const isActivePreview = (urlSearchParams: URLSearchParams) => {
+export const isActivePreview = (urlSearchParams: URLSearchParams) => {
     return (
         urlSearchParams.has(CARD_PAGE_URL_PARAMS.PREVIEW, '1') ||
         urlSearchParams.has(CARD_PAGE_URL_PARAMS.PREVIEW, 'true') ||
@@ -523,19 +540,18 @@ const isActivePreview = (urlSearchParams: URLSearchParams) => {
 
 export function CardPage() {
     const {activeMediaQuery} = useLayoutContext();
-
     const location = useLocation();
-    const {search: searchParams} = location;
     const history = useHistory();
+    const themeType = useThemeType();
+    const mobile = useMobile();
+    const {id} = useParams<{id: string}>();
+    const {isLoading, data, error, refetch} = useGetGalleryItemQuery({id});
+    const {search: searchParams} = location;
     const urlSearchParams = new URLSearchParams(searchParams);
     const showPreview = isActivePreview(urlSearchParams);
-
-    const {id} = useParams<{id: string}>();
-
-    const {isLoading, data, error, refetch} = useGetGalleryItemQuery({id});
-
     const lang = getLang();
-    const themeType = useThemeType();
+
+    useErrorLayoutAdjustment(error);
 
     const togglePreview = () => {
         const urlParams = new URLSearchParams(searchParams);
@@ -558,11 +574,8 @@ export function CardPage() {
 
     if (error || !data) {
         const parsedError = Utils.parseRtkQueryError(error);
-
         const {status, code, message = galleryI18n('label_error'), details} = parsedError;
-
         const isNotFound = code === ErrorContentTypes.NOT_FOUND || status === 404;
-
         const canRetry = !isNotFound;
         const errorTitle = isNotFound ? galleryI18n('label_not_found') : details?.title ?? message;
 
@@ -598,7 +611,7 @@ export function CardPage() {
             />
             {showPreview ? (
                 <iframe
-                    className={b('iframe')}
+                    className={b('iframe', {mobile, promo: isPromo})}
                     src={getIframeUrl({publicUrl: data.publicUrl, theme: themeType, lang})}
                 />
             ) : (

@@ -38,7 +38,7 @@ export type ResolvedConfig = {
     type: string;
     public: false;
     isFavorite?: boolean;
-    revId: string;
+    revId?: string;
     savedId: string;
     publishedId: string;
     createdAt: string;
