@@ -23,6 +23,7 @@ export type UiTabExportsControl = {
     updateOnChange?: boolean;
     postUpdateOnChange?: boolean;
     updateControlsOnChange?: boolean;
+    disabled?: boolean;
 };
 
 export type UiTabExports =
@@ -76,6 +77,7 @@ export type ProcessorSuccessResponse = {
     comments?: CommentsFetcherFetchResult;
     publicAuthor?: EntryPublicAuthor;
     id?: string;
+    revId?: string;
     _confStorageConfig?: object;
     key?: string;
     type?: string;
@@ -84,11 +86,11 @@ export type ProcessorSuccessResponse = {
 export type ProcessorFiles =
     | 'Shared'
     | 'Params'
-    | 'Urls'
+    | 'Sources'
     | 'Highcharts'
     | 'Config'
-    | 'JavaScript'
-    | 'UI';
+    | 'Prepare'
+    | 'Controls';
 export type ProcessorLogs = {modules: LogItem[][]} & Partial<
     Record<ProcessorFiles | 'failed', LogItem[][]>
 >;

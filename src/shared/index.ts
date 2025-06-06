@@ -1,5 +1,5 @@
 export {oldSchema} from './old-schema';
-export type {schema, authSchema} from './schema';
+export type {schema, authSchema, anonymousSchema} from './schema';
 
 export * from './constants';
 export * from './modules';

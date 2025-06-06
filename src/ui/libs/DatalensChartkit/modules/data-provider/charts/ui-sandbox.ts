@@ -216,13 +216,14 @@ async function getUnwrappedFunction(args: {
     name?: string;
 }) {
     const {sandbox, wrappedFn, options, entryId, entryType, name} = args;
-    let libs = await getUiSandboxLibs(wrappedFn.libs ?? []);
+    const uiSandboxLibs = await getUiSandboxLibs(wrappedFn.libs ?? []);
     const parseHtml = await getParseHtmlFn();
     const isAdvancedChart = (
         [EditorType.AdvancedChartNode, LegacyEditorType.BlankChart] as string[]
     ).includes(entryType);
 
     return function (this: unknown, ...restArgs: unknown[]) {
+        let libs = uiSandboxLibs;
         const runId = getRandomCKId();
         Performance.mark(runId);
 
@@ -258,10 +259,6 @@ async function getUnwrappedFunction(args: {
                 generateHtml: (value: ChartKitHtmlItem) => wrapHtml(value),
             },
         };
-
-        merge(globalApi, {
-            Editor: globalApi.ChartEditor,
-        });
 
         // extend API for Highcharts charts
         if (entryType === 'graph_node') {
@@ -381,12 +378,24 @@ async function getUnwrappedFunction(args: {
                         chartContext?.updateActionParams(params);
                     },
                 },
+                ChartEditor: {
+                    updateActionParams: (params: StringParams) => {
+                        chartContext?.updateActionParams(params);
+                    },
+                    updateParams: (params: StringParams) => {
+                        chartContext?.updateParams(params);
+                    },
+                },
             });
 
             if (fnContext && typeof fnContext === 'object' && '__innerHTML' in fnContext) {
                 libs += `document.body.innerHTML = (${JSON.stringify(fnContext.__innerHTML)});`;
             }
         }
+
+        merge(globalApi, {
+            Editor: globalApi.ChartEditor,
+        });
 
         const oneRunTimeLimit = options?.fnExecTimeLimit ?? UI_SANDBOX_FN_TIME_LIMIT;
         const execTimeout = Math.min(oneRunTimeLimit, options?.totalTimeLimit ?? Infinity);

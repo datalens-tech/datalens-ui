@@ -14,7 +14,7 @@ import type {
     StringParams,
     WorkbookId,
 } from '../../../../../shared';
-import {DL_CONTEXT_HEADER, Feature, isEnabledServerFeature} from '../../../../../shared';
+import {DL_CONTEXT_HEADER, Feature} from '../../../../../shared';
 import {renderHTML} from '../../../../../shared/modules/markdown/markdown';
 import {registry} from '../../../../registry';
 import type {CacheClient} from '../../../cache-client';
@@ -147,6 +147,7 @@ export type ProcessorParams = {
 } & SerializableProcessorParams;
 
 export type SerializableProcessorParams = {
+    secureConfig?: {privateParams?: string[]};
     subrequestHeaders: Record<string, string>;
     paramsOverride: Record<string, string | string[]>;
     actionParamsOverride: Record<string, string | string[]>;
@@ -173,6 +174,7 @@ export type SerializableProcessorParams = {
     disableJSONFnByCookie: boolean;
     configName: string;
     configId: string;
+    revId?: string;
     isEmbed: boolean;
     zitadelParams: ZitadelParams | undefined;
     authParams: AuthParams | undefined;
@@ -203,6 +205,7 @@ export class Processor {
         disableJSONFnByCookie,
         configName,
         configId,
+        revId,
         isEmbed,
         zitadelParams,
         authParams,
@@ -213,6 +216,7 @@ export class Processor {
         cacheClient,
         hooks,
         sourcesConfig,
+        secureConfig,
     }: ProcessorParams): Promise<
         ProcessorSuccessResponse | ProcessorErrorResponse | {error: string}
     > {
@@ -243,8 +247,9 @@ export class Processor {
 
         function injectConfigAndParams({target}: {target: ProcessorSuccessResponse}) {
             let responseConfig;
+            const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
             const useChartsEngineResponseConfig = Boolean(
-                isEnabledServerFeature(ctx, Feature.UseChartsEngineResponseConfig),
+                isEnabledServerFeature(Feature.UseChartsEngineResponseConfig),
             );
 
             if (useChartsEngineResponseConfig && responseOptions.includeConfig && config) {
@@ -255,16 +260,19 @@ export class Processor {
                     meta: config.meta,
                     entryId: config.entryId,
                     key: config.key,
+                    revId: config.revId,
                 };
             }
             responseConfig.key = config.key || configName;
             responseConfig.entryId = config.entryId || configId;
+            responseConfig.revId = config.revId || revId;
 
             target._confStorageConfig = responseConfig;
 
             target.key = responseConfig.key;
             target.id = responseConfig.entryId;
             target.type = responseConfig.type;
+            target.revId = responseConfig.revId;
 
             if (params) {
                 target.params = params;
@@ -510,8 +518,8 @@ export class Processor {
             });
 
             logSandboxDuration(sourcesTabResults.executionTiming, sourcesTabResults.name, ctx);
-            ctx.log('EditorEngine::Urls', {duration: getDuration(hrStart)});
-            logs.Urls = sourcesTabResults.logs;
+            ctx.log('EditorEngine::Sources', {duration: getDuration(hrStart)});
+            logs.Sources = sourcesTabResults.logs;
 
             try {
                 hrStart = process.hrtime();
@@ -721,10 +729,10 @@ export class Processor {
                     latency: (hrDuration[0] * 1e9 + hrDuration[1]) / 1e6,
                 });
 
-                ctx.log('EditorEngine::JS', {duration: getDuration(hrStart)});
+                ctx.log('EditorEngine::Prepare', {duration: getDuration(hrStart)});
 
                 processedData = jsTabResults.exports;
-                logs.JavaScript = jsTabResults.logs;
+                logs.Prepare = jsTabResults.logs;
 
                 const jsError = jsTabResults.runtimeMetadata.error;
                 if (jsError) {
@@ -760,10 +768,20 @@ export class Processor {
                         Array.isArray(uiTabExports.controls)))
             ) {
                 uiScheme = uiTabExports as UiTabExports;
+
+                if (secureConfig?.privateParams) {
+                    const controls = Array.isArray(uiScheme) ? uiScheme : uiScheme.controls;
+
+                    controls.forEach((control) => {
+                        if (secureConfig.privateParams?.includes(control.param)) {
+                            control.disabled = true;
+                        }
+                    });
+                }
             }
 
-            logs.UI = uiTabResults.logs;
-            ctx.log('EditorEngine::UI', {duration: getDuration(hrStart)});
+            logs.Controls = uiTabResults.logs;
+            ctx.log('EditorEngine::Controls', {duration: getDuration(hrStart)});
 
             // Editor.updateParams() has the highest priority,
             // so now we take the parameters set through this method
@@ -825,7 +843,8 @@ export class Processor {
                     entryId: config.entryId || configId,
                 });
 
-                const disableFnAndHtml = isEnabledServerFeature(ctx, Feature.DisableFnAndHtml);
+                const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
+                const disableFnAndHtml = isEnabledServerFeature(Feature.DisableFnAndHtml);
                 if (
                     disableFnAndHtml ||
                     !isChartWithJSAndHtmlAllowed({createdAt: config.createdAt})
@@ -834,7 +853,7 @@ export class Processor {
                 }
                 const enableJsAndHtml = get(resultConfig, 'enableJsAndHtml', false);
                 const disableJSONFn =
-                    isEnabledServerFeature(ctx, Feature.NoJsonFn) ||
+                    isEnabledServerFeature(Feature.NoJsonFn) ||
                     disableJSONFnByCookie ||
                     enableJsAndHtml === false;
                 const stringify = disableJSONFn ? JSON.stringify : JSONfn.stringify;

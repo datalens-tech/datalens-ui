@@ -1,7 +1,11 @@
 import React from 'react';
 
 import {ArrowRight, ChevronDown, LockOpen, TrashBin} from '@gravity-ui/icons';
-import type {DropdownMenuItem, DropdownMenuItemMixed} from '@gravity-ui/uikit';
+import type {
+    DropdownMenuItem,
+    DropdownMenuItemAction,
+    DropdownMenuItemMixed,
+} from '@gravity-ui/uikit';
 import {Button, DropdownMenu, Icon, Tooltip} from '@gravity-ui/uikit';
 import type {SVGIconData} from '@gravity-ui/uikit/build/esm/components/Icon/types';
 import block from 'bem-cn-lite';
@@ -28,8 +32,8 @@ const b = block('dl-collection-actions');
 
 export type Props = {
     className?: string;
-    onCreateCollectionClick: () => void;
-    onCreateWorkbookClick: () => void;
+    onCreateCollectionClick: DropdownMenuItemAction<void>;
+    onCreateWorkbookClick: DropdownMenuItemAction<void>;
     onEditAccessClick: () => void;
     onMoveClick: () => void;
     onDeleteClick: () => void;
@@ -55,7 +59,7 @@ export const CollectionActions = React.memo<Props>(
 
         const showCreateWorkbook = collection ? collection.permissions?.createWorkbook : true;
 
-        const createActionItems: DropdownMenuItemMixed<unknown>[] = [];
+        const createActionItems: DropdownMenuItemMixed<void>[] = [];
 
         const getItemText = ({
             icon,

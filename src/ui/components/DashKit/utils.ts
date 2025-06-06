@@ -215,12 +215,14 @@ export function adjustWidgetLayout({
               mainNode.getBoundingClientRect().bottom
             : 0;
 
-    const fullContentHeight =
+    // If browser is scaled there is a possibility to get floats with different fractional part
+    const fullContentHeight = Math.floor(
         scrollableNodeTopOffsetFromRoot +
-        scrollHeight +
-        scrollBar +
-        belowLyingNodesHeight +
-        additionalPaddings;
+            scrollHeight +
+            scrollBar +
+            belowLyingNodesHeight +
+            additionalPaddings,
+    );
 
     const contentHeight =
         fullContentHeight > MAX_AUTO_HEIGHT_PX ? MAX_AUTO_HEIGHT_PX : fullContentHeight;

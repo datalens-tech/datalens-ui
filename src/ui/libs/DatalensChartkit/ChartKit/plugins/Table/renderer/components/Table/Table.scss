@@ -90,11 +90,6 @@
             cursor: pointer;
         }
 
-        &_fixed-size {
-            white-space: normal;
-            word-break: break-word;
-        }
-
         &_align_left {
             text-align: left;
             justify-content: flex-start;
@@ -113,8 +108,6 @@
 
     &__th-content {
         display: inline-block;
-        width: min-content;
-        min-width: fit-content;
 
         &_sortable {
             position: relative;
@@ -223,7 +216,6 @@
         padding: var(--dl-table-cell-vertical-padding) var(--dl-table-cell-horizontal-padding);
         text-overflow: ellipsis;
         vertical-align: var(--dl-table-footer-cell-vertical-align);
-        white-space: nowrap;
         font-weight: 500;
     }
 
@@ -292,6 +284,14 @@
 
         tbody td {
             white-space: nowrap;
+        }
+
+        &_preWrap tbody td {
+            white-space: pre-wrap;
+        }
+
+        .dl-table__th-content {
+            width: min-content;
         }
     }
 

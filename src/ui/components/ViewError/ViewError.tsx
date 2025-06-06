@@ -33,6 +33,9 @@ export interface ViewErrorProps {
     hideDetails?: boolean;
     size?: PlaceholderIllustrationProps['size'];
     containerClassName?: string;
+    showDebugInfo?: boolean;
+    exportId?: string;
+    importId?: string;
 }
 
 export const ViewError = ({
@@ -48,6 +51,9 @@ export const ViewError = ({
     hideDetails,
     size,
     containerClassName,
+    showDebugInfo = !hideDetails,
+    exportId,
+    importId,
 }: ViewErrorProps) => {
     const dispatch = useDispatch();
 
@@ -99,6 +105,8 @@ export const ViewError = ({
                 title: resultTitle,
                 error,
                 withReport,
+                exportId,
+                importId,
             }),
         );
     };
@@ -140,7 +148,7 @@ export const ViewError = ({
             description={description || message}
             action={{content}}
             error={error}
-            showDebugInfo={!hideDetails}
+            showDebugInfo={showDebugInfo}
             size={size}
             containerClassName={containerClassName}
         />

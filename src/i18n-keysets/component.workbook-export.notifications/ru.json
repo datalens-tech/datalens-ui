@@ -1,0 +1,23 @@
+{
+  "button_show-details": "Показать детали",
+  "label_bad-connection-type": "Некоторые типы подключений не поддерживаются в текущей версии сервиса",
+  "label_error-export-connection": "Не удалось экспортировать подключение",
+  "label_error-export-dataset": "Не удалось экспортировать датасет",
+  "label_error-import-connection": "Не удалось импортировать подключение",
+  "label_error-import-dataset": "Не удалось импортировать датасет",
+  "label_export-check-connection-credentials": "В подключениях значения полей с паролями и токенами не экспортируются, после импорта их нужно проверить и при необходимости заменить",
+  "label_export-rls": "В экспортированных датасетах не гарантируется корректная работа RLS",
+  "label_import-check-connections-credentials": "Проверьте настройки подключений и при необходимости заново укажите пароли и токены",
+  "label_import-check-delegation": "Настройка подключений не завершена, измените или повторно сохраните настройки подключений",
+  "label_import-rls": "Убедитесь, что RLS в датасетах работает корректно",
+  "label_info-documentation-notifications": "Описание ошибок и предупреждений",
+  "label_invalid-entry-data": "Конфигурация воркбука нарушена",
+  "label_invalid-entry-scope": "В воркбуке содержатся объекты с некорректным типом",
+  "label_invalid-error": "Неизвестная ошибка",
+  "label_invalid-version": "Инсталляция DataLens не поддерживает конфигурацию воркбука",
+  "label_missing-linked-entry": "В воркбуке есть объекты, связанные с несуществующими объектами",
+  "label_scope-not-available-for-installation": "В воркбуке есть объекты, которые не поддерживаются в вашей инсталляции DataLens",
+  "label_unexpected-workflow-error": "Операция прервана из-за неизвестной ошибки",
+  "label_unsupported-objects": "Объекты данного типа недоступны для экспорта и импорта",
+  "title_error-details": "Детали ошибки"
+}

@@ -35,6 +35,7 @@ import {
     WizardVisualizationId,
     createMeasureNames,
     filterUpdatesByDatasetId,
+    getEntryNameByKey,
     getResultSchemaFromDataset,
     isMeasureName,
     isMeasureValue,
@@ -45,7 +46,7 @@ import {
     splitParamsToParametersAndFilters,
 } from 'shared';
 import type {DataLensApiError} from 'typings';
-import type {DatalensGlobalState} from 'ui';
+import {type DatalensGlobalState, URL_QUERY} from 'ui';
 import {GEOLAYER_VISUALIZATION} from 'ui/constants/visualizations';
 import {navigateHelper} from 'ui/libs';
 import {
@@ -172,8 +173,7 @@ function getDataset({id, workbookId}: GetDatasetArgs) {
         })
         .then((dataset) => {
             if (dataset && dataset.key) {
-                const keyParts = dataset.key.split('/');
-                dataset.realName = keyParts[keyParts.length - 1];
+                dataset.realName = getEntryNameByKey({key: dataset.key});
             }
 
             if (dataset.result_schema) {
@@ -2139,8 +2139,12 @@ export type SetDefaultsArgs = {
     unreleased?: boolean;
 };
 
-export function setDefaults({entryId, revId, routeWorkbookId, unreleased}: SetDefaultsArgs) {
-    return function (dispatch: WizardDispatch) {
+export function setDefaults(args: SetDefaultsArgs) {
+    const {entryId, revId, routeWorkbookId, unreleased} = args;
+    return async function (dispatch: WizardDispatch, getState: () => DatalensGlobalState) {
+        const searchPairs = new URLSearchParams(window.location.search);
+        const entryConfigParam = searchPairs.get(URL_QUERY.ENTRY_CONFIG);
+
         if (routeWorkbookId) {
             dispatch(setRouteWorkbookId(routeWorkbookId));
         }
@@ -2154,18 +2158,28 @@ export function setDefaults({entryId, revId, routeWorkbookId, unreleased}: SetDe
                 }),
             );
         } else {
-            const defaultVisualization = getDefaultVisualization();
+            if (entryConfigParam) {
+                try {
+                    const config = JSON.parse(entryConfigParam);
+                    await processWidget({widget: {data: config}, dispatch, getState});
+                } catch (e) {
+                    console.error(e);
+                }
+            }
 
-            dispatch(
-                setVisualization({
-                    visualization: cloneDeep(
-                        defaultVisualization,
-                    ) as unknown as Shared['visualization'],
-                }),
-            );
+            const visualization = getState().wizard.visualization;
+            if (!visualization?.visualization) {
+                const defaultVisualization = getDefaultVisualization();
+                dispatch(
+                    setVisualization({
+                        visualization: cloneDeep(
+                            defaultVisualization,
+                        ) as unknown as Shared['visualization'],
+                    }),
+                );
+            }
         }
 
-        const searchPairs = new URLSearchParams(window.location.search);
         if (searchPairs) {
             const datasetId = searchPairs.get(WIZARD_DATASET_ID_PARAMETER_KEY);
 

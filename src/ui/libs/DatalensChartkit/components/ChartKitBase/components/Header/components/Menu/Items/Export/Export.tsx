@@ -58,8 +58,7 @@ const screenshotExportAction = (
                         .getGoAwayLink(
                             {loadedData, propsData},
                             {
-                                urlPostfix: '/preview',
-                                idPrefix: '/editor/',
+                                idPrefix: '/preview/',
                                 extraParams: {[URL_OPTIONS.ACTION_PARAMS_ENABLED]: '1'},
                             },
                         )

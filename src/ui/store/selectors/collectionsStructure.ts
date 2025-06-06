@@ -53,11 +53,34 @@ const selectDeleteCollections = (state: DatalensGlobalState) =>
 const selectDeleteWorkbooks = (state: DatalensGlobalState) =>
     state.collectionsStructure.deleteWorkbooks;
 
-export const selectExportWorkbook = (state: DatalensGlobalState) =>
+const selectGetExportProgress = (state: DatalensGlobalState) =>
+    state.collectionsStructure.getExportProgress;
+
+const selectExportWorkbook = (state: DatalensGlobalState) =>
     state.collectionsStructure.exportWorkbook;
 
-export const selectGetExportProgress = (state: DatalensGlobalState) =>
-    state.collectionsStructure.getExportProgress;
+const selectGetExportResult = (state: DatalensGlobalState) =>
+    state.collectionsStructure.getExportResult;
+
+export const selectGetExportProgressData = createSelector(
+    [selectGetExportProgress],
+    (getExportProgress) => getExportProgress.data,
+);
+
+export const selectGetExportProgressEntriesMap = createSelector(
+    [selectGetExportProgress],
+    (data) => data.notificationEntries,
+);
+
+export const selectGetExportResultLoading = createSelector(
+    [selectGetExportResult],
+    (getExportResult) => getExportResult.isLoading,
+);
+
+export const selectExportError = createSelector(
+    [selectExportWorkbook, selectGetExportProgress],
+    (exportWorkbook, getExportProgress) => exportWorkbook.error || getExportProgress.error,
+);
 
 export const selectExportWorkbookStatus = createSelector(
     [selectExportWorkbook, selectGetExportProgress],
@@ -68,17 +91,36 @@ export const selectExportWorkbookStatus = createSelector(
         }),
 );
 
-export const selectImportWorkbook = (state: DatalensGlobalState) =>
+const selectImportWorkbook = (state: DatalensGlobalState) =>
     state.collectionsStructure.importWorkbook;
 
-export const selectGetImportProgress = (state: DatalensGlobalState) =>
+const selectGetImportProgress = (state: DatalensGlobalState) =>
     state.collectionsStructure.getImportProgress;
 
-export const selectImportWorkbookStatus = createSelector(
+export const selectImportWorkbookData = createSelector(
+    [selectImportWorkbook],
+    (importWorkbook) => importWorkbook.data,
+);
+
+export const selectGetImportProgressEntriesMap = createSelector(
+    [selectGetImportProgress],
+    (data) => data.notificationEntries,
+);
+
+export const selectGetImportProgressData = createSelector(
+    [selectGetImportProgress],
+    (getImportProgress) => getImportProgress.data,
+);
+
+export const selectImportError = createSelector(
     [selectImportWorkbook, selectGetImportProgress],
-    (importWorkbook, getImportProgress) =>
+    (importWorkbook, getImportProgress) => importWorkbook.error || getImportProgress.error,
+);
+
+export const selectImportWorkbookStatus = createSelector(
+    [selectGetImportProgress],
+    (getImportProgress) =>
         getStatusFromOperation({
-            initialOperation: importWorkbook,
             progessOperation: getImportProgress,
         }),
 );
@@ -86,6 +128,18 @@ export const selectImportWorkbookStatus = createSelector(
 export const selectExportData = createSelector(
     [selectExportWorkbook],
     (exportWorkbook) => exportWorkbook.data,
+);
+
+// Export result data
+export const selectExportResultData = createSelector(
+    [selectGetExportResult],
+    (getExportResult) => getExportResult.data,
+);
+
+// Export result loading state
+export const selectExportResultIsLoading = createSelector(
+    [selectGetExportResult],
+    (getExportResult) => getExportResult.isLoading,
 );
 
 // Rights at the root of the structure

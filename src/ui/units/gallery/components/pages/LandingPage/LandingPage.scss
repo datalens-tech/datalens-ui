@@ -1,0 +1,218 @@
+@use '../../variables';
+
+@import '~@gravity-ui/uikit/styles/mixins';
+
+$block: '.#{variables.$ns}-landing';
+
+#{$block} {
+    &__loader {
+        height: 100%;
+    }
+
+    &__container {
+        max-width: 1032px;
+        padding-left: 48px;
+        padding-right: 48px;
+        display: flex;
+        flex-direction: column;
+
+        &_media_s,
+        &_media_m {
+            height: auto;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        &_maxWidth {
+            max-width: unset;
+            padding-inline: 0;
+        }
+    }
+
+    &__header {
+        flex-direction: row-reverse;
+
+        &_media_s {
+            margin-bottom: 24px;
+        }
+    }
+
+    &__header-title-flex {
+        height: 100%;
+        flex-direction: column;
+        row-gap: 16px;
+        justify-content: center;
+        padding: 140px 0;
+
+        &_media_s {
+            padding: 50px 0 0;
+        }
+    }
+
+    &__header-title {
+        @include text-display-3();
+
+        margin: 0;
+    }
+
+    &__header-description {
+        @include text-subheader-3();
+
+        font-weight: var(--g-text-body-font-weight);
+    }
+
+    &__header-actions {
+        display: flex;
+        column-gap: 12px;
+    }
+
+    &__header-actions-link {
+        &_media_s {
+            width: 100%;
+        }
+    }
+
+    &__header-illustration-flex {
+        height: 100%;
+        justify-content: end;
+        align-items: center;
+
+        &_media_s {
+            justify-content: start;
+            padding-top: 60px;
+        }
+    }
+
+    &__header-illustration {
+        height: 290px;
+
+        &_media_s {
+            height: 210px;
+        }
+    }
+
+    &__promo-block {
+        margin-bottom: 48px;
+
+        &_media_s {
+            margin-top: 24px;
+        }
+    }
+
+    &__promo-block-link-wrapper {
+        text-decoration: none;
+        color: inherit;
+    }
+
+    &__promo-block-item-flex {
+        display: flex;
+        flex-direction: column;
+        height: 220px;
+        row-gap: 16px;
+        border-radius: 12px;
+        padding-left: 20px;
+        padding-top: 16px;
+        overflow: hidden;
+        background-color: var(--g-color-base-float-announcement);
+
+        &:not(:hover) {
+            box-shadow: none;
+        }
+
+        &_media_s {
+            height: 190px;
+        }
+
+        &_primary {
+            background-color: var(--g-color-base-brand);
+            color: var(--g-color-text-inverted-primary);
+        }
+    }
+
+    &__promo-block-item-title,
+    &__promo-block-item-title-counter {
+        @include text-subheader-2();
+    }
+
+    &__promo-block-item-title {
+        display: flex;
+        justify-content: space-between;
+        padding-right: 20px;
+        align-items: center;
+
+        &_primary {
+            color: var(--g-color-text-light-primary);
+        }
+    }
+
+    &__promo-block-item-title-counter {
+        margin-right: auto;
+        color: var(--g-color-text-secondary);
+
+        &_primary {
+            color: var(--g-color-text-light-secondary);
+        }
+    }
+
+    &__promo-block-item-images-container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+    }
+
+    &__promo-block-item-image-container {
+        display: flex;
+        position: absolute;
+        left: 0;
+        top: 0;
+        border-radius: 8px;
+        background-color: var(--g-color-base-float-announcement);
+
+        &_primary {
+            background-color: var(--g-color-base-brand);
+        }
+    }
+
+    &__promo-block-item-image {
+        border-radius: 8px;
+        height: 100%;
+        object-fit: cover;
+
+        &_media_s {
+            width: 100%;
+        }
+    }
+
+    &__add-card {
+        background-color: var(--g-color-base-generic);
+        border-radius: 24px;
+        padding: 52px 100px;
+        margin: 48px 0;
+
+        &_media_s {
+            padding: 32px;
+            margin: 24px 0;
+        }
+    }
+
+    &__add-card-flex {
+        flex-direction: column;
+        row-gap: 12px;
+        align-items: center;
+    }
+
+    &__add-card-title {
+        @include text-header-2();
+        text-align: center;
+    }
+
+    &__add-card-description {
+        @include text-body-3();
+        text-align: center;
+    }
+
+    &__add-card-button {
+        width: fit-content;
+        margin-top: 12px;
+    }
+}

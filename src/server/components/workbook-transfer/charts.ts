@@ -2,6 +2,7 @@ import type {Request} from '@gravity-ui/expresskit';
 import forIn from 'lodash/forIn';
 import isArray from 'lodash/isArray';
 
+import {getEntryNameByKey} from '../../../shared';
 import {
     TRANSFER_UNKNOWN_ENTRY_ID,
     TransferErrorCode,
@@ -51,16 +52,55 @@ const validateChartShared = (chartOptions: TransferChartDataOptions) => {
     }
 };
 
+const traverseDatasetFields = (obj: any, matchCallback: MatchCallback) => {
+    const {result_schema, sources} = obj || {};
+
+    // Legacy dataset properties placeholder replacer
+    if (result_schema && Array.isArray(result_schema)) {
+        for (let i = 0; i <= result_schema.length; i++) {
+            const item = result_schema[i];
+
+            if (item?.datasetId) {
+                item.datasetId = matchCallback(item.datasetId, item, 'datasetId');
+            }
+        }
+    }
+
+    // This is v1 field schema but saved and cause we are not migrating wizard charts
+    // we need to migrate this fields before export\import
+    if (sources && Array.isArray(sources)) {
+        for (let i = 0; i <= sources.length; i++) {
+            const item = sources[i];
+
+            if (item?.connection_id) {
+                item.connection_id = matchCallback(item.connection_id, item, 'connection_id');
+            }
+        }
+    }
+};
+
 const traverseWizardFieldsRecursive = (obj: any, matchCallback: MatchCallback) => {
     forIn(obj, (val, key) => {
-        if (typeof val === 'object') {
-            traverseWizardFieldsRecursive(val, matchCallback);
+        if (key === 'datasetId' && typeof val === 'string') {
             // Array<{datasetId: string}>
-        } else if (key === 'datasetId' && typeof val === 'string') {
             obj[key] = matchCallback(val, obj, key);
-            // dataset.id
-        } else if (key === 'dataset' && typeof val.id === 'string') {
+        } else if (key === 'datasets' && Array.isArray(val)) {
+            // datasets: [{id: string}]
+            for (let i = 0; i <= val.length; i++) {
+                const item = val[i];
+                if (item?.id) {
+                    item.id = matchCallback(item.id, item, 'id');
+                }
+
+                traverseDatasetFields(item, matchCallback);
+            }
+        } else if (key === 'dataset' && typeof val === 'object' && typeof val.id === 'string') {
+            // dataset: {id: string}
             val.id = matchCallback(val.id, val, 'id');
+
+            traverseDatasetFields(val, matchCallback);
+        } else if (typeof val === 'object') {
+            traverseWizardFieldsRecursive(val, matchCallback);
         }
     });
 };
@@ -173,11 +213,20 @@ export const prepareImportChartData = async (
     }
 
     try {
-        const links = chartGenerator.gatherChartLinks({
-            req,
-            shared,
-            chartTemplate,
-        });
+        const links = Object.entries(
+            chartGenerator.gatherChartLinks({
+                req,
+                shared,
+                chartTemplate,
+            }) || {},
+        ).reduce<Record<string, string>>((acc, [key, value]) => {
+            if (value !== TRANSFER_UNKNOWN_ENTRY_ID) {
+                acc[key] = value;
+            }
+
+            return acc;
+        }, {});
+
         const serializedData = chartGenerator.serializeShared({
             ctx,
             shared,
@@ -209,8 +258,7 @@ export const prepareExportChartData = async (entry: EntryFields, idMapping: Tran
     let data;
 
     const {key, type} = entry;
-    const nameParts = key.split('/');
-    const name = nameParts[nameParts.length - 1];
+    const name = getEntryNameByKey({key});
 
     const widget = {
         data,

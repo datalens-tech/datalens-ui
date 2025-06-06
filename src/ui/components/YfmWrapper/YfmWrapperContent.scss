@@ -24,6 +24,11 @@
         font-weight: 500;
     }
 
+    h6 {
+        // reset to the default value in most browsers, because the default value for Mac OS is too high
+        margin-block-start: 1.67em;
+    }
+
     img {
         background: transparent;
     }
@@ -62,6 +67,15 @@
 
     .yfm:not(.yfm-term_title):not(.yfm-term_dfn) {
         width: 100%;
+    }
+
+    /**
+     * unset styles from @diplodoc/transform to fix clipboard button position on hover
+     * https://github.com/diplodoc-platform/transform/issues/700
+     */
+    .yfm-clipboard:hover .yfm-clipboard-button {
+        min-height: unset;
+        min-width: unset;
     }
 }
 

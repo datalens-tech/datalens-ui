@@ -24,7 +24,7 @@ export async function renameEntry(entryDialoguesRef: EntryDialoguesRef, entry: M
             dialog: EntryDialogName.Rename,
             dialogProps: {
                 entryId: entry.entryId,
-                initName: entry.name || getEntryNameByKey({key: entry.key, index: -1}),
+                initName: entry.name || getEntryNameByKey({key: entry.key}),
             },
         });
 

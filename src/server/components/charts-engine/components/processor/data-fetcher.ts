@@ -18,7 +18,6 @@ import {
     SERVICE_USER_ACCESS_TOKEN_HEADER,
     SuperuserHeader,
     WORKBOOK_ID_HEADER,
-    isEnabledServerFeature,
 } from '../../../../../shared';
 import {registry} from '../../../../registry';
 import type {CacheClient} from '../../../cache-client';
@@ -557,9 +556,8 @@ export class DataFetcher {
             source: loggedSource,
         };
 
-        const useChartsEngineLogin = Boolean(
-            isEnabledServerFeature(ctx, Feature.UseChartsEngineLogin),
-        );
+        const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
+        const useChartsEngineLogin = Boolean(isEnabledServerFeature(Feature.UseChartsEngineLogin));
 
         if (useChartsEngineLogin && userLogin) {
             loggedInfo.login = userLogin;

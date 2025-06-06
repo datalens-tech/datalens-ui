@@ -1,15 +1,30 @@
 import React from 'react';
 
-import {Route, Switch} from 'react-router-dom';
+import {Route, Switch, useLocation} from 'react-router-dom';
+import withErrorPage from 'ui/components/ErrorPage/withErrorPage';
 
 import {UNIT_ROUTE} from '../constants/routes';
 
-export function App() {
+import {AllPage, CardPage, LandingPage} from './pages';
+
+function AppContent() {
+    const {pathname} = useLocation();
+
+    React.useEffect(() => {
+        window.scrollTo({
+            top: 0,
+            left: 0,
+            behavior: 'instant',
+        });
+    }, [pathname]);
+
     return (
         <Switch>
-            <Route path={UNIT_ROUTE.ROOT} render={() => <div>Root page</div>} />
-            <Route path={UNIT_ROUTE.ALL} render={() => <div>All entries</div>} />
-            <Route path={UNIT_ROUTE.ENTRY} render={() => <div>Entry or 404</div>} />
+            <Route exact path={UNIT_ROUTE.ROOT} render={() => <LandingPage />} />
+            <Route exact path={UNIT_ROUTE.ALL} render={() => <AllPage />} />
+            <Route exact path={UNIT_ROUTE.ENTRY} render={() => <CardPage />} />
         </Switch>
     );
 }
+
+export const App = withErrorPage(AppContent, undefined, {height: '100%'});

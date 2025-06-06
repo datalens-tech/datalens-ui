@@ -140,7 +140,7 @@ export interface EntityRequestOptions {
         controlData?: {
             id: string;
             tabId?: string;
-            groupId?: string;
+            widgetId?: string;
         };
         workbookId?: WorkbookId;
     };
@@ -819,16 +819,16 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             loadedData: (Widget & ChartsData) | {};
             propsData: ChartKitProps<ChartsProps, ChartsData>;
         },
-        {extraParams = {}, urlPostfix = '', idPrefix = ''},
+        {extraParams = {}, idPrefix = ''},
     ) {
-        let url = urlPostfix;
+        let url = idPrefix;
 
         let id = propsData.id;
         if (!id && loadedData && 'entryId' in loadedData) {
             id = loadedData.entryId;
         }
 
-        url += id ? idPrefix + id : propsData.source;
+        url += id ? id : propsData.source;
 
         const query = URI.makeQueryString({...propsData.params, ...extraParams});
 

@@ -50,7 +50,6 @@ export {
     updateGSheetSource,
     updateGSheetItem,
     setGSheetItemsAndFormSources,
-    handleReplacedSources,
     gsheetToSourcesInfo,
 } from './misc-actions';
 export type {UpdateGSheetItemArgs} from './misc-actions';

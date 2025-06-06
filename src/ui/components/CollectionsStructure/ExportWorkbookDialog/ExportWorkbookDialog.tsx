@@ -1,44 +1,53 @@
 import React from 'react';
 
-import {Dialog, Flex, Loader} from '@gravity-ui/uikit';
+import {Button, Dialog, Flex, Link, Loader, spacing} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {DIALOG_DEFAULT} from 'ui/components/DialogDefault/DialogDefault';
 import {ProgressBar} from 'ui/components/ProgressBar/ProgressBar';
 import {ViewError} from 'ui/components/ViewError/ViewError';
+import {useMountedState} from 'ui/hooks';
 import type {AppDispatch} from 'ui/store';
 import {
+    cancelExportProcess,
     exportWorkbook,
     getExportProgress,
+    getExportResult,
     resetExportWorkbook,
 } from 'ui/store/actions/collectionsStructure';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {
     selectExportData,
-    selectExportWorkbook,
+    selectExportError,
     selectExportWorkbookStatus,
-    selectGetExportProgress,
+    selectGetExportProgressData,
+    selectGetExportProgressEntriesMap,
+    selectGetExportResultLoading,
 } from 'ui/store/selectors/collectionsStructure';
+import {formDocsEndpointDL} from 'ui/utils/docs';
 
 import DialogManager from '../../DialogManager/DialogManager';
 import {EntriesNotificationCut} from '../components/EntriesNotificationCut/EntriesNotificationCut';
-import {transformNotifications} from '../components/EntriesNotificationCut/helpers';
+import {useNotificationsAndDetails} from '../hooks/useNotificationsAndDetails';
 import type {ImportExportStatus} from '../types';
 
 import {ExportInfo} from './ExportInfo/ExportInfo';
+import {downloadObjectAsJSON} from './utils';
 
 import './ExportWorkbookDialog.scss';
 
 const b = block('export-workbook-file-dialog');
 
 const i18n = I18n.keyset('component.workbook-export-dialog.view');
+const notificationsI18n = I18n.keyset('component.workbook-export.notifications');
 
 const GET_EXPORT_PROGRESS_INTERVAL = 1000;
 
 export type Props = {
     open: boolean;
     workbookId: string;
+    workbookTitle: string;
     onClose: () => void;
 };
 
@@ -80,31 +89,39 @@ const getCaption = (view: DialogView, status: ImportExportStatus) => {
     }
 };
 
-export const ExportWorkbookDialog: React.FC<Props> = ({workbookId, open, onClose}) => {
+export const ExportWorkbookDialog: React.FC<Props> = ({
+    workbookId,
+    workbookTitle,
+    open,
+    onClose,
+}) => {
     const dispatch: AppDispatch = useDispatch();
 
     const [view, setView] = React.useState<DialogView>('info');
     const status = useSelector(selectExportWorkbookStatus);
 
-    const exportData = useSelector(selectExportData);
+    const dialogRef = React.useRef<HTMLDivElement>(null);
 
-    const {error} = useSelector(selectExportWorkbook);
-    const {data: progressData} = useSelector(selectGetExportProgress);
+    const error = useSelector(selectExportError);
+    const isResultLoading = useSelector(selectGetExportResultLoading);
+    const exportData = useSelector(selectExportData);
+    const progressData = useSelector(selectGetExportProgressData);
+    const notificationEntriesMap = useSelector(selectGetExportProgressEntriesMap);
+
     const progress = progressData?.progress;
     const notifications = progressData?.notifications;
 
     const exportProgressTimeout = React.useRef<ReturnType<typeof setTimeout> | null>(null);
-    const isMounted = React.useCallback(() => true, []);
+    const isMounted = useMountedState();
 
-    const preparedNotifications = React.useMemo(() => {
-        if (!notifications) {
-            return [];
-        }
+    const {notificationDetails, preparedNotifications, handleShowDetails} =
+        useNotificationsAndDetails({
+            notifications,
+            exportId: exportData?.exportId,
+        });
 
-        return transformNotifications(notifications);
-    }, [notifications]);
-
-    const isLoading = status === 'loading' || status === 'pending';
+    const isExportLoading = status === 'loading' || status === 'pending';
+    const isButtonLoading = isExportLoading || isResultLoading;
 
     React.useEffect(() => {
         if (open) {
@@ -140,18 +157,20 @@ export const ExportWorkbookDialog: React.FC<Props> = ({workbookId, open, onClose
     );
 
     const handleCancel = React.useCallback(() => {
-        if (isLoading) {
+        if (isExportLoading && exportData?.exportId) {
             dispatch(
                 openDialog({
                     id: DIALOG_DEFAULT,
                     props: {
                         open: true,
                         onApply: () => {
-                            // TODO: cancel request
+                            dispatch(cancelExportProcess(exportData.exportId));
                             dispatch(closeDialog());
                             onClose();
                         },
-                        onCancel: () => dispatch(closeDialog()),
+                        onCancel: () => {
+                            dispatch(closeDialog());
+                        },
                         message: i18n('label_cancel-export-description'),
                         textButtonApply: i18n('button_cancel-export'),
                         textButtonCancel: i18n('button_back-to-export'),
@@ -192,27 +211,47 @@ export const ExportWorkbookDialog: React.FC<Props> = ({workbookId, open, onClose
         }
 
         onClose();
-    }, [dispatch, exportData?.exportId, isLoading, onClose, status]);
+    }, [dispatch, exportData?.exportId, isExportLoading, onClose, status]);
+
+    const startExport = React.useCallback(async () => {
+        const exportResult = await dispatch(exportWorkbook({workbookId}));
+        if (exportResult && exportResult.exportId) {
+            setView('export');
+            pollExportStatus(exportResult.exportId);
+        }
+    }, [dispatch, pollExportStatus, workbookId]);
+
+    const getExportFile = React.useCallback(async () => {
+        if (exportData?.exportId) {
+            const result = await dispatch(getExportResult({exportId: exportData?.exportId}));
+            if (result && result.status === 'success') {
+                downloadObjectAsJSON({obj: result.data, name: workbookTitle, dialogRef});
+                onClose();
+            }
+        }
+    }, [dispatch, exportData?.exportId, onClose, workbookTitle]);
 
     const handleApply = React.useCallback(async () => {
         if (view === 'info') {
-            setView('export');
-            const exportResult = await dispatch(exportWorkbook({workbookId}));
-            if (exportResult && exportResult.exportId) {
-                pollExportStatus(exportResult.exportId);
-            }
+            startExport();
             return;
         }
 
         if (status === 'success') {
-            // await donwload file
-
-            onClose();
+            getExportFile();
         }
-    }, [dispatch, onClose, pollExportStatus, status, view, workbookId]);
+    }, [getExportFile, startExport, status, view]);
+
+    const handleRetry = React.useCallback(() => {
+        if (exportData?.exportId) {
+            pollExportStatus(exportData.exportId);
+        }
+    }, [exportData?.exportId, pollExportStatus]);
 
     const cancelButtonText =
-        view === 'info' || isLoading ? i18n('button_cancel') : i18n('button_close');
+        view === 'info' || isExportLoading ? i18n('button_cancel') : i18n('button_close');
+
+    const docsUrl = formDocsEndpointDL('/workbooks-collections/export-import-notifications');
 
     const renderBody = () => {
         if (view === 'info') {
@@ -229,10 +268,7 @@ export const ExportWorkbookDialog: React.FC<Props> = ({workbookId, open, onClose
                 );
             case 'success':
             case 'notification-error':
-                if (!notifications) {
-                    return null;
-                }
-                if (!preparedNotifications.length) {
+                if (!preparedNotifications.length && status === 'success') {
                     return (
                         <EntriesNotificationCut
                             title={i18n('label_success-export')}
@@ -241,34 +277,66 @@ export const ExportWorkbookDialog: React.FC<Props> = ({workbookId, open, onClose
                     );
                 }
                 return (
-                    <Flex direction="column" gap={4} className={b('notifications')}>
-                        {preparedNotifications.map((notification) => (
-                            <EntriesNotificationCut
-                                key={notification.code}
-                                title={notification.message}
-                                level={notification.level}
-                                entries={notification.entries}
-                            />
-                        ))}
-                    </Flex>
+                    <React.Fragment>
+                        <Flex direction="column" gap={4} className={b('notifications')}>
+                            {preparedNotifications.map(({code, message, level, entries}) => (
+                                <EntriesNotificationCut
+                                    key={code}
+                                    title={message}
+                                    level={level}
+                                    entries={entries}
+                                    code={code}
+                                    entriesMap={notificationEntriesMap}
+                                />
+                            ))}
+                        </Flex>
+                        {docsUrl && (
+                            <Link target="_blank" href={docsUrl} className={spacing({mt: 4})}>
+                                {notificationsI18n('label_info-documentation-notifications')}
+                            </Link>
+                        )}
+                    </React.Fragment>
                 );
             case 'fatal-error':
-            default:
-                return <ViewError containerClassName={b('error-content')} error={error} size="s" />;
+            default: {
+                const handleRetryFn = exportData?.exportId ? handleRetry : undefined;
+
+                return (
+                    <ViewError
+                        showDebugInfo={false}
+                        containerClassName={b('error-content')}
+                        error={error}
+                        size="s"
+                        exportId={exportData?.exportId}
+                        retry={handleRetryFn}
+                    />
+                );
+            }
         }
     };
 
     return (
-        <Dialog className={b()} open={open} onClose={handleCancel} onEscapeKeyDown={handleCancel}>
+        <Dialog className={b()} open={open} onClose={handleCancel}>
             <Dialog.Header caption={getCaption(view, status)} />
-            <Dialog.Body>{renderBody()}</Dialog.Body>
+            <Dialog.Body>
+                <Flex direction="column" ref={dialogRef}>
+                    {renderBody()}
+                </Flex>
+            </Dialog.Body>
             <Dialog.Footer
                 textButtonApply={getApplyButtonText(view, status)}
                 textButtonCancel={cancelButtonText}
                 onClickButtonApply={handleApply}
                 onClickButtonCancel={handleCancel}
-                propsButtonApply={{loading: isLoading}}
-            />
+                propsButtonApply={{loading: isButtonLoading}}
+                propsButtonCancel={{disabled: isResultLoading}}
+            >
+                {notificationDetails && (
+                    <Button size="l" view="outlined" onClick={handleShowDetails}>
+                        {notificationsI18n('button_show-details')}
+                    </Button>
+                )}
+            </Dialog.Footer>
         </Dialog>
     );
 };

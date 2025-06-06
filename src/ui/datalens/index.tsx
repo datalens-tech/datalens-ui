@@ -17,6 +17,7 @@ import {MobileHeaderComponent} from 'ui/components/MobileHeader/MobileHeaderComp
 import {DL} from 'ui/constants';
 import {useClearReloadedQuery} from '../units/auth/hooks/useClearReloadedQuery';
 import {reducer} from 'ui/units/auth/store/reducers';
+import {useIframeRender} from './hooks';
 
 import {getSdk} from '../libs/schematic-sdk';
 import {
@@ -197,6 +198,8 @@ const DatalensPage: React.FC = () => {
     const showMobileHeader = !isEmbeddedMode() && DL.IS_MOBILE;
     // const showMobileHeader =
     //     !isEmbeddedMode() && DL.IS_MOBILE && !DL.IS_NOT_AUTHENTICATED && !DL.IS_AUTH_PAGE;
+
+    useIframeRender();
 
     if (token && showMobileHeader && superUser) {
         return <MobileHeaderComponent renderContent={() => <DatalensPageView token={token} setToken={setToken} superUser={superUser} setSuperUser={setSuperUser} />} />;

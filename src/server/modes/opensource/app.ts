@@ -1,16 +1,17 @@
 import {createUikitPlugin} from '@gravity-ui/app-layout';
-import type {AppMiddleware, AppRoutes} from '@gravity-ui/expresskit';
-import {AuthPolicy, ExpressKit} from '@gravity-ui/expresskit';
+import type {AppMiddleware} from '@gravity-ui/expresskit';
+import {AuthPolicy} from '@gravity-ui/expresskit';
 import type {NodeKit} from '@gravity-ui/nodekit';
 import passport from 'passport';
 
 import {DASH_API_BASE_URL, PUBLIC_API_DASH_API_BASE_URL} from '../../../shared';
-import {isChartsMode, isDatalensMode, isFullMode} from '../../app-env';
+import {isApiMode, isChartsMode, isDatalensMode, isFullMode} from '../../app-env';
 import {getAppLayoutSettings} from '../../components/app-layout/app-layout-settings';
 import {createLayoutPlugin} from '../../components/app-layout/plugins/layout';
 import type {ChartsEngine} from '../../components/charts-engine';
 import {initZitadel} from '../../components/zitadel/init-zitadel';
 import {xlsxConverter} from '../../controllers/xlsx-converter';
+import {getExpressKit} from '../../expresskit';
 import {
     beforeAuthDefaults,
     createAppLayoutMiddleware,
@@ -26,9 +27,6 @@ import {configurableRequestWithDatasetPlugin} from '../charts/plugins/request-wi
 
 import {setSubrequestHeaders} from './middlewares';
 import {getRoutes} from './routes';
-import { US } from '../../components/sdk';
-
-const { auth } = require('express-openid-connect');
 
 export default function initApp(nodekit: NodeKit) {
     const beforeAuth: AppMiddleware[] = [];
@@ -50,6 +48,10 @@ export default function initApp(nodekit: NodeKit) {
         chartsEngine = initChartsApp({nodekit, beforeAuth, afterAuth});
     }
 
+    if (isFullMode || isApiMode) {
+        initApiApp({beforeAuth, afterAuth});
+    }
+
     const extendedRoutes = getRoutes({
         ctx: nodekit.ctx,
         chartsEngine,
@@ -58,56 +60,7 @@ export default function initApp(nodekit: NodeKit) {
         afterAuth,
     });
 
-    const routes: AppRoutes = {};
-    Object.keys(extendedRoutes).forEach((key) => {
-        const {route, ...params} = extendedRoutes[key];
-        routes[route] = params;
-    });
-
-    var expressKit = new ExpressKit(nodekit, routes);
-  
-    var oidc_suffix = ['', '_2', '_3', '_4']
-
-    for(var i = 0; i < oidc_suffix.length; i++) {
-        var config:any = nodekit.config;
-        if(config['oidc' + oidc_suffix[i]]) {
-            var oidcRoutes = auth({
-                issuerBaseURL: config['oidc_issuer' + oidc_suffix[i]],
-                baseURL: config['oidc_base_url' + oidc_suffix[i]],
-                clientID: config['oidc_client_id' + oidc_suffix[i]],
-                secret: config['oidc_secret' + oidc_suffix[i]],
-                clientSecret: config['oidc_secret' + oidc_suffix[i]],
-                idpLogout: true,
-                authorizationParams: {
-                    response_type: 'code',
-                    scope: 'openid email profile'
-                },
-            });
-
-            expressKit.express.get(`/auth/v${i+1}/oidc/callback`, async (req, res, next) => {
-                if(req.query['error'] == 'access_denied') {
-                    res.redirect(`/?x-rpc-authorization=`)
-                }
-                next();
-            });
-            expressKit.express.use(`/auth/v${i+1}/oidc`, oidcRoutes);
-            expressKit.express.get(`/auth/v${i+1}/oidc`, async (req, res, next) => {
-                var r:any = req;
-
-                if(await r.oidc.isAuthenticated()) {
-                    const token: string = r.oidc.accessToken.access_token;
-                    const user = await r.oidc.user;
-                    var result = await US.oidcAuth({"login": user.sub, "token": token, "data": Buffer.from(JSON.stringify(user)).toString('base64') }, req.ctx)
-                    if(result && result.data) {
-                        return res.redirect(`/?x-rpc-authorization=${result.data.token}`)
-                    }
-                }
-                next();
-            });
-        }
-    }
-
-    return expressKit;
+    return getExpressKit({extendedRoutes, nodekit});
 }
 
 function initDataLensApp({
@@ -177,4 +130,18 @@ function initChartsApp({
         chartsEngine.initPreloading(nodekit.ctx);
     }
     return chartsEngine;
+}
+
+function initApiApp({
+    beforeAuth,
+    afterAuth,
+}: {
+    beforeAuth: AppMiddleware[];
+    afterAuth: AppMiddleware[];
+}) {
+    // As charts app execpt chartEngine
+    if (isApiMode) {
+        afterAuth.push(xDlContext(), setSubrequestHeaders, patchLogger, getCtxMiddleware());
+        beforeAuth.push(beforeAuthDefaults);
+    }
 }

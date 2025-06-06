@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {ArrowLeft, PencilToLine} from '@gravity-ui/icons';
+import type {DropdownMenuItemAction} from '@gravity-ui/uikit';
 import {Button, Icon, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -67,7 +68,7 @@ type UseLayoutArgs = {
     resetSelected: () => void;
     fetchCollectionInfo: () => void;
     fetchStructureItems: () => void;
-    handleCreateWorkbook: () => void;
+    handleCreateWorkbook: DropdownMenuItemAction<void>;
     handeCloseMoveDialog: (structureChanged: boolean) => void;
     updateAllCheckboxes: (checked: boolean) => void;
 };

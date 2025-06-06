@@ -81,6 +81,7 @@ export type UiSandboxRuntimeOptions = {
 export interface WidgetBase {
     type: string;
     entryId?: string;
+    revId?: string;
     data?: object;
     params: StringParams;
     unresolvedParams?: StringParams;
@@ -273,6 +274,7 @@ export type TableWidgetData = WidgetBaseWithData &
             useMarkup?: boolean;
             useHtml?: boolean;
             size?: WidgetSizeType;
+            preserveWhiteSpace?: boolean;
         };
         unresolvedParams?: StringParams;
     };

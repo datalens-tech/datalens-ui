@@ -6,6 +6,7 @@ import get from 'lodash/get';
 import {useSelector} from 'react-redux';
 import {ControlQA, Feature, type StringParams} from 'shared';
 import {ChartInfoIcon} from 'ui/components/Widgets/Chart/components/ChartInfoIcon';
+import {URL_OPTIONS} from 'ui/constants';
 import type {ChartKitDataProvider} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
 import type {GetChartkitMenuByType} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
 import {selectWorkbookEditPermission} from 'ui/units/workbooks/store/selectors';
@@ -58,6 +59,12 @@ export type HeaderProps = Pick<
 
 const b = block('dl-widget');
 
+function hasNoControlsParamVal(val: string) {
+    const paramVal = Array.isArray(val) ? val[0] : val;
+    // in case of setting params directly (ex. on Params tab)
+    return ['1', 'true', 1, true].includes(paramVal);
+}
+
 export const Header = (props: HeaderProps) => {
     const {
         isMenuAvailable,
@@ -101,8 +108,11 @@ export const Header = (props: HeaderProps) => {
      * but we need to toggle show/hide comments menu
      */
     const hideChartComments = Boolean((loadedData?.config as GraphWidget['config'])?.hideComments);
+    const hideControlsByParam = hasNoControlsParamVal(
+        get(dataProps?.params || '', URL_OPTIONS.NO_CONTROLS),
+    );
 
-    const canBeShownMenu = isMenuAvailable && widgetDataRef;
+    const canBeShownMenu = isMenuAvailable && widgetDataRef && !hideControlsByParam;
 
     const configMenu = menuType
         ? getChartkitMenu({

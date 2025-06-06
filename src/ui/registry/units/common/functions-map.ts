@@ -28,6 +28,7 @@ import type {EntrySettings} from '../../../components/Navigation/Base/configure'
 import type {NavigationQuickItem} from '../../../components/Navigation/Base/types';
 import type {NavigationMinimalProps} from '../../../components/Navigation/NavigationMinimal';
 import type {PlaceParameterItem} from '../../../components/Navigation/types';
+import type {GetUsersSuggestItems} from '../../../components/UsersSuggest/types';
 import type {ConfigSdk, HeadersSdk} from '../../../libs/sdk/types';
 import type {AppThunkAction} from '../../../store';
 
@@ -168,5 +169,7 @@ export const commonFunctionsMap = {
     renderDialogRelatedEntitiesAlertHint:
         makeFunctionTemplate<RenderDialogRelatedEntitiesAlertHint>(),
     getAdditionalChartkitErrorContent: makeFunctionTemplate<GetAdditionalChartkitErrorContent>(),
+    getCurrentUserRights: makeFunctionTemplate<() => {admin: boolean}>(),
     csvExportAction: makeFunctionTemplate<CsvExportAction>(),
+    getUsersSuggestItems: makeFunctionTemplate<GetUsersSuggestItems>(),
 } as const;

@@ -32,7 +32,7 @@ import {getDatasetIdAndLayerIdFromKey, getFieldList} from '../../helpers/misc';
 import prepareBackendPivotTableData from '../preparers/backend-pivot-table';
 import type {PivotData} from '../preparers/backend-pivot-table/types';
 import {prepareD3BarX, prepareHighchartsBarX} from '../preparers/bar-x';
-import {prepareD3BarY, prepareHighchartsBarY} from '../preparers/bar-y';
+import {prepareGravityChartsBarY, prepareHighchartsBarY} from '../preparers/bar-y';
 import prepareFlatTableData from '../preparers/flat-table';
 import prepareGeopointData from '../preparers/geopoint';
 import prepareGeopointWithClusterData from '../preparers/geopoint-with-cluster';
@@ -500,7 +500,7 @@ function prepareSingleResult({
 
         case WizardVisualizationId.BarYD3:
         case WizardVisualizationId.BarY100pD3: {
-            prepare = prepareD3BarY;
+            prepare = prepareGravityChartsBarY;
             rowsLimit = 75000;
             break;
         }
@@ -961,7 +961,6 @@ export const buildGraphPrivate = (args: {
         const resultData = mergedData[0].result;
         const fields = mergedData[0].fields;
         const notifications = mergedData[0].notifications;
-        bounds = result && result[0] && result[0].bounds;
 
         result = prepareSingleResult({
             resultData,
@@ -977,6 +976,10 @@ export const buildGraphPrivate = (args: {
             palettes,
             features,
         });
+
+        if (result?.[0]?.bounds) {
+            bounds = result[0].bounds;
+        }
     }
 
     if (bounds) {

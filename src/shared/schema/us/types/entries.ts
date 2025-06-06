@@ -141,13 +141,11 @@ export interface GetEntriesResponse {
     entries: GetEntriesEntryResponse[];
 }
 
-export interface GetEntriesArgs extends EntriesCommonArgs {
-    scope: string;
-    ids?: string | string[];
+export type GetEntriesArgs = EntriesCommonArgs & {
     excludeLocked?: boolean;
     includeData?: boolean;
     includeLinks?: boolean;
-}
+} & ({scope: string; ids?: string | string[]} | {scope?: never; ids: string[]});
 
 export type MoveEntryResponse = EntryFields[];
 
