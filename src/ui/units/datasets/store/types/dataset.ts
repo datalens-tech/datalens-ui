@@ -58,7 +58,7 @@ import type {
     RESET_DATASET_STATE,
     SET_CURRENT_TAB,
     SET_DATASET_REVISION_MISMATCH,
-    SET_DATA_EXPORT_FORBIDDEN,
+    SET_DATA_EXPORT_ENABLED,
     SET_EDIT_HISTORY_STATE,
     SET_FREEFORM_SOURCES,
     SET_INITIAL_SOURCES,
@@ -800,9 +800,9 @@ export type SetTemplateEnabled = {
 };
 
 export type SetDataExportForbidden = {
-    type: typeof SET_DATA_EXPORT_FORBIDDEN;
+    type: typeof SET_DATA_EXPORT_ENABLED;
     payload: {
-        dataExportForbidden: boolean;
+        dataExportEnabled: boolean;
     } & EditHistoryOptionsProperty;
 };
 

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Button} from '@gravity-ui/uikit';
+import {Button, spacing} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {get} from 'lodash';
@@ -11,12 +11,13 @@ import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
-import type {ConnectorType} from 'shared';
+import {type ConnectorType, Feature} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {PageTitle, SlugifyUrl, Utils} from 'ui';
 import {registry} from 'ui/registry';
 import {openDialogErrorWithTabs} from 'ui/store/actions/dialog';
 import type {DataLensApiError} from 'ui/typings';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {ErrorViewProps} from '../';
 import {ErrorView, Router, WrappedLoader} from '../';
@@ -35,6 +36,7 @@ import {getConnItemByType} from '../../utils';
 
 import ConnPanelActions from './ConnPanelActions';
 import {UnloadConfirmation} from './components';
+import {ConnSettings} from './components/ConnSettings';
 import {useApiErrors} from './useApiErrors';
 import {isListPageOpened, isS3BasedConnForm} from './utils';
 
@@ -135,13 +137,14 @@ const PageComponent = (props: PageProps) => {
     const listPageOpened = isListPageOpened(location.pathname);
     const s3BasedFormOpened = isS3BasedConnForm(connectionData, type);
 
+    const isExportSettingsFeatureEnabled = isEnabledFeature(Feature.EnableExportSettings);
+
+    const showSettings = !connector?.backend_driven_form;
     let isShowCreateButtons = true;
 
     if (entry?.workbookId && !(entry as {fake?: boolean}).fake) {
         isShowCreateButtons = Boolean(entry.permissions?.edit);
     }
-
-    const {AdditionalConnectionFormActions} = registry.connections.components.getAll();
 
     React.useEffect(() => {
         return () => {
@@ -173,11 +176,13 @@ const PageComponent = (props: PageProps) => {
                     <ActionPanel
                         entry={entry}
                         rightItems={[
-                            <AdditionalConnectionFormActions
-                                key="additional-actions"
-                                entry={entry}
-                                connectorType={type}
-                            />,
+                            showSettings && isExportSettingsFeatureEnabled && (
+                                <ConnSettings
+                                    className={spacing({mr: 2})}
+                                    key="additional-actions"
+                                    connectionId={extractedEntryId}
+                                />
+                            ),
                             isShowCreateButtons && (
                                 <ConnPanelActions
                                     key="conn-panel-actions"

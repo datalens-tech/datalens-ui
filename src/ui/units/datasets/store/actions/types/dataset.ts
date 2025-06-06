@@ -96,4 +96,4 @@ export const SET_VALIDATION_STATE = Symbol('dataset/SET_VALIDATION_STATE');
 
 export const SET_TEMPLATE_ENABLED = Symbol('dataset/SET_TEMPLATE_ENABLED');
 
-export const SET_DATA_EXPORT_FORBIDDEN = Symbol('dataset/SET_DATA_EXPORT_FORBIDDEN');
+export const SET_DATA_EXPORT_ENABLED = Symbol('dataset/SET_DATA_EXPORT_ENABLED');

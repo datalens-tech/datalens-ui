@@ -53,7 +53,7 @@ import {
     RENAME_DATASET,
     SET_CURRENT_TAB,
     SET_DATASET_REVISION_MISMATCH,
-    SET_DATA_EXPORT_FORBIDDEN,
+    SET_DATA_EXPORT_ENABLED,
     SET_EDIT_HISTORY_STATE,
     SET_FREEFORM_SOURCES,
     SET_INITIAL_SOURCES,
@@ -1363,13 +1363,13 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
             };
         }
 
-        case SET_DATA_EXPORT_FORBIDDEN: {
-            const {dataExportForbidden} = action.payload;
+        case SET_DATA_EXPORT_ENABLED: {
+            const {dataExportEnabled} = action.payload;
             return {
                 ...state,
                 content: {
                     ...state.content,
-                    data_export_forbidden: dataExportForbidden,
+                    data_export_forbidden: !dataExportEnabled,
                 },
             };
         }
