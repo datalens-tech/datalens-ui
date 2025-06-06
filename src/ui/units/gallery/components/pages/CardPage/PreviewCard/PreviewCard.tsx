@@ -9,6 +9,8 @@ import './PreviewCard.scss';
 
 const b = block('card-image-preview');
 
+export const CARD_IMAGE_PREVIEW_HEIGHT = 82;
+
 type PreviewCardProps = {
     selected: boolean;
     onSelected: (image: string) => void;
@@ -23,6 +25,7 @@ export const PreviewCard = React.forwardRef<HTMLDivElement, PreviewCardProps>(fu
     return (
         <Card
             selected={selected}
+            style={{height: CARD_IMAGE_PREVIEW_HEIGHT}}
             className={b({size})}
             type="selection"
             view="outlined"

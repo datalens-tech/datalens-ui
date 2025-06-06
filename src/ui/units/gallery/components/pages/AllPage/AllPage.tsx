@@ -239,10 +239,14 @@ export function AllPage() {
             >
                 <Row space="0" style={{marginTop: 24}}>
                     <Col s="12">
-                        <PageHeader title={i18n('title_all_entries')} to={UNIT_ROUTE.ROOT} />
+                        <PageHeader
+                            activeMediaQuery={activeMediaQuery}
+                            title={i18n('title_all_entries')}
+                            to={UNIT_ROUTE.ROOT}
+                        />
                     </Col>
                 </Row>
-                <Row space="6" style={{marginTop: 0, marginBottom: 24}}>
+                <Row space="4" style={{marginTop: 0, marginBottom: 24}}>
                     <Col m="6" s="12">
                         <TextInput
                             defaultValue={search}

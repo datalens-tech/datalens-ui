@@ -122,7 +122,6 @@ function PromoBlockItem({
             <Card
                 className={b('promo-block-item-flex', {primary, media: activeMediaQuery})}
                 view="clear"
-                type="action"
             >
                 <div className={b('promo-block-item-title', {primary})}>
                     {title}

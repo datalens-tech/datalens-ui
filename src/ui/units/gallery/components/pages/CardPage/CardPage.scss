@@ -88,29 +88,24 @@ $block: '.#{variables.$ns}-card';
         width: 100%;
         height: 418px;
         object-fit: cover;
-        object-position: top;
+        object-position: left top;
         border-radius: var(--g-border-radius-l);
     }
 
     &__image-card-preview-flex {
-        flex-direction: column;
         height: 432px;
+        flex-direction: column;
         overflow: auto;
         row-gap: 16px;
 
         &_media_s {
             flex-direction: row;
-            height: 96px;
             column-gap: 16px;
         }
     }
 
     &__icon-with-text-icon {
         margin: 6px;
-    }
-
-    &__card-description-collapse {
-        width: fit-content;
     }
 
     &__card-info-flex {
@@ -120,10 +115,6 @@ $block: '.#{variables.$ns}-card';
             flex-direction: column;
             align-items: flex-start;
         }
-    }
-
-    &__md.yfm {
-        @include text-body-2();
     }
 
     &__contact-partner-btn {

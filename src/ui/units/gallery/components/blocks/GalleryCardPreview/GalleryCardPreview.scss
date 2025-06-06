@@ -8,6 +8,16 @@ $block: '.#{variables.$ns}-card-preview';
     text-decoration: none;
     color: inherit;
 
+    &:hover {
+        & #{$block}__card {
+            border-color: var(--g-color-line-generic-hover);
+        }
+
+        & #{$block}__info {
+            border-color: var(--g-color-line-generic-hover);
+        }
+    }
+
     &__card {
         display: flex;
         flex-direction: column;
@@ -15,10 +25,6 @@ $block: '.#{variables.$ns}-card-preview';
         border: 1px solid var(--g-color-line-generic);
         overflow: hidden;
         line-height: 0;
-
-        &:not(:hover) {
-            box-shadow: none;
-        }
     }
 
     &__image {
