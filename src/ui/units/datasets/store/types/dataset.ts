@@ -799,7 +799,7 @@ export type SetTemplateEnabled = {
     } & EditHistoryOptionsProperty;
 };
 
-export type SetDataExportForbidden = {
+export type SetDataExportEnabled = {
     type: typeof SET_DATA_EXPORT_ENABLED;
     payload: {
         dataExportEnabled: boolean;
@@ -875,4 +875,4 @@ export type DatasetReduxAction =
     | SetLastModifiedTab
     | SetValidationState
     | SetTemplateEnabled
-    | SetDataExportForbidden;
+    | SetDataExportEnabled;
