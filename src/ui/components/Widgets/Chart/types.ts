@@ -1,5 +1,6 @@
 import type React from 'react';
 
+import type {ChartKitRef} from '@gravity-ui/chartkit';
 import type {CkHighchartsSeriesOptionsType, Highcharts} from '@gravity-ui/chartkit/highcharts';
 import type {CancelTokenSource} from 'axios';
 import type {Split} from 'react-split-pane';
@@ -124,27 +125,24 @@ type ChartKitBaseWrapperProps = ChartsProps & {
     needRenderContentControls?: boolean;
 };
 
-export type ChartWidgetProviderPropsWithRefProps = Omit<
-    WidgetPluginProps,
-    'debouncedAdjustWidgetLayout'
-> &
+export type ChartWidgetProviderPropsWithRefProps = ChartRefProp &
+    Omit<WidgetPluginProps, 'debouncedAdjustWidgetLayout' | 'forwardedRef'> &
     ChartsProps & {
-        forwardedRef: React.RefObject<ChartKit>;
         usageType: 'widget';
     };
 
-export type ChartProviderPropsWithRefProps = Partial<Omit<ChartKitBaseWrapperProps, 'onLoad'>> &
+export type ChartProviderPropsWithRefProps = ChartRefProp &
+    Partial<Omit<ChartKitBaseWrapperProps, 'onLoad'>> &
     ChartsProps & {
-        forwardedRef: React.RefObject<ChartKit> | React.MutableRefObject<ChartKit | null>;
         usageType: 'chart';
         isPageHidden?: boolean;
         autoupdateInterval?: number;
     };
 
-export type ChartSelectorWithRefProps = Omit<WidgetPluginProps, 'debouncedAdjustWidgetLayout'> &
+export type ChartSelectorWithRefProps = ChartRefProp &
+    Omit<WidgetPluginProps, 'debouncedAdjustWidgetLayout'> &
     Partial<Omit<ChartKitBaseWrapperProps, 'onLoad'>> &
     ChartsProps & {
-        forwardedRef: React.RefObject<ChartKit>;
         usageType: 'control';
         widgetId: WidgetPluginProps['id'];
     };
@@ -159,7 +157,7 @@ export type ChartAlertProps = Pick<
 > &
     ChartsProps & {
         dataProvider: ChartKitDataProvider;
-        forwardedRef: React.RefObject<ChartKit>;
+        forwardedRef: React.RefObject<ChartKit | ChartKitRef>;
     };
 
 type ChartWidgetWithProviderProps = Omit<WidgetPluginProps, 'debouncedAdjustWidgetLayout'> &
@@ -170,6 +168,8 @@ type ChartWidgetWithProviderProps = Omit<WidgetPluginProps, 'debouncedAdjustWidg
 export type ChartWithProviderProps = ChartsProps & {
     dataProvider: ChartKitDataProvider;
 };
+
+type ChartRefProp = {forwardedRef: React.RefObject<ChartKit | ChartKitRef>};
 
 export type ChartWrapperWithRefProps =
     | ChartWidgetProviderPropsWithRefProps
@@ -188,7 +188,7 @@ export type ChartNoWidgetProps = ChartProviderPropsWithRefProps &
     ChartWithProviderProps &
     Omit<ChartKitBaseWrapperProps, 'onLoad'> & {
         rootNodeRef?: React.RefObject<HTMLDivElement>;
-        chartKitRef?: React.RefObject<ChartKit>;
+        chartKitRef?: React.RefObject<ChartKit | ChartKitRef>;
     };
 
 export type ChartWidgetPropsWithContext = ChartWidgetProviderPropsWithRefProps &
@@ -337,13 +337,24 @@ export type CurrentRequestStateItem = {
 
 export type CurrentRequestState = Record<string, CurrentRequestStateItem>;
 
-export type ChartSelectorWithWrapRefProps = {
-    reflow: (args: unknown) => void;
+// common props from useImperativeHandle in ChartSelector and ChartWidget
+type ChartWidgetCommonWrapRefProps = {
+    reflow: () => void;
     reload: (arg: {silentLoading?: boolean; noVeil?: boolean}) => void;
     getCurrentTabChartId: () => string;
     getMeta: () => Promise<ResolveWidgetControlDataRefArgs | null>;
 };
 
+export type ChartWidgetWithWrapRefProps = ChartWidgetCommonWrapRefProps & {
+    props: ChartWidgetProps;
+};
+
+export type ChartSelectorWithWrapRefProps = ChartWidgetCommonWrapRefProps & {
+    props: ChartSelectorWidgetProps;
+};
+
+// props from useImperativeHandle in Chart
 export type ChartWithWrapRefProps = {
+    reflow: () => void;
     reload: () => void;
 };
