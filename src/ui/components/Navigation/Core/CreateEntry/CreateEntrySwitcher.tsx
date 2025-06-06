@@ -8,8 +8,6 @@ import {CreateEntityButton} from 'shared';
 
 import {registry} from '../../../../registry';
 
-import type {CreateMenuValue} from './CreateEntry';
-
 const b = block('dl-navigation-create-entry');
 
 export const CreateEntrySwitcher = ({
@@ -19,7 +17,7 @@ export const CreateEntrySwitcher = ({
     buttonView,
 }: {
     place: string;
-    onClick: (value: CreateMenuValue, options?: Record<string, unknown>) => void;
+    onClick: React.MouseEventHandler<HTMLElement>;
     withMenu: boolean;
     buttonView?: ButtonView;
 }) => {
@@ -43,13 +41,7 @@ export const CreateEntrySwitcher = ({
                 'with-menu': withMenu,
                 action: buttonView === 'action',
             })}
-            onClick={
-                withMenu
-                    ? undefined
-                    : () => {
-                          onClick(targetPlace.value);
-                      }
-            }
+            onClick={onClick}
         >
             {targetPlace.buttonText} {withMenu && <Icon data={ChevronDown} />}
         </Button>

@@ -37,7 +37,6 @@ class DialogNeedReset extends React.Component<Props> {
                 <Dialog.Footer
                     preset={'default'}
                     showError={false}
-                    listenKeyEnter={false}
                     onClickButtonApply={this.onApply}
                     textButtonApply={i18n('button_apply')}
                     loading={false}

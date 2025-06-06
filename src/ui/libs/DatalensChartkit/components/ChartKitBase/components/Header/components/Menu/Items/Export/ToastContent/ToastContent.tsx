@@ -9,7 +9,7 @@ import {truncateTextWithEllipsis} from '../utils';
 
 import './ToastContent.scss';
 
-const toaster = new Toaster({className: 'djfsijlsfdjlf'});
+const toaster = new Toaster();
 
 const b = block('export-loading');
 

@@ -1,14 +1,14 @@
 import React from 'react';
 
-import type {RadioButtonOption} from '@gravity-ui/uikit';
-import {RadioButton} from '@gravity-ui/uikit';
+import type {SegmentedRadioGroupOptionProps} from '@gravity-ui/uikit';
+import {SegmentedRadioGroup as RadioButton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
 import './DialogRadioButtons.scss';
 
 type Props = {
     disabled?: boolean;
-    items: RadioButtonOption[];
+    items: SegmentedRadioGroupOptionProps[];
     value: string | undefined;
     onUpdate: (value: string) => void;
     stretched?: boolean;

@@ -98,7 +98,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
     const dispatch = useDispatch();
     const showDebugInfo = useSelector(selectDebugMode);
 
-    const aliasWarnButtonRef = React.useRef<HTMLElement | null>(null);
+    const aliasWarnButtonRef = React.useRef<HTMLButtonElement | null>(null);
 
     const [aliasWarnPopupOpen, setAliasWarnPopupOpen] = React.useState(false);
     const [searchValue, setSearchValue] = React.useState('');
@@ -589,7 +589,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                                     qa: DashCommonQa.RelationsDisconnectAllSelectors,
                                 },
                             ]}
-                            switcher={
+                            renderSwitcher={() => (
                                 <Button
                                     className={b('switcher-button')}
                                     view="normal"
@@ -602,7 +602,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                                         size={ICON_SIZE}
                                     />
                                 </Button>
-                            }
+                            )}
                         />
                         {Boolean(shownInvalidAliases?.length) && (
                             <React.Fragment>
@@ -619,7 +619,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                                 </Button>
                                 <Popup
                                     hasArrow={true}
-                                    anchorRef={aliasWarnButtonRef}
+                                    anchorElement={aliasWarnButtonRef.current}
                                     open={aliasWarnPopupOpen}
                                     placement="right"
                                     className={b('invalid-list-popup')}

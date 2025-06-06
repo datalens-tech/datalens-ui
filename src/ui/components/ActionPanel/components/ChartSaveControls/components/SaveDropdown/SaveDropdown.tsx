@@ -24,7 +24,7 @@ export const SaveDropdown: React.FC<SaveDropdownProps> = (props: SaveDropdownPro
             size="s"
             disabled={disabled}
             items={dropdownItems}
-            switcher={
+            renderSwitcher={() => (
                 <Button
                     className={b('switcher')}
                     view="action"
@@ -34,7 +34,7 @@ export const SaveDropdown: React.FC<SaveDropdownProps> = (props: SaveDropdownPro
                 >
                     <Icon data={ChevronDown} size={16} />
                 </Button>
-            }
+            )}
         />
     );
 };

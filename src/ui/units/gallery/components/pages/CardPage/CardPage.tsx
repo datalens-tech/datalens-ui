@@ -12,6 +12,7 @@ import {
 } from '@gravity-ui/icons';
 import {
     ActionTooltip,
+    Breadcrumbs,
     Button,
     Card,
     Col,
@@ -27,7 +28,6 @@ import {
     useThemeType,
 } from '@gravity-ui/uikit';
 import type {ButtonProps, IconData} from '@gravity-ui/uikit';
-import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
 import {I18n} from 'i18n';
 import {useHistory, useLocation, useParams} from 'react-router-dom';
 import {ErrorContentTypes} from 'shared';
@@ -222,7 +222,6 @@ function CardActionPanel({
     togglePreview,
     lang,
 }: CardActionPanelProps) {
-    const history = useHistory();
     const [actionPanelNode, setActionPanelNode] = React.useState<HTMLDivElement | null>(null);
     const {rect} = useElementRect({node: actionPanelNode});
     const actionPanelStyle = React.useMemo(() => {
@@ -235,6 +234,7 @@ function CardActionPanel({
 
         return style;
     }, [rect]);
+
     const isActiveMediaQueryS = activeMediaQuery === 's';
     const mods: CnMods = {media: activeMediaQuery};
     let leftItems: React.ReactNode = null;
@@ -261,7 +261,7 @@ function CardActionPanel({
     } else {
         leftItems = (
             <Flex style={{minWidth: 0, flexGrow: 1, flexShrink: 1, flexBasis: 'auto'}}>
-                <Breadcrumbs className={b('breadcrumbs')} navigate={(href) => history.push(href)}>
+                <Breadcrumbs className={b('breadcrumbs')}>
                     <Breadcrumbs.Item href="/gallery">
                         {galleryI18n('label_gallery')}
                     </Breadcrumbs.Item>

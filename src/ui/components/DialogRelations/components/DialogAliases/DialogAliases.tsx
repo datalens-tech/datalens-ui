@@ -1,8 +1,7 @@
 import React from 'react';
 
-import {HelpPopover} from '@gravity-ui/components';
 import {Plus} from '@gravity-ui/icons';
-import {Alert, Button, Dialog, Icon} from '@gravity-ui/uikit';
+import {Alert, Button, Dialog, HelpMark, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {Collapse} from 'components/Collapse/Collapse';
 import DialogManager from 'components/DialogManager/DialogManager';
@@ -88,15 +87,10 @@ const DialogAliases = (props: DialogAliasesProps) => {
     const caption = (
         <React.Fragment>
             {i18n('title_add-alias')}
-            <HelpPopover
-                className={b('info')}
-                content={
-                    <React.Fragment>
-                        <p className={b('info-text')}>{i18n('label_info_1')}</p>
-                        <p className={b('info-text')}>{i18n('label_info_2')}</p>
-                    </React.Fragment>
-                }
-            />
+            <HelpMark className={b('info')}>
+                <p className={b('info-text')}>{i18n('label_info_1')}</p>
+                <p className={b('info-text')}>{i18n('label_info_2')}</p>
+            </HelpMark>
         </React.Fragment>
     );
 

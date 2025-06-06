@@ -1,6 +1,6 @@
 import type {MarkdownItPluginCb} from '@diplodoc/transform/lib/plugins/typings';
 import type {CancellablePromise} from '@gravity-ui/sdk';
-import type {SVGIconData} from '@gravity-ui/uikit/build/esm/components/Icon/types';
+import type {IconData} from '@gravity-ui/uikit';
 import type {RenderHtmlOutput} from 'shared/modules/markdown/markdown';
 import type {
     BatchRenderMarkdownResponse,
@@ -67,7 +67,7 @@ export const commonFunctionsMap = {
         makeFunctionTemplate<
             <T>(args: {action: () => void; hidden: boolean}) => EntryContextMenuItem<T>
         >(),
-    getIconDataById: makeFunctionTemplate<(arg: IconId) => SVGIconData>(),
+    getIconDataById: makeFunctionTemplate<(arg: IconId) => IconData>(),
     getIllustrationStore: makeFunctionTemplate<() => GetIllustrationStore>(),
     getAccessEntryMenuItem: makeFunctionTemplate<() => ContextMenuItem>(),
     setEntryKey: makeFunctionTemplate<SetEntryKey>(),

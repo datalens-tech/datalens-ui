@@ -40,6 +40,7 @@ interface EntryDialogBaseDefaultProps {
     defaultName: string;
     path: string;
     withInput: boolean;
+    confirmButtonView: ButtonView;
 }
 
 export interface EntryDialogBaseProps<T>
@@ -67,6 +68,7 @@ export class EntryDialogBase<T> extends React.Component<
         defaultName: '',
         path: '/',
         withInput: true,
+        confirmButtonView: 'action',
     };
 
     static getDerivedStateFromProps<T>(
@@ -130,13 +132,7 @@ export class EntryDialogBase<T> extends React.Component<
         } = this.props;
 
         return (
-            <Dialog
-                size="s"
-                open={visible}
-                onClose={this.onClose}
-                onEnterKeyDown={this.onApply}
-                disableFocusTrap={true}
-            >
+            <Dialog size="s" open={visible} onClose={this.onClose} onEnterKeyDown={this.onApply}>
                 <Dialog.Header caption={caption} />
                 <Dialog.Body>
                     <div data-qa={EntryDialogQA.Content}>
