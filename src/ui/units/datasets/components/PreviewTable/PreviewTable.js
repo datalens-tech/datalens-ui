@@ -163,9 +163,7 @@ class PreviewTable extends React.Component {
         return (
             <div className={b()}>
                 <div className={b('error')}>
-                    <span className={b('error-msg-text')}>
-                        {this.getErrorMessage(BI_ERRORS.DATA_PREPARATION_NOT_FINISHED)}
-                    </span>
+                    <span className={b('error-msg-text')}>{this.getErrorMessage(code)}</span>
                     {/*
                         For incomplete materialization, we do not show the button with details
                         because it's kind of not a mistake
