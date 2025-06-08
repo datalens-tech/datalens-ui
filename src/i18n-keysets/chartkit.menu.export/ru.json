@@ -7,6 +7,7 @@
   "format_markdown": "Markdown",
   "format_wiki": "Wiki",
   "format_xlsx": "XLSX",
+  "label_data-export-forbidden": "Экспорт данных запрещен владельцем подключения или датасета",
   "menu-export": "Сохранить как",
   "menu-screenshot": "Сохранить как изображение"
 }

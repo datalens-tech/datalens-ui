@@ -17,6 +17,7 @@ import {
 } from '../../../../../../../../menu/MenuItems';
 import type {ChartKitDataProvider} from '../../../../../../types';
 
+import {csvExportAction} from './CsvExport/CsvExport';
 import type {ExportActionArgs, ExportChartArgs} from './types';
 import {copyData, downloadData, isExportVisible} from './utils';
 
@@ -95,7 +96,9 @@ const getSubItems = ({
 }) => {
     const onExportLoading = customConfig?.onExportLoading;
 
-    const {csvExportAction} = registry.common.functions.getAll();
+    const csvAction =
+        customConfig?.items?.find((item) => item.id === MenuItemsIds.EXPORT_CSV)?.action ??
+        csvExportAction(chartsDataProvider, onExportLoading);
 
     const submenuItems = [
         {
@@ -110,7 +113,7 @@ const getSubItems = ({
             id: MenuItemsIds.EXPORT_CSV,
             title: i18n('format_csv'),
             isVisible: ({loadedData, error}: MenuItemArgs) => isExportVisible({loadedData, error}),
-            action: csvExportAction(chartsDataProvider, onExportLoading),
+            action: csvAction,
         },
         {
             id: MenuItemsIds.EXPORT_MARKDOWN,
@@ -142,11 +145,13 @@ export const getExportItem = ({
     showScreenshot,
     chartsDataProvider,
     customConfig,
+    extraOptions,
 }: {
     showWiki?: boolean;
     showScreenshot?: boolean;
     chartsDataProvider: ChartKitDataProvider;
     customConfig?: Partial<MenuItemConfig>;
+    extraOptions?: Record<string, unknown>;
 }): MenuItemConfig => ({
     id: MenuItemsIds.EXPORT,
     title: ({loadedData, error}: MenuItemArgs) => {
@@ -168,13 +173,22 @@ export const getExportItem = ({
         chartsDataProvider,
         customConfig,
     }),
+    isDisabled: ({loadedData}: MenuItemArgs) => {
+        const isExportForbidden =
+            extraOptions &&
+            'exportForbiddenResult' in extraOptions &&
+            Boolean(extraOptions.exportForbiddenResult);
+        const disabledReason =
+            typeof isExportForbidden === 'string'
+                ? isExportForbidden
+                : i18n('label_data-export-forbidden');
+        const isExportAllowed = !loadedData?.extra.dataExportForbidden && !isExportForbidden;
+        return isExportAllowed ? false : disabledReason;
+    },
     isVisible: ({loadedData, error}: MenuItemArgs) => {
-        const isExportAllowed = !loadedData?.extra.dataExportForbidden;
         const isScreenshotVisible = loadedData?.data && showScreenshot;
 
-        return Boolean(
-            isExportAllowed && (isExportVisible({loadedData, error}) || isScreenshotVisible),
-        );
+        return Boolean(isExportVisible({loadedData, error}) || isScreenshotVisible);
     },
     action: (data: ExportActionArgs) => {
         if (!isExportVisible({loadedData: data.loadedData, error: data.error})) {
