@@ -405,6 +405,13 @@ export type SetItemDataArgs = {
     defaults?: SetItemDataDefaults;
     type?: string;
     namespace?: string;
+    // context for selectors pasted from the buffer
+    contextList?: {
+        index: number;
+        targetId: string;
+        targetEntryId: string;
+        targetDashTabId: string;
+    }[];
 };
 
 export type SetItemDataAction = {
