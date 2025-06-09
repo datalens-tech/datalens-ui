@@ -23,10 +23,8 @@
         height: $color-item-size;
         flex-grow: 0;
         flex-shrink: 0;
-    }
-
-    &__palette-trigger {
-        overflow: hidden;
+        // disable inheritance from theme
+        --_--border-radius: 6px;
     }
 
     &__palette-list-btn,
