@@ -10,10 +10,17 @@ const b = block('dl-scrollable-with-shadow');
 export interface ScrollableWithShadowProps {
     children?: React.ReactNode;
     direction?: 'horizontal' | 'vertical';
+    shadowSize?: string;
 }
 
+/**
+ * Scrollable container with shadow indicators
+ * @param children - Content without overflow style
+ * @param direction - Scroll direction. `vertical` (default) shows top/bottom shadows, `horizontal` shows left/right shadows
+ * @param shadowSize - CSS size value for shadow (default: `40px`)
+ */
 export function ScrollableWithShadow(props: ScrollableWithShadowProps) {
-    const {children, direction = 'vertical'} = props;
+    const {children, direction = 'vertical', shadowSize} = props;
     const containerRef = React.useRef<HTMLDivElement>(null);
     const isHorizontal = direction === 'horizontal';
 
@@ -59,6 +66,12 @@ export function ScrollableWithShadow(props: ScrollableWithShadowProps) {
     );
 
     const handleScrollDebounced = React.useMemo(() => debounce(handleScroll), [handleScroll]);
+
+    React.useEffect(() => {
+        if (containerRef.current && shadowSize) {
+            containerRef.current.style.setProperty('--dl-scrollable-shadow-size', shadowSize);
+        }
+    }, [shadowSize]);
 
     React.useEffect(() => {
         if (containerRef.current) {
