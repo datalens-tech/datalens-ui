@@ -134,4 +134,10 @@ export type SelectorDialogState = {
     draftId?: string;
 };
 
+export type PastedSelectorDialogState = SelectorDialogState & {
+    originalId: string;
+    targetEntryId: string;
+    targetDashTabId: string;
+};
+
 export type SetSelectorDialogItemArgs = Partial<SelectorDialogState>;
