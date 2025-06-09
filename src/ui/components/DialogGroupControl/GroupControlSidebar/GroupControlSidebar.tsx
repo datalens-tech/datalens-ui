@@ -8,7 +8,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import type {DashTabItemControlData, DashTabItemGroupControlData} from 'shared';
 import {DashTabItemControlSourceType, DashTabItemType, DialogGroupControlQa} from 'shared';
 import {TabMenu} from 'ui/components/TabMenu/TabMenu';
-import type {TabMenuItemData, UpdateState} from 'ui/components/TabMenu/types';
+import type {UpdateState} from 'ui/components/TabMenu/types';
 import {TabActionType} from 'ui/components/TabMenu/types';
 import {
     addSelectorToGroup,
@@ -58,7 +58,7 @@ const handlePasteItems = (pasteConfig: CopiedConfigData | null) => {
         return null;
     }
 
-    const pasteItems = pasteConfig?.data.group
+    const pasteItemsList = pasteConfig?.data.group
         ? getSelectorGroupDialogFromData(
               pasteConfig?.data as unknown as DashTabItemGroupControlData,
           ).group
@@ -69,7 +69,21 @@ const handlePasteItems = (pasteConfig: CopiedConfigData | null) => {
               ),
           ];
 
-    return pasteItems as TabMenuItemData<SelectorDialogState>[];
+    if (!pasteConfig.copyContext?.targetDashTabId || !pasteConfig.copyContext?.targetEntryId) {
+        return pasteItemsList;
+    }
+
+    // Saving the context for copying connections later in dash setItemData action
+    const preparedPasteItems = pasteItemsList.map((item) => {
+        return {
+            ...item,
+            originalId: item.id,
+            targetDashTabId: pasteConfig.copyContext?.targetDashTabId,
+            targetEntryId: pasteConfig.copyContext?.targetEntryId,
+        };
+    });
+
+    return preparedPasteItems;
 };
 
 export const GroupControlSidebar: React.FC<{

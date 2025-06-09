@@ -6,7 +6,9 @@ import type {
     StringParams,
 } from 'shared';
 import type {
+    PastedSelectorDialogState,
     DialogEditItemFeaturesProp,
+    SelectorDialogState,
     SelectorsGroupDialogState,
     SetSelectorDialogItemArgs,
 } from '../typings/controlDialog';
@@ -172,6 +174,12 @@ export const setLastUsedConnectionId = (connectionId: string): SetLastUsedConnec
     payload: connectionId,
 });
 
+const isSelectorWithContext = (
+    selector: SelectorDialogState,
+): selector is PastedSelectorDialogState => {
+    return 'originalId' in selector;
+};
+
 export const applyGroupControlDialog = ({
     setItemData,
     closeDialog,
@@ -261,6 +269,19 @@ export const applyGroupControlDialog = ({
                 ? selectorsGroup.updateControlsOnChange
                 : false;
 
+        const contextList: SetItemDataArgs['contextList'] = [];
+
+        selectorsGroup.group.forEach((selector, index) => {
+            if (isSelectorWithContext(selector)) {
+                contextList.push({
+                    index,
+                    targetId: selector.originalId,
+                    targetEntryId: selector.targetEntryId,
+                    targetDashTabId: selector.targetDashTabId,
+                });
+            }
+        });
+
         const data = {
             autoHeight,
             updateControlsOnChange,
@@ -297,7 +318,13 @@ export const applyGroupControlDialog = ({
         const getExtendedItemData = getExtendedItemDataAction();
         const itemData = dispatch(getExtendedItemData({data}));
 
-        setItemData({...itemData, type: DashTabItemType.GroupControl});
+        const finalItemData = {
+            ...itemData,
+            type: DashTabItemType.GroupControl,
+            contextList,
+        };
+
+        setItemData(finalItemData);
         closeDialog();
     };
 };
