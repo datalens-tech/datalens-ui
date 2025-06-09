@@ -1,6 +1,6 @@
 {
   "name": "@datalens-platform/datalens-ui",
-  "version": "0.2990.0",
+  "version": "0.2991.0",
   "files": [
     "build",
     "scripts"
@@ -124,7 +124,7 @@
     "workerpool": "^9.1.1"
   },
   "devDependencies": {
-    "@gravity-ui/app-builder": "^0.26.0",
+    "@gravity-ui/app-builder": "^0.28.0",
     "@gravity-ui/components": "^3.12.5",
     "@gravity-ui/date-components": "^2.11.0",
     "@gravity-ui/eslint-config": "^3.2.0",
