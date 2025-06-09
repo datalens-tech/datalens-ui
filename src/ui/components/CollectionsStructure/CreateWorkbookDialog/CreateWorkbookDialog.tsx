@@ -28,6 +28,7 @@ import DialogManager from '../../DialogManager/DialogManager';
 import type {GetDialogFooterPropsOverride} from '../WorkbookDialog';
 import {WorkbookDialog} from '../WorkbookDialog';
 import {useNotificationsAndDetails} from '../hooks/useNotificationsAndDetails';
+import type {PublicGalleryData} from '../types';
 
 import {ImportFileField} from './ImportFileField/ImportFileField';
 import {ImportWorkbookView} from './ImportWorkbookView/ImportWorkbookView';
@@ -47,19 +48,12 @@ export type OpenDialogCreateWorkbookArgs = {
     props: CreateWorkbookDialogProps;
 };
 
-export type PublicGalleryData = {
-    title: string;
-    id: string;
-    description?: string;
-    data: string;
-};
-
 export type CreateWorkbookDialogProps = {
     collectionId: string | null;
     open: boolean;
     dialogTitle?: string;
     defaultWorkbookTitle?: string;
-    onClose: () => void;
+    onClose: (isImportBeging?: boolean) => void;
     // TODO: remove and use onCreateWorkbook
     onApply?: (result: {workbookId?: string}) => void | Promise<void>;
     onCreateWorkbook?: ({workbookId}: {workbookId?: string}) => void | Promise<void>;
@@ -196,7 +190,7 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
                         open: true,
                         onApply: () => {
                             dispatch(closeDialog());
-                            onClose();
+                            onClose(true);
                         },
                         onCancel: () => dispatch(closeDialog()),
                         message: i18n('label_import-exit-description'),
@@ -210,7 +204,7 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
             return;
         }
 
-        onClose();
+        onClose(importStatus === 'success');
     }, [dispatch, importStatus, onClose]);
 
     const handleCreateCallback = React.useCallback(

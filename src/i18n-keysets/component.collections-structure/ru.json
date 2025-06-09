@@ -12,6 +12,7 @@
   "action_save": "Сохранить",
   "action_stay": "Остаться",
   "button_choose-file": "Выбрать файл",
+  "button_deploy": "Развернуть",
   "label_connection": "подключения",
   "label_copy": "Куда копировать",
   "label_copy-denied-title": "Недостаточно прав для копирования",
@@ -24,6 +25,7 @@
   "label_delete-collections-workbooks": "Удаление коллекций и воркбуков",
   "label_delete-workbook": "Удаление воркбука",
   "label_delete-workbooks-for-delete": "Будут удалены воркбуки",
+  "label_deploy-denied-title": "Недостаточно прав для создания воркбука",
   "label_description": "Описание",
   "label_empty-collection": "В коллекции пусто или не удалось ничего найти по условиям в фильтрах",
   "label_error-file-type": "Файл должен быть в формате JSON",
@@ -38,6 +40,7 @@
   "label_wizard": "чарта",
   "section_delete-collection": "Вы действительно хотите удалить коллекцию \"{{name}}\"?",
   "section_delete-workbook": "Вы действительно хотите удалить воркбук \"{{name}}\"?",
+  "title_deploy": "Куда развернуть",
   "title_import-exit": "Закрыть окно импорта?",
   "toast_get-json-error": "Ошибка при попытке получить JSON из файла",
   "toast_outdated-workbook-info": "Информация о воркбуке устарела. Пожалуйста, обновите страницу."

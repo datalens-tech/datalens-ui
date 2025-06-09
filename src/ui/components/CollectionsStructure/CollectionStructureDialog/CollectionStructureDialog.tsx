@@ -99,6 +99,7 @@ export type Props = {
     }) => Promise<unknown>;
     onClose: (structureChanged: boolean) => void;
     additionalButtons?: React.ReactNode;
+    useCustomDialog?: boolean;
 };
 
 export const CollectionStructureDialog = React.memo<Props>(
@@ -119,6 +120,7 @@ export const CollectionStructureDialog = React.memo<Props>(
         onApply,
         onClose,
         additionalButtons,
+        useCustomDialog,
     }) => {
         const dispatch = useDispatch<CollectionsStructureDispatch>();
 
@@ -279,19 +281,22 @@ export const CollectionStructureDialog = React.memo<Props>(
                             handleClose();
                         }
                     });
+                } else if (useCustomDialog) {
+                    onApply({targetCollectionId, targetWorkbookId});
                 } else {
                     setNewTitleDialogIsOpen(true);
                 }
             }
         }, [
-            massMoveMode,
             applyButtonDisabled,
-            closeDialogAfterSuccessfulApply,
             workbookSelectionMode,
+            massMoveMode,
+            useCustomDialog,
             onApply,
-            targetCollectionId,
             targetWorkbookId,
+            closeDialogAfterSuccessfulApply,
             handleClose,
+            targetCollectionId,
         ]);
 
         const handleChangeCollection = React.useCallback((newValue: string | null) => {
