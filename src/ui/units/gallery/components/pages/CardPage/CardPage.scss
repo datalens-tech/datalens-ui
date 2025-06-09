@@ -95,7 +95,6 @@ $block: '.#{variables.$ns}-card';
     &__image-card-preview-flex {
         height: 432px;
         flex-direction: column;
-        overflow: auto;
         row-gap: 16px;
 
         &_media_s {

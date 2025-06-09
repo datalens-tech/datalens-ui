@@ -34,6 +34,7 @@ import type {GalleryItem} from 'shared/types';
 import {ActionPanel} from 'ui/components/ActionPanel';
 import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 import ErrorContent from 'ui/components/ErrorContent/ErrorContent';
+import {ScrollableWithShadow} from 'ui/components/ScrollableWithShadow/ScrollableWithShadow';
 import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
 import {DL, URL_OPTIONS} from 'ui/constants';
 import {PUBLIC_GALLERY_ID_SEARCH_PARAM} from 'ui/units/collections/components/constants';
@@ -57,7 +58,6 @@ import {CARD_PAGE_URL_PARAMS, PARTNER_FORM_LINK} from '../constants';
 import {useElementRect} from '../hooks/useElementRect';
 
 import {CardDescription} from './CardDescription/CardDescription';
-import {FlexWithScrollShades} from './FlexWithScrollShades';
 import {FullscreenGallery} from './FullscreenGallery/FullscreenGallery';
 import {CARD_IMAGE_PREVIEW_HEIGHT, PreviewCard} from './PreviewCard/PreviewCard';
 import {useErrorLayoutAdjustment} from './hooks/useErrorLayoutAdjustment';
@@ -68,6 +68,8 @@ const b = block('card');
 const toasterI18n = I18n.keyset('component.entry-context-menu.view');
 
 const isPromo = DL.IS_NOT_AUTHENTICATED;
+const DESKTOP_ICON_SIZE = 16;
+const MOBILE_ICON_SIZE = 18;
 
 interface IconWithTextProps {
     iconData: IconData;
@@ -113,7 +115,7 @@ function LinkButton(props: ButtonProps & {entryId: string}) {
             }}
         >
             <Button.Icon>
-                <Icon data={LinkIcon} />
+                <Icon data={LinkIcon} size={mobile ? MOBILE_ICON_SIZE : DESKTOP_ICON_SIZE} />
             </Button.Icon>
         </Button>
     );
@@ -386,32 +388,32 @@ function CardPreview({activeMediaQuery, images}: CardPreviewProps) {
                     />
                 </Card>
             </Col>
-            <Col m="2" s="12" style={{position: 'relative'}}>
-                <FlexWithScrollShades
-                    styleClassName={b('image-card-preview-flex')}
-                    isActiveMediaQueryS={isActiveMediaQueryS}
-                    className={b('image-card-preview-flex', {media: activeMediaQuery})}
-                    style={
-                        typeof imageCardPreviewHeight === 'number'
-                            ? {height: imageCardPreviewHeight}
-                            : undefined
-                    }
-                    ref={previewContainerRef}
-                >
-                    {themeImages.map((image, i) => {
-                        return (
-                            <PreviewCard
-                                key={i}
-                                selected={selectedImage === image}
-                                onSelected={(newSelectedImage) => {
-                                    setSelectedImage(newSelectedImage);
-                                }}
-                                image={image}
-                                size={isActiveMediaQueryS ? 's' : 'auto'}
-                            />
-                        );
-                    })}
-                </FlexWithScrollShades>
+            <Col m="2" s="12">
+                <ScrollableWithShadow direction={isActiveMediaQueryS ? 'horizontal' : 'vertical'}>
+                    <Flex
+                        className={b('image-card-preview-flex', {media: activeMediaQuery})}
+                        style={
+                            typeof imageCardPreviewHeight === 'number'
+                                ? {height: imageCardPreviewHeight}
+                                : undefined
+                        }
+                        ref={previewContainerRef}
+                    >
+                        {themeImages.map((image, i) => {
+                            return (
+                                <PreviewCard
+                                    key={i}
+                                    selected={selectedImage === image}
+                                    onSelected={(newSelectedImage) => {
+                                        setSelectedImage(newSelectedImage);
+                                    }}
+                                    image={image}
+                                    size={isActiveMediaQueryS ? 's' : 'auto'}
+                                />
+                            );
+                        })}
+                    </Flex>
+                </ScrollableWithShadow>
             </Col>
         </React.Fragment>
     );

@@ -1,0 +1,76 @@
+.dl-scrollable-with-shadow {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    position: relative;
+
+    &[data-show-top] > &__shadow_top,
+    &[data-show-bottom] > &__shadow_bottom,
+    &[data-show-left] > &__shadow_left,
+    &[data-show-right] > &__shadow_right {
+        opacity: 1;
+    }
+
+    &__shadow {
+        position: sticky;
+        width: 100%;
+        z-index: 1;
+        opacity: 0;
+        transition: opacity 0.1s ease-in-out;
+
+        &::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 40px;
+            pointer-events: none;
+        }
+
+        &_top::before,
+        &_bottom::before {
+            width: 100%;
+        }
+
+        &_left::before,
+        &_right::before {
+            width: 40px;
+            height: var(--dl-scrollable-shadow-height, 100%);
+        }
+
+        &_top,
+        &_top::before {
+            top: 0;
+        }
+
+        &_bottom,
+        &_bottom::before {
+            top: calc(100% - 20px);
+        }
+
+        &_left,
+        &_right,
+        &_left::before {
+            top: 0;
+            left: 0;
+        }
+
+        &_top::before {
+            background: linear-gradient(var(--g-color-base-background), transparent) no-repeat;
+        }
+
+        &_bottom::before {
+            background: linear-gradient(transparent, var(--g-color-base-background)) no-repeat;
+        }
+
+        &_left::before {
+            background: linear-gradient(to right, var(--g-color-base-background), transparent)
+                no-repeat;
+        }
+
+        &_right::before {
+            left: calc(100% - 40px);
+            background: linear-gradient(to left, var(--g-color-base-background), transparent)
+                no-repeat;
+        }
+    }
+}
