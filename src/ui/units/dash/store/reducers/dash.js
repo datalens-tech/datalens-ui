@@ -329,6 +329,31 @@ function dash(state = initialState, action) {
                 });
             }
 
+            // copy connections if the pasted selector was on the same dashboard tab
+            if (action.payload.contextList?.length > 0) {
+                const indexTargetIdMap = {};
+                action.payload.contextList.forEach((context) => {
+                    if (
+                        context.targetEntryId === state.entry.entryId &&
+                        context.targetDashTabId === tabId
+                    ) {
+                        indexTargetIdMap[context.index] = context.targetId;
+                    }
+                });
+
+                const item = state.openedItemId
+                    ? tabData.items.find((tabItem) => tabItem.id === state.openedItemId)
+                    : tabData.items[tabData.items.length - 1];
+
+                const updatedConnections = getUpdatedConnections({
+                    connections: tabData.connections,
+                    indexTargetIdMap,
+                    item,
+                });
+
+                tabData.connections = updatedConnections;
+            }
+
             const modifiedItem = tabData.layout[tabData.layout.length - 1];
 
             return {
