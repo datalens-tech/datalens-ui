@@ -25,7 +25,7 @@
   "ERR.DS_API.NO_AVAILABLE_SUBPRODUCTS": "Истекла подписка на товар из Marketplace",
   "ERR.DS_API.REFERENCED_ENTRY_ACCESS_DENIED_CONNECTION": "Нет доступа к <link>подключению</link>",
   "ERR.DS_API.ROW_COUNT_LIMIT": "Превышено допустимое количество строк",
-  "ERR.DS_API.SOURCE_CONFIG.TABLE_NOT_CONFIGURED": "Источник материализуется",
+  "ERR.DS_API.SOURCE_CONFIG.TABLE_NOT_CONFIGURED": "Нарушена конфигурация таблицы",
   "ERR.DS_API.US.ACCESS_DENIED_DATASET": "Нет доступа к <link>датасету</link>",
   "ERR.DS_API.US.BAD_REQUEST": "Внутренняя ошибка",
   "ERR.DS_API.US.OBJ_NOT_FOUND": "Датасет не найден",
