@@ -21,6 +21,7 @@ type DownloadCsvProps = {
     onApply: ({chartData, params}: ExportChartArgs) => void;
     loading?: boolean;
     onClose: () => void;
+    footerContent?: React.ReactNode;
     chartType: string;
     chartData: ExportActionArgs;
     path?: string;
@@ -81,6 +82,7 @@ export const DownloadCsv = ({
     onApply,
     loading,
     onClose,
+    footerContent,
     chartType,
     chartData,
     onExportLoading,
@@ -161,7 +163,9 @@ export const DownloadCsv = ({
                 }}
                 textButtonApply={i18n('button_download')}
                 textButtonCancel={i18n('button_cancel')}
-            />
+            >
+                {footerContent}
+            </Dialog.Footer>
         </Dialog>
     );
 };

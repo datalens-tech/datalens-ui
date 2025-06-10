@@ -7,7 +7,6 @@ import {
     Col,
     Container,
     Flex,
-    Loader,
     Row,
     useLayoutContext,
     useThemeType,
@@ -21,6 +20,7 @@ import type {AsyncImageProps} from 'ui/components/AsyncImage/AsyncImage';
 import type {CreateIllustrationProps} from 'ui/components/Illustration/types';
 import {createIllustration} from 'ui/components/Illustration/utils';
 import {InterpolatedText} from 'ui/components/InterpolatedText/InterpolatedText';
+import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
 import {DL} from 'ui/constants';
 
 import {useGetGalleryItemsQuery, useGetGalleryMetaQuery} from '../../../store/api';
@@ -122,7 +122,6 @@ function PromoBlockItem({
             <Card
                 className={b('promo-block-item-flex', {primary, media: activeMediaQuery})}
                 view="clear"
-                type="action"
             >
                 <div className={b('promo-block-item-title', {primary})}>
                     {title}
@@ -247,7 +246,7 @@ function HeaderActions({activeMediaQuery}: HeaderActionsProps) {
                 target="_blank"
                 size={buttonSize}
                 width={buttonWidth}
-                view={isActiveMediaQueryS ? 'outlined' : 'flat'}
+                view="outlined"
             >
                 {i18n('button_add_dashboard')}
             </Button>
@@ -262,11 +261,7 @@ export function LandingPage() {
     const {isLoading: isMetaLoading, data: metaData} = useGetGalleryMetaQuery();
 
     if (isDataLoading || isMetaLoading) {
-        return (
-            <div className={b('loader')}>
-                <Loader size="m" />
-            </div>
-        );
+        return <SmartLoader className={b('loader')} size="m" />;
     }
 
     const galleryItems = data ?? [];
@@ -282,7 +277,6 @@ export function LandingPage() {
 
     return (
         <Container className={b('container', baseMods)}>
-            {/* Header */}
             <Row className={b('header', baseMods)} space="0">
                 <Col l="6" m="6" s="12">
                     <Flex className={b('header-illustration-flex', baseMods)}>
@@ -303,13 +297,11 @@ export function LandingPage() {
                     </Flex>
                 </Col>
             </Row>
-            {/* Promo block */}
             <PromoBlockRow
                 galleryItems={galleryItems}
                 activeMediaQuery={activeMediaQuery}
                 editorChoiceIds={metaData?.editorChoice?.ids}
             />
-            {/* Work of the month */}
             {workOfMonthId && <WorkOfMonth id={workOfMonthId} />}
             {landingCategories.map((landingCategoriy, i) => {
                 const isLastCategory = i === landingCategories.length - 1;
@@ -353,7 +345,6 @@ export function LandingPage() {
                     </Row>
                 );
             })}
-            {/* Add your example */}
             <Row className={b('add-card', baseMods)} space="0">
                 <Col s="12">
                     <Flex className={b('add-card-flex')}>

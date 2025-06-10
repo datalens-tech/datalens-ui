@@ -50,7 +50,6 @@ export interface DataProvider<T extends {params?: StringParams}, R, K> {
             propsData: any; // ChartKitProps<ChartsProps, ChartsData>; // TODO after remove old alternative Chartkit code, cause cycle imports
         },
         params2: {
-            urlPostfix?: string;
             idPrefix: string;
             extraParams?: Partial<
                 Record<UrlKeys, string> & {

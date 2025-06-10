@@ -6,11 +6,6 @@ $block: '.#{variables.$ns}-landing';
 
 #{$block} {
     &__loader {
-        flex: 1 1 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
         height: 100%;
     }
 
@@ -118,10 +113,24 @@ $block: '.#{variables.$ns}-landing';
         padding-left: 20px;
         padding-top: 16px;
         overflow: hidden;
-        background-color: var(--g-color-base-float-announcement);
+        background-color: var(--g-color-private-cool-grey-50);
 
-        &:not(:hover) {
-            box-shadow: none;
+        .g-root_theme_dark &:not(#{&}_primary),
+        .g-root_theme_dark-hc &:not(#{&}_primary) {
+            background-color: var(--g-color-private-white-50);
+        }
+
+        &:hover:not(#{&}_primary) {
+            background-color: var(--g-color-private-cool-grey-100);
+
+            .g-root_theme_dark &:not(#{&}_primary),
+            .g-root_theme_dark-hc &:not(#{&}_primary) {
+                background-color: var(--g-color-private-white-100);
+            }
+        }
+
+        &_primary:hover {
+            background-color: var(--g-color-base-brand-hover);
         }
 
         &_media_s {
@@ -189,7 +198,7 @@ $block: '.#{variables.$ns}-landing';
     }
 
     &__add-card {
-        background-color: var(--g-color-base-generic);
+        background-color: var(--g-color-base-float-announcement);
         border-radius: 24px;
         padding: 52px 100px;
         margin: 48px 0;
@@ -208,6 +217,7 @@ $block: '.#{variables.$ns}-landing';
 
     &__add-card-title {
         @include text-header-2();
+        text-align: center;
     }
 
     &__add-card-description {

@@ -5,7 +5,23 @@
 $block: '.#{variables.$ns}-card-labels';
 
 #{$block} {
+    $labelsGap: 6px;
+
     display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
+    flex-wrap: nowrap;
+    gap: $labelsGap;
+
+    &__hidden {
+        position: absolute;
+        visibility: hidden;
+        height: 0;
+        overflow: hidden;
+        pointer-events: none;
+        white-space: nowrap;
+    }
+
+    &__popover {
+        display: flex;
+        gap: $labelsGap;
+    }
 }
