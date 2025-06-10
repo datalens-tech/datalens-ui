@@ -64,6 +64,7 @@ import {
 } from 'ui/components/DashKit/constants';
 import {WidgetContextProvider} from 'ui/components/DashKit/context/WidgetContext';
 import {getDashKitMenu} from 'ui/components/DashKit/helpers';
+import {registry} from 'ui/registry';
 import {showToast} from 'ui/store/actions/toaster';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
 import {selectUserSettings} from 'ui/store/selectors/user';
@@ -383,11 +384,14 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
     }
 
     render() {
+        const {DashBodyAdditionalControls} = registry.dash.components.getAll();
+
         return (
             <div className={b()} ref={this._dashBodyRef}>
                 {this.renderBody()}
                 <PaletteEditor />
                 <EntryDialogues ref={this.entryDialoguesRef} />
+                <DashBodyAdditionalControls />
             </div>
         );
     }
