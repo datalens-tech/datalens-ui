@@ -54,5 +54,6 @@ $block: '.#{variables.$ns}-card-fullscreen-gallery';
         align-items: center;
         justify-content: space-between;
         padding: 0 var(--g-spacing-2) 0 var(--g-spacing-4);
+        position: relative;
     }
 }

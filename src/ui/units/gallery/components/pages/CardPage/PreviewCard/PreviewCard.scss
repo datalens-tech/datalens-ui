@@ -6,7 +6,6 @@ $block: '.#{variables.$ns}-card-image-preview';
     line-height: 0;
     padding: var(--g-spacing-1);
     border-radius: var(--g-border-radius-l);
-    height: 82px;
     transition:
         width 0.2s,
         height 0.2s;
