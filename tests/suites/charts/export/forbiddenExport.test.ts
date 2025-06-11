@@ -29,7 +29,7 @@ datalensTest.describe('Chart with forbidden export', () => {
             const exportMenuItem = await page.locator(slct(MenuItemsIds.EXPORT));
 
             expect(menuItemsCount).toEqual(PARAMS.WIZARD_MENU_ITEMS_COUNT);
-            expect(exportMenuItem.getAttribute('tabindex')).toBe('-1');
+            expect(await exportMenuItem.getAttribute('tabindex')).toBe('-1');
         },
     );
 });
