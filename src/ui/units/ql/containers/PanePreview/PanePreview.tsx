@@ -257,12 +257,12 @@ type PanePreviewInnerProps = PanePreviewStateProps & PanePreviewDispatchProps;
 type PanePreviewProps = PanePreviewInnerProps & PanePreviewOuterProps;
 
 class PanePreview extends React.PureComponent<PanePreviewProps> {
-    widgetRef: React.RefObject<ChartWithWrapRefProps>;
+    widgetRef: {current: ChartWithWrapRefProps | null};
 
     constructor(props: PanePreviewProps) {
         super(props);
 
-        this.widgetRef = React.createRef();
+        this.widgetRef = {current: null};
     }
 
     componentDidUpdate(prevProps: PanePreviewProps) {
@@ -280,8 +280,7 @@ class PanePreview extends React.PureComponent<PanePreviewProps> {
     }
 
     private setWidgetRef = (widget: ChartWithWrapRefProps | null) => {
-        // TODO: to use mutable type the component needs to be functional, not class-based
-        (this.widgetRef as React.MutableRefObject<ChartWithWrapRefProps | null>).current = widget;
+        this.widgetRef.current = widget;
     };
 }
 

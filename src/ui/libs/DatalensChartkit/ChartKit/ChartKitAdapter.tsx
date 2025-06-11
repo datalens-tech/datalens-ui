@@ -107,6 +107,7 @@ const ChartkitWidget = React.forwardRef<ChartKit | ChartKitRef | undefined, Char
         return (
             <ChartKit
                 // ref is mainly used to access the reflow method
+                // undefined can only be passed in the os version of chartkit
                 ref={ref as React.ForwardedRef<ChartKit>}
                 loadedData={loadedData}
                 lang={lang}
