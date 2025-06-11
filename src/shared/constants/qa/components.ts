@@ -207,3 +207,7 @@ export enum DatalensHeaderQa {
     DesktopContainer = 'datalens-header-desktop-container',
     MobileContainer = 'datalens-header-mobile-container',
 }
+
+export enum TextWidgetQa {
+    Wrapper = 'text-widget-wrapper',
+}
