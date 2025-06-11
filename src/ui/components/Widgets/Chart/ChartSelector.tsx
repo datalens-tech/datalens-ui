@@ -1,5 +1,6 @@
 import React from 'react';
 
+import type {ChartKitRef} from '@gravity-ui/chartkit';
 import {pickExceptActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
 import type {AxiosResponse} from 'axios';
 import block from 'bem-cn-lite';
@@ -216,7 +217,7 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
     }, [requestCancellationRef, dataProvider, requestId]);
 
     const rootNodeRef = React.useRef<HTMLDivElement>(null);
-    const chartKitRef = React.useRef<ChartKit>(); // ref is forwarded to ChartKit
+    const chartKitRef = React.useRef<ChartKit | ChartKitRef>(); // ref is forwarded to ChartKit
     const widgetDataRef = React.useRef<ChartWidgetData>(null);
 
     const [initialParams, setInitialParams] = React.useState<StringParams>(
@@ -283,7 +284,7 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
         setInitialParams({...loadedData?.defaultParams, ...props.defaults});
     }, [hasCurrentDefaultsChanged, props.defaults, loadedData?.defaultParams]);
 
-    React.useImperativeHandle<ChartSelectorWithWrapRefProps, ChartSelectorWithWrapRefProps>(
+    React.useImperativeHandle<ChartKit | ChartKitRef, ChartSelectorWithWrapRefProps>(
         forwardedRef,
         () => ({
             props,
