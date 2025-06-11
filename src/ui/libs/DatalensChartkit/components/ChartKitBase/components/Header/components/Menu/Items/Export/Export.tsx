@@ -177,7 +177,8 @@ export const getExportItem = ({
         const isExportForbidden =
             extraOptions &&
             'exportForbiddenResult' in extraOptions &&
-            Boolean(extraOptions.exportForbiddenResult);
+            extraOptions.exportForbiddenResult;
+
         const disabledReason =
             typeof isExportForbidden === 'string'
                 ? isExportForbidden
