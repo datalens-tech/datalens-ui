@@ -184,7 +184,7 @@ export async function showShareDialog(
             dialogProps.currentTab = (
                 searchParams.has(URL_QUERY.TAB_ID)
                     ? searchParams.get(URL_QUERY.TAB_ID)
-                    : (entry.data?.tabs as DashTab[])[0].id
+                    : (entry.data?.tabs as DashTab[])?.[0].id
             ) as string;
         }
 
