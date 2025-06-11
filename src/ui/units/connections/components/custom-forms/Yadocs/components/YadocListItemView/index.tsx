@@ -6,16 +6,18 @@ import {UploadedYadocView} from './UploadedYadocView';
 import {YadocSourceInfoView} from './YadocSourceInfoView';
 import {YadocSourceView} from './YadocSourceView';
 
-type GSheetListItemViewProps = {
+type YadocListItemViewProps = {
     item: YadocListItem;
     deleteListItem?: HandleItemClick;
     clickErrorAction?: HandleItemClick;
     clickRenameAction?: HandleItemClick;
     clickReplaceAction?: HandleItemClick;
+    qa?: string;
 };
 
-export const YadocListItemView = (props: GSheetListItemViewProps) => {
-    const {item, deleteListItem, clickErrorAction, clickRenameAction, clickReplaceAction} = props;
+export const YadocListItemView = (props: YadocListItemViewProps) => {
+    const {item, deleteListItem, clickErrorAction, clickRenameAction, clickReplaceAction, qa} =
+        props;
 
     switch (item.type) {
         case 'uploadedYadoc': {
@@ -24,11 +26,12 @@ export const YadocListItemView = (props: GSheetListItemViewProps) => {
                     item={item}
                     deleteListItem={deleteListItem}
                     clickErrorAction={clickErrorAction}
+                    qa={qa}
                 />
             );
         }
         case 'yadocSourceInfo': {
-            return <YadocSourceInfoView item={item} deleteListItem={deleteListItem} />;
+            return <YadocSourceInfoView item={item} deleteListItem={deleteListItem} qa={qa} />;
         }
         case 'yadocEditableSource':
         case 'yadocReadonlySource': {
@@ -39,6 +42,7 @@ export const YadocListItemView = (props: GSheetListItemViewProps) => {
                     clickErrorAction={clickErrorAction}
                     clickRenameAction={clickRenameAction}
                     clickReplaceAction={clickReplaceAction}
+                    qa={qa}
                 />
             );
         }

@@ -131,6 +131,17 @@ export const yadocToSourcesInfo = (fileId: string, sourcesId: string[]) => {
 
         batch(() => {
             const selectedItemId = newSources[0].data.source_id;
+            const index = getYadocItemIndex(prevItems, fileId);
+            const filteredPrevItems = getFilteredYadocItems(prevItems, fileId);
+            let items = [...filteredPrevItems, ...newSources];
+            if (index !== -1) {
+                items = [
+                    ...filteredPrevItems.slice(0, index),
+                    ...newSources,
+                    ...filteredPrevItems.slice(index),
+                ];
+            }
+            dispatch(setYadocsItems({items}));
 
             if (yadoc.replacedSourceId) {
                 dispatch(
@@ -142,9 +153,6 @@ export const yadocToSourcesInfo = (fileId: string, sourcesId: string[]) => {
                         },
                     }),
                 );
-            } else {
-                const filteredPrevItems = getFilteredYadocItems(prevItems, fileId);
-                dispatch(setYadocsItems({items: [...filteredPrevItems, ...newSources]}));
             }
 
             dispatch(setYadocsSelectedItemId({selectedItemId}));

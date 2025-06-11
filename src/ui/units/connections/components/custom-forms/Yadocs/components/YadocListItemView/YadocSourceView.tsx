@@ -15,10 +15,12 @@ type YadocSourceViewProps = {
     clickErrorAction?: HandleItemClick;
     clickRenameAction?: HandleItemClick;
     clickReplaceAction?: HandleItemClick;
+    qa?: string;
 };
 
 const YadocSourceViewComponent = (props: YadocSourceViewProps) => {
-    const {item, deleteListItem, clickErrorAction, clickRenameAction, clickReplaceAction} = props;
+    const {item, deleteListItem, clickErrorAction, clickRenameAction, clickReplaceAction, qa} =
+        props;
     const actions: ListItemAction<YadocSource>[] | undefined = React.useMemo(() => {
         let nextActions: ListItemAction<YadocSource>[] | undefined;
 
@@ -56,7 +58,7 @@ const YadocSourceViewComponent = (props: YadocSourceViewProps) => {
     }, [item, deleteListItem, clickErrorAction, clickRenameAction, clickReplaceAction]);
     const title = item.type === 'yadocEditableSource' ? item.data.source.title : item.data.title;
 
-    return <ListItem title={title} actions={actions} />;
+    return <ListItem title={title} actions={actions} qa={qa} />;
 };
 
 export const YadocSourceView = React.memo(YadocSourceViewComponent);
