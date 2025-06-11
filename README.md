@@ -16,7 +16,7 @@ Start project in dev mode:
 # Start backend for datalens:
 git clone git@github.com:datalens-tech/datalens.git
 cd datalens
-docker compose -f docker-compose-dev.yml up
+docker compose -f docker-compose.dev.yaml up
 
 # Start datalens ui in dev mode:
 git clone git@github.com:datalens-tech/datalens-ui.git
