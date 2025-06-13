@@ -11,7 +11,7 @@
   "ERR.DS_API.DB.CHYT": "CHYT error",
   "ERR.DS_API.DB.CHYT.INVALID_SORTED_JOIN": "Incorrect connection between tables",
   "ERR.DS_API.DB.COLUMN_DOES_NOT_EXIST": "Using non-existent field",
-  "ERR.DS_API.DB.DATA_PREPARATION_NOT_FINISHED": "Data preparation has not been completed yet, wait a few minutes or upload the data again.",
+  "ERR.DS_API.DB.DATA_PREPARATION_NOT_FINISHED": "Data preparation is not completed yet",
   "ERR.DS_API.DB.INVALID_QUERY": "Invalid SQL query",
   "ERR.DS_API.DB.MEMORY_LIMIT_EXCEEDED": "Memory limit has been exceeded during query execution",
   "ERR.DS_API.DB.METRICA": "Metrika error",
