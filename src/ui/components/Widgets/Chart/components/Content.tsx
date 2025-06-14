@@ -6,6 +6,7 @@ import {useDispatch} from 'react-redux';
 import {Feature} from 'shared';
 import {DL} from 'ui/constants';
 import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
+import {registry} from 'ui/registry';
 import {setSkipReload} from 'ui/units/dash/store/actions/dashTyped';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
@@ -19,8 +20,6 @@ import ExtensionsManager from '../../../../libs/DatalensChartkit/modules/extensi
 import type {ControlsOnlyWidget, DrillDownConfig} from '../../../../libs/DatalensChartkit/types';
 import {useChartActions} from '../helpers/chart-actions';
 import type {ChartContentProps, ChartControlsType, OnLoadChartkitData} from '../types';
-
-import {Header as ChartHeader} from './Header';
 
 import '../ChartWidget.scss';
 
@@ -134,6 +133,8 @@ export const Content = (props: ChartContentProps) => {
     const chartInnerLoaderComponent = isFirstLoadingFloat
         ? emptyLoaderComponent
         : renderPluginLoader;
+
+    const {ChartHeader} = registry.chart.components.getAll();
 
     const handleRender = React.useCallback(
         (args: OnLoadChartkitData) => {

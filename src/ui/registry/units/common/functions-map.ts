@@ -34,7 +34,6 @@ import type {AppThunkAction} from '../../../store';
 
 import {EXAMPLE_FUNCTION} from './constants/functions';
 import type {CheckCreateEntryButtonVisibility} from './types/functions/checkCreateEntryButtonVisibility';
-import type {CsvExportAction} from './types/functions/csvExportAction';
 import type {
     FetchDocumentationArgs,
     FetchDocumentationResponse,
@@ -170,6 +169,5 @@ export const commonFunctionsMap = {
         makeFunctionTemplate<RenderDialogRelatedEntitiesAlertHint>(),
     getAdditionalChartkitErrorContent: makeFunctionTemplate<GetAdditionalChartkitErrorContent>(),
     getCurrentUserRights: makeFunctionTemplate<() => {admin: boolean}>(),
-    csvExportAction: makeFunctionTemplate<CsvExportAction>(),
     getUsersSuggestItems: makeFunctionTemplate<GetUsersSuggestItems>(),
 } as const;

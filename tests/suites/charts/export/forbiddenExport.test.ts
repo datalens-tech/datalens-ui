@@ -5,15 +5,16 @@ import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {openTestPage, slct} from '../../../utils';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
+import {MenuItemsIds} from '../../../../src/shared';
 
 const PARAMS = {
     // the number of menu items of chart including separators with non-displayed export
-    WIZARD_MENU_ITEMS_COUNT: 5,
+    WIZARD_MENU_ITEMS_COUNT: 7,
 };
 
 datalensTest.describe('Chart with forbidden export', () => {
     datalensTest(
-        'There is no extra export menu item in wizard chart on connection with forbidden export',
+        'Export menu item is disabled in wizard chart on connection with forbidden export',
         async ({page}: {page: Page}) => {
             const wizardPage = new WizardPage({page});
             await openTestPage(page, RobotChartsWizardUrls.WizardWithForbiddenExport);
@@ -25,7 +26,10 @@ datalensTest.describe('Chart with forbidden export', () => {
                 .locator(`${slct(ChartkitMenuDialogsQA.chartMenuDropDown)} > li`)
                 .count();
 
+            const exportMenuItem = await page.locator(slct(MenuItemsIds.EXPORT));
+
             expect(menuItemsCount).toEqual(PARAMS.WIZARD_MENU_ITEMS_COUNT);
+            expect(await exportMenuItem.getAttribute('tabindex')).toBe('-1');
         },
     );
 });
