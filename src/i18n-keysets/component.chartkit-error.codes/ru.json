@@ -11,7 +11,7 @@
   "ERR.DS_API.DB.CHYT": "Ошибка CHYT",
   "ERR.DS_API.DB.CHYT.INVALID_SORTED_JOIN": "Связь между таблицами настроена некорректно",
   "ERR.DS_API.DB.COLUMN_DOES_NOT_EXIST": "Используется несуществующее поле",
-  "ERR.DS_API.DB.DATA_PREPARATION_NOT_FINISHED": "Подготовка данных еще не завершилась, подождите несколько минут или загрузите данные повторно.",
+  "ERR.DS_API.DB.DATA_PREPARATION_NOT_FINISHED": "Подготовка данных ещё не завершилась",
   "ERR.DS_API.DB.INVALID_QUERY": "Некорректный SQL-запрос",
   "ERR.DS_API.DB.MEMORY_LIMIT_EXCEEDED": "Лимит памяти был превышен во время выполнения запроса",
   "ERR.DS_API.DB.METRICA": "Ошибка Метрики",
