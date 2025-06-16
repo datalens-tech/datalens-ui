@@ -7,8 +7,6 @@ export enum Feature {
     AsideHeaderEnabled = 'AsideHeaderEnabled',
     /** Enable redesign of dash controls */
     DashFloatControls = 'DashFloatControls',
-    /** Enable group controls lock while loading */
-    GroupControlsLoadingLock = 'GroupControlsLoadingLock',
     FieldEditorDocSection = 'FieldEditorDocSection',
     UsePublicDistincts = 'UsePublicDistincts',
     EnablePublishEntry = 'EnablePublishEntry',
