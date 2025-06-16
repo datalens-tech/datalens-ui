@@ -6,6 +6,7 @@ export enum ErrorCode {
     DbCannotParseNumber = 'ERR.DS_API.DB.CANNOT_PARSE.NUMBER',
     DbJoinColumnTypeMismatch = 'ERR.DS_API.DB.JOIN_COLUMN_TYPE_MISMATCH',
     DbDataPreparationNotFinished = 'ERR.DS_API.DB.DATA_PREPARATION_NOT_FINISHED',
+    DbMaterizalizationNotFinished = 'ERR.DS_API.DB.MATERIALIZATION_NOT_FINISHED',
     DbMemoryLimitExceeded = 'ERR.DS_API.DB.MEMORY_LIMIT_EXCEEDED',
     ChytTableAccessDenied = 'ERR.DS_API.DB.CHYT.TABLE_ACCESS_DENIED',
     ChytTableHasNoSchema = 'ERR.DS_API.DB.CHYT.TABLE_HAS_NO_SCHEMA',

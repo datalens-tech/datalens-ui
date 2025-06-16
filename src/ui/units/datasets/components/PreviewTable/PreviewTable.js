@@ -141,6 +141,7 @@ class PreviewTable extends React.Component {
 
     getErrorMessage(code) {
         switch (code) {
+            case BI_ERRORS.MATERIALIZATION_NOT_FINISHED:
             case BI_ERRORS.DATA_PREPARATION_NOT_FINISHED:
                 return i18n(
                     'component.chartkit-error.codes',
@@ -168,23 +169,24 @@ class PreviewTable extends React.Component {
                         For incomplete data preparation, we do not show the button with details
                         because it's kind of not a mistake
                     */}
-                    {code !== BI_ERRORS.DATA_PREPARATION_NOT_FINISHED && (
-                        <Button
-                            className={b('details-btn')}
-                            view="outlined"
-                            onClick={() => {
-                                this.props.openDialogErrorWithTabs({
-                                    error,
-                                    title: i18n(
-                                        'dataset.dataset-editor.modify',
-                                        'label_request-dataset-preview-error',
-                                    ),
-                                });
-                            }}
-                        >
-                            {i18n('dataset.notifications.view', 'toast_error-action-label')}
-                        </Button>
-                    )}
+                    {code !== BI_ERRORS.DATA_PREPARATION_NOT_FINISHED &&
+                        code !== BI_ERRORS.MATERIALIZATION_NOT_FINISHED && (
+                            <Button
+                                className={b('details-btn')}
+                                view="outlined"
+                                onClick={() => {
+                                    this.props.openDialogErrorWithTabs({
+                                        error,
+                                        title: i18n(
+                                            'dataset.dataset-editor.modify',
+                                            'label_request-dataset-preview-error',
+                                        ),
+                                    });
+                                }}
+                            >
+                                {i18n('dataset.notifications.view', 'toast_error-action-label')}
+                            </Button>
+                        )}
                 </div>
             </div>
         );
