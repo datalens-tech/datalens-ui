@@ -39,6 +39,7 @@
         left: 0;
         top: 0;
         background-color: transparent;
+        z-index: 3; // to overlay Datepicker
     }
 
     &__loader {
