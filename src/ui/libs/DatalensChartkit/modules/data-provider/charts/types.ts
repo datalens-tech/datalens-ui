@@ -154,6 +154,7 @@ export interface ChartsProps {
 
 export interface ChartsData extends DashWidgetConfig {
     entryId: string;
+    revId?: string;
     key: string;
     usedParams: StringParams;
     unresolvedParams?: StringParams;
@@ -332,6 +333,7 @@ export interface ResponseSuccessNodeBase extends DashWidgetConfig {
     logs_v2?: string;
     key: string;
     id: string;
+    revId?: string;
     sources: {fields?: {datasetId?: string}} | ResponseSourcesSuccess;
     extra: {
         exportFilename?: string;

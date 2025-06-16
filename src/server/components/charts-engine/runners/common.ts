@@ -231,6 +231,7 @@ export const getSerializableProcessorParams = ({
         secureConfig,
         configName,
         configId,
+        revId: localConfig?.revId,
         disableJSONFnByCookie,
         isEmbed,
         zitadelParams,

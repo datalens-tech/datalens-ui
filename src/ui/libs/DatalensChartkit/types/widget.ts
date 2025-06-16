@@ -81,6 +81,7 @@ export type UiSandboxRuntimeOptions = {
 export interface WidgetBase {
     type: string;
     entryId?: string;
+    revId?: string;
     data?: object;
     params: StringParams;
     unresolvedParams?: StringParams;

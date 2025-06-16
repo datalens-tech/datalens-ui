@@ -174,6 +174,7 @@ export type SerializableProcessorParams = {
     disableJSONFnByCookie: boolean;
     configName: string;
     configId: string;
+    revId?: string;
     isEmbed: boolean;
     zitadelParams: ZitadelParams | undefined;
     authParams: AuthParams | undefined;
@@ -204,6 +205,7 @@ export class Processor {
         disableJSONFnByCookie,
         configName,
         configId,
+        revId,
         isEmbed,
         zitadelParams,
         authParams,
@@ -258,16 +260,19 @@ export class Processor {
                     meta: config.meta,
                     entryId: config.entryId,
                     key: config.key,
+                    revId: config.revId,
                 };
             }
             responseConfig.key = config.key || configName;
             responseConfig.entryId = config.entryId || configId;
+            responseConfig.revId = config.revId || revId;
 
             target._confStorageConfig = responseConfig;
 
             target.key = responseConfig.key;
             target.id = responseConfig.entryId;
             target.type = responseConfig.type;
+            target.revId = responseConfig.revId;
 
             if (params) {
                 target.params = params;

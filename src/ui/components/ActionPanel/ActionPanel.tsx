@@ -56,7 +56,7 @@ type OwnProps = {
         onConfirm?: () => void;
     };
     renderRevisionItemActions?: (item: GetRevisionsEntry, currentRevId: string) => React.ReactNode;
-    wrapperRef?: React.Ref<HTMLDivElement>;
+    wrapperRef?: React.Ref<HTMLDivElement> | React.RefCallback<HTMLDivElement>;
     style?: React.CSSProperties;
 };
 

@@ -2,16 +2,12 @@
 
 @import '~@gravity-ui/uikit/styles/mixins';
 @import '../../../../../styles/variables.scss';
+@import '../../../../../styles/mixins.scss';
 
 $block: '.#{variables.$ns}-all';
 
 #{$block} {
     &__loader {
-        flex: 1 1 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-direction: column;
         height: 100%;
     }
 
@@ -65,5 +61,13 @@ $block: '.#{variables.$ns}-all';
         &_mobile {
             justify-content: start;
         }
+    }
+
+    &__placeholder-empty {
+        margin: 0 auto;
+    }
+
+    &__category-select-popup {
+        @include dl-select-popup($mw: unset);
     }
 }

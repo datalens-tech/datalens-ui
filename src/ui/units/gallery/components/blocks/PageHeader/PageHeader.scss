@@ -5,4 +5,10 @@ $block: '.#{variables.$ns}-page-header';
 #{$block} {
     display: flex;
     column-gap: 6px;
+    position: relative;
+
+    &__back-button {
+        position: absolute;
+        right: calc(100% + 16px);
+    }
 }

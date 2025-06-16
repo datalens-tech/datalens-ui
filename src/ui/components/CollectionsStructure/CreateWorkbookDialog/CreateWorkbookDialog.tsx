@@ -94,6 +94,8 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
     const importProgressData = useSelector(selectGetImportProgressData);
     const notifications = importProgressData?.notifications;
 
+    const currentImportId = importData?.importId || importProgressData?.importId;
+
     const [isExternalLoading, setIsExternalLoading] = React.useState(false);
 
     const isImportLoading = importStatus === 'loading' || importStatus === 'pending';
@@ -314,7 +316,7 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
                     ? getApplyButtonText(importStatus, textButtonApply)
                     : textButtonApply,
                 propsButtonApply: {
-                    disabled: importData?.importId ? false : propsButtonApply?.disabled,
+                    disabled: currentImportId ? false : propsButtonApply?.disabled,
                     loading: isLoading,
                 },
                 propsButtonCancel: {
@@ -334,9 +336,9 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
         },
 
         [
+            currentImportId,
             handleClose,
             handleShowDetails,
-            importData?.importId,
             importStatus,
             isImportLoading,
             isLoading,
@@ -345,11 +347,11 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
     );
 
     const handleRetry = React.useCallback(() => {
-        if (importStatus === 'fatal-error' && importData?.importId) {
-            pollImportStatus(importData.importId);
+        if (importStatus === 'fatal-error' && currentImportId) {
+            pollImportStatus(currentImportId);
             return;
         }
-    }, [importData?.importId, importStatus, pollImportStatus]);
+    }, [currentImportId, importStatus, pollImportStatus]);
 
     const renderImportSection = () => {
         if (!isEnabledFeature(Feature.EnableExportWorkbookFile) || !showImport) {
@@ -371,7 +373,7 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
 
     const renderDialogView = () => {
         if (view === 'import') {
-            const canProgressBeRetried = importStatus === 'fatal-error' && importData?.importId;
+            const canProgressBeRetried = importStatus === 'fatal-error' && currentImportId;
 
             const handleRetryFn = canProgressBeRetried ? handleRetry : undefined;
             return (
@@ -379,7 +381,7 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
                     <ImportWorkbookView
                         onRetry={handleRetryFn}
                         status={importStatus}
-                        importId={importData?.importId}
+                        importId={currentImportId}
                     />
                 </Flex>
             );

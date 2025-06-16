@@ -69,8 +69,6 @@ export enum Feature {
     NewTableWidgetForCE = 'NewTableWidgetForCE',
     /** Enable undo/redo buttons & hotkeys in datasets */
     EnableEditHistoryDatasets = 'EnableEditHistoryDataset',
-    /** An empty chart for drawing something unusual */
-    BlankChart = 'BlankChart',
     /** Additional chart config for making requests by widget events */
     ChartActions = 'ChartActions',
     /** Disable the use of html and function in chart configs */
@@ -96,10 +94,10 @@ export enum Feature {
     EnableDashUndoRedo = 'EnableDashUndoRedo',
     /** Enable public gallery unit */
     EnablePublicGallery = 'EnablePublicGallery',
-    /** Setting in the table to preserve spaces and line breaks */
-    PreWrapTableSetting = 'PreWrapTableSetting',
     /** Enable new secure parameters behavior */
     EnableSecureParamsV2 = 'EnableSecureParamsV2',
+    /** Enable export settings in connections & datasets */
+    EnableExportSettings = 'EnableExportSettings',
 }
 
 export type FeatureConfig = Record<string, boolean>;

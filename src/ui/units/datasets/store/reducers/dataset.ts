@@ -53,6 +53,7 @@ import {
     RENAME_DATASET,
     SET_CURRENT_TAB,
     SET_DATASET_REVISION_MISMATCH,
+    SET_DATA_EXPORT_ENABLED,
     SET_EDIT_HISTORY_STATE,
     SET_FREEFORM_SOURCES,
     SET_INITIAL_SOURCES,
@@ -1358,6 +1359,17 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 content: {
                     ...state.content,
                     template_enabled: templateEnabled,
+                },
+            };
+        }
+
+        case SET_DATA_EXPORT_ENABLED: {
+            const {dataExportEnabled} = action.payload;
+            return {
+                ...state,
+                content: {
+                    ...state.content,
+                    data_export_forbidden: !dataExportEnabled,
                 },
             };
         }

@@ -2,9 +2,9 @@ import {Feature} from '../../../../shared';
 import {createFeatureConfig} from '../utils';
 
 export default createFeatureConfig({
-    name: Feature.PreWrapTableSetting,
+    name: Feature.EnableExportSettings,
     state: {
-        development: false,
+        development: true,
         production: false,
     },
 });

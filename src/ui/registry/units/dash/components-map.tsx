@@ -8,4 +8,5 @@ export const dashComponentsMap = {
     DashSelectStateDialog: makeDefaultEmpty(),
     DialogDashMeta: makeDefaultEmpty<DialogDashMetaProps>(),
     DialogTextWidget: makeDefaultEmpty<DialogTextWidgetProps>(),
+    DashBodyAdditionalControls: makeDefaultEmpty(),
 } as const;
