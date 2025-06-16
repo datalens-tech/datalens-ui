@@ -3,6 +3,7 @@ import React from 'react';
 import {Xmark} from '@gravity-ui/icons';
 import {Button, Flex, Icon, spacing} from '@gravity-ui/uikit';
 import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
+import {ScrollableWithShadow} from 'ui/components/ScrollableWithShadow/ScrollableWithShadow';
 
 import {block} from '../../../utils';
 import {PreviewCard} from '../PreviewCard/PreviewCard';
@@ -42,6 +43,7 @@ export function FullscreenGallery({images, initialImageIndex, onClose}: Fullscre
     const [isHorizontalOrientation, setIsHorizontalOrientation] = React.useState(false);
     const imageRef = React.useRef<HTMLDivElement>(null);
     const thumbnailRefs = React.useRef<(HTMLDivElement | null)[]>([]);
+    const controlsRef = React.useRef<HTMLDivElement>(null);
 
     // Detect orientation changes
     React.useEffect(() => {
@@ -232,20 +234,22 @@ export function FullscreenGallery({images, initialImageIndex, onClose}: Fullscre
             </div>
 
             <div className={b('controls')}>
-                <Flex gap={4} overflow="y" className={spacing({py: 2})}>
-                    {images.map((image, i) => (
-                        <PreviewCard
-                            key={i}
-                            selected={i === currentIndex}
-                            onSelected={() => setCurrentIndex(i)}
-                            image={image}
-                            size={isHorizontalOrientation ? 'xs' : 's'}
-                            ref={(element) => {
-                                thumbnailRefs.current[i] = element;
-                            }}
-                        />
-                    ))}
-                </Flex>
+                <ScrollableWithShadow direction="horizontal">
+                    <Flex className={spacing({py: 2})} gap={4} ref={controlsRef}>
+                        {images.map((image, i) => (
+                            <PreviewCard
+                                key={i}
+                                selected={i === currentIndex}
+                                onSelected={() => setCurrentIndex(i)}
+                                image={image}
+                                size={isHorizontalOrientation ? 'xs' : 's'}
+                                ref={(element) => {
+                                    thumbnailRefs.current[i] = element;
+                                }}
+                            />
+                        ))}
+                    </Flex>
+                </ScrollableWithShadow>
             </div>
         </div>
     );

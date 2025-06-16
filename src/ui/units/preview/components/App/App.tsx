@@ -45,7 +45,10 @@ const App: React.FunctionComponent<Props> = (props) => {
             <Switch>
                 <Route
                     path="/preview/:source/:id"
-                    render={({match}) => <Redirect to={`/preview/${match.params.id}`} />}
+                    render={({match, location}) => {
+                        const oldQueryAndHash = `${location.search}${location.hash}`;
+                        return <Redirect to={`/preview/${match.params.id}${oldQueryAndHash}`} />;
+                    }}
                 />
                 <Route
                     path={`/preview/:id`}
