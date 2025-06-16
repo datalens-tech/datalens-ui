@@ -181,7 +181,11 @@ class DashboardPage extends BasePage {
         waitForLoader?: boolean;
         action?: () => Promise<void>;
     }) {
-        const loader = this.page.locator(slct(ControlQA.groupCommonLoader));
+        const isEnabledLocked = await isEnabledFeature(this.page, Feature.GroupControlsLoadingLock);
+        const loader = this.page.locator(
+            slct(isEnabledLocked ? ControlQA.groupCommonLockedBlock : ControlQA.groupCommonLoader),
+        );
+
         const handler = async (route: Route) => {
             await expect(loader).toBeVisible();
 

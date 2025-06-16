@@ -245,9 +245,9 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             this.state.quickActionLoader ||
             this.state.localUpdateLoader;
 
-        const showSpinner = isLoading && !showFloatControls && !lockWhileLoading;
-        const showLocked = isLoading && lockWhileLoading;
-        const pulsate = showFloatControls && isLoading;
+        const showSpinner = isLoading && !showFloatControls;
+        const pulsate = isLoading && showFloatControls;
+        const showLockedBlock = pulsate && lockWhileLoading;
 
         return (
             <GroupControlWrapper
@@ -271,8 +271,8 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                             <Loader size="s" qa={ControlQA.groupCommonLoader} />
                         </div>
                     )}
-                    {showLocked && (
-                        <div className={b('locked')} data-qa={ControlQA.groupCommonLoader} />
+                    {showLockedBlock && (
+                        <div className={b('locked')} data-qa={ControlQA.groupCommonLockedBlock} />
                     )}
                 </div>
             </GroupControlWrapper>
