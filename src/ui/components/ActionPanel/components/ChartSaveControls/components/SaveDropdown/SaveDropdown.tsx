@@ -24,13 +24,15 @@ export const SaveDropdown: React.FC<SaveDropdownProps> = (props: SaveDropdownPro
             size="s"
             disabled={disabled}
             items={dropdownItems}
-            renderSwitcher={() => (
+            renderSwitcher={({onClick, onKeyDown}) => (
                 <Button
                     className={b('switcher')}
                     view="action"
                     disabled={disabled}
                     size="m"
                     qa={ChartSaveControlsQA.SaveMoreDropdown}
+                    onClick={onClick}
+                    onKeyDown={onKeyDown}
                 >
                     <Icon data={ChevronDown} size={16} />
                 </Button>

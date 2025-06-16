@@ -142,8 +142,13 @@ export const CollectionActions = React.memo<Props>(
                         size="s"
                         items={createActionItems}
                         switcherWrapperClassName={b('create-wrapper')}
-                        renderSwitcher={() => (
-                            <Button view="action" className={b('create')}>
+                        renderSwitcher={({onClick, onKeyDown}) => (
+                            <Button
+                                view="action"
+                                className={b('create')}
+                                onClick={onClick}
+                                onKeyDown={onKeyDown}
+                            >
                                 {i18n('action_create')}
                                 <Icon data={ChevronDown} />
                             </Button>

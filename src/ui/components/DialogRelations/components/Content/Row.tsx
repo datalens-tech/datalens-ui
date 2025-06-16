@@ -470,11 +470,13 @@ export const Row = ({
                         <DropdownMenu
                             size="l"
                             items={items}
-                            renderSwitcher={() => (
+                            renderSwitcher={({onClick, onKeyDown}) => (
                                 <Button
                                     view="flat"
                                     className={b('button-link')}
                                     qa={DashCommonQa.RelationTypeButton}
+                                    onClick={onClick}
+                                    onKeyDown={onKeyDown}
                                 >
                                     <span className={b('button-link-icon-wrap')}>
                                         <Icon

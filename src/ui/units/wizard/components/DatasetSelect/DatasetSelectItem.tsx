@@ -116,8 +116,13 @@ const DatasetSelectItem = (props: DatasetSelectItemProps) => {
                         popupProps={{
                             qa: SectionDatasetQA.DatasetSelectMoreMenu,
                         }}
-                        renderSwitcher={() => (
-                            <Button view="flat-secondary" qa={SectionDatasetQA.DatasetSelectMore}>
+                        renderSwitcher={({onClick, onKeyDown}) => (
+                            <Button
+                                view="flat-secondary"
+                                qa={SectionDatasetQA.DatasetSelectMore}
+                                onClick={onClick}
+                                onKeyDown={onKeyDown}
+                            >
                                 <Icon data={Ellipsis} size={16} />
                             </Button>
                         )}

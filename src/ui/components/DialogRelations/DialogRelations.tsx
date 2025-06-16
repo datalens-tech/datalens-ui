@@ -589,12 +589,14 @@ const DialogRelations = (props: DialogRelationsProps) => {
                                     qa: DashCommonQa.RelationsDisconnectAllSelectors,
                                 },
                             ]}
-                            renderSwitcher={() => (
+                            renderSwitcher={({onClick, onKeyDown}) => (
                                 <Button
                                     className={b('switcher-button')}
                                     view="normal"
                                     qa={DashCommonQa.RelationsDisconnectAllSwitcher}
                                     disabled={isDisconnectDisabled}
+                                    onClick={onClick}
+                                    onKeyDown={onKeyDown}
                                 >
                                     <Icon
                                         className={b('switcher-button-icon')}

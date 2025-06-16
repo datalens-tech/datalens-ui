@@ -950,13 +950,15 @@ class SectionDataset extends React.Component<Props, State> {
             <DropdownMenu
                 size="s"
                 switcherWrapperClassName="add-param-btn-wrapper"
-                renderSwitcher={() => (
+                renderSwitcher={({onClick, onKeyDown}) => (
                     <Button
                         className="add-param-btn"
                         view="outlined"
                         size="m"
                         loading={this.state.fieldEditorLoading}
                         qa="add-param"
+                        onClick={onClick}
+                        onKeyDown={onKeyDown}
                     >
                         <Icon data={iconPlus} size={15} />
                     </Button>
