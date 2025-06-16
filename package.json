@@ -122,7 +122,7 @@
   },
   "devDependencies": {
     "@floating-ui/react": "^0.27.8",
-    "@gravity-ui/app-builder": "^0.26.0",
+    "@gravity-ui/app-builder": "^0.28.0",
     "@gravity-ui/components": "^4.2.2",
     "@gravity-ui/date-components": "^3.1.0",
     "@gravity-ui/eslint-config": "^3.2.0",

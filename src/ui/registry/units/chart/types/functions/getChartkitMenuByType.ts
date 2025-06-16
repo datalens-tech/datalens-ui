@@ -1,3 +1,4 @@
+import type {Dispatch} from 'redux';
 import type {MenuItemsIds} from 'shared';
 import type {ChartKitDataProvider} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
 import type {MenuItemConfig} from 'ui/libs/DatalensChartkit/menu/Menu';
@@ -9,6 +10,7 @@ export type GetChartkitMenuByType = GetChartkitMenuItems & {
     isEditAvaible?: boolean;
     extraOptions?: Record<string, unknown>;
     widgetConfig?: Record<string, unknown>;
+    dispatch?: Dispatch<any>;
 };
 
 export type GetChartkitMenuItems = {

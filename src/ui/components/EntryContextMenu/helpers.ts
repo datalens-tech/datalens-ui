@@ -6,9 +6,10 @@ import type {DialogShareProps} from 'ui/registry/units/common/types/components/D
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import Utils from 'ui/utils/utils';
 
-import {Feature, MenuItemsIds, getEntryNameByKey} from '../../../shared';
+import type {DashData} from '../../../shared';
+import {EntryScope, Feature, MenuItemsIds, getEntryNameByKey} from '../../../shared';
 import type {GetEntryResponse} from '../../../shared/schema';
-import {DL, URL_OPTIONS} from '../../constants';
+import {DL, URL_OPTIONS, URL_QUERY} from '../../constants';
 import navigateHelper from '../../libs/navigateHelper';
 import history from '../../utils/history';
 import type {EntryDialogues} from '../EntryDialogues';
@@ -175,6 +176,13 @@ export async function showShareDialog(
         } else {
             dialogProps.withEmbedLink = false;
             dialogProps.withCopyAndExitBtn = true;
+        }
+
+        if (entry.scope === EntryScope.Dash) {
+            const searchParams = new URLSearchParams(location.search);
+            const {tabs} = entry.data as unknown as DashData;
+
+            dialogProps.currentTab = searchParams.get(URL_QUERY.TAB_ID) || tabs[0]?.id;
         }
 
         await entryDialoguesRef.current.open({

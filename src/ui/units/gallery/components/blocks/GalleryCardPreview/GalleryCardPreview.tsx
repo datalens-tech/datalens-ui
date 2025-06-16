@@ -33,7 +33,7 @@ export function GalleryCardPreview({
 
     return (
         <Link className={b(null, className)} to={url} onClick={onClick}>
-            <Card className={b('card')} type="action" view="outlined">
+            <Card className={b('card')} view="outlined">
                 <AsyncImage className={b('image')} showSkeleton={true} src={imageSrc} />
                 <div className={b('info')}>
                     <div className={b('info-title')} title={title[lang]}>

@@ -20,7 +20,6 @@ import {
     DropdownMenu,
     Flex,
     Icon,
-    Link,
     Row,
     Text,
     useLayoutContext,
@@ -31,13 +30,13 @@ import type {ButtonProps, IconData} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {useHistory, useLocation, useParams} from 'react-router-dom';
 import {ErrorContentTypes} from 'shared';
-import type {GalleryItem, TranslationsDict} from 'shared/types';
+import type {GalleryItem} from 'shared/types';
 import {ActionPanel} from 'ui/components/ActionPanel';
 import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 import ErrorContent from 'ui/components/ErrorContent/ErrorContent';
+import {ScrollableWithShadow} from 'ui/components/ScrollableWithShadow/ScrollableWithShadow';
 import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
 import {DL, URL_OPTIONS} from 'ui/constants';
-import {useMarkdown} from 'ui/hooks/useMarkdown';
 import {PUBLIC_GALLERY_ID_SEARCH_PARAM} from 'ui/units/collections/components/constants';
 import {useGetGalleryItemQuery, useGetGalleryItemsQuery} from 'ui/units/gallery/store/api';
 import Utils from 'ui/utils';
@@ -58,8 +57,9 @@ import type {CnMods} from '../../utils';
 import {CARD_PAGE_URL_PARAMS, PARTNER_FORM_LINK} from '../constants';
 import {useElementRect} from '../hooks/useElementRect';
 
+import {CardDescription} from './CardDescription/CardDescription';
 import {FullscreenGallery} from './FullscreenGallery/FullscreenGallery';
-import {PreviewCard} from './PreviewCard/PreviewCard';
+import {CARD_IMAGE_PREVIEW_HEIGHT, PreviewCard} from './PreviewCard/PreviewCard';
 import {useErrorLayoutAdjustment} from './hooks/useErrorLayoutAdjustment';
 
 import './CardPage.scss';
@@ -68,6 +68,8 @@ const b = block('card');
 const toasterI18n = I18n.keyset('component.entry-context-menu.view');
 
 const isPromo = DL.IS_NOT_AUTHENTICATED;
+const DESKTOP_ICON_SIZE = 16;
+const MOBILE_ICON_SIZE = 18;
 
 interface IconWithTextProps {
     iconData: IconData;
@@ -113,7 +115,7 @@ function LinkButton(props: ButtonProps & {entryId: string}) {
             }}
         >
             <Button.Icon>
-                <Icon data={LinkIcon} />
+                <Icon data={LinkIcon} size={mobile ? MOBILE_ICON_SIZE : DESKTOP_ICON_SIZE} />
             </Button.Icon>
         </Button>
     );
@@ -322,20 +324,23 @@ interface CardPreviewProps {
 }
 
 function CardPreview({activeMediaQuery, images}: CardPreviewProps) {
-    const mods: CnMods = {media: activeMediaQuery};
+    const previewContainerRef = React.useRef<HTMLDivElement>(null);
     const themeType = useThemeType();
+    const mobile = useMobile();
     const themeImages = React.useMemo(() => {
         return images?.[themeType] ?? [];
     }, [themeType, images]);
     const [selectedImage, setSelectedImage] = React.useState(themeImages[0] || '');
     const [showFullscreenGallery, setShowFullscreenGallery] = React.useState(false);
+    const [imageCardPreviewHeight, setImageCardPreviewHeight] = React.useState<
+        number | undefined
+    >();
 
     const isActiveMediaQueryS = activeMediaQuery === 's';
+    const previewContainerNode = previewContainerRef.current;
 
     const handleImageClick = () => {
-        if (isActiveMediaQueryS) {
-            setShowFullscreenGallery(true);
-        }
+        setShowFullscreenGallery(true);
     };
 
     const handleCloseFullscreenGallery = () => {
@@ -347,6 +352,18 @@ function CardPreview({activeMediaQuery, images}: CardPreviewProps) {
     React.useEffect(() => {
         setSelectedImage(themeImages[0] || '');
     }, [themeImages]);
+
+    React.useEffect(() => {
+        let nextImageCardPreviewHeight: number | undefined;
+
+        if (isActiveMediaQueryS && previewContainerRef.current) {
+            const {clientHeight, offsetHeight} = previewContainerRef.current;
+            const scrollBarWidth = offsetHeight - clientHeight;
+            nextImageCardPreviewHeight = CARD_IMAGE_PREVIEW_HEIGHT + scrollBarWidth;
+        }
+
+        setImageCardPreviewHeight(nextImageCardPreviewHeight);
+    }, [isActiveMediaQueryS, previewContainerNode]);
 
     return (
         <React.Fragment>
@@ -362,7 +379,7 @@ function CardPreview({activeMediaQuery, images}: CardPreviewProps) {
                     className={b('image-card')}
                     type="action"
                     view="outlined"
-                    onClick={handleImageClick}
+                    onClick={mobile ? handleImageClick : undefined}
                 >
                     <AsyncImage
                         className={b('image-card-content')}
@@ -372,64 +389,33 @@ function CardPreview({activeMediaQuery, images}: CardPreviewProps) {
                 </Card>
             </Col>
             <Col m="2" s="12">
-                <Flex className={b('image-card-preview-flex', mods)}>
-                    {themeImages.map((image, i) => {
-                        return (
-                            <PreviewCard
-                                key={i}
-                                selected={selectedImage === image}
-                                onSelected={(newSelectedImage) => {
-                                    setSelectedImage(newSelectedImage);
-                                }}
-                                image={image}
-                                size={isActiveMediaQueryS ? 's' : 'auto'}
-                            />
-                        );
-                    })}
-                </Flex>
+                <ScrollableWithShadow direction={isActiveMediaQueryS ? 'horizontal' : 'vertical'}>
+                    <Flex
+                        className={b('image-card-preview-flex', {media: activeMediaQuery})}
+                        style={
+                            typeof imageCardPreviewHeight === 'number'
+                                ? {height: imageCardPreviewHeight}
+                                : undefined
+                        }
+                        ref={previewContainerRef}
+                    >
+                        {themeImages.map((image, i) => {
+                            return (
+                                <PreviewCard
+                                    key={i}
+                                    selected={selectedImage === image}
+                                    onSelected={(newSelectedImage) => {
+                                        setSelectedImage(newSelectedImage);
+                                    }}
+                                    image={image}
+                                    size={isActiveMediaQueryS ? 's' : 'auto'}
+                                />
+                            );
+                        })}
+                    </Flex>
+                </ScrollableWithShadow>
             </Col>
         </React.Fragment>
-    );
-}
-
-interface CardDescriptionProps {
-    lang: string;
-    description?: TranslationsDict;
-    shortDescription?: TranslationsDict;
-}
-
-function CardDescription({lang, description, shortDescription}: CardDescriptionProps) {
-    const [isExpanded, setIsExpanded] = React.useState(false);
-    const {markdown} = useMarkdown({value: getTranslation(description), className: b('md')});
-    const shouldShowButton = Boolean(description);
-
-    function getTranslation(dict?: TranslationsDict) {
-        return dict?.[lang] || '';
-    }
-
-    React.useEffect(() => {
-        setIsExpanded(false);
-    }, [description, shortDescription]);
-
-    return (
-        <Flex direction="column">
-            {shortDescription && <Text variant="body-2">{getTranslation(shortDescription)}</Text>}
-            {isExpanded && description && markdown}
-            {shouldShowButton && (
-                <Link
-                    className={b('card-description-collapse')}
-                    href="#"
-                    onClick={(event) => {
-                        event.preventDefault();
-                        setIsExpanded(!isExpanded);
-                    }}
-                    view="secondary"
-                    visitable={false}
-                >
-                    {isExpanded ? i18n('button_collapse') : i18n('button_show_full')}
-                </Link>
-            )}
-        </Flex>
     );
 }
 
@@ -455,7 +441,11 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang, maxWidth}: C
         <Container className={b('container', mods)}>
             <Row space="0" style={{marginTop: 24, marginBottom: 24}}>
                 <Col s="12">
-                    <PageHeader title={entry.title[lang]} to={getAllPageUrl()} />
+                    <PageHeader
+                        activeMediaQuery={activeMediaQuery}
+                        title={entry.title[lang]}
+                        to={getAllPageUrl()}
+                    />
                 </Col>
             </Row>
             <Row space="4" spaceRow="4" style={{marginTop: 0, marginBottom: 32}}>
