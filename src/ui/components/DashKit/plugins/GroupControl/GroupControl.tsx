@@ -270,7 +270,9 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                             <Loader size="s" qa={ControlQA.groupCommonLoader} />
                         </div>
                     )}
-                    {pulsate && lockWhileLoading && <div className={b('locked')} />}
+                    {pulsate && lockWhileLoading && (
+                        <div className={b('locked')} data-qa={ControlQA.groupCommonLoader} />
+                    )}
                 </div>
             </GroupControlWrapper>
         );
