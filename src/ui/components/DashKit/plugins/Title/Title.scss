@@ -66,6 +66,10 @@
             padding: 0 5px;
             right: 0;
             z-index: 1;
+
+            #{$class}__hint {
+                padding-bottom: 0;
+            }
         }
     }
 
