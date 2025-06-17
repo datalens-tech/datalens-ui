@@ -14,14 +14,12 @@ export class ColumnSettings {
     }
 
     async switchUnit(fieldTitle: string, unit: 'auto' | 'pixel' | 'percent') {
-        await this.page.click(
-            `${slct(`${DialogColumnSettingsQa.UnitRadioButtons}__${fieldTitle}`)} ${
-                CommonSelectors.RadioButtonOptionControl
-            }[value=${unit}]`,
-            {
-                force: true,
-            },
+        const radioGroupLocator = this.page.locator(
+            slct(`${DialogColumnSettingsQa.UnitRadioButtons}__${fieldTitle}`),
         );
+        await radioGroupLocator
+            .locator(`${CommonSelectors.RadioButtonOptionControl}[value=${unit}]`)
+            .click({force: true});
     }
 
     async fillWidthValueInput(fieldTitle: string, text: string) {
