@@ -94,6 +94,8 @@ export enum Feature {
     EnablePublicGallery = 'EnablePublicGallery',
     /** Enable new secure parameters behavior */
     EnableSecureParamsV2 = 'EnableSecureParamsV2',
+    /** Enable export settings in connections & datasets */
+    EnableExportSettings = 'EnableExportSettings',
 }
 
 export type FeatureConfig = Record<string, boolean>;
