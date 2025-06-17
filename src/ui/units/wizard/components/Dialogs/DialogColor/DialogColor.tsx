@@ -124,7 +124,7 @@ class DialogColorComponent extends React.Component<Props, State> {
                         }
                         caption={i18n('wizard', 'label_colors-settings')}
                     />
-                    <Dialog.Body>
+                    <Dialog.Body className={b('body')}>
                         <ColorSettingsContainer
                             colorsConfig={this.props.colorsConfig}
                             item={item}

@@ -52,7 +52,7 @@ export default class FilterEditor {
     async selectRadio(value: string) {
         await this.page
             .locator('.dl-dialog-filter__body')
-            .locator(`.g-radio-group__option`, {hasText: value})
+            .locator(`.g-segmented-radio-group__option`, {hasText: value})
             .click();
     }
 
