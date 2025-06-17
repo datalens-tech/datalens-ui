@@ -1,4 +1,4 @@
-@mixin with-fade-effect() {
+@mixin with-fade-effect($hasHint: false) {
     content: '';
     position: absolute;
     top: 0;
@@ -11,4 +11,8 @@
         var(--g-color-base-generic-ultralight) 50%,
         var(--g-color-base-generic-ultralight)
     );
+
+    @if $hasHint {
+        width: 88px;
+    }
 }

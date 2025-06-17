@@ -18,7 +18,7 @@ import {unstable_NumberInput as NumberInput} from '@gravity-ui/uikit/unstable';
 import block from 'bem-cn-lite';
 import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
 import {i18n} from 'i18n';
-import type {DashTabItemTitle, DashTabItemTitleSize} from 'shared';
+import type {DashTabItemTitle, DashTabItemTitleSize, HintSettings} from 'shared';
 import {
     DashTabItemTitleSizes,
     DialogDashTitleQA,
@@ -26,6 +26,7 @@ import {
     DialogDashWidgetQA,
 } from 'shared';
 import {CustomPaletteBgColors} from 'shared/constants/widgets';
+import {registry} from 'ui/registry';
 import {PaletteBackground} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 
 import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
@@ -71,6 +72,7 @@ interface DialogTitleWidgetState {
     showInTOC?: boolean;
     autoHeight?: boolean;
     backgroundColor?: string;
+    hint?: HintSettings;
 }
 
 export interface DialogTitleWidgetFeatureProps {
@@ -78,6 +80,7 @@ export interface DialogTitleWidgetFeatureProps {
     enableShowInTOC?: boolean;
     enableCustomFontSize?: boolean;
     enableCustomBgColorSelector?: boolean;
+    enableHint?: boolean;
 }
 interface DialogTitleWidgetProps extends DialogTitleWidgetFeatureProps {
     openedItemId: string | null;
@@ -112,6 +115,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         enableAutoheight = true,
         enableShowInTOC = true,
         enableCustomBgColorSelector,
+        enableHint = true,
         theme,
         closeDialog,
         setItemData,
@@ -136,6 +140,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         showInTOC: openedItemData.showInTOC,
         autoHeight: Boolean(openedItemData.autoHeight),
         backgroundColor: openedItemData.background?.color || '',
+        hint: openedItemData.hint,
     });
     const {
         text,
@@ -143,6 +148,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         customFontSize,
         showInTOC,
         validation,
+        hint,
         autoHeight,
         backgroundColor,
         previousSelectedFontSize,
@@ -231,6 +237,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
                         enabled: backgroundColor !== CustomPaletteBgColors.NONE,
                         color: backgroundColor,
                     },
+                    hint,
                 },
             });
             closeDialog();
@@ -250,7 +257,22 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         autoHeight,
         backgroundColor,
         closeDialog,
+        hint,
     ]);
+
+    const handleEnableHintSelected = React.useCallback(() => {
+        setState((prevState) => ({
+            ...prevState,
+            hint: {text: prevState.hint?.text, enabled: !prevState.hint?.enabled},
+        }));
+    }, []);
+
+    const handleHintChanged = React.useCallback((hintText: string) => {
+        setState((prevState) => ({
+            ...prevState,
+            hint: {text: hintText, enabled: prevState.hint?.enabled},
+        }));
+    }, []);
 
     const handleAutoHeightChanged = React.useCallback(() => {
         setState((prevState) => ({...prevState, autoHeight: !prevState.autoHeight}));
@@ -261,6 +283,8 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
     }, []);
 
     const inputRef: React.Ref<HTMLInputElement> = React.useRef(null);
+
+    const {MarkdownControl} = registry.common.components.getAll();
 
     React.useEffect(() => {
         // TODO remove and use "initialFocus={inputRef}" in Dialog props when switch to uikit7
@@ -359,6 +383,28 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
                         enableCustomBgColorSelector={enableCustomBgColorSelector}
                     />
                 </FormRow>
+                {enableHint && (
+                    <FormRow
+                        className={b('row')}
+                        label={i18n('dash.widget-dialog.edit', 'field_hint')}
+                    >
+                        <div className={b('settings-container')}>
+                            <Checkbox
+                                onUpdate={handleEnableHintSelected}
+                                checked={Boolean(enableHint)}
+                                size="m"
+                                className={b('checkbox')}
+                            />
+                            {Boolean(hint?.enabled) && (
+                                <MarkdownControl
+                                    value={hint?.text || ''}
+                                    onChange={handleHintChanged}
+                                    disabled={!enableHint}
+                                />
+                            )}
+                        </div>
+                    </FormRow>
+                )}
                 {enableAutoheight && (
                     <FormRow
                         className={b('row')}

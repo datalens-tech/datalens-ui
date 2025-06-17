@@ -3,7 +3,7 @@
 .dashkit-plugin-title-container {
     $class: &;
     height: fit-content;
-    overflow: clip;
+    // overflow: clip;
 
     &_with-auto-height {
         [data-plugin-root-el='title'] {
@@ -20,7 +20,8 @@
             align-items: center;
         }
 
-        #{$class}__anchor {
+        #{$class}__anchor,
+        #{$class}__hint {
             padding: 5px;
         }
     }
@@ -33,13 +34,39 @@
         }
     }
 
-    &:has(&__anchor_absolute:focus-visible)::after {
+    &:has(&__anchor-container_with-absolute-anchor:focus-visible)::after {
         @include with-fade-effect;
     }
+
+    // &:has(&__anchor-container_with-absolute-hint)::after {
+    //     @include with-fade-effect(true);
+    // }
 
     .dashkit-grid-item__item_editMode .dashkit-plugin-container__wrapper_with-color & {
         // it has own color bg for contrast in edit mod
         background-color: transparent;
+    }
+
+    // .dashkit-plugin-container__wrapper_with-color & {
+    //     // it has own color bg for contrast in edit mod
+    //     background-color: transparent;
+
+    //     #{$class}:has(#{$class}__anchor-container_with-absolute-hint)::after {
+    //         background-color: transparent;
+    //     }
+    // }
+
+    &__anchor-container {
+        display: flex;
+        // align-items: center;
+        // height: fit-content;
+
+        &_absolute {
+            position: absolute;
+            padding: 0 5px;
+            right: 0;
+            z-index: 1;
+        }
     }
 
     &__anchor {
@@ -59,10 +86,18 @@
         }
 
         &_absolute {
-            position: absolute;
             padding: 0 5px;
-            right: 0;
-            z-index: 1;
         }
+    }
+
+    &__hint {
+        padding-left: 5px;
+        padding-bottom: 5px;
+    }
+
+    &__hint,
+    &__hint-button {
+        display: flex;
+        align-items: center;
     }
 }

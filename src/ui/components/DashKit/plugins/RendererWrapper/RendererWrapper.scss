@@ -32,7 +32,13 @@
             }
 
             .dashkit-plugin-title-container_with-absolute-anchor::after {
-                @include with-fade-effect;
+                @include with-fade-effect();
+            }
+        }
+
+        &_title {
+            .dashkit-plugin-title-container_with-absolute-hint::after {
+                @include with-fade-effect(true);
             }
         }
     }
