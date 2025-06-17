@@ -146,7 +146,8 @@ export function ChangePasswordDialog({
                 data: {
                     userId,
                     newPassword,
-                    oldPassword: isOwnProfile ? oldPassword : undefined,
+                    oldPassword:
+                        isOwnProfile && oldPassword !== 'admin' ? oldPassword : undefined,
                 },
                 onSuccess: handleSuccessUpdate,
                 onError: handleErrorUpdate,
