@@ -174,16 +174,16 @@ export const getExportItem = ({
         customConfig,
     }),
     isDisabled: ({loadedData}: MenuItemArgs) => {
-        const isExportForbidden =
+        const exportForbiddenResult =
             extraOptions &&
             'exportForbiddenResult' in extraOptions &&
             extraOptions.exportForbiddenResult;
 
         const disabledReason =
-            typeof isExportForbidden === 'string'
-                ? isExportForbidden
+            typeof exportForbiddenResult === 'string'
+                ? exportForbiddenResult
                 : i18n('label_data-export-forbidden');
-        const isExportAllowed = !loadedData?.extra.dataExportForbidden && !isExportForbidden;
+        const isExportAllowed = !loadedData?.extra.dataExportForbidden && !exportForbiddenResult;
         return isExportAllowed ? false : disabledReason;
     },
     isVisible: ({loadedData, error}: MenuItemArgs) => {
