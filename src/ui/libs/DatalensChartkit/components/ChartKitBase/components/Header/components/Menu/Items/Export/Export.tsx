@@ -180,7 +180,7 @@ export const getExportItem = ({
             extraOptions.exportForbiddenResult;
 
         const isExportDisabled =
-            loadedData?.extra.dataExportForbidden && Boolean(exportForbiddenResult);
+            loadedData?.extra.dataExportForbidden || Boolean(exportForbiddenResult);
 
         let disabledReason = i18n('label_data-export-forbidden');
         if (isExportDisabled && typeof exportForbiddenResult === 'string') {
