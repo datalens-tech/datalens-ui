@@ -1,7 +1,15 @@
 import React from 'react';
 
 import {Ellipsis} from '@gravity-ui/icons';
-import {Button, DropdownMenu, Icon, Menu as ListMenu, Portal, Sheet} from '@gravity-ui/uikit';
+import {
+    Button,
+    DropdownMenu,
+    Icon,
+    Menu as ListMenu,
+    Portal,
+    Sheet,
+    Tooltip,
+} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import isEmpty from 'lodash/isEmpty';
@@ -83,13 +91,15 @@ export class Menu extends React.PureComponent {
     };
 
     prepareItem = (item, data, onChange, index) => {
-        const {title, icon, action, id, items} = item;
+        const {title, icon, action, id, items, isDisabled} = item;
         const titleStr = typeof title === 'function' ? title(data) : title.toString();
         const itemIcon = typeof icon === 'function' ? icon(data) : icon;
         const subItems =
             items &&
             items.map((subitem, itemIndex) => this.prepareItem(subitem, data, onChange, itemIndex));
 
+        const disabledHint = isDisabled?.(data);
+        const disabled = Boolean(disabledHint);
         return {
             key: `ch-menu-item-${id}-${index}`,
             id,
@@ -107,10 +117,20 @@ export class Menu extends React.PureComponent {
 
                 this.setState({modal: component});
             },
-            text: titleStr,
-            items: subItems,
+            disabled,
+            text: (
+                <div className={b('menu-item-content')}>
+                    {titleStr}
+                    {typeof disabledHint === 'string' ? (
+                        <Tooltip content={disabledHint} className={b('hint-tooltip')}>
+                            <div className={b('menu-item-hint')}></div>
+                        </Tooltip>
+                    ) : null}
+                </div>
+            ),
+            items: disabled ? undefined : subItems,
             iconStart: itemIcon,
-            className: b('popup-item'),
+            className: b('popup-item', {disabled}),
         };
     };
 
