@@ -16,7 +16,7 @@ const plugin = {
         forwardedRef: React.RefObject<ChartsChartKit>,
     ) {
         const workbookId = props.context.workbookId;
-        const enableAiAssistant = props.context.enableAiAssistant;
+        const enableAssistant = props.context.enableAssistant;
 
         return (
             <RendererWrapper type="widget" id={props.id}>
@@ -26,7 +26,7 @@ const plugin = {
                     forwardedRef={forwardedRef as any}
                     getMarkdown={MarkdownProvider.getMarkdown}
                     workbookId={workbookId}
-                    enableAiAssistant={enableAiAssistant}
+                    enableAssistant={enableAssistant}
                 />
             </RendererWrapper>
         );

@@ -72,7 +72,7 @@ export type HeaderWithControlsProps = HeaderProps &
         widgetRenderTimeRef: React.MutableRefObject<number | null>;
         yandexMapAPIWaiting?: number | null;
         enableActionParams?: boolean;
-        enableAiAssistant?: boolean;
+        enableAssistant?: boolean;
         isWidgetMenuDataChanged?: boolean;
         showLoader?: boolean;
         veil?: boolean;
@@ -269,7 +269,7 @@ export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
                             }
                             onExportLoading={handleExportLoading}
                             enableActionParams={headerWithControlsProps.enableActionParams}
-                            enableAiAssistant={headerWithControlsProps.enableAiAssistant}
+                            enableAssistant={headerWithControlsProps.enableAssistant}
                             onFullscreenClick={onFullscreenClick}
                             showActionParamsFilter={showActionParamsFilter}
                             onFiltersClear={onFiltersClear}

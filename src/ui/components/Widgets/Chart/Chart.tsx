@@ -73,7 +73,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
         onInnerParamsChanged,
         disableChartLoader,
         actionParamsEnabled,
-        enableAiAssistant,
+        enableAssistant,
         isPageHidden,
         autoupdateInterval,
         workbookId,
@@ -304,7 +304,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
                 widgetDashState={widgetDashState}
                 rootNodeRef={rootNodeRef}
                 needRenderContentControls={true}
-                enableAiAssistant={enableAiAssistant}
+                enableAssistant={enableAssistant}
             />
         </div>
     );
