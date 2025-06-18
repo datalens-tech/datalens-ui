@@ -12,7 +12,7 @@ import {
 import type {Plugin, PluginTitleProps} from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
-import type {DashTabItemTitle} from 'shared';
+import {type DashTabItemTitle, EXPORT_PRINT_HIDDEN_ATTR} from 'shared';
 import {CustomPaletteBgColors} from 'shared/constants/widgets';
 import {
     adjustWidgetLayout as dashkitAdjustWidgetLayout,
@@ -136,8 +136,8 @@ const titlePlugin: PluginTitle = {
         const withInlineAnchor = showAnchor && isInlineExtra;
         const withAbsoluteAnchor = showAnchor && !isInlineExtra;
 
-        // const showHint = !titlePlugin.hideHint && !props.editMode && data.hint?.enabled;
-        const showHint = !props.editMode;
+        // const showHint = !titlePlugin.hideHint && data.hint?.enabled && data.hint.text;
+        const showHint = !titlePlugin.hideHint;
         // const showHint = data.hint?.enabled;
         const withAbsoluteHint = showHint && !isInlineExtra;
 
@@ -239,7 +239,12 @@ const titlePlugin: PluginTitle = {
                             absolute: !isInlineExtra,
                             'with-hint': showHint,
                         })}
-                        style={{top: anchorTop, ...fontStyle}}
+                        style={{
+                            top: anchorTop,
+                            lineHeight: fontStyle.lineHeight,
+                            fontSize: fontStyle.fontSize,
+                        }}
+                        {...{[EXPORT_PRINT_HIDDEN_ATTR]: true}}
                     >
                         {showHint && (
                             <HelpPopover
@@ -250,12 +255,18 @@ const titlePlugin: PluginTitle = {
                                 placement="bottom"
                                 buttonProps={{
                                     className: b('hint-button'),
-                                    style: fontStyle,
+                                    // style: fontStyle,
                                 }}
                             />
                         )}
                         <AnchorLink to={data.text} show={showAnchor} absolute={!isInlineExtra} />
                     </span>
+                    {(withAbsoluteHint || withAbsoluteAnchor) && (
+                        <div
+                            className={b({'with-absolute-hint-fade': true})}
+                            {...{[EXPORT_PRINT_HIDDEN_ATTR]: true}}
+                        />
+                    )}
                 </div>
             </RendererWrapper>
         );

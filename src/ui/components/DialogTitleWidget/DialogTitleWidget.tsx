@@ -80,7 +80,6 @@ export interface DialogTitleWidgetFeatureProps {
     enableShowInTOC?: boolean;
     enableCustomFontSize?: boolean;
     enableCustomBgColorSelector?: boolean;
-    enableHint?: boolean;
 }
 interface DialogTitleWidgetProps extends DialogTitleWidgetFeatureProps {
     openedItemId: string | null;
@@ -115,7 +114,6 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         enableAutoheight = true,
         enableShowInTOC = true,
         enableCustomBgColorSelector,
-        enableHint = true,
         theme,
         closeDialog,
         setItemData,
@@ -383,28 +381,23 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
                         enableCustomBgColorSelector={enableCustomBgColorSelector}
                     />
                 </FormRow>
-                {enableHint && (
-                    <FormRow
-                        className={b('row')}
-                        label={i18n('dash.widget-dialog.edit', 'field_hint')}
-                    >
-                        <div className={b('settings-container')}>
-                            <Checkbox
-                                onUpdate={handleEnableHintSelected}
-                                checked={Boolean(enableHint)}
-                                size="m"
-                                className={b('checkbox')}
+                <FormRow className={b('row')} label={i18n('dash.widget-dialog.edit', 'field_hint')}>
+                    <div className={b('settings-container')}>
+                        <Checkbox
+                            onUpdate={handleEnableHintSelected}
+                            checked={Boolean(hint?.enabled)}
+                            size="m"
+                            className={b('checkbox')}
+                        />
+                        {Boolean(hint?.enabled) && (
+                            <MarkdownControl
+                                value={hint?.text || ''}
+                                onChange={handleHintChanged}
+                                disabled={!hint?.enabled}
                             />
-                            {Boolean(hint?.enabled) && (
-                                <MarkdownControl
-                                    value={hint?.text || ''}
-                                    onChange={handleHintChanged}
-                                    disabled={!enableHint}
-                                />
-                            )}
-                        </div>
-                    </FormRow>
-                )}
+                        )}
+                    </div>
+                </FormRow>
                 {enableAutoheight && (
                     <FormRow
                         className={b('row')}

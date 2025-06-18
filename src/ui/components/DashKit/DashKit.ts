@@ -36,11 +36,12 @@ const wrapPlugins = (plugins: Plugin[], pluginDefaultsGetter?: typeof currentDef
 
 export const getConfiguredDashKit = (
     pluginDefaultsGetter: typeof currentDefaultsGetter = null,
-    options?: {disableHashNavigation?: boolean},
+    options?: {disableHashNavigation?: boolean; hideHint?: boolean},
 ) => {
     if (currentDefaultsGetter !== pluginDefaultsGetter || !isConfigured) {
         const titleSettings = {
             hideAnchor: options?.disableHashNavigation,
+            hideHint: options?.hideHint,
         };
 
         const textSettings = {

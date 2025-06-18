@@ -8,8 +8,8 @@
     background: linear-gradient(
         to right,
         transparent,
-        var(--g-color-base-generic-ultralight) 50%,
-        var(--g-color-base-generic-ultralight)
+        var(--dl-dk-title-background, var(--g-color-base-generic-ultralight)) 50%,
+        var(--dl-dk-title-background, var(--g-color-base-generic-ultralight))
     );
 
     @if $hasHint {
