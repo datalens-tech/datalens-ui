@@ -1,7 +1,7 @@
-import {ElementHandle, Page} from '@playwright/test';
+import {expect, Page} from '@playwright/test';
 
 import WizardPage from '../../../page-objects/wizard/WizardPage';
-import {openTestPage, waitForCondition, slct} from '../../../utils';
+import {openTestPage, slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import {DlNavigationQA} from '../../../../src/shared';
@@ -16,32 +16,15 @@ datalensTest.describe('Wizard - Pop-up for adding dataset', () => {
 
             await wizardPage.datasetSelector.click();
 
-            let popupWindow: ElementHandle<HTMLElement | SVGElement> | null;
+            const navigationPopup = page.locator(slct('navigation-minimal'));
+            await expect(navigationPopup).toBeVisible();
 
-            await waitForCondition(async () => {
-                popupWindow = await wizardPage.page.$('.dl-core-navigation-minimal__popup');
-                return popupWindow;
-            }).catch(() => {
-                throw new Error('A pop-up with a selection of datasets did not appear');
-            });
+            await wizardPage.page.locator(slct(DlNavigationQA.AsideMenuItem)).click();
 
-            popupWindow = null;
+            const viewNavigation = page.locator('.dl-core-navigation__view');
 
-            await wizardPage.page.click(slct(DlNavigationQA.AsideMenuItem));
-
-            let viewNavigation: ElementHandle<SVGElement | HTMLElement> | null;
-
-            await waitForCondition(async () => {
-                viewNavigation = await wizardPage.page.$('.dl-core-navigation__view');
-                popupWindow = await wizardPage.page.$('.dl-core-navigation-minimal__popup');
-                return viewNavigation && !popupWindow;
-            }).catch(() => {
-                throw new Error(
-                    `The sidebar appeared [${Boolean(
-                        viewNavigation,
-                    )}], and the pop-up has not disappeared [${Boolean(popupWindow)}]`,
-                );
-            });
+            await expect(viewNavigation).toBeVisible();
+            await expect(navigationPopup).not.toBeVisible();
         },
     );
 });

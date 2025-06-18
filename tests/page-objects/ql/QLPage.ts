@@ -53,7 +53,11 @@ class QLPage extends ChartPage {
     async selectConnection(connectionName: string) {
         await this.page.click(this.selectConnectionButtonSelector);
 
-        await this.navigationMinimal.selectNamespace(NavigationMinimalPlaceSelectQa.Connections);
+        await this.page
+            .locator(slct('navigation-minimal'))
+            .locator(slct('navigation-minimal-place-select'))
+            .click();
+        await this.page.locator(slct(NavigationMinimalPlaceSelectQa.Connections)).click();
 
         await this.navigationMinimal.typeToSearch(connectionName);
 
