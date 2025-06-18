@@ -33,6 +33,7 @@ export type MenuItemConfig = {
     title: string | (() => string) | ((data: MenuItemArgs) => string);
     icon?: React.ReactNode | ((data: MenuItemArgs) => React.ReactNode);
     items?: MenuItemConfig[];
+    isDisabled?: (params?: any) => boolean | string;
     isVisible: (params?: any) => boolean;
     action: (params: any) => void | Promise<void> | MenuActionComponent;
     actionWrapper?: (args: MenuItemConfig['action']) => (args: unknown) => void;
