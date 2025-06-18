@@ -89,13 +89,17 @@ export default class PlaceholderDialog {
     }
 
     async getRadioButtonsSelectedValue(radioButton: RadioButtons) {
-        const button = await this.page.$(`${slct(radioButton)} .g-radio-button__option [checked]`);
+        const button = await this.page.$(
+            `${slct(radioButton)} .g-segmented-radio-group__option [checked]`,
+        );
 
         return button?.getAttribute('value');
     }
 
     async checkRadioButtonsSelectedValue(radioButton: RadioButtons, value: string) {
-        const button = this.page.locator(`${slct(radioButton)} .g-radio-button__option [checked]`);
+        const button = this.page.locator(
+            `${slct(radioButton)} .g-segmented-radio-group__option [checked]`,
+        );
         await expect(button).toHaveValue(value);
     }
 
