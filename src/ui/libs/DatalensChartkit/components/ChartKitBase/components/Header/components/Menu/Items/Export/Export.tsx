@@ -179,12 +179,15 @@ export const getExportItem = ({
             'exportForbiddenResult' in extraOptions &&
             extraOptions.exportForbiddenResult;
 
-        const disabledReason =
-            typeof exportForbiddenResult === 'string'
-                ? exportForbiddenResult
-                : i18n('label_data-export-forbidden');
-        const isExportAllowed = !loadedData?.extra.dataExportForbidden && !exportForbiddenResult;
-        return isExportAllowed ? false : disabledReason;
+        const isExportDisabled =
+            loadedData?.extra.dataExportForbidden && Boolean(exportForbiddenResult);
+
+        let disabledReason = i18n('label_data-export-forbidden');
+        if (isExportDisabled && typeof exportForbiddenResult === 'string') {
+            disabledReason = exportForbiddenResult;
+        }
+
+        return isExportDisabled ? disabledReason : false;
     },
     isVisible: ({loadedData, error}: MenuItemArgs) => {
         const isScreenshotVisible = loadedData?.data && showScreenshot;
