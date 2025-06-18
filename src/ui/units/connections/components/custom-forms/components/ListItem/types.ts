@@ -25,4 +25,5 @@ export type ListItemProps<T = unknown> = {
     title: string;
     description?: string;
     actions?: ListItemAction<T>[];
+    qa?: string;
 };

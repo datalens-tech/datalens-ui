@@ -1,8 +1,10 @@
 import React from 'react';
 
 import {Dialog, List} from '@gravity-ui/uikit';
+import type {ListProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {ConnectionsS3BaseQA} from 'shared/constants/qa/connections';
 
 import {ListHeader} from './ListHeader';
 import {ListItem} from './ListItem';
@@ -57,12 +59,19 @@ export const DialogS3Source = (props: DialogS3SourcesProps) => {
         onApply(selectedItems);
     }, [selectedItems, onApply]);
 
-    const renderListItem = React.useCallback(
-        (item: DialogS3SourceItem) => {
-            return <ListItem item={item} batch={batch} />;
-        },
-        [batch],
-    );
+    const renderListItem: NonNullable<ListProps<DialogS3SourceItem>['renderItem']> =
+        React.useCallback(
+            (item, _isItemActive, itemIndex) => {
+                return (
+                    <ListItem
+                        item={item}
+                        batch={batch}
+                        qa={`${ConnectionsS3BaseQA.S3_SOURCE_DIALOG_LIST_ITEM}-${itemIndex}`}
+                    />
+                );
+            },
+            [batch],
+        );
 
     return (
         <Dialog size="s" open={true} onClose={onClose}>
@@ -90,7 +99,10 @@ export const DialogS3Source = (props: DialogS3SourcesProps) => {
                 onClickButtonApply={handleApply}
                 textButtonApply={i18n('button_add')}
                 textButtonCancel={i18n('button_cancel')}
-                propsButtonApply={{disabled: !selectedItems.length}}
+                propsButtonApply={{
+                    disabled: !selectedItems.length,
+                    qa: ConnectionsS3BaseQA.S3_SOURCE_DIALOG_SUBMIT_BUTTON,
+                }}
             />
         </Dialog>
     );
