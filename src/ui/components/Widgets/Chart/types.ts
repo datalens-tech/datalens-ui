@@ -119,6 +119,7 @@ type ChartKitBaseWrapperProps = ChartsProps & {
     widgetDashState?: WidgetDashState;
 
     showActionParamsFilter?: boolean;
+    enableAiAssistant?: boolean;
     onFiltersClear?: () => void;
 
     needRenderContentControls?: boolean;
@@ -178,7 +179,10 @@ export type ChartWrapperWithRefProps =
 
 export type ChartWithProviderWithRefProps = ChartProviderPropsWithRefProps;
 
-export type ChartWrapperWithProviderProps = ChartWrapperWithRefProps & {workbookId?: string | null};
+export type ChartWrapperWithProviderProps = ChartWrapperWithRefProps & {
+    workbookId?: string | null;
+    enableAiAssistant?: boolean;
+};
 
 export type ChartWidgetProps = ChartWidgetProviderPropsWithRefProps &
     ChartWidgetWithProviderProps &
@@ -293,6 +297,7 @@ export type ChartContentProps = Pick<
         isWidgetMenuDataChanged?: boolean;
         initialParams: StringParams;
         enableActionParams?: boolean;
+        enableAiAssistant?: boolean;
         rootNodeRef: React.RefObject<HTMLDivElement | null>;
         runAction?: ControlProps['runAction'];
         backgroundColor?: string;

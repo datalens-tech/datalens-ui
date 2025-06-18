@@ -79,6 +79,7 @@ export const Content = (props: ChartContentProps) => {
         isWidgetMenuDataChanged,
         renderPluginLoader,
         enableActionParams,
+        enableAiAssistant,
         paneSplitOrientation,
         widgetDashState,
         rootNodeRef,
@@ -171,6 +172,7 @@ export const Content = (props: ChartContentProps) => {
                         isWidgetMenuDataChanged={isWidgetMenuDataChanged}
                         onExportLoading={handleExportLoading}
                         enableActionParams={enableActionParams}
+                        enableAiAssistant={enableAiAssistant}
                         onFullscreenClick={onFullscreenClick}
                         showActionParamsFilter={showActionParamsFilter}
                         onFiltersClear={onFiltersClear}

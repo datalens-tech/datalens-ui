@@ -55,6 +55,7 @@ export type HeaderProps = Pick<
     onExportLoading: (isLoading: boolean) => void;
     onFullscreenClick?: () => void;
     canBeDisplayedFilters?: boolean;
+    enableAiAssistant?: boolean;
 };
 
 const b = block('dl-widget');
@@ -86,6 +87,7 @@ export const Header = (props: HeaderProps) => {
         onExportLoading,
         onFullscreenClick,
         enableActionParams,
+        enableAiAssistant,
         showActionParamsFilter,
         onFiltersClear,
     } = props;
@@ -127,7 +129,7 @@ export const Header = (props: HeaderProps) => {
               onExportLoading,
               onFullscreenClick,
               isEditAvaible,
-              extraOptions: {enableActionParams},
+              extraOptions: {enableActionParams, enableAiAssistant},
               widgetConfig: loadedData?.widgetConfig,
               dispatch,
           })

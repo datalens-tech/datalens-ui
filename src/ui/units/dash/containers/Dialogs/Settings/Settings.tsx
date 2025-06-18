@@ -12,7 +12,7 @@ import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import type {DatalensGlobalState} from '../../../../..';
 import {EntryDialogName} from '../../../../..';
 import {i18n} from '../../../../../../i18n';
-import type {DashSettingsGlobalParams} from '../../../../../../shared';
+import type {DashSettings, DashSettingsGlobalParams} from '../../../../../../shared';
 import {DashLoadPriority, Feature} from '../../../../../../shared';
 import EntryDialogues from '../../../../../components/EntryDialogues/EntryDialogues';
 import {DIALOG_TYPE} from '../../../../../constants/dialogs';
@@ -73,6 +73,7 @@ const Settings = () => {
     const [accessDescription, setAccessDesc] = React.useState(accessDesc);
     const [supportDescription, setSupportDesc] = React.useState(supportDesc);
     const [margins, setMargins] = React.useState(settings.margins || DEFAULT_DASH_MARGINS);
+    const [otherSettinsState, setOtherSettingsState] = React.useState<Partial<DashSettings>>({});
 
     const entryDialoguesRef = React.useRef<EntryDialogues>(null);
 
@@ -133,6 +134,7 @@ const Settings = () => {
                 hideDashTitle,
                 expandTOC,
                 loadPriority,
+                ...otherSettinsState,
             };
 
             if (
@@ -259,6 +261,9 @@ const Settings = () => {
                     onSupportDescriptionClick={handleButtonSetupSupportDescription}
                     loadOnlyVisibleCharts={loadOnlyVisibleCharts}
                     onUpdateLoadOnlyVisibleCharts={handleUpdateLoadOnlyVisibleCharts}
+                    initialSettings={settings}
+                    settings={otherSettinsState}
+                    onChange={setOtherSettingsState}
                 />
                 <Params paramsValue={globalParams} onChangeParamsValue={handleChangeGlobalParams} />
                 <EntryDialogues ref={entryDialoguesRef} />
