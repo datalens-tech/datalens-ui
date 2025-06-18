@@ -71,10 +71,6 @@ export default class PlaceholderDialog {
         await radioGroupLocator.locator(`[value="${value}"]`).click();
     }
 
-    async getDialogTooltip() {
-        return await this.page.$('.g-popover__tooltip-content > span');
-    }
-
     async fillInput(qa: Inputs, value: string) {
         await this.page.fill(`${slct(qa)} input`, value);
     }
