@@ -132,7 +132,8 @@ const PageComponent = (props: PageProps) => {
     const extractedEntryId = extractEntryId(entryId);
     const workbookId = get(props.match?.params, 'workbookId');
     const queryType = get(props.match?.params, 'type', '');
-    const connector = getConnItemByType({connectors: flattenConnectors, type: queryType});
+    const connectorType = entry?.type || queryType;
+    const connector = getConnItemByType({connectors: flattenConnectors, type: connectorType});
     const type = (connector?.conn_type || queryType) as ConnectorType;
     const listPageOpened = isListPageOpened(location.pathname);
     const s3BasedFormOpened = isS3BasedConnForm(connectionData, type);

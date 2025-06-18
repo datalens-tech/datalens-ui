@@ -17,3 +17,21 @@ export const ConnectionsFormQA = {
 export const ConnectionsActionPanelControls = {
     CREATE_QL_CHART_BUTTON: 'conn-action-panel-controls-create-ql-chart-button',
 };
+
+export const ConnectionsS3BaseQA = {
+    LIST_ITEM: 'conn-s3-list-item',
+    LIST_ITEM_ACTION_MORE: 'conn-s3-list-item-action-more',
+    LIST_ITEM_ACTION_MORE_DELETE: 'conn-s3-list-item-action-more-delete',
+    LIST_ITEM_ACTION_MORE_RENAME: 'conn-s3-list-item-action-more-rename',
+    LIST_ITEM_ACTION_MORE_REPLACE: 'conn-s3-list-item-action-more-replace',
+    S3_SOURCE_DIALOG_BATCH_CHECKBOX: 'conn-s3-source-dialog-batch-checkbox',
+    S3_SOURCE_DIALOG_LIST_ITEM: 'conn-s3-source-dialog-list-item',
+    S3_SOURCE_DIALOG_SUBMIT_BUTTON: 'conn-s3-source-dialog-submit-button',
+};
+
+export const ConnectionsYadocsQA = {
+    ADD_DOCUMENT_BUTTON: 'conn-yadocs-add-document-button',
+    ADD_DOCUMENT_DIALOG_INPUT: 'conn-yadocs-add-document-dialog-input',
+    ADD_DOCUMENT_DIALOG_SUBMIT_BUTTON: 'conn-yadocs-add-document-dialog-submit-button',
+    LIST_SECTION: 'conn-yadocs-list-section',
+};
