@@ -23,6 +23,11 @@
         height: $color-item-size;
         flex-grow: 0;
         flex-shrink: 0;
+    }
+
+    &__palette-trigger,
+    &__custom-palette-bg-btn,
+    &__palette-list-btn {
         // disable inheritance from theme
         --g-button-border-radius: 6px;
     }
