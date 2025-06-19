@@ -191,6 +191,7 @@ type MemoContext = {
     isEmbeddedMode?: boolean;
     isPublicMode?: boolean;
     workbookId?: string | null;
+    enableAssistant?: boolean;
 };
 type DashkitGroupRenderWithContextProps = DashkitGroupRenderProps & {context: MemoContext};
 
@@ -856,10 +857,12 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
     getContext = () => {
         const memoContext = this._memoizedContext;
         const isCollapsed = this.getFixedHeaderCollapsedState();
+        const enableAssistant = this.props.settings.enableAssistant ?? true;
 
         if (
             memoContext.workbookId !== this.props.workbookId ||
-            memoContext.fixedHeaderCollapsed !== isCollapsed
+            memoContext.fixedHeaderCollapsed !== isCollapsed ||
+            memoContext.enableAssistant !== enableAssistant
         ) {
             this._memoizedContext = {
                 ...(memoContext || {}),
@@ -867,6 +870,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                 fixedHeaderCollapsed: isCollapsed,
                 isEmbeddedMode: isEmbeddedMode(),
                 isPublicMode: Boolean(this.props.isPublicMode),
+                enableAssistant,
             };
         }
 
