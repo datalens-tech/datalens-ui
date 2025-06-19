@@ -4,9 +4,10 @@ import type {SelectProps} from '@gravity-ui/uikit';
 import {Button, Checkbox, HelpMark} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {registry} from 'ui/registry';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
-import type {DashLoadPriority} from '../../../../../../../shared';
+import type {DashLoadPriority, DashSettings} from '../../../../../../../shared';
 import {Feature} from '../../../../../../../shared';
 import {SectionWrapper} from '../../../../../../components/SectionWrapper/SectionWrapper';
 
@@ -32,6 +33,9 @@ type OtherSettingsProps = {
     onSupportDescriptionClick: () => void;
     loadOnlyVisibleCharts: boolean;
     onUpdateLoadOnlyVisibleCharts: () => void;
+    initialSettings: DashSettings;
+    settings: Partial<DashSettings>;
+    onChange: (settings: Partial<DashSettings>) => void;
 };
 
 export const OtherSettings = ({
@@ -46,11 +50,21 @@ export const OtherSettings = ({
     onSupportDescriptionClick,
     loadOnlyVisibleCharts,
     onUpdateLoadOnlyVisibleCharts,
+    initialSettings,
+    settings,
+    onChange,
 }: OtherSettingsProps) => {
     const showAccessDescriptionSetting = isEnabledFeature(Feature.DashBoardAccessDescription);
     const showSupportDescriptionSetting = isEnabledFeature(Feature.DashBoardSupportDescription);
+    const {DialogDashOtherSettingsPrepend} = registry.dash.components.getAll();
+
     return (
         <SectionWrapper title={i18n('label_other-settings')} titleMods={b('section-title')}>
+            <DialogDashOtherSettingsPrepend
+                initialSettings={initialSettings}
+                settings={settings}
+                onChange={onChange}
+            />
             <Row>
                 <Title text={i18n('label_load-only-visible-charts')}>
                     <HelpMark>{i18n('hint_load-only-visible-charts')}</HelpMark>
