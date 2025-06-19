@@ -154,7 +154,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
                                 selected: selectedRows[row.guid],
                             });
                         }}
-                        onRowClick={this.handleRowClick}
+                        onRowClick={this.onSelectToggleByHotkey}
                     />
                 </div>
 
@@ -248,6 +248,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             handleDescriptionUpdate: this.handleDescriptionUpdate,
             handleMoreActionClick: this.handleMoreActionClick,
             onSelectChange: this.onSelectChange,
+            onSelectToggleByHotkey: this.onSelectToggleByHotkey,
         });
     }
 
@@ -271,6 +272,50 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             selectedRows,
         });
         this.selectionAnchorIndex = null;
+    };
+
+    private onSelectToggleByHotkey = (
+        {guid}: DatasetField,
+        index: number,
+        event: React.MouseEvent,
+    ) => {
+        const {fields} = this.props;
+        const {selectedRows} = this.state;
+
+        const newSelectedRows = {...selectedRows};
+
+        const toggleRow = () => {
+            if (selectedRows[guid]) {
+                delete newSelectedRows[guid];
+                this.selectionAnchorIndex = null;
+            } else {
+                newSelectedRows[guid] = true;
+                this.selectionAnchorIndex = index;
+            }
+
+            this.setState({selectedRows: newSelectedRows});
+        };
+
+        // Shift+Click: select range from anchor to clicked row
+        if (event.shiftKey) {
+            if (this.selectionAnchorIndex === null || this.selectionAnchorIndex === index) {
+                return toggleRow();
+            }
+
+            const start = Math.min(this.selectionAnchorIndex, index);
+            const end = Math.max(this.selectionAnchorIndex, index);
+
+            for (let i = start; i <= end; i++) {
+                newSelectedRows[fields[i].guid] = true;
+            }
+
+            this.selectionAnchorIndex = index;
+            return this.setState({selectedRows: newSelectedRows});
+        }
+
+        if (event.ctrlKey || event.metaKey) {
+            return toggleRow();
+        }
     };
 
     private setActiveRow = (activeRow?: number) => this.setState({activeRow});
@@ -527,46 +572,6 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
                 this.props.removeField({field});
                 break;
             }
-        }
-    };
-
-    private handleRowClick = ({guid}: DatasetField, index: number, event: React.MouseEvent) => {
-        const {fields} = this.props;
-        const {selectedRows} = this.state;
-
-        const newSelectedRows = {...selectedRows};
-
-        const toggleRow = () => {
-            if (selectedRows[guid]) {
-                delete newSelectedRows[guid];
-                this.selectionAnchorIndex = null;
-            } else {
-                newSelectedRows[guid] = true;
-                this.selectionAnchorIndex = index;
-            }
-
-            this.setState({selectedRows: newSelectedRows});
-        };
-
-        // Shift+Click: select range from anchor to clicked row
-        if (event.shiftKey) {
-            if (this.selectionAnchorIndex === null || this.selectionAnchorIndex === index) {
-                return toggleRow();
-            }
-
-            const start = Math.min(this.selectionAnchorIndex, index);
-            const end = Math.max(this.selectionAnchorIndex, index);
-
-            for (let i = start; i <= end; i++) {
-                newSelectedRows[fields[i].guid] = true;
-            }
-
-            this.selectionAnchorIndex = index;
-            return this.setState({selectedRows: newSelectedRows});
-        }
-
-        if (event.ctrlKey || event.metaKey) {
-            return toggleRow();
         }
     };
 }

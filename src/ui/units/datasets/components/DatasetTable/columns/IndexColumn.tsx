@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useRef} from 'react';
 
 import type {Column} from '@gravity-ui/react-data-table';
 import DataTable from '@gravity-ui/react-data-table';
@@ -14,12 +14,14 @@ export const getIndexColumn = ({
     indeterminate,
     onSelectChange,
     onSelectAllChange,
+    onSelectToggleByHotkey,
 }: {
     selectedRows: DatasetSelectionMap;
     isAllSelected?: boolean;
     indeterminate?: boolean;
     onSelectChange: (isSelected: boolean, fields: (keyof DatasetSelectionMap)[]) => void;
     onSelectAllChange: (isSelected: boolean) => void;
+    onSelectToggleByHotkey: (row: DatasetField, index: number, event: React.MouseEvent) => void;
 }): Column<DatasetField> => ({
     name: 'index',
     className: b('column'),
@@ -36,14 +38,30 @@ export const getIndexColumn = ({
     ),
     render: function IndexColumnItem({index, row}) {
         const {guid} = row;
+        const lockCheckbox = useRef(false);
 
         return (
             <React.Fragment>
                 <Checkbox
+                    controlProps={{
+                        onClick: (event) => {
+                            if (event.shiftKey || event.ctrlKey || event.metaKey) {
+                                event.stopPropagation();
+
+                                lockCheckbox.current = true;
+                                onSelectToggleByHotkey(row, index, event);
+                            }
+                        },
+                    }}
                     className={b('btn-select')}
                     checked={selectedRows[guid] ?? false}
                     size={'l'}
-                    onUpdate={(value) => onSelectChange(value, [guid])}
+                    onUpdate={(value) => {
+                        if (!lockCheckbox.current) {
+                            onSelectChange(value, [guid]);
+                        }
+                        lockCheckbox.current = false;
+                    }}
                 />
                 <div className={b('title-index')}>{index + 1}</div>
             </React.Fragment>
