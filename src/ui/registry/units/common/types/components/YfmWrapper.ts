@@ -5,7 +5,7 @@ export type YfmWrapperProps = {
     setByInnerHtml?: boolean;
     className?: string;
     noMagicLinks?: boolean;
-    metaScripts?: string[];
+    metaScripts?: string[] | null;
     ref?: React.Ref<HTMLDivElement>;
     onRenderCallback?: () => void;
 };

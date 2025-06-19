@@ -351,6 +351,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         isFullscreen,
         isAutoHeightEnabled,
         description,
+        descriptionMetaScript,
         handleToggleFullscreenMode,
         handleSelectTab,
         handleGetWidgetMeta,
@@ -660,6 +661,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 <WidgetFooter
                     isFullscreen={Boolean(isFullscreen)}
                     description={description || ''}
+                    metaScripts={descriptionMetaScript}
                     enableDescription={currentTab.enableDescription}
                     author={loadedData?.publicAuthor}
                 />

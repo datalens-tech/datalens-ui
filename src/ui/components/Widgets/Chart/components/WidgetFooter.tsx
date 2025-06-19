@@ -15,12 +15,13 @@ export type FooterProps = {
     enableDescription?: boolean;
     withPaddings?: boolean;
     author?: EntryPublicAuthor;
+    metaScripts?: string[] | null;
 };
 
 const b = block(COMPONENT_CLASSNAME);
 
 export const WidgetFooter = (props: FooterProps) => {
-    const {isFullscreen, description, author, withPaddings, enableDescription} = props;
+    const {isFullscreen, description, author, withPaddings, enableDescription, metaScripts} = props;
 
     const enableDesc = enableDescription === undefined ? Boolean(description) : enableDescription;
 
@@ -30,7 +31,13 @@ export const WidgetFooter = (props: FooterProps) => {
         <React.Fragment>
             {showWidgetFooter && (
                 <div className={b('description', {'with-paddings': Boolean(withPaddings)})}>
-                    {description && <YfmWrapper content={description} setByInnerHtml={true} />}
+                    {description && (
+                        <YfmWrapper
+                            content={description}
+                            setByInnerHtml={true}
+                            metaScripts={metaScripts}
+                        />
+                    )}
                 </div>
             )}
             {author && author.text && (
