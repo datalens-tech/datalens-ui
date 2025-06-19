@@ -10,7 +10,7 @@ import {connect} from 'react-redux';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
 import type {Field} from 'shared';
-import {isParameter} from 'shared';
+import {WizardPageQa, isParameter} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {selectUpdates} from 'units/wizard/selectors/preview';
 
@@ -192,9 +192,17 @@ class PlaceholderComponent extends React.PureComponent<Props> {
                 </div>
                 {placeholderTooltipText && (
                     <Popover
-                        content={placeholderTooltipText}
+                        content={
+                            <div
+                                data-qa={WizardPageQa.PlaceholderIconTooltipContent}
+                                className="placeholder-icon-tooltip-content"
+                            >
+                                {placeholderTooltipText}
+                            </div>
+                        }
                         placement="right"
                         className={'placeholder-tooltip-icon'}
+                        hasArrow
                     >
                         <Icon
                             data={placeholderTooltipIcon || defaultPlaceholderTooltipIcon}

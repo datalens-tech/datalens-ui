@@ -58,9 +58,9 @@ datalensTest.describe('Wizard - placeholder dialog ("Axis type") ', () => {
             });
 
             const tooltip = page
-                .locator('.g-popover__tooltip-content')
+                .locator('.g-popover')
                 .locator(slct(DialogPlaceholderQa.TooltipZeroToMaxScale));
-            await expect(tooltip).isVisible();
+            await expect(tooltip).toBeVisible();
         },
     );
 
@@ -99,9 +99,9 @@ datalensTest.describe('Wizard - placeholder dialog ("Axis type") ', () => {
             });
 
             const tooltip = page
-                .locator('.g-popover__tooltip-content')
+                .locator('.g-popover')
                 .locator(slct(DialogPlaceholderQa.TooltipLogarithmicAxis));
-            await expect(tooltip).isVisible();
+            await expect(tooltip).toBeVisible();
         },
     );
 });

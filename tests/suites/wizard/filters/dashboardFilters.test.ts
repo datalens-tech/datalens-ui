@@ -98,7 +98,7 @@ datalensTest.describe('Wizard - filters', () => {
                 try {
                     await wizardPage.page.hover('.placeholder-tooltip-icon');
 
-                    return await wizardPage.page.$('.g-popover__tooltip-content');
+                    return await wizardPage.page.$('.placeholder-tooltip-content');
                 } catch {
                     throw new Error('The dashboard Filter tooltip did not appear');
                 }

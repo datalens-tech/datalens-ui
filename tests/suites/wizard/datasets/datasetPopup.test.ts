@@ -19,7 +19,7 @@ datalensTest.describe('Wizard - Pop-up for adding dataset', () => {
             const navigationPopup = page.locator(slct('navigation-minimal'));
             await expect(navigationPopup).toBeVisible();
 
-            await wizardPage.page.locator(slct(DlNavigationQA.AsideMenuItem)).click();
+            await wizardPage.page.locator(slct(DlNavigationQA.AsideMenuItem)).first().click();
 
             const viewNavigation = page.locator('.dl-core-navigation__view');
 
