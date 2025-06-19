@@ -55,7 +55,7 @@ type GetColumnsArgs = {
     handleDescriptionUpdate: (field: DatasetField, value: string) => void;
     handleMoreActionClick: (args: {action: FieldAction; field: DatasetField}) => void;
     onSelectChange: (isSelected: boolean, fields: DatasetField['guid'][]) => void;
-    onSelectToggleByHotkey: (guid: DatasetField, index: number, event: React.MouseEvent) => void;
+    onSelectToggleByHotkey: (row: DatasetField, index: number, event: React.MouseEvent) => void;
 };
 
 export const getAggregationSwitchTo = (
