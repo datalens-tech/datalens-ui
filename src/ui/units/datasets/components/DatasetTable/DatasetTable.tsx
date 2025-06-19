@@ -90,6 +90,8 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
         waitingForOpenFieldEditor: false,
     };
 
+    private selectionAnchorIndex: number | null = null;
+
     componentDidUpdate(prevProps: DatasetTableProps) {
         const {editableFieldGuid, waitingForOpenFieldEditor} = this.state;
 
@@ -152,6 +154,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
                                 selected: selectedRows[row.guid],
                             });
                         }}
+                        onRowClick={this.handleRowClick}
                     />
                 </div>
 
@@ -250,6 +253,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
 
     private resetSelection = () => {
         this.setState({selectedRows: {}});
+        this.selectionAnchorIndex = null;
     };
 
     private onSelectChange = (isSelected: boolean, guids: (keyof DatasetSelectionMap)[]) => {
@@ -266,6 +270,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
         this.setState({
             selectedRows,
         });
+        this.selectionAnchorIndex = null;
     };
 
     private setActiveRow = (activeRow?: number) => this.setState({activeRow});
@@ -522,6 +527,50 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
                 this.props.removeField({field});
                 break;
             }
+        }
+    };
+
+    private handleRowClick = ({guid}: DatasetField, index: number, event: React.MouseEvent) => {
+        const {fields} = this.props;
+        const {selectedRows} = this.state;
+
+        const newSelectedRows = {...selectedRows};
+
+        const toggleRow = () => {
+            if (selectedRows[guid]) {
+                delete newSelectedRows[guid];
+                this.selectionAnchorIndex = null;
+            } else {
+                newSelectedRows[guid] = true;
+                this.selectionAnchorIndex = index;
+            }
+
+            this.setState({selectedRows: newSelectedRows});
+        };
+
+        // Shift+Click: select range from anchor to clicked row
+        if (event.shiftKey) {
+            event.preventDefault();
+
+            if (this.selectionAnchorIndex === null || this.selectionAnchorIndex === index) {
+                return toggleRow();
+            }
+
+            const start = Math.min(this.selectionAnchorIndex, index);
+            const end = Math.max(this.selectionAnchorIndex, index);
+
+            for (let i = start; i <= end; i++) {
+                newSelectedRows[fields[i].guid] = true;
+            }
+
+            this.selectionAnchorIndex = index;
+            return this.setState({selectedRows: newSelectedRows});
+        }
+
+        if (event.ctrlKey || event.metaKey) {
+            event.preventDefault();
+
+            return toggleRow();
         }
     };
 }
