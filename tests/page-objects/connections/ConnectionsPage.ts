@@ -34,9 +34,9 @@ class ConnectionsPage extends BasePage {
         const textInput = await this.page.waitForSelector(slct(EntryDialogQA.PathSelect));
         // type connection name
         await textInput.type(name);
-        const dialogApplyButton = await this.page.waitForSelector(slct(EntryDialogQA.Apply));
+
         // create connection
-        await dialogApplyButton.click();
+        await this.page.locator(slct(EntryDialogQA.Apply)).click();
         try {
             await this.page.waitForURL(() => this.page.url().includes(name));
         } catch {
