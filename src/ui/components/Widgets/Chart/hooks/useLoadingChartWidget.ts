@@ -443,12 +443,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         }
 
         const metaScript = ((loadedDescription?.meta as any)?.script as string[]) ?? null;
-
-        if (metaScript) {
-            setDescriptionMetaScript(metaScript);
-        } else {
-            setDescriptionMetaScript(null);
-        }
+        setDescriptionMetaScript(metaScript);
 
         handleChartkitReflow();
     }, [loadedDescription, description, handleChartkitReflow]);
