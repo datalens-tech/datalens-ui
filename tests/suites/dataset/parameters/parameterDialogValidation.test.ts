@@ -22,35 +22,35 @@ datalensTest.describe('Datasets - Parameter dialog validation', () => {
         const defaultValueInput = await datasetPage.dialogParameter.getDefaultValueInput();
         const applyButton = await datasetPage.dialogParameter.getApplyButton();
 
-        // Пытаемся зааплаить с пустыми полями
+        // Try to apply with empty fields
         await datasetPage.dialogParameter.apply();
 
-        // Проверяем, что все поля невалидны и кнопка сабмита неактивна
+        // Check that all fields are invalid and submit button is disabled
         expect(nameInput).toHaveAttribute('aria-invalid', 'true');
         expect(defaultValueInput).toHaveAttribute('aria-invalid', 'true');
         expect(applyButton).toBeDisabled();
 
-        // Устанавливаем имя параметра
+        // Set parameter name
         await datasetPage.dialogParameter.setName(PARAMETER_NAME);
 
-        // Проверяем, что поле с именем валидно, поле со значением по умолчанию - нет, кнопка сабмита неактивна
+        // Check that name field is valid, default value field is not, submit button is disabled
         expect(nameInput).not.toHaveAttribute('aria-invalid');
         expect(defaultValueInput).toHaveAttribute('aria-invalid', 'true');
         expect(applyButton).toBeDisabled();
 
-        // Устанавливаем значение параметра
+        // Set parameter value
         await datasetPage.dialogParameter.setDefaultValue(PARAMETER_VALUE);
 
-        // Проверяем, что все поля валидны и кнопка сабмита активна
+        // Check that all fields are valid and submit button is enabled
         expect(nameInput).not.toHaveAttribute('aria-invalid');
         expect(defaultValueInput).not.toHaveAttribute('aria-invalid');
         expect(applyButton).not.toBeDisabled();
 
-        // Устанавливаем пустые значения в поля
+        // Set empty values in fields
         await datasetPage.dialogParameter.setName('');
         await datasetPage.dialogParameter.setDefaultValue('');
 
-        // Проверяем, что все поля невалидны и кнопка сабмита неактивна
+        // Check that all fields are invalid and submit button is disabled
         expect(nameInput).toHaveAttribute('aria-invalid', 'true');
         expect(defaultValueInput).toHaveAttribute('aria-invalid', 'true');
         expect(applyButton).toBeDisabled();
