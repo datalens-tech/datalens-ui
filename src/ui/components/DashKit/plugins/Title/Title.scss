@@ -1,9 +1,24 @@
 @import '../mixins.scss';
 
+// .dashkit-grid-item__item_editMode .dashkit-plugin-title-container {
+//     position: relative;
+// }
+
+.dashkit-grid-item_is-dragging.dashkit-grid-item_is-focused {
+    .dashkit-plugin-title-container {
+        &__extra-elements-container {
+            display: none;
+        }
+    }
+}
+
 .dashkit-plugin-title-container {
     $class: &;
     height: fit-content;
+    // position: relative;
     // overflow: clip;
+
+    display: flex;
 
     &_with-auto-height {
         [data-plugin-root-el='title'] {
@@ -13,8 +28,6 @@
 
     &_with-default-color,
     &_with-color {
-        display: flex;
-
         .dashkit-plugin-title {
             padding: 5px 10px;
             align-items: center;
@@ -23,10 +36,15 @@
         #{$class}__anchor,
         #{$class}__hint {
             padding: 5px;
+            // padding-left: 0;
+        }
+
+        #{$class}__extra-elements-container {
+            padding-bottom: 0;
         }
     }
 
-    &_with-inline-anchor {
+    &_with-inline-extra-elements {
         display: flex;
 
         .dashkit-plugin-title {
@@ -34,12 +52,12 @@
         }
 
         #{$class}__hint {
-            padding-bottom: 5px;
+            // padding-bottom: 5px;
         }
     }
 
-    &:has(&__anchor-container_with-absolute-anchor:focus-visible)::after {
-        @include with-fade-effect;
+    &:has(&__extra-elements-container_with-absolute-anchor:focus-visible)::after {
+        @include title-with-fade-effect();
     }
 
     .dashkit-grid-item__item_editMode .dashkit-plugin-container__wrapper_with-color & {
@@ -47,8 +65,12 @@
         background-color: transparent;
     }
 
-    &__anchor-container {
+    &__extra-elements-container {
         display: flex;
+        padding-bottom: 5px;
+
+        position: relative;
+        // height: fit-content;
 
         &_absolute {
             position: absolute;

@@ -12,7 +12,7 @@ import {
 import type {Plugin, PluginTitleProps} from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
-import {type DashTabItemTitle, EXPORT_PRINT_HIDDEN_ATTR} from 'shared';
+import {type DashTabItemTitle, type DashTitleSize, EXPORT_PRINT_HIDDEN_ATTR} from 'shared';
 import {CustomPaletteBgColors} from 'shared/constants/widgets';
 import {
     adjustWidgetLayout as dashkitAdjustWidgetLayout,
@@ -46,12 +46,27 @@ const MIN_AVAILABLE_ANCHOR_OFFSET = -5;
 
 const MIN_AVAILABLE_HEIGHT_OFFSET = -8.5;
 
+const getFontStyleBySize = (size: DashTitleSize) => {
+    if (typeof size === 'object' && 'fontSize' in size) {
+        return {
+            fontSize: size.fontSize + 'px',
+            lineHeight: RECCOMMENDED_LINE_HEIGHT_MULTIPLIER,
+        };
+    } else if (typeof size === 'string') {
+        return TITLE_DEFAULT_SIZES[size];
+    }
+
+    return {};
+};
+
 const titlePlugin: PluginTitle = {
     ...pluginTitle,
     setSettings(settings: PluginTitleObjectSettings) {
         const {hideAnchor, hideHint} = settings;
+
         titlePlugin.hideAnchor = hideAnchor;
         titlePlugin.hideHint = hideHint;
+
         return titlePlugin;
     },
     renderer: function Wrapper(
@@ -61,8 +76,9 @@ const titlePlugin: PluginTitle = {
         const rootNodeRef = React.useRef<HTMLDivElement>(null);
         const contentRef = React.useRef<HTMLDivElement>(null);
 
-        const [isInlineExtra, setIsInlineExtra] = React.useState<boolean>(false);
-        const [anchorTop, setAnchorTop] = React.useState(0);
+        const [isInlineExtraElements, setIsInlineExtraElements] = React.useState<boolean>(false);
+        const [, setExtraElementsTop] = React.useState(0);
+        // const [extraElementsTop, setExtraElementsTop] = React.useState(0);
 
         const data = props.data as DashTabItemTitle['data'];
 
@@ -133,13 +149,13 @@ const titlePlugin: PluginTitle = {
         ]);
 
         const showAnchor = !titlePlugin.hideAnchor && !props.editMode;
-        const withInlineAnchor = showAnchor && isInlineExtra;
-        const withAbsoluteAnchor = showAnchor && !isInlineExtra;
-
         // const showHint = !titlePlugin.hideHint && data.hint?.enabled && data.hint.text;
         const showHint = !titlePlugin.hideHint;
-        // const showHint = data.hint?.enabled;
-        const withAbsoluteHint = showHint && !isInlineExtra;
+
+        const withInlineExtraElements = (showAnchor || showHint) && isInlineExtraElements;
+
+        const withAbsoluteAnchor = showAnchor && !isInlineExtraElements;
+        const withAbsoluteHint = showHint && !isInlineExtraElements;
 
         const calculateExtraElements = React.useCallback(() => {
             if (contentRef.current && rootNodeRef.current) {
@@ -156,19 +172,25 @@ const titlePlugin: PluginTitle = {
                 const isHeightFits =
                     rootRect.height - contentRect.height >= MIN_AVAILABLE_HEIGHT_OFFSET;
 
-                console.log(
-                    {isWidthFits, isHeightFits},
-                    rootRect.height,
-                    contentRect.height,
-                    rootRect.height - contentRect.height,
-                );
+                // console.log(
+                //     {isWidthFits, isHeightFits},
+                //     rootRect.height,
+                //     contentRect.height,
+                //     rootRect.height - contentRect.height,
+                // );
 
                 const contentFits = isWidthFits && isHeightFits;
-                const calculatedAnchorTop =
-                    offsetTop < MIN_AVAILABLE_ANCHOR_OFFSET || contentFits ? 0 : offsetTop;
+                // const calculatedAnchorTop =
+                //     offsetTop < MIN_AVAILABLE_ANCHOR_OFFSET || contentFits ? 0 : offsetTop; // ?
 
-                setAnchorTop(calculatedAnchorTop);
-                setIsInlineExtra(contentFits);
+                const calculatedAnchorTop =
+                    offsetTop < MIN_AVAILABLE_ANCHOR_OFFSET ||
+                    (isWidthFits && contentRect.height <= rootRect.height)
+                        ? 0
+                        : offsetTop;
+
+                setExtraElementsTop(calculatedAnchorTop);
+                setIsInlineExtraElements(contentFits);
             }
         }, []);
 
@@ -176,7 +198,7 @@ const titlePlugin: PluginTitle = {
             if (showAnchor || showHint) {
                 calculateExtraElements();
             } else {
-                setIsInlineExtra(false);
+                setIsInlineExtraElements(false);
             }
         }, [
             currentLayout.x,
@@ -205,16 +227,6 @@ const titlePlugin: PluginTitle = {
             };
         }, [calculateExtraElements, showAnchor, showHint]);
 
-        let fontStyle: React.CSSProperties = {};
-        if (typeof data.size === 'object' && 'fontSize' in data.size) {
-            fontStyle = {
-                fontSize: data.size.fontSize + 'px',
-                lineHeight: RECCOMMENDED_LINE_HEIGHT_MULTIPLIER,
-            };
-        } else if (typeof data.size === 'string') {
-            fontStyle = TITLE_DEFAULT_SIZES[data.size];
-        }
-
         return (
             <RendererWrapper
                 id={props.id}
@@ -227,22 +239,23 @@ const titlePlugin: PluginTitle = {
                     className={b({
                         'with-auto-height': Boolean(data.autoHeight),
                         'with-color': Boolean(showBgColor),
-                        'with-inline-anchor': Boolean(withInlineAnchor),
+                        'with-inline-extra-elements': Boolean(withInlineExtraElements),
                         'with-absolute-anchor': Boolean(withAbsoluteAnchor && !withAbsoluteHint),
-                        'with-absolute-hint': Boolean(withAbsoluteHint),
+                        // 'with-absolute-hint': Boolean(withAbsoluteHint && !withAbsoluteAnchor),
                     })}
                     ref={contentRef}
                 >
                     {content}
                     <span
-                        className={b('anchor-container', {
-                            absolute: !isInlineExtra,
-                            'with-hint': showHint,
+                        className={b('extra-elements-container', {
+                            absolute: !isInlineExtraElements,
+                            // 'with-hint': showHint,
                         })}
                         style={{
-                            top: anchorTop,
-                            lineHeight: fontStyle.lineHeight,
-                            fontSize: fontStyle.fontSize,
+                            // top: extraElementsTop,
+                            ...getFontStyleBySize(data.size),
+                            // lineHeight: fontStyle.lineHeight, // ?
+                            // fontSize: fontStyle.fontSize, // ?
                         }}
                         {...{[EXPORT_PRINT_HIDDEN_ATTR]: true}}
                     >
@@ -259,11 +272,21 @@ const titlePlugin: PluginTitle = {
                                 }}
                             />
                         )}
-                        <AnchorLink to={data.text} show={showAnchor} absolute={!isInlineExtra} />
+                        <AnchorLink
+                            to={data.text}
+                            show={showAnchor}
+                            absolute={!isInlineExtraElements}
+                        />
                     </span>
                     {(withAbsoluteHint || withAbsoluteAnchor) && (
                         <div
-                            className={b({'with-absolute-hint-fade': true})}
+                            className={b({
+                                'with-absolute-anchor-fade':
+                                    !withAbsoluteHint && withAbsoluteAnchor,
+                                'with-absolute-hint-fade': withAbsoluteHint && !withAbsoluteAnchor,
+                                'with-absolute-hint-and-anchor-fade':
+                                    withAbsoluteHint && withAbsoluteAnchor,
+                            })}
                             {...{[EXPORT_PRINT_HIDDEN_ATTR]: true}}
                         />
                     )}

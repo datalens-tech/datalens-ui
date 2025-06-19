@@ -1,4 +1,4 @@
-@mixin with-fade-effect($hasHint: false) {
+@mixin title-with-fade-effect($hasAnchor: true, $hasHint: false) {
     content: '';
     position: absolute;
     top: 0;
@@ -12,7 +12,11 @@
         var(--dl-dk-title-background, var(--g-color-base-generic-ultralight))
     );
 
-    @if $hasHint {
-        width: 88px;
+    @if $hasHint and not $hasAnchor {
+        width: 60px;
+    }
+
+    @if $hasAnchor and $hasHint {
+        width: 100px;
     }
 }
