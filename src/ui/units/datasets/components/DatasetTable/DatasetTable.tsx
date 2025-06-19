@@ -550,8 +550,6 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
 
         // Shift+Click: select range from anchor to clicked row
         if (event.shiftKey) {
-            event.preventDefault();
-
             if (this.selectionAnchorIndex === null || this.selectionAnchorIndex === index) {
                 return toggleRow();
             }
@@ -568,8 +566,6 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
         }
 
         if (event.ctrlKey || event.metaKey) {
-            event.preventDefault();
-
             return toggleRow();
         }
     };
