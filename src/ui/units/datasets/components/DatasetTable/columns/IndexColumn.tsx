@@ -45,9 +45,9 @@ export const getIndexColumn = ({
                 <Checkbox
                     controlProps={{
                         onClick: (event) => {
-                            if (event.shiftKey || event.ctrlKey || event.metaKey) {
-                                event.stopPropagation();
+                            event.stopPropagation();
 
+                            if (event.shiftKey || event.ctrlKey || event.metaKey) {
                                 lockCheckbox.current = true;
                                 onSelectToggleByHotkey(row, index, event);
                             }

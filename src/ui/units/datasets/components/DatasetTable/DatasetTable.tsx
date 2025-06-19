@@ -279,6 +279,8 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
         index: number,
         event: React.MouseEvent,
     ) => {
+        event.preventDefault();
+
         const {fields} = this.props;
         const {selectedRows} = this.state;
 
