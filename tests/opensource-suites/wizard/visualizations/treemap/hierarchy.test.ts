@@ -29,7 +29,7 @@ datalensTest.describe('Wizard', () => {
             async ({page}) => {
                 const wizardPage = new WizardPage({page});
                 const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
-                const chart = chartContainer.locator('.gcharts');
+                const chart = chartContainer.locator('.gcharts-chart');
                 const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
 
                 await wizardPage.sectionVisualization.addFieldByClick(

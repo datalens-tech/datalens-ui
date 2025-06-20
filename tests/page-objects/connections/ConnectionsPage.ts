@@ -60,12 +60,14 @@ class ConnectionsPage extends BasePage {
         );
         // open creation dialog
         await formSubmit.click();
-        const textInput = await this.page.waitForSelector(slct(DialogCreateWorkbookEntryQa.Input));
+        const textInput = this.page
+            .locator(slct(DialogCreateWorkbookEntryQa.Input))
+            .locator('input');
         // clear input
         await textInput.press('Meta+A');
         await textInput.press('Backspace');
         // type connection name
-        await textInput.type(name);
+        await textInput.fill(name);
         const dialogApplyButton = await this.page.waitForSelector(
             slct(DialogCreateWorkbookEntryQa.ApplyButton),
         );

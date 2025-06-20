@@ -224,23 +224,16 @@ class QLPage extends ChartPage {
     }
 
     waitForSomeSuccessfulRender() {
-        return new Promise((resolve, reject) => {
-            this.page.waitForSelector('.chartkit .gcharts').then(resolve, () => undefined);
-            this.page.waitForSelector('.chartkit .chartkit-graph').then(resolve, () => undefined);
+        const gchart = this.page.locator('.chartkit .gcharts-chart');
+        const hcChart = this.page.locator('.chartkit .chartkit-graph');
+        const metricLocators = [
+            '.chartkit .chartkit-markup',
+            '.chartkit .chartkit-indicator',
+        ].join();
+        const metric = this.page.locator(metricLocators);
+        const table = this.chartkit.getTableLocator();
 
-            const metricLocators = [
-                '.chartkit .chartkit-markup',
-                '.chartkit .chartkit-indicator',
-            ].join();
-            this.page.waitForSelector(metricLocators).then(resolve, () => undefined);
-
-            this.chartkit
-                .getTableLocator()
-                .waitFor()
-                .then(resolve, () => undefined);
-
-            setTimeout(reject, 30 * 1000);
-        });
+        return gchart.or(hcChart).or(metric).or(table).waitFor();
     }
 
     compareScripts(s1: string | null, s2: string | null) {

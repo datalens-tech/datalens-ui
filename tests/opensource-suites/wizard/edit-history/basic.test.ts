@@ -32,7 +32,7 @@ datalensTest.describe('Wizard', () => {
         datalensTest('Make some changes, then undo them', async ({page}) => {
             const wizardPage = new WizardPage({page});
             const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
-            const chart = chartContainer.locator('.chartkit-graph,.gcharts');
+            const chart = chartContainer.locator('.chartkit-graph,.gcharts-chart');
 
             await expect(chart).toBeVisible();
 
@@ -62,7 +62,7 @@ datalensTest.describe('Wizard', () => {
         datalensTest('Make some changes, then undo them, then redo them', async ({page}) => {
             const wizardPage = new WizardPage({page});
             const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
-            const chart = chartContainer.locator('.chartkit-graph,.gcharts');
+            const chart = chartContainer.locator('.chartkit-graph,.gcharts-chart');
 
             await expect(chart).toBeVisible();
 

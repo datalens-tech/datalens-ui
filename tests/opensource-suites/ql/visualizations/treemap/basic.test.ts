@@ -27,7 +27,7 @@ datalensTest.describe('QL', () => {
 
         datalensTest('Visualization of the graph without errors', async ({page}) => {
             const previewLoader = page.locator('.grid-loader');
-            const chart = page.locator('.gcharts');
+            const chart = page.locator('.gcharts-chart');
 
             await expect(previewLoader).not.toBeVisible();
             await expect(chart).toBeVisible();
