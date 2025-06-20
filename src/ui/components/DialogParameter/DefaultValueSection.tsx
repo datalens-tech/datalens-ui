@@ -7,6 +7,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {DATASET_FIELD_TYPES, DialogParameterQA, isDateField} from 'shared';
 
+import type {ParameterValidationErrors} from './helpers';
 import type {UseParameterFormReturnValue} from './useParameterForm';
 
 const b = block('dialog-parameter');
@@ -19,6 +20,7 @@ const BOOLEAN_STRING = {
 interface Props {
     formState: UseParameterFormReturnValue['formState'];
     updateFormState: UseParameterFormReturnValue['updateFormState'];
+    validationErrors: ParameterValidationErrors;
 }
 
 const getDatePickerFormat = (
@@ -36,7 +38,7 @@ const getDatePickerFormat = (
     }
 };
 
-export function DefaultValueSection({formState, updateFormState}: Props) {
+export function DefaultValueSection({formState, updateFormState, validationErrors}: Props) {
     let content: React.ReactNode;
 
     if (isDateField({data_type: formState.type})) {
@@ -58,6 +60,9 @@ export function DefaultValueSection({formState, updateFormState}: Props) {
 
                     updateFormState({defaultValue: value});
                 }}
+                validationState={validationErrors.defaultValue ? 'invalid' : undefined}
+                errorPlacement="inside"
+                errorMessage={validationErrors.defaultValue}
             />
         );
     } else if (formState.type === DATASET_FIELD_TYPES.BOOLEAN) {
@@ -88,6 +93,9 @@ export function DefaultValueSection({formState, updateFormState}: Props) {
                 onUpdate={(value) => {
                     updateFormState({defaultValue: value});
                 }}
+                validationState={validationErrors.defaultValue ? 'invalid' : undefined}
+                errorPlacement="inside"
+                errorMessage={validationErrors.defaultValue}
             />
         );
     }
