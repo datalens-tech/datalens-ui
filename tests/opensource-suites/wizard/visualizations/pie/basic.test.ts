@@ -22,7 +22,7 @@ datalensTest.describe('Wizard', () => {
         datalensTest('Auto coloring @screenshot', async ({page}) => {
             const wizardPage = new WizardPage({page});
             const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
-            const chart = chartContainer.locator('.chartkit-graph,.gcharts-d3');
+            const chart = chartContainer.locator('.chartkit-graph,.gcharts');
             const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
 
             // 1. Only Measures placeholder is filled
