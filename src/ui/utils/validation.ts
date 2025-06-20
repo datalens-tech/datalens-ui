@@ -55,7 +55,7 @@ export const isParameterNameValid = (value: string): boolean => {
 
 export const isInt = (value: string | number): boolean => {
     const num = Number(value);
-    return Number.isSafeInteger(num) && !Number.isNaN(num);
+    return Number.isSafeInteger(num);
 };
 
 export const isUInt = (value: string | number): boolean => {
@@ -65,5 +65,5 @@ export const isUInt = (value: string | number): boolean => {
 
 export const isFloat = (value: string | number): boolean => {
     const num = Number(value);
-    return Number.isFinite(num) && !Number.isNaN(num) && Math.abs(num) <= Number.MAX_SAFE_INTEGER;
+    return Number.isFinite(num) && Math.abs(num) <= Number.MAX_SAFE_INTEGER;
 };
