@@ -1,4 +1,4 @@
-@mixin with-fade-effect() {
+@mixin with-fade-effect($hasHint: false) {
     content: '';
     position: absolute;
     top: 0;
@@ -8,7 +8,11 @@
     background: linear-gradient(
         to right,
         transparent,
-        var(--g-color-base-generic-ultralight) 50%,
-        var(--g-color-base-generic-ultralight)
+        var(--dl-dk-title-background, var(--g-color-base-generic-ultralight)) 50%,
+        var(--dl-dk-title-background, var(--g-color-base-generic-ultralight))
     );
+
+    @if $hasHint {
+        width: 88px;
+    }
 }
