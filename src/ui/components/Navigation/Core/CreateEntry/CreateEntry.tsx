@@ -1,15 +1,15 @@
 import React from 'react';
 
+import {ChevronDown} from '@gravity-ui/icons';
 import type {ButtonView, PopupPlacement} from '@gravity-ui/uikit';
-import {DropdownMenu} from '@gravity-ui/uikit';
+import {Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {Feature} from 'shared';
+import {CreateEntityButton, Feature} from 'shared';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {registry} from '../../../../registry';
 import {PLACE} from '../../constants';
 
-import {CreateEntrySwitcher} from './CreateEntrySwitcher';
 import {getCreateEntryItems} from './getCreateEntryItems';
 
 import './CreateEntry.scss';
@@ -46,7 +46,8 @@ export const CreateEntry: React.FC<CreateEntryProps> = ({
     isOnlyCollectionsMode = false,
     buttonView = 'action',
 }) => {
-    const {checkCreateEntryButtonVisibility} = registry.common.functions.getAll();
+    const {checkCreateEntryButtonVisibility, getNavigationPlacesConfig} =
+        registry.common.functions.getAll();
     const withMenu =
         place === PLACE.ROOT ||
         place === PLACE.FAVORITES ||
@@ -69,6 +70,15 @@ export const CreateEntry: React.FC<CreateEntryProps> = ({
         return null;
     }
 
+    const placesConfig = getNavigationPlacesConfig();
+    const targetPlace = placesConfig.find((placeConfig) => {
+        return placeConfig.place === place;
+    });
+
+    if (!targetPlace) {
+        return null;
+    }
+
     return (
         <DropdownMenu
             size="s"
@@ -78,13 +88,24 @@ export const CreateEntry: React.FC<CreateEntryProps> = ({
                 placement: popupPlacement,
             }}
             menuProps={{className: b('popup-menu')}}
-            renderSwitcher={() => (
-                <CreateEntrySwitcher
-                    place={place}
-                    onClick={onClick}
-                    withMenu={withMenu}
-                    buttonView={buttonView}
-                />
+            renderSwitcher={(triggerProps) => (
+                <Button
+                    view={buttonView}
+                    qa={CreateEntityButton.Button}
+                    className={b('button-create', {
+                        'with-menu': withMenu,
+                        action: buttonView === 'action',
+                    })}
+                    onClick={
+                        withMenu
+                            ? triggerProps.onClick
+                            : () => {
+                                  onClick(targetPlace.value);
+                              }
+                    }
+                >
+                    {targetPlace.buttonText} {withMenu && <Icon data={ChevronDown} />}
+                </Button>
             )}
         />
     );
