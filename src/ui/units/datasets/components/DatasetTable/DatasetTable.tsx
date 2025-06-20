@@ -90,6 +90,8 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
         waitingForOpenFieldEditor: false,
     };
 
+    private selectionAnchorIndex: number | null = null;
+
     componentDidUpdate(prevProps: DatasetTableProps) {
         const {editableFieldGuid, waitingForOpenFieldEditor} = this.state;
 
@@ -151,6 +153,10 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
                                 active: activeRow === index,
                                 selected: selectedRows[row.guid],
                             });
+                        }}
+                        onRowClick={this.onRowClick}
+                        onSort={() => {
+                            this.selectionAnchorIndex = null;
                         }}
                     />
                 </div>
@@ -250,9 +256,19 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
 
     private resetSelection = () => {
         this.setState({selectedRows: {}});
+        this.selectionAnchorIndex = null;
     };
 
-    private onSelectChange = (isSelected: boolean, guids: (keyof DatasetSelectionMap)[]) => {
+    private onSelectChange = (
+        isSelected: boolean,
+        guids: (keyof DatasetSelectionMap)[],
+        modifier?: {shiftKey: boolean; ctrlKey: boolean; metaKey: boolean},
+        clickedIndex?: number,
+    ) => {
+        if (clickedIndex && (modifier?.shiftKey || modifier?.ctrlKey || modifier?.metaKey)) {
+            return this.onSelectToggleByHotkey({guid: guids[0]}, clickedIndex, modifier);
+        }
+
         const selectedRows = {...this.state.selectedRows};
 
         guids.forEach((guid) => {
@@ -266,6 +282,70 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
         this.setState({
             selectedRows,
         });
+        this.selectionAnchorIndex = clickedIndex ?? null;
+    };
+
+    private onSelectToggleByHotkey = (
+        {guid}: {guid: keyof DatasetSelectionMap},
+        index: number,
+        modifier: {shiftKey: boolean; ctrlKey: boolean; metaKey: boolean},
+    ) => {
+        const {fields} = this.props;
+        const selectedRows = {...this.state.selectedRows};
+
+        const toggleRow = () => {
+            this.selectionAnchorIndex = index;
+
+            if (selectedRows[guid]) {
+                delete selectedRows[guid];
+            } else {
+                selectedRows[guid] = true;
+            }
+
+            this.setState({selectedRows});
+        };
+
+        if (modifier.shiftKey) {
+            if (this.selectionAnchorIndex === null || this.selectionAnchorIndex === index) {
+                return toggleRow();
+            }
+
+            const start = Math.min(this.selectionAnchorIndex, index);
+            const end = Math.max(this.selectionAnchorIndex, index);
+
+            const isLastIndexChecked = selectedRows[fields[this.selectionAnchorIndex].guid];
+            const wasCurrentRowChecked = selectedRows[guid];
+
+            if (wasCurrentRowChecked === isLastIndexChecked) {
+                return toggleRow();
+            }
+
+            // select/deselect range from anchor to clicked row
+            for (let i = start; i <= end; i++) {
+                if (wasCurrentRowChecked) {
+                    delete selectedRows[fields[i].guid];
+                } else {
+                    selectedRows[fields[i].guid] = true;
+                }
+            }
+
+            this.selectionAnchorIndex = index;
+            return this.setState({selectedRows});
+        }
+
+        if (modifier.ctrlKey || modifier.metaKey) {
+            return toggleRow();
+        }
+    };
+
+    private onRowClick = (
+        row: DatasetField,
+        index: number,
+        event: React.MouseEvent<HTMLTableRowElement>,
+    ) => {
+        event.preventDefault();
+
+        this.onSelectToggleByHotkey(row, index, event);
     };
 
     private setActiveRow = (activeRow?: number) => this.setState({activeRow});
