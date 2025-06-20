@@ -1,6 +1,9 @@
 export interface ListSuggestUser {
     id: string;
+    login?: string;
     name: string;
+    email?: string;
+    meta?: string;
     avatarUrl?: string;
 }
 

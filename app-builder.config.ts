@@ -31,6 +31,9 @@ const vendors = (vendorsList: string[]) => {
     ]);
 };
 
+const devClientPort = process.env?.['DEV_CLIENT_PORT'];
+const devServerPort = process.env?.['DEV_SERVER_PORT'];
+
 const config: ServiceConfig = {
     client: {
         bundler: 'rspack',
@@ -77,9 +80,21 @@ const config: ServiceConfig = {
             'highlight.js': false,
             buffer: false,
         },
+        ...(devClientPort
+            ? {
+                  devServer: {
+                      port: parseInt(devClientPort, 10),
+                  },
+              }
+            : {}),
     },
     server: {
         watch: ['dist/i18n', 'dist/shared'],
+        ...(devServerPort
+            ? {
+                  port: parseInt(devServerPort, 10),
+              }
+            : {}),
     },
 };
 

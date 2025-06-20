@@ -11,7 +11,6 @@ import {downloadData} from '../utils';
 export type CsvExportAction = (
     chartsDataProvider: ChartKitDataProvider,
     onExportLoading?: ExportChartArgs['onExportLoading'],
-    isEnabledAsyncChartDataExport?: boolean,
     hasAccessToBusinessFeature?: boolean,
 ) => (chartData: ExportActionArgs) => void | MenuActionComponent;
 

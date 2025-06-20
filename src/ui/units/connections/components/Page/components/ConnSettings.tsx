@@ -20,7 +20,7 @@ export function ConnSettings({
     className?: string;
 }) {
     const form = useSelector(formSelector);
-    const dataExportEnabled = !form.data_export_forbidden;
+    const dataExportEnabled = !form.data_export_forbidden || form.data_export_forbidden === 'off';
 
     const dispatch = useDispatch();
 
@@ -34,7 +34,7 @@ export function ConnSettings({
             const nextDataExportEnabled = value.includes(ITEM_DATA_EXPORT_ENABLED);
 
             if (dataExportEnabled !== nextDataExportEnabled) {
-                dispatch(changeForm({data_export_forbidden: !nextDataExportEnabled}));
+                dispatch(changeForm({data_export_forbidden: nextDataExportEnabled ? 'off' : 'on'}));
             }
         },
         [dataExportEnabled, dispatch],
