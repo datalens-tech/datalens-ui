@@ -44,12 +44,7 @@ export function ConnSettings({
         const {ref, triggerProps} = args;
 
         return (
-            <Button
-                ref={ref}
-                view="flat"
-                extraProps={{onKeyDown: triggerProps.onKeyDown}}
-                {...triggerProps}
-            >
+            <Button ref={ref as React.Ref<HTMLButtonElement>} view="flat" {...triggerProps}>
                 <Icon data={Gear} size={18} />
             </Button>
         );

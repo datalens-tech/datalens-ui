@@ -809,7 +809,7 @@ class Connections extends React.PureComponent {
         };
 
         return (
-            <Dialog open={true} autoclosable={false} onClose={closeDialog} disableFocusTrap={true}>
+            <Dialog open={true} autoclosable={false} onClose={closeDialog}>
                 <Dialog.Header
                     caption={i18n('dash.connections-dialog.edit', 'label_connections')}
                 />

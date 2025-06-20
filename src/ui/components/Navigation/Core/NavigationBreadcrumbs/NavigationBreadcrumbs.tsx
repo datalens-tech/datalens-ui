@@ -1,9 +1,9 @@
 import React from 'react';
 
-import type {BreadcrumbsItem} from '@gravity-ui/uikit';
-import {Breadcrumbs, FirstDisplayedItemsCount, LastDisplayedItemsCount} from '@gravity-ui/uikit';
+import {Breadcrumbs} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {EntryDialogues} from 'components/EntryDialogues';
+import type {EntryContextMenuItems} from 'ui/components/EntryContextMenu/helpers';
 
 import type {ListDirectoryBreadCrumb} from '../../../../../shared/schema';
 import type {ChangeLocation, CurrentPageEntry, PlaceParameterItem} from '../../types';
@@ -31,19 +31,21 @@ type Props = {
         event: React.MouseEvent<HTMLElement, MouseEvent> | KeyboardEvent,
         last: boolean,
     ) => void;
-    getContextMenuItems: (data: {entry: unknown}) => unknown;
+    getContextMenuItems: (data: {entry: unknown}) => EntryContextMenuItems;
     refresh?: () => void;
     onChangeLocation?: ChangeLocation;
     className?: string;
     currentPageEntry?: CurrentPageEntry;
 };
 
-type Item = BreadcrumbsItem & {
+type Item = {
     qa?: string;
     item: {
         path: string;
         name: string;
     };
+    text: string;
+    action?: (event: React.MouseEvent<HTMLElement, MouseEvent> | KeyboardEvent) => void;
 };
 
 export const NavigationBreadcrumbs = ({
@@ -107,22 +109,6 @@ export const NavigationBreadcrumbs = ({
         return breadCrumbsItems;
     }, [place, getPlaceParameters, breadCrumbs, onClick]);
 
-    const renderItemContent = (renderItem: Item, isCurrent: boolean) => {
-        return (
-            <span
-                data-qa={renderItem.qa}
-                className={b('item', {last: isCurrent})}
-                onClick={(event) => {
-                    if (isCurrent) {
-                        onClick(renderItem.item, event, true);
-                    }
-                }}
-            >
-                {renderItem.text}
-            </span>
-        );
-    };
-
     const showMenu = React.useMemo(() => {
         if (enableMenu && isRootPlace(place) && breadCrumbs.length > 0) {
             const breadCrumb = breadCrumbs[breadCrumbs.length - 1];
@@ -137,13 +123,23 @@ export const NavigationBreadcrumbs = ({
             <EntryDialogues ref={entryDialoguesRef} />
             <div className={b('wrapper')}>
                 <div className={b('line')}>
-                    <Breadcrumbs
-                        className={b('component', {showMenu})}
-                        items={items}
-                        firstDisplayedItemsCount={FirstDisplayedItemsCount.One}
-                        lastDisplayedItemsCount={LastDisplayedItemsCount.One}
-                        renderItemContent={renderItemContent}
-                    />
+                    <Breadcrumbs className={b('component', {showMenu})}>
+                        {items.map((item, index) => {
+                            const last = index === items.length - 1;
+                            return (
+                                <Breadcrumbs.Item
+                                    key={index}
+                                    data-qa={item.qa}
+                                    className={b('item', {last})}
+                                    onClick={(event) => {
+                                        onClick(item.item, event, last);
+                                    }}
+                                >
+                                    {item.text}
+                                </Breadcrumbs.Item>
+                            );
+                        })}
+                    </Breadcrumbs>
                     {showMenu && Boolean(getContextMenuItems) && (
                         <BreadcrumbMenu
                             breadCrumbs={breadCrumbs}

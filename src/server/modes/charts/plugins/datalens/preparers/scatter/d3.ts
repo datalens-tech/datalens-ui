@@ -1,4 +1,8 @@
-import type {ChartData, ScatterSeries, ScatterSeriesData} from '@gravity-ui/chartkit/d3';
+import type {
+    ChartData,
+    ScatterSeries,
+    ScatterSeriesData,
+} from '@gravity-ui/chartkit/gravity-charts';
 
 import type {SeriesExportSettings} from '../../../../../../../shared';
 import {

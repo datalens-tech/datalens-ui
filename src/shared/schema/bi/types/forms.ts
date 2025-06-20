@@ -2,7 +2,7 @@ import type {DatePickerProps} from '@gravity-ui/date-components';
 import type {
     ButtonProps,
     CheckboxProps,
-    RadioButtonProps,
+    SegmentedRadioGroupProps as RadioButtonProps,
     RadioGroupProps,
     SelectProps,
     TextAreaProps,
@@ -118,7 +118,7 @@ export type DescriptionItem = Pick<BaseItem, 'displayConditions'> & {
 
 export type FileInputItem = BaseItem & {
     id: 'file-input';
-    controlProps?: Partial<ButtonProps>;
+    controlProps?: Partial<ButtonProps<'input'>>;
 };
 
 export type HiddenItem = BaseItem & {

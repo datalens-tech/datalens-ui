@@ -141,7 +141,6 @@ const DialogShapes: React.FC<Props> = ({
                 <Dialog.Footer
                     preset="default"
                     showError={false}
-                    listenKeyEnter={false}
                     onClickButtonCancel={onCancelButtonClick}
                     onClickButtonApply={onApplyButtonClick}
                     textButtonApply={i18n('wizard', 'button_apply')}

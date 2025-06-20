@@ -1,7 +1,7 @@
 import React from 'react';
 
-import {FormRow, HelpPopover} from '@gravity-ui/components';
-import {Checkbox, Dialog, Flex, List, TextInput} from '@gravity-ui/uikit';
+import {FormRow} from '@gravity-ui/components';
+import {Checkbox, Dialog, Flex, HelpMark, List, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {I18n} from 'i18n';
@@ -262,10 +262,9 @@ const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                         label={
                             <React.Fragment>
                                 {i18n('label_apply-button-checkbox')}
-                                <HelpPopover
-                                    className={b('help-icon')}
-                                    htmlContent={i18n('context_apply-button')}
-                                />
+                                <HelpMark className={b('help-icon')}>
+                                    {i18n('context_apply-button')}
+                                </HelpMark>
                             </React.Fragment>
                         }
                     >
@@ -282,10 +281,9 @@ const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                         label={
                             <React.Fragment>
                                 {i18n('label_reset-button-checkbox')}
-                                <HelpPopover
-                                    className={b('help-icon')}
-                                    htmlContent={i18n('context_reset-button')}
-                                />
+                                <HelpMark className={b('help-icon')}>
+                                    {i18n('context_reset-button')}
+                                </HelpMark>
                             </React.Fragment>
                         }
                     >
@@ -314,10 +312,9 @@ const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                             label={
                                 <React.Fragment>
                                     {i18n('label_update-controls-on-change')}
-                                    <HelpPopover
-                                        className={b('help-icon')}
-                                        htmlContent={i18n('context_update-controls-on-change')}
-                                    />
+                                    <HelpMark className={b('help-icon')}>
+                                        {i18n('context_update-controls-on-change')}
+                                    </HelpMark>
                                 </React.Fragment>
                             }
                         >

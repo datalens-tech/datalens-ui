@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Button, Checkbox, RadioButton, TextInput} from '@gravity-ui/uikit';
+import {Button, Checkbox, SegmentedRadioGroup as RadioButton, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import type {DatasetField, DatasetFieldCalcMode} from 'shared';
 import {Feature} from 'shared';

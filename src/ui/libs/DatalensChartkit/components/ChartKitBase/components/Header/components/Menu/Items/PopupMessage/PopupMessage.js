@@ -30,12 +30,16 @@ export default function PopupMessage(props) {
         <Popup
             {...{
                 hasArrow: tail,
-                onClose: onOutsideClick,
+                onOpenChange: (open) => {
+                    if (!open) {
+                        onOutsideClick();
+                    }
+                },
                 open: visible,
                 placement: []
                     .concat(to)
                     .map((dir) => mapLegoDirectionsToCommonPlacement[`${dir}-${toSide}`]),
-                anchorRef: anchor,
+                anchorElement: anchor.current,
             }}
         >
             <div className={b('content')}>{children}</div>

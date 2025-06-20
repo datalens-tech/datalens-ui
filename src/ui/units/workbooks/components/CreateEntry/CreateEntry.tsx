@@ -38,12 +38,17 @@ export const CreateEntry = React.memo<Props>(({className, scope, size = 'm', vie
                     size="s"
                     items={items}
                     popupProps={{qa: CreateEntityButton.Popup}}
-                    switcher={
-                        <Button view={view} size={size} qa={CreateEntityButton.Button}>
+                    renderSwitcher={({onClick}) => (
+                        <Button
+                            view={view}
+                            size={size}
+                            qa={CreateEntityButton.Button}
+                            onClick={onClick}
+                        >
                             {buttonText}
                             <Icon data={ChevronDown} size="16" />
                         </Button>
-                    }
+                    )}
                 />
             ) : (
                 <Button view={view} onClick={handleClick} size={size}>

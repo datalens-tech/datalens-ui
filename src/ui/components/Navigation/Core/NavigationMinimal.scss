@@ -1,12 +1,12 @@
 .dl-core-navigation-minimal {
     width: 416px;
-    height: 540px;
+    height: 556px;
     display: flex;
     flex-direction: column;
     position: relative;
     max-height: 70vh;
     max-width: 80vw;
-    margin-top: 16px;
+    padding-top: 16px;
 
     .dl-core-navigation {
         height: calc(100% - 40px);

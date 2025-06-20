@@ -34,9 +34,9 @@ class ConnectionsPage extends BasePage {
         const textInput = await this.page.waitForSelector(slct(EntryDialogQA.PathSelect));
         // type connection name
         await textInput.type(name);
-        const dialogApplyButton = await this.page.waitForSelector(slct(EntryDialogQA.Apply));
+
         // create connection
-        await dialogApplyButton.click();
+        await this.page.locator(slct(EntryDialogQA.Apply)).click();
         try {
             await this.page.waitForURL(() => this.page.url().includes(name));
         } catch {
@@ -60,12 +60,14 @@ class ConnectionsPage extends BasePage {
         );
         // open creation dialog
         await formSubmit.click();
-        const textInput = await this.page.waitForSelector(slct(DialogCreateWorkbookEntryQa.Input));
+        const textInput = this.page
+            .locator(slct(DialogCreateWorkbookEntryQa.Input))
+            .locator('input');
         // clear input
         await textInput.press('Meta+A');
         await textInput.press('Backspace');
         // type connection name
-        await textInput.type(name);
+        await textInput.fill(name);
         const dialogApplyButton = await this.page.waitForSelector(
             slct(DialogCreateWorkbookEntryQa.ApplyButton),
         );

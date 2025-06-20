@@ -1,8 +1,7 @@
 import React from 'react';
 
-import {HelpPopover} from '@gravity-ui/components';
 import {Plus} from '@gravity-ui/icons';
-import {Button, Icon, useFileInput} from '@gravity-ui/uikit';
+import {Button, HelpMark, Icon, useFileInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {ConnectionsBaseQA} from 'shared';
@@ -29,7 +28,7 @@ export const AddFileButton = () => {
                 <Icon data={Plus} size={ICON_SIZE} />
                 <span>{i18n('button_add-file')}</span>
             </Button>
-            <HelpPopover content={hintContent} />
+            <HelpMark>{hintContent}</HelpMark>
         </div>
     );
 };

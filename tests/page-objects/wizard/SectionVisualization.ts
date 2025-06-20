@@ -240,9 +240,7 @@ export default class SectionVisualization {
         await this.page.hover(placeholderSelector);
 
         await this.page.hover(`${placeholderSelector} .add-field`);
-
-        const content = await this.page.$('.g-popover__tooltip-content > span');
-        return content?.getAttribute('data-qa');
+        return await this.page.locator('.g-popover [data-qa]').getAttribute('data-qa');
     }
 
     async getPlaceholderItemsInnerText(placeholderName: PlaceholderName) {

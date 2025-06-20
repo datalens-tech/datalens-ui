@@ -1,7 +1,7 @@
 import type {IncomingHttpHeaders} from 'http';
 
 import type {AppContext} from '@gravity-ui/nodekit';
-import Hashids from 'hashids/cjs';
+import Hashids from 'hashids';
 import assign from 'lodash/assign';
 import intersection from 'lodash/intersection';
 

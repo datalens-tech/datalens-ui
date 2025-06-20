@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {CircleQuestion, Gear, Sliders} from '@gravity-ui/icons';
-import type {AsideHeaderProps, AsideHeaderTopAlertProps, MenuItem} from '@gravity-ui/navigation';
+import type {AsideHeaderProps, MenuItem, TopAlertProps} from '@gravity-ui/navigation';
 import {AsideHeader, FooterItem} from '@gravity-ui/navigation';
 import type {IconData} from '@gravity-ui/uikit';
 import {List} from '@gravity-ui/uikit';
@@ -134,7 +134,7 @@ export const AsideHeaderAdapter = ({renderContent, logoIcon}: AsideHeaderAdapter
     }, []);
 
     const isReadOnly = isEnabledFeature(Feature.ReadOnlyMode);
-    const topAlert: AsideHeaderTopAlertProps | undefined = isReadOnly
+    const topAlert: TopAlertProps | undefined = isReadOnly
         ? {
               message: baseI18n('common.read-only', 'toast_editing-warning'),
           }
@@ -244,8 +244,12 @@ export const AsideHeaderAdapter = ({renderContent, logoIcon}: AsideHeaderAdapter
                     }}
                     enableTooltip={false}
                     popupVisible={currentPopup === PopupName.Main}
-                    popupOffset={[0, 8]}
-                    onClosePopup={() => setCurrentPopup(null)}
+                    popupOffset={{mainAxis: 0, crossAxis: 8}}
+                    onOpenChangePopup={(isOpen) => {
+                        if (!isOpen) {
+                            setCurrentPopup(null);
+                        }
+                    }}
                     renderPopupContent={() => {
                         return (
                             <List
@@ -295,8 +299,12 @@ export const AsideHeaderAdapter = ({renderContent, logoIcon}: AsideHeaderAdapter
                         }}
                         enableTooltip={false}
                         popupVisible={currentPopup === PopupName.Account}
-                        popupOffset={[0, 8]}
-                        onClosePopup={handleClosePopup}
+                        popupOffset={{mainAxis: 0, crossAxis: 8}}
+                        onOpenChangePopup={(isOpen) => {
+                            if (!isOpen) {
+                                handleClosePopup();
+                            }
+                        }}
                         renderPopupContent={() => <UserMenu onClose={handleClosePopup} />}
                     />
                 )}
