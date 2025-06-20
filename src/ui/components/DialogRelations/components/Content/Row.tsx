@@ -490,12 +490,20 @@ export const Row = ({
                             )}
                         />
                         <Popover
-                            content={<div title={tooltipTitle}>{tooltipContent}</div>}
+                            content={
+                                <div className={b('popover-content')} title={tooltipTitle}>
+                                    {tooltipContent}
+                                </div>
+                            }
                             placement="bottom"
                             hasArrow={false}
-                            qa={DashCommonQa.RelationsRowPopover}
                         >
-                            <Icon data={iconInfo} size={ICON_SIZE} className={b('icon-info')} />
+                            <Icon
+                                qa={DashCommonQa.RelationsRowPopover}
+                                data={iconInfo}
+                                size={ICON_SIZE}
+                                className={b('icon-info')}
+                            />
                         </Popover>
                     </React.Fragment>
                 )}
