@@ -33,38 +33,40 @@ export const EntryBreadcrumbs = (props: EntryBreadcrumbsProps) => {
     }
 
     return (
-        <Breadcrumbs className={b()}>
-            {breadcrumbsItems.map((item, index) => {
-                let content: React.ReactNode = null;
+        <div style={{overflow: 'hidden'}}>
+            <Breadcrumbs showRoot className={b()}>
+                {breadcrumbsItems.map((item, index) => {
+                    let content: React.ReactNode = null;
 
-                if (index === 0 && !entry?.workbookId && renderRootContent) {
-                    content = renderRootContent(item);
-                }
+                    if (index === 0 && !entry?.workbookId && renderRootContent) {
+                        content = renderRootContent(item);
+                    }
 
-                content = item.path ? (
-                    <Link
-                        to={item.path}
-                        className={b('item', {link: true})}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                        }}
-                    >
-                        {item.text}
-                    </Link>
-                ) : (
-                    <div className={b('item')}>{item.text}</div>
-                );
+                    content = item.path ? (
+                        <Link
+                            to={item.path}
+                            className={b('item', {link: true})}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                            }}
+                        >
+                            {item.text}
+                        </Link>
+                    ) : (
+                        <div className={b('item')}>{item.text}</div>
+                    );
 
-                return (
-                    <Breadcrumbs.Item
-                        key={index}
-                        onClick={item.action}
-                        className={b('item', {link: Boolean(item.path)})}
-                    >
-                        {content}
-                    </Breadcrumbs.Item>
-                );
-            })}
-        </Breadcrumbs>
+                    return (
+                        <Breadcrumbs.Item
+                            key={index}
+                            onClick={item.action}
+                            className={b('item', {link: Boolean(item.path)})}
+                        >
+                            {content}
+                        </Breadcrumbs.Item>
+                    );
+                })}
+            </Breadcrumbs>
+        </div>
     );
 };
