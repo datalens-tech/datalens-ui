@@ -71,9 +71,11 @@ class Drill extends React.Component<Props> {
                     className={b('breadcrumbs')}
                     popupPlacement={['bottom', 'top', 'bottom-start']}
                 >
-                    {this.getItems().map((item, index) => {
+                    {this.getItems().map((item, index, items) => {
+                        const lastItem = index === items.length - 1;
+
                         return (
-                            <Breadcrumbs.Item key={index} onClick={item.action}>
+                            <Breadcrumbs.Item key={index} onClick={item.action} disabled={lastItem}>
                                 {item.text}
                             </Breadcrumbs.Item>
                         );

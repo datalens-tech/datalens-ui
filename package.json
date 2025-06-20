@@ -225,7 +225,7 @@
     "react-redux": "^7.2.4",
     "react-router-dom": "^5.2.0",
     "react-split-pane": "^0.1.92",
-    "react-virtualized-auto-sizer": "^1.0.20",
+    "react-virtualized-auto-sizer": "1.0.24",
     "react-waypoint": "^10.3.0",
     "recompose": "npm:react-recompose@^0.33.0",
     "redux": "^4.1.1",
@@ -247,7 +247,10 @@
   },
   "overrides": {
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "@gravity-ui/uikit": {
+      "react-virtualized-auto-sizer": "1.0.24"
+    }
   },
   "deploy": {
     "project": "stat",
