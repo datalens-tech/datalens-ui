@@ -12,6 +12,7 @@
   "action_save": "Save",
   "action_stay": "Remain",
   "button_choose-file": "Select a file",
+  "button_deploy": "Deploy",
   "label_connection": "connection",
   "label_copy": "Copy to",
   "label_copy-denied-title": "Insufficient permissions to copy",
@@ -24,6 +25,7 @@
   "label_delete-collections-workbooks": "Delete collections and workbooks",
   "label_delete-workbook": "Delete workbook",
   "label_delete-workbooks-for-delete": "Workbooks to be deleted",
+  "label_deploy-denied-title": "Insufficient permissions to create a workbook",
   "label_description": "Description",
   "label_empty-collection": "This collection is empty or nothing matching the filter conditions was found",
   "label_error-file-type": "File must be in JSON format",
@@ -38,6 +40,7 @@
   "label_wizard": "chart",
   "section_delete-collection": "Are you sure you want to delete the collection \"{{name}}\"?",
   "section_delete-workbook": "Are you sure you want to delete the workbook \"{{name}}\"?",
+  "title_deploy": "Deploy to",
   "title_import-exit": "Do you want to close the import window?",
   "toast_get-json-error": "An error occurred while trying to get a JSON from the file",
   "toast_outdated-workbook-info": "The workbook information is outdated. Please refresh the page."
