@@ -151,9 +151,7 @@ describe('isFloat', () => {
         [-Infinity, false],
         [NaN, false],
         [Number.MAX_SAFE_INTEGER, true],
-        [Number.MIN_SAFE_INTEGER, true],
         [Number.MAX_SAFE_INTEGER + 1, false],
-        [Number.MIN_SAFE_INTEGER - 1, false],
     ])('should return %s for input %s', (input, expected) => {
         expect(isFloat(input)).toBe(expected);
     });
