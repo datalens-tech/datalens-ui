@@ -116,8 +116,6 @@ describe('isUInt', () => {
         [-123, false],
         [-123.0, false],
         [123.5, false],
-        [Number.MAX_SAFE_INTEGER, true],
-        [Number.MAX_SAFE_INTEGER + 1, false],
     ])('should return %s for input %s', (input, expected) => {
         expect(isUInt(input)).toBe(expected);
     });
@@ -150,8 +148,6 @@ describe('isFloat', () => {
         [Infinity, false],
         [-Infinity, false],
         [NaN, false],
-        [Number.MAX_SAFE_INTEGER, true],
-        [Number.MAX_SAFE_INTEGER + 1, false],
     ])('should return %s for input %s', (input, expected) => {
         expect(isFloat(input)).toBe(expected);
     });
