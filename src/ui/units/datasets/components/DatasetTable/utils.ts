@@ -54,8 +54,12 @@ type GetColumnsArgs = {
     ) => void;
     handleDescriptionUpdate: (field: DatasetField, value: string) => void;
     handleMoreActionClick: (args: {action: FieldAction; field: DatasetField}) => void;
-    onSelectChange: (isSelected: boolean, fields: DatasetField['guid'][]) => void;
-    onSelectToggleByHotkey: (row: DatasetField, index: number, event: React.MouseEvent) => void;
+    onSelectChange: (
+        isSelected: boolean,
+        fields: (keyof DatasetSelectionMap)[],
+        modifier?: {shiftKey: boolean; ctrlKey: boolean; metaKey: boolean},
+        clickedIndex?: number,
+    ) => void;
 };
 
 export const getAggregationSwitchTo = (
@@ -97,7 +101,6 @@ export const getColumns = (args: GetColumnsArgs) => {
         fields,
         showFieldsId,
         onSelectChange,
-        onSelectToggleByHotkey,
         setActiveRow,
         openDialogFieldEditor,
         handleTitleUpdate,
@@ -124,7 +127,6 @@ export const getColumns = (args: GetColumnsArgs) => {
                 state,
                 fields.map(({guid}) => guid),
             ),
-        onSelectToggleByHotkey,
     });
 
     const title = getTitleColumn({

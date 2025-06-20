@@ -8,20 +8,29 @@ import type {DatasetField, DatasetSelectionMap} from 'shared';
 
 const b = block('dataset-table');
 
+const MODIFIER_DEFAULT = {
+    shiftKey: false,
+    ctrlKey: false,
+    metaKey: false,
+};
+
 export const getIndexColumn = ({
     selectedRows,
     isAllSelected,
     indeterminate,
     onSelectChange,
     onSelectAllChange,
-    onSelectToggleByHotkey,
 }: {
     selectedRows: DatasetSelectionMap;
     isAllSelected?: boolean;
     indeterminate?: boolean;
-    onSelectChange: (isSelected: boolean, fields: (keyof DatasetSelectionMap)[]) => void;
+    onSelectChange: (
+        isSelected: boolean,
+        guids: (keyof DatasetSelectionMap)[],
+        modifier: {shiftKey: boolean; ctrlKey: boolean; metaKey: boolean},
+        clickedIndex: number,
+    ) => void;
     onSelectAllChange: (isSelected: boolean) => void;
-    onSelectToggleByHotkey: (row: DatasetField, index: number, event: React.MouseEvent) => void;
 }): Column<DatasetField> => ({
     name: 'index',
     className: b('column'),
@@ -38,30 +47,36 @@ export const getIndexColumn = ({
     ),
     render: function IndexColumnItem({index, row}) {
         const {guid} = row;
-        const lockCheckbox = useRef(false);
+        const modifierRef = useRef<{shiftKey: boolean; ctrlKey: boolean; metaKey: boolean}>(
+            MODIFIER_DEFAULT,
+        );
+
+        const handleCheckboxClick = (event: React.MouseEvent) => {
+            event.stopPropagation();
+
+            modifierRef.current = {
+                shiftKey: event.shiftKey,
+                ctrlKey: event.ctrlKey,
+                metaKey: event.metaKey,
+            };
+        };
+
+        const handleCheckboxChange = (isSelected: boolean) => {
+            onSelectChange(isSelected, [guid], modifierRef.current, index);
+
+            modifierRef.current = MODIFIER_DEFAULT;
+        };
 
         return (
             <React.Fragment>
                 <Checkbox
                     controlProps={{
-                        onClick: (event) => {
-                            event.stopPropagation();
-
-                            if (event.shiftKey || event.ctrlKey || event.metaKey) {
-                                lockCheckbox.current = true;
-                                onSelectToggleByHotkey(row, index, event);
-                            }
-                        },
+                        onClick: handleCheckboxClick,
                     }}
                     className={b('btn-select')}
                     checked={selectedRows[guid] ?? false}
                     size={'l'}
-                    onUpdate={(value) => {
-                        if (!lockCheckbox.current) {
-                            onSelectChange(value, [guid]);
-                        }
-                        lockCheckbox.current = false;
-                    }}
+                    onUpdate={handleCheckboxChange}
                 />
                 <div className={b('title-index')}>{index + 1}</div>
             </React.Fragment>
