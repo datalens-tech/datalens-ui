@@ -11,7 +11,6 @@ import {selectIsChartSaved} from 'units/wizard/selectors/preview';
 import type {DatalensGlobalState} from '../../../../../';
 import {ActionPanel} from '../../../../../';
 import {ChartSaveControls} from '../../../../../components/ActionPanel/components/ChartSaveControls/ChartSaveControl';
-import type {ChartKit} from '../../../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {registry} from '../../../../../registry';
 import {selectCanGoBack, selectCanGoForward} from '../../../../../store/selectors/editHistory';
 import {setEditMode} from '../../../../dash/store/actions/base/actions';
@@ -37,7 +36,6 @@ export interface WizardActionPanelProps {
     onSaveAsNewClick: () => void;
     onSaveAsDraftClick: () => void;
     onSaveAndPublishClick: () => void;
-    chartKitRef: React.RefObject<ChartKit>;
 }
 export const WizardActionPanel: React.FC<WizardActionPanelProps> = (
     props: WizardActionPanelProps,
@@ -53,7 +51,6 @@ export const WizardActionPanel: React.FC<WizardActionPanelProps> = (
         onSaveAsNewClick,
         onSaveAndPublishClick,
         onSaveAsDraftClick,
-        chartKitRef,
     } = props;
 
     const dispatch = useDispatch();
@@ -105,7 +102,6 @@ export const WizardActionPanel: React.FC<WizardActionPanelProps> = (
         editButtonLoading,
         handleEditButtonClick,
         isViewOnlyMode,
-        chartKitRef,
         isFullscreen,
         canGoBack,
         canGoForward,

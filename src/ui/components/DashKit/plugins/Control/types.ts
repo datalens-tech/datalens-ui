@@ -8,9 +8,7 @@ import type {
     GetDistinctsApiV2TransformedResponse,
 } from 'shared/schema/types';
 import type {ServerFilter} from 'shared/types/config/wizard';
-import type {ResolveWidgetControlDataRefArgs} from 'ui/components/Widgets/Chart/types';
 import type {ResponseSuccessControls} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
-import type {ChartsChartKit} from 'ui/libs/DatalensChartkit/types/charts';
 
 export type ControlType = 'select' | 'input' | 'datepicker' | 'range-datepicker' | 'checkbox';
 export type LoadStatus = 'pending' | 'success' | 'fail' | 'initial' | 'destroyed';
@@ -118,12 +116,6 @@ export interface SelectControlProps {
     hint?: string;
     disabled?: boolean;
 }
-
-export type ChartControlRef =
-    | (ChartsChartKit & {
-          getMeta: () => Promise<ResolveWidgetControlDataRefArgs | null>;
-      })
-    | null;
 
 export type ValidationErrorData = {
     required?: boolean;
