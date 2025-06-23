@@ -67,10 +67,7 @@ type RowProps = Pick<
     | 'onMenuClick'
     | 'isOnlyCollectionsMode'
 > &
-    Pick<
-        HookBatchSelectResult,
-        'isBatchEnabled' | 'onEntrySelect' | 'selectedIds' | 'onSelectByShiftKey'
-    > & {
+    Pick<HookBatchSelectResult, 'isBatchEnabled' | 'onEntrySelect' | 'selectedIds'> & {
         entry: NavigationEntry;
         index: number;
     };
@@ -245,11 +242,9 @@ export class Row extends React.Component<RowProps> {
     }
 
     private onChangeCheckBox = (_: boolean, event: React.MouseEvent | null) => {
-        if (event?.shiftKey) {
-            return this.props.onSelectByShiftKey(this.props.entry.entryId, this.props.index, event);
-        }
-
-        this.props.onEntrySelect(this.props.entry.entryId, this.props.index);
+        this.props.onEntrySelect(this.props.entry.entryId, this.props.index, {
+            shiftKey: Boolean(event?.shiftKey),
+        });
     };
 
     private onClickCheckBox = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {

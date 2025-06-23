@@ -172,7 +172,6 @@ export class List extends React.PureComponent<ListProps> {
                         linkWrapper={this.props.linkWrapper}
                         selectedIds={this.props.selectedIds}
                         onEntrySelect={this.props.onEntrySelect}
-                        onSelectByShiftKey={this.props.onSelectByShiftKey}
                         isBatchEnabled={this.props.isBatchEnabled}
                         entry={entry}
                         onMenuClick={this.props.onMenuClick}

@@ -293,11 +293,11 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             }
         });
 
+        this.resetSelectionAnchor(isSelected ? clickedIndex : null);
+
         this.setState({
             selectedRows,
         });
-
-        this.resetSelectionAnchor(clickedIndex);
     };
 
     private onSelectByShiftKey = (guid: keyof DatasetSelectionMap, index: number) => {
@@ -305,12 +305,11 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
         const selectedRows = {...this.state.selectedRows};
 
         if (this.selectionIndexAnchor === null) {
-            this.selectionIndexAnchor = index;
-
             if (selectedRows[guid]) {
                 delete selectedRows[guid];
             } else {
                 selectedRows[guid] = true;
+                this.selectionIndexAnchor = index;
             }
 
             return this.setState({selectedRows});
