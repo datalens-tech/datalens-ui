@@ -57,8 +57,8 @@ type GetColumnsArgs = {
     onSelectChange: (
         isSelected: boolean,
         fields: (keyof DatasetSelectionMap)[],
-        modifier?: {shiftKey: boolean; ctrlKey: boolean; metaKey: boolean},
         clickedIndex?: number,
+        modifier?: {shiftKey: boolean},
     ) => void;
 };
 

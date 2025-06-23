@@ -172,10 +172,12 @@ export class List extends React.PureComponent<ListProps> {
                         linkWrapper={this.props.linkWrapper}
                         selectedIds={this.props.selectedIds}
                         onEntrySelect={this.props.onEntrySelect}
+                        onSelectByHotkey={this.props.onSelectByHotkey}
                         isBatchEnabled={this.props.isBatchEnabled}
                         entry={entry}
                         onMenuClick={this.props.onMenuClick}
                         isOnlyCollectionsMode={this.props.isOnlyCollectionsMode}
+                        index={index - 1}
                     />
                 )}
             </div>

@@ -54,8 +54,9 @@ export type TableViewProps = {
 export type HookBatchSelectResult = {
     selectedIds: Set<string>;
     isBatchEnabled: boolean;
-    onEntrySelect: (entryId: string) => void;
+    onEntrySelect: (entryId: string, index: number) => void;
     isAllCheckBoxChecked: boolean;
     onAllCheckBoxSelect: () => void;
     resetSelected: () => void;
+    onSelectByHotkey: (entryId: string, index: number, modifier: {shiftKey: boolean}) => void;
 };

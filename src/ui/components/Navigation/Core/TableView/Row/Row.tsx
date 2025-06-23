@@ -3,6 +3,7 @@ import React from 'react';
 import {Folder, Lock, Star, StarFill} from '@gravity-ui/icons';
 import {Checkbox, Icon, Loader, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {CheckboxWithEvent} from 'components/CheckboxWithEvent/CheckboxWithEvent';
 import {EntryIcon} from 'components/EntryIcon/EntryIcon';
 import {I18n} from 'i18n';
 import moment from 'moment';
@@ -66,8 +67,12 @@ type RowProps = Pick<
     | 'onMenuClick'
     | 'isOnlyCollectionsMode'
 > &
-    Pick<HookBatchSelectResult, 'isBatchEnabled' | 'onEntrySelect' | 'selectedIds'> & {
+    Pick<
+        HookBatchSelectResult,
+        'isBatchEnabled' | 'onEntrySelect' | 'selectedIds' | 'onSelectByHotkey'
+    > & {
         entry: NavigationEntry;
+        index: number;
     };
 
 export class Row extends React.Component<RowProps> {
@@ -167,11 +172,11 @@ export class Row extends React.Component<RowProps> {
                         </div>
                     </Tooltip>
                 ) : (
-                    <Checkbox
+                    <CheckboxWithEvent
                         size="l"
                         checked={this.isCheckedEntry()}
                         disabled={this.isLockedEntry()}
-                        onUpdate={this.onChangeCheckBox}
+                        onUpdateWithEvent={this.onChangeCheckBox}
                     />
                 )}
             </div>
@@ -239,8 +244,12 @@ export class Row extends React.Component<RowProps> {
         }
     }
 
-    private onChangeCheckBox = () => {
-        this.props.onEntrySelect(this.props.entry.entryId);
+    private onChangeCheckBox = (_: boolean, event: React.MouseEvent | null) => {
+        if (event?.shiftKey) {
+            return this.props.onSelectByHotkey(this.props.entry.entryId, this.props.index, event);
+        }
+
+        this.props.onEntrySelect(this.props.entry.entryId, this.props.index);
     };
 
     private onClickCheckBox = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
