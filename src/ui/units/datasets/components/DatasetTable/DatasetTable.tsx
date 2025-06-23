@@ -280,7 +280,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
         modifier?: {shiftKey: boolean},
     ) => {
         if (modifier?.shiftKey && clickedIndex !== undefined) {
-            return this.onSelectByHotkey(guids[0], clickedIndex, modifier);
+            return this.onSelectByShiftKey(guids[0], clickedIndex);
         }
 
         const selectedRows = {...this.state.selectedRows};
@@ -300,15 +300,11 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
         this.resetSelectionAnchor(clickedIndex);
     };
 
-    private onSelectByHotkey = (
-        guid: keyof DatasetSelectionMap,
-        index: number,
-        modifier: {shiftKey: boolean},
-    ) => {
+    private onSelectByShiftKey = (guid: keyof DatasetSelectionMap, index: number) => {
         const {fields} = this.props;
         const selectedRows = {...this.state.selectedRows};
 
-        const toggleRow = () => {
+        if (this.selectionIndexAnchor === null) {
             this.selectionIndexAnchor = index;
 
             if (selectedRows[guid]) {
@@ -317,35 +313,29 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
                 selectedRows[guid] = true;
             }
 
-            this.setState({selectedRows});
-        };
-
-        if (modifier.shiftKey) {
-            if (this.selectionIndexAnchor === null) {
-                return toggleRow();
-            }
-
-            const start = Math.min(this.selectionIndexAnchor, index);
-            const end = Math.max(this.selectionIndexAnchor, index);
-
-            // deselect previos range
-            if (this.selectionIndexPrev !== null) {
-                const prevStart = Math.min(this.selectionIndexPrev, index);
-                const prevEnd = Math.max(this.selectionIndexPrev, index);
-
-                for (let i = prevStart; i <= prevEnd; i++) {
-                    delete selectedRows[fields[i].guid];
-                }
-            }
-
-            // select range from anchor to clicked row
-            for (let i = start; i <= end; i++) {
-                selectedRows[fields[i].guid] = true;
-            }
-
-            this.selectionIndexPrev = index;
             return this.setState({selectedRows});
         }
+
+        const start = Math.min(this.selectionIndexAnchor, index);
+        const end = Math.max(this.selectionIndexAnchor, index);
+
+        // deselect previos range
+        if (this.selectionIndexPrev !== null) {
+            const prevStart = Math.min(this.selectionIndexPrev, index);
+            const prevEnd = Math.max(this.selectionIndexPrev, index);
+
+            for (let i = prevStart; i <= prevEnd; i++) {
+                delete selectedRows[fields[i].guid];
+            }
+        }
+
+        // select range from anchor to clicked row
+        for (let i = start; i <= end; i++) {
+            selectedRows[fields[i].guid] = true;
+        }
+
+        this.selectionIndexPrev = index;
+        return this.setState({selectedRows});
     };
 
     private setActiveRow = (activeRow?: number) => this.setState({activeRow});

@@ -27,7 +27,7 @@ export const TableView = (props: TableViewProps) => {
         isAllCheckBoxChecked,
         onAllCheckBoxSelect,
         resetSelected,
-        onSelectByHotkey,
+        onSelectByShiftKey,
     } = useBatchSelect({
         isMobileNavigation,
         onItemSelect,
@@ -48,7 +48,7 @@ export const TableView = (props: TableViewProps) => {
                 showBatchPanel={showBatchPanel}
                 isAllCheckBoxChecked={isAllCheckBoxChecked}
                 onAllCheckBoxSelect={onAllCheckBoxSelect}
-                onSelectByHotkey={onSelectByHotkey}
+                onSelectByShiftKey={onSelectByShiftKey}
             />
             {showBatchPanel && (
                 <BatchPanel

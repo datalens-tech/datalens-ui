@@ -58,5 +58,5 @@ export type HookBatchSelectResult = {
     isAllCheckBoxChecked: boolean;
     onAllCheckBoxSelect: () => void;
     resetSelected: () => void;
-    onSelectByHotkey: (entryId: string, index: number, modifier: {shiftKey: boolean}) => void;
+    onSelectByShiftKey: (entryId: string, index: number, modifier: {shiftKey: boolean}) => void;
 };

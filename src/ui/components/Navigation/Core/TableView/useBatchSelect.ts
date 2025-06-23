@@ -71,7 +71,7 @@ export function useBatchSelect({
         resetSelectionAnchor();
     }, []);
 
-    const onSelectByHotkey = React.useCallback(
+    const onSelectByShiftKey = React.useCallback(
         (entryId: string, index: number, modifier: {shiftKey: boolean}) => {
             if (!allActiveIds.has(entryId)) {
                 return;
@@ -79,21 +79,17 @@ export function useBatchSelect({
 
             const newSelectedIds = new Set([...selectedIds]);
 
-            const toggleRow = () => {
-                selectionIndexAnchor.current = index;
-
-                if (newSelectedIds.has(entryId)) {
-                    newSelectedIds.delete(entryId);
-                } else {
-                    newSelectedIds.add(entryId);
-                }
-
-                setSelectedIds(newSelectedIds);
-            };
-
             if (modifier.shiftKey) {
                 if (selectionIndexAnchor.current === null) {
-                    toggleRow();
+                    selectionIndexAnchor.current = index;
+
+                    if (newSelectedIds.has(entryId)) {
+                        newSelectedIds.delete(entryId);
+                    } else {
+                        newSelectedIds.add(entryId);
+                    }
+
+                    setSelectedIds(newSelectedIds);
                     return;
                 }
 
@@ -131,7 +127,7 @@ export function useBatchSelect({
         isAllCheckBoxChecked,
         onAllCheckBoxSelect,
         resetSelected,
-        onSelectByHotkey,
+        onSelectByShiftKey,
     };
 }
 
