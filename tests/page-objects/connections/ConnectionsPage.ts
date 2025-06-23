@@ -31,9 +31,9 @@ class ConnectionsPage extends BasePage {
     }
 
     async fillCreateConnectionInFolder({name}: {name: string}) {
-        const textInput = await this.page.waitForSelector(slct(EntryDialogQA.PathSelect));
+        const textInput = this.page.locator(slct(EntryDialogQA.PathSelect)).locator('input');
         // type connection name
-        await textInput.type(name);
+        await textInput.fill(name);
 
         // create connection
         await this.page.locator(slct(EntryDialogQA.Apply)).click();
@@ -45,11 +45,8 @@ class ConnectionsPage extends BasePage {
     }
 
     async createConnectionInFolder({name = uuidv1()}: {name?: string} = {}) {
-        const formSubmit = await this.page.waitForSelector(
-            slct(ConnectionsBaseQA.SUBMIT_ACTION_BUTTON),
-        );
         // open creation dialog
-        await formSubmit.click();
+        await this.page.locator(slct(ConnectionsBaseQA.SUBMIT_ACTION_BUTTON)).click();
 
         await this.fillCreateConnectionInFolder({name});
     }

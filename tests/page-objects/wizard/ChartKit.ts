@@ -192,15 +192,6 @@ export default class ChartKit {
         await this.page.waitForSelector(this.paginatorSelector, {state: 'detached'});
     }
 
-    async getBreadcrumbs() {
-        const switchers = await this.page.$$(this.breadcrumbsSwitcherSelector);
-        const items = await this.page.$$(this.breadcrumbsItemSelector);
-        const switchersText = await Promise.all(switchers.map((el) => el.innerText()));
-        const itemsText = await Promise.all(items.map((el) => el.innerText()));
-
-        return [...switchersText, ...itemsText];
-    }
-
     async getTableRowsCount() {
         return await this.getTableLocator().locator('tbody tr').count();
     }

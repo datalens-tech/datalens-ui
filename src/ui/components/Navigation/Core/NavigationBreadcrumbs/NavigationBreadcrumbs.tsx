@@ -5,6 +5,7 @@ import block from 'bem-cn-lite';
 import {EntryDialogues} from 'components/EntryDialogues';
 import type {EntryContextMenuItems} from 'ui/components/EntryContextMenu/helpers';
 
+import {DlNavigationQA} from '../../../../../shared';
 import type {ListDirectoryBreadCrumb} from '../../../../../shared/schema';
 import type {ChangeLocation, CurrentPageEntry, PlaceParameterItem} from '../../types';
 import {isRootPlace} from '../../util';
@@ -123,7 +124,10 @@ export const NavigationBreadcrumbs = ({
             <EntryDialogues ref={entryDialoguesRef} />
             <div className={b('wrapper')}>
                 <div className={b('line')}>
-                    <Breadcrumbs className={b('component', {showMenu})}>
+                    <Breadcrumbs
+                        className={b('component', {showMenu})}
+                        qa={DlNavigationQA.NavigationBreadcrumbs}
+                    >
                         {items.map((item, index) => {
                             const last = index === items.length - 1;
                             return (

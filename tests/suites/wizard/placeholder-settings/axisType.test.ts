@@ -58,7 +58,7 @@ datalensTest.describe('Wizard - placeholder dialog ("Axis type") ', () => {
             });
 
             const tooltip = page
-                .locator('.g-popover')
+                .locator('.g-popup')
                 .locator(slct(DialogPlaceholderQa.TooltipZeroToMaxScale));
             await expect(tooltip).toBeVisible();
         },
@@ -99,7 +99,7 @@ datalensTest.describe('Wizard - placeholder dialog ("Axis type") ', () => {
             });
 
             const tooltip = page
-                .locator('.g-popover')
+                .locator('.g-popup')
                 .locator(slct(DialogPlaceholderQa.TooltipLogarithmicAxis));
             await expect(tooltip).toBeVisible();
         },

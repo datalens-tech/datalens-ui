@@ -6,4 +6,5 @@ export enum DlNavigationQA {
     AsideMenuItem = 'aside-nav-menu-item',
     List = 'navigation-list',
     RobotBreadcrumbItem = 'breadcrumbs-item-robot-charts',
+    NavigationBreadcrumbs = 'dl-navigation-breadcrumbs',
 }
