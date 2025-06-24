@@ -201,10 +201,10 @@ class PlaceholderComponent extends React.PureComponent<Props> {
                             </div>
                         }
                         placement="right"
-                        className={'placeholder-tooltip-icon'}
                         hasArrow
                     >
                         <Icon
+                            className="placeholder-tooltip-icon"
                             data={placeholderTooltipIcon || defaultPlaceholderTooltipIcon}
                             fill="currentColor"
                             stroke="currentColor"

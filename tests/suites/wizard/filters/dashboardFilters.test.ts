@@ -93,16 +93,10 @@ datalensTest.describe('Wizard - filters', () => {
         async ({page}: {page: Page}) => {
             const wizardPage = new WizardPage({page});
             await openTestPage(page, RobotChartsWizardUrls.WizardWithDashboardFilters);
+            await wizardPage.page.locator('.placeholder-tooltip-icon').hover();
 
-            await waitForCondition(async () => {
-                try {
-                    await wizardPage.page.hover('.placeholder-tooltip-icon');
-
-                    return await wizardPage.page.$('.placeholder-tooltip-content');
-                } catch {
-                    throw new Error('The dashboard Filter tooltip did not appear');
-                }
-            });
+            const tooltipContent = wizardPage.page.locator('.placeholder-icon-tooltip-content');
+            await expect(tooltipContent).toBeVisible();
         },
     );
 

@@ -243,9 +243,15 @@ class GeolayersSelect extends React.Component<GeolayersSelectProps, GeolayersSel
         );
     };
 
-    private renderDotsButton = () => (
+    private renderDotsButton = ({onClick}: {onClick: React.MouseEventHandler<HTMLElement>}) => (
         <div className={b('button-dots-wrap')}>
-            <Button className={b('button-dots')} view="flat" size="s" qa="geolayer-item-actions">
+            <Button
+                className={b('button-dots')}
+                view="flat"
+                size="s"
+                qa="geolayer-item-actions"
+                onClick={onClick}
+            >
                 <Icon data={Ellipsis} size={DOTS_ICON_SIZE} />
             </Button>
         </div>
