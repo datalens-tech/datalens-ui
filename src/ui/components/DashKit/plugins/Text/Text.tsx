@@ -5,7 +5,7 @@ import {PluginText, pluginText} from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
 import get from 'lodash/get';
-import type {DashTabItemText} from 'shared';
+import {type DashTabItemText, TextWidgetQa} from 'shared';
 import {CustomPaletteBgColors} from 'shared/constants/widgets';
 import {
     adjustWidgetLayout as dashkitAdjustWidgetLayout,
@@ -233,7 +233,11 @@ const textPlugin = {
                 <YfmWrapper
                     // needed for force update when text is changed
                     key={`yfm_${YfmWrapperKeyRef.current}`}
-                    content={<div className={b('content-wrap', null)}>{content}</div>}
+                    content={
+                        <div className={b('content-wrap', null)} data-qa={TextWidgetQa.Wrapper}>
+                            {content}
+                        </div>
+                    }
                     className={b({'with-color': Boolean(showBgColor)})}
                     metaScripts={metaScripts}
                     onRenderCallback={handleTextRender}
