@@ -58,7 +58,11 @@ export const getChartkitMenuItems = (props: GetChartkitMenuItems) => {
         }
         case 'wizard': {
             const getWizardChartMenuFn = registry.chart.functions.get('getWizardChartMenu');
-            menuItemsGroups = getWizardChartMenuFn({chartsDataProvider, customOptions});
+            menuItemsGroups = getWizardChartMenuFn({
+                chartsDataProvider,
+                customOptions,
+                extraOptions,
+            });
             break;
         }
         case 'panePreview': {
