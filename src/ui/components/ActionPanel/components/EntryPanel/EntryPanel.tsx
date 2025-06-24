@@ -122,13 +122,7 @@ class EntryPanel extends React.Component<Props, State> {
 
     render() {
         const {children, workbookName, workbookBreadcrumbs} = this.props;
-        const {entry: {isFavorite} = {isFavorite: undefined}, entry} = this.state;
-
-        const isFakeEntry = (entry as any)?.fake;
-
-        const additionalItems = this.getEntryContextMenuItems();
-
-        const {EntryBreadcrumbs, ButtonFavorite} = registry.common.components.getAll();
+        const {EntryBreadcrumbs} = registry.common.components.getAll();
 
         return (
             <React.Fragment>
@@ -138,46 +132,60 @@ class EntryPanel extends React.Component<Props, State> {
                     entry={this.state.entry}
                     workbookName={workbookName}
                     workbookBreadcrumbs={workbookBreadcrumbs}
+                    endContent={this.renderControls()}
                 />
-                <div className={b()}>
-                    {!DL.IS_MOBILE && (
-                        <div className={b('entry-actions')}>
-                            {!isFakeEntry && (
-                                <ButtonFavorite
-                                    className={b('action-btn', {active: isFavorite})}
-                                    onClick={this.toggleFavorite}
-                                    isFavorite={isFavorite}
-                                />
-                            )}
-                            {!isFakeEntry || additionalItems.length ? (
-                                <Button
-                                    className={b('action-btn', b('more-dropdown'))}
-                                    qa={ActionPanelQA.MoreBtn}
-                                    size="m"
-                                    view="flat"
-                                    onClick={this.toggleEntryContextMenu}
-                                    ref={this.btnEntryContextMenuRef}
-                                >
-                                    <Icon className={b('more')} data={Ellipsis} size={18} />
-                                </Button>
-                            ) : null}
-                            {this.btnEntryContextMenuRef.current && (
-                                <EntryContextMenu
-                                    entryDialogsRef={this.entryDialogsRef}
-                                    forwardRef={this.entryContextMenuRef}
-                                    onClose={this.onCloseEntryContextMenu}
-                                    anchorElement={this.btnEntryContextMenuRef.current}
-                                    visible={this.state.visibleEntryContextMenu}
-                                    entry={entry}
-                                    additionalItems={additionalItems}
-                                    showSpecificItems={true}
-                                />
-                            )}
-                        </div>
-                    )}
-                    {children}
-                </div>
+                <div className={b()}>{children}</div>
             </React.Fragment>
+        );
+    }
+
+    renderControls() {
+        if (DL.IS_MOBILE) {
+            return null;
+        }
+
+        const {entry: {isFavorite} = {isFavorite: undefined}, entry} = this.state;
+
+        const isFakeEntry = (entry as any)?.fake;
+
+        const additionalItems = this.getEntryContextMenuItems();
+
+        const {ButtonFavorite} = registry.common.components.getAll();
+
+        return (
+            <div className={b('entry-actions')}>
+                {!isFakeEntry && (
+                    <ButtonFavorite
+                        className={b('action-btn', {active: isFavorite})}
+                        onClick={this.toggleFavorite}
+                        isFavorite={isFavorite}
+                    />
+                )}
+                {!isFakeEntry || additionalItems.length ? (
+                    <Button
+                        className={b('action-btn', b('more-dropdown'))}
+                        qa={ActionPanelQA.MoreBtn}
+                        size="m"
+                        view="flat"
+                        onClick={this.toggleEntryContextMenu}
+                        ref={this.btnEntryContextMenuRef}
+                    >
+                        <Icon className={b('more')} data={Ellipsis} size={18} />
+                    </Button>
+                ) : null}
+                {this.btnEntryContextMenuRef.current && (
+                    <EntryContextMenu
+                        entryDialogsRef={this.entryDialogsRef}
+                        forwardRef={this.entryContextMenuRef}
+                        onClose={this.onCloseEntryContextMenu}
+                        anchorElement={this.btnEntryContextMenuRef.current}
+                        visible={this.state.visibleEntryContextMenu}
+                        entry={entry}
+                        additionalItems={additionalItems}
+                        showSpecificItems={true}
+                    />
+                )}
+            </div>
         );
     }
 

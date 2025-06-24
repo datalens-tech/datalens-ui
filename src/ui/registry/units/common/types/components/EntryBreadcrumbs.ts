@@ -9,6 +9,7 @@ export type EntryBreadcrumbsProps = {
     workbookName?: string;
     workbookBreadcrumbs?: GetCollectionBreadcrumbsResponse | null;
     openNavigationAction?: (startFromNavigation: string) => void;
+    endContent?: React.ReactNode;
 };
 
 export type BreadcrumbsItem = {
