@@ -37,7 +37,14 @@ export function useBatchSelect({
     }, []);
 
     const onAllCheckBoxSelect = React.useCallback(() => {
-        setSelectedIds(isAllCheckBoxChecked ? new Set() : new Set([...allActiveIds]));
+        const newSelectedIds = isAllCheckBoxChecked
+            ? new Set<string>()
+            : new Set([...allActiveIds]);
+
+        setSelectedIds(newSelectedIds);
+        onItemSelect?.({
+            selectedItemsIds: newSelectedIds,
+        });
         resetSelectionAnchor();
     }, [isAllCheckBoxChecked, allActiveIds]);
 
@@ -79,8 +86,13 @@ export function useBatchSelect({
 
             selectionIndexPrev.current = index;
             setSelectedIds(newSelectedIds);
+
+            onItemSelect?.({
+                selectedItemId: entryId,
+                selectedItemsIds: newSelectedIds,
+            });
         },
-        [allActiveIds, selectedIds],
+        [allActiveIds, entries, selectedIds],
     );
 
     const onEntrySelect = React.useCallback(
