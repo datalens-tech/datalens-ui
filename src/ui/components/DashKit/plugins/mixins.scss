@@ -1,5 +1,5 @@
 @mixin with-fade-effect() {
-    --_--fade-effect-color: var(--current-dash-background, var(--g-color-base-generic-ultralight));
+    --_--fade-effect-color: var(--dash-current-background, var(--g-color-base-generic-ultralight));
 
     content: '';
     position: absolute;

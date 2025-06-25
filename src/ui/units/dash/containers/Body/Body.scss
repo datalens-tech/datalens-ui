@@ -10,7 +10,7 @@ $actionPanelDefaultBottom: 20px;
     --dashkit-overlay-border-color: var(--g-color-base-float);
     --dashkit-overlay-opacity: 0.5;
 
-    --current-dash-background: var(--g-color-base-generic-ultralight);
+    --dash-current-background: var(--g-color-base-generic-ultralight);
 
     position: relative;
     display: flex;
@@ -33,7 +33,7 @@ $actionPanelDefaultBottom: 20px;
         width: 100%;
         transition: width 0.1s;
         padding: 20px #{$contentPadding} 48px;
-        background-color: var(--current-dash-background);
+        background-color: var(--dash-current-background);
 
         &_with-table-of-content:not(&_mobile) {
             width: calc(100% - 250px);
@@ -112,7 +112,7 @@ $actionPanelDefaultBottom: 20px;
         flex: 1;
         overflow: clip;
         text-size-adjust: none;
-        background-color: var(--current-dash-background);
+        background-color: var(--dash-current-background);
 
         &_mobile {
             overflow: hidden;
