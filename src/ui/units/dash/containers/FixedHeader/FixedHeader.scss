@@ -67,12 +67,7 @@
     */
     --btn-click-scale-compensantion: 1px;
 
-    margin-bottom: var(--g-spacing-4);
     margin-inline: calc(-1 * var(--dash-inline-padding));
-
-    &_no-content {
-        margin-block: 0 calc(-1 * var(--g-spacing-4));
-    }
 
     &__wrapper {
         position: relative;
