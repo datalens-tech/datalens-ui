@@ -23,10 +23,6 @@ $actionPanelDefaultBottom: 20px;
         font-weight: 500;
     }
 
-    .dashkit {
-        margin-block-start: var(--g-spacing-4);
-    }
-
     &__content {
         width: 100%;
         transition: width 0.1s;
@@ -131,6 +127,24 @@ $actionPanelDefaultBottom: 20px;
         font-weight: 500;
         background-color: var(--g-color-base-generic-ultralight);
         padding: 16px 0 4px;
+    }
+
+    &__tabs {
+        margin-block-end: 22px;
+    }
+
+    &__fixed-header {
+        margin-block: var(--g-spacing-4);
+
+        &_no-content {
+            margin-block: 0;
+        }
+    }
+
+    &__entry-name + &__fixed-header_no-content {
+        // when no tabs and no visible main fixed-header content,
+        // this margin is used as a spacing between dash title and content
+        margin-block-start: var(--g-spacing-4);
     }
 
     & #{$bodyClass}__edit-panel {
