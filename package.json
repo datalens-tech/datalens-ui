@@ -134,7 +134,7 @@
     "@gravity-ui/stylelint-config": "^4.0.1",
     "@gravity-ui/tsconfig": "^1.0.0",
     "@gravity-ui/ui-logger": "^1.1.0",
-    "@gravity-ui/uikit": "^7.15.0",
+    "@gravity-ui/uikit": "^7.16.0",
     "@jest/types": "^29.6.3",
     "@microsoft/fetch-event-source": "^2.0.1",
     "@playwright/test": "^1.48.2",
@@ -224,7 +224,7 @@
     "react-redux": "^7.2.4",
     "react-router-dom": "^5.2.0",
     "react-split-pane": "^0.1.92",
-    "react-virtualized-auto-sizer": "^1.0.24",
+    "react-virtualized-auto-sizer": "1.0.24",
     "react-waypoint": "^10.3.0",
     "recompose": "npm:react-recompose@^0.33.0",
     "redux": "^4.1.1",
@@ -248,7 +248,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "@gravity-ui/uikit": {
-      "react-virtualized-auto-sizer": "^1.0.24"
+      "react-virtualized-auto-sizer": "1.0.24"
     }
   },
   "deploy": {
