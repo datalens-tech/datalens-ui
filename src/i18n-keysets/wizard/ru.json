@@ -33,7 +33,7 @@
   "button_to-dataset": "Перейти к датасету",
   "button_toggle-fullscreen": "На весь экран",
   "button_turn-into-formula": "Преобразовать в формулу",
-  "confirm_chart-save_message": "Чтобы экспортировать изображение, сохраните изменения в чарте.",
+  "confirm_chart-save_message": "Чтобы экспортировать данные, сохраните изменения в чарте.",
   "confirm_chart-save_message_alerts": "Чтобы настроить алерты, сначала сохраните изменения в чарте.",
   "dataset-selector_label": "Датасет:",
   "field_search": "Поиск по имени и описанию",
