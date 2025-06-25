@@ -6,6 +6,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {ControlQA, DashTabItemControlSourceType, DialogControlQa} from 'shared';
+import {YfmWrapper} from 'ui/components/YfmWrapper/YfmWrapper';
 import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
 import {
     selectIsControlConfigurationDisabled,
@@ -58,9 +59,10 @@ export const InnerTitleRow = ({className}: {className?: string}) => {
                 popoverProps={{
                     placement: ['bottom', 'top'],
                     offset: {mainAxis: -1, crossAxis: 5},
+                    style: {maxWidth: 300},
                 }}
             >
-                {getHelpPopoverText(sourceType)}
+                <YfmWrapper content={getHelpPopoverText(sourceType)} setByInnerHtml={true} />
             </HelpMark>
         </React.Fragment>
     );

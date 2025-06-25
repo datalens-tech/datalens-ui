@@ -22,6 +22,7 @@ import {Interpolate} from 'ui/components/Interpolate';
 import {TabMenu} from 'ui/components/TabMenu/TabMenu';
 import type {UpdateState} from 'ui/components/TabMenu/types';
 import {TabActionType} from 'ui/components/TabMenu/types';
+import {helpMarkDefaultProps} from 'ui/constants';
 import {DL} from 'ui/constants/common';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
@@ -533,7 +534,7 @@ class DialogChartWidget extends React.PureComponent<
         );
 
         const helpPopover = (
-            <HelpMark className={b('help-tooltip')}>
+            <HelpMark {...helpMarkDefaultProps} className={b('help-tooltip')}>
                 {i18n('dash.widget-dialog.edit', 'context_filtering-other-charts')}
                 {this.getFiltrationDocsLink()}
             </HelpMark>
@@ -573,7 +574,7 @@ class DialogChartWidget extends React.PureComponent<
         } = this.props;
 
         const autoHeightHelpPopover = (
-            <HelpMark className={b('help-tooltip')}>
+            <HelpMark {...helpMarkDefaultProps} className={b('help-tooltip')}>
                 {i18n('dash.widget-dialog.edit', 'context_autoheight-availability-hint')}
             </HelpMark>
         );
@@ -696,7 +697,7 @@ class DialogChartWidget extends React.PureComponent<
                     fieldId={INPUT_HINT_ID}
                     label={i18n('dash.widget-dialog.edit', 'field_hint')}
                     labelHelpPopover={
-                        <HelpMark className={b('help-tooltip')}>
+                        <HelpMark {...helpMarkDefaultProps} className={b('help-tooltip')}>
                             {i18n('dash.widget-dialog.edit', 'context_hint-display-info')}
                         </HelpMark>
                     }

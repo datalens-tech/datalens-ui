@@ -5,6 +5,7 @@ import {Button, Flex, HelpMark, Icon, Label, Text, useFileInput} from '@gravity-
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {InterpolatedText} from 'ui/components/InterpolatedText/InterpolatedText';
+import {helpMarkDefaultProps} from 'ui/constants';
 import {formDocsEndpointDL} from 'ui/utils';
 
 import './ImportFileField.scss';
@@ -61,7 +62,7 @@ export const ImportFileField = ({
         <Flex spacing={{mt: 3}} className={b()} gap={2} direction="column" alignItems="flex-start">
             <Flex gap={1}>
                 <Text variant="body-1">{i18n('label_import-from-file')}</Text>
-                <HelpMark>
+                <HelpMark {...helpMarkDefaultProps}>
                     <InterpolatedText
                         href={docsUrl}
                         disableLink={!docsUrl}

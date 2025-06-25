@@ -16,7 +16,7 @@ import type {
     DatasetSourceAvatar,
 } from 'shared';
 import {DatasetDialogRelationQA} from 'shared';
-import {DataTypeIcon, withHiddenUnmount} from 'ui';
+import {DataTypeIcon, helpMarkDefaultProps, withHiddenUnmount} from 'ui';
 
 import {
     BINARY_JOIN_OPERATORS,
@@ -641,7 +641,10 @@ class SourceRelationDialog extends React.Component<Props, State> {
                                     onUpdate={this.changeOptimized}
                                 >
                                     {i18n('label_optimize-join')}
-                                    <HelpMark className={b('hint-optimize-join')}>
+                                    <HelpMark
+                                        {...helpMarkDefaultProps}
+                                        className={b('hint-optimize-join')}
+                                    >
                                         {i18n('hint_optimize-join')}
                                     </HelpMark>
                                 </Checkbox>

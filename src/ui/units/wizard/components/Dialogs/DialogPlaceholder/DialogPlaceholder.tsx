@@ -29,6 +29,7 @@ import {
     isNumberField,
     isPercentVisualization,
 } from 'shared';
+import {helpMarkDefaultProps} from 'ui/constants';
 import {AREA_OR_AREA100P} from 'ui/constants/misc';
 import {withHiddenUnmount} from 'ui/hoc';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -308,7 +309,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                             />
                         </div>
                         {shouldDisabledManualButton && (
-                            <HelpMark className={b('title-popover')}>
+                            <HelpMark {...helpMarkDefaultProps} className={b('title-popover')}>
                                 {i18n('wizard', 'label_axis-title-manual-warning')}
                             </HelpMark>
                         )}
@@ -454,7 +455,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                                 qa={'axis-mode-radio-buttons'}
                             />
                             {disabledTooltipContent && (
-                                <HelpMark className={b('title-popover')}>
+                                <HelpMark {...helpMarkDefaultProps} className={b('title-popover')}>
                                     {i18n('wizard', disabledTooltipContent)}
                                 </HelpMark>
                             )}

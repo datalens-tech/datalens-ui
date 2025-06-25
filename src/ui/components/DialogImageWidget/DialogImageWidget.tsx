@@ -9,6 +9,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import merge from 'lodash/merge';
 import {DialogDashWidgetItemQA, DialogDashWidgetQA} from 'shared';
 import type {DashTabItemImage, EntryScope, RecursivePartial} from 'shared';
+import {helpMarkDefaultProps} from 'ui/constants';
 import {registry} from 'ui/registry';
 
 import {PaletteBackground} from '../..//units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
@@ -123,7 +124,7 @@ export function DialogImageWidget(props: Props) {
                     label={
                         <Flex gap={1}>
                             {i18n('dash.image-dialog.edit', 'label_alt-text')}
-                            <HelpMark>
+                            <HelpMark {...helpMarkDefaultProps}>
                                 {i18n('dash.image-dialog.edit', 'label_alt-text-description')}
                             </HelpMark>
                         </Flex>

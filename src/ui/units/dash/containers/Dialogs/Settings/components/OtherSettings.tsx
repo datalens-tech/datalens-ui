@@ -11,6 +11,7 @@ import type {DashLoadPriority, DashSettings} from '../../../../../../../shared';
 import {Feature} from '../../../../../../../shared';
 import {SectionWrapper} from '../../../../../../components/SectionWrapper/SectionWrapper';
 
+import {helpMarkDefaultProps} from './../../../../../../constants';
 import {LoadPriority} from './LoadPriority';
 import {MaxConnection} from './MaxConnection';
 import {Row} from './Row';
@@ -67,7 +68,9 @@ export const OtherSettings = ({
             />
             <Row>
                 <Title text={i18n('label_load-only-visible-charts')}>
-                    <HelpMark>{i18n('hint_load-only-visible-charts')}</HelpMark>
+                    <HelpMark {...helpMarkDefaultProps}>
+                        {i18n('hint_load-only-visible-charts')}
+                    </HelpMark>
                 </Title>
                 <Checkbox
                     size="l"

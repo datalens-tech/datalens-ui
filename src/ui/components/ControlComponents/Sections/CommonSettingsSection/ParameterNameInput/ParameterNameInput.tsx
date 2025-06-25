@@ -4,6 +4,7 @@ import {FormRow} from '@gravity-ui/components';
 import {HelpMark, TextInput} from '@gravity-ui/uikit';
 import {useDispatch, useSelector} from 'react-redux';
 import {DialogControlQa} from 'shared';
+import {YfmWrapper} from 'ui/components/YfmWrapper/YfmWrapper';
 import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
 import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 
@@ -37,9 +38,10 @@ export const ParameterNameInput: React.FC<ParameterNameInputProps> = (
                 popoverProps={{
                     placement: ['bottom', 'top'],
                     offset: {mainAxis: -1, crossAxis: 5},
+                    style: {maxWidth: 300},
                 }}
             >
-                {props.note}
+                <YfmWrapper content={props.note} setByInnerHtml={true} />
             </HelpMark>
         </React.Fragment>
     ) : (
