@@ -15,7 +15,7 @@ import './EntryBreadcrumbs.scss';
 const b = block('entry-panel-breadcrumbs');
 
 export const EntryBreadcrumbs = (props: EntryBreadcrumbsProps) => {
-    const {renderRootContent, entry, workbookName, workbookBreadcrumbs} = props;
+    const {renderRootContent, entry, workbookName, workbookBreadcrumbs, endContent} = props;
 
     const history = useHistory();
     const location = useLocation();
@@ -34,7 +34,7 @@ export const EntryBreadcrumbs = (props: EntryBreadcrumbsProps) => {
 
     return (
         <div style={{overflow: 'hidden'}}>
-            <Breadcrumbs showRoot className={b()}>
+            <Breadcrumbs showRoot className={b()} endContent={endContent}>
                 {breadcrumbsItems.map((item, index) => {
                     let content: React.ReactNode = null;
 
