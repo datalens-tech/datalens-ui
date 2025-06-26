@@ -1096,6 +1096,10 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         const canRenderDashkit =
             this.state.fixedHeaderControlsEl && this.state.fixedHeaderContainerEl;
 
+        const fixedHeaderHasNoVisibleContent =
+            !hasFixedHeaderControlsElements &&
+            (!hasFixedHeaderContainerElements || fixedHeaderCollapsed);
+
         if (isEmptyTab && !isGlobalDragging) {
             return (
                 <EmptyState
@@ -1111,6 +1115,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         return (
             <WidgetContextProvider onWidgetMountChange={this.itemAddHandler}>
                 <FixedHeaderWrapper
+                    className={b('fixed-header', {'no-content': fixedHeaderHasNoVisibleContent})}
                     dashBodyRef={this._dashBodyRef}
                     controlsRef={this._fixedHeaderControlsRef}
                     containerRef={this._fixedHeaderContainerRef}
@@ -1273,7 +1278,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                                 {Utils.getEntryNameFromKey(this.props.entry?.key)}
                             </div>
                         )}
-                        {!settings.hideTabs && <Tabs />}
+                        {!settings.hideTabs && <Tabs className={b('tabs')} />}
                         {this.renderDashkit()}
                         {!this.props.onlyView && (
                             <DashkitActionPanel

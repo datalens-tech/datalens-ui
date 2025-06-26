@@ -33,7 +33,7 @@
   "button_to-dataset": "Go to dataset",
   "button_toggle-fullscreen": "Full screen",
   "button_turn-into-formula": "Convert to formula",
-  "confirm_chart-save_message": "To export this image, save the changes to the chart.",
+  "confirm_chart-save_message": "To export data, save the changes to the chart.",
   "confirm_chart-save_message_alerts": "To set up alerts, first save the changes to the chart.",
   "dataset-selector_label": "Dataset:",
   "field_search": "Search by name or description",

@@ -161,6 +161,7 @@ type FixedHeaderWrapperProps = CommonFixedHeaderProps & {
     dashBodyRef: React.RefObject<HTMLDivElement>;
     controlsRef: React.Ref<HTMLDivElement>;
     containerRef: React.Ref<HTMLDivElement>;
+    className?: string;
 };
 
 export function FixedHeaderWrapper({
@@ -171,6 +172,7 @@ export function FixedHeaderWrapper({
     isCollapsed,
     isControlsGroupEmpty,
     isContainerGroupEmpty,
+    className,
 }: FixedHeaderWrapperProps) {
     const rootRef = React.useRef<HTMLDivElement>(null);
     const wrapperRef = React.useRef<HTMLDivElement>(null);
@@ -200,11 +202,14 @@ export function FixedHeaderWrapper({
 
     return (
         <div
-            className={b({
-                'no-content': isControlsGroupEmpty && (isContainerGroupEmpty || isCollapsed),
-                'edit-mode': editMode,
-                collapsed: isCollapsed,
-            })}
+            className={b(
+                {
+                    'no-content': isControlsGroupEmpty && (isContainerGroupEmpty || isCollapsed),
+                    'edit-mode': editMode,
+                    collapsed: isCollapsed,
+                },
+                className,
+            )}
             ref={rootRef}
             style={{
                 height: isFixed ? containerHeight : 'auto',
