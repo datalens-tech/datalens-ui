@@ -96,6 +96,8 @@ export enum Feature {
     EnableSecureParamsV2 = 'EnableSecureParamsV2',
     /** Enable export settings in connections & datasets */
     EnableExportSettings = 'EnableExportSettings',
+    /** Enable updating dataset settings by action ('load_preview_by_default' | 'template_enabled' | 'data_export_forbidden') */
+    EnableUpdatingDsSettingsByAction = 'EnableUpdatingDsSettingsByAction',
 }
 
 export type FeatureConfig = Record<string, boolean>;
