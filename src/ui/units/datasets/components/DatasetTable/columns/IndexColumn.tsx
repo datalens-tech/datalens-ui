@@ -4,7 +4,6 @@ import type {Column} from '@gravity-ui/react-data-table';
 import DataTable from '@gravity-ui/react-data-table';
 import {Checkbox} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {CheckboxWithEvent} from 'components/CheckboxWithEvent/CheckboxWithEvent';
 import type {DatasetField, DatasetSelectionMap} from 'shared';
 
 const b = block('dataset-table');
@@ -44,19 +43,25 @@ export const getIndexColumn = ({
         const {guid} = row;
 
         const handleCheckboxChange = useCallback(
-            (isSelected: boolean, event: React.MouseEvent | null) => {
-                onSelectChange(isSelected, [guid], index, {shiftKey: Boolean(event?.shiftKey)});
+            (event: React.ChangeEvent<HTMLInputElement>) => {
+                const {checked} = event.target;
+
+                onSelectChange(checked, [guid], index, {
+                    shiftKey: Boolean(
+                        event.nativeEvent instanceof MouseEvent && event.nativeEvent.shiftKey,
+                    ),
+                });
             },
             [guid, index],
         );
 
         return (
             <React.Fragment>
-                <CheckboxWithEvent
+                <Checkbox
                     className={b('btn-select')}
                     checked={selectedRows[guid] ?? false}
                     size={'l'}
-                    onUpdateWithEvent={handleCheckboxChange}
+                    onChange={handleCheckboxChange}
                 />
                 <div className={b('title-index')}>{index + 1}</div>
             </React.Fragment>

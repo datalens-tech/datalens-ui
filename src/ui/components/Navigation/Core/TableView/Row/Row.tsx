@@ -3,7 +3,6 @@ import React from 'react';
 import {Folder, Lock, Star, StarFill} from '@gravity-ui/icons';
 import {Checkbox, Icon, Loader, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {CheckboxWithEvent} from 'components/CheckboxWithEvent/CheckboxWithEvent';
 import {EntryIcon} from 'components/EntryIcon/EntryIcon';
 import {I18n} from 'i18n';
 import moment from 'moment';
@@ -169,11 +168,11 @@ export class Row extends React.Component<RowProps> {
                         </div>
                     </Tooltip>
                 ) : (
-                    <CheckboxWithEvent
+                    <Checkbox
                         size="l"
                         checked={this.isCheckedEntry()}
                         disabled={this.isLockedEntry()}
-                        onUpdateWithEvent={this.onChangeCheckBox}
+                        onChange={this.onChangeCheckBox}
                     />
                 )}
             </div>
@@ -241,9 +240,11 @@ export class Row extends React.Component<RowProps> {
         }
     }
 
-    private onChangeCheckBox = (_: boolean, event: React.MouseEvent | null) => {
+    private onChangeCheckBox = (event: React.ChangeEvent<HTMLInputElement>) => {
         this.props.onEntrySelect(this.props.entry.entryId, this.props.index, {
-            shiftKey: Boolean(event?.shiftKey),
+            shiftKey: Boolean(
+                event.nativeEvent instanceof MouseEvent && event.nativeEvent.shiftKey,
+            ),
         });
     };
 

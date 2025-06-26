@@ -18,7 +18,6 @@ export function useBatchSelect({
     const [selectedIds, setSelectedIds] = React.useState<Set<string>>(new Set());
 
     const selectionIndexAnchor = React.useRef<number | null>(null);
-    const selectionIndexPrev = React.useRef<number | null>(null);
 
     const allActiveIds = React.useMemo(() => {
         const ids = entries
@@ -31,11 +30,6 @@ export function useBatchSelect({
         return allActiveIds.size > 0 && [...allActiveIds].every((id) => selectedIds.has(id));
     }, [allActiveIds, selectedIds]);
 
-    const resetSelectionAnchor = React.useCallback((indexAnchor: number | null = null) => {
-        selectionIndexAnchor.current = indexAnchor;
-        selectionIndexPrev.current = null;
-    }, []);
-
     const onAllCheckBoxSelect = React.useCallback(() => {
         const newSelectedIds = isAllCheckBoxChecked
             ? new Set<string>()
@@ -45,46 +39,30 @@ export function useBatchSelect({
         onItemSelect?.({
             selectedItemsIds: newSelectedIds,
         });
-        resetSelectionAnchor();
+        selectionIndexAnchor.current = null;
     }, [isAllCheckBoxChecked, allActiveIds]);
 
     const onSelectByShiftKey = React.useCallback(
-        (entryId: string, index: number) => {
+        (entryId: string, index: number, lastCheckedIndex: number) => {
             const newSelectedIds = new Set([...selectedIds]);
 
-            if (selectionIndexAnchor.current === null) {
-                if (newSelectedIds.has(entryId)) {
-                    newSelectedIds.delete(entryId);
-                } else {
-                    newSelectedIds.add(entryId);
-                    selectionIndexAnchor.current = index;
-                }
+            const checked = !selectedIds.has(entryId);
 
-                setSelectedIds(newSelectedIds);
-                return;
-            }
+            const start = Math.min(lastCheckedIndex, index);
+            const end = Math.max(lastCheckedIndex, index);
 
-            const start = Math.min(selectionIndexAnchor.current, index);
-            const end = Math.max(selectionIndexAnchor.current, index);
-
-            // deselect previos range
-            if (selectionIndexPrev.current !== null) {
-                const prevStart = Math.min(selectionIndexPrev.current, index);
-                const prevEnd = Math.max(selectionIndexPrev.current, index);
-
-                for (let i = prevStart; i <= prevEnd; i++) {
-                    newSelectedIds.delete(entries[i].entryId);
-                }
-            }
-
-            // select range from anchor to clicked row
+            // select/deselect range from anchor to clicked row
             for (let i = start; i <= end; i++) {
                 if (allActiveIds.has(entries[i].entryId)) {
-                    newSelectedIds.add(entries[i].entryId);
+                    if (checked) {
+                        newSelectedIds.add(entries[i].entryId);
+                    } else {
+                        newSelectedIds.delete(entries[i].entryId);
+                    }
                 }
             }
 
-            selectionIndexPrev.current = index;
+            selectionIndexAnchor.current = index;
             setSelectedIds(newSelectedIds);
 
             onItemSelect?.({
@@ -98,19 +76,18 @@ export function useBatchSelect({
     const onEntrySelect = React.useCallback(
         (entryId: string, index: number, {shiftKey}: {shiftKey: boolean}) => {
             if (allActiveIds.has(entryId)) {
-                if (shiftKey) {
-                    onSelectByShiftKey(entryId, index);
+                if (shiftKey && selectionIndexAnchor.current !== null) {
+                    onSelectByShiftKey(entryId, index, selectionIndexAnchor.current);
                     return;
                 }
 
                 const newSelectedIds = new Set([...selectedIds]);
                 if (selectedIds.has(entryId)) {
                     newSelectedIds.delete(entryId);
-                    resetSelectionAnchor(null);
                 } else {
                     newSelectedIds.add(entryId);
-                    resetSelectionAnchor(index);
                 }
+                selectionIndexAnchor.current = index;
 
                 setSelectedIds(newSelectedIds);
 
@@ -127,7 +104,7 @@ export function useBatchSelect({
 
     const resetSelected = React.useCallback(() => {
         setSelectedIds(new Set());
-        resetSelectionAnchor();
+        selectionIndexAnchor.current = null;
     }, []);
 
     return {

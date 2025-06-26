@@ -91,7 +91,6 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
     };
 
     private selectionIndexAnchor: number | null = null;
-    private selectionIndexPrev: number | null = null;
 
     componentDidUpdate(prevProps: DatasetTableProps) {
         const {editableFieldGuid, waitingForOpenFieldEditor} = this.state;
@@ -165,7 +164,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
                             });
                         }}
                         onSort={() => {
-                            this.resetSelectionAnchor();
+                            this.selectionIndexAnchor = null;
                         }}
                     />
                 </div>
@@ -265,12 +264,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
 
     private resetSelection = () => {
         this.setState({selectedRows: {}});
-        this.resetSelectionAnchor();
-    };
-
-    private resetSelectionAnchor = (indexAnchor: number | null = null) => {
-        this.selectionIndexAnchor = indexAnchor;
-        this.selectionIndexPrev = null;
+        this.selectionIndexAnchor = null;
     };
 
     private onSelectChange = (
@@ -279,8 +273,12 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
         clickedIndex?: number,
         modifier?: {shiftKey: boolean},
     ) => {
-        if (modifier?.shiftKey && clickedIndex !== undefined) {
-            return this.onSelectByShiftKey(guids[0], clickedIndex);
+        if (
+            modifier?.shiftKey &&
+            this.selectionIndexAnchor !== null &&
+            clickedIndex !== undefined
+        ) {
+            return this.onSelectByShiftKey(guids[0], clickedIndex, this.selectionIndexAnchor);
         }
 
         const selectedRows = {...this.state.selectedRows};
@@ -293,48 +291,39 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             }
         });
 
-        this.resetSelectionAnchor(isSelected ? clickedIndex : null);
+        this.selectionIndexAnchor = clickedIndex ?? null;
 
         this.setState({
             selectedRows,
         });
     };
 
-    private onSelectByShiftKey = (guid: keyof DatasetSelectionMap, index: number) => {
+    private onSelectByShiftKey = (
+        guid: keyof DatasetSelectionMap,
+        index: number,
+        lastCheckedIndex: number,
+    ) => {
         const {fields} = this.props;
         const selectedRows = {...this.state.selectedRows};
 
-        if (this.selectionIndexAnchor === null) {
-            if (selectedRows[guid]) {
-                delete selectedRows[guid];
+        const checked = !selectedRows[guid];
+
+        const start = Math.min(lastCheckedIndex, index);
+        const end = Math.max(lastCheckedIndex, index);
+
+        // select/deselect range from anchor to clicked row
+        for (let i = start; i <= end; i++) {
+            selectedRows[fields[i].guid] = true;
+
+            if (checked) {
+                selectedRows[fields[i].guid] = true;
             } else {
-                selectedRows[guid] = true;
-                this.selectionIndexAnchor = index;
-            }
-
-            return this.setState({selectedRows});
-        }
-
-        const start = Math.min(this.selectionIndexAnchor, index);
-        const end = Math.max(this.selectionIndexAnchor, index);
-
-        // deselect previos range
-        if (this.selectionIndexPrev !== null) {
-            const prevStart = Math.min(this.selectionIndexPrev, index);
-            const prevEnd = Math.max(this.selectionIndexPrev, index);
-
-            for (let i = prevStart; i <= prevEnd; i++) {
                 delete selectedRows[fields[i].guid];
             }
         }
 
-        // select range from anchor to clicked row
-        for (let i = start; i <= end; i++) {
-            selectedRows[fields[i].guid] = true;
-        }
-
-        this.selectionIndexPrev = index;
-        return this.setState({selectedRows});
+        this.selectionIndexAnchor = index;
+        this.setState({selectedRows});
     };
 
     private setActiveRow = (activeRow?: number) => this.setState({activeRow});
