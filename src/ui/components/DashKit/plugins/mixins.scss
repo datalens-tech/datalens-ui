@@ -1,4 +1,10 @@
+<<<<<<< CHARTS-10663-hints
 @mixin title-with-fade-effect($hasAnchor: true, $hasHint: false) {
+=======
+@mixin with-fade-effect() {
+    --_--fade-effect-color: var(--dash-current-background, var(--g-color-base-generic-ultralight));
+
+>>>>>>> main
     content: '';
     position: absolute;
     top: 0;
@@ -8,8 +14,13 @@
     background: linear-gradient(
         to right,
         transparent,
+<<<<<<< CHARTS-10663-hints
         var(--dl-dk-title-background, var(--g-color-base-generic-ultralight)) 50%,
         var(--dl-dk-title-background, var(--g-color-base-generic-ultralight))
+=======
+        var(--_--fade-effect-color) 50%,
+        var(--_--fade-effect-color)
+>>>>>>> main
     );
 
     @if $hasHint and not $hasAnchor {

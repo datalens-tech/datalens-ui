@@ -1,32 +1,43 @@
 import {Page} from '@playwright/test';
-import {DialogCreateEntry} from './DialogCreateEntry';
-import {CreateEntryButton} from './CreateEntryButton';
-import {NavigationMinimalPopup} from './NavigationMinimalPopup';
+
+import {WorkbookPageQa} from '../../../src/shared/constants/qa/workbooks';
 import {openTestPage, slct} from '../../utils';
 import {WorkbooksUrls} from '../../constants/constants';
-import {EditEntityButton} from './EditEntityButton';
 import DashboardPage from '../../page-objects/dashboard/DashboardPage';
-import {WorkbookPageQa} from '../../../src/shared/constants/qa/workbooks';
+
+import {ActionsMoreDropdown} from './ActionsMoreDropdown';
+import {CreateEntryButton} from './CreateEntryButton';
+import {DialogCreateEntry} from './DialogCreateEntry';
+import {DialogDeleteWorkbook} from './DialogDeleteWorkbook';
+import {DialogWorkbook} from './DialogWorkbook';
+import {EditEntityButton} from './EditEntityButton';
 import {FiltersPO} from './Filters';
+import {NavigationMinimalPopup} from './NavigationMinimalPopup';
 
 export class Workbook {
+    actionsMoreDropdown: ActionsMoreDropdown;
     createEntryButton: CreateEntryButton;
-    dialogCreateEntry: DialogCreateEntry;
-    navigationMinimalPopup: NavigationMinimalPopup;
-    editEntityButton: EditEntityButton;
-
     dashboardPage: DashboardPage;
+    dialogCreateEntry: DialogCreateEntry;
+    dialogDeleteWorkbook: DialogDeleteWorkbook;
+    dialogWorkbook: DialogWorkbook;
+    editEntityButton: EditEntityButton;
+    navigationMinimalPopup: NavigationMinimalPopup;
 
     protected page: Page;
     private readonly root = '.dl-collections-navigation-layout';
 
     constructor(page: Page) {
         this.page = page;
-        this.dialogCreateEntry = new DialogCreateEntry(page);
+
+        this.actionsMoreDropdown = new ActionsMoreDropdown(page);
         this.createEntryButton = new CreateEntryButton(page);
-        this.navigationMinimalPopup = new NavigationMinimalPopup(page);
-        this.editEntityButton = new EditEntityButton(page);
         this.dashboardPage = new DashboardPage({page});
+        this.dialogCreateEntry = new DialogCreateEntry(page);
+        this.dialogDeleteWorkbook = new DialogDeleteWorkbook(page);
+        this.dialogWorkbook = new DialogWorkbook(page);
+        this.editEntityButton = new EditEntityButton(page);
+        this.navigationMinimalPopup = new NavigationMinimalPopup(page);
     }
 
     get filters() {
