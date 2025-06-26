@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 
 import type {Column} from '@gravity-ui/react-data-table';
 import DataTable from '@gravity-ui/react-data-table';
@@ -18,7 +18,12 @@ export const getIndexColumn = ({
     selectedRows: DatasetSelectionMap;
     isAllSelected?: boolean;
     indeterminate?: boolean;
-    onSelectChange: (isSelected: boolean, fields: (keyof DatasetSelectionMap)[]) => void;
+    onSelectChange: (
+        isSelected: boolean,
+        guids: (keyof DatasetSelectionMap)[],
+        clickedIndex: number,
+        modifier: {shiftKey: boolean},
+    ) => void;
     onSelectAllChange: (isSelected: boolean) => void;
 }): Column<DatasetField> => ({
     name: 'index',
@@ -37,13 +42,26 @@ export const getIndexColumn = ({
     render: function IndexColumnItem({index, row}) {
         const {guid} = row;
 
+        const handleCheckboxChange = useCallback(
+            (event: React.ChangeEvent<HTMLInputElement>) => {
+                const {checked} = event.target;
+
+                onSelectChange(checked, [guid], index, {
+                    shiftKey: Boolean(
+                        'shiftKey' in event.nativeEvent && event.nativeEvent.shiftKey,
+                    ),
+                });
+            },
+            [guid, index],
+        );
+
         return (
             <React.Fragment>
                 <Checkbox
                     className={b('btn-select')}
                     checked={selectedRows[guid] ?? false}
                     size={'l'}
-                    onUpdate={(value) => onSelectChange(value, [guid])}
+                    onChange={handleCheckboxChange}
                 />
                 <div className={b('title-index')}>{index + 1}</div>
             </React.Fragment>
