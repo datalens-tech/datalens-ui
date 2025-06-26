@@ -48,7 +48,7 @@ export const getIndexColumn = ({
 
                 onSelectChange(checked, [guid], index, {
                     shiftKey: Boolean(
-                        event.nativeEvent instanceof MouseEvent && event.nativeEvent.shiftKey,
+                        'shiftKey' in event.nativeEvent && event.nativeEvent.shiftKey,
                     ),
                 });
             },

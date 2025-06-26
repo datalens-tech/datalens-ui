@@ -242,9 +242,7 @@ export class Row extends React.Component<RowProps> {
 
     private onChangeCheckBox = (event: React.ChangeEvent<HTMLInputElement>) => {
         this.props.onEntrySelect(this.props.entry.entryId, this.props.index, {
-            shiftKey: Boolean(
-                event.nativeEvent instanceof MouseEvent && event.nativeEvent.shiftKey,
-            ),
+            shiftKey: Boolean('shiftKey' in event.nativeEvent && event.nativeEvent.shiftKey),
         });
     };
 
