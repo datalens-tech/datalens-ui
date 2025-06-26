@@ -32,18 +32,24 @@ const handleTabLinkClick = (event: React.MouseEvent) => {
 type TabsWithDatalensSpecificProps<T> = Omit<AdaptiveTabsProps<T>, 'breakpointsConfig'> & {
     size?: TabsSize;
     disableOpacity?: boolean;
+    wrapperClassName?: string;
 };
 
 function withDatalensSpecific<T>(Component: React.ElementType<AdaptiveTabsProps<T>>) {
     function WithDatalensSpecific(props: TabsWithDatalensSpecificProps<T>) {
-        const {size = 'm', disableOpacity, ...restProps} = props;
+        const {size = 'm', disableOpacity, wrapperClassName, ...restProps} = props;
 
         const breakpointsConfig = DL.IS_MOBILE
             ? breakpointsWithoutCollapse
             : defaultBreakPointsConfig;
 
         return (
-            <div className={b({size, opacity: !disableOpacity, mobile: DL.IS_MOBILE})}>
+            <div
+                className={b(
+                    {size, opacity: !disableOpacity, mobile: DL.IS_MOBILE},
+                    wrapperClassName,
+                )}
+            >
                 <Component
                     {...restProps}
                     breakpointsConfig={breakpointsConfig}

@@ -15,10 +15,12 @@ import {
     toggleLoadPreviewByDefault,
     toggletDataExportEnabled,
     toggletTemplateEnabled,
+    updateSetting,
 } from '../../store/actions/creators';
 import {
     dataExportEnabledSelector,
     datasetIdSelector,
+    datasetValidationSelector,
     isDatasetRevisionMismatchSelector,
     isLoadPreviewByDefaultSelector,
     isLoadingDatasetSelector,
@@ -38,6 +40,11 @@ const ITEM_SHOW_PREVIEW_BY_DEFAULT = 'showPreviewByDefault';
 const ITEM_TEMPLATE_ENABLED = 'templateEnabled';
 const ITEM_DATA_EXPORT_ENABLED = 'dataExportEnabled';
 const RAW_SQL_LEVELS_ALLOW_TEMPLATING: string[] = [RAW_SQL_LEVEL.TEMPLATE, RAW_SQL_LEVEL.DASHSQL];
+const isTemplateParamsFeatureEnabled = isEnabledFeature(Feature.EnableDsTemplateParams);
+const isExportSettingsFeatureEnabled = isEnabledFeature(Feature.EnableExportSettings);
+const isUpdatingDsSettingsByActionFeatureEnabled = isEnabledFeature(
+    Feature.EnableUpdatingDsSettingsByAction,
+);
 
 type Props = {
     isCreationProcess?: boolean;
@@ -56,10 +63,9 @@ export function ActionPanelRightItems(props: Props) {
     const templateEnabled = useSelector(templateEnabledSelector);
     const datasetId = useSelector(datasetIdSelector);
     const dataExportEnabled = useSelector(dataExportEnabledSelector);
+    const isValidationLoading = useSelector(datasetValidationSelector).isLoading;
     const rawSqlLevel = useSelector(rawSqlLevelSelector);
     const historyActions = useHistoryActions();
-    const isTemplateParamsFeatureEnabled = isEnabledFeature(Feature.EnableDsTemplateParams);
-    const isExportSettingsFeatureEnabled = isEnabledFeature(Feature.EnableExportSettings);
     const isSaveButtonDisabled = isSavingDatasetDisabled || isDatasetRevisionMismatch;
     const isRawSqlLevelEnableTemplating = RAW_SQL_LEVELS_ALLOW_TEMPLATING.includes(rawSqlLevel);
     const settingsValue = React.useMemo(() => {
@@ -78,13 +84,7 @@ export function ActionPanelRightItems(props: Props) {
         }
 
         return nextValue;
-    }, [
-        isLoadPreviewByDefault,
-        templateEnabled,
-        isRawSqlLevelEnableTemplating,
-        dataExportEnabled,
-        isExportSettingsFeatureEnabled,
-    ]);
+    }, [isLoadPreviewByDefault, templateEnabled, isRawSqlLevelEnableTemplating, dataExportEnabled]);
 
     const {getRenderDatasetSettingsPopup} = registry.datasets.functions.getAll();
 
@@ -95,15 +95,27 @@ export function ActionPanelRightItems(props: Props) {
             const nextDataExportEnabled = value.includes(ITEM_DATA_EXPORT_ENABLED);
 
             if (isLoadPreviewByDefault !== nextIsLoadPreviewByDefault) {
-                dispatch(toggleLoadPreviewByDefault(nextIsLoadPreviewByDefault));
+                if (isUpdatingDsSettingsByActionFeatureEnabled) {
+                    dispatch(updateSetting('load_preview_by_default', nextIsLoadPreviewByDefault));
+                } else {
+                    dispatch(toggleLoadPreviewByDefault(nextIsLoadPreviewByDefault));
+                }
             }
 
             if (templateEnabled !== nextTemplateEnabled) {
-                dispatch(toggletTemplateEnabled(nextTemplateEnabled));
+                if (isUpdatingDsSettingsByActionFeatureEnabled) {
+                    dispatch(updateSetting('template_enabled', nextTemplateEnabled));
+                } else {
+                    dispatch(toggletTemplateEnabled(nextTemplateEnabled));
+                }
             }
 
             if (dataExportEnabled !== nextDataExportEnabled) {
-                dispatch(toggletDataExportEnabled(nextDataExportEnabled));
+                if (isUpdatingDsSettingsByActionFeatureEnabled) {
+                    dispatch(updateSetting('data_export_forbidden', !nextDataExportEnabled));
+                } else {
+                    dispatch(toggletDataExportEnabled(nextDataExportEnabled));
+                }
             }
         },
         [dataExportEnabled, dispatch, isLoadPreviewByDefault, templateEnabled],
@@ -123,7 +135,7 @@ export function ActionPanelRightItems(props: Props) {
         <Select.Option
             key={ITEM_SHOW_PREVIEW_BY_DEFAULT}
             value={ITEM_SHOW_PREVIEW_BY_DEFAULT}
-            disabled={isLoadingDataset}
+            disabled={isLoadingDataset || isValidationLoading}
         >
             {i18n('label_load_preview_by_default')}
         </Select.Option>,
@@ -142,7 +154,7 @@ export function ActionPanelRightItems(props: Props) {
             <Select.Option
                 key={ITEM_TEMPLATE_ENABLED}
                 value={ITEM_TEMPLATE_ENABLED}
-                disabled={isLoadingDataset || !isRawSqlLevelEnableTemplating}
+                disabled={isLoadingDataset || !isRawSqlLevelEnableTemplating || isValidationLoading}
             >
                 {isRawSqlLevelEnableTemplating ? (
                     optionContent
@@ -164,7 +176,7 @@ export function ActionPanelRightItems(props: Props) {
             <Select.Option
                 key={ITEM_DATA_EXPORT_ENABLED}
                 value={ITEM_DATA_EXPORT_ENABLED}
-                disabled={isLoadingDataset}
+                disabled={isLoadingDataset || isValidationLoading}
             >
                 {i18nExport('label_enable-data-export')}
                 <HelpMark {...helpMarkDefaultProps} className={b('settings-hint')}>

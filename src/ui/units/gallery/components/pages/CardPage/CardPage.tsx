@@ -1,15 +1,7 @@
 import React from 'react';
 
 import {dateTime} from '@gravity-ui/date-utils';
-import {
-    ArrowDownToLine,
-    ArrowLeft,
-    Calendar,
-    FileArrowUp,
-    Link as LinkIcon,
-    Person,
-    Xmark,
-} from '@gravity-ui/icons';
+import {ArrowLeft, Calendar, Link as LinkIcon, Person, Xmark} from '@gravity-ui/icons';
 import {
     ActionTooltip,
     Breadcrumbs,
@@ -17,7 +9,6 @@ import {
     Card,
     Col,
     Container,
-    DropdownMenu,
     Flex,
     Icon,
     Row,
@@ -37,7 +28,6 @@ import ErrorContent from 'ui/components/ErrorContent/ErrorContent';
 import {ScrollableWithShadow} from 'ui/components/ScrollableWithShadow/ScrollableWithShadow';
 import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
 import {DL, URL_OPTIONS} from 'ui/constants';
-import {PUBLIC_GALLERY_ID_SEARCH_PARAM} from 'ui/units/collections/components/constants';
 import {useGetGalleryItemQuery, useGetGalleryItemsQuery} from 'ui/units/gallery/store/api';
 import Utils from 'ui/utils';
 import {copyTextWithToast} from 'ui/utils/copyText';
@@ -59,6 +49,7 @@ import {useElementRect} from '../hooks/useElementRect';
 
 import {CardDescription} from './CardDescription/CardDescription';
 import {FullscreenGallery} from './FullscreenGallery/FullscreenGallery';
+import {ImportDropdown} from './ImportDropdown/ImportDropdown';
 import {CARD_IMAGE_PREVIEW_HEIGHT, PreviewCard} from './PreviewCard/PreviewCard';
 import {useErrorLayoutAdjustment} from './hooks/useErrorLayoutAdjustment';
 
@@ -124,56 +115,6 @@ function LinkButton(props: ButtonProps & {entryId: string}) {
         button
     ) : (
         <ActionTooltip title={utilityI18n('button_copy')}>{button}</ActionTooltip>
-    );
-}
-
-const getDropdownItem = ({icon, text, hint}: {icon: IconData; text: string; hint?: string}) => {
-    return (
-        <div className={b('dropdown-item')}>
-            <Icon className={b('dropdown-icon')} data={icon} />
-            <div className={b('dropdown-text')}>
-                {text}
-                {hint && <div className={b('dropdown-hint')}>{hint}</div>}
-            </div>
-        </div>
-    );
-};
-
-function UseButton(props: {url: string; entryId: string}) {
-    const history = useHistory();
-
-    return (
-        <DropdownMenu
-            items={[
-                {
-                    action: () => {
-                        Utils.downloadFileByUrl(props.url, `${props.entryId}.json`);
-                    },
-                    text: getDropdownItem({
-                        text: i18n('button_download'),
-                        hint: i18n('text_download-desctiption'),
-                        icon: ArrowDownToLine,
-                    }),
-                },
-                {
-                    action: () => {
-                        const redirectUrl = `/collections/?${PUBLIC_GALLERY_ID_SEARCH_PARAM}=${props.entryId}`;
-
-                        if (DL.IS_NOT_AUTHENTICATED) {
-                            window.location.href = redirectUrl;
-                        } else {
-                            history.push(redirectUrl);
-                        }
-                    },
-                    text: getDropdownItem({
-                        text: i18n('button_import'),
-                        hint: i18n('text_import-desctiption'),
-                        icon: FileArrowUp,
-                    }),
-                },
-            ]}
-            renderSwitcher={(props) => <Button {...props}>{i18n('button_use')}</Button>}
-        />
     );
 }
 
@@ -279,7 +220,7 @@ function CardActionPanel({
         rightItems = (
             <Flex className={b('actions-right-flex', mods)} style={{flexShrink: 0}}>
                 <LinkButton entryId={entry.id} />
-                {entry.data && <UseButton entryId={entry.id} url={entry.data} />}
+                {entry.data && <ImportDropdown entryId={entry.id} url={entry.data} />}
             </Flex>
         );
     } else {
@@ -290,7 +231,7 @@ function CardActionPanel({
                     partnerId={entry.partnerId}
                     activeMediaQuery={activeMediaQuery}
                 />
-                {entry.data && <UseButton entryId={entry.id} url={entry.data} />}
+                {entry.data && <ImportDropdown entryId={entry.id} url={entry.data} />}
                 <Button view={showPreview ? 'normal' : 'action'} onClick={togglePreview}>
                     {showPreview ? (
                         <Button.Icon>
