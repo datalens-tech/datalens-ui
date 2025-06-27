@@ -1,15 +1,12 @@
 import type {History, Location} from 'history';
 import {I18n} from 'i18n';
-import type {EntryBreadcrumbsProps} from 'ui/registry/units/common/types/components/EntryBreadcrumbs';
+import type {
+    BreadcrumbsItem,
+    EntryBreadcrumbsProps,
+} from 'ui/registry/units/common/types/components/EntryBreadcrumbs';
 import Utils from 'ui/utils';
 
 const i18n = I18n.keyset('component.collection-breadcrumbs');
-
-export type BreadcrumbsItem = {
-    text: string;
-    action: (event: React.MouseEvent<HTMLElement, MouseEvent> | KeyboardEvent) => void;
-    path?: string;
-};
 
 export const getWorkbookBreadcrumbsItems = ({
     entry,

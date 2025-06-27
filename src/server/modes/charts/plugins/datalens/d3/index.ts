@@ -1,4 +1,4 @@
-import type {ChartData} from '@gravity-ui/chartkit/d3';
+import type {ChartData} from '@gravity-ui/chartkit/gravity-charts';
 
 import type {QlExtendedConfig, ServerChartsConfig} from '../../../../../../shared';
 import {PlaceholderId, WizardVisualizationId, isDateField} from '../../../../../../shared';

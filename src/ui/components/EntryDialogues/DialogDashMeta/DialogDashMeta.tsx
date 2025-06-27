@@ -101,7 +101,6 @@ export const DialogDashMeta = (props: DialogDashMetaProps) => {
             onClose={handleClose}
             disableOutsideClick={true}
             qa={DashMetaQa.Dialog}
-            disableFocusTrap={true}
         >
             <Dialog.Header caption={props.title} />
             {isEditable ? (

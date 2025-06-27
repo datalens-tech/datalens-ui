@@ -181,4 +181,8 @@ $textWidth: $widgetIconWidth + $widgetIconMarginRight + $widgetIconMarginLeft;
         display: inline-flex;
         min-width: 30px;
     }
+
+    &__popover-content {
+        padding: var(--g-spacing-3);
+    }
 }

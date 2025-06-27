@@ -30,6 +30,7 @@
             align-items: center;
             margin-bottom: 2px;
             padding-right: 10px;
+            margin-left: var(--g-spacing-2);
 
             #{$class}__action-btn {
                 color: var(--g-color-text-secondary);

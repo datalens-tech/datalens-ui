@@ -118,7 +118,7 @@ export class Menu extends React.PureComponent {
                 this.setState({modal: component});
             },
             disabled,
-            children: (
+            text: (
                 <div className={b('menu-item-content')}>
                     {titleStr}
                     {typeof disabledHint === 'string' ? (
@@ -129,7 +129,7 @@ export class Menu extends React.PureComponent {
                 </div>
             ),
             items: disabled ? undefined : subItems,
-            icon: itemIcon,
+            iconStart: itemIcon,
             className: b('popup-item', {disabled}),
         };
     };

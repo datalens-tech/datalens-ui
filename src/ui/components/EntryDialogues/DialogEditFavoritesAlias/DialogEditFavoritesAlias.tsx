@@ -87,7 +87,6 @@ export const DialogEditFavoritesAlias: React.FC<DialogEditFavoritesAliasProps> =
             open={visible}
             onEnterKeyDown={onApplyDialog}
             onClose={onCloseDialog}
-            disableFocusTrap={true}
         >
             <Dialog.Header caption={caption} />
             <Dialog.Body>

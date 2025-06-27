@@ -47,19 +47,15 @@ export const TypeSelect = ({onUpdate, types, value}: TypeSelectProps) => {
         setOpen(nextOpen);
     };
 
-    const renderControl: NonNullable<SelectProps['renderControl']> = ({
-        onKeyDown,
-        ...restControlProps
-    }) => {
+    const renderControl: NonNullable<SelectProps['renderControl']> = ({triggerProps}) => {
         const view: ButtonView = open ? 'normal' : 'outlined';
         return (
             <Button
-                {...restControlProps}
+                {...triggerProps}
                 className={b('type-select')}
                 view={view}
                 size="s"
                 selected={open}
-                extraProps={{onKeyDown}}
             >
                 <DataTypeIcon className={b('type-select-icon')} dataType={selectedValue[0]} />
             </Button>

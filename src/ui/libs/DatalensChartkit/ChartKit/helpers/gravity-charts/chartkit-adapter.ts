@@ -1,5 +1,5 @@
-import type {ChartData, ChartSeriesData} from '@gravity-ui/chartkit/d3';
-import {CustomShapeRenderer} from '@gravity-ui/chartkit/d3';
+import type {ChartData, ChartSeriesData} from '@gravity-ui/chartkit/gravity-charts';
+import {CustomShapeRenderer} from '@gravity-ui/chartkit/gravity-charts';
 import {pickActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
 import get from 'lodash/get';
 import merge from 'lodash/merge';

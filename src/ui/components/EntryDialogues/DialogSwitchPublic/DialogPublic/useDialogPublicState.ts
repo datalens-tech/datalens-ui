@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Toaster} from '@gravity-ui/uikit';
+import {toaster} from '@gravity-ui/uikit/toaster-singleton';
 import {i18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {isValidPublishLink} from 'shared/schema/mix/helpers/validation';
@@ -37,8 +37,6 @@ import {
     DIALOG_PUBLIC_SET_REFETCH,
     DIALOG_PUBLIC_SET_SUCCESS,
 } from './types';
-
-const toaster = new Toaster();
 
 function formGroups(
     normalizedRelations: Record<string, EntryRelationExtended>,

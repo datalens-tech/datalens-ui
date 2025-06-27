@@ -85,7 +85,7 @@ const addParam = async (page: Page, param: {title: string; value: string}) => {
     await openParams(page);
 
     // click the add parameters button to ensure that a new line appears
-    await page.click(slct(ParamsSettingsQA.Add));
+    await page.locator(slct(ParamsSettingsQA.Add)).click();
 
     // getting the entire list of parameters
     const paramRows = await page.$$(slct(ParamsSettingsQA.ParamRow));

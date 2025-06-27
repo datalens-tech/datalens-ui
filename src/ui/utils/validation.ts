@@ -1,10 +1,10 @@
 import {I18n} from 'i18n';
-import type {BaseSchema} from 'yup';
+import type {Schema} from 'yup';
 import {ValidationError} from 'yup';
 
 const i18n = I18n.keyset('validation');
 
-export function fieldValidateFactory<T>(schema: BaseSchema<T>, errorMessage?: string) {
+export function fieldValidateFactory<T>(schema: Schema<T>, errorMessage?: string) {
     return (value: T) => {
         try {
             schema.validateSync(value, {abortEarly: true});
