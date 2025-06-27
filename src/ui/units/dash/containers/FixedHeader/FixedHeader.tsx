@@ -176,8 +176,11 @@ export function FixedHeaderWrapper({
 }: FixedHeaderWrapperProps) {
     const rootRef = React.useRef<HTMLDivElement>(null);
     const wrapperRef = React.useRef<HTMLDivElement>(null);
+    const scrollableContainerRef = React.useRef<HTMLDivElement>(null);
 
     const [containerHeight, setContainerHeight] = React.useState<'auto' | number>('auto');
+    const [scrollableContainerOverflow, setScrollableContainerOverflow] =
+        React.useState<React.CSSProperties['overflow']>('auto');
 
     const topOffset = calculateOffset(dashBodyRef);
     const {isFixed, leftOffset, width} = useFixedHeaderRef(rootRef, topOffset);
@@ -199,6 +202,36 @@ export function FixedHeaderWrapper({
             observer.disconnect();
         };
     }, [wrapperRef, topOffset]);
+
+    React.useEffect(() => {
+        const observer = new ResizeObserver(([el]) => {
+            if (el && scrollableContainerRef.current) {
+                const {height} = el.contentRect;
+                const maxHeightPx = getComputedStyle(scrollableContainerRef.current).maxHeight;
+                const maxHeight = Number.parseInt(maxHeightPx.replace('px', ''));
+
+                const scrollableContentSize = scrollableContainerRef.current.scrollHeight;
+
+                // If scrollableContentSize > height && maxHeight > height,
+                // then a scroll appears due to absolutely or fixed-positioned elements.
+                // Most likely, they function similarly to popups and can be displayed outside the container.
+                const overflow =
+                    !Number.isNaN(maxHeight) && scrollableContentSize > height && maxHeight > height
+                        ? 'visible'
+                        : 'auto';
+
+                setScrollableContainerOverflow(overflow);
+            }
+        });
+
+        if (scrollableContainerRef.current) {
+            observer.observe(scrollableContainerRef.current);
+        }
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [scrollableContainerRef]);
 
     return (
         <div
@@ -224,7 +257,11 @@ export function FixedHeaderWrapper({
                 data-qa={FixedHeaderQa.Wrapper}
             >
                 <div className={b('content')}>
-                    <div className={b('scrollable-container')}>
+                    <div
+                        className={b('scrollable-container')}
+                        ref={scrollableContainerRef}
+                        style={{overflow: scrollableContainerOverflow}}
+                    >
                         <div ref={controlsRef} className={b('controls-placeholder')}></div>
                         <div
                             ref={containerRef}
