@@ -62,6 +62,7 @@ import {
     SET_QUEUE_TO_LOAD_PREVIEW,
     SET_SOURCES_LOADING_ERROR,
     SET_TEMPLATE_ENABLED,
+    SET_UPDATES,
     SET_VALIDATION_STATE,
     SOURCES_REFRESH,
     SOURCE_ADD,
@@ -1371,6 +1372,13 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                     ...state.content,
                     data_export_forbidden: !dataExportEnabled,
                 },
+            };
+        }
+        case SET_UPDATES: {
+            const {updates} = action.payload;
+            return {
+                ...state,
+                updates: [...state.updates, ...updates],
             };
         }
         default: {

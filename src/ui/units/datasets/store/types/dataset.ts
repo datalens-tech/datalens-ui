@@ -67,6 +67,7 @@ import type {
     SET_QUEUE_TO_LOAD_PREVIEW,
     SET_SOURCES_LOADING_ERROR,
     SET_TEMPLATE_ENABLED,
+    SET_UPDATES,
     SET_VALIDATION_STATE,
     SOURCES_REFRESH,
     SOURCE_ADD,
@@ -263,7 +264,14 @@ type UpdateConnection = {
     };
 };
 
-// TODO: the same type is in the scheme, it is necessary to sleep properly
+export type UpdateSetting = {
+    action: 'update_setting';
+    setting: {
+        name: 'load_preview_by_default' | 'template_enabled' | 'data_export_forbidden';
+        value: boolean;
+    };
+};
+
 export type Update =
     | AddFieldUpdate
     | DeleteFieldUpdate
@@ -277,7 +285,8 @@ export type Update =
     | DeleteSourceAvatarUpdate
     | DeleteSourceUpdate
     | UpdateConnection
-    | SourceRefreshUpdate;
+    | SourceRefreshUpdate
+    | UpdateSetting;
 
 export type EditorItemToDisplay = 'fieldsId' | 'hiddenFields';
 
@@ -806,6 +815,13 @@ export type SetDataExportEnabled = {
     } & EditHistoryOptionsProperty;
 };
 
+type SetUpdates = {
+    type: typeof SET_UPDATES;
+    payload: {
+        updates: Update[];
+    } & EditHistoryOptionsProperty;
+};
+
 export type DatasetReduxAction =
     | SetFreeformSources
     | ResetDatasetState
@@ -875,4 +891,5 @@ export type DatasetReduxAction =
     | SetLastModifiedTab
     | SetValidationState
     | SetTemplateEnabled
-    | SetDataExportEnabled;
+    | SetDataExportEnabled
+    | SetUpdates;
