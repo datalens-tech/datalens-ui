@@ -55,7 +55,7 @@
     }
 
     // only for inner yfm block, fixes for autoheight markdown
-    .yfm:not(.yfm-term_title) {
+    .yfm:not(.yfm-term_title).yfm-term_dfn {
         display: table;
 
         p:has(.MagicLink),
@@ -76,6 +76,13 @@
     .yfm-clipboard:hover .yfm-clipboard-button {
         min-height: unset;
         min-width: unset;
+    }
+
+    .yfm .yfm-term_dfn {
+        display: none;
+    }
+    .yfm .yfm-term_dfn.open {
+        display: block;
     }
 }
 

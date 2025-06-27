@@ -204,33 +204,24 @@ export function FixedHeaderWrapper({
     }, [wrapperRef, topOffset]);
 
     React.useEffect(() => {
-        const observer = new ResizeObserver(([el]) => {
-            if (el && scrollableContainerRef.current) {
-                const {height} = el.contentRect;
-                const maxHeightPx = getComputedStyle(scrollableContainerRef.current).maxHeight;
-                const maxHeight = Number.parseInt(maxHeightPx.replace('px', ''));
-
-                const scrollableContentSize = scrollableContainerRef.current.scrollHeight;
-
-                // If scrollableContentSize > height && maxHeight > height,
-                // then a scroll appears due to absolutely or fixed-positioned elements.
-                // Most likely, they function similarly to popups and can be displayed outside the container.
-                const overflow =
-                    !Number.isNaN(maxHeight) && scrollableContentSize > height && maxHeight > height
-                        ? 'visible'
-                        : 'auto';
-
-                setScrollableContainerOverflow(overflow);
-            }
-        });
-
         if (scrollableContainerRef.current) {
+            const observer = new ResizeObserver(([entity]) => {
+                if (entity) {
+                    const {target} = entity;
+                    setScrollableContainerOverflow(
+                        target.scrollHeight > target.clientHeight ? 'auto' : 'visible',
+                    );
+                }
+            });
+
             observer.observe(scrollableContainerRef.current);
+
+            return () => {
+                observer.disconnect();
+            };
         }
 
-        return () => {
-            observer.disconnect();
-        };
+        return () => {};
     }, [scrollableContainerRef]);
 
     return (
