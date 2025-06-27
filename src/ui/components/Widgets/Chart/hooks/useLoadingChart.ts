@@ -1,5 +1,6 @@
 import React from 'react';
 
+import type {ChartKitRef} from '@gravity-ui/chartkit';
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 import type {ItemStateAndParamsChangeOptions} from '@gravity-ui/dashkit';
 import {
@@ -14,9 +15,9 @@ import pick from 'lodash/pick';
 import unescape from 'lodash/unescape';
 import type {DashChartRequestContext, StringParams} from 'shared';
 import {DashTabItemControlSourceType, SHARED_URL_OPTIONS} from 'shared';
+import type {ChartKit} from 'ui/libs/DatalensChartkit/ChartKit/ChartKit';
 import {isEmbeddedMode} from 'ui/utils/embedded';
 
-import type {ChartKit} from '../../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {START_PAGE} from '../../../../libs/DatalensChartkit/ChartKit/components/Widget/components/Table/Paginator/Paginator';
 import type {
     ChartKitWrapperLoadError,
@@ -43,7 +44,6 @@ import {
 import type {
     ChartContentProps,
     ChartNoWidgetProps,
-    ChartSelectorWithRefProps,
     ChartWithProviderProps,
     ChartWrapperWithRefProps,
     CurrentRequestState,
@@ -73,7 +73,9 @@ export type LoadingChartHookProps = {
     hasChangedOuterProps: boolean;
     hasChangedOuterParams: boolean;
     hasChartTabChanged?: boolean;
-    chartKitRef: React.RefObject<ChartKit> | React.MutableRefObject<ChartKit | undefined>;
+    chartKitRef:
+        | React.RefObject<ChartKit | ChartKitRef>
+        | React.MutableRefObject<ChartKit | ChartKitRef | undefined>;
     resolveMetaDataRef?: React.MutableRefObject<ResolveMetaDataRef | undefined>;
     resolveWidgetDataRef?: React.MutableRefObject<
         ResolveWidgetDataRef | ResolveWidgetControlDataRef | undefined
@@ -89,7 +91,7 @@ export type LoadingChartHookProps = {
     onInnerParamsChanged?: (params: StringParams) => void;
     hasChangedActionParams?: boolean;
     enableActionParams?: boolean;
-    widgetType?: ChartSelectorWithRefProps['widgetType'];
+    widgetType?: ChartWrapperWithRefProps['widgetType'];
     isPageHidden?: boolean;
     autoupdateInterval?: number;
     forceShowSafeChart?: boolean;
