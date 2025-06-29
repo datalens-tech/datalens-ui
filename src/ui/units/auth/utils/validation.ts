@@ -23,7 +23,7 @@ export const baseFieldsValidSchema = yup.object({
         .string()
         .min(3, i18n('label_error-login-min', {min: 3}))
         .max(200, i18n('label_error-login-max', {max: 200}))
-        .when([], {
+        .when({
             is: (value: string) => value?.includes('@'),
             then: (schema) => schema.email(i18n('label_error-login-email-invalid')),
             otherwise: (schema) =>
