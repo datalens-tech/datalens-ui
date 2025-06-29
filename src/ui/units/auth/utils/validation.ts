@@ -23,12 +23,13 @@ export const baseFieldsValidSchema = yup.object({
         .string()
         .min(3, i18n('label_error-login-min', {min: 3}))
         .max(200, i18n('label_error-login-max', {max: 200}))
-        .when([], (value, schema) => {
-            return value?.includes('@')
-                ? schema.email(i18n('label_error-login-email-invalid'))
-                : schema.matches(/^[a-zA-Z][a-zA-Z\d_-]+[a-zA-Z\d]$/, {
-                      message: i18n('label_error-login-invalid'),
-                  });
+        .when([], {
+            is: (value: string) => value?.includes('@'),
+            then: (schema) => schema.email(i18n('label_error-login-email-invalid')),
+            otherwise: (schema) =>
+                schema.matches(/^[a-zA-Z][a-zA-Z\d_-]+[a-zA-Z\d]$/, {
+                    message: i18n('label_error-login-invalid'),
+                }),
         }),
     email: yup.string().email(i18n('label_error-email-invalid')),
     repeatPassword: yup.string(),
