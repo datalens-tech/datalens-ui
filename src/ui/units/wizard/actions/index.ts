@@ -373,7 +373,7 @@ export function setVisualizationPlaceholderItems({
         const {sort} = getState().wizard.visualization;
         const stateVisualization = getState().wizard.visualization.visualization!;
         let {colors, shapes} = getState().wizard.visualization;
-        const isQL = Boolean(getState().ql.entry);
+        const isQL = Boolean(getState().ql?.entry);
 
         let atLeastOneHierarchyExists = false;
 
