@@ -1,9 +1,5 @@
 @import '../mixins.scss';
 
-// .dashkit-grid-item__item_editMode .dashkit-plugin-title-container {
-//     position: relative;
-// }
-
 .dashkit-grid-item_is-dragging.dashkit-grid-item_is-focused {
     .dashkit-plugin-title-container {
         &__extra-elements-container {
@@ -15,15 +11,31 @@
 .dashkit-plugin-title-container {
     $class: &;
     height: fit-content;
-    // position: relative;
-    // overflow: clip;
+    overflow: clip;
+
+    &_with-no-anchor {
+        position: relative;
+
+        #{$class}__extra-elements-container {
+            padding: 5px;
+        }
+    }
 
     display: flex;
+    align-items: center;
+
+    &_absolute {
+        width: 100%;
+    }
 
     &_with-auto-height {
         [data-plugin-root-el='title'] {
             height: fit-content;
         }
+    }
+
+    [data-plugin-root-el='title'] {
+        width: 100%;
     }
 
     &_with-default-color,
@@ -33,14 +45,20 @@
             align-items: center;
         }
 
-        #{$class}__anchor,
+        #{$class}__anchor {
+            padding: 5px 0 5px 5px;
+        }
+
         #{$class}__hint {
-            padding: 5px;
-            // padding-left: 0;
+            padding: 5px 0;
         }
 
         #{$class}__extra-elements-container {
             padding-bottom: 0;
+
+            &_absolute {
+                padding-left: 0;
+            }
         }
     }
 
@@ -50,14 +68,6 @@
         .dashkit-plugin-title {
             padding-right: 0;
         }
-
-        #{$class}__hint {
-            // padding-bottom: 5px;
-        }
-    }
-
-    &:has(&__extra-elements-container_with-absolute-anchor:focus-visible)::after {
-        @include title-with-fade-effect();
     }
 
     .dashkit-grid-item__item_editMode .dashkit-plugin-container__wrapper_with-color & {
@@ -67,26 +77,28 @@
 
     &__extra-elements-container {
         display: flex;
-        padding-bottom: 5px;
-
-        position: relative;
-        // height: fit-content;
+        padding: 0 5px 5px;
+        right: 0;
+        z-index: 1;
 
         &_absolute {
             position: absolute;
-            padding: 0 5px;
-            right: 0;
-            z-index: 1;
+            top: 10px;
+        }
+
+        &_hidden {
+            opacity: 0;
         }
     }
 
     &__anchor {
         opacity: 0;
-        padding: 0 5px 5px;
+        padding-left: 5px;
         position: relative;
         height: fit-content;
         text-decoration: none;
         color: var(--g-color-text-link);
+        z-index: 1;
 
         &:focus-visible {
             opacity: 1;
@@ -95,20 +107,35 @@
         &:hover {
             color: var(--g-color-text-link-hover);
         }
-
-        &_absolute {
-            padding: 0 5px;
-        }
-    }
-
-    &__hint {
-        padding-left: 5px;
-        padding-right: 5px;
     }
 
     &__hint,
     &__hint-button {
         display: flex;
         align-items: center;
+    }
+
+    &_with-absolute-hint {
+        [data-plugin-root-el='title'] {
+            mask-image: linear-gradient(
+                to right,
+                rgba(0, 0, 0, 1) calc(100% - 44px),
+                rgba(0, 0, 0, 0.5) calc(100% - 40px),
+                rgba(0, 0, 0, 0) calc(100% - 30px),
+                rgba(0, 0, 0, 0) 100%
+            );
+        }
+    }
+
+    &_with-absolute-hint-and-anchor {
+        [data-plugin-root-el='title'] {
+            mask-image: linear-gradient(
+                to right,
+                rgba(0, 0, 0, 1) calc(100% - 60px),
+                rgba(0, 0, 0, 0.5) calc(100% - 55px),
+                rgba(0, 0, 0, 0) calc(100% - 50px),
+                rgba(0, 0, 0, 0) 100%
+            );
+        }
     }
 }

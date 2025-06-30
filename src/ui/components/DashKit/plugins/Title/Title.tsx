@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import React from 'react';
 
 import {HelpPopover} from '@gravity-ui/components';
@@ -39,12 +38,12 @@ type PluginTitle = Plugin<Props> & {
 };
 
 const WIDGET_RESIZE_DEBOUNCE_TIMEOUT = 100;
-const MAX_ANCHOR_WIDTH = 28;
+
 // text can be placed directly on the upper border of container,
 // in which case a small negative offset is needed
-const MIN_AVAILABLE_ANCHOR_OFFSET = -5;
-
-const MIN_AVAILABLE_HEIGHT_OFFSET = -8.5;
+const MIN_AVAILABLE_TOP_OFFSET = -5;
+// if the text is too large, it slightly overflows its container
+const MIN_AVAILABLE_HEIGHT_OFFSET = 8.5;
 
 const getFontStyleBySize = (size: DashTitleSize) => {
     if (typeof size === 'object' && 'fontSize' in size) {
@@ -58,6 +57,27 @@ const getFontStyleBySize = (size: DashTitleSize) => {
 
     return {};
 };
+
+/* eslint-disable no-param-reassign */
+function isTextOverflowedWithoutNowrap(element: HTMLDivElement, extraElements: HTMLDivElement) {
+    const originalWhiteSpace = element.style.whiteSpace;
+    const originalOverflow = element.style.overflow;
+    element.style.whiteSpace = 'nowrap';
+    element.style.overflow = 'hidden';
+
+    const originalPosition = extraElements.style.position;
+    extraElements.style.position = 'static';
+
+    // const isOverflowed = element.scrollWidth > element.clientWidth;
+    const isOverflowed = element.scrollWidth > element.offsetWidth;
+
+    element.style.whiteSpace = originalWhiteSpace;
+    element.style.overflow = originalOverflow;
+    extraElements.style.position = originalPosition;
+
+    return isOverflowed;
+}
+/* eslint-enable no-param-reassign */
 
 const titlePlugin: PluginTitle = {
     ...pluginTitle,
@@ -75,10 +95,14 @@ const titlePlugin: PluginTitle = {
     ) {
         const rootNodeRef = React.useRef<HTMLDivElement>(null);
         const contentRef = React.useRef<HTMLDivElement>(null);
+        const extraRef = React.useRef<HTMLDivElement>(null);
 
-        const [isInlineExtraElements, setIsInlineExtraElements] = React.useState<boolean>(false);
-        const [, setExtraElementsTop] = React.useState(0);
-        // const [extraElementsTop, setExtraElementsTop] = React.useState(0);
+        const [isInlineExtraElements, setIsInlineExtraElements] = React.useState<boolean | null>(
+            false,
+        );
+        const [extraElementsTop, setExtraElementsTop] = React.useState<number | undefined>(
+            undefined,
+        );
 
         const data = props.data as DashTabItemTitle['data'];
 
@@ -110,7 +134,7 @@ const titlePlugin: PluginTitle = {
                     needHeightReset: true,
                 });
             }, WIDGET_RESIZE_DEBOUNCE_TIMEOUT),
-            [props.id, rootNodeRef, layoutRef, props.adjustWidgetLayout, props.gridLayout],
+            [props.id, props.adjustWidgetLayout, props.gridLayout],
         );
 
         React.useEffect(() => {
@@ -148,9 +172,8 @@ const titlePlugin: PluginTitle = {
             data.text,
         ]);
 
-        const showAnchor = !titlePlugin.hideAnchor && !props.editMode;
-        // const showHint = !titlePlugin.hideHint && data.hint?.enabled && data.hint.text;
-        const showHint = !titlePlugin.hideHint;
+        const showHint = Boolean(!titlePlugin.hideHint && data.hint?.enabled && data.hint.text);
+        const showAnchor = !titlePlugin.hideAnchor;
 
         const withInlineExtraElements = (showAnchor || showHint) && isInlineExtraElements;
 
@@ -164,30 +187,18 @@ const titlePlugin: PluginTitle = {
 
                 const offsetTop = contentRect.top - rootRect.top;
 
-                console.log(contentRef.current);
-                console.log(rootNodeRef.current);
-                console.log({offsetTop});
+                const isWidthFits = !isTextOverflowedWithoutNowrap(
+                    contentRef.current.children[0] as HTMLDivElement,
+                    extraRef.current as HTMLDivElement,
+                );
 
-                const isWidthFits = contentRect.width + MAX_ANCHOR_WIDTH < rootRect.width;
                 const isHeightFits =
-                    rootRect.height - contentRect.height >= MIN_AVAILABLE_HEIGHT_OFFSET;
-
-                // console.log(
-                //     {isWidthFits, isHeightFits},
-                //     rootRect.height,
-                //     contentRect.height,
-                //     rootRect.height - contentRect.height,
-                // );
+                    contentRect.height <= rootRect.height + MIN_AVAILABLE_HEIGHT_OFFSET;
 
                 const contentFits = isWidthFits && isHeightFits;
-                // const calculatedAnchorTop =
-                //     offsetTop < MIN_AVAILABLE_ANCHOR_OFFSET || contentFits ? 0 : offsetTop; // ?
 
                 const calculatedAnchorTop =
-                    offsetTop < MIN_AVAILABLE_ANCHOR_OFFSET ||
-                    (isWidthFits && contentRect.height <= rootRect.height)
-                        ? 0
-                        : offsetTop;
+                    offsetTop < MIN_AVAILABLE_TOP_OFFSET || contentFits ? 0 : offsetTop;
 
                 setExtraElementsTop(calculatedAnchorTop);
                 setIsInlineExtraElements(contentFits);
@@ -225,7 +236,22 @@ const titlePlugin: PluginTitle = {
             return () => {
                 window.removeEventListener('resize', debouncedCalculateAnchor);
             };
-        }, [calculateExtraElements, showAnchor, showHint]);
+        }, [showAnchor, showHint]);
+
+        const getStyles = () => {
+            const fontStyles = getFontStyleBySize(data.size);
+            const hintSize = 16;
+
+            if (isInlineExtraElements) {
+                return fontStyles;
+            }
+            return {
+                top: showAnchor
+                    ? extraElementsTop
+                    : ((fontStyles.lineHeight as number) + hintSize) / 2,
+                ...fontStyles,
+            };
+        };
 
         return (
             <RendererWrapper
@@ -239,36 +265,31 @@ const titlePlugin: PluginTitle = {
                     className={b({
                         'with-auto-height': Boolean(data.autoHeight),
                         'with-color': Boolean(showBgColor),
+                        'with-no-anchor': !showAnchor,
                         'with-inline-extra-elements': Boolean(withInlineExtraElements),
                         'with-absolute-anchor': Boolean(withAbsoluteAnchor && !withAbsoluteHint),
-                        // 'with-absolute-hint': Boolean(withAbsoluteHint && !withAbsoluteAnchor),
+                        'with-absolute-hint': withAbsoluteHint && !withAbsoluteAnchor,
+                        'with-absolute-hint-and-anchor': withAbsoluteHint && withAbsoluteAnchor,
+                        absolute: isInlineExtraElements === false,
                     })}
                     ref={contentRef}
                 >
                     {content}
-                    <span
+                    <div
                         className={b('extra-elements-container', {
-                            absolute: !isInlineExtraElements,
-                            // 'with-hint': showHint,
+                            absolute: isInlineExtraElements === false,
                         })}
-                        style={{
-                            // top: extraElementsTop,
-                            ...getFontStyleBySize(data.size),
-                            // lineHeight: fontStyle.lineHeight, // ?
-                            // fontSize: fontStyle.fontSize, // ?
-                        }}
+                        style={getStyles()}
                         {...{[EXPORT_PRINT_HIDDEN_ATTR]: true}}
+                        ref={extraRef}
                     >
                         {showHint && (
                             <HelpPopover
-                                // TODO
-                                content={data.hint?.text || 'test'}
-                                // content={data.hint?.text}
+                                content={data.hint?.text}
                                 className={b('hint')}
                                 placement="bottom"
                                 buttonProps={{
                                     className: b('hint-button'),
-                                    // style: fontStyle,
                                 }}
                             />
                         )}
@@ -277,19 +298,7 @@ const titlePlugin: PluginTitle = {
                             show={showAnchor}
                             absolute={!isInlineExtraElements}
                         />
-                    </span>
-                    {(withAbsoluteHint || withAbsoluteAnchor) && (
-                        <div
-                            className={b({
-                                'with-absolute-anchor-fade':
-                                    !withAbsoluteHint && withAbsoluteAnchor,
-                                'with-absolute-hint-fade': withAbsoluteHint && !withAbsoluteAnchor,
-                                'with-absolute-hint-and-anchor-fade':
-                                    withAbsoluteHint && withAbsoluteAnchor,
-                            })}
-                            {...{[EXPORT_PRINT_HIDDEN_ATTR]: true}}
-                        />
-                    )}
+                    </div>
                 </div>
             </RendererWrapper>
         );
