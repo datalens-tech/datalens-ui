@@ -10,6 +10,7 @@ import {useDispatch} from 'react-redux';
 import {ChartkitMenuDialogsQA, ControlQA, Feature} from 'shared';
 import {DL} from 'ui/constants/common';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
+import {registry} from 'ui/registry';
 import {setSkipReload} from 'ui/units/dash/store/actions/dashTyped';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
@@ -24,8 +25,6 @@ import type {
 import {MarkdownHelpPopover} from '../../../MarkdownHelpPopover/MarkdownHelpPopover';
 import {DRAGGABLE_HANDLE_CLASS_NAME} from '../helpers/helpers';
 import type {ChartProviderPropsWithRefProps, ChartWidgetDataRef, DataProps} from '../types';
-
-import {Header as ChartHeader} from './Header';
 
 import iconClearActionParams from '../../../../assets/icons/funnel-clear.svg';
 
@@ -73,6 +72,7 @@ export type HeaderWithControlsProps = HeaderProps &
         widgetRenderTimeRef: React.MutableRefObject<number | null>;
         yandexMapAPIWaiting?: number | null;
         enableActionParams?: boolean;
+        enableAssistant?: boolean;
         isWidgetMenuDataChanged?: boolean;
         showLoader?: boolean;
         veil?: boolean;
@@ -122,6 +122,8 @@ export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
     const showFiltersClear = showActionParamsFilter && onFiltersClear && !showFloatControls;
 
     const dispatch = useDispatch();
+
+    const {ChartHeader} = registry.chart.components.getAll();
 
     const handleExportLoading = React.useCallback(
         (isLoading: boolean) => {
@@ -267,6 +269,7 @@ export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
                             }
                             onExportLoading={handleExportLoading}
                             enableActionParams={headerWithControlsProps.enableActionParams}
+                            enableAssistant={headerWithControlsProps.enableAssistant}
                             onFullscreenClick={onFullscreenClick}
                             showActionParamsFilter={showActionParamsFilter}
                             onFiltersClear={onFiltersClear}

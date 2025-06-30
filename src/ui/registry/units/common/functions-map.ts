@@ -33,8 +33,8 @@ import type {ConfigSdk, HeadersSdk} from '../../../libs/sdk/types';
 import type {AppThunkAction} from '../../../store';
 
 import {EXAMPLE_FUNCTION} from './constants/functions';
+import type {GetUsersById} from './types/functions/GetUsersById';
 import type {CheckCreateEntryButtonVisibility} from './types/functions/checkCreateEntryButtonVisibility';
-import type {CsvExportAction} from './types/functions/csvExportAction';
 import type {
     FetchDocumentationArgs,
     FetchDocumentationResponse,
@@ -170,6 +170,6 @@ export const commonFunctionsMap = {
         makeFunctionTemplate<RenderDialogRelatedEntitiesAlertHint>(),
     getAdditionalChartkitErrorContent: makeFunctionTemplate<GetAdditionalChartkitErrorContent>(),
     getCurrentUserRights: makeFunctionTemplate<() => {admin: boolean}>(),
-    csvExportAction: makeFunctionTemplate<CsvExportAction>(),
     getUsersSuggestItems: makeFunctionTemplate<GetUsersSuggestItems>(),
+    getUsersById: makeFunctionTemplate<GetUsersById>(),
 } as const;

@@ -4,6 +4,7 @@ import {Button, Flex} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
+import {WorkbookDialogQA} from 'shared/constants/qa';
 import {Feature} from 'shared/types/feature';
 import type {AppDispatch} from 'store';
 import {DIALOG_DEFAULT} from 'ui/components/DialogDefault/DialogDefault';
@@ -302,7 +303,13 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
     );
 
     const getDialogFooterPropsOverride = React.useCallback<GetDialogFooterPropsOverride>(
-        ({propsButtonApply, onClickButtonApply, textButtonCancel, textButtonApply}) => {
+        ({
+            propsButtonApply,
+            onClickButtonApply,
+            textButtonCancel,
+            textButtonApply,
+            qaApplyButton,
+        }) => {
             return {
                 onClickButtonCancel: handleClose,
                 onClickButtonApply: onClickButtonApply,
@@ -312,6 +319,7 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
                 propsButtonApply: {
                     disabled: currentImportId ? false : propsButtonApply?.disabled,
                     loading: isLoading,
+                    qa: qaApplyButton,
                 },
                 propsButtonCancel: {
                     view: importStatus?.endsWith('error') ? 'normal' : 'flat',
@@ -400,6 +408,7 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
             customActions={renderImportSection()}
             customBody={renderDialogView()}
             getDialogFooterPropsOverride={getDialogFooterPropsOverride}
+            qa={importStatus === 'success' ? WorkbookDialogQA.ROOT_IMPORT_SUCCESS : undefined}
         />
     );
 };

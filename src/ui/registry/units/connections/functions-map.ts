@@ -7,6 +7,7 @@ import type {BeforeConnectorFormUnmount} from './types/beforeConnectorFormUnmoun
 import type {GetFakeEntry} from './types/getFakeEntry';
 import type {GetMockedFormArgs} from './types/getMockedForm';
 import type {GetNewConnectionDestination} from './types/getNewConnectionDestination';
+import type {GetRenderConnectionSettingsPopup} from './types/getRenderConnectionSettingsPopup';
 
 export const connectionsFunctionsMap = {
     [EXAMPLE_FUNCTION]: makeFunctionTemplate<(arg: number) => string>(),
@@ -15,4 +16,5 @@ export const connectionsFunctionsMap = {
     getNewConnectionDestination: makeFunctionTemplate<GetNewConnectionDestination>(),
     getFakeEntry: makeFunctionTemplate<GetFakeEntry>(),
     beforeConnectorFormUnmount: makeFunctionTemplate<BeforeConnectorFormUnmount>(),
+    getRenderConnectionSettingsPopup: makeFunctionTemplate<GetRenderConnectionSettingsPopup>(),
 } as const;

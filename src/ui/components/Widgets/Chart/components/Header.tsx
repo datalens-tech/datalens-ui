@@ -3,7 +3,7 @@ import React from 'react';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {ControlQA, Feature, type StringParams} from 'shared';
 import {ChartInfoIcon} from 'ui/components/Widgets/Chart/components/ChartInfoIcon';
 import {URL_OPTIONS} from 'ui/constants';
@@ -48,14 +48,16 @@ export type HeaderProps = Pick<
     | 'enableActionParams'
     | 'showActionParamsFilter'
     | 'onFiltersClear'
-> & {
-    chartsInsightsData?: ChartsInsightsData;
-    isMenuAvailable: boolean;
-    isWidgetMenuDataChanged?: boolean;
-    onExportLoading: (isLoading: boolean) => void;
-    onFullscreenClick?: () => void;
-    canBeDisplayedFilters?: boolean;
-};
+> &
+    Pick<GetChartkitMenuByType, 'extraOptions'> & {
+        chartsInsightsData?: ChartsInsightsData;
+        isMenuAvailable: boolean;
+        isWidgetMenuDataChanged?: boolean;
+        onExportLoading: (isLoading: boolean) => void;
+        onFullscreenClick?: () => void;
+        canBeDisplayedFilters?: boolean;
+        enableAssistant?: boolean;
+    };
 
 const b = block('dl-widget');
 
@@ -65,6 +67,7 @@ function hasNoControlsParamVal(val: string) {
     return ['1', 'true', 1, true].includes(paramVal);
 }
 
+// eslint-disable-next-line complexity
 export const Header = (props: HeaderProps) => {
     const {
         isMenuAvailable,
@@ -85,9 +88,13 @@ export const Header = (props: HeaderProps) => {
         onExportLoading,
         onFullscreenClick,
         enableActionParams,
+        enableAssistant,
         showActionParamsFilter,
         onFiltersClear,
+        extraOptions,
     } = props;
+
+    const dispatch = useDispatch();
 
     /**
      * extra prop for rerender chart to actualize show/hide comments menu after add/remove comments
@@ -124,8 +131,9 @@ export const Header = (props: HeaderProps) => {
               onExportLoading,
               onFullscreenClick,
               isEditAvaible,
-              extraOptions: {enableActionParams},
+              extraOptions: {...extraOptions, enableActionParams, enableAssistant},
               widgetConfig: loadedData?.widgetConfig,
+              dispatch,
           })
         : settings.menu;
 

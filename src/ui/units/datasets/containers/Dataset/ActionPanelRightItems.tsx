@@ -7,10 +7,19 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {DatasetActionQA, Feature, RAW_SQL_LEVEL} from 'shared';
+import {registry} from 'ui/registry';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
-import {toggleLoadPreviewByDefault, toggletTemplateEnabled} from '../../store/actions/creators';
 import {
+    toggleLoadPreviewByDefault,
+    toggletDataExportEnabled,
+    toggletTemplateEnabled,
+    updateSetting,
+} from '../../store/actions/creators';
+import {
+    dataExportEnabledSelector,
+    datasetIdSelector,
+    datasetValidationSelector,
     isDatasetRevisionMismatchSelector,
     isLoadPreviewByDefaultSelector,
     isLoadingDatasetSelector,
@@ -25,9 +34,16 @@ import {useHistoryActions} from './useHistoryActions';
 
 const b = block('dataset');
 const i18n = I18n.keyset('dataset.dataset-editor.modify');
+const i18nExport = I18n.keyset('exports.enable-data-export-settings');
 const ITEM_SHOW_PREVIEW_BY_DEFAULT = 'showPreviewByDefault';
 const ITEM_TEMPLATE_ENABLED = 'templateEnabled';
+const ITEM_DATA_EXPORT_ENABLED = 'dataExportEnabled';
 const RAW_SQL_LEVELS_ALLOW_TEMPLATING: string[] = [RAW_SQL_LEVEL.TEMPLATE, RAW_SQL_LEVEL.DASHSQL];
+const isTemplateParamsFeatureEnabled = isEnabledFeature(Feature.EnableDsTemplateParams);
+const isExportSettingsFeatureEnabled = isEnabledFeature(Feature.EnableExportSettings);
+const isUpdatingDsSettingsByActionFeatureEnabled = isEnabledFeature(
+    Feature.EnableUpdatingDsSettingsByAction,
+);
 
 type Props = {
     isCreationProcess?: boolean;
@@ -44,9 +60,11 @@ export function ActionPanelRightItems(props: Props) {
     const isSavingDatasetDisabled = useSelector(isSavingDatasetDisabledSelector);
     const isSavingDataset = useSelector(isSavingDatasetSelector);
     const templateEnabled = useSelector(templateEnabledSelector);
+    const datasetId = useSelector(datasetIdSelector);
+    const dataExportEnabled = useSelector(dataExportEnabledSelector);
+    const isValidationLoading = useSelector(datasetValidationSelector).isLoading;
     const rawSqlLevel = useSelector(rawSqlLevelSelector);
     const historyActions = useHistoryActions();
-    const isTemplateParamsFeatureEnabled = isEnabledFeature(Feature.EnableDsTemplateParams);
     const isSaveButtonDisabled = isSavingDatasetDisabled || isDatasetRevisionMismatch;
     const isRawSqlLevelEnableTemplating = RAW_SQL_LEVELS_ALLOW_TEMPLATING.includes(rawSqlLevel);
     const settingsValue = React.useMemo(() => {
@@ -60,23 +78,46 @@ export function ActionPanelRightItems(props: Props) {
             nextValue.push(ITEM_TEMPLATE_ENABLED);
         }
 
+        if (dataExportEnabled && isExportSettingsFeatureEnabled) {
+            nextValue.push(ITEM_DATA_EXPORT_ENABLED);
+        }
+
         return nextValue;
-    }, [isLoadPreviewByDefault, templateEnabled, isRawSqlLevelEnableTemplating]);
+    }, [isLoadPreviewByDefault, templateEnabled, isRawSqlLevelEnableTemplating, dataExportEnabled]);
+
+    const {getRenderDatasetSettingsPopup} = registry.datasets.functions.getAll();
 
     const handleUpdateSettings = React.useCallback(
         (value: string[]) => {
             const nextIsLoadPreviewByDefault = value.includes(ITEM_SHOW_PREVIEW_BY_DEFAULT);
             const nextTemplateEnabled = value.includes(ITEM_TEMPLATE_ENABLED);
+            const nextDataExportEnabled = value.includes(ITEM_DATA_EXPORT_ENABLED);
 
             if (isLoadPreviewByDefault !== nextIsLoadPreviewByDefault) {
-                dispatch(toggleLoadPreviewByDefault(nextIsLoadPreviewByDefault));
+                if (isUpdatingDsSettingsByActionFeatureEnabled) {
+                    dispatch(updateSetting('load_preview_by_default', nextIsLoadPreviewByDefault));
+                } else {
+                    dispatch(toggleLoadPreviewByDefault(nextIsLoadPreviewByDefault));
+                }
             }
 
             if (templateEnabled !== nextTemplateEnabled) {
-                dispatch(toggletTemplateEnabled(nextTemplateEnabled));
+                if (isUpdatingDsSettingsByActionFeatureEnabled) {
+                    dispatch(updateSetting('template_enabled', nextTemplateEnabled));
+                } else {
+                    dispatch(toggletTemplateEnabled(nextTemplateEnabled));
+                }
+            }
+
+            if (dataExportEnabled !== nextDataExportEnabled) {
+                if (isUpdatingDsSettingsByActionFeatureEnabled) {
+                    dispatch(updateSetting('data_export_forbidden', !nextDataExportEnabled));
+                } else {
+                    dispatch(toggletDataExportEnabled(nextDataExportEnabled));
+                }
             }
         },
-        [dispatch, isLoadPreviewByDefault, templateEnabled],
+        [dataExportEnabled, dispatch, isLoadPreviewByDefault, templateEnabled],
     );
 
     const renderSelectControl: SelectRenderControl = React.useCallback((args) => {
@@ -98,7 +139,7 @@ export function ActionPanelRightItems(props: Props) {
         <Select.Option
             key={ITEM_SHOW_PREVIEW_BY_DEFAULT}
             value={ITEM_SHOW_PREVIEW_BY_DEFAULT}
-            disabled={isLoadingDataset}
+            disabled={isLoadingDataset || isValidationLoading}
         >
             {i18n('label_load_preview_by_default')}
         </Select.Option>,
@@ -108,7 +149,7 @@ export function ActionPanelRightItems(props: Props) {
         const optionContent = (
             <div style={{display: 'flex', height: '100%'}}>
                 {i18n('label_enable-templating')}
-                <HelpMark className={b('settings-templating-hint')}>
+                <HelpMark className={b('settings-hint')}>
                     {i18n('label_enable-templating-hint')}
                 </HelpMark>
             </div>
@@ -117,7 +158,7 @@ export function ActionPanelRightItems(props: Props) {
             <Select.Option
                 key={ITEM_TEMPLATE_ENABLED}
                 value={ITEM_TEMPLATE_ENABLED}
-                disabled={isLoadingDataset || !isRawSqlLevelEnableTemplating}
+                disabled={isLoadingDataset || !isRawSqlLevelEnableTemplating || isValidationLoading}
             >
                 {isRawSqlLevelEnableTemplating ? (
                     optionContent
@@ -134,6 +175,21 @@ export function ActionPanelRightItems(props: Props) {
         );
     }
 
+    if (isExportSettingsFeatureEnabled) {
+        settingsSelectOptions.push(
+            <Select.Option
+                key={ITEM_DATA_EXPORT_ENABLED}
+                value={ITEM_DATA_EXPORT_ENABLED}
+                disabled={isLoadingDataset || isValidationLoading}
+            >
+                {i18nExport('label_enable-data-export')}
+                <HelpMark className={b('settings-hint')}>
+                    {i18nExport('label_data-export-info')}
+                </HelpMark>
+            </Select.Option>,
+        );
+    }
+
     return (
         <div className={b('actions-panel-right-items')}>
             {historyActions}
@@ -143,6 +199,7 @@ export function ActionPanelRightItems(props: Props) {
                 onUpdate={handleUpdateSettings}
                 popupPlacement={'bottom-end'}
                 renderControl={renderSelectControl}
+                renderPopup={getRenderDatasetSettingsPopup(datasetId)}
             >
                 {settingsSelectOptions}
             </Select>

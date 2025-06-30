@@ -1,6 +1,8 @@
 import {
     ConnectionsActionPanelControls,
     ConnectionsBaseQA,
+    ConnectionsS3BaseQA,
+    ConnectionsYadocsQA,
     DialogCreateWorkbookEntryQa,
     EntryDialogQA,
 } from '../../../src/shared/constants';
@@ -9,7 +11,7 @@ import {v1 as uuidv1} from 'uuid';
 import {slct, waitForCondition} from '../../utils';
 import {BasePage} from '../BasePage';
 import type {BasePageProps} from '../BasePage';
-import type {ConsoleMessage} from '@playwright/test';
+import type {ConsoleMessage, Request} from '@playwright/test';
 
 type ConnectionsPageProps = BasePageProps;
 type FillInputArgs = {name: string; value: string};
@@ -114,6 +116,37 @@ class ConnectionsPage extends BasePage {
                 }
             }
         }
+    }
+
+    async fillAndSubmitAddYadocDialog(fileUrl: string) {
+        const fileInput = await this.page.waitForSelector(
+            `${slct(ConnectionsYadocsQA.ADD_DOCUMENT_DIALOG_INPUT)} input`,
+        );
+        await fileInput.click();
+        await fileInput.fill(fileUrl);
+        const addFileDialogSubmitButton = await this.page.waitForSelector(
+            slct(ConnectionsYadocsQA.ADD_DOCUMENT_DIALOG_SUBMIT_BUTTON),
+        );
+        await addFileDialogSubmitButton.click();
+    }
+
+    async applyS3SourceDialogAndForSourcesUpdating() {
+        const updateFileSourceRequests: Request[] = [];
+        this.page.on('request', (request) => {
+            if (request.url().includes('updateFileSource')) {
+                updateFileSourceRequests.push(request);
+            }
+        });
+        const submitButton = await this.page.waitForSelector(
+            slct(ConnectionsS3BaseQA.S3_SOURCE_DIALOG_SUBMIT_BUTTON),
+        );
+        await submitButton.click();
+        await Promise.all(
+            updateFileSourceRequests.map(async (request) => {
+                const response = await request.response();
+                expect(response?.status()).toBe(200);
+            }),
+        );
     }
 }
 
