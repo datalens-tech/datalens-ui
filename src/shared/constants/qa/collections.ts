@@ -4,3 +4,7 @@ export const enum CollectionContentTableQa {
     WorkbookLinkRow = 'coll-content-table-workbook-link-row',
     CollectionTitleCell = 'coll-content-table-coll-title-cell',
 }
+
+export const enum CollectionStructureDialogQa {
+    ApplyButton = 'coll-structure-dialog-apply-button',
+}

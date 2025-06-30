@@ -13,6 +13,7 @@ import {DialogWorkbook} from './DialogWorkbook';
 import {EditEntityButton} from './EditEntityButton';
 import {FiltersPO} from './Filters';
 import {NavigationMinimalPopup} from './NavigationMinimalPopup';
+import {DialogCollectionStructure} from './DialogCollectionStructure';
 
 export class Workbook {
     actionsMoreDropdown: ActionsMoreDropdown;
@@ -21,6 +22,7 @@ export class Workbook {
     dialogCreateEntry: DialogCreateEntry;
     dialogDeleteWorkbook: DialogDeleteWorkbook;
     dialogWorkbook: DialogWorkbook;
+    dialogCollectionStructure: DialogCollectionStructure;
     editEntityButton: EditEntityButton;
     navigationMinimalPopup: NavigationMinimalPopup;
 
@@ -38,6 +40,7 @@ export class Workbook {
         this.dialogWorkbook = new DialogWorkbook(page);
         this.editEntityButton = new EditEntityButton(page);
         this.navigationMinimalPopup = new NavigationMinimalPopup(page);
+        this.dialogCollectionStructure = new DialogCollectionStructure(page);
     }
 
     get filters() {
