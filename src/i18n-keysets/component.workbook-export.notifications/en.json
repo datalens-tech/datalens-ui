@@ -1,14 +1,23 @@
 {
-  "label_export-check-connection-credentials": "Values of fields in connections with passwords and tokens are not exported. After importing, they will need to be filled in",
+  "button_show-details": "Show details",
+  "label_bad-connection-type": "These connection types are not supported in the current version of the service",
+  "label_error-export-connection": "Failed to export connection",
+  "label_error-export-dataset": "Failed to export dataset",
+  "label_error-import-connection": "Failed to import connection",
+  "label_error-import-dataset": "Failed to import dataset",
+  "label_export-check-connection-credentials": "In connections, the values of fields with passwords and tokens are not exported. They should be checked and replaced if necessary after being imported",
   "label_export-rls": "RLS is not guaranteed to work correctly in exported datasets",
   "label_import-check-connections-credentials": "Check the connection settings and re-enter passwords and tokens if necessary",
   "label_import-check-delegation": "Connection configuration is not complete, change or save the connection settings again",
   "label_import-rls": "Check RLS functionality in datasets",
+  "label_info-documentation-notifications": "Error and warning descriptions",
   "label_invalid-entry-data": "Workbook configuration was corrupted",
   "label_invalid-entry-scope": "The workbook contains entities with an incorrect type",
   "label_invalid-error": "Unknown error",
   "label_invalid-version": "The DataLens installation does not support the workbook configuration",
   "label_missing-linked-entry": "The workbook contains entities linked to nonexistent entities",
   "label_scope-not-available-for-installation": "The workbook contains entities not supported in your DataLens installation",
-  "label_unexpected-workflow-error": "Unexpected error during operation"
+  "label_unexpected-workflow-error": "Unexpected error during operation",
+  "label_unsupported-objects": "Objects of this type are not available for export and import",
+  "title_error-details": "Error details"
 }

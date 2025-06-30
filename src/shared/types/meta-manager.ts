@@ -10,4 +10,5 @@ export type EntryNotification = {
     code: string;
     message?: string;
     level: NotificationLevel;
+    details?: unknown;
 };

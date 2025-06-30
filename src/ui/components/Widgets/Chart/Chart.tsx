@@ -7,6 +7,7 @@ import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import {ChartkitMenuDialogsQA, type StringParams} from 'shared';
 import {DL} from 'ui/constants/common';
+import type {ChartKit} from 'ui/libs/DatalensChartkit/ChartKit/ChartKit';
 import {getDataProviderData} from 'ui/libs/DatalensChartkit/components/ChartKitBase/helpers';
 import {CHART_RELOAD_EVENT} from 'ui/units/preview/modules/constants/constants';
 import {isEmbeddedMode} from 'ui/utils/embedded';
@@ -25,6 +26,7 @@ import type {
     ChartNoWidgetProps,
     ChartWidgetData,
     ChartWidgetPropsWithContext,
+    ChartWithWrapRefProps,
     CurrentRequestState,
     DataProps,
 } from './types';
@@ -71,6 +73,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
         onInnerParamsChanged,
         disableChartLoader,
         actionParamsEnabled,
+        enableAssistant,
         isPageHidden,
         autoupdateInterval,
         workbookId,
@@ -125,6 +128,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
     const rootNodeRef = React.useRef<HTMLDivElement>(props.rootNodeRef?.current || null);
     const widgetDataRef = React.useRef<ChartWidgetData>(null);
     const widgetRenderTimeRef = React.useRef<number | null>(null);
+    const chartKitRef = React.useRef<ChartKit>(null);
 
     const [initialParams, setInitialParams] = React.useState<StringParams>({});
 
@@ -170,8 +174,9 @@ export const Chart = (props: ChartNoWidgetProps) => {
         isWidgetMenuDataChanged,
         reloadChart,
         runAction,
+        handleChartkitReflow,
     } = useLoadingChart({
-        chartKitRef: forwardedRef,
+        chartKitRef,
         dataProvider,
         initialData,
         requestId,
@@ -246,6 +251,17 @@ export const Chart = (props: ChartNoWidgetProps) => {
         return undefined;
     }, [reloadChart]);
 
+    React.useImperativeHandle<unknown, ChartWithWrapRefProps>(
+        forwardedRef,
+        () => ({
+            reflow: handleChartkitReflow,
+            reload: () => {
+                reloadChart();
+            },
+        }),
+        [handleChartkitReflow, reloadChart],
+    );
+
     return (
         <div ref={rootNodeRef} className={b(mods)} data-qa={ChartkitMenuDialogsQA.chartWidget}>
             <DebugInfoTool data={[{label: 'chartId', value: chartId || ''}]} />
@@ -271,7 +287,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
                 onRetry={handleRetry}
                 onError={handleError}
                 loadedData={loadedData}
-                forwardedRef={forwardedRef}
+                forwardedRef={chartKitRef}
                 getControls={loadControls}
                 runAction={runAction}
                 drillDownFilters={drillDownFilters}
@@ -288,6 +304,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
                 widgetDashState={widgetDashState}
                 rootNodeRef={rootNodeRef}
                 needRenderContentControls={true}
+                enableAssistant={enableAssistant}
             />
         </div>
     );

@@ -23,3 +23,5 @@ export const DEFAULT_FILTERS: {
 export enum EmptyPlaceholderActionId {
     ConnectYourData = 'connectYourData',
 }
+
+export const PUBLIC_GALLERY_ID_SEARCH_PARAM = '_public_gallery_id';

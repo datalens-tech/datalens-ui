@@ -46,3 +46,7 @@ export const submitLoadingSelector = (state: DatalensGlobalState) => {
 export const uiSchemaSelector = (state: DatalensGlobalState) => {
     return state.connections.schema?.uiSchema;
 };
+
+export const flattenConnectorsSelector = (state: DatalensGlobalState) => {
+    return state.connections.flattenConnectors;
+};

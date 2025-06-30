@@ -113,6 +113,7 @@ export function getCellContentStyles(args: {
     return contentStyles;
 }
 
+// eslint-disable-next-line complexity
 export function renderCellContent(args: {
     cell: TableCommonCell;
     column: TableHead;

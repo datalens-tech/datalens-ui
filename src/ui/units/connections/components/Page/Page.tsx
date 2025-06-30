@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Button} from '@gravity-ui/uikit';
+import {Button, spacing} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {get} from 'lodash';
@@ -11,12 +11,13 @@ import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
-import type {ConnectorType} from 'shared';
+import {type ConnectorType, Feature} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {PageTitle, SlugifyUrl, Utils} from 'ui';
 import {registry} from 'ui/registry';
 import {openDialogErrorWithTabs} from 'ui/store/actions/dialog';
 import type {DataLensApiError} from 'ui/typings';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {ErrorViewProps} from '../';
 import {ErrorView, Router, WrappedLoader} from '../';
@@ -35,6 +36,7 @@ import {getConnItemByType} from '../../utils';
 
 import ConnPanelActions from './ConnPanelActions';
 import {UnloadConfirmation} from './components';
+import {ConnSettings} from './components/ConnSettings';
 import {useApiErrors} from './useApiErrors';
 import {isListPageOpened, isS3BasedConnForm} from './utils';
 
@@ -130,11 +132,15 @@ const PageComponent = (props: PageProps) => {
     const extractedEntryId = extractEntryId(entryId);
     const workbookId = get(props.match?.params, 'workbookId');
     const queryType = get(props.match?.params, 'type', '');
-    const connector = getConnItemByType({connectors: flattenConnectors, type: queryType});
+    const connectorType = entry?.type || queryType;
+    const connector = getConnItemByType({connectors: flattenConnectors, type: connectorType});
     const type = (connector?.conn_type || queryType) as ConnectorType;
     const listPageOpened = isListPageOpened(location.pathname);
     const s3BasedFormOpened = isS3BasedConnForm(connectionData, type);
 
+    const isExportSettingsFeatureEnabled = isEnabledFeature(Feature.EnableExportSettings);
+
+    const showSettings = !connector?.backend_driven_form;
     let isShowCreateButtons = true;
 
     if (entry?.workbookId && !(entry as {fake?: boolean}).fake) {
@@ -170,16 +176,24 @@ const PageComponent = (props: PageProps) => {
                 {entry && (
                     <ActionPanel
                         entry={entry}
-                        rightItems={
+                        rightItems={[
+                            showSettings && isExportSettingsFeatureEnabled && (
+                                <ConnSettings
+                                    className={spacing({mr: 2})}
+                                    key="additional-actions"
+                                    connectionId={extractedEntryId}
+                                />
+                            ),
                             isShowCreateButtons && (
                                 <ConnPanelActions
+                                    key="conn-panel-actions"
                                     entryId={extractedEntryId}
                                     entryKey={(connectionData[FieldKey.Key] as string) || ''}
                                     s3BasedFormOpened={s3BasedFormOpened}
                                     workbookId={workbookId || entry?.workbookId}
                                 />
-                            )
-                        }
+                            ),
+                        ]}
                     />
                 )}
                 {loading || !entry ? (

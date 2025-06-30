@@ -1,6 +1,7 @@
 import type {OpenDialogArgs} from 'store/actions/openDialogTypes';
+import type {DialogErrorWithTabsProps} from '../../components/DialogErrorWithTabs/DialogErrorWithTabs';
 import {DIALOG_ERROR_WITH_TABS} from '../../components/DialogErrorWithTabs/DialogErrorWithTabs';
-import type {DataLensApiError, DialogFilterProps, OpenDialogFilterArgs} from 'ui';
+import type {DialogFilterProps, OpenDialogFilterArgs} from 'ui';
 import {DIALOG_FILTER} from 'ui';
 import type {
     DialogConfirmApplyStatus,
@@ -75,29 +76,40 @@ export function setDialogConfirmLoadingStatus(
     };
 }
 
-type OpenDialogErrorWithTabsArguments = {
-    error: DataLensApiError;
+export type DialogErrorWithTabsBaseProps = {
     title?: string | null;
     withReport?: boolean;
     onRetry?: () => void;
+    exportId?: string;
+    importId?: string;
 };
 
-export const openDialogErrorWithTabs = ({
-    error,
-    title,
-    withReport,
-    onRetry,
-}: OpenDialogErrorWithTabsArguments) => {
-    return function (dispatch: AppDispatch) {
+type DialogErrorWithTabsErrorProps = DialogErrorWithTabsBaseProps & {
+    error: DialogErrorWithTabsProps['error'];
+    details?: never;
+};
+
+type DialogErrorWithTabsDetailsProps = DialogErrorWithTabsBaseProps & {
+    error?: never;
+    details: string;
+};
+
+type OpenDialogErrorWithTabsParams =
+    | DialogErrorWithTabsErrorProps
+    | DialogErrorWithTabsDetailsProps;
+
+export const openDialogErrorWithTabs = (params: OpenDialogErrorWithTabsParams) => {
+    return (dispatch: AppDispatch) => {
+        const {error, details, title, ...restProps} = params;
+
         dispatch(
             openDialog({
                 id: DIALOG_ERROR_WITH_TABS,
                 props: {
-                    title: title || error?.message,
-                    error,
+                    title: title || error?.message || null,
                     onCancel: () => dispatch(closeDialog()),
-                    withReport,
-                    onRetry,
+                    ...restProps,
+                    ...(error ? {error} : {details: details as string}),
                 },
             }),
         );

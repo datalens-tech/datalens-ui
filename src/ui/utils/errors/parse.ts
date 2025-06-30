@@ -1,3 +1,4 @@
+import type {FetchBaseQueryError} from '@reduxjs/toolkit/query';
 import {isAxiosError} from 'axios';
 import isObject from 'lodash/isObject';
 import {REQUEST_ID_HEADER, TRACE_ID_HEADER} from 'shared';
@@ -9,9 +10,9 @@ import type {
     CustomErrorDebugFullArgs,
 } from '../../libs/DatalensChartkit/ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
 import {isOperationError, isSdkError} from '../../libs/schematic-sdk';
-import type {DataLensApiError} from '../../typings';
+import type {DataLensApiError, ParsedError, RtkQueryError} from '../../typings';
 
-function isCustomError(error: Error): error is ChartKitCustomError {
+function isCustomError(error: DataLensApiError): error is ChartKitCustomError {
     return Boolean((error as Error & {isCustomError?: boolean}).isCustomError);
 }
 
@@ -79,5 +80,44 @@ export function parseError(apiError: DataLensApiError) {
         debug,
         traceId,
         stack,
+        _parsedError: true as const,
+    };
+}
+
+function isFetchBaseQueryError(error: RtkQueryError): error is FetchBaseQueryError {
+    return (
+        isObject(error) &&
+        'status' in error &&
+        (typeof error.status === 'string' || 'data' in error)
+    );
+}
+
+export function parseRtkQueryError(apiError: RtkQueryError): ParsedError {
+    const error = isObject(apiError) ? apiError : ({} as RtkQueryError);
+    let status: number | null = null;
+    let message = '';
+    let code = '';
+    let stack: string | undefined;
+
+    if (isFetchBaseQueryError(error)) {
+        if (typeof error.status === 'number') {
+            status = error.status;
+        }
+    } else if (error) {
+        code = error.code || '';
+        message = error.message || '';
+        stack = error.stack;
+    }
+
+    return {
+        status,
+        code,
+        message,
+        stack,
+        details: {},
+        traceId: undefined,
+        requestId: DL.REQUEST_ID,
+        debug: undefined,
+        _parsedError: true,
     };
 }

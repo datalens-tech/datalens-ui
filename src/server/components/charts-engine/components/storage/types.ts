@@ -38,7 +38,7 @@ export type ResolvedConfig = {
     type: string;
     public: false;
     isFavorite?: boolean;
-    revId: string;
+    revId?: string;
     savedId: string;
     publishedId: string;
     createdAt: string;
@@ -85,5 +85,5 @@ type EmbeddingToken = {
     embedId: string;
     iat: number;
     exp: number;
-    params: Record<string, unknown>;
+    params?: Record<string, unknown>;
 };
