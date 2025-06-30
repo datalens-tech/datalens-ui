@@ -184,7 +184,6 @@
     "@types/set-cookie-parser": "^2.4.10",
     "@types/uuid": "^9.0.8",
     "@types/webpack-env": "^1.16.0",
-    "@types/yup": "^0.29.13",
     "bem-cn-lite": "^4.0.0",
     "blueimp-md5": "^2.19.0",
     "classnames": "^2.5.1",
@@ -242,7 +241,7 @@
     "url": "^0.11.1",
     "utility-types": "^3.10.0",
     "uuid": "^9.0.1",
-    "yup": "^0.32.9"
+    "yup": "^1.6.1"
   },
   "overrides": {
     "react": "^17.0.2",
