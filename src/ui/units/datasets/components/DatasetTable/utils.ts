@@ -54,7 +54,12 @@ type GetColumnsArgs = {
     ) => void;
     handleDescriptionUpdate: (field: DatasetField, value: string) => void;
     handleMoreActionClick: (args: {action: FieldAction; field: DatasetField}) => void;
-    onSelectChange: (isSelected: boolean, fields: DatasetField['guid'][]) => void;
+    onSelectChange: (
+        isSelected: boolean,
+        fields: (keyof DatasetSelectionMap)[],
+        clickedIndex?: number,
+        modifier?: {shiftKey: boolean},
+    ) => void;
 };
 
 export const getAggregationSwitchTo = (

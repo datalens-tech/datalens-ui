@@ -68,6 +68,7 @@ type RowProps = Pick<
 > &
     Pick<HookBatchSelectResult, 'isBatchEnabled' | 'onEntrySelect' | 'selectedIds'> & {
         entry: NavigationEntry;
+        index: number;
     };
 
 export class Row extends React.Component<RowProps> {
@@ -171,7 +172,7 @@ export class Row extends React.Component<RowProps> {
                         size="l"
                         checked={this.isCheckedEntry()}
                         disabled={this.isLockedEntry()}
-                        onUpdate={this.onChangeCheckBox}
+                        onChange={this.onChangeCheckBox}
                     />
                 )}
             </div>
@@ -239,8 +240,10 @@ export class Row extends React.Component<RowProps> {
         }
     }
 
-    private onChangeCheckBox = () => {
-        this.props.onEntrySelect(this.props.entry.entryId);
+    private onChangeCheckBox = (event: React.ChangeEvent<HTMLInputElement>) => {
+        this.props.onEntrySelect(this.props.entry.entryId, this.props.index, {
+            shiftKey: Boolean('shiftKey' in event.nativeEvent && event.nativeEvent.shiftKey),
+        });
     };
 
     private onClickCheckBox = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
