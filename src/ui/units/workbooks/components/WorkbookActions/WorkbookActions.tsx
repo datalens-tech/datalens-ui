@@ -12,6 +12,7 @@ import {
 import {I18N} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {useHistory, useLocation} from 'react-router-dom';
+import {WorkbookPageActionsMoreQA} from 'shared/constants/qa';
 import {DIALOG_EXPORT_WORKBOOK} from 'ui/components/CollectionsStructure/ExportWorkbookDialog/ExportWorkbookDialog';
 import {DropdownAction} from 'ui/components/DropdownAction/DropdownAction';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
@@ -206,6 +207,7 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
                 );
             },
             theme: 'danger',
+            qa: WorkbookPageActionsMoreQA.DELETE_ITEM,
         });
     }
 
@@ -217,7 +219,7 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
         <div className={b()}>
             {Boolean(dropdownActions.length) && (
                 <DropdownMenu
-                    defaultSwitcherProps={{view: 'normal'}}
+                    defaultSwitcherProps={{view: 'normal', qa: WorkbookPageActionsMoreQA.SWITCHER}}
                     switcherWrapperClassName={b('item')}
                     items={dropdownActions}
                 />

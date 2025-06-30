@@ -689,6 +689,7 @@ class DialogChartWidget extends React.PureComponent<
                                 value={description || ''}
                                 onChange={this.handleUpdateDescription}
                                 disabled={!enableDescription}
+                                enableExtensions={true}
                             />
                         )}
                     </div>

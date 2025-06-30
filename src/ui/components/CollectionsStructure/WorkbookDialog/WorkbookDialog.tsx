@@ -1,8 +1,10 @@
 import React from 'react';
 
 import {Dialog, TextArea, TextInput, Select} from '@gravity-ui/uikit';
+import type {QAProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {WorkbookDialogQA} from 'shared/constants/qa';
 
 import type {GetDialogFooterPropsOverride} from './types';
 
@@ -29,7 +31,7 @@ export type Props = {
     customActions?: React.ReactNode;
     customBody?: React.ReactNode;
     getDialogFooterPropsOverride?: GetDialogFooterPropsOverride;
-};
+} & QAProps;
 
 export const WorkbookDialog = React.memo<Props>(
     ({
@@ -47,6 +49,7 @@ export const WorkbookDialog = React.memo<Props>(
         customActions,
         customBody,
         getDialogFooterPropsOverride,
+        qa,
     }) => {
         const [innerProjectValue, setInnerProjectValue] = React.useState([projectValue]);
         const [innerTitleValue, setInnerTitleValue] = React.useState(titleValue);
@@ -93,9 +96,11 @@ export const WorkbookDialog = React.memo<Props>(
                 textButtonApply: textButtonApply,
                 propsButtonApply: {
                     disabled: !innerTitleValue,
+                    qa: WorkbookDialogQA.APPLY_BUTTON,
                 },
                 textButtonCancel: i18n('action_cancel'),
                 loading: isLoading,
+                qaApplyButton: WorkbookDialogQA.APPLY_BUTTON,
             };
             return getDialogFooterPropsOverride
                 ? getDialogFooterPropsOverride(defaultDialogFooterProps)
@@ -122,6 +127,7 @@ export const WorkbookDialog = React.memo<Props>(
                             value={innerTitleValue}
                             onUpdate={setInnerTitleValue}
                             autoFocus={titleAutoFocus}
+                            qa={WorkbookDialogQA.TITLE_INPUT}
                         />
                     </div>
                     <div className={b('field')}>
@@ -151,6 +157,7 @@ export const WorkbookDialog = React.memo<Props>(
                 open={open}
                 onClose={onClose}
                 onEnterKeyDown={handleApply}
+                qa={qa}
             >
                 <Dialog.Header caption={title} />
                 <Dialog.Body>{renderBody()}</Dialog.Body>
