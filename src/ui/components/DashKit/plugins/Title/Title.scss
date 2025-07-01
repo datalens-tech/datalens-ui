@@ -12,6 +12,9 @@
     $class: &;
     height: fit-content;
     overflow: clip;
+    display: flex;
+    align-items: center;
+    max-width: 100%;
 
     &_with-no-anchor {
         position: relative;
@@ -20,9 +23,6 @@
             padding: 5px;
         }
     }
-
-    display: flex;
-    align-items: center;
 
     &_absolute {
         width: 100%;
@@ -123,7 +123,7 @@
 
     &_with-absolute-hint-and-anchor {
         [data-plugin-root-el='title'] {
-            @include text-with-fade-effect(60px);
+            @include text-with-fade-effect(65px);
         }
     }
 }

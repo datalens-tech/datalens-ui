@@ -61,18 +61,14 @@ const getFontStyleBySize = (size: DashTitleSize) => {
 /* eslint-disable no-param-reassign */
 const isTitleOverflowed = (element: HTMLDivElement, extraElements: HTMLDivElement) => {
     const originalWhiteSpace = element.style.whiteSpace;
-    const originalOverflow = element.style.overflow;
     element.style.whiteSpace = 'nowrap';
-    element.style.overflow = 'hidden';
 
     const originalPosition = extraElements.style.position;
     extraElements.style.position = 'static';
 
-    // const isOverflowed = element.scrollWidth > element.clientWidth;
     const isOverflowed = element.scrollWidth > element.offsetWidth;
 
     element.style.whiteSpace = originalWhiteSpace;
-    element.style.overflow = originalOverflow;
     extraElements.style.position = originalPosition;
 
     return isOverflowed;
