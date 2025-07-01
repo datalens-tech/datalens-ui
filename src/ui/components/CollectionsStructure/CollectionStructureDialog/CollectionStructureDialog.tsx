@@ -6,7 +6,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import type {WorkbookId} from 'shared';
-import {CollectionStructureDialogQa} from 'shared/constants/qa/collections';
+import {DialogCollectionStructureQa} from 'shared/constants/qa/collections';
 import type {
     GetStructureItemsArgs,
     GetStructureItemsMode,
@@ -401,7 +401,7 @@ export const CollectionStructureDialog = React.memo<Props>(
                         textButtonApply={textButtonApply}
                         propsButtonApply={{
                             disabled: applyButtonDisabled,
-                            qa: CollectionStructureDialogQa.ApplyButton,
+                            qa: DialogCollectionStructureQa.ApplyButton,
                         }}
                         textButtonCancel={i18n('action_cancel')}
                         loading={applyIsLoading}

@@ -5,6 +5,6 @@ export const enum CollectionContentTableQa {
     CollectionTitleCell = 'coll-content-table-coll-title-cell',
 }
 
-export const enum CollectionStructureDialogQa {
+export const enum DialogCollectionStructureQa {
     ApplyButton = 'coll-structure-dialog-apply-button',
 }
