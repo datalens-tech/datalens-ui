@@ -526,18 +526,25 @@ export const getCurrentWidgetMeta = ({
     metaData,
     dashkitData,
     widget,
-    itemId,
+    selectedSubItemId,
     tabId,
 }: {
     metaData: DashMetaDataNoRelations;
     dashkitData: DashKit | null;
     widget: DashTabItem;
     // current item id for widgets with multiple items
-    itemId: string | null;
+    selectedSubItemId: string | null;
     tabId?: string | null;
 }): DashkitMetaDataItem => {
-    if (itemId) {
-        return (metaData?.find((item) => item.itemId === itemId) || {}) as DashkitMetaDataItem;
+    if (widget.type === DashTabItemType.GroupControl && selectedSubItemId) {
+        return (metaData?.find((item) => item.itemId === selectedSubItemId) ||
+            {}) as DashkitMetaDataItem;
+    }
+
+    // for no active tab of chart widget
+    if (widget.type === DashTabItemType.Widget && selectedSubItemId) {
+        return (metaData?.find((item) => item.widgetId === selectedSubItemId) ||
+            {}) as DashkitMetaDataItem;
     }
 
     const tabInfo = getCurrentWidgetTabShortInfo(dashkitData, widget, tabId);

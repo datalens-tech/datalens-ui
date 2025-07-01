@@ -30,14 +30,14 @@ export const useRelations = ({
     widget,
     dialogAliases,
     workbookId,
-    itemId,
+    selectedSubItemId,
     widgetsCurrentTab,
 }: {
     dashKitRef: React.RefObject<DashKit>;
     widget: DashTabItem | null;
     dialogAliases: Record<string, string[][]>;
     workbookId: WorkbookId;
-    itemId: string | null;
+    selectedSubItemId: string | null;
     widgetsCurrentTab: Record<string, string>;
 }) => {
     const [isInited, setIsInited] = React.useState(false);
@@ -53,7 +53,7 @@ export const useRelations = ({
     >(null);
     const [datasets, setDatasets] = React.useState<DatasetsListData | null>(null);
 
-    const [prevItemId, setPrevItemId] = React.useState(itemId);
+    const [prevSelectedSubItemId, setPrevSelectedSubItemId] = React.useState(selectedSubItemId);
     const [prevWidgetId, setPrevWidgetId] = React.useState(widget?.id ?? null);
 
     const getCurrentWidgetInfo = React.useCallback(
@@ -73,7 +73,7 @@ export const useRelations = ({
                 metaData: dashWidgetsMetaData,
                 dashkitData: dashKitRef.current,
                 widget,
-                itemId,
+                selectedSubItemId,
                 tabId: widgetCurrentTabId,
             });
 
@@ -88,19 +88,19 @@ export const useRelations = ({
             setCurrentWidgetMeta(currentMeta);
             setRelations(currentRelations);
         },
-        [dashKitRef, dialogAliases, itemId, widget, widgetsCurrentTab],
+        [dashKitRef, dialogAliases, selectedSubItemId, widget, widgetsCurrentTab],
     );
 
     // the current item is changed in the modal
     if (
         isInited &&
-        (itemId !== prevItemId || widget?.id !== prevWidgetId) &&
+        (selectedSubItemId !== prevSelectedSubItemId || widget?.id !== prevWidgetId) &&
         dashWidgetsMeta &&
         datasets
     ) {
         getCurrentWidgetInfo(dashWidgetsMeta, datasets);
         setPrevWidgetId(widget?.id ?? null);
-        setPrevItemId(itemId);
+        setPrevSelectedSubItemId(selectedSubItemId);
     }
 
     React.useEffect(() => {
@@ -195,10 +195,10 @@ export const useRelations = ({
         widget,
         dialogAliases,
         workbookId,
-        itemId,
+        selectedSubItemId,
         datasets,
         dashWidgetsMeta,
-        prevItemId,
+        prevSelectedSubItemId,
         getCurrentWidgetInfo,
     ]);
 

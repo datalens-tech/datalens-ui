@@ -416,6 +416,7 @@ export const getWidgetsOptions = (
                             : item.title,
                         data: {
                             widgetId: widgetItem.id,
+                            isItem: true,
                             icon: widgetsIconMap[item.id],
                         },
                     });
@@ -434,4 +435,21 @@ export const getWidgetsOptions = (
     }
 
     return options;
+};
+
+export const getInitialSubItemId = (
+    widget: DashTabItem | null,
+    widgetsCurrentTab: Record<string, string>,
+) => {
+    if (!widget) {
+        return null;
+    }
+    switch (widget.type) {
+        case DashTabItemType.GroupControl:
+            return widget.data.group[0].id;
+        case DashTabItemType.Widget:
+            return widgetsCurrentTab[widget.id] || null;
+    }
+
+    return null;
 };

@@ -26,6 +26,7 @@ import type {FiltersTypes} from './components/Filters/Filters';
 import {Filters} from './components/Filters/Filters';
 import {DEFAULT_ALIAS_NAMESPACE, RELATION_TYPES} from './constants';
 import {
+    getInitialSubItemId,
     getPairedRelationType,
     getRelationsForSave,
     getRelationsIcon,
@@ -107,10 +108,9 @@ const DialogRelations = (props: DialogRelationsProps) => {
     const [preparedRelations, setPreparedRelations] = React.useState<DashMetaData>([]);
     const [aliases, setAliases] = React.useState(dashTabAliases || {});
 
-    const [itemId, setItemId] = React.useState(
-        currentWidget?.type === DashTabItemType.GroupControl
-            ? currentWidget.data.group[0].id
-            : null,
+    // used for control in group or tab of widget
+    const [selectedSubItemId, setSelectedSubItemId] = React.useState(
+        getInitialSubItemId(currentWidget, widgetsCurrentTab),
     );
 
     const {isLoading, currentWidgetMeta, relations, datasets, dashWidgetsMeta, invalidAliases} =
@@ -119,12 +119,13 @@ const DialogRelations = (props: DialogRelationsProps) => {
             widget: currentWidget,
             dialogAliases: aliases,
             workbookId,
-            itemId,
+            selectedSubItemId,
             widgetsCurrentTab,
         });
 
     const widgetsIconMap = React.useMemo(() => {
         const iconsMap: Record<string, JSX.Element | null> = {};
+
         dashWidgetsMeta?.forEach((widgetMeta) => {
             iconsMap[widgetMeta.widgetId] = getRelationsIcon(widgetMeta, b('relations-icon'));
         });
@@ -136,7 +137,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
         return getWidgetsOptions(widgetsIconMap, widgets, showDebugInfo);
     }, [widgets, widgetsIconMap, showDebugInfo]);
 
-    const currentWidgetId = itemId || currentWidgetMeta?.widgetId || '';
+    const currentWidgetId = selectedSubItemId || currentWidgetMeta?.widgetId || '';
     const [changedWidgets, setChangedWidgets] = React.useState<WidgetsTypes>({});
 
     const [shownInvalidAliases, setShownInvalidAliases] = React.useState<string[] | null>(null);
@@ -153,18 +154,21 @@ const DialogRelations = (props: DialogRelationsProps) => {
         const newWidgetData = widgetOptions.find((item) => item.value === value[0])?.data;
         // if it's tab of widget or item in group control, widgetId is in the option
         // data, for old controls it's value[0]
-        const currentId = newWidgetData?.widgetId || value[0];
+        const selectedWidgetId = newWidgetData?.widgetId || value[0];
+        const selectedItemId = value[0];
 
-        const newCurrentWidget = widgets?.find((item) => item.id === currentId) as DashTabItem;
+        const newCurrentWidget = widgets?.find(
+            (item) => item.id === selectedWidgetId,
+        ) as DashTabItem;
 
         setCurrentWidget(newCurrentWidget);
 
-        setItemId(newWidgetData?.isItem ? value[0] : null);
+        setSelectedSubItemId(newWidgetData?.isItem ? selectedItemId : null);
         setPreparedRelations([]);
 
-        if (!changedWidgets[currentId]) {
+        if (!changedWidgets[selectedWidgetId]) {
             const updatedChangedWidgets = {...changedWidgets};
-            updatedChangedWidgets[currentId] = {};
+            updatedChangedWidgets[selectedWidgetId] = {};
             setChangedWidgets(updatedChangedWidgets);
         }
     };
@@ -321,16 +325,16 @@ const DialogRelations = (props: DialogRelationsProps) => {
      */
     const handleRelationTypeChange = React.useCallback(
         (changedData: RelationTypeChangeProps) => {
-            const {type, widgetId, forceAddAlias, itemId: rowItemId, ...rest} = changedData;
+            const {type, widgetId, forceAddAlias, itemId: selectorSubItemId, ...rest} = changedData;
 
             const newChanged = {...changedWidgets};
             if (!newChanged[currentWidgetId]) {
                 newChanged[currentWidgetId] = {};
             }
             let currentRelations;
-            if (rowItemId) {
+            if (selectorSubItemId) {
                 currentRelations = preparedRelations.find(
-                    (item) => item.itemId === rowItemId,
+                    (item) => item.itemId === selectorSubItemId,
                 )?.relations;
             } else {
                 currentRelations = preparedRelations.find(
@@ -338,7 +342,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
                 )?.relations;
             }
 
-            const relationSubjectId = rowItemId || widgetId;
+            const relationSubjectId = selectorSubItemId || widgetId;
             const currentRelationType = currentRelations?.type;
             if (currentRelationType === type) {
                 if (
@@ -382,7 +386,6 @@ const DialogRelations = (props: DialogRelationsProps) => {
                             forceAddAlias: true,
                             changedWidgetsData: newChanged,
                             changedWidgetId: widgetId,
-                            changedItemId: rowItemId,
                         });
                     }
                 }
@@ -450,7 +453,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
 
             setChangedWidgets(newChangedWidgets);
         },
-        [preparedRelations, filteredRelations, currentWidgetId],
+        [changedWidgets, currentWidgetId, filteredRelations, preparedRelations],
     );
 
     /**
@@ -483,7 +486,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
         } else {
             onApply(newData);
         }
-    }, [dashKitRef, aliases, dashTabAliases, changedWidgets, currentWidgetMeta, onClose, onApply]);
+    }, [dashKitRef, aliases, isLoading, dashTabAliases, changedWidgets, onClose, onApply]);
 
     const handleAliasesWarnClick = () => setAliasWarnPopupOpen(!aliasWarnPopupOpen);
 
