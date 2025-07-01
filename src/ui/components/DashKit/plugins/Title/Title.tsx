@@ -4,14 +4,12 @@ import {HelpPopover} from '@gravity-ui/components';
 import {
     PluginTitle as DashKitPluginTitle,
     PLUGIN_ROOT_ATTR_NAME,
-    RECCOMMENDED_LINE_HEIGHT_MULTIPLIER,
-    TITLE_DEFAULT_SIZES,
     pluginTitle,
 } from '@gravity-ui/dashkit';
 import type {Plugin, PluginTitleProps} from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
-import {type DashTabItemTitle, type DashTitleSize, EXPORT_PRINT_HIDDEN_ATTR} from 'shared';
+import {type DashTabItemTitle, EXPORT_PRINT_HIDDEN_ATTR} from 'shared';
 import {CustomPaletteBgColors} from 'shared/constants/widgets';
 import {
     adjustWidgetLayout as dashkitAdjustWidgetLayout,
@@ -22,6 +20,7 @@ import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
 import {AnchorLink} from './AnchorLink/AnchorLink';
+import {getFontStyleBySize, getTopOffsetBySize, isTitleOverflowed} from './utils';
 
 import './Title.scss';
 
@@ -44,36 +43,6 @@ const WIDGET_RESIZE_DEBOUNCE_TIMEOUT = 100;
 const MIN_AVAILABLE_TOP_OFFSET = -5;
 // if the text is too large, it slightly overflows its container
 const MIN_AVAILABLE_HEIGHT_OFFSET = 8.5;
-
-const getFontStyleBySize = (size: DashTitleSize) => {
-    if (typeof size === 'object' && 'fontSize' in size) {
-        return {
-            fontSize: size.fontSize + 'px',
-            lineHeight: RECCOMMENDED_LINE_HEIGHT_MULTIPLIER,
-        };
-    } else if (typeof size === 'string') {
-        return TITLE_DEFAULT_SIZES[size];
-    }
-
-    return {};
-};
-
-/* eslint-disable no-param-reassign */
-const isTitleOverflowed = (element: HTMLDivElement, extraElements: HTMLDivElement) => {
-    const originalWhiteSpace = element.style.whiteSpace;
-    element.style.whiteSpace = 'nowrap';
-
-    const originalPosition = extraElements.style.position;
-    extraElements.style.position = 'static';
-
-    const isOverflowed = element.scrollWidth > element.offsetWidth;
-
-    element.style.whiteSpace = originalWhiteSpace;
-    extraElements.style.position = originalPosition;
-
-    return isOverflowed;
-};
-/* eslint-enable no-param-reassign */
 
 const titlePlugin: PluginTitle = {
     ...pluginTitle,
@@ -236,16 +205,13 @@ const titlePlugin: PluginTitle = {
 
         const getStyles = () => {
             const fontStyles = getFontStyleBySize(data.size);
-            const hintSize = 16;
 
             if (isInlineExtraElements) {
                 return fontStyles;
             }
             return {
-                top: showAnchor
-                    ? extraElementsTop
-                    : ((fontStyles.lineHeight as number) + hintSize) / 2,
                 ...fontStyles,
+                top: showAnchor ? extraElementsTop : getTopOffsetBySize(data.size),
             };
         };
 
