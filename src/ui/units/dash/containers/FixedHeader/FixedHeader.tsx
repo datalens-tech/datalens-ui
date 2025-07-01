@@ -161,6 +161,7 @@ type FixedHeaderWrapperProps = CommonFixedHeaderProps & {
     dashBodyRef: React.RefObject<HTMLDivElement>;
     controlsRef: React.Ref<HTMLDivElement>;
     containerRef: React.Ref<HTMLDivElement>;
+    className?: string;
 };
 
 export function FixedHeaderWrapper({
@@ -171,11 +172,15 @@ export function FixedHeaderWrapper({
     isCollapsed,
     isControlsGroupEmpty,
     isContainerGroupEmpty,
+    className,
 }: FixedHeaderWrapperProps) {
     const rootRef = React.useRef<HTMLDivElement>(null);
     const wrapperRef = React.useRef<HTMLDivElement>(null);
+    const scrollableContainerRef = React.useRef<HTMLDivElement>(null);
 
     const [containerHeight, setContainerHeight] = React.useState<'auto' | number>('auto');
+    const [scrollableContainerOverflow, setScrollableContainerOverflow] =
+        React.useState<React.CSSProperties['overflow']>('auto');
 
     const topOffset = calculateOffset(dashBodyRef);
     const {isFixed, leftOffset, width} = useFixedHeaderRef(rootRef, topOffset);
@@ -198,13 +203,37 @@ export function FixedHeaderWrapper({
         };
     }, [wrapperRef, topOffset]);
 
+    React.useEffect(() => {
+        if (scrollableContainerRef.current) {
+            const observer = new ResizeObserver(([entity]) => {
+                if (entity) {
+                    const {target} = entity;
+                    setScrollableContainerOverflow(
+                        target.scrollHeight > target.clientHeight ? 'auto' : 'visible',
+                    );
+                }
+            });
+
+            observer.observe(scrollableContainerRef.current);
+
+            return () => {
+                observer.disconnect();
+            };
+        }
+
+        return () => {};
+    }, [scrollableContainerRef]);
+
     return (
         <div
-            className={b({
-                'no-content': isControlsGroupEmpty && (isContainerGroupEmpty || isCollapsed),
-                'edit-mode': editMode,
-                collapsed: isCollapsed,
-            })}
+            className={b(
+                {
+                    'no-content': isControlsGroupEmpty && (isContainerGroupEmpty || isCollapsed),
+                    'edit-mode': editMode,
+                    collapsed: isCollapsed,
+                },
+                className,
+            )}
             ref={rootRef}
             style={{
                 height: isFixed ? containerHeight : 'auto',
@@ -219,7 +248,11 @@ export function FixedHeaderWrapper({
                 data-qa={FixedHeaderQa.Wrapper}
             >
                 <div className={b('content')}>
-                    <div className={b('scrollable-container')}>
+                    <div
+                        className={b('scrollable-container')}
+                        ref={scrollableContainerRef}
+                        style={{overflow: scrollableContainerOverflow}}
+                    >
                         <div ref={controlsRef} className={b('controls-placeholder')}></div>
                         <div
                             ref={containerRef}

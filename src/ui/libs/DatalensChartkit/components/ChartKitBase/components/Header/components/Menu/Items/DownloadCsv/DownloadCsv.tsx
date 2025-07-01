@@ -5,7 +5,9 @@ import type {SelectOption} from '@gravity-ui/uikit';
 import {Card, Dialog, Select, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {useSelector} from 'react-redux';
 import {ChartkitMenuDialogsQA, EXPORT_FORMATS} from 'shared';
+import {selectWidget} from 'ui/units/wizard/selectors/widget';
 
 import type {ExportActionArgs, ExportChartArgs} from '../Export/types';
 
@@ -94,6 +96,9 @@ export const DownloadCsv = ({
     const [delNumber, setDelNumber] = React.useState('.');
     const [encoding, setEncoding] = React.useState('utf8');
 
+    const widget = useSelector(selectWidget);
+    const revId = widget?.revId;
+
     const showAttention = showWarning && chartType === EXPORT_WARNING_TYPE;
 
     const downloadCsv = React.useCallback(() => {
@@ -104,9 +109,9 @@ export const DownloadCsv = ({
             encoding,
         };
 
-        onApply({chartData, params, onExportLoading});
+        onApply({chartData, params, onExportLoading, chartRevId: revId});
         onClose();
-    }, [chartData, delNumber, delValue, encoding, onApply]);
+    }, [chartData, delNumber, delValue, encoding, onApply, revId]);
 
     return (
         <Dialog

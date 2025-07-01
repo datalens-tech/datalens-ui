@@ -84,6 +84,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         config,
         usageType,
         workbookId,
+        enableAssistant,
     } = props;
 
     const extDashkitContext = React.useContext(ExtendedDashKitContext);
@@ -352,6 +353,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         isFullscreen,
         isAutoHeightEnabled,
         description,
+        descriptionMetaScript,
         handleToggleFullscreenMode,
         handleSelectTab,
         handleGetWidgetMeta,
@@ -556,6 +558,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         widgetRenderTimeRef,
         yandexMapAPIWaiting,
         enableActionParams,
+        enableAssistant,
         isWidgetMenuDataChanged,
         onChange: handleChange,
         onFullscreenClick: handleToggleFullscreenMode,
@@ -660,6 +663,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 <WidgetFooter
                     isFullscreen={Boolean(isFullscreen)}
                     description={description || ''}
+                    metaScripts={descriptionMetaScript}
                     enableDescription={currentTab.enableDescription}
                     author={loadedData?.publicAuthor}
                 />

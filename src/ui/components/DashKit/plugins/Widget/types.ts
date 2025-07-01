@@ -38,7 +38,7 @@ export type WidgetPluginProps = Omit<PluginWidgetProps, 'data'> & {
     forwardedRef: React.RefObject<ChartKit | ChartKitRef>;
     isNewRelations?: boolean;
     data: WidgetPluginDataWithTabs | WidgetPluginData;
-    getMarkdown?: (props: {text: string}) => Promise<{result: string}>;
+    getMarkdown?: (props: {text: string}) => Promise<{result: string; meta?: object}>;
     debouncedAdjustWidgetLayout: DebouncedFunc<(props: AdjustWidgetLayoutProps) => void>;
 };
 

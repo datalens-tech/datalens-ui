@@ -12,7 +12,7 @@ export const opensourceEndpoints = {
             uploader: process.env.UI_UPLOADER_ENDPOINT || '/uploader',
 
             auth: process.env.AUTH_ENDPOINT || 'http://localhost:8088',
-            s3: process.env.S3_ENDPOINT || '',
+            s3Proxy: process.env.S3_PROXY_ENDPOINT || '',
         },
         ui: {
             gateway: process.env.UI_GATEWAY_ENDPOINT || '/gateway',
@@ -44,7 +44,7 @@ export const opensourceEndpoints = {
             uploader: process.env.UI_UPLOADER_ENDPOINT || '/uploader',
 
             auth: process.env.AUTH_ENDPOINT || 'http://auth:8080',
-            s3: process.env.S3_ENDPOINT || '',
+            s3Proxy: process.env.S3_PROXY_ENDPOINT || '',
         },
         ui: {
             gateway: process.env.UI_GATEWAY_ENDPOINT || '/gateway',

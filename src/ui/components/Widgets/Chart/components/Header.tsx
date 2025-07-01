@@ -48,14 +48,16 @@ export type HeaderProps = Pick<
     | 'enableActionParams'
     | 'showActionParamsFilter'
     | 'onFiltersClear'
-> & {
-    chartsInsightsData?: ChartsInsightsData;
-    isMenuAvailable: boolean;
-    isWidgetMenuDataChanged?: boolean;
-    onExportLoading: (isLoading: boolean) => void;
-    onFullscreenClick?: () => void;
-    canBeDisplayedFilters?: boolean;
-};
+> &
+    Pick<GetChartkitMenuByType, 'extraOptions'> & {
+        chartsInsightsData?: ChartsInsightsData;
+        isMenuAvailable: boolean;
+        isWidgetMenuDataChanged?: boolean;
+        onExportLoading: (isLoading: boolean) => void;
+        onFullscreenClick?: () => void;
+        canBeDisplayedFilters?: boolean;
+        enableAssistant?: boolean;
+    };
 
 const b = block('dl-widget');
 
@@ -86,8 +88,10 @@ export const Header = (props: HeaderProps) => {
         onExportLoading,
         onFullscreenClick,
         enableActionParams,
+        enableAssistant,
         showActionParamsFilter,
         onFiltersClear,
+        extraOptions,
     } = props;
 
     const dispatch = useDispatch();
@@ -127,7 +131,7 @@ export const Header = (props: HeaderProps) => {
               onExportLoading,
               onFullscreenClick,
               isEditAvaible,
-              extraOptions: {enableActionParams},
+              extraOptions: {...extraOptions, enableActionParams, enableAssistant},
               widgetConfig: loadedData?.widgetConfig,
               dispatch,
           })

@@ -1,4 +1,6 @@
 @mixin with-fade-effect() {
+    --_--fade-effect-color: var(--dash-current-background, var(--g-color-base-generic-ultralight));
+
     content: '';
     position: absolute;
     top: 0;
@@ -8,7 +10,7 @@
     background: linear-gradient(
         to right,
         transparent,
-        var(--g-color-base-generic-ultralight) 50%,
-        var(--g-color-base-generic-ultralight)
+        var(--_--fade-effect-color) 50%,
+        var(--_--fade-effect-color)
     );
 }

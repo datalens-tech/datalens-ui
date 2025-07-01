@@ -191,6 +191,7 @@ type MemoContext = {
     isEmbeddedMode?: boolean;
     isPublicMode?: boolean;
     workbookId?: string | null;
+    enableAssistant?: boolean;
 };
 type DashkitGroupRenderWithContextProps = DashkitGroupRenderProps & {context: MemoContext};
 
@@ -856,10 +857,12 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
     getContext = () => {
         const memoContext = this._memoizedContext;
         const isCollapsed = this.getFixedHeaderCollapsedState();
+        const enableAssistant = this.props.settings.enableAssistant ?? true;
 
         if (
             memoContext.workbookId !== this.props.workbookId ||
-            memoContext.fixedHeaderCollapsed !== isCollapsed
+            memoContext.fixedHeaderCollapsed !== isCollapsed ||
+            memoContext.enableAssistant !== enableAssistant
         ) {
             this._memoizedContext = {
                 ...(memoContext || {}),
@@ -867,6 +870,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                 fixedHeaderCollapsed: isCollapsed,
                 isEmbeddedMode: isEmbeddedMode(),
                 isPublicMode: Boolean(this.props.isPublicMode),
+                enableAssistant,
             };
         }
 
@@ -1092,6 +1096,10 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         const canRenderDashkit =
             this.state.fixedHeaderControlsEl && this.state.fixedHeaderContainerEl;
 
+        const fixedHeaderHasNoVisibleContent =
+            !hasFixedHeaderControlsElements &&
+            (!hasFixedHeaderContainerElements || fixedHeaderCollapsed);
+
         if (isEmptyTab && !isGlobalDragging) {
             return (
                 <EmptyState
@@ -1107,6 +1115,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         return (
             <WidgetContextProvider onWidgetMountChange={this.itemAddHandler}>
                 <FixedHeaderWrapper
+                    className={b('fixed-header', {'no-content': fixedHeaderHasNoVisibleContent})}
                     dashBodyRef={this._dashBodyRef}
                     controlsRef={this._fixedHeaderControlsRef}
                     containerRef={this._fixedHeaderContainerRef}
@@ -1269,7 +1278,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                                 {Utils.getEntryNameFromKey(this.props.entry?.key)}
                             </div>
                         )}
-                        {!settings.hideTabs && <Tabs />}
+                        {!settings.hideTabs && <Tabs className={b('tabs')} />}
                         {this.renderDashkit()}
                         {!this.props.onlyView && (
                             <DashkitActionPanel
