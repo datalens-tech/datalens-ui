@@ -6,6 +6,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import type {WorkbookId} from 'shared';
+import {DialogCollectionStructureQa} from 'shared/constants/qa/collections';
 import type {
     GetStructureItemsArgs,
     GetStructureItemsMode,
@@ -99,6 +100,7 @@ export type Props = {
     }) => Promise<unknown>;
     onClose: (structureChanged: boolean) => void;
     additionalButtons?: React.ReactNode;
+    useCustomDialog?: boolean;
 };
 
 export const CollectionStructureDialog = React.memo<Props>(
@@ -119,6 +121,7 @@ export const CollectionStructureDialog = React.memo<Props>(
         onApply,
         onClose,
         additionalButtons,
+        useCustomDialog,
     }) => {
         const dispatch = useDispatch<CollectionsStructureDispatch>();
 
@@ -279,19 +282,22 @@ export const CollectionStructureDialog = React.memo<Props>(
                             handleClose();
                         }
                     });
+                } else if (useCustomDialog) {
+                    onApply({targetCollectionId, targetWorkbookId});
                 } else {
                     setNewTitleDialogIsOpen(true);
                 }
             }
         }, [
-            massMoveMode,
             applyButtonDisabled,
-            closeDialogAfterSuccessfulApply,
             workbookSelectionMode,
+            massMoveMode,
+            useCustomDialog,
             onApply,
-            targetCollectionId,
             targetWorkbookId,
+            closeDialogAfterSuccessfulApply,
             handleClose,
+            targetCollectionId,
         ]);
 
         const handleChangeCollection = React.useCallback((newValue: string | null) => {
@@ -395,6 +401,7 @@ export const CollectionStructureDialog = React.memo<Props>(
                         textButtonApply={textButtonApply}
                         propsButtonApply={{
                             disabled: applyButtonDisabled,
+                            qa: DialogCollectionStructureQa.ApplyButton,
                         }}
                         textButtonCancel={i18n('action_cancel')}
                         loading={applyIsLoading}
