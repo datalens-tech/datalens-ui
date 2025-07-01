@@ -1,6 +1,6 @@
 @import '../mixins.scss';
 
-.dashkit-grid-item_is-dragging.dashkit-grid-item_is-focused {
+.dashkit-grid-item_is-dragging {
     .dashkit-plugin-title-container {
         &__extra-elements-container {
             display: none;
@@ -117,25 +117,13 @@
 
     &_with-absolute-hint {
         [data-plugin-root-el='title'] {
-            mask-image: linear-gradient(
-                to right,
-                rgba(0, 0, 0, 1) calc(100% - 44px),
-                rgba(0, 0, 0, 0.5) calc(100% - 40px),
-                rgba(0, 0, 0, 0) calc(100% - 30px),
-                rgba(0, 0, 0, 0) 100%
-            );
+            @include text-with-fade-effect(45px);
         }
     }
 
     &_with-absolute-hint-and-anchor {
         [data-plugin-root-el='title'] {
-            mask-image: linear-gradient(
-                to right,
-                rgba(0, 0, 0, 1) calc(100% - 60px),
-                rgba(0, 0, 0, 0.5) calc(100% - 55px),
-                rgba(0, 0, 0, 0) calc(100% - 50px),
-                rgba(0, 0, 0, 0) 100%
-            );
+            @include text-with-fade-effect(60px);
         }
     }
 }

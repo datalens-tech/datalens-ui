@@ -59,7 +59,7 @@ const getFontStyleBySize = (size: DashTitleSize) => {
 };
 
 /* eslint-disable no-param-reassign */
-function isTextOverflowedWithoutNowrap(element: HTMLDivElement, extraElements: HTMLDivElement) {
+const isTitleOverflowed = (element: HTMLDivElement, extraElements: HTMLDivElement) => {
     const originalWhiteSpace = element.style.whiteSpace;
     const originalOverflow = element.style.overflow;
     element.style.whiteSpace = 'nowrap';
@@ -76,7 +76,7 @@ function isTextOverflowedWithoutNowrap(element: HTMLDivElement, extraElements: H
     extraElements.style.position = originalPosition;
 
     return isOverflowed;
-}
+};
 /* eslint-enable no-param-reassign */
 
 const titlePlugin: PluginTitle = {
@@ -187,7 +187,7 @@ const titlePlugin: PluginTitle = {
 
                 const offsetTop = contentRect.top - rootRect.top;
 
-                const isWidthFits = !isTextOverflowedWithoutNowrap(
+                const isWidthFits = !isTitleOverflowed(
                     contentRef.current.children[0] as HTMLDivElement,
                     extraRef.current as HTMLDivElement,
                 );
@@ -267,21 +267,21 @@ const titlePlugin: PluginTitle = {
                         'with-color': Boolean(showBgColor),
                         'with-no-anchor': !showAnchor,
                         'with-inline-extra-elements': Boolean(withInlineExtraElements),
-                        'with-absolute-anchor': Boolean(withAbsoluteAnchor && !withAbsoluteHint),
+                        'with-absolute-anchor': withAbsoluteAnchor && !withAbsoluteHint,
                         'with-absolute-hint': withAbsoluteHint && !withAbsoluteAnchor,
                         'with-absolute-hint-and-anchor': withAbsoluteHint && withAbsoluteAnchor,
-                        absolute: isInlineExtraElements === false,
+                        absolute: !isInlineExtraElements,
                     })}
                     ref={contentRef}
                 >
                     {content}
                     <div
                         className={b('extra-elements-container', {
-                            absolute: isInlineExtraElements === false,
+                            absolute: !isInlineExtraElements,
                         })}
                         style={getStyles()}
-                        {...{[EXPORT_PRINT_HIDDEN_ATTR]: true}}
                         ref={extraRef}
+                        {...{[EXPORT_PRINT_HIDDEN_ATTR]: true}}
                     >
                         {showHint && (
                             <HelpPopover
@@ -293,11 +293,7 @@ const titlePlugin: PluginTitle = {
                                 }}
                             />
                         )}
-                        <AnchorLink
-                            to={data.text}
-                            show={showAnchor}
-                            absolute={!isInlineExtraElements}
-                        />
+                        <AnchorLink to={data.text} show={showAnchor} />
                     </div>
                 </div>
             </RendererWrapper>

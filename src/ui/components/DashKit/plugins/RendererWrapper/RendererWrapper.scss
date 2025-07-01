@@ -33,13 +33,7 @@
 
             .dashkit-plugin-title-container_with-absolute-anchor {
                 [data-plugin-root-el='title'] {
-                    mask-image: linear-gradient(
-                        to right,
-                        rgb(0, 0, 0) calc(100% - 40px),
-                        rgba(0, 0, 0, 0.5) calc(100% - 35px),
-                        rgba(0, 0, 0, 0) calc(100% - 25px),
-                        rgba(0, 0, 0, 0) 100%
-                    );
+                    @include text-with-fade-effect(40px);
                 }
             }
         }
