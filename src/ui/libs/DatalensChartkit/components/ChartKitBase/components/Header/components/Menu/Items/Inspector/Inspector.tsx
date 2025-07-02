@@ -72,7 +72,7 @@ const Inspector: React.FC<{
     const {Timings} = registry.common.components.getAll();
 
     return (
-        <Dialog onClose={onClose} open={true} size="m">
+        <Dialog onClose={onClose} open={true} size="m" disableHeightTransition={true}>
             <Dialog.Header caption={i18n('chartkit.menu.inspector', 'label_caption')} />
             <Dialog.Body className={b('body')}>
                 {stats && <Timings {...stats} />}
