@@ -26,7 +26,7 @@ const getResultValidatedItems = (args: PartialBy<ValidationArgs, 'innerForm'>) =
     const {apiSchemaItem, form, innerForm} = args;
     const resultKeys = getResultSchemaKeys({apiSchemaItem, form, innerForm});
 
-    return resultKeys.reduce((acc, key) => {
+    return resultKeys.reduce<ValidatedItem[]>((acc, key) => {
         const item = apiSchemaItem.items.find(({name}) => name === key);
 
         if (item) {
@@ -34,13 +34,13 @@ const getResultValidatedItems = (args: PartialBy<ValidationArgs, 'innerForm'>) =
         }
 
         return acc;
-    }, [] as ValidatedItem[]);
+    }, []);
 };
 
 const createValidationSchema = (args: PartialBy<ValidationArgs, 'innerForm'>) => {
     const {apiSchemaItem, form, innerForm} = args;
     const vaildationItems = getResultValidatedItems({apiSchemaItem, form, innerForm});
-    const schemaOptions = vaildationItems.reduce((acc, item) => {
+    const schemaOptions = vaildationItems.reduce<SchemaOptions>((acc, item) => {
         const {name, type = 'string', required, nullable, length} = item;
 
         switch (type) {
@@ -78,7 +78,7 @@ const createValidationSchema = (args: PartialBy<ValidationArgs, 'innerForm'>) =>
         }
 
         return acc;
-    }, {} as SchemaOptions);
+    }, {});
 
     return yup.object<SchemaOptions>(schemaOptions);
 };
@@ -87,10 +87,10 @@ const createValidationData = (args: PartialBy<ValidationArgs, 'innerForm'>): For
     const {apiSchemaItem, form, innerForm} = args;
     const vaildationItems = getResultValidatedItems({apiSchemaItem, form, innerForm});
 
-    return vaildationItems.reduce((acc, {name}) => {
+    return vaildationItems.reduce<FormDict>((acc, {name}) => {
         acc[name] = form[name];
         return acc;
-    }, {} as FormDict);
+    }, {});
 };
 
 const validateSchema = (schema: yup.ObjectSchema<SchemaOptions>, data: FormDict) => {

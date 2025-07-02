@@ -13,7 +13,7 @@ const concatTitleFormItem = (items: FormOptions[] = []) => {
 
 export const createValidationSchema = (items: FormOptions[] = []) => {
     const allItems = concatTitleFormItem(items);
-    const schemaOptions = allItems.reduce(
+    const schemaOptions = allItems.reduce<Record<string, yup.StringSchema<string | undefined>>>(
         (acc, {name, required}) => {
             acc[name] = yup.string();
 
@@ -38,27 +38,24 @@ export const createValidationSchema = (items: FormOptions[] = []) => {
 
             return acc;
         },
-        {} as Record<string, yup.StringSchema>,
+        {},
     );
 
-    return yup.object<Record<string, yup.StringSchema>>(schemaOptions);
+    return yup.object<Record<string, yup.StringSchema<string | undefined>>>(schemaOptions);
 };
 
 export const getDataForValidation = (source: EditedSource, freeformSource?: FreeformSource) => {
     const allItems = concatTitleFormItem(freeformSource?.form);
 
-    return allItems.reduce(
-        (acc, {name}) => {
-            if (name === TITLE_INPUT) {
-                acc[name] = source.title;
-            } else {
-                acc[name] = source.parameters[name];
-            }
+    return allItems.reduce<Record<string, string>>((acc, {name}) => {
+        if (name === TITLE_INPUT) {
+            acc[name] = source.title;
+        } else {
+            acc[name] = source.parameters[name];
+        }
 
-            return acc;
-        },
-        {} as Record<string, string>,
-    );
+        return acc;
+    }, {});
 };
 
 export const getValidationErrors = (

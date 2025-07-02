@@ -185,7 +185,6 @@
     "@types/set-cookie-parser": "^2.4.10",
     "@types/uuid": "^9.0.8",
     "@types/webpack-env": "^1.16.0",
-    "@types/yup": "^0.29.13",
     "bem-cn-lite": "^4.0.0",
     "blueimp-md5": "^2.19.0",
     "classnames": "^2.5.1",

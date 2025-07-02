@@ -1,6 +1,5 @@
 import {I18n} from 'i18n';
 import * as yup from 'yup';
-import type {StringSchema} from 'yup';
 
 const i18n = I18n.keyset('auth.user-form-validation');
 
@@ -26,8 +25,8 @@ export const baseFieldsValidSchema = yup.object({
         .max(200, i18n('label_error-login-max', {max: 200}))
         .when({
             is: (value: string) => value?.includes('@'),
-            then: (schema: StringSchema) => schema.email(i18n('label_error-login-email-invalid')),
-            otherwise: (schema: StringSchema) =>
+            then: (schema) => schema.email(i18n('label_error-login-email-invalid')),
+            otherwise: (schema) =>
                 schema.matches(/^[a-zA-Z][a-zA-Z\d_-]+[a-zA-Z\d]$/, {
                     message: i18n('label_error-login-invalid'),
                 }),
