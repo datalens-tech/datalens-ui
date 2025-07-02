@@ -37,6 +37,7 @@ export const SaveDropdown: React.FC<SaveDropdownProps> = (props: SaveDropdownPro
                     <Icon data={ChevronDown} size={16} />
                 </Button>
             )}
+            popupProps={{placement: 'bottom-end'}}
         />
     );
 };

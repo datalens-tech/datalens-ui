@@ -67,9 +67,11 @@ const RevisionRow: React.FC<RevisionRowProps> = ({
                     hasArrow={false}
                     closeDelay={TOOLTIP_DELAY_CLOSING}
                     content={tooltipText}
-                    className={b('point-wrap')}
+                    className={b('point-tooltip')}
                 >
-                    <RevisionStatusPoint status={revisionStatusKey} />
+                    <div className={b('point-wrap')}>
+                        <RevisionStatusPoint status={revisionStatusKey} />
+                    </div>
                 </Popover>
             ) : (
                 <div className={b('point-wrap')}>

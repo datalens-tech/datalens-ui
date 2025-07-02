@@ -187,9 +187,9 @@ const DialogParameter: React.FC<DialogParameterProps> = (props: DialogParameterP
                             <span className={b('line-title')}>
                                 <span>{i18n('parameter_name')}</span>
                                 <HelpMark
-                                    iconSize="s"
                                     popoverProps={{
                                         placement: 'right',
+                                        style: {maxWidth: 280},
                                     }}
                                     className={b('title-tooltip')}
                                 >

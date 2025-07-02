@@ -507,7 +507,7 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
                         <DialogRadioButtons
                             qa={DialogFieldSettingsQa.MarkupTypeRadioButtons}
                             items={items}
-                            value={this.state.markupType}
+                            value={this.state.markupType ?? MARKUP_TYPE.none}
                             onUpdate={(value: string) => {
                                 this.setState({markupType: value});
                             }}
