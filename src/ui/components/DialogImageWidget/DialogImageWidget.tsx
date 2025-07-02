@@ -102,7 +102,7 @@ export function DialogImageWidget(props: Props) {
                     className={b('row')}
                     fieldId={INPUT_SRC_ID}
                     label={
-                        <Flex gap={1}>
+                        <Flex>
                             {i18n('dash.image-dialog.edit', 'label_link')}
                             <DialogImageWidgetLinkHint scope={scope} />
                         </Flex>
@@ -122,7 +122,7 @@ export function DialogImageWidget(props: Props) {
                     className={b('row')}
                     fieldId={INPUT_ALT_ID}
                     label={
-                        <Flex gap={1}>
+                        <Flex>
                             {i18n('dash.image-dialog.edit', 'label_alt-text')}
                             <HelpMark {...helpMarkDefaultProps}>
                                 {i18n('dash.image-dialog.edit', 'label_alt-text-description')}

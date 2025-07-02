@@ -132,9 +132,13 @@ class EntryPanel extends React.Component<Props, State> {
                     entry={this.state.entry}
                     workbookName={workbookName}
                     workbookBreadcrumbs={workbookBreadcrumbs}
-                    endContent={this.renderControls()}
+                    endContent={
+                        <React.Fragment>
+                            {this.renderControls()}
+                            <div className={b()}>{children}</div>
+                        </React.Fragment>
+                    }
                 />
-                <div className={b()}>{children}</div>
             </React.Fragment>
         );
     }
