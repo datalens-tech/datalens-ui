@@ -239,6 +239,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         isInit,
         isWidgetMenuDataChanged,
         dataProps,
+        silentLoadChartData,
     } = useLoadingChart({
         dataProvider,
         requestHeadersGetter,
@@ -532,6 +533,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         (argResolve) => {
             resolveMetaDataRef.current = argResolve;
             resolveWidgetDataRef.current = (resolvingData: LoadedWidgetData<ChartsData>) => {
+                console.log('resolvingData', resolvingData);
                 if (isNewRelations) {
                     getCurrentWidgetResolvedMetaInfo(resolvingData);
                 } else {
@@ -734,5 +736,6 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         isWidgetMenuDataChanged,
         dataProps,
         noControls,
+        silentLoadChartData,
     };
 };

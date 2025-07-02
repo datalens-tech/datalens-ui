@@ -112,6 +112,10 @@ export const getMetaDataWithDatasetInfo = ({
         Boolean(item.datasetFields?.length),
     );
 
+    const fetchedWidgetsIds: string[] = [];
+
+    console.log(metaData, 'metaData');
+
     const res = (metaData || []).map((item) => {
         const itemWithDataset = {...item};
         const entryWithDataset = entriesWithDatasetsFields.find(
@@ -166,6 +170,10 @@ export const getMetaDataWithDatasetInfo = ({
             ) as Array<DatasetsData>; // TODO for multi-datasets, this did not work, you need to support in API to return a different format
             itemWithDataset.type = item.type || type; // TODO order from US type for graph
             itemWithDataset.enableFiltering = item.enableFiltering || false;
+
+            fetchedWidgetsIds.push(itemWithDataset.widgetId);
+
+            itemWithDataset.isFetchPrevented = true;
         }
 
         if (visualizationType) {
@@ -174,7 +182,9 @@ export const getMetaDataWithDatasetInfo = ({
 
         return itemWithDataset;
     });
-    return res;
+
+    console.log(res, 'res of metaDataWithDatasetInfo');
+    return {updatedMetaData: res, fetchedWidgetsIds};
 };
 
 export const showInRelation = (

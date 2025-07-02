@@ -220,82 +220,88 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         [loadedData?.params.drillDownFilters],
     );
 
-    const requestDataProps: DataProps = React.useMemo(() => {
-        let res = {...initialData};
-        let params = {...initialData.params};
-        if (!ignoreUsedParams && usedParams) {
-            params = pick(initialData.params || {}, Object.keys(usedParams));
-        }
-        let localParams = hasChartTabChanged ? {} : changedParams || {};
-
-        if (hasChangedActionParams && changedParams) {
-            const localActionParams = pickActionParamsFromParams(changedParams, true);
-            const newLocalActionParams: StringParams = {};
-
-            for (const [key, val] of Object.entries(localActionParams)) {
-                if (key in params) {
-                    newLocalActionParams[key] = val as string | string[];
-                }
+    const getRequestDataProps = React.useCallback(
+        (inputData: DataProps) => {
+            let res = {...inputData};
+            let params = {...inputData.params};
+            if (!ignoreUsedParams && usedParams) {
+                params = pick(inputData.params || {}, Object.keys(usedParams));
             }
+            let localParams = hasChartTabChanged ? {} : changedParams || {};
 
-            const localOnlyParams = pickExceptActionParamsFromParams(changedParams);
-            localParams = {...localOnlyParams, ...newLocalActionParams};
-        }
-        currentChangeParamsRef.current = localParams;
+            if (hasChangedActionParams && changedParams) {
+                const localActionParams = pickActionParamsFromParams(changedParams, true);
+                const newLocalActionParams: StringParams = {};
 
-        if (hasChangedOuterProps || hasChangedOuterParams) {
-            const filteredLocalParams = clearedOuterParams?.length
-                ? omit(localParams, clearedOuterParams)
-                : localParams;
+                for (const [key, val] of Object.entries(localActionParams)) {
+                    if (key in params) {
+                        newLocalActionParams[key] = val as string | string[];
+                    }
+                }
 
-            // when clear params of widget from outer
-            // ex cleared actionParams from other chart cause empty params in current
-            // or params contains params without local
-            const newParams =
-                hasChangedOuterParams && isEmpty(params)
-                    ? {
-                          ...params,
-                      }
-                    : {
-                          ...filteredLocalParams,
-                          ...params,
-                      };
-            res = {
-                ...res,
-                params: newParams,
-            };
-        } else {
-            res = {
-                ...res,
-                params: {
-                    ...params,
-                    ...localParams,
-                },
-            };
-        }
-        if (forceShowSafeChart) {
-            res = {
-                ...res,
-                params: {
-                    ...res.params,
-                    [SHARED_URL_OPTIONS.SAFE_CHART]: '1',
-                },
-            };
-        }
-        return res;
-    }, [
-        ignoreUsedParams,
-        hasChangedActionParams,
-        changedParams,
-        initialData,
-        usedParams,
-        hasChangedOuterProps,
-        hasChangedOuterParams,
-        hasChartTabChanged,
-        clearedOuterParams,
-        currentChangeParamsRef,
-        forceShowSafeChart,
-    ]);
+                const localOnlyParams = pickExceptActionParamsFromParams(changedParams);
+                localParams = {...localOnlyParams, ...newLocalActionParams};
+            }
+            currentChangeParamsRef.current = localParams;
+
+            if (hasChangedOuterProps || hasChangedOuterParams) {
+                const filteredLocalParams = clearedOuterParams?.length
+                    ? omit(localParams, clearedOuterParams)
+                    : localParams;
+
+                // when clear params of widget from outer
+                // ex cleared actionParams from other chart cause empty params in current
+                // or params contains params without local
+                const newParams =
+                    hasChangedOuterParams && isEmpty(params)
+                        ? {
+                              ...params,
+                          }
+                        : {
+                              ...filteredLocalParams,
+                              ...params,
+                          };
+                res = {
+                    ...res,
+                    params: newParams,
+                };
+            } else {
+                res = {
+                    ...res,
+                    params: {
+                        ...params,
+                        ...localParams,
+                    },
+                };
+            }
+            if (forceShowSafeChart) {
+                res = {
+                    ...res,
+                    params: {
+                        ...res.params,
+                        [SHARED_URL_OPTIONS.SAFE_CHART]: '1',
+                    },
+                };
+            }
+            return res;
+        },
+        [
+            ignoreUsedParams,
+            hasChangedActionParams,
+            changedParams,
+            usedParams,
+            hasChangedOuterProps,
+            hasChangedOuterParams,
+            hasChartTabChanged,
+            clearedOuterParams,
+            currentChangeParamsRef,
+            forceShowSafeChart,
+        ],
+    );
+
+    const requestDataProps: DataProps = React.useMemo(() => {
+        return getRequestDataProps(initialData);
+    }, [getRequestDataProps, initialData]);
 
     const handleError = React.useCallback(
         ({error: errorMsg}: {error: CombinedError}) => {
@@ -414,7 +420,6 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                           widgetConfig,
                       }
                     : {...requestDataProps, widgetConfig};
-
             /**
              * can't use debounced getWidget on dash because of widget priority setting
              * fix in CHARTS-7043
@@ -510,6 +515,62 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         rootNodeRef,
         enableActionParams,
     ]);
+
+    const silentLoadChartData = React.useCallback(
+        async (requestProps: DataProps) => {
+            cleanUpConflictingParameters({
+                prev: prevInnerParamsRefCurrent,
+                current: requestProps.params,
+            });
+
+            let widgetConfig;
+            if (enableActionParams) {
+                // sending additional config for enabled filtering charts in section actionParams
+                // (will be set in dash relation dialog later), if undefined - means that using full fields list
+                widgetConfig = {
+                    actionParams: {
+                        enable: true,
+                    },
+                };
+            }
+
+            const dataProps = getRequestDataProps(requestProps);
+
+            const getWidgetProps =
+                widgetType === DashTabItemControlSourceType.External
+                    ? {
+                          ...dataProps,
+                          widgetType: DashTabItemControlSourceType.External,
+                          widgetConfig,
+                      }
+                    : {...dataProps, widgetConfig};
+
+            const getWidget = dataProvider.getWidget.bind(dataProvider);
+            const loadedWidgetData = await getWidget({
+                props: getWidgetProps,
+                requestId,
+                responseOptions: {
+                    includeConfig: false,
+                },
+                requestCancellation:
+                    requestCancellationRef.current[requestId]?.requestCancellation ||
+                    dataProvider.getRequestCancellation(),
+                ...(requestHeadersGetter ? {contextHeaders: requestHeadersGetter()} : {}),
+            });
+
+            return loadedWidgetData;
+        },
+        [
+            dataProvider,
+            enableActionParams,
+            getRequestDataProps,
+            prevInnerParamsRefCurrent,
+            requestCancellationRef,
+            requestHeadersGetter,
+            requestId,
+            widgetType,
+        ],
+    );
 
     /**
      * reload chart by timer when the _autoupdate param is passed
@@ -965,5 +1026,6 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         dataProps: requestDataProps,
         isWidgetMenuDataChanged,
         runAction,
+        silentLoadChartData,
     };
 };

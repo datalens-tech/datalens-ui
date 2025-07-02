@@ -3,9 +3,12 @@ import React from 'react';
 import type {DashKit} from '@gravity-ui/dashkit';
 import isEmpty from 'lodash/isEmpty';
 import type {DashTabItem, WorkbookId} from 'shared';
+import {DashTabItemType} from 'shared';
 
 import type {GetEntriesDatasetsFieldsResponse} from '../../../../shared/schema';
 import {getSdk} from '../../../libs/schematic-sdk';
+import type {LoadHiddenWidgetsMetaType} from '../../../units/dash/contexts/WidgetMetaContext';
+import {useWidgetContext} from '../../../units/dash/contexts/WidgetMetaContext';
 import {getRowTitle} from '../components/Content/helpers';
 import {DEFAULT_ALIAS_NAMESPACE} from '../constants';
 import type {
@@ -32,6 +35,7 @@ export const useRelations = ({
     workbookId,
     selectedSubItemId,
     widgetsCurrentTab,
+    loadHiddenWidgetsMeta,
 }: {
     dashKitRef: React.RefObject<DashKit>;
     widget: DashTabItem | null;
@@ -39,6 +43,7 @@ export const useRelations = ({
     workbookId: WorkbookId;
     selectedSubItemId: string | null;
     widgetsCurrentTab: Record<string, string>;
+    loadHiddenWidgetsMeta?: LoadHiddenWidgetsMetaType;
 }) => {
     const [isInited, setIsInited] = React.useState(false);
     const [isLoading, setIsLoading] = React.useState(false);
@@ -110,7 +115,12 @@ export const useRelations = ({
             }
 
             setIsLoading(true);
+
+            // Collect metadata from all dashboard widgets
             const data = (await Promise.all(dashKitRef.current.getItemsMeta())) as DashkitMetaData;
+            // Transform raw metadata into structured format with namespaces and extract datasets/entries lists
+            // The dataset IDs are collected from loaded widgets (loadedData).
+            // If widget is not loaded (inactive tabs), getEntriesDatasetsFields will be able to pull up the dataset by entryId in the case of wizard charts and editor with defined datasets on Shared tab.
             const {metaData, datasetsList, entriesList, controlsList} = getPreparedMetaData(
                 data,
                 dashKitRef.current,
@@ -125,23 +135,34 @@ export const useRelations = ({
                     workbookId,
                 });
             }
-            const dashWidgetsMetaData = entriesDatasetsFields.length
-                ? getMetaDataWithDatasetInfo({
-                      metaData,
-                      entriesDatasetsFields,
-                      datasetsList,
-                  })
-                : metaData;
+            // Merge server-fetched dataset fields info into metadata if available
+            // Add/update fields 'datasets' | 'type' | 'enableFiltering' | 'visualizationType' | 'usedParams'
+            let dashWidgetsMetaData;
+            const preventFetchIds = [];
+            if (entriesDatasetsFields.length) {
+                const {updatedMetaData, fetchedWidgetsIds} = getMetaDataWithDatasetInfo({
+                    metaData,
+                    entriesDatasetsFields,
+                    datasetsList,
+                });
+                dashWidgetsMetaData = updatedMetaData;
+                preventFetchIds.push(...fetchedWidgetsIds);
+            } else {
+                dashWidgetsMetaData = metaData;
+            }
 
+            // Sort widgets alphabetically by display title (combines label and title with separator)
             dashWidgetsMetaData.sort((prevItem, item) => {
                 const prevItemTitle = getRowTitle(prevItem.title, prevItem.label);
                 const itemTitle = getRowTitle(item.title, item.label);
                 return prevItemTitle.localeCompare(itemTitle);
             });
 
+            // Extract only dataset entries from server response
             const fetchedDatasets =
                 entriesDatasetsFields?.filter((item) => item.type === 'dataset') || [];
 
+            // Update local dataset info ('datasetsList') with names and fields from server
             if (fetchedDatasets?.length) {
                 fetchedDatasets.forEach((datasetItem) => {
                     if (datasetItem.datasetId && datasetItem.datasetId in datasetsList) {
@@ -163,6 +184,7 @@ export const useRelations = ({
                 return result;
             }, new Set());
 
+            // Find alias parameters that don't exist in any widget
             const invalidAliasesData: string[] = [];
             if (DEFAULT_ALIAS_NAMESPACE in dialogAliases) {
                 dialogAliases[DEFAULT_ALIAS_NAMESPACE].forEach((aliasRow) => {
@@ -174,6 +196,45 @@ export const useRelations = ({
                 });
             }
 
+            // // Collect IDs of charts with multiple tabs before main metadata collection
+            // const multiTabChartIds: string[] = [];
+            // if (dashKitRef.current.props.config.items) {
+            //     dashKitRef.current.props.config.items.forEach((item) => {
+            //         if (
+            //             item.type === DashTabItemType.Widget &&
+            //             item.data?.tabs &&
+            //             item.data.tabs.length > 1
+            //         ) {
+            //             multiTabChartIds.push(item.id);
+            //         }
+            //     });
+            // }
+
+            // // Start loading metadata from inactive tabs in parallel (don't wait for it)
+            // if (multiTabChartIds.length > 0 && loadHiddenWidgetsMeta) {
+            //     console.log(multiTabChartIds, 'multiTabChartIds');
+            //     loadHiddenWidgetsMeta({widgetIds: multiTabChartIds, preventFetchIds})
+            //         .catch((error: any) => {
+            //             console.warn('Failed to load metadata from inactive tabs:', error);
+            //         })
+            //         .then((hiddenWidgetsMeta) => {
+            //             if (hiddenWidgetsMeta) {
+            //                 console.log(hiddenWidgetsMeta, 'hiddenWidgetsMeta');
+            //                 console.log(dashWidgetsMetaData, 'dashWidgetsMetaData');
+            //                 const extendedWidgetsMetaData = dashWidgetsMetaData?.map((item) => {
+            //                     return {
+            //                         ...item,
+            //                         ...hiddenWidgetsMeta[item.widgetId],
+            //                     };
+            //                 });
+            //                 console.log(extendedWidgetsMetaData, 'extendedWidgetsMetaData');
+            //                 getCurrentWidgetInfo(extendedWidgetsMetaData, datasetsList);
+            //                 setDashWidgetsMeta(extendedWidgetsMetaData);
+            //             }
+            //         });
+            // }
+
+            // Calculate relations for current widget and update component state
             getCurrentWidgetInfo(dashWidgetsMetaData, datasetsList);
 
             setIsInited(true);
@@ -202,5 +263,27 @@ export const useRelations = ({
         getCurrentWidgetInfo,
     ]);
 
-    return {isLoading, relations, currentWidgetMeta, datasets, dashWidgetsMeta, invalidAliases};
+    const updateWidgetMeta = (widgetId: string, meta: DashkitMetaDataItem) => {
+        setDashWidgetsMeta((prevState) => {
+            if (prevState) {
+                return prevState.map((item) => {
+                    if (item.widgetId === widgetId) {
+                        return {...item, ...meta};
+                    }
+                    return item;
+                });
+            }
+            return [{...meta}];
+        });
+    };
+
+    return {
+        isLoading,
+        relations,
+        currentWidgetMeta,
+        datasets,
+        dashWidgetsMeta,
+        invalidAliases,
+        updateWidgetMeta,
+    };
 };

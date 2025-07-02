@@ -84,6 +84,8 @@ export const runController = (
             return;
         }
 
+        console.log(config, 'config');
+
         try {
             const configResolving = getDuration(hrStart);
             const configType = config && config.meta && config.meta.stype;

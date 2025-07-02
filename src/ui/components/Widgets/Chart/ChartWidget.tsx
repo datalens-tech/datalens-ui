@@ -13,6 +13,8 @@ import pick from 'lodash/pick';
 import {ChartkitMenuDialogsQA, type StringParams} from 'shared';
 import {Feature} from 'shared/types/feature';
 import {DL} from 'ui/constants/common';
+import type {ChartsData} from 'ui/libs/DatalensChartkit/modules/data-provider/charts/types';
+import type {CombinedError, Widget} from 'ui/libs/DatalensChartkit/types';
 import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
@@ -20,6 +22,7 @@ import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import Loader from '../../../libs/DatalensChartkit/components/ChartKitBase/components/Loader/Loader';
 import {getDataProviderData} from '../../../libs/DatalensChartkit/components/ChartKitBase/helpers';
 import settings from '../../../libs/DatalensChartkit/modules/settings/settings';
+import {WidgetMetaContext, useWidgetContext} from '../../../units/dash/contexts/WidgetMetaContext';
 import DebugInfoTool from '../../DashKit/plugins/DebugInfoTool/DebugInfoTool';
 import type {CurrentTab, WidgetPluginDataWithTabs} from '../../DashKit/plugins/Widget/types';
 import {getPreparedWrapSettings} from '../../DashKit/utils';
@@ -32,6 +35,8 @@ import {WidgetHeader} from './components/WidgetHeader';
 import {
     COMPONENT_CLASSNAME,
     getTabIndex,
+    getTabMeta,
+    getWidgetMeta,
     removeEmptyNDatasetFieldsProperties,
 } from './helpers/helpers';
 import {useLoadingChartWidget} from './hooks/useLoadingChartWidget';
@@ -86,6 +91,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
     } = props;
 
     const extDashkitContext = React.useContext(ExtendedDashKitContext);
+    const metaCallback = React.useContext(WidgetMetaContext);
     const skipReload = extDashkitContext?.skipReload ?? false;
     const setWidgetCurrentTab = extDashkitContext?.setWidgetCurrentTab;
 
@@ -372,6 +378,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         isWidgetMenuDataChanged,
         dataProps,
         noControls: urlNoControls,
+        silentLoadChartData,
     } = useLoadingChartWidget({
         ...props,
         chartKitRef,
@@ -413,6 +420,92 @@ export const ChartWidget = (props: ChartWidgetProps) => {
             true,
         );
     }, [handleChange, chartkitParams]);
+
+    React.useEffect(() => {
+        const loadNonActiveTabMeta = async ({
+            tabId,
+        }: {
+            preventFetchIds: string[];
+            tabId: string;
+        }) => {
+            console.log('loadNonActiveTabMeta');
+
+            const loadingTabIndex = getTabIndex(tabs, tabId);
+            // this current tab we get from dashkit rerender with extra params for ds
+            const loadingTab = tabs[loadingTabIndex];
+
+            // for (let i = 0; i < tabs.length; i++) {
+            //     if (i === tabIndex)) {
+            //         continue;
+            //     }
+            //     promises.push(
+            //         new Promise((resolve) => {
+            //             let chartData: (Widget & ChartsData) | null = null;
+            //             let error: CombinedError | null = null;
+            //             silentLoadChartData(
+            //                 getDataProviderData({
+            //                     id: tabs[i].chartId,
+            //                     params: chartkitParams,
+            //                     workbookId,
+            //                 }),
+            //             )
+            //                 .then((tabLoadedData) => {
+            //                     chartData = tabLoadedData;
+            //                 })
+            //                 .catch((err) => {
+            //                     error = err;
+            //                 })
+            //                 .finally(() => {
+            //                     const meta = getTabMeta({
+            //                         tabWidget: tabs[i],
+            //                         id: widgetId,
+            //                         loadData: chartData,
+            //                         error,
+            //                     });
+            //                     resolve(meta);
+            //                 });
+            //         }),
+            //     );
+            // }
+
+            // console.log('promises', promises);
+
+            return new Promise((resolve) => {
+                let chartData: (Widget & ChartsData) | null = null;
+                let error: CombinedError | null = null;
+                silentLoadChartData(
+                    getDataProviderData({
+                        id: loadingTab.chartId,
+                        params: chartkitParams,
+                        workbookId,
+                    }),
+                )
+                    .then((tabLoadedData) => {
+                        chartData = tabLoadedData;
+                    })
+                    .catch((err) => {
+                        error = err;
+                    })
+                    .finally(() => {
+                        const meta = getTabMeta({
+                            tabWidget: loadingTab,
+                            id: widgetId,
+                            loadData: chartData,
+                            error,
+                        });
+                        resolve(meta);
+                    });
+            });
+        };
+
+        console.log(widgetId, 'registry');
+        metaCallback?.registerCallback(widgetId, loadNonActiveTabMeta);
+
+        return () => {
+            console.log('unregistry');
+            metaCallback?.unregisterCallback(widgetId);
+        };
+    }, [chartkitParams, metaCallback, silentLoadChartData, tabIndex, tabs, widgetId, workbookId]);
 
     /**
      * Clear action params on disable of filtration of widget

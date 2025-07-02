@@ -78,6 +78,7 @@ import Utils from '../../../../utils';
 import {TYPES_TO_DIALOGS_MAP, getActionPanelItems} from '../../../../utils/getActionPanelItems';
 import {EmptyState} from '../../components/EmptyState/EmptyState';
 import Loader from '../../components/Loader/Loader';
+import {WidgetMetaContext} from '../../contexts/WidgetMetaContext';
 import {Mode} from '../../modules/constants';
 import type {CopiedConfigContext, CopiedConfigData} from '../../modules/helpers';
 import {
@@ -201,6 +202,8 @@ type GetPreparedCopyItemOptions<T extends object = {}> = (
 
 // Body is used as a core in different environments
 class Body extends React.PureComponent<BodyProps, DashBodyState> {
+    static contextType = WidgetMetaContext;
+
     static getDerivedStateFromProps(props: BodyProps, state: DashBodyState) {
         let updatedState: Partial<DashBodyState> = {};
 
@@ -244,6 +247,8 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
 
         return Object.keys(updatedState).length ? updatedState : null;
     }
+
+    declare context: React.ContextType<typeof WidgetMetaContext>;
 
     dashKitRef = React.createRef<DashKitComponent>();
     entryDialoguesRef = React.createRef<EntryDialogues>();
@@ -887,6 +892,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
     };
 
     getOverlayControls = (): DashKitProps['overlayControls'] => {
+        console.log(this.context, ' this.context');
         if (!this._memoizedControls) {
             this._memoizedControls = {
                 overlayControls: [
@@ -949,6 +955,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                                 onClose: () => {
                                     this.props.setNewRelations(false);
                                 },
+                                loadHiddenWidgetsMeta: this.context?.loadHiddenWidgetsMeta,
                             });
                         },
                     } as OverlayControlItem,
@@ -1115,7 +1122,9 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         return (
             <WidgetContextProvider onWidgetMountChange={this.itemAddHandler}>
                 <FixedHeaderWrapper
-                    className={b('fixed-header', {'no-content': fixedHeaderHasNoVisibleContent})}
+                    className={b('fixed-header', {
+                        'no-content': fixedHeaderHasNoVisibleContent,
+                    })}
                     dashBodyRef={this._dashBodyRef}
                     controlsRef={this._fixedHeaderControlsRef}
                     containerRef={this._fixedHeaderContainerRef}

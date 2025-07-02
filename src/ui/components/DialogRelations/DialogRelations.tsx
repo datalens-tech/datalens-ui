@@ -16,6 +16,7 @@ import type {DashTab, DashTabAliases, DashTabItem} from 'shared';
 import {DashCommonQa, DashTabItemType} from 'shared';
 import {selectDebugMode} from 'store/selectors/user';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents/components/SelectOptionWithIcon/SelectOptionWithIcon';
+import type {LoadHiddenWidgetsMetaType} from 'ui/units/dash/contexts/WidgetMetaContext';
 
 import {openDialogAliases} from '../../units/dash/store/actions/relations/actions';
 import {PlaceholderIllustration} from '../PlaceholderIllustration/PlaceholderIllustration';
@@ -62,6 +63,7 @@ export type DialogRelationsProps = {
     dashTabAliases: DashTabAliases | null;
     workbookId: string | null;
     widgetsCurrentTab: Record<string, string>;
+    loadHiddenWidgetsMeta?: LoadHiddenWidgetsMetaType;
 };
 
 export type OpenDialogRelationsArgs = {
@@ -95,6 +97,7 @@ const DialogRelations = (props: DialogRelationsProps) => {
         allWidgets: widgets,
         onClose,
         onApply,
+        loadHiddenWidgetsMeta,
     } = props;
     const dispatch = useDispatch();
     const showDebugInfo = useSelector(selectDebugMode);
@@ -113,15 +116,23 @@ const DialogRelations = (props: DialogRelationsProps) => {
         getInitialSubItemId(currentWidget, widgetsCurrentTab),
     );
 
-    const {isLoading, currentWidgetMeta, relations, datasets, dashWidgetsMeta, invalidAliases} =
-        useRelations({
-            dashKitRef,
-            widget: currentWidget,
-            dialogAliases: aliases,
-            workbookId,
-            selectedSubItemId,
-            widgetsCurrentTab,
-        });
+    const {
+        isLoading,
+        currentWidgetMeta,
+        relations,
+        datasets,
+        dashWidgetsMeta,
+        invalidAliases,
+        updateWidgetMeta,
+    } = useRelations({
+        dashKitRef,
+        widget: currentWidget,
+        dialogAliases: aliases,
+        workbookId,
+        selectedSubItemId,
+        widgetsCurrentTab,
+        loadHiddenWidgetsMeta,
+    });
 
     const widgetsIconMap = React.useMemo(() => {
         const iconsMap: Record<string, JSX.Element | null> = {};
@@ -150,12 +161,33 @@ const DialogRelations = (props: DialogRelationsProps) => {
         currentWidgetId,
     });
 
-    const handleItemChange = (value: string[]) => {
+    const handleItemChange = async (value: string[]) => {
         const newWidgetData = widgetOptions.find((item) => item.value === value[0])?.data;
         // if it's tab of widget or item in group control, widgetId is in the option
         // data, for old controls it's value[0]
         const selectedWidgetId = newWidgetData?.widgetId || value[0];
         const selectedItemId = value[0];
+
+        const selectedWidgetMeta = dashWidgetsMeta?.find(
+            (item) => item.widgetId === selectedItemId,
+        );
+
+        console.log(selectedWidgetMeta, 'selectedWidgetMeta');
+
+        if (
+            !selectedWidgetMeta?.loaded &&
+            !selectedWidgetMeta?.loadError &&
+            !selectedWidgetMeta?.isFetchPrevented
+        ) {
+            const updatedMeta = await loadHiddenWidgetsMeta({
+                widgetId: selectedWidgetId,
+                tabId: selectedItemId,
+            });
+
+            if (updatedMeta) {
+                updateWidgetMeta(selectedItemId, {...updatedMeta, isFetchPrevented: true});
+            }
+        }
 
         const newCurrentWidget = widgets?.find(
             (item) => item.id === selectedWidgetId,
