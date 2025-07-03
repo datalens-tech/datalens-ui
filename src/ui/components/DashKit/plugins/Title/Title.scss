@@ -1,13 +1,5 @@
 @import '../mixins.scss';
 
-.dashkit-grid-item_is-dragging {
-    .dashkit-plugin-title-container {
-        &__extra-elements-container {
-            display: none;
-        }
-    }
-}
-
 .dashkit-plugin-title-container {
     $class: &;
     height: fit-content;
