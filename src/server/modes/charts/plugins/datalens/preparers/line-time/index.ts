@@ -215,6 +215,10 @@ function prepareLineTime(options: PrepareFunctionArgs) {
         }
     });
 
+    result.graphs.forEach((graph) => {
+        graph.spanGaps = yPlaceholderSettings.nulls === AxisNullsMode.Connect;
+    });
+
     const useColorizingWithPalettes =
         colorsConfig.mountedColors && Object.keys(colorsConfig.mountedColors).length > 0;
 
@@ -239,7 +243,6 @@ function prepareLineTime(options: PrepareFunctionArgs) {
 
         result.graphs.forEach((graph, i) => {
             graph.color = colorData[i];
-            graph.spanGaps = yPlaceholderSettings.nulls === AxisNullsMode.Connect;
         });
 
         if (result.graphs.length > 1 && isLegendEnabled(shared.extraSettings)) {
