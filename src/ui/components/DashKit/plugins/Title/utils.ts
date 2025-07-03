@@ -1,6 +1,8 @@
 import {RECCOMMENDED_LINE_HEIGHT_MULTIPLIER, TITLE_DEFAULT_SIZES} from '@gravity-ui/dashkit';
 import {type DashTitleSize} from 'shared';
 
+import {HINT_SIZE} from './constants';
+
 export const getFontStyleBySize = (size: DashTitleSize) => {
     if (typeof size === 'object' && 'fontSize' in size) {
         return {
@@ -17,15 +19,13 @@ export const getFontStyleBySize = (size: DashTitleSize) => {
 };
 
 export const getTopOffsetBySize = (size: DashTitleSize) => {
-    const hintSize = 16;
-
     if (typeof size === 'object' && 'fontSize' in size) {
-        return (size.fontSize * RECCOMMENDED_LINE_HEIGHT_MULTIPLIER - hintSize) / 2;
+        return (size.fontSize * RECCOMMENDED_LINE_HEIGHT_MULTIPLIER - HINT_SIZE) / 2;
     }
 
     if (typeof size === 'string') {
         const fontStyles = TITLE_DEFAULT_SIZES[size];
-        return (parseInt(fontStyles.lineHeight ?? fontStyles.fontSize, 10) - hintSize) / 2;
+        return (parseInt(fontStyles.lineHeight ?? fontStyles.fontSize, 10) - HINT_SIZE) / 2;
     }
 
     return undefined;
