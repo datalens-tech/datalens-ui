@@ -84,4 +84,14 @@
             background-color: var(--g-color-base-selection);
         }
     }
+
+    &__hint {
+        padding-left: 5px;
+        display: inline;
+    }
+
+    &__hint-tooltip {
+        // to be displayed on top of the Sheet component from uikit
+        z-index: 100001;
+    }
 }
