@@ -38,19 +38,14 @@ export type Placeholder = {
     items: Field[];
     settings?: Record<string, any>;
     required?: boolean;
-    onChange?: ({
-        placeholder,
-        visualization,
-        colors,
-        sort,
-        shapes,
-    }: {
+    onChange?: (params: {
         placeholder: Placeholder;
         visualization: any;
         colors: Field[];
         sort: Sort[];
         shapes: Field[];
         placeholderId: PlaceholderId;
+        isQL: boolean;
     }) => void;
     allowedDataTypes?: Set<string>;
     allowedFinalTypes?: Set<string>;
