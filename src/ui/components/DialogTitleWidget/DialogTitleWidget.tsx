@@ -266,10 +266,14 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
     }, []);
 
     const handleHintChanged = React.useCallback((hintText: string) => {
-        setState((prevState) => ({
-            ...prevState,
-            hint: {text: hintText, enabled: prevState.hint?.enabled},
-        }));
+        setState((prevState) =>
+            prevState.hint?.text === hintText
+                ? prevState
+                : {
+                      ...prevState,
+                      hint: {text: hintText, enabled: prevState.hint?.enabled},
+                  },
+        );
     }, []);
 
     const handleAutoHeightChanged = React.useCallback(() => {

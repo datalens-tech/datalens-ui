@@ -156,10 +156,11 @@ const titlePlugin: PluginTitle = {
 
                 const offsetTop = contentRect.top - rootRect.top;
 
-                const isWidthFits = !isTitleOverflowed(
-                    contentRef.current.children[0] as HTMLDivElement,
-                    extraRef.current as HTMLDivElement,
-                );
+                const titleElement = contentRef.current.children[0];
+                const isWidthFits =
+                    titleElement instanceof HTMLDivElement && extraRef.current
+                        ? !isTitleOverflowed(titleElement, extraRef.current)
+                        : contentRect.width <= rootRect.width;
 
                 const isHeightFits =
                     contentRect.height <= rootRect.height + MIN_AVAILABLE_HEIGHT_OFFSET;
