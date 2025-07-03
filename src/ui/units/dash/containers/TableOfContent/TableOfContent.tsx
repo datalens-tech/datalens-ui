@@ -212,6 +212,8 @@ const TableOfContent = React.memo(
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 e.preventDefault();
+
+                                                // open popover on click
                                                 return true;
                                             }}
                                         />

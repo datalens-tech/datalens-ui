@@ -124,11 +124,9 @@ const titlePlugin: PluginTitle = {
         const withAbsoluteAnchor = showAnchor && !isInlineExtraElements;
         const withAbsoluteHint = showHint && !isInlineExtraElements;
 
-        const {classMod, style} = getPreparedWrapSettings(
-            showBgColor,
-            data.background?.color,
-            !showAnchor && isVerticalOverflowing,
-        );
+        const {classMod, style} = getPreparedWrapSettings(showBgColor, data.background?.color, {
+            position: !showAnchor && isVerticalOverflowing ? 'relative' : undefined,
+        });
 
         const currentLayout = props.layout.find(({i}) => i === props.id) || {
             x: null,

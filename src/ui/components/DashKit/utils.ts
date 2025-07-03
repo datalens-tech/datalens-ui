@@ -273,7 +273,7 @@ export function getControlHint(source: DashTabItemControlElement) {
 export function getPreparedWrapSettings(
     showBgColor: boolean,
     color?: string,
-    needRelative?: boolean,
+    additionalStyle?: CSSProperties,
 ) {
     const wrapperClassMod =
         (showBgColor &&
@@ -281,9 +281,9 @@ export function getPreparedWrapSettings(
         '';
 
     const style: CSSProperties = {
+        ...additionalStyle,
         backgroundColor:
-            showBgColor && color === CustomPaletteBgColors.LIKE_CHART ? undefined : color,
-        position: needRelative ? 'relative' : undefined,
+            !showBgColor || color === CustomPaletteBgColors.LIKE_CHART ? undefined : color,
     };
     return {
         classMod: wrapperClassMod,
