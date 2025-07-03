@@ -261,6 +261,7 @@ export interface ChartsStats extends Timings {
     scope: 'dash' | 'preview' | 'snapter' | null;
     entryId: string;
     query: string;
+    chartType: 'editor' | 'wizard' | 'ql' | 'unknown';
     type: string;
     // type: 'graph' | 'table'
     widgetRendering: number | null;

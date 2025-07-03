@@ -169,6 +169,7 @@ export interface ChartsData extends DashWidgetConfig {
     isNewWizard: boolean;
     isOldWizard: boolean;
     isQL?: boolean;
+    isEditor?: boolean;
     extra: {
         exportFilename?: string;
         dataExportForbidden?: boolean;
