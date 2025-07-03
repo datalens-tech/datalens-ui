@@ -11,12 +11,11 @@
 .dashkit-plugin-title-container {
     $class: &;
     height: fit-content;
-    overflow: clip;
     display: flex;
     align-items: center;
     max-width: 100%;
 
-    &_with-no-anchor {
+    &_relative {
         position: relative;
     }
 
@@ -109,6 +108,14 @@
     &_with-absolute-hint {
         [data-plugin-root-el='title'] {
             @include text-with-fade-effect(45px);
+        }
+    }
+
+    &_with-absolute-anchor {
+        &:has(#{$class}__anchor:focus-visible) {
+            [data-plugin-root-el='title'] {
+                @include text-with-fade-effect(40px);
+            }
         }
     }
 

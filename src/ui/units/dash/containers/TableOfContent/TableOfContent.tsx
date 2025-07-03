@@ -205,7 +205,16 @@ const TableOfContent = React.memo(
                                 >
                                     {item.title}
                                     {item.hint && (
-                                        <HelpPopover content={item.hint} className={b('hint')} />
+                                        <HelpPopover
+                                            content={item.hint}
+                                            className={b('hint')}
+                                            tooltipClassName={b('hint-tooltip')}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                e.preventDefault();
+                                                return true;
+                                            }}
+                                        />
                                     )}
                                 </Link>
                             ))}

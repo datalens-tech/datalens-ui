@@ -15,6 +15,7 @@ import {
     adjustWidgetLayout as dashkitAdjustWidgetLayout,
     getPreparedWrapSettings,
 } from 'ui/components/DashKit/utils';
+import {DL} from 'ui/constants';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
@@ -68,6 +69,7 @@ const titlePlugin: PluginTitle = {
         const [extraElementsTop, setExtraElementsTop] = React.useState<number | undefined>(
             undefined,
         );
+        const [isVerticalOverflowing, setIsVerticalOverflowing] = React.useState<boolean>(false);
 
         const data = props.data as DashTabItemTitle['data'];
 
@@ -114,7 +116,19 @@ const titlePlugin: PluginTitle = {
                 data.background?.color !== CustomPaletteBgColors.NONE,
         );
 
-        const {classMod, style} = getPreparedWrapSettings(showBgColor, data.background?.color);
+        const showHint = Boolean(!titlePlugin.hideHint && data.hint?.enabled && data.hint.text);
+        const showAnchor = !titlePlugin.hideAnchor && !DL.IS_MOBILE;
+
+        const withInlineExtraElements = (showAnchor || showHint) && isInlineExtraElements;
+
+        const withAbsoluteAnchor = showAnchor && !isInlineExtraElements;
+        const withAbsoluteHint = showHint && !isInlineExtraElements;
+
+        const {classMod, style} = getPreparedWrapSettings(
+            showBgColor,
+            data.background?.color,
+            !showAnchor && isVerticalOverflowing,
+        );
 
         const currentLayout = props.layout.find(({i}) => i === props.id) || {
             x: null,
@@ -136,14 +150,6 @@ const titlePlugin: PluginTitle = {
             data.size,
             data.text,
         ]);
-
-        const showHint = Boolean(!titlePlugin.hideHint && data.hint?.enabled && data.hint.text);
-        const showAnchor = !titlePlugin.hideAnchor;
-
-        const withInlineExtraElements = (showAnchor || showHint) && isInlineExtraElements;
-
-        const withAbsoluteAnchor = showAnchor && !isInlineExtraElements;
-        const withAbsoluteHint = showHint && !isInlineExtraElements;
 
         const calculateExtraElements = React.useCallback(() => {
             if (contentRef.current && rootNodeRef.current) {
@@ -167,6 +173,7 @@ const titlePlugin: PluginTitle = {
 
                 setExtraElementsTop(calculatedAnchorTop);
                 setIsInlineExtraElements(contentFits);
+                setIsVerticalOverflowing(!isHeightFits);
             }
         }, []);
 
@@ -209,9 +216,12 @@ const titlePlugin: PluginTitle = {
             if (isInlineExtraElements) {
                 return fontStyles;
             }
+
+            const noAnchorTop = isVerticalOverflowing ? 0 : getTopOffsetBySize(data.size);
+
             return {
                 ...fontStyles,
-                top: showAnchor ? extraElementsTop : getTopOffsetBySize(data.size),
+                top: showAnchor ? extraElementsTop : noAnchorTop,
             };
         };
 
@@ -227,12 +237,12 @@ const titlePlugin: PluginTitle = {
                     className={b({
                         'with-auto-height': Boolean(data.autoHeight),
                         'with-color': Boolean(showBgColor),
-                        'with-no-anchor': !showAnchor,
                         'with-inline-extra-elements': Boolean(withInlineExtraElements),
                         'with-absolute-anchor': withAbsoluteAnchor && !withAbsoluteHint,
                         'with-absolute-hint': withAbsoluteHint && !withAbsoluteAnchor,
                         'with-absolute-hint-and-anchor': withAbsoluteHint && withAbsoluteAnchor,
                         absolute: !isInlineExtraElements,
+                        relative: !showAnchor && !isVerticalOverflowing,
                     })}
                     ref={contentRef}
                 >
