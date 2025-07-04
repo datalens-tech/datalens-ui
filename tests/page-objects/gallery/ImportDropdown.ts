@@ -15,11 +15,18 @@ export default class ImportDropdown {
         await locator.click();
     }
 
-    async clickItem(item: 'import') {
+    async clickItem(item: 'import' | 'download') {
         switch (item) {
             case 'import': {
                 const locator = this.page.locator(
                     slct(GalleryCardPageQA.IMPORT_DROPDOWN_IMPORT_ITEM),
+                );
+                await locator.click();
+                break;
+            }
+            case 'download': {
+                const locator = this.page.locator(
+                    slct(GalleryCardPageQA.IMPORT_DROPDOWN_DOWNLOAD_ITEM),
                 );
                 await locator.click();
                 break;

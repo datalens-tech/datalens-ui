@@ -7,4 +7,5 @@ export const enum CollectionContentTableQa {
 
 export const enum DialogCollectionStructureQa {
     ApplyButton = 'coll-structure-dialog-apply-button',
+    ListItem = 'coll-structure-dialog-list-item',
 }
