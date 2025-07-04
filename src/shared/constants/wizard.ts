@@ -30,6 +30,7 @@ export enum NavigatorLinesMode {
 
 export enum PseudoFieldTitle {
     MeasureNames = 'Measure Names',
+    ColumnNames = 'Column Names',
     MeasureValues = 'Measure Values',
 }
 

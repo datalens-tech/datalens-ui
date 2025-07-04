@@ -11,3 +11,10 @@ export type ImportExportStatus =
     | 'success'
     // the state before the request was made
     | null;
+
+export type PublicGalleryData = {
+    title: string;
+    id: string;
+    description?: string;
+    data: string;
+};

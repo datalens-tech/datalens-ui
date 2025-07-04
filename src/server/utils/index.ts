@@ -115,6 +115,8 @@ class Utils {
     static getErrorCode(error: unknown) {
         if (axios.isAxiosError(error)) {
             return error.response?.data.code;
+        } else if (isGatewayError(error)) {
+            return error.error.code;
         }
         return undefined;
     }

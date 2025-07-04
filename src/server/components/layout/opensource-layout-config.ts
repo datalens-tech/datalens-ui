@@ -88,6 +88,7 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         apiPrefix: config.apiPrefix,
         releaseVersion: config.releaseVersion,
         orderedAuthRoles: config.orderedAuthRoles,
+        authSignupDisabled: req.ctx.config.authSignupDisabled,
         ...appLayoutSettings.DL,
     };
     const renderConfig: RenderParams<{DL: DLGlobalData}> = {

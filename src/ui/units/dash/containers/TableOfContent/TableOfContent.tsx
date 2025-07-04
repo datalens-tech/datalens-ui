@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {HelpPopover} from '@gravity-ui/components';
 import {Xmark} from '@gravity-ui/icons';
 import {Icon, Sheet} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
@@ -203,6 +204,20 @@ const TableOfContent = React.memo(
                                     key={item.id}
                                 >
                                     {item.title}
+                                    {item.hint && (
+                                        <HelpPopover
+                                            content={item.hint}
+                                            className={b('hint')}
+                                            tooltipClassName={b('hint-tooltip')}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                e.preventDefault();
+
+                                                // open popover on click
+                                                return true;
+                                            }}
+                                        />
+                                    )}
                                 </Link>
                             ))}
                         </div>
