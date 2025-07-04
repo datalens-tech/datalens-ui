@@ -1,7 +1,13 @@
 import type {BarYSeries, ChartData} from '@gravity-ui/chartkit/d3';
 
 import type {SeriesExportSettings, ServerField} from '../../../../../../../shared';
-import {PlaceholderId, WizardVisualizationId} from '../../../../../../../shared';
+import {
+    PlaceholderId,
+    WizardVisualizationId,
+    isHtmlField,
+    isMarkdownField,
+    isMarkupField,
+} from '../../../../../../../shared';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import type {PrepareFunctionArgs} from '../types';
 
@@ -10,13 +16,14 @@ import {prepareBarYData} from './prepare-bar-y-data';
 type BarYPoint = {x: number; y: number} & Record<string, unknown>;
 
 export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
-    const {visualizationId, colors, placeholders} = args;
+    const {visualizationId, colors, labels, placeholders} = args;
     const {graphs, categories} = prepareBarYData(args);
     const hasCategories = Boolean(categories?.length);
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xField: ServerField | undefined = xPlaceholder?.items?.[0];
     const yPlaceholder = placeholders.find((p) => p.id === PlaceholderId.Y);
     const yField: ServerField | undefined = yPlaceholder?.items?.[0];
+    const labelField = labels?.[0];
 
     const exportSettings: SeriesExportSettings = {
         columns: [
@@ -31,6 +38,9 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
             getExportColumnSettings({path: 'series.custom.colorValue', field: colorItem}),
         );
     }
+
+    const shouldUseHtmlForLabels =
+        isMarkupField(labelField) || isHtmlField(labelField) || isMarkdownField(labelField);
 
     const series = graphs.map<BarYSeries>((graph) => {
         return {
@@ -49,6 +59,7 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
             dataLabels: {
                 enabled: graph.dataLabels?.enabled,
                 inside: visualizationId === WizardVisualizationId.BarY100pD3,
+                html: shouldUseHtmlForLabels,
             },
             custom: {
                 ...graph.custom,

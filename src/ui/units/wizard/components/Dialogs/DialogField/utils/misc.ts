@@ -42,6 +42,7 @@ export const getFormattingDataType = (item: TField, cast: DATASET_FIELD_TYPES | 
     return item.data_type;
 };
 
+// eslint-disable-next-line complexity
 export function canUseStringAsMarkdown(
     visualizationId: WizardVisualizationId,
     placeholderId: PlaceholderId | undefined,
@@ -80,12 +81,23 @@ export function canUseStringAsMarkdown(
             const possiblePlaceholders: PlaceholderId[] = [PlaceholderId.Labels];
             return placeholderId && possiblePlaceholders.includes(placeholderId);
         }
+        case WizardVisualizationId.LineD3:
+        case WizardVisualizationId.BarXD3:
+        case WizardVisualizationId.BarYD3:
+        case WizardVisualizationId.BarY100pD3:
+        case WizardVisualizationId.PieD3:
+        case WizardVisualizationId.DonutD3:
+            return placeholderId === PlaceholderId.Labels;
         default:
             return false;
     }
 }
 
-export function canUseStringAsHtml(visualizationId: WizardVisualizationId) {
+// eslint-disable-next-line complexity
+export function canUseStringAsHtml(
+    visualizationId: WizardVisualizationId,
+    placeholderId?: PlaceholderId,
+) {
     switch (visualizationId) {
         case WizardVisualizationId.Scatter:
         case WizardVisualizationId.Treemap:
@@ -103,6 +115,13 @@ export function canUseStringAsHtml(visualizationId: WizardVisualizationId) {
         case WizardVisualizationId.Donut:
         case WizardVisualizationId.CombinedChart:
             return true;
+        case WizardVisualizationId.LineD3:
+        case WizardVisualizationId.BarXD3:
+        case WizardVisualizationId.BarYD3:
+        case WizardVisualizationId.BarY100pD3:
+        case WizardVisualizationId.PieD3:
+        case WizardVisualizationId.DonutD3:
+            return placeholderId === PlaceholderId.Labels;
         default:
             return false;
     }
