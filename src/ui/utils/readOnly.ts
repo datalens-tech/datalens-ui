@@ -1,7 +1,5 @@
-import {Toaster} from '@gravity-ui/uikit';
+import {toaster} from '@gravity-ui/uikit/toaster-singleton';
 import {I18n} from 'i18n';
-
-const toaster = new Toaster();
 
 const i18n = I18n.keyset('common.read-only');
 

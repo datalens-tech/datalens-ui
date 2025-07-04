@@ -63,8 +63,8 @@ datalensTest.describe('Dashboards - Relations types check (new)', () => {
 
             await selectorElem.click();
 
-            await page.hover(slct(DashCommonQa.RelationsListRow));
-            await page.hover(slct(DashCommonQa.RelationsRowPopover));
+            await page.locator(slct(DashCommonQa.RelationsListRow)).hover();
+            await page.locator(slct(DashCommonQa.RelationsRowPopover)).hover();
 
             await dashboardPage.waitForSelector(
                 `${SELECTORS.YC_POPUP} >> text=${PARAMS.RELATION_TYPE_BY_ALIAS}`,
@@ -103,9 +103,8 @@ datalensTest.describe('Dashboards - Relations types check (new)', () => {
             await page.hover(slct(DashCommonQa.RelationsListRow));
             await page.hover(slct(DashCommonQa.RelationsRowPopover));
 
-            await dashboardPage.waitForSelector(
-                `${SELECTORS.YC_POPUP} >> text=${PARAMS.RELATION_TEXT}`,
-            );
+            const popup = page.locator(SELECTORS.YC_POPUP, {hasText: PARAMS.RELATION_TEXT});
+            await expect(popup).toBeVisible();
 
             await dashboardPage.cancelRelationsChanges();
             await dashboardPage.exitEditMode();
@@ -136,9 +135,10 @@ datalensTest.describe('Dashboards - Relations types check (new)', () => {
             await page.hover(slct(DashCommonQa.RelationsListRow));
             await page.hover(slct(DashCommonQa.RelationsRowPopover));
 
-            await dashboardPage.waitForSelector(
-                `${SELECTORS.YC_POPUP} >> text=${PARAMS.RELATION_TYPE_BY_FIELD}`,
-            );
+            const popup = page.locator(SELECTORS.YC_POPUP, {
+                hasText: PARAMS.RELATION_TYPE_BY_FIELD,
+            });
+            await expect(popup).toBeVisible();
 
             await dashboardPage.cancelRelationsChanges();
             await dashboardPage.exitEditMode();

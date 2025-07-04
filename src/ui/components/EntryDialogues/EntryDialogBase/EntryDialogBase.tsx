@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {Alert, Dialog} from '@gravity-ui/uikit';
-import type {ButtonView} from '@gravity-ui/uikit';
+import type {ButtonView, DialogProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import type {DataLensApiError} from 'typings';
@@ -33,6 +33,7 @@ interface EntryDialogBaseGeneralProps<T> {
     inactiveEntryKeys?: string[];
     warningMessage?: React.ReactNode;
     confirmButtonView?: ButtonView;
+    initialFocus?: DialogProps['initialFocus'];
 }
 
 interface EntryDialogBaseDefaultProps {
@@ -40,6 +41,7 @@ interface EntryDialogBaseDefaultProps {
     defaultName: string;
     path: string;
     withInput: boolean;
+    confirmButtonView?: ButtonView;
 }
 
 export interface EntryDialogBaseProps<T>
@@ -127,6 +129,7 @@ export class EntryDialogBase<T> extends React.Component<
             children,
             warningMessage,
             confirmButtonView,
+            initialFocus,
         } = this.props;
 
         return (
@@ -135,7 +138,7 @@ export class EntryDialogBase<T> extends React.Component<
                 open={visible}
                 onClose={this.onClose}
                 onEnterKeyDown={this.onApply}
-                disableFocusTrap={true}
+                initialFocus={initialFocus}
             >
                 <Dialog.Header caption={caption} />
                 <Dialog.Body>

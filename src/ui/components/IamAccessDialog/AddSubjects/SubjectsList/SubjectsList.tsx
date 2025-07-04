@@ -159,10 +159,13 @@ export const SubjectsList = ({resourceId, subjects, onUpdateSubjects}: Props) =>
             </Button>
 
             <Popup
-                anchorRef={suggestRef}
+                anchorElement={suggestRef.current}
                 open={suggestOpen}
-                onClose={() => setSuggestOpen(false)}
-                contentClassName={b('acl-popup-content')}
+                onOpenChange={(open) => {
+                    if (!open) {
+                        setSuggestOpen(false);
+                    }
+                }}
             >
                 <AclSubjectSuggest
                     availableGroups={availableSubjectGroups}

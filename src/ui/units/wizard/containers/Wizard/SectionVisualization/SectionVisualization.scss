@@ -192,3 +192,8 @@
         @include dl-select-popup;
     }
 }
+
+.placeholder-icon-tooltip-content {
+    padding: var(--g-spacing-4);
+    width: 300px;
+}

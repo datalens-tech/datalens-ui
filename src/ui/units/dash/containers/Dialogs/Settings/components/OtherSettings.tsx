@@ -1,8 +1,7 @@
 import React from 'react';
 
-import {HelpPopover} from '@gravity-ui/components';
 import type {SelectProps} from '@gravity-ui/uikit';
-import {Button, Checkbox} from '@gravity-ui/uikit';
+import {Button, Checkbox, HelpMark} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {registry} from 'ui/registry';
@@ -12,6 +11,7 @@ import type {DashLoadPriority, DashSettings} from '../../../../../../../shared';
 import {Feature} from '../../../../../../../shared';
 import {SectionWrapper} from '../../../../../../components/SectionWrapper/SectionWrapper';
 
+import {helpMarkDefaultProps} from './../../../../../../constants';
 import {LoadPriority} from './LoadPriority';
 import {MaxConnection} from './MaxConnection';
 import {Row} from './Row';
@@ -68,7 +68,9 @@ export const OtherSettings = ({
             />
             <Row>
                 <Title text={i18n('label_load-only-visible-charts')}>
-                    <HelpPopover htmlContent={i18n('hint_load-only-visible-charts')} />
+                    <HelpMark {...helpMarkDefaultProps}>
+                        {i18n('hint_load-only-visible-charts')}
+                    </HelpMark>
                 </Title>
                 <Checkbox
                     size="l"

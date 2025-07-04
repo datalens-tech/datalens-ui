@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {PlaceholderContainer} from '@gravity-ui/components';
+import {PlaceholderContainer} from '@gravity-ui/uikit';
 import {DL} from 'ui/constants';
 import {registry} from 'ui/registry';
 
@@ -26,6 +26,8 @@ export const PlaceholderIllustration = ({
         return <PlaceholderIllustrationImage illustrationStore={store} name={name} size={size} />;
     }, [name, size]);
 
+    const actions = renderAction?.();
+
     return (
         <PlaceholderContainer
             image={renderImage()}
@@ -33,7 +35,7 @@ export const PlaceholderIllustration = ({
             title={title}
             className={className}
             description={description}
-            renderAction={renderAction}
+            actions={actions}
             direction={placeholderDirection}
         />
     );

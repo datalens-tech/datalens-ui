@@ -28,6 +28,8 @@ export const ChartkitMenuDialogsQA = {
 
 export const enum ChartKitQa {
     Loader = 'chartkit-loader',
+    DrillBreadcrumbs = 'chartkit-drillbreadcrumbs',
+    DrillBreadcrumbsItem = 'chartkit-drillbreadcrumbs-item',
 }
 
 export const enum ChartQa {

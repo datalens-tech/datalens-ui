@@ -1,7 +1,8 @@
 import React from 'react';
 
 import type {DropdownMenuItemMixed} from '@gravity-ui/uikit';
-import {Loader, Toaster} from '@gravity-ui/uikit';
+import {Loader} from '@gravity-ui/uikit';
+import {toaster} from '@gravity-ui/uikit/toaster-singleton';
 import type {AxiosError} from 'axios';
 import block from 'bem-cn-lite';
 import type {History, Location} from 'history';
@@ -129,7 +130,6 @@ interface State {
 }
 
 class Wizard extends React.Component<Props, State> {
-    private toaster: Toaster;
     private entryDialoguesRef: React.RefObject<EntryDialogues>;
     private hotkeysAreaRef: React.RefObject<HTMLDivElement>;
 
@@ -158,8 +158,6 @@ class Wizard extends React.Component<Props, State> {
 
             this.props.setDefaults(params);
         }
-
-        this.toaster = new Toaster();
 
         this.entryDialoguesRef = React.createRef();
         this.hotkeysAreaRef = React.createRef();
@@ -484,7 +482,7 @@ class Wizard extends React.Component<Props, State> {
 
         const fullscreen = isFullscreen ? ' fullscreen-mode' : '';
         const hidden = isFullscreen ? ' hidden' : '';
-        const {entryDialoguesRef, toaster} = this;
+        const {entryDialoguesRef} = this;
 
         return (
             <div className={`${b()}${fullscreen}`}>

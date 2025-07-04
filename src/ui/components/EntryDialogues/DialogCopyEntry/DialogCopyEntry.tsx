@@ -98,6 +98,7 @@ class DialogCopyEntry extends React.Component<
                 textButtonApply={i18n('button_apply')}
                 placeholder={i18n('label_placeholder')}
                 warningMessage={this.getWarningMessage()}
+                initialFocus={1}
             />
         );
     }

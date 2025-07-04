@@ -11,7 +11,7 @@ import notes from '@diplodoc/transform/lib/plugins/notes';
 import sup from '@diplodoc/transform/lib/plugins/sup';
 import table from '@diplodoc/transform/lib/plugins/table';
 import term from '@diplodoc/transform/lib/plugins/term';
-import type {MarkdownItPluginCb} from '@diplodoc/transform/lib/plugins/typings';
+import type {Lang, MarkdownItPluginCb} from '@diplodoc/transform/lib/plugins/typings';
 import {defaultOptions} from '@diplodoc/transform/lib/sanitize';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import type MarkdownIt from 'markdown-it';
@@ -116,7 +116,7 @@ export function renderHTML(args: RenderHtmlArgs): RenderHtmlOutput {
         result: {html, meta},
     } = yfmTransform(preparedTextWithTermLinks, {
         plugins,
-        lang,
+        lang: lang as Lang,
         vars: {},
         disableLiquid: true,
         needToSanitizeHtml: true,

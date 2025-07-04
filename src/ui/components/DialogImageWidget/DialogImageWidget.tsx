@@ -1,14 +1,15 @@
 import React from 'react';
 
-import {FormRow, HelpPopover} from '@gravity-ui/components';
+import {FormRow} from '@gravity-ui/components';
 import type {RealTheme} from '@gravity-ui/uikit';
-import {Checkbox, Dialog, Flex, TextInput} from '@gravity-ui/uikit';
+import {Checkbox, Dialog, Flex, HelpMark, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import cloneDeep from 'lodash/cloneDeep';
 import merge from 'lodash/merge';
 import {DialogDashWidgetItemQA, DialogDashWidgetQA} from 'shared';
 import type {DashTabItemImage, EntryScope, RecursivePartial} from 'shared';
+import {helpMarkDefaultProps} from 'ui/constants';
 import {registry} from 'ui/registry';
 
 import {PaletteBackground} from '../..//units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
@@ -101,7 +102,7 @@ export function DialogImageWidget(props: Props) {
                     className={b('row')}
                     fieldId={INPUT_SRC_ID}
                     label={
-                        <Flex gap={1}>
+                        <Flex>
                             {i18n('dash.image-dialog.edit', 'label_link')}
                             <DialogImageWidgetLinkHint scope={scope} />
                         </Flex>
@@ -121,14 +122,11 @@ export function DialogImageWidget(props: Props) {
                     className={b('row')}
                     fieldId={INPUT_ALT_ID}
                     label={
-                        <Flex gap={1}>
+                        <Flex>
                             {i18n('dash.image-dialog.edit', 'label_alt-text')}
-                            <HelpPopover
-                                content={i18n(
-                                    'dash.image-dialog.edit',
-                                    'label_alt-text-description',
-                                )}
-                            />
+                            <HelpMark {...helpMarkDefaultProps}>
+                                {i18n('dash.image-dialog.edit', 'label_alt-text-description')}
+                            </HelpMark>
                         </Flex>
                     }
                 >

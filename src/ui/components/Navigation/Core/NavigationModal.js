@@ -187,7 +187,7 @@ class NavigationModal extends React.Component {
         return asideMode ? (
             body
         ) : (
-            <Dialog open={visible} onClose={onClose} disableFocusTrap={true}>
+            <Dialog open={visible} onClose={onClose}>
                 {body}
             </Dialog>
         );

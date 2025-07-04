@@ -78,7 +78,7 @@ export const getChartkitType = (data?: LoadedWidgetData): ChartKitType | undefin
         }
 
         case 'd3': {
-            chartkitType = 'd3';
+            chartkitType = 'gravity-charts';
 
             break;
         }
@@ -203,7 +203,7 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
 
             return data;
         }
-        case 'd3': {
+        case 'gravity-charts': {
             const data = cloneDeep(loadedData) as GraphWidget;
             return getGravityChartsChartKitData({
                 loadedData: data,

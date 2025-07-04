@@ -2,7 +2,6 @@ import {Page} from '@playwright/test';
 
 import {slct} from '../../utils';
 import {CommonSelectors} from '../constants/common-selectors';
-import {NavigationMinimalPlaceSelectQa} from '../../../src/shared';
 
 export enum Ownership {
     All = 'all',
@@ -27,14 +26,6 @@ class NavigationMinimal {
             `${slct('navigation-minimal')} .dl-core-navigation-search input`,
             value,
         );
-    }
-
-    async selectNamespace(value: NavigationMinimalPlaceSelectQa) {
-        await this.page.click(
-            `${slct('navigation-minimal')} ${slct('navigation-minimal-place-select')}`,
-        );
-
-        await this.page.click(slct(value));
     }
 
     async selectOwnership(ownership: Ownership) {

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Loader, RadioButton} from '@gravity-ui/uikit';
+import {Loader, SegmentedRadioGroup as RadioButton} from '@gravity-ui/uikit';
 import cn from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import debounce from 'lodash/debounce';
@@ -557,7 +557,7 @@ class NavigationEntries extends React.Component {
                 <EntryContextMenuBase
                     visible={true}
                     entry={this.state.currentEntryContext}
-                    anchorRef={this.state.currentEntryContextButton}
+                    anchorElement={this.state.currentEntryContextButton.current}
                     items={this.props.getContextMenuItems({
                         entry: this.state.currentEntryContext,
                         place: this.state.place,

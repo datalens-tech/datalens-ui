@@ -106,14 +106,14 @@ export const ListWithMenu = <T extends ItemWithTitleAndDraftId>({
         {
             action: onDuplicateItem,
             text: i18n('button_duplicate'),
-            icon: <Icon data={Copy} />,
+            iconStart: <Icon data={Copy} />,
             className: b('menu-button'),
             qa: DialogGroupControlQa.duplicateControlButton,
         },
         {
             action: onCopyItem,
             text: i18n('button_copy'),
-            icon: <Icon data={CopyArrowRight} />,
+            iconStart: <Icon data={CopyArrowRight} />,
             className: b('menu-button'),
             qa: DialogGroupControlQa.copyControlButton,
         },
@@ -123,7 +123,7 @@ export const ListWithMenu = <T extends ItemWithTitleAndDraftId>({
         customMenuOptions.push({
             action: onRemoveItem,
             text: i18n('button_delete'),
-            icon: <Icon data={TrashBin} />,
+            iconStart: <Icon data={TrashBin} />,
             className: b('delete-button'),
             qa: DialogGroupControlQa.removeControlButton,
         });
