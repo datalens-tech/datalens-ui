@@ -12,6 +12,7 @@ import {getZitadelRoutes} from '../../components/zitadel/routes';
 import {ping} from '../../controllers/ping';
 import {workbooksTransferController} from '../../controllers/workbook-transfer';
 import {getConnectorIconsMiddleware} from '../../middlewares';
+import {registry} from '../../registry';
 import type {ExtendedAppRouteDescription} from '../../types/controllers';
 import {getConfiguredRoute} from '../../utils/routes';
 import {applyPluginRoutes} from '../charts/init-charts-engine';
@@ -43,10 +44,15 @@ export function getRoutes({
         routes = {...routes, ...getZitadelRoutes({passport, beforeAuth, afterAuth})};
     }
 
+    const {privateRouteMiddleware} = registry.common.auth.getAll();
+
     if (appEnv === AppEnvironment.Development || isApiMode) {
         routes = {
             ...routes,
-            ...getApiRoutes({beforeAuth, afterAuth}),
+            ...getApiRoutes({
+                beforeAuth: [...beforeAuth, privateRouteMiddleware],
+                afterAuth,
+            }),
         };
     }
 
