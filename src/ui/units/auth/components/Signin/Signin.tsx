@@ -5,6 +5,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {Link} from 'react-router-dom';
+import {DL} from 'ui/constants';
 import type {SdkError} from 'ui/libs/schematic-sdk';
 import type {SigninProps} from 'ui/registry/units/auth/types/components/Signin';
 import {showToast} from 'ui/store/actions/toaster';
@@ -78,12 +79,14 @@ export const Signin = ({alternativeAuthOptions, logoIcon}: SigninProps) => {
                     <Button size="xl" view="action" type="submit">
                         {i18n('button_sign-in')}
                     </Button>
-                    <Flex gap={1}>
-                        {i18n('label_sign-up-hint')}
-                        <Link to={AUTH_ROUTE.SIGNUP} className={b('link')}>
-                            {i18n('label_sing-up-link')}
-                        </Link>
-                    </Flex>
+                    {!DL.AUTH_SIGNUP_DISABLED && (
+                        <Flex gap={1}>
+                            {i18n('label_sign-up-hint')}
+                            <Link to={AUTH_ROUTE.SIGNUP} className={b('link')}>
+                                {i18n('label_sing-up-link')}
+                            </Link>
+                        </Flex>
+                    )}
                 </Flex>
                 {alternativeAuthOptions}
             </Flex>

@@ -187,6 +187,9 @@ export const DL = {
     get AUTH_MANAGE_LOCAL_USERS_DISABLED() {
         return window.DL.authManageLocalUsersDisabled === true;
     },
+    get AUTH_SIGNUP_DISABLED() {
+        return window.DL.authSignupDisabled === true;
+    },
     get IS_AUTH_PAGE() {
         return Boolean(window.DL.authPageSettings?.isAuthPage);
     },

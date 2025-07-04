@@ -218,6 +218,7 @@ export default {
     isAuthEnabled: isTrueArg(process.env.AUTH_ENABLED),
     authTokenPublicKey: getEnvCert(process.env.AUTH_TOKEN_PUBLIC_KEY),
     authManageLocalUsersDisabled: isTrueArg(process.env.AUTH_MANAGE_LOCAL_USERS_DISABLED),
+    authSignupDisabled: isTrueArg(process.env.AUTH_SIGNUP_DISABLED),
 
     apiPrefix: '/api',
 } satisfies Partial<AppConfig>;
