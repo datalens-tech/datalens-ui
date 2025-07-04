@@ -94,6 +94,7 @@ export const ChartsInsights = ({items = [], messagesByLocator, locators, hidden}
         <Popover
             trigger="click"
             placement={['left', 'right']}
+            hasArrow={true}
             content={
                 isEmpty(messages) ? (
                     <Loader size="s" />

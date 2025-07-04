@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {FormRow} from '@gravity-ui/components';
-import type {RealTheme} from '@gravity-ui/uikit';
+import type {HelpMarkProps, RealTheme} from '@gravity-ui/uikit';
 import {Checkbox, Dialog, Flex, HelpMark, Link, Popup, Text, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
@@ -22,7 +22,6 @@ import {Interpolate} from 'ui/components/Interpolate';
 import {TabMenu} from 'ui/components/TabMenu/TabMenu';
 import type {UpdateState} from 'ui/components/TabMenu/types';
 import {TabActionType} from 'ui/components/TabMenu/types';
-import {helpMarkDefaultProps} from 'ui/constants';
 import {DL} from 'ui/constants/common';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
@@ -51,6 +50,13 @@ type AutoExtendCommand<T = object> = CustomCommands<{$auto: Spec<T>}>;
 imm.extend('$auto', (value, object) => {
     return object ? update(object, value) : update({}, value);
 });
+
+const helpMarkDefaultProps: Partial<HelpMarkProps> = {
+    style: {
+        verticalAlign: 'middle',
+    },
+    popoverProps: {style: {maxWidth: 300}},
+};
 
 const b = block('widget-item-dialog');
 

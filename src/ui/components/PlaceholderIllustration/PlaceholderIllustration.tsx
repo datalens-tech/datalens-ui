@@ -26,6 +26,8 @@ export const PlaceholderIllustration = ({
         return <PlaceholderIllustrationImage illustrationStore={store} name={name} size={size} />;
     }, [name, size]);
 
+    const actions = renderAction?.();
+
     return (
         <PlaceholderContainer
             image={renderImage()}
@@ -33,7 +35,7 @@ export const PlaceholderIllustration = ({
             title={title}
             className={className}
             description={description}
-            actions={renderAction}
+            actions={actions}
             direction={placeholderDirection}
         />
     );

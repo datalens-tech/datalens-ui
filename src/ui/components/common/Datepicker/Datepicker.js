@@ -614,6 +614,7 @@ export class Datepicker extends React.PureComponent {
                                         this.onClose();
                                     }
                                 }}
+                                returnFocus={false}
                             >
                                 <div className={b('popup-content')}>
                                     {this.renderContent(mobile)}
