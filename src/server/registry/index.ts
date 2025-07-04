@@ -1,7 +1,7 @@
 import type {MarkdownItPluginCb} from '@diplodoc/transform/lib/plugins/typings';
 import type {ExpressKit, Request, Response} from '@gravity-ui/expresskit';
 import type {ApiWithRoot, GatewayConfig, SchemasByScope} from '@gravity-ui/gateway';
-import getGatewayControllers from '@gravity-ui/gateway';
+import {getGatewayControllers} from '@gravity-ui/gateway';
 import type {AppContext} from '@gravity-ui/nodekit';
 
 import type {ChartsEngine} from '../components/charts-engine';

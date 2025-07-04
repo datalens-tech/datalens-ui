@@ -2,6 +2,11 @@ import {extractEntryId, getAvailablePalettesMap, isEntryId} from '../../../../sh
 import {getSourceAuthorizationHeaders} from '../../../components/charts-engine/components/utils';
 import {handleEntryRedirect} from '../../../controllers/utils/handle-entry-redirect';
 import {registry} from '../../index';
+import {
+    getAuthArgsUSPrivate,
+    getAuthHeadersUSPrivate,
+    privateRouteMiddleware,
+} from '../../utils/us-auth-helpers';
 
 export const registerCommonPlugins = () => {
     registry.common.functions.register({
@@ -10,5 +15,13 @@ export const registerCommonPlugins = () => {
         isEntryId,
         extractEntryId,
         handleEntryRedirect,
+    });
+
+    registry.common.auth.register({
+        getAuthArgsUSPrivate,
+        getAuthHeadersUSPrivate,
+        privateRouteMiddleware,
+        getAuthArgsBiPrivate: getAuthArgsUSPrivate,
+        getAuthHeadersBiPrivate: getAuthHeadersUSPrivate,
     });
 };

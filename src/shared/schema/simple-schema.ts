@@ -8,10 +8,12 @@ import biConverter from './bi-converter';
 import extensions from './extensions';
 import metaManager from './meta-manager';
 import us from './us';
+import usPrivate from './us-private';
 
 // Scheme for all local requests except mix
 export const simpleSchema = {
     us,
+    usPrivate,
     bi,
     biConverter,
     extensions,
