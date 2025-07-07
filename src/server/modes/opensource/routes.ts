@@ -44,13 +44,13 @@ export function getRoutes({
         routes = {...routes, ...getZitadelRoutes({passport, beforeAuth, afterAuth})};
     }
 
-    const {privateRouteMiddleware} = registry.common.auth.getAll();
+    const {resolvePrivateRoute} = registry.common.auth.getAll();
 
     if (appEnv === AppEnvironment.Development || isApiMode) {
         routes = {
             ...routes,
             ...getApiRoutes({
-                beforeAuth: [...beforeAuth, privateRouteMiddleware],
+                beforeAuth: [...beforeAuth, resolvePrivateRoute],
                 afterAuth,
             }),
         };

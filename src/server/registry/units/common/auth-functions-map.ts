@@ -16,6 +16,6 @@ export const authFunctionsMap = {
         makeFunctionTemplate<
             (params: GetAuthHeadersParams<Record<string, unknown>>) => Record<string, string>
         >(),
-    privateRouteMiddleware:
+    resolvePrivateRoute:
         makeFunctionTemplate<(req: Request, res: Response, next: () => void) => void>(),
 } as const;

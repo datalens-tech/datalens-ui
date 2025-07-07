@@ -2,7 +2,7 @@ import type {Request, Response} from '@gravity-ui/expresskit';
 
 import {US_MASTER_TOKEN_HEADER} from '../../../../../shared/constants/header';
 
-export const privateRouteMiddleware = (req: Request, res: Response, next: () => void) => {
+export const resolvePrivateRoute = (req: Request, res: Response, next: () => void) => {
     const requestMasterToken = req.headers[US_MASTER_TOKEN_HEADER] as string;
 
     const usMasterToken = req.ctx.config.usMasterToken as string;
