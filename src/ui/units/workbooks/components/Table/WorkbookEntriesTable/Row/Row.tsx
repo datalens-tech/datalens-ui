@@ -87,7 +87,11 @@ const Row: React.FC<RowProps> = ({
                 <div className={b('content-cell', {title: true})} data-qa={item.entryId}>
                     <div className={b('title-col')}>
                         <EntryIcon entry={item} entityIconSize="xl" />
-                        <div className={b('title-col-text')} title={item.name}>
+                        <div
+                            className={b('title-col-text')}
+                            data-qa={WorkbookPageQa.ListItemName}
+                            title={item.name}
+                        >
                             {item.name}
                         </div>
                     </div>
@@ -106,7 +110,11 @@ const Row: React.FC<RowProps> = ({
             <div className={b('content-cell', {title: true})} data-qa={item.entryId}>
                 <div className={b('title-col', {'is-mobile': DL.IS_MOBILE})}>
                     <EntryIcon entry={item} width={24} height={24} />
-                    <div className={b('title-col-text')} title={item.name}>
+                    <div
+                        className={b('title-col-text')}
+                        data-qa={WorkbookPageQa.ListItemName}
+                        title={item.name}
+                    >
                         {item.name}
                     </div>
                 </div>

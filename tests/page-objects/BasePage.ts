@@ -87,4 +87,27 @@ export class BasePage {
         }
         return extractEntryId(entryId);
     }
+
+    async checkHttpErrorsDuringAction(action: () => Promise<void>) {
+        // check that the requests are completed successfully before the callback is resolved.
+        const failedRequests: Response[] = [];
+
+        const onResponse = (response: Response) => {
+            const status = response.status();
+            if (status >= 400) {
+                failedRequests.push(response);
+            }
+        };
+
+        this.page.on('response', onResponse);
+
+        await action();
+
+        this.page.off('response', onResponse);
+
+        if (failedRequests.length > 0) {
+            const failedUrls = failedRequests.map((r) => `${r.url()} (${r.status()})`);
+            throw new Error(`Failed requests detected: ${failedUrls.join(', ')}`);
+        }
+    }
 }
