@@ -134,6 +134,8 @@ class SectionPreview extends Component<Props> {
         const {configType, config, widget, previewEntryId, datasetError, chartKitRef, workbookId} =
             this.props;
 
+        const revId = widget?.revId;
+
         if (datasetError) {
             return (
                 <div className="dataset-error-container">
@@ -164,6 +166,7 @@ class SectionPreview extends Component<Props> {
                 <ChartWrapper
                     usageType="chart"
                     id={previewEntryId ? previewEntryId : widget ? widget.entryId : ''}
+                    revId={revId}
                     params={params}
                     config={editMode}
                     onChartRender={this.handleLoad}
