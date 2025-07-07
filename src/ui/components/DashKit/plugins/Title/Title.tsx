@@ -254,9 +254,9 @@ const titlePlugin: PluginTitle = {
                         ref={extraRef}
                         {...{[EXPORT_PRINT_HIDDEN_ATTR]: true}}
                     >
-                        {showHint && data.hint?.text && (
+                        {showHint && (
                             <MarkdownHelpPopover
-                                markdown={data.hint?.text}
+                                markdown={data.hint?.text!}
                                 className={b('hint')}
                                 placement="bottom"
                                 buttonProps={{
