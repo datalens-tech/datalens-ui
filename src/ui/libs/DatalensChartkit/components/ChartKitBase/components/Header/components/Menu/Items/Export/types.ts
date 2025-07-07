@@ -30,4 +30,5 @@ export type ExportChartArgs = {
     chartData: ExportActionArgs;
     params?: ExportParams;
     onExportLoading?: (isLoading: boolean) => void;
+    chartRevId?: string;
 };
