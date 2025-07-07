@@ -210,13 +210,10 @@ const TableOfContent = React.memo(
                                             className={b('hint')}
                                             popoverProps={{
                                                 className: b('hint-tooltip'),
+                                                zIndex: 100001,
                                             }}
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                e.preventDefault();
-
-                                                // open popover on click
-                                                return true;
                                             }}
                                         />
                                     )}
