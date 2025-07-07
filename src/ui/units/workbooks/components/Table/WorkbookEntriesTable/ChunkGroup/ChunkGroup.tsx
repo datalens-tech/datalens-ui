@@ -32,7 +32,7 @@ export function ChunkGroup({
     const height = chunk.length * ROW_HEIGHT;
 
     const chunkScopeQa =
-        chunk[0].type === 'entry'
+        chunk[0]?.type === 'entry'
             ? `${WorkbookPageQa.ChunkScope}${chunk[0].item.scope}`
             : undefined;
 

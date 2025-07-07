@@ -88,7 +88,7 @@ export class BasePage {
         return extractEntryId(entryId);
     }
 
-    async checkForFailedRequests(waitingCallback: () => Promise<void>) {
+    async checkHttpErrorsDuringAction(action: () => Promise<void>) {
         // check that the requests are completed successfully before the callback is resolved.
         const failedRequests: Response[] = [];
 
@@ -101,7 +101,7 @@ export class BasePage {
 
         this.page.on('response', onResponse);
 
-        await waitingCallback();
+        await action();
 
         this.page.off('response', onResponse);
 
