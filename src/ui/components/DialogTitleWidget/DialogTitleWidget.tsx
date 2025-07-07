@@ -297,12 +297,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
     }, []);
 
     return (
-        <Dialog
-            open={dialogIsVisible}
-            onClose={closeDialog}
-            onEnterKeyDown={onApply}
-            qa={DialogDashWidgetItemQA.Title}
-        >
+        <Dialog open={dialogIsVisible} onClose={closeDialog} qa={DialogDashWidgetItemQA.Title}>
             <Dialog.Header caption={i18n('dash.dialogs-common.edit', 'title_widget-settings')} />
             <Dialog.Body className={b()}>
                 <FormRow
