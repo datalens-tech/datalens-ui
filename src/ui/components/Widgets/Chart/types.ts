@@ -253,6 +253,11 @@ export type ChartWidgetData =
     | null;
 export type ChartWidgetDataRef = React.MutableRefObject<ChartWidgetData> | null;
 
+/** When you try to export unsaved wizard chart, chart saving confirmation appears.
+ * After saving chart this way, if revId is passed as a primitive,
+ * its value does not updates in DownloadCsv modal.
+ * For avoiding chart export with old revision, revId is passed as ref
+ */
 export type ChartRevIdRef = React.MutableRefObject<ChartsData['revId']> | null;
 
 export type ChartContentProps = Pick<
