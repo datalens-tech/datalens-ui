@@ -1,6 +1,5 @@
 import React from 'react';
 
-import {HelpPopover} from '@gravity-ui/components';
 import {
     PluginTitle as DashKitPluginTitle,
     PLUGIN_ROOT_ATTR_NAME,
@@ -15,6 +14,7 @@ import {
     adjustWidgetLayout as dashkitAdjustWidgetLayout,
     getPreparedWrapSettings,
 } from 'ui/components/DashKit/utils';
+import {MarkdownHelpPopover} from 'ui/components/MarkdownHelpPopover/MarkdownHelpPopover';
 import {DL} from 'ui/constants';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
@@ -255,8 +255,8 @@ const titlePlugin: PluginTitle = {
                         {...{[EXPORT_PRINT_HIDDEN_ATTR]: true}}
                     >
                         {showHint && (
-                            <HelpPopover
-                                content={data.hint?.text}
+                            <MarkdownHelpPopover
+                                markdown={data.hint?.text!}
                                 className={b('hint')}
                                 placement="bottom"
                                 buttonProps={{
