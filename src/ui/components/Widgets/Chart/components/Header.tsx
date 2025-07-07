@@ -40,6 +40,7 @@ export type HeaderProps = Pick<
     | 'dataProps'
     | 'requestId'
     | 'loadedData'
+    | 'chartRevIdRef'
     | 'widgetDataRef'
     | 'widgetRenderTimeRef'
     | 'yandexMapAPIWaiting'
@@ -79,6 +80,7 @@ export const Header = (props: HeaderProps) => {
         dataProps,
         requestId,
         loadedData,
+        chartRevIdRef,
         widgetDataRef,
         widgetRenderTimeRef,
         yandexMapAPIWaiting,
@@ -188,6 +190,7 @@ export const Header = (props: HeaderProps) => {
                         configMenu={configMenu}
                         widgetDataRef={widgetDataRef}
                         loadedData={loadedData}
+                        chartRevIdRef={chartRevIdRef}
                         error={error}
                         propsData={chartData}
                         requestId={requestId}

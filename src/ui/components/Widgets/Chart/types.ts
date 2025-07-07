@@ -138,6 +138,7 @@ export type ChartProviderPropsWithRefProps = Partial<Omit<ChartKitBaseWrapperPro
     ChartsProps & {
         forwardedRef: React.RefObject<ChartKit> | React.MutableRefObject<ChartKit | null>;
         usageType: 'chart';
+        revId?: string;
         isPageHidden?: boolean;
         autoupdateInterval?: number;
     };
@@ -252,6 +253,8 @@ export type ChartWidgetData =
     | null;
 export type ChartWidgetDataRef = React.MutableRefObject<ChartWidgetData> | null;
 
+export type ChartRevIdRef = React.MutableRefObject<ChartsData['revId']> | null;
+
 export type ChartContentProps = Pick<
     ChartProviderPropsWithRefProps,
     | 'widgetBodyClassName'
@@ -290,6 +293,7 @@ export type ChartContentProps = Pick<
         widgetType?: DashTabItemControlSourceType | WidgetType | ChartWidget['type'];
         dataProps?: DataProps;
         yandexMapAPIWaiting?: number | null;
+        chartRevIdRef: ChartRevIdRef;
         widgetDataRef: ChartWidgetDataRef;
         widgetRenderTimeRef: React.MutableRefObject<number | null>;
         onFullscreenClick?: () => void;
