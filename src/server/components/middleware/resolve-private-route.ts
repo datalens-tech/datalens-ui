@@ -1,6 +1,6 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
 
-import {US_MASTER_TOKEN_HEADER} from '../../../../../shared/constants/header';
+import {US_MASTER_TOKEN_HEADER} from '../../../shared/constants/header';
 
 export const resolvePrivateRoute = (req: Request, res: Response, next: () => void) => {
     const requestMasterToken = req.headers[US_MASTER_TOKEN_HEADER] as string;
