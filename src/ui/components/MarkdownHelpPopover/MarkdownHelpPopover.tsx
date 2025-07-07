@@ -12,14 +12,14 @@ import './MarkdownHelpPopover.scss';
 
 const b = block('markdown-help-popover');
 
-type Props = Partial<Pick<HelpPopoverProps, 'onClick'>> & {
+type Props = Partial<Pick<HelpPopoverProps, 'onClick' | 'tooltipClassName' | 'placement'>> & {
     markdown: string;
     className?: string;
     buttonProps?: ButtonProps;
 };
 
 export const MarkdownHelpPopover = (props: Props) => {
-    const {markdown, onClick, buttonProps} = props;
+    const {markdown, onClick, buttonProps, tooltipClassName, placement} = props;
     const [isLoaded, setLoaded] = React.useState(false);
 
     return (
@@ -27,9 +27,10 @@ export const MarkdownHelpPopover = (props: Props) => {
             content={<Content value={markdown} onRender={() => setLoaded(true)} />}
             className={props.className ? props.className : b({mobile: DL.IS_MOBILE})}
             contentClassName={b('content')}
-            tooltipClassName={b('tooltip', {hidden: !isLoaded})}
+            tooltipClassName={b('tooltip', {hidden: !isLoaded}, tooltipClassName)}
             key={String(isLoaded)}
             initialOpen={isLoaded}
+            placement={placement}
             {...(buttonProps ? {buttonProps} : {})}
             {...(onClick ? {onClick} : {})}
         />
