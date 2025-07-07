@@ -1,6 +1,5 @@
 import React from 'react';
 
-import {HelpPopover} from '@gravity-ui/components';
 import {Xmark} from '@gravity-ui/icons';
 import {Icon, Sheet} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
@@ -12,6 +11,7 @@ import throttle from 'lodash/throttle';
 import {useDispatch, useSelector} from 'react-redux';
 import {Link, useLocation} from 'react-router-dom';
 import {TableOfContentQa} from 'shared';
+import {MarkdownHelpPopover} from 'ui/components/MarkdownHelpPopover/MarkdownHelpPopover';
 import {DL} from 'ui/constants';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
 import {
@@ -205,10 +205,12 @@ const TableOfContent = React.memo(
                                 >
                                     {item.title}
                                     {item.hint && (
-                                        <HelpPopover
-                                            content={item.hint}
+                                        <MarkdownHelpPopover
+                                            markdown={item.hint}
                                             className={b('hint')}
-                                            tooltipClassName={b('hint-tooltip')}
+                                            popoverProps={{
+                                                className: b('hint-tooltip'),
+                                            }}
                                             onClick={(e) => {
                                                 e.stopPropagation();
                                                 e.preventDefault();
