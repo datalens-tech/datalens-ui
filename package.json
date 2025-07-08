@@ -62,7 +62,7 @@
     "@diplodoc/mermaid-extension": "^1.2.3",
     "@diplodoc/file-extension": "^0.2.1",
     "@diplodoc/tabs-extension": "^3.5.1",
-    "@diplodoc/transform": "^4.43.0",
+    "@diplodoc/transform": "^4.58.1",
     "@gravity-ui/app-layout": "^2.1.0",
     "@gravity-ui/browserslist-config": "^4.3.0",
     "@gravity-ui/chartkit": "^7.0.1",
