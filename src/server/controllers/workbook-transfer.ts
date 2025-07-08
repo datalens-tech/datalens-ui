@@ -54,6 +54,7 @@ export const proxyGetEntry = async (
     args: {
         workbookId: string | null;
         entryId: string;
+        usMasterToken: string;
     },
 ) => {
     const {ctx} = req;
@@ -100,7 +101,11 @@ const resolveScopeForEntryData = (entryData: Record<keyof EntryScope, unknown>) 
     return Object.values(EntryScope).find((key) => key in entryData);
 };
 
-export const prepareExportData = async (req: Request, res: Response) => {
+export const prepareExportData = async (
+    req: Request,
+    res: Response,
+    {usMasterToken}: {usMasterToken: string},
+) => {
     const {ctx} = req;
     const headers = {
         ...Utils.pickHeaders(req),
@@ -110,13 +115,12 @@ export const prepareExportData = async (req: Request, res: Response) => {
     const {exportId, scope, idMapping} = req.body;
     const workbookId = (req.body?.workbookId as string) ?? null;
 
-    const {getAuthArgsBiPrivate} = registry.common.auth.getAll();
-
     switch (scope) {
         case EntryScope.Dash: {
             const {responseData: entry} = await proxyGetEntry(req, res, {
                 entryId: exportId,
                 workbookId,
+                usMasterToken,
             });
 
             if (entry.scope !== scope) {
@@ -138,6 +142,7 @@ export const prepareExportData = async (req: Request, res: Response) => {
             const {responseData: entry} = await proxyGetEntry(req, res, {
                 entryId: exportId,
                 workbookId,
+                usMasterToken,
             });
 
             if (entry.scope !== scope) {
@@ -156,8 +161,8 @@ export const prepareExportData = async (req: Request, res: Response) => {
                 args: {
                     connectionId: exportId,
                     workbookId,
+                    usMasterToken,
                 },
-                authArgs: getAuthArgsBiPrivate(req, res),
                 ctx,
                 requestId: getRequestId(ctx),
             });
@@ -173,8 +178,8 @@ export const prepareExportData = async (req: Request, res: Response) => {
                     datasetId: exportId,
                     idMapping,
                     workbookId,
+                    usMasterToken,
                 },
-                authArgs: getAuthArgsBiPrivate(req, res),
                 ctx,
                 requestId: getRequestId(ctx),
             });
@@ -191,7 +196,11 @@ export const prepareExportData = async (req: Request, res: Response) => {
     }
 };
 
-export const prepareImportData = async (req: Request, res: Response) => {
+export const prepareImportData = async (
+    req: Request,
+    res: Response,
+    {usMasterToken}: {usMasterToken: string},
+) => {
     const {ctx} = req;
     const headers = {
         ...Utils.pickHeaders(req),
@@ -201,7 +210,7 @@ export const prepareImportData = async (req: Request, res: Response) => {
     const scope = resolveScopeForEntryData(entryData);
 
     const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
-    const {getAuthArgsBiPrivate} = registry.common.auth.getAll();
+    const {getAuthArgsUSPrivate} = registry.common.auth.getAll();
 
     switch (scope) {
         case EntryScope.Connection: {
@@ -210,9 +219,9 @@ export const prepareImportData = async (req: Request, res: Response) => {
                 args: {
                     workbookId,
                     connection: entryData.connection,
+                    usMasterToken,
                 },
                 ctx,
-                authArgs: getAuthArgsBiPrivate(req, res),
                 requestId: getRequestId(ctx),
             });
 
@@ -225,9 +234,9 @@ export const prepareImportData = async (req: Request, res: Response) => {
                     workbookId,
                     dataset: entryData.dataset,
                     idMapping,
+                    usMasterToken,
                 },
                 ctx,
-                authArgs: getAuthArgsBiPrivate(req, res),
                 requestId: getRequestId(ctx),
             });
 
@@ -260,7 +269,7 @@ export const prepareImportData = async (req: Request, res: Response) => {
                     links: widget.links as EntryFieldLinks,
                 },
                 ctx,
-                authArgs: getAuthArgsBiPrivate(req, res),
+                authArgs: getAuthArgsUSPrivate(req, res),
                 requestId: getRequestId(ctx),
             });
 
@@ -286,7 +295,7 @@ export const prepareImportData = async (req: Request, res: Response) => {
                     links: dash.links,
                 },
                 ctx,
-                authArgs: getAuthArgsBiPrivate(req, res),
+                authArgs: getAuthArgsUSPrivate(req, res),
                 requestId: getRequestId(ctx),
             });
 
@@ -306,7 +315,16 @@ export const workbooksTransferController = {
     },
     export: async (req: Request, res: Response) => {
         try {
-            sendResponse(res, await prepareExportData(req, res));
+            const usMasterToken = Utils.pickUsMasterToken(req);
+
+            if (!usMasterToken) {
+                res.status(403).send({
+                    code: TransferErrorCode.TransferInvalidToken,
+                });
+                return;
+            }
+
+            sendResponse(res, await prepareExportData(req, res, {usMasterToken}));
         } catch (ex) {
             const {error} = ex as GatewayApiErrorResponse;
             res.status(error?.status || 500).send(error);
@@ -314,7 +332,16 @@ export const workbooksTransferController = {
     },
     import: async (req: Request, res: Response) => {
         try {
-            sendResponse(res, await prepareImportData(req, res));
+            const usMasterToken = Utils.pickUsMasterToken(req);
+
+            if (!usMasterToken) {
+                res.status(403).send({
+                    code: TransferErrorCode.TransferInvalidToken,
+                });
+                return;
+            }
+
+            sendResponse(res, await prepareImportData(req, res, {usMasterToken}));
         } catch (ex) {
             const {error} = ex as GatewayApiErrorResponse;
             res.status(error?.status || 500).send(error);

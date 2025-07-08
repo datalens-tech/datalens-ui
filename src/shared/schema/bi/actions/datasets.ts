@@ -1,5 +1,9 @@
-import {registry} from '../../../../server/registry';
-import {TIMEOUT_60_SEC, TIMEOUT_95_SEC, WORKBOOK_ID_HEADER} from '../../../constants';
+import {
+    TIMEOUT_60_SEC,
+    TIMEOUT_95_SEC,
+    US_MASTER_TOKEN_HEADER,
+    WORKBOOK_ID_HEADER,
+} from '../../../constants';
 import {createAction} from '../../gateway-utils';
 import {filterUrlFragment} from '../../utils';
 import {
@@ -250,27 +254,25 @@ export const actions = {
     _proxyExportDataset: createAction<ExportDatasetResponse, ExportDatasetArgs>({
         method: 'POST',
         path: ({datasetId}) => `${API_V1}/datasets/export/${datasetId}`,
-        params: ({workbookId, idMapping}, headers) => ({
+        params: ({usMasterToken, workbookId, idMapping}, headers) => ({
             headers: {
                 ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
                 ...headers,
+                [US_MASTER_TOKEN_HEADER]: usMasterToken,
             },
             body: {
                 id_mapping: idMapping,
             },
         }),
-        getAuthHeaders: (params) => {
-            const {getAuthHeadersBiPrivate} = registry.common.auth.getAll();
-            return getAuthHeadersBiPrivate(params);
-        },
     }),
     _proxyImportDataset: createAction<ImportDatasetResponse, ImportDatasetArgs>({
         method: 'POST',
         path: () => `${API_V1}/datasets/import`,
-        params: ({workbookId, idMapping, dataset}, headers) => ({
+        params: ({usMasterToken, workbookId, idMapping, dataset}, headers) => ({
             headers: {
                 ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
                 ...headers,
+                [US_MASTER_TOKEN_HEADER]: usMasterToken,
             },
             body: {
                 data: {
@@ -280,9 +282,5 @@ export const actions = {
                 id_mapping: idMapping,
             },
         }),
-        getAuthHeaders: (params) => {
-            const {getAuthHeadersBiPrivate} = registry.common.auth.getAll();
-            return getAuthHeadersBiPrivate(params);
-        },
     }),
 };

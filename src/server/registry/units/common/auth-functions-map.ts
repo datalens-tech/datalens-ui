@@ -8,14 +8,8 @@ export const authFunctionsMap = {
         makeFunctionTemplate<(req: Request, res: Response) => Record<string, string>>(),
     getAuthHeadersUSPrivate:
         makeFunctionTemplate<
-            (params: GetAuthHeadersParams<Record<string, unknown>>) => Record<string, string>
+            (
+                params: GetAuthHeadersParams<Record<string, unknown>>,
+            ) => Record<string, string> | undefined
         >(),
-    getAuthArgsBiPrivate:
-        makeFunctionTemplate<(req: Request, res: Response) => Record<string, string>>(),
-    getAuthHeadersBiPrivate:
-        makeFunctionTemplate<
-            (params: GetAuthHeadersParams<Record<string, unknown>>) => Record<string, string>
-        >(),
-    resolvePrivateRoute:
-        makeFunctionTemplate<(req: Request, res: Response, next: () => void) => void>(),
 } as const;
