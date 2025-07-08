@@ -2,6 +2,7 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {useInView} from 'react-intersection-observer';
+import {WorkbookPageQa} from 'shared/constants';
 import type {ChunkItem} from 'ui/units/workbooks/types';
 
 import {EmptyRow, Row} from '../Row/Row';
@@ -30,6 +31,11 @@ export function ChunkGroup({
 
     const height = chunk.length * ROW_HEIGHT;
 
+    const chunkScopeQa =
+        chunk[0]?.type === 'entry'
+            ? `${WorkbookPageQa.ChunkScope}${chunk[0].item.scope}`
+            : undefined;
+
     const renderContent = () =>
         chunk.map((chunkItem) => {
             switch (chunkItem.type) {
@@ -55,7 +61,7 @@ export function ChunkGroup({
         });
 
     return (
-        <div ref={ref} className={b()}>
+        <div ref={ref} className={b()} data-qa={chunkScopeQa}>
             {inView ? renderContent() : <div className={b('hidden-row')} style={{height}} />}
         </div>
     );

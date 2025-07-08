@@ -27,7 +27,7 @@ import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 import ErrorContent from 'ui/components/ErrorContent/ErrorContent';
 import {ScrollableWithShadow} from 'ui/components/ScrollableWithShadow/ScrollableWithShadow';
 import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
-import {DL, URL_OPTIONS} from 'ui/constants';
+import {DL} from 'ui/constants';
 import {useGetGalleryItemQuery, useGetGalleryItemsQuery} from 'ui/units/gallery/store/api';
 import Utils from 'ui/utils';
 import {copyTextWithToast} from 'ui/utils/copyText';
@@ -51,6 +51,7 @@ import {CardDescription} from './CardDescription/CardDescription';
 import {FullscreenGallery} from './FullscreenGallery/FullscreenGallery';
 import {ImportDropdown} from './ImportDropdown/ImportDropdown';
 import {CARD_IMAGE_PREVIEW_HEIGHT, PreviewCard} from './PreviewCard/PreviewCard';
+import {getIframeLang, getIframeUrl} from './helpers';
 import {useErrorLayoutAdjustment} from './hooks/useErrorLayoutAdjustment';
 
 import './CardPage.scss';
@@ -65,19 +66,6 @@ const MOBILE_ICON_SIZE = 18;
 interface IconWithTextProps {
     iconData: IconData;
     text: string;
-}
-
-function getIframeUrl({publicUrl, lang, theme}: {publicUrl?: string; lang: string; theme: string}) {
-    if (!publicUrl) {
-        return publicUrl;
-    }
-
-    const url = new URL(publicUrl);
-
-    url.searchParams.set(URL_OPTIONS.LANGUAGE, lang);
-    url.searchParams.set(URL_OPTIONS.THEME, theme);
-
-    return url.toString();
 }
 
 function IconWithText(props: IconWithTextProps) {
@@ -482,6 +470,8 @@ export function CardPage() {
     const showPreview = isActivePreview(urlSearchParams);
     const lang = getLang();
 
+    const iframeLang = getIframeLang({labels: data?.labels, defaultLang: lang});
+
     useErrorLayoutAdjustment(error);
 
     const togglePreview = () => {
@@ -543,7 +533,11 @@ export function CardPage() {
             {showPreview ? (
                 <iframe
                     className={b('iframe', {mobile, promo: isPromo})}
-                    src={getIframeUrl({publicUrl: data.publicUrl, theme: themeType, lang})}
+                    src={getIframeUrl({
+                        publicUrl: data.publicUrl,
+                        theme: themeType,
+                        lang: iframeLang,
+                    })}
                 />
             ) : (
                 <CardContent

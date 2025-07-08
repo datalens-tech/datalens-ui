@@ -54,6 +54,7 @@ export const Content = (props: ChartContentProps) => {
         splitTooltip,
         compactLoader,
         chartId,
+        chartRevIdRef,
         requestId,
         error,
         onRender,
@@ -166,6 +167,7 @@ export const Content = (props: ChartContentProps) => {
                         dataProps={dataProps}
                         requestId={requestId}
                         loadedData={loadedData}
+                        chartRevIdRef={chartRevIdRef}
                         widgetDataRef={widgetDataRef}
                         widgetRenderTimeRef={widgetRenderTimeRef}
                         yandexMapAPIWaiting={yandexMapAPIWaiting}
