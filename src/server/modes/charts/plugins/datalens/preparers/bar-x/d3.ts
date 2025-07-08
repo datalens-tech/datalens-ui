@@ -8,6 +8,9 @@ import {
     getFakeTitleOrTitle,
     getXAxisMode,
     isDateField,
+    isHtmlField,
+    isMarkdownField,
+    isMarkupField,
     isNumberField,
 } from '../../../../../../../shared';
 import type {WrappedHTML} from '../../../../../../../shared/types/charts';
@@ -93,6 +96,9 @@ export function prepareD3BarX(args: PrepareFunctionArgs) {
         );
     }
 
+    const shouldUseHtmlForLabels =
+        isMarkupField(labelField) || isHtmlField(labelField) || isMarkdownField(labelField);
+
     const seriesData = preparedData.graphs.map<ExtendedBarXSeries>((graph) => {
         return {
             name: graph.title,
@@ -108,8 +114,13 @@ export function prepareD3BarX(args: PrepareFunctionArgs) {
                     };
 
                     if (isDataLabelsEnabled) {
-                        dataItem.label =
-                            item?.y === null ? ' ' : getFormattedLabel(item?.label, labelField);
+                        if (item?.y === null) {
+                            dataItem.label = '';
+                        } else if (shouldUseHtmlForLabels) {
+                            dataItem.label = item?.label;
+                        } else {
+                            dataItem.label = getFormattedLabel(item?.label, labelField);
+                        }
                     }
 
                     if (isCategoriesXAxis) {
@@ -130,6 +141,7 @@ export function prepareD3BarX(args: PrepareFunctionArgs) {
             dataLabels: {
                 enabled: isDataLabelsEnabled,
                 inside: shared.extraSettings?.labelsPosition !== LabelsPositions.Outside,
+                html: shouldUseHtmlForLabels,
             },
         };
     });
