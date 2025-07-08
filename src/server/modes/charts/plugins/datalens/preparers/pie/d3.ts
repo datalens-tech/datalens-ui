@@ -3,7 +3,7 @@ import type {PieSeries, PieSeriesData} from '@gravity-ui/chartkit/gravity-charts
 import type {SeriesExportSettings} from '../../../../../../../shared';
 import {WizardVisualizationId, formatNumber, getFormatOptions} from '../../../../../../../shared';
 import {getFakeTitleOrTitle} from '../../../../../../../shared/modules/fields';
-import {isMarkdownField, isMarkupField} from '../../../../../../../shared/types/index';
+import {isHtmlField, isMarkdownField, isMarkupField} from '../../../../../../../shared/types/index';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import type {PiePoint, PrepareFunctionArgs} from '../types';
 
@@ -29,8 +29,9 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
     const {labels, visualizationId, ChartEditor, colorsConfig, idToDataType} = args;
     const {graphs, label, measure, totals} = preparePieData(args);
     const isLabelsEnabled = Boolean(labels?.length && label && measure?.hideLabelMode !== 'hide');
-    const isMarkdownLabel = isMarkdownField(label);
-    const isMarkupLabel = isMarkupField(label);
+
+    const shouldUseHtmlForLabels =
+        isMarkupField(label) || isHtmlField(label) || isMarkdownField(label);
 
     let data: ExtendedPieSeries[] = [];
 
@@ -41,7 +42,7 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
             type: 'pie',
             dataLabels: {
                 enabled: isLabelsEnabled,
-                html: isMarkdownLabel || isMarkupLabel,
+                html: shouldUseHtmlForLabels,
             },
             data:
                 graph.data?.map((item) => {
