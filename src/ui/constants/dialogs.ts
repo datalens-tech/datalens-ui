@@ -13,13 +13,11 @@ export const ITEM_TYPE = {
 export const DIALOG_TYPE = Object.assign(
     {
         TABS: 'tabs',
-        CONNECTIONS: 'connections',
         SETTINGS: 'settings',
         SELECT_STATE: 'selectState',
         EDIT: 'edit',
     } as {
         TABS: 'tabs';
-        CONNECTIONS: 'connections';
         SETTINGS: 'settings';
         SELECT_STATE: 'selectState';
         EDIT: 'edit';

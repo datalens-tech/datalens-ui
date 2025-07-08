@@ -3,7 +3,7 @@ import {Page} from '@playwright/test';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {getControlByTitle, openTestPage, slct, waitForCondition} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {ConnectionsDialogQA, DashRelationTypes} from '../../../../src/shared';
+import {DashRelationTypes} from '../../../../src/shared';
 import {RobotChartsDashboardUrls} from '../../../utils/constants';
 
 const SELECTORS = {
@@ -29,11 +29,6 @@ datalensTest.describe('Dashboards - Basic functionality', () => {
 
             await openTestPage(page, RobotChartsDashboardUrls.DashboardWithLongContentBeforeChart);
 
-            const relationType = await dashboardPage.getGlobalRelationsDialogType();
-            if (relationType === null) {
-                return;
-            }
-
             await dashboardPage.createDashboard({
                 editDash: async () => {
                     await dashboardPage.controlActions.addSelector({
@@ -47,20 +42,12 @@ datalensTest.describe('Dashboards - Basic functionality', () => {
                         url: PARAMS.CHART_URL,
                     });
 
-                    if (relationType === 'new') {
-                        await dashboardPage.setupNewLinks({
-                            linkType: DashRelationTypes.output,
-                            firstParamName: PARAMS.CONTROL_FIELD_NAME,
-                            secondParamName: PARAMS.CHART_FIELD,
-                            selectorName: PARAMS.CONTROL_TITLE,
-                        });
-                    } else {
-                        await dashboardPage.setupLinks({
-                            linkType: ConnectionsDialogQA.TypeSelectOutputOption,
-                            chartField: PARAMS.CHART_FIELD,
-                            selectorName: PARAMS.CONTROL_TITLE,
-                        });
-                    }
+                    await dashboardPage.setupNewLinks({
+                        linkType: DashRelationTypes.output,
+                        firstParamName: PARAMS.CONTROL_FIELD_NAME,
+                        secondParamName: PARAMS.CHART_FIELD,
+                        selectorName: PARAMS.CONTROL_TITLE,
+                    });
                 },
             });
 
