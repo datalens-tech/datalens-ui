@@ -4,11 +4,9 @@ import {ArrowUturnCcwLeft, ArrowUturnCwRight, Gear} from '@gravity-ui/icons';
 import {ActionTooltip, Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {Feature} from 'shared';
 import {ActionPanelDashSaveControlsQa} from 'shared/constants/qa/action-panel';
 import {DashboardActionPanelControlsQa} from 'shared/constants/qa/dash';
 import {REDO_HOTKEY, UNDO_HOTKEY} from 'ui/constants/misc';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import EntryDialogues from '../../../../../components/EntryDialogues/EntryDialogues';
 import NavigationPrompt from '../../../../../components/NavigationPrompt/NavigationPrompt';
@@ -108,36 +106,32 @@ export const EditControls = (props: EditControlsProps) => {
 
     return (
         <React.Fragment>
-            {isEnabledFeature(Feature.EnableDashUndoRedo) && (
-                <React.Fragment>
-                    <ActionTooltip
-                        title={I18n.keyset('component.action-panel.view')('button_undo')}
-                        hotkey={UNDO_HOTKEY.join('+')}
-                    >
-                        <Button
-                            qa={DashboardActionPanelControlsQa.UndoButton}
-                            disabled={!canGoBack}
-                            onClick={onGoBack}
-                            view={'flat'}
-                        >
-                            <Icon data={ArrowUturnCcwLeft} size={16} />
-                        </Button>
-                    </ActionTooltip>
-                    <ActionTooltip
-                        title={I18n.keyset('component.action-panel.view')('button_redo')}
-                        hotkey={REDO_HOTKEY.join('+')}
-                    >
-                        <Button
-                            qa={DashboardActionPanelControlsQa.RedoButton}
-                            disabled={!canGoForward}
-                            onClick={onGoForward}
-                            view={'flat'}
-                        >
-                            <Icon data={ArrowUturnCwRight} size={16} />
-                        </Button>
-                    </ActionTooltip>
-                </React.Fragment>
-            )}
+            <ActionTooltip
+                title={I18n.keyset('component.action-panel.view')('button_undo')}
+                hotkey={UNDO_HOTKEY.join('+')}
+            >
+                <Button
+                    qa={DashboardActionPanelControlsQa.UndoButton}
+                    disabled={!canGoBack}
+                    onClick={onGoBack}
+                    view={'flat'}
+                >
+                    <Icon data={ArrowUturnCcwLeft} size={16} />
+                </Button>
+            </ActionTooltip>
+            <ActionTooltip
+                title={I18n.keyset('component.action-panel.view')('button_redo')}
+                hotkey={REDO_HOTKEY.join('+')}
+            >
+                <Button
+                    qa={DashboardActionPanelControlsQa.RedoButton}
+                    disabled={!canGoForward}
+                    onClick={onGoForward}
+                    view={'flat'}
+                >
+                    <Icon data={ArrowUturnCwRight} size={16} />
+                </Button>
+            </ActionTooltip>
             <Button
                 view="flat"
                 size="m"
