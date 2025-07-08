@@ -46,10 +46,7 @@ export function getRoutes({
     if (appEnv === AppEnvironment.Development || isApiMode) {
         routes = {
             ...routes,
-            ...getApiRoutes({
-                beforeAuth,
-                afterAuth,
-            }),
+            ...getApiRoutes({beforeAuth, afterAuth}),
         };
     }
 
