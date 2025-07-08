@@ -2,6 +2,7 @@ import React from 'react';
 
 import {useThemeType} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {DialogCollectionStructureQa} from 'shared/constants';
 import type {Collection} from 'shared/schema/us/types/collections';
 import type {Workbook} from 'shared/schema/us/types/workbooks';
 
@@ -33,6 +34,7 @@ export const Item = React.memo<Props>(({item, active, canSelectWorkbook, onSelec
             onClick={() => {
                 onSelect(item);
             }}
+            data-qa={DialogCollectionStructureQa.ListItem}
         >
             <div className={b('icon')}>
                 {isWorkbook ? (

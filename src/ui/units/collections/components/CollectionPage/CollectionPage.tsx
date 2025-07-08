@@ -5,10 +5,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import type {RouteComponentProps} from 'react-router-dom';
 import {useHistory, useLocation, useParams} from 'react-router-dom';
 import {Feature} from 'shared';
-import type {
-    CreateWorkbookDialogProps,
-    PublicGalleryData,
-} from 'ui/components/CollectionsStructure/CreateWorkbookDialog/CreateWorkbookDialog';
+import type {CreateWorkbookDialogProps} from 'ui/components/CollectionsStructure/CreateWorkbookDialog/CreateWorkbookDialog';
+import type {PublicGalleryData} from 'ui/components/CollectionsStructure/types';
 import {DL} from 'ui/constants/common';
 import {getSdk} from 'ui/libs/schematic-sdk';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -21,6 +19,7 @@ import {
     DIALOG_MOVE_COLLECTIONS_WORKBOOKS,
     DIALOG_NO_CREATE_COLLECTION_PERMISSION,
 } from '../../../../components/CollectionsStructure';
+import {DIALOG_CREATE_PUBLIC_GALLERY_WORKBOOK} from '../../../../components/CollectionsStructure/CreatePublicGalleryWorkbookDialog';
 import {ViewError} from '../../../../components/ViewError/ViewError';
 import type {AppDispatch} from '../../../../store';
 import {closeDialog, openDialog} from '../../../../store/actions/dialog';
@@ -60,6 +59,31 @@ export const CollectionPage = (props: RouteComponentProps) => {
             defaultView?: CreateWorkbookDialogProps['defaultView'],
             options?: {importId?: string; publicGallery?: PublicGalleryData},
         ) => {
+            if (options?.publicGallery) {
+                dispatch(
+                    openDialog({
+                        id: DIALOG_CREATE_PUBLIC_GALLERY_WORKBOOK,
+                        props: {
+                            open: true,
+                            workbookTitle: options.publicGallery.title,
+                            onClose: () => {
+                                dispatch(closeDialog());
+                                // Clean up url
+                                if (options?.publicGallery) {
+                                    history.replace(location.pathname);
+                                }
+                            },
+                            onApply: (workbookId?: string) => {
+                                if (workbookId) {
+                                    history.push(`${WORKBOOKS_PATH}/${workbookId}`);
+                                }
+                            },
+                            publicGallery: options.publicGallery,
+                        },
+                    }),
+                );
+                return;
+            }
             dispatch(
                 openDialog({
                     id: DIALOG_CREATE_WORKBOOK,

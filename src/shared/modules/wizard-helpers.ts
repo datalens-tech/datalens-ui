@@ -20,12 +20,19 @@ import type {
     Update,
     V3Label,
 } from '../types';
-import {isDateField, isFloatField, isNumberField} from '../types';
+import {
+    DATASET_FIELD_TYPES,
+    DatasetFieldType,
+    isDateField,
+    isFloatField,
+    isNumberField,
+} from '../types';
 
 import {isMeasureField} from './helpers';
 
 export const isMeasureName = (field: {type: string; title: string}) =>
-    field.type === 'PSEUDO' && field.title === PseudoFieldTitle.MeasureNames;
+    field.type === 'PSEUDO' &&
+    (field.title === PseudoFieldTitle.MeasureNames || field.title === PseudoFieldTitle.ColumnNames);
 
 export const isMeasureValue = (field?: {type: string; title: string}) =>
     field?.type === 'PSEUDO' && field?.title === PseudoFieldTitle.MeasureValues;
@@ -35,20 +42,20 @@ export const isMeasureType = (field: {type: string}) => field.type === 'MEASURE'
 export const isMeasureNameOrValue = (field: {type: string; title: string}) =>
     isMeasureName(field) || isMeasureValue(field);
 
-export const createMeasureNames = () =>
+export const createMeasureNames = (isQL?: boolean) =>
     ({
-        title: PseudoFieldTitle.MeasureNames,
-        type: 'PSEUDO',
+        title: isQL ? PseudoFieldTitle.ColumnNames : PseudoFieldTitle.MeasureNames,
+        type: DatasetFieldType.Pseudo,
         className: 'item pseudo-item dimension-item',
-        data_type: 'string',
+        data_type: DATASET_FIELD_TYPES.STRING,
     }) as Field;
 
 export const createMeasureValues = () =>
     ({
         title: PseudoFieldTitle.MeasureValues,
-        type: 'PSEUDO',
+        type: DatasetFieldType.Pseudo,
         className: 'item pseudo-item measure-item',
-        data_type: 'float',
+        data_type: DATASET_FIELD_TYPES.FLOAT,
     }) as Field;
 
 export const getDefaultFormatting = (

@@ -66,6 +66,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
         loaderDelay,
         config,
         id: chartId,
+        revId: chartRevId,
         menuType,
         customMenuOptions,
         onChartRender,
@@ -127,6 +128,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
     );
 
     const rootNodeRef = React.useRef<HTMLDivElement>(props.rootNodeRef?.current || null);
+    const chartRevIdRef = React.useRef<string | undefined>();
     const widgetDataRef = React.useRef<ChartWidgetData>(null);
     const widgetRenderTimeRef = React.useRef<number | null>(null);
     const chartKitRef = React.useRef<ChartKit>(null);
@@ -146,6 +148,12 @@ export const Chart = (props: ChartNoWidgetProps) => {
             status: 'unset',
         },
     });
+
+    React.useEffect(() => {
+        if (chartRevIdRef.current !== chartRevId) {
+            chartRevIdRef.current = chartRevId;
+        }
+    }, [chartRevId]);
 
     /**
      * for correct cancellation on rerender & changed request params & data props
@@ -277,6 +285,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
                 widgetBodyClassName={widgetBodyClassName}
                 hasHiddenClassMod={hasHiddenClassMod}
                 chartId={chartId}
+                chartRevIdRef={chartRevIdRef}
                 noControls={noControls}
                 transformLoadedData={transformLoadedData}
                 splitTooltip={splitTooltip}

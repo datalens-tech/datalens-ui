@@ -657,6 +657,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 rootNodeRef={rootNodeRef}
                 backgroundColor={style?.backgroundColor}
                 needRenderContentControls={!showFloatControls}
+                chartRevIdRef={null}
                 {...commonHeaderContentProps}
             />
             {Boolean(description || loadedData?.publicAuthor) && (

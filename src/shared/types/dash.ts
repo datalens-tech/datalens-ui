@@ -7,6 +7,7 @@ import type {
     Dictionary,
     Entry,
     EntryScope,
+    HintSettings,
     StringParams,
     ValueOf,
 } from './index';
@@ -174,6 +175,7 @@ export interface DashTabItemTitle extends DashTabItemBase {
         showInTOC: boolean;
         autoHeight?: boolean;
         background?: BackgroundSettings;
+        hint?: HintSettings;
     };
 }
 
