@@ -1,5 +1,6 @@
 .markdown-help-popover {
     margin-left: 4px;
+    vertical-align: top;
 
     &__content {
         max-height: calc(100vh - 34px);
@@ -7,6 +8,8 @@
     }
 
     &__tooltip {
+        max-width: 300px;
+
         &_hidden {
             display: none;
         }

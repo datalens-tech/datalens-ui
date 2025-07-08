@@ -26,7 +26,7 @@ export const MarkdownHelpPopover = (props: Props) => {
         <HelpMark
             popoverProps={{
                 ...popoverProps,
-                className: b('tooltip', {hidden: !isLoaded}),
+                className: b('tooltip', {hidden: !isLoaded}, popoverProps?.className),
             }}
             className={props.className ? props.className : b({mobile: DL.IS_MOBILE})}
             key={String(isLoaded)}
