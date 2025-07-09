@@ -175,6 +175,7 @@ export interface DashTabItemTitle extends DashTabItemBase {
         showInTOC: boolean;
         autoHeight?: boolean;
         background?: BackgroundSettings;
+        textColor?: string;
         hint?: HintSettings;
     };
 }
