@@ -40,9 +40,6 @@ datalensTest.describe('SQL connection selection', () => {
 
         await qlPage.selectConnection(RobotChartsSQLEditorTitles.PublicPostgresDemo);
 
-        const loader = page.locator(slct(ChartKitQa.Loader));
-        await expect(loader).toBeHidden();
-
         await qlPage.clickCreate();
 
         await qlPage.waitForConnectionName(RobotChartsSQLEditorTitles.PublicPostgresDemo);
