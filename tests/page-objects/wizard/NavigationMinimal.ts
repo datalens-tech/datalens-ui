@@ -2,7 +2,7 @@ import {Page} from '@playwright/test';
 
 import {slct} from '../../utils';
 import {CommonSelectors} from '../constants/common-selectors';
-import {ChartKitQa, NavigationMinimalPlaceSelectQa} from '../../../src/shared';
+import {NavigationMinimalPlaceSelectQa} from '../../../src/shared';
 
 export enum Ownership {
     All = 'all',
@@ -33,9 +33,6 @@ class NavigationMinimal {
         await this.page.click(
             `${slct('navigation-minimal')} ${slct('navigation-minimal-place-select')}`,
         );
-
-        const loader = this.page.locator(slct(ChartKitQa.Loader));
-        await expect(loader).toBeHidden();
 
         await this.page.click(slct(value));
     }
