@@ -39,7 +39,7 @@ datalensTest.describe('SQL connection selection', () => {
         await qlPage.clickConnectionButton();
 
         const loader = page.locator(slct(ChartKitQa.Loader));
-        await expect(loader).not.toBeVisible();
+        await expect(loader).toBeHidden();
 
         await workbookPO.navigationMinimalPopup.selectListItem({
             innerText: ConnectionsNames.ConnectionPostgreSQL,

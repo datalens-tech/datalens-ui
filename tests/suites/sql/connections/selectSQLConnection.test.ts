@@ -8,7 +8,8 @@ import {
     RobotChartsSQLEditorUrls,
 } from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {openTestPage} from '../../../utils';
+import {openTestPage, slct} from '../../../utils';
+import {ChartKitQa} from '../../../../src/shared';
 
 datalensTest.describe('SQL connection selection', () => {
     datalensTest(
@@ -38,6 +39,9 @@ datalensTest.describe('SQL connection selection', () => {
         await qlPage.selectChartType('SQL');
 
         await qlPage.selectConnection(RobotChartsSQLEditorTitles.PublicPostgresDemo);
+
+        const loader = page.locator(slct(ChartKitQa.Loader));
+        await expect(loader).toBeHidden();
 
         await qlPage.clickCreate();
 
