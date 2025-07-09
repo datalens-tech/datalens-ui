@@ -1,13 +1,14 @@
-import {Page} from '@playwright/test';
+import {Page, expect} from '@playwright/test';
 
 import ConnectionsPage from '../../../page-objects/connections/ConnectionsPage';
 import QLPage from '../../../page-objects/ql/QLPage';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {openTestPage} from '../../../utils';
+import {openTestPage, slct} from '../../../utils';
 import {TestParametrizationConfig} from '../../../types/config';
 import {Workbook} from '../../../page-objects/workbook/Workbook';
 import {QlUrls} from '../../../constants/test-entities/ql';
 import {ConnectionsNames} from '../../../constants/test-entities/connections';
+import {ChartKitQa} from '../../../../src/shared';
 
 datalensTest.describe('SQL connection selection', () => {
     datalensTest(
@@ -36,6 +37,9 @@ datalensTest.describe('SQL connection selection', () => {
         await openTestPage(page, QlUrls.NewQLChart);
 
         await qlPage.clickConnectionButton();
+
+        const loader = page.locator(slct(ChartKitQa.Loader));
+        await expect(loader).not.toBeVisible();
 
         await workbookPO.navigationMinimalPopup.selectListItem({
             innerText: ConnectionsNames.ConnectionPostgreSQL,
