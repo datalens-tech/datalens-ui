@@ -1,14 +1,13 @@
-import {Page, expect} from '@playwright/test';
+import {Page} from '@playwright/test';
 
 import ConnectionsPage from '../../../page-objects/connections/ConnectionsPage';
 import QLPage from '../../../page-objects/ql/QLPage';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {openTestPage, slct} from '../../../utils';
+import {openTestPage} from '../../../utils';
 import {TestParametrizationConfig} from '../../../types/config';
 import {Workbook} from '../../../page-objects/workbook/Workbook';
 import {QlUrls} from '../../../constants/test-entities/ql';
 import {ConnectionsNames} from '../../../constants/test-entities/connections';
-import {ChartKitQa} from '../../../../src/shared';
 
 datalensTest.describe('SQL connection selection', () => {
     datalensTest(

@@ -8,8 +8,7 @@ import {
     RobotChartsSQLEditorUrls,
 } from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {openTestPage, slct} from '../../../utils';
-import {ChartKitQa} from '../../../../src/shared';
+import {openTestPage} from '../../../utils';
 
 datalensTest.describe('SQL connection selection', () => {
     datalensTest(
