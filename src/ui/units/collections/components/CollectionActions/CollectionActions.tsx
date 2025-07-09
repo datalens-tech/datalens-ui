@@ -142,6 +142,7 @@ export const CollectionActions = React.memo<Props>(
                         size="s"
                         items={createActionItems}
                         switcherWrapperClassName={b('create-wrapper')}
+                        popupProps={{placement: 'bottom-end'}}
                         renderSwitcher={({onClick, onKeyDown}) => (
                             <Button
                                 view="action"

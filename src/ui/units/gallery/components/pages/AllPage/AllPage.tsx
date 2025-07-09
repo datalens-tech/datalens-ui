@@ -221,7 +221,7 @@ export function AllPage() {
         <React.Fragment>
             <ActionPanel
                 leftItems={
-                    <Breadcrumbs>
+                    <Breadcrumbs className={b('breadcrumbs')}>
                         <Breadcrumbs.Item href="/gallery">
                             {galleryI18n('label_gallery')}
                         </Breadcrumbs.Item>
