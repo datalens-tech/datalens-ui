@@ -275,12 +275,10 @@ function CategoryBlockRow(props: CategoryBlockRowProps) {
 
         return item.labels?.includes(landingCategory.category);
     });
-    let sortedCategoryItemIndex = 0;
     const categoryItems = sortBy(filteredGalleryItems, (item) => {
         const index = landingCategory.ids?.indexOf(item.id);
-        sortedCategoryItemIndex += 1;
 
-        return index === -1 ? sortedCategoryItemIndex : index;
+        return index === -1 ? Infinity : index;
     }).slice(0, 3);
 
     return (
@@ -358,6 +356,7 @@ export function LandingPage() {
             {workOfMonthId && <WorkOfMonth id={workOfMonthId} />}
             {landingCategories.map((landingCategory, i) => {
                 const isLastCategory = i === landingCategories.length - 1;
+
                 return (
                     <CategoryBlockRow
                         key={`landing-category-${landingCategory}-${i}`}
