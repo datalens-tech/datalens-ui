@@ -15,6 +15,7 @@ import {
     DialogQLParameterQA,
     ScreenEditorQA,
     NavigationMinimalPlaceSelectQa,
+    DlNavigationQA,
 } from '../../../src/shared';
 import SectionVisualization from '../wizard/SectionVisualization';
 import {ColumnSettings} from '../wizard/ColumnSettings';
@@ -52,6 +53,11 @@ class QLPage extends ChartPage {
 
     async selectConnection(connectionName: string) {
         await this.page.click(this.selectConnectionButtonSelector);
+
+        const list = this.page
+            .locator(`${slct('navigation-minimal')} ${slct(DlNavigationQA.List)}`)
+            .first();
+        await list.waitFor({state: 'visible'});
 
         await this.page
             .locator(slct('navigation-minimal'))
