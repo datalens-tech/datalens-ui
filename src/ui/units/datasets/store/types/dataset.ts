@@ -141,6 +141,12 @@ export type TranslatedItem = {
 
 export type StandaloneSource = {id: string} & BaseSource;
 
+export type SourcePrototype = DatasetSource & {
+    id?: string;
+    isSource?: boolean;
+    isConnectedWithAvatar?: boolean;
+};
+
 type BaseOptions = {
     name: string;
     default: string;
@@ -350,7 +356,7 @@ export type DatasetReduxState = {
     updates: Update[];
     freeformSources: FreeformSource[];
     selectedConnections: ConnectionEntry[];
-    sourcePrototypes: BaseSource[];
+    sourcePrototypes: SourcePrototype[];
     sourceTemplate: FreeformSource | null; // TODO: abandon this thing in favor of freeformSources
     error: DatasetError;
     currentTab: DatasetTab;
