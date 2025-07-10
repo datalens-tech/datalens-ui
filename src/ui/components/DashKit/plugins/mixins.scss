@@ -1,9 +1,16 @@
+.print-canvas-root {
+    --dl-dashkit-text-mask-image: unset;
+}
+
 @mixin text-with-fade-effect($fadeWidth) {
-    mask-image: linear-gradient(
-        to right,
-        rgb(0, 0, 0) calc(100% - $fadeWidth),
-        rgba(0, 0, 0, 0.5) calc(100% - $fadeWidth + 5px),
-        rgba(0, 0, 0, 0) calc(100% - $fadeWidth + 15px),
-        rgba(0, 0, 0, 0) 100%
+    mask-image: var(
+        --dl-dashkit-text-mask-image,
+        linear-gradient(
+            to right,
+            rgb(0, 0, 0) calc(100% - $fadeWidth),
+            rgba(0, 0, 0, 0.5) calc(100% - $fadeWidth + 5px),
+            rgba(0, 0, 0, 0) calc(100% - $fadeWidth + 15px),
+            rgba(0, 0, 0, 0) 100%
+        )
     );
 }
