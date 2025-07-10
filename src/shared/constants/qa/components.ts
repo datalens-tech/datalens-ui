@@ -48,7 +48,6 @@ export enum ConnectionsDialogQA {
     TypeSelectItems = 'connections-dialog-type-select-items',
     TypeSelectConnectedOption = 'connections-dialog-type-select-connected-option',
     TypeSelectInputOption = 'connections-dialog-type-select-input-option',
-    TypeSelectOutputOption = 'connections-dialog-type-select-output-option',
     TypeSelectIgnoreOption = 'connections-dialog-type-select-ignore-option',
 }
 

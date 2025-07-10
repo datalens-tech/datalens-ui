@@ -633,7 +633,6 @@ class DashboardPage extends BasePage {
         linkType:
             | ConnectionsDialogQA.TypeSelectConnectedOption
             | ConnectionsDialogQA.TypeSelectInputOption
-            | ConnectionsDialogQA.TypeSelectOutputOption
             | ConnectionsDialogQA.TypeSelectIgnoreOption;
         chartField: string;
     }) {
