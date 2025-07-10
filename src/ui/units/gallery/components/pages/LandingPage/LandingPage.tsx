@@ -152,6 +152,7 @@ function PromoBlockRow({galleryItems, activeMediaQuery, editorChoiceIds}: PromoB
         editorChoiceIds?.indexOf(item.id),
     )
         .slice(0, 3)
+        .reverse()
         .map((item, index, list) => {
             const opacity = activeMediaQuery === 's' ? 1 : 1 - (list.length - 1 - index) * 0.1;
             return {

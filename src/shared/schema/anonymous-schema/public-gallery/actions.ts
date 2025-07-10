@@ -11,16 +11,28 @@ export type GetItemArgs = {
 };
 
 export type GetMetaRespose = {
+    /**
+     * Works that are shown in the first promo block in a panel colored with the brand color
+     */
     editorChoice: {
         ids: string[];
     };
+    /**
+     * Works grouped by categories, each block shows the first 3 works from the specified category
+     */
     landingCategories: {
         category: string;
         title: TranslationsDict;
     }[];
+    /**
+     * 4 works that are shown on the DL main page
+     */
     mainPage: {
         ids: string[];
     };
+    /**
+     * Work that is shown in the "Work of the month" block
+     */
     workOfTheMonth: {id: string};
 };
 
