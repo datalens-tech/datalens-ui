@@ -298,9 +298,11 @@ class DialogChartWidget extends React.PureComponent<
         const {enableAutoheight} = this.props;
         const {data, tabIndex, isManualTitle, tabParams, legacyChanged} = this.state;
 
+        const {_no_controls, _embedded, ...filteredParams} = params;
+
         const newTabParams = imm.update<{tabParams: StringParams}, AutoExtendCommand<StringParams>>(
             {tabParams},
-            {tabParams: {$auto: {$merge: params}}},
+            {tabParams: {$auto: {$merge: filteredParams}}},
         ).tabParams;
 
         if (isManualTitle) {
@@ -312,7 +314,7 @@ class DialogChartWidget extends React.PureComponent<
                     tabs: {
                         [tabIndex]: {
                             chartId: {$set: entryId},
-                            params: {$auto: {$merge: params}},
+                            params: {$auto: {$merge: filteredParams}},
                             autoHeight: {$set: false},
                         },
                     },
@@ -330,7 +332,7 @@ class DialogChartWidget extends React.PureComponent<
                         [tabIndex]: {
                             title: {$set: name},
                             chartId: {$set: entryId},
-                            params: {$auto: {$merge: params}},
+                            params: {$auto: {$merge: filteredParams}},
                             autoHeight: {$set: false},
                         },
                     },
