@@ -3,7 +3,7 @@ import React from 'react';
 import {Breadcrumbs, Skeleton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {Link, useHistory} from 'react-router-dom';
+import {useHistory} from 'react-router';
 
 import type {
     GetCollectionBreadcrumbsResponse,
@@ -92,32 +92,27 @@ export const CollectionBreadcrumbs = React.memo<Props>(
                     {items.map((item, index, list) => {
                         const isLast = index === list.length - 1;
 
-                        let content: JSX.Element;
+                        let content: JSX.Element | string;
                         if (item.id === LOADING_ITEM_ID) {
                             content = <Skeleton className={b('skeleton')} />;
                         } else {
-                            content = (
-                                <Link
-                                    className={b('item', {last: isLast, link: true})}
-                                    to={item.path}
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-
-                                        if (!e.metaKey && onItemClick) {
-                                            onItemClick({id: item.id, isCurrent: isLast});
-                                        }
-                                    }}
-                                >
-                                    {item.text}
-                                </Link>
-                            );
+                            content = item.text;
                         }
 
                         return (
                             <Breadcrumbs.Item
                                 key={index}
-                                onClick={item.action}
-                                className={b('item', {link: Boolean(item.path)})}
+                                onClick={(event) => {
+                                    if (!event.metaKey && onItemClick) {
+                                        event.preventDefault();
+
+                                        onItemClick({id: item.id, isCurrent: isLast});
+                                        item.action(event);
+                                    }
+                                }}
+                                className={b('item')}
+                                disabled={isLast}
+                                href={item.path}
                             >
                                 {content}
                             </Breadcrumbs.Item>
