@@ -212,6 +212,7 @@ export interface PluginRoute {
     method: Uppercase<HttpMethod>;
     path: string;
     handler: AppRouteDescription['handler'];
+    handlerName?: AppRouteDescription['handlerName'];
     authPolicy?: AppRouteDescription['authPolicy'];
     disableCsrf?: boolean;
     validationConfig?: {
