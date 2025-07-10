@@ -25,11 +25,6 @@ datalensTest.describe('Dashboards - Basic functionality', () => {
             // some page need to be loaded so we can get data of feature flag from DL var
             await openTestPage(page, '/');
 
-            const relationType = await dashboardPage.getGlobalRelationsDialogType();
-            if (relationType === null) {
-                return;
-            }
-
             await dashboardPage.createDashboard({
                 editDash: async () => {
                     await dashboardPage.controlActions.addSelector({

@@ -412,25 +412,6 @@ class DashboardPage extends BasePage {
         return this.page.locator(slct(DashkitQa.GRID_ITEM)).getByText(text, {exact: true});
     }
 
-    async getGlobalRelationsDialogType(): Promise<'new' | 'old' | null> {
-        const isEnabledShowNewRelationsButton = await isEnabledFeature(
-            this.page,
-            Feature.ShowNewRelationsButton,
-        );
-
-        if (isEnabledShowNewRelationsButton) {
-            return 'new';
-        }
-
-        const hideOldRelations = await isEnabledFeature(this.page, Feature.HideOldRelations);
-
-        if (!hideOldRelations) {
-            return 'old';
-        }
-
-        return null;
-    }
-
     async deleteSelector(controlTitle: string) {
         const control = this.page.locator(slct('dashkit-grid-item'), {
             has: this.page.locator(slct(ControlQA.chartkitControl, controlTitle)),

@@ -29,11 +29,6 @@ datalensTest.describe('Dashboards - Basic functionality', () => {
 
             await openTestPage(page, RobotChartsDashboardUrls.DashboardWithLongContentBeforeChart);
 
-            const relationType = await dashboardPage.getGlobalRelationsDialogType();
-            if (relationType === null) {
-                return;
-            }
-
             await dashboardPage.createDashboard({
                 editDash: async () => {
                     await dashboardPage.controlActions.addSelector({
