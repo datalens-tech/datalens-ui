@@ -2,16 +2,9 @@ import {Page} from '@playwright/test';
 
 import {ConnectionsDialogQA} from '../../../../src/shared/constants';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {
-    clickGSelectOption,
-    getUniqueTimestamp,
-    isEnabledFeature,
-    openTestPage,
-    slct,
-} from '../../../utils';
+import {clickGSelectOption, getUniqueTimestamp, openTestPage, slct} from '../../../utils';
 import {RobotChartsDashboardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {Feature} from '../../../../src/shared';
 
 datalensTest.describe.configure({mode: 'serial'});
 
@@ -24,11 +17,6 @@ datalensTest.describe('Dashboards - Links', () => {
         const dashName = `e2e-test-dash-with-dash-connections-${getUniqueTimestamp()}`;
         const dashboardPage = new DashboardPage({page});
         await openTestPage(page, RobotChartsDashboardUrls.DashboardWithDashConnections);
-
-        const hideOldRelations = await isEnabledFeature(page, Feature.HideOldRelations);
-        if (hideOldRelations) {
-            return;
-        }
 
         await dashboardPage.copyDashboard(dashName);
         await dashboardPage.openDashConnections();

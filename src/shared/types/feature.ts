@@ -1,7 +1,6 @@
 export enum Feature {
     ChartkitAlerts = 'chartkitAlerts',
     UseConfigurableChartkit = 'UseConfigurableChartkit',
-    HideOldRelations = 'hideOldRelations',
     AsideHeaderEnabled = 'AsideHeaderEnabled',
     /** Enable redesign of dash controls */
     DashFloatControls = 'DashFloatControls',

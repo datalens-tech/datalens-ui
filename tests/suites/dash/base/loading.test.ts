@@ -3,17 +3,10 @@ import {ConnectionsDialogQA} from '../../../../src/shared/constants';
 
 import {COMMON_CHARTKIT_SELECTORS} from '../../../page-objects/constants/chartkit';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {
-    getUniqueTimestamp,
-    isEnabledFeature,
-    openTestPage,
-    slct,
-    waitForCondition,
-} from '../../../utils';
+import {getUniqueTimestamp, openTestPage, slct, waitForCondition} from '../../../utils';
 import {RobotChartsDashboardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {COMMON_DASH_SELECTORS} from '../constants';
-import {Feature} from '../../../../src/shared';
 
 const TEXTS = {
     TAB2: 'Tab 2',
@@ -128,10 +121,6 @@ datalensTest.describe('Dashboards - Widget loading', () => {
             const dashboardPage = new DashboardPage({page});
             await openTestPage(page, RobotChartsDashboardUrls.DashboardWithLongContentBeforeChart);
 
-            const hideOldRelations = await isEnabledFeature(page, Feature.HideOldRelations);
-            if (hideOldRelations) {
-                return;
-            }
             await dashboardPage.copyDashboard(dashName);
 
             // we set small viewport sizes for a more stable check
