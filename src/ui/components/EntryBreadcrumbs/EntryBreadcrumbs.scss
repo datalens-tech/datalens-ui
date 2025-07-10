@@ -3,8 +3,4 @@
 
 .entry-panel-breadcrumbs {
     margin-right: 5px;
-
-    &__item {
-        @include dl-breadcrumbs-items-style;
-    }
 }

@@ -10,18 +10,4 @@
         width: 200px;
         height: 16px;
     }
-
-    &__item {
-        @include dl-breadcrumbs-items-style;
-
-        &_last,
-        &_last:active,
-        &_last:visited {
-            color: var(--g-color-text-primary);
-        }
-
-        &_last:hover {
-            color: var(--g-color-text-link-hover);
-        }
-    }
 }

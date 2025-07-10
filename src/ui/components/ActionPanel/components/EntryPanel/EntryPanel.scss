@@ -65,8 +65,4 @@
     &__cloud-select-container {
         margin-right: 8px;
     }
-
-    &__item {
-        @include dl-breadcrumbs-items-style;
-    }
 }

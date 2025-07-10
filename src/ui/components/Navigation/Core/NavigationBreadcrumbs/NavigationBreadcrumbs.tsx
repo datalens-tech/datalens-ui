@@ -138,6 +138,7 @@ export const NavigationBreadcrumbs = ({
                                     onClick={(event) => {
                                         onClick(item.item, event, last);
                                     }}
+                                    disabled={last}
                                 >
                                     {item.text}
                                 </Breadcrumbs.Item>
