@@ -244,7 +244,10 @@
   },
   "overrides": {
     "react": "^17.0.2",
-    "react-dom": "^17.0.2"
+    "react-dom": "^17.0.2",
+    "@gravity-ui/app-builder": {
+      "@rspack/core": "1.4.2"
+    }
   },
   "deploy": {
     "project": "stat",
