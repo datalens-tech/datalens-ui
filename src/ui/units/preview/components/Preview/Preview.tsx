@@ -9,15 +9,14 @@ import {DL, PageTitle, SlugifyUrl, Utils} from 'ui';
 import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
 import {WidgetHeader} from 'ui/components/Widgets/Chart/components/WidgetHeader';
 import {pushStats} from 'ui/components/Widgets/Chart/helpers/helpers';
+import type {ChartWithWrapRefProps} from 'ui/components/Widgets/Chart/types';
 import {EMBEDDED_CHART_MESSAGE_NAME, MIN_AUTOUPDATE_CHART_INTERVAL} from 'ui/constants/common';
-import type {ChartsChartKit} from 'ui/libs/DatalensChartkit/types/charts';
 import {getSdk} from 'ui/libs/schematic-sdk';
 import {fetchEntryById} from 'ui/store/actions/entryContent';
 import {PostMessage} from 'ui/units/dash/modules/postMessage';
 import {addWorkbookInfo, resetWorkbookPermissions} from 'ui/units/workbooks/store/actions';
 
 import {ChartWrapper} from '../../../../components/Widgets/Chart/ChartWidgetWithProvider';
-import type {ChartKit as ChartKitType} from '../../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import type {
     ChartKitDataProvider,
     ChartKitWrapperLoadStatusUnknown,
@@ -68,7 +67,7 @@ const Preview: React.FC<PreviewProps> = (props) => {
     const params = React.useMemo(() => Utils.getParamsFromSearch(search), [search]);
 
     const previewRef = React.useRef<HTMLDivElement>(null);
-    const chartKitRef = React.useRef<ChartsChartKit>(null);
+    const chartKitRef = React.useRef<ChartWithWrapRefProps>(null);
 
     const [workbookInfo, setWorkbookInfo] = React.useState<{
         isLoading: boolean;
@@ -252,7 +251,7 @@ const Preview: React.FC<PreviewProps> = (props) => {
                         onChartRender={onChartRender}
                         noControls={noControls}
                         actionParamsEnabled={actionParamsEnabled}
-                        forwardedRef={chartKitRef as unknown as React.RefObject<ChartKitType>}
+                        forwardedRef={chartKitRef}
                         splitTooltip={hasSplitTooltip}
                         menuType="preview"
                         isPageHidden={isPageHidden}
