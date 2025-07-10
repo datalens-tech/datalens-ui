@@ -237,7 +237,7 @@ export class Menu extends React.PureComponent {
                             }
                             iconStart={item.icon}
                         >
-                            {item.text}
+                            {item.children}
                         </ListMenu.Item>
                     ))}
                 </ListMenu>
