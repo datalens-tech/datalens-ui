@@ -1,6 +1,6 @@
 import {Page} from '@playwright/test';
 
-import {ConnectionsDialogQA, DashCommonQa} from '../../../../src/shared/constants';
+import {DashCommonQa} from '../../../../src/shared/constants';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {clickGSelectOption, getUniqueTimestamp, openTestPage, slct} from '../../../utils';
 import {RobotChartsDashboardUrls} from '../../../utils/constants';
