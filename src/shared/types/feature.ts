@@ -30,7 +30,6 @@ export enum Feature {
     CollectionsAccessEnabled = 'CollectionsAccessEnabled',
     DashBoardAccessDescription = 'DashBoardAccessDescription',
     DashBoardSupportDescription = 'DashBoardSupportDescription',
-    DashAutorefresh = 'DashAutorefresh',
     // Show request body in the Inspector dialog
     ShowInspectorDetails = 'ShowInspectorDetails',
     // Prohibiting the serialization of functions in the chart configs
