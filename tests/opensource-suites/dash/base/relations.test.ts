@@ -41,8 +41,6 @@ datalensTest.describe('Dashboards - Basic functionality', () => {
                         secondParamName: PARAMS.CHART_FIELD,
                         selectorName: PARAMS.CONTROL_TITLE,
                     });
-
-                    await dashboardPage.clickSaveButton();
                 },
             });
 
