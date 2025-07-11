@@ -41,6 +41,7 @@ export const PaletteBackground = ({
             mainPresetOptions={mainPresetOptions}
             paletteOptions={paletteOptions}
             theme={theme}
+            paletteColumns={7}
         />
     );
 };

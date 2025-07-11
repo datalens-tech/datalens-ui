@@ -274,6 +274,7 @@ export function getPreparedWrapSettings(
     showBgColor: boolean,
     color?: string,
     additionalStyle?: CSSProperties,
+    textColor?: string,
 ) {
     const wrapperClassMod =
         (showBgColor &&
@@ -284,6 +285,7 @@ export function getPreparedWrapSettings(
         ...additionalStyle,
         backgroundColor:
             !showBgColor || color === CustomPaletteBgColors.LIKE_CHART ? undefined : color,
+        color: textColor,
     };
     return {
         classMod: wrapperClassMod,

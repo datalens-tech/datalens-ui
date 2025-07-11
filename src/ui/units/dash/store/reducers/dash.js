@@ -233,6 +233,7 @@ function dash(state = initialState, action) {
             };
         case actionTypes.SET_COPIED_ITEM_DATA: {
             const itemData = action.payload.item.data;
+            delete itemData.textColor;
             const backgroundData =
                 'background' in itemData
                     ? {

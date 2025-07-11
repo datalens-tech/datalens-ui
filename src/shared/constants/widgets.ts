@@ -67,6 +67,46 @@ export const WIDGET_BG_COLORS_PRESET = [
     'var(--g-color-base-neutral-medium-hover)',
 ];
 
+export const TITLE_WIDGET_TEXT_COLORS_PRESET = [
+    'var(--g-color-text-info)',
+    'var(--g-color-text-positive)',
+    'var(--g-color-text-warning)',
+    'var(--g-color-text-danger)',
+    'var(--g-color-text-utility)',
+    'var(--g-color-text-misc)',
+
+    'var(--g-color-text-info-heavy)',
+    'var(--g-color-text-positive-heavy)',
+    'var(--g-color-text-warning-heavy)',
+    'var(--g-color-text-danger-heavy)',
+    'var(--g-color-text-utility-heavy)',
+    'var(--g-color-text-misc-heavy)',
+
+    'var(--g-color-private-white-1000-solid)',
+    'var(--g-color-private-black-50-solid)',
+    'var(--g-color-private-black-100-solid)',
+    'var(--g-color-private-black-200-solid)',
+    'var(--g-color-private-black-300-solid)',
+    'var(--g-color-private-black-400-solid)',
+
+    'var(--g-color-private-black-500-solid)',
+    'var(--g-color-private-black-600-solid)',
+    'var(--g-color-private-black-700-solid)',
+    'var(--g-color-private-black-800-solid)',
+    'var(--g-color-private-black-900-solid)',
+    'var(--g-color-private-black-1000-solid)',
+];
+
+export const CustomPaletteTextColors = {
+    PRIMARY: 'var(--g-color-text-primary)',
+    COMPLEMENTARY: 'var(--g-color-text-complementary)',
+    SECONDARY: 'var(--g-color-text-secondary)',
+    HINT: 'var(--g-color-text-hint)',
+    BRAND: 'var(--g-color-text-brand)',
+} as const;
+
+export type CustomPaletteTextColor = ValueOf<typeof CustomPaletteTextColors>;
+
 export const CONTROLS_PLACEMENT_MODE = {
     AUTO: 'auto',
     PERCENT: '%',
