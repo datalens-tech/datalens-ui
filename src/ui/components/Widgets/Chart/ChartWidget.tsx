@@ -126,6 +126,8 @@ export const ChartWidget = (props: ChartWidgetProps) => {
             (prevEnableActionParams === undefined && currentTab.enableActionParams),
     );
 
+    console.log(widgetId, 'widgetID');
+
     const initialData: DataProps = React.useMemo(
         () =>
             getDataProviderData({
@@ -133,8 +135,9 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 config,
                 params: chartkitParams,
                 workbookId,
+                widgetData: {widgetId},
             }),
-        [chartId, chartkitParams, config, hasChartTabChanged, workbookId],
+        [chartId, chartkitParams, config, hasChartTabChanged, workbookId, widgetId],
     );
 
     const savedForFetchProps = React.useMemo(() => pick(props, influencingProps), [props]);

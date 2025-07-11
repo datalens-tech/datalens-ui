@@ -414,6 +414,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
                           widgetConfig,
                       }
                     : {...requestDataProps, widgetConfig};
+            console.log(getWidgetProps, 'getWidgetProps');
 
             /**
              * can't use debounced getWidget on dash because of widget priority setting
