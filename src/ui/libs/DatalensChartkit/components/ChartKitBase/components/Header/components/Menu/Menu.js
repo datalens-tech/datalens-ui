@@ -235,9 +235,9 @@ export class Menu extends React.PureComponent {
                                     ? this.handleFullscreenOpen(item.action)
                                     : item.action
                             }
-                            iconStart={item.icon}
+                            iconStart={item.iconStart}
                         >
-                            {item.children}
+                            {item.text}
                         </ListMenu.Item>
                     ))}
                 </ListMenu>

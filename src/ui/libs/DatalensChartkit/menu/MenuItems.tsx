@@ -31,8 +31,6 @@ import type {AlertsActionArgs} from '../types/menu';
 
 import type {MenuItemConfig, MenuItemModalProps, MenuLoadedData} from './Menu';
 
-import './MenuItems.scss';
-
 const b = block('dl-chartkit-menu-items');
 
 export const ICONS_MENU_DEFAULT_CLASSNAME = b('icon');
