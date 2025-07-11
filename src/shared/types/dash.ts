@@ -83,6 +83,7 @@ export type DashSettings = {
     hideDashTitle?: boolean;
     expandTOC: boolean;
     globalParams?: DashSettingsGlobalParams;
+    // TODO: remove after code update
     // used only for secure cases
     signedGlobalParams?: DashSettingsGlobalParams;
     loadPriority?: DashLoadPriority;
@@ -205,49 +206,62 @@ export interface DashTabItemControl extends DashTabItemBase {
     defaults: StringParams;
 }
 
-export interface DashTabItemControlData {
+type DashTabItemControlCommonData = {
     id: string;
     title: string;
-    sourceType: DashTabItemControlSourceType;
-    source:
-        | DashTabItemControlDataset['source']
-        | DashTabItemControlManual['source']
-        | DashTabItemControlExternal['source'];
     placementMode?: 'auto' | '%' | 'px';
     autoHeight?: boolean;
     width?: string;
     defaults?: StringParams;
     namespace: string;
-}
+};
 
+export type DashTabItemControlData =
+    | DashTabItemControlDataset
+    | DashTabItemControlManual
+    | DashTabItemControlExternal
+    | DashTabItemControlConnection;
 export type DashTabItemControlSingle = DashTabItemControlDataset | DashTabItemControlManual;
 
-export interface DashTabItemControlDataset extends DashTabItemControlData {
+type DashTabItemControlDatasetSource = {
     sourceType: DashTabItemControlSourceType.Dataset;
     source: {
         datasetId: string;
         datasetFieldId: string;
     } & DashTabItemControlElement;
-}
+};
+export type DashTabItemControlDataset = DashTabItemControlCommonData &
+    DashTabItemControlDatasetSource;
 
-export interface DashTabItemControlManual extends DashTabItemControlData {
+type DashTabItemControlConnectionSource = {
+    sourceType: DashTabItemControlSourceType.Connection;
+    source: {
+        fieldName: string;
+    };
+};
+
+export type DashTabItemControlConnection = DashTabItemControlCommonData &
+    DashTabItemControlConnectionSource;
+
+type DashTabItemControlManualSource = {
     sourceType: DashTabItemControlSourceType.Manual;
     source: {
         fieldName: string;
         fieldType: string;
         acceptableValues:
             | {
-                  // elementType: select
-                  value: string;
-                  title: string;
-              }[]
+                  // elementType: s;
+                  values: string[];
+              }
             | {
                   // elementType: date
                   from: string;
                   to: string;
               };
     } & DashTabItemControlElement;
-}
+};
+export type DashTabItemControlManual = DashTabItemControlCommonData &
+    DashTabItemControlManualSource;
 
 export type DashTabItemControlElement =
     | DashTabItemControlElementSelect
@@ -306,12 +320,14 @@ export interface DashTabItemControlElementCheckbox extends DashTabItemControlEle
     defaultValue: string;
 }
 
-export interface DashTabItemControlExternal extends DashTabItemControlData {
+type DashTabItemControlExternalSource = {
     sourceType: DashTabItemControlSourceType.External;
     source: {
         chartId: string;
     };
-}
+};
+export type DashTabItemControlExternal = DashTabItemControlCommonData &
+    DashTabItemControlExternalSource;
 
 export interface DashTabItemGroupControl extends DashTabItemBase {
     type: DashTabItemType.GroupControl;

@@ -948,6 +948,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             widgetConfig,
             config: {type, data: configData, key, createdAt} = {},
             workbookId,
+            widgetData,
         } = data;
 
         const isEditMode = Boolean(type && configData);
@@ -975,6 +976,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                 },
                 uiOnly: onlyControls || undefined,
                 workbookId,
+                widgetData,
             },
             headers: this.getLoadHeaders(requestId, contextHeaders),
             'axios-retry': {

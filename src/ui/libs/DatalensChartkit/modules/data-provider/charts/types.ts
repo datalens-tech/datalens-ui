@@ -150,6 +150,7 @@ export interface ChartsProps {
     showActionParamsFilter?: boolean;
     onFiltersClear?: () => void;
     needRenderContentControls?: boolean;
+    widgetData?: {widgetId: string};
 }
 
 export interface ChartsData extends DashWidgetConfig {
