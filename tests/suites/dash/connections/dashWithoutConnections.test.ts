@@ -24,11 +24,11 @@ datalensTest.describe('Dashboards - Links', () => {
             // select the selector
             await clickGSelectOption({
                 page,
-                key: ConnectionsDialogQA.ElementSelect,
+                key: DashCommonQa.RelationsWidgetSelect,
                 optionText: PARAMS.ELEMENT_NO_CONNECTIONS,
             });
 
-            await page.waitForSelector(slct(ConnectionsDialogQA.EmptyContent));
+            await page.waitForSelector(slct(DashCommonQa.RelationsDialogEmptyText));
 
             // click on the "Cancel" button
             await page.click(slct(DashCommonQa.RelationsCancelBtn));
