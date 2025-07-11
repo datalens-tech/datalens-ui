@@ -53,6 +53,8 @@
 
     &__color-picker {
         display: block;
+        width: 140px;
+        min-width: 100%;
     }
 
     $colorItem: #{$class}__color-item;
