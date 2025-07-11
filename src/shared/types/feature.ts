@@ -65,8 +65,6 @@ export enum Feature {
     EnableEmbedsInDialogShare = 'EnableEmbedsInDialogShare',
     EnableEntryMenuItemShare = 'EnableEntryMenuItemShare',
     NewTableWidgetForCE = 'NewTableWidgetForCE',
-    /** Enable undo/redo buttons & hotkeys in datasets */
-    EnableEditHistoryDatasets = 'EnableEditHistoryDataset',
     /** Additional chart config for making requests by widget events */
     ChartActions = 'ChartActions',
     /** Disable the use of html and function in chart configs */
