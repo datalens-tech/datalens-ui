@@ -1,6 +1,6 @@
 import {Page} from '@playwright/test';
 
-import {ConnectionsDialogQA} from '../../../../src/shared/constants';
+import {DashCommonQa} from '../../../../src/shared/constants';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {clickGSelectOption, getUniqueTimestamp, openTestPage, slct} from '../../../utils';
 import {RobotChartsDashboardUrls} from '../../../utils/constants';
@@ -24,14 +24,14 @@ datalensTest.describe('Dashboards - Links', () => {
         // select the selector
         await clickGSelectOption({
             page,
-            key: ConnectionsDialogQA.ElementSelect,
+            key: DashCommonQa.RelationsWidgetSelect,
             optionText: PARAMS.ELEMENT_WITH_CONNECTIONS,
         });
 
-        await page.waitForSelector(slct(ConnectionsDialogQA.TypeSelect));
+        await page.waitForSelector(slct(DashCommonQa.RelationsWidgetSelect));
 
         // click on the "Cancel" button
-        await page.click(slct(ConnectionsDialogQA.Cancel));
+        await page.click(slct(DashCommonQa.RelationsCancelBtn));
 
         await dashboardPage.deleteDashFromEditMode();
     });

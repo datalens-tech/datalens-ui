@@ -1,5 +1,5 @@
 import {Page} from '@playwright/test';
-import {ConnectionsDialogQA} from '../../../../src/shared/constants';
+import {DashCommonQa} from '../../../../src/shared/constants';
 
 import {COMMON_CHARTKIT_SELECTORS} from '../../../page-objects/constants/chartkit';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
@@ -142,7 +142,7 @@ datalensTest.describe('Dashboards - Widget loading', () => {
             // waiting for the chart to load
             await initPromise;
 
-            await page.click(slct(ConnectionsDialogQA.Cancel));
+            await page.click(slct(DashCommonQa.RelationsCancelBtn));
 
             // check that the widget content has appeared
             await page.waitForSelector(`.${COMMON_CHARTKIT_SELECTORS.graph}`);
