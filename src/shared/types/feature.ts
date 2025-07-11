@@ -88,8 +88,6 @@ export enum Feature {
     EnableDashAutoFocus = 'EnableDashAutoFocus',
     /** Enable using template params in datasets sources */
     EnableDsTemplateParams = 'EnableDsTemplateParams',
-    /** Enable Dash undo\redo */
-    EnableDashUndoRedo = 'EnableDashUndoRedo',
     /** Enable public gallery unit */
     EnablePublicGallery = 'EnablePublicGallery',
     /** Enable new secure parameters behavior */
