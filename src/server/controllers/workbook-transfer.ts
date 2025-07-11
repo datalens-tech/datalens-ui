@@ -51,7 +51,10 @@ const getRequestId = (ctx: Request['ctx']) => ctx.get(REQUEST_ID_PARAM_NAME) || 
 export const proxyGetEntry = async (
     req: Request,
     res: Response,
-    args: {
+    {
+        usMasterToken,
+        ...args
+    }: {
         workbookId: string | null;
         entryId: string;
         usMasterToken: string;
@@ -59,14 +62,11 @@ export const proxyGetEntry = async (
 ) => {
     const {ctx} = req;
     const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
-    const {getAuthArgsUSPrivate} = registry.common.auth.getAll();
 
     const headers = {
         ...Utils.pickHeaders(req),
     };
     const requestId = getRequestId(ctx);
-
-    const authArgs = getAuthArgsUSPrivate(req, res);
 
     try {
         return await gatewayApi.usPrivate._proxyGetEntry({
@@ -75,7 +75,7 @@ export const proxyGetEntry = async (
                 ...args,
                 branch: 'published',
             },
-            authArgs,
+            authArgs: {usMasterToken},
             ctx,
             requestId,
         });
@@ -210,7 +210,6 @@ export const prepareImportData = async (
     const scope = resolveScopeForEntryData(entryData);
 
     const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
-    const {getAuthArgsUSPrivate} = registry.common.auth.getAll();
 
     switch (scope) {
         case EntryScope.Connection: {
@@ -269,7 +268,7 @@ export const prepareImportData = async (
                     links: widget.links as EntryFieldLinks,
                 },
                 ctx,
-                authArgs: getAuthArgsUSPrivate(req, res),
+                authArgs: {usMasterToken},
                 requestId: getRequestId(ctx),
             });
 
@@ -295,7 +294,7 @@ export const prepareImportData = async (
                     links: dash.links,
                 },
                 ctx,
-                authArgs: getAuthArgsUSPrivate(req, res),
+                authArgs: {usMasterToken},
                 requestId: getRequestId(ctx),
             });
 
