@@ -1,13 +1,14 @@
 import React from 'react';
 
-import {FormRow, HelpPopover} from '@gravity-ui/components';
-import {Checkbox, Dialog, Flex, List, TextInput} from '@gravity-ui/uikit';
+import {FormRow} from '@gravity-ui/components';
+import {Checkbox, Dialog, Flex, HelpMark, List, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {DialogGroupControlQa, TitlePlacementOption} from 'shared';
 import {BackButton} from 'ui/components/ControlComponents/BackButton/BackButton';
+import {helpMarkDefaultProps} from 'ui/constants';
 import {updateSelectorsGroup} from 'ui/store/actions/controlDialog';
 import {selectSelectorsGroup} from 'ui/store/selectors/controlDialog';
 import type {SelectorDialogState} from 'ui/store/typings/controlDialog';
@@ -262,10 +263,9 @@ const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                         label={
                             <React.Fragment>
                                 {i18n('label_apply-button-checkbox')}
-                                <HelpPopover
-                                    className={b('help-icon')}
-                                    htmlContent={i18n('context_apply-button')}
-                                />
+                                <HelpMark {...helpMarkDefaultProps} className={b('help-icon')}>
+                                    {i18n('context_apply-button')}
+                                </HelpMark>
                             </React.Fragment>
                         }
                     >
@@ -282,10 +282,9 @@ const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                         label={
                             <React.Fragment>
                                 {i18n('label_reset-button-checkbox')}
-                                <HelpPopover
-                                    className={b('help-icon')}
-                                    htmlContent={i18n('context_reset-button')}
-                                />
+                                <HelpMark {...helpMarkDefaultProps} className={b('help-icon')}>
+                                    {i18n('context_reset-button')}
+                                </HelpMark>
                             </React.Fragment>
                         }
                     >
@@ -314,10 +313,9 @@ const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                             label={
                                 <React.Fragment>
                                     {i18n('label_update-controls-on-change')}
-                                    <HelpPopover
-                                        className={b('help-icon')}
-                                        htmlContent={i18n('context_update-controls-on-change')}
-                                    />
+                                    <HelpMark {...helpMarkDefaultProps} className={b('help-icon')}>
+                                        {i18n('context_update-controls-on-change')}
+                                    </HelpMark>
                                 </React.Fragment>
                             }
                         >

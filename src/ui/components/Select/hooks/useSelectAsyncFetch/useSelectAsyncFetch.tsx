@@ -1,11 +1,12 @@
 import React from 'react';
 
-import type {SelectProps, SelectRenderOption} from '@gravity-ui/uikit';
-import {Loader} from '@gravity-ui/uikit';
 import type {
     SelectOption,
+    SelectProps,
+    SelectRenderOption,
     SelectRenderOptionViewParams,
-} from '@gravity-ui/uikit/build/esm/components/Select/types';
+} from '@gravity-ui/uikit';
+import {Loader} from '@gravity-ui/uikit';
 import {useMountedState} from 'ui/hooks/useMountedState';
 
 import {useIntersection} from './useIntersection';

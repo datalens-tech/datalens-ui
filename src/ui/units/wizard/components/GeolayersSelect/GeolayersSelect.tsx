@@ -154,15 +154,18 @@ class GeolayersSelect extends React.Component<GeolayersSelectProps, GeolayersSel
 
         return (
             <Popup
-                contentClassName={b('popup')}
                 style={{
                     minWidth: this.controlWidth,
                 }}
                 open={active}
-                anchorRef={this.controlRef}
-                offset={[0, POPUP_OFFSET]}
+                anchorElement={this.controlRef.current}
+                offset={{mainAxis: 0, crossAxis: POPUP_OFFSET}}
                 placement={'bottom-start'}
-                onClose={this.togglePopupVisibility}
+                onOpenChange={(open) => {
+                    if (!open) {
+                        this.togglePopupVisibility();
+                    }
+                }}
             >
                 {this.renderPopupContent()}
             </Popup>
@@ -240,9 +243,15 @@ class GeolayersSelect extends React.Component<GeolayersSelectProps, GeolayersSel
         );
     };
 
-    private renderDotsButton = () => (
+    private renderDotsButton = ({onClick}: {onClick: React.MouseEventHandler<HTMLElement>}) => (
         <div className={b('button-dots-wrap')}>
-            <Button className={b('button-dots')} view="flat" size="s" qa="geolayer-item-actions">
+            <Button
+                className={b('button-dots')}
+                view="flat"
+                size="s"
+                qa="geolayer-item-actions"
+                onClick={onClick}
+            >
                 <Icon data={Ellipsis} size={DOTS_ICON_SIZE} />
             </Button>
         </div>
@@ -265,7 +274,7 @@ class GeolayersSelect extends React.Component<GeolayersSelectProps, GeolayersSel
                 <DropdownMenu
                     size="s"
                     data={item.id}
-                    switcher={this.renderDotsButton()}
+                    renderSwitcher={this.renderDotsButton}
                     items={this.dropdownItems}
                     onSwitcherClick={this.onSwitcherClick}
                 />

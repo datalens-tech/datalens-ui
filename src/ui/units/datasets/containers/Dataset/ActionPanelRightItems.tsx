@@ -7,6 +7,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {DatasetActionQA, Feature, RAW_SQL_LEVEL} from 'shared';
+import {helpMarkDefaultProps} from 'ui/constants';
 import {registry} from 'ui/registry';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
@@ -124,12 +125,7 @@ export function ActionPanelRightItems(props: Props) {
         const {ref, triggerProps} = args;
 
         return (
-            <Button
-                ref={ref}
-                view="flat"
-                extraProps={{onKeyDown: triggerProps.onKeyDown}}
-                {...triggerProps}
-            >
+            <Button ref={ref as React.Ref<HTMLButtonElement>} view="flat" {...triggerProps}>
                 <Icon data={Gear} size={ACTION_PANEL_ICON_SIZE} />
             </Button>
         );
@@ -149,7 +145,7 @@ export function ActionPanelRightItems(props: Props) {
         const optionContent = (
             <div style={{display: 'flex', height: '100%'}}>
                 {i18n('label_enable-templating')}
-                <HelpMark className={b('settings-hint')}>
+                <HelpMark {...helpMarkDefaultProps} className={b('settings-hint')}>
                     {i18n('label_enable-templating-hint')}
                 </HelpMark>
             </div>
@@ -183,7 +179,7 @@ export function ActionPanelRightItems(props: Props) {
                 disabled={isLoadingDataset || isValidationLoading}
             >
                 {i18nExport('label_enable-data-export')}
-                <HelpMark className={b('settings-hint')}>
+                <HelpMark {...helpMarkDefaultProps} className={b('settings-hint')}>
                     {i18nExport('label_data-export-info')}
                 </HelpMark>
             </Select.Option>,

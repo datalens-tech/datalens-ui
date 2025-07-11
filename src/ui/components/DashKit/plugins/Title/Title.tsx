@@ -256,9 +256,11 @@ const titlePlugin: PluginTitle = {
                     >
                         {showHint && (
                             <MarkdownHelpPopover
-                                markdown={data.hint?.text!}
+                                markdown={data.hint?.text ?? ''}
                                 className={b('hint')}
-                                placement="bottom"
+                                popoverProps={{
+                                    placement: 'bottom',
+                                }}
                                 buttonProps={{
                                     className: b('hint-button'),
                                 }}

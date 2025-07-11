@@ -11,7 +11,7 @@ import notes from '@diplodoc/transform/lib/plugins/notes';
 import sup from '@diplodoc/transform/lib/plugins/sup';
 import table from '@diplodoc/transform/lib/plugins/table';
 import term from '@diplodoc/transform/lib/plugins/term';
-import type {MarkdownItPluginCb} from '@diplodoc/transform/lib/plugins/typings';
+import type {Lang, MarkdownItPluginCb} from '@diplodoc/transform/lib/plugins/typings';
 import {defaultOptions} from '@diplodoc/transform/lib/sanitize';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import type MarkdownIt from 'markdown-it';
@@ -22,12 +22,10 @@ import MarkdonwItIns from 'markdown-it-ins';
 import Mila from 'markdown-it-link-attributes';
 import MarkdonwItMark from 'markdown-it-mark';
 import MarkdonwItSub from 'markdown-it-sub';
-import {v4 as uuidv4} from 'uuid';
 
 import {YFM_COLORIFY_MARKDOWN_CLASSNAME, YfmMetaScripts} from '../../constants';
 
 import {emojiDefs} from './emoji-defs';
-import {unifyTermIds} from './markdown-plugins/unify-terms';
 
 type RenderHtmlArgs = {
     text?: string;
@@ -42,8 +40,6 @@ export type RenderHtmlOutput = {
 
 export function renderHTML(args: RenderHtmlArgs): RenderHtmlOutput {
     const {text = '', lang, plugins: additionalPlugins = []} = args;
-
-    const uniqPrefix = uuidv4();
 
     const plugins = [
         deflist,
@@ -64,10 +60,7 @@ export function renderHTML(args: RenderHtmlArgs): RenderHtmlOutput {
                 .use(MarkdownItColor, {
                     defaultClassName: YFM_COLORIFY_MARKDOWN_CLASSNAME,
                 })
-                .use(MarkdownItEmoji, {defs: emojiDefs})
-                .use(unifyTermIds, {
-                    prefix: uniqPrefix,
-                }),
+                .use(MarkdownItEmoji, {defs: emojiDefs}),
         yfmTabs({
             bundle: false,
             features: {
@@ -116,7 +109,7 @@ export function renderHTML(args: RenderHtmlArgs): RenderHtmlOutput {
         result: {html, meta},
     } = yfmTransform(preparedTextWithTermLinks, {
         plugins,
-        lang,
+        lang: lang as Lang,
         vars: {},
         disableLiquid: true,
         needToSanitizeHtml: true,

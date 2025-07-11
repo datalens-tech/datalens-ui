@@ -137,9 +137,7 @@ export const useLayout = ({
                             collections={preparedBreadcrumbs}
                             workbook={null}
                             onItemClick={({isCurrent, id}) => {
-                                if (isCurrent) {
-                                    fetchStructureItems();
-                                } else if (id !== null) {
+                                if (!isCurrent && id !== null) {
                                     batch(() => {
                                         const newBreadcrumbs = cutBreadcrumbs(
                                             id,

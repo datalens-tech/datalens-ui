@@ -80,13 +80,13 @@ datalensTest.describe('Datasets - source editor dialog', () => {
         const inputLocator = page.locator(inputSelector).first();
 
         const tableTab = page
-            .locator(`${slct('datasets-source-switcher')} .g-radio-button__option`)
+            .locator(`${slct('datasets-source-switcher')} .g-segmented-radio-group__option`)
             .nth(0);
         const listTab = page
-            .locator(`${slct('datasets-source-switcher')} .g-radio-button__option`)
+            .locator(`${slct('datasets-source-switcher')} .g-segmented-radio-group__option`)
             .nth(1);
         const rangeTab = page
-            .locator(`${slct('datasets-source-switcher')} .g-radio-button__option`)
+            .locator(`${slct('datasets-source-switcher')} .g-segmented-radio-group__option`)
             .nth(2);
 
         await tableTab.check();

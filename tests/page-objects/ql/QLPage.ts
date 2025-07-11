@@ -59,7 +59,11 @@ class QLPage extends ChartPage {
             .first();
         await list.waitFor({state: 'visible'});
 
-        await this.navigationMinimal.selectNamespace(NavigationMinimalPlaceSelectQa.Connections);
+        await this.page
+            .locator(slct('navigation-minimal'))
+            .locator(slct('navigation-minimal-place-select'))
+            .click();
+        await this.page.locator(slct(NavigationMinimalPlaceSelectQa.Connections)).click();
 
         await this.navigationMinimal.typeToSearch(connectionName);
 
@@ -226,23 +230,16 @@ class QLPage extends ChartPage {
     }
 
     waitForSomeSuccessfulRender() {
-        return new Promise((resolve, reject) => {
-            this.page.waitForSelector('.chartkit .gcharts-d3').then(resolve, () => undefined);
-            this.page.waitForSelector('.chartkit .chartkit-graph').then(resolve, () => undefined);
+        const gchart = this.page.locator('.chartkit .gcharts-chart');
+        const hcChart = this.page.locator('.chartkit .chartkit-graph');
+        const metricLocators = [
+            '.chartkit .chartkit-markup',
+            '.chartkit .chartkit-indicator',
+        ].join();
+        const metric = this.page.locator(metricLocators);
+        const table = this.chartkit.getTableLocator();
 
-            const metricLocators = [
-                '.chartkit .chartkit-markup',
-                '.chartkit .chartkit-indicator',
-            ].join();
-            this.page.waitForSelector(metricLocators).then(resolve, () => undefined);
-
-            this.chartkit
-                .getTableLocator()
-                .waitFor()
-                .then(resolve, () => undefined);
-
-            setTimeout(reject, 30 * 1000);
-        });
+        return gchart.or(hcChart).or(metric).or(table).waitFor();
     }
 
     compareScripts(s1: string | null, s2: string | null) {

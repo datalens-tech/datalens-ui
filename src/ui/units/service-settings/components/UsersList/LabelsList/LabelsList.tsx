@@ -56,10 +56,14 @@ export const LabelsList = ({
                     {buttonText}
                 </Label>
                 <Popup
-                    anchorRef={anchorRef}
+                    anchorElement={anchorRef.current}
                     open={open}
                     placement={['bottom-end', 'bottom', 'top-end', 'top']}
-                    onClose={handlePopupClose}
+                    onOpenChange={(isOpened) => {
+                        if (!isOpened) {
+                            handlePopupClose();
+                        }
+                    }}
                 >
                     <div className={b('popup')}>
                         <div className={b('popup-content')}>

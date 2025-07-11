@@ -1,12 +1,13 @@
 import React from 'react';
 
-import {HelpPopover, ItemSelector} from '@gravity-ui/components';
-import {Dialog as CommonDialog, Icon, TextInput} from '@gravity-ui/uikit';
+import {ItemSelector} from '@gravity-ui/components';
+import {Dialog as CommonDialog, HelpMark, Icon, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import omit from 'lodash/omit';
 import type {Field} from 'shared';
 import {HierarchyEditorQa} from 'shared';
+import {helpMarkDefaultProps} from 'ui/constants';
 import {getIconForDataType} from 'units/wizard/utils/helpers';
 
 import './HierarchyEditor.scss';
@@ -62,10 +63,9 @@ class HierarchyEditor extends React.Component<Props, State> {
                         caption={
                             <span>
                                 {i18n('wizard.hierarchy-editor', 'caption')}
-                                <HelpPopover
-                                    className={b('help-icon')}
-                                    content={i18n('wizard.hierarchy-editor', 'help_tooltip')}
-                                />
+                                <HelpMark {...helpMarkDefaultProps} className={b('help-icon')}>
+                                    {i18n('wizard.hierarchy-editor', 'help_tooltip')}
+                                </HelpMark>
                             </span>
                         }
                     />

@@ -11,6 +11,14 @@ $block: '.#{variables.$ns}-all';
         height: 100%;
     }
 
+    &__breadcrumbs {
+        flex-grow: 1;
+
+        .g-breadcrumbs__item {
+            height: fit-content;
+        }
+    }
+
     &__container {
         height: calc(100% - #{$actionPanelHeight});
         padding-left: 48px;

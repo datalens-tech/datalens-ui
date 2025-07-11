@@ -1,10 +1,9 @@
-import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
+import {Breadcrumbs, Flex} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import React from 'react';
 import block from 'bem-cn-lite';
 import {UserProfile} from 'ui/units/auth/containers/UserProfile/UserProfile';
 
-import {Flex} from '@gravity-ui/uikit';
 import {DL} from 'ui/constants';
 import {PageTitle} from 'ui/components/PageTitle';
 import {ActionPanel} from 'ui/components/ActionPanel';

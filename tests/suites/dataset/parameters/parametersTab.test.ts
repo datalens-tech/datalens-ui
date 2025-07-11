@@ -8,7 +8,7 @@ import {CommonSelectors} from '../../../page-objects/constants/common-selectors'
 
 async function goToParametersTab(page: Page) {
     await page.click(
-        `.dataset-panel .g-radio-button__option ${CommonSelectors.RadioButtonOptionControl}[value=parameters]`,
+        `.dataset-panel .g-segmented-radio-group__option ${CommonSelectors.RadioButtonOptionControl}[value=parameters]`,
         {
             force: true,
         },
@@ -26,7 +26,7 @@ datalensTest.describe('Datasets - Tab parameters', () => {
             await openTestPage(page, RobotChartsDatasetUrls.NewDataset);
 
             const parametersTab = page.locator(
-                `.dataset-panel .g-radio-button__option ${CommonSelectors.RadioButtonOptionControl}[value=parameters]`,
+                `.dataset-panel .g-segmented-radio-group__option ${CommonSelectors.RadioButtonOptionControl}[value=parameters]`,
             );
 
             await expect(parametersTab).not.toBeDisabled();
