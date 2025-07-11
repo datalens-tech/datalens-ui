@@ -7,7 +7,7 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import type {CustomCommands, Spec} from 'immutability-helper';
 import update, {Context} from 'immutability-helper';
-import {omit} from 'lodash';
+import omit from 'lodash/omit';
 import type {
     DashTabItemWidget,
     DashTabItemWidgetTab,
