@@ -43,6 +43,7 @@ const getRoutes = (options?: ConfiguredDashApiPluginOptions): Plugin['routes'] =
             method: 'POST',
             path: basePath,
             validationConfig,
+            handlerName: 'dashAPIcreate',
             handler: async (req: Request, res: Response) => {
                 try {
                     const {body, ctx} = req;
@@ -66,6 +67,7 @@ const getRoutes = (options?: ConfiguredDashApiPluginOptions): Plugin['routes'] =
         {
             method: 'GET',
             path: `${basePath}/:id`,
+            handlerName: 'dashAPIget',
             handler: async (req: Request, res: Response) => {
                 try {
                     const {
@@ -101,6 +103,7 @@ const getRoutes = (options?: ConfiguredDashApiPluginOptions): Plugin['routes'] =
         {
             method: 'POST',
             path: `${basePath}/:id`,
+            handlerName: 'dashAPIupdate',
             validationConfig,
             handler: async (req: Request, res: Response) => {
                 try {
@@ -130,6 +133,7 @@ const getRoutes = (options?: ConfiguredDashApiPluginOptions): Plugin['routes'] =
         {
             method: 'DELETE',
             path: `${basePath}/:id`,
+            handlerName: 'dashAPIdelete',
             handler: async (req: Request, res: Response) => {
                 try {
                     const {
