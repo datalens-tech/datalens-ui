@@ -14,7 +14,7 @@ const PARAMS = {
     CONTROL_TITLE: 'test-control',
     CONTROL_FIELD_NAME: 'test-control-field',
     CONTROL_ITEMS: ['Dallas', 'Chicago'],
-    CHART_FIELD: 'city',
+    CHART_FIELD: 'City',
 };
 
 datalensTest.describe('Dashboards - Basic functionality', () => {
