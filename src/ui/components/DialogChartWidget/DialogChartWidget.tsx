@@ -7,6 +7,7 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import type {CustomCommands, Spec} from 'immutability-helper';
 import update, {Context} from 'immutability-helper';
+import {omit} from 'lodash';
 import type {
     DashTabItemWidget,
     DashTabItemWidgetTab,
@@ -22,7 +23,7 @@ import {Interpolate} from 'ui/components/Interpolate';
 import {TabMenu} from 'ui/components/TabMenu/TabMenu';
 import type {UpdateState} from 'ui/components/TabMenu/types';
 import {TabActionType} from 'ui/components/TabMenu/types';
-import {DL} from 'ui/constants/common';
+import {DL, URL_OPTIONS} from 'ui/constants/common';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {registry} from '../../registry';
@@ -298,7 +299,7 @@ class DialogChartWidget extends React.PureComponent<
         const {enableAutoheight} = this.props;
         const {data, tabIndex, isManualTitle, tabParams, legacyChanged} = this.state;
 
-        const {_no_controls, _embedded, ...filteredParams} = params;
+        const filteredParams = omit(params, [URL_OPTIONS.EMBEDDED, URL_OPTIONS.NO_CONTROLS]);
 
         const newTabParams = imm.update<{tabParams: StringParams}, AutoExtendCommand<StringParams>>(
             {tabParams},
