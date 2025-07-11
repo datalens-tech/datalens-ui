@@ -50,7 +50,7 @@ const getRequestId = (ctx: Request['ctx']) => ctx.get(REQUEST_ID_PARAM_NAME) || 
 
 export const proxyGetEntry = async (
     req: Request,
-    res: Response,
+    _res: Response,
     {
         usMasterToken,
         ...args
@@ -87,7 +87,7 @@ export const proxyGetEntry = async (
             return gatewayApi.usPrivate._proxyGetEntry({
                 headers,
                 args,
-                authArgs,
+                authArgs: {usMasterToken},
                 ctx,
                 requestId,
             });
@@ -198,7 +198,7 @@ export const prepareExportData = async (
 
 export const prepareImportData = async (
     req: Request,
-    res: Response,
+    _res: Response,
     {usMasterToken}: {usMasterToken: string},
 ) => {
     const {ctx} = req;
