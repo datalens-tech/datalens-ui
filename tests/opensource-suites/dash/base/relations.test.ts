@@ -3,7 +3,7 @@ import {Page} from '@playwright/test';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {openTestPage, waitForCondition} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {ConnectionsDialogQA, DashRelationTypes} from '../../../../src/shared';
+import {DashRelationTypes} from '../../../../src/shared';
 import {TestParametrizationConfig} from '../../../types/config';
 
 const SELECTORS = {
@@ -14,7 +14,7 @@ const PARAMS = {
     CONTROL_TITLE: 'test-control',
     CONTROL_FIELD_NAME: 'test-control-field',
     CONTROL_ITEMS: ['Dallas', 'Chicago'],
-    CHART_FIELD: 'city',
+    CHART_FIELD: 'City',
 };
 
 datalensTest.describe('Dashboards - Basic functionality', () => {
@@ -24,11 +24,6 @@ datalensTest.describe('Dashboards - Basic functionality', () => {
             const dashboardPage = new DashboardPage({page});
             // some page need to be loaded so we can get data of feature flag from DL var
             await openTestPage(page, '/');
-
-            const relationType = await dashboardPage.getGlobalRelationsDialogType();
-            if (relationType === null) {
-                return;
-            }
 
             await dashboardPage.createDashboard({
                 editDash: async () => {
@@ -40,22 +35,12 @@ datalensTest.describe('Dashboards - Basic functionality', () => {
 
                     await dashboardPage.addChart(config.dash.charts.ChartCityPie);
 
-                    if (relationType === 'new') {
-                        await dashboardPage.setupNewLinks({
-                            linkType: DashRelationTypes.output,
-                            firstParamName: PARAMS.CONTROL_FIELD_NAME,
-                            secondParamName: PARAMS.CHART_FIELD,
-                            selectorName: PARAMS.CONTROL_TITLE,
-                        });
-                    } else {
-                        await dashboardPage.setupLinks({
-                            linkType: ConnectionsDialogQA.TypeSelectOutputOption,
-                            chartField: PARAMS.CHART_FIELD,
-                            selectorName: PARAMS.CONTROL_TITLE,
-                        });
-                    }
-
-                    await dashboardPage.clickSaveButton();
+                    await dashboardPage.setupNewLinks({
+                        linkType: DashRelationTypes.output,
+                        firstParamName: PARAMS.CONTROL_FIELD_NAME,
+                        secondParamName: PARAMS.CHART_FIELD,
+                        selectorName: PARAMS.CONTROL_TITLE,
+                    });
                 },
             });
 

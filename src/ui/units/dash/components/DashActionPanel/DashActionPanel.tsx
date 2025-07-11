@@ -145,12 +145,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
                 onSaveAsNewClick={this.handlerSaveAsNewClick}
                 onCancelClick={this.handlerCancelEditClick}
                 onOpenDialogSettingsClick={this.openDialogSettings}
-                onOpenDialogConnectionsClick={
-                    !isEnabledFeature(Feature.HideOldRelations) ||
-                    isEnabledFeature(Feature.ShowNewRelationsButton)
-                        ? this.openDialogConnections
-                        : undefined
-                }
+                onOpenDialogConnectionsClick={this.openDialogConnections}
                 onOpenDialogTabsClick={this.openDialogTabs}
                 entryDialoguesRef={this.props.entryDialoguesRef}
                 isDraft={this.props.isDraft}
@@ -178,13 +173,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
     }
 
     openDialogSettings = () => this.props.openDialog(DIALOG_TYPE.SETTINGS);
-    openDialogConnections = () => {
-        if (isEnabledFeature(Feature.ShowNewRelationsButton)) {
-            this.props.openEmptyDialogRelations();
-        } else if (!isEnabledFeature(Feature.HideOldRelations)) {
-            this.props.openDialog(DIALOG_TYPE.CONNECTIONS);
-        }
-    };
+    openDialogConnections = () => this.props.openEmptyDialogRelations();
     openDialogTabs = () => this.props.openDialog(DIALOG_TYPE.TABS);
 
     openDialogAccess = () => {
