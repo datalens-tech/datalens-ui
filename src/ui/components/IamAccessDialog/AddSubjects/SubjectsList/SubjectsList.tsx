@@ -44,7 +44,11 @@ export const SubjectsList = ({resourceId, subjects, onUpdateSubjects}: Props) =>
     }, [directAccessBindings]);
 
     const suggestRef = React.useRef<HTMLElement>(null);
-    const [suggestOpen, setSuggestOpen] = React.useState(true);
+    const [suggestOpen, setSuggestOpen] = React.useState(false);
+
+    React.useLayoutEffect(() => {
+        setSuggestOpen(true);
+    }, []);
 
     const handleAddSubject = React.useCallback(
         (subject) => {
@@ -157,7 +161,6 @@ export const SubjectsList = ({resourceId, subjects, onUpdateSubjects}: Props) =>
                 <Icon data={Plus} height={12} width={12} />
                 {i18n('action_choose-user')}
             </Button>
-
             <Popup
                 anchorElement={suggestRef.current}
                 open={suggestOpen}
@@ -166,15 +169,18 @@ export const SubjectsList = ({resourceId, subjects, onUpdateSubjects}: Props) =>
                         setSuggestOpen(false);
                     }
                 }}
+                placement={'bottom-start'}
             >
-                <AclSubjectSuggest
-                    availableGroups={availableSubjectGroups}
-                    fetchSubjects={fetchSubjects}
-                    onSubjectChange={(subject) => {
-                        handleAddSubject(subject);
-                        setSuggestOpen(false);
-                    }}
-                />
+                <div className={b('acl-popup-content')}>
+                    <AclSubjectSuggest
+                        availableGroups={availableSubjectGroups}
+                        fetchSubjects={fetchSubjects}
+                        onSubjectChange={(subject) => {
+                            handleAddSubject(subject);
+                            setSuggestOpen(false);
+                        }}
+                    />
+                </div>
             </Popup>
 
             {subjects.length > 0 && (

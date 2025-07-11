@@ -33,6 +33,7 @@ class NavigationModal extends React.Component {
         aside: PropTypes.bool,
         hideSidebar: PropTypes.bool,
         isOnlyCollectionsMode: PropTypes.bool,
+        dialogs: PropTypes.element,
     };
     static defaultProps = {
         onCrumbClick: noop,
@@ -128,6 +129,7 @@ class NavigationModal extends React.Component {
             visible,
             hideSidebar,
             aside,
+            dialogs,
             ...props
         } = this.props;
         const {path, place} = this.state;
@@ -182,6 +184,7 @@ class NavigationModal extends React.Component {
                         />
                     </NavigationEntries>
                 </div>
+                {dialogs}
             </div>
         );
         return asideMode ? (
