@@ -10,7 +10,10 @@ const ROOT_ENV_PATH = path.resolve(__dirname, '..', '.env');
 
 dotenv.config({path: ROOT_ENV_PATH});
 
-const maxWorkers = process.env.DLCI ? 6 : Number(process.env.E2E_MAX_WORKERS || os.cpus().length);
+const maxWorkers =
+    process.env.CI === 'true'
+        ? 6
+        : parseInt(process.env.E2E_MAX_WORKERS || os.cpus().length.toString(), 10);
 
 const testMatch = process.env.E2E_TEST_MATCH
     ? `**/${process.env.E2E_TEST_MATCH}.test.ts`
@@ -18,6 +21,12 @@ const testMatch = process.env.E2E_TEST_MATCH
 
 const grep = process.env.E2E_TEST_NAME_PATTERN
     ? new RegExp(process.env.E2E_TEST_NAME_PATTERN)
+    : undefined;
+
+const grepInvert = process.env.E2E_TEST_NAME_PATTERN_INVERT
+    ? process.env.E2E_TEST_NAME_PATTERN_INVERT.trim()
+          .split('/[\n,]+/')
+          .map((pattern) => new RegExp(pattern.trim()))
     : undefined;
 
 const workers = process.env.E2E_DEBUG ? 1 : maxWorkers;
@@ -65,6 +74,7 @@ const playwrightConfig: PlaywrightTestConfig<DatalensTestFixtures> = {
     retries,
     reporter,
     grep,
+    grepInvert,
     fullyParallel: true,
     globalSetup: require.resolve(globalSetupPath),
     timeout: testTimeout,
