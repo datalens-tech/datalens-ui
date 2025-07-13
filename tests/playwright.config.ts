@@ -41,7 +41,7 @@ const slowMo = Number.isInteger(Number(process.env.E2E_SLOW_MO))
 
 const reporter: ReporterDescription[] = [
     ['html', {outputFolder: 'artifacts/report', open: 'never'}],
-    ['json', {outputFile: 'results.json'}],
+    ['json', {outputFile: './test-results/results.json'}],
     ['list'],
 ];
 
