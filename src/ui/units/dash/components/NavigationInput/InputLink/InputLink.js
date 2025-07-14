@@ -139,7 +139,7 @@ class InputLink extends React.PureComponent {
                     onKeyUp={this.onKeyUp}
                     onUpdate={(value) => this.setState({value})}
                 />
-                <div>
+                <div className={b('buttons-container')}>
                     <Button
                         view="action"
                         className={b('button')}

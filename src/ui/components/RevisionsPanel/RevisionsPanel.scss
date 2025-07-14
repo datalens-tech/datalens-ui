@@ -25,6 +25,10 @@
         .dl-header + div & {
             top: calc(#{$headerHeight} + #{$actionPanelHeight});
         }
+
+        .gn-aside-header__pane-top_opened + div & {
+            top: calc(#{$actionPanelHeight} + var(--gn-aside-top-panel-height));
+        }
     }
 
     &__text {
