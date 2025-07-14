@@ -28,9 +28,10 @@ import {
     DialogDashWidgetItemQA,
     DialogDashWidgetQA,
 } from 'shared';
-import {CustomPaletteBgColors} from 'shared/constants/widgets';
+import {CustomPaletteBgColors, CustomPaletteTextColors} from 'shared/constants/widgets';
 import {registry} from 'ui/registry';
 import {PaletteBackground} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
+import {PaletteText} from 'ui/units/dash/containers/Dialogs/components/PaletteText/PaletteText';
 
 import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
 
@@ -75,6 +76,7 @@ interface DialogTitleWidgetState {
     showInTOC?: boolean;
     autoHeight?: boolean;
     backgroundColor?: string;
+    textColor?: string;
     hint?: HintSettings;
 }
 
@@ -83,6 +85,7 @@ export interface DialogTitleWidgetFeatureProps {
     enableShowInTOC?: boolean;
     enableCustomFontSize?: boolean;
     enableCustomBgColorSelector?: boolean;
+    enableTextColorSelector?: boolean;
 }
 interface DialogTitleWidgetProps extends DialogTitleWidgetFeatureProps {
     openedItemId: string | null;
@@ -107,7 +110,8 @@ const defaultOpenedItemData: DashTabItemTitle['data'] = {
     size: FONT_SIZE_OPTIONS[0].value,
     showInTOC: true,
     autoHeight: false,
-    background: {color: 'transparent'},
+    background: {color: CustomPaletteBgColors.NONE},
+    textColor: CustomPaletteTextColors.PRIMARY,
 };
 
 function DialogTitleWidget(props: DialogTitleWidgetProps) {
@@ -117,6 +121,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         enableAutoheight = true,
         enableShowInTOC = true,
         enableCustomBgColorSelector,
+        enableTextColorSelector = false,
         theme,
         closeDialog,
         setItemData,
@@ -141,6 +146,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         showInTOC: openedItemData.showInTOC,
         autoHeight: Boolean(openedItemData.autoHeight),
         backgroundColor: openedItemData.background?.color || '',
+        textColor: openedItemData.textColor || CustomPaletteTextColors.PRIMARY,
         hint: openedItemData.hint,
     });
     const {
@@ -152,6 +158,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         hint,
         autoHeight,
         backgroundColor,
+        textColor,
         previousSelectedFontSize,
     } = state;
 
@@ -238,6 +245,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
                         enabled: backgroundColor !== CustomPaletteBgColors.NONE,
                         color: backgroundColor,
                     },
+                    textColor,
                     hint,
                 },
             });
@@ -257,6 +265,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         showInTOC,
         autoHeight,
         backgroundColor,
+        textColor,
         closeDialog,
         hint,
     ]);
@@ -285,6 +294,10 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
 
     const handleHasBackgroundSelected = React.useCallback((color: string) => {
         setState((prevState) => ({...prevState, backgroundColor: color}));
+    }, []);
+
+    const handleTextColorChanged = React.useCallback((color: string) => {
+        setState((prevState) => ({...prevState, textColor: color}));
     }, []);
 
     const inputRef: React.Ref<HTMLInputElement> = React.useRef(null);
@@ -383,6 +396,18 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
                         enableCustomBgColorSelector={enableCustomBgColorSelector}
                     />
                 </FormRow>
+                {enableTextColorSelector && (
+                    <FormRow
+                        className={b('row')}
+                        label={i18n('dash.title-dialog.edit', 'label_text-color')}
+                    >
+                        <PaletteText
+                            color={textColor}
+                            theme={theme}
+                            onSelect={handleTextColorChanged}
+                        />
+                    </FormRow>
+                )}
                 <FormRow className={b('row')} label={i18n('dash.widget-dialog.edit', 'field_hint')}>
                     <div className={b('settings-container')}>
                         <Checkbox

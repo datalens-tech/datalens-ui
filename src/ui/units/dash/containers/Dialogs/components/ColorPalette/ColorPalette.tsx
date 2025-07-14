@@ -85,6 +85,8 @@ type PaleteListProps = {
     mainPresetOptions: string[];
     paletteOptions: string[];
     theme?: RealTheme;
+    showItemsBorder?: boolean;
+    paletteColumns?: number;
 };
 
 function PaletteList(props: PaleteListProps) {
@@ -95,6 +97,8 @@ function PaletteList(props: PaleteListProps) {
         mainPresetOptions,
         paletteOptions,
         theme,
+        showItemsBorder,
+        paletteColumns = 7,
     } = props;
 
     const [customColorInputEnabled, setCustomColorInputEnabled] = React.useState(
@@ -121,6 +125,7 @@ function PaletteList(props: PaleteListProps) {
                         isSelected={selected}
                         ref={selected ? previewRef : undefined}
                         theme={theme}
+                        classNameMod={showItemsBorder ? 'with-border' : undefined}
                     />
                 </div>
             ),
@@ -204,7 +209,7 @@ function PaletteList(props: PaleteListProps) {
             )}
             <Palette
                 className={b('palette')}
-                columns={7}
+                columns={paletteColumns}
                 options={options}
                 onUpdate={handleSelectColor}
                 multiple={false}
@@ -222,6 +227,8 @@ type ColorPaletteProps = {
     mainPresetOptions: string[];
     paletteOptions: string[];
     theme?: RealTheme;
+    showItemsBorder?: boolean;
+    paletteColumns?: number;
 };
 
 export function ColorPalette({
@@ -231,6 +238,8 @@ export function ColorPalette({
     mainPresetOptions,
     paletteOptions,
     theme,
+    showItemsBorder,
+    paletteColumns,
 }: ColorPaletteProps) {
     const [selectedColor, setSelectedColor] = React.useState<string>(
         color || CustomPaletteBgColors.NONE,
@@ -280,6 +289,8 @@ export function ColorPalette({
                     mainPresetOptions={mainPresetOptions}
                     paletteOptions={paletteOptions}
                     theme={theme}
+                    showItemsBorder={showItemsBorder}
+                    paletteColumns={paletteColumns}
                 />
             </Popup>
         </div>
