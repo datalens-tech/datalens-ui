@@ -18,6 +18,7 @@ import {actualizeAndSetUpdates} from '../../../../../actions/preview';
 import DNDContainer from '../../../../../components/DND/DNDContainer';
 import PlaceholderActionIcon from '../../../../../components/PlaceholderActionIcon/PlaceholderActionIcon';
 import {ITEM_TYPES} from '../../../../../constants';
+import {canAddParamToPlaceholder} from '../../../../../utils/placeholder';
 import type {AddableField} from '../../AddField/AddField';
 import AddFieldContainer from '../../AddField/AddField';
 
@@ -55,7 +56,6 @@ type Props = StateProps &
         placeholderTooltipIcon?: IconData;
         transform?: (item: Field, action?: 'replace') => Promise<Field>;
         showHideLabel?: boolean;
-        isDashboardPlaceholder?: boolean;
         customPlaceholderActions?: CustomPlaceholderAction[];
         disableAddField?: boolean;
         addFieldItems?: Field[];
@@ -229,8 +229,8 @@ class PlaceholderComponent extends React.PureComponent<Props> {
 
     private checkAllowed = (item: Field) => {
         // We can add the parameter to any section
-        if (isParameter(item) && !this.props.isDashboardPlaceholder) {
-            return true;
+        if (isParameter(item)) {
+            return canAddParamToPlaceholder({field: item, placeholderId: this.props.id});
         }
 
         return this.props.checkAllowed(item);

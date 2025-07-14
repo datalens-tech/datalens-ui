@@ -1,5 +1,12 @@
-import type {AxisMode, Field, Placeholder, PlaceholderSettings, ServerChartsConfig} from 'shared';
-import {getXAxisMode, isFieldHierarchy} from 'shared';
+import type {
+    AxisMode,
+    Field,
+    Placeholder,
+    PlaceholderSettings,
+    ServerChartsConfig,
+    ServerField,
+} from 'shared';
+import {PlaceholderId, getXAxisMode, isDateField, isFieldHierarchy, isNumberField} from 'shared';
 import {SETTINGS} from 'ui/constants/visualizations';
 
 type GetAxisModePlaceholderSettings = {
@@ -68,4 +75,22 @@ export function getPlaceholderAxisModeMap(args: {placeholder: Placeholder; axisM
     return fields.reduce((acc, field) => {
         return Object.assign({}, acc, {[field.guid]: axisMode});
     }, axisModeMap);
+}
+
+export function canAddParamToPlaceholder(args: {field: ServerField; placeholderId: string}) {
+    const {field, placeholderId} = args;
+
+    const forbiddenPlaceholderIds: string[] = [
+        PlaceholderId.DashboardFilters,
+        PlaceholderId.DashboardParameters,
+    ];
+    if (forbiddenPlaceholderIds.includes(placeholderId)) {
+        return false;
+    }
+
+    if (!isNumberField(field) && !isDateField(field)) {
+        return ![PlaceholderId.Y, PlaceholderId.Y2].includes(placeholderId as PlaceholderId);
+    }
+
+    return true;
 }

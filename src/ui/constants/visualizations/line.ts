@@ -1,9 +1,10 @@
 import {ArrowDown, ArrowRight, ArrowUp} from '@gravity-ui/icons';
-import type {Field, GraphShared, Placeholder, Shared} from 'shared';
-import {AxisNullsMode, WizardVisualizationId} from 'shared';
+import type {Field, GraphShared, Placeholder, ServerField, Shared} from 'shared';
+import {AxisNullsMode, PlaceholderId, WizardVisualizationId} from 'shared';
 import {checkAllowedAreaSort} from 'units/wizard/utils/helpers';
 import {prepareFieldToMeasureTransformation} from 'units/wizard/utils/visualization';
 
+import {canAddParamToPlaceholder} from '../../units/wizard/utils/placeholder';
 import {
     lineCommonCheckColor,
     linearCheckColor,
@@ -68,6 +69,9 @@ const LineYPlaceholder = {
         axisVisibility: 'show',
     },
     transform: prepareFieldToMeasureTransformation,
+    checkAllowed: (field: ServerField) => {
+        return canAddParamToPlaceholder({field, placeholderId: PlaceholderId.Y});
+    },
 };
 
 export const LINE_VISUALIZATION: GraphShared['visualization'] = {
