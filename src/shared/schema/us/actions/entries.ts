@@ -3,6 +3,7 @@ import {omit, uniqBy} from 'lodash';
 import {
     DL_COMPONENT_HEADER,
     DlComponentHeader,
+    TIMEOUT_60_SEC,
     TIMEOUT_90_SEC,
     US_MASTER_TOKEN_HEADER,
     WORKBOOK_ID_HEADER,
@@ -240,6 +241,7 @@ export const entriesActions = {
             }
             return {body, headers};
         },
+        timeout: TIMEOUT_60_SEC,
     }),
     copyEntry: createAction<CopyEntryResponse, CopyEntryArgs>({
         method: 'POST',
@@ -279,6 +281,7 @@ export const entriesActions = {
         method: 'POST',
         path: ({entryId}) => `${PATH_PREFIX}/entries/${filterUrlFragment(entryId)}/rename`,
         params: ({name}, headers) => ({body: {name}, headers}),
+        timeout: TIMEOUT_60_SEC,
     }),
     createFolder: createAction<CreateFolderResponse, CreateFolderArgs>({
         method: 'POST',

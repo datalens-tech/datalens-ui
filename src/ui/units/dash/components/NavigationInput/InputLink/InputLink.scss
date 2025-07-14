@@ -8,6 +8,10 @@
         display: flex;
     }
 
+    &__buttons-container {
+        display: flex;
+    }
+
     &__button {
         &:not(:last-child) {
             margin-right: var(--g-spacing-2);
