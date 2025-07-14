@@ -1,9 +1,6 @@
 export enum Feature {
     ChartkitAlerts = 'chartkitAlerts',
     UseConfigurableChartkit = 'UseConfigurableChartkit',
-    HideOldRelations = 'hideOldRelations',
-    // Show new relations button in navigation action panel
-    ShowNewRelationsButton = 'ShowNewRelationsButton',
     AsideHeaderEnabled = 'AsideHeaderEnabled',
     /** Enable redesign of dash controls */
     DashFloatControls = 'DashFloatControls',
