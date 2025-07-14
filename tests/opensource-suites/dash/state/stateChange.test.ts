@@ -1,13 +1,12 @@
 import {Page, Response, expect} from '@playwright/test';
 
-import {clickSelectOption, openTestPage, slct, isEnabledFeature} from '../../../utils';
+import {clickSelectOption, openTestPage, slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {TestParametrizationConfig} from '../../../types/config';
 import {getUrlStateParam} from '../../../suites/dash/helpers';
 import {CommonUrls} from '../../../page-objects/constants/common-urls';
 import {ChartkitMenuDialogsQA, ControlQA, ControlType, WizardType} from '../../../../src/shared';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {Feature} from '../../../../src/shared/types';
 
 const SELECTORS = {
     TAB_SELECTOR_TEXT: '.yc-select-control__tokens-text',
@@ -405,15 +404,14 @@ datalensTest.describe('Dashboards - States with tabs', () => {
                 `${slct(ControlQA.controlSelect)} >> ${SELECTORS.TAB_SELECTOR_TEXT}`,
             );
             let selectorText = await selector?.innerText();
-            // Check that the selector value has been reset when switching back
-            const isEmptySelectorFeatureEnabled = await isEnabledFeature(
-                page,
-                Feature.EmptySelector,
+
+            // EMPTY_SELECTOR_VAL_FULL_TEXT for common selectors with EmptySelector is enabled
+            // EMPTY_SELECTOR_VAL_TEXT for editor selectors and common selectors with EmptySelector is disabled
+            expect(selectorText).toMatch(
+                new RegExp(
+                    `${PARAMS.EMPTY_SELECTOR_VAL_FULL_TEXT}|${PARAMS.EMPTY_SELECTOR_VAL_TEXT}`,
+                ),
             );
-            const emptySelectorText = isEmptySelectorFeatureEnabled
-                ? PARAMS.EMPTY_SELECTOR_VAL_FULL_TEXT
-                : PARAMS.EMPTY_SELECTOR_VAL_TEXT;
-            expect(selectorText).toEqual(emptySelectorText);
 
             // We return to the browser by clicking the back button
             urlParam = await waitBackGetUrlStateParam(page);
