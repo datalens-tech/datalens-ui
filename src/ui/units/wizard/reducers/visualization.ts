@@ -536,13 +536,8 @@ export function visualization(
                             return item.type === 'MEASURE';
                         });
 
-                        if (dimensions.length === 1) {
-                            placeholders[1].items = [dimensions[0]];
-                        }
-
-                        if (dimensions.length > 1) {
-                            placeholders[0].items = [dimensions[0]];
-                            placeholders[1].items = [dimensions[1]];
+                        if (dimensions.length > 0) {
+                            placeholders[1].items = dimensions;
                         }
 
                         if (measures.length > 0) {
