@@ -125,7 +125,6 @@ function PaletteList(props: PaleteListProps) {
                         isSelected={selected}
                         ref={selected ? previewRef : undefined}
                         theme={theme}
-                        classNameMod={showItemsBorder ? 'with-border' : undefined}
                     />
                 </div>
             ),
@@ -145,6 +144,7 @@ function PaletteList(props: PaleteListProps) {
         <div className={b('palette-list')}>
             <Flex gap={2} className={b('preset')}>
                 {mainPresetOptions.map((colorItem) => {
+                    const previewColorWithSlideTheme = colorItem !== CustomPaletteBgColors.NONE;
                     const selected = colorItem === selectedColor;
                     return (
                         <div key={colorItem} className={b('highlight-wrapper', {selected})}>
@@ -162,7 +162,7 @@ function PaletteList(props: PaleteListProps) {
                                     color={colorItem}
                                     isSelected={selected}
                                     ref={selected ? previewRef : undefined}
-                                    theme={theme}
+                                    theme={previewColorWithSlideTheme ? theme : undefined}
                                 />
                                 {colorItem in PALETTE_HINTS && (
                                     <ActionTooltip
@@ -186,7 +186,10 @@ function PaletteList(props: PaleteListProps) {
                         <ActionTooltip title={PALETTE_HINTS['custom-btn']}>
                             <Button
                                 view="flat"
-                                className={b('custom-palette-bg-btn', {'with-border': true})}
+                                className={b('custom-palette-bg-btn', {
+                                    'with-border': true,
+                                    'edit-btn': true,
+                                })}
                                 onClick={() => setCustomColorInputEnabled(true)}
                             >
                                 <Icon data={PencilToLine} size={16} />
@@ -205,6 +208,7 @@ function PaletteList(props: PaleteListProps) {
                             onSelect(val);
                         }
                     }}
+                    theme={theme}
                 />
             )}
             <Palette
@@ -213,7 +217,7 @@ function PaletteList(props: PaleteListProps) {
                 options={options}
                 onUpdate={handleSelectColor}
                 multiple={false}
-                optionClassName={b('palette-list-btn')}
+                optionClassName={b('palette-list-btn', {'with-border': showItemsBorder})}
                 qa={DashCommonQa.WidgetSelectBackgroundPalleteContainer}
             />
         </div>
@@ -254,6 +258,8 @@ export function ColorPalette({
         onSelect(selectedColor);
     }, [onSelect, selectedColor]);
 
+    const previewColorWithSlideTheme = selectedColor !== CustomPaletteBgColors.NONE;
+
     return (
         <div className={b()}>
             <Tooltip content={i18n('dash.palette-background', 'tooltip_click-to-select')}>
@@ -267,7 +273,7 @@ export function ColorPalette({
                         color={selectedColor}
                         isPreview={true}
                         qa={DashCommonQa.WidgetSelectBackgroundButton}
-                        theme={theme}
+                        theme={previewColorWithSlideTheme ? theme : undefined}
                     />
                 </Button>
             </Tooltip>
