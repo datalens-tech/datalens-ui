@@ -23,6 +23,7 @@
     &__component {
         padding: 0 10px;
         max-width: 100%;
+        min-height: var(--dl-navigation-breadcrumbs-height);
 
         &_showMenu {
             max-width: calc(100% - 40px);

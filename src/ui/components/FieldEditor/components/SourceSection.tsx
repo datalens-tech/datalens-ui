@@ -153,7 +153,10 @@ const SourceSection: React.FC<SourceSectionProps> = (props) => {
             <div className={b('row')}>
                 <div className={b('label')}>
                     {i18n('label_field-id')}
-                    <HelpMark className={b('source-section-hint')}>
+                    <HelpMark
+                        popoverProps={{style: {maxWidth: 300}}}
+                        className={b('source-section-hint')}
+                    >
                         {i18n('label_field-id-hint')}
                     </HelpMark>
                 </div>

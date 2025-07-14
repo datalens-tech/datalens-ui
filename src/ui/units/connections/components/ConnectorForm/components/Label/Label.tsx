@@ -57,7 +57,7 @@ export const Label = ({text, helpText, align = 'center'}: LabelProps) => {
             <span className={b('inner-content')}>
                 <LabelText text={text} />
                 {helpText && (
-                    <HelpMark className={b('help-text')}>
+                    <HelpMark popoverProps={{style: {maxWidth: 300}}} className={b('help-text')}>
                         <MarkdownItem
                             text={helpText}
                             fallback={<Loader size="s" />}

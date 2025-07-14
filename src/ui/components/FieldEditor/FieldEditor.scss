@@ -67,7 +67,9 @@
     }
 
     &__source-section-hint {
+        position: relative;
         left: 5px;
+        vertical-align: text-bottom;
     }
 
     &__row {
