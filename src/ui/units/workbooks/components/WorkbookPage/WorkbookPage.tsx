@@ -7,7 +7,7 @@ import {ViewError} from 'components/ViewError/ViewError';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {Redirect, useLocation, useParams} from 'react-router-dom';
-import {Feature} from 'shared';
+import {Feature, WorkbookPageQa} from 'shared';
 import {WORKBOOK_STATUS} from 'shared/constants/workbooks';
 import {DL} from 'ui/constants/common';
 import type {AppDispatch} from 'ui/store';
@@ -152,7 +152,7 @@ export const WorkbookPage = () => {
     };
 
     return (
-        <div className={b()}>
+        <div className={b()} data-qa={WorkbookPageQa.Layout}>
             {showContentLoader ? (
                 <SmartLoader size="l" />
             ) : (

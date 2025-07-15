@@ -1,11 +1,10 @@
 import {Page} from '@playwright/test';
-import {ConnectionsDialogQA} from '../../../../src/shared/constants';
-import {isEnabledFeature, openTestPage, slct} from '../../../utils';
+import {DashCommonQa} from '../../../../src/shared/constants';
+import {openTestPage, slct} from '../../../utils';
 
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {RobotChartsDashboardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {Feature} from '../../../../src/shared';
 
 datalensTest.describe('Dashboards - Links', () => {
     datalensTest(
@@ -20,20 +19,15 @@ datalensTest.describe('Dashboards - Links', () => {
                 RobotChartsDashboardUrls.DashboardWithLongContentAndBrokenChart,
             );
 
-            const hideOldRelations = await isEnabledFeature(page, Feature.HideOldRelations);
-            if (hideOldRelations) {
-                return;
-            }
-
             // enter the edit mode and open the links window
             await dashboardPage.openDashConnections();
 
             // checking the loading of the select
-            await dashboardPage.waitForSelector(slct(ConnectionsDialogQA.ElementSelect));
+            await dashboardPage.waitForSelector(slct(DashCommonQa.RelationsWidgetSelect));
 
             // closing the links window
             const cancelButton = await dashboardPage.waitForSelector(
-                slct(ConnectionsDialogQA.Cancel),
+                slct(DashCommonQa.RelationsCancelBtn),
             );
             await cancelButton.click();
 

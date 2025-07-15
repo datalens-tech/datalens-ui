@@ -24,15 +24,17 @@
             display: flex;
             align-items: center;
             max-height: 100%;
-        }
 
-        &_title:hover {
-            .dashkit-plugin-title-container__anchor {
-                opacity: 1;
-            }
+            &:hover {
+                .dashkit-plugin-title-container__anchor {
+                    opacity: 1;
+                }
 
-            .dashkit-plugin-title-container_with-absolute-anchor::after {
-                @include with-fade-effect;
+                .dashkit-plugin-title-container_with-absolute-anchor {
+                    [data-plugin-root-el='title'] {
+                        @include text-with-fade-effect(40px);
+                    }
+                }
             }
         }
     }

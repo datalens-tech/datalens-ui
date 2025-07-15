@@ -11,6 +11,7 @@ import throttle from 'lodash/throttle';
 import {useDispatch, useSelector} from 'react-redux';
 import {Link, useLocation} from 'react-router-dom';
 import {TableOfContentQa} from 'shared';
+import {MarkdownHelpPopover} from 'ui/components/MarkdownHelpPopover/MarkdownHelpPopover';
 import {DL} from 'ui/constants';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
 import {
@@ -203,6 +204,20 @@ const TableOfContent = React.memo(
                                     key={item.id}
                                 >
                                     {item.title}
+                                    {item.hint && (
+                                        <MarkdownHelpPopover
+                                            markdown={item.hint}
+                                            className={b('hint')}
+                                            tooltipClassName={b('hint-tooltip')}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                e.preventDefault();
+
+                                                // open popover on click
+                                                return true;
+                                            }}
+                                        />
+                                    )}
                                 </Link>
                             ))}
                         </div>

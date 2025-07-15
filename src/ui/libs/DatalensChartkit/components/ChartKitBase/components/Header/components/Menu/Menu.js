@@ -52,6 +52,7 @@ export class Menu extends React.PureComponent {
         widget: PropTypes.object,
         widgetDataRef: PropTypes.object,
         loadedData: PropTypes.object,
+        chartRevIdRef: PropTypes.object,
         error: PropTypes.object,
         propsData: PropTypes.object.isRequired,
         requestId: PropTypes.string.isRequired,
@@ -236,7 +237,7 @@ export class Menu extends React.PureComponent {
                             }
                             iconStart={item.icon}
                         >
-                            {item.text}
+                            {item.children}
                         </ListMenu.Item>
                     ))}
                 </ListMenu>
@@ -250,6 +251,7 @@ export class Menu extends React.PureComponent {
             widget,
             widgetDataRef,
             loadedData,
+            chartRevIdRef,
             requestId,
             widgetRendering,
             yandexMapAPIWaiting,
@@ -271,6 +273,7 @@ export class Menu extends React.PureComponent {
             widget,
             widgetDataRef,
             loadedData,
+            chartRevIdRef,
             propsData,
             requestId,
             widgetRendering,

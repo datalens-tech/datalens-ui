@@ -427,7 +427,7 @@ export const getFlatSortedItems = (
 };
 
 type LocalTab = Pick<DashTab, 'id' | 'title'> & {
-    items: {id: DashTabItemBase['id']; title: string; order: number}[];
+    items: {id: DashTabItemBase['id']; title: string; order: number; hint?: string}[];
 };
 
 // Lodash.memoize takes into account only the first argument!
@@ -445,10 +445,14 @@ export const memoizedGetLocalTabs = memoize((tabs: DashTab[]) => {
 
                     return false;
                 })
-                .map(({id: itemId, data, orderId}) => ({
+                .map(({id: itemId, data, orderId, type}) => ({
                     id: itemId,
                     title: 'text' in data ? data.text : '',
                     order: orderId || 0,
+                    hint:
+                        type === DashTabItemType.Title && data.hint?.enabled
+                            ? data.hint?.text
+                            : undefined,
                 }))
                 .sort((itemA, itemB) => itemA.order - itemB.order),
         });

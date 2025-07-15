@@ -1,9 +1,6 @@
 export enum Feature {
     ChartkitAlerts = 'chartkitAlerts',
     UseConfigurableChartkit = 'UseConfigurableChartkit',
-    HideOldRelations = 'hideOldRelations',
-    // Show new relations button in navigation action panel
-    ShowNewRelationsButton = 'ShowNewRelationsButton',
     AsideHeaderEnabled = 'AsideHeaderEnabled',
     /** Enable redesign of dash controls */
     DashFloatControls = 'DashFloatControls',
@@ -30,7 +27,6 @@ export enum Feature {
     CollectionsAccessEnabled = 'CollectionsAccessEnabled',
     DashBoardAccessDescription = 'DashBoardAccessDescription',
     DashBoardSupportDescription = 'DashBoardSupportDescription',
-    DashAutorefresh = 'DashAutorefresh',
     // Show request body in the Inspector dialog
     ShowInspectorDetails = 'ShowInspectorDetails',
     // Prohibiting the serialization of functions in the chart configs
@@ -65,8 +61,6 @@ export enum Feature {
     EnableEmbedsInDialogShare = 'EnableEmbedsInDialogShare',
     EnableEntryMenuItemShare = 'EnableEntryMenuItemShare',
     NewTableWidgetForCE = 'NewTableWidgetForCE',
-    /** Enable undo/redo buttons & hotkeys in datasets */
-    EnableEditHistoryDatasets = 'EnableEditHistoryDataset',
     /** Additional chart config for making requests by widget events */
     ChartActions = 'ChartActions',
     /** Disable the use of html and function in chart configs */
@@ -88,8 +82,6 @@ export enum Feature {
     EnableDashAutoFocus = 'EnableDashAutoFocus',
     /** Enable using template params in datasets sources */
     EnableDsTemplateParams = 'EnableDsTemplateParams',
-    /** Enable Dash undo\redo */
-    EnableDashUndoRedo = 'EnableDashUndoRedo',
     /** Enable public gallery unit */
     EnablePublicGallery = 'EnablePublicGallery',
     /** Enable new secure parameters behavior */

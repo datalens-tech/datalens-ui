@@ -1,5 +1,6 @@
 import React from 'react';
 
+import type {ChartKitRef} from '@gravity-ui/chartkit';
 import {
     pickActionParamsFromParams,
     pickExceptActionParamsFromParams,
@@ -39,6 +40,7 @@ import type {
     ChartWidgetData,
     ChartWidgetProps,
     ChartWidgetPropsWithContext,
+    ChartWidgetWithWrapRefProps,
     CurrentRequestState,
     DataProps,
 } from './types';
@@ -481,7 +483,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         [tabs, isLoading],
     );
 
-    React.useImperativeHandle<unknown, unknown>(
+    React.useImperativeHandle<ChartKit | ChartKitRef, ChartWidgetWithWrapRefProps>(
         forwardedRef,
         () => ({
             props,
@@ -655,6 +657,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 rootNodeRef={rootNodeRef}
                 backgroundColor={style?.backgroundColor}
                 needRenderContentControls={!showFloatControls}
+                chartRevIdRef={null}
                 {...commonHeaderContentProps}
             />
             {Boolean(description || loadedData?.publicAuthor) && (

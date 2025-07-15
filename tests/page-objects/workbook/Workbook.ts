@@ -14,6 +14,7 @@ import {EditEntityButton} from './EditEntityButton';
 import {FiltersPO} from './Filters';
 import {NavigationMinimalPopup} from './NavigationMinimalPopup';
 import {DialogCollectionStructure} from './DialogCollectionStructure';
+import {DashEntryQa} from '../../../src/shared';
 
 export class Workbook {
     actionsMoreDropdown: ActionsMoreDropdown;
@@ -47,6 +48,10 @@ export class Workbook {
         return new FiltersPO({page: this.page, parent: this.root});
     }
 
+    async checkWorkbookPage() {
+        await this.page.waitForSelector(slct(WorkbookPageQa.Layout));
+    }
+
     async openE2EWorkbookPage() {
         await openTestPage(this.page, WorkbooksUrls.E2EWorkbook);
     }
@@ -63,5 +68,24 @@ export class Workbook {
 
         await menuDropDownBtn.focus();
         await menuDropDownBtn.click();
+    }
+
+    async findFirstItemByScope(scope: string) {
+        const chunk = this.page.locator(slct(`${WorkbookPageQa.ChunkScope}${scope}`));
+
+        return chunk.locator(slct(WorkbookPageQa.ListItem)).first();
+    }
+
+    async clickFirstDashboard() {
+        const firstDashboard = await this.findFirstItemByScope('dash');
+
+        const dashName = await firstDashboard
+            .locator(slct(WorkbookPageQa.ListItemName))
+            .textContent();
+
+        await firstDashboard.click();
+
+        // check that the dashboard has loaded by its name
+        await this.page.waitForSelector(`${slct(DashEntryQa.EntryName)} >> text=${dashName}`);
     }
 }

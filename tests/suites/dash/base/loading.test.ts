@@ -1,19 +1,12 @@
 import {Page} from '@playwright/test';
-import {ConnectionsDialogQA} from '../../../../src/shared/constants';
+import {DashCommonQa} from '../../../../src/shared/constants';
 
 import {COMMON_CHARTKIT_SELECTORS} from '../../../page-objects/constants/chartkit';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {
-    getUniqueTimestamp,
-    isEnabledFeature,
-    openTestPage,
-    slct,
-    waitForCondition,
-} from '../../../utils';
+import {getUniqueTimestamp, openTestPage, slct, waitForCondition} from '../../../utils';
 import {RobotChartsDashboardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {COMMON_DASH_SELECTORS} from '../constants';
-import {Feature} from '../../../../src/shared';
 
 const TEXTS = {
     TAB2: 'Tab 2',
@@ -128,10 +121,6 @@ datalensTest.describe('Dashboards - Widget loading', () => {
             const dashboardPage = new DashboardPage({page});
             await openTestPage(page, RobotChartsDashboardUrls.DashboardWithLongContentBeforeChart);
 
-            const hideOldRelations = await isEnabledFeature(page, Feature.HideOldRelations);
-            if (hideOldRelations) {
-                return;
-            }
             await dashboardPage.copyDashboard(dashName);
 
             // we set small viewport sizes for a more stable check
@@ -153,7 +142,7 @@ datalensTest.describe('Dashboards - Widget loading', () => {
             // waiting for the chart to load
             await initPromise;
 
-            await page.click(slct(ConnectionsDialogQA.Cancel));
+            await page.click(slct(DashCommonQa.RelationsCancelBtn));
 
             // check that the widget content has appeared
             await page.waitForSelector(`.${COMMON_CHARTKIT_SELECTORS.graph}`);

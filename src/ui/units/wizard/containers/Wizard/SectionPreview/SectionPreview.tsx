@@ -22,8 +22,10 @@ import {
 } from 'units/wizard/selectors/preview';
 
 import {ChartWrapper} from '../../../../../components/Widgets/Chart/ChartWidgetWithProvider';
-import type {ChartProviderPropsWithRefProps} from '../../../../../components/Widgets/Chart/types';
-import type {ChartKit} from '../../../../../libs/DatalensChartkit/ChartKit/ChartKit';
+import type {
+    ChartProviderPropsWithRefProps,
+    ChartWithWrapRefProps,
+} from '../../../../../components/Widgets/Chart/types';
 import type {
     ChartKitBaseOnLoadProps,
     ChartKitLoadSuccess,
@@ -54,7 +56,7 @@ type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
 
 interface Props extends StateProps, DispatchProps {
-    chartKitRef: React.RefObject<ChartKit>;
+    chartKitRef: React.RefObject<ChartWithWrapRefProps>;
 }
 
 class SectionPreview extends Component<Props> {
@@ -134,6 +136,8 @@ class SectionPreview extends Component<Props> {
         const {configType, config, widget, previewEntryId, datasetError, chartKitRef, workbookId} =
             this.props;
 
+        const revId = widget?.revId;
+
         if (datasetError) {
             return (
                 <div className="dataset-error-container">
@@ -164,6 +168,7 @@ class SectionPreview extends Component<Props> {
                 <ChartWrapper
                     usageType="chart"
                     id={previewEntryId ? previewEntryId : widget ? widget.entryId : ''}
+                    revId={revId}
                     params={params}
                     config={editMode}
                     onChartRender={this.handleLoad}

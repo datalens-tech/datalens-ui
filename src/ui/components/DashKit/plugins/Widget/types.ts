@@ -1,9 +1,10 @@
 import type React from 'react';
 
+import type {ChartKitRef} from '@gravity-ui/chartkit';
 import type {ConfigItem, ConfigItemWithTabs, PluginWidgetProps} from '@gravity-ui/dashkit';
 import type {DebouncedFunc} from 'lodash';
 import type {StringParams} from 'shared';
-import type {ChartsChartKit} from 'ui/libs/DatalensChartkit/types/charts';
+import type {ChartKit} from 'ui/libs/DatalensChartkit/ChartKit/ChartKit';
 
 import type {ChartKitBaseOnLoadProps} from '../../../../libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import type {ChartsData} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
@@ -34,7 +35,7 @@ export type WidgetPluginData = ConfigItem['data'];
 export type WidgetPluginDataWithTabs = ConfigItemWithTabs['data'] & {tabs: Array<CurrentTab>};
 
 export type WidgetPluginProps = Omit<PluginWidgetProps, 'data'> & {
-    forwardedRef: React.RefObject<ChartsChartKit>;
+    forwardedRef: React.RefObject<ChartKit | ChartKitRef>;
     isNewRelations?: boolean;
     data: WidgetPluginDataWithTabs | WidgetPluginData;
     getMarkdown?: (props: {text: string}) => Promise<{result: string; meta?: object}>;

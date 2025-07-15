@@ -87,6 +87,7 @@ export function applyPluginRoutes({
 
             const appRoute: Omit<ExtendedAppRouteDescription, 'route'> = {
                 handler,
+                handlerName: pluginRoute.handlerName,
                 beforeAuth,
                 afterAuth,
             };
