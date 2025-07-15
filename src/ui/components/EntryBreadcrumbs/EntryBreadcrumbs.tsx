@@ -2,7 +2,7 @@ import React from 'react';
 
 import {Breadcrumbs} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {Link, useHistory, useLocation} from 'react-router-dom';
+import {useHistory, useLocation} from 'react-router-dom';
 import type {
     BreadcrumbsItem,
     EntryBreadcrumbsProps,
@@ -33,40 +33,35 @@ export const EntryBreadcrumbs = (props: EntryBreadcrumbsProps) => {
     }
 
     return (
-        <div style={{overflow: 'hidden'}}>
-            <Breadcrumbs showRoot className={b()} endContent={endContent}>
-                {breadcrumbsItems.map((item, index) => {
-                    let content: React.ReactNode = null;
+        <Breadcrumbs showRoot className={b()} endContent={endContent}>
+            {breadcrumbsItems.map((item, index) => {
+                const last = index === breadcrumbsItems.length - 1;
+                let content: React.ReactNode = null;
 
-                    if (index === 0 && !entry?.workbookId && renderRootContent) {
-                        content = renderRootContent(item);
-                    }
+                if (index === 0 && !entry?.workbookId && renderRootContent) {
+                    content = renderRootContent(item);
+                }
 
-                    content = item.path ? (
-                        <Link
-                            to={item.path}
-                            className={b('item', {link: true})}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                            }}
-                        >
-                            {item.text}
-                        </Link>
-                    ) : (
-                        <div className={b('item')}>{item.text}</div>
-                    );
+                content = item.text;
 
-                    return (
-                        <Breadcrumbs.Item
-                            key={index}
-                            onClick={item.action}
-                            className={b('item', {link: Boolean(item.path)})}
-                        >
-                            {content}
-                        </Breadcrumbs.Item>
-                    );
-                })}
-            </Breadcrumbs>
-        </div>
+                return (
+                    <Breadcrumbs.Item
+                        key={index}
+                        onClick={(event) => {
+                            if (!event.metaKey && item.action) {
+                                event.preventDefault();
+
+                                item.action(event);
+                            }
+                        }}
+                        className={b('item', {link: Boolean(item.path)})}
+                        disabled={last}
+                        href={item.path}
+                    >
+                        {content}
+                    </Breadcrumbs.Item>
+                );
+            })}
+        </Breadcrumbs>
     );
 };

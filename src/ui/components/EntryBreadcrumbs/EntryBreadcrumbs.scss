@@ -3,4 +3,8 @@
 
 .entry-panel-breadcrumbs {
     margin-right: 5px;
+    flex-grow: 1;
+    overflow: hidden;
+    height: 28px;
+    align-items: center;
 }
