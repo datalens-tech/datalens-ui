@@ -1,6 +1,7 @@
 .markdown-help-popover {
     margin-left: 4px;
     vertical-align: top;
+    align-self: center;
 
     &__content {
         max-height: calc(100vh - 34px);
