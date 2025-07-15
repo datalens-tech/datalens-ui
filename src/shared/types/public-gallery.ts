@@ -23,11 +23,12 @@ export type GalleryItem = {
     publicUrl?: string;
     partnerId?: string;
     data?: string;
+    hidden?: boolean;
 };
 
 export type GalleryItemShort = Pick<
     GalleryItem,
-    'createdAt' | 'createdBy' | 'id' | 'images' | 'labels' | 'title'
+    'createdAt' | 'createdBy' | 'id' | 'hidden' | 'images' | 'labels' | 'title'
 > & {
     canBeUsed: boolean;
 };
