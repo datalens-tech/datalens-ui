@@ -5,7 +5,6 @@ import {Button, HelpMark, Icon, useFileInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {ConnectionsBaseQA} from 'shared';
-import {helpMarkDefaultProps} from 'ui/constants';
 
 import {useFileContext} from '../context';
 import {getAcceptedExtensions} from '../utils';
@@ -29,7 +28,7 @@ export const AddFileButton = () => {
                 <Icon data={Plus} size={ICON_SIZE} />
                 <span>{i18n('button_add-file')}</span>
             </Button>
-            <HelpMark {...helpMarkDefaultProps}>{hintContent}</HelpMark>
+            <HelpMark>{hintContent}</HelpMark>
         </div>
     );
 };

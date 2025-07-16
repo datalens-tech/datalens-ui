@@ -4,7 +4,7 @@ import {HelpMark} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
 import {I18n} from '../../../../../../i18n';
-import {Interpolate, helpMarkDefaultProps} from '../../../../../../ui';
+import {Interpolate} from '../../../../../../ui';
 import type {FormOptions} from '../../../store/types';
 
 const b = block('source-editor-dialog');
@@ -45,7 +45,7 @@ const RegularTooltip: React.FC<RegularTooltipProps> = (props) => {
         </div>
     );
 
-    return <HelpMark {...helpMarkDefaultProps}>{renderContent()}</HelpMark>;
+    return <HelpMark>{renderContent()}</HelpMark>;
 };
 
 const getStyledTextWithCode = (key: string) => {
@@ -120,11 +120,11 @@ export const SourceHelpTooltip: React.FC<SourceHelpTooltipProps> = ({fieldDocKey
             return <RegularTooltip example={i18n('label_chydb-database-example')} />;
         }
         case 'ANY_SUBSELECT/subsql': {
-            return <HelpMark {...helpMarkDefaultProps}>{getCommonSubselectContent()}</HelpMark>;
+            return <HelpMark>{getCommonSubselectContent()}</HelpMark>;
         }
         case 'CHYT_SUBSELECT/subsql': {
             return (
-                <HelpMark {...helpMarkDefaultProps}>
+                <HelpMark>
                     {getCommonSubselectContent()}
                     <div className={b('tooltip-item')}>
                         {getStyledTextWithCode('label_subselect-form-tooltip-chyt')}
@@ -134,7 +134,7 @@ export const SourceHelpTooltip: React.FC<SourceHelpTooltipProps> = ({fieldDocKey
         }
         case 'MSSQL_SUBSELECT/subsql': {
             return (
-                <HelpMark {...helpMarkDefaultProps}>
+                <HelpMark>
                     {getCommonSubselectContent()}
                     <div className={b('tooltip-item')}>
                         {i18n('label_subselect-form-tooltip-mssql')}
@@ -144,7 +144,7 @@ export const SourceHelpTooltip: React.FC<SourceHelpTooltipProps> = ({fieldDocKey
         }
         case 'PG_SUBSELECT/subsql': {
             return (
-                <HelpMark {...helpMarkDefaultProps}>
+                <HelpMark>
                     {getCommonSubselectContent()}
                     <div className={b('tooltip-item')}>
                         {getStyledTextWithCode('label_subselect-form-tooltip-pg')}

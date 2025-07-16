@@ -57,10 +57,7 @@ export const AdditionalTitleContent = (props: Props) => {
                 >
                     {i18n('label_auto-update')}
                 </Checkbox>
-                <HelpMark
-                    popoverProps={{style: {maxWidth: 300}}}
-                    className={b('help-btn', {'with-margin-right': true})}
-                >
+                <HelpMark className={b('help-btn', {'with-margin-right': true})}>
                     {i18n('label_auto-update-help')}
                 </HelpMark>
                 <Button disabled={disableControls} onClick={updateData}>

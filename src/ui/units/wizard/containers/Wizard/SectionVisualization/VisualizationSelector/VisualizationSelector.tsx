@@ -111,7 +111,6 @@ class VisualizationSelector extends React.Component<Props> {
                         </React.Fragment>
                     )}
                     popupProps={{
-                        // contentClassName: b('popup'),
                         placement: ['bottom-start', 'top-start'],
                     }}
                     menuProps={{

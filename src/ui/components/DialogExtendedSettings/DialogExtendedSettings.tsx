@@ -262,10 +262,7 @@ const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                         label={
                             <React.Fragment>
                                 {i18n('label_apply-button-checkbox')}
-                                <HelpMark
-                                    popoverProps={{style: {maxWidth: 300}}}
-                                    className={b('help-icon')}
-                                >
+                                <HelpMark className={b('help-icon')}>
                                     {i18n('context_apply-button')}
                                 </HelpMark>
                             </React.Fragment>
@@ -284,10 +281,7 @@ const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                         label={
                             <React.Fragment>
                                 {i18n('label_reset-button-checkbox')}
-                                <HelpMark
-                                    popoverProps={{style: {maxWidth: 300}}}
-                                    className={b('help-icon')}
-                                >
+                                <HelpMark className={b('help-icon')}>
                                     {i18n('context_reset-button')}
                                 </HelpMark>
                             </React.Fragment>
@@ -318,10 +312,7 @@ const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                             label={
                                 <React.Fragment>
                                     {i18n('label_update-controls-on-change')}
-                                    <HelpMark
-                                        popoverProps={{style: {maxWidth: 300}}}
-                                        className={b('help-icon')}
-                                    >
+                                    <HelpMark className={b('help-icon')}>
                                         {i18n('context_update-controls-on-change')}
                                     </HelpMark>
                                 </React.Fragment>

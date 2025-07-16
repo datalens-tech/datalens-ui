@@ -16,7 +16,7 @@ import type {
     DatasetSourceAvatar,
 } from 'shared';
 import {DatasetDialogRelationQA} from 'shared';
-import {DataTypeIcon, helpMarkDefaultProps, withHiddenUnmount} from 'ui';
+import {DataTypeIcon, withHiddenUnmount} from 'ui';
 
 import {
     BINARY_JOIN_OPERATORS,
@@ -108,19 +108,17 @@ const renderCustomControl = (
     renderOptions: {style?: React.CSSProperties; className?: string},
 ) => {
     const {ref, triggerProps} = args;
-    const {onClick, onKeyDown} = triggerProps ?? {};
     const {style, className} = renderOptions;
 
     const selectedOption = options.find((o) => o.value === selectedValue);
 
     return (
         <Button
+            {...triggerProps}
             style={style}
             view="outlined"
             className={className}
             ref={ref as React.Ref<HTMLButtonElement>}
-            onClick={onClick}
-            onKeyDown={onKeyDown}
         >
             {selectedOption?.data?.iconNode || selectedOption?.content}
         </Button>
@@ -641,10 +639,7 @@ class SourceRelationDialog extends React.Component<Props, State> {
                                     onUpdate={this.changeOptimized}
                                 >
                                     {i18n('label_optimize-join')}
-                                    <HelpMark
-                                        {...helpMarkDefaultProps}
-                                        className={b('hint-optimize-join')}
-                                    >
+                                    <HelpMark className={b('hint-optimize-join')}>
                                         {i18n('hint_optimize-join')}
                                     </HelpMark>
                                 </Checkbox>

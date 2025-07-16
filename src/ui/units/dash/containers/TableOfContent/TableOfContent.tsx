@@ -206,8 +206,8 @@ const TableOfContent = React.memo(
                                     {item.title}
                                     {item.hint && (
                                         <MarkdownHelpPopover
-                                            markdown={item.hint}
                                             className={b('hint')}
+                                            markdown={item.hint}
                                             popoverProps={{
                                                 className: b('hint-tooltip'),
                                                 zIndex: 100001,

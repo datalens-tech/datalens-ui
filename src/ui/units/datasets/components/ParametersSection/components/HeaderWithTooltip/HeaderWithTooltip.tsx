@@ -24,7 +24,6 @@ const HeaderWithTooltip: React.FC<HeaderTooltipProps> = (props: HeaderTooltipPro
                 popoverProps={{
                     placement: ['bottom', 'right'],
                     className: b('tooltip'),
-                    style: {maxWidth: 300},
                 }}
                 className={b('tooltip-anchor')}
             >

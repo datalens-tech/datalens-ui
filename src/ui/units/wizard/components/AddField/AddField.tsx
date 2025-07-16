@@ -107,7 +107,7 @@ export default class AddField extends React.Component<AddFieldProps> {
                             },
                         };
                     })}
-                    renderControl={({triggerProps: {onClick}, ref}) => {
+                    renderControl={({triggerProps, ref}) => {
                         const actionProps = disabled
                             ? {
                                   disabledText: (
@@ -116,7 +116,7 @@ export default class AddField extends React.Component<AddFieldProps> {
                                       </div>
                                   ),
                               }
-                            : {qa: AddFieldQA.AddFieldButton, onClick, ref};
+                            : {qa: AddFieldQA.AddFieldButton, ...triggerProps, ref};
 
                         return <PlaceholderActionIcon icon={Plus} {...actionProps} />;
                     }}

@@ -7,7 +7,6 @@ import {i18n} from 'i18n';
 import omit from 'lodash/omit';
 import type {Field} from 'shared';
 import {HierarchyEditorQa} from 'shared';
-import {helpMarkDefaultProps} from 'ui/constants';
 import {getIconForDataType} from 'units/wizard/utils/helpers';
 
 import './HierarchyEditor.scss';
@@ -63,7 +62,7 @@ class HierarchyEditor extends React.Component<Props, State> {
                         caption={
                             <span>
                                 {i18n('wizard.hierarchy-editor', 'caption')}
-                                <HelpMark {...helpMarkDefaultProps} className={b('help-icon')}>
+                                <HelpMark className={b('help-icon')}>
                                     {i18n('wizard.hierarchy-editor', 'help_tooltip')}
                                 </HelpMark>
                             </span>

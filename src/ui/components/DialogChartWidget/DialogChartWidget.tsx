@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {FormRow} from '@gravity-ui/components';
-import type {HelpMarkProps, RealTheme} from '@gravity-ui/uikit';
+import type {RealTheme} from '@gravity-ui/uikit';
 import {Checkbox, Dialog, Flex, HelpMark, Link, Popup, Text, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
@@ -51,13 +51,6 @@ type AutoExtendCommand<T = object> = CustomCommands<{$auto: Spec<T>}>;
 imm.extend('$auto', (value, object) => {
     return object ? update(object, value) : update({}, value);
 });
-
-const helpMarkDefaultProps: Partial<HelpMarkProps> = {
-    style: {
-        verticalAlign: 'middle',
-    },
-    popoverProps: {style: {maxWidth: 300}},
-};
 
 const b = block('widget-item-dialog');
 
@@ -543,7 +536,7 @@ class DialogChartWidget extends React.PureComponent<
         );
 
         const helpPopover = (
-            <HelpMark {...helpMarkDefaultProps} className={b('help-tooltip')}>
+            <HelpMark className={b('help-tooltip')}>
                 {i18n('dash.widget-dialog.edit', 'context_filtering-other-charts')}
                 {this.getFiltrationDocsLink()}
             </HelpMark>
@@ -583,7 +576,7 @@ class DialogChartWidget extends React.PureComponent<
         } = this.props;
 
         const autoHeightHelpPopover = (
-            <HelpMark {...helpMarkDefaultProps} className={b('help-tooltip')}>
+            <HelpMark className={b('help-tooltip')}>
                 {i18n('dash.widget-dialog.edit', 'context_autoheight-availability-hint')}
             </HelpMark>
         );
@@ -706,7 +699,7 @@ class DialogChartWidget extends React.PureComponent<
                     fieldId={INPUT_HINT_ID}
                     label={i18n('dash.widget-dialog.edit', 'field_hint')}
                     labelHelpPopover={
-                        <HelpMark {...helpMarkDefaultProps} className={b('help-tooltip')}>
+                        <HelpMark className={b('help-tooltip')}>
                             {i18n('dash.widget-dialog.edit', 'context_hint-display-info')}
                         </HelpMark>
                     }

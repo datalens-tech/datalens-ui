@@ -96,6 +96,7 @@ export const CreateEntry: React.FC<CreateEntryProps> = ({
                         'with-menu': withMenu,
                         action: buttonView === 'action',
                     })}
+                    {...triggerProps}
                     onClick={
                         withMenu
                             ? triggerProps.onClick

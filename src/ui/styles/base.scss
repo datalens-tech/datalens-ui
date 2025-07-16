@@ -50,6 +50,11 @@ body.g-root_mobile {
     overscroll-behavior: auto;
 }
 
+.g-help-mark {
+    margin: auto 0;
+    flex-shrink: 0;
+}
+
 .g-help-mark__popover {
     max-width: var(--dl-help-mark-popover-max-width, 300px);
 }

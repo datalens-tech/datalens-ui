@@ -56,9 +56,7 @@ export function ConnSettings({
     const settingsSelectOptions = [
         <Select.Option key={ITEM_DATA_EXPORT_ENABLED} value={ITEM_DATA_EXPORT_ENABLED}>
             {i18nExport('label_enable-data-export')}
-            <HelpMark popoverProps={{style: {maxWidth: 300}}} className={b('help-btn')}>
-                {i18nExport('label_data-export-info')}
-            </HelpMark>
+            <HelpMark className={b('help-btn')}>{i18nExport('label_data-export-info')}</HelpMark>
         </Select.Option>,
     ];
 

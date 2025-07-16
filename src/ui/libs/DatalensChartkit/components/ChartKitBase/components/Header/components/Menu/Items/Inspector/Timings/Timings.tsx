@@ -5,7 +5,6 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {ChartkitMenuDialogsQA} from 'shared';
 import {formatDuration} from 'shared/modules/format-units/formatUnit';
-import {helpMarkDefaultProps} from 'ui/constants';
 
 import type {ChartsStats} from '../../../../../../../../../../../../shared/types/charts';
 import {DL} from '../../../../../../../../../../../constants/common';
@@ -218,14 +217,10 @@ const Timings: React.FC<
                 <div className={b('metric-title')}>
                     {i18n('chartkit.menu.inspector', 'label_data-fetching')}
                     {dataFetchingWarning && !dataFetchingDanger && (
-                        <HelpMark {...helpMarkDefaultProps}>
-                            {BASELINE.DATA_FETCHING.WARNING.message()}
-                        </HelpMark>
+                        <HelpMark>{BASELINE.DATA_FETCHING.WARNING.message()}</HelpMark>
                     )}
                     {dataFetchingDanger && (
-                        <HelpMark {...helpMarkDefaultProps}>
-                            {BASELINE.DATA_FETCHING.DANGER.message()}
-                        </HelpMark>
+                        <HelpMark>{BASELINE.DATA_FETCHING.DANGER.message()}</HelpMark>
                     )}
                 </div>
             </div>
@@ -234,14 +229,10 @@ const Timings: React.FC<
                 <div className={b('metric-title')}>
                     {i18n('chartkit.menu.inspector', 'label_js-execution')}
                     {jsExecutionWarning && !jsExecutionDanger && (
-                        <HelpMark {...helpMarkDefaultProps}>
-                            {BASELINE.JS_EXECUTION.WARNING.message()}
-                        </HelpMark>
+                        <HelpMark>{BASELINE.JS_EXECUTION.WARNING.message()}</HelpMark>
                     )}
                     {jsExecutionDanger && (
-                        <HelpMark {...helpMarkDefaultProps}>
-                            {BASELINE.JS_EXECUTION.DANGER.message()}
-                        </HelpMark>
+                        <HelpMark>{BASELINE.JS_EXECUTION.DANGER.message()}</HelpMark>
                     )}
                 </div>
             </div>
@@ -300,7 +291,7 @@ const Timings: React.FC<
                     <div className={b('metric-title')}>
                         {inspectorLabelApiWaitingText ??
                             i18n('chartkit.menu.inspector', 'label_api-waiting')}
-                        <HelpMark {...helpMarkDefaultProps}>
+                        <HelpMark>
                             {inspectorLabelApiWaitingHintText ??
                                 i18n('chartkit.menu.inspector', 'label_api-waiting-hint')}
                         </HelpMark>

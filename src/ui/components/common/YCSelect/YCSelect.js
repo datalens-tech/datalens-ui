@@ -1618,7 +1618,7 @@ export class YCSelect extends React.PureComponent {
                     contentClassName={this._getPopupClassNames()}
                     style={popupStyles}
                     open={showSelectedPopup}
-                    anchoanchorElementrRef={this.controlRef.current}
+                    anchorElementrRef={this.controlRef.current}
                     placement={AVAILABLE_POPUP_DIRECTIONS}
                     onOpenChange={(open) => {
                         if (!open) {

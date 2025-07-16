@@ -5,7 +5,6 @@ import {HelpMark, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {YfmWrapper} from 'ui/components/YfmWrapper/YfmWrapper';
-import {helpMarkDefaultProps} from 'ui/constants';
 
 import {Row} from './Row';
 import {Title} from './Title';
@@ -40,7 +39,7 @@ export const MaxConnection = ({maxValue, onUpdate}: MaxConnectionProps) => {
     return (
         <Row alignTop={true}>
             <Title text={i18n('dash.settings-dialog.edit', 'label_max-concurrent-requests')}>
-                <HelpMark {...helpMarkDefaultProps}>
+                <HelpMark>
                     <YfmWrapper
                         content={i18n(
                             'dash.settings-dialog.edit',

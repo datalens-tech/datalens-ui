@@ -132,9 +132,8 @@ class AggregationSelectComponent extends React.Component<Props> {
 
         return (
             <Button
-                onClick={triggerProps.onClick}
+                {...triggerProps}
                 ref={ref as React.Ref<HTMLButtonElement>}
-                onKeyDown={triggerProps.onKeyDown}
                 view="flat"
                 className={b('select-control', {[this.type]: true})}
             >

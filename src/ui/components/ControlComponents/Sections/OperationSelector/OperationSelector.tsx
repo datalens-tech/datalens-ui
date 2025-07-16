@@ -60,10 +60,8 @@ const OperationSelector = ({className}: {className?: string}) => {
         <React.Fragment>
             <span>{i18n('field_operation')}</span>
             <HelpMark
-                style={{marginLeft: 4, verticalAlign: 'middle'}}
                 popoverProps={{
                     placement: ['bottom', 'top'],
-                    style: {maxWidth: 300},
                 }}
             >
                 {i18n('field_operation-note')}

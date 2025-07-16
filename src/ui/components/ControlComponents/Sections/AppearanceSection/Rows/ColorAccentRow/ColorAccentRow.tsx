@@ -39,10 +39,8 @@ export const ColorAccentRow = ({className}: {className?: string}) => {
         <React.Fragment>
             <span>{i18n('field_color-accent')}</span>
             <HelpMark
-                style={{marginLeft: 4, verticalAlign: 'middle'}}
                 popoverProps={{
                     placement: ['bottom', 'top'],
-                    style: {maxWidth: 300},
                 }}
             >
                 {i18n('field_color-accent-note')}

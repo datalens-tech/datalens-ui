@@ -35,10 +35,8 @@ export const ParameterNameInput: React.FC<ParameterNameInputProps> = (
         <React.Fragment>
             <span>{props.label}</span>
             <HelpMark
-                style={{marginLeft: 4, verticalAlign: 'middle'}}
                 popoverProps={{
                     placement: ['bottom', 'top'],
-                    style: {maxWidth: 300},
                 }}
             >
                 <YfmWrapper content={props.note} setByInnerHtml={true} />
