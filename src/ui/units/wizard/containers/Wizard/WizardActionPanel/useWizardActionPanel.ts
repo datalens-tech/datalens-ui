@@ -14,7 +14,6 @@ import {WizardPageQa} from '../../../../../../shared';
 import type {AdditionalButtonTemplate} from '../../../../../components/ActionPanel/components/ChartSaveControls/types';
 import {HOTKEYS_SCOPES, REDO_HOTKEY, UNDO_HOTKEY} from '../../../../../constants/misc';
 import {useBindHotkey} from '../../../../../hooks/useBindHotkey';
-import type {ChartKit} from '../../../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {goBack, goForward} from '../../../../../store/actions/editHistory';
 import {toggleFullscreen} from '../../../actions/settings';
 import {WIZARD_EDIT_HISTORY_UNIT_ID} from '../../../constants';
@@ -25,7 +24,6 @@ export type UseWizardActionPanelArgs = {
     handleEditButtonClick: () => void;
     editButtonLoading: boolean;
     isViewOnlyMode: boolean;
-    chartKitRef: React.RefObject<ChartKit>;
     isFullscreen: boolean;
     canGoBack: boolean | null;
     canGoForward: boolean | null;
