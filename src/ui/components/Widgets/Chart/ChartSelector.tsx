@@ -94,9 +94,8 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
                 config,
                 params: chartkitParams,
                 workbookId,
-                widgetData: {widgetId},
             }),
-        [chartId, chartkitParams, config, widgetId, workbookId],
+        [chartId, chartkitParams, config, workbookId],
     );
 
     const usedParamsRef = React.useRef<DataProps['params'] | null>(null);

@@ -7,7 +7,7 @@ import get from 'lodash/get';
 import isObject from 'lodash/isObject';
 
 import type {ChartsEngine} from '..';
-import type {DashTab, DashTabItemControlData} from '../../../../shared';
+import type {DashTabItemControlData} from '../../../../shared';
 import {
     ControlType,
     DL_EMBED_TOKEN_HEADER,
@@ -17,10 +17,9 @@ import {
     Feature,
 } from '../../../../shared';
 import {resolveEmbedConfig} from '../components/storage';
-import type {EmbedResolveConfigProps} from '../components/storage/base';
+import type {EmbedResolveConfigProps, ResolveConfigError} from '../components/storage/base';
 import type {EmbeddingInfo, ReducedResolvedConfig} from '../components/storage/types';
 import {getDuration, isDashEntry} from '../components/utils';
-import {findTabByWidgetId, getTypedError, processTabAliases} from '../helpers/embeds';
 
 const isResponseError = (error: unknown): error is AxiosError<{code: string}> => {
     return Boolean(isObject(error) && 'response' in error && error.response);
@@ -94,7 +93,8 @@ function handleError(
         return;
     }
 
-    const typedError = getTypedError(error);
+    const typedError: ResolveConfigError =
+        isObject(error) && 'message' in error ? (error as Error) : new Error(error as string);
 
     const status = (typedError.response && typedError.response.status) || typedError.status || 500;
 
@@ -126,22 +126,25 @@ function processControlWidget(
     },
     embeddingInfo: EmbeddingInfo,
     res: Response,
-    prefoundTab?: DashTab | null,
 ): ReducedResolvedConfig | null {
     if (!isDashEntry(embeddingInfo.entry)) {
         return null;
     }
 
+    const controlTab = controlData?.tabId
+        ? embeddingInfo.entry.data.tabs.find((tab) => tab.id === controlData?.tabId)
+        : null;
+
     // Support group and old single selectors
     const controlWidgetId = controlData.widgetId || controlData.id;
 
-    const controlWidgetConfig = prefoundTab?.items.find(
+    const controlWidgetConfig = controlTab?.items.find(
         ({id}: {id: string}) => id === controlWidgetId,
     );
 
     // Early return if control widget config is not found or has invalid type
     if (
-        !prefoundTab ||
+        !controlTab ||
         !controlWidgetConfig ||
         (controlWidgetConfig.type !== DashTabItemType.Control &&
             controlWidgetConfig.type !== DashTabItemType.GroupControl)
@@ -180,10 +183,9 @@ function processEntry(
         | undefined,
     embeddingInfo: EmbeddingInfo,
     res: Response,
-    prefoundTab?: DashTab | null,
 ): ReducedResolvedConfig | null {
     if (controlData && isDashEntry(embeddingInfo.entry)) {
-        return processControlWidget(controlData, embeddingInfo, res, prefoundTab);
+        return processControlWidget(controlData, embeddingInfo, res);
     }
 
     if (embeddingInfo.entry.scope === EntryScope.Widget) {
@@ -206,27 +208,22 @@ async function filterParams({
     params = {},
     embeddingInfo,
     ctx,
-    tabsToProcess,
 }: {
     params: Record<string, unknown>;
     embeddingInfo: EmbeddingInfo;
     ctx: AppContext;
-    embedToken: string;
-    subrequestHeaders: Record<string, string>;
-    currentWidgetId?: string;
-    tabsToProcess: DashTab[] | null;
 }): Promise<{params: Record<string, unknown>; privateParams?: Set<string>}> {
     if (!params || Object.keys(params).length === 0) {
         return {params: {...embeddingInfo.token.params}};
     }
 
-    const isSecureParamsV2Enabled = ctx.get('isEnabledServerFeature')(Feature.EnableSecureParamsV2);
-
     const filteredParams: Record<string, unknown> = {};
 
     let forbiddenParamsSet: Set<string> | undefined;
 
-    if (embeddingInfo.embed.publicParamsMode && embeddingInfo.embed.unsignedParams.length > 0) {
+    if (embeddingInfo.embed.unsignedParams?.length > 0) {
+        // public params mode is enabled
+
         const unsignedParamsSet = new Set(embeddingInfo.embed.unsignedParams);
 
         Object.keys(params).forEach((key) => {
@@ -235,13 +232,11 @@ async function filterParams({
             }
         });
     } else if (embeddingInfo.embed.privateParams?.length === 0) {
-        Object.assign(filteredParams, params);
-    } else {
-        const fillingForbiddenParamsSet = new Set(embeddingInfo.embed.privateParams);
+        // privateParams mode is enabled, but params are not added
 
-        if (tabsToProcess && isSecureParamsV2Enabled) {
-            processTabAliases(tabsToProcess, fillingForbiddenParamsSet);
-        }
+        Object.assign(filteredParams, params);
+    } else if (embeddingInfo.embed.privateParams?.length > 0) {
+        const fillingForbiddenParamsSet = new Set(embeddingInfo.embed.privateParams);
 
         for (const [key, value] of Object.entries(params)) {
             if (!fillingForbiddenParamsSet.has(key)) {
@@ -253,6 +248,7 @@ async function filterParams({
     }
 
     let finalParams;
+    const isSecureParamsV2Enabled = ctx.get('isEnabledServerFeature')(Feature.EnableSecureParamsV2);
 
     if (isSecureParamsV2Enabled) {
         finalParams = {
@@ -347,7 +343,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
 
         const hrStart = process.hrtime();
 
-        const {id, controlData, widgetData} = req.body;
+        const {id, controlData} = req.body;
 
         const tokenData = validateEmbedToken(req, ctx, res);
         if (!tokenData) {
@@ -356,8 +352,6 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
 
         const {embedToken, embedId} = tokenData;
 
-        const subrequestHeaders = res.locals.subrequestHeaders;
-
         const configResolveArgs: EmbedResolveConfigProps = {
             id,
             embedToken,
@@ -365,7 +359,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
             key: embedId,
             embedId,
             headers: {
-                ...subrequestHeaders,
+                ...res.locals.subrequestHeaders,
                 ...ctx.getMetadata(),
             },
             includeServicePlan: true,
@@ -398,74 +392,15 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
                     return null;
                 }
 
-                // Find the target tab
-                const currentWidgetId =
-                    controlData?.widgetId || controlData?.id || widgetData?.widgetId;
-                let dashTabs: DashTab[] | null = null;
-                let prefoundTab = null;
-
-                const isSecureParamsV2Enabled = ctx.get('isEnabledServerFeature')(
-                    Feature.EnableSecureParamsV2,
-                );
-
-                if (currentWidgetId) {
-                    if (controlData && isDashEntry(embeddingInfo.entry)) {
-                        // Tab is available in current entry
-                        prefoundTab = findTabByWidgetId(
-                            embeddingInfo.entry.data.tabs,
-                            currentWidgetId,
-                        );
-                        dashTabs = embeddingInfo.entry.data.tabs;
-                    } else if (isSecureParamsV2Enabled) {
-                        // Need to fetch dash config to find the tab
-                        const dashConfigResolveArgs: EmbedResolveConfigProps = {
-                            embedToken,
-                            key: embeddingInfo.embed.embedId,
-                            embedId: embeddingInfo.embed.embedId,
-                            headers: {
-                                ...subrequestHeaders,
-                                ...ctx.getMetadata(),
-                            },
-                        };
-
-                        try {
-                            const embeddedDashData = await ctx.call('configLoading', (cx) =>
-                                resolveEmbedConfig(cx, dashConfigResolveArgs),
-                            );
-
-                            if (embeddedDashData && isDashEntry(embeddedDashData.entry)) {
-                                prefoundTab = findTabByWidgetId(
-                                    embeddedDashData.entry.data.tabs,
-                                    currentWidgetId,
-                                    id,
-                                );
-                                dashTabs = embeddedDashData.entry.data.tabs;
-                            }
-                        } catch (error) {
-                            handleError(
-                                error,
-                                ctx,
-                                res,
-                                'ERR.CHARTS.DASH_CONFIG_LOADING_ERROR',
-                                'RESOLVE_CHARTS_EMBEDDED_DASH_CONFIG_ERROR',
-                            );
-                        }
-                    }
-                }
-
                 const {params, privateParams} = await filterParams({
                     params: req.body.params,
                     embeddingInfo,
                     ctx,
-                    embedToken,
-                    subrequestHeaders,
-                    currentWidgetId,
-                    tabsToProcess: prefoundTab ? [prefoundTab] : dashTabs,
                 });
 
                 req.body.params = params;
 
-                const entry = processEntry(controlData, embeddingInfo, res, prefoundTab);
+                const entry = processEntry(controlData, embeddingInfo, res);
 
                 // If entry processing failed, the response has already been sent
                 if (!entry) {

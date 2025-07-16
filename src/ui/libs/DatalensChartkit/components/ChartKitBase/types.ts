@@ -120,10 +120,7 @@ export type ChartKitWrapperParams = {
     getControls: (params: StringParams) => void;
 };
 
-export type DataProps = Omit<ChartsProps, 'params'> & {
-    params: ChartsProps['params'];
-    widgetData?: {widgetId: string};
-};
+export type DataProps = Omit<ChartsProps, 'params'> & {params: ChartsProps['params']};
 
 type ChartAxis = {
     index: number;

@@ -133,9 +133,8 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 config,
                 params: chartkitParams,
                 workbookId,
-                widgetData: {widgetId},
             }),
-        [chartId, chartkitParams, config, hasChartTabChanged, workbookId, widgetId],
+        [chartId, chartkitParams, config, hasChartTabChanged, workbookId],
     );
 
     const savedForFetchProps = React.useMemo(() => pick(props, influencingProps), [props]);
