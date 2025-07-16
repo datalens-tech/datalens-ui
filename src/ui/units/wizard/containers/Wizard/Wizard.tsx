@@ -14,6 +14,7 @@ import SplitPane from 'react-split-pane';
 import {compose} from 'recompose';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
+import type {ChartWithWrapRefProps} from 'ui/components/Widgets/Chart/types';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {isDraftVersion} from 'ui/utils/revisions';
 
@@ -39,7 +40,6 @@ import withErrorPage from '../../../../components/ErrorPage/withErrorPage';
 import type {RevisionEntry} from '../../../../components/Revisions/types';
 import {HOTKEYS_SCOPES} from '../../../../constants/misc';
 import {withHotkeysContext} from '../../../../hoc/withHotkeysContext';
-import type {ChartKit} from '../../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {registry} from '../../../../registry';
 import {openDialogSaveDraftChartAsActualConfirm} from '../../../../store/actions/dialog';
 import {
@@ -133,7 +133,7 @@ class Wizard extends React.Component<Props, State> {
     private entryDialoguesRef: React.RefObject<EntryDialogues>;
     private hotkeysAreaRef: React.RefObject<HTMLDivElement>;
 
-    private chartKitRef: React.RefObject<ChartKit> = React.createRef<ChartKit>();
+    private chartKitRef = React.createRef<ChartWithWrapRefProps>();
 
     constructor(props: Props) {
         super(props);
@@ -534,7 +534,6 @@ class Wizard extends React.Component<Props, State> {
                         onSaveAsNewClick={this.openSaveAsWidgetDialog}
                         onSaveAsDraftClick={this.handleSaveDraftClick}
                         onSaveAndPublishClick={this.handleSavePublishClick}
-                        chartKitRef={this.chartKitRef}
                     />
                     <div className={`columns columns_aside-${getIsAsideHeaderEnabled()}`}>
                         <SplitPane

@@ -53,6 +53,8 @@
 
     &__color-picker {
         display: block;
+        width: 140px;
+        min-width: 100%;
     }
 
     $colorItem: #{$class}__color-item;
@@ -79,10 +81,11 @@
 
     &__custom-palette-bg-btn_with-border {
         --g-button-border-width: 1px;
+    }
 
-        #{$colorItem} {
-            border: 1px solid var(--g-button-border-color);
-        }
+    &__custom-palette-bg-btn_with-border #{$colorItem},
+    &__color-item_with-border {
+        border: 1px solid var(--g-button-border-color);
     }
 
     &__highlight-wrapper:not(&__highlight-wrapper_selected):hover:before {

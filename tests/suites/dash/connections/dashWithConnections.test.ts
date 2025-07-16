@@ -1,17 +1,10 @@
 import {Page} from '@playwright/test';
 
-import {ConnectionsDialogQA} from '../../../../src/shared/constants';
+import {DashCommonQa} from '../../../../src/shared/constants';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {
-    clickGSelectOption,
-    getUniqueTimestamp,
-    isEnabledFeature,
-    openTestPage,
-    slct,
-} from '../../../utils';
+import {clickGSelectOption, getUniqueTimestamp, openTestPage, slct} from '../../../utils';
 import {RobotChartsDashboardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {Feature} from '../../../../src/shared';
 
 datalensTest.describe.configure({mode: 'serial'});
 
@@ -25,25 +18,20 @@ datalensTest.describe('Dashboards - Links', () => {
         const dashboardPage = new DashboardPage({page});
         await openTestPage(page, RobotChartsDashboardUrls.DashboardWithDashConnections);
 
-        const hideOldRelations = await isEnabledFeature(page, Feature.HideOldRelations);
-        if (hideOldRelations) {
-            return;
-        }
-
         await dashboardPage.copyDashboard(dashName);
         await dashboardPage.openDashConnections();
 
         // select the selector
         await clickGSelectOption({
             page,
-            key: ConnectionsDialogQA.ElementSelect,
+            key: DashCommonQa.RelationsWidgetSelect,
             optionText: PARAMS.ELEMENT_WITH_CONNECTIONS,
         });
 
-        await page.waitForSelector(slct(ConnectionsDialogQA.TypeSelect));
+        await page.waitForSelector(slct(DashCommonQa.RelationsWidgetSelect));
 
         // click on the "Cancel" button
-        await page.click(slct(ConnectionsDialogQA.Cancel));
+        await page.click(slct(DashCommonQa.RelationsCancelBtn));
 
         await dashboardPage.deleteDashFromEditMode();
     });

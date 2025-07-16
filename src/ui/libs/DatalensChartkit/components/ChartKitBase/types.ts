@@ -1,5 +1,6 @@
 import type React from 'react';
 
+import type {ChartKitRef} from '@gravity-ui/chartkit';
 import type {CancelTokenSource} from 'axios';
 import type {Split} from 'react-split-pane';
 import type {DashTabItemControlSourceType, StringParams} from 'shared';
@@ -87,7 +88,9 @@ export type ChartKitBaseWrapperProps = ChartsProps & {
 };
 
 export type ChartKitBaseWrapperWithRefProps = ChartKitBaseWrapperProps & {
-    forwardedRef: React.RefObject<ChartKit> | React.MutableRefObject<ChartKit | null>;
+    forwardedRef:
+        | React.RefObject<ChartKit | ChartKitRef>
+        | React.MutableRefObject<ChartKit | ChartKitRef | null>;
 };
 
 export interface ChartKitWrapperState {
