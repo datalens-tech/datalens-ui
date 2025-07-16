@@ -24,7 +24,7 @@ export const MarkdownHelpPopover = (props: Props) => {
 
     return (
         <HelpMark
-            iconSize="l"
+            iconSize={DL.IS_MOBILE ? 'l' : 'm'}
             popoverProps={{
                 ...popoverProps,
                 className: b('tooltip', {hidden: !isLoaded}, popoverProps?.className),
