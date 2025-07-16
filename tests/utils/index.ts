@@ -124,7 +124,6 @@ export async function entryDialogFillAndSave(
     if (useUserFolder && isSelectVisible) {
         await entryDialogSelect.click();
         await page.waitForSelector(slct(DlNavigationQA.NavigationMinimal));
-        await page.locator(slct(DlNavigationQA.RobotBreadcrumbItem)).click();
         await page.locator(slct(DlNavigationQA.MinimalDoneBtn)).click();
     }
 
