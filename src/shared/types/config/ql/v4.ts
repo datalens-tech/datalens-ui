@@ -1,6 +1,6 @@
 import type {QLChartType} from '../../../constants';
 import type {QlConfigVersions} from '../../ql/versions';
-import type {CommonSharedExtraSettings, Field, ShapesConfig, Shared} from '../../wizard';
+import type {CommonSharedExtraSettings, Field, ShapesConfig, Shared, PointSizeConfig} from '../../wizard';
 
 export interface QLResultEntryMetadataDataGroupV4 {
     group: boolean;
@@ -70,6 +70,7 @@ export interface QlConfigV4 {
     queries: QLQueryV4[];
     extraSettings?: CommonSharedExtraSettings;
     visualization: Shared['visualization'] & {highchartsId?: string};
+    geopointsConfig?: PointSizeConfig;
     params: QLParamV4[];
     connection: QLEntryDataSharedConnectionV4;
     order?: QLResultEntryMetadataDataColumnOrGroupV4[] | null;
