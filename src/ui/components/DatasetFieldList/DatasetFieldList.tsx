@@ -67,8 +67,6 @@ const DatasetFieldList: React.FC<DatasetFieldListProps> = (props) => {
                 renderItem={renderField}
                 filterItem={filterFields}
                 onItemClick={onFiledItemClick}
-                itemsClassName={b('items')}
-                virtualized={false}
             />
         </div>
     );
