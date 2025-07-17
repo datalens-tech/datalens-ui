@@ -9,14 +9,22 @@ import './LogoText.scss';
 
 const b = block('aside-header-logo-text');
 
-export const LogoText = ({installationInfo}: {installationInfo?: string}) => {
+export const LogoText = ({
+    installationInfo,
+    productName,
+}: {
+    installationInfo?: string;
+    productName?: string;
+}) => {
     const isRebrandingEnabled = isEnabledFeature(Feature.EnableDLRebranding);
     const showInstallation = isRebrandingEnabled && installationInfo;
-    const productName = isRebrandingEnabled ? REBRANDING_PRODUCT_NAME : PRODUCT_NAME;
+    const defaultProductName = isRebrandingEnabled ? REBRANDING_PRODUCT_NAME : PRODUCT_NAME;
 
     return (
         <div className={b()}>
-            <div className={b('title', {rebranding: isRebrandingEnabled})}>{productName}</div>
+            <div className={b('title', {rebranding: isRebrandingEnabled})}>
+                {productName || defaultProductName}
+            </div>
             {showInstallation && (
                 <div className={b('installation-info')}>{installationInfo.toUpperCase()}</div>
             )}
