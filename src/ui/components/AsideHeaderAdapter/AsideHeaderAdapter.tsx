@@ -10,7 +10,7 @@ import {I18n, i18n as baseI18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {Link, useLocation} from 'react-router-dom';
 import {DlNavigationQA, Feature} from 'shared';
-import {DL, PRODUCT_NAME} from 'ui/constants';
+import {DL} from 'ui/constants';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -20,11 +20,13 @@ import type {AsideHeaderData} from '../../store/typings/asideHeader';
 import {UserAvatar} from '../UserMenu/UserAvatar';
 import {UserMenu} from '../UserMenu/UserMenu';
 
+import {LogoText} from './LogoText/LogoText';
 import {Settings as SettingsPanel} from './Settings/Settings';
 import {DIALOG_RELEASE_VERSION} from './VersionDialog/VersionDialog';
 
 import defaultLogoIcon from '../../assets/icons/logo.svg';
 import iconCollection from '../../assets/icons/mono-collection.svg';
+import rebrandingLogoIcon from '../../assets/icons/os-logo.svg';
 
 import './AsideHeaderAdapter.scss';
 
@@ -47,6 +49,7 @@ export const ITEMS_NAVIGATION_DEFAULT_SIZE = 18;
 type AsideHeaderAdapterProps = {
     renderContent?: AsideHeaderProps['renderContent'];
     logoIcon?: IconData;
+    installationInfo?: string;
 };
 
 enum Panel {
@@ -63,14 +66,6 @@ const getLinkWrapper = (node: React.ReactNode, path: string) => {
         <Link to={path} className={b('item-link')} data-qa={DlNavigationQA.AsideMenuItem}>
             <div className={b('item-wrap')}>{node}</div>
         </Link>
-    );
-};
-
-const getLogoWrapper = (node: React.ReactNode) => {
-    return (
-        <a href="/" className={b('logo-link')}>
-            {node}
-        </a>
     );
 };
 
@@ -103,7 +98,11 @@ const renderDocsItem = (item: DocsItem) => {
     }
 };
 
-export const AsideHeaderAdapter = ({renderContent, logoIcon}: AsideHeaderAdapterProps) => {
+export const AsideHeaderAdapter = ({
+    renderContent,
+    logoIcon,
+    installationInfo,
+}: AsideHeaderAdapterProps) => {
     const dispatch = useDispatch();
     const {pathname} = useLocation();
     const isCompact = useSelector(selectAsideHeaderIsCompact);
@@ -208,6 +207,8 @@ export const AsideHeaderAdapter = ({renderContent, logoIcon}: AsideHeaderAdapter
         setCurrentPopup(null);
     }, []);
 
+    const isRebrandingEnabled = isEnabledFeature(Feature.EnableDLRebranding);
+
     const renderFooter = () => {
         return (
             <React.Fragment>
@@ -304,15 +305,18 @@ export const AsideHeaderAdapter = ({renderContent, logoIcon}: AsideHeaderAdapter
         );
     };
 
+    const defaultLogo = isRebrandingEnabled ? rebrandingLogoIcon : defaultLogoIcon;
+
     return (
         <AsideHeader
             compact={isCompact}
             logo={{
-                text: PRODUCT_NAME,
-                icon: logoIcon ?? defaultLogoIcon,
+                text: () => <LogoText installationInfo={installationInfo} />,
+                icon: logoIcon ?? defaultLogo,
                 iconSize: LOGO_DEFAULT_SIZE,
                 iconClassName: b('logo-icon'),
-                wrapper: getLogoWrapper,
+                href: '/',
+                className: b('logo'),
             }}
             topAlert={topAlert}
             menuItems={menuItems}
@@ -322,6 +326,7 @@ export const AsideHeaderAdapter = ({renderContent, logoIcon}: AsideHeaderAdapter
             renderFooter={renderFooter}
             renderContent={renderAsideHeaderContent}
             onClosePanel={handleClosePanel}
+            className={b({rebranding: isRebrandingEnabled})}
         />
     );
 };

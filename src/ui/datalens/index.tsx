@@ -18,6 +18,7 @@ import {DL} from 'ui/constants';
 import {useClearReloadedQuery} from '../units/auth/hooks/useClearReloadedQuery';
 import {reducer} from 'ui/units/auth/store/reducers';
 import {useIframeRender} from './hooks';
+import {OPEN_SOURCE_INSTALLATION_INFO} from 'ui/components/AsideHeaderAdapter/constants';
 
 reducerRegistry.register(coreReducers);
 reducerRegistry.register({auth: reducer});
@@ -120,7 +121,12 @@ const DatalensPage: React.FC = () => {
     }
 
     if (showAsideHeaderAdapter) {
-        return <AsideHeaderAdapter renderContent={() => <DatalensPageView />} />;
+        return (
+            <AsideHeaderAdapter
+                renderContent={() => <DatalensPageView />}
+                installationInfo={OPEN_SOURCE_INSTALLATION_INFO}
+            />
+        );
     }
 
     return <DatalensPageView />;

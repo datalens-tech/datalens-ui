@@ -4,8 +4,10 @@ import type {MobileHeaderProps} from '@gravity-ui/navigation';
 import {MobileHeader, getMobileHeaderCustomEvent} from '@gravity-ui/navigation';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {Feature} from 'shared/types';
 import {PRODUCT_NAME} from 'ui/constants';
 import type {MobileHeaderComponentProps} from 'ui/registry/units/common/types/components/MobileHeaderComponent';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {DL} from '../../../constants/common';
 import {UserAvatar} from '../../UserMenu/UserAvatar';
@@ -15,6 +17,7 @@ import {UserPanel} from './UserPanel/UserPanel';
 
 import defaultLogoIcon from 'ui/assets/icons/logo.svg';
 import iconCollection from 'ui/assets/icons/mono-collection.svg';
+import rebrandingLogoIcon from 'ui/assets/icons/os-logo.svg';
 
 import '../MobileHeader.scss';
 
@@ -61,11 +64,15 @@ export const MobileHeaderComponent = ({renderContent, logoIcon}: MobileHeaderCom
           ]
         : undefined;
 
+    const defaultLogo = isEnabledFeature(Feature.EnableDLRebranding)
+        ? rebrandingLogoIcon
+        : defaultLogoIcon;
+
     return (
         <MobileHeader
             ref={ref}
             logo={{
-                icon: logoIcon ?? defaultLogoIcon,
+                icon: logoIcon ?? defaultLogo,
                 text: PRODUCT_NAME,
                 iconClassName: b('logo-icon'),
             }}
@@ -73,7 +80,7 @@ export const MobileHeaderComponent = ({renderContent, logoIcon}: MobileHeaderCom
             contentClassName={b('content')}
             className={b('container')}
             renderContent={renderContent}
-            sideItemRenderContent={() => sideItem}
+            sideItemRenderContent={DL.AUTH_ENABLED ? () => sideItem : undefined}
             panelItems={panelItems}
         />
     );
