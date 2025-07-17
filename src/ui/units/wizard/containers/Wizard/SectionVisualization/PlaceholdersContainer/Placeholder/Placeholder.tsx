@@ -12,6 +12,7 @@ import {bindActionCreators} from 'redux';
 import type {Field} from 'shared';
 import {isParameter} from 'shared';
 import type {DatalensGlobalState} from 'ui';
+import {selectVisualization} from 'ui/units/wizard/selectors/visualization';
 import {selectUpdates} from 'units/wizard/selectors/preview';
 
 import {actualizeAndSetUpdates} from '../../../../../actions/preview';
@@ -230,7 +231,11 @@ class PlaceholderComponent extends React.PureComponent<Props> {
     private checkAllowed = (item: Field) => {
         // We can add the parameter to any section
         if (isParameter(item)) {
-            return canAddParamToPlaceholder({field: item, placeholderId: this.props.id});
+            return canAddParamToPlaceholder({
+                field: item,
+                placeholderId: this.props.id,
+                visualizationId: this.props.visualization.id,
+            });
         }
 
         return this.props.checkAllowed(item);
@@ -255,6 +260,7 @@ class PlaceholderComponent extends React.PureComponent<Props> {
 
 const mapStateToProps = (state: DatalensGlobalState) => {
     return {
+        visualization: selectVisualization(state),
         updates: selectUpdates(state),
     };
 };

@@ -6,7 +6,14 @@ import type {
     ServerChartsConfig,
     ServerField,
 } from 'shared';
-import {PlaceholderId, getXAxisMode, isDateField, isFieldHierarchy, isNumberField} from 'shared';
+import {
+    PlaceholderId,
+    WizardVisualizationId,
+    getXAxisMode,
+    isDateField,
+    isFieldHierarchy,
+    isNumberField,
+} from 'shared';
 import {SETTINGS} from 'ui/constants/visualizations';
 
 type GetAxisModePlaceholderSettings = {
@@ -77,8 +84,12 @@ export function getPlaceholderAxisModeMap(args: {placeholder: Placeholder; axisM
     }, axisModeMap);
 }
 
-export function canAddParamToPlaceholder(args: {field: ServerField; placeholderId: string}) {
-    const {field, placeholderId} = args;
+export function canAddParamToPlaceholder(args: {
+    field: ServerField;
+    placeholderId: string;
+    visualizationId: string;
+}) {
+    const {field, placeholderId, visualizationId} = args;
 
     const forbiddenPlaceholderIds: string[] = [
         PlaceholderId.DashboardFilters,
@@ -88,8 +99,26 @@ export function canAddParamToPlaceholder(args: {field: ServerField; placeholderI
         return false;
     }
 
-    if (!isNumberField(field) && !isDateField(field)) {
-        return ![PlaceholderId.Y, PlaceholderId.Y2].includes(placeholderId as PlaceholderId);
+    switch (visualizationId) {
+        case WizardVisualizationId.Line:
+        case WizardVisualizationId.Area:
+        case WizardVisualizationId.Area100p:
+        case WizardVisualizationId.Column:
+        case WizardVisualizationId.Column100p: {
+            if (!isNumberField(field) && !isDateField(field)) {
+                return ![PlaceholderId.Y, PlaceholderId.Y2].includes(
+                    placeholderId as PlaceholderId,
+                );
+            }
+            break;
+        }
+        case WizardVisualizationId.Bar:
+        case WizardVisualizationId.Bar100p: {
+            if (!isNumberField(field) && !isDateField(field)) {
+                return placeholderId !== PlaceholderId.X;
+            }
+            break;
+        }
     }
 
     return true;
