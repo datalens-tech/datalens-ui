@@ -12,9 +12,11 @@ const b = block('aside-header-logo-text');
 export const LogoText = ({
     installationInfo,
     productName,
+    installationInfoStyle,
 }: {
     installationInfo?: string;
     productName?: string;
+    installationInfoStyle?: React.CSSProperties;
 }) => {
     const isRebrandingEnabled = isEnabledFeature(Feature.EnableDLRebranding);
     const showInstallation = isRebrandingEnabled && installationInfo;
@@ -26,7 +28,9 @@ export const LogoText = ({
                 {productName || defaultProductName}
             </div>
             {showInstallation && (
-                <div className={b('installation-info')}>{installationInfo.toUpperCase()}</div>
+                <div className={b('installation-info')} style={installationInfoStyle}>
+                    {installationInfo}
+                </div>
             )}
         </div>
     );
