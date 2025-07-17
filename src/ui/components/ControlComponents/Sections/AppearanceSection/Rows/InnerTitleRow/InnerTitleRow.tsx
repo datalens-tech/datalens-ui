@@ -59,6 +59,7 @@ export const InnerTitleRow = ({className}: {className?: string}) => {
                 popoverProps={{
                     placement: ['bottom', 'top'],
                 }}
+                style={{left: 5}}
             >
                 <YfmWrapper content={getHelpPopoverText(sourceType)} setByInnerHtml={true} />
             </HelpMark>

@@ -38,6 +38,7 @@ export const ParameterNameInput: React.FC<ParameterNameInputProps> = (
                 popoverProps={{
                     placement: ['bottom', 'top'],
                 }}
+                style={{left: 5}}
             >
                 <YfmWrapper content={props.note} setByInnerHtml={true} />
             </HelpMark>

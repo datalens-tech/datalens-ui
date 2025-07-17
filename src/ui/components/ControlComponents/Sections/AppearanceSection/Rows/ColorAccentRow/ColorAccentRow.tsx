@@ -42,6 +42,7 @@ export const ColorAccentRow = ({className}: {className?: string}) => {
                 popoverProps={{
                     placement: ['bottom', 'top'],
                 }}
+                style={{left: 5}}
             >
                 {i18n('field_color-accent-note')}
             </HelpMark>
