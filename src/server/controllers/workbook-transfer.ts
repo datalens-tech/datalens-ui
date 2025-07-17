@@ -50,26 +50,32 @@ const getRequestId = (ctx: Request['ctx']) => ctx.get(REQUEST_ID_PARAM_NAME) || 
 
 export const proxyGetEntry = async (
     req: Request,
-    args: {
-        usMasterToken: string;
+    _res: Response,
+    {
+        usMasterToken,
+        ...args
+    }: {
         workbookId: string | null;
         entryId: string;
+        usMasterToken: string;
     },
 ) => {
     const {ctx} = req;
     const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
+
     const headers = {
         ...Utils.pickHeaders(req),
     };
     const requestId = getRequestId(ctx);
 
     try {
-        return await gatewayApi.us._proxyGetEntry({
+        return await gatewayApi.usPrivate._proxyGetEntry({
             headers,
             args: {
                 ...args,
                 branch: 'published',
             },
+            authArgs: {usMasterToken},
             ctx,
             requestId,
         });
@@ -78,9 +84,10 @@ export const proxyGetEntry = async (
 
         // If failed to find published entry, at least take current saved
         if (error.status === 404) {
-            return gatewayApi.us._proxyGetEntry({
+            return gatewayApi.usPrivate._proxyGetEntry({
                 headers,
                 args,
+                authArgs: {usMasterToken},
                 ctx,
                 requestId,
             });
@@ -94,7 +101,11 @@ const resolveScopeForEntryData = (entryData: Record<keyof EntryScope, unknown>) 
     return Object.values(EntryScope).find((key) => key in entryData);
 };
 
-export const prepareExportData = async (req: Request, usMasterToken: string) => {
+export const prepareExportData = async (
+    req: Request,
+    res: Response,
+    {usMasterToken}: {usMasterToken: string},
+) => {
     const {ctx} = req;
     const headers = {
         ...Utils.pickHeaders(req),
@@ -106,7 +117,7 @@ export const prepareExportData = async (req: Request, usMasterToken: string) => 
 
     switch (scope) {
         case EntryScope.Dash: {
-            const {responseData: entry} = await proxyGetEntry(req, {
+            const {responseData: entry} = await proxyGetEntry(req, res, {
                 entryId: exportId,
                 workbookId,
                 usMasterToken,
@@ -128,7 +139,7 @@ export const prepareExportData = async (req: Request, usMasterToken: string) => 
             });
         }
         case EntryScope.Widget: {
-            const {responseData: entry} = await proxyGetEntry(req, {
+            const {responseData: entry} = await proxyGetEntry(req, res, {
                 entryId: exportId,
                 workbookId,
                 usMasterToken,
@@ -185,7 +196,11 @@ export const prepareExportData = async (req: Request, usMasterToken: string) => 
     }
 };
 
-export const prepareImportData = async (req: Request, usMasterToken: string) => {
+export const prepareImportData = async (
+    req: Request,
+    _res: Response,
+    {usMasterToken}: {usMasterToken: string},
+) => {
     const {ctx} = req;
     const headers = {
         ...Utils.pickHeaders(req),
@@ -237,7 +252,7 @@ export const prepareImportData = async (req: Request, usMasterToken: string) => 
                 return createImportResponseData(notifications);
             }
 
-            const {responseData} = await gatewayApi.us._proxyCreateEntry({
+            const {responseData} = await gatewayApi.usPrivate._proxyCreateEntry({
                 headers: {
                     ...headers,
                     metadata: ctx.getMetadata(),
@@ -251,9 +266,9 @@ export const prepareImportData = async (req: Request, usMasterToken: string) => 
                     scope: widget.scope,
                     mode: widget.mode,
                     links: widget.links as EntryFieldLinks,
-                    usMasterToken,
                 },
                 ctx,
+                authArgs: {usMasterToken},
                 requestId: getRequestId(ctx),
             });
 
@@ -266,7 +281,7 @@ export const prepareImportData = async (req: Request, usMasterToken: string) => 
                 return createImportResponseData(notifications);
             }
 
-            const {responseData} = await gatewayApi.us._proxyCreateEntry({
+            const {responseData} = await gatewayApi.usPrivate._proxyCreateEntry({
                 headers,
                 args: {
                     workbookId,
@@ -277,9 +292,9 @@ export const prepareImportData = async (req: Request, usMasterToken: string) => 
                     scope: dash.scope,
                     mode: dash.mode,
                     links: dash.links,
-                    usMasterToken,
                 },
                 ctx,
+                authArgs: {usMasterToken},
                 requestId: getRequestId(ctx),
             });
 
@@ -308,7 +323,7 @@ export const workbooksTransferController = {
                 return;
             }
 
-            sendResponse(res, await prepareExportData(req, usMasterToken));
+            sendResponse(res, await prepareExportData(req, res, {usMasterToken}));
         } catch (ex) {
             const {error} = ex as GatewayApiErrorResponse;
             res.status(error?.status || 500).send(error);
@@ -325,7 +340,7 @@ export const workbooksTransferController = {
                 return;
             }
 
-            sendResponse(res, await prepareImportData(req, usMasterToken));
+            sendResponse(res, await prepareImportData(req, res, {usMasterToken}));
         } catch (ex) {
             const {error} = ex as GatewayApiErrorResponse;
             res.status(error?.status || 500).send(error);
