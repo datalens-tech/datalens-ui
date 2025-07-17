@@ -9,7 +9,8 @@ export const galleryApi = createApi({
     endpoints: (builder) => ({
         getGalleryItems: builder.query<GalleryItemShort[], void>({
             async queryFn() {
-                const {entries: data} = await getSdk().sdk.anonymous.publicGallery.getAllItems();
+                const {entries} = await getSdk().sdk.anonymous.publicGallery.getAllItems();
+                const data = entries.filter((entry) => !entry.hidden);
                 return {data};
             },
         }),
