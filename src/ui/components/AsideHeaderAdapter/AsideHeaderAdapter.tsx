@@ -23,6 +23,7 @@ import {UserMenu} from '../UserMenu/UserMenu';
 import {LogoText} from './LogoText/LogoText';
 import {Settings as SettingsPanel} from './Settings/Settings';
 import {DIALOG_RELEASE_VERSION} from './VersionDialog/VersionDialog';
+import {ASIDE_HEADER_LOGO_ICON_SIZE} from './constants';
 
 import defaultLogoIcon from '../../assets/icons/logo.svg';
 import iconCollection from '../../assets/icons/mono-collection.svg';
@@ -36,7 +37,6 @@ const i18n = I18n.keyset('component.aside-header.view');
 const COLLECTIONS_PATH = '/collections';
 const SERVICE_SETTINGS_PATH = '/settings';
 
-const LOGO_DEFAULT_SIZE = 32;
 const FOOTER_ITEM_DEFAULT_SIZE = 18;
 const PROMO_SITE_DOMAIN = 'https://datalens.tech';
 const PROMO_DOC_PATH = '/docs';
@@ -313,7 +313,7 @@ export const AsideHeaderAdapter = ({
             logo={{
                 text: () => <LogoText installationInfo={installationInfo} />,
                 icon: logoIcon ?? defaultLogo,
-                iconSize: LOGO_DEFAULT_SIZE,
+                iconSize: ASIDE_HEADER_LOGO_ICON_SIZE,
                 iconClassName: b('logo-icon'),
                 href: '/',
                 className: b('logo'),

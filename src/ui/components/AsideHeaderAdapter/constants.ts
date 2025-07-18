@@ -1,1 +1,1 @@
-export const OPEN_SOURCE_INSTALLATION_INFO = 'open source';
+export const ASIDE_HEADER_LOGO_ICON_SIZE = 32;
