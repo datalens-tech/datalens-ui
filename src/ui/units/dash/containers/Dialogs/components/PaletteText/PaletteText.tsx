@@ -15,6 +15,7 @@ const mainPresetOptions = [
     CustomPaletteTextColors.COMPLEMENTARY,
     CustomPaletteTextColors.SECONDARY,
     CustomPaletteTextColors.HINT,
+    CustomPaletteTextColors.INVERTED_PRIMARY,
 ];
 
 export const PaletteText = ({onSelect, color, theme}: PaletteTextProps) => {

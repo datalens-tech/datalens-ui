@@ -88,6 +88,7 @@ export const CustomPaletteTextColors = {
     COMPLEMENTARY: 'var(--g-color-text-complementary)',
     SECONDARY: 'var(--g-color-text-secondary)',
     HINT: 'var(--g-color-text-hint)',
+    INVERTED_PRIMARY: 'var(--g-color-text-inverted-primary)',
 } as const;
 
 export type CustomPaletteTextColor = ValueOf<typeof CustomPaletteTextColors>;
