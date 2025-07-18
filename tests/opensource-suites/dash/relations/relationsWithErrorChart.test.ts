@@ -41,9 +41,6 @@ datalensTest.describe('Dashboards - Relations (new)', () => {
     datalensTest(
         'Pop-up opening for chart with error (removed dataset but old fields) and there is possibility to set ignore link',
         async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
-            // some page need to be loaded so we can get data of feature flag from DL var
-            await openTestPage(page, '/');
-
             // copy the original dashboard with delayed widget loading,
             // so that the tests do not collapse due to the transition to editing and locks
             const dashboardPage = new DashboardPage({page});
