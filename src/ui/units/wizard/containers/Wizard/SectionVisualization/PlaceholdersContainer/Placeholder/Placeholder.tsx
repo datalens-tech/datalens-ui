@@ -12,12 +12,14 @@ import {bindActionCreators} from 'redux';
 import type {Field} from 'shared';
 import {WizardPageQa, isParameter} from 'shared';
 import type {DatalensGlobalState} from 'ui';
+import {selectVisualization} from 'ui/units/wizard/selectors/visualization';
 import {selectUpdates} from 'units/wizard/selectors/preview';
 
 import {actualizeAndSetUpdates} from '../../../../../actions/preview';
 import DNDContainer from '../../../../../components/DND/DNDContainer';
 import PlaceholderActionIcon from '../../../../../components/PlaceholderActionIcon/PlaceholderActionIcon';
 import {ITEM_TYPES} from '../../../../../constants';
+import {canAddParamToPlaceholder} from '../../../../../utils/placeholder';
 import type {AddableField} from '../../AddField/AddField';
 import AddFieldContainer from '../../AddField/AddField';
 
@@ -55,7 +57,6 @@ type Props = StateProps &
         placeholderTooltipIcon?: IconData;
         transform?: (item: Field, action?: 'replace') => Promise<Field>;
         showHideLabel?: boolean;
-        isDashboardPlaceholder?: boolean;
         customPlaceholderActions?: CustomPlaceholderAction[];
         disableAddField?: boolean;
         addFieldItems?: Field[];
@@ -237,8 +238,12 @@ class PlaceholderComponent extends React.PureComponent<Props> {
 
     private checkAllowed = (item: Field) => {
         // We can add the parameter to any section
-        if (isParameter(item) && !this.props.isDashboardPlaceholder) {
-            return true;
+        if (isParameter(item)) {
+            return canAddParamToPlaceholder({
+                field: item,
+                placeholderId: this.props.id,
+                visualizationId: this.props.visualization.id,
+            });
         }
 
         return this.props.checkAllowed(item);
@@ -263,6 +268,7 @@ class PlaceholderComponent extends React.PureComponent<Props> {
 
 const mapStateToProps = (state: DatalensGlobalState) => {
     return {
+        visualization: selectVisualization(state),
         updates: selectUpdates(state),
     };
 };

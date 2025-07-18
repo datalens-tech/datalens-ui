@@ -121,10 +121,10 @@
     "workerpool": "^9.1.1"
   },
   "devDependencies": {
-    "@floating-ui/react": "^0.27.8",
-    "@gravity-ui/app-builder": "^0.28.0",
-    "@gravity-ui/components": "^4.4.0",
-    "@gravity-ui/date-components": "^3.1.0",
+    "@floating-ui/react": "^0.27.13",
+    "@gravity-ui/app-builder": "^0.29.2",
+    "@gravity-ui/components": "^4.7.1",
+    "@gravity-ui/date-components": "^3.2.3",
     "@gravity-ui/eslint-config": "^3.2.0",
     "@gravity-ui/icons": "^2.13.0",
     "@gravity-ui/navigation": "^3.3.6",
