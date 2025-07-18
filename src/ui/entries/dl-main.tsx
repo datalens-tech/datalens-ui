@@ -26,11 +26,18 @@ import 'ui/styles/base.scss';
 import 'ui/styles/variables.scss';
 import 'ui/styles/split-pane-resizer.scss';
 import 'ui/styles/theme.scss';
+import 'ui/styles/rebranding-theme.scss';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import {Feature} from 'shared';
 
 const Content = () => {
     const userTheme = useSelector(selectTheme);
     const theme = getOverridedTheme(userTheme);
     const themeSettings = useSelector(selectThemeSettings);
+
+    if (isEnabledFeature(Feature.EnableDLRebranding)) {
+        Utils.addBodyClass('dl-root', 'dl-root_rebranding');
+    }
 
     return (
         <ThemeProvider

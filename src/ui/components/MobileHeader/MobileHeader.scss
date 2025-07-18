@@ -13,11 +13,17 @@
     }
 
     &__logo {
-        height: 32px;
-        width: 143px;
+        &_rebranding {
+            flex: 1;
+        }
+
+        // compensation of shift due to absence of user icon
+        &_no-auth {
+            margin-right: var(--g-spacing-8);
+        }
     }
 
-    &__link {
+    &__logo &__link {
         text-decoration: none;
         outline: none;
         color: inherit;
@@ -28,6 +34,12 @@
 
     &__logo-icon {
         color: var(--g-color-base-brand);
+
+        &_rebranding {
+            height: auto;
+            width: auto;
+            padding-left: var(--g-spacing-2);
+        }
     }
 
     &__user-avatar {

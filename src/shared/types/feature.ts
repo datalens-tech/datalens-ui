@@ -90,6 +90,8 @@ export enum Feature {
     EnableExportSettings = 'EnableExportSettings',
     /** Enable updating dataset settings by action ('load_preview_by_default' | 'template_enabled' | 'data_export_forbidden') */
     EnableUpdatingDsSettingsByAction = 'EnableUpdatingDsSettingsByAction',
+    /** Enable new favicon, icon, theme, decorations and illustrations */
+    EnableDLRebranding = 'EnableDLRebranding',
 }
 
 export type FeatureConfig = Record<string, boolean>;

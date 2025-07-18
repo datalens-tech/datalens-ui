@@ -1,0 +1,1 @@
+export const ASIDE_HEADER_LOGO_ICON_SIZE = 32;
