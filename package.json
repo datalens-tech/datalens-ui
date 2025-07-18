@@ -76,7 +76,7 @@
     "axios": "^1.7.7",
     "axios-retry": "^3.9.1",
     "clipboard-copy": "^3.2.0",
-    "cookie-session": "^2.1.0",
+    "cookie-session": "^2.1.1",
     "d3": "^7.8.5",
     "d3-color": "^3.1.0",
     "dotenv": "^8.2.0",
