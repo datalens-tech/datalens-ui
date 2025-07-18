@@ -29,8 +29,12 @@ export const PaletteBackground = ({
         enableCustomBgColorSelector ? BASE_GREY_BACKGROUND_COLOR : '',
     ].filter(Boolean);
 
-    const paletteOptions = WIDGET_BG_COLORS_PRESET.concat(
-        enableCustomBgColorSelector ? WIDGET_BG_HEAVY_COLORS_PRESET : [],
+    const paletteOptions = React.useMemo(
+        () =>
+            WIDGET_BG_COLORS_PRESET.concat(
+                enableCustomBgColorSelector ? WIDGET_BG_HEAVY_COLORS_PRESET : [],
+            ),
+        [enableCustomBgColorSelector],
     );
 
     return (
