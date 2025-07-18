@@ -206,15 +206,13 @@ const TableOfContent = React.memo(
                                     {item.title}
                                     {item.hint && (
                                         <MarkdownHelpPopover
-                                            markdown={item.hint}
                                             className={b('hint')}
-                                            tooltipClassName={b('hint-tooltip')}
+                                            markdown={item.hint}
+                                            popoverProps={{
+                                                className: b('hint-tooltip'),
+                                            }}
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                e.preventDefault();
-
-                                                // open popover on click
-                                                return true;
                                             }}
                                         />
                                     )}

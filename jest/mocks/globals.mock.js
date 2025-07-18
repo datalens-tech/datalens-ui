@@ -62,7 +62,7 @@ jest.mock(`../../src/ui/libs/userSettings/index.ts`, () => {
     };
 });
 
-jest.mock('@gravity-ui/chartkit/d3', () => {
+jest.mock('@gravity-ui/chartkit/gravity-charts', () => {
     return {
         CustomShapeRenderer: {
             pieCenterText: () => {},

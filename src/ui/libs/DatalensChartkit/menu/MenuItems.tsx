@@ -11,7 +11,6 @@ import {
     Pencil,
 } from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
-import block from 'bem-cn-lite';
 import {I18n, i18n} from 'i18n';
 import {FOCUSED_WIDGET_PARAM_NAME, Feature, MenuItemsIds, PREVIEW_ROUTE, WidgetKind} from 'shared';
 import {isWidgetTypeDoNotNeedOverlay} from 'ui/components/DashKit/plugins/Widget/components/helpers';
@@ -31,11 +30,6 @@ import type {AlertsActionArgs} from '../types/menu';
 
 import type {MenuItemConfig, MenuItemModalProps, MenuLoadedData} from './Menu';
 
-import './MenuItems.scss';
-
-const b = block('dl-chartkit-menu-items');
-
-export const ICONS_MENU_DEFAULT_CLASSNAME = b('icon');
 export const ICONS_MENU_DEFAULT_SIZE = DL.IS_MOBILE ? 18 : 16;
 
 export type MenuItemArgs = {
@@ -77,7 +71,7 @@ export const getAlertsMenuItem = ({
         get title() {
             return alertI18n('section_title');
         },
-        icon: <ChartKitIcon data={Megaphone} className={ICONS_MENU_DEFAULT_CLASSNAME} />,
+        icon: <ChartKitIcon data={Megaphone} />,
         isVisible: (params: MenuItemArgs) => {
             if (!params || DL.IS_MOBILE) {
                 return false;
@@ -131,11 +125,7 @@ export const getNewWindowMenuItem = ({
         return customConfig?.title || i18n('chartkit.menu', 'open-in-window');
     },
     icon: customConfig?.icon || (
-        <Icon
-            data={ArrowUpRightFromSquare}
-            size={ICONS_MENU_DEFAULT_SIZE}
-            className={ICONS_MENU_DEFAULT_CLASSNAME}
-        />
+        <Icon data={ArrowUpRightFromSquare} size={ICONS_MENU_DEFAULT_SIZE} />
     ),
     isVisible: () => true,
     action:
@@ -165,9 +155,7 @@ export const getEditMenuItem = ({
     get title() {
         return customConfig?.title || i18n('chartkit.menu', 'open-edit');
     },
-    icon: customConfig?.icon || (
-        <ChartKitIcon data={Pencil} className={ICONS_MENU_DEFAULT_CLASSNAME} />
-    ),
+    icon: customConfig?.icon || <ChartKitIcon data={Pencil} />,
     isVisible: () => !DL.IS_MOBILE && (customConfig?.isVisible ? customConfig.isVisible() : true),
     action:
         customConfig?.action ||
@@ -194,13 +182,7 @@ export const getOpenAsTableMenuItem = ({
     get title() {
         return customConfig?.title || i18n('chartkit.menu', 'open-as-table');
     },
-    icon: customConfig?.icon || (
-        <Icon
-            data={LayoutCells}
-            size={ICONS_MENU_DEFAULT_SIZE}
-            className={ICONS_MENU_DEFAULT_CLASSNAME}
-        />
-    ),
+    icon: customConfig?.icon || <Icon data={LayoutCells} size={ICONS_MENU_DEFAULT_SIZE} />,
     isVisible: ({loadedData, error}: MenuItemArgs) => {
         const isExportAllowed = !loadedData?.extra.dataExportForbidden;
         const isCriticalError = error && !error?.extra?.rowsExceededLimit;
@@ -231,11 +213,7 @@ export const getLinkMenuItem = (customConfig?: Partial<MenuItemConfig>): MenuIte
         return customConfig?.title || i18n('chartkit.menu', 'get-code');
     },
     icon: customConfig?.icon || (
-        <Icon
-            data={ArrowShapeTurnUpRight}
-            size={ICONS_MENU_DEFAULT_SIZE}
-            className={ICONS_MENU_DEFAULT_CLASSNAME}
-        />
+        <Icon data={ArrowShapeTurnUpRight} size={ICONS_MENU_DEFAULT_SIZE} />
     ),
     isVisible: ({loadedData}: MenuItemArgs) => Boolean(loadedData?.type),
     action:
@@ -275,9 +253,7 @@ export const getEmbeddedMenuItem = (customConfig?: Partial<MenuItemConfig>): Men
     get title() {
         return customConfig?.title || i18n('chartkit.menu', 'embedded');
     },
-    icon: customConfig?.icon || (
-        <Icon data={Code} size={ICONS_MENU_DEFAULT_SIZE} className={ICONS_MENU_DEFAULT_CLASSNAME} />
-    ),
+    icon: customConfig?.icon || <Icon data={Code} size={ICONS_MENU_DEFAULT_SIZE} />,
     isVisible: () => true,
     action:
         customConfig?.action ||
@@ -306,11 +282,7 @@ export const getFullscreenMenuItem = (customConfig: Partial<MenuItemConfig>): Me
         return customConfig?.title || i18n('chartkit.menu', 'open-fullscreen');
     },
     icon: customConfig?.icon || (
-        <Icon
-            data={ChevronsExpandUpRight}
-            size={ICONS_MENU_DEFAULT_SIZE}
-            className={ICONS_MENU_DEFAULT_CLASSNAME}
-        />
+        <Icon data={ChevronsExpandUpRight} size={ICONS_MENU_DEFAULT_SIZE} />
     ),
     isVisible: ({loadedData, error}: MenuItemArgs) => {
         const searchParams = new URLSearchParams(window.location.search);

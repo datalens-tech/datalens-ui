@@ -73,13 +73,14 @@ class VisualizationSelector extends React.Component<Props> {
                     size="s"
                     switcherWrapperClassName={b('dropdown')}
                     items={this.getItems()}
-                    switcher={
+                    renderSwitcher={(args) => (
                         <React.Fragment>
                             <Button
                                 className={b('dropdown-btn')}
                                 view="flat"
                                 pin="brick-brick"
                                 width="max"
+                                onClick={args.onClick}
                             >
                                 <div
                                     className={b('dropdown-btn-content')}
@@ -108,9 +109,8 @@ class VisualizationSelector extends React.Component<Props> {
                                 </Button>
                             </div>
                         </React.Fragment>
-                    }
+                    )}
                     popupProps={{
-                        contentClassName: b('popup'),
                         placement: ['bottom-start', 'top-start'],
                     }}
                     menuProps={{

@@ -291,7 +291,7 @@ class DialogFilter extends React.Component<DialogFilterProps, DialogFilterState>
             <React.Fragment>
                 {this.renderOperationSection()}
                 <Dialog.Divider />
-                <Dialog.Body className={b('body', mods)}>
+                <div className={b('body', mods)}>
                     {fetching && operation.selectable ? (
                         <div className={b('loader')}>
                             <Loader size="m" />
@@ -299,7 +299,7 @@ class DialogFilter extends React.Component<DialogFilterProps, DialogFilterState>
                     ) : (
                         this.renderFilterSection()
                     )}
-                </Dialog.Body>
+                </div>
             </React.Fragment>
         );
     }

@@ -107,10 +107,16 @@ export default class AddField extends React.Component<AddFieldProps> {
                             },
                         };
                     })}
-                    renderControl={({triggerProps: {onClick}, ref}) => {
+                    renderControl={({triggerProps, ref}) => {
                         const actionProps = disabled
-                            ? {disabledText: <span data-qa={disabledTextQa}>{disabledText}</span>}
-                            : {qa: AddFieldQA.AddFieldButton, onClick, ref};
+                            ? {
+                                  disabledText: (
+                                      <div className={b('popup-content')} data-qa={disabledTextQa}>
+                                          {disabledText}
+                                      </div>
+                                  ),
+                              }
+                            : {qa: AddFieldQA.AddFieldButton, ...triggerProps, ref};
 
                         return <PlaceholderActionIcon icon={Plus} {...actionProps} />;
                     }}

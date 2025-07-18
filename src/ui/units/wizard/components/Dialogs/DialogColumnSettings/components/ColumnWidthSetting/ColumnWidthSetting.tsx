@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {RadioButtonOption} from '@gravity-ui/uikit';
+import type {SegmentedRadioGroupOptionProps} from '@gravity-ui/uikit';
 import {TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
@@ -18,7 +18,7 @@ type ColumnWidthSettingProps = {
     onError: (error: boolean) => void;
 };
 
-const WIDTH_UNIT_RADIO_CONFIG: RadioButtonOption[] = [
+const WIDTH_UNIT_RADIO_CONFIG: SegmentedRadioGroupOptionProps[] = [
     {
         content: i18n('wizard', 'label_auto'),
         value: 'auto',

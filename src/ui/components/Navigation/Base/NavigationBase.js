@@ -1,4 +1,4 @@
-import React, {Fragment} from 'react';
+import React from 'react';
 
 import {I18N} from 'i18n';
 import PropTypes from 'prop-types';
@@ -480,7 +480,7 @@ class NavigationBase extends React.Component {
             return getPlaceConfig({place, placesConfig: getNavigationPlacesConfig()});
         };
 
-        const navigationNode = React.createElement(navConstructor, {
+        return React.createElement(navConstructor, {
             ref: this.refNavigation,
             sdk,
             place: root,
@@ -493,13 +493,8 @@ class NavigationBase extends React.Component {
             onCreateMenuClick: this.onCreateMenuClick,
             onEntryClick: this.onEntryClick,
             onCrumbClick: this.onCrumbClick,
+            dialogs: <EntryDialogues ref={this.refDialogues} sdk={sdk} />,
         });
-        return (
-            <Fragment>
-                {navigationNode}
-                <EntryDialogues ref={this.refDialogues} sdk={sdk} />
-            </Fragment>
-        );
     }
 }
 

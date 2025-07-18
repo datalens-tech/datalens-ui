@@ -1,7 +1,7 @@
 import type {ReactElement} from 'react';
 
 import {dateTime} from '@gravity-ui/date-utils';
-import {Toaster} from '@gravity-ui/uikit';
+import {toaster} from '@gravity-ui/uikit/toaster-singleton';
 import copy from 'copy-to-clipboard';
 import {I18n} from 'i18n';
 import {isObject} from 'lodash';
@@ -19,8 +19,6 @@ import {setLoadingToast, updateLoadingToast} from './ToastContent/ToastContent';
 import type {ExportChartArgs, ExportResultType} from './types';
 
 const i18n = I18n.keyset('chartkit.menu.export');
-
-const toaster = new Toaster();
 
 const FALLBACK_CONTENT_WIDTH = 206;
 const FORMAT_WIDTH = 27;

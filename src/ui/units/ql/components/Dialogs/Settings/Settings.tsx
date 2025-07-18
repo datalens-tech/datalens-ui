@@ -1,6 +1,6 @@
 import React, {PureComponent} from 'react';
 
-import {Dialog, RadioButton, TextInput} from '@gravity-ui/uikit';
+import {Dialog, SegmentedRadioGroup as RadioButton, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import _pick from 'lodash/pick';

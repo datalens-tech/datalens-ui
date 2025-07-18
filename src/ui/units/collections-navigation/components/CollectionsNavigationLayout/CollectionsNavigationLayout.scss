@@ -107,4 +107,12 @@ $class: 'dl-collections-navigation-layout';
             margin-top: 8px;
         }
     }
+
+    &__action-bar-group-left {
+        flex-grow: 1;
+    }
+
+    &__action-bar-group-item {
+        width: 100%;
+    }
 }

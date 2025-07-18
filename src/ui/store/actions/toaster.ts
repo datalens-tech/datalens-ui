@@ -2,7 +2,7 @@ import type React from 'react';
 import type {AnyAction} from 'redux';
 import type {ThunkDispatch} from 'redux-thunk';
 import type {ToastTheme, ToastAction} from '@gravity-ui/uikit';
-import {Toaster} from '@gravity-ui/uikit';
+import {toaster} from '@gravity-ui/uikit/toaster-singleton';
 import {I18n} from 'i18n';
 import type {DatalensGlobalState} from '../../';
 import type {DataLensApiError} from '../../typings';
@@ -11,7 +11,6 @@ import {Feature} from 'shared';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 const i18n = I18n.keyset('component.toaster.view');
-const toaster = new Toaster();
 
 export type ShowToastOptions = {
     title: string;

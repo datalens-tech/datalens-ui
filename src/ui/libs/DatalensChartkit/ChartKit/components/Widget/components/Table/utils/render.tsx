@@ -288,8 +288,8 @@ export function valueFormatter(
         >
             {button}
             {shouldShowTooltip ? (
-                <Popover content={cellOnClickEvent?.args?.message} openOnHover={false}>
-                    {resultValue}
+                <Popover content={cellOnClickEvent?.args?.message} trigger="click">
+                    <React.Fragment>{resultValue}</React.Fragment>
                 </Popover>
             ) : (
                 resultValue

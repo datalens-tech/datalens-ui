@@ -95,10 +95,13 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
             <Popup
                 hasArrow={hasTail}
                 placement={popupPlacement}
-                onClose={this.onClose}
+                onOpenChange={(open, event) => {
+                    if (!open) {
+                        this.onClose(event as MouseEvent | KeyboardEvent);
+                    }
+                }}
                 open={visible}
-                anchorRef={anchor}
-                contentClassName={b('popup')}
+                anchorElement={anchor.current}
                 qa={WorkbookNavigationMinimalQa.Popup}
             >
                 {visible && (

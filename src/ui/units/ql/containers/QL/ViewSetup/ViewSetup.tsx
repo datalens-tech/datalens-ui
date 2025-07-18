@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Button, RadioButton} from '@gravity-ui/uikit';
+import {Button, SegmentedRadioGroup as RadioButton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {EntryIcon} from 'components/EntryIcon/EntryIcon';
 import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';

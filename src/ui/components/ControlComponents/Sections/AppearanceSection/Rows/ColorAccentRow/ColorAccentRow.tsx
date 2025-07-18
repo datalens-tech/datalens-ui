@@ -1,7 +1,7 @@
 import React from 'react';
 
-import {FormRow, HelpPopover} from '@gravity-ui/components';
-import {Checkbox} from '@gravity-ui/uikit';
+import {FormRow} from '@gravity-ui/components';
+import {Checkbox, HelpMark} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
@@ -38,11 +38,14 @@ export const ColorAccentRow = ({className}: {className?: string}) => {
     const label = (
         <React.Fragment>
             <span>{i18n('field_color-accent')}</span>
-            <HelpPopover
-                placement={['bottom', 'top']}
-                offset={{top: -1, left: 5}}
-                content={i18n('field_color-accent-note')}
-            />
+            <HelpMark
+                popoverProps={{
+                    placement: ['bottom', 'top'],
+                }}
+                style={{left: 5}}
+            >
+                {i18n('field_color-accent-note')}
+            </HelpMark>
         </React.Fragment>
     );
 

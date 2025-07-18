@@ -1,4 +1,9 @@
 .conn-panel-actions {
     display: flex;
     column-gap: 10px;
+
+    &__help-btn {
+        margin-left: var(--g-spacing-1);
+        vertical-align: text-bottom;
+    }
 }

@@ -1,6 +1,8 @@
 .chartkit-charts-insights {
     max-height: 80vh;
+    max-width: 300px;
     overflow: auto;
+    padding: var(--g-spacing-4);
 
     &__tooltip:not(:first-child) {
         margin-top: 12px;

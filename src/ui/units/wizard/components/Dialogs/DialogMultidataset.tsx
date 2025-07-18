@@ -179,16 +179,18 @@ class DialogMultidataset extends PureComponent<Props, State> {
                                             <div className={b('left-dataset-more')}>
                                                 <DropdownMenu
                                                     size="s"
-                                                    switcher={
+                                                    renderSwitcher={({onClick, onKeyDown}) => (
                                                         <Button
                                                             qa={`dataset-${dataset.realName}`}
                                                             size="s"
                                                             view="flat"
                                                             width="max"
+                                                            onClick={onClick}
+                                                            onKeyDown={onKeyDown}
                                                         >
                                                             <Icon data={Ellipsis} width="16" />
                                                         </Button>
-                                                    }
+                                                    )}
                                                     items={[
                                                         {
                                                             action: () => {

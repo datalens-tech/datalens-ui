@@ -1,6 +1,7 @@
 export enum ActionPanelQA {
     MoreBtn = 'entry-panel-more-btn',
     ActionPanel = 'entry-action-panel',
+    EntryBreadcrumbs = 'entry-breadcrumbs',
 }
 
 export enum RevisionsPanelQa {

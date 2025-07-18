@@ -26,8 +26,7 @@ const vendors = (vendorsList: string[]) => {
         'react-dnd',
         'react-grid-layout',
         'react-beautiful-dnd',
-        '@popperjs/core',
-        'focus-trap',
+        '@floating-ui/react',
     ]);
 };
 

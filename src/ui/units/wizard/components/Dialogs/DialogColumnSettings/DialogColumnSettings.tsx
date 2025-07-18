@@ -145,7 +145,6 @@ export const DialogColumnSettings: React.FC<DialogColumnSettingsProps> = (
             <Dialog.Footer
                 preset="default"
                 showError={false}
-                listenKeyEnter={true}
                 onClickButtonApply={() => onApply({fields, pinnedColumns})}
                 onClickButtonCancel={() => onClose()}
                 propsButtonApply={{

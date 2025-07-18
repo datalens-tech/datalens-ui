@@ -27,8 +27,8 @@
     }
 
     &__help-icon {
-        top: 5px;
-        left: 5px;
+        margin-left: var(--g-spacing-1);
+        vertical-align: middle;
     }
 
     &__dialog-divider {
