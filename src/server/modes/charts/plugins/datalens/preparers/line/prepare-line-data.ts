@@ -292,7 +292,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
             visualizationId !== WizardVisualizationId.Area &&
             !isPercentVisualization(visualizationId);
 
-        if (!previousCategories && !disableDefaultSorting) {
+        if (!previousCategories?.length && !disableDefaultSorting) {
             categories = getSortedCategories({
                 lines,
                 colorItem,
