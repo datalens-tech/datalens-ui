@@ -1,11 +1,12 @@
 .color-picker-input {
-    &__preview {
+    --_--preview-size: 16px;
+
+    &__preview-container {
+        margin: 0 var(--g-spacing-1);
         overflow: hidden;
         position: relative;
-        width: 16px;
-        height: 16px;
-        border-radius: 2px;
-        margin: 0 var(--g-spacing-1);
+        width: var(--_--preview-size);
+        height: var(--_--preview-size);
 
         &::before {
             content: '';
@@ -13,6 +14,16 @@
             inset: 0px;
             border: 1px solid var(--g-color-line-generic);
         }
+
+        &,
+        &::before {
+            border-radius: 2px;
+        }
+    }
+
+    &__preview {
+        width: var(--_--preview-size);
+        height: var(--_--preview-size);
     }
 
     &__palette {
