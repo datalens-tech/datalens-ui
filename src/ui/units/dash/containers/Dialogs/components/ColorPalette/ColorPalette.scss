@@ -104,13 +104,13 @@
         display: inline-block;
         width: $color-item-size;
         height: $color-item-size;
+        background-clip: padding-box;
 
         &_transparent {
             background-image: repeating-conic-gradient(
                 var(--g-color-base-generic) 0 25%,
                 var(--g-color-base-background) 0 50%
             );
-            background-clip: padding-box;
             border: 1px solid transparent;
         }
 
@@ -134,12 +134,16 @@
     }
 
     &__theme,
-    &__color-item_transparent {
+    &__color-item {
         border-radius: 6px;
     }
 
     &__palette-trigger &__theme,
-    &__highlight-wrapper_with-border &__theme {
+    &__palette-trigger &__color-item {
         border: 1px solid transparent;
+    }
+
+    &__palette-trigger &__theme &__color-item {
+        margin: -1px;
     }
 }
