@@ -15,6 +15,7 @@ import {
     selectShapes,
     selectShapesConfig,
     selectTooltips,
+    selectPointSizeConfig,
 } from 'units/wizard/selectors/visualization';
 import {selectExtraSettings as getExtraSettingsWizard} from 'units/wizard/selectors/widget';
 
@@ -409,6 +410,7 @@ export const getPreviewData = createSelector(
     getParams,
     getPlaceholdersContent,
     getOrder,
+    selectPointSizeConfig,
     (
         chartType,
         queryValue,
@@ -419,6 +421,7 @@ export const getPreviewData = createSelector(
         params,
         placeholdersContent,
         order,
+        geopointsConfig,
     ): QlConfig | null => {
         if (chartType && connection && visualization) {
             const result: QlConfig = {
@@ -441,6 +444,7 @@ export const getPreviewData = createSelector(
                 visualization,
                 order,
                 version: QlConfigVersions.V4,
+                geopointsConfig,
             };
 
             return result;
