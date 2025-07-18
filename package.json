@@ -120,7 +120,7 @@
     "workerpool": "^9.1.1"
   },
   "devDependencies": {
-    "@gravity-ui/app-builder": "^0.28.0",
+    "@gravity-ui/app-builder": "^0.29.2",
     "@gravity-ui/components": "^3.12.5",
     "@gravity-ui/date-components": "^2.11.0",
     "@gravity-ui/eslint-config": "^3.2.0",
