@@ -247,7 +247,7 @@ function PaletteList(props: PaleteListProps) {
 type ColorPaletteProps = {
     color?: string;
     onSelect: (color: string) => void;
-    enableCustomBgColorSelector?: boolean;
+    enableCustomColorSelector?: boolean;
     mainPresetOptions: string[];
     paletteOptions: string[];
     theme?: RealTheme;
@@ -257,7 +257,7 @@ type ColorPaletteProps = {
 export function ColorPalette({
     onSelect,
     color,
-    enableCustomBgColorSelector,
+    enableCustomColorSelector,
     mainPresetOptions,
     paletteOptions,
     theme,
@@ -309,7 +309,7 @@ export function ColorPalette({
                 <PaletteList
                     onSelect={setSelectedColor}
                     selectedColor={selectedColor}
-                    enableCustomBgColorSelector={enableCustomBgColorSelector}
+                    enableCustomBgColorSelector={enableCustomColorSelector}
                     mainPresetOptions={mainPresetOptions}
                     paletteOptions={paletteOptions}
                     theme={theme}

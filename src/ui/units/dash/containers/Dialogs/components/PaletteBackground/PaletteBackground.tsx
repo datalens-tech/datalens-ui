@@ -41,7 +41,7 @@ export const PaletteBackground = ({
         <ColorPalette
             onSelect={onSelect}
             color={color}
-            enableCustomBgColorSelector={enableCustomBgColorSelector}
+            enableCustomColorSelector={enableCustomBgColorSelector}
             mainPresetOptions={mainPresetOptions}
             paletteOptions={paletteOptions}
             theme={theme}
