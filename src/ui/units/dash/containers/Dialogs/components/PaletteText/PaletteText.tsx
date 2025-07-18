@@ -15,7 +15,6 @@ const mainPresetOptions = [
     CustomPaletteTextColors.COMPLEMENTARY,
     CustomPaletteTextColors.SECONDARY,
     CustomPaletteTextColors.HINT,
-    CustomPaletteTextColors.BRAND,
 ];
 
 export const PaletteText = ({onSelect, color, theme}: PaletteTextProps) => {
@@ -27,7 +26,6 @@ export const PaletteText = ({onSelect, color, theme}: PaletteTextProps) => {
             mainPresetOptions={mainPresetOptions}
             paletteOptions={TITLE_WIDGET_TEXT_COLORS_PRESET}
             theme={theme}
-            showItemsBorder
             paletteColumns={6}
         />
     );
