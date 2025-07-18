@@ -33,7 +33,7 @@ import DialogConfirm from '../DialogConfirm/DialogConfirm';
 import DocSection from './components/DocSection';
 import type {FormulaSectionProps} from './components/FormulaSection';
 import FormulaSection from './components/FormulaSection';
-import Settings from './components/Settings';
+import {Settings} from './components/Settings';
 import SourceSection from './components/SourceSection';
 import type {Cancelable, FieldEditorErrors, ModifiedDatasetField, ModifyField} from './typings';
 import {
