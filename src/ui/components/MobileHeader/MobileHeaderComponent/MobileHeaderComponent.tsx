@@ -85,7 +85,11 @@ export const MobileHeaderComponent = ({
                     ? () => <LogoText installationInfo={installationInfo} />
                     : PRODUCT_NAME,
                 iconClassName: b('logo-icon', {rebranding: isRebrandingEnabled}),
-                className: b('logo', {rebranding: isRebrandingEnabled}),
+                // TODO: Remove no-auth after rebranding will be enabled
+                className: b('logo', {
+                    rebranding: isRebrandingEnabled,
+                    'no-auth': !DL.AUTH_ENABLED,
+                }),
                 iconSize: isRebrandingEnabled ? MOBILE_HEADER_LOGO_ICON_SIZE : undefined,
             }}
             burgerMenu={{items: menuItems, renderFooter: () => <BurgerMenuFooter />}}

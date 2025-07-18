@@ -12,11 +12,18 @@
         height: 0;
     }
 
-    &__logo_rebranding {
-        flex: 1;
+    &__logo {
+        &_rebranding {
+            flex: 1;
+        }
+
+        // compensation of shift due to absence of user icon
+        &_no-auth {
+            margin-right: var(--g-spacing-8);
+        }
     }
 
-    &__link {
+    &__logo &__link {
         text-decoration: none;
         outline: none;
         color: inherit;
