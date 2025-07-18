@@ -99,25 +99,25 @@ export function canAddParamToPlaceholder(args: {
         return false;
     }
 
+    // numbers (and date) are suitable for any placeholder
+    if (isNumberField(field) || isDateField(field)) {
+        return true;
+    }
+
     switch (visualizationId) {
         case WizardVisualizationId.Line:
         case WizardVisualizationId.Area:
         case WizardVisualizationId.Area100p:
         case WizardVisualizationId.Column:
         case WizardVisualizationId.Column100p: {
-            if (!isNumberField(field) && !isDateField(field)) {
-                return ![PlaceholderId.Y, PlaceholderId.Y2].includes(
-                    placeholderId as PlaceholderId,
-                );
+            if ([PlaceholderId.Y, PlaceholderId.Y2].includes(placeholderId as PlaceholderId)) {
+                return false;
             }
-            break;
+            return true;
         }
         case WizardVisualizationId.Bar:
         case WizardVisualizationId.Bar100p: {
-            if (!isNumberField(field) && !isDateField(field)) {
-                return placeholderId !== PlaceholderId.X;
-            }
-            break;
+            return placeholderId !== PlaceholderId.X;
         }
     }
 
