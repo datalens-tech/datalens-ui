@@ -56,7 +56,8 @@ export function buildChartConfig(args: BuildChartsConfigArgs) {
     const isScatterWidget = visualizationId === WizardVisualizationId.Scatter;
     const isTreemapWidget = visualizationId === WizardVisualizationId.Treemap;
 
-    const isSetManageTooltipConfig = !isIndicatorWidget && !isTableWidget && !isScatterWidget && !isTreemapWidget
+    const isSetManageTooltipConfig =
+        !isIndicatorWidget && !isTableWidget && !isScatterWidget && !isTreemapWidget;
 
     if (isTableWidget) {
         const size = widgetConfig?.size ?? shared?.extraSettings?.size;

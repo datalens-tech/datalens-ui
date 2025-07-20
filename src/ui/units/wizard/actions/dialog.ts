@@ -169,14 +169,14 @@ type OpenDialogPointsSizeArguments = {
     geopointsConfig: PointSizeConfig;
     placeholder: Placeholder;
     visualization: Shared['visualization'];
-    onApply?: () => void
+    onApply?: () => void;
 };
 
 export function openDialogPointsSize({
     geopointsConfig,
     placeholder,
     visualization,
-    onApply
+    onApply,
 }: OpenDialogPointsSizeArguments) {
     return function (dispatch: WizardDispatch) {
         const visualizationId = visualization.id;
@@ -202,7 +202,7 @@ export function openDialogPointsSize({
 
                         dispatch(updatePreviewAndClientChartsConfig({}));
 
-                        onApply?.()
+                        onApply?.();
                     },
                 },
             }),

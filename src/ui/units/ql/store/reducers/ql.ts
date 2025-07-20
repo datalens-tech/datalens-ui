@@ -12,10 +12,10 @@ import {
     selectColors,
     selectColorsConfig,
     selectLabels,
+    selectPointSizeConfig,
     selectShapes,
     selectShapesConfig,
     selectTooltips,
-    selectPointSizeConfig,
 } from 'units/wizard/selectors/visualization';
 import {selectExtraSettings as getExtraSettingsWizard} from 'units/wizard/selectors/widget';
 
@@ -328,6 +328,7 @@ export const getEntryNotChanged = createSelector(
     getParams,
     getChartType,
     getPlaceholdersContent,
+    selectPointSizeConfig,
     (
         entry,
         extraSettings,
@@ -338,6 +339,7 @@ export const getEntryNotChanged = createSelector(
         params,
         chartType,
         placeholdersContent,
+        geopointsConfig,
     ): boolean => {
         if (chartType && entry && entry.data && connection && visualization) {
             const actualSharedData: QlConfig = {
@@ -353,6 +355,7 @@ export const getEntryNotChanged = createSelector(
                 shapes: placeholdersContent.shapes || [],
                 shapesConfig: placeholdersContent.shapesConfig || [],
                 extraSettings: extraSettings || {},
+                geopointsConfig: geopointsConfig || {},
                 params: params.map((param) => {
                     return {
                         type: param.type,
