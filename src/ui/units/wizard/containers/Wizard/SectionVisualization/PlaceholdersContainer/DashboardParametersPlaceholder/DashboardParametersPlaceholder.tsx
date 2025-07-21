@@ -43,7 +43,6 @@ class DashboardParametersPlaceholder extends React.Component<Props> {
                 onBeforeRemoveItem={this.props.onBeforeRemoveItem}
                 hasSettings={false}
                 checkAllowed={() => false}
-                isDashboardPlaceholder={true}
                 onItemClick={this.handleOnItemClick}
             />
         );
