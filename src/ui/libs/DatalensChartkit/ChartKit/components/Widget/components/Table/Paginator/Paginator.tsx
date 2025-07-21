@@ -22,6 +22,7 @@ interface ArrowButtonProps {
     page: number;
     qa?: string;
     reversed?: boolean;
+    disabled?: boolean
 }
 
 const b = block('chartkit-table-paginator');
@@ -44,7 +45,7 @@ const getRange = (page: number, limit: number, rowsCount: number) => {
     return `${i18n('chartkit-table', 'paginator-rows')}: ${from + 1}–${to}`;
 };
 
-const ArrowButton: React.FC<ArrowButtonProps> = ({page, qa, reversed, onChange}) => {
+const ArrowButton: React.FC<ArrowButtonProps> = ({page, qa, reversed, onChange, disabled}) => {
     const onClick = React.useCallback(() => {
         onChange(page + (reversed ? -1 : 1));
     }, [page, reversed, onChange]);
@@ -54,7 +55,7 @@ const ArrowButton: React.FC<ArrowButtonProps> = ({page, qa, reversed, onChange})
             size="m"
             view="normal"
             qa={qa}
-            disabled={reversed && page === START_PAGE}
+            disabled={disabled}
             onClick={onClick}
         >
             <Icon data={ChevronRight} className={b('arrow-btn', {reversed})} size={16} />
@@ -93,6 +94,7 @@ const Paginator: React.FC<PaginatorProps> = ({page, rowsCount, limit, onChange, 
         <div className={b(null, className)} data-qa={ChartKitTableQa.Paginator}>
             <div {...{[PRINT_HIDDEN_ATTR]: true}}>
                 <ArrowButton
+                    disabled={currentPage === START_PAGE}
                     page={currentPage}
                     qa={ChartKitTableQa.PaginatorPrevPageButton}
                     reversed={true}
@@ -108,6 +110,7 @@ const Paginator: React.FC<PaginatorProps> = ({page, rowsCount, limit, onChange, 
                     qa={ChartKitTableQa.PaginatorPageInput}
                 />
                 <ArrowButton
+                    disabled={Number(rowsCount ?? 0) < Number(limit ?? 0)}
                     page={currentPage}
                     qa={ChartKitTableQa.PaginatorNextPageButton}
                     onChange={onChange}
@@ -122,4 +125,4 @@ const Paginator: React.FC<PaginatorProps> = ({page, rowsCount, limit, onChange, 
     );
 };
 
-export default Paginator;
+export default React.memo(Paginator);
