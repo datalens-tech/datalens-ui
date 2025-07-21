@@ -989,7 +989,7 @@ export const buildGraphPrivate = (args: {
     }
 
     if (shared.visualization.id.includes('Table')) {
-        const page = ChartEditor.getCurrentPage()
+        const page = ChartEditor.getCurrentPage();
         const limit = shared.extraSettings?.limit;
         const shouldDisablePaginator = page === 1 && limit && limit > (result.rows?.length ?? 0);
         if (shouldDisablePaginator) {

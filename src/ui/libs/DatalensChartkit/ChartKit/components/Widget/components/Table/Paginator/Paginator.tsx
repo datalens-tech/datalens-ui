@@ -22,7 +22,7 @@ interface ArrowButtonProps {
     page: number;
     qa?: string;
     reversed?: boolean;
-    disabled?: boolean
+    disabled?: boolean;
 }
 
 const b = block('chartkit-table-paginator');
@@ -51,13 +51,7 @@ const ArrowButton: React.FC<ArrowButtonProps> = ({page, qa, reversed, onChange, 
     }, [page, reversed, onChange]);
 
     return (
-        <Button
-            size="m"
-            view="normal"
-            qa={qa}
-            disabled={disabled}
-            onClick={onClick}
-        >
+        <Button size="m" view="normal" qa={qa} disabled={disabled} onClick={onClick}>
             <Icon data={ChevronRight} className={b('arrow-btn', {reversed})} size={16} />
         </Button>
     );
