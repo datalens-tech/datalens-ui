@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Dialog, RadioButton} from '@gravity-ui/uikit';
+import {Dialog, SegmentedRadioGroup as RadioButton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {connect} from 'react-redux';

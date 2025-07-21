@@ -91,7 +91,7 @@ class ColorPalettesCard extends React.Component<Props> {
                 action: () => {
                     this.props.handleRemoveColorPaletteClick(colorPalette);
                 },
-                icon: <Icon size={16} data={trashIcon} />,
+                iconStart: <Icon size={16} data={trashIcon} />,
                 text: i18n('component.color-palette-editor', 'label_delete-palette'),
                 theme: 'danger',
             },

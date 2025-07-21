@@ -40,8 +40,8 @@ export const ChartInfoIcon = (props: Props) => {
         <Popover
             content={<MarkdownContent value={content} onRender={() => setLoaded(true)} />}
             key={String(isLoaded)}
-            initialOpen={isLoaded}
-            tooltipClassName={b('tooltip', {hidden: !isLoaded})}
+            open={isLoaded}
+            className={b('tooltip', {hidden: !isLoaded})}
         >
             <Icon size={20} data={ShieldExclamation} className={b('icon')} />
         </Popover>

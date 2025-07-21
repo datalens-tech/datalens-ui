@@ -1,4 +1,8 @@
-import type {ChartData, TreemapSeries, TreemapSeriesData} from '@gravity-ui/chartkit/d3';
+import type {
+    ChartData,
+    TreemapSeries,
+    TreemapSeriesData,
+} from '@gravity-ui/chartkit/gravity-charts';
 
 import type {
     ColumnExportSettings,

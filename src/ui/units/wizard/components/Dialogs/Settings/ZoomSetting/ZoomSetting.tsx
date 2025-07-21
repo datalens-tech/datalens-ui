@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {FormRow} from '@gravity-ui/components';
-import {RadioButton} from '@gravity-ui/uikit';
+import {SegmentedRadioGroup as RadioButton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 

@@ -3,6 +3,7 @@ export const enum WizardPageQa {
     VisualizationSelectPopup = 'visualization-select-popup',
     UndoButton = 'undo-btn',
     RedoButton = 'redo-btn',
+    PlaceholderIconTooltipContent = 'placeholder-icon-tooltip-content',
 }
 
 export const enum SectionDatasetQA {

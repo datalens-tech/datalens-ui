@@ -63,7 +63,6 @@ class DialogExternalControl extends React.Component<Props> {
                 className={b()}
                 size={'m'}
                 qa={ControlQA.dialogControl}
-                disableFocusTrap={true}
                 disableEscapeKeyDown={true}
             >
                 <Dialog.Header caption={caption} />

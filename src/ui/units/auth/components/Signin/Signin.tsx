@@ -42,7 +42,7 @@ export const Signin = ({alternativeAuthOptions, logoIcon}: SigninProps) => {
         dispatch(showToast({title: error.message, error}));
     };
 
-    const handleSubmit = (event: React.FormEvent<string>) => {
+    const handleSubmit: React.FormEventHandler<'form'> = (event) => {
         event.preventDefault();
         if (!formData.login || !formData.password) {
             setErrorMessage(i18n('label_error-required-fields'));
