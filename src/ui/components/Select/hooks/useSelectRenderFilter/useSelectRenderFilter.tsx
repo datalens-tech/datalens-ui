@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type {SelectOption, SelectProps} from '@gravity-ui/uikit';
-import {Button, RadioButton, TextInput} from '@gravity-ui/uikit';
+import {Button, SegmentedRadioGroup as RadioButton, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import debounce from 'lodash/debounce';

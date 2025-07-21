@@ -214,7 +214,6 @@ const SourceEditorDialog: React.FC<SourceEditorDialogProps> = (props) => {
             qa="source-editor-dialog"
             className={b()}
             open={open}
-            disableFocusTrap={true}
             onClose={attemptToCloseDialog}
         >
             <Dialog.Header caption={i18n('label_source-editor-header')} />

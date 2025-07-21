@@ -14,4 +14,11 @@
             flex-grow: 0;
         }
     }
+
+    &__tooltip-content {
+        padding: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+    }
 }

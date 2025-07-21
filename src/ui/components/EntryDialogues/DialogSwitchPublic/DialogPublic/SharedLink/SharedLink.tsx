@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {Button, CopyToClipboard, TextInput, Toaster} from '@gravity-ui/uikit';
+import {Button, CopyToClipboard, TextInput} from '@gravity-ui/uikit';
+import {toaster} from '@gravity-ui/uikit/toaster-singleton';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {CLIPBOARD_TIMEOUT, DL} from 'ui/constants/common';
@@ -11,8 +12,6 @@ import './SharedLink.scss';
 
 const b = block('dl-dialog-public-shared-link');
 const i18n = I18n.keyset('component.dialog-switch-public.view');
-
-const toaster = new Toaster();
 
 type Props = {
     className?: string;
