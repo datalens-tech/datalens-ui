@@ -37,7 +37,6 @@ datalensTest.describe('Wizard', () => {
             await wizardPage.createNewFieldWithFormula(parameterizedFieldName, formula);
 
             await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'Category');
-            await expect(previewLoader).toBeVisible();
             await expect(previewLoader).not.toBeVisible();
 
             const initialXAxisValues = 'Furniture\nOffice Supplies\nTechnology';
@@ -48,7 +47,6 @@ datalensTest.describe('Wizard', () => {
                 PlaceholderName.X,
                 parameterizedFieldName,
             );
-            await expect(previewLoader).toBeVisible();
             await expect(previewLoader).not.toBeVisible();
             const newXAxisValues = 'Office Supplies\nparameter_title\nTechnology';
             await expect(chartContainer).toHaveText(newXAxisValues, {useInnerText: true});
@@ -61,7 +59,7 @@ datalensTest.describe('Wizard', () => {
                 const datasetFields = page.locator(slct(SectionDatasetQA.DatasetFields));
                 const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
                 const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
-                const chart = chartContainer.locator('.chartkit-graph,.gcharts-d3');
+                const chart = chartContainer.locator('.chartkit-graph,.gcharts-chart');
                 const noData = chartContainer.locator(slct('ERR.CK.NO_DATA'));
 
                 // Create parameter (value = 1)

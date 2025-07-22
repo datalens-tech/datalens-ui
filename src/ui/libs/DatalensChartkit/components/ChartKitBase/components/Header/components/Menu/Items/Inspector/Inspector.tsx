@@ -11,10 +11,7 @@ import ChartKitIcon from 'ui/libs/DatalensChartkit/components/ChartKitIcon/Chart
 import {registry} from 'ui/registry';
 
 import type {ChartWidgetDataRef} from '../../../../../../../../../../components/Widgets/Chart/types';
-import {
-    ICONS_MENU_DEFAULT_CLASSNAME,
-    type MenuItemArgs,
-} from '../../../../../../../../menu/MenuItems';
+import {type MenuItemArgs} from '../../../../../../../../menu/MenuItems';
 import type {
     ChartsData,
     ChartsProps,
@@ -72,7 +69,7 @@ const Inspector: React.FC<{
     const {Timings} = registry.common.components.getAll();
 
     return (
-        <Dialog onClose={onClose} open={true} size="m">
+        <Dialog onClose={onClose} open={true} size="m" disableHeightTransition={true}>
             <Dialog.Header caption={i18n('chartkit.menu.inspector', 'label_caption')} />
             <Dialog.Body className={b('body')}>
                 {stats && <Timings {...stats} />}
@@ -116,7 +113,7 @@ const Inspector: React.FC<{
 const getInspectorMenuitem = () => ({
     id: MenuItemsIds.INSPECTOR,
     title: () => i18n('chartkit.menu.inspector', 'label_caption'),
-    icon: <ChartKitIcon data={Magnifier} className={ICONS_MENU_DEFAULT_CLASSNAME} />,
+    icon: <ChartKitIcon data={Magnifier} />,
     isVisible: (params: MenuItemArgs) => {
         if (!params || DL.IS_MOBILE) {
             return false;

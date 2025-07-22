@@ -1,6 +1,7 @@
 import React from 'react';
 
-import {Button, CopyToClipboard, Toaster} from '@gravity-ui/uikit';
+import {Button, CopyToClipboard} from '@gravity-ui/uikit';
+import {toaster} from '@gravity-ui/uikit/toaster-singleton';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {DL} from 'ui/constants/common';
@@ -10,8 +11,6 @@ import './DebugInfo.scss';
 
 const i18n = I18n.keyset('component.error-content.view');
 const b = block('error-debug-info');
-
-const toaster = new Toaster();
 
 type DebugInfoProps = {
     id: string;

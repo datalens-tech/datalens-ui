@@ -245,7 +245,7 @@ export function ColorPalette({
         color || CustomPaletteBgColors.NONE,
     );
 
-    const anchorRef = React.useRef<HTMLElement>(null);
+    const anchorRef = React.useRef<HTMLButtonElement>(null);
     const [openPopup, setOpenPopup] = React.useState(false);
 
     const handleClosePopup = React.useCallback(() => {
@@ -273,9 +273,13 @@ export function ColorPalette({
             </Tooltip>
             <Popup
                 open={openPopup}
-                anchorRef={anchorRef}
+                anchorElement={anchorRef.current}
                 hasArrow
-                onOutsideClick={handleClosePopup}
+                onOpenChange={(open, _event, reason) => {
+                    if (!open && reason === 'outside-press') {
+                        handleClosePopup();
+                    }
+                }}
                 className={b('popup')}
             >
                 <PaletteList

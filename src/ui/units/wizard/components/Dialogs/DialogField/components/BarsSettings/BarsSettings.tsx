@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {RadioButtonOption} from '@gravity-ui/uikit';
+import type {SegmentedRadioGroupOptionProps} from '@gravity-ui/uikit';
 import {Switch} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
@@ -26,7 +26,7 @@ export type BarsSettingsProps = {
 
 const b = block('bars-settings-section');
 
-const COLOR_TYPE_RADIO_ITEMS: RadioButtonOption[] = [
+const COLOR_TYPE_RADIO_ITEMS: SegmentedRadioGroupOptionProps[] = [
     {
         content: i18n('wizard', 'label_one-color'),
         value: BarsColorType.OneColor,
@@ -40,7 +40,7 @@ const COLOR_TYPE_RADIO_ITEMS: RadioButtonOption[] = [
         value: BarsColorType.Gradient,
     },
 ];
-const ALIGN_RADIO_ITEMS: RadioButtonOption[] = [
+const ALIGN_RADIO_ITEMS: SegmentedRadioGroupOptionProps[] = [
     {
         content: i18n('wizard', 'label_default'),
         value: BarsAlignValues.Default,
@@ -55,7 +55,7 @@ const ALIGN_RADIO_ITEMS: RadioButtonOption[] = [
     },
 ];
 
-const SCALE_RADIO_ITEMS: RadioButtonOption[] = [
+const SCALE_RADIO_ITEMS: SegmentedRadioGroupOptionProps[] = [
     {
         content: i18n('wizard', 'label_auto'),
         value: 'auto',

@@ -7,7 +7,7 @@ import type {
     ScatterSeries,
     ScatterSeriesData,
     TreemapSeriesData,
-} from '@gravity-ui/chartkit/d3';
+} from '@gravity-ui/chartkit/gravity-charts';
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
 import {formatNumber} from 'shared/modules/format-units/index';

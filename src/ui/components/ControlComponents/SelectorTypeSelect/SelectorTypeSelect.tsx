@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {RadioButton, Select} from '@gravity-ui/uikit';
+import {SegmentedRadioGroup as RadioButton, Select} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {DashTabItemControlSourceType, DialogControlQa, Feature} from 'shared';

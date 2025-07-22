@@ -119,7 +119,7 @@ export class Menu extends React.PureComponent {
                 this.setState({modal: component});
             },
             disabled,
-            children: (
+            text: (
                 <div className={b('menu-item-content')}>
                     {titleStr}
                     {typeof disabledHint === 'string' ? (
@@ -130,7 +130,7 @@ export class Menu extends React.PureComponent {
                 </div>
             ),
             items: disabled ? undefined : subItems,
-            icon: itemIcon,
+            iconStart: itemIcon,
             className: b('popup-item', {disabled}),
         };
     };
@@ -235,9 +235,9 @@ export class Menu extends React.PureComponent {
                                     ? this.handleFullscreenOpen(item.action)
                                     : item.action
                             }
-                            iconStart={item.icon}
+                            iconStart={item.iconStart}
                         >
-                            {item.children}
+                            {item.text}
                         </ListMenu.Item>
                     ))}
                 </ListMenu>
