@@ -9,15 +9,14 @@ import './LogoText.scss';
 
 const b = block('aside-header-logo-text');
 
-export const LogoText = ({
-    installationInfo,
-    productName,
-    installationInfoStyle,
-}: {
-    installationInfo?: string;
-    productName?: string;
-    installationInfoStyle?: React.CSSProperties;
-}) => {
+export const LogoText = React.forwardRef<
+    HTMLDivElement,
+    {
+        installationInfo?: string;
+        productName?: string;
+        installationInfoClassName?: string;
+    }
+>(({installationInfo, productName, installationInfoClassName}, ref) => {
     const isRebrandingEnabled = isEnabledFeature(Feature.EnableDLRebranding);
     const showInstallation = isRebrandingEnabled && installationInfo;
     const defaultProductName = isRebrandingEnabled ? REBRANDING_PRODUCT_NAME : PRODUCT_NAME;
@@ -28,10 +27,12 @@ export const LogoText = ({
                 {productName || defaultProductName}
             </div>
             {showInstallation && (
-                <div className={b('installation-info')} style={installationInfoStyle}>
+                <div ref={ref} className={b('installation-info', installationInfoClassName)}>
                     {installationInfo}
                 </div>
             )}
         </div>
     );
-};
+});
+
+LogoText.displayName = 'LogoText';
