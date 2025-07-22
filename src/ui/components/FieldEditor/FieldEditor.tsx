@@ -290,7 +290,10 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
         const nextDocPanelVisible = !this.props.docPanelVisible;
 
         await this.props.updateUserSettings({
-            newSettings: {dlFieldEditorDocShown: nextDocPanelVisible},
+            newSettings: {
+                dlFieldEditorAdditionalShown: false,
+                dlFieldEditorDocShown: nextDocPanelVisible,
+            },
         });
 
         this.state.editor?.layout();
@@ -300,7 +303,10 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
         const nextAdditionalPanelVisible = !this.props.additionalPanelVisible;
 
         await this.props.updateUserSettings({
-            newSettings: {dlFieldEditorAdditionalShown: nextAdditionalPanelVisible},
+            newSettings: {
+                dlFieldEditorDocShown: false,
+                dlFieldEditorAdditionalShown: nextAdditionalPanelVisible,
+            },
         });
 
         this.state.editor?.layout();
