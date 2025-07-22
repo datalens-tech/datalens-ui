@@ -7,6 +7,7 @@ import {Feature} from 'shared';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {I18n} from '../../../../i18n';
+import {registry} from '../../../registry';
 import {DUPLICATE_TITLE, EMPTY_TITLE} from '../constants';
 import type {FieldEditorErrors, ModifyField} from '../typings';
 import {getErrorMessageKey} from '../utils';
@@ -17,9 +18,11 @@ const i18n = I18n.keyset('component.dl-field-editor.view');
 interface SettingsProps {
     modifyField: ModifyField;
     toggleDocumentationPanel: () => void;
+    toggleAdditionalPanel: () => void;
     field: DatasetField;
     errors: FieldEditorErrors;
     onlyFormulaEditor?: boolean;
+    additionalPanelVisible: boolean;
 }
 
 export const Settings: React.FC<SettingsProps> = ({
@@ -28,8 +31,11 @@ export const Settings: React.FC<SettingsProps> = ({
     onlyFormulaEditor,
     modifyField,
     toggleDocumentationPanel,
+    toggleAdditionalPanel,
 }) => {
     const inputRef = useRef<HTMLInputElement>(null);
+
+    const {AdditionalButtons} = registry.fieldEditor.components.getAll();
 
     useEffect(() => {
         inputRef.current?.focus();
@@ -91,11 +97,14 @@ export const Settings: React.FC<SettingsProps> = ({
                     />
                 </React.Fragment>
             )}
-            {showDocButton && (
-                <Button className={b('settings-doc-btn')} onClick={toggleDocumentationPanel}>
-                    {i18n('button_documentation')}
-                </Button>
-            )}
+            <div className={b('settings-buttons-container')}>
+                <AdditionalButtons toggleAdditionalPanel={toggleAdditionalPanel} />
+                {showDocButton && (
+                    <Button className={b('settings-doc-btn')} onClick={toggleDocumentationPanel}>
+                        {i18n('button_documentation')}
+                    </Button>
+                )}
+            </div>
         </div>
     );
 };

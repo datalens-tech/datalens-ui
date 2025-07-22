@@ -3,6 +3,8 @@ import React from 'react';
 import type {DialogProps} from '@gravity-ui/uikit';
 import {Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {AIChat} from 'extensions/src/ui/components/AIChat/AIChat';
+import {AIRoles} from 'extensions/src/ui/components/AIChat/constants';
 import lodash from 'lodash';
 import type {ResolveThunks} from 'react-redux';
 import {connect} from 'react-redux';
@@ -18,7 +20,7 @@ import type {
 } from 'shared';
 import {DialogFieldEditorQA, Feature, FieldEditorQa} from 'shared';
 import {updateUserSettings} from 'store/actions/user';
-import {selectFieldEditorDocShown} from 'store/selectors/user';
+import {selectFieldEditorAdditionalShown, selectFieldEditorDocShown} from 'store/selectors/user';
 import type {DataTypeConfig, DatalensGlobalState} from 'ui';
 import {SPLIT_PANE_RESIZER_CLASSNAME, sdk} from 'ui';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -137,6 +139,8 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
                         onlyFormulaEditor={onlyFormulaEditor}
                         modifyField={this.modifyField}
                         toggleDocumentationPanel={this.toggleDocumentationPanel}
+                        toggleAdditionalPanel={this.toggleAdditionalPanel}
+                        additionalPanelVisible={this.props.additionalPanelVisible}
                     />
                     {this.renderContent()}
                 </div>
@@ -160,6 +164,7 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
             options: {supported_functions: supportedFunctions = []} = {},
             dataTypes = [],
             docPanelVisible,
+            additionalPanelVisible,
         } = this.props;
         const {field, fieldErrors, errors} = this.state;
         const {calc_mode: calcMode} = field;
@@ -223,6 +228,17 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
                                 <div></div>
                             )}
                         </SplitPane>
+                        {additionalPanelVisible && (
+                            <AIChat
+                                roles={[AIRoles.Analyst]}
+                                className={b('ai-chat')}
+                                pinned={false}
+                                onClose={() => {}}
+                                meta={{}}
+                                startMessage={undefined}
+                                showHeaderButtons={false}
+                            />
+                        )}
                     </div>
                 )}
             </div>
@@ -275,6 +291,16 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
 
         await this.props.updateUserSettings({
             newSettings: {dlFieldEditorDocShown: nextDocPanelVisible},
+        });
+
+        this.state.editor?.layout();
+    };
+
+    toggleAdditionalPanel = async () => {
+        const nextAdditionalPanelVisible = !this.props.additionalPanelVisible;
+
+        await this.props.updateUserSettings({
+            newSettings: {dlFieldEditorAdditionalShown: nextAdditionalPanelVisible},
         });
 
         this.state.editor?.layout();
@@ -414,6 +440,7 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
 const mapStateToProps = (state: DatalensGlobalState) => {
     return {
         docPanelVisible: selectFieldEditorDocShown(state),
+        additionalPanelVisible: selectFieldEditorAdditionalShown(state),
     };
 };
 
