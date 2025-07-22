@@ -49,9 +49,12 @@ const Body: React.FC<{content: BodyProps; isActive?: boolean}> = ({content, isAc
                         <div className={b('content-item-text')}>{i18n(item.text)}</div>
                         {item.helpText && (
                             <Popover
-                                content={i18n(item.helpText)}
+                                content={
+                                    <div className={b('content-tooltip')}>
+                                        {i18n(item.helpText)}
+                                    </div>
+                                }
                                 placement="bottom"
-                                contentClassName={b('content-tooltip')}
                                 className={b('content-item-help')}
                             >
                                 <Icon data={CircleQuestion} />

@@ -1,11 +1,11 @@
 import React from 'react';
 
-import type {RadioButtonOption} from '@gravity-ui/uikit';
+import type {SegmentedRadioGroupOptionProps} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
 
 import {SETTINGS} from '../../../../constants';
 
-export const SCALE_RADIO_BUTTON_OPTIONS: RadioButtonOption[] = [
+export const SCALE_RADIO_BUTTON_OPTIONS: SegmentedRadioGroupOptionProps[] = [
     {
         value: SETTINGS.SCALE.AUTO,
         content: i18n('wizard', 'label_auto'),
@@ -16,7 +16,7 @@ export const SCALE_RADIO_BUTTON_OPTIONS: RadioButtonOption[] = [
     },
 ];
 
-export const SCALE_VALUE_RADIO_BUTTON_OPTIONS: RadioButtonOption[] = [
+export const SCALE_VALUE_RADIO_BUTTON_OPTIONS: SegmentedRadioGroupOptionProps[] = [
     {
         value: SETTINGS.SCALE_VALUE.MIN_MAX,
         content: (
@@ -37,7 +37,7 @@ export const SCALE_VALUE_RADIO_BUTTON_OPTIONS: RadioButtonOption[] = [
     },
 ];
 
-export const AXIS_TITLE_RADIO_BUTTON_OPTIONS: RadioButtonOption[] = [
+export const AXIS_TITLE_RADIO_BUTTON_OPTIONS: SegmentedRadioGroupOptionProps[] = [
     {
         value: SETTINGS.TITLE.AUTO,
         content: i18n('wizard', 'label_on'),
@@ -52,7 +52,7 @@ export const AXIS_TITLE_RADIO_BUTTON_OPTIONS: RadioButtonOption[] = [
     },
 ];
 
-export const AXIS_TYPE_RADIO_BUTTON_OPTIONS: RadioButtonOption[] = [
+export const AXIS_TYPE_RADIO_BUTTON_OPTIONS: SegmentedRadioGroupOptionProps[] = [
     {
         value: SETTINGS.TYPE.LINEAR,
         content: i18n('wizard', 'label_linear'),
@@ -63,7 +63,7 @@ export const AXIS_TYPE_RADIO_BUTTON_OPTIONS: RadioButtonOption[] = [
     },
 ];
 
-export const AXIS_VISIBILITY_RADIO_BUTTON_OPTIONS: RadioButtonOption[] = [
+export const AXIS_VISIBILITY_RADIO_BUTTON_OPTIONS: SegmentedRadioGroupOptionProps[] = [
     {
         value: SETTINGS.AXIS_VISIBILITY.SHOW,
         content: i18n('wizard', 'label_show'),
@@ -74,7 +74,7 @@ export const AXIS_VISIBILITY_RADIO_BUTTON_OPTIONS: RadioButtonOption[] = [
     },
 ];
 
-export const GRID_RADIO_BUTTON_OPTIONS: RadioButtonOption[] = [
+export const GRID_RADIO_BUTTON_OPTIONS: SegmentedRadioGroupOptionProps[] = [
     {
         value: SETTINGS.GRID.ON,
         content: i18n('wizard', 'label_on'),
@@ -85,7 +85,7 @@ export const GRID_RADIO_BUTTON_OPTIONS: RadioButtonOption[] = [
     },
 ];
 
-export const GRID_STEP_RADIO_BUTTON_OPTIONS: RadioButtonOption[] = [
+export const GRID_STEP_RADIO_BUTTON_OPTIONS: SegmentedRadioGroupOptionProps[] = [
     {
         value: SETTINGS.GRID_STEP.AUTO,
         content: i18n('wizard', 'label_auto'),
@@ -96,7 +96,7 @@ export const GRID_STEP_RADIO_BUTTON_OPTIONS: RadioButtonOption[] = [
     },
 ];
 
-export const HIDE_LABELS_RADIO_BUTTON_OPTIONS: RadioButtonOption[] = [
+export const HIDE_LABELS_RADIO_BUTTON_OPTIONS: SegmentedRadioGroupOptionProps[] = [
     {
         value: SETTINGS.HIDE_LABELS.NO,
         content: i18n('wizard', 'label_on'),
@@ -107,7 +107,7 @@ export const HIDE_LABELS_RADIO_BUTTON_OPTIONS: RadioButtonOption[] = [
     },
 ];
 
-export const LABELS_VIEW_RADIO_BUTTON_OPTIONS: RadioButtonOption[] = [
+export const LABELS_VIEW_RADIO_BUTTON_OPTIONS: SegmentedRadioGroupOptionProps[] = [
     {
         value: SETTINGS.LABELS_VIEW.AUTO,
         content: i18n('wizard', 'label_auto'),
@@ -126,7 +126,7 @@ export const LABELS_VIEW_RADIO_BUTTON_OPTIONS: RadioButtonOption[] = [
     },
 ];
 
-export const DEFAULT_NULLS_OPTIONS_RADIO_BUTTON_OPTIONS: RadioButtonOption[] = [
+export const DEFAULT_NULLS_OPTIONS_RADIO_BUTTON_OPTIONS: SegmentedRadioGroupOptionProps[] = [
     {
         value: SETTINGS.NULLS.IGNORE,
         content: i18n('wizard', 'label_ignore'),
@@ -137,17 +137,17 @@ export const DEFAULT_NULLS_OPTIONS_RADIO_BUTTON_OPTIONS: RadioButtonOption[] = [
     },
 ];
 
-export const HOLIDAYS_RADIO_BUTTON_OPTIONS: RadioButtonOption[] = [
+export const HOLIDAYS_RADIO_BUTTON_OPTIONS: SegmentedRadioGroupOptionProps[] = [
     {value: SETTINGS.HOLIDAYS.ON, content: i18n('wizard', 'label_on')},
     {value: SETTINGS.HOLIDAYS.OFF, content: i18n('wizard', 'label_off')},
 ];
 
-export const POLYLINE_POINTS_RADIO_BUTTON_OPTIONS: RadioButtonOption[] = [
+export const POLYLINE_POINTS_RADIO_BUTTON_OPTIONS: SegmentedRadioGroupOptionProps[] = [
     {value: SETTINGS.POLYLINE_POINTS.ON, content: i18n('wizard', 'label_on')},
     {value: SETTINGS.POLYLINE_POINTS.OFF, content: i18n('wizard', 'label_off')},
 ];
 
-export const AXIS_FORMAT_MODE_RADIO_BUTTON_OPTIONS: RadioButtonOption[] = [
+export const AXIS_FORMAT_MODE_RADIO_BUTTON_OPTIONS: SegmentedRadioGroupOptionProps[] = [
     {value: SETTINGS.AXIS_FORMAT_MODE.AUTO, content: i18n('wizard', 'label_auto')},
     {
         value: SETTINGS.AXIS_FORMAT_MODE.BY_FIELD,
@@ -155,7 +155,7 @@ export const AXIS_FORMAT_MODE_RADIO_BUTTON_OPTIONS: RadioButtonOption[] = [
     },
 ];
 
-export const AXIS_MODE_RADIO_BUTTONS: RadioButtonOption[] = [
+export const AXIS_MODE_RADIO_BUTTONS: SegmentedRadioGroupOptionProps[] = [
     {
         value: SETTINGS.AXIS_MODE.DISCRETE,
         content: i18n('wizard', 'label_discrete'),

@@ -1,7 +1,13 @@
 import React from 'react';
 
 import type {DropdownMenuItem} from '@gravity-ui/uikit';
-import {Dialog, DropdownMenu, Icon, Loader, RadioButton} from '@gravity-ui/uikit';
+import {
+    Dialog,
+    DropdownMenu,
+    Icon,
+    Loader,
+    SegmentedRadioGroup as RadioButton,
+} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import isEmpty from 'lodash/isEmpty';

@@ -1,4 +1,4 @@
-import type {ChartData, ChartSeries, ChartSeriesData} from '@gravity-ui/chartkit/d3';
+import type {ChartData, ChartSeries, ChartSeriesData} from '@gravity-ui/chartkit/gravity-charts';
 import {
     pickActionParamsFromParams,
     transformParamsToActionParams,

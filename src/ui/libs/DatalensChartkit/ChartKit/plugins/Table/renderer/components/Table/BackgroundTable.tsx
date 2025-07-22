@@ -40,7 +40,11 @@ export const BackgroundTable = React.memo<Props>((props: Props) => {
     const tableMinSizes = React.useRef<null | number[]>(null);
 
     const setMinSizes = async () => {
-        const tableElement = tableRef.current as HTMLTableElement;
+        const tableElement = tableRef.current;
+        if (!tableElement) {
+            return;
+        }
+
         await waitForContent(tableElement);
         const tableColSizes = getTableSizes(tableElement);
         const prev = tableMinSizes.current;

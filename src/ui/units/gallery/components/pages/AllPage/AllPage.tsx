@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {
+    Breadcrumbs,
     Col,
     Container,
     Row,
@@ -11,7 +12,6 @@ import {
     useThemeType,
 } from '@gravity-ui/uikit';
 import type {SelectOptionGroup} from '@gravity-ui/uikit';
-import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
 import {useHistory, useLocation} from 'react-router-dom';
 import {ActionPanel} from 'ui/components/ActionPanel';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
@@ -221,7 +221,7 @@ export function AllPage() {
         <React.Fragment>
             <ActionPanel
                 leftItems={
-                    <Breadcrumbs navigate={(href) => history.push(href)}>
+                    <Breadcrumbs className={b('breadcrumbs')}>
                         <Breadcrumbs.Item href="/gallery">
                             {galleryI18n('label_gallery')}
                         </Breadcrumbs.Item>

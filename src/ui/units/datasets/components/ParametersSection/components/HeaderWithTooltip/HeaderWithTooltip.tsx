@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {HelpPopover} from '@gravity-ui/components';
+import {HelpMark} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {registry} from 'ui/registry';
 
@@ -20,12 +20,15 @@ const HeaderWithTooltip: React.FC<HeaderTooltipProps> = (props: HeaderTooltipPro
     return (
         <span className={b()}>
             {title}
-            <HelpPopover
-                content={<YfmWrapper content={yfmString} setByInnerHtml={true} />}
-                placement={['bottom', 'right']}
-                tooltipClassName={b('tooltip')}
+            <HelpMark
+                popoverProps={{
+                    placement: ['bottom', 'right'],
+                    className: b('tooltip'),
+                }}
                 className={b('tooltip-anchor')}
-            />
+            >
+                <YfmWrapper content={yfmString} setByInnerHtml={true} />
+            </HelpMark>
         </span>
     );
 };

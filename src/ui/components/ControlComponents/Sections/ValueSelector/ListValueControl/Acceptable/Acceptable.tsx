@@ -196,7 +196,7 @@ export const Acceptable = () => {
                 caption={i18n('dash.control-dialog.edit', 'label_acceptable-values')}
                 onApply={handleApply}
                 onClose={handleClose}
-                onTransitionEntered={handleDialogTransitionEntered}
+                onTransitionInComplete={handleDialogTransitionEntered}
             >
                 {renderBody()}
             </Dialog>
