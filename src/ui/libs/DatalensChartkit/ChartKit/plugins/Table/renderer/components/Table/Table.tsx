@@ -169,14 +169,14 @@ export const Table = React.memo<Props>((props: Props) => {
         preserveWhiteSpace: config?.preserveWhiteSpace,
     });
 
+    const noData = !props.widgetData.data?.head?.length;
     React.useEffect(() => {
-        if (onReady && cellMinSizes) {
+        if (onReady && (cellMinSizes || noData)) {
             setTimeout(onReady, 0);
         }
-    }, [onReady, cellMinSizes]);
+    }, [onReady, cellMinSizes, noData]);
 
     const highlightRows = get(config, 'settings.highlightRows') ?? !hasGroups(data.head);
-    const noData = !props.widgetData.data?.head?.length;
 
     const handleCellClick = React.useCallback(
         (event: React.MouseEvent, cellData: unknown, rowId: string) => {

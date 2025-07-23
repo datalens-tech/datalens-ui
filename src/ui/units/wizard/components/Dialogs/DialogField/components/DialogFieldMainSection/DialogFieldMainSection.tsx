@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {RadioButtonOption, SelectOptionGroup} from '@gravity-ui/uikit';
+import type {SegmentedRadioGroupOptionProps, SelectOptionGroup} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
 import type {
     AvailableFieldType,
@@ -305,7 +305,7 @@ export class DialogFieldMainSection extends React.Component<Props> {
     renderLabelHide() {
         const {extra, hideLabelMode} = this.props;
 
-        const radioButtons: RadioButtonOption[] = [
+        const radioButtons: SegmentedRadioGroupOptionProps[] = [
             {
                 value: 'hide',
                 content: i18n('wizard', 'label_hide'),

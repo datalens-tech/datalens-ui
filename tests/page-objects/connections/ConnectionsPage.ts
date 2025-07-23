@@ -31,12 +31,12 @@ class ConnectionsPage extends BasePage {
     }
 
     async fillCreateConnectionInFolder({name}: {name: string}) {
-        const textInput = await this.page.waitForSelector(slct(EntryDialogQA.PathSelect));
+        const textInput = this.page.locator(slct(EntryDialogQA.PathSelect)).locator('input');
         // type connection name
-        await textInput.type(name);
-        const dialogApplyButton = await this.page.waitForSelector(slct(EntryDialogQA.Apply));
+        await textInput.fill(name);
+
         // create connection
-        await dialogApplyButton.click();
+        await this.page.locator(slct(EntryDialogQA.Apply)).click();
         try {
             await this.page.waitForURL(() => this.page.url().includes(name));
         } catch {
@@ -45,11 +45,8 @@ class ConnectionsPage extends BasePage {
     }
 
     async createConnectionInFolder({name = uuidv1()}: {name?: string} = {}) {
-        const formSubmit = await this.page.waitForSelector(
-            slct(ConnectionsBaseQA.SUBMIT_ACTION_BUTTON),
-        );
         // open creation dialog
-        await formSubmit.click();
+        await this.page.locator(slct(ConnectionsBaseQA.SUBMIT_ACTION_BUTTON)).click();
 
         await this.fillCreateConnectionInFolder({name});
     }
@@ -60,12 +57,14 @@ class ConnectionsPage extends BasePage {
         );
         // open creation dialog
         await formSubmit.click();
-        const textInput = await this.page.waitForSelector(slct(DialogCreateWorkbookEntryQa.Input));
+        const textInput = this.page
+            .locator(slct(DialogCreateWorkbookEntryQa.Input))
+            .locator('input');
         // clear input
         await textInput.press('Meta+A');
         await textInput.press('Backspace');
         // type connection name
-        await textInput.type(name);
+        await textInput.fill(name);
         const dialogApplyButton = await this.page.waitForSelector(
             slct(DialogCreateWorkbookEntryQa.ApplyButton),
         );

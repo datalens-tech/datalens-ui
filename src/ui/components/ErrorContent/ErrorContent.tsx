@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {ButtonProps, ButtonWidth} from '@gravity-ui/uikit';
+import type {ButtonButtonProps, ButtonWidth} from '@gravity-ui/uikit';
 import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -37,8 +37,8 @@ interface ErrorContentProps {
     action?: {
         text?: string;
         content?: React.ReactNode;
-        handler?: ButtonProps['onClick'];
-        buttonProps?: Omit<ButtonProps, 'onClick' | 'width' | 'size'>;
+        handler?: ButtonButtonProps['onClick'];
+        buttonProps?: Omit<ButtonButtonProps, 'onClick' | 'width' | 'size'>;
     };
     reqId?: string;
     traceId?: string;

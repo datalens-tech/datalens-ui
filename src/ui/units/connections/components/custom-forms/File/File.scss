@@ -6,7 +6,7 @@
     --column-filter-height: 43px;
 
     display: flex;
-    height: calc(100vh - var(--container-height-offset) - var(--gn-aside-top-panel-height));
+    height: calc(100vh - var(--container-height-offset) - var(--gn-top-alert-height));
 
     &_with-aside-header {
         --container-height-offset: #{$actionPanelHeight};
@@ -26,7 +26,7 @@
         display: flex;
         flex-direction: column;
         flex: 0 0 256px;
-        height: calc(100vh - var(--container-height-offset) - var(--gn-aside-top-panel-height));
+        height: calc(100vh - var(--container-height-offset) - var(--gn-top-alert-height));
         overflow-y: auto;
         border-right: 1px solid var(--g-color-line-generic);
         background-color: var(--g-color-base-generic-ultralight);
@@ -193,7 +193,7 @@
         height: calc(
             100vh - var(--container-height-offset) - var(--settings-height) - var(
                     --column-filter-height
-                ) - var(--gn-aside-top-panel-height)
+                ) - var(--gn-top-alert-height)
         );
 
         &__table {
@@ -230,7 +230,7 @@
     &__workspace_standalone .data-table {
         height: calc(
             100vh - var(--container-height-offset) - var(--column-filter-height) - var(
-                    --gn-aside-top-panel-height
+                    --gn-top-alert-height
                 )
         );
     }

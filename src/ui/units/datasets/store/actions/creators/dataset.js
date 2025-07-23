@@ -1,4 +1,4 @@
-import {Toaster} from '@gravity-ui/uikit';
+import {toaster} from '@gravity-ui/uikit/toaster-singleton';
 import {i18n} from 'i18n';
 import get from 'lodash/get';
 import {batch} from 'react-redux';
@@ -34,8 +34,6 @@ import {
     toggleSourcesLoader,
     validateDataset,
 } from './datasetTyped';
-
-const toaster = new Toaster();
 
 function checkFetchingPreview({updatePreview, updates}) {
     return (

@@ -1,10 +1,10 @@
 import React from 'react';
 
-import type {ButtonProps} from '@gravity-ui/uikit';
+import type {ButtonButtonProps} from '@gravity-ui/uikit';
 import {Button} from '@gravity-ui/uikit';
 import {ConnectionsBaseQA} from 'shared';
 
-type SubmitButtonProps = ButtonProps & {text: string};
+type SubmitButtonProps = ButtonButtonProps & {text: string};
 
 export const SubmitButton = (props: SubmitButtonProps) => {
     const {text, loading, disabled, onClick} = props;

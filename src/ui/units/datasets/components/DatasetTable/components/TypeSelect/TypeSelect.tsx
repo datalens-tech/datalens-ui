@@ -84,7 +84,7 @@ class TypeSelectComponent extends React.Component<Props> {
         );
     };
 
-    private renderSelectControl = ({onClick, ref, onKeyDown}: SelectRenderControlProps) => {
+    private renderSelectControl = ({ref, triggerProps}: SelectRenderControlProps) => {
         const {selectedType} = this.props;
         const selectedValue = getSelectedValueForSelect([selectedType], this.props.types);
 
@@ -92,9 +92,8 @@ class TypeSelectComponent extends React.Component<Props> {
 
         return (
             <Button
-                onClick={onClick}
-                ref={ref}
-                extraProps={{onKeyDown}}
+                {...triggerProps}
+                ref={ref as React.Ref<HTMLButtonElement>}
                 view="flat"
                 className={b('select-control')}
             >

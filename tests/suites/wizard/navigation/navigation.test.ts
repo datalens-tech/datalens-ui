@@ -6,49 +6,24 @@ import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {openTestPage, slct, waitForCondition} from '../../../utils';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {ActionPanelQA} from '../../../../src/shared/constants';
-
-const coreBreadrumbSelector = '.dl-core-navigation-breadcrumbs__item';
+import {ActionPanelQA, DlNavigationQA} from '../../../../src/shared/constants';
 
 const PARAMS = {
     FOLDER_NAME: 'E2E_NAVIGATION_TEST',
 };
 
-async function getCoreNavigationBreadcrumbs(page: Page) {
-    await page.waitForSelector(coreBreadrumbSelector);
-
-    const items = await page.$$(coreBreadrumbSelector);
-
-    return Promise.all(items.map((item) => item.getAttribute('data-qa')));
-}
-
-async function clickToNavigationBreadcrumb(page: Page, breadcrumb: string) {
-    await page.click(`.g-breadcrumbs__switcher >> text=${breadcrumb}`);
-}
-
 datalensTest.describe('Wizard - Navigation', () => {
     datalensTest(
         'When you click on a bread crumb, navigation in the corresponding directory should open',
         async ({page}: {page: Page}) => {
-            const expectedRobotChartsBreadcrumbs = [
-                'breadcrumbs-item-root',
-                'breadcrumbs-item-Users',
-                'breadcrumbs-item-robot-charts',
-                'breadcrumbs-item-yagr',
-            ];
-
-            let texts: (string | null)[] = [];
-
             await openTestPage(page, RobotChartsWizardUrls.NewChartWithCurrentPath);
+            await page.locator(slct(ActionPanelQA.EntryBreadcrumbs)).getByText('yagr').click();
 
-            await clickToNavigationBreadcrumb(page, 'yagr');
-
-            await waitForCondition(async () => {
-                texts = await getCoreNavigationBreadcrumbs(page);
-
-                return texts.join() === expectedRobotChartsBreadcrumbs.join();
-            }).catch(() => {
-                expect(texts).toEqual(expectedRobotChartsBreadcrumbs);
+            const breadcrumbs = page
+                .locator(slct(DlNavigationQA.NavigationBreadcrumbs))
+                .getByRole('link');
+            await expect(breadcrumbs).toHaveText(['Все объекты', 'Users', 'robot-charts', 'yagr'], {
+                useInnerText: true,
             });
         },
     );

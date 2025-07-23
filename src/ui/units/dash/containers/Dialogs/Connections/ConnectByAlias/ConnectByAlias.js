@@ -44,7 +44,7 @@ function ConnectByAlias({firstItemId, secondItemId, visible, onClose, onApply}) 
     const [secondParam, setSecondParam] = React.useState(secondParamDefault);
 
     return (
-        <Dialog open={visible} onClose={onClose} autoclosable={false} disableFocusTrap={true}>
+        <Dialog open={visible} onClose={onClose} autoclosable={false}>
             <Dialog.Header caption={i18n('dash.connections-dialog.edit', 'label_alias')} />
             <Dialog.Body className={b()}>
                 <div className={b('column')}>

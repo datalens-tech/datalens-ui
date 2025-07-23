@@ -58,7 +58,8 @@
     }
 
     &__title-tooltip {
-        margin-left: 5px;
+        margin-left: var(--g-spacing-1);
+        vertical-align: middle;
 
         .yfm {
             @include yfm-text-style();

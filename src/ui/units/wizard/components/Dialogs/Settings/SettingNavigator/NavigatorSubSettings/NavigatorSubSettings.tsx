@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type {SelectOption} from '@gravity-ui/uikit';
-import {RadioButton, Select, TextInput} from '@gravity-ui/uikit';
+import {SegmentedRadioGroup as RadioButton, Select, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import type {NavigatorPeriod, Period} from 'shared';

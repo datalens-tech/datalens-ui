@@ -130,7 +130,14 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
         const {field, errors, dialogConfirmVisible} = this.state;
 
         return (
-            <Dialog open={true} disableFocusTrap={true} onClose={this.onClose}>
+            <Dialog
+                open={true}
+                onClose={this.onClose}
+                onTransitionInComplete={() => {
+                    // in order for the monaco editor to calculate the dimensions correctly
+                    window.dispatchEvent(new Event('resize'));
+                }}
+            >
                 <div className={b()} data-qa={FieldEditorQa.Dialog}>
                     <Dialog.Header caption={i18n('label_title')} />
                     <Settings

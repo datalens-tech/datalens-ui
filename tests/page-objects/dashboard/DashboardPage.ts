@@ -312,6 +312,7 @@ class DashboardPage extends BasePage {
         const workbookPO = new Workbook(this.page);
 
         await workbookPO.openE2EWorkbookPage();
+        await this.page.locator(slct(DatalensTabs.Item), {hasText: 'Dashboards'}).click();
 
         await workbookPO.openWorkbookItemMenu(dashId);
 

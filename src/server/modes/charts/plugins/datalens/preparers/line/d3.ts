@@ -1,4 +1,4 @@
-import type {ChartData, LineSeries, LineSeriesData} from '@gravity-ui/chartkit/d3';
+import type {ChartData, LineSeries, LineSeriesData} from '@gravity-ui/chartkit/gravity-charts';
 
 import type {
     SeriesExportSettings,

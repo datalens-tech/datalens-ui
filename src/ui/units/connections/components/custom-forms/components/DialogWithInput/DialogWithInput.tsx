@@ -75,7 +75,7 @@ export const DialogWithInput = <T extends unknown>(props: DialogConnWithInputPro
                 onClickButtonApply={handleApply}
                 textButtonApply={textButtonApply || i18n('button_apply')}
                 textButtonCancel={textButtonCancel || i18n('button_cancel')}
-                propsButtonApply={propsButtonApply}
+                propsButtonApply={propsButtonApply as ButtonProps}
             />
         </Dialog>
     );

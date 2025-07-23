@@ -17,7 +17,7 @@ export const UserAvatarById = ({className, size, loginOrId}: UserAvatarByIdProps
             <Popover
                 placement="bottom"
                 hasArrow={false}
-                delayClosing={100}
+                closeDelay={100}
                 content={<LoginById loginOrId={loginOrId} view="primary" />}
             >
                 <UserAvatar size={size} />

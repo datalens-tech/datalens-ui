@@ -1,4 +1,4 @@
-import type {BarYSeries, ChartData} from '@gravity-ui/chartkit/d3';
+import type {BarYSeries, ChartData} from '@gravity-ui/chartkit/gravity-charts';
 
 import type {SeriesExportSettings, ServerField} from '../../../../../../../shared';
 import {

@@ -1,4 +1,4 @@
-import {D3Plugin} from '@gravity-ui/chartkit/d3';
+import {GravityChartsPlugin} from '@gravity-ui/chartkit/gravity-charts';
 import {HighchartsPlugin} from '@gravity-ui/chartkit/highcharts';
 import {IndicatorPlugin} from '@gravity-ui/chartkit/indicator';
 import {YagrPlugin} from '@gravity-ui/chartkit/yagr';
@@ -25,7 +25,7 @@ export const getChartkitPlugins = () => [
     HighchartsMapPlugin,
     YandexMapPlugin,
     HighchartsPlugin,
-    D3Plugin,
+    GravityChartsPlugin,
     MarkupPlugin,
     TablePlugin,
     AdvancedChartPlugin,
