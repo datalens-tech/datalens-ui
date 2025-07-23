@@ -3,8 +3,6 @@ import React from 'react';
 import type {DialogProps} from '@gravity-ui/uikit';
 import {Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {AIChat} from 'extensions/src/ui/components/AIChat/AIChat';
-import {AIRoles} from 'extensions/src/ui/components/AIChat/constants';
 import lodash from 'lodash';
 import type {ResolveThunks} from 'react-redux';
 import {connect} from 'react-redux';
@@ -30,6 +28,7 @@ import logger from '../../libs/logger';
 import type {MonacoTypes} from '../../libs/monaco';
 import {registerDatalensFormulaLanguage} from '../../libs/monaco';
 import {getSdk} from '../../libs/schematic-sdk';
+import {registry} from '../../registry';
 import DialogConfirm from '../DialogConfirm/DialogConfirm';
 
 import DocSection from './components/DocSection';
@@ -175,6 +174,7 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
         } = this.props;
         const {field, fieldErrors, errors} = this.state;
         const {calc_mode: calcMode} = field;
+        const {AdditionalPanel} = registry.fieldEditor.components.getAll();
 
         return (
             <div className={b('content')}>
@@ -235,17 +235,7 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
                                 <div></div>
                             )}
                         </SplitPane>
-                        {additionalPanelVisible && (
-                            <AIChat
-                                roles={[AIRoles.Analyst]}
-                                className={b('ai-chat')}
-                                pinned={false}
-                                onClose={() => {}}
-                                meta={{}}
-                                startMessage={undefined}
-                                showHeaderButtons={false}
-                            />
-                        )}
+                        <AdditionalPanel visible={additionalPanelVisible} onClose={() => {}} />
                     </div>
                 )}
             </div>
