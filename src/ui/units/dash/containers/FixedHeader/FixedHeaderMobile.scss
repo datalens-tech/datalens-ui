@@ -1,0 +1,24 @@
+.dash-fixed-header-mobile {
+    $class: &;
+
+    --fixed-header-background: var(
+        --dl-color-fixed-header-background,
+        var(--g-color-base-background)
+    );
+
+    --dash-current-background: var(--fixed-header-background);
+
+    /* terms rendering fix start */
+    &__controls-placeholder,
+    &__container-placeholder {
+        & .dashkit-item__renderer {
+            overflow-y: visible;
+        }
+    }
+
+    &__controls-placeholder {
+        position: relative;
+        z-index: 1;
+    }
+    /* terms rendering fix end */
+}

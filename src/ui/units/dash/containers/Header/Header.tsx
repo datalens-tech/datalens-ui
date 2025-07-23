@@ -3,12 +3,14 @@ import React from 'react';
 import type {History, Location} from 'history';
 import type {ResolveThunks} from 'react-redux';
 import {connect} from 'react-redux';
+import {Feature} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import type EntryDialogues from 'ui/components/EntryDialogues/EntryDialogues';
 import {MobileTocToggle} from 'ui/components/MobileTocToggle/MobileTocToggle';
 import {DL} from 'ui/constants/common';
 import {selectCanGoBack, selectCanGoForward} from 'ui/store/selectors/editHistory';
 import type {DashEntry} from 'ui/units/dash/typings/entry';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {DashActionPanelMobile} from 'units/dash/components/DashActionPanel/DashActionPanelMobile';
 
 import DashActionPanel from '../../components/DashActionPanel/DashActionPanel';
@@ -37,6 +39,8 @@ type Props = StateProps & DispatchProps & OwnProps;
 
 type State = {};
 
+const isMobileFixedHeaderEnabled = isEnabledFeature(Feature.EnableMobileFixedHeader);
+
 class Header extends React.PureComponent<Props, State> {
     state: State = {};
 
@@ -49,7 +53,7 @@ class Header extends React.PureComponent<Props, State> {
             this.props.hasTableOfContent && this.props.entry?.data?.settings?.expandTOC;
 
         if (DL.IS_MOBILE) {
-            return (
+            return isMobileFixedHeaderEnabled ? null : (
                 <React.Fragment>
                     <DashActionPanelMobile entry={this.props.entry} />
                     {showTocHeader && <MobileTocToggle onClick={this.props.toggleTableOfContent} />}
