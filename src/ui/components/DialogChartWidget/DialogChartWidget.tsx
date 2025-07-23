@@ -213,6 +213,7 @@ class DialogChartWidget extends React.PureComponent<
                 bodyClassMixin={b('content-body')}
                 disableEscapeKeyDown={true}
                 withoutSidebar={withoutSidebar}
+                disableHeightTransition={true}
             />
         );
     }
