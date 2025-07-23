@@ -92,6 +92,7 @@ export enum Feature {
     EnableUpdatingDsSettingsByAction = 'EnableUpdatingDsSettingsByAction',
     /** Enable new favicon, icon, theme, decorations and illustrations */
     EnableDLRebranding = 'EnableDLRebranding',
+    EnableMobileFixedHeader = 'EnableMobileFixedHeader',
 }
 
 export type FeatureConfig = Record<string, boolean>;
