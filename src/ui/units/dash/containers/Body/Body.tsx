@@ -96,6 +96,7 @@ import {
     setHashState,
     setStateHashId,
     setWidgetCurrentTab,
+    toggleTableOfContent,
 } from '../../store/actions/dashTyped';
 import {openDialog, openItemDialogAndSetData} from '../../store/actions/dialogs/actions';
 import {closeDialogRelations, openDialogRelations} from '../../store/actions/relations/actions';
@@ -121,6 +122,7 @@ import {
     FixedHeaderControls,
     FixedHeaderWrapper,
 } from '../FixedHeader/FixedHeader';
+import {MobileFloatMenu} from '../MobileFloatMenu/MobileFloatMenu';
 import TableOfContent from '../TableOfContent/TableOfContent';
 import {Tabs} from '../Tabs/Tabs';
 
@@ -129,6 +131,8 @@ import iconRelations from 'ui/assets/icons/relations.svg';
 import './Body.scss';
 
 const b = block('dash-body');
+
+const isMobileFixedHeaderEnabled = isEnabledFeature(Feature.EnableMobileFixedHeader);
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
@@ -193,6 +197,11 @@ type DashkitGroupRenderWithContextProps = DashkitGroupRenderProps & {context: Me
 type GetPreparedCopyItemOptions<T extends object = {}> = (
     itemToCopy: PreparedCopyItemOptions<T>,
 ) => PreparedCopyItemOptions<T>;
+
+const RefsContext = React.createContext<{
+    fixedHeaderControlsEl: HTMLDivElement | null;
+    fixedHeaderContainerEl: HTMLDivElement | null;
+}>({fixedHeaderControlsEl: null, fixedHeaderContainerEl: null});
 
 // Body is used as a core in different environments
 class Body extends React.PureComponent<BodyProps, DashBodyState> {
@@ -803,17 +812,15 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             return null;
         }
 
-        if (params.isMobile) {
+        if (params.isMobile && !isMobileFixedHeaderEnabled) {
             return children;
         }
 
         const {fixedHeaderCollapsed = false} = params.context;
 
-        if (!this.state.fixedHeaderControlsEl) {
-            return null;
-        }
-
-        return createPortal(
+        const content = params.isMobile ? (
+            children
+        ) : (
             <FixedHeaderControls
                 isEmpty={isEmpty}
                 isContainerGroupEmpty={!hasFixedContainerElements}
@@ -826,9 +833,10 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                 )}
             >
                 {children}
-            </FixedHeaderControls>,
-            this.state.fixedHeaderControlsEl,
+            </FixedHeaderControls>
         );
+
+        return <FixedControlsWrapperWithContext content={content} />;
     };
 
     renderFixedGroupContainer = (
@@ -845,15 +853,13 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             return null;
         }
 
-        if (params.isMobile) {
+        if (params.isMobile && !isMobileFixedHeaderEnabled) {
             return children;
         }
 
-        if (!this.state.fixedHeaderContainerEl) {
-            return null;
-        }
-
-        return createPortal(
+        const content = params.isMobile ? (
+            children
+        ) : (
             <FixedHeaderContainer
                 isEmpty={isEmpty}
                 isControlsGroupEmpty={!hasFixedHeaderElements}
@@ -861,9 +867,10 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                 editMode={params.editMode}
             >
                 {children}
-            </FixedHeaderContainer>,
-            this.state.fixedHeaderContainerEl,
+            </FixedHeaderContainer>
         );
+
+        return <FixedContainerWrapperWithContext content={content} />;
     };
 
     storageHandler = () => {
@@ -1112,9 +1119,6 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             this.getWidgetLayoutByGroup(FIXED_GROUP_CONTAINER_ID)?.length,
         );
 
-        const canRenderDashkit =
-            this.state.fixedHeaderControlsEl && this.state.fixedHeaderContainerEl;
-
         const fixedHeaderHasNoVisibleContent =
             !hasFixedHeaderControlsElements &&
             (!hasFixedHeaderContainerElements || fixedHeaderCollapsed);
@@ -1132,18 +1136,39 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         }
 
         return (
-            <WidgetContextProvider onWidgetMountChange={this.itemAddHandler}>
-                <FixedHeaderWrapper
-                    className={b('fixed-header', {'no-content': fixedHeaderHasNoVisibleContent})}
-                    dashBodyRef={this._dashBodyRef}
-                    controlsRef={this._fixedHeaderControlsRef}
-                    containerRef={this._fixedHeaderContainerRef}
-                    isCollapsed={fixedHeaderCollapsed}
-                    editMode={isEditMode}
-                    isControlsGroupEmpty={!hasFixedHeaderControlsElements}
-                    isContainerGroupEmpty={!hasFixedHeaderContainerElements}
-                />
-                {canRenderDashkit ? (
+            <RefsContext.Provider
+                value={{
+                    fixedHeaderControlsEl: this.state.fixedHeaderControlsEl,
+                    fixedHeaderContainerEl: this.state.fixedHeaderContainerEl,
+                }}
+            >
+                <WidgetContextProvider onWidgetMountChange={this.itemAddHandler}>
+                    {DL.IS_MOBILE && isMobileFixedHeaderEnabled && this.props.entryId && (
+                        <MobileFloatMenu
+                            entryId={this.props.entryId}
+                            hasFixedContent={
+                                hasFixedHeaderContainerElements || hasFixedHeaderControlsElements
+                            }
+                            entryDialoguesRef={this.entryDialoguesRef}
+                            fixedHeaderControlsRef={this._fixedHeaderControlsRef}
+                            fixedHeaderContainerRef={this._fixedHeaderContainerRef}
+                        />
+                    )}
+
+                    {!DL.IS_MOBILE && (
+                        <FixedHeaderWrapper
+                            className={b('fixed-header', {
+                                'no-content': fixedHeaderHasNoVisibleContent,
+                            })}
+                            dashBodyRef={this._dashBodyRef}
+                            controlsRef={this._fixedHeaderControlsRef}
+                            containerRef={this._fixedHeaderContainerRef}
+                            isCollapsed={fixedHeaderCollapsed}
+                            editMode={isEditMode}
+                            isControlsGroupEmpty={!hasFixedHeaderControlsElements}
+                            isContainerGroupEmpty={!hasFixedHeaderContainerElements}
+                        />
+                    )}
                     <DashKit
                         ref={this.dashKitRef}
                         config={tabDataConfig as DashKitProps['config']}
@@ -1174,8 +1199,8 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                         setWidgetCurrentTab={this.props.setWidgetCurrentTab}
                         dataProviderContextGetter={this.dataProviderContextGetter}
                     />
-                ) : null}
-            </WidgetContextProvider>
+                </WidgetContextProvider>
+            </RefsContext.Provider>
         );
     };
 
@@ -1257,7 +1282,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
 
         const localTabs = memoizedGetLocalTabs(tabs);
 
-        const hasTableOfContent = !(localTabs.length === 1 && !localTabs[0].items.length);
+        const hasTableOfContentForTab = !(localTabs.length === 1 && !localTabs[0].items.length);
 
         const showEditActionPanel = this.isEditMode();
 
@@ -1284,18 +1309,19 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                     <div
                         className={b('content', {
                             condensed: this.isCondensed(),
-                            'with-table-of-content': showTableOfContent && hasTableOfContent,
+                            'with-table-of-content': showTableOfContent && hasTableOfContentForTab,
                             mobile: DL.IS_MOBILE,
                             aside: getIsAsideHeaderEnabled(),
                             'with-edit-panel': showEditActionPanel,
                             'with-footer': isEnabledFeature(Feature.EnableFooter),
                         })}
                     >
-                        {!settings.hideDashTitle && !DL.IS_MOBILE && (
-                            <div className={b('entry-name')} data-qa={DashEntryQa.EntryName}>
-                                {Utils.getEntryNameFromKey(this.props.entry?.key)}
-                            </div>
-                        )}
+                        {!settings.hideDashTitle &&
+                            (!DL.IS_MOBILE || isMobileFixedHeaderEnabled) && (
+                                <div className={b('entry-name')} data-qa={DashEntryQa.EntryName}>
+                                    {Utils.getEntryNameFromKey(this.props.entry?.key)}
+                                </div>
+                            )}
                         {!settings.hideTabs && <Tabs className={b('tabs')} />}
                         {this.renderDashkit()}
                         {!this.props.onlyView && (
@@ -1360,9 +1386,28 @@ const mapDispatchToProps = {
     openDialog,
     showToast,
     setWidgetCurrentTab,
+    toggleTableOfContent,
 };
 
 export default compose<BodyProps, OwnProps>(
     withRouter,
     connect(mapStateToProps, mapDispatchToProps),
 )(Body);
+
+function FixedControlsWrapperWithContext({content}: {content: React.ReactNode}) {
+    const {fixedHeaderControlsEl} = React.useContext(RefsContext);
+
+    if (fixedHeaderControlsEl) {
+        return createPortal(content, fixedHeaderControlsEl, 'fixed-header-controls-mounted');
+    }
+    return null;
+}
+
+function FixedContainerWrapperWithContext({content}: {content: React.ReactNode}) {
+    const {fixedHeaderContainerEl} = React.useContext(RefsContext);
+
+    if (fixedHeaderContainerEl) {
+        return createPortal(content, fixedHeaderContainerEl, 'fixed-header-container-mounted');
+    }
+    return null;
+}
