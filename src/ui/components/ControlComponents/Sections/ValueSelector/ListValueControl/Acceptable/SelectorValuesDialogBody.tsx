@@ -69,7 +69,9 @@ export const SelectorValuesDialogBody = (props: SelectorValuesDialogBodyProps) =
     const addItemsFromBuffer = React.useCallback(
         (e: ClipboardEvent) => {
             const text: string = (e.clipboardData || window.clipboardData).getData('text') || '';
-
+            if (!text) {
+                return;
+            }
             const newValuesArr = text.split('\n').filter((item: string) => item.trim());
             const differentNewValuesArr: string[] = difference(
                 newValuesArr,
