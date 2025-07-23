@@ -1,7 +1,7 @@
 import React from 'react';
 
-import type {InputControlSize, NumberInputProps} from '@gravity-ui/uikit';
-import {NumberInput, Text, TextInput} from '@gravity-ui/uikit';
+import type {InputControlSize, NumberInputProps, RealTheme} from '@gravity-ui/uikit';
+import {NumberInput, Text, TextInput, ThemeProvider} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {color as d3Color} from 'd3-color';
 
@@ -41,6 +41,7 @@ interface ColorPickerInputProps {
     autoFocus?: boolean;
     onUpdate: (value: string | null) => void;
     onValidChange?: (isValid: boolean) => void;
+    theme?: RealTheme;
     className?: string;
 }
 
@@ -60,6 +61,7 @@ export function ColorPickerInput({
     autoFocus,
     onUpdate,
     onValidChange,
+    theme,
     className,
 }: ColorPickerInputProps) {
     const [stateValue, setStateValue] = React.useState<ColorParts>(getColorParts(colorMask(value)));
@@ -155,6 +157,19 @@ export function ColorPickerInput({
         ? normalizeColor(placeholder)
         : placeholder;
 
+    const previewContent = (
+        <div className={b('preview')} style={renderParams.styles} ref={pickerRef}>
+            <input
+                className={b('palette', {[`size-${size}`]: true})}
+                type="color"
+                value={renderParams.solidColorPart}
+                onChange={(e) => {
+                    setColor(e.target.value);
+                }}
+            />
+        </div>
+    );
+
     return (
         <TextInput
             className={b(null, className)}
@@ -166,15 +181,14 @@ export function ColorPickerInput({
             hasClear={hasClear}
             autoFocus={autoFocus}
             startContent={
-                <div className={b('preview')} style={renderParams.styles} ref={pickerRef}>
-                    <input
-                        className={b('palette', {[`size-${size}`]: true})}
-                        type="color"
-                        value={renderParams.solidColorPart}
-                        onChange={(e) => {
-                            setColor(e.target.value);
-                        }}
-                    />
+                <div className={b('preview-container')}>
+                    {theme ? (
+                        <ThemeProvider theme={theme} scoped rootClassName={b('theme')}>
+                            {previewContent}
+                        </ThemeProvider>
+                    ) : (
+                        previewContent
+                    )}
                 </div>
             }
             endContent={
