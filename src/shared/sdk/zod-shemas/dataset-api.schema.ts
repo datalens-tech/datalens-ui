@@ -272,7 +272,7 @@ const datasetApiErrorSchema = z.object({
 const datasetSelectionMapSchema = z.record(z.string(), z.literal(true));
 
 // Main Dataset schema
-const datasetSchema = z.object({
+export const datasetSchema = z.object({
     id: z.string(),
     realName: z.string(),
     is_favorite: z.boolean(),

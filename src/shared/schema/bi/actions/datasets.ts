@@ -1,10 +1,13 @@
+import z from 'zod/v4';
+
 import {
     TIMEOUT_60_SEC,
     TIMEOUT_95_SEC,
     US_MASTER_TOKEN_HEADER,
     WORKBOOK_ID_HEADER,
 } from '../../../constants';
-import {createAction} from '../../gateway-utils';
+import {datasetSchema} from '../../../sdk/zod-shemas/dataset-api.schema';
+import {createAction, createTypedAction} from '../../gateway-utils';
 import {filterUrlFragment} from '../../utils';
 import {
     prepareDatasetProperty,
@@ -63,6 +66,23 @@ export const actions = {
         timeout: TIMEOUT_60_SEC,
     }),
     getDatasetByVersion: createAction<GetDatasetByVersionResponse, GetDatasetByVersionArgs>({
+        method: 'GET',
+        path: ({datasetId, version}) =>
+            `${API_V1}/datasets/${filterUrlFragment(datasetId)}/versions/${filterUrlFragment(
+                version,
+            )}`,
+        params: ({workbookId}, headers) => ({
+            headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
+        }),
+    }),
+    getDataset: createTypedAction({
+        bodySchema: datasetSchema,
+        argsSchema: z.object({
+            datasetId: z.string(),
+            version: z.literal('draft'),
+            workbookId: z.union([z.null(), z.string()]),
+        }),
+    })({
         method: 'GET',
         path: ({datasetId, version}) =>
             `${API_V1}/datasets/${filterUrlFragment(datasetId)}/versions/${filterUrlFragment(
