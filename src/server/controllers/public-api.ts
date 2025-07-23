@@ -1,0 +1,114 @@
+import type {Request, Response} from '@gravity-ui/expresskit';
+import {REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
+import _ from 'lodash';
+
+import {getValidationSchema, hasValidationSchema} from '../../shared/schema/gateway-utils';
+import {PUBLIC_API_RPC_ERROR_CODE} from '../constants/public-api';
+import {registry} from '../registry';
+import type {DatalensGatewaySchemas} from '../types/gateway';
+import type {PublicApiRpcMap} from '../types/public-api';
+import Utils from '../utils';
+
+const proxyMap: PublicApiRpcMap = {
+    v0: {
+        getDataset: {
+            resolve: (api) => api.bi.getDataset,
+        },
+        updateDataset: {
+            resolve: (api) => api.bi.updateDataset,
+        },
+        createDataset: {
+            resolve: (api) => api.bi.createDataset,
+        },
+        deleteDataset: {
+            resolve: (api) => api.bi.deleteDataset,
+        },
+    },
+};
+
+const handleError = (req: Request, res: Response, status: number, message: string) => {
+    res.status(status).send({
+        status,
+        code: PUBLIC_API_RPC_ERROR_CODE,
+        message,
+        requestId: req.ctx.get(REQUEST_ID_PARAM_NAME) || '',
+    });
+};
+
+const parseRoute = (route: string) => {
+    const spacerIndex = route.indexOf(' ');
+    const method = route.slice(0, spacerIndex).trim();
+    const url = route.slice(spacerIndex).trim();
+
+    return {
+        method,
+        url,
+        reverse: (props: {version: string; action: string}) => {
+            return url.replace(':version', props.version).replace(':action', props.action);
+        },
+    };
+};
+
+export function publicApiControllerGetter(
+    gatewayProxyMap: PublicApiRpcMap = proxyMap,
+    params: any,
+) {
+    const parsedRoute = parseRoute(params.route);
+    const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
+
+    Object.entries(gatewayProxyMap).forEach(([version, actions]) => {
+        Object.entries(actions).forEach(([action, {resolve}]) => {
+            if (hasValidationSchema(resolve(gatewayApi))) {
+                console.log(
+                    parsedRoute.reverse({version, action}),
+                    getValidationSchema(resolve(gatewayApi)).getOpenApichema(),
+                );
+            }
+        });
+    });
+
+    return async function publicApiController(req: Request, res: Response) {
+        const boundeHandler = handleError.bind(null, req, res);
+
+        if (!req.params.version || !req.params.action) {
+            return boundeHandler(400, 'Invalid params, version or action are empty');
+        }
+
+        const version = req.params.version as keyof PublicApiRpcMap;
+        if (!_.has(gatewayProxyMap, version)) {
+            return boundeHandler(404, 'Version not found');
+        }
+
+        const versionMap = gatewayProxyMap[version];
+        const actionName = req.params.action as keyof typeof versionMap;
+        if (!_.has(gatewayProxyMap[version], req.params.action)) {
+            return boundeHandler(404, 'Action not found');
+        }
+
+        try {
+            const action = versionMap[actionName];
+            const {ctx} = req;
+
+            const initialHeaders = Utils.pickRpcHeaders(req);
+            const headers = action.headers ? action.headers(req, initialHeaders) : initialHeaders;
+            const args = action.args ? await action.args(req) : req.body;
+            const requestId = ctx.get(REQUEST_ID_PARAM_NAME) || '';
+
+            const result = await action.resolve(gatewayApi)({
+                headers,
+                args,
+                ctx,
+                requestId,
+            });
+
+            res.status(200).send(result);
+        } catch (err) {
+            const {error} = err as any;
+            if (error) {
+                res.status(typeof error.status === 'number' ? error.status : 500).send(error);
+            } else {
+                return boundeHandler(500, 'Unknown error');
+            }
+        }
+    };
+}
