@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {CircleInfo} from '@gravity-ui/icons';
 import {Button, Icon} from '@gravity-ui/uikit';
 import {EntryDialogName} from 'components/EntryDialogues';
 import {I18n} from 'i18n';
@@ -20,8 +21,6 @@ import {
     selectDashDescription,
 } from '../../../store/selectors/dashTypedSelectors';
 
-import iconDescription from 'assets/icons/info.svg';
-
 import '../DashActionPanel.scss';
 
 const i18n = I18n.keyset('dash.action-panel.view');
@@ -31,10 +30,11 @@ type DescriptionProps = {
     entryDialoguesRef: React.RefObject<EntryDialogues>;
     onEditClick?: () => void;
     showOpenedDescription: boolean;
+    iconSize?: number;
 };
 
 export const Description = (props: DescriptionProps) => {
-    const {canEdit, entryDialoguesRef, onEditClick, showOpenedDescription} = props;
+    const {canEdit, entryDialoguesRef, onEditClick, showOpenedDescription, iconSize = 20} = props;
 
     const history = useHistory();
 
@@ -143,7 +143,7 @@ export const Description = (props: DescriptionProps) => {
             onClick={handleDescriptionClick}
             qa="action-button-description"
         >
-            <Icon data={iconDescription} width={20} height={20} />
+            <Icon data={CircleInfo} size={iconSize} />
         </Button>
     );
 };
