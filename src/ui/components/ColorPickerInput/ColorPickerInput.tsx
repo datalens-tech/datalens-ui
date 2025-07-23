@@ -1,11 +1,6 @@
 import React from 'react';
 
-import type {
-    InputControlSize,
-    InputControlSize,
-    NumberInputProps,
-    RealTheme,
-} from '@gravity-ui/uikit';
+import type {InputControlSize, NumberInputProps, RealTheme} from '@gravity-ui/uikit';
 import {NumberInput, Text, TextInput, ThemeProvider} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {color as d3Color} from 'd3-color';
