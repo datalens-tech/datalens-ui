@@ -10,11 +10,7 @@
     }
 
     &__installation-info {
-        font-size: 10px;
-        line-height: 15px;
-        font-weight: bold;
-        letter-spacing: 0.8px;
-        text-transform: uppercase;
+        @include installation-info-font;
         width: min-content;
     }
 }
