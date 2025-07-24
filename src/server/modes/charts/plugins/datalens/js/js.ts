@@ -988,6 +988,20 @@ export const buildGraphPrivate = (args: {
         });
     }
 
+    const isTableChart = [
+        WizardVisualizationId.FlatTable,
+        WizardVisualizationId.PivotTable,
+    ].includes(shared.visualization.id as WizardVisualizationId);
+
+    if (isTableChart) {
+        const page = ChartEditor.getCurrentPage();
+        const limit = shared.extraSettings?.limit;
+        const shouldDisablePaginator = page === 1 && limit && limit > (result.rows?.length ?? 0);
+        if (shouldDisablePaginator) {
+            ChartEditor.updateConfig({paginator: {enabled: false}});
+        }
+    }
+
     log('RESULT:');
     log(result);
 
