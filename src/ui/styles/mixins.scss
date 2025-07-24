@@ -162,3 +162,11 @@
 @mixin loading-pulsate-animation-style {
     animation: pulseAnimation 1.5s ease-in-out infinite;
 }
+
+@mixin installation-info-font {
+    font-size: 10px;
+    line-height: 15px;
+    font-weight: bold;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+}
