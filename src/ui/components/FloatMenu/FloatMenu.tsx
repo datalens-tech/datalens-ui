@@ -16,12 +16,10 @@ interface FloatMenuProps {
 const MOBILE_PAGE_SCROLLABLE_CONTAINER_CLASSNAME = 'dl-mobile-header__content';
 
 const MIN_SCROLL_POSITION_FOR_HIDING = 100;
-const TIMEOUT_DELAY_FOR_HIDING = 200;
 
 export function FloatMenu({children, align = 'center'}: FloatMenuProps) {
     const [isVisible, setIsVisible] = React.useState(true);
     const prevScrollY = React.useRef(0);
-    const timeoutRef = React.useRef<NodeJS.Timeout>();
 
     const scrollableContainer = React.useMemo(() => {
         const defaultScrollingContainer = document.scrollingElement;
@@ -38,14 +36,8 @@ export function FloatMenu({children, align = 'center'}: FloatMenuProps) {
                 currentScrollY > MIN_SCROLL_POSITION_FOR_HIDING
             ) {
                 setIsVisible(true);
-                if (timeoutRef.current) clearTimeout(timeoutRef.current);
-            }
-            // Скрываем при скролле вниз с небольшой задержкой
-            else if (currentScrollY > prevScrollY.current) {
-                if (timeoutRef.current) clearTimeout(timeoutRef.current);
-                timeoutRef.current = setTimeout(() => {
-                    setIsVisible(false);
-                }, TIMEOUT_DELAY_FOR_HIDING);
+            } else if (currentScrollY > prevScrollY.current) {
+                setIsVisible(false);
             }
 
             prevScrollY.current = currentScrollY;
@@ -55,14 +47,13 @@ export function FloatMenu({children, align = 'center'}: FloatMenuProps) {
 
         return () => {
             scrollableContainer?.removeEventListener('scroll', handleScroll);
-            if (timeoutRef.current) clearTimeout(timeoutRef.current);
         };
     }, [scrollableContainer]);
 
     return (
         <Portal>
-            <Flex justifyContent={align}>
-                <div className={b({hidden: !isVisible})}>{children}</div>
+            <Flex justifyContent={align} className={b({hidden: !isVisible})}>
+                <div className={b('content')}>{children}</div>
             </Flex>
         </Portal>
     );
