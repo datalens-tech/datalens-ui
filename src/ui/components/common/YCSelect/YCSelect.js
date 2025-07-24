@@ -1581,11 +1581,11 @@ export class YCSelect extends React.PureComponent {
                 <Loader size="s" />
             </div>
         ) : (
-            <React.Fragment>
+            <div style={this._getPopupStyles()} className={this._getPopupClassNames()}>
                 {shouldRenderSearch && this._renderSearch()}
                 <div ref={this.selectorRef}>{this._renderItems({mobile: isMobile})}</div>
                 {this._renderApplyButton()}
-            </React.Fragment>
+            </div>
         );
     }
 
@@ -1601,8 +1601,6 @@ export class YCSelect extends React.PureComponent {
         return (
             <React.Fragment>
                 <Popup
-                    contentClassName={this._getPopupClassNames()}
-                    style={popupStyles}
                     open={showMainPopup}
                     anchorElement={this.controlRef.current}
                     placement={AVAILABLE_POPUP_DIRECTIONS}
@@ -1615,10 +1613,8 @@ export class YCSelect extends React.PureComponent {
                     {this._renderPopupContent({isMobile: false})}
                 </Popup>
                 <Popup
-                    contentClassName={this._getPopupClassNames()}
-                    style={popupStyles}
                     open={showSelectedPopup}
-                    anchorElementrRef={this.controlRef.current}
+                    anchorElement={this.controlRef.current}
                     placement={AVAILABLE_POPUP_DIRECTIONS}
                     onOpenChange={(open) => {
                         if (!open) {
@@ -1626,9 +1622,13 @@ export class YCSelect extends React.PureComponent {
                         }
                     }}
                 >
-                    <div className={bPopup('select-title')}>{trans('selected_popup_title')}</div>
-                    {this._renderItems({selectedPopup: true})}
-                    {this._renderApplyButton()}
+                    <div style={popupStyles} className={this._getPopupClassNames()}>
+                        <div className={bPopup('select-title')}>
+                            {trans('selected_popup_title')}
+                        </div>
+                        {this._renderItems({selectedPopup: true})}
+                        {this._renderApplyButton()}
+                    </div>
                 </Popup>
             </React.Fragment>
         );
