@@ -235,7 +235,10 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
                                 <div></div>
                             )}
                         </SplitPane>
-                        <AdditionalPanel visible={additionalPanelVisible} onClose={() => {}} />
+                        <AdditionalPanel
+                            visible={additionalPanelVisible}
+                            onClose={this.closeAdditionalPanel}
+                        />
                     </div>
                 )}
             </div>
@@ -288,7 +291,6 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
 
         await this.props.updateUserSettings({
             newSettings: {
-                dlFieldEditorAdditionalShown: false,
                 dlFieldEditorDocShown: nextDocPanelVisible,
             },
         });
@@ -301,12 +303,17 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
 
         await this.props.updateUserSettings({
             newSettings: {
-                dlFieldEditorDocShown: false,
                 dlFieldEditorAdditionalShown: nextAdditionalPanelVisible,
             },
         });
+    };
 
-        this.state.editor?.layout();
+    closeAdditionalPanel = async () => {
+        await this.props.updateUserSettings({
+            newSettings: {
+                dlFieldEditorAdditionalShown: false,
+            },
+        });
     };
 
     validateFormula = async () => {
