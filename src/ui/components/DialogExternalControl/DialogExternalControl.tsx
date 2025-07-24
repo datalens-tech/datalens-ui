@@ -64,6 +64,7 @@ class DialogExternalControl extends React.Component<Props> {
                 size={'m'}
                 qa={ControlQA.dialogControl}
                 disableEscapeKeyDown={true}
+                disableHeightTransition={true}
             >
                 <Dialog.Header caption={caption} />
                 <Dialog.Body className={b('body')}>{this.renderBody()}</Dialog.Body>

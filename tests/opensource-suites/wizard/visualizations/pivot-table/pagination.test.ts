@@ -52,10 +52,7 @@ datalensTest.describe('Wizard', () => {
             async ({page}) => {
                 const wizardPage = new WizardPage({page});
 
-                await wizardPage.sectionVisualization.addFieldByClick(
-                    PlaceholderName.Rows,
-                    'country',
-                );
+                await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Rows, 'Id');
 
                 const table = wizardPage.chartkit.getTableLocator();
                 // Put a number that obviously exceeds the number of pages
