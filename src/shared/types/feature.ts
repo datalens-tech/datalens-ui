@@ -90,6 +90,7 @@ export enum Feature {
     EnableExportSettings = 'EnableExportSettings',
     /** Enable updating dataset settings by action ('load_preview_by_default' | 'template_enabled' | 'data_export_forbidden') */
     EnableUpdatingDsSettingsByAction = 'EnableUpdatingDsSettingsByAction',
+    EnableMobileFixedHeader = 'EnableMobileFixedHeader',
 }
 
 export type FeatureConfig = Record<string, boolean>;
