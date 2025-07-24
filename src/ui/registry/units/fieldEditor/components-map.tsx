@@ -1,12 +1,17 @@
+import type {DatasetField, DatasetFieldError} from 'shared';
+
 import {makeDefaultEmpty} from '../../components/DefaultEmpty';
 
-interface AdditionalButtonsProps {
+export interface AdditionalButtonsProps {
     toggleAdditionalPanel: () => void;
 }
 
-interface AdditionalPanelProps {
+export interface AdditionalPanelProps {
     visible: boolean;
     onClose: () => void;
+    field: DatasetField;
+    fields: DatasetField[];
+    fieldErrors: DatasetFieldError[];
 }
 
 export const fieldEditorComponentsMap = {

@@ -238,6 +238,9 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
                         <AdditionalPanel
                             visible={additionalPanelVisible}
                             onClose={this.closeAdditionalPanel}
+                            fields={fields}
+                            field={field}
+                            fieldErrors={fieldErrors}
                         />
                     </div>
                 )}
@@ -435,6 +438,7 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
     };
 
     onClose: DialogProps['onClose'] = (_, reason) => {
+        this.closeAdditionalPanel();
         if (reason === 'outsideClick') {
             this.attemptToCloseDialog();
 

@@ -98,11 +98,16 @@ export const Settings: React.FC<SettingsProps> = ({
                 </React.Fragment>
             )}
             <div className={b('settings-buttons-container')}>
-                <AdditionalButtons toggleAdditionalPanel={toggleAdditionalPanel} />
                 {showDocButton && (
-                    <Button className={b('settings-doc-btn')} onClick={toggleDocumentationPanel}>
-                        {i18n('button_documentation')}
-                    </Button>
+                    <>
+                        <AdditionalButtons toggleAdditionalPanel={toggleAdditionalPanel} />
+                        <Button
+                            className={b('settings-doc-btn')}
+                            onClick={toggleDocumentationPanel}
+                        >
+                            {i18n('button_documentation')}
+                        </Button>
+                    </>
                 )}
             </div>
         </div>
