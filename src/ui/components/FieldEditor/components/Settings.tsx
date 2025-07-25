@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from 'react';
+import React from 'react';
 
 import {Button, Checkbox, SegmentedRadioGroup as RadioButton, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
@@ -33,11 +33,11 @@ export const Settings: React.FC<SettingsProps> = ({
     toggleDocumentationPanel,
     toggleAdditionalPanel,
 }) => {
-    const inputRef = useRef<HTMLInputElement>(null);
+    const inputRef = React.useRef<HTMLInputElement>(null);
 
     const {AdditionalButtons} = registry.fieldEditor.components.getAll();
 
-    useEffect(() => {
+    React.useEffect(() => {
         inputRef.current?.focus();
     }, []);
 
@@ -99,7 +99,7 @@ export const Settings: React.FC<SettingsProps> = ({
             )}
             <div className={b('settings-buttons-container')}>
                 {showDocButton && (
-                    <>
+                    <React.Fragment>
                         <AdditionalButtons toggleAdditionalPanel={toggleAdditionalPanel} />
                         <Button
                             className={b('settings-doc-btn')}
@@ -107,7 +107,7 @@ export const Settings: React.FC<SettingsProps> = ({
                         >
                             {i18n('button_documentation')}
                         </Button>
-                    </>
+                    </React.Fragment>
                 )}
             </div>
         </div>
