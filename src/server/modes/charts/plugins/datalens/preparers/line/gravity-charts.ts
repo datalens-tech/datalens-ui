@@ -1,4 +1,9 @@
-import type {ChartData, LineSeries, LineSeriesData} from '@gravity-ui/chartkit/gravity-charts';
+import type {
+    ChartData,
+    ChartSeries,
+    LineSeries,
+    LineSeriesData,
+} from '@gravity-ui/chartkit/gravity-charts';
 
 import type {
     SeriesExportSettings,
@@ -16,7 +21,8 @@ import {
     isMarkupField,
     isNumberField,
 } from '../../../../../../../shared';
-import {getFormattedLabel} from '../../d3/utils/dataLabels';
+import {getFormattedLabel} from '../../gravity-charts/utils/dataLabels';
+import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import {getAxisType} from '../helpers/axis';
@@ -170,11 +176,19 @@ export function prepareD3Line(args: PrepareFunctionArgs) {
         }
     }
 
-    return {
+    const config: ChartData = {
         series: {
-            data: seriesData,
+            data: seriesData as ChartSeries[],
         },
         xAxis,
         legend,
     };
+
+    if (yFields[0]) {
+        config.tooltip = {
+            valueFormat: getFieldFormatOptions({field: yFields[0]}),
+        };
+    }
+
+    return config;
 }
