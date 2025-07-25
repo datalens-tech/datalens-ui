@@ -42,7 +42,8 @@ const PROMO_SITE_DOMAIN = 'https://datalens.tech';
 const PROMO_DOC_PATH = '/docs';
 const GITHUB_URL = 'https://github.com/datalens-tech/datalens';
 
-export const DOCUMENTATION_LINK = `${PROMO_SITE_DOMAIN}${PROMO_DOC_PATH}/${DL.USER_LANG}/`;
+export const DOCUMENTATION_LINK =
+    DL.DOCS_URL || `${PROMO_SITE_DOMAIN}${PROMO_DOC_PATH}/${DL.USER_LANG}/`;
 
 export const ITEMS_NAVIGATION_DEFAULT_SIZE = 18;
 
