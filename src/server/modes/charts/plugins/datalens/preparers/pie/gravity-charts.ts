@@ -1,9 +1,10 @@
-import type {PieSeries, PieSeriesData} from '@gravity-ui/chartkit/d3';
+import type {PieSeries, PieSeriesData} from '@gravity-ui/chartkit/gravity-charts';
 
 import type {SeriesExportSettings} from '../../../../../../../shared';
 import {WizardVisualizationId, formatNumber, getFormatOptions} from '../../../../../../../shared';
 import {getFakeTitleOrTitle} from '../../../../../../../shared/modules/fields';
 import {isHtmlField, isMarkdownField, isMarkupField} from '../../../../../../../shared/types/index';
+import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import type {PiePoint, PrepareFunctionArgs} from '../types';
 
@@ -43,6 +44,7 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
             dataLabels: {
                 enabled: isLabelsEnabled,
                 html: shouldUseHtmlForLabels,
+                format: getFieldFormatOptions({field: label}),
             },
             data:
                 graph.data?.map((item) => {

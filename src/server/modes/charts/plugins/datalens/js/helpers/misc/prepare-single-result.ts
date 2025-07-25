@@ -18,7 +18,7 @@ import prepareGeopointData from '../../../preparers/geopoint';
 import prepareGeopolygonData from '../../../preparers/geopolygon';
 import prepareHeatmapData from '../../../preparers/heatmap';
 import {prepareHighchartsLine} from '../../../preparers/line';
-import {prepareD3Line} from '../../../preparers/line/d3';
+import {prepareD3Line} from '../../../preparers/line/gravity-charts';
 import prepareLineTime from '../../../preparers/line-time';
 import prepareMetricData from '../../../preparers/metric';
 import preparePivotTableData from '../../../preparers/old-pivot-table/old-pivot-table';

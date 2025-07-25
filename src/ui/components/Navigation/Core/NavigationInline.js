@@ -28,6 +28,7 @@ class NavigationInline extends React.Component {
         getPlaceParameters: PropTypes.func.isRequired,
         hideSidebar: PropTypes.bool,
         isOnlyCollectionsMode: PropTypes.bool,
+        dialogs: PropTypes.element,
     };
     state = {
         breadCrumbs: [],
@@ -85,7 +86,7 @@ class NavigationInline extends React.Component {
         />
     );
     render() {
-        const {linkWrapper, quickItems, onSidebarItemClick, ...props} = this.props;
+        const {linkWrapper, quickItems, onSidebarItemClick, dialogs, ...props} = this.props;
         return (
             <div className={b({inline: true})}>
                 {!this.props.hideSidebar && (
@@ -112,6 +113,7 @@ class NavigationInline extends React.Component {
                         renderEmptyStateAction={this.renderEmptyStateAction}
                     />
                 </div>
+                {dialogs}
             </div>
         );
     }

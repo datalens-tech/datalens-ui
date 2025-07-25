@@ -1,8 +1,8 @@
 import React from 'react';
 
 import {LayoutRows} from '@gravity-ui/icons';
-import type {RadioButtonSize} from '@gravity-ui/uikit';
-import {Icon, RadioButton, Select, TextInput} from '@gravity-ui/uikit';
+import type {SegmentedRadioGroupSize as RadioButtonSize} from '@gravity-ui/uikit';
+import {Icon, SegmentedRadioGroup as RadioButton, Select, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import debounce from 'lodash/debounce';

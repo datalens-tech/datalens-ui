@@ -48,6 +48,7 @@ const PlaceholderActionIcon: React.FC<PlaceholderActionIconProps> = ({
             placement={['right', 'top', 'bottom']}
             content={disabledText || hoverText}
             className={b({first: isFirstElementInRow}, className)}
+            hasArrow={true}
         >
             {content}
         </Popover>

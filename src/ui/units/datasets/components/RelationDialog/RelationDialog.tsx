@@ -1,7 +1,6 @@
 import React from 'react';
 
-import {HelpPopover} from '@gravity-ui/components';
-import {Button, Checkbox, Dialog, Icon, Select} from '@gravity-ui/uikit';
+import {Button, Checkbox, Dialog, HelpMark, Icon, Select} from '@gravity-ui/uikit';
 import type {SelectOption, SelectRenderControlProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -108,19 +107,18 @@ const renderCustomControl = (
     options: SelectOption[],
     renderOptions: {style?: React.CSSProperties; className?: string},
 ) => {
-    const {onClick, ref, onKeyDown} = args;
+    const {ref, triggerProps} = args;
     const {style, className} = renderOptions;
 
     const selectedOption = options.find((o) => o.value === selectedValue);
 
     return (
         <Button
+            {...triggerProps}
             style={style}
             view="outlined"
             className={className}
-            ref={ref}
-            onClick={onClick}
-            extraProps={{onKeyDown}}
+            ref={ref as React.Ref<HTMLButtonElement>}
         >
             {selectedOption?.data?.iconNode || selectedOption?.content}
         </Button>
@@ -641,10 +639,9 @@ class SourceRelationDialog extends React.Component<Props, State> {
                                     onUpdate={this.changeOptimized}
                                 >
                                     {i18n('label_optimize-join')}
-                                    <HelpPopover
-                                        className={b('hint-optimize-join')}
-                                        content={i18n('hint_optimize-join')}
-                                    />
+                                    <HelpMark className={b('hint-optimize-join')}>
+                                        {i18n('hint_optimize-join')}
+                                    </HelpMark>
                                 </Checkbox>
                             </div>
                         </div>

@@ -470,11 +470,13 @@ export const Row = ({
                         <DropdownMenu
                             size="l"
                             items={items}
-                            switcher={
+                            renderSwitcher={({onClick, onKeyDown}) => (
                                 <Button
                                     view="flat"
                                     className={b('button-link')}
                                     qa={DashCommonQa.RelationTypeButton}
+                                    onClick={onClick}
+                                    onKeyDown={onKeyDown}
                                 >
                                     <span className={b('button-link-icon-wrap')}>
                                         <Icon
@@ -485,15 +487,23 @@ export const Row = ({
                                     </span>
                                     {relationTypeText}
                                 </Button>
-                            }
+                            )}
                         />
                         <Popover
-                            content={<div title={tooltipTitle}>{tooltipContent}</div>}
+                            content={
+                                <div className={b('popover-content')} title={tooltipTitle}>
+                                    {tooltipContent}
+                                </div>
+                            }
                             placement="bottom"
                             hasArrow={false}
-                            qa={DashCommonQa.RelationsRowPopover}
                         >
-                            <Icon data={iconInfo} size={ICON_SIZE} className={b('icon-info')} />
+                            <Icon
+                                qa={DashCommonQa.RelationsRowPopover}
+                                data={iconInfo}
+                                size={ICON_SIZE}
+                                className={b('icon-info')}
+                            />
                         </Popover>
                     </React.Fragment>
                 )}

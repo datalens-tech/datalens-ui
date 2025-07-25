@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {ButtonProps} from '@gravity-ui/uikit';
+import type {ButtonButtonProps} from '@gravity-ui/uikit';
 
 import {ErrorContent} from '../../';
 
@@ -14,7 +14,7 @@ export interface ErrorPageProps {
     action?: {
         text: string;
         content: React.ReactNode;
-        handler: ButtonProps['onClick'];
+        handler: ButtonButtonProps['onClick'];
     };
     style?: React.CSSProperties;
 }

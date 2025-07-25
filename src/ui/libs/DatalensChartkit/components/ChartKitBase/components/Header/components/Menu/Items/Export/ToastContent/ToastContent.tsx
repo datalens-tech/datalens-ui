@@ -1,15 +1,14 @@
 import React from 'react';
 
 import {CircleCheckFill} from '@gravity-ui/icons';
-import {Icon, Loader, Toast, Toaster} from '@gravity-ui/uikit';
+import {Icon, Loader, Toast} from '@gravity-ui/uikit';
+import {toaster} from '@gravity-ui/uikit/toaster-singleton';
 import block from 'bem-cn-lite';
 
 import type {ExportChartArgs} from '../types';
 import {truncateTextWithEllipsis} from '../utils';
 
 import './ToastContent.scss';
-
-const toaster = new Toaster({className: 'djfsijlsfdjlf'});
 
 const b = block('export-loading');
 

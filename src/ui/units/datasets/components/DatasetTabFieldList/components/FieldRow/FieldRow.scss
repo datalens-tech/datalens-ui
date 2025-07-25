@@ -7,14 +7,15 @@
     cursor: pointer;
 
     &__control-item {
-        display: none;
+        display: flex;
         flex: 0 0 24px;
         margin-left: auto;
+        opacity: 0;
     }
 
     &:hover {
         .dataset-tab-field-list-row__control-item {
-            display: flex;
+            opacity: 1;
         }
     }
 

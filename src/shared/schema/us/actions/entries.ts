@@ -72,6 +72,9 @@ export const entriesActions = {
             },
         }),
     }),
+    /**
+     * @deprecated Use gatewayApi.usPrivate._proxyGetEntry instead
+     */
     _proxyGetEntry: createAction<GetEntryResponse, PrivateGetEntryArgs>({
         method: 'GET',
         path: ({entryId}) => `${PRIVATE_PATH_PREFIX}/entries/${filterUrlFragment(entryId)}`,
@@ -84,6 +87,9 @@ export const entriesActions = {
             },
         }),
     }),
+    /**
+     * @deprecated Use gatewayApi.usPrivate._proxyCreateEntry instead
+     */
     _proxyCreateEntry: createAction<GetEntryResponse, ProxyCreateEntryArgs>({
         method: 'POST',
         path: () => `${PRIVATE_PATH_PREFIX}/entries/`,
@@ -132,6 +138,9 @@ export const entriesActions = {
         path: ({entryId}) => `${PATH_PREFIX}/entries/${filterUrlFragment(entryId)}/meta`,
         params: (_, headers) => ({headers}),
     }),
+    /**
+     * @deprecated Use gatewayApi.usPrivate._getEntryMeta instead
+     */
     _getEntryMeta: createAction<GetEntryMetaResponse, GetEntryMetaArgs>({
         method: 'GET',
         path: ({entryId}) => `${PRIVATE_PATH_PREFIX}/entries/${entryId}/meta`,

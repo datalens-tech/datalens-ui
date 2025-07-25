@@ -1,8 +1,8 @@
 import React from 'react';
 
-import {FormRow, HelpPopover} from '@gravity-ui/components';
+import {FormRow} from '@gravity-ui/components';
 import type {RealTheme} from '@gravity-ui/uikit';
-import {Checkbox, Dialog, Flex, Link, Popup, Text, TextInput} from '@gravity-ui/uikit';
+import {Checkbox, Dialog, Flex, HelpMark, Link, Popup, Text, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import type {CustomCommands, Spec} from 'immutability-helper';
@@ -211,9 +211,9 @@ class DialogChartWidget extends React.PureComponent<
                 sidebarClassMixin={b('dialog-sidebar')}
                 contentClassMixin={b('content')}
                 bodyClassMixin={b('content-body')}
-                disableFocusTrap={true}
                 disableEscapeKeyDown={true}
                 withoutSidebar={withoutSidebar}
+                disableHeightTransition={true}
             />
         );
     }
@@ -537,15 +537,10 @@ class DialogChartWidget extends React.PureComponent<
         );
 
         const helpPopover = (
-            <HelpPopover
-                className={b('help-tooltip')}
-                content={
-                    <React.Fragment>
-                        {i18n('dash.widget-dialog.edit', 'context_filtering-other-charts')}
-                        {this.getFiltrationDocsLink()}
-                    </React.Fragment>
-                }
-            />
+            <HelpMark className={b('help-tooltip')}>
+                {i18n('dash.widget-dialog.edit', 'context_filtering-other-charts')}
+                {this.getFiltrationDocsLink()}
+            </HelpMark>
         );
 
         return (
@@ -582,10 +577,9 @@ class DialogChartWidget extends React.PureComponent<
         } = this.props;
 
         const autoHeightHelpPopover = (
-            <HelpPopover
-                className={b('help-tooltip')}
-                content={i18n('dash.widget-dialog.edit', 'context_autoheight-availability-hint')}
-            />
+            <HelpMark className={b('help-tooltip')}>
+                {i18n('dash.widget-dialog.edit', 'context_autoheight-availability-hint')}
+            </HelpMark>
         );
 
         const {
@@ -663,11 +657,15 @@ class DialogChartWidget extends React.PureComponent<
                         />
                     </div>
                     <Popup
-                        anchorRef={this.navigationInputRef}
+                        anchorElement={this.navigationInputRef.current}
                         open={this.state.error}
                         placement="left-start"
                         hasArrow={true}
-                        onClose={() => this.setState({error: false})}
+                        onOpenChange={(open) => {
+                            if (!open) {
+                                this.setState({error: false});
+                            }
+                        }}
                     >
                         <div className={b('error')}>
                             {i18n('dash.widget-dialog.edit', 'toast_required-field')}
@@ -702,10 +700,9 @@ class DialogChartWidget extends React.PureComponent<
                     fieldId={INPUT_HINT_ID}
                     label={i18n('dash.widget-dialog.edit', 'field_hint')}
                     labelHelpPopover={
-                        <HelpPopover
-                            className={b('help-tooltip')}
-                            content={i18n('dash.widget-dialog.edit', 'context_hint-display-info')}
-                        />
+                        <HelpMark className={b('help-tooltip')}>
+                            {i18n('dash.widget-dialog.edit', 'context_hint-display-info')}
+                        </HelpMark>
                     }
                 >
                     <div className={b('settings-container')}>

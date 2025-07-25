@@ -72,6 +72,7 @@ export interface DLUserSettings {
     dlStartInDataLensExt?: boolean; // CHARTS-6146
     dlFieldEditorDocShown?: boolean; // CHARTS-6168
     dlGsheetAuthHintShown?: boolean; // CHARTS-6811
+    dlFieldEditorAdditionalShown?: boolean;
 
     // DC specific user settings
     crmContactCreated?: boolean;
@@ -218,6 +219,7 @@ export type DLGlobalData = {
     hideNavigation?: boolean;
     connectorIcons?: ConnectorIconData[];
     releaseVersion?: string;
+    docsUrl?: string;
     isAuthEnabled?: boolean;
     authManageLocalUsersDisabled?: boolean;
     authSignupDisabled?: boolean;

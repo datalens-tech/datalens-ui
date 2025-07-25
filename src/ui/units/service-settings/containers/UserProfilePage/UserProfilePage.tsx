@@ -1,11 +1,10 @@
 import React from 'react';
 
-import {Flex} from '@gravity-ui/uikit';
-import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
+import {Breadcrumbs, Flex} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n, i18n as i18nGlobal} from 'i18n';
 import {useSelector} from 'react-redux';
-import {useHistory, useParams} from 'react-router';
+import {useParams} from 'react-router';
 import {ActionPanel} from 'ui/components/ActionPanel';
 import {PageTitle} from 'ui/components/PageTitle';
 import {DL} from 'ui/constants/common';
@@ -22,7 +21,6 @@ const i18n = I18n.keyset('auth.user-profile.view');
 const b = block('dl-user-profile-page');
 
 const UserProfilePage = () => {
-    const history = useHistory();
     const {userId} = useParams<{userId?: string}>();
     const userProfile = useSelector(selectUserProfile);
 
@@ -36,11 +34,7 @@ const UserProfilePage = () => {
 
             <ActionPanel
                 leftItems={
-                    <Breadcrumbs
-                        navigate={(href) => {
-                            history.push(href);
-                        }}
-                    >
+                    <Breadcrumbs>
                         <Breadcrumbs.Item href="/settings">
                             {i18nGlobal('service-settings.main.view', 'label_header')}
                         </Breadcrumbs.Item>

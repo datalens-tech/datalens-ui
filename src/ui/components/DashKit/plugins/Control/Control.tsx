@@ -291,12 +291,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         if (this.context?.isNewRelations) {
             return this.getCurrentWidgetMetaInfo();
         }
-        // TODO: remove
-        if (this.chartKitRef && this.chartKitRef.current) {
-            (
-                this.chartKitRef.current as ChartWidgetWithWrapRefProps & {undeferred: () => void}
-            ).undeferred();
-        }
+
         return new Promise((resolve) => {
             this.resolve = resolve;
             if (this.state.loadedData) {
@@ -309,13 +304,6 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     }
 
     getCurrentWidgetMetaInfo() {
-        // TODO: remove
-        if (this.chartKitRef.current) {
-            (
-                this.chartKitRef.current as ChartWidgetWithWrapRefProps & {undeferred: () => void}
-            ).undeferred();
-        }
-
         return new Promise((resolve: (value: unknown) => void) => {
             this.resolve = resolve;
             if (this.state.status !== LOAD_STATUS.PENDING) {

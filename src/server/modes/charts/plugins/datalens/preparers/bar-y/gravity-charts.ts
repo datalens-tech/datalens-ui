@@ -1,4 +1,4 @@
-import type {BarYSeries, ChartData} from '@gravity-ui/chartkit/d3';
+import type {BarYSeries, ChartData} from '@gravity-ui/chartkit/gravity-charts';
 
 import type {SeriesExportSettings, ServerField} from '../../../../../../../shared';
 import {
@@ -8,6 +8,7 @@ import {
     isMarkdownField,
     isMarkupField,
 } from '../../../../../../../shared';
+import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import type {PrepareFunctionArgs} from '../types';
 
@@ -42,6 +43,7 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
     const shouldUseHtmlForLabels =
         isMarkupField(labelField) || isHtmlField(labelField) || isMarkdownField(labelField);
 
+    const dataLabelFormat = getFieldFormatOptions({field: labelField});
     const series = graphs.map<BarYSeries>((graph) => {
         return {
             ...graph,
@@ -60,6 +62,7 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
                 enabled: graph.dataLabels?.enabled,
                 inside: visualizationId === WizardVisualizationId.BarY100pD3,
                 html: shouldUseHtmlForLabels,
+                format: dataLabelFormat,
             },
             custom: {
                 ...graph.custom,
@@ -78,6 +81,12 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
             type: 'linear',
         },
     };
+
+    if (xField) {
+        config.tooltip = {
+            valueFormat: getFieldFormatOptions({field: xField}),
+        };
+    }
 
     if (hasCategories) {
         config.yAxis = [
