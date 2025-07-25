@@ -20,6 +20,7 @@ import type {AsideHeaderData} from '../../store/typings/asideHeader';
 import {UserAvatar} from '../UserMenu/UserAvatar';
 import {UserMenu} from '../UserMenu/UserMenu';
 
+import {BottomDecoration} from './BottomDecoration/BottomDecoration';
 import {LogoText} from './LogoText/LogoText';
 import {Settings as SettingsPanel} from './Settings/Settings';
 import {DIALOG_RELEASE_VERSION} from './VersionDialog/VersionDialog';
@@ -313,6 +314,17 @@ export const AsideHeaderAdapter = ({
         );
     };
 
+    const renderCollapseButton = (
+        defaultButton: React.ReactNode,
+        {compact}: {compact: boolean},
+    ) => {
+        return (
+            <React.Fragment>
+                {defaultButton} <BottomDecoration compact={compact} />
+            </React.Fragment>
+        );
+    };
+
     const defaultLogo = isRebrandingEnabled ? rebrandingLogoIcon : defaultLogoIcon;
 
     return (
@@ -335,6 +347,7 @@ export const AsideHeaderAdapter = ({
             renderContent={renderAsideHeaderContent}
             onClosePanel={handleClosePanel}
             className={b({rebranding: isRebrandingEnabled})}
+            collapseButtonWrapper={isRebrandingEnabled ? renderCollapseButton : undefined}
         />
     );
 };
