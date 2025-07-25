@@ -231,11 +231,17 @@ async function filterParams({
                 filteredParams[key] = params[key];
             }
         });
-    } else if (!embeddingInfo.embed.publicParamsMode && embeddingInfo.embed.privateParams?.length === 0) {
+    } else if (
+        !embeddingInfo.embed.publicParamsMode &&
+        embeddingInfo.embed.privateParams?.length === 0
+    ) {
         // privateParams mode is enabled, but params are not added
 
         Object.assign(filteredParams, params);
-    } else if (!embeddingInfo.embed.publicParamsMode && embeddingInfo.embed.privateParams?.length > 0) {
+    } else if (
+        !embeddingInfo.embed.publicParamsMode &&
+        embeddingInfo.embed.privateParams?.length > 0
+    ) {
         const fillingForbiddenParamsSet = new Set(embeddingInfo.embed.privateParams);
 
         for (const [key, value] of Object.entries(params)) {
