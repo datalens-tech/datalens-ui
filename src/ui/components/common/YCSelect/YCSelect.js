@@ -1581,7 +1581,7 @@ export class YCSelect extends React.PureComponent {
                 <Loader size="s" />
             </div>
         ) : (
-            <div className={this._getPopupClassNames()}>
+            <div style={this._getPopupStyles()} className={this._getPopupClassNames()}>
                 {shouldRenderSearch && this._renderSearch()}
                 <div ref={this.selectorRef}>{this._renderItems({mobile: isMobile})}</div>
                 {this._renderApplyButton()}
@@ -1601,7 +1601,6 @@ export class YCSelect extends React.PureComponent {
         return (
             <React.Fragment>
                 <Popup
-                    style={popupStyles}
                     open={showMainPopup}
                     anchorElement={this.controlRef.current}
                     placement={AVAILABLE_POPUP_DIRECTIONS}
@@ -1614,7 +1613,6 @@ export class YCSelect extends React.PureComponent {
                     {this._renderPopupContent({isMobile: false})}
                 </Popup>
                 <Popup
-                    style={popupStyles}
                     open={showSelectedPopup}
                     anchorElement={this.controlRef.current}
                     placement={AVAILABLE_POPUP_DIRECTIONS}
@@ -1624,7 +1622,7 @@ export class YCSelect extends React.PureComponent {
                         }
                     }}
                 >
-                    <div className={this._getPopupClassNames()}>
+                    <div style={popupStyles} className={this._getPopupClassNames()}>
                         <div className={bPopup('select-title')}>
                             {trans('selected_popup_title')}
                         </div>

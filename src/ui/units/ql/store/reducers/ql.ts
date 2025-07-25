@@ -12,6 +12,7 @@ import {
     selectColors,
     selectColorsConfig,
     selectLabels,
+    selectPointSizeConfig,
     selectShapes,
     selectShapesConfig,
     selectTooltips,
@@ -327,6 +328,7 @@ export const getEntryNotChanged = createSelector(
     getParams,
     getChartType,
     getPlaceholdersContent,
+    selectPointSizeConfig,
     (
         entry,
         extraSettings,
@@ -337,6 +339,7 @@ export const getEntryNotChanged = createSelector(
         params,
         chartType,
         placeholdersContent,
+        geopointsConfig,
     ): boolean => {
         if (chartType && entry && entry.data && connection && visualization) {
             const actualSharedData: QlConfig = {
@@ -352,6 +355,7 @@ export const getEntryNotChanged = createSelector(
                 shapes: placeholdersContent.shapes || [],
                 shapesConfig: placeholdersContent.shapesConfig || [],
                 extraSettings: extraSettings || {},
+                geopointsConfig: geopointsConfig || {},
                 params: params.map((param) => {
                     return {
                         type: param.type,
@@ -409,6 +413,7 @@ export const getPreviewData = createSelector(
     getParams,
     getPlaceholdersContent,
     getOrder,
+    selectPointSizeConfig,
     (
         chartType,
         queryValue,
@@ -419,6 +424,7 @@ export const getPreviewData = createSelector(
         params,
         placeholdersContent,
         order,
+        geopointsConfig,
     ): QlConfig | null => {
         if (chartType && connection && visualization) {
             const result: QlConfig = {
@@ -441,6 +447,7 @@ export const getPreviewData = createSelector(
                 visualization,
                 order,
                 version: QlConfigVersions.V4,
+                geopointsConfig,
             };
 
             return result;

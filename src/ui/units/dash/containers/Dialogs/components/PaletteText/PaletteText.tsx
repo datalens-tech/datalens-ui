@@ -9,25 +9,30 @@ type PaletteTextProps = {
     color?: string;
     onSelect: (color: string) => void;
     theme?: RealTheme;
+    enableCustomColorSelector?: boolean;
 };
 const mainPresetOptions = [
     CustomPaletteTextColors.PRIMARY,
     CustomPaletteTextColors.COMPLEMENTARY,
     CustomPaletteTextColors.SECONDARY,
     CustomPaletteTextColors.HINT,
-    CustomPaletteTextColors.BRAND,
+    CustomPaletteTextColors.INVERTED_PRIMARY,
 ];
 
-export const PaletteText = ({onSelect, color, theme}: PaletteTextProps) => {
+export const PaletteText = ({
+    onSelect,
+    color,
+    theme,
+    enableCustomColorSelector,
+}: PaletteTextProps) => {
     return (
         <ColorPalette
             onSelect={onSelect}
             color={color}
-            enableCustomBgColorSelector
+            enableCustomColorSelector={enableCustomColorSelector}
             mainPresetOptions={mainPresetOptions}
             paletteOptions={TITLE_WIDGET_TEXT_COLORS_PRESET}
             theme={theme}
-            showItemsBorder
             paletteColumns={6}
         />
     );
