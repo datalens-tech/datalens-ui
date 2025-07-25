@@ -481,10 +481,6 @@ export class YCSelect extends React.PureComponent {
             return;
         }
 
-        if (this.state.showMainPopup && this.searchRef.current) {
-            this.searchRef.current.focusInput();
-        }
-
         if (this.state.isInitPending) {
             this._initItems();
         }
@@ -1581,7 +1577,10 @@ export class YCSelect extends React.PureComponent {
                 <Loader size="s" />
             </div>
         ) : (
-            <div style={this._getPopupStyles()} className={this._getPopupClassNames()}>
+            <div
+                style={isMobile ? {} : this._getPopupStyles()}
+                className={isMobile ? {} : this._getPopupClassNames()}
+            >
                 {shouldRenderSearch && this._renderSearch()}
                 <div ref={this.selectorRef}>{this._renderItems({mobile: isMobile})}</div>
                 {this._renderApplyButton()}
@@ -1609,6 +1608,7 @@ export class YCSelect extends React.PureComponent {
                             this._onOutsideMainPopupClick();
                         }
                     }}
+                    initialFocus={0}
                 >
                     {this._renderPopupContent({isMobile: false})}
                 </Popup>

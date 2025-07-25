@@ -218,6 +218,7 @@ export type DLGlobalData = {
     hideNavigation?: boolean;
     connectorIcons?: ConnectorIconData[];
     releaseVersion?: string;
+    docsUrl?: string;
     isAuthEnabled?: boolean;
     authManageLocalUsersDisabled?: boolean;
     authSignupDisabled?: boolean;
