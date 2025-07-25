@@ -11,6 +11,6 @@
 
     &__installation-info {
         @include installation-info-font;
-        width: min-content;
+        width: fit-content;
     }
 }
