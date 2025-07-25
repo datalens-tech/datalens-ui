@@ -18,7 +18,7 @@ import type {
 } from 'shared';
 import {DialogFieldEditorQA, Feature, FieldEditorQa} from 'shared';
 import {updateUserSettings} from 'store/actions/user';
-import {selectFieldEditorAdditionalShown, selectFieldEditorDocShown} from 'store/selectors/user';
+import {selectFieldEditorDocShown} from 'store/selectors/user';
 import type {DataTypeConfig, DatalensGlobalState} from 'ui';
 import {SPLIT_PANE_RESIZER_CLASSNAME, sdk} from 'ui';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -84,6 +84,7 @@ interface FieldEditorState {
     editor: MonacoTypes.editor.IStandaloneCodeEditor | null;
     dialogConfirmVisible: boolean;
     saveAsNewField: boolean;
+    additionalPanelVisible: boolean;
 }
 
 class FieldEditor extends React.Component<Props, FieldEditorState> {
@@ -113,6 +114,7 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
             saveAsNewField: Boolean(
                 this.props.field && this.props.field.formula && !this.props.field.title,
             ),
+            additionalPanelVisible: false,
         };
     }
 
@@ -146,7 +148,7 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
                         modifyField={this.modifyField}
                         toggleDocumentationPanel={this.toggleDocumentationPanel}
                         toggleAdditionalPanel={this.toggleAdditionalPanel}
-                        additionalPanelVisible={this.props.additionalPanelVisible}
+                        additionalPanelVisible={this.state.additionalPanelVisible}
                     />
                     {this.renderContent()}
                 </div>
@@ -170,9 +172,8 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
             options: {supported_functions: supportedFunctions = []} = {},
             dataTypes = [],
             docPanelVisible,
-            additionalPanelVisible,
         } = this.props;
-        const {field, fieldErrors, errors} = this.state;
+        const {field, fieldErrors, errors, additionalPanelVisible} = this.state;
         const {calc_mode: calcMode} = field;
         const {AdditionalPanel} = registry.fieldEditor.components.getAll();
 
@@ -301,21 +302,15 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
         this.state.editor?.layout();
     };
 
-    toggleAdditionalPanel = async () => {
-        const nextAdditionalPanelVisible = !this.props.additionalPanelVisible;
-
-        await this.props.updateUserSettings({
-            newSettings: {
-                dlFieldEditorAdditionalShown: nextAdditionalPanelVisible,
-            },
+    toggleAdditionalPanel = () => {
+        this.setState({
+            additionalPanelVisible: !this.state.additionalPanelVisible,
         });
     };
 
-    closeAdditionalPanel = async () => {
-        await this.props.updateUserSettings({
-            newSettings: {
-                dlFieldEditorAdditionalShown: false,
-            },
+    closeAdditionalPanel = () => {
+        this.setState({
+            additionalPanelVisible: false,
         });
     };
 
@@ -438,7 +433,6 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
     };
 
     onClose: DialogProps['onClose'] = (_, reason) => {
-        this.closeAdditionalPanel();
         if (reason === 'outsideClick') {
             this.attemptToCloseDialog();
 
@@ -454,7 +448,6 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
 const mapStateToProps = (state: DatalensGlobalState) => {
     return {
         docPanelVisible: selectFieldEditorDocShown(state),
-        additionalPanelVisible: selectFieldEditorAdditionalShown(state),
     };
 };
 

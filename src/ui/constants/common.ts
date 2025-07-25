@@ -250,6 +250,9 @@ export const DL = {
     get RELEASE_VERSION() {
         return window.DL.releaseVersion;
     },
+    get DOCS_URL() {
+        return window.DL.docsUrl;
+    },
     get IS_NATIVE_AUTH_ADMIN() {
         return window.DL.user.roles?.includes(UserRole.Admin);
     },

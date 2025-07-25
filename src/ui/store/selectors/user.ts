@@ -18,11 +18,6 @@ export const selectFieldEditorDocShown = createSelector(
     (userSettings) => userSettings.dlFieldEditorDocShown || false,
 );
 
-export const selectFieldEditorAdditionalShown = createSelector(
-    selectUserSettings,
-    (userSettings) => userSettings.dlFieldEditorAdditionalShown || false,
-);
-
 export const selectdGsheetAuthHintShown = createSelector(
     selectUserSettings,
     (userSettings) => userSettings.dlGsheetAuthHintShown || false,

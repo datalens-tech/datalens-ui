@@ -92,6 +92,7 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         connectorIcons: res.locals.connectorIcons,
         apiPrefix: config.apiPrefix,
         releaseVersion: config.releaseVersion,
+        docsUrl: config.docsUrl,
         orderedAuthRoles: config.orderedAuthRoles,
         authSignupDisabled: req.ctx.config.authSignupDisabled,
         ...appLayoutSettings.DL,
