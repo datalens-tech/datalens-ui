@@ -134,7 +134,7 @@ export const createUser = ({
     userData,
 }: {
     userData: CreateUserArgs;
-    onSuccess?: () => void;
+    onSuccess?: (userId: string) => void;
 }) => {
     return async (dispatch: ServiceSettingsDispatch) => {
         try {
@@ -147,7 +147,7 @@ export const createUser = ({
                     concurrentId: 'serviceSettings/createUser',
                 },
             );
-            onSuccess?.();
+            onSuccess?.(data.userId);
             dispatch({
                 type: SET_CREATE_USER_SUCCESS,
                 payload: data,

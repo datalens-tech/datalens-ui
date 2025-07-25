@@ -104,7 +104,7 @@ export interface SubjectClaims {
     givenName: string;
     familyName: string;
     preferredUsername: string;
-    federation: unknown;
+    federation?: unknown;
     pictureData?: string;
     idpType?: string | null;
 }
