@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {ArrowRight} from '@gravity-ui/icons';
+import type {ButtonProps} from '@gravity-ui/uikit';
 import {
     Button,
     Card,
@@ -11,13 +12,12 @@ import {
     useLayoutContext,
     useThemeType,
 } from '@gravity-ui/uikit';
-import type {ButtonProps} from '@gravity-ui/uikit';
 import sortBy from 'lodash/sortBy';
 import {Link as RouterLink} from 'react-router-dom';
 import type {GetMetaRespose} from 'shared/schema/anonymous-schema/public-gallery/actions';
 import type {GalleryItemShort} from 'shared/types';
-import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 import type {AsyncImageProps} from 'ui/components/AsyncImage/AsyncImage';
+import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 import type {CreateIllustrationProps} from 'ui/components/Illustration/types';
 import {createIllustration} from 'ui/components/Illustration/utils';
 import {InterpolatedText} from 'ui/components/InterpolatedText/InterpolatedText';
@@ -28,6 +28,7 @@ import {useGetGalleryItemsQuery, useGetGalleryMetaQuery} from '../../../store/ap
 import {GalleryCardPreview, SectionHeader} from '../../blocks';
 import {WorkOfMonth} from '../../blocks/WorkOfMonth/WorkOfMonth';
 import type {ActiveMediaQuery} from '../../types';
+import type {CnMods} from '../../utils';
 import {
     block,
     galleryAllPageI18n,
@@ -38,7 +39,6 @@ import {
     groupGalleryItemsByLabels,
     galleryLandingI18n as i18n,
 } from '../../utils';
-import type {CnMods} from '../../utils';
 import {ADD_DASH_FORM_LINK, PROMO_BLOCK_CATEGORIES, SPECIAL_CATEGORY} from '../constants';
 
 import './LandingPage.scss';
@@ -233,20 +233,19 @@ interface HeaderActionsProps {
 function HeaderActions({activeMediaQuery}: HeaderActionsProps) {
     const isActiveMediaQueryS = activeMediaQuery === 's';
     const mods: CnMods = {media: activeMediaQuery};
-    const buttonSize: ButtonProps['size'] = isActiveMediaQueryS ? 'xl' : 'l';
     const buttonWidth: ButtonProps['width'] = isActiveMediaQueryS ? 'max' : undefined;
 
     return (
         <div className={b('header-actions')}>
             <RouterLink className={b('header-actions-link', mods)} to={getAllPageUrl()}>
-                <Button width={buttonWidth} size={buttonSize} view="action">
+                <Button width={buttonWidth} size="xl" view="action">
                     {galleryAllPageI18n('title_all_entries')}
                 </Button>
             </RouterLink>
             <Button
                 href={ADD_DASH_FORM_LINK}
                 target="_blank"
-                size={buttonSize}
+                size="xl"
                 width={buttonWidth}
                 view="outlined"
             >
@@ -333,8 +332,13 @@ export function LandingPage() {
                     <Flex className={b('header-illustration-flex', baseMods)}>
                         <GalleryIllustration
                             name="header"
-                            className={b('header-illustration', baseMods)}
+                            className={b('header-illustration', {
+                                ...baseMods,
+                                medium: Boolean(DL.USER_ID),
+                            })}
                             showSkeleton={true}
+                            role="presentation"
+                            aria-hidden="true"
                         />
                     </Flex>
                 </Col>
