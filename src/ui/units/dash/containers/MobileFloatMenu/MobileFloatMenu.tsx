@@ -16,12 +16,13 @@ import {
 } from '../../store/selectors/dashTypedSelectors';
 import {FixedHeaderMobile} from '../FixedHeader/FixedHeaderMobile';
 
-interface MobileFloatMenuOwnProps {
+export interface MobileFloatMenuOwnProps {
     entryId: string;
     hasFixedContent: boolean;
     entryDialoguesRef: React.RefObject<EntryDialogues>;
     fixedHeaderControlsRef: React.RefCallback<HTMLDivElement>;
     fixedHeaderContainerRef: React.RefCallback<HTMLDivElement>;
+    dashEl: HTMLDivElement | null;
 }
 
 const mapStateToProps = (state: DatalensGlobalState) => ({
@@ -50,6 +51,7 @@ function MobileFloatMenuComponent({
     entryDialoguesRef,
     fixedHeaderControlsRef,
     fixedHeaderContainerRef,
+    dashEl,
     toggleTableOfContent: toggleToc,
 }: MobileFloatMenuProps) {
     const showDescriptionButton = Boolean(dashDescription);
@@ -89,7 +91,11 @@ function MobileFloatMenuComponent({
         />,
     ].filter(Boolean);
 
-    return <FloatMenu align={actions.length <= 2 ? 'right' : 'center'}>{actions}</FloatMenu>;
+    return (
+        <FloatMenu align={actions.length <= 2 ? 'right' : 'center'} container={dashEl ?? undefined}>
+            {actions}
+        </FloatMenu>
+    );
 }
 export const MobileFloatMenu = connect(
     mapStateToProps,

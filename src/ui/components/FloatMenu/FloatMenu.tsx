@@ -11,13 +11,14 @@ const b = block('dl-float-menu');
 interface FloatMenuProps {
     children: React.ReactNode;
     align?: 'left' | 'center' | 'right';
+    container?: HTMLElement;
 }
 
 const MOBILE_PAGE_SCROLLABLE_CONTAINER_CLASSNAME = 'dl-mobile-header__content';
 
 const MIN_SCROLL_POSITION_FOR_HIDING = 100;
 
-export function FloatMenu({children, align = 'center'}: FloatMenuProps) {
+export function FloatMenu({children, align = 'center', container}: FloatMenuProps) {
     const [isVisible, setIsVisible] = React.useState(true);
     const prevScrollY = React.useRef(0);
 
@@ -51,7 +52,7 @@ export function FloatMenu({children, align = 'center'}: FloatMenuProps) {
     }, [scrollableContainer]);
 
     return (
-        <Portal>
+        <Portal container={container}>
             <Flex justifyContent={align} className={b({hidden: !isVisible})}>
                 <div className={b('content')}>{children}</div>
             </Flex>

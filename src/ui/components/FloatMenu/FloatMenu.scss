@@ -5,7 +5,9 @@
 
     position: fixed;
     bottom: 16px;
-    z-index: 1000;
+    left: 0;
+    right: 0;
+    z-index: 97;
     width: 100%;
 
     transition:
@@ -23,7 +25,8 @@
 
     &__content {
         box-shadow: 0px 2px 52px 0px var(--g-color-sfx-shadow);
-        padding: 0 8px;
+        padding: 0 var(--g-spacing-2);
+        margin-inline: var(--g-spacing-4);
         background-color: var(--g-color-base-float-accent);
         border-radius: 20px;
         overflow: hidden;
