@@ -11,13 +11,15 @@ const b = block('dash-fixed-header-mobile');
 const DASHKIT_MOBILE_LAYOUT_CLASSNAME = 'dashkit-mobile-layout';
 
 export function FixedHeaderMobile({
+    fixedContentInitiallyOpened,
     fixedHeaderControlsRef,
     fixedHeaderContainerRef,
 }: {
+    fixedContentInitiallyOpened?: boolean;
     fixedHeaderControlsRef: React.RefCallback<HTMLDivElement>;
     fixedHeaderContainerRef: React.RefCallback<HTMLDivElement>;
 }) {
-    const [sheetVisible, setSheetVisible] = React.useState(false);
+    const [sheetVisible, setSheetVisible] = React.useState(fixedContentInitiallyOpened ?? false);
 
     const toggleSheet = () => {
         setSheetVisible((prevSheetVisible) => !prevSheetVisible);
