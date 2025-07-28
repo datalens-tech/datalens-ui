@@ -127,6 +127,7 @@ import {
     FixedHeaderControls,
     FixedHeaderWrapper,
 } from '../FixedHeader/FixedHeader';
+import type {MobileFloatMenuOwnProps} from '../MobileFloatMenu/MobileFloatMenu';
 import {MobileFloatMenu} from '../MobileFloatMenu/MobileFloatMenu';
 import TableOfContent from '../TableOfContent/TableOfContent';
 import {Tabs} from '../Tabs/Tabs';
@@ -170,6 +171,7 @@ type DashBodyState = {
     fixedHeaderCollapsed: Record<string, boolean>;
     fixedHeaderControlsEl: HTMLDivElement | null;
     fixedHeaderContainerEl: HTMLDivElement | null;
+    dashEl: HTMLDivElement | null;
     isGlobalDragging: boolean;
     hasCopyInBuffer: CopiedConfigData | null;
     loaded: boolean;
@@ -206,7 +208,8 @@ type GetPreparedCopyItemOptions<T extends object = {}> = (
 const RefsContext = React.createContext<{
     fixedHeaderControlsEl: HTMLDivElement | null;
     fixedHeaderContainerEl: HTMLDivElement | null;
-}>({fixedHeaderControlsEl: null, fixedHeaderContainerEl: null});
+    dashEl: HTMLDivElement | null;
+}>({fixedHeaderControlsEl: null, fixedHeaderContainerEl: null, dashEl: null});
 
 // Body is used as a core in different environments
 class Body extends React.PureComponent<BodyProps, DashBodyState> {
@@ -316,7 +319,6 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         key: DashKitProps['config'];
         config: DashKitProps['config'];
     };
-    _dashBodyRef: React.RefObject<HTMLDivElement>;
 
     state: DashBodyState;
 
@@ -327,6 +329,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             fixedHeaderCollapsed: {},
             fixedHeaderControlsEl: null,
             fixedHeaderContainerEl: null,
+            dashEl: null,
             isGlobalDragging: false,
             hasCopyInBuffer: null,
             prevMeta: {tabId: null, entryId: null},
@@ -355,8 +358,6 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                 ],
             },
         };
-
-        this._dashBodyRef = React.createRef();
     }
 
     componentDidMount() {
@@ -411,6 +412,9 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
     };
     _fixedHeaderContainerRef: React.RefCallback<HTMLDivElement> = (el) => {
         this.setState({fixedHeaderContainerEl: el});
+    };
+    _dashBodyRef: React.RefCallback<HTMLDivElement> = (el) => {
+        this.setState({dashEl: el});
     };
 
     updateMargins() {
@@ -1121,11 +1125,12 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                 value={{
                     fixedHeaderControlsEl: this.state.fixedHeaderControlsEl,
                     fixedHeaderContainerEl: this.state.fixedHeaderContainerEl,
+                    dashEl: this.state.dashEl,
                 }}
             >
                 <WidgetContextProvider onWidgetMountChange={this.itemAddHandler}>
                     {DL.IS_MOBILE && isMobileFixedHeaderEnabled && this.props.entryId && (
-                        <MobileFloatMenu
+                        <FloatingMobileMenuWithContext
                             entryId={this.props.entryId}
                             hasFixedContent={
                                 hasFixedHeaderContainerElements || hasFixedHeaderControlsElements
@@ -1141,7 +1146,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                             className={b('fixed-header', {
                                 'no-content': fixedHeaderHasNoVisibleContent,
                             })}
-                            dashBodyRef={this._dashBodyRef}
+                            dashBodyEl={this.state.dashEl}
                             controlsRef={this._fixedHeaderControlsRef}
                             containerRef={this._fixedHeaderContainerRef}
                             isCollapsed={fixedHeaderCollapsed}
@@ -1392,6 +1397,15 @@ function FixedContainerWrapperWithContext({content}: {content: React.ReactNode})
 
     if (fixedHeaderContainerEl) {
         return createPortal(content, fixedHeaderContainerEl, 'fixed-header-container-mounted');
+    }
+    return null;
+}
+
+function FloatingMobileMenuWithContext(props: Omit<MobileFloatMenuOwnProps, 'dashEl'>) {
+    const {dashEl} = React.useContext(RefsContext);
+
+    if (dashEl) {
+        return <MobileFloatMenu {...props} dashEl={dashEl} />;
     }
     return null;
 }
