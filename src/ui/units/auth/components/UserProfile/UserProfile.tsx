@@ -43,8 +43,8 @@ export function UserProfile({userProfile, onUserDataChange}: UserProfileProps) {
     const disableActions = DL.AUTH_MANAGE_LOCAL_USERS_DISABLED || Boolean(idpType);
     const showAdministrationActions = !disableActions && canChangeUserData && !isCurrentUserProfile;
 
-    const {getAdditionalProfileFields, getAdditionalProfileSections} =
-        registry.auth.functions.getAll();
+    const {getAdditionalProfileFields} = registry.auth.functions.getAll();
+    const {AdditionalProfileSections} = registry.auth.components.getAll();
 
     const additionalProfileFields = getAdditionalProfileFields?.(userProfile)?.map((field) => (
         <DefinitionList.Item name={field.name} key={field.name}>
@@ -128,11 +128,7 @@ export function UserProfile({userProfile, onUserDataChange}: UserProfileProps) {
                 />
             </Section>
 
-            {getAdditionalProfileSections(userProfile).map(({title, section}) => (
-                <Section key={title} title={title}>
-                    {section}
-                </Section>
-            ))}
+            <AdditionalProfileSections userProfile={userProfile} />
 
             {showAdministrationActions && (
                 <Section
@@ -160,7 +156,7 @@ export function UserProfile({userProfile, onUserDataChange}: UserProfileProps) {
 }
 
 const HEADER_TAG = 'h3' as const;
-function Section({
+export function Section({
     title,
     actions,
     children,
@@ -186,3 +182,5 @@ function Section({
         </section>
     );
 }
+
+export {Section as UserProfileSection};

@@ -37,6 +37,7 @@ const UserProfilePage = () => {
             <ActionPanel
                 leftItems={
                     <Breadcrumbs
+                        // TODO: remove navigate
                         navigate={(href) => {
                             history.push(href);
                         }}

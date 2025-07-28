@@ -24,14 +24,14 @@ const UserProfilePage = React.lazy(() => import('../UserProfilePage/UserProfileP
 const CreateProfilePage = React.lazy(() => import('../CreateProfilePage/CreateProfilePage'));
 
 type ServiceSettingsProps = MainServiceSettingsPageProps & {
-    customRoutes?: React.ReactNode[];
+    children?: React.ReactNode[];
 };
 
-export const App = ({customRoutes, ...props}: ServiceSettingsProps) => (
+export const App = ({children, ...props}: ServiceSettingsProps) => (
     <React.Suspense fallback={<Loader size="l" className={b('loader')} />}>
         <PageTitle entry={{key: i18n('label_header')}} />
         <Switch>
-            {customRoutes}
+            {children}
             {DL.AUTH_ENABLED && (
                 <Route exact path={'/settings/users/new'} component={CreateProfilePage} />
             )}

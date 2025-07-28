@@ -46,7 +46,7 @@ export const CreateUserForm = () => {
             dispatch(showToast({title: message, type: 'danger'}));
         };
 
-        await getAdditionalAddProfileFields().onApply(userId, extraFieldsValues, handleError);
+        await getAdditionalAddProfileFields()?.onApply(userId, extraFieldsValues, handleError);
 
         dispatch(showToast({title: i18n('label_success-user-creation'), type: 'success'}));
 
@@ -97,7 +97,7 @@ export const CreateUserForm = () => {
                     <LastName />
                     <Email />
                     <Roles />
-                    {getAdditionalAddProfileFields().fields.map(({key, label, Component}) => (
+                    {getAdditionalAddProfileFields()?.fields.map(({key, label, Component}) => (
                         <CustomRow key={label} label={label}>
                             <Component
                                 value={extraFieldsValues[key]}
