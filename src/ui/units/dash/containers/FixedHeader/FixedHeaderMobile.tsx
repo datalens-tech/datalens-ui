@@ -25,6 +25,33 @@ export function FixedHeaderMobile({
         setSheetVisible((prevSheetVisible) => !prevSheetVisible);
     };
 
+    const contentRef = React.useRef<HTMLDivElement>(null);
+    const [indicator, setIndicator] = React.useState<HTMLDivElement>();
+    const setIndicatorRef = React.useCallback((el: HTMLDivElement) => {
+        setIndicator(el);
+    }, []);
+
+    React.useLayoutEffect(() => {
+        const resizeObserver = new ResizeObserver(([el]) => {
+            const rect = el.contentRect;
+
+            if (rect?.height) {
+                contentRef.current?.style.setProperty(
+                    '--fullscreen-widget-transform-y',
+                    `${rect.height - window.innerHeight}px`,
+                );
+            }
+        });
+
+        if (indicator) {
+            resizeObserver.observe(indicator);
+        }
+
+        return () => {
+            resizeObserver.disconnect();
+        };
+    }, [contentRef, indicator]);
+
     return (
         <React.Fragment>
             <Button onClick={toggleSheet} view="flat">
@@ -36,8 +63,11 @@ export function FixedHeaderMobile({
                 allowHideOnContentScroll
                 onClose={toggleSheet}
             >
-                <div ref={fixedHeaderControlsRef} className={b('controls-placeholder')}></div>
-                <div ref={fixedHeaderContainerRef} className={b('container-placeholder')}></div>
+                <div className={b('content')} ref={contentRef}>
+                    <div className={b('indicator')} ref={setIndicatorRef} />
+                    <div ref={fixedHeaderControlsRef} className={b('controls-placeholder')}></div>
+                    <div ref={fixedHeaderContainerRef} className={b('container-placeholder')}></div>
+                </div>
             </Sheet>
         </React.Fragment>
     );
