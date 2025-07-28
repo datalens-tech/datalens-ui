@@ -50,6 +50,7 @@ import {
     DashKitOverlayMenuQa,
     DashTabItemType,
     EntryScope,
+    FOCUSED_WIDGET_PARAM_NAME,
     Feature,
     FixedHeaderQa,
     LOADED_DASH_CLASS,
@@ -1139,6 +1140,11 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             );
         }
 
+        const shouldRenderMobileMenu = DL.IS_MOBILE && isMobileFixedHeaderEnabled;
+        const searchParams = new URLSearchParams(location.search);
+        const mobileFixedHeaderInitiallyOpened =
+            shouldRenderMobileMenu &&
+            tabDataConfig?.items?.some((i) => i.id === searchParams.get(FOCUSED_WIDGET_PARAM_NAME));
         return (
             <RefsContext.Provider
                 value={{
@@ -1148,12 +1154,13 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                 }}
             >
                 <WidgetContextProvider onWidgetMountChange={this.itemAddHandler}>
-                    {DL.IS_MOBILE && isMobileFixedHeaderEnabled && this.props.entryId && (
+                    {shouldRenderMobileMenu && this.props.entryId && (
                         <FloatingMobileMenuWithContext
                             entryId={this.props.entryId}
                             hasFixedContent={
                                 hasFixedHeaderContainerElements || hasFixedHeaderControlsElements
                             }
+                            fixedContentInitiallyOpened={mobileFixedHeaderInitiallyOpened}
                             entryDialoguesRef={this.entryDialoguesRef}
                             fixedHeaderControlsRef={this._fixedHeaderControlsRef}
                             fixedHeaderContainerRef={this._fixedHeaderContainerRef}
