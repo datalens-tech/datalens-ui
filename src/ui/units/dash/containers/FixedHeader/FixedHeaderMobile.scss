@@ -1,8 +1,8 @@
 .dash-fixed-header-mobile {
     $class: &;
 
-    --fullscreen-widget-top: auto;
-    --fullscreen-widget-transform-y: -100%;
+    // --fullscreen-widget-top: auto;
+    // --fullscreen-widget-transform-y: -100%;
 
     --fixed-header-background: var(
         --dl-color-fixed-header-background,
@@ -10,6 +10,11 @@
     );
 
     --dash-current-background: var(--fixed-header-background);
+
+    &__indicator {
+        position: fixed;
+        inset: 0;
+    }
 
     /* terms rendering fix start */
     &__controls-placeholder,
