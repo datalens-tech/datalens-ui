@@ -1,4 +1,5 @@
 .dialog-dash-meta {
+    $class: &;
     position: relative;
 
     &__subtitle {
@@ -24,6 +25,16 @@
         &_narrow {
             min-width: 416px;
             max-width: 736px;
+        }
+    }
+
+    &_mobile {
+        padding: 0 var(--g-spacing-4);
+
+        #{$class}__content {
+            padding: var(--g-spacing-4) 0;
+            margin-top: 0;
+            min-width: 100%;
         }
     }
 
