@@ -1,7 +1,7 @@
 import type {PieSeries, PieSeriesData} from '@gravity-ui/chartkit/gravity-charts';
 
 import type {SeriesExportSettings} from '../../../../../../../shared';
-import {WizardVisualizationId, formatNumber, getFormatOptions} from '../../../../../../../shared';
+import {formatNumber, getFormatOptions} from '../../../../../../../shared';
 import {getFakeTitleOrTitle} from '../../../../../../../shared/modules/fields';
 import {isHtmlField, isMarkdownField, isMarkupField} from '../../../../../../../shared/types/index';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
@@ -9,7 +9,7 @@ import {getExportColumnSettings} from '../../utils/export-helpers';
 import type {PiePoint, PrepareFunctionArgs} from '../types';
 
 import preparePieData from './prepare-pie-data';
-import {getFormattedValue, isColoringByMeasure} from './utils';
+import {getFormattedValue, isColoringByMeasure, isDonut} from './utils';
 
 type ExtendedPieSeriesData = Omit<PieSeriesData, 'label'> & {
     drillDownFilterValue?: string;
@@ -27,7 +27,7 @@ type ExtendedPieSeries = Omit<PieSeries, 'data'> & {
 };
 
 export function prepareD3Pie(args: PrepareFunctionArgs) {
-    const {labels, visualizationId, ChartEditor, colorsConfig, idToDataType} = args;
+    const {shared, labels, visualizationId, ChartEditor, colorsConfig, idToDataType} = args;
     const {graphs, label, measure, totals} = preparePieData(args);
     const isLabelsEnabled = Boolean(labels?.length && label && measure?.hideLabelMode !== 'hide');
 
@@ -45,6 +45,9 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
                 enabled: isLabelsEnabled,
                 html: shouldUseHtmlForLabels,
                 format: getFieldFormatOptions({field: label}),
+                style: {
+                    fontSize: '12px',
+                },
             },
             data:
                 graph.data?.map((item) => {
@@ -59,6 +62,13 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
                         percentage: item.y / total,
                     };
                 }) ?? [],
+            legend: {
+                symbol: {
+                    width: 10,
+                    height: 10,
+                    padding: 4,
+                },
+            },
         };
 
         seriesConfig.custom = {
@@ -73,7 +83,7 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
             },
         };
 
-        if (visualizationId === WizardVisualizationId.DonutD3) {
+        if (isDonut({visualizationId})) {
             seriesConfig.innerRadius = '50%';
 
             if (measure && totals) {
@@ -102,10 +112,22 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
         };
     }
 
+    const isLegendEnabled =
+        shared?.extraSettings?.legendMode !== 'hide' &&
+        (legend?.enabled || data[0]?.data.length > 1);
+
     return {
+        chart: {
+            margin: isLegendEnabled
+                ? {top: 20, left: 20, right: 20, bottom: 20}
+                : {top: 30, left: 30, right: 30, bottom: 35},
+        },
         series: {
             data,
         },
-        legend,
+        legend: {
+            itemDistance: 30,
+            ...legend,
+        },
     };
 }
