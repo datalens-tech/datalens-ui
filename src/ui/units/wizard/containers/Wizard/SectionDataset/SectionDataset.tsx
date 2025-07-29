@@ -982,7 +982,7 @@ class SectionDataset extends React.Component<Props, State> {
 
         const workbookId = widget.workbookId as string;
 
-        const startFrom = dataset?.key.replace(/[^/]+$/, '');
+        const startFrom = widget?.key.replace(/[^/]+$/, '');
 
         const {getPlaceSelectParameters} = registry.common.functions.getAll();
 
