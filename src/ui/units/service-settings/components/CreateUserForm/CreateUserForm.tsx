@@ -32,11 +32,9 @@ export const CreateUserForm = () => {
     const location = useLocation<{from: string | undefined}>();
 
     const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
-
-    const userInfo = useSelector(selectUserInfoFormValues);
-
     const [extraFieldsValues, setExtraFieldsValues] = React.useState<Record<string, any>>({});
 
+    const userInfo = useSelector(selectUserInfoFormValues);
     const isLoading = useSelector(selectCreateUserIsLoading);
 
     const {getAdditionalAddProfileFields} = registry.auth.functions.getAll();

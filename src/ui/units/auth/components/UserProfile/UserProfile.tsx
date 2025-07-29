@@ -156,7 +156,7 @@ export function UserProfile({userProfile, onUserDataChange}: UserProfileProps) {
 }
 
 const HEADER_TAG = 'h3' as const;
-export function Section({
+function Section({
     title,
     actions,
     children,
