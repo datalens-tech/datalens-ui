@@ -2,16 +2,7 @@ import React from 'react';
 
 import {PencilToLine} from '@gravity-ui/icons';
 import type {PaletteOption, RealTheme} from '@gravity-ui/uikit';
-import {
-    ActionTooltip,
-    Button,
-    Flex,
-    Icon,
-    Palette,
-    Popup,
-    ThemeProvider,
-    Tooltip,
-} from '@gravity-ui/uikit';
+import {ActionTooltip, Button, Flex, Icon, Palette, Popup, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {color as d3Color} from 'd3-color';
 import {i18n} from 'i18n';
@@ -22,6 +13,8 @@ import {
     CustomPaletteTextColors,
 } from 'shared/constants/widgets';
 import {ColorPickerInput} from 'ui/components/ColorPickerInput/ColorPickerInput';
+import {ColorItem} from 'ui/components/DecoratedColorItem/ColorItem/ColorItem';
+import {DecoratedColorItem} from 'ui/components/DecoratedColorItem/DecoratedColorItem';
 
 import './ColorPalette.scss';
 
@@ -43,50 +36,6 @@ const COLORS_WITH_VISIBLE_BORDER: string[] = [
 function colorStringToHex(color: string) {
     return d3Color(color)?.formatHex8() ?? '';
 }
-
-const ColorItem = React.forwardRef(function ColorItemWithRef(
-    {
-        color,
-        isSelected,
-        classNameMod,
-        theme,
-        qa,
-    }: {
-        color: string;
-        classNameMod?: string;
-        isSelected?: boolean;
-        isPreview?: boolean;
-        theme?: RealTheme;
-        qa?: string;
-    },
-    ref: React.ForwardedRef<HTMLSpanElement>,
-) {
-    const isTransparent = color === CustomPaletteBgColors.NONE;
-    const isLikeChartBg = color === CustomPaletteBgColors.LIKE_CHART;
-    const mod = classNameMod ? {[classNameMod]: Boolean(classNameMod)} : {};
-
-    const itemContent = (
-        <span
-            ref={ref}
-            style={{backgroundColor: isLikeChartBg || isTransparent ? '' : `${color}`}}
-            className={b('color-item', {
-                transparent: isTransparent,
-                selected: isSelected,
-                'widget-bg': isLikeChartBg,
-                ...mod,
-            })}
-            data-qa={qa}
-        ></span>
-    );
-
-    return theme ? (
-        <ThemeProvider theme={theme} scoped rootClassName={b('theme')}>
-            {itemContent}
-        </ThemeProvider>
-    ) : (
-        itemContent
-    );
-});
 
 type PaleteListProps = {
     onSelect: (val: string) => void;
@@ -128,19 +77,13 @@ function PaletteList(props: PaleteListProps) {
         const showItemBorder = COLORS_WITH_VISIBLE_BORDER.includes(colorItem);
         return {
             content: (
-                <div
-                    className={b('highlight-wrapper', {
-                        selected,
-                        'with-border': showItemBorder,
-                    })}
-                >
-                    <ColorItem
-                        color={colorItem}
-                        isSelected={selected}
-                        ref={selected ? previewRef : undefined}
-                        theme={theme}
-                    />
-                </div>
+                <DecoratedColorItem
+                    selected={selected}
+                    showItemBorder={showItemBorder}
+                    previewRef={previewRef}
+                    theme={theme}
+                    color={colorItem}
+                />
             ),
             value: colorItem,
         };
@@ -162,19 +105,13 @@ function PaletteList(props: PaleteListProps) {
                     const selected = colorItem === selectedColor;
                     const showItemBorder = COLORS_WITH_VISIBLE_BORDER.includes(colorItem);
                     const colorContent = (
-                        <div
-                            className={b('highlight-wrapper', {
-                                selected,
-                                'with-border': showItemBorder,
-                            })}
-                        >
-                            <ColorItem
-                                color={colorItem}
-                                isSelected={selected}
-                                ref={selected ? previewRef : undefined}
-                                theme={previewColorWithSlideTheme ? theme : undefined}
-                            />
-                        </div>
+                        <DecoratedColorItem
+                            selected={selected}
+                            showItemBorder={showItemBorder}
+                            color={colorItem}
+                            previewRef={previewRef}
+                            theme={previewColorWithSlideTheme ? theme : undefined}
+                        />
                     );
                     return (
                         <Button

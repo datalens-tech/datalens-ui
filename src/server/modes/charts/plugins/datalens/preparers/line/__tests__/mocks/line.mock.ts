@@ -1,3 +1,4 @@
+import {COMMON_PALETTE_ID} from '../../../../../../../../../shared';
 import {EmptyPrepapreArgs} from '../../../__tests__/common.mock';
 
 const chartEditorMock = {
@@ -62,7 +63,10 @@ export const linesColoredByFieldWithPostfixArgs = {
                         settingsId: 'b0df4800-88c2-11ee-96b1-05f14cfb8434',
                         settings: {
                             gradientState: {},
-                            paletteState: {palette: 'default-palette', mountedColors: {}},
+                            paletteState: {
+                                palette: COMMON_PALETTE_ID.DEFAULT_20,
+                                mountedColors: {},
+                            },
                             isContinuous: false,
                         },
                         colorFieldGuid: 'e83fb454-ca9a-4083-95be-1994e9957655',
@@ -206,7 +210,7 @@ export const linesColoredByFieldWithPostfixArgs = {
     ],
     colorsConfig: {
         polygonBorders: 'show',
-        palette: 'default-palette',
+        palette: COMMON_PALETTE_ID.DEFAULT_20,
         mountedColors: {'2014': '6', '2015': '12', '2016': '18', '2017': '19'},
         fieldGuid: 'd0ab8220-16e9-4320-b6da-1ca12163d956',
         coloredByMeasure: false,

@@ -1,0 +1,49 @@
+.decorated-palette-color-item {
+	$color-item-size: 28px;
+	--_--color-item-border-color: transparent;
+	position: relative;
+
+	border-radius: 6px;
+
+
+	width: $color-item-size;
+	height: $color-item-size;
+	flex-grow: 0;
+	flex-shrink: 0;
+
+
+	&_with-border {
+		--_--color-item-border-color: var(--g-color-line-generic);
+	}
+
+	&::before {
+		content: '';
+		position: absolute;
+		inset: 0;
+		border: 1px solid var(--_--color-item-border-color);
+		border-radius: 6px;
+	}
+
+	&_selected,
+	&:hover {
+		--_--color-item-border-color: transparent;
+	}
+
+	&:not(&_selected):hover::before {
+		content: '';
+		position: absolute;
+		inset: -3px;
+		border: 2px solid var(--g-color-line-generic-hover);
+		border-radius: 9px;
+	}
+
+	&_selected::before {
+		content: '';
+		position: absolute;
+		inset: -3px;
+		border: 2px solid var(--g-color-line-brand);
+		border-radius: 9px;
+	}
+
+
+}

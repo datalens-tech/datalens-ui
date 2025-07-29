@@ -28,8 +28,6 @@ import ColorPaletteEditor from './PaletteEditor/PaletteEditor';
 
 import './ColorPaletteEditorContainer.scss';
 
-const IS_FAVORITES_ENABLED = false;
-
 const b = block('color-palette-editor-container');
 
 type StateProps = ReturnType<typeof mapStateToProps>;
@@ -57,7 +55,6 @@ class ColorPaletteEditorContainer extends React.Component<ColorPaletteEditorProp
         return (
             <div className={b()}>
                 <ColorPalettesCard
-                    isFavoritesEnabled={IS_FAVORITES_ENABLED}
                     title={i18n('component.color-palette-editor', 'label_gradient-palette-title')}
                     description={i18n(
                         'component.color-palette-editor',
@@ -72,7 +69,6 @@ class ColorPaletteEditorContainer extends React.Component<ColorPaletteEditorProp
                     hasEditRights={hasEditRights}
                 />
                 <ColorPalettesCard
-                    isFavoritesEnabled={IS_FAVORITES_ENABLED}
                     title={i18n('component.color-palette-editor', 'label_palette-title')}
                     description={i18n(
                         'component.color-palette-editor',
@@ -87,14 +83,8 @@ class ColorPaletteEditorContainer extends React.Component<ColorPaletteEditorProp
                     qa={ServiceSettingsQA.ColorPalettes}
                     hasEditRights={hasEditRights}
                 />
-                <ColorPaletteEditor
-                    isFavoritesEnabled={IS_FAVORITES_ENABLED}
-                    hasEditRights={hasEditRights}
-                />
-                <GradientColorPaletteEditor
-                    isFavoritesEnabled={IS_FAVORITES_ENABLED}
-                    hasEditRights={hasEditRights}
-                />
+                <ColorPaletteEditor hasEditRights={hasEditRights} />
+                <GradientColorPaletteEditor hasEditRights={hasEditRights} />
             </div>
         );
     }

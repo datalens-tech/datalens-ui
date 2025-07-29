@@ -1,23 +1,23 @@
 import React, {useCallback, useRef} from 'react';
 
-import {Select, TextInput} from '@gravity-ui/uikit';
+import type {PaletteOption} from '@gravity-ui/uikit';
+import {Palette, Select, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import type {ColorPalette} from 'shared';
 import {DialogFieldBarsSettingsQa} from 'shared';
+import {DecoratedColorItem} from 'ui/components/DecoratedColorItem/DecoratedColorItem';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents';
 import {useEnterClick} from 'ui/hooks/useEnterClick';
-import {PaletteTypes} from 'ui/units/wizard/constants';
 import {getPaletteSelectorItems} from 'ui/units/wizard/utils/palette';
 import {getPaletteColors} from 'ui/utils';
 
-import Palette from '../Palette/Palette';
 import {PaletteItem} from '../Palette/components/PaletteItem/PaletteItem';
 
 import './MinifiedPalette.scss';
 
 type MinifiedPaletteProps = {
     onPaletteUpdate: (paletteName: string) => void;
-    onPaletteItemClick: (color: string) => void;
+    onPaletteItemClick: (value: string[]) => void;
     onInputColorUpdate: (color: string) => void;
     onEnterPress?: () => void;
     palette: string;
@@ -53,12 +53,20 @@ export const MinifiedPalette: React.FC<MinifiedPaletteProps> = (props: MinifiedP
 
     useEnterClick(paletteRef, handleEnterPress);
 
-    const options = getPaletteSelectorItems({colorPalettes});
+    const selectOptions = getPaletteSelectorItems({colorPalettes});
 
     const colors = React.useMemo(
-        () => getPaletteColors(palette, colorPalettes),
+        () => [...getPaletteColors(palette, colorPalettes), 'input'],
         [colorPalettes, palette],
     );
+
+    const options: PaletteOption[] = colors.map((colorItem) => {
+        const selected = colorItem === currentColor;
+        return {
+            content: <DecoratedColorItem selected={selected} color={colorItem} />,
+            value: colorItem,
+        };
+    });
 
     return (
         <div className={b()} ref={paletteRef}>
@@ -74,15 +82,15 @@ export const MinifiedPalette: React.FC<MinifiedPaletteProps> = (props: MinifiedP
                     return <SelectOptionWithIcon option={option} />;
                 }}
                 value={[palette]}
-                options={options}
+                options={selectOptions}
             />
             <Palette
-                paletteType={PaletteTypes.Colors}
-                palette={colors}
-                onPaletteItemClick={onPaletteItemClick}
-                isSelectedItem={(color) => color === currentColor}
+                columns={7}
+                options={options}
+                onUpdate={onPaletteItemClick}
                 className={b('palette', {size})}
-                itemClassName={b('item', {size})}
+                optionClassName={b('item', {size})}
+                multiple={false}
             />
             <div className={b('color-input-wrapper')}>
                 <PaletteItem color={currentColor} className={b('color-input-icon')} />

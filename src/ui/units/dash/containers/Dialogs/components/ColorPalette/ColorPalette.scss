@@ -60,65 +60,6 @@
         min-width: 100%;
     }
 
-    &__highlight-wrapper {
-        --_--color-item-border-color: transparent;
-        position: relative;
-
-        border-radius: 6px;
-
-        &_with-border {
-            --_--color-item-border-color: var(--g-color-line-generic);
-        }
-
-        &::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            border: 1px solid var(--_--color-item-border-color);
-            border-radius: 6px;
-        }
-
-        &_selected,
-        &:hover {
-            --_--color-item-border-color: transparent;
-        }
-
-        &:not(&_selected):hover::before {
-            content: '';
-            position: absolute;
-            inset: -3px;
-            border: 2px solid var(--g-color-line-generic-hover);
-            border-radius: 9px;
-        }
-
-        &_selected::before {
-            content: '';
-            position: absolute;
-            inset: -3px;
-            border: 2px solid var(--g-color-line-brand);
-            border-radius: 9px;
-        }
-    }
-
-    &__color-item {
-        display: inline-block;
-        width: $color-item-size;
-        height: $color-item-size;
-        background-clip: padding-box;
-
-        &_transparent {
-            background-image: repeating-conic-gradient(
-                var(--g-color-base-generic) 0 25%,
-                var(--g-color-base-background) 0 50%
-            );
-            border: 1px solid transparent;
-        }
-
-        &_widget-bg {
-            background-color: var(--g-color-base-float);
-        }
-    }
-
     &__tooltip-trigger {
         position: absolute;
         inset: 0;

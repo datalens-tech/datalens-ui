@@ -1,6 +1,5 @@
 import React from 'react';
 
-import {Star, StarFill} from '@gravity-ui/icons';
 import type {DropdownMenuItem} from '@gravity-ui/uikit';
 import {ActionTooltip, Button, DropdownMenu, Icon, List} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
@@ -24,7 +23,6 @@ type Props = {
     handleRemoveColorPaletteClick: (colorPalette: ColorPalette) => void;
     handleCreateColorPalette: () => void;
     handleItemClick: (colorPalette: ColorPalette) => void;
-    isFavoritesEnabled: boolean;
     condensed?: boolean;
     qa?: string;
     hasEditRights?: boolean;
@@ -84,7 +82,7 @@ class ColorPalettesCard extends React.Component<Props> {
     }
 
     private renderPaletteListItem = (colorPalette: ColorPalette) => {
-        const {isFavoritesEnabled, hasEditRights} = this.props;
+        const {hasEditRights} = this.props;
 
         const items: DropdownMenuItem<unknown>[] = [
             {
@@ -124,14 +122,6 @@ class ColorPalettesCard extends React.Component<Props> {
                             items={items}
                         />
                     )}
-                    {isFavoritesEnabled ? (
-                        <Icon
-                            className={b('default-icon', {default: colorPalette.isDefault})}
-                            data={colorPalette.isDefault ? StarFill : Star}
-                            width="16"
-                            height="16"
-                        />
-                    ) : null}
                 </div>
             </div>
         );

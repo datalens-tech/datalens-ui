@@ -1,4 +1,4 @@
-export const DEFAULT_PALETTE_ID = 'default-palette';
+export const AUTO_PALETTE_ID = 'auto';
 
 export const GRADIENT_PALETTE_ID = {
     EMERALD_20: 'emerald20-palette',
@@ -9,7 +9,7 @@ export const GRADIENT_PALETTE_ID = {
 } as const;
 
 export const COMMON_PALETTE_ID = {
-    DEFAULT: DEFAULT_PALETTE_ID,
+    DEFAULT_20: 'default20-palette',
     DATALENS_NEO_20: 'datalens-neo-20-palette',
     ...GRADIENT_PALETTE_ID,
 } as const;
@@ -31,11 +31,11 @@ export const TABLEAU_PALETTE_ID = {
 } as const;
 
 export const PALETTE_ID = {
+    AUTO_PALETTE_ID,
     ...COMMON_PALETTE_ID,
     ...TABLEAU_PALETTE_ID,
 } as const;
 
-export type DefaultPaletteId = typeof DEFAULT_PALETTE_ID;
 export type CommonPaletteId = (typeof COMMON_PALETTE_ID)[keyof typeof COMMON_PALETTE_ID];
 export type TableauPaletteId = (typeof TABLEAU_PALETTE_ID)[keyof typeof TABLEAU_PALETTE_ID];
 export type InternalPaletteId = CommonPaletteId;

@@ -23,38 +23,38 @@ import type {
     TableSubTotalsSettings,
 } from '../../wizard';
 
-export type V12ChartsConfig = {
+export type V13ChartsConfig = {
     title?: string;
-    colors: V12Color[];
-    colorsConfig?: V12ColorsConfig;
-    extraSettings: V12CommonSharedExtraSettings | undefined;
-    filters: V12Filter[];
-    geopointsConfig?: V12PointSizeConfig;
-    hierarchies: V12HierarchyField[];
-    labels: V12Label[];
-    links: V12Link[];
-    sort: V12Sort[];
-    tooltips: V12Tooltip[];
-    tooltipConfig?: V12TooltipConfig;
+    colors: V13Color[];
+    colorsConfig?: V13ColorsConfig;
+    extraSettings: V13CommonSharedExtraSettings | undefined;
+    filters: V13Filter[];
+    geopointsConfig?: V13PointSizeConfig;
+    hierarchies: V13HierarchyField[];
+    labels: V13Label[];
+    links: V13Link[];
+    sort: V13Sort[];
+    tooltips: V13Tooltip[];
+    tooltipConfig?: V13TooltipConfig;
     type: 'datalens';
-    updates: V12Update[];
-    visualization: V12Visualization;
-    shapes: V12Shape[];
-    shapesConfig?: V12ShapesConfig;
-    version: ChartsConfigVersion.V12;
+    updates: V13Update[];
+    visualization: V13Visualization;
+    shapes: V13Shape[];
+    shapesConfig?: V13ShapesConfig;
+    version: ChartsConfigVersion.V13;
     datasetsIds: string[];
-    datasetsPartialFields: V12ChartsConfigDatasetField[][];
-    segments: V12Field[];
+    datasetsPartialFields: V13ChartsConfigDatasetField[][];
+    segments: V13Field[];
     chartType?: string;
 };
 
-export type V12Update = {
+export type V13Update = {
     action: 'add_field' | 'add' | 'update_field' | 'update' | 'delete' | 'delete_field';
     field: any;
     debug_info?: string;
 };
 
-export interface V12CommonSharedExtraSettings {
+export interface V13CommonSharedExtraSettings {
     title?: string;
     titleMode?: 'show' | 'hide';
     indicatorTitleMode?: IndicatorTitleMode;
@@ -62,6 +62,7 @@ export interface V12CommonSharedExtraSettings {
     metricFontSize?: string;
     metricFontColor?: string;
     metricFontColorPalette?: string;
+    metricFontColorIndex?: number | null;
     tooltip?: 'show' | 'hide';
     tooltipSum?: 'on' | 'off';
     limit?: number;
@@ -74,7 +75,7 @@ export interface V12CommonSharedExtraSettings {
     stacking?: 'on' | 'off';
     overlap?: 'on' | 'off';
     feed?: string;
-    navigatorSettings?: V12NavigatorSettings;
+    navigatorSettings?: V13NavigatorSettings;
     enableGPTInsights?: boolean;
     labelsPosition?: LabelsPositions;
     pinnedColumns?: number;
@@ -86,7 +87,7 @@ export interface V12CommonSharedExtraSettings {
     preserveWhiteSpace?: boolean;
 }
 
-export type V12NavigatorSettings = {
+export type V13NavigatorSettings = {
     navigatorMode: string;
     isNavigatorAvailable: boolean;
     selectedLines: string[];
@@ -98,7 +99,7 @@ export type V12NavigatorSettings = {
     };
 };
 
-export type V12Filter = {
+export type V13Filter = {
     guid: string;
     datasetId: string;
     disabled?: string;
@@ -111,9 +112,9 @@ export type V12Filter = {
     type: string;
     title: string;
     calc_mode: DatasetFieldCalcMode;
-} & V12ClientOnlyFields;
+} & V13ClientOnlyFields;
 
-export type V12Sort = {
+export type V13Sort = {
     guid: string;
     title: string;
     source?: string;
@@ -123,14 +124,14 @@ export type V12Sort = {
     format?: string;
     type: string;
     default_value?: ParameterDefaultValue;
-} & V12ClientOnlyFields;
+} & V13ClientOnlyFields;
 
-export type V12Link = {
+export type V13Link = {
     id: string;
-    fields: Record<string, V12LinkField>;
+    fields: Record<string, V13LinkField>;
 };
 
-export type V12LinkField = {
+export type V13LinkField = {
     field: {
         title: string;
         guid: string;
@@ -141,15 +142,15 @@ export type V12LinkField = {
     };
 };
 
-export type V12Visualization = {
+export type V13Visualization = {
     id: string;
     highchartsId?: string;
     selectedLayerId?: string;
-    layers?: V12Layer[];
-    placeholders: V12Placeholder[];
+    layers?: V13Layer[];
+    placeholders: V13Placeholder[];
 };
 
-export type V12LayerSettings = {
+export type V13LayerSettings = {
     id: string;
     name: string;
     type: string;
@@ -157,27 +158,27 @@ export type V12LayerSettings = {
     valid: boolean;
 };
 
-export type V12CommonPlaceholders = {
-    colors: V12Color[];
-    labels: V12Label[];
-    tooltips: V12Tooltip[];
-    filters: V12Filter[];
-    sort: V12Sort[];
-    shapes?: V12Shape[];
-    colorsConfig?: V12ColorsConfig;
-    geopointsConfig?: V12PointSizeConfig;
-    shapesConfig?: V12ShapesConfig;
-    tooltipConfig?: V12TooltipConfig;
+export type V13CommonPlaceholders = {
+    colors: V13Color[];
+    labels: V13Label[];
+    tooltips: V13Tooltip[];
+    filters: V13Filter[];
+    sort: V13Sort[];
+    shapes?: V13Shape[];
+    colorsConfig?: V13ColorsConfig;
+    geopointsConfig?: V13PointSizeConfig;
+    shapesConfig?: V13ShapesConfig;
+    tooltipConfig?: V13TooltipConfig;
 };
 
-export type V12Layer = {
+export type V13Layer = {
     id: string;
-    commonPlaceholders: V12CommonPlaceholders;
-    layerSettings: V12LayerSettings;
-    placeholders: V12Placeholder[];
+    commonPlaceholders: V13CommonPlaceholders;
+    layerSettings: V13LayerSettings;
+    placeholders: V13Placeholder[];
 };
 
-export type V12PlaceholderSettings = {
+export type V13PlaceholderSettings = {
     groupping?: 'disabled' | 'off';
     autoscale?: boolean;
     scale?: 'auto' | 'manual';
@@ -201,25 +202,25 @@ export type V12PlaceholderSettings = {
     axisVisibility?: 'show' | 'hide';
 };
 
-export type V12Placeholder = {
+export type V13Placeholder = {
     id: string;
-    settings?: V12PlaceholderSettings;
+    settings?: V13PlaceholderSettings;
     required?: boolean;
     capacity?: number;
-    items: V12Field[];
+    items: V13Field[];
 };
 
-export type V12Color = {
+export type V13Color = {
     datasetId: string;
     guid: string;
     title: string;
     type: string;
     data_type: string;
-    formatting?: V12Formatting;
+    formatting?: V13Formatting;
     calc_mode: DatasetFieldCalcMode;
-} & V12ClientOnlyFields;
+} & V13ClientOnlyFields;
 
-export type V12Shape = {
+export type V13Shape = {
     datasetId: string;
     guid: string;
     title: string;
@@ -227,18 +228,18 @@ export type V12Shape = {
     type: string;
     data_type: string;
     calc_mode: DatasetFieldCalcMode;
-} & V12ClientOnlyFields;
+} & V13ClientOnlyFields;
 
-export type V12Tooltip = {
+export type V13Tooltip = {
     datasetId: string;
     guid: string;
     title: string;
-    formatting?: V12Formatting;
+    formatting?: V13Formatting;
     data_type: string;
     calc_mode: DatasetFieldCalcMode;
-} & V12ClientOnlyFields;
+} & V13ClientOnlyFields;
 
-export type V12Formatting = {
+export type V13Formatting = {
     format?: NumberFormatType;
     showRankDelimiter?: boolean;
     prefix?: string;
@@ -248,36 +249,36 @@ export type V12Formatting = {
     labelMode?: string;
 };
 
-export type V12Label = {
+export type V13Label = {
     datasetId: string;
     type: string;
     title: string;
     guid: string;
-    formatting?: V12Formatting;
+    formatting?: V13Formatting;
     format?: string;
     data_type: string;
     calc_mode: DatasetFieldCalcMode;
 };
 
-export type V12HierarchyField = {
+export type V13HierarchyField = {
     data_type: string;
-    fields: V12Field[];
+    fields: V13Field[];
     type: string;
 };
 
-export type V12PointSizeConfig = {
+export type V13PointSizeConfig = {
     radius: number;
     minRadius: number;
     maxRadius: number;
 };
 
-export type V12Field = {
+export type V13Field = {
     data_type: string;
-    fields?: V12Field[];
+    fields?: V13Field[];
     type: string;
     title: string;
     guid: string;
-    formatting?: V12Formatting;
+    formatting?: V13Formatting;
     format?: string;
     datasetId: string;
     source?: string;
@@ -290,9 +291,9 @@ export type V12Field = {
     backgroundSettings?: TableFieldBackgroundSettings;
     columnSettings?: ColumnSettings;
     hintSettings?: HintSettings;
-} & V12ClientOnlyFields;
+} & V13ClientOnlyFields;
 
-export type V12ColorsConfig = {
+export type V13ColorsConfig = {
     thresholdsMode?: string;
     leftThreshold?: string;
     middleThreshold?: string;
@@ -309,23 +310,23 @@ export type V12ColorsConfig = {
     nullMode?: GradientNullMode;
 };
 
-export type V12ShapesConfig = {
+export type V13ShapesConfig = {
     mountedShapes?: Record<string, string>;
     fieldGuid?: string;
 };
 
-export type V12TooltipConfig = {
+export type V13TooltipConfig = {
     color?: 'on' | 'off';
     fieldTitle?: 'on' | 'off';
 };
 
-export type V12ChartsConfigDatasetField = {
+export type V13ChartsConfigDatasetField = {
     guid: string;
     title: string;
     calc_mode?: DatasetFieldCalcMode;
 };
 
-export type V12ClientOnlyFields = {
+export type V13ClientOnlyFields = {
     fakeTitle?: string;
     originalTitle?: string;
     markupType?: MarkupType;

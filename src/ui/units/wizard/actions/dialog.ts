@@ -147,12 +147,13 @@ export function openDialogMetric({extraSettings}: OpenDialogMetricArguments) {
             openDialog({
                 id: DIALOG_METRIC_SETTINGS,
                 props: {
-                    onSave: ({size, palette, color}) => {
+                    onSave: ({size, palette, color, colorIndex}) => {
                         const updatedExtraSettings = {
                             ...extraSettings,
                             metricFontSize: size,
                             metricFontColor: color,
                             metricFontColorPalette: palette,
+                            metricFontColorIndex: colorIndex,
                         };
 
                         dispatch(setExtraSettings(updatedExtraSettings));
