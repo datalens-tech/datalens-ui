@@ -1,3 +1,5 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
 html,
 body,
 #root {
@@ -32,9 +34,13 @@ body.js-screenshot-mode * {
 
 body.g-root {
     --g-font-family-sans: 'YS Text', 'Helvetica Neue', 'Arial', 'Helvetica', sans-serif;
-    --gn-aside-top-panel-height: 0px;
+    --gn-top-alert-height: 0px;
     // Disable overscroll for desktop cause sticky and fixed navigation elements has different behavior
     overscroll-behavior: none;
+
+    scrollbar-width: var(--g-scrollbar-width);
+    scrollbar-color: var(--g-color-scroll-handle) var(--g-color-scroll-track);
+    @include scrollbar;
 }
 
 // Enable overscroll for mobile and iframe
@@ -42,4 +48,14 @@ body.g-root {
 body.dl-iframe,
 body.g-root_mobile {
     overscroll-behavior: auto;
+}
+
+.g-help-mark {
+    margin-top: auto;
+    margin-bottom: auto;
+    flex-shrink: 0;
+}
+
+.g-help-mark__popover {
+    max-width: var(--dl-help-mark-popover-max-width, 300px);
 }

@@ -1,7 +1,7 @@
 import React from 'react';
 
-import type {RadioButtonProps} from '@gravity-ui/uikit';
-import {RadioButton} from '@gravity-ui/uikit';
+import type {SegmentedRadioGroupProps as RadioButtonProps} from '@gravity-ui/uikit';
+import {SegmentedRadioGroup as RadioButton} from '@gravity-ui/uikit';
 
 import type {FreeformSource} from '../../../store/types';
 import {getTranslate} from '../utils';

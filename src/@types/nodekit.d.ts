@@ -101,6 +101,7 @@ export interface SharedAppConfig {
     apiPrefix: string;
     preloadList?: string[];
     releaseVersion?: string;
+    docsUrl?: string;
 }
 
 export interface SharedAppDynamicConfig {

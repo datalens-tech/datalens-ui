@@ -93,13 +93,12 @@ export function ParamSelector(props: ParamSelectorProps) {
                 onParamSelect(selectedOption.data.param);
             }}
             popupClassName={b('param-select-popup')}
-            renderControl={({triggerProps: {onKeyDown, ...restTriggerProps}, ref}) => {
+            renderControl={({triggerProps, ref}) => {
                 return (
                     <Button
-                        {...restTriggerProps}
-                        ref={ref}
+                        {...triggerProps}
+                        ref={ref as React.Ref<HTMLButtonElement>}
                         className={b('param-add-button', className)}
-                        extraProps={{onKeyDown}}
                     >
                         <Button.Icon>
                             <Plus />
@@ -155,7 +154,7 @@ export function ParamSelector(props: ParamSelectorProps) {
                             switcherWrapperClassName={b('param-select-option-dropdown')}
                             size="s"
                             popupProps={{
-                                offset: [0, 0],
+                                offset: {mainAxis: 0, crossAxis: 0},
                             }}
                             onSwitcherClick={(e) => {
                                 e.stopPropagation();

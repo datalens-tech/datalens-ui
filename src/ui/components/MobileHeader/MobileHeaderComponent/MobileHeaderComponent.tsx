@@ -4,17 +4,22 @@ import type {MobileHeaderProps} from '@gravity-ui/navigation';
 import {MobileHeader, getMobileHeaderCustomEvent} from '@gravity-ui/navigation';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {Feature} from 'shared/types';
+import {LogoText} from 'ui/components/AsideHeaderAdapter/LogoText/LogoText';
 import {PRODUCT_NAME} from 'ui/constants';
 import type {MobileHeaderComponentProps} from 'ui/registry/units/common/types/components/MobileHeaderComponent';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {DL} from '../../../constants/common';
 import {UserAvatar} from '../../UserMenu/UserAvatar';
+import {MOBILE_HEADER_LOGO_ICON_SIZE} from '../constants';
 
 import {BurgerMenuFooter} from './BurgerMenuFooter/BurgerMenuFooter';
 import {UserPanel} from './UserPanel/UserPanel';
 
 import defaultLogoIcon from 'ui/assets/icons/logo.svg';
 import iconCollection from 'ui/assets/icons/mono-collection.svg';
+import rebrandingLogoIcon from 'ui/assets/icons/os-logo.svg';
 
 import '../MobileHeader.scss';
 
@@ -36,7 +41,11 @@ enum Panel {
     User = 'user',
 }
 
-export const MobileHeaderComponent = ({renderContent, logoIcon}: MobileHeaderComponentProps) => {
+export const MobileHeaderComponent = ({
+    renderContent,
+    logoIcon,
+    installationInfo,
+}: MobileHeaderComponentProps) => {
     const ref = React.useRef<HTMLDivElement>(null);
 
     const sideItem = (
@@ -61,19 +70,29 @@ export const MobileHeaderComponent = ({renderContent, logoIcon}: MobileHeaderCom
           ]
         : undefined;
 
+    const defaultLogo = isEnabledFeature(Feature.EnableDLRebranding)
+        ? rebrandingLogoIcon
+        : defaultLogoIcon;
+
+    const isRebrandingEnabled = isEnabledFeature(Feature.EnableDLRebranding);
+
     return (
         <MobileHeader
             ref={ref}
             logo={{
-                icon: logoIcon ?? defaultLogoIcon,
-                text: PRODUCT_NAME,
-                iconClassName: b('logo-icon'),
+                icon: logoIcon ?? defaultLogo,
+                text: isRebrandingEnabled
+                    ? () => <LogoText installationInfo={installationInfo} />
+                    : PRODUCT_NAME,
+                iconClassName: b('logo-icon', {rebranding: isRebrandingEnabled}),
+                className: b('logo', {rebranding: isRebrandingEnabled}),
+                iconSize: isRebrandingEnabled ? MOBILE_HEADER_LOGO_ICON_SIZE : undefined,
             }}
             burgerMenu={{items: menuItems, renderFooter: () => <BurgerMenuFooter />}}
             contentClassName={b('content')}
             className={b('container')}
             renderContent={renderContent}
-            sideItemRenderContent={() => sideItem}
+            sideItemRenderContent={DL.AUTH_ENABLED ? () => sideItem : undefined}
             panelItems={panelItems}
         />
     );

@@ -1,4 +1,9 @@
-import type {BarXSeries, BarXSeriesData, ChartData} from '@gravity-ui/chartkit/d3';
+import type {
+    BarXSeries,
+    BarXSeriesData,
+    ChartData,
+    ChartSeries,
+} from '@gravity-ui/chartkit/gravity-charts';
 
 import type {SeriesExportSettings, ServerField, WrappedMarkdown} from '../../../../../../../shared';
 import {
@@ -14,7 +19,8 @@ import {
     isNumberField,
 } from '../../../../../../../shared';
 import type {WrappedHTML} from '../../../../../../../shared/types/charts';
-import {getFormattedLabel} from '../../d3/utils/dataLabels';
+import {getFormattedLabel} from '../../gravity-charts/utils/dataLabels';
+import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import {getAxisType} from '../helpers/axis';
@@ -167,11 +173,19 @@ export function prepareD3BarX(args: PrepareFunctionArgs) {
         }
     }
 
-    return {
+    const config: ChartData = {
         series: {
-            data: seriesData,
+            data: seriesData as ChartSeries[],
         },
         legend,
         xAxis,
     };
+
+    if (yField) {
+        config.tooltip = {
+            valueFormat: getFieldFormatOptions({field: yField}),
+        };
+    }
+
+    return config;
 }

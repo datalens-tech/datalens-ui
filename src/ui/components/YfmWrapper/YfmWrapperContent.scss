@@ -8,8 +8,11 @@
 // support yfm dark theme
 
 .g-root .yfm {
+    --yfm-list-text-last-margin-block: 15px;
+    --yfm-list-text-only-margin-block: 15px;
     --yfm-font-family-sans: var(--g-font-family-sans);
     --yfm-font-family-monospace: var(--g-font-family-monospace);
+    --yfm-color-table-row-header-background-primary: transparent;
 
     font-family: var(--g-font-family-sans);
     @include yfm-text-style();

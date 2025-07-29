@@ -12,9 +12,8 @@
         height: 0;
     }
 
-    &__logo {
-        height: 32px;
-        width: 143px;
+    &__logo_rebranding {
+        flex: 1;
     }
 
     &__link {
@@ -28,6 +27,12 @@
 
     &__logo-icon {
         color: var(--g-color-base-brand);
+
+        &_rebranding {
+            height: auto;
+            width: auto;
+            padding-left: var(--g-spacing-2);
+        }
     }
 
     &__user-avatar {

@@ -32,11 +32,11 @@ function SourceMenu(props) {
         <DropdownMenu
             size="s"
             switcherWrapperClassName={b('btn-menu-control')}
-            switcher={
-                <Button size="s" view="flat">
+            renderSwitcher={({onClick, onKeyDown}) => (
+                <Button size="s" view="flat" onClick={onClick} onKeyDown={onKeyDown}>
                     <Icon className={b('icon-more')} data={Ellipsis} width={14} />
                 </Button>
-            }
+            )}
             popupProps={{placement: ['bottom-start', 'top-start'], qa: 'ds-source-menu'}}
             items={[
                 {
