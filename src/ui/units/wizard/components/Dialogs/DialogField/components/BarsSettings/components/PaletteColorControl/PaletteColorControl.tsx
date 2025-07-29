@@ -6,7 +6,7 @@ import {i18n} from 'i18n';
 import type {ColorPalette} from 'shared';
 import {useOutsideClick} from 'ui/hooks/useOutsideClick';
 import {MinifiedPalette} from 'ui/units/wizard/components/MinifiedPalette/MinifiedPalette';
-import {isValidHexColor} from 'ui/utils';
+import {getPaletteColors, isValidHexColor} from 'ui/utils';
 
 import {PaletteItem} from '../../../../../../Palette/components/PaletteItem/PaletteItem';
 
@@ -16,7 +16,7 @@ type PaletteColorControlProps = {
     palette: string;
     controlQa: string;
     currentColor: string;
-    onPaletteItemChange: (color: string) => void;
+    onPaletteItemChange: (color: string, index: number | null) => void;
     onPaletteUpdate: (paletteName: string) => void;
     onError: (error: boolean) => void;
     disabled: boolean;
@@ -42,6 +42,10 @@ export const PaletteColorControl: React.FC<PaletteColorControlProps> = (
     const [isPaletteVisible, setIsPaletteVisible] = React.useState<boolean>(false);
     const [errorText, setErrorText] = React.useState<string>('');
 
+    const paletteColors = React.useMemo(() => {
+        return getPaletteColors(palette, colorPalettes);
+    }, [colorPalettes, palette]);
+
     const ref = useRef<HTMLDivElement | null>(null);
 
     const handleOutsideClick = React.useCallback(() => {
@@ -51,7 +55,11 @@ export const PaletteColorControl: React.FC<PaletteColorControlProps> = (
     const handleInputColorUpdate = React.useCallback(
         (color: string) => {
             const hexColor = `#${color}`;
-            onPaletteItemChange(hexColor);
+
+            const colorPaletteIndex = paletteColors.indexOf(hexColor);
+            const colorIndex = colorPaletteIndex === -1 ? null : colorPaletteIndex;
+
+            onPaletteItemChange(hexColor, colorIndex);
 
             if (!isValidHexColor(hexColor)) {
                 setErrorText(i18n('wizard', 'label_bars-custom-color-error'));
@@ -62,11 +70,11 @@ export const PaletteColorControl: React.FC<PaletteColorControlProps> = (
             onError(false);
             setErrorText('');
         },
-        [onError, onPaletteItemChange],
+        [onError, onPaletteItemChange, paletteColors],
     );
 
     const onPaletteItemClick = (color: string) => {
-        onPaletteItemChange(color);
+        onPaletteItemChange(color, paletteColors.indexOf(color));
         setIsPaletteVisible(false);
     };
 

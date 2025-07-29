@@ -33,7 +33,9 @@ export const ColorsControl: React.FC<ColorsControlProps> = (props: ColorsControl
                             palette={colorSettings.settings.palette}
                             controlQa={DialogFieldBarsSettingsQa.ColorSelector}
                             currentColor={colorSettings.settings.color}
-                            onPaletteItemChange={(color) => onUpdateColor({color})}
+                            onPaletteItemChange={(color, index: number | null) =>
+                                onUpdateColor({color, colorIndex: index})
+                            }
                             onPaletteUpdate={onUpdatePalette}
                             onError={onError}
                             disabled={disabled}
@@ -44,7 +46,7 @@ export const ColorsControl: React.FC<ColorsControlProps> = (props: ColorsControl
             );
         case BarsColorType.TwoColor:
             return (
-                <>
+                <React.Fragment>
                     <DialogFieldRow
                         title={i18n('wizard', 'label_bars-positive-color')}
                         setting={
@@ -52,8 +54,8 @@ export const ColorsControl: React.FC<ColorsControlProps> = (props: ColorsControl
                                 palette={colorSettings.settings.palette}
                                 controlQa={DialogFieldBarsSettingsQa.PositiveColorSelector}
                                 currentColor={colorSettings.settings.positiveColor}
-                                onPaletteItemChange={(color) =>
-                                    onUpdateColor({positiveColor: color})
+                                onPaletteItemChange={(color, index: number | null) =>
+                                    onUpdateColor({positiveColor: color, positiveColorIndex: index})
                                 }
                                 onPaletteUpdate={onUpdatePalette}
                                 onError={onError}
@@ -70,8 +72,11 @@ export const ColorsControl: React.FC<ColorsControlProps> = (props: ColorsControl
                                 palette={colorSettings.settings.palette}
                                 controlQa={DialogFieldBarsSettingsQa.NegativeColorSelector}
                                 currentColor={colorSettings.settings.negativeColor}
-                                onPaletteItemChange={(color: string) => {
-                                    onUpdateColor({negativeColor: color});
+                                onPaletteItemChange={(color: string, index: number | null) => {
+                                    onUpdateColor({
+                                        negativeColor: color,
+                                        negativeColorIndex: index,
+                                    });
                                 }}
                                 onPaletteUpdate={onUpdatePalette}
                                 onError={onError}
@@ -80,7 +85,7 @@ export const ColorsControl: React.FC<ColorsControlProps> = (props: ColorsControl
                             />
                         }
                     />
-                </>
+                </React.Fragment>
             );
         case BarsColorType.Gradient:
             return (

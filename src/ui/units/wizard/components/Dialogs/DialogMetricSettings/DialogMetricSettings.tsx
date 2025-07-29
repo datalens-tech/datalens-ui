@@ -30,7 +30,12 @@ const b = block('dialog-metric-settings');
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
 type OwnProps = {
-    onSave: (args: {palette: string; color: string; size: string}) => void;
+    onSave: (args: {
+        palette: string;
+        color: string;
+        size: string;
+        colorIndex: number | null;
+    }) => void;
 };
 
 interface Props extends StateProps, DispatchProps, OwnProps {}
@@ -38,8 +43,10 @@ interface Props extends StateProps, DispatchProps, OwnProps {}
 interface State {
     size: string;
     color: string;
+    colorIndex: number | null;
     palette: string;
     colorErrorText?: string;
+    paletteColors: string[];
 }
 
 export const DIALOG_METRIC_SETTINGS = Symbol('DIALOG_METRIC_SETTINGS');
@@ -54,10 +61,15 @@ class DialogMetricSettings extends React.PureComponent<Props, State> {
         super(props);
 
         const palette = props.palette || DEFAULT_PALETTE.id;
+        const paletteColors = getPaletteColors(palette, props.colorPalettes);
         this.state = {
             size: props.fontSize || DEFAULT_SIZE,
-            color: props.metricFontColor || getPaletteColors(palette, props.colorPalettes)[0],
+            color: props.metricFontColorIndex
+                ? paletteColors[props.metricFontColorIndex]
+                : props.metricFontColor || paletteColors[0],
             palette,
+            colorIndex: props.metricFontColorIndex || null,
+            paletteColors,
         };
     }
 
@@ -138,18 +150,29 @@ class DialogMetricSettings extends React.PureComponent<Props, State> {
     }
 
     private handleInputColorUpdate = (color: string) => {
-        this.setState({color: `#${color}`});
+        const preparedColor = `#${color}`;
+        const paletteColors = getPaletteColors(
+            this.props.palette || DEFAULT_PALETTE.id,
+            this.props.colorPalettes,
+        );
+        const colorPaletteIndex = paletteColors.indexOf(preparedColor);
+        const colorIndex = colorPaletteIndex === -1 ? null : colorPaletteIndex;
+
+        this.setState({color: preparedColor, colorIndex});
     };
 
     private handlePaletteUpdate = (paletteName: string) => {
         const {colorPalettes} = this.props;
-        const newColor = getPaletteColors(paletteName, colorPalettes)[0];
-        this.setState({palette: paletteName, color: newColor});
+        const updatedColors = getPaletteColors(paletteName, colorPalettes);
+        const newColor = updatedColors[0];
+        this.setState({palette: paletteName, color: newColor, paletteColors: updatedColors});
     };
 
-    private onPaletteItemClick = (color: string) => {
+    private onPaletteItemClick = (value: string) => {
+        const colorIndex = this.state.paletteColors.indexOf(value);
         this.setState({
-            color,
+            color: value,
+            colorIndex,
         });
     };
 
@@ -158,8 +181,8 @@ class DialogMetricSettings extends React.PureComponent<Props, State> {
     };
 
     private onApply = () => {
-        const {size, color, palette} = this.state;
-        this.props.onSave({color, size, palette});
+        const {size, color, palette, colorIndex} = this.state;
+        this.props.onSave({color, size, palette, colorIndex});
         this.props.closeDialog();
     };
 
@@ -178,6 +201,7 @@ const mapStateToProps = (state: DatalensGlobalState) => {
     return {
         fontSize: extraSettings.metricFontSize,
         metricFontColor: extraSettings.metricFontColor,
+        metricFontColorIndex: extraSettings.metricFontColorIndex,
         palette: extraSettings.metricFontColorPalette,
         colorPalettes: selectColorPalettes(state),
     };

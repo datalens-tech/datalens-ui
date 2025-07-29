@@ -33,6 +33,7 @@ export interface BarOneColorSettings {
     settings: {
         palette: string;
         color: string;
+        colorIndex?: number | null;
     };
 }
 
@@ -42,6 +43,8 @@ export interface BarTwoColorSettings {
         palette: string;
         positiveColor: string;
         negativeColor: string;
+        positiveColorIndex?: number | null;
+        negativeColorIndex?: number | null;
     };
 }
 

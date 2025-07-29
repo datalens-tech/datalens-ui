@@ -2,7 +2,7 @@ import type {Palette} from './types';
 import {PALETTE_ID} from './types';
 
 export default {
-    id: PALETTE_ID.DEFAULT,
+    id: PALETTE_ID.DEFAULT_20,
     scheme: [
         '#4DA2F1',
         '#FF3D64',

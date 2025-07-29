@@ -91,6 +91,7 @@ export const BarsSettings: React.FC<BarsSettingsProps> = (props: BarsSettingsPro
                     updateParams = {
                         ...updateParams,
                         color: paletteColors[0],
+                        colorIndex: 0,
                     };
                     break;
                 }
@@ -99,6 +100,8 @@ export const BarsSettings: React.FC<BarsSettingsProps> = (props: BarsSettingsPro
                         ...updateParams,
                         positiveColor: paletteColors[0],
                         negativeColor: paletteColors[1],
+                        positiveColorIndex: 0,
+                        negativeColorIndex: 1,
                     };
                     break;
                 }

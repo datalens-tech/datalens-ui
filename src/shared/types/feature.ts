@@ -92,6 +92,8 @@ export enum Feature {
     EnableUpdatingDsSettingsByAction = 'EnableUpdatingDsSettingsByAction',
     /** Enable new favicon, icon, theme, decorations and illustrations */
     EnableDLRebranding = 'EnableDLRebranding',
+    /** Enable new default palette & default palette setting for tenant */
+    EnableNewDefaultPalettes = 'EnableNewDefaultPalettes',
 }
 
 export type FeatureConfig = Record<string, boolean>;

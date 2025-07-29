@@ -4,7 +4,7 @@ import golden from './common/golden-20';
 import neutral from './common/neutral-20';
 import oceanic from './common/oceanic-20';
 import trafficLight from './common/traffic-light-9';
-import defaultScheme from './default';
+import default20 from './default20';
 import type {Palette} from './types';
 
 export * from './types';
@@ -15,7 +15,7 @@ export interface Palettes {
 }
 
 export const PALETTES = {
-    defaultScheme,
+    default20,
     neutral,
     golden,
     emerald,
@@ -24,10 +24,10 @@ export const PALETTES = {
     datalens,
 };
 
-export const DEFAULT_PALETTE = defaultScheme;
+export const DEFAULT_PALETTE = default20;
 
 export const BASE_PALETTES_MAP: Record<string, Palette> = {
-    [DEFAULT_PALETTE.id]: defaultScheme,
+    [default20.id]: default20,
     [emerald.id]: emerald,
     [neutral.id]: neutral,
     [golden.id]: golden,

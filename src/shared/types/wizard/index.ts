@@ -106,6 +106,7 @@ export interface CommonSharedExtraSettings {
     metricFontSize?: string;
     metricFontColor?: string;
     metricFontColorPalette?: string;
+    metricFontColorIndex?: number | null;
     tooltip?: ServerCommonSharedExtraSettings['tooltip'];
     tooltipSum?: 'on' | 'off';
     limit?: number;
