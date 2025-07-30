@@ -142,6 +142,18 @@ export type BackgroundSettings = {
     color: string;
 };
 
+export function isBackgroundSettings(value: unknown): value is BackgroundSettings {
+    return (
+        typeof value === 'object' &&
+        value !== null &&
+        'color' in value &&
+        typeof value.color === 'string' &&
+        ('enabled' in value
+            ? typeof value.enabled === 'boolean' || value.enabled === undefined
+            : true)
+    );
+}
+
 export interface DashTabItemBase {
     id: string;
     namespace: string;
