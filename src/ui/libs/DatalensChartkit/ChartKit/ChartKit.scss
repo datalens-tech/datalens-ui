@@ -37,7 +37,7 @@
     }
 }
 
-.chartkit-tooltip {
+.g-charts-tooltip {
     font-family: var(--g-text-body-font-family);
 
     &__content {
@@ -53,7 +53,6 @@
         display: inline-block;
         height: 6px;
         width: 12px;
-        margin-bottom: 2px;
     }
 
     &__block {
