@@ -250,6 +250,9 @@ export const DL = {
     get RELEASE_VERSION() {
         return window.DL.releaseVersion;
     },
+    get DOCS_URL() {
+        return window.DL.docsUrl;
+    },
     get IS_NATIVE_AUTH_ADMIN() {
         return window.DL.user.roles?.includes(UserRole.Admin);
     },
@@ -268,6 +271,7 @@ export const DATALENS_DARK_THEME_MONACO = 'vs-dark-datalens';
 export const DATALENS_DARK_HC_THEME_MONACO = 'vs-dark-hc-datalens';
 
 export const PRODUCT_NAME = 'DataLens';
+export const REBRANDING_PRODUCT_NAME = `Yandex ${PRODUCT_NAME}`;
 
 export const URL_OPTIONS = {
     THEME: '_theme',

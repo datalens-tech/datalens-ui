@@ -25,14 +25,14 @@ const CreateProfilePage = () => {
         <main className={b()}>
             <ActionPanel
                 leftItems={
-                    <Breadcrumbs>
+                    <Breadcrumbs className={b('breadcrumbs')}>
                         <Breadcrumbs.Item href="/settings">
                             {i18nMain('label_header')}
                         </Breadcrumbs.Item>
                         <Breadcrumbs.Item href="/settings/users">
                             {i18nMain('section_users')}
                         </Breadcrumbs.Item>
-                        <Breadcrumbs.Item disabled={true}>
+                        <Breadcrumbs.Item disabled={true} className={b('breadcrumbs-item')}>
                             {i18n('title_create-user')}
                         </Breadcrumbs.Item>
                     </Breadcrumbs>

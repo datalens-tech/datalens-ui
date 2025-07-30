@@ -16,12 +16,22 @@ const GeneralSettings = React.lazy(
 );
 const UsersList = React.lazy(() => import('../../components/UsersList/UsersList'));
 
-type MainPageProps = {
+export type MainPageProps = {
     customGeneralSettings?: React.ReactNode;
     disablePalettesEdit?: boolean;
+    customTabItems?: {
+        id: string;
+        title: string;
+    }[];
+    customTabRoutes?: React.ReactNode[];
 };
 
-const MainPage = ({customGeneralSettings, disablePalettesEdit}: MainPageProps) => {
+const MainPage = ({
+    customGeneralSettings,
+    disablePalettesEdit,
+    customTabItems = [],
+    customTabRoutes,
+}: MainPageProps) => {
     const history = useHistory();
     const {tab} = useParams<{tab: string}>();
 
@@ -76,7 +86,7 @@ const MainPage = ({customGeneralSettings, disablePalettesEdit}: MainPageProps) =
             <div role="tablist" className={b('tabs')}>
                 <TabProvider value={activeTab} onUpdate={handleSelectTab}>
                     <TabList size="m">
-                        {tabs.map((item) => (
+                        {[...tabs, ...customTabItems].map((item) => (
                             <Tab key={item.id} value={item.id}>
                                 {item.title}
                             </Tab>
@@ -99,6 +109,7 @@ const MainPage = ({customGeneralSettings, disablePalettesEdit}: MainPageProps) =
                             )}
                         />
                         <Route exact path={'/settings/users'} component={UsersList} />
+                        {customTabRoutes}
                         <Redirect to="/settings/general" />
                     </Switch>
                 </React.Suspense>
