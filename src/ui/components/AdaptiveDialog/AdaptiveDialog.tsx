@@ -13,6 +13,7 @@ type AdaptiveDialogProps = {
     visible: boolean;
     id?: string;
     onClose: () => void;
+    sheetClassName?: string;
     sheetContentClassName?: string;
     dialogBodyClassName?: string;
     title?: string;
@@ -30,6 +31,7 @@ export const AdaptiveDialog: React.FC<AdaptiveDialogProps> = ({
     renderSheetFooter,
     renderDialogFooter,
     title,
+    sheetClassName,
     sheetContentClassName,
     dialogBodyClassName,
     dialogProps,
@@ -46,6 +48,7 @@ export const AdaptiveDialog: React.FC<AdaptiveDialogProps> = ({
             visible={visible}
             onClose={onClose}
             allowHideOnContentScroll={false}
+            className={sheetClassName}
             contentClassName={sheetContentClassName}
             qa={qa}
             id={id}
