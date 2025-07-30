@@ -4,8 +4,6 @@ import {SegmentedRadioGroup as RadioButton, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {
-    AUTO_PALETTE_ID,
-    COMMON_PALETTE_ID,
     type ColorPalette,
     type DatasetOptions,
     type Field,
@@ -109,14 +107,11 @@ class PaletteContainer extends React.Component<Props> {
             colorPalettes,
         });
 
-        // TODO: Support auto value
-        const value = palette === AUTO_PALETTE_ID ? COMMON_PALETTE_ID.CLASSIC_20 : palette;
-
         return (
             <div className={b('palette-container')}>
                 <Select
                     qa="palette-select"
-                    value={[value]}
+                    value={[palette]}
                     options={options}
                     className={b('palette-select')}
                     onUpdate={([selectedPalette]) => {
