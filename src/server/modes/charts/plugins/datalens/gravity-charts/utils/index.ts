@@ -78,7 +78,12 @@ export function getBaseChartConfig(args: {
         WizardVisualizationId.BarY100pD3,
     ];
 
-    if (!visualizationWithoutAxis.includes(visualizationId)) {
+    if (visualizationWithoutAxis.includes(visualizationId)) {
+        Object.assign(chartWidgetData, {
+            xAxis: {visible: false},
+            yAxis: [{visible: false}],
+        });
+    } else {
         Object.assign(chartWidgetData, {
             xAxis: {
                 labels: {
