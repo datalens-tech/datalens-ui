@@ -1,7 +1,7 @@
 import workerPool from 'workerpool';
 
 import type {ServerChartsConfig, Shared} from '../../../../../shared';
-import {WizardVisualizationId, isD3Visualization} from '../../../../../shared';
+import {WizardVisualizationId, isGravityChartsVisualization} from '../../../../../shared';
 import {getTranslationFn} from '../../../../../shared/modules/language';
 import {datalensModule} from '../../../../modes/charts/plugins/datalens/private-module';
 import {createI18nInstance} from '../../../../utils/language';
@@ -66,7 +66,12 @@ const worker: WizardWorker = {
                 break;
             }
             default: {
-                if (isD3Visualization(visualizationId as WizardVisualizationId)) {
+                if (
+                    isGravityChartsVisualization({
+                        id: visualizationId as WizardVisualizationId,
+                        features,
+                    })
+                ) {
                     result = datalensModule.buildD3Config({
                         shared: serverChartConfig,
                     });

@@ -1,5 +1,5 @@
-import type {Link} from '../../shared';
-import {WizardVisualizationId} from '../../shared';
+import type {FeatureConfig, Link} from '../../shared';
+import {Feature, WizardVisualizationId} from '../../shared';
 import {QLChartType} from '../constants';
 
 export function isMonitoringOrPrometheusChart(chartType: string | null | undefined) {
@@ -41,4 +41,22 @@ export function isD3Visualization(id: WizardVisualizationId) {
         WizardVisualizationId.TreemapD3,
     ];
     return d3Visualizations.includes(id);
+}
+
+export function isGravityChartsVisualization({
+    id,
+    features,
+}: {
+    id: WizardVisualizationId;
+    features?: FeatureConfig;
+}) {
+    if (features?.[Feature.GravityAsDefaultWizardVisualizationLibrary]) {
+        return [
+            WizardVisualizationId.Pie,
+            WizardVisualizationId.Donut,
+            WizardVisualizationId.Treemap,
+        ].includes(id);
+    }
+
+    return isD3Visualization(id);
 }
