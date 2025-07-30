@@ -110,7 +110,7 @@ class PaletteContainer extends React.Component<Props> {
         });
 
         // TODO: Support auto value
-        const value = palette === AUTO_PALETTE_ID ? COMMON_PALETTE_ID.DEFAULT_20 : palette;
+        const value = palette === AUTO_PALETTE_ID ? COMMON_PALETTE_ID.CLASSIC_20 : palette;
 
         return (
             <div className={b('palette-container')}>

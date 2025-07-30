@@ -1,11 +1,4 @@
-import isEmpty from 'lodash/isEmpty';
-
-import {
-    AUTO_PALETTE_ID,
-    BarsColorType,
-    COMMON_PALETTE_ID,
-    WizardVisualizationId,
-} from '../../../../constants';
+import {BarsColorType, COMMON_PALETTE_ID, WizardVisualizationId} from '../../../../constants';
 import type {
     V12ChartsConfig,
     V13ChartsConfig,
@@ -20,7 +13,7 @@ const mutatePalettesSettings = (config: V12ChartsConfig) => {
     if (config.visualization?.id === WizardVisualizationId.Metric) {
         const extraSettings = config.extraSettings as V13CommonSharedExtraSettings;
         if (extraSettings.metricFontColorPalette === OLD_DEFAULT_PALETTE_ID) {
-            extraSettings.metricFontColorPalette = COMMON_PALETTE_ID.DEFAULT_20;
+            extraSettings.metricFontColorPalette = COMMON_PALETTE_ID.CLASSIC_20;
         }
 
         if (!extraSettings.metricFontColorIndex) {
@@ -36,14 +29,14 @@ const mutatePalettesSettings = (config: V12ChartsConfig) => {
                     item.backgroundSettings.settings.paletteState.palette =
                         item.backgroundSettings.settings.paletteState.palette ===
                         OLD_DEFAULT_PALETTE_ID
-                            ? COMMON_PALETTE_ID.DEFAULT_20
+                            ? COMMON_PALETTE_ID.CLASSIC_20
                             : item.backgroundSettings.settings.paletteState.palette;
                 }
 
                 if (item.barsSettings?.colorSettings?.settings.palette) {
                     item.barsSettings.colorSettings.settings.palette =
                         item.barsSettings.colorSettings.settings.palette === OLD_DEFAULT_PALETTE_ID
-                            ? COMMON_PALETTE_ID.DEFAULT_20
+                            ? COMMON_PALETTE_ID.CLASSIC_20
                             : item.barsSettings.colorSettings.settings.palette;
                 }
 
@@ -61,11 +54,7 @@ const mutatePalettesSettings = (config: V12ChartsConfig) => {
         // indicators also has colorsConfig but it is not used
     } else if (config.colorsConfig) {
         if (config.colorsConfig.palette === OLD_DEFAULT_PALETTE_ID) {
-            config.colorsConfig.palette = COMMON_PALETTE_ID.DEFAULT_20;
-        }
-        // for default empty state of colorsConfig we use new option that can be configured in the tenant settings
-        if (isEmpty(config.colorsConfig)) {
-            config.colorsConfig = config.colorsConfig = {palette: AUTO_PALETTE_ID};
+            config.colorsConfig.palette = COMMON_PALETTE_ID.CLASSIC_20;
         }
     }
 };

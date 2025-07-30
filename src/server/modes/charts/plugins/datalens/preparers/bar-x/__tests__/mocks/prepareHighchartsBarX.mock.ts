@@ -347,7 +347,7 @@ export const barXColoringDimensionByPaletteArgs = {
             '2016': '14',
             '2017': '15',
         },
-        palette: COMMON_PALETTE_ID.DEFAULT_20,
+        palette: COMMON_PALETTE_ID.CLASSIC_20,
         polygonBorders: 'show',
     },
 };

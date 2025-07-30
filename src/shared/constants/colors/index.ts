@@ -1,11 +1,11 @@
+import classic from './common/classic-20';
 import datalens from './common/datalens';
 import emerald from './common/emerald-20';
 import golden from './common/golden-20';
 import neutral from './common/neutral-20';
 import oceanic from './common/oceanic-20';
 import trafficLight from './common/traffic-light-9';
-import default20 from './default20';
-import type {Palette} from './types';
+import {type Palette} from './types';
 
 export * from './types';
 
@@ -15,7 +15,9 @@ export interface Palettes {
 }
 
 export const PALETTES = {
-    default20,
+    // TODO: Update with new colors
+    // default20,
+    classic,
     neutral,
     golden,
     emerald,
@@ -24,10 +26,12 @@ export const PALETTES = {
     datalens,
 };
 
-export const DEFAULT_PALETTE = default20;
+export const DEFAULT_PALETTE = classic;
 
 export const BASE_PALETTES_MAP: Record<string, Palette> = {
-    [default20.id]: default20,
+    // TODO: Update with new colors
+    // [default20.id]: default20,
+    [classic.id]: classic,
     [emerald.id]: emerald,
     [neutral.id]: neutral,
     [golden.id]: golden,

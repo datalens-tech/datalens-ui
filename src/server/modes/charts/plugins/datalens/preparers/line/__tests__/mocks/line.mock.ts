@@ -64,7 +64,7 @@ export const linesColoredByFieldWithPostfixArgs = {
                         settings: {
                             gradientState: {},
                             paletteState: {
-                                palette: COMMON_PALETTE_ID.DEFAULT_20,
+                                palette: COMMON_PALETTE_ID.CLASSIC_20,
                                 mountedColors: {},
                             },
                             isContinuous: false,
@@ -210,7 +210,7 @@ export const linesColoredByFieldWithPostfixArgs = {
     ],
     colorsConfig: {
         polygonBorders: 'show',
-        palette: COMMON_PALETTE_ID.DEFAULT_20,
+        palette: COMMON_PALETTE_ID.CLASSIC_20,
         mountedColors: {'2014': '6', '2015': '12', '2016': '18', '2017': '19'},
         fieldGuid: 'd0ab8220-16e9-4320-b6da-1ca12163d956',
         coloredByMeasure: false,
