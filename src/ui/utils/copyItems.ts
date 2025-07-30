@@ -1,5 +1,7 @@
 import type {ConfigItem, ConfigItemData} from '@gravity-ui/dashkit';
-import {DashTabItemType} from 'shared/types';
+import {CustomPaletteBgColors, WIDGET_BG_COLORS_PRESET} from 'shared';
+import type {BackgroundSettings} from 'shared/types';
+import {DashTabItemType, isBackgroundSettings} from 'shared/types';
 import type {ConnectionsData} from 'ui/components/DialogRelations/types';
 
 // targetId - item is copied data from localStorage
@@ -91,3 +93,18 @@ export const getUpdatedConnections = ({
 
     return [...connections, ...copiedConnections];
 };
+
+export function getUpdatedBackgroundValue(
+    background: unknown,
+    allowCusomValues?: boolean,
+): Omit<BackgroundSettings, 'enabled'> {
+    return {
+        color:
+            isBackgroundSettings(background) &&
+            background?.color &&
+            background.enabled !== false &&
+            (allowCusomValues || WIDGET_BG_COLORS_PRESET.includes(background.color))
+                ? background.color
+                : CustomPaletteBgColors.NONE,
+    };
+}
