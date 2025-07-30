@@ -8,7 +8,11 @@ import type {
     ServerVisualization,
     ServerVisualizationLayer,
 } from '../../../../../../../../shared';
-import {WizardVisualizationId, isMonitoringOrPrometheusChart} from '../../../../../../../../shared';
+import {
+    Feature,
+    WizardVisualizationId,
+    isMonitoringOrPrometheusChart,
+} from '../../../../../../../../shared';
 import prepareBackendPivotTableData from '../../../preparers/backend-pivot-table';
 import type {PivotData} from '../../../preparers/backend-pivot-table/types';
 import {prepareD3BarX, prepareHighchartsBarX} from '../../../preparers/bar-x';
@@ -175,7 +179,11 @@ export default ({
 
         case WizardVisualizationId.Pie:
         case WizardVisualizationId.Donut:
-            prepare = prepareHighchartsPie;
+            if (features[Feature.GravityAsDefaultWizardVisualizationLibrary]) {
+                prepare = prepareD3Pie;
+            } else {
+                prepare = prepareHighchartsPie;
+            }
             rowsLimit = 1000;
             break;
 
@@ -191,7 +199,11 @@ export default ({
             break;
 
         case WizardVisualizationId.Treemap:
-            prepare = prepareHighchartsTreemap;
+            if (features[Feature.GravityAsDefaultWizardVisualizationLibrary]) {
+                prepare = prepareD3Treemap;
+            } else {
+                prepare = prepareHighchartsTreemap;
+            }
             rowsLimit = 800;
             break;
 
