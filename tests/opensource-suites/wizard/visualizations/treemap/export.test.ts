@@ -51,12 +51,12 @@ datalensTest.describe('Wizard', () => {
 
             const expected = [
                 ['region', 'segment', 'sum'],
-                ['Central', 'Home Office', '90404.8944'],
-                ['Central', 'Corporate', '152031.4968'],
-                ['East', 'Home Office', '125714.696'],
-                ['East', 'Corporate', '195897.425'],
                 ['East', 'Consumer', '347906.605'],
                 ['Central', 'Consumer', '250210.522'],
+                ['East', 'Corporate', '195897.425'],
+                ['Central', 'Corporate', '152031.4968'],
+                ['East', 'Home Office', '125714.696'],
+                ['Central', 'Home Office', '90404.8944'],
             ];
             expect(xlsxContent).toEqual(expected);
         });

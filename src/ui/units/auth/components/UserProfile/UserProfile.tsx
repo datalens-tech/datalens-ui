@@ -44,6 +44,7 @@ export function UserProfile({userProfile, onUserDataChange}: UserProfileProps) {
     const showAdministrationActions = !disableActions && canChangeUserData && !isCurrentUserProfile;
 
     const {getAdditionalProfileFields} = registry.auth.functions.getAll();
+    const {AdditionalProfileSections} = registry.auth.components.getAll();
 
     const additionalProfileFields = getAdditionalProfileFields?.(userProfile)?.map((field) => (
         <DefinitionList.Item name={field.name} key={field.name}>
@@ -127,6 +128,8 @@ export function UserProfile({userProfile, onUserDataChange}: UserProfileProps) {
                 />
             </Section>
 
+            <AdditionalProfileSections userProfile={userProfile} />
+
             {showAdministrationActions && (
                 <Section
                     title={i18n('title_administration')}
@@ -179,3 +182,5 @@ function Section({
         </section>
     );
 }
+
+export {Section as UserProfileSection};

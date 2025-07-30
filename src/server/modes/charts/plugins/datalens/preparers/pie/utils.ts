@@ -1,6 +1,7 @@
 import type {ServerField} from '../../../../../../../shared';
 import {
     PlaceholderId,
+    WizardVisualizationId,
     getFormatOptions,
     isDateField,
     isNumberField,
@@ -48,4 +49,11 @@ export function isColoringByMeasure(args: PrepareFunctionArgs) {
     const gradientMode = isGradientMode({colorField, colorFieldDataType, colorsConfig});
 
     return isNumericalDataType(colorFieldDataType) && Boolean(gradientMode);
+}
+
+export function isDonut({visualizationId}: {visualizationId: string}) {
+    return (
+        visualizationId === WizardVisualizationId.Donut ||
+        visualizationId === WizardVisualizationId.DonutD3
+    );
 }

@@ -1,7 +1,7 @@
 import type {Request} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
 
-import type {StringParams, ValueOf} from '../../../../shared';
+import type {FeatureConfig, StringParams, ValueOf} from '../../../../shared';
 
 const commonTemplateGraph = `
 const {buildHighchartsConfig, buildLibraryConfig} = require('#module');
@@ -134,7 +134,7 @@ export type ChartTemplates = {
 type ChartTemplate = {
     module: string;
     identifyParams: (data: unknown, req: Request) => StringParams;
-    identifyChartType: (data: unknown, req: Request) => string;
+    identifyChartType: (data: unknown, req: Request, features?: FeatureConfig) => string;
     identifyLinks: (data: unknown, req: Request) => Record<string, string>;
 };
 
