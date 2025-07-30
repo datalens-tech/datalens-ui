@@ -3,6 +3,7 @@ import type {
     ScatterSeries,
     ScatterSeriesData,
 } from '@gravity-ui/chartkit/gravity-charts';
+import merge from 'lodash/merge';
 
 import type {SeriesExportSettings} from '../../../../../../../shared';
 import {
@@ -16,6 +17,7 @@ import type {
     PointCustomData,
     ScatterSeriesCustomData,
 } from '../../../../../../../shared/types/chartkit';
+import {getBaseChartConfig} from '../../gravity-charts/utils';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import {getAxisType} from '../helpers/axis';
@@ -167,5 +169,5 @@ export function prepareD3Scatter(args: PrepareFunctionArgs): ChartData<PointCust
         config.legend = {enabled: false};
     }
 
-    return config;
+    return merge(getBaseChartConfig(shared), config);
 }
