@@ -7,10 +7,10 @@ import {openTestPage, slct} from '../../../utils';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 
-import defaultPalette from '../../../../src/shared/constants/colors/default';
+import default20Palette from '../../../../src/shared/constants/colors/default20';
 import testPalette from '../../../../src/shared/constants/colors/common/datalens';
 
-const defaultPaletteColorScheme = defaultPalette.scheme.slice(0, 3);
+const defaultPaletteColorScheme = default20Palette.scheme.slice(0, 3);
 
 const testPaletteId = testPalette.id;
 const testPaletteColorScheme = testPalette.scheme.slice(0, 3);
