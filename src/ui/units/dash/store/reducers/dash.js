@@ -242,7 +242,7 @@ function dash(state = initialState, action) {
             }
             const backgroundData =
                 'background' in itemData
-                    ? getUpdatedBackgroundValue(itemData.background, false)
+                    ? {background: getUpdatedBackgroundValue(itemData.background, false)}
                     : {};
             const newItem = {
                 ...action.payload.item,
