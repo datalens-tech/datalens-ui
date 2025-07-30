@@ -94,6 +94,8 @@ export enum Feature {
     EnableDLRebranding = 'EnableDLRebranding',
     /** Enable new default palette & default palette setting for tenant */
     EnableNewDefaultPalettes = 'EnableNewDefaultPalettes',
+    /** Use GravityUI Charts as the default library for some wizard visualizations(pie, donut, treemap) */
+    GravityAsDefaultWizardVisualizationLibrary = 'GravityAsDefaultWizardVisualizationLibrary',
 }
 
 export type FeatureConfig = Record<string, boolean>;

@@ -1,8 +1,11 @@
+import type {Request} from '@gravity-ui/expresskit';
+
 import type {ExtendedChartsConfig} from '../../../shared';
 import {
+    Feature,
     WizardVisualizationId,
     getDatasetLinks,
-    isD3Visualization,
+    isGravityChartsVisualization,
     mapChartsConfigToLatestVersion,
 } from '../../../shared';
 
@@ -11,7 +14,7 @@ export default {
     identifyParams: () => {
         return {};
     },
-    identifyChartType: (chart: ExtendedChartsConfig) => {
+    identifyChartType: (chart: ExtendedChartsConfig, req: Request) => {
         let visualizationId;
 
         if (
@@ -24,7 +27,16 @@ export default {
             throw new Error('UNABLE_TO_IDENTIFY_CHART_TYPE');
         }
 
-        if (isD3Visualization(visualizationId as WizardVisualizationId)) {
+        const {ctx} = req;
+        const features = {
+            GravityAsDefaultWizardVisualizationLibrary: ctx.get('isEnabledServerFeature')(
+                Feature.GravityAsDefaultWizardVisualizationLibrary,
+            ),
+        };
+
+        if (
+            isGravityChartsVisualization({id: visualizationId as WizardVisualizationId, features})
+        ) {
             return 'd3_wizard_node';
         }
 

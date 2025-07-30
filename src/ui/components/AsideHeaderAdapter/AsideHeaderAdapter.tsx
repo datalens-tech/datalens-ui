@@ -51,6 +51,7 @@ type AsideHeaderAdapterProps = {
     renderContent?: AsideHeaderProps['renderContent'];
     logoIcon?: IconData;
     installationInfo?: string;
+    collapseButtonWrapper?: AsideHeaderProps['collapseButtonWrapper'];
 };
 
 enum Panel {
@@ -103,6 +104,7 @@ export const AsideHeaderAdapter = ({
     renderContent,
     logoIcon,
     installationInfo,
+    collapseButtonWrapper,
 }: AsideHeaderAdapterProps) => {
     const dispatch = useDispatch();
     const {pathname} = useLocation();
@@ -336,6 +338,7 @@ export const AsideHeaderAdapter = ({
             renderContent={renderAsideHeaderContent}
             onClosePanel={handleClosePanel}
             className={b({rebranding: isRebrandingEnabled})}
+            collapseButtonWrapper={collapseButtonWrapper}
         />
     );
 };
