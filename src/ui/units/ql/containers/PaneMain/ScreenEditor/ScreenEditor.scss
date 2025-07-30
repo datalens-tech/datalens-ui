@@ -8,7 +8,9 @@
     }
 
     &__action-bar-top {
-        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
         width: 100%;
         height: 41px;
         line-height: 41px;
@@ -20,63 +22,57 @@
         }
 
         &_connection-select-btn-wrapper {
-            float: right;
-            height: 40px;
-        }
-
-        &_connection-select-btn {
-            float: right;
-            height: 40px;
-            margin-left: 10px;
-
-            svg,
-            img {
-                vertical-align: middle;
-                margin-right: 5px;
-            }
-
-            &_more {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 3;
+            min-width: 0;
+            button {
+                padding: 0 8px;
+                overflow: hidden;
                 height: 100%;
-                max-width: 50%;
-                float: right;
-
-                button {
-                    height: 100%;
+                .g-button__text {
+                    display: flex;
+                    align-items: center;
+                    min-width: 0;
                     width: 100%;
-                    vertical-align: top;
-                    top: 0;
-                    padding: 0 8px;
-
-                    span {
-                        width: 90%;
-                        overflow: hidden;
-                        text-overflow: ellipsis;
-                    }
+                    overflow: hidden;
+                    gap: 5px;
                 }
             }
+        }
+
+        &_connection-select-btn-text {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            min-width: 0;
+            max-width: 100%;
+            flex-shrink: 1;
+        }
+
+        &_connection-label {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
 
         &_connection-select-btn_more {
             height: 100%;
-            float: right;
+            min-width: 0;
+            display: flex;
+            flex-shrink: 3;
+        }
 
-            button {
-                height: 100%;
-                vertical-align: top;
-                top: 0;
-                padding: 0 8px;
-
-                &:active {
-                    transform: scale(1);
-                }
-            }
+        &_connection-select-btn {
+            flex-shrink: 0;
         }
 
         &_tabs {
             width: 220px;
+            flex-shrink: 0;
             height: 40px;
-            float: left;
-
             margin-left: 20px;
             box-shadow: none;
         }

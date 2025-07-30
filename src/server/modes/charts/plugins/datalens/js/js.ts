@@ -20,6 +20,7 @@ import type {
 } from '../../../../../../shared';
 import {
     DATASET_FIELD_TYPES,
+    Feature,
     MAX_SEGMENTS_NUMBER,
     WizardVisualizationId,
     isDateType,
@@ -542,7 +543,12 @@ function prepareSingleResult({
 
         case 'pie':
         case 'donut':
-            prepare = prepareHighchartsPie;
+            if (features[Feature.GravityAsDefaultWizardVisualizationLibrary]) {
+                prepare = prepareD3Pie;
+            } else {
+                prepare = prepareHighchartsPie;
+            }
+
             rowsLimit = 1000;
             break;
 
@@ -558,7 +564,11 @@ function prepareSingleResult({
             break;
 
         case 'treemap':
-            prepare = prepareHighchartsTreemap;
+            if (features[Feature.GravityAsDefaultWizardVisualizationLibrary]) {
+                prepare = prepareD3Treemap;
+            } else {
+                prepare = prepareHighchartsTreemap;
+            }
             rowsLimit = 800;
             break;
 

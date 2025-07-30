@@ -57,7 +57,7 @@ export function getGravityChartsChartKitData(args: {
                 if (renderCustomShapeFn) {
                     s.renderCustomShape = getCustomShapeRenderer(renderCustomShapeFn);
                 } else if (typeof totals !== 'undefined') {
-                    s.renderCustomShape = CustomShapeRenderer.pieCenterText(totals);
+                    s.renderCustomShape = CustomShapeRenderer.pieCenterText(totals, {padding: 36});
                 }
 
                 break;

@@ -232,6 +232,7 @@ const UsersList = () => {
                     getRowActions={getRowActions}
                     emptyMessage={i18n('label_users-empty-message')}
                     onRowClick={handleRowClick}
+                    edgePadding={false}
                 />
 
                 {nextPageToken && (

@@ -93,6 +93,8 @@ export enum Feature {
     /** Enable new favicon, icon, theme, decorations and illustrations */
     EnableDLRebranding = 'EnableDLRebranding',
     EnableMobileFixedHeader = 'EnableMobileFixedHeader',
+    /** Use GravityUI Charts as the default library for some wizard visualizations(pie, donut, treemap) */
+    GravityAsDefaultWizardVisualizationLibrary = 'GravityAsDefaultWizardVisualizationLibrary',
 }
 
 export type FeatureConfig = Record<string, boolean>;

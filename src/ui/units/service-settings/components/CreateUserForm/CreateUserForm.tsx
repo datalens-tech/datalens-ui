@@ -5,7 +5,9 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {Link, useHistory, useLocation} from 'react-router-dom';
 import {InterpolatedText} from 'ui/components/InterpolatedText/InterpolatedText';
+import {registry} from 'ui/registry';
 import {showToast} from 'ui/store/actions/toaster';
+import {CustomRow} from 'ui/units/auth/components/formControls/CustomRow';
 import {Email} from 'ui/units/auth/components/formControls/Email';
 import {FirstName} from 'ui/units/auth/components/formControls/FirstName';
 import {LastName} from 'ui/units/auth/components/formControls/LastName';
@@ -20,7 +22,7 @@ import {
 import {selectUserInfoFormValues} from 'ui/units/auth/store/selectors/userInfoForm';
 
 import {createUser, resetCreateUser} from '../../store/actions/serviceSettings';
-import {selecCreateUserIsLoading} from '../../store/selectors/serviceSettings';
+import {selectCreateUserIsLoading} from '../../store/selectors/serviceSettings';
 
 const i18n = I18n.keyset('service-settings.create-user.view');
 
@@ -30,12 +32,20 @@ export const CreateUserForm = () => {
     const location = useLocation<{from: string | undefined}>();
 
     const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+    const [extraFieldsValues, setExtraFieldsValues] = React.useState<Record<string, any>>({});
 
     const userInfo = useSelector(selectUserInfoFormValues);
+    const isLoading = useSelector(selectCreateUserIsLoading);
 
-    const isLoading = useSelector(selecCreateUserIsLoading);
+    const {getAdditionalAddProfileFields} = registry.auth.functions.getAll();
 
-    const handleSuccessCreate = () => {
+    const handleSuccessCreate = async (userId: string) => {
+        const handleError = (message: string) => {
+            dispatch(showToast({title: message, type: 'danger'}));
+        };
+
+        await getAdditionalAddProfileFields()?.onApply(userId, extraFieldsValues, handleError);
+
         dispatch(showToast({title: i18n('label_success-user-creation'), type: 'success'}));
 
         if (location?.state?.from === '/settings/users') {
@@ -85,6 +95,19 @@ export const CreateUserForm = () => {
                     <LastName />
                     <Email />
                     <Roles />
+                    {getAdditionalAddProfileFields()?.fields.map(({key, label, Component}) => (
+                        <CustomRow key={label} label={label}>
+                            <Component
+                                value={extraFieldsValues[key]}
+                                onChange={(v) =>
+                                    setExtraFieldsValues({
+                                        ...extraFieldsValues,
+                                        [key]: v,
+                                    })
+                                }
+                            />
+                        </CustomRow>
+                    ))}
                     <Password showGenerateButton={true} />
                 </Flex>
             </Flex>
