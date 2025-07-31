@@ -37,10 +37,9 @@
     }
 }
 
-.dl-chart-tooltip-content {
-    font-family: var(--g-text-body-font-family);
-
+.dl-chart-tooltip {
     &__content {
+        font-family: var(--g-text-body-font-family);
         font-size: 12px;
     }
 

@@ -14,7 +14,7 @@ import {formatNumber} from 'shared/modules/format-units/index';
 
 import type {PointCustomData, ScatterSeriesCustomData} from '../../../../../shared/types/chartkit';
 
-const b = block('dl-chart-tooltip-content');
+const b = block('dl-chart-tooltip');
 
 type CustomScatterSeries = ScatterSeries<PointCustomData> & {custom: ScatterSeriesCustomData};
 type TooltipRenderer = NonNullable<ChartTooltip['renderer']>;
