@@ -42,7 +42,7 @@ export function getGravityChartsChartKitData(args: {
             },
         },
         tooltip: {
-            pin: {enabled: true},
+            pin: {enabled: true, modifierKey: 'altKey'},
             renderer: getTooltipRenderer(widgetData),
             ...widgetData.tooltip,
         },
