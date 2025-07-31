@@ -38,6 +38,8 @@ type PluginTitle = Plugin<Props> & {
 };
 
 const WIDGET_RESIZE_DEBOUNCE_TIMEOUT = 100;
+// const MAX_HINT_WIDTH = 28;
+// const MAX_HINT_WITH_ANCHOR_WIDTH = 42;
 
 // text can be placed directly on the upper border of container,
 // in which case a small negative offset is needed
@@ -164,11 +166,13 @@ const titlePlugin: PluginTitle = {
                 const titleElement = contentRef.current.children[0];
                 const isWidthFits =
                     titleElement instanceof HTMLDivElement && extraRef.current
-                        ? !isTitleOverflowed(titleElement, extraRef.current)
+                        ? !isTitleOverflowed(contentRef.current, extraRef.current)
                         : contentRect.width <= rootRect.width;
 
                 const isHeightFits =
                     contentRect.height <= rootRect.height + MIN_AVAILABLE_HEIGHT_OFFSET;
+
+                // const isHeightFits = true;
 
                 const contentFits = isWidthFits && isHeightFits;
 
@@ -214,6 +218,8 @@ const titlePlugin: PluginTitle = {
             };
         }, [showAnchor, showHint]);
 
+        const relativePosition = !showAnchor && !isVerticalOverflowing;
+
         const getStyles = () => {
             const fontStyles = getFontStyleBySize(data.size);
 
@@ -246,7 +252,7 @@ const titlePlugin: PluginTitle = {
                         'with-absolute-hint': withAbsoluteHint && !withAbsoluteAnchor,
                         'with-absolute-hint-and-anchor': withAbsoluteHint && withAbsoluteAnchor,
                         absolute: !isInlineExtraElements,
-                        relative: !showAnchor && !isVerticalOverflowing,
+                        relative: relativePosition,
                     })}
                     ref={contentRef}
                 >
@@ -261,6 +267,7 @@ const titlePlugin: PluginTitle = {
                     >
                         {showHint && (
                             <MarkdownHelpPopover
+                                size={data.size}
                                 markdown={data.hint?.text ?? ''}
                                 className={b('hint')}
                                 popoverProps={{

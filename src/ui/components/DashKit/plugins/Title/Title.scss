@@ -117,3 +117,9 @@
         }
     }
 }
+
+.dashkit-grid-item.resizing {
+    .dashkit-plugin-title-container__extra-elements-container {
+        opacity: 0;
+    }
+}
