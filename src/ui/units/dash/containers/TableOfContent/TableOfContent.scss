@@ -90,8 +90,8 @@
         margin-left: 5px;
     }
 
-    &__hint-tooltip {
-        // to be displayed on top of the mobile Sheet component from uikit
-        z-index: 100001;
+    &__sheet {
+        // for hint tooltip to be visible
+        z-index: 1000;
     }
 }
