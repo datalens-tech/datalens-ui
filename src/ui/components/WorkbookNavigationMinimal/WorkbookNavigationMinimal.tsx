@@ -218,10 +218,10 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
                         const inactiveByIds = inactiveEntryIds
                             ? inactiveIds.has(entry.entryId)
                             : false;
-                        const qa = getEntryNameByKey({key: entry.key});
+                        const name = getEntryNameByKey({key: entry.key});
                         return {
-                            qa,
-                            entry,
+                            qa: name,
+                            entry: {...entry, name},
                             inactive:
                                 inactiveByIncludeType || inactiveByExcludeType || inactiveByIds,
                         };
