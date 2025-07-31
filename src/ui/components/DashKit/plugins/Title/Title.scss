@@ -113,13 +113,17 @@
 
     &_with-absolute-hint-and-anchor {
         [data-plugin-root-el='title'] {
-            @include text-with-fade-effect(65px);
+            @include text-with-fade-effect(70px);
         }
     }
 }
 
+// hide hint when resizing container
+
 .dashkit-grid-item.resizing {
-    .dashkit-plugin-title-container__extra-elements-container {
-        opacity: 0;
+    .dashkit-plugin-title-container {
+        &__extra-elements-container {
+            opacity: 0;
+        }
     }
 }
