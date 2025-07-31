@@ -3,7 +3,7 @@ import {workerData} from 'worker_threads';
 import workerPool from 'workerpool';
 
 import type {QlConfig, QlExtendedConfig} from '../../../../../shared';
-import {WizardVisualizationId, isD3Visualization} from '../../../../../shared';
+import {WizardVisualizationId, isGravityChartsVisualization} from '../../../../../shared';
 import {getTranslationFn} from '../../../../../shared/modules/language';
 import {Console} from '../../../../components/charts-engine';
 import type {GetChartApiContextArgs} from '../../../../components/charts-engine/components/processor/chart-api-context';
@@ -92,11 +92,8 @@ const worker: WizardWorker = {
                 break;
             }
             default: {
-                if (isD3Visualization(visualizationId as WizardVisualizationId)) {
-                    result = qlModule.buildD3Config({
-                        shared: serverChartConfig,
-                        ChartEditor: context.ChartEditor,
-                    });
+                if (isGravityChartsVisualization({id: visualizationId, features})) {
+                    result = {};
                 } else {
                     result = qlModule.buildLibraryConfig({
                         shared: serverChartConfig,
