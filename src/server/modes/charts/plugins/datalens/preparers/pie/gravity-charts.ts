@@ -127,9 +127,6 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
         series: {
             data,
         },
-        legend: {
-            itemDistance: 30,
-            ...legend,
-        },
+        legend,
     });
 }

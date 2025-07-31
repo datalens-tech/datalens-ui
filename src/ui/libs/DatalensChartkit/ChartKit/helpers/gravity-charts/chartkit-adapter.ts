@@ -44,6 +44,7 @@ export function getGravityChartsChartKitData(args: {
         },
         legend: {
             justifyContent: 'start',
+            itemDistance: 24,
         },
         tooltip: {
             pin: {enabled: true, modifierKey: 'altKey'},
