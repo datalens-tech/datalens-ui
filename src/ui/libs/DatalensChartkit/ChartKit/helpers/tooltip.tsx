@@ -14,7 +14,7 @@ import {formatNumber} from 'shared/modules/format-units/index';
 
 import type {PointCustomData, ScatterSeriesCustomData} from '../../../../../shared/types/chartkit';
 
-const b = block('dl-chart-tooltip');
+const b = block('dl-chart-tooltip-content');
 
 type CustomScatterSeries = ScatterSeries<PointCustomData> & {custom: ScatterSeriesCustomData};
 type TooltipRenderer = NonNullable<ChartTooltip['renderer']>;
@@ -38,7 +38,7 @@ export const scatterTooltipRenderer = (
     const shouldShowShape = shapeTitle && shapeTitle !== colorTitle;
 
     return (
-        <React.Fragment>
+        <div className={b()}>
             {pointTitle && (
                 <div>
                     {pointTitle}: <b>{point.custom?.name}</b>
@@ -65,7 +65,7 @@ export const scatterTooltipRenderer = (
                     {colorTitle}: {point.custom?.cLabel}
                 </div>
             )}
-        </React.Fragment>
+        </div>
     );
 };
 
@@ -81,7 +81,7 @@ function treemapTooltipRenderer(widgetData: ChartData, data: Parameters<TooltipR
     const label = get(point, 'label', '');
 
     return (
-        <div className={b('content')}>
+        <div className={b()}>
             {names.map((name, index) => (
                 <div key={`${name}_${index}`} dangerouslySetInnerHTML={{__html: name}} />
             ))}
@@ -104,13 +104,15 @@ function pieTooltipRenderer(_widgetData: ChartData, data: Parameters<TooltipRend
     percentage = percentage ? formatNumber(percentage, {precision: 1, format: 'percent'}) : null;
 
     return (
-        <div className={b('row')}>
-            <div className={b('block')}>
-                <span className={b('color')} style={{backgroundColor: point.color}} />
+        <div className={b()}>
+            <div className={b('row')}>
+                <div className={b('block')}>
+                    <span className={b('color')} style={{backgroundColor: point.color}} />
+                </div>
+                <div className={b('block')}>{point.name}</div>
+                <div className={b('block')}>{percentage}</div>
+                <div className={b('block')}>{value}</div>
             </div>
-            <div className={b('block')}>{point.name}</div>
-            <div className={b('block')}>{percentage}</div>
-            <div className={b('block')}>{value}</div>
         </div>
     );
 }
@@ -122,9 +124,7 @@ function customTooltipRenderer(widgetData: ChartData, data: Parameters<TooltipRe
     }
 
     const content = render(...data);
-    return (
-        <div className={b('content')} dangerouslySetInnerHTML={{__html: String(content ?? '')}} />
-    );
+    return <div className={b()} dangerouslySetInnerHTML={{__html: String(content ?? '')}} />;
 }
 
 export const getTooltipRenderer = (widgetData: ChartData): TooltipRenderer | undefined => {
