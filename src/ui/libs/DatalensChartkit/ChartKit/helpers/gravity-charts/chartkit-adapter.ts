@@ -41,10 +41,12 @@ export function getGravityChartsChartKitData(args: {
                 },
             },
         },
+        legend: {
+            justifyContent: 'start',
+        },
         tooltip: {
             pin: {enabled: true, modifierKey: 'altKey'},
             renderer: getTooltipRenderer(widgetData),
-            ...widgetData.tooltip,
         },
         series: getStyledSeries(loadedData),
     };
