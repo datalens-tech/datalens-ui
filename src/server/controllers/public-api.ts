@@ -3,6 +3,7 @@ import {REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 import _ from 'lodash';
 
 import {getValidationSchema, hasValidationSchema} from '../../shared/schema/gateway-utils';
+import {openApiRegistry} from '../components/app-docs';
 import {PUBLIC_API_RPC_ERROR_CODE} from '../constants/public-api';
 import {registry} from '../registry';
 import type {DatalensGatewaySchemas} from '../types/gateway';
@@ -11,18 +12,122 @@ import Utils from '../utils';
 
 const proxyMap: PublicApiRpcMap = {
     v0: {
+        // dataset
         getDataset: {
-            resolve: (api) => api.bi.getDataset,
+            resolve: (api) => api.bi.getDatasetApi,
+            openApi: {
+                summary: 'Get dataset',
+                tags: ['dataset'],
+            },
         },
         updateDataset: {
-            resolve: (api) => api.bi.updateDataset,
+            resolve: (api) => api.bi.updateDatasetApi,
+            openApi: {
+                summary: 'Update dataset',
+                tags: ['dataset'],
+            },
         },
         createDataset: {
-            resolve: (api) => api.bi.createDataset,
+            resolve: (api) => api.bi.createDatasetApi,
+            openApi: {
+                summary: 'Create dataset',
+                tags: ['dataset'],
+            },
         },
         deleteDataset: {
-            resolve: (api) => api.bi.deleteDataset,
+            resolve: (api) => api.bi.deleteDatasetApi,
+            openApi: {
+                summary: 'Delete dataset',
+                tags: ['dataset'],
+            },
         },
+        // wizard
+        getWizardChart: {
+            resolve: (api) => api.bi.createDataset,
+            openApi: {
+                summary: 'Get wizard chart',
+                tags: ['wizard'],
+            },
+        },
+        updateWizardChart: {
+            resolve: (api) => api.bi.updateDataset,
+            openApi: {
+                summary: 'Delete wizard chart',
+                tags: ['wizard'],
+            },
+        },
+        createWizardChart: {
+            resolve: (api) => api.bi.createDataset,
+            openApi: {
+                summary: 'Create wizard chart',
+                tags: ['wizard'],
+            },
+        },
+        deleteWizardChart: {
+            resolve: (api) => api.bi.deleteDataset,
+            openApi: {
+                summary: 'Delete wizard chart',
+                tags: ['wizard'],
+            },
+        },
+        // Dash
+        getDashboard: {
+            resolve: (api) => api.mix.getDashApi,
+            openApi: {
+                summary: 'Get dashboard',
+                tags: ['dashboard'],
+            },
+        },
+        updateDashboard: {
+            resolve: (api) => api.mix.updateDashboardApi,
+            openApi: {
+                summary: 'Delete dashboard',
+                tags: ['dashboard'],
+            },
+        },
+        createDashboard: {
+            resolve: (api) => api.mix.updateDashboardApi,
+            openApi: {
+                summary: 'Create dashboard',
+                tags: ['dashboard'],
+            },
+        },
+        deleteDashboard: {
+            resolve: (api) => api.mix.deleteDashboardApi,
+            openApi: {
+                summary: 'Delete dashboard',
+                tags: ['dashboard'],
+            },
+        },
+        // Report
+        // getReport: {
+        //     resolve: (api) => api.bi.createDataset,
+        //     openApi: {
+        //         summary: 'Get report',
+        //         tags: ['report'],
+        //     },
+        // },
+        // updateReport: {
+        //     resolve: (api) => api.bi.updateDataset,
+        //     openApi: {
+        //         summary: 'Delete report',
+        //         tags: ['report'],
+        //     },
+        // },
+        // createReport: {
+        //     resolve: (api) => api.bi.createDataset,
+        //     openApi: {
+        //         summary: 'Create report',
+        //         tags: ['report'],
+        //     },
+        // },
+        // deleteReport: {
+        //     resolve: (api) => api.bi.deleteDataset,
+        //     openApi: {
+        //         summary: 'Delete report',
+        //         tags: ['report'],
+        //     },
+        // },
     },
 };
 
@@ -57,12 +162,17 @@ export function publicApiControllerGetter(
     const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
 
     Object.entries(gatewayProxyMap).forEach(([version, actions]) => {
-        Object.entries(actions).forEach(([action, {resolve}]) => {
-            if (hasValidationSchema(resolve(gatewayApi))) {
-                console.log(
-                    parsedRoute.reverse({version, action}),
-                    getValidationSchema(resolve(gatewayApi)).getOpenApichema(),
-                );
+        Object.entries(actions).forEach(([action, {resolve, openApi}]) => {
+            const gatewayApiAction = resolve(gatewayApi);
+
+            if (hasValidationSchema(gatewayApiAction)) {
+                openApiRegistry.registerPath({
+                    method: parsedRoute.method.toLocaleLowerCase(),
+                    path: parsedRoute.reverse({version, action}),
+                    ...openApi,
+                    ...getValidationSchema(gatewayApiAction)().getOpenApichema(),
+                    security: [{['Access token']: []}],
+                });
             }
         });
     });
@@ -101,7 +211,7 @@ export function publicApiControllerGetter(
                 requestId,
             });
 
-            res.status(200).send(result);
+            res.status(200).send(result.responseData);
         } catch (err) {
             const {error} = err as any;
             if (error) {

@@ -1,7 +1,13 @@
+import _, {pick} from 'lodash';
 import type {DeepNonNullable} from 'utility-types';
+import {z} from 'zod/v4';
 
+import Dash from '../../../../server/components/sdk/dash';
+import {DASH_ENTRY_RELEVANT_FIELDS} from '../../../../server/constants';
+import {dashSchema} from '../../../sdk/zod-shemas/dash-api.schema';
 import type {ChartsStats} from '../../../types/charts';
-import {createAction} from '../../gateway-utils';
+import {EntryScope} from '../../../types/common';
+import {createAction, createTypedAction} from '../../gateway-utils';
 import {getTypedApi} from '../../simple-schema';
 import {getEntryVisualizationType} from '../helpers';
 import type {DatasetDictResponse, DatasetFieldsDictResponse} from '../helpers/dash';
@@ -22,7 +28,112 @@ import {
     type GetWidgetsDatasetsFieldsResponse,
 } from '../types';
 
+const dashUsSchema = z.object({
+    ...dashSchema.shape,
+    entryId: z.string(),
+    scope: z.literal(EntryScope.Dash),
+    public: z.boolean(),
+    isFavorite: z.boolean(),
+    createdAt: z.string(),
+    createdBy: z.string(),
+    updatedAt: z.string(),
+    updatedBy: z.string(),
+    revId: z.string(),
+    savedId: z.string(),
+    publishedId: z.string(),
+    meta: z.record(z.string(), z.string()),
+    links: z.record(z.string(), z.string()),
+    key: z.union([z.null(), z.string()]),
+    workbookId: z.union([z.null(), z.string()]),
+    type: z.literal(''),
+});
+
+const dashUsCreateSchema = z.object({
+    ...dashSchema.shape,
+    key: z.string().optional(),
+    workbookId: z.union([z.null(), z.string()]).optional(),
+    lockToken: z.string().optional(),
+    mode: z.literal(['publish', 'save']),
+});
+
+const dashUsUpdateSchema = z.object({
+    ...dashSchema.partial().shape,
+    entryId: z.string(),
+});
+
 export const dashActions = {
+    getDashApi: createTypedAction({
+        argsSchema: z.object({
+            dashboardId: z.string(),
+            revId: z.string().optional(),
+            includePermissions: z.boolean(),
+            includeLinks: z.boolean(),
+            branch: z.literal(['published', 'saved']).optional().default('published'),
+        }),
+        bodySchema: dashUsSchema,
+    }).withValidationSchema(async (_, args, {headers, ctx}) => {
+        const {dashboardId, includePermissions, includeLinks, branch, revId} = args;
+
+        if (!dashboardId || dashboardId === 'null') {
+            throw new Error(`Not found ${dashboardId} id`);
+        }
+
+        const result = await Dash.read(
+            dashboardId,
+            {
+                includePermissions: includePermissions?.toString(),
+                includeLinks: includeLinks?.toString(),
+                ...(branch ? {branch} : {}),
+                ...(revId ? {revId} : {}),
+            },
+            headers,
+            ctx,
+            {forceMigrate: true},
+        );
+
+        if (result.scope !== EntryScope.Dash) {
+            throw new Error('No entry found');
+        }
+
+        return pick(result, DASH_ENTRY_RELEVANT_FIELDS) as any;
+    }),
+    deleteDashboardApi: createTypedAction({
+        argsSchema: z.object({
+            dashboardId: z.string(),
+            lockToken: z.string().optional(),
+        }),
+        bodySchema: z.any(),
+    }).withValidationSchema(async (api, {lockToken, dashboardId}) => {
+        const typedApi = getTypedApi(api);
+
+        await typedApi.us._deleteUSEntry({
+            entryId: dashboardId,
+            lockToken,
+        });
+    }),
+    updateDashboardApi: createTypedAction({
+        argsSchema: dashUsUpdateSchema,
+        bodySchema: dashUsSchema,
+    }).withValidationSchema(async (_, args, {headers, ctx}) => {
+        const {entryId} = args;
+
+        const I18n = ctx.get('i18n');
+
+        return (await Dash.update(entryId as any, args as any, headers, ctx, I18n, {
+            forceMigrate: true,
+        })) as unknown as z.infer<typeof dashUsSchema>;
+    }),
+    createDashboardApi: createTypedAction({
+        argsSchema: dashUsCreateSchema,
+        bodySchema: dashUsSchema,
+    }).withValidationSchema(async (_, args, {headers, ctx}) => {
+        const I18n = ctx.get('i18n');
+
+        return (await Dash.create(args as any, headers, ctx, I18n)) as unknown as z.infer<
+            typeof dashUsSchema
+        >;
+    }),
+
     collectDashStats: createAction<CollectDashStatsResponse, CollectDashStatsArgs>(
         async (_, args, {ctx}) => {
             ctx.stats('dashStats', {

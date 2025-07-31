@@ -256,7 +256,13 @@ const settingsSchema = z.object({
 const dataSchema = z.object({
     counter: z.number().int().min(1).optional(),
     salt: z.string().min(1).optional(),
-    schemeVersion: z.number().int().min(1).max(DASH_CURRENT_SCHEME_VERSION).optional(),
+    schemeVersion: z
+        .number()
+        .int()
+        .min(1)
+        .max(DASH_CURRENT_SCHEME_VERSION)
+        .default(DASH_CURRENT_SCHEME_VERSION)
+        .optional(),
     tabs: z.array(tabSchema),
     settings: settingsSchema.optional(),
 });
@@ -264,6 +270,7 @@ const dataSchema = z.object({
 // Main dashboard API validation schema
 export const dashSchema = z.object({
     key: z.string().min(1).optional(),
+    workbookId: z.union([z.null(), z.string()]).optional(),
     data: dataSchema,
     meta: z.record(z.any(), z.any()).optional(),
     links: z.record(z.string(), z.string()).optional(),

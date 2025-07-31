@@ -271,6 +271,30 @@ const datasetApiErrorSchema = z.object({
 // Dataset selection map schema
 const datasetSelectionMapSchema = z.record(z.string(), z.literal(true));
 
+export const datasetBodySchema = z.object({
+    avatar_relations: z.array(datasetAvatarRelationSchema),
+    component_errors: z.object({
+        items: z.array(datasetComponentErrorSchema),
+    }),
+    obligatory_filters: z.array(obligatoryFilterSchema),
+    preview_enabled: z.boolean(),
+    result_schema: z.array(datasetFieldSchema),
+    result_schema_aux: z.object({
+        inter_dependencies: z.object({
+            deps: z.array(z.string()),
+        }),
+    }),
+    rls: datasetRlsSchema,
+    rls2: z.array(z.unknown()),
+    source_avatars: z.array(datasetSourceAvatarSchema),
+    source_features: z.record(z.string(), z.any()),
+    sources: z.array(datasetSourceSchema),
+    revisionId: z.string(),
+    load_preview_by_default: z.boolean(),
+    template_enabled: z.boolean(),
+    data_export_forbidden: z.boolean().optional(),
+});
+
 // Main Dataset schema
 export const datasetSchema = z.object({
     id: z.string(),
@@ -278,29 +302,7 @@ export const datasetSchema = z.object({
     is_favorite: z.boolean(),
     key: z.string(),
     options: datasetOptionsSchema,
-    dataset: z.object({
-        avatar_relations: z.array(datasetAvatarRelationSchema),
-        component_errors: z.object({
-            items: z.array(datasetComponentErrorSchema),
-        }),
-        obligatory_filters: z.array(obligatoryFilterSchema),
-        preview_enabled: z.boolean(),
-        result_schema: z.array(datasetFieldSchema),
-        result_schema_aux: z.object({
-            inter_dependencies: z.object({
-                deps: z.array(z.string()),
-            }),
-        }),
-        rls: datasetRlsSchema,
-        rls2: z.array(z.unknown()),
-        source_avatars: z.array(datasetSourceAvatarSchema),
-        source_features: z.record(z.string(), z.any()),
-        sources: z.array(datasetSourceSchema),
-        revisionId: z.string(),
-        load_preview_by_default: z.boolean(),
-        template_enabled: z.boolean(),
-        data_export_forbidden: z.boolean().optional(),
-    }),
+    dataset: datasetBodySchema,
     workbook_id: z.string().optional(),
     permissions: z.any().optional(), // Using z.any() for Permissions type as it's complex
 

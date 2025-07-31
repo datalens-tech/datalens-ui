@@ -75,14 +75,12 @@ export function createTypedAction<
         TTransformed
     >;
 
-    const shemaValidationObject = {
+    const shemaValidationObject = () => ({
         getSchema() {
             return schema;
         },
         getOpenApichema() {
             return {
-                summary: 'Action summary',
-                // tags: [ApiTag.Workbooks],
                 request: {
                     body: {
                         content: {
@@ -104,7 +102,7 @@ export function createTypedAction<
                 },
             };
         },
-    };
+    });
 
     const action = (actionConfig: ActionConfig) =>
         registerValidationSchema<ActionConfig>(actionConfig, shemaValidationObject);

@@ -13,6 +13,10 @@ export type PublicApiRpcMap<TSchema extends SchemasByScope = DatalensGatewaySche
             resolve: (api: ApiWithRoot<TSchema, Request['ctx'], Request, Response>) => any;
             headers?: (req: Request, headers: HeadersType) => HeadersType;
             args?: (req: Request) => Promise<object> | object;
+            openApi: {
+                summary: string;
+                tags?: string[];
+            };
         }
     >
 >;
