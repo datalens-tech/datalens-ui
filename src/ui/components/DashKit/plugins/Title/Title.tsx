@@ -214,7 +214,7 @@ const titlePlugin: PluginTitle = {
 
             return {
                 ...fontStyles,
-                top: showAnchor ? extraElementsTop : getTopOffsetBySize(data.size),
+                top: showAnchor ? extraElementsTop : getTopOffsetBySize(data.size, showBgColor),
             };
         };
 
