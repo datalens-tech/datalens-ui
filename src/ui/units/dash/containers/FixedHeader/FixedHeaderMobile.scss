@@ -1,9 +1,6 @@
 .dash-fixed-header-mobile {
     $class: &;
 
-    // --fullscreen-widget-top: auto;
-    // --fullscreen-widget-transform-y: -100%;
-
     --fixed-header-background: var(
         --dl-color-fixed-header-background,
         var(--g-color-base-background)
