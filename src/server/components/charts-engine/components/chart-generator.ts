@@ -21,22 +21,6 @@ const result = buildFn({
 module.exports = result;
 `;
 
-const commonTemplateD3Graph = `
-const {buildD3Config} = require('#module');
-
-const result = buildD3Config({
-    shared: Editor.getSharedData(),
-    params: Editor.getParams(),
-    actionParams: Editor.getActionParams(),
-    widgetConfig: Editor.getWidgetConfig(),
-    Editor
-});
-
-// your code here
-
-module.exports = result;
-`;
-
 const commonTemplate = {
     prepare: `
 const {buildGraph} = require('#module');
@@ -276,7 +260,6 @@ export const chartGenerator = {
         } else if (type.indexOf('markup') > -1 || isTable) {
             chart.config = chart.config.replace('#module', chartTemplate.module);
         } else if (isD3Graph) {
-            chart.graph = commonTemplateD3Graph.replace('#module', chartTemplate.module);
             chart.config = chart.config.replace('#module', chartTemplate.module);
         } else {
             chart.graph = commonTemplateGraph.replace('#module', chartTemplate.module);

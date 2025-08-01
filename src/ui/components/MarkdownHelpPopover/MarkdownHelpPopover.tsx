@@ -11,20 +11,29 @@ import './MarkdownHelpPopover.scss';
 
 const b = block('markdown-help-popover');
 
+type IconSize = 's' | 'm' | 'l' | 'xl';
+
 type Props = Partial<Pick<HelpMarkProps, 'onClick'>> & {
     markdown: string;
     className?: string;
     buttonProps?: ButtonProps;
     popoverProps?: Partial<PopoverProps>;
+    iconSize?: IconSize;
 };
 
 export const MarkdownHelpPopover = (props: Props) => {
-    const {markdown, onClick, buttonProps, popoverProps} = props;
+    const {
+        markdown,
+        onClick,
+        buttonProps,
+        popoverProps,
+        iconSize = DL.IS_MOBILE ? 'l' : 'm',
+    } = props;
     const [isLoaded, setLoaded] = React.useState(false);
 
     return (
         <HelpMark
-            iconSize={DL.IS_MOBILE ? 'l' : 'm'}
+            iconSize={iconSize}
             popoverProps={{
                 ...popoverProps,
                 className: b('tooltip', {hidden: !isLoaded}, popoverProps?.className),

@@ -132,6 +132,9 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
 
         return (
             <Dialog
+                modalClassName={b('dialog', {
+                    'additional-panel-open': this.state.additionalPanelVisible,
+                })}
                 open={true}
                 onClose={this.onClose}
                 onTransitionInComplete={() => {
@@ -139,7 +142,10 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
                     window.dispatchEvent(new Event('resize'));
                 }}
             >
-                <div className={b()} data-qa={FieldEditorQa.Dialog}>
+                <div
+                    className={b({'additional-panel-open': this.state.additionalPanelVisible})}
+                    data-qa={FieldEditorQa.Dialog}
+                >
                     <Dialog.Header caption={i18n('label_title')} />
                     <Settings
                         field={field}

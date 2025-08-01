@@ -1,9 +1,11 @@
 import type {PieSeries, PieSeriesData} from '@gravity-ui/chartkit/gravity-charts';
+import merge from 'lodash/merge';
 
 import type {SeriesExportSettings} from '../../../../../../../shared';
 import {formatNumber, getFormatOptions} from '../../../../../../../shared';
 import {getFakeTitleOrTitle} from '../../../../../../../shared/modules/fields';
 import {isHtmlField, isMarkdownField, isMarkupField} from '../../../../../../../shared/types/index';
+import {getBaseChartConfig} from '../../gravity-charts/utils';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import type {PiePoint, PrepareFunctionArgs} from '../types';
@@ -116,7 +118,7 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
         shared?.extraSettings?.legendMode !== 'hide' &&
         (legend?.enabled || data[0]?.data.length > 1);
 
-    return {
+    return merge(getBaseChartConfig(shared), {
         chart: {
             margin: isLegendEnabled
                 ? {top: 20, left: 20, right: 20, bottom: 20}
@@ -125,9 +127,6 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
         series: {
             data,
         },
-        legend: {
-            itemDistance: 30,
-            ...legend,
-        },
-    };
+        legend,
+    });
 }
