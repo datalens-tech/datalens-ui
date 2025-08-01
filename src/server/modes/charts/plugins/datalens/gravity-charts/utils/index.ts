@@ -86,6 +86,7 @@ export function getBaseChartConfig(args: {
     } else {
         Object.assign(chartWidgetData, {
             xAxis: {
+                visible: xPlaceholderSettings?.axisVisibility !== 'hide',
                 labels: {
                     enabled: xPlaceholderSettings?.hideLabels !== 'yes',
                 },
@@ -103,6 +104,7 @@ export function getBaseChartConfig(args: {
                 {
                     // todo: the axis type should depend on the type of field
                     type: isDateField(yItem) ? 'datetime' : 'linear',
+                    visible: yPlaceholderSettings?.axisVisibility !== 'hide',
                     labels: {
                         enabled: Boolean(yItem) && yPlaceholder?.settings?.hideLabels !== 'yes',
                     },
