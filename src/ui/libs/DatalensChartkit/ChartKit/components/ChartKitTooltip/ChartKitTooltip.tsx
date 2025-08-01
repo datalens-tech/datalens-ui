@@ -130,6 +130,10 @@ const ChartKitTooltipComponent = React.forwardRef<ChartKitTooltipRef | undefined
                         `[${ATTR_DATA_TOOLTIP_CONTENT}],[${ATTR_DATA_TOOLTIP_ANCHOR_ID}]`,
                     ) as HTMLElement;
 
+                    if (!node) {
+                        return;
+                    }
+
                     const anchorId = node.dataset['tooltipAnchorId'];
 
                     if (anchorId) {
