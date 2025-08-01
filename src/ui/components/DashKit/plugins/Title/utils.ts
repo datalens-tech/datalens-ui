@@ -52,7 +52,7 @@ export const isTitleOverflowed = (element: HTMLDivElement, extraElements: HTMLDi
 };
 /* eslint-enable no-param-reassign */
 
-export const getHelpIconSizeByTitleSize = (size: DashTitleSize) => {
+export const getHelpIconSizeBySize = (size: DashTitleSize) => {
     // from uikit
     const ICON_SIZE_MAP = [
         ['xl', 20],
