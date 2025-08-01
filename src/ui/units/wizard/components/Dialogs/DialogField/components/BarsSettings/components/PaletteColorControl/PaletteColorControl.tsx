@@ -1,10 +1,9 @@
 import React, {useRef} from 'react';
 
-import {TextInput} from '@gravity-ui/uikit';
+import {Popup, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import type {ColorPalette} from 'shared';
-import {useOutsideClick} from 'ui/hooks/useOutsideClick';
 import {MinifiedPalette} from 'ui/units/wizard/components/MinifiedPalette/MinifiedPalette';
 import {isValidHexColor} from 'ui/utils';
 
@@ -14,12 +13,12 @@ import './PaletteColorControl.scss';
 
 type PaletteColorControlProps = {
     palette: string;
-    controlQa: string;
+    controlQa?: string;
     currentColor: string;
     onPaletteItemChange: (color: string) => void;
     onPaletteUpdate: (paletteName: string) => void;
-    onError: (error: boolean) => void;
-    disabled: boolean;
+    onError?: (error: boolean) => void;
+    disabled?: boolean;
     colorPalettes: ColorPalette[];
 };
 
@@ -44,10 +43,6 @@ export const PaletteColorControl: React.FC<PaletteColorControlProps> = (
 
     const ref = useRef<HTMLDivElement | null>(null);
 
-    const handleOutsideClick = React.useCallback(() => {
-        setIsPaletteVisible(false);
-    }, []);
-
     const handleInputColorUpdate = React.useCallback(
         (color: string) => {
             const hexColor = `#${color}`;
@@ -55,11 +50,11 @@ export const PaletteColorControl: React.FC<PaletteColorControlProps> = (
 
             if (!isValidHexColor(hexColor)) {
                 setErrorText(i18n('wizard', 'label_bars-custom-color-error'));
-                onError(true);
+                onError?.(true);
                 return;
             }
 
-            onError(false);
+            onError?.(false);
             setErrorText('');
         },
         [onError, onPaletteItemChange],
@@ -78,12 +73,7 @@ export const PaletteColorControl: React.FC<PaletteColorControlProps> = (
         setIsPaletteVisible(false);
     }, [currentColor, errorText]);
 
-    // Solves the problem of clicking on the palette in the selector. Since the palette list is rendered in the body, not in the ref container
-    const additionalCheck = React.useCallback(() => {
-        return Boolean(document.getElementsByClassName('g-select-list__item').length);
-    }, []);
-
-    useOutsideClick(ref, handleOutsideClick, additionalCheck);
+    const paletteItemRef = React.useRef<HTMLDivElement | null>(null);
 
     return (
         <div className={b()} ref={ref}>
@@ -98,19 +88,19 @@ export const PaletteColorControl: React.FC<PaletteColorControlProps> = (
                         }
                     }}
                     qa={controlQa}
+                    ref={paletteItemRef}
                 />
-                <TextInput
-                    // Cut # from color in HEX format
-                    disabled={disabled}
-                    error={errorText}
-                    value={currentColor.slice(1)}
-                    qa={`${controlQa}-input`}
-                    onUpdate={handleInputColorUpdate}
-                    className={b('color-control-input')}
-                />
-            </div>
-            {isPaletteVisible && (
-                <div className={b('palette')}>
+                <Popup
+                    onOpenChange={(_open, _event, reason) => {
+                        if (reason === 'outside-press') {
+                            setIsPaletteVisible(false);
+                        }
+                    }}
+                    anchorElement={paletteItemRef.current}
+                    open={isPaletteVisible}
+                    placement={['right-end']}
+                    className={b('palette')}
+                >
                     <MinifiedPalette
                         onPaletteUpdate={onPaletteUpdate}
                         onPaletteItemClick={onPaletteItemClick}
@@ -122,8 +112,17 @@ export const PaletteColorControl: React.FC<PaletteColorControlProps> = (
                         onEnterPress={handleEnterPress}
                         colorPalettes={colorPalettes}
                     />
-                </div>
-            )}
+                </Popup>
+                <TextInput
+                    // Cut # from color in HEX format
+                    disabled={disabled}
+                    error={errorText}
+                    value={currentColor.slice(1)}
+                    qa={`${controlQa}-input`}
+                    onUpdate={handleInputColorUpdate}
+                    className={b('color-control-input')}
+                />
+            </div>
         </div>
     );
 };

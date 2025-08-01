@@ -1,5 +1,6 @@
 import type {MarkupItem} from '../../../../../../../../../shared';
 import {getDistinctValue, markupToRawString} from '../../../../../../../../../shared';
+import {getColorBrightness} from '../../../../../../../../../shared/utils/color';
 import {selectServerPalette} from '../../../../../../../../constants';
 import {getColor} from '../../../../utils/constants';
 import {findIndexInOrder} from '../../../../utils/misc-helpers';
@@ -68,7 +69,6 @@ const getDiscreteBackgroundColorStyle = (args: GetDiscreteBackgroundColorStyle) 
     // eslint-disable-next-line consistent-return
     return {
         backgroundColor: colorValue,
-        color: '#FFF',
     };
 };
 
@@ -106,29 +106,52 @@ export const getFlatTableBackgroundStyles = (
     const backgroundSettings = column.backgroundSettings;
 
     if (!backgroundSettings) {
-        return;
+        return undefined;
     }
 
     const {settings} = backgroundSettings;
 
+    let backgroundCss: {backgroundColor?: string | number; color?: string} | undefined;
+
     if (settings.isContinuous) {
-        // eslint-disable-next-line consistent-return
-        return getContinuousBackgroundColorStyle({
+        backgroundCss = getContinuousBackgroundColorStyle({
             backgroundColorsByMeasure,
             currentRowIndex,
             backgroundSettings,
         });
+    } else {
+        backgroundCss = getDiscreteBackgroundColorStyle({
+            column,
+            values,
+            backgroundSettings,
+            order,
+            idToTitle,
+            idToDataType,
+            loadedColorPalettes,
+            availablePalettes,
+        });
     }
 
-    // eslint-disable-next-line consistent-return
-    return getDiscreteBackgroundColorStyle({
-        column,
-        values,
-        backgroundSettings,
-        order,
-        idToTitle,
-        idToDataType,
-        loadedColorPalettes,
-        availablePalettes,
-    });
+    const textColorSettings = backgroundSettings.textColor;
+    if (typeof backgroundCss?.backgroundColor === 'string') {
+        switch (textColorSettings?.mode) {
+            case 'manual': {
+                backgroundCss.color = textColorSettings.color;
+                break;
+            }
+            case 'auto':
+            default: {
+                const brightness = getColorBrightness(backgroundCss.backgroundColor);
+                const textColor =
+                    brightness > 0.5
+                        ? 'var(--g-color-text-dark-primary)'
+                        : 'var(--g-color-text-light-primary)';
+
+                backgroundCss.color = textColor;
+                break;
+            }
+        }
+    }
+
+    return backgroundCss;
 };

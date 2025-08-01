@@ -12,8 +12,16 @@
         margin-right: var(--g-spacing-1);
         margin-block: 2px;
 
-        &.palette-item:hover::before {
-            content: none;
+        &::before,
+        &.palette-item_selectable:hover::before {
+            width: 28px;
+            height: 28px;
+            content: '';
+            position: absolute;
+            border-radius: 6px;
+            top: -2px;
+            left: -2px;
+            border: 1px solid var(--g-color-base-generic-medium);
         }
     }
 
@@ -30,13 +38,13 @@
     }
 
     &__palette {
-        z-index: 2;
-        border-radius: 8px;
-        box-shadow: 0 8px 20px 0 var(--g-color-sfx-shadow);
-        position: absolute;
-        top: 0;
-        left: 28px;
-        background-color: var(--g-color-base-background);
+        // z-index: 2;
+        // border-radius: 8px;
+        // box-shadow: 0 8px 20px 0 var(--g-color-sfx-shadow);
+        // position: absolute;
+        // top: 0;
+        // left: 28px;
+        // background-color: var(--g-color-base-background);
         padding: var(--g-spacing-4);
     }
 }

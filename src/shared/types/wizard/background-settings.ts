@@ -19,4 +19,9 @@ export interface TableFieldBackgroundSettings {
         gradientState: Pick<ColorsConfig, GradientFields>;
         isContinuous: boolean;
     };
+    textColor?: {
+        mode?: string;
+        color?: string;
+        palette?: string;
+    };
 }

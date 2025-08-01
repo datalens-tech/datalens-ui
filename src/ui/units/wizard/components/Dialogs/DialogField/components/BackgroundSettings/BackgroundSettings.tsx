@@ -3,6 +3,7 @@ import React from 'react';
 import {SegmentedRadioGroup as RadioButton, Switch} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
+import {useSelector} from 'react-redux';
 import type {
     ClientChartsConfig,
     Field,
@@ -11,10 +12,12 @@ import type {
     TableFieldBackgroundSettings,
     WizardVisualizationId,
 } from 'shared';
-import {DialogFieldBackgroundSettingsQa} from 'shared';
+import {DEFAULT_PALETTE, DialogFieldBackgroundSettingsQa} from 'shared';
+import {selectColorPalettes} from 'ui/store/selectors/colorPaletteEditor';
 import {NULLS_OPTIONS} from 'ui/units/wizard/constants/dialogColor';
 
 import {DialogRadioButtons} from '../../../components/DialogRadioButtons/DialogRadioButtons';
+import {PaletteColorControl} from '../BarsSettings/components/PaletteColorControl/PaletteColorControl';
 import {ButtonColorDialog} from '../ButtonColorDialog/ButtonColorDialog';
 import {DialogFieldRow} from '../DialogFieldRow/DialogFieldRow';
 import {DialogFieldSelect} from '../DialogFieldSelect/DialogFieldSelect';
@@ -43,6 +46,7 @@ type Props = {
 
 export const BackgroundSettings: React.FC<Props> = (props) => {
     const {state, onUpdate, visualization, currentField, placeholderId} = props;
+    const colorPalettes = useSelector(selectColorPalettes);
 
     const {field, datasetFieldsMap, chartFields, extraDistincts} = useBackgroundSettings({
         visualization,
@@ -80,6 +84,20 @@ export const BackgroundSettings: React.FC<Props> = (props) => {
         onUpdate,
         state,
     });
+
+    const textColorMode = state.textColor?.mode ?? 'auto';
+    const handleTextColorModeUpdate = React.useCallback(
+        (event: React.ChangeEvent<HTMLInputElement>) => {
+            onUpdate({
+                ...state,
+                textColor: {
+                    ...state?.textColor,
+                    mode: event.target.value,
+                },
+            });
+        },
+        [onUpdate, state],
+    );
 
     return (
         <div className={b()}>
@@ -145,6 +163,53 @@ export const BackgroundSettings: React.FC<Props> = (props) => {
                             options={NULLS_OPTIONS}
                             value={nullMode}
                             onUpdate={handleNullModeUpdate}
+                        />
+                    }
+                />
+            )}
+            <DialogFieldRow
+                title={i18n('wizard', 'label_text-color-mode')}
+                setting={
+                    <RadioButton
+                        size="m"
+                        value={textColorMode}
+                        onChange={handleTextColorModeUpdate}
+                    >
+                        <RadioButton.Option value="auto">
+                            {i18n('wizard', 'label_auto')}
+                        </RadioButton.Option>
+                        <RadioButton.Option value="manual">
+                            {i18n('wizard', 'label_manual')}
+                        </RadioButton.Option>
+                    </RadioButton>
+                }
+            />
+            {textColorMode === 'manual' && (
+                <DialogFieldRow
+                    title={''}
+                    setting={
+                        <PaletteColorControl
+                            palette={state.textColor?.palette ?? DEFAULT_PALETTE.id}
+                            currentColor={state.textColor?.color ?? '#FFF'}
+                            onPaletteItemChange={(color) => {
+                                onUpdate({
+                                    ...state,
+                                    textColor: {
+                                        ...state?.textColor,
+                                        color,
+                                    },
+                                });
+                            }}
+                            onPaletteUpdate={(palette) => {
+                                onUpdate({
+                                    ...state,
+                                    textColor: {
+                                        ...state?.textColor,
+                                        palette,
+                                    },
+                                });
+                            }}
+                            colorPalettes={colorPalettes}
                         />
                     }
                 />
