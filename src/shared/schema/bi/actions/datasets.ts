@@ -1,10 +1,17 @@
+import z from 'zod/v4';
+
 import {
     TIMEOUT_60_SEC,
     TIMEOUT_95_SEC,
     US_MASTER_TOKEN_HEADER,
     WORKBOOK_ID_HEADER,
 } from '../../../constants';
-import {createAction} from '../../gateway-utils';
+import {
+    datasetBodySchema,
+    datasetOptionsSchema,
+    datasetSchema,
+} from '../../../sdk/zod-shemas/dataset-api.schema';
+import {createAction, createTypedAction} from '../../gateway-utils';
 import {filterUrlFragment} from '../../utils';
 import {
     prepareDatasetProperty,
@@ -250,6 +257,78 @@ export const actions = {
         method: 'DELETE',
         path: ({datasetId}) => `${API_V1}/datasets/${filterUrlFragment(datasetId)}`,
         params: (_, headers) => ({headers}),
+    }),
+    createDatasetApi: createTypedAction({
+        bodySchema: z.object({
+            id: z.string(),
+            dataset: datasetBodySchema,
+            options: datasetOptionsSchema,
+        }),
+        argsSchema: z.object({
+            name: z.string(),
+            created_via: z.string().optional(),
+            multisource: z.boolean(),
+            dataset: datasetBodySchema,
+            dir_path: z.string().optional(),
+            workbook_id: z.string().optional(),
+        }),
+    }).withValidationSchema({
+        method: 'POST',
+        path: () => `${API_V1}/datasets`,
+        params: ({dataset, ...restBody}, headers, {ctx}) => {
+            const resultDataset = prepareDatasetProperty(ctx, dataset);
+            return {body: {...restBody, dataset: resultDataset}, headers};
+        },
+    }),
+    updateDatasetApi: createTypedAction({
+        bodySchema: z.object({
+            id: z.string(),
+            dataset: datasetBodySchema,
+            options: datasetOptionsSchema,
+        }),
+        argsSchema: z.object({
+            version: z.literal('draft'),
+            datasetId: z.string(),
+            multisource: z.boolean(),
+            dataset: datasetBodySchema,
+        }),
+    }).withValidationSchema({
+        method: 'PUT',
+        path: ({datasetId, version}) =>
+            `${API_V1}/datasets/${filterUrlFragment(datasetId)}/versions/${filterUrlFragment(
+                version,
+            )}`,
+        params: ({dataset, multisource}, headers, {ctx}) => {
+            const resultDataset = prepareDatasetProperty(ctx, dataset);
+            return {body: {dataset: resultDataset, multisource}, headers};
+        },
+    }),
+    deleteDatasetApi: createTypedAction({
+        bodySchema: z.unknown(),
+        argsSchema: z.object({
+            datasetId: z.string(),
+        }),
+    }).withValidationSchema({
+        method: 'DELETE',
+        path: ({datasetId}) => `${API_V1}/datasets/${filterUrlFragment(datasetId)}`,
+        params: (_, headers) => ({headers}),
+    }),
+    getDatasetApi: createTypedAction({
+        bodySchema: datasetSchema,
+        argsSchema: z.object({
+            datasetId: z.string(),
+            version: z.literal('draft'),
+            workbookId: z.union([z.null(), z.string()]),
+        }),
+    }).withValidationSchema({
+        method: 'GET',
+        path: ({datasetId, version}) =>
+            `${API_V1}/datasets/${filterUrlFragment(datasetId)}/versions/${filterUrlFragment(
+                version,
+            )}`,
+        params: ({workbookId}, headers) => ({
+            headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
+        }),
     }),
     _proxyExportDataset: createAction<ExportDatasetResponse, ExportDatasetArgs>({
         method: 'POST',
