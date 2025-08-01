@@ -8,7 +8,7 @@ import {ChartsConfigVersion} from '../../../../types';
 
 const OLD_DEFAULT_PALETTE_ID = 'default-palette';
 
-// replace 'default-palette' with classic20 (classic20 contains the old colors that used to be in default20)
+// replace 'default-palette' (old default20) with classic20 palette
 const migratePaletteSettings = (config: V12ChartsConfig) => {
     // types cast
     // {metricFontSize?: string; metricFontColor?: string; metricFontColorPalette?: string;} =>

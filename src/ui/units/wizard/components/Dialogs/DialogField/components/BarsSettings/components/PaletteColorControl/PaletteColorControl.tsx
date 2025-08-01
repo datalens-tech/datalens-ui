@@ -74,7 +74,8 @@ export const PaletteColorControl: React.FC<PaletteColorControlProps> = (
     );
 
     const onPaletteItemClick = (color: string) => {
-        onPaletteItemChange(color, paletteColors.indexOf(color) || undefined);
+        const index = paletteColors.indexOf(color);
+        onPaletteItemChange(color, index === -1 ? undefined : index);
         setIsPaletteVisible(false);
     };
 

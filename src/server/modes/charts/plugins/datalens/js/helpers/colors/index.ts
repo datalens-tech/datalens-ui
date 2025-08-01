@@ -31,15 +31,13 @@ export const getChartColorsConfig = ({
     let colors: string[] = fallbackColors;
     let gradientColors: string[] = fallbackGradientColors;
 
-    const palette = colorsConfig.palette;
-
     if (colorsConfig.gradientPalette) {
         gradientColors =
             loadedColorPalettes[colorsConfig.gradientPalette]?.colors || fallbackGradientColors;
     }
 
-    if (palette) {
-        colors = loadedColorPalettes[palette]?.colors || fallbackColors;
+    if (colorsConfig.palette) {
+        colors = loadedColorPalettes[colorsConfig.palette]?.colors || fallbackColors;
     }
 
     return {

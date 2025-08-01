@@ -5,7 +5,7 @@ import {QlConfigVersions} from '../../../../types/ql/versions';
 
 const OLD_DEFAULT_PALETTE_ID = 'default-palette';
 
-// replace 'default-palette' with classic20 (classic20 contains the old colors that used to be in default20)
+// replace 'default-palette' (old default20) with classic20 palette
 const migratePaletteSettings = (config: QlConfigV4) => {
     if (config.visualization?.id === WizardVisualizationId.Metric && config.extraSettings) {
         const migratedExtraSettings = {...config.extraSettings};

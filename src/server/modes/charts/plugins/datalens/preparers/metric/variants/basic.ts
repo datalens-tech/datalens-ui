@@ -67,9 +67,8 @@ export const prepareBasicMetricVariant = ({
 
     const colorIndex = extraSettings?.metricFontColorIndex;
     const colorByIndex = colorIndex ? currentPalette[colorIndex] : '';
-    const customColor = extraSettings?.metricFontColor;
 
-    const color = colorByIndex || customColor || currentPalette[0];
+    const color = colorByIndex || extraSettings?.metricFontColor || currentPalette[0];
     const title = getTitle(extraSettings, measure);
 
     const metric: MetricConfig = {

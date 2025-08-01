@@ -72,18 +72,13 @@ const getTwoColorBarColor = (
 ) => {
     const parsedValue = parseFloat(rowValue);
 
-    if (parsedValue >= 0) {
-        return getColorByColorSettings({
-            currentColors,
-            colorIndex: colors.positiveColorIndex,
-            color: colors.positiveColor,
-        });
-    }
+    const isPositive = parsedValue >= 0;
 
     return getColorByColorSettings({
         currentColors,
-        color: colors.negativeColor,
-        colorIndex: colors.negativeColorIndex,
+        colorIndex: isPositive ? colors.positiveColorIndex : colors.negativeColorIndex,
+        color: isPositive ? colors.positiveColor : colors.negativeColor,
+        fallbackIndex: isPositive ? 2 : 1,
     });
 };
 const getGradientBarColor = (args: {
