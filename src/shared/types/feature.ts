@@ -92,6 +92,7 @@ export enum Feature {
     EnableUpdatingDsSettingsByAction = 'EnableUpdatingDsSettingsByAction',
     /** Enable new favicon, icon, theme, decorations and illustrations */
     EnableDLRebranding = 'EnableDLRebranding',
+    EnableMobileFixedHeader = 'EnableMobileFixedHeader',
     /** Use GravityUI Charts as the default library for some wizard visualizations(pie, donut, treemap) */
     GravityAsDefaultWizardVisualizationLibrary = 'GravityAsDefaultWizardVisualizationLibrary',
 }

@@ -1,0 +1,34 @@
+.dl-float-menu {
+    --g-button-height: 56px;
+    --g-button-border-radius: 0;
+    --g-button-background-color-hover: transparent;
+
+    position: fixed;
+    bottom: 16px;
+    left: 0;
+    right: 0;
+    z-index: 7;
+    width: 100%;
+
+    transition:
+        transform 0.3s ease,
+        opacity 0.3s ease;
+
+    transform: translateY(0);
+    opacity: 1;
+
+    &_hidden {
+        transform: translateY(100px);
+        opacity: 0;
+        pointer-events: none;
+    }
+
+    &__content {
+        box-shadow: 0px 2px 52px 0px var(--g-color-sfx-shadow);
+        padding: 0 var(--g-spacing-2);
+        margin-inline: var(--g-spacing-4);
+        background-color: var(--g-color-base-float-accent);
+        border-radius: 20px;
+        overflow: hidden;
+    }
+}
