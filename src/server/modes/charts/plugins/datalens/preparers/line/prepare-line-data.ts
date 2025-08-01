@@ -66,7 +66,6 @@ export function prepareLineData(args: PrepareFunctionArgs) {
         layerChartMeta,
         usedColors,
         disableDefaultSorting = false,
-        categories: previousCategories = [],
     } = args;
     const widgetConfig = ChartEditor.getWidgetConfig();
     const isActionParamsEnable = widgetConfig?.actionParams?.enable;
@@ -146,9 +145,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
     const nullsY1 = yPlaceholder?.settings?.nulls;
     const nullsY2 = y2Placeholder?.settings?.nulls;
 
-    const categoriesMap = new Map<string | number, boolean>(
-        previousCategories?.map((val) => [val, true]),
-    );
+    const categoriesMap = new Map<string | number, boolean>();
     const seriesNameFormatter = getSeriesTitleFormatter({fields: [colorItem, shapeItem]});
 
     const categoryField = xField
@@ -163,7 +160,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
     }
 
     if (mergedYSections.length) {
-        let categories = [...previousCategories];
+        let categories: (string | number)[] = [];
         const categories2: (string | number)[] = [];
 
         const lines1: LinesRecord = {};
@@ -292,7 +289,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
             visualizationId !== WizardVisualizationId.Area &&
             !isPercentVisualization(visualizationId);
 
-        if (!previousCategories?.length && !disableDefaultSorting) {
+        if (!disableDefaultSorting) {
             categories = getSortedCategories({
                 lines,
                 colorItem,

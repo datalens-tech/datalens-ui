@@ -384,7 +384,6 @@ type PrepareSingleResultArgs = {
     layerChartMeta?: LayerChartMeta;
     usedColors?: (string | undefined)[];
     features: FeatureConfig;
-    categories?: (string | number)[];
 };
 
 // eslint-disable-next-line complexity
@@ -403,7 +402,6 @@ function prepareSingleResult({
     usedColors,
     palettes,
     features,
-    categories,
 }: PrepareSingleResultArgs) {
     const isVisualizationWithLayers = Boolean(
         (visualization as ServerVisualizationLayer).layerSettings,
@@ -725,7 +723,6 @@ function prepareSingleResult({
         layerChartMeta,
         usedColors,
         features,
-        categories,
     };
 
     return (prepare as PrepareFunction)(prepareFunctionArgs);
@@ -899,7 +896,6 @@ export const buildGraphPrivate = (args: {
     let result: any = [];
     let bounds: null | any = null;
 
-    let categories: string[] = [];
     if (layers) {
         const legendValues: Record<string, string> = {};
         const layerChartMeta = getLayerChartMeta({
@@ -926,10 +922,7 @@ export const buildGraphPrivate = (args: {
                 usedColors,
                 palettes,
                 features,
-                categories,
             });
-
-            categories = categories?.length ? categories : localResult.categories;
 
             if (localResult && localResult[0] && localResult[0].bounds) {
                 const {bounds: localBounds} = localResult[0];
