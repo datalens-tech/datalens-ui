@@ -42,8 +42,6 @@ const WIDGET_RESIZE_DEBOUNCE_TIMEOUT = 100;
 // text can be placed directly on the upper border of container,
 // in which case a small negative offset is needed
 const MIN_AVAILABLE_TOP_OFFSET = -5;
-// if the text is too large, it slightly overflows its container
-const MIN_AVAILABLE_HEIGHT_OFFSET = 8.5;
 
 const titlePlugin: PluginTitle = {
     ...pluginTitle,
@@ -69,7 +67,6 @@ const titlePlugin: PluginTitle = {
         const [extraElementsTop, setExtraElementsTop] = React.useState<number | undefined>(
             undefined,
         );
-        const [isVerticalOverflowing, setIsVerticalOverflowing] = React.useState<boolean>(false);
 
         const data = props.data as DashTabItemTitle['data'];
 
@@ -128,7 +125,7 @@ const titlePlugin: PluginTitle = {
             showBgColor,
             data.background?.color,
             {
-                position: !showAnchor && isVerticalOverflowing ? 'relative' : undefined,
+                position: showAnchor ? undefined : 'relative',
             },
             data.textColor,
         );
@@ -164,20 +161,14 @@ const titlePlugin: PluginTitle = {
                 const titleElement = contentRef.current.children[0];
                 const isWidthFits =
                     titleElement instanceof HTMLDivElement && extraRef.current
-                        ? !isTitleOverflowed(titleElement, extraRef.current)
+                        ? !isTitleOverflowed(contentRef.current, extraRef.current)
                         : contentRect.width <= rootRect.width;
 
-                const isHeightFits =
-                    contentRect.height <= rootRect.height + MIN_AVAILABLE_HEIGHT_OFFSET;
-
-                const contentFits = isWidthFits && isHeightFits;
-
                 const calculatedAnchorTop =
-                    offsetTop < MIN_AVAILABLE_TOP_OFFSET || contentFits ? 0 : offsetTop;
+                    offsetTop < MIN_AVAILABLE_TOP_OFFSET || isWidthFits ? 0 : offsetTop;
 
                 setExtraElementsTop(calculatedAnchorTop);
-                setIsInlineExtraElements(contentFits);
-                setIsVerticalOverflowing(!isHeightFits);
+                setIsInlineExtraElements(isWidthFits);
             }
         }, []);
 
@@ -221,11 +212,9 @@ const titlePlugin: PluginTitle = {
                 return fontStyles;
             }
 
-            const noAnchorTop = isVerticalOverflowing ? 0 : getTopOffsetBySize(data.size);
-
             return {
                 ...fontStyles,
-                top: showAnchor ? extraElementsTop : noAnchorTop,
+                top: showAnchor ? extraElementsTop : getTopOffsetBySize(data.size, showBgColor),
             };
         };
 
@@ -246,7 +235,7 @@ const titlePlugin: PluginTitle = {
                         'with-absolute-hint': withAbsoluteHint && !withAbsoluteAnchor,
                         'with-absolute-hint-and-anchor': withAbsoluteHint && withAbsoluteAnchor,
                         absolute: !isInlineExtraElements,
-                        relative: !showAnchor && !isVerticalOverflowing,
+                        relative: !showAnchor,
                     })}
                     ref={contentRef}
                 >
