@@ -51,7 +51,9 @@ export default {
     collectionColoredDark,
     collectionColoredBig,
     collectionColoredBigDark,
-    [PALETTES.defaultScheme.id]: paletteDatalens20Icon,
+    // TODO: Update with new colors
+    // [PALETTES.default20.id]: paletteDatalens20Icon,
+    [PALETTES.classic.id]: paletteDatalens20Icon,
     [PALETTES.emerald.id]: paletteEmerald20Icon,
     [PALETTES.golden.id]: paletteGolden20Icon,
     [PALETTES.neutral.id]: paletteNeutral20Icon,

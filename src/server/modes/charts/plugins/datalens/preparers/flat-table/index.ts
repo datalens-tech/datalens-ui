@@ -233,6 +233,7 @@ function prepareFlatTable({
                         field: item,
                         columnValues,
                         isTotalCell: false,
+                        availablePalettes: colorsConfig.availablePalettes,
                         loadedColorPalettes: colorsConfig.loadedColorPalettes,
                     });
 
