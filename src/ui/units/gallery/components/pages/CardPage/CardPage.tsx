@@ -196,7 +196,9 @@ function CardActionPanel({
                     <Breadcrumbs.Item href="/gallery">
                         {galleryI18n('label_gallery')}
                     </Breadcrumbs.Item>
-                    <Breadcrumbs.Item disabled={true}>{entry.title[lang]}</Breadcrumbs.Item>
+                    <Breadcrumbs.Item className={b('breadcrumbs-item')} disabled={true}>
+                        {entry.title[lang]}
+                    </Breadcrumbs.Item>
                 </Breadcrumbs>
             </Flex>
         );
