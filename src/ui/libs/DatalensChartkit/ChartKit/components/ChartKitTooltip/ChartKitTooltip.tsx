@@ -1,5 +1,13 @@
 import React from 'react';
 
+import {
+    safePolygon,
+    useClick,
+    useDismiss,
+    useFloatingRootContext,
+    useHover,
+    useRole,
+} from '@floating-ui/react';
 import {Popup} from '@gravity-ui/uikit';
 import type {PopupPlacement} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
@@ -77,9 +85,31 @@ const createAnchor = async (node: HTMLElement): Promise<ChartKitTooltipAnchor> =
 const ChartKitTooltipComponent = React.forwardRef<ChartKitTooltipRef | undefined, {}>(
     function ChartKitTooltip(_props, ref) {
         const [anchor, setAnchor] = React.useState<ChartKitTooltipAnchor | null>(null);
-        const [hover, setHover] = React.useState(false);
         const [open, setOpen] = React.useState(false);
         const timeoutIdRef = React.useRef<number | null>(null);
+
+        const [floatingElement, setFloatingElement] = React.useState<HTMLDivElement | null>(null);
+        const context = useFloatingRootContext({
+            open: open,
+            onOpenChange: setOpen,
+            elements: {
+                reference: anchor?.ref.current ?? null,
+                floating: floatingElement,
+            },
+        });
+
+        const hover = useHover(context, {
+            enabled: true,
+            delay: {open: anchor?.openDelay, close: anchor?.hideDelay},
+            move: false,
+            handleClose: safePolygon(),
+        });
+        const click = useClick(context);
+        const role = useRole(context, {
+            role: 'dialog',
+        });
+        const dismiss = useDismiss(context);
+        const interactions = [hover, click, role, dismiss];
 
         const setOpenAsync = React.useCallback((nextOpen: boolean, delay: number) => {
             if (timeoutIdRef.current) {
@@ -95,20 +125,10 @@ const ChartKitTooltipComponent = React.forwardRef<ChartKitTooltipRef | undefined
             ref,
             () => ({
                 async checkForTooltipNode(e) {
-                    if (hover) {
-                        return;
-                    }
-
-                    let node = (e.target as HTMLElement)?.closest(
+                    const eventTarget = e.target as HTMLElement;
+                    let node = eventTarget?.closest(
                         `[${ATTR_DATA_TOOLTIP_CONTENT}],[${ATTR_DATA_TOOLTIP_ANCHOR_ID}]`,
                     ) as HTMLElement;
-
-                    if (!node) {
-                        if (anchor !== null) {
-                            setOpenAsync(false, anchor.hideDelay);
-                        }
-                        return;
-                    }
 
                     const anchorId = node.dataset['tooltipAnchorId'];
 
@@ -124,12 +144,10 @@ const ChartKitTooltipComponent = React.forwardRef<ChartKitTooltipRef | undefined
                         const nextAnchor = await createAnchor(node);
                         setAnchor(nextAnchor);
                         setOpenAsync(true, nextAnchor.openDelay);
-                    } else if (anchor !== null && currentId !== id) {
-                        setOpenAsync(false, anchor.hideDelay);
                     }
                 },
             }),
-            [anchor, hover, setAnchor, setOpenAsync],
+            [anchor, setAnchor, setOpenAsync],
         );
 
         React.useEffect(() => {
@@ -151,12 +169,11 @@ const ChartKitTooltipComponent = React.forwardRef<ChartKitTooltipRef | undefined
                 anchorElement={anchor?.ref.current}
                 placement={anchor?.placement}
                 className={b('popup')}
-                open={open}
+                open={context.open}
+                floatingContext={context}
+                floatingRef={setFloatingElement}
+                floatingInteractions={interactions}
                 hasArrow={true}
-                onTransitionOutComplete={() => {
-                    setHover(false);
-                    setAnchor(null);
-                }}
             >
                 <div className={b()} dangerouslySetInnerHTML={{__html: anchor?.content || ''}} />
             </Popup>
