@@ -22,6 +22,7 @@ type TooltipRenderer = NonNullable<ChartTooltip['renderer']>;
 export const scatterTooltipRenderer = (
     widgetData: ChartData,
     data: Parameters<TooltipRenderer>[0],
+    qa?: string,
 ) => {
     const seriesName = data.hovered[0].series.name;
     const series = widgetData.series.data.find(
@@ -38,7 +39,7 @@ export const scatterTooltipRenderer = (
     const shouldShowShape = shapeTitle && shapeTitle !== colorTitle;
 
     return (
-        <div className={b()}>
+        <div className={b()} data-qa={qa}>
             {pointTitle && (
                 <div>
                     {pointTitle}: <b>{point.custom?.name}</b>
@@ -69,7 +70,11 @@ export const scatterTooltipRenderer = (
     );
 };
 
-function treemapTooltipRenderer(widgetData: ChartData, data: Parameters<TooltipRenderer>[0]) {
+function treemapTooltipRenderer(
+    widgetData: ChartData,
+    data: Parameters<TooltipRenderer>[0],
+    qa?: string,
+) {
     const series = widgetData.series.data[0];
     const point = data?.hovered[0]?.data as TreemapSeriesData | undefined;
 
@@ -81,7 +86,7 @@ function treemapTooltipRenderer(widgetData: ChartData, data: Parameters<TooltipR
     const label = get(point, 'label', '');
 
     return (
-        <div className={b()}>
+        <div className={b()} data-qa={qa}>
             {names.map((name, index) => (
                 <div key={`${name}_${index}`} dangerouslySetInnerHTML={{__html: name}} />
             ))}
@@ -148,11 +153,11 @@ export const getTooltipRenderer = ({
         switch (seriesTypes[0]) {
             case 'scatter': {
                 return (data: Parameters<TooltipRenderer>[0]) =>
-                    scatterTooltipRenderer(widgetData, data);
+                    scatterTooltipRenderer(widgetData, data, qa);
             }
             case 'treemap': {
                 return (data: Parameters<TooltipRenderer>[0]) =>
-                    treemapTooltipRenderer(widgetData, data);
+                    treemapTooltipRenderer(widgetData, data, qa);
             }
             case 'pie': {
                 return (data: Parameters<TooltipRenderer>[0]) =>
