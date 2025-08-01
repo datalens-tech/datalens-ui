@@ -62,7 +62,7 @@ const getRoutes = (options?: ConfiguredDashApiPluginOptions): Plugin['routes'] =
                         details: Utils.getErrorDetails(error),
                         code: errorCode,
                     });
-                    sendStats(req.ctx, 'create', errorStatus);
+                    sendStats(req.ctx, 'dashAPIcreate', errorStatus);
                 }
             },
             ...(routeParams || {}),
@@ -81,7 +81,7 @@ const getRoutes = (options?: ConfiguredDashApiPluginOptions): Plugin['routes'] =
 
                     if (!id || id === 'null') {
                         res.status(404).send({message: 'Dash not found'});
-                        sendStats(req.ctx, 'get', 404);
+                        sendStats(req.ctx, 'dashAPIget', 404);
                         return;
                     }
                     const result = await Dash.read(
@@ -93,7 +93,7 @@ const getRoutes = (options?: ConfiguredDashApiPluginOptions): Plugin['routes'] =
 
                     if (result.scope !== EntryScope.Dash) {
                         res.status(404).send({message: 'No entry found'});
-                        sendStats(req.ctx, 'get', 404);
+                        sendStats(req.ctx, 'dashAPIget', 404);
                         return;
                     }
 
@@ -106,7 +106,7 @@ const getRoutes = (options?: ConfiguredDashApiPluginOptions): Plugin['routes'] =
                             ? originalStatus
                             : 500;
                     res.status(errorStatus).send({message: Utils.getErrorMessage(error)});
-                    sendStats(req.ctx, 'get', errorStatus);
+                    sendStats(req.ctx, 'dashAPIget', errorStatus);
                 }
             },
             ...(routeParams || {}),
@@ -137,7 +137,7 @@ const getRoutes = (options?: ConfiguredDashApiPluginOptions): Plugin['routes'] =
                         errorStatus = 451;
                     }
                     res.status(errorStatus).send({message: Utils.getErrorMessage(error)});
-                    sendStats(req.ctx, 'update', errorStatus);
+                    sendStats(req.ctx, 'dashAPIupdate', errorStatus);
                 }
             },
             ...(routeParams || {}),
@@ -164,7 +164,7 @@ const getRoutes = (options?: ConfiguredDashApiPluginOptions): Plugin['routes'] =
                         errorStatus = 451;
                     }
                     res.status(errorStatus).send({message: Utils.getErrorMessage(error)});
-                    sendStats(req.ctx, 'delete', errorStatus);
+                    sendStats(req.ctx, 'dashAPIdelete', errorStatus);
                 }
             },
             ...(routeParams || {}),
