@@ -195,9 +195,10 @@ export function configuredDashApiPlugin(options?: ConfiguredDashApiPluginOptions
 function sendStats(ctx: AppContext, handlerName: string, status: number) {
     ctx.stats('dashApiErrors', {
         handlerName,
-        datetime: Date.now(),
+        timestamp: Date.now(),
         status,
         requestId: ctx.get(REQUEST_ID_PARAM_NAME) || '',
         userId: ctx.get(USER_ID_PARAM_NAME) || '',
+        traceId: ctx.getTraceId() || '',
     });
 }
