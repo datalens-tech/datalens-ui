@@ -25,7 +25,10 @@ const getColumnWithColorSelector = (color: string) => `//*[@fill='${color}']`;
 
 const waitForColorsInChartkit = async (page: Page, colors: string[]) => {
     return Promise.all(
-        colors.map((color) => page.waitForSelector(getColumnWithColorSelector(color))),
+        colors.map((color) => {
+            const locator = page.locator(getColumnWithColorSelector(color)).first();
+            return locator.waitFor();
+        }),
     );
 };
 
