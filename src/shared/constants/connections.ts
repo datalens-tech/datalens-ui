@@ -99,6 +99,7 @@ export const MDB_AVAILABLE_BASES = [
     ConnectorType.Greenplum,
     ConnectorType.Mysql,
     ConnectorType.Postgres,
+    ConnectorType.Trino,
 ] as const;
 
 export const RAW_SQL_LEVEL = {
