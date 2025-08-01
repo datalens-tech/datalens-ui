@@ -2,7 +2,7 @@ import React from 'react';
 
 import {Flex, Portal} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {DL} from 'ui/constants';
+import {useScrollableContainerContext} from 'ui/utils/scrollableContainerContext';
 
 import './FloatMenu.scss';
 
@@ -14,21 +14,18 @@ interface FloatMenuProps {
     container?: HTMLElement;
 }
 
-const MOBILE_PAGE_SCROLLABLE_CONTAINER_CLASSNAME = 'dl-mobile-header__content';
-
 const MIN_SCROLL_POSITION_FOR_HIDING = 100;
 
 export function FloatMenu({children, align = 'center', container}: FloatMenuProps) {
     const [isVisible, setIsVisible] = React.useState(true);
     const prevScrollY = React.useRef(0);
 
-    const scrollableContainer = React.useMemo(() => {
-        const defaultScrollingContainer = document.scrollingElement;
-        return DL.IS_MOBILE
-            ? document.getElementsByClassName(MOBILE_PAGE_SCROLLABLE_CONTAINER_CLASSNAME)?.[0]
-            : defaultScrollingContainer;
-    }, []);
+    const {scrollableContainerRef} = useScrollableContainerContext();
+
     React.useEffect(() => {
+        const defaultScrollingContainer = document.scrollingElement;
+        const scrollableContainer = scrollableContainerRef?.current ?? defaultScrollingContainer;
+
         const handleScroll = () => {
             const currentScrollY = scrollableContainer?.scrollTop || 0;
 
@@ -49,7 +46,7 @@ export function FloatMenu({children, align = 'center', container}: FloatMenuProp
         return () => {
             scrollableContainer?.removeEventListener('scroll', handleScroll);
         };
-    }, [scrollableContainer]);
+    }, [scrollableContainerRef]);
 
     return (
         <Portal container={container}>

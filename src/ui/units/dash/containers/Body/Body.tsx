@@ -128,6 +128,8 @@ import {MobileFloatMenu} from '../MobileFloatMenu/MobileFloatMenu';
 import TableOfContent from '../TableOfContent/TableOfContent';
 import {Tabs} from '../Tabs/Tabs';
 
+import {RefsContext, RefsContextProvider} from './context';
+
 import iconRelations from 'ui/assets/icons/relations.svg';
 
 import './Body.scss';
@@ -200,12 +202,6 @@ type DashkitGroupRenderWithContextProps = DashkitGroupRenderProps & {context: Me
 type GetPreparedCopyItemOptions<T extends object = {}> = (
     itemToCopy: PreparedCopyItemOptions<T>,
 ) => PreparedCopyItemOptions<T>;
-
-const RefsContext = React.createContext<{
-    fixedHeaderControlsEl: HTMLDivElement | null;
-    fixedHeaderContainerEl: HTMLDivElement | null;
-    dashEl: HTMLDivElement | null;
-}>({fixedHeaderControlsEl: null, fixedHeaderContainerEl: null, dashEl: null});
 
 // Body is used as a core in different environments
 class Body extends React.PureComponent<BodyProps, DashBodyState> {
@@ -1146,12 +1142,10 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             shouldRenderMobileMenu &&
             tabDataConfig?.items?.some((i) => i.id === searchParams.get(FOCUSED_WIDGET_PARAM_NAME));
         return (
-            <RefsContext.Provider
-                value={{
-                    fixedHeaderControlsEl: this.state.fixedHeaderControlsEl,
-                    fixedHeaderContainerEl: this.state.fixedHeaderContainerEl,
-                    dashEl: this.state.dashEl,
-                }}
+            <RefsContextProvider
+                fixedHeaderControlsEl={this.state.fixedHeaderControlsEl}
+                fixedHeaderContainerEl={this.state.fixedHeaderContainerEl}
+                dashEl={this.state.dashEl}
             >
                 <WidgetContextProvider onWidgetMountChange={this.itemAddHandler}>
                     {shouldRenderMobileMenu && this.props.entryId && (
@@ -1212,7 +1206,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                         dataProviderContextGetter={this.dataProviderContextGetter}
                     />
                 </WidgetContextProvider>
-            </RefsContext.Provider>
+            </RefsContextProvider>
         );
     };
 
