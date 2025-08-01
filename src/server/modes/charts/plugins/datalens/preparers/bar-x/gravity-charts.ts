@@ -4,6 +4,7 @@ import type {
     ChartData,
     ChartSeries,
 } from '@gravity-ui/chartkit/gravity-charts';
+import merge from 'lodash/merge';
 
 import type {SeriesExportSettings, ServerField, WrappedMarkdown} from '../../../../../../../shared';
 import {
@@ -19,6 +20,7 @@ import {
     isNumberField,
 } from '../../../../../../../shared';
 import type {WrappedHTML} from '../../../../../../../shared/types/charts';
+import {getBaseChartConfig} from '../../gravity-charts/utils';
 import {getFormattedLabel} from '../../gravity-charts/utils/dataLabels';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
@@ -187,5 +189,5 @@ export function prepareD3BarX(args: PrepareFunctionArgs) {
         };
     }
 
-    return config;
+    return merge(getBaseChartConfig(shared), config);
 }

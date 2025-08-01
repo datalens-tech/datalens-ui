@@ -37,13 +37,8 @@
     }
 }
 
-.chartkit-tooltip {
-    font-family: var(--g-text-body-font-family);
-
-    &__content {
-        font-size: 12px;
-    }
-
+.dl-chart-tooltip-content {
+    font-size: 12px;
     &__row {
         display: flex;
     }
@@ -53,7 +48,6 @@
         display: inline-block;
         height: 6px;
         width: 12px;
-        margin-bottom: 2px;
     }
 
     &__block {
