@@ -21,7 +21,12 @@ import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
 import {AnchorLink} from './AnchorLink/AnchorLink';
-import {getFontStyleBySize, getTopOffsetBySize, isTitleOverflowed} from './utils';
+import {
+    getFontStyleBySize,
+    getHelpIconSizeBySize,
+    getTopOffsetBySize,
+    isTitleOverflowed,
+} from './utils';
 
 import './Title.scss';
 
@@ -250,6 +255,7 @@ const titlePlugin: PluginTitle = {
                     >
                         {showHint && (
                             <MarkdownHelpPopover
+                                iconSize={getHelpIconSizeBySize(data.size)}
                                 markdown={data.hint?.text ?? ''}
                                 className={b('hint')}
                                 popoverProps={{
