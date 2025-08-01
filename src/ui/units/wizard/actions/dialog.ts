@@ -148,15 +148,22 @@ export function openDialogMetric({extraSettings}: OpenDialogMetricArguments) {
                 id: DIALOG_METRIC_SETTINGS,
                 props: {
                     onSave: ({size, palette, color, colorIndex}) => {
-                        const updatedExtraSettings = {
-                            ...extraSettings,
-                            metricFontSize: size,
-                            metricFontColor: color,
-                            metricFontColorPalette: palette,
-                            metricFontColorIndex: colorIndex,
-                        };
+                        const metricSettins =
+                            typeof colorIndex === 'number'
+                                ? {
+                                      metricFontColorIndex: colorIndex,
+                                      metricFontSize: size,
+                                      metricFontColorPalette: palette,
+                                      metricFontColor: undefined,
+                                  }
+                                : {
+                                      metricFontSize: size,
+                                      metricFontColor: color,
+                                      metricFontColorPalette: palette,
+                                      metricFontColorIndex: undefined,
+                                  };
 
-                        dispatch(setExtraSettings(updatedExtraSettings));
+                        dispatch(setExtraSettings({...extraSettings, ...metricSettins}));
 
                         dispatch(updatePreviewAndClientChartsConfig({}));
                     },

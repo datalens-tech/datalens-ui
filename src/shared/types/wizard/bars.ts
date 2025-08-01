@@ -28,24 +28,51 @@ export interface BarGradientColorSettings {
     };
 }
 
+type BarOneColorByIndex = {
+    colorIndex: number;
+    color?: undefined;
+};
+
+type BarOneColorByColor = {
+    colorIndex?: undefined;
+    color: string;
+};
+
 export interface BarOneColorSettings {
     colorType: BarsColorType.OneColor;
     settings: {
         palette: string;
-        color: string;
-        colorIndex?: number | null;
-    };
+    } & (BarOneColorByIndex | BarOneColorByColor);
 }
+
+type BarTwoColumnsPositiveByIndex = {
+    positiveColorIndex: number;
+    positiveColor?: undefined;
+};
+
+type BarTwoColumnsPositiveByColor = {
+    positiveColorIndex?: undefined;
+    positiveColor: string;
+};
+
+type BarTwoColumnsNegativeByIndex = {
+    negativeColorIndex: number;
+    negativeColor?: undefined;
+};
+
+type BarTwoColumnsNegativeByColor = {
+    negativeColorIndex?: undefined;
+    negativeColor: string;
+};
+
+type BatTwoColorsSettings = (BarTwoColumnsPositiveByIndex | BarTwoColumnsPositiveByColor) &
+    (BarTwoColumnsNegativeByIndex | BarTwoColumnsNegativeByColor);
 
 export interface BarTwoColorSettings {
     colorType: BarsColorType.TwoColor;
     settings: {
         palette: string;
-        positiveColor: string;
-        negativeColor: string;
-        positiveColorIndex?: number | null;
-        negativeColorIndex?: number | null;
-    };
+    } & BatTwoColorsSettings;
 }
 
 export interface BarAutoScaleSettings {

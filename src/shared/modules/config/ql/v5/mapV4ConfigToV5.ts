@@ -1,20 +1,14 @@
 import {COMMON_PALETTE_ID, WizardVisualizationId} from '../../../../constants';
-import type {
-    V12ChartsConfig,
-    V13ChartsConfig,
-    V13CommonSharedExtraSettings,
-} from '../../../../types';
-import {ChartsConfigVersion} from '../../../../types';
+import type {QlConfigV4} from '../../../../types/config/ql/v4';
+import type {QlConfigV5} from '../../../../types/config/ql/v5';
+import {QlConfigVersions} from '../../../../types/ql/versions';
 
 const OLD_DEFAULT_PALETTE_ID = 'default-palette';
 
 // replace 'default-palette' with classic20 (classic20 contains the old colors that used to be in default20)
-const migratePaletteSettings = (config: V12ChartsConfig) => {
-    // types cast
-    // {metricFontSize?: string; metricFontColor?: string; metricFontColorPalette?: string;} =>
-    // MetricFontSettings
-    const migratedExtraSettings = {...config.extraSettings} as V13CommonSharedExtraSettings;
+const migratePaletteSettings = (config: QlConfigV4) => {
     if (config.visualization?.id === WizardVisualizationId.Metric && config.extraSettings) {
+        const migratedExtraSettings = {...config.extraSettings};
         if (migratedExtraSettings.metricFontColorPalette === OLD_DEFAULT_PALETTE_ID) {
             migratedExtraSettings.metricFontColorPalette = COMMON_PALETTE_ID.CLASSIC_20;
         }
@@ -51,7 +45,6 @@ const migratePaletteSettings = (config: V12ChartsConfig) => {
         return {
             ...config,
             visualization: {...config.visualization, placeholders: migratedPlaceholders},
-            extraSettings: migratedExtraSettings,
         };
 
         // tables also has colorsConfig but only for gradients and we don't touch them.
@@ -60,18 +53,17 @@ const migratePaletteSettings = (config: V12ChartsConfig) => {
         return {
             ...config,
             colorsConfig: {...config.colorsConfig, palette: COMMON_PALETTE_ID.CLASSIC_20},
-            extraSettings: migratedExtraSettings,
         };
     }
 
-    return {...config, extraSettings: migratedExtraSettings};
+    return {...config};
 };
 
-export const mapV12ConfigToV13 = (config: V12ChartsConfig): V13ChartsConfig => {
+export const mapV4ConfigToV5 = (config: QlConfigV4): QlConfigV5 => {
     const migratedConfig = migratePaletteSettings(config);
 
     return {
         ...migratedConfig,
-        version: ChartsConfigVersion.V13,
+        version: QlConfigVersions.V5,
     };
 };

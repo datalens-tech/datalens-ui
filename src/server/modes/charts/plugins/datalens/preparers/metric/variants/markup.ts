@@ -15,10 +15,12 @@ export const prepareMarkupMetricVariant = ({
     measure,
     value,
     extraSettings,
+    currentPalette,
 }: {
     measure: ServerField;
     value: string | MarkupItem | null;
     extraSettings: ServerCommonSharedExtraSettings | undefined;
+    currentPalette: string[];
 }) => {
     if (!measure) {
         return {};
@@ -50,7 +52,12 @@ export const prepareMarkupMetricVariant = ({
         }
     } else {
         const size = (extraSettings && extraSettings.metricFontSize) || 'm';
-        const color = (extraSettings && extraSettings.metricFontColor) || 'rgb(77, 162, 241)';
+
+        const colorIndex = extraSettings?.metricFontColorIndex;
+        const colorByIndex = colorIndex ? currentPalette[colorIndex] : '';
+        const customColor = extraSettings?.metricFontColor;
+
+        const color = colorByIndex || customColor || currentPalette[0];
 
         const formatOptions: CommonNumberFormattingOptions = {};
 

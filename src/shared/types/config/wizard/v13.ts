@@ -2,6 +2,7 @@ import type {
     GradientNullMode,
     MapCenterModes,
     MarkupType,
+    MetricFontSettings,
     WidgetSizeType,
     ZoomModes,
 } from '../../..';
@@ -54,15 +55,11 @@ export type V13Update = {
     debug_info?: string;
 };
 
-export interface V13CommonSharedExtraSettings {
+export type V13CommonSharedExtraSettings = {
     title?: string;
     titleMode?: 'show' | 'hide';
     indicatorTitleMode?: IndicatorTitleMode;
     legendMode?: 'show' | 'hide';
-    metricFontSize?: string;
-    metricFontColor?: string;
-    metricFontColorPalette?: string;
-    metricFontColorIndex?: number | null;
     tooltip?: 'show' | 'hide';
     tooltipSum?: 'on' | 'off';
     limit?: number;
@@ -85,7 +82,7 @@ export interface V13CommonSharedExtraSettings {
     mapCenterMode?: MapCenterModes;
     mapCenterValue?: string | null;
     preserveWhiteSpace?: boolean;
-}
+} & MetricFontSettings;
 
 export type V13NavigatorSettings = {
     navigatorMode: string;

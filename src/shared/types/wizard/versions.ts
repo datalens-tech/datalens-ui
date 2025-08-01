@@ -27,8 +27,6 @@ export enum ChartsConfigVersion {
     V11 = '11',
     // isMarkdown boolean field is converted to a string markupType.
     V12 = '12',
-    // rename 'default-palette' value to 'default20'
-    // adding indexes in the color palette for chart types where they are not supported yet
-    // add 'auto' palette to charts with empty colorsConfig
+    // rename 'default-palette' value to classic20
     V13 = '13',
 }

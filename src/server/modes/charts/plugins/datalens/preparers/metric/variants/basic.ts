@@ -33,10 +33,12 @@ export const prepareBasicMetricVariant = ({
     measure,
     value,
     extraSettings,
+    currentPalette,
 }: {
     measure: any;
     value: string | null;
     extraSettings: ServerCommonSharedExtraSettings | undefined;
+    currentPalette: string[];
 }) => {
     const current: MetricCurrent = {value};
     if (measure && isNumericalDataType(measure.data_type)) {
@@ -62,7 +64,12 @@ export const prepareBasicMetricVariant = ({
     }
 
     const size = (extraSettings && extraSettings.metricFontSize) || '';
-    const color = (extraSettings && extraSettings.metricFontColor) || '';
+
+    const colorIndex = extraSettings?.metricFontColorIndex;
+    const colorByIndex = colorIndex ? currentPalette[colorIndex] : '';
+    const customColor = extraSettings?.metricFontColor;
+
+    const color = colorByIndex || customColor || currentPalette[0];
     const title = getTitle(extraSettings, measure);
 
     const metric: MetricConfig = {

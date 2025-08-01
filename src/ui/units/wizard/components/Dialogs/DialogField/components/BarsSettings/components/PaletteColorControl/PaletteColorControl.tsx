@@ -16,7 +16,7 @@ type PaletteColorControlProps = {
     palette: string;
     controlQa: string;
     currentColor: string;
-    onPaletteItemChange: (color: string, index: number | null) => void;
+    onPaletteItemChange: (color: string, index?: number) => void;
     onPaletteUpdate: (paletteName: string) => void;
     onError: (error: boolean) => void;
     disabled: boolean;
@@ -57,7 +57,7 @@ export const PaletteColorControl: React.FC<PaletteColorControlProps> = (
             const hexColor = `#${color}`;
 
             const colorPaletteIndex = paletteColors.indexOf(hexColor);
-            const colorIndex = colorPaletteIndex === -1 ? null : colorPaletteIndex;
+            const colorIndex = colorPaletteIndex === -1 ? undefined : colorPaletteIndex;
 
             onPaletteItemChange(hexColor, colorIndex);
 
@@ -74,7 +74,7 @@ export const PaletteColorControl: React.FC<PaletteColorControlProps> = (
     );
 
     const onPaletteItemClick = (color: string) => {
-        onPaletteItemChange(color, paletteColors.indexOf(color));
+        onPaletteItemChange(color, paletteColors.indexOf(color) || undefined);
         setIsPaletteVisible(false);
     };
 
