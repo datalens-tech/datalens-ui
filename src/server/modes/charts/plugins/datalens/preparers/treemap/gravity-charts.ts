@@ -3,6 +3,7 @@ import type {
     TreemapSeries,
     TreemapSeriesData,
 } from '@gravity-ui/chartkit/gravity-charts';
+import merge from 'lodash/merge';
 import orderBy from 'lodash/orderBy';
 
 import type {
@@ -17,6 +18,7 @@ import {
     isMarkdownField,
 } from '../../../../../../../shared';
 import {wrapMarkdownValue} from '../../../../../../../shared/utils/markdown';
+import {getBaseChartConfig} from '../../gravity-charts/utils';
 import {
     mapAndColorizeHashTableByGradient,
     mapAndColorizeHashTableByPalette,
@@ -45,6 +47,7 @@ type ExtendedTreemapSeries = TreemapSeries & {
 };
 
 export function prepareD3Treemap({
+    shared,
     placeholders,
     resultData,
     colors,
@@ -248,12 +251,12 @@ export function prepareD3Treemap({
         },
     };
 
-    return {
+    return merge(getBaseChartConfig(shared), {
         series: {
             data: [series],
         },
         legend: {
             enabled: false,
         },
-    };
+    });
 }

@@ -18,7 +18,7 @@ function prepareMetric({placeholders, resultData, shared, idToTitle}: PrepareFun
     const measureIndex = findIndexInOrder(order, measure, measureActualTitle);
     const value = data[0][measureIndex];
 
-    if (typeof value === 'undefined') {
+    if (typeof value === 'undefined' || value === null) {
         return {};
     }
 

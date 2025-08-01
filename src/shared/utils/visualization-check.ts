@@ -29,7 +29,7 @@ export function getItemLinkWithDatasets(
     return targetLink;
 }
 
-export function isD3Visualization(id: WizardVisualizationId) {
+export function isD3Visualization(id: string) {
     const d3Visualizations = [
         WizardVisualizationId.ScatterD3,
         WizardVisualizationId.PieD3,
@@ -40,23 +40,26 @@ export function isD3Visualization(id: WizardVisualizationId) {
         WizardVisualizationId.BarY100pD3,
         WizardVisualizationId.TreemapD3,
     ];
-    return d3Visualizations.includes(id);
+    return d3Visualizations.includes(id as WizardVisualizationId);
 }
 
 export function isGravityChartsVisualization({
     id,
     features,
 }: {
-    id: WizardVisualizationId;
+    id: string;
     features?: FeatureConfig;
 }) {
-    if (features?.[Feature.GravityAsDefaultWizardVisualizationLibrary]) {
-        return [
-            WizardVisualizationId.Pie,
-            WizardVisualizationId.Donut,
-            WizardVisualizationId.Treemap,
-        ].includes(id);
-    }
-
-    return isD3Visualization(id);
+    const shouldUseGravityChartsByDefault = Boolean(
+        features?.[Feature.GravityAsDefaultWizardVisualizationLibrary],
+    );
+    const availableVisualizations: string[] = [
+        WizardVisualizationId.Pie,
+        WizardVisualizationId.Donut,
+        WizardVisualizationId.Treemap,
+    ];
+    return (
+        (shouldUseGravityChartsByDefault && availableVisualizations.includes(id)) ||
+        isD3Visualization(id)
+    );
 }

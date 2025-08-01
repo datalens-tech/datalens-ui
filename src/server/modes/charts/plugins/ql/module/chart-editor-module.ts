@@ -50,6 +50,6 @@ export default {
     buildSources,
     buildGraph,
     buildChartConfig,
-    buildD3Config: privateModule.buildD3Config,
+    buildD3Config: () => {},
     setConsole: privateModule.setConsole,
 };

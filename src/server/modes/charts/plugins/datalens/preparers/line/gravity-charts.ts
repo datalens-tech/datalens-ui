@@ -4,6 +4,7 @@ import type {
     LineSeries,
     LineSeriesData,
 } from '@gravity-ui/chartkit/gravity-charts';
+import merge from 'lodash/merge';
 
 import type {
     SeriesExportSettings,
@@ -21,6 +22,7 @@ import {
     isMarkupField,
     isNumberField,
 } from '../../../../../../../shared';
+import {getBaseChartConfig} from '../../gravity-charts/utils';
 import {getFormattedLabel} from '../../gravity-charts/utils/dataLabels';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
@@ -190,5 +192,5 @@ export function prepareD3Line(args: PrepareFunctionArgs) {
         };
     }
 
-    return config;
+    return merge(getBaseChartConfig(shared), config);
 }

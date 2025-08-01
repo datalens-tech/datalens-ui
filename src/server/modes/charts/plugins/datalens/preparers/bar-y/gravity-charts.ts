@@ -1,4 +1,5 @@
 import type {BarYSeries, ChartData} from '@gravity-ui/chartkit/gravity-charts';
+import merge from 'lodash/merge';
 
 import type {SeriesExportSettings, ServerField} from '../../../../../../../shared';
 import {
@@ -8,6 +9,7 @@ import {
     isMarkdownField,
     isMarkupField,
 } from '../../../../../../../shared';
+import {getBaseChartConfig} from '../../gravity-charts/utils';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import type {PrepareFunctionArgs} from '../types';
@@ -17,7 +19,7 @@ import {prepareBarYData} from './prepare-bar-y-data';
 type BarYPoint = {x: number; y: number} & Record<string, unknown>;
 
 export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
-    const {visualizationId, colors, labels, placeholders} = args;
+    const {shared, visualizationId, colors, labels, placeholders} = args;
     const {graphs, categories} = prepareBarYData(args);
     const hasCategories = Boolean(categories?.length);
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
@@ -97,5 +99,5 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
         ];
     }
 
-    return config;
+    return merge(getBaseChartConfig(shared), config);
 }

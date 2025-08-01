@@ -8,6 +8,14 @@
     display: flex;
     flex-direction: column;
 
+    &_additional-panel-open {
+        max-width: min(calc(100vw - 530px), 1200px);
+    }
+
+    &__dialog_additional-panel-open {
+        padding-right: 330px;
+    }
+
     &__settings {
         display: flex;
         align-items: center;

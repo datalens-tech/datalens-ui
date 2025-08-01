@@ -186,24 +186,6 @@ export function getAvailableVisualizations(options?: ChartkitGlobalSettings) {
     return _.cloneDeep(items.filter((item) => item.enabled).map(({value}) => value));
 }
 
-const highchartsD3Map = [
-    [WizardVisualizationId.Line, WizardVisualizationId.LineD3],
-    [WizardVisualizationId.Column, WizardVisualizationId.BarXD3],
-    [WizardVisualizationId.Scatter, WizardVisualizationId.ScatterD3],
-    [WizardVisualizationId.Pie, WizardVisualizationId.PieD3],
-    [WizardVisualizationId.Donut, WizardVisualizationId.DonutD3],
-    [WizardVisualizationId.Bar, WizardVisualizationId.BarYD3],
-    [WizardVisualizationId.Bar100p, WizardVisualizationId.BarY100pD3],
-];
-
-export function getHighchartsAnalog(visualizationId: WizardVisualizationId) {
-    return highchartsD3Map.find(([_hc, d3]) => d3 === visualizationId)?.[0];
-}
-
-export function getD3Analog(visualizationId: WizardVisualizationId) {
-    return highchartsD3Map.find(([hc, _d3]) => hc === visualizationId)?.[1];
-}
-
 export function getDefaultVisualization() {
     const defaultVisualizationIds = [WizardVisualizationId.Column, WizardVisualizationId.BarXD3];
 

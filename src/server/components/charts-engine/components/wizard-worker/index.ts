@@ -72,9 +72,7 @@ const worker: WizardWorker = {
                         features,
                     })
                 ) {
-                    result = datalensModule.buildD3Config({
-                        shared: serverChartConfig,
-                    });
+                    result = {};
                 } else {
                     result = datalensModule.buildHighchartsConfig({
                         shared: serverChartConfig,

@@ -3,6 +3,7 @@ import {CustomShapeRenderer} from '@gravity-ui/chartkit/gravity-charts';
 import {pickActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
 import get from 'lodash/get';
 import merge from 'lodash/merge';
+import set from 'lodash/set';
 
 import type {GraphWidget} from '../../../types';
 import type {ChartKitAdapterProps} from '../../types';
@@ -41,14 +42,20 @@ export function getGravityChartsChartKitData(args: {
                 },
             },
         },
+        legend: {
+            justifyContent: 'start',
+            itemDistance: 24,
+        },
         tooltip: {
-            ...widgetData.tooltip,
+            pin: {enabled: true, modifierKey: 'altKey'},
             renderer: getTooltipRenderer(widgetData),
         },
         series: getStyledSeries(loadedData),
     };
 
     chartWidgetData.series?.data.forEach((s) => {
+        set(s, 'legend.symbol.padding', 8);
+
         switch (s.type) {
             case 'pie': {
                 const totals = get(s, 'custom.totals');
