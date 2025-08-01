@@ -8,6 +8,7 @@ import {ChartKitTableQa, DashBodyQa} from '../../../../src/shared';
 
 const PARAMS = {
     TAB_WITHOUT_AUTOHEIGHT_NAME: 'Without autoheight',
+    TAB_HEADERS_WITH_HINTS: 'Headers with hints',
 };
 
 datalensTest.describe('Dashboards - Base widgets screenshots', () => {
@@ -46,6 +47,27 @@ datalensTest.describe('Dashboards - Base widgets screenshots', () => {
             );
 
             await dashboardPage.changeTab({tabName: PARAMS.TAB_WITHOUT_AUTOHEIGHT_NAME});
+
+            await dashboardPage.waitForWidgetsRender();
+
+            const contentContainer = page.locator(slct(DashBodyQa.ContentWrapper));
+
+            await expect(contentContainer).toHaveScreenshot({
+                mask: [page.locator(slct(ChartKitTableQa.Widget))],
+            });
+        },
+    );
+
+    datalensTest(
+        'Headers with hints @screenshot',
+        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
+            const dashboardPage = new DashboardPage({page});
+            await openTestPage(
+                page,
+                `${config.dash.urls.DashboardWithDifferentWidgets}?_embedded=1`,
+            );
+
+            await dashboardPage.changeTab({tabName: PARAMS.TAB_HEADERS_WITH_HINTS});
 
             await dashboardPage.waitForWidgetsRender();
 
