@@ -1294,6 +1294,9 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
 
         const loadedMixin = loaded ? LOADED_DASH_CLASS : undefined;
 
+        const showDashTitle =
+            !settings.hideDashTitle && (!DL.IS_MOBILE || isMobileFixedHeaderEnabled);
+
         const content = (
             <div
                 data-qa={DashBodyQa.ContentWrapper}
@@ -1322,12 +1325,11 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                             'with-footer': isEnabledFeature(Feature.EnableFooter),
                         })}
                     >
-                        {!settings.hideDashTitle &&
-                            (!DL.IS_MOBILE || isMobileFixedHeaderEnabled) && (
-                                <div className={b('entry-name')} data-qa={DashEntryQa.EntryName}>
-                                    {Utils.getEntryNameFromKey(this.props.entry?.key)}
-                                </div>
-                            )}
+                        {showDashTitle && (
+                            <div className={b('entry-name')} data-qa={DashEntryQa.EntryName}>
+                                {Utils.getEntryNameFromKey(this.props.entry?.key)}
+                            </div>
+                        )}
                         {!settings.hideTabs && <Tabs className={b('tabs')} />}
                         {this.renderDashkit()}
                         {!this.props.onlyView && (
