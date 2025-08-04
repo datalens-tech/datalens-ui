@@ -216,7 +216,7 @@ export type ProviderCreateParams = {
     recursion?: boolean;
     meta?: Record<string, string>;
     includePermissionsInfo?: boolean | string;
-    workbookId: string;
+    workbookId: string | null;
     name: string;
     mode?: EntryUpdateMode;
 };
@@ -360,7 +360,7 @@ export class USProvider {
     ) {
         const result = await USProvider.retrieveById(ctx, props);
 
-        result.data.shared = mapChartsConfigToLatestVersion(JSON.parse(result.data.shared));
+        result.data = mapChartsConfigToLatestVersion(JSON.parse(result.data.shared));
 
         return result;
     }
@@ -615,7 +615,7 @@ export class USProvider {
             recursion: boolean;
             links?: unknown;
             meta: Record<string, string>;
-            workbookId: string;
+            workbookId: string | null;
             name: string;
             includePermissionsInfo?: boolean;
             mode: EntryUpdateMode;

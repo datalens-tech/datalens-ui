@@ -7,9 +7,7 @@ import {createTypedAction} from '../../gateway-utils';
 import {getTypedApi} from '../../simple-schema';
 
 const wizardUsSchema = z.object({
-    data: z.object({
-        shared: v12ChartsConfigSchema,
-    }),
+    data: v12ChartsConfigSchema,
     entryId: z.string(),
     scope: z.literal(EntryScope.Widget),
     type: z.enum(WizardType),
@@ -47,6 +45,52 @@ export const wizardActions = {
             includeLinks: includeLinks ? includeLinks?.toString() : '0',
             ...(revId ? {revId} : {}),
             ...(unreleased ? {unreleased} : {unreleased: false}),
+            headers,
+        });
+
+        return result as any;
+    }),
+    createWizardChartApi: createTypedAction({
+        argsSchema: z.object({
+            entryId: z.string(),
+            data: v12ChartsConfigSchema,
+            key: z.string(),
+            workbookId: z.union([z.string(), z.null()]).optional(),
+            type: z.enum(WizardType).optional(),
+            name: z.string(),
+        }),
+        bodySchema: wizardUsSchema,
+    }).withValidationSchema(async (_, args, {ctx, headers}) => {
+        const {data, type, key, workbookId, name} = args;
+
+        const result = await USProvider.create(ctx, {
+            type,
+            data,
+            key,
+            name,
+            scope: EntryScope.Widget,
+            ...(workbookId ? {workbookId} : {workbookId: null}),
+            headers,
+        });
+
+        return result as any;
+    }),
+    updateWizardChartApi: createTypedAction({
+        argsSchema: z.object({
+            entryId: z.string(),
+            revId: z.string().optional(),
+            data: v12ChartsConfigSchema,
+            type: z.enum(WizardType).optional(),
+        }),
+        bodySchema: wizardUsSchema,
+    }).withValidationSchema(async (_, args, {ctx, headers}) => {
+        const {entryId, revId, data, type} = args;
+
+        const result = await USProvider.update(ctx, {
+            entryId,
+            ...(revId ? {revId} : {}),
+            ...(type ? {type} : {}),
+            data,
             headers,
         });
 

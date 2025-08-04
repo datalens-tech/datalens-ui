@@ -59,14 +59,14 @@ const proxyMap: PublicApiRpcMap = {
             },
         },
         updateWizardChart: {
-            resolve: (api) => api.bi.updateDataset,
+            resolve: (api) => api.mix.updateWizardChartApi,
             openApi: {
                 summary: 'Delete wizard chart',
                 tags: ['wizard'],
             },
         },
         createWizardChart: {
-            resolve: (api) => api.bi.createDataset,
+            resolve: (api) => api.mix.createWizardChartApi,
             openApi: {
                 summary: 'Create wizard chart',
                 tags: ['wizard'],
