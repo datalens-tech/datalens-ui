@@ -1,6 +1,7 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
 import {REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 import _ from 'lodash';
+import z from 'zod/v4';
 
 import {getValidationSchema, hasValidationSchema} from '../../shared/schema/gateway-utils';
 import {openApiRegistry} from '../components/app-docs';
@@ -12,6 +13,14 @@ import Utils from '../utils';
 
 const proxyMap: PublicApiRpcMap = {
     v0: {
+        // navigation
+        getNavigationList: {
+            resolve: (api) => api.mix.getNavigationList,
+            openApi: {
+                summary: 'Get navigation list',
+                tags: ['navigation'],
+            },
+        },
         // dataset
         getDataset: {
             resolve: (api) => api.bi.getDatasetApi,
@@ -43,7 +52,7 @@ const proxyMap: PublicApiRpcMap = {
         },
         // wizard
         getWizardChart: {
-            resolve: (api) => api.bi.createDataset,
+            resolve: (api) => api.mix.getWizardChartApi,
             openApi: {
                 summary: 'Get wizard chart',
                 tags: ['wizard'],
@@ -64,7 +73,7 @@ const proxyMap: PublicApiRpcMap = {
             },
         },
         deleteWizardChart: {
-            resolve: (api) => api.bi.deleteDataset,
+            resolve: (api) => api.mix.deleteWizardChartApi,
             openApi: {
                 summary: 'Delete wizard chart',
                 tags: ['wizard'],
@@ -72,7 +81,7 @@ const proxyMap: PublicApiRpcMap = {
         },
         // Dash
         getDashboard: {
-            resolve: (api) => api.mix.getDashApi,
+            resolve: (api) => api.mix.getDashboardApi,
             openApi: {
                 summary: 'Get dashboard',
                 tags: ['dashboard'],
@@ -86,7 +95,7 @@ const proxyMap: PublicApiRpcMap = {
             },
         },
         createDashboard: {
-            resolve: (api) => api.mix.updateDashboardApi,
+            resolve: (api) => api.mix.createDashboardApi,
             openApi: {
                 summary: 'Create dashboard',
                 tags: ['dashboard'],
@@ -154,6 +163,29 @@ const parseRoute = (route: string) => {
     };
 };
 
+const defaultSchema = {
+    summary: 'Type not defined',
+    request: {
+        body: {
+            content: {
+                ['application/json']: {
+                    schema: z.toJSONSchema(z.any()),
+                },
+            },
+        },
+    },
+    responses: {
+        200: {
+            description: 'TBD',
+            content: {
+                ['application/json']: {
+                    schema: z.toJSONSchema(z.any()),
+                },
+            },
+        },
+    },
+};
+
 export function publicApiControllerGetter(
     gatewayProxyMap: PublicApiRpcMap = proxyMap,
     params: any,
@@ -173,6 +205,14 @@ export function publicApiControllerGetter(
                     ...getValidationSchema(gatewayApiAction)().getOpenApichema(),
                     security: [{['Access token']: []}],
                 });
+            } else {
+                openApiRegistry.registerPath({
+                    method: parsedRoute.method.toLocaleLowerCase(),
+                    path: parsedRoute.reverse({version, action}),
+                    ...openApi,
+                    ...defaultSchema,
+                    security: [{['Access token']: []}],
+                } as any);
             }
         });
     });

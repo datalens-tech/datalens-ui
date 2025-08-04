@@ -58,6 +58,18 @@ const API_V1 = '/api/v1';
 const API_DATA_V1 = '/api/data/v1';
 const API_DATA_V2 = '/api/data/v2';
 
+const createDatasetDefaultArgsSchema = z.object({
+    name: z.string(),
+    created_via: z.string().optional(),
+    multisource: z.boolean(),
+    dataset: datasetBodySchema,
+});
+
+const createDatasetArgsSchema = z.union([
+    z.object({...createDatasetDefaultArgsSchema.shape, dir_path: z.string()}),
+    z.object({...createDatasetDefaultArgsSchema.shape, workbook_id: z.string()}),
+]);
+
 export const actions = {
     getSources: createAction<GetSourceResponse, GetSourceArgs>({
         method: 'GET',
@@ -264,14 +276,7 @@ export const actions = {
             dataset: datasetBodySchema,
             options: datasetOptionsSchema,
         }),
-        argsSchema: z.object({
-            name: z.string(),
-            created_via: z.string().optional(),
-            multisource: z.boolean(),
-            dataset: datasetBodySchema,
-            dir_path: z.string().optional(),
-            workbook_id: z.string().optional(),
-        }),
+        argsSchema: createDatasetArgsSchema,
     }).withValidationSchema({
         method: 'POST',
         path: () => `${API_V1}/datasets`,

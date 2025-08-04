@@ -42,7 +42,7 @@ const dashUsSchema = z.object({
     savedId: z.string(),
     publishedId: z.string(),
     meta: z.record(z.string(), z.string()),
-    links: z.record(z.string(), z.string()),
+    links: z.record(z.string(), z.string()).optional(),
     key: z.union([z.null(), z.string()]),
     workbookId: z.union([z.null(), z.string()]),
     type: z.literal(''),
@@ -50,7 +50,6 @@ const dashUsSchema = z.object({
 
 const dashUsCreateSchema = z.object({
     ...dashSchema.shape,
-    key: z.string().optional(),
     workbookId: z.union([z.null(), z.string()]).optional(),
     lockToken: z.string().optional(),
     mode: z.literal(['publish', 'save']),
@@ -62,12 +61,12 @@ const dashUsUpdateSchema = z.object({
 });
 
 export const dashActions = {
-    getDashApi: createTypedAction({
+    getDashboardApi: createTypedAction({
         argsSchema: z.object({
             dashboardId: z.string(),
             revId: z.string().optional(),
-            includePermissions: z.boolean(),
-            includeLinks: z.boolean(),
+            includePermissions: z.boolean().optional().default(false),
+            includeLinks: z.boolean().optional().default(false),
             branch: z.literal(['published', 'saved']).optional().default('published'),
         }),
         bodySchema: dashUsSchema,
@@ -81,9 +80,9 @@ export const dashActions = {
         const result = await Dash.read(
             dashboardId,
             {
-                includePermissions: includePermissions?.toString(),
-                includeLinks: includeLinks?.toString(),
-                ...(branch ? {branch} : {}),
+                includePermissions: includePermissions ? includePermissions?.toString() : '0',
+                includeLinks: includeLinks ? includeLinks?.toString() : '0',
+                ...(branch ? {branch} : {branch: 'published'}),
                 ...(revId ? {revId} : {}),
             },
             headers,

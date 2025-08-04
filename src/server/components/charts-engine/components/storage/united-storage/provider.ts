@@ -21,6 +21,7 @@ import {
     TRACE_ID_HEADER,
     US_PUBLIC_API_TOKEN_HEADER,
     WORKBOOK_ID_HEADER,
+    mapChartsConfigToLatestVersion,
 } from '../../../../../../shared';
 import {ErrorCode, TIMEOUT_10_SEC} from '../../../../../../shared/constants';
 import {createErrorHandler} from '../../error-handler';
@@ -339,6 +340,29 @@ export class USProvider {
                     });
                 }
             });
+    }
+
+    static async retrivePrasedWizardChart(
+        ctx: AppContext,
+        props: {
+            id: string;
+            storageApiPath?: string;
+            extraAllowedHeaders?: string[];
+            unreleased: boolean | string;
+            includeLinks?: boolean | string;
+            includePermissionsInfo?: boolean | string;
+            revId?: string;
+            headers: Request['headers'];
+            workbookId?: WorkbookId;
+            includeServicePlan?: boolean;
+            includeTenantFeatures?: boolean;
+        },
+    ) {
+        const result = await USProvider.retrieveById(ctx, props);
+
+        result.data.shared = mapChartsConfigToLatestVersion(JSON.parse(result.data.shared));
+
+        return result;
     }
 
     static retrieveByKey(

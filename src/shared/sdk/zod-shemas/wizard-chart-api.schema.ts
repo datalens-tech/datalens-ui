@@ -7,7 +7,7 @@ import {
     LabelsPositions,
     MapCenterMode,
     ZoomMode,
-} from '../../';
+} from '../..';
 import {WidgetSize} from '../../constants';
 import {MARKUP_TYPE} from '../../types/charts';
 import type {DatasetFieldCalcMode} from '../../types/dataset';
