@@ -27,7 +27,7 @@ const waitForColorsInChartkit = async (page: Page, colors: string[]) => {
     return Promise.all(
         colors.map((color) => {
             const locator = page.locator(getColumnWithColorSelector(color)).first();
-            return locator.waitFor();
+            return locator.waitFor({state: 'attached'});
         }),
     );
 };

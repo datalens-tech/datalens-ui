@@ -24,7 +24,7 @@ async function getChartLabelValues(page: Page, expectedLength: number) {
             const labelsSelector = '.highcharts-data-label';
             const hcDataLabelsSelector = `${lineLabelsSelector} ${labelsSelector}`;
             // ToDo: replace with qa attribute
-            const gravityChartsDataLabelsSelector = '.gcharts-pie__label';
+            const gravityChartsDataLabelsSelector = '.gcharts-pie__label tspan';
 
             const labels = document.querySelectorAll(
                 [hcDataLabelsSelector, gravityChartsDataLabelsSelector].join(','),
