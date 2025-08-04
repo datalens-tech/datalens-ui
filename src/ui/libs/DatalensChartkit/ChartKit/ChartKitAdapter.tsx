@@ -64,6 +64,7 @@ const ChartkitWidget = React.forwardRef<ChartKit | ChartKitRef | undefined, Char
                 data: getOpensourceChartKitData({type: chartkitType, loadedData, onChange}),
                 lang,
                 splitTooltip,
+                tooltip: {splitted: splitTooltip},
                 isMobile,
                 formatNumber: getFormatNumber,
                 onChange,

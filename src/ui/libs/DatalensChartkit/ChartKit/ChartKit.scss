@@ -38,12 +38,19 @@
 }
 
 .dl-chart-tooltip-content {
-    font-size: 12px;
+    font-size: 13px;
+
+    &_mobile {
+        padding: var(--g-spacing-3);
+        font-size: 13px;
+    }
+
     &__row {
         display: flex;
     }
 
     &__color {
+        align-self: center;
         border-radius: 1px;
         display: inline-block;
         height: 6px;
@@ -51,6 +58,7 @@
     }
 
     &__block {
+        display: flex;
         padding: 0 4px;
         max-width: 400px;
         overflow: hidden;

@@ -11,6 +11,7 @@ import type {
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
 import {formatNumber} from 'shared/modules/format-units/index';
+import {DL} from 'ui/constants';
 
 import type {PointCustomData, ScatterSeriesCustomData} from '../../../../../shared/types/chartkit';
 
@@ -38,7 +39,7 @@ export const scatterTooltipRenderer = (
     const shouldShowShape = shapeTitle && shapeTitle !== colorTitle;
 
     return (
-        <div className={b()}>
+        <div className={b({mobile: DL.IS_MOBILE})}>
             {pointTitle && (
                 <div>
                     {pointTitle}: <b>{point.custom?.name}</b>
@@ -81,7 +82,7 @@ function treemapTooltipRenderer(widgetData: ChartData, data: Parameters<TooltipR
     const label = get(point, 'label', '');
 
     return (
-        <div className={b()}>
+        <div className={b({mobile: DL.IS_MOBILE})}>
             {names.map((name, index) => (
                 <div key={`${name}_${index}`} dangerouslySetInnerHTML={{__html: name}} />
             ))}
@@ -104,12 +105,14 @@ function pieTooltipRenderer(_widgetData: ChartData, data: Parameters<TooltipRend
     percentage = percentage ? formatNumber(percentage, {precision: 1, format: 'percent'}) : null;
 
     return (
-        <div className={b()}>
+        <div className={b({mobile: DL.IS_MOBILE})}>
             <div className={b('row')}>
                 <div className={b('block')}>
                     <span className={b('color')} style={{backgroundColor: point.color}} />
                 </div>
-                <div className={b('block')}>{point.name}</div>
+                <div className={b('block')} style={DL.IS_MOBILE ? {marginRight: 'auto'} : {}}>
+                    {point.name}
+                </div>
                 <div className={b('block')}>{percentage}</div>
                 <div className={b('block')}>{value}</div>
             </div>
@@ -124,7 +127,12 @@ function customTooltipRenderer(widgetData: ChartData, data: Parameters<TooltipRe
     }
 
     const content = render(...data);
-    return <div className={b()} dangerouslySetInnerHTML={{__html: String(content ?? '')}} />;
+    return (
+        <div
+            className={b({mobile: DL.IS_MOBILE})}
+            dangerouslySetInnerHTML={{__html: String(content ?? '')}}
+        />
+    );
 }
 
 export const getTooltipRenderer = (widgetData: ChartData): TooltipRenderer | undefined => {

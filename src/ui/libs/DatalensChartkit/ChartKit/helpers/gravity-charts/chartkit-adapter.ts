@@ -45,6 +45,9 @@ export function getGravityChartsChartKitData(args: {
         legend: {
             justifyContent: 'start',
             itemDistance: 24,
+            itemStyle: {
+                fontSize: '13px',
+            },
         },
         tooltip: {
             pin: {enabled: true, modifierKey: 'altKey'},
@@ -55,6 +58,13 @@ export function getGravityChartsChartKitData(args: {
 
     chartWidgetData.series?.data.forEach((s) => {
         set(s, 'legend.symbol.padding', 8);
+
+        set(s, 'dataLabels.padding', 10);
+        set(s, 'dataLabels.style', {
+            fontSize: '12px',
+            fontWeight: 500,
+            ...s.dataLabels?.style,
+        });
 
         switch (s.type) {
             case 'pie': {
