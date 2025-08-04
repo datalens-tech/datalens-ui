@@ -21,7 +21,7 @@ export const getDefaultOneColorSettings = (): BarOneColorSettings => {
         colorType: BarsColorType.OneColor,
         settings: {
             palette: DEFAULT_PALETTE.id,
-            color: DEFAULT_PALETTE.scheme[0],
+            colorIndex: 0,
         },
     };
 };
@@ -31,8 +31,8 @@ export const getDefaultTwoColorSettings = (): BarTwoColorSettings => {
         colorType: BarsColorType.TwoColor,
         settings: {
             palette: DEFAULT_PALETTE.id,
-            positiveColor: '#8AD554',
-            negativeColor: '#FF3D64',
+            positiveColorIndex: 2,
+            negativeColorIndex: 1,
         },
     };
 };

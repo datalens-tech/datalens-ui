@@ -23,6 +23,7 @@ type TooltipRenderer = NonNullable<ChartTooltip['renderer']>;
 export const scatterTooltipRenderer = (
     widgetData: ChartData,
     data: Parameters<TooltipRenderer>[0],
+    qa?: string,
 ) => {
     const seriesName = data.hovered[0].series.name;
     const series = widgetData.series.data.find(
@@ -39,7 +40,7 @@ export const scatterTooltipRenderer = (
     const shouldShowShape = shapeTitle && shapeTitle !== colorTitle;
 
     return (
-        <div className={b({mobile: DL.IS_MOBILE})}>
+        <div className={b({mobile: DL.IS_MOBILE})} data-qa={qa}>
             {pointTitle && (
                 <div>
                     {pointTitle}: <b>{point.custom?.name}</b>
@@ -70,7 +71,11 @@ export const scatterTooltipRenderer = (
     );
 };
 
-function treemapTooltipRenderer(widgetData: ChartData, data: Parameters<TooltipRenderer>[0]) {
+function treemapTooltipRenderer(
+    widgetData: ChartData,
+    data: Parameters<TooltipRenderer>[0],
+    qa?: string,
+) {
     const series = widgetData.series.data[0];
     const point = data?.hovered[0]?.data as TreemapSeriesData | undefined;
 
@@ -82,7 +87,7 @@ function treemapTooltipRenderer(widgetData: ChartData, data: Parameters<TooltipR
     const label = get(point, 'label', '');
 
     return (
-        <div className={b({mobile: DL.IS_MOBILE})}>
+        <div className={b({mobile: DL.IS_MOBILE})} data-qa={qa}>
             {names.map((name, index) => (
                 <div key={`${name}_${index}`} dangerouslySetInnerHTML={{__html: name}} />
             ))}
@@ -93,7 +98,11 @@ function treemapTooltipRenderer(widgetData: ChartData, data: Parameters<TooltipR
     );
 }
 
-function pieTooltipRenderer(_widgetData: ChartData, data: Parameters<TooltipRenderer>[0]) {
+function pieTooltipRenderer(
+    _widgetData: ChartData,
+    data: Parameters<TooltipRenderer>[0],
+    qa?: string,
+) {
     const point = data?.hovered[0]?.data as PieSeriesData | undefined;
 
     if (!point) {
@@ -105,7 +114,7 @@ function pieTooltipRenderer(_widgetData: ChartData, data: Parameters<TooltipRend
     percentage = percentage ? formatNumber(percentage, {precision: 1, format: 'percent'}) : null;
 
     return (
-        <div className={b({mobile: DL.IS_MOBILE})}>
+        <div className={b({mobile: DL.IS_MOBILE})} data-qa={qa}>
             <div className={b('row')}>
                 <div className={b('block')}>
                     <span className={b('color')} style={{backgroundColor: point.color}} />
@@ -135,7 +144,13 @@ function customTooltipRenderer(widgetData: ChartData, data: Parameters<TooltipRe
     );
 }
 
-export const getTooltipRenderer = (widgetData: ChartData): TooltipRenderer | undefined => {
+export const getTooltipRenderer = ({
+    widgetData,
+    qa,
+}: {
+    widgetData: ChartData;
+    qa?: string;
+}): TooltipRenderer | undefined => {
     if (widgetData?.tooltip?.renderer) {
         return (...args) => customTooltipRenderer(widgetData, args);
     }
@@ -146,15 +161,15 @@ export const getTooltipRenderer = (widgetData: ChartData): TooltipRenderer | und
         switch (seriesTypes[0]) {
             case 'scatter': {
                 return (data: Parameters<TooltipRenderer>[0]) =>
-                    scatterTooltipRenderer(widgetData, data);
+                    scatterTooltipRenderer(widgetData, data, qa);
             }
             case 'treemap': {
                 return (data: Parameters<TooltipRenderer>[0]) =>
-                    treemapTooltipRenderer(widgetData, data);
+                    treemapTooltipRenderer(widgetData, data, qa);
             }
             case 'pie': {
                 return (data: Parameters<TooltipRenderer>[0]) =>
-                    pieTooltipRenderer(widgetData, data);
+                    pieTooltipRenderer(widgetData, data, qa);
             }
             default: {
                 return undefined;

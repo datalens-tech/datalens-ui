@@ -3,7 +3,13 @@ import React from 'react';
 import {SegmentedRadioGroup as RadioButton, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import type {ColorPalette, DatasetOptions, Field, FilterField, Update} from 'shared';
+import {
+    type ColorPalette,
+    type DatasetOptions,
+    type Field,
+    type FilterField,
+    type Update,
+} from 'shared';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents';
 
 import {PaletteTypes} from '../../../../constants';

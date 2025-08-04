@@ -25,6 +25,7 @@ export function getGravityChartsChartKitData(args: {
     const {loadedData, onChange} = args;
     const widgetData = loadedData?.data as ChartData;
     const config = loadedData?.libraryConfig as ChartData;
+    const chartId = loadedData?.entryId;
 
     const chartWidgetData: Partial<ChartData> = {
         chart: {
@@ -51,7 +52,7 @@ export function getGravityChartsChartKitData(args: {
         },
         tooltip: {
             pin: {enabled: true, modifierKey: 'altKey'},
-            renderer: getTooltipRenderer(widgetData),
+            renderer: getTooltipRenderer({widgetData, qa: `chartkit-tooltip-entry-${chartId}`}),
         },
         series: getStyledSeries(loadedData),
     };
