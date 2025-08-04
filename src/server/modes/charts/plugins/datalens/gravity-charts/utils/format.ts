@@ -23,13 +23,14 @@ export function getFieldFormatOptions({field}: {field: ServerField}): ValueForma
             return format;
         }
 
+        const labelFormat =
+            field.formatting?.labelMode === 'percent' ? 'percent' : field.formatting?.format;
         return {
             ...format,
             prefix: field.formatting?.prefix,
             postfix: field.formatting?.postfix,
             unit: field.formatting?.unit,
-            format: field.formatting?.format,
-            labelMode: field.formatting?.labelMode,
+            format: labelFormat,
             showRankDelimiter: field.formatting?.showRankDelimiter,
         };
     }
