@@ -8,7 +8,6 @@ import {useSelector} from 'react-redux';
 import type {Field, TableBarsSettings} from 'shared';
 import {BarsAlignValues, BarsColorType, DialogFieldBarsSettingsQa} from 'shared';
 import {selectColorPalettes} from 'ui/store/selectors/colorPaletteEditor';
-import {getPaletteColors} from 'ui/utils';
 
 import {DialogRadioButtons} from '../../../components/DialogRadioButtons/DialogRadioButtons';
 import {DialogFieldRow} from '../DialogFieldRow/DialogFieldRow';
@@ -84,21 +83,20 @@ export const BarsSettings: React.FC<BarsSettingsProps> = (props: BarsSettingsPro
     const handlePaletteUpdate = React.useCallback(
         (palette: string) => {
             let updateParams: Partial<TableBarsSettings['colorSettings']['settings']> = {palette};
-            const paletteColors = getPaletteColors(palette, colorPalettes);
 
             switch (state.colorSettings.colorType) {
                 case BarsColorType.OneColor: {
                     updateParams = {
                         ...updateParams,
-                        color: paletteColors[0],
+                        colorIndex: 0,
                     };
                     break;
                 }
                 case BarsColorType.TwoColor: {
                     updateParams = {
                         ...updateParams,
-                        positiveColor: paletteColors[0],
-                        negativeColor: paletteColors[1],
+                        positiveColorIndex: 0,
+                        negativeColorIndex: 1,
                     };
                     break;
                 }
@@ -106,7 +104,7 @@ export const BarsSettings: React.FC<BarsSettingsProps> = (props: BarsSettingsPro
 
             handleColorUpdate(updateParams);
         },
-        [handleColorUpdate, state.colorSettings.colorType, colorPalettes],
+        [handleColorUpdate, state.colorSettings.colorType],
     );
 
     return (
