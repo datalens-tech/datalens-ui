@@ -256,30 +256,31 @@ const v12PlaceholderSettingsSchema = z.object({
 });
 
 // Forward declaration for recursive types
-const v12FieldSchema: z.ZodType<any> = z.lazy(() =>
-    z
-        .object({
-            data_type: z.string(),
-            fields: z.array(v12FieldSchema).optional(),
-            type: z.string(),
-            title: z.string(),
-            guid: z.string(),
-            formatting: v12FormattingSchema.optional(),
-            format: z.string().optional(),
-            datasetId: z.string(),
-            source: z.string().optional(),
-            datasetName: z.string().optional(),
-            hideLabelMode: z.string().optional(),
-            calc_mode: datasetFieldCalcModeSchema,
-            default_value: parameterDefaultValueSchema.optional(),
-            barsSettings: z.any().optional(), // TableBarsSettings
-            subTotalsSettings: z.any().optional(), // TableSubTotalsSettings
-            backgroundSettings: z.any().optional(), // TableFieldBackgroundSettings
-            columnSettings: z.any().optional(), // ColumnSettings
-            hintSettings: z.any().optional(), // HintSettings
-        })
-        .merge(v12ClientOnlyFieldsSchema),
-);
+const v12FieldSchemaInner = z.object({
+    ...v12ClientOnlyFieldsSchema.shape,
+    data_type: z.string(),
+    type: z.string(),
+    title: z.string(),
+    guid: z.string(),
+    formatting: v12FormattingSchema.optional(),
+    format: z.string().optional(),
+    datasetId: z.string(),
+    source: z.string().optional(),
+    datasetName: z.string().optional(),
+    hideLabelMode: z.string().optional(),
+    calc_mode: datasetFieldCalcModeSchema,
+    default_value: parameterDefaultValueSchema.optional(),
+    barsSettings: z.any().optional(), // TableBarsSettings
+    subTotalsSettings: z.any().optional(), // TableSubTotalsSettings
+    backgroundSettings: z.any().optional(), // TableFieldBackgroundSettings
+    columnSettings: z.any().optional(), // ColumnSettings
+    hintSettings: z.any().optional(), // HintSettings
+});
+
+const v12FieldSchema = z.object({
+    ...v12FieldSchemaInner.shape,
+    fields: z.array(v12FieldSchemaInner).optional(),
+});
 
 // V12Placeholder schema
 const v12PlaceholderSchema = z.object({
