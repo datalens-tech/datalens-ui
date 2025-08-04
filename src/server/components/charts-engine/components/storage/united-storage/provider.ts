@@ -360,7 +360,7 @@ export class USProvider {
     ) {
         const result = await USProvider.retrieveById(ctx, props);
 
-        result.data = mapChartsConfigToLatestVersion(JSON.parse(result.data.shared));
+        result.data = mapChartsConfigToLatestVersion(JSON.parse(result.data.shared)) as any;
 
         return result;
     }

@@ -61,7 +61,7 @@ const proxyMap: PublicApiRpcMap = {
         updateWizardChart: {
             resolve: (api) => api.mix.updateWizardChartApi,
             openApi: {
-                summary: 'Delete wizard chart',
+                summary: 'Update wizard chart',
                 tags: ['wizard'],
             },
         },
