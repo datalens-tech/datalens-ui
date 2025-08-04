@@ -97,29 +97,37 @@ export const enum IndicatorTitleMode {
     Hide = 'hide',
 }
 
-type MetricColorWithIndex = {
-    metricFontColor?: undefined;
-    metricFontColorIndex: number;
+// TODO: use either index or color
+// type MetricColorWithIndex = {
+//     metricFontColor?: undefined;
+//     metricFontColorIndex: number;
+// };
+
+// type MetricColorWithCustomColor = {
+//     metricFontColor: string;
+//     metricFontColorIndex?: undefined;
+// };
+
+// export type DefinedMetricFontSettings = {metricFontColorPalette: string; metricFontSize: string} & (
+//     | MetricColorWithIndex
+//     | MetricColorWithCustomColor
+// );
+
+// export type MetricFontSettings =
+//     | DefinedMetricFontSettings
+//     | {
+//           metricFontColorPalette?: undefined;
+//           metricFontSize?: undefined;
+//           metricFontColor?: undefined;
+//           metricFontColorIndex?: undefined;
+//       };
+
+export type MetricFontSettings = {
+    metricFontColorPalette?: string;
+    metricFontSize?: string;
+    metricFontColor?: string;
+    metricFontColorIndex?: number;
 };
-
-type MetricColorWithCustomColor = {
-    metricFontColor: string;
-    metricFontColorIndex?: undefined;
-};
-
-export type DefinedMetricFontSettings = {metricFontColorPalette: string; metricFontSize: string} & (
-    | MetricColorWithIndex
-    | MetricColorWithCustomColor
-);
-
-export type MetricFontSettings =
-    | DefinedMetricFontSettings
-    | {
-          metricFontColorPalette?: undefined;
-          metricFontSize?: undefined;
-          metricFontColor?: undefined;
-          metricFontColorIndex?: undefined;
-      };
 
 export type CommonSharedExtraSettings = {
     title?: string;

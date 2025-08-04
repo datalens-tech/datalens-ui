@@ -45,11 +45,8 @@ export const ColorsControl: React.FC<ColorsControlProps> = (props: ColorsControl
                             controlQa={DialogFieldBarsSettingsQa.ColorSelector}
                             currentColor={currentColor}
                             onPaletteItemChange={(color, index?: number) =>
-                                onUpdateColor(
-                                    index
-                                        ? {colorIndex: index, color: undefined}
-                                        : {color, colorIndex: undefined},
-                                )
+                                // TODO: use either index or color
+                                onUpdateColor({colorIndex: index, color})
                             }
                             onPaletteUpdate={onUpdatePalette}
                             onError={onError}
@@ -84,11 +81,8 @@ export const ColorsControl: React.FC<ColorsControlProps> = (props: ColorsControl
                                 controlQa={DialogFieldBarsSettingsQa.PositiveColorSelector}
                                 currentColor={positiveColor}
                                 onPaletteItemChange={(color, index?: number) =>
-                                    onUpdateColor(
-                                        index
-                                            ? {positiveColorIndex: index, positiveColor: undefined}
-                                            : {positiveColor: color, positiveColorIndex: undefined},
-                                    )
+                                    // TODO: use either index or color
+                                    onUpdateColor({positiveColorIndex: index, positiveColor: color})
                                 }
                                 onPaletteUpdate={onUpdatePalette}
                                 onError={onError}
@@ -106,11 +100,11 @@ export const ColorsControl: React.FC<ColorsControlProps> = (props: ColorsControl
                                 controlQa={DialogFieldBarsSettingsQa.NegativeColorSelector}
                                 currentColor={negativeColor}
                                 onPaletteItemChange={(color: string, index?: number) => {
-                                    onUpdateColor(
-                                        index
-                                            ? {negativeColorIndex: index, negativeColor: undefined}
-                                            : {negativeColor: color, negativeColorIndex: undefined},
-                                    );
+                                    // TODO: use either index or color
+                                    onUpdateColor({
+                                        negativeColorIndex: index,
+                                        negativeColor: color,
+                                    });
                                 }}
                                 onPaletteUpdate={onUpdatePalette}
                                 onError={onError}

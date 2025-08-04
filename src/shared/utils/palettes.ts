@@ -9,8 +9,8 @@ export function getColorByColorSettings({
     color?: string;
     fallbackIndex?: number;
 }) {
-    if (colorIndex) {
-        return currentColors[colorIndex];
+    if (typeof colorIndex === 'number') {
+        return currentColors[colorIndex] || currentColors[fallbackIndex];
     }
 
     if (color) {

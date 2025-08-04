@@ -7,6 +7,7 @@ import type {
     ServerCommonSharedExtraSettings,
 } from '../../../../../../../../shared';
 import {MINIMUM_FRACTION_DIGITS, isDateField} from '../../../../../../../../shared';
+import {getColorByColorSettings} from '../../../../../../../../shared/utils/palettes';
 import {isFloatDataType, isNumericalDataType} from '../../../utils/misc-helpers';
 import {getTitle} from '../utils';
 
@@ -65,10 +66,11 @@ export const prepareBasicMetricVariant = ({
 
     const size = (extraSettings && extraSettings.metricFontSize) || '';
 
-    const colorIndex = extraSettings?.metricFontColorIndex;
-    const colorByIndex = colorIndex ? currentPalette[colorIndex] : '';
-
-    const color = colorByIndex || extraSettings?.metricFontColor || currentPalette[0];
+    const color = getColorByColorSettings({
+        currentColors: currentPalette,
+        colorIndex: extraSettings?.metricFontColorIndex,
+        color: extraSettings?.metricFontColor,
+    });
     const title = getTitle(extraSettings, measure);
 
     const metric: MetricConfig = {

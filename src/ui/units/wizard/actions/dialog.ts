@@ -148,20 +148,28 @@ export function openDialogMetric({extraSettings}: OpenDialogMetricArguments) {
                 id: DIALOG_METRIC_SETTINGS,
                 props: {
                     onSave: ({size, palette, color, colorIndex}) => {
-                        const metricSettins =
-                            typeof colorIndex === 'number'
-                                ? {
-                                      metricFontColorIndex: colorIndex,
-                                      metricFontSize: size,
-                                      metricFontColorPalette: palette,
-                                      metricFontColor: undefined,
-                                  }
-                                : {
-                                      metricFontSize: size,
-                                      metricFontColor: color,
-                                      metricFontColorPalette: palette,
-                                      metricFontColorIndex: undefined,
-                                  };
+                        // TODO: use either index or color
+                        // const metricSettins =
+                        //     typeof colorIndex === 'number'
+                        //         ? {
+                        //               metricFontColorIndex: colorIndex,
+                        //               metricFontSize: size,
+                        //               metricFontColorPalette: palette,
+                        //               metricFontColor: undefined,
+                        //           }
+                        //         : {
+                        //               metricFontSize: size,
+                        //               metricFontColor: color,
+                        //               metricFontColorPalette: palette,
+                        //               metricFontColorIndex: undefined,
+                        //           };
+
+                        const metricSettins = {
+                            metricFontColorIndex: colorIndex,
+                            metricFontSize: size,
+                            metricFontColorPalette: palette,
+                            metricFontColor: color,
+                        };
 
                         dispatch(setExtraSettings({...extraSettings, ...metricSettins}));
 

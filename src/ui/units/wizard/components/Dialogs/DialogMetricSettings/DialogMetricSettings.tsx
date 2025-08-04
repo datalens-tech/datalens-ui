@@ -154,11 +154,8 @@ class DialogMetricSettings extends React.PureComponent<Props, State> {
 
     private handleInputColorUpdate = (color: string) => {
         const preparedColor = `#${color}`;
-        const paletteColors = getPaletteColors(
-            this.props.palette || DEFAULT_PALETTE.id,
-            this.props.colorPalettes,
-        );
-        const colorPaletteIndex = paletteColors.indexOf(preparedColor);
+
+        const colorPaletteIndex = this.state.paletteColors.indexOf(preparedColor);
         const colorIndex = colorPaletteIndex === -1 ? undefined : colorPaletteIndex;
 
         this.setState({currentColor: preparedColor, colorIndex});

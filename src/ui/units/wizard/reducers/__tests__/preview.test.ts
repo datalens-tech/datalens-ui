@@ -1,5 +1,5 @@
 import type {CommonSharedExtraSettings, Dataset, Shared} from 'shared';
-import {WizardType} from 'shared';
+import {ChartsConfigVersion, WizardType} from 'shared';
 
 import {VISUALIZATION_IDS} from '../../../../constants/visualizations';
 import {UPDATE_CLIENT_CHARTS_CONFIG, UPDATE_PREVIEW} from '../../actions/preview';
@@ -267,7 +267,7 @@ describe('Preview reducer', () => {
                 tooltips: [],
                 type: 'datalens',
                 updates: [],
-                version: '13',
+                version: ChartsConfigVersion.V13,
                 visualization: stateWithDataset.visualization,
                 wizardDataset: mockedDataset,
             };

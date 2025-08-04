@@ -7,6 +7,7 @@ import type {
     ServerField,
 } from '../../../../../../../../shared';
 import {MINIMUM_FRACTION_DIGITS, formatNumber, isDateField} from '../../../../../../../../shared';
+import {getColorByColorSettings} from '../../../../../../../../shared/utils/palettes';
 import {prepareMetricObject} from '../../../utils/markup-helpers';
 import {isFloatDataType, isNumericalDataType} from '../../../utils/misc-helpers';
 import {getTitle} from '../utils';
@@ -53,10 +54,11 @@ export const prepareMarkupMetricVariant = ({
     } else {
         const size = (extraSettings && extraSettings.metricFontSize) || 'm';
 
-        const colorIndex = extraSettings?.metricFontColorIndex;
-        const colorByIndex = colorIndex ? currentPalette[colorIndex] : '';
-
-        const color = colorByIndex || extraSettings?.metricFontColor || currentPalette[0];
+        const color = getColorByColorSettings({
+            currentColors: currentPalette,
+            colorIndex: extraSettings?.metricFontColorIndex,
+            color: extraSettings?.metricFontColor,
+        });
 
         const formatOptions: CommonNumberFormattingOptions = {};
 

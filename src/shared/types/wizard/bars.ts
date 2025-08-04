@@ -28,51 +28,58 @@ export interface BarGradientColorSettings {
     };
 }
 
-type BarOneColorByIndex = {
-    colorIndex: number;
-    color?: undefined;
-};
+// TODO: use either index or color
+// type BarOneColorByIndex = {
+//     colorIndex: number;
+//     color?: undefined;
+// };
 
-type BarOneColorByColor = {
-    colorIndex?: undefined;
-    color: string;
-};
+// type BarOneColorByColor = {
+//     colorIndex?: undefined;
+//     color: string;
+// };
 
 export interface BarOneColorSettings {
     colorType: BarsColorType.OneColor;
     settings: {
         palette: string;
-    } & (BarOneColorByIndex | BarOneColorByColor);
+        colorIndex?: number;
+        color?: string;
+    };
 }
 
-type BarTwoColumnsPositiveByIndex = {
-    positiveColorIndex: number;
-    positiveColor?: undefined;
-};
+// type BarTwoColumnsPositiveByIndex = {
+//     positiveColorIndex: number;
+//     positiveColor?: undefined;
+// };
 
-type BarTwoColumnsPositiveByColor = {
-    positiveColorIndex?: undefined;
-    positiveColor: string;
-};
+// type BarTwoColumnsPositiveByColor = {
+//     positiveColorIndex?: undefined;
+//     positiveColor: string;
+// };
 
-type BarTwoColumnsNegativeByIndex = {
-    negativeColorIndex: number;
-    negativeColor?: undefined;
-};
+// type BarTwoColumnsNegativeByIndex = {
+//     negativeColorIndex: number;
+//     negativeColor?: undefined;
+// };
 
-type BarTwoColumnsNegativeByColor = {
-    negativeColorIndex?: undefined;
-    negativeColor: string;
-};
+// type BarTwoColumnsNegativeByColor = {
+//     negativeColorIndex?: undefined;
+//     negativeColor: string;
+// };
 
-type BatTwoColorsSettings = (BarTwoColumnsPositiveByIndex | BarTwoColumnsPositiveByColor) &
-    (BarTwoColumnsNegativeByIndex | BarTwoColumnsNegativeByColor);
+// type BatTwoColorsSettings = (BarTwoColumnsPositiveByIndex | BarTwoColumnsPositiveByColor) &
+//     (BarTwoColumnsNegativeByIndex | BarTwoColumnsNegativeByColor);
 
 export interface BarTwoColorSettings {
     colorType: BarsColorType.TwoColor;
     settings: {
         palette: string;
-    } & BatTwoColorsSettings;
+        negativeColorIndex?: number;
+        negativeColor?: string;
+        positiveColorIndex?: number;
+        positiveColor?: string;
+    };
 }
 
 export interface BarAutoScaleSettings {

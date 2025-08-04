@@ -9,17 +9,24 @@ import {ChartsConfigVersion} from '../../../../types';
 const OLD_DEFAULT_PALETTE_ID = 'default-palette';
 
 // replace 'default-palette' (old default20) with classic20 palette
-const migratePaletteSettings = (config: V12ChartsConfig) => {
-    // types cast
-    // {metricFontSize?: string; metricFontColor?: string; metricFontColorPalette?: string;} =>
-    // MetricFontSettings
-    const migratedExtraSettings = {...config.extraSettings} as V13CommonSharedExtraSettings;
-    if (config.visualization?.id === WizardVisualizationId.Metric && config.extraSettings) {
-        if (migratedExtraSettings.metricFontColorPalette === OLD_DEFAULT_PALETTE_ID) {
-            migratedExtraSettings.metricFontColorPalette = COMMON_PALETTE_ID.CLASSIC_20;
-        }
+export const mapV12ConfigToV13 = (config: V12ChartsConfig): V13ChartsConfig => {
+    // there are differences only in the type of extraSettings
+    const migratedConfig = {...config, version: ChartsConfigVersion.V13} as V13ChartsConfig;
 
-        return {...config, extraSettings: migratedExtraSettings};
+    if (
+        config.visualization?.id === WizardVisualizationId.Metric &&
+        config.extraSettings &&
+        config.extraSettings.metricFontColorPalette === OLD_DEFAULT_PALETTE_ID
+    ) {
+        const migratedExtraSettings = {
+            ...config.extraSettings,
+            metricFontColorPalette: COMMON_PALETTE_ID.CLASSIC_20,
+        } as V13CommonSharedExtraSettings;
+
+        return {
+            ...migratedConfig,
+            extraSettings: migratedExtraSettings,
+        };
     } else if (
         config.visualization?.id === WizardVisualizationId.PivotTable ||
         config.visualization?.id === WizardVisualizationId.FlatTable
@@ -45,33 +52,23 @@ const migratePaletteSettings = (config: V12ChartsConfig) => {
 
                 return migratedItem;
             });
+
             return {...placeholder, items: migratedItems};
         });
 
         return {
-            ...config,
+            ...migratedConfig,
             visualization: {...config.visualization, placeholders: migratedPlaceholders},
-            extraSettings: migratedExtraSettings,
         };
 
         // tables also has colorsConfig but only for gradients and we don't touch them.
         // indicators also has colorsConfig but it is not used
     } else if (config.colorsConfig && config.colorsConfig.palette === OLD_DEFAULT_PALETTE_ID) {
         return {
-            ...config,
+            ...migratedConfig,
             colorsConfig: {...config.colorsConfig, palette: COMMON_PALETTE_ID.CLASSIC_20},
-            extraSettings: migratedExtraSettings,
         };
     }
 
-    return {...config, extraSettings: migratedExtraSettings};
-};
-
-export const mapV12ConfigToV13 = (config: V12ChartsConfig): V13ChartsConfig => {
-    const migratedConfig = migratePaletteSettings(config);
-
-    return {
-        ...migratedConfig,
-        version: ChartsConfigVersion.V13,
-    };
+    return migratedConfig;
 };
