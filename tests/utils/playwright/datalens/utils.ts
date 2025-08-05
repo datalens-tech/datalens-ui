@@ -29,7 +29,18 @@ export async function isAuthenticated(args: AuthenticateCheckArgs) {
 }
 
 export async function authenticate(args: AuthenticateArgs) {
-    const {page, baseUrl, authUrl, authType, login, password, afterAuth, retryCount, force} = args;
+    const {
+        page,
+        baseUrl,
+        authUrl,
+        authType,
+        storageState,
+        login,
+        password,
+        afterAuth,
+        retryCount,
+        force,
+    } = args;
 
     for (let retry = 0; retry < retryCount; retry += 1) {
         const authenticated = await isAuthenticated({
@@ -58,7 +69,7 @@ export async function authenticate(args: AuthenticateArgs) {
 
         await promiseResponse;
 
-        await page.context().storageState({path: 'artifacts/storageState.json'});
+        await page.context().storageState({path: storageState || 'artifacts/storageState.json'});
 
         await page.goto(baseUrl, {waitUntil: 'load'});
 

@@ -82,6 +82,7 @@ export async function datalensTestSetup({config, authSettings, afterAuth}: Datal
                 password: authSettings.password,
                 afterAuth,
                 retryCount: AUTH_RETRY,
+                storageState: path.join(ARTIFACTS_PATH, 'storageState.json'),
             });
         }
     } finally {

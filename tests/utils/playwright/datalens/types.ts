@@ -13,9 +13,10 @@ export type AuthenticateArgs = {
     afterAuth?: (args: {page: Page}) => Promise<void>;
     force?: boolean;
     authUrl?: string;
+    storageState?: string;
 };
 
 export type AuthenticateCheckArgs = Pick<
     AuthenticateArgs,
-    'page' | 'baseUrl' | 'authUrl' | 'authType'
+    'page' | 'baseUrl' | 'authUrl' | 'authType' | 'storageState'
 >;
