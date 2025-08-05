@@ -83,7 +83,7 @@ const authenticateDataLens = async (args: AuthenticateArgs) => {
 
     await page.context().storageState({path: storageState || 'artifacts/storageState.json'});
 
-    await page.waitForURL(baseUrl);
+    expect(page.url()).not.toEqual(url);
 };
 
 export async function authenticate(args: AuthenticateArgs) {
