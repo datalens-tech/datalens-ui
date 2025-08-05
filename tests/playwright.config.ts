@@ -56,8 +56,9 @@ Object.defineProperty(global, 'expect', {
 
 const baseURL = process.env.E2E_DOMAIN;
 
-const globalSetupPath = './utils/playwright/datalens/e2e/setup-e2e';
+const globalSetupPath = './utils/playwright/datalens/setup-e2e';
 
+// eslint-disable-next-line no-console
 console.log(`Base URL for tests is: ${baseURL}`);
 
 const testTimeout = process.env.E2E_TEST_TIMEOUT

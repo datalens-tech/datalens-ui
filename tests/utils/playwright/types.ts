@@ -61,6 +61,29 @@ export interface SuiteOptions {
 export type AuthRobotSettings = {
     login: string;
     password: string;
-    url: string;
+    url?: string;
     baseUrl?: string;
 };
+
+export type AuthenticateType = 'datalens';
+
+export type AuthenticateArgs = {
+    page: Page;
+    baseUrl: string;
+    authType: AuthenticateType;
+    login: string;
+    password: string;
+    retryCount: number;
+    afterAuth?: (args: {page: Page}) => Promise<void>;
+    force?: boolean;
+    authUrl?: string;
+};
+
+export type AuthenticateCheckArgs = Pick<
+    AuthenticateArgs,
+    'page' | 'baseUrl' | 'authUrl' | 'authType'
+>;
+export type AuthenticateLoginArgs = Pick<
+    AuthenticateArgs,
+    'page' | 'baseUrl' | 'authUrl' | 'login' | 'password'
+>;

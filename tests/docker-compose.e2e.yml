@@ -127,7 +127,7 @@ services:
       E2E_ACTION_TIMEOUT: ${E2E_ACTION_TIMEOUT}
       E2E_EXPECT_TIMEOUT: ${E2E_EXPECT_TIMEOUT}
       E2E_TEST_TIMEOUT: ${E2E_TEST_TIMEOUT}
-      NO_AUTH: true
+      E2E_NO_AUTH: ${E2E_NO_AUTH:-true}
     depends_on:
       - datalens-from-image
     networks:

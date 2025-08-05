@@ -1,79 +1,71 @@
-import urlUtils from 'url';
+import {URL} from 'url';
 
-import {Page} from '@playwright/test';
+import type {AuthenticateArgs, AuthenticateCheckArgs} from './types';
+import {AUTH_TYPE} from '../constants';
 
-import {goToWithRetry} from '../utils';
+import {SignInQa} from '../../../../src/shared/constants';
 
-export async function isAuthenticated(page: Page, baseUrl: string, passportUrl: string) {
-    const updateAuthUrl = `${passportUrl}/auth/update?retpath=${baseUrl}`;
+import {slct} from '../..';
+
+export async function isAuthenticated(args: AuthenticateCheckArgs) {
+    const {page, baseUrl, authUrl, authType} = args;
+
+    let updateAuthUrl = `${baseUrl}/auth/signin`;
+    if (authType !== AUTH_TYPE.DATALENS) {
+        updateAuthUrl = `${authUrl}/auth/update?retpath=${baseUrl}`;
+    }
+
     const response = await page.goto(updateAuthUrl, {waitUntil: 'networkidle'});
 
     if (!response) {
         return false;
     }
 
-    const {hostname: targetHostname} = urlUtils.parse(updateAuthUrl);
-    const {hostname: actualHostname} = urlUtils.parse(response.url());
-    // if we have been redirected away from passport, most likely we're already authenticated
+    const {hostname: targetHostname} = new URL(updateAuthUrl);
+    const {hostname: actualHostname} = new URL(response.url());
+
+    // if we have been redirected away from auth, most likely we're already authenticated
     return targetHostname !== actualHostname;
 }
 
-type AuthenticateRobotArgs = {
-    page: Page;
-    baseUrl: string;
-    passportUrl: string;
-    login: string;
-    password: string;
-    retryCount: number;
-    afterAuth?: (args: {page: Page}) => Promise<void>;
-    force?: boolean;
-};
+export async function authenticate(args: AuthenticateArgs) {
+    const {page, baseUrl, authUrl, authType, login, password, afterAuth, retryCount, force} = args;
 
-export async function authenticate(args: AuthenticateRobotArgs) {
-    const {page, baseUrl, passportUrl, login, password, afterAuth, retryCount, force} = args;
+    for (let retry = 0; retry < retryCount; retry += 1) {
+        const authenticated = await isAuthenticated({
+            page,
+            baseUrl,
+            authUrl,
+            authType,
+        });
 
-    try {
-        const authenticated = await isAuthenticated(page, baseUrl, passportUrl);
-        if (!authenticated || force) {
-            const authUrl = `${passportUrl}/auth?mode=password&retpath=${encodeURIComponent(
-                baseUrl,
-            )}?skipPromo=true`;
-
-            const timestamp = Math.round(new Date().getTime() / 1000);
-            const html = `
-                <html>
-                    <form method="POST" id="authForm" action="${authUrl}">
-                        <input name="login" value="${login}">
-                        <input type="password" name="passwd" value="${password}">
-                        <input type="checkbox" name="twoweeks" value="no">
-                        <input type="hidden" name="timestamp" value="${timestamp}">
-                        <button type="submit">Login</button>
-                    </form>
-                <html>
-            `;
-            await page.setContent(html);
-            await page.waitForSelector('#authForm');
-            await page.click('button');
-
-            await page.waitForResponse((response) => response.ok());
-
-            await page.context().storageState({path: 'artifacts/storageState.json'});
-
-            await goToWithRetry(page, `${baseUrl}?skipPromo=true`);
-
-            if (afterAuth) {
-                await afterAuth({page});
-            }
+        if (authenticated && !force) {
+            return;
         }
-    } catch (error) {
-        if (retryCount > 0) {
-            console.log(`Error: ${JSON.stringify(error)}`);
-            console.log('Auth retry');
-            await authenticate({...args, retryCount: retryCount - 1, force: true});
-        } else {
-            // first of all, check for holes before baseUrl, if it falls in this place
-            console.error('AUTHENTICATION_FAILED', error);
-            throw error;
+
+        const url = `${baseUrl}/auth/signin`;
+
+        await page.goto(url);
+
+        await page.waitForSelector(slct(SignInQa.SIGN_IN_FORM));
+        await page.fill(`${slct(SignInQa.INPUT_LOGIN)} input`, login);
+        await page.fill(`${slct(SignInQa.INPUT_PASSWORD)} input`, password);
+
+        const promiseResponse = page.waitForResponse((response) => response.ok(), {
+            timeout: 10 * 1000,
+        });
+        await page.click('button[type=submit]');
+
+        await promiseResponse;
+
+        await page.context().storageState({path: 'artifacts/storageState.json'});
+
+        await page.goto(baseUrl, {waitUntil: 'load'});
+
+        expect(page.url()).toContain(baseUrl);
+
+        if (afterAuth) {
+            await afterAuth({page});
         }
     }
 }
