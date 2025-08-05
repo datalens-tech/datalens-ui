@@ -213,42 +213,82 @@ const stringifyData = async (host: string, chartData: any, token: string, settin
 }
 
 export async function exportEntries(req: Request, res: Response) {
+    /**
+     * Конвертирует массив объектов в CSV-строку.
+     * @param arr - Массив объектов с данными.
+     * @returns CSV-строка.
+     */
+    function convertToCSV(arr: Object[], sep: string): string {
+        const headers = Object.keys(arr[0]).join(sep);
+        const rows = arr.map(obj =>
+            Object.values(obj)
+            .map(value => `"${String(value).replace(/"/g, '""')}"`) // Экранирование кавычек
+            .join(sep)
+        );
+        return [headers, ...rows].join('\n');
+    }
     var r: any = req;
     var host = r.body['host'] || 'http://localhost:8080';
 
     const context:any = req.ctx;
 
     if(r.body['links']) {
+        // debugger
         const links = r.body['links'];
         const chartData = await getChartData(host, req.headers['x-rpc-authorization'] as string, links, r.body['params']);
 
         const exportPath = path.join(__dirname, '../', '../', '../', 'export');
         const pythonScript = path.join(exportPath, 'dash2sheets.py');
+        const metaPath = path.join(exportPath, 'meta.csv');
 
         const publicOutputPath = path.join(exportPath, `${r.body['exportFilename'] +'-' + Date.now()}.${r.body['outputFormat']}`);
-
-        let files = [];
+        
+        let metadata = [];
 
         const filteredLinks = Object.keys(chartData);
         for(let i = 0; i < filteredLinks.length; i++) {
             if(chartData[filteredLinks[i]].extra.datasets) {
                 let sheetName = (chartData[filteredLinks[i]].key.split('/').length > 1 ? chartData[filteredLinks[i]].key.split('/')[1] : filteredLinks[i]) + '-' + Date.now();
+                
                 const publicOutputCSVPath = path.join(exportPath, `${sheetName.replace(/[\[\]\:\*\?\/\\]/g, '_')}.${r.body['formSettings'].format}`);
-                files.push(publicOutputCSVPath);
+                
+                const chartProps = {};
+                const chart = chartData[filteredLinks[i]];
+                const chartPropNames = Object.keys(chart.defaultParams);
 
+                chartPropNames.forEach(name=>{
+                    if (chart.defaultParams[name]?.length > 0) {
+                        chartProps[name.replace("__", "")] = chart.defaultParams[name][0]
+                    }
+                })
+
+                metadata.push({ 
+                    csv_data_name: publicOutputCSVPath, 
+                    ...chartProps
+                });
+                
+                
                 const response = await stringifyData(host, chartData[filteredLinks[i]], req.headers['x-rpc-authorization'] as string, r.body);
                 await fs.promises.writeFile(publicOutputCSVPath, response.data);
             }
         }
-
+        
+        const SEPARATOR = ";"
+        const csv = convertToCSV(metadata, SEPARATOR);
+        await fs.promises.writeFile(metaPath, csv, 'utf8');
+        
         const destroy = async () => {
             if(fs.existsSync(publicOutputPath)) {
                 await fs.promises.unlink(publicOutputPath);
             }
 
-            for(let i = 0; i < files.length; i++) {
-                if(fs.existsSync(files[i])) {
-                    await fs.promises.unlink(files[i]);
+            if(fs.existsSync(metaPath)) {
+                await fs.promises.unlink(metaPath);
+            }
+
+            for(let i = 0; i < metadata.length; i++) {
+                if(fs.existsSync(metadata[i].csv_data_name)) {
+                    await fs.promises.unlink(metadata[i].csv_data_name);
                 }
             }
         }
@@ -259,7 +299,7 @@ export async function exportEntries(req: Request, res: Response) {
         } 
 
         // тут нужно вызвать скрипт python
-        var resSpawn = child_process.spawnSync(context.config.python || 'python3', [pythonScript, `OUTPUT_NAME="${publicOutputPath}"`, `SEP=;`, ...files]);
+        var resSpawn = child_process.spawnSync(context.config.python || 'python3', [pythonScript, `OUTPUT_NAME="${publicOutputPath}"`, `SEP=${SEPARATOR}`, `META_NAME="${metaPath}"`]);
         if (resSpawn != null && resSpawn.stderr.byteLength > 0) {
             context.logError(`EXPORT_ODS_DATA_WRITE_ERROR`, {
                 outputPath: publicOutputPath,

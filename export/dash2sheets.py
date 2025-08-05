@@ -1,20 +1,10 @@
-# "python3 dash2sheets.py OUTPUT_NAME=output.xlsx SEP=; ./temp/file1.csv ./temp/file2.csv"
-#
-# Python скрипт для объединения нескольких CSV файлов в один XLSX
-# 
-# Параметры:
-# - OUTPUT_NAME: string - выходной файл
-# - SEP: string - разделитель CSV 
-# - далее следует список CSV файлов
-
 import pandas as pd
 import sys
-import os
+from IservMultiTabReportsLib import WorkbookManager
 
 def read_args():
     """
     Чтение аргументов из командной строки
-
     Результат:
     ----------
     Словарь с параметрами
@@ -22,7 +12,7 @@ def read_args():
 
     params = {}
 
-    new_argv = sys.argv[1:3]
+    new_argv = sys.argv[1:5]
 
     for i in range(0, len(new_argv)):
         arg = new_argv[i].split('=')
@@ -32,12 +22,25 @@ def read_args():
 
     return params
 
-params = read_args()
 
-with pd.ExcelWriter(params["OUTPUT_NAME"]) as writer:
-    for csvfilename in sys.argv[3:]:
-        df = pd.read_csv(csvfilename, sep=params["SEP"])
-        file_name = os.path.basename(csvfilename)
-        sheet_name = os.path.splitext(file_name)[0]
-        # Excel worksheet name must be <= 31 chars.
-        df.to_excel(writer,sheet_name=sheet_name.split(sep='-')[0][:31], index=False)
+if __name__ == "__main__":
+    # аргументы
+    params = read_args()
+
+    # имена файлов
+    filenames = sys.argv[5:]
+
+    # Пример метаданных
+    # template_name;sheet_name;csv_data_name;mapping
+    # tests/5.3. Обязательность заполнения колонок (Универсальная+ДЭК).xlsx;ТУ;tests/Опросный лист ТУ.csv;A4:AX4
+    dfMeta = pd.read_csv(params['META_NAME'], sep=params["SEP"], dtype="str").fillna("")
+
+    wm = WorkbookManager()
+
+    wm.transform(
+        meta_data=dfMeta.to_dict(orient='records'), 
+        separator=params["SEP"], 
+        output_path=params["OUTPUT_NAME"]
+    )
+
+    
