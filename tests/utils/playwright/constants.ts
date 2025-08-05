@@ -12,6 +12,8 @@ export const AUTH_SETTINGS = {
 
 export const AUTH_TYPE = {
     DATALENS: 'datalens',
+    PASSPORT: 'passport',
+    CUSTOM: 'custom',
 } as const;
 
 export const AUTH_RETRY = 1;

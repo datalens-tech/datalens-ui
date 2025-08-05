@@ -71,7 +71,10 @@ const expectTimeout = process.env.E2E_EXPECT_TIMEOUT
 const actionTimeout = process.env.E2E_ACTION_TIMEOUT
     ? parseInt(process.env.E2E_ACTION_TIMEOUT, 10)
     : testTimeout;
-const isAuthDisabled = isTrueArg(process.env.NO_AUTH) || isTrueArg(process.env.E2E_NO_AUTH);
+const isAuthDisabled =
+    isTrueArg(process.env.NO_AUTH) ||
+    isTrueArg(process.env.E2E_NO_AUTH) ||
+    !isTrueArg(process.env.AUTH_ENABLED || 'true');
 const playwrightConfig: PlaywrightTestConfig<DatalensTestFixtures> = {
     workers,
     testMatch,

@@ -65,7 +65,14 @@ export type AuthRobotSettings = {
     baseUrl?: string;
 };
 
-export type AuthenticateType = 'datalens';
+export type AuthenticateType = 'datalens' | 'passport' | 'custom';
+export type AuthenticateCustomArgs = {
+    page: Page;
+    login?: string;
+    password?: string;
+    baseUrl?: string;
+    storageState?: string;
+};
 
 export type AuthenticateArgs = {
     page: Page;
@@ -75,8 +82,10 @@ export type AuthenticateArgs = {
     password: string;
     retryCount: number;
     afterAuth?: (args: {page: Page}) => Promise<void>;
+    customAuth?: (args: AuthenticateCustomArgs) => Promise<void>;
     force?: boolean;
     authUrl?: string;
+    storageState?: string;
 };
 
 export type AuthenticateCheckArgs = Pick<

@@ -3,7 +3,7 @@ import path from 'path';
 
 import {FullConfig, Page, chromium} from '@playwright/test';
 
-import type {AuthRobotSettings, AuthenticateType} from '../types';
+import type {AuthRobotSettings, AuthenticateType, AuthenticateCustomArgs} from '../types';
 import {AUTH_TYPE, DEFAULT_SCREENSHOT_PATH, AUTH_RETRY} from '../constants';
 import {isTrueArg} from '../../../../src/shared';
 
@@ -15,9 +15,15 @@ type DatalensTestSetupArgs = {
     config: FullConfig;
     authSettings: AuthRobotSettings;
     afterAuth?: (args: {page: Page}) => Promise<void>;
+    customAuth?: (args: AuthenticateCustomArgs) => Promise<void>;
 };
 
-export async function datalensTestSetup({config, authSettings, afterAuth}: DatalensTestSetupArgs) {
+export async function datalensTestSetup({
+    config,
+    authSettings,
+    afterAuth,
+    customAuth,
+}: DatalensTestSetupArgs) {
     if (fs.existsSync(ARTIFACTS_PATH) && process.env.CI !== 'true') {
         await fs.rmSync(ARTIFACTS_PATH, {recursive: true});
     }
@@ -49,7 +55,10 @@ export async function datalensTestSetup({config, authSettings, afterAuth}: Datal
 
     for (let i = 0; i <= pingRetries; i += 1) {
         try {
-            const response = await page.request.get(`${baseUrl}/ping`, {timeout: 1 * 1000});
+            const response = await page.request.get(`${baseUrl}/ping`, {
+                timeout: 1 * 1000,
+                maxRedirects: 0,
+            });
             if (response.ok()) {
                 pingError = null;
                 break;
@@ -65,7 +74,10 @@ export async function datalensTestSetup({config, authSettings, afterAuth}: Datal
     // eslint-disable-next-line no-console
     console.log(`Ping ready: ok`);
 
-    const isAuthDisabled = isTrueArg(process.env.NO_AUTH) || isTrueArg(process.env.E2E_NO_AUTH);
+    const isAuthDisabled =
+        isTrueArg(process.env.NO_AUTH) ||
+        isTrueArg(process.env.E2E_NO_AUTH) ||
+        !isTrueArg(process.env.AUTH_ENABLED || 'true');
 
     try {
         if (isAuthDisabled) {
@@ -81,6 +93,7 @@ export async function datalensTestSetup({config, authSettings, afterAuth}: Datal
                 login: authSettings.login,
                 password: authSettings.password,
                 afterAuth,
+                customAuth,
                 retryCount: AUTH_RETRY,
                 storageState: path.join(ARTIFACTS_PATH, 'storageState.json'),
             });
