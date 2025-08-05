@@ -19,6 +19,7 @@ import {
 import {isChartSupportMultipleColors} from '../../../../../../../shared/modules/colors/common-helpers';
 import {mapQlConfigToLatestVersion} from '../../../../../../../shared/modules/config/ql';
 import prepareSingleResult from '../../../datalens/js/helpers/misc/prepare-single-result';
+import type {ChartPlugin} from '../../../datalens/types';
 import {extractColorPalettesFromData} from '../../../helpers/color-palettes';
 import {getFieldList} from '../../../helpers/misc';
 import type {QLConnectionTypeMap} from '../../utils/connection';
@@ -48,11 +49,12 @@ type BuildGraphArgs = {
     features: FeatureConfig;
     palettes: Record<string, Palette>;
     qlConnectionTypeMap: QLConnectionTypeMap;
+    plugin?: ChartPlugin;
 };
 
 // eslint-disable-next-line complexity
 export function buildGraph(args: BuildGraphArgs) {
-    const {shared, ChartEditor, features, palettes, qlConnectionTypeMap} = args;
+    const {shared, ChartEditor, features, palettes, qlConnectionTypeMap, plugin} = args;
     const data = ChartEditor.getLoadedData();
 
     log('LOADED DATA:', data);
@@ -281,6 +283,7 @@ export function buildGraph(args: BuildGraphArgs) {
             disableDefaultSorting,
             palettes,
             features,
+            plugin,
         };
 
         result = prepareSingleResult(prepareSingleResultArgs);

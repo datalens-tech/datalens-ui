@@ -20,7 +20,6 @@ import type {
 } from '../../../../../../shared';
 import {
     DATASET_FIELD_TYPES,
-    Feature,
     MAX_SEGMENTS_NUMBER,
     WizardVisualizationId,
     isDateType,
@@ -54,6 +53,7 @@ import type {
     PrepareFunctionResultData,
     ResultDataOrderItem,
 } from '../preparers/types';
+import type {ChartPlugin} from '../types';
 import {mapChartsConfigToServerConfig} from '../utils/config-helpers';
 import {LAT, LONG} from '../utils/constants';
 import {preprocessHierarchies} from '../utils/hierarchy-helpers';
@@ -384,6 +384,7 @@ type PrepareSingleResultArgs = {
     layerChartMeta?: LayerChartMeta;
     usedColors?: (string | undefined)[];
     features: FeatureConfig;
+    plugin?: ChartPlugin;
 };
 
 // eslint-disable-next-line complexity
@@ -402,6 +403,7 @@ function prepareSingleResult({
     usedColors,
     palettes,
     features,
+    plugin,
 }: PrepareSingleResultArgs) {
     const isVisualizationWithLayers = Boolean(
         (visualization as ServerVisualizationLayer).layerSettings,
@@ -543,7 +545,7 @@ function prepareSingleResult({
 
         case 'pie':
         case 'donut':
-            if (features[Feature.GravityAsDefaultWizardVisualizationLibrary]) {
+            if (plugin === 'gravity-charts') {
                 prepare = prepareD3Pie;
             } else {
                 prepare = prepareHighchartsPie;
@@ -564,7 +566,7 @@ function prepareSingleResult({
             break;
 
         case 'treemap':
-            if (features[Feature.GravityAsDefaultWizardVisualizationLibrary]) {
+            if (plugin === 'gravity-charts') {
                 prepare = prepareD3Treemap;
             } else {
                 prepare = prepareHighchartsTreemap;
@@ -736,8 +738,9 @@ export const buildGraphPrivate = (args: {
     data: any;
     palettes: Record<string, Palette>;
     features: FeatureConfig;
+    plugin?: ChartPlugin;
 }) => {
-    const {shared: chartSharedConfig, ChartEditor, data, palettes, features} = args;
+    const {shared: chartSharedConfig, ChartEditor, data, palettes, features, plugin} = args;
 
     log('LOADED DATA:');
     log(data);
@@ -922,6 +925,7 @@ export const buildGraphPrivate = (args: {
                 usedColors,
                 palettes,
                 features,
+                plugin,
             });
 
             if (localResult && localResult[0] && localResult[0].bounds) {
@@ -985,6 +989,7 @@ export const buildGraphPrivate = (args: {
             loadedColorPalettes,
             palettes,
             features,
+            plugin,
         });
 
         if (result?.[0]?.bounds) {

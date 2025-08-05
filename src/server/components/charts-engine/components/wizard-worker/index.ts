@@ -1,7 +1,7 @@
 import workerPool from 'workerpool';
 
 import type {ServerChartsConfig, Shared} from '../../../../../shared';
-import {WizardVisualizationId, isGravityChartsVisualization} from '../../../../../shared';
+import {Feature, WizardVisualizationId, isGravityChartsVisualization} from '../../../../../shared';
 import {getTranslationFn} from '../../../../../shared/modules/language';
 import {datalensModule} from '../../../../modes/charts/plugins/datalens/private-module';
 import {createI18nInstance} from '../../../../utils/language';
@@ -139,6 +139,9 @@ const worker: WizardWorker = {
             ChartEditor: context.ChartEditor,
             palettes,
             features,
+            plugin: features[Feature.GravityAsDefaultWizardVisualizationLibrary]
+                ? 'gravity-charts'
+                : undefined,
         });
 
         return {

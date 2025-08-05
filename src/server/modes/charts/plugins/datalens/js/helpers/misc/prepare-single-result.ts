@@ -8,11 +8,7 @@ import type {
     ServerVisualization,
     ServerVisualizationLayer,
 } from '../../../../../../../../shared';
-import {
-    Feature,
-    WizardVisualizationId,
-    isMonitoringOrPrometheusChart,
-} from '../../../../../../../../shared';
+import {WizardVisualizationId, isMonitoringOrPrometheusChart} from '../../../../../../../../shared';
 import prepareBackendPivotTableData from '../../../preparers/backend-pivot-table';
 import type {PivotData} from '../../../preparers/backend-pivot-table/types';
 import {prepareD3BarX, prepareHighchartsBarX} from '../../../preparers/bar-x';
@@ -31,6 +27,7 @@ import preparePolylineData from '../../../preparers/polyline';
 import {prepareD3Scatter, prepareHighchartsScatter} from '../../../preparers/scatter';
 import {prepareD3Treemap, prepareHighchartsTreemap} from '../../../preparers/treemap';
 import type {PrepareFunction, PrepareFunctionResultData} from '../../../preparers/types';
+import type {ChartPlugin} from '../../../types';
 import {getServerDateFormat} from '../../../utils/misc-helpers';
 import {OversizeErrorType} from '../../constants/errors';
 import {getChartColorsConfig} from '../colors';
@@ -53,6 +50,7 @@ type PrepareSingleResultArgs = {
     loadedColorPalettes?: Record<string, ColorPalette>;
     disableDefaultSorting?: boolean;
     features: FeatureConfig;
+    plugin?: ChartPlugin;
 };
 
 // eslint-disable-next-line complexity
@@ -68,6 +66,7 @@ export default ({
     disableDefaultSorting = false,
     palettes,
     features,
+    plugin,
 }: PrepareSingleResultArgs) => {
     const {
         sharedData: {drillDownData},
@@ -179,7 +178,7 @@ export default ({
 
         case WizardVisualizationId.Pie:
         case WizardVisualizationId.Donut:
-            if (features[Feature.GravityAsDefaultWizardVisualizationLibrary]) {
+            if (plugin === 'gravity-charts') {
                 prepare = prepareD3Pie;
             } else {
                 prepare = prepareHighchartsPie;
@@ -199,7 +198,7 @@ export default ({
             break;
 
         case WizardVisualizationId.Treemap:
-            if (features[Feature.GravityAsDefaultWizardVisualizationLibrary]) {
+            if (plugin === 'gravity-charts') {
                 prepare = prepareD3Treemap;
             } else {
                 prepare = prepareHighchartsTreemap;
