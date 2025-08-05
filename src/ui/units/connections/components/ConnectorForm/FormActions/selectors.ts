@@ -21,6 +21,12 @@ export const showCheckButtonSelector = (state: DatalensGlobalState) => {
     if (state.connections.innerForm.mdb_fill_mode === 'conn-manager') {
         return false;
     }
+    if (
+        state.connections.connectionData[FieldKey.DbType] === 'trino' &&
+        state.connections.innerForm.auth_type === 'mdb_integration'
+    ) {
+        return false;
+    }
 
     return Boolean(state.connections.schema?.apiSchema?.check);
 };
