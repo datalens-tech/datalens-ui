@@ -105,6 +105,24 @@ export default {
     buildHighchartsConfig,
     buildSources,
     buildGraph,
+    buildGravityChartsConfig: ({
+        shared,
+        Editor,
+        data,
+    }: {
+        shared: Shared | ServerChartsConfig;
+        Editor: IChartEditor;
+        data: unknown;
+    }) => {
+        return buildGraphPrivate({
+            shared,
+            ChartEditor: Editor,
+            data,
+            palettes: __palettes,
+            features: __features,
+            plugin: 'gravity-charts',
+        });
+    },
     buildChartsConfig,
     buildD3Config: () => {},
     setConsole,
