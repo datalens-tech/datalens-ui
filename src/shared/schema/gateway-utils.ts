@@ -16,6 +16,7 @@ type AuthArgsData = {
     userAccessToken?: string;
     serviceUserAccessToken?: string;
     accessToken?: string;
+    usMasterToken?: string;
 };
 
 export const getAuthArgs = (req: Request, _res: Response): AuthArgsData => {
@@ -25,6 +26,7 @@ export const getAuthArgs = (req: Request, _res: Response): AuthArgsData => {
         serviceUserAccessToken: req.serviceUserAccessToken,
         // auth
         accessToken: req.ctx.get('user')?.accessToken,
+        usMasterToken: req.ctx.config.usMasterToken as string,
     };
 };
 

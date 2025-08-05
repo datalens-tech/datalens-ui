@@ -9,10 +9,6 @@ export default {
     actions,
     endpoints: getServiceEndpoints('us'),
     serviceName: 'us-private',
-    getAuthArgs: (req, res) => {
-        const {getAuthArgsUSPrivate} = registry.common.auth.getAll();
-        return getAuthArgsUSPrivate(req, res);
-    },
     getAuthHeaders: (params) => {
         const {getAuthHeadersUSPrivate} = registry.common.auth.getAll();
         return getAuthHeadersUSPrivate(params);
