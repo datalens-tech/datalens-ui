@@ -271,7 +271,7 @@ export interface Entry {
     type: EntryType;
     data: EntryData;
     links: Dictionary<string>;
-    meta: object;
+    meta: Dictionary;
     workbookId?: string;
     mode?: EntryUpdateMode;
 }

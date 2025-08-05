@@ -368,6 +368,7 @@ export const load = ({
                     currentRevId: entry.revId,
                     widgetsCurrentTab,
                     openInfoOnLoad: searchParams.get(URL_QUERY.OPEN_DASH_INFO) === '1',
+                    meta: entry.meta,
                 },
             });
 
@@ -427,7 +428,7 @@ export const save = (mode: EntryUpdateMode, isDraft = false) => {
     return async function (dispatch: DashDispatch, getState: () => DatalensGlobalState) {
         try {
             const isPublishing = mode === 'publish';
-            const {entry: prevEntry, data, lockToken} = getState().dash;
+            const {entry: prevEntry, data, lockToken, meta} = getState().dash;
 
             // TODO Refactor old api schema
             const updateData: {
@@ -440,7 +441,10 @@ export const save = (mode: EntryUpdateMode, isDraft = false) => {
                 data: {
                     lockToken,
                     mode: mode,
-                    meta: isPublishing ? {is_release: true} : {},
+                    meta: {
+                        ...(meta && {description: meta.description}),
+                        ...(isPublishing ? {is_release: true} : {}),
+                    },
                 },
             };
             if (isDraft && isPublishing) {
@@ -465,6 +469,7 @@ export const save = (mode: EntryUpdateMode, isDraft = false) => {
                 payload: {
                     mode: Mode.View,
                     data: entry.data,
+                    meta: entry.meta,
                     convertedEntryData: null,
                     initialTabsSettings: null,
                     entry: {
