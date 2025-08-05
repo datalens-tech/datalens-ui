@@ -1,4 +1,3 @@
-import type {CommonSharedExtraSettings} from '../../shared';
 import {DATASET_FIELD_TYPES, LabelsPositions} from '../../shared';
 
 const ITEM_TYPES = {
@@ -104,7 +103,7 @@ const DEFAULT_DONUT_EXTRA_SETTINGS = {
     totals: 'on',
 } as const;
 
-export const DEFAULT_BAR_EXTRA_SETTINGS: Partial<CommonSharedExtraSettings> = {
+export const DEFAULT_BAR_EXTRA_SETTINGS = {
     labelsPosition: LabelsPositions.Outside,
 } as const;
 

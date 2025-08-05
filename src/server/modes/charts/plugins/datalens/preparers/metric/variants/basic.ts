@@ -7,6 +7,7 @@ import type {
     ServerCommonSharedExtraSettings,
 } from '../../../../../../../../shared';
 import {MINIMUM_FRACTION_DIGITS, isDateField} from '../../../../../../../../shared';
+import {getColorByColorSettings} from '../../../../../../../../shared/utils/palettes';
 import {isFloatDataType, isNumericalDataType} from '../../../utils/misc-helpers';
 import {getTitle} from '../utils';
 
@@ -33,10 +34,12 @@ export const prepareBasicMetricVariant = ({
     measure,
     value,
     extraSettings,
+    currentPalette,
 }: {
     measure: any;
     value: string | null;
     extraSettings: ServerCommonSharedExtraSettings | undefined;
+    currentPalette: string[];
 }) => {
     const current: MetricCurrent = {value};
     if (measure && isNumericalDataType(measure.data_type)) {
@@ -62,7 +65,12 @@ export const prepareBasicMetricVariant = ({
     }
 
     const size = (extraSettings && extraSettings.metricFontSize) || '';
-    const color = (extraSettings && extraSettings.metricFontColor) || '';
+
+    const color = getColorByColorSettings({
+        currentColors: currentPalette,
+        colorIndex: extraSettings?.metricFontColorIndex,
+        color: extraSettings?.metricFontColor,
+    });
     const title = getTitle(extraSettings, measure);
 
     const metric: MetricConfig = {

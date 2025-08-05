@@ -77,6 +77,11 @@ $block: '.#{variables.$ns}-card';
 
     &__breadcrumbs {
         min-width: 0;
+        flex-grow: 1;
+    }
+
+    &__breadcrumbs-item {
+        height: 100%;
     }
 
     &__image-card {

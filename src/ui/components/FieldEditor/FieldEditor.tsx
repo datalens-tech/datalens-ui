@@ -309,15 +309,25 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
     };
 
     toggleAdditionalPanel = () => {
-        this.setState({
-            additionalPanelVisible: !this.state.additionalPanelVisible,
-        });
+        this.setState(
+            {
+                additionalPanelVisible: !this.state.additionalPanelVisible,
+            },
+            () => {
+                this.state.editor?.layout();
+            },
+        );
     };
 
     closeAdditionalPanel = () => {
-        this.setState({
-            additionalPanelVisible: false,
-        });
+        this.setState(
+            {
+                additionalPanelVisible: false,
+            },
+            () => {
+                this.state.editor?.layout();
+            },
+        );
     };
 
     validateFormula = async () => {

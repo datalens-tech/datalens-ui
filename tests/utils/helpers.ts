@@ -74,7 +74,9 @@ export async function waitForValidSearchParams({
 }
 
 export const hoverTooltip = async (page: Page, chartId: string) => {
-    const plot = page.locator(slct(`chartkit-body-entry-${chartId}`)).locator('.chartkit-graph');
+    const plot = page
+        .locator(slct(`chartkit-body-entry-${chartId}`))
+        .locator('.chartkit-graph, .gcharts-chart');
     await plot.waitFor({state: 'visible'});
 
     const plotBox = await plot.boundingBox();

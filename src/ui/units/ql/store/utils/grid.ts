@@ -116,7 +116,7 @@ export class Helper {
             shapes: [],
             labels: [],
             tooltips: [],
-            version: QlConfigVersions.V4,
+            version: QlConfigVersions.V5,
         };
 
         return {

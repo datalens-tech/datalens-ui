@@ -53,6 +53,7 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
             },
             data:
                 graph.data?.map((item) => {
+                    const percentage = item.y / total;
                     return {
                         ...item,
                         value: item.y,
@@ -61,7 +62,8 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
                             ...measure,
                             data_type: idToDataType[measure.guid],
                         }),
-                        percentage: item.y / total,
+                        percentage,
+                        label: label?.formatting?.labelMode === 'percent' ? percentage : item.label,
                     };
                 }) ?? [],
             legend: {

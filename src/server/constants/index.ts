@@ -43,6 +43,7 @@ const BLOCK_STAT = {
 
 const WORLD_REGION = 10000;
 
+// if the palette is not specified or not found, it returns the default palette
 const selectServerPalette = (args: {
     palette?: string;
     availablePalettes: Record<string, Palette>;

@@ -30,7 +30,10 @@ export function getColorPalettesRequests(args: GetColorPalettesRequestArgs) {
         });
     } else {
         const colorPaletteId =
-            config.colorsConfig?.palette || config.colorsConfig?.gradientPalette || '';
+            config.colorsConfig?.palette ||
+            config.colorsConfig?.gradientPalette ||
+            config.extraSettings?.metricFontColorPalette ||
+            '';
         colorPalettes.add(colorPaletteId);
     }
 
