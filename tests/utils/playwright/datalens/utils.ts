@@ -58,7 +58,9 @@ const authenticatePassport = async (args: AuthenticateArgs) => {
 
     await page.context().storageState({path: storageState || 'artifacts/storageState.json'});
 
-    await page.waitForURL(baseUrl);
+    await page.waitForLoadState(); // need for prevent fast double goto
+
+    await Promise.all([page.goto(baseUrl), page.waitForURL(baseUrl)]);
 };
 
 const authenticateDataLens = async (args: AuthenticateArgs) => {
