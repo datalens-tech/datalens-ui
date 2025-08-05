@@ -307,13 +307,10 @@ export const chartGenerator = {
                     chart.params = chart.params.replace('#module', chartTemplate.module);
                 }
 
-                const isD3Graph = type.indexOf('d3') > -1;
                 const isTable = type.indexOf('table') > -1;
                 if (type.indexOf('metric') > -1) {
                     chart.statface_metric = chart.config.replace('#module', chartTemplate.module);
                 } else if (type.indexOf('markup') > -1 || isTable) {
-                    chart.config = chart.config.replace('#module', chartTemplate.module);
-                } else if (isD3Graph) {
                     chart.config = chart.config.replace('#module', chartTemplate.module);
                 } else {
                     chart.graph = commonTemplateGraph.replace('#module', chartTemplate.module);
@@ -330,7 +327,7 @@ export const chartGenerator = {
                 chart.prepare = chart.prepare.replace('#apiVersion', apiVersion);
                 chart.sources = chart.sources.replace('#apiVersion', apiVersion);
 
-                const chartsWithConfig = isD3Graph || isTable;
+                const chartsWithConfig = isTable;
                 const {config: _, ...chartWithoutConfig} = chart;
 
                 return {chart: chartsWithConfig ? chart : chartWithoutConfig, links, type};
