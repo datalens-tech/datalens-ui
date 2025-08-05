@@ -3,7 +3,7 @@ import {workerData} from 'worker_threads';
 import workerPool from 'workerpool';
 
 import type {QlConfig, QlExtendedConfig} from '../../../../../shared';
-import {WizardVisualizationId, isGravityChartsVisualization} from '../../../../../shared';
+import {Feature, WizardVisualizationId, isGravityChartsVisualization} from '../../../../../shared';
 import {getTranslationFn} from '../../../../../shared/modules/language';
 import {Console} from '../../../../components/charts-engine';
 import type {GetChartApiContextArgs} from '../../../../components/charts-engine/components/processor/chart-api-context';
@@ -160,6 +160,9 @@ const worker: WizardWorker = {
             palettes,
             features,
             qlConnectionTypeMap,
+            plugin: features[Feature.GravityAsDefaultWizardVisualizationLibrary]
+                ? 'gravity-charts'
+                : undefined,
         });
 
         return {

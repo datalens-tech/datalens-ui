@@ -47,9 +47,6 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
                 enabled: isLabelsEnabled,
                 html: shouldUseHtmlForLabels,
                 format: getFieldFormatOptions({field: label}),
-                style: {
-                    fontSize: '12px',
-                },
             },
             data:
                 graph.data?.map((item) => {

@@ -1,7 +1,7 @@
 import type {Request} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
 
-import type {FeatureConfig, StringParams, ValueOf} from '../../../../shared';
+import {type FeatureConfig, type StringParams, type ValueOf, WizardType} from '../../../../shared';
 
 const commonTemplateGraph = `
 const {buildHighchartsConfig, buildLibraryConfig} = require('#module');
@@ -106,6 +106,48 @@ module.exports = result;
 `,
 };
 
+const getGravityChartEditorTemplate = ({module, params}: {module: string; params: string}) => ({
+    params: `module.exports = ${params};
+    `,
+    sources: `const {buildSources} = require('${module}');
+
+const result = buildSources({
+    apiVersion: '2',
+    shared: Editor.getSharedData(),
+    params: Editor.getParams(),
+    Editor
+});
+
+// your code here
+
+module.exports = result;
+`,
+    config: `const {buildChartsConfig} = require('${module}');
+
+const result = buildChartsConfig({
+    shared: Editor.getSharedData(),
+    params: Editor.getParams(),
+    widgetConfig: Editor.getWidgetConfig(),
+});
+
+// your code here
+
+module.exports = result;
+`,
+    prepare: `const {buildGravityChartsConfig} = require('${module}');
+
+const result = buildGravityChartsConfig({
+    data: Editor.getLoadedData(),
+    shared: Editor.getSharedData(),
+    Editor,
+});
+
+// your code here
+
+module.exports = result;
+`,
+});
+
 export type ChartTemplates = {
     datalens: ChartTemplate;
     sql: ChartTemplate;
@@ -138,7 +180,7 @@ type Chart = {
 
 function createChartManifest(args: {links?: Record<string, string>}) {
     const manifest = {
-        links: Object.values(args.links ?? {}),
+        links: args.links ?? {},
     };
 
     return JSON.stringify(manifest, null, 4);
@@ -232,53 +274,64 @@ export const chartGenerator = {
         req: Request;
         ctx: AppContext;
     }) => {
-        const chart: Chart = {...commonTemplate};
-
         const {chartTemplate} = chartGenerator.identifyChartTemplate({ctx, shared: data, template});
-
         const params = chartTemplate.identifyParams(data, req);
         const type = chartTemplate.identifyChartType(data, req);
-
         const links = chartGenerator.gatherChartLinks({req, shared: data, chartTemplate});
         const serializedData = chartGenerator.serializeShared({ctx, shared: data, links});
 
-        chart.shared = serializedData.shared;
+        switch (type) {
+            case WizardType.GravityChartsWizardNode: {
+                const chart: Chart = {
+                    ...getGravityChartEditorTemplate({
+                        module: chartTemplate.module,
+                        params: JSON.stringify(params),
+                    }),
+                    shared: serializedData.shared,
+                    meta: serializedData.meta,
+                };
 
-        if (serializedData.meta) {
-            chart.meta = serializedData.meta;
+                return {chart, links, type};
+            }
+            default: {
+                const chart: Chart = {...commonTemplate};
+
+                chart.shared = serializedData.shared;
+
+                if (serializedData.meta) {
+                    chart.meta = serializedData.meta;
+                }
+
+                chart.params = chart.params.replace('#params', JSON.stringify(params));
+                if (chart.params.indexOf('#module') > -1) {
+                    chart.params = chart.params.replace('#module', chartTemplate.module);
+                }
+
+                const isTable = type.indexOf('table') > -1;
+                if (type.indexOf('metric') > -1) {
+                    chart.statface_metric = chart.config.replace('#module', chartTemplate.module);
+                } else if (type.indexOf('markup') > -1 || isTable) {
+                    chart.config = chart.config.replace('#module', chartTemplate.module);
+                } else {
+                    chart.graph = commonTemplateGraph.replace('#module', chartTemplate.module);
+
+                    chart.statface_graph = chart.config.replace('#module', chartTemplate.module);
+                }
+
+                chart.prepare = chart.prepare?.replace('#module', chartTemplate.module) ?? '';
+                chart.sources = chart.sources?.replace('#module', chartTemplate.module) ?? '';
+                chart.controls = chart.controls?.replace('#module', chartTemplate.module);
+
+                const apiVersion = '2';
+
+                chart.prepare = chart.prepare.replace('#apiVersion', apiVersion);
+                chart.sources = chart.sources.replace('#apiVersion', apiVersion);
+
+                const chartsWithConfig = isTable;
+                const {config: _, ...chartWithoutConfig} = chart;
+
+                return {chart: chartsWithConfig ? chart : chartWithoutConfig, links, type};
+            }
         }
-
-        chart.params = chart.params.replace('#params', JSON.stringify(params));
-        if (chart.params.indexOf('#module') > -1) {
-            chart.params = chart.params.replace('#module', chartTemplate.module);
-        }
-
-        const isD3Graph = type.indexOf('d3') > -1;
-        const isTable = type.indexOf('table') > -1;
-        if (type.indexOf('metric') > -1) {
-            chart.statface_metric = chart.config.replace('#module', chartTemplate.module);
-        } else if (type.indexOf('markup') > -1 || isTable) {
-            chart.config = chart.config.replace('#module', chartTemplate.module);
-        } else if (isD3Graph) {
-            chart.config = chart.config.replace('#module', chartTemplate.module);
-        } else {
-            chart.graph = commonTemplateGraph.replace('#module', chartTemplate.module);
-
-            chart.statface_graph = chart.config.replace('#module', chartTemplate.module);
-        }
-
-        chart.prepare = chart.prepare?.replace('#module', chartTemplate.module) ?? '';
-        chart.sources = chart.sources?.replace('#module', chartTemplate.module) ?? '';
-        chart.controls = chart.controls?.replace('#module', chartTemplate.module);
-
-        const apiVersion = '2';
-
-        chart.prepare = chart.prepare.replace('#apiVersion', apiVersion);
-        chart.sources = chart.sources.replace('#apiVersion', apiVersion);
-
-        const chartsWithConfig = isD3Graph || isTable;
-        const {config: _, ...chartWithoutConfig} = chart;
-
-        return {chart: chartsWithConfig ? chart : chartWithoutConfig, links, type};
     },
 };

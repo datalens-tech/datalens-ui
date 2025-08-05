@@ -47,7 +47,8 @@
         // since there is no grid in the mobile layout, widgets gets their "native" height
         // but for the case of the map embed, you must specify the height of the container, otherwise the map will collapse
 
-        .dashkit-plugin-widget__body_fullscreen .chartkit-ymap {
+        .dashkit-plugin-widget__body_fullscreen .chartkit-ymap,
+        .dl-widget_fullscreen.dl-widget_d3 .chartkit {
             height: 100%;
         }
 

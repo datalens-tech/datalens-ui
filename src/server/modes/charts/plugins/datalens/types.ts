@@ -35,6 +35,8 @@ export type BaseUrlPayload = {
 
 export type ApiVersion = '1.5' | '2';
 
+export type ChartPlugin = 'highcharts' | 'gravity-charts';
+
 export type ServerFieldWithBackgroundSettings = ServerField & {
     backgroundSettings: TableFieldBackgroundSettings;
 };
