@@ -29,7 +29,7 @@ export const navigateController = async (req: Request, res: Response) => {
 
         const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
 
-        const {getAuthArgsUSPrivate} = registry.common.auth.getAll();
+        const {getAuthArgs} = registry.common.auth.getAll();
 
         const {responseData: entryMeta} = await gatewayApi.usPrivate._getEntryMeta({
             ctx: req.ctx,
@@ -40,7 +40,7 @@ export const navigateController = async (req: Request, res: Response) => {
                 ...(req.ctx.config.isAuthEnabled ? {...Utils.pickAuthHeaders(req)} : {}),
             },
             requestId: req.id,
-            authArgs: getAuthArgsUSPrivate(req, res),
+            authArgs: getAuthArgs(req, res),
             args: {entryId: possibleEntryId},
         });
 

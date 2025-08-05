@@ -3,8 +3,8 @@ import {AuthPolicy} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
 import type {PassportStatic} from 'passport';
 
+import {registry} from '../../../server/registry';
 import {AppEnvironment} from '../../../shared';
-import {getAuthArgs} from '../../../shared/schema/gateway-utils';
 import {appEnv, isApiMode, isChartsMode, isDatalensMode, isFullMode} from '../../app-env';
 import {getAuthRoutes} from '../../components/auth/routes';
 import type {ChartsEngine} from '../../components/charts-engine';
@@ -115,9 +115,13 @@ function getDataLensRoutes({
         afterAuth: [
             ...afterAuth,
             getConnectorIconsMiddleware({
-                getAdditionalArgs: (req, res) => ({
-                    authArgs: getAuthArgs(req, res),
-                }),
+                getAdditionalArgs: (req, res) => {
+                    const {getAuthArgs} = registry.common.auth.getAll();
+
+                    return {
+                        authArgs: getAuthArgs(req, res),
+                    };
+                },
             }),
         ],
         ui: true,

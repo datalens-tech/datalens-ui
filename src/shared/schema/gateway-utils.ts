@@ -2,6 +2,7 @@ import type {Request, Response} from '@gravity-ui/expresskit';
 import type {ApiServiceActionConfig, GetAuthHeaders} from '@gravity-ui/gateway';
 import type {AppContext} from '@gravity-ui/nodekit';
 
+import type {AuthArgsData} from '../../server/components/gateway-auth-helpers/gateway-auth-helpers';
 import {AuthHeader, SERVICE_USER_ACCESS_TOKEN_HEADER} from '../constants';
 
 export const getAuthHeadersNone = () => undefined;
@@ -11,24 +12,6 @@ export function createAction<TOutput, TParams = undefined, TTransformed = TOutpu
 ) {
     return config;
 }
-
-type AuthArgsData = {
-    userAccessToken?: string;
-    serviceUserAccessToken?: string;
-    accessToken?: string;
-    usMasterToken?: string;
-};
-
-export const getAuthArgs = (req: Request, _res: Response): AuthArgsData => {
-    return {
-        // zitadel
-        userAccessToken: req.user?.accessToken,
-        serviceUserAccessToken: req.serviceUserAccessToken,
-        // auth
-        accessToken: req.ctx.get('user')?.accessToken,
-        usMasterToken: req.ctx.config.usMasterToken as string,
-    };
-};
 
 const createGetAuthHeaders: () => GetAuthHeaders<AuthArgsData> = () => (params) => {
     const {authArgs} = params;

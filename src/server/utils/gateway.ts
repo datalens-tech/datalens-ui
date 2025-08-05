@@ -5,8 +5,9 @@ import type {Headers as DebugHeaders, GatewayConfig, GatewayError} from '@gravit
 import type {AppContext, NodeKit} from '@gravity-ui/nodekit';
 import {AppError} from '@gravity-ui/nodekit';
 
-import {getAuthArgs, getAuthHeaders} from '../../shared/schema/gateway-utils';
+import {getAuthHeaders} from '../../shared/schema/gateway-utils';
 import {IPV6_AXIOS_OPTIONS} from '../constants/axios';
+import {registry} from '../registry';
 
 export type GatewayApiErrorResponse<T = GatewayError> = {
     error: T;
@@ -72,7 +73,7 @@ export const getGatewayConfig = (
         caCertificatePath: null,
         axiosConfig,
         withDebugHeaders: false,
-        getAuthArgs,
+        getAuthArgs: (req, res) => registry.common.auth.getAll().getAuthArgs(req, res),
         getAuthHeaders,
         ErrorConstructor: AppError,
         ...(config || {}),
