@@ -216,14 +216,23 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
     }
 };
 
-export const getAdditionalProps = <T extends ChartKitType>(type: T) => {
+export const getAdditionalProps = <T extends ChartKitType>({
+    type,
+    splitTooltip,
+}: {
+    type: T;
+    splitTooltip?: boolean;
+}) => {
     switch (type) {
         case 'highcharts': {
-            const props: Partial<ChartKitProps<'highcharts'>> = {
+            return {
                 hoistConfigError: false,
-            };
-
-            return props;
+            } as Partial<ChartKitProps<ChartKitType>>;
+        }
+        case 'gravity-charts': {
+            return {
+                tooltip: {splitted: splitTooltip},
+            } as Partial<ChartKitProps<ChartKitType>>;
         }
         default: {
             return undefined;

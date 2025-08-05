@@ -238,9 +238,6 @@ export function prepareD3Treemap({
         dataLabels: {
             enabled: true,
             html: useMarkdown,
-            style: {
-                fontSize: '11px',
-            },
         },
         levels,
         data: orderBy(treemap, (d) => d.value, 'desc') as TreemapSeriesData[],
