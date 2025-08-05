@@ -218,9 +218,9 @@ export async function exportEntries(req: Request, res: Response) {
      * @param arr - Массив объектов с данными.
      * @returns CSV-строка.
      */
-    function convertToCSV(arr: Object[], sep: string): string {
+    function convertToCSV(arr: any, sep: any): any {
         const headers = Object.keys(arr[0]).join(sep);
-        const rows = arr.map(obj =>
+        const rows = arr.map((obj: any) =>
             Object.values(obj)
             .map(value => `"${String(value).replace(/"/g, '""')}"`) // Экранирование кавычек
             .join(sep)
@@ -230,7 +230,7 @@ export async function exportEntries(req: Request, res: Response) {
     var r: any = req;
     var host = r.body['host'] || 'http://localhost:8080';
 
-    const context:any = req.ctx;
+    const ctx:any = req.ctx;
 
     if(r.body['links']) {
         // debugger
@@ -252,13 +252,13 @@ export async function exportEntries(req: Request, res: Response) {
                 
                 const publicOutputCSVPath = path.join(exportPath, `${sheetName.replace(/[\[\]\:\*\?\/\\]/g, '_')}.${r.body['formSettings'].format}`);
                 
-                const chartProps = {};
+                const chartProps: Record<string, any> = {};
                 const chart = chartData[filteredLinks[i]];
                 const chartPropNames = Object.keys(chart.defaultParams);
 
                 chartPropNames.forEach(name=>{
                     if (chart.defaultParams[name]?.length > 0) {
-                        chartProps[name.replace("__", "")] = chart.defaultParams[name][0]
+                        chartProps[String(name).replace("__", "")] = String(chart.defaultParams[name][0])
                     }
                 })
 
@@ -278,19 +278,19 @@ export async function exportEntries(req: Request, res: Response) {
         await fs.promises.writeFile(metaPath, csv, 'utf8');
         
         const destroy = async () => {
-            if(fs.existsSync(publicOutputPath)) {
-                await fs.promises.unlink(publicOutputPath);
-            }
+            // if(fs.existsSync(publicOutputPath)) {
+            //     await fs.promises.unlink(publicOutputPath);
+            // }
 
-            if(fs.existsSync(metaPath)) {
-                await fs.promises.unlink(metaPath);
-            }
+            // if(fs.existsSync(metaPath)) {
+            //     await fs.promises.unlink(metaPath);
+            // }
 
-            for(let i = 0; i < metadata.length; i++) {
-                if(fs.existsSync(metadata[i].csv_data_name)) {
-                    await fs.promises.unlink(metadata[i].csv_data_name);
-                }
-            }
+            // for(let i = 0; i < metadata.length; i++) {
+            //     if(fs.existsSync(metadata[i].csv_data_name)) {
+            //         await fs.promises.unlink(metadata[i].csv_data_name);
+            //     }
+            // }
         }
 
         if (filteredLinks.length == 0) {
@@ -299,12 +299,13 @@ export async function exportEntries(req: Request, res: Response) {
         } 
 
         // тут нужно вызвать скрипт python
-        var resSpawn = child_process.spawnSync(context.config.python || 'python3', [pythonScript, `OUTPUT_NAME="${publicOutputPath}"`, `SEP=${SEPARATOR}`, `META_NAME="${metaPath}"`]);
+        var resSpawn = child_process.spawnSync(ctx.config.python || 'python3', [pythonScript, `OUTPUT_NAME="${publicOutputPath}"`, `SEP=${SEPARATOR}`, `META_NAME="${metaPath}"`]);
         if (resSpawn != null && resSpawn.stderr.byteLength > 0) {
-            context.logError(`EXPORT_ODS_DATA_WRITE_ERROR`, {
-                outputPath: publicOutputPath,
-                message: `Ошибка при вызове python скрипта: ${resSpawn.stderr.toString()}`
-            });
+            ctx.logError(`Ошибка при вызове python скрипта: ${resSpawn.stderr.toString()}`);
+            // ctx.logError(`EXPORT_ODS_DATA_WRITE_ERROR`, {
+            //     outputPath: publicOutputPath,
+            //     message: `Ошибка при вызове python скрипта: ${resSpawn.stderr.toString()}`
+            // });
             res.sendStatus(500);
 
             await destroy();

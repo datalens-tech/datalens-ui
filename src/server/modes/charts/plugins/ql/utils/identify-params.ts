@@ -27,7 +27,7 @@ export function identifyParams(args: {getTranslation: GetTranslationFn; chart: Q
                 availableParams[fromName] = '';
                 availableParams[toName] = '';
             } else {
-                availableParams[param.name] = param.defaultValue || "";
+                availableParams[param.name] = String(param.defaultValue) || "";
             }
         });
     }
