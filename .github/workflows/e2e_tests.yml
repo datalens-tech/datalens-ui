@@ -109,6 +109,8 @@ jobs:
           E2E_ACTION_TIMEOUT: 10000
           E2E_EXPECT_TIMEOUT: 10000
           E2E_DOMAIN: http://localhost:8080
+          E2E_USER_LOGIN: admin
+          E2E_USER_PASSWORD: admin
 
       - name: Run tests from builded docker image
         if: ${{ env.UI_VERSION != '' }}

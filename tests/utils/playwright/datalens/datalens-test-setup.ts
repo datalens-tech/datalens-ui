@@ -44,6 +44,8 @@ export async function datalensTestSetup({
     }
 
     const baseUrl = project.use.baseURL;
+    const storageState =
+        typeof project.use.storageState === 'string' ? project.use.storageState : undefined;
 
     if (!baseUrl) {
         throw new Error('The URL for testing is not specified');
@@ -95,7 +97,7 @@ export async function datalensTestSetup({
                 afterAuth,
                 customAuth,
                 retryCount: AUTH_RETRY,
-                storageState: path.join(ARTIFACTS_PATH, 'storageState.json'),
+                storageState,
             });
         }
     } finally {
