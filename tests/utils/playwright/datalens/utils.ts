@@ -56,6 +56,9 @@ const authenticatePassport = async (args: AuthenticateArgs) => {
 
     const promiseResponse = page.waitForResponse(
         async (response) => {
+            // wait for a 200 ok response after all redirects and check the url
+            // if we have been redirected away from the auth page, most likely we're already authenticated
+            // if we are still on the auth page, it means there is an authentication credential error
             if (response.url().startsWith(authUrl) && response.status() === 200) {
                 // eslint-disable-next-line no-console
                 console.log('Auth error, check credentials...');

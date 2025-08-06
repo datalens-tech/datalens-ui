@@ -48,7 +48,7 @@ jobs:
       - uses: daun/playwright-report-summary@v3
         id: report-md
         with:
-          report-file: ./tests/artifacts/results.json
+          report-file: playwright-report/results.json
           create-comment: false
       - name: Create Comment
         uses: marocchino/sticky-pull-request-comment@v2
