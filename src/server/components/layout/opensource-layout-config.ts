@@ -2,6 +2,7 @@ import type {RenderParams} from '@gravity-ui/app-layout';
 
 import type {AppEnvironment, AppInstallation, DLGlobalData, DLUser} from '../../../shared';
 import {FALLBACK_LANGUAGES, Feature, Language, USER_SETTINGS_KEY} from '../../../shared';
+import type {TenantSettings} from '../../../shared/types/common';
 import type {AppLayoutSettings, GetLayoutConfig} from '../../types/app-layout';
 import {addTranslationsScript} from '../../utils/language';
 import {getUserInfo} from '../zitadel/utils';
@@ -71,6 +72,10 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
     // applying new favicon from rebranding
     const faviconUrl = isRebrandingEnabled ? '/os-favicon.ico' : config.faviconUrl;
 
+    const tenantSettings: TenantSettings = {
+        defaultColorPaletteId: res.locals.defaultColorPaletteId,
+    };
+
     const DL: DLGlobalData = {
         user,
         userSettings,
@@ -95,6 +100,7 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         docsUrl: config.docsUrl,
         orderedAuthRoles: config.orderedAuthRoles,
         authSignupDisabled: req.ctx.config.authSignupDisabled,
+        tenantSettings,
         ...appLayoutSettings.DL,
     };
     const renderConfig: RenderParams<{DL: DLGlobalData}> = {

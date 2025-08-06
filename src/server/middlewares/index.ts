@@ -4,6 +4,7 @@ import {getConnectorIconsMiddleware} from './connector-icons';
 import {getCtxMiddleware} from './ctx';
 import {patchLogger} from './patch-logger';
 import {scrRequests} from './scr-requests';
+import {prepareUiPreflightMiddleware} from './ui-preflight';
 import {xDlContext} from './x-dl-context';
 
 export {
@@ -14,4 +15,5 @@ export {
     patchLogger,
     createAppLayoutMiddleware,
     getConnectorIconsMiddleware,
+    prepareUiPreflightMiddleware,
 };

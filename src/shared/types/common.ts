@@ -144,6 +144,10 @@ export type MainLayoutConfigData = {
     intLandingConfigEntryId?: string;
 };
 
+export type TenantSettings = {
+    defaultColorPaletteId?: string;
+};
+
 type DocPathNameKey = 'datasetSubsql' | 'qlCreateChart' | 'functionsPath';
 export type DocPathName = Partial<Record<DocPathNameKey, string>>;
 
@@ -157,6 +161,7 @@ export type DLGlobalData = {
     userSettings: DLUserSettings;
     iamUserId: string;
     currentTenantId?: string;
+    tenantSettings?: TenantSettings;
     clouds?: any[]; // TODO@types
     endpoints: Endpoints['ui'];
     features: FeatureConfig;

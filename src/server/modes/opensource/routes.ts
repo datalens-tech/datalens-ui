@@ -11,7 +11,7 @@ import type {ChartsEngine} from '../../components/charts-engine';
 import {getZitadelRoutes} from '../../components/zitadel/routes';
 import {ping} from '../../controllers/ping';
 import {workbooksTransferController} from '../../controllers/workbook-transfer';
-import {getConnectorIconsMiddleware} from '../../middlewares';
+import {getConnectorIconsMiddleware, prepareUiPreflightMiddleware} from '../../middlewares';
 import type {ExtendedAppRouteDescription} from '../../types/controllers';
 import {getConfiguredRoute} from '../../utils/routes';
 import {applyPluginRoutes} from '../charts/init-charts-engine';
@@ -114,6 +114,7 @@ function getDataLensRoutes({
         beforeAuth,
         afterAuth: [
             ...afterAuth,
+            prepareUiPreflightMiddleware(),
             getConnectorIconsMiddleware({
                 getAdditionalArgs: (req, res) => ({
                     authArgs: getAuthArgs(req, res),

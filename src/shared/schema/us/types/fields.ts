@@ -93,3 +93,13 @@ export interface EntryRelationFields {
     workbookId: WorkbookId;
     isLocked: boolean;
 }
+
+export interface TenantFields {
+    tenantId: string;
+    createdAt: string;
+    enabled: boolean;
+    deleting: boolean;
+    settings: {
+        defaultColorPaletteId?: string;
+    };
+}

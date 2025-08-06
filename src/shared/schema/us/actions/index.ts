@@ -10,6 +10,7 @@ import {presetsActions} from './presets';
 import {privateActions} from './private';
 import {stateActions} from './state';
 import {templateActions} from './template';
+import {tenantActions} from './tenant';
 import {userActions} from './user';
 import {workbooksActions} from './workbooks';
 
@@ -28,4 +29,5 @@ export const actions = {
     ...colorPalettesActions,
     ...embedsActions,
     ...operationsActions,
+    ...tenantActions,
 };
