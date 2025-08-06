@@ -21,6 +21,56 @@ const proxyMap: PublicApiRpcMap = {
                 tags: ['navigation'],
             },
         },
+        getStructureItems: {
+            resolve: (api) => api.us.getStructureItems,
+            openApi: {
+                summary: 'Get structure list',
+                tags: ['navigation'],
+            },
+        },
+        createWorkbook: {
+            resolve: (api) => api.us.createWorkbook,
+            openApi: {
+                summary: 'Create workbook',
+                tags: ['navigation'],
+            },
+        },
+        createCollection: {
+            resolve: (api) => api.us.createCollection,
+            openApi: {
+                summary: 'Create collection',
+                tags: ['navigation'],
+            },
+        },
+        // connection
+        getConnection: {
+            resolve: (api) => api.bi.getConnection,
+            openApi: {
+                summary: 'Get connection',
+                tags: ['connection'],
+            },
+        },
+        updateConnection: {
+            resolve: (api) => api.bi.updateConnection,
+            openApi: {
+                summary: 'Update connection',
+                tags: ['connection'],
+            },
+        },
+        createConnection: {
+            resolve: (api) => api.bi.createConnection,
+            openApi: {
+                summary: 'Create connection',
+                tags: ['connection'],
+            },
+        },
+        deleteConnection: {
+            resolve: (api) => api.bi.deleteConnnection,
+            openApi: {
+                summary: 'Delete connection',
+                tags: ['connection'],
+            },
+        },
         // dataset
         getDataset: {
             resolve: (api) => api.bi.getDatasetApi,
@@ -77,6 +127,35 @@ const proxyMap: PublicApiRpcMap = {
             openApi: {
                 summary: 'Delete wizard chart',
                 tags: ['wizard'],
+            },
+        },
+        // editor
+        getEditorChart: {
+            resolve: (api) => api.mix.getEditorChartApi,
+            openApi: {
+                summary: 'Get editor chart',
+                tags: ['editor'],
+            },
+        },
+        updateEditorChart: {
+            resolve: (api) => api.mix.updateEditorChart,
+            openApi: {
+                summary: 'Update editor chart',
+                tags: ['editor'],
+            },
+        },
+        createEditorChart: {
+            resolve: (api) => api.mix.createEditorChart,
+            openApi: {
+                summary: 'Create editor chart',
+                tags: ['editor'],
+            },
+        },
+        deleteEditorChart: {
+            resolve: (api) => api.mix.deleteEditorChartApi,
+            openApi: {
+                summary: 'Delete editor chart',
+                tags: ['editor'],
             },
         },
         // Dash
