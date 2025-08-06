@@ -293,10 +293,6 @@ export function dashTypedReducer(
         case SET_DASH_DESCRIPTION: {
             return {
                 ...state,
-                data: {
-                    ...state.data,
-                    description: action.payload || '',
-                },
                 meta: {
                     ...state.meta,
                     description: action.payload || '',

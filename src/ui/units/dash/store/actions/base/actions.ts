@@ -451,7 +451,10 @@ export const save = (mode: EntryUpdateMode, isDraft = false) => {
                 updateData.data.revId = prevEntry.revId;
             } else {
                 updateData.data.data = purgeData(data);
+                // TODO: remove after DLAPI-381 (stop saving to data)
+                delete updateData.data.data.description;
             }
+
             // TODO Refactor old api schema
             const entry = await (sdk.charts as any).updateDash(updateData);
 
