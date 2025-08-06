@@ -1,6 +1,7 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
 import {REQUEST_ID_PARAM_NAME, USER_ID_PARAM_NAME} from '@gravity-ui/nodekit';
+import {isObject} from 'lodash';
 import pick from 'lodash/pick';
 
 import type {DashEntry, EntryReadParams} from '../../../../shared';
@@ -193,6 +194,10 @@ export function configuredDashApiPlugin(options?: ConfiguredDashApiPluginOptions
 }
 
 function sendStats(ctx: AppContext, handlerName: string, status: number) {
+    let userId = ctx.get(USER_ID_PARAM_NAME) || '0';
+    if (isObject(userId)) {
+        userId = 'value' in userId ? (userId as {value: string}).value : '0';
+    }
     ctx.stats('dashApiErrors', {
         handlerName,
         timestamp: Date.now(),
