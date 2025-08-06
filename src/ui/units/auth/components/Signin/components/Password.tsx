@@ -9,7 +9,9 @@ import {selectPassword} from '../../../store/selectors/signin';
 
 const i18n = I18n.keyset('auth.sign-in');
 
-export const Password = () => {
+type Props = {qa?: string};
+
+export const Password = ({qa}: Props) => {
     const dispatch = useDispatch();
 
     const password = useSelector(selectPassword);
@@ -24,6 +26,7 @@ export const Password = () => {
             autoComplete="current-password"
             value={password}
             onUpdate={handleUpdate}
+            qa={qa}
         />
     );
 };

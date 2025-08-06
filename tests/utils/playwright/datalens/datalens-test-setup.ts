@@ -3,21 +3,27 @@ import path from 'path';
 
 import {FullConfig, Page, chromium} from '@playwright/test';
 
-import {AuthRobotSettings} from '../types';
+import type {AuthRobotSettings, AuthenticateType, AuthenticateCustomArgs} from '../types';
+import {AUTH_TYPE, DEFAULT_SCREENSHOT_PATH, AUTH_RETRY} from '../constants';
+import {isTrueArg} from '../../../../src/shared';
 
 import {authenticate} from './utils';
-import {DEFAULT_SCREENSHOT_PATH} from '../constants';
 
 const ARTIFACTS_PATH = path.resolve(__dirname, '../../../artifacts');
-const AUTH_RETRY = 1;
 
 type DatalensTestSetupArgs = {
     config: FullConfig;
     authSettings: AuthRobotSettings;
     afterAuth?: (args: {page: Page}) => Promise<void>;
+    customAuth?: (args: AuthenticateCustomArgs) => Promise<void>;
 };
 
-export async function datalensTestSetup({config, afterAuth, authSettings}: DatalensTestSetupArgs) {
+export async function datalensTestSetup({
+    config,
+    authSettings,
+    afterAuth,
+    customAuth,
+}: DatalensTestSetupArgs) {
     if (fs.existsSync(ARTIFACTS_PATH) && process.env.CI !== 'true') {
         await fs.rmSync(ARTIFACTS_PATH, {recursive: true});
     }
@@ -38,23 +44,60 @@ export async function datalensTestSetup({config, afterAuth, authSettings}: Datal
     }
 
     const baseUrl = project.use.baseURL;
+    const storageState =
+        typeof project.use.storageState === 'string' ? project.use.storageState : undefined;
 
     if (!baseUrl) {
         throw new Error('The URL for testing is not specified');
     }
 
+    const pingRetries = 60;
+    const pingRetryDelay = 500;
+    let pingError: unknown;
+
+    for (let i = 0; i <= pingRetries; i += 1) {
+        try {
+            const response = await page.request.get(`${baseUrl}/ping`, {
+                timeout: 1 * 1000,
+                maxRedirects: 0,
+            });
+            if (response.ok()) {
+                pingError = null;
+                break;
+            }
+        } catch (error) {
+            pingError = error;
+        }
+        await new Promise((r) => setTimeout(r, pingRetryDelay));
+    }
+    if (pingError) {
+        throw pingError;
+    }
+    // eslint-disable-next-line no-console
+    console.log(`Ping ready: ok`);
+
+    const isAuthDisabled =
+        isTrueArg(process.env.NO_AUTH) ||
+        isTrueArg(process.env.E2E_NO_AUTH) ||
+        !isTrueArg(process.env.AUTH_ENABLED || 'true');
+
     try {
-        if (process.env.NO_AUTH === 'true') {
+        if (isAuthDisabled) {
             await afterAuth?.({page});
         } else {
+            const authType = process.env.E2E_AUTH_TYPE as AuthenticateType | undefined;
+
             await authenticate({
                 page,
                 baseUrl,
-                passportUrl: authSettings.url,
+                authUrl: authSettings.url,
+                authType: authType || AUTH_TYPE.DATALENS,
                 login: authSettings.login,
                 password: authSettings.password,
                 afterAuth,
+                customAuth,
                 retryCount: AUTH_RETRY,
+                storageState,
             });
         }
     } finally {

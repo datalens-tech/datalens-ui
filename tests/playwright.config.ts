@@ -5,6 +5,7 @@ import path from 'path';
 import {PlaywrightTestConfig, ReporterDescription, expect} from '@playwright/test';
 
 import {DatalensTestFixtures} from './utils/playwright/globalTestDefinition';
+import {isTrueArg} from '../src/shared';
 
 const ROOT_ENV_PATH = path.resolve(__dirname, '..', '.env');
 
@@ -56,8 +57,9 @@ Object.defineProperty(global, 'expect', {
 
 const baseURL = process.env.E2E_DOMAIN;
 
-const globalSetupPath = './utils/playwright/datalens/e2e/setup-e2e';
+const globalSetupPath = './utils/playwright/datalens/setup-e2e';
 
+// eslint-disable-next-line no-console
 console.log(`Base URL for tests is: ${baseURL}`);
 
 const testTimeout = process.env.E2E_TEST_TIMEOUT
@@ -69,6 +71,10 @@ const expectTimeout = process.env.E2E_EXPECT_TIMEOUT
 const actionTimeout = process.env.E2E_ACTION_TIMEOUT
     ? parseInt(process.env.E2E_ACTION_TIMEOUT, 10)
     : testTimeout;
+const isAuthDisabled =
+    isTrueArg(process.env.NO_AUTH) ||
+    isTrueArg(process.env.E2E_NO_AUTH) ||
+    !isTrueArg(process.env.AUTH_ENABLED || 'true');
 const playwrightConfig: PlaywrightTestConfig<DatalensTestFixtures> = {
     workers,
     testMatch,
@@ -98,7 +104,9 @@ const playwrightConfig: PlaywrightTestConfig<DatalensTestFixtures> = {
         trace: {mode: 'on-first-retry', screenshots: false, sources: false},
         actionTimeout: actionTimeout,
         testIdAttribute: 'data-qa',
-        storageState: process.env.NO_AUTH === 'true' ? undefined : 'artifacts/storageState.json',
+        storageState: isAuthDisabled
+            ? undefined
+            : path.join(__dirname, 'artifacts/storageState.json'),
     },
     projects: [
         {
