@@ -88,21 +88,21 @@ jobs:
           context: .
           push: false
           load: true
-          tags: e2e-datalens-ui:pr
+          tags: datalens-ui:pr
           platforms: linux/amd64
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Build docker ui  image with cache
+      - name: Build docker ui tests image with cache
         if: ${{ env.UI_VERSION == '' }}
         uses: docker/build-push-action@v5.0.0
         with:
           network: host
           context: .
-          dockerfile: ./tests/Dockerfile
+          file: ./tests/Dockerfile
           push: false
           load: true
-          tags: e2e-datalens-ui:e2e-pr
+          tags: datalens-ui:pr-e2e
           platforms: linux/amd64
           cache-from: type=gha
           cache-to: type=gha,mode=max
@@ -115,7 +115,8 @@ jobs:
           AUTH_VERSION: ${{ env.AUTH_VERSION }}
           CONTROL_API_VERSION: ${{ env.CONTROL_API_VERSION }}
           DATA_API_VERSION: ${{ env.DATA_API_VERSION }}
-          UI_VERSION: ${{ env.UI_VERSION }}
+          UI_VERSION: pr
+          E2E_IMAGE: datalens-ui:pr
           E2E_NO_AUTH: false
           E2E_RETRY_TIMES: 1
           E2E_TEST_TIMEOUT: 90000
