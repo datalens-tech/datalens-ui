@@ -45,7 +45,6 @@ export function getGravityChartsChartKitData(args: {
         },
         legend: {
             justifyContent: 'start',
-            margin: 24,
             itemDistance: 24,
             itemStyle: {
                 fontSize: '13px',
