@@ -141,13 +141,9 @@ jobs:
       - name: Copy tests report from docker run
         if: always()
         run: |
-          if [ -z "${{ env.UI_VERSION }}" ]; then
-            echo "skip export report from docker run..."
-          else
-            echo "export report from docker run"
-            rm -rf ./tests/artifacts
-            npm run test:e2e:docker:report
-          fi
+          echo "export report from docker run"
+          rm -rf ./tests/artifacts
+          npm run test:e2e:docker:report
         env:
           US_VERSION: ${{ env.US_VERSION }}
           AUTH_VERSION: ${{ env.AUTH_VERSION }}
