@@ -32,6 +32,11 @@ concurrency:
   group: ${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
+# TODO: remove
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   run-e2e:
     name: Install Datalens and Run E2E Tests

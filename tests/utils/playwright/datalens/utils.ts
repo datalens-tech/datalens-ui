@@ -32,6 +32,11 @@ const authenticatePassport = async (args: AuthenticateArgs) => {
     const {page, baseUrl, authUrl, login, password, storageState} = args;
 
     const retPath = encodeURIComponent(baseUrl);
+    if (!authUrl) {
+        throw new Error(
+            'Environment variable [E2E_PASSPORT_URL] is required for passport authentication',
+        );
+    }
     const url = `${authUrl}/auth?mode=password&retpath=${retPath}?skipPromo=true`;
 
     const timestamp = Math.round(new Date().getTime() / 1000);
@@ -49,12 +54,33 @@ const authenticatePassport = async (args: AuthenticateArgs) => {
     await page.setContent(html);
     await page.waitForSelector('#authForm');
 
-    const promiseResponse = page.waitForResponse((response) => response.ok(), {
-        timeout: 10 * 1000,
-    });
+    const promiseResponse = page.waitForResponse(
+        async (response) => {
+            if (response.url().startsWith(authUrl) && response.status() === 200) {
+                // eslint-disable-next-line no-console
+                console.log('Auth error, check credentials...');
+                throw new Error(
+                    JSON.stringify(
+                        {
+                            url: response.url(),
+                        },
+                        null,
+                        2,
+                    ),
+                );
+            }
+            return response.ok();
+        },
+        {
+            timeout: 15 * 1000,
+        },
+    );
     await page.click('button');
 
     await promiseResponse;
+
+    // eslint-disable-next-line no-console
+    console.log('Auth check: ok');
 
     await page.context().storageState({path: storageState || 'artifacts/storageState.json'});
 
@@ -97,9 +123,7 @@ const authenticateDataLens = async (args: AuthenticateArgs) => {
 
     await page.context().storageState({path: storageState || 'artifacts/storageState.json'});
 
-    await page.waitForLoadState();
-
-    expect(page.url()).not.toEqual(url);
+    await page.waitForURL((u) => u.href !== url);
 };
 
 export async function authenticate(args: AuthenticateArgs) {
