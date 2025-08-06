@@ -96,7 +96,6 @@ jobs:
       - name: Up docker compose and install local deps for test
         if: ${{ env.UI_VERSION == '' }}
         run: |
-          sudo rm /etc/apt/sources.list.d/microsoft-prod.list
           npm run test:e2e:docker:up-no-build && npm ci && npm run test:install:chromium & wait
         env:
           US_VERSION: ${{ env.US_VERSION }}
