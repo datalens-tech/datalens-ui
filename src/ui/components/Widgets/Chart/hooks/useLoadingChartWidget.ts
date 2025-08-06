@@ -1,5 +1,3 @@
-import {YFM_CUT_MARKDOWN_CLASSNAME, YFM_MARKDOWN_CLASSNAME} from 'constants/yfm';
-
 import React from 'react';
 
 import debounce from 'lodash/debounce';
@@ -7,6 +5,7 @@ import {useHistory} from 'react-router-dom';
 import type {DashSettings} from 'shared';
 import {FOCUSED_WIDGET_PARAM_NAME} from 'shared';
 import {adjustWidgetLayout as dashkitAdjustWidgetLayout} from 'ui/components/DashKit/utils';
+import {YFM_CUT_MARKDOWN_CLASSNAME, YFM_MARKDOWN_CLASSNAME} from 'ui/constants/yfm';
 import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
@@ -115,8 +114,12 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
 
     const tabs = props.tabs as WidgetPluginDataWithTabs['tabs'];
 
-    const [loadedDescription, setLoadedDescription] = React.useState<string | null>(null);
+    const [loadedDescription, setLoadedDescription] = React.useState<{
+        result: string;
+        meta?: object;
+    } | null>(null);
     const [description, setDescription] = React.useState<string | null>(null);
+    const [descriptionMetaScript, setDescriptionMetaScript] = React.useState<string[] | null>(null);
     const [loadedWidgetType, setLoadedWidgetType] = React.useState<string>('');
     const [isLoadedWidgetWizard, setIsLoadedWidgetWizard] = React.useState(false);
     const [isRendered, setIsRendered] = React.useState(false);
@@ -329,10 +332,12 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
     const loadDescription = React.useCallback(() => {
         if (currentTab.description) {
             getMarkdown?.({text: currentTab.description})
-                .then(({result}) => setLoadedDescription(result))
+                .then(({result, meta}) => {
+                    setLoadedDescription(meta ? {result, meta} : {result});
+                })
                 .catch((err) => {
                     logger.logError('DashKit: Widget loadDescription failed', err);
-                    setLoadedDescription(currentTab.description);
+                    setLoadedDescription({result: currentTab.description});
                     updateImmediateLayout({
                         type: loadedWidgetType,
                         autoHeight: tabs[tabIndex].autoHeight,
@@ -344,7 +349,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
                     });
                 });
         } else {
-            setLoadedDescription(currentTab.description);
+            setLoadedDescription({result: currentTab.description});
             updateImmediateLayout({
                 type: loadedWidgetType,
                 autoHeight: tabs[tabIndex].autoHeight,
@@ -428,10 +433,17 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
      * updating widget description by markdown
      */
     React.useEffect(() => {
-        if (loadedDescription === description) {
+        if (loadedDescription?.result === description) {
             return;
         }
-        setDescription(loadedDescription);
+
+        if (loadedDescription) {
+            setDescription(loadedDescription.result);
+        }
+
+        const metaScript = ((loadedDescription?.meta as any)?.script as string[]) ?? null;
+        setDescriptionMetaScript(metaScript);
+
         handleChartkitReflow();
     }, [loadedDescription, description, handleChartkitReflow]);
 
@@ -696,6 +708,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         error,
         handleRenderChart,
         description,
+        descriptionMetaScript,
         handleToggleFullscreenMode,
         handleSelectTab,
         handleChartkitReflow,

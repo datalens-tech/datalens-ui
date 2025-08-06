@@ -1,12 +1,16 @@
+@import '../../../styles/mixins.scss';
+
 $dashContainerClassName: '.dash-body';
 $dashPublicContainerClassName: '.dash';
 
 $hintOffset: 3px;
 
+$widgetBgColor: var(--g-color-base-float);
+
 .dl-widget {
     #{$dashContainerClassName} &,
     #{$dashPublicContainerClassName} & {
-        background-color: var(--g-color-base-float);
+        background-color: $widgetBgColor;
     }
 
     &__overlay {
@@ -59,14 +63,14 @@ $hintOffset: 3px;
 
     // styles for widgets with tabs below
 
-    #{$dashPublicContainerClassName} &__container &__chart-header,
-    #{$dashContainerClassName} &__container &__chart-header {
+    #{$dashPublicContainerClassName} &__container &__chart-header:not(&__chart-header_float),
+    #{$dashContainerClassName} &__container &__chart-header:not(&__chart-header_float) {
         top: -40px;
         right: 8px;
     }
 
-    #{$dashPublicContainerClassName} &__container_table &__chart-header,
-    #{$dashContainerClassName} &__container_table &__chart-header {
+    #{$dashPublicContainerClassName} &__container_table &__chart-header:not(&__chart-header_float),
+    #{$dashContainerClassName} &__container_table &__chart-header:not(&__chart-header_float) {
         top: -46px;
         right: 8px;
     }
@@ -89,15 +93,18 @@ $hintOffset: 3px;
 
     // styles for widgets without tabs below
 
-    #{$dashPublicContainerClassName} &_no-tabs &__container &__chart-header,
-    #{$dashContainerClassName} &_no-tabs &__container &__chart-header {
+    #{$dashPublicContainerClassName}
+        &_no-tabs
+        &__container
+        &__chart-header:not(&__chart-header_float),
+    #{$dashContainerClassName} &_no-tabs &__container &__chart-header:not(&__chart-header_float) {
         top: -4px;
     }
 
     // styles for mobile dash widgets chart header
     // for supporting full display of titles
-    #{$dashPublicContainerClassName} &_default-mobile &__chart-header,
-    #{$dashContainerClassName} &_default-mobile &__chart-header {
+    #{$dashPublicContainerClassName} &_default-mobile &__chart-header:not(&__chart-header_float),
+    #{$dashContainerClassName} &_default-mobile &__chart-header:not(&__chart-header_float) {
         top: 2px;
     }
 
@@ -108,5 +115,84 @@ $hintOffset: 3px;
     #{$dashPublicContainerClassName} &_autoheight .datalens-chartkit-error,
     #{$dashContainerClassName} &_autoheight .datalens-chartkit-error {
         height: auto;
+    }
+
+    /** styles for flat controls */
+    &__controls-corner-wrapper {
+        background-color: $widgetBgColor;
+        border-radius: var(--g-border-radius-m);
+        margin-left: 8px;
+        padding: 0px;
+        display: flex;
+        column-gap: 0px;
+        opacity: 1;
+        transition: opacity 0.3s ease-out;
+
+        & .dl-widget__filter-button {
+            opacity: 0.75;
+        }
+    }
+
+    & .chartkit-menu__switcher_flat {
+        display: none;
+    }
+
+    &:hover &__controls-corner-wrapper {
+        background-color: $widgetBgColor;
+
+        & .chartkit-insights__button {
+            opacity: 1;
+        }
+
+        & .dl-widget__filter-button:hover {
+            opacity: 1;
+        }
+
+        & .chartkit-menu__switcher_flat {
+            display: block;
+        }
+    }
+
+    &__controls-corner-wrapper:has(.chartkit-menu__switcher-button_opened)
+        .chartkit-menu__switcher_flat {
+        display: block;
+    }
+
+    .widget-header_mobile &__controls-corner-wrapper {
+        background-color: $widgetBgColor;
+
+        & .chartkit-insights__button,
+        & .dl-widget__filter-button {
+            opacity: 1;
+        }
+
+        & .chartkit-menu__switcher_flat {
+            display: block;
+        }
+    }
+
+    #{$dashPublicContainerClassName} &_pulsate &__container,
+    #{$dashContainerClassName} &_pulsate &__container {
+        background-color: $widgetBgColor;
+        @include loading-pulsate-animation-style();
+    }
+
+    &__chartkit-inner-loader,
+    &__mobile-loading-dummy,
+    #{$dashPublicContainerClassName} &_loading-mobile-height,
+    #{$dashContainerClassName} &_loading-mobile-height {
+        min-height: 400px;
+    }
+
+    &__loader {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 3; // to overlay Datepicker
     }
 }

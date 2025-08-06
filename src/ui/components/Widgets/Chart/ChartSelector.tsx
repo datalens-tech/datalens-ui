@@ -1,8 +1,7 @@
-import {DL} from 'constants/common';
-
 import React from 'react';
 
 import {pickExceptActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
+import {Loader as CommonLoader} from '@gravity-ui/uikit';
 import type {AxiosResponse} from 'axios';
 import block from 'bem-cn-lite';
 import {usePrevious} from 'hooks';
@@ -11,8 +10,10 @@ import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import {useSelector} from 'react-redux';
 import type {StringParams} from 'shared';
-import {DashTabItemControlSourceType} from 'shared';
+import {DashTabItemControlSourceType, Feature} from 'shared';
+import {DL} from 'ui/constants/common';
 import {useChangedValue} from 'ui/hooks/useChangedProp';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import type {ChartInitialParams} from '../../../libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
@@ -26,6 +27,7 @@ import type {ControlsOnlyWidget} from '../../../libs/DatalensChartkit/types';
 import {selectSkipReload} from '../../../units/dash/store/selectors/dashTypedSelectors';
 import DebugInfoTool from '../../DashKit/plugins/DebugInfoTool/DebugInfoTool';
 
+import {useChartActions} from './helpers/chart-actions';
 import {COMPONENT_CLASSNAME, removeEmptyNDatasetFieldsProperties} from './helpers/helpers';
 import {useLoadingChartSelector} from './hooks/useLoadingChartSelector';
 import type {
@@ -247,6 +249,7 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
         setLoadingProps,
         getControls,
         isAutoHeightEnabled,
+        runAction,
     } = useLoadingChartSelector({
         ...props,
         chartKitRef,
@@ -262,6 +265,10 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
         widgetDataRef,
         chartId,
         widgetType,
+    });
+
+    const {onAction} = useChartActions({
+        onChange: handleChange,
     });
 
     const hasControl = Boolean((loadedData as ControlsOnlyWidget)?.controls?.controls?.length);
@@ -308,12 +315,18 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
         error || (loadedData as unknown as AxiosResponse<ResponseError>)?.data?.error,
     );
 
+    const showFloatControls = isEnabledFeature(Feature.DashFloatControls);
+    const isLoading = showFloatControls && showLoader && !hasError;
+    const pulsate = isLoading && hasControl;
+    const showSpinner = isLoading && !hasControl;
+
     return (
         <div
             ref={rootNodeRef}
             className={`${b({
                 ...mods,
                 autoheight: isAutoHeightEnabled,
+                pulsate,
             })}`}
             data-qa="chart-widget-selectors"
         >
@@ -324,7 +337,14 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
                 ]}
             />
             <div className={b('container', {[String(widgetType)]: Boolean(widgetType)})}>
-                <Loader visible={showLoader} veil={veil} delay={loaderDelay} />
+                {!showFloatControls && (
+                    <Loader visible={showLoader} veil={veil} delay={loaderDelay} />
+                )}
+                {showSpinner && (
+                    <div className={b('loader')}>
+                        <CommonLoader size="s" />
+                    </div>
+                )}
                 <div
                     className={b(
                         'body',
@@ -344,6 +364,8 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
                             getControls={getControls}
                             nonBodyScroll={nonBodyScroll}
                             initialParams={controlInitialParams}
+                            runAction={runAction}
+                            onAction={onAction}
                         />
                     )}
                     {/* DatalensChartkitContent for error displaying & retry */}

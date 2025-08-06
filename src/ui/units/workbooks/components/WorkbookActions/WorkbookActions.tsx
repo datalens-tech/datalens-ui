@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {ArrowRight, Copy, LockOpen, TrashBin} from '@gravity-ui/icons';
+import {ArrowRight, Copy, FileArrowUp, LockOpen, TrashBin} from '@gravity-ui/icons';
 import type {DropdownMenuItem} from '@gravity-ui/uikit';
 import {Button, DropdownMenu, Icon, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
@@ -12,6 +12,8 @@ import {
 import {I18N} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {useHistory, useLocation} from 'react-router-dom';
+import {WorkbookPageActionsMoreQA} from 'shared/constants/qa';
+import {DIALOG_EXPORT_WORKBOOK} from 'ui/components/CollectionsStructure/ExportWorkbookDialog/ExportWorkbookDialog';
 import {DropdownAction} from 'ui/components/DropdownAction/DropdownAction';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {COLLECTIONS_PATH} from 'ui/units/collections-navigation/constants';
@@ -74,6 +76,13 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
 
     const {useAdditionalWorkbookActions} = registry.workbooks.functions.getAll();
     const {CustomActionPanelWorkbookActions} = registry.workbooks.components.getAll();
+
+    const {//getCurrentUserRights, 
+        getGloballyEntrySettings} = registry.common.functions.getAll();
+    //const currentUserRights = getCurrentUserRights();
+
+    const globallyEntrySettings = getGloballyEntrySettings();
+    const isWorkbookExportDisabled = Boolean(globallyEntrySettings?.isWorkbookExportDisabled);
 
     const additionalActions = useAdditionalWorkbookActions(workbook);
 
@@ -145,6 +154,31 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
         });
     }
 
+    if (
+        isEnabledFeature(Feature.EnableExportWorkbookFile) &&
+        workbook.permissions.listAccessBindings &&
+        !isWorkbookExportDisabled
+    ) {
+        dropdownActions.push({
+            action: () => {
+                dispatch(
+                    openDialog({
+                        id: DIALOG_EXPORT_WORKBOOK,
+                        props: {
+                            open: true,
+                            workbookId: workbook.workbookId,
+                            workbookTitle: workbook.title,
+                            onClose: () => {
+                                dispatch(closeDialog());
+                            },
+                        },
+                    }),
+                );
+            },
+            text: <DropdownAction icon={FileArrowUp} text={i18n('action_export')} />,
+        });
+    }
+
     const otherActions: DropdownMenuItem[] = [];
 
     if (workbook.permissions.delete) {
@@ -173,6 +207,7 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
                 );
             },
             theme: 'danger',
+            qa: WorkbookPageActionsMoreQA.DELETE_ITEM,
         });
     }
 
@@ -184,7 +219,7 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
         <div className={b()}>
             {Boolean(dropdownActions.length) && (
                 <DropdownMenu
-                    defaultSwitcherProps={{view: 'normal'}}
+                    defaultSwitcherProps={{view: 'normal', qa: WorkbookPageActionsMoreQA.SWITCHER}}
                     switcherWrapperClassName={b('item')}
                     items={dropdownActions}
                 />

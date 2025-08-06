@@ -17,6 +17,7 @@ import {
     SERVICE_USER_ACCESS_TOKEN_HEADER,
     SuperuserHeader,
     TENANT_ID_HEADER,
+    US_MASTER_TOKEN_HEADER,
 } from '../../shared';
 import {isOpensourceInstallation} from '../app-env';
 
@@ -89,6 +90,15 @@ class Utils {
             [REQUEST_ID_HEADER]: req.id,
             ...(req.ctx.config.isZitadelEnabled ? {...Utils.pickZitadelHeaders(req)} : {})
         };
+    }
+
+    static pickUsMasterToken(req: Request) {
+        const token = req.headers[US_MASTER_TOKEN_HEADER];
+        if (typeof token !== 'string') {
+            return null;
+        }
+
+        return token;
     }
 
     static getErrorMessage(error: unknown) {

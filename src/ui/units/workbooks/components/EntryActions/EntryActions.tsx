@@ -16,6 +16,8 @@ import {DropdownAction} from '../../../../components/DropdownAction/DropdownActi
 import {registry} from '../../../../registry';
 import type {WorkbookEntry} from '../../types';
 
+import iconId from 'ui/assets/icons/id-square.svg';
+
 const i18n = I18n.keyset('new-workbooks');
 const commonMenuI18n = I18n.keyset('component.entry-context-menu.view');
 
@@ -30,6 +32,7 @@ type EntryActionsProps = {
     onDuplicateEntry: () => void;
     onCopyEntry: () => void;
     onShowRelatedClick: () => void;
+    onCopyId: () => void;
 };
 
 export const EntryActions = ({
@@ -41,6 +44,7 @@ export const EntryActions = ({
     onDuplicateEntry,
     onCopyEntry,
     onShowRelatedClick,
+    onCopyId,
 }: EntryActionsProps) => {
     const {useAdditionalWorkbookEntryActions} = registry.workbooks.functions.getAll();
 
@@ -86,6 +90,20 @@ export const EntryActions = ({
                     />
                 ),
             },
+            ...(onCopyId
+                ? [
+                      {
+                          action: onCopyId,
+                          text: (
+                              <DropdownAction
+                                  size={16}
+                                  icon={iconId}
+                                  text={commonMenuI18n('value_copy-id')}
+                              />
+                          ),
+                      },
+                  ]
+                : []),
         ],
     ];
 

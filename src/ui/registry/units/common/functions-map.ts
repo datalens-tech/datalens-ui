@@ -28,10 +28,12 @@ import type {EntrySettings} from '../../../components/Navigation/Base/configure'
 import type {NavigationQuickItem} from '../../../components/Navigation/Base/types';
 import type {NavigationMinimalProps} from '../../../components/Navigation/NavigationMinimal';
 import type {PlaceParameterItem} from '../../../components/Navigation/types';
+import type {GetUsersSuggestItems} from '../../../components/UsersSuggest/types';
 import type {ConfigSdk, HeadersSdk} from '../../../libs/sdk/types';
 import type {AppThunkAction} from '../../../store';
 
 import {EXAMPLE_FUNCTION} from './constants/functions';
+import type {GetUsersById} from './types/functions/GetUsersById';
 import type {CheckCreateEntryButtonVisibility} from './types/functions/checkCreateEntryButtonVisibility';
 import type {
     FetchDocumentationArgs,
@@ -41,6 +43,7 @@ import type {FetchFunctionsDocumentationResponse} from './types/functions/fetchF
 import type {GetAdditionalChartkitErrorContent} from './types/functions/getAdditionalChartkitErrorContent';
 import type {GetBasicActionPanelItems} from './types/functions/getBasicActionPanelItems';
 import type {GetFunctionsDocumentationResponse} from './types/functions/getFunctionsDocumentation';
+import type {GloballyEntrySettings} from './types/functions/getGloballyEntrySettings';
 import type {GetIllustrationStore} from './types/functions/getIllustrationStore';
 import type {GetLoginById} from './types/functions/getLoginById';
 import type {GetUIEntryRouteArgs} from './types/functions/getUIEntryRoute';
@@ -58,7 +61,7 @@ export const commonFunctionsMap = {
     openDialogOrganizationInviteUsers:
         makeFunctionTemplate<() => OpenDialogOrganizationInviteUsers>(),
     getEntryMenuConfig: makeFunctionTemplate<() => MenuGroup[]>(),
-    getEntryPublishGloballyDisabled: makeFunctionTemplate<() => boolean>(),
+    getGloballyEntrySettings: makeFunctionTemplate<() => GloballyEntrySettings>(),
     getMenuGroupConfig: makeFunctionTemplate<() => Array<MenuGroup>>(),
     getSelectStateMenuItem:
         makeFunctionTemplate<
@@ -166,4 +169,7 @@ export const commonFunctionsMap = {
     renderDialogRelatedEntitiesAlertHint:
         makeFunctionTemplate<RenderDialogRelatedEntitiesAlertHint>(),
     getAdditionalChartkitErrorContent: makeFunctionTemplate<GetAdditionalChartkitErrorContent>(),
+    getCurrentUserRights: makeFunctionTemplate<() => {admin: boolean}>(),
+    getUsersSuggestItems: makeFunctionTemplate<GetUsersSuggestItems>(),
+    getUsersById: makeFunctionTemplate<GetUsersById>(),
 } as const;

@@ -7,6 +7,7 @@ import type {Request, Response} from '@gravity-ui/expresskit';
 import {isObject} from 'lodash';
 import mime from 'mime';
 import {v4 as uuidv4} from 'uuid';
+import * as path from 'path';
 
 import type {Graph} from '../components/charts-engine/components/processor/comments-fetcher';
 
@@ -20,10 +21,31 @@ function isCell(cellData: unknown): cellData is Cell {
     return isObject(cellData) && 't' in cellData && 'v' in cellData;
 }
 
+const getWorkSheet = (widgetKey?: string) => {
+    const defaultSheet = XLSX.utils.sheet_new();
+    if (!widgetKey) return defaultSheet;
+
+    const name = widgetKey.split('/')?.[1] || "";
+    if (!name) return defaultSheet;
+
+    const exportPath = path.join(__dirname, '../', '../', '../', 'table-report-headers');
+    const templatePath = path.join(exportPath, `${name}.xlsx`);
+
+    if (!fs.existsSync(templatePath)) return defaultSheet;
+
+    const workBook = XLSX.readFile(templatePath);
+    const workSheet = workBook.Sheets[workBook.SheetNames[0]];
+
+    if (!workSheet['!ref']) return defaultSheet;
+
+    return workSheet;
+}
+
 export function xlsxConverter(
     req: Request,
     res: Response,
     chartData: {
+        widgetKey?: string;
         categories_ms?: number[];
         categories?: string[] | number[];
         graphs: Graph[];
@@ -96,11 +118,17 @@ export function xlsxConverter(
 
     ctx.log('EXPORT_XLS_ADD_WORKBOOK_SHEET');
 
-    const worksheet = XLSX.utils.json_to_sheet(rows, {dense: true, cellDates: true});
+    const worksheet = getWorkSheet(chartData.widgetKey);
+    const headRange = worksheet['!ref'] ? XLSX.utils.decode_range(worksheet['!ref']) : XLSX.utils.decode_range('A1');
+    if (!worksheet['!ref']) {
+        XLSX.utils.sheet_add_aoa(worksheet, [titleRows], {origin: 'A1'});
+    }
+
+    XLSX.utils.sheet_add_aoa(worksheet, rows, { origin: { r:headRange.e.r + 1, c:headRange.s.c }});
+    
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'Chart data');
     ctx.log('EXPORT_XLS_FINISH_ADD_WORKBOOK_SHEET');
-    XLSX.utils.sheet_add_aoa(worksheet, [titleRows], {origin: 'A1'});
     worksheet['!cols'] = [...columns];
 
     const mimeType = mime.lookup('.xlsx');

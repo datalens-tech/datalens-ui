@@ -31,6 +31,7 @@ export type RunnerHandlerProps = {
     workbookId?: WorkbookId;
     isWizard?: boolean;
     forbiddenFields?: ProcessorParams['forbiddenFields'];
+    secureConfig?: ProcessorParams['secureConfig'];
 };
 
 export function getDefaultRunners() {

@@ -65,6 +65,8 @@ const PASSED_PROPERTIES: (keyof Entry)[] = [
     'updatedAt',
     'updatedBy',
     'workbookId',
+    'servicePlan',
+    'tenantFeatures',
 ];
 
 export type Entry = {
@@ -93,6 +95,8 @@ export type Entry = {
     updatedAt?: string;
     updatedBy?: string;
     workbookId?: WorkbookId;
+    servicePlan?: string;
+    tenantFeatures?: Record<string, unknown>;
 };
 
 const PASSED_HEADERS = [
@@ -245,6 +249,8 @@ export class USProvider {
             unreleased,
             includeLinks,
             includePermissionsInfo,
+            includeServicePlan,
+            includeTenantFeatures,
             headers,
             storageApiPath,
             extraAllowedHeaders,
@@ -259,6 +265,8 @@ export class USProvider {
             revId?: string;
             headers: Request['headers'];
             workbookId?: WorkbookId;
+            includeServicePlan?: boolean;
+            includeTenantFeatures?: boolean;
         },
     ) {
         const hrStart = process.hrtime();
@@ -268,9 +276,19 @@ export class USProvider {
             includeLinks?: boolean;
             includePermissionsInfo?: boolean;
             revId?: string;
+            includeServicePlan?: boolean;
+            includeTenantFeatures?: boolean;
         } = {
             branch: unreleased ? 'saved' : 'published',
         };
+
+        if (includeServicePlan) {
+            params.includeServicePlan = true;
+        }
+
+        if (includeTenantFeatures) {
+            params.includeTenantFeatures = true;
+        }
 
         if (includeLinks) {
             params.includeLinks = true;
@@ -407,9 +425,13 @@ export class USProvider {
         {
             token,
             headers,
+            includeServicePlan,
+            includeTenantFeatures,
         }: {
             token: string;
             headers: Request['headers'];
+            includeServicePlan?: boolean;
+            includeTenantFeatures?: boolean;
         },
     ): Promise<EmbeddingInfo> {
         const hrStart = process.hrtime();
@@ -417,12 +439,25 @@ export class USProvider {
             ...headers,
             [DL_EMBED_TOKEN_HEADER]: token,
         };
+        const params: {
+            includeServicePlan?: boolean;
+            includeTenantFeatures?: boolean;
+        } = {};
+
+        if (includeServicePlan) {
+            params.includeServicePlan = true;
+        }
+
+        if (includeTenantFeatures) {
+            params.includeTenantFeatures = true;
+        }
         const formattedHeaders = formatPassedHeaders(headersWithToken, ctx);
         const axiosArgs: AxiosRequestConfig = {
             url: `${storageEndpoint}/v1/embedded-entry`,
             method: 'get',
             headers: injectMetadata(formattedHeaders, ctx),
             timeout: TEN_SECONDS,
+            params,
         };
 
         return axios
@@ -464,10 +499,14 @@ export class USProvider {
             id,
             token,
             headers,
+            includeServicePlan,
+            includeTenantFeatures,
         }: {
             id: string;
             token: string;
             headers: Request['headers'];
+            includeServicePlan?: boolean;
+            includeTenantFeatures?: boolean;
         },
     ): Promise<EmbeddingInfo> {
         const hrStart = process.hrtime();
@@ -475,12 +514,26 @@ export class USProvider {
             ...headers,
             [DL_EMBED_TOKEN_HEADER]: token,
         };
+        const params: {
+            includeServicePlan?: boolean;
+            includeTenantFeatures?: boolean;
+        } = {};
+
+        if (includeServicePlan) {
+            params.includeServicePlan = true;
+        }
+
+        if (includeTenantFeatures) {
+            params.includeTenantFeatures = true;
+        }
+
         const formattedHeaders = formatPassedHeaders(headersWithToken, ctx);
         const axiosArgs: AxiosRequestConfig = {
             url: `${storageEndpoint}/embeds/entries/${id}`,
             method: 'get',
             headers: injectMetadata(formattedHeaders, ctx),
             timeout: TEN_SECONDS,
+            params
         };
 
         return axios

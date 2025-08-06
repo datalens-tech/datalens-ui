@@ -1,3 +1,4 @@
+import {batch} from 'react-redux';
 import type {Dispatch} from 'redux';
 import type {AliasClickHandlerArgs} from 'ui/components/DialogRelations/types';
 import type {DatalensGlobalState} from 'ui/index';
@@ -11,6 +12,7 @@ import {
     selectCurrentTabAliases,
     selectCurrentTabRelationDataItems,
     selectDashWorkbookId,
+    selectDashkitRef,
     selectWidgetsCurrentTab,
 } from '../../selectors/dashTypedSelectors';
 import {updateCurrentTabData} from '../dashTyped';
@@ -42,7 +44,7 @@ export const openDialogRelations = ({
             },
             onApply: (newData) => {
                 onApply?.();
-                dispatch(updateCurrentTabData(newData));
+                updateCurrentTabData(newData)(dispatch);
                 onClose();
                 dispatch(closeDialog());
             },
@@ -100,3 +102,24 @@ export const setNewRelations = (data: SetNewRelationsAction['payload']) => ({
     type: SET_NEW_RELATIONS,
     payload: data,
 });
+
+export const openEmptyDialogRelations = () => {
+    return function (dispatch: Dispatch, getState: () => DatalensGlobalState) {
+        const state = getState();
+        const dashKitRef = selectDashkitRef(state);
+
+        if (dashKitRef === null) {
+            return;
+        }
+
+        batch(() => {
+            dispatch(setNewRelations(true));
+            openDialogRelations({
+                dashKitRef,
+                onClose: () => {
+                    dispatch(setNewRelations(false));
+                },
+            })(dispatch, getState);
+        });
+    };
+};

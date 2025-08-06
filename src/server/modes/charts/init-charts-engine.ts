@@ -48,7 +48,6 @@ export function initChartsEngine({
         plugins,
         telemetryCallbacks: chartsEngineConfig.enableTelemetry ? telemetryCallbacks : undefined,
         cacheClient,
-        nativeModules: chartsEngineConfig.nativeModules,
         beforeAuth,
         afterAuth,
         runners: getDefaultRunners(),

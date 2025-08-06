@@ -21,7 +21,8 @@ import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {ChartWidgetDataRef} from '../../../components/Widgets/Chart/types';
 import {CHARTKIT_WIDGET_TYPE} from '../ChartKit/components/Widget/Widget';
-import {getExportItem, getExportPDF} from '../components/ChartKitBase/components/Header/components/Menu/Items/Export/Export';
+import {getExportPDF, getExportItem} from '../components/ChartKitBase/components/Header/components/Menu/Items/Export/Export';
+//import {getExportItem} from '../components/ChartKitBase/components/Header/components/Menu/Items/Export/Export';
 import Inspector from '../components/ChartKitBase/components/Header/components/Menu/Items/Inspector/Inspector';
 import type {ChartKitDataProvider} from '../components/ChartKitBase/types';
 import ChartKitIcon from '../components/ChartKitIcon/ChartKitIcon';
@@ -147,8 +148,7 @@ export const getNewWindowMenuItem = ({
             const link = (dataProvider || chartsDataProvider)?.getGoAwayLink(
                 {loadedData, propsData},
                 {
-                    urlPostfix: '/preview',
-                    idPrefix: '/editor/',
+                    idPrefix: '/preview/',
                     extraParams: enableAP ? {[COMMON_URL_OPTIONS.ACTION_PARAMS_ENABLED]: '1'} : {},
                 },
             );
@@ -221,8 +221,7 @@ export const getOpenAsTableMenuItem = ({
                     {loadedData, propsData},
                     {
                         extraParams: {_chart_type: 'table'},
-                        urlPostfix: '/preview',
-                        idPrefix: '/editor/',
+                        idPrefix: '/preview/',
                     },
                 ),
             );

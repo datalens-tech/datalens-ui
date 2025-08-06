@@ -3,7 +3,8 @@ import React from 'react';
 import {useThemeType} from '@gravity-ui/uikit';
 import merge from 'lodash/merge';
 
-import {SvgImage} from './SvgImage/SvgImage';
+import {AsyncImage} from '../AsyncImage/AsyncImage';
+
 import {importContext, isContext} from './context';
 import type {CreateIllustrationProps, IllustrationStore} from './types';
 
@@ -22,7 +23,7 @@ export function createIllustration(
     function Illustration({name, ...props}: CreateIllustrationProps) {
         const theme = useThemeType();
         const src = store[theme] && store[theme][name];
-        return <SvgImage alt={name} src={src} {...props} />;
+        return <AsyncImage alt={name} src={src} {...props} />;
     }
 
     return Illustration;

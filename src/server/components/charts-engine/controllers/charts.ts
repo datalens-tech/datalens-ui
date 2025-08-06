@@ -47,18 +47,13 @@ function responseWithError({
     res.status(status).send(readableError);
 }
 
-function prepareChartData(
-    {
-        data,
-        template,
-        type,
-    }: {
-        data: {type?: string; convert?: boolean};
-        template?: keyof ChartTemplates;
-        type: string;
-    },
-    req: Request,
-) {
+export type ChartDataOptions = {
+    data: {type?: string; convert?: boolean};
+    template?: keyof ChartTemplates;
+    type: string;
+};
+
+export function prepareChartData({data, template, type}: ChartDataOptions, req: Request) {
     const {ctx} = req;
 
     let chart, links;
@@ -101,11 +96,46 @@ const getHeaders = (req: Request) => {
     return headers;
 };
 
+export const prepareCreateParams = async (
+    chartData: ReturnType<typeof prepareChartData>,
+    req: Request,
+) => {
+    const {chart, type, links, template} = chartData;
+    const {key, name, workbookId} = req.body;
+
+    // If we save editor script
+    if (typeof template === 'undefined') {
+        const {checkRequestForDeveloperModeAccess} = req.ctx.get('gateway');
+
+        const checkResult = await checkRequestForDeveloperModeAccess({ctx: req.ctx});
+
+        if (checkResult === DeveloperModeCheckStatus.Forbidden) {
+            return;
+        }
+    }
+
+    const createParams: ProviderCreateParams = {
+        key,
+        name,
+        workbookId,
+        data: chart,
+        type,
+        scope: 'widget',
+        headers: getHeaders(req),
+        includePermissionsInfo: true,
+    };
+
+    if (links) {
+        createParams.links = links;
+    }
+
+    return createParams;
+};
+
 export const chartsController = (_chartsEngine: ChartsEngine) => {
     return {
         create: async (req: Request, res: Response) => {
             const {ctx} = req;
-            const {key, name, workbookId} = req.body;
 
             const chartData = prepareChartData(req.body, req);
 
@@ -115,40 +145,19 @@ export const chartsController = (_chartsEngine: ChartsEngine) => {
                 });
                 return;
             }
-            const {chart, type, links, template} = chartData;
 
-            // If we save editor script
-            if (typeof template === 'undefined') {
-                const {checkRequestForDeveloperModeAccess} = req.ctx.get('gateway');
+            const createParams = await prepareCreateParams(chartData, req);
 
-                const checkResult = await checkRequestForDeveloperModeAccess({ctx: req.ctx});
-
-                if (checkResult === DeveloperModeCheckStatus.Forbidden) {
-                    res.status(403).send({
-                        error: {
-                            code: 403,
-                            details: {
-                                message: 'Access to ChartEditor developer mode was denied',
-                            },
+            if (!createParams) {
+                res.status(403).send({
+                    error: {
+                        code: 403,
+                        details: {
+                            message: 'Access to Editor developer mode was denied',
                         },
-                    });
-                    return;
-                }
-            }
-
-            const createParams: ProviderCreateParams = {
-                key,
-                name,
-                workbookId,
-                data: chart,
-                type,
-                scope: 'widget',
-                headers: getHeaders(req),
-                includePermissionsInfo: true,
-            };
-
-            if (links) {
-                createParams.links = links;
+                    },
+                });
+                return;
             }
 
             USProvider.create(ctx, createParams)
@@ -190,7 +199,7 @@ export const chartsController = (_chartsEngine: ChartsEngine) => {
                         error: {
                             code: 403,
                             details: {
-                                message: 'Access to ChartEditor developer mode was denied',
+                                message: 'Access to Editor developer mode was denied',
                             },
                         },
                     });

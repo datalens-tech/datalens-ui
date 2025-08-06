@@ -14,13 +14,13 @@
         .dashkit-grid-item:hover & {
             opacity: 1;
         }
-
-        &:hover:before {
-            background: none;
-        }
     }
 
-    &__popup-item {
+    &__switcher:not(&__switcher_flat):hover:before {
+        background: none;
+    }
+
+    &__popup-item:not(&__popup-item_disabled) {
         color: var(--g-color-text-complementary);
 
         &:hover {
@@ -34,5 +34,16 @@
 
     &__sheet-content {
         padding: 0;
+    }
+
+    &__menu-item-content {
+        position: relative;
+    }
+
+    &__menu-item-hint {
+        position: absolute;
+        inset: 0;
+        pointer-events: auto;
+        cursor: pointer;
     }
 }

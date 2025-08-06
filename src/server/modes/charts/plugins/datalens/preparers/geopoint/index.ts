@@ -8,10 +8,10 @@ import type {
     VisualizationLayerShared,
 } from '../../../../../../../shared';
 import {
-    Feature,
     MARKUP_TYPE,
     MINIMUM_FRACTION_DIGITS,
     WRAPPED_MARKDOWN_KEY,
+    ZoomMode,
     getFakeTitleOrTitle,
     isMarkupDataType,
 } from '../../../../../../../shared';
@@ -25,6 +25,7 @@ import {
     getGradientMapOptions,
     getLayerAlpha,
     getMapBounds,
+    getMapState,
 } from '../../utils/geo-helpers';
 import {
     chartKitFormatNumberWrapper,
@@ -38,7 +39,7 @@ import {addActionParamValue} from '../helpers/action-params';
 import type {PrepareFunctionArgs} from '../types';
 
 import {DEFAULT_ICON_COLOR, DEFAULT_POINT_RADIUS} from './constants';
-import type {GeopointMapOptions, GeopointPointConfig} from './types';
+import type {GeopointMapOptions, GeopointPointConfig, GeopointPrepareResult} from './types';
 
 type GetPointConfigArgs = {
     stringifyedCoordinates: string;
@@ -123,7 +124,6 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
         idToTitle,
         shared,
         idToDataType,
-        features,
         ChartEditor,
     } = options;
     const widgetConfig = ChartEditor.getWidgetConfig();
@@ -148,7 +148,6 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
     const size = placeholders[1].items[0];
     const coordinates = placeholders[0].items;
     const updatedTooltips = [...tooltips];
-    const shouldEscapeUserValue = features[Feature.EscapeUserHtmlInDefaultHcTooltip];
 
     const label = labels[0];
 
@@ -347,7 +346,7 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
                             break;
                         }
                         default: {
-                            pointData.text = shouldEscapeUserValue ? escape(text) : text;
+                            pointData.text = text;
                             break;
                         }
                     }
@@ -413,6 +412,13 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
         };
     }
 
+    const shouldSetBounds =
+        shared?.extraSettings?.zoomMode !== ZoomMode.Manual &&
+        shared?.extraSettings?.mapCenterMode !== ZoomMode.Manual;
+    const {zoom, center} = getMapState(shared, [leftBot, rightTop]);
+
+    ChartEditor?.updateHighchartsConfig({state: {zoom, center}});
+
     if (gradientOptions) {
         const colorTitle = color.fakeTitle || idToTitle[color.guid] || color.title;
 
@@ -421,15 +427,17 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
             ...getGradientMapOptions(colorsConfig, colorTitle, gradientOptions),
         };
 
-        return [
-            {
-                collection: {
-                    children: getFlattenCoordinates(Object.values(allPoints)),
-                },
-                options: mapOptions,
-                bounds: [leftBot, rightTop],
+        const resultData: GeopointPrepareResult = {
+            collection: {
+                children: getFlattenCoordinates(Object.values(allPoints)),
             },
-        ];
+            options: mapOptions,
+        };
+        if (shouldSetBounds) {
+            resultData.bounds = [leftBot, rightTop];
+        }
+
+        return [resultData];
     } else {
         mapOptions = {
             ...mapOptions,
@@ -442,10 +450,13 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
         }
     }
 
-    const resultData = {
+    const resultData: GeopointPrepareResult = {
         options: mapOptions,
-        bounds: [leftBot, rightTop],
     };
+
+    if (shouldSetBounds) {
+        resultData.bounds = [leftBot, rightTop];
+    }
 
     const flatternCoordinates = getFlattenCoordinates(Object.values(allPoints));
 

@@ -1,5 +1,3 @@
-import {EMBEDDED_CHART_MESSAGE_NAME, MIN_AUTOUPDATE_CHART_INTERVAL} from 'constants/common';
-
 import React from 'react';
 
 import block from 'bem-cn-lite';
@@ -11,6 +9,7 @@ import {DL, PageTitle, SlugifyUrl, Utils} from 'ui';
 import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
 import {WidgetHeader} from 'ui/components/Widgets/Chart/components/WidgetHeader';
 import {pushStats} from 'ui/components/Widgets/Chart/helpers/helpers';
+import {EMBEDDED_CHART_MESSAGE_NAME, MIN_AUTOUPDATE_CHART_INTERVAL} from 'ui/constants/common';
 import type {ChartsChartKit} from 'ui/libs/DatalensChartkit/types/charts';
 import {getSdk} from 'ui/libs/schematic-sdk';
 import {fetchEntryById} from 'ui/store/actions/entryContent';
@@ -34,7 +33,7 @@ import 'ui/components/Widgets/Chart/Chart.scss';
 
 const b = block('preview');
 
-interface PreviewProps extends RouteComponentProps<{idOrSource: string}> {
+interface PreviewProps extends RouteComponentProps<{id: string}> {
     asideHeaderSize: number;
     setPageEntry: (pageEntry: {entryId: string; key: string}) => void;
     isEmbedded?: boolean;
@@ -46,7 +45,7 @@ const Preview: React.FC<PreviewProps> = (props) => {
     const {
         location: {search},
         match: {
-            params: {idOrSource},
+            params: {id},
         },
         history,
         asideHeaderSize,
@@ -57,9 +56,9 @@ const Preview: React.FC<PreviewProps> = (props) => {
     const {noControls, actionParamsEnabled} = Utils.getOptionsFromSearch(search);
 
     const {extractEntryId} = registry.common.functions.getAll();
-    const possibleEntryId = React.useMemo(() => extractEntryId(idOrSource), [idOrSource]);
+    const possibleEntryId = React.useMemo(() => extractEntryId(id), [id]);
 
-    const [title, setTitle] = React.useState(idOrSource);
+    const [title, setTitle] = React.useState(id);
 
     const [name, setName] = React.useState<string | null>(null);
 
@@ -209,7 +208,7 @@ const Preview: React.FC<PreviewProps> = (props) => {
     if (possibleEntryId) {
         chartKitProps.id = possibleEntryId;
     } else {
-        chartKitProps.source = '/' + idOrSource;
+        chartKitProps.source = '/' + id;
     }
 
     const entry = React.useMemo(() => ({key: title}), [title]);
@@ -251,13 +250,10 @@ const Preview: React.FC<PreviewProps> = (props) => {
                         params={params}
                         onChartLoad={onChartLoad}
                         onChartRender={onChartRender}
-                        // to remove all controls
                         noControls={noControls}
                         actionParamsEnabled={actionParamsEnabled}
                         forwardedRef={chartKitRef as unknown as React.RefObject<ChartKitType>}
                         splitTooltip={hasSplitTooltip}
-                        // select menu type
-                        // src/ui/libs/DatalensChartkit/menu/helpers.ts
                         menuType="preview"
                         isPageHidden={isPageHidden}
                         autoupdateInterval={autoupdateInterval}

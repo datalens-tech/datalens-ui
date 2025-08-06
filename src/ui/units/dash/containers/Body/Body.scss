@@ -10,6 +10,8 @@ $actionPanelDefaultBottom: 20px;
     --dashkit-overlay-border-color: var(--g-color-base-float);
     --dashkit-overlay-opacity: 0.5;
 
+    --dash-current-background: var(--g-color-base-generic-ultralight);
+
     position: relative;
     display: flex;
     flex-direction: row;
@@ -27,14 +29,24 @@ $actionPanelDefaultBottom: 20px;
         position: fixed;
         right: 24px;
     }
+    .dashkit {
+        margin-block-start: var(--g-spacing-4);
+    }
 
     &__content {
         width: 100%;
         transition: width 0.1s;
         padding: 20px #{$contentPadding} 48px;
+        background-color: var(--dash-current-background);
 
         &_with-table-of-content:not(&_mobile) {
             width: calc(100% - 250px);
+        }
+
+        &_condensed {
+            --dashkit-grid-item-border-radius: 0px;
+            --dl-dk-charts-border-radius: 0px;
+            --dl-dk-controls-border-radius: 0px;
         }
 
         &_mobile {
@@ -104,7 +116,7 @@ $actionPanelDefaultBottom: 20px;
         flex: 1;
         overflow: clip;
         text-size-adjust: none;
-        background-color: var(--g-color-base-generic-ultralight);
+        background-color: var(--dash-current-background);
 
         &_mobile {
             overflow: hidden;
@@ -127,11 +139,50 @@ $actionPanelDefaultBottom: 20px;
         padding: 16px 0 4px;
     }
 
+    &__tabs {
+        margin-block-end: 22px;
+    }
+
+    &__fixed-header {
+        margin-block: var(--g-spacing-4);
+
+        &_no-content {
+            margin-block: 0;
+        }
+    }
+
+    &__entry-name + &__fixed-header_no-content {
+        // when no tabs and no visible main fixed-header content,
+        // this margin is used as a spacing between dash title and content
+        margin-block-start: var(--g-spacing-4);
+    }
+
     & #{$bodyClass}__edit-panel {
         z-index: 10;
     }
 
     .edit-panel-item {
         width: 108px;
+    }
+
+    &__fixed-header-settings-switcher {
+        width: inherit;
+    }
+
+    &__content-wrapper_mode_edit &__sticky-control-btn {
+        --sticky-control-border-radius: var(--g-border-radius-m);
+        --sticky-control-border-top-left-radius: var(--sticky-control-border-radius);
+        --sticky-control-border-bottom-left-radius: var(--sticky-control-border-radius);
+
+        --g-button-border-radius: var(--sticky-control-border-top-left-radius, 0) 0 0
+            var(--sticky-control-border-bottom-left-radius, 0);
+
+        &_last {
+            --sticky-control-border-top-left-radius: 0;
+        }
+
+        &_first {
+            --sticky-control-border-bottom-left-radius: 0;
+        }
     }
 }

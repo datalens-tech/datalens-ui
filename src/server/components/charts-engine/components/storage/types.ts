@@ -32,14 +32,13 @@ export type ResolvedConfig = {
         is_release?: boolean;
         stype: ChartStorageType | ControlType.Dash;
         owner?: string;
-        sandbox_version?: string;
     };
     permissions: {execute: boolean; read: boolean; edit: boolean; admin: boolean};
     scope: EntryScope;
     type: string;
     public: false;
     isFavorite?: boolean;
-    revId: string;
+    revId?: string;
     savedId: string;
     publishedId: string;
     createdAt: string;
@@ -50,6 +49,8 @@ export type ResolvedConfig = {
     template?: keyof ChartTemplates;
     owner?: string;
     publicAuthor?: EntryPublicAuthor;
+    servicePlan?: string;
+    tenantFeatures?: Record<string, unknown>;
 };
 
 export type ReducedResolvedConfig = ResolvedConfig & {data: {shared: string | object}};
@@ -84,5 +85,5 @@ type EmbeddingToken = {
     embedId: string;
     iat: number;
     exp: number;
-    params: Record<string, unknown>;
+    params?: Record<string, unknown>;
 };

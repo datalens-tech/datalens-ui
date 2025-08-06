@@ -12,8 +12,11 @@ function formUrl(endpoint: string, path: string) {
     return normalizedEndpoint + normalizedPath;
 }
 
-export function formDocsEndpointDL(path: string): string {
+export function formDocsEndpointDL(path: string) {
     const {datalensDocs} = DL.ENDPOINTS;
+    if (!datalensDocs) {
+        return '';
+    }
     return formUrl(datalensDocs, path);
 }
 

@@ -31,8 +31,12 @@ const vendors = (vendorsList: string[]) => {
     ]);
 };
 
+const devClientPort = process.env?.['DEV_CLIENT_PORT'];
+const devServerPort = process.env?.['DEV_SERVER_PORT'];
+
 const config: ServiceConfig = {
     client: {
+        bundler: 'rspack',
         alias: {
             i18n: 'src/i18n',
             shared: 'src/shared',
@@ -74,10 +78,23 @@ const config: ServiceConfig = {
             'cose-base': false,
             'layout-base': false,
             'highlight.js': false,
+            buffer: false,
         },
+        ...(devClientPort
+            ? {
+                  devServer: {
+                      port: parseInt(devClientPort, 10),
+                  },
+              }
+            : {}),
     },
     server: {
         watch: ['dist/i18n', 'dist/shared'],
+        ...(devServerPort
+            ? {
+                  port: parseInt(devServerPort, 10),
+              }
+            : {}),
     },
 };
 

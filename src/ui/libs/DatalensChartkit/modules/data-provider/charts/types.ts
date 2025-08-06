@@ -129,7 +129,6 @@ export type ConfigNode = (
     // to get it back in the response
     key: string;
     createdAt?: string;
-    sandbox_version?: string;
 };
 
 export interface ChartsProps {
@@ -148,17 +147,21 @@ export interface ChartsProps {
     ignoreUsedParams?: boolean;
     workbookId?: WorkbookId;
     forceShowSafeChart?: boolean;
+    showActionParamsFilter?: boolean;
+    onFiltersClear?: () => void;
+    needRenderContentControls?: boolean;
 }
 
 export interface ChartsData extends DashWidgetConfig {
     entryId: string;
+    revId?: string;
     key: string;
     usedParams: StringParams;
     unresolvedParams?: StringParams;
     defaultParams?: StringParams;
     logs_v2?: string;
     // sources: {} when there are no sources
-    sources: object | ResponseSourcesSuccess;
+    sources: {} | ResponseSourcesSuccess;
     // the old wizard doesn't have timings
     timings?: Timings;
     requestId: string;
@@ -201,10 +204,10 @@ export type Logs = {
     [key in
         | 'Config'
         | 'Highcharts'
-        | 'JavaScript'
+        | 'Prepare'
         | 'Params'
-        | 'UI'
-        | 'Urls'
+        | 'Controls'
+        | 'Sources'
         | 'modules']?: LogItem[][];
 };
 
@@ -332,6 +335,7 @@ export interface ResponseSuccessNodeBase extends DashWidgetConfig {
     logs_v2?: string;
     key: string;
     id: string;
+    revId?: string;
     sources: {fields?: {datasetId?: string}} | ResponseSourcesSuccess;
     extra: {
         exportFilename?: string;

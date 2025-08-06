@@ -10,5 +10,6 @@ export interface CtxUser {
         email?: string;
         formattedLogin: string;
         displayName: string;
+        idpType: string | null;
     };
 }

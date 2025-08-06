@@ -112,7 +112,7 @@ interface DashkitWrapperProps extends DashKitProps {
     skipReload?: boolean;
     isNewRelations?: boolean;
     hideErrorDetails?: boolean;
-    groupSelectorHeaderPlaceholder?: string;
+    selectorsGroupTitlePlaceholder?: string;
     // Extended headers context for widgets
     dataProviderContextGetter?: (widgetId: string) => DashChartRequestContext;
     setWidgetCurrentTab?: (payload: {widgetId: string; tabId: string}) => void;
@@ -144,7 +144,7 @@ export const DashkitWrapper: React.FC<
                 setWidgetCurrentTab,
                 dataProviderContextGetter,
                 hideErrorDetails: props.hideErrorDetails,
-                groupSelectorHeaderPlaceholder: props.groupSelectorHeaderPlaceholder,
+                selectorsGroupTitlePlaceholder: props.selectorsGroupTitlePlaceholder,
             };
         }, [
             props.config,
@@ -154,7 +154,7 @@ export const DashkitWrapper: React.FC<
             setWidgetCurrentTab,
             dataProviderContextGetter,
             props.hideErrorDetails,
-            props.groupSelectorHeaderPlaceholder,
+            props.selectorsGroupTitlePlaceholder,
         ]);
 
         return (

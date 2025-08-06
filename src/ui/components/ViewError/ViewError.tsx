@@ -13,6 +13,7 @@ import Utils from 'ui/utils/utils';
 
 import type {DataLensApiError} from '../../typings';
 import ErrorContent from '../ErrorContent/ErrorContent';
+import type {PlaceholderIllustrationProps} from '../PlaceholderIllustration/types';
 
 import './ViewError.scss';
 
@@ -25,11 +26,16 @@ export interface ViewErrorProps {
     title?: string;
     description?: string;
     type?: string;
-    className?: string;
+    actionsClassName?: string;
     buttonText?: string;
     withReport?: boolean;
     actionContent?: React.ReactNode;
     hideDetails?: boolean;
+    size?: PlaceholderIllustrationProps['size'];
+    containerClassName?: string;
+    showDebugInfo?: boolean;
+    exportId?: string;
+    importId?: string;
 }
 
 export const ViewError = ({
@@ -38,11 +44,16 @@ export const ViewError = ({
     title,
     description,
     type,
-    className,
+    actionsClassName,
     buttonText,
     withReport,
     actionContent,
     hideDetails,
+    size,
+    containerClassName,
+    showDebugInfo = !hideDetails,
+    exportId,
+    importId,
 }: ViewErrorProps) => {
     const dispatch = useDispatch();
 
@@ -82,7 +93,7 @@ export const ViewError = ({
     const {type: statusType, title: statusTitle} = getErrorMessage();
     const resultType = type || statusType;
     const resultTitle = title || statusTitle;
-    const errorClassname = className || 'actions';
+    const errorClassname = actionsClassName || 'actions';
     const buttonDetailsText = buttonText || i18n('button_details');
 
     const buttonSize = DL.IS_MOBILE ? MOBILE_SIZE.BUTTON : 'm';
@@ -94,6 +105,8 @@ export const ViewError = ({
                 title: resultTitle,
                 error,
                 withReport,
+                exportId,
+                importId,
             }),
         );
     };
@@ -135,7 +148,9 @@ export const ViewError = ({
             description={description || message}
             action={{content}}
             error={error}
-            showDebugInfo={!hideDetails}
+            showDebugInfo={showDebugInfo}
+            size={size}
+            containerClassName={containerClassName}
         />
     );
 };

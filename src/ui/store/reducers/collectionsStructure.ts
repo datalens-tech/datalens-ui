@@ -50,15 +50,32 @@ import {
     DELETE_WORKBOOK_FAILED,
     DELETE_WORKBOOK_LOADING,
     DELETE_WORKBOOK_SUCCESS,
-    ADD_DEMO_WORKBOOK_LOADING,
-    ADD_DEMO_WORKBOOK_SUCCESS,
-    ADD_DEMO_WORKBOOK_FAILED,
     DELETE_COLLECTIONS_LOADING,
     DELETE_COLLECTIONS_SUCCESS,
     DELETE_COLLECTIONS_FAILED,
     DELETE_WORKBOOKS_SUCCESS,
     DELETE_WORKBOOKS_LOADING,
     DELETE_WORKBOOKS_FAILED,
+    EXPORT_WORKBOOK_LOADING,
+    EXPORT_WORKBOOK_SUCCESS,
+    EXPORT_WORKBOOK_FAILED,
+    IMPORT_WORKBOOK_LOADING,
+    IMPORT_WORKBOOK_SUCCESS,
+    IMPORT_WORKBOOK_FAILED,
+    RESET_EXPORT_WORKBOOK,
+    RESET_IMPORT_WORKBOOK,
+    GET_IMPORT_PROGRESS_LOADING,
+    GET_IMPORT_PROGRESS_SUCCESS,
+    GET_IMPORT_PROGRESS_FAILED,
+    RESET_IMPORT_PROGRESS,
+    GET_EXPORT_PROGRESS_LOADING,
+    GET_EXPORT_PROGRESS_SUCCESS,
+    GET_EXPORT_PROGRESS_FAILED,
+    RESET_EXPORT_PROGRESS,
+    GET_EXPORT_RESULT_LOADING,
+    GET_EXPORT_RESULT_SUCCESS,
+    GET_EXPORT_RESULT_FAILED,
+    RESET_EXPORT_RESULT,
 } from '../constants/collectionsStructure';
 import type {CollectionsStructureAction} from '../actions/collectionsStructure';
 import type {
@@ -81,7 +98,12 @@ import type {
     DeleteCollectionResponse,
     DeleteWorkbooksResponse,
     DeleteWorkbookResponse,
-    CopyWorkbookTemplateResponse,
+    GetWorkbookExportResultResponse,
+    GetWorkbookExportStatusResponse,
+    GetWorkbookImportStatusResponse,
+    StartWorkbookExportResponse,
+    StartWorkbookImportResponse,
+    GetEntriesEntryResponse,
 } from '../../../shared/schema';
 
 export type CollectionsStructureState = {
@@ -176,10 +198,32 @@ export type CollectionsStructureState = {
         data: DeleteWorkbooksResponse | null;
         error: Error | null;
     };
-    addDemoWorkbook: {
+    exportWorkbook: {
         isLoading: boolean;
-        data: CopyWorkbookTemplateResponse | null;
+        data: null | StartWorkbookExportResponse;
         error: Error | null;
+    };
+    importWorkbook: {
+        isLoading: boolean;
+        data: null | StartWorkbookImportResponse;
+        error: Error | null;
+    };
+    getImportProgress: {
+        isLoading: boolean;
+        data: null | GetWorkbookImportStatusResponse;
+        error: Error | null;
+        notificationEntries: null | Record<string, GetEntriesEntryResponse>;
+    };
+    getExportResult: {
+        isLoading: boolean;
+        data: null | GetWorkbookExportResultResponse;
+        error: Error | null;
+    };
+    getExportProgress: {
+        isLoading: boolean;
+        data: null | GetWorkbookExportStatusResponse;
+        error: Error | null;
+        notificationEntries: null | Record<string, GetEntriesEntryResponse>;
     };
 };
 
@@ -275,10 +319,32 @@ const initialState: CollectionsStructureState = {
         data: null,
         error: null,
     },
-    addDemoWorkbook: {
+    exportWorkbook: {
         isLoading: false,
         data: null,
         error: null,
+    },
+    importWorkbook: {
+        isLoading: false,
+        data: null,
+        error: null,
+    },
+    getExportResult: {
+        isLoading: false,
+        data: null,
+        error: null,
+    },
+    getImportProgress: {
+        isLoading: false,
+        data: null,
+        error: null,
+        notificationEntries: null,
+    },
+    getExportProgress: {
+        isLoading: false,
+        data: null,
+        error: null,
+        notificationEntries: null,
     },
 };
 
@@ -897,35 +963,215 @@ export const collectionsStructure = (
             };
         }
 
-        // Adding a demo workbook
-        case ADD_DEMO_WORKBOOK_LOADING: {
+        // Export workbook file
+        case EXPORT_WORKBOOK_LOADING: {
             return {
                 ...state,
-                addDemoWorkbook: {
+                exportWorkbook: {
                     isLoading: true,
                     data: null,
                     error: null,
                 },
             };
         }
-        case ADD_DEMO_WORKBOOK_SUCCESS: {
+        case EXPORT_WORKBOOK_SUCCESS: {
             return {
                 ...state,
-                addDemoWorkbook: {
+                exportWorkbook: {
                     isLoading: false,
                     data: action.data,
                     error: null,
                 },
             };
         }
-        case ADD_DEMO_WORKBOOK_FAILED: {
+        case EXPORT_WORKBOOK_FAILED: {
             return {
                 ...state,
-                addDemoWorkbook: {
-                    ...state.addDemoWorkbook,
+                exportWorkbook: {
+                    isLoading: false,
+                    data: null,
+                    error: action.error,
+                },
+            };
+        }
+        case RESET_EXPORT_WORKBOOK: {
+            return {
+                ...state,
+                exportWorkbook: {
+                    isLoading: false,
+                    data: null,
+                    error: null,
+                },
+            };
+        }
+
+        // Import workbook file
+        case IMPORT_WORKBOOK_LOADING: {
+            return {
+                ...state,
+                importWorkbook: {
+                    isLoading: true,
+                    data: null,
+                    error: null,
+                },
+            };
+        }
+        case IMPORT_WORKBOOK_SUCCESS: {
+            return {
+                ...state,
+                importWorkbook: {
+                    isLoading: false,
+                    data: action.data,
+                    error: null,
+                },
+            };
+        }
+        case IMPORT_WORKBOOK_FAILED: {
+            return {
+                ...state,
+                importWorkbook: {
+                    isLoading: false,
+                    data: null,
+                    error: action.error,
+                },
+            };
+        }
+        case RESET_IMPORT_WORKBOOK: {
+            return {
+                ...state,
+                importWorkbook: {
+                    isLoading: false,
+                    data: null,
+                    error: null,
+                },
+            };
+        }
+
+        // Getting workbook import progres
+        case GET_IMPORT_PROGRESS_LOADING: {
+            return {
+                ...state,
+                getImportProgress: {
+                    ...state.getImportProgress,
+                    isLoading: true,
+                    error: null,
+                    notificationEntries: null,
+                },
+            };
+        }
+        case GET_IMPORT_PROGRESS_SUCCESS: {
+            return {
+                ...state,
+                getImportProgress: {
+                    isLoading: false,
+                    data: action.data,
+                    error: null,
+                    notificationEntries: action.notificationEntries,
+                },
+            };
+        }
+        case GET_IMPORT_PROGRESS_FAILED: {
+            return {
+                ...state,
+                getImportProgress: {
+                    ...state.getImportProgress,
                     isLoading: false,
                     error: action.error,
                 },
+            };
+        }
+        case RESET_IMPORT_PROGRESS: {
+            return {
+                ...state,
+                getImportProgress: {
+                    isLoading: false,
+                    data: null,
+                    error: null,
+                    notificationEntries: null,
+                },
+            };
+        }
+
+        // Getting workbook export progress
+        case GET_EXPORT_PROGRESS_LOADING: {
+            return {
+                ...state,
+                getExportProgress: {
+                    ...state.getExportProgress,
+                    isLoading: true,
+                    error: null,
+                    notificationEntries: null,
+                },
+            };
+        }
+        case GET_EXPORT_PROGRESS_SUCCESS: {
+            return {
+                ...state,
+                getExportProgress: {
+                    isLoading: false,
+                    data: action.data,
+                    error: null,
+                    notificationEntries: action.notificationEntries,
+                },
+            };
+        }
+        case GET_EXPORT_PROGRESS_FAILED: {
+            return {
+                ...state,
+                getExportProgress: {
+                    ...state.getExportProgress,
+                    isLoading: false,
+                    error: action.error,
+                },
+            };
+        }
+        case RESET_EXPORT_PROGRESS: {
+            return {
+                ...state,
+                getExportProgress: {
+                    isLoading: false,
+                    data: null,
+                    error: null,
+                    notificationEntries: null,
+                },
+            };
+        }
+
+        // Getting export result
+        case GET_EXPORT_RESULT_LOADING: {
+            return {
+                ...state,
+                getExportResult: {
+                    ...state.getExportResult,
+                    isLoading: true,
+                    error: null,
+                },
+            };
+        }
+        case GET_EXPORT_RESULT_SUCCESS: {
+            return {
+                ...state,
+                getExportResult: {
+                    isLoading: false,
+                    data: action.data,
+                    error: null,
+                },
+            };
+        }
+        case GET_EXPORT_RESULT_FAILED: {
+            return {
+                ...state,
+                getExportResult: {
+                    ...state.getExportResult,
+                    isLoading: false,
+                    error: action.error,
+                },
+            };
+        }
+        case RESET_EXPORT_RESULT: {
+            return {
+                ...state,
+                getExportResult: initialState.getExportResult,
             };
         }
 

@@ -3,7 +3,7 @@ import {generateUniqId} from '@gravity-ui/dashkit/helpers';
 import update from 'immutability-helper';
 import pick from 'lodash/pick';
 import {DashTabItemTitleSizes, DashTabItemType} from 'shared';
-import {CustomPaletteBgColors, WIDGET_BG_COLORS_PRESET} from 'ui/constants/widgets';
+import {CustomPaletteBgColors, WIDGET_BG_COLORS_PRESET} from 'shared/constants/widgets';
 import {migrateConnectionsForGroupControl} from 'ui/store/utils/controlDialog';
 import {getUpdatedConnections} from 'ui/utils/copyItems';
 
@@ -38,6 +38,7 @@ const initialState = {
     convertedEntryData: null,
 
     tabId: null,
+    lastModifiedItemId: null,
 
     hashStates: null,
 
@@ -103,7 +104,32 @@ function dash(state = initialState, action) {
 
                         idsMapper[item.id] = itemId;
 
-                        if (item.type === 'widget') {
+                        if (item.type === DashTabItemType.GroupControl) {
+                            widgetItem = {
+                                ...item,
+                                id: itemId,
+                                data: {
+                                    ...item.data,
+                                    group: item.data.group.map((groupItem) => {
+                                        const uniqEntityIdData = generateUniqId({
+                                            salt,
+                                            counter,
+                                            ids: dashDataUniqIds,
+                                        });
+                                        counter = uniqEntityIdData.counter;
+
+                                        const entityId = uniqEntityIdData.id;
+
+                                        idsMapper[groupItem.id] = entityId;
+
+                                        return {
+                                            ...groupItem,
+                                            id: entityId,
+                                        };
+                                    }),
+                                },
+                            };
+                        } else if (item.type === DashTabItemType.Widget) {
                             widgetItem = {
                                 ...item,
                                 id: itemId,
@@ -179,6 +205,7 @@ function dash(state = initialState, action) {
             return {
                 ...state,
                 data: update(data, updateData),
+                lastModifiedItemId: null,
                 tabId: newTabId,
             };
         }
@@ -302,8 +329,36 @@ function dash(state = initialState, action) {
                 });
             }
 
+            // copy connections if the pasted selector was on the same dashboard tab
+            if (action.payload.contextList?.length > 0) {
+                const indexTargetIdMap = {};
+                action.payload.contextList.forEach((context) => {
+                    if (
+                        context.targetEntryId === state.entry.entryId &&
+                        context.targetDashTabId === tabId
+                    ) {
+                        indexTargetIdMap[context.index] = context.targetId;
+                    }
+                });
+
+                const item = state.openedItemId
+                    ? tabData.items.find((tabItem) => tabItem.id === state.openedItemId)
+                    : tabData.items[tabData.items.length - 1];
+
+                const updatedConnections = getUpdatedConnections({
+                    connections: tabData.connections,
+                    indexTargetIdMap,
+                    item,
+                });
+
+                tabData.connections = updatedConnections;
+            }
+
+            const modifiedItem = tabData.layout[tabData.layout.length - 1];
+
             return {
                 ...state,
+                lastModifiedItemId: modifiedItem.i,
                 data: update(data, {
                     tabs: {
                         [tabIndex]: {$set: pick(tabData, TAB_PROPERTIES)},

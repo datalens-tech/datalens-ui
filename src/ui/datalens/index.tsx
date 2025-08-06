@@ -15,6 +15,9 @@ import {reducerRegistry} from '../store';
 import {AsideHeaderAdapter} from 'ui/components/AsideHeaderAdapter/AsideHeaderAdapter';
 import {MobileHeaderComponent} from 'ui/components/MobileHeader/MobileHeaderComponent/MobileHeaderComponent';
 import {DL} from 'ui/constants';
+import {useClearReloadedQuery} from '../units/auth/hooks/useClearReloadedQuery';
+import {reducer} from 'ui/units/auth/store/reducers';
+import {useIframeRender} from './hooks';
 
 import {getSdk} from '../libs/schematic-sdk';
 import {
@@ -25,6 +28,7 @@ import CustomAuthPage from './pages/AuthPage/CustomAuthPage';
 import Utils from 'ui/utils';
 
 reducerRegistry.register(coreReducers);
+reducerRegistry.register({auth: reducer});
 
 const DatasetPage = React.lazy(() => import('./pages/DatasetPage/DatasetPage'));
 const PreviewPage = React.lazy(() => import('./pages/PreviewPage/PreviewPage'));
@@ -52,9 +56,11 @@ const UsersPage = React.lazy(
 );
 
 const ServiceSettings = React.lazy(() => import('./pages/ServiceSettingsPage/ServiceSettingsPage'));
+//const UserProfile = React.lazy(() => import('./pages/OwnUserProfilePage/OwnUserProfilePage'));
+
 const LandingPage = React.lazy(() => import('./pages/LandingPage/LandingPage'));
 const AuthPage = React.lazy(
-    () => import(/* webpackChunkName: "connections-page" */ './pages/AuthPage/AuthPage'),
+    () => import(/* webpackChunkName: "auth-page" */ './pages/AuthPage/AuthPage'),
 );
 
 export const AuthContext = React.createContext({
@@ -69,6 +75,7 @@ export const AuthContext = React.createContext({
 });
 
 const DatalensPageView = (props: any) => {
+    useClearReloadedQuery();
     var token = props.token;
     var setToken = props.setToken;
 
@@ -191,6 +198,8 @@ const DatalensPage: React.FC = () => {
     const showMobileHeader = !isEmbeddedMode() && DL.IS_MOBILE;
     // const showMobileHeader =
     //     !isEmbeddedMode() && DL.IS_MOBILE && !DL.IS_NOT_AUTHENTICATED && !DL.IS_AUTH_PAGE;
+
+    useIframeRender();
 
     if (token && showMobileHeader && superUser) {
         return <MobileHeaderComponent renderContent={() => <DatalensPageView token={token} setToken={setToken} superUser={superUser} setSuperUser={setSuperUser} />} />;

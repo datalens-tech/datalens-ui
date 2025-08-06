@@ -21,6 +21,7 @@ import type {SelectedMap, UpdateCheckboxArgs} from '../CollectionPage/hooks';
 import {CollectionCheckboxCell} from './TableComponents/CollectionCheckboxCell';
 import {CollectionLinkRow} from './TableComponents/CollectionLinkRow';
 import {CollectionTitleCell} from './TableComponents/CollectionTitleCell';
+import {getItemParams} from './helpers';
 
 import './CollectionContentTable.scss';
 
@@ -78,27 +79,33 @@ export const CollectionContentTable = React.memo<Props>(
                     <AnimateBlock>
                         <div className={b('table')}>
                             <div className={b('content')}>
-                                {items.map((item) => (
-                                    <CollectionLinkRow
-                                        key={
-                                            'workbookId' in item
-                                                ? item.workbookId
-                                                : item.collectionId
-                                        }
-                                        item={item}
-                                    >
-                                        <CollectionTitleCell
-                                            isWorkbook={'workbookId' in item}
-                                            title={item.title}
-                                            collectionId={item.collectionId}
-                                        />
-                                        <div className={b('content-cell', {date: true})}>
-                                            {dateTime({
-                                                input: item.updatedAt,
-                                            }).format(DEFAULT_DATE_FORMAT)}
-                                        </div>
-                                    </CollectionLinkRow>
-                                ))}
+                                {items.map((item) => {
+                                    const {status, isDisabled} = getItemParams(item);
+
+                                    return (
+                                        <CollectionLinkRow
+                                            key={
+                                                'workbookId' in item
+                                                    ? item.workbookId
+                                                    : item.collectionId
+                                            }
+                                            item={item}
+                                            isDisabled={isDisabled}
+                                        >
+                                            <CollectionTitleCell
+                                                isWorkbook={'workbookId' in item}
+                                                title={item.title}
+                                                collectionId={item.collectionId}
+                                                status={status}
+                                            />
+                                            <div className={b('content-cell', {date: true})}>
+                                                {dateTime({
+                                                    input: item.updatedAt,
+                                                }).format(DEFAULT_DATE_FORMAT)}
+                                            </div>
+                                        </CollectionLinkRow>
+                                    );
+                                })}
                             </div>
                         </div>
                     </AnimateBlock>
@@ -141,10 +148,12 @@ export const CollectionContentTable = React.memo<Props>(
 
                         <div className={b('content')}>
                             {items.map((item) => {
-                                const actions =
-                                    'workbookId' in item
-                                        ? getWorkbookActions(item)
-                                        : getCollectionActions(item);
+                                const isWorkbookItem = 'workbookId' in item;
+                                const {status, isDisabled} = getItemParams(item);
+
+                                const actions = isWorkbookItem
+                                    ? getWorkbookActions(item)
+                                    : getCollectionActions(item);
 
                                 return (
                                     <CollectionLinkRow
@@ -154,35 +163,45 @@ export const CollectionContentTable = React.memo<Props>(
                                                 : item.collectionId
                                         }
                                         item={item}
+                                        isDisabled={isDisabled}
                                     >
                                         <CollectionCheckboxCell
                                             item={item}
                                             onUpdateCheckboxClick={onUpdateCheckboxClick}
                                             selectedMap={selectedMap}
+                                            disabled={isDisabled}
                                         />
                                         <CollectionTitleCell
                                             isWorkbook={'workbookId' in item}
                                             title={item.title}
                                             collectionId={item.collectionId}
+                                            status={status}
                                         />
                                         <div className={b('content-cell', {date: false})}>
                                             {item.projectId || ''}
                                         </div>
+
                                         <div className={b('content-cell', {date: true})}>
-                                            <Tooltip
-                                                content={dateTime({input: item.updatedAt}).format(
-                                                    dateTimeFormat,
-                                                )}
-                                            >
-                                                <span>
-                                                    {dateTime({
+                                            {!isDisabled && (
+                                                <Tooltip
+                                                    content={dateTime({
                                                         input: item.updatedAt,
-                                                    }).fromNow()}
-                                                </span>
-                                            </Tooltip>
+                                                    }).format(dateTimeFormat)}
+                                                >
+                                                    <span>
+                                                        {dateTime({
+                                                            input: item.updatedAt,
+                                                        }).fromNow()}
+                                                    </span>
+                                                </Tooltip>
+                                            )}
                                         </div>
+
                                         <div
-                                            className={b('content-cell', {control: true})}
+                                            className={b('content-cell', {
+                                                control: true,
+                                                import: isDisabled,
+                                            })}
                                             onClick={(e) => {
                                                 if (actions.length > 0) {
                                                     e.stopPropagation();
@@ -191,7 +210,11 @@ export const CollectionContentTable = React.memo<Props>(
                                             }}
                                         >
                                             {actions.length > 0 && (
-                                                <DropdownMenu size="s" items={actions} />
+                                                <DropdownMenu
+                                                    size="s"
+                                                    items={actions}
+                                                    disabled={isDisabled}
+                                                />
                                             )}
                                         </div>
                                     </CollectionLinkRow>

@@ -207,7 +207,7 @@ export function resolveOperation(
         return null;
     }
 
-    // In an ideal world, urlValue should always be string. However, in ChartEditor, the user can put in params
+    // In an ideal world, urlValue should always be string. However, in Editor, the user can put in params
     // absolutely anything. Therefore, if it is not a string, then we make a fallback to the old behavior.
     if (typeof urlValue !== 'string') {
         return getFallbackForUrlFilters(urlValue, defaultOperation);

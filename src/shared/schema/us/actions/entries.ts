@@ -9,7 +9,6 @@ import {
 } from '../../../constants';
 import {getEntryNameByKey, normalizeDestination} from '../../../modules';
 import {Feature} from '../../../types/feature';
-import {isEnabledServerFeature} from '../../../utils/feature';
 import {createAction} from '../../gateway-utils';
 import {defaultParamsSerializer, filterUrlFragment} from '../../utils';
 import type {
@@ -47,6 +46,8 @@ import type {
     ListDirectoryResponse,
     MoveEntryArgs,
     MoveEntryResponse,
+    PrivateGetEntryArgs,
+    ProxyCreateEntryArgs,
     RenameEntryArgs,
     RenameEntryResponse,
     SwitchPublicationStatusArgs,
@@ -107,6 +108,56 @@ export const entriesActions = {
             },
         }),
     }),
+    _proxyGetEntry: createAction<GetEntryResponse, PrivateGetEntryArgs>({
+        method: 'GET',
+        path: ({entryId}) => `${PRIVATE_PATH_PREFIX}/entries/${filterUrlFragment(entryId)}`,
+        params: ({entryId: _entryId, workbookId, usMasterToken, ...query}, headers) => ({
+            query,
+            headers: {
+                ...headers,
+                ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
+                [US_MASTER_TOKEN_HEADER]: usMasterToken,
+            },
+        }),
+    }),
+    _proxyCreateEntry: createAction<GetEntryResponse, ProxyCreateEntryArgs>({
+        method: 'POST',
+        path: () => `${PRIVATE_PATH_PREFIX}/entries/`,
+        params: (
+            {
+                usMasterToken,
+                workbookId,
+                data,
+                name,
+                type,
+                scope,
+                mode,
+                links,
+                key,
+                recursion,
+                includePermissionsInfo,
+            },
+            headers,
+        ) => ({
+            headers: {
+                ...headers,
+                ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
+                [US_MASTER_TOKEN_HEADER]: usMasterToken,
+            },
+            body: {
+                workbookId,
+                data,
+                name,
+                type,
+                scope,
+                mode,
+                links,
+                recursion,
+                includePermissionsInfo,
+                ...(key ? {key} : {}),
+            },
+        }),
+    }),
     getEntryByKey: createAction<GetEntryByKeyResponse, GetEntryByKeyArgs>({
         method: 'GET',
         path: () => `${PATH_PREFIX}/entriesByKey`,
@@ -132,7 +183,8 @@ export const entriesActions = {
         path: ({entryId}) => `${PATH_PREFIX}/entries/${filterUrlFragment(entryId)}/revisions`,
         params: (args, headers, {ctx}) => {
             let updatedAfter;
-            if (!isEnabledServerFeature(ctx, Feature.RevisionsListNoLimit) && !args.revIds) {
+            const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
+            if (!isEnabledServerFeature(Feature.RevisionsListNoLimit) && !args.revIds) {
                 const date = new Date();
                 date.setMonth(date.getMonth() - 3);
                 updatedAfter = date.toISOString();
@@ -159,7 +211,7 @@ export const entriesActions = {
             breadCrumbs: data.breadCrumbs,
             entries: data.entries.map((entry) => ({
                 ...entry,
-                name: getEntryNameByKey({key: entry.key, index: -1}),
+                name: getEntryNameByKey({key: entry.key}),
             })),
         }),
         paramsSerializer: defaultParamsSerializer,
@@ -172,7 +224,7 @@ export const entriesActions = {
             hasNextPage: Boolean(data.nextPageToken),
             entries: data.entries.map((entry) => ({
                 ...entry,
-                name: getEntryNameByKey({key: entry.key, index: -1}),
+                name: getEntryNameByKey({key: entry.key}),
             })),
         }),
         paramsSerializer: defaultParamsSerializer,
@@ -188,12 +240,13 @@ export const entriesActions = {
             let uniqRelations = uniqBy(
                 data.map((relationEntry) => ({
                     ...relationEntry,
-                    name: getEntryNameByKey({key: relationEntry.key, index: -1}),
+                    name: getEntryNameByKey({key: relationEntry.key}),
                 })),
                 (relationEntry) => relationEntry.entryId,
             );
             if (args.excludeUnregistredDlsEntries) {
-                if (isEnabledServerFeature(ctx, Feature.UseYqlFolderKey)) {
+                const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
+                if (isEnabledServerFeature(Feature.UseYqlFolderKey)) {
                     const yqlFolderKey = 'yql/charts/';
                     uniqRelations = uniqRelations.filter(
                         ({key}) => !key.toLowerCase().startsWith(yqlFolderKey),

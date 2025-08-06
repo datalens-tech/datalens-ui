@@ -1,6 +1,4 @@
-import {DL} from 'constants/common';
-
-import type {ChartKitWidgetData} from '@gravity-ui/chartkit';
+import type {ChartData} from '@gravity-ui/chartkit/d3';
 import type {AxiosError, AxiosRequestConfig, AxiosResponse, CancelTokenSource} from 'axios';
 import axios from 'axios';
 import type {Series as HighchartSeries} from 'highcharts';
@@ -31,6 +29,7 @@ import {
     MAX_SEGMENTS_NUMBER,
     WidgetKind,
 } from 'shared';
+import {DL} from 'ui/constants/common';
 import {isEmbeddedEntry} from 'ui/utils/embedded';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
@@ -141,7 +140,7 @@ export interface EntityRequestOptions {
         controlData?: {
             id: string;
             tabId?: string;
-            groupId?: string;
+            widgetId?: string;
         };
         workbookId?: WorkbookId;
     };
@@ -403,7 +402,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                     return {
                         ...processed,
                         type: 'table',
-                        data: chartToTable({chartData: processed.data as ChartKitWidgetData}),
+                        data: chartToTable({chartData: processed.data as ChartData}),
                     } as Widget & ChartsData;
                 }
             }
@@ -820,16 +819,16 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             loadedData: (Widget & ChartsData) | {};
             propsData: ChartKitProps<ChartsProps, ChartsData>;
         },
-        {extraParams = {}, urlPostfix = '', idPrefix = ''},
+        {extraParams = {}, idPrefix = ''},
     ) {
-        let url = urlPostfix;
+        let url = idPrefix;
 
         let id = propsData.id;
         if (!id && loadedData && 'entryId' in loadedData) {
             id = loadedData.entryId;
         }
 
-        url += id ? idPrefix + id : propsData.source;
+        url += id ? id : propsData.source;
 
         const query = URI.makeQueryString({...propsData.params, ...extraParams});
 
@@ -956,7 +955,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             params,
             widgetType,
             widgetConfig,
-            config: {type, data: configData, key, createdAt, sandbox_version} = {},
+            config: {type, data: configData, key, createdAt} = {},
             workbookId,
         } = data;
 
@@ -975,7 +974,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                     ? {
                           data: configData,
                           createdAt: createdAt,
-                          meta: {stype: type, sandbox_version},
+                          meta: {stype: type},
                       }
                     : undefined,
                 responseOptions: {

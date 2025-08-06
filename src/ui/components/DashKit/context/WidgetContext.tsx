@@ -17,7 +17,7 @@ export const WidgetContextProvider: React.FC<WidgetCallbacksContext> = (props) =
     return <WidgetContext.Provider value={contextValue}>{props.children}</WidgetContext.Provider>;
 };
 
-export const useWidgetContext = (id: string, elementRef: React.RefObject<HTMLElement>) => {
+export const useWidgetContext = (id: string, elementRef: React.RefObject<HTMLElement | null>) => {
     const context = React.useContext(WidgetContext);
     const onMountChange = context?.onWidgetMountChange;
 

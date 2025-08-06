@@ -6,11 +6,11 @@ import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
 import get from 'lodash/get';
 import type {DashTabItemText} from 'shared';
+import {CustomPaletteBgColors} from 'shared/constants/widgets';
 import {
     adjustWidgetLayout as dashkitAdjustWidgetLayout,
     getPreparedWrapSettings,
 } from 'ui/components/DashKit/utils';
-import {CustomPaletteBgColors} from 'ui/constants/widgets';
 import {YFM_MARKDOWN_CLASSNAME} from 'ui/constants/yfm';
 import {usePrevious} from 'ui/hooks';
 
@@ -26,22 +26,50 @@ const b = block('dashkit-plugin-text-container');
 
 const WIDGET_RESIZE_DEBOUNCE_TIMEOUT = 100;
 
-const setObserve = (
-    nodesRef: React.MutableRefObject<NodeList | null>,
-    observerRef: React.MutableRefObject<MutationObserver | null>,
-) => {
-    if (!nodesRef.current || !observerRef.current) {
-        return false;
-    }
+const useWatchDomResizeObserver = ({
+    domNodeGetter,
+    onResize,
+    enable = false,
+}: {
+    domNodeGetter: () => HTMLElement | null;
+    onResize: () => void;
+    enable: boolean;
+}) => {
+    const currentRectRef = React.useRef({width: 0, height: 0});
+    const domElement = enable ? domNodeGetter() : null;
 
-    nodesRef.current.forEach((cutNode) => {
-        observerRef.current?.observe(cutNode, {
-            attributes: true,
-            attributeFilter: ['class'],
+    // using ref to avoil effect calls when function link changed
+    const onResizeRef = React.useRef(onResize);
+    onResizeRef.current = onResize;
+
+    React.useEffect(() => {
+        if (!domElement) {
+            return;
+        }
+
+        const observer = new ResizeObserver((entries) => {
+            if (!entries[0]) {
+                return;
+            }
+
+            const {width, height} = entries[0].contentRect;
+            const currentRect = currentRectRef.current;
+
+            if (currentRect.height !== height || currentRect.width !== width) {
+                currentRect.height = height;
+                currentRect.width = width;
+
+                onResizeRef.current();
+            }
         });
-    });
 
-    return true;
+        observer.observe(domElement);
+
+        // eslint-disable-next-line consistent-return
+        return () => {
+            observer.disconnect();
+        };
+    }, [domElement, onResizeRef]);
 };
 
 const textPlugin = {
@@ -56,10 +84,6 @@ const textPlugin = {
         forwardedRef: React.LegacyRef<PluginText> | undefined,
     ) {
         const rootNodeRef = React.useRef<HTMLDivElement>(null);
-        const cutNodesRef = React.useRef<NodeList | null>(null);
-        const tabsNodesRef = React.useRef<NodeList | null>(null);
-        const mutationObserver = React.useRef<MutationObserver | null>(null);
-        const observedIsSetRef = React.useRef<{[key: string]: boolean}>({cuts: false, tabs: false});
         const [metaScripts, setMetaScripts] = React.useState<string[] | undefined>();
         const [isPending, setIsPending] = React.useState<boolean>(false);
 
@@ -132,52 +156,18 @@ const textPlugin = {
         }, [props.data.autoHeight]);
 
         /**
-         * watching content changes to check if adjustLayout needed for autoheight widgets update
+         * Watching yfm dom element sizes for update
          */
-        // TODO move this logic in isPending check hook and instead of useEffect use it as callback
-        React.useEffect(() => {
-            if (!mutationObserver) {
-                return;
-            }
-
-            mutationObserver.current = new MutationObserver(() => {
-                requestAnimationFrame(() => handleTextRender());
-            });
-
-            observedIsSetRef.current.cuts = setObserve(cutNodesRef, mutationObserver);
-            observedIsSetRef.current.tabs = setObserve(tabsNodesRef, mutationObserver);
-
-            // eslint-disable-next-line consistent-return
-            return () => {
-                mutationObserver.current?.disconnect();
-                observedIsSetRef.current = {cuts: false, tabs: false};
-            };
-        }, [
-            handleTextRender,
-            mutationObserver,
-            rootNodeRef,
-            cutNodesRef.current,
-            tabsNodesRef.current,
-        ]);
-
-        const cutNodes = rootNodeRef.current?.querySelectorAll(`.${YFM_MARKDOWN_CLASSNAME}-cut`);
-        const tabsNodes = rootNodeRef.current?.querySelectorAll(`.${YFM_MARKDOWN_CLASSNAME}-tab`);
-
-        if (cutNodes?.length && !cutNodesRef.current) {
-            cutNodesRef.current = cutNodes;
-
-            if (!observedIsSetRef.current.cuts) {
-                setObserve(cutNodesRef, mutationObserver);
-            }
-        }
-
-        if (tabsNodes?.length && !tabsNodesRef.current) {
-            tabsNodesRef.current = tabsNodes;
-
-            if (!observedIsSetRef.current.tabs) {
-                setObserve(tabsNodesRef, mutationObserver);
-            }
-        }
+        useWatchDomResizeObserver({
+            domNodeGetter: () =>
+                rootNodeRef.current?.querySelector(
+                    `.${YFM_MARKDOWN_CLASSNAME}.${b()} .${YFM_MARKDOWN_CLASSNAME}`,
+                ) || null,
+            onResize: () => {
+                adjustLayout(false);
+            },
+            enable: props.data.autoHeight as boolean,
+        });
 
         const content = <PluginText {...props} apiHandler={textHandler} ref={forwardedRef} />;
 

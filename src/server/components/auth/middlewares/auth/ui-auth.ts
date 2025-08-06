@@ -14,7 +14,6 @@ import {
     FORWARDED_FOR_HEADER,
     SET_COOKIE_HEADER,
 } from '../../../../../shared/constants/header';
-import {isTrueArg} from '../../../../../shared/modules/url';
 import {onFail} from '../../../../callbacks';
 import {registry} from '../../../../registry';
 import type {DatalensGatewaySchemas} from '../../../../types/gateway';
@@ -88,7 +87,7 @@ export const uiAuth = async (req: Request, res: Response, next: NextFunction) =>
                 });
         } catch (err) {
             req.ctx.logError('REFRESH_TOKEN_ERROR', isGatewayError(err) ? err.error : err);
-            if (isTrueArg(req.query[RELOADED_URL_QUERY])) {
+            if (req.query[RELOADED_URL_QUERY]) {
                 onAuthLogout(req, res);
             } else {
                 onAuthReload(req, res);
@@ -97,17 +96,27 @@ export const uiAuth = async (req: Request, res: Response, next: NextFunction) =>
         }
     }
 
-    try {
-        req.ctx.log('CHECK_ACCESS_TOKEN');
+    let accessToken, userId, sessionId, roles;
 
-        const {accessToken} = JSON.parse(authCookie);
-        const {userId, sessionId, roles} = jwt.verify(
+    try {
+        req.ctx.log('VERIFY_ACCESS_TOKEN');
+        ({accessToken} = JSON.parse(authCookie));
+
+        ({userId, sessionId, roles} = jwt.verify(
             accessToken,
             req.ctx.config.authTokenPublicKey || '',
             {
                 algorithms: ALGORITHMS,
             },
-        ) as AccessTokenPayload;
+        ) as AccessTokenPayload);
+    } catch (err) {
+        req.ctx.logError('VERIFY_ACCESS_TOKEN_ERROR', err);
+        onAuthLogout(req, res);
+        return;
+    }
+
+    try {
+        req.ctx.log('SET_USER_CTX');
 
         const {
             responseData: {profile},
@@ -136,12 +145,11 @@ export const uiAuth = async (req: Request, res: Response, next: NextFunction) =>
                     profile.login ||
                     profile.email ||
                     userId,
+                idpType: profile.idpType,
             },
         });
-
-        req.ctx.log('CHECK_ACCESS_TOKEN_SUCCESS');
     } catch (err) {
-        req.ctx.logError('CHECK_ACCESS_TOKEN_ERROR', isGatewayError(err) ? err.error : err);
+        req.ctx.logError('SET_USER_CTX_ERROR', isGatewayError(err) ? err.error : err);
         onFail(req, res);
         return;
     }

@@ -2,6 +2,7 @@
   "label_parameter-name-column": "Name",
   "label_parameter-name-column-description": "Parameter name restrictions: \n* Lowercase Latin letters, digits, hyphens, and underscores are acceptable. The first character can't be an underscore: `_name`. \n* Parameter name is case-sensitive: `Test` and `test` are different parameters. \n* Parameter name length should not exceed 36 characters. \n* Reserved parameter names that cannot be used: `tab`, `state`, `mode`, `focus`, `grid`, `tz`, `from`, `to`.",
   "label_parameter-type-column": "Type",
+  "label_parameter-validation-column": "Use in source setup",
   "label_parameter-value-column": "Default Value",
   "label_parameter-value-column-description": "The default value is required. It is used in cases when the parameter value is not defined on the dashboard, in the chart URL, or in the chart settings.",
   "tab-parameters_add-button": "Add",

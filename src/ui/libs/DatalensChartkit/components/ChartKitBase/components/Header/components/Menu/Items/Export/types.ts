@@ -1,7 +1,7 @@
 import type {AxiosError} from 'axios';
+import type {ExportParams} from 'shared';
 import type {ChartWidgetDataRef} from 'ui/components/Widgets/Chart/types';
 import type {MenuLoadedData} from 'ui/libs/DatalensChartkit/menu/Menu';
-import type {ExportFormatsType} from 'ui/libs/DatalensChartkit/modules/constants/constants';
 import type {ChartsData, ChartsProps} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
 import type DatalensChartkitCustomError from 'ui/libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import type {WidgetBase} from 'ui/libs/DatalensChartkit/types';
@@ -15,13 +15,6 @@ export type ExportResultType = {
     isCopyToClipboard?: boolean;
     data?: string;
     error?: AxiosError<Body>;
-};
-
-export type ExportParams = {
-    format: ExportFormatsType;
-    delValues: string | null;
-    delNumbers: string | null;
-    encoding: string | null;
 };
 
 export type ExportActionArgs = {
@@ -38,4 +31,5 @@ export type ExportChartArgs = {
     chartData: ExportActionArgs;
     params?: ExportParams;
     onExportLoading?: (isLoading: boolean) => void;
+    chartRevId?: string;
 };

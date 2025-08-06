@@ -6,6 +6,7 @@ import type {RedisConfig} from '../server/components/cache-client';
 import type {ChartTemplates} from '../server/components/charts-engine/components/chart-generator';
 import type {SourceConfig} from '../server/components/charts-engine/types';
 import type {AppEnvironment, LandingPageSettings} from '../shared';
+import type {UserRole} from '../shared/components/auth/constants/role';
 import type {FeatureConfig} from '../shared/types';
 
 export interface SharedAppConfig {
@@ -34,15 +35,18 @@ export interface SharedAppConfig {
     fetchingTimeout: number;
     singleFetchingTimeout: number;
     flatTableRowsLimit: number;
+    runnerExecutionTimeouts?: Record<string, Record<string, number>>;
     runResponseWhitelist?: string[];
     allowBodyConfig: boolean;
     chartsEngineConfig: {
-        nativeModules: Record<string, unknown>;
         secrets: Record<string, string>;
         enableTelemetry: boolean;
         flags?: Record<string, boolean>;
         usEndpointPostfix: string;
         dataFetcherProxiedHeaders?: string[];
+        maxWorkers?: number;
+        includeServicePlan?: boolean;
+        includeTenantFeatures?: true;
     };
     // CHARTS ENGINE -- FINISH
 
@@ -72,6 +76,9 @@ export interface SharedAppConfig {
             };
         };
     };
+
+    // sorted roles from the role with the most rights to the role with the least
+    orderedAuthRoles?: `${UserRole}`[];
 
     // zitadel
     isZitadelEnabled: boolean;
@@ -115,6 +122,7 @@ export interface SharedAppConfig {
     // auth
     isAuthEnabled: boolean;
     authTokenPublicKey?: string;
+    authManageLocalUsersDisabled?: boolean;
 
     chartTemplates: Partial<Record<keyof ChartTemplates, unknown>>;
     redis: RedisConfig | null;
@@ -156,6 +164,8 @@ export interface SharedAppContextParams {
     tenantId?: string;
 
     user?: CtxUser;
+
+    isEnabledServerFeature: (feature: string) => boolean;
 }
 
 declare module '@gravity-ui/nodekit' {

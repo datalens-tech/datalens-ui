@@ -1,0 +1,16 @@
+{
+  "button_add-user": "Добавить пользователя",
+  "button_load-more": "Загрузить ещё",
+  "label_field-email": "Почта",
+  "label_field-first-name": "Имя",
+  "label_field-id": "Идентификатор",
+  "label_field-last-name": "Фамилия",
+  "label_field-login": "Логин",
+  "label_field-roles": "Роль",
+  "label_menu-change-password": "Сменить пароль",
+  "label_menu-change-role": "Назначить роль",
+  "label_menu-delete": "Удалить пользователя",
+  "label_menu-edit-profile": "Редактировать профиль",
+  "label_search-placeholder": "Поиск",
+  "label_users-empty-message": "Пользователи не найдены"
+}

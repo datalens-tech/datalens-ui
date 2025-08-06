@@ -20,7 +20,7 @@ const getPageTitle = ({
 }) => {
     const pageTitle =
         entry && entry.key
-            ? `${getEntryNameByKey({key: entry.key, index: -1})} - ${defaultTitle}`
+            ? `${getEntryNameByKey({key: entry.key})} - ${defaultTitle}`
             : defaultTitle;
     return extraSettings?.subtitle ? `${extraSettings?.subtitle} - ${pageTitle}` : pageTitle;
 };

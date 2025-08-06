@@ -119,6 +119,7 @@ class QL extends React.PureComponent<QLInnerProps> {
             if (currentRevId) {
                 const searchParams = new URLSearchParams(location.search);
                 searchParams.delete(URL_QUERY.REV_ID);
+                searchParams.delete(URL_QUERY.UNRELEASED);
                 history.replace({
                     ...location,
                     search: `?${searchParams.toString()}`,

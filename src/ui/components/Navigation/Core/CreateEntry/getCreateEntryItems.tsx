@@ -49,6 +49,7 @@ export const getCreateEntryItems = ({onClick, place, isOnlyCollectionsMode}: Cre
             action: () => onClick(entryConfig.value),
             icon: <EntityIcon type={entryConfig.type} iconData={entryConfig.icon} />,
             text: <Title className={b('item-title')} title={entryConfig.text} />,
+            qa: entryConfig.qa,
         });
     });
 

@@ -1,0 +1,10 @@
+{
+  "action_user-roles-change-apply": "Save",
+  "action_user-roles-change-cancel": "Cancel",
+  "label_base-role": "Base role for service access",
+  "label_includes-permissions-from": "Includes permissions granted by the role",
+  "label_roles-change-failure": "An error occurred while editing the user's access rights",
+  "label_roles-change-success": "Role assigned successfully",
+  "label_select-role": "Select role",
+  "title_update-role": "Setting up access rights"
+}

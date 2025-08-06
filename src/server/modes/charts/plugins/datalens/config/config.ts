@@ -205,6 +205,10 @@ export const buildChartsConfigPrivate = (
         }
 
         set(config, 'settings.width', 'max-content');
+
+        if (shared?.extraSettings?.preserveWhiteSpace) {
+            set(config, 'preserveWhiteSpace', true);
+        }
     }
 
     const placeholders = shared.visualization.placeholders;

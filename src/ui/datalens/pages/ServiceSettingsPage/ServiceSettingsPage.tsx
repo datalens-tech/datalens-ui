@@ -1,6 +1,6 @@
 import React from 'react';
-import {ServiceSettings} from 'units/main/containers/ServiceSettings/ServiceSettings';
+import {App as ServiceSettingsApp} from 'ui/units/service-settings/containers/App/App';
 
-const ServiceSettingsPage = () => <ServiceSettings />;
+const ServiceSettingsPage = () => <ServiceSettingsApp />;
 
 export default ServiceSettingsPage;

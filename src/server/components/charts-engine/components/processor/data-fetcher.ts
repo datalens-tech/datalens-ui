@@ -18,7 +18,6 @@ import {
     SERVICE_USER_ACCESS_TOKEN_HEADER,
     SuperuserHeader,
     WORKBOOK_ID_HEADER,
-    isEnabledServerFeature,
 } from '../../../../../shared';
 import {registry} from '../../../../registry';
 import type {CacheClient} from '../../../cache-client';
@@ -27,12 +26,8 @@ import type {AdapterContext, Source, SourceConfig, TelemetryCallbacks} from '../
 import {Request as RequestPromise} from '../request';
 import {hideSensitiveData} from '../utils';
 
-import type {APIConnectorParams} from './sources';
-import {
-    getApiConnectorParamsFromSource,
-    isAPIConnectorSource,
-    prepareSourceWithAPIConnector,
-} from './sources';
+import {getApiConnectorParamsFromSource, isAPIConnectorSource, prepareSource} from './sources';
+import {getMessageFromUnknownError} from './utils';
 
 const {
     ALL_REQUESTS_SIZE_LIMIT_EXCEEDED,
@@ -65,7 +60,6 @@ type ChartkitSource = {
 type PromiseWithAbortController = [Promise<unknown>, AbortController];
 
 type DataFetcherOptions = {
-    chartsEngine?: ChartsEngine;
     sources: Record<string, Source | string>;
     ctx: AppContext;
     postprocess?:
@@ -84,9 +78,9 @@ type DataFetcherOptions = {
     authParams?: AuthParams | undefined;
     originalReqHeaders: DataFetcherOriginalReqHeaders;
     adapterContext: AdapterContext;
-    telemetryCallbacks?: TelemetryCallbacks;
-    cacheClient?: CacheClient;
-    sourcesConfig?: ChartsEngine['sources'];
+    telemetryCallbacks: TelemetryCallbacks;
+    cacheClient: CacheClient;
+    sourcesConfig: ChartsEngine['sources'];
 };
 
 export type DataFetcherOriginalReqHeaders = {
@@ -168,6 +162,7 @@ export type DataFetcherResult = {
     message?: string;
     code?: string;
     data?: any;
+    details?: string;
 };
 
 export type ZitadelParams = {
@@ -211,7 +206,6 @@ export function addAuthHeaders({
 
 export class DataFetcher {
     static fetch({
-        chartsEngine,
         sources,
         ctx,
         postprocess = null,
@@ -229,16 +223,6 @@ export class DataFetcher {
         cacheClient,
         sourcesConfig,
     }: DataFetcherOptions): Promise<Record<string, DataFetcherResult>> {
-        // TODO remove after migration
-        if ((!telemetryCallbacks || !cacheClient) && chartsEngine) {
-            telemetryCallbacks = chartsEngine.telemetryCallbacks;
-            cacheClient = chartsEngine.cacheClient;
-            sourcesConfig = chartsEngine.sources;
-        }
-        if (!telemetryCallbacks || !cacheClient || !sourcesConfig) {
-            throw new Error('Missing telemetry callbacks or cache client');
-        }
-
         const fetchingTimeout = ctx.config.fetchingTimeout || DEFAULT_FETCHING_TIMEOUT;
 
         const fetchingStartTime = Date.now();
@@ -325,6 +309,7 @@ export class DataFetcher {
                                 hideInInspector: result.hideInInspector,
                                 /** @deprecated use uiUrl and dataUrl */
                                 url: result.url,
+                                details: result.details,
                             };
 
                             if (result.body) {
@@ -539,6 +524,17 @@ export class DataFetcher {
         const singleFetchingTimeout =
             ctx.config.singleFetchingTimeout || DEFAULT_SINGLE_FETCHING_TIMEOUT;
 
+        try {
+            source = prepareSource(source);
+        } catch (e) {
+            return {
+                sourceId: sourceName,
+                sourceType: 'Unresolved',
+                code: 'INVALID_SOURCE_CONFIG',
+                details: getMessageFromUnknownError(e),
+            };
+        }
+
         const onDataFetched = telemetryCallbacks.onDataFetched || (() => {});
         const onDataFetchingFailed = telemetryCallbacks.onDataFetchingFailed || (() => {});
 
@@ -547,24 +543,6 @@ export class DataFetcher {
         };
 
         const hideInInspector = source.hideInInspector;
-
-        let apiConnectorParams: APIConnectorParams | undefined;
-        if (source.connectionId) {
-            if (isAPIConnectorSource(source)) {
-                apiConnectorParams = getApiConnectorParamsFromSource(source);
-                source = prepareSourceWithAPIConnector(source, apiConnectorParams);
-            } else {
-                ctx.logError('FETCHER_INCORRECT_API_CONNECTOR_SPECIFICATION', {
-                    connectionId: source.connectionId,
-                });
-
-                return {
-                    sourceId: sourceName,
-                    sourceType: 'Unresolved',
-                    code: UNKNOWN_SOURCE,
-                };
-            }
-        }
 
         let targetUri = source.url;
 
@@ -578,9 +556,8 @@ export class DataFetcher {
             source: loggedSource,
         };
 
-        const useChartsEngineLogin = Boolean(
-            isEnabledServerFeature(ctx, Feature.UseChartsEngineLogin),
-        );
+        const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
+        const useChartsEngineLogin = Boolean(isEnabledServerFeature(Feature.UseChartsEngineLogin));
 
         if (useChartsEngineLogin && userLogin) {
             loggedInfo.login = userLogin;
@@ -589,7 +566,7 @@ export class DataFetcher {
         ctx.log('FETCHER_REQUEST', loggedInfo);
 
         if (typeof targetUri !== 'string' || !targetUri) {
-            ctx.logError('FETCHER_UNKNOWN_SOURCE', {targetUri});
+            ctx.logError('FETCHER_UNKNOWN_SOURCE', null, {targetUri});
 
             return {
                 sourceId: sourceName,
@@ -687,7 +664,7 @@ export class DataFetcher {
                 sourceType,
             });
             if (result.valid === false) {
-                return result;
+                return result.meta;
             }
         }
 
@@ -846,9 +823,7 @@ export class DataFetcher {
             });
         }
 
-        if (ctx.config.appEnv !== 'development') {
-            requestOptions.headers['x-forwarded-for'] = originalReqHeaders.xForwardedFor;
-        }
+        requestOptions.headers['x-forwarded-for'] = originalReqHeaders.xForwardedFor;
 
         if (!requestOptions.headers['x-real-ip']) {
             requestOptions.headers['x-real-ip'] = originalReqHeaders.xRealIP;
@@ -877,10 +852,9 @@ export class DataFetcher {
             }
         }
 
-        const sourceData =
-            isAPIConnectorSource(source) && apiConnectorParams
-                ? {parameters: apiConnectorParams}
-                : (!isString(source) && source.data) || null;
+        const sourceData = isAPIConnectorSource(source)
+            ? {parameters: getApiConnectorParamsFromSource(source)}
+            : (!isString(source) && source.data) || null;
 
         if (sourceData) {
             if (sourceFormat === 'form') {

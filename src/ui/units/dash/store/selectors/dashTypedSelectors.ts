@@ -10,6 +10,8 @@ import type {DashState} from '../reducers/dashTypedReducer';
 
 export const selectDash = (state: DatalensGlobalState) => state.dash || null;
 
+export const selectDashkitRef = (state: DatalensGlobalState) => state.dash?.dashKitRef || null;
+
 export const canEdit = (state: DatalensGlobalState) =>
     Boolean(state.dash.permissions && state.dash.permissions.edit);
 
@@ -32,6 +34,9 @@ export const selectEntryData = (state: DatalensGlobalState) =>
 
 export const selectSettings = (state: DatalensGlobalState) => state.dash?.data?.settings || {};
 
+export const selectHasOpenedDialog = (state: DatalensGlobalState) =>
+    Boolean(state.dash.openedDialog) || state.dialog?.dialogs?.length > 0;
+
 export const selectIsDialogVisible = (state: DatalensGlobalState, dialogType: string) =>
     state.dash.openedDialog === dialogType;
 
@@ -42,6 +47,9 @@ export const selectWidgetsCurrentTab = (state: DatalensGlobalState) =>
     (state.dash as DashState).widgetsCurrentTab;
 
 export const selectTabId = (state: DatalensGlobalState) => state.dash?.tabId;
+
+export const selectLastModifiedItemId = (state: DatalensGlobalState) =>
+    state.dash?.lastModifiedItemId ?? null;
 
 export const selectTabs = (state: DatalensGlobalState) => state.dash.data?.tabs || null;
 export const selectTab = (state: DatalensGlobalState) =>

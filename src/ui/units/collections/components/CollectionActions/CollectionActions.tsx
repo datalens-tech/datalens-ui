@@ -1,7 +1,11 @@
 import React from 'react';
 
 import {ArrowRight, ChevronDown, LockOpen, TrashBin} from '@gravity-ui/icons';
-import type {DropdownMenuItem, DropdownMenuItemMixed} from '@gravity-ui/uikit';
+import type {
+    DropdownMenuItem,
+    DropdownMenuItemAction,
+    DropdownMenuItemMixed,
+} from '@gravity-ui/uikit';
 import {Button, DropdownMenu, Icon, Tooltip} from '@gravity-ui/uikit';
 import type {SVGIconData} from '@gravity-ui/uikit/build/esm/components/Icon/types';
 import block from 'bem-cn-lite';
@@ -11,12 +15,10 @@ import {DropdownAction} from 'ui/components/DropdownAction/DropdownAction';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {Feature} from '../../../../../shared';
-import {DL} from '../../../../constants';
 import {registry} from '../../../../registry';
 import {selectCollection} from '../../store/selectors';
 
 import collectionIcon from '../../../../assets/icons/collections/collection.svg';
-import workbookDemoIcon from '../../../../assets/icons/collections/workbook-demo.svg';
 import workbookIcon from '../../../../assets/icons/collections/workbook.svg';
 
 import './CollectionActions.scss';
@@ -30,10 +32,8 @@ const b = block('dl-collection-actions');
 
 export type Props = {
     className?: string;
-    onCreateCollectionClick: () => void;
-    onAddDemoWorkbookClick: () => void;
-    onAddLearningMaterialsWorkbookClick: () => void;
-    onCreateWorkbookClick: () => void;
+    onCreateCollectionClick: DropdownMenuItemAction<void>;
+    onCreateWorkbookClick: DropdownMenuItemAction<void>;
     onEditAccessClick: () => void;
     onMoveClick: () => void;
     onDeleteClick: () => void;
@@ -44,8 +44,6 @@ export const CollectionActions = React.memo<Props>(
     ({
         className,
         onCreateCollectionClick,
-        onAddDemoWorkbookClick,
-        onAddLearningMaterialsWorkbookClick,
         onCreateWorkbookClick,
         onEditAccessClick,
         onMoveClick,
@@ -61,11 +59,7 @@ export const CollectionActions = React.memo<Props>(
 
         const showCreateWorkbook = collection ? collection.permissions?.createWorkbook : true;
 
-        const showAddDemoWorkbook = showCreateWorkbook && DL.TEMPLATE_WORKBOOK_ID;
-        const showAddLearningMaterialsWorkbook =
-            showCreateWorkbook && DL.LEARNING_MATERIALS_WORKBOOK_ID;
-
-        const createActionItems: DropdownMenuItemMixed<unknown>[] = [];
+        const createActionItems: DropdownMenuItemMixed<void>[] = [];
 
         const getItemText = ({
             icon,
@@ -105,35 +99,6 @@ export const CollectionActions = React.memo<Props>(
                 }),
                 action: onCreateCollectionClick,
             });
-        }
-
-        if (showAddDemoWorkbook || showAddLearningMaterialsWorkbook) {
-            const subItems: DropdownMenuItem<unknown>[] = [];
-
-            if (showAddDemoWorkbook) {
-                subItems.push({
-                    text: getItemText({
-                        icon: workbookDemoIcon,
-                        text: i18n('action_add-demo-workbook'),
-                        hint: i18n('action_add-demo-workbook-hint'),
-                    }),
-                    action: onAddDemoWorkbookClick,
-                });
-            }
-
-            if (showAddLearningMaterialsWorkbook) {
-                subItems.push({
-                    text: getItemText({
-                        icon: workbookDemoIcon,
-                        text: i18n('action_add-learning-materials-workbook'),
-                    }),
-                    action: onAddLearningMaterialsWorkbookClick,
-                });
-            }
-
-            if (subItems.length > 0) {
-                createActionItems.push(subItems);
-            }
         }
 
         const collectionsAccessEnabled = isEnabledFeature(Feature.CollectionsAccessEnabled);

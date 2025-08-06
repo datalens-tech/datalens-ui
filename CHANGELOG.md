@@ -5,6 +5,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3025.0] 30.06.2025
+
+Fixed:
+
+* Обновление версии 0.2991.0 -> 0.3025.0;
+
+## [0.2864.2] 23.05.2025
+
+Created:
+
+* добавлена возможность экспорта шапки отчёта из файла (только Excel).
+
+## [0.2864.1] 20.05.2025
+
+Created:
+
+* на странице авторизации выведена информация о версии datalens.
+
+## [0.2864.0] 28.04.2025
+
+Fixed:
+
+* Обновление версии 0.2752.0 -> 0.2864.0;
+
+Created:
+
+* Сборка Docker создана на основе Ubuntu 22.04 (из python3.9).
+
+## [0.2752.0] 20.03.2025
+
+Обновление версии 0.2601.3 -> 0.2752.0;
+
 ## [0.2601.3] 13.03.2025
 
 Fixed:

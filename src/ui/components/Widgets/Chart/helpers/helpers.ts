@@ -1,5 +1,3 @@
-import {DL, URL_OPTIONS} from 'constants/common';
-
 import type {ConfigItemData} from '@gravity-ui/dashkit';
 import type {AxiosResponse} from 'axios';
 import type {History} from 'history';
@@ -7,6 +5,7 @@ import isEmpty from 'lodash/isEmpty';
 import type {StringParams} from 'shared';
 import {DashTabItemType, FOCUSED_WIDGET_PARAM_NAME, Feature, isTrueArg} from 'shared';
 import {isExternalControl} from 'ui/components/DashKit/plugins/Control/utils';
+import {DL, URL_OPTIONS} from 'ui/constants/common';
 import type DatalensChartkitCustomError from 'ui/libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import {ERROR_CODE} from 'ui/libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import {DASH_WIDGET_TYPES} from 'ui/units/dash/modules/constants';

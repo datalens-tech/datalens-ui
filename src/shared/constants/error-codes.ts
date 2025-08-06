@@ -5,6 +5,7 @@ export enum ErrorCode {
     DbCannotParseDatetime = 'ERR.DS_API.DB.CANNOT_PARSE.DATETIME',
     DbCannotParseNumber = 'ERR.DS_API.DB.CANNOT_PARSE.NUMBER',
     DbJoinColumnTypeMismatch = 'ERR.DS_API.DB.JOIN_COLUMN_TYPE_MISMATCH',
+    DbDataPreparationNotFinished = 'ERR.DS_API.DB.DATA_PREPARATION_NOT_FINISHED',
     DbMaterizalizationNotFinished = 'ERR.DS_API.DB.MATERIALIZATION_NOT_FINISHED',
     DbMemoryLimitExceeded = 'ERR.DS_API.DB.MEMORY_LIMIT_EXCEEDED',
     ChytTableAccessDenied = 'ERR.DS_API.DB.CHYT.TABLE_ACCESS_DENIED',
@@ -42,6 +43,7 @@ export enum ErrorCode {
     IncorrectEntryIdForEmbed = 'ERR.DS_API.US.BAD_REQUEST.INCORRECT_ENTRY_ID_FOR_EMBED',
 
     ChartEditorNotAvailable = 'ERR.CHARTS.CHART_EDITOR_NOT_AVAILABLE',
+    InsufficientServicePlan = 'ERR.CHARTS.INSUFFICIENT_SERVICE_PLAN',
 }
 
 export const ErrorContentTypes = {
@@ -59,6 +61,7 @@ export const ErrorContentTypes = {
     NEW_LOCAL_FEDERATION_USER: 'new-local-federation-user',
     INACCESSIBLE_ON_MOBILE: 'inaccessible-on-mobile',
     NOT_AUTHENTICATED: 'not-authenticated',
-    FORBIDDEN_SSO: 'forbidden-sso',
-    FORBIDDEN_REPORT_ENTRY: 'forbidden-report-entry',
+    FORBIDDEN_BY_PLAN: 'forbidden-by-plan',
+    FORBIDDEN_AUTH: 'forbidden-auth',
+    NOT_AUTHENTICATED_GALLERY: 'not-authenticated-gallery',
 };

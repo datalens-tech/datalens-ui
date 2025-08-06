@@ -1,5 +1,6 @@
 import {createSelector} from 'reselect';
 import type {DatalensGlobalState} from 'index';
+import {getStatusFromOperation} from '../utils/collectionStructure';
 
 export const selectGetRootCollectionPermissions = (state: DatalensGlobalState) =>
     state.collectionsStructure.getRootCollectionPermissions;
@@ -52,8 +53,94 @@ const selectDeleteCollections = (state: DatalensGlobalState) =>
 const selectDeleteWorkbooks = (state: DatalensGlobalState) =>
     state.collectionsStructure.deleteWorkbooks;
 
-const selectAddDemoWorkbook = (state: DatalensGlobalState) =>
-    state.collectionsStructure.addDemoWorkbook;
+const selectGetExportProgress = (state: DatalensGlobalState) =>
+    state.collectionsStructure.getExportProgress;
+
+const selectExportWorkbook = (state: DatalensGlobalState) =>
+    state.collectionsStructure.exportWorkbook;
+
+const selectGetExportResult = (state: DatalensGlobalState) =>
+    state.collectionsStructure.getExportResult;
+
+export const selectGetExportProgressData = createSelector(
+    [selectGetExportProgress],
+    (getExportProgress) => getExportProgress.data,
+);
+
+export const selectGetExportProgressEntriesMap = createSelector(
+    [selectGetExportProgress],
+    (data) => data.notificationEntries,
+);
+
+export const selectGetExportResultLoading = createSelector(
+    [selectGetExportResult],
+    (getExportResult) => getExportResult.isLoading,
+);
+
+export const selectExportError = createSelector(
+    [selectExportWorkbook, selectGetExportProgress],
+    (exportWorkbook, getExportProgress) => exportWorkbook.error || getExportProgress.error,
+);
+
+export const selectExportWorkbookStatus = createSelector(
+    [selectExportWorkbook, selectGetExportProgress],
+    (exportWorkbook, getExportProgress) =>
+        getStatusFromOperation({
+            initialOperation: exportWorkbook,
+            progessOperation: getExportProgress,
+        }),
+);
+
+const selectImportWorkbook = (state: DatalensGlobalState) =>
+    state.collectionsStructure.importWorkbook;
+
+const selectGetImportProgress = (state: DatalensGlobalState) =>
+    state.collectionsStructure.getImportProgress;
+
+export const selectImportWorkbookData = createSelector(
+    [selectImportWorkbook],
+    (importWorkbook) => importWorkbook.data,
+);
+
+export const selectGetImportProgressEntriesMap = createSelector(
+    [selectGetImportProgress],
+    (data) => data.notificationEntries,
+);
+
+export const selectGetImportProgressData = createSelector(
+    [selectGetImportProgress],
+    (getImportProgress) => getImportProgress.data,
+);
+
+export const selectImportError = createSelector(
+    [selectImportWorkbook, selectGetImportProgress],
+    (importWorkbook, getImportProgress) => importWorkbook.error || getImportProgress.error,
+);
+
+export const selectImportWorkbookStatus = createSelector(
+    [selectGetImportProgress],
+    (getImportProgress) =>
+        getStatusFromOperation({
+            progessOperation: getImportProgress,
+        }),
+);
+
+export const selectExportData = createSelector(
+    [selectExportWorkbook],
+    (exportWorkbook) => exportWorkbook.data,
+);
+
+// Export result data
+export const selectExportResultData = createSelector(
+    [selectGetExportResult],
+    (getExportResult) => getExportResult.data,
+);
+
+// Export result loading state
+export const selectExportResultIsLoading = createSelector(
+    [selectGetExportResult],
+    (getExportResult) => getExportResult.isLoading,
+);
 
 // Rights at the root of the structure
 export const selectRootPermissionsData = createSelector(
@@ -159,11 +246,5 @@ export const selectDeleteCollectionIsLoading = createSelector(
 // Indication of the process of changing the workbook
 export const selectDeleteWorkbookIsLoading = createSelector(
     selectDeleteWorkbook,
-    (result) => result.isLoading,
-);
-
-// Indication of the process of adding a demo workbook
-export const selectAddDemoWorkbookIsLoading = createSelector(
-    selectAddDemoWorkbook,
     (result) => result.isLoading,
 );

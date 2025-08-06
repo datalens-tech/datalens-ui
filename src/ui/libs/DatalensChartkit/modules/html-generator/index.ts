@@ -41,7 +41,7 @@ export function generateHtml(
 
         const {tag, attributes = {}, style = {}, content, theme} = item;
 
-        if (!ALLOWED_TAGS.includes(tag)) {
+        if (!ALLOWED_TAGS.includes(tag?.toLocaleLowerCase())) {
             const msg = `Tag '${tag}' is not allowed`;
             if (options?.ignoreInvalidValues) {
                 console.warn(msg);

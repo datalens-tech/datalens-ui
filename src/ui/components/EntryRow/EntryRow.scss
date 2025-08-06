@@ -9,7 +9,7 @@
     transition: background ease-in-out 0.2s;
     padding-left: 4px;
 
-    &_hoverable:not(#{$class}_non-interactive):hover {
+    &_hoverable:hover {
         background: var(--g-color-base-simple-hover);
     }
 

@@ -2,12 +2,9 @@
 @use '../mixins' as connMixins;
 
 .conn-list {
-    @include connMixins.form-layout();
-
+    @include connMixins.form-layout(880px);
     display: flex;
     flex-direction: column;
-    row-gap: 20px;
-    padding: 20px;
 
     &__filter {
         width: 220px;
@@ -16,18 +13,21 @@
     &__list-title {
         @include mixins.text-header-1();
 
-        line-height: 32px;
-        margin: 0;
+        margin: 32px 0 20px;
+
+        &:first-child {
+            margin-top: 0;
+        }
     }
 
     &__list {
         display: flex;
         flex-wrap: wrap;
-        gap: 20px;
+        gap: 16px;
     }
 
     &__item {
-        flex: 0 0 142px;
+        flex: 0 0 163px;
         border: 1px solid var(--g-color-line-generic);
         border-radius: 8px;
         transition:

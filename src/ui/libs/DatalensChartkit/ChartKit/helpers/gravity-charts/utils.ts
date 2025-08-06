@@ -1,4 +1,4 @@
-import type {ChartKitWidgetSeries, ChartKitWidgetSeriesData} from '@gravity-ui/chartkit';
+import type {ChartSeries, ChartSeriesData} from '@gravity-ui/chartkit/d3';
 import get from 'lodash/get';
 import set from 'lodash/set';
 
@@ -11,9 +11,11 @@ const Opacity = {
     UNSELECTED: 0.5,
 };
 
+const SVG_NAMESPACE_URI = 'http://www.w3.org/2000/svg';
+
 export function getPointActionParams(
-    point: ChartKitWidgetSeriesData,
-    series: ChartKitWidgetSeries | undefined,
+    point: ChartSeriesData,
+    series: ChartSeries | undefined,
 ): PointActionParams {
     return Object.assign(
         {},
@@ -23,16 +25,16 @@ export function getPointActionParams(
 }
 
 export function isPointSelected(
-    point: ChartKitWidgetSeriesData,
-    series: ChartKitWidgetSeries | undefined,
+    point: ChartSeriesData,
+    series: ChartSeries | undefined,
     actionParams: StringParams = {},
 ) {
     return hasMatchedActionParams(getPointActionParams(point, series), actionParams);
 }
 
 export function setPointSelectState(args: {
-    point: ChartKitWidgetSeriesData;
-    series: ChartKitWidgetSeries;
+    point: ChartSeriesData;
+    series: ChartSeries;
     selected: boolean;
 }) {
     const {point, series, selected} = args;
@@ -54,7 +56,7 @@ export function setPointSelectState(args: {
     }
 }
 
-export function setSeriesSelectState(args: {series: ChartKitWidgetSeries; selected: boolean}) {
+export function setSeriesSelectState(args: {series: ChartSeries; selected: boolean}) {
     const {series, selected} = args;
     const opacity = selected ? Opacity.SELECTED : Opacity.UNSELECTED;
 
@@ -68,4 +70,15 @@ export function setSeriesSelectState(args: {series: ChartKitWidgetSeries; select
             break;
         }
     }
+}
+
+export function getCustomShapeRenderer(fn: (this: unknown, ...args: unknown[]) => string) {
+    return function renderer(this: unknown, ...args: unknown[]) {
+        const content = fn.call(this, args);
+
+        const container = document.createElementNS(SVG_NAMESPACE_URI, 'g');
+        container.innerHTML = content;
+
+        return container;
+    };
 }

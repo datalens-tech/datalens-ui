@@ -1,3 +1,5 @@
+import {UserRole} from 'shared/components/auth/constants/role';
+
 import type {LineShapeType} from '../../shared';
 import {
     AppEnvironment,
@@ -165,7 +167,10 @@ export const DL = {
         return window.DL.landingPageSettings;
     },
     get IS_NOT_AUTHENTICATED() {
-        return this.LANDING_PAGE_ERROR_TYPE === ErrorContentTypes.NOT_AUTHENTICATED;
+        return (
+            this.LANDING_PAGE_ERROR_TYPE === ErrorContentTypes.NOT_AUTHENTICATED ||
+            this.LANDING_PAGE_ERROR_TYPE === ErrorContentTypes.NOT_AUTHENTICATED_GALLERY
+        );
     },
     get PUSH_SERVICE_CONFIG() {
         return window.DL.push;
@@ -178,6 +183,9 @@ export const DL = {
     },
     get AUTH_ENABLED() {
         return window.DL.isAuthEnabled === true;
+    },
+    get AUTH_MANAGE_LOCAL_USERS_DISABLED() {
+        return window.DL.authManageLocalUsersDisabled === true;
     },
     get IS_AUTH_PAGE() {
         return Boolean(window.DL.authPageSettings?.isAuthPage);
@@ -200,11 +208,8 @@ export const DL = {
     get IAM_RESOURCES() {
         return window.DL.iamResources ?? undefined;
     },
-    get TEMPLATE_WORKBOOK_ID() {
-        return window.DL.templateWorkbookId;
-    },
-    get LEARNING_MATERIALS_WORKBOOK_ID() {
-        return window.DL.learningMaterialsWorkbookId;
+    get ORDERED_AUTH_ROLES() {
+        return window.DL.orderedAuthRoles ?? undefined;
     },
     get TITLE() {
         return window.DL.title || '';
@@ -286,6 +291,9 @@ export const DL = {
     get EXPORT_DASH_EXCEL() {
         return window.DL.exportDashExcel === true;
     },
+    get IS_NATIVE_AUTH_ADMIN() {
+        return window.DL.user.roles?.includes(UserRole.Admin);
+    },
 };
 
 // monaco-editor common themes:
@@ -341,7 +349,10 @@ export const QL_LANGUAGE_ID = 'datalens-ql';
 
 export const SPLIT_PANE_RESIZER_CLASSNAME = 'dl-resizer';
 
+export const DATALENS_IFRAME_CLASSNAME = 'dl-iframe';
+
 export const BI_ERRORS = {
+    DATA_PREPARATION_NOT_FINISHED: 'ERR.DS_API.DB.DATA_PREPARATION_NOT_FINISHED',
     MATERIALIZATION_NOT_FINISHED: 'ERR.DS_API.DB.MATERIALIZATION_NOT_FINISHED',
     NO_AVAILABLE_SUBPRODUCTS: 'ERR.DS_API.NO_AVAILABLE_SUBPRODUCTS',
     DATASET_REVISION_MISMATCH: 'ERR.DS_API.DATASET_REVISION_MISMATCH',
@@ -358,8 +369,12 @@ export const URL_QUERY = {
     CHART_TYPE: 'chartType',
     TAB_ID: 'tab',
     CONNECTION_FORM: '_form',
+    API_CONNECTION_ID: 'apiConnectionId',
+    CONNECTION_ID: 'connectionId',
     DEBUG: '_debug',
     OPEN_DASH_INFO: '_opened_info',
+    UNRELEASED: 'unreleased',
+    ENTRY_CONFIG: '_entry_config',
 };
 
 const GRADIENT_ICONS = {

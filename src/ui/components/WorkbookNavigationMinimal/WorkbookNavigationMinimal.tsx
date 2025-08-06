@@ -9,7 +9,7 @@ import {i18n} from 'i18n';
 import {getSdk} from 'libs/schematic-sdk';
 import moment from 'moment';
 import type {EntryScope} from 'shared';
-import {WorkbookNavigationMinimalQa} from 'shared';
+import {WorkbookNavigationMinimalQa, getEntryNameByKey} from 'shared';
 import type {GetEntryResponse, GetWorkbookEntriesArgs} from 'shared/schema';
 import {DEFAULT_DATE_FORMAT} from 'ui/constants/misc';
 
@@ -147,7 +147,7 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
 
     private renderItem = (item: Item) => {
         const {entry, inactive, qa} = item;
-        const name = entry.key.split('/').pop();
+        const name = getEntryNameByKey({key: entry.key});
         const date = moment(entry.createdAt).format(DEFAULT_DATE_FORMAT);
 
         return (
@@ -210,12 +210,12 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
                             ? !includeType.has(entry.type)
                             : false;
                         const inactiveByExcludeType = excludeClickableType
-                            ? excludeType.has(entry.entryId)
+                            ? excludeType.has(entry.type)
                             : false;
                         const inactiveByIds = inactiveEntryIds
                             ? inactiveIds.has(entry.entryId)
                             : false;
-                        const qa = entry.key.split('/').pop();
+                        const qa = getEntryNameByKey({key: entry.key});
                         return {
                             qa,
                             entry,

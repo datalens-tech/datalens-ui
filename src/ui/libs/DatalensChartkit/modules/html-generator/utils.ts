@@ -154,9 +154,9 @@ function mapElementToJson(element: any): ChartKitHtmlItem | string {
             .split(';')
             .reduce(
                 (acc, item) => {
-                    const [key, value] = item?.split(':').map((str) => str.trim()) || [];
+                    const [key, ...value] = item?.split(':').map((str) => str.trim()) || [];
                     if (key && value) {
-                        acc[key] = value;
+                        acc[key] = value.join(':');
                     }
                     return acc;
                 },

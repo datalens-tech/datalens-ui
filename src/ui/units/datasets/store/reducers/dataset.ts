@@ -1,7 +1,9 @@
 import _has from 'lodash/has';
 import _xorBy from 'lodash/xorBy';
 import type {DatasetAvatarRelation, DatasetField, DatasetSource, DatasetSourceAvatar} from 'shared';
+import {Feature} from 'shared';
 import {DatasetSDK} from 'ui';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {v1 as uuidv1} from 'uuid';
 
 import {DATASET_UPDATE_ACTIONS} from '../../constants';
@@ -51,6 +53,7 @@ import {
     RENAME_DATASET,
     SET_CURRENT_TAB,
     SET_DATASET_REVISION_MISMATCH,
+    SET_DATA_EXPORT_ENABLED,
     SET_EDIT_HISTORY_STATE,
     SET_FREEFORM_SOURCES,
     SET_INITIAL_SOURCES,
@@ -58,6 +61,8 @@ import {
     SET_LAST_MODIFIED_TAB,
     SET_QUEUE_TO_LOAD_PREVIEW,
     SET_SOURCES_LOADING_ERROR,
+    SET_TEMPLATE_ENABLED,
+    SET_UPDATES,
     SET_VALIDATION_STATE,
     SOURCES_REFRESH,
     SOURCE_ADD,
@@ -1148,15 +1153,25 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
         case UPDATE_RLS: {
             const {rls} = action.payload;
             const {content} = state;
+            const updates = isEnabledFeature(Feature.EnableRLSV2)
+                ? {
+                      rls2: {
+                          ...content.rls2,
+                          ...rls,
+                      },
+                  }
+                : {
+                      rls: {
+                          ...content.rls,
+                          ...rls,
+                      },
+                  };
 
             return {
                 ...state,
                 content: {
                     ...content,
-                    rls: {
-                        ...content.rls,
-                        ...rls,
-                    },
+                    ...updates,
                 },
             };
         }
@@ -1336,6 +1351,34 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                     ...state.validation,
                     ...validation,
                 },
+            };
+        }
+        case SET_TEMPLATE_ENABLED: {
+            const {templateEnabled} = action.payload;
+            return {
+                ...state,
+                content: {
+                    ...state.content,
+                    template_enabled: templateEnabled,
+                },
+            };
+        }
+
+        case SET_DATA_EXPORT_ENABLED: {
+            const {dataExportEnabled} = action.payload;
+            return {
+                ...state,
+                content: {
+                    ...state.content,
+                    data_export_forbidden: !dataExportEnabled,
+                },
+            };
+        }
+        case SET_UPDATES: {
+            const {updates} = action.payload;
+            return {
+                ...state,
+                updates: [...state.updates, ...updates],
             };
         }
         default: {

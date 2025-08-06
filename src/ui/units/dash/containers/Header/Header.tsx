@@ -1,5 +1,3 @@
-import {DL} from 'constants/common';
-
 import React from 'react';
 
 import type {History, Location} from 'history';
@@ -8,12 +6,15 @@ import {connect} from 'react-redux';
 import type {DatalensGlobalState} from 'ui';
 import type EntryDialogues from 'ui/components/EntryDialogues/EntryDialogues';
 import {MobileTocToggle} from 'ui/components/MobileTocToggle/MobileTocToggle';
+import {DL} from 'ui/constants/common';
+import {selectCanGoBack, selectCanGoForward} from 'ui/store/selectors/editHistory';
 import type {DashEntry} from 'ui/units/dash/typings/entry';
 import {DashActionPanelMobile} from 'units/dash/components/DashActionPanel/DashActionPanelMobile';
 
 import DashActionPanel from '../../components/DashActionPanel/DashActionPanel';
 import {toggleTableOfContent} from '../../store/actions/dashTyped';
 import {openDialog} from '../../store/actions/dialogs/actions';
+import {DASH_EDIT_HISTORY_UNIT_ID} from '../../store/constants';
 import {
     canEdit,
     hasTableOfContent,
@@ -62,6 +63,8 @@ class Header extends React.PureComponent<Props, State> {
                 canEdit={this.props.canEdit}
                 isEditMode={this.props.isEditMode}
                 isDraft={this.props.isDraft}
+                canGoBack={this.props.canGoBack}
+                canGoForward={this.props.canGoForward}
                 hasTableOfContent={this.props.hasTableOfContent}
                 history={this.props.history}
                 location={this.props.location}
@@ -82,6 +85,8 @@ const mapStateToProps = (state: DatalensGlobalState) => ({
     isEditMode: isEditMode(state),
     isFullscreenMode: state.dash.isFullscreenMode,
     isDraft: isDraft(state),
+    canGoBack: selectCanGoBack(state, {unitId: DASH_EDIT_HISTORY_UNIT_ID}),
+    canGoForward: selectCanGoForward(state, {unitId: DASH_EDIT_HISTORY_UNIT_ID}),
 });
 
 const mapDispatchToProps = {

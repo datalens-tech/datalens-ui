@@ -66,6 +66,7 @@ import {CommonUrls} from '../constants/common-urls';
 import {EditEntityButton} from '../workbook/EditEntityButton';
 import ControlActions from './ControlActions';
 import {getUrlStateParam} from '../../suites/dash/helpers';
+import {FixedHeader} from './FixedHeader';
 
 export const BUTTON_CHECK_TIMEOUT = 3000;
 export const RENDER_TIMEOUT = 4000;
@@ -112,6 +113,7 @@ class DashboardPage extends BasePage {
     dialogCreateEntry: DialogCreateEntry;
     editEntityButton: EditEntityButton;
     controlActions: ControlActions;
+    fixedHeader: FixedHeader;
 
     constructor({page}: DashboardPageProps) {
         super({page});
@@ -123,6 +125,7 @@ class DashboardPage extends BasePage {
         this.dialogCreateEntry = new DialogCreateEntry(page);
         this.editEntityButton = new EditEntityButton(page);
         this.controlActions = new ControlActions(page);
+        this.fixedHeader = new FixedHeader(page);
     }
 
     async waitForResponses(url: string, timeout = API_TIMEOUT): Promise<Array<Response>> {
@@ -178,7 +181,19 @@ class DashboardPage extends BasePage {
         waitForLoader?: boolean;
         action?: () => Promise<void>;
     }) {
-        const loader = this.page.locator(slct(ControlQA.groupCommonLoader));
+        const isEnabledDashFloatControls = await isEnabledFeature(
+            this.page,
+            Feature.DashFloatControls,
+        );
+
+        const loader = this.page.locator(
+            slct(
+                isEnabledDashFloatControls
+                    ? ControlQA.groupCommonLockedBlock
+                    : ControlQA.groupCommonLoader,
+            ),
+        );
+
         const handler = async (route: Route) => {
             await expect(loader).toBeVisible();
 
@@ -397,6 +412,25 @@ class DashboardPage extends BasePage {
         return this.page.locator(slct(DashkitQa.GRID_ITEM)).getByText(text, {exact: true});
     }
 
+    async getGlobalRelationsDialogType(): Promise<'new' | 'old' | null> {
+        const isEnabledShowNewRelationsButton = await isEnabledFeature(
+            this.page,
+            Feature.ShowNewRelationsButton,
+        );
+
+        if (isEnabledShowNewRelationsButton) {
+            return 'new';
+        }
+
+        const hideOldRelations = await isEnabledFeature(this.page, Feature.HideOldRelations);
+
+        if (!hideOldRelations) {
+            return 'old';
+        }
+
+        return null;
+    }
+
     async deleteSelector(controlTitle: string) {
         const control = this.page.locator(slct('dashkit-grid-item'), {
             has: this.page.locator(slct(ControlQA.chartkitControl, controlTitle)),
@@ -561,18 +595,35 @@ class DashboardPage extends BasePage {
     }
 
     async setupNewLinks({
-        linkType,
         widgetElem,
+        selectorName,
+
+        linkType,
         firstParamName,
         secondParamName,
     }: {
         linkType: DashRelationTypes;
         firstParamName: string;
-        widgetElem: Locator;
         secondParamName: string;
-    }) {
-        // open dialog relations by click on control item links icon
-        await widgetElem.click();
+    } & (
+        | {widgetElem: Locator; selectorName?: undefined}
+        | {selectorName: string; widgetElem?: undefined}
+    )) {
+        if (widgetElem) {
+            // open dialog relations by click on control item links icon
+            await widgetElem.click();
+        } else if (selectorName) {
+            // click on global links button
+            await this.clickOnLinksBtn();
+
+            await clickGSelectOption({
+                page: this.page,
+                key: DashCommonQa.RelationsWidgetSelect,
+                optionText: selectorName,
+            });
+        } else {
+            throw new Error('Relation dialog needs selectorName or widgetElement param');
+        }
 
         // choose new link
         await this.page.click(slct(DashCommonQa.RelationTypeButton));
@@ -633,6 +684,13 @@ class DashboardPage extends BasePage {
         await this.page.click(slct('connect-by-alias-dialog-apply-button'));
         // applying changes in the communication dialog
         await this.page.click(slct(ConnectionsDialogQA.Apply));
+    }
+
+    async hasChanges() {
+        const saveButton = await this.page.locator(slct(ActionPanelDashSaveControlsQa.Save));
+        const disabledAttribute = await saveButton.getAttribute('disabled');
+
+        return disabledAttribute === null;
     }
 
     async clickSaveButton() {

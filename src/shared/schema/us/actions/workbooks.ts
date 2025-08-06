@@ -5,8 +5,6 @@ import {defaultParamsSerializer} from '../../utils';
 import type {
     CopyWorkbookArgs,
     CopyWorkbookResponse,
-    CopyWorkbookTemplateArgs,
-    CopyWorkbookTemplateResponse,
     CreateWorkbookArgs,
     CreateWorkbookResponse,
     DeleteWorkbookArgs,
@@ -123,12 +121,6 @@ export const workbooksActions = {
         path: ({workbookId}) => `${PATH_PREFIX}/${workbookId}/copy`,
         params: ({collectionId, title}, headers) => ({body: {collectionId, title}, headers}),
         timeout: TIMEOUT_60_SEC,
-    }),
-
-    copyWorkbookTemplate: createAction<CopyWorkbookTemplateResponse, CopyWorkbookTemplateArgs>({
-        method: 'POST',
-        path: ({workbookId}) => `${PATH_PREFIX}/${workbookId}/copyTemplate`,
-        params: ({collectionId, title}, headers) => ({body: {collectionId, title}, headers}),
     }),
 
     migrateEntriesToWorkbookByTransfer: createAction<

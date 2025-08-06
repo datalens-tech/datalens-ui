@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {PopupPlacement} from '@gravity-ui/uikit';
+import type {ButtonView, PopupPlacement} from '@gravity-ui/uikit';
 import {DropdownMenu} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {Feature} from 'shared';
@@ -28,34 +28,30 @@ export enum CreateMenuValue {
     Script = 'script',
     Widget = 'widget',
     QL = 'ql',
-    SQL = 'sql',
-    PromQL = 'promql',
-    MonitoringQL = 'monitoringql',
     Dashboard = 'dashboard',
     Connection = 'connection',
     Dataset = 'dataset',
-    Report = 'report',
 }
 
 export interface CreateEntryProps {
     place: string;
     onClick: (value: string, options?: Record<string, unknown>) => void;
     isOnlyCollectionsMode?: boolean;
+    buttonView?: ButtonView;
 }
 
 export const CreateEntry: React.FC<CreateEntryProps> = ({
     place,
     onClick,
     isOnlyCollectionsMode = false,
+    buttonView = 'action',
 }) => {
     const {checkCreateEntryButtonVisibility} = registry.common.functions.getAll();
     const withMenu =
         place === PLACE.ROOT ||
         place === PLACE.FAVORITES ||
         (isEnabledFeature(Feature.ShowCreateEntryWithMenu) && place === PLACE.WIDGETS) ||
-        (isEnabledFeature(Feature.ShowCreateEntryWithMenu) &&
-            place === PLACE.WIDGETS &&
-            isEnabledFeature(Feature.Ql));
+        (isEnabledFeature(Feature.ShowCreateEntryWithMenu) && place === PLACE.WIDGETS);
 
     const items = React.useMemo(() => {
         if (!withMenu) {
@@ -77,14 +73,20 @@ export const CreateEntry: React.FC<CreateEntryProps> = ({
         <DropdownMenu
             size="s"
             items={items}
-            switcherWrapperClassName={b('switcher-wrapper')}
             disabled={!withMenu}
             popupProps={{
                 contentClassName: b('popup'),
                 placement: popupPlacement,
             }}
             menuProps={{className: b('popup-menu')}}
-            switcher={<CreateEntrySwitcher place={place} onClick={onClick} withMenu={withMenu} />}
+            switcher={
+                <CreateEntrySwitcher
+                    place={place}
+                    onClick={onClick}
+                    withMenu={withMenu}
+                    buttonView={buttonView}
+                />
+            }
         />
     );
 };

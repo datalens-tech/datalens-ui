@@ -1,5 +1,4 @@
 {
-  "action_add": "Добавить",
   "action_cancel": "Отменить",
   "action_copy": "Копировать",
   "action_create": "Создать",
@@ -8,8 +7,11 @@
   "action_delete": "Удалить",
   "action_edit-collection": "Редактирование коллекции",
   "action_edit-workbook": "Редактирование воркбука",
+  "action_exit": "Закрыть",
   "action_move": "Переместить",
   "action_save": "Сохранить",
+  "action_stay": "Остаться",
+  "button_choose-file": "Выбрать файл",
   "label_connection": "подключения",
   "label_copy": "Куда копировать",
   "label_copy-denied-title": "Недостаточно прав для копирования",
@@ -24,6 +26,10 @@
   "label_delete-workbooks-for-delete": "Будут удалены воркбуки",
   "label_description": "Описание",
   "label_empty-collection": "В коллекции пусто или не удалось ничего найти по условиям в фильтрах",
+  "label_error-file-type": "Файл должен быть в формате JSON",
+  "label_help-import-hint": "Используйте файл с конфигурацией воркбука в формате JSON. Получить такой файл можно при <link>экспорте воркбука</link>.",
+  "label_import-exit-description": "На процесс импорта это не повлияет. Окно импорта можно снова открыть, нажав на воркбук в списке.",
+  "label_import-from-file": "Импорт из файла",
   "label_move": "Куда переместить",
   "label_move-denied-title": "Недостаточно прав для перемещения",
   "label_ql": "QL-чарта",
@@ -32,5 +38,8 @@
   "label_project": "Проект",
   "label_wizard": "чарта",
   "section_delete-collection": "Вы действительно хотите удалить коллекцию \"{{name}}\"?",
-  "section_delete-workbook": "Вы действительно хотите удалить воркбук \"{{name}}\"?"
+  "section_delete-workbook": "Вы действительно хотите удалить воркбук \"{{name}}\"?",
+  "title_import-exit": "Закрыть окно импорта?",
+  "toast_get-json-error": "Ошибка при попытке получить JSON из файла",
+  "toast_outdated-workbook-info": "Информация о воркбуке устарела. Пожалуйста, обновите страницу."
 }

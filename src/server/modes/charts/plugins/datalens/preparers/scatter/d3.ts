@@ -1,11 +1,13 @@
-import type {
-    ChartKitWidgetData,
-    ScatterSeries,
-    ScatterSeriesData,
-} from '@gravity-ui/chartkit/build/types/widget-data';
+import type {ChartData, ScatterSeries, ScatterSeriesData} from '@gravity-ui/chartkit/d3';
 
 import type {SeriesExportSettings} from '../../../../../../../shared';
-import {PlaceholderId, getFakeTitleOrTitle, getXAxisMode} from '../../../../../../../shared';
+import {
+    PlaceholderId,
+    getFakeTitleOrTitle,
+    getXAxisMode,
+    isDateField,
+    isNumberField,
+} from '../../../../../../../shared';
 import type {
     PointCustomData,
     ScatterSeriesCustomData,
@@ -72,7 +74,7 @@ function mapScatterSeries(args: MapScatterSeriesArgs): ScatterSeries<PointCustom
     return series;
 }
 
-export function prepareD3Scatter(args: PrepareFunctionArgs): ChartKitWidgetData<PointCustomData> {
+export function prepareD3Scatter(args: PrepareFunctionArgs): ChartData<PointCustomData> {
     const {shared, idToDataType, placeholders, colors, shapes} = args;
     const {categories: preparedXCategories, graphs, x, y, z, color, size} = prepareScatter(args);
     const xCategories = (preparedXCategories || []).map(String);
@@ -130,7 +132,25 @@ export function prepareD3Scatter(args: PrepareFunctionArgs): ChartKitWidgetData<
         field: y,
         settings: yPlaceholder?.settings,
     });
-    const config: ChartKitWidgetData = {
+
+    let xAxis: ChartData['xAxis'] = {};
+    if (xAxisType === 'category' && xCategories?.length) {
+        xAxis = {
+            type: 'category',
+            categories: xCategories,
+        };
+    } else {
+        if (isDateField(x)) {
+            xAxis.type = 'datetime';
+        }
+
+        if (isNumberField(x)) {
+            xAxis.type = xPlaceholder?.settings?.type === 'logarithmic' ? 'logarithmic' : 'linear';
+        }
+    }
+
+    const config: ChartData = {
+        xAxis,
         series: {
             data: graphs.map((graph) => ({
                 ...mapScatterSeries({graph, xAxisType, yAxisType}),
@@ -138,12 +158,6 @@ export function prepareD3Scatter(args: PrepareFunctionArgs): ChartKitWidgetData<
             })),
         },
     };
-
-    if (xAxisType === 'category') {
-        config.xAxis = {
-            categories: xCategories,
-        };
-    }
 
     if (config.series.data.length <= 1) {
         config.legend = {enabled: false};

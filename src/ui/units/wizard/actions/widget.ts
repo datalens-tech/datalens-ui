@@ -1,5 +1,3 @@
-import {WIZARD_DATASET_ID_PARAMETER_KEY} from 'constants/misc';
-
 import type {AxiosError} from 'axios';
 import type {
     ChartsConfig,
@@ -9,6 +7,7 @@ import type {
     Shared,
 } from 'shared';
 import type {DatalensGlobalState} from 'ui';
+import {WIZARD_DATASET_ID_PARAMETER_KEY} from 'ui/constants/misc';
 import {updateClientChartsConfig} from 'ui/units/wizard/actions/preview';
 
 import type {SaveWidgetArgs} from '../../../store/actions/chartWidget';
@@ -55,7 +54,9 @@ export function receiveWidgetAndPrepareMetadata({
                 resultPath += 'preview/';
             }
 
-            resultPath += entryId;
+            if (entryId) {
+                resultPath += entryId;
+            }
 
             if (!pathname.includes(entryId)) {
                 const updatedUrl = `${resultPath}${url.search}${url.hash}`;

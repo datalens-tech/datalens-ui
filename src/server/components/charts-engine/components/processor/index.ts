@@ -14,13 +14,12 @@ import type {
     StringParams,
     WorkbookId,
 } from '../../../../../shared';
-import {DL_CONTEXT_HEADER, Feature, isEnabledServerFeature} from '../../../../../shared';
+import {DL_CONTEXT_HEADER, Feature} from '../../../../../shared';
 import {renderHTML} from '../../../../../shared/modules/markdown/markdown';
 import {registry} from '../../../../registry';
 import type {CacheClient} from '../../../cache-client';
 import {config as configConstants} from '../../constants';
 import type {AdapterContext, HooksContext, Source, TelemetryCallbacks} from '../../types';
-import * as Storage from '../storage';
 import type {ResolvedConfig} from '../storage/types';
 import {getDuration, normalizeParams, resolveParams} from '../utils';
 
@@ -148,11 +147,12 @@ export type ProcessorParams = {
 } & SerializableProcessorParams;
 
 export type SerializableProcessorParams = {
+    secureConfig?: {privateParams?: string[]};
     subrequestHeaders: Record<string, string>;
     paramsOverride: Record<string, string | string[]>;
     actionParamsOverride: Record<string, string | string[]>;
     widgetConfig?: DashWidgetConfig['widgetConfig'];
-    configOverride?: {
+    configOverride: {
         data: Record<string, string>;
         key?: string;
         entryId?: string;
@@ -160,7 +160,6 @@ export type SerializableProcessorParams = {
         meta: {stype: keyof typeof EDITOR_TYPE_CONFIG_TABS | ControlType.Dash};
         publicAuthor?: EntryPublicAuthor;
     };
-    useUnreleasedConfig?: boolean;
     userLogin: string | null;
     userLang: string | null;
     userId: string | null;
@@ -175,6 +174,7 @@ export type SerializableProcessorParams = {
     disableJSONFnByCookie: boolean;
     configName: string;
     configId: string;
+    revId?: string;
     isEmbed: boolean;
     zitadelParams: ZitadelParams | undefined;
     authParams: AuthParams | undefined;
@@ -190,7 +190,6 @@ export class Processor {
         paramsOverride = {},
         widgetConfig = {},
         configOverride,
-        useUnreleasedConfig,
         userLang,
         userLogin,
         userId = null,
@@ -206,6 +205,7 @@ export class Processor {
         disableJSONFnByCookie,
         configName,
         configId,
+        revId,
         isEmbed,
         zitadelParams,
         authParams,
@@ -216,6 +216,7 @@ export class Processor {
         cacheClient,
         hooks,
         sourcesConfig,
+        secureConfig,
     }: ProcessorParams): Promise<
         ProcessorSuccessResponse | ProcessorErrorResponse | {error: string}
     > {
@@ -226,7 +227,7 @@ export class Processor {
         let processedModules: Record<string, ChartBuilderResult> = {};
         let modulesLogsCollected = false;
         let resolvedSources: Record<string, DataFetcherResult> | undefined;
-        let config: ResolvedConfig;
+        const config: ResolvedConfig = configOverride as ResolvedConfig;
         let params: Record<string, string | string[]> | StringParams;
         let actionParams: Record<string, string | string[]>;
         let usedParams: Record<string, string | string[]>;
@@ -246,8 +247,9 @@ export class Processor {
 
         function injectConfigAndParams({target}: {target: ProcessorSuccessResponse}) {
             let responseConfig;
+            const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
             const useChartsEngineResponseConfig = Boolean(
-                isEnabledServerFeature(ctx, Feature.UseChartsEngineResponseConfig),
+                isEnabledServerFeature(Feature.UseChartsEngineResponseConfig),
             );
 
             if (useChartsEngineResponseConfig && responseOptions.includeConfig && config) {
@@ -258,16 +260,19 @@ export class Processor {
                     meta: config.meta,
                     entryId: config.entryId,
                     key: config.key,
+                    revId: config.revId,
                 };
             }
             responseConfig.key = config.key || configName;
             responseConfig.entryId = config.entryId || configId;
+            responseConfig.revId = config.revId || revId;
 
             target._confStorageConfig = responseConfig;
 
             target.key = responseConfig.key;
             target.id = responseConfig.entryId;
             target.type = responseConfig.type;
+            target.revId = responseConfig.revId;
 
             if (params) {
                 target.params = params;
@@ -313,26 +318,6 @@ export class Processor {
 
         try {
             let hrStart = process.hrtime();
-
-            try {
-                config =
-                    (configOverride as ResolvedConfig) ||
-                    (await Storage.resolveConfig(ctx, {
-                        unreleased: useUnreleasedConfig,
-                        key: configName,
-                        headers: {...subrequestHeaders},
-                        workbookId,
-                    }));
-            } catch (e) {
-                return {
-                    error: {
-                        code: CONFIG_LOADING_ERROR,
-                        debug: {
-                            message: getMessageFromUnknownError(e),
-                        },
-                    },
-                };
-            }
 
             const type = config.meta.stype;
 
@@ -506,7 +491,7 @@ export class Processor {
                 usedParams[paramName] = params[paramName];
             });
 
-            // ChartEditor.updateParams() has the highest priority,
+            // Editor.updateParams() has the highest priority,
             // therefore, now we take the parameters set through this method
             updateParams({
                 userParamsOverride: paramsTabResults.runtimeMetadata.userParamsOverride,
@@ -533,8 +518,8 @@ export class Processor {
             });
 
             logSandboxDuration(sourcesTabResults.executionTiming, sourcesTabResults.name, ctx);
-            ctx.log('EditorEngine::Urls', {duration: getDuration(hrStart)});
-            logs.Urls = sourcesTabResults.logs;
+            ctx.log('EditorEngine::Sources', {duration: getDuration(hrStart)});
+            logs.Sources = sourcesTabResults.logs;
 
             try {
                 hrStart = process.hrtime();
@@ -556,7 +541,7 @@ export class Processor {
                     sources = filteredSources;
                 }
 
-                if (configOverride?.entryId || configId) {
+                if (config?.entryId || configId) {
                     let dlContext: Record<string, string> = {};
                     if (subrequestHeaders[DL_CONTEXT_HEADER]) {
                         const dlContextHeader = subrequestHeaders[DL_CONTEXT_HEADER];
@@ -567,7 +552,7 @@ export class Processor {
                         );
                     }
 
-                    dlContext.chartId = configOverride?.entryId || configId;
+                    dlContext.chartId = config?.entryId || configId;
 
                     if (subrequestHeaders['x-chart-kind']) {
                         dlContext.chartKind = subrequestHeaders['x-chart-kind'];
@@ -744,17 +729,17 @@ export class Processor {
                     latency: (hrDuration[0] * 1e9 + hrDuration[1]) / 1e6,
                 });
 
-                ctx.log('EditorEngine::JS', {duration: getDuration(hrStart)});
+                ctx.log('EditorEngine::Prepare', {duration: getDuration(hrStart)});
 
                 processedData = jsTabResults.exports;
-                logs.JavaScript = jsTabResults.logs;
+                logs.Prepare = jsTabResults.logs;
 
                 const jsError = jsTabResults.runtimeMetadata.error;
                 if (jsError) {
                     throw jsError;
                 }
 
-                // ChartEditor.updateParams() has the highest priority,
+                // Editor.updateParams() has the highest priority,
                 // so now we take the parameters set through this method
                 updateParams({
                     userParamsOverride: jsTabResults.runtimeMetadata.userParamsOverride,
@@ -783,12 +768,22 @@ export class Processor {
                         Array.isArray(uiTabExports.controls)))
             ) {
                 uiScheme = uiTabExports as UiTabExports;
+
+                if (secureConfig?.privateParams) {
+                    const controls = Array.isArray(uiScheme) ? uiScheme : uiScheme.controls;
+
+                    controls.forEach((control) => {
+                        if (secureConfig.privateParams?.includes(control.param)) {
+                            control.disabled = true;
+                        }
+                    });
+                }
             }
 
-            logs.UI = uiTabResults.logs;
-            ctx.log('EditorEngine::UI', {duration: getDuration(hrStart)});
+            logs.Controls = uiTabResults.logs;
+            ctx.log('EditorEngine::Controls', {duration: getDuration(hrStart)});
 
-            // ChartEditor.updateParams() has the highest priority,
+            // Editor.updateParams() has the highest priority,
             // so now we take the parameters set through this method
             updateParams({
                 userParamsOverride: uiTabResults.runtimeMetadata.userParamsOverride,
@@ -848,7 +843,8 @@ export class Processor {
                     entryId: config.entryId || configId,
                 });
 
-                const disableFnAndHtml = isEnabledServerFeature(ctx, Feature.DisableFnAndHtml);
+                const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
+                const disableFnAndHtml = isEnabledServerFeature(Feature.DisableFnAndHtml);
                 if (
                     disableFnAndHtml ||
                     !isChartWithJSAndHtmlAllowed({createdAt: config.createdAt})
@@ -857,7 +853,7 @@ export class Processor {
                 }
                 const enableJsAndHtml = get(resultConfig, 'enableJsAndHtml', false);
                 const disableJSONFn =
-                    isEnabledServerFeature(ctx, Feature.NoJsonFn) ||
+                    isEnabledServerFeature(Feature.NoJsonFn) ||
                     disableJSONFnByCookie ||
                     enableJsAndHtml === false;
                 const stringify = disableJSONFn ? JSON.stringify : JSONfn.stringify;

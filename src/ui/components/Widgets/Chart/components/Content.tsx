@@ -1,11 +1,14 @@
+/* eslint-disable complexity */
 import React from 'react';
 
 import block from 'bem-cn-lite';
 import {useDispatch} from 'react-redux';
+import {Feature} from 'shared';
+import {DL} from 'ui/constants';
 import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
-import {showToast} from 'ui/store/actions/toaster';
+import {registry} from 'ui/registry';
 import {setSkipReload} from 'ui/units/dash/store/actions/dashTyped';
-import {getRenderMarkdownFn} from 'ui/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {getRandomCKId} from '../../../../libs/DatalensChartkit/ChartKit/helpers/getRandomCKId';
 import {DatalensChartkitContent} from '../../../../libs/DatalensChartkit/components/ChartKitBase/components/Chart/Chart';
@@ -15,13 +18,23 @@ import Drill from '../../../../libs/DatalensChartkit/components/Drill/Drill';
 import {SideMarkdown} from '../../../../libs/DatalensChartkit/components/SideMarkdown/SideMarkdown';
 import ExtensionsManager from '../../../../libs/DatalensChartkit/modules/extensions-manager/extensions-manager';
 import type {ControlsOnlyWidget, DrillDownConfig} from '../../../../libs/DatalensChartkit/types';
-import type {ChartContentProps, ChartControlsType} from '../types';
-
-import {Header as ChartHeader} from './Header';
+import {useChartActions} from '../helpers/chart-actions';
+import type {ChartContentProps, ChartControlsType, OnLoadChartkitData} from '../types';
 
 import '../ChartWidget.scss';
 
 const b = block('dl-widget');
+
+const emptyLoaderComponent = () => (
+    <Loader
+        visible={true}
+        compact={false}
+        size="s"
+        veil={false}
+        delay={1000}
+        classNameMod={b('chartkit-inner-loader')}
+    />
+);
 
 const Control = ExtensionsManager.getWithWrapper(
     'control',
@@ -65,11 +78,14 @@ export const Content = (props: ChartContentProps) => {
         isWidgetMenuDataChanged,
         renderPluginLoader,
         enableActionParams,
+        enableAssistant,
         paneSplitOrientation,
         widgetDashState,
         rootNodeRef,
         runAction,
         backgroundColor,
+        showActionParamsFilter,
+        onFiltersClear,
     } = props;
 
     const [isExportLoading, setIsExportLoading] = React.useState(false);
@@ -105,69 +121,65 @@ export const Content = (props: ChartContentProps) => {
     const showContentLoader = showLoader || isExportLoading;
     const showLoaderVeil = veil && !isExportLoading;
 
-    const onAction = React.useCallback(async (actionArgs: {data?: any} = {}) => {
-        const {action, ...args} = actionArgs.data || {};
+    const {onAction} = useChartActions({onChange});
 
-        switch (action) {
-            case 'toast': {
-                const renderMarkdown = await getRenderMarkdownFn();
-                dispatch(
-                    showToast({
-                        title: args?.title,
-                        type: args?.type,
-                        content: (
-                            <div
-                                dangerouslySetInnerHTML={{
-                                    __html: renderMarkdown(String(args.content ?? '')),
-                                }}
-                            />
-                        ),
-                    }),
-                );
-                break;
-            }
-            case 'setParams': {
-                if (onChange) {
-                    onChange(
-                        {type: 'PARAMS_CHANGED', data: {params: args}},
-                        {forceUpdate: true},
-                        true,
-                    );
-                }
+    const showFloatControls = isEnabledFeature(Feature.DashFloatControls);
+    const isFirstLoadingFloat = showFloatControls && loadedData === null;
 
-                break;
-            }
-        }
-    }, []);
+    // chartkit doesn't call onLoad when spltTooltip is enabled
+    const [hasDummy, setHasDummy] = React.useState<boolean>(
+        DL.IS_MOBILE && showFloatControls && !splitTooltip,
+    );
+
+    const chartInnerLoaderComponent = isFirstLoadingFloat
+        ? emptyLoaderComponent
+        : renderPluginLoader;
+
+    const {ChartHeader} = registry.chart.components.getAll();
+
+    const handleRender = React.useCallback(
+        (args: OnLoadChartkitData) => {
+            setHasDummy(false);
+            onRender?.(args);
+        },
+        [onRender],
+    );
 
     return (
         <div className={b('container', {[String(widgetType)]: Boolean(widgetType)})}>
-            <Loader
-                visible={showContentLoader}
-                compact={compactLoader}
-                veil={showLoaderVeil}
-                delay={loaderDelay}
-            />
-            <ChartHeader
-                dataProvider={dataProvider}
-                chartsInsightsData={chartsInsightsData}
-                menuType={menuType}
-                customMenuOptions={customMenuOptions}
-                menuChartkitConfig={menuChartkitConfig}
-                isMenuAvailable={!noControls}
-                error={error}
-                dataProps={dataProps}
-                requestId={requestId}
-                loadedData={loadedData}
-                widgetDataRef={widgetDataRef}
-                widgetRenderTimeRef={widgetRenderTimeRef}
-                yandexMapAPIWaiting={yandexMapAPIWaiting}
-                onChange={onChange}
-                isWidgetMenuDataChanged={isWidgetMenuDataChanged}
-                onExportLoading={handleExportLoading}
-                enableActionParams={enableActionParams}
-                onFullscreenClick={onFullscreenClick}
-            />
+            {props.needRenderContentControls && (
+                <React.Fragment>
+                    <Loader
+                        visible={showContentLoader}
+                        compact={compactLoader}
+                        veil={showLoaderVeil}
+                        delay={loaderDelay}
+                    />
+                    <ChartHeader
+                        dataProvider={dataProvider}
+                        chartsInsightsData={chartsInsightsData}
+                        menuType={menuType}
+                        customMenuOptions={customMenuOptions}
+                        menuChartkitConfig={menuChartkitConfig}
+                        isMenuAvailable={!noControls}
+                        error={error}
+                        dataProps={dataProps}
+                        requestId={requestId}
+                        loadedData={loadedData}
+                        widgetDataRef={widgetDataRef}
+                        widgetRenderTimeRef={widgetRenderTimeRef}
+                        yandexMapAPIWaiting={yandexMapAPIWaiting}
+                        onChange={onChange}
+                        isWidgetMenuDataChanged={isWidgetMenuDataChanged}
+                        onExportLoading={handleExportLoading}
+                        enableActionParams={enableActionParams}
+                        enableAssistant={enableAssistant}
+                        onFullscreenClick={onFullscreenClick}
+                        showActionParamsFilter={showActionParamsFilter}
+                        onFiltersClear={onFiltersClear}
+                    />
+                </React.Fragment>
+            )}
             <div
                 className={b(
                     'body',
@@ -199,6 +211,7 @@ export const Content = (props: ChartContentProps) => {
                     />
                 )}
                 {Boolean(sideMarkdownData) && <SideMarkdown data={sideMarkdownData} />}
+                {hasDummy && <div className={b('mobile-loading-dummy')} />}
                 <DatalensChartkitContent
                     noControls={noControls}
                     transformLoadedData={transformLoadedData}
@@ -206,13 +219,13 @@ export const Content = (props: ChartContentProps) => {
                     nonBodyScroll={nonBodyScroll}
                     requestId={requestId}
                     error={error}
-                    onLoad={onRender}
+                    onLoad={handleRender}
                     onChange={onChange}
                     onError={onError}
                     onRetry={onRetry}
                     loadedData={loadedData}
                     forwardedRef={forwardedRef}
-                    renderPluginLoader={renderPluginLoader}
+                    renderPluginLoader={chartInnerLoaderComponent}
                     paneSplitOrientation={paneSplitOrientation}
                     widgetDashState={widgetDashState}
                     rootNodeRef={rootNodeRef}

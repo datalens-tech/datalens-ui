@@ -1,5 +1,5 @@
 import type {ThunkDispatch} from 'redux-thunk';
-import type {DatalensGlobalState} from 'index';
+import {DL, type DatalensGlobalState} from 'index';
 
 import {showToast} from './toaster';
 import {waitOperation} from '../../utils/waitOperation';
@@ -328,6 +328,7 @@ export const batchListMembers = ({subjectIds}: GetClaimsArgs) => {
         return getSdk()
             .sdk.extensions.getClaims({
                 subjectIds,
+                language: DL.USER_LANG,
             })
             .then((data) => {
                 dispatch({
@@ -378,7 +379,7 @@ type SuggestBatchListMembersAction =
 export const suggestBatchListMembers = ({
     id,
     search,
-    subType,
+    tabId,
     pageToken,
     filter,
 }: SuggestBatchListMembersArgs) => {
@@ -391,10 +392,11 @@ export const suggestBatchListMembers = ({
             .sdk.extensions.batchListMembers({
                 id,
                 search: search.toLowerCase(),
-                subType,
+                tabId,
                 pageSize: BATCH_LIST_MEMBERS_PAGE_SIZE,
                 pageToken,
                 filter,
+                language: DL.USER_LANG,
             })
             .then((res) => {
                 const {members, nextPageToken} = res;

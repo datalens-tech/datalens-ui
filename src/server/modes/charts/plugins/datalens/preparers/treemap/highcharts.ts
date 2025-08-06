@@ -1,7 +1,4 @@
-import escape from 'lodash/escape';
-
 import {
-    Feature,
     MINIMUM_FRACTION_DIGITS,
     isDateField,
     isHtmlField,
@@ -43,7 +40,6 @@ export function prepareHighchartsTreemap({
     colorsConfig,
     idToTitle,
     idToDataType,
-    features,
     ChartEditor,
 }: PrepareFunctionArgs) {
     // Dimensions
@@ -70,7 +66,6 @@ export function prepareHighchartsTreemap({
     const hashTable: Record<string, {value: string | null; label: string}> = {};
     const valuesForColorData: Record<string, number> & {colorGuid?: string} = {};
     const isFloat = m[0] && m[0].data_type === 'float';
-    const shouldEscapeUserValue = features[Feature.EscapeUserHtmlInDefaultHcTooltip];
     let multimeasure = false;
     let measureNamesLevel: number;
     let colorData: Record<string, {backgroundColor: string}> = {};
@@ -136,7 +131,7 @@ export function prepareHighchartsTreemap({
                     ...item.formatting,
                 });
             } else {
-                value = rawValue && shouldEscapeUserValue ? escape(rawValue as string) : rawValue;
+                value = rawValue;
             }
 
             const treemapId =

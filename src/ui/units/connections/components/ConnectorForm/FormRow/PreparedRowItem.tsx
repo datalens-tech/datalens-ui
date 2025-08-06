@@ -4,7 +4,7 @@ import type {PreparedRow} from 'shared/schema/types';
 import type {PreparedRowItemProps} from 'ui/registry/units/connections/types/PreparedRowItem';
 
 import logger from '../../../../../libs/logger';
-import {CacheTtlRow, CollapseRow} from '../preparedRows';
+import {CacheTtlRow, CollapseRow, RawSQLLevelRow} from '../preparedRows';
 
 export const PreparedRowItem = (props: PreparedRowItemProps) => {
     switch (props.type) {
@@ -15,6 +15,10 @@ export const PreparedRowItem = (props: PreparedRowItemProps) => {
         case 'collapse': {
             const {type: _type, ...rowProps} = props;
             return <CollapseRow {...rowProps} />;
+        }
+        case 'raw_sql_level': {
+            const {type: _type, ...rowProps} = props;
+            return <RawSQLLevelRow {...rowProps} />;
         }
         default: {
             logger.logError(`FormItem (conn): unknown row type "${(props as PreparedRow).type}"`);

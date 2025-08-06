@@ -1,57 +1,47 @@
 #!/bin/bash
 
-US_CONTAINER_NAME="e2e-datalens-pg-us"
-US_DB_HOST="pg-us"
-US_DB_USER="us"
-US_DB_PASS="us"
-US_DB_NAME="us-db-ci_purgeable"
-US_DB_PORT=5432
-US_DUMP_PATH="./tests/data/us-e2e-data"
-US_CONNECTION="postgres://$US_DB_USER:$US_DB_PASS@$US_DB_HOST:$US_DB_PORT/$US_DB_NAME"
-DUMP_TMP="/tmp/us-dump-"$(date +%Y-%m-%d_%H-%M-%S)""
+# exit setup
+set -eo pipefail
+# [-e] - immediately exit if any command has a non-zero exit status
+# [-x] - all executed commands are printed to the terminal [not secure]
+# [-o pipefail] - if any command in a pipeline fails, that return code will be used as the return code of the whole pipeline
 
-echo "United Storage dump process"
-echo
+SCRIPT_DIR=$(dirname -- "$(readlink -f -- "$0")")
 
-US_CONTAINER_ID=$(docker ps -aqf name="$US_CONTAINER_NAME")
-US_CONTAINERS_NUMBER=$(echo $US_CONTAINER_ID | tr " " "\n" | wc -l | xargs)
+echo ""
+echo "Start dump UnitedStorage entries..."
+echo "  - workbooks"
+echo "  - collections"
+echo "  - entries"
+echo "  - revisions"
+echo "  - links"
 
-if [ $US_CONTAINERS_NUMBER -gt 1 ]; then
-    echo "Failed to match the \""$US_CONTAINER_NAME"\" container id."
-    echo "It was expected to find 1 running container with the \""$US_CONTAINER_NAME"\" pattern however "$US_CONTAINERS_NUMBER" were found."
-    echo
-    echo "Please keep only 1 of those containers running."
-    echo $US_CONTAINER_ID | tr " " "\n"
-    exit 1
+COMPOSE_FILE=$(readlink -f "${SCRIPT_DIR}/../../tests/docker-compose.e2e.yml")
+DUMP_FILE=$(readlink -f "${SCRIPT_DIR}/../../tests/data/us-e2e-data.sql")
+
+echo "BEGIN;" >"${DUMP_FILE}"
+
+docker --log-level error compose -f "${COMPOSE_FILE}" exec \
+    --env "POSTGRES_DUMP_CLEAR_META=true" \
+    --env "POSTGRES_DUMP_SKIP_CONFLICT=false" \
+    -T postgres \
+    /init/us-dump.sh |
+    sed -E 's|"cypher_text": "[^"]+"|"cypher_text": "{{POSTGRES_PASSWORD}}"|' |
+    sed -E 's|"host": "[^"]+"|"host": "{{POSTGRES_HOST}}"|' |
+    sed -E 's|"port": [^,]+,|"port": {{POSTGRES_PORT}},|' |
+    sed -E 's|"db_name": "[^"]+"|"db_name": "{{POSTGRES_DB}}"|' |
+    sed -E 's|"username": "[^"]+"|"username": "{{POSTGRES_USER}}"|' \
+        >>"${DUMP_FILE}"
+
+EXIT="$?"
+
+echo "COMMIT;" >>"${DUMP_FILE}"
+
+if [ "${EXIT}" != "0" ]; then
+    echo "Dump error, exit..."
+    exit "${EXIT}"
+else
+    echo ""
+    echo "Dump done, saved at [${DUMP_FILE}]"
+    exit 0
 fi
-
-if [ -z $US_CONTAINER_ID ]; then
-    echo "Failed to locate \"$US_CONTAINER_NAME\" docker container id."
-    exit 1
-fi
-
-CONNECTION_CHECK_CMD="pg_isready --dbname=$US_CONNECTION"
-CONNECTION_CHECK_RESULT=$(docker exec -it $US_CONTAINER_ID /bin/sh -c "$CONNECTION_CHECK_CMD")
-CONNECTION_CHECK_RESULT_STATUS_CODE=$?
-
-if [ $CONNECTION_CHECK_RESULT_STATUS_CODE -ne 0 ]; then
-    echo "Failed to establish database connection."
-    echo $CONNECTION_CHECK_RESULT
-    exit 1
-fi
-
-DUMP_CMD="pg_dump --dbname=$US_CONNECTION --disable-triggers --column-inserts -a -t collections -t workbooks -t entries -t revisions -t links"
-docker exec -it $US_CONTAINER_ID /bin/sh -c "$DUMP_CMD" |
-tee >(grep -Ev "^(--|SET|SELECT pg_catalog.set_config|pg_dump:)" >$DUMP_TMP) | grep "pg_dump:"
-DUMP_RESULT_STATUS_CODE=$?
-
-if [ $DUMP_RESULT_STATUS_CODE -ne 0 ]; then
-    echo "Failed to dump database."
-    cat $DUMP_TMP
-    rm $DUMP_TMP
-    exit 1
-fi
-
-mv $DUMP_TMP $US_DUMP_PATH
-echo "The dump was succesfully created in $US_DUMP_PATH."
-exit 0

@@ -39,14 +39,6 @@ export const getChartApiContext = (args: GetChartApiContextArgs): ChartApiContex
     const api: IChartEditor = {
         getSharedData: () => shared,
         getLang: () => userLang,
-        attachHandler: (handlerConfig: Record<string, unknown>) => ({
-            ...handlerConfig,
-            __chartkitHandler: true,
-        }),
-        attachFormatter: (formatterConfig: Record<string, unknown>) => ({
-            ...formatterConfig,
-            __chartkitFormatter: true,
-        }),
         ...hooks?.getSandboxApiMethods(),
     };
 
@@ -84,7 +76,7 @@ export const getChartApiContext = (args: GetChartApiContextArgs): ChartApiContex
     api.wrapFn = (value) => {
         if (!isWrapFnArgsValid(value)) {
             // There is no way to reach this code, just satisfy ts
-            throw new Error('You should pass a valid arguments to ChartEditor.wrapFn method');
+            throw new Error('You should pass a valid arguments to Editor.wrapFn method');
         }
 
         const fnArgs = Array.isArray(value.args)
@@ -109,15 +101,15 @@ export const getChartApiContext = (args: GetChartApiContextArgs): ChartApiContex
         api.getParam = (paramName: string) => getParam(paramName, params);
     }
 
-    if (name === 'Urls') {
+    if (name === 'Sources') {
         api.getSortParams = () => getSortParams(params);
     }
 
-    if (name === 'Urls' || name === 'JavaScript') {
+    if (name === 'Sources' || name === 'Prepare') {
         api.getCurrentPage = () => getCurrentPage(params);
     }
 
-    if (name === 'Params' || name === 'JavaScript' || name === 'UI' || name === 'Urls') {
+    if (name === 'Params' || name === 'Prepare' || name === 'Controls' || name === 'Sources') {
         api.updateParams = (updatedParams) => {
             context.__runtimeMetadata.userParamsOverride = Object.assign(
                 {},
@@ -134,14 +126,14 @@ export const getChartApiContext = (args: GetChartApiContextArgs): ChartApiContex
         };
     }
 
-    if (name === 'UI' || name === 'JavaScript') {
+    if (name === 'Controls' || name === 'Prepare') {
         api.getLoadedData = () => data || {};
         api.getLoadedDataStats = () => dataStats || {};
         api.setDataSourceInfo = (dataSourceKey, info) => {
             context.__runtimeMetadata.dataSourcesInfos[dataSourceKey] = {info};
         };
 
-        if (name === 'JavaScript') {
+        if (name === 'Prepare') {
             api.updateConfig = (updatedFragment) => {
                 context.__runtimeMetadata.userConfigOverride = Object.assign(
                     {},

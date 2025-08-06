@@ -6,7 +6,9 @@ import type {
     StringParams,
 } from 'shared';
 import type {
+    PastedSelectorDialogState,
     DialogEditItemFeaturesProp,
+    SelectorDialogState,
     SelectorsGroupDialogState,
     SetSelectorDialogItemArgs,
 } from '../typings/controlDialog';
@@ -44,6 +46,7 @@ import {
     selectSelectorDialog,
     selectSelectorsGroup,
     selectControlDialogFeatureByType,
+    selectControlDialogState,
 } from '../selectors/controlDialog';
 
 const dialogI18n = I18n.keyset('dash.group-controls-dialog.edit');
@@ -59,6 +62,7 @@ export type InitDialogAction = {
         defaults?: StringParams | null;
         features?: DialogEditItemFeaturesProp;
         theme?: RealTheme;
+        titlePlaceholder?: string;
         openedItemMeta: ControlDialogStateItemMeta;
     };
 };
@@ -170,6 +174,12 @@ export const setLastUsedConnectionId = (connectionId: string): SetLastUsedConnec
     payload: connectionId,
 });
 
+const isSelectorWithContext = (
+    selector: SelectorDialogState,
+): selector is PastedSelectorDialogState => {
+    return 'originalId' in selector;
+};
+
 export const applyGroupControlDialog = ({
     setItemData,
     closeDialog,
@@ -183,6 +193,7 @@ export const applyGroupControlDialog = ({
         const activeSelectorIndex = selectActiveSelectorIndex(state);
         const openedItemData = selectOpenedItemData(state);
         const openedItemId = selectOpenedItemId(state);
+        const controlState = selectControlDialogState(state);
         const features = selectControlDialogFeatureByType(state)(DashTabItemType.GroupControl);
 
         let firstInvalidIndex: number | null = null;
@@ -242,21 +253,34 @@ export const applyGroupControlDialog = ({
         } else {
             const hasButtons = selectorsGroup.buttonApply || selectorsGroup.buttonReset;
             const hasGroupName =
-                selectorsGroup.showGroupName && selectorsGroup.groupName
-                    ? selectorsGroup.autoHeight
-                    : false;
+                selectorsGroup.showGroupName &&
+                (selectorsGroup.groupName || controlState.titlePlaceholder);
             const hasTopPlacementTitle =
-                // skip isSingleControl check while it's checked on next line
-                selectorsGroup.group[0].titlePlacement === TitlePlacementOption.Top
-                    ? selectorsGroup.autoHeight
-                    : false;
+                selectorsGroup.group[0].titlePlacement === TitlePlacementOption.Top;
 
-            autoHeight = !isSingleControl || hasButtons || hasTopPlacementTitle || hasGroupName;
+            if (!isSingleControl || hasButtons || hasGroupName || hasTopPlacementTitle) {
+                autoHeight = selectorsGroup.autoHeight;
+            } else {
+                autoHeight = false;
+            }
         }
         const updateControlsOnChange =
             !isSingleControl && selectorsGroup.buttonApply
                 ? selectorsGroup.updateControlsOnChange
                 : false;
+
+        const contextList: SetItemDataArgs['contextList'] = [];
+
+        selectorsGroup.group.forEach((selector, index) => {
+            if (isSelectorWithContext(selector)) {
+                contextList.push({
+                    index,
+                    targetId: selector.originalId,
+                    targetEntryId: selector.targetEntryId,
+                    targetDashTabId: selector.targetDashTabId,
+                });
+            }
+        });
 
         const data = {
             autoHeight,
@@ -294,7 +318,13 @@ export const applyGroupControlDialog = ({
         const getExtendedItemData = getExtendedItemDataAction();
         const itemData = dispatch(getExtendedItemData({data}));
 
-        setItemData({...itemData, type: DashTabItemType.GroupControl});
+        const finalItemData = {
+            ...itemData,
+            type: DashTabItemType.GroupControl,
+            contextList,
+        };
+
+        setItemData(finalItemData);
         closeDialog();
     };
 };

@@ -7,9 +7,9 @@ on:
     types:
       - completed
 
-concurrency:
-  group: ${{ github.workflow }}
-  cancel-in-progress: false
+# concurrency:
+#   group: ${{ github.workflow }}
+#   cancel-in-progress: false
 
 name: E2E Build Application Docker
 
@@ -20,7 +20,7 @@ env:
 jobs:
   build:
     name: datalens-ui
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     if: ${{ github.event.workflow_run.conclusion == '' || github.event.workflow_run.conclusion == 'success' }}
     permissions:
       contents: read
@@ -41,6 +41,9 @@ jobs:
       - uses: docker/setup-qemu-action@v3
         with:
           platforms: 'arm64'
+          # fix QEMU build for arm64
+          # https://github.com/docker/setup-qemu-action/issues/198
+          image: tonistiigi/binfmt:qemu-v7.0.0-28
       - uses: docker/setup-buildx-action@v3
       - name: 'Get release build version'
         run: |

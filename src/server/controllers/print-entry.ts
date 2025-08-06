@@ -82,7 +82,16 @@ export async function printEntry(req: Request, res: Response) {
                 let sheetName = (chartData[filteredLinks[i]].key.split('/').length > 1 ? chartData[filteredLinks[i]].key.split('/')[1] : filteredLinks[i]) + '-' + Date.now();
                 const publicOutputPDFPath = path.join(exportPath, `${sheetName}.pdf`);
                 files.push(publicOutputPDFPath);
-                const browser = await puppeteer.launch();
+                // TODO: Try running `which google-chrome-stable` in Docker and using the full path to the binary that is returned.
+                
+                const _isDevelopment = process.env.APP_ENV === 'development';
+                let browser;
+                if(_isDevelopment) {
+                    browser = await puppeteer.launch();
+                } else {
+                    browser = await puppeteer.launch({executablePath: '/usr/bin/google-chrome-stable'});
+                }
+
                 const page = await browser.newPage();
                 await page.goto(host + '/preview/' + chartData[filteredLinks[i]].id + '?_embedded=1&_no_controls=1&x-rpc-authorization=' + req.headers['x-rpc-authorization'], {
                     waitUntil: 'networkidle0',

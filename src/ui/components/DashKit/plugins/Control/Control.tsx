@@ -18,13 +18,14 @@ import type {
     StringParams,
     WorkbookId,
 } from 'shared';
-import {ControlType, DATASET_FIELD_TYPES, DashTabItemControlSourceType} from 'shared';
+import {ControlType, DATASET_FIELD_TYPES, DashTabItemControlSourceType, Feature} from 'shared';
 import {ChartWrapper} from 'ui/components/Widgets/Chart/ChartWidgetWithProvider';
 import {DL} from 'ui/constants/common';
 import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import type {ChartKitWrapperOnLoadProps} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
 import type {ChartsChartKit} from 'ui/libs/DatalensChartkit/types/charts';
 import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {chartsDataProvider} from '../../../../libs/DatalensChartkit';
 import {
@@ -44,7 +45,8 @@ import {
     addOperationForValue,
     unwrapFromArrayAndSkipOperation,
 } from '../../../../units/dash/modules/helpers';
-import {DEFAULT_CONTROL_LAYOUT} from '../../constants';
+import {DEBOUNCE_RENDER_TIMEOUT, DEFAULT_CONTROL_LAYOUT} from '../../constants';
+import {useWidgetContext} from '../../context/WidgetContext';
 import {adjustWidgetLayout, getControlHint} from '../../utils';
 import DebugInfoTool from '../DebugInfoTool/DebugInfoTool';
 
@@ -90,6 +92,19 @@ const i18n = I18n.keyset('dash.dashkit-plugin-control.view');
 
 const CONTROL_LAYOUT_DEBOUNCE_TIME = 20;
 
+const ControlWrapper = React.forwardRef<
+    HTMLDivElement,
+    {id: string; children: React.ReactNode; className: string}
+>(function ControlWrapper(props, nodeRef) {
+    useWidgetContext(props.id, nodeRef as React.RefObject<HTMLElement>);
+
+    return (
+        <div ref={nodeRef} className={props.className}>
+            {props.children}
+        </div>
+    );
+});
+
 class Control extends React.PureComponent<PluginControlProps, PluginControlState> {
     static contextType = ExtendedDashKitContext;
 
@@ -104,6 +119,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
     adjustWidgetLayout = debounce(this.setAdjustWidgetLayout, CONTROL_LAYOUT_DEBOUNCE_TIME);
     _getDistinctsMemo: ControlSettings['getDistincts'];
+    _onRedraw: null | (() => void) = null;
 
     resolve: ((value: unknown) => void) | null = null;
 
@@ -116,6 +132,8 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
     constructor(props: PluginControlProps) {
         super(props);
+        this._onRedraw = debounce(this.props.onBeforeLoad(), DEBOUNCE_RENDER_TIMEOUT);
+
         this.state = {
             status: LOAD_STATUS.PENDING,
             loadedData: null,
@@ -204,7 +222,10 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             rootNode: this.rootNode,
             gridLayout: this.props.gridLayout,
             layout: this.props.layout,
-            cb: this.props.adjustWidgetLayout,
+            cb: (data) => {
+                this.props.adjustWidgetLayout(data);
+                this._onRedraw?.();
+            },
         });
     }
 
@@ -415,6 +436,8 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             const resolveDataArg = status === LOAD_STATUS.SUCCESS ? loadedData : null;
             this.resolveMeta(resolveDataArg);
         }
+
+        this._onRedraw?.();
     };
 
     init = async () => {
@@ -612,9 +635,22 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
         const {sourceType} = data;
         const {id} = this.props;
+        const showFloatControls = isEnabledFeature(Feature.DashFloatControls);
 
         switch (this.state.status) {
             case LOAD_STATUS.PENDING:
+                if (showFloatControls) {
+                    if (!this.state.loadedData) {
+                        return (
+                            <div className={b()}>
+                                <Loader size="s" />
+                            </div>
+                        );
+                    }
+                    return;
+                }
+
+                // save previous logic without flag
                 if (
                     !this.state.silentLoading ||
                     !this.state.loadedData ||
@@ -733,7 +769,8 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             const chartId = source.chartId;
 
             return (
-                <div
+                <ControlWrapper
+                    id={this.props.id}
                     ref={this.rootNode}
                     className={b({
                         external: true,
@@ -765,7 +802,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                         forwardedRef={this.chartKitRef as any}
                         workbookId={workbookId}
                     />
-                </div>
+                </ControlWrapper>
             );
         }
 
@@ -775,7 +812,11 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             '') as string;
 
         return (
-            <div ref={this.rootNode} className={b({mobile: DL.IS_MOBILE})}>
+            <ControlWrapper
+                id={this.props.id}
+                ref={this.rootNode}
+                className={b({mobile: DL.IS_MOBILE})}
+            >
                 {this.renderSilentLoader()}
                 <DebugInfoTool
                     modType={'corner'}
@@ -787,7 +828,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                 {source.elementType === TYPE.SELECT
                     ? this.renderSelectControl()
                     : this.renderControls()}
-            </div>
+            </ControlWrapper>
         );
     }
 
@@ -795,6 +836,8 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         if (this._isUnmounted) {
             return;
         }
+
+        this._onRedraw?.();
 
         const statusResponse = getStatus(status);
         if (statusResponse) {

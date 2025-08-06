@@ -1,10 +1,10 @@
 import React from 'react';
 
+import {dateTimeParse} from '@gravity-ui/date-utils';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import moment from 'moment';
 import {useDispatch, useSelector} from 'react-redux';
-import type {EntryScope} from 'shared';
+import {type EntryScope, RevisionsPanelQa} from 'shared';
 import type {AppDispatch} from 'store';
 import {closeDialog as closeDialogConfirm, openDialogConfirm} from 'store/actions/dialog';
 import {setRevisionsListMode, setRevisionsMode} from 'store/actions/entryContent';
@@ -14,7 +14,7 @@ import {RevisionsListMode, RevisionsMode} from 'store/typings/entryContent';
 import {TIMESTAMP_FORMAT, URL_QUERY} from 'ui/constants';
 import {registry} from 'ui/registry';
 
-import {getUrlParamFromStr} from '../../utils';
+import {getUrlParamFromStr, isUnreleasedByUrlParams} from '../../utils';
 import history from '../../utils/history';
 import {getCapitalizedStr} from '../../utils/stringUtils';
 
@@ -34,7 +34,7 @@ export type RevisionsPanelProps = {
     onDeprecationConfirm?: () => void;
     deprecationMessage?: string | null;
     isEditing: boolean;
-    hideOpenRevisionsButton?: boolean;
+    className?: string;
 };
 
 const b = block('revisions-panel');
@@ -125,7 +125,7 @@ const RevisionsPanel = ({
     onDeprecationConfirm,
     deprecationMessage,
     isEditing,
-    hideOpenRevisionsButton,
+    className,
 }: RevisionsPanelProps) => {
     const dispatch = useDispatch();
     const storedEntryContent = useSelector(selectEntryContent);
@@ -136,6 +136,8 @@ const RevisionsPanel = ({
     const {getEntryScopesWithRevisionsList} = registry.common.functions.getAll();
 
     const urlRevId = getUrlParamFromStr(location.search, URL_QUERY.REV_ID);
+    const isUnreleased = isUnreleasedByUrlParams(location.search);
+
     const isInAvailableScopes = React.useMemo(
         () => getEntryScopesWithRevisionsList().includes(scope as EntryScope),
         [location, scope],
@@ -144,11 +146,14 @@ const RevisionsPanel = ({
         () => getDraftWarningAvailableScopes().includes(scope as EntryScope),
         [location, scope],
     );
-    const isCurrentRevDraft = savedId === urlRevId;
+    const isCurrentRevDraft = savedId === urlRevId || isUnreleased;
 
     const showDeprecationMessage = isEditing && Boolean(deprecationMessage);
 
+    const canEdit = Boolean(entry.permissions?.edit || !entry.permissions);
+
     const showDraftWarningPanel =
+        canEdit &&
         currentRevId &&
         currentRevId === publishedId &&
         savedId !== publishedId &&
@@ -157,7 +162,7 @@ const RevisionsPanel = ({
 
     const isPanelHidden =
         !currentRevId ||
-        !urlRevId ||
+        (!urlRevId && !isUnreleased) ||
         currentRevId === publishedId ||
         !(typeof scope === 'undefined' || isInAvailableScopes) ||
         isEditing;
@@ -171,6 +176,7 @@ const RevisionsPanel = ({
 
         const searchParams = new URLSearchParams(location.search);
         searchParams.delete(URL_QUERY.REV_ID);
+        searchParams.delete(URL_QUERY.UNRELEASED);
 
         history.push({
             ...location,
@@ -187,6 +193,8 @@ const RevisionsPanel = ({
         onOpenDraftRevision();
 
         const searchParams = new URLSearchParams(location.search);
+        searchParams.delete(URL_QUERY.UNRELEASED);
+
         if (savedId === publishedId) {
             searchParams.delete(URL_QUERY.REV_ID);
         } else {
@@ -207,7 +215,7 @@ const RevisionsPanel = ({
     const scopeTexts = getRevisionsPanelEntryScopesTexts();
 
     const scopeText = scopeTexts[scope]?.panelText || '';
-    const date = moment(updatedAt).format(TIMESTAMP_FORMAT);
+    const date = dateTimeParse(updatedAt)?.format(TIMESTAMP_FORMAT) || updatedAt;
 
     const {getLoginById} = registry.common.functions.getAll();
     const LoginById = getLoginById();
@@ -215,15 +223,20 @@ const RevisionsPanel = ({
     let warningText = '';
     let loginText = null;
     let dateText = '';
+    let subQa;
     if (showDeprecationMessage) {
         warningText = deprecationMessage ?? '';
     } else if (showDraftWarningPanel) {
+        subQa = RevisionsPanelQa.HasDraft;
         warningText = `${i18n('label_later-warning-text', {scope: scopeText})}`;
     } else {
         dateText = `${i18n('label_by')} ${date}`;
         const prefixText = isCurrentRevDraft
             ? i18n('label_draft-version')
             : i18n('label_not-actual');
+        subQa = isCurrentRevDraft
+            ? RevisionsPanelQa.DraftVersion
+            : RevisionsPanelQa.NotActualVersion;
         warningText = `${prefixText} ${scopeText}, ${dateText}`;
 
         const showLogin = LoginById && updatedBy;
@@ -238,14 +251,18 @@ const RevisionsPanel = ({
     }
 
     return (
-        <div className={b('wrap', null, 'active')}>
-            <div className={b('text-container')} style={leftStyle} data-qa="revisions-top-panel">
-                <div className={b('text')}>
+        <div className={b(null, className)}>
+            <div
+                className={b('text-container')}
+                style={leftStyle}
+                data-qa={RevisionsPanelQa.RevisionsPanel}
+            >
+                <div className={b('text')} data-qa={subQa}>
                     <div className={b('text-info')}>{warningText}</div>
                     {loginText}
                 </div>
                 <RevisionsControls
-                    canEdit={Boolean(entry.permissions?.edit || !entry.permissions)}
+                    canEdit={canEdit}
                     onMakeActualClickCallback={handleMakeActualClick}
                     onOpenActualClickCallback={handleOpenActualClick}
                     onOpenRevisionsClickCallback={handleOpenRevisionsClick}
@@ -254,7 +271,6 @@ const RevisionsPanel = ({
                     isDraft={Boolean(showDraftWarningPanel)}
                     isDeprecated={Boolean(showDeprecationMessage)}
                     isLoading={revisionsLoadingStatus === 'loading'}
-                    hideOpenButton={hideOpenRevisionsButton}
                 />
             </div>
         </div>

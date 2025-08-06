@@ -8,114 +8,189 @@
     }
 }
 
+@mixin dashedBorderPositioning {
+    position: absolute;
+    content: '';
+    pointer-events: none;
+    left: var(--dashed-border-offset);
+    right: var(--dashed-border-offset);
+    top: var(--top-divider-offset, var(--dashed-border-offset));
+    bottom: var(--bottom-divider-offset, var(--dashed-border-offset));
+    border-radius: var(--g-border-radius-xl);
+}
+
 @mixin dndHighlight {
     &_edit-mode {
         position: relative;
-        .react-grid-layout {
-            background-color: var(--g-color-base-background);
-            border-radius: var(--g-border-radius-s);
-            outline: 1px dashed var(--g-color-line-generic);
+
+        &::before {
+            @include dashedBorderPositioning;
+            border: var(--outline-dashed-style);
+        }
+
+        &::after {
+            @include dashedBorderPositioning;
+            border: var(--outline-font-color-style);
         }
     }
 }
 
-$fixedSectionOffset: 8px;
+@mixin hiddenSection {
+    &_hidden {
+        display: none;
+        margin: 0;
+    }
+}
 
 .dash-fixed-header {
-    &__controls {
-        display: flex;
-        flex: 1;
-        padding: 8px 0;
-        min-height: 60px;
+    $class: &;
 
-        @include dndHighlight;
+    --fixed-header-background: var(
+        --dl-color-fixed-header-background,
+        var(--g-color-base-background)
+    );
+
+    --dash-current-background: var(--fixed-header-background);
+
+    --dash-inline-padding: var(--g-spacing-6);
+    --fixed-header-block-spacing: var(--g-spacing-4);
+
+    --dashed-border-offset: calc(var(--g-spacing-3) * -1);
+    --hidden-dashed-border-width: 4px;
+
+    --outline-dashed-style: calc(var(--hidden-dashed-border-width) + 1px) dashed
+        var(--g-color-line-generic);
+    --outline-font-color-style: var(--hidden-dashed-border-width) solid
+        var(--fixed-header-background);
+
+    /*
+    Clicked btn shrinks, and small empty space appears between button pinned to the border of the page and the actual page border.
+    This commensation is desired to remove this empty space by moving button out of the border for this value
+    */
+    --btn-click-scale-compensantion: 1px;
+
+    margin-inline: calc(-1 * var(--dash-inline-padding));
+
+    &__wrapper {
+        position: relative;
+        background-color: var(--fixed-header-background);
 
         &_fixed {
             position: fixed;
             top: 40px;
-            background-color: var(
-                --dl-color-fixed-header-background,
-                var(--g-color-base-background)
-            );
-            padding-left: 24px;
-            padding-right: 24px;
-            margin-left: -24px;
-            z-index: 10;
+
+            z-index: 8;
+
+            display: flex;
+            flex-direction: row;
         }
     }
 
-    &__controls-placeholder {
-        height: 60px;
+    &__content {
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
+        flex: 1;
     }
 
-    &__controls-grid {
-        display: flex;
-        flex-grow: 1;
+    &__scrollable-container {
+        padding-inline: var(--dash-inline-padding);
 
-        @include flexReactGridLayout;
+        max-height: 70vh;
+        overflow: auto;
+        flex: 1;
+
+        #{$class}_edit-mode & {
+            max-height: initial;
+            overflow: initial;
+        }
     }
 
     &__controls-settings {
-        width: math.div(100%, 36) * 1;
-        flex-shrink: 0;
-        position: relative;
-    }
-
-    &__controls-settings-wrapper {
+        z-index: 9;
+        width: 36px;
         position: absolute;
-        inset: 0px 0px 0px 8px;
+        right: calc(-1 * var(--btn-click-scale-compensantion));
+        top: var(--fixed-header-block-spacing);
+
         display: flex;
-        min-width: 28px;
-        align-items: center;
-        justify-content: end;
-    }
+        justify-content: flex-end;
 
-    &__container-placeholder {
-        margin-bottom: 20px;
+        #{$class}_edit-mode & {
+            top: var(--g-spacing-2);
+        }
 
-        &_edit-mode {
-            border-bottom: 1px solid var(--g-color-line-generic);
+        #{$class}__controls-settings-wrapper {
+            width: calc(28px + var(--btn-click-scale-compensantion));
+
+            overflow: hidden;
+
+            border-radius: var(--g-border-radius-xl) 0 0 var(--g-border-radius-xl);
+            box-shadow: 0 0 15px var(--g-color-sfx-shadow);
+
+            transition: width 0.1s;
+        }
+
+        &:hover #{$class}__controls-settings-wrapper {
+            width: calc(36px + var(--btn-click-scale-compensantion));
         }
     }
 
-    &__container-wrapper {
-        display: flex;
-        padding-bottom: $fixedSectionOffset;
-        flex-direction: row;
-        flex: 1;
+    &_edit-mode #{$class}__controls-settings-wrapper {
+        background-color: var(--g-color-base-float);
+        border-radius: var(--g-border-radius-m) 0 0 var(--g-border-radius-m);
+    }
 
-        @include flexReactGridLayout;
+    &__controls {
+        --bottom-divider-offset: calc(
+            var(--fixed-header-block-spacing) / -2 - var(--hidden-dashed-border-width)
+        );
+
+        @include dndHighlight;
+        &::before,
+        &::after {
+            #{$class}:not(#{$class}_collapsed) & {
+                border-bottom-right-radius: 0;
+                border-bottom-left-radius: 0;
+            }
+        }
     }
 
     &__container {
+        --top-divider-offset: calc(var(--fixed-header-block-spacing) / -2);
         display: flex;
         flex-direction: row;
-        min-height: 52px;
 
         @include dndHighlight;
-
-        &_fixed {
-            position: fixed;
-            overflow: auto;
-            top: 100px;
-            background-color: var(
-                --dl-color-fixed-header-background,
-                var(--g-color-base-background)
-            );
-            border-bottom: 1px solid var(--g-color-line-generic);
-            padding-left: 24px;
-            padding-right: 24px;
-            margin-left: -24px;
-            z-index: 10;
-            max-height: calc(100vh - 100px);
+        &::before,
+        &::after {
+            border-top: none;
+            border-top-right-radius: 0;
+            border-top-left-radius: 0;
         }
+    }
 
-        &_collapsed {
+    &__controls-placeholder,
+    &__container-placeholder {
+        display: contents;
+    }
+
+    &__controls,
+    &__container {
+        margin-block: var(--fixed-header-block-spacing);
+
+        @include flexReactGridLayout;
+        @include hiddenSection;
+    }
+
+    &__container-placeholder {
+        position: relative;
+
+        &_collapsed #{$class}__container {
             overflow: clip;
             min-height: 0;
             max-height: 0;
+            padding: 0;
+            margin: 0;
         }
     }
 
@@ -127,11 +202,9 @@ $fixedSectionOffset: 8px;
         top: 50%;
         pointer-events: none;
         color: var(--g-color-text-hint);
-        text-align: center;
-
-        &.with-offset {
-            top: calc(50% - #{$fixedSectionOffset});
-            transform: translateY(calc(-1 * calc(50% - calc(#{$fixedSectionOffset}) / 2)));
-        }
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: var(--g-spacing-1);
     }
 }

@@ -14,7 +14,6 @@ export const CHARTKIT_WIDGET_TYPE = {
     MARKDOWN: 'markdown',
     ALERT: 'alert',
     GRAPH: 'graph',
-    D3: 'd3',
 };
 
 const WidgetComponents = {

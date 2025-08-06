@@ -1,3 +1,5 @@
+@import '../../../../styles/mixins.scss';
+
 .dashkit-plugin-group-control {
     $class: &;
 
@@ -6,7 +8,11 @@
     width: 100%;
     min-height: 44px;
     background-color: var(--dl-color-dashkit-control-background, var(--g-color-base-float));
-    border-radius: 3px;
+    border-radius: var(--dl-dk-controls-border-radius, var(--g-border-radius-xs));
+
+    &_pulsate &__container {
+        @include loading-pulsate-animation-style();
+    }
 
     &__header {
         margin-top: 8px;
@@ -24,6 +30,16 @@
 
     &__container {
         padding: 0 5px 0 15px;
+    }
+
+    &__locked {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        left: 0;
+        top: 0;
+        background-color: transparent;
+        z-index: 3; // to overlay Datepicker
     }
 
     &__loader {

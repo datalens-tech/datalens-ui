@@ -23,7 +23,7 @@ import {DL} from 'ui/constants/common';
 import {registry} from 'ui/registry';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
-import type {GetEntryResponse} from '../../../shared/schema';
+import type {GetEntryResponse, GetRevisionsEntry} from '../../../shared/schema';
 import type {DatalensGlobalState} from '../../index';
 import {getSdk} from '../../libs/schematic-sdk';
 import type {EntryContextMenuItems} from '../EntryContextMenu/helpers';
@@ -55,7 +55,9 @@ type OwnProps = {
         message: string;
         onConfirm?: () => void;
     };
-    hideOpenRevisionsButton?: boolean;
+    renderRevisionItemActions?: (item: GetRevisionsEntry, currentRevId: string) => React.ReactNode;
+    wrapperRef?: React.Ref<HTMLDivElement> | React.RefCallback<HTMLDivElement>;
+    style?: React.CSSProperties;
 };
 
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
@@ -152,17 +154,19 @@ class ActionPanel extends React.Component<Props, State> {
             setActualVersion,
             isEditing,
             deprecationWarning,
-            hideOpenRevisionsButton,
+            renderRevisionItemActions,
+            wrapperRef,
+            style: externalStyle,
         } = this.props;
 
-        const leftStyle: React.CSSProperties = {left: sidebarSize};
+        const style: React.CSSProperties = {left: sidebarSize, ...externalStyle};
 
         const entry = this.getEntry();
 
         return (
-            <React.Fragment>
-                <div className={b()} data-qa={ActionPanelQA.ActionPanel}>
-                    <div className={b('container', {mobile: DL.IS_MOBILE}, mix)} style={leftStyle}>
+            <div className={b()} ref={wrapperRef}>
+                <div className={b('wrapper')} data-qa={ActionPanelQA.ActionPanel}>
+                    <div className={b('container', {mobile: DL.IS_MOBILE}, mix)} style={style}>
                         {Array.isArray(leftItems)
                             ? leftItems.map((LeftItems) => LeftItems)
                             : leftItems}
@@ -183,17 +187,18 @@ class ActionPanel extends React.Component<Props, State> {
                 {entry && entryContent && setActualVersion && (
                     <React.Fragment>
                         <RevisionsPanel
+                            className={b('revisions-panel')}
                             entry={entry}
-                            leftStyle={leftStyle}
+                            leftStyle={style}
                             onSetActualRevision={setActualVersion}
                             onOpenActualRevision={this.handleOpenCurrentRevision}
                             onOpenDraftRevision={this.handleOpenDraftRevision}
                             isEditing={isEditing || false}
                             deprecationMessage={deprecationWarning?.message}
                             onDeprecationConfirm={deprecationWarning?.onConfirm}
-                            hideOpenRevisionsButton={hideOpenRevisionsButton}
                         />
                         <ExpandablePanel
+                            className={b('expandable-panel')}
                             title={i18n('label_history-changes')}
                             description={
                                 isEnabledFeature(Feature.RevisionsListNoLimit)
@@ -203,11 +208,11 @@ class ActionPanel extends React.Component<Props, State> {
                             active={isRevisionsOpened || false}
                             onClose={this.handleExpandablePanelClose}
                         >
-                            <Revisions />
+                            <Revisions renderItemActions={renderRevisionItemActions} />
                         </ExpandablePanel>
                     </React.Fragment>
                 )}
-            </React.Fragment>
+            </div>
         );
     }
 
@@ -216,10 +221,9 @@ class ActionPanel extends React.Component<Props, State> {
     }
 
     private getEnablePublish() {
-        const getEntryPublishGloballyDisabledFn = registry.common.functions.get(
-            'getEntryPublishGloballyDisabled',
-        );
-        if (getEntryPublishGloballyDisabledFn()) {
+        const getGloballyEntrySettings = registry.common.functions.get('getGloballyEntrySettings');
+        const globallyEntrySettings = getGloballyEntrySettings();
+        if (globallyEntrySettings?.isPublishDisabled) {
             return false;
         }
 

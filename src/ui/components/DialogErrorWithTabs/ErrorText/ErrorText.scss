@@ -2,6 +2,8 @@
 @import '../../../styles/variables';
 
 .error-text {
+    $class: &;
+
     &__content {
         margin-top: 30px;
         padding: 15px;
@@ -13,6 +15,13 @@
         word-wrap: break-word;
         font-family: $monospaceFontFamily;
         max-height: 365px;
+        position: relative;
+
+        &:hover {
+            #{$class}__clipboard {
+                visibility: visible;
+            }
+        }
 
         &_mobile {
             @include text-code-2;
@@ -23,5 +32,13 @@
 
     &__extra-content {
         margin-top: 16px;
+    }
+
+    &__clipboard {
+        visibility: hidden;
+        position: absolute;
+        top: var(--g-spacing-2);
+        right: var(--g-spacing-3);
+        color: var(--g-color-text-secondary);
     }
 }

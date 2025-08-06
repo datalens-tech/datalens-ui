@@ -1,0 +1,8 @@
+{
+  "action_user-profile-deletion-cancel": "Cancel",
+  "action_user-profile-deletion-confirm": "Delete user",
+  "label_delete-user-confirmation": "Are you sure you want to delete the user? After deletion, it will not be able to use the DataLens service.",
+  "label_delete-user-failure": "An error occurred when deleting the user",
+  "label_delete-user-success": "User deleted successfully",
+  "title_delete-user": "Deleting a user"
+}

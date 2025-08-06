@@ -1,13 +1,9 @@
-import type {Chart, Series, SeriesClickEventObject} from 'highcharts';
-import Highcharts from 'highcharts';
 import {i18n} from 'i18n';
 import JSONfn from 'json-fn';
 import logger from 'libs/logger';
 import {UserSettings} from 'libs/userSettings';
 import {omit} from 'lodash';
 import get from 'lodash/get';
-import partial from 'lodash/partial';
-import partialRight from 'lodash/partialRight';
 import pick from 'lodash/pick';
 import set from 'lodash/set';
 import {WidgetKind} from 'shared/types/widget';
@@ -19,7 +15,6 @@ import type {StringParams} from '../../../../../../shared';
 import {
     ChartkitHandlers,
     EDITOR_CHART_NODE,
-    Feature,
     QL_CHART_NODE,
     SHARED_URL_OPTIONS,
     WIZARD_CHART_NODE,
@@ -55,190 +50,22 @@ import {getSafeChartWarnings, isPotentiallyUnsafeChart} from './utils';
 
 import {CHARTS_ERROR_CODE} from '.';
 
-interface ChartKitFormatterOptions {
-    prefix?: 'string';
-    postfix?: 'string';
-    mappingVariables?: Record<
-        string,
-        {
-            mapper: Record<string, string>;
-            mappingKey: string;
-        }
-    >;
-    wrapLink?: {
-        href: 'string';
-        value: 'string';
-    };
-}
-
 type CurrentResponse = ResponseSuccessNode | ResponseSuccessControls;
-
-function getChartInstanceFromContext(context: Chart | Series) {
-    if (context instanceof Highcharts.Chart) {
-        return context;
-    } else if (context instanceof Highcharts.Series) {
-        return context.chart;
-    } else {
-        return undefined;
-    }
-}
-
-const handlerActionToCustomHandlerMapper = {
-    openLink(
-        this: Series | Chart,
-        _: SeriesClickEventObject,
-        {url, sourceField}: {url?: string; sourceField?: string},
-    ) {
-        if (url) {
-            window.open(url);
-        }
-
-        const chart: Chart | undefined = getChartInstanceFromContext(this);
-
-        if (chart && chart.hoverPoint && chart.hoverPoint.options[sourceField || 'url']) {
-            window.open(chart.hoverPoint.options[sourceField || 'url']);
-        } else if (this.options && this.options[sourceField || 'url']) {
-            const url = this.options[sourceField || 'url'] as string;
-
-            window.open(url);
-        }
-    },
-    hideOthers(this: Series, event: SeriesClickEventObject) {
-        if (this instanceof Highcharts.Chart) {
-            console.warn(
-                'Warning: "hideOthers" handler can be attached only on Series, this handler will be ignored',
-            );
-
-            return false;
-        }
-
-        (this.chart.series || []).forEach((series) => {
-            if (series !== this) {
-                series.setVisible(false, false);
-                this.chart.tooltip.refresh([event.point]);
-            }
-        });
-
-        (this.chart.hoverPoints || []).forEach((point) => {
-            if (point !== this.chart.hoverPoint) {
-                point.setState('');
-            }
-        });
-
-        return false;
-    },
-    hideThis(this: Series) {
-        if (this instanceof Highcharts.Chart) {
-            console.warn(
-                'Warning: "hideThis" handler can be attached only on Series, this handler will be ignored',
-            );
-
-            return false;
-        }
-
-        this.chart.tooltip.hide();
-
-        this.setVisible(false, false);
-
-        return false;
-    },
-    showHidden(this: Chart | Series) {
-        const chart = getChartInstanceFromContext(this);
-
-        if (chart) {
-            if (chart.hoverPoints) {
-                chart.hoverPoints.forEach((point) => {
-                    point.setState('');
-                });
-            }
-
-            (chart.series || []).forEach((series) => {
-                if (!series.visible) {
-                    series.setVisible(true, true);
-
-                    if (!chart.tooltip.isHidden) {
-                        chart.tooltip.hide();
-                    }
-                }
-            });
-
-            (chart.hoverPoints || []).forEach((point) => {
-                point.setState('');
-            });
-        }
-    },
-    updateParams(
-        this: Series | Chart,
-        _: SeriesClickEventObject,
-        {sourceField}: {sourceField?: string},
-    ) {
-        const chart: Chart | undefined = getChartInstanceFromContext(this);
-
-        if (chart && chart.hoverPoint && chart.hoverPoint.options[sourceField || 'params']) {
-            chart.updateParams(
-                chart.hoverPoint.options[sourceField || 'params'] as unknown as StringParams,
-            );
-        } else if (this instanceof Highcharts.Series && (sourceField || 'params') in this.options) {
-            this.chart.updateParams(this.options[sourceField || 'params'] as StringParams);
-        }
-    },
-};
-
-function getVariable(
-    context: Record<string, string>,
-    mappingVariables: Record<string, string>,
-    property: string,
-) {
-    if (property in mappingVariables) {
-        return mappingVariables[property];
-    } else {
-        return context[property];
-    }
-}
-
-function formatter(this: Record<string, string>, options: ChartKitFormatterOptions) {
-    const prefix = options.prefix || '';
-    const postfix = options.postfix || '';
-    const mappingVariables: Record<string, string> = {};
-
-    if (options.mappingVariables && Object.keys(options.mappingVariables).length) {
-        Object.keys(options.mappingVariables).forEach((mappingVariableName) => {
-            if (options.mappingVariables) {
-                const {mapper, mappingKey} = options.mappingVariables[mappingVariableName];
-
-                mappingVariables[mappingVariableName] = mapper[this[mappingKey]];
-            }
-        });
-    }
-
-    let result = `${prefix}${this.value}${postfix}`;
-
-    if (options.wrapLink) {
-        const href = getVariable(this, mappingVariables, options.wrapLink.href);
-        const text = getVariable(this, mappingVariables, options.wrapLink.value);
-
-        result = `<a href="${href}" target="_blank">${prefix}${text}${postfix}</a>`;
-    }
-
-    return result;
-}
-
-function replacer(_: string, value: any) {
-    if (value && value.__chartkitHandler && value.action) {
-        const action: keyof typeof handlerActionToCustomHandlerMapper = value.action || '';
-
-        return partialRight(handlerActionToCustomHandlerMapper[action], value);
-    }
-
-    if (value && value.__chartkitFormatter) {
-        return partial(formatter, value);
-    }
-
-    return value;
-}
 
 function isNodeResponse(loaded: CurrentResponse): loaded is ResponseSuccessNode {
     return 'data' in loaded;
+}
+
+function shouldShowSafeChartInfo(params: StringParams) {
+    if (!isEnabledFeature('ShowSafeChartInfo')) {
+        return false;
+    }
+    return (
+        Utils.getOptionsFromSearch(window.location.search).showSafeChartInfo ||
+        (params &&
+            SHARED_URL_OPTIONS.SAFE_CHART in params &&
+            String(params?.[SHARED_URL_OPTIONS.SAFE_CHART]?.[0]) === '1')
+    );
 }
 
 /* eslint-disable complexity */
@@ -252,6 +79,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
         defaultParams,
         id,
         key,
+        revId,
         usedParams,
         unresolvedParams,
         sources,
@@ -264,12 +92,6 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
     } = loaded;
 
     try {
-        const showSafeChartInfo =
-            Utils.getOptionsFromSearch(window.location.search).showSafeChartInfo ||
-            (params &&
-                SHARED_URL_OPTIONS.SAFE_CHART in params &&
-                String(params?.[SHARED_URL_OPTIONS.SAFE_CHART]?.[0]) === '1');
-
         let result: Widget & Optional<WithControls> & ChartsData = {
             // @ts-ignore
             type: loadedType.match(/^[^_]*/)![0],
@@ -277,6 +99,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
             defaultParams,
             entryId: id ?? `fake_${getRandomCKId()}`,
             key,
+            revId,
             usedParams,
             sources,
             logs_v2,
@@ -308,12 +131,9 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
 
             result.data = loaded.data;
             result.config = jsonParse(loaded.config);
-            result.libraryConfig = jsonParse(
-                loaded.highchartsConfig,
-                noJsonFn ? replacer : undefined,
-            );
+            result.libraryConfig = jsonParse(loaded.highchartsConfig);
 
-            if (showSafeChartInfo) {
+            if (shouldShowSafeChartInfo(params)) {
                 result.safeChartInfo = getSafeChartWarnings(
                     loadedType,
                     pick(result, 'config', 'libraryConfig', 'data'),
@@ -333,7 +153,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                     uiSandboxOptions.totalTimeLimit = UI_SANDBOX_TOTAL_TIME_LIMIT;
                 }
 
-                if (result.type === WidgetKind.BlankChart) {
+                if (result.type === WidgetKind.AdvancedChart) {
                     uiSandboxOptions.fnExecTimeLimit = 1500;
                 }
 
@@ -351,15 +171,11 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
 
             const isWizardOrQl = result.isNewWizard || result.isQL;
             const shouldProcessHtmlFields =
-                isPotentiallyUnsafeChart(loadedType) ||
-                (isEnabledFeature(Feature.HtmlInWizard) && result.config?.useHtml);
+                isPotentiallyUnsafeChart(loadedType) || result.config?.useHtml;
             if (shouldProcessHtmlFields) {
                 const parseHtml = await getParseHtmlFn();
                 const ignoreInvalidValues = isWizardOrQl;
-                const allowHtml =
-                    isWizardOrQl && isEnabledFeature(Feature.EscapeStringInWizard)
-                        ? false
-                        : enableJsAndHtml;
+                const allowHtml = isWizardOrQl ? false : enableJsAndHtml;
                 processHtmlFields(result.data, {
                     allowHtml,
                     parseHtml,

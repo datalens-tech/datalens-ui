@@ -28,6 +28,7 @@ import {
     SET_ERROR_MODE,
     SET_STATE,
     purgeData,
+    resetDashEditHistory,
     setDashViewMode,
     setLock,
     toggleTableOfContent,
@@ -38,7 +39,6 @@ import {
     applyDataProviderChartSettings,
     getCurrentTab,
     isCallable,
-    prepareLoadedData,
     removeParamAndUpdate,
 } from '../helpers';
 
@@ -122,6 +122,7 @@ export const setEditMode = (successCallback = () => {}, failCallback = () => {})
         } = getState();
 
         if (fake) {
+            dispatch(resetDashEditHistory());
             return;
         }
 
@@ -154,6 +155,7 @@ export const setEditMode = (successCallback = () => {}, failCallback = () => {})
             }
 
             await dispatch(setLock(entryId));
+            dispatch(resetDashEditHistory());
             successCallback();
         } catch (error) {
             if (isEntryIsLockedError(error)) {
@@ -166,6 +168,7 @@ export const setEditMode = (successCallback = () => {}, failCallback = () => {})
                                 await dispatch(setLock(entryId, true));
                                 (dispatch as ConnectionsReduxDispatch)(closeDialogConfirm());
                                 successCallback();
+                                dispatch(resetDashEditHistory());
                             } catch (localError) {
                                 dispatch(
                                     showToast({
@@ -292,17 +295,15 @@ export const load = ({
                 throw new Error(NOT_FOUND_ERROR_TEXT);
             }
 
-            let data;
+            let data = entry.data;
             let convertedEntryData;
             if (DashSchemeConverter.isUpdateNeeded(entry.data)) {
                 dispatch({
                     type: SET_STATE,
                     payload: {mode: Mode.Updating},
                 });
-                data = prepareLoadedData(await DashSchemeConverter.update(entry.data));
+                data = await DashSchemeConverter.update(entry.data);
                 convertedEntryData = data;
-            } else {
-                data = prepareLoadedData(entry.data);
             }
 
             // fix try to open not dashboard entry

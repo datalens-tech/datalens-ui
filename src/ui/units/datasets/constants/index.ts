@@ -126,9 +126,13 @@ export const MILLISECONDS_IN_DAY = 86400000;
 
 export const TOAST_NAME = 'dialog_footer_error';
 
+/** @deprecated use `DATASET_TAB` from `src/shared/constants/qa/datasets.ts` */
 export const TAB_DATASET = 'dataset';
+/** @deprecated use `DATASET_TAB` from `src/shared/constants/qa/datasets.ts` */
 export const TAB_SOURCES = 'sources';
+/** @deprecated use `DATASET_TAB` from `src/shared/constants/qa/datasets.ts` */
 export const TAB_FILTERS = 'filters';
+/** @deprecated use `DATASET_TAB` from `src/shared/constants/qa/datasets.ts` */
 export const TAB_PARAMETERS = 'parameters';
 export type DatasetTab =
     | typeof TAB_DATASET

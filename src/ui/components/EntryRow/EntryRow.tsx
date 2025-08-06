@@ -7,6 +7,7 @@ import {I18n} from 'i18n';
 import {getEntryNameByKey} from 'shared/modules';
 import navigateHelper from 'ui/libs/navigateHelper';
 
+import type {EntityIconType} from '../EntityIcon/EntityIcon';
 import {EntryIcon} from '../EntryIcon/EntryIcon';
 
 import './EntryRow.scss';
@@ -16,12 +17,12 @@ const b = block('entry-row');
 const i18n = I18n.keyset('component.entry-row.view');
 
 export type RowEntryData = {
-    entryId: string;
+    entryId?: string;
     disabled?: boolean;
-    key: string;
+    key?: string;
     name?: string;
     scope: string;
-    type: string;
+    type?: string;
     isLocked?: boolean;
 };
 
@@ -32,6 +33,7 @@ export type EntryRowProps = {
     enableHover?: boolean;
     disableHover?: boolean;
     showUndefinedIcon?: boolean;
+    overrideIconType?: EntityIconType;
 } & (RowWithEntry | CustomRow);
 
 type RowWithEntry = {entry: RowEntryData; name?: string; showUndefinedIcon?: boolean};
@@ -41,7 +43,18 @@ const getName = (entry?: RowEntryData, name?: string) => {
     if (!entry || name) {
         return name;
     }
-    return entry.name ? entry.name : getEntryNameByKey({key: entry.key, index: -1});
+    if (!entry.key) {
+        return entry.name;
+    }
+    return entry.name ? entry.name : getEntryNameByKey({key: entry.key});
+};
+
+// Type guard to ensure entry has all required properties for redirectUrlSwitcher
+const isValidEntryForRedirect = (
+    entry: RowEntryData,
+): entry is RowEntryData & {entryId: string; key: string; type: string} => {
+    // datasets has empty string entry.type
+    return Boolean(entry.entryId) && Boolean(entry.key) && typeof entry.type === 'string';
 };
 
 export const EntryRow = ({
@@ -52,6 +65,7 @@ export const EntryRow = ({
     enableHover,
     name,
     showUndefinedIcon,
+    overrideIconType,
 }: EntryRowProps) => {
     const entryName = getName(entry, name);
 
@@ -73,11 +87,13 @@ export const EntryRow = ({
                 width={24}
                 height={24}
                 className={b('icon', {disabled: entry?.disabled})}
+                overrideIconType={overrideIconType}
             />
         );
     };
 
-    const showWithoutLink = nonInteractive || !entry;
+    const hasValidEntryForRedirect = entry && isValidEntryForRedirect(entry);
+    const showWithoutLink = nonInteractive || !hasValidEntryForRedirect;
 
     return (
         <div
@@ -102,7 +118,7 @@ export const EntryRow = ({
                     </React.Fragment>
                 ) : (
                     <Link
-                        view={entry.disabled ? 'secondary' : 'primary'}
+                        view={entry?.disabled ? 'secondary' : 'primary'}
                         target="_blank"
                         className={b('text-block')}
                         title={entryName}

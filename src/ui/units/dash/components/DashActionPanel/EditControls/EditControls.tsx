@@ -1,12 +1,13 @@
 import React from 'react';
 
-import {Gear} from '@gravity-ui/icons';
-import {Button, Icon} from '@gravity-ui/uikit';
+import {ArrowUturnCcwLeft, ArrowUturnCwRight, Gear} from '@gravity-ui/icons';
+import {ActionTooltip, Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Feature} from 'shared';
 import {ActionPanelDashSaveControlsQa} from 'shared/constants/qa/action-panel';
 import {DashboardActionPanelControlsQa} from 'shared/constants/qa/dash';
+import {REDO_HOTKEY, UNDO_HOTKEY} from 'ui/constants/misc';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import EntryDialogues from '../../../../../components/EntryDialogues/EntryDialogues';
@@ -26,7 +27,7 @@ type EditControlsProps = {
     onSaveAsDraftDashClick: () => void;
     onSaveAsNewClick: () => void;
     onOpenDialogSettingsClick: () => void;
-    onOpenDialogConnectionsClick: () => void;
+    onOpenDialogConnectionsClick?: () => void;
     onCancelClick: () => void;
     onOpenDialogTabsClick: () => void;
     entryDialoguesRef: React.RefObject<EntryDialogues>;
@@ -35,6 +36,10 @@ type EditControlsProps = {
     loading: boolean;
     showCancel: boolean;
     showSaveDropdown: boolean;
+    canGoBack?: boolean;
+    canGoForward?: boolean;
+    onGoBack: () => void;
+    onGoForward: () => void;
 };
 
 export const EditControls = (props: EditControlsProps) => {
@@ -54,6 +59,10 @@ export const EditControls = (props: EditControlsProps) => {
         loading,
         showCancel = true,
         showSaveDropdown = true,
+        canGoBack,
+        canGoForward,
+        onGoBack,
+        onGoForward,
     } = props;
 
     const isCurrentRevisionActual = revId === publishedId;
@@ -99,6 +108,36 @@ export const EditControls = (props: EditControlsProps) => {
 
     return (
         <React.Fragment>
+            {isEnabledFeature(Feature.EnableDashUndoRedo) && (
+                <React.Fragment>
+                    <ActionTooltip
+                        title={I18n.keyset('component.action-panel.view')('button_undo')}
+                        hotkey={UNDO_HOTKEY.join('+')}
+                    >
+                        <Button
+                            qa={DashboardActionPanelControlsQa.UndoButton}
+                            disabled={!canGoBack}
+                            onClick={onGoBack}
+                            view={'flat'}
+                        >
+                            <Icon data={ArrowUturnCcwLeft} size={16} />
+                        </Button>
+                    </ActionTooltip>
+                    <ActionTooltip
+                        title={I18n.keyset('component.action-panel.view')('button_redo')}
+                        hotkey={REDO_HOTKEY.join('+')}
+                    >
+                        <Button
+                            qa={DashboardActionPanelControlsQa.RedoButton}
+                            disabled={!canGoForward}
+                            onClick={onGoForward}
+                            view={'flat'}
+                        >
+                            <Icon data={ArrowUturnCwRight} size={16} />
+                        </Button>
+                    </ActionTooltip>
+                </React.Fragment>
+            )}
             <Button
                 view="flat"
                 size="m"
@@ -113,7 +152,7 @@ export const EditControls = (props: EditControlsProps) => {
                 entryDialoguesRef={entryDialoguesRef}
                 showOpenedDescription={false}
             />
-            {!isEnabledFeature(Feature.HideOldRelations) && (
+            {Boolean(onOpenDialogConnectionsClick) && (
                 <Button
                     view="normal"
                     size="m"

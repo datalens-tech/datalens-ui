@@ -8,7 +8,6 @@ import {
     DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME,
     DL_EMBED_TOKEN_HEADER,
     Feature,
-    isEnabledServerFeature,
 } from '../../../../shared';
 import type {ProcessorParams, SerializableProcessorParams} from '../components/processor';
 import {Processor} from '../components/processor';
@@ -34,10 +33,11 @@ export function engineProcessingCallback({
     processorParams: Omit<ProcessorParams, 'ctx'>;
     runnerType: Runners;
 }): Promise<{status: number; payload: unknown}> {
+    const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
     const enableChartEditor =
-        isEnabledServerFeature(ctx, 'EnableChartEditor') && runnerType === 'Editor';
+        isEnabledServerFeature('EnableChartEditor') && runnerType === 'Editor';
     const showChartsEngineDebugInfo = Boolean(
-        isEnabledServerFeature(ctx, Feature.ShowChartsEngineDebugInfo),
+        isEnabledServerFeature(Feature.ShowChartsEngineDebugInfo),
     );
 
     return Processor.process({...processorParams, ctx: ctx})
@@ -153,6 +153,7 @@ export const getSerializableProcessorParams = ({
     localConfig,
     subrequestHeadersKind,
     forbiddenFields,
+    secureConfig,
 }: {
     res: Response;
     req: Request;
@@ -169,6 +170,7 @@ export const getSerializableProcessorParams = ({
     workbookId?: WorkbookId;
     subrequestHeadersKind?: string;
     forbiddenFields?: ProcessorParams['forbiddenFields'];
+    secureConfig?: ProcessorParams['secureConfig'];
 }): SerializableProcessorParams => {
     const {params, actionParams, widgetConfig} = req.body;
 
@@ -226,8 +228,10 @@ export const getSerializableProcessorParams = ({
         configResolving,
         cacheToken: req.headers['x-charts-cache-token'] || null,
         forbiddenFields,
+        secureConfig,
         configName,
         configId,
+        revId: localConfig?.revId,
         disableJSONFnByCookie,
         isEmbed,
         zitadelParams,
@@ -235,15 +239,8 @@ export const getSerializableProcessorParams = ({
         originalReqHeaders,
         adapterContext,
         hooksContext,
+        configOverride: generatedConfig,
     };
-
-    if (req.body.unreleased === 1) {
-        processorParams.useUnreleasedConfig = true;
-    }
-
-    if (generatedConfig) {
-        processorParams.configOverride = generatedConfig;
-    }
 
     const configWorkbook = workbookId ?? localConfig?.workbookId;
     if (configWorkbook) {
@@ -289,6 +286,7 @@ export function commonRunner({
     hrStart,
     subrequestHeadersKind,
     forbiddenFields,
+    secureConfig,
 }: {
     res: Response;
     req: Request;
@@ -310,6 +308,7 @@ export function commonRunner({
     hrStart: [number, number];
     subrequestHeadersKind?: string;
     forbiddenFields?: ProcessorParams['forbiddenFields'];
+    secureConfig?: ProcessorParams['secureConfig'];
 }) {
     const telemetryCallbacks = chartsEngine.telemetryCallbacks;
     const cacheClient = chartsEngine.cacheClient;
@@ -344,6 +343,7 @@ export function commonRunner({
                     builder,
                     hooks,
                     sourcesConfig,
+                    secureConfig,
                 },
                 runnerType: runnerType as Runners,
             });

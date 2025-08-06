@@ -3,6 +3,7 @@ import React from 'react';
 import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {RevisionsPanelQa} from 'shared/constants/qa';
 
 import '../RevisionsPanel.scss';
 
@@ -16,7 +17,6 @@ type RevisionsControlsProps = {
     onDeprecationConfirm?: () => void;
     onOpenDraftClickCallback?: () => void;
     isLoading: boolean;
-    hideOpenButton?: boolean;
 };
 
 const b = block('revisions-panel');
@@ -32,7 +32,6 @@ const RevisionsControls = ({
     onOpenRevisionsClickCallback,
     onOpenDraftClickCallback,
     isLoading,
-    hideOpenButton,
 }: RevisionsControlsProps) => {
     if (isDeprecated) {
         return (
@@ -66,20 +65,16 @@ const RevisionsControls = ({
                 >
                     {i18n('button_open-draft')}
                 </Button>
-                {/* TODO: remove hideOpenButton when revisions panel will be supported
-                everywhere */}
-                {!hideOpenButton && (
-                    <Button
-                        view="outlined-contrast"
-                        size="m"
-                        className={b('button')}
-                        onClick={onOpenRevisionsClickCallback}
-                        qa="action-open-revisions"
-                        disabled={isLoading}
-                    >
-                        {i18n('button_open-revisions')}
-                    </Button>
-                )}
+                <Button
+                    view="outlined-contrast"
+                    size="m"
+                    className={b('button')}
+                    onClick={onOpenRevisionsClickCallback}
+                    qa="action-open-revisions"
+                    disabled={isLoading}
+                >
+                    {i18n('button_open-revisions')}
+                </Button>
             </div>
         );
     }
@@ -92,7 +87,7 @@ const RevisionsControls = ({
                     size="m"
                     className={b('button')}
                     onClick={onMakeActualClickCallback}
-                    qa="action-make-actual"
+                    qa={RevisionsPanelQa.ButtonMakeActual}
                     loading={isLoading}
                 >
                     {i18n('button_make-actual')}
@@ -103,7 +98,7 @@ const RevisionsControls = ({
                 size="m"
                 className={b('button')}
                 onClick={onOpenActualClickCallback}
-                qa="action-open-actual"
+                qa={RevisionsPanelQa.ButtonOpenActual}
                 disabled={isLoading}
             >
                 {i18n('button_open-actual')}

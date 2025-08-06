@@ -15,13 +15,12 @@ import type {CollectionsState} from 'units/collections/store/reducers';
 import type {ConnectionsReduxState} from 'units/connections/store/typings';
 import type {DashState} from 'units/dash/store/reducers/dashTypedReducer';
 import type {DatasetReduxState} from 'units/datasets/store/types';
-import type {ComponentsState} from 'units/editor/store/reducers';
-import type {EditorState} from 'units/editor/store/reducers/editor/editorTypedReducer';
 import type {QLState} from 'units/ql/store/typings';
 import type {WizardGlobalState} from 'units/wizard/reducers';
 import type {WorkbooksState} from 'units/workbooks/store/reducers';
 
 import type {CollectionsNavigationState} from './units/collections-navigation/store/reducers';
+import type {ServiceSettingsState} from './units/service-settings/store/typings/serviceSettings';
 
 export {default as ActionPanel} from './components/ActionPanel/ActionPanel';
 export {default as Utils} from './utils';
@@ -67,8 +66,6 @@ export type DatalensGlobalState = {
     collectionsNavigation: CollectionsNavigationState;
     dialog: DialogState;
     landing: LandingState;
-    components: ComponentsState;
-    editor: EditorState;
     entryContent: EntryGlobalState;
     user: UserState;
     colorPaletteEditor: ColorPaletteEditorState;
@@ -77,4 +74,5 @@ export type DatalensGlobalState = {
     editHistory: EditHistoryState;
     iamAccessDialog: IamAccessDialogState;
     auth: AuthState;
+    serviceSettings: ServiceSettingsState;
 };

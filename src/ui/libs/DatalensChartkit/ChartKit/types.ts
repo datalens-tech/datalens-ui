@@ -64,7 +64,7 @@ declare module '@gravity-ui/chartkit' {
             data: any;
             widget: TableWidgetData;
         };
-        'blank-chart': {
+        'advanced-chart': {
             data: any;
             widget: unknown;
         };

@@ -1,0 +1,10 @@
+{
+  "button_generate-password": "Generate password",
+  "label_email": "Email",
+  "label_first-name": "First name",
+  "label_last-name": "Last name",
+  "label_login": "Username",
+  "label_password": "Password",
+  "label_repeat-password": "Repeat password",
+  "label_roles": "Role"
+}

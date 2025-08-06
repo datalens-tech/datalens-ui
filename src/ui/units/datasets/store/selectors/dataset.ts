@@ -1,6 +1,9 @@
+import get from 'lodash/get';
 import {createSelector} from 'reselect';
+import {Feature} from 'shared';
 import type {DatasetField} from 'shared';
 import type {DatalensGlobalState} from 'ui';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import DatasetUtils from '../../helpers/utils';
 import type {BaseSource} from '../types';
@@ -27,11 +30,19 @@ export const isDatasetRevisionMismatchSelector = (state: DatalensGlobalState) =>
 
 export const datasetFieldsSelector = (state: DatalensGlobalState) =>
     state.dataset.content.result_schema!;
+export const dataExportEnabledSelector = (state: DatalensGlobalState) =>
+    !state.dataset.content.data_export_forbidden;
 export const sourcesSelector = (state: DatalensGlobalState) => state.dataset.content.sources;
 export const avatarsSelector = (state: DatalensGlobalState) => state.dataset.content.source_avatars;
 export const relationsSelector = (state: DatalensGlobalState) =>
     state.dataset.content.avatar_relations;
-export const rlsSelector = (state: DatalensGlobalState) => state.dataset.content.rls;
+export const rlsSelector = (state: DatalensGlobalState) => {
+    if (isEnabledFeature(Feature.EnableRLSV2)) {
+        return state.dataset.content.rls2 || [];
+    }
+
+    return state.dataset.content.rls;
+};
 export const optionsSelector = (state: DatalensGlobalState) => state.dataset.options;
 
 export const datasetPreviewSelector = (state: DatalensGlobalState) => state.dataset.preview;
@@ -175,3 +186,22 @@ export const workbookIdSelector = (state: DatalensGlobalState) => {
 };
 
 export const currentTabSelector = (state: DatalensGlobalState) => state.dataset.currentTab;
+
+export const templateEnabledSelector = (state: DatalensGlobalState) =>
+    state.dataset.content.template_enabled;
+
+export const rawSqlLevelSelector = createSelector(
+    connectionsSelector,
+    (connections: ReturnType<typeof connectionsSelector>) => {
+        let rawSqlLevel = '';
+
+        for (const connection of connections) {
+            const possibleValue = get(connection, ['data', 'raw_sql_level'], '') as string;
+            if (possibleValue) {
+                rawSqlLevel = possibleValue;
+            }
+        }
+
+        return rawSqlLevel;
+    },
+);

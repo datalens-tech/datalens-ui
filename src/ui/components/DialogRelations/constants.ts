@@ -1,3 +1,4 @@
+import iconEditorChart from '@gravity-ui/icons/svgs/curly-brackets.svg';
 import LogoMarkdownIcon from '@gravity-ui/icons/svgs/logo-markdown.svg';
 import iconFlatTable from 'ui/assets/icons/charts-visualisations/vis-flat-table.svg';
 import iconGeolayers from 'ui/assets/icons/charts-visualisations/vis-geolayers.svg';
@@ -14,6 +15,9 @@ export const RELATIONS_CHARTS_ICONS_DICT = {
     ymap: iconGeolayers,
     markdown: LogoMarkdownIcon,
     markup: iconMetric,
+    'blank-chart': iconEditorChart,
+    'advanced-chart': iconEditorChart,
+    d3: iconEditorChart,
 };
 
 export const DEFAULT_ALIAS_NAMESPACE = 'default';

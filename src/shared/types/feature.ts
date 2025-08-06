@@ -1,9 +1,12 @@
 export enum Feature {
     ChartkitAlerts = 'chartkitAlerts',
     UseConfigurableChartkit = 'UseConfigurableChartkit',
-    Ql = 'ql',
     HideOldRelations = 'hideOldRelations',
+    // Show new relations button in navigation action panel
+    ShowNewRelationsButton = 'ShowNewRelationsButton',
     AsideHeaderEnabled = 'AsideHeaderEnabled',
+    /** Enable redesign of dash controls */
+    DashFloatControls = 'DashFloatControls',
     FieldEditorDocSection = 'FieldEditorDocSection',
     UsePublicDistincts = 'UsePublicDistincts',
     EnablePublishEntry = 'EnablePublishEntry',
@@ -36,14 +39,11 @@ export enum Feature {
     // The ability to upload xlsx files for file connections
     XlsxFilesEnabled = 'XlsxFilesEnabled',
     XlsxChartExportEnabled = 'XlsxChartExportEnabled',
-    // Escaping field values in chart tooltips (only scatter, treemap, geopoints visualizations)
-    EscapeUserHtmlInDefaultHcTooltip = 'EscapeUserHtmlInDefaultHcTooltip',
     HolidaysOnChart = 'HolidaysOnChart',
     ReadOnlyMode = 'ReadOnlyMode',
     MenuItemsFlatView = 'MenuItemsFlatView',
     EntryMenuItemCopy = 'EntryMenuItemCopy',
     EntryMenuItemMove = 'EntryMenuItemMove',
-    EntryMenuEditor = 'EntryMenuEditor',
     ExternalSelectors = 'ExternalSelectors',
     DashBoardWidgetParamsStrictValidation = 'DashBoardWidgetParamsStrictValidation',
     D3Visualizations = 'D3Visualizations',
@@ -52,7 +52,6 @@ export enum Feature {
     HideMultitenant = 'HideMultitenant',
     EnableMobileHeader = 'EnableMobileHeader',
     UseYqlFolderKey = 'UseYqlFolderKey',
-    UseGrpcOptions = 'UseGrpcOptions',
     ShowChartsEngineDebugInfo = 'ShowChartsEngineDebugInfo',
     UseChartsEngineResponseConfig = 'UseChartsEngineResponseConfig',
     UseChartsEngineLogin = 'UseChartsEngineLogin',
@@ -68,22 +67,37 @@ export enum Feature {
     NewTableWidgetForCE = 'NewTableWidgetForCE',
     /** Enable undo/redo buttons & hotkeys in datasets */
     EnableEditHistoryDatasets = 'EnableEditHistoryDataset',
-    /** Depends on US feature UseMovePermAction.
-     * It checks admin permission for move entries instead of edit permission.
-     */
-    UseMovePermAction = 'UseMovePermAction',
-    /** An empty chart for drawing something unusual */
-    BlankChart = 'BlankChart',
-    /** Add a setting to display html in wizard */
-    HtmlInWizard = 'HtmlInWizard',
     /** Additional chart config for making requests by widget events */
     ChartActions = 'ChartActions',
-    /** Escaping string in wizard chart config to remove potential html injection */
-    EscapeStringInWizard = 'EscapeStringInWizard',
     /** Disable the use of html and function in chart configs */
     DisableFnAndHtml = 'DisableFnAndHtml',
     /** Enable using of presigned urls for uploading files to S3 */
     EnableFileUploadingByPresignedUrl = 'EnableFileUploadingByPresignedUrl',
+    /** Enables export menu item for downloading workbook config and import button
+     * when creating a workbook */
+    EnableExportWorkbookFile = 'EnableExportWorkbookFile',
+    /** Enable using RLS v2 config for datasets */
+    EnableRLSV2 = 'EnableRLSV2',
+    /* Enable Dash server entry validation */
+    DashServerValidationEnable = 'DashServerValidationEnable',
+    /* Enable Dash server entry migrations */
+    DashServerMigrationEnable = 'DashServerMigrationEnable',
+    /** Enable custom dashboard gaps */
+    EnableCustomDashMargins = 'EnableCustomDashMargins',
+    /** Enabled Dash elements auto-focus */
+    EnableDashAutoFocus = 'EnableDashAutoFocus',
+    /** Enable using template params in datasets sources */
+    EnableDsTemplateParams = 'EnableDsTemplateParams',
+    /** Enable Dash undo\redo */
+    EnableDashUndoRedo = 'EnableDashUndoRedo',
+    /** Enable public gallery unit */
+    EnablePublicGallery = 'EnablePublicGallery',
+    /** Enable new secure parameters behavior */
+    EnableSecureParamsV2 = 'EnableSecureParamsV2',
+    /** Enable export settings in connections & datasets */
+    EnableExportSettings = 'EnableExportSettings',
+    /** Enable updating dataset settings by action ('load_preview_by_default' | 'template_enabled' | 'data_export_forbidden') */
+    EnableUpdatingDsSettingsByAction = 'EnableUpdatingDsSettingsByAction',
 }
 
 export type FeatureConfig = Record<string, boolean>;

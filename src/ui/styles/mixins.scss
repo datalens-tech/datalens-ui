@@ -100,9 +100,9 @@
     }
 }
 
-@mixin dl-select-popup() {
-    max-height: 40vh;
-    max-width: 400px;
+@mixin dl-select-popup($mh: 40vh, $mw: 400px) {
+    max-height: $mh;
+    max-width: $mw;
 }
 
 @mixin dl-select-disabled-option() {
@@ -165,4 +165,20 @@
 
 @mixin yfm-text-style {
     @include text-body-1();
+}
+
+@keyframes pulseAnimation {
+    0% {
+        opacity: 0.65;
+    }
+    50% {
+        opacity: 0.35;
+    }
+    100% {
+        opacity: 0.65;
+    }
+}
+
+@mixin loading-pulsate-animation-style {
+    animation: pulseAnimation 1.5s ease-in-out infinite;
 }

@@ -8,6 +8,7 @@
   "format_markdown": "Markdown",
   "format_wiki": "Wiki",
   "format_xlsx": "XLSX",
+  "label_data-export-forbidden": "Data export is forbidden by the owner of the connection or dataset",
   "menu-export": "Save as",
   "menu-export-pdf": "Save as PDF",
   "menu-screenshot": "Save as image"

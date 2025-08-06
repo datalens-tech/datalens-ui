@@ -36,7 +36,17 @@ export const EditWorkbookDialog: React.FC<Props> = (props) => {
     const isLoading = useSelector(selectUpdateWorkbookIsLoading);
 
     const handleApply = React.useCallback(
-        async ({title, project, description}: {title: string; project?: string; description?: string}) => {
+        async ({
+            title,
+            project,
+            description,
+            onClose,
+        }: {
+            title: string;
+            project?: string;
+            description?: string;
+            onClose: () => void;
+        }) => {
             const {workbookId, onApply} = props;
 
             const result = await dispatch(
@@ -52,7 +62,7 @@ export const EditWorkbookDialog: React.FC<Props> = (props) => {
                 onApply(result);
             }
 
-            return result;
+            onClose();
         },
         [dispatch, props],
     );

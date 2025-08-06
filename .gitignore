@@ -32,10 +32,13 @@ src/i18n/keysets
 tests/metadata
 tests/certs
 tests/test-results
+tests/artifacts
+tests/logs
 
-report
 reference.json
 input.json
 result.json
 export/temp
 .last-run.json
+
+table-report-headers

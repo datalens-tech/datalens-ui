@@ -17,14 +17,14 @@ export interface UpdateUsersRolesArgs {
     }[];
 }
 
-export interface CreateUserArgs {
+export type CreateUserArgs = {
     login: string;
     password: string;
     email?: string;
     firstName?: string;
     lastName?: string;
     roles?: `${UserRole}`[];
-}
+};
 
 export interface CreateUserResponse {
     userId: string;
@@ -38,12 +38,25 @@ export interface GetUserProfileArgs {
     userId: string;
 }
 
-interface UserProfile {
+export interface UserSubject {
     userId: string;
     login: string | null;
     email: string | null;
     firstName: string | null;
     lastName: string | null;
+    idpSlug: string | null;
+    idpType: string | null;
+}
+
+export interface GetUsersByIdsArgs {
+    subjectIds: string[];
+}
+
+export interface GetUsersByIdsResponse {
+    users: UserSubject[];
+}
+
+export interface UserProfile extends UserSubject {
     roles: `${UserRole}`[];
 }
 
@@ -78,13 +91,12 @@ export interface GetUsersListArgs {
     pageSize?: number;
     filterString?: string;
     roles?: `${UserRole}`[];
+    idpType?: string;
 }
 
-interface GetUserList extends UserProfile {
-    providerId: string | null;
-}
+export interface ListUser extends UserProfile {}
 
 export interface GetUsersListResponse {
     nextPageToken?: string;
-    users: GetUserList[];
+    users: ListUser[];
 }

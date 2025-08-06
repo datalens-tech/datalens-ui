@@ -15,6 +15,7 @@ import {compose} from 'recompose';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import {isDraftVersion} from 'ui/utils/revisions';
 
 import {
     DL,
@@ -35,7 +36,6 @@ import type {ChartsConfig} from '../../../../../shared';
 import {AccessRightsUrlOpen} from '../../../../components/AccessRights/AccessRightsUrlOpen';
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
 import withErrorPage from '../../../../components/ErrorPage/withErrorPage';
-import {isDraftVersion} from '../../../../components/Revisions/helpers';
 import type {RevisionEntry} from '../../../../components/Revisions/types';
 import {HOTKEYS_SCOPES} from '../../../../constants/misc';
 import {withHotkeysContext} from '../../../../hoc/withHotkeysContext';
@@ -53,7 +53,7 @@ import {
     setRevisionsMode,
 } from '../../../../store/actions/entryContent';
 import {RevisionsMode} from '../../../../store/typings/entryContent';
-import {getUrlParamFromStr} from '../../../../utils';
+import {getUrlParamFromStr, isUnreleasedByUrlParams} from '../../../../utils';
 import history from '../../../../utils/history';
 import {isDraft, isEditMode} from '../../../dash/store/selectors/dashTypedSelectors';
 import type {SetDefaultsArgs} from '../../actions';
@@ -145,8 +145,9 @@ class Wizard extends React.Component<Props, State> {
             const entryId = extractEntryId(window.location.pathname);
 
             const revId = getUrlParamFromStr(this.props.location.search, URL_QUERY.REV_ID);
+            const unreleased = isUnreleasedByUrlParams(this.props.location.search);
 
-            const params: SetDefaultsArgs = {entryId};
+            const params: SetDefaultsArgs = {entryId, unreleased};
             if (revId) {
                 params.revId = revId;
             }
@@ -252,6 +253,7 @@ class Wizard extends React.Component<Props, State> {
             if (revId) {
                 const searchParams = new URLSearchParams(location.search);
                 searchParams.delete(URL_QUERY.REV_ID);
+                searchParams.delete(URL_QUERY.UNRELEASED);
                 history.replace({
                     ...location,
                     search: `?${searchParams.toString()}`,

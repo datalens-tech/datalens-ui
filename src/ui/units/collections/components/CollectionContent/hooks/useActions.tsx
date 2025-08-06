@@ -1,10 +1,11 @@
 import React from 'react';
 
-import {ArrowRight, Copy, LockOpen, PencilToLine, TrashBin} from '@gravity-ui/icons';
+import {ArrowRight, Copy, FileArrowUp, LockOpen, PencilToLine, TrashBin} from '@gravity-ui/icons';
 import type {DropdownMenuItem} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {useHistory} from 'react-router-dom';
+import {DIALOG_EXPORT_WORKBOOK} from 'ui/components/CollectionsStructure/ExportWorkbookDialog/ExportWorkbookDialog';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {Feature} from '../../../../../../shared';
@@ -45,6 +46,9 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
 
     const {customizeWorkbooksActions, customizeCollectionsActions} =
         registry.collections.functions.getAll();
+    const {getCurrentUserRights} = registry.common.functions.getAll();
+
+    const currentUserRights = getCurrentUserRights();
 
     const history = useHistory();
 
@@ -194,6 +198,12 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
         (item: WorkbookWithPermissions): (DropdownMenuItem[] | DropdownMenuItem)[] => {
             const actions: (DropdownMenuItem[] | DropdownMenuItem)[] = [];
 
+            const {getGloballyEntrySettings} = registry.common.functions.getAll();
+            const globallyEntrySettings = getGloballyEntrySettings();
+            const isWorkbookExportDisabled = Boolean(
+                globallyEntrySettings?.isWorkbookExportDisabled,
+            );
+
             if (item.permissions.update) {
                 actions.push({
                     text: <DropdownAction icon={PencilToLine} text={i18n('action_edit')} />,
@@ -311,6 +321,31 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
                             }),
                         );
                     },
+                });
+            }
+
+            if (
+                isEnabledFeature(Feature.EnableExportWorkbookFile) &&
+                currentUserRights.admin &&
+                !isWorkbookExportDisabled
+            ) {
+                actions.push({
+                    action: () => {
+                        dispatch(
+                            openDialog({
+                                id: DIALOG_EXPORT_WORKBOOK,
+                                props: {
+                                    open: true,
+                                    workbookId: item.workbookId,
+                                    workbookTitle: item.title,
+                                    onClose: () => {
+                                        dispatch(closeDialog());
+                                    },
+                                },
+                            }),
+                        );
+                    },
+                    text: <DropdownAction icon={FileArrowUp} text={i18n('action_export')} />,
                 });
             }
 

@@ -8,7 +8,13 @@ import logger from '../../../../../libs/logger';
 import {FieldKey} from '../../../constants';
 import type {ConnectionsReduxDispatch, GetState, YadocItem, YadocSourceInfo} from '../../typings';
 import {api} from '../api';
-import {setForm, setYadocsActiveDialog, setYadocsItems, setYadocsSelectedItemId} from '../base';
+import {
+    handleReplacedSources,
+    setForm,
+    setYadocsActiveDialog,
+    setYadocsItems,
+    setYadocsSelectedItemId,
+} from '../base';
 
 import {
     findUploadedYadoc,
@@ -124,14 +130,31 @@ export const yadocToSourcesInfo = (fileId: string, sourcesId: string[]) => {
         }, [] as YadocSourceInfo[]);
 
         batch(() => {
+            const selectedItemId = newSources[0].data.source_id;
+            const index = getYadocItemIndex(prevItems, fileId);
+            const filteredPrevItems = getFilteredYadocItems(prevItems, fileId);
+            let items = [...filteredPrevItems, ...newSources];
+            if (index !== -1) {
+                items = [
+                    ...filteredPrevItems.slice(0, index),
+                    ...newSources,
+                    ...filteredPrevItems.slice(index),
+                ];
+            }
+            dispatch(setYadocsItems({items}));
+
             if (yadoc.replacedSourceId) {
-                // TODO: add logic for source replacing
-            } else {
-                const filteredPrevItems = getFilteredYadocItems(prevItems, fileId);
-                dispatch(setYadocsItems({items: [...filteredPrevItems, ...newSources]}));
+                dispatch(
+                    handleReplacedSources({
+                        action: 'add',
+                        replaceSource: {
+                            old_source_id: yadoc.replacedSourceId,
+                            new_source_id: selectedItemId,
+                        },
+                    }),
+                );
             }
 
-            const selectedItemId = newSources[0].data.source_id;
             dispatch(setYadocsSelectedItemId({selectedItemId}));
             sourcesId.forEach((sourceId) => {
                 dispatch(updateYadocSource({fileId, sourceId}));

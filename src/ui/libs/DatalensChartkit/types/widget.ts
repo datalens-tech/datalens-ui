@@ -81,6 +81,7 @@ export type UiSandboxRuntimeOptions = {
 export interface WidgetBase {
     type: string;
     entryId?: string;
+    revId?: string;
     data?: object;
     params: StringParams;
     unresolvedParams?: StringParams;
@@ -192,7 +193,7 @@ type AlertWidget = WidgetBase & {
 
 type GravityChartsWidget = WidgetBase & {type: 'd3'};
 
-type BlankChartWidget = WidgetBase & {type: 'blank-chart'};
+type AdvancedChartWidget = WidgetBase & {type: 'advanced-chart'};
 
 type WidgetComponentProps =
     | GraphWidget
@@ -273,6 +274,7 @@ export type TableWidgetData = WidgetBaseWithData &
             useMarkup?: boolean;
             useHtml?: boolean;
             size?: WidgetSizeType;
+            preserveWhiteSpace?: boolean;
         };
         unresolvedParams?: StringParams;
     };
@@ -363,7 +365,7 @@ export type Widget =
     | TextWidget
     | TimeseriesWidget
     | MarkupWidget
-    | BlankChartWidget;
+    | AdvancedChartWidget;
 
 type ParamsChangedOnChange = {
     type: 'PARAMS_CHANGED';

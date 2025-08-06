@@ -1,5 +1,3 @@
-import {DL} from 'constants/common';
-
 import React from 'react';
 
 import {DropdownMenu} from '@gravity-ui/uikit';
@@ -9,6 +7,7 @@ import type {ResolveThunks} from 'react-redux';
 import {connect} from 'react-redux';
 import type {DashTab, DashTabItem} from 'shared';
 import {DialogTabsQA, ENABLE, SUPERUSER_SWITCH_MODE_COOKIE_NAME} from 'shared';
+import {DL} from 'ui/constants/common';
 import Utils from 'ui/utils';
 import type {Optional} from 'utility-types';
 
@@ -81,6 +80,7 @@ class TabItem extends React.PureComponent<Props> {
         {
             action: () => this.handleRemoveTab(),
             text: i18n('dash.tabs-dialog.edit', 'menu_delete'),
+            theme: 'danger',
         },
     ];
 

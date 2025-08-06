@@ -1,0 +1,22 @@
+{
+  "button_back-to-export": "Back",
+  "button_begin-export": "Export",
+  "button_cancel": "Cancel",
+  "button_cancel-export": "Cancel export",
+  "button_close": "Close",
+  "button_close-export": "Close",
+  "button_download": "Download",
+  "label_cancel-export-description": "The workbook configuration file will not be created",
+  "label_close-export-description": "If you do not download the file now, you will need to export it again",
+  "label_info-documentation": "How do workbooks export work?",
+  "label_info-file": "We are exporting the workbook configuration to a file",
+  "label_info-secrets": "You will need to re-enter your passwords during the import",
+  "label_info-time": "The export may take several minutes",
+  "label_info-versions": "In other versions of DataLens, <link>some</link> connections will not work",
+  "label_success-export": "Download file with workbook configuration",
+  "title_cancel-export": "Cancel the export?",
+  "title_close-export": "Close the window with the finished export file?",
+  "title_export": "Workbook export",
+  "title_export-success": "Export file is ready",
+  "title_fatal-error": "Workbook export error"
+}

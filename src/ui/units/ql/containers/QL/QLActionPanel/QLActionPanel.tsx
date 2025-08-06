@@ -9,6 +9,7 @@ import type {CommonSharedExtraSettings} from 'shared';
 import {EntryUpdateMode, Feature} from 'shared';
 import type {QlConfig} from 'shared/types/config/ql';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import {isDraftVersion} from 'ui/utils/revisions';
 
 import type {DatalensGlobalState, EntryDialogues} from '../../../../../';
 import {
@@ -17,12 +18,10 @@ import {
     EntryDialogName,
     EntryDialogResolveStatus,
     Utils,
-    useEffectOnce,
 } from '../../../../../';
 import type {GetEntryResponse} from '../../../../../../shared/schema';
 import {ChartSaveControls} from '../../../../../components/ActionPanel/components/ChartSaveControls/ChartSaveControl';
 import type {EntryContextMenuItems} from '../../../../../components/EntryContextMenu/helpers';
-import {isDraftVersion} from '../../../../../components/Revisions/helpers';
 import {registry} from '../../../../../registry';
 import {openDialogSaveDraftChartAsActualConfirm} from '../../../../../store/actions/dialog';
 import {addEditHistoryPoint, resetEditHistoryUnit} from '../../../../../store/actions/editHistory';
@@ -103,13 +102,23 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
     const qlState = useSelector((state: DatalensGlobalState) => state.ql);
     const wizardState = useSelector((state: DatalensGlobalState) => state.wizard);
 
-    useEffectOnce(() => {
-        window.addEventListener('beforeunload', (event) => {
+    const handleBeforeunload = React.useCallback(
+        (event: BeforeUnloadEvent) => {
             if (!entryNotChanged) {
                 event.returnValue = true;
             }
-        });
-    });
+        },
+        [entryNotChanged],
+    );
+
+    React.useEffect(() => {
+        window.removeEventListener('beforeunload', handleBeforeunload);
+        window.addEventListener('beforeunload', handleBeforeunload);
+
+        return () => {
+            window.removeEventListener('beforeunload', handleBeforeunload);
+        };
+    }, [handleBeforeunload]);
 
     const handleSetActualRevision = React.useCallback(() => {
         if (!entry) {

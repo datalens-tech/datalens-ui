@@ -12,6 +12,7 @@ import type {
     GetStructureItemsResponse,
     OrderBasicField,
     OrderDirection,
+    WorkbookWithPermissions,
 } from 'shared/schema';
 import type {CollectionsStructureDispatch} from 'store/actions/collectionsStructure';
 import {
@@ -155,24 +156,29 @@ export const CollectionStructureDialog = React.memo<Props>(
             onClose(structureChanged);
         }, [structureChanged, onClose]);
 
+        const includePermissionsInfo = workbookSelectionMode;
+
         const getStructureItemsRecursively = React.useCallback(
             (args: GetStructureItemsArgs): CancellablePromise<GetStructureItemsResponse | null> => {
                 let curPage = args.page;
 
-                return dispatch(getStructureItems(args)).then((result) => {
-                    if (result?.items.length === 0 && result.nextPageToken !== null) {
-                        curPage = result.nextPageToken;
+                return dispatch(getStructureItems({...args, includePermissionsInfo})).then(
+                    (result) => {
+                        if (result?.items.length === 0 && result.nextPageToken !== null) {
+                            curPage = result.nextPageToken;
 
-                        return getStructureItemsRecursively({
-                            ...args,
-                            page: curPage,
-                        });
-                    } else {
-                        return result;
-                    }
-                });
+                            return getStructureItemsRecursively({
+                                ...args,
+                                includePermissionsInfo,
+                                page: curPage,
+                            });
+                        } else {
+                            return result;
+                        }
+                    },
+                );
             },
-            [dispatch],
+            [dispatch, includePermissionsInfo],
         );
 
         const fetchData = React.useCallback(() => {
@@ -216,6 +222,10 @@ export const CollectionStructureDialog = React.memo<Props>(
         }, [targetCollectionId, rootPermissionsData, collectionData]);
 
         const isSelectionAllowed = React.useMemo(() => {
+            if (workbookSelectionMode) {
+                return true;
+            }
+
             let result = true;
 
             if (targetCollectionId && collectionData) {
@@ -231,13 +241,25 @@ export const CollectionStructureDialog = React.memo<Props>(
             }
 
             return result;
-        }, [collectionData, rootPermissionsData, targetCollectionId, type]);
+        }, [collectionData, rootPermissionsData, targetCollectionId, type, workbookSelectionMode]);
 
         let applyButtonDisabled = collectionIsLoading || !isSelectionAllowed;
 
         if (!applyButtonDisabled) {
             if (workbookSelectionMode) {
-                applyButtonDisabled = targetWorkbookId === null;
+                if (targetWorkbookId) {
+                    const targetWorkbook = structureItems.find(
+                        (item) => 'workbookId' in item && item.workbookId === targetWorkbookId,
+                    ) as WorkbookWithPermissions;
+
+                    if (targetWorkbook) {
+                        applyButtonDisabled = targetWorkbook?.permissions.update !== true;
+                    } else {
+                        applyButtonDisabled = true;
+                    }
+                } else {
+                    applyButtonDisabled = true;
+                }
             } else if (!canSelectInitialCollectionId) {
                 applyButtonDisabled = targetCollectionId === initialCollectionId;
             }

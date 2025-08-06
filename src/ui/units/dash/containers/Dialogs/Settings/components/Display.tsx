@@ -1,8 +1,11 @@
 import React from 'react';
 
-import {Checkbox} from '@gravity-ui/uikit';
+import {Checkbox, Label, Slider} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {Feature} from 'shared';
+import {DASH_MARGIN_STEP, MAX_DASH_MARGIN, MIN_DASH_MARGIN} from 'ui/components/DashKit/constants';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {SectionWrapper} from '../../../../../../components/SectionWrapper/SectionWrapper';
 
@@ -15,6 +18,8 @@ const b = block('dialog-settings');
 const i18n = I18n.keyset('dash.settings-dialog.edit');
 
 type DisplayProps = {
+    margins: [number, number];
+    onChangeMargins: (newMargins: number | [number, number]) => void;
     hideTabsValue: boolean;
     onChangeHideTabs: () => void;
     hideDashTitleValue: boolean;
@@ -24,6 +29,8 @@ type DisplayProps = {
 };
 
 export const Display = ({
+    margins,
+    onChangeMargins,
     hideTabsValue,
     onChangeHideTabs,
     hideDashTitleValue,
@@ -65,6 +72,23 @@ export const Display = ({
                     className={b('box')}
                 />
             </Row>
+            {isEnabledFeature(Feature.EnableCustomDashMargins) && (
+                <Row>
+                    <div>
+                        <Title text={i18n('label_margins')}>
+                            <Label theme={'warning'}>{i18n('label_experimental')}</Label>
+                        </Title>
+                    </div>
+                    <Slider
+                        min={MIN_DASH_MARGIN}
+                        max={MAX_DASH_MARGIN}
+                        step={DASH_MARGIN_STEP}
+                        tooltipDisplay={'on'}
+                        value={margins[0]}
+                        onUpdate={onChangeMargins}
+                    />
+                </Row>
+            )}
         </SectionWrapper>
     );
 };

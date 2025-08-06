@@ -1,0 +1,10 @@
+{
+  "button_generate-password": "Сгенерировать пароль",
+  "label_email": "Почта",
+  "label_first-name": "Имя",
+  "label_last-name": "Фамилия",
+  "label_login": "Логин",
+  "label_password": "Пароль",
+  "label_repeat-password": "Подтвердите пароль",
+  "label_roles": "Роль"
+}

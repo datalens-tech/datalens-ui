@@ -15,7 +15,7 @@ import {
     TIMEZONE_OFFSET_HEADER,
     RPC_AUTHORIZATION
 } from '../../../shared';
-import type {WithRequired, authSchema, schema} from '../../../shared';
+import type {WithRequired, anonymousSchema, authSchema, schema} from '../../../shared';
 import {DL} from '../../constants';
 import {registry} from '../../registry';
 import Utils from '../../utils';
@@ -70,7 +70,11 @@ const sdkConfig: SdkConfig = {
         : undefined,
 };
 
-export type TypedSchema = {root: typeof schema; auth: typeof authSchema};
+export type TypedSchema = {
+    root: typeof schema;
+    auth: typeof authSchema;
+    anonymous: typeof anonymousSchema;
+};
 
 export const initSdk = () => {
     const sdk: DatalensSdk<TypedSchema> = sdkFactory<TypedSchema>(sdkConfig);

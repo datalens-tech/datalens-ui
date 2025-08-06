@@ -56,6 +56,7 @@ import type {
     SetValidationState,
     ToggleAllowanceSave,
     Update,
+    UpdateSetting,
 } from '../../types';
 import * as DATASET_ACTION_TYPES from '../types/dataset';
 
@@ -103,7 +104,7 @@ export function renameDataset(key: string) {
         payload: key,
     };
 }
-//
+
 export function toggleSaveDataset(args: ToggleAllowanceSave['payload']): DatasetReduxAction {
     const {enable = true, validationPending, [EDIT_HISTORY_OPTIONS_KEY]: editHistoryOptions} = args;
     return {
@@ -1105,5 +1106,70 @@ export function setValidationState(payload: SetValidationState['payload']): SetV
     return {
         type: DATASET_ACTION_TYPES.SET_VALIDATION_STATE,
         payload,
+    };
+}
+
+export function toggletTemplateEnabled(
+    templateEnabled: boolean,
+    editHistoryOptions?: EditHistoryOptions,
+) {
+    return (dispatch: Dispatch<DatasetReduxAction>) => {
+        batch(() => {
+            dispatch({
+                type: DATASET_ACTION_TYPES.SET_TEMPLATE_ENABLED,
+                payload: {
+                    templateEnabled,
+                    [EDIT_HISTORY_OPTIONS_KEY]: {
+                        ...editHistoryOptions,
+                    },
+                },
+            });
+            dispatch(toggleSaveDataset({enable: true}));
+        });
+    };
+}
+
+export function toggletDataExportEnabled(
+    dataExportEnabled: boolean,
+    editHistoryOptions?: EditHistoryOptions,
+) {
+    return (dispatch: Dispatch<DatasetReduxAction>) => {
+        batch(() => {
+            dispatch({
+                type: DATASET_ACTION_TYPES.SET_DATA_EXPORT_ENABLED,
+                payload: {
+                    dataExportEnabled,
+                    [EDIT_HISTORY_OPTIONS_KEY]: {
+                        ...editHistoryOptions,
+                    },
+                },
+            });
+            dispatch(toggleSaveDataset({enable: true}));
+        });
+    };
+}
+
+export function updateSetting(
+    name: UpdateSetting['setting']['name'],
+    value: boolean,
+    editHistoryOptions?: EditHistoryOptions,
+) {
+    return (dispatch: Dispatch<DatasetReduxAction>) => {
+        const update: UpdateSetting = {
+            action: 'update_setting',
+            setting: {name, value},
+        };
+        batch(() => {
+            dispatch({
+                type: DATASET_ACTION_TYPES.SET_UPDATES,
+                payload: {
+                    updates: [update],
+                    [EDIT_HISTORY_OPTIONS_KEY]: {
+                        ...editHistoryOptions,
+                    },
+                },
+            });
+            dispatch(updateDatasetByValidation());
+        });
     };
 }

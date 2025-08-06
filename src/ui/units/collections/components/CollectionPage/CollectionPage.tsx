@@ -2,9 +2,15 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
-import {useHistory, useParams} from 'react-router-dom';
+import type {RouteComponentProps} from 'react-router-dom';
+import {useHistory, useLocation, useParams} from 'react-router-dom';
 import {Feature} from 'shared';
+import type {
+    CreateWorkbookDialogProps,
+    PublicGalleryData,
+} from 'ui/components/CollectionsStructure/CreateWorkbookDialog/CreateWorkbookDialog';
 import {DL} from 'ui/constants/common';
+import {getSdk} from 'ui/libs/schematic-sdk';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {AnimateBlock} from '../../../../components/AnimateBlock';
@@ -28,7 +34,7 @@ import {
     selectStructureItems,
 } from '../../store/selectors';
 import {CollectionContent} from '../CollectionContent';
-import {DEFAULT_FILTERS} from '../constants';
+import {DEFAULT_FILTERS, PUBLIC_GALLERY_ID_SEARCH_PARAM} from '../constants';
 
 import {useData, useFilters, useLayout, useSelection, useViewMode} from './hooks';
 
@@ -36,13 +42,91 @@ import './CollectionPage.scss';
 
 const b = block('dl-collection-page');
 
-export const CollectionPage = () => {
+type LocationImportState = {
+    importId?: string;
+};
+
+export const CollectionPage = (props: RouteComponentProps) => {
     const {collectionId} = useParams<{collectionId?: string}>();
     const curCollectionId = collectionId ?? null;
 
+    const dispatch: AppDispatch = useDispatch();
+
+    const {state: locationState} = useLocation<LocationImportState>();
     const history = useHistory();
 
-    const dispatch: AppDispatch = useDispatch();
+    const handleOpenCreateDialog = React.useCallback(
+        (
+            defaultView?: CreateWorkbookDialogProps['defaultView'],
+            options?: {importId?: string; publicGallery?: PublicGalleryData},
+        ) => {
+            dispatch(
+                openDialog({
+                    id: DIALOG_CREATE_WORKBOOK,
+                    props: {
+                        open: true,
+                        collectionId: curCollectionId,
+                        onCreateWorkbook: ({workbookId}) => {
+                            if (workbookId) {
+                                history.push(`${WORKBOOKS_PATH}/${workbookId}`);
+                            }
+                        },
+                        onClose: () => {
+                            dispatch(closeDialog());
+                            // Clean up url
+                            if (options?.publicGallery) {
+                                history.replace(location.pathname);
+                            }
+                        },
+                        defaultView,
+                        showImport: true,
+                        ...options,
+                    },
+                }),
+            );
+        },
+        [curCollectionId, dispatch, history],
+    );
+
+    const handleCreateDialogAction = React.useCallback(() => {
+        handleOpenCreateDialog();
+    }, [handleOpenCreateDialog]);
+
+    React.useEffect(() => {
+        const importId = locationState && locationState?.importId;
+        if (importId) {
+            // after the replaceState, the page is re-rendered,
+            // so it is important that the dialog is opened after that.
+            // clearing the state is necessary so that it does not persist when the page is reloaded.
+            history.replace({state: {...locationState, importId: undefined}});
+            handleOpenCreateDialog('import', {importId});
+        }
+    }, [handleOpenCreateDialog, history, locationState, locationState?.importId]);
+
+    const {search} = props.location;
+    React.useEffect(() => {
+        const searchParams = new URLSearchParams(search);
+        const publicGalleryId = searchParams.get(PUBLIC_GALLERY_ID_SEARCH_PARAM);
+
+        if (!publicGalleryId) {
+            return;
+        }
+
+        getSdk()
+            .sdk.anonymous.publicGallery.getItem({fileId: publicGalleryId})
+            .then((publicGalleryEntry) => {
+                if (publicGalleryEntry.data) {
+                    handleOpenCreateDialog('default', {
+                        publicGallery: {
+                            id: publicGalleryEntry.id,
+                            title: publicGalleryEntry.title[DL.USER_LANG] || '',
+                            description: publicGalleryEntry.shortDescription?.[DL.USER_LANG] || '',
+                            data: publicGalleryEntry.data,
+                        },
+                    });
+                }
+            });
+    }, [handleOpenCreateDialog, search]);
 
     const collection = useSelector(selectCollection);
     const collectionError = useSelector(selectCollectionError);
@@ -92,26 +176,6 @@ export const CollectionPage = () => {
         [dispatch, refreshPage],
     );
 
-    const handleCreateWorkbook = React.useCallback(() => {
-        dispatch(
-            openDialog({
-                id: DIALOG_CREATE_WORKBOOK,
-                props: {
-                    open: true,
-                    collectionId: curCollectionId,
-                    onApply: (result) => {
-                        if (result) {
-                            history.push(`${WORKBOOKS_PATH}/${result.workbookId}`);
-                        }
-                    },
-                    onClose: () => {
-                        dispatch(closeDialog());
-                    },
-                },
-            }),
-        );
-    }, [curCollectionId, dispatch, history]);
-
     const handleShowNoPermissionsDialog = React.useCallback(() => {
         dispatch(
             openDialog({
@@ -126,16 +190,16 @@ export const CollectionPage = () => {
         );
     }, [dispatch]);
 
-    const handleCreateWorkbookWithConnection = React.useCallback(() => {
+    const handleOpenCreateDialogWithConnection = React.useCallback(() => {
         dispatch(
             openDialog({
                 id: DIALOG_CREATE_WORKBOOK,
                 props: {
                     open: true,
                     collectionId: curCollectionId,
-                    onApply: (result) => {
-                        if (result) {
-                            history.push(`${WORKBOOKS_PATH}/${result.workbookId}/connections/new`);
+                    onCreateWorkbook: ({workbookId}) => {
+                        if (workbookId) {
+                            history.push(`${WORKBOOKS_PATH}/${workbookId}/connections/new`);
                         }
                     },
                     onClose: () => {
@@ -260,7 +324,7 @@ export const CollectionPage = () => {
         fetchCollectionInfo,
         fetchStructureItems,
         handleCreateWorkbook: hasPermissionToCreate
-            ? handleCreateWorkbook
+            ? handleCreateDialogAction
             : handleShowNoPermissionsDialog,
         handeCloseMoveDialog,
         updateAllCheckboxes,
@@ -315,7 +379,7 @@ export const CollectionPage = () => {
                     onCloseMoveDialog={handeCloseMoveDialog}
                     onCreateWorkbookWithConnectionClick={
                         hasPermissionToCreate
-                            ? handleCreateWorkbookWithConnection
+                            ? handleOpenCreateDialogWithConnection
                             : handleShowNoPermissionsDialog
                     }
                     onClearFiltersClick={() => {

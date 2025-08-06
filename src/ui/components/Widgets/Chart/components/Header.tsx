@@ -1,13 +1,16 @@
 import React from 'react';
 
+import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
-import {useSelector} from 'react-redux';
-import type {StringParams} from 'shared';
+import {useDispatch, useSelector} from 'react-redux';
+import {ControlQA, Feature, type StringParams} from 'shared';
 import {ChartInfoIcon} from 'ui/components/Widgets/Chart/components/ChartInfoIcon';
+import {URL_OPTIONS} from 'ui/constants';
 import type {ChartKitDataProvider} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
 import type {GetChartkitMenuByType} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
 import {selectWorkbookEditPermission} from 'ui/units/workbooks/store/selectors';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {
     drawComments,
@@ -23,6 +26,8 @@ import settings from '../../../../libs/DatalensChartkit/modules/settings/setting
 import type {ChartsInsightsData, GraphWidget} from '../../../../libs/DatalensChartkit/types';
 import {registry} from '../../../../registry';
 import type {ChartContentProps} from '../types';
+
+import iconClearActionParams from '../../../../assets/icons/funnel-clear.svg';
 
 import '../ChartWidget.scss';
 
@@ -41,16 +46,28 @@ export type HeaderProps = Pick<
     | 'onChange'
     | 'dataProvider'
     | 'enableActionParams'
-> & {
-    chartsInsightsData?: ChartsInsightsData;
-    isMenuAvailable: boolean;
-    isWidgetMenuDataChanged?: boolean;
-    onExportLoading: (isLoading: boolean) => void;
-    onFullscreenClick?: () => void;
-};
+    | 'showActionParamsFilter'
+    | 'onFiltersClear'
+> &
+    Pick<GetChartkitMenuByType, 'extraOptions'> & {
+        chartsInsightsData?: ChartsInsightsData;
+        isMenuAvailable: boolean;
+        isWidgetMenuDataChanged?: boolean;
+        onExportLoading: (isLoading: boolean) => void;
+        onFullscreenClick?: () => void;
+        canBeDisplayedFilters?: boolean;
+        enableAssistant?: boolean;
+    };
 
 const b = block('dl-widget');
 
+function hasNoControlsParamVal(val: string) {
+    const paramVal = Array.isArray(val) ? val[0] : val;
+    // in case of setting params directly (ex. on Params tab)
+    return ['1', 'true', 1, true].includes(paramVal);
+}
+
+// eslint-disable-next-line complexity
 export const Header = (props: HeaderProps) => {
     const {
         isMenuAvailable,
@@ -71,7 +88,13 @@ export const Header = (props: HeaderProps) => {
         onExportLoading,
         onFullscreenClick,
         enableActionParams,
+        enableAssistant,
+        showActionParamsFilter,
+        onFiltersClear,
+        extraOptions,
     } = props;
+
+    const dispatch = useDispatch();
 
     /**
      * extra prop for rerender chart to actualize show/hide comments menu after add/remove comments
@@ -92,8 +115,11 @@ export const Header = (props: HeaderProps) => {
      * but we need to toggle show/hide comments menu
      */
     const hideChartComments = Boolean((loadedData?.config as GraphWidget['config'])?.hideComments);
+    const hideControlsByParam = hasNoControlsParamVal(
+        get(dataProps?.params || '', URL_OPTIONS.NO_CONTROLS),
+    );
 
-    const canBeShownMenu = isMenuAvailable && widgetDataRef;
+    const canBeShownMenu = isMenuAvailable && widgetDataRef && !hideControlsByParam;
 
     const configMenu = menuType
         ? getChartkitMenu({
@@ -105,8 +131,9 @@ export const Header = (props: HeaderProps) => {
               onExportLoading,
               onFullscreenClick,
               isEditAvaible,
-              extraOptions: {enableActionParams},
+              extraOptions: {...extraOptions, enableActionParams, enableAssistant},
               widgetConfig: loadedData?.widgetConfig,
+              dispatch,
           })
         : settings.menu;
 
@@ -116,10 +143,13 @@ export const Header = (props: HeaderProps) => {
     };
     const safeChartWarning = get(loadedData, 'safeChartInfo');
 
+    const showFloatControls = isEnabledFeature(Feature.DashFloatControls);
+    const showFiltersClear = showActionParamsFilter && onFiltersClear && showFloatControls;
+
     return (
-        <div className={b('chart-header')}>
+        <div className={b('chart-header', {float: showFloatControls})}>
             {safeChartWarning && <ChartInfoIcon msg={safeChartWarning} />}
-            {chartsInsightsData && (
+            {!showFloatControls && chartsInsightsData && (
                 <ChartsInsights
                     items={chartsInsightsData.items}
                     messagesByLocator={chartsInsightsData.messagesByLocator}
@@ -132,27 +162,72 @@ export const Header = (props: HeaderProps) => {
                 widgetDataRef={widgetDataRef}
                 chartData={chartData}
             />
-            {canBeShownMenu && (
-                <MenuWithErrorBoundary
-                    commentsLength={commentsLength}
-                    hideChartComments={hideChartComments}
-                    configMenu={configMenu}
-                    widgetDataRef={widgetDataRef}
-                    loadedData={loadedData}
-                    error={error}
-                    propsData={chartData}
-                    requestId={requestId}
-                    widgetRenderTimeRef={widgetRenderTimeRef}
-                    yandexMapAPIWaiting={yandexMapAPIWaiting}
-                    callbackOnCommentsChanged={handleCommentsChanged}
-                    hideComments={hideComments}
-                    drawComments={drawComments}
-                    onChange={onChange}
-                    /* isWidgetMenuDataChanged - need this flag for extra rerender after widget rendered to check visibility of items (it is not used in component directly) */
-                    isWidgetMenuDataChanged={isWidgetMenuDataChanged}
-                    chartsDataProvider={dataProvider}
-                />
-            )}
+
+            <div className={showFloatControls ? b('controls-corner-wrapper') : undefined}>
+                {!showFloatControls && showFiltersClear && props.canBeDisplayedFilters && (
+                    <div className={b('icons')}>
+                        <div className={b('filters-controls')}>
+                            <Button
+                                qa={ControlQA.filtersClear}
+                                onClick={onFiltersClear}
+                                className={b('filter-button')}
+                            >
+                                <Icon
+                                    data={iconClearActionParams}
+                                    size={16}
+                                    className={b('icon-filter-clear')}
+                                />
+                            </Button>
+                        </div>
+                    </div>
+                )}
+                {canBeShownMenu && (
+                    <MenuWithErrorBoundary
+                        commentsLength={commentsLength}
+                        hideChartComments={hideChartComments}
+                        configMenu={configMenu}
+                        widgetDataRef={widgetDataRef}
+                        loadedData={loadedData}
+                        error={error}
+                        propsData={chartData}
+                        requestId={requestId}
+                        widgetRenderTimeRef={widgetRenderTimeRef}
+                        yandexMapAPIWaiting={yandexMapAPIWaiting}
+                        callbackOnCommentsChanged={handleCommentsChanged}
+                        hideComments={hideComments}
+                        drawComments={drawComments}
+                        onChange={onChange}
+                        /* isWidgetMenuDataChanged - need this flag for extra rerender after widget rendered to check visibility of items (it is not used in component directly) */
+                        isWidgetMenuDataChanged={isWidgetMenuDataChanged}
+                        chartsDataProvider={dataProvider}
+                    />
+                )}
+                {showFloatControls && showFiltersClear && props.canBeDisplayedFilters && (
+                    <div className={b('icons')}>
+                        <div className={b('filters-controls')}>
+                            <Button
+                                qa={ControlQA.filtersClear}
+                                onClick={onFiltersClear}
+                                className={b('filter-button')}
+                                view="flat-secondary"
+                            >
+                                <Icon
+                                    data={iconClearActionParams}
+                                    size={16}
+                                    className={b('icon-filter-clear')}
+                                />
+                            </Button>
+                        </div>
+                    </div>
+                )}
+                {showFloatControls && chartsInsightsData && (
+                    <ChartsInsights
+                        items={chartsInsightsData.items}
+                        messagesByLocator={chartsInsightsData.messagesByLocator}
+                        locators={chartsInsightsData.locators}
+                    />
+                )}
+            </div>
         </div>
     );
 };

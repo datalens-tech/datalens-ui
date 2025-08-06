@@ -1,50 +1,36 @@
 import React from 'react';
 
-import {useBodyScrollLock} from '@gravity-ui/uikit';
+import {ChevronsUp} from '@gravity-ui/icons';
+import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {FixedHeaderQa} from 'shared';
 
 import './FixedHeader.scss';
 
-type FixedHeaderContainerProps = {
-    isEmpty: boolean;
-    isCollapsed: boolean;
-    isEmbedded?: boolean;
-    isPublic?: boolean;
+type CommonFixedHeaderProps = {
     editMode: boolean;
 };
 
-type FixedHeaderControlsProps = FixedHeaderContainerProps & {
+type FixedHeaderControlsProps = CommonFixedHeaderProps & {
+    isEmpty: boolean;
+    isContainerGroupEmpty: boolean;
     controls: React.ReactNode;
+};
+
+type FixedHeaderContainerProps = CommonFixedHeaderProps & {
+    isEmpty: boolean;
+    isControlsGroupEmpty: boolean;
 };
 
 const b = block('dash-fixed-header');
 const i18n = I18n.keyset('dash.empty-state.view');
 
-const CONTROLS_TOP_EMBEDDED_OFFSET = 0;
-const CONTROLS_TOP_PUBLIC_OFFSET = 70;
-const CONTROLS_TOP_DEFAULT_NAV_OFFSET = 40;
-const CONTAINER_TOP_OFFSET = 60;
+const calculateOffset = (dashBodyRef: React.RefObject<HTMLDivElement>) => {
+    const pageBodyY = document.body.getBoundingClientRect().y;
+    const dashBodyY = dashBodyRef.current?.getBoundingClientRect()?.y ?? pageBodyY;
 
-const CONTAINER_PADDING_OFFSET = 48;
-
-const calculateOffset = (
-    pageOptions: {isEmbedded?: boolean; isPublic?: boolean},
-    blockType: 'controls' | 'content' = 'controls',
-) => {
-    let globalOffset = CONTROLS_TOP_DEFAULT_NAV_OFFSET;
-    if (pageOptions.isEmbedded) {
-        globalOffset = CONTROLS_TOP_EMBEDDED_OFFSET;
-    } else if (pageOptions.isPublic) {
-        globalOffset = CONTROLS_TOP_PUBLIC_OFFSET;
-    }
-
-    if (blockType === 'content') {
-        return globalOffset + CONTAINER_TOP_OFFSET;
-    }
-
-    return globalOffset;
+    return dashBodyY - pageBodyY;
 };
 
 const EmptyPlaceholder = ({
@@ -53,7 +39,7 @@ const EmptyPlaceholder = ({
     mod,
 }: {
     content: React.ReactNode;
-    text: string;
+    text: React.ReactNode;
     mod?: string;
 }) => (
     <React.Fragment>
@@ -78,7 +64,7 @@ const useFixedHeaderRef = (rootRef: React.RefObject<HTMLDivElement>, topOffset =
         const resizeObserver = new ResizeObserver(() => {
             const rect = rootRef.current?.getBoundingClientRect();
 
-            setWidth(rect?.width ? rect.width + CONTAINER_PADDING_OFFSET : '100%');
+            setWidth(rect?.width ? rect.width : '100%');
             setLeftOffset(rect?.left || 0);
         });
 
@@ -99,14 +85,14 @@ const useFixedHeaderRef = (rootRef: React.RefObject<HTMLDivElement>, topOffset =
     return {isFixed, leftOffset, width};
 };
 
-export const FixedHeaderControls: React.FC<FixedHeaderControlsProps> = (props) => {
-    const rootRef = React.useRef<HTMLDivElement>(null);
-    const {editMode, isEmpty} = props;
-    const topOffset = calculateOffset({isEmbedded: props.isEmbedded, isPublic: props.isPublic});
-    const {isFixed, leftOffset, width} = useFixedHeaderRef(rootRef, topOffset);
-
-    const children = !editMode && isEmpty ? null : props.children;
-    const style = isFixed && !editMode ? {left: leftOffset, top: topOffset, width} : {};
+export const FixedHeaderControls: React.FC<FixedHeaderControlsProps> = ({
+    isEmpty,
+    isContainerGroupEmpty,
+    editMode,
+    controls,
+    children: externalChildren,
+}) => {
+    const children = !editMode && isEmpty ? null : externalChildren;
 
     const content =
         isEmpty && editMode ? (
@@ -116,97 +102,139 @@ export const FixedHeaderControls: React.FC<FixedHeaderControlsProps> = (props) =
         );
 
     return (
-        <div ref={rootRef} className={b('controls-placeholder')}>
+        <React.Fragment>
             <div
-                style={style}
                 className={b('controls', {
-                    fixed: isFixed && !editMode,
                     'edit-mode': editMode,
+                    hidden: isEmpty && (!editMode || (editMode && isContainerGroupEmpty)),
                 })}
                 data-qa={FixedHeaderQa.Controls}
             >
-                <div className={b('controls-grid')}>{content}</div>
-                <div className={b('controls-settings')}>
-                    <div className={b('controls-settings-wrapper')}>{props.controls}</div>
-                </div>
+                {content}
             </div>
-        </div>
+            <div className={b('controls-settings')}>
+                <div className={b('controls-settings-wrapper')}>{controls}</div>
+            </div>
+        </React.Fragment>
     );
 };
 
-export const FixedHeaderContainer: React.FC<FixedHeaderContainerProps> = (props) => {
-    const {editMode, isEmpty} = props;
-    const rootRef = React.useRef<HTMLDivElement>(null);
-    const containerRef = React.useRef<HTMLDivElement>(null);
-    const topOffset = calculateOffset(
-        {isEmbedded: props.isEmbedded, isPublic: props.isPublic},
-        'content',
-    );
-    const [isScrollLocked, setScrollLock] = React.useState(false);
-
-    const [containerHeight, setContainerHeight] = React.useState(0);
-
-    const isRenderEmpty = !editMode && isEmpty;
-
-    React.useEffect(() => {
-        if (isRenderEmpty) {
-            setContainerHeight(0);
-            return;
-        }
-
-        const observer = new ResizeObserver(([el]) => {
-            if (el) {
-                const {height} = el.contentRect;
-                setContainerHeight(height);
-                setScrollLock(el.target.scrollHeight + topOffset >= window.innerHeight);
-            }
-        });
-
-        if (containerRef.current) {
-            observer.observe(containerRef.current);
-        }
-
-        // eslint-disable-next-line consistent-return
-        return () => {
-            observer.disconnect();
-        };
-    }, [containerRef, isRenderEmpty]);
-    const {isFixed, leftOffset, width} = useFixedHeaderRef(rootRef, topOffset);
-    const isScrollCaptured = isFixed && !editMode && !props.isCollapsed && isScrollLocked;
-
-    useBodyScrollLock({enabled: isScrollCaptured});
-
-    const style = isFixed && !editMode ? {left: leftOffset, top: topOffset, width} : {};
-
+export const FixedHeaderContainer: React.FC<FixedHeaderContainerProps> = ({
+    editMode,
+    isEmpty,
+    isControlsGroupEmpty,
+    children,
+}) => {
     const content =
         isEmpty && editMode ? (
             <EmptyPlaceholder
-                content={props.children}
-                text={i18n('label_empty-fixed-content')}
+                content={children}
+                text={
+                    <React.Fragment>
+                        <Icon size={16} data={ChevronsUp} />
+                        {i18n('label_empty-fixed-content')}
+                    </React.Fragment>
+                }
                 mod="with-offset"
             />
         ) : (
-            props.children
+            children
         );
 
     return (
         <div
-            ref={rootRef}
-            className={b('container-placeholder', {'edit-mode': editMode})}
-            style={{height: containerHeight}}
+            className={b('container', {
+                'edit-mode': editMode,
+                hidden: isEmpty && (!editMode || (editMode && isControlsGroupEmpty)),
+            })}
+            data-qa={FixedHeaderQa.Container}
         >
-            <div
-                ref={containerRef}
-                style={style}
-                className={b('container', {
-                    fixed: isFixed && !editMode,
-                    collapsed: (!editMode && props.isCollapsed) || isRenderEmpty,
-                    'edit-mode': editMode,
-                })}
-                data-qa={FixedHeaderQa.Container}
-            >
-                <div className={b('container-wrapper')}>{content}</div>
-            </div>
+            {content}
         </div>
     );
 };
+
+type FixedHeaderWrapperProps = CommonFixedHeaderProps & {
+    isCollapsed: boolean;
+    isControlsGroupEmpty?: boolean;
+    isContainerGroupEmpty?: boolean;
+    dashBodyRef: React.RefObject<HTMLDivElement>;
+    controlsRef: React.Ref<HTMLDivElement>;
+    containerRef: React.Ref<HTMLDivElement>;
+    className?: string;
+};
+
+export function FixedHeaderWrapper({
+    dashBodyRef,
+    controlsRef,
+    containerRef,
+    editMode,
+    isCollapsed,
+    isControlsGroupEmpty,
+    isContainerGroupEmpty,
+    className,
+}: FixedHeaderWrapperProps) {
+    const rootRef = React.useRef<HTMLDivElement>(null);
+    const wrapperRef = React.useRef<HTMLDivElement>(null);
+
+    const [containerHeight, setContainerHeight] = React.useState<'auto' | number>('auto');
+
+    const topOffset = calculateOffset(dashBodyRef);
+    const {isFixed, leftOffset, width} = useFixedHeaderRef(rootRef, topOffset);
+    const style = isFixed && !editMode ? {left: leftOffset, top: topOffset, width} : {};
+
+    React.useEffect(() => {
+        const observer = new ResizeObserver(([el]) => {
+            if (el) {
+                const {height} = el.contentRect;
+                setContainerHeight(height);
+            }
+        });
+
+        if (wrapperRef.current) {
+            observer.observe(wrapperRef.current);
+        }
+
+        return () => {
+            observer.disconnect();
+        };
+    }, [wrapperRef, topOffset]);
+
+    return (
+        <div
+            className={b(
+                {
+                    'no-content': isControlsGroupEmpty && (isContainerGroupEmpty || isCollapsed),
+                    'edit-mode': editMode,
+                    collapsed: isCollapsed,
+                },
+                className,
+            )}
+            ref={rootRef}
+            style={{
+                height: isFixed ? containerHeight : 'auto',
+            }}
+        >
+            <div
+                className={b('wrapper', {
+                    fixed: isFixed && !editMode,
+                })}
+                style={style}
+                ref={wrapperRef}
+                data-qa={FixedHeaderQa.Wrapper}
+            >
+                <div className={b('content')}>
+                    <div className={b('scrollable-container')}>
+                        <div ref={controlsRef} className={b('controls-placeholder')}></div>
+                        <div
+                            ref={containerRef}
+                            className={b('container-placeholder', {
+                                collapsed: isCollapsed,
+                            })}
+                        ></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+}

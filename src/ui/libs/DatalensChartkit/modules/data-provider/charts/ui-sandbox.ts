@@ -6,10 +6,15 @@ import merge from 'lodash/merge';
 import pick from 'lodash/pick';
 import set from 'lodash/set';
 import type {InterruptHandler, QuickJSWASMModule} from 'quickjs-emscripten';
-import {chartStorage} from 'ui/libs/DatalensChartkit/ChartKit/plugins/BlankChart/renderer/BlankChartWidget';
+import {chartStorage} from 'ui/libs/DatalensChartkit/ChartKit/plugins/chart-storage';
 
 import type {ChartKitHtmlItem, StringParams} from '../../../../../../shared';
-import {WRAPPED_FN_KEY, WRAPPED_HTML_KEY} from '../../../../../../shared';
+import {
+    EditorType,
+    LegacyEditorType,
+    WRAPPED_FN_KEY,
+    WRAPPED_HTML_KEY,
+} from '../../../../../../shared';
 import type {UISandboxWrappedFunction} from '../../../../../../shared/types/ui-sandbox';
 import {wrapHtml} from '../../../../../../shared/utils/ui-sandbox';
 import {getRandomCKId} from '../../../ChartKit/helpers/getRandomCKId';
@@ -186,6 +191,10 @@ async function getUiSandboxLibs(libs: string[]) {
             case 'd3-chord': {
                 return getModule('d3-chord/v3.0.1');
             }
+            case 'd3-sankey@0.12.3':
+            case 'd3-sankey': {
+                return getModule('d3-sankey/v0.12.3');
+            }
             default: {
                 throw new ChartKitCustomError(null, {
                     details: `The library '${lib}' is not available`,
@@ -207,11 +216,14 @@ async function getUnwrappedFunction(args: {
     name?: string;
 }) {
     const {sandbox, wrappedFn, options, entryId, entryType, name} = args;
-    let libs = await getUiSandboxLibs(wrappedFn.libs ?? []);
+    const uiSandboxLibs = await getUiSandboxLibs(wrappedFn.libs ?? []);
     const parseHtml = await getParseHtmlFn();
-    const isBlankChart = entryType === 'blank-chart_node';
+    const isAdvancedChart = (
+        [EditorType.AdvancedChartNode, LegacyEditorType.BlankChart] as string[]
+    ).includes(entryType);
 
     return function (this: unknown, ...restArgs: unknown[]) {
+        let libs = uiSandboxLibs;
         const runId = getRandomCKId();
         Performance.mark(runId);
 
@@ -220,10 +232,12 @@ async function getUnwrappedFunction(args: {
         if (wrappedFn.args) {
             preparedUserArgs = Array.isArray(wrappedFn.args) ? wrappedFn.args : [wrappedFn.args];
         }
-        let fnArgs: unknown[] = [...restArgs, ...preparedUserArgs];
+        let fnArgs: unknown[] = [...restArgs];
         if (entryType === 'graph_node') {
             fnArgs = fnArgs.map((a) => clearVmProp(a));
         }
+
+        fnArgs = [...fnArgs, ...preparedUserArgs];
 
         // prepare function context
         let fnContext = this;
@@ -241,16 +255,6 @@ async function getUnwrappedFunction(args: {
             },
             setTimeout: (handler: TimerHandler, timeout: number) => setTimeout(handler, timeout),
             clearTimeout: (timeoutId: number) => clearTimeout(timeoutId),
-            window: {
-                open: function (url: string, target?: string) {
-                    try {
-                        const href = sanitizeUrl(url);
-                        window.open(href, target === '_self' ? '_self' : '_blank');
-                    } catch (e) {
-                        console.error(e);
-                    }
-                },
-            },
             ChartEditor: {
                 generateHtml: (value: ChartKitHtmlItem) => wrapHtml(value),
             },
@@ -347,8 +351,18 @@ async function getUnwrappedFunction(args: {
                         return null;
                     },
                 },
+                window: {
+                    open: function (url: string, target?: string) {
+                        try {
+                            const href = sanitizeUrl(url);
+                            window.open(href, target === '_self' ? '_self' : '_blank');
+                        } catch (e) {
+                            console.error(e);
+                        }
+                    },
+                },
             });
-        } else if (isBlankChart) {
+        } else if (isAdvancedChart) {
             const chartId = get(this, 'chartId');
             const chartContext = chartStorage.get(chartId);
 
@@ -364,6 +378,14 @@ async function getUnwrappedFunction(args: {
                         chartContext?.updateActionParams(params);
                     },
                 },
+                ChartEditor: {
+                    updateActionParams: (params: StringParams) => {
+                        chartContext?.updateActionParams(params);
+                    },
+                    updateParams: (params: StringParams) => {
+                        chartContext?.updateParams(params);
+                    },
+                },
             });
 
             if (fnContext && typeof fnContext === 'object' && '__innerHTML' in fnContext) {
@@ -371,12 +393,19 @@ async function getUnwrappedFunction(args: {
             }
         }
 
+        merge(globalApi, {
+            Editor: globalApi.ChartEditor,
+        });
+
         const oneRunTimeLimit = options?.fnExecTimeLimit ?? UI_SANDBOX_FN_TIME_LIMIT;
         const execTimeout = Math.min(oneRunTimeLimit, options?.totalTimeLimit ?? Infinity);
-        const interruptHandler = getInterruptAfterDeadlineHandler(Date.now() + execTimeout);
-        const runtime = new UiSandboxRuntime({sandbox, interruptHandler});
+        const runtime = new UiSandboxRuntime({
+            sandbox,
+            getInterruptAfterDeadlineHandler,
+            timelimit: execTimeout,
+        });
         try {
-            const result = runtime.callFunction({
+            const {result, execTime} = runtime.callFunction({
                 fn: wrappedFn.fn,
                 fnContext,
                 fnArgs,
@@ -384,12 +413,12 @@ async function getUnwrappedFunction(args: {
                 libs,
                 name,
             });
-            const performance = Performance.getDuration(runId);
+
             if (options?.totalTimeLimit) {
-                options.totalTimeLimit = Math.max(0, options.totalTimeLimit - Number(performance));
+                options.totalTimeLimit = Math.max(0, options.totalTimeLimit - Number(execTime));
             }
 
-            return unwrapHtml({value: result, parseHtml, addElementId: isBlankChart});
+            return unwrapHtml({value: result, parseHtml, addElementId: isAdvancedChart});
         } catch (e) {
             const performance = Performance.getDuration(runId);
             if (performance && e?.message === 'interrupted') {

@@ -371,6 +371,9 @@ export const ControlItemSelect = ({
         onChange({param: fieldId, value: valueWithOperation});
     };
 
+    // The value may not be relevant before loadedData is loaded.
+    const value = disabled || !loadedData ? '' : (preparedValue as string);
+
     const props: SelectControlProps = {
         widgetId: id,
         content: content || preselectedContent,
@@ -380,7 +383,7 @@ export const ControlItemSelect = ({
         className: b(null, classMixin),
         labelClassName: b(null, labelMixin),
         key: fieldId,
-        value: disabled ? '' : (preparedValue as string),
+        value,
         onChange: onSelectChange,
         onOpenChange,
         loadingItems,
@@ -392,7 +395,6 @@ export const ControlItemSelect = ({
         disabled,
         ...selectProps,
     };
-
     if (status === LOAD_STATUS.FAIL) {
         props.errorContent = getErrorContent();
         props.itemsLoaderClassName = b('select-loader');

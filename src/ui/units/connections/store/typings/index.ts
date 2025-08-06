@@ -397,3 +397,7 @@ export type ConnectionsReduxAction =
     | SetYadocsColumnFilter;
 
 export type ConnectionsReduxDispatch = AppDispatch<ConnectionsReduxAction>;
+
+export type HandleReplacedSourcesArgs =
+    | {action: 'add'; replaceSource: ReplaceSource}
+    | {action: 'filter'; replacedSourceId: string};

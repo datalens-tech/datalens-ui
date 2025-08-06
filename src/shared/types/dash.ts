@@ -82,8 +82,12 @@ export type DashSettings = {
     hideDashTitle?: boolean;
     expandTOC: boolean;
     globalParams?: DashSettingsGlobalParams;
+    // used only for secure cases
+    signedGlobalParams?: DashSettingsGlobalParams;
     loadPriority?: DashLoadPriority;
     loadOnlyVisibleCharts?: boolean;
+    margins?: [number, number];
+    enableAssistant?: boolean;
 };
 
 export interface DashData {
@@ -102,7 +106,10 @@ export type DashDragOptions = ItemDropProps;
 // config with strict requirements of settings for new dash
 // schemeVersion comes from server
 export type FakeDashData = Omit<DashData, 'schemeVersion'> & {
-    settings: Required<DashSettings>;
+    settings: Required<Omit<DashSettings, 'margins' | 'enableAssistant' | 'signedGlobalParams'>> & {
+        margins?: DashSettings['margins'];
+        enableAssistant?: boolean;
+    };
 };
 
 export interface DashTabSettings {

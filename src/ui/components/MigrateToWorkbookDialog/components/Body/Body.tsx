@@ -1,10 +1,9 @@
-import {DL} from 'constants/common';
-
 import React from 'react';
 
 import {Alert, Button, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {DL} from 'ui/constants/common';
 
 import type {GetEntryResponse, GetRelationsGraphResponse} from '../../../../../shared/schema';
 import {Scope} from '../../../../constants';

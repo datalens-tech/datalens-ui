@@ -1,3 +1,5 @@
+import {isEqual} from 'lodash';
+
 import {EDITOR_TYPE} from '../../../../shared/constants';
 
 // Parts in Set keys should be separeted by comma and defined in alphabetic order
@@ -69,7 +71,7 @@ const MODEL_TABS = {
         'config,js,meta,params,secrets,shared,ui,url',
     ]),
 
-    [EDITOR_TYPE.BLANK_CHART_NODE]: new Set([
+    [EDITOR_TYPE.ADVANCED_CHART_NODE]: new Set([
         'config,js,params,shared,ui,url',
         'config,js,meta,params,shared,ui,url',
         'config,js,params,secrets,shared,ui,url',
@@ -77,10 +79,11 @@ const MODEL_TABS = {
     ]),
 };
 
+MODEL_TABS[EDITOR_TYPE.BLANK_CHART_NODE] = MODEL_TABS[EDITOR_TYPE.ADVANCED_CHART_NODE];
+
 export const chartValidator = {
     validate: ({data, type}: {data: Record<string, unknown>; type: string}) => {
         const dataTabs = Object.keys(data).sort();
-        const joinedDataTabs = dataTabs.join(',');
         const modelTabs = MODEL_TABS[type as keyof typeof MODEL_TABS];
 
         if (modelTabs) {
@@ -90,7 +93,17 @@ export const chartValidator = {
                 }
             });
 
-            return modelTabs.has(joinedDataTabs);
+            return Array.from(modelTabs).some((modelTab) => {
+                const oldTabs = modelTab.split(',').sort();
+                const newTabs = modelTab
+                    .replace('js', 'prepare')
+                    .replace('ui', 'controls')
+                    .replace('url', 'sources')
+                    .replace('table', 'config')
+                    .split(',')
+                    .sort();
+                return isEqual(oldTabs, dataTabs) || isEqual(newTabs, dataTabs);
+            });
         } else {
             throw new Error(`Unknown chart type "${type}"`);
         }

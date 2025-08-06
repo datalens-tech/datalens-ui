@@ -1,5 +1,3 @@
-import {DL} from 'constants/common';
-
 import React from 'react';
 
 import {
@@ -12,10 +10,14 @@ import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
-import type {StringParams} from 'shared';
+import {ChartkitMenuDialogsQA, type StringParams} from 'shared';
+import {Feature} from 'shared/types/feature';
+import {DL} from 'ui/constants/common';
 import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
+import Loader from '../../../libs/DatalensChartkit/components/ChartKitBase/components/Loader/Loader';
 import {getDataProviderData} from '../../../libs/DatalensChartkit/components/ChartKitBase/helpers';
 import settings from '../../../libs/DatalensChartkit/modules/settings/settings';
 import DebugInfoTool from '../../DashKit/plugins/DebugInfoTool/DebugInfoTool';
@@ -25,6 +27,7 @@ import {MarkdownHelpPopover} from '../../MarkdownHelpPopover/MarkdownHelpPopover
 
 import {Content} from './components/Content';
 import {WidgetFooter} from './components/WidgetFooter';
+import type {HeaderWithControlsProps} from './components/WidgetHeader';
 import {WidgetHeader} from './components/WidgetHeader';
 import {
     COMPONENT_CLASSNAME,
@@ -79,6 +82,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         config,
         usageType,
         workbookId,
+        enableAssistant,
     } = props;
 
     const extDashkitContext = React.useContext(ExtendedDashKitContext);
@@ -333,6 +337,8 @@ export const ChartWidget = (props: ChartWidgetProps) => {
 
     const [initialParams, setInitialParams] = React.useState<StringParams>({});
 
+    const [isExportLoading, setIsExportLoading] = React.useState(false);
+
     const {
         loadedData,
         error,
@@ -345,6 +351,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         isFullscreen,
         isAutoHeightEnabled,
         description,
+        descriptionMetaScript,
         handleToggleFullscreenMode,
         handleSelectTab,
         handleGetWidgetMeta,
@@ -533,6 +540,65 @@ export const ChartWidget = (props: ChartWidgetProps) => {
 
     const disableControls = noControls || urlNoControls;
 
+    const showFloatControls = isEnabledFeature(Feature.DashFloatControls);
+
+    const commonHeaderContentProps = {
+        compactLoader,
+        loaderDelay,
+        menuType: 'dash',
+        menuChartkitConfig,
+        dataProvider,
+        error,
+        dataProps,
+        requestId,
+        loadedData,
+        widgetDataRef,
+        widgetRenderTimeRef,
+        yandexMapAPIWaiting,
+        enableActionParams,
+        enableAssistant,
+        isWidgetMenuDataChanged,
+        onChange: handleChange,
+        onFullscreenClick: handleToggleFullscreenMode,
+        showActionParamsFilter,
+        noControls: disableControls,
+        onFiltersClear: handleFiltersClear,
+    };
+
+    const withInsights = Boolean(loadedData?.chartsInsightsData);
+    const withFiltering = Boolean(showActionParamsFilter);
+    const withBtnsMod =
+        withInsights && withFiltering
+            ? 'btns-full'
+            : withInsights || withFiltering
+              ? 'btns-partly'
+              : '';
+
+    const widgetHeaderProps = {
+        isFullscreen,
+        editMode,
+        hideTitle: Boolean(data.hideTitle),
+        tabsItems: adaptiveTabsItems,
+        currentTab,
+        onSelectTab: handleSelectTab,
+        widgetId,
+        hideDebugTool: true,
+        ...commonHeaderContentProps,
+        setIsExportLoading,
+        ...(showFloatControls
+            ? {
+                  showLoader,
+                  veil,
+                  extraMod: withBtnsMod,
+              }
+            : {}),
+    };
+
+    const showContentLoader = widgetHeaderProps.showLoader || isExportLoading;
+    const showLoaderVeil =
+        widgetHeaderProps.showLoader && widgetHeaderProps.veil && !isExportLoading;
+    const isFirstLoadingFloat = showFloatControls && loadedData === null;
+
     return (
         <div
             ref={rootNodeRef}
@@ -542,9 +608,11 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 classMod,
                 ['wait-for-init']: !isInit,
                 'default-mobile': DL.IS_MOBILE && !isFullscreen,
+                pulsate: (showContentLoader || showLoaderVeil) && !isFirstLoadingFloat,
+                'loading-mobile-height': DL.IS_MOBILE && isFirstLoadingFloat,
             })}`}
             style={style}
-            data-qa="chart-widget"
+            data-qa={ChartkitMenuDialogsQA.chartWidget}
             data-qa-mod={isFullscreen ? 'fullscreen' : ''}
         >
             <DebugInfoTool
@@ -554,65 +622,46 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                     {label: 'chartId', value: chartId},
                 ]}
             />
-            <WidgetHeader
-                isFullscreen={isFullscreen}
-                onFullscreenClick={handleToggleFullscreenMode}
-                editMode={editMode}
-                hideTitle={Boolean(data.hideTitle)}
-                tabsItems={adaptiveTabsItems}
-                currentTab={currentTab}
-                onSelectTab={handleSelectTab}
-                widgetId={widgetId}
-                hideDebugTool={true}
-                showActionParamsFilter={showActionParamsFilter}
-                onFiltersClear={handleFiltersClear}
-                warning={loadedData?.safeChartInfo}
-                noControls={disableControls}
-            />
+            <WidgetHeader {...(widgetHeaderProps as HeaderWithControlsProps)} />
+            {isFirstLoadingFloat && (
+                <Loader
+                    visible={showContentLoader}
+                    compact={false}
+                    size="s"
+                    veil={false}
+                    delay={1000}
+                />
+            )}
             <Content
                 initialParams={initialParams}
-                dataProps={dataProps}
-                dataProvider={dataProvider}
                 showLoader={showLoader}
-                onFullscreenClick={handleToggleFullscreenMode}
                 showOverlayWithControlsOnEdit={showOverlayWithControlsOnEdit}
-                compactLoader={compactLoader}
                 veil={veil}
-                loaderDelay={loaderDelay}
                 widgetBodyClassName={widgetBodyClassName}
                 hasHiddenClassMod={hasHiddenClassMod}
                 chartId={chartId}
-                noControls={disableControls}
                 transformLoadedData={transformLoadedData}
                 splitTooltip={splitTooltip || isFullscreen}
                 nonBodyScroll={nonBodyScroll}
-                requestId={requestId}
-                error={error}
                 onRender={handleRenderChart}
-                onChange={handleChange}
                 onRetry={handleRetry}
                 onError={handleError}
-                loadedData={loadedData}
                 forwardedRef={chartKitRef}
                 getControls={loadControls}
                 drillDownFilters={drillDownFilters}
                 drillDownLevel={drillDownLevel}
                 widgetType={widgetType}
-                menuType="dash"
-                menuChartkitConfig={menuChartkitConfig}
-                widgetDataRef={widgetDataRef}
-                widgetRenderTimeRef={widgetRenderTimeRef}
-                yandexMapAPIWaiting={yandexMapAPIWaiting}
-                isWidgetMenuDataChanged={isWidgetMenuDataChanged}
-                enableActionParams={enableActionParams}
                 widgetDashState={widgetDashState}
                 rootNodeRef={rootNodeRef}
                 backgroundColor={style?.backgroundColor}
+                needRenderContentControls={!showFloatControls}
+                {...commonHeaderContentProps}
             />
             {Boolean(description || loadedData?.publicAuthor) && (
                 <WidgetFooter
                     isFullscreen={Boolean(isFullscreen)}
                     description={description || ''}
+                    metaScripts={descriptionMetaScript}
                     enableDescription={currentTab.enableDescription}
                     author={loadedData?.publicAuthor}
                 />

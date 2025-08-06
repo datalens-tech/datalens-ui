@@ -1,0 +1,9 @@
+.import-workbook-file-view {
+    &__progress {
+        --g-progress-filled-background-color: var(--g-color-base-brand);
+    }
+
+    &__error-content {
+        padding: 0;
+    }
+}

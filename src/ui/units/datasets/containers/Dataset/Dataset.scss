@@ -45,4 +45,12 @@
         display: flex;
         column-gap: 8px;
     }
+
+    &__settings-hint {
+        margin-left: 8px;
+    }
+
+    &__settings-templating-disable-hint {
+        width: 200px;
+    }
 }

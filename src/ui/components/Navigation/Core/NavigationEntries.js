@@ -1,5 +1,3 @@
-import {DL} from 'constants/common';
-
 import React from 'react';
 
 import {Loader, RadioButton} from '@gravity-ui/uikit';
@@ -12,6 +10,7 @@ import {connect} from 'react-redux';
 import {filterUsersIds, makeUserId, normalizeDestination} from 'shared';
 import {showToast} from 'store/actions/toaster';
 import Tabs from 'ui/components/Tabs/Tabs';
+import {DL} from 'ui/constants/common';
 import {getResolveUsersByIdsAction} from 'ui/store/actions/usersByIds';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 
@@ -79,12 +78,15 @@ class NavigationEntries extends React.Component {
         resolveUsersByIds: PropTypes.func,
 
         onPermissionError: PropTypes.func,
+
+        renderEmptyStateAction: PropTypes.func,
     };
     static defaultProps = {
         mode: MODE_FULL,
         place: PLACE.ROOT,
         setBreadCrumbs: noop,
         onChangeLocation: noop,
+        renderEmptyStateAction: noop,
     };
     static getDerivedStateFromProps(nextProps, prevState) {
         const {scope, path, place} = nextProps;
@@ -580,6 +582,8 @@ class NavigationEntries extends React.Component {
                     className={b('empty-entries')}
                     mode={mode}
                     isEmptyFolder={isEmptyFolder}
+                    place={place}
+                    renderAction={this.props.renderEmptyStateAction}
                 />
             );
         }

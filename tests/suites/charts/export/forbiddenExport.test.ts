@@ -3,20 +3,18 @@ import {ChartkitMenuDialogsQA} from '../../../../src/shared/constants';
 
 import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {openTestPage, slct} from '../../../utils';
-import {RobotChartsEditorUrls, RobotChartsWizardUrls} from '../../../utils/constants';
+import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import EditorPage from '../../../page-objects/editor/EditorPage';
+import {MenuItemsIds} from '../../../../src/shared';
 
 const PARAMS = {
-    CHART_TITLE: 'ForbiddenExport test',
     // the number of menu items of chart including separators with non-displayed export
-    WIZARD_MENU_ITEMS_COUNT: 5,
-    EDITOR_MENU_ITEMS_COUNT: 7,
+    WIZARD_MENU_ITEMS_COUNT: 7,
 };
 
 datalensTest.describe('Chart with forbidden export', () => {
     datalensTest(
-        'There is no extra export menu item in wizard chart on connection with forbidden export',
+        'Export menu item is disabled in wizard chart on connection with forbidden export',
         async ({page}: {page: Page}) => {
             const wizardPage = new WizardPage({page});
             await openTestPage(page, RobotChartsWizardUrls.WizardWithForbiddenExport);
@@ -28,27 +26,10 @@ datalensTest.describe('Chart with forbidden export', () => {
                 .locator(`${slct(ChartkitMenuDialogsQA.chartMenuDropDown)} > li`)
                 .count();
 
+            const exportMenuItem = await page.locator(slct(MenuItemsIds.EXPORT));
+
             expect(menuItemsCount).toEqual(PARAMS.WIZARD_MENU_ITEMS_COUNT);
-        },
-    );
-    datalensTest(
-        'There is no extra export menu item in editor chart on connection with forbidden export',
-        async ({page}: {page: Page}) => {
-            const editorPage = new EditorPage({page});
-            await openTestPage(page, RobotChartsEditorUrls.ChartWithForbiddenExport);
-            await editorPage.drawPreview();
-
-            await editorPage.waitForSelector(
-                `${slct(ChartkitMenuDialogsQA.chartPreview)} >> text=${PARAMS.CHART_TITLE}`,
-            );
-
-            await editorPage.chartkit.openChartMenu();
-
-            const menuItemsCount = await page
-                .locator(`${slct(ChartkitMenuDialogsQA.chartMenuDropDown)} > li`)
-                .count();
-
-            expect(menuItemsCount).toEqual(PARAMS.EDITOR_MENU_ITEMS_COUNT);
+            expect(await exportMenuItem.getAttribute('tabindex')).toBe('-1');
         },
     );
 });

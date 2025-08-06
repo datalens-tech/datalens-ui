@@ -238,19 +238,24 @@ export async function exportEntries(req: Request, res: Response) {
         const chartData = await getChartData(host, req.headers['x-rpc-authorization'] as string, links, r.body['params']);
 
         const exportPath = path.join(__dirname, '../', '../', '../', 'export');
+        const headersPath = path.join(__dirname, '../', '../', '../', 'table-report-headers');
+
         const pythonScript = path.join(exportPath, 'dash2sheets.py');
         const metaPath = path.join(exportPath, 'meta.csv');
 
-        const publicOutputPath = path.join(exportPath, `${r.body['exportFilename'] +'-' + Date.now()}.${r.body['outputFormat']}`);
+        const exportFilename = r.body['exportFilename'];
+        const publicOutputPath = path.join(exportPath, `${exportFilename +'-' + Date.now()}.${r.body['outputFormat']}`);
         
         let metadata = [];
+        
+        const clearRegexp = /[\[\]\:\*\?\/\\]/g;
 
         const filteredLinks = Object.keys(chartData);
         for(let i = 0; i < filteredLinks.length; i++) {
             if(chartData[filteredLinks[i]].extra.datasets) {
                 let sheetName = (chartData[filteredLinks[i]].key.split('/').length > 1 ? chartData[filteredLinks[i]].key.split('/')[1] : filteredLinks[i]) + '-' + Date.now();
                 
-                const publicOutputCSVPath = path.join(exportPath, `${sheetName.replace(/[\[\]\:\*\?\/\\]/g, '_')}.${r.body['formSettings'].format}`);
+                const publicOutputCSVPath = path.join(exportPath, `${sheetName.replace(clearRegexp, '_')}.${r.body['formSettings'].format}`);
                 
                 const chartProps: Record<string, any> = {};
                 const chart = chartData[filteredLinks[i]];
@@ -278,19 +283,19 @@ export async function exportEntries(req: Request, res: Response) {
         await fs.promises.writeFile(metaPath, csv, 'utf8');
         
         const destroy = async () => {
-            // if(fs.existsSync(publicOutputPath)) {
-            //     await fs.promises.unlink(publicOutputPath);
-            // }
+            if(fs.existsSync(publicOutputPath)) {
+                await fs.promises.unlink(publicOutputPath);
+            }
 
-            // if(fs.existsSync(metaPath)) {
-            //     await fs.promises.unlink(metaPath);
-            // }
+            if(fs.existsSync(metaPath)) {
+                await fs.promises.unlink(metaPath);
+            }
 
-            // for(let i = 0; i < metadata.length; i++) {
-            //     if(fs.existsSync(metadata[i].csv_data_name)) {
-            //         await fs.promises.unlink(metadata[i].csv_data_name);
-            //     }
-            // }
+            for(let i = 0; i < metadata.length; i++) {
+                if(fs.existsSync(metadata[i].csv_data_name)) {
+                    await fs.promises.unlink(metadata[i].csv_data_name);
+                }
+            }
         }
 
         if (filteredLinks.length == 0) {

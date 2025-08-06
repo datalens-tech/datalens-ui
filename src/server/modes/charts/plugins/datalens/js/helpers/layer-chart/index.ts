@@ -1,6 +1,6 @@
 import type {LayerChartMeta} from '../../../preparers/types';
 
-import type {ExtendCombinedChartGraphsArgs, GetLayerChartMetaArgs} from './types';
+import type {ExtendCombinedChartGraphsArgs} from './types';
 
 export const extendCombinedChartGraphs = (args: ExtendCombinedChartGraphsArgs) => {
     const {graphs, layer, layers, legendValues} = args;
@@ -96,14 +96,11 @@ export const mergeResultForCombinedCharts = (
     return combinedChartResult;
 };
 
-export const getLayerChartMeta = ({
-    layers,
-    isComboChart,
-}: GetLayerChartMetaArgs): LayerChartMeta => {
+export const getLayerChartMeta = ({isComboChart}: {isComboChart: boolean}): LayerChartMeta => {
     const layerChartsMeta: LayerChartMeta = {};
 
     if (isComboChart) {
-        layerChartsMeta.isCategoriesSortAvailable = layers.every((layer) => layer.id !== 'line');
+        layerChartsMeta.isCategoriesSortAvailable = true;
     }
 
     return layerChartsMeta;

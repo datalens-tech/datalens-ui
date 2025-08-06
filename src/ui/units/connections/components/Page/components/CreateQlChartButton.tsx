@@ -6,9 +6,8 @@ import {I18n} from 'i18n';
 import {get} from 'lodash';
 import {connect} from 'react-redux';
 import type {WorkbookId} from 'shared';
-import {ConnectionsActionPanelControls, Feature, RawSQLLevel} from 'shared';
+import {ConnectionsActionPanelControls, RAW_SQL_LEVEL} from 'shared';
 import type {DatalensGlobalState} from 'ui';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {FieldKey} from '../../../constants';
 
@@ -52,9 +51,8 @@ const isQlButtonVisible = (state: DatalensGlobalState) => {
     const pageLoading = get(state.connections.ui, 'pageLoading');
     const initialForm = state.connections.initialForm;
     const value = (initialForm[FieldKey.RawSqlLevel] as string) || undefined;
-    const qlEnabled = isEnabledFeature(Feature.Ql);
 
-    return qlEnabled && !pageLoading && (value === RawSQLLevel.Dashsql || showCreateQlChartButton);
+    return !pageLoading && (value === RAW_SQL_LEVEL.DASHSQL || showCreateQlChartButton);
 };
 
 const mapStateToProps = (state: DatalensGlobalState) => {

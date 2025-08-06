@@ -117,6 +117,12 @@ type ChartKitBaseWrapperProps = ChartsProps & {
     actionParamsEnabled?: boolean;
     paneSplitOrientation?: Split;
     widgetDashState?: WidgetDashState;
+
+    showActionParamsFilter?: boolean;
+    enableAssistant?: boolean;
+    onFiltersClear?: () => void;
+
+    needRenderContentControls?: boolean;
 };
 
 export type ChartWidgetProviderPropsWithRefProps = Omit<
@@ -173,7 +179,10 @@ export type ChartWrapperWithRefProps =
 
 export type ChartWithProviderWithRefProps = ChartProviderPropsWithRefProps;
 
-export type ChartWrapperWithProviderProps = ChartWrapperWithRefProps & {workbookId?: string | null};
+export type ChartWrapperWithProviderProps = ChartWrapperWithRefProps & {
+    workbookId?: string | null;
+    enableAssistant?: boolean;
+};
 
 export type ChartWidgetProps = ChartWidgetProviderPropsWithRefProps &
     ChartWidgetWithProviderProps &
@@ -262,6 +271,9 @@ export type ChartContentProps = Pick<
     | 'hideMenu'
     | 'renderPluginLoader'
     | 'forceShowSafeChart'
+    | 'showActionParamsFilter'
+    | 'onFiltersClear'
+    | 'needRenderContentControls'
 > &
     ChartKitWrapperParams & {
         hasHiddenClassMod: boolean;
@@ -285,6 +297,7 @@ export type ChartContentProps = Pick<
         isWidgetMenuDataChanged?: boolean;
         initialParams: StringParams;
         enableActionParams?: boolean;
+        enableAssistant?: boolean;
         rootNodeRef: React.RefObject<HTMLDivElement | null>;
         runAction?: ControlProps['runAction'];
         backgroundColor?: string;
@@ -334,4 +347,8 @@ export type ChartSelectorWithWrapRefProps = {
     reload: (arg: {silentLoading?: boolean; noVeil?: boolean}) => void;
     getCurrentTabChartId: () => string;
     getMeta: () => Promise<ResolveWidgetControlDataRefArgs | null>;
+};
+
+export type ChartWithWrapRefProps = {
+    reload: () => void;
 };

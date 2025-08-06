@@ -10,12 +10,30 @@ import './RLSDialog.scss';
 const b = block('rls-dialog');
 const i18n = I18n.keyset('dataset.rls.modify');
 
-interface Props {
+export interface RLSDialogUser {
+    /**
+     * User identifier string that should consist of two parts separated by a colon
+     * Example: "groupId:userName"
+     */
+    name?: string;
+    title?: string;
+}
+
+export interface RLSDialogProps<T1 = string, T2 extends RLSDialogUser = RLSDialogUser> {
     visible: boolean;
     onClose: () => void;
     onSave: (args: any) => void;
-    rlsField: string;
+    rlsField: T1;
     field?: DatasetField;
+    getUsers?: (searchText: string) => Promise<T2[]>;
+    getInitialUsers?: (args: {
+        /**
+         * @deprecated use `rules` property instead
+         */
+        ids: string[];
+        rules?: T1;
+    }) => Promise<T2[]>;
+    renderUser?: (props: {user: T2}) => React.ReactNode;
 }
 
 interface State {
@@ -23,12 +41,12 @@ interface State {
     rlsField: string;
 }
 
-class RLSDialog extends React.Component<Props, State> {
+class RLSDialog extends React.Component<RLSDialogProps<string>, State> {
     static defaultProps = {
         visible: false,
     };
 
-    static getDerivedStateFromProps(nextProps: Props, nextState: State) {
+    static getDerivedStateFromProps(nextProps: RLSDialogProps<string>, nextState: State) {
         const {rlsField, visible} = nextProps;
         const {visible: visibleState} = nextState;
 
@@ -45,31 +63,6 @@ class RLSDialog extends React.Component<Props, State> {
     state = {
         visible: false,
         rlsField: '',
-    };
-
-    get isSaveBtnDisabled() {
-        const {rlsField} = this.props;
-        const {rlsField: rlsFieldState} = this.state;
-
-        return rlsField === rlsFieldState;
-    }
-
-    saveRls = () => {
-        const {field, onSave, onClose} = this.props;
-        const {rlsField} = this.state;
-
-        if (field) {
-            const {guid} = field;
-
-            onSave({
-                [guid]: rlsField,
-            });
-            onClose();
-        }
-    };
-
-    changeRlsSettings = (rlsField: string) => {
-        this.setState({rlsField});
     };
 
     render() {
@@ -110,6 +103,35 @@ class RLSDialog extends React.Component<Props, State> {
             </Dialog>
         );
     }
+
+    get isSaveBtnDisabled() {
+        const {rlsField} = this.props;
+        const {rlsField: rlsFieldState} = this.state;
+
+        return rlsField === rlsFieldState;
+    }
+
+    private saveRls = () => {
+        const {field, onSave, onClose} = this.props;
+        const {rlsField} = this.state;
+
+        if (field) {
+            const {guid} = field;
+
+            onSave({
+                [guid]: rlsField,
+            });
+            onClose();
+        }
+    };
+
+    private changeRlsSettings = (rlsField: string) => {
+        this.setState({rlsField});
+    };
 }
+
+export const renderRLSDialog = (props: RLSDialogProps<any, any>) => {
+    return <RLSDialog {...props} />;
+};
 
 export default RLSDialog;

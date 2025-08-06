@@ -137,6 +137,7 @@ export interface DLUser extends DLUserAccount {
     isLocalFederationUser?: boolean;
     withNavigation?: boolean;
     roles?: `${UserRole}`[];
+    idpType: string | null;
 }
 
 export type MainLayoutConfigData = {
@@ -167,8 +168,6 @@ export type DLGlobalData = {
     authPageSettings?: AuthPageSettings;
     push?: PushServiceConfig;
     metricaCounters?: MetricaCounterConfig[];
-    templateWorkbookId?: string;
-    learningMaterialsWorkbookId?: string;
     isLanding?: boolean;
     publicScope?: 'dash' | 'widget';
     ymapApiKey?: string;
@@ -177,6 +176,7 @@ export type DLGlobalData = {
         foldersEnabled: boolean;
         workbooksEnabled: boolean;
         collectionsEnabled: boolean;
+        features?: Record<string, unknown>;
     };
     userIsOrgAdmin?: boolean;
     allowLanguages?: Language[];
@@ -202,6 +202,8 @@ export type DLGlobalData = {
             };
         };
     };
+    // sorted roles from the role with the most rights to the role with the least
+    orderedAuthRoles?: `${UserRole}`[];
     embed?:
         | {
               mode: 'chart';
@@ -230,6 +232,7 @@ export type DLGlobalData = {
     releaseVersion?: string;
     isAuthEnabled?: boolean;
     exportDashExcel?: boolean;
+    authManageLocalUsersDisabled?: boolean;
 } & MainLayoutConfigData;
 
 export type ContactDialogSettings = {

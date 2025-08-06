@@ -21,10 +21,7 @@ import {registry} from '../../registry';
 
 import type {ContextMenuItem, ContextMenuParams} from './types';
 
-const getCurrentPageFirstPathPart = () =>
-    window.location.pathname.split('/').filter((item) => item.trim())[0];
-
-const isChartsPage = (part: string) => part !== 'editor';
+import iconId from 'ui/assets/icons/id-square.svg';
 
 export const ENTRY_CONTEXT_MENU_ACTION = {
     RENAME: 'rename',
@@ -35,6 +32,7 @@ export const ENTRY_CONTEXT_MENU_ACTION = {
     COPY: 'copy',
     ACCESS: 'access',
     COPY_LINK: 'copy-link',
+    COPY_ID: 'copy-id',
     SHARE: 'share',
     REVISIONS: 'revisions',
     MIGRATE_TO_WORKBOOK: 'migrate-to-workbook',
@@ -66,6 +64,21 @@ const CONTEXT_MENU_COPY = {
         const revId = searchParams.get(URL_QUERY.REV_ID);
         return showSpecificItems ? !revId : true;
     },
+};
+
+export const CONTEXT_MENU_COPY_LINK = {
+    id: ENTRY_CONTEXT_MENU_ACTION.COPY_LINK,
+    action: ENTRY_CONTEXT_MENU_ACTION.COPY_LINK,
+    icon: Link,
+    text: 'value_copy-link',
+    enable: () => true,
+};
+export const CONTEXT_MENU_COPY_ID = {
+    id: ENTRY_CONTEXT_MENU_ACTION.COPY_ID,
+    action: ENTRY_CONTEXT_MENU_ACTION.COPY_ID,
+    icon: iconId,
+    text: 'value_copy-id',
+    enable: () => true,
 };
 
 const getContextMenuAccess = () => {
@@ -108,14 +121,7 @@ const isVisibleEntryContextShareItem = ({entry, showSpecificItems}: ContextMenuP
             isVisible({entry, isLimitedView}: ContextMenuParams) {
                 if (!entry || !entry.scope || isLimitedView) return false;
 
-                // TODO: remove temporary restriction of the new versioning for the editor
-                const currentPathPart = getCurrentPageFirstPathPart();
-                const isChartNotEditor = isChartsPage(currentPathPart);
-
-                return (
-                    isChartNotEditor &&
-                    getEntryScopesWithRevisionsList().includes(entry.scope as EntryScope)
-                );
+                return getEntryScopesWithRevisionsList().includes(entry.scope as EntryScope);
             },
         },
         {
@@ -245,13 +251,18 @@ const isVisibleEntryContextShareItem = ({entry, showSpecificItems}: ContextMenuP
         },
         getContextMenuAccess(),
         {
-            id: ENTRY_CONTEXT_MENU_ACTION.COPY_LINK,
-            action: ENTRY_CONTEXT_MENU_ACTION.COPY_LINK,
-            icon: Link,
-            text: 'value_copy-link',
-            enable: () => true,
+            ...CONTEXT_MENU_COPY_LINK,
             scopes: getAllEntryScopes(),
             isVisible: (params) => !isVisibleEntryContextShareItem(params),
+        },
+        {
+            ...CONTEXT_MENU_COPY_ID,
+            scopes: [
+                EntryScope.Widget,
+                EntryScope.Dataset,
+                EntryScope.Connection,
+                ...getTopLevelEntryScopes(),
+            ],
         },
         {
             id: ENTRY_CONTEXT_MENU_ACTION.SHARE,

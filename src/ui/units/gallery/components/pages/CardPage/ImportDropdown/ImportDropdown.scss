@@ -1,0 +1,26 @@
+@use '../../../variables';
+
+@import '../../../../../../styles/variables.scss';
+
+$block: '.#{variables.$ns}-card-import-dropdown';
+
+#{$block} {
+    &__dropdown-item {
+        display: flex;
+    }
+
+    &__dropdown-icon {
+        margin-top: 3px;
+    }
+
+    &__dropdown-text {
+        margin-left: 8px;
+    }
+
+    &__dropdown-hint {
+        padding-bottom: 4px;
+        max-width: 200px;
+        line-height: normal;
+        color: var(--g-color-text-hint);
+    }
+}
