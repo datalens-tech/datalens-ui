@@ -74,12 +74,26 @@ const authenticateDataLens = async (args: AuthenticateArgs) => {
     await page.fill(`${slct(SignInQa.INPUT_LOGIN)} input`, login);
     await page.fill(`${slct(SignInQa.INPUT_PASSWORD)} input`, password);
 
-    const promiseResponse = page.waitForResponse((response) => response.ok(), {
-        timeout: 10 * 1000,
-    });
+    const promiseResponse = page.waitForResponse(
+        async (response) => {
+            if (response.url().endsWith('/auth/signin') && response.status() === 403) {
+                // eslint-disable-next-line no-console
+                console.log('Auth error, check credentials...');
+                const error = await response.json();
+                throw new Error(JSON.stringify(error, null, 2));
+            }
+            return response.ok();
+        },
+        {
+            timeout: 10 * 1000,
+        },
+    );
     await page.click('button[type=submit]');
 
     await promiseResponse;
+
+    // eslint-disable-next-line no-console
+    console.log('Auth check: ok');
 
     await page.context().storageState({path: storageState || 'artifacts/storageState.json'});
 

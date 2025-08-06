@@ -168,6 +168,11 @@ jobs:
           mkdir -p ./tests/artifacts
           echo "reports/${{ github.head_ref || github.ref_name }}/${{ github.run_id }}/${{ github.run_attempt }}" > ./tests/artifacts/report-link
           echo "${{ github.event.pull_request.number }}" > ./tests/artifacts/report-pr
+          HTML_REPORT_URL_PATH=$(cat ./tests/artifacts/report-link)
+          echo "HTML_REPORT_URL_PATH=${HTML_REPORT_URL_PATH}" >> "$GITHUB_ENV"
+          echo "REPORT_PR_NUMBER=$(cat ./tests/artifacts/report-pr)" >> "$GITHUB_ENV"
+          FULL_HTML_REPORT_URL=https://${{ vars.E2E_REPORT_S3_BUCKET }}.${{ vars.E2E_REPORT_HTML_ENDPOINT }}/${{ env.HTML_REPORT_URL_PATH }}/report
+          echo "FULL_HTML_REPORT_URL=${FULL_HTML_REPORT_URL}" >> "$GITHUB_ENV"
 
       - uses: actions/upload-artifact@v4
         if: always()
@@ -182,3 +187,29 @@ jobs:
           name: docker-compose-logs
           path: ./tests/logs/
           retention-days: 30
+
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: ./datalens-ui/tests/artifacts/
+          retention-days: 30
+      - uses: daun/playwright-report-summary@v3
+        if: always()
+        id: report-md
+        with:
+          report-file: ./tests/artifacts/results.json
+          create-comment: false
+      - uses: marocchino/sticky-pull-request-comment@v2
+        if: always()
+        with:
+          header: e2e-report-full
+          number: ${{ env.REPORT_PR_NUMBER }}
+          message: |
+            ## ![](https://storage.yandexcloud.net/e2e-report/icons/os-small.svg) E2E Tests
+
+            ${{ steps.report-md.outputs.summary }}
+
+            ---
+
+            👉 Link with detailed report: [report](${{ env.FULL_HTML_REPORT_URL }})
