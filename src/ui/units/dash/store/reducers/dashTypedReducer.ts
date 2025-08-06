@@ -65,7 +65,7 @@ export type DashState = {
     lastUsedConnectionId: undefined | string;
     entry: DashEntry;
     data: DashData;
-    meta: DashMeta;
+    meta: DashMeta | null;
     updateStatus: DashUpdateStatus;
     convertedEntryData: DashData | null;
     permissions?: Permissions;
