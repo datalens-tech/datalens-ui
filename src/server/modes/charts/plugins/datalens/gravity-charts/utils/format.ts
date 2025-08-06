@@ -4,7 +4,7 @@ import {isEmpty} from 'lodash';
 import type {ServerField} from '../../../../../../../shared';
 import {MINIMUM_FRACTION_DIGITS, isFloatField, isNumberField} from '../../../../../../../shared';
 
-export function getFieldFormatOptions({field}: {field: ServerField}): ValueFormat | undefined {
+export function getFieldFormatOptions({field}: {field?: ServerField}): ValueFormat | undefined {
     if (isNumberField(field)) {
         let precision = 0;
         if (isFloatField(field)) {
