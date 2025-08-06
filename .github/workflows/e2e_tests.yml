@@ -107,32 +107,26 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Run tests local from repo
-        if: ${{ env.UI_VERSION == '' }}
+      - name: Get ui image tag
+        run: |
+          if [ -z "${UI_VERSION}" ]; then
+            UI_VERSION="pr"
+            E2E_IMAGE_PREFIX="datalens-ui:pr"
+          fi
+          echo "UI_VERSION=${UI_VERSION}" >> "$GITHUB_ENV"
+          echo "E2E_IMAGE_PREFIX=${E2E_IMAGE_PREFIX}" >> "$GITHUB_ENV"
+        env:
+          UI_VERSION: ${{ env.UI_VERSION }}
+
+      - name: Run tests from local builded tests image
         run: npm run test:e2e:docker
         env:
           US_VERSION: ${{ env.US_VERSION }}
           AUTH_VERSION: ${{ env.AUTH_VERSION }}
           CONTROL_API_VERSION: ${{ env.CONTROL_API_VERSION }}
           DATA_API_VERSION: ${{ env.DATA_API_VERSION }}
-          UI_VERSION: pr
-          E2E_IMAGE: datalens-ui:pr
-          E2E_NO_AUTH: false
-          E2E_RETRY_TIMES: 1
-          E2E_TEST_TIMEOUT: 90000
-          E2E_ACTION_TIMEOUT: 10000
-          E2E_EXPECT_TIMEOUT: 10000
-
-      - name: Run tests from builded docker image
-        if: ${{ env.UI_VERSION != '' }}
-        run: |
-          npm run test:e2e:docker
-        env:
-          US_VERSION: ${{ env.US_VERSION }}
-          AUTH_VERSION: ${{ env.AUTH_VERSION }}
-          CONTROL_API_VERSION: ${{ env.CONTROL_API_VERSION }}
-          DATA_API_VERSION: ${{ env.DATA_API_VERSION }}
           UI_VERSION: ${{ env.UI_VERSION }}
+          E2E_IMAGE_PREFIX: ${{ env.E2E_IMAGE_PREFIX }}
           E2E_NO_AUTH: false
           E2E_RETRY_TIMES: 1
           E2E_TEST_TIMEOUT: 90000

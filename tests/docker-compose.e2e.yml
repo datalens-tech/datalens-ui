@@ -160,7 +160,7 @@ services:
 
   datalens-from-image-tests:
     container_name: e2e-datalens-ui-tests
-    image: ${E2E_IMAGE:-ghcr.io/datalens-tech/datalens-ui}:${UI_VERSION:-release}-e2e
+    image: ${E2E_IMAGE_PREFIX:-ghcr.io/datalens-tech/datalens-ui}:${UI_VERSION:-release}-e2e
     environment:
       E2E_DOMAIN: http://datalens-from-image:8080
       E2E_RETRY_TIMES: ${E2E_RETRY_TIMES:-0}
