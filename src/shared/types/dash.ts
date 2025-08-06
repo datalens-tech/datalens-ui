@@ -103,7 +103,7 @@ export interface DashData {
 }
 
 export interface DashMeta {
-    description: string;
+    description?: string;
 }
 
 export type DashDragOptions = ItemDropProps;

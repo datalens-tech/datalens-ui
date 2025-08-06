@@ -65,7 +65,7 @@ export type DashState = {
     lastUsedConnectionId: undefined | string;
     entry: DashEntry;
     data: DashData;
-    meta: DashMeta | null;
+    meta: DashMeta;
     updateStatus: DashUpdateStatus;
     convertedEntryData: DashData | null;
     permissions?: Permissions;
@@ -279,6 +279,7 @@ export function dashTypedReducer(
                 tabId: tabIndex === -1 ? entryData.tabs[0].id : tabId,
                 showTableOfContent: entryData.settings?.expandTOC && state.showTableOfContent,
                 data: entryData,
+                meta: state.entry.meta,
             };
         }
 
