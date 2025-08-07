@@ -64,19 +64,22 @@ export function getGravityChartsChartKitData(args: {
     }
 
     result.series?.data.forEach((s) => {
-        if (!s.legend?.symbol?.padding) {
-            set(s, 'legend.symbol.padding', 8);
-        }
-
-        if (!s.dataLabels?.padding) {
-            set(s, 'dataLabels.padding', 10);
-        }
-
-        set(s, 'dataLabels.style', {
-            fontSize: '12px',
-            fontWeight: 500,
-            ...s.dataLabels?.style,
+        set(s, 'legend.symbol', {
+            padding: 8,
+            width: 10,
+            height: 10,
+            ...s.legend?.symbol,
         });
+
+        s.dataLabels = {
+            padding: 10,
+            ...s.dataLabels,
+            style: {
+                fontSize: '12px',
+                fontWeight: '500',
+                ...s.dataLabels?.style,
+            },
+        };
 
         switch (s.type) {
             case 'pie': {

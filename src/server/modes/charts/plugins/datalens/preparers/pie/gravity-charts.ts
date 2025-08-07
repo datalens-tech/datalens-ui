@@ -68,7 +68,6 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
                 symbol: {
                     width: 10,
                     height: 10,
-                    padding: 4,
                 },
             },
         };
