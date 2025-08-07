@@ -10,7 +10,7 @@
   "label_add-color-disabled": "Невозможно добавить более {{count}} цветов",
   "label_add-palette": "Добавить палитру",
   "label_bars-custom-color-error": "Для обозначения цвета используйте HEX-код",
-  "label_default-palette": "Использовать по умолчанию",
+  "label_default-palette": "Палитра по умолчанию",
   "label_delete-message": "Вы собираетесь удалить палитру. Чарты которые её используют переключатся на системную палитру. Вы уверены что хотите удалить?",
   "label_delete-palette": "Удалить",
   "label_edit-palette": "Редактировать",
@@ -22,6 +22,8 @@
   "label_palette-title": "Цветовые палитры",
   "toast_create-failed": "Не удалось создать палитру",
   "toast_delete-failed": "Не удалось удалить палитру",
+  "toast_update-default-palette-failed": "Не удалось сменить палитру по умолчанию",
+  "toast_update-default-palette-success": "Палитра по умолчанию применена ко всем доступным чартам",
   "toast_update-failed": "Не удалось обновить палитру",
   "tooltip_disabled-due-rights": "Доступно только администратору"
 }
