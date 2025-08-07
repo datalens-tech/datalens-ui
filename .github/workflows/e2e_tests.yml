@@ -15,6 +15,8 @@ on:
         description: 'custom data-api version'
       us:
         description: 'custom us version'
+      auth:
+        description: 'custom auth version'
       ui:
         description: 'custom ui version'
         default: 'release'
@@ -23,6 +25,7 @@ env:
   CONTROL_API_VERSION: ${{github.event.inputs.control-api}}
   DATA_API_VERSION: ${{github.event.inputs.data-api}}
   US_VERSION: ${{github.event.inputs.us}}
+  AUTH_VERSION: ${{github.event.inputs.auth}}
   UI_VERSION: ${{github.event.inputs.ui}}
 
 concurrency:
@@ -67,6 +70,7 @@ jobs:
         run: npm run test:e2e:docker:check
         env:
           US_VERSION: ${{ env.US_VERSION }}
+          AUTH_VERSION: ${{ env.AUTH_VERSION }}
           CONTROL_API_VERSION: ${{ env.CONTROL_API_VERSION }}
           DATA_API_VERSION: ${{ env.DATA_API_VERSION }}
           UI_VERSION: ${{ env.UI_VERSION }}
@@ -91,6 +95,7 @@ jobs:
           npm run test:e2e:docker:up-no-build && npm ci && npm run test:install:chromium & wait
         env:
           US_VERSION: ${{ env.US_VERSION }}
+          AUTH_VERSION: ${{ env.AUTH_VERSION }}
           CONTROL_API_VERSION: ${{ env.CONTROL_API_VERSION }}
           DATA_API_VERSION: ${{ env.DATA_API_VERSION }}
 
@@ -98,12 +103,14 @@ jobs:
         if: ${{ env.UI_VERSION == '' }}
         run: npm run test:e2e:opensource
         env:
-          NO_AUTH: true
+          E2E_NO_AUTH: false
           E2E_RETRY_TIMES: 1
           E2E_TEST_TIMEOUT: 90000
           E2E_ACTION_TIMEOUT: 10000
           E2E_EXPECT_TIMEOUT: 10000
           E2E_DOMAIN: http://localhost:8080
+          E2E_USER_LOGIN: admin
+          E2E_USER_PASSWORD: admin
 
       - name: Run tests from builded docker image
         if: ${{ env.UI_VERSION != '' }}
@@ -111,9 +118,11 @@ jobs:
           npm run test:e2e:docker
         env:
           US_VERSION: ${{ env.US_VERSION }}
+          AUTH_VERSION: ${{ env.AUTH_VERSION }}
           CONTROL_API_VERSION: ${{ env.CONTROL_API_VERSION }}
           DATA_API_VERSION: ${{ env.DATA_API_VERSION }}
           UI_VERSION: ${{ env.UI_VERSION }}
+          E2E_NO_AUTH: false
           E2E_RETRY_TIMES: 1
           E2E_TEST_TIMEOUT: 90000
           E2E_ACTION_TIMEOUT: 10000
@@ -131,6 +140,7 @@ jobs:
           fi
         env:
           US_VERSION: ${{ env.US_VERSION }}
+          AUTH_VERSION: ${{ env.AUTH_VERSION }}
           CONTROL_API_VERSION: ${{ env.CONTROL_API_VERSION }}
           DATA_API_VERSION: ${{ env.DATA_API_VERSION }}
           UI_VERSION: ${{ env.UI_VERSION }}
@@ -147,6 +157,7 @@ jobs:
           npm run test:e2e:docker:down
         env:
           US_VERSION: ${{ env.US_VERSION }}
+          AUTH_VERSION: ${{ env.AUTH_VERSION }}
           CONTROL_API_VERSION: ${{ env.CONTROL_API_VERSION }}
           DATA_API_VERSION: ${{ env.DATA_API_VERSION }}
           UI_VERSION: ${{ env.UI_VERSION }}

@@ -5,6 +5,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {Link} from 'react-router-dom';
+import {SignInQa} from 'shared/constants';
 import {Feature} from 'shared/types';
 import {DL} from 'ui/constants';
 import type {SdkError} from 'ui/libs/schematic-sdk';
@@ -72,6 +73,7 @@ export const Signin = ({alternativeAuthOptions, logoIcon}: SigninProps) => {
                 direction="column"
                 gap="6"
                 as="form"
+                qa={SignInQa.SIGN_IN_FORM}
                 onChange={handleFormChange}
                 onSubmit={handleSubmit}
             >
@@ -81,8 +83,8 @@ export const Signin = ({alternativeAuthOptions, logoIcon}: SigninProps) => {
                 </Flex>
                 <Flex direction="column" gap="4">
                     {errorMessage && <Alert theme="danger" message={errorMessage} />}
-                    <Login />
-                    <Password />
+                    <Login qa={SignInQa.INPUT_LOGIN} />
+                    <Password qa={SignInQa.INPUT_PASSWORD} />
                     <Button size="xl" view="action" type="submit">
                         {i18n('button_sign-in')}
                     </Button>
