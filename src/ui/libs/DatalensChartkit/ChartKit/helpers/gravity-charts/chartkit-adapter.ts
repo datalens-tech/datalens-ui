@@ -24,7 +24,6 @@ export function getGravityChartsChartKitData(args: {
 }) {
     const {loadedData, onChange} = args;
     const widgetData = loadedData?.data as ChartData;
-    const config = loadedData?.libraryConfig as ChartData;
     const chartId = loadedData?.entryId;
 
     const chartWidgetData: Partial<ChartData> = {
@@ -52,15 +51,27 @@ export function getGravityChartsChartKitData(args: {
         },
         tooltip: {
             pin: {enabled: true, modifierKey: 'altKey'},
-            renderer: getTooltipRenderer({widgetData, qa: `chartkit-tooltip-entry-${chartId}`}),
         },
         series: getStyledSeries(loadedData),
     };
 
-    chartWidgetData.series?.data.forEach((s) => {
-        set(s, 'legend.symbol.padding', 8);
+    const result = merge({}, chartWidgetData, widgetData);
+    if (result.tooltip) {
+        result.tooltip.renderer = getTooltipRenderer({
+            widgetData,
+            qa: `chartkit-tooltip-entry-${chartId}`,
+        });
+    }
 
-        set(s, 'dataLabels.padding', 10);
+    result.series?.data.forEach((s) => {
+        if (!s.legend?.symbol?.padding) {
+            set(s, 'legend.symbol.padding', 8);
+        }
+
+        if (!s.dataLabels?.padding) {
+            set(s, 'dataLabels.padding', 10);
+        }
+
         set(s, 'dataLabels.style', {
             fontSize: '12px',
             fontWeight: 500,
@@ -83,7 +94,7 @@ export function getGravityChartsChartKitData(args: {
         }
     });
 
-    return merge({}, config, widgetData, chartWidgetData);
+    return result;
 }
 
 function getStyledSeries(loadedData: ChartKitAdapterProps['loadedData']) {
