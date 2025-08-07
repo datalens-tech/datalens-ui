@@ -64,12 +64,6 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
                         label: label?.formatting?.labelMode === 'percent' ? percentage : item.label,
                     };
                 }) ?? [],
-            legend: {
-                symbol: {
-                    width: 10,
-                    height: 10,
-                },
-            },
         };
 
         seriesConfig.custom = {
