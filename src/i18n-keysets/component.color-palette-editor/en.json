@@ -22,8 +22,8 @@
   "label_palette-title": "Color palettes",
   "toast_create-failed": "Failed to create palette",
   "toast_delete-failed": "Failed to delete palette",
-  "toast_update-default-palette-failed": "Couldn't change the default palette",
-  "toast_update-default-palette-success": "The default palette is applied to all available charts.",
+  "toast_update-default-palette-failed": "Error changing default palette",
+  "toast_update-default-palette-success": "The default palette was applied to all available charts.",
   "toast_update-failed": "Failed to update palette",
   "tooltip_disabled-due-rights": "Available only to the administrator"
 }
