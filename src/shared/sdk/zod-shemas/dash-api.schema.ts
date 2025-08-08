@@ -265,6 +265,8 @@ const dataSchema = z.object({
         .optional(),
     tabs: z.array(tabSchema),
     settings: settingsSchema.optional(),
+    supportDescription: z.string().optional(),
+    accessDescription: z.string().optional(),
 });
 
 // Main dashboard API validation schema
