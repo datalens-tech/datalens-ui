@@ -1,12 +1,19 @@
+import {ConnectorType} from 'shared/constants';
 import type {DatalensGlobalState} from 'ui';
 import {FieldKey} from 'ui/units/connections/constants';
+
+function getDbType(state: DatalensGlobalState) {
+    const {form} = state.connections;
+
+    return (form[FieldKey.DbType] || form[FieldKey.Type]) as string | undefined;
+}
 
 export const showSubmitButtonSelector = (state: DatalensGlobalState) => {
     const apiSchema = state.connections.schema?.apiSchema;
     const isNewConnection = !state.connections.entry?.entryId;
-    const {form, flattenConnectors} = state.connections;
-    const type = (form[FieldKey.DbType] || form[FieldKey.Type]) as string | undefined;
-    const connectorItem = flattenConnectors.find((item) => item.conn_type === type);
+    const {flattenConnectors} = state.connections;
+    const dbType = getDbType(state);
+    const connectorItem = flattenConnectors.find((item) => item.conn_type === dbType);
     const hasApiSchema = isNewConnection ? Boolean(apiSchema?.create) : Boolean(apiSchema?.edit);
     const hasUncreatableVisibilityMode =
         connectorItem && connectorItem.visibility_mode
@@ -17,16 +24,18 @@ export const showSubmitButtonSelector = (state: DatalensGlobalState) => {
 };
 
 export const showCheckButtonSelector = (state: DatalensGlobalState) => {
-    // Remove after BI backend has supported params checking in case of anonymous connection
+    // TODO: remove after BI-6458
     if (state.connections.innerForm.mdb_fill_mode === 'conn-manager') {
         return false;
     }
-    if (
-        state.connections.connectionData[FieldKey.DbType] === 'trino' &&
-        state.connections.innerForm.auth_type === 'mdb_integration'
-    ) {
+
+    const {innerForm, schema} = state.connections;
+    const dbType = getDbType(state);
+
+    // TODO: remove after BI-6458
+    if (dbType === ConnectorType.Trino && innerForm.auth_type === 'mdb_integration') {
         return false;
     }
 
-    return Boolean(state.connections.schema?.apiSchema?.check);
+    return Boolean(schema?.apiSchema?.check);
 };
