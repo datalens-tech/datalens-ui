@@ -16,32 +16,44 @@ type PaletteItemProps = {
     isSelected?: boolean;
     isDisabled?: boolean;
     isSelectable?: boolean;
+    children?: React.ReactNode;
 };
 
 const b = block('palette-item');
 
-export const PaletteItem: React.FC<React.PropsWithChildren<PaletteItemProps>> = ({
-    children,
-    qa,
-    className,
-    onClick,
-    color,
-    isSelected,
-    isDefault,
-    isDisabled,
-    isSelectable = true,
-}: React.PropsWithChildren<PaletteItemProps>) => {
-    const mods = {
-        default: Boolean(isDefault),
-        selected: Boolean(isSelected),
-        disabled: Boolean(isDisabled),
-        selectable: isSelectable,
-    };
-    const style = color ? {backgroundColor: color} : undefined;
-    return (
-        <div className={b(mods, className)} data-qa={qa} style={style} onClick={onClick}>
-            {isDisabled && <Icon data={lockIcon} className={b('lock-icon')} />}
-            {children}
-        </div>
-    );
-};
+export const PaletteItem = React.forwardRef<HTMLDivElement, PaletteItemProps>(
+    (
+        {
+            children,
+            qa,
+            className,
+            onClick,
+            color,
+            isSelected,
+            isDefault,
+            isDisabled,
+            isSelectable = true,
+        }: PaletteItemProps,
+        ref,
+    ) => {
+        const mods = {
+            default: Boolean(isDefault),
+            selected: Boolean(isSelected),
+            disabled: Boolean(isDisabled),
+            selectable: isSelectable,
+        };
+        const style = color ? {backgroundColor: color} : undefined;
+        return (
+            <div
+                ref={ref}
+                className={b(mods, className)}
+                data-qa={qa}
+                style={style}
+                onClick={onClick}
+            >
+                {isDisabled && <Icon data={lockIcon} className={b('lock-icon')} />}
+                {children}
+            </div>
+        );
+    },
+);
