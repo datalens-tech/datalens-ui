@@ -21,7 +21,10 @@ export const mapV4ConfigToV5 = (config: QlConfigV4): QlConfigV5 => {
                 metricFontColorPalette: COMMON_PALETTE_ID.CLASSIC_20,
             },
         };
-    } else if (config.visualization?.id === QlVisualizationId.FlatTable) {
+    } else if (
+        config.visualization?.id === QlVisualizationId.FlatTable &&
+        config.visualization.placeholders
+    ) {
         const migratedPlaceholders = config.visualization.placeholders.map((placeholder) => {
             const migratedItems = placeholder.items.map((item) => {
                 const migratedItem = {...item};
