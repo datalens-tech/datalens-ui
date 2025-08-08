@@ -25,6 +25,8 @@ export const ShareButton = ({
     popoverText,
     popoverTitle,
     iconSize = 18,
+    mobileShareIconSize = 18,
+    mobileShareIconColorPrimary = false,
     popoverClassName,
     dialogShareProps,
 }: {
@@ -32,6 +34,8 @@ export const ShareButton = ({
     popoverText?: string;
     popoverTitle?: string;
     iconSize?: number;
+    mobileShareIconSize?: number;
+    mobileShareIconColorPrimary?: boolean;
     popoverClassName?: string;
     dialogShareProps?: DialogSharePropsForShareButton;
 }) => {
@@ -95,9 +99,9 @@ export const ShareButton = ({
             <Button
                 view="flat"
                 onClick={handleShareButtonClick}
-                className={b('mobile-share-button')}
+                className={b('mobile-share-button', {secondary: !mobileShareIconColorPrimary})}
             >
-                <Icon size={18} data={ArrowShapeTurnUpRight} />
+                <Icon size={mobileShareIconSize} data={ArrowShapeTurnUpRight} />
             </Button>
         );
     };

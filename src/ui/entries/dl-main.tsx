@@ -29,6 +29,7 @@ import 'ui/styles/theme.scss';
 import 'ui/styles/rebranding-theme.scss';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {Feature} from 'shared';
+import {ScrollableContainerContextProvider} from 'ui/utils/scrollableContainerContext';
 
 const Content = () => {
     const userTheme = useSelector(selectTheme);
@@ -47,10 +48,12 @@ const Content = () => {
         >
             <MobileProvider mobile={DL.IS_MOBILE}>
                 <HotkeysProvider initiallyActiveScopes={[HOTKEYS_SCOPES.GLOBAL]}>
-                    <React.Fragment>
-                        <DialogManager />
-                        <DatalensPage />
-                    </React.Fragment>
+                    <ScrollableContainerContextProvider>
+                        <React.Fragment>
+                            <DialogManager />
+                            <DatalensPage />
+                        </React.Fragment>
+                    </ScrollableContainerContextProvider>
                 </HotkeysProvider>
             </MobileProvider>
         </ThemeProvider>
