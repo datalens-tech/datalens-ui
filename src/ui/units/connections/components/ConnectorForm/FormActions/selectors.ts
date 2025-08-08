@@ -24,16 +24,17 @@ export const showSubmitButtonSelector = (state: DatalensGlobalState) => {
 };
 
 export const showCheckButtonSelector = (state: DatalensGlobalState) => {
+    const {innerForm, schema} = state.connections;
+
     // TODO: remove after BI-6458
-    if (state.connections.innerForm.mdb_fill_mode === 'conn-manager') {
+    if (innerForm.mdb_fill_mode === 'conn-manager') {
         return false;
     }
 
-    const {innerForm, schema} = state.connections;
     const dbType = getDbType(state);
 
     // TODO: remove after BI-6458
-    if (dbType === ConnectorType.Trino && innerForm.auth_type === 'mdb_integration') {
+    if (dbType === ConnectorType.Trino && innerForm.mdb_fill_mode === 'cloud') {
         return false;
     }
 
