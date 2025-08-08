@@ -49,6 +49,7 @@ export const enum DialogFieldBackgroundSettingsQa {
     EnableButton = 'dialog-field-bg-switcher',
     FillTypeButtons = 'dialog-field-bg-fill-type',
     ButtonColorDialog = 'button-color-dialog',
+    NullModeRadioButtons = 'null-node-radio-buttons',
 }
 
 export const enum DialogFieldBarsSettingsQa {
