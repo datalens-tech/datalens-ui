@@ -102,6 +102,11 @@ export interface DashData {
     supportDescription?: string;
 }
 
+export interface DashMeta {
+    description?: string;
+    is_release?: boolean;
+}
+
 export type DashDragOptions = ItemDropProps;
 
 // config with strict requirements of settings for new dash
