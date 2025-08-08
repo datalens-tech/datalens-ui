@@ -22,7 +22,7 @@
   "label_palette-title": "Цветовые палитры",
   "toast_create-failed": "Не удалось создать палитру",
   "toast_delete-failed": "Не удалось удалить палитру",
-  "toast_update-default-palette-failed": "Не удалось сменить палитру по умолчанию",
+  "toast_update-default-palette-failed": "Ошибка при изменении палитры по умолчанию",
   "toast_update-default-palette-success": "Палитра по умолчанию применена ко всем доступным чартам",
   "toast_update-failed": "Не удалось обновить палитру",
   "tooltip_disabled-due-rights": "Доступно только администратору"
