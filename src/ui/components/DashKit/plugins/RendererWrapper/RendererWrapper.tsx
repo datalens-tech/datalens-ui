@@ -3,6 +3,7 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import type {DashTabItemType} from 'shared';
 
+import type {OnWidgetLoadDataHandler} from '../../context/WidgetContext';
 import {useWidgetContext} from '../../context/WidgetContext';
 
 import './RendererWrapper.scss';
@@ -16,12 +17,20 @@ type RendererProps = {
     classMod?: string;
     style?: React.CSSProperties;
     beforeContentNode?: React.ReactNode;
+    children?: React.ReactNode;
+};
+
+type ChildrenProps = {
+    onWidgetLoadData?: OnWidgetLoadDataHandler;
 };
 
 export const RendererWrapper: React.FC<RendererProps> = React.memo(
     ({children, type, nodeRef, classMod, beforeContentNode, ...props}) => {
         const innerNodeRef = React.useRef(null);
-        useWidgetContext(props.id, nodeRef || innerNodeRef);
+        const {onWidgetLoadData} = useWidgetContext({
+            id: props.id,
+            elementRef: nodeRef || innerNodeRef,
+        });
 
         return (
             <React.Fragment>
@@ -34,7 +43,13 @@ export const RendererWrapper: React.FC<RendererProps> = React.memo(
                     })}
                     {...props}
                 >
-                    {children}
+                    {React.Children.map(children, (child) => {
+                        return React.isValidElement(child)
+                            ? React.cloneElement(child, {
+                                  onWidgetLoadData,
+                              } as Partial<ChildrenProps>)
+                            : child;
+                    })}
                 </div>
             </React.Fragment>
         );

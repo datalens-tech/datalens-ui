@@ -72,7 +72,7 @@ const GroupControlWrapper = React.forwardRef<
     HTMLDivElement,
     {id: string; autoHeight: boolean; children: React.ReactNode; pulsate?: boolean}
 >(function GroupControlWrapper(props, nodeRef) {
-    useWidgetContext(props.id, nodeRef as React.RefObject<HTMLElement>);
+    useWidgetContext({id: props.id, elementRef: nodeRef as React.RefObject<HTMLElement>});
 
     return (
         <div
