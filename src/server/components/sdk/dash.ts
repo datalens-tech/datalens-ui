@@ -304,6 +304,8 @@ class Dash {
                 result.data = await Dash.migrate(result.data);
             }
 
+            Dash.migrateDescription(result);
+
             ctx.log('SDK_DASH_READ_SUCCESS', US.getLoggedEntry(result));
 
             return result;
@@ -316,6 +318,15 @@ class Dash {
 
     static async migrate(data: DashEntry['data']) {
         return DashSchemeConverter.update(data);
+    }
+
+    static migrateDescription(entry: DashEntry) {
+        if (entry.data.description) {
+            entry.annotation = {
+                description: entry.data.description,
+            };
+            delete entry.data.description;
+        }
     }
 
     static async update(

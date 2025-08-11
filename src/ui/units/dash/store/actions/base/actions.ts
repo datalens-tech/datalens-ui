@@ -368,7 +368,7 @@ export const load = ({
                     currentRevId: entry.revId,
                     widgetsCurrentTab,
                     openInfoOnLoad: searchParams.get(URL_QUERY.OPEN_DASH_INFO) === '1',
-                    meta: entry.meta,
+                    annotation: entry.annotation,
                 },
             });
 
@@ -428,7 +428,7 @@ export const save = (mode: EntryUpdateMode, isDraft = false) => {
     return async function (dispatch: DashDispatch, getState: () => DatalensGlobalState) {
         try {
             const isPublishing = mode === 'publish';
-            const {entry: prevEntry, data, lockToken, meta} = getState().dash;
+            const {entry: prevEntry, data, lockToken, annotation} = getState().dash;
 
             // TODO Refactor old api schema
             const updateData: {
@@ -436,16 +436,15 @@ export const save = (mode: EntryUpdateMode, isDraft = false) => {
                 data: Partial<DashEntry> & {
                     lockToken: string | null;
                 };
+                description?: string;
             } = {
                 id: prevEntry.entryId,
                 data: {
                     lockToken,
                     mode: mode,
-                    meta: {
-                        ...{description: meta?.description},
-                        ...(isPublishing && {is_release: true}),
-                    },
+                    meta: isPublishing ? {is_release: true} : {},
                 },
+                description: annotation?.description,
             };
             if (isDraft && isPublishing) {
                 updateData.data.revId = prevEntry.revId;
@@ -472,13 +471,13 @@ export const save = (mode: EntryUpdateMode, isDraft = false) => {
                 payload: {
                     mode: Mode.View,
                     data: entry.data,
-                    meta: entry.meta,
                     convertedEntryData: null,
                     initialTabsSettings: null,
                     entry: {
                         ...prevEntry,
                         ...entry,
                     },
+                    annotation: entry.annotation,
                 },
             });
         } catch (error) {
