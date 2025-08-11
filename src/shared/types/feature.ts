@@ -94,8 +94,12 @@ export enum Feature {
     EnableDLRebranding = 'EnableDLRebranding',
     /** Add "auto" palette to the list. If enabled, "auto" is parsed to the value of the tenant settings, otherwise to the default palette. */
     EnableTenantSettingPalettes = 'EnableTenantSettingPalettes',
-    /** Use GravityUI Charts as the default library for some wizard visualizations(pie, donut, treemap) */
+    /** TODO: delete */
     GravityAsDefaultWizardVisualizationLibrary = 'GravityAsDefaultWizardVisualizationLibrary',
+    /** Use GravityUI Charts as the default library for some wizard visualizations(pie, donut, treemap) */
+    GravityChartsForPieAndTreemap = 'GravityChartsForPieAndTreemap',
+    /** Use GravityUI Charts as the default library for some wizard visualizations(scatter and bar-y) */
+    GravityChartsForBarYAndScatter = 'GravityChartsForBarYAndScatter',
 }
 
 export type FeatureConfig = Record<string, boolean>;
