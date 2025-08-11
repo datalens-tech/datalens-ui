@@ -1,5 +1,6 @@
 import 'i18n';
-import {MobileProvider, ThemeProvider} from '@gravity-ui/uikit';
+import {MobileProvider, ThemeProvider, ToasterComponent, ToasterProvider} from '@gravity-ui/uikit';
+import {toaster} from '@gravity-ui/uikit/toaster-singleton';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Router} from 'react-router-dom';
@@ -45,14 +46,17 @@ const Content = () => {
             systemLightTheme={themeSettings?.systemLightTheme}
             systemDarkTheme={themeSettings?.systemDarkTheme}
         >
-            <MobileProvider mobile={DL.IS_MOBILE}>
-                <HotkeysProvider initiallyActiveScopes={[HOTKEYS_SCOPES.GLOBAL]}>
-                    <React.Fragment>
-                        <DialogManager />
-                        <DatalensPage />
-                    </React.Fragment>
-                </HotkeysProvider>
-            </MobileProvider>
+            <ToasterProvider toaster={toaster}>
+                <MobileProvider mobile={DL.IS_MOBILE}>
+                    <HotkeysProvider initiallyActiveScopes={[HOTKEYS_SCOPES.GLOBAL]}>
+                        <React.Fragment>
+                            <DialogManager />
+                            <DatalensPage />
+                        </React.Fragment>
+                    </HotkeysProvider>
+                </MobileProvider>
+                <ToasterComponent />
+            </ToasterProvider>
         </ThemeProvider>
     );
 };
