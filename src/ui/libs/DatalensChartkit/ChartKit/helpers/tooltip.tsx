@@ -103,12 +103,14 @@ function pieTooltipRenderer(
     data: Parameters<TooltipRenderer>[0],
     qa?: string,
 ) {
-    const point = data?.hovered[0]?.data as PieSeriesData | undefined;
+    const hovered = data?.hovered[0];
+    const point = hovered?.data as PieSeriesData | undefined;
 
     if (!point) {
         return null;
     }
 
+    const color = get(hovered?.series, 'color');
     const value = get(point, 'formattedValue', point.value);
     let percentage = get(point, 'percentage');
     percentage = percentage ? formatNumber(percentage, {precision: 1, format: 'percent'}) : null;
@@ -117,7 +119,7 @@ function pieTooltipRenderer(
         <div className={b({mobile: DL.IS_MOBILE})} data-qa={qa}>
             <div className={b('row')}>
                 <div className={b('block')}>
-                    <span className={b('color')} style={{backgroundColor: point.color}} />
+                    <span className={b('color')} style={{backgroundColor: color}} />
                 </div>
                 <div className={b('block')} style={DL.IS_MOBILE ? {marginRight: 'auto'} : {}}>
                     {point.name}

@@ -1,8 +1,8 @@
-import type {PieSeries, PieSeriesData} from '@gravity-ui/chartkit/gravity-charts';
+import type {ChartData, PieSeries, PieSeriesData} from '@gravity-ui/chartkit/gravity-charts';
 import merge from 'lodash/merge';
 
 import type {SeriesExportSettings} from '../../../../../../../shared';
-import {formatNumber, getFormatOptions} from '../../../../../../../shared';
+import {formatNumber, getFormatOptions, isMeasureValue} from '../../../../../../../shared';
 import {getFakeTitleOrTitle} from '../../../../../../../shared/modules/fields';
 import {isHtmlField, isMarkdownField, isMarkupField} from '../../../../../../../shared/types/index';
 import {getBaseChartConfig} from '../../gravity-charts/utils';
@@ -35,6 +35,7 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
 
     const shouldUseHtmlForLabels =
         isMarkupField(label) || isHtmlField(label) || isMarkdownField(label);
+    const labelField = isMeasureValue(label) ? measure : label;
 
     let data: ExtendedPieSeries[] = [];
 
@@ -46,7 +47,7 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
             dataLabels: {
                 enabled: isLabelsEnabled,
                 html: shouldUseHtmlForLabels,
-                format: getFieldFormatOptions({field: label}),
+                format: isLabelsEnabled ? getFieldFormatOptions({field: labelField}) : undefined,
             },
             data:
                 graph.data?.map((item) => {
@@ -63,13 +64,6 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
                         label: label?.formatting?.labelMode === 'percent' ? percentage : item.label,
                     };
                 }) ?? [],
-            legend: {
-                symbol: {
-                    width: 10,
-                    height: 10,
-                    padding: 4,
-                },
-            },
         };
 
         seriesConfig.custom = {
@@ -100,7 +94,7 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
         data = [];
     }
 
-    let legend;
+    let legend: ChartData['legend'];
     if (graphs.length && isColoringByMeasure(args)) {
         legend = {
             enabled: true,
@@ -113,15 +107,9 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
         };
     }
 
-    const isLegendEnabled =
-        shared?.extraSettings?.legendMode !== 'hide' &&
-        (legend?.enabled || data[0]?.data.length > 1);
-
     return merge(getBaseChartConfig(shared), {
         chart: {
-            margin: isLegendEnabled
-                ? {top: 20, left: 20, right: 20, bottom: 20}
-                : {top: 30, left: 30, right: 30, bottom: 35},
+            margin: {top: 20, left: 20, right: 20, bottom: 20},
         },
         series: {
             data,

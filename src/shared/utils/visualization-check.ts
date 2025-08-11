@@ -50,16 +50,23 @@ export function isGravityChartsVisualization({
     id: string;
     features?: FeatureConfig;
 }) {
-    const shouldUseGravityChartsByDefault = Boolean(
-        features?.[Feature.GravityAsDefaultWizardVisualizationLibrary],
-    );
-    const availableVisualizations: string[] = [
+    const isPieOrTreemap = [
         WizardVisualizationId.Pie,
         WizardVisualizationId.Donut,
         WizardVisualizationId.Treemap,
-    ];
-    return (
-        (shouldUseGravityChartsByDefault && availableVisualizations.includes(id)) ||
-        isD3Visualization(id)
-    );
+    ].includes(id as WizardVisualizationId);
+    if (isPieOrTreemap && features?.[Feature.GravityChartsForPieAndTreemap]) {
+        return true;
+    }
+
+    const isScatterOrBarY = [
+        WizardVisualizationId.Bar,
+        WizardVisualizationId.Bar100p,
+        WizardVisualizationId.Scatter,
+    ].includes(id as WizardVisualizationId);
+    if (isScatterOrBarY && features?.[Feature.GravityChartsForBarYAndScatter]) {
+        return true;
+    }
+
+    return isD3Visualization(id);
 }

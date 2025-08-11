@@ -1,0 +1,11 @@
+@import '../../../../styles/mixins.scss';
+
+.default-color-palette-select {
+    &__select-popup {
+        @include dl-select-popup;
+    }
+
+    &__select {
+        min-width: 200px;
+    }
+}

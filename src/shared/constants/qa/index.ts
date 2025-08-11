@@ -11,6 +11,7 @@ export * from './field-editor';
 export * from './gallery';
 export * from './ql';
 export * from './settings';
+export * from './sign-in';
 export * from './uikit';
 export * from './wizard';
 export * from './workbooks';

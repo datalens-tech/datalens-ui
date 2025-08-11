@@ -48,10 +48,8 @@ export const CollectionsStructureBreadcrumbs: React.FC<Props> = ({items, onChang
             <Breadcrumbs>
                 {preparedItems.map((item, index) => {
                     return (
-                        <Breadcrumbs.Item key={index}>
-                            <div className={b('item')} onClick={item.action}>
-                                {item.text}
-                            </div>
+                        <Breadcrumbs.Item key={index} className={b('item')}>
+                            <div onClick={item.action}>{item.text}</div>
                         </Breadcrumbs.Item>
                     );
                 })}
