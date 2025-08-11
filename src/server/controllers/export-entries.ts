@@ -238,7 +238,6 @@ export async function exportEntries(req: Request, res: Response) {
         const chartData = await getChartData(host, req.headers['x-rpc-authorization'] as string, links, r.body['params']);
 
         const exportPath = path.join(__dirname, '../', '../', '../', 'export');
-        const headersPath = path.join(__dirname, '../', '../', '../', 'table-report-headers');
 
         const pythonScript = path.join(exportPath, 'dash2sheets.py');
         const metaPath = path.join(exportPath, 'meta.csv');
@@ -259,9 +258,8 @@ export async function exportEntries(req: Request, res: Response) {
                 
                 const chartProps: Record<string, any> = {};
                 const chart = chartData[filteredLinks[i]];
-                const chartPropNames = Object.keys(chart.defaultParams);
 
-                chartPropNames.forEach(name=>{
+                ["__template_name", "__sheet_name", "__mapping"].forEach(name=>{
                     if (chart.defaultParams[name]?.length > 0) {
                         chartProps[String(name).replace("__", "")] = String(chart.defaultParams[name][0])
                     }
