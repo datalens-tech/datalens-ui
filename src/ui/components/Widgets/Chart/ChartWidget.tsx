@@ -85,6 +85,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         usageType,
         workbookId,
         enableAssistant,
+        onWidgetLoadData,
     } = props;
 
     const extDashkitContext = React.useContext(ExtendedDashKitContext);
@@ -398,6 +399,12 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         enableActionParams,
         clearedOuterParams,
     });
+
+    React.useEffect(() => {
+        if (loadedData && onWidgetLoadData) {
+            onWidgetLoadData(widgetId, loadedData, widgetDataRef);
+        }
+    }, [loadedData, widgetId, onWidgetLoadData]);
 
     const handleFiltersClear = React.useCallback(() => {
         const newActionParams: StringParams = {};
