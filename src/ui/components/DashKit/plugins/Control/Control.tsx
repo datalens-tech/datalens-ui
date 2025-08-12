@@ -95,7 +95,7 @@ const ControlWrapper = React.forwardRef<
     HTMLDivElement,
     {id: string; children: React.ReactNode; className: string}
 >(function ControlWrapper(props, nodeRef) {
-    useWidgetContext(props.id, nodeRef as React.RefObject<HTMLElement>);
+    useWidgetContext({id: props.id, elementRef: nodeRef as React.RefObject<HTMLElement>});
 
     return (
         <div ref={nodeRef} className={props.className}>

@@ -16,6 +16,7 @@ import {usePrevious} from 'ui/hooks';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
 import {YfmWrapper} from '../../../YfmWrapper/YfmWrapper';
+import {useWidgetContext} from '../../context/WidgetContext';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
 import './Text.scss';
@@ -86,6 +87,11 @@ const textPlugin = {
         const rootNodeRef = React.useRef<HTMLDivElement>(null);
         const [metaScripts, setMetaScripts] = React.useState<string[] | undefined>();
         const [isPending, setIsPending] = React.useState<boolean>(false);
+
+        useWidgetContext({
+            id: props.id,
+            elementRef: rootNodeRef,
+        });
 
         const previousPendingState = usePrevious(isPending);
         const isPendingChanged = isPending !== previousPendingState;
