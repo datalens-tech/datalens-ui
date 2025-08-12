@@ -34,9 +34,9 @@ export const Tooltip = React.forwardRef<HTMLDivElement, TooltipProps>((props, re
             anchorElement={anchorRef.current}
             offset={{mainAxis: 10, crossAxis: 0}}
             placement={['right-end', 'left', 'top', 'bottom']}
+            floatingRef={ref}
         >
             <div
-                ref={ref}
                 className={b('content')}
                 dangerouslySetInnerHTML={{
                     __html: content,
