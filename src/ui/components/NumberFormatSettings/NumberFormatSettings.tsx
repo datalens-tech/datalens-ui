@@ -2,7 +2,6 @@ import React from 'react';
 
 import {FormRow} from '@gravity-ui/components';
 import {SegmentedRadioGroup as RadioButton, Select, TextInput} from '@gravity-ui/uikit';
-import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import type {CommonNumberFormattingOptions} from 'shared';
 import {
@@ -21,9 +20,7 @@ type Props = {
     rowClassName?: string;
 };
 
-const i18n = I18n.keyset('wizard.number-field-formatting.view');
-
-const b = block('wizard-number-field-formatting');
+const i18n = I18n.keyset('component.number-field-formatting.view');
 
 function setDefaultFormatting(data: Props) {
     const formatting: Required<CommonNumberFormattingOptions> = Object.assign(
