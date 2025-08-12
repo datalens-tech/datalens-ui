@@ -18,6 +18,7 @@ import {MarkdownHelpPopover} from 'ui/components/MarkdownHelpPopover/MarkdownHel
 import {DL} from 'ui/constants';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
+import {useWidgetContext} from '../../context/WidgetContext';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
 import {AnchorLink} from './AnchorLink/AnchorLink';
@@ -65,6 +66,11 @@ const titlePlugin: PluginTitle = {
         const rootNodeRef = React.useRef<HTMLDivElement>(null);
         const contentRef = React.useRef<HTMLDivElement>(null);
         const extraRef = React.useRef<HTMLDivElement>(null);
+
+        useWidgetContext({
+            id: props.id,
+            elementRef: rootNodeRef,
+        });
 
         const [isInlineExtraElements, setIsInlineExtraElements] = React.useState<boolean | null>(
             false,
