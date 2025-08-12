@@ -1,4 +1,7 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
+import type {AppContext} from '@gravity-ui/nodekit';
+import {REQUEST_ID_PARAM_NAME, USER_ID_PARAM_NAME} from '@gravity-ui/nodekit';
+import {isObject} from 'lodash';
 import pick from 'lodash/pick';
 
 import type {DashEntry, EntryReadParams} from '../../../../shared';
@@ -60,6 +63,7 @@ const getRoutes = (options?: ConfiguredDashApiPluginOptions): Plugin['routes'] =
                         details: Utils.getErrorDetails(error),
                         code: errorCode,
                     });
+                    sendStats(req.ctx, 'dashAPIcreate', errorStatus);
                 }
             },
             ...(routeParams || {}),
@@ -78,6 +82,7 @@ const getRoutes = (options?: ConfiguredDashApiPluginOptions): Plugin['routes'] =
 
                     if (!id || id === 'null') {
                         res.status(404).send({message: 'Dash not found'});
+                        sendStats(req.ctx, 'dashAPIget', 404);
                         return;
                     }
                     const result = await Dash.read(
@@ -89,13 +94,20 @@ const getRoutes = (options?: ConfiguredDashApiPluginOptions): Plugin['routes'] =
 
                     if (result.scope !== EntryScope.Dash) {
                         res.status(404).send({message: 'No entry found'});
+                        sendStats(req.ctx, 'dashAPIget', 404);
                         return;
                     }
 
                     res.status(200).send(purgeResult(result));
                 } catch (error) {
-                    const errorStatus = Utils.getErrorStatus(error) === 403 ? 403 : 500;
+                    const originalStatus = Utils.getErrorStatus(error);
+
+                    const errorStatus =
+                        originalStatus && [400, 403, 404].includes(originalStatus)
+                            ? originalStatus
+                            : 500;
                     res.status(errorStatus).send({message: Utils.getErrorMessage(error)});
+                    sendStats(req.ctx, 'dashAPIget', errorStatus);
                 }
             },
             ...(routeParams || {}),
@@ -126,6 +138,7 @@ const getRoutes = (options?: ConfiguredDashApiPluginOptions): Plugin['routes'] =
                         errorStatus = 451;
                     }
                     res.status(errorStatus).send({message: Utils.getErrorMessage(error)});
+                    sendStats(req.ctx, 'dashAPIupdate', errorStatus);
                 }
             },
             ...(routeParams || {}),
@@ -152,6 +165,7 @@ const getRoutes = (options?: ConfiguredDashApiPluginOptions): Plugin['routes'] =
                         errorStatus = 451;
                     }
                     res.status(errorStatus).send({message: Utils.getErrorMessage(error)});
+                    sendStats(req.ctx, 'dashAPIdelete', errorStatus);
                 }
             },
             ...(routeParams || {}),
@@ -177,4 +191,19 @@ export function configuredDashApiPlugin(options?: ConfiguredDashApiPluginOptions
     return {
         routes: getRoutes(options),
     };
+}
+
+function sendStats(ctx: AppContext, handlerName: string, status: number) {
+    let userId = ctx.get(USER_ID_PARAM_NAME) || '0';
+    if (isObject(userId)) {
+        userId = 'value' in userId ? (userId as {value: string}).value : '0';
+    }
+    ctx.stats('dashApiErrors', {
+        handlerName,
+        timestamp: Date.now(),
+        status,
+        requestId: ctx.get(REQUEST_ID_PARAM_NAME) || '',
+        userId,
+        traceId: ctx.getTraceId() || '',
+    });
 }

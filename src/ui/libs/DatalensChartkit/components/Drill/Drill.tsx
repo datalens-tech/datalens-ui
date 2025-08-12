@@ -1,8 +1,8 @@
 import React from 'react';
 
-import {Breadcrumbs, FirstDisplayedItemsCount, LastDisplayedItemsCount} from '@gravity-ui/uikit';
+import {Breadcrumbs} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {IS_NULL_FILTER_TEMPLATE, PRINT_HIDDEN_ATTR} from 'shared';
+import {ChartKitQa, IS_NULL_FILTER_TEMPLATE, PRINT_HIDDEN_ATTR} from 'shared';
 
 import type {OnChangeData} from '../../types';
 import ChartKitIcon from '../ChartKitIcon/ChartKitIcon';
@@ -69,11 +69,24 @@ class Drill extends React.Component<Props> {
                 <div className={b('separator')} {...{[PRINT_HIDDEN_ATTR]: true}} />
                 <Breadcrumbs
                     className={b('breadcrumbs')}
-                    firstDisplayedItemsCount={FirstDisplayedItemsCount.Zero}
-                    lastDisplayedItemsCount={LastDisplayedItemsCount.One}
-                    items={this.getItems()}
                     popupPlacement={['bottom', 'top', 'bottom-start']}
-                />
+                    qa={ChartKitQa.DrillBreadcrumbs}
+                >
+                    {this.getItems().map((item, index, items) => {
+                        const lastItem = index === items.length - 1;
+
+                        return (
+                            <Breadcrumbs.Item
+                                key={index}
+                                onClick={item.action}
+                                disabled={lastItem}
+                                data-qa={ChartKitQa.DrillBreadcrumbsItem}
+                            >
+                                {item.text}
+                            </Breadcrumbs.Item>
+                        );
+                    })}
+                </Breadcrumbs>
             </div>
         );
     }

@@ -18,7 +18,7 @@ import prepareGeopointData from '../../../preparers/geopoint';
 import prepareGeopolygonData from '../../../preparers/geopolygon';
 import prepareHeatmapData from '../../../preparers/heatmap';
 import {prepareHighchartsLine} from '../../../preparers/line';
-import {prepareD3Line} from '../../../preparers/line/d3';
+import {prepareD3Line} from '../../../preparers/line/gravity-charts';
 import prepareLineTime from '../../../preparers/line-time';
 import prepareMetricData from '../../../preparers/metric';
 import preparePivotTableData from '../../../preparers/old-pivot-table/old-pivot-table';
@@ -27,6 +27,7 @@ import preparePolylineData from '../../../preparers/polyline';
 import {prepareD3Scatter, prepareHighchartsScatter} from '../../../preparers/scatter';
 import {prepareD3Treemap, prepareHighchartsTreemap} from '../../../preparers/treemap';
 import type {PrepareFunction, PrepareFunctionResultData} from '../../../preparers/types';
+import type {ChartPlugin} from '../../../types';
 import {getServerDateFormat} from '../../../utils/misc-helpers';
 import {OversizeErrorType} from '../../constants/errors';
 import {getChartColorsConfig} from '../colors';
@@ -49,6 +50,7 @@ type PrepareSingleResultArgs = {
     loadedColorPalettes?: Record<string, ColorPalette>;
     disableDefaultSorting?: boolean;
     features: FeatureConfig;
+    plugin?: ChartPlugin;
 };
 
 // eslint-disable-next-line complexity
@@ -64,6 +66,7 @@ export default ({
     disableDefaultSorting = false,
     palettes,
     features,
+    plugin,
 }: PrepareSingleResultArgs) => {
     const {
         sharedData: {drillDownData},
@@ -175,7 +178,11 @@ export default ({
 
         case WizardVisualizationId.Pie:
         case WizardVisualizationId.Donut:
-            prepare = prepareHighchartsPie;
+            if (plugin === 'gravity-charts') {
+                prepare = prepareD3Pie;
+            } else {
+                prepare = prepareHighchartsPie;
+            }
             rowsLimit = 1000;
             break;
 
@@ -191,7 +198,11 @@ export default ({
             break;
 
         case WizardVisualizationId.Treemap:
-            prepare = prepareHighchartsTreemap;
+            if (plugin === 'gravity-charts') {
+                prepare = prepareD3Treemap;
+            } else {
+                prepare = prepareHighchartsTreemap;
+            }
             rowsLimit = 800;
             break;
 

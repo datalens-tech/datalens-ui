@@ -11,6 +11,7 @@
 
     &__content {
         width: $contentDesktopMaxWidth;
+        max-width: 100%;
         max-height: 80vh;
         min-height: 400px;
         display: flex;

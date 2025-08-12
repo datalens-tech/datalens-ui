@@ -78,7 +78,7 @@ export const getChartkitType = (data?: LoadedWidgetData): ChartKitType | undefin
         }
 
         case 'd3': {
-            chartkitType = 'd3';
+            chartkitType = 'gravity-charts';
 
             break;
         }
@@ -203,7 +203,7 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
 
             return data;
         }
-        case 'd3': {
+        case 'gravity-charts': {
             const data = cloneDeep(loadedData) as GraphWidget;
             return getGravityChartsChartKitData({
                 loadedData: data,
@@ -216,14 +216,23 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
     }
 };
 
-export const getAdditionalProps = <T extends ChartKitType>(type: T) => {
+export const getAdditionalProps = <T extends ChartKitType>({
+    type,
+    splitTooltip,
+}: {
+    type: T;
+    splitTooltip?: boolean;
+}) => {
     switch (type) {
         case 'highcharts': {
-            const props: Partial<ChartKitProps<'highcharts'>> = {
+            return {
                 hoistConfigError: false,
-            };
-
-            return props;
+            } as Partial<ChartKitProps<ChartKitType>>;
+        }
+        case 'gravity-charts': {
+            return {
+                tooltip: {splitted: splitTooltip},
+            } as Partial<ChartKitProps<ChartKitType>>;
         }
         default: {
             return undefined;

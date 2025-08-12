@@ -95,10 +95,13 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
             <Popup
                 hasArrow={hasTail}
                 placement={popupPlacement}
-                onClose={this.onClose}
+                onOpenChange={(open, event) => {
+                    if (!open) {
+                        this.onClose(event as MouseEvent | KeyboardEvent);
+                    }
+                }}
                 open={visible}
-                anchorRef={anchor}
-                contentClassName={b('popup')}
+                anchorElement={anchor.current}
                 qa={WorkbookNavigationMinimalQa.Popup}
             >
                 {visible && (
@@ -215,10 +218,10 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
                         const inactiveByIds = inactiveEntryIds
                             ? inactiveIds.has(entry.entryId)
                             : false;
-                        const qa = getEntryNameByKey({key: entry.key});
+                        const name = getEntryNameByKey({key: entry.key});
                         return {
-                            qa,
-                            entry,
+                            qa: name,
+                            entry: {...entry, name},
                             inactive:
                                 inactiveByIncludeType || inactiveByExcludeType || inactiveByIds,
                         };

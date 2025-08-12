@@ -7,14 +7,15 @@ import type {
     ScatterSeries,
     ScatterSeriesData,
     TreemapSeriesData,
-} from '@gravity-ui/chartkit/d3';
+} from '@gravity-ui/chartkit/gravity-charts';
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
 import {formatNumber} from 'shared/modules/format-units/index';
+import {DL} from 'ui/constants';
 
 import type {PointCustomData, ScatterSeriesCustomData} from '../../../../../shared/types/chartkit';
 
-const b = block('chartkit-tooltip');
+const b = block('dl-chart-tooltip-content');
 
 type CustomScatterSeries = ScatterSeries<PointCustomData> & {custom: ScatterSeriesCustomData};
 type TooltipRenderer = NonNullable<ChartTooltip['renderer']>;
@@ -22,6 +23,7 @@ type TooltipRenderer = NonNullable<ChartTooltip['renderer']>;
 export const scatterTooltipRenderer = (
     widgetData: ChartData,
     data: Parameters<TooltipRenderer>[0],
+    qa?: string,
 ) => {
     const seriesName = data.hovered[0].series.name;
     const series = widgetData.series.data.find(
@@ -38,7 +40,7 @@ export const scatterTooltipRenderer = (
     const shouldShowShape = shapeTitle && shapeTitle !== colorTitle;
 
     return (
-        <React.Fragment>
+        <div className={b({mobile: DL.IS_MOBILE})} data-qa={qa}>
             {pointTitle && (
                 <div>
                     {pointTitle}: <b>{point.custom?.name}</b>
@@ -65,11 +67,15 @@ export const scatterTooltipRenderer = (
                     {colorTitle}: {point.custom?.cLabel}
                 </div>
             )}
-        </React.Fragment>
+        </div>
     );
 };
 
-function treemapTooltipRenderer(widgetData: ChartData, data: Parameters<TooltipRenderer>[0]) {
+function treemapTooltipRenderer(
+    widgetData: ChartData,
+    data: Parameters<TooltipRenderer>[0],
+    qa?: string,
+) {
     const series = widgetData.series.data[0];
     const point = data?.hovered[0]?.data as TreemapSeriesData | undefined;
 
@@ -81,7 +87,7 @@ function treemapTooltipRenderer(widgetData: ChartData, data: Parameters<TooltipR
     const label = get(point, 'label', '');
 
     return (
-        <div className={b('content')}>
+        <div className={b({mobile: DL.IS_MOBILE})} data-qa={qa}>
             {names.map((name, index) => (
                 <div key={`${name}_${index}`} dangerouslySetInnerHTML={{__html: name}} />
             ))}
@@ -92,25 +98,35 @@ function treemapTooltipRenderer(widgetData: ChartData, data: Parameters<TooltipR
     );
 }
 
-function pieTooltipRenderer(_widgetData: ChartData, data: Parameters<TooltipRenderer>[0]) {
-    const point = data?.hovered[0]?.data as PieSeriesData | undefined;
+function pieTooltipRenderer(
+    _widgetData: ChartData,
+    data: Parameters<TooltipRenderer>[0],
+    qa?: string,
+) {
+    const hovered = data?.hovered[0];
+    const point = hovered?.data as PieSeriesData | undefined;
 
     if (!point) {
         return null;
     }
 
+    const color = get(hovered?.series, 'color');
     const value = get(point, 'formattedValue', point.value);
     let percentage = get(point, 'percentage');
     percentage = percentage ? formatNumber(percentage, {precision: 1, format: 'percent'}) : null;
 
     return (
-        <div className={b('row')}>
-            <div className={b('block')}>
-                <span className={b('color')} style={{backgroundColor: point.color}} />
+        <div className={b({mobile: DL.IS_MOBILE})} data-qa={qa}>
+            <div className={b('row')}>
+                <div className={b('block')}>
+                    <span className={b('color')} style={{backgroundColor: color}} />
+                </div>
+                <div className={b('block')} style={DL.IS_MOBILE ? {marginRight: 'auto'} : {}}>
+                    {point.name}
+                </div>
+                <div className={b('block')}>{percentage}</div>
+                <div className={b('block')}>{value}</div>
             </div>
-            <div className={b('block')}>{point.name}</div>
-            <div className={b('block')}>{percentage}</div>
-            <div className={b('block')}>{value}</div>
         </div>
     );
 }
@@ -123,11 +139,20 @@ function customTooltipRenderer(widgetData: ChartData, data: Parameters<TooltipRe
 
     const content = render(...data);
     return (
-        <div className={b('content')} dangerouslySetInnerHTML={{__html: String(content ?? '')}} />
+        <div
+            className={b({mobile: DL.IS_MOBILE})}
+            dangerouslySetInnerHTML={{__html: String(content ?? '')}}
+        />
     );
 }
 
-export const getTooltipRenderer = (widgetData: ChartData): TooltipRenderer | undefined => {
+export const getTooltipRenderer = ({
+    widgetData,
+    qa,
+}: {
+    widgetData: ChartData;
+    qa?: string;
+}): TooltipRenderer | undefined => {
     if (widgetData?.tooltip?.renderer) {
         return (...args) => customTooltipRenderer(widgetData, args);
     }
@@ -138,15 +163,15 @@ export const getTooltipRenderer = (widgetData: ChartData): TooltipRenderer | und
         switch (seriesTypes[0]) {
             case 'scatter': {
                 return (data: Parameters<TooltipRenderer>[0]) =>
-                    scatterTooltipRenderer(widgetData, data);
+                    scatterTooltipRenderer(widgetData, data, qa);
             }
             case 'treemap': {
                 return (data: Parameters<TooltipRenderer>[0]) =>
-                    treemapTooltipRenderer(widgetData, data);
+                    treemapTooltipRenderer(widgetData, data, qa);
             }
             case 'pie': {
                 return (data: Parameters<TooltipRenderer>[0]) =>
-                    pieTooltipRenderer(widgetData, data);
+                    pieTooltipRenderer(widgetData, data, qa);
             }
             default: {
                 return undefined;

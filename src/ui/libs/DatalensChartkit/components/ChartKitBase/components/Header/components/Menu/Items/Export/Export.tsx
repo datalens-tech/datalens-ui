@@ -10,11 +10,7 @@ import type {MenuItemConfig, MenuItemModalProps} from 'ui/libs/DatalensChartkit/
 import {registry} from 'ui/registry';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
-import {
-    ICONS_MENU_DEFAULT_CLASSNAME,
-    ICONS_MENU_DEFAULT_SIZE,
-    type MenuItemArgs,
-} from '../../../../../../../../menu/MenuItems';
+import {ICONS_MENU_DEFAULT_SIZE, type MenuItemArgs} from '../../../../../../../../menu/MenuItems';
 import type {ChartKitDataProvider} from '../../../../../../types';
 
 import {csvExportAction} from './CsvExport/CsvExport';
@@ -163,13 +159,7 @@ export const getExportItem = ({
     },
     icon: ({loadedData, error}: MenuItemArgs) => {
         const iconData = isExportVisible({loadedData, error}) && !error ? ArrowDownToLine : Picture;
-        return (
-            <Icon
-                size={ICONS_MENU_DEFAULT_SIZE}
-                data={iconData}
-                className={ICONS_MENU_DEFAULT_CLASSNAME}
-            />
-        );
+        return <Icon size={ICONS_MENU_DEFAULT_SIZE} data={iconData} />;
     },
     items: getSubItems({
         showWiki,

@@ -49,7 +49,11 @@ import {getChartFiltersWithDisabledProp} from './filters';
 
 const i18n = I18n.keyset('wizard');
 
-type DefaultExtraSettings = Partial<CommonSharedExtraSettings>;
+type DefaultExtraSettings =
+    | typeof DEFAULT_FLAT_TABLE_EXTRA_SETTINGS
+    | typeof DEFAULT_DONUT_EXTRA_SETTINGS
+    | typeof DEFAULT_BAR_EXTRA_SETTINGS
+    | Partial<CommonSharedExtraSettings>;
 
 const getVisualizationConfig = (type: VisualizationLayerType) => {
     let visualization: VisualizationLayerShared['visualization'];
@@ -418,7 +422,7 @@ export function getDefaultVisualisationExtraSettings(
 export const getDefaultExtraSettings = (
     visualisationId: string,
     prevExtraSettings?: CommonSharedExtraSettings,
-): DefaultExtraSettings => {
+): DefaultExtraSettings | {} => {
     let defaultExtraSettings = getDefaultVisualisationExtraSettings(visualisationId) || {};
 
     if (prevExtraSettings) {

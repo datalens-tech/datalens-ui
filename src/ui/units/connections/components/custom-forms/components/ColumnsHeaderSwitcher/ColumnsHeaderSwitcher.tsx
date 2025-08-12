@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {RadioButton} from '@gravity-ui/uikit';
+import {SegmentedRadioGroup as RadioButton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 

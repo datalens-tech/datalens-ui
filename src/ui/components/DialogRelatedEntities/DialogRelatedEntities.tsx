@@ -1,7 +1,13 @@
 import React from 'react';
 
 import type {DropdownMenuItem} from '@gravity-ui/uikit';
-import {Dialog, DropdownMenu, Icon, Loader, RadioButton} from '@gravity-ui/uikit';
+import {
+    Dialog,
+    DropdownMenu,
+    Icon,
+    Loader,
+    SegmentedRadioGroup as RadioButton,
+} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import isEmpty from 'lodash/isEmpty';
@@ -196,7 +202,7 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
     const showRelationsCount = Boolean(relationsCount && !isLoading);
 
     return (
-        <Dialog onClose={handleClose} open={visible} className={b()}>
+        <Dialog onClose={handleClose} open={visible} className={b()} disableHeightTransition={true}>
             <Dialog.Header caption={i18n('label_title')} />
             <Dialog.Body className={b('body')}>
                 <EntitiesList

@@ -1,4 +1,4 @@
-import type {ColorPalette} from 'shared';
+import {type ColorPalette, DEFAULT_PALETTE} from 'shared';
 import {getAvailableClientPalettesMap} from 'ui/constants';
 
 export function getPaletteColors(paletteName: string, clientPalettes?: ColorPalette[]) {
@@ -9,7 +9,8 @@ export function getPaletteColors(paletteName: string, clientPalettes?: ColorPale
 
     const availablePalettesMap = getAvailableClientPalettesMap();
 
-    const currentPalette = availablePalettesMap[paletteName];
+    const currentPalette =
+        availablePalettesMap[paletteName] || availablePalettesMap[DEFAULT_PALETTE.id];
 
     return currentPalette?.scheme || [];
 }

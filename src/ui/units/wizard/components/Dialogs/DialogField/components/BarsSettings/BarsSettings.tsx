@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {RadioButtonOption} from '@gravity-ui/uikit';
+import type {SegmentedRadioGroupOptionProps} from '@gravity-ui/uikit';
 import {Switch} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
@@ -8,7 +8,6 @@ import {useSelector} from 'react-redux';
 import type {Field, TableBarsSettings} from 'shared';
 import {BarsAlignValues, BarsColorType, DialogFieldBarsSettingsQa} from 'shared';
 import {selectColorPalettes} from 'ui/store/selectors/colorPaletteEditor';
-import {getPaletteColors} from 'ui/utils';
 
 import {DialogRadioButtons} from '../../../components/DialogRadioButtons/DialogRadioButtons';
 import {DialogFieldRow} from '../DialogFieldRow/DialogFieldRow';
@@ -26,7 +25,7 @@ export type BarsSettingsProps = {
 
 const b = block('bars-settings-section');
 
-const COLOR_TYPE_RADIO_ITEMS: RadioButtonOption[] = [
+const COLOR_TYPE_RADIO_ITEMS: SegmentedRadioGroupOptionProps[] = [
     {
         content: i18n('wizard', 'label_one-color'),
         value: BarsColorType.OneColor,
@@ -40,7 +39,7 @@ const COLOR_TYPE_RADIO_ITEMS: RadioButtonOption[] = [
         value: BarsColorType.Gradient,
     },
 ];
-const ALIGN_RADIO_ITEMS: RadioButtonOption[] = [
+const ALIGN_RADIO_ITEMS: SegmentedRadioGroupOptionProps[] = [
     {
         content: i18n('wizard', 'label_default'),
         value: BarsAlignValues.Default,
@@ -55,7 +54,7 @@ const ALIGN_RADIO_ITEMS: RadioButtonOption[] = [
     },
 ];
 
-const SCALE_RADIO_ITEMS: RadioButtonOption[] = [
+const SCALE_RADIO_ITEMS: SegmentedRadioGroupOptionProps[] = [
     {
         content: i18n('wizard', 'label_auto'),
         value: 'auto',
@@ -84,21 +83,20 @@ export const BarsSettings: React.FC<BarsSettingsProps> = (props: BarsSettingsPro
     const handlePaletteUpdate = React.useCallback(
         (palette: string) => {
             let updateParams: Partial<TableBarsSettings['colorSettings']['settings']> = {palette};
-            const paletteColors = getPaletteColors(palette, colorPalettes);
 
             switch (state.colorSettings.colorType) {
                 case BarsColorType.OneColor: {
                     updateParams = {
                         ...updateParams,
-                        color: paletteColors[0],
+                        colorIndex: 0,
                     };
                     break;
                 }
                 case BarsColorType.TwoColor: {
                     updateParams = {
                         ...updateParams,
-                        positiveColor: paletteColors[0],
-                        negativeColor: paletteColors[1],
+                        positiveColorIndex: 0,
+                        negativeColorIndex: 1,
                     };
                     break;
                 }
@@ -106,7 +104,7 @@ export const BarsSettings: React.FC<BarsSettingsProps> = (props: BarsSettingsPro
 
             handleColorUpdate(updateParams);
         },
-        [handleColorUpdate, state.colorSettings.colorType, colorPalettes],
+        [handleColorUpdate, state.colorSettings.colorType],
     );
 
     return (

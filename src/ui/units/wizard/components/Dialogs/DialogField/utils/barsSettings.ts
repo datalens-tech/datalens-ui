@@ -24,8 +24,8 @@ export const getDefaultBarsSettings = (): TableBarsSettings => ({
         colorType: BarsColorType.TwoColor,
         settings: {
             palette: DEFAULT_PALETTE.id,
-            positiveColor: '#8AD554',
-            negativeColor: '#FF3D64',
+            positiveColorIndex: 2,
+            negativeColorIndex: 1,
         },
     },
     showLabels: true,

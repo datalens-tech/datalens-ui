@@ -79,7 +79,7 @@ import {
     UPDATE_OBLIGATORY_FILTER,
     UPDATE_RLS,
 } from '../actions/types/dataset';
-import {initialState} from '../constants';
+import {getCurrentTab, initialState} from '../constants';
 import type {ConnectionEntry, DatasetReduxAction, DatasetReduxState, Update} from '../types';
 
 import {
@@ -971,6 +971,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                     isLoading: false,
                     readyPreview: null,
                 },
+                currentTab: getCurrentTab(),
             };
         }
         case CLEAR_PREVIEW: {

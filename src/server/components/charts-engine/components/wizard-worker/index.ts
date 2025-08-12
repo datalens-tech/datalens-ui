@@ -1,7 +1,7 @@
 import workerPool from 'workerpool';
 
 import type {ServerChartsConfig, Shared} from '../../../../../shared';
-import {WizardVisualizationId, isD3Visualization} from '../../../../../shared';
+import {WizardVisualizationId, isGravityChartsVisualization} from '../../../../../shared';
 import {getTranslationFn} from '../../../../../shared/modules/language';
 import {datalensModule} from '../../../../modes/charts/plugins/datalens/private-module';
 import {createI18nInstance} from '../../../../utils/language';
@@ -66,10 +66,13 @@ const worker: WizardWorker = {
                 break;
             }
             default: {
-                if (isD3Visualization(visualizationId as WizardVisualizationId)) {
-                    result = datalensModule.buildD3Config({
-                        shared: serverChartConfig,
-                    });
+                if (
+                    isGravityChartsVisualization({
+                        id: visualizationId as WizardVisualizationId,
+                        features,
+                    })
+                ) {
+                    result = {};
                 } else {
                     result = datalensModule.buildHighchartsConfig({
                         shared: serverChartConfig,
@@ -130,12 +133,19 @@ const worker: WizardWorker = {
         const console = new Console({});
         datalensModule.setConsole(console);
 
+        const serverChartConfig = shared as ServerChartsConfig;
+        const shouldUseGravityCharts = isGravityChartsVisualization({
+            features,
+            id: serverChartConfig?.visualization?.id,
+        });
+        const plugin = shouldUseGravityCharts ? 'gravity-charts' : undefined;
         const result = datalensModule.buildGraph({
             data,
-            shared: shared as ServerChartsConfig,
+            shared: serverChartConfig,
             ChartEditor: context.ChartEditor,
             palettes,
             features,
+            plugin,
         });
 
         return {

@@ -1,7 +1,7 @@
 import React from 'react';
 
-import type {RadioButtonProps} from '@gravity-ui/uikit';
-import {RadioButton as CommonRadioButton} from '@gravity-ui/uikit';
+import type {SegmentedRadioGroupProps as RadioButtonProps} from '@gravity-ui/uikit';
+import {SegmentedRadioGroup as CommonRadioButton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {get} from 'lodash';
 import {connect} from 'react-redux';

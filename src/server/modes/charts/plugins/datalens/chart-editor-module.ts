@@ -10,7 +10,6 @@ import type {
 
 import {buildChartsConfigPrivate} from './config/config';
 import type {BuildChartConfigArgs} from './config/types';
-import {buildWizardD3Config as buildD3Config} from './d3';
 import {buildHighchartsConfigPrivate} from './highcharts/highcharts';
 import type {JSTabOptions} from './js';
 import {buildGraphPrivate} from './js/js';
@@ -106,7 +105,25 @@ export default {
     buildHighchartsConfig,
     buildSources,
     buildGraph,
+    buildGravityChartsConfig: ({
+        shared,
+        Editor,
+        data,
+    }: {
+        shared: Shared | ServerChartsConfig;
+        Editor: IChartEditor;
+        data: unknown;
+    }) => {
+        return buildGraphPrivate({
+            shared,
+            ChartEditor: Editor,
+            data,
+            palettes: __palettes,
+            features: __features,
+            plugin: 'gravity-charts',
+        });
+    },
     buildChartsConfig,
-    buildD3Config,
+    buildD3Config: () => {},
     setConsole,
 };

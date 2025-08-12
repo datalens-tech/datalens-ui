@@ -29,7 +29,7 @@ datalensTest.describe('Wizard', () => {
             async ({page}) => {
                 const wizardPage = new WizardPage({page});
                 const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
-                const chart = chartContainer.locator('.gcharts-d3');
+                const chart = chartContainer.locator('.gcharts-chart');
                 const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
 
                 await wizardPage.sectionVisualization.addFieldByClick(
@@ -44,7 +44,7 @@ datalensTest.describe('Wizard', () => {
                 await expect(previewLoader).not.toBeVisible();
                 const box = await chart.boundingBox();
                 if (box) {
-                    await page.mouse.click(box.x + box.width / 4, box.y + box.height / 2);
+                    await page.mouse.click(box.x + box.width / 2, box.y + box.height / 2);
                     await expect(previewLoader).not.toBeVisible();
                     await expect(chartContainer).toHaveScreenshot();
                 } else {

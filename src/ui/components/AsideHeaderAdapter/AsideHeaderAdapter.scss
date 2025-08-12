@@ -1,6 +1,10 @@
 @import '../../styles/mixins.scss';
 
 .dl-aside-header {
+    &_rebranding {
+        --gn-aside-header-item-icon-color: var(--g-color-text-primary);
+    }
+
     &__item-link {
         @include link-reset;
         & {
@@ -18,8 +22,11 @@
         align-items: center;
     }
 
-    &__logo-link {
-        @include link-reset;
+    &__logo {
+        // temp fix for background on hover
+        // background color may break due to the css order
+        // TODO: wait for uikit@7 and check new logic
+        --g-button-background-color-hover: transparent;
     }
 
     &__docs-link,

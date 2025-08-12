@@ -28,8 +28,6 @@ import ColorPaletteEditor from './PaletteEditor/PaletteEditor';
 
 import './ColorPaletteEditorContainer.scss';
 
-const IS_FAVORITES_ENABLED = false;
-
 const b = block('color-palette-editor-container');
 
 type StateProps = ReturnType<typeof mapStateToProps>;
@@ -40,6 +38,7 @@ type ColorPaletteEditorProps = StateProps &
     DispatchProps & {
         condensed?: boolean;
         hasEditRights?: boolean;
+        enableDefaultColorPalette?: boolean;
     };
 
 class ColorPaletteEditorContainer extends React.Component<ColorPaletteEditorProps> {
@@ -52,12 +51,16 @@ class ColorPaletteEditorContainer extends React.Component<ColorPaletteEditorProp
     }
 
     render() {
-        const {colorPalettes, condensed, hasEditRights = true} = this.props;
+        const {
+            colorPalettes,
+            condensed,
+            hasEditRights = true,
+            enableDefaultColorPalette,
+        } = this.props;
 
         return (
             <div className={b()}>
                 <ColorPalettesCard
-                    isFavoritesEnabled={IS_FAVORITES_ENABLED}
                     title={i18n('component.color-palette-editor', 'label_gradient-palette-title')}
                     description={i18n(
                         'component.color-palette-editor',
@@ -72,7 +75,6 @@ class ColorPaletteEditorContainer extends React.Component<ColorPaletteEditorProp
                     hasEditRights={hasEditRights}
                 />
                 <ColorPalettesCard
-                    isFavoritesEnabled={IS_FAVORITES_ENABLED}
                     title={i18n('component.color-palette-editor', 'label_palette-title')}
                     description={i18n(
                         'component.color-palette-editor',
@@ -86,15 +88,10 @@ class ColorPaletteEditorContainer extends React.Component<ColorPaletteEditorProp
                     condensed={condensed}
                     qa={ServiceSettingsQA.ColorPalettes}
                     hasEditRights={hasEditRights}
+                    enableDefaultPalette={enableDefaultColorPalette}
                 />
-                <ColorPaletteEditor
-                    isFavoritesEnabled={IS_FAVORITES_ENABLED}
-                    hasEditRights={hasEditRights}
-                />
-                <GradientColorPaletteEditor
-                    isFavoritesEnabled={IS_FAVORITES_ENABLED}
-                    hasEditRights={hasEditRights}
-                />
+                <ColorPaletteEditor hasEditRights={hasEditRights} />
+                <GradientColorPaletteEditor hasEditRights={hasEditRights} />
             </div>
         );
     }

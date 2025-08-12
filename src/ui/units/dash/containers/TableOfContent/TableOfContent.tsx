@@ -206,15 +206,10 @@ const TableOfContent = React.memo(
                                     {item.title}
                                     {item.hint && (
                                         <MarkdownHelpPopover
-                                            markdown={item.hint}
                                             className={b('hint')}
-                                            tooltipClassName={b('hint-tooltip')}
+                                            markdown={item.hint}
                                             onClick={(e) => {
                                                 e.stopPropagation();
-                                                e.preventDefault();
-
-                                                // open popover on click
-                                                return true;
                                             }}
                                         />
                                     )}
@@ -239,6 +234,7 @@ const TableOfContent = React.memo(
                         id="dash-table-of-content"
                         allowHideOnContentScroll={false}
                         onClose={handleSheetClose}
+                        className={b('sheet')}
                     >
                         <div className={b('tabs')}>{tabsItems}</div>
                     </Sheet>

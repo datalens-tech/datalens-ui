@@ -10,7 +10,7 @@
   "label_add-color-disabled": "You can't add more than {{count}} colors",
   "label_add-palette": "Add palette",
   "label_bars-custom-color-error": "Use HEX code to indicate a color",
-  "label_default-palette": "Use as default",
+  "label_default-palette": "Default palette",
   "label_delete-message": "You are going to delete the palette. Charts that use it will switch to the system palette. Are you sure you want to delete it?",
   "label_delete-palette": "Delete",
   "label_edit-palette": "Edit",
@@ -22,6 +22,8 @@
   "label_palette-title": "Color palettes",
   "toast_create-failed": "Failed to create palette",
   "toast_delete-failed": "Failed to delete palette",
+  "toast_update-default-palette-failed": "Error changing default palette",
+  "toast_update-default-palette-success": "The default palette was applied to all available charts.",
   "toast_update-failed": "Failed to update palette",
   "tooltip_disabled-due-rights": "Available only to the administrator"
 }

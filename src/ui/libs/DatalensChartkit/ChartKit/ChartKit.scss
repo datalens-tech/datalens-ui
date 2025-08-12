@@ -37,11 +37,13 @@
     }
 }
 
-.chartkit-tooltip {
-    font-family: var(--g-text-body-font-family);
+.dl-chart-tooltip-content {
+    font-size: 13px;
+    padding: 8px 14px;
 
-    &__content {
-        font-size: 12px;
+    &_mobile {
+        padding: var(--g-spacing-3);
+        font-size: 13px;
     }
 
     &__row {
@@ -49,14 +51,15 @@
     }
 
     &__color {
+        align-self: center;
         border-radius: 1px;
         display: inline-block;
         height: 6px;
         width: 12px;
-        margin-bottom: 2px;
     }
 
     &__block {
+        display: flex;
         padding: 0 4px;
         max-width: 400px;
         overflow: hidden;

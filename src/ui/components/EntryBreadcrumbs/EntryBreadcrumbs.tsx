@@ -1,11 +1,13 @@
 import React from 'react';
 
-import {Breadcrumbs, FirstDisplayedItemsCount, LastDisplayedItemsCount} from '@gravity-ui/uikit';
+import {Breadcrumbs} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {Link, useHistory, useLocation} from 'react-router-dom';
-import type {EntryBreadcrumbsProps} from 'ui/registry/units/common/types/components/EntryBreadcrumbs';
+import {useHistory, useLocation} from 'react-router-dom';
+import type {
+    BreadcrumbsItem,
+    EntryBreadcrumbsProps,
+} from 'ui/registry/units/common/types/components/EntryBreadcrumbs';
 
-import type {BreadcrumbsItem} from './helpers';
 import {getWorkbookBreadcrumbsItems} from './helpers';
 
 import './EntryBreadcrumbs.scss';
@@ -13,7 +15,7 @@ import './EntryBreadcrumbs.scss';
 const b = block('entry-panel-breadcrumbs');
 
 export const EntryBreadcrumbs = (props: EntryBreadcrumbsProps) => {
-    const {renderRootContent, entry, workbookName, workbookBreadcrumbs} = props;
+    const {renderRootContent, entry, workbookName, workbookBreadcrumbs, endContent} = props;
 
     const history = useHistory();
     const location = useLocation();
@@ -31,31 +33,35 @@ export const EntryBreadcrumbs = (props: EntryBreadcrumbsProps) => {
     }
 
     return (
-        <Breadcrumbs
-            className={b()}
-            items={breadcrumbsItems}
-            firstDisplayedItemsCount={FirstDisplayedItemsCount.One}
-            lastDisplayedItemsCount={LastDisplayedItemsCount.One}
-            renderRootContent={entry?.workbookId ? undefined : renderRootContent}
-            renderItemContent={(item: BreadcrumbsItem, isCurrent: boolean) => {
-                if (isCurrent) {
-                    return item.text;
+        <Breadcrumbs showRoot className={b()} endContent={endContent}>
+            {breadcrumbsItems.map((item, index) => {
+                const last = index === breadcrumbsItems.length - 1;
+                let content: React.ReactNode = null;
+
+                if (index === 0 && !entry?.workbookId && renderRootContent) {
+                    content = renderRootContent(item);
                 }
 
-                return item.path ? (
-                    <Link
-                        to={item.path}
-                        className={b('item', {link: true})}
-                        onClick={(e) => {
-                            e.stopPropagation();
+                content = item.text;
+
+                return (
+                    <Breadcrumbs.Item
+                        key={index}
+                        onClick={(event) => {
+                            if (!event.metaKey && item.action) {
+                                event.preventDefault();
+
+                                item.action(event);
+                            }
                         }}
+                        className={b('item', {link: Boolean(item.path)})}
+                        disabled={last}
+                        href={item.path}
                     >
-                        {item.text}
-                    </Link>
-                ) : (
-                    <div className={b('item')}>{item.text}</div>
+                        {content}
+                    </Breadcrumbs.Item>
                 );
-            }}
-        />
+            })}
+        </Breadcrumbs>
     );
 };

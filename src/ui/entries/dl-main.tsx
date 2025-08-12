@@ -1,5 +1,6 @@
 import 'i18n';
-import {MobileProvider, ThemeProvider} from '@gravity-ui/uikit';
+import {MobileProvider, ThemeProvider, ToasterComponent, ToasterProvider} from '@gravity-ui/uikit';
+import {toaster} from '@gravity-ui/uikit/toaster-singleton';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import {Router} from 'react-router-dom';
@@ -26,11 +27,18 @@ import 'ui/styles/base.scss';
 import 'ui/styles/variables.scss';
 import 'ui/styles/split-pane-resizer.scss';
 import 'ui/styles/theme.scss';
+import 'ui/styles/rebranding-theme.scss';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import {Feature} from 'shared';
 
 const Content = () => {
     const userTheme = useSelector(selectTheme);
     const theme = getOverridedTheme(userTheme);
     const themeSettings = useSelector(selectThemeSettings);
+
+    if (isEnabledFeature(Feature.EnableDLRebranding)) {
+        Utils.addBodyClass('dl-root', 'dl-root_rebranding');
+    }
 
     return (
         <ThemeProvider
@@ -38,14 +46,17 @@ const Content = () => {
             systemLightTheme={themeSettings?.systemLightTheme}
             systemDarkTheme={themeSettings?.systemDarkTheme}
         >
-            <MobileProvider mobile={DL.IS_MOBILE}>
-                <HotkeysProvider initiallyActiveScopes={[HOTKEYS_SCOPES.GLOBAL]}>
-                    <React.Fragment>
-                        <DialogManager />
-                        <DatalensPage />
-                    </React.Fragment>
-                </HotkeysProvider>
-            </MobileProvider>
+            <ToasterProvider toaster={toaster}>
+                <MobileProvider mobile={DL.IS_MOBILE}>
+                    <HotkeysProvider initiallyActiveScopes={[HOTKEYS_SCOPES.GLOBAL]}>
+                        <React.Fragment>
+                            <DialogManager />
+                            <DatalensPage />
+                        </React.Fragment>
+                    </HotkeysProvider>
+                </MobileProvider>
+                <ToasterComponent />
+            </ToasterProvider>
         </ThemeProvider>
     );
 };

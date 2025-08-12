@@ -1,5 +1,4 @@
 import {buildChartsConfig} from './config';
-import {buildWizardD3Config as buildD3Config} from './d3';
 import {buildHighchartsConfig} from './highcharts';
 import {buildGraph} from './js';
 import {buildSources} from './url/build-sources';
@@ -10,6 +9,5 @@ export const datalensModule = {
     buildSources,
     buildGraph,
     buildChartsConfig,
-    buildD3Config,
     setConsole,
 };

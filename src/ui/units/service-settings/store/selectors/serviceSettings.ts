@@ -11,7 +11,7 @@ export const selectServiceUsersListError = (state: DatalensGlobalState) =>
 
 export const selectCreateUserData = (state: DatalensGlobalState) =>
     state.serviceSettings.createUser.data;
-export const selecCreateUserIsLoading = (state: DatalensGlobalState) =>
+export const selectCreateUserIsLoading = (state: DatalensGlobalState) =>
     state.serviceSettings.createUser.isLoading;
 export const selectCreateUserError = (state: DatalensGlobalState) =>
     state.serviceSettings.createUser.error;

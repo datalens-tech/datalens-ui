@@ -124,12 +124,7 @@ export function ActionPanelRightItems(props: Props) {
         const {ref, triggerProps} = args;
 
         return (
-            <Button
-                ref={ref}
-                view="flat"
-                extraProps={{onKeyDown: triggerProps.onKeyDown}}
-                {...triggerProps}
-            >
+            <Button ref={ref as React.Ref<HTMLButtonElement>} view="flat" {...triggerProps}>
                 <Icon data={Gear} size={ACTION_PANEL_ICON_SIZE} />
             </Button>
         );

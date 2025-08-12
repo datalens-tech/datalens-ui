@@ -1,4 +1,4 @@
-import type {PlaceholderContainerProps} from '@gravity-ui/components';
+import type {PlaceholderContainerProps} from '@gravity-ui/uikit';
 
 import type {
     IllustrationName,
