@@ -12,6 +12,7 @@ import type {
     Field,
     Placeholder,
     PlaceholderSettings,
+    QLChartType,
     ServerChartsConfig,
     ServerPlaceholderSettings,
     ServerSort,
@@ -60,6 +61,7 @@ import {
     isAxisScaleEnabled,
     isAxisTypeEnabled,
     isHolidaysEnabled,
+    isQlChartAxisTypeDisabled,
 } from './utils';
 
 import './DialogPlaceholder.scss';
@@ -79,6 +81,7 @@ interface Props {
     visible: boolean;
     onCancel: () => void;
     visualizationId: WizardVisualizationId;
+    qlChartType: QLChartType | null;
     segments: Field[];
     onApply: (placeholderSettings: PlaceholderSettings) => void;
     sort: Field[];
@@ -332,10 +335,14 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
     }
 
     renderAxisTypeSettings() {
-        const {visualizationId} = this.props;
+        const {visualizationId, qlChartType} = this.props;
         const {type} = this.state.settings;
+        const isAixsTypeNotExist =
+            typeof type === 'undefined' ||
+            !isAxisTypeEnabled(visualizationId) ||
+            isQlChartAxisTypeDisabled(qlChartType, visualizationId);
 
-        if (typeof type === 'undefined' || !isAxisTypeEnabled(visualizationId)) {
+        if (isAixsTypeNotExist) {
             return null;
         }
 
