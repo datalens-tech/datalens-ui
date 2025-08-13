@@ -26,7 +26,7 @@ export const getFieldSettingsColumn = ({onUpdate}: GetHiddenColumnArgs): Column<
     header: <Icon className={b('header-icon')} data={Brush} width="24" />,
     render: function FieldSettingsColumnItem({index, row}) {
         const fieldHasSettings = isFieldWithDisplaySettings({field: row});
-        const tooltipText = i18n('no-field-settings');
+        const tooltipText = i18n('text_no-field-settings');
 
         return (
             <ActionTooltip disabled={fieldHasSettings} title={tooltipText}>

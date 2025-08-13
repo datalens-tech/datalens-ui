@@ -171,7 +171,6 @@ export const NumberFormatSettings = (props: Props) => {
             {formatting.format !== NumberFormatType.Percent && (
                 <FormRow className={rowClassName} label={i18n('field_units')}>
                     <Select
-                        className={b('unit-control')}
                         width={'max'}
                         options={getUnitItems()}
                         value={[formatting.unit || '']}
