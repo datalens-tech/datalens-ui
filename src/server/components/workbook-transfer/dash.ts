@@ -109,6 +109,7 @@ export async function prepareDashExportData(entry: DashEntry, idMapping: Transfe
     const dash = {
         name,
         data,
+        annotation: entry.annotation,
     };
 
     return {

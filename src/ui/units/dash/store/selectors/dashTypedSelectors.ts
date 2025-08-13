@@ -64,8 +64,7 @@ export const selectStateHashId = (state: DatalensGlobalState) => state.dash.stat
 export const selectLoadingEditMode = (state: DatalensGlobalState) => state.dash.isLoadingEditMode;
 
 export const selectDashDescription = (state: DatalensGlobalState) =>
-    // TODO: remove fallback after DLAPI-381
-    state.dash.annotation?.description ?? state.dash.data?.description;
+    state.dash.annotation?.description;
 
 export const selectDashDescMode = (state: DatalensGlobalState) =>
     state.dash.descriptionMode || Mode.View;
@@ -124,7 +123,7 @@ const selectDashChanged = createSelector(
             !isEqual(
                 {
                     ...entry.data,
-                    description: entry.annotation?.description ?? entry.data.description,
+                    description: entry.annotation?.description,
                     counter: 0,
                 },
                 {...dashData, description, counter: 0},

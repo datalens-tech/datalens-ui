@@ -289,12 +289,9 @@ class Dash {
                 ...headers,
                 ...ctx.getMetadata(),
             };
-            const result = (await US.readEntry(
-                entryId,
-                params,
-                headersWithMetadata,
-                ctx,
-            )) as DashEntry;
+            const result = await US.readEntry(entryId, params, headersWithMetadata, ctx).then(
+                (entry) => Dash.migrateDescription(entry as DashEntry),
+            );
 
             const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
             const isServerMigrationEnabled = Boolean(
@@ -303,8 +300,6 @@ class Dash {
             if (isServerMigrationEnabled && DashSchemeConverter.isUpdateNeeded(result.data)) {
                 result.data = await Dash.migrate(result.data);
             }
-
-            Dash.migrateDescription(result);
 
             ctx.log('SDK_DASH_READ_SUCCESS', US.getLoggedEntry(result));
 
@@ -320,13 +315,19 @@ class Dash {
         return DashSchemeConverter.update(data);
     }
 
-    static migrateDescription(entry: DashEntry) {
-        if (entry.data.description) {
-            entry.annotation = {
-                description: entry.data.description,
+    static migrateDescription(prevEntry: DashEntry) {
+        if ('description' in prevEntry.data) {
+            const entry = {
+                ...prevEntry,
+                annotation: {
+                    description: prevEntry.data.description,
+                },
             };
             delete entry.data.description;
+            return entry;
         }
+
+        return prevEntry;
     }
 
     static async update(
