@@ -11,7 +11,9 @@ if [ -z "${POSTGRES_USER_DEMO}" ]; then POSTGRES_USER_DEMO="${POSTGRES_USER}"; f
 if [ -z "${POSTGRES_PASSWORD_US}" ]; then POSTGRES_PASSWORD_US="${POSTGRES_PASSWORD}"; fi
 if [ -z "${POSTGRES_PASSWORD_DEMO}" ]; then POSTGRES_PASSWORD_DEMO="${POSTGRES_PASSWORD}"; fi
 
-POSTGRES_HOST="postgres"
+if [ -z "${POSTGRES_HOST}" ]; then
+  POSTGRES_HOST="postgres"
+fi
 export PGPORT="${POSTGRES_PORT}"
 
 echo "  [post-init] start e2e data migration..."
