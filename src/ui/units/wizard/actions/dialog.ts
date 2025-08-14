@@ -69,6 +69,7 @@ export function openDialogPlaceholder({placeholder, onApply}: OpenDialogPlacehol
         const sort = selectSort(state);
         const drillDownLevel = selectDrillDownLevel(state);
         const chartConfig = state.wizard.visualization as Partial<ServerChartsConfig>;
+        const qlChartType = getChartType(state);
 
         if (visualization) {
             dispatch(
@@ -77,6 +78,7 @@ export function openDialogPlaceholder({placeholder, onApply}: OpenDialogPlacehol
                     props: {
                         chartConfig,
                         visualizationId: visualization.id as WizardVisualizationId,
+                        qlChartType,
                         drillDownLevel,
                         segments,
                         sort,
