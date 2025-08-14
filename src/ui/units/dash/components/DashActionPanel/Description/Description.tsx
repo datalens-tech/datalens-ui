@@ -1,11 +1,14 @@
 import React from 'react';
 
-import {Button, Icon} from '@gravity-ui/uikit';
-import {EntryDialogName} from 'components/EntryDialogues';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
+import {
+    DIALOG_ENTRY_DESCRIPTION,
+    EntryDescriptionButton,
+} from 'ui/components/DialogEntryDescription';
 import {URL_QUERY} from 'ui/constants/common';
+import {openDialog} from 'ui/store/actions/dialog';
 
 import type EntryDialogues from '../../../../../components/EntryDialogues/EntryDialogues';
 import {Mode} from '../../../modules/constants';
@@ -19,8 +22,6 @@ import {
     selectDashDescMode,
     selectDashDescription,
 } from '../../../store/selectors/dashTypedSelectors';
-
-import iconDescription from 'assets/icons/info.svg';
 
 import '../DashActionPanel.scss';
 
@@ -72,27 +73,30 @@ export const Description = (props: DescriptionProps) => {
     }, [history, dispatch]);
 
     const handleDescriptionClick = React.useCallback(() => {
-        entryDialoguesRef.current?.open?.({
-            dialog: EntryDialogName.DashMeta,
-            dialogProps: {
-                title: i18n('label_dash-info'),
-                text: description || '',
-                canEdit,
-                onEdit: handleOnEditClick,
-                onCancel: handleOnCancelClick,
-                isEditMode: isDashEditMode,
-                onApply: handleOnApplyClick,
-                onCloseCallback: handleOnClose,
-            },
-        });
+        dispatch(
+            openDialog({
+                id: DIALOG_ENTRY_DESCRIPTION,
+                props: {
+                    title: i18n('label_dash-info'),
+                    description: description || '',
+                    canEdit,
+                    onEdit: handleOnEditClick,
+                    onCancel: handleOnCancelClick,
+                    isEditMode: isDashEditMode,
+                    onApply: handleOnApplyClick,
+                    onCloseCallback: handleOnClose,
+                },
+            }),
+        );
     }, [
-        entryDialoguesRef,
+        dispatch,
         description,
         canEdit,
         handleOnEditClick,
         handleOnCancelClick,
         handleOnApplyClick,
         isDashEditMode,
+        handleOnClose,
     ]);
 
     // open meta info dialog in edit mode when switches to dash edit mode
@@ -105,19 +109,21 @@ export const Description = (props: DescriptionProps) => {
             return;
         }
 
-        entryDialoguesRef.current?.open?.({
-            dialog: EntryDialogName.DashMeta,
-            dialogProps: {
-                title: i18n('label_dash-info'),
-                text: description || '',
-                canEdit,
-                onEdit: handleOnEditClick,
-                onCancel: handleOnCancelClick,
-                isEditMode: isDashEditMode,
-                onApply: handleOnApplyClick,
-                onCloseCallback: handleOnClose,
-            },
-        });
+        dispatch(
+            openDialog({
+                id: DIALOG_ENTRY_DESCRIPTION,
+                props: {
+                    title: i18n('label_dash-info'),
+                    description: description || '',
+                    canEdit,
+                    onEdit: handleOnEditClick,
+                    onCancel: handleOnCancelClick,
+                    isEditMode: isDashEditMode,
+                    onApply: handleOnApplyClick,
+                    onCloseCallback: handleOnClose,
+                },
+            }),
+        );
     }, [
         dispatch,
         entryDialoguesRef,
@@ -132,18 +138,11 @@ export const Description = (props: DescriptionProps) => {
         handleOnClose,
     ]);
 
-    if (!isDashEditMode && !description) {
-        return null;
-    }
-
     return (
-        <Button
-            view="flat"
-            size="m"
+        <EntryDescriptionButton
             onClick={handleDescriptionClick}
-            qa="action-button-description"
-        >
-            <Icon data={iconDescription} width={20} height={20} />
-        </Button>
+            description={description}
+            isEditMode={isDashEditMode}
+        />
     );
 };

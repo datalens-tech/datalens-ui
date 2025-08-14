@@ -4,41 +4,42 @@ import {ChevronRight, Pencil, TrashBin} from '@gravity-ui/icons';
 import {Button, Dialog, Icon, Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {TextEditor} from 'ui/components/TextEditor/TextEditor';
-import type {DialogDashMetaProps} from 'ui/registry/units/dash/types/DialogDashMeta';
+import {useDispatch} from 'react-redux';
+import {DialogEntryDescriptionQa} from 'shared';
+import {MarkdownProvider} from 'ui/modules';
+import type {DialogEntryDescriptionProps} from 'ui/registry/units/common/types/components/DialogEntryDescription';
+import {closeDialog} from 'ui/store/actions/dialog';
 
-import {DashMetaQa} from '../../../../shared/constants/qa/dash';
-import logger from '../../../libs/logger';
-import {MarkdownProvider} from '../../../modules';
-import {YfmWrapper} from '../../YfmWrapper/YfmWrapper';
-import {EntryDialogResolveStatus} from '../constants';
-
-import './DialogDashMeta.scss';
+import logger from '../../libs/logger';
+import {TextEditor} from '../TextEditor/TextEditor';
+import {YfmWrapper} from '../YfmWrapper/YfmWrapper';
 
 const b = block('dialog-dash-meta');
-const i18n = I18n.keyset('component.dialog-dash-meta');
+const i18n = I18n.keyset('component.dialog-entry-description');
 
-export const DialogDashMeta = (props: DialogDashMetaProps) => {
+const MAX_DESCRIPTION_LENGTH = 36_000;
+
+export const DialogEntryDescription: React.FC<DialogEntryDescriptionProps> = (props) => {
     const {
-        onEdit,
-        onApply,
-        onClose,
-        onCancel,
-        onContactService,
+        title,
         canEdit,
         isEditMode,
+        description,
+        onEdit,
+        onApply,
+        onCancel,
         onCloseCallback,
+        onContactService,
     } = props;
 
     const isMounted = React.useRef<boolean>(false);
+    const dispatch = useDispatch();
 
     const isEditable = canEdit && isEditMode;
 
-    const [text, setText] = React.useState(props.text || '');
+    const [text, setText] = React.useState(description || '');
     const [markdown, setMarkdown] = React.useState('');
     const [loading, setLoading] = React.useState(false);
-
-    const renderSymbolsCounter = `${text.length}/${props.maxLength}`;
 
     React.useEffect(() => {
         isMounted.current = true;
@@ -58,7 +59,7 @@ export const DialogDashMeta = (props: DialogDashMetaProps) => {
                         setMarkdown(result);
                     }
                 } catch (error) {
-                    logger.logError('DialogDashMeta: getMarkdown failed', error);
+                    logger.logError('DialogEntryDescription: getMarkdown failed', error);
                 }
                 if (isMounted.current) {
                     setLoading(false);
@@ -67,20 +68,16 @@ export const DialogDashMeta = (props: DialogDashMetaProps) => {
         }
     }, [isEditable, text]);
 
-    const handleTextUpdate = React.useCallback((value: string) => {
-        setText(value);
-    }, []);
-
     const handleClose = React.useCallback(() => {
         onCancel?.();
-        onClose({status: EntryDialogResolveStatus.Close});
+        dispatch(closeDialog());
         onCloseCallback?.();
-    }, [onCancel, onClose, onCloseCallback]);
+    }, [dispatch, onCancel, onCloseCallback]);
 
     const handleApply = React.useCallback(() => {
         onApply?.(text);
-        onClose({status: EntryDialogResolveStatus.Success});
-    }, [onApply, onClose, text]);
+        dispatch(closeDialog());
+    }, [dispatch, onApply, text]);
 
     const handleEdit = React.useCallback(() => {
         onEdit?.(text);
@@ -88,42 +85,43 @@ export const DialogDashMeta = (props: DialogDashMetaProps) => {
 
     const handleSupport = React.useCallback(() => {
         onContactService?.();
-        onClose({status: EntryDialogResolveStatus.Success});
-    }, [onContactService, onClose]);
+        dispatch(closeDialog());
+    }, [dispatch, onContactService]);
 
     const handleClear = React.useCallback(() => {
         setText('');
     }, []);
 
+    const renderSymbolsCounter = `${text.length.toLocaleString('ru-RU')} / ${MAX_DESCRIPTION_LENGTH.toLocaleString('ru-RU')}`;
+    const isExceedLimit = text.length > MAX_DESCRIPTION_LENGTH;
+
     return (
         <Dialog
-            open={props.visible}
+            open={true}
             onClose={handleClose}
             disableOutsideClick={true}
-            qa={DashMetaQa.Dialog}
+            qa={DialogEntryDescriptionQa.Root}
         >
-            <Dialog.Header caption={props.title} />
+            <Dialog.Header caption={title} />
             {isEditable ? (
                 <React.Fragment>
                     <Dialog.Body className={b()}>
                         {props.subTitle && <div className={b('subtitle')}>{props.subTitle}</div>}
-                        <TextEditor autofocus onTextUpdate={handleTextUpdate} text={text} />
-                        {props.maxLength && props.maxLength >= (props.text || '').length ? (
-                            <div
-                                className={b('length-counter', {
-                                    error: props.maxLength ? text.length > props.maxLength : false,
-                                })}
-                            >
-                                <span>{renderSymbolsCounter}</span>
-                            </div>
-                        ) : null}
+                        <TextEditor autofocus onTextUpdate={setText} text={text} />
+                        <div
+                            className={b('length-counter', {
+                                error: isExceedLimit,
+                            })}
+                        >
+                            <span>{renderSymbolsCounter}</span>
+                        </div>
                     </Dialog.Body>
                     <Dialog.Footer
                         onClickButtonApply={handleApply}
                         textButtonApply={i18n('button_save')}
                         propsButtonApply={{
-                            disabled: props.maxLength ? text.length > props.maxLength : false,
-                            qa: DashMetaQa.SaveButton,
+                            disabled: text.length > MAX_DESCRIPTION_LENGTH,
+                            qa: DialogEntryDescriptionQa.SaveButton,
                         }}
                         onClickButtonCancel={handleClose}
                         textButtonCancel={i18n('button_cancel')}
@@ -152,7 +150,7 @@ export const DialogDashMeta = (props: DialogDashMetaProps) => {
                             <Button
                                 view="flat-secondary"
                                 onClick={handleEdit}
-                                qa={DashMetaQa.EditButton}
+                                qa={DialogEntryDescriptionQa.EditButton}
                             >
                                 <Icon data={Pencil} size={16} />
                                 {i18n('button_edit')}
