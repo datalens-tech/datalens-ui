@@ -14,7 +14,9 @@ import logger from '../../libs/logger';
 import {TextEditor} from '../TextEditor/TextEditor';
 import {YfmWrapper} from '../YfmWrapper/YfmWrapper';
 
-const b = block('dialog-dash-meta');
+import './DialogEntryDescription.scss';
+
+const b = block('dialog-entry-description');
 const i18n = I18n.keyset('component.dialog-entry-description');
 
 const MAX_DESCRIPTION_LENGTH = 36_000;
