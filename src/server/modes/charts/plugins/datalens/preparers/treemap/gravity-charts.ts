@@ -14,9 +14,11 @@ import {
     MINIMUM_FRACTION_DIGITS,
     PlaceholderId,
     isDateField,
+    isHtmlField,
     isMarkdownField,
 } from '../../../../../../../shared';
 import {wrapMarkdownValue} from '../../../../../../../shared/utils/markdown';
+import {wrapHtml} from '../../../../../../../shared/utils/ui-sandbox';
 import {getBaseChartConfig} from '../../gravity-charts/utils';
 import {
     mapAndColorizeHashTableByGradient,
@@ -58,6 +60,7 @@ export function prepareD3Treemap({
     const dimensions = placeholders.find((p) => p.id === PlaceholderId.Dimensions)?.items ?? [];
     const dTypes = dimensions.map((item) => item.data_type);
     const useMarkdown = dimensions?.some(isMarkdownField);
+    const useHtml = dimensions?.some(isHtmlField);
 
     const measures = placeholders.find((p) => p.id === PlaceholderId.Measures)?.items ?? [];
 
@@ -183,6 +186,8 @@ export function prepareD3Treemap({
             let name: any[] = dPath;
             if (useMarkdown) {
                 name = dPath.map((item) => (item ? wrapMarkdownValue(item) : item));
+            } else if (useHtml) {
+                name = dPath.map((item) => (item ? wrapHtml(item) : item));
             }
             lastDimensionItem.name = name as any;
 
@@ -225,6 +230,10 @@ export function prepareD3Treemap({
         ChartEditor.updateConfig({useMarkdown: true});
     }
 
+    if (useHtml) {
+        ChartEditor.updateConfig({useHtml: true});
+    }
+
     const exportSettingsCols = dimensions.map<ColumnExportSettings>((field, index) => {
         return getExportColumnSettings({path: `name.${index}`, field});
     });
@@ -236,7 +245,7 @@ export function prepareD3Treemap({
         layoutAlgorithm: 'squarify' as TreemapSeries['layoutAlgorithm'],
         dataLabels: {
             enabled: true,
-            html: useMarkdown,
+            html: useMarkdown || useHtml,
         },
         levels,
         data: treemap as TreemapSeriesData[],
