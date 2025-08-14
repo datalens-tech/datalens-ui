@@ -6,10 +6,11 @@ import {useHistory} from 'react-router-dom';
 import {
     DIALOG_ENTRY_DESCRIPTION,
     EntryDescriptionButton,
+    MAX_ENTRY_DESCRIPTION_LENGTH,
+    openDialogEntryAnnotationDescription,
 } from 'ui/components/DialogEntryDescription';
-import type {EntryDialogues} from 'ui/components/EntryDialogues';
 import {URL_QUERY} from 'ui/constants/common';
-import {openDialog, updateDialogProps} from 'ui/store/actions/dialog';
+import {updateDialogProps} from 'ui/store/actions/dialog';
 
 import {updateDashOpenedDesc, updateDescription} from '../../../store/actions/dashTyped';
 import {isEditMode, selectDashDescription} from '../../../store/selectors/dashTypedSelectors';
@@ -20,7 +21,6 @@ const i18n = I18n.keyset('dash.action-panel.view');
 
 type DescriptionProps = {
     canEdit: boolean;
-    entryDialoguesRef: React.RefObject<EntryDialogues>;
     onEditClick?: (onConfirmCallback?: () => void) => void;
     showOpenedDescription: boolean;
 };
@@ -64,6 +64,7 @@ export const Description = (props: DescriptionProps) => {
                         isEditMode: true,
                         onApply: handleOnApplyClick,
                         onCloseCallback: handleOnClose,
+                        maxLength: MAX_ENTRY_DESCRIPTION_LENGTH,
                     },
                 }),
             );
@@ -72,17 +73,14 @@ export const Description = (props: DescriptionProps) => {
 
     const openEntryDescriptionDialog = React.useCallback(() => {
         dispatch(
-            openDialog({
-                id: DIALOG_ENTRY_DESCRIPTION,
-                props: {
-                    title: i18n('label_dash-info'),
-                    description: description || '',
-                    canEdit,
-                    onEdit: handleOnEditClick,
-                    isEditMode: isDashEditMode,
-                    onApply: handleOnApplyClick,
-                    onCloseCallback: handleOnClose,
-                },
+            openDialogEntryAnnotationDescription({
+                title: i18n('label_dash-info'),
+                description: description || '',
+                canEdit,
+                onEdit: handleOnEditClick,
+                isEditMode: isDashEditMode,
+                onApply: handleOnApplyClick,
+                onCloseCallback: handleOnClose,
             }),
         );
     }, [

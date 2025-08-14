@@ -4,6 +4,7 @@ export type DialogEntryDescriptionProps = {
     canEdit?: boolean;
     isEditMode?: boolean;
     description?: string;
+    maxLength?: number;
     onEdit?: (text: string) => void;
     onApply?: (text: string) => void;
     onCancel?: () => void;
