@@ -9,7 +9,7 @@ import {
 } from 'ui/components/DialogEntryDescription';
 import type {EntryDialogues} from 'ui/components/EntryDialogues';
 import {URL_QUERY} from 'ui/constants/common';
-import {closeDialog, openDialog} from 'ui/store/actions/dialog';
+import {openDialog, updateDialogProps} from 'ui/store/actions/dialog';
 
 import {updateDashOpenedDesc, updateDescription} from '../../../store/actions/dashTyped';
 import {isEditMode, selectDashDescription} from '../../../store/selectors/dashTypedSelectors';
@@ -54,9 +54,8 @@ export const Description = (props: DescriptionProps) => {
 
     const handleOnEditClick = React.useCallback(() => {
         onEditClick?.(() => {
-            dispatch(closeDialog());
             dispatch(
-                openDialog({
+                updateDialogProps({
                     id: DIALOG_ENTRY_DESCRIPTION,
                     props: {
                         title: i18n('label_dash-info'),
@@ -71,7 +70,7 @@ export const Description = (props: DescriptionProps) => {
         });
     }, [canEdit, description, dispatch, handleOnApplyClick, handleOnClose, onEditClick]);
 
-    const handleDescriptionClick = React.useCallback(() => {
+    const openEntryDescriptionDialog = React.useCallback(() => {
         dispatch(
             openDialog({
                 id: DIALOG_ENTRY_DESCRIPTION,
@@ -91,8 +90,8 @@ export const Description = (props: DescriptionProps) => {
         description,
         canEdit,
         handleOnEditClick,
-        handleOnApplyClick,
         isDashEditMode,
+        handleOnApplyClick,
         handleOnClose,
     ]);
 
@@ -100,38 +99,14 @@ export const Description = (props: DescriptionProps) => {
     React.useEffect(() => {
         const needOpenDialog = showOpenedDescription && description;
 
-        if (!needOpenDialog) {
-            return;
+        if (needOpenDialog) {
+            openEntryDescriptionDialog();
         }
-
-        dispatch(
-            openDialog({
-                id: DIALOG_ENTRY_DESCRIPTION,
-                props: {
-                    title: i18n('label_dash-info'),
-                    description: description || '',
-                    canEdit,
-                    onEdit: handleOnEditClick,
-                    isEditMode: isDashEditMode,
-                    onApply: handleOnApplyClick,
-                    onCloseCallback: handleOnClose,
-                },
-            }),
-        );
-    }, [
-        dispatch,
-        description,
-        canEdit,
-        isDashEditMode,
-        handleOnEditClick,
-        handleOnApplyClick,
-        showOpenedDescription,
-        handleOnClose,
-    ]);
+    }, [openEntryDescriptionDialog, description, showOpenedDescription]);
 
     return (
         <EntryDescriptionButton
-            onClick={handleDescriptionClick}
+            onClick={openEntryDescriptionDialog}
             description={description}
             isEditMode={isDashEditMode}
         />
