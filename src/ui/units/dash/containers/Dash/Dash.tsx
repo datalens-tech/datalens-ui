@@ -319,6 +319,10 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
     };
 
     private handlerEditClick = (onConfirmCallback?: () => void) => {
+        if (this.state.isEditModeLoading) {
+            return;
+        }
+
         const {savedId, publishedId, revId} = this.props.entry;
         const hasLatestUnpublishedVersion = savedId !== publishedId && savedId !== revId;
 
