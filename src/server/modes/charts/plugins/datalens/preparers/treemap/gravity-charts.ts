@@ -4,7 +4,6 @@ import type {
     TreemapSeriesData,
 } from '@gravity-ui/chartkit/gravity-charts';
 import merge from 'lodash/merge';
-import orderBy from 'lodash/orderBy';
 
 import type {
     ColumnExportSettings,
@@ -240,7 +239,10 @@ export function prepareD3Treemap({
             html: useMarkdown,
         },
         levels,
-        data: orderBy(treemap, (d) => d.value, 'desc') as TreemapSeriesData[],
+        data: treemap as TreemapSeriesData[],
+        sorting: {
+            enabled: true,
+        },
         custom: {
             exportSettings: {
                 columns: exportSettingsCols,
