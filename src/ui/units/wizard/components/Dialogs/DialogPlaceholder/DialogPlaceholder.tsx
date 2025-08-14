@@ -12,6 +12,7 @@ import type {
     Field,
     Placeholder,
     PlaceholderSettings,
+    QLChartType,
     ServerChartsConfig,
     ServerPlaceholderSettings,
     ServerSort,
@@ -28,6 +29,7 @@ import {
     isFieldHierarchy,
     isNumberField,
     isPercentVisualization,
+    isYAGRVisualization,
 } from 'shared';
 import {AREA_OR_AREA100P} from 'ui/constants/misc';
 import {withHiddenUnmount} from 'ui/hoc';
@@ -79,6 +81,7 @@ interface Props {
     visible: boolean;
     onCancel: () => void;
     visualizationId: WizardVisualizationId;
+    qlChartType: QLChartType | null;
     segments: Field[];
     onApply: (placeholderSettings: PlaceholderSettings) => void;
     sort: Field[];
@@ -332,10 +335,15 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
     }
 
     renderAxisTypeSettings() {
-        const {visualizationId} = this.props;
+        const {visualizationId, qlChartType} = this.props;
         const {type} = this.state.settings;
 
-        if (typeof type === 'undefined' || !isAxisTypeEnabled(visualizationId)) {
+        const isYagr = qlChartType && isYAGRVisualization(qlChartType, visualizationId);
+
+        const isAixsTypeNotExist =
+            typeof type === 'undefined' || !isAxisTypeEnabled(visualizationId) || isYagr;
+
+        if (isAixsTypeNotExist) {
             return null;
         }
 
