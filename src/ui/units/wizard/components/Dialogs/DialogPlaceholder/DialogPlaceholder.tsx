@@ -29,6 +29,7 @@ import {
     isFieldHierarchy,
     isNumberField,
     isPercentVisualization,
+    isYAGRVisualization,
 } from 'shared';
 import {AREA_OR_AREA100P} from 'ui/constants/misc';
 import {withHiddenUnmount} from 'ui/hoc';
@@ -61,7 +62,6 @@ import {
     isAxisScaleEnabled,
     isAxisTypeEnabled,
     isHolidaysEnabled,
-    isQlChartAxisTypeDisabled,
 } from './utils';
 
 import './DialogPlaceholder.scss';
@@ -337,10 +337,11 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
     renderAxisTypeSettings() {
         const {visualizationId, qlChartType} = this.props;
         const {type} = this.state.settings;
+
+        const isYagr = qlChartType && isYAGRVisualization(qlChartType, visualizationId);
+
         const isAixsTypeNotExist =
-            typeof type === 'undefined' ||
-            !isAxisTypeEnabled(visualizationId) ||
-            isQlChartAxisTypeDisabled(qlChartType, visualizationId);
+            typeof type === 'undefined' || !isAxisTypeEnabled(visualizationId) || isYagr;
 
         if (isAixsTypeNotExist) {
             return null;

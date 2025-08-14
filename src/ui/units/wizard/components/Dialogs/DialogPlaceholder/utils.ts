@@ -1,9 +1,5 @@
-import {
-    AxisModeDisabledReason,
-    QLChartType,
-    WizardVisualizationId,
-    isD3Visualization,
-} from '../../../../../../shared';
+import type {WizardVisualizationId} from '../../../../../../shared';
+import {AxisModeDisabledReason, isD3Visualization} from '../../../../../../shared';
 
 export function isAxisScaleEnabled(visualizationId: WizardVisualizationId) {
     return !isD3Visualization(visualizationId);
@@ -11,22 +7,6 @@ export function isAxisScaleEnabled(visualizationId: WizardVisualizationId) {
 
 export function isAxisTypeEnabled(visualizationId: WizardVisualizationId) {
     return !isD3Visualization(visualizationId);
-}
-
-export function isQlChartAxisTypeDisabled(
-    qlChartType: QLChartType | null,
-    visualizationId: WizardVisualizationId,
-) {
-    return (
-        qlChartType === QLChartType.Monitoringql &&
-        [
-            WizardVisualizationId.Line,
-            WizardVisualizationId.Area,
-            WizardVisualizationId.Area100p,
-            WizardVisualizationId.Column,
-            WizardVisualizationId.Column100p,
-        ].includes(visualizationId)
-    );
 }
 
 export function isAxisFormatEnabled(visualizationId: WizardVisualizationId) {
