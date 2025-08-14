@@ -447,18 +447,6 @@ export const setDashViewMode =
         dispatch(resetDashEditHistory());
     };
 
-export const SET_DASH_DESC_VIEW_MODE = Symbol('dash/SET_DASH_DESC_VIEW_MODE');
-export type SetDescViewModeAction = {
-    type: typeof SET_DASH_DESC_VIEW_MODE;
-    payload?: Mode;
-};
-export const setDashDescViewMode = (
-    payload?: SetDescViewModeAction['payload'],
-): SetDescViewModeAction => ({
-    type: SET_DASH_DESC_VIEW_MODE,
-    payload,
-});
-
 export const SET_DASH_DESCRIPTION = Symbol('dash/SET_DASH_DESCRIPTION');
 export type SetDescriptionAction = {
     type: typeof SET_DASH_DESCRIPTION;
@@ -474,7 +462,6 @@ export const setDashDescription = (
 export const updateDescription =
     (description: SetDescriptionAction['payload']) => (dispatch: DashDispatch) => {
         dispatch(setDashDescription(description));
-        dispatch(setDashDescViewMode(Mode.View));
         dispatch(addDashEditHistoryPoint());
     };
 
