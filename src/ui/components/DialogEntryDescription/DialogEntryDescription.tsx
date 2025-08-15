@@ -6,6 +6,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {DialogEntryDescriptionQa} from 'shared';
+import {useMountedState} from 'ui/hooks';
 import {MarkdownProvider} from 'ui/modules';
 import type {DialogEntryDescriptionProps} from 'ui/registry/units/common/types/components/DialogEntryDescription';
 import {closeDialog} from 'ui/store/actions/dialog';
@@ -32,7 +33,7 @@ export const DialogEntryDescription: React.FC<DialogEntryDescriptionProps> = (pr
         onCloseCallback,
     } = props;
 
-    const isMounted = React.useRef<boolean>(false);
+    const isMounted = useMountedState();
     const dispatch = useDispatch();
 
     const isEditable = canEdit && isEditMode;
@@ -42,26 +43,18 @@ export const DialogEntryDescription: React.FC<DialogEntryDescriptionProps> = (pr
     const [loading, setLoading] = React.useState(false);
 
     React.useEffect(() => {
-        isMounted.current = true;
-
-        return () => {
-            isMounted.current = false;
-        };
-    }, []);
-
-    React.useEffect(() => {
         if (!isEditable) {
             (async () => {
                 setLoading(true);
                 try {
                     const {result} = await MarkdownProvider.getMarkdown({text});
-                    if (isMounted.current) {
+                    if (isMounted()) {
                         setMarkdown(result);
                     }
                 } catch (error) {
                     logger.logError('DialogEntryDescription: getMarkdown failed', error);
                 }
-                if (isMounted.current) {
+                if (isMounted()) {
                     setLoading(false);
                 }
             })();
