@@ -64,7 +64,7 @@ export const selectStateHashId = (state: DatalensGlobalState) => state.dash.stat
 export const selectLoadingEditMode = (state: DatalensGlobalState) => state.dash.isLoadingEditMode;
 
 export const selectDashDescription = (state: DatalensGlobalState) =>
-    state.dash.data?.description || '';
+    state.dash.annotation?.description;
 
 export const selectDashDescMode = (state: DatalensGlobalState) =>
     state.dash.descriptionMode || Mode.View;
@@ -115,9 +115,22 @@ const selectTabsItemsOrderChanged = createSelector(
     (initTabs, currentTabs) => (initTabs ? isOrderIdsChanged(initTabs, currentTabs || []) : false),
 );
 
-const selectDashChanged = createSelector([selectDashEntry, selectDashData], (entry, dashData) => {
-    return Boolean(entry) && !isEqual({...entry.data, counter: 0}, {...dashData, counter: 0});
-});
+const selectDashChanged = createSelector(
+    [selectDashEntry, selectDashData, selectDashDescription],
+    (entry, dashData, description) => {
+        return (
+            Boolean(entry) &&
+            !isEqual(
+                {
+                    ...entry.data,
+                    description: entry.annotation?.description,
+                    counter: 0,
+                },
+                {...dashData, description, counter: 0},
+            )
+        );
+    },
+);
 
 export const isDraft = createSelector(
     [selectTabsItemsOrderChanged, selectDashChanged],
