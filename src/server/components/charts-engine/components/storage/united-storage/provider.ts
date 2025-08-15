@@ -273,8 +273,10 @@ export class USProvider {
             revId?: string;
             includeServicePlan?: boolean;
             includeTenantFeatures?: boolean;
+            includeFavorite?: boolean;
         } = {
             branch: unreleased ? 'saved' : 'published',
+            includeFavorite: true,
         };
 
         if (includeServicePlan) {
@@ -512,7 +514,10 @@ export class USProvider {
         const params: {
             includeServicePlan?: boolean;
             includeTenantFeatures?: boolean;
-        } = {};
+            includeFavorite: boolean;
+        } = {
+            includeFavorite: true,
+        };
 
         if (includeServicePlan) {
             params.includeServicePlan = true;
