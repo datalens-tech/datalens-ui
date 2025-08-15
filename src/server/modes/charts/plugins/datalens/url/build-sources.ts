@@ -1,20 +1,16 @@
-import type {Palette, ServerPlaceholder, V4Field} from '../../../../../../../shared';
-import {DATASET_FIELD_TYPES} from '../../../../../../../shared';
+import type {Palette, ServerPlaceholder, V4Field} from '../../../../../../shared';
+import {DATASET_FIELD_TYPES} from '../../../../../../shared';
 import {
     CHARTS_MIDDLEWARE_URL_TYPE,
     REQUEST_WITH_DATASET_SOURCE_NAME,
-} from '../../../constants/middleware-urls';
-import {getColorPalettesRequests} from '../../../helpers/color-palettes';
-import {getDatasetIdAndLayerIdRequestKey} from '../../../helpers/misc';
-import {mapChartsConfigToServerConfig} from '../../utils/config-helpers';
-import {
-    DATASET_DATA_PIVOT_URL,
-    DATASET_DATA_URL_V1,
-    DATASET_DATA_URL_V2,
-} from '../../utils/constants';
-import {getAllPlaceholderItems, log} from '../../utils/misc-helpers';
-import {prepareFieldsForPayload} from '../helpers';
+} from '../../constants/middleware-urls';
+import {getColorPalettesRequests} from '../../helpers/color-palettes';
+import {getDatasetIdAndLayerIdRequestKey} from '../../helpers/misc';
+import {mapChartsConfigToServerConfig} from '../utils/config-helpers';
+import {DATASET_DATA_PIVOT_URL, DATASET_DATA_URL_V1, DATASET_DATA_URL_V2} from '../utils/constants';
+import {getAllPlaceholderItems, log} from '../utils/misc-helpers';
 
+import {prepareFieldsForPayload} from './helpers';
 import type {
     PrepareSingleSourceRequestArgs,
     PrepareSourceRequestBody,
