@@ -95,6 +95,7 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         docsUrl: config.docsUrl,
         orderedAuthRoles: config.orderedAuthRoles,
         authSignupDisabled: req.ctx.config.authSignupDisabled,
+        defaultColorPaletteId: config.defaultColorPaletteId,
         ...appLayoutSettings.DL,
     };
     const renderConfig: RenderParams<{DL: DLGlobalData}> = {

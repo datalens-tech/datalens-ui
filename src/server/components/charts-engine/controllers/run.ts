@@ -51,7 +51,10 @@ export const runController = (
 
         let config: ResolvedConfig | {error: unknown};
         if (chartConfig) {
-            config = chartConfig;
+            config = {
+                ...chartConfig,
+                // tenantSettings: {defaultColorPaletteId: tenantSettings?.defaultColorPaletteId},
+            };
         } else {
             if (!params && key) {
                 const parsedUrl = url.parse(key);

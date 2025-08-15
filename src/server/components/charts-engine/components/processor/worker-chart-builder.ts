@@ -1,4 +1,3 @@
-import type {AppContext} from '@gravity-ui/nodekit';
 import type {Proxy} from 'workerpool';
 
 import type {
@@ -8,8 +7,9 @@ import type {
     StringParams,
     TenantSettings,
 } from '../../../../../shared';
-import {Feature, PALETTE_ID, getServerFeatures} from '../../../../../shared';
+import {getServerFeatures} from '../../../../../shared';
 import {registry} from '../../../../registry';
+import {getDefaultColorPaletteId} from '../utils';
 import type {WizardWorker} from '../wizard-worker/types';
 import {getChartApiContext} from '../wizard-worker/utils';
 
@@ -38,28 +38,6 @@ type WizardChartBuilderArgs = {
     worker: Proxy<WizardWorker>;
     tenantSettings: TenantSettings;
 };
-
-export function getDefaultColorPaletteId({
-    ctx,
-    tenantSettings,
-    palettes,
-}: {
-    ctx: AppContext;
-    tenantSettings: TenantSettings;
-    palettes: Record<string, unknown>;
-}) {
-    const tenantDefaultPalette = tenantSettings?.defaultColorPaletteId;
-    if (tenantDefaultPalette && palettes?.[tenantDefaultPalette]) {
-        return tenantDefaultPalette;
-    }
-
-    const features = getServerFeatures(ctx);
-    if (features[Feature.NewDefaultPalette]) {
-        return ctx.config.defaultColorPaletteId;
-    }
-
-    return PALETTE_ID.CLASSIC_20;
-}
 
 export const getWizardChartBuilder = async (
     args: WizardChartBuilderArgs,

@@ -37,7 +37,7 @@ export const runWizardChart: RunnerHandler = async (cx: AppContext, props: Runne
             maxWorkers: cx.config.chartsEngineConfig.maxWorkers ?? 1,
         }),
         timeouts,
-        tenantSettings: config.tenantSettings ?? {},
+        tenantSettings: {defaultColorPaletteId: config.tenantSettings?.defaultColorPaletteId},
     });
 
     return runWorkerChart(cx, {...props, chartBuilder, runnerType: 'Wizard'});

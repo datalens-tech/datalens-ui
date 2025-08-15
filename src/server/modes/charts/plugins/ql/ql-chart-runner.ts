@@ -44,7 +44,7 @@ export const runQlChart: RunnerHandler = async (cx: AppContext, props: RunnerHan
             maxWorkers: cx.config.chartsEngineConfig.maxWorkers ?? 1,
         }),
         timeouts,
-        tenantSettings: config.tenantSettings ?? {},
+        tenantSettings: {defaultColorPaletteId: config.tenantSettings?.defaultColorPaletteId},
     });
 
     return runWorkerChart(cx, {...props, chartBuilder, runnerType: 'Ql'});
