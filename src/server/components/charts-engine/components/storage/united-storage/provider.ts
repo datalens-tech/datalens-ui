@@ -514,10 +514,7 @@ export class USProvider {
         const params: {
             includeServicePlan?: boolean;
             includeTenantFeatures?: boolean;
-            includeFavorite: boolean;
-        } = {
-            includeFavorite: true,
-        };
+        } = {};
 
         if (includeServicePlan) {
             params.includeServicePlan = true;

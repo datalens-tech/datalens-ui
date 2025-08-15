@@ -18,10 +18,7 @@ export const entriesActions = {
         path: ({entryId}) => `${PRIVATE_PATH_PREFIX}/entries/${filterUrlFragment(entryId)}`,
         params: ({entryId: _entryId, workbookId, ...query}, headers) => {
             return {
-                query: {
-                    ...query,
-                    includeFavorite: true,
-                },
+                query,
                 headers: {
                     ...headers,
                     ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
