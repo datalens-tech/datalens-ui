@@ -24,6 +24,7 @@ export interface SharedAppConfig {
     meta?: Meta[];
 
     chartkitSettings?: ChartkitGlobalSettings;
+    defaultColorPaletteId: string;
     serviceName: string;
     // CHARTS ENGINE -- START
     usEndpoint: string;

@@ -55,6 +55,7 @@ export type BuildChartArgs = {
 
     features: FeatureConfig;
     palettes: Record<string, Palette>;
+    defaultColorPaletteId: string;
 };
 
 export type WizardWorker = {

@@ -35,7 +35,7 @@ type BackendPivotTablePreparerResult = {
 };
 
 const backendPivotTablePreparer = (args: PrepareFunctionArgs): BackendPivotTablePreparerResult => {
-    const {shared} = args;
+    const {shared, defaultColorPaletteId} = args;
     const rawPivotData: PivotData | PivotDataWithInfo = (args.resultData as any).pivot_data as
         | PivotData
         | PivotDataWithInfo;
@@ -171,6 +171,7 @@ const backendPivotTablePreparer = (args: PrepareFunctionArgs): BackendPivotTable
         sortSettings,
         headerTotalsIndexMap,
         ChartEditor: args.ChartEditor,
+        defaultColorPaletteId,
     });
 
     const columns = pivotData.columns;
