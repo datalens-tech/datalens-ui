@@ -1,5 +1,4 @@
 import type {ColorPalette, Palette} from '../../shared';
-import {PALETTE_ID} from '../../shared';
 
 const DASH_API_BASE_URL = '/api/dash/v1/dashboards';
 const CHARTS_API_BASE_URL = '/api/charts/v1/charts';
@@ -50,9 +49,13 @@ export const selectServerPalette = (args: {
     customColorPalettes?: Record<string, ColorPalette>;
     defaultColorPaletteId: string;
 }) => {
-    const {defaultColorPaletteId, palette, availablePalettes, customColorPalettes} = args;
+    const {
+        defaultColorPaletteId,
+        palette: selectedPalleteId,
+        availablePalettes,
+        customColorPalettes,
+    } = args;
 
-    let selectedPalleteId = palette;
     if (selectedPalleteId) {
         if (customColorPalettes?.[selectedPalleteId]) {
             return customColorPalettes[selectedPalleteId].colors;
@@ -63,9 +66,7 @@ export const selectServerPalette = (args: {
         }
     }
 
-    selectedPalleteId = defaultColorPaletteId ?? PALETTE_ID.CLASSIC_20;
-
-    return availablePalettes[selectedPalleteId].scheme ?? [];
+    return availablePalettes[defaultColorPaletteId]?.scheme ?? [];
 };
 
 const SERVICE_NAME_DATALENS = 'DataLens';
