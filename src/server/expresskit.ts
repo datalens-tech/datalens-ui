@@ -2,6 +2,7 @@ import type {AppRoutes} from '@gravity-ui/expresskit';
 import {ExpressKit} from '@gravity-ui/expresskit';
 import type {NodeKit} from '@gravity-ui/nodekit';
 
+import {initSwagger} from './components/app-docs';
 import type {ExtendedAppRouteDescription} from './types/controllers';
 
 export function getExpressKit({
@@ -20,5 +21,9 @@ export function getExpressKit({
         routes[route] = params;
     });
 
-    return new ExpressKit(nodekit, routes);
+    const app = new ExpressKit(nodekit, routes);
+
+    initSwagger(app);
+
+    return app;
 }

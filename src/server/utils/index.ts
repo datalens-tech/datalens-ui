@@ -84,6 +84,13 @@ class Utils {
         };
     }
 
+    static pickRpcHeaders(req: Request) {
+        return {
+            ...pick(req.headers, [AuthHeader.Authorization]),
+            ...Utils.pickForwardHeaders(req.headers),
+        };
+    }
+
     static pickUsMasterToken(req: Request) {
         const token = req.headers[US_MASTER_TOKEN_HEADER];
         if (typeof token !== 'string') {
