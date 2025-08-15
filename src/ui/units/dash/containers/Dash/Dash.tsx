@@ -318,7 +318,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
         this.setEditMode(successCallback);
     };
 
-    private handlerEditClick = (onConfirmCallback?: () => void) => {
+    private handlerEditClick = (onConfirmCallback?: () => void, onCancelCallback?: () => void) => {
         if (this.state.isEditModeLoading) {
             return;
         }
@@ -333,7 +333,10 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
                     onEditClick: () => {
                         this.setEditDash(onConfirmCallback);
                     },
-                    onShowHistoryClick: this.setExpandedRevisions,
+                    onShowHistoryClick: () => {
+                        onCancelCallback?.();
+                        this.setExpandedRevisions();
+                    },
                 },
             });
             return;
