@@ -30,7 +30,6 @@ export const DialogEntryDescription: React.FC<DialogEntryDescriptionProps> = (pr
         onApply,
         onCancel,
         onCloseCallback,
-        onContactService,
     } = props;
 
     const isMounted = React.useRef<boolean>(false);
@@ -85,9 +84,8 @@ export const DialogEntryDescription: React.FC<DialogEntryDescriptionProps> = (pr
     }, [onEdit, text]);
 
     const handleSupport = React.useCallback(() => {
-        onContactService?.();
         dispatch(closeDialog());
-    }, [dispatch, onContactService]);
+    }, [dispatch]);
 
     const handleClear = React.useCallback(() => {
         setText('');
@@ -140,7 +138,7 @@ export const DialogEntryDescription: React.FC<DialogEntryDescriptionProps> = (pr
             ) : (
                 <React.Fragment>
                     <Dialog.Body className={b()}>
-                        <div className={b('content', {narrow: Boolean(onContactService)})}>
+                        <div className={b('content')}>
                             {loading ? (
                                 <div className={b('yfm-loader')}>
                                     <Loader size="m" />
@@ -161,7 +159,7 @@ export const DialogEntryDescription: React.FC<DialogEntryDescriptionProps> = (pr
                                 {i18n('button_edit')}
                             </Button>
                         )}
-                        {!loading && onContactService && (
+                        {!loading && (
                             <Button view="outlined" onClick={handleSupport}>
                                 {i18n('button_contact-service')}
                                 <Icon data={ChevronRight} size={16} />
