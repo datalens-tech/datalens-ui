@@ -77,7 +77,7 @@
   "text_batch-show-message": "Are you sure want to show the selected fields?",
   "text_batch-type-alert": "Some conversion types are not available",
   "text_batch-type-header": "Changing the field type",
-  "text_no-field-settings": "There are no display settings",
+  "text_no-field-settings": "No display settings",
   "value_array_float": "Array of fractional numbers",
   "value_array_int": "Array of integers",
   "value_array_str": "Array of strings",
