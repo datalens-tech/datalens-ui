@@ -19,14 +19,13 @@ import './DialogEntryDescription.scss';
 const b = block('dialog-entry-description');
 const i18n = I18n.keyset('component.dialog-entry-description');
 
-const MAX_DESCRIPTION_LENGTH = 36_000;
-
 export const DialogEntryDescription: React.FC<DialogEntryDescriptionProps> = (props) => {
     const {
         title,
         canEdit,
         isEditMode,
         description,
+        maxLength,
         onEdit,
         onApply,
         onCancel,
@@ -94,8 +93,10 @@ export const DialogEntryDescription: React.FC<DialogEntryDescriptionProps> = (pr
         setText('');
     }, []);
 
-    const renderSymbolsCounter = `${text.length.toLocaleString('ru-RU')} / ${MAX_DESCRIPTION_LENGTH.toLocaleString('ru-RU')}`;
-    const isExceedLimit = text.length > MAX_DESCRIPTION_LENGTH;
+    const renderSymbolsCounter = maxLength
+        ? `${text.length.toLocaleString('ru-RU')} / ${maxLength.toLocaleString('ru-RU')}`
+        : null;
+    const isExceedLimit = maxLength ? text.length > maxLength : false;
 
     return (
         <Dialog
@@ -110,19 +111,21 @@ export const DialogEntryDescription: React.FC<DialogEntryDescriptionProps> = (pr
                     <Dialog.Body className={b()}>
                         {props.subTitle && <div className={b('subtitle')}>{props.subTitle}</div>}
                         <TextEditor autofocus onTextUpdate={setText} text={text} />
-                        <div
-                            className={b('length-counter', {
-                                error: isExceedLimit,
-                            })}
-                        >
-                            <span>{renderSymbolsCounter}</span>
-                        </div>
+                        {Boolean(maxLength) && (
+                            <div
+                                className={b('length-counter', {
+                                    error: isExceedLimit,
+                                })}
+                            >
+                                <span>{renderSymbolsCounter}</span>
+                            </div>
+                        )}
                     </Dialog.Body>
                     <Dialog.Footer
                         onClickButtonApply={handleApply}
                         textButtonApply={i18n('button_save')}
                         propsButtonApply={{
-                            disabled: text.length > MAX_DESCRIPTION_LENGTH,
+                            disabled: isExceedLimit,
                             qa: DialogEntryDescriptionQa.SaveButton,
                         }}
                         onClickButtonCancel={handleClose}
