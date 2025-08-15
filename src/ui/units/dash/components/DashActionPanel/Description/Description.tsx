@@ -1,19 +1,26 @@
 import React from 'react';
 
+import {Button, Icon} from '@gravity-ui/uikit';
+import {EntryDialogName} from 'components/EntryDialogues';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
-import {
-    DIALOG_ENTRY_DESCRIPTION,
-    EntryAnnotationDescriptionButton,
-    MAX_ENTRY_DESCRIPTION_LENGTH,
-    openDialogEntryAnnotationDescription,
-} from 'ui/components/DialogEntryDescription';
 import {URL_QUERY} from 'ui/constants/common';
-import {closeDialog, updateDialogProps} from 'ui/store/actions/dialog';
 
-import {updateDashOpenedDesc, updateDescription} from '../../../store/actions/dashTyped';
-import {isEditMode, selectDashDescription} from '../../../store/selectors/dashTypedSelectors';
+import type EntryDialogues from '../../../../../components/EntryDialogues/EntryDialogues';
+import {Mode} from '../../../modules/constants';
+import {
+    setDashDescViewMode,
+    updateDashOpenedDesc,
+    updateDescription,
+} from '../../../store/actions/dashTyped';
+import {
+    isEditMode,
+    selectDashDescMode,
+    selectDashDescription,
+} from '../../../store/selectors/dashTypedSelectors';
+
+import iconDescription from 'assets/icons/info.svg';
 
 import '../DashActionPanel.scss';
 
@@ -21,18 +28,20 @@ const i18n = I18n.keyset('dash.action-panel.view');
 
 type DescriptionProps = {
     canEdit: boolean;
-    onEditClick?: (onConfirmCallback?: () => void, onCancelCallback?: () => void) => void;
+    entryDialoguesRef: React.RefObject<EntryDialogues>;
+    onEditClick?: () => void;
     showOpenedDescription: boolean;
 };
 
 export const Description = (props: DescriptionProps) => {
-    const {canEdit, onEditClick, showOpenedDescription} = props;
+    const {canEdit, entryDialoguesRef, onEditClick, showOpenedDescription} = props;
 
     const history = useHistory();
 
     const dispatch = useDispatch();
     const isDashEditMode = useSelector(isEditMode);
     const description = useSelector(selectDashDescription);
+    const descriptionMode = useSelector(selectDashDescMode);
 
     const handleOnApplyClick = React.useCallback(
         (text: string) => {
@@ -40,6 +49,15 @@ export const Description = (props: DescriptionProps) => {
         },
         [dispatch],
     );
+
+    const handleOnCancelClick = React.useCallback(() => {
+        dispatch(setDashDescViewMode(Mode.View));
+    }, [dispatch]);
+
+    const handleOnEditClick = React.useCallback(() => {
+        onEditClick?.();
+        dispatch(setDashDescViewMode(Mode.Edit));
+    }, [dispatch, onEditClick]);
 
     const handleOnClose = React.useCallback(() => {
         const searchParams = new URLSearchParams(history.location.search);
@@ -50,66 +68,82 @@ export const Description = (props: DescriptionProps) => {
         });
 
         dispatch(updateDashOpenedDesc(false));
+        dispatch(setDashDescViewMode(Mode.View));
     }, [history, dispatch]);
 
-    const handleOnEditClick = React.useCallback(() => {
-        onEditClick?.(
-            () => {
-                dispatch(
-                    updateDialogProps({
-                        id: DIALOG_ENTRY_DESCRIPTION,
-                        props: {
-                            title: i18n('label_dash-info'),
-                            description: description || '',
-                            canEdit,
-                            isEditMode: true,
-                            onApply: handleOnApplyClick,
-                            onCloseCallback: handleOnClose,
-                            maxLength: MAX_ENTRY_DESCRIPTION_LENGTH,
-                        },
-                    }),
-                );
-            },
-            () => dispatch(closeDialog()),
-        );
-    }, [canEdit, description, dispatch, handleOnApplyClick, handleOnClose, onEditClick]);
-
-    const openEntryDescriptionDialog = React.useCallback(() => {
-        dispatch(
-            openDialogEntryAnnotationDescription({
+    const handleDescriptionClick = React.useCallback(() => {
+        entryDialoguesRef.current?.open?.({
+            dialog: EntryDialogName.DashMeta,
+            dialogProps: {
                 title: i18n('label_dash-info'),
-                description: description || '',
+                text: description || '',
                 canEdit,
                 onEdit: handleOnEditClick,
+                onCancel: handleOnCancelClick,
                 isEditMode: isDashEditMode,
                 onApply: handleOnApplyClick,
                 onCloseCallback: handleOnClose,
-            }),
-        );
+            },
+        });
     }, [
-        dispatch,
+        entryDialoguesRef,
         description,
         canEdit,
         handleOnEditClick,
-        isDashEditMode,
+        handleOnCancelClick,
         handleOnApplyClick,
-        handleOnClose,
+        isDashEditMode,
     ]);
 
     // open meta info dialog in edit mode when switches to dash edit mode
     React.useEffect(() => {
-        const needOpenDialog = showOpenedDescription && description;
+        const needOpenDialog =
+            (showOpenedDescription && description) ||
+            !(descriptionMode !== Mode.Edit || !isDashEditMode);
 
-        if (needOpenDialog) {
-            openEntryDescriptionDialog();
+        if (!needOpenDialog) {
+            return;
         }
-    }, [openEntryDescriptionDialog, description, showOpenedDescription]);
+
+        entryDialoguesRef.current?.open?.({
+            dialog: EntryDialogName.DashMeta,
+            dialogProps: {
+                title: i18n('label_dash-info'),
+                text: description || '',
+                canEdit,
+                onEdit: handleOnEditClick,
+                onCancel: handleOnCancelClick,
+                isEditMode: isDashEditMode,
+                onApply: handleOnApplyClick,
+                onCloseCallback: handleOnClose,
+            },
+        });
+    }, [
+        dispatch,
+        entryDialoguesRef,
+        description,
+        canEdit,
+        descriptionMode,
+        isDashEditMode,
+        handleOnEditClick,
+        handleOnCancelClick,
+        handleOnApplyClick,
+        showOpenedDescription,
+        handleOnClose,
+    ]);
+
+    if (!isDashEditMode && !description) {
+        return null;
+    }
 
     return (
-        <EntryAnnotationDescriptionButton
-            onClick={openEntryDescriptionDialog}
-            description={description}
-            isEditMode={isDashEditMode}
-        />
+        <Button
+            view="flat"
+            size="m"
+            onClick={handleDescriptionClick}
+            qa="action-button-description"
+        >
+            <Icon data={iconDescription} width={20} height={20} />
+        </Button>
     );
 };

@@ -7,13 +7,12 @@ import {batch, useDispatch, useSelector} from 'react-redux';
 import {DashboardDialogSettingsQa} from 'shared/constants/qa/dash';
 import {DEFAULT_DASH_MARGINS} from 'ui/components/DashKit/constants';
 import {registry} from 'ui/registry';
-import {openDialog} from 'ui/store/actions/dialog';
 
 import type {DatalensGlobalState} from '../../../../..';
+import {EntryDialogName} from '../../../../..';
 import {i18n} from '../../../../../../i18n';
 import type {DashSettings, DashSettingsGlobalParams} from '../../../../../../shared';
 import {DashLoadPriority} from '../../../../../../shared';
-import {DIALOG_ENTRY_DESCRIPTION} from '../../../../../components/DialogEntryDescription';
 import EntryDialogues from '../../../../../components/EntryDialogues/EntryDialogues';
 import {DIALOG_TYPE} from '../../../../../constants/dialogs';
 import {validateParamTitle} from '../../../components/ParamsSettings/helpers';
@@ -169,34 +168,30 @@ const Settings = () => {
     };
 
     const handleButtonSetupAccessDescription = React.useCallback(() => {
-        dispatch(
-            openDialog({
-                id: DIALOG_ENTRY_DESCRIPTION,
-                props: {
-                    title: i18n('dash.settings-dialog.edit', 'label_access-description'),
-                    description: accessDescription || '',
-                    canEdit: true,
-                    isEditMode: true,
-                    onApply: (text: string) => setAccessDesc(text),
-                },
-            }),
-        );
-    }, [dispatch, accessDescription]);
+        entryDialoguesRef?.current?.open?.({
+            dialog: EntryDialogName.DashMeta,
+            dialogProps: {
+                title: i18n('dash.settings-dialog.edit', 'label_access-description'),
+                text: accessDescription || '',
+                canEdit: true,
+                isEditMode: true,
+                onApply: (text: string) => setAccessDesc(text),
+            },
+        });
+    }, [entryDialoguesRef, accessDescription]);
 
     const handleButtonSetupSupportDescription = React.useCallback(() => {
-        dispatch(
-            openDialog({
-                id: DIALOG_ENTRY_DESCRIPTION,
-                props: {
-                    title: i18n('dash.settings-dialog.edit', 'label_support-description'),
-                    description: supportDescription || '',
-                    canEdit: true,
-                    isEditMode: true,
-                    onApply: (text: string) => setSupportDesc(text),
-                },
-            }),
-        );
-    }, [dispatch, supportDescription]);
+        entryDialoguesRef?.current?.open?.({
+            dialog: EntryDialogName.DashMeta,
+            dialogProps: {
+                title: i18n('dash.settings-dialog.edit', 'label_support-description'),
+                text: supportDescription || '',
+                canEdit: true,
+                isEditMode: true,
+                onApply: (text: string) => setSupportDesc(text),
+            },
+        });
+    }, [entryDialoguesRef, supportDescription]);
 
     const handleChangeGlobalParams = React.useCallback((params: DashSettingsGlobalParams) => {
         setIsGlobalParamsError(

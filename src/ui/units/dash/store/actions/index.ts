@@ -18,6 +18,7 @@ import type {
     SetDashKitRefAction,
     SetDashOpenedDescKeyAction,
     SetDashUpdateStatusAction,
+    SetDescViewModeAction,
     SetDescriptionAction,
     SetErrorModeAction,
     SetHashStateAction,
@@ -58,6 +59,7 @@ export type DashAction<T = unknown> =
     | AddSelectorToGroupAction
     | UpdateSelectorsGroupAction
     | SetViewModeAction
+    | SetDescViewModeAction
     | SetDescriptionAction
     | SetAccessDescriptionAction
     | SetSupportDescriptionAction

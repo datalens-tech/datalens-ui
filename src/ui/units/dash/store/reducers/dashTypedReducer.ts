@@ -22,6 +22,7 @@ import {
     SET_DASHKIT_REF,
     SET_DASH_ACCESS_DESCRIPTION,
     SET_DASH_DESCRIPTION,
+    SET_DASH_DESC_VIEW_MODE,
     SET_DASH_KEY,
     SET_DASH_OPENED_DESC,
     SET_DASH_SUPPORT_DESCRIPTION,
@@ -54,6 +55,7 @@ export type DashState = {
     stateHashId: null | string;
     initialTabsSettings?: null | DashData['tabs'];
     mode: Mode;
+    descriptionMode: Mode;
     navigationPath: null | string;
     dashKitRef: null | React.RefObject<DashKit>;
     error: null | Error;
@@ -276,6 +278,13 @@ export function dashTypedReducer(
                 tabId: tabIndex === -1 ? entryData.tabs[0].id : tabId,
                 showTableOfContent: entryData.settings?.expandTOC && state.showTableOfContent,
                 data: entryData,
+            };
+        }
+
+        case SET_DASH_DESC_VIEW_MODE: {
+            return {
+                ...state,
+                descriptionMode: action.payload || Mode.View,
             };
         }
 
