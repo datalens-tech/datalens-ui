@@ -11,12 +11,15 @@ import type {
 import {buildChartsConfigPrivate} from './config/config';
 import type {BuildChartConfigArgs} from './config/types';
 import {buildHighchartsConfigPrivate} from './highcharts/highcharts';
-import type {JSTabOptions} from './js';
 import {buildGraphPrivate} from './js/js';
 import {fallbackJSFunctionPrivate} from './js/js-v1.5-private';
 import {buildSourcesPrivate} from './url/build-sources/build-sources';
 import type {SourceRequests, SourcesArgs} from './url/build-sources/types';
 import {setConsole} from './utils/misc-helpers';
+
+type JSTabOptions =
+    | [{shared: Shared | ServerChartsConfig; ChartEditor: IChartEditor; data: any}]
+    | [any, Shared | ServerChartsConfig, IChartEditor];
 
 declare const __features: FeatureConfig;
 declare const __palettes: Record<string, Palette>;
