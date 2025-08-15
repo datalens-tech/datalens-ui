@@ -3,6 +3,7 @@ import type {
     DashData,
     EntryPublicAuthor,
     EntryScope,
+    TenantSettings,
     WorkbookId,
 } from '../../../../../shared';
 import type {ChartStorageType} from '../../types';
@@ -51,6 +52,7 @@ export type ResolvedConfig = {
     publicAuthor?: EntryPublicAuthor;
     servicePlan?: string;
     tenantFeatures?: Record<string, unknown>;
+    tenantSettings?: TenantSettings;
 };
 
 export type ReducedResolvedConfig = ResolvedConfig & {data: {shared: string | object}};

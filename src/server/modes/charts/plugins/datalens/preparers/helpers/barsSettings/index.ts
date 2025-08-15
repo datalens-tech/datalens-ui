@@ -160,9 +160,17 @@ export const getBarSettingsValue = (args: {
     isTotalCell: boolean;
     loadedColorPalettes: Record<string, ColorPalette>;
     availablePalettes: Record<string, Palette>;
+    defaultColorPaletteId: string;
 }): BarValueOptions => {
-    const {field, rowValue, columnValues, isTotalCell, loadedColorPalettes, availablePalettes} =
-        args;
+    const {
+        defaultColorPaletteId,
+        field,
+        rowValue,
+        columnValues,
+        isTotalCell,
+        loadedColorPalettes,
+        availablePalettes,
+    } = args;
 
     const barSettings = field.barsSettings!;
 
@@ -174,6 +182,7 @@ export const getBarSettingsValue = (args: {
         palette: barSettings.colorSettings.settings.palette,
         availablePalettes,
         customColorPalettes: loadedColorPalettes,
+        defaultColorPaletteId,
     });
 
     switch (barSettings.colorSettings.colorType) {

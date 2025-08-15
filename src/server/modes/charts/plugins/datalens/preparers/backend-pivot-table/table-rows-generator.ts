@@ -58,11 +58,12 @@ type GetRowCellMetadataArgs = {
     settingsByField: Record<string, PivotTableFieldSettings>;
     loadedColorPalettes: Record<string, ColorPalette>;
     availablePalettes: Record<string, Palette>;
+    defaultColorPaletteId: string;
     annotationsMap: AnnotationsMap;
 };
 
 function getRowCellMetadata(args: GetRowCellMetadataArgs): ChartkitCell {
-    const {loadedColorPalettes, availablePalettes, annotationsMap} = args;
+    const {loadedColorPalettes, availablePalettes, annotationsMap, defaultColorPaletteId} = args;
     const [value, legendItemId] = args.pivotDataCellValue[0];
 
     const pivotField = args.fieldsItemIdMap[legendItemId];
@@ -113,6 +114,7 @@ function getRowCellMetadata(args: GetRowCellMetadataArgs): ChartkitCell {
                 isTotalCell: isTotalsRowValue,
                 availablePalettes,
                 loadedColorPalettes,
+                defaultColorPaletteId,
             });
 
             const fullFilledBarSettings: BarViewOptions & BarValueOptions = {
@@ -154,6 +156,7 @@ type GenerateTableRowsArgs = {
     sortSettings: PivotTableSortSettings;
     headerTotalsIndexMap: Record<number, boolean>;
     ChartEditor: IChartEditor;
+    defaultColorPaletteId: string;
 };
 
 export const generateTableRows = ({
@@ -168,6 +171,7 @@ export const generateTableRows = ({
     sortSettings,
     headerTotalsIndexMap,
     ChartEditor,
+    defaultColorPaletteId,
 }: GenerateTableRowsArgs): ChartkitTableRows => {
     const {rowsMeta, isSortByRowAllowed} = sortSettings;
     const cellId = {current: 0};
@@ -318,6 +322,7 @@ export const generateTableRows = ({
                         loadedColorPalettes: colorsConfig.loadedColorPalettes,
                         availablePalettes: colorsConfig.availablePalettes,
                         annotationsMap,
+                        defaultColorPaletteId,
                     }),
                 };
 

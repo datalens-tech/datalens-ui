@@ -12,6 +12,7 @@ function prepareMetric({
     shared,
     idToTitle,
     colorsConfig,
+    defaultColorPaletteId,
 }: PrepareFunctionArgs) {
     const {data, order} = resultData;
 
@@ -35,6 +36,7 @@ function prepareMetric({
         palette: shared.extraSettings?.metricFontColorPalette,
         availablePalettes: colorsConfig.availablePalettes,
         customColorPalettes: colorsConfig.loadedColorPalettes,
+        defaultColorPaletteId,
     });
 
     if (useMarkup) {

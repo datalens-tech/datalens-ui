@@ -46,8 +46,10 @@ const getDiscreteColorValue = (args: {
     settings: TableFieldBackgroundSettings['settings'];
     customColorPalettes: Record<string, ColorPalette>;
     availablePalettes: Record<string, Palette>;
+    defaultColorPaletteId: string;
 }): string | null => {
-    const {colorValue, settings, customColorPalettes, availablePalettes} = args;
+    const {colorValue, settings, customColorPalettes, availablePalettes, defaultColorPaletteId} =
+        args;
     const mountedColors = settings.paletteState.mountedColors;
     const palette = settings.paletteState.palette;
 
@@ -67,6 +69,7 @@ const getDiscreteColorValue = (args: {
             palette,
             customColorPalettes,
             availablePalettes,
+            defaultColorPaletteId,
         }),
     );
 };
@@ -79,6 +82,7 @@ type ColorizePivotTableHeaderByBackgroundSettings = {
     isTotal: boolean;
     loadedColorPalettes: Record<string, ColorPalette>;
     availablePalettes: Record<string, Palette>;
+    defaultColorPaletteId: string;
 };
 export const colorizePivotTableHeaderByBackgroundSettings = ({
     backgroundSettings,
@@ -88,6 +92,7 @@ export const colorizePivotTableHeaderByBackgroundSettings = ({
     isTotal,
     loadedColorPalettes,
     availablePalettes,
+    defaultColorPaletteId,
 }: ColorizePivotTableHeaderByBackgroundSettings) => {
     if (isTotal) {
         return {};
@@ -102,6 +107,7 @@ export const colorizePivotTableHeaderByBackgroundSettings = ({
             settings: backgroundSettings.settings,
             customColorPalettes: loadedColorPalettes,
             availablePalettes,
+            defaultColorPaletteId,
         });
 
         if (!colorValue) {
@@ -116,6 +122,7 @@ export const colorizePivotTableHeaderByBackgroundSettings = ({
                     settings: backgroundSettings.settings,
                     customColorPalettes: loadedColorPalettes,
                     availablePalettes,
+                    defaultColorPaletteId,
                 });
             });
         }
@@ -140,6 +147,7 @@ type PrepareBackgroundColorSettings = {
     settingsByField: Record<string, PivotTableFieldSettings>;
     loadedColorPalettes: Record<string, ColorPalette>;
     availablePalettes: Record<string, Palette>;
+    defaultColorPaletteId: string;
 };
 
 export const prepareBackgroundColorSettings = (args: PrepareBackgroundColorSettings) => {
@@ -150,6 +158,7 @@ export const prepareBackgroundColorSettings = (args: PrepareBackgroundColorSetti
         fieldDict,
         settingsByField,
         availablePalettes,
+        defaultColorPaletteId,
     } = args;
 
     if (!rowsData.length) {
@@ -210,6 +219,7 @@ export const prepareBackgroundColorSettings = (args: PrepareBackgroundColorSetti
                 settings,
                 customColorPalettes: args.loadedColorPalettes,
                 availablePalettes,
+                defaultColorPaletteId,
             });
         });
     });
@@ -288,6 +298,7 @@ type ColorizePivotTableByFieldBackgroundSettings = {
     fieldDict: Record<string, ServerField>;
     loadedColorPalettes: Record<string, ColorPalette>;
     availablePalettes: Record<string, Palette>;
+    defaultColorPaletteId: string;
 };
 
 export const colorizePivotTableByFieldBackgroundSettings = (
@@ -303,6 +314,7 @@ export const colorizePivotTableByFieldBackgroundSettings = (
         fieldsItemIdMap,
         loadedColorPalettes,
         availablePalettes,
+        defaultColorPaletteId,
     } = args;
 
     const {discreteColorsByField, continuousColorsByField} = prepareBackgroundColorSettings({
@@ -313,6 +325,7 @@ export const colorizePivotTableByFieldBackgroundSettings = (
         settingsByField,
         loadedColorPalettes,
         availablePalettes,
+        defaultColorPaletteId,
     });
 
     rows.forEach((row) => {
@@ -362,6 +375,7 @@ export const colorizePivotTableByFieldBackgroundSettings = (
                     settings,
                     customColorPalettes: loadedColorPalettes,
                     availablePalettes,
+                    defaultColorPaletteId,
                 });
             }
 

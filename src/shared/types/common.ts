@@ -140,6 +140,10 @@ export interface DLUser extends DLUserAccount {
     idpType: string | null;
 }
 
+export type TenantSettings = {
+    defaultColorPaletteId?: string;
+};
+
 export type MainLayoutConfigData = {
     intLandingConfigEntryId?: string;
 };
@@ -178,6 +182,7 @@ export type DLGlobalData = {
         collectionsEnabled: boolean;
         features?: Record<string, unknown>;
     };
+    tenantSettings?: TenantSettings;
     userIsOrgAdmin?: boolean;
     allowLanguages?: Language[];
     langRegion?: string;
@@ -212,6 +217,7 @@ export type DLGlobalData = {
     apiPrefix?: string;
     docPathName?: DocPathName;
     chartkitSettings?: ChartkitGlobalSettings;
+    defaultColorPaletteId: string;
     extraPalettes?: Record<string, Palette>;
     headersMap?: Record<string, string>;
     isZitadelEnabled?: boolean;

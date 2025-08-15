@@ -20,6 +20,7 @@ const getDiscreteBackgroundColorStyle = (args: GetDiscreteBackgroundColorStyle) 
         idToDataType,
         loadedColorPalettes,
         availablePalettes,
+        defaultColorPaletteId,
     } = args;
 
     const {settings, colorFieldGuid} = backgroundSettings;
@@ -56,6 +57,7 @@ const getDiscreteBackgroundColorStyle = (args: GetDiscreteBackgroundColorStyle) 
         colors = selectServerPalette({
             palette: paletteSettings.palette,
             availablePalettes,
+            defaultColorPaletteId,
         });
     }
 
@@ -101,6 +103,7 @@ export const getFlatTableBackgroundStyles = (
         idToDataType,
         loadedColorPalettes,
         availablePalettes,
+        defaultColorPaletteId,
     } = args;
 
     const backgroundSettings = column.backgroundSettings;
@@ -130,5 +133,6 @@ export const getFlatTableBackgroundStyles = (
         idToDataType,
         loadedColorPalettes,
         availablePalettes,
+        defaultColorPaletteId,
     });
 };

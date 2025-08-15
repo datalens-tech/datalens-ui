@@ -26,7 +26,11 @@ import {prepareD3Pie, prepareHighchartsPie} from '../../../preparers/pie';
 import preparePolylineData from '../../../preparers/polyline';
 import {prepareD3Scatter, prepareHighchartsScatter} from '../../../preparers/scatter';
 import {prepareD3Treemap, prepareHighchartsTreemap} from '../../../preparers/treemap';
-import type {PrepareFunction, PrepareFunctionResultData} from '../../../preparers/types';
+import type {
+    PrepareFunction,
+    PrepareFunctionArgs,
+    PrepareFunctionResultData,
+} from '../../../preparers/types';
 import type {ChartPlugin} from '../../../types';
 import {getServerDateFormat} from '../../../utils/misc-helpers';
 import {OversizeErrorType} from '../../constants/errors';
@@ -38,7 +42,7 @@ import {
     isDefaultOversizeError,
 } from '../errors/oversize-error/utils';
 
-type PrepareSingleResultArgs = {
+export type PrepareSingleResultArgs = {
     resultData: PrepareFunctionResultData;
     visualization: ServerVisualization;
     shared: ServerChartsConfig;
@@ -51,6 +55,7 @@ type PrepareSingleResultArgs = {
     disableDefaultSorting?: boolean;
     features: FeatureConfig;
     plugin?: ChartPlugin;
+    defaultColorPaletteId: string;
 };
 
 // eslint-disable-next-line complexity
@@ -67,6 +72,7 @@ export default ({
     palettes,
     features,
     plugin,
+    defaultColorPaletteId,
 }: PrepareSingleResultArgs) => {
     const {
         sharedData: {drillDownData},
@@ -319,9 +325,10 @@ export default ({
         loadedColorPalettes,
         colorsConfig,
         availablePalettes: palettes,
+        defaultColorPaletteId,
     });
 
-    const prepareFunctionArgs = {
+    const prepareFunctionArgs: PrepareFunctionArgs = {
         placeholders: visualization.placeholders,
         fields: [],
         colors,
@@ -346,6 +353,7 @@ export default ({
 
         disableDefaultSorting,
         features,
+        defaultColorPaletteId,
     };
 
     return (prepare as PrepareFunction)(prepareFunctionArgs);
