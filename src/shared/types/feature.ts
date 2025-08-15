@@ -100,6 +100,8 @@ export enum Feature {
     GravityChartsForPieAndTreemap = 'GravityChartsForPieAndTreemap',
     /** Use GravityUI Charts as the default library for some wizard visualizations(scatter and bar-y) */
     GravityChartsForBarYAndScatter = 'GravityChartsForBarYAndScatter',
+    /** Save field settings (formatting and colors) in the dataset */
+    StoreFieldSettingsAtDataset = 'StoreFieldSettingsAtDataset',
 }
 
 export type FeatureConfig = Record<string, boolean>;

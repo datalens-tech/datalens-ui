@@ -67,6 +67,7 @@ type DatasetTableProps = {
     batchRemoveFields: (data: {fields: DatasetField[]}) => void;
     onClickRow: (data: {field: DatasetField}) => void;
     openRLSDialog: (data: {field: DatasetField}) => void;
+    openFieldSettingsDialog: (data: {field: DatasetField}) => void;
     openDialog: typeof openDialog;
     openDialogConfirm: typeof openDialogConfirm;
     closeDialog: typeof closeDialog;
@@ -253,6 +254,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             handleTitleUpdate: this.handleTitleUpdate,
             handleIdUpdate: this.handleIdUpdate,
             handleHiddenUpdate: this.handleHiddenUpdate,
+            handleUpdateFieldSettings: this.handleUpdateFieldSettings,
             handleRlsUpdate: this.handleRlsUpdate,
             handleTypeSelectUpdate: this.handleTypeSelectUpdate,
             handleAggregationSelectUpdate: this.handleAggregationSelectUpdate,
@@ -487,6 +489,10 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             updatePreview: true,
             debounce: true,
         });
+    };
+
+    private handleUpdateFieldSettings = (field: DatasetField) => {
+        this.props.openFieldSettingsDialog({field});
     };
 
     private handleRlsUpdate = (field: DatasetField) => {

@@ -26,6 +26,7 @@ import {DIALOG_FIELD_EDITOR} from '../../../../components/DialogFieldEditor/Dial
 import {CounterName, GoalId, reachMetricaGoal} from '../../../../libs/metrica';
 import {closeDialog, openDialog, openDialogConfirm} from '../../../../store/actions/dialog';
 import DatasetTable from '../../components/DatasetTable/DatasetTable';
+import {FieldSettingsDialog} from '../../components/FieldSettingsDialog/FieldSettingsDialog';
 import {DATASET_VALIDATION_TIMEOUT, TAB_DATASET} from '../../constants';
 import {
     UISelector,
@@ -59,6 +60,7 @@ class DatasetEditor extends React.Component {
         field: null,
         updates: [],
         visibleRLSDialog: false,
+        visibleFieldSettingsDialog: false,
         currentRLSField: isEnabledFeature(Feature.EnableRLSV2) ? [] : '',
     };
 
@@ -310,6 +312,20 @@ class DatasetEditor extends React.Component {
         }
     };
 
+    openFieldSettingsDialog = ({field}) => {
+        this.setState({
+            visibleFieldSettingsDialog: true,
+            field,
+        });
+    };
+
+    closeFieldSettingsDialog = () => {
+        this.setState({
+            visibleFieldSettingsDialog: false,
+            field: null,
+        });
+    };
+
     closeRLSDialog = () => {
         this.setState({
             visibleRLSDialog: false,
@@ -340,6 +356,7 @@ class DatasetEditor extends React.Component {
                     removeField={this.removeField}
                     batchRemoveFields={this.batchRemoveFields}
                     openRLSDialog={this.openRLSDialog}
+                    openFieldSettingsDialog={this.openFieldSettingsDialog}
                     openDialog={this.props.openDialog}
                     closeDialog={this.props.closeDialog}
                     openDialogConfirm={this.props.openDialogConfirm}
@@ -352,6 +369,11 @@ class DatasetEditor extends React.Component {
                     onClose: this.closeRLSDialog,
                     onSave: this.props.updateRLS,
                 })}
+                <FieldSettingsDialog
+                    open={this.state.visibleFieldSettingsDialog}
+                    onClose={this.closeFieldSettingsDialog}
+                    field={field}
+                />
             </div>
         );
     }
