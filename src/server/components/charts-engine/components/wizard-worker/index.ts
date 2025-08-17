@@ -1,7 +1,7 @@
 import workerPool from 'workerpool';
 
 import type {ServerChartsConfig, Shared} from '../../../../../shared';
-import {Feature, WizardVisualizationId, isGravityChartsVisualization} from '../../../../../shared';
+import {WizardVisualizationId, isGravityChartsVisualization} from '../../../../../shared';
 import {getTranslationFn} from '../../../../../shared/modules/language';
 import {datalensModule} from '../../../../modes/charts/plugins/datalens/private-module';
 import {createI18nInstance} from '../../../../utils/language';
@@ -133,15 +133,19 @@ const worker: WizardWorker = {
         const console = new Console({});
         datalensModule.setConsole(console);
 
+        const serverChartConfig = shared as ServerChartsConfig;
+        const shouldUseGravityCharts = isGravityChartsVisualization({
+            features,
+            id: serverChartConfig?.visualization?.id,
+        });
+        const plugin = shouldUseGravityCharts ? 'gravity-charts' : undefined;
         const result = datalensModule.buildGraph({
             data,
-            shared: shared as ServerChartsConfig,
+            shared: serverChartConfig,
             ChartEditor: context.ChartEditor,
             palettes,
             features,
-            plugin: features[Feature.GravityAsDefaultWizardVisualizationLibrary]
-                ? 'gravity-charts'
-                : undefined,
+            plugin,
         });
 
         return {

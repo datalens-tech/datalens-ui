@@ -121,7 +121,7 @@ class ScreenSQL extends React.PureComponent<ScreenSQLInnerProps, ScreenSQLState>
                             glyphMargin: true,
                             hideCursorInOverviewRuler: true,
                             lineNumbersMinChars: 1,
-                            wordWrap: 'bounded',
+                            wordWrap: 'on',
                         }}
                         onChange={this.onQueryChange}
                     />

@@ -55,7 +55,7 @@ export const ViewControls = (props: ViewControlsProps) => {
                     view="normal"
                     size="m"
                     loading={isEditBtnLoading}
-                    onClick={onEditClick}
+                    onClick={() => onEditClick()}
                     qa="action-button-edit"
                 >
                     {i18n('button_edit')}

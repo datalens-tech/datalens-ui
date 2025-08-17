@@ -29,8 +29,11 @@ export default {
 
         const {ctx} = req;
         const features = {
-            GravityAsDefaultWizardVisualizationLibrary: ctx.get('isEnabledServerFeature')(
-                Feature.GravityAsDefaultWizardVisualizationLibrary,
+            GravityChartsForPieAndTreemap: ctx.get('isEnabledServerFeature')(
+                Feature.GravityChartsForPieAndTreemap,
+            ),
+            GravityChartsForBarYAndScatter: ctx.get('isEnabledServerFeature')(
+                Feature.GravityChartsForBarYAndScatter,
             ),
         };
 

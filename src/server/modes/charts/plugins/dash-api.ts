@@ -203,7 +203,7 @@ function sendStats(ctx: AppContext, handlerName: string, status: number) {
         timestamp: Date.now(),
         status,
         requestId: ctx.get(REQUEST_ID_PARAM_NAME) || '',
-        userId: ctx.get(USER_ID_PARAM_NAME) || '',
+        userId,
         traceId: ctx.getTraceId() || '',
     });
 }
