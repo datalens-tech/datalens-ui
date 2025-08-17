@@ -28,9 +28,6 @@ if [ -z "${POSTGRES_USER_DEMO}" ] || [ "${IS_ROOT}" == "true" ]; then POSTGRES_U
 if [ -z "${POSTGRES_PASSWORD_US}" ] || [ "${IS_ROOT}" == "true" ]; then POSTGRES_PASSWORD_US="${POSTGRES_PASSWORD}"; fi
 if [ -z "${POSTGRES_PASSWORD_DEMO}" ] || [ "${IS_ROOT}" == "true" ]; then POSTGRES_PASSWORD_DEMO="${POSTGRES_PASSWORD}"; fi
 
-if [ "${POSTGRES_HOST}" != "localhost" ]; then
-  POSTGRES_HOST="postgres"
-fi
 export PGPORT="${POSTGRES_PORT}"
 
 echo "  [post-init] start e2e data migration..."
