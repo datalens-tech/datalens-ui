@@ -35,12 +35,7 @@ concurrency:
 jobs:
   run-e2e:
     name: Install Datalens and Run E2E Tests
-    # runs-on: ubuntu-24.04
-    runs-on:
-      - self-hosted
-      - linux
-      - cloud
-      - datalens-opensource
+    runs-on: ubuntu-24.04
     steps:
       - name: echo distinct ID ${{ github.event.inputs.distinct_id }}
         run: echo ${{ github.event.inputs.distinct_id }}
