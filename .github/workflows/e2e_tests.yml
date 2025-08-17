@@ -106,7 +106,7 @@ jobs:
         run: |
           if [ -z "${UI_VERSION}" ]; then
             UI_VERSION="pr"
-            E2E_IMAGE_PREFIX="datalens-ui:pr"
+            E2E_IMAGE_PREFIX="datalens-ui"
           fi
           echo "UI_VERSION=${UI_VERSION}" >> "$GITHUB_ENV"
           echo "E2E_IMAGE_PREFIX=${E2E_IMAGE_PREFIX}" >> "$GITHUB_ENV"
