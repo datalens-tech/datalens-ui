@@ -22,7 +22,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: link ticket
-        run: scripts/tracker-ticket-link.sh
+        run: scripts/ci/tracker-ticket-link.sh
         env:
           ST_OAUTH_TOKEN: ${{ secrets.ST_OAUTH_TOKEN }}
           ST_SERVER_ENDPOINT: ${{ vars.ST_SERVER_ENDPOINT }}
