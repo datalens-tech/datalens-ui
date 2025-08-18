@@ -197,6 +197,7 @@ export interface DatasetField {
         | {type: typeof DATASET_VALUE_CONSTRAINT_TYPE.DEFAULT}
         | {type: typeof DATASET_VALUE_CONSTRAINT_TYPE.NULL}
         | {type: typeof DATASET_VALUE_CONSTRAINT_TYPE.REGEX; pattern: string};
+    ui_settings?: string;
 }
 
 export interface DatasetFieldError {

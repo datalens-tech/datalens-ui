@@ -1,0 +1,19 @@
+.field-settings-dialog {
+    width: 480px;
+
+    &__row {
+        &:last-child {
+            margin-bottom: 0;
+        }
+    }
+
+    &__footer {
+        width: 100%;
+        display: flex;
+        gap: 10px;
+    }
+
+    &__btn-reset {
+        margin-right: auto;
+    }
+}
