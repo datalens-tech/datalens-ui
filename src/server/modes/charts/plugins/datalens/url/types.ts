@@ -6,9 +6,9 @@ import type {
     ServerVisualization,
     Shared,
     StringParams,
-} from '../../../../../../../shared';
-import type {MiddlewareUrl} from '../../../types';
-import type {ApiVersion} from '../../types';
+} from '../../../../../../shared';
+import type {MiddlewareUrl} from '../../types';
+import type {ApiVersion} from '../types';
 
 export type SourcesArgs = {
     params: StringParams;
