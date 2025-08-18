@@ -83,8 +83,14 @@ $paletteItemSizeM: 30px;
             &::before {
                 width: 36px;
                 height: 36px;
-                border: 2px solid var(--g-color-line-brand);
                 border-radius: 8px;
+                border-width: 2px;
+            }
+        }
+
+        &.palette-item_selected {
+            &::before {
+                border-color: var(--g-color-line-brand);
             }
         }
     }

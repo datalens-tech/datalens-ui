@@ -82,7 +82,7 @@ export const MinifiedPalette: React.FC<MinifiedPaletteProps> = (props: MinifiedP
                 paletteType={PaletteTypes.Colors}
                 palette={colors}
                 onPaletteItemClick={onPaletteItemClick}
-                isSelectedItem={(color) => color === currentColor}
+                isSelectedItem={(color) => !customColorSelected && color === currentColor}
                 className={b('palette', {size})}
                 itemClassName={b('item', {size})}
                 customColorEnabled={true}
