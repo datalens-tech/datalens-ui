@@ -94,7 +94,12 @@ class DialogMetricSettings extends React.PureComponent<Props, State> {
         const hasErrors = Boolean(this.state.colorErrorText);
 
         return (
-            <Dialog open={true} onClose={this.onClose} qa={DialogMetricSettingsQa.Dialog}>
+            <Dialog
+                open={true}
+                onClose={this.onClose}
+                qa={DialogMetricSettingsQa.Dialog}
+                disableHeightTransition={true}
+            >
                 <Dialog.Header caption={i18n('label_settings')} />
                 <Dialog.Body className={b()}>
                     <div className={b('row')} data-qa="metric-settings-dialog-size">
@@ -147,6 +152,7 @@ class DialogMetricSettings extends React.PureComponent<Props, State> {
                     onInputColorUpdate={this.handleInputColorUpdate}
                     colorPalettes={this.props.colorPalettes}
                     size="m"
+                    customColorSelected={typeof this.state.colorIndex !== 'number'}
                 />
             </div>
         );
@@ -155,10 +161,7 @@ class DialogMetricSettings extends React.PureComponent<Props, State> {
     private handleInputColorUpdate = (color: string) => {
         const preparedColor = `#${color}`;
 
-        const colorPaletteIndex = this.state.paletteColors.indexOf(preparedColor);
-        const colorIndex = colorPaletteIndex === -1 ? undefined : colorPaletteIndex;
-
-        this.setState({currentColor: preparedColor, colorIndex});
+        this.setState({currentColor: preparedColor, colorIndex: undefined});
     };
 
     private handlePaletteUpdate = (paletteName: string) => {

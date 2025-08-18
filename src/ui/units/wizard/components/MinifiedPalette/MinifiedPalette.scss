@@ -81,9 +81,10 @@ $paletteItemSizeM: 30px;
         &.palette-item:hover,
         &.palette-item_selected {
             &::before {
-                top: -2px;
-                left: -2px;
-                border: 1px solid var(--g-color-base-generic-medium);
+                width: 36px;
+                height: 36px;
+                border: 2px solid var(--g-color-line-brand);
+                border-radius: 8px;
             }
         }
     }
