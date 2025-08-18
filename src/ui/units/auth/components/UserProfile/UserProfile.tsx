@@ -53,7 +53,7 @@ export function UserProfile({userProfile, onUserDataChange}: UserProfileProps) {
     ));
 
     return (
-        <Flex direction="column" gap={10} width={490}>
+        <Flex direction="column" gap={10} width={DL.IS_MOBILE ? 480 : 936}>
             <Section
                 title={i18n('title_profile')}
                 disableActions={disableActions}
