@@ -1,7 +1,7 @@
 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M13.1429 4H4V14.2857H13.1429V4Z" fill="var(--dl-viz-icon-main-color)"/>
-<path d="M20 4H14.2857V14.2857H20V4Z" fill="var(--dl-viz-icon-main-color)"/>
-<path d="M4 15.4286H9.71429V20H4V15.4286Z" fill="var(--dl-viz-icon-main-color)"/>
-<path d="M10.8571 15.4286H16.5714V20H10.8571V15.4286Z" fill="var(--dl-viz-icon-main-color)"/>
-<path d="M17.7143 15.4286H20V20H17.7143V15.4286Z" fill="#FF0400"/>
+<path d="M13.1429 4H4V14.2857H13.1429V4Z" fill="var(--dl-viz-icon-main-color, currentColor)"/>
+<path d="M20 4H14.2857V14.2857H20V4Z" fill="var(--dl-viz-icon-main-color, currentColor)"/>
+<path d="M4 15.4286H9.71429V20H4V15.4286Z" fill="var(--dl-viz-icon-main-color, currentColor)"/>
+<path d="M10.8571 15.4286H16.5714V20H10.8571V15.4286Z" fill="var(--dl-viz-icon-main-color, currentColor)"/>
+<path d="M17.7143 15.4286H20V20H17.7143V15.4286Z" fill="var(--dl-viz-icon-secondary-color, currentColor)"/>
 </svg>
