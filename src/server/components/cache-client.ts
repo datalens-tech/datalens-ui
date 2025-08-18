@@ -19,7 +19,7 @@ export type RedisConfig = RedisDsnConfig & {
     role: 'master' | 'slave';
 };
 
-export type RedisConfigParams = {sentinels?: RedisSentinelsList; name?: string};
+export type RedisConfigParams = {sentinels?: RedisSentinelsList; name?: string; envName?: string};
 
 export type CacheStatus =
     | typeof CacheClient.OK
@@ -44,16 +44,19 @@ const timeout = <T>(prom: Promise<T>, time: number): Promise<T> => {
 };
 
 const getRedisDsnConfig = (params: RedisConfigParams = {}): RedisDsnConfig => {
-    if (!process.env.REDIS_DSN_LIST?.startsWith('redis://')) {
+    const envName = params.envName || 'REDIS_DSN_LIST';
+    const redisDsnList = process.env[envName];
+
+    if (!redisDsnList?.startsWith('redis://')) {
         return {
             name: params.name || '',
             sentinels: params.sentinels || [],
         };
     }
 
-    const dnsListString = process.env.REDIS_DSN_LIST.slice('redis://'.length);
+    const dsnListString = redisDsnList.slice('redis://'.length);
 
-    const [namePasswordString, redisSentinelsString] = dnsListString.split('@');
+    const [namePasswordString, redisSentinelsString] = dsnListString.split('@');
 
     const [name, password] = namePasswordString.split(':');
 
