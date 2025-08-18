@@ -5,9 +5,9 @@
     <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
         <g id="Artboard-3" transform="translate(12.000000, 12.000000), rotate(90), translate(-12.000000, -12.000000)">
             <rect id="Rectangle-17" fill="#FFFFFF" opacity="0" x="0" y="0" width="24" height="24"></rect>
-            <rect id="Rectangle-17" fill="#1A82E3" x="4" y="13.5" width="4" height="5.5" rx="1"></rect>
-            <rect id="Rectangle-17" fill="#1A82E3" x="10" y="9.5" width="4" height="9.5" rx="1"></rect>
-            <rect id="Rectangle-17" fill="#FC4F51" x="16" y="5" width="4" height="14" rx="1"></rect>
+            <rect id="Rectangle-17" fill="var(--dl-viz-icon-main-color, currentColor)" x="4" y="13.5" width="4" height="5.5" rx="1"></rect>
+            <rect id="Rectangle-17" fill="var(--dl-viz-icon-main-color, currentColor)" x="10" y="9.5" width="4" height="9.5" rx="1"></rect>
+            <rect id="Rectangle-17" fill="var(--dl-viz-icon-secondary-color, currentColor)" x="16" y="5" width="4" height="14" rx="1"></rect>
         </g>
     </g>
 </svg>

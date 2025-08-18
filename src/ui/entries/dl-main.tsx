@@ -40,6 +40,10 @@ const Content = () => {
         Utils.addBodyClass('dl-root', 'dl-root_rebranding');
     }
 
+    if (isEnabledFeature(Feature.NewDefaultPalette)) {
+        Utils.addBodyClass('dl-root_new-palette');
+    }
+
     return (
         <ThemeProvider
             theme={theme}
