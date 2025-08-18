@@ -6,12 +6,34 @@ set -eo pipefail
 # [-x] - all executed commands are printed to the terminal [not secure]
 # [-o pipefail] - if any command in a pipeline fails, that return code will be used as the return code of the whole pipeline
 
-if [ -z "${POSTGRES_USER_US}" ]; then POSTGRES_USER_US="${POSTGRES_USER}"; fi
-if [ -z "${POSTGRES_USER_DEMO}" ]; then POSTGRES_USER_DEMO="${POSTGRES_USER}"; fi
-if [ -z "${POSTGRES_PASSWORD_US}" ]; then POSTGRES_PASSWORD_US="${POSTGRES_PASSWORD}"; fi
-if [ -z "${POSTGRES_PASSWORD_DEMO}" ]; then POSTGRES_PASSWORD_DEMO="${POSTGRES_PASSWORD}"; fi
+IS_ROOT="false"
 
-POSTGRES_HOST="postgres"
+# parse args
+for _ in "$@"; do
+  case ${1} in
+  --root)
+    IS_ROOT="true"
+    shift # past argument with no value
+    ;;
+  -*)
+    echo "unknown arg: ${1}"
+    exit 1
+    ;;
+  *) ;;
+  esac
+done
+
+if [ -z "${POSTGRES_USER_US}" ] || [ "${IS_ROOT}" == "true" ]; then POSTGRES_USER_US="${POSTGRES_USER}"; fi
+if [ -z "${POSTGRES_USER_DEMO}" ] || [ "${IS_ROOT}" == "true" ]; then POSTGRES_USER_DEMO="${POSTGRES_USER}"; fi
+if [ -z "${POSTGRES_PASSWORD_US}" ] || [ "${IS_ROOT}" == "true" ]; then POSTGRES_PASSWORD_US="${POSTGRES_PASSWORD}"; fi
+if [ -z "${POSTGRES_PASSWORD_DEMO}" ] || [ "${IS_ROOT}" == "true" ]; then POSTGRES_PASSWORD_DEMO="${POSTGRES_PASSWORD}"; fi
+
+if [ -z "${POSTGRES_HOST}" ] || [ "${POSTGRES_HOST}" == "localhost" ]; then
+  POSTGRES_HOST="postgres"
+fi
+if [ -z "${POSTGRES_PORT}" ]; then
+  POSTGRES_PORT="5432"
+fi
 export PGPORT="${POSTGRES_PORT}"
 
 echo "  [post-init] start e2e data migration..."
@@ -58,10 +80,17 @@ export PGPASSWORD="${POSTGRES_PASSWORD_US}"
 
 FERNET_POSTGRES_PASSWORD=$(python /init/crypto.py "${CONTROL_API_CRYPTO_KEY}" "${POSTGRES_PASSWORD_DEMO}")
 
+if [ -z "${POSTGRES_HOST_DEMO}" ]; then
+  POSTGRES_HOST_DEMO="${POSTGRES_HOST}"
+fi
+if [ -z "${POSTGRES_PORT_DEMO}" ]; then
+  POSTGRES_PORT_DEMO="${POSTGRES_PORT}"
+fi
+
 # shellcheck disable=SC2002
 cat /init/post-init/us-e2e-data.sql |
-  sed "s|{{POSTGRES_HOST}}|${POSTGRES_HOST}|" |
-  sed "s|{{POSTGRES_PORT}}|${POSTGRES_PORT}|" |
+  sed "s|{{POSTGRES_HOST}}|${POSTGRES_HOST_DEMO}|" |
+  sed "s|{{POSTGRES_PORT}}|${POSTGRES_PORT_DEMO}|" |
   sed "s|{{POSTGRES_DB}}|${POSTGRES_DB_DEMO}|" |
   sed "s|{{POSTGRES_USER}}|${POSTGRES_USER_DEMO}|" |
   sed "s|{{POSTGRES_PASSWORD}}|${FERNET_POSTGRES_PASSWORD}|" |
