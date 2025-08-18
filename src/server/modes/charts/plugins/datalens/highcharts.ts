@@ -5,7 +5,7 @@ import type {
     FeatureConfig,
     ServerChartsConfig,
     ServerPlaceholder,
-} from '../../../../../../shared';
+} from '../../../../../shared';
 import {
     AxisLabelFormatMode,
     ChartkitHandlers,
@@ -14,12 +14,13 @@ import {
     VISUALIZATIONS_WITH_LABELS_POSITION,
     WizardVisualizationId,
     isDateField,
-} from '../../../../../../shared';
-import {PERCENT_VISUALIZATIONS} from '../../../../../../shared/constants/visualization';
-import type {IgnoreProps} from '../utils/axis-helpers';
-import {applyPlaceholderSettingsToAxis} from '../utils/axis-helpers';
-import {mapChartsConfigToServerConfig} from '../utils/config-helpers';
-import {isNumericalDataType, log} from '../utils/misc-helpers';
+} from '../../../../../shared';
+import {PERCENT_VISUALIZATIONS} from '../../../../../shared/constants/visualization';
+
+import type {IgnoreProps} from './utils/axis-helpers';
+import {applyPlaceholderSettingsToAxis} from './utils/axis-helpers';
+import {mapChartsConfigToServerConfig} from './utils/config-helpers';
+import {isNumericalDataType, log} from './utils/misc-helpers';
 
 type ExtendedHighchartsLegendOptions = Omit<Highcharts.LegendOptions, 'labelFormatter'> & {
     labelFormatter?:
