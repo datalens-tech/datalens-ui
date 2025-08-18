@@ -4,10 +4,11 @@ import type {BreadcrumbsItemProps} from '@gravity-ui/uikit';
 import {BreadcrumbsItem} from '@gravity-ui/uikit';
 import {useHistory} from 'react-router';
 
-export const BreadcrumbsItemLink = ({
-    to,
-    ...rest
-}: BreadcrumbsItemProps & React.RefAttributes<HTMLAnchorElement> & {to?: string}) => {
+interface BreadcrumbsItemLinkProps extends BreadcrumbsItemProps {
+    to?: string;
+}
+
+export const BreadcrumbsItemLink = ({to, ...rest}: BreadcrumbsItemLinkProps) => {
     const history = useHistory();
 
     const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
