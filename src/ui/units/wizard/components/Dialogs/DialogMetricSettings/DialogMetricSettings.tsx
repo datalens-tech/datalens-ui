@@ -168,7 +168,13 @@ class DialogMetricSettings extends React.PureComponent<Props, State> {
     private handlePaletteUpdate = (paletteName: string) => {
         const {colorPalettes} = this.props;
         const updatedColors = getPaletteColors(paletteName, colorPalettes);
-        this.setState({palette: paletteName, paletteColors: updatedColors});
+        const newColor = updatedColors[0];
+        this.setState({
+            palette: paletteName,
+            currentColor: newColor,
+            colorIndex: 0,
+            paletteColors: updatedColors,
+        });
     };
 
     private onPaletteItemClick = (value: string) => {
