@@ -98,7 +98,7 @@ export const DialogEntryDescription: React.FC<DialogEntryDescriptionProps> = (pr
                     <Dialog.Body className={b()}>
                         {props.subTitle && <div className={b('subtitle')}>{props.subTitle}</div>}
                         <TextEditor autofocus onTextUpdate={setText} text={text} />
-                        {Boolean(maxLength) && (
+                        {Boolean(maxLength && !loading) && (
                             <div
                                 className={b('length-counter', {
                                     error: isExceedLimit,
