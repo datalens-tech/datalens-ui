@@ -6,9 +6,8 @@ import logger from 'libs/logger';
 import {isEmpty} from 'lodash';
 import moment from 'moment';
 import {useDispatch} from 'react-redux';
-import {type ChartsInsightsItem, Feature} from 'shared';
+import {type ChartsInsightsItem} from 'shared';
 import {updateUserSettings} from 'store/actions/user';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {fetchBatchRenderedMarkdown} from 'ui/utils/sdkRequests';
 
 import {CounterName, GoalId, reachMetricaGoal} from '../../../../../../../metrica';
@@ -87,9 +86,6 @@ export const ChartsInsights = ({items = [], messagesByLocator, locators, hidden}
         return null;
     }
 
-    const showFlatControls = isEnabledFeature(Feature.DashFloatControls);
-    const buttonSize = showFlatControls ? 'm' : 's';
-
     return (
         <Popover
             trigger="click"
@@ -110,7 +106,7 @@ export const ChartsInsights = ({items = [], messagesByLocator, locators, hidden}
             <Button
                 ref={buttonRef}
                 view="flat-secondary"
-                size={buttonSize}
+                size="m"
                 width="auto"
                 onClick={handleClick}
                 onMouseEnter={handleMouseEnter}
