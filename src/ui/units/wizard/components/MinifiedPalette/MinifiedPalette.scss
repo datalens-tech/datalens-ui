@@ -57,8 +57,8 @@ $paletteItemSizeM: 30px;
                 &.palette-item:hover,
                 &.palette-item_selected {
                     &::before {
-                        width: $paletteItemSizeS + 4px;
-                        height: $paletteItemSizeS + 4px;
+                        width: $paletteItemSizeS + 6px;
+                        height: $paletteItemSizeS + 6px;
                     }
                 }
             }
@@ -66,25 +66,16 @@ $paletteItemSizeM: 30px;
             &_m {
                 width: $paletteItemSizeM;
                 height: $paletteItemSizeM;
-                border-radius: 5px;
 
                 &.palette-item:hover,
                 &.palette-item_selected {
                     &::before {
-                        width: $paletteItemSizeM + 4px;
-                        height: $paletteItemSizeM + 4px;
+                        border-width: 2px;
+                        border-radius: 6px;
+                        width: $paletteItemSizeM + 6px;
+                        height: $paletteItemSizeM + 6px;
                     }
                 }
-            }
-        }
-
-        &.palette-item:hover,
-        &.palette-item_selected {
-            &::before {
-                width: 36px;
-                height: 36px;
-                border-radius: 8px;
-                border-width: 2px;
             }
         }
 

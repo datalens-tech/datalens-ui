@@ -5,7 +5,7 @@ import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {CommonQa} from '../../../page-objects/constants/common-selectors';
-import {WizardPageQa, WizardVisualizationId} from '../../../../src/shared';
+import {DialogMetricSettingsQa, WizardPageQa, WizardVisualizationId} from '../../../../src/shared';
 import {openTestPage, slct} from '../../../utils';
 
 datalensTest.describe('Wizard - metric chart. Settings', () => {
@@ -32,10 +32,7 @@ datalensTest.describe('Wizard - metric chart. Settings', () => {
         await wizardPage.metricSettingsDialog.open();
 
         const paletteColor = await wizardPage.metricSettingsDialog.getSelectedPaletteColor();
-        const inputValue = await wizardPage.metricSettingsDialog.getPaletteInput().inputValue();
-
         expect(paletteColor).toBe(defaultColor);
-        expect(inputValue).toBe(defaultColor.replace('#', ''));
     });
 
     datalensTest('Size change', async ({page}: {page: Page}) => {
@@ -61,9 +58,7 @@ datalensTest.describe('Wizard - metric chart. Settings', () => {
         await wizardPage.metricSettingsDialog.selectColor(newColor);
 
         const paletteColor = await wizardPage.metricSettingsDialog.getSelectedPaletteColor();
-        const inputValue = await wizardPage.metricSettingsDialog.getPaletteInput().inputValue();
         expect(paletteColor).toBe(newColor);
-        expect(inputValue).toBe(newColor.replace('#', ''));
 
         await wizardPage.metricSettingsDialog.apply();
 
@@ -83,9 +78,7 @@ datalensTest.describe('Wizard - metric chart. Settings', () => {
         await wizardPage.metricSettingsDialog.selectPalette(newPalette);
 
         const paletteColor = await wizardPage.metricSettingsDialog.getSelectedPaletteColor();
-        const inputValue = await wizardPage.metricSettingsDialog.getPaletteInput().inputValue();
         expect(paletteColor).toEqual(expectedColor);
-        expect(inputValue).toBe(expectedColor.replace('#', ''));
 
         await wizardPage.metricSettingsDialog.apply();
 
@@ -106,6 +99,9 @@ datalensTest.describe('Wizard - metric chart. Settings', () => {
         const customColor = '#FF8C69';
 
         await wizardPage.metricSettingsDialog.open();
+        const customColorBtn = page.locator(slct(DialogMetricSettingsQa.CustomColorButton));
+        await customColorBtn.click();
+
         const colorInput = wizardPage.metricSettingsDialog.getPaletteInput();
         await colorInput.fill(inavlidColorValue);
 

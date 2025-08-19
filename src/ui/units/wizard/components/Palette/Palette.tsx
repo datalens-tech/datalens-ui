@@ -22,18 +22,19 @@ interface Props {
     onPaletteItemClick: (color: string, index: number) => void;
     isSelectedItem: (item: string, index: number) => boolean;
     isDefaultItem?: (item: string) => boolean;
-    customColorEnabled?: boolean;
-    customColorSelected?: boolean;
-    onCustomColorSelected?: () => void;
+    customColor?: {
+        enabled: boolean;
+        selected: boolean;
+        onSelect: () => void;
+        qa?: string;
+    };
 }
 
 export const Palette = (props: Props) => {
     const {
         palette,
         className,
-        customColorEnabled,
-        customColorSelected,
-        onCustomColorSelected,
+        customColor,
         isSelectedItem,
         onPaletteItemClick,
         isDefaultItem,
@@ -92,12 +93,13 @@ export const Palette = (props: Props) => {
     return (
         <div className={b(null, className)}>
             {palette.map(renderPaletteItem)}
-            {customColorEnabled && (
+            {customColor?.enabled && (
                 <PaletteItem
                     key={'custom-color'}
                     className={b('custom-color-btn', itemClassName)}
-                    onClick={onCustomColorSelected}
-                    isSelected={customColorSelected}
+                    onClick={customColor.onSelect}
+                    isSelected={customColor.selected}
+                    qa={customColor.qa}
                 >
                     <Button view="flat">
                         <Icon data={PencilToLine} />

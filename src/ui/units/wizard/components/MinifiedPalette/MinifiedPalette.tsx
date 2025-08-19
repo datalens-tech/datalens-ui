@@ -27,6 +27,7 @@ type MinifiedPaletteProps = {
     controlQa?: string;
     size?: 's' | 'm';
     customColorSelected?: boolean;
+    customColorBtnQa?: string;
 };
 
 const b = block('minified-palette');
@@ -44,6 +45,7 @@ export const MinifiedPalette: React.FC<MinifiedPaletteProps> = (props: MinifiedP
         colorPalettes,
         size = 's',
         customColorSelected,
+        customColorBtnQa,
     } = props;
 
     const paletteRef = useRef<HTMLDivElement | null>(null);
@@ -85,9 +87,12 @@ export const MinifiedPalette: React.FC<MinifiedPaletteProps> = (props: MinifiedP
                 isSelectedItem={(color) => !customColorSelected && color === currentColor}
                 className={b('palette', {size})}
                 itemClassName={b('item', {size})}
-                customColorEnabled={true}
-                customColorSelected={customColorSelected}
-                onCustomColorSelected={() => onInputColorUpdate(currentColor.slice(1))}
+                customColor={{
+                    enabled: true,
+                    selected: Boolean(customColorSelected),
+                    onSelect: () => onInputColorUpdate(currentColor.slice(1)),
+                    qa: customColorBtnQa,
+                }}
             />
             {customColorSelected && (
                 <div className={b('color-input-wrapper')}>
