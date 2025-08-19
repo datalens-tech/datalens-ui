@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {CircleInfo} from '@gravity-ui/icons';
 import {Button, Icon} from '@gravity-ui/uikit';
 import type {AppDispatch} from 'ui/store';
 import {openDialog} from 'ui/store/actions/dialog';
@@ -8,8 +9,6 @@ import {
     DIALOG_ENTRY_DESCRIPTION,
     type OpenDialogEntryDescriptionArgs,
 } from './DialogEntryDescriptionWrapper';
-
-import iconDescription from 'assets/icons/info.svg';
 
 type Props = {
     description?: string;
@@ -30,7 +29,7 @@ export const EntryAnnotationDescriptionButton = (props: Props) => {
 
     return (
         <Button view="flat" size="m" onClick={onClick} qa="action-button-description">
-            <Icon data={iconDescription} size={size} />
+            <Icon data={CircleInfo} size={size} />
         </Button>
     );
 };
