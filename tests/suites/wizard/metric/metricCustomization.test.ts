@@ -115,7 +115,9 @@ datalensTest.describe('Wizard - metric chart. Settings', () => {
 
         await expect(colorInputErrorLocator).not.toBeVisible();
 
-        expect(await wizardPage.metricSettingsDialog.getSelectedPaletteColor()).toBeFalsy();
+        expect(await wizardPage.metricSettingsDialog.getSelectedPaletteColor()).toBe(
+            DialogMetricSettingsQa.CustomColorButton,
+        );
 
         await wizardPage.metricSettingsDialog.apply();
 
