@@ -24,7 +24,6 @@ import type {DialogCreateQLChartProps} from './DialogCreateQLChart';
 import {DialogCreateQLChart} from './DialogCreateQLChart';
 import type {DialogCreateWizardChartProps} from './DialogCreateWizardChart';
 import {DialogCreateWizardChart} from './DialogCreateWizardChart';
-import {DialogDashMetaWrapper as DialogDashMeta} from './DialogDashMeta/DialogDashMetaWrapper';
 import type {DialogDeleteEntryProps} from './DialogDeleteEntry';
 import {DialogDeleteEntry} from './DialogDeleteEntry';
 import type {DialogEditFavoritesAliasProps} from './DialogEditFavoritesAlias';
@@ -81,7 +80,6 @@ const getMapDialogues = (): Record<string, any> => {
         [EntryDialogName.Delete]: DialogDeleteEntry,
         [EntryDialogName.Move]: DialogMoveEntry,
         [EntryDialogName.Rename]: DialogRenameEntry,
-        [EntryDialogName.DashMeta]: DialogDashMeta,
         [EntryDialogName.EditFavoritesAlias]: DialogEditFavoritesAlias,
         [EntryDialogName.Copy]: DialogCopyEntry,
         [EntryDialogName.CreateFolder]: DialogCreateFolder,
