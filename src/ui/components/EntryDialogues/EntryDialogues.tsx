@@ -59,7 +59,6 @@ export enum EntryDialogName {
     Unlock = 'unlock',
     CreateDashboard = 'create_dashboard',
     CreateWizardChart = 'create_wizard_chart',
-    DashMeta = 'dash_meta',
     SwitchPublic = 'switch_public',
     CreateEditorChart = 'create_editor_chart',
     CreateQLChart = 'create_sql_chart',
