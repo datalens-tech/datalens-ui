@@ -151,7 +151,6 @@ class DialogMetricSettings extends React.PureComponent<Props, State> {
                     controlQa="dialog-metric-settings-palette"
                     onInputColorUpdate={this.handleInputColorUpdate}
                     colorPalettes={this.props.colorPalettes}
-                    size="m"
                     customColorSelected={typeof this.state.colorIndex !== 'number'}
                     customColorBtnQa={DialogMetricSettingsQa.CustomColorButton}
                 />

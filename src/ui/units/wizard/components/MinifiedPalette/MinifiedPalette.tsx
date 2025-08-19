@@ -25,7 +25,6 @@ type MinifiedPaletteProps = {
     colorPalettes: ColorPalette[];
     errorText?: string;
     controlQa?: string;
-    size?: 's' | 'm';
     customColorSelected?: boolean;
     customColorBtnQa?: string;
 };
@@ -43,7 +42,6 @@ export const MinifiedPalette: React.FC<MinifiedPaletteProps> = (props: MinifiedP
         onInputColorUpdate,
         onEnterPress,
         colorPalettes,
-        size = 's',
         customColorSelected,
         customColorBtnQa,
     } = props;
@@ -85,8 +83,8 @@ export const MinifiedPalette: React.FC<MinifiedPaletteProps> = (props: MinifiedP
                 palette={colors}
                 onPaletteItemClick={onPaletteItemClick}
                 isSelectedItem={(color) => !customColorSelected && color === currentColor}
-                className={b('palette', {size})}
-                itemClassName={b('item', {size})}
+                className={b('palette')}
+                itemClassName={b('item')}
                 customColor={{
                     enabled: true,
                     selected: Boolean(customColorSelected),
