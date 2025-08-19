@@ -8,15 +8,18 @@ import type {
     StringParams,
 } from '../../../../../shared';
 
-import {buildChartsConfigPrivate} from './config/config';
+import {buildChartsConfigPrivate} from './config';
 import type {BuildChartConfigArgs} from './config/types';
-import {buildHighchartsConfigPrivate} from './highcharts/highcharts';
-import type {JSTabOptions} from './js';
+import {buildHighchartsConfigPrivate} from './highcharts';
 import {buildGraphPrivate} from './js/js';
 import {fallbackJSFunctionPrivate} from './js/js-v1.5-private';
-import {buildSourcesPrivate} from './url/build-sources/build-sources';
-import type {SourceRequests, SourcesArgs} from './url/build-sources/types';
+import {buildSourcesPrivate} from './url/build-sources';
+import type {SourceRequests, SourcesArgs} from './url/types';
 import {setConsole} from './utils/misc-helpers';
+
+type JSTabOptions =
+    | [{shared: Shared | ServerChartsConfig; ChartEditor: IChartEditor; data: any}]
+    | [any, Shared | ServerChartsConfig, IChartEditor];
 
 declare const __features: FeatureConfig;
 declare const __palettes: Record<string, Palette>;

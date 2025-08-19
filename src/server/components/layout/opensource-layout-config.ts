@@ -84,6 +84,7 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         features: config.features,
         meta: req.ctx.getMetadata(),
         chartkitSettings: config.chartkitSettings,
+        defaultColorPaletteId: config.defaultColorPaletteId,
         allowLanguages,
         headersMap: req.ctx.config.headersMap,
         isZitadelEnabled,
@@ -95,7 +96,6 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         docsUrl: config.docsUrl,
         orderedAuthRoles: config.orderedAuthRoles,
         authSignupDisabled: req.ctx.config.authSignupDisabled,
-        defaultColorPaletteId: config.defaultColorPaletteId,
         ...appLayoutSettings.DL,
     };
     const renderConfig: RenderParams<{DL: DLGlobalData}> = {

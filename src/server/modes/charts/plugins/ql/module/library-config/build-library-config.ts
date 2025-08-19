@@ -7,7 +7,7 @@ import type {
 } from '../../../../../../../shared';
 import {ChartsConfigVersion, isYAGRVisualization} from '../../../../../../../shared';
 import {mapQlConfigToLatestVersion} from '../../../../../../../shared/modules/config/ql';
-import {buildHighchartsConfigPrivate as buildHighchartsConfigWizard} from '../../../datalens/highcharts/highcharts';
+import {buildHighchartsConfigPrivate as buildHighchartsConfigWizard} from '../../../datalens/highcharts';
 import {log} from '../../utils/misc-helpers';
 import buildYagrConfig from '../../yagr';
 import buildHighchartsConfig from '../highcharts';

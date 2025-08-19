@@ -58,6 +58,7 @@ import type {OpenDialogReleaseVersionArgs} from 'ui/components/AsideHeaderAdapte
 import type {OpenDialogExportWorkbookArgs} from 'ui/components/CollectionsStructure/ExportWorkbookDialog/ExportWorkbookDialog';
 import type {OpenDialogDefaultArgs} from 'ui/components/DialogDefault/DialogDefault';
 import type {OpenDialogCreatePublicGalleryWorkbookArgs} from 'ui/components/CollectionsStructure/CreatePublicGalleryWorkbookDialog';
+import type {OpenDialogEntryDescriptionArgs} from 'ui/components/DialogEntryDescription/DialogEntryDescriptionWrapper';
 
 export type OpenDialogArgs<T = unknown> =
     | OpenDialogReleaseVersionArgs
@@ -117,4 +118,5 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogCollectionNoCreatePermissionArgs
     | OpenDialogExportWorkbookArgs
     | OpenDialogDefaultArgs
-    | OpenDialogCreatePublicGalleryWorkbookArgs;
+    | OpenDialogCreatePublicGalleryWorkbookArgs
+    | OpenDialogEntryDescriptionArgs;

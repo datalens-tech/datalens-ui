@@ -182,8 +182,8 @@ export type DLGlobalData = {
         collectionsEnabled: boolean;
         features?: Record<string, unknown>;
     };
-    tenantSettings?: TenantSettings;
     userIsOrgAdmin?: boolean;
+    tenantSettings?: TenantSettings;
     allowLanguages?: Language[];
     langRegion?: string;
     widgetMenuGroupConfig?: Array<Array<MenuItemsIds>>;
@@ -217,7 +217,7 @@ export type DLGlobalData = {
     apiPrefix?: string;
     docPathName?: DocPathName;
     chartkitSettings?: ChartkitGlobalSettings;
-    defaultColorPaletteId: string;
+    defaultColorPaletteId?: string;
     extraPalettes?: Record<string, Palette>;
     headersMap?: Record<string, string>;
     isZitadelEnabled?: boolean;

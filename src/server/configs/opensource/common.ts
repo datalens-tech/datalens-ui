@@ -199,7 +199,6 @@ export default {
             token: process.env.YANDEX_MAP_TOKEN,
         },
     },
-
     defaultColorPaletteId: PALETTE_ID.DEFAULT_20,
 
     appSensitiveKeys: [CSP_HEADER, CSP_REPORT_TO_HEADER, SERVICE_USER_ACCESS_TOKEN_HEADER],

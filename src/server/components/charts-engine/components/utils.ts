@@ -173,7 +173,7 @@ export function getDefaultColorPaletteId({
     palettes,
 }: {
     ctx: AppContext;
-    tenantSettings: TenantSettings;
+    tenantSettings?: TenantSettings;
     palettes: Record<string, unknown>;
 }) {
     const tenantDefaultPalette = tenantSettings?.defaultColorPaletteId;
