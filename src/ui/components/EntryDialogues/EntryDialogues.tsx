@@ -6,7 +6,6 @@ import type {DialogShareProps} from 'ui/registry/units/common/types/components/D
 import type SDK from '../../libs/sdk';
 import {sdk} from '../../libs/sdk';
 import {registry} from '../../registry';
-import type {DialogDashMetaProps} from '../../registry/units/dash/types/DialogDashMeta';
 import {DialogRelatedEntities} from '../DialogRelatedEntities/DialogRelatedEntities';
 
 import type {DialogAccessProps} from './DialogAccess/DialogAccess';
@@ -59,9 +58,9 @@ export enum EntryDialogName {
     Access = 'access',
     AccessDescription = 'access_description',
     Unlock = 'unlock',
-    DashMeta = 'dash_meta',
     CreateDashboard = 'create_dashboard',
     CreateWizardChart = 'create_wizard_chart',
+    DashMeta = 'dash_meta',
     SwitchPublic = 'switch_public',
     CreateEditorChart = 'create_editor_chart',
     CreateQLChart = 'create_sql_chart',
@@ -79,10 +78,10 @@ const getMapDialogues = (): Record<string, any> => {
         [EntryDialogName.Access]: DialogAccess,
         [EntryDialogName.AccessDescription]: DialogAccessDescription,
         [EntryDialogName.Unlock]: DialogUnlock,
-        [EntryDialogName.DashMeta]: DialogDashMeta,
         [EntryDialogName.Delete]: DialogDeleteEntry,
         [EntryDialogName.Move]: DialogMoveEntry,
         [EntryDialogName.Rename]: DialogRenameEntry,
+        [EntryDialogName.DashMeta]: DialogDashMeta,
         [EntryDialogName.EditFavoritesAlias]: DialogEditFavoritesAlias,
         [EntryDialogName.Copy]: DialogCopyEntry,
         [EntryDialogName.CreateFolder]: DialogCreateFolder,
@@ -107,7 +106,6 @@ interface MapDialoguesProps {
     [EntryDialogName.AccessDescription]: DialogAccessDescriptionProps;
     [EntryDialogName.Unlock]: DialogUnlockProps;
     [EntryDialogName.Delete]: DialogDeleteEntryProps;
-    [EntryDialogName.DashMeta]: DialogDashMetaProps;
     [EntryDialogName.Move]: DialogMoveEntryProps;
     [EntryDialogName.Copy]: DialogCopyEntryProps;
     [EntryDialogName.CreateFolder]: DialogCreateFolderProps;

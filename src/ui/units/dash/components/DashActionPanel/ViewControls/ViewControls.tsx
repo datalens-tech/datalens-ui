@@ -45,7 +45,6 @@ export const ViewControls = (props: ViewControlsProps) => {
         <React.Fragment>
             <Description
                 canEdit={canEdit}
-                entryDialoguesRef={entryDialoguesRef}
                 onEditClick={onEditClick}
                 showOpenedDescription={showOpenedDescription}
             />
