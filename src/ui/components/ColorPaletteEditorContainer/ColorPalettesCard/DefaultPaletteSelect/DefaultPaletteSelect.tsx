@@ -32,7 +32,9 @@ export const DefaultPaletteSelect = ({colorPalettes}: DefaultPaletteSelectProps)
     );
 
     const [defaultColorPaletteId, setDefaultPaletteId] = React.useState<string>(
-        window.DL.tenantSettings?.defaultColorPaletteId ?? window.DL.defaultColorPaletteId,
+        window.DL.tenantSettings?.defaultColorPaletteId ??
+            window.DL.defaultColorPaletteId ??
+            colorPalettes[0].colorPaletteId,
     );
 
     const handleDefaultPaletteUpdate = (value: string[]) => {
