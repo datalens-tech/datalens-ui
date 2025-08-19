@@ -205,6 +205,7 @@ const backendPivotTablePreparer = (args: PrepareFunctionArgs): BackendPivotTable
         availablePalettes: args.colorsConfig.availablePalettes,
         sortSettings,
         pinnedColumns,
+        defaultColorPaletteId,
     });
 
     let footer = [];

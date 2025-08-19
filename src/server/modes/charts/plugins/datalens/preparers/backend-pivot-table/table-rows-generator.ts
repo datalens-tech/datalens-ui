@@ -241,6 +241,7 @@ export const generateTableRows = ({
                         parents,
                         loadedColorPalettes: colorsConfig.loadedColorPalettes,
                         availablePalettes: colorsConfig.availablePalettes,
+                        defaultColorPaletteId,
                     }),
                 };
 
@@ -348,6 +349,7 @@ export const generateTableRows = ({
         fieldsItemIdMap,
         loadedColorPalettes: colorsConfig.loadedColorPalettes,
         availablePalettes: colorsConfig.availablePalettes,
+        defaultColorPaletteId,
     });
 
     colorizePivotTableByColorField({

@@ -700,7 +700,6 @@ function prepareSingleResult({
         loadedColorPalettes,
         colorsConfig,
         availablePalettes: palettes,
-        features,
         defaultColorPaletteId,
     });
 

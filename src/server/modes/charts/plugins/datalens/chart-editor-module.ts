@@ -45,6 +45,7 @@ const fallbackJSFunction = (...options: JSTabOptions) => {
         options,
         features: __features,
         palettes: __palettes,
+        defaultColorPaletteId: __defaultColorPaletteId,
     });
 };
 

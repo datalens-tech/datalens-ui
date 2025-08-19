@@ -296,6 +296,7 @@ function prepareFlatTable({
                     idToDataType,
                     loadedColorPalettes: colorsConfig.loadedColorPalettes,
                     availablePalettes: colorsConfig.availablePalettes,
+                    defaultColorPaletteId,
                 });
             }
 
