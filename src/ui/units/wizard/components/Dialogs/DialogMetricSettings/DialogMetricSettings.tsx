@@ -9,9 +9,10 @@ import {bindActionCreators} from 'redux';
 import {getColorByColorSettings} from 'shared/utils/palettes';
 
 import type {CommonSharedExtraSettings} from '../../../../../../shared';
-import {DEFAULT_PALETTE, DialogMetricSettingsQa} from '../../../../../../shared';
+import {DialogMetricSettingsQa} from '../../../../../../shared';
 import type {DatalensGlobalState} from '../../../../../../ui';
 import DialogManager from '../../../../../components/DialogManager/DialogManager';
+import {getTenantDefaultColorPaletteId} from '../../../../../constants/common';
 import {closeDialog} from '../../../../../store/actions/dialog';
 import {selectColorPalettes} from '../../../../../store/selectors/colorPaletteEditor';
 import {getPaletteColors, isValidHexColor} from '../../../../../utils';
@@ -56,7 +57,7 @@ class DialogMetricSettings extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        const palette = props.palette || DEFAULT_PALETTE.id;
+        const palette = props.palette || getTenantDefaultColorPaletteId();
         const paletteColors = getPaletteColors(palette, props.colorPalettes);
 
         // if font settings is empty take index 0 by default
