@@ -9,6 +9,7 @@
   "label_scope-dataset": "Datasets",
   "label_scope-other": "Other",
   "label_title": "Related objects",
+  "label_button-retry": "Retry",
   "value_includes": "Contains objects",
   "value_where-contained": "Used in objects"
 }

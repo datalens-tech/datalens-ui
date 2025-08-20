@@ -6,6 +6,7 @@ import {
     DropdownMenu,
     Icon,
     Loader,
+    Button,
     SegmentedRadioGroup as RadioButton,
 } from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
@@ -105,7 +106,7 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
     const {DialogRelatedEntitiesRadioHint} = registry.common.components.getAll();
     const {renderDialogRelatedEntitiesAlertHint} = registry.common.functions.getAll();
 
-    React.useEffect(() => {
+    const fetchRelatedEntries = () => {
         setIsLoading(true);
         setIsError(false);
         getSdk().cancelRequest(CONCURRENT_ID);
@@ -118,7 +119,7 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
                 },
                 {concurrentId: CONCURRENT_ID},
             )
-            .then((response) => {
+            .then(async (response) => {
                 setRelationsCount(response.length);
                 setRelations(groupEntitiesByScope(response));
                 setIsLoading(false);
@@ -130,7 +131,9 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
                 setIsError(true);
                 setIsLoading(false);
             });
-    }, [entry, currentDirection]);
+    }
+
+    React.useEffect(fetchRelatedEntries, [entry, currentDirection]);
 
     const showDirectionControl =
         !topLevelEntryScopes.includes(entry.scope as EntryScope) &&
@@ -240,6 +243,18 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
                     >{`${i18n('label_entities-count')} ${relationsCount}`}</div>
                 )}
             </Dialog.Body>
+            {isError && (
+                <Dialog.Footer className={b('footer')}>
+                    <Button
+                        className={b('button-retry')}
+                        size="l"
+                        view="action"
+                        onClick={fetchRelatedEntries}
+                    >
+                        {i18n('label_button-retry')}
+                    </Button>
+                </Dialog.Footer>
+            )}
         </Dialog>
     );
 };

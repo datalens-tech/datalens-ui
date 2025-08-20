@@ -9,6 +9,7 @@
   "label_scope-dataset": "Датасеты",
   "label_scope-other": "Другое",
   "label_title": "Связанные объекты",
+  "label_button-retry": "Повторить",
   "value_includes": "Содержит объекты",
   "value_where-contained": "Используется в объектах"
 }
