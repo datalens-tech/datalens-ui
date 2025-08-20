@@ -1,4 +1,5 @@
 {
+  "label_button-retry": "Retry",
   "label_current-object": "Current object",
   "label_entities-count": "Number of related objects:",
   "label_no-relatives": "There are no related objects",
@@ -9,7 +10,6 @@
   "label_scope-dataset": "Datasets",
   "label_scope-other": "Other",
   "label_title": "Related objects",
-  "label_button-retry": "Retry",
   "value_includes": "Contains objects",
   "value_where-contained": "Used in objects"
 }
