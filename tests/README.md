@@ -34,7 +34,7 @@ Install Node.js >= v20.18.0 manually or via [node version manager](https://githu
 
 Change UI port for E2E tests to dev running application at `.env` file:
 ```sh
-E2E_DOMAIN=http://localhost:3030
+E2E_DOMAIN=http://localhost:8080
 ```
 
 Start project in dev mode (don't forget to update docker images first):
