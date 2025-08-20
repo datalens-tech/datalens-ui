@@ -53,7 +53,6 @@ export const runController = (
         if (chartConfig) {
             config = {
                 ...chartConfig,
-                // tenantSettings: {defaultColorPaletteId: tenantSettings?.defaultColorPaletteId},
             };
         } else {
             if (!params && key) {
