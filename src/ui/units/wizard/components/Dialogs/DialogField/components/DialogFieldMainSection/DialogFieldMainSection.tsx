@@ -89,7 +89,7 @@ export class DialogFieldMainSection extends React.Component<Props> {
 
         const placeholderSettings = currentPlaceholder?.settings as PlaceholderSettings;
         const isDateFieldItem = isDateField(item);
-        const isDiscreteMode = placeholderSettings.axisModeMap?.[item.guid] === AxisMode.Discrete;
+        const isDiscreteMode = placeholderSettings?.axisModeMap?.[item.guid] === AxisMode.Discrete;
         const isAxisFormattingEnabled = this.props.isAxisFormatting && isDateFieldItem;
         const isDateAndDiscreteMode = isDateFieldItem && isDiscreteMode;
         const hasValidDataType = commonDataType === 'date' || item.grouping;
