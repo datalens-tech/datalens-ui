@@ -543,12 +543,18 @@ type ProcessHtmlOptions = {
     parseHtml?: (value: string) => unknown;
     ignoreInvalidValues?: boolean;
     addElementId?: boolean;
+    excludedKeys?: string[];
 };
 
 export function processHtmlFields(target: unknown, options?: ProcessHtmlOptions) {
     const allowHtml = Boolean(options?.allowHtml);
+    const excludedKeys = options?.excludedKeys ?? [];
 
     const processValue = (key: string | number, value: unknown, item: object) => {
+        if (excludedKeys.indexOf(String(key)) === -1) {
+            return;
+        }
+
         if (value && typeof value === 'object') {
             if (WRAPPED_HTML_KEY in value) {
                 let content = value[WRAPPED_HTML_KEY];
