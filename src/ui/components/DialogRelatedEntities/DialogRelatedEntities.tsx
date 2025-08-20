@@ -119,7 +119,7 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
                 },
                 {concurrentId: CONCURRENT_ID},
             )
-            .then(async (response) => {
+            .then((response) => {
                 setRelationsCount(response.length);
                 setRelations(groupEntitiesByScope(response));
                 setIsLoading(false);
@@ -157,12 +157,24 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
         }
 
         if (isError) {
+            const renderRetryAction = () => (
+                <Button
+                    className={b('button-retry')}
+                    size="l"
+                    view="action"
+                    onClick={fetchRelatedEntries}
+                >
+                    {i18n('label_button-retry')}
+                </Button>
+            );
+
             return (
                 <div className={b('error-state')}>
                     <PlaceholderIllustration
                         direction="column"
                         name="error"
                         title={i18n('label_request-error')}
+                        renderAction={renderRetryAction}
                     />
                 </div>
             );
@@ -243,18 +255,6 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
                     >{`${i18n('label_entities-count')} ${relationsCount}`}</div>
                 )}
             </Dialog.Body>
-            {isError && (
-                <Dialog.Footer className={b('footer')}>
-                    <Button
-                        className={b('button-retry')}
-                        size="l"
-                        view="action"
-                        onClick={fetchRelatedEntries}
-                    >
-                        {i18n('label_button-retry')}
-                    </Button>
-                </Dialog.Footer>
-            )}
         </Dialog>
     );
 };
