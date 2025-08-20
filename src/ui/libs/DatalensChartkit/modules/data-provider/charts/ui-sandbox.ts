@@ -551,7 +551,7 @@ export function processHtmlFields(target: unknown, options?: ProcessHtmlOptions)
     const excludedKeys = options?.excludedKeys ?? [];
 
     const processValue = (key: string | number, value: unknown, item: object) => {
-        if (excludedKeys.indexOf(String(key)) === -1) {
+        if (excludedKeys.indexOf(String(key)) !== -1) {
             return;
         }
 
