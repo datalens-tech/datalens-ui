@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {ChevronRight, Pencil, TrashBin} from '@gravity-ui/icons';
+import {Pencil, TrashBin} from '@gravity-ui/icons';
 import {Button, Dialog, Icon, Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -76,10 +76,6 @@ export const DialogEntryDescription: React.FC<DialogEntryDescriptionProps> = (pr
         onEdit?.(text);
     }, [onEdit, text]);
 
-    const handleSupport = React.useCallback(() => {
-        dispatch(closeDialog());
-    }, [dispatch]);
-
     const handleClear = React.useCallback(() => {
         setText('');
     }, []);
@@ -150,12 +146,6 @@ export const DialogEntryDescription: React.FC<DialogEntryDescriptionProps> = (pr
                             >
                                 <Icon data={Pencil} size={16} />
                                 {i18n('button_edit')}
-                            </Button>
-                        )}
-                        {!loading && (
-                            <Button view="outlined" onClick={handleSupport}>
-                                {i18n('button_contact-service')}
-                                <Icon data={ChevronRight} size={16} />
                             </Button>
                         )}
                     </Dialog.Footer>
