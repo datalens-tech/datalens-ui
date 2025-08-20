@@ -34,7 +34,7 @@ const workers = process.env.E2E_DEBUG ? 1 : maxWorkers;
 
 const retries = process.env.E2E_RETRY_TIMES ? Number(process.env.E2E_RETRY_TIMES) : 0;
 
-const headful = Boolean(process.env.E2E_HEADFUL);
+const headful = isTrueArg(process.env.E2E_HEADFUL);
 
 const slowMo = Number.isInteger(Number(process.env.E2E_SLOW_MO))
     ? Number(process.env.E2E_SLOW_MO)
