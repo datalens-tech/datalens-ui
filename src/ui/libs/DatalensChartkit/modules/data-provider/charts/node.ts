@@ -364,6 +364,12 @@ function applyChartkitHandlers(args: {
                 ChartkitHandlersDict[ChartkitHandlers.WizardLabelFormatter];
         }
 
+        if (libraryConfig.xAxis?.labels?.formatter === ChartkitHandlers.WizardAxisFormatter) {
+            libraryConfig.xAxis.labels.formatter = ChartkitHandlersDict[
+                ChartkitHandlers.WizardAxisFormatter
+            ](libraryConfig.xAxis?.labels?.format);
+        }
+
         if (libraryConfig.xAxis?.labels?.formatter === ChartkitHandlers.WizardXAxisFormatter) {
             libraryConfig.xAxis.labels.formatter =
                 ChartkitHandlersDict[ChartkitHandlers.WizardXAxisFormatter];

@@ -22,6 +22,7 @@ import {
     PlaceholderId,
     WizardVisualizationId,
     getDefaultFormatting,
+    isDateField,
     isPseudoField,
 } from 'shared';
 import type {TableSubTotalsSettings} from 'shared/types/wizard/sub-totals';
@@ -50,7 +51,7 @@ import {
     AVAILABLE_DATE_FORMATS,
     HIDE_LABEL_MODES,
 } from '../../../constants';
-import {getCommonDataType, getIconForDataType} from '../../../utils/helpers';
+import {getCommonDataType, getFormattingDataType, getIconForDataType} from '../../../utils/helpers';
 import {DialogRadioButtons} from '../components/DialogRadioButtons/DialogRadioButtons';
 
 import {BackgroundSettings} from './components/BackgroundSettings/BackgroundSettings';
@@ -63,12 +64,7 @@ import {
     showBackgroundSettingsInDialogField,
 } from './utils/backgroundSettings';
 import {getDefaultBarsSettings, showBarsInDialogField} from './utils/barsSettings';
-import {
-    canUseStringAsHtml,
-    canUseStringAsMarkdown,
-    getFormattingDataType,
-    isOneOfPropChanged,
-} from './utils/misc';
+import {canUseStringAsHtml, canUseStringAsMarkdown, isOneOfPropChanged} from './utils/misc';
 
 import './DialogField.scss';
 
@@ -86,6 +82,7 @@ type DialogFieldProps = {
     placeholderId?: PlaceholderId;
     options?: DatasetOptions;
     formattingEnabled: boolean;
+    isAxisFormatting?: boolean;
     markupTypeEnabled?: boolean;
     onCancel: () => void;
     onApply: (state: DialogFieldState) => void;
@@ -187,7 +184,10 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
 
         const visualizationId = visualization.id;
 
-        const {data_type, cast, formatting} = item;
+        const {data_type, cast} = item;
+        const formatting = this.props.isAxisFormatting
+            ? this.state.currentPlaceholder?.settings?.axisLabelFormating
+            : this.props.item?.formatting || ({} as CommonNumberFormattingOptions);
 
         const commonDataType = getCommonDataType(cast || data_type);
 
@@ -227,6 +227,9 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
                     : itemLabelMode;
         }
 
+        const axisFormat = this.state.currentPlaceholder?.settings?.axisLabelDateFormat;
+        const format = axisFormat === 'auto' ? item.format : axisFormat;
+
         this.setState({
             item,
             extra,
@@ -239,7 +242,7 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
                 item.fakeTitle && !item.title.startsWith('title-') ? item.title : undefined,
             title: item.fakeTitle || item.title,
             aggregation: item.aggregation,
-            format: item.format,
+            format: this.props.isAxisFormatting ? format : item.format,
             grouping: item.grouping,
             hideLabelMode: (item.hideLabelMode as 'hide' | 'show') || HIDE_LABEL_MODES.DEFAULT,
             formatting: preparedFormatting,
@@ -367,7 +370,9 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
             currentPlaceholder,
         } = this.state;
 
-        if (!item || !options || isPseudoField(item)) {
+        const isAxisFormattingDateField = !isDateField(item) && this.props.isAxisFormatting;
+
+        if (!item || !options || isPseudoField(item) || isAxisFormattingDateField) {
             return null;
         }
 
@@ -389,6 +394,7 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
                 visualizationId={visualizationId}
                 formatting={formatting}
                 currentPlaceholder={currentPlaceholder}
+                isAxisFormatting={this.props.isAxisFormatting}
                 handleTitleInputUpdate={this.handleTitleInput}
                 handleLabelModeUpdate={this.handleLabelModeUpdate}
                 handleFieldTypeUpdate={this.handleFieldTypeUpdate}

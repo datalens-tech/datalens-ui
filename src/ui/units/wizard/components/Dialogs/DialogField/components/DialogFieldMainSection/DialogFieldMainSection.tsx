@@ -64,6 +64,7 @@ type Props = {
     currentPlaceholder: Placeholder | undefined;
     placeholderId: PlaceholderId | undefined;
     formatting: CommonNumberFormattingOptions;
+    isAxisFormatting?: boolean;
     handleTitleInputUpdate: (v: string) => void;
     handleLabelModeUpdate: (v: string) => void;
     handleFieldTypeUpdate: (v: string) => void;
@@ -86,14 +87,20 @@ export class DialogFieldMainSection extends React.Component<Props> {
 
         const commonDataType = getCommonDataType(cast || data_type!);
 
+        const placeholderSettings = currentPlaceholder?.settings as PlaceholderSettings;
+        const isDateFieldItem = isDateField(item);
+        const isDiscreteMode = placeholderSettings.axisModeMap?.[item.guid] === AxisMode.Discrete;
+        const isAxisFormattingEnabled = this.props.isAxisFormatting && isDateFieldItem;
+        const isDateAndDiscreteMode = isDateFieldItem && isDiscreteMode;
+        const hasValidDataType = commonDataType === 'date' || item.grouping;
+
         const enableFormat =
             visualizationId &&
-            ((isDateField(item) &&
-                (currentPlaceholder?.settings as PlaceholderSettings)?.axisModeMap?.[item.guid] ===
-                    AxisMode.Discrete) ||
+            hasValidDataType &&
+            (isDateAndDiscreteMode ||
+                isAxisFormattingEnabled ||
                 this.isTableVisualization ||
-                this.isMetricVisualization) &&
-            (commonDataType === 'date' || item.grouping);
+                this.isMetricVisualization);
 
         return (
             <React.Fragment>
@@ -154,7 +161,10 @@ export class DialogFieldMainSection extends React.Component<Props> {
         const {options} = this.props;
         const {item, cast, grouping} = this.props;
 
-        if (options && !options.supported_functions.includes('datetrunc')) {
+        if (
+            (options && !options.supported_functions.includes('datetrunc')) ||
+            this.props.isAxisFormatting
+        ) {
             return null;
         }
 
@@ -252,7 +262,7 @@ export class DialogFieldMainSection extends React.Component<Props> {
 
     renderFieldTypeSelect() {
         const {options, item, cast} = this.props;
-        if (!item || !options) {
+        if (!item || !options || this.props.isAxisFormatting) {
             return null;
         }
         // We take the available types from options.data_types by item.initial_data_type
@@ -361,7 +371,7 @@ export class DialogFieldMainSection extends React.Component<Props> {
     renderAggregationSelect() {
         const {aggregation, options, item, cast} = this.props;
 
-        if (!options || !item) {
+        if (!options || !item || this.props.isAxisFormatting) {
             return null;
         }
 

@@ -53,6 +53,7 @@ export const SETTINGS = {
     AXIS_FORMAT_MODE: {
         AUTO: AxisLabelFormatMode.Auto,
         BY_FIELD: AxisLabelFormatMode.ByField,
+        MANUAL: AxisLabelFormatMode.Manual,
     },
     SCALE: {
         AUTO: 'auto',

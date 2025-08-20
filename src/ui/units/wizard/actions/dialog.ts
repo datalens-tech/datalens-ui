@@ -1,5 +1,6 @@
 import _isEqual from 'lodash/isEqual';
 
+import {WizardVisualizationId, isMeasureValue} from '../../../../shared';
 import type {
     ColorsConfig,
     CommonSharedExtraSettings,
@@ -8,12 +9,12 @@ import type {
     Field,
     Link,
     Placeholder,
+    PlaceholderId,
     PointSizeConfig,
     ServerChartsConfig,
     ShapesConfig,
     Shared,
 } from '../../../../shared';
-import {WizardVisualizationId, isMeasureValue} from '../../../../shared';
 import type {ApplyData, DatalensGlobalState, Filter} from '../../../../ui';
 import {fetchColorPalettes} from '../../../store/actions/colorPaletteEditor';
 import {closeDialog, openDialog, openDialogFilter} from '../../../store/actions/dialog';
@@ -22,10 +23,12 @@ import {getChartType} from '../../ql/store/reducers/ql';
 import type {DialogColumnSettingsFields} from '../components/Dialogs/DialogColumnSettings/DialogColumnSettings';
 import {DIALOG_COLUMN_SETTINGS} from '../components/Dialogs/DialogColumnSettings/DialogColumnSettings';
 import type {ColumnSettingsState} from '../components/Dialogs/DialogColumnSettings/hooks/useDialogColumnSettingsState';
+import {DIALOG_FIELD} from '../components/Dialogs/DialogField/DialogField';
 import type {LabelSettings} from '../components/Dialogs/DialogLabelSettings/DialogLabelSettings';
 import {DIALOG_LABEL_SETTINGS} from '../components/Dialogs/DialogLabelSettings/DialogLabelSettings';
 import {DIALOG_METRIC_SETTINGS} from '../components/Dialogs/DialogMetricSettings/DialogMetricSettings';
 import {DIALOG_MULTIDATASET} from '../components/Dialogs/DialogMultidataset';
+import type {AxisFormatConfirmHandle} from '../components/Dialogs/DialogPlaceholder/DialogPlaceholder';
 import {DIALOG_PLACEHOLDER} from '../components/Dialogs/DialogPlaceholder/DialogPlaceholder';
 import {DIALOG_POINTS_SIZE} from '../components/Dialogs/DialogPointsSize';
 import {DIALOG_SHAPES} from '../components/Dialogs/DialogShapes/DialogShapes';
@@ -33,7 +36,7 @@ import {DIALOG_CHART_SETTINGS} from '../components/Dialogs/Settings/Settings';
 import {PaletteTypes, VISUALIZATION_IDS} from '../constants';
 import type {WizardDispatch} from '../reducers';
 import {getChangedPlaceholderSettings} from '../reducers/utils/getPlaceholdersWithMergedSettings';
-import {selectParameters} from '../selectors/dataset';
+import {selectDataset, selectParameters} from '../selectors/dataset';
 import {isColorModeChangeAvailable} from '../selectors/dialogColor';
 import {selectWizardWorkbookId} from '../selectors/settings';
 import {
@@ -61,6 +64,38 @@ type OpenDialogPlaceholderArguments = {
     onApply?: () => void;
 };
 
+function openDialogAxisFormat(
+    dispatch: WizardDispatch,
+    getState: () => DatalensGlobalState,
+    placeholder: Placeholder,
+    confirmHandle: AxisFormatConfirmHandle,
+) {
+    const state = getState();
+    const dataset = selectDataset(state);
+    const visualization = selectVisualization(state);
+
+    const item = placeholder.items[0];
+
+    dispatch(
+        openDialog({
+            id: DIALOG_FIELD,
+            props: {
+                item,
+                visualization,
+                placeholderId: placeholder.id as PlaceholderId,
+                formattingEnabled: true,
+                isAxisFormatting: true,
+                options: dataset?.options,
+                onCancel: () => dispatch(closeDialog()),
+                onApply: (newSettings) => {
+                    confirmHandle(newSettings.formatting, newSettings.format ?? 'auto');
+                    dispatch(closeDialog());
+                },
+            },
+        }),
+    );
+}
+
 export function openDialogPlaceholder({placeholder, onApply}: OpenDialogPlaceholderArguments) {
     return function (dispatch: WizardDispatch, getState: () => DatalensGlobalState) {
         const state = getState();
@@ -84,6 +119,8 @@ export function openDialogPlaceholder({placeholder, onApply}: OpenDialogPlacehol
                         sort,
                         visible: true,
                         item: placeholder,
+                        onAxisFormatManual: (confirmHandle: AxisFormatConfirmHandle) =>
+                            openDialogAxisFormat(dispatch, getState, placeholder, confirmHandle),
                         onCancel: () => dispatch(closeDialog()),
                         onApply: (newSettings) => {
                             const visualizationsList =

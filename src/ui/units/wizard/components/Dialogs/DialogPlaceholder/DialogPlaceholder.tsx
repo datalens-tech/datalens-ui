@@ -9,6 +9,7 @@ import DialogManager from 'components/DialogManager/DialogManager';
 import {i18n} from 'i18n';
 import type {
     AxisNullsMode,
+    CommonNumberFormattingOptions,
     Field,
     Placeholder,
     PlaceholderSettings,
@@ -26,8 +27,8 @@ import {
     getAxisNullsSettings,
     hasSortThanAffectAxisMode,
     isContinuousAxisModeDisabled,
+    isD3Visualization,
     isFieldHierarchy,
-    isNumberField,
     isPercentVisualization,
     isYAGRVisualization,
 } from 'shared';
@@ -56,6 +57,7 @@ import {
     SCALE_VALUE_RADIO_BUTTON_OPTIONS,
 } from './constants/radio-buttons';
 import {
+    analyzeField,
     getAxisModeTooltipContent,
     isAxisFormatEnabled,
     isAxisLabelsRotationEnabled,
@@ -76,6 +78,11 @@ const PLACEHOLDERS_WITH_AXIS_SETTINGS: string[] = [
     PlaceholderId.Y2,
 ];
 
+export type AxisFormatConfirmHandle = (
+    formatting: CommonNumberFormattingOptions,
+    format: string,
+) => void;
+
 interface Props {
     item: Placeholder;
     visible: boolean;
@@ -87,6 +94,7 @@ interface Props {
     sort: Field[];
     drillDownLevel: number;
     chartConfig: Partial<ServerChartsConfig>;
+    onAxisFormatManual: (confirmHandle: AxisFormatConfirmHandle) => void;
 }
 
 interface State {
@@ -123,13 +131,9 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
         const settings: PlaceholderSettings = {...placeholder.settings};
 
         const isAxisWithPercent = isPercentVisualization(props.visualizationId);
+        const {isFormatless} = analyzeField(placeholderItems[0]);
 
-        const isFirstFieldIsNumeric = isNumberField(placeholderItems[0]);
-
-        if (
-            (isAxisWithPercent || !isFirstFieldIsNumeric) &&
-            typeof settings.axisFormatMode !== 'undefined'
-        ) {
+        if ((isAxisWithPercent || isFormatless) && typeof settings.axisFormatMode !== 'undefined') {
             settings.axisFormatMode = 'auto';
         }
         const axisModeMap = settings.axisModeMap;
@@ -367,7 +371,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
 
     renderAxisFormatSettings() {
         const {axisFormatMode} = this.state.settings;
-        const {visualizationId, item} = this.props;
+        const {visualizationId, item, qlChartType} = this.props;
 
         if (typeof axisFormatMode === 'undefined' || !isAxisFormatEnabled(visualizationId)) {
             return null;
@@ -376,25 +380,60 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
         const isAxisWithPercent = isPercentVisualization(visualizationId);
         const placeholderItems = item.items || [];
 
-        const isFirstFieldIsNumeric = isNumberField(placeholderItems[0]);
+        const {isFormatless, isNumeric} = analyzeField(placeholderItems[0]);
         const section = `section_${item.id}`;
 
-        const radioOptions = AXIS_FORMAT_MODE_RADIO_BUTTON_OPTIONS.map((option) => {
-            if (option.value === SETTINGS.AXIS_FORMAT_MODE.BY_FIELD) {
-                return {
-                    ...option,
-                    content: i18n(
-                        'wizard',
-                        visualizationId === 'combined-chart'
-                            ? 'label_combined-chart-axis-format-by-field'
-                            : 'label_axis-format-by-field',
-                        {axisName: i18n('wizard', section)},
-                    ),
-                    disabled: isAxisWithPercent || !isFirstFieldIsNumeric,
-                };
+        const isYagr = qlChartType && isYAGRVisualization(qlChartType, visualizationId);
+        const isD3 = isD3Visualization(visualizationId);
+
+        const radioOptions = AXIS_FORMAT_MODE_RADIO_BUTTON_OPTIONS.reduce<
+            SegmentedRadioGroupOptionProps[]
+        >((acc, option) => {
+            switch (option.value) {
+                case SETTINGS.AXIS_FORMAT_MODE.MANUAL:
+                    if (!isYagr && !isD3) {
+                        acc.push({
+                            ...option,
+                            controlProps: {
+                                onClick: () => {
+                                    this.props.onAxisFormatManual(
+                                        (
+                                            axisLabelFormating: CommonNumberFormattingOptions,
+                                            axisLabelDateFormat: string,
+                                        ) => {
+                                            this.setState((state) => ({
+                                                settings: {
+                                                    ...state.settings,
+                                                    axisLabelFormating,
+                                                    axisLabelDateFormat,
+                                                },
+                                            }));
+                                        },
+                                    );
+                                },
+                            },
+                            disabled: isAxisWithPercent || isFormatless,
+                        });
+                    }
+                    break;
+                case SETTINGS.AXIS_FORMAT_MODE.BY_FIELD:
+                    acc.push({
+                        ...option,
+                        content: i18n(
+                            'wizard',
+                            visualizationId === 'combined-chart'
+                                ? 'label_combined-chart-axis-format-by-field'
+                                : 'label_axis-format-by-field',
+                            {axisName: i18n('wizard', section)},
+                        ),
+                        disabled: isAxisWithPercent || !isNumeric,
+                    });
+                    break;
+                default:
+                    acc.push(option);
             }
-            return option;
-        });
+            return acc;
+        }, []);
 
         return (
             <DialogPlaceholderRow
