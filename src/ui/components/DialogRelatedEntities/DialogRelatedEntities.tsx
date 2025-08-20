@@ -2,11 +2,11 @@ import React from 'react';
 
 import type {DropdownMenuItem} from '@gravity-ui/uikit';
 import {
+    Button,
     Dialog,
     DropdownMenu,
     Icon,
     Loader,
-    Button,
     SegmentedRadioGroup as RadioButton,
 } from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
@@ -131,7 +131,7 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
                 setIsError(true);
                 setIsLoading(false);
             });
-    }
+    };
 
     React.useEffect(fetchRelatedEntries, [entry, currentDirection]);
 
