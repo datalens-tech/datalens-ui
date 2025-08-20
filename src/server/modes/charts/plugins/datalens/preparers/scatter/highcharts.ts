@@ -22,7 +22,7 @@ import {prepareScatter} from './prepare-scatter';
 
 // eslint-disable-next-line complexity
 export function prepareHighchartsScatter(options: PrepareFunctionArgs) {
-    const {ChartEditor, shared, placeholders, idToTitle, idToDataType} = options;
+    const {ChartEditor, shared, placeholders, idToTitle, idToDataType, visualizationId} = options;
     const {
         graphs,
         categories,
@@ -124,8 +124,8 @@ export function prepareHighchartsScatter(options: PrepareFunctionArgs) {
                 },
             };
         }
-        addAxisFormatting(customConfig.axesFormatting.xAxis, shared.visualization.id, xPlaceholder);
-        addAxisFormatting(customConfig.axesFormatting.yAxis, shared.visualization.id, yPlaceholder);
+        addAxisFormatting(customConfig.axesFormatting.xAxis, visualizationId, xPlaceholder);
+        addAxisFormatting(customConfig.axesFormatting.yAxis, visualizationId, yPlaceholder);
 
         if (gradientMode) {
             if (
