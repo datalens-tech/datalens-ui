@@ -460,17 +460,18 @@ function getThresholdValues(
     colorsConfig: ChartColorsConfig,
     colorValues: ColorValue[],
 ): GradientThresholdValues {
+    const list = colorValues.filter((d) => d !== null).map(Number);
     const max =
         colorsConfig.thresholdsMode === 'manual' &&
         typeof colorsConfig.rightThreshold !== 'undefined'
             ? Number(colorsConfig.rightThreshold)
-            : Math.max(...colorValues.map(Number));
+            : Math.max(...list);
 
     const min =
         colorsConfig.thresholdsMode === 'manual' &&
         typeof colorsConfig.leftThreshold !== 'undefined'
             ? Number(colorsConfig.leftThreshold)
-            : Math.min(...colorValues.map(Number));
+            : Math.min(...list);
 
     const range = max - min;
 
