@@ -334,7 +334,9 @@ const getDropdownItems = ({
         action: () => {
             onChange({type: item, widgetId: currentRow.widgetId, itemId: currentRow.itemId});
         },
-        icon: <Icon data={getLinkIcon(item)} size={ICON_SIZE} className={b('icon-link', item)} />,
+        iconStart: (
+            <Icon data={getLinkIcon(item)} size={ICON_SIZE} className={b('icon-link', item)} />
+        ),
         text: (
             <div className={b('list-link')} data-qa={DashRelationTypes[item as RelationType]}>
                 <span>{i18n(`label_${item}`)}</span>
