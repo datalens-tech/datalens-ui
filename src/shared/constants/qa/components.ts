@@ -184,9 +184,9 @@ export const enum DialogCreateWorkbookEntryQa {
 }
 
 export const enum DialogEntryDescriptionQa {
-    Root = 'dialog-dash-meta',
-    SaveButton = 'dash-meta-save-button',
-    EditButton = 'dash-meta-edit-button',
+    Root = 'dialog-entry-description-root',
+    SaveButton = 'dialog-entry-description-save-button',
+    EditButton = 'dialog-entry-description-edit-button',
 }
 
 export const enum CreateEntityButton {
