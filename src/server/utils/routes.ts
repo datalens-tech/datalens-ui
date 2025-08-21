@@ -43,7 +43,7 @@ export const getConfiguredRoute = (
         }
         case 'public-api': {
             return {
-                handler: publicApiControllerGetter(undefined, params),
+                handler: publicApiControllerGetter(params),
                 ...params,
             };
         }

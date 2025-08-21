@@ -1,7 +1,7 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
 import type {ApiWithRoot, SchemasByScope} from '@gravity-ui/gateway';
 
-import type {DatalensGatewaySchemas} from './gateway';
+import type {DatalensGatewaySchemas} from '../../types/gateway';
 
 type HeadersType = Record<string, string | string[] | undefined>;
 
