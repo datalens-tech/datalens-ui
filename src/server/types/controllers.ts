@@ -21,5 +21,4 @@ export type BasicControllers =
     | 'navigate'
     | 'navigation'
     | 'api.deleteLock'
-    | 'schematic-gateway'
-    | 'public-api';
+    | 'schematic-gateway';

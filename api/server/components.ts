@@ -19,7 +19,11 @@ export {
 
 export {renderHTML} from '../../src/server/components/charts-engine/components/markdown';
 
-export {initPublicApiSwagger} from '../../src/server/components/app-docs';
+export {initPublicApiSwagger} from '../../src/server/components/api-docs';
 
-export {PUBLIC_API_PROXY_MAP} from '../../src/server/components/public-api';
-export type {PublicApiRpcMap} from '../../src/server/components/public-api/types';
+export {PUBLIC_API_PROXY_MAP, PUBLIC_API_ROUTE} from '../../src/server/components/public-api';
+export type {
+    PublicApiRpcMap,
+    PublicApiConfig,
+    PublicApiSecuritySchemes,
+} from '../../src/server/components/public-api/types';

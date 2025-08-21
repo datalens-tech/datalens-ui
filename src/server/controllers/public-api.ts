@@ -1,10 +1,13 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
+import type {AppContext} from '@gravity-ui/nodekit';
 import {REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 import _ from 'lodash';
 import z from 'zod/v4';
 
+import {Feature, isEnabledServerFeature} from '../../shared';
 import {getValidationSchema, hasValidationSchema} from '../../shared/schema/gateway-utils';
-import {openApiRegistry} from '../components/app-docs';
+import {publicApiOpenApiRegistry} from '../components/api-docs/utils';
+import {PUBLIC_API_HTTP_METHOD, PUBLIC_API_URL} from '../components/public-api';
 import type {PublicApiRpcMap} from '../components/public-api/types';
 import {PUBLIC_API_RPC_ERROR_CODE} from '../constants/public-api';
 import {registry} from '../registry';
@@ -20,18 +23,8 @@ const handleError = (req: Request, res: Response, status: number, message: strin
     });
 };
 
-const parseRoute = (route: string) => {
-    const spacerIndex = route.indexOf(' ');
-    const method = route.slice(0, spacerIndex).trim();
-    const url = route.slice(spacerIndex).trim();
-
-    return {
-        method,
-        url,
-        reverse: (props: {version: string; action: string}) => {
-            return url.replace(':version', props.version).replace(':action', props.action);
-        },
-    };
+const resolveUrl = ({version, action}: {version: string; action: string}) => {
+    return PUBLIC_API_URL.replace(':version', version).replace(':action', action);
 };
 
 const defaultSchema = {
@@ -57,34 +50,39 @@ const defaultSchema = {
     },
 };
 
-export function publicApiControllerGetter(params: any) {
-    const parsedRoute = parseRoute(params.route);
+export function createPublicApiController(ctx: AppContext) {
     const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
-    const proxyMap = registry.getPublicApiProxyMap();
+    const {proxyMap, securityTypes} = registry.getPublicApiConfig();
 
-    Object.entries(proxyMap).forEach(([version, actions]) => {
-        Object.entries(actions).forEach(([action, {resolve, openApi}]) => {
-            const gatewayApiAction = resolve(gatewayApi);
+    if (isEnabledServerFeature(ctx, Feature.PublicApiSwagger)) {
+        const security = securityTypes.map((type) => ({
+            [type]: [],
+        }));
 
-            if (hasValidationSchema(gatewayApiAction)) {
-                openApiRegistry.registerPath({
-                    method: parsedRoute.method.toLocaleLowerCase(),
-                    path: parsedRoute.reverse({version, action}),
-                    ...openApi,
-                    ...getValidationSchema(gatewayApiAction)().getOpenApiSchema(),
-                    security: [{['Access token']: [], ['Access token 2']: []}],
-                });
-            } else {
-                openApiRegistry.registerPath({
-                    method: parsedRoute.method.toLocaleLowerCase(),
-                    path: parsedRoute.reverse({version, action}),
-                    ...openApi,
-                    ...defaultSchema,
-                    security: [{['Access token']: [], ['Access token 2']: []}],
-                } as any);
-            }
+        Object.entries(proxyMap).forEach(([version, actions]) => {
+            Object.entries(actions).forEach(([action, {resolve, openApi}]) => {
+                const gatewayApiAction = resolve(gatewayApi);
+
+                if (hasValidationSchema(gatewayApiAction)) {
+                    publicApiOpenApiRegistry.registerPath({
+                        method: PUBLIC_API_HTTP_METHOD.toLocaleLowerCase(),
+                        path: resolveUrl({version, action}),
+                        ...openApi,
+                        ...getValidationSchema(gatewayApiAction)().getOpenApiSchema(),
+                        security,
+                    });
+                } else {
+                    publicApiOpenApiRegistry.registerPath({
+                        method: PUBLIC_API_HTTP_METHOD.toLocaleLowerCase(),
+                        path: resolveUrl({version, action}),
+                        ...openApi,
+                        ...defaultSchema,
+                        security,
+                    } as any);
+                }
+            });
         });
-    });
+    }
 
     return async function publicApiController(req: Request, res: Response) {
         const boundeHandler = handleError.bind(null, req, res);

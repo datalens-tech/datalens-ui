@@ -4,11 +4,13 @@ import type {ExpressKit} from '@gravity-ui/expresskit';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import swaggerUi from 'swagger-ui-express';
 
-export const openApiRegistry = new OpenAPIRegistry();
+import type {PublicApiSecuritySchemes} from '../public-api/types';
+
+export const publicApiOpenApiRegistry = new OpenAPIRegistry();
 
 export const initPublicApiSwagger = (
     app: ExpressKit,
-    // securitySchemes?: GetAdditionalSecuritySchemesResult,
+    securitySchemes?: PublicApiSecuritySchemes,
 ) => {
     const {config} = app;
 
@@ -17,20 +19,16 @@ export const initPublicApiSwagger = (
     const descriptionText = `<br />Datalens api.`;
 
     setImmediate(() => {
-        openApiRegistry.registerComponent('securitySchemes', 'Access token', {
-            type: 'apiKey',
-            in: 'header',
-            name: 'x-yacloud-subjecttoken',
-        });
-
-        openApiRegistry.registerComponent('securitySchemes', 'Access token 2', {
-            type: 'apiKey',
-            in: 'header',
-            name: 'x-dl-org-id',
-        });
+        if (securitySchemes) {
+            Object.keys(securitySchemes).forEach((securityType) => {
+                publicApiOpenApiRegistry.registerComponent('securitySchemes', securityType, {
+                    ...securitySchemes[securityType],
+                });
+            });
+        }
 
         const openApiDocument = new OpenApiGeneratorV31(
-            openApiRegistry.definitions,
+            publicApiOpenApiRegistry.definitions,
         ).generateDocument({
             openapi: '3.1.0',
             info: {

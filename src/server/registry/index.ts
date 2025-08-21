@@ -7,7 +7,7 @@ import _ from 'lodash';
 
 import {getValidationSchema, registerValidationSchema} from '../../shared/schema/gateway-utils';
 import type {ChartsEngine} from '../components/charts-engine';
-import type {PublicApiRpcMap} from '../components/public-api/types';
+import type {PublicApiConfig} from '../components/public-api/types';
 import type {QLConnectionTypeMap} from '../modes/charts/plugins/ql/utils/connection';
 import {getConnectorToQlConnectionTypeMap} from '../modes/charts/plugins/ql/utils/connection';
 import type {GetLayoutConfig} from '../types/app-layout';
@@ -64,7 +64,7 @@ let getLayoutConfig: GetLayoutConfig | undefined;
 let yfmPlugins: MarkdownItPluginCb[];
 let getXlsxConverter: XlsxConverterFn | undefined;
 let qLConnectionTypeMap: QLConnectionTypeMap | undefined;
-let publicApiProxyMap: PublicApiRpcMap | undefined;
+let publicApiConfig: PublicApiConfig | undefined;
 
 export const registry = {
     common: commonRegistry,
@@ -166,19 +166,17 @@ export const registry = {
     getQLConnectionTypeMap() {
         return qLConnectionTypeMap ?? getConnectorToQlConnectionTypeMap();
     },
-    setupPublicApiProxyMap(proxyMap: PublicApiRpcMap) {
-        if (publicApiProxyMap) {
-            throw new Error(
-                'The method must not be called more than once [setupPublicApiProxyMap]',
-            );
+    setupPublicApiConfig(config: PublicApiConfig) {
+        if (publicApiConfig) {
+            throw new Error('The method must not be called more than once [publicApiConfig]');
         }
-        publicApiProxyMap = proxyMap;
+        publicApiConfig = config;
     },
-    getPublicApiProxyMap() {
-        if (!publicApiProxyMap) {
-            throw new Error('First of all setup the publicSchema');
+    getPublicApiConfig() {
+        if (!publicApiConfig) {
+            throw new Error('First of all setup the publicApiConfig');
         }
 
-        return publicApiProxyMap;
+        return publicApiConfig;
     },
 };

@@ -1,5 +1,9 @@
 import type {PublicApiRpcMap} from './types';
 
+export const PUBLIC_API_HTTP_METHOD = 'POST';
+export const PUBLIC_API_URL = '/rpc/:version/:action';
+export const PUBLIC_API_ROUTE = `${PUBLIC_API_HTTP_METHOD} ${PUBLIC_API_URL}`;
+
 export const PUBLIC_API_PROXY_MAP = {
     v0: {
         // navigation
