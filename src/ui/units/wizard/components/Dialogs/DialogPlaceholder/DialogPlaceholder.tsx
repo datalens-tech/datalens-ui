@@ -40,6 +40,8 @@ import {withHiddenUnmount} from 'ui/hoc';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {AVAILABLE_DATE_FORMATS, SETTINGS} from '../../../constants';
+import {getFormattingDataType} from '../../../utils/helpers';
+import {DialogFieldSelect} from '../DialogField/components/DialogFieldSelect/DialogFieldSelect';
 import {DialogRadioButtons} from '../components/DialogRadioButtons/DialogRadioButtons';
 
 import {DialogPlaceholderRow} from './components/DialogPlaceholderRow/DialogPlaceholderRow';
@@ -70,9 +72,6 @@ import {
 } from './utils';
 
 import './DialogPlaceholder.scss';
-
-import {getFormattingDataType} from '../../../utils/helpers';
-import {DialogFieldSelect} from '../DialogField/components/DialogFieldSelect/DialogFieldSelect';
 
 const b = block('dialog-placeholder');
 
