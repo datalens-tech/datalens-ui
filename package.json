@@ -247,6 +247,9 @@
     },
     "@gravity-ui/app-builder": {
       "@rspack/core": "1.4.2"
+    },
+    "@gravity-ui/chartkit": {
+      "@gravity-ui/charts": "1.6.3"
     }
   },
   "deploy": {
