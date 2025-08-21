@@ -5,18 +5,22 @@ import {
     ArrowUturnCwRight,
     ChevronsCollapseUpRight,
     ChevronsExpandUpRight,
+    CircleInfo,
 } from '@gravity-ui/icons';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import {useDispatch} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 
 import {WizardPageQa} from '../../../../../../shared';
 import type {AdditionalButtonTemplate} from '../../../../../components/ActionPanel/components/ChartSaveControls/types';
+import {openDialogEntryAnnotationDescription} from '../../../../../components/DialogEntryDescription';
 import {HOTKEYS_SCOPES, REDO_HOTKEY, UNDO_HOTKEY} from '../../../../../constants/misc';
 import {useBindHotkey} from '../../../../../hooks/useBindHotkey';
 import {goBack, goForward} from '../../../../../store/actions/editHistory';
+import {setDescription} from '../../../actions/preview';
 import {toggleFullscreen} from '../../../actions/settings';
 import {WIZARD_EDIT_HISTORY_UNIT_ID} from '../../../constants';
+import {selectIsDescriptionChanged, selectPreviewDescription} from '../../../selectors/preview';
 
 const b = block('wizard-action-panel');
 
@@ -33,6 +37,8 @@ export const useWizardActionPanel = (
     args: UseWizardActionPanelArgs,
 ): AdditionalButtonTemplate[] => {
     const dispatch = useDispatch();
+    const description = useSelector(selectPreviewDescription);
+    const isDescriptionChanged = useSelector(selectIsDescriptionChanged);
 
     const {
         editButtonLoading,
@@ -54,6 +60,44 @@ export const useWizardActionPanel = (
             dispatch(goForward({unitId: WIZARD_EDIT_HISTORY_UNIT_ID}));
         }
     }, [canGoForward, dispatch]);
+
+    const handleApplyDescriptionClick = React.useCallback(
+        (text: string) => {
+            dispatch(setDescription(text));
+        },
+        [dispatch],
+    );
+
+    const handleEditDescriptionClick = React.useCallback(() => {
+        dispatch(
+            openDialogEntryAnnotationDescription({
+                title: i18n('wizard', 'label_wizard-info'),
+                description: description || '',
+                isEditMode: true,
+                onApply: handleApplyDescriptionClick,
+            }),
+        );
+    }, [description, dispatch, handleApplyDescriptionClick]);
+
+    const handleDescriptionClick = React.useCallback(() => {
+        dispatch(
+            openDialogEntryAnnotationDescription({
+                title: i18n('wizard', 'label_wizard-info'),
+                description: description || '',
+                canEdit: !isViewOnlyMode,
+                onEdit: handleEditDescriptionClick,
+                isEditMode: !isViewOnlyMode && (!description || isDescriptionChanged),
+                onApply: handleApplyDescriptionClick,
+            }),
+        );
+    }, [
+        description,
+        dispatch,
+        handleApplyDescriptionClick,
+        handleEditDescriptionClick,
+        isDescriptionChanged,
+        isViewOnlyMode,
+    ]);
 
     useBindHotkey({
         key: UNDO_HOTKEY,
@@ -109,15 +153,44 @@ export const useWizardActionPanel = (
                 },
                 text: i18n('wizard', 'button_toggle-fullscreen'),
                 textClassName: b('fullscreen-btn-text'),
-                className: b('fullscreen-btn'),
                 icon: iconFullScreenData,
                 view: 'flat',
             },
+            {
+                key: 'description',
+                action: handleDescriptionClick,
+                icon: {data: CircleInfo, size: 16},
+                view: 'flat',
+                className: b('description-btn'),
+            },
         ];
-    }, [isFullscreen, onClickGoBack, canGoBack, onClickGoForward, canGoForward, dispatch]);
+    }, [
+        isFullscreen,
+        onClickGoBack,
+        canGoBack,
+        onClickGoForward,
+        canGoForward,
+        dispatch,
+        handleDescriptionClick,
+    ]);
 
-    const editButton: AdditionalButtonTemplate[] = React.useMemo<AdditionalButtonTemplate[]>(() => {
+    const viewOnlyModeButtons: AdditionalButtonTemplate[] = React.useMemo<
+        AdditionalButtonTemplate[]
+    >(() => {
+        const descriptionButton: AdditionalButtonTemplate[] = description
+            ? [
+                  {
+                      key: 'description',
+                      action: handleDescriptionClick,
+                      icon: {data: CircleInfo, size: 16},
+                      view: 'flat',
+                      className: b('description-btn'),
+                  },
+              ]
+            : [];
+
         return [
+            ...descriptionButton,
             {
                 key: 'action-panel-edit-button',
                 loading: editButtonLoading,
@@ -126,7 +199,7 @@ export const useWizardActionPanel = (
                 view: 'action',
             },
         ];
-    }, [editButtonLoading, handleEditButtonClick]);
+    }, [description, editButtonLoading, handleDescriptionClick, handleEditButtonClick]);
 
-    return isViewOnlyMode ? editButton : defaultButtons;
+    return isViewOnlyMode ? viewOnlyModeButtons : defaultButtons;
 };

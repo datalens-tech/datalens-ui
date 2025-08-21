@@ -327,6 +327,7 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
     );
 
     const additionalButtons = useQLActionPanel({
+        entryLocked,
         handleClickButtonToggleTablePreview,
     });
 

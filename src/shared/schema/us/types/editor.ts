@@ -28,4 +28,5 @@ export interface UpdateEditorChartArgs {
     revId?: string;
     meta?: EntryFieldMeta;
     links?: EntryFieldLinks;
+    description?: string;
 }
