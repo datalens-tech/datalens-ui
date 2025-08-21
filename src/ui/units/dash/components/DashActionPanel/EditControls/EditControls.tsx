@@ -141,11 +141,7 @@ export const EditControls = (props: EditControlsProps) => {
             >
                 <Icon data={Gear} height={18} width={18} />
             </Button>
-            <Description
-                canEdit={true}
-                entryDialoguesRef={entryDialoguesRef}
-                showOpenedDescription={false}
-            />
+            <Description canEdit={true} showOpenedDescription={false} />
             {Boolean(onOpenDialogConnectionsClick) && (
                 <Button
                     view="normal"
