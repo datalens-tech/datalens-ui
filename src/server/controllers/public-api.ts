@@ -11,7 +11,7 @@ import type {DatalensGatewaySchemas} from '../types/gateway';
 import type {PublicApiRpcMap} from '../types/public-api';
 import Utils from '../utils';
 
-const proxyMap: PublicApiRpcMap = {
+const proxyMap = {
     v0: {
         // navigation
         getNavigationList: {
@@ -217,7 +217,7 @@ const proxyMap: PublicApiRpcMap = {
         //     },
         // },
     },
-};
+} satisfies PublicApiRpcMap;
 
 const handleError = (req: Request, res: Response, status: number, message: string) => {
     res.status(status).send({
@@ -281,8 +281,10 @@ export function publicApiControllerGetter(
                     method: parsedRoute.method.toLocaleLowerCase(),
                     path: parsedRoute.reverse({version, action}),
                     ...openApi,
-                    ...getValidationSchema(gatewayApiAction)().getOpenApichema(),
-                    security: [{['Access token']: []}],
+                    ...getValidationSchema(gatewayApiAction)().getOpenApiSchema(),
+                    // security: [
+                    //     {['Access token']: [], ['Access token 2']: []},
+                    // ],
                 });
             } else {
                 openApiRegistry.registerPath({
@@ -290,7 +292,9 @@ export function publicApiControllerGetter(
                     path: parsedRoute.reverse({version, action}),
                     ...openApi,
                     ...defaultSchema,
-                    security: [{['Access token']: []}],
+                    // security: [
+                    //     {['Access token']: [], ['Access token 2']: []},
+                    // ],
                 } as any);
             }
         });

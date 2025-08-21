@@ -18,3 +18,5 @@ export {
 } from '../../src/server/components/charts-engine';
 
 export {renderHTML} from '../../src/server/components/charts-engine/components/markdown';
+
+export {initPublicApiSwagger} from '../../src/server/components/app-docs';

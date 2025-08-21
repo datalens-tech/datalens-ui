@@ -79,7 +79,7 @@ export function createTypedAction<
         getSchema() {
             return schema;
         },
-        getOpenApichema() {
+        getOpenApiSchema() {
             return {
                 request: {
                     body: {

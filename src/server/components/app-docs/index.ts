@@ -6,7 +6,7 @@ import swaggerUi from 'swagger-ui-express';
 
 export const openApiRegistry = new OpenAPIRegistry();
 
-export const initSwagger = (
+export const initPublicApiSwagger = (
     app: ExpressKit,
     // securitySchemes?: GetAdditionalSecuritySchemesResult,
 ) => {
@@ -20,23 +20,29 @@ export const initSwagger = (
         openApiRegistry.registerComponent('securitySchemes', 'Access token', {
             type: 'apiKey',
             in: 'header',
-            name: 'Authorization',
+            name: 'x-yacloud-subjecttoken',
         });
 
-        app.express.use(
-            '/api-docs/',
-            swaggerUi.serve,
-            swaggerUi.setup(
-                new OpenApiGeneratorV31(openApiRegistry.definitions).generateDocument({
-                    openapi: '3.1.0',
-                    info: {
-                        version: `${config.appVersion}`,
-                        title: `UI API `,
-                        description: [installationText, envText, descriptionText].join('<br />'),
-                    },
-                    servers: [{url: '/'}],
-                }),
-            ),
-        );
+        openApiRegistry.registerComponent('securitySchemes', 'Access token 2', {
+            type: 'apiKey',
+            in: 'header',
+            name: 'x-dl-org-id',
+        });
+
+        const openApiDocument = new OpenApiGeneratorV31(
+            openApiRegistry.definitions,
+        ).generateDocument({
+            openapi: '3.1.0',
+            info: {
+                version: `${config.appVersion}`,
+                title: `UI API `,
+                description: [installationText, envText, descriptionText].join('<br />'),
+            },
+            servers: [{url: '/'}],
+        });
+
+        app.express.get('/api-docs.json', (_, res) => res.json(openApiDocument));
+
+        app.express.use('/api-docs/', swaggerUi.serve, swaggerUi.setup(openApiDocument));
     });
 };
