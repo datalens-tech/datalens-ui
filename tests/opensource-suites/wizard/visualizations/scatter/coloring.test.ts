@@ -27,7 +27,7 @@ datalensTest.describe('Wizard', () => {
 
                 await wizardPage.createNewFieldWithFormula(
                     'year',
-                    'datetrunc([Order_date], "year")',
+                    'datepart([Order_date], "year")',
                 );
                 await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'year');
                 await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'sum');
