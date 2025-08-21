@@ -236,15 +236,18 @@ export function preparePieData(args: PrepareFunctionArgs) {
             ? legendParts.join(': ')
             : getFakeTitleOrTitle(measure);
         const drillDownFilterValue = pointName;
-        const shouldWrapPointName = isHtmlColor || isHtmlDimension;
 
         let formattedName: string | WrappedHTML = formattedNameParts.join(': ');
         if (isHtmlColor || isHtmlDimension) {
             formattedName = wrapHtml(formattedName);
         }
 
+        // toDo: return as soon as the html legend in gravity-charts is supported
+        // const shouldWrapPointName = isHtmlColor || isHtmlDimension;
+
         const point: PiePoint = {
-            name: shouldWrapPointName ? wrapHtml(pointName) : pointName,
+            // name: shouldWrapPointName ? wrapHtml(pointName) : pointName,
+            name: pointName,
             formattedName,
             drillDownFilterValue,
             y: Number(measureValue),
