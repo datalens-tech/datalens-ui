@@ -106,7 +106,7 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
     const {DialogRelatedEntitiesRadioHint} = registry.common.components.getAll();
     const {renderDialogRelatedEntitiesAlertHint} = registry.common.functions.getAll();
 
-    const fetchRelatedEntries = () => {
+    const fetchRelatedEntries = React.useCallback(() => {
         setIsLoading(true);
         setIsError(false);
         getSdk().cancelRequest(CONCURRENT_ID);
@@ -131,9 +131,9 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
                 setIsError(true);
                 setIsLoading(false);
             });
-    };
+    }, [entry, currentDirection]);
 
-    React.useEffect(fetchRelatedEntries, [entry, currentDirection]);
+    React.useEffect(fetchRelatedEntries, [fetchRelatedEntries]);
 
     const showDirectionControl =
         !topLevelEntryScopes.includes(entry.scope as EntryScope) &&
