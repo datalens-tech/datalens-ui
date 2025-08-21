@@ -11,15 +11,13 @@ import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import {useSelector} from 'react-redux';
 import type {StringParams} from 'shared';
-import {DashTabItemControlSourceType, Feature} from 'shared';
+import {DashTabItemControlSourceType} from 'shared';
 import {DL} from 'ui/constants/common';
 import {useChangedValue} from 'ui/hooks/useChangedProp';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import type {ChartInitialParams} from '../../../libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import {DatalensChartkitContent} from '../../../libs/DatalensChartkit/components/ChartKitBase/components/Chart/Chart';
-import Loader from '../../../libs/DatalensChartkit/components/ChartKitBase/components/Loader/Loader';
 import {getDataProviderData} from '../../../libs/DatalensChartkit/components/ChartKitBase/helpers';
 import type {ResponseError} from '../../../libs/DatalensChartkit/modules/data-provider/charts';
 import ExtensionsManager from '../../../libs/DatalensChartkit/modules/extensions-manager/extensions-manager';
@@ -69,7 +67,6 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
         dataProvider,
         forwardedRef,
         nonBodyScroll,
-        loaderDelay,
         id: chartId,
         config,
         widgetId,
@@ -238,7 +235,6 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
         mods,
         widgetBodyClassName,
         hasHiddenClassMod,
-        veil,
         showLoader,
         handleGetWidgetMeta,
         handleChartkitReflow,
@@ -316,8 +312,7 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
         error || (loadedData as unknown as AxiosResponse<ResponseError>)?.data?.error,
     );
 
-    const showFloatControls = isEnabledFeature(Feature.DashFloatControls);
-    const isLoading = showFloatControls && showLoader && !hasError;
+    const isLoading = showLoader && !hasError;
     const pulsate = isLoading && hasControl;
     const showSpinner = isLoading && !hasControl;
 
@@ -338,9 +333,6 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
                 ]}
             />
             <div className={b('container', {[String(widgetType)]: Boolean(widgetType)})}>
-                {!showFloatControls && (
-                    <Loader visible={showLoader} veil={veil} delay={loaderDelay} />
-                )}
                 {showSpinner && (
                     <div className={b('loader')}>
                         <CommonLoader size="s" />

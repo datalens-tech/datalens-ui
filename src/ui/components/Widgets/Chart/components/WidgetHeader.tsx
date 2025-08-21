@@ -2,17 +2,16 @@ import React from 'react';
 
 import {AdaptiveTabs} from '@gravity-ui/components';
 import {ArrowLeft} from '@gravity-ui/icons';
-import {Button, Icon} from '@gravity-ui/uikit';
+import {Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DebugInfoTool from 'components/DashKit/plugins/DebugInfoTool/DebugInfoTool';
 import type {CurrentTab} from 'components/DashKit/plugins/Widget/types';
 import {useDispatch} from 'react-redux';
-import {ChartkitMenuDialogsQA, ControlQA, Feature} from 'shared';
+import {ChartkitMenuDialogsQA} from 'shared';
 import {DL} from 'ui/constants/common';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
 import {registry} from 'ui/registry';
 import {setSkipReload} from 'ui/units/dash/store/actions/dashTyped';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 
 import type {ChartsData} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
@@ -25,8 +24,6 @@ import type {
 import {MarkdownHelpPopover} from '../../../MarkdownHelpPopover/MarkdownHelpPopover';
 import {DRAGGABLE_HANDLE_CLASS_NAME} from '../helpers/helpers';
 import type {ChartProviderPropsWithRefProps, ChartWidgetDataRef, DataProps} from '../types';
-
-import iconClearActionParams from '../../../../assets/icons/funnel-clear.svg';
 
 import './WidgetHeader.scss';
 
@@ -116,10 +113,6 @@ export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
 
     const widgetTitleHint =
         currentTab?.enableHint && currentTab?.hint?.trim() ? currentTab?.hint?.trim() : '';
-
-    const showFloatControls = isEnabledFeature(Feature.DashFloatControls);
-
-    const showFiltersClear = showActionParamsFilter && onFiltersClear && !showFloatControls;
 
     const dispatch = useDispatch();
 
@@ -230,54 +223,33 @@ export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
                     </span>
                 )}
                 {renderTabs()}
-                {showFiltersClear && (
-                    <div className={b('icons')}>
-                        <div className={b('filters-controls')}>
-                            <Button qa={ControlQA.filtersClear} onClick={onFiltersClear}>
-                                <Icon
-                                    data={iconClearActionParams}
-                                    size={16}
-                                    className={b('icon-filter-clear')}
-                                />
-                            </Button>
-                        </div>
-                    </div>
-                )}
-                {showFloatControls && (
-                    <React.Fragment>
-                        <ChartHeader
-                            dataProvider={headerWithControlsProps.dataProvider}
-                            chartsInsightsData={
-                                headerWithControlsProps.loadedData?.chartsInsightsData
-                            }
-                            menuType={headerWithControlsProps.menuType}
-                            customMenuOptions={
-                                {} as unknown as ChartProviderPropsWithRefProps['customMenuOptions']
-                            }
-                            menuChartkitConfig={headerWithControlsProps.menuChartkitConfig}
-                            isMenuAvailable={!noControls}
-                            error={headerWithControlsProps.error || null}
-                            dataProps={headerWithControlsProps.dataProps}
-                            requestId={headerWithControlsProps.requestId || ''}
-                            chartRevIdRef={null}
-                            loadedData={headerWithControlsProps.loadedData}
-                            widgetDataRef={headerWithControlsProps.widgetDataRef}
-                            widgetRenderTimeRef={headerWithControlsProps.widgetRenderTimeRef}
-                            yandexMapAPIWaiting={headerWithControlsProps.yandexMapAPIWaiting}
-                            onChange={headerWithControlsProps.onChange}
-                            isWidgetMenuDataChanged={
-                                headerWithControlsProps.isWidgetMenuDataChanged
-                            }
-                            onExportLoading={handleExportLoading}
-                            enableActionParams={headerWithControlsProps.enableActionParams}
-                            enableAssistant={headerWithControlsProps.enableAssistant}
-                            onFullscreenClick={onFullscreenClick}
-                            showActionParamsFilter={showActionParamsFilter}
-                            onFiltersClear={onFiltersClear}
-                            canBeDisplayedFilters={true}
-                        />
-                    </React.Fragment>
-                )}
+                <ChartHeader
+                    dataProvider={headerWithControlsProps.dataProvider}
+                    chartsInsightsData={headerWithControlsProps.loadedData?.chartsInsightsData}
+                    menuType={headerWithControlsProps.menuType}
+                    customMenuOptions={
+                        {} as unknown as ChartProviderPropsWithRefProps['customMenuOptions']
+                    }
+                    menuChartkitConfig={headerWithControlsProps.menuChartkitConfig}
+                    isMenuAvailable={!noControls}
+                    error={headerWithControlsProps.error || null}
+                    dataProps={headerWithControlsProps.dataProps}
+                    requestId={headerWithControlsProps.requestId || ''}
+                    chartRevIdRef={null}
+                    loadedData={headerWithControlsProps.loadedData}
+                    widgetDataRef={headerWithControlsProps.widgetDataRef}
+                    widgetRenderTimeRef={headerWithControlsProps.widgetRenderTimeRef}
+                    yandexMapAPIWaiting={headerWithControlsProps.yandexMapAPIWaiting}
+                    onChange={headerWithControlsProps.onChange}
+                    isWidgetMenuDataChanged={headerWithControlsProps.isWidgetMenuDataChanged}
+                    onExportLoading={handleExportLoading}
+                    enableActionParams={headerWithControlsProps.enableActionParams}
+                    enableAssistant={headerWithControlsProps.enableAssistant}
+                    onFullscreenClick={onFullscreenClick}
+                    showActionParamsFilter={showActionParamsFilter}
+                    onFiltersClear={onFiltersClear}
+                    canBeDisplayedFilters={true}
+                />
             </div>
         </React.Fragment>
     );
