@@ -1,1 +1,1 @@
-export {initPublicApiSwagger} from './utils';
+export type {SecuritySchemeObject} from './types';

@@ -19,7 +19,7 @@ export {
 
 export {renderHTML} from '../../src/server/components/charts-engine/components/markdown';
 
-export {initPublicApiSwagger} from '../../src/server/components/api-docs';
+export {initPublicApiSwagger} from '../../src/server/components/public-api';
 
 export {PUBLIC_API_PROXY_MAP, PUBLIC_API_ROUTE} from '../../src/server/components/public-api';
 export type {

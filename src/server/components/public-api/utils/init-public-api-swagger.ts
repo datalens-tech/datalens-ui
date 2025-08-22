@@ -4,7 +4,7 @@ import type {ExpressKit} from '@gravity-ui/expresskit';
 // eslint-disable-next-line import/no-extraneous-dependencies
 import swaggerUi from 'swagger-ui-express';
 
-import type {PublicApiSecuritySchemes} from '../public-api/types';
+import type {PublicApiSecuritySchemes} from '../types';
 
 export const publicApiOpenApiRegistry = new OpenAPIRegistry();
 
