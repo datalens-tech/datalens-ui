@@ -9,5 +9,5 @@ export const docsUrl = process.env.DOCS_URL;
 export const isFullMode = false; //mode === AppMode.Full;
 export const isDatalensMode = mode === AppMode.Datalens;
 export const isChartsMode = mode === AppMode.Charts;
-export const isApiMode = mode === AppMode.Api;
+export const isApiMode = true; //mode === AppMode.Api;
 export const isOpensourceInstallation = appInstallation === AppInstallation.Opensource;
