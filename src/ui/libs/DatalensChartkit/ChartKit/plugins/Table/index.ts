@@ -7,4 +7,4 @@ export const TablePlugin = {
     renderer: React.lazy(() => import('./renderer/TableWidget')),
 } as unknown as ChartKitPlugin;
 
-export {default as TableWidget} from './renderer/TableWidget';
+export const TableWidget = React.lazy(() => import('./renderer/TableWidget'));

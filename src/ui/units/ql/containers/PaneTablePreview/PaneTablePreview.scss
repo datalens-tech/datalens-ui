@@ -7,7 +7,6 @@
     right: 0;
     bottom: 0;
     top: 0;
-    overflow-y: scroll;
 
     .dl-table {
         &__td_type_number {
@@ -15,11 +14,16 @@
             justify-content: initial;
         }
 
-        &__td,
-        &__th {
+        &__header {
+            th {
+                height: 32px;
+                border-bottom: 1px solid var(--g-color-line-generic);
+            }
+        }
+
+        &__td {
             height: 32px;
             border-bottom: 1px solid var(--g-color-line-generic);
         }
     }
-
 }
