@@ -5,12 +5,7 @@ import {i18n} from 'i18n';
 import type {ResolveThunks} from 'react-redux';
 import {connect} from 'react-redux';
 import type {ColorPalette} from 'shared';
-import {
-    DEFAULT_PALETTE,
-    GradientType,
-    ServiceSettingsQA,
-    selectAvailableGradientsColors,
-} from 'shared';
+import {GradientType, ServiceSettingsQA, selectAvailableGradientsColors} from 'shared';
 import {
     deleteColorPalette,
     fetchColorPalettes,
@@ -20,7 +15,12 @@ import {
 } from 'store/actions/colorPaletteEditor';
 import {selectColorPalettes, selectCurrentColorPalette} from 'store/selectors/colorPaletteEditor';
 import type {DatalensGlobalState} from 'ui';
-import {selectDefaultClientGradient} from 'ui';
+
+import {
+    getAvailableClientPalettesMap,
+    getDefaultColorPaletteId,
+    selectDefaultClientGradient,
+} from '../../constants/common';
 
 import ColorPalettesCard from './ColorPalettesCard/ColorPalettesCard';
 import GradientColorPaletteEditor from './GradientPaletteEditor/GradientPaletteEditor';
@@ -113,7 +113,8 @@ class ColorPaletteEditorContainer extends React.Component<ColorPaletteEditorProp
     };
 
     private handleCreateColorPalette = () => {
-        const colors = DEFAULT_PALETTE.scheme;
+        const defaultColorPaletteId = getDefaultColorPaletteId();
+        const colors = getAvailableClientPalettesMap()[defaultColorPaletteId]?.scheme ?? [];
 
         const colorPalette: ColorPalette = {
             colorPaletteId: '',

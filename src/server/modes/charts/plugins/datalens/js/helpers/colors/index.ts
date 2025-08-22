@@ -11,16 +11,19 @@ type GetChartColorsArgs = {
     colorsConfig?: ServerColorsConfig;
     loadedColorPalettes: Record<string, ColorPalette>;
     availablePalettes: Record<string, Palette>;
+    defaultColorPaletteId: string;
 };
 
 export const getChartColorsConfig = ({
     colorsConfig = {},
     loadedColorPalettes,
     availablePalettes,
+    defaultColorPaletteId,
 }: GetChartColorsArgs): ChartColorsConfig => {
     const fallbackColors = selectServerPalette({
         palette: colorsConfig.palette,
         availablePalettes,
+        defaultColorPaletteId,
     });
 
     const fallbackGradientColors = selectAvailableGradientsColors(

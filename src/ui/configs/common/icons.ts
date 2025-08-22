@@ -4,7 +4,8 @@ import collectionColoredBigDark from 'assets/icons/collections/collection-colore
 import collectionColoredBig from 'assets/icons/collections/collection-colored-big.svg';
 import collectionColoredDark from 'assets/icons/collections/collection-colored-dark.svg';
 import collectionColored from 'assets/icons/collections/collection-colored.svg';
-import paletteDatalens20Icon from 'assets/icons/palettes/datalens-20.svg';
+import paletteDatalensClassic20Icon from 'assets/icons/palettes/datalens-classic20.svg';
+import paletteDatalensDefault20Icon from 'assets/icons/palettes/datalens-default20.svg';
 import paletteDatalensNeo20Icon from 'assets/icons/palettes/datalens-neo20.svg';
 import paletteEmerald20Icon from 'assets/icons/palettes/emerald-20.svg';
 import paletteGolden20Icon from 'assets/icons/palettes/golden-20.svg';
@@ -51,9 +52,8 @@ export default {
     collectionColoredDark,
     collectionColoredBig,
     collectionColoredBigDark,
-    // TODO: Update with new colors
-    // [PALETTES.default20.id]: paletteDatalens20Icon,
-    [PALETTES.classic.id]: paletteDatalens20Icon,
+    [PALETTES.default20.id]: paletteDatalensDefault20Icon,
+    [PALETTES.classic.id]: paletteDatalensClassic20Icon,
     [PALETTES.emerald.id]: paletteEmerald20Icon,
     [PALETTES.golden.id]: paletteGolden20Icon,
     [PALETTES.neutral.id]: paletteNeutral20Icon,
