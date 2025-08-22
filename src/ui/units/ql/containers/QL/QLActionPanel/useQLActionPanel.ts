@@ -18,7 +18,7 @@ import {useBindHotkey} from '../../../../../hooks/useBindHotkey';
 import {goBack, goForward} from '../../../../../store/actions/editHistory';
 import {selectCanGoBack, selectCanGoForward} from '../../../../../store/selectors/editHistory';
 import {QL_EDIT_HISTORY_UNIT_ID} from '../../../constants';
-import {setQLDescription} from '../../../store/actions/ql';
+import {setDescription} from '../../../store/actions/ql';
 import {getDescription, getIsDescriptionChanged} from '../../../store/reducers/ql';
 
 const b = block('wizard-action-panel');
@@ -58,7 +58,7 @@ export const useQLActionPanel = (args: UseQlActionPanelArgs): AdditionalButtonTe
 
     const handleApplyDescriptionClick = React.useCallback(
         (text: string) => {
-            dispatch(setQLDescription(text));
+            dispatch(setDescription(text));
         },
         [dispatch],
     );

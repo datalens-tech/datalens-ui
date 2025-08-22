@@ -1257,7 +1257,7 @@ export const removeQueryAndRedraw = ({index}: {index: number}) => {
     };
 };
 
-export const setQLDescription = (payload: string) => {
+export const setDescription = (payload: string) => {
     return {
         type: SET_DESCRIPTION,
         payload,

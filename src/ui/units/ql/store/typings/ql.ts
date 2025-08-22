@@ -288,7 +288,7 @@ export interface ResetWizardStoreAction {
     type: typeof RESET_WIZARD_STORE;
 }
 
-interface SetQLDescriptionAction {
+interface QLActionSetDescription {
     type: typeof SET_DESCRIPTION;
     payload: string;
 }
@@ -331,7 +331,7 @@ export type QLAction =
     | QLActionToggleTablePreview
     | CloseDialogAction
     | OpenDialogAction
-    | SetQLDescriptionAction;
+    | QLActionSetDescription;
 
 export type QLDispatch = ThunkDispatch<DatalensGlobalState, void, AnyAction>;
 
