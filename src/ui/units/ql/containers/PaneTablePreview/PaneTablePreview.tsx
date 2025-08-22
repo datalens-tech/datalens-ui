@@ -1,11 +1,9 @@
 import React from 'react';
 
-import DataTable from '@gravity-ui/react-data-table';
 import block from 'bem-cn-lite';
-import {i18n} from 'i18n';
-import _ from 'lodash';
 import {connect} from 'react-redux';
 import type {DatalensGlobalState} from 'ui';
+import {TableWidget} from 'ui/libs/DatalensChartkit/ChartKit/plugins/Table';
 
 import type {QlConfigPreviewTableData} from '../../../../../shared';
 import {getTablePreviewData} from '../../store/reducers/ql';
@@ -21,7 +19,6 @@ interface PreviewTableProps {
 class PreviewTable extends React.PureComponent<PreviewTableProps> {
     render() {
         const {tablePreviewData} = this.props;
-
         const {columns, data} = tablePreviewData;
 
         return (
@@ -29,18 +26,17 @@ class PreviewTable extends React.PureComponent<PreviewTableProps> {
                 {typeof columns === 'undefined' || typeof data === 'undefined' ? (
                     <div></div>
                 ) : (
-                    <DataTable
-                        columns={columns}
-                        data={data}
-                        emptyDataMessage={i18n('dataset.dataset-editor.modify', 'label_no-data')}
-                        settings={{
-                            highlightRows: true,
-                            stripedRows: false,
-                            displayIndices: false,
-                            dynamicRender: true,
+                    <TableWidget
+                        id="ql-preview-table"
+                        data={{
+                            type: 'table',
+                            controls: null,
+                            params: {},
+                            data: {
+                                head: columns,
+                                rows: data,
+                            },
                         }}
-                        rowClassName={() => b('row')}
-                        theme={'preview-dataset'}
                     />
                 )}
             </div>

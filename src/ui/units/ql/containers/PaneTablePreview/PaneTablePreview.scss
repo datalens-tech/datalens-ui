@@ -8,16 +8,5 @@
     bottom: 0;
     top: 0;
     overflow-y: scroll;
-
-    .data-table {
-        &__table {
-            min-width: 100%;
-        }
-
-        &__row,
-        &__th {
-            height: 32px;
-            border-bottom: 1px solid var(--g-color-line-generic);
-        }
-    }
+    --dl-table-border-color: var(--g-color-line-generic-solid);
 }
