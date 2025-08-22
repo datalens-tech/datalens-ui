@@ -168,7 +168,7 @@ export const registry = {
     },
     setupPublicApiConfig(config: PublicApiConfig) {
         if (publicApiConfig) {
-            throw new Error('The method must not be called more than once [publicApiConfig]');
+            throw new Error('The method must not be called more than once [setupPublicApiConfig]');
         }
         publicApiConfig = config;
     },
