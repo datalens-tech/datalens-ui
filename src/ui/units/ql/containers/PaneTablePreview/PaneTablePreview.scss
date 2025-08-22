@@ -8,5 +8,18 @@
     bottom: 0;
     top: 0;
     overflow-y: scroll;
-    --dl-table-border-color: var(--g-color-line-generic-solid);
+
+    .dl-table {
+        &__td_type_number {
+            text-align: initial;
+            justify-content: initial;
+        }
+
+        &__td,
+        &__th {
+            height: 32px;
+            border-bottom: 1px solid var(--g-color-line-generic);
+        }
+    }
+
 }
