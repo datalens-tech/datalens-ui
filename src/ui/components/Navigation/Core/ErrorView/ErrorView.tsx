@@ -28,7 +28,12 @@ export default function ErrorView({error, onRetryClick}: Props) {
             errorViewConfig = {
                 title: i18n('label_access-denied-folder'),
                 renderAction: () => (
-                    <Button view="action" size="l" onClick={onRetryClick}>
+                    <Button
+                        view="action"
+                        size="l"
+                        className={b('button-retry')}
+                        onClick={onRetryClick}
+                    >
                         {i18n('button_retry')}
                     </Button>
                 ),
@@ -46,7 +51,7 @@ export default function ErrorView({error, onRetryClick}: Props) {
 
     return (
         <div className={b()}>
-            <PlaceholderIllustration {...errorViewConfig} direction="column" />
+            <PlaceholderIllustration {...errorViewConfig} size="promo" direction="column" />
         </div>
     );
 }
