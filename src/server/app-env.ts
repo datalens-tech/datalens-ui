@@ -6,7 +6,7 @@ export const appEnv = process.env.APP_ENV;
 export const releaseVersion = process.env.RELEASE_VERSION;
 export const docsUrl = process.env.DOCS_URL;
 
-export const isFullMode = mode === AppMode.Full;
+export const isFullMode = false; //mode === AppMode.Full;
 export const isDatalensMode = mode === AppMode.Datalens;
 export const isChartsMode = mode === AppMode.Charts;
 export const isApiMode = mode === AppMode.Api;
