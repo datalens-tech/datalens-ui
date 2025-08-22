@@ -16,6 +16,7 @@ $block: '.#{variables.$ns}-landing';
         display: flex;
         flex-direction: column;
 
+        &_media_xs,
         &_media_s,
         &_media_m {
             height: auto;
@@ -33,6 +34,7 @@ $block: '.#{variables.$ns}-landing';
         flex-direction: row-reverse;
         margin-bottom: 24px;
 
+        &_media_xs,
         &_media_s {
             margin-bottom: 24px;
         }
@@ -47,6 +49,7 @@ $block: '.#{variables.$ns}-landing';
         z-index: 1;
         position: relative;
 
+        &_media_xs,
         &_media_s {
             padding: 50px 0 0;
         }
@@ -71,6 +74,7 @@ $block: '.#{variables.$ns}-landing';
     }
 
     &__header-actions-link {
+        &_media_xs,
         &_media_s {
             width: 100%;
         }
@@ -82,6 +86,7 @@ $block: '.#{variables.$ns}-landing';
         align-items: center;
         padding: 24px 0;
 
+        &_media_xs,
         &_media_s {
             justify-content: start;
             padding-top: 60px;
@@ -96,6 +101,7 @@ $block: '.#{variables.$ns}-landing';
             height: 290px;
         }
 
+        &_media_xs,
         &_media_s {
             height: 210px;
         }
@@ -107,6 +113,7 @@ $block: '.#{variables.$ns}-landing';
         padding: 52px 100px;
         margin: 48px 0;
 
+        &_media_xs,
         &_media_s {
             padding: 32px;
             margin: 24px 0;

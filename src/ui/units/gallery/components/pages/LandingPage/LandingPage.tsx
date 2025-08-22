@@ -16,7 +16,6 @@ import {useGetGalleryItemsQuery, useGetGalleryMetaQuery} from '../../../store/ap
 import {GalleryCardPreview, SectionHeader} from '../../blocks';
 import {PromoBlockRow} from '../../blocks/PromoBlockRow/PromoBlockRow';
 import {WorkOfMonth} from '../../blocks/WorkOfMonth/WorkOfMonth';
-import type {ActiveMediaQuery} from '../../types';
 import type {CnMods} from '../../utils';
 import {
     block,
@@ -44,14 +43,11 @@ function GalleryIllustration(props: Omit<CreateIllustrationProps, 'name'>) {
     return <BaseIllustration name="galleryHeader" {...props} />;
 }
 
-interface HeaderActionsProps {
-    activeMediaQuery?: ActiveMediaQuery;
-}
-
-function HeaderActions({activeMediaQuery}: HeaderActionsProps) {
-    const isActiveMediaQueryS = activeMediaQuery === 's';
+function HeaderActions() {
+    const {isMediaActive, activeMediaQuery} = useLayoutContext();
+    const isMobileMediaQuery = !isMediaActive('m');
     const mods: CnMods = {media: activeMediaQuery};
-    const buttonWidth: ButtonProps['width'] = isActiveMediaQueryS ? 'max' : undefined;
+    const buttonWidth: ButtonProps['width'] = isMobileMediaQuery ? 'max' : undefined;
 
     return (
         <div className={b('header-actions')}>
@@ -76,13 +72,12 @@ function HeaderActions({activeMediaQuery}: HeaderActionsProps) {
 interface CategoryBlockRowProps {
     galleryItems: GalleryItemShort[];
     landingCategory: GetMetaRespose['landingCategories'][number];
-    activeMediaQuery?: ActiveMediaQuery;
     editorChoiceIds?: string[];
     style?: React.CSSProperties;
 }
 
 function CategoryBlockRow(props: CategoryBlockRowProps) {
-    const {galleryItems, landingCategory, activeMediaQuery, editorChoiceIds, style} = props;
+    const {galleryItems, landingCategory, editorChoiceIds, style} = props;
     const themeType = useThemeType();
     const lang = getLang();
     const filteredGalleryItems = galleryItems.filter((item) => {
@@ -100,16 +95,15 @@ function CategoryBlockRow(props: CategoryBlockRowProps) {
 
     return (
         <Row space="6" style={style}>
-            <Col s="12">
+            <Col size={12}>
                 <SectionHeader
-                    activeMediaQuery={activeMediaQuery}
                     title={landingCategory.title[lang]}
                     category={landingCategory.category}
                 />
             </Col>
             {categoryItems.map((item) => {
                 return (
-                    <Col key={item.id} l="4" m="4" s="12">
+                    <Col key={item.id} size={[12, {m: 4}]}>
                         <GalleryCardPreview
                             id={item.id}
                             title={item.title}
@@ -125,7 +119,7 @@ function CategoryBlockRow(props: CategoryBlockRowProps) {
 }
 
 export function LandingPage() {
-    const {activeMediaQuery} = useLayoutContext();
+    const {activeMediaQuery, isMediaActive} = useLayoutContext();
     const {isLoading: isDataLoading, data} = useGetGalleryItemsQuery();
     const {isLoading: isMetaLoading, data: metaData} = useGetGalleryMetaQuery();
 
@@ -134,19 +128,19 @@ export function LandingPage() {
     }
 
     const galleryItems = data ?? [];
-    const isActiveMediaQueryS = activeMediaQuery === 's';
+    const isMobileMediaQuery = !isMediaActive('m');
     const isPromo = DL.IS_NOT_AUTHENTICATED;
     const baseMods: CnMods = {media: activeMediaQuery, maxWidth: isPromo};
     const landingCategories = Array.isArray(metaData?.landingCategories)
         ? metaData.landingCategories
         : [];
     const workOfMonthId = metaData?.workOfTheMonth.id;
-    const buttonSize: ButtonProps['size'] = isActiveMediaQueryS ? 'xl' : 'l';
+    const buttonSize: ButtonProps['size'] = isMobileMediaQuery ? 'xl' : 'l';
 
     return (
         <Container className={b('container', baseMods)}>
             <Row className={b('header', baseMods)} space="0">
-                <Col l="6" m="6" s="12">
+                <Col size={[12, {m: 6}]}>
                     <Flex className={b('header-illustration-flex', baseMods)}>
                         <GalleryIllustration
                             name="header"
@@ -160,13 +154,13 @@ export function LandingPage() {
                         />
                     </Flex>
                 </Col>
-                <Col l="6" m="6" s="12">
+                <Col size={[12, {m: 6}]}>
                     <Flex className={b('header-title-flex', baseMods)}>
                         <h1 className={b('header-title')}>{i18n('header_title')}</h1>
                         <span className={b('header-description')}>
                             <InterpolatedText br text={i18n('header_description')} />
                         </span>
-                        <HeaderActions activeMediaQuery={activeMediaQuery} />
+                        <HeaderActions />
                     </Flex>
                 </Col>
             </Row>
@@ -185,17 +179,16 @@ export function LandingPage() {
                         key={`landing-category-${landingCategory}-${i}`}
                         galleryItems={galleryItems}
                         landingCategory={landingCategory}
-                        activeMediaQuery={activeMediaQuery}
                         editorChoiceIds={metaData?.editorChoice?.ids}
                         style={{
                             marginTop: 24,
-                            marginBottom: isActiveMediaQueryS && !isLastCategory ? 24 : 48,
+                            marginBottom: isMobileMediaQuery && !isLastCategory ? 24 : 48,
                         }}
                     />
                 );
             })}
             <Row className={b('add-card', baseMods)} space="0">
-                <Col s="12">
+                <Col size={12}>
                     <Flex className={b('add-card-flex')}>
                         <div className={b('add-card-title')}>{i18n('section_add_example')}</div>
                         <div className={b('add-card-description')}>

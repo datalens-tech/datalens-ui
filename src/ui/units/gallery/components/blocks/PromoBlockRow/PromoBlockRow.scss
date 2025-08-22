@@ -5,6 +5,7 @@
 $block: '.#{variables.$ns}-promo-block-row';
 
 $promoBackgroundColor: #e8ecf2;
+$promoHoverBackgroundColor: #d6dde8;
 
 #{$block} {
     &_media_s {
@@ -26,6 +27,7 @@ $promoBackgroundColor: #e8ecf2;
         padding-top: 16px;
         overflow: hidden;
         background-color: var(--g-color-private-cool-grey-50);
+        transition: background-color 0.2s ease-in-out;
 
         .g-root_theme_dark &:not(#{&}_primary),
         .g-root_theme_dark-hc &:not(#{&}_primary) {
@@ -45,7 +47,9 @@ $promoBackgroundColor: #e8ecf2;
             background-color: var(--g-color-base-brand-hover);
         }
 
-        &_media_s {
+        &_media_xs,
+        &_media_s,
+        &_media_m {
             height: 190px;
         }
 
@@ -104,55 +108,78 @@ $promoBackgroundColor: #e8ecf2;
         height: 100%;
         object-fit: cover;
 
-        &_media_s {
+        &_media_xs,
+        &_media_s,
+        &_media_m {
             width: 100%;
         }
     }
 
     &_view_promo {
         #{$block}__item-flex {
+            height: 320px;
+            padding-left: var(--g-spacing-8);
+            padding-top: var(--g-spacing-8);
+            row-gap: var(--g-spacing-6);
             border-radius: 24px;
             background-color: $promoBackgroundColor;
 
-            .g-root_theme_dark &:not(#{&}_primary),
-            .g-root_theme_dark-hc &:not(#{&}_primary) {
-                background-color: $promoBackgroundColor;
-            }
-
-            &:hover:not(#{&}_primary) {
-                background-color: $promoBackgroundColor;
-
-                .g-root_theme_dark &:not(#{&}_primary),
-                .g-root_theme_dark-hc &:not(#{&}_primary) {
-                    background-color: $promoBackgroundColor;
-                }
-            }
-
-            &_primary:hover {
-                background-color: $promoBackgroundColor;
-            }
-
             &_primary {
                 background-color: $promoBackgroundColor;
-                color: initial;
+                color: inherit;
+            }
+
+            &:hover,
+            &_primary:hover {
+                background-color: $promoHoverBackgroundColor;
+            }
+
+            &_centered {
+                justify-content: center;
+                align-items: center;
+                padding: 0;
+
+                #{$block}__item-title {
+                    justify-content: flex-start;
+                    padding-right: 0;
+                }
+
+                #{$block}__item-title-counter {
+                    margin-right: var(--g-spacing-1);
+                }
             }
         }
 
         #{$block}__item-image {
             border-radius: 16px;
+
+            &_media_xs,
+            &_media_s,
+            &_media_m {
+                width: initial;
+            }
+
+            &_primary:not(&_media_xs) {
+                width: 100%;
+            }
         }
 
         #{$block}__item-image-container {
-            background-color: $promoBackgroundColor;
+            background-color: inherit;
 
             &_primary {
-                background-color: $promoBackgroundColor;
+                background-color: inherit;
             }
+        }
+
+        #{$block}__item-title,
+        #{$block}__item-title-counter {
+            @include text-header-1;
         }
 
         #{$block}__item-title {
             &_primary {
-                color: initial;
+                color: inherit;
             }
         }
 

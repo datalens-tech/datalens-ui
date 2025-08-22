@@ -1,7 +1,7 @@
 import React from 'react';
 
-import {ArrowRight} from '@gravity-ui/icons';
-import {Card, Col, Row, useThemeType} from '@gravity-ui/uikit';
+import {ArrowRight, ChevronRight} from '@gravity-ui/icons';
+import {Card, Col, Row, useLayoutContext, useThemeType} from '@gravity-ui/uikit';
 import sortBy from 'lodash/sortBy';
 import {Link as RouterLink} from 'react-router-dom';
 import type {GalleryItemShort} from 'shared/types';
@@ -26,42 +26,49 @@ const b = block('promo-block-row');
 interface PromoBlockItemProps {
     title: string;
     icon?: boolean;
-    activeMediaQuery?: ActiveMediaQuery;
     counter?: number;
     primary?: boolean;
     imageProps?: AsyncImageProps[];
     category?: string;
     view?: PromoBlockRowProps['view'];
+    centered?: boolean;
 }
 
 function PromoBlockItem({
-    activeMediaQuery,
     title,
     counter = 0,
     primary,
     imageProps = [],
     category,
     icon,
-    // view,
+    view,
+    centered,
 }: PromoBlockItemProps) {
+    const {activeMediaQuery, isMediaActive} = useLayoutContext();
+
+    const isMobileMediaQuery = !isMediaActive('m');
+
     const renderImage = React.useCallback(
         (props: AsyncImageProps, index: number) => {
             let style: React.CSSProperties = {};
+
             if (imageProps.length > 1) {
                 style = primary
                     ? {
                           top: `${(imageProps.length - 1 - index) * 20}%`,
                           left: `${(imageProps.length - 1 - index) * 18}%`,
-                          ...(activeMediaQuery === 's' ? {width: '75%'} : {height: '110%'}),
+                          ...(isMobileMediaQuery ? {width: '75%'} : {height: '110%'}),
                       }
                     : {
                           top: `${index * 20}%`,
                           left: `${(imageProps.length - 1 - index) * 20}%`,
-                          ...(activeMediaQuery === 's' ? {width: '90%'} : {height: '110%'}),
+                          ...(isMobileMediaQuery ? {width: '90%'} : {height: '110%'}),
                       };
+            } else if (view === 'promo') {
+                style = primary && isMediaActive('s') ? {width: '120%'} : {height: '140%'};
             } else {
                 style = {
-                    ...(activeMediaQuery === 's' ? {width: '105%'} : {height: '110%'}),
+                    ...(isMediaActive('l') ? {height: '110%'} : {width: '105%'}),
                 };
             }
 
@@ -82,22 +89,34 @@ function PromoBlockItem({
                 </div>
             );
         },
-        [activeMediaQuery, imageProps, primary],
+        [activeMediaQuery, imageProps.length, isMediaActive, isMobileMediaQuery, primary, view],
     );
+
+    const iconComponent =
+        view === 'promo' ? <ChevronRight width={22} height={22} /> : <ArrowRight />;
 
     return (
         <RouterLink className={b('link-wrapper')} to={getAllPageUrl({category})}>
-            <Card className={b('item-flex', {primary, media: activeMediaQuery})} view="clear">
+            <Card
+                className={b('item-flex', {
+                    primary,
+                    media: activeMediaQuery,
+                    centered,
+                })}
+                view="clear"
+            >
                 <div className={b('item-title', {primary})}>
                     {title}
                     <span className={b('item-title-counter', {primary})}>
                         &nbsp;·&nbsp;{counter}
                     </span>
-                    {icon && <ArrowRight />}
+                    {icon && iconComponent}
                 </div>
-                <div className={b('item-images-container', {primary})}>
-                    {imageProps.map(renderImage)}
-                </div>
+                {imageProps.length > 0 && (
+                    <div className={b('item-images-container', {primary})}>
+                        {imageProps.map(renderImage)}
+                    </div>
+                )}
             </Card>
         </RouterLink>
     );
@@ -113,21 +132,26 @@ interface PromoBlockRowProps {
 
 export function PromoBlockRow({
     galleryItems,
-    activeMediaQuery,
     editorChoiceIds,
     className,
     view = 'gallery',
 }: PromoBlockRowProps) {
+    const {activeMediaQuery, isMediaActive} = useLayoutContext();
     const themeType = useThemeType();
     const itemsByLabels = groupGalleryItemsByLabels(galleryItems);
     const primaryItems = galleryItems.filter((item) => editorChoiceIds?.includes(item.id));
+
+    const isMobileMediaQuery = !isMediaActive('m');
+
+    const isGalleryView = view === 'gallery';
+
     const primaryImagesProps: AsyncImageProps[] = sortBy(primaryItems, (item) =>
         editorChoiceIds?.indexOf(item.id),
     )
         .slice(0, 3)
         .reverse()
         .map((item, index, list) => {
-            const opacity = activeMediaQuery === 's' ? 1 : 1 - (list.length - 1 - index) * 0.1;
+            const opacity = isMobileMediaQuery ? 1 : 1 - (list.length - 1 - index) * 0.1;
             return {
                 src: item.images?.[themeType]?.[0] || '',
                 style: {
@@ -160,8 +184,9 @@ export function PromoBlockRow({
                     title={galleryI18n('label_best-works')}
                     counter={editorChoiceIds?.length}
                     primary={true}
-                    activeMediaQuery={activeMediaQuery}
-                    imageProps={primaryImagesProps}
+                    imageProps={
+                        isGalleryView ? primaryImagesProps : [{src: primaryImagesProps[0]?.src}]
+                    }
                     category={SPECIAL_CATEGORY.EDITORS_CHOICE}
                     view={view}
                 />
@@ -171,11 +196,10 @@ export function PromoBlockRow({
                 const imageSrc = galleryItems[indexes[0]]?.images?.[themeType]?.[0] || '';
 
                 return (
-                    <Col key={`${key}`} size={[12, {m: 6, l: 4, xl: 3}]}>
+                    <Col key={`${key}`} size={[12, {s: 6, l: 4, xl: 3}]}>
                         <PromoBlockItem
                             title={getCategoryLabelTitle(key)}
                             counter={indexes.length}
-                            activeMediaQuery={activeMediaQuery}
                             imageProps={[
                                 {
                                     src: imageSrc,
@@ -187,14 +211,14 @@ export function PromoBlockRow({
                     </Col>
                 );
             })}
-            <Col size={[12, {m: 6, l: 4, xl: 3}]}>
+            <Col size={[12, {s: 6, l: 4, xl: 3}]}>
                 <PromoBlockItem
                     icon={true}
                     title={i18n('label_show-all')}
                     counter={galleryItems.length}
-                    activeMediaQuery={activeMediaQuery}
-                    imageProps={othersImageProps}
+                    imageProps={isGalleryView ? othersImageProps : []}
                     view={view}
+                    centered={view === 'promo'}
                 />
             </Col>
         </Row>

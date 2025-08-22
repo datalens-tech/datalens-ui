@@ -11,7 +11,7 @@ import {block} from '../../utils';
 import './PageHeader.scss';
 
 const b = block('page-header');
-const HIDE_BACKBUTTON_BREAKPOINTS: ActiveMediaQuery[] = ['s', 'm'];
+const HIDE_BACKBUTTON_BREAKPOINTS: ActiveMediaQuery[] = ['xs', 's', 'm'];
 
 interface PageHeaderProps {
     title: string;
