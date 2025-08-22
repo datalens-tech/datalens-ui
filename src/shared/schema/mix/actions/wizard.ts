@@ -39,7 +39,7 @@ export const wizardActions = {
     }).withValidationSchema(async (_, args, {ctx, headers}) => {
         const {includePermissions, includeLinks, unreleased, revId, chardId} = args;
 
-        const result = await USProvider.retrivePrasedWizardChart(ctx, {
+        const result = await USProvider.retrieveParsedWizardChart(ctx, {
             id: chardId,
             includePermissionsInfo: includePermissions ? includePermissions?.toString() : '0',
             includeLinks: includeLinks ? includeLinks?.toString() : '0',

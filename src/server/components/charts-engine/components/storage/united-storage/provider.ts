@@ -342,7 +342,7 @@ export class USProvider {
             });
     }
 
-    static async retrivePrasedWizardChart(
+    static async retrieveParsedWizardChart(
         ctx: AppContext,
         props: {
             id: string;
