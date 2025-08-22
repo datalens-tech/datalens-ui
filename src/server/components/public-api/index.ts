@@ -4,4 +4,4 @@ export {
     PUBLIC_API_ROUTE,
     PUBLIC_API_URL,
 } from './constants';
-export {initPublicApiSwagger} from './utils';
+export {initPublicApiSwagger, publicApiOpenApiRegistry} from './utils';

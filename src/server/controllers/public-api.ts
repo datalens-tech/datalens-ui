@@ -6,8 +6,11 @@ import z from 'zod/v4';
 
 import {Feature, isEnabledServerFeature} from '../../shared';
 import {getValidationSchema, hasValidationSchema} from '../../shared/schema/gateway-utils';
-import {publicApiOpenApiRegistry} from '../components/api-docs/utils';
-import {PUBLIC_API_HTTP_METHOD, PUBLIC_API_URL} from '../components/public-api';
+import {
+    PUBLIC_API_HTTP_METHOD,
+    PUBLIC_API_URL,
+    publicApiOpenApiRegistry,
+} from '../components/public-api';
 import type {PublicApiRpcMap} from '../components/public-api/types';
 import {PUBLIC_API_RPC_ERROR_CODE} from '../constants/public-api';
 import {registry} from '../registry';

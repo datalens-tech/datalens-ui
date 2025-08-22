@@ -1,1 +1,1 @@
-export {initPublicApiSwagger} from './init-public-api-swagger';
+export {initPublicApiSwagger, publicApiOpenApiRegistry} from './init-public-api-swagger';
