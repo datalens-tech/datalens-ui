@@ -923,7 +923,6 @@ export class Processor {
                             lang: userLang || '',
                             plugins: registry.getYfmPlugins(),
                         });
-                        delete result.data.markdown;
                         result.data.html = html.result;
                         result.data.meta = html.meta;
                     } catch (error) {
