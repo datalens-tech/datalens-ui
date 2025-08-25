@@ -9,8 +9,8 @@ export const GRADIENT_PALETTE_ID = {
 } as const;
 
 export const COMMON_PALETTE_ID = {
-    CLASSIC_20: 'classic20-palette',
-    DEFAULT_20: 'default20-palette',
+    CLASSIC_20: 'classic20',
+    DEFAULT_20: 'default20',
     DATALENS_NEO_20: 'datalens-neo-20-palette',
     ...GRADIENT_PALETTE_ID,
 } as const;
