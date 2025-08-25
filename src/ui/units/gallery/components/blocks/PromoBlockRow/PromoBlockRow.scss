@@ -1,6 +1,6 @@
 @use '../../variables';
-
-@import '~@gravity-ui/uikit/styles/mixins';
+@use 'platform/src/ui/styles/mixins' as datalens-mixins;
+@use '~@gravity-ui/uikit/styles/mixins' as gravity-mixins;
 
 $block: '.#{variables.$ns}-promo-block-row';
 
@@ -13,8 +13,7 @@ $promoHoverBackgroundColor: #d6dde8;
     }
 
     &__link-wrapper {
-        text-decoration: none;
-        color: inherit;
+        @include datalens-mixins.link-reset;
     }
 
     &__item-flex {
@@ -61,7 +60,7 @@ $promoHoverBackgroundColor: #d6dde8;
 
     &__item-title,
     &__item-title-counter {
-        @include text-subheader-2();
+        @include gravity-mixins.text-subheader-2();
     }
 
     &__item-title {
@@ -174,7 +173,7 @@ $promoHoverBackgroundColor: #d6dde8;
 
         #{$block}__item-title,
         #{$block}__item-title-counter {
-            @include text-header-1;
+            @include gravity-mixins.text-header-1;
         }
 
         #{$block}__item-title {

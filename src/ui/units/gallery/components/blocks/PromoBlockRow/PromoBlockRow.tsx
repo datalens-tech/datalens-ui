@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {ArrowRight, ChevronRight} from '@gravity-ui/icons';
-import {Card, Col, Row, useLayoutContext, useThemeType} from '@gravity-ui/uikit';
+import {Card, Col, Link, Row, useLayoutContext, useThemeType} from '@gravity-ui/uikit';
 import sortBy from 'lodash/sortBy';
 import {Link as RouterLink} from 'react-router-dom';
 import type {GalleryItemShort} from 'shared/types';
@@ -95,29 +95,35 @@ function PromoBlockItem({
     const iconComponent =
         view === 'promo' ? <ChevronRight width={22} height={22} /> : <ArrowRight />;
 
-    return (
-        <RouterLink className={b('link-wrapper')} to={getAllPageUrl({category})}>
-            <Card
-                className={b('item-flex', {
-                    primary,
-                    media: activeMediaQuery,
-                    centered,
-                })}
-                view="clear"
-            >
-                <div className={b('item-title', {primary})}>
-                    {title}
-                    <span className={b('item-title-counter', {primary})}>
-                        &nbsp;·&nbsp;{counter}
-                    </span>
-                    {icon && iconComponent}
+    const card = (
+        <Card
+            className={b('item-flex', {
+                primary,
+                media: activeMediaQuery,
+                centered,
+            })}
+            view="clear"
+        >
+            <div className={b('item-title', {primary})}>
+                {title}
+                <span className={b('item-title-counter', {primary})}>&nbsp;·&nbsp;{counter}</span>
+                {icon && iconComponent}
+            </div>
+            {imageProps.length > 0 && (
+                <div className={b('item-images-container', {primary})}>
+                    {imageProps.map(renderImage)}
                 </div>
-                {imageProps.length > 0 && (
-                    <div className={b('item-images-container', {primary})}>
-                        {imageProps.map(renderImage)}
-                    </div>
-                )}
-            </Card>
+            )}
+        </Card>
+    );
+
+    return view === 'promo' ? (
+        <Link className={b('link-wrapper')} href={getAllPageUrl({category})}>
+            {card}
+        </Link>
+    ) : (
+        <RouterLink className={b('link-wrapper')} to={getAllPageUrl({category})}>
+            {card}
         </RouterLink>
     );
 }
