@@ -1,10 +1,10 @@
 {
   "label_classic20": "Classic 20",
-  "label_datalens-neo-20-palette": "Neo 20",
+  "label_datalens-neo-20": "Neo 20",
   "label_default20": "Default 20",
-  "label_emerald20-palette": "Emerald 20",
-  "label_golden20-palette": "Golden 20",
-  "label_neutral20-palette": "Neutral 20",
-  "label_oceanic20-palette": "Oceanic 20",
-  "label_traffic-light9-palette": "Traffic Light 9"
+  "label_emerald20": "Emerald 20",
+  "label_golden20": "Golden 20",
+  "label_neutral20": "Neutral 20",
+  "label_oceanic20": "Oceanic 20",
+  "label_traffic-light9": "Traffic Light 9"
 }
