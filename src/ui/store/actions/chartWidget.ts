@@ -14,6 +14,7 @@ export type UpdateWidgetArguments<RequestData> = {
     data: RequestData;
     mode?: EntryUpdateMode;
     template?: string;
+    description?: string;
 };
 
 export type RequestUpdateWidgetArgs<RequestData, ResponseData> = {
@@ -133,6 +134,7 @@ export const saveWidget = <
             data,
             mode,
             template,
+            description: entry.annotation?.description,
         };
 
         if (updateParams.mode === EntryUpdateMode.Publish) {

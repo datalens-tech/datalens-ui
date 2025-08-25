@@ -1,4 +1,4 @@
-import type {WorkbookId} from '../../../types';
+import type {EntryAnnotation, WorkbookId} from '../../../types';
 
 export type EntryFieldData<T = Record<string, unknown>> = null | T;
 export type EntryFieldLinks = null | Record<string, string>;
@@ -27,6 +27,7 @@ export interface EntryFields {
     updatedBy: string;
     unversionedData?: unknown;
     workbookId: WorkbookId;
+    annotation: EntryAnnotation | null;
 }
 
 // corresponds to RETURN_META_COLUMNS from US

@@ -31,6 +31,7 @@ import {
 import type {ResetWizardStoreAction} from '../actions';
 import type {HighchartsWidget, PreviewAction} from '../actions/preview';
 import {
+    SET_DESCRIPTION,
     SET_HIGHCHARTS_WIDGET,
     SET_UPDATES,
     UPDATE_CLIENT_CHARTS_CONFIG,
@@ -71,6 +72,7 @@ export interface PreviewState {
     segments: Field[];
     shapesConfig: ShapesConfig;
     initialPreviewHash: string;
+    description?: string;
 }
 
 export type ConfigDataState = Pick<
@@ -555,6 +557,13 @@ export function preview(
                 ...state,
                 isLoading: false,
                 highchartsWidget,
+            };
+        }
+
+        case SET_DESCRIPTION: {
+            return {
+                ...state,
+                description: action.payload,
             };
         }
 

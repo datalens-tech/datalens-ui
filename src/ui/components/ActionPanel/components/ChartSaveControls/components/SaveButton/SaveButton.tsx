@@ -11,7 +11,7 @@ import './SaveButton.scss';
 
 type SaveButtonProps = {
     onClick: (entry?: EntryUpdateMode) => void;
-    isLocked: boolean;
+    canEdit: boolean;
     disabled: boolean;
     isSaveAsDraft: boolean;
 };
@@ -19,7 +19,7 @@ type SaveButtonProps = {
 const b = block('action-panel-save-button');
 
 export const SaveButton: React.FC<SaveButtonProps> = (props: SaveButtonProps) => {
-    const {disabled, isLocked, isSaveAsDraft} = props;
+    const {disabled, canEdit, isSaveAsDraft} = props;
 
     let buttonText;
 
@@ -46,7 +46,7 @@ export const SaveButton: React.FC<SaveButtonProps> = (props: SaveButtonProps) =>
             className={b('save-btn')}
             qa={SaveChartControlsQa.SaveButton}
         >
-            {isLocked ? <Icon data={iconLock} /> : null}
+            {canEdit ? null : <Icon data={iconLock} />}
             {i18n('component.chart-save-controls', buttonText)}
         </Button>
     );
