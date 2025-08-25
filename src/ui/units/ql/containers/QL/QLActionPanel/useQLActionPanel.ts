@@ -88,7 +88,14 @@ export const useQLActionPanel = (args: UseQlActionPanelArgs): AdditionalButtonTe
                 onApply: handleApplyDescriptionClick,
             }),
         );
-    }, [description, dispatch, canEdit, handleEditDescriptionClick, handleApplyDescriptionClick]);
+    }, [
+        dispatch,
+        description,
+        canEdit,
+        handleEditDescriptionClick,
+        isDescriptionChanged,
+        handleApplyDescriptionClick,
+    ]);
 
     useBindHotkey({
         key: UNDO_HOTKEY,
@@ -116,13 +123,16 @@ export const useQLActionPanel = (args: UseQlActionPanelArgs): AdditionalButtonTe
                     className: b('toggle-preview-icon'),
                 },
             },
-            {
+        ];
+
+        if (canEdit || description) {
+            items.push({
                 key: 'description',
                 action: handleOpenDescription,
                 icon: {data: CircleInfo, size: 16},
                 view: 'flat',
-            },
-        ];
+            });
+        }
 
         items = [
             {
@@ -152,11 +162,13 @@ export const useQLActionPanel = (args: UseQlActionPanelArgs): AdditionalButtonTe
 
         return items;
     }, [
-        handleClickButtonToggleTablePreview,
-        handleOpenDescription,
+        canEdit,
+        description,
         handleClickGoBack,
         canGoBack,
         handleClickGoForward,
         canGoForward,
+        handleClickButtonToggleTablePreview,
+        handleOpenDescription,
     ]);
 };
