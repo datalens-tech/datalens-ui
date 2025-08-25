@@ -1,52 +1,46 @@
 import React from 'react';
 
-import {ChevronRight, Pencil, TrashBin} from '@gravity-ui/icons';
+import {Pencil, TrashBin} from '@gravity-ui/icons';
 import {Button, Dialog, Icon, Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {TextEditor} from 'ui/components/TextEditor/TextEditor';
-import type {DialogDashMetaProps} from 'ui/registry/units/dash/types/DialogDashMeta';
+import {useDispatch} from 'react-redux';
+import {DialogEntryDescriptionQa} from 'shared';
+import {useMountedState} from 'ui/hooks';
+import {MarkdownProvider} from 'ui/modules';
+import type {DialogEntryDescriptionProps} from 'ui/registry/units/common/types/components/DialogEntryDescription';
+import {closeDialog} from 'ui/store/actions/dialog';
 
-import {DashMetaQa} from '../../../../shared/constants/qa/dash';
-import logger from '../../../libs/logger';
-import {MarkdownProvider} from '../../../modules';
-import {YfmWrapper} from '../../YfmWrapper/YfmWrapper';
-import {EntryDialogResolveStatus} from '../constants';
+import logger from '../../libs/logger';
+import {TextEditor} from '../TextEditor/TextEditor';
+import {YfmWrapper} from '../YfmWrapper/YfmWrapper';
 
-import './DialogDashMeta.scss';
+import './DialogEntryDescription.scss';
 
-const b = block('dialog-dash-meta');
-const i18n = I18n.keyset('component.dialog-dash-meta');
+const b = block('dialog-entry-description');
+const i18n = I18n.keyset('component.dialog-entry-description');
 
-export const DialogDashMeta = (props: DialogDashMetaProps) => {
+export const DialogEntryDescription: React.FC<DialogEntryDescriptionProps> = (props) => {
     const {
-        onEdit,
-        onApply,
-        onClose,
-        onCancel,
-        onContactService,
+        title,
         canEdit,
         isEditMode,
+        description,
+        maxLength,
+        onEdit,
+        onApply,
+        onCancel,
         onCloseCallback,
     } = props;
 
-    const isMounted = React.useRef<boolean>(false);
+    const isMounted = useMountedState();
+    const dispatch = useDispatch();
 
     const isEditable = canEdit && isEditMode;
 
-    const [text, setText] = React.useState(props.text || '');
+    const [text, setText] = React.useState(description || '');
     const [markdown, setMarkdown] = React.useState('');
     const [loading, setLoading] = React.useState(false);
-
-    const renderSymbolsCounter = `${text.length}/${props.maxLength}`;
-
-    React.useEffect(() => {
-        isMounted.current = true;
-
-        return () => {
-            isMounted.current = false;
-        };
-    }, []);
 
     React.useEffect(() => {
         if (!isEditable) {
@@ -54,76 +48,72 @@ export const DialogDashMeta = (props: DialogDashMetaProps) => {
                 setLoading(true);
                 try {
                     const {result} = await MarkdownProvider.getMarkdown({text});
-                    if (isMounted.current) {
+                    if (isMounted()) {
                         setMarkdown(result);
                     }
                 } catch (error) {
-                    logger.logError('DialogDashMeta: getMarkdown failed', error);
+                    logger.logError('DialogEntryDescription: getMarkdown failed', error);
                 }
-                if (isMounted.current) {
+                if (isMounted()) {
                     setLoading(false);
                 }
             })();
         }
     }, [isEditable, text]);
 
-    const handleTextUpdate = React.useCallback((value: string) => {
-        setText(value);
-    }, []);
-
     const handleClose = React.useCallback(() => {
         onCancel?.();
-        onClose({status: EntryDialogResolveStatus.Close});
+        dispatch(closeDialog());
         onCloseCallback?.();
-    }, [onCancel, onClose, onCloseCallback]);
+    }, [dispatch, onCancel, onCloseCallback]);
 
     const handleApply = React.useCallback(() => {
         onApply?.(text);
-        onClose({status: EntryDialogResolveStatus.Success});
-    }, [onApply, onClose, text]);
+        dispatch(closeDialog());
+    }, [dispatch, onApply, text]);
 
     const handleEdit = React.useCallback(() => {
         onEdit?.(text);
     }, [onEdit, text]);
 
-    const handleSupport = React.useCallback(() => {
-        onContactService?.();
-        onClose({status: EntryDialogResolveStatus.Success});
-    }, [onContactService, onClose]);
-
     const handleClear = React.useCallback(() => {
         setText('');
     }, []);
 
+    const renderSymbolsCounter = maxLength
+        ? `${text.length.toLocaleString('ru-RU')} / ${maxLength.toLocaleString('ru-RU')}`
+        : null;
+    const isExceedLimit = maxLength ? text.length > maxLength : false;
+
     return (
         <Dialog
-            open={props.visible}
+            open={true}
             onClose={handleClose}
             disableOutsideClick={true}
-            qa={DashMetaQa.Dialog}
+            qa={DialogEntryDescriptionQa.Root}
         >
-            <Dialog.Header caption={props.title} />
+            <Dialog.Header caption={title} />
             {isEditable ? (
                 <React.Fragment>
                     <Dialog.Body className={b()}>
                         {props.subTitle && <div className={b('subtitle')}>{props.subTitle}</div>}
-                        <TextEditor autofocus onTextUpdate={handleTextUpdate} text={text} />
-                        {props.maxLength && props.maxLength >= (props.text || '').length ? (
+                        <TextEditor autofocus onTextUpdate={setText} text={text} />
+                        {Boolean(maxLength) && (
                             <div
                                 className={b('length-counter', {
-                                    error: props.maxLength ? text.length > props.maxLength : false,
+                                    error: isExceedLimit,
                                 })}
                             >
                                 <span>{renderSymbolsCounter}</span>
                             </div>
-                        ) : null}
+                        )}
                     </Dialog.Body>
                     <Dialog.Footer
                         onClickButtonApply={handleApply}
                         textButtonApply={i18n('button_save')}
                         propsButtonApply={{
-                            disabled: props.maxLength ? text.length > props.maxLength : false,
-                            qa: DashMetaQa.SaveButton,
+                            disabled: isExceedLimit,
+                            qa: DialogEntryDescriptionQa.SaveButton,
                         }}
                         onClickButtonCancel={handleClose}
                         textButtonCancel={i18n('button_cancel')}
@@ -137,7 +127,7 @@ export const DialogDashMeta = (props: DialogDashMetaProps) => {
             ) : (
                 <React.Fragment>
                     <Dialog.Body className={b()}>
-                        <div className={b('content', {narrow: Boolean(onContactService)})}>
+                        <div className={b('content')}>
                             {loading ? (
                                 <div className={b('yfm-loader')}>
                                     <Loader size="m" />
@@ -152,16 +142,10 @@ export const DialogDashMeta = (props: DialogDashMetaProps) => {
                             <Button
                                 view="flat-secondary"
                                 onClick={handleEdit}
-                                qa={DashMetaQa.EditButton}
+                                qa={DialogEntryDescriptionQa.EditButton}
                             >
                                 <Icon data={Pencil} size={16} />
                                 {i18n('button_edit')}
-                            </Button>
-                        )}
-                        {!loading && onContactService && (
-                            <Button view="outlined" onClick={handleSupport}>
-                                {i18n('button_contact-service')}
-                                <Icon data={ChevronRight} size={16} />
                             </Button>
                         )}
                     </Dialog.Footer>

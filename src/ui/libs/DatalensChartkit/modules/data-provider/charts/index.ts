@@ -966,6 +966,10 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                           data: configData,
                           createdAt: createdAt,
                           meta: {stype: type},
+                          tenantSettings: {
+                              defaultColorPaletteId:
+                                  window.DL.tenantSettings?.defaultColorPaletteId,
+                          },
                       }
                     : undefined,
                 responseOptions: {

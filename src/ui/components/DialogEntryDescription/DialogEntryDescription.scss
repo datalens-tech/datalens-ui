@@ -1,4 +1,4 @@
-.dialog-dash-meta {
+.dialog-entry-description {
     position: relative;
 
     &__subtitle {
@@ -20,11 +20,6 @@
         margin-top: 6px;
         min-width: 656px;
         max-width: 736px;
-
-        &_narrow {
-            min-width: 416px;
-            max-width: 736px;
-        }
     }
 
     &__yfm-loader {

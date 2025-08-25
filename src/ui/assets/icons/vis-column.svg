@@ -6,9 +6,9 @@
         <g id="Artboard-3" transform="translate(-32.000000, -120.000000)">
             <g id="Files/List/ic-wiz" transform="translate(32.000000, 120.000000)">
                 <rect id="Rectangle-17" fill="#FFFFFF" opacity="0" x="0" y="0" width="24" height="24"></rect>
-                <rect id="Rectangle-17" fill="#1A82E3" x="4" y="13.5" width="4" height="5.5" rx="1"></rect>
-                <rect id="Rectangle-17" fill="#1A82E3" x="10" y="9.5" width="4" height="9.5" rx="1"></rect>
-                <rect id="Rectangle-17" fill="#FC4F51" x="16" y="5" width="4" height="14" rx="1"></rect>
+                <rect id="Rectangle-17" fill="var(--dl-viz-icon-main-color, currentColor)" x="4" y="13.5" width="4" height="5.5" rx="1"></rect>
+                <rect id="Rectangle-17" fill="var(--dl-viz-icon-main-color, currentColor)" x="10" y="9.5" width="4" height="9.5" rx="1"></rect>
+                <rect id="Rectangle-17" fill="var(--dl-viz-icon-secondary-color, currentColor)" x="16" y="5" width="4" height="14" rx="1"></rect>
             </g>
         </g>
     </g>

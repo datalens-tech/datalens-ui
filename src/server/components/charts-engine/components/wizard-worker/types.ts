@@ -7,7 +7,7 @@ import type {
     Shared,
     StringParams,
 } from '../../../../../shared';
-import type {SourceRequests} from '../../../../modes/charts/plugins/datalens/url/build-sources/types';
+import type {SourceRequests} from '../../../../modes/charts/plugins/datalens/url/types';
 import type {LogItem} from '../processor/console';
 import type {RuntimeMetadata} from '../processor/types';
 
@@ -55,6 +55,7 @@ export type BuildChartArgs = {
 
     features: FeatureConfig;
     palettes: Record<string, Palette>;
+    defaultColorPaletteId: string;
 };
 
 export type WizardWorker = {

@@ -12,10 +12,8 @@ import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import {ChartkitMenuDialogsQA, type StringParams} from 'shared';
-import {Feature} from 'shared/types/feature';
 import {DL} from 'ui/constants/common';
 import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import Loader from '../../../libs/DatalensChartkit/components/ChartKitBase/components/Loader/Loader';
@@ -85,6 +83,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         usageType,
         workbookId,
         enableAssistant,
+        onWidgetLoadData,
     } = props;
 
     const extDashkitContext = React.useContext(ExtendedDashKitContext);
@@ -399,6 +398,12 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         clearedOuterParams,
     });
 
+    React.useEffect(() => {
+        if (loadedData && onWidgetLoadData) {
+            onWidgetLoadData(widgetId, loadedData, widgetDataRef);
+        }
+    }, [loadedData, widgetId, onWidgetLoadData]);
+
     const handleFiltersClear = React.useCallback(() => {
         const newActionParams: StringParams = {};
         Object.keys(chartkitParams || {}).forEach(function (key) {
@@ -542,8 +547,6 @@ export const ChartWidget = (props: ChartWidgetProps) => {
 
     const disableControls = noControls || urlNoControls;
 
-    const showFloatControls = isEnabledFeature(Feature.DashFloatControls);
-
     const commonHeaderContentProps = {
         compactLoader,
         loaderDelay,
@@ -587,19 +590,15 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         hideDebugTool: true,
         ...commonHeaderContentProps,
         setIsExportLoading,
-        ...(showFloatControls
-            ? {
-                  showLoader,
-                  veil,
-                  extraMod: withBtnsMod,
-              }
-            : {}),
+        showLoader,
+        veil,
+        extraMod: withBtnsMod,
     };
 
     const showContentLoader = widgetHeaderProps.showLoader || isExportLoading;
     const showLoaderVeil =
         widgetHeaderProps.showLoader && widgetHeaderProps.veil && !isExportLoading;
-    const isFirstLoadingFloat = showFloatControls && loadedData === null;
+    const isFirstLoadingFloat = loadedData === null;
 
     return (
         <div
@@ -656,7 +655,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 widgetDashState={widgetDashState}
                 rootNodeRef={rootNodeRef}
                 backgroundColor={style?.backgroundColor}
-                needRenderContentControls={!showFloatControls}
+                needRenderContentControls={false}
                 chartRevIdRef={null}
                 {...commonHeaderContentProps}
             />

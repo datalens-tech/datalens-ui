@@ -45,7 +45,6 @@ export const ViewControls = (props: ViewControlsProps) => {
         <React.Fragment>
             <Description
                 canEdit={canEdit}
-                entryDialoguesRef={entryDialoguesRef}
                 onEditClick={onEditClick}
                 showOpenedDescription={showOpenedDescription}
             />
@@ -55,7 +54,7 @@ export const ViewControls = (props: ViewControlsProps) => {
                     view="normal"
                     size="m"
                     loading={isEditBtnLoading}
-                    onClick={onEditClick}
+                    onClick={() => onEditClick()}
                     qa="action-button-edit"
                 >
                     {i18n('button_edit')}

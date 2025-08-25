@@ -2,9 +2,9 @@ import {Feature} from '../../../../shared';
 import {createFeatureConfig} from '../utils';
 
 export default createFeatureConfig({
-    name: Feature.DashFloatControls,
+    name: Feature.NewDefaultPalette,
     state: {
-        development: true,
-        production: true,
+        development: false,
+        production: false,
     },
 });
