@@ -99,7 +99,9 @@ const ColorPalettesCard = ({
                 <div className={b('title')}>{title}</div>
                 <div className={b('description')}>{description}</div>
             </div>
-            {enableDefaultPalette && <DefaultPaletteSelect colorPalettes={colorPalettes} />}
+            {enableDefaultPalette && (
+                <DefaultPaletteSelect disabled={!hasEditRights} colorPalettes={colorPalettes} />
+            )}
             {hasPalettes && (
                 <List<ColorPalette>
                     className={b('list-items', {condensed})}

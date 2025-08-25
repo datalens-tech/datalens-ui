@@ -8,4 +8,6 @@ export enum QlConfigVersions {
     V4 = '4',
     // Rename 'default-palette' to classic20
     V5 = '5',
+    // rename the palette id (remove the word "palette" from the value)
+    V6 = '6',
 }

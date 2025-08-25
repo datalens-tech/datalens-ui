@@ -1,17 +1,17 @@
 export const AUTO_PALETTE_ID = 'auto';
 
 export const GRADIENT_PALETTE_ID = {
-    EMERALD_20: 'emerald20-palette',
-    GOLDEN_20: 'golden20-palette',
-    NEUTRAL_20: 'neutral20-palette',
-    OCEANIC_20: 'oceanic20-palette',
-    TRAFFIC_LIGHT_9: 'traffic-light9-palette',
+    EMERALD_20: 'emerald20',
+    GOLDEN_20: 'golden20',
+    NEUTRAL_20: 'neutral20',
+    OCEANIC_20: 'oceanic20',
+    TRAFFIC_LIGHT_9: 'traffic-light9',
 } as const;
 
 export const COMMON_PALETTE_ID = {
-    CLASSIC_20: 'classic20-palette',
-    DEFAULT_20: 'default20-palette',
-    DATALENS_NEO_20: 'datalens-neo-20-palette',
+    CLASSIC_20: 'classic20',
+    DEFAULT_20: 'default20',
+    DATALENS_NEO_20: 'datalens-neo-20',
     ...GRADIENT_PALETTE_ID,
 } as const;
 
