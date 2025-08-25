@@ -371,7 +371,15 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(DashboardAddWidgetQa.AddText));
     }
 
-    async addText(text: string, delay?: number) {
+    async addText({
+        text,
+        delay,
+        options,
+    }: {
+        text: string;
+        delay?: number;
+        options?: {autoHeight?: boolean};
+    }) {
         await this.clickAddText();
         const isEnabledCollections = await isEnabledFeature(this.page, Feature.CollectionsEnabled);
         await this.page.waitForSelector(slct(DialogDashWidgetItemQA.Text));
@@ -383,6 +391,11 @@ class DashboardPage extends BasePage {
                 text,
                 {delay},
             );
+        }
+        if (options) {
+            if (options.autoHeight) {
+                await this.page.click(slct(DashCommonQa.WidgetEnableAutoHeightCheckbox));
+            }
         }
         await this.page.click(slct(DialogDashWidgetQA.Apply));
     }
@@ -1123,6 +1136,18 @@ class DashboardPage extends BasePage {
         const jsonState = await responseState?.json();
 
         return jsonState?.hash;
+    }
+
+    async checkNoScroll({selector, locator}: {selector?: string; locator?: Locator}) {
+        const elementLocator = selector ? this.page.locator(selector) : locator;
+        if (!elementLocator) {
+            return;
+        }
+        const hasNoScroll = await elementLocator.evaluate((element) => {
+            return element?.clientHeight === element?.scrollHeight;
+        });
+
+        expect(hasNoScroll).toBe(true);
     }
 }
 
