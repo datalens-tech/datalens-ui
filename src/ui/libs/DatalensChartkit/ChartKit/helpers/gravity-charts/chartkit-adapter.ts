@@ -90,7 +90,7 @@ export function getGravityChartsChartKitData(args: {
                     s.renderCustomShape = getCustomShapeRenderer(renderCustomShapeFn);
                 } else if (typeof totals !== 'undefined') {
                     s.renderCustomShape = CustomShapeRenderer.pieCenterText(totals, {
-                        padding: '5%',
+                        padding: '25%',
                         minFontSize: 6,
                     });
                 }
