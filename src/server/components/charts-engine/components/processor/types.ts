@@ -70,6 +70,7 @@ export type ProcessorSuccessResponse = {
         markdown?: string;
         html?: string;
         meta?: object;
+        raw?: string;
     };
     logs_v2?: string;
     config?: string;
