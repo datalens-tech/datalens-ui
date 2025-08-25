@@ -24,14 +24,14 @@ import {getDescription, getIsDescriptionChanged} from '../../../store/reducers/q
 const b = block('wizard-action-panel');
 
 export type UseQlActionPanelArgs = {
-    entryLocked?: boolean | null;
+    canEdit?: boolean;
     handleClickButtonToggleTablePreview: () => void;
 };
 
 export const useQLActionPanel = (args: UseQlActionPanelArgs): AdditionalButtonTemplate[] => {
     const dispatch = useDispatch();
 
-    const {entryLocked, handleClickButtonToggleTablePreview} = args;
+    const {canEdit, handleClickButtonToggleTablePreview} = args;
 
     const canGoBack = useSelector<DatalensGlobalState, ReturnType<typeof selectCanGoBack>>(
         (state) => selectCanGoBack(state, {unitId: QL_EDIT_HISTORY_UNIT_ID}),
@@ -82,19 +82,13 @@ export const useQLActionPanel = (args: UseQlActionPanelArgs): AdditionalButtonTe
             openDialogEntryAnnotationDescription({
                 title: i18n('sql', 'label_ql-info'),
                 description: description || '',
-                canEdit: !entryLocked,
+                canEdit,
                 onEdit: handleEditDescriptionClick,
-                isEditMode: !entryLocked && (!description || isDescriptionChanged),
+                isEditMode: canEdit && (!description || isDescriptionChanged),
                 onApply: handleApplyDescriptionClick,
             }),
         );
-    }, [
-        description,
-        dispatch,
-        entryLocked,
-        handleEditDescriptionClick,
-        handleApplyDescriptionClick,
-    ]);
+    }, [description, dispatch, canEdit, handleEditDescriptionClick, handleApplyDescriptionClick]);
 
     useBindHotkey({
         key: UNDO_HOTKEY,

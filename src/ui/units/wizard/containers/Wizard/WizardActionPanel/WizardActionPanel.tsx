@@ -76,7 +76,7 @@ export const WizardActionPanel: React.FC<WizardActionPanelProps> = (
     }, [dispatch]);
 
     const isNewEntryInWorkbook = entry && entry.workbookId && entry.fake;
-    const entryLocked = entry && entry.permissions && entry.permissions.edit === false;
+    const canEdit = !(entry && entry.permissions && entry.permissions.edit === false);
     const saveDisabled = !config || !configType || isChartSaved;
     const saveMoreDisabled = !config || !configType;
     const isCurrentRevisionActual = entry.revId && entry.revId === entry.publishedId;
@@ -123,8 +123,8 @@ export const WizardActionPanel: React.FC<WizardActionPanelProps> = (
                         onClickButtonSave={handleSaveCallback}
                         onOpenNoRightsDialog={onNoRightsDialogCallback}
                         dropdownItems={dropdownItems || []}
-                        isLocked={Boolean(entryLocked)}
-                        isSaveButtonDisabled={entryLocked || saveDisabled}
+                        canEdit={canEdit}
+                        isSaveButtonDisabled={!canEdit || saveDisabled}
                         isDropdownDisabled={saveMoreDisabled}
                         isCurrentRevisionActual={isCurrentRevisionActual}
                         hideSaveDropdown={isViewOnlyMode || isNewEntryInWorkbook}
