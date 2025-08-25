@@ -49,6 +49,7 @@ export type PrepareFunctionArgs = {
     usedColors?: (string | undefined)[];
     disableDefaultSorting?: boolean;
     features: FeatureConfig;
+    defaultColorPaletteId: string;
 };
 
 export type PrepareFunctionDataRow = (string | null)[];
