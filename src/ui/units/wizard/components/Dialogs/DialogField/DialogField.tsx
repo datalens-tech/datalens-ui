@@ -50,7 +50,7 @@ import {
     AVAILABLE_DATE_FORMATS,
     HIDE_LABEL_MODES,
 } from '../../../constants';
-import {getCommonDataType, getIconForDataType} from '../../../utils/helpers';
+import {getCommonDataType, getFormattingDataType, getIconForDataType} from '../../../utils/helpers';
 import {DialogRadioButtons} from '../components/DialogRadioButtons/DialogRadioButtons';
 
 import {BackgroundSettings} from './components/BackgroundSettings/BackgroundSettings';
@@ -63,12 +63,7 @@ import {
     showBackgroundSettingsInDialogField,
 } from './utils/backgroundSettings';
 import {getDefaultBarsSettings, showBarsInDialogField} from './utils/barsSettings';
-import {
-    canUseStringAsHtml,
-    canUseStringAsMarkdown,
-    getFormattingDataType,
-    isOneOfPropChanged,
-} from './utils/misc';
+import {canUseStringAsHtml, canUseStringAsMarkdown, isOneOfPropChanged} from './utils/misc';
 
 import './DialogField.scss';
 

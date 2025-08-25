@@ -3,24 +3,26 @@ import set from 'lodash/set';
 
 import type {ExtendedExportingCsvOptions} from '../../../../../../../shared';
 import {
-    AxisLabelFormatMode,
+    AxisMode,
     ChartkitHandlers,
     LegendDisplayMode,
+    getXAxisMode,
     isDateField,
     isHtmlField,
     isMarkdownField,
 } from '../../../../../../../shared';
+import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getFieldExportingOptions, getFieldsExportingOptions} from '../../utils/export-helpers';
 import {getGradientStops} from '../../utils/get-gradient-stops';
 import {isGradientMode, isNumericalDataType} from '../../utils/misc-helpers';
-import {getAxisFormattingByField} from '../line/helpers/axis/getAxisFormattingByField';
+import {addAxisFormatting, getAxisType, isAxisLabelDateFormat} from '../helpers/axis';
 import type {ChartKitFormatSettings, PrepareFunctionArgs} from '../types';
 
 import {prepareScatter} from './prepare-scatter';
 
 // eslint-disable-next-line complexity
 export function prepareHighchartsScatter(options: PrepareFunctionArgs) {
-    const {ChartEditor, shared, placeholders, idToTitle, idToDataType} = options;
+    const {ChartEditor, shared, placeholders, idToTitle, idToDataType, visualizationId} = options;
     const {
         graphs,
         categories,
@@ -59,15 +61,34 @@ export function prepareHighchartsScatter(options: PrepareFunctionArgs) {
 
         const xPlaceholderSettings = xPlaceholder.settings;
         const yPlaceholderSettings = yPlaceholder.settings;
+        const chartConfig = getConfigWithActualFieldTypes({config: shared, idToDataType});
+        const xAxisMode = getXAxisMode({config: chartConfig}) ?? AxisMode.Discrete;
+        const xAxisType = getAxisType({
+            field: x,
+            settings: xPlaceholder?.settings,
+            axisMode: xAxisMode,
+        });
+        const axisLabelDateFormat = isAxisLabelDateFormat(xPlaceholderSettings, x, xAxisType);
+        const formatter = axisLabelDateFormat ? ChartkitHandlers.WizardAxisFormatter : undefined;
+        const format = axisLabelDateFormat
+            ? xPlaceholder?.settings?.axisLabelDateFormat
+            : undefined;
 
-        const customConfig: Omit<Partial<Highcharts.Options>, 'exporting'> & {
+        const customConfig: Omit<Partial<Highcharts.Options>, 'exporting' | 'xAxis'> & {
             axesFormatting: {
                 xAxis: (ChartKitFormatSettings | undefined)[];
                 yAxis: (ChartKitFormatSettings | undefined)[];
             };
+            xAxis: Record<string, any>;
             exporting: {csv: ExtendedExportingCsvOptions};
         } = {
             axesFormatting: {xAxis: [], yAxis: []},
+            xAxis: {
+                labels: {
+                    formatter,
+                    format,
+                },
+            },
             exporting: {
                 csv: {
                     custom: {
@@ -103,18 +124,8 @@ export function prepareHighchartsScatter(options: PrepareFunctionArgs) {
                 },
             };
         }
-
-        if (xPlaceholderSettings?.axisFormatMode === AxisLabelFormatMode.ByField) {
-            customConfig.axesFormatting.xAxis.push(
-                getAxisFormattingByField(xPlaceholder, shared.visualization.id),
-            );
-        }
-
-        if (yPlaceholderSettings?.axisFormatMode === AxisLabelFormatMode.ByField) {
-            customConfig.axesFormatting.yAxis.push(
-                getAxisFormattingByField(yPlaceholder, shared.visualization.id),
-            );
-        }
+        addAxisFormatting(customConfig.axesFormatting.xAxis, visualizationId, xPlaceholder);
+        addAxisFormatting(customConfig.axesFormatting.yAxis, visualizationId, yPlaceholder);
 
         if (gradientMode) {
             if (

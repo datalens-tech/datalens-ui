@@ -733,3 +733,13 @@ export const prepareFieldForCreate = ({
 
     return fieldNext;
 };
+
+export const getFormattingDataType = (item: Field, cast: DATASET_FIELD_TYPES | undefined) => {
+    const data_type = item.data_type as unknown as DATASET_FIELD_TYPES;
+
+    if (cast && Object.values(DATASET_FIELD_TYPES).includes(data_type) && cast !== data_type) {
+        return cast as unknown as DATASET_FIELD_TYPES;
+    }
+
+    return item.data_type;
+};

@@ -1,5 +1,11 @@
-import type {WizardVisualizationId} from '../../../../../../shared';
-import {AxisModeDisabledReason, isD3Visualization} from '../../../../../../shared';
+import type {Field, WizardVisualizationId} from '../../../../../../shared';
+import {
+    AxisModeDisabledReason,
+    isD3Visualization,
+    isDateField,
+    isNumberField,
+} from '../../../../../../shared';
+import {getFormattingDataType} from '../../../utils/helpers';
 
 export function isAxisScaleEnabled(visualizationId: WizardVisualizationId) {
     return !isD3Visualization(visualizationId);
@@ -33,3 +39,20 @@ export function getAxisModeTooltipContent(reason: AxisModeDisabledReason) {
             return '';
     }
 }
+
+export const analyzeField = (field: Field) => {
+    const formattingDataType = getFormattingDataType(field, field.cast);
+
+    const isNumeric = isNumberField(field);
+    const isCastNumeric = isNumberField({data_type: formattingDataType});
+    const isDate = isDateField(field);
+    const isFormatless = !isCastNumeric && !isDate;
+
+    return {
+        formattingDataType,
+        isNumeric,
+        isCastNumeric,
+        isDate,
+        isFormatless,
+    };
+};

@@ -1,6 +1,5 @@
 import type {SelectOption} from '@gravity-ui/uikit';
-import type {Field as TField} from 'shared';
-import {DATASET_FIELD_TYPES, PlaceholderId, WizardVisualizationId} from 'shared';
+import {PlaceholderId, WizardVisualizationId} from 'shared';
 
 export const getDialogFieldSelectItems = ({
     arr,
@@ -30,16 +29,6 @@ export const isOneOfPropChanged = <T extends Record<string, any>>(
     props: (keyof T)[],
 ) => {
     return props.some((key) => obj1[key] !== obj2[key]);
-};
-
-export const getFormattingDataType = (item: TField, cast: DATASET_FIELD_TYPES | undefined) => {
-    const data_type = item.data_type as unknown as DATASET_FIELD_TYPES;
-
-    if (cast && Object.values(DATASET_FIELD_TYPES).includes(data_type) && cast !== data_type) {
-        return cast as unknown as DATASET_FIELD_TYPES;
-    }
-
-    return item.data_type;
 };
 
 // eslint-disable-next-line complexity

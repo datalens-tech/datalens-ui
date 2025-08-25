@@ -1,5 +1,6 @@
 import _isEqual from 'lodash/isEqual';
 
+import {WizardVisualizationId, isMeasureValue} from '../../../../shared';
 import type {
     ColorsConfig,
     CommonSharedExtraSettings,
@@ -13,7 +14,6 @@ import type {
     ShapesConfig,
     Shared,
 } from '../../../../shared';
-import {WizardVisualizationId, isMeasureValue} from '../../../../shared';
 import type {ApplyData, DatalensGlobalState, Filter} from '../../../../ui';
 import {fetchColorPalettes} from '../../../store/actions/colorPaletteEditor';
 import {closeDialog, openDialog, openDialogFilter} from '../../../store/actions/dialog';
