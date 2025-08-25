@@ -48,6 +48,7 @@ import type {GetIllustrationStore} from './types/functions/getIllustrationStore'
 import type {GetLoginById} from './types/functions/getLoginById';
 import type {GetLogoIcon} from './types/functions/getLogoIcon';
 import type {GetUIEntryRouteArgs} from './types/functions/getUIEntryRoute';
+import type {IsValidLogoUrl} from './types/functions/isValidLogoUrl';
 import type {OpenDialogOrganizationInvite} from './types/functions/openDialogOrganizationInvite';
 import type {OpenDialogOrganizationInviteUsers} from './types/functions/openDialogOrganizationInviteUsers';
 import type {RenderDialogRelatedEntitiesAlertHint} from './types/functions/renderDialogRelatedEntitiesAlertHint';
@@ -174,4 +175,5 @@ export const commonFunctionsMap = {
     getUsersSuggestItems: makeFunctionTemplate<GetUsersSuggestItems>(),
     getUsersById: makeFunctionTemplate<GetUsersById>(),
     getLogoIcon: makeFunctionTemplate<GetLogoIcon>(),
+    isValidLogoUrl: makeFunctionTemplate<IsValidLogoUrl>(),
 } as const;
