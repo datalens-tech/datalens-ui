@@ -31,6 +31,7 @@ export type UseWizardActionPanelArgs = {
     isFullscreen: boolean;
     canGoBack: boolean | null;
     canGoForward: boolean | null;
+    canEdit: boolean;
 };
 
 export const useWizardActionPanel = (
@@ -47,6 +48,7 @@ export const useWizardActionPanel = (
         isFullscreen,
         canGoBack,
         canGoForward,
+        canEdit,
     } = args;
 
     const onClickGoBack = React.useCallback(() => {
@@ -84,9 +86,9 @@ export const useWizardActionPanel = (
             openDialogEntryAnnotationDescription({
                 title: i18n('wizard', 'label_wizard-info'),
                 description: description || '',
-                canEdit: !isViewOnlyMode,
+                canEdit,
                 onEdit: handleEditDescriptionClick,
-                isEditMode: !isViewOnlyMode && (!description || isDescriptionChanged),
+                isEditMode: canEdit && (!description || isDescriptionChanged),
                 onApply: handleApplyDescriptionClick,
             }),
         );
@@ -96,7 +98,7 @@ export const useWizardActionPanel = (
         handleApplyDescriptionClick,
         handleEditDescriptionClick,
         isDescriptionChanged,
-        isViewOnlyMode,
+        canEdit,
     ]);
 
     useBindHotkey({
@@ -142,10 +144,6 @@ export const useWizardActionPanel = (
                 title: i18n('component.action-panel.view', 'button_redo'),
                 hotkey: REDO_HOTKEY.join('+'),
             },
-        ];
-
-        return [
-            ...items,
             {
                 key: 'fullscreen',
                 action: () => {
@@ -156,20 +154,27 @@ export const useWizardActionPanel = (
                 icon: iconFullScreenData,
                 view: 'flat',
             },
-            {
+        ];
+
+        if (canEdit || description) {
+            items.push({
                 key: 'description',
                 action: handleDescriptionClick,
                 icon: {data: CircleInfo, size: 16},
                 view: 'flat',
                 className: b('description-btn'),
-            },
-        ];
+            });
+        }
+
+        return items;
     }, [
         isFullscreen,
         onClickGoBack,
         canGoBack,
         onClickGoForward,
         canGoForward,
+        canEdit,
+        description,
         dispatch,
         handleDescriptionClick,
     ]);

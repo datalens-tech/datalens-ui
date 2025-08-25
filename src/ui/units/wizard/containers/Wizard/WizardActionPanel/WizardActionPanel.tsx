@@ -105,6 +105,7 @@ export const WizardActionPanel: React.FC<WizardActionPanelProps> = (
         isFullscreen,
         canGoBack,
         canGoForward,
+        canEdit,
     });
 
     const {WizardActionPanelExtension} = registry.wizard.components.getAll();
