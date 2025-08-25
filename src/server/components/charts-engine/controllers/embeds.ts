@@ -370,6 +370,7 @@ export const embedsController = (chartsEngine: ChartsEngine) => {
             },
             includeServicePlan: true,
             includeTenantFeatures: true,
+            includeTenantSettings: true,
         };
 
         // 1. it's embedded chart, id is not used, chart is resolved by token

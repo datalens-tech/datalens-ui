@@ -51,7 +51,9 @@ export const runController = (
 
         let config: ResolvedConfig | {error: unknown};
         if (chartConfig) {
-            config = chartConfig;
+            config = {
+                ...chartConfig,
+            };
         } else {
             if (!params && key) {
                 const parsedUrl = url.parse(key);
