@@ -183,8 +183,14 @@ export function PromoBlockRow({
             };
         });
 
+    const baseSpace = view === 'promo' ? 4 : 6;
+
     return (
-        <Row className={b({media: activeMediaQuery, view}, className)} space="6">
+        <Row
+            spaceRow={baseSpace}
+            className={b({media: activeMediaQuery, view}, className)}
+            space={baseSpace}
+        >
             <Col size={[12, {l: 8, xl: 6}]}>
                 <PromoBlockItem
                     title={galleryI18n('label_best-works')}

@@ -8,6 +8,7 @@ $promoBackgroundColor: #e8ecf2;
 $promoHoverBackgroundColor: #d6dde8;
 
 #{$block} {
+    &_media_xs,
     &_media_s {
         margin-top: 24px;
     }
