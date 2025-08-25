@@ -1,1 +1,5 @@
-export type GetLogoIcon = (args: {brandingLogo?: React.ComponentType<{}> | null}) => any;
+export type GetLogoIconArgs = {
+    brandingLogo?: React.ComponentType<{}> | null;
+};
+
+export type GetLogoIcon = (args: GetLogoIconArgs) => any;
