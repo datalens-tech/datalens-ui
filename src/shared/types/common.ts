@@ -270,6 +270,10 @@ export enum EntryScope {
     Connection = 'connection',
 }
 
+export interface EntryAnnotation {
+    description?: string;
+}
+
 export interface Entry {
     entryId: string;
     key: string;
@@ -280,6 +284,7 @@ export interface Entry {
     meta: object;
     workbookId?: string;
     mode?: EntryUpdateMode;
+    annotation: EntryAnnotation | null;
 }
 
 export type CreateEntryRequest<T = Entry> = Partial<Omit<T, 'entryId'>> &
