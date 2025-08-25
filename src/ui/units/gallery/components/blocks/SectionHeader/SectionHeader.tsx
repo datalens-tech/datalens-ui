@@ -1,8 +1,7 @@
 import React from 'react';
 
 import {ArrowRight, ChevronRight} from '@gravity-ui/icons';
-import {Button, Flex} from '@gravity-ui/uikit';
-import type {useLayoutContext} from '@gravity-ui/uikit';
+import {Button, Flex, useLayoutContext} from '@gravity-ui/uikit';
 import {useHistory} from 'react-router';
 import {Link as RouterLink} from 'react-router-dom';
 
@@ -14,14 +13,14 @@ const b = block('section-header');
 
 interface SectionHeaderProps {
     title: string;
-    activeMediaQuery?: ReturnType<typeof useLayoutContext>['activeMediaQuery'];
     category?: string;
     className?: string;
 }
 
-export function SectionHeader({activeMediaQuery, title, category, className}: SectionHeaderProps) {
-    const isActiveMediaQueryS = activeMediaQuery === 's';
-    const icon = isActiveMediaQueryS ? <ChevronRight /> : <ArrowRight />;
+export function SectionHeader({title, category, className}: SectionHeaderProps) {
+    const {activeMediaQuery, isMediaActive} = useLayoutContext();
+    const isMobileMediaQuery = !isMediaActive('m');
+    const icon = isMobileMediaQuery ? <ChevronRight /> : <ArrowRight />;
 
     const history = useHistory();
 
