@@ -248,7 +248,7 @@
     "@gravity-ui/app-builder": {
       "@rspack/core": "1.4.2"
     },
-    "@gravity-ui/charts": "1.6.4"
+    "@gravity-ui/charts": "1.6.5"
   },
   "deploy": {
     "project": "stat",
