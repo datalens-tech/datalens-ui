@@ -46,6 +46,7 @@ import type {GetFunctionsDocumentationResponse} from './types/functions/getFunct
 import type {GloballyEntrySettings} from './types/functions/getGloballyEntrySettings';
 import type {GetIllustrationStore} from './types/functions/getIllustrationStore';
 import type {GetLoginById} from './types/functions/getLoginById';
+import type {GetLogoIcon} from './types/functions/getLogoIcon';
 import type {GetUIEntryRouteArgs} from './types/functions/getUIEntryRoute';
 import type {OpenDialogOrganizationInvite} from './types/functions/openDialogOrganizationInvite';
 import type {OpenDialogOrganizationInviteUsers} from './types/functions/openDialogOrganizationInviteUsers';
@@ -172,4 +173,5 @@ export const commonFunctionsMap = {
     getCurrentUserRights: makeFunctionTemplate<() => {admin: boolean}>(),
     getUsersSuggestItems: makeFunctionTemplate<GetUsersSuggestItems>(),
     getUsersById: makeFunctionTemplate<GetUsersById>(),
+    getLogoIcon: makeFunctionTemplate<GetLogoIcon>(),
 } as const;
