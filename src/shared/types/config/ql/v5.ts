@@ -1,4 +1,5 @@
 import type {QLChartType} from '../../../constants';
+import {type TableHead, type TableRow} from '../../chartkit';
 import type {QlConfigVersions} from '../../ql/versions';
 import type {
     CommonSharedExtraSettings,
@@ -101,6 +102,6 @@ export interface QLPreviewTableDataRowV5 {
 }
 
 export interface QLPreviewTableDataV5 {
-    columns?: QLPreviewTableDataColumnV5[];
-    data?: QLPreviewTableDataRowV5[];
+    columns?: TableHead[];
+    data?: TableRow[];
 }
