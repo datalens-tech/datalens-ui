@@ -16,6 +16,7 @@ const DASH_ENTRY_RELEVANT_FIELDS = [
     'type',
     'public',
     'isFavorite',
+    'annotation',
 
     'createdAt',
     'createdBy',
