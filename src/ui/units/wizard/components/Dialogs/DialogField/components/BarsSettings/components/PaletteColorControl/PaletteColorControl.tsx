@@ -16,6 +16,7 @@ type PaletteColorControlProps = {
     palette: string;
     controlQa: string;
     currentColor: string;
+    currentColorIndex?: number;
     onPaletteItemChange: (color: string, index?: number) => void;
     onPaletteUpdate: (paletteName: string) => void;
     onError: (error: boolean) => void;
@@ -31,6 +32,7 @@ export const PaletteColorControl: React.FC<PaletteColorControlProps> = (
     const {
         controlQa,
         currentColor,
+        currentColorIndex,
         onPaletteItemChange,
         onPaletteUpdate,
         palette,
@@ -55,11 +57,7 @@ export const PaletteColorControl: React.FC<PaletteColorControlProps> = (
     const handleInputColorUpdate = React.useCallback(
         (color: string) => {
             const hexColor = `#${color}`;
-
-            const colorPaletteIndex = paletteColors.indexOf(hexColor);
-            const colorIndex = colorPaletteIndex === -1 ? undefined : colorPaletteIndex;
-
-            onPaletteItemChange(hexColor, colorIndex);
+            onPaletteItemChange(hexColor, undefined);
 
             if (!isValidHexColor(hexColor)) {
                 setErrorText(i18n('wizard', 'label_bars-custom-color-error'));
@@ -70,7 +68,7 @@ export const PaletteColorControl: React.FC<PaletteColorControlProps> = (
             onError(false);
             setErrorText('');
         },
-        [onError, onPaletteItemChange, paletteColors],
+        [onError, onPaletteItemChange],
     );
 
     const onPaletteItemClick = (color: string) => {
@@ -130,6 +128,7 @@ export const PaletteColorControl: React.FC<PaletteColorControlProps> = (
                         onInputColorUpdate={handleInputColorUpdate}
                         onEnterPress={handleEnterPress}
                         colorPalettes={colorPalettes}
+                        customColorSelected={typeof currentColorIndex !== 'number'}
                     />
                 </div>
             )}

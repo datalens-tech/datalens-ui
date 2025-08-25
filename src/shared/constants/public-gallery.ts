@@ -18,4 +18,5 @@ export const GALLERY_ITEM_CATEGORY = {
     SPORTS: 'sport',
     HORECA: 'horeca',
     ENGLISH: 'english',
+    TECH: 'tech',
 } as const;

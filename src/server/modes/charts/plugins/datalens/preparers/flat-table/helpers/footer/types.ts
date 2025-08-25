@@ -15,6 +15,7 @@ export type GetFooterCellWithStylesArgs = {
     value: string | number;
     columnValuesByColumn: Record<string, PrepareFunctionDataRow>;
     colorsConfig: ChartColorsConfig;
+    defaultColorPaletteId: string;
 };
 
 export type GetFooterArgs = {
@@ -26,4 +27,5 @@ export type GetFooterArgs = {
     columnValuesByColumn: Record<string, PrepareFunctionDataRow>;
     idToDataType: Record<string, string>;
     colorsConfig: ChartColorsConfig;
+    defaultColorPaletteId: string;
 };

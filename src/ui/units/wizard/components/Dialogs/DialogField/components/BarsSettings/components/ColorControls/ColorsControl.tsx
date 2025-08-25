@@ -44,8 +44,8 @@ export const ColorsControl: React.FC<ColorsControlProps> = (props: ColorsControl
                             palette={colorSettings.settings.palette}
                             controlQa={DialogFieldBarsSettingsQa.ColorSelector}
                             currentColor={currentColor}
+                            currentColorIndex={colorSettings.settings.colorIndex}
                             onPaletteItemChange={(color, index?: number) =>
-                                // TODO: use either index or color
                                 onUpdateColor({colorIndex: index, color})
                             }
                             onPaletteUpdate={onUpdatePalette}
@@ -80,8 +80,8 @@ export const ColorsControl: React.FC<ColorsControlProps> = (props: ColorsControl
                                 palette={colorSettings.settings.palette}
                                 controlQa={DialogFieldBarsSettingsQa.PositiveColorSelector}
                                 currentColor={positiveColor}
+                                currentColorIndex={colorSettings.settings.positiveColorIndex}
                                 onPaletteItemChange={(color, index?: number) =>
-                                    // TODO: use either index or color
                                     onUpdateColor({positiveColorIndex: index, positiveColor: color})
                                 }
                                 onPaletteUpdate={onUpdatePalette}
@@ -99,8 +99,8 @@ export const ColorsControl: React.FC<ColorsControlProps> = (props: ColorsControl
                                 palette={colorSettings.settings.palette}
                                 controlQa={DialogFieldBarsSettingsQa.NegativeColorSelector}
                                 currentColor={negativeColor}
+                                currentColorIndex={colorSettings.settings.negativeColorIndex}
                                 onPaletteItemChange={(color: string, index?: number) => {
-                                    // TODO: use either index or color
                                     onUpdateColor({
                                         negativeColorIndex: index,
                                         negativeColor: color,

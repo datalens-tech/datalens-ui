@@ -23,6 +23,7 @@ type JSTabOptions =
 
 declare const __features: FeatureConfig;
 declare const __palettes: Record<string, Palette>;
+declare const __defaultColorPaletteId: string;
 
 const buildHighchartsConfig = (...options: [{shared: ServerChartsConfig} | ServerChartsConfig]) => {
     let shared: ServerChartsConfig;
@@ -44,6 +45,7 @@ const fallbackJSFunction = (...options: JSTabOptions) => {
         options,
         features: __features,
         palettes: __palettes,
+        defaultColorPaletteId: __defaultColorPaletteId,
     });
 };
 
@@ -76,6 +78,7 @@ export const buildGraph = (...options: JSTabOptions) => {
         data,
         palettes: __palettes,
         features: __features,
+        defaultColorPaletteId: __defaultColorPaletteId,
     });
 };
 
@@ -124,6 +127,7 @@ export default {
             palettes: __palettes,
             features: __features,
             plugin: 'gravity-charts',
+            defaultColorPaletteId: __defaultColorPaletteId,
         });
     },
     buildChartsConfig,
