@@ -149,6 +149,7 @@ export class Helper {
             },
             connection: null,
             workbookId: null,
+            annotation: null,
         };
     }
 
