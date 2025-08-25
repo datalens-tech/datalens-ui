@@ -6,7 +6,7 @@ import type {AxiosRequestConfig} from 'axios';
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
 
-import type {EntryPublicAuthor, WorkbookId} from '../../../../../../shared';
+import type {EntryPublicAuthor, TenantSettings, WorkbookId} from '../../../../../../shared';
 import {
     AuthHeader,
     DL_COMPONENT_HEADER,
@@ -64,6 +64,7 @@ const PASSED_PROPERTIES: (keyof Entry)[] = [
     'workbookId',
     'servicePlan',
     'tenantFeatures',
+    'tenantSettings',
 ];
 
 export type Entry = {
@@ -94,6 +95,7 @@ export type Entry = {
     workbookId?: WorkbookId;
     servicePlan?: string;
     tenantFeatures?: Record<string, unknown>;
+    tenantSettings?: TenantSettings;
 };
 
 const PASSED_HEADERS = [
@@ -274,9 +276,11 @@ export class USProvider {
             includeServicePlan?: boolean;
             includeTenantFeatures?: boolean;
             includeFavorite?: boolean;
+            includeTenantSettings: boolean;
         } = {
             branch: unreleased ? 'saved' : 'published',
             includeFavorite: true,
+            includeTenantSettings: true,
         };
 
         if (includeServicePlan) {
@@ -439,7 +443,8 @@ export class USProvider {
         const params: {
             includeServicePlan?: boolean;
             includeTenantFeatures?: boolean;
-        } = {};
+            includeTenantSettings: boolean;
+        } = {includeTenantSettings: true};
 
         if (includeServicePlan) {
             params.includeServicePlan = true;
@@ -514,7 +519,8 @@ export class USProvider {
         const params: {
             includeServicePlan?: boolean;
             includeTenantFeatures?: boolean;
-        } = {};
+            includeTenantSettings: boolean;
+        } = {includeTenantSettings: true};
 
         if (includeServicePlan) {
             params.includeServicePlan = true;

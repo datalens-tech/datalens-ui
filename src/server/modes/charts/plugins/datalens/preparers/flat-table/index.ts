@@ -52,6 +52,7 @@ function prepareFlatTable({
     shared,
     ChartEditor,
     fields,
+    defaultColorPaletteId,
 }: PrepareFunctionArgs) {
     const {drillDownData} = shared.sharedData;
     const widgetConfig = ChartEditor.getWidgetConfig();
@@ -235,6 +236,7 @@ function prepareFlatTable({
                         isTotalCell: false,
                         availablePalettes: colorsConfig.availablePalettes,
                         loadedColorPalettes: colorsConfig.loadedColorPalettes,
+                        defaultColorPaletteId,
                     });
 
                     cell.value = barCellProperties.value;
@@ -294,6 +296,7 @@ function prepareFlatTable({
                     idToDataType,
                     loadedColorPalettes: colorsConfig.loadedColorPalettes,
                     availablePalettes: colorsConfig.availablePalettes,
+                    defaultColorPaletteId,
                 });
             }
 
@@ -349,6 +352,7 @@ function prepareFlatTable({
             order,
             columnValuesByColumn,
             colorsConfig,
+            defaultColorPaletteId,
         });
     }
 

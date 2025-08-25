@@ -63,18 +63,6 @@ $widgetBgColor: var(--g-color-base-float);
 
     // styles for widgets with tabs below
 
-    #{$dashPublicContainerClassName} &__container &__chart-header:not(&__chart-header_float),
-    #{$dashContainerClassName} &__container &__chart-header:not(&__chart-header_float) {
-        top: -40px;
-        right: 8px;
-    }
-
-    #{$dashPublicContainerClassName} &__container_table &__chart-header:not(&__chart-header_float),
-    #{$dashContainerClassName} &__container_table &__chart-header:not(&__chart-header_float) {
-        top: -46px;
-        right: 8px;
-    }
-
     #{$dashPublicContainerClassName} &__container &__body_table,
     #{$dashContainerClassName} &__container &__body_table {
         padding: var(--dl-dk-table-padding);
@@ -89,23 +77,6 @@ $widgetBgColor: var(--g-color-base-float);
     #{$dashContainerClassName} &__container_table .chartkit-loader__loader_compact {
         top: -42px;
         right: 35px;
-    }
-
-    // styles for widgets without tabs below
-
-    #{$dashPublicContainerClassName}
-        &_no-tabs
-        &__container
-        &__chart-header:not(&__chart-header_float),
-    #{$dashContainerClassName} &_no-tabs &__container &__chart-header:not(&__chart-header_float) {
-        top: -4px;
-    }
-
-    // styles for mobile dash widgets chart header
-    // for supporting full display of titles
-    #{$dashPublicContainerClassName} &_default-mobile &__chart-header:not(&__chart-header_float),
-    #{$dashContainerClassName} &_default-mobile &__chart-header:not(&__chart-header_float) {
-        top: 2px;
     }
 
     // style for widgets with auto height
@@ -133,7 +104,7 @@ $widgetBgColor: var(--g-color-base-float);
         }
     }
 
-    & .chartkit-menu__switcher_flat {
+    & .chartkit-menu__switcher {
         display: none;
     }
 
@@ -148,13 +119,13 @@ $widgetBgColor: var(--g-color-base-float);
             opacity: 1;
         }
 
-        & .chartkit-menu__switcher_flat {
+        & .chartkit-menu__switcher {
             display: block;
         }
     }
 
     &__controls-corner-wrapper:has(.chartkit-menu__switcher-button_opened)
-        .chartkit-menu__switcher_flat {
+        .chartkit-menu__switcher {
         display: block;
     }
 
@@ -166,7 +137,7 @@ $widgetBgColor: var(--g-color-base-float);
             opacity: 1;
         }
 
-        & .chartkit-menu__switcher_flat {
+        & .chartkit-menu__switcher {
             display: block;
         }
     }
