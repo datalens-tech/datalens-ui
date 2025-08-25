@@ -1,6 +1,6 @@
 import type {BarGradientColorSettings, BarOneColorSettings, BarTwoColorSettings} from 'shared';
-import {BarsColorType, DEFAULT_PALETTE, GradientType} from 'shared';
-import {selectDefaultClientGradient} from 'ui';
+import {BarsColorType, GradientType} from 'shared';
+import {getTenantDefaultColorPaletteId, selectDefaultClientGradient} from 'ui';
 
 export const getDefaultGradientColorSettings = (): BarGradientColorSettings => {
     return {
@@ -20,7 +20,7 @@ export const getDefaultOneColorSettings = (): BarOneColorSettings => {
     return {
         colorType: BarsColorType.OneColor,
         settings: {
-            palette: DEFAULT_PALETTE.id,
+            palette: getTenantDefaultColorPaletteId(),
             colorIndex: 0,
         },
     };
@@ -30,7 +30,7 @@ export const getDefaultTwoColorSettings = (): BarTwoColorSettings => {
     return {
         colorType: BarsColorType.TwoColor,
         settings: {
-            palette: DEFAULT_PALETTE.id,
+            palette: getTenantDefaultColorPaletteId(),
             positiveColorIndex: 2,
             negativeColorIndex: 1,
         },

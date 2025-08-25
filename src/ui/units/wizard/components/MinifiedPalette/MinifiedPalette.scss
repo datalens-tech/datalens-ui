@@ -1,7 +1,6 @@
 @import '../../../../styles/mixins.scss';
 
-$paletteItemSizeS: 24px;
-$paletteItemSizeM: 30px;
+$paletteItemSizeM: 28px;
 
 .minified-palette {
     &__selector {
@@ -27,63 +26,34 @@ $paletteItemSizeM: 30px;
 
     &__color-input-icon {
         margin-right: 4px;
-        height: 24px;
-        width: 24px;
+        height: $paletteItemSizeM;
+        width: $paletteItemSizeM;
+        border-radius: 6px;
         pointer-events: none;
     }
 
     &__palette {
-        &_size {
-            &_s {
-                grid-gap: 4px;
-                grid-template-columns: repeat(7, $paletteItemSizeS);
-                grid-auto-rows: $paletteItemSizeS;
-            }
-
-            &_m {
-                grid-gap: 5px;
-                grid-template-columns: repeat(7, $paletteItemSizeM);
-                grid-auto-rows: $paletteItemSizeM;
-            }
-        }
+        grid-gap: 8px;
+        grid-template-columns: repeat(7, $paletteItemSizeM);
+        grid-auto-rows: $paletteItemSizeM;
     }
 
     & &__item {
-        &_size {
-            &_s {
-                width: $paletteItemSizeS;
-                height: $paletteItemSizeS;
-
-                &.palette-item:hover,
-                &.palette-item_selected {
-                    &::before {
-                        width: $paletteItemSizeS + 4px;
-                        height: $paletteItemSizeS + 4px;
-                    }
-                }
-            }
-
-            &_m {
-                width: $paletteItemSizeM;
-                height: $paletteItemSizeM;
-                border-radius: 5px;
-
-                &.palette-item:hover,
-                &.palette-item_selected {
-                    &::before {
-                        width: $paletteItemSizeM + 4px;
-                        height: $paletteItemSizeM + 4px;
-                    }
-                }
-            }
-        }
+        border-radius: 6px;
 
         &.palette-item:hover,
         &.palette-item_selected {
             &::before {
-                top: -2px;
-                left: -2px;
-                border: 1px solid var(--g-color-base-generic-medium);
+                border-width: 2px;
+                border-radius: 9px;
+                width: $paletteItemSizeM + 6px;
+                height: $paletteItemSizeM + 6px;
+            }
+        }
+
+        &.palette-item_selected {
+            &::before {
+                border-color: var(--g-color-line-brand);
             }
         }
     }

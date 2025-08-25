@@ -4,6 +4,7 @@ export {
     getCtxMiddleware,
     getConnectorIconsMiddleware,
     beforeAuthDefaults,
+    serverFeatureWithBoundedContext,
     patchLogger,
     createAppLayoutMiddleware,
 } from '../../src/server/middlewares';
