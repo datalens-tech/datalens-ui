@@ -97,5 +97,5 @@ export type AxisOptions = {
         style?: React.CSSProperties;
         useHTML?: boolean;
     };
-    labels?: any[];
+    labels?: any;
 };

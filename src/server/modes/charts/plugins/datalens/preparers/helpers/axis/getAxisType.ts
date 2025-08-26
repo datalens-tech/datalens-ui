@@ -1,5 +1,5 @@
-import type {ServerPlaceholderSettings} from '../../../../../../../shared';
-import {AxisMode, isDateField, isNumberField} from '../../../../../../../shared';
+import type {ServerPlaceholderSettings} from '../../../../../../../../shared';
+import {AxisMode, isDateField, isNumberField} from '../../../../../../../../shared';
 
 export function getAxisType(args: {
     field?: {guid: string; data_type: string};

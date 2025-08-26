@@ -1,3 +1,4 @@
+import {dateTimeUtc} from '@gravity-ui/date-utils';
 import get from 'lodash/get';
 import type {
     ExtendedExportingCsvOptions,
@@ -18,7 +19,15 @@ export const ChartkitHandlersDict = {
     [ChartkitHandlers.WizardScatterTooltipFormatter]: wizardScatterTooltipFormatter,
     [ChartkitHandlers.WizardScatterYAxisLabelFormatter]: wizardScatterYAxisLabelFormatter,
     [ChartkitHandlers.WizardTreemapTooltipFormatter]: wizardTreemapTooltipFormatter,
+    [ChartkitHandlers.WizardDatetimeAxisFormatter]: wizardDatetimeAxisFormatter,
 };
+
+function wizardDatetimeAxisFormatter(format: string) {
+    return (point: Highcharts.AxisLabelsFormatterContextObject<number>) => {
+        const dateTimeValue = dateTimeUtc({input: point.value});
+        return dateTimeValue?.isValid() ? dateTimeValue.format(format) : point.value;
+    };
+}
 
 function wizardManageTooltipConfig(config: {lines: GraphTooltipLine[]}) {
     const mappedLines = config.lines.map((row) => {
