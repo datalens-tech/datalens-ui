@@ -4,16 +4,16 @@ import type {QlConfigV5} from '../../../../types/config/ql/v5';
 import type {QlConfigV6} from '../../../../types/config/ql/v6';
 import {QlConfigVersions} from '../../../../types/ql/versions';
 
-function getNewPaltteId(value: string) {
+function getNewPaletteId(value: string) {
     return value?.replace('-palette', '');
 }
 
 function replacePalettesField(item: unknown) {
     if (item && typeof item === 'object') {
         if ('metricFontColorPalette' in item) {
-            item.metricFontColorPalette = getNewPaltteId(item.metricFontColorPalette as string);
+            item.metricFontColorPalette = getNewPaletteId(item.metricFontColorPalette as string);
         } else if ('palette' in item) {
-            item.palette = getNewPaltteId(item.palette as string);
+            item.palette = getNewPaletteId(item.palette as string);
         } else {
             Object.values(item).forEach(replacePalettesField);
         }
@@ -21,10 +21,11 @@ function replacePalettesField(item: unknown) {
 }
 
 export const mapV5ConfigToV6 = (config: QlConfigV5): QlConfigV6 => {
-    replacePalettesField(cloneDeep(config));
+    const newConfig = cloneDeep(config);
+    replacePalettesField(newConfig);
 
     return {
-        ...config,
+        ...newConfig,
         version: QlConfigVersions.V6,
     };
 };

@@ -4,16 +4,16 @@ import {ChartsConfigVersion} from '../../../../types';
 import type {V13ChartsConfig} from '../../../../types/config/wizard/v13';
 import type {V14ChartsConfig} from '../../../../types/config/wizard/v14';
 
-function getNewPaltteId(value: string) {
+function getNewPaletteId(value: string) {
     return value?.replace('-palette', '');
 }
 
 function replacePalettesField(item: unknown) {
     if (item && typeof item === 'object') {
         if ('metricFontColorPalette' in item) {
-            item.metricFontColorPalette = getNewPaltteId(item.metricFontColorPalette as string);
+            item.metricFontColorPalette = getNewPaletteId(item.metricFontColorPalette as string);
         } else if ('palette' in item) {
-            item.palette = getNewPaltteId(item.palette as string);
+            item.palette = getNewPaletteId(item.palette as string);
         } else {
             Object.values(item).forEach(replacePalettesField);
         }
@@ -21,10 +21,11 @@ function replacePalettesField(item: unknown) {
 }
 
 export const mapV13ConfigToV14 = (config: V13ChartsConfig): V14ChartsConfig => {
-    replacePalettesField(cloneDeep(config));
+    const newConfig = cloneDeep(config);
+    replacePalettesField(newConfig);
 
     return {
-        ...config,
+        ...newConfig,
         version: ChartsConfigVersion.V14,
     };
 };
