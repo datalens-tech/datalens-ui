@@ -29,7 +29,7 @@ import './WorkOfMonth.scss';
 const b = block('work-of-the-month');
 
 export const WorkOfMonth = ({id}: {id: string}) => {
-    const {activeMediaQuery} = useLayoutContext();
+    const {activeMediaQuery, isMediaActive} = useLayoutContext();
     const {isLoading, data} = useGetGalleryItemQuery({id});
     const themeType = useThemeType();
     const history = useHistory();
@@ -49,7 +49,7 @@ export const WorkOfMonth = ({id}: {id: string}) => {
     }
 
     const lang = getLang();
-    const isActiveMediaQueryS = activeMediaQuery === 's';
+    const isMobileMediaQuery = !isMediaActive('m');
     const baseMods: CnMods = {media: activeMediaQuery};
     const title = data.title?.[lang] ?? '';
     const description = data.shortDescription?.[lang] ?? '';
@@ -57,15 +57,15 @@ export const WorkOfMonth = ({id}: {id: string}) => {
 
     return (
         <Row className={b(baseMods)} space="0">
-            <Col m="6" s="12">
+            <Col size={[12, {m: 6}]}>
                 <Flex className={b('flex', baseMods)}>
                     <span className={b('medal', {media: activeMediaQuery})}>
                         <Icon data={Medal} />
                         {galleryLandingI18n('section_work_of_month')}
                     </span>
                     <div className={b('title', {media: activeMediaQuery})}>{title}</div>
-                    {!isActiveMediaQueryS && <div className={b('description')}>{description}</div>}
-                    {!isActiveMediaQueryS && (
+                    {!isMobileMediaQuery && <div className={b('description')}>{description}</div>}
+                    {!isMobileMediaQuery && (
                         <div className={b('actions')}>
                             <Button size="l" view="action" onClick={handleOpen}>
                                 {i18n('button_open')}
@@ -81,7 +81,7 @@ export const WorkOfMonth = ({id}: {id: string}) => {
                 </Flex>
             </Col>
             {imgSrc && (
-                <Col m="6" s="12">
+                <Col size={[12, {m: 6}]}>
                     <Flex style={{alignItems: 'center', height: '100%'}}>
                         <Card view="clear" type="action" className={b('card')}>
                             <AsyncImage className={b('img')} src={imgSrc} showSkeleton={true} />
@@ -89,8 +89,8 @@ export const WorkOfMonth = ({id}: {id: string}) => {
                     </Flex>
                 </Col>
             )}
-            {isActiveMediaQueryS && (
-                <Col s="12">
+            {isMobileMediaQuery && (
+                <Col size={12}>
                     <div className={b('actions')}>
                         <Button size="xl" view="action" style={{width: '50%'}} onClick={handleOpen}>
                             {i18n('button_open')}
