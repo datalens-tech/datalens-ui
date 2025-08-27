@@ -19,6 +19,7 @@ const i18n = I18n.keyset('component.color-palette-editor');
 
 type DefaultPaletteSelectProps = {
     colorPalettes: ColorPalette[];
+    disabled?: boolean;
 };
 
 export const DefaultPaletteSelect = ({colorPalettes}: DefaultPaletteSelectProps) => {
@@ -31,10 +32,20 @@ export const DefaultPaletteSelect = ({colorPalettes}: DefaultPaletteSelectProps)
         [colorPalettes],
     );
 
+    const defaultColorPaletteIdValue = React.useMemo(() => {
+        const tenantDefaultValue = window.DL.tenantSettings?.defaultColorPaletteId;
+        if (
+            tenantDefaultValue &&
+            colorPalettes.some((p) => p.colorPaletteId === tenantDefaultValue)
+        ) {
+            return tenantDefaultValue;
+        }
+
+        return window.DL.defaultColorPaletteId ?? '';
+    }, [colorPalettes]);
+
     const [defaultColorPaletteId, setDefaultPaletteId] = React.useState<string>(
-        window.DL.tenantSettings?.defaultColorPaletteId ??
-            window.DL.defaultColorPaletteId ??
-            colorPalettes[0].colorPaletteId,
+        defaultColorPaletteIdValue,
     );
 
     const handleDefaultPaletteUpdate = (value: string[]) => {
