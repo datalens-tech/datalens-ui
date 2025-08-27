@@ -435,16 +435,16 @@ export const save = (mode: EntryUpdateMode, isDraft = false) => {
                 id: string;
                 data: Partial<DashEntry> & {
                     lockToken: string | null;
+                    description?: string;
                 };
-                description?: string;
             } = {
                 id: prevEntry.entryId,
                 data: {
                     lockToken,
                     mode: mode,
                     meta: isPublishing ? {is_release: true} : {},
+                    description: annotation?.description,
                 },
-                description: annotation?.description,
             };
             if (isDraft && isPublishing) {
                 updateData.data.revId = prevEntry.revId;
