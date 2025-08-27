@@ -201,9 +201,14 @@ export interface DatasetField {
     ui_settings?: string;
 }
 
+export type DatasetFieldColorConfig = {
+    palette?: string;
+    colors?: Record<string, string>;
+};
+
 export type FieldUISettings = {
     numberFormatting?: CommonNumberFormattingOptions;
-};
+} & DatasetFieldColorConfig;
 
 export interface DatasetFieldError {
     guid: string;

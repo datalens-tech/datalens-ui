@@ -5,10 +5,21 @@ import {BucketPaint} from '@gravity-ui/icons';
 import {Button, Dialog, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import type {DatasetField, FieldUISettings} from 'shared';
+import {useDispatch, useSelector} from 'react-redux';
+import type {
+    CommonNumberFormattingOptions,
+    DatasetField,
+    DatasetFieldColorConfig,
+    FieldUISettings,
+} from 'shared';
 import {isNumberField} from 'shared';
 import {getFieldUISettings, isFieldWithDisplaySettings} from 'shared/utils';
 import {NumberFormatSettings} from 'ui/components/NumberFormatSettings/NumberFormatSettings';
+import {fetchColorPalettes} from 'ui/store/actions/colorPaletteEditor';
+import {selectColorPalettesDict} from 'ui/store/selectors/colorPaletteEditor';
+import {getPaletteColors} from 'ui/utils';
+
+import {ColorsDialog} from '../ColorsDialog/ColorsDialog';
 
 import './FieldSettingsDialog.scss';
 
@@ -18,13 +29,16 @@ const b = block('field-settings-dialog');
 
 type Props = {
     open: boolean;
-    field: DatasetField | null;
+    field: DatasetField;
+    parameters: DatasetField[];
+    datasetId: string;
+    workbookId?: string;
     onClose: () => void;
     onSave: (value: DatasetField | null) => void;
 };
 
 export const FieldSettingsDialog = (props: Props) => {
-    const {open, field, onClose, onSave} = props;
+    const {open, field, parameters, datasetId, workbookId, onClose, onSave} = props;
     const hasDisplaySettings = field && isFieldWithDisplaySettings({field});
 
     const fieldUiSettings = React.useMemo<FieldUISettings>(() => {
@@ -35,15 +49,30 @@ export const FieldSettingsDialog = (props: Props) => {
         return {};
     }, [field]);
 
-    const [numberFormatting, setNumberFormatting] = React.useState(
-        fieldUiSettings?.numberFormatting ?? {},
-    );
+    const [colorDialogOpened, setColorDialogOpened] = React.useState(false);
+    const [uiSettings, setUISettings] = React.useState<FieldUISettings>({});
 
     React.useEffect(() => {
         if (open) {
-            setNumberFormatting(fieldUiSettings?.numberFormatting ?? {});
+            setUISettings(fieldUiSettings ?? {});
         }
     }, [open, fieldUiSettings]);
+
+    const dispatch = useDispatch();
+    const colorPalettes = useSelector(selectColorPalettesDict);
+    React.useEffect(() => {
+        if (!colorPalettes.length) {
+            dispatch(fetchColorPalettes());
+        }
+    }, [colorPalettes.length, dispatch]);
+
+    const fieldColors = React.useMemo(() => {
+        const selectedPalette = uiSettings.palette ?? '';
+        const colors = getPaletteColors(selectedPalette, Object.values(colorPalettes));
+        return Object.entries(uiSettings.colors ?? {}).map(([value, colorIndex]) => {
+            return {value, color: colors[Number(colorIndex)]};
+        });
+    }, [colorPalettes, uiSettings.colors, uiSettings.palette]);
 
     const handleReset = () => {};
 
@@ -51,9 +80,7 @@ export const FieldSettingsDialog = (props: Props) => {
         if (field) {
             onSave({
                 ...field,
-                ui_settings: JSON.stringify({
-                    numberFormatting,
-                }),
+                ui_settings: JSON.stringify(uiSettings),
             });
         }
     };
@@ -62,14 +89,30 @@ export const FieldSettingsDialog = (props: Props) => {
         onClose();
     };
 
+    const handleChangeFieldFormatting = (value: CommonNumberFormattingOptions | undefined) => {
+        setUISettings({
+            ...uiSettings,
+            numberFormatting: value,
+        });
+    };
+
+    const handleApplyColors = ({colors, palette}: DatasetFieldColorConfig) => {
+        setColorDialogOpened(false);
+        setUISettings({
+            ...uiSettings,
+            colors,
+            palette,
+        });
+    };
+
     const renderFormattingSection = () => {
         if (field && isNumberField(field)) {
             return (
                 <NumberFormatSettings
                     dataType={field.data_type}
-                    onChange={setNumberFormatting}
+                    onChange={handleChangeFieldFormatting}
                     rowClassName={b('row')}
-                    formatting={numberFormatting}
+                    formatting={uiSettings?.numberFormatting ?? {}}
                 />
             );
         }
@@ -78,14 +121,36 @@ export const FieldSettingsDialog = (props: Props) => {
     };
 
     return (
-        <Dialog onClose={onClose} open={open} className={b()}>
+        <Dialog onClose={onClose} open={open} className={b()} disableHeightTransition={true}>
             <Dialog.Header caption={i18n('label_title')} />
             <Dialog.Body>
                 <FormRow className={b('row')} label={i18n('label_colors')}>
-                    <Button>
+                    <Button onClick={() => setColorDialogOpened(true)}>
                         <Icon data={BucketPaint} width="16" height="16" />
                         {i18n('button_colors')}
                     </Button>
+                    {Boolean(fieldColors.length) && (
+                        <div className={b('field-colors')}>
+                            {fieldColors.map((item) => (
+                                <div className={b('field-color-row')} key={item.value}>
+                                    <div
+                                        className={b('field-color-icon')}
+                                        style={{backgroundColor: item.color}}
+                                    ></div>
+                                    <div>{item.value}</div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                    <ColorsDialog
+                        field={field}
+                        datasetId={datasetId}
+                        workbookId={workbookId}
+                        open={colorDialogOpened}
+                        parameters={parameters}
+                        onClose={() => setColorDialogOpened(false)}
+                        onApply={handleApplyColors}
+                    />
                 </FormRow>
                 {renderFormattingSection()}
             </Dialog.Body>
