@@ -25,7 +25,7 @@ npm ci
 npm run dev
 ```
 
-Now you can open datalens in dev mode at [http://localhost:3030](http://localhost:3030)
+Now you can open datalens in dev mode at [http://localhost:8080](http://localhost:8080)
 
 ### Credentials for postgres
 

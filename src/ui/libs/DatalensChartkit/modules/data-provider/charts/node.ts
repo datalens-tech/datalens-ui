@@ -180,6 +180,9 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                     allowHtml,
                     parseHtml,
                     ignoreInvalidValues,
+                    // we expand its below
+                    // additional checks should be inside the markup and markdown processing
+                    excludedKeys: [WRAPPED_MARKUP_KEY, WRAPPED_MARKDOWN_KEY],
                 });
                 processHtmlFields(result.libraryConfig, {
                     allowHtml,
