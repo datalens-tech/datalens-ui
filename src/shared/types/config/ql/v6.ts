@@ -7,6 +7,7 @@ import type {
     ShapesConfig,
     Shared,
 } from '../../wizard';
+import {TableHead, TableRow} from '../../chartkit';
 
 export interface QLResultEntryMetadataDataGroupV6 {
     group: boolean;
@@ -92,15 +93,11 @@ export interface QlConfigV6 {
     available?: Field[];
 }
 
-export interface QLPreviewTableDataColumnV6 {
-    name: string;
-}
+export interface QLPreviewTableDataColumnV6 {}
 
-export interface QLPreviewTableDataRowV6 {
-    [key: string]: number | string | null;
-}
+export interface QLPreviewTableDataRowV6 {}
 
 export interface QLPreviewTableDataV6 {
-    columns?: QLPreviewTableDataColumnV6[];
-    data?: QLPreviewTableDataRowV6[];
+    columns?: Array<QLPreviewTableDataColumnV6 & TableHead>;
+    data?: Array<QLPreviewTableDataRowV6 & TableRow>;
 }
