@@ -3,7 +3,7 @@ import React from 'react';
 import {type Plugin, type PluginWidgetProps, type SettingsProps} from '@gravity-ui/dashkit';
 import type {Config, StateAndParamsMetaData} from '@gravity-ui/dashkit/helpers';
 import {getItemsParams, pluginGroupControlBaseDL} from '@gravity-ui/dashkit/helpers';
-import {Loader, Text} from '@gravity-ui/uikit';
+import {Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import debounce from 'lodash/debounce';
@@ -15,7 +15,7 @@ import type {
     DashTabItemGroupControlData,
     StringParams,
 } from 'shared';
-import {ControlQA, DashTabItemType, Feature} from 'shared';
+import {ControlQA, DashTabItemType} from 'shared';
 import {DL} from 'ui/constants/common';
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from 'ui/libs/DatalensChartkit/ChartKit/helpers/constants';
 import {ControlButton} from 'ui/libs/DatalensChartkit/components/Control/Items/Items';
@@ -24,7 +24,6 @@ import {
     CONTROL_TYPE,
 } from 'ui/libs/DatalensChartkit/modules/constants/constants';
 import {getUrlGlobalParams} from 'ui/units/dash/utils/url';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {ExtendedDashKitContext} from '../../../../units/dash/utils/context';
 import {DEBOUNCE_RENDER_TIMEOUT, DEFAULT_CONTROL_LAYOUT} from '../../constants';
@@ -238,21 +237,17 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     }
 
     render() {
-        const showFloatControls = isEnabledFeature(Feature.DashFloatControls);
         const isLoading =
             (this.state.status === LOAD_STATUS.PENDING && !this.state.silentLoading) ||
             this.state.quickActionLoader ||
             this.state.localUpdateLoader;
-
-        const showSpinner = isLoading && !showFloatControls;
-        const pulsate = isLoading && showFloatControls;
 
         return (
             <GroupControlWrapper
                 ref={this.rootNode}
                 id={this.props.id}
                 autoHeight={(this.props.data.autoHeight as boolean) ?? false}
-                pulsate={pulsate}
+                pulsate={isLoading}
             >
                 <div
                     className={b('container', CHARTKIT_SCROLLABLE_NODE_CLASSNAME)}
@@ -264,12 +259,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                         modType="bottom-right-corner"
                     />
                     {this.renderControls()}
-                    {showSpinner && (
-                        <div className={b('loader')}>
-                            <Loader size="s" qa={ControlQA.groupCommonLoader} />
-                        </div>
-                    )}
-                    {pulsate && (
+                    {isLoading && (
                         <div className={b('locked')} data-qa={ControlQA.groupCommonLockedBlock} />
                     )}
                 </div>

@@ -47,6 +47,7 @@ const Content = () => {
     return (
         <ThemeProvider
             theme={theme}
+            layout={{fixBreakpoints: true}}
             systemLightTheme={themeSettings?.systemLightTheme}
             systemDarkTheme={themeSettings?.systemDarkTheme}
         >

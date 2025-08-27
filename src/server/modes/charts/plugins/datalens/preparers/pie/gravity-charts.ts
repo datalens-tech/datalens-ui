@@ -44,6 +44,7 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
         const total = graph.data?.reduce((sum, d) => sum + (d.y || 0), 0) ?? 0;
         const seriesConfig: ExtendedPieSeries = {
             type: 'pie',
+            minRadius: '50%',
             dataLabels: {
                 enabled: isLabelsEnabled,
                 html: shouldUseHtmlForLabels,
@@ -99,7 +100,7 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
         legend = {
             enabled: true,
             type: 'continuous',
-            title: {text: getFakeTitleOrTitle(measure)},
+            title: {text: getFakeTitleOrTitle(measure), style: {fontWeight: '500'}},
             colorScale: {
                 colors: colorsConfig.gradientColors,
                 stops: colorsConfig.gradientColors.length === 2 ? [0, 1] : [0, 0.5, 1],
@@ -109,7 +110,7 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
 
     return merge(getBaseChartConfig(shared), {
         chart: {
-            margin: {top: 20, left: 20, right: 20, bottom: 20},
+            margin: {top: 20, left: 12, right: 12, bottom: 20},
         },
         series: {
             data,

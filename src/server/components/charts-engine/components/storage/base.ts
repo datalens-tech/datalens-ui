@@ -22,6 +22,7 @@ export type ResolveConfigProps = {
     workbookId?: WorkbookId;
     includeServicePlan?: boolean;
     includeTenantFeatures?: boolean;
+    includeTenantSettings?: boolean;
 };
 
 export type EmbedResolveConfigProps = ResolveConfigProps & {embedToken: string; embedId: string};
@@ -157,6 +158,7 @@ export class BaseStorage {
             includePermissionsInfo: true,
             includeServicePlan,
             includeTenantFeatures,
+            includeTenantSettings: true,
             storageApiPath,
             extraAllowedHeaders,
         };

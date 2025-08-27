@@ -5,7 +5,6 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import type {ColorPalette} from 'shared';
-import {DEFAULT_PALETTE} from 'shared';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents';
 import {showToast} from 'ui/store/actions/toaster';
 import {getPaletteSelectorItems} from 'ui/units/wizard/utils/palette';
@@ -20,6 +19,7 @@ const i18n = I18n.keyset('component.color-palette-editor');
 
 type DefaultPaletteSelectProps = {
     colorPalettes: ColorPalette[];
+    disabled?: boolean;
 };
 
 export const DefaultPaletteSelect = ({colorPalettes}: DefaultPaletteSelectProps) => {
@@ -27,12 +27,26 @@ export const DefaultPaletteSelect = ({colorPalettes}: DefaultPaletteSelectProps)
 
     const [isLoading, setIsLoading] = React.useState(false);
 
-    const defaultPaletteOptions = React.useMemo(() => {
-        return getPaletteSelectorItems({colorPalettes, order: ['color']});
+    const defaultPaletteOptions = React.useMemo(
+        () => getPaletteSelectorItems({colorPalettes}),
+        [colorPalettes],
+    );
+
+    const defaultColorPaletteIdValue = React.useMemo(() => {
+        const tenantDefaultValue = window.DL.tenantSettings?.defaultColorPaletteId;
+        if (
+            tenantDefaultValue &&
+            colorPalettes.some((p) => p.colorPaletteId === tenantDefaultValue)
+        ) {
+            return tenantDefaultValue;
+        }
+
+        return window.DL.defaultColorPaletteId ?? '';
     }, [colorPalettes]);
 
-    // TODO: use DL.tenantSettings.defaultColorPaletteId as initial
-    const [defaultColorPaletteId, setDefaultPaletteId] = React.useState<string>(DEFAULT_PALETTE.id);
+    const [defaultColorPaletteId, setDefaultPaletteId] = React.useState<string>(
+        defaultColorPaletteIdValue,
+    );
 
     const handleDefaultPaletteUpdate = (value: string[]) => {
         setIsLoading(true);

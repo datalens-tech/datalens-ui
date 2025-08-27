@@ -182,8 +182,9 @@ export function getDefaultColorPaletteId({
     }
 
     const features = getServerFeatures(ctx);
-    if (features[Feature.NewDefaultPalette]) {
-        return ctx.config.defaultColorPaletteId;
+    const defaultPaletteId = ctx.config.defaultColorPaletteId;
+    if (features[Feature.NewDefaultPalette] && defaultPaletteId) {
+        return defaultPaletteId;
     }
 
     return PALETTE_ID.CLASSIC_20;

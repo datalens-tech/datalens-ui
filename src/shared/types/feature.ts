@@ -2,8 +2,6 @@ export enum Feature {
     ChartkitAlerts = 'chartkitAlerts',
     UseConfigurableChartkit = 'UseConfigurableChartkit',
     AsideHeaderEnabled = 'AsideHeaderEnabled',
-    /** Enable redesign of dash controls */
-    DashFloatControls = 'DashFloatControls',
     FieldEditorDocSection = 'FieldEditorDocSection',
     UsePublicDistincts = 'UsePublicDistincts',
     EnablePublishEntry = 'EnablePublishEntry',
@@ -80,8 +78,6 @@ export enum Feature {
     EnableCustomDashMargins = 'EnableCustomDashMargins',
     /** Enabled Dash elements auto-focus */
     EnableDashAutoFocus = 'EnableDashAutoFocus',
-    /** Enable using template params in datasets sources */
-    EnableDsTemplateParams = 'EnableDsTemplateParams',
     /** Enable public gallery unit */
     EnablePublicGallery = 'EnablePublicGallery',
     /** Enable new secure parameters behavior */
