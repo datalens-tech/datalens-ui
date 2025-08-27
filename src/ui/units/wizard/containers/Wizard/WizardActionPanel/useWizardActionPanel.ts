@@ -10,10 +10,14 @@ import {
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
+import {updateDialogProps} from 'ui/store/actions/dialog';
 
 import {WizardPageQa} from '../../../../../../shared';
 import type {AdditionalButtonTemplate} from '../../../../../components/ActionPanel/components/ChartSaveControls/types';
-import {openDialogEntryAnnotationDescription} from '../../../../../components/DialogEntryDescription';
+import {
+    DIALOG_ENTRY_DESCRIPTION,
+    openDialogEntryAnnotationDescription,
+} from '../../../../../components/DialogEntryDescription';
 import {HOTKEYS_SCOPES, REDO_HOTKEY, UNDO_HOTKEY} from '../../../../../constants/misc';
 import {useBindHotkey} from '../../../../../hooks/useBindHotkey';
 import {goBack, goForward} from '../../../../../store/actions/editHistory';
@@ -72,11 +76,15 @@ export const useWizardActionPanel = (
 
     const handleEditDescriptionClick = React.useCallback(() => {
         dispatch(
-            openDialogEntryAnnotationDescription({
-                title: i18n('wizard', 'label_wizard-info'),
-                description: description || '',
-                isEditMode: true,
-                onApply: handleApplyDescriptionClick,
+            updateDialogProps({
+                id: DIALOG_ENTRY_DESCRIPTION,
+                props: {
+                    title: i18n('wizard', 'label_wizard-info'),
+                    description: description || '',
+                    canEdit: true,
+                    isEditMode: true,
+                    onApply: handleApplyDescriptionClick,
+                },
             }),
         );
     }, [description, dispatch, handleApplyDescriptionClick]);

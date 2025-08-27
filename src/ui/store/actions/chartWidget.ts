@@ -119,6 +119,7 @@ export type SaveWidgetArgs<RequestData, ResponseData> = {
     data: RequestData;
     mode?: EntryUpdateMode;
     template?: string;
+    description?: string;
 } & Omit<RequestUpdateWidgetArgs<RequestData, ResponseData>, 'updateParams'>;
 
 export const saveWidget = <
@@ -128,13 +129,13 @@ export const saveWidget = <
     args: SaveWidgetArgs<RequestData, ResponseData>,
 ) => {
     return async (dispatch: AppDispatch) => {
-        const {entry, data, mode, template, ...restArgs} = args;
+        const {entry, data, mode, template, description, ...restArgs} = args;
         const updateParams: UpdateWidgetArguments<RequestData> = {
             entryId: entry.entryId,
             data,
             mode,
             template,
-            description: entry.annotation?.description,
+            description,
         };
 
         if (updateParams.mode === EntryUpdateMode.Publish) {
