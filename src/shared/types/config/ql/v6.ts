@@ -1,4 +1,5 @@
 import type {QLChartType} from '../../../constants';
+import type {TableHead, TableRow} from '../../chartkit';
 import type {QlConfigVersions} from '../../ql/versions';
 import type {
     CommonSharedExtraSettings,
@@ -7,7 +8,6 @@ import type {
     ShapesConfig,
     Shared,
 } from '../../wizard';
-import {TableHead, TableRow} from '../../chartkit';
 
 export interface QLResultEntryMetadataDataGroupV6 {
     group: boolean;
