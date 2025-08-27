@@ -65,7 +65,7 @@
     "@diplodoc/transform": "^4.59.0",
     "@gravity-ui/app-layout": "^2.1.0",
     "@gravity-ui/browserslist-config": "^4.3.0",
-    "@gravity-ui/chartkit": "^7.6.2",
+    "@gravity-ui/chartkit": "^7.7.0",
     "@gravity-ui/dashkit": "^9.1.1",
     "@gravity-ui/date-utils": "^2.5.6",
     "@gravity-ui/expresskit": "^2.4.0",
@@ -247,8 +247,7 @@
     },
     "@gravity-ui/app-builder": {
       "@rspack/core": "1.4.2"
-    },
-    "@gravity-ui/charts": "1.7.1"
+    }
   },
   "deploy": {
     "project": "stat",
