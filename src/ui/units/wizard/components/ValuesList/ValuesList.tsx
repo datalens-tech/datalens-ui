@@ -12,20 +12,18 @@ import type {
     DatasetOptions,
     Field,
     FilterField,
-    MarkupItem,
     Update,
 } from 'shared';
 import {
-    DATASET_FIELD_TYPES,
     TIMEOUT_90_SEC,
+    getFieldDistinctValues,
     getFieldsApiV2RequestSection,
     getFiltersApiV2RequestSection,
     getParametersApiV2RequestSection,
     isMeasureName,
-    markupToRawString,
 } from 'shared';
 import {getColorsConfigKey} from 'shared/modules/colors/common-helpers';
-import {getDistinctValue, getLineTimeDistinctValue} from 'shared/modules/colors/distincts-helpers';
+import {getLineTimeDistinctValue} from 'shared/modules/colors/distincts-helpers';
 import type {GetDistinctsApiV2TransformedResponse} from 'shared/schema';
 import type {DatalensGlobalState} from 'ui';
 
@@ -280,18 +278,7 @@ class ValuesList extends React.Component<Props, State> {
 
     getValuesFromDistincts = ({result}: GetDistinctsApiV2TransformedResponse) => {
         const {item, extra} = this.props;
-        const distincts = result.data.Data.reduce((acc: string[], cur: (string | MarkupItem)[]) => {
-            const rawDistinctValue = cur[0];
-            let distinctValue: string;
-
-            if (item.data_type === DATASET_FIELD_TYPES.MARKUP && rawDistinctValue) {
-                distinctValue = markupToRawString(rawDistinctValue as MarkupItem);
-            } else {
-                distinctValue = getDistinctValue(rawDistinctValue);
-            }
-
-            return acc.concat(distinctValue);
-        }, []);
+        const distincts = getFieldDistinctValues(item, result.data.Data);
 
         return [...distincts, ...(extra?.extraDistinctsForDiscreteMode || [])];
     };

@@ -200,6 +200,13 @@ export interface DatasetField {
     ui_settings?: string;
 }
 
+export type DatasetFieldColorConfig = {
+    palette?: string;
+    colors?: Record<string, string>;
+};
+
+export type DatasetFieldUISettings = DatasetFieldColorConfig;
+
 export interface DatasetFieldError {
     guid: string;
     title: string;
