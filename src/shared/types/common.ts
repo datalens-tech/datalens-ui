@@ -284,7 +284,7 @@ export interface Entry {
     meta: object;
     workbookId?: string;
     mode?: EntryUpdateMode;
-    annotation?: EntryAnnotation;
+    annotation: EntryAnnotation | null;
 }
 
 export type CreateEntryRequest<T = Entry> = Partial<Omit<T, 'entryId'>> &
