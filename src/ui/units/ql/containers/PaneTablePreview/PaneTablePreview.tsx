@@ -3,7 +3,7 @@ import React, {Suspense} from 'react';
 import block from 'bem-cn-lite';
 import {connect} from 'react-redux';
 import type {DatalensGlobalState} from 'ui';
-import {TableWidget} from 'ui/libs/DatalensChartkit/ChartKit/plugins/Table';
+import TableWidget from 'ui/libs/DatalensChartkit/ChartKit/plugins/Table/renderer/TableWidget';
 
 import type {QlConfigPreviewTableData} from '../../../../../shared';
 import {getTablePreviewData} from '../../store/reducers/ql';
