@@ -70,7 +70,7 @@ export type DashState = {
     lastUsedConnectionId: undefined | string;
     entry: DashEntry;
     data: DashData;
-    annotation: EntryAnnotation | null;
+    annotation?: EntryAnnotation | null;
     updateStatus: DashUpdateStatus;
     convertedEntryData: DashData | null;
     permissions?: Permissions;

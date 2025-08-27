@@ -293,6 +293,7 @@ export const prepareImportData = async (
                     scope: dash.scope,
                     mode: dash.mode,
                     links: dash.links,
+                    description: dash.annotation?.description,
                 },
                 ctx,
                 authArgs: {usMasterToken},

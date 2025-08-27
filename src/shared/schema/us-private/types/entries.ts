@@ -15,4 +15,5 @@ export interface ProxyCreateEntryArgs {
     key?: string;
     includePermissionsInfo?: boolean;
     recursion?: boolean;
+    description?: string;
 }
