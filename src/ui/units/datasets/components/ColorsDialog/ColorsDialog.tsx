@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Button, Dialog, Palette, Select} from '@gravity-ui/uikit';
+import {Button, Dialog, Palette} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
@@ -11,14 +11,13 @@ import {
     getFieldsApiV2RequestSection,
     getParametersApiV2RequestSection,
 } from 'shared';
-import {SelectOptionWithIcon} from 'ui/components/SelectComponents/components/SelectOptionWithIcon/SelectOptionWithIcon';
+import {ColorPaletteSelect} from 'ui/components/ColorPaletteSelect/ColorPaletteSelect';
+import {PaletteItem} from 'ui/components/PaletteItem/PaletteItem';
 import {ValuesList} from 'ui/components/ValuesList/ValuesList';
 import {getTenantDefaultColorPaletteId} from 'ui/constants';
 import {getSdk} from 'ui/libs/schematic-sdk';
 import {fetchColorPalettes} from 'ui/store/actions/colorPaletteEditor';
 import {selectColorPalettesDict} from 'ui/store/selectors/colorPaletteEditor';
-import {PaletteItem} from 'ui/units/wizard/components/Palette/components/PaletteItem/PaletteItem';
-import {getPaletteSelectorItems} from 'ui/units/wizard/utils/palette';
 import {getPaletteColors} from 'ui/utils';
 
 import './ColorsDialog.scss';
@@ -157,18 +156,10 @@ export const ColorsDialog = (props: Props) => {
                         onSelect={setSelectedValue}
                     />
                     <div className={b('palette-container')}>
-                        <Select
-                            value={[selectedPaletteId]}
-                            options={getPaletteSelectorItems({
-                                colorPalettes: Object.values(colorPalettes),
-                            })}
-                            className={b('palette-select')}
+                        <ColorPaletteSelect
+                            colorPalettes={Object.values(colorPalettes)}
                             onUpdate={handleSelectPalette}
-                            popupClassName={b('palette-select-popup')}
-                            renderSelectedOption={(option) => (
-                                <SelectOptionWithIcon option={option} />
-                            )}
-                            renderOption={(option) => <SelectOptionWithIcon option={option} />}
+                            value={selectedPaletteId}
                         />
                         <Palette
                             multiple={false}
