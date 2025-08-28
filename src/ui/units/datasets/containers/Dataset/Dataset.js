@@ -172,7 +172,7 @@ class Dataset extends React.Component {
         const prevRevId = prevSearchParams.get(URL_QUERY.REV_ID) ?? undefined;
         const hasRevisionChanged = revId !== prevRevId;
         const isSavingUpdate = publishedId === currentRevId && !revId;
-        const revisionsEnabled = DatasetUtils.isEnabledFeature(Feature.EnableDatasetRevisions)
+        const revisionsEnabled = DatasetUtils.isEnabledFeature(Feature.EnableDatasetRevisions);
 
         if (datasetId && prevDatasetId !== datasetId) {
             initialFetchDataset({datasetId, rev_id: revId});
