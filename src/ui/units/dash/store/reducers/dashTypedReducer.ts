@@ -3,7 +3,14 @@ import type React from 'react';
 import type {DashKit} from '@gravity-ui/dashkit';
 import update from 'immutability-helper';
 import {cloneDeep, pick} from 'lodash';
-import type {DashData, DashDragOptions, DashEntry, Permissions, WidgetType} from 'shared';
+import type {
+    DashData,
+    DashDragOptions,
+    DashEntry,
+    EntryAnnotation,
+    Permissions,
+    WidgetType,
+} from 'shared';
 import type {DIALOG_TYPE} from 'ui/constants/dialogs';
 import type {ValuesType} from 'utility-types';
 
@@ -63,6 +70,7 @@ export type DashState = {
     lastUsedConnectionId: undefined | string;
     entry: DashEntry;
     data: DashData;
+    annotation?: EntryAnnotation | null;
     updateStatus: DashUpdateStatus;
     convertedEntryData: DashData | null;
     permissions?: Permissions;
@@ -276,14 +284,14 @@ export function dashTypedReducer(
                 tabId: tabIndex === -1 ? entryData.tabs[0].id : tabId,
                 showTableOfContent: entryData.settings?.expandTOC && state.showTableOfContent,
                 data: entryData,
+                annotation: state.entry.annotation,
             };
         }
 
         case SET_DASH_DESCRIPTION: {
             return {
                 ...state,
-                data: {
-                    ...state.data,
+                annotation: {
                     description: action.payload || '',
                 },
             };

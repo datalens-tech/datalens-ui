@@ -6,6 +6,7 @@ import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import type {ColorPalette} from 'shared';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents';
+import {getAvailableClientPalettesMap} from 'ui/constants/common';
 import {showToast} from 'ui/store/actions/toaster';
 import {getPaletteSelectorItems} from 'ui/units/wizard/utils/palette';
 
@@ -19,9 +20,10 @@ const i18n = I18n.keyset('component.color-palette-editor');
 
 type DefaultPaletteSelectProps = {
     colorPalettes: ColorPalette[];
+    disabled?: boolean;
 };
 
-export const DefaultPaletteSelect = ({colorPalettes}: DefaultPaletteSelectProps) => {
+export const DefaultPaletteSelect = ({colorPalettes, disabled}: DefaultPaletteSelectProps) => {
     const dispatch = useDispatch();
 
     const [isLoading, setIsLoading] = React.useState(false);
@@ -31,10 +33,21 @@ export const DefaultPaletteSelect = ({colorPalettes}: DefaultPaletteSelectProps)
         [colorPalettes],
     );
 
+    const defaultColorPaletteIdValue = React.useMemo(() => {
+        const allPalettes = [
+            ...Object.values(getAvailableClientPalettesMap()).map((p) => p.id),
+            ...colorPalettes.map((p) => p.colorPaletteId),
+        ];
+        const tenantDefaultValue = window.DL.tenantSettings?.defaultColorPaletteId;
+        if (tenantDefaultValue && allPalettes.includes(tenantDefaultValue)) {
+            return tenantDefaultValue;
+        }
+
+        return window.DL.defaultColorPaletteId ?? '';
+    }, [colorPalettes]);
+
     const [defaultColorPaletteId, setDefaultPaletteId] = React.useState<string>(
-        window.DL.tenantSettings?.defaultColorPaletteId ??
-            window.DL.defaultColorPaletteId ??
-            colorPalettes[0].colorPaletteId,
+        defaultColorPaletteIdValue,
     );
 
     const handleDefaultPaletteUpdate = (value: string[]) => {
@@ -89,7 +102,7 @@ export const DefaultPaletteSelect = ({colorPalettes}: DefaultPaletteSelectProps)
                     }}
                     popupClassName={b('select-popup')}
                     className={b('select')}
-                    disabled={isLoading}
+                    disabled={isLoading || disabled}
                 />
                 {isLoading && <Loader size="s" />}
             </Flex>
