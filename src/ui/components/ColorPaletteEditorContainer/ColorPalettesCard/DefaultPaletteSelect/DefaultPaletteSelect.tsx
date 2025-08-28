@@ -36,13 +36,15 @@ export const DefaultPaletteSelect = ({colorPalettes, disabled}: DefaultPaletteSe
         const tenantDefaultValue = window.DL.tenantSettings?.defaultColorPaletteId;
         if (
             tenantDefaultValue &&
-            colorPalettes.some((p) => p.colorPaletteId === tenantDefaultValue)
+            defaultPaletteOptions.some((group) =>
+                group.options?.some((p) => p.value === tenantDefaultValue),
+            )
         ) {
             return tenantDefaultValue;
         }
 
         return window.DL.defaultColorPaletteId ?? '';
-    }, [colorPalettes]);
+    }, [defaultPaletteOptions]);
 
     const [defaultColorPaletteId, setDefaultPaletteId] = React.useState<string>(
         defaultColorPaletteIdValue,
