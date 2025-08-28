@@ -15,6 +15,7 @@ export interface CreateEditorChartArgs {
     name?: string;
     mode?: EntryUpdateMode;
     links?: EntryFieldLinks;
+    description?: string;
 }
 
 export interface UpdateEditorChartResponse extends EntryFields {

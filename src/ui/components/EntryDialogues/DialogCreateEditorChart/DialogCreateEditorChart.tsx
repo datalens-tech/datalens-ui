@@ -20,6 +20,7 @@ export interface DialogCreateEditorChartProps extends EntryDialogProps {
     data?: Record<string, any>;
     initName?: string;
     workbookId?: string;
+    description?: string;
 }
 
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
@@ -72,17 +73,19 @@ class DialogCreateEditorChart extends React.Component<Props> {
             key,
             data: this.props.data || {},
             type: this.props.type,
+            description: this.props.description,
         });
         return data;
     };
 
     private onWorkbookApply = ({name}: {name: string}) => {
-        const {workbookId} = this.props;
+        const {workbookId, description} = this.props;
         return getSdk().sdk.mix.createEditorChart({
             name,
             workbookId: workbookId as string,
             data: this.props.data || {},
             type: this.props.type,
+            description,
         });
     };
 
