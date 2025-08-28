@@ -89,7 +89,10 @@ export function getGravityChartsChartKitData(args: {
                 if (renderCustomShapeFn) {
                     s.renderCustomShape = getCustomShapeRenderer(renderCustomShapeFn);
                 } else if (typeof totals !== 'undefined') {
-                    s.renderCustomShape = CustomShapeRenderer.pieCenterText(totals, {padding: 36});
+                    s.renderCustomShape = CustomShapeRenderer.pieCenterText(totals, {
+                        padding: '25%',
+                        minFontSize: 6,
+                    });
                 }
 
                 break;

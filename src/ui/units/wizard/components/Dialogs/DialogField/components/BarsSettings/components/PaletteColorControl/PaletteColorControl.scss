@@ -1,5 +1,4 @@
 .palette-color-control {
-    position: relative;
     margin-bottom: var(--g-spacing-1);
 
     &__color-control-wrapper {
@@ -17,25 +16,8 @@
         }
     }
 
-    &__color-control-input {
-        width: 108px;
-    }
-
-    .g-text-input {
-        position: static;
-
-        &__error {
-            position: absolute;
-        }
-    }
-
     &__palette {
-        z-index: 2;
         border-radius: 8px;
-        box-shadow: 0 8px 20px 0 var(--g-color-sfx-shadow);
-        position: absolute;
-        top: 0;
-        left: 28px;
         background-color: var(--g-color-base-background);
         padding: var(--g-spacing-4);
     }
