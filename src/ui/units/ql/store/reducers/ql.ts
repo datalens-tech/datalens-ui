@@ -341,6 +341,7 @@ export const getEntryNotChanged = createSelector(
     getChartType,
     getPlaceholdersContent,
     selectPointSizeConfig,
+    getIsDescriptionChanged,
     (
         entry,
         extraSettings,
@@ -352,6 +353,7 @@ export const getEntryNotChanged = createSelector(
         chartType,
         placeholdersContent,
         geopointsConfig,
+        isDescriptionChanged,
     ): boolean => {
         if (chartType && entry && entry.data && connection && visualization) {
             const actualSharedData: QlConfig = {
@@ -386,7 +388,9 @@ export const getEntryNotChanged = createSelector(
             // Removing possible functions from the structure to compare data
             const actualSharedDataWOFunctions = JSON.parse(JSON.stringify(actualSharedData));
 
-            return _.isEqual(entry.data.shared, actualSharedDataWOFunctions);
+            return (
+                _.isEqual(entry.data.shared, actualSharedDataWOFunctions) && !isDescriptionChanged
+            );
         } else {
             return true;
         }

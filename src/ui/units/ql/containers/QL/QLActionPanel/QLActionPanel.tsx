@@ -187,6 +187,7 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
                     initName,
                     initDestination: path,
                     workbookId: entry?.workbookId,
+                    description: qlState.annotation?.description,
                 },
             });
 

@@ -1199,7 +1199,7 @@ export const onErrorSetActualChartRevision = (error: AxiosError) => {
 
 export const updateChart = (data: QlConfig, mode?: EntryUpdateMode) => {
     return async function (dispatch: QLDispatch, getState: () => DatalensGlobalState) {
-        const {entry} = getState().ql;
+        const {entry, annotation} = getState().ql;
 
         if (!entry) {
             return;
@@ -1211,6 +1211,7 @@ export const updateChart = (data: QlConfig, mode?: EntryUpdateMode) => {
                 mode,
                 data,
                 template: 'ql',
+                description: annotation?.description,
                 onError: (error) => dispatch(onErrorQlWidgetUpdate(error)),
                 onSuccess: (responseData) => dispatch(onSuccessQlWidgetUpdate(responseData)),
             }),

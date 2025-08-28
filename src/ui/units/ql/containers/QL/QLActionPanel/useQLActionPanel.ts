@@ -70,6 +70,7 @@ export const useQLActionPanel = (args: UseQlActionPanelArgs): AdditionalButtonTe
                 props: {
                     title: i18n('sql', 'label_ql-info'),
                     description: description || '',
+                    canEdit: true,
                     isEditMode: true,
                     onApply: handleApplyDescriptionClick,
                 },
