@@ -6,6 +6,7 @@ import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import type {ColorPalette} from 'shared';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents';
+import {getAvailableClientPalettesMap} from 'ui/constants/common';
 import {showToast} from 'ui/store/actions/toaster';
 import {getPaletteSelectorItems} from 'ui/units/wizard/utils/palette';
 
@@ -33,11 +34,12 @@ export const DefaultPaletteSelect = ({colorPalettes, disabled}: DefaultPaletteSe
     );
 
     const defaultColorPaletteIdValue = React.useMemo(() => {
+        const allPalettes = [
+            ...Object.values(getAvailableClientPalettesMap()).map((p) => p.id),
+            ...colorPalettes.map((p) => p.colorPaletteId),
+        ];
         const tenantDefaultValue = window.DL.tenantSettings?.defaultColorPaletteId;
-        if (
-            tenantDefaultValue &&
-            colorPalettes.some((p) => p.colorPaletteId === tenantDefaultValue)
-        ) {
+        if (tenantDefaultValue && allPalettes.includes(tenantDefaultValue)) {
             return tenantDefaultValue;
         }
 
