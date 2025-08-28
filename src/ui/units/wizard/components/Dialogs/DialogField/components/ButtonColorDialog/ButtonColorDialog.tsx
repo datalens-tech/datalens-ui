@@ -9,8 +9,8 @@ import type {ColorsConfig, Field, GradientType, InternalPaletteId} from 'shared'
 import {fetchColorPalettes} from 'store/actions/colorPaletteEditor';
 import {selectColorPalettesDict} from 'store/selectors/colorPaletteEditor';
 
+import {PaletteIcon, PaletteType} from '../../../../../../../components/PaletteIcon/PaletteIcon';
 import {openDialogColor} from '../../../../../actions/dialogColor';
-import {PaletteIcon, PaletteType} from '../../../../PaletteIcon/PaletteIcon';
 import type {ExtraSettings} from '../../../DialogColor/DialogColor';
 
 import './ButtonColorDialog.scss';

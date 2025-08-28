@@ -7,6 +7,26 @@
         }
     }
 
+    &__field-colors {
+    }
+
+    &__field-color-row {
+        height: 32px;
+        display: flex;
+        align-items: center;
+
+        &:first-child {
+            margin-top: 8px;
+        }
+    }
+
+    &__field-color-icon {
+        flex: 0 0 20px;
+        height: 14px;
+        margin-right: 12px;
+        border-radius: 2px;
+    }
+
     &__footer {
         width: 100%;
         display: flex;

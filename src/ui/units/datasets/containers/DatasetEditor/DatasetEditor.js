@@ -335,7 +335,17 @@ class DatasetEditor extends React.Component {
     };
 
     render() {
-        const {sourceAvatars, validation, options, itemsToDisplay, rls, permissions} = this.props;
+        const {
+            sourceAvatars,
+            validation,
+            options,
+            itemsToDisplay,
+            rls,
+            permissions,
+            datasetId,
+            workbookId,
+            parameters,
+        } = this.props;
         const {field, visibleRLSDialog, currentRLSField} = this.state;
         const {renderRLSDialog} = registry.datasets.functions.getAll();
 
@@ -369,11 +379,16 @@ class DatasetEditor extends React.Component {
                     onClose: this.closeRLSDialog,
                     onSave: this.props.updateRLS,
                 })}
-                <FieldSettingsDialog
-                    open={this.state.visibleFieldSettingsDialog}
-                    onClose={this.closeFieldSettingsDialog}
-                    field={field}
-                />
+                {field && (
+                    <FieldSettingsDialog
+                        open={this.state.visibleFieldSettingsDialog}
+                        onClose={this.closeFieldSettingsDialog}
+                        field={field}
+                        datasetId={datasetId}
+                        workbookId={workbookId}
+                        parameters={parameters}
+                    />
+                )}
             </div>
         );
     }
