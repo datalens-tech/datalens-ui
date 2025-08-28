@@ -2,8 +2,11 @@ import {toaster} from '@gravity-ui/uikit/toaster-singleton';
 import {i18n} from 'i18n';
 import get from 'lodash/get';
 import {batch} from 'react-redux';
-import {TIMEOUT_65_SEC} from 'shared';
+import {Feature, TIMEOUT_65_SEC} from 'shared';
+import {URL_QUERY} from 'ui';
 import {resetEditHistoryUnit} from 'ui/store/actions/editHistory';
+import {loadRevisions, setEntryContent} from 'ui/store/actions/entryContent';
+import {RevisionsMode} from 'ui/store/typings/entryContent';
 
 import logger from '../../../../../libs/logger';
 import {getSdk} from '../../../../../libs/schematic-sdk';
@@ -187,13 +190,20 @@ export function initializeDataset({connectionId}) {
     };
 }
 
-export function initialFetchDataset({datasetId}) {
+export function initialFetchDataset({datasetId, rev_id, isInitialFetch = true}) {
     return async (dispatch, getState) => {
         try {
-            dispatch({
-                type: DATASET_ACTION_TYPES.DATASET_INITIAL_FETCH_REQUEST,
-                payload: {},
-            });
+            if (isInitialFetch) {
+                dispatch({
+                    type: DATASET_ACTION_TYPES.DATASET_INITIAL_FETCH_REQUEST,
+                    payload: {},
+                });
+            } else {
+                dispatch({
+                    type: DATASET_ACTION_TYPES.DATASET_FETCH_REQUEST,
+                    payload: {},
+                });
+            }
 
             const meta = await getSdk().sdk.us.getEntryMeta({entryId: datasetId});
             const workbookId = meta.workbookId ?? null;
@@ -201,6 +211,9 @@ export function initialFetchDataset({datasetId}) {
             const dataset = await getSdk().sdk.bi.getDatasetByVersion({
                 datasetId,
                 workbookId,
+                rev_id: DatasetUtils.isEnabledFeature(Feature.EnableDatasetRevisions)
+                    ? rev_id
+                    : undefined,
                 version: 'draft',
             });
             const {
@@ -219,10 +232,15 @@ export function initialFetchDataset({datasetId}) {
 
             await dispatch(setInitialSources(ids));
 
+            const publishedId = meta.publishedId ?? null;
+            const currentRevId = rev_id ?? publishedId;
+
             dispatch({
                 type: DATASET_ACTION_TYPES.DATASET_INITIAL_FETCH_SUCCESS,
                 payload: {
                     dataset,
+                    publishedId,
+                    currentRevId,
                 },
             });
 
@@ -267,7 +285,7 @@ export function initialFetchDataset({datasetId}) {
     };
 }
 
-export function fetchDataset({datasetId}) {
+export function fetchDataset({datasetId, rev_id}) {
     return async (dispatch, getState) => {
         try {
             dispatch({
@@ -280,6 +298,9 @@ export function fetchDataset({datasetId}) {
             const dataset = await getSdk().sdk.bi.getDatasetByVersion({
                 datasetId,
                 workbookId,
+                rev_id: DatasetUtils.isEnabledFeature(Feature.EnableDatasetRevisions)
+                    ? rev_id
+                    : undefined,
                 version: 'draft',
             });
 
@@ -318,7 +339,7 @@ export function saveDataset({
                 payload: {},
             });
 
-            const {dataset: {id, content: dataset} = {}} = getState();
+            const {entryContent, dataset: {id, content: dataset} = {}} = getState();
             let datasetId = id;
 
             if (isCreationProcess) {
@@ -352,10 +373,42 @@ export function saveDataset({
                 dispatch(setValidationData(validation));
             }
 
-            dispatch({
-                type: DATASET_ACTION_TYPES.DATASET_SAVE_SUCCESS,
-                payload: {},
-            });
+            if (
+                DatasetUtils.isEnabledFeature(Feature.EnableDatasetRevisions) &&
+                !isCreationProcess
+            ) {
+                const meta = await getSdk().sdk.us.getEntryMeta({entryId: datasetId});
+                const publishedId = meta.publishedId ?? null;
+                const entryId = meta.entryId;
+
+                dispatch({
+                    type: DATASET_ACTION_TYPES.DATASET_SAVE_SUCCESS,
+                    payload: {
+                        publishedId,
+                    },
+                });
+
+                dispatch(
+                    setEntryContent({
+                        publishedId,
+                        revId: publishedId,
+                    }),
+                );
+
+                if (entryContent.revisionsMode === RevisionsMode.Opened) {
+                    await dispatch(
+                        loadRevisions({
+                            entryId,
+                            page: 0,
+                        }),
+                    );
+                }
+            } else {
+                dispatch({
+                    type: DATASET_ACTION_TYPES.DATASET_SAVE_SUCCESS,
+                    payload: {},
+                });
+            }
 
             if (!isAuto) {
                 toaster.add({
@@ -390,6 +443,19 @@ export function saveDataset({
                 throw error;
             }
         }
+    };
+}
+
+export function setActualDataset({history}) {
+    return async (dispatch) => {
+        await dispatch(saveDataset({history}));
+
+        const searchParams = new URLSearchParams(location.search);
+        searchParams.delete(URL_QUERY.REV_ID);
+        history.push({
+            ...location,
+            search: `?${searchParams.toString()}`,
+        });
     };
 }
 

@@ -200,6 +200,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
         case DATASET_FETCH_REQUEST: {
             return {
                 ...state,
+                isUpdatingDataset: true,
                 error: null,
             };
         }
@@ -224,6 +225,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                     ...state.ui,
                     isDatasetChanged: false,
                 },
+                isUpdatingDataset: false,
                 isLoading: false,
             };
         }
@@ -232,6 +234,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
 
             return {
                 ...state,
+                isUpdatingDataset: false,
                 error,
             };
         }
@@ -257,10 +260,14 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                     workbook_id: workbookId,
                     permissions,
                 },
+                publishedId,
+                currentRevId,
             } = action.payload;
 
             return {
                 ...state,
+                publishedId,
+                currentRevId,
                 id,
                 key,
                 isFavorite,
@@ -280,6 +287,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 },
                 permissions,
                 isLoading: false,
+                isUpdatingDataset: false,
             };
         }
         case DATASET_INITIAL_FETCH_FAILURE: {
@@ -288,6 +296,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
             return {
                 ...state,
                 isLoading: false,
+                isUpdatingDataset: false,
                 error,
             };
         }
@@ -305,8 +314,11 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
             };
         }
         case DATASET_SAVE_SUCCESS: {
+            const {publishedId} = action.payload;
             return {
                 ...state,
+                publishedId,
+                currentRevId: publishedId,
                 savingDataset: {
                     ...state.savingDataset,
                     isProcessingSavingDataset: false,

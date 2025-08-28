@@ -9,6 +9,7 @@
   "label_already-editing-entry": "Этот {{scope}} уже редактируется",
   "label_by": "от",
   "label_chart": "чарт",
+  "label_dataset": "датасет",
   "label_dash": "дашборд",
   "label_draft-version": "Это черновая версия",
   "label_editor": "редактор",
@@ -17,6 +18,7 @@
   "label_later-warning-text": "История изменений содержит черновую версию {{scope}}",
   "label_not-actual": "Это неактуальная версия",
   "label_of-chart": "чарта",
+  "label_of-dataset": "датасета",
   "label_of-dash": "дашборда",
   "label_of-editor": "редактора",
   "label_unexpected-error": "Ошибка"

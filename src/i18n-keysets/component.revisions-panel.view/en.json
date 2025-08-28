@@ -9,6 +9,7 @@
   "label_already-editing-entry": "This {{scope}} is already being edited",
   "label_by": "by",
   "label_chart": "chart",
+  "label_dataset": "dataset",
   "label_dash": "dashboard",
   "label_draft-version": "This is a draft version",
   "label_editor": "editor",
@@ -17,6 +18,7 @@
   "label_later-warning-text": "The change history contains a draft version of the {{scope}}",
   "label_not-actual": "This is not actual version",
   "label_of-chart": "of chart",
+  "label_of-dataset": "of dataset",
   "label_of-dash": "of dashboard",
   "label_of-editor": "of editor",
   "label_unexpected-error": "Error"

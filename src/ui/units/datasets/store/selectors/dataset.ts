@@ -14,12 +14,17 @@ export const datasetKeySelector = (state: DatalensGlobalState) => state.dataset.
 export const datasetIdSelector = (state: DatalensGlobalState) => state.dataset.id;
 export const datasetWorkbookId = (state: DatalensGlobalState) => state.dataset.workbookId;
 export const datasetContentSelector = (state: DatalensGlobalState) => state.dataset.content;
+export const datasetPublishedIdSelector = (state: DatalensGlobalState) => state.dataset.publishedId;
+export const datasetCurrentRevIdSelector = (state: DatalensGlobalState) =>
+    state.dataset.currentRevId;
 
 export const previewEnabledSelector = (state: DatalensGlobalState) =>
     state.dataset.preview.previewEnabled;
 export const isDatasetChangedDatasetSelector = (state: DatalensGlobalState) =>
     state.dataset.ui.isDatasetChanged;
 export const isLoadingDatasetSelector = (state: DatalensGlobalState) => state.dataset.isLoading;
+export const isUpdatingDatasetSelector = (state: DatalensGlobalState) =>
+    state.dataset.isUpdatingDataset;
 export const isFavoriteDatasetSelector = (state: DatalensGlobalState) => state.dataset.isFavorite;
 export const isSavingDatasetSelector = (state: DatalensGlobalState) =>
     state.dataset.savingDataset.isProcessingSavingDataset;

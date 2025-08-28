@@ -47,9 +47,12 @@ export const initialPreview: DatasetReduxState['preview'] = {
 };
 
 export const initialState: DatasetReduxState = {
+    isUpdatingDataset: false,
     isLoading: true,
     isFavorite: false,
     isDatasetRevisionMismatch: false,
+    publishedId: null,
+    currentRevId: null,
     id: '',
     key: '',
     workbookId: null,
