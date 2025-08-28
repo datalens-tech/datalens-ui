@@ -178,7 +178,7 @@ interface SDK {
             options: OptionsMethodGateway,
         ): Promise<Entry>;
         createDash({
-            data: {key, workbookId, name, mode, withParams, data},
+            data: {key, workbookId, name, mode, withParams, data, description},
         }: {
             data: {
                 key?: string;
@@ -187,6 +187,7 @@ interface SDK {
                 mode?: EntryUpdateMode;
                 withParams?: boolean;
                 data?: DashData;
+                description?: string;
             };
         }): Promise<Entry>;
         createWidget(args: CreateWidgetArgs): Promise<Entry>;

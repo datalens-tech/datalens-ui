@@ -18,6 +18,7 @@ export interface DialogCreateDashboardProps extends EntryDialogProps {
     initDestination?: string;
     workbookId?: string;
     data?: DashData;
+    description?: string;
 }
 
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
@@ -67,20 +68,21 @@ class DialogCreateDashboard extends React.Component<Props> {
     }
 
     private onWorkbookApply = ({name}: {name: string}) => {
-        const {workbookId, data} = this.props;
+        const {workbookId, data, description} = this.props;
         return this.props.sdk.charts.createDash({
             data: {
                 workbookId,
                 name,
                 data,
+                description,
             },
         });
     };
 
     private onApply = async (key: string) => {
-        const {data} = this.props;
+        const {data, description} = this.props;
         const response = await this.props.sdk.charts.createDash({
-            data: {key, data},
+            data: {key, data, description},
         });
 
         return response;

@@ -319,7 +319,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
     };
 
     private handleSaveDash = async () => {
-        const {entry, data} = this.props.dashEntry;
+        const {entry, data, annotation} = this.props.dashEntry;
         const {getDashEntryUrl} = registry.dash.functions.getAll();
 
         const response = await this.props.entryDialoguesRef.current?.open?.({
@@ -328,6 +328,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
                 workbookId: entry?.workbookId,
                 initDestination: Utils.getPathBefore({path: entry.key}),
                 data,
+                description: annotation?.description,
             },
         });
 
