@@ -154,7 +154,11 @@ export default ({
 
         case WizardVisualizationId.Bar:
         case WizardVisualizationId.Bar100p: {
-            prepare = prepareHighchartsBarY;
+            if (plugin === 'gravity-charts') {
+                prepare = prepareGravityChartsBarY;
+            } else {
+                prepare = prepareHighchartsBarY;
+            }
             rowsLimit = 75000;
             break;
         }
@@ -173,7 +177,11 @@ export default ({
         }
 
         case WizardVisualizationId.Scatter:
-            prepare = prepareHighchartsScatter;
+            if (plugin === 'gravity-charts') {
+                prepare = prepareD3Scatter;
+            } else {
+                prepare = prepareHighchartsScatter;
+            }
             rowsLimit = 75000;
             break;
 

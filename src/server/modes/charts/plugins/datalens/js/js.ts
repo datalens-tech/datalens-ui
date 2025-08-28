@@ -498,7 +498,11 @@ function prepareSingleResult({
 
         case WizardVisualizationId.Bar:
         case WizardVisualizationId.Bar100p: {
-            prepare = prepareHighchartsBarY;
+            if (plugin === 'gravity-charts') {
+                prepare = prepareGravityChartsBarY;
+            } else {
+                prepare = prepareHighchartsBarY;
+            }
             rowsLimit = 75000;
             break;
         }
@@ -531,12 +535,17 @@ function prepareSingleResult({
             break;
         }
 
-        case 'scatter':
+        case WizardVisualizationId.Scatter: {
+            if (plugin === 'gravity-charts') {
+                prepare = prepareD3Scatter;
+            } else {
+                prepare = prepareHighchartsScatter;
+            }
             shapes = shared.shapes || [];
             shapesConfig = shared.shapesConfig;
-            prepare = prepareHighchartsScatter;
             rowsLimit = 75000;
             break;
+        }
 
         case 'scatter-d3':
             shapes = shared.shapes || [];
