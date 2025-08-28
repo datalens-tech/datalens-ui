@@ -16,6 +16,7 @@ import {WizardPageQa} from '../../../../../../shared';
 import type {AdditionalButtonTemplate} from '../../../../../components/ActionPanel/components/ChartSaveControls/types';
 import {
     DIALOG_ENTRY_DESCRIPTION,
+    MAX_ENTRY_DESCRIPTION_LENGTH,
     openDialogEntryAnnotationDescription,
 } from '../../../../../components/DialogEntryDescription';
 import {HOTKEYS_SCOPES, REDO_HOTKEY, UNDO_HOTKEY} from '../../../../../constants/misc';
@@ -84,6 +85,7 @@ export const useWizardActionPanel = (
                     canEdit: true,
                     isEditMode: true,
                     onApply: handleApplyDescriptionClick,
+                    maxLength: MAX_ENTRY_DESCRIPTION_LENGTH,
                 },
             }),
         );

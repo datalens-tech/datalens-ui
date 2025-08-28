@@ -7,6 +7,7 @@ import {useDispatch, useSelector} from 'react-redux';
 import {QLPageQA} from 'shared';
 import {
     DIALOG_ENTRY_DESCRIPTION,
+    MAX_ENTRY_DESCRIPTION_LENGTH,
     openDialogEntryAnnotationDescription,
 } from 'ui/components/DialogEntryDescription';
 import {updateDialogProps} from 'ui/store/actions/dialog';
@@ -73,6 +74,7 @@ export const useQLActionPanel = (args: UseQlActionPanelArgs): AdditionalButtonTe
                     canEdit: true,
                     isEditMode: true,
                     onApply: handleApplyDescriptionClick,
+                    maxLength: MAX_ENTRY_DESCRIPTION_LENGTH,
                 },
             }),
         );
