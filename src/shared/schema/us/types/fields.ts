@@ -27,7 +27,7 @@ export interface EntryFields {
     updatedBy: string;
     unversionedData?: unknown;
     workbookId: WorkbookId;
-    annotation: EntryAnnotation | null;
+    annotation?: EntryAnnotation | null;
 }
 
 // corresponds to RETURN_META_COLUMNS from US
