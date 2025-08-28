@@ -382,7 +382,7 @@ export const getEntryNotChanged = createSelector(
                 chartType,
                 visualization,
                 order: null,
-                version: QlConfigVersions.V5,
+                version: QlConfigVersions.V6,
             };
 
             // Removing possible functions from the structure to compare data
@@ -462,7 +462,7 @@ export const getPreviewData = createSelector(
                 params: params,
                 visualization,
                 order,
-                version: QlConfigVersions.V5,
+                version: QlConfigVersions.V6,
                 geopointsConfig,
             };
 
