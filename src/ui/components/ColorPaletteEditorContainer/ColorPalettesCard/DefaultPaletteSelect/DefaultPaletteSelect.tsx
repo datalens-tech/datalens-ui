@@ -22,7 +22,7 @@ type DefaultPaletteSelectProps = {
     disabled?: boolean;
 };
 
-export const DefaultPaletteSelect = ({colorPalettes}: DefaultPaletteSelectProps) => {
+export const DefaultPaletteSelect = ({colorPalettes, disabled}: DefaultPaletteSelectProps) => {
     const dispatch = useDispatch();
 
     const [isLoading, setIsLoading] = React.useState(false);
@@ -100,7 +100,7 @@ export const DefaultPaletteSelect = ({colorPalettes}: DefaultPaletteSelectProps)
                     }}
                     popupClassName={b('select-popup')}
                     className={b('select')}
-                    disabled={isLoading}
+                    disabled={isLoading || disabled}
                 />
                 {isLoading && <Loader size="s" />}
             </Flex>
