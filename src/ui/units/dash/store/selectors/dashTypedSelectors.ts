@@ -114,13 +114,13 @@ const selectTabsItemsOrderChanged = createSelector(
 
 const selectDashChanged = createSelector(
     [selectDashEntry, selectDashData, selectDashDescription],
-    (entry, dashData, description) => {
+    (entry, dashData, description = '') => {
         return (
             Boolean(entry) &&
             !isEqual(
                 {
                     ...entry.data,
-                    description: entry.annotation?.description,
+                    description: entry.annotation?.description || '',
                     counter: 0,
                 },
                 {...dashData, description, counter: 0},
