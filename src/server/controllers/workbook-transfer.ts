@@ -6,6 +6,7 @@ import {EntryScope} from '../../shared';
 import {TransferCapabilities, TransferErrorCode} from '../../shared/constants/workbook-transfer';
 import type {EntryFieldData, EntryFieldLinks} from '../../shared/schema';
 import {Utils} from '../components';
+import {Dash} from '../components/sdk';
 import {
     prepareExportChartData,
     prepareImportChartData,
@@ -130,7 +131,7 @@ export const prepareExportData = async (
             }
 
             const {dash, notifications} = await prepareDashExportData(
-                entry as unknown as DashEntry,
+                Dash.migrateDescription(entry as unknown as DashEntry),
                 idMapping,
             );
 
@@ -292,6 +293,7 @@ export const prepareImportData = async (
                     scope: dash.scope,
                     mode: dash.mode,
                     links: dash.links,
+                    description: dash.annotation?.description,
                 },
                 ctx,
                 authArgs: {usMasterToken},

@@ -284,13 +284,17 @@ export interface Entry {
     meta: object;
     workbookId?: string;
     mode?: EntryUpdateMode;
-    annotation: EntryAnnotation | null;
+    annotation?: EntryAnnotation | null;
 }
 
-export type CreateEntryRequest<T = Entry> = Partial<Omit<T, 'entryId'>> &
-    Required<{key: string; data: EntryData}>;
+export type CreateEntryRequest<T = Entry> = Partial<Omit<T, 'entryId' | 'annotation'>> &
+    Required<{key: string; data: EntryData}> & {
+        description?: string;
+    };
 
-export type UpdateEntryRequest<T = Entry> = Omit<T, 'entryId' | 'scope' | 'type'>;
+export type UpdateEntryRequest<T = Entry> = Omit<T, 'entryId' | 'scope' | 'type' | 'annotation'> & {
+    description?: string;
+};
 
 export type EntryData = DashData; // | WidgetData | DatasetData | ConnectionData | FolderData
 
