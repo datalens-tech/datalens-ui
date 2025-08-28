@@ -77,6 +77,7 @@ export const setActualChart = <
             mode: EntryUpdateMode.Publish,
             entryId: entry.entryId,
             template,
+            description: entry.annotation?.description,
         };
 
         if (isDraftEntry) {

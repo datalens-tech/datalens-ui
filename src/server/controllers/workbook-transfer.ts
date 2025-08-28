@@ -266,6 +266,7 @@ export const prepareImportData = async (
                     scope: widget.scope,
                     mode: widget.mode,
                     links: widget.links as EntryFieldLinks,
+                    description: widget.annotation?.description,
                 },
                 ctx,
                 authArgs: {usMasterToken},
