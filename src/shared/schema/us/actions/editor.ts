@@ -15,7 +15,17 @@ export const editorActions = {
         method: 'POST',
         path: () => `${PATH_PREFIX}/entries`,
         params: (
-            {type, key, data, meta = {}, name, workbookId, mode = EntryUpdateMode.Publish, links},
+            {
+                type,
+                key,
+                data,
+                meta = {},
+                name,
+                workbookId,
+                mode = EntryUpdateMode.Publish,
+                links,
+                description,
+            },
             headers,
         ) => {
             return {
@@ -29,6 +39,7 @@ export const editorActions = {
                     workbookId,
                     mode,
                     links,
+                    description,
                 },
                 headers,
             };
