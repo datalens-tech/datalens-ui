@@ -35,6 +35,8 @@ if (nodekit.config.isAuthEnabled) {
 nodekit.config.appAllowedLangs = nodekit.config.regionalEnvConfig?.allowLanguages;
 nodekit.config.appDefaultLang = nodekit.config.regionalEnvConfig?.defaultLang;
 
+nodekit.config.appBeforeAuthMiddleware = [serverFeatureWithBoundedContext];
+
 const app = initOpensourceApp(nodekit);
 registry.setupApp(app);
 
