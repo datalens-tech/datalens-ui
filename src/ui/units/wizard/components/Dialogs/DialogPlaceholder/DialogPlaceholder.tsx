@@ -877,7 +877,6 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
     };
 
     handleAxisFormattingUpdate = (updatedFormatting: CommonNumberFormattingOptions) => {
-        console.log(updatedFormatting);
         this.setState((state) => ({
             settings: {
                 ...state.settings,
