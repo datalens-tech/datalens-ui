@@ -108,7 +108,7 @@ export function ActionPanelRightItems(props: Props) {
                 }
             }
 
-            if (dataExportEnabled !== nextDataExportEnabled) {
+            if (dataExportEnabled !== nextDataExportEnabled && isExportSettingsFeatureEnabled) {
                 if (isUpdatingDsSettingsByActionFeatureEnabled) {
                     dispatch(updateSetting('data_export_forbidden', !nextDataExportEnabled));
                 } else {
