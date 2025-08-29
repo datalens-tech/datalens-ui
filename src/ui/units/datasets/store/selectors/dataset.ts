@@ -31,7 +31,7 @@ export const isDatasetRevisionMismatchSelector = (state: DatalensGlobalState) =>
 export const datasetFieldsSelector = (state: DatalensGlobalState) =>
     state.dataset.content.result_schema!;
 export const dataExportEnabledSelector = (state: DatalensGlobalState) =>
-    !state.dataset.content.data_export_forbidden;
+    !(state.dataset.content.data_export_forbidden ?? false);
 export const sourcesSelector = (state: DatalensGlobalState) => state.dataset.content.sources;
 export const avatarsSelector = (state: DatalensGlobalState) => state.dataset.content.source_avatars;
 export const relationsSelector = (state: DatalensGlobalState) =>
