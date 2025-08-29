@@ -284,10 +284,6 @@ export interface ResetWizardStoreAction {
     type: typeof RESET_WIZARD_STORE;
 }
 
-export interface ResetWizardStoreAction {
-    type: typeof RESET_WIZARD_STORE;
-}
-
 interface QLActionSetDescription {
     type: typeof SET_DESCRIPTION;
     payload: string;
