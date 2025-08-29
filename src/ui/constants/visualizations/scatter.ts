@@ -3,6 +3,7 @@ import {ArrowRight, ArrowUp, ChevronsExpandUpRight, Circles5Random} from '@gravi
 import type {Field, GraphShared, Placeholder, Shared} from '../../../shared';
 import {WizardVisualizationId} from '../../../shared';
 import {
+    DEFAULT_DATE_FORMAT,
     ITEM_TYPES,
     PRIMITIVE_DATA_TYPES,
     PRIMITIVE_DATA_TYPES_AND_HIERARCHY,
@@ -61,7 +62,7 @@ export const SCATTER_VISUALIZATION: GraphShared['visualization'] = {
                 hideLabels: 'no',
                 labelsView: 'auto',
                 holidays: 'off',
-                axisLabelDateFormat: 'auto',
+                axisLabelDateFormat: DEFAULT_DATE_FORMAT,
                 axisLabelFormating: {},
                 axisFormatMode: 'auto',
                 axisModeMap: {},
@@ -90,7 +91,7 @@ export const SCATTER_VISUALIZATION: GraphShared['visualization'] = {
                 gridStepValue: 50,
                 hideLabels: 'no',
                 labelsView: 'auto',
-                axisLabelDateFormat: 'auto',
+                axisLabelDateFormat: DEFAULT_DATE_FORMAT,
                 axisLabelFormating: {},
                 axisFormatMode: 'auto',
                 axisVisibility: 'show',

@@ -462,9 +462,6 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
             content: item,
         }));
 
-        const format =
-            axisLabelDateFormat === 'auto' ? AVAILABLE_DATE_FORMATS[2] : axisLabelDateFormat;
-
         return (
             <>
                 {isNumber && (
@@ -472,6 +469,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                         onChange={this.handleAxisFormattingUpdate}
                         dataType={field.data_type}
                         formatting={axisLabelFormating}
+                        isAxisFormatting
                     />
                 )}
                 {isDate && (
@@ -480,7 +478,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                         setting={
                             <DialogFieldSelect
                                 options={items}
-                                value={format}
+                                value={axisLabelDateFormat}
                                 onUpdate={this.handleAxisDateFormatUpdate}
                             />
                         }
@@ -879,6 +877,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
     };
 
     handleAxisFormattingUpdate = (updatedFormatting: CommonNumberFormattingOptions) => {
+        console.log(updatedFormatting);
         this.setState((state) => ({
             settings: {
                 ...state.settings,

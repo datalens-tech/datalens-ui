@@ -923,14 +923,6 @@ class VisualizationItem extends React.Component<Props, State> {
             }
         }
 
-        if (placeholder?.settings) {
-            placeholder.settings = {
-                ...placeholder.settings,
-                axisLabelDateFormat: 'auto',
-                axisLabelFormating: {},
-            };
-        }
-
         this.props.actions.updateVisualizationPlaceholderItems({
             items: placeholder?.items || [],
             options: {item: target, placeholderId: placeholder?.id as PlaceholderId},

@@ -11,6 +11,6 @@ export const isAxisLabelDateFormat = (
         axisFormatMode === AxisLabelFormatMode.Manual &&
         isDateField(field) &&
         axisType === 'datetime' &&
-        axisLabelDateFormat !== 'auto'
+        axisLabelDateFormat
     );
 };
