@@ -41,6 +41,7 @@ export const entriesActions = {
                 key,
                 recursion,
                 includePermissionsInfo,
+                description,
             },
             headers,
         ) => ({
@@ -58,6 +59,7 @@ export const entriesActions = {
                 links,
                 recursion,
                 includePermissionsInfo,
+                description,
                 ...(key ? {key} : {}),
             },
         }),

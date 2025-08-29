@@ -57,6 +57,7 @@ export type QLResultEntryMetadataDataColumnOrGroupV6 =
 interface QLEntryDataSharedConnectionV6 {
     entryId: string;
     type: string;
+    dataExportForbidden?: boolean;
 }
 
 export interface QLQueryV6 {

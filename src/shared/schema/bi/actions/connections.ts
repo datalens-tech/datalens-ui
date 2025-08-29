@@ -121,7 +121,7 @@ export const actions = {
     getConnectorSchema: createAction<GetConnectorSchemaResponse, GetConnectorSchemaArgs>({
         method: 'GET',
         path: ({type, mode}) => `${PATH_PREFIX}/info/connectors/forms/${type}/${mode}`,
-        params: (_, headers) => ({headers}),
+        params: ({connectionId}, headers) => ({headers, query: {conn_id: connectionId}}),
     }),
     getConnectionTypedQueryData: createAction<
         GetConnectionTypedQueryDataResponse,

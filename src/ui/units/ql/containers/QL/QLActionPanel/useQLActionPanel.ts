@@ -1,10 +1,16 @@
 import React from 'react';
 
-import {ArrowUturnCcwLeft, ArrowUturnCwRight, LayoutHeader} from '@gravity-ui/icons';
+import {ArrowUturnCcwLeft, ArrowUturnCwRight, CircleInfo, LayoutHeader} from '@gravity-ui/icons';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {QLPageQA} from 'shared';
+import {
+    DIALOG_ENTRY_DESCRIPTION,
+    MAX_ENTRY_DESCRIPTION_LENGTH,
+    openDialogEntryAnnotationDescription,
+} from 'ui/components/DialogEntryDescription';
+import {updateDialogProps} from 'ui/store/actions/dialog';
 
 import {type DatalensGlobalState} from '../../../../../';
 import type {AdditionalButtonTemplate} from '../../../../../components/ActionPanel/components/ChartSaveControls/types';
@@ -13,17 +19,20 @@ import {useBindHotkey} from '../../../../../hooks/useBindHotkey';
 import {goBack, goForward} from '../../../../../store/actions/editHistory';
 import {selectCanGoBack, selectCanGoForward} from '../../../../../store/selectors/editHistory';
 import {QL_EDIT_HISTORY_UNIT_ID} from '../../../constants';
+import {setDescription} from '../../../store/actions/ql';
+import {getDescription, getIsDescriptionChanged} from '../../../store/reducers/ql';
 
 const b = block('wizard-action-panel');
 
 export type UseQlActionPanelArgs = {
+    canEdit?: boolean;
     handleClickButtonToggleTablePreview: () => void;
 };
 
 export const useQLActionPanel = (args: UseQlActionPanelArgs): AdditionalButtonTemplate[] => {
     const dispatch = useDispatch();
 
-    const {handleClickButtonToggleTablePreview} = args;
+    const {canEdit, handleClickButtonToggleTablePreview} = args;
 
     const canGoBack = useSelector<DatalensGlobalState, ReturnType<typeof selectCanGoBack>>(
         (state) => selectCanGoBack(state, {unitId: QL_EDIT_HISTORY_UNIT_ID}),
@@ -32,6 +41,9 @@ export const useQLActionPanel = (args: UseQlActionPanelArgs): AdditionalButtonTe
     const canGoForward = useSelector<DatalensGlobalState, ReturnType<typeof selectCanGoForward>>(
         (state) => selectCanGoForward(state, {unitId: QL_EDIT_HISTORY_UNIT_ID}),
     );
+
+    const description = useSelector(getDescription);
+    const isDescriptionChanged = useSelector(getIsDescriptionChanged);
 
     const handleClickGoBack = React.useCallback(() => {
         if (canGoBack) {
@@ -44,6 +56,49 @@ export const useQLActionPanel = (args: UseQlActionPanelArgs): AdditionalButtonTe
             dispatch(goForward({unitId: QL_EDIT_HISTORY_UNIT_ID}));
         }
     }, [canGoForward, dispatch]);
+
+    const handleApplyDescriptionClick = React.useCallback(
+        (text: string) => {
+            dispatch(setDescription(text));
+        },
+        [dispatch],
+    );
+
+    const handleEditDescriptionClick = React.useCallback(() => {
+        dispatch(
+            updateDialogProps({
+                id: DIALOG_ENTRY_DESCRIPTION,
+                props: {
+                    title: i18n('sql', 'label_ql-info'),
+                    description: description || '',
+                    canEdit: true,
+                    isEditMode: true,
+                    onApply: handleApplyDescriptionClick,
+                    maxLength: MAX_ENTRY_DESCRIPTION_LENGTH,
+                },
+            }),
+        );
+    }, [description, dispatch, handleApplyDescriptionClick]);
+
+    const handleOpenDescription = React.useCallback(() => {
+        dispatch(
+            openDialogEntryAnnotationDescription({
+                title: i18n('sql', 'label_ql-info'),
+                description: description || '',
+                canEdit,
+                onEdit: handleEditDescriptionClick,
+                isEditMode: canEdit && (!description || isDescriptionChanged),
+                onApply: handleApplyDescriptionClick,
+            }),
+        );
+    }, [
+        dispatch,
+        description,
+        canEdit,
+        handleEditDescriptionClick,
+        isDescriptionChanged,
+        handleApplyDescriptionClick,
+    ]);
 
     useBindHotkey({
         key: UNDO_HOTKEY,
@@ -73,6 +128,15 @@ export const useQLActionPanel = (args: UseQlActionPanelArgs): AdditionalButtonTe
             },
         ];
 
+        if (canEdit || description) {
+            items.push({
+                key: 'description',
+                action: handleOpenDescription,
+                icon: {data: CircleInfo, size: 16},
+                view: 'flat',
+            });
+        }
+
         items = [
             {
                 key: 'undo',
@@ -101,10 +165,13 @@ export const useQLActionPanel = (args: UseQlActionPanelArgs): AdditionalButtonTe
 
         return items;
     }, [
-        handleClickButtonToggleTablePreview,
+        canEdit,
+        description,
         handleClickGoBack,
         canGoBack,
         handleClickGoForward,
         canGoForward,
+        handleClickButtonToggleTablePreview,
+        handleOpenDescription,
     ]);
 };
