@@ -625,9 +625,11 @@ class NavigationEntries extends React.Component {
     render() {
         const {isMobileNavigation} = this.props;
         const {loading, error, hasNextPage} = this.state;
+
         if (error) {
             return <ErrorView error={error} onRetryClick={this.refresh} />;
         }
+
         return (
             <div className={b('entries')}>
                 {isMobileNavigation
