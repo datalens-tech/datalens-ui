@@ -81,7 +81,7 @@
     "d3": "^7.8.5",
     "d3-color": "^3.1.0",
     "dotenv": "^8.2.0",
-    "form-data": "^4.0.0",
+    "form-data": "^4.0.4",
     "hashids": "^2.2.1",
     "iconv-lite": "^0.4.24",
     "ioredis": "^4.28.0",
