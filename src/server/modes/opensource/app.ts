@@ -17,7 +17,6 @@ import {
     createAppLayoutMiddleware,
     getCtxMiddleware,
     patchLogger,
-    serverFeatureWithBoundedContext,
     xDlContext,
 } from '../../middlewares';
 import {registry} from '../../registry';
@@ -72,7 +71,6 @@ function initDataLensApp({
     afterAuth: AppMiddleware[];
 }) {
     beforeAuth.push(
-        serverFeatureWithBoundedContext,
         createAppLayoutMiddleware({
             plugins: [createLayoutPlugin(), createUikitPlugin()],
             getAppLayoutSettings,
@@ -124,7 +122,7 @@ function initChartsApp({
     afterAuth.push(setSubrequestHeaders, patchLogger);
 
     if (isChartsMode) {
-        beforeAuth.push(serverFeatureWithBoundedContext, beforeAuthDefaults);
+        beforeAuth.push(beforeAuthDefaults);
         afterAuth.push(getCtxMiddleware());
     }
 
@@ -144,6 +142,6 @@ function initApiApp({
     // As charts app execpt chartEngine
     if (isApiMode) {
         afterAuth.push(xDlContext(), setSubrequestHeaders, patchLogger, getCtxMiddleware());
-        beforeAuth.push(serverFeatureWithBoundedContext, beforeAuthDefaults);
+        beforeAuth.push(beforeAuthDefaults);
     }
 }
