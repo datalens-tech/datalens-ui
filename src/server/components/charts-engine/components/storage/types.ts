@@ -1,6 +1,7 @@
 import type {
     ControlType,
     DashData,
+    EntryAnnotation,
     EntryPublicAuthor,
     EntryScope,
     TenantSettings,
@@ -53,6 +54,7 @@ export type ResolvedConfig = {
     servicePlan?: string;
     tenantFeatures?: Record<string, unknown>;
     tenantSettings?: TenantSettings;
+    annotation?: EntryAnnotation;
 };
 
 export type ReducedResolvedConfig = ResolvedConfig & {data: {shared: string | object}};

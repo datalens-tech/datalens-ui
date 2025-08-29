@@ -108,6 +108,7 @@ export const SET_CONNECTION_SOURCES = Symbol('ql/SET_CONNECTION_SOURCES');
 export const SET_CONNECTION_SOURCE_SCHEMA = Symbol('ql/SET_CONNECTION_SOURCE_SCHEMA');
 export const SET_CONNECTION = Symbol('ql/SET_CONNECTION');
 export const SET_QUERY_VALUE = Symbol('ql/SET_QUERY_VALUE');
+export const SET_DESCRIPTION = Symbol('ql/SET_DESCRIPTION');
 
 export const ADD_QUERY = Symbol('ql/ADD_QUERY');
 export const UPDATE_QUERY = Symbol('ql/UPDATE_QUERY');
@@ -1198,7 +1199,7 @@ export const onErrorSetActualChartRevision = (error: AxiosError) => {
 
 export const updateChart = (data: QlConfig, mode?: EntryUpdateMode) => {
     return async function (dispatch: QLDispatch, getState: () => DatalensGlobalState) {
-        const {entry} = getState().ql;
+        const {entry, annotation} = getState().ql;
 
         if (!entry) {
             return;
@@ -1210,6 +1211,7 @@ export const updateChart = (data: QlConfig, mode?: EntryUpdateMode) => {
                 mode,
                 data,
                 template: 'ql',
+                description: annotation?.description,
                 onError: (error) => dispatch(onErrorQlWidgetUpdate(error)),
                 onSuccess: (responseData) => dispatch(onSuccessQlWidgetUpdate(responseData)),
             }),
@@ -1253,5 +1255,12 @@ export const removeQueryAndRedraw = ({index}: {index: number}) => {
     return (dispatch: AppDispatch) => {
         dispatch(removeQuery({index}));
         dispatch(drawPreviewIfValid());
+    };
+};
+
+export const setDescription = (payload: string) => {
+    return {
+        type: SET_DESCRIPTION,
+        payload,
     };
 };

@@ -43,6 +43,7 @@ import {
     SET_CONNECTION_SOURCE_SCHEMA,
     SET_CONNECTION_STATUS,
     SET_DEFAULT_PATH,
+    SET_DESCRIPTION,
     SET_ENTRY,
     SET_ENTRY_KEY,
     SET_ERROR,
@@ -131,6 +132,7 @@ const initialState: QLState = {
     queryValue: '',
     queries: [],
     paneViews: Helper.createPaneViewsData(),
+    annotation: null,
 };
 
 /* --- SELECTORS --- */
@@ -163,6 +165,16 @@ export const getQueries = (state: DatalensGlobalState) => state.ql.queries;
 export const getRedirectUrl = (state: DatalensGlobalState) => state.ql.redirectUrl;
 
 export const getCurrentSchemeId = (state: DatalensGlobalState) => state.ql.grid.scheme;
+
+export const getInitialDescription = (state: DatalensGlobalState) =>
+    state.ql.entry?.annotation?.description;
+
+export const getDescription = (state: DatalensGlobalState) => state.ql.annotation?.description;
+
+export const getIsDescriptionChanged = createSelector(
+    [getInitialDescription, getDescription],
+    (initialDescription = '', description = '') => initialDescription !== description,
+);
 
 export const getGridSchemes = createSelector(
     [getVisualizationStatus, getTablePreviewVisible],
@@ -329,6 +341,7 @@ export const getEntryNotChanged = createSelector(
     getChartType,
     getPlaceholdersContent,
     selectPointSizeConfig,
+    getIsDescriptionChanged,
     (
         entry,
         extraSettings,
@@ -340,6 +353,7 @@ export const getEntryNotChanged = createSelector(
         chartType,
         placeholdersContent,
         geopointsConfig,
+        isDescriptionChanged,
     ): boolean => {
         if (chartType && entry && entry.data && connection && visualization) {
             const actualSharedData: QlConfig = {
@@ -374,7 +388,9 @@ export const getEntryNotChanged = createSelector(
             // Removing possible functions from the structure to compare data
             const actualSharedDataWOFunctions = JSON.parse(JSON.stringify(actualSharedData));
 
-            return _.isEqual(entry.data.shared, actualSharedDataWOFunctions);
+            return (
+                _.isEqual(entry.data.shared, actualSharedDataWOFunctions) && !isDescriptionChanged
+            );
         } else {
             return true;
         }
@@ -566,6 +582,7 @@ export default function ql(state: QLState = initialState, action: QLAction) {
             return {
                 ...state,
                 entry,
+                annotation: entry?.annotation,
             };
         }
 
@@ -945,6 +962,15 @@ export default function ql(state: QLState = initialState, action: QLAction) {
                         updateKey,
                     },
                     updateKey,
+                },
+            };
+        }
+
+        case SET_DESCRIPTION: {
+            return {
+                ...state,
+                annotation: {
+                    description: action.payload,
                 },
             };
         }
