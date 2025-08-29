@@ -14,7 +14,7 @@ import {CommonSettingsSection} from 'ui/components/ControlComponents/Sections/Co
 import {InputTypeSelector} from 'ui/components/ControlComponents/Sections/CommonSettingsSection/InputTypeSelector/InputTypeSelector';
 import {OperationSelector} from 'ui/components/ControlComponents/Sections/OperationSelector/OperationSelector';
 import {RequiredValueCheckbox} from 'ui/components/ControlComponents/Sections/ValueSelector/RequiredValueCheckbox/RequiredValueCheckbox';
-// import {ValueSelector} from 'ui/components/ControlComponents/Sections/ValueSelector/ValueSelector';
+import {ValueSelector} from 'ui/components/ControlComponents/Sections/ValueSelector/ValueSelector';
 import {SelectorTypeSelect} from 'ui/components/ControlComponents/SelectorTypeSelect/SelectorTypeSelect';
 import {ELEMENT_TYPE} from 'ui/store/constants/controlDialog';
 import {selectSelectorControlType} from 'ui/store/selectors/controlDialog';
@@ -52,7 +52,7 @@ export const GroupControlBody: React.FC<{
                 {!isEnabledFeature(Feature.ConnectionBasedControl) && (
                     <OperationSelector className={b('row')} />
                 )}
-                {/* <ValueSelector rowClassName={b('row')} /> */}
+                <ValueSelector rowClassName={b('row')} />
                 {isTypeNotCheckbox && <RequiredValueCheckbox className={b('row')} />}
             </FormSection>
             <FormSection title={i18n('label_representation')}>
