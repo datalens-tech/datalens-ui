@@ -16,7 +16,6 @@ import type {
 import {
     DashTabItemControlSourceType,
     DatasetFieldType,
-    Feature,
     Operations,
     resolveIntervalDate,
     resolveOperation,
@@ -33,7 +32,6 @@ import type {ControlSelect as ControlSelectType} from 'ui/libs/DatalensChartkit/
 import {openDialogErrorWithTabs} from 'ui/store/actions/dialog';
 import {addOperationForValue, unwrapFromArrayAndSkipOperation} from 'ui/units/dash/modules/helpers';
 import {selectDashWorkbookId} from 'ui/units/dash/store/selectors/dashTypedSelectors';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 
 import logger from '../../../../../libs/logger';
@@ -336,9 +334,7 @@ export const ControlItemSelect = ({
         : null;
     const disabled = loadedData?.uiScheme?.controls[0].disabled;
 
-    const emptyPaceholder = isEnabledFeature(Feature.EmptySelector)
-        ? i18n('placeholder_empty')
-        : undefined;
+    const emptyPaceholder = i18n('placeholder_empty');
 
     const preparedValue = unwrapFromArrayAndSkipOperation(actualParams[fieldId]);
 

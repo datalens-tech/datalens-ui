@@ -15,14 +15,12 @@ import type {
     WorkbookId,
 } from 'shared';
 import {
-    Feature,
     Operations,
     TIMEOUT_90_SEC,
     getFieldsApiV2RequestSection,
     getParametersApiV2RequestSection,
 } from 'shared';
 import type {GetDistinctsApiV2TransformedResponse} from 'shared/schema';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {NO_SELECTED_VALUES_OPERATION} from '../../constants/operations';
 import {withHiddenUnmount} from '../../hoc';
@@ -153,7 +151,6 @@ class DialogFilter extends React.Component<DialogFilterProps, DialogFilterState>
         let availableOperations = getAvailableOperations(field, filterOperations);
 
         if (
-            isEnabledFeature(Feature.EmptySelector) &&
             'unsaved' in field &&
             field.unsaved &&
             filter?.operation === Operations.NO_SELECTED_VALUES

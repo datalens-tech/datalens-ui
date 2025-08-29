@@ -30,7 +30,6 @@ import {
     AxisMode,
     DATASET_FIELD_TYPES,
     DatasetFieldType,
-    Feature,
     PlaceholderId,
     QLChartType,
     SortDirection,
@@ -44,7 +43,6 @@ import {closeDialog, openDialog} from 'store/actions/dialog';
 import type {DatalensGlobalState} from 'ui';
 import {getChartType} from 'ui/units/ql/store/reducers/ql';
 import {selectExtraSettings} from 'ui/units/wizard/selectors/widget';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import Utils from 'ui/utils/utils';
 import {
     createFieldFromVisualization,
@@ -936,11 +934,7 @@ class VisualizationItem extends React.Component<Props, State> {
 
         if (!filter || !filter?.value?.length) {
             return {rawValues: [], filterValues: ''};
-        } else if (
-            filter?.value.length === 1 &&
-            filter?.value?.[0] === '' &&
-            isEnabledFeature(Feature.EmptySelector)
-        ) {
+        } else if (filter?.value.length === 1 && filter?.value?.[0] === '') {
             return {
                 rawValues: [],
                 filterValues: i18n('component.operations', 'label_operation-all-values'),

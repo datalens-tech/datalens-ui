@@ -12,7 +12,6 @@ import type {
 import {
     DATASET_FIELD_TYPES,
     DatasetFieldType,
-    Feature,
     NavigatorModes,
     Operations,
     isDateField,
@@ -38,7 +37,6 @@ import {
     POLYLINE_VISUALIZATION,
     VISUALIZATION_IDS,
 } from 'ui/constants/visualizations';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {v1 as uuidv1} from 'uuid';
 
 import history from '../../../utils/history';
@@ -351,7 +349,7 @@ export function getFiltersFields(
             isDateField(foundItem) && values.length === 1 ? Operations.EQ : undefined;
 
         values.forEach((urlValue) => {
-            if (!urlValue && isFilterAlreadyInChart && isEnabledFeature(Feature.EmptySelector)) {
+            if (!urlValue && isFilterAlreadyInChart) {
                 filtersFields.push({
                     ...foundItem,
                     unsaved: true,
