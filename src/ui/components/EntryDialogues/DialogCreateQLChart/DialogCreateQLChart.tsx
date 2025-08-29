@@ -22,6 +22,7 @@ export interface DialogCreateQLChartProps extends EntryDialogProps {
         [key: string]: any;
     };
     workbookId?: WorkbookId;
+    description?: string;
 }
 
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
@@ -72,12 +73,13 @@ class DialogCreateQLChart extends React.Component<Props> {
     }
 
     private onWorkbookApply = ({name}: {name: string}) => {
-        const {workbookId} = this.props;
+        const {workbookId, description} = this.props;
         return this.props.sdk.charts.createWidget({
             name,
             workbookId: workbookId as string,
             data: this.props.data,
             template: 'ql',
+            description,
         });
     };
 
@@ -86,6 +88,7 @@ class DialogCreateQLChart extends React.Component<Props> {
             key,
             data: this.props.data,
             template: 'ql',
+            description: this.props.description,
         });
         return data;
     };

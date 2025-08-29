@@ -15,6 +15,7 @@ export interface CreateEditorChartArgs {
     name?: string;
     mode?: EntryUpdateMode;
     links?: EntryFieldLinks;
+    description?: string;
 }
 
 export interface UpdateEditorChartResponse extends EntryFields {
@@ -28,4 +29,5 @@ export interface UpdateEditorChartArgs {
     revId?: string;
     meta?: EntryFieldMeta;
     links?: EntryFieldLinks;
+    description?: string;
 }
