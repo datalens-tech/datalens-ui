@@ -8,6 +8,7 @@ import {getAppEndpointsConfig} from '../shared/endpoints';
 import {appEnv} from './app-env';
 import {appAuth} from './components/auth/middlewares/auth';
 import {getOpensourceLayoutConfig} from './components/layout/opensource-layout-config';
+import {serverFeatureWithBoundedContext} from './middlewares';
 import authZitadel from './middlewares/auth-zitadel';
 import {getConnectorToQlConnectionTypeMap} from './modes/charts/plugins/ql/utils/connection';
 import initOpensourceApp from './modes/opensource/app';
