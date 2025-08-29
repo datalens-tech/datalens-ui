@@ -1,7 +1,7 @@
 import {createSelector, createStructuredSelector} from 'reselect';
 import type {Update} from 'shared';
 import type {DatalensGlobalState} from 'ui';
-import {selectWidgetHash} from 'units/wizard/selectors/widget';
+import {selectInitialDescription, selectWidgetHash} from 'units/wizard/selectors/widget';
 
 import type {ConfigDataState} from '../reducers/preview';
 import {getConfigData} from '../reducers/utils/getConfigData';
@@ -72,12 +72,24 @@ export const selectConfigForSaving = createSelector(selectConfigData, (previewSt
     };
 });
 
+export const selectPreviewDescription = (state: DatalensGlobalState) =>
+    state.wizard.preview.description ?? state.wizard.widget.widget?.annotation?.description;
+
+export const selectIsDescriptionChanged = createSelector(
+    [selectInitialDescription, selectPreviewDescription],
+    (initialDescription = '', previewDescription = '') => initialDescription !== previewDescription,
+);
+
 export const selectIsChartSaved = createSelector(
     selectPreviewHash,
     selectInitialPreviewHash,
     selectWidgetHash,
-    (previewHash: string, initialPreviewHash: string, widgetHash: string) => {
-        return previewHash === initialPreviewHash || previewHash === widgetHash;
+    selectIsDescriptionChanged,
+    (previewHash: string, initialPreviewHash: string, widgetHash: string, isDescriptionChanged) => {
+        return (
+            (previewHash === initialPreviewHash || previewHash === widgetHash) &&
+            !isDescriptionChanged
+        );
     },
 );
 

@@ -3,20 +3,21 @@ import type {Shared, SharedData} from '../../index';
 import type {V10ChartsConfig} from './v10';
 import type {V11ChartsConfig} from './v11';
 import type {V12ChartsConfig} from './v12';
+import type {V13ChartsConfig} from './v13';
 import type {
-    V13ChartsConfig,
-    V13ChartsConfigDatasetField,
-    V13ColorsConfig,
-    V13CommonPlaceholders,
-    V13CommonSharedExtraSettings,
-    V13Field,
-    V13Filter,
-    V13Formatting,
-    V13HierarchyField,
-    V13Layer,
-    V13PlaceholderSettings,
-    V13TooltipConfig,
-} from './v13';
+    V14ChartsConfig,
+    V14ChartsConfigDatasetField,
+    V14ColorsConfig,
+    V14CommonPlaceholders,
+    V14CommonSharedExtraSettings,
+    V14Field,
+    V14Filter,
+    V14Formatting,
+    V14HierarchyField,
+    V14Layer,
+    V14PlaceholderSettings,
+    V14TooltipConfig,
+} from './v14';
 import type {V2ChartsConfig} from './v2';
 import type {V3ChartsConfig} from './v3';
 import type {V4ChartsConfig} from './v4';
@@ -38,8 +39,9 @@ export * from './v10';
 export * from './v11';
 export * from './v12';
 export * from './v13';
+export * from './v14';
 
-export type ChartsConfig = V13ChartsConfig;
+export type ChartsConfig = V14ChartsConfig;
 export type PreviousChartsConfigs =
     | Shared
     | V2ChartsConfig
@@ -52,8 +54,9 @@ export type PreviousChartsConfigs =
     | V9ChartsConfig
     | V10ChartsConfig
     | V11ChartsConfig
-    | V12ChartsConfig;
-export type CommonPlaceholders = V13CommonPlaceholders;
+    | V12ChartsConfig
+    | V13ChartsConfig;
+export type CommonPlaceholders = V14CommonPlaceholders;
 
 export type ExtendedChartsConfig = ChartsConfig | PreviousChartsConfigs;
 
@@ -79,28 +82,28 @@ export type ServerLayerSettings = NonNullable<
     ChartsConfig['visualization']['layers']
 >[0]['layerSettings'];
 
-export type ServerFieldFormatting = V13Formatting;
+export type ServerFieldFormatting = V14Formatting;
 
 export type ServerShapesConfig = ChartsConfig['shapesConfig'];
 
-export type ServerColorsConfig = V13ColorsConfig;
+export type ServerColorsConfig = V14ColorsConfig;
 
 export type ServerPointSizeConfig = NonNullable<ChartsConfig['geopointsConfig']>;
 
-export type ServerField = V13Field;
+export type ServerField = V14Field;
 
-export type ServerFilter = V13Filter;
+export type ServerFilter = V14Filter;
 
-export type ServerDatasetField = V13ChartsConfigDatasetField;
+export type ServerDatasetField = V14ChartsConfigDatasetField;
 
-export type ServerVisualizationLayer = V13Layer;
+export type ServerVisualizationLayer = V14Layer;
 
 export type ServerLink = ChartsConfig['links'][0];
 
-export type ServerHierarchy = V13HierarchyField;
+export type ServerHierarchy = V14HierarchyField;
 
-export type ServerCommonSharedExtraSettings = V13CommonSharedExtraSettings;
+export type ServerCommonSharedExtraSettings = V14CommonSharedExtraSettings;
 
-export type ServerPlaceholderSettings = V13PlaceholderSettings;
+export type ServerPlaceholderSettings = V14PlaceholderSettings;
 
-export type ServerTooltipConfig = V13TooltipConfig;
+export type ServerTooltipConfig = V14TooltipConfig;

@@ -97,6 +97,7 @@ export interface DashData {
     salt: string;
     schemeVersion: number;
     settings: DashSettings;
+    // only in old dashbords (now migrating to annotation)
     description?: string;
     accessDescription?: string;
     supportDescription?: string;
