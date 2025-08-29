@@ -86,13 +86,27 @@ function DatasetSelector(props: {
     );
 
     const handleDatasetFieldChange = React.useCallback(
-        (data: {
-            fieldId: string;
-            fieldType: DATASET_FIELD_TYPES;
-            fieldName: string;
-            datasetFieldType: DatasetFieldType;
-        }) => {
+        (
+            data: {
+                fieldId: string;
+                fieldType: DATASET_FIELD_TYPES;
+                fieldName: string;
+                datasetFieldType: DatasetFieldType;
+            } | null,
+        ) => {
             let elementType: SelectorElementType = ELEMENT_TYPE.INPUT;
+
+            if (data === null) {
+                dispatch(
+                    setSelectorDialogItem({
+                        datasetFieldId: undefined,
+                        elementType,
+                        fieldType: undefined,
+                        datasetFieldType: undefined,
+                    }),
+                );
+                return;
+            }
 
             if (datasetFieldId === data.fieldId && fieldType === data.fieldType) {
                 return;
