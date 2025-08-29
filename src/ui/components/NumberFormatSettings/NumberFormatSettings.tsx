@@ -37,7 +37,8 @@ function setDefaultFormatting(data: Props) {
     );
 
     if (data.dataType === DATASET_FIELD_TYPES.FLOAT || data.isAxisFormatting) {
-        const minimumFractionDigits = data.dataType !== DATASET_FIELD_TYPES.FLOAT && data.isAxisFormatting ? 0 : 2
+        const minimumFractionDigits =
+            data.dataType !== DATASET_FIELD_TYPES.FLOAT && data.isAxisFormatting ? 0 : 2;
         formatting.precision = formatting.precision ?? minimumFractionDigits;
     } else {
         formatting.precision = 0;
@@ -76,7 +77,8 @@ const getUnitItems = () => [
 export const NumberFormatSettings = (props: Props) => {
     const {onChange, formatting, rowClassName} = setDefaultFormatting(props);
 
-    const isShowDigitsAfterDot = props.dataType === DATASET_FIELD_TYPES.FLOAT || props.isAxisFormatting
+    const isShowDigitsAfterDot =
+        props.dataType === DATASET_FIELD_TYPES.FLOAT || props.isAxisFormatting;
 
     const handleChange = React.useCallback(
         (data: Partial<Props['formatting']>) => {

@@ -11,7 +11,12 @@ import {
     onLineChartDesignItemsChange,
 } from '../../utils/visualizations/line';
 import {onMeasureAxisChange} from '../../utils/visualizations/placeholders/common-measures';
-import {ITEM_TYPES, PRIMITIVE_DATA_TYPES, PRIMITIVE_DATA_TYPES_AND_HIERARCHY, DEFAULT_DATE_FORMAT} from '../misc';
+import {
+    DEFAULT_DATE_FORMAT,
+    ITEM_TYPES,
+    PRIMITIVE_DATA_TYPES,
+    PRIMITIVE_DATA_TYPES_AND_HIERARCHY,
+} from '../misc';
 
 import {prepareFieldToDimensionTransformation} from './utils';
 
