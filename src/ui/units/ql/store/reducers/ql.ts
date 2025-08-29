@@ -361,6 +361,7 @@ export const getEntryNotChanged = createSelector(
                 connection: {
                     entryId: connection.entryId,
                     type: connection.type,
+                    dataExportForbidden: Boolean(connection.data?.data_export_forbidden),
                 },
                 colors: placeholdersContent.colors || [],
                 colorsConfig: placeholdersContent.colorsConfig || {},
@@ -449,6 +450,7 @@ export const getPreviewData = createSelector(
                 connection: {
                     entryId: connection.entryId,
                     type: connection.type,
+                    dataExportForbidden: Boolean(connection.data?.data_export_forbidden),
                 },
                 colors: placeholdersContent.colors || [],
                 colorsConfig: placeholdersContent.colorsConfig || {},
