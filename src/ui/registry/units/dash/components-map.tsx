@@ -9,4 +9,5 @@ export const dashComponentsMap = {
     DialogTextWidget: makeDefaultEmpty<DialogTextWidgetProps>(),
     DashBodyAdditionalControls: makeDefaultEmpty(),
     DialogDashOtherSettingsPrepend: makeDefaultEmpty<DialogDashOtherSettingsPrependProps>(),
+    DashActionPanelAdditionalButtons: makeDefaultEmpty(),
 } as const;
