@@ -28,6 +28,7 @@ class PreviewTable extends React.PureComponent<PreviewTableProps> {
                         <div></div>
                     ) : (
                         <TableWidget
+                            isQlPreviewTable
                             id="ql-preview-table"
                             data={{
                                 type: 'table',
