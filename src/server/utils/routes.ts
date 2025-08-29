@@ -3,6 +3,7 @@ import {
     dlMainController,
     navigateController,
     navigationController,
+    publicApiControllerGetter,
 } from '../controllers';
 import {registry} from '../registry';
 import type {BasicControllers, ExtendedAppRouteDescription} from '../types/controllers';
@@ -37,6 +38,12 @@ export const getConfiguredRoute = (
 
             return {
                 handler: gatewayController,
+                ...params,
+            };
+        }
+        case 'public-api': {
+            return {
+                handler: publicApiControllerGetter(undefined, params),
                 ...params,
             };
         }
