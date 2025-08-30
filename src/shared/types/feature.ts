@@ -98,6 +98,8 @@ export enum Feature {
     GravityChartsForBarYAndScatter = 'GravityChartsForBarYAndScatter',
     /** Save field settings (formatting and colors) in the dataset */
     StoreFieldSettingsAtDataset = 'StoreFieldSettingsAtDataset',
+    /** Enable dataset revisions */
+    EnableDatasetRevisions = 'EnableDatasetRevisions',
 }
 
 export type FeatureConfig = Record<string, boolean>;

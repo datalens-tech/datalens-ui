@@ -38,6 +38,7 @@ class DatasetPage extends React.Component<DatasetPageProps> {
                         datasetId={this.datasetId}
                         workbookIdFromPath={this.props.workbookId}
                         history={this.props.history}
+                        location={this.props.location}
                         ytPath={this.ytPath}
                         isCreationProcess={isCreationProcess(location.pathname)}
                         isAuto={this.isAuto}

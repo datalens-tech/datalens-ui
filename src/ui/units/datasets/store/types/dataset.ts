@@ -10,7 +10,7 @@ import type {
     Permissions,
     WorkbookId,
 } from '../../../../../shared';
-import type {ValidateDatasetResponse} from '../../../../../shared/schema';
+import type {EntryFieldPublishedId, ValidateDatasetResponse} from '../../../../../shared/schema';
 import type {DatasetTab} from '../../constants';
 import type {
     ADD_AVATAR_PROTOTYPES,
@@ -297,9 +297,12 @@ export type Update =
 export type EditorItemToDisplay = 'fieldsId' | 'hiddenFields';
 
 export type DatasetReduxState = {
+    isRefetchingDataset: boolean;
     isLoading: boolean;
     isFavorite: boolean;
     isDatasetRevisionMismatch: boolean;
+    publishedId: EntryFieldPublishedId;
+    currentRevId: string | null;
     id: string;
     key: string;
     workbookId: WorkbookId;
@@ -702,6 +705,9 @@ type DatasetSaveRequest = {
 
 type DatasetSaveSuccess = {
     type: typeof DATASET_SAVE_SUCCESS;
+    payload: {
+        publishedId?: EntryFieldPublishedId;
+    };
 };
 
 type DatasetSaveFailure = {
@@ -718,7 +724,11 @@ type DatasetInitialFetchRequest = {
 type DatasetInitialFetchSuccess = {
     type: typeof DATASET_INITIAL_FETCH_SUCCESS;
     payload: {
-        dataset: Dataset & {connection: ConnectionEntry | null};
+        dataset: Dataset & {
+            connection: ConnectionEntry | null;
+        };
+        publishedId: EntryFieldPublishedId;
+        currentRevId: string | null;
     };
 };
 

@@ -230,14 +230,14 @@ const RevisionsPanel = ({
         subQa = RevisionsPanelQa.HasDraft;
         warningText = `${i18n('label_later-warning-text', {scope: scopeText})}`;
     } else {
-        dateText = `${i18n('label_by')} ${date}`;
+        dateText = date ? `, ${i18n('label_by')} ${date}` : '';
         const prefixText = isCurrentRevDraft
             ? i18n('label_draft-version')
             : i18n('label_not-actual');
         subQa = isCurrentRevDraft
             ? RevisionsPanelQa.DraftVersion
             : RevisionsPanelQa.NotActualVersion;
-        warningText = `${prefixText} ${scopeText}, ${dateText}`;
+        warningText = `${prefixText} ${scopeText}${dateText}`;
 
         const showLogin = LoginById && updatedBy;
 

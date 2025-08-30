@@ -68,8 +68,9 @@ export const actions = {
             `${API_V1}/datasets/${filterUrlFragment(datasetId)}/versions/${filterUrlFragment(
                 version,
             )}`,
-        params: ({workbookId}, headers) => ({
+        params: ({workbookId, rev_id}, headers) => ({
             headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
+            query: {rev_id},
         }),
     }),
     getFieldTypes: createAction<GetFieldTypesResponse>({
