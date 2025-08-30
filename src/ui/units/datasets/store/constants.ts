@@ -47,7 +47,7 @@ export const initialPreview: DatasetReduxState['preview'] = {
 };
 
 export const initialState: DatasetReduxState = {
-    isUpdatingDataset: false,
+    isRefetchingDataset: false,
     isLoading: true,
     isFavorite: false,
     isDatasetRevisionMismatch: false,

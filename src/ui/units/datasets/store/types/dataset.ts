@@ -297,7 +297,7 @@ export type Update =
 export type EditorItemToDisplay = 'fieldsId' | 'hiddenFields';
 
 export type DatasetReduxState = {
-    isUpdatingDataset: boolean;
+    isRefetchingDataset: boolean;
     isLoading: boolean;
     isFavorite: boolean;
     isDatasetRevisionMismatch: boolean;

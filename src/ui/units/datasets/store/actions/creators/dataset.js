@@ -285,7 +285,7 @@ export function initialFetchDataset({datasetId, rev_id, isInitialFetch = true}) 
     };
 }
 
-export function fetchDataset({datasetId, rev_id}) {
+export function fetchDataset({datasetId}) {
     return async (dispatch, getState) => {
         try {
             dispatch({
@@ -298,9 +298,6 @@ export function fetchDataset({datasetId, rev_id}) {
             const dataset = await getSdk().sdk.bi.getDatasetByVersion({
                 datasetId,
                 workbookId,
-                rev_id: DatasetUtils.isEnabledFeature(Feature.EnableDatasetRevisions)
-                    ? rev_id
-                    : undefined,
                 version: 'draft',
             });
 

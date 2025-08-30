@@ -200,7 +200,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
         case DATASET_FETCH_REQUEST: {
             return {
                 ...state,
-                isUpdatingDataset: true,
+                isRefetchingDataset: true,
                 error: null,
             };
         }
@@ -225,7 +225,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                     ...state.ui,
                     isDatasetChanged: false,
                 },
-                isUpdatingDataset: false,
+                isRefetchingDataset: false,
                 isLoading: false,
             };
         }
@@ -234,7 +234,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
 
             return {
                 ...state,
-                isUpdatingDataset: false,
+                isRefetchingDataset: false,
                 error,
             };
         }
@@ -287,7 +287,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 },
                 permissions,
                 isLoading: false,
-                isUpdatingDataset: false,
+                isRefetchingDataset: false,
             };
         }
         case DATASET_INITIAL_FETCH_FAILURE: {
@@ -296,7 +296,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
             return {
                 ...state,
                 isLoading: false,
-                isUpdatingDataset: false,
+                isRefetchingDataset: false,
                 error,
             };
         }

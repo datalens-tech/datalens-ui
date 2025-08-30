@@ -23,8 +23,8 @@ export const previewEnabledSelector = (state: DatalensGlobalState) =>
 export const isDatasetChangedDatasetSelector = (state: DatalensGlobalState) =>
     state.dataset.ui.isDatasetChanged;
 export const isLoadingDatasetSelector = (state: DatalensGlobalState) => state.dataset.isLoading;
-export const isUpdatingDatasetSelector = (state: DatalensGlobalState) =>
-    state.dataset.isUpdatingDataset;
+export const isRefetchingDatasetSelector = (state: DatalensGlobalState) =>
+    state.dataset.isRefetchingDataset;
 export const isFavoriteDatasetSelector = (state: DatalensGlobalState) => state.dataset.isFavorite;
 export const isSavingDatasetSelector = (state: DatalensGlobalState) =>
     state.dataset.savingDataset.isProcessingSavingDataset;
