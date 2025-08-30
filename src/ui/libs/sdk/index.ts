@@ -197,12 +197,14 @@ interface SDK {
             data,
             template,
             mode,
+            description,
         }: {
             entryId: string;
             revId?: string;
             data: Record<string, any>;
             template?: string;
             mode?: EntryUpdateMode;
+            description?: string;
         }): Promise<Entry>;
     };
 }

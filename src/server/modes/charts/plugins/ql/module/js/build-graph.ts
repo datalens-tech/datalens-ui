@@ -97,6 +97,11 @@ export function buildGraph(args: BuildGraphArgs) {
     log('RECOGNIZED COLUMNS:', columns);
     log('RECOGNIZED ROWS:', rows);
 
+    if (config.connection.dataExportForbidden) {
+        // Hiding the data export button in the ChartKit menu
+        ChartEditor.setExtra?.('dataExportForbidden', true);
+    }
+
     const sharedVisualization = config.visualization as ServerVisualization;
     const {
         colors: sharedColors,
