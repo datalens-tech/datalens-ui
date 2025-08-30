@@ -104,6 +104,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                         onChangeParams={handleChangeParams}
                         onReady={handleTableReady}
                         backgroundColor={backgroundColor}
+                        disableCellFormatting={isQlPreviewTable}
                     />
                 ) : (
                     <Loader />

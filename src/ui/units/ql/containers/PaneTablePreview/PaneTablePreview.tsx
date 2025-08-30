@@ -1,4 +1,4 @@
-import React, {Suspense} from 'react';
+import React from 'react';
 
 import block from 'bem-cn-lite';
 import {connect} from 'react-redux';
@@ -22,27 +22,25 @@ class PreviewTable extends React.PureComponent<PreviewTableProps> {
         const {columns, data} = tablePreviewData;
 
         return (
-            <Suspense fallback={<div />}>
-                <div className={b()}>
-                    {typeof columns === 'undefined' || typeof data === 'undefined' ? (
-                        <div></div>
-                    ) : (
-                        <TableWidget
-                            isQlPreviewTable
-                            id="ql-preview-table"
-                            data={{
-                                type: 'table',
-                                controls: null,
-                                params: {},
-                                data: {
-                                    head: columns,
-                                    rows: data,
-                                },
-                            }}
-                        />
-                    )}
-                </div>
-            </Suspense>
+            <div className={b()}>
+                {typeof columns === 'undefined' || typeof data === 'undefined' ? (
+                    <div></div>
+                ) : (
+                    <TableWidget
+                        isQlPreviewTable
+                        id="ql-preview-table"
+                        data={{
+                            type: 'table',
+                            controls: null,
+                            params: {},
+                            data: {
+                                head: columns,
+                                rows: data,
+                            },
+                        }}
+                    />
+                )}
+            </div>
         );
     }
 }
