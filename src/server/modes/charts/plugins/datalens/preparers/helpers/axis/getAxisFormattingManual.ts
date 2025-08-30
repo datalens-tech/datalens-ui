@@ -23,5 +23,5 @@ export const getAxisFormattingManual = (
 
     const formatting =
         placeholder.settings?.axisLabelFormating || ({} as CommonNumberFormattingOptions);
-    return getFormatOptionsFromFieldFormatting(formatting, field.data_type);
+    return getFormatOptionsFromFieldFormatting(formatting, field.data_type, true);
 };

@@ -6,6 +6,7 @@ import {I18n} from 'i18n';
 import type {CommonNumberFormattingOptions} from 'shared';
 import {
     DATASET_FIELD_TYPES,
+    DEFAULT_FLOAT_NUMBERS,
     DialogFieldMainSectionQa,
     NumberFormatType,
     NumberFormatUnit,
@@ -38,7 +39,9 @@ function setDefaultFormatting(data: Props) {
 
     if (data.dataType === DATASET_FIELD_TYPES.FLOAT || data.isAxisFormatting) {
         const minimumFractionDigits =
-            data.dataType !== DATASET_FIELD_TYPES.FLOAT && data.isAxisFormatting ? 0 : 2;
+            data.dataType !== DATASET_FIELD_TYPES.FLOAT && data.isAxisFormatting
+                ? 0
+                : DEFAULT_FLOAT_NUMBERS;
         formatting.precision = formatting.precision ?? minimumFractionDigits;
     } else {
         formatting.precision = 0;
