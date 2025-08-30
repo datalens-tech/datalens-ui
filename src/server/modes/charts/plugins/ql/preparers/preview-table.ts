@@ -1,8 +1,7 @@
-import type {IChartEditor} from '../../../../../../shared';
+import type {IChartEditor, TableRow} from '../../../../../../shared';
 import {DATALENS_QL_TYPES} from '../../../../../../shared';
 import type {
     QlConfig,
-    QlConfigPreviewTableDataRow,
     QlConfigResultEntryMetadataDataColumn,
 } from '../../../../../../shared/types/config/ql';
 import {DEFAULT_DATETIME_FORMAT, DEFAULT_DATE_FORMAT} from '../utils/constants';
@@ -67,8 +66,7 @@ export default ({
 
         return {
             name: uniqueColumnName,
-            header: column.name,
-            title: column.name,
+            id: column.name,
             type: tableColumnType,
             format: tableColumnFormat,
         };
@@ -77,7 +75,7 @@ export default ({
     const result = {
         columns: head,
         data: rows.map((row: string[]) => {
-            const tableRow: QlConfigPreviewTableDataRow = {};
+            const tableRow: TableRow = {cells: []};
             head.forEach(({name}, index) => {
                 let cellValue;
 
@@ -101,7 +99,7 @@ export default ({
                     cellValue = value;
                 }
 
-                tableRow[name] = cellValue;
+                tableRow.cells.push({fieldId: name, value: cellValue});
             });
 
             return tableRow;

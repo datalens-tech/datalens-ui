@@ -163,6 +163,7 @@ export const usePreparedTableData = (props: {
     sortingState?: SortingState;
     backgroundColor?: string;
     preserveWhiteSpace?: boolean;
+    disableCellFormatting?: boolean;
 }): TableViewData => {
     const {
         dimensions,
@@ -175,6 +176,7 @@ export const usePreparedTableData = (props: {
         sortingState,
         backgroundColor,
         preserveWhiteSpace,
+        disableCellFormatting,
     } = props;
     const [shouldResize, resize] = React.useState<string | null>(null);
 
@@ -187,7 +189,7 @@ export const usePreparedTableData = (props: {
 
     const columns = React.useMemo(() => {
         const headData = data.head?.map((th) =>
-            mapHeadCell({th, tableWidth: dimensions.width, onRenderCell}),
+            mapHeadCell({th, tableWidth: dimensions.width, onRenderCell, disableCellFormatting}),
         );
         const footerData = ((data.footer?.[0] as TableCellsRow)?.cells ?? []) as TFoot[];
         return createTableColumns({head: headData, rows: data.rows, footer: footerData});
