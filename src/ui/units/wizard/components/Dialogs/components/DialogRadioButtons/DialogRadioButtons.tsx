@@ -29,12 +29,13 @@ const DialogRadioButtons = React.forwardRef<HTMLDivElement, Props>(
                 qa={props.qa}
                 ref={ref}
             >
-                {props.items.map(({value, content, disabled}, index) => {
+                {props.items.map(({value, content, disabled, controlProps}, index) => {
                     return (
                         <RadioButton.Option
                             key={`${value}-${index}`}
                             value={value}
                             disabled={disabled}
+                            controlProps={controlProps}
                         >
                             {content}
                         </RadioButton.Option>

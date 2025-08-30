@@ -18,6 +18,7 @@ import {
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getFieldExportingOptions} from '../../utils/export-helpers';
 import {isLegendEnabled, isNumericalDataType} from '../../utils/misc-helpers';
+import {addAxisFormatter, addAxisFormatting, getAxisFormatting} from '../helpers/axis';
 import {
     getHighchartsColorAxis,
     isXAxisReversed,
@@ -26,7 +27,6 @@ import {
 import {getYPlaceholders} from '../helpers/layers';
 import {getSegmentMap} from '../helpers/segments';
 import {getSegmentsYAxis} from '../line/helpers';
-import {getAxisFormattingByField} from '../line/helpers/axis/getAxisFormattingByField';
 import type {PrepareFunctionArgs} from '../types';
 
 import {prepareBarX} from './prepare-bar-x';
@@ -55,8 +55,9 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
     const xIsDate = Boolean(xDataType && isDateField({data_type: xDataType}));
     const xPlaceholderSettings = xPlaceholder?.settings;
     let xAxisMode = AxisMode.Discrete;
+    const chartConfig = getConfigWithActualFieldTypes({config: shared, idToDataType});
+
     if (x && xDataType) {
-        const chartConfig = getConfigWithActualFieldTypes({config: shared, idToDataType});
         xAxisMode = getXAxisMode({config: chartConfig}) ?? AxisMode.Discrete;
     }
 
@@ -70,7 +71,7 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
 
     // Here we manage the highcharts settings depending on the parameters
     if (ChartEditor) {
-        const customConfig: any = {xAxis: {}};
+        const customConfig: any = {xAxis: {}, yAxis: {}};
 
         if (yFields.length) {
             const isYSectionHasFloatItem = yFields.some((y) => y.data_type === 'float');
@@ -94,22 +95,22 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
                 },
             });
 
-            if (xPlaceholder?.settings?.axisFormatMode === AxisLabelFormatMode.ByField) {
-                customConfig.axesFormatting.xAxis.push(
-                    getAxisFormattingByField(xPlaceholder, visualizationId),
-                );
-            }
+            addAxisFormatting(customConfig.axesFormatting.xAxis, visualizationId, xPlaceholder);
 
             const [layerYPlaceholder] = getYPlaceholders(args);
 
-            if (
-                layerYPlaceholder?.settings?.axisFormatMode === AxisLabelFormatMode.ByField &&
-                !isSegmentsExists
-            ) {
-                customConfig.axesFormatting.yAxis.push(
-                    getAxisFormattingByField(layerYPlaceholder, visualizationId),
-                );
+            const formatMode = layerYPlaceholder?.settings?.axisFormatMode;
+            if (formatMode && formatMode !== AxisLabelFormatMode.Auto && !isSegmentsExists) {
+                const formatting = getAxisFormatting(layerYPlaceholder, visualizationId);
+                if (formatting) {
+                    customConfig.axesFormatting.yAxis.push(formatting);
+                }
             }
+
+            addAxisFormatter({
+                axisConfig: customConfig.yAxis,
+                placeholder: layerYPlaceholder,
+            });
 
             if (shouldUseGradientLegend(colorItem, colorsConfig, shared)) {
                 customConfig.colorAxis = getHighchartsColorAxis(graphs, colorsConfig);
@@ -134,20 +135,27 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
                     visualizationId as WizardVisualizationId,
                 );
 
-                if (
+                const isXDiscreteAndNotLogarithmic =
                     isXDiscrete &&
                     xPlaceholderSettings &&
-                    xPlaceholderSettings.type !== 'logarithmic'
-                ) {
+                    xPlaceholderSettings.type !== 'logarithmic';
+                const wizardXAxisFormatter =
+                    isXDiscreteAndNotLogarithmic && xIsDate
+                        ? ChartkitHandlers.WizardXAxisFormatter
+                        : undefined;
+
+                if (isXDiscreteAndNotLogarithmic) {
                     customConfig.xAxis.type = 'category';
-                    if (xIsDate) {
-                        customConfig.xAxis.labels = {
-                            formatter: ChartkitHandlers.WizardXAxisFormatter,
-                        };
-                    }
                 } else if (xIsDate) {
                     customConfig.xAxis.type = 'datetime';
                 }
+
+                addAxisFormatter({
+                    axisConfig: customConfig.xAxis,
+                    placeholder: xPlaceholder,
+                    otherwiseFormatter: wizardXAxisFormatter,
+                    chartConfig,
+                });
 
                 if (x && getIsNavigatorEnabled(shared)) {
                     ChartEditor.updateConfig({
@@ -204,17 +212,23 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
                     visualizationId as WizardVisualizationId,
                 );
 
+                const wizardXAxisFormatter =
+                    isXDiscrete && xIsDate ? ChartkitHandlers.WizardXAxisFormatter : undefined;
+
                 if (xIsDate) {
-                    if (xAxisMode === AxisMode.Discrete) {
-                        customConfig.xAxis.labels = {
-                            formatter: ChartkitHandlers.WizardXAxisFormatter,
-                        };
-                    } else {
+                    if (!isXDiscrete) {
                         customConfig.xAxis.type = 'datetime';
                     }
                 } else if (!xIsFloat) {
                     customConfig.xAxis.type = 'category';
                 }
+
+                addAxisFormatter({
+                    axisConfig: customConfig.xAxis,
+                    placeholder: xPlaceholder,
+                    otherwiseFormatter: wizardXAxisFormatter,
+                    chartConfig,
+                });
             }
         }
 
