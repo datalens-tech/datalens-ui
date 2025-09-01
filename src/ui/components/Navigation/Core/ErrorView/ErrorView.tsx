@@ -27,6 +27,14 @@ export default function ErrorView({error, onRetryClick}: Props) {
         case 403: {
             errorViewConfig = {
                 title: i18n('label_access-denied-folder'),
+                name: 'noAccess',
+            };
+            break;
+        }
+        default: {
+            errorViewConfig = {
+                title: i18n('label_failed-load-navigation'),
+                name: 'error',
                 renderAction: () => (
                     <Button
                         view="action"
@@ -37,14 +45,6 @@ export default function ErrorView({error, onRetryClick}: Props) {
                         {i18n('button_retry')}
                     </Button>
                 ),
-                name: 'noAccess',
-            };
-            break;
-        }
-        default: {
-            errorViewConfig = {
-                title: i18n('label_failed-load-navigation'),
-                name: 'error',
             };
         }
     }
