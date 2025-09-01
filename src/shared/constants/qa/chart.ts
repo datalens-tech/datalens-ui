@@ -51,3 +51,7 @@ export const enum ChartKitTableQa {
     PaginatorPrevPageButton = 'chartkit-table-paginator-prev-btn',
     PaginatorNextPageButton = 'chartkit-table-paginator-next-btn',
 }
+
+export const enum ChartKitQlPreviewTableQa {
+    Widget = 'chartkit-preview-table-widget',
+}
