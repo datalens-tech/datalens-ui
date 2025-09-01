@@ -17,6 +17,7 @@ const PARAMS = {
     TAB_1_SELECT_VALUE_2: 'Aberdeen',
     TAB_2_SELECT_VALUE_1: 'Allen',
     TAB_4_SELECT_VALUE_1: 'Akron',
+    EMPTY_SELECTOR_VAL_TEXT: '—',
     EMPTY_SELECTOR_VAL_FULL_TEXT: 'No selected values',
     TAB_1_NAME: 'Tab 1',
     TAB_2_NAME: 'Tab 2',
@@ -404,7 +405,13 @@ datalensTest.describe('Dashboards - States with tabs', () => {
             );
             let selectorText = await selector?.innerText();
 
-            expect(selectorText).toMatch(PARAMS.EMPTY_SELECTOR_VAL_FULL_TEXT);
+            // EMPTY_SELECTOR_VAL_FULL_TEXT for common selectors with EmptySelector is enabled
+            // EMPTY_SELECTOR_VAL_TEXT for editor selectors
+            expect(selectorText).toMatch(
+                new RegExp(
+                    `${PARAMS.EMPTY_SELECTOR_VAL_FULL_TEXT}|${PARAMS.EMPTY_SELECTOR_VAL_TEXT}`,
+                ),
+            );
 
             // We return to the browser by clicking the back button
             urlParam = await waitBackGetUrlStateParam(page);
