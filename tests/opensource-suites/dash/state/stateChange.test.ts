@@ -405,7 +405,7 @@ datalensTest.describe('Dashboards - States with tabs', () => {
             );
             let selectorText = await selector?.innerText();
 
-            // EMPTY_SELECTOR_VAL_FULL_TEXT for common selectors with EmptySelector is enabled
+            // EMPTY_SELECTOR_VAL_FULL_TEXT for common selectors
             // EMPTY_SELECTOR_VAL_TEXT for editor selectors
             expect(selectorText).toMatch(
                 new RegExp(
