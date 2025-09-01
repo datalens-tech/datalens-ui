@@ -122,11 +122,12 @@ export type UpdateWizardWidgetArgs = {
     entry: WidgetData;
     config: {shared: ClientChartsConfig} | undefined;
     mode?: EntryUpdateMode;
+    description?: string;
 };
 
 export function updateWizardWidget(args: UpdateWizardWidgetArgs) {
     return async (dispatch: WizardDispatch) => {
-        const {config, entry, mode} = args;
+        const {config, entry, mode, description} = args;
 
         const data = mapClientConfigToChartsConfig(config);
 
@@ -134,6 +135,7 @@ export function updateWizardWidget(args: UpdateWizardWidgetArgs) {
             data,
             entry,
             mode,
+            description,
             onSuccess: (responseData) => dispatch(onSuccessWizardWidgetUpdate(responseData)),
             onError: (error) => dispatch(onErrorWizardWidgetUpdate(error)),
         };

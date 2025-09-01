@@ -13,6 +13,7 @@ $block: '.#{variables.$ns}-work-of-the-month';
     row-gap: 24px;
     min-height: 248px;
 
+    &_media_xs,
     &_media_s {
         margin-top: 24px;
         margin-bottom: 24px;
@@ -33,6 +34,7 @@ $block: '.#{variables.$ns}-work-of-the-month';
         align-items: center;
         gap: 8px;
 
+        &_media_xs,
         &_media_s {
             justify-content: center;
         }
@@ -41,6 +43,7 @@ $block: '.#{variables.$ns}-work-of-the-month';
     &__title {
         @include text-header-2();
 
+        &_media_xs,
         &_media_s {
             text-align: center;
         }
