@@ -6,6 +6,7 @@ import type {DatalensGlobalState} from 'ui';
 import TableWidget from 'ui/libs/DatalensChartkit/ChartKit/plugins/Table/renderer/TableWidget';
 
 import type {QlConfigPreviewTableData} from '../../../../../shared';
+import {ChartKitQlPreviewTableQa} from '../../../../../shared';
 import {getTablePreviewData} from '../../store/reducers/ql';
 
 import './PaneTablePreview.scss';
@@ -27,6 +28,7 @@ class PreviewTable extends React.PureComponent<PreviewTableProps> {
                     <div></div>
                 ) : (
                     <TableWidget
+                        qa={ChartKitQlPreviewTableQa.Widget}
                         isQlPreviewTable
                         id="ql-preview-table"
                         data={{

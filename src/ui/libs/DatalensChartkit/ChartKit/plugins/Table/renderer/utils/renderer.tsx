@@ -69,13 +69,12 @@ export function mapHeadCell(args: {
         enableSorting: get(th, 'sortable', true),
         enableRowGrouping: get(th, 'group', false),
         cell: (cellData) => {
-            if (disableCellFormatting) {
-                return <React.Fragment>{cellData?.value ?? ''}</React.Fragment>;
-            }
             const cell = (cellData || {}) as TableCommonCell;
             return (
                 <React.Fragment>
-                    {renderCellContent({cell, column: th, onRender: onRenderCell})}
+                    {disableCellFormatting
+                        ? cellData?.value ?? ''
+                        : renderCellContent({cell, column: th, onRender: onRenderCell})}
                     {cell.sortDirection && (
                         <Icon
                             className={b('sort-icon')}

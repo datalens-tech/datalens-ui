@@ -15,4 +15,5 @@ export type TableWidgetProps = {
     widgetDashState?: WidgetDashState;
     backgroundColor?: string;
     isQlPreviewTable?: boolean;
+    qa?: string;
 };

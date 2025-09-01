@@ -5,7 +5,7 @@ import {Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
 import type {StringParams} from 'shared';
-import {ChartKitQlPreviewTableQa, ChartKitTableQa} from 'shared';
+import {ChartKitTableQa} from 'shared';
 
 import {getRandomCKId} from '../../../helpers/getRandomCKId';
 import Performance from '../../../modules/perfomance';
@@ -27,6 +27,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
             data: {data: originalData, config},
             backgroundColor,
             isQlPreviewTable = false,
+            qa = ChartKitTableQa.Widget,
         } = props;
 
         const generatedId = React.useMemo(
@@ -90,13 +91,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
         );
 
         return (
-            <div
-                className={b()}
-                data-qa={
-                    isQlPreviewTable ? ChartKitQlPreviewTableQa.Widget : ChartKitTableQa.Widget
-                }
-                ref={ref}
-            >
+            <div className={b()} data-qa={qa} ref={ref}>
                 {dimensions ? (
                     <Table
                         widgetData={props.data}
