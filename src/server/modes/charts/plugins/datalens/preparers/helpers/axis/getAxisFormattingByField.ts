@@ -1,18 +1,11 @@
 import type {
     CommonNumberFormattingOptions,
-    ServerField,
     ServerPlaceholder,
-} from '../../../../../../../../../shared';
-import {isNumberField, isPercentVisualization} from '../../../../../../../../../shared';
-import {getFormatOptionsFromFieldFormatting} from '../../../../utils/misc-helpers';
+} from '../../../../../../../../shared';
+import {isNumberField, isPercentVisualization} from '../../../../../../../../shared';
+import {getFormatOptionsFromFieldFormatting} from '../../../utils/misc-helpers';
 
-export const getFieldFromPlaceholder = (
-    placeholder: ServerPlaceholder,
-): ServerField | undefined => {
-    const placeholderItems = placeholder.items || [];
-
-    return placeholderItems[0];
-};
+import {getFieldFromPlaceholder} from './getFieldFromPlaceholder';
 
 export const getAxisFormattingByField = (
     placeholder: ServerPlaceholder,

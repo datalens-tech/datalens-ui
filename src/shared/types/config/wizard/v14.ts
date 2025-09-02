@@ -3,6 +3,7 @@ import type {
     MapCenterModes,
     MarkupType,
     MetricFontSettings,
+    V13Formatting,
     WidgetSizeType,
     ZoomModes,
 } from '../../..';
@@ -190,6 +191,8 @@ export type V14PlaceholderSettings = {
     labelsView?: 'horizontal' | 'vertical' | 'angle';
     nulls?: AxisNullsMode;
     holidays?: 'on' | 'off';
+    axisLabelFormating?: V13Formatting;
+    axisLabelDateFormat?: string;
     axisFormatMode?: AxisLabelFormatMode;
     axisModeMap?: Record<string, AxisMode>;
     disableAxisMode?: boolean;
