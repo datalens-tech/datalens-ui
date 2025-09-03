@@ -100,7 +100,7 @@ export const prepareCreateParams = async (
     req: Request,
 ) => {
     const {chart, type, links, template} = chartData;
-    const {key, name, workbookId, description} = req.body;
+    const {key, name, workbookId, annotation} = req.body;
 
     // If we save editor script
     if (typeof template === 'undefined') {
@@ -122,7 +122,7 @@ export const prepareCreateParams = async (
         scope: 'widget',
         headers: getHeaders(req),
         includePermissionsInfo: true,
-        description,
+        annotation,
     };
 
     if (links) {
@@ -209,7 +209,7 @@ export const chartsController = (_chartsEngine: ChartsEngine) => {
 
             const entryId = req.params.entryId;
 
-            const {mode, description} = req.body;
+            const {mode, annotation} = req.body;
 
             const updateParams: ProviderUpdateParams = {
                 entryId,
@@ -217,8 +217,12 @@ export const chartsController = (_chartsEngine: ChartsEngine) => {
                 type,
                 data: chart,
                 headers: getHeaders(req),
-                description,
+                annotation,
             };
+
+            if (links) {
+                updateParams.links = links;
+            }
 
             if (links) {
                 updateParams.links = links;

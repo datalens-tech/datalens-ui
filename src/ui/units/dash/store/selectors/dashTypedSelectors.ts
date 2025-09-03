@@ -63,8 +63,8 @@ export const selectStateHashId = (state: DatalensGlobalState) => state.dash.stat
 
 export const selectLoadingEditMode = (state: DatalensGlobalState) => state.dash.isLoadingEditMode;
 
-export const selectDashDescription = (state: DatalensGlobalState) =>
-    state.dash.annotation?.description;
+export const selectDashDescription = (state: DatalensGlobalState): string =>
+    state.dash.annotation?.description ?? '';
 
 export const selectDashShowOpenedDescription = (state: DatalensGlobalState) =>
     Boolean(state.dash?.openInfoOnLoad);
