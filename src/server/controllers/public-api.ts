@@ -1,10 +1,8 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
-import type {AppContext} from '@gravity-ui/nodekit';
 import {REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 import _ from 'lodash';
 import z from 'zod/v4';
 
-import {Feature, isEnabledServerFeature} from '../../shared';
 import {getValidationSchema, hasValidationSchema} from '../../shared/schema/gateway-utils';
 import {
     PUBLIC_API_HTTP_METHOD,
@@ -53,39 +51,37 @@ const defaultSchema = {
     },
 };
 
-export function createPublicApiController(ctx: AppContext) {
+export function createPublicApiController() {
     const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
     const {proxyMap, securityTypes} = registry.getPublicApiConfig();
 
-    if (isEnabledServerFeature(ctx, Feature.PublicApiSwagger)) {
-        const security = securityTypes.map((type) => ({
-            [type]: [],
-        }));
+    const security = securityTypes.map((type) => ({
+        [type]: [],
+    }));
 
-        Object.entries(proxyMap).forEach(([version, actions]) => {
-            Object.entries(actions).forEach(([action, {resolve, openApi}]) => {
-                const gatewayApiAction = resolve(gatewayApi);
+    Object.entries(proxyMap).forEach(([version, actions]) => {
+        Object.entries(actions).forEach(([action, {resolve, openApi}]) => {
+            const gatewayApiAction = resolve(gatewayApi);
 
-                if (hasValidationSchema(gatewayApiAction)) {
-                    publicApiOpenApiRegistry.registerPath({
-                        method: PUBLIC_API_HTTP_METHOD.toLocaleLowerCase(),
-                        path: resolveUrl({version, action}),
-                        ...openApi,
-                        ...getValidationSchema(gatewayApiAction)().getOpenApiSchema(),
-                        security,
-                    });
-                } else {
-                    publicApiOpenApiRegistry.registerPath({
-                        method: PUBLIC_API_HTTP_METHOD.toLocaleLowerCase(),
-                        path: resolveUrl({version, action}),
-                        ...openApi,
-                        ...defaultSchema,
-                        security,
-                    } as any);
-                }
-            });
+            if (hasValidationSchema(gatewayApiAction)) {
+                publicApiOpenApiRegistry.registerPath({
+                    method: PUBLIC_API_HTTP_METHOD.toLocaleLowerCase(),
+                    path: resolveUrl({version, action}),
+                    ...openApi,
+                    ...getValidationSchema(gatewayApiAction)().getOpenApiSchema(),
+                    security,
+                });
+            } else {
+                publicApiOpenApiRegistry.registerPath({
+                    method: PUBLIC_API_HTTP_METHOD.toLocaleLowerCase(),
+                    path: resolveUrl({version, action}),
+                    ...openApi,
+                    ...defaultSchema,
+                    security,
+                } as any);
+            }
         });
-    }
+    });
 
     return async function publicApiController(req: Request, res: Response) {
         const boundeHandler = handleError.bind(null, req, res);
