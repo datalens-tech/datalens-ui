@@ -1,6 +1,6 @@
 import type {ChartsData} from './charts/types';
 
-export const getChartType = (loadedData: ChartsData) => {
+export const getChartKind = (loadedData: ChartsData) => {
     if (loadedData?.isQL) {
         return 'ql';
     }
