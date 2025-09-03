@@ -384,7 +384,8 @@ function applyChartkitHandlers(args: {
         }
 
         libraryConfig.yAxis?.forEach?.((item: typeof libraryConfig.yAxis) => {
-            if (item.labels.formatter === ChartkitHandlers.WizardDatetimeAxisFormatter) {
+            const formatter = item?.labels?.formatter;
+            if (formatter && formatter === ChartkitHandlers.WizardDatetimeAxisFormatter) {
                 item.labels.formatter = ChartkitHandlersDict[
                     ChartkitHandlers.WizardDatetimeAxisFormatter
                 ](item.labels.format);
