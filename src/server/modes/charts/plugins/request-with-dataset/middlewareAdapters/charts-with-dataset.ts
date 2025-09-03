@@ -73,7 +73,6 @@ export default async (
         datasetFields,
         layerId,
         revisionId,
-        ctx,
     });
 
     ctx.log('CHARTS_DATASET_FIELDS_PROCESSED');
