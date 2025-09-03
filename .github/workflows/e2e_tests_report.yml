@@ -50,6 +50,13 @@ jobs:
         with:
           report-file: playwright-report/results.json
           create-comment: false
+      - name: Escape report markdown
+        run: |
+          echo 'REPORT_MD<<EOF' >> $GITHUB_ENV
+          echo "${REPORT_MD}" | sed 's|@screenshot|\`@screenshot\`|g' >> $GITHUB_ENV
+          echo 'EOF' >> $GITHUB_ENV
+        env:
+          REPORT_MD: ${{ steps.report-md.outputs.summary }}
       - name: Create Comment
         uses: marocchino/sticky-pull-request-comment@v2
         with:
@@ -58,7 +65,7 @@ jobs:
           message: |
             ## ![](https://storage.yandexcloud.net/e2e-report/icons/os-small.svg) E2E Tests
 
-            ${{ steps.report-md.outputs.summary }}
+            ${{ env.REPORT_MD }}
 
             ---
 

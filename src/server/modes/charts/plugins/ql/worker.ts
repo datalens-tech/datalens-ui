@@ -138,8 +138,17 @@ const worker: WizardWorker = {
     },
 
     buildChart: async (args: BuildChartArgs) => {
-        const {shared, params, actionParams, widgetConfig, userLang, data, palettes, features} =
-            args;
+        const {
+            shared,
+            params,
+            actionParams,
+            widgetConfig,
+            userLang,
+            data,
+            palettes,
+            features,
+            defaultColorPaletteId,
+        } = args;
         const context = getChartApiContext({
             name: 'Prepare',
             shared,
@@ -167,6 +176,7 @@ const worker: WizardWorker = {
             features,
             qlConnectionTypeMap,
             plugin,
+            defaultColorPaletteId,
         });
 
         return {

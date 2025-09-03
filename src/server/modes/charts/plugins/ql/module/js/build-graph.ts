@@ -18,6 +18,7 @@ import {
 } from '../../../../../../../shared';
 import {isChartSupportMultipleColors} from '../../../../../../../shared/modules/colors/common-helpers';
 import {mapQlConfigToLatestVersion} from '../../../../../../../shared/modules/config/ql';
+import type {PrepareSingleResultArgs} from '../../../datalens/js/helpers/misc/prepare-single-result';
 import prepareSingleResult from '../../../datalens/js/helpers/misc/prepare-single-result';
 import type {ChartPlugin} from '../../../datalens/types';
 import {extractColorPalettesFromData} from '../../../helpers/color-palettes';
@@ -50,11 +51,20 @@ type BuildGraphArgs = {
     palettes: Record<string, Palette>;
     qlConnectionTypeMap: QLConnectionTypeMap;
     plugin?: ChartPlugin;
+    defaultColorPaletteId: string;
 };
 
 // eslint-disable-next-line complexity
 export function buildGraph(args: BuildGraphArgs) {
-    const {shared, ChartEditor, features, palettes, qlConnectionTypeMap, plugin} = args;
+    const {
+        shared,
+        ChartEditor,
+        features,
+        palettes,
+        qlConnectionTypeMap,
+        plugin,
+        defaultColorPaletteId,
+    } = args;
     const data = ChartEditor.getLoadedData();
 
     log('LOADED DATA:', data);
@@ -86,6 +96,11 @@ export function buildGraph(args: BuildGraphArgs) {
 
     log('RECOGNIZED COLUMNS:', columns);
     log('RECOGNIZED ROWS:', rows);
+
+    if (config.connection.dataExportForbidden) {
+        // Hiding the data export button in the ChartKit menu
+        ChartEditor.setExtra?.('dataExportForbidden', true);
+    }
 
     const sharedVisualization = config.visualization as ServerVisualization;
     const {
@@ -263,7 +278,7 @@ export function buildGraph(args: BuildGraphArgs) {
 
         const disableDefaultSorting = doesQueryContainOrderBy(shared.queryValue);
 
-        const prepareSingleResultArgs = {
+        const prepareSingleResultArgs: PrepareSingleResultArgs = {
             resultData,
             shared: {
                 ...config,
@@ -284,6 +299,7 @@ export function buildGraph(args: BuildGraphArgs) {
             palettes,
             features,
             plugin,
+            defaultColorPaletteId,
         };
 
         result = prepareSingleResult(prepareSingleResultArgs);

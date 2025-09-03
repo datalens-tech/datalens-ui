@@ -1,0 +1,32 @@
+.dialog-entry-description {
+    position: relative;
+
+    &__subtitle {
+        color: var(--g-color-text-secondary);
+        margin-bottom: 21px;
+    }
+
+    &__length-counter {
+        text-align: right;
+        color: var(--g-color-text-secondary);
+        margin-top: 6px;
+
+        &_error {
+            color: var(--g-color-text-danger);
+        }
+    }
+
+    &__content {
+        margin-top: 6px;
+        min-width: 656px;
+        max-width: 736px;
+    }
+
+    &__yfm-loader {
+        height: 100%;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+}

@@ -1,5 +1,6 @@
 import classic from './common/classic-20';
 import datalens from './common/datalens';
+import default20 from './common/default-20';
 import emerald from './common/emerald-20';
 import golden from './common/golden-20';
 import neutral from './common/neutral-20';
@@ -15,8 +16,7 @@ export interface Palettes {
 }
 
 export const PALETTES = {
-    // TODO: Update with new colors
-    // default20,
+    default20,
     classic,
     neutral,
     golden,
@@ -26,11 +26,8 @@ export const PALETTES = {
     datalens,
 };
 
-export const DEFAULT_PALETTE = classic;
-
 export const BASE_PALETTES_MAP: Record<string, Palette> = {
-    // TODO: Update with new colors
-    // [default20.id]: default20,
+    [default20.id]: default20,
     [classic.id]: classic,
     [emerald.id]: emerald,
     [neutral.id]: neutral,
@@ -40,20 +37,26 @@ export const BASE_PALETTES_MAP: Record<string, Palette> = {
     [datalens.id]: datalens,
 };
 
-const sortPalettes = (palettes: string[]) =>
+const sortPalettes = (palettes: string[], defaultPaletteId?: string) =>
     palettes.sort((a, b) => {
-        if (a === DEFAULT_PALETTE.id) {
+        if (a === defaultPaletteId) {
             return -1;
         }
 
-        if (b === DEFAULT_PALETTE.id) {
+        if (b === defaultPaletteId) {
             return 1;
         }
 
         return a.localeCompare(b);
     });
 
-export const selectAvailablePalettes = (palettes: Record<string, Palette>): Palettes => {
+export const selectAvailablePalettes = ({
+    palettes,
+    defaultPaletteId,
+}: {
+    palettes: Record<string, Palette>;
+    defaultPaletteId?: string;
+}): Palettes => {
     const gradientPalettes: string[] = [];
     const colorPalettes: string[] = [];
     const datalensPalettes: string[] = [];
@@ -71,21 +74,16 @@ export const selectAvailablePalettes = (palettes: Record<string, Palette>): Pale
     });
 
     return {
-        color: [...sortPalettes(datalensPalettes), ...sortPalettes(colorPalettes)],
-        gradient: sortPalettes(gradientPalettes),
+        color: [
+            ...sortPalettes(datalensPalettes, defaultPaletteId),
+            ...sortPalettes(colorPalettes, defaultPaletteId),
+        ],
+        gradient: sortPalettes(gradientPalettes, defaultPaletteId),
     };
 };
 
 export const getAvailablePalettesMap = () => {
     return BASE_PALETTES_MAP;
-};
-
-export const selectPaletteById = (
-    paletteId: string = DEFAULT_PALETTE.id,
-    palettes: Record<string, Palette>,
-) => {
-    const selectedPalette = palettes[paletteId];
-    return selectedPalette?.scheme || DEFAULT_PALETTE.scheme;
 };
 
 export const getPalettesOrder = (): (keyof Palettes)[] => {

@@ -2,9 +2,9 @@ import type {Link, Meta} from '@gravity-ui/app-layout';
 import type {Request, Response} from '@gravity-ui/expresskit';
 
 import type {CtxUser} from '../server/components/auth/types/user';
-import type {RedisConfig} from '../server/components/cache-client';
 import type {ChartTemplates} from '../server/components/charts-engine/components/chart-generator';
 import type {SourceConfig} from '../server/components/charts-engine/types';
+import type {RedisConfig} from '../server/utils/redis';
 import type {AppEnvironment, LandingPageSettings} from '../shared';
 import type {UserRole} from '../shared/components/auth/constants/role';
 import type {FeatureConfig} from '../shared/types';
@@ -24,6 +24,7 @@ export interface SharedAppConfig {
     meta?: Meta[];
 
     chartkitSettings?: ChartkitGlobalSettings;
+    defaultColorPaletteId?: string;
     serviceName: string;
     // CHARTS ENGINE -- START
     usEndpoint: string;

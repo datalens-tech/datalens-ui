@@ -14,12 +14,17 @@ export const datasetKeySelector = (state: DatalensGlobalState) => state.dataset.
 export const datasetIdSelector = (state: DatalensGlobalState) => state.dataset.id;
 export const datasetWorkbookId = (state: DatalensGlobalState) => state.dataset.workbookId;
 export const datasetContentSelector = (state: DatalensGlobalState) => state.dataset.content;
+export const datasetPublishedIdSelector = (state: DatalensGlobalState) => state.dataset.publishedId;
+export const datasetCurrentRevIdSelector = (state: DatalensGlobalState) =>
+    state.dataset.currentRevId;
 
 export const previewEnabledSelector = (state: DatalensGlobalState) =>
     state.dataset.preview.previewEnabled;
 export const isDatasetChangedDatasetSelector = (state: DatalensGlobalState) =>
     state.dataset.ui.isDatasetChanged;
 export const isLoadingDatasetSelector = (state: DatalensGlobalState) => state.dataset.isLoading;
+export const isRefetchingDatasetSelector = (state: DatalensGlobalState) =>
+    state.dataset.isRefetchingDataset;
 export const isFavoriteDatasetSelector = (state: DatalensGlobalState) => state.dataset.isFavorite;
 export const isSavingDatasetSelector = (state: DatalensGlobalState) =>
     state.dataset.savingDataset.isProcessingSavingDataset;
@@ -31,7 +36,7 @@ export const isDatasetRevisionMismatchSelector = (state: DatalensGlobalState) =>
 export const datasetFieldsSelector = (state: DatalensGlobalState) =>
     state.dataset.content.result_schema!;
 export const dataExportEnabledSelector = (state: DatalensGlobalState) =>
-    !state.dataset.content.data_export_forbidden;
+    !(state.dataset.content.data_export_forbidden ?? false);
 export const sourcesSelector = (state: DatalensGlobalState) => state.dataset.content.sources;
 export const avatarsSelector = (state: DatalensGlobalState) => state.dataset.content.source_avatars;
 export const relationsSelector = (state: DatalensGlobalState) =>

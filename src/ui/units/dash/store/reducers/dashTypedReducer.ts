@@ -3,7 +3,14 @@ import type React from 'react';
 import type {DashKit} from '@gravity-ui/dashkit';
 import update from 'immutability-helper';
 import {cloneDeep, pick} from 'lodash';
-import type {DashData, DashDragOptions, DashEntry, Permissions, WidgetType} from 'shared';
+import type {
+    DashData,
+    DashDragOptions,
+    DashEntry,
+    EntryAnnotation,
+    Permissions,
+    WidgetType,
+} from 'shared';
 import type {DIALOG_TYPE} from 'ui/constants/dialogs';
 import type {ValuesType} from 'utility-types';
 
@@ -22,7 +29,6 @@ import {
     SET_DASHKIT_REF,
     SET_DASH_ACCESS_DESCRIPTION,
     SET_DASH_DESCRIPTION,
-    SET_DASH_DESC_VIEW_MODE,
     SET_DASH_KEY,
     SET_DASH_OPENED_DESC,
     SET_DASH_SUPPORT_DESCRIPTION,
@@ -55,7 +61,6 @@ export type DashState = {
     stateHashId: null | string;
     initialTabsSettings?: null | DashData['tabs'];
     mode: Mode;
-    descriptionMode: Mode;
     navigationPath: null | string;
     dashKitRef: null | React.RefObject<DashKit>;
     error: null | Error;
@@ -65,6 +70,7 @@ export type DashState = {
     lastUsedConnectionId: undefined | string;
     entry: DashEntry;
     data: DashData;
+    annotation?: EntryAnnotation | null;
     updateStatus: DashUpdateStatus;
     convertedEntryData: DashData | null;
     permissions?: Permissions;
@@ -278,21 +284,14 @@ export function dashTypedReducer(
                 tabId: tabIndex === -1 ? entryData.tabs[0].id : tabId,
                 showTableOfContent: entryData.settings?.expandTOC && state.showTableOfContent,
                 data: entryData,
-            };
-        }
-
-        case SET_DASH_DESC_VIEW_MODE: {
-            return {
-                ...state,
-                descriptionMode: action.payload || Mode.View,
+                annotation: state.entry.annotation,
             };
         }
 
         case SET_DASH_DESCRIPTION: {
             return {
                 ...state,
-                data: {
-                    ...state.data,
+                annotation: {
                     description: action.payload || '',
                 },
             };

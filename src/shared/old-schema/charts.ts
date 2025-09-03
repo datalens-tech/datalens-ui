@@ -20,12 +20,14 @@ export type CreateWidgetArgs =
           key: string;
           data: Record<string, unknown>;
           template?: string;
+          description?: string;
       }
     | {
           workbookId: string;
           name: string;
           data: Record<string, unknown>;
           template?: string;
+          description?: string;
       };
 
 const CHARTS_API_SCHEMA = {
@@ -85,12 +87,14 @@ const CHARTS_API_SCHEMA = {
             data,
             template = 'datalens',
             mode = EntryUpdateMode.Publish,
+            description,
         }: {
             entryId: string;
             revId: string;
             data: any;
             template: string;
             mode?: EntryUpdateMode;
+            description?: string;
         },
     ) => ({
         method: 'post',
@@ -100,6 +104,7 @@ const CHARTS_API_SCHEMA = {
             data,
             mode,
             template,
+            description,
         },
     }),
 

@@ -385,6 +385,7 @@ type PrepareSingleResultArgs = {
     usedColors?: (string | undefined)[];
     features: FeatureConfig;
     plugin?: ChartPlugin;
+    defaultColorPaletteId: string;
 };
 
 // eslint-disable-next-line complexity
@@ -404,6 +405,7 @@ function prepareSingleResult({
     palettes,
     features,
     plugin,
+    defaultColorPaletteId,
 }: PrepareSingleResultArgs) {
     const isVisualizationWithLayers = Boolean(
         (visualization as ServerVisualizationLayer).layerSettings,
@@ -496,7 +498,11 @@ function prepareSingleResult({
 
         case WizardVisualizationId.Bar:
         case WizardVisualizationId.Bar100p: {
-            prepare = prepareHighchartsBarY;
+            if (plugin === 'gravity-charts') {
+                prepare = prepareGravityChartsBarY;
+            } else {
+                prepare = prepareHighchartsBarY;
+            }
             rowsLimit = 75000;
             break;
         }
@@ -529,12 +535,17 @@ function prepareSingleResult({
             break;
         }
 
-        case 'scatter':
+        case WizardVisualizationId.Scatter: {
+            if (plugin === 'gravity-charts') {
+                prepare = prepareD3Scatter;
+            } else {
+                prepare = prepareHighchartsScatter;
+            }
             shapes = shared.shapes || [];
             shapesConfig = shared.shapesConfig;
-            prepare = prepareHighchartsScatter;
             rowsLimit = 75000;
             break;
+        }
 
         case 'scatter-d3':
             shapes = shared.shapes || [];
@@ -698,6 +709,7 @@ function prepareSingleResult({
         loadedColorPalettes,
         colorsConfig,
         availablePalettes: palettes,
+        defaultColorPaletteId,
     });
 
     const prepareFunctionArgs: PrepareFunctionArgs = {
@@ -725,6 +737,7 @@ function prepareSingleResult({
         layerChartMeta,
         usedColors,
         features,
+        defaultColorPaletteId,
     };
 
     return (prepare as PrepareFunction)(prepareFunctionArgs);
@@ -739,8 +752,17 @@ export const buildGraphPrivate = (args: {
     palettes: Record<string, Palette>;
     features: FeatureConfig;
     plugin?: ChartPlugin;
+    defaultColorPaletteId: string;
 }) => {
-    const {shared: chartSharedConfig, ChartEditor, data, palettes, features, plugin} = args;
+    const {
+        shared: chartSharedConfig,
+        ChartEditor,
+        data,
+        palettes,
+        features,
+        plugin,
+        defaultColorPaletteId,
+    } = args;
 
     log('LOADED DATA:');
     log(data);
@@ -926,6 +948,7 @@ export const buildGraphPrivate = (args: {
                 palettes,
                 features,
                 plugin,
+                defaultColorPaletteId,
             });
 
             if (localResult && localResult[0] && localResult[0].bounds) {
@@ -990,6 +1013,7 @@ export const buildGraphPrivate = (args: {
             palettes,
             features,
             plugin,
+            defaultColorPaletteId,
         });
 
         if (result?.[0]?.bounds) {

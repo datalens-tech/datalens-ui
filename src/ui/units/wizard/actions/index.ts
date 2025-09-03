@@ -41,7 +41,6 @@ import {
     isMeasureValue,
     isParameter,
     isVisualizationWithLayers,
-    mapChartsConfigToLatestVersion,
     prepareUrlParams,
     splitParamsToParametersAndFilters,
 } from 'shared';
@@ -58,6 +57,7 @@ import type {DatasetState} from 'units/wizard/reducers/dataset';
 import {selectDataset, selectDatasets} from 'units/wizard/selectors/dataset';
 import {v1 as uuidv1} from 'uuid';
 
+import {mapChartsConfigToLatestVersion} from '../../../../shared/modules/config/wizard';
 import {WIZARD_DATASET_ID_PARAMETER_KEY} from '../../../constants/misc';
 import type {ChartKitCustomError} from '../../../libs/DatalensChartkit/ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
 import logger from '../../../libs/logger';

@@ -3,6 +3,7 @@ import type {AnyAction} from 'redux';
 import type {ThunkDispatch} from 'redux-thunk';
 import type {
     CommonSharedExtraSettings,
+    EntryAnnotation,
     QLChartType,
     QlConfigPreviewTableData,
     Shared,
@@ -38,6 +39,7 @@ import type {
     SET_CONNECTION_SOURCE_SCHEMA,
     SET_CONNECTION_STATUS,
     SET_DEFAULT_PATH,
+    SET_DESCRIPTION,
     SET_ENTRY,
     SET_ENTRY_KEY,
     SET_ERROR,
@@ -105,6 +107,7 @@ export interface QLState {
     queries: QLConfigQuery[];
     paneViews: QLPaneViews;
     redirectUrl?: string;
+    annotation: EntryAnnotation | null;
 }
 
 export interface QLActionResetQLStore {
@@ -281,6 +284,11 @@ export interface ResetWizardStoreAction {
     type: typeof RESET_WIZARD_STORE;
 }
 
+interface QLActionSetDescription {
+    type: typeof SET_DESCRIPTION;
+    payload: string;
+}
+
 export type QLAction =
     | QLActionResetQLStore
     | QLActionSetQLStore
@@ -318,7 +326,8 @@ export type QLAction =
     | QLActionDuplcateQuery
     | QLActionToggleTablePreview
     | CloseDialogAction
-    | OpenDialogAction;
+    | OpenDialogAction
+    | QLActionSetDescription;
 
 export type QLDispatch = ThunkDispatch<DatalensGlobalState, void, AnyAction>;
 
