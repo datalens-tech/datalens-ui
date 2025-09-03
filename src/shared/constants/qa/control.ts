@@ -28,7 +28,6 @@ export const ControlQA = {
     dialogControlApplyBtn: 'control-dialog-apply-button',
     dialogControlCancelBtn: 'control-dialog-cancel-button',
 
-    groupCommonLoader: 'group-control-common-loader',
     groupCommonLockedBlock: 'group-control-common-locked-block',
 };
 

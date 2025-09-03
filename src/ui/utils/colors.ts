@@ -1,5 +1,5 @@
-import type {ColorPalette} from 'shared';
-import {getAvailableClientPalettesMap} from 'ui/constants';
+import {type ColorPalette} from 'shared';
+import {getAvailableClientPalettesMap, getTenantDefaultColorPaletteId} from 'ui/constants';
 
 export function getPaletteColors(paletteName: string, clientPalettes?: ColorPalette[]) {
     const clientPalette = clientPalettes?.find((item) => item.colorPaletteId === paletteName);
@@ -9,7 +9,8 @@ export function getPaletteColors(paletteName: string, clientPalettes?: ColorPale
 
     const availablePalettesMap = getAvailableClientPalettesMap();
 
-    const currentPalette = availablePalettesMap[paletteName];
+    const currentPalette =
+        availablePalettesMap[paletteName] || availablePalettesMap[getTenantDefaultColorPaletteId()];
 
     return currentPalette?.scheme || [];
 }

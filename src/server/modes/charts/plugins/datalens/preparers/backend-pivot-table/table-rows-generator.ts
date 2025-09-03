@@ -2,6 +2,7 @@ import type {
     BarViewOptions,
     ColorPalette,
     IChartEditor,
+    Palette,
     ServerColor,
     ServerField,
 } from '../../../../../../../shared';
@@ -56,11 +57,13 @@ type GetRowCellMetadataArgs = {
     fieldDict: Record<string, ServerField>;
     settingsByField: Record<string, PivotTableFieldSettings>;
     loadedColorPalettes: Record<string, ColorPalette>;
+    availablePalettes: Record<string, Palette>;
+    defaultColorPaletteId: string;
     annotationsMap: AnnotationsMap;
 };
 
 function getRowCellMetadata(args: GetRowCellMetadataArgs): ChartkitCell {
-    const {loadedColorPalettes, annotationsMap} = args;
+    const {loadedColorPalettes, availablePalettes, annotationsMap, defaultColorPaletteId} = args;
     const [value, legendItemId] = args.pivotDataCellValue[0];
 
     const pivotField = args.fieldsItemIdMap[legendItemId];
@@ -103,12 +106,15 @@ function getRowCellMetadata(args: GetRowCellMetadataArgs): ChartkitCell {
         const barSettings = args.settingsByField[field.guid]?.barsSettings;
         if (isTableBarsSettingsEnabled(field) && barSettings) {
             const {columnValues, options} = barSettings;
+
             const barValueOptions = getBarSettingsValue({
                 field,
                 rowValue: value,
                 columnValues,
                 isTotalCell: isTotalsRowValue,
+                availablePalettes,
                 loadedColorPalettes,
+                defaultColorPaletteId,
             });
 
             const fullFilledBarSettings: BarViewOptions & BarValueOptions = {
@@ -150,6 +156,7 @@ type GenerateTableRowsArgs = {
     sortSettings: PivotTableSortSettings;
     headerTotalsIndexMap: Record<number, boolean>;
     ChartEditor: IChartEditor;
+    defaultColorPaletteId: string;
 };
 
 export const generateTableRows = ({
@@ -164,6 +171,7 @@ export const generateTableRows = ({
     sortSettings,
     headerTotalsIndexMap,
     ChartEditor,
+    defaultColorPaletteId,
 }: GenerateTableRowsArgs): ChartkitTableRows => {
     const {rowsMeta, isSortByRowAllowed} = sortSettings;
     const cellId = {current: 0};
@@ -233,6 +241,7 @@ export const generateTableRows = ({
                         parents,
                         loadedColorPalettes: colorsConfig.loadedColorPalettes,
                         availablePalettes: colorsConfig.availablePalettes,
+                        defaultColorPaletteId,
                     }),
                 };
 
@@ -312,7 +321,9 @@ export const generateTableRows = ({
                         fieldDict,
                         settingsByField,
                         loadedColorPalettes: colorsConfig.loadedColorPalettes,
+                        availablePalettes: colorsConfig.availablePalettes,
                         annotationsMap,
+                        defaultColorPaletteId,
                     }),
                 };
 
@@ -338,6 +349,7 @@ export const generateTableRows = ({
         fieldsItemIdMap,
         loadedColorPalettes: colorsConfig.loadedColorPalettes,
         availablePalettes: colorsConfig.availablePalettes,
+        defaultColorPaletteId,
     });
 
     colorizePivotTableByColorField({

@@ -3,6 +3,7 @@ import React from 'react';
 import {Icon} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {Feature} from 'shared';
+import type {GetEntryResponse} from 'shared/schema';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {EntryContextMenuNestedProps, MenuClickHandler} from '../EntryContextMenu';
@@ -62,7 +63,7 @@ export const withConfiguredEntryContextMenu = (
     function WithConfiguredEntryContextMenu(
         props: EntryContextMenuNestedProps &
             ContextMenuParams & {
-                onMenuClick: MenuClickHandler;
+                onMenuClick: MenuClickHandler<GetEntryResponse>;
             },
     ) {
         const resultProps = {

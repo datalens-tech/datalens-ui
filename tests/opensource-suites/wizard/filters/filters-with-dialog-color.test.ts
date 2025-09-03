@@ -9,12 +9,12 @@ import {WizardVisualizationId} from '../../../../src/shared';
 const chartNamePattern = 'e2e-wizard-filters';
 
 const setupFilters = async (wizardPage: WizardPage) => {
-    await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Filters, 'city');
-    await wizardPage.filterEditor.selectValues(['Los Angeles', 'Akron']);
+    await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Filters, 'region');
+    await wizardPage.filterEditor.selectValues(['Central', 'East']);
     await wizardPage.filterEditor.apply();
 
     await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Filters, 'Sales');
-    await wizardPage.filterEditor.selectValues(['122.352']);
+    await wizardPage.filterEditor.selectValues(['0.444']);
     await wizardPage.filterEditor.apply();
 };
 
@@ -38,9 +38,9 @@ datalensTest.describe('Wizard filters', () => {
         async ({page}: {page: Page}) => {
             const wizardPage = new WizardPage({page});
 
-            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'city');
-            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'city');
-            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Colors, 'city');
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'region');
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'region');
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Colors, 'region');
 
             await wizardPage.colorDialog.open();
 
@@ -58,7 +58,7 @@ datalensTest.describe('Wizard filters', () => {
 
             expect(valuesWithoutFilters).not.toEqual(valuesWithFilters);
 
-            expect(valuesWithFilters).toEqual(['Los Angeles']);
+            expect(valuesWithFilters).toEqual(['Central']);
         },
     );
 

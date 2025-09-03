@@ -7,13 +7,13 @@ import {batch, useDispatch, useSelector} from 'react-redux';
 import {DashboardDialogSettingsQa} from 'shared/constants/qa/dash';
 import {DEFAULT_DASH_MARGINS} from 'ui/components/DashKit/constants';
 import {registry} from 'ui/registry';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import {openDialog} from 'ui/store/actions/dialog';
 
 import type {DatalensGlobalState} from '../../../../..';
-import {EntryDialogName} from '../../../../..';
 import {i18n} from '../../../../../../i18n';
 import type {DashSettings, DashSettingsGlobalParams} from '../../../../../../shared';
-import {DashLoadPriority, Feature} from '../../../../../../shared';
+import {DashLoadPriority} from '../../../../../../shared';
+import {DIALOG_ENTRY_DESCRIPTION} from '../../../../../components/DialogEntryDescription';
 import EntryDialogues from '../../../../../components/EntryDialogues/EntryDialogues';
 import {DIALOG_TYPE} from '../../../../../constants/dialogs';
 import {validateParamTitle} from '../../../components/ParamsSettings/helpers';
@@ -169,30 +169,34 @@ const Settings = () => {
     };
 
     const handleButtonSetupAccessDescription = React.useCallback(() => {
-        entryDialoguesRef?.current?.open?.({
-            dialog: EntryDialogName.DashMeta,
-            dialogProps: {
-                title: i18n('dash.settings-dialog.edit', 'label_access-description'),
-                text: accessDescription || '',
-                canEdit: true,
-                isEditMode: true,
-                onApply: (text: string) => setAccessDesc(text),
-            },
-        });
-    }, [entryDialoguesRef, accessDescription]);
+        dispatch(
+            openDialog({
+                id: DIALOG_ENTRY_DESCRIPTION,
+                props: {
+                    title: i18n('dash.settings-dialog.edit', 'label_access-description'),
+                    description: accessDescription || '',
+                    canEdit: true,
+                    isEditMode: true,
+                    onApply: (text: string) => setAccessDesc(text),
+                },
+            }),
+        );
+    }, [dispatch, accessDescription]);
 
     const handleButtonSetupSupportDescription = React.useCallback(() => {
-        entryDialoguesRef?.current?.open?.({
-            dialog: EntryDialogName.DashMeta,
-            dialogProps: {
-                title: i18n('dash.settings-dialog.edit', 'label_support-description'),
-                text: supportDescription || '',
-                canEdit: true,
-                isEditMode: true,
-                onApply: (text: string) => setSupportDesc(text),
-            },
-        });
-    }, [entryDialoguesRef, supportDescription]);
+        dispatch(
+            openDialog({
+                id: DIALOG_ENTRY_DESCRIPTION,
+                props: {
+                    title: i18n('dash.settings-dialog.edit', 'label_support-description'),
+                    description: supportDescription || '',
+                    canEdit: true,
+                    isEditMode: true,
+                    onApply: (text: string) => setSupportDesc(text),
+                },
+            }),
+        );
+    }, [dispatch, supportDescription]);
 
     const handleChangeGlobalParams = React.useCallback((params: DashSettingsGlobalParams) => {
         setIsGlobalParamsError(
@@ -215,30 +219,28 @@ const Settings = () => {
         <Dialog
             open={visible}
             onClose={() => dispatch(closeDialog())}
-            disableFocusTrap={true}
             disableEscapeKeyDown={true}
+            disableHeightTransition={true}
             qa={DashboardDialogSettingsQa.DialogRoot}
         >
             <Dialog.Header caption={i18n('dash.settings-dialog.edit', 'label_settings')} />
             <Dialog.Body className={b()}>
-                {isEnabledFeature(Feature.DashAutorefresh) && (
-                    <AutoRefresh
-                        autoUpdateValue={autoupdate}
-                        onChangeAutoUpdate={() => {
-                            const newValue = !autoupdate;
-                            setAutoupdate(newValue);
-                            setSilentLoading(false);
-                            setAutoupdateInterval(newValue ? getMinAutoupdateInterval() : '');
-                        }}
-                        intervalDisabled={!autoupdate}
-                        intervalValue={String(autoupdateInterval)}
-                        onUpdateInterval={handleAutoUpdateIntervalInputChange}
-                        onBlurInterval={() => isValidAutoupdateInterval()}
-                        silentLoadingValue={silentLoading}
-                        silentLoadingDisabled={!autoupdate}
-                        onChangeSilentLoading={() => setSilentLoading(!silentLoading)}
-                    />
-                )}
+                <AutoRefresh
+                    autoUpdateValue={autoupdate}
+                    onChangeAutoUpdate={() => {
+                        const newValue = !autoupdate;
+                        setAutoupdate(newValue);
+                        setSilentLoading(false);
+                        setAutoupdateInterval(newValue ? getMinAutoupdateInterval() : '');
+                    }}
+                    intervalDisabled={!autoupdate}
+                    intervalValue={String(autoupdateInterval)}
+                    onUpdateInterval={handleAutoUpdateIntervalInputChange}
+                    onBlurInterval={() => isValidAutoupdateInterval()}
+                    silentLoadingValue={silentLoading}
+                    silentLoadingDisabled={!autoupdate}
+                    onChangeSilentLoading={() => setSilentLoading(!silentLoading)}
+                />
                 <Display
                     margins={margins}
                     onChangeMargins={handleMarginsChange}

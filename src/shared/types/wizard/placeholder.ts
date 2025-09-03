@@ -4,7 +4,7 @@ import type {PlaceholderId} from '../../constants';
 
 import type {Field} from './field';
 
-import type {Sort} from './index';
+import type {CommonNumberFormattingOptions, Sort} from './index';
 
 export interface PlaceholderSettings {
     scale?: string;
@@ -21,6 +21,8 @@ export interface PlaceholderSettings {
     holidays?: string;
     polylinePoints?: string;
     axisFormatMode?: string;
+    axisLabelFormating?: CommonNumberFormattingOptions;
+    axisLabelDateFormat?: string;
     axisModeMap?: Record<string, string>;
     disableAxisMode?: boolean;
     axisVisibility?: string;
@@ -38,19 +40,14 @@ export type Placeholder = {
     items: Field[];
     settings?: Record<string, any>;
     required?: boolean;
-    onChange?: ({
-        placeholder,
-        visualization,
-        colors,
-        sort,
-        shapes,
-    }: {
+    onChange?: (params: {
         placeholder: Placeholder;
         visualization: any;
         colors: Field[];
         sort: Sort[];
         shapes: Field[];
         placeholderId: PlaceholderId;
+        isQL: boolean;
     }) => void;
     allowedDataTypes?: Set<string>;
     allowedFinalTypes?: Set<string>;

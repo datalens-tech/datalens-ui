@@ -56,6 +56,7 @@ import type {DashState} from '../reducers/dashTypedReducer';
 import {
     selectDash,
     selectDashData,
+    selectDashDescription,
     selectDashEntry,
     selectEntryId,
 } from '../selectors/dashTypedSelectors';
@@ -447,18 +448,6 @@ export const setDashViewMode =
         dispatch(resetDashEditHistory());
     };
 
-export const SET_DASH_DESC_VIEW_MODE = Symbol('dash/SET_DASH_DESC_VIEW_MODE');
-export type SetDescViewModeAction = {
-    type: typeof SET_DASH_DESC_VIEW_MODE;
-    payload?: Mode;
-};
-export const setDashDescViewMode = (
-    payload?: SetDescViewModeAction['payload'],
-): SetDescViewModeAction => ({
-    type: SET_DASH_DESC_VIEW_MODE,
-    payload,
-});
-
 export const SET_DASH_DESCRIPTION = Symbol('dash/SET_DASH_DESCRIPTION');
 export type SetDescriptionAction = {
     type: typeof SET_DASH_DESCRIPTION;
@@ -474,7 +463,6 @@ export const setDashDescription = (
 export const updateDescription =
     (description: SetDescriptionAction['payload']) => (dispatch: DashDispatch) => {
         dispatch(setDashDescription(description));
-        dispatch(setDashDescViewMode(Mode.View));
         dispatch(addDashEditHistoryPoint());
     };
 
@@ -752,17 +740,24 @@ export function copyDash({
     return async (_: DashDispatch, getState: () => DatalensGlobalState) => {
         const state = getState();
         let dashData: DashData;
+        let dashDescription: string | undefined;
 
         if (selectDash(state) === null || selectEntryId(state) !== entryId) {
             const response = await getSdk().sdk.us.getEntry({entryId});
 
             if (response.scope === EntryScope.Dash) {
-                dashData = (response as any as DashEntry).data;
+                const dashEntry = response as any as DashEntry;
+
+                dashData = dashEntry.data;
+                dashDescription = dashEntry.annotation?.description;
             } else {
                 throw Error(`Invalid entry type: ${response.scope}`);
             }
         } else {
             dashData = withUnsavedChanges ? selectDashData(state) : selectDashEntry(state).data;
+            dashDescription = withUnsavedChanges
+                ? selectDashDescription(state)
+                : selectDashEntry(state).annotation?.description;
         }
 
         return sdk.charts.createDash({
@@ -773,6 +768,7 @@ export function copyDash({
                 key,
                 workbookId,
                 name,
+                description: dashDescription,
             },
         });
     };

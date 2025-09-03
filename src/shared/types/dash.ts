@@ -7,6 +7,7 @@ import type {
     Dictionary,
     Entry,
     EntryScope,
+    HintSettings,
     StringParams,
     ValueOf,
 } from './index';
@@ -96,6 +97,7 @@ export interface DashData {
     salt: string;
     schemeVersion: number;
     settings: DashSettings;
+    // only in old dashbords (now migrating to annotation)
     description?: string;
     accessDescription?: string;
     supportDescription?: string;
@@ -141,6 +143,18 @@ export type BackgroundSettings = {
     color: string;
 };
 
+export function isBackgroundSettings(value: unknown): value is BackgroundSettings {
+    return (
+        typeof value === 'object' &&
+        value !== null &&
+        'color' in value &&
+        typeof value.color === 'string' &&
+        ('enabled' in value
+            ? typeof value.enabled === 'boolean' || value.enabled === undefined
+            : true)
+    );
+}
+
 export interface DashTabItemBase {
     id: string;
     namespace: string;
@@ -174,6 +188,8 @@ export interface DashTabItemTitle extends DashTabItemBase {
         showInTOC: boolean;
         autoHeight?: boolean;
         background?: BackgroundSettings;
+        textColor?: string;
+        hint?: HintSettings;
     };
 }
 

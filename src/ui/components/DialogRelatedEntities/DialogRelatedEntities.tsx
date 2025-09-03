@@ -1,7 +1,14 @@
 import React from 'react';
 
 import type {DropdownMenuItem} from '@gravity-ui/uikit';
-import {Dialog, DropdownMenu, Icon, Loader, RadioButton} from '@gravity-ui/uikit';
+import {
+    Button,
+    Dialog,
+    DropdownMenu,
+    Icon,
+    Loader,
+    SegmentedRadioGroup as RadioButton,
+} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import isEmpty from 'lodash/isEmpty';
@@ -40,6 +47,7 @@ type DialogRelatedEntitiesProps = EntryDialogProps & {
 };
 
 const CONCURRENT_ID = 'list-related-entities';
+const cancelConcurrentRequest = () => getSdk().cancelRequest(CONCURRENT_ID);
 
 const MENU_DEFAULT_ACTIONS = [CONTEXT_MENU_COPY_LINK, CONTEXT_MENU_COPY_ID];
 
@@ -99,10 +107,10 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
     const {DialogRelatedEntitiesRadioHint} = registry.common.components.getAll();
     const {renderDialogRelatedEntitiesAlertHint} = registry.common.functions.getAll();
 
-    React.useEffect(() => {
+    const fetchRelatedEntries = React.useCallback(() => {
         setIsLoading(true);
         setIsError(false);
-        getSdk().cancelRequest(CONCURRENT_ID);
+        cancelConcurrentRequest();
         getSdk()
             .sdk.mix.getEntryRelations(
                 {
@@ -126,6 +134,12 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
             });
     }, [entry, currentDirection]);
 
+    React.useEffect(() => {
+        fetchRelatedEntries();
+
+        return () => cancelConcurrentRequest();
+    }, [fetchRelatedEntries]);
+
     const showDirectionControl =
         !topLevelEntryScopes.includes(entry.scope as EntryScope) &&
         entry.scope !== EntryScope.Connection;
@@ -148,12 +162,24 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
         }
 
         if (isError) {
+            const renderRetryAction = () => (
+                <Button
+                    className={b('button-retry')}
+                    size="l"
+                    view="action"
+                    onClick={fetchRelatedEntries}
+                >
+                    {i18n('label_button-retry')}
+                </Button>
+            );
+
             return (
                 <div className={b('error-state')}>
                     <PlaceholderIllustration
                         direction="column"
                         name="error"
                         title={i18n('label_request-error')}
+                        renderAction={renderRetryAction}
                     />
                 </div>
             );
@@ -196,7 +222,7 @@ export const DialogRelatedEntities = ({onClose, visible, entry}: DialogRelatedEn
     const showRelationsCount = Boolean(relationsCount && !isLoading);
 
     return (
-        <Dialog onClose={handleClose} open={visible} className={b()}>
+        <Dialog onClose={handleClose} open={visible} className={b()} disableHeightTransition={true}>
             <Dialog.Header caption={i18n('label_title')} />
             <Dialog.Body className={b('body')}>
                 <EntitiesList

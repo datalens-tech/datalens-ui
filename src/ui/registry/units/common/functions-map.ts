@@ -1,6 +1,6 @@
 import type {MarkdownItPluginCb} from '@diplodoc/transform/lib/plugins/typings';
 import type {CancellablePromise} from '@gravity-ui/sdk';
-import type {SVGIconData} from '@gravity-ui/uikit/build/esm/components/Icon/types';
+import type {IconData} from '@gravity-ui/uikit';
 import type {RenderHtmlOutput} from 'shared/modules/markdown/markdown';
 import type {
     BatchRenderMarkdownResponse,
@@ -46,7 +46,9 @@ import type {GetFunctionsDocumentationResponse} from './types/functions/getFunct
 import type {GloballyEntrySettings} from './types/functions/getGloballyEntrySettings';
 import type {GetIllustrationStore} from './types/functions/getIllustrationStore';
 import type {GetLoginById} from './types/functions/getLoginById';
+import type {GetLogoIcon} from './types/functions/getLogoIcon';
 import type {GetUIEntryRouteArgs} from './types/functions/getUIEntryRoute';
+import type {IsValidLogoUrl} from './types/functions/isValidLogoUrl';
 import type {OpenDialogOrganizationInvite} from './types/functions/openDialogOrganizationInvite';
 import type {OpenDialogOrganizationInviteUsers} from './types/functions/openDialogOrganizationInviteUsers';
 import type {RenderDialogRelatedEntitiesAlertHint} from './types/functions/renderDialogRelatedEntitiesAlertHint';
@@ -67,7 +69,7 @@ export const commonFunctionsMap = {
         makeFunctionTemplate<
             <T>(args: {action: () => void; hidden: boolean}) => EntryContextMenuItem<T>
         >(),
-    getIconDataById: makeFunctionTemplate<(arg: IconId) => SVGIconData>(),
+    getIconDataById: makeFunctionTemplate<(arg: IconId) => IconData>(),
     getIllustrationStore: makeFunctionTemplate<() => GetIllustrationStore>(),
     getAccessEntryMenuItem: makeFunctionTemplate<() => ContextMenuItem>(),
     setEntryKey: makeFunctionTemplate<SetEntryKey>(),
@@ -172,4 +174,6 @@ export const commonFunctionsMap = {
     getCurrentUserRights: makeFunctionTemplate<() => {admin: boolean}>(),
     getUsersSuggestItems: makeFunctionTemplate<GetUsersSuggestItems>(),
     getUsersById: makeFunctionTemplate<GetUsersById>(),
+    getLogoIcon: makeFunctionTemplate<GetLogoIcon>(),
+    isValidLogoUrl: makeFunctionTemplate<IsValidLogoUrl>(),
 } as const;

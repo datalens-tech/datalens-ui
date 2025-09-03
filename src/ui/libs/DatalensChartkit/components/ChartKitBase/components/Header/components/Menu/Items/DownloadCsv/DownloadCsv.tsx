@@ -2,12 +2,10 @@ import React from 'react';
 
 import {FormRow} from '@gravity-ui/components';
 import type {SelectOption} from '@gravity-ui/uikit';
-import {Card, Dialog, Select, Text} from '@gravity-ui/uikit';
+import {Dialog, Select, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {useSelector} from 'react-redux';
 import {ChartkitMenuDialogsQA, EXPORT_FORMATS} from 'shared';
-import {selectWidget} from 'ui/units/wizard/selectors/widget';
 
 import type {ExportActionArgs, ExportChartArgs} from '../Export/types';
 
@@ -17,19 +15,18 @@ const b = block('download-csv-modal');
 
 const i18n = I18n.keyset('chartkit.menu.download-csv');
 
-const EXPORT_WARNING_TYPE = 'table';
-
 type DownloadCsvProps = {
     onApply: ({chartData, params}: ExportChartArgs) => void;
     loading?: boolean;
     onClose: () => void;
     footerContent?: React.ReactNode;
-    chartType: string;
+    chartType?: string;
     chartData: ExportActionArgs;
     path?: string;
     onExportLoading?: (isLoading: boolean) => void;
     additionalControls?: React.ReactNode;
     showWarning?: boolean;
+    showHint?: boolean;
     className?: string;
 };
 
@@ -85,21 +82,15 @@ export const DownloadCsv = ({
     loading,
     onClose,
     footerContent,
-    chartType,
     chartData,
     onExportLoading,
     additionalControls,
-    showWarning = true,
     className,
+    showHint = true,
 }: DownloadCsvProps) => {
     const [delValue, setDelValue] = React.useState(';');
     const [delNumber, setDelNumber] = React.useState('.');
     const [encoding, setEncoding] = React.useState('utf8');
-
-    const widget = useSelector(selectWidget);
-    const revId = widget?.revId;
-
-    const showAttention = showWarning && chartType === EXPORT_WARNING_TYPE;
 
     const downloadCsv = React.useCallback(() => {
         const params = {
@@ -109,9 +100,9 @@ export const DownloadCsv = ({
             encoding,
         };
 
-        onApply({chartData, params, onExportLoading, chartRevId: revId});
+        onApply({chartData, params, onExportLoading});
         onClose();
-    }, [chartData, delNumber, delValue, encoding, onApply, revId]);
+    }, [chartData, delNumber, delValue, encoding, onApply]);
 
     return (
         <Dialog
@@ -122,11 +113,6 @@ export const DownloadCsv = ({
         >
             <Dialog.Header caption={i18n('label_title')} />
             <Dialog.Body className={b('content')}>
-                {showAttention && (
-                    <Card theme="normal" className={b('attention')}>
-                        {i18n('label_attention')}
-                    </Card>
-                )}
                 {additionalControls}
                 <FormRow label={i18n('label_values-delimiter')} className={b('row')}>
                     <Select
@@ -155,9 +141,11 @@ export const DownloadCsv = ({
                         onUpdate={(encodingVal) => setEncoding(encodingVal[0])}
                     />
                 </FormRow>
-                <Text variant="body-1" color="hint">
-                    {i18n('label_hint')}
-                </Text>
+                {showHint && (
+                    <Text variant="body-1" color="hint">
+                        {i18n('label_hint')}
+                    </Text>
+                )}
             </Dialog.Body>
             <Dialog.Footer
                 onClickButtonCancel={onClose}

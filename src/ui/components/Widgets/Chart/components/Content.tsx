@@ -3,12 +3,10 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {useDispatch} from 'react-redux';
-import {Feature} from 'shared';
 import {DL} from 'ui/constants';
 import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import {registry} from 'ui/registry';
 import {setSkipReload} from 'ui/units/dash/store/actions/dashTyped';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {getRandomCKId} from '../../../../libs/DatalensChartkit/ChartKit/helpers/getRandomCKId';
 import {DatalensChartkitContent} from '../../../../libs/DatalensChartkit/components/ChartKitBase/components/Chart/Chart';
@@ -54,6 +52,7 @@ export const Content = (props: ChartContentProps) => {
         splitTooltip,
         compactLoader,
         chartId,
+        chartRevIdRef,
         requestId,
         error,
         onRender,
@@ -123,13 +122,10 @@ export const Content = (props: ChartContentProps) => {
 
     const {onAction} = useChartActions({onChange});
 
-    const showFloatControls = isEnabledFeature(Feature.DashFloatControls);
-    const isFirstLoadingFloat = showFloatControls && loadedData === null;
+    const isFirstLoadingFloat = loadedData === null;
 
     // chartkit doesn't call onLoad when spltTooltip is enabled
-    const [hasDummy, setHasDummy] = React.useState<boolean>(
-        DL.IS_MOBILE && showFloatControls && !splitTooltip,
-    );
+    const [hasDummy, setHasDummy] = React.useState<boolean>(DL.IS_MOBILE && !splitTooltip);
 
     const chartInnerLoaderComponent = isFirstLoadingFloat
         ? emptyLoaderComponent
@@ -166,6 +162,7 @@ export const Content = (props: ChartContentProps) => {
                         dataProps={dataProps}
                         requestId={requestId}
                         loadedData={loadedData}
+                        chartRevIdRef={chartRevIdRef}
                         widgetDataRef={widgetDataRef}
                         widgetRenderTimeRef={widgetRenderTimeRef}
                         yandexMapAPIWaiting={yandexMapAPIWaiting}

@@ -6,4 +6,8 @@ export enum QlConfigVersions {
     V3 = '3',
     // A new 'dimensions' section has been added to the pie chart, the old section 'dimensions' has been moved to 'colors'.
     V4 = '4',
+    // Rename 'default-palette' to classic20
+    V5 = '5',
+    // rename the palette id (remove the word "palette" from the value)
+    V6 = '6',
 }

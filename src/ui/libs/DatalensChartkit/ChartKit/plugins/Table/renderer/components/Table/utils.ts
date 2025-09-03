@@ -2,9 +2,13 @@ import type * as React from 'react';
 
 import type {DateTimeInput} from '@gravity-ui/date-utils';
 import {dateTimeUtc} from '@gravity-ui/date-utils';
-import type {ColumnDef, SortingFnOption} from '@tanstack/react-table';
+import type {
+    ColumnDef,
+    DisplayColumnDef,
+    GroupColumnDef,
+    SortingFnOption,
+} from '@tanstack/react-table';
 import {createColumnHelper} from '@tanstack/react-table';
-import type {DisplayColumnDef, GroupColumnDef} from '@tanstack/table-core/build/lib/types';
 import {ascending, rgb} from 'd3';
 import type {Primitive, RGBColor} from 'd3';
 import get from 'lodash/get';

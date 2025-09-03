@@ -1,14 +1,14 @@
 import React from 'react';
 
-import type {RadioButtonOption} from '@gravity-ui/uikit';
-import {RadioButton} from '@gravity-ui/uikit';
+import type {SegmentedRadioGroupOptionProps} from '@gravity-ui/uikit';
+import {SegmentedRadioGroup as RadioButton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 
 import './DialogRadioButtons.scss';
 
 type Props = {
     disabled?: boolean;
-    items: RadioButtonOption[];
+    items: SegmentedRadioGroupOptionProps[];
     value: string | undefined;
     onUpdate: (value: string) => void;
     stretched?: boolean;
@@ -29,12 +29,13 @@ const DialogRadioButtons = React.forwardRef<HTMLDivElement, Props>(
                 qa={props.qa}
                 ref={ref}
             >
-                {props.items.map(({value, content, disabled}, index) => {
+                {props.items.map(({value, content, disabled, controlProps}, index) => {
                     return (
                         <RadioButton.Option
                             key={`${value}-${index}`}
                             value={value}
                             disabled={disabled}
+                            controlProps={controlProps}
                         >
                             {content}
                         </RadioButton.Option>

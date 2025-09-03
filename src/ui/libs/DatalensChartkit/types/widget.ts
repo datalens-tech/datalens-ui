@@ -292,6 +292,7 @@ export type MarkdownWidget = WidgetBaseWithData & {
         html?: string;
         markdown?: string;
         meta?: object;
+        original_markdown?: string;
     };
 };
 

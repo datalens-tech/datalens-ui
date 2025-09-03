@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {Loader, Tabs, Text} from '@gravity-ui/uikit';
+import {Loader, Tab, TabList, TabProvider, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Redirect, Route, Switch, useHistory, useParams} from 'react-router-dom';
@@ -16,12 +16,22 @@ const GeneralSettings = React.lazy(
 );
 const UsersList = React.lazy(() => import('../../components/UsersList/UsersList'));
 
-type MainPageProps = {
+export type MainPageProps = {
     customGeneralSettings?: React.ReactNode;
     disablePalettesEdit?: boolean;
+    customTabItems?: {
+        id: string;
+        title: string;
+    }[];
+    customTabRoutes?: React.ReactNode[];
 };
 
-const MainPage = ({customGeneralSettings, disablePalettesEdit}: MainPageProps) => {
+const MainPage = ({
+    customGeneralSettings,
+    disablePalettesEdit,
+    customTabItems = [],
+    customTabRoutes,
+}: MainPageProps) => {
     const history = useHistory();
     const {tab} = useParams<{tab: string}>();
 
@@ -60,24 +70,29 @@ const MainPage = ({customGeneralSettings, disablePalettesEdit}: MainPageProps) =
         history.push(`/settings/${tabId}`);
     };
 
+    const tabs = [
+        {
+            id: 'general',
+            title: i18n('section_general'),
+        },
+        {id: 'users', title: i18n('section_users')},
+    ];
+
     return (
         <div className={b()}>
             <Text as={'h3' as const} variant="subheader-3" className={b('header')}>
                 {i18n('label_header')}
             </Text>
             <div role="tablist" className={b('tabs')}>
-                <Tabs
-                    items={[
-                        {
-                            id: 'general',
-                            title: i18n('section_general'),
-                        },
-                        {id: 'users', title: i18n('section_users')},
-                    ]}
-                    size="m"
-                    onSelectTab={handleSelectTab}
-                    activeTab={activeTab}
-                />
+                <TabProvider value={activeTab} onUpdate={handleSelectTab}>
+                    <TabList size="m">
+                        {[...tabs, ...customTabItems].map((item) => (
+                            <Tab key={item.id} value={item.id}>
+                                {item.title}
+                            </Tab>
+                        ))}
+                    </TabList>
+                </TabProvider>
             </div>
             <main className={b('tabs-content')}>
                 <React.Suspense fallback={<Loader size="m" className={b('loader')} />}>
@@ -94,6 +109,7 @@ const MainPage = ({customGeneralSettings, disablePalettesEdit}: MainPageProps) =
                             )}
                         />
                         <Route exact path={'/settings/users'} component={UsersList} />
+                        {customTabRoutes}
                         <Redirect to="/settings/general" />
                     </Switch>
                 </React.Suspense>

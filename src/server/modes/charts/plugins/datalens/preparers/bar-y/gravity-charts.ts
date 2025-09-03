@@ -1,7 +1,16 @@
-import type {BarYSeries, ChartData} from '@gravity-ui/chartkit/d3';
+import type {BarYSeries, ChartData} from '@gravity-ui/chartkit/gravity-charts';
+import merge from 'lodash/merge';
 
 import type {SeriesExportSettings, ServerField} from '../../../../../../../shared';
-import {PlaceholderId, WizardVisualizationId} from '../../../../../../../shared';
+import {
+    PlaceholderId,
+    WizardVisualizationId,
+    isHtmlField,
+    isMarkdownField,
+    isMarkupField,
+} from '../../../../../../../shared';
+import {getBaseChartConfig} from '../../gravity-charts/utils';
+import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import type {PrepareFunctionArgs} from '../types';
 
@@ -10,13 +19,14 @@ import {prepareBarYData} from './prepare-bar-y-data';
 type BarYPoint = {x: number; y: number} & Record<string, unknown>;
 
 export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
-    const {visualizationId, colors, placeholders} = args;
+    const {shared, visualizationId, colors, labels, placeholders} = args;
     const {graphs, categories} = prepareBarYData(args);
     const hasCategories = Boolean(categories?.length);
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xField: ServerField | undefined = xPlaceholder?.items?.[0];
     const yPlaceholder = placeholders.find((p) => p.id === PlaceholderId.Y);
     const yField: ServerField | undefined = yPlaceholder?.items?.[0];
+    const labelField = labels?.[0];
 
     const exportSettings: SeriesExportSettings = {
         columns: [
@@ -32,6 +42,10 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
         );
     }
 
+    const shouldUseHtmlForLabels =
+        isMarkupField(labelField) || isHtmlField(labelField) || isMarkdownField(labelField);
+
+    const dataLabelFormat = getFieldFormatOptions({field: labelField});
     const series = graphs.map<BarYSeries>((graph) => {
         return {
             ...graph,
@@ -49,6 +63,8 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
             dataLabels: {
                 enabled: graph.dataLabels?.enabled,
                 inside: visualizationId === WizardVisualizationId.BarY100pD3,
+                html: shouldUseHtmlForLabels,
+                format: dataLabelFormat,
             },
             custom: {
                 ...graph.custom,
@@ -68,6 +84,12 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
         },
     };
 
+    if (xField) {
+        config.tooltip = {
+            valueFormat: getFieldFormatOptions({field: xField}),
+        };
+    }
+
     if (hasCategories) {
         config.yAxis = [
             {
@@ -77,5 +99,5 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
         ];
     }
 
-    return config;
+    return merge(getBaseChartConfig(shared), config);
 }

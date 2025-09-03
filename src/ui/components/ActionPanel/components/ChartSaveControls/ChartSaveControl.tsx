@@ -30,7 +30,7 @@ type ChartSaveControlProps = {
     dropdownItems?: DropdownMenuItemMixed<() => void>[];
     needSplitMainAndAdditionalButtons?: boolean;
 
-    isLocked: boolean;
+    canEdit: boolean;
     isSaveButtonDisabled: boolean;
     isDropdownDisabled: boolean;
     isCurrentRevisionActual: boolean;
@@ -49,7 +49,7 @@ export const ChartSaveControls: React.FC<ChartSaveControlProps> = (
         className,
         additionalControls,
         needSplitMainAndAdditionalButtons,
-        isLocked,
+        canEdit,
         isSaveButtonDisabled,
         isCurrentRevisionActual,
         dropdownItems,
@@ -74,7 +74,7 @@ export const ChartSaveControls: React.FC<ChartSaveControlProps> = (
             extraProps: {
                 'data-qa': 'save-as-draft',
             } as any,
-            hidden: isNewChart || isLocked,
+            hidden: isNewChart || !canEdit,
         };
 
         const saveAndPublishItem = {
@@ -101,7 +101,7 @@ export const ChartSaveControls: React.FC<ChartSaveControlProps> = (
         ];
     }, [
         isNewChart,
-        isLocked,
+        canEdit,
         isCurrentRevisionActual,
         onSaveAsDraftClick,
         onSaveAndPublishClick,
@@ -122,12 +122,12 @@ export const ChartSaveControls: React.FC<ChartSaveControlProps> = (
                     <div className={b('save-btn-wrapper')}>
                         <div
                             key="pseudosave-btn"
-                            className={b('pseudosave-btn', {active: isLocked})}
+                            className={b('pseudosave-btn', {active: !canEdit})}
                             onClick={() => onOpenNoRightsDialog()}
                         />
                         <SaveButton
                             onClick={onClickButtonSave}
-                            isLocked={isLocked}
+                            canEdit={canEdit}
                             disabled={isSaveButtonDisabled}
                             isSaveAsDraft={!isCurrentRevisionActual && !isNewChart}
                         />

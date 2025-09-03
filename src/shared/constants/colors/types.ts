@@ -1,16 +1,17 @@
-export const DEFAULT_PALETTE_ID = 'default-palette';
+export const AUTO_PALETTE_ID = 'auto';
 
 export const GRADIENT_PALETTE_ID = {
-    EMERALD_20: 'emerald20-palette',
-    GOLDEN_20: 'golden20-palette',
-    NEUTRAL_20: 'neutral20-palette',
-    OCEANIC_20: 'oceanic20-palette',
-    TRAFFIC_LIGHT_9: 'traffic-light9-palette',
+    EMERALD_20: 'emerald20',
+    GOLDEN_20: 'golden20',
+    NEUTRAL_20: 'neutral20',
+    OCEANIC_20: 'oceanic20',
+    TRAFFIC_LIGHT_9: 'traffic-light9',
 } as const;
 
 export const COMMON_PALETTE_ID = {
-    DEFAULT: DEFAULT_PALETTE_ID,
-    DATALENS_NEO_20: 'datalens-neo-20-palette',
+    CLASSIC_20: 'classic20',
+    DEFAULT_20: 'default20',
+    DATALENS_NEO_20: 'datalens-neo-20',
     ...GRADIENT_PALETTE_ID,
 } as const;
 
@@ -31,11 +32,11 @@ export const TABLEAU_PALETTE_ID = {
 } as const;
 
 export const PALETTE_ID = {
+    AUTO_PALETTE_ID,
     ...COMMON_PALETTE_ID,
     ...TABLEAU_PALETTE_ID,
 } as const;
 
-export type DefaultPaletteId = typeof DEFAULT_PALETTE_ID;
 export type CommonPaletteId = (typeof COMMON_PALETTE_ID)[keyof typeof COMMON_PALETTE_ID];
 export type TableauPaletteId = (typeof TABLEAU_PALETTE_ID)[keyof typeof TABLEAU_PALETTE_ID];
 export type InternalPaletteId = CommonPaletteId;

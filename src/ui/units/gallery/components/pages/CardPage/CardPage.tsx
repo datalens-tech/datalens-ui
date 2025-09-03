@@ -4,6 +4,7 @@ import {dateTime} from '@gravity-ui/date-utils';
 import {ArrowLeft, Calendar, Link as LinkIcon, Person, Xmark} from '@gravity-ui/icons';
 import {
     ActionTooltip,
+    Breadcrumbs,
     Button,
     Card,
     Col,
@@ -17,7 +18,6 @@ import {
     useThemeType,
 } from '@gravity-ui/uikit';
 import type {ButtonProps, IconData} from '@gravity-ui/uikit';
-import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
 import {I18n} from 'i18n';
 import {useHistory, useLocation, useParams} from 'react-router-dom';
 import {ErrorContentTypes} from 'shared';
@@ -27,13 +27,12 @@ import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 import ErrorContent from 'ui/components/ErrorContent/ErrorContent';
 import {ScrollableWithShadow} from 'ui/components/ScrollableWithShadow/ScrollableWithShadow';
 import {SmartLoader} from 'ui/components/SmartLoader/SmartLoader';
-import {DL, URL_OPTIONS} from 'ui/constants';
+import {DL} from 'ui/constants';
 import {useGetGalleryItemQuery, useGetGalleryItemsQuery} from 'ui/units/gallery/store/api';
 import Utils from 'ui/utils';
 import {copyTextWithToast} from 'ui/utils/copyText';
 
 import {GalleryCardLabels, GalleryCardPreview, PageHeader, SectionHeader} from '../../blocks';
-import type {ActiveMediaQuery} from '../../types';
 import {
     block,
     galleryI18n,
@@ -51,6 +50,7 @@ import {CardDescription} from './CardDescription/CardDescription';
 import {FullscreenGallery} from './FullscreenGallery/FullscreenGallery';
 import {ImportDropdown} from './ImportDropdown/ImportDropdown';
 import {CARD_IMAGE_PREVIEW_HEIGHT, PreviewCard} from './PreviewCard/PreviewCard';
+import {getIframeLang, getIframeUrl} from './helpers';
 import {useErrorLayoutAdjustment} from './hooks/useErrorLayoutAdjustment';
 
 import './CardPage.scss';
@@ -65,19 +65,6 @@ const MOBILE_ICON_SIZE = 18;
 interface IconWithTextProps {
     iconData: IconData;
     text: string;
-}
-
-function getIframeUrl({publicUrl, lang, theme}: {publicUrl?: string; lang: string; theme: string}) {
-    if (!publicUrl) {
-        return publicUrl;
-    }
-
-    const url = new URL(publicUrl);
-
-    url.searchParams.set(URL_OPTIONS.LANGUAGE, lang);
-    url.searchParams.set(URL_OPTIONS.THEME, theme);
-
-    return url.toString();
 }
 
 function IconWithText(props: IconWithTextProps) {
@@ -118,11 +105,9 @@ function LinkButton(props: ButtonProps & {entryId: string}) {
     );
 }
 
-function ContactPartnerButton(props: {
-    partnerId?: string | null;
-    activeMediaQuery: ActiveMediaQuery;
-}) {
-    const {partnerId, activeMediaQuery} = props;
+function ContactPartnerButton(props: {partnerId?: string | null}) {
+    const {activeMediaQuery, isMediaActive} = useLayoutContext();
+    const {partnerId} = props;
 
     const handleClick = React.useCallback(() => {
         if (!partnerId) {
@@ -140,8 +125,8 @@ function ContactPartnerButton(props: {
     }
 
     const mods: CnMods = {media: activeMediaQuery};
-    const isActiveMediaQueryS = activeMediaQuery === 's';
-    const buttonProps: ButtonProps = isActiveMediaQueryS ? {width: 'max', size: 'xl'} : {};
+    const isMobileMediaQuery = !isMediaActive('m');
+    const buttonProps: ButtonProps = isMobileMediaQuery ? {width: 'max', size: 'xl'} : {};
 
     return (
         <Button className={b('contact-partner-btn', mods)} {...buttonProps} onClick={handleClick}>
@@ -151,23 +136,17 @@ function ContactPartnerButton(props: {
 }
 
 interface CardActionPanelProps {
-    activeMediaQuery: ActiveMediaQuery;
     entry: GalleryItem;
     showPreview: boolean;
     togglePreview: () => void;
     lang: string;
 }
 
-function CardActionPanel({
-    activeMediaQuery,
-    entry,
-    showPreview,
-    togglePreview,
-    lang,
-}: CardActionPanelProps) {
-    const history = useHistory();
+function CardActionPanel({entry, showPreview, togglePreview, lang}: CardActionPanelProps) {
     const [actionPanelNode, setActionPanelNode] = React.useState<HTMLDivElement | null>(null);
     const {rect} = useElementRect({node: actionPanelNode});
+    const {activeMediaQuery, isMediaActive} = useLayoutContext();
+
     const actionPanelStyle = React.useMemo(() => {
         const style: React.CSSProperties = {};
         const offset = rect?.left;
@@ -178,14 +157,15 @@ function CardActionPanel({
 
         return style;
     }, [rect]);
-    const isActiveMediaQueryS = activeMediaQuery === 's';
+
+    const isMobileMediaQuery = !isMediaActive('m');
     const mods: CnMods = {media: activeMediaQuery};
     let leftItems: React.ReactNode = null;
 
     if (showPreview) {
         leftItems = (
             <Flex className={b('actions-left-flex', mods)}>
-                {isActiveMediaQueryS && (
+                {isMobileMediaQuery && (
                     <Button view="flat" onClick={togglePreview}>
                         <Button.Icon>
                             <Icon data={ArrowLeft} />
@@ -193,7 +173,7 @@ function CardActionPanel({
                     </Button>
                 )}
                 <Text
-                    variant={isActiveMediaQueryS ? 'subheader-2' : 'header-1'}
+                    variant={isMobileMediaQuery ? 'subheader-2' : 'header-1'}
                     ellipsis={true}
                     style={{minWidth: 0}}
                 >
@@ -204,11 +184,13 @@ function CardActionPanel({
     } else {
         leftItems = (
             <Flex style={{minWidth: 0, flexGrow: 1, flexShrink: 1, flexBasis: 'auto'}}>
-                <Breadcrumbs className={b('breadcrumbs')} navigate={(href) => history.push(href)}>
+                <Breadcrumbs className={b('breadcrumbs')}>
                     <Breadcrumbs.Item href="/gallery">
                         {galleryI18n('label_gallery')}
                     </Breadcrumbs.Item>
-                    <Breadcrumbs.Item disabled={true}>{entry.title[lang]}</Breadcrumbs.Item>
+                    <Breadcrumbs.Item className={b('breadcrumbs-item')} disabled={true}>
+                        {entry.title[lang]}
+                    </Breadcrumbs.Item>
                 </Breadcrumbs>
             </Flex>
         );
@@ -216,7 +198,7 @@ function CardActionPanel({
 
     let rightItems: React.ReactNode = null;
 
-    if (isActiveMediaQueryS) {
+    if (isMobileMediaQuery) {
         rightItems = (
             <Flex className={b('actions-right-flex', mods)} style={{flexShrink: 0}}>
                 <LinkButton entryId={entry.id} />
@@ -227,10 +209,7 @@ function CardActionPanel({
         rightItems = (
             <Flex className={b('actions-right-flex', mods)} style={{flexShrink: 0}}>
                 <LinkButton entryId={entry.id} />
-                <ContactPartnerButton
-                    partnerId={entry.partnerId}
-                    activeMediaQuery={activeMediaQuery}
-                />
+                <ContactPartnerButton partnerId={entry.partnerId} />
                 {entry.data && <ImportDropdown entryId={entry.id} url={entry.data} />}
                 <Button view={showPreview ? 'normal' : 'action'} onClick={togglePreview}>
                     {showPreview ? (
@@ -260,11 +239,11 @@ function CardActionPanel({
 }
 
 interface CardPreviewProps {
-    activeMediaQuery: ActiveMediaQuery;
     images?: GalleryItem['images'];
 }
 
-function CardPreview({activeMediaQuery, images}: CardPreviewProps) {
+function CardPreview({images}: CardPreviewProps) {
+    const {activeMediaQuery, isMediaActive} = useLayoutContext();
     const previewContainerRef = React.useRef<HTMLDivElement>(null);
     const themeType = useThemeType();
     const mobile = useMobile();
@@ -277,7 +256,7 @@ function CardPreview({activeMediaQuery, images}: CardPreviewProps) {
         number | undefined
     >();
 
-    const isActiveMediaQueryS = activeMediaQuery === 's';
+    const isMobileMediaQuery = !isMediaActive('m');
     const previewContainerNode = previewContainerRef.current;
 
     const handleImageClick = () => {
@@ -297,25 +276,25 @@ function CardPreview({activeMediaQuery, images}: CardPreviewProps) {
     React.useEffect(() => {
         let nextImageCardPreviewHeight: number | undefined;
 
-        if (isActiveMediaQueryS && previewContainerRef.current) {
+        if (isMobileMediaQuery && previewContainerRef.current) {
             const {clientHeight, offsetHeight} = previewContainerRef.current;
             const scrollBarWidth = offsetHeight - clientHeight;
             nextImageCardPreviewHeight = CARD_IMAGE_PREVIEW_HEIGHT + scrollBarWidth;
         }
 
         setImageCardPreviewHeight(nextImageCardPreviewHeight);
-    }, [isActiveMediaQueryS, previewContainerNode]);
+    }, [isMobileMediaQuery, previewContainerNode]);
 
     return (
         <React.Fragment>
-            {showFullscreenGallery && isActiveMediaQueryS && (
+            {showFullscreenGallery && isMobileMediaQuery && (
                 <FullscreenGallery
                     images={themeImages}
                     initialImageIndex={selectedImageIndex === -1 ? 0 : selectedImageIndex}
                     onClose={handleCloseFullscreenGallery}
                 />
             )}
-            <Col m="10" s="12">
+            <Col size={[12, {m: 10}]}>
                 <Card
                     className={b('image-card')}
                     type="action"
@@ -329,8 +308,8 @@ function CardPreview({activeMediaQuery, images}: CardPreviewProps) {
                     />
                 </Card>
             </Col>
-            <Col m="2" s="12">
-                <ScrollableWithShadow direction={isActiveMediaQueryS ? 'horizontal' : 'vertical'}>
+            <Col size={[12, {m: 2}]}>
+                <ScrollableWithShadow direction={isMobileMediaQuery ? 'horizontal' : 'vertical'}>
                     <Flex
                         className={b('image-card-preview-flex', {media: activeMediaQuery})}
                         style={
@@ -349,7 +328,7 @@ function CardPreview({activeMediaQuery, images}: CardPreviewProps) {
                                         setSelectedImage(newSelectedImage);
                                     }}
                                     image={image}
-                                    size={isActiveMediaQueryS ? 's' : 'auto'}
+                                    size={isMobileMediaQuery ? 's' : 'auto'}
                                 />
                             );
                         })}
@@ -361,15 +340,16 @@ function CardPreview({activeMediaQuery, images}: CardPreviewProps) {
 }
 
 interface CardContentProps {
-    activeMediaQuery: ActiveMediaQuery;
     entry: GalleryItem;
     togglePreview: () => void;
     lang: string;
     maxWidth?: boolean;
 }
 
-function CardContent({activeMediaQuery, entry, togglePreview, lang, maxWidth}: CardContentProps) {
-    const isActiveMediaQueryS = activeMediaQuery === 's';
+function CardContent({entry, togglePreview, lang, maxWidth}: CardContentProps) {
+    const {activeMediaQuery, isMediaActive} = useLayoutContext();
+
+    const isMobileMediaQuery = !isMediaActive('m');
     const mods: CnMods = {media: activeMediaQuery, maxWidth};
     const themeType = useThemeType();
     const {data: galleryItems = []} = useGetGalleryItemsQuery();
@@ -381,7 +361,7 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang, maxWidth}: C
     return (
         <Container className={b('container', mods)}>
             <Row space="0" style={{marginTop: 24, marginBottom: 24}}>
-                <Col s="12">
+                <Col size={12}>
                     <PageHeader
                         activeMediaQuery={activeMediaQuery}
                         title={entry.title[lang]}
@@ -390,33 +370,30 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang, maxWidth}: C
                 </Col>
             </Row>
             <Row space="4" spaceRow="4" style={{marginTop: 0, marginBottom: 32}}>
-                <CardPreview activeMediaQuery={activeMediaQuery} images={entry.images} />
+                <CardPreview images={entry.images} />
             </Row>
-            {isActiveMediaQueryS && (
+            {isMobileMediaQuery && (
                 <Row space="0" spaceRow="4" style={{marginTop: 48, marginBottom: 28}}>
-                    <Col s="12">
+                    <Col size={12}>
                         <Flex className={b('actions-right-flex', mods)}>
                             <LinkButton entryId={entry.id} size="xl" />
                             <Button view="action" size="xl" width="max" onClick={togglePreview}>
                                 {galleryI18n('button_open')}
                             </Button>
                         </Flex>
-                        <ContactPartnerButton
-                            partnerId={entry.partnerId}
-                            activeMediaQuery={activeMediaQuery}
-                        />
+                        <ContactPartnerButton partnerId={entry.partnerId} />
                     </Col>
                 </Row>
             )}
             <Row space="0" spaceRow="4" style={{marginTop: 48}}>
-                <Col s="12">
+                <Col size={12}>
                     <CardDescription
                         shortDescription={entry.shortDescription}
                         description={entry.description}
                         lang={lang}
                     />
                 </Col>
-                <Col s="12">
+                <Col size={12}>
                     <Flex className={b('card-info-flex', mods)}>
                         <IconWithText iconData={Person} text={entry.createdBy} />
                         {Boolean(entry.createdAt) && (
@@ -427,7 +404,7 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang, maxWidth}: C
                         )}
                     </Flex>
                 </Col>
-                <Col s="12">
+                <Col size={12}>
                     <GalleryCardLabels
                         labels={entry.labels}
                         labelProps={{interactive: true}}
@@ -436,15 +413,12 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang, maxWidth}: C
                 </Col>
             </Row>
             <Row space="6" style={{marginTop: 24}}>
-                <Col s="12">
-                    <SectionHeader
-                        activeMediaQuery={activeMediaQuery}
-                        title={i18n('section_other_works')}
-                    />
+                <Col size={12}>
+                    <SectionHeader title={i18n('section_other_works')} />
                 </Col>
                 {otherWorks.map((item) => {
                     return (
-                        <Col key={item.id} l="4" m="4" s="12">
+                        <Col key={item.id} size={[12, {m: 4}]}>
                             <GalleryCardPreview
                                 id={item.id}
                                 title={item.title}
@@ -455,7 +429,7 @@ function CardContent({activeMediaQuery, entry, togglePreview, lang, maxWidth}: C
                         </Col>
                     );
                 })}
-                <Col s="12" />
+                <Col size={12} />
             </Row>
         </Container>
     );
@@ -470,7 +444,6 @@ export const isActivePreview = (urlSearchParams: URLSearchParams) => {
 };
 
 export function CardPage() {
-    const {activeMediaQuery} = useLayoutContext();
     const location = useLocation();
     const history = useHistory();
     const themeType = useThemeType();
@@ -481,6 +454,8 @@ export function CardPage() {
     const urlSearchParams = new URLSearchParams(searchParams);
     const showPreview = isActivePreview(urlSearchParams);
     const lang = getLang();
+
+    const iframeLang = getIframeLang({labels: data?.labels, defaultLang: lang});
 
     useErrorLayoutAdjustment(error);
 
@@ -534,7 +509,6 @@ export function CardPage() {
     return (
         <React.Fragment>
             <CardActionPanel
-                activeMediaQuery={activeMediaQuery}
                 entry={data}
                 showPreview={showPreview}
                 togglePreview={togglePreview}
@@ -543,11 +517,14 @@ export function CardPage() {
             {showPreview ? (
                 <iframe
                     className={b('iframe', {mobile, promo: isPromo})}
-                    src={getIframeUrl({publicUrl: data.publicUrl, theme: themeType, lang})}
+                    src={getIframeUrl({
+                        publicUrl: data.publicUrl,
+                        theme: themeType,
+                        lang: iframeLang,
+                    })}
                 />
             ) : (
                 <CardContent
-                    activeMediaQuery={activeMediaQuery}
                     entry={data}
                     togglePreview={togglePreview}
                     lang={lang}

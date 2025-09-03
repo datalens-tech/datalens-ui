@@ -1,8 +1,7 @@
-import {buildChartsConfigPrivate} from './config/config';
-import {buildWizardD3Config as buildD3Config} from './d3';
-import {buildHighchartsConfigPrivate} from './highcharts/highcharts';
+import {buildChartsConfigPrivate} from './config';
+import {buildHighchartsConfigPrivate} from './highcharts';
 import {buildGraphPrivate} from './js/js';
-import {buildSourcesPrivate} from './url/build-sources/build-sources';
+import {buildSourcesPrivate} from './url/build-sources';
 import {setConsole} from './utils/misc-helpers';
 
 export const datalensModule = {
@@ -10,6 +9,5 @@ export const datalensModule = {
     buildSources: buildSourcesPrivate,
     buildGraph: buildGraphPrivate,
     buildChartsConfig: buildChartsConfigPrivate,
-    buildD3Config,
     setConsole,
 };

@@ -1,12 +1,12 @@
 import React from 'react';
 
-import {Flex} from '@gravity-ui/uikit';
-import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
+import {Breadcrumbs, Flex} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n, i18n as i18nGlobal} from 'i18n';
 import {useSelector} from 'react-redux';
-import {useHistory, useParams} from 'react-router';
+import {useParams} from 'react-router';
 import {ActionPanel} from 'ui/components/ActionPanel';
+import {BreadcrumbsItemLink} from 'ui/components/BreadcrumbsItemLink/BreadcrumbsItemLink';
 import {PageTitle} from 'ui/components/PageTitle';
 import {DL} from 'ui/constants/common';
 import {UserProfile} from 'ui/units/auth/containers/UserProfile/UserProfile';
@@ -22,7 +22,6 @@ const i18n = I18n.keyset('auth.user-profile.view');
 const b = block('dl-user-profile-page');
 
 const UserProfilePage = () => {
-    const history = useHistory();
     const {userId} = useParams<{userId?: string}>();
     const userProfile = useSelector(selectUserProfile);
 
@@ -36,20 +35,16 @@ const UserProfilePage = () => {
 
             <ActionPanel
                 leftItems={
-                    <Breadcrumbs
-                        navigate={(href) => {
-                            history.push(href);
-                        }}
-                    >
-                        <Breadcrumbs.Item href="/settings">
+                    <Breadcrumbs className={b('breadcrumbs')} itemComponent={BreadcrumbsItemLink}>
+                        <BreadcrumbsItemLink to="/settings">
                             {i18nGlobal('service-settings.main.view', 'label_header')}
-                        </Breadcrumbs.Item>
-                        <Breadcrumbs.Item href="/settings/users">
+                        </BreadcrumbsItemLink>
+                        <BreadcrumbsItemLink to="/settings/users">
                             {i18nGlobal('service-settings.main.view', 'section_users')}
-                        </Breadcrumbs.Item>
-                        <Breadcrumbs.Item disabled>
+                        </BreadcrumbsItemLink>
+                        <BreadcrumbsItemLink disabled className={b('breadcrumbs-item')}>
                             {userProfile ? getUserDisplayName(userProfile) : userId}
-                        </Breadcrumbs.Item>
+                        </BreadcrumbsItemLink>
                     </Breadcrumbs>
                 }
             />

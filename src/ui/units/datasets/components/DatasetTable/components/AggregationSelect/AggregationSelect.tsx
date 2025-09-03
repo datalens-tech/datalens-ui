@@ -121,7 +121,7 @@ class AggregationSelectComponent extends React.Component<Props> {
         this.props.onSelect(row, aggregation);
     };
 
-    private renderSelectControl = ({onClick, ref, onKeyDown}: SelectRenderControlProps) => {
+    private renderSelectControl = ({ref, triggerProps}: SelectRenderControlProps) => {
         const selectedValue = getSelectedValueForSelect(
             [this.props.selectedAggregation],
             this.aggregations,
@@ -132,9 +132,8 @@ class AggregationSelectComponent extends React.Component<Props> {
 
         return (
             <Button
-                onClick={onClick}
-                ref={ref}
-                extraProps={{onKeyDown}}
+                {...triggerProps}
+                ref={ref as React.Ref<HTMLButtonElement>}
                 view="flat"
                 className={b('select-control', {[this.type]: true})}
             >

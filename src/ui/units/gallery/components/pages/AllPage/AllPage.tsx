@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {
+    Breadcrumbs,
     Col,
     Container,
     Row,
@@ -11,7 +12,6 @@ import {
     useThemeType,
 } from '@gravity-ui/uikit';
 import type {SelectOptionGroup} from '@gravity-ui/uikit';
-import {unstable_Breadcrumbs as Breadcrumbs} from '@gravity-ui/uikit/unstable';
 import {useHistory, useLocation} from 'react-router-dom';
 import {ActionPanel} from 'ui/components/ActionPanel';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
@@ -193,7 +193,7 @@ export function AllPage() {
     if (filteredItems.length > 0) {
         content = filteredItems.map((item) => {
             return (
-                <Col key={item.id} l="4" m="4" s="12">
+                <Col key={item.id} size={[12, {m: 4, l: 4}]}>
                     <GalleryCardPreview
                         id={item.id}
                         title={item.title}
@@ -221,7 +221,7 @@ export function AllPage() {
         <React.Fragment>
             <ActionPanel
                 leftItems={
-                    <Breadcrumbs navigate={(href) => history.push(href)}>
+                    <Breadcrumbs className={b('breadcrumbs')}>
                         <Breadcrumbs.Item href="/gallery">
                             {galleryI18n('label_gallery')}
                         </Breadcrumbs.Item>
@@ -238,7 +238,7 @@ export function AllPage() {
                 style={{maxWidth: isPromo ? undefined : '1032px'}}
             >
                 <Row space="0" style={{marginTop: 24}}>
-                    <Col s="12">
+                    <Col size={12}>
                         <PageHeader
                             activeMediaQuery={activeMediaQuery}
                             title={i18n('title_all_entries')}
@@ -247,7 +247,7 @@ export function AllPage() {
                     </Col>
                 </Row>
                 <Row space="4" style={{marginTop: 0, marginBottom: 24}}>
-                    <Col m="6" s="12">
+                    <Col size={[12, {m: 6}]}>
                         <TextInput
                             defaultValue={search}
                             hasClear={true}
@@ -256,7 +256,7 @@ export function AllPage() {
                             onUpdate={setSearch}
                         />
                     </Col>
-                    <Col m="6" s="12" className={b('filters', {mobile: DL.IS_MOBILE})}>
+                    <Col size={[12, {m: 6}]} className={b('filters', {mobile: DL.IS_MOBILE})}>
                         <div className={b('filter-category', {mobile: DL.IS_MOBILE})}>
                             <Select
                                 filterable={true}

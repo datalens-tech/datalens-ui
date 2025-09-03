@@ -3,7 +3,17 @@
 .dashkit-plugin-title-container {
     $class: &;
     height: fit-content;
-    overflow: clip;
+    display: flex;
+    align-items: center;
+    max-width: 100%;
+
+    &_relative {
+        position: relative;
+    }
+
+    &_absolute {
+        width: 100%;
+    }
 
     &_with-auto-height {
         [data-plugin-root-el='title'] {
@@ -11,21 +21,31 @@
         }
     }
 
+    [data-plugin-root-el='title'] {
+        width: 100%;
+    }
+
     &_with-default-color,
     &_with-color {
-        display: flex;
-
         .dashkit-plugin-title {
             padding: 5px 10px;
             align-items: center;
         }
 
         #{$class}__anchor {
-            padding: 5px;
+            padding: 5px 0 5px 5px;
+        }
+
+        #{$class}__extra-elements-container {
+            padding-bottom: 0;
+
+            &_absolute {
+                padding-left: 0;
+            }
         }
     }
 
-    &_with-inline-anchor {
+    &_with-inline-extra-elements {
         display: flex;
 
         .dashkit-plugin-title {
@@ -33,22 +53,30 @@
         }
     }
 
-    &:has(&__anchor_absolute:focus-visible)::after {
-        @include with-fade-effect;
-    }
-
     .dashkit-grid-item__item_editMode .dashkit-plugin-container__wrapper_with-color & {
         // it has own color bg for contrast in edit mod
         background-color: transparent;
     }
 
+    &__extra-elements-container {
+        display: flex;
+        padding: 0 5px 5px;
+        right: 0;
+        z-index: 1;
+
+        &_absolute {
+            position: absolute;
+        }
+    }
+
     &__anchor {
         opacity: 0;
-        padding: 0 5px 5px;
+        padding-left: 5px;
         position: relative;
         height: fit-content;
         text-decoration: none;
         color: var(--g-color-text-link);
+        z-index: 1;
 
         &:focus-visible {
             opacity: 1;
@@ -57,12 +85,40 @@
         &:hover {
             color: var(--g-color-text-link-hover);
         }
+    }
 
-        &_absolute {
-            position: absolute;
-            padding: 0 5px;
-            right: 0;
-            z-index: 1;
+    &__hint,
+    &__hint-button {
+        display: flex;
+        align-items: center;
+    }
+
+    &_with-absolute-hint {
+        [data-plugin-root-el='title'] {
+            @include text-with-fade-effect(45px);
+        }
+    }
+
+    &_with-absolute-anchor {
+        &:has(#{$class}__anchor:focus-visible) {
+            [data-plugin-root-el='title'] {
+                @include text-with-fade-effect(40px);
+            }
+        }
+    }
+
+    &_with-absolute-hint-and-anchor {
+        [data-plugin-root-el='title'] {
+            @include text-with-fade-effect(70px);
+        }
+    }
+}
+
+.dashkit-grid-item.resizing {
+    .dashkit-plugin-title-container {
+        // hide hint when resizing container
+        &__extra-elements-container {
+            opacity: 0;
         }
     }
 }

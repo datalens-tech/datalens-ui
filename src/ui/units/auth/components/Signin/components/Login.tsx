@@ -9,7 +9,9 @@ import {selectLogin} from '../../../store/selectors/signin';
 
 const i18n = I18n.keyset('auth.sign-in');
 
-export const Login = () => {
+type Props = {qa?: string};
+
+export const Login = ({qa}: Props) => {
     const dispatch = useDispatch();
 
     const login = useSelector(selectLogin);
@@ -24,6 +26,7 @@ export const Login = () => {
             size="l"
             autoComplete="username"
             autoFocus
+            qa={qa}
         />
     );
 };

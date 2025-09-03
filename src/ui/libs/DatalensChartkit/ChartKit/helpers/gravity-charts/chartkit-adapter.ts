@@ -1,8 +1,9 @@
-import type {ChartData, ChartSeriesData} from '@gravity-ui/chartkit/d3';
-import {CustomShapeRenderer} from '@gravity-ui/chartkit/d3';
+import type {ChartData, ChartSeriesData} from '@gravity-ui/chartkit/gravity-charts';
+import {CustomShapeRenderer} from '@gravity-ui/chartkit/gravity-charts';
 import {pickActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
 import get from 'lodash/get';
 import merge from 'lodash/merge';
+import set from 'lodash/set';
 
 import type {GraphWidget} from '../../../types';
 import type {ChartKitAdapterProps} from '../../types';
@@ -23,7 +24,7 @@ export function getGravityChartsChartKitData(args: {
 }) {
     const {loadedData, onChange} = args;
     const widgetData = loadedData?.data as ChartData;
-    const config = loadedData?.libraryConfig as ChartData;
+    const chartId = loadedData?.entryId;
 
     const chartWidgetData: Partial<ChartData> = {
         chart: {
@@ -41,14 +42,45 @@ export function getGravityChartsChartKitData(args: {
                 },
             },
         },
+        legend: {
+            justifyContent: 'start',
+            itemDistance: 24,
+            itemStyle: {
+                fontSize: '13px',
+            },
+        },
         tooltip: {
-            ...widgetData.tooltip,
-            renderer: getTooltipRenderer(widgetData),
+            pin: {enabled: true, modifierKey: 'altKey'},
         },
         series: getStyledSeries(loadedData),
     };
 
-    chartWidgetData.series?.data.forEach((s) => {
+    const result = merge({}, chartWidgetData, widgetData);
+    if (result.tooltip) {
+        result.tooltip.renderer = getTooltipRenderer({
+            widgetData,
+            qa: `chartkit-tooltip-entry-${chartId}`,
+        });
+    }
+
+    result.series?.data.forEach((s) => {
+        set(s, 'legend.symbol', {
+            padding: 8,
+            width: 10,
+            height: 10,
+            ...s.legend?.symbol,
+        });
+
+        s.dataLabels = {
+            padding: 10,
+            ...s.dataLabels,
+            style: {
+                fontSize: '12px',
+                fontWeight: '500',
+                ...s.dataLabels?.style,
+            },
+        };
+
         switch (s.type) {
             case 'pie': {
                 const totals = get(s, 'custom.totals');
@@ -57,7 +89,10 @@ export function getGravityChartsChartKitData(args: {
                 if (renderCustomShapeFn) {
                     s.renderCustomShape = getCustomShapeRenderer(renderCustomShapeFn);
                 } else if (typeof totals !== 'undefined') {
-                    s.renderCustomShape = CustomShapeRenderer.pieCenterText(totals);
+                    s.renderCustomShape = CustomShapeRenderer.pieCenterText(totals, {
+                        padding: '25%',
+                        minFontSize: 6,
+                    });
                 }
 
                 break;
@@ -65,7 +100,7 @@ export function getGravityChartsChartKitData(args: {
         }
     });
 
-    return merge({}, config, widgetData, chartWidgetData);
+    return result;
 }
 
 function getStyledSeries(loadedData: ChartKitAdapterProps['loadedData']) {

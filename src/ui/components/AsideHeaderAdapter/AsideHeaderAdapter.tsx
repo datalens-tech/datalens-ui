@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {CircleQuestion, Gear, Sliders} from '@gravity-ui/icons';
-import type {AsideHeaderProps, AsideHeaderTopAlertProps, MenuItem} from '@gravity-ui/navigation';
+import type {AsideHeaderProps, MenuItem, TopAlertProps} from '@gravity-ui/navigation';
 import {AsideHeader, FooterItem} from '@gravity-ui/navigation';
 import type {IconData} from '@gravity-ui/uikit';
 import {List} from '@gravity-ui/uikit';
@@ -10,7 +10,7 @@ import {I18n, i18n as baseI18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {Link, useLocation} from 'react-router-dom';
 import {DlNavigationQA, Feature} from 'shared';
-import {DL, PRODUCT_NAME} from 'ui/constants';
+import {DL} from 'ui/constants';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -20,11 +20,14 @@ import type {AsideHeaderData} from '../../store/typings/asideHeader';
 import {UserAvatar} from '../UserMenu/UserAvatar';
 import {UserMenu} from '../UserMenu/UserMenu';
 
+import {LogoText} from './LogoText/LogoText';
 import {Settings as SettingsPanel} from './Settings/Settings';
 import {DIALOG_RELEASE_VERSION} from './VersionDialog/VersionDialog';
+import {ASIDE_HEADER_LOGO_ICON_SIZE} from './constants';
 
 import defaultLogoIcon from '../../assets/icons/logo.svg';
 import iconCollection from '../../assets/icons/mono-collection.svg';
+import rebrandingLogoIcon from '../../assets/icons/os-logo.svg';
 
 import './AsideHeaderAdapter.scss';
 
@@ -34,19 +37,21 @@ const i18n = I18n.keyset('component.aside-header.view');
 const COLLECTIONS_PATH = '/collections';
 const SERVICE_SETTINGS_PATH = '/settings';
 
-const LOGO_DEFAULT_SIZE = 32;
 const FOOTER_ITEM_DEFAULT_SIZE = 18;
 const PROMO_SITE_DOMAIN = 'https://datalens.tech';
 const PROMO_DOC_PATH = '/docs';
 const GITHUB_URL = 'https://github.com/datalens-tech/datalens';
 
-export const DOCUMENTATION_LINK = `${PROMO_SITE_DOMAIN}${PROMO_DOC_PATH}/${DL.USER_LANG}/`;
+export const DOCUMENTATION_LINK =
+    DL.DOCS_URL || `${PROMO_SITE_DOMAIN}${PROMO_DOC_PATH}/${DL.USER_LANG}/`;
 
 export const ITEMS_NAVIGATION_DEFAULT_SIZE = 18;
 
 type AsideHeaderAdapterProps = {
     renderContent?: AsideHeaderProps['renderContent'];
     logoIcon?: IconData;
+    installationInfo?: string;
+    collapseButtonWrapper?: AsideHeaderProps['collapseButtonWrapper'];
 };
 
 enum Panel {
@@ -63,14 +68,6 @@ const getLinkWrapper = (node: React.ReactNode, path: string) => {
         <Link to={path} className={b('item-link')} data-qa={DlNavigationQA.AsideMenuItem}>
             <div className={b('item-wrap')}>{node}</div>
         </Link>
-    );
-};
-
-const getLogoWrapper = (node: React.ReactNode) => {
-    return (
-        <a href="/" className={b('logo-link')}>
-            {node}
-        </a>
     );
 };
 
@@ -103,7 +100,12 @@ const renderDocsItem = (item: DocsItem) => {
     }
 };
 
-export const AsideHeaderAdapter = ({renderContent, logoIcon}: AsideHeaderAdapterProps) => {
+export const AsideHeaderAdapter = ({
+    renderContent,
+    logoIcon,
+    installationInfo,
+    collapseButtonWrapper,
+}: AsideHeaderAdapterProps) => {
     const dispatch = useDispatch();
     const {pathname} = useLocation();
     const isCompact = useSelector(selectAsideHeaderIsCompact);
@@ -134,7 +136,7 @@ export const AsideHeaderAdapter = ({renderContent, logoIcon}: AsideHeaderAdapter
     }, []);
 
     const isReadOnly = isEnabledFeature(Feature.ReadOnlyMode);
-    const topAlert: AsideHeaderTopAlertProps | undefined = isReadOnly
+    const topAlert: TopAlertProps | undefined = isReadOnly
         ? {
               message: baseI18n('common.read-only', 'toast_editing-warning'),
           }
@@ -208,6 +210,8 @@ export const AsideHeaderAdapter = ({renderContent, logoIcon}: AsideHeaderAdapter
         setCurrentPopup(null);
     }, []);
 
+    const isRebrandingEnabled = isEnabledFeature(Feature.EnableDLRebranding);
+
     const renderFooter = () => {
         return (
             <React.Fragment>
@@ -244,8 +248,12 @@ export const AsideHeaderAdapter = ({renderContent, logoIcon}: AsideHeaderAdapter
                     }}
                     enableTooltip={false}
                     popupVisible={currentPopup === PopupName.Main}
-                    popupOffset={[0, 8]}
-                    onClosePopup={() => setCurrentPopup(null)}
+                    popupOffset={{mainAxis: 0, crossAxis: 8}}
+                    onOpenChangePopup={(isOpen) => {
+                        if (!isOpen) {
+                            setCurrentPopup(null);
+                        }
+                    }}
                     renderPopupContent={() => {
                         return (
                             <List
@@ -295,8 +303,12 @@ export const AsideHeaderAdapter = ({renderContent, logoIcon}: AsideHeaderAdapter
                         }}
                         enableTooltip={false}
                         popupVisible={currentPopup === PopupName.Account}
-                        popupOffset={[0, 8]}
-                        onClosePopup={handleClosePopup}
+                        popupOffset={{mainAxis: 0, crossAxis: 8}}
+                        onOpenChangePopup={(isOpen) => {
+                            if (!isOpen) {
+                                handleClosePopup();
+                            }
+                        }}
                         renderPopupContent={() => <UserMenu onClose={handleClosePopup} />}
                     />
                 )}
@@ -304,15 +316,18 @@ export const AsideHeaderAdapter = ({renderContent, logoIcon}: AsideHeaderAdapter
         );
     };
 
+    const defaultLogo = isRebrandingEnabled ? rebrandingLogoIcon : defaultLogoIcon;
+
     return (
         <AsideHeader
             compact={isCompact}
             logo={{
-                text: PRODUCT_NAME,
-                icon: logoIcon ?? defaultLogoIcon,
-                iconSize: LOGO_DEFAULT_SIZE,
+                text: () => <LogoText installationInfo={installationInfo} />,
+                icon: logoIcon ?? defaultLogo,
+                iconSize: ASIDE_HEADER_LOGO_ICON_SIZE,
                 iconClassName: b('logo-icon'),
-                wrapper: getLogoWrapper,
+                href: '/',
+                className: b('logo'),
             }}
             topAlert={topAlert}
             menuItems={menuItems}
@@ -322,6 +337,8 @@ export const AsideHeaderAdapter = ({renderContent, logoIcon}: AsideHeaderAdapter
             renderFooter={renderFooter}
             renderContent={renderAsideHeaderContent}
             onClosePanel={handleClosePanel}
+            className={b({rebranding: isRebrandingEnabled})}
+            collapseButtonWrapper={collapseButtonWrapper}
         />
     );
 };

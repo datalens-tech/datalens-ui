@@ -1,5 +1,6 @@
 import React from 'react';
 
+import type {ChartKitRef} from '@gravity-ui/chartkit';
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 import block from 'bem-cn-lite';
 import {get, isEqual, isFunction, omit} from 'lodash';
@@ -222,7 +223,7 @@ class ChartKitBase<TProviderProps, TProviderData, TProviderCancellation> extends
         };
     }
 
-    chartKitRef: React.RefObject<ChartKit> = React.createRef();
+    chartKitRef: React.RefObject<ChartKit | ChartKitRef> = React.createRef();
 
     // dynamic id will force Widget to be re-rendered and then Component/Graph
     id = getRandomCKId();

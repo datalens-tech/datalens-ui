@@ -4,13 +4,12 @@ import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import get from 'lodash/get';
 import {useDispatch, useSelector} from 'react-redux';
-import {ControlQA, Feature, type StringParams} from 'shared';
+import {ControlQA, type StringParams} from 'shared';
 import {ChartInfoIcon} from 'ui/components/Widgets/Chart/components/ChartInfoIcon';
 import {URL_OPTIONS} from 'ui/constants';
 import type {ChartKitDataProvider} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
 import type {GetChartkitMenuByType} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
 import {selectWorkbookEditPermission} from 'ui/units/workbooks/store/selectors';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {
     drawComments,
@@ -40,6 +39,7 @@ export type HeaderProps = Pick<
     | 'dataProps'
     | 'requestId'
     | 'loadedData'
+    | 'chartRevIdRef'
     | 'widgetDataRef'
     | 'widgetRenderTimeRef'
     | 'yandexMapAPIWaiting'
@@ -79,6 +79,7 @@ export const Header = (props: HeaderProps) => {
         dataProps,
         requestId,
         loadedData,
+        chartRevIdRef,
         widgetDataRef,
         widgetRenderTimeRef,
         yandexMapAPIWaiting,
@@ -143,19 +144,11 @@ export const Header = (props: HeaderProps) => {
     };
     const safeChartWarning = get(loadedData, 'safeChartInfo');
 
-    const showFloatControls = isEnabledFeature(Feature.DashFloatControls);
-    const showFiltersClear = showActionParamsFilter && onFiltersClear && showFloatControls;
+    const showFiltersClear = showActionParamsFilter && onFiltersClear;
 
     return (
-        <div className={b('chart-header', {float: showFloatControls})}>
+        <div className={b('chart-header')}>
             {safeChartWarning && <ChartInfoIcon msg={safeChartWarning} />}
-            {!showFloatControls && chartsInsightsData && (
-                <ChartsInsights
-                    items={chartsInsightsData.items}
-                    messagesByLocator={chartsInsightsData.messagesByLocator}
-                    locators={chartsInsightsData.locators}
-                />
-            )}
             <ChartActionPanelButton
                 menuType={menuType}
                 loadedData={loadedData}
@@ -163,24 +156,7 @@ export const Header = (props: HeaderProps) => {
                 chartData={chartData}
             />
 
-            <div className={showFloatControls ? b('controls-corner-wrapper') : undefined}>
-                {!showFloatControls && showFiltersClear && props.canBeDisplayedFilters && (
-                    <div className={b('icons')}>
-                        <div className={b('filters-controls')}>
-                            <Button
-                                qa={ControlQA.filtersClear}
-                                onClick={onFiltersClear}
-                                className={b('filter-button')}
-                            >
-                                <Icon
-                                    data={iconClearActionParams}
-                                    size={16}
-                                    className={b('icon-filter-clear')}
-                                />
-                            </Button>
-                        </div>
-                    </div>
-                )}
+            <div className={b('controls-corner-wrapper')}>
                 {canBeShownMenu && (
                     <MenuWithErrorBoundary
                         commentsLength={commentsLength}
@@ -188,6 +164,7 @@ export const Header = (props: HeaderProps) => {
                         configMenu={configMenu}
                         widgetDataRef={widgetDataRef}
                         loadedData={loadedData}
+                        chartRevIdRef={chartRevIdRef}
                         error={error}
                         propsData={chartData}
                         requestId={requestId}
@@ -202,7 +179,7 @@ export const Header = (props: HeaderProps) => {
                         chartsDataProvider={dataProvider}
                     />
                 )}
-                {showFloatControls && showFiltersClear && props.canBeDisplayedFilters && (
+                {showFiltersClear && props.canBeDisplayedFilters && (
                     <div className={b('icons')}>
                         <div className={b('filters-controls')}>
                             <Button
@@ -220,7 +197,7 @@ export const Header = (props: HeaderProps) => {
                         </div>
                     </div>
                 )}
-                {showFloatControls && chartsInsightsData && (
+                {chartsInsightsData && (
                     <ChartsInsights
                         items={chartsInsightsData.items}
                         messagesByLocator={chartsInsightsData.messagesByLocator}

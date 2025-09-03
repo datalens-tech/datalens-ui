@@ -143,26 +143,6 @@
     max-height: calc($height - 54px - 92px - 20px);
 }
 
-@mixin dl-breadcrumbs-items-style {
-    &,
-    &:visited,
-    &:active {
-        color: var(--g-color-text-secondary);
-    }
-    & {
-        display: inline;
-        text-decoration: none;
-    }
-
-    &:hover {
-        color: var(--g-color-text-primary);
-    }
-
-    &_link:hover {
-        color: var(--g-color-text-link-hover);
-    }
-}
-
 @mixin yfm-text-style {
     @include text-body-1();
 }
@@ -181,4 +161,12 @@
 
 @mixin loading-pulsate-animation-style {
     animation: pulseAnimation 1.5s ease-in-out infinite;
+}
+
+@mixin installation-info-font {
+    font-size: 10px;
+    line-height: 15px;
+    font-weight: bold;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
 }

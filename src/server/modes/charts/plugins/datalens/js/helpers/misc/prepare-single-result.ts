@@ -18,7 +18,7 @@ import prepareGeopointData from '../../../preparers/geopoint';
 import prepareGeopolygonData from '../../../preparers/geopolygon';
 import prepareHeatmapData from '../../../preparers/heatmap';
 import {prepareHighchartsLine} from '../../../preparers/line';
-import {prepareD3Line} from '../../../preparers/line/d3';
+import {prepareD3Line} from '../../../preparers/line/gravity-charts';
 import prepareLineTime from '../../../preparers/line-time';
 import prepareMetricData from '../../../preparers/metric';
 import preparePivotTableData from '../../../preparers/old-pivot-table/old-pivot-table';
@@ -26,7 +26,12 @@ import {prepareD3Pie, prepareHighchartsPie} from '../../../preparers/pie';
 import preparePolylineData from '../../../preparers/polyline';
 import {prepareD3Scatter, prepareHighchartsScatter} from '../../../preparers/scatter';
 import {prepareD3Treemap, prepareHighchartsTreemap} from '../../../preparers/treemap';
-import type {PrepareFunction, PrepareFunctionResultData} from '../../../preparers/types';
+import type {
+    PrepareFunction,
+    PrepareFunctionArgs,
+    PrepareFunctionResultData,
+} from '../../../preparers/types';
+import type {ChartPlugin} from '../../../types';
 import {getServerDateFormat} from '../../../utils/misc-helpers';
 import {OversizeErrorType} from '../../constants/errors';
 import {getChartColorsConfig} from '../colors';
@@ -37,7 +42,7 @@ import {
     isDefaultOversizeError,
 } from '../errors/oversize-error/utils';
 
-type PrepareSingleResultArgs = {
+export type PrepareSingleResultArgs = {
     resultData: PrepareFunctionResultData;
     visualization: ServerVisualization;
     shared: ServerChartsConfig;
@@ -49,6 +54,8 @@ type PrepareSingleResultArgs = {
     loadedColorPalettes?: Record<string, ColorPalette>;
     disableDefaultSorting?: boolean;
     features: FeatureConfig;
+    plugin?: ChartPlugin;
+    defaultColorPaletteId: string;
 };
 
 // eslint-disable-next-line complexity
@@ -64,6 +71,8 @@ export default ({
     disableDefaultSorting = false,
     palettes,
     features,
+    plugin,
+    defaultColorPaletteId,
 }: PrepareSingleResultArgs) => {
     const {
         sharedData: {drillDownData},
@@ -145,7 +154,11 @@ export default ({
 
         case WizardVisualizationId.Bar:
         case WizardVisualizationId.Bar100p: {
-            prepare = prepareHighchartsBarY;
+            if (plugin === 'gravity-charts') {
+                prepare = prepareGravityChartsBarY;
+            } else {
+                prepare = prepareHighchartsBarY;
+            }
             rowsLimit = 75000;
             break;
         }
@@ -164,7 +177,11 @@ export default ({
         }
 
         case WizardVisualizationId.Scatter:
-            prepare = prepareHighchartsScatter;
+            if (plugin === 'gravity-charts') {
+                prepare = prepareD3Scatter;
+            } else {
+                prepare = prepareHighchartsScatter;
+            }
             rowsLimit = 75000;
             break;
 
@@ -175,7 +192,11 @@ export default ({
 
         case WizardVisualizationId.Pie:
         case WizardVisualizationId.Donut:
-            prepare = prepareHighchartsPie;
+            if (plugin === 'gravity-charts') {
+                prepare = prepareD3Pie;
+            } else {
+                prepare = prepareHighchartsPie;
+            }
             rowsLimit = 1000;
             break;
 
@@ -191,7 +212,11 @@ export default ({
             break;
 
         case WizardVisualizationId.Treemap:
-            prepare = prepareHighchartsTreemap;
+            if (plugin === 'gravity-charts') {
+                prepare = prepareD3Treemap;
+            } else {
+                prepare = prepareHighchartsTreemap;
+            }
             rowsLimit = 800;
             break;
 
@@ -308,9 +333,10 @@ export default ({
         loadedColorPalettes,
         colorsConfig,
         availablePalettes: palettes,
+        defaultColorPaletteId,
     });
 
-    const prepareFunctionArgs = {
+    const prepareFunctionArgs: PrepareFunctionArgs = {
         placeholders: visualization.placeholders,
         fields: [],
         colors,
@@ -335,6 +361,7 @@ export default ({
 
         disableDefaultSorting,
         features,
+        defaultColorPaletteId,
     };
 
     return (prepare as PrepareFunction)(prepareFunctionArgs);

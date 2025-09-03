@@ -7,15 +7,21 @@
     right: 0;
     bottom: 0;
     top: 0;
-    overflow-y: scroll;
 
-    .data-table {
-        &__table {
-            min-width: 100%;
+    .dl-table {
+        &__td_type_number {
+            text-align: initial;
+            justify-content: initial;
         }
 
-        &__row,
-        &__th {
+        &__header {
+            th {
+                height: 32px;
+                border-bottom: 1px solid var(--g-color-line-generic);
+            }
+        }
+
+        &__td {
             height: 32px;
             border-bottom: 1px solid var(--g-color-line-generic);
         }

@@ -16,4 +16,7 @@ export const GALLERY_ITEM_CATEGORY = {
     SERVICE: 'service',
     SOCIAL: 'social',
     SPORTS: 'sport',
+    HORECA: 'horeca',
+    ENGLISH: 'english',
+    TECH: 'tech',
 } as const;

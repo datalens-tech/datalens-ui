@@ -1,12 +1,7 @@
 export enum Feature {
     ChartkitAlerts = 'chartkitAlerts',
     UseConfigurableChartkit = 'UseConfigurableChartkit',
-    HideOldRelations = 'hideOldRelations',
-    // Show new relations button in navigation action panel
-    ShowNewRelationsButton = 'ShowNewRelationsButton',
     AsideHeaderEnabled = 'AsideHeaderEnabled',
-    /** Enable redesign of dash controls */
-    DashFloatControls = 'DashFloatControls',
     FieldEditorDocSection = 'FieldEditorDocSection',
     UsePublicDistincts = 'UsePublicDistincts',
     EnablePublishEntry = 'EnablePublishEntry',
@@ -30,7 +25,6 @@ export enum Feature {
     CollectionsAccessEnabled = 'CollectionsAccessEnabled',
     DashBoardAccessDescription = 'DashBoardAccessDescription',
     DashBoardSupportDescription = 'DashBoardSupportDescription',
-    DashAutorefresh = 'DashAutorefresh',
     // Show request body in the Inspector dialog
     ShowInspectorDetails = 'ShowInspectorDetails',
     // Prohibiting the serialization of functions in the chart configs
@@ -65,8 +59,6 @@ export enum Feature {
     EnableEmbedsInDialogShare = 'EnableEmbedsInDialogShare',
     EnableEntryMenuItemShare = 'EnableEntryMenuItemShare',
     NewTableWidgetForCE = 'NewTableWidgetForCE',
-    /** Enable undo/redo buttons & hotkeys in datasets */
-    EnableEditHistoryDatasets = 'EnableEditHistoryDataset',
     /** Additional chart config for making requests by widget events */
     ChartActions = 'ChartActions',
     /** Disable the use of html and function in chart configs */
@@ -86,10 +78,6 @@ export enum Feature {
     EnableCustomDashMargins = 'EnableCustomDashMargins',
     /** Enabled Dash elements auto-focus */
     EnableDashAutoFocus = 'EnableDashAutoFocus',
-    /** Enable using template params in datasets sources */
-    EnableDsTemplateParams = 'EnableDsTemplateParams',
-    /** Enable Dash undo\redo */
-    EnableDashUndoRedo = 'EnableDashUndoRedo',
     /** Enable public gallery unit */
     EnablePublicGallery = 'EnablePublicGallery',
     /** Enable new secure parameters behavior */
@@ -98,6 +86,20 @@ export enum Feature {
     EnableExportSettings = 'EnableExportSettings',
     /** Enable updating dataset settings by action ('load_preview_by_default' | 'template_enabled' | 'data_export_forbidden') */
     EnableUpdatingDsSettingsByAction = 'EnableUpdatingDsSettingsByAction',
+    /** Enable new favicon, icon, theme, decorations and illustrations */
+    EnableDLRebranding = 'EnableDLRebranding',
+    /** Add "auto" palette to the list. If enabled, "auto" is parsed to the value of the tenant settings, otherwise to the default palette. */
+    EnableTenantSettingPalettes = 'EnableTenantSettingPalettes',
+    /** Use default20 instead of classic20 as deafult palette. */
+    NewDefaultPalette = 'NewDefaultPalette',
+    /** Use GravityUI Charts as the default library for some wizard visualizations(pie, donut, treemap) */
+    GravityChartsForPieAndTreemap = 'GravityChartsForPieAndTreemap',
+    /** Use GravityUI Charts as the default library for some wizard visualizations(scatter and bar-y) */
+    GravityChartsForBarYAndScatter = 'GravityChartsForBarYAndScatter',
+    /** Save field settings (formatting and colors) in the dataset */
+    StoreFieldSettingsAtDataset = 'StoreFieldSettingsAtDataset',
+    /** Enable dataset revisions */
+    EnableDatasetRevisions = 'EnableDatasetRevisions',
 }
 
 export type FeatureConfig = Record<string, boolean>;

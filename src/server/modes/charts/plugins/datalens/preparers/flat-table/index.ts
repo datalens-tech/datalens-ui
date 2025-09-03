@@ -17,7 +17,6 @@ import {
     isTreeDataType,
     isUnsupportedDataType,
 } from '../../../../../../../shared';
-import type {Config} from '../../config/types';
 import {getTreeState} from '../../url/helpers';
 import {mapAndColorizeTableCells} from '../../utils/color-helpers';
 import {
@@ -53,6 +52,7 @@ function prepareFlatTable({
     shared,
     ChartEditor,
     fields,
+    defaultColorPaletteId,
 }: PrepareFunctionArgs) {
     const {drillDownData} = shared.sharedData;
     const widgetConfig = ChartEditor.getWidgetConfig();
@@ -234,7 +234,9 @@ function prepareFlatTable({
                         field: item,
                         columnValues,
                         isTotalCell: false,
+                        availablePalettes: colorsConfig.availablePalettes,
                         loadedColorPalettes: colorsConfig.loadedColorPalettes,
+                        defaultColorPaletteId,
                     });
 
                     cell.value = barCellProperties.value;
@@ -294,6 +296,7 @@ function prepareFlatTable({
                     idToDataType,
                     loadedColorPalettes: colorsConfig.loadedColorPalettes,
                     availablePalettes: colorsConfig.availablePalettes,
+                    defaultColorPaletteId,
                 });
             }
 
@@ -333,9 +336,6 @@ function prepareFlatTable({
     // Disable the paginator if all the data came initially
     // Disabling the paginator enables front-end sorting (when clicking on the column header)
     const shouldDisablePaginator = page === 1 && limit && limit > data.length;
-    if (shouldDisablePaginator) {
-        ChartEditor.updateConfig({paginator: {enabled: false}} as Config);
-    }
 
     let footer;
 
@@ -352,6 +352,7 @@ function prepareFlatTable({
             order,
             columnValuesByColumn,
             colorsConfig,
+            defaultColorPaletteId,
         });
     }
 

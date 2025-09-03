@@ -1,6 +1,4 @@
-import {Toaster} from '@gravity-ui/uikit';
-
-const toaster = new Toaster();
+import {toaster} from '@gravity-ui/uikit/toaster-singleton';
 
 // default in Toast is 5000
 const COPY_TOAST_HIDE_TIMEOUT = 2000;

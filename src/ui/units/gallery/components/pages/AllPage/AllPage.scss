@@ -11,6 +11,14 @@ $block: '.#{variables.$ns}-all';
         height: 100%;
     }
 
+    &__breadcrumbs {
+        flex-grow: 1;
+
+        .g-breadcrumbs__item {
+            height: fit-content;
+        }
+    }
+
     &__container {
         height: calc(100% - #{$actionPanelHeight});
         padding-left: 48px;
@@ -19,6 +27,7 @@ $block: '.#{variables.$ns}-all';
         display: flex;
         flex-direction: column;
 
+        &_media_xs,
         &_media_s,
         &_media_m {
             padding-left: 20px;

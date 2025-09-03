@@ -3,9 +3,9 @@ import {generateUniqId} from '@gravity-ui/dashkit/helpers';
 import update from 'immutability-helper';
 import pick from 'lodash/pick';
 import {DashTabItemTitleSizes, DashTabItemType} from 'shared';
-import {CustomPaletteBgColors, WIDGET_BG_COLORS_PRESET} from 'shared/constants/widgets';
+import {CustomPaletteTextColors, TITLE_WIDGET_TEXT_COLORS_PRESET} from 'shared/constants/widgets';
 import {migrateConnectionsForGroupControl} from 'ui/store/utils/controlDialog';
-import {getUpdatedConnections} from 'ui/utils/copyItems';
+import {getUpdatedBackgroundValue, getUpdatedConnections} from 'ui/utils/copyItems';
 
 import {EMBEDDED_MODE} from '../../../../constants/embedded';
 import {Mode} from '../../modules/constants';
@@ -233,18 +233,16 @@ function dash(state = initialState, action) {
             };
         case actionTypes.SET_COPIED_ITEM_DATA: {
             const itemData = action.payload.item.data;
+            if (
+                itemData.textColor &&
+                !CustomPaletteTextColors[itemData.textColor] &&
+                !TITLE_WIDGET_TEXT_COLORS_PRESET.includes(itemData.textColor)
+            ) {
+                delete itemData.textColor;
+            }
             const backgroundData =
                 'background' in itemData
-                    ? {
-                          background: {
-                              color:
-                                  itemData.background?.color &&
-                                  itemData.background.enabled !== false &&
-                                  WIDGET_BG_COLORS_PRESET.includes(itemData.background.color)
-                                      ? itemData.background.color
-                                      : CustomPaletteBgColors.NONE,
-                          },
-                      }
+                    ? {background: getUpdatedBackgroundValue(itemData.background, false)}
                     : {};
             const newItem = {
                 ...action.payload.item,

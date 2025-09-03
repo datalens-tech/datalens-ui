@@ -607,9 +607,14 @@ export class Datepicker extends React.PureComponent {
                             <Popup
                                 contentClassName={b('popup', popupClassName)}
                                 open={active && !disabled}
-                                anchorRef={this.ControlNodeRef}
+                                anchorElement={this.ControlNodeRef.current}
                                 placement={AVAILABLE_POPUP_PLACEMENT}
-                                onClose={this.onClose}
+                                onOpenChange={(open) => {
+                                    if (!open) {
+                                        this.onClose();
+                                    }
+                                }}
+                                returnFocus={false}
                             >
                                 <div className={b('popup-content')}>
                                     {this.renderContent(mobile)}

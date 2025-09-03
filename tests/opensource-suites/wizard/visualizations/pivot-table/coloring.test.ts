@@ -115,7 +115,6 @@ datalensTest.describe('Wizard', () => {
                 measureField,
             );
 
-            await expect(previewLoader).toBeVisible();
             await expect(previewLoader).not.toBeVisible();
 
             await wizardPage.sectionVisualization.addFieldByClick(
@@ -123,7 +122,6 @@ datalensTest.describe('Wizard', () => {
                 measureField,
             );
 
-            await expect(previewLoader).toBeVisible();
             await expect(previewLoader).not.toBeVisible();
             await expect(chartContainer).toHaveScreenshot();
         });

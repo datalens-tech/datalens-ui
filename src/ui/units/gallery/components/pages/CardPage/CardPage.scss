@@ -46,6 +46,7 @@ $block: '.#{variables.$ns}-card';
         display: flex;
         flex-direction: column;
 
+        &_media_xs,
         &_media_s,
         &_media_m {
             padding-left: 20px;
@@ -70,6 +71,7 @@ $block: '.#{variables.$ns}-card';
         column-gap: 8px;
         margin-left: auto;
 
+        &_media_xs,
         &_media_s {
             flex-direction: row-reverse;
         }
@@ -77,6 +79,11 @@ $block: '.#{variables.$ns}-card';
 
     &__breadcrumbs {
         min-width: 0;
+        flex-grow: 1;
+    }
+
+    &__breadcrumbs-item {
+        height: 100%;
     }
 
     &__image-card {
@@ -97,6 +104,7 @@ $block: '.#{variables.$ns}-card';
         flex-direction: column;
         row-gap: 16px;
 
+        &_media_xs,
         &_media_s {
             flex-direction: row;
             column-gap: 16px;
@@ -110,6 +118,7 @@ $block: '.#{variables.$ns}-card';
     &__card-info-flex {
         column-gap: 12px;
 
+        &_media_xs,
         &_media_s {
             flex-direction: column;
             align-items: flex-start;
@@ -117,6 +126,7 @@ $block: '.#{variables.$ns}-card';
     }
 
     &__contact-partner-btn {
+        &_media_xs,
         &_media_s {
             margin-top: 8px;
         }

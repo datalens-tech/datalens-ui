@@ -2,7 +2,7 @@ import React from 'react';
 
 import {ArrowLeft} from '@gravity-ui/icons';
 import {Button, Text} from '@gravity-ui/uikit';
-import type {ButtonProps, TextProps} from '@gravity-ui/uikit';
+import type {ButtonButtonProps as ButtonProps, TextProps} from '@gravity-ui/uikit';
 import {Link} from 'react-router-dom';
 
 import type {ActiveMediaQuery} from '../../types';
@@ -11,7 +11,7 @@ import {block} from '../../utils';
 import './PageHeader.scss';
 
 const b = block('page-header');
-const HIDE_BACKBUTTON_BREAKPOINTS: ActiveMediaQuery[] = ['s', 'm'];
+const HIDE_BACKBUTTON_BREAKPOINTS: ActiveMediaQuery[] = ['xs', 's', 'm'];
 
 interface PageHeaderProps {
     title: string;

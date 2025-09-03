@@ -79,7 +79,7 @@ import {
     UPDATE_OBLIGATORY_FILTER,
     UPDATE_RLS,
 } from '../actions/types/dataset';
-import {initialState} from '../constants';
+import {getCurrentTab, initialState} from '../constants';
 import type {ConnectionEntry, DatasetReduxAction, DatasetReduxState, Update} from '../types';
 
 import {
@@ -200,6 +200,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
         case DATASET_FETCH_REQUEST: {
             return {
                 ...state,
+                isRefetchingDataset: true,
                 error: null,
             };
         }
@@ -224,6 +225,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                     ...state.ui,
                     isDatasetChanged: false,
                 },
+                isRefetchingDataset: false,
                 isLoading: false,
             };
         }
@@ -232,6 +234,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
 
             return {
                 ...state,
+                isRefetchingDataset: false,
                 error,
             };
         }
@@ -257,10 +260,14 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                     workbook_id: workbookId,
                     permissions,
                 },
+                publishedId,
+                currentRevId,
             } = action.payload;
 
             return {
                 ...state,
+                publishedId,
+                currentRevId,
                 id,
                 key,
                 isFavorite,
@@ -280,6 +287,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 },
                 permissions,
                 isLoading: false,
+                isRefetchingDataset: false,
             };
         }
         case DATASET_INITIAL_FETCH_FAILURE: {
@@ -288,6 +296,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
             return {
                 ...state,
                 isLoading: false,
+                isRefetchingDataset: false,
                 error,
             };
         }
@@ -305,8 +314,11 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
             };
         }
         case DATASET_SAVE_SUCCESS: {
+            const {publishedId} = action.payload;
             return {
                 ...state,
+                publishedId,
+                currentRevId: publishedId,
                 savingDataset: {
                     ...state.savingDataset,
                     isProcessingSavingDataset: false,
@@ -971,6 +983,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                     isLoading: false,
                     readyPreview: null,
                 },
+                currentTab: getCurrentTab(),
             };
         }
         case CLEAR_PREVIEW: {

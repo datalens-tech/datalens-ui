@@ -3,6 +3,7 @@ import type {
     BarTwoColorSettings,
     BarViewOptions,
     ColorPalette,
+    Palette,
     ServerField,
     TableBarsSettings,
 } from '../../../../../../../../shared';
@@ -13,6 +14,8 @@ import {
     selectCurrentRGBGradient,
     transformHexToRgb,
 } from '../../../../../../../../shared';
+import {getColorByColorSettings} from '../../../../../../../../shared/utils/palettes';
+import {selectServerPalette} from '../../../../../../../constants';
 import {getRgbColors} from '../../../utils/color-helpers';
 import {chartKitFormatNumberWrapper} from '../../../utils/misc-helpers';
 import type {PrepareFunctionDataRow} from '../../types';
@@ -62,10 +65,21 @@ const getBarThresholdValues = (
 
     return {min, max, mid, range, rangeMiddle};
 };
-const getTwoColorBarColor = (rowValue: string, colors: BarTwoColorSettings['settings']) => {
+const getTwoColorBarColor = (
+    rowValue: string,
+    colors: BarTwoColorSettings['settings'],
+    currentColors: string[],
+) => {
     const parsedValue = parseFloat(rowValue);
 
-    return parsedValue >= 0 ? colors.positiveColor : colors.negativeColor;
+    const isPositive = parsedValue >= 0;
+
+    return getColorByColorSettings({
+        currentColors,
+        colorIndex: isPositive ? colors.positiveColorIndex : colors.negativeColorIndex,
+        color: isPositive ? colors.positiveColor : colors.negativeColor,
+        fallbackIndex: isPositive ? 2 : 1,
+    });
 };
 const getGradientBarColor = (args: {
     columnValues: PrepareFunctionDataRow;
@@ -145,8 +159,18 @@ export const getBarSettingsValue = (args: {
     columnValues: PrepareFunctionDataRow;
     isTotalCell: boolean;
     loadedColorPalettes: Record<string, ColorPalette>;
+    availablePalettes: Record<string, Palette>;
+    defaultColorPaletteId: string;
 }): BarValueOptions => {
-    const {field, rowValue, columnValues, isTotalCell, loadedColorPalettes} = args;
+    const {
+        defaultColorPaletteId,
+        field,
+        rowValue,
+        columnValues,
+        isTotalCell,
+        loadedColorPalettes,
+        availablePalettes,
+    } = args;
 
     const barSettings = field.barsSettings!;
 
@@ -154,12 +178,27 @@ export const getBarSettingsValue = (args: {
 
     let barColor: string;
 
+    const currentColors = selectServerPalette({
+        palette: barSettings.colorSettings.settings.palette,
+        availablePalettes,
+        customColorPalettes: loadedColorPalettes,
+        defaultColorPaletteId,
+    });
+
     switch (barSettings.colorSettings.colorType) {
         case 'one-color':
-            barColor = barSettings.colorSettings.settings.color;
+            barColor = getColorByColorSettings({
+                currentColors,
+                color: barSettings.colorSettings.settings.color,
+                colorIndex: barSettings.colorSettings.settings.colorIndex,
+            });
             break;
         case 'two-color':
-            barColor = getTwoColorBarColor(rowValue, barSettings.colorSettings.settings);
+            barColor = getTwoColorBarColor(
+                rowValue,
+                barSettings.colorSettings.settings,
+                currentColors,
+            );
             break;
         case 'gradient':
             barColor = getGradientBarColor({

@@ -5,9 +5,13 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {Link} from 'react-router-dom';
+import {SignInQa} from 'shared/constants';
+import {Feature} from 'shared/types';
+import {DL} from 'ui/constants';
 import type {SdkError} from 'ui/libs/schematic-sdk';
 import type {SigninProps} from 'ui/registry/units/auth/types/components/Signin';
 import {showToast} from 'ui/store/actions/toaster';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {AUTH_ROUTE} from '../../constants/routes';
 import {submitSigninForm} from '../../store/actions/signin';
@@ -17,6 +21,7 @@ import {Login} from './components/Login';
 import {Password} from './components/Password';
 
 import defaultLogoIcon from 'ui/assets/icons/logo.svg';
+import rebrandingLogoIcon from 'ui/assets/icons/os-logo.svg';
 
 import './Signin.scss';
 
@@ -41,7 +46,7 @@ export const Signin = ({alternativeAuthOptions, logoIcon}: SigninProps) => {
         dispatch(showToast({title: error.message, error}));
     };
 
-    const handleSubmit = (event: React.FormEvent<string>) => {
+    const handleSubmit: React.FormEventHandler<'form'> = (event) => {
         event.preventDefault();
         if (!formData.login || !formData.password) {
             setErrorMessage(i18n('label_error-required-fields'));
@@ -57,6 +62,10 @@ export const Signin = ({alternativeAuthOptions, logoIcon}: SigninProps) => {
         }
     }, [errorMessage]);
 
+    const defaultLogo = isEnabledFeature(Feature.EnableDLRebranding)
+        ? rebrandingLogoIcon
+        : defaultLogoIcon;
+
     return (
         <Flex className={b()} justifyContent="center" alignItems="center">
             <Flex
@@ -64,26 +73,29 @@ export const Signin = ({alternativeAuthOptions, logoIcon}: SigninProps) => {
                 direction="column"
                 gap="6"
                 as="form"
+                qa={SignInQa.SIGN_IN_FORM}
                 onChange={handleFormChange}
                 onSubmit={handleSubmit}
             >
                 <Flex direction="column" gap="2" alignItems="center">
-                    <Icon size={32} data={logoIcon || defaultLogoIcon} />
+                    <Icon size={32} data={logoIcon || defaultLogo} />
                     <Text variant="subheader-3">{i18n('title_product')}</Text>
                 </Flex>
                 <Flex direction="column" gap="4">
                     {errorMessage && <Alert theme="danger" message={errorMessage} />}
-                    <Login />
-                    <Password />
+                    <Login qa={SignInQa.INPUT_LOGIN} />
+                    <Password qa={SignInQa.INPUT_PASSWORD} />
                     <Button size="xl" view="action" type="submit">
                         {i18n('button_sign-in')}
                     </Button>
-                    <Flex gap={1}>
-                        {i18n('label_sign-up-hint')}
-                        <Link to={AUTH_ROUTE.SIGNUP} className={b('link')}>
-                            {i18n('label_sing-up-link')}
-                        </Link>
-                    </Flex>
+                    {!DL.AUTH_SIGNUP_DISABLED && (
+                        <Flex gap={1}>
+                            {i18n('label_sign-up-hint')}
+                            <Link to={AUTH_ROUTE.SIGNUP} className={b('link')}>
+                                {i18n('label_sing-up-link')}
+                            </Link>
+                        </Flex>
+                    )}
                 </Flex>
                 {alternativeAuthOptions}
             </Flex>

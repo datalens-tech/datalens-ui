@@ -47,7 +47,7 @@ export const getCreateEntryItems = ({onClick, place, isOnlyCollectionsMode}: Cre
 
         targetMenu.push({
             action: () => onClick(entryConfig.value),
-            icon: <EntityIcon type={entryConfig.type} iconData={entryConfig.icon} />,
+            iconStart: <EntityIcon type={entryConfig.type} iconData={entryConfig.icon} />,
             text: <Title className={b('item-title')} title={entryConfig.text} />,
             qa: entryConfig.qa,
         });
@@ -61,7 +61,7 @@ export const getCreateEntryItems = ({onClick, place, isOnlyCollectionsMode}: Cre
     if (isOnlyCollectionsMode === false) {
         menuItems.push({
             action: () => onClick(CreateMenuValue.Folder),
-            icon: <EntityIcon type="folder" iconData={iconFolder} iconSize={18} />,
+            iconStart: <EntityIcon type="folder" iconData={iconFolder} iconSize={18} />,
             text: <Title className={b('item-title')} title={i18n('value_create-folder')} />,
         });
     }

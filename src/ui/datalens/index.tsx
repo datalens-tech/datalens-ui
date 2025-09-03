@@ -18,6 +18,7 @@ import {DL} from 'ui/constants';
 import {useClearReloadedQuery} from '../units/auth/hooks/useClearReloadedQuery';
 import {reducer} from 'ui/units/auth/store/reducers';
 import {useIframeRender} from './hooks';
+import {OPEN_SOURCE_INSTALLATION_INFO} from 'ui/constants/navigation';
 
 reducerRegistry.register(coreReducers);
 reducerRegistry.register({auth: reducer});
@@ -73,7 +74,13 @@ const DatalensPageView = () => {
                     path={['/workbooks/:workbookId/datasets/new', '/datasets/:id']}
                     component={DatasetPage}
                 />
+
                 <Route path="/preview" component={PreviewPage} />
+
+                {/* Prevent attempts to create a standalone (outside of workbook) connection */}
+                <Route path={['/connections/new/:type', '/connections/new']}>
+                    <Redirect to={`/collections${location.search}`} />
+                </Route>
                 <Route
                     path={[
                         '/connections/:id',
@@ -116,11 +123,21 @@ const DatalensPage: React.FC = () => {
     useIframeRender();
 
     if (showMobileHeader) {
-        return <MobileHeaderComponent renderContent={() => <DatalensPageView />} />;
+        return (
+            <MobileHeaderComponent
+                renderContent={() => <DatalensPageView />}
+                installationInfo={OPEN_SOURCE_INSTALLATION_INFO}
+            />
+        );
     }
 
     if (showAsideHeaderAdapter) {
-        return <AsideHeaderAdapter renderContent={() => <DatalensPageView />} />;
+        return (
+            <AsideHeaderAdapter
+                renderContent={() => <DatalensPageView />}
+                installationInfo={OPEN_SOURCE_INSTALLATION_INFO}
+            />
+        );
     }
 
     return <DatalensPageView />;

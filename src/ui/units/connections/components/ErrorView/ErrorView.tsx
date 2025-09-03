@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {ButtonProps} from '@gravity-ui/uikit';
+import type {ButtonButtonProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {ErrorContentTypes} from 'shared';
@@ -21,7 +21,7 @@ export type ErrorScope = 'connectors' | 'connection' | 'schema' | 'unknown';
 
 export type ErrorContentAction = {
     text?: string;
-    buttonProps?: Partial<ButtonProps>;
+    buttonProps?: Partial<ButtonButtonProps>;
     content?: React.ReactNode;
     handler?: () => void;
 };

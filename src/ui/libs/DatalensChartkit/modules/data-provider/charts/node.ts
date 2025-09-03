@@ -180,6 +180,9 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                     allowHtml,
                     parseHtml,
                     ignoreInvalidValues,
+                    // we expand its below
+                    // additional checks should be inside the markup and markdown processing
+                    excludedKeys: [WRAPPED_MARKUP_KEY, WRAPPED_MARKDOWN_KEY],
                 });
                 processHtmlFields(result.libraryConfig, {
                     allowHtml,
@@ -363,6 +366,31 @@ function applyChartkitHandlers(args: {
             libraryConfig.legend.labelFormatter =
                 ChartkitHandlersDict[ChartkitHandlers.WizardLabelFormatter];
         }
+
+        if (
+            libraryConfig.xAxis?.labels?.formatter === ChartkitHandlers.WizardDatetimeAxisFormatter
+        ) {
+            libraryConfig.xAxis.labels.formatter = ChartkitHandlersDict[
+                ChartkitHandlers.WizardDatetimeAxisFormatter
+            ](libraryConfig.xAxis?.labels?.format);
+        }
+
+        if (
+            libraryConfig.yAxis?.labels?.formatter === ChartkitHandlers.WizardDatetimeAxisFormatter
+        ) {
+            libraryConfig.yAxis.labels.formatter = ChartkitHandlersDict[
+                ChartkitHandlers.WizardDatetimeAxisFormatter
+            ](libraryConfig.yAxis?.labels?.format);
+        }
+
+        libraryConfig.yAxis?.forEach?.((item: typeof libraryConfig.yAxis) => {
+            const formatter = item?.labels?.formatter;
+            if (formatter && formatter === ChartkitHandlers.WizardDatetimeAxisFormatter) {
+                item.labels.formatter = ChartkitHandlersDict[
+                    ChartkitHandlers.WizardDatetimeAxisFormatter
+                ](item.labels.format);
+            }
+        });
 
         if (libraryConfig.xAxis?.labels?.formatter === ChartkitHandlers.WizardXAxisFormatter) {
             libraryConfig.xAxis.labels.formatter =

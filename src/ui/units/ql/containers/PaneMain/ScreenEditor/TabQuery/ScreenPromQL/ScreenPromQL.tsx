@@ -155,16 +155,18 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
                                             />
                                             <DropdownMenu
                                                 size="s"
-                                                switcher={
+                                                renderSwitcher={({onClick, onKeyDown}) => (
                                                     <Button
                                                         view="flat-secondary"
                                                         size="s"
                                                         key="button-query-more"
                                                         className={b('query-more-btn')}
+                                                        onClick={onClick}
+                                                        onKeyDown={onKeyDown}
                                                     >
                                                         <Icon size={14} data={Ellipsis} />
                                                     </Button>
-                                                }
+                                                )}
                                                 items={[
                                                     {
                                                         action: () => {
@@ -223,7 +225,7 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
                                                     glyphMargin: true,
                                                     hideCursorInOverviewRuler: true,
                                                     lineNumbersMinChars: 1,
-                                                    wordWrap: 'bounded',
+                                                    wordWrap: 'on',
                                                     automaticLayout: true,
                                                 }}
                                                 onChange={(newQueryValue) => {

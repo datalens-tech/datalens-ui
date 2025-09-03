@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {RadioButtonOption} from '@gravity-ui/uikit';
+import type {SegmentedRadioGroupOptionProps} from '@gravity-ui/uikit';
 import {Dialog, Icon, Switch} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
@@ -25,6 +25,7 @@ import {
     isPseudoField,
 } from 'shared';
 import type {TableSubTotalsSettings} from 'shared/types/wizard/sub-totals';
+import {NumberFormatSettings} from 'ui/components/NumberFormatSettings/NumberFormatSettings';
 import {setExtraSettings} from 'ui/units/wizard/actions/widget';
 import {
     getDefaultSubTotalsSettings,
@@ -41,7 +42,7 @@ import type {
     Field as TField,
     TableBarsSettings,
 } from '../../../../../../shared/types';
-import {DATASET_FIELD_TYPES} from '../../../../../../shared/types';
+import {DATASET_FIELD_TYPES, isNumberField} from '../../../../../../shared/types';
 import {registry} from '../../../../../registry';
 import {
     AVAILABLE_DATETIMETZ_FORMATS,
@@ -56,10 +57,6 @@ import {BackgroundSettings} from './components/BackgroundSettings/BackgroundSett
 import {BarsSettings} from './components/BarsSettings/BarsSettings';
 import {DialogFieldMainSection} from './components/DialogFieldMainSection/DialogFieldMainSection';
 import {DialogFieldRow} from './components/DialogFieldRow/DialogFieldRow';
-import NumberComponent, {
-    isFloatNumberFormatting,
-    isIntegerNumberFormatting,
-} from './components/Number/Number';
 import {SubTotalsSettings} from './components/SubTotalsSettings/SubTotalsSettings';
 import {
     getDefaultBackgroundSettings,
@@ -291,8 +288,8 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
             <Dialog
                 open={true}
                 onClose={this.props.onCancel}
-                disableFocusTrap={true}
                 className={b()}
+                disableHeightTransition={true}
             >
                 <div className={b(itemType)}>
                     <Dialog.Header
@@ -419,8 +416,8 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
                 this.setState({formatting: updatedFormatting}),
         };
 
-        if (isFloatNumberFormatting(numberProps) || isIntegerNumberFormatting(numberProps)) {
-            return <NumberComponent {...numberProps} />;
+        if (isNumberField({data_type: formattingDataType})) {
+            return <NumberFormatSettings {...numberProps} />;
         }
 
         return null;
@@ -485,13 +482,14 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
         const visualizationId = visualization.id as WizardVisualizationId;
         const canTransformToMarkdown =
             isStringField && canUseStringAsMarkdown(visualizationId, placeholderId);
-        const canTransformToHtml = isStringField && canUseStringAsHtml(visualizationId);
+        const canTransformToHtml =
+            isStringField && canUseStringAsHtml(visualizationId, placeholderId);
 
         if (!canTransformToMarkdown && !canTransformToHtml) {
             return null;
         }
 
-        const items: RadioButtonOption[] = [
+        const items: SegmentedRadioGroupOptionProps[] = [
             {value: MARKUP_TYPE.none, content: i18n('wizard', 'label_none')},
         ];
 
@@ -512,7 +510,7 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
                         <DialogRadioButtons
                             qa={DialogFieldSettingsQa.MarkupTypeRadioButtons}
                             items={items}
-                            value={this.state.markupType}
+                            value={this.state.markupType ?? MARKUP_TYPE.none}
                             onUpdate={(value: string) => {
                                 this.setState({markupType: value});
                             }}

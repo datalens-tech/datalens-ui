@@ -1,5 +1,6 @@
 import type {SortedDataItem} from '@gravity-ui/react-data-table';
-import {get} from 'lodash';
+import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
 import type {
     DatasetField,
     DatasetFieldAggregation,
@@ -26,6 +27,7 @@ import {
     getSourceColumn,
     getTitleColumn,
 } from './columns';
+import {getFieldSettingsColumn} from './columns/FieldSettings';
 import type {FieldAction} from './constants';
 import {FORMULA_CALC_MODE} from './constants';
 import type {ColumnItem} from './types';
@@ -44,6 +46,7 @@ type GetColumnsArgs = {
     handleTitleUpdate: (field: DatasetField, value: string) => void;
     handleIdUpdate: (field: DatasetField, value: string) => void;
     handleHiddenUpdate: (field: DatasetField) => void;
+    handleUpdateFieldSettings: (field: DatasetField) => void;
     handleRlsUpdate: (field: DatasetField) => void;
     rls: DatasetRls;
     permissions?: Permissions;
@@ -106,6 +109,7 @@ export const getColumns = (args: GetColumnsArgs) => {
         handleTitleUpdate,
         handleIdUpdate,
         handleHiddenUpdate,
+        handleUpdateFieldSettings,
         handleTypeSelectUpdate,
         handleAggregationSelectUpdate,
         handleDescriptionUpdate,
@@ -147,7 +151,14 @@ export const getColumns = (args: GetColumnsArgs) => {
     });
     const more = getMoreColumn({setActiveRow, onItemClick: handleMoreActionClick});
 
-    const columns = [index, title, source, hidden, cast, aggregation, description, more];
+    const columns = [index, title, source];
+
+    if (isEnabledFeature(Feature.StoreFieldSettingsAtDataset)) {
+        const fieldSettingsColumn = getFieldSettingsColumn({onUpdate: handleUpdateFieldSettings});
+        columns.push(fieldSettingsColumn);
+    }
+
+    columns.push(...[hidden, cast, aggregation, description, more]);
 
     if (isEnabledFeature(Feature.DatasetsRLS) && (permissions?.admin || permissions?.edit)) {
         const rlsColumn = getRlsColumn({onUpdate: handleRlsUpdate, rls});
@@ -262,4 +273,22 @@ export const sortDescriptionColumn = (
 
 export const isHiddenSupported = (row: DatasetField) => {
     return row.initial_data_type !== DATASET_FIELD_TYPES.UNSUPPORTED;
+};
+
+export const getFieldUISettings = ({field}: {field: DatasetField}) => {
+    const value = field?.ui_settings;
+    let result = null;
+    try {
+        if (value) {
+            result = JSON.parse(value);
+        }
+    } catch (e) {
+        console.error('Incorrect ui_settings value', e);
+    }
+
+    return result;
+};
+
+export const isFieldWithDisplaySettings = ({field}: {field: DatasetField}) => {
+    return !isEmpty(field?.ui_settings);
 };

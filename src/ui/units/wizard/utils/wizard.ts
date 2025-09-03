@@ -12,7 +12,6 @@ import type {
 import {
     DATASET_FIELD_TYPES,
     DatasetFieldType,
-    Feature,
     NavigatorModes,
     Operations,
     isDateField,
@@ -38,7 +37,6 @@ import {
     POLYLINE_VISUALIZATION,
     VISUALIZATION_IDS,
 } from 'ui/constants/visualizations';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {v1 as uuidv1} from 'uuid';
 
 import history from '../../../utils/history';
@@ -49,7 +47,11 @@ import {getChartFiltersWithDisabledProp} from './filters';
 
 const i18n = I18n.keyset('wizard');
 
-type DefaultExtraSettings = Partial<CommonSharedExtraSettings>;
+type DefaultExtraSettings =
+    | typeof DEFAULT_FLAT_TABLE_EXTRA_SETTINGS
+    | typeof DEFAULT_DONUT_EXTRA_SETTINGS
+    | typeof DEFAULT_BAR_EXTRA_SETTINGS
+    | Partial<CommonSharedExtraSettings>;
 
 const getVisualizationConfig = (type: VisualizationLayerType) => {
     let visualization: VisualizationLayerShared['visualization'];
@@ -347,7 +349,7 @@ export function getFiltersFields(
             isDateField(foundItem) && values.length === 1 ? Operations.EQ : undefined;
 
         values.forEach((urlValue) => {
-            if (!urlValue && isFilterAlreadyInChart && isEnabledFeature(Feature.EmptySelector)) {
+            if (!urlValue && isFilterAlreadyInChart) {
                 filtersFields.push({
                     ...foundItem,
                     unsaved: true,
@@ -418,7 +420,7 @@ export function getDefaultVisualisationExtraSettings(
 export const getDefaultExtraSettings = (
     visualisationId: string,
     prevExtraSettings?: CommonSharedExtraSettings,
-): DefaultExtraSettings => {
+): DefaultExtraSettings | {} => {
     let defaultExtraSettings = getDefaultVisualisationExtraSettings(visualisationId) || {};
 
     if (prevExtraSettings) {

@@ -57,7 +57,7 @@ export const prepareFooterValue = (
 };
 
 export const getFooterCellWithStyles = (args: GetFooterCellWithStylesArgs) => {
-    const {column, value, columnValuesByColumn, colorsConfig} = args;
+    const {column, value, columnValuesByColumn, colorsConfig, defaultColorPaletteId} = args;
 
     const cell: TableCommonCell | BarTableCell = {
         value,
@@ -71,7 +71,9 @@ export const getFooterCellWithStyles = (args: GetFooterCellWithStylesArgs) => {
             field: column,
             columnValues,
             isTotalCell: true,
+            availablePalettes: colorsConfig.availablePalettes,
             loadedColorPalettes: colorsConfig.loadedColorPalettes,
+            defaultColorPaletteId,
         });
 
         cell.value = barCellProperties.value;
@@ -93,6 +95,7 @@ export const getFooter = (args: GetFooterArgs) => {
         idToDataType,
         columnValuesByColumn,
         colorsConfig,
+        defaultColorPaletteId,
     } = args;
 
     const i18n = (key: string, params?: Record<string, string | number>) =>
@@ -106,7 +109,13 @@ export const getFooter = (args: GetFooterArgs) => {
     });
 
     const cells = valuesWithColumns.map(({value, column}) => {
-        return getFooterCellWithStyles({column, value, columnValuesByColumn, colorsConfig});
+        return getFooterCellWithStyles({
+            column,
+            value,
+            columnValuesByColumn,
+            colorsConfig,
+            defaultColorPaletteId,
+        });
     });
 
     return [

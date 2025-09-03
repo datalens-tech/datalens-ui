@@ -39,7 +39,6 @@ const ITEM_SHOW_PREVIEW_BY_DEFAULT = 'showPreviewByDefault';
 const ITEM_TEMPLATE_ENABLED = 'templateEnabled';
 const ITEM_DATA_EXPORT_ENABLED = 'dataExportEnabled';
 const RAW_SQL_LEVELS_ALLOW_TEMPLATING: string[] = [RAW_SQL_LEVEL.TEMPLATE, RAW_SQL_LEVEL.DASHSQL];
-const isTemplateParamsFeatureEnabled = isEnabledFeature(Feature.EnableDsTemplateParams);
 const isExportSettingsFeatureEnabled = isEnabledFeature(Feature.EnableExportSettings);
 const isUpdatingDsSettingsByActionFeatureEnabled = isEnabledFeature(
     Feature.EnableUpdatingDsSettingsByAction,
@@ -109,7 +108,7 @@ export function ActionPanelRightItems(props: Props) {
                 }
             }
 
-            if (dataExportEnabled !== nextDataExportEnabled) {
+            if (dataExportEnabled !== nextDataExportEnabled && isExportSettingsFeatureEnabled) {
                 if (isUpdatingDsSettingsByActionFeatureEnabled) {
                     dispatch(updateSetting('data_export_forbidden', !nextDataExportEnabled));
                 } else {
@@ -124,17 +123,20 @@ export function ActionPanelRightItems(props: Props) {
         const {ref, triggerProps} = args;
 
         return (
-            <Button
-                ref={ref}
-                view="flat"
-                extraProps={{onKeyDown: triggerProps.onKeyDown}}
-                {...triggerProps}
-            >
+            <Button ref={ref as React.Ref<HTMLButtonElement>} view="flat" {...triggerProps}>
                 <Icon data={Gear} size={ACTION_PANEL_ICON_SIZE} />
             </Button>
         );
     }, []);
 
+    const templateParamsOptionContent = (
+        <div style={{display: 'flex', height: '100%'}}>
+            {i18n('label_enable-templating')}
+            <HelpMark className={b('settings-hint')}>
+                {i18n('label_enable-templating-hint')}
+            </HelpMark>
+        </div>
+    );
     const settingsSelectOptions = [
         <Select.Option
             key={ITEM_SHOW_PREVIEW_BY_DEFAULT}
@@ -143,37 +145,24 @@ export function ActionPanelRightItems(props: Props) {
         >
             {i18n('label_load_preview_by_default')}
         </Select.Option>,
+        <Select.Option
+            key={ITEM_TEMPLATE_ENABLED}
+            value={ITEM_TEMPLATE_ENABLED}
+            disabled={isLoadingDataset || !isRawSqlLevelEnableTemplating || isValidationLoading}
+        >
+            {isRawSqlLevelEnableTemplating ? (
+                templateParamsOptionContent
+            ) : (
+                <ActionTooltip
+                    className={b('settings-templating-disable-hint')}
+                    title={i18n('label_enable-templating-disabled-hint')}
+                    placement="left"
+                >
+                    {templateParamsOptionContent}
+                </ActionTooltip>
+            )}
+        </Select.Option>,
     ];
-
-    if (isTemplateParamsFeatureEnabled) {
-        const optionContent = (
-            <div style={{display: 'flex', height: '100%'}}>
-                {i18n('label_enable-templating')}
-                <HelpMark className={b('settings-hint')}>
-                    {i18n('label_enable-templating-hint')}
-                </HelpMark>
-            </div>
-        );
-        settingsSelectOptions.push(
-            <Select.Option
-                key={ITEM_TEMPLATE_ENABLED}
-                value={ITEM_TEMPLATE_ENABLED}
-                disabled={isLoadingDataset || !isRawSqlLevelEnableTemplating || isValidationLoading}
-            >
-                {isRawSqlLevelEnableTemplating ? (
-                    optionContent
-                ) : (
-                    <ActionTooltip
-                        className={b('settings-templating-disable-hint')}
-                        title={i18n('label_enable-templating-disabled-hint')}
-                        placement="left"
-                    >
-                        {optionContent}
-                    </ActionTooltip>
-                )}
-            </Select.Option>,
-        );
-    }
 
     if (isExportSettingsFeatureEnabled) {
         settingsSelectOptions.push(

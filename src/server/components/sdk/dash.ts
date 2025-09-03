@@ -1,7 +1,7 @@
 import type {IncomingHttpHeaders} from 'http';
 
 import type {AppContext} from '@gravity-ui/nodekit';
-import Hashids from 'hashids/cjs';
+import Hashids from 'hashids';
 import assign from 'lodash/assign';
 import intersection from 'lodash/intersection';
 
@@ -289,12 +289,9 @@ class Dash {
                 ...headers,
                 ...ctx.getMetadata(),
             };
-            const result = (await US.readEntry(
-                entryId,
-                params,
-                headersWithMetadata,
-                ctx,
-            )) as DashEntry;
+            const result = await US.readEntry(entryId, params, headersWithMetadata, ctx).then(
+                (entry) => Dash.migrateDescription(entry as DashEntry),
+            );
 
             const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
             const isServerMigrationEnabled = Boolean(
@@ -316,6 +313,21 @@ class Dash {
 
     static async migrate(data: DashEntry['data']) {
         return DashSchemeConverter.update(data);
+    }
+
+    static migrateDescription(prevEntry: DashEntry) {
+        if ('description' in prevEntry.data) {
+            const entry = {
+                ...prevEntry,
+                annotation: {
+                    description: prevEntry.data.description,
+                },
+            };
+            delete entry.data.description;
+            return entry;
+        }
+
+        return prevEntry;
     }
 
     static async update(

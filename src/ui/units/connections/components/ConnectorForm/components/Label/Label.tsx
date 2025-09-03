@@ -1,7 +1,6 @@
 import React from 'react';
 
-import {HelpPopover} from '@gravity-ui/components';
-import {Loader} from '@gravity-ui/uikit';
+import {HelpMark, Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import type {LabelItem} from 'shared/schema/types';
 import {Interpolate} from 'ui';
@@ -58,16 +57,13 @@ export const Label = ({text, helpText, align = 'center'}: LabelProps) => {
             <span className={b('inner-content')}>
                 <LabelText text={text} />
                 {helpText && (
-                    <HelpPopover
-                        className={b('help-text')}
-                        content={
-                            <MarkdownItem
-                                text={helpText}
-                                fallback={<Loader size="s" />}
-                                onLoad={handleMarkdownLoad}
-                            />
-                        }
-                    />
+                    <HelpMark className={b('help-text')}>
+                        <MarkdownItem
+                            text={helpText}
+                            fallback={<Loader size="s" />}
+                            onLoad={handleMarkdownLoad}
+                        />
+                    </HelpMark>
                 )}
             </span>
         </div>

@@ -1,7 +1,8 @@
 import React from 'react';
 
 import type {DropdownMenuItemMixed} from '@gravity-ui/uikit';
-import {Loader, Toaster} from '@gravity-ui/uikit';
+import {Loader} from '@gravity-ui/uikit';
+import {toaster} from '@gravity-ui/uikit/toaster-singleton';
 import type {AxiosError} from 'axios';
 import block from 'bem-cn-lite';
 import type {History, Location} from 'history';
@@ -14,6 +15,7 @@ import SplitPane from 'react-split-pane';
 import {compose} from 'recompose';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
+import type {ChartWithWrapRefProps} from 'ui/components/Widgets/Chart/types';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {isDraftVersion} from 'ui/utils/revisions';
 
@@ -39,7 +41,6 @@ import withErrorPage from '../../../../components/ErrorPage/withErrorPage';
 import type {RevisionEntry} from '../../../../components/Revisions/types';
 import {HOTKEYS_SCOPES} from '../../../../constants/misc';
 import {withHotkeysContext} from '../../../../hoc/withHotkeysContext';
-import type {ChartKit} from '../../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import {registry} from '../../../../registry';
 import {openDialogSaveDraftChartAsActualConfirm} from '../../../../store/actions/dialog';
 import {
@@ -71,6 +72,7 @@ import {
     selectConfigForSaving,
     selectConfigType,
     selectInitialPreviewHash,
+    selectPreviewDescription,
     selectPreviewEntryId,
     selectPreviewHash,
 } from '../../selectors/preview';
@@ -129,11 +131,10 @@ interface State {
 }
 
 class Wizard extends React.Component<Props, State> {
-    private toaster: Toaster;
     private entryDialoguesRef: React.RefObject<EntryDialogues>;
     private hotkeysAreaRef: React.RefObject<HTMLDivElement>;
 
-    private chartKitRef: React.RefObject<ChartKit> = React.createRef<ChartKit>();
+    private chartKitRef = React.createRef<ChartWithWrapRefProps>();
 
     constructor(props: Props) {
         super(props);
@@ -158,8 +159,6 @@ class Wizard extends React.Component<Props, State> {
 
             this.props.setDefaults(params);
         }
-
-        this.toaster = new Toaster();
 
         this.entryDialoguesRef = React.createRef();
         this.hotkeysAreaRef = React.createRef();
@@ -302,8 +301,15 @@ class Wizard extends React.Component<Props, State> {
     };
 
     openSaveAsWidgetDialog = async (convert = false) => {
-        const {dataset, visualization, extraSettings, defaultPath, widget, configForSaving} =
-            this.props;
+        const {
+            dataset,
+            visualization,
+            extraSettings,
+            defaultPath,
+            widget,
+            configForSaving,
+            description,
+        } = this.props;
 
         const resultConfig = mapClientConfigToChartsConfig(configForSaving);
 
@@ -327,6 +333,7 @@ class Wizard extends React.Component<Props, State> {
                 initName,
                 initDestination: path,
                 workbookId: widget.workbookId,
+                description,
             },
         });
 
@@ -351,12 +358,17 @@ class Wizard extends React.Component<Props, State> {
     };
 
     openSaveWidgetDialog = async (mode?: EntryUpdateMode) => {
-        const {widget, configForSaving} = this.props;
+        const {widget, configForSaving, description} = this.props;
 
         // Are we updating an existing one or saving a new one?
         if (widget && !widget.fake) {
             // Updating an existing one
-            this.props.updateWizardWidget({entry: widget, config: configForSaving, mode});
+            this.props.updateWizardWidget({
+                entry: widget,
+                config: configForSaving,
+                mode,
+                description,
+            });
 
             this.props.updateClientChartsConfig({
                 isInitialPreview: true,
@@ -484,7 +496,7 @@ class Wizard extends React.Component<Props, State> {
 
         const fullscreen = isFullscreen ? ' fullscreen-mode' : '';
         const hidden = isFullscreen ? ' hidden' : '';
-        const {entryDialoguesRef, toaster} = this;
+        const {entryDialoguesRef} = this;
 
         return (
             <div className={`${b()}${fullscreen}`}>
@@ -534,7 +546,6 @@ class Wizard extends React.Component<Props, State> {
                         onSaveAsNewClick={this.openSaveAsWidgetDialog}
                         onSaveAsDraftClick={this.handleSaveDraftClick}
                         onSaveAndPublishClick={this.handleSavePublishClick}
-                        chartKitRef={this.chartKitRef}
                     />
                     <div className={`columns columns_aside-${getIsAsideHeaderEnabled()}`}>
                         <SplitPane
@@ -629,6 +640,7 @@ const mapStateToProps = (state: DatalensGlobalState, ownProps: OwnProps) => {
         isParentDashWasChanged: isDraft(state) && isEditMode(state),
         initialPreviewHash: selectInitialPreviewHash(state),
         wizardState: state.wizard,
+        description: selectPreviewDescription(state),
     };
 };
 

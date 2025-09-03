@@ -22,6 +22,7 @@ type OnMeasureAxisChangeArgs = {
     shapes: Field[];
     visualization: Shared['visualization'];
     placeholderId: PlaceholderId;
+    isQL: boolean;
 };
 
 export function onMeasureAxisChange({
@@ -30,6 +31,7 @@ export function onMeasureAxisChange({
     colors,
     visualization,
     shapes,
+    isQL,
 }: OnMeasureAxisChangeArgs) {
     if (isMeasureFieldInColors(colors)) {
         return;
@@ -80,7 +82,7 @@ export function onMeasureAxisChange({
                     colors.splice(0, colors.length);
                 }
 
-                colors.push(createMeasureNames());
+                colors.push(createMeasureNames(isQL));
 
                 visualization.colorsCapacity = 2;
             }
@@ -89,7 +91,7 @@ export function onMeasureAxisChange({
                     shapes.splice(0, shapes.length);
                 }
 
-                shapes.push(createMeasureNames());
+                shapes.push(createMeasureNames(isQL));
 
                 visualization.shapesCapacity = 2;
             }
