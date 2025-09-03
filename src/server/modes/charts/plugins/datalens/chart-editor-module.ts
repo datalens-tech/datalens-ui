@@ -8,18 +8,22 @@ import type {
     StringParams,
 } from '../../../../../shared';
 
-import {buildChartsConfigPrivate} from './config/config';
+import {buildChartsConfigPrivate} from './config';
 import type {BuildChartConfigArgs} from './config/types';
-import {buildHighchartsConfigPrivate} from './highcharts/highcharts';
-import type {JSTabOptions} from './js';
+import {buildHighchartsConfigPrivate} from './highcharts';
 import {buildGraphPrivate} from './js/js';
 import {fallbackJSFunctionPrivate} from './js/js-v1.5-private';
-import {buildSourcesPrivate} from './url/build-sources/build-sources';
-import type {SourceRequests, SourcesArgs} from './url/build-sources/types';
+import {buildSourcesPrivate} from './url/build-sources';
+import type {SourceRequests, SourcesArgs} from './url/types';
 import {setConsole} from './utils/misc-helpers';
+
+type JSTabOptions =
+    | [{shared: Shared | ServerChartsConfig; ChartEditor: IChartEditor; data: any}]
+    | [any, Shared | ServerChartsConfig, IChartEditor];
 
 declare const __features: FeatureConfig;
 declare const __palettes: Record<string, Palette>;
+declare const __defaultColorPaletteId: string;
 
 const buildHighchartsConfig = (...options: [{shared: ServerChartsConfig} | ServerChartsConfig]) => {
     let shared: ServerChartsConfig;
@@ -41,6 +45,7 @@ const fallbackJSFunction = (...options: JSTabOptions) => {
         options,
         features: __features,
         palettes: __palettes,
+        defaultColorPaletteId: __defaultColorPaletteId,
     });
 };
 
@@ -73,6 +78,7 @@ export const buildGraph = (...options: JSTabOptions) => {
         data,
         palettes: __palettes,
         features: __features,
+        defaultColorPaletteId: __defaultColorPaletteId,
     });
 };
 
@@ -121,6 +127,7 @@ export default {
             palettes: __palettes,
             features: __features,
             plugin: 'gravity-charts',
+            defaultColorPaletteId: __defaultColorPaletteId,
         });
     },
     buildChartsConfig,

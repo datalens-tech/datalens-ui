@@ -223,7 +223,6 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
         mods,
         widgetBodyClassName,
         hasHiddenClassMod,
-        veil,
         showLoader,
         showOverlayWithControlsOnEdit,
     } = React.useMemo(
@@ -432,7 +431,6 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
         mods,
         widgetBodyClassName,
         hasHiddenClassMod,
-        veil,
         showLoader,
         loadChartData,
         setLoadingProps,

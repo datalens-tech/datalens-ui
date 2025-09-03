@@ -2,8 +2,6 @@ export enum Feature {
     ChartkitAlerts = 'chartkitAlerts',
     UseConfigurableChartkit = 'UseConfigurableChartkit',
     AsideHeaderEnabled = 'AsideHeaderEnabled',
-    /** Enable redesign of dash controls */
-    DashFloatControls = 'DashFloatControls',
     FieldEditorDocSection = 'FieldEditorDocSection',
     UsePublicDistincts = 'UsePublicDistincts',
     EnablePublishEntry = 'EnablePublishEntry',
@@ -80,8 +78,6 @@ export enum Feature {
     EnableCustomDashMargins = 'EnableCustomDashMargins',
     /** Enabled Dash elements auto-focus */
     EnableDashAutoFocus = 'EnableDashAutoFocus',
-    /** Enable using template params in datasets sources */
-    EnableDsTemplateParams = 'EnableDsTemplateParams',
     /** Enable public gallery unit */
     EnablePublicGallery = 'EnablePublicGallery',
     /** Enable new secure parameters behavior */
@@ -94,8 +90,8 @@ export enum Feature {
     EnableDLRebranding = 'EnableDLRebranding',
     /** Add "auto" palette to the list. If enabled, "auto" is parsed to the value of the tenant settings, otherwise to the default palette. */
     EnableTenantSettingPalettes = 'EnableTenantSettingPalettes',
-    /** TODO: delete */
-    GravityAsDefaultWizardVisualizationLibrary = 'GravityAsDefaultWizardVisualizationLibrary',
+    /** Use default20 instead of classic20 as deafult palette. */
+    NewDefaultPalette = 'NewDefaultPalette',
     /** Use GravityUI Charts as the default library for some wizard visualizations(pie, donut, treemap) */
     GravityChartsForPieAndTreemap = 'GravityChartsForPieAndTreemap',
     /** Use GravityUI Charts as the default library for some wizard visualizations(scatter and bar-y) */
@@ -104,6 +100,10 @@ export enum Feature {
     PublicApi = 'PublicApi',
     /** Enable public api swagger */
     PublicApiSwagger = 'PublicApiSwagger',
+    /** Save field settings (formatting and colors) in the dataset */
+    StoreFieldSettingsAtDataset = 'StoreFieldSettingsAtDataset',
+    /** Enable dataset revisions */
+    EnableDatasetRevisions = 'EnableDatasetRevisions',
 }
 
 export type FeatureConfig = Record<string, boolean>;

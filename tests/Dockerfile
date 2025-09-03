@@ -75,6 +75,6 @@ ENV APP_VERSION=$app_version
 
 ENV E2E_DOMAIN="http://localhost:8080" 
 ENV E2E_RETRY_TIMES=1
-ENV E2E_NO_AUTH=false 
+ENV E2E_NO_AUTH=false
 
 ENTRYPOINT ["npm", "run", "test:e2e:opensource"]

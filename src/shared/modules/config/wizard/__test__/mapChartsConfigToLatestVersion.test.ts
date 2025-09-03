@@ -8,6 +8,6 @@ describe('mapChartsConfigToLatestVersion', () => {
 
         const result = mapChartsConfigToLatestVersion(mockedConfigWithNumericVersion);
 
-        expect(result).toEqual({version: ChartsConfigVersion.V13});
+        expect(result).toEqual({version: ChartsConfigVersion.V14});
     });
 });

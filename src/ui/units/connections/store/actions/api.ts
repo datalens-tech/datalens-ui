@@ -86,12 +86,17 @@ const fetchConnectors = async (): Promise<
 const fetchConnectorSchema = async ({
     type,
     mode,
+    connectionId,
 }: GetConnectorSchemaArgs): Promise<{
     schema?: FormSchema;
     error?: DataLensApiError;
 }> => {
     try {
-        const {form: schema} = await getSdk().sdk.bi.getConnectorSchema({type, mode});
+        const {form: schema} = await getSdk().sdk.bi.getConnectorSchema({
+            type,
+            mode,
+            connectionId,
+        });
         return {schema};
     } catch (error) {
         logger.logError('Redux actions (conn): fetchConnectorForm failed', error);

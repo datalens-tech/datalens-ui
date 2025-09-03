@@ -1,9 +1,9 @@
-import type {WorkbookId} from '../../../types';
+import type {EntryAnnotation, WorkbookId} from '../../../types';
 
 export type EntryFieldData<T = Record<string, unknown>> = null | T;
 export type EntryFieldLinks = null | Record<string, string>;
 export type EntryFieldMeta<T = Record<string, unknown>> = null | T;
-type EntryFieldPublishedId = null | string;
+export type EntryFieldPublishedId = null | string;
 
 // corresponds to RETURN_COLUMNS from US
 export interface EntryFields {
@@ -27,6 +27,7 @@ export interface EntryFields {
     updatedBy: string;
     unversionedData?: unknown;
     workbookId: WorkbookId;
+    annotation?: EntryAnnotation | null;
 }
 
 // corresponds to RETURN_META_COLUMNS from US

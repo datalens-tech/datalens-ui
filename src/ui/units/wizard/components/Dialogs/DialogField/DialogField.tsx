@@ -25,6 +25,7 @@ import {
     isPseudoField,
 } from 'shared';
 import type {TableSubTotalsSettings} from 'shared/types/wizard/sub-totals';
+import {NumberFormatSettings} from 'ui/components/NumberFormatSettings/NumberFormatSettings';
 import {setExtraSettings} from 'ui/units/wizard/actions/widget';
 import {
     getDefaultSubTotalsSettings,
@@ -41,7 +42,7 @@ import type {
     Field as TField,
     TableBarsSettings,
 } from '../../../../../../shared/types';
-import {DATASET_FIELD_TYPES} from '../../../../../../shared/types';
+import {DATASET_FIELD_TYPES, isNumberField} from '../../../../../../shared/types';
 import {registry} from '../../../../../registry';
 import {
     AVAILABLE_DATETIMETZ_FORMATS,
@@ -56,10 +57,6 @@ import {BackgroundSettings} from './components/BackgroundSettings/BackgroundSett
 import {BarsSettings} from './components/BarsSettings/BarsSettings';
 import {DialogFieldMainSection} from './components/DialogFieldMainSection/DialogFieldMainSection';
 import {DialogFieldRow} from './components/DialogFieldRow/DialogFieldRow';
-import NumberComponent, {
-    isFloatNumberFormatting,
-    isIntegerNumberFormatting,
-} from './components/Number/Number';
 import {SubTotalsSettings} from './components/SubTotalsSettings/SubTotalsSettings';
 import {
     getDefaultBackgroundSettings,
@@ -288,7 +285,12 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
         }
 
         return (
-            <Dialog open={true} onClose={this.props.onCancel} className={b()}>
+            <Dialog
+                open={true}
+                onClose={this.props.onCancel}
+                className={b()}
+                disableHeightTransition={true}
+            >
                 <div className={b(itemType)}>
                     <Dialog.Header
                         caption={item.fakeTitle || item.title}
@@ -414,8 +416,8 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
                 this.setState({formatting: updatedFormatting}),
         };
 
-        if (isFloatNumberFormatting(numberProps) || isIntegerNumberFormatting(numberProps)) {
-            return <NumberComponent {...numberProps} />;
+        if (isNumberField({data_type: formattingDataType})) {
+            return <NumberFormatSettings {...numberProps} />;
         }
 
         return null;

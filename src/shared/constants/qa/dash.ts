@@ -53,12 +53,6 @@ export enum TableOfContentQa {
     MobileTableOfContent = 'mobile-table-of-content',
 }
 
-export enum DashMetaQa {
-    Dialog = 'dialog-dash-meta',
-    SaveButton = 'dash-meta-save-button',
-    EditButton = 'dash-meta-edit-button',
-}
-
 export enum DashCommonQa {
     RelationTypeButton = 'relation-type-btn',
     AliasSelectLeft = 'alias-first-select',

@@ -69,7 +69,8 @@ export type DeleteDatasetArgs = DatasetId;
 
 export type GetDatasetByVersionResponse = Dataset;
 
-export type GetDatasetByVersionArgs = {version: string} & DatasetId & WorkbookIdArg;
+export type GetDatasetByVersionArgs = {version: string; rev_id?: string} & DatasetId &
+    WorkbookIdArg;
 
 export type CheckDatasetsForPublicationResponse = {
     result: {

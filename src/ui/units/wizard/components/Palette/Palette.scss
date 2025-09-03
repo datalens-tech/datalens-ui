@@ -1,7 +1,25 @@
+@import '../../styles/mixins';
+
 .palette {
     display: grid;
     grid-template-columns: repeat(auto-fit, 36px);
     grid-auto-rows: 36px;
     grid-gap: 12px;
     justify-content: left;
+
+    &__custom-color-btn {
+        --g-button-background-color: transparent;
+        --g-button-background-color-hover: transparent;
+
+        &::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: -1px;
+            width: calc(100% + 2px);
+            height: calc(100% + 2px);
+            border: 1px solid var(--g-color-line-generic);
+            border-radius: 6px;
+        }
+    }
 }

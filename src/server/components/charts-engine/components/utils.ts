@@ -1,7 +1,12 @@
-import type {FilterValue, IntervalPart} from '../../../../shared';
+import type {AppContext} from '@gravity-ui/nodekit';
+
+import type {FilterValue, IntervalPart, TenantSettings} from '../../../../shared';
 import {
     EntryScope,
+    Feature,
+    PALETTE_ID,
     URL_ACTION_PARAMS_PREFIX,
+    getServerFeatures,
     resolveIntervalDate as sharedResolveIntervalDate,
     resolveOperation as sharedResolveOperation,
     resolveRelativeDate as sharedResolveRelativeDate,
@@ -161,3 +166,26 @@ export const isDashEntry = (entry: EmbeddingInfo['entry']): entry is DashEntryDa
         return false;
     }
 };
+
+export function getDefaultColorPaletteId({
+    ctx,
+    tenantSettings,
+    palettes,
+}: {
+    ctx: AppContext;
+    tenantSettings?: TenantSettings;
+    palettes: Record<string, unknown>;
+}) {
+    const tenantDefaultPalette = tenantSettings?.defaultColorPaletteId;
+    if (tenantDefaultPalette && palettes?.[tenantDefaultPalette]) {
+        return tenantDefaultPalette;
+    }
+
+    const features = getServerFeatures(ctx);
+    const defaultPaletteId = ctx.config.defaultColorPaletteId;
+    if (features[Feature.NewDefaultPalette] && defaultPaletteId) {
+        return defaultPaletteId;
+    }
+
+    return PALETTE_ID.CLASSIC_20;
+}

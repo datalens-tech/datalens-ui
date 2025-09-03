@@ -65,7 +65,7 @@
     "@diplodoc/transform": "^4.59.0",
     "@gravity-ui/app-layout": "^2.1.0",
     "@gravity-ui/browserslist-config": "^4.3.0",
-    "@gravity-ui/chartkit": "^7.4.0",
+    "@gravity-ui/chartkit": "^7.8.0",
     "@gravity-ui/dashkit": "^9.1.1",
     "@gravity-ui/date-utils": "^2.5.6",
     "@gravity-ui/expresskit": "^2.4.0",
@@ -124,7 +124,7 @@
   "devDependencies": {
     "@floating-ui/react": "^0.27.13",
     "@gravity-ui/app-builder": "^0.29.2",
-    "@gravity-ui/components": "^4.7.1",
+    "@gravity-ui/components": "^4.11.0",
     "@gravity-ui/date-components": "^3.2.3",
     "@gravity-ui/eslint-config": "^3.2.0",
     "@gravity-ui/icons": "^2.13.0",

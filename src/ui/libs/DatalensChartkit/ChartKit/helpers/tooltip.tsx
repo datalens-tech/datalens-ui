@@ -121,9 +121,11 @@ function pieTooltipRenderer(
                 <div className={b('block')}>
                     <span className={b('color')} style={{backgroundColor: color}} />
                 </div>
-                <div className={b('block')} style={DL.IS_MOBILE ? {marginRight: 'auto'} : {}}>
-                    {point.name}
-                </div>
+                <div
+                    className={b('block')}
+                    style={DL.IS_MOBILE ? {marginRight: 'auto'} : {}}
+                    dangerouslySetInnerHTML={{__html: point.name}}
+                />
                 <div className={b('block')}>{percentage}</div>
                 <div className={b('block')}>{value}</div>
             </div>

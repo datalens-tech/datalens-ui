@@ -57,6 +57,7 @@ type GenerateTableHeadArgs = {
     availablePalettes: Record<string, Palette>;
     sortSettings: PivotTableSortSettings;
     pinnedColumns: number;
+    defaultColorPaletteId: string;
 };
 
 type GetHeaderCellMetadataArgs = {
@@ -70,6 +71,7 @@ type GetHeaderCellMetadataArgs = {
     isPaginatorEnabled?: boolean;
     loadedColorPalettes: Record<string, ColorPalette>;
     availablePalettes: Record<string, Palette>;
+    defaultColorPaletteId: string;
 };
 
 type HeadSortMetaData = {
@@ -80,6 +82,7 @@ type HeadSortMetaData = {
 };
 
 export const getRowHeaderCellMetadata = (args: GetHeaderCellMetadataArgs): ChartkitCell => {
+    const {defaultColorPaletteId} = args;
     const [value, legendItemId] = args.pivotDataCellValue;
     const pivotField = args.fieldsItemIdMap[legendItemId];
     const isMeasureName = pivotField.id === MEASURE_NAME_PSEUDO_ID;
@@ -112,6 +115,7 @@ export const getRowHeaderCellMetadata = (args: GetHeaderCellMetadataArgs): Chart
         isTotal: Boolean(args.isTotalHeader),
         loadedColorPalettes: args.loadedColorPalettes,
         availablePalettes: args.availablePalettes,
+        defaultColorPaletteId,
     });
 
     if (isMeasureName) {
@@ -162,6 +166,7 @@ function getCellType(field: ServerField) {
 export const getHeaderCellMetadata = (
     args: GetHeaderCellMetadataArgs & {sortMetaData: HeadSortMetaData},
 ): ChartkitHeadCell => {
+    const {defaultColorPaletteId} = args;
     const [name, legendItemId] = args.pivotDataCellValue;
     const pivotField = args.fieldsItemIdMap[legendItemId];
     const isMeasureName = pivotField.id === MEASURE_NAME_PSEUDO_ID;
@@ -204,6 +209,7 @@ export const getHeaderCellMetadata = (
         isTotal: Boolean(args.isTotalHeader),
         loadedColorPalettes: args.loadedColorPalettes,
         availablePalettes: args.availablePalettes,
+        defaultColorPaletteId,
     });
 
     if (isMeasureName) {
@@ -251,6 +257,7 @@ export const generateTableHead = ({
     sortSettings,
     pivotStructure,
     pinnedColumns,
+    defaultColorPaletteId,
 }: GenerateTableHeadArgs): CharkitTableHead => {
     const {columnsMeta, isSortByRowAllowed, isSortByColumnAllowed} = sortSettings;
     const mappedHeadCellData = mapColumnsToHeadCellData(pivotData.columns, columnsMeta);
@@ -270,6 +277,7 @@ export const generateTableHead = ({
             isPaginatorEnabled,
             loadedColorPalettes,
             availablePalettes,
+            defaultColorPaletteId,
         },
         cellId,
         sortMetaData: {

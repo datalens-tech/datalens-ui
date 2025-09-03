@@ -64,7 +64,10 @@ export const entriesActions = {
         method: 'GET',
         path: ({entryId}) => `${PATH_PREFIX}/entries/${filterUrlFragment(entryId)}`,
         params: ({entryId: _entryId, workbookId, includeDlComponentUiData, ...query}, headers) => ({
-            query,
+            query: {
+                ...query,
+                includeFavorite: true,
+            },
             headers: {
                 ...headers,
                 ...(includeDlComponentUiData ? {[DL_COMPONENT_HEADER]: DlComponentHeader.UI} : {}),
