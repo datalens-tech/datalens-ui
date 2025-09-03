@@ -433,3 +433,5 @@ export const EMBEDDED_DASH_MESSAGE_NAME = 'subscribe-for-embed-height-dash';
 export const SYSTEM_GROUP_IDS = ['allUsers', 'allAuthenticatedUsers'];
 
 export const CLIPBOARD_TIMEOUT = 1000;
+
+export const APP_ROOT_CLASS = 'app-root';
