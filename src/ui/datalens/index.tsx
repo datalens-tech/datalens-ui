@@ -74,7 +74,13 @@ const DatalensPageView = () => {
                     path={['/workbooks/:workbookId/datasets/new', '/datasets/:id']}
                     component={DatasetPage}
                 />
+
                 <Route path="/preview" component={PreviewPage} />
+
+                {/* Prevent attempts to create a standalone (outside of workbook) connection */}
+                <Route path={['/connections/new/:type', '/connections/new']}>
+                    <Redirect to={`/collections${location.search}`} />
+                </Route>
                 <Route
                     path={[
                         '/connections/:id',
