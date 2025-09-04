@@ -44,14 +44,21 @@ function PromoBlockItem({
     cardMod,
 }: PromoBlockItemProps) {
     const {activeMediaQuery, isMediaActive} = useLayoutContext();
+    const [isImageLoading, setIsImageLoading] = React.useState(true);
 
     const isMobileMediaQuery = !isMediaActive('m');
+
+    const handleImageLoad = React.useCallback(() => {
+        setIsImageLoading(false);
+    }, []);
 
     const renderImage = React.useCallback(
         (props: AsyncImageProps, index: number) => {
             let style: React.CSSProperties = {};
 
-            if (imageProps.length > 1) {
+            if (isImageLoading) {
+                style = {width: '100%', height: '100%'};
+            } else if (imageProps.length > 1) {
                 style = primary
                     ? {
                           top: `${(imageProps.length - 1 - index) * 20}%`,
@@ -83,12 +90,22 @@ function PromoBlockItem({
                             media: activeMediaQuery,
                         })}
                         showSkeleton={true}
+                        onLoad={handleImageLoad}
                         {...props}
                     />
                 </div>
             );
         },
-        [activeMediaQuery, imageProps.length, isMediaActive, isMobileMediaQuery, primary, view],
+        [
+            activeMediaQuery,
+            handleImageLoad,
+            imageProps.length,
+            isImageLoading,
+            isMediaActive,
+            isMobileMediaQuery,
+            primary,
+            view,
+        ],
     );
 
     const iconComponent =

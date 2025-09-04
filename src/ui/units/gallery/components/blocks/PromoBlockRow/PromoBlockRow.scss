@@ -166,7 +166,7 @@ $promoHoverBackgroundColor: #d6dde8;
             &_media_xs,
             &_media_s,
             &_media_m {
-                width: initial;
+                width: inherit;
             }
 
             &_primary:not(&_media_xs) {
