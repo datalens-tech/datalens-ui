@@ -3,6 +3,7 @@ import React from 'react';
 import {I18n} from 'i18n';
 import type {ResolveThunks} from 'react-redux';
 import {connect} from 'react-redux';
+import type {EntryAnnotationArgs} from 'shared';
 import {showToast} from 'store/actions/toaster';
 import type {DataLensApiError} from 'typings';
 import {isEntryAlreadyExists} from 'utils/errors/errorByCode';
@@ -20,7 +21,9 @@ export interface DialogCreateEditorChartProps extends EntryDialogProps {
     data?: Record<string, any>;
     initName?: string;
     workbookId?: string;
+    // TODO: remove after platform update
     description?: string;
+    annotation?: EntryAnnotationArgs;
 }
 
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
@@ -69,23 +72,23 @@ class DialogCreateEditorChart extends React.Component<Props> {
     }
 
     private onApply = async (key: string) => {
-        const data = await getSdk().sdk.mix.createEditorChart({
+        const {data, type, annotation, description = ''} = this.props;
+        return getSdk().sdk.mix.createEditorChart({
             key,
-            data: this.props.data || {},
-            type: this.props.type,
-            description: this.props.description,
+            data: data || {},
+            type,
+            annotation: annotation ? annotation : {description},
         });
-        return data;
     };
 
     private onWorkbookApply = ({name}: {name: string}) => {
-        const {workbookId, description} = this.props;
+        const {workbookId, annotation, description = ''} = this.props;
         return getSdk().sdk.mix.createEditorChart({
             name,
             workbookId: workbookId as string,
             data: this.props.data || {},
             type: this.props.type,
-            description,
+            annotation: annotation ? annotation : {description},
         });
     };
 
