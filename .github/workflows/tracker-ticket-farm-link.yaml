@@ -1,0 +1,32 @@
+name: Tracker ticket farm link
+
+on:
+  pull_request:
+    types:
+      - opened
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  run:
+    name: tracker-ticket-farm-link
+    runs-on:
+      - self-hosted
+      - linux
+      - qyp
+    steps:
+      - uses: actions/checkout@v4
+      - name: ticket farm link
+        run: scripts/ci/tracker-ticket-pr-merged.sh
+        env:
+          ST_OAUTH_TOKEN: ${{ secrets.ST_OAUTH_TOKEN }}
+          ST_SERVER_ENDPOINT: ${{ vars.ST_SERVER_ENDPOINT }}
+          BRANCH_NAME: ${{ github.head_ref }}
+          BUILD_PR_NUMBER: ${{ github.event.pull_request.number }}
+          PR_BODY: ${{ github.event.pull_request.body }}
+          GH_REPO: ${{ github.repository }}
+          FARM_ENDPOINT: ${{ vars.FARM_ENDPOINT }}
+          COMMENT_MESSAGE: ${{ vars.COMMENT_MESSAGE_FARM_LINK }}
+          COMMENT_PREFIX: ${{ vars.COMMENT_PREFIX_FARM_LINK }}

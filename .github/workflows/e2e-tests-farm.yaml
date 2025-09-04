@@ -1,0 +1,91 @@
+name: E2E Tests Farm
+
+on:
+  pull_request:
+    branches-ignore:
+      - 'weblate-**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  PLAYWRIGHT_VERSION: 1.48.2
+  FARM_POLL_TIMEOUT_MIN: 10
+  FARM_POLL_RETRY_TIMES: 10
+
+jobs:
+  run:
+    name: e2e-tests-farm
+    runs-on:
+      - self-hosted
+      - linux
+      - qyp
+    container:
+      image: mcr.microsoft.com/playwright:v${{ env.PLAYWRIGHT_VERSION }}-noble
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: ./package-lock.json
+      - name: check closed branch exists
+        run: |
+          if gh api "repos/${GH_REPO_OWNER}/${GH_REPO_CLOSED}/branches/${GH_BRANCH_NAME}" >/dev/null 2>&1; then
+            echo "GH_BRANCH_NAME_CLOSED=${BRANCH_NAME}" >> "$GITHUB_ENV"
+          else
+            echo "GH_BRANCH_NAME_CLOSED=main" >> "$GITHUB_ENV"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_REPO_OWNER: ${{ github.repository_owner }}
+          GH_REPO_CLOSED: ${{ vars.GH_REPO_CLOSED }}
+          GH_BRANCH_NAME: ${{ github.head_ref }}
+      - name: create farm and wait for it to be ready
+        timeout-minutes: ${{ env.FARM_POLL_TIMEOUT_MIN }}
+        run: |
+          curl -q -s -X POST -H "content-type: application/json" \
+          --data "{\"project\":\"${GH_REPO_CLOSED}\", \"organization\":\"${GH_REPO_OWNER}\", \"name\":\"${GH_BRANCH_NAME}\",\"vcs\":\"git\",\"branch\":\"${GH_BRANCH_NAME_CLOSED}\",\"instanceConfigName\":\"${FARM_INSTANCE_CONFIG_NAME}\",\"env.GITHUB_BRANCH_NAME\":\"${GH_BRANCH_NAME}\"}" \
+          "${FARM_ENDPOINT}/api/generate"
+
+          FARM_STATUS="queued"
+          FARM_URL=""
+
+          echo "⏳ wait for farm to be ready..."
+
+          while true; do
+            FARM_DATA=$(
+              curl -q -s -X POST -H "content-type: application/json" \
+              --data "{\"project\":\"${GH_REPO_CLOSED}\", \"name\":\"${GH_BRANCH_NAME}\",\"vcs\":\"git\",\"branch\":\"${GH_BRANCH_NAME_CLOSED}\",\"instanceConfigName\":\"${FARM_INSTANCE_CONFIG_NAME}\"}" \
+              "${FARM_ENDPOINT}/api/getInstance"
+            )
+            FARM_STATUS=$(echo "${FARM_DATA}" | jq -r '.instance.status')
+            FARM_URL=$(echo "${FARM_DATA}" | jq -r '.url')
+            if [ "${FARM_STATUS}" == "running" ]; then
+              break
+            fi
+            echo -n "."
+            sleep "${FARM_POLL_TIMEOUT_SEC}"
+          done
+
+          echo "  farm url: ${FARM_URL}"
+          echo "E2E_DOMAIN=${FARM_URL}" >> "$GITHUB_ENV"
+
+          echo "✅ farm success ready"
+        env:
+          GH_REPO_OWNER: ${{ github.repository_owner }}
+          GH_REPO_CLOSED: ${{ vars.GH_REPO_CLOSED }}
+          GH_BRANCH_NAME: ${{ github.head_ref }}
+          GH_BRANCH_NAME_CLOSED: ${{ env.GH_BRANCH_NAME_CLOSED }}
+          FARM_INSTANCE_CONFIG_NAME: ${{ vars.FARM_INSTANCE_CONFIG_NAME }}
+          FARM_ENDPOINT: ${{ vars.FARM_ENDPOINT }}
+          FARM_POLL_TIMEOUT_SEC: ${{ env.FARM_POLL_TIMEOUT_SEC }}
+      - run: npm ci
+      - name: run e2e tests
+        run: npm run test:e2e
+        env:
+          GH_BRANCH_NAME: ${{ github.head_ref }}
+          GH_BRANCH_NAME_CLOSED: ${{ env.GH_BRANCH_NAME_CLOSED }}
+          E2E_DOMAIN: ${{ env.E2E_DOMAIN }}
+          E2E_MAX_WORKERS: 6
