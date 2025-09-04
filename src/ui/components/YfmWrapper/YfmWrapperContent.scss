@@ -10,6 +10,13 @@ $rootClass: '.app-root.g-root';
 
 // support yfm dark theme
 
+#{$rootClass} {
+    --yfm-code-background: var(--g-color-base-misc-light);
+    --yfm-code-color: var(--g-color-text-misc-heavy);
+    --yfm-pre-code-background: var(--g-color-base-misc-light);
+    --yfm-pre-code-color: var(--g-color-text-complementary);
+}
+
 #{$rootClass} .yfm {
     --yfm-list-text-last-margin-block: 15px;
     --yfm-list-text-only-margin-block: 15px;
@@ -140,13 +147,13 @@ $rootClass: '.app-root.g-root';
     }
 
     code {
-        background: var(--g-color-base-misc-light);
-        color: var(--g-color-text-misc-heavy);
+        background: var(--yfm-code-background);
+        color: var(--yfm-code-color);
     }
 
     pre > code {
-        background: var(--g-color-base-misc-light);
-        color: var(--g-color-text-complementary);
+        background: var(--yfm-pre-code-background);
+        color: var(--yfm-pre-code-color);
     }
 
     table {
