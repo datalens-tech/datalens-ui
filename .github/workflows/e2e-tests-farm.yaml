@@ -34,8 +34,10 @@ jobs:
         run: |
           if gh api "repos/${GH_REPO_OWNER}/${GH_REPO_CLOSED}/branches/${GH_BRANCH_NAME}" >/dev/null 2>&1; then
             echo "GH_BRANCH_NAME_CLOSED=${BRANCH_NAME}" >> "$GITHUB_ENV"
+            echo "  branch closed: ${BRANCH_NAME}"
           else
             echo "GH_BRANCH_NAME_CLOSED=main" >> "$GITHUB_ENV"
+            echo "  branch closed: main"
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
@@ -71,6 +73,7 @@ jobs:
             sleep "${FARM_POLL_SLEEP_SEC}"
           done
 
+          echo "  farm status: ${FARM_STATUS}"
           echo "  farm url: ${FARM_URL}"
           echo "E2E_DOMAIN=${FARM_URL}" >> "$GITHUB_ENV"
 
