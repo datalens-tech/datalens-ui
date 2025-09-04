@@ -378,6 +378,7 @@
   "tooltip_no-available-fields": "Нет подходящих полей для добавления",
   "tooltip_pagination_unavailable": "Для мультидатасетных чартов пагинация недоступна",
   "tooltip_parameter-changed-icon": "Значение параметра изменено",
+  "tooltip_sort_unavailable": "Для мультидатасетных чартов ортировка недоступна",
   "tooltip_table-preview": "Предпросмотр данных",
   "tooltip_tree-pagination_unavailable": "Пагинация недоступна в таблице с деревьями",
   "tooltip_tree-total_unavailable": "Итоги недоступны в таблице с деревьями",
