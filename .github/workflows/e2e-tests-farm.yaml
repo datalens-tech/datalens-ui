@@ -93,8 +93,8 @@ jobs:
           GH_BRANCH_NAME: ${{ github.head_ref }}
           GH_BRANCH_NAME_CLOSED: ${{ env.GH_BRANCH_NAME_CLOSED }}
           E2E_DOMAIN: ${{ env.E2E_DOMAIN }}
-          E2E_AUTH_TYPE: ${{ env.E2E_AUTH_TYPE }}
-          E2E_PASSPORT_URL: ${{ env.E2E_PASSPORT_URL }}
+          E2E_AUTH_TYPE: ${{ vars.E2E_AUTH_TYPE }}
+          E2E_PASSPORT_URL: ${{ vars.E2E_PASSPORT_URL }}
           E2E_USER_LOGIN: ${{ secrets.E2E_USER_LOGIN }}
           E2E_USER_PASSWORD: ${{ secrets.E2E_USER_PASSWORD }}
           E2E_MAX_WORKERS: 6
