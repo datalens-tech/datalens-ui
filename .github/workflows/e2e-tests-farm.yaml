@@ -10,7 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  PLAYWRIGHT_VERSION: 1.48.2
+  FARM_POLL_SLEEP_SEC: 5
   FARM_POLL_TIMEOUT_MIN: 10
   FARM_POLL_RETRY_TIMES: 10
 
@@ -22,7 +22,7 @@ jobs:
       - linux
       - qyp
     container:
-      image: mcr.microsoft.com/playwright:v${{ env.PLAYWRIGHT_VERSION }}-noble
+      image: mcr.microsoft.com/playwright:v1.48.2-noble
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
@@ -66,7 +66,7 @@ jobs:
               break
             fi
             echo -n "."
-            sleep "${FARM_POLL_TIMEOUT_SEC}"
+            sleep "${FARM_POLL_SLEEP_SEC}"
           done
 
           echo "  farm url: ${FARM_URL}"
@@ -80,7 +80,7 @@ jobs:
           GH_BRANCH_NAME_CLOSED: ${{ env.GH_BRANCH_NAME_CLOSED }}
           FARM_INSTANCE_CONFIG_NAME: ${{ vars.FARM_INSTANCE_CONFIG_NAME }}
           FARM_ENDPOINT: ${{ vars.FARM_ENDPOINT }}
-          FARM_POLL_TIMEOUT_SEC: ${{ env.FARM_POLL_TIMEOUT_SEC }}
+          FARM_POLL_TIMEOUT_SEC: ${{ env.FARM_POLL_SLEEP_SEC }}
       - run: npm ci
       - name: run e2e tests
         run: npm run test:e2e
