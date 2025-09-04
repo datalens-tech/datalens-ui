@@ -10,6 +10,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
+  PLAYWRIGHT_IMAGE: ghcr.io/datalens-tech/datalens-playwright:1.48.2-24.04
   FARM_POLL_SLEEP_SEC: 5
   FARM_POLL_TIMEOUT_MIN: 10
   FARM_POLL_RETRY_TIMES: 10
@@ -22,7 +23,7 @@ jobs:
       - linux
       - qyp
     container:
-      image: ghcr.io/datalens-tech/datalens-playwright:1.48.2-24.04
+      image: ${{ env.PLAYWRIGHT_IMAGE }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
