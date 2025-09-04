@@ -63,7 +63,7 @@ jobs:
             )
             FARM_STATUS=$(echo "${FARM_DATA}" | jq -r '.instance.status')
             FARM_URL=$(echo "${FARM_DATA}" | jq -r '.url')
-            if [ "${FARM_STATUS}" == "running" ]; then
+            if [ "${FARM_STATUS}" = "running" ]; then
               break
             fi
             echo -n "."
