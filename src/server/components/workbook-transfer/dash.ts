@@ -24,7 +24,7 @@ export async function prepareDashImportData(
 ) {
     const data = await Dash.migrate(entryData.data);
     const notifications: TransferNotification[] = [];
-    const description = entryData.annotation?.description;
+    const description = entryData.annotation?.description ?? '';
     const defaults = {
         name: entryData.name,
         scope: EntryScope.Dash,
@@ -32,7 +32,7 @@ export async function prepareDashImportData(
         links: {},
         type: '',
         key: '',
-        ...(typeof description === 'string' ? {annotation: {description}} : {}),
+        annotation: {description},
     };
 
     try {

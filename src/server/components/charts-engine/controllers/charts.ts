@@ -224,10 +224,6 @@ export const chartsController = (_chartsEngine: ChartsEngine) => {
                 updateParams.links = links;
             }
 
-            if (links) {
-                updateParams.links = links;
-            }
-
             if (mode !== EntryUpdateMode.Publish) {
                 updateParams.skipSyncLinks = true;
             }
