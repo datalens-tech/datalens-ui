@@ -90,4 +90,4 @@ jobs:
           GH_BRANCH_NAME_CLOSED: ${{ env.GH_BRANCH_NAME_CLOSED }}
           E2E_DOMAIN: ${{ env.E2E_DOMAIN }}
           E2E_MAX_WORKERS: 6
-          PLAYWRIGHT_BROWSERS_PATH: /root/.cache/ms-playwright/chromium-1140/chrome-linux/chrome
+          PLAYWRIGHT_BROWSERS_PATH: /root/.cache/ms-playwright
