@@ -9,6 +9,7 @@ import type {AsyncImageProps} from 'ui/components/AsyncImage/AsyncImage';
 import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 
 import {PROMO_BLOCK_CATEGORIES, SPECIAL_CATEGORY} from '../../pages/constants';
+import type {ActiveMediaQuery} from '../../types';
 import {
     block,
     galleryI18n,
@@ -150,6 +151,7 @@ function PromoBlockItem({
 
 interface PromoBlockRowProps {
     galleryItems: GalleryItemShort[];
+    activeMediaQuery?: ActiveMediaQuery;
     editorChoiceIds?: string[];
     className?: string;
     view?: 'gallery' | 'promo';
