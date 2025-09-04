@@ -1,6 +1,7 @@
 export const GALLERY_ITEM_CATEGORY = {
     EDITOR: 'editor',
     EDUCATION: 'education',
+    ENTERTAINMENT: 'entertainment',
     FINANCE: 'finance',
     GEO: 'geo',
     HEALTHCARE: 'healthcare',
