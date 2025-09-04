@@ -23,7 +23,6 @@ jobs:
       - qyp
     container:
       image: mcr.microsoft.com/playwright:v1.48.2-noble
-      options: --network host
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
