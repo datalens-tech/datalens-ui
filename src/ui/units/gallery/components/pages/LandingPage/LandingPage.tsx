@@ -166,7 +166,6 @@ export function LandingPage() {
             </Row>
             <PromoBlockRow
                 galleryItems={galleryItems}
-                activeMediaQuery={activeMediaQuery}
                 editorChoiceIds={metaData?.editorChoice?.ids}
                 className={b('promo-block-row')}
             />

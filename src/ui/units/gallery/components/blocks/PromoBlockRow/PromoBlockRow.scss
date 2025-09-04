@@ -134,7 +134,7 @@ $promoHoverBackgroundColor: #d6dde8;
                 background-color: $promoHoverBackgroundColor;
             }
 
-            &_centered {
+            &_show-button {
                 justify-content: center;
                 align-items: center;
                 padding: 0;
@@ -146,6 +146,16 @@ $promoHoverBackgroundColor: #d6dde8;
 
                 #{$block}__item-title-counter {
                     margin-right: var(--g-spacing-1);
+                }
+
+                #{$block}__show-icon {
+                    transition: transform 0.2s ease-in-out;
+                }
+
+                &:hover {
+                    #{$block}__show-icon {
+                        transform: translateX(8px);
+                    }
                 }
             }
         }

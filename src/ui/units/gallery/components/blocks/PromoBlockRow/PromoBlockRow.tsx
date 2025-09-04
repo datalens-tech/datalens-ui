@@ -9,7 +9,6 @@ import type {AsyncImageProps} from 'ui/components/AsyncImage/AsyncImage';
 import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 
 import {PROMO_BLOCK_CATEGORIES, SPECIAL_CATEGORY} from '../../pages/constants';
-import type {ActiveMediaQuery} from '../../types';
 import {
     block,
     galleryI18n,
@@ -31,7 +30,7 @@ interface PromoBlockItemProps {
     imageProps?: AsyncImageProps[];
     category?: string;
     view?: PromoBlockRowProps['view'];
-    centered?: boolean;
+    cardMod?: string;
 }
 
 function PromoBlockItem({
@@ -42,7 +41,7 @@ function PromoBlockItem({
     category,
     icon,
     view,
-    centered,
+    cardMod,
 }: PromoBlockItemProps) {
     const {activeMediaQuery, isMediaActive} = useLayoutContext();
 
@@ -93,14 +92,18 @@ function PromoBlockItem({
     );
 
     const iconComponent =
-        view === 'promo' ? <ChevronRight width={22} height={22} /> : <ArrowRight />;
+        view === 'promo' ? (
+            <ChevronRight width={22} height={22} className={b('show-icon')} />
+        ) : (
+            <ArrowRight className={b('show-icon')} />
+        );
 
     const card = (
         <Card
             className={b('item-flex', {
                 primary,
                 media: activeMediaQuery,
-                centered,
+                [String(cardMod)]: Boolean(cardMod),
             })}
             view="clear"
         >
@@ -130,7 +133,6 @@ function PromoBlockItem({
 
 interface PromoBlockRowProps {
     galleryItems: GalleryItemShort[];
-    activeMediaQuery?: ActiveMediaQuery;
     editorChoiceIds?: string[];
     className?: string;
     view?: 'gallery' | 'promo';
@@ -230,7 +232,7 @@ export function PromoBlockRow({
                     counter={galleryItems.length}
                     imageProps={isGalleryView ? othersImageProps : []}
                     view={view}
-                    centered={view === 'promo'}
+                    cardMod="show-button"
                 />
             </Col>
         </Row>
