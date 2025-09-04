@@ -19,7 +19,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: ticket farm link
-        run: scripts/ci/tracker-ticket-pr-merged.sh
+        run: scripts/ci/tracker-ticket-farm-link.sh
         env:
           ST_OAUTH_TOKEN: ${{ secrets.ST_OAUTH_TOKEN }}
           ST_SERVER_ENDPOINT: ${{ vars.ST_SERVER_ENDPOINT }}
