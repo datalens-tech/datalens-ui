@@ -3,7 +3,7 @@ import {Page} from '@playwright/test';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
 import {slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {DashCommonQa} from '../../../../src/shared';
+import {DashCommonQa, DashTabItemControlSourceType, TitlePlacements} from '../../../../src/shared';
 import {TestParametrizationConfig} from '../../../types/config';
 
 const PARAMS = {
@@ -22,7 +22,12 @@ datalensTest.describe('Dashboards - Relations (new), validation', () => {
             const dashboardPage = new DashboardPage({page});
             await dashboardPage.createDashboard({
                 editDash: async () => {
-                    await dashboardPage.controlActions.addSelectorWithDefaultSettings({});
+                    await dashboardPage.controlActions.addSelector({
+                        appearance: {titlePlacement: TitlePlacements.Left},
+                        sourceType: DashTabItemControlSourceType.Dataset,
+                        dataset: {innerText: 'Dataset'},
+                        datasetField: {idx: 1},
+                    });
 
                     await dashboardPage.addChart({
                         name: config.dash.charts.ChartCityPie.name,
@@ -31,6 +36,7 @@ datalensTest.describe('Dashboards - Relations (new), validation', () => {
                     });
                 },
             });
+
             await dashboardPage.enterEditMode();
 
             const selectorElem = await dashboardPage.controlActions.getDashControlLinksIconElem();
