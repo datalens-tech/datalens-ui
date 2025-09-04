@@ -22,7 +22,7 @@ jobs:
       - linux
       - qyp
     container:
-      image: ghc.io/datalens-tech/datalens-playwright:1.48.2-24.04
+      image: ghcr.io/datalens-tech/datalens-playwright:1.48.2-24.04
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v3
