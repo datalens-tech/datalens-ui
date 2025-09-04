@@ -4,6 +4,9 @@ on:
   pull_request:
     types:
       - opened
+      - synchronize
+    branches-ignore:
+      - 'weblate-**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}

@@ -7,6 +7,8 @@ on:
       - edited
       - reopened
       - synchronize
+    branches-ignore:
+      - 'weblate-**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
