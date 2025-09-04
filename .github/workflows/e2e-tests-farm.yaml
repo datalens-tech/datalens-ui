@@ -30,9 +30,15 @@ jobs:
           node-version: 22
           cache: 'npm'
           cache-dependency-path: ./package-lock.json
+      - name: install gh cli
+        run: |
+          curl -LO https://github.com/cli/cli/releases/latest/download/gh_$(uname -s)_$(uname -m).tar.gz &&
+          tar -xzf gh_$(uname -s)_$(uname -m).tar.gz &&
+          sudo cp $(uname -s)-$(uname -m)/bin/gh /usr/local/bin/gh &&
+          rm -rf gh_$(uname -s)_$(uname -m).tar.gz $(uname -s)-$(uname -m)
       - name: check closed branch exists
         run: |
-          if gh api "repos/${GH_REPO_OWNER}/${GH_REPO_CLOSED}/branches/${GH_BRANCH_NAME}" >/dev/null 2>&1; then
+          if gh api "repos/${GH_REPO_OWNER}/${GH_REPO_CLOSED}/branches/${GH_BRANCH_NAME}"; then
             echo "GH_BRANCH_NAME_CLOSED=${BRANCH_NAME}" >> "$GITHUB_ENV"
           else
             echo "GH_BRANCH_NAME_CLOSED=main" >> "$GITHUB_ENV"
