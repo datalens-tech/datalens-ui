@@ -166,6 +166,11 @@ export const entriesActions = {
                 }
                 if (typeof error === 'object' && error !== null && 'status' in error) {
                     switch (error.status) {
+                        case 400:
+                            if ('code' in error && error.code === 'DECODE_ID_FAILED') {
+                                return {code: 'NOT_FOUND'};
+                            }
+                            return {code: 'UNHANDLED'};
                         case 403:
                             return {code: 'FORBIDDEN'};
                         case 404:
