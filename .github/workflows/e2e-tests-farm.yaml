@@ -32,7 +32,7 @@ jobs:
           cache-dependency-path: ./package-lock.json
       - name: check closed branch exists
         run: |
-          if gh api "repos/${GH_REPO_OWNER}/${GH_REPO_CLOSED}/branches/${GH_BRANCH_NAME}"; then
+          if gh api "repos/${GH_REPO_OWNER}/${GH_REPO_CLOSED}/branches/${GH_BRANCH_NAME}" >/dev/null 2>&1; then
             echo "GH_BRANCH_NAME_CLOSED=${BRANCH_NAME}" >> "$GITHUB_ENV"
           else
             echo "GH_BRANCH_NAME_CLOSED=main" >> "$GITHUB_ENV"
@@ -43,7 +43,7 @@ jobs:
           GH_REPO_CLOSED: ${{ vars.GH_REPO_CLOSED }}
           GH_BRANCH_NAME: ${{ github.head_ref }}
       - name: create farm and wait for it to be ready
-        timeout-minutes: ${{ env.FARM_POLL_TIMEOUT_MIN }}
+        timeout-minutes: ${{ fromJSON(env.FARM_POLL_TIMEOUT_MIN) }}
         run: |
           curl -q -s -X POST -H "content-type: application/json" \
           --data "{\"project\":\"${GH_REPO_CLOSED}\", \"organization\":\"${GH_REPO_OWNER}\", \"name\":\"${GH_BRANCH_NAME}\",\"vcs\":\"git\",\"branch\":\"${GH_BRANCH_NAME_CLOSED}\",\"instanceConfigName\":\"${FARM_INSTANCE_CONFIG_NAME}\",\"env.GITHUB_BRANCH_NAME\":\"${GH_BRANCH_NAME}\"}" \
