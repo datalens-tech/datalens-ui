@@ -9,6 +9,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+  pull-requests: write
+
 env:
   FARM_POLL_SLEEP_SEC: 10
   FARM_POLL_TIMEOUT_MIN: 15
@@ -112,3 +116,92 @@ jobs:
           E2E_RETRY_TIMES: '1'
           E2E_MAX_FAILURES: ${{ env.E2E_MAX_FAILURES }}
           NODE_TLS_REJECT_UNAUTHORIZED: '0'
+      - name: save report link and pr number
+        if: always()
+        run: |
+          echo "reports/${{ github.head_ref || github.ref_name }}/${{ github.run_id }}/${{ github.run_attempt }}" > ./tests/artifacts/report-link
+          echo "${{ github.event.pull_request.number }}" > ./tests/artifacts/report-pr
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: ./tests/artifacts/
+          retention-days: 30
+
+  report:
+    name: e2e-tests-farm-report
+    needs: run
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: playwright-report
+          path: ./tests/artifacts/
+      - name: extract env from workflow
+        run: |
+          echo "E2E_REPORT_PATH=$(cat ./tests/artifacts/report-link)" >> "$GITHUB_ENV"
+          echo "E2E_REPORT_PR_NUMBER=$(cat ./tests/artifacts/report-pr)" >> "$GITHUB_ENV"
+      - uses: daun/playwright-report-summary@v3
+        if: always()
+        id: report-md
+        with:
+          report-file: ./tests/artifacts/results.json
+          create-comment: false
+      - name: create or update pr comment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issueNumber = context.issue.number;
+            const repo = context.repo;
+
+            const commentIdentifier = "<!-- e2e-tests-farm-report -->";
+            const { data: comments } = await github.rest.issues.listComments({
+              ...repo,
+              issue_number: issueNumber,
+            });
+
+            const botComment = comments.find(comment => 
+              comment.body.includes(commentIdentifier) && 
+              comment.user.login === 'github-actions[bot]'
+            );
+
+            const timestamp = new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString().replace('T', ' ').slice(0, 19) + ' MSK';
+
+            let commentBody = `
+            ## ![](https://storage.yandexcloud.net/e2e-report/icons/yt-small.svg) E2E Tests Farm
+
+            ${{ steps.report-md.outputs.summary }}
+
+            ---
+
+            🧐 Link with trace: [trace](${process.env.E2E_TRACE_LINK})
+
+            👉 Link with detailed report: [report](${process.env.E2E_REPORT_LINK})
+
+            Last updated: ${timestamp}
+
+            ${commentIdentifier}
+            `;
+
+            commentBody = commentBody.replace(/@screenshot/g, '`@screenshot`');
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                ...repo,
+                comment_id: botComment.id,
+                body: commentBody
+              });
+              
+              console.log('updated existing comment on PR #' + issueNumber);
+            } else {
+              await github.rest.issues.createComment({
+                ...repo,
+                issue_number: issueNumber,
+                body: commentBody
+              });
+              
+              console.log('added new comment to PR #' + issueNumber);
+            }
