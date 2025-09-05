@@ -20,4 +20,13 @@
     &__sidebar-icon-connections {
         color: var(--g-color-text-link-visited);
     }
+
+    &__dropdown-item {
+        display: flex;
+        align-items: center;
+    }
+
+    &__dropdown-label {
+        margin-left: 14px;
+    }
 }
