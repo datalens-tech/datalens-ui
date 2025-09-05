@@ -320,7 +320,7 @@ class Dash {
             const entry = {
                 ...prevEntry,
                 annotation: {
-                    description: prevEntry.data.description,
+                    description: prevEntry.data.description ?? '',
                 },
             };
             delete entry.data.description;
