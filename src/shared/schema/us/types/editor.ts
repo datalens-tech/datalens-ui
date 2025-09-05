@@ -1,4 +1,4 @@
-import type {EntryUpdateMode} from '../../..';
+import type {EntryAnnotationArgs, EntryUpdateMode} from '../../..';
 
 import type {EntryFieldData, EntryFieldLinks, EntryFieldMeta, EntryFields} from './fields';
 
@@ -16,6 +16,7 @@ export interface CreateEditorChartArgs {
     mode?: EntryUpdateMode;
     links?: EntryFieldLinks;
     description?: string;
+    annotation?: EntryAnnotationArgs;
 }
 
 export interface UpdateEditorChartResponse extends EntryFields {
@@ -30,4 +31,5 @@ export interface UpdateEditorChartArgs {
     meta?: EntryFieldMeta;
     links?: EntryFieldLinks;
     description?: string;
+    annotation?: EntryAnnotationArgs;
 }

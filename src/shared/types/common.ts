@@ -262,10 +262,6 @@ export type DSAPIErrorCode =
 /** @deprecated use StringParams from datalens-shared*/
 export interface Params extends Dictionary<string | string[]> {}
 
-export interface EntryAnnotation {
-    description?: string;
-}
-
 export enum EntryScope {
     Dash = 'dash',
     Widget = 'widget',
@@ -277,6 +273,8 @@ export enum EntryScope {
 export interface EntryAnnotation {
     description?: string;
 }
+
+export type EntryAnnotationArgs = Required<EntryAnnotation>;
 
 export interface Entry {
     entryId: string;
