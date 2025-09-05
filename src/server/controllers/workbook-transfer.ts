@@ -131,7 +131,7 @@ export const prepareExportData = async (
             }
 
             const {dash, notifications} = await prepareDashExportData(
-                Dash.migrateDescriptionForClient(entry as unknown as DashEntry),
+                Dash.migrateDescription(entry as unknown as DashEntry),
                 idMapping,
             );
 
@@ -283,18 +283,22 @@ export const prepareImportData = async (
                 return createImportResponseData(notifications);
             }
 
+            const {data, annotation} = Dash.migrateDescription(dash);
+
             const {responseData} = await gatewayApi.usPrivate._proxyCreateEntry({
                 headers,
                 args: {
                     workbookId,
-                    data: dash.data as unknown as EntryFieldData,
+                    data: data as unknown as EntryFieldData,
                     key: dash.key,
                     name: dash.name,
                     type: dash.type,
                     scope: dash.scope,
                     mode: dash.mode,
                     links: dash.links,
-                    description: dash.annotation?.description,
+                    annotation: {
+                        description: annotation?.description ?? '',
+                    },
                 },
                 ctx,
                 authArgs: {usMasterToken},

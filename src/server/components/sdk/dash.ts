@@ -315,6 +315,21 @@ class Dash {
         return DashSchemeConverter.update(data);
     }
 
+    static migrateDescription<T extends Pick<DashEntry, 'data' | 'annotation'>>(prevEntry: T) {
+        if ('description' in prevEntry.data) {
+            const entry = {
+                ...prevEntry,
+                annotation: {
+                    description: prevEntry.data.description,
+                },
+            };
+            delete entry.data.description;
+            return entry;
+        }
+
+        return prevEntry;
+    }
+
     static migrateDescriptionForClient(prevEntry: DashEntry) {
         if ('description' in prevEntry.data && !prevEntry.annotation) {
             return {
