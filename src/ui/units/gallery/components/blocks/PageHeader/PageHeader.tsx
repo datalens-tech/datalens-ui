@@ -16,12 +16,20 @@ const HIDE_BACKBUTTON_BREAKPOINTS: ActiveMediaQuery[] = ['xs', 's', 'm'];
 interface PageHeaderProps {
     title: string;
     to: string;
+    ariaLabel?: string;
     activeMediaQuery?: ActiveMediaQuery;
     buttonProps?: Partial<ButtonProps>;
     textProps?: Partial<TextProps>;
 }
 
-export function PageHeader({activeMediaQuery, buttonProps, title, textProps, to}: PageHeaderProps) {
+export function PageHeader({
+    activeMediaQuery,
+    buttonProps,
+    ariaLabel,
+    title,
+    textProps,
+    to,
+}: PageHeaderProps) {
     const showBackButton = activeMediaQuery
         ? !HIDE_BACKBUTTON_BREAKPOINTS.includes(activeMediaQuery)
         : true;
@@ -29,8 +37,8 @@ export function PageHeader({activeMediaQuery, buttonProps, title, textProps, to}
     return (
         <div className={b()}>
             {showBackButton && (
-                <Link className={b('back-button')} to={to}>
-                    <Button view="flat" {...buttonProps}>
+                <Link className={b('back-button')} to={to} aria-label={ariaLabel}>
+                    <Button view="flat" aria-hidden="true" {...buttonProps}>
                         <Button.Icon>
                             <ArrowLeft />
                         </Button.Icon>

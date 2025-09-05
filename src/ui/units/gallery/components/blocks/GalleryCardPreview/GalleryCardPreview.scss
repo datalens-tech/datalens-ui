@@ -46,6 +46,7 @@ $block: '.#{variables.$ns}-card-preview';
         @include text-subheader-2();
         @include overflow-ellipsis();
 
+        margin: 0;
         margin-bottom: 4px;
     }
 
