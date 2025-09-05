@@ -36,9 +36,9 @@ export function GalleryCardPreview({
             <Card className={b('card')} view="outlined">
                 <AsyncImage className={b('image')} showSkeleton={true} src={imageSrc} />
                 <div className={b('info')}>
-                    <div className={b('info-title')} title={title[lang]}>
+                    <h1 className={b('info-title')} title={title[lang]}>
                         {title[lang]}
-                    </div>
+                    </h1>
                     {Boolean(createdBy) && (
                         <div className={b('info-created-by')} title={createdBy}>
                             {createdBy}

@@ -43,6 +43,9 @@ export function ImportDropdown(props: {url: string; entryId: string}) {
                         icon: ArrowDownToLine,
                     }),
                     qa: GalleryCardPageQA.IMPORT_DROPDOWN_DOWNLOAD_ITEM,
+                    extraProps: {
+                        'aria-label': i18n('button_download-label'),
+                    },
                 },
                 {
                     action: () => {
@@ -60,10 +63,17 @@ export function ImportDropdown(props: {url: string; entryId: string}) {
                         icon: FileArrowUp,
                     }),
                     qa: GalleryCardPageQA.IMPORT_DROPDOWN_IMPORT_ITEM,
+                    extraProps: {
+                        'aria-label': i18n('button_import-label'),
+                    },
                 },
             ]}
             renderSwitcher={(switcherProps) => (
-                <Button {...switcherProps} qa={GalleryCardPageQA.IMPORT_DROPDOWN}>
+                <Button
+                    {...switcherProps}
+                    qa={GalleryCardPageQA.IMPORT_DROPDOWN}
+                    aria-label={i18n('button_use-label')}
+                >
                     {i18n('button_use')}
                 </Button>
             )}

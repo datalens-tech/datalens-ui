@@ -201,17 +201,21 @@ function CardActionPanel({entry, showPreview, togglePreview, lang}: CardActionPa
     if (isMobileMediaQuery) {
         rightItems = (
             <Flex className={b('actions-right-flex', mods)} style={{flexShrink: 0}}>
-                <LinkButton entryId={entry.id} />
+                <LinkButton entryId={entry.id} aria-label={i18n('button_copy-link-label')} />
                 {entry.data && <ImportDropdown entryId={entry.id} url={entry.data} />}
             </Flex>
         );
     } else {
         rightItems = (
             <Flex className={b('actions-right-flex', mods)} style={{flexShrink: 0}}>
-                <LinkButton entryId={entry.id} />
+                <LinkButton entryId={entry.id} aria-label={i18n('button_copy-link-label')} />
                 <ContactPartnerButton partnerId={entry.partnerId} />
                 {entry.data && <ImportDropdown entryId={entry.id} url={entry.data} />}
-                <Button view={showPreview ? 'normal' : 'action'} onClick={togglePreview}>
+                <Button
+                    view={showPreview ? 'normal' : 'action'}
+                    onClick={togglePreview}
+                    aria-label={i18n('button_preview-label')}
+                >
                     {showPreview ? (
                         <Button.Icon>
                             <Icon data={Xmark} />
@@ -364,6 +368,7 @@ function CardContent({entry, togglePreview, lang, maxWidth}: CardContentProps) {
                 <Col size={12}>
                     <PageHeader
                         activeMediaQuery={activeMediaQuery}
+                        ariaLabel={i18n('button_back-to-list')}
                         title={entry.title[lang]}
                         to={getAllPageUrl()}
                     />
