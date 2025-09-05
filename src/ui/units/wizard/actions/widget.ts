@@ -3,6 +3,7 @@ import type {
     ChartsConfig,
     ClientChartsConfig,
     CommonSharedExtraSettings,
+    EntryAnnotationArgs,
     EntryUpdateMode,
     Shared,
 } from 'shared';
@@ -122,12 +123,12 @@ export type UpdateWizardWidgetArgs = {
     entry: WidgetData;
     config: {shared: ClientChartsConfig} | undefined;
     mode?: EntryUpdateMode;
-    description?: string;
+    annotation?: EntryAnnotationArgs;
 };
 
 export function updateWizardWidget(args: UpdateWizardWidgetArgs) {
     return async (dispatch: WizardDispatch) => {
-        const {config, entry, mode, description} = args;
+        const {config, entry, mode, annotation} = args;
 
         const data = mapClientConfigToChartsConfig(config);
 
@@ -135,7 +136,7 @@ export function updateWizardWidget(args: UpdateWizardWidgetArgs) {
             data,
             entry,
             mode,
-            description,
+            annotation,
             onSuccess: (responseData) => dispatch(onSuccessWizardWidgetUpdate(responseData)),
             onError: (error) => dispatch(onErrorWizardWidgetUpdate(error)),
         };

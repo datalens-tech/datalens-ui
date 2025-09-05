@@ -7,6 +7,7 @@ import type {
     CreateEntryRequest,
     DashEntry,
     DashEntryCreateParams,
+    EntryAnnotationArgs,
     EntryReadParams,
     Params,
     UpdateEntryRequest,
@@ -20,14 +21,14 @@ export type CreateWidgetArgs =
           key: string;
           data: Record<string, unknown>;
           template?: string;
-          description?: string;
+          annotation?: EntryAnnotationArgs;
       }
     | {
           workbookId: string;
           name: string;
           data: Record<string, unknown>;
           template?: string;
-          description?: string;
+          annotation?: EntryAnnotationArgs;
       };
 
 const CHARTS_API_SCHEMA = {
@@ -87,14 +88,14 @@ const CHARTS_API_SCHEMA = {
             data,
             template = 'datalens',
             mode = EntryUpdateMode.Publish,
-            description,
+            annotation,
         }: {
             entryId: string;
             revId: string;
             data: any;
             template: string;
             mode?: EntryUpdateMode;
-            description?: string;
+            annotation?: EntryAnnotationArgs;
         },
     ) => ({
         method: 'post',
@@ -104,7 +105,7 @@ const CHARTS_API_SCHEMA = {
             data,
             mode,
             template,
-            description,
+            annotation,
         },
     }),
 

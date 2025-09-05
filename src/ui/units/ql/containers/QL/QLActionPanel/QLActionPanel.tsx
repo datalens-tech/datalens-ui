@@ -180,6 +180,8 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
                       })
                     : defaultChartName;
 
+            const description = qlState.annotation?.description ?? '';
+
             const result = await entryDialoguesRef.current?.open({
                 dialog: EntryDialogName.CreateQLChart,
                 dialogProps: {
@@ -187,7 +189,7 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
                     initName,
                     initDestination: path,
                     workbookId: entry?.workbookId,
-                    description: qlState.annotation?.description,
+                    annotation: {description},
                 },
             });
 

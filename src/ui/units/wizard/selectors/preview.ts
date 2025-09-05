@@ -72,12 +72,12 @@ export const selectConfigForSaving = createSelector(selectConfigData, (previewSt
     };
 });
 
-export const selectPreviewDescription = (state: DatalensGlobalState) =>
-    state.wizard.preview.description ?? state.wizard.widget.widget?.annotation?.description;
+export const selectPreviewDescription = (state: DatalensGlobalState): string =>
+    state.wizard.preview.description ?? state.wizard.widget.widget?.annotation?.description ?? '';
 
 export const selectIsDescriptionChanged = createSelector(
     [selectInitialDescription, selectPreviewDescription],
-    (initialDescription = '', previewDescription = '') => initialDescription !== previewDescription,
+    (initialDescription, previewDescription) => initialDescription !== previewDescription,
 );
 
 export const selectIsChartSaved = createSelector(

@@ -3,6 +3,7 @@ import React from 'react';
 import {I18n} from 'i18n';
 import type {ResolveThunks} from 'react-redux';
 import {connect} from 'react-redux';
+import type {EntryAnnotationArgs} from 'shared';
 import type {DashData} from 'shared/types/dash';
 import {showToast} from 'store/actions/toaster';
 import type {DataLensApiError} from 'typings';
@@ -18,7 +19,7 @@ export interface DialogCreateDashboardProps extends EntryDialogProps {
     initDestination?: string;
     workbookId?: string;
     data?: DashData;
-    description?: string;
+    annotation?: EntryAnnotationArgs;
 }
 
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
@@ -68,21 +69,21 @@ class DialogCreateDashboard extends React.Component<Props> {
     }
 
     private onWorkbookApply = ({name}: {name: string}) => {
-        const {workbookId, data, description} = this.props;
+        const {workbookId, data, annotation} = this.props;
         return this.props.sdk.charts.createDash({
             data: {
                 workbookId,
                 name,
                 data,
-                description,
+                annotation,
             },
         });
     };
 
     private onApply = async (key: string) => {
-        const {data, description} = this.props;
+        const {data, annotation} = this.props;
         const response = await this.props.sdk.charts.createDash({
-            data: {key, data, description},
+            data: {key, data, annotation},
         });
 
         return response;

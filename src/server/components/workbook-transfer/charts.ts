@@ -157,6 +157,7 @@ export const prepareImportChartData = async (
 ) => {
     const {ctx} = req;
 
+    const description = chartOptions.annotation?.description ?? '';
     const defaults = {
         key: chartOptions.key,
         name: chartOptions.name,
@@ -164,7 +165,7 @@ export const prepareImportChartData = async (
         links: {},
         scope: EntryScope.Widget,
         mode: EntryUpdateMode.Publish,
-        annotation: chartOptions.annotation,
+        annotation: {description},
     };
     const notifications: TransferNotification[] = [];
 
