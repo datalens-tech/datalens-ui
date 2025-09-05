@@ -32,7 +32,7 @@ jobs:
           node-version: 22
           cache: 'npm'
           cache-dependency-path: ./package-lock.json
-      - name: check closed branch exists
+      - name: check closed and extensions branch exists
         run: |
           if gh api "repos/${GH_REPO_OWNER}/${GH_REPO_CLOSED}/branches/${GH_BRANCH_NAME}" >/dev/null 2>&1; then
             echo "GH_BRANCH_NAME_CLOSED=${BRANCH_NAME}" >> "$GITHUB_ENV"
@@ -56,7 +56,6 @@ jobs:
       - name: create farm and wait for it to be ready
         timeout-minutes: ${{ fromJSON(env.FARM_POLL_TIMEOUT_MIN) }}
         run: |
-          set -x
           FARM_NAME=$(echo "${GH_BRANCH_NAME}" | tr '[:upper:]' '[:lower:]')
 
           curl -k -q -s -X POST -H "content-type: application/json" \
