@@ -11,10 +11,13 @@ const ROOT_ENV_PATH = path.resolve(__dirname, '..', '.env');
 
 dotenv.config({path: ROOT_ENV_PATH});
 
-const maxWorkers =
-    process.env.CI === 'true'
-        ? 6
-        : parseInt(process.env.E2E_MAX_WORKERS || os.cpus().length.toString(), 10);
+let maxWorkers = process.env.E2E_MAX_WORKERS
+    ? parseInt(process.env.E2E_MAX_WORKERS, 10)
+    : os.cpus().length.toString();
+
+if (process.env.CI === 'true') {
+    maxWorkers = 6;
+}
 
 const testMatch = process.env.E2E_TEST_MATCH
     ? `**/${process.env.E2E_TEST_MATCH}.test.ts`
@@ -33,6 +36,8 @@ const grepInvert = process.env.E2E_TEST_NAME_PATTERN_INVERT
 const workers = process.env.E2E_DEBUG ? 1 : maxWorkers;
 
 const retries = process.env.E2E_RETRY_TIMES ? Number(process.env.E2E_RETRY_TIMES) : 0;
+
+const maxFailures = process.env.E2E_MAX_FAILURES ? parseInt(process.env.E2E_MAX_FAILURES, 10) : 0;
 
 const headful = isTrueArg(process.env.E2E_HEADFUL);
 
@@ -85,6 +90,7 @@ const playwrightConfig: PlaywrightTestConfig<DatalensTestFixtures> = {
     fullyParallel: true,
     globalSetup: require.resolve(globalSetupPath),
     timeout: testTimeout,
+    maxFailures,
     forbidOnly,
     snapshotPathTemplate: '{testDir}/__screenshots__/{testFilePath}/{arg}{ext}',
     updateSnapshots,
