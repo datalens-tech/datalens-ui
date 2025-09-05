@@ -112,6 +112,7 @@ jobs:
           E2E_PASSPORT_URL: ${{ vars.E2E_PASSPORT_URL }}
           E2E_USER_LOGIN: ${{ secrets.E2E_USER_LOGIN }}
           E2E_USER_PASSWORD: ${{ secrets.E2E_USER_PASSWORD }}
+          E2E_YT_PATH: ${{ secrets.E2E_YT_PATH }}
           E2E_MAX_WORKERS: '12'
           E2E_RETRY_TIMES: '1'
           E2E_MAX_FAILURES: ${{ env.E2E_MAX_FAILURES }}
