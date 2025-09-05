@@ -31,7 +31,7 @@ interface PromoBlockItemProps {
     imageProps?: AsyncImageProps[];
     category?: string;
     view?: PromoBlockRowProps['view'];
-    centered?: boolean;
+    cardMod?: string;
 }
 
 function PromoBlockItem({
@@ -42,17 +42,24 @@ function PromoBlockItem({
     category,
     icon,
     view,
-    centered,
+    cardMod,
 }: PromoBlockItemProps) {
     const {activeMediaQuery, isMediaActive} = useLayoutContext();
+    const [isImageLoading, setIsImageLoading] = React.useState(true);
 
     const isMobileMediaQuery = !isMediaActive('m');
+
+    const handleImageLoad = React.useCallback(() => {
+        setIsImageLoading(false);
+    }, []);
 
     const renderImage = React.useCallback(
         (props: AsyncImageProps, index: number) => {
             let style: React.CSSProperties = {};
 
-            if (imageProps.length > 1) {
+            if (isImageLoading) {
+                style = {width: '100%', height: '100%'};
+            } else if (imageProps.length > 1) {
                 style = primary
                     ? {
                           top: `${(imageProps.length - 1 - index) * 20}%`,
@@ -84,23 +91,37 @@ function PromoBlockItem({
                             media: activeMediaQuery,
                         })}
                         showSkeleton={true}
+                        onLoad={handleImageLoad}
                         {...props}
                     />
                 </div>
             );
         },
-        [activeMediaQuery, imageProps.length, isMediaActive, isMobileMediaQuery, primary, view],
+        [
+            activeMediaQuery,
+            handleImageLoad,
+            imageProps.length,
+            isImageLoading,
+            isMediaActive,
+            isMobileMediaQuery,
+            primary,
+            view,
+        ],
     );
 
     const iconComponent =
-        view === 'promo' ? <ChevronRight width={22} height={22} /> : <ArrowRight />;
+        view === 'promo' ? (
+            <ChevronRight width={22} height={22} className={b('show-icon')} />
+        ) : (
+            <ArrowRight className={b('show-icon')} />
+        );
 
     const card = (
         <Card
             className={b('item-flex', {
                 primary,
                 media: activeMediaQuery,
-                centered,
+                [String(cardMod)]: Boolean(cardMod),
             })}
             view="clear"
         >
@@ -230,7 +251,7 @@ export function PromoBlockRow({
                     counter={galleryItems.length}
                     imageProps={isGalleryView ? othersImageProps : []}
                     view={view}
-                    centered={view === 'promo'}
+                    cardMod="show-button"
                 />
             </Col>
         </Row>

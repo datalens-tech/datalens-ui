@@ -9,9 +9,10 @@ export type AsyncImageProps = Omit<
 > & {
     src: string | (() => Promise<{default: string}>);
     showSkeleton?: boolean;
+    onLoad?: () => void;
 };
 
-export function AsyncImage({src, alt, style, showSkeleton, ...restProps}: AsyncImageProps) {
+export function AsyncImage({src, alt, style, showSkeleton, onLoad, ...restProps}: AsyncImageProps) {
     const [finalSrc, setFinalSrc] = React.useState(typeof src === 'string' ? src : undefined);
     const [loading, setLoading] = React.useState(showSkeleton);
 
@@ -40,6 +41,11 @@ export function AsyncImage({src, alt, style, showSkeleton, ...restProps}: AsyncI
         };
     }, [src]);
 
+    const handleLoad = React.useCallback(() => {
+        setLoading(false);
+        onLoad?.();
+    }, [onLoad]);
+
     const skeleton = loading ? <Skeleton className={restProps.className} style={style} /> : null;
 
     return isNil(finalSrc) ? (
@@ -54,7 +60,7 @@ export function AsyncImage({src, alt, style, showSkeleton, ...restProps}: AsyncI
                     ...(loading && {display: 'none'}),
                 }}
                 {...restProps}
-                onLoad={loading ? () => setLoading(false) : undefined}
+                onLoad={loading ? handleLoad : undefined}
                 onError={() => setLoading(false)}
             />
             {skeleton}
