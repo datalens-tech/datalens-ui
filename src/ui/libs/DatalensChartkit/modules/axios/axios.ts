@@ -1,7 +1,8 @@
-import type {AxiosError} from 'axios';
+import type {AxiosError, AxiosRequestConfig} from 'axios';
 import axios from 'axios';
 import axiosRetry, {isRetryableError} from 'axios-retry';
 import isNumber from 'lodash/isNumber';
+import {REQUEST_ID_HEADER} from 'shared';
 import {sleep} from 'shared/modules';
 import {showReadOnlyToast} from 'ui/utils/readOnly';
 
@@ -22,6 +23,22 @@ const client = axios.create({
     // Request header field X-XSRF-TOKEN is not allowed by Access-Control-Allow-Headers in preflight response.
     xsrfCookieName: '',
 });
+
+export const axiosOnRetryHandler = (
+    retryCount: number,
+    _: AxiosError,
+    requestConfig: AxiosRequestConfig,
+) => {
+    if (requestConfig?.headers?.[REQUEST_ID_HEADER]) {
+        let requestId = requestConfig.headers[REQUEST_ID_HEADER];
+
+        if (retryCount > 1) {
+            requestId = requestId.slice(0, requestId.lastIndexOf('.'));
+        }
+
+        requestConfig.headers[REQUEST_ID_HEADER] = `${requestId}.${retryCount}`;
+    }
+};
 
 initConcurrencyManager(Infinity);
 
@@ -47,6 +64,7 @@ export function initConcurrencyManager(maxConcurrentRequests: number) {
         retries: 0,
         retryCondition: isRetryableError,
         retryDelay: () => 3000,
+        onRetry: axiosOnRetryHandler,
     });
     retryRequestInterceptorId = requestInterceptorId;
     retryResponseInterceptorId = responseInterceptorId;
