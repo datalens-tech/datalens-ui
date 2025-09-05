@@ -119,7 +119,7 @@ jobs:
       - name: save report link and pr number
         if: always()
         run: |
-          echo "reports/${{ github.head_ref || github.ref_name }}/${{ github.run_id }}/${{ github.run_attempt }}" > ./tests/artifacts/report-link
+          echo "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" > ./tests/artifacts/report-link
           echo "${{ github.event.pull_request.number }}" > ./tests/artifacts/report-pr
       - uses: actions/upload-artifact@v4
         if: always()
@@ -141,7 +141,7 @@ jobs:
           path: ./tests/artifacts/
       - name: extract env from workflow
         run: |
-          echo "E2E_REPORT_PATH=$(cat ./tests/artifacts/report-link)" >> "$GITHUB_ENV"
+          echo "E2E_REPORT_LINK=$(cat ./tests/artifacts/report-link)" >> "$GITHUB_ENV"
           echo "E2E_REPORT_PR_NUMBER=$(cat ./tests/artifacts/report-pr)" >> "$GITHUB_ENV"
       - uses: daun/playwright-report-summary@v3
         if: always()
@@ -176,8 +176,6 @@ jobs:
             ${{ steps.report-md.outputs.summary }}
 
             ---
-
-            🧐 Link with trace: [trace](${process.env.E2E_TRACE_LINK})
 
             👉 Link with detailed report: [report](${process.env.E2E_REPORT_LINK})
 
