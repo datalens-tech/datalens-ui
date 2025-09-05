@@ -307,6 +307,7 @@ export interface EntryReadParams {
     revId?: string;
     includePermissions: string;
     includeLinks: string;
+    includeFavorite?: boolean;
     branch?: string;
 }
 

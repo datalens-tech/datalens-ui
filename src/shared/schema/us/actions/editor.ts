@@ -48,6 +48,7 @@ export const editorActions = {
     _updateEditorChart: createAction<UpdateEditorChartResponse, UpdateEditorChartArgs>({
         method: 'POST',
         path: ({entryId}) => `${PATH_PREFIX}/entries/${filterUrlFragment(entryId)}`,
+
         params: ({data, mode, revId, meta = {}, links, annotation}, headers) => {
             return {
                 body: {

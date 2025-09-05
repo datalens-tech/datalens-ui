@@ -56,6 +56,7 @@ import DatalensChartkitCustomError, {
     ERROR_CODE,
 } from '../../datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import URI from '../../uri/uri';
+import {getChartKind} from '../helpers';
 
 import {getGraph} from './get-graph/get-graph';
 import processNode from './node';
@@ -477,6 +478,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             configResolving: null,
             dataFetching: null,
             jsExecution: null,
+            chartKind: getChartKind(loadedData),
         };
 
         if (loadedData.timings) {
