@@ -353,7 +353,9 @@ class Dash {
         return prevEntry;
     }
 
-    static migrateDescriptionForSave(prevEntry: CreateEntryRequest<DashEntry>) {
+    static migrateDescriptionForSave<T extends Pick<DashEntry, 'data' | 'annotation'>>(
+        prevEntry: T,
+    ) {
         if (prevEntry.annotation) {
             return prevEntry;
         }
@@ -420,7 +422,7 @@ class Dash {
             const result = (await US.updateEntry(
                 entryId,
                 mode,
-                usData,
+                Dash.migrateDescriptionForSave(usData),
                 headersWithMetadata,
                 ctx,
             )) as DashEntry;
