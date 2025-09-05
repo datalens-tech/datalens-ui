@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import get from 'lodash/get';
 import keyBy from 'lodash/keyBy';
 import type {Required} from 'utility-types';
 
@@ -174,7 +174,7 @@ export const entriesActions = {
                             }
                             // us zod validation
                             if ('code' in error && error.code === 'VALIDATION_ERROR') {
-                                const path = _.get(error, ['details', 'details', 0, 'path', 0]);
+                                const path = get(error, ['details', 'details', 0, 'path', 0]);
                                 if (path === 'entryId') {
                                     return {code: 'NOT_FOUND'};
                                 }
