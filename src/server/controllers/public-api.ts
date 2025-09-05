@@ -1,16 +1,7 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
-import type {AppContext} from '@gravity-ui/nodekit';
 import {REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 import _ from 'lodash';
-import z from 'zod/v4';
 
-import {Feature, isEnabledServerFeature} from '../../shared';
-import {getValidationSchema, hasValidationSchema} from '../../shared/schema/gateway-utils';
-import {
-    PUBLIC_API_HTTP_METHOD,
-    PUBLIC_API_URL,
-    publicApiOpenApiRegistry,
-} from '../components/public-api';
 import type {PublicApiRpcMap} from '../components/public-api/types';
 import {PUBLIC_API_RPC_ERROR_CODE} from '../constants/public-api';
 import {registry} from '../registry';
@@ -26,66 +17,9 @@ const handleError = (req: Request, res: Response, status: number, message: strin
     });
 };
 
-const resolveUrl = ({version, action}: {version: string; action: string}) => {
-    return PUBLIC_API_URL.replace(':version', version).replace(':action', action);
-};
-
-const defaultSchema = {
-    summary: 'Type not defined',
-    request: {
-        body: {
-            content: {
-                ['application/json']: {
-                    schema: z.toJSONSchema(z.any()),
-                },
-            },
-        },
-    },
-    responses: {
-        200: {
-            description: 'TBD',
-            content: {
-                ['application/json']: {
-                    schema: z.toJSONSchema(z.any()),
-                },
-            },
-        },
-    },
-};
-
-export function createPublicApiController(ctx: AppContext) {
+export function createPublicApiController() {
     const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
-    const {proxyMap, securityTypes} = registry.getPublicApiConfig();
-
-    if (isEnabledServerFeature(ctx, Feature.PublicApiSwagger)) {
-        const security = securityTypes.map((type) => ({
-            [type]: [],
-        }));
-
-        Object.entries(proxyMap).forEach(([version, actions]) => {
-            Object.entries(actions).forEach(([action, {resolve, openApi}]) => {
-                const gatewayApiAction = resolve(gatewayApi);
-
-                if (hasValidationSchema(gatewayApiAction)) {
-                    publicApiOpenApiRegistry.registerPath({
-                        method: PUBLIC_API_HTTP_METHOD.toLocaleLowerCase(),
-                        path: resolveUrl({version, action}),
-                        ...openApi,
-                        ...getValidationSchema(gatewayApiAction)().getOpenApiSchema(),
-                        security,
-                    });
-                } else {
-                    publicApiOpenApiRegistry.registerPath({
-                        method: PUBLIC_API_HTTP_METHOD.toLocaleLowerCase(),
-                        path: resolveUrl({version, action}),
-                        ...openApi,
-                        ...defaultSchema,
-                        security,
-                    } as any);
-                }
-            });
-        });
-    }
+    const {proxyMap} = registry.getPublicApiConfig();
 
     return async function publicApiController(req: Request, res: Response) {
         const boundeHandler = handleError.bind(null, req, res);

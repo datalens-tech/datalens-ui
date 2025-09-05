@@ -5,7 +5,6 @@ import {getGatewayControllers} from '@gravity-ui/gateway';
 import type {AppContext} from '@gravity-ui/nodekit';
 import _ from 'lodash';
 
-import {getValidationSchema, registerValidationSchema} from '../../shared/schema/gateway-utils';
 import type {ChartsEngine} from '../components/charts-engine';
 import type {PublicApiConfig} from '../components/public-api/types';
 import type {QLConnectionTypeMap} from '../modes/charts/plugins/ql/utils/connection';
@@ -21,44 +20,10 @@ let chartsEngine: ChartsEngine;
 export const wrapperGetGatewayControllers = (
     schemasByScope: SchemasByScope,
     config: GatewayConfig<AppContext, Request, Response>,
-) => {
-    const typedSchemasMap = Object.keys(schemasByScope).reduce<Record<string, any>>(
-        (memo, scope) => {
-            const services = schemasByScope[scope];
-            Object.keys(services).forEach((service) => {
-                const actions = services[service].actions;
-
-                Object.entries(actions).forEach(([action, actionConfig]) => {
-                    const validationSchema = getValidationSchema(actionConfig);
-
-                    if (validationSchema) {
-                        memo[`${scope}.${service}.${action}`] = validationSchema;
-                    }
-                });
-            });
-
-            return memo;
-        },
-        {},
-    );
-
-    const controllers = getGatewayControllers<SchemasByScope, AppContext, Request, Response>(
-        schemasByScope,
-        config,
-    );
-
-    Object.entries(typedSchemasMap).forEach(([actionPath, schema]) => {
-        const actionCallback = _.get(controllers.api, actionPath, null);
-
-        if (actionCallback) {
-            registerValidationSchema(actionCallback, schema);
-        }
-    });
-
-    return controllers;
-};
+) => getGatewayControllers<SchemasByScope, AppContext, Request, Response>(schemasByScope, config);
 
 let gateway: ReturnType<typeof wrapperGetGatewayControllers>;
+let gatewaySchemasByScope: SchemasByScope;
 let publicSchema: any;
 let getLayoutConfig: GetLayoutConfig | undefined;
 let yfmPlugins: MarkdownItPluginCb[];
@@ -102,6 +67,7 @@ export const registry = {
         }
         gateway = wrapperGetGatewayControllers(schemasByScope, config);
         publicSchema = publicSchemaArg;
+        gatewaySchemasByScope = schemasByScope;
     },
     getGatewayController() {
         if (!gateway) {
@@ -118,6 +84,13 @@ export const registry = {
         return {gatewayApi: gateway.api} as {
             gatewayApi: ApiWithRoot<TSchema, Request['ctx'], Request, Response>;
         };
+    },
+    getGatewaySchemasByScope() {
+        if (!gatewaySchemasByScope) {
+            throw new Error('First of all setup the gateway');
+        }
+
+        return gatewaySchemasByScope;
     },
     getPublicApi() {
         if (!publicSchema) {

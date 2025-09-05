@@ -19,6 +19,7 @@ export enum AppMode {
     Datalens = 'datalens',
     Charts = 'charts',
     Api = 'api',
+    PublicApi = 'public-api',
 }
 
 export enum Language {
