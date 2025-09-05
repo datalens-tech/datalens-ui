@@ -316,7 +316,7 @@ class Dash {
     }
 
     static migrateDescription<T extends Pick<DashEntry, 'data' | 'annotation'>>(prevEntry: T) {
-        if ('description' in prevEntry.data) {
+        if (prevEntry.data && 'description' in prevEntry.data) {
             const entry = {
                 ...prevEntry,
                 annotation: {
@@ -331,7 +331,7 @@ class Dash {
     }
 
     static migrateDescriptionForClient(prevEntry: DashEntry) {
-        if ('description' in prevEntry.data && !prevEntry.annotation) {
+        if (prevEntry.data && 'description' in prevEntry.data && !prevEntry.annotation) {
             return {
                 ...prevEntry,
                 annotation: {
@@ -360,7 +360,7 @@ class Dash {
             return prevEntry;
         }
 
-        if ('description' in prevEntry.data) {
+        if (prevEntry.data && 'description' in prevEntry.data) {
             const entry = {
                 ...prevEntry,
                 annotation: {
@@ -372,7 +372,7 @@ class Dash {
             return entry;
         }
 
-        if ('description' in prevEntry) {
+        if (prevEntry && 'description' in prevEntry) {
             const entry = {
                 ...prevEntry,
                 annotation: {
