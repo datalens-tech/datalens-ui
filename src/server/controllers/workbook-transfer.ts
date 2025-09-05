@@ -131,7 +131,7 @@ export const prepareExportData = async (
             }
 
             const {dash, notifications} = await prepareDashExportData(
-                Dash.migrateDescription(entry as unknown as DashEntry),
+                Dash.migrateDescriptionForClient(entry as unknown as DashEntry),
                 idMapping,
             );
 

@@ -261,7 +261,7 @@ class Dash {
             };
 
             const createdEntry = (await US.createEntry(
-                usData,
+                Dash.migrateDescriptionForSave(usData),
                 headersWithMetadata,
                 ctx,
             )) as DashEntry & {
@@ -270,7 +270,7 @@ class Dash {
 
             ctx.log('SDK_DASH_CREATE_SUCCESS', US.getLoggedEntry(createdEntry));
 
-            return createdEntry;
+            return Dash.migrateDescriptionForClient(createdEntry);
         } catch (error) {
             ctx.logError('SDK_DASH_CREATE_FAILED', error, US.getLoggedErrorEntry(data));
 
@@ -290,7 +290,7 @@ class Dash {
                 ...ctx.getMetadata(),
             };
             const result = await US.readEntry(entryId, params, headersWithMetadata, ctx).then(
-                (entry) => Dash.migrateDescription(entry as DashEntry),
+                (entry) => Dash.migrateDescriptionForClient(entry as DashEntry),
             );
 
             const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
@@ -315,14 +315,54 @@ class Dash {
         return DashSchemeConverter.update(data);
     }
 
-    static migrateDescription(prevEntry: DashEntry) {
+    static migrateDescriptionForClient(prevEntry: DashEntry) {
         if ('description' in prevEntry.data && !prevEntry.annotation) {
-            const entry = {
+            return {
                 ...prevEntry,
                 annotation: {
                     description: prevEntry.data.description,
                 },
             };
+        }
+
+        if (prevEntry.annotation?.description && !prevEntry.data.description) {
+            return {
+                ...prevEntry,
+                data: {
+                    ...prevEntry.data,
+                    description: prevEntry.annotation.description,
+                },
+            };
+        }
+
+        return prevEntry;
+    }
+
+    static migrateDescriptionForSave(prevEntry: CreateEntryRequest<DashEntry>) {
+        if (prevEntry.annotation) {
+            return prevEntry;
+        }
+
+        if ('description' in prevEntry.data) {
+            const entry = {
+                ...prevEntry,
+                annotation: {
+                    description: prevEntry.data.description ?? '',
+                },
+            };
+            delete entry.data.description;
+
+            return entry;
+        }
+
+        if ('description' in prevEntry) {
+            const entry = {
+                ...prevEntry,
+                annotation: {
+                    description: prevEntry.description ?? '',
+                },
+            };
+            delete entry.description;
 
             return entry;
         }
@@ -372,7 +412,7 @@ class Dash {
 
             ctx.log('SDK_DASH_UPDATE_SUCCESS', US.getLoggedEntry(result));
 
-            return result;
+            return Dash.migrateDescriptionForClient(result);
         } catch (error) {
             ctx.logError('SDK_DASH_UPDATE_FAILED', error, {
                 entryId,
