@@ -316,14 +316,14 @@ class Dash {
     }
 
     static migrateDescription(prevEntry: DashEntry) {
-        if ('description' in prevEntry.data) {
+        if ('description' in prevEntry.data && !prevEntry.annotation) {
             const entry = {
                 ...prevEntry,
                 annotation: {
                     description: prevEntry.data.description,
                 },
             };
-            delete entry.data.description;
+
             return entry;
         }
 
