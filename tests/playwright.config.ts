@@ -15,7 +15,7 @@ let maxWorkers = process.env.E2E_MAX_WORKERS
     ? parseInt(process.env.E2E_MAX_WORKERS, 10)
     : os.cpus().length.toString();
 
-if (process.env.CI === 'true') {
+if (process.env.CI === 'true' && !process.env.E2E_MAX_WORKERS) {
     maxWorkers = 6;
 }
 
