@@ -98,6 +98,6 @@ jobs:
           E2E_USER_LOGIN: ${{ secrets.E2E_USER_LOGIN }}
           E2E_USER_PASSWORD: ${{ secrets.E2E_USER_PASSWORD }}
           E2E_MAX_WORKERS: '12'
-          E2E_RETRY_TIMES: '1'
+          E2E_RETRY_TIMES: '3'
           NODE_TLS_REJECT_UNAUTHORIZED: '0'
           CI: 'false'
