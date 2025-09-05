@@ -26,6 +26,7 @@ import {
     TRACE_ID_HEADER,
     US_PUBLIC_API_TOKEN_HEADER,
     WORKBOOK_ID_HEADER,
+    mapChartsConfigToLatestVersion,
 } from '../../../../../../shared';
 import {ErrorCode, TIMEOUT_10_SEC} from '../../../../../../shared/constants';
 import {createErrorHandler} from '../../error-handler';
@@ -225,7 +226,7 @@ export type ProviderCreateParams = {
     recursion?: boolean;
     meta?: Record<string, string>;
     includePermissionsInfo?: boolean | string;
-    workbookId: string;
+    workbookId: string | null;
     name: string;
     mode?: EntryUpdateMode;
     description?: string;
@@ -354,6 +355,29 @@ export class USProvider {
                     });
                 }
             });
+    }
+
+    static async retrieveParsedWizardChart(
+        ctx: AppContext,
+        props: {
+            id: string;
+            storageApiPath?: string;
+            extraAllowedHeaders?: string[];
+            unreleased: boolean | string;
+            includeLinks?: boolean | string;
+            includePermissionsInfo?: boolean | string;
+            revId?: string;
+            headers: Request['headers'];
+            workbookId?: WorkbookId;
+            includeServicePlan?: boolean;
+            includeTenantFeatures?: boolean;
+        },
+    ) {
+        const result = await USProvider.retrieveById(ctx, props);
+
+        result.data = mapChartsConfigToLatestVersion(JSON.parse(result.data.shared)) as any;
+
+        return result;
     }
 
     static retrieveByKey(
@@ -609,7 +633,7 @@ export class USProvider {
             recursion: boolean;
             links?: unknown;
             meta: Record<string, string>;
-            workbookId: string;
+            workbookId: string | null;
             name: string;
             includePermissionsInfo?: boolean;
             mode: EntryUpdateMode;

@@ -3,8 +3,11 @@ import type {ExpressKit, Request, Response} from '@gravity-ui/expresskit';
 import type {ApiWithRoot, GatewayConfig, SchemasByScope} from '@gravity-ui/gateway';
 import {getGatewayControllers} from '@gravity-ui/gateway';
 import type {AppContext} from '@gravity-ui/nodekit';
+import _ from 'lodash';
 
+import {getValidationSchema, registerValidationSchema} from '../../shared/schema/gateway-utils';
 import type {ChartsEngine} from '../components/charts-engine';
+import type {PublicApiConfig} from '../components/public-api/types';
 import type {QLConnectionTypeMap} from '../modes/charts/plugins/ql/utils/connection';
 import {getConnectorToQlConnectionTypeMap} from '../modes/charts/plugins/ql/utils/connection';
 import type {GetLayoutConfig} from '../types/app-layout';
@@ -18,13 +21,50 @@ let chartsEngine: ChartsEngine;
 export const wrapperGetGatewayControllers = (
     schemasByScope: SchemasByScope,
     config: GatewayConfig<AppContext, Request, Response>,
-) => getGatewayControllers<SchemasByScope, AppContext, Request, Response>(schemasByScope, config);
+) => {
+    const typedSchemasMap = Object.keys(schemasByScope).reduce<Record<string, any>>(
+        (memo, scope) => {
+            const services = schemasByScope[scope];
+            Object.keys(services).forEach((service) => {
+                const actions = services[service].actions;
+
+                Object.entries(actions).forEach(([action, actionConfig]) => {
+                    const validationSchema = getValidationSchema(actionConfig);
+
+                    if (validationSchema) {
+                        memo[`${scope}.${service}.${action}`] = validationSchema;
+                    }
+                });
+            });
+
+            return memo;
+        },
+        {},
+    );
+
+    const controllers = getGatewayControllers<SchemasByScope, AppContext, Request, Response>(
+        schemasByScope,
+        config,
+    );
+
+    Object.entries(typedSchemasMap).forEach(([actionPath, schema]) => {
+        const actionCallback = _.get(controllers.api, actionPath, null);
+
+        if (actionCallback) {
+            registerValidationSchema(actionCallback, schema);
+        }
+    });
+
+    return controllers;
+};
 
 let gateway: ReturnType<typeof wrapperGetGatewayControllers>;
+let publicSchema: any;
 let getLayoutConfig: GetLayoutConfig | undefined;
 let yfmPlugins: MarkdownItPluginCb[];
 let getXlsxConverter: XlsxConverterFn | undefined;
 let qLConnectionTypeMap: QLConnectionTypeMap | undefined;
+let publicApiConfig: PublicApiConfig | undefined;
 
 export const registry = {
     common: commonRegistry,
@@ -55,11 +95,13 @@ export const registry = {
     setupGateway(
         config: GatewayConfig<Request['ctx'], Request, Response>,
         schemasByScope: SchemasByScope,
+        publicSchemaArg?: any, // TODO @flops
     ) {
         if (gateway) {
             throw new Error('The method must not be called more than once');
         }
         gateway = wrapperGetGatewayControllers(schemasByScope, config);
+        publicSchema = publicSchemaArg;
     },
     getGatewayController() {
         if (!gateway) {
@@ -76,6 +118,13 @@ export const registry = {
         return {gatewayApi: gateway.api} as {
             gatewayApi: ApiWithRoot<TSchema, Request['ctx'], Request, Response>;
         };
+    },
+    getPublicApi() {
+        if (!publicSchema) {
+            throw new Error('First of all setup the publicSchema');
+        }
+
+        return publicSchema;
     },
     registerGetLayoutConfig(fn: GetLayoutConfig) {
         if (getLayoutConfig) {
@@ -116,5 +165,18 @@ export const registry = {
     },
     getQLConnectionTypeMap() {
         return qLConnectionTypeMap ?? getConnectorToQlConnectionTypeMap();
+    },
+    setupPublicApiConfig(config: PublicApiConfig) {
+        if (publicApiConfig) {
+            throw new Error('The method must not be called more than once [setupPublicApiConfig]');
+        }
+        publicApiConfig = config;
+    },
+    getPublicApiConfig() {
+        if (!publicApiConfig) {
+            throw new Error('First of all setup the publicApiConfig');
+        }
+
+        return publicApiConfig;
     },
 };

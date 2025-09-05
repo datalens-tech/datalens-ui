@@ -40,6 +40,7 @@ export const getConfiguredRoute = (
                 ...params,
             };
         }
+
         default:
             return null as never;
     }
