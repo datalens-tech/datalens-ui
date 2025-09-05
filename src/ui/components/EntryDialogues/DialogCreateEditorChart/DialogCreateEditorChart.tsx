@@ -70,7 +70,7 @@ class DialogCreateEditorChart extends React.Component<Props> {
     }
 
     private onApply = async (key: string) => {
-        const {data, type, annotation, description = ''} = this.props;
+        const {data, type, annotation} = this.props;
         return getSdk().sdk.mix.createEditorChart({
             key,
             data: data || {},
