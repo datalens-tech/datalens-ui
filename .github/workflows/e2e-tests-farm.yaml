@@ -134,10 +134,15 @@ jobs:
           echo "${{ github.event.pull_request.number }}" > ./tests/artifacts/report-pr
       - uses: actions/upload-artifact@v4
         if: always()
+        id: upload-artifact
         with:
           name: playwright-report
           path: ./tests/artifacts/
           retention-days: 30
+      - name: extract report link from workflow
+        if: always()
+        run: |
+          echo "e2e_report_link=${{ steps.upload-artifact.outputs.artifact-url }}" >> "$GITHUB_OUTPUT"
 
   report:
     name: e2e-tests-farm-report
@@ -150,10 +155,6 @@ jobs:
         with:
           name: playwright-report
           path: ./tests/artifacts/
-      - name: extract env from workflow
-        run: |
-          echo "E2E_REPORT_LINK=$(cat ./tests/artifacts/report-link)" >> "$GITHUB_ENV"
-          echo "E2E_REPORT_PR_NUMBER=$(cat ./tests/artifacts/report-pr)" >> "$GITHUB_ENV"
       - uses: daun/playwright-report-summary@v3
         if: always()
         id: report-md
@@ -214,3 +215,5 @@ jobs:
               
               console.log('added new comment to PR #' + issueNumber);
             }
+        env:
+          E2E_REPORT_LINK: ${{ needs.run.outputs.e2e_report_link }}
