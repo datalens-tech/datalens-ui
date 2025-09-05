@@ -15,7 +15,7 @@ import iconFolder from '../../../../assets/icons/folder.svg';
 const b = block('dl-navigation-create-entry');
 const i18n = I18n.keyset('component.navigation.view');
 
-const Title: React.FC<{title: string; className: string}> = ({title, className}) => (
+const Title: React.FC<{title: React.ReactNode; className: string}> = ({title, className}) => (
     <div className={className}>{title}</div>
 );
 
@@ -46,7 +46,7 @@ export const getCreateEntryItems = ({onClick, place, isOnlyCollectionsMode}: Cre
         }
 
         targetMenu.push({
-            action: () => onClick(entryConfig.value),
+            action: entryConfig.action ? entryConfig.action : () => onClick(entryConfig.value),
             iconStart: <EntityIcon type={entryConfig.type} iconData={entryConfig.icon} />,
             text: <Title className={b('item-title')} title={entryConfig.text} />,
             qa: entryConfig.qa,

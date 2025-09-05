@@ -1,3 +1,5 @@
+import type React from 'react';
+
 import {
     ChartColumn,
     CirclesIntersection,
@@ -137,11 +139,12 @@ export interface EntrySettings {
     value: CreateMenuValue;
     icon: IconData;
     type: string;
-    text: string;
+    text: React.ReactNode;
     place?: string;
     submenu?: string;
     condition?: () => boolean;
     qa?: string;
+    action?: () => void;
 }
 
 export const getCreatableEntriesConfig = memoize(() => {
