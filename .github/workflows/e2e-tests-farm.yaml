@@ -141,8 +141,11 @@ jobs:
           retention-days: 30
       - name: extract report link from workflow
         if: always()
+        id: e2e_report_link
         run: |
           echo "e2e_report_link=${{ steps.upload-artifact.outputs.artifact-url }}" >> "$GITHUB_OUTPUT"
+    outputs:
+      e2e_report_link: ${{ steps.e2e_report_link.outputs.e2e_report_link }}
 
   report:
     name: e2e-tests-farm-report
