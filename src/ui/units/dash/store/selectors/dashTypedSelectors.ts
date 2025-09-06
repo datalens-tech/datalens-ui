@@ -1,7 +1,6 @@
 import type {DatalensGlobalState} from 'index';
 import isEqual from 'lodash/isEqual';
 import {createSelector} from 'reselect';
-import type {DashTabItem, DashTabItemWidget, DashTabItemWidgetTab} from 'shared';
 
 import {ITEM_TYPE} from '../../../../constants/dialogs';
 import {isOrderIdsChanged} from '../../containers/Dialogs/Tabs/PopupWidgetsOrder/helpers';
@@ -197,51 +196,6 @@ export const selectOpenedItem = createSelector(
         return undefined;
     },
 );
-
-export const selectCurrentTabConnectableItems = createSelector([selectCurrentTab], (currentTab) => {
-    if (!currentTab) {
-        return undefined;
-    }
-    return currentTab.items
-        .filter(
-            ({type}) =>
-                type === ITEM_TYPE.CONTROL ||
-                type === ITEM_TYPE.WIDGET ||
-                type === ITEM_TYPE.GROUP_CONTROL,
-        )
-        .reduce((result, {id, data, type, namespace}: DashTabItem) => {
-            if (type === ITEM_TYPE.GROUP_CONTROL && 'group' in data) {
-                data.group.forEach((groupItem) => {
-                    result.push({
-                        id: groupItem.id,
-                        namespace: groupItem.namespace,
-                        type,
-                        title: groupItem.title,
-                    } as DashTabItem);
-                });
-            } else if (type === ITEM_TYPE.WIDGET) {
-                (data as DashTabItemWidget['data']).tabs.forEach(
-                    (tabItem: DashTabItemWidgetTab) => {
-                        result.push({
-                            id: tabItem.id,
-                            namespace,
-                            type,
-                            title: tabItem.title,
-                        } as DashTabItem);
-                    },
-                );
-            } else {
-                result.push({
-                    id,
-                    namespace,
-                    type,
-                    title: 'title' in data ? data.title : '',
-                } as DashTabItem);
-            }
-
-            return result;
-        }, [] as DashTabItem[]);
-});
 
 export const selectCurrentTabRelationDataItems = createSelector(
     [selectCurrentTab],
