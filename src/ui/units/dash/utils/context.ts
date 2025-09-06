@@ -6,7 +6,6 @@ import type {DashChartRequestContext, DashSettingsGlobalParams, DashTab} from 's
 export const ExtendedDashKitContext = createContext<{
     config?: Config | DashTab;
     skipReload: boolean;
-    isNewRelations: boolean;
     defaultGlobalParams?: DashSettingsGlobalParams;
     hideErrorDetails?: boolean;
     selectorsGroupTitlePlaceholder?: string;

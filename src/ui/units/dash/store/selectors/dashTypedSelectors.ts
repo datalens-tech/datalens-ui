@@ -78,9 +78,6 @@ export const selectDashSupportDescription = (state: DatalensGlobalState) => {
     return dashEntryId && currentPageEntryId === dashEntryId ? supportDesc : '';
 };
 
-export const selectIsNewRelations = (state: DatalensGlobalState) =>
-    state.dash?.isNewRelationsOpened || false;
-
 export const selectIsFullscreenMode = (state: DatalensGlobalState) => state.dash.isFullscreenMode;
 
 export const selectDashWorkbookId = (state: DatalensGlobalState) =>
