@@ -139,7 +139,7 @@ function initApiApp({
     beforeAuth: AppMiddleware[];
     afterAuth: AppMiddleware[];
 }) {
-    // As charts app execpt chartEngine
+    // As charts app except chartEngine
     if (isApiMode) {
         afterAuth.push(xDlContext(), setSubrequestHeaders, patchLogger, getCtxMiddleware());
         beforeAuth.push(beforeAuthDefaults);
