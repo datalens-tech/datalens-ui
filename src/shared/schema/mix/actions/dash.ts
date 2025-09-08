@@ -61,77 +61,89 @@ const dashUsUpdateSchema = z.object({
 });
 
 export const dashActions = {
-    getDashboardApi: createTypedAction({
-        argsSchema: z.object({
-            dashboardId: z.string(),
-            revId: z.string().optional(),
-            includePermissions: z.boolean().optional().default(false),
-            includeLinks: z.boolean().optional().default(false),
-            branch: z.literal(['published', 'saved']).optional().default('published'),
-        }),
-        bodySchema: dashUsSchema,
-    }).withValidationSchema(async (_, args, {headers, ctx}) => {
-        const {dashboardId, includePermissions, includeLinks, branch, revId} = args;
+    getDashboardApi: createTypedAction(
+        {
+            argsSchema: z.object({
+                dashboardId: z.string(),
+                revId: z.string().optional(),
+                includePermissions: z.boolean().optional().default(false),
+                includeLinks: z.boolean().optional().default(false),
+                branch: z.literal(['published', 'saved']).optional().default('published'),
+            }),
+            bodySchema: dashUsSchema,
+        },
+        async (_, args, {headers, ctx}) => {
+            const {dashboardId, includePermissions, includeLinks, branch, revId} = args;
 
-        if (!dashboardId || dashboardId === 'null') {
-            throw new Error(`Not found ${dashboardId} id`);
-        }
+            if (!dashboardId || dashboardId === 'null') {
+                throw new Error(`Not found ${dashboardId} id`);
+            }
 
-        const result = await Dash.read(
-            dashboardId,
-            {
-                includePermissions: includePermissions ? includePermissions?.toString() : '0',
-                includeLinks: includeLinks ? includeLinks?.toString() : '0',
-                ...(branch ? {branch} : {branch: 'published'}),
-                ...(revId ? {revId} : {}),
-            },
-            headers,
-            ctx,
-            {forceMigrate: true},
-        );
+            const result = await Dash.read(
+                dashboardId,
+                {
+                    includePermissions: includePermissions ? includePermissions?.toString() : '0',
+                    includeLinks: includeLinks ? includeLinks?.toString() : '0',
+                    ...(branch ? {branch} : {branch: 'published'}),
+                    ...(revId ? {revId} : {}),
+                },
+                headers,
+                ctx,
+                {forceMigrate: true},
+            );
 
-        if (result.scope !== EntryScope.Dash) {
-            throw new Error('No entry found');
-        }
+            if (result.scope !== EntryScope.Dash) {
+                throw new Error('No entry found');
+            }
 
-        return pick(result, DASH_ENTRY_RELEVANT_FIELDS) as any;
-    }),
-    deleteDashboardApi: createTypedAction({
-        argsSchema: z.object({
-            dashboardId: z.string(),
-            lockToken: z.string().optional(),
-        }),
-        bodySchema: z.any(),
-    }).withValidationSchema(async (api, {lockToken, dashboardId}) => {
-        const typedApi = getTypedApi(api);
+            return pick(result, DASH_ENTRY_RELEVANT_FIELDS) as any;
+        },
+    ),
+    deleteDashboardApi: createTypedAction(
+        {
+            argsSchema: z.object({
+                dashboardId: z.string(),
+                lockToken: z.string().optional(),
+            }),
+            bodySchema: z.any(),
+        },
+        async (api, {lockToken, dashboardId}) => {
+            const typedApi = getTypedApi(api);
 
-        await typedApi.us._deleteUSEntry({
-            entryId: dashboardId,
-            lockToken,
-        });
-    }),
-    updateDashboardApi: createTypedAction({
-        argsSchema: dashUsUpdateSchema,
-        bodySchema: dashUsSchema,
-    }).withValidationSchema(async (_, args, {headers, ctx}) => {
-        const {entryId} = args;
+            await typedApi.us._deleteUSEntry({
+                entryId: dashboardId,
+                lockToken,
+            });
+        },
+    ),
+    updateDashboardApi: createTypedAction(
+        {
+            argsSchema: dashUsUpdateSchema,
+            bodySchema: dashUsSchema,
+        },
+        async (_, args, {headers, ctx}) => {
+            const {entryId} = args;
 
-        const I18n = ctx.get('i18n');
+            const I18n = ctx.get('i18n');
 
-        return (await Dash.update(entryId as any, args as any, headers, ctx, I18n, {
-            forceMigrate: true,
-        })) as unknown as z.infer<typeof dashUsSchema>;
-    }),
-    createDashboardApi: createTypedAction({
-        argsSchema: dashUsCreateSchema,
-        bodySchema: dashUsSchema,
-    }).withValidationSchema(async (_, args, {headers, ctx}) => {
-        const I18n = ctx.get('i18n');
+            return (await Dash.update(entryId as any, args as any, headers, ctx, I18n, {
+                forceMigrate: true,
+            })) as unknown as z.infer<typeof dashUsSchema>;
+        },
+    ),
+    createDashboardApi: createTypedAction(
+        {
+            argsSchema: dashUsCreateSchema,
+            bodySchema: dashUsSchema,
+        },
+        async (_, args, {headers, ctx}) => {
+            const I18n = ctx.get('i18n');
 
-        return (await Dash.create(args as any, headers, ctx, I18n)) as unknown as z.infer<
-            typeof dashUsSchema
-        >;
-    }),
+            return (await Dash.create(args as any, headers, ctx, I18n)) as unknown as z.infer<
+                typeof dashUsSchema
+            >;
+        },
+    ),
 
     collectDashStats: createAction<CollectDashStatsResponse, CollectDashStatsArgs>(
         async (_, args, {ctx}) => {

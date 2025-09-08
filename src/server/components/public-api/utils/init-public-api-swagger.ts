@@ -1,13 +1,16 @@
+import type {ZodMediaTypeObject} from '@asteasolutions/zod-to-openapi';
 import {OpenAPIRegistry, OpenApiGeneratorV31} from '@asteasolutions/zod-to-openapi';
 import type {OpenAPIObjectConfigV31} from '@asteasolutions/zod-to-openapi/dist/v3.1/openapi-generator';
 import type {ExpressKit} from '@gravity-ui/expresskit';
 import {AppError} from '@gravity-ui/nodekit';
 import swaggerUi from 'swagger-ui-express';
-import z from 'zod/v4';
+import z from 'zod';
+import z4 from 'zod/v4';
 
-import {getValidationSchema, hasValidationSchema} from '../../../../shared/schema/gateway-utils';
+import {getValidationSchema} from '../../../../shared/schema/gateway-utils';
 import {registry} from '../../../registry';
 import type {DatalensGatewaySchemas} from '../../../types/gateway';
+import {CONTENT_TYPE_JSON} from '../../api-docs/constants';
 import {PUBLIC_API_HTTP_METHOD, PUBLIC_API_URL} from '../constants';
 import type {PublicApiSecuritySchemes} from '../types';
 
@@ -22,8 +25,8 @@ const defaultSchema = {
     request: {
         body: {
             content: {
-                ['application/json']: {
-                    schema: z.toJSONSchema(z.any()),
+                [CONTENT_TYPE_JSON]: {
+                    schema: z.object({}),
                 },
             },
         },
@@ -32,8 +35,8 @@ const defaultSchema = {
         200: {
             description: 'TBD',
             content: {
-                ['application/json']: {
-                    schema: z.toJSONSchema(z.any()),
+                [CONTENT_TYPE_JSON]: {
+                    schema: z.object({}),
                 },
             },
         },
@@ -80,22 +83,50 @@ export const initPublicApiSwagger = (
                 const actionConfig =
                     schemasByScope.root[pathObject.serviceName].actions[pathObject.actionName];
 
-                if (hasValidationSchema(actionConfig)) {
+                const actionSchema = getValidationSchema(actionConfig);
+
+                if (actionSchema) {
                     publicApiOpenApiRegistry.registerPath({
-                        method: PUBLIC_API_HTTP_METHOD.toLocaleLowerCase(),
+                        method: PUBLIC_API_HTTP_METHOD.toLocaleLowerCase() as Lowercase<
+                            typeof PUBLIC_API_HTTP_METHOD
+                        >,
                         path: resolveUrl({version, action}),
                         ...openApi,
-                        ...getValidationSchema(actionConfig)().getOpenApiSchema(),
+                        request: {
+                            body: {
+                                content: {
+                                    [CONTENT_TYPE_JSON]: {
+                                        schema: z4.toJSONSchema(
+                                            actionSchema.argsSchema,
+                                        ) as ZodMediaTypeObject['schema'],
+                                    },
+                                },
+                            },
+                        },
+                        responses: {
+                            200: {
+                                description: 'Response',
+                                content: {
+                                    [CONTENT_TYPE_JSON]: {
+                                        schema: z4.toJSONSchema(
+                                            actionSchema.bodySchema,
+                                        ) as ZodMediaTypeObject['schema'],
+                                    },
+                                },
+                            },
+                        },
                         security,
                     });
                 } else {
                     publicApiOpenApiRegistry.registerPath({
-                        method: PUBLIC_API_HTTP_METHOD.toLocaleLowerCase(),
+                        method: PUBLIC_API_HTTP_METHOD.toLocaleLowerCase() as Lowercase<
+                            typeof PUBLIC_API_HTTP_METHOD
+                        >,
                         path: resolveUrl({version, action}),
                         ...openApi,
                         ...defaultSchema,
                         security,
-                    } as any);
+                    });
                 }
             });
         });

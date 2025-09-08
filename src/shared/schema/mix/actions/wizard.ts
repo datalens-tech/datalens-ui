@@ -27,85 +27,97 @@ const wizardUsSchema = z.object({
 });
 
 export const wizardActions = {
-    getWizardChartApi: createTypedAction({
-        argsSchema: z.object({
-            chardId: z.string(),
-            unreleased: z.boolean().default(false).optional(),
-            revId: z.string().optional(),
-            includePermissions: z.boolean().default(false).optional(),
-            includeLinks: z.boolean().default(false).optional(),
-        }),
-        bodySchema: wizardUsSchema,
-    }).withValidationSchema(async (_, args, {ctx, headers}) => {
-        const {includePermissions, includeLinks, unreleased, revId, chardId} = args;
+    getWizardChartApi: createTypedAction(
+        {
+            argsSchema: z.object({
+                chardId: z.string(),
+                unreleased: z.boolean().default(false).optional(),
+                revId: z.string().optional(),
+                includePermissions: z.boolean().default(false).optional(),
+                includeLinks: z.boolean().default(false).optional(),
+            }),
+            bodySchema: wizardUsSchema,
+        },
+        async (_, args, {ctx, headers}) => {
+            const {includePermissions, includeLinks, unreleased, revId, chardId} = args;
 
-        const result = await USProvider.retrieveParsedWizardChart(ctx, {
-            id: chardId,
-            includePermissionsInfo: includePermissions ? includePermissions?.toString() : '0',
-            includeLinks: includeLinks ? includeLinks?.toString() : '0',
-            ...(revId ? {revId} : {}),
-            ...(unreleased ? {unreleased} : {unreleased: false}),
-            headers,
-        });
+            const result = await USProvider.retrieveParsedWizardChart(ctx, {
+                id: chardId,
+                includePermissionsInfo: includePermissions ? includePermissions?.toString() : '0',
+                includeLinks: includeLinks ? includeLinks?.toString() : '0',
+                ...(revId ? {revId} : {}),
+                ...(unreleased ? {unreleased} : {unreleased: false}),
+                headers,
+            });
 
-        return result as any;
-    }),
-    createWizardChartApi: createTypedAction({
-        argsSchema: z.object({
-            entryId: z.string(),
-            data: v12ChartsConfigSchema,
-            key: z.string(),
-            workbookId: z.union([z.string(), z.null()]).optional(),
-            type: z.enum(WizardType).optional(),
-            name: z.string(),
-        }),
-        bodySchema: wizardUsSchema,
-    }).withValidationSchema(async (_, args, {ctx, headers}) => {
-        const {data, type, key, workbookId, name} = args;
+            return result as any;
+        },
+    ),
+    createWizardChartApi: createTypedAction(
+        {
+            argsSchema: z.object({
+                entryId: z.string(),
+                data: v12ChartsConfigSchema,
+                key: z.string(),
+                workbookId: z.union([z.string(), z.null()]).optional(),
+                type: z.enum(WizardType).optional(),
+                name: z.string(),
+            }),
+            bodySchema: wizardUsSchema,
+        },
+        async (_, args, {ctx, headers}) => {
+            const {data, type, key, workbookId, name} = args;
 
-        const result = await USProvider.create(ctx, {
-            type,
-            data,
-            key,
-            name,
-            scope: EntryScope.Widget,
-            ...(workbookId ? {workbookId} : {workbookId: null}),
-            headers,
-        });
+            const result = await USProvider.create(ctx, {
+                type,
+                data,
+                key,
+                name,
+                scope: EntryScope.Widget,
+                ...(workbookId ? {workbookId} : {workbookId: null}),
+                headers,
+            });
 
-        return result as any;
-    }),
-    updateWizardChartApi: createTypedAction({
-        argsSchema: z.object({
-            entryId: z.string(),
-            revId: z.string().optional(),
-            data: v12ChartsConfigSchema,
-            type: z.enum(WizardType).optional(),
-        }),
-        bodySchema: wizardUsSchema,
-    }).withValidationSchema(async (_, args, {ctx, headers}) => {
-        const {entryId, revId, data, type} = args;
+            return result as any;
+        },
+    ),
+    updateWizardChartApi: createTypedAction(
+        {
+            argsSchema: z.object({
+                entryId: z.string(),
+                revId: z.string().optional(),
+                data: v12ChartsConfigSchema,
+                type: z.enum(WizardType).optional(),
+            }),
+            bodySchema: wizardUsSchema,
+        },
+        async (_, args, {ctx, headers}) => {
+            const {entryId, revId, data, type} = args;
 
-        const result = await USProvider.update(ctx, {
-            entryId,
-            ...(revId ? {revId} : {}),
-            ...(type ? {type} : {}),
-            data,
-            headers,
-        });
+            const result = await USProvider.update(ctx, {
+                entryId,
+                ...(revId ? {revId} : {}),
+                ...(type ? {type} : {}),
+                data,
+                headers,
+            });
 
-        return result as any;
-    }),
-    deleteWizardChartApi: createTypedAction({
-        argsSchema: z.object({
-            chartId: z.string(),
-        }),
-        bodySchema: z.any(),
-    }).withValidationSchema(async (api, {chartId}) => {
-        const typedApi = getTypedApi(api);
+            return result as any;
+        },
+    ),
+    deleteWizardChartApi: createTypedAction(
+        {
+            argsSchema: z.object({
+                chartId: z.string(),
+            }),
+            bodySchema: z.any(),
+        },
+        async (api, {chartId}) => {
+            const typedApi = getTypedApi(api);
 
-        await typedApi.us._deleteUSEntry({
-            entryId: chartId,
-        });
-    }),
+            await typedApi.us._deleteUSEntry({
+                entryId: chartId,
+            });
+        },
+    ),
 };
