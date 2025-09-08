@@ -1,7 +1,6 @@
 import {Page, Response, Route, expect} from '@playwright/test';
 
 import {
-    ConnectionsDialogQA,
     ControlQA,
     DashCommonQa,
     DashEntryQa,
@@ -612,49 +611,6 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(DashCommonQa.AliasAddBtn));
         await this.applyAliasesChanges();
         await this.applyRelationsChanges();
-    }
-
-    async setupLinks({
-        selectorName,
-        linkType,
-        chartField,
-    }: {
-        selectorName: string;
-        linkType:
-            | ConnectionsDialogQA.TypeSelectConnectedOption
-            | ConnectionsDialogQA.TypeSelectInputOption
-            | ConnectionsDialogQA.TypeSelectOutputOption
-            | ConnectionsDialogQA.TypeSelectIgnoreOption;
-        chartField: string;
-    }) {
-        // click on the "connections" button
-        await this.clickOnLinksBtn();
-
-        // select the selector
-        await clickGSelectOption({
-            page: this.page,
-            key: ConnectionsDialogQA.ElementSelect,
-            optionText: selectorName,
-        });
-
-        // changing the value from "no connection" to "outgoing connection"
-        await clickGSelectOption({
-            page: this.page,
-            key: ConnectionsDialogQA.TypeSelect,
-            optionQa: linkType,
-        });
-
-        // link to the "City" field of the chart
-        await clickGSelectOption({
-            page: this.page,
-            key: 'connect-by-alias-to-select',
-            optionText: chartField,
-        });
-
-        // save
-        await this.page.click(slct('connect-by-alias-dialog-apply-button'));
-        // applying changes in the communication dialog
-        await this.page.click(slct(ConnectionsDialogQA.Apply));
     }
 
     async hasChanges() {
