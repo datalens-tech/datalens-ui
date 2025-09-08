@@ -1,12 +1,16 @@
+import type {AnyAction, Dispatch, MiddlewareAPI, Middleware} from 'redux';
+
 type Reducers = Record<string, any>;
 type EmitChange = (reducers: Reducers) => void;
 
 export class ReducerRegistry {
     reducers: Record<string, any>;
+    middlewares: Middleware[];
     emitChange: EmitChange | null;
 
     constructor() {
         this.reducers = {};
+        this.middlewares = [];
         this.emitChange = null;
     }
 
@@ -14,6 +18,27 @@ export class ReducerRegistry {
         return {
             ...this.reducers,
         };
+    }
+
+    getMiddlewares() {
+        return (store: MiddlewareAPI) => {
+            return (next: Dispatch) => {
+                const middlewareWrappers = this.middlewares.map((mw) => mw(store));
+
+                let dispatch = next;
+                for (let i = middlewareWrappers.length - 1; i >= 0; i--) {
+                    dispatch = middlewareWrappers[i](dispatch);
+                }
+
+                return (action: AnyAction) => {
+                    return dispatch(action);
+                };
+            };
+        };
+    }
+
+    registerMiddleware(mw: Middleware) {
+        this.middlewares.push(mw);
     }
 
     register(reducers: Reducers) {
@@ -29,6 +54,7 @@ export class ReducerRegistry {
 
     reset() {
         this.reducers = {};
+        this.middlewares = [];
         this.emitChange = null;
     }
 
