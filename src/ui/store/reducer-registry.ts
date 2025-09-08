@@ -20,6 +20,10 @@ export class ReducerRegistry {
         };
     }
 
+    //something like a polyfill for the createDynamicMiddleware https://redux-toolkit.js.org/api/createDynamicMiddleware
+    //Builds and composes a chain of middlewares for a Redux store.
+    //Wraps the dispatch function so actions pass through all middlewares
+    //before reaching the reducer.
     getMiddlewares() {
         return (store: MiddlewareAPI) => {
             return (next: Dispatch) => {
