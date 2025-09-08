@@ -92,17 +92,6 @@ export const openDialogAliases = (props: AliasClickHandlerArgs) => {
     };
 };
 
-export const SET_NEW_RELATIONS = Symbol('dash/SET_NEW_RELATIONS');
-export type SetNewRelationsAction = {
-    type: typeof SET_NEW_RELATIONS;
-    payload: boolean;
-};
-
-export const setNewRelations = (data: SetNewRelationsAction['payload']) => ({
-    type: SET_NEW_RELATIONS,
-    payload: data,
-});
-
 export const openEmptyDialogRelations = () => {
     return function (dispatch: Dispatch, getState: () => DatalensGlobalState) {
         const state = getState();
@@ -113,12 +102,9 @@ export const openEmptyDialogRelations = () => {
         }
 
         batch(() => {
-            dispatch(setNewRelations(true));
             openDialogRelations({
                 dashKitRef,
-                onClose: () => {
-                    dispatch(setNewRelations(false));
-                },
+                onClose: () => {},
             })(dispatch, getState);
         });
     };

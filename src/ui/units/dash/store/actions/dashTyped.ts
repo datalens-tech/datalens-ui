@@ -740,7 +740,7 @@ export function copyDash({
     return async (_: DashDispatch, getState: () => DatalensGlobalState) => {
         const state = getState();
         let dashData: DashData;
-        let dashDescription: string | undefined;
+        let description: string;
 
         if (selectDash(state) === null || selectEntryId(state) !== entryId) {
             const response = await getSdk().sdk.us.getEntry({entryId});
@@ -749,15 +749,15 @@ export function copyDash({
                 const dashEntry = response as any as DashEntry;
 
                 dashData = dashEntry.data;
-                dashDescription = dashEntry.annotation?.description;
+                description = dashEntry.annotation?.description ?? '';
             } else {
                 throw Error(`Invalid entry type: ${response.scope}`);
             }
         } else {
             dashData = withUnsavedChanges ? selectDashData(state) : selectDashEntry(state).data;
-            dashDescription = withUnsavedChanges
+            description = withUnsavedChanges
                 ? selectDashDescription(state)
-                : selectDashEntry(state).annotation?.description;
+                : selectDashEntry(state).annotation?.description ?? '';
         }
 
         return sdk.charts.createDash({
@@ -768,7 +768,7 @@ export function copyDash({
                 key,
                 workbookId,
                 name,
-                description: dashDescription,
+                annotation: {description},
             },
         });
     };
