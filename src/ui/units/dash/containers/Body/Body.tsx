@@ -275,9 +275,18 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                 search: `?${searchParams.toString()}`,
             });
         } catch (error) {
+            const details = error?.details?.details;
+            const isStateLimitError = details?.some(({params}: {params?: {code?: string}}) =>
+                params?.code?.includes('limit exceeded'),
+            );
+
+            const title = isStateLimitError
+                ? i18n('dash.main.view', 'value_state-limit-error')
+                : error.message;
+
             this.props.showToast({
-                title: error.message,
-                error: error,
+                title,
+                error,
                 withReport: true,
             });
             throw error;
