@@ -1,3 +1,4 @@
+import get from 'lodash/get';
 import keyBy from 'lodash/keyBy';
 import type {Required} from 'utility-types';
 
@@ -166,6 +167,19 @@ export const entriesActions = {
                 }
                 if (typeof error === 'object' && error !== null && 'status' in error) {
                     switch (error.status) {
+                        case 400:
+                            // us ajv validation
+                            if ('code' in error && error.code === 'DECODE_ID_FAILED') {
+                                return {code: 'NOT_FOUND'};
+                            }
+                            // us zod validation
+                            if ('code' in error && error.code === 'VALIDATION_ERROR') {
+                                const path = get(error, ['details', 'details', 0, 'path', 0]);
+                                if (path === 'entryId') {
+                                    return {code: 'NOT_FOUND'};
+                                }
+                            }
+                            return {code: 'UNHANDLED'};
                         case 403:
                             return {code: 'FORBIDDEN'};
                         case 404:

@@ -33,6 +33,16 @@ docker --log-level error compose -f "${COMPOSE_FILE}" exec \
     sed -E 's|"username": "[^"]+"|"username": "{{POSTGRES_USER}}"|' \
         >>"${DUMP_FILE}"
 
+E2E_ENTRIES=$(grep -E "INSERT INTO public.entries.*key.e2e-entry-" "${DUMP_FILE}" | grep -v "__trash/" | \
+              sed -E "s/.*'([^']*e2e-entry-[^']*)'.*/\1/")
+
+if [ -n "${E2E_ENTRIES}" ]; then
+    echo "WARNING: Found entries with 'e2e-entry-' in key (excluding __trash/):" >&2
+    echo "Keys:" >&2
+    echo "${E2E_ENTRIES}" >&2
+    echo "These entries might be test entries and should be reviewed." >&2
+fi
+
 EXIT="$?"
 
 echo "COMMIT;" >>"${DUMP_FILE}"

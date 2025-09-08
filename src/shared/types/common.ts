@@ -262,10 +262,6 @@ export type DSAPIErrorCode =
 /** @deprecated use StringParams from datalens-shared*/
 export interface Params extends Dictionary<string | string[]> {}
 
-export interface EntryAnnotation {
-    description?: string;
-}
-
 export enum EntryScope {
     Dash = 'dash',
     Widget = 'widget',
@@ -277,6 +273,8 @@ export enum EntryScope {
 export interface EntryAnnotation {
     description?: string;
 }
+
+export type EntryAnnotationArgs = Required<EntryAnnotation>;
 
 export interface Entry {
     entryId: string;
@@ -291,14 +289,22 @@ export interface Entry {
     annotation?: EntryAnnotation | null;
 }
 
-export type CreateEntryRequest<T = Entry> = Partial<Omit<T, 'entryId' | 'annotation'>> &
-    Required<{key: string; data: EntryData}> & {
-        description?: string;
-    };
+export type CreateEntryRequest<T = Entry> = Partial<Omit<T, 'entryId'>> &
+    Required<{key: string; data: EntryData}> &
+    (
+        | {
+              description?: string;
+          }
+        | {annotation?: EntryAnnotationArgs}
+    );
 
-export type UpdateEntryRequest<T = Entry> = Omit<T, 'entryId' | 'scope' | 'type' | 'annotation'> & {
-    description?: string;
-};
+export type UpdateEntryRequest<T = Entry> = Omit<T, 'entryId' | 'scope' | 'type'> &
+    (
+        | {
+              description?: string;
+          }
+        | {annotation?: EntryAnnotationArgs}
+    );
 
 export type EntryData = DashData; // | WidgetData | DatasetData | ConnectionData | FolderData
 
@@ -309,6 +315,7 @@ export interface EntryReadParams {
     revId?: string;
     includePermissions: string;
     includeLinks: string;
+    includeFavorite?: boolean;
     branch?: string;
 }
 
