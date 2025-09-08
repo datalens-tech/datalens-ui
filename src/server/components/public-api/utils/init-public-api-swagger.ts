@@ -1,10 +1,7 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import {OpenAPIRegistry, OpenApiGeneratorV31} from '@asteasolutions/zod-to-openapi';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import type {OpenAPIObjectConfigV31} from '@asteasolutions/zod-to-openapi/dist/v3.1/openapi-generator';
 import type {ExpressKit} from '@gravity-ui/expresskit';
 import {AppError} from '@gravity-ui/nodekit';
-// eslint-disable-next-line import/no-extraneous-dependencies
 import swaggerUi from 'swagger-ui-express';
 import z from 'zod/v4';
 

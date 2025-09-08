@@ -54,6 +54,7 @@
   "author": "DataLens Team <https://github.com/datalens-tech>",
   "license": "Apache-2.0",
   "dependencies": {
+    "@asteasolutions/zod-to-openapi": "^7.3.4",
     "@braintree/sanitize-url": "^6.0.0",
     "@datalens-tech/ui-sandbox-modules": "^0.36.0",
     "@datalens-tech/xlsx": "^0.20.1",
@@ -118,6 +119,7 @@
     "request-ip": "^3.3.0",
     "request-promise-native": "^1.0.9",
     "set-cookie-parser": "^2.7.1",
+    "swagger-ui-express": "^5.0.1",
     "workerpool": "^9.1.1",
     "zod": "^3.25.64"
   },
@@ -182,6 +184,7 @@
     "@types/request-ip": "^0.0.41",
     "@types/request-promise-native": "^1.0.21",
     "@types/set-cookie-parser": "^2.4.10",
+    "@types/swagger-ui-express": "^4.1.8",
     "@types/uuid": "^9.0.8",
     "@types/webpack-env": "^1.16.0",
     "bem-cn-lite": "^4.0.0",
