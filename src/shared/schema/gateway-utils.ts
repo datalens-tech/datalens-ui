@@ -19,8 +19,8 @@ export function createAction<TOutput, TParams = undefined, TTransformed = TOutpu
 }
 
 type TypedActionSchema = {
-    argsSchema: z.ZodType;
-    bodySchema: z.ZodType;
+    paramsSchema: z.ZodType;
+    resultSchema: z.ZodType;
 };
 
 const VALIDATION_SCHEMA_KEY = Symbol('$schema');
@@ -52,7 +52,7 @@ export function createTypedAction<
     TParams = z.infer<TParamsSchema>,
     TTransformed = z.infer<TTransformedSchema>,
 >(
-    schema: {bodySchema: TOutputSchema; argsSchema: TParamsSchema},
+    schema: {paramsSchema: TParamsSchema; resultSchema: TOutputSchema},
     actionConfig: ApiServiceActionConfig<
         AppContext,
         Request,
@@ -63,8 +63,8 @@ export function createTypedAction<
     >,
 ) {
     const schemaValidationObject = {
-        argsSchema: schema.argsSchema,
-        bodySchema: schema.bodySchema,
+        paramsSchema: schema.paramsSchema,
+        resultSchema: schema.resultSchema,
     };
 
     return registerValidationSchema(actionConfig, schemaValidationObject);

@@ -63,14 +63,14 @@ const dashUsUpdateSchema = z.object({
 export const dashActions = {
     getDashboardApi: createTypedAction(
         {
-            argsSchema: z.object({
+            paramsSchema: z.object({
                 dashboardId: z.string(),
                 revId: z.string().optional(),
                 includePermissions: z.boolean().optional().default(false),
                 includeLinks: z.boolean().optional().default(false),
                 branch: z.literal(['published', 'saved']).optional().default('published'),
             }),
-            bodySchema: dashUsSchema,
+            resultSchema: dashUsSchema,
         },
         async (_, args, {headers, ctx}) => {
             const {dashboardId, includePermissions, includeLinks, branch, revId} = args;
@@ -101,11 +101,11 @@ export const dashActions = {
     ),
     deleteDashboardApi: createTypedAction(
         {
-            argsSchema: z.object({
+            paramsSchema: z.object({
                 dashboardId: z.string(),
                 lockToken: z.string().optional(),
             }),
-            bodySchema: z.any(),
+            resultSchema: z.any(),
         },
         async (api, {lockToken, dashboardId}) => {
             const typedApi = getTypedApi(api);
@@ -118,8 +118,8 @@ export const dashActions = {
     ),
     updateDashboardApi: createTypedAction(
         {
-            argsSchema: dashUsUpdateSchema,
-            bodySchema: dashUsSchema,
+            paramsSchema: dashUsUpdateSchema,
+            resultSchema: dashUsSchema,
         },
         async (_, args, {headers, ctx}) => {
             const {entryId} = args;
@@ -133,8 +133,8 @@ export const dashActions = {
     ),
     createDashboardApi: createTypedAction(
         {
-            argsSchema: dashUsCreateSchema,
-            bodySchema: dashUsSchema,
+            paramsSchema: dashUsCreateSchema,
+            resultSchema: dashUsSchema,
         },
         async (_, args, {headers, ctx}) => {
             const I18n = ctx.get('i18n');

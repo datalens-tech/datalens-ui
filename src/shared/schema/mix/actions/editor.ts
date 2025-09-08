@@ -50,7 +50,7 @@ const editorUsSchema = z.object({
 export const editorActions = {
     getEditorChartApi: createTypedAction(
         {
-            argsSchema: z.object({
+            paramsSchema: z.object({
                 chardId: z.string(),
                 workbookId: z.union([z.string(), z.null()]).default(null).optional(),
                 revId: z.string().optional(),
@@ -58,7 +58,7 @@ export const editorActions = {
                 includeLinks: z.boolean().default(false).optional(),
                 branch: z.literal(['saved', 'published']).default('published').optional(),
             }),
-            bodySchema: editorUsSchema,
+            resultSchema: editorUsSchema,
         },
         async (api, args) => {
             const {includePermissions, includeLinks, revId, chardId, branch, workbookId} = args;
@@ -110,10 +110,10 @@ export const editorActions = {
     ),
     deleteEditorChartApi: createTypedAction(
         {
-            argsSchema: z.object({
+            paramsSchema: z.object({
                 chartId: z.string(),
             }),
-            bodySchema: z.any(),
+            resultSchema: z.any(),
         },
         async (api, {chartId}) => {
             const typedApi = getTypedApi(api);

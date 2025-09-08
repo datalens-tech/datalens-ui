@@ -273,12 +273,12 @@ export const actions = {
     }),
     createDatasetApi: createTypedAction(
         {
-            bodySchema: z.object({
+            paramsSchema: createDatasetArgsSchema,
+            resultSchema: z.object({
                 id: z.string(),
                 dataset: datasetBodySchema,
                 options: datasetOptionsSchema,
             }),
-            argsSchema: createDatasetArgsSchema,
         },
         {
             method: 'POST',
@@ -291,16 +291,16 @@ export const actions = {
     ),
     updateDatasetApi: createTypedAction(
         {
-            bodySchema: z.object({
-                id: z.string(),
-                dataset: datasetBodySchema,
-                options: datasetOptionsSchema,
-            }),
-            argsSchema: z.object({
+            paramsSchema: z.object({
                 version: z.literal('draft'),
                 datasetId: z.string(),
                 multisource: z.boolean(),
                 dataset: datasetBodySchema,
+            }),
+            resultSchema: z.object({
+                id: z.string(),
+                dataset: datasetBodySchema,
+                options: datasetOptionsSchema,
             }),
         },
         {
@@ -317,10 +317,10 @@ export const actions = {
     ),
     deleteDatasetApi: createTypedAction(
         {
-            bodySchema: z.unknown(),
-            argsSchema: z.object({
+            paramsSchema: z.object({
                 datasetId: z.string(),
             }),
+            resultSchema: z.unknown(),
         },
         {
             method: 'DELETE',
@@ -330,12 +330,12 @@ export const actions = {
     ),
     getDatasetApi: createTypedAction(
         {
-            bodySchema: datasetSchema,
-            argsSchema: z.object({
+            paramsSchema: z.object({
                 datasetId: z.string(),
                 version: z.literal('draft'),
                 workbookId: z.union([z.null(), z.string()]),
             }),
+            resultSchema: datasetSchema,
         },
         {
             method: 'GET',

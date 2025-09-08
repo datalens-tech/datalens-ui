@@ -29,14 +29,14 @@ const wizardUsSchema = z.object({
 export const wizardActions = {
     getWizardChartApi: createTypedAction(
         {
-            argsSchema: z.object({
+            paramsSchema: z.object({
                 chardId: z.string(),
                 unreleased: z.boolean().default(false).optional(),
                 revId: z.string().optional(),
                 includePermissions: z.boolean().default(false).optional(),
                 includeLinks: z.boolean().default(false).optional(),
             }),
-            bodySchema: wizardUsSchema,
+            resultSchema: wizardUsSchema,
         },
         async (_, args, {ctx, headers}) => {
             const {includePermissions, includeLinks, unreleased, revId, chardId} = args;
@@ -55,7 +55,7 @@ export const wizardActions = {
     ),
     createWizardChartApi: createTypedAction(
         {
-            argsSchema: z.object({
+            paramsSchema: z.object({
                 entryId: z.string(),
                 data: v12ChartsConfigSchema,
                 key: z.string(),
@@ -63,7 +63,7 @@ export const wizardActions = {
                 type: z.enum(WizardType).optional(),
                 name: z.string(),
             }),
-            bodySchema: wizardUsSchema,
+            resultSchema: wizardUsSchema,
         },
         async (_, args, {ctx, headers}) => {
             const {data, type, key, workbookId, name} = args;
@@ -83,13 +83,13 @@ export const wizardActions = {
     ),
     updateWizardChartApi: createTypedAction(
         {
-            argsSchema: z.object({
+            paramsSchema: z.object({
                 entryId: z.string(),
                 revId: z.string().optional(),
                 data: v12ChartsConfigSchema,
                 type: z.enum(WizardType).optional(),
             }),
-            bodySchema: wizardUsSchema,
+            resultSchema: wizardUsSchema,
         },
         async (_, args, {ctx, headers}) => {
             const {entryId, revId, data, type} = args;
@@ -107,10 +107,10 @@ export const wizardActions = {
     ),
     deleteWizardChartApi: createTypedAction(
         {
-            argsSchema: z.object({
+            paramsSchema: z.object({
                 chartId: z.string(),
             }),
-            bodySchema: z.any(),
+            resultSchema: z.any(),
         },
         async (api, {chartId}) => {
             const typedApi = getTypedApi(api);

@@ -97,7 +97,7 @@ export const initPublicApiSwagger = (
                                 content: {
                                     [CONTENT_TYPE_JSON]: {
                                         schema: z4.toJSONSchema(
-                                            actionSchema.argsSchema,
+                                            actionSchema.paramsSchema,
                                         ) as ZodMediaTypeObject['schema'],
                                     },
                                 },
@@ -109,7 +109,7 @@ export const initPublicApiSwagger = (
                                 content: {
                                     [CONTENT_TYPE_JSON]: {
                                         schema: z4.toJSONSchema(
-                                            actionSchema.bodySchema,
+                                            actionSchema.resultSchema,
                                         ) as ZodMediaTypeObject['schema'],
                                     },
                                 },
