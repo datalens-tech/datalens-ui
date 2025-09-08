@@ -4,6 +4,16 @@ export const PUBLIC_API_HTTP_METHOD = 'POST';
 export const PUBLIC_API_URL = '/rpc/:version/:action';
 export const PUBLIC_API_ROUTE = `${PUBLIC_API_HTTP_METHOD} ${PUBLIC_API_URL}`;
 
+enum ApiTag {
+    Navigation = 'Navigation',
+    Connection = 'Connection',
+    Dataset = 'Dataset',
+    Wizard = 'Wizard',
+    Editor = 'Editor',
+    Dashboard = 'Dashboard',
+    Report = 'Report',
+}
+
 export const PUBLIC_API_PROXY_MAP = {
     v0: {
         // navigation
@@ -11,28 +21,28 @@ export const PUBLIC_API_PROXY_MAP = {
             resolve: (api) => api.mix.getNavigationList,
             openApi: {
                 summary: 'Get navigation list',
-                tags: ['navigation'],
+                tags: [ApiTag.Navigation],
             },
         },
         getStructureItems: {
             resolve: (api) => api.us.getStructureItems,
             openApi: {
                 summary: 'Get structure list',
-                tags: ['navigation'],
+                tags: [ApiTag.Navigation],
             },
         },
         createWorkbook: {
             resolve: (api) => api.us.createWorkbook,
             openApi: {
                 summary: 'Create workbook',
-                tags: ['navigation'],
+                tags: [ApiTag.Navigation],
             },
         },
         createCollection: {
             resolve: (api) => api.us.createCollection,
             openApi: {
                 summary: 'Create collection',
-                tags: ['navigation'],
+                tags: [ApiTag.Navigation],
             },
         },
         // connection
@@ -40,28 +50,28 @@ export const PUBLIC_API_PROXY_MAP = {
             resolve: (api) => api.bi.getConnection,
             openApi: {
                 summary: 'Get connection',
-                tags: ['connection'],
+                tags: [ApiTag.Connection],
             },
         },
         updateConnection: {
             resolve: (api) => api.bi.updateConnection,
             openApi: {
                 summary: 'Update connection',
-                tags: ['connection'],
+                tags: [ApiTag.Connection],
             },
         },
         createConnection: {
             resolve: (api) => api.bi.createConnection,
             openApi: {
                 summary: 'Create connection',
-                tags: ['connection'],
+                tags: [ApiTag.Connection],
             },
         },
         deleteConnection: {
             resolve: (api) => api.bi.deleteConnnection,
             openApi: {
                 summary: 'Delete connection',
-                tags: ['connection'],
+                tags: [ApiTag.Connection],
             },
         },
         // dataset
@@ -69,28 +79,28 @@ export const PUBLIC_API_PROXY_MAP = {
             resolve: (api) => api.bi.getDatasetApi,
             openApi: {
                 summary: 'Get dataset',
-                tags: ['dataset'],
+                tags: [ApiTag.Dataset],
             },
         },
         updateDataset: {
             resolve: (api) => api.bi.updateDatasetApi,
             openApi: {
                 summary: 'Update dataset',
-                tags: ['dataset'],
+                tags: [ApiTag.Dataset],
             },
         },
         createDataset: {
             resolve: (api) => api.bi.createDatasetApi,
             openApi: {
                 summary: 'Create dataset',
-                tags: ['dataset'],
+                tags: [ApiTag.Dataset],
             },
         },
         deleteDataset: {
             resolve: (api) => api.bi.deleteDatasetApi,
             openApi: {
                 summary: 'Delete dataset',
-                tags: ['dataset'],
+                tags: [ApiTag.Dataset],
             },
         },
         // wizard
@@ -98,28 +108,28 @@ export const PUBLIC_API_PROXY_MAP = {
             resolve: (api) => api.mix.getWizardChartApi,
             openApi: {
                 summary: 'Get wizard chart',
-                tags: ['wizard'],
+                tags: [ApiTag.Wizard],
             },
         },
         updateWizardChart: {
             resolve: (api) => api.mix.updateWizardChartApi,
             openApi: {
                 summary: 'Update wizard chart',
-                tags: ['wizard'],
+                tags: [ApiTag.Wizard],
             },
         },
         createWizardChart: {
             resolve: (api) => api.mix.createWizardChartApi,
             openApi: {
                 summary: 'Create wizard chart',
-                tags: ['wizard'],
+                tags: [ApiTag.Wizard],
             },
         },
         deleteWizardChart: {
             resolve: (api) => api.mix.deleteWizardChartApi,
             openApi: {
                 summary: 'Delete wizard chart',
-                tags: ['wizard'],
+                tags: [ApiTag.Wizard],
             },
         },
         // editor
@@ -127,28 +137,28 @@ export const PUBLIC_API_PROXY_MAP = {
             resolve: (api) => api.mix.getEditorChartApi,
             openApi: {
                 summary: 'Get editor chart',
-                tags: ['editor'],
+                tags: [ApiTag.Editor],
             },
         },
         updateEditorChart: {
             resolve: (api) => api.mix.updateEditorChart,
             openApi: {
                 summary: 'Update editor chart',
-                tags: ['editor'],
+                tags: [ApiTag.Editor],
             },
         },
         createEditorChart: {
             resolve: (api) => api.mix.createEditorChart,
             openApi: {
                 summary: 'Create editor chart',
-                tags: ['editor'],
+                tags: [ApiTag.Editor],
             },
         },
         deleteEditorChart: {
             resolve: (api) => api.mix.deleteEditorChartApi,
             openApi: {
                 summary: 'Delete editor chart',
-                tags: ['editor'],
+                tags: [ApiTag.Editor],
             },
         },
         // Dash
@@ -156,28 +166,28 @@ export const PUBLIC_API_PROXY_MAP = {
             resolve: (api) => api.mix.getDashboardApi,
             openApi: {
                 summary: 'Get dashboard',
-                tags: ['dashboard'],
+                tags: [ApiTag.Dashboard],
             },
         },
         updateDashboard: {
             resolve: (api) => api.mix.updateDashboardApi,
             openApi: {
                 summary: 'Delete dashboard',
-                tags: ['dashboard'],
+                tags: [ApiTag.Dashboard],
             },
         },
         createDashboard: {
             resolve: (api) => api.mix.createDashboardApi,
             openApi: {
                 summary: 'Create dashboard',
-                tags: ['dashboard'],
+                tags: [ApiTag.Dashboard],
             },
         },
         deleteDashboard: {
             resolve: (api) => api.mix.deleteDashboardApi,
             openApi: {
                 summary: 'Delete dashboard',
-                tags: ['dashboard'],
+                tags: [ApiTag.Dashboard],
             },
         },
         // Report
@@ -185,28 +195,28 @@ export const PUBLIC_API_PROXY_MAP = {
         //     resolve: (api) => api.bi.createDataset,
         //     openApi: {
         //         summary: 'Get report',
-        //         tags: ['report'],
+        //         tags: [ApiTag.Report],
         //     },
         // },
         // updateReport: {
         //     resolve: (api) => api.bi.updateDataset,
         //     openApi: {
         //         summary: 'Delete report',
-        //         tags: ['report'],
+        //         tags: [ApiTag.Report],
         //     },
         // },
         // createReport: {
         //     resolve: (api) => api.bi.createDataset,
         //     openApi: {
         //         summary: 'Create report',
-        //         tags: ['report'],
+        //         tags: [ApiTag.Report],
         //     },
         // },
         // deleteReport: {
         //     resolve: (api) => api.bi.deleteDataset,
         //     openApi: {
         //         summary: 'Delete report',
-        //         tags: ['report'],
+        //         tags: [ApiTag.Report],
         //     },
         // },
     },
