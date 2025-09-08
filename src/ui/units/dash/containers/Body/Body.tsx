@@ -1,10 +1,5 @@
 import React from 'react';
 
-import {
-    DashKitDnDWrapper,
-    ActionPanel as DashkitActionPanel,
-    DashKit as GravityDashkit,
-} from '@gravity-ui/dashkit';
 import type {
     ConfigItem,
     ConfigLayout,
@@ -14,6 +9,11 @@ import type {
     DashkitGroupRenderProps,
     ItemDropProps,
     PreparedCopyItemOptions,
+} from '@gravity-ui/dashkit';
+import {
+    DashKitDnDWrapper,
+    ActionPanel as DashkitActionPanel,
+    DashKit as GravityDashkit,
 } from '@gravity-ui/dashkit';
 import {DEFAULT_GROUP, MenuItems} from '@gravity-ui/dashkit/helpers';
 import {
@@ -98,11 +98,7 @@ import {
     setWidgetCurrentTab,
 } from '../../store/actions/dashTyped';
 import {openDialog, openItemDialogAndSetData} from '../../store/actions/dialogs/actions';
-import {
-    closeDialogRelations,
-    openDialogRelations,
-    setNewRelations,
-} from '../../store/actions/relations/actions';
+import {closeDialogRelations, openDialogRelations} from '../../store/actions/relations/actions';
 import {
     canEdit,
     selectCurrentTab,
@@ -110,7 +106,6 @@ import {
     selectDashError,
     selectDashWorkbookId,
     selectEntryId,
-    selectIsNewRelations,
     selectLastModifiedItemId,
     selectSettings,
     selectShowTableOfContent,
@@ -942,13 +937,10 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                         icon: iconRelations,
                         qa: ControlQA.controlLinks,
                         handler: (widget: DashTabItem) => {
-                            this.props.setNewRelations(true);
                             this.props.openDialogRelations({
                                 widget,
                                 dashKitRef: this.dashKitRef,
-                                onClose: () => {
-                                    this.props.setNewRelations(false);
-                                },
+                                onClose: () => {},
                             });
                         },
                     } as OverlayControlItem,
@@ -1149,7 +1141,6 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                         overlayControls={this.getOverlayControls()}
                         overlayMenuItems={this.getOverlayMenu()}
                         skipReload={this.props.skipReload}
-                        isNewRelations={this.props.isNewRelations}
                         onItemMountChange={this.handleItemMountChange}
                         onItemRender={this.handleItemRender}
                         hideErrorDetails={this.props.hideErrorDetails}
@@ -1327,7 +1318,6 @@ const mapStateToProps = (state: DatalensGlobalState) => ({
     workbookId: selectDashWorkbookId(state),
     error: selectDashError(state),
     skipReload: selectSkipReload(state),
-    isNewRelations: selectIsNewRelations(state),
     userSettings: selectUserSettings(state),
 });
 
@@ -1340,7 +1330,6 @@ const mapDispatchToProps = {
     setDashKitRef,
     openDialogRelations,
     closeDialogRelations,
-    setNewRelations,
     openDialog,
     showToast,
     setWidgetCurrentTab,

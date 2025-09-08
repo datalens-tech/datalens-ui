@@ -3,7 +3,7 @@ import React from 'react';
 import {I18n} from 'i18n';
 import type {ResolveThunks} from 'react-redux';
 import {connect} from 'react-redux';
-import type {WorkbookId} from 'shared';
+import type {EntryAnnotationArgs, WorkbookId} from 'shared';
 import {showToast} from 'store/actions/toaster';
 import type {DataLensApiError} from 'typings';
 import {isEntryAlreadyExists} from 'utils/errors/errorByCode';
@@ -22,7 +22,7 @@ export interface DialogCreateQLChartProps extends EntryDialogProps {
         [key: string]: any;
     };
     workbookId?: WorkbookId;
-    description?: string;
+    annotation?: EntryAnnotationArgs;
 }
 
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
@@ -73,13 +73,13 @@ class DialogCreateQLChart extends React.Component<Props> {
     }
 
     private onWorkbookApply = ({name}: {name: string}) => {
-        const {workbookId, description} = this.props;
+        const {workbookId, annotation} = this.props;
         return this.props.sdk.charts.createWidget({
             name,
             workbookId: workbookId as string,
             data: this.props.data,
             template: 'ql',
-            description,
+            annotation,
         });
     };
 
@@ -88,7 +88,7 @@ class DialogCreateQLChart extends React.Component<Props> {
             key,
             data: this.props.data,
             template: 'ql',
-            description: this.props.description,
+            annotation: this.props.annotation,
         });
         return data;
     };

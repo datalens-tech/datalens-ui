@@ -50,7 +50,6 @@ import {
     TOGGLE_TABLE_OF_CONTENT,
 } from '../actions/dashTyped';
 import type {DashAction} from '../actions/index';
-import {SET_NEW_RELATIONS} from '../actions/relations/actions';
 
 import {TAB_PROPERTIES} from './dash';
 
@@ -77,7 +76,6 @@ export type DashState = {
     lockToken: string | null;
     isFullscreenMode?: boolean;
     isLoadingEditMode: boolean;
-    isNewRelationsOpened?: boolean;
     skipReload?: boolean;
     openedItemWidgetType?: WidgetType;
     // contains widgetId: currentTabId to open widget dialog with current tab
@@ -335,13 +333,6 @@ export function dashTypedReducer(
             return {
                 ...state,
                 isLoadingEditMode: action.payload || false,
-            };
-        }
-
-        case SET_NEW_RELATIONS: {
-            return {
-                ...state,
-                isNewRelationsOpened: action.payload || false,
             };
         }
 
