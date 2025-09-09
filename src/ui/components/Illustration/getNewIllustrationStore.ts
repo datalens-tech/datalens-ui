@@ -1,0 +1,26 @@
+export const getNewIllustrationStore = () => ({
+    light: {
+        notFound: () => import('assets/images/new/light/nothing_found.svg'),
+        notFoundError: () => import('assets/images/new/dark/404.svg'),
+        noAccess: () => import('assets/images/new/light/403.svg'),
+        error: () => import('assets/images/new/light/500.svg'),
+        identity: () => import('assets/images/new/light/no_permission.svg'),
+        project: () => import('assets/images/new/light/project.svg'),
+        template: () => import('assets/images/new/light/empty_state.svg'),
+        emptyDirectory: () => import('assets/images/new/light/empty_directory.svg'),
+        successOperation: () => import('assets/images/new/light/success_operation.svg'),
+        badRequest: () => import('assets/images/new/light/bad_request.svg'),
+    },
+    dark: {
+        notFound: () => import('assets/images/new/dark/nothing_found.svg'),
+        notFoundError: () => import('assets/images/new/dark/404.svg'),
+        noAccess: () => import('assets/images/new/dark/403.svg'),
+        error: () => import('assets/images/new/dark/500.svg'),
+        identity: () => import('assets/images/new/dark/no_permission.svg'),
+        project: () => import('assets/images/new/dark/project.svg'),
+        template: () => import('assets/images/new/dark/empty_state.svg'),
+        emptyDirectory: () => import('assets/images/new/dark/empty_directory.svg'),
+        successOperation: () => import('assets/images/new/dark/success_operation.svg'),
+        badRequest: () => import('assets/images/new/light/bad_request.svg'),
+    },
+});

@@ -1,4 +1,4 @@
-import {extractEntryId, isEntryId} from 'shared';
+import {Feature, extractEntryId, isEntryId} from 'shared';
 import {getEntryScopesWithRevisionsList} from 'ui/components/RevisionsPanel/utils';
 import {DL} from 'ui/constants';
 import {getAdditionalChartkitErrorContent} from 'ui/libs/DatalensChartkit/Error/getAdditionalChartkitErrorContent';
@@ -6,6 +6,7 @@ import {getIsCompact, updateIsCompact} from 'ui/store/utils/asideHeader';
 import {getLoginById} from 'ui/units/auth/components/LoginById/utils';
 import {resolveUsersByIds} from 'ui/units/auth/store/actions/usersByIds';
 import {getRestrictedParamNames} from 'ui/utils/getRestrictedParamNames';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {setEntryKey} from 'ui/utils/setEntryKey';
 
 import {formatNumber} from '../../../../shared/modules/format-units/formatUnit';
@@ -17,6 +18,7 @@ import {getAdditionalEntryDialoguesMap} from '../../../components/EntryDialogues
 import {getEntryName} from '../../../components/EntryTitle/utils';
 import {Illustration} from '../../../components/Illustration/Illustration';
 import {getIllustrationStore} from '../../../components/Illustration/getIllustrationStore';
+import {getNewIllustrationStore} from '../../../components/Illustration/getNewIllustrationStore';
 import {MarkdownControl} from '../../../components/MarkdownControl/MarkdownControl';
 import {MobileHeaderComponent} from '../../../components/MobileHeader/MobileHeaderComponent/MobileHeaderComponent';
 import {
@@ -53,6 +55,8 @@ import {registry} from '../../index';
 import {EXAMPLE_FUNCTION} from './constants/functions';
 
 export const registerCommonPlugins = () => {
+    const isRebrandingEnabled = isEnabledFeature(Feature.EnableDLRebranding);
+
     registry.common.components.registerMany({
         MobileHeaderComponent,
         PlaceholderIllustrationImage: Illustration,
@@ -70,7 +74,7 @@ export const registerCommonPlugins = () => {
         getEntryMenuConfig,
         getMenuGroupConfig,
         getIconDataById,
-        getIllustrationStore,
+        getIllustrationStore: isRebrandingEnabled ? getNewIllustrationStore : getIllustrationStore,
         getIsCompact,
         updateIsCompact,
         getPlaceSelectParameters,
