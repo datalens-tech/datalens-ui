@@ -1,4 +1,8 @@
+import {OpenAPIRegistry} from '@asteasolutions/zod-to-openapi';
+
 import type {PublicApiRpcMap} from './types';
+
+export const publicApiOpenApiRegistry = new OpenAPIRegistry();
 
 export const PUBLIC_API_HTTP_METHOD = 'POST';
 export const PUBLIC_API_URL = '/rpc/:version/:action';
@@ -11,7 +15,6 @@ enum ApiTag {
     Wizard = 'Wizard',
     Editor = 'Editor',
     Dashboard = 'Dashboard',
-    Report = 'Report',
 }
 
 export const PUBLIC_API_PROXY_MAP = {
@@ -24,27 +27,27 @@ export const PUBLIC_API_PROXY_MAP = {
                 tags: [ApiTag.Navigation],
             },
         },
-        getStructureItems: {
-            resolve: (api) => api.us.getStructureItems,
-            openApi: {
-                summary: 'Get structure list',
-                tags: [ApiTag.Navigation],
-            },
-        },
-        createWorkbook: {
-            resolve: (api) => api.us.createWorkbook,
-            openApi: {
-                summary: 'Create workbook',
-                tags: [ApiTag.Navigation],
-            },
-        },
-        createCollection: {
-            resolve: (api) => api.us.createCollection,
-            openApi: {
-                summary: 'Create collection',
-                tags: [ApiTag.Navigation],
-            },
-        },
+        // getStructureItems: {
+        //     resolve: (api) => api.us.getStructureItems,
+        //     openApi: {
+        //         summary: 'Get structure list',
+        //         tags: [ApiTag.Navigation],
+        //     },
+        // },
+        // createWorkbook: {
+        //     resolve: (api) => api.us.createWorkbook,
+        //     openApi: {
+        //         summary: 'Create workbook',
+        //         tags: [ApiTag.Navigation],
+        //     },
+        // },
+        // createCollection: {
+        //     resolve: (api) => api.us.createCollection,
+        //     openApi: {
+        //         summary: 'Create collection',
+        //         tags: [ApiTag.Navigation],
+        //     },
+        // },
         // connection
         getConnection: {
             resolve: (api) => api.bi.getConnection,
@@ -190,34 +193,5 @@ export const PUBLIC_API_PROXY_MAP = {
                 tags: [ApiTag.Dashboard],
             },
         },
-        // Report
-        // getReport: {
-        //     resolve: (api) => api.bi.createDataset,
-        //     openApi: {
-        //         summary: 'Get report',
-        //         tags: [ApiTag.Report],
-        //     },
-        // },
-        // updateReport: {
-        //     resolve: (api) => api.bi.updateDataset,
-        //     openApi: {
-        //         summary: 'Delete report',
-        //         tags: [ApiTag.Report],
-        //     },
-        // },
-        // createReport: {
-        //     resolve: (api) => api.bi.createDataset,
-        //     openApi: {
-        //         summary: 'Create report',
-        //         tags: [ApiTag.Report],
-        //     },
-        // },
-        // deleteReport: {
-        //     resolve: (api) => api.bi.deleteDataset,
-        //     openApi: {
-        //         summary: 'Delete report',
-        //         tags: [ApiTag.Report],
-        //     },
-        // },
     },
 } satisfies PublicApiRpcMap;

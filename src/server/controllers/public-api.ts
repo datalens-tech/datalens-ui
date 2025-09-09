@@ -1,14 +1,14 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
-import type {ApiServiceActionConfig} from '@gravity-ui/gateway';
 import {AppError, REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 import _ from 'lodash';
 import {ZodError} from 'zod/v4';
 
 import {getValidationSchema} from '../../shared/schema/gateway-utils';
+import {registerActionToOpenApi} from '../components/public-api';
 import type {PublicApiRpcMap} from '../components/public-api/types';
 import {PUBLIC_API_RPC_ERROR_CODE} from '../constants/public-api';
 import {registry} from '../registry';
-import type {DatalensGatewaySchemas} from '../types/gateway';
+import type {AnyApiServiceActionConfig, DatalensGatewaySchemas} from '../types/gateway';
 import Utils from '../utils';
 
 const handleError = (
@@ -40,13 +40,10 @@ export const createPublicApiController = () => {
         });
     });
 
-    const actionToConfigMap = new Map<
-        Function,
-        ApiServiceActionConfig<any, any, any, any, any, any>
-    >();
+    const actionToConfigMap = new Map<Function, AnyApiServiceActionConfig>();
 
-    Object.values(proxyMap).forEach((actions) => {
-        Object.values(actions).forEach(({resolve}) => {
+    Object.entries(proxyMap).forEach(([version, actions]) => {
+        Object.entries(actions).forEach(([actionName, {resolve, openApi}]) => {
             const gatewayAction = resolve(gatewayApi);
             const pathObject = actionToPathMap.get(gatewayAction);
 
@@ -58,6 +55,8 @@ export const createPublicApiController = () => {
                 schemasByScope.root[pathObject.serviceName].actions[pathObject.actionName];
 
             actionToConfigMap.set(gatewayAction, actionConfig);
+
+            registerActionToOpenApi({actionConfig, actionName, version, openApi});
         });
     });
 
