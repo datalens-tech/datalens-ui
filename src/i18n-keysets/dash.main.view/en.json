@@ -21,3 +21,4 @@
   "value_state-limit-error": "Не удалось сохранить состояние дашборда. Превышен лимит размера выбранных значений фильтров.",
   "warning_paste-invalid-workbook-entry": "To work with this object within another workbook, please migrate all linked objects from the source workbook. <link>Migrating objects to workbooks</link>"
 }
+
