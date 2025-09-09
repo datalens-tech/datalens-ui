@@ -14,12 +14,7 @@ import type {
 } from '../../../../libs/DatalensChartkit/components/ChartKitBase/types';
 import type {ResponseError} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
 import type {WidgetPluginProps} from '../../../DashKit/plugins/Widget/types';
-import {
-    getPreparedConstants,
-    getWidgetSelectorMeta,
-    getWidgetSelectorMetaOld,
-    pushStats,
-} from '../helpers/helpers';
+import {getPreparedConstants, getWidgetSelectorMeta, pushStats} from '../helpers/helpers';
 import type {
     ChartWidgetProps,
     ResolveMetaDataRef,
@@ -92,7 +87,6 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
     const resolveWidgetDataRef = React.useRef<ResolveWidgetControlDataRef>();
 
     const extDashkitContext = React.useContext(ExtendedDashKitContext);
-    const isNewRelations = extDashkitContext?.isNewRelations || false;
     const dataProviderContextGetter = extDashkitContext?.dataProviderContextGetter || undefined;
 
     const history = useHistory();
@@ -308,24 +302,6 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
     );
 
     /**
-     * get dash widget meta data (current relations)
-     */
-    const resolveMeta = React.useCallback(
-        (loadedData: ResolveWidgetControlDataRefArgs | null) => {
-            const meta = getWidgetSelectorMetaOld({
-                id: widgetId,
-                chartId,
-                loadedData,
-            });
-
-            if (resolveMetaDataRef.current) {
-                resolveMetaDataRef.current(meta);
-            }
-        },
-        [resolveMetaDataRef.current, widgetId, chartId],
-    );
-
-    /**
      * get dash widget meta info (used for relations)
      */
     const handleGetWidgetMeta = React.useCallback(
@@ -334,11 +310,7 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
             resolveWidgetDataRef.current = (
                 resolvingData: ResolveWidgetControlDataRefArgs | null,
             ) => {
-                if (isNewRelations) {
-                    getCurrentWidgetResolvedMetaInfo(resolvingData);
-                } else {
-                    resolveMeta(resolvingData);
-                }
+                getCurrentWidgetResolvedMetaInfo(resolvingData);
             };
             if (!isInit) {
                 // initializing chart loading if it was not inited yet (ex. was not in viewport
@@ -357,10 +329,8 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
         [
             error,
             loadedData,
-            isNewRelations,
             setCanBeLoaded,
             isInit,
-            resolveMeta,
             getCurrentWidgetResolvedMetaInfo,
             resolveMetaDataRef,
             resolveWidgetDataRef,
