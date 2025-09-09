@@ -1,6 +1,7 @@
 export const getIllustrationStore = () => ({
     light: {
         notFound: () => import('assets/images/illustration/light/404.svg'),
+        notFoundError: () => import('assets/images/illustration/light/404.svg'),
         noAccess: () => import('assets/images/illustration/light/403.svg'),
         error: () => import('assets/images/illustration/light/500.svg'),
         identity: () => import('assets/images/illustration/light/identity.svg'),
@@ -12,6 +13,7 @@ export const getIllustrationStore = () => ({
     },
     dark: {
         notFound: () => import('assets/images/illustration/dark/404.svg'),
+        notFoundError: () => import('assets/images/illustration/dark/404.svg'),
         noAccess: () => import('assets/images/illustration/dark/403.svg'),
         error: () => import('assets/images/illustration/dark/500.svg'),
         identity: () => import('assets/images/illustration/dark/identity.svg'),
