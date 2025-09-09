@@ -10,6 +10,7 @@ export const getIllustrationStore = () => ({
         emptyDirectory: () => import('assets/images/illustration/light/folder.svg'),
         successOperation: () => import('assets/images/illustration/light/success_operation.svg'),
         badRequest: () => import('assets/images/illustration/light/bad_request.svg'),
+        noAccounts: () => import('assets/images/illustration/light/404.svg'),
     },
     dark: {
         notFound: () => import('assets/images/illustration/dark/404.svg'),
@@ -22,5 +23,6 @@ export const getIllustrationStore = () => ({
         emptyDirectory: () => import('assets/images/illustration/dark/folder.svg'),
         successOperation: () => import('assets/images/illustration/dark/success_operation.svg'),
         badRequest: () => import('assets/images/illustration/light/bad_request.svg'),
+        noAccounts: () => import('assets/images/illustration/dark/404.svg'),
     },
 });
