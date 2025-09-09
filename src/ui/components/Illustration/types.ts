@@ -7,9 +7,11 @@ export type IllustrationName =
     | 'successOperation'
     | 'project'
     | 'notFound'
+    | 'notFoundError'
     | 'identity'
     | 'emptyDirectory'
-    | 'badRequest';
+    | 'badRequest'
+    | 'noAccounts';
 
 export type IllustrationProps = {
     name: IllustrationName;
