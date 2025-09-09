@@ -35,7 +35,7 @@ export const Settings: React.FC<SettingsProps> = ({
 }) => {
     const inputRef = React.useRef<HTMLInputElement>(null);
 
-    const {AdditionalButtonsWrapper} = registry.fieldEditor.components.getAll();
+    const {AdditionalButtons} = registry.fieldEditor.components.getAll();
 
     React.useEffect(() => {
         inputRef.current?.focus();
@@ -100,7 +100,7 @@ export const Settings: React.FC<SettingsProps> = ({
             <div className={b('settings-buttons-container')}>
                 {showDocButton && (
                     <React.Fragment>
-                        <AdditionalButtonsWrapper toggleAdditionalPanel={toggleAdditionalPanel} />
+                        <AdditionalButtons toggleAdditionalPanel={toggleAdditionalPanel} />
                         <Button
                             className={b('settings-doc-btn')}
                             onClick={toggleDocumentationPanel}
