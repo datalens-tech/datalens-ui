@@ -265,6 +265,7 @@ export const load = ({
             const readDashParams: Omit<GetEntryArgs, 'entryId'> = {
                 includePermissionsInfo: true,
                 includeLinks: true,
+                includeFavorite: true,
                 branch: 'published',
             };
 

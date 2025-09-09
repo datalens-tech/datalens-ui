@@ -10,7 +10,9 @@
 Create `.env` file in root of project. Should be `datalens-ui/.env` and add:
 ```sh
 E2E_DOMAIN=http://localhost:8080
-NO_AUTH=true
+NO_AUTH=false
+E2E_USER_LOGIN=admin
+E2E_USER_PASSWORD=admin
 ```
 For additional configuration check [list of available ENV variables](documentation/env_configuration.md)
 
@@ -55,7 +57,7 @@ npm run test:e2e:opensource
 ```
 
 ### How to add or modify new connection/dataset/chart/dashboard for E2E tests:
-1. Start project 
+1. Start project
 ```sh
 # Clear existing containers
 npm run test:e2e:docker:down

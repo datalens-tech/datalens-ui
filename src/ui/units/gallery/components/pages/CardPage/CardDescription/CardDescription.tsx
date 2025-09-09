@@ -30,7 +30,7 @@ export function CardDescription({lang, description, shortDescription}: CardDescr
     }, [description, shortDescription]);
 
     return (
-        <Flex direction="column" style={{maxWidth: 720}}>
+        <Flex direction="column" style={{maxWidth: 720}} className={b()}>
             {shortDescription && <Text variant="body-2">{getTranslation(shortDescription)}</Text>}
             {isExpanded && description && markdown}
             {shouldShowButton && (

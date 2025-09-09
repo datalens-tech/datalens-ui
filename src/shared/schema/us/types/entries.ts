@@ -26,6 +26,7 @@ export interface GetEntryArgs {
     branch?: string;
     includePermissionsInfo?: boolean;
     includeLinks?: boolean;
+    includeFavorite?: boolean;
     includeDlComponentUiData?: boolean;
 }
 

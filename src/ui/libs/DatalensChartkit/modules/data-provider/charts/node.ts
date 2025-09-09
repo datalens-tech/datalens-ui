@@ -367,6 +367,31 @@ function applyChartkitHandlers(args: {
                 ChartkitHandlersDict[ChartkitHandlers.WizardLabelFormatter];
         }
 
+        if (
+            libraryConfig.xAxis?.labels?.formatter === ChartkitHandlers.WizardDatetimeAxisFormatter
+        ) {
+            libraryConfig.xAxis.labels.formatter = ChartkitHandlersDict[
+                ChartkitHandlers.WizardDatetimeAxisFormatter
+            ](libraryConfig.xAxis?.labels?.format);
+        }
+
+        if (
+            libraryConfig.yAxis?.labels?.formatter === ChartkitHandlers.WizardDatetimeAxisFormatter
+        ) {
+            libraryConfig.yAxis.labels.formatter = ChartkitHandlersDict[
+                ChartkitHandlers.WizardDatetimeAxisFormatter
+            ](libraryConfig.yAxis?.labels?.format);
+        }
+
+        libraryConfig.yAxis?.forEach?.((item: typeof libraryConfig.yAxis) => {
+            const formatter = item?.labels?.formatter;
+            if (formatter && formatter === ChartkitHandlers.WizardDatetimeAxisFormatter) {
+                item.labels.formatter = ChartkitHandlersDict[
+                    ChartkitHandlers.WizardDatetimeAxisFormatter
+                ](item.labels.format);
+            }
+        });
+
         if (libraryConfig.xAxis?.labels?.formatter === ChartkitHandlers.WizardXAxisFormatter) {
             libraryConfig.xAxis.labels.formatter =
                 ChartkitHandlersDict[ChartkitHandlers.WizardXAxisFormatter];
