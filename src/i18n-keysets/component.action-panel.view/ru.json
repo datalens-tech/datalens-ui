@@ -4,5 +4,6 @@
   "button_switch-public": "Публичный доступ",
   "button_undo": "Отменить",
   "label_history-changes": "История изменений",
-  "label_history-changes-date-limit": "Доступна история за последние три месяца"
+  "label_history-changes-date-limit": "Доступна история за последние три месяца",
+  "label_history-changes-date-limit-dataset": "История доступна с"
 }

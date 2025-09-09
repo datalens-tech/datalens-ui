@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {dateTimeParse} from '@gravity-ui/date-utils';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {connect} from 'react-redux';
@@ -7,7 +8,7 @@ import type {RouteComponentProps} from 'react-router-dom';
 import {withRouter} from 'react-router-dom';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
-import {ActionPanelQA, Feature} from 'shared';
+import {ActionPanelQA, EntryScope, Feature} from 'shared';
 import {
     cleanRevisions,
     fetchEntryById,
@@ -29,6 +30,7 @@ import {getSdk} from '../../libs/schematic-sdk';
 import type {EntryContextMenuItems} from '../EntryContextMenu/helpers';
 import ExpandablePanel from '../ExpandablePanel/ExpandablePanel';
 import Revisions from '../Revisions/Revisions';
+import {DATASET_DATE_AVAILABLE_FORMAT, MIN_AVAILABLE_DATASET_REV_DATE} from '../Revisions/helpers';
 import RevisionsPanel from '../RevisionsPanel/RevisionsPanel';
 
 import EntryPanel from './components/EntryPanel/EntryPanel';
@@ -162,6 +164,14 @@ class ActionPanel extends React.Component<Props, State> {
         const style: React.CSSProperties = {left: sidebarSize, ...externalStyle};
 
         const entry = this.getEntry();
+        const datasetDescription =
+            entry?.scope === EntryScope.Dataset
+                ? `${i18n('label_history-changes-date-limit-dataset')} ${dateTimeParse(MIN_AVAILABLE_DATASET_REV_DATE)?.format(DATASET_DATE_AVAILABLE_FORMAT) ?? MIN_AVAILABLE_DATASET_REV_DATE}`
+                : undefined;
+
+        const description = isEnabledFeature(Feature.RevisionsListNoLimit)
+            ? datasetDescription
+            : i18n('label_history-changes-date-limit');
 
         return (
             <div className={b()} ref={wrapperRef}>
@@ -200,11 +210,7 @@ class ActionPanel extends React.Component<Props, State> {
                         <ExpandablePanel
                             className={b('expandable-panel')}
                             title={i18n('label_history-changes')}
-                            description={
-                                isEnabledFeature(Feature.RevisionsListNoLimit)
-                                    ? undefined
-                                    : i18n('label_history-changes-date-limit')
-                            }
+                            description={description}
                             active={isRevisionsOpened || false}
                             onClose={this.handleExpandablePanelClose}
                         >

@@ -9,6 +9,7 @@
   "label_status-draft": "Черновик",
   "label_status-published": "Актуальная",
   "label_status-tooltip-current": "Текущая",
+  "label_status-tooltip-disable": "Не доступно для просмотра",
   "label_status-tooltip-draft": "Черновик",
   "label_status-tooltip-not-actual": "Неактуальная",
   "label_status-tooltip-published": "Актуальная",

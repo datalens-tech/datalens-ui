@@ -7,6 +7,8 @@ import type {RevisionEntry, RevisionsGroupedDates, RevisionsListItems} from './t
 export const REVISIONS_LIST_PART_SIZE = 100;
 export const REVISIONS_LIST_DEBOUNCE_DELAY = 100;
 export const DATE_GROUPPED_FORMAT = 'YYYY-MM-DD';
+export const MIN_AVAILABLE_DATASET_REV_DATE = '2024-11-30T21:00:00.000Z';
+export const DATASET_DATE_AVAILABLE_FORMAT = 'DD.MM.YYYY';
 
 const getDateKey = (str: string) => str?.split('T').shift() || '';
 
