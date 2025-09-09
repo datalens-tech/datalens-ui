@@ -164,9 +164,12 @@ class ActionPanel extends React.Component<Props, State> {
         const style: React.CSSProperties = {left: sidebarSize, ...externalStyle};
 
         const entry = this.getEntry();
+        const formattedMinDatasetDate =
+            dateTimeParse(MIN_AVAILABLE_DATASET_REV_DATE)?.format(DATASET_DATE_AVAILABLE_FORMAT) ??
+            MIN_AVAILABLE_DATASET_REV_DATE;
         const datasetDescription =
             entry?.scope === EntryScope.Dataset
-                ? `${i18n('label_history-changes-date-limit-dataset')} ${dateTimeParse(MIN_AVAILABLE_DATASET_REV_DATE)?.format(DATASET_DATE_AVAILABLE_FORMAT) ?? MIN_AVAILABLE_DATASET_REV_DATE}`
+                ? `${i18n('label_history-changes-date-limit-dataset')} ${formattedMinDatasetDate}`
                 : undefined;
 
         const description = isEnabledFeature(Feature.RevisionsListNoLimit)
