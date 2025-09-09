@@ -78,6 +78,7 @@ export const getWizardChartMenu = ({
         getOpenAsTableMenuItem({
             chartsDataProvider,
             customConfig: customOptions[MenuItemsIds.OPEN_AS_TABLE],
+            extraOptions,
         }),
         getInspectorMenuItem(),
     ];

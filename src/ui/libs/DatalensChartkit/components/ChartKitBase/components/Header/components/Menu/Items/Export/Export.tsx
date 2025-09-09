@@ -140,6 +140,25 @@ const getSubItems = ({
     return submenuItems;
 };
 
+export function isExportItemDisabled({extraOptions}: {extraOptions?: Record<string, unknown>}) {
+    return ({loadedData}: MenuItemArgs) => {
+        const exportForbiddenResult =
+            extraOptions &&
+            'exportForbiddenResult' in extraOptions &&
+            extraOptions.exportForbiddenResult;
+
+        const isExportDisabled =
+            loadedData?.extra.dataExportForbidden || Boolean(exportForbiddenResult);
+
+        let disabledReason = i18n('label_data-export-forbidden');
+        if (isExportDisabled && typeof exportForbiddenResult === 'string') {
+            disabledReason = exportForbiddenResult;
+        }
+
+        return isExportDisabled ? disabledReason : false;
+    };
+}
+
 export const getExportItem = ({
     showWiki,
     showScreenshot,
@@ -167,22 +186,7 @@ export const getExportItem = ({
         chartsDataProvider,
         customConfig,
     }),
-    isDisabled: ({loadedData}: MenuItemArgs) => {
-        const exportForbiddenResult =
-            extraOptions &&
-            'exportForbiddenResult' in extraOptions &&
-            extraOptions.exportForbiddenResult;
-
-        const isExportDisabled =
-            loadedData?.extra.dataExportForbidden || Boolean(exportForbiddenResult);
-
-        let disabledReason = i18n('label_data-export-forbidden');
-        if (isExportDisabled && typeof exportForbiddenResult === 'string') {
-            disabledReason = exportForbiddenResult;
-        }
-
-        return isExportDisabled ? disabledReason : false;
-    },
+    isDisabled: isExportItemDisabled({extraOptions}),
     isVisible: ({loadedData, error}: MenuItemArgs) => {
         const isScreenshotVisible = loadedData?.data && showScreenshot;
 
