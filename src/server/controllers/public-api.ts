@@ -1,11 +1,11 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
 import {AppError, REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 import _ from 'lodash';
+import type z from 'zod/v4';
 import {ZodError} from 'zod/v4';
 
 import {getValidationSchema} from '../../shared/schema/gateway-utils';
 import {registerActionToOpenApi} from '../components/public-api';
-import type {PublicApiRpcMap} from '../components/public-api/types';
 import {PUBLIC_API_RPC_ERROR_CODE} from '../constants/public-api';
 import {registry} from '../registry';
 import type {AnyApiServiceActionConfig, DatalensGatewaySchemas} from '../types/gateway';
@@ -25,6 +25,20 @@ const handleError = (
         requestId: req.ctx.get(REQUEST_ID_PARAM_NAME) || '',
         details,
     });
+};
+
+const validateRequestBody = async (schema: z.ZodType, data: unknown): Promise<unknown> => {
+    try {
+        return await schema.parseAsync(data);
+    } catch (error) {
+        if (error instanceof ZodError) {
+            throw new AppError('Validation error', {
+                details: error.issues,
+            });
+        }
+
+        throw error;
+    }
 };
 
 export const createPublicApiController = () => {
@@ -61,70 +75,65 @@ export const createPublicApiController = () => {
     });
 
     return async function publicApiController(req: Request, res: Response) {
-        const boundeHandler = handleError.bind(null, req, res);
-
-        if (!req.params.version || !req.params.action) {
-            return boundeHandler(400, 'Invalid params, version or action are empty');
-        }
-
-        const version = req.params.version as keyof PublicApiRpcMap;
-        if (!_.has(proxyMap, version)) {
-            return boundeHandler(404, 'Version not found');
-        }
-
-        const versionMap = proxyMap[version];
-        const actionName = req.params.action as keyof typeof versionMap;
-        if (!_.has(proxyMap[version], req.params.action)) {
-            return boundeHandler(404, 'Action not found');
-        }
+        const boundHandler = handleError.bind(null, req, res);
 
         try {
+            const {version, action: actionName} = req.params;
+
+            if (!version) {
+                return boundHandler(400, 'Invalid params, version is empty');
+            }
+
+            if (!actionName) {
+                return boundHandler(400, 'Invalid params, action is empty');
+            }
+
+            const versionMap = proxyMap[version];
+            if (!versionMap) {
+                return boundHandler(404, 'Version not found');
+            }
+
             const action = versionMap[actionName];
+            if (!action) {
+                return boundHandler(404, 'Action not found');
+            }
+
             const {ctx} = req;
 
             const headers = Utils.pickRpcHeaders(req);
-            const args = req.body;
             const requestId = ctx.get(REQUEST_ID_PARAM_NAME) || '';
 
             const gatewayAction = action.resolve(gatewayApi);
             const gatewayActionConfig = actionToConfigMap.get(gatewayAction);
 
             if (!gatewayActionConfig) {
-                return boundeHandler(404, 'Action not found');
+                return boundHandler(500, 'Action not found');
             }
 
             const validationSchema = getValidationSchema(gatewayActionConfig);
 
             if (!validationSchema) {
-                return boundeHandler(404, 'Validation schema not found');
+                return boundHandler(500, 'Validation schema not found');
             }
 
             const {paramsSchema} = validationSchema;
 
-            try {
-                const validatedArgs = await paramsSchema.parseAsync(args);
+            const validatedArgs = await validateRequestBody(paramsSchema, req.body);
 
-                const result = await gatewayAction({
-                    headers,
-                    args: validatedArgs,
-                    ctx,
-                    requestId,
-                });
+            const result = await gatewayAction({
+                headers,
+                args: validatedArgs,
+                ctx,
+                requestId,
+            });
 
-                res.status(200).send(result.responseData);
-            } catch (error) {
-                if (error instanceof ZodError) {
-                    return boundeHandler(400, 'Validation error', error.issues);
-                } else {
-                    throw error;
-                }
-            }
+            res.status(200).send(result.responseData);
         } catch (err) {
             const {error} = err as any;
             if (error) {
                 res.status(typeof error.status === 'number' ? error.status : 500).send(error);
             } else {
-                return boundeHandler(500, 'Unknown error');
+                return boundHandler(500, 'Unknown error');
             }
         }
     };
