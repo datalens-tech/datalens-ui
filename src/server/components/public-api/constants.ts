@@ -20,13 +20,13 @@ enum ApiTag {
 export const PUBLIC_API_PROXY_MAP = {
     v0: {
         // navigation
-        getNavigationList: {
-            resolve: (api) => api.mix.getNavigationList,
-            openApi: {
-                summary: 'Get navigation list',
-                tags: [ApiTag.Navigation],
-            },
-        },
+        // getNavigationList: {
+        //     resolve: (api) => api.mix.getNavigationList,
+        //     openApi: {
+        //         summary: 'Get navigation list',
+        //         tags: [ApiTag.Navigation],
+        //     },
+        // },
         // getStructureItems: {
         //     resolve: (api) => api.us.getStructureItems,
         //     openApi: {
@@ -49,58 +49,58 @@ export const PUBLIC_API_PROXY_MAP = {
         //     },
         // },
         // connection
-        getConnection: {
-            resolve: (api) => api.bi.getConnection,
-            openApi: {
-                summary: 'Get connection',
-                tags: [ApiTag.Connection],
-            },
-        },
-        updateConnection: {
-            resolve: (api) => api.bi.updateConnection,
-            openApi: {
-                summary: 'Update connection',
-                tags: [ApiTag.Connection],
-            },
-        },
-        createConnection: {
-            resolve: (api) => api.bi.createConnection,
-            openApi: {
-                summary: 'Create connection',
-                tags: [ApiTag.Connection],
-            },
-        },
-        deleteConnection: {
-            resolve: (api) => api.bi.deleteConnnection,
-            openApi: {
-                summary: 'Delete connection',
-                tags: [ApiTag.Connection],
-            },
-        },
+        // getConnection: {
+        //     resolve: (api) => api.bi.getConnection,
+        //     openApi: {
+        //         summary: 'Get connection',
+        //         tags: [ApiTag.Connection],
+        //     },
+        // },
+        // updateConnection: {
+        //     resolve: (api) => api.bi.updateConnection,
+        //     openApi: {
+        //         summary: 'Update connection',
+        //         tags: [ApiTag.Connection],
+        //     },
+        // },
+        // createConnection: {
+        //     resolve: (api) => api.bi.createConnection,
+        //     openApi: {
+        //         summary: 'Create connection',
+        //         tags: [ApiTag.Connection],
+        //     },
+        // },
+        // deleteConnection: {
+        //     resolve: (api) => api.bi.deleteConnection,
+        //     openApi: {
+        //         summary: 'Delete connection',
+        //         tags: [ApiTag.Connection],
+        //     },
+        // },
         // dataset
         getDataset: {
-            resolve: (api) => api.bi.getDatasetApi,
+            resolve: (api) => api.bi.getDatasetByVersion,
             openApi: {
                 summary: 'Get dataset',
                 tags: [ApiTag.Dataset],
             },
         },
         updateDataset: {
-            resolve: (api) => api.bi.updateDatasetApi,
+            resolve: (api) => api.bi.updateDataset,
             openApi: {
                 summary: 'Update dataset',
                 tags: [ApiTag.Dataset],
             },
         },
         createDataset: {
-            resolve: (api) => api.bi.createDatasetApi,
+            resolve: (api) => api.bi.createDataset,
             openApi: {
                 summary: 'Create dataset',
                 tags: [ApiTag.Dataset],
             },
         },
         deleteDataset: {
-            resolve: (api) => api.bi.deleteDatasetApi,
+            resolve: (api) => api.bi.deleteDataset,
             openApi: {
                 summary: 'Delete dataset',
                 tags: [ApiTag.Dataset],
@@ -143,20 +143,20 @@ export const PUBLIC_API_PROXY_MAP = {
                 tags: [ApiTag.Editor],
             },
         },
-        updateEditorChart: {
-            resolve: (api) => api.mix.updateEditorChart,
-            openApi: {
-                summary: 'Update editor chart',
-                tags: [ApiTag.Editor],
-            },
-        },
-        createEditorChart: {
-            resolve: (api) => api.mix.createEditorChart,
-            openApi: {
-                summary: 'Create editor chart',
-                tags: [ApiTag.Editor],
-            },
-        },
+        // updateEditorChart: {
+        //     resolve: (api) => api.mix.updateEditorChart,
+        //     openApi: {
+        //         summary: 'Update editor chart',
+        //         tags: [ApiTag.Editor],
+        //     },
+        // },
+        // createEditorChart: {
+        //     resolve: (api) => api.mix.createEditorChart,
+        //     openApi: {
+        //         summary: 'Create editor chart',
+        //         tags: [ApiTag.Editor],
+        //     },
+        // },
         deleteEditorChart: {
             resolve: (api) => api.mix.deleteEditorChartApi,
             openApi: {

@@ -95,7 +95,7 @@ export const actions = {
         params: ({connectionId: _connectionId, ...body}, headers) => ({body, headers}),
         transformResponseError: transformConnectionResponseError,
     }),
-    deleteConnnection: createAction<DeleteConnectionResponse, DeleteConnectionArgs>({
+    deleteConnection: createAction<DeleteConnectionResponse, DeleteConnectionArgs>({
         method: 'DELETE',
         path: ({connectionId}) => `${PATH_PREFIX}/connections/${filterUrlFragment(connectionId)}`,
         params: (_, headers) => ({headers}),

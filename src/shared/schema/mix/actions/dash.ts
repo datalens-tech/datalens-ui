@@ -4,7 +4,7 @@ import {z} from 'zod/v4';
 
 import Dash from '../../../../server/components/sdk/dash';
 import {DASH_ENTRY_RELEVANT_FIELDS} from '../../../../server/constants';
-import {dashSchema} from '../../../sdk/zod-shemas/dash-api.schema';
+import {dashSchema} from '../../../sdk/zod-schemas/dash-api.schema';
 import type {ChartsStats} from '../../../types/charts';
 import {EntryScope} from '../../../types/common';
 import {createAction, createTypedAction} from '../../gateway-utils';

@@ -1,5 +1,6 @@
 import * as z from 'zod/v4';
 
+import type {ConnectorType} from '../..';
 import {
     DATASET_FIELD_TYPES,
     DATASET_VALUE_CONSTRAINT_TYPE,
@@ -215,7 +216,7 @@ const datasetOptionsSchema = z.object({
                 id: z.string(),
                 replacement_types: z.array(
                     z.object({
-                        conn_type: z.string(), // ConnectorType but using string for flexibility
+                        conn_type: z.string() as z.ZodSchema<ConnectorType>, // ConnectorType but using string for flexibility
                     }),
                 ),
             }),

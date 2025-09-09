@@ -1,7 +1,7 @@
 import z from 'zod/v4';
 
 import {USProvider} from '../../../../server/components/charts-engine/components/storage/united-storage/provider';
-import {v12ChartsConfigSchema} from '../../../sdk/zod-shemas/wizard-chart-api.schema';
+import {v12ChartsConfigSchema} from '../../../sdk/zod-schemas/wizard-chart-api.schema';
 import {EntryScope, WizardType} from '../../../types';
 import {createTypedAction} from '../../gateway-utils';
 import {getTypedApi} from '../../simple-schema';
