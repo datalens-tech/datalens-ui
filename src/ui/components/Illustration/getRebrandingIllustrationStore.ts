@@ -1,4 +1,4 @@
-export const getNewIllustrationStore = () => ({
+export const getRebrandingIllustrationStore = () => ({
     light: {
         notFound: () => import('assets/images/new-illustrations/light/nothing_found.svg'),
         notFoundError: () => import('assets/images/new-illustrations/dark/404.svg'),

@@ -18,7 +18,7 @@ import {getAdditionalEntryDialoguesMap} from '../../../components/EntryDialogues
 import {getEntryName} from '../../../components/EntryTitle/utils';
 import {Illustration} from '../../../components/Illustration/Illustration';
 import {getIllustrationStore} from '../../../components/Illustration/getIllustrationStore';
-import {getNewIllustrationStore} from '../../../components/Illustration/getNewIllustrationStore';
+import {getRebrandingIllustrationStore} from '../../../components/Illustration/getRebrandingIllustrationStore';
 import {MarkdownControl} from '../../../components/MarkdownControl/MarkdownControl';
 import {MobileHeaderComponent} from '../../../components/MobileHeader/MobileHeaderComponent/MobileHeaderComponent';
 import {
@@ -74,7 +74,9 @@ export const registerCommonPlugins = () => {
         getEntryMenuConfig,
         getMenuGroupConfig,
         getIconDataById,
-        getIllustrationStore: isRebrandingEnabled ? getNewIllustrationStore : getIllustrationStore,
+        getIllustrationStore: isRebrandingEnabled
+            ? getRebrandingIllustrationStore
+            : getIllustrationStore,
         getIsCompact,
         updateIsCompact,
         getPlaceSelectParameters,
