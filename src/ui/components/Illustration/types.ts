@@ -7,6 +7,7 @@ export type IllustrationName =
     | 'successOperation'
     | 'project'
     | 'notFound'
+    | 'notFoundError'
     | 'identity'
     | 'emptyDirectory'
     | 'badRequest';
