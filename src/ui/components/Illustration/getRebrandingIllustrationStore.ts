@@ -1,7 +1,7 @@
 export const getRebrandingIllustrationStore = () => ({
     light: {
         notFound: () => import('assets/images/new-illustrations/light/nothing_found.svg'),
-        notFoundError: () => import('assets/images/new-illustrations/dark/404.svg'),
+        notFoundError: () => import('assets/images/new-illustrations/light/404.svg'),
         noAccess: () => import('assets/images/new-illustrations/light/403.svg'),
         error: () => import('assets/images/new-illustrations/light/500.svg'),
         identity: () => import('assets/images/new-illustrations/light/no_permission.svg'),
@@ -23,6 +23,6 @@ export const getRebrandingIllustrationStore = () => ({
         emptyDirectory: () => import('assets/images/new-illustrations/dark/empty_directory.svg'),
         successOperation: () =>
             import('assets/images/new-illustrations/dark/success_operation.svg'),
-        badRequest: () => import('assets/images/new-illustrations/light/bad_request.svg'),
+        badRequest: () => import('assets/images/new-illustrations/dark/bad_request.svg'),
     },
 });
