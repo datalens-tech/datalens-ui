@@ -13,7 +13,7 @@ dotenv.config({path: ROOT_ENV_PATH});
 
 let maxWorkers = process.env.E2E_MAX_WORKERS
     ? parseInt(process.env.E2E_MAX_WORKERS, 10)
-    : os.cpus().length.toString();
+    : os.cpus().length;
 
 if (process.env.CI === 'true' && !process.env.E2E_MAX_WORKERS) {
     maxWorkers = 6;
