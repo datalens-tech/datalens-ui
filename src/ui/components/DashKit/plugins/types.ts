@@ -26,6 +26,7 @@ export type DashkitMetaDataItemBase = {
     isWizard?: boolean;
     isEditor?: boolean;
     isQL?: boolean;
+    getLoadedData?: () => unknown;
 };
 
 export type DatasetsData = {

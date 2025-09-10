@@ -168,6 +168,7 @@ export const getWidgetMeta = ({
             isWizard: Boolean(loadedData?.isNewWizard || loadedData?.isOldWizard),
             isEditor: Boolean(loadedData?.isEditor),
             isQL: Boolean(loadedData?.isQL),
+            getLoadedData: () => loadedData,
         };
 
         return metaInfo;
@@ -219,6 +220,7 @@ export const getWidgetSelectorMeta = ({
             type: (loadedData?.type as DashTabItemType) || null,
             visualizationType: null,
             loadError: loadedWithError,
+            getLoadedData: () => loadedData,
         };
 
     return metaInfo;
