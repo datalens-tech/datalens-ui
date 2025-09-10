@@ -30,9 +30,11 @@ function configureStore(services: unknown = {}) {
         }
     }
 
+    middlewares.forEach((mw) => reducerRegistry.registerMiddleware(mw));
+
     const newStore = createStore(
         combineReducers(reducerRegistry.getReducers()),
-        composeEnhancers(applyMiddleware(...middlewares)),
+        composeEnhancers(applyMiddleware(reducerRegistry.getMiddlewares())),
     );
 
     reducerRegistry.setChangeListener(() => {
