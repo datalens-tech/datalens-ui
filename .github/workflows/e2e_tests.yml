@@ -45,12 +45,6 @@ jobs:
         run: echo ${{ github.event.inputs.distinct_id }}
 
       - uses: actions/checkout@v4
-      - uses: actions/cache@v3
-        with:
-          path: /var/cache/apt/archives
-          key: ${{ runner.os }}-apt-packages-${{ hashFiles('**/apt-packages.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-apt-packages-
       - uses: docker/setup-buildx-action@v3
       - uses: actions/setup-node@v3
         with:
@@ -103,13 +97,12 @@ jobs:
       - name: Up docker compose and install local deps for test
         if: ${{ env.UI_VERSION == '' }}
         run: |
-          npm run test:e2e:docker:up-no-build && npm ci && npm run test:install:chromium & wait
+          npm run test:e2e:docker:up-no-build && npm ci
         env:
           US_VERSION: ${{ env.US_VERSION }}
           AUTH_VERSION: ${{ env.AUTH_VERSION }}
           CONTROL_API_VERSION: ${{ env.CONTROL_API_VERSION }}
           DATA_API_VERSION: ${{ env.DATA_API_VERSION }}
-          PLAYWRIGHT_DOWNLOAD_HOST: https://storage.yandexcloud.net/playwright
 
       - name: Run tests local from repo
         if: ${{ env.UI_VERSION == '' }}
