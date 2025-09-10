@@ -110,7 +110,6 @@ interface DashkitWrapperProps extends DashKitProps {
     noOverlay?: boolean;
     // Extended Controls props
     skipReload?: boolean;
-    isNewRelations?: boolean;
     hideErrorDetails?: boolean;
     selectorsGroupTitlePlaceholder?: string;
     // Extended headers context for widgets
