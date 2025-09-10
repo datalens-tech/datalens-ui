@@ -1,10 +1,5 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
-import type {
-    ApiServiceActionConfig,
-    // ApiServiceMixedActionConfig,
-    // ApiServiceRestActionConfig,
-    GetAuthHeaders,
-} from '@gravity-ui/gateway';
+import type {ApiServiceActionConfig, GetAuthHeaders} from '@gravity-ui/gateway';
 import type {AppContext} from '@gravity-ui/nodekit';
 import type z from 'zod/v4';
 
