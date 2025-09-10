@@ -35,14 +35,14 @@ if [ ! -z "${TRACKER_TICKET}" ]; then
   HASH_SYMBOL='#'
   TICKET_COMMENT_ID=$(curl -q -s \
     -H "Authorization:OAuth ${ST_OAUTH_TOKEN}" \
-    "${ST_SERVER_ENDPOINT}/v2/issues/${TRACKER_TICKET}/comments?perPage=100" | jq -c 'map({"id":.id,"text":.text}) | .[]' | { grep -F "/farm [${HASH_SYMBOL}${BUILD_PR_NUMBER}]" || true; } | jq -r '.id' 2>/dev/null)
+    "${ST_SERVER_ENDPOINT}/v2/issues/${TRACKER_TICKET}/comments?perPage=100" | jq -c 'map({"id":.id,"text":.text}) | .[]' | { grep -F "/farm [PR ${HASH_SYMBOL}${BUILD_PR_NUMBER}]" || true; } | jq -r '.id' 2>/dev/null)
 
   if [ ! -z "${TICKET_COMMENT_ID}" ]; then
     echo "❎ ticket farm link comment already exists..."
     exit 0
   fi
 
-  COMMENT_BODY="/farm [#${BUILD_PR_NUMBER}](https://github.com/${GH_REPO}/pull/${BUILD_PR_NUMBER})\n\n${COMMENT_PREFIX}\n\n${COMMENT_MESSAGE}: [${BRANCH_NAME_LOWER}](${FARM_URL})"
+  COMMENT_BODY="/farm [PR ${HASH_SYMBOL}${BUILD_PR_NUMBER}](https://github.com/${GH_REPO}/pull/${BUILD_PR_NUMBER})\n\n${COMMENT_PREFIX}\n\n${COMMENT_MESSAGE}: [${BRANCH_NAME_LOWER}](${FARM_URL})"
 
   RESULT=$(curl -q -s -X POST -H "Authorization:OAuth ${ST_OAUTH_TOKEN}" -H "content-type: application/json" \
     --data "{\"text\":\"${COMMENT_BODY}\"}" \
