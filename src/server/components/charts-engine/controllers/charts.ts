@@ -122,7 +122,9 @@ export const prepareCreateParams = async (
         scope: 'widget',
         headers: getHeaders(req),
         includePermissionsInfo: true,
-        annotation: annotation ? annotation : {description},
+        annotation: {
+            description: annotation?.description ?? description,
+        },
     };
 
     if (links) {
@@ -217,7 +219,9 @@ export const chartsController = (_chartsEngine: ChartsEngine) => {
                 type,
                 data: chart,
                 headers: getHeaders(req),
-                annotation: annotation ? annotation : {description},
+                annotation: {
+                    description: annotation?.description ?? description,
+                },
             };
 
             if (links) {
