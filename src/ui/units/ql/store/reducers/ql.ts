@@ -167,13 +167,14 @@ export const getRedirectUrl = (state: DatalensGlobalState) => state.ql.redirectU
 export const getCurrentSchemeId = (state: DatalensGlobalState) => state.ql.grid.scheme;
 
 export const getInitialDescription = (state: DatalensGlobalState) =>
-    state.ql.entry?.annotation?.description;
+    state.ql.entry?.annotation?.description ?? '';
 
-export const getDescription = (state: DatalensGlobalState) => state.ql.annotation?.description;
+export const getDescription = (state: DatalensGlobalState) =>
+    state.ql.annotation?.description ?? '';
 
 export const getIsDescriptionChanged = createSelector(
     [getInitialDescription, getDescription],
-    (initialDescription = '', description = '') => initialDescription !== description,
+    (initialDescription, description) => initialDescription !== description,
 );
 
 export const getGridSchemes = createSelector(

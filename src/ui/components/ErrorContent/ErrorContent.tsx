@@ -286,7 +286,7 @@ class ErrorContent extends React.PureComponent<ErrorContentProps> {
             case ErrorContentTypes.NOT_FOUND:
             case ErrorContentTypes.NOT_FOUND_CURRENT_CLOUD_FOLDER:
             case ErrorContentTypes.NOT_FOUND_BY_RESOLVE_TENANT:
-                imageName = 'notFound';
+                imageName = 'notFoundError';
                 break;
             case ErrorContentTypes.NO_ACCESS:
             case ErrorContentTypes.CLOUD_FOLDER_ACCESS_DENIED:
