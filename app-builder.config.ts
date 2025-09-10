@@ -79,7 +79,6 @@ const config: ServiceConfig = {
             'highlight.js': false,
             buffer: false,
         },
-        javaScriptLoader: 'swc',
         ...(devClientPort
             ? {
                   devServer: {
