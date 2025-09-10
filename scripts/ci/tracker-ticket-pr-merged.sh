@@ -72,14 +72,14 @@ if [ ! -z "${TRACKER_TICKET}" ]; then
   HASH_SYMBOL='#'
   TICKET_COMMENT_ID=$(curl -q -s \
     -H "Authorization:OAuth ${ST_OAUTH_TOKEN}" \
-    "${ST_SERVER_ENDPOINT}/v2/issues/${TRACKER_TICKET}/comments?perPage=100" | jq -c 'map({"id":.id,"text":.text}) | .[]' | { grep -F "/merged [${HASH_SYMBOL}${RELEASE_PR_NUMBER}]" || true; } | jq -r '.id' 2>/dev/null)
+    "${ST_SERVER_ENDPOINT}/v2/issues/${TRACKER_TICKET}/comments?perPage=100" | jq -c 'map({"id":.id,"text":.text}) | .[]' | { grep -F "/merged [PR ${HASH_SYMBOL}${RELEASE_PR_NUMBER}]" || true; } | jq -r '.id' 2>/dev/null)
 
   if [ ! -z "${TICKET_COMMENT_ID}" ]; then
     echo "❎ ticket merged comment already exists..."
     exit 0
   fi
 
-  COMMENT_BODY="/merged [#${RELEASE_PR_NUMBER}](https://github.com/${GH_REPO}/pull/${RELEASE_PR_NUMBER})\n\n${COMMENT_MESSAGE}: [v${RELEASE_NUMBER}](https://github.com/${GH_REPO}/releases/tag/v${RELEASE_NUMBER})"
+  COMMENT_BODY="/merged [PR ${HASH_SYMBOL}${RELEASE_PR_NUMBER}](https://github.com/${GH_REPO}/pull/${RELEASE_PR_NUMBER})\n\n${COMMENT_MESSAGE}: [v${RELEASE_NUMBER}](https://github.com/${GH_REPO}/releases/tag/v${RELEASE_NUMBER})"
 
   RESULT=$(curl -q -s -X POST -H "Authorization:OAuth ${ST_OAUTH_TOKEN}" -H "content-type: application/json" \
     --data "{\"text\":\"${COMMENT_BODY}\"}" \
