@@ -10,6 +10,7 @@ import {PUBLIC_API_RPC_ERROR_CODE} from '../constants/public-api';
 import {registry} from '../registry';
 import type {AnyApiServiceActionConfig, DatalensGatewaySchemas} from '../types/gateway';
 import Utils from '../utils';
+import {isGatewayError} from '../utils/gateway';
 
 const handleError = (
     req: Request,
@@ -107,13 +108,15 @@ export const createPublicApiController = () => {
             const gatewayActionConfig = actionToConfigMap.get(gatewayAction);
 
             if (!gatewayActionConfig) {
-                return boundHandler(500, 'Action not found');
+                req.ctx.logError(`Couldn't find action config in actionToConfigMap`);
+                return boundHandler(500, 'Unknown error');
             }
 
             const validationSchema = getValidationSchema(gatewayActionConfig);
 
             if (!validationSchema) {
-                return boundHandler(500, 'Validation schema not found');
+                req.ctx.logError(`Couldn't find action validation schema`);
+                return boundHandler(500, 'Unknown error');
             }
 
             const {paramsSchema} = validationSchema;
@@ -128,10 +131,9 @@ export const createPublicApiController = () => {
             });
 
             res.status(200).send(result.responseData);
-        } catch (err) {
-            const {error} = err as any;
-            if (error) {
-                res.status(typeof error.status === 'number' ? error.status : 500).send(error);
+        } catch (err: unknown) {
+            if (isGatewayError(err)) {
+                return boundHandler(500, 'Gateway error');
             } else {
                 return boundHandler(500, 'Unknown error');
             }
