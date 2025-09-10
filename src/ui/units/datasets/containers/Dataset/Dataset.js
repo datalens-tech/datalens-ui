@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {dateTimeUtc} from '@gravity-ui/date-utils';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import omit from 'lodash/omit';
@@ -52,6 +53,8 @@ import DatasetPanel from '../../components/DatasetPanel/DatasetPanel';
 import DialogCreateDataset from '../../components/DialogCreateDataset/DialogCreateDataset';
 import {
     DATASETS_EDIT_HISTORY_UNIT_ID,
+    DATASET_DATE_AVAILABLE_FORMAT,
+    MIN_AVAILABLE_DATASET_REV_DATE,
     TAB_DATASET,
     TAB_SOURCES,
     VIEW_PREVIEW,
@@ -91,6 +94,7 @@ import './Dataset.scss';
 const b = block('dataset');
 const i18n = I18n.keyset('dataset.dataset-editor.modify');
 const i18nError = I18n.keyset('component.view-error.view');
+const i18nActionPanel = I18n.keyset('component.action-panel.view');
 const RIGHT_PREVIEW_PANEL_MIN_SIZE = 500;
 const BOTTOM_PREVIEW_PANEL_MIN_SIZE = 48;
 const BOTTOM_PREVIEW_PANEL_DEFAULT_SIZE = 200;
@@ -554,12 +558,31 @@ class Dataset extends React.Component {
             ? this.setActualVersionHandler.bind(this)
             : undefined;
 
+        const DATASET_DISABLED_DATE = dateTimeUtc({input: MIN_AVAILABLE_DATASET_REV_DATE});
+        const formattedMinDatasetDate = DATASET_DISABLED_DATE?.format(
+            DATASET_DATE_AVAILABLE_FORMAT,
+        );
+        const description = `${i18nActionPanel('label_history-changes-date-limit-dataset')} ${formattedMinDatasetDate ?? ''}`;
+
+        const getRevisionRowExtendedProps = (item) => {
+            const updatedTime = dateTimeUtc({input: item.updatedAt});
+            const disabled =
+                (updatedTime?.isValid() && updatedTime?.isBefore(DATASET_DISABLED_DATE)) ?? false;
+            const disabledText = disabled ? i18n('label_status-tooltip-disable') : '';
+            return {
+                disabled,
+                disabledText,
+            };
+        };
+
         return (
             <React.Fragment>
                 <ActionPanel
                     entry={this.getEntry()}
                     rightItems={this.getRightItems()}
                     setActualVersion={setActualVersionHandler}
+                    expandablePanelDescription={description}
+                    getRevisionRowExtendedProps={getRevisionRowExtendedProps}
                 />
                 <DatasetPanel
                     isCreationProcess={this.props.isCreationProcess}

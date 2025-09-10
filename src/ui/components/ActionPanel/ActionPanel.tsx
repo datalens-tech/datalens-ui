@@ -1,6 +1,5 @@
 import React from 'react';
 
-import {dateTimeParse} from '@gravity-ui/date-utils';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {connect} from 'react-redux';
@@ -8,7 +7,7 @@ import type {RouteComponentProps} from 'react-router-dom';
 import {withRouter} from 'react-router-dom';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
-import {ActionPanelQA, EntryScope, Feature} from 'shared';
+import {ActionPanelQA, Feature} from 'shared';
 import {
     cleanRevisions,
     fetchEntryById,
@@ -30,7 +29,7 @@ import {getSdk} from '../../libs/schematic-sdk';
 import type {EntryContextMenuItems} from '../EntryContextMenu/helpers';
 import ExpandablePanel from '../ExpandablePanel/ExpandablePanel';
 import Revisions from '../Revisions/Revisions';
-import {DATASET_DATE_AVAILABLE_FORMAT, MIN_AVAILABLE_DATASET_REV_DATE} from '../Revisions/helpers';
+import type {GetRevisionRowExtendedProps} from '../Revisions/types';
 import RevisionsPanel from '../RevisionsPanel/RevisionsPanel';
 
 import EntryPanel from './components/EntryPanel/EntryPanel';
@@ -60,6 +59,8 @@ type OwnProps = {
     renderRevisionItemActions?: (item: GetRevisionsEntry, currentRevId: string) => React.ReactNode;
     wrapperRef?: React.Ref<HTMLDivElement> | React.RefCallback<HTMLDivElement>;
     style?: React.CSSProperties;
+    expandablePanelDescription?: string;
+    getRevisionRowExtendedProps?: GetRevisionRowExtendedProps;
 };
 
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
@@ -159,22 +160,19 @@ class ActionPanel extends React.Component<Props, State> {
             renderRevisionItemActions,
             wrapperRef,
             style: externalStyle,
+            expandablePanelDescription,
+            getRevisionRowExtendedProps,
         } = this.props;
 
         const style: React.CSSProperties = {left: sidebarSize, ...externalStyle};
 
         const entry = this.getEntry();
-        const formattedMinDatasetDate =
-            dateTimeParse(MIN_AVAILABLE_DATASET_REV_DATE)?.format(DATASET_DATE_AVAILABLE_FORMAT) ??
-            MIN_AVAILABLE_DATASET_REV_DATE;
-        const datasetDescription =
-            entry?.scope === EntryScope.Dataset
-                ? `${i18n('label_history-changes-date-limit-dataset')} ${formattedMinDatasetDate}`
-                : undefined;
 
-        const description = isEnabledFeature(Feature.RevisionsListNoLimit)
-            ? datasetDescription
+        const revisionsListDescription = isEnabledFeature(Feature.RevisionsListNoLimit)
+            ? undefined
             : i18n('label_history-changes-date-limit');
+
+        const description = expandablePanelDescription ?? revisionsListDescription;
 
         return (
             <div className={b()} ref={wrapperRef}>
@@ -217,7 +215,10 @@ class ActionPanel extends React.Component<Props, State> {
                             active={isRevisionsOpened || false}
                             onClose={this.handleExpandablePanelClose}
                         >
-                            <Revisions renderItemActions={renderRevisionItemActions} />
+                            <Revisions
+                                getRevisionRowExtendedProps={getRevisionRowExtendedProps}
+                                renderItemActions={renderRevisionItemActions}
+                            />
                         </ExpandablePanel>
                     </React.Fragment>
                 )}

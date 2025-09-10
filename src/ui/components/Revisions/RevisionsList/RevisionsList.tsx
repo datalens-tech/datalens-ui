@@ -3,8 +3,6 @@ import React from 'react';
 import {dateTimeParse} from '@gravity-ui/date-utils';
 import {ActionTooltip, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {I18n} from 'i18n';
-import {EntryScope} from 'shared';
 import {RevisionsListQa} from 'shared/constants/qa';
 import {RevisionStatusPoint} from 'ui/components/RevisionStatusPoint/RevisionStatusPoint';
 import {registry} from 'ui/registry';
@@ -16,17 +14,14 @@ import {
 } from 'ui/utils/revisions';
 
 import type {GetRevisionsEntry} from '../../../../shared/schema';
-import {MIN_AVAILABLE_DATASET_REV_DATE, prepareRevisionListItems} from '../helpers';
-import type {RevisionsListItems} from '../types';
+import {prepareRevisionListItems} from '../helpers';
+import type {GetRevisionRowExtendedProps, RevisionsListItems} from '../types';
 
 import './RevisionsList.scss';
 
 const DATE_FORMAT = 'DD MMMM YYYY';
 const TIME_FORMAT = 'H:mm:ss';
 const TOOLTIP_DELAY_CLOSING = 100;
-const DATASET_DISABLED_DATE = dateTimeParse(MIN_AVAILABLE_DATASET_REV_DATE);
-
-const i18n = I18n.keyset('component.dialog-revisions.view');
 
 const b = block('revisions-list');
 
@@ -35,8 +30,7 @@ export type RevisionRowProps = {
     onItemClick: (param: string) => void;
     currentRevId: string;
     renderItemActions?: (item: GetRevisionsEntry, currentRevId: string) => React.ReactNode;
-    disabled?: boolean;
-    disabledText?: string;
+    getRevisionRowExtendedProps?: GetRevisionRowExtendedProps;
 };
 
 const RevisionRow: React.FC<RevisionRowProps> = ({
@@ -44,8 +38,7 @@ const RevisionRow: React.FC<RevisionRowProps> = ({
     onItemClick,
     currentRevId,
     renderItemActions,
-    disabledText = '',
-    disabled = false,
+    getRevisionRowExtendedProps,
 }) => {
     const handlerClick = () => onItemClick(item.revId);
     const {updatedAt, updatedBy} = item;
@@ -58,6 +51,8 @@ const RevisionRow: React.FC<RevisionRowProps> = ({
     const customActions = renderItemActions?.(item, currentRevId);
 
     const revisionStatusKey = getRevisionStatusKey(item);
+
+    const {disabledText = '', disabled = false} = getRevisionRowExtendedProps?.(item) ?? {};
 
     return (
         <ActionTooltip title={disabledText} disabled={!disabledText || !disabled}>
@@ -104,7 +99,7 @@ type RevisionsListDayProps = {
     items: Array<GetRevisionsEntry>;
     onItemClick: (param: string) => void;
     currentRevId: string;
-
+    getRevisionRowExtendedProps?: GetRevisionRowExtendedProps;
     renderItemActions?: RevisionRowProps['renderItemActions'];
 };
 
@@ -114,31 +109,18 @@ const RevisionsListDay: React.FC<RevisionsListDayProps> = ({
     onItemClick,
     currentRevId,
     renderItemActions,
+    getRevisionRowExtendedProps,
 }) => {
-    const list = items.map((item) => {
-        let isDisable = false;
-        let disabledText = '';
-
-        if (item.scope === EntryScope.Dataset) {
-            const updatedTime = dateTimeParse(item.updatedAt);
-            isDisable =
-                (updatedTime?.isValid() && updatedTime?.isBefore(DATASET_DISABLED_DATE)) ?? false;
-            disabledText = i18n('label_status-tooltip-disable');
-        }
-
-        return (
-            <RevisionRow
-                item={item}
-                key={`rev-item-${date}-${item.revId}-${item.updatedAt}`}
-                onItemClick={onItemClick}
-                currentRevId={currentRevId}
-                renderItemActions={renderItemActions}
-                disabled={isDisable}
-                disabledText={disabledText}
-            />
-        );
-    });
-
+    const list = items.map((item) => (
+        <RevisionRow
+            item={item}
+            key={`rev-item-${date}-${item.revId}-${item.updatedAt}`}
+            onItemClick={onItemClick}
+            currentRevId={currentRevId}
+            renderItemActions={renderItemActions}
+            getRevisionRowExtendedProps={getRevisionRowExtendedProps}
+        />
+    ));
     return (
         <div className={b('block')}>
             <div className={b('label')}>{dateTimeParse(date)?.format(DATE_FORMAT) || date}</div>
@@ -156,6 +138,7 @@ type RevisionsListProps = {
     onItemClick: (param: string) => void;
     currentRevId: string;
     renderItemActions?: RevisionsListDayProps['renderItemActions'];
+    getRevisionRowExtendedProps?: GetRevisionRowExtendedProps;
 };
 
 export const RevisionsList: React.FC<RevisionsListProps> = ({
@@ -163,6 +146,7 @@ export const RevisionsList: React.FC<RevisionsListProps> = ({
     onItemClick,
     currentRevId,
     renderItemActions,
+    getRevisionRowExtendedProps,
 }) => {
     const preparedItems = React.useMemo(() => prepareRevisionListItems(items), [items]);
     const list = preparedItems.map((listItems, index) => (
@@ -173,6 +157,7 @@ export const RevisionsList: React.FC<RevisionsListProps> = ({
             onItemClick={onItemClick}
             currentRevId={currentRevId}
             renderItemActions={renderItemActions}
+            getRevisionRowExtendedProps={getRevisionRowExtendedProps}
         />
     ));
 
