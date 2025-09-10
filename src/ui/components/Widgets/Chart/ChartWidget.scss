@@ -43,21 +43,13 @@ $widgetBgColor: var(--g-color-base-float);
         align-items: center;
     }
 
-    &__chart-title-hint {
-        margin-left: $hintOffset;
-        display: inline-flex;
-
-        & > * {
-            display: inline-flex;
-        }
-    }
-
     // hide in sheet only
     .g-sheet__sheet &__chart-title-hint {
         display: none;
     }
 
     &__chart-title-hint-button {
+        margin-left: $hintOffset;
         display: inline-flex;
     }
 

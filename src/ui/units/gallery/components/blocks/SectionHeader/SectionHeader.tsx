@@ -15,9 +15,10 @@ interface SectionHeaderProps {
     title: string;
     category?: string;
     className?: string;
+    ariaLabel?: string;
 }
 
-export function SectionHeader({title, category, className}: SectionHeaderProps) {
+export function SectionHeader({title, category, className, ariaLabel}: SectionHeaderProps) {
     const {activeMediaQuery, isMediaActive} = useLayoutContext();
     const isMobileMediaQuery = !isMediaActive('m');
     const icon = isMobileMediaQuery ? <ChevronRight /> : <ArrowRight />;
@@ -34,10 +35,11 @@ export function SectionHeader({title, category, className}: SectionHeaderProps) 
             <RouterLink
                 className={b('router-link', {media: activeMediaQuery})}
                 to={getAllPageUrl({category})}
+                aria-label={ariaLabel}
             >
                 {title}
             </RouterLink>
-            <Button view="flat" size="l" onClick={handleClick}>
+            <Button view="flat" size="l" onClick={handleClick} aria-hidden>
                 <Button.Icon>{icon}</Button.Icon>
             </Button>
         </Flex>

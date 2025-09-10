@@ -241,6 +241,7 @@ export function AllPage() {
                     <Col size={12}>
                         <PageHeader
                             activeMediaQuery={activeMediaQuery}
+                            ariaLabel={i18n('button_back-to-main')}
                             title={i18n('title_all_entries')}
                             to={UNIT_ROUTE.ROOT}
                         />

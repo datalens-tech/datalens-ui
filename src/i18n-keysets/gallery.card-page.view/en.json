@@ -1,12 +1,18 @@
 {
+  "button_back-to-list": "Перейти к списку Datalens Public Gallery",
   "button_collapse": "Collapse",
   "button_contact_partner": "Contact the author",
+  "button_copy-link-label": "Скопировать ссылку на карточку галереи",
   "button_download": "Download",
+  "button_download-label": "Скачать файл для импорта",
   "button_import": "Deploy",
+  "button_import-label": "Развернуть копию воркбука",
   "button_open": "Open",
+  "button_preview-label": "Открыть предпросмотр",
   "button_retry": "Try reloading",
   "button_show_full": "Show full",
   "button_use": "Use",
+  "button_use-label": "Открыть меню использовать",
   "section_other_works": "Other creations",
   "text_download-desctiption": "Get import file",
   "text_import-desctiption": "Create copy of workbook"
