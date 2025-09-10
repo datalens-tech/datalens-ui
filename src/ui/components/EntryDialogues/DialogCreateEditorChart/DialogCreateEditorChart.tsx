@@ -21,8 +21,6 @@ export interface DialogCreateEditorChartProps extends EntryDialogProps {
     data?: Record<string, any>;
     initName?: string;
     workbookId?: string;
-    // TODO: remove after platform update
-    description?: string;
     annotation?: EntryAnnotationArgs;
 }
 
@@ -72,23 +70,24 @@ class DialogCreateEditorChart extends React.Component<Props> {
     }
 
     private onApply = async (key: string) => {
-        const {data, type, annotation, description = ''} = this.props;
+        const {data, type, annotation} = this.props;
         return getSdk().sdk.mix.createEditorChart({
             key,
             data: data || {},
             type,
-            annotation: annotation ? annotation : {description},
+            annotation,
         });
     };
 
     private onWorkbookApply = ({name}: {name: string}) => {
-        const {workbookId, annotation, description = ''} = this.props;
+        const {workbookId, annotation} = this.props;
+
         return getSdk().sdk.mix.createEditorChart({
             name,
             workbookId: workbookId as string,
             data: this.props.data || {},
             type: this.props.type,
-            annotation: annotation ? annotation : {description},
+            annotation,
         });
     };
 

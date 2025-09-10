@@ -333,7 +333,9 @@ class Wizard extends React.Component<Props, State> {
                 initName,
                 initDestination: path,
                 workbookId: widget.workbookId,
-                description,
+                annotation: {
+                    description,
+                },
             },
         });
 
@@ -367,7 +369,7 @@ class Wizard extends React.Component<Props, State> {
                 entry: widget,
                 config: configForSaving,
                 mode,
-                description,
+                annotation: {description},
             });
 
             this.props.updateClientChartsConfig({
