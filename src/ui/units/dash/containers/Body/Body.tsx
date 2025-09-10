@@ -277,8 +277,10 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         } catch (error) {
             const details = error?.details?.details;
             const isStateLimitError = details?.some(
-                ({params, path}: {path?: string; params?: {code?: string}}) =>
-                    path?.includes('data') && params?.code?.includes('OBJECT_SIZE_LIMIT_EXCEEDED'),
+                ({params, path}: {path?: string[]; params?: {code?: string}}) =>
+                    path?.length === 1 &&
+                    path[0] === 'data' &&
+                    params?.code === 'OBJECT_SIZE_LIMIT_EXCEEDED',
             );
 
             const title = isStateLimitError
