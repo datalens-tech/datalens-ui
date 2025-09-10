@@ -2,6 +2,8 @@ import type {DashTabItemControlSourceType, DashTabItemType, StringParams} from '
 
 import type {DASH_WIDGET_TYPES} from '../../../units/dash/modules/constants';
 
+import type {WidgetLoadedData} from './../../Widgets/Chart/helpers/helpers';
+
 export type DashkitMetaDataItemBase = {
     layoutId: string;
     widgetId: string;
@@ -26,7 +28,7 @@ export type DashkitMetaDataItemBase = {
     isWizard?: boolean;
     isEditor?: boolean;
     isQL?: boolean;
-    getLoadedData?: () => unknown;
+    getLoadedData?: () => WidgetLoadedData;
 };
 
 export type DatasetsData = {

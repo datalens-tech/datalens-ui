@@ -75,6 +75,16 @@ const ALLOWED_ERRORS = [
     ERROR_CODE.UI_SANDBOX_EXECUTION_TIMEOUT,
 ];
 
+export type WidgetLoadedData =
+    | (Omit<
+          Partial<DashkitMetaDataItemBase> & Widget & ChartsData,
+          'type' | 'usedParams' | 'defaultParams'
+      > & {
+          type: ChartContentProps['widgetType'];
+          usedParams: ChartsData['usedParams'];
+      })
+    | null;
+
 /**
  * We get duplicated from api, need to clear it to prevent problems with doubles
  * (in ex. in dash relations)
@@ -120,15 +130,7 @@ export const getWidgetMeta = ({
     error: CombinedError | null;
 }) => {
     return tabs.map((tabWidget) => {
-        let loadedData:
-            | (Omit<
-                  Partial<DashkitMetaDataItemBase> & Widget & ChartsData,
-                  'type' | 'usedParams' | 'defaultParams'
-              > & {
-                  type: ChartContentProps['widgetType'];
-                  usedParams: ChartsData['usedParams'];
-              })
-            | null = null;
+        let loadedData: WidgetLoadedData = null;
         if (loadData?.entryId === tabWidget.chartId) {
             loadedData = loadData;
         } else if (savedData?.entryId === tabWidget.chartId) {
