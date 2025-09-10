@@ -10,7 +10,8 @@ export type IllustrationName =
     | 'notFoundError'
     | 'identity'
     | 'emptyDirectory'
-    | 'badRequest';
+    | 'badRequest'
+    | 'noAccounts';
 
 export type IllustrationProps = {
     name: IllustrationName;

@@ -1,14 +1,9 @@
-name: Tracker ticket link
+name: Tracker ticket PR merged
 
 on:
-  pull_request:
-    types:
-      - opened
-      - edited
-      - reopened
-      - synchronize
-    branches-ignore:
-      - 'weblate-**'
+  push:
+    branches:
+      - 'release-**'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -16,19 +11,18 @@ concurrency:
 
 jobs:
   run:
-    name: tracker-ticket-link
+    name: tracker-ticket-pr-merged
     runs-on:
       - self-hosted
       - linux
       - qyp
     steps:
       - uses: actions/checkout@v4
-      - name: link ticket
-        run: scripts/ci/tracker-ticket-link.sh
+      - name: pr merged ticket status
+        run: scripts/ci/tracker-ticket-pr-merged.sh
         env:
           ST_OAUTH_TOKEN: ${{ secrets.ST_OAUTH_TOKEN }}
           ST_SERVER_ENDPOINT: ${{ vars.ST_SERVER_ENDPOINT }}
           BRANCH_NAME: ${{ github.head_ref }}
-          BUILD_PR_NUMBER: ${{ github.event.pull_request.number }}
-          PR_BODY: ${{ github.event.pull_request.body }}
           GH_REPO: ${{ github.repository }}
+          COMMENT_MESSAGE: ${{ vars.COMMENT_MESSAGE_PR_MERGED }}

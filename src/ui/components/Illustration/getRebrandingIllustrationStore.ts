@@ -11,6 +11,7 @@ export const getRebrandingIllustrationStore = () => ({
         successOperation: () =>
             import('assets/images/new-illustrations/light/success_operation.svg'),
         badRequest: () => import('assets/images/new-illustrations/light/bad_request.svg'),
+        noAccounts: () => import('assets/images/new-illustrations/light/no_accounts.svg'),
     },
     dark: {
         notFound: () => import('assets/images/new-illustrations/dark/nothing_found.svg'),
@@ -24,5 +25,6 @@ export const getRebrandingIllustrationStore = () => ({
         successOperation: () =>
             import('assets/images/new-illustrations/dark/success_operation.svg'),
         badRequest: () => import('assets/images/new-illustrations/dark/bad_request.svg'),
+        noAccounts: () => import('assets/images/new-illustrations/dark/no_accounts.svg'),
     },
 });
