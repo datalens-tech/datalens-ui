@@ -27,7 +27,8 @@ const wizardUsSchema = z.object({
 });
 
 export const wizardActions = {
-    getWizardChartApi: createTypedAction(
+    // WIP
+    getWizardChart: createTypedAction(
         {
             paramsSchema: z.object({
                 chardId: z.string(),
@@ -53,7 +54,8 @@ export const wizardActions = {
             return result as any;
         },
     ),
-    createWizardChartApi: createTypedAction(
+    // WIP
+    createWizardChart: createTypedAction(
         {
             paramsSchema: z.object({
                 entryId: z.string(),
@@ -81,7 +83,8 @@ export const wizardActions = {
             return result as any;
         },
     ),
-    updateWizardChartApi: createTypedAction(
+    // WIP
+    updateWizardChart: createTypedAction(
         {
             paramsSchema: z.object({
                 entryId: z.string(),
@@ -105,7 +108,8 @@ export const wizardActions = {
             return result as any;
         },
     ),
-    deleteWizardChartApi: createTypedAction(
+    // WIP
+    deleteWizardChart: createTypedAction(
         {
             paramsSchema: z.object({
                 chartId: z.string(),

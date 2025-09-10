@@ -61,7 +61,8 @@ const dashUsUpdateSchema = z.object({
 });
 
 export const dashActions = {
-    getDashboardApi: createTypedAction(
+    // WIP
+    getDashboard: createTypedAction(
         {
             paramsSchema: z.object({
                 dashboardId: z.string(),
@@ -99,7 +100,8 @@ export const dashActions = {
             return pick(result, DASH_ENTRY_RELEVANT_FIELDS) as any;
         },
     ),
-    deleteDashboardApi: createTypedAction(
+    // WIP
+    deleteDashboard: createTypedAction(
         {
             paramsSchema: z.object({
                 dashboardId: z.string(),
@@ -116,7 +118,8 @@ export const dashActions = {
             });
         },
     ),
-    updateDashboardApi: createTypedAction(
+    // WIP
+    updateDashboard: createTypedAction(
         {
             paramsSchema: dashUsUpdateSchema,
             resultSchema: dashUsSchema,
@@ -131,7 +134,8 @@ export const dashActions = {
             })) as unknown as z.infer<typeof dashUsSchema>;
         },
     ),
-    createDashboardApi: createTypedAction(
+    // WIP
+    createDashboard: createTypedAction(
         {
             paramsSchema: dashUsCreateSchema,
             resultSchema: dashUsSchema,

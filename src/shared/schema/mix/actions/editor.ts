@@ -48,7 +48,8 @@ const editorUsSchema = z.object({
 });
 
 export const editorActions = {
-    getEditorChartApi: createTypedAction(
+    // WIP
+    getEditorChart: createTypedAction(
         {
             paramsSchema: z.object({
                 chardId: z.string(),
@@ -108,7 +109,8 @@ export const editorActions = {
             }
         },
     ),
-    deleteEditorChartApi: createTypedAction(
+    // WIP
+    deleteEditorChart: createTypedAction(
         {
             paramsSchema: z.object({
                 chartId: z.string(),

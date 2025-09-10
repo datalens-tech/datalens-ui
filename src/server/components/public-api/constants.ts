@@ -108,28 +108,28 @@ export const PUBLIC_API_PROXY_MAP = {
         },
         // wizard
         getWizardChart: {
-            resolve: (api) => api.mix.getWizardChartApi,
+            resolve: (api) => api.mix.getWizardChart,
             openApi: {
                 summary: 'Get wizard chart',
                 tags: [ApiTag.Wizard],
             },
         },
         updateWizardChart: {
-            resolve: (api) => api.mix.updateWizardChartApi,
+            resolve: (api) => api.mix.updateWizardChart,
             openApi: {
                 summary: 'Update wizard chart',
                 tags: [ApiTag.Wizard],
             },
         },
         createWizardChart: {
-            resolve: (api) => api.mix.createWizardChartApi,
+            resolve: (api) => api.mix.createWizardChart,
             openApi: {
                 summary: 'Create wizard chart',
                 tags: [ApiTag.Wizard],
             },
         },
         deleteWizardChart: {
-            resolve: (api) => api.mix.deleteWizardChartApi,
+            resolve: (api) => api.mix.deleteWizardChart,
             openApi: {
                 summary: 'Delete wizard chart',
                 tags: [ApiTag.Wizard],
@@ -137,7 +137,7 @@ export const PUBLIC_API_PROXY_MAP = {
         },
         // editor
         getEditorChart: {
-            resolve: (api) => api.mix.getEditorChartApi,
+            resolve: (api) => api.mix.getEditorChart,
             openApi: {
                 summary: 'Get editor chart',
                 tags: [ApiTag.Editor],
@@ -158,7 +158,7 @@ export const PUBLIC_API_PROXY_MAP = {
         //     },
         // },
         deleteEditorChart: {
-            resolve: (api) => api.mix.deleteEditorChartApi,
+            resolve: (api) => api.mix.deleteEditorChart,
             openApi: {
                 summary: 'Delete editor chart',
                 tags: [ApiTag.Editor],
@@ -166,28 +166,28 @@ export const PUBLIC_API_PROXY_MAP = {
         },
         // Dash
         getDashboard: {
-            resolve: (api) => api.mix.getDashboardApi,
+            resolve: (api) => api.mix.getDashboard,
             openApi: {
                 summary: 'Get dashboard',
                 tags: [ApiTag.Dashboard],
             },
         },
         updateDashboard: {
-            resolve: (api) => api.mix.updateDashboardApi,
+            resolve: (api) => api.mix.updateDashboard,
             openApi: {
                 summary: 'Delete dashboard',
                 tags: [ApiTag.Dashboard],
             },
         },
         createDashboard: {
-            resolve: (api) => api.mix.createDashboardApi,
+            resolve: (api) => api.mix.createDashboard,
             openApi: {
                 summary: 'Create dashboard',
                 tags: [ApiTag.Dashboard],
             },
         },
         deleteDashboard: {
-            resolve: (api) => api.mix.deleteDashboardApi,
+            resolve: (api) => api.mix.deleteDashboard,
             openApi: {
                 summary: 'Delete dashboard',
                 tags: [ApiTag.Dashboard],
