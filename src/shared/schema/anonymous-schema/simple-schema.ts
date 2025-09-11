@@ -1,5 +1,1 @@
-import publicGallery from './public-gallery';
-
-export const anonymousSimpleSchema = {
-    publicGallery,
-};
+export const anonymousSimpleSchema = {};

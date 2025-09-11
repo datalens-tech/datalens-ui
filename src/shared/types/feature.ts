@@ -78,8 +78,6 @@ export enum Feature {
     EnableCustomDashMargins = 'EnableCustomDashMargins',
     /** Enabled Dash elements auto-focus */
     EnableDashAutoFocus = 'EnableDashAutoFocus',
-    /** Enable public gallery unit */
-    EnablePublicGallery = 'EnablePublicGallery',
     /** Enable new secure parameters behavior */
     EnableSecureParamsV2 = 'EnableSecureParamsV2',
     /** Enable export settings in connections & datasets */
