@@ -114,7 +114,7 @@ export const wizardActions = {
             paramsSchema: z.object({
                 chartId: z.string(),
             }),
-            resultSchema: z.any(),
+            resultSchema: z.object({}),
         },
         async (api, {chartId}) => {
             const typedApi = getTypedApi(api);
@@ -122,6 +122,8 @@ export const wizardActions = {
             await typedApi.us._deleteUSEntry({
                 entryId: chartId,
             });
+
+            return {};
         },
     ),
 };

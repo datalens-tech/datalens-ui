@@ -107,7 +107,7 @@ export const dashActions = {
                 dashboardId: z.string(),
                 lockToken: z.string().optional(),
             }),
-            resultSchema: z.any(),
+            resultSchema: z.object({}),
         },
         async (api, {lockToken, dashboardId}) => {
             const typedApi = getTypedApi(api);
@@ -116,6 +116,8 @@ export const dashActions = {
                 entryId: dashboardId,
                 lockToken,
             });
+
+            return {};
         },
     ),
     // WIP
