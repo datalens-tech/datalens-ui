@@ -78,16 +78,13 @@ export const setActualChart = <
             mode: EntryUpdateMode.Publish,
             entryId: entry.entryId,
             template,
+            annotation: {
+                description: annotation?.description ?? '',
+            },
         };
 
         if (isDraftEntry) {
             updateParams.revId = entry.revId;
-        }
-
-        if (typeof annotation?.description === 'string') {
-            updateParams.annotation = {
-                description: annotation.description,
-            };
         }
 
         try {

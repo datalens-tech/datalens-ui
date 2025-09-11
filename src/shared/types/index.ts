@@ -24,7 +24,6 @@ export * from './chartkit/table';
 export * from './config/ql';
 export * from './typed-query-api';
 export * from './permissions';
-export * from './public-gallery';
 
 // TODO: will be removed in CHARTS-10240
 export type GoogleOAuthClient = any;
