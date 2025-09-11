@@ -28,7 +28,7 @@ const wizardUsSchema = z.object({
 
 export const wizardActions = {
     // WIP
-    getWizardChart: createTypedAction(
+    __getWizardChart__: createTypedAction(
         {
             paramsSchema: z.object({
                 chardId: z.string(),
@@ -55,7 +55,7 @@ export const wizardActions = {
         },
     ),
     // WIP
-    createWizardChart: createTypedAction(
+    __createWizardChart__: createTypedAction(
         {
             paramsSchema: z.object({
                 entryId: z.string(),
@@ -84,7 +84,7 @@ export const wizardActions = {
         },
     ),
     // WIP
-    updateWizardChart: createTypedAction(
+    __updateWizardChart__: createTypedAction(
         {
             paramsSchema: z.object({
                 entryId: z.string(),
@@ -109,7 +109,7 @@ export const wizardActions = {
         },
     ),
     // WIP
-    deleteWizardChart: createTypedAction(
+    __deleteWizardChart__: createTypedAction(
         {
             paramsSchema: z.object({
                 chartId: z.string(),

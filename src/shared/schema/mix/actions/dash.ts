@@ -62,7 +62,7 @@ const dashUsUpdateSchema = z.object({
 
 export const dashActions = {
     // WIP
-    getDashboard: createTypedAction(
+    __getDashboard__: createTypedAction(
         {
             paramsSchema: z.object({
                 dashboardId: z.string(),
@@ -101,7 +101,7 @@ export const dashActions = {
         },
     ),
     // WIP
-    deleteDashboard: createTypedAction(
+    __deleteDashboard__: createTypedAction(
         {
             paramsSchema: z.object({
                 dashboardId: z.string(),
@@ -119,7 +119,7 @@ export const dashActions = {
         },
     ),
     // WIP
-    updateDashboard: createTypedAction(
+    __updateDashboard__: createTypedAction(
         {
             paramsSchema: dashUsUpdateSchema,
             resultSchema: dashUsSchema,
@@ -135,7 +135,7 @@ export const dashActions = {
         },
     ),
     // WIP
-    createDashboard: createTypedAction(
+    __createDashboard__: createTypedAction(
         {
             paramsSchema: dashUsCreateSchema,
             resultSchema: dashUsSchema,

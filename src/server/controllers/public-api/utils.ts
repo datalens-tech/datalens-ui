@@ -70,6 +70,14 @@ export const prepareError = (
 
             return {status, message, code, details};
         }
+
+        if (originalError instanceof AppError) {
+            const message = originalError.message;
+            const code = originalError.code ? String(originalError.code) : undefined;
+            const details = originalError.details;
+
+            return {status: 500, message, code, details};
+        }
     }
 
     return {
