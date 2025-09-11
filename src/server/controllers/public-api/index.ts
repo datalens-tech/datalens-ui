@@ -1,46 +1,15 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
 import {AppError, REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 import _ from 'lodash';
-import type z from 'zod/v4';
-import {ZodError} from 'zod/v4';
 
-import {getValidationSchema} from '../../shared/schema/gateway-utils';
-import {registerActionToOpenApi} from '../components/public-api';
-import {PUBLIC_API_RPC_ERROR_CODE} from '../constants/public-api';
-import {registry} from '../registry';
-import type {AnyApiServiceActionConfig, DatalensGatewaySchemas} from '../types/gateway';
-import Utils from '../utils';
-import {isGatewayError} from '../utils/gateway';
+import {getValidationSchema} from '../../../shared/schema/gateway-utils';
+import {registerActionToOpenApi} from '../../components/public-api';
+import {registry} from '../../registry';
+import type {AnyApiServiceActionConfig, DatalensGatewaySchemas} from '../../types/gateway';
+import Utils from '../../utils';
 
-const handleError = (
-    req: Request,
-    res: Response,
-    status: number,
-    message: string,
-    details?: unknown,
-) => {
-    res.status(status).send({
-        status,
-        code: PUBLIC_API_RPC_ERROR_CODE,
-        message,
-        requestId: req.ctx.get(REQUEST_ID_PARAM_NAME) || '',
-        details,
-    });
-};
-
-const validateRequestBody = async (schema: z.ZodType, data: unknown): Promise<unknown> => {
-    try {
-        return await schema.parseAsync(data);
-    } catch (error) {
-        if (error instanceof ZodError) {
-            throw new AppError('Validation error', {
-                details: error.issues,
-            });
-        }
-
-        throw error;
-    }
-};
+import {PUBLIC_API_ERRORS, PublicApiError} from './constants';
+import {prepareError, validateRequestBody} from './utils';
 
 export const createPublicApiController = () => {
     const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
@@ -76,28 +45,16 @@ export const createPublicApiController = () => {
     });
 
     return async function publicApiController(req: Request, res: Response) {
-        const boundHandler = handleError.bind(null, req, res);
-
         try {
             const {version, action: actionName} = req.params;
 
-            if (!version) {
-                return boundHandler(400, 'Invalid params, version is empty');
+            if (!version || !actionName || !proxyMap[version] || !proxyMap[version][actionName]) {
+                throw new PublicApiError(`Endpoint ${req.path} does not exist`, {
+                    code: PUBLIC_API_ERRORS.ENDPOINT_NOT_FOUND,
+                });
             }
 
-            if (!actionName) {
-                return boundHandler(400, 'Invalid params, action is empty');
-            }
-
-            const versionMap = proxyMap[version];
-            if (!versionMap) {
-                return boundHandler(404, 'Version not found');
-            }
-
-            const action = versionMap[actionName];
-            if (!action) {
-                return boundHandler(404, 'Action not found');
-            }
+            const action = proxyMap[version][actionName];
 
             const {ctx} = req;
 
@@ -109,14 +66,18 @@ export const createPublicApiController = () => {
 
             if (!gatewayActionConfig) {
                 req.ctx.logError(`Couldn't find action config in actionToConfigMap`);
-                return boundHandler(500, 'Unknown error');
+                throw new PublicApiError(PUBLIC_API_ERRORS.ACTION_CONFIG_NOT_FOUND, {
+                    code: PUBLIC_API_ERRORS.ACTION_CONFIG_NOT_FOUND,
+                });
             }
 
             const validationSchema = getValidationSchema(gatewayActionConfig);
 
             if (!validationSchema) {
                 req.ctx.logError(`Couldn't find action validation schema`);
-                return boundHandler(500, 'Unknown error');
+                throw new PublicApiError(PUBLIC_API_ERRORS.ACTION_VALIDATION_SCHEMA_NOT_FOUND, {
+                    code: PUBLIC_API_ERRORS.ACTION_VALIDATION_SCHEMA_NOT_FOUND,
+                });
             }
 
             const {paramsSchema} = validationSchema;
@@ -132,11 +93,15 @@ export const createPublicApiController = () => {
 
             res.status(200).send(result.responseData);
         } catch (err: unknown) {
-            if (isGatewayError(err)) {
-                return boundHandler(500, 'Gateway error');
-            } else {
-                return boundHandler(500, 'Unknown error');
-            }
+            const {status, message, code, details} = prepareError(err);
+
+            res.status(status).send({
+                status,
+                code,
+                message,
+                requestId: req.ctx.get(REQUEST_ID_PARAM_NAME) || '',
+                details,
+            });
         }
     };
 };
