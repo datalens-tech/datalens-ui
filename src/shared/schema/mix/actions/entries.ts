@@ -40,7 +40,7 @@ export const entriesActions = {
                 return data;
             }
             case EntryScope.Connection: {
-                const data = await typedApi.bi.deleteConnnection({connectionId: entryId});
+                const data = await typedApi.bi.deleteConnection({connectionId: entryId});
                 return data;
             }
             default: {

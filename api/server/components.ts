@@ -19,3 +19,12 @@ export {
 } from '../../src/server/components/charts-engine';
 
 export {renderHTML} from '../../src/server/components/charts-engine/components/markdown';
+
+export {initPublicApiSwagger} from '../../src/server/components/public-api';
+
+export {PUBLIC_API_PROXY_MAP, PUBLIC_API_ROUTE} from '../../src/server/components/public-api';
+export type {
+    PublicApiRpcMap,
+    PublicApiConfig,
+    PublicApiSecuritySchemes,
+} from '../../src/server/components/public-api/types';
