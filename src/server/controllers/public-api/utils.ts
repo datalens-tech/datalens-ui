@@ -76,7 +76,7 @@ export const prepareError = (
             const code = originalError.code ? String(originalError.code) : undefined;
             const details = originalError.details;
 
-            return {status: 500, message, code, details};
+            return {status: innerError.status, message, code, details};
         }
 
         if (
