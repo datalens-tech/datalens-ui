@@ -78,6 +78,14 @@ export const prepareError = (
 
             return {status: 500, message, code, details};
         }
+
+        if (
+            !(originalError instanceof TypeError) &&
+            !(originalError instanceof ReferenceError) &&
+            !(originalError instanceof SyntaxError)
+        ) {
+            return {status: innerError.status, message: innerError.message};
+        }
     }
 
     return {
