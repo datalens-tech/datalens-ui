@@ -1,10 +1,8 @@
 import _, {pick} from 'lodash';
 import type {DeepNonNullable} from 'utility-types';
-import {z} from 'zod/v4';
 
 import Dash from '../../../../server/components/sdk/dash';
 import {DASH_ENTRY_RELEVANT_FIELDS} from '../../../../server/constants';
-import {dashSchema} from '../../../sdk/zod-schemas/dash-api.schema';
 import type {ChartsStats} from '../../../types/charts';
 import {EntryScope} from '../../../types/common';
 import {createAction, createTypedAction} from '../../gateway-utils';
@@ -18,60 +16,34 @@ import {
     prepareWidgetDatasetData,
 } from '../helpers/dash';
 import {
-    type CollectChartkitStatsArgs,
-    type CollectChartkitStatsResponse,
-    type CollectDashStatsArgs,
-    type CollectDashStatsResponse,
-    type GetEntriesDatasetsFieldsArgs,
-    type GetEntriesDatasetsFieldsResponse,
-    type GetWidgetsDatasetsFieldsArgs,
-    type GetWidgetsDatasetsFieldsResponse,
+    createDashArgsSchema,
+    createDashResultSchema,
+    deleteDashArgsSchema,
+    deleteDashResultSchema,
+    getDashArgsSchema,
+    getDashResultSchema,
+    updateDashArgsSchema,
+    updateDashResultSchema,
+} from '../schemas/dash';
+import type {
+    CollectChartkitStatsArgs,
+    CollectChartkitStatsResponse,
+    CollectDashStatsArgs,
+    CollectDashStatsResponse,
+    CreateDashResponse,
+    GetEntriesDatasetsFieldsArgs,
+    GetEntriesDatasetsFieldsResponse,
+    GetWidgetsDatasetsFieldsArgs,
+    GetWidgetsDatasetsFieldsResponse,
+    UpdateDashResponse,
 } from '../types';
-
-const dashUsSchema = z.object({
-    ...dashSchema.shape,
-    entryId: z.string(),
-    scope: z.literal(EntryScope.Dash),
-    public: z.boolean(),
-    isFavorite: z.boolean(),
-    createdAt: z.string(),
-    createdBy: z.string(),
-    updatedAt: z.string(),
-    updatedBy: z.string(),
-    revId: z.string(),
-    savedId: z.string(),
-    publishedId: z.string(),
-    meta: z.record(z.string(), z.string()),
-    links: z.record(z.string(), z.string()).optional(),
-    key: z.union([z.null(), z.string()]),
-    workbookId: z.union([z.null(), z.string()]),
-    type: z.literal(''),
-});
-
-const dashUsCreateSchema = z.object({
-    ...dashSchema.shape,
-    workbookId: z.union([z.null(), z.string()]).optional(),
-    lockToken: z.string().optional(),
-    mode: z.literal(['publish', 'save']),
-});
-
-const dashUsUpdateSchema = z.object({
-    ...dashSchema.partial().shape,
-    entryId: z.string(),
-});
 
 export const dashActions = {
     // WIP
     __getDashboard__: createTypedAction(
         {
-            paramsSchema: z.object({
-                dashboardId: z.string(),
-                revId: z.string().optional(),
-                includePermissions: z.boolean().optional().default(false),
-                includeLinks: z.boolean().optional().default(false),
-                branch: z.literal(['published', 'saved']).optional().default('published'),
-            }),
-            resultSchema: dashUsSchema,
+            paramsSchema: getDashArgsSchema,
+            resultSchema: getDashResultSchema,
         },
         async (_, args, {headers, ctx}) => {
             const {dashboardId, includePermissions, includeLinks, branch, revId} = args;
@@ -103,11 +75,8 @@ export const dashActions = {
     // WIP
     __deleteDashboard__: createTypedAction(
         {
-            paramsSchema: z.object({
-                dashboardId: z.string(),
-                lockToken: z.string().optional(),
-            }),
-            resultSchema: z.object({}),
+            paramsSchema: deleteDashArgsSchema,
+            resultSchema: deleteDashResultSchema,
         },
         async (api, {lockToken, dashboardId}) => {
             const typedApi = getTypedApi(api);
@@ -123,8 +92,8 @@ export const dashActions = {
     // WIP
     __updateDashboard__: createTypedAction(
         {
-            paramsSchema: dashUsUpdateSchema,
-            resultSchema: dashUsSchema,
+            paramsSchema: updateDashArgsSchema,
+            resultSchema: updateDashResultSchema,
         },
         async (_, args, {headers, ctx}) => {
             const {entryId} = args;
@@ -133,21 +102,24 @@ export const dashActions = {
 
             return (await Dash.update(entryId as any, args as any, headers, ctx, I18n, {
                 forceMigrate: true,
-            })) as unknown as z.infer<typeof dashUsSchema>;
+            })) as unknown as UpdateDashResponse;
         },
     ),
     // WIP
     __createDashboard__: createTypedAction(
         {
-            paramsSchema: dashUsCreateSchema,
-            resultSchema: dashUsSchema,
+            paramsSchema: createDashArgsSchema,
+            resultSchema: createDashResultSchema,
         },
         async (_, args, {headers, ctx}) => {
             const I18n = ctx.get('i18n');
 
-            return (await Dash.create(args as any, headers, ctx, I18n)) as unknown as z.infer<
-                typeof dashUsSchema
-            >;
+            return (await Dash.create(
+                args as any,
+                headers,
+                ctx,
+                I18n,
+            )) as unknown as CreateDashResponse;
         },
     ),
 
