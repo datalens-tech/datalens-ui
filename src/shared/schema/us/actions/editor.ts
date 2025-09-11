@@ -40,7 +40,9 @@ export const editorActions = {
                     workbookId,
                     mode,
                     links,
-                    annotation: annotation ? annotation : {description},
+                    annotation: {
+                        description: annotation?.description ?? description,
+                    },
                 },
                 headers,
             };
@@ -58,7 +60,9 @@ export const editorActions = {
                     data,
                     revId,
                     links,
-                    annotation: annotation ? annotation : {description},
+                    annotation: {
+                        description: annotation?.description ?? description,
+                    },
                 },
                 headers,
             };
