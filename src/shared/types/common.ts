@@ -290,21 +290,15 @@ export interface Entry {
 }
 
 export type CreateEntryRequest<T = Entry> = Partial<Omit<T, 'entryId'>> &
-    Required<{key: string; data: EntryData}> &
-    (
-        | {
-              description?: string;
-          }
-        | {annotation?: EntryAnnotationArgs}
-    );
+    Required<{key: string; data: EntryData}> & {
+        description?: string;
+        annotation?: EntryAnnotationArgs;
+    };
 
-export type UpdateEntryRequest<T = Entry> = Omit<T, 'entryId' | 'scope' | 'type'> &
-    (
-        | {
-              description?: string;
-          }
-        | {annotation?: EntryAnnotationArgs}
-    );
+export type UpdateEntryRequest<T = Entry> = Omit<T, 'entryId' | 'scope' | 'type'> & {
+    description?: string;
+    annotation?: EntryAnnotationArgs;
+};
 
 export type EntryData = DashData; // | WidgetData | DatasetData | ConnectionData | FolderData
 

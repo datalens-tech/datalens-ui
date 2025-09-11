@@ -361,7 +361,12 @@ class Dash {
         prevEntry: T,
     ) {
         if (prevEntry.annotation) {
-            return prevEntry;
+            return {
+                ...prevEntry,
+                annotation: {
+                    description: prevEntry.annotation.description ?? '',
+                },
+            };
         }
 
         if (prevEntry.data && 'description' in prevEntry.data) {

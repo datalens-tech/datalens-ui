@@ -3,6 +3,7 @@ import React from 'react';
 import {I18n} from 'i18n';
 import type {ResolveThunks} from 'react-redux';
 import {connect} from 'react-redux';
+import type {EntryAnnotationArgs} from 'shared';
 import {showToast} from 'store/actions/toaster';
 import type {DataLensApiError} from 'typings';
 import {isEntryAlreadyExists} from 'utils/errors/errorByCode';
@@ -21,7 +22,7 @@ export interface DialogCreateWizardChartProps extends EntryDialogProps {
         [key: string]: any;
     };
     workbookId?: string;
-    description?: string;
+    annotation?: EntryAnnotationArgs;
 }
 
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
@@ -72,14 +73,14 @@ class DialogCreateWizardChart extends React.Component<Props> {
     }
 
     private onWorkbookApply = async ({name}: {name: string}) => {
-        const {workbookId, description} = this.props;
+        const {workbookId, annotation} = this.props;
 
         const data = await this.props.sdk.charts.createWidget({
             name,
             workbookId: workbookId as string,
             data: this.props.data,
             template: 'datalens',
-            description,
+            annotation,
         });
         return data;
     };
@@ -89,7 +90,7 @@ class DialogCreateWizardChart extends React.Component<Props> {
             key,
             data: this.props.data,
             template: 'datalens',
-            description: this.props.description,
+            annotation: this.props.annotation,
         });
         return data;
     };

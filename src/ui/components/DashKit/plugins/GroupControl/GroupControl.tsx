@@ -39,7 +39,6 @@ import type {
     ExtendedLoadedData,
     GroupControlLocalMeta,
     PluginGroupControlState,
-    ResolveMetaResult,
 } from './types';
 import {addItemToLocalQueue, filterSignificantParams} from './utils';
 
@@ -591,37 +590,6 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         return widgetMetaInfo;
     };
 
-    private resolveMeta = (loadedData: ExtendedLoadedData | null) => {
-        if (!loadedData) {
-            return null;
-        }
-
-        const {id, extra, usedParams, sourceType} = loadedData;
-        let result: ResolveMetaResult = {id};
-        if (extra) {
-            result = {
-                id,
-                usedParams: usedParams
-                    ? Object.keys(
-                          filterSignificantParams({
-                              params: usedParams,
-                              loadedData,
-                              dependentSelectors: this.dependentSelectors,
-                          }),
-                      )
-                    : null,
-                datasets: extra.datasets,
-                // deprecated
-                datasetId: extra.datasetId,
-                datasetFields: extra.datasetFields,
-                type: 'control',
-                sourceType,
-            };
-        }
-
-        return result;
-    };
-
     private resolveMetaInControl = () => {
         if (!this.resolve) {
             return;
@@ -630,11 +598,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         const result = [];
 
         for (const [id, data] of Object.entries(this.controlsData)) {
-            if (this.context?.isNewRelations) {
-                result.push(this.getCurrentWidgetResolvedMetaInfo(id, data));
-            } else {
-                result.push(this.resolveMeta(data));
-            }
+            result.push(this.getCurrentWidgetResolvedMetaInfo(id, data));
         }
 
         this.resolve(result);

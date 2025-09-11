@@ -8,6 +8,7 @@ import axiosRetry from 'axios-retry';
 
 import type {
     EntryAnnotation,
+    EntryAnnotationArgs,
     EntryPublicAuthor,
     TenantSettings,
     WorkbookId,
@@ -213,7 +214,7 @@ export type ProviderUpdateParams = {
     meta?: Record<string, string>;
     headers: Request['headers'];
     skipSyncLinks?: boolean;
-    description?: string;
+    annotation?: EntryAnnotationArgs;
 };
 
 export type ProviderCreateParams = {
@@ -229,7 +230,7 @@ export type ProviderCreateParams = {
     workbookId: string | null;
     name: string;
     mode?: EntryUpdateMode;
-    description?: string;
+    annotation?: EntryAnnotationArgs;
 };
 
 function injectMetadata(headers: IncomingHttpHeaders, ctx: AppContext): IncomingHttpHeaders {
@@ -620,7 +621,7 @@ export class USProvider {
             workbookId,
             name,
             mode = EntryUpdateMode.Publish,
-            description,
+            annotation,
         }: ProviderCreateParams,
     ) {
         const hrStart = process.hrtime();
@@ -637,7 +638,7 @@ export class USProvider {
             name: string;
             includePermissionsInfo?: boolean;
             mode: EntryUpdateMode;
-            description?: string;
+            annotation?: EntryAnnotationArgs;
         } = {
             key,
             data,
@@ -658,8 +659,8 @@ export class USProvider {
             postedData.includePermissionsInfo = true;
         }
 
-        if (description) {
-            postedData.description = description;
+        if (annotation) {
+            postedData.annotation = annotation;
         }
 
         const formattedHeaders = formatPassedHeaders(headers, ctx);
@@ -712,7 +713,7 @@ export class USProvider {
             meta = {},
             headers,
             skipSyncLinks,
-            description,
+            annotation,
         }: ProviderUpdateParams,
     ) {
         const hrStart = process.hrtime();
@@ -725,7 +726,7 @@ export class USProvider {
             type?: unknown;
             links?: unknown;
             skipSyncLinks?: boolean;
-            description?: string;
+            annotation?: EntryAnnotationArgs;
         } = {
             mode,
             meta,
@@ -751,8 +752,8 @@ export class USProvider {
             postedData.skipSyncLinks = true;
         }
 
-        if (description) {
-            postedData.description = description;
+        if (annotation) {
+            postedData.annotation = annotation;
         }
 
         const formattedHeaders = formatPassedHeaders(headers, ctx);

@@ -444,7 +444,9 @@ export const save = (mode: EntryUpdateMode, isDraft = false) => {
                     lockToken,
                     mode: mode,
                     meta: isPublishing ? {is_release: true} : {},
-                    description: annotation?.description,
+                    annotation: {
+                        description: annotation?.description ?? '',
+                    },
                 },
             };
             if (isDraft && isPublishing) {
