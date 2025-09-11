@@ -13,9 +13,12 @@ import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
 import {type ConnectorType, Feature} from 'shared';
 import type {DatalensGlobalState} from 'ui';
-import {PageTitle, SlugifyUrl, Utils} from 'ui';
+import {PageTitle, SlugifyUrl, URL_QUERY, Utils} from 'ui';
 import {registry} from 'ui/registry';
-import {openDialogErrorWithTabs} from 'ui/store/actions/dialog';
+import {
+    openDialogErrorWithTabs,
+    openDialogSaveDraftChartAsActualConfirm,
+} from 'ui/store/actions/dialog';
 import type {DataLensApiError} from 'ui/typings';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
@@ -29,6 +32,7 @@ import {
     getConnectionData,
     getConnectorSchema,
     getConnectors,
+    setActualConnection,
     setInitialState,
     setPageData,
 } from '../../store';
@@ -127,6 +131,7 @@ const PageComponent = (props: PageProps) => {
         connectionData,
         loading,
     } = props;
+    const [isFirstRender, setIsFirstRender] = React.useState(true);
     const entryId = get(props.match?.params, 'id', '');
     const {extractEntryId} = registry.common.functions.getAll();
     const extractedEntryId = extractEntryId(entryId);
@@ -137,6 +142,8 @@ const PageComponent = (props: PageProps) => {
     const type = (connector?.conn_type || queryType) as ConnectorType;
     const listPageOpened = isListPageOpened(location.pathname);
     const s3BasedFormOpened = isS3BasedConnForm(connectionData, type);
+    const currentSearchParams = new URLSearchParams(location.search);
+    const revId = currentSearchParams.get(URL_QUERY.REV_ID) ?? undefined;
 
     const isExportSettingsFeatureEnabled = isEnabledFeature(Feature.EnableExportSettings);
 
@@ -160,8 +167,14 @@ const PageComponent = (props: PageProps) => {
     }, [actions, type, listPageOpened]);
 
     React.useEffect(() => {
-        actions.setPageData({entryId: extractedEntryId, workbookId});
-    }, [actions, extractedEntryId, workbookId]);
+        actions.setPageData({
+            entryId: extractedEntryId,
+            workbookId,
+            rev_id: revId,
+            initialSet: isFirstRender,
+        });
+        setIsFirstRender(false);
+    }, [actions, extractedEntryId, workbookId, revId]);
 
     return (
         <React.Fragment>
@@ -194,6 +207,13 @@ const PageComponent = (props: PageProps) => {
                                 />
                             ),
                         ]}
+                        setActualVersion={() => {
+                            actions.openDialogSaveDraftChartAsActualConfirm({
+                                onApply: () => {
+                                    actions.setActualConnection();
+                                },
+                            });
+                        }}
                     />
                 )}
                 {loading || !entry ? (
@@ -238,6 +258,8 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
                 getConnectors,
                 getConnectorSchema,
                 openDialogErrorWithTabs,
+                openDialogSaveDraftChartAsActualConfirm,
+                setActualConnection,
             },
             dispatch,
         ),

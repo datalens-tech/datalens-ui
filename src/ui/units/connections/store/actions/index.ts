@@ -3,11 +3,14 @@ import {flow} from 'lodash';
 import {batch} from 'react-redux';
 import type {ConnectionData, ConnectorType} from 'shared';
 import type {FormSchema, GetEntryResponse} from 'shared/schema/types';
+import {URL_QUERY} from 'ui';
 import {registry} from 'ui/registry';
 import {isEntryAlreadyExists} from 'utils/errors/errorByCode';
 
 import logger from '../../../../libs/logger';
+import {loadRevisions, setEntryContent} from '../../../../store/actions/entryContent';
 import {showToast} from '../../../../store/actions/toaster';
+import {RevisionsMode} from '../../../../store/typings/entryContent';
 import type {DataLensApiError} from '../../../../typings';
 import {getWorkbookIdFromPathname} from '../../../../utils';
 import history from '../../../../utils/history';
@@ -53,12 +56,25 @@ export * from './yadoc';
 
 const i18n = I18n.keyset('connections.form');
 
-export function setPageData({entryId, workbookId}: {entryId?: string | null; workbookId?: string}) {
+export function setPageData({
+    entryId,
+    workbookId,
+    rev_id,
+    initialSet,
+}: {
+    entryId?: string | null;
+    workbookId?: string;
+    rev_id?: string;
+    initialSet?: boolean;
+}) {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
         dispatch(setPageLoading({pageLoading: true}));
         const groupedConnectors = await api.fetchConnectors();
         const flattenConnectors = getFlattenConnectors(groupedConnectors);
-        const {checkData, form, validationErrors} = getState().connections;
+        const {
+            connections: {checkData, form, validationErrors},
+            entryContent,
+        } = getState();
         let entry: GetEntryResponse | undefined;
         let entryError: DataLensApiError | undefined;
         let connectionData: ConnectionData | undefined;
@@ -69,6 +85,7 @@ export function setPageData({entryId, workbookId}: {entryId?: string | null; wor
             ({connectionData, error: connectionError} = await api.fetchConnectionData(
                 entryId,
                 entry?.workbookId ?? null,
+                rev_id,
             ));
         }
 
@@ -77,10 +94,29 @@ export function setPageData({entryId, workbookId}: {entryId?: string | null; wor
             entry = getFakeEntry(workbookId);
         }
 
+        const updateAfterSave = !initialSet && entry?.publishedId === entry?.revId && !rev_id;
+        if (updateAfterSave && entry) {
+            dispatch(setEntryContent(entry));
+
+            if (entryContent.revisionsMode === RevisionsMode.Opened) {
+                await dispatch(
+                    loadRevisions({
+                        entryId: entry?.entryId ?? '',
+                        page: 0,
+                    }),
+                );
+            }
+        }
+
         batch(() => {
             dispatch(setGroupedConnectors({groupedConnectors}));
             dispatch(setFlattenConnectors({flattenConnectors}));
-            dispatch(setEntry({entry, error: entryError}));
+            dispatch(
+                setEntry({
+                    entry: {...entry, revId: rev_id ?? entry?.publishedId ?? ''},
+                    error: entryError,
+                }),
+            );
 
             if (Object.keys(form).length) {
                 dispatch(resetFormsData());
@@ -386,6 +422,19 @@ export function updateConnection() {
             }
 
             flow([setSubmitLoading, dispatch])({loading: false});
+        });
+    };
+}
+
+export function setActualConnection() {
+    return async (dispatch: ConnectionsReduxDispatch) => {
+        await dispatch(updateConnection());
+
+        const searchParams = new URLSearchParams(location.search);
+        searchParams.delete(URL_QUERY.REV_ID);
+        history.push({
+            ...location,
+            search: `?${searchParams.toString()}`,
         });
     };
 }
