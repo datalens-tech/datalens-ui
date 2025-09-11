@@ -35,7 +35,11 @@ concurrency:
 jobs:
   run-e2e:
     name: Install Datalens and Run E2E Tests
-    runs-on: ubuntu-24.04
+    runs-on:
+      - self-hosted
+      - linux
+      - cloud
+      - datalens-opensource
     steps:
       - name: echo distinct ID ${{ github.event.inputs.distinct_id }}
         run: echo ${{ github.event.inputs.distinct_id }}
@@ -85,14 +89,15 @@ jobs:
           load: true
           tags: e2e-datalens-ui:pr
           platforms: linux/amd64
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: |
+            type=s3,endpoint_url=${{ vars.DOCKER_CACHE_S3_ENDPOINT }},region=${{ vars.DOCKER_CACHE_S3_REGION }},bucket=${{ vars.DOCKER_CACHE_S3_BUCKET }},access_key_id=${{ secrets.DOCKER_CACHE_S3_ACCESS_KEY }},secret_access_key=${{ secrets.DOCKER_CACHE_S3_SECRET_KEY }},blobs_prefix=${{ github.repository }}/,manifests_prefix=${{ github.repository }}/manifests/e2e-tests/pr-${{ github.event.pull_request.number }}/
+            type=s3,endpoint_url=${{ vars.DOCKER_CACHE_S3_ENDPOINT }},region=${{ vars.DOCKER_CACHE_S3_REGION }},bucket=${{ vars.DOCKER_CACHE_S3_BUCKET }},access_key_id=${{ secrets.DOCKER_CACHE_S3_ACCESS_KEY }},secret_access_key=${{ secrets.DOCKER_CACHE_S3_SECRET_KEY }},blobs_prefix=${{ github.repository }}/,manifests_prefix=${{ github.repository }}/manifests/build-application-docker/
+          cache-to: type=s3,upload_parallelism=8,mode=max,endpoint_url=${{ vars.DOCKER_CACHE_S3_ENDPOINT }},region=${{ vars.DOCKER_CACHE_S3_REGION }},bucket=${{ vars.DOCKER_CACHE_S3_BUCKET }},access_key_id=${{ secrets.DOCKER_CACHE_S3_ACCESS_KEY }},secret_access_key=${{ secrets.DOCKER_CACHE_S3_SECRET_KEY }},blobs_prefix=${{ github.repository }}/,manifests_prefix=${{ github.repository }}/manifests/e2e-tests/pr-${{ github.event.pull_request.number }}/
 
       - name: Up docker compose and install local deps for test
         if: ${{ env.UI_VERSION == '' }}
         run: |
-          sudo rm /etc/apt/sources.list.d/microsoft-prod.list
-          npm run test:e2e:docker:up-no-build && npm ci && npm run test:install:chromium & wait
+          npm run test:e2e:docker:up-no-build && npm ci
         env:
           US_VERSION: ${{ env.US_VERSION }}
           AUTH_VERSION: ${{ env.AUTH_VERSION }}
