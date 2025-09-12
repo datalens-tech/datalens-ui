@@ -18,6 +18,7 @@
   "toast_unsaved": "There are unsaved changes on the page. Are you sure?",
   "tooltip_collapse-fixed-group": "Collapse pinned group",
   "tooltip_expand-fixed-group": "Expand pinned group",
-  "value_state-limit-error": "The dashboard state was not saved as there are too many values set in the selectors.",
+  "value_state-limit-error": "The dashboard state was not saved.",
+  "value_state-limit-error-message": "Too many parameters are configured in the charts. Try reducing the number of selectors or the number of values in them.",
   "warning_paste-invalid-workbook-entry": "To work with this object within another workbook, please migrate all linked objects from the source workbook. <link>Migrating objects to workbooks</link>"
 }

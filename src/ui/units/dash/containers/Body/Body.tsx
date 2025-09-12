@@ -287,9 +287,14 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                 ? i18n('dash.main.view', 'value_state-limit-error')
                 : error.message;
 
+            const message = isStateLimitError
+                ? i18n('dash.main.view', 'value_state-limit-error-message')
+                : error.message;
+
             this.props.showToast({
                 title,
-                error,
+                content: message,
+                error: {...error, message},
                 withReport: true,
             });
             throw error;
