@@ -68,7 +68,7 @@ const datasetFieldSchema = z.object({
     hidden: z.boolean(),
     autoaggregated: z.boolean(),
     template_enabled: z.boolean().optional(),
-    value_constraint: datasetValueConstraintSchema.optional(),
+    value_constraint: datasetValueConstraintSchema.optional().nullable(),
 });
 
 // Dataset component error item schema
@@ -116,7 +116,7 @@ const datasetRawSchemaSchema = z.object({
     has_auto_aggregation: z.boolean(),
     native_type: z.object({
         name: z.string(),
-        conn_type: z.string(),
+        conn_type: z.string().optional(),
     }),
 });
 
@@ -124,21 +124,21 @@ const datasetRawSchemaSchema = z.object({
 const datasetSourceSchema = z.object({
     id: z.string(),
     connection_id: z.string(),
-    ref_source_id: z.union([z.string(), z.null()]),
-    name: z.string(),
+    ref_source_id: z.union([z.string(), z.null(), z.undefined()]),
+    name: z.string().optional(),
     title: z.string(),
     source_type: z.string(),
     managed_by: z.string(),
     parameter_hash: z.string(),
     valid: z.boolean(),
-    is_ref: z.boolean(),
+    is_ref: z.boolean().optional(),
     virtual: z.boolean(),
     raw_schema: z.array(datasetRawSchemaSchema),
-    group: z.array(z.string()),
+    group: z.array(z.string()).optional(),
     parameters: z.object({
-        table_name: z.string(),
-        db_version: z.string(),
-        db_name: z.union([z.string(), z.null()]),
+        table_name: z.string().optional(),
+        db_version: z.string().optional(),
+        db_name: z.union([z.string(), z.null(), z.undefined()]),
     }),
 });
 
@@ -261,11 +261,11 @@ const datasetBodySchema = z.object({
         }),
     }),
     rls: datasetRlsSchema,
-    rls2: z.array(z.unknown()),
+    rls2: z.object({}),
     source_avatars: z.array(datasetSourceAvatarSchema),
-    source_features: z.record(z.string(), z.any()),
+    source_features: z.record(z.string(), z.any()).optional(),
     sources: z.array(datasetSourceSchema),
-    revisionId: z.string(),
+    revisionId: z.string().optional(),
     load_preview_by_default: z.boolean(),
     template_enabled: z.boolean(),
     data_export_forbidden: z.boolean().optional(),

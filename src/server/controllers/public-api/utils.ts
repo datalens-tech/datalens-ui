@@ -99,7 +99,8 @@ export const validateRequestBody = async (schema: z.ZodType, data: unknown): Pro
         return await schema.parseAsync(data);
     } catch (error) {
         if (error instanceof ZodError) {
-            throw new AppError('Validation error', {
+            throw new PublicApiError('Validation error', {
+                code: PUBLIC_API_ERRORS.VALIDATION_ERROR,
                 details: error.issues,
             });
         }
