@@ -26,7 +26,6 @@ export const PUBLIC_API_PROXY_MAP = {
                 tags: [ApiTag.Connection],
             },
         },
-
         // Dataset
         getDataset: {
             resolve: (api) => api.bi.getDatasetByVersion,
@@ -56,8 +55,28 @@ export const PUBLIC_API_PROXY_MAP = {
                 tags: [ApiTag.Dataset],
             },
         },
-
         // Wizard
+        getWizardChart: {
+            resolve: (api) => api.mix.__getWizardChart__,
+            openApi: {
+                summary: 'Get wizard chart',
+                tags: [ApiTag.Wizard],
+            },
+        },
+        updateWizardChart: {
+            resolve: (api) => api.mix.__updateWizardChart__,
+            openApi: {
+                summary: 'Update wizard chart',
+                tags: [ApiTag.Wizard],
+            },
+        },
+        createWizardChart: {
+            resolve: (api) => api.mix.__createWizardChart__,
+            openApi: {
+                summary: 'Create wizard chart',
+                tags: [ApiTag.Wizard],
+            },
+        },
         deleteWizardChart: {
             resolve: (api) => api.mix.__deleteWizardChart__,
             openApi: {
@@ -65,8 +84,28 @@ export const PUBLIC_API_PROXY_MAP = {
                 tags: [ApiTag.Wizard],
             },
         },
-
         // Editor
+        getEditorChart: {
+            resolve: (api) => api.mix.__getEditorChart__,
+            openApi: {
+                summary: 'Get editor chart',
+                tags: [ApiTag.Editor],
+            },
+        },
+        // updateEditorChart: {
+        //     resolve: (api) => api.mix.updateEditorChart,
+        //     openApi: {
+        //         summary: 'Update editor chart',
+        //         tags: [ApiTag.Editor],
+        //     },
+        // },
+        // createEditorChart: {
+        //     resolve: (api) => api.mix.createEditorChart,
+        //     openApi: {
+        //         summary: 'Create editor chart',
+        //         tags: [ApiTag.Editor],
+        //     },
+        // },
         deleteEditorChart: {
             resolve: (api) => api.mix.__deleteEditorChart__,
             openApi: {
@@ -74,8 +113,28 @@ export const PUBLIC_API_PROXY_MAP = {
                 tags: [ApiTag.Editor],
             },
         },
-
         // Dashboard
+        getDashboard: {
+            resolve: (api) => api.mix.__getDashboard__,
+            openApi: {
+                summary: 'Get dashboard',
+                tags: [ApiTag.Dashboard],
+            },
+        },
+        updateDashboard: {
+            resolve: (api) => api.mix.__updateDashboard__,
+            openApi: {
+                summary: 'Delete dashboard',
+                tags: [ApiTag.Dashboard],
+            },
+        },
+        createDashboard: {
+            resolve: (api) => api.mix.__createDashboard__,
+            openApi: {
+                summary: 'Create dashboard',
+                tags: [ApiTag.Dashboard],
+            },
+        },
         deleteDashboard: {
             resolve: (api) => api.mix.__deleteDashboard__,
             openApi: {

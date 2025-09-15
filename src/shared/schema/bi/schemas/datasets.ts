@@ -1,6 +1,10 @@
 import z from 'zod/v4';
 
-import {datasetBodySchema, datasetOptionsSchema, datasetSchema} from '../../../zod-schemas/dataset';
+import {
+    datasetBodySchema,
+    datasetOptionsSchema,
+    datasetSchema,
+} from '../../../sdk/zod-schemas/dataset-api.schema';
 
 const createDatasetDefaultArgsSchema = z.object({
     name: z.string(),

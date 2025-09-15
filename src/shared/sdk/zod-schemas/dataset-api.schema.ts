@@ -1,12 +1,12 @@
-import z from 'zod/v4';
+import * as z from 'zod/v4';
 
-import {ConnectorType} from '..';
+import {ConnectorType} from '../..';
 import {
     DATASET_FIELD_TYPES,
     DATASET_VALUE_CONSTRAINT_TYPE,
     DatasetFieldAggregation,
     DatasetFieldType,
-} from '../types/dataset';
+} from '../../types/dataset';
 
 // Basic type schemas
 const parameterDefaultValueSchema = z.union([z.string(), z.number(), z.boolean(), z.null()]);
@@ -69,6 +69,19 @@ const datasetFieldSchema = z.object({
     autoaggregated: z.boolean(),
     template_enabled: z.boolean().optional(),
     value_constraint: datasetValueConstraintSchema.optional(),
+});
+
+// Dataset field error schema
+const datasetFieldErrorSchema = z.object({
+    guid: z.string(),
+    title: z.string(),
+    errors: z.array(
+        z.object({
+            column: z.union([z.number(), z.null()]),
+            row: z.union([z.number(), z.null()]),
+            message: z.string(),
+        }),
+    ),
 });
 
 // Dataset component error item schema
@@ -247,7 +260,19 @@ const datasetOptionsSchema = z.object({
     }),
 });
 
-const datasetBodySchema = z.object({
+// Dataset API error schema
+const datasetApiErrorSchema = z.object({
+    datasetId: z.string(),
+    error: z.object({
+        code: z.string().optional(),
+        message: z.string().optional(),
+    }),
+});
+
+// Dataset selection map schema
+const datasetSelectionMapSchema = z.record(z.string(), z.literal(true));
+
+export const datasetBodySchema = z.object({
     avatar_relations: z.array(datasetAvatarRelationSchema),
     component_errors: z.object({
         items: z.array(datasetComponentErrorSchema),
@@ -272,7 +297,7 @@ const datasetBodySchema = z.object({
 });
 
 // Main Dataset schema
-const datasetSchema = z.object({
+export const datasetSchema = z.object({
     id: z.string(),
     realName: z.string(),
     is_favorite: z.boolean(),
@@ -296,4 +321,22 @@ const datasetSchema = z.object({
     sources: z.array(datasetSourceSchema),
 });
 
-export {datasetBodySchema, datasetOptionsSchema, datasetSchema};
+// Export JSON schema generation
+export const datasetApiValidationJsonSchema = z.toJSONSchema(datasetSchema);
+
+// Export the TypeScript type
+export type DatasetApiValidationType = z.infer<typeof datasetSchema>;
+
+// Export individual schemas for potential reuse
+export {
+    datasetFieldSchema,
+    datasetSourceSchema,
+    datasetOptionsSchema,
+    datasetAvatarRelationSchema,
+    datasetSourceAvatarSchema,
+    obligatoryFilterSchema,
+    datasetComponentErrorSchema,
+    datasetFieldErrorSchema,
+    datasetApiErrorSchema,
+    datasetSelectionMapSchema,
+};

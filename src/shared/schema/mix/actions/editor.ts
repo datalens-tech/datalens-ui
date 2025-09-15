@@ -9,9 +9,35 @@ import type {
 } from '../../us/types';
 import {getEntryLinks} from '../helpers';
 import {validateData} from '../helpers/editor/validation';
-import {deleteEditorChartArgsSchema, deleteEditorChartResultSchema} from '../schemas/editor';
+import {
+    deleteEditorChartArgsSchema,
+    deleteEditorChartResultSchema,
+    getEditorChartArgsSchema,
+    getEditorChartResultSchema,
+} from '../schemas/editor';
+import type {GetEditorChartResponse} from '../types';
 
 export const editorActions = {
+    // WIP
+    __getEditorChart__: createTypedAction(
+        {
+            paramsSchema: getEditorChartArgsSchema,
+            resultSchema: getEditorChartResultSchema,
+        },
+        async (api, args) => {
+            const {includePermissions, includeLinks, revId, chardId, branch, workbookId} = args;
+            const typedApi = getTypedApi(api);
+
+            return typedApi.us.getEntry({
+                entryId: chardId,
+                includePermissionsInfo: includePermissions ? Boolean(includePermissions) : false,
+                includeLinks: includeLinks ? Boolean(includeLinks) : false,
+                ...(revId ? {revId} : {}),
+                workbookId: workbookId || null,
+                branch: branch || 'published',
+            }) as unknown as GetEditorChartResponse;
+        },
+    ),
     createEditorChart: createAction<CreateEditorChartResponse, CreateEditorChartArgs>(
         async (api, args, {ctx}) => {
             const {checkRequestForDeveloperModeAccess} = ctx.get('gateway');
