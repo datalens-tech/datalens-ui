@@ -610,7 +610,7 @@ export class USProvider {
             recursion: boolean;
             links?: unknown;
             meta: Record<string, string>;
-            workbookId: string;
+            workbookId: string | null;
             name: string;
             includePermissionsInfo?: boolean;
             mode: EntryUpdateMode;
