@@ -30,8 +30,8 @@ export const initPublicApiSwagger = (
         const generateDocumentParams: OpenAPIObjectConfigV31 = {
             openapi: '3.1.0',
             info: {
-                version: `${config.appVersion}`,
-                title: `UI API `,
+                version: `v0`,
+                title: `DataLens API `,
                 description: [installationText, envText, descriptionText].join('<br />'),
             },
             servers: [{url: '/'}],

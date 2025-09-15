@@ -1,3 +1,1 @@
-export const PUBLIC_API_RPC_ERROR_CODE = 'ERR.UI_API.PUBLIC-API.FAILED_RPC_PROXY';
-
 export const PUBLIC_API_ORG_ID_HEADER = 'x-dl-org-id';
