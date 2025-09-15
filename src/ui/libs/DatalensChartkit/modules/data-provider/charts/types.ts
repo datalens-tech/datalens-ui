@@ -339,6 +339,7 @@ export interface ResponseSuccessNodeBase extends DashWidgetConfig {
     extra: {
         exportFilename?: string;
         dataExportForbidden?: boolean;
+        colors?: string[];
     };
     timings: Timings;
 

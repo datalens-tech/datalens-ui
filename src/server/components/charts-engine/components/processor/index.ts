@@ -16,6 +16,8 @@ import type {
 } from '../../../../../shared';
 import {DL_CONTEXT_HEADER, Feature} from '../../../../../shared';
 import {renderHTML} from '../../../../../shared/modules/markdown/markdown';
+import {selectServerPalette} from '../../../../constants';
+import {extractColorPalettesFromData} from '../../../../modes/charts/plugins/helpers/color-palettes';
 import {registry} from '../../../../registry';
 import type {CacheClient} from '../../../cache-client';
 import {config as configConstants} from '../../constants';
@@ -181,6 +183,7 @@ export type SerializableProcessorParams = {
     originalReqHeaders: DataFetcherOriginalReqHeaders;
     adapterContext: AdapterContext;
     hooksContext: HooksContext;
+    defaultColorPaletteId?: string;
 };
 
 export class Processor {
@@ -217,6 +220,7 @@ export class Processor {
         hooks,
         sourcesConfig,
         secureConfig,
+        defaultColorPaletteId,
     }: ProcessorParams): Promise<
         ProcessorSuccessResponse | ProcessorErrorResponse | {error: string}
     > {
@@ -665,6 +669,8 @@ export class Processor {
                 return acc;
             }, {});
 
+            const {colorPalettes: tenantColorPalettes} = extractColorPalettesFromData(data);
+
             hrStart = process.hrtime();
             const libraryTabResult = await builder.buildChartLibraryConfig({
                 data,
@@ -869,7 +875,14 @@ export class Processor {
                 result.extra = jsTabResults.runtimeMetadata.extra || {};
                 result.extra.chartsInsights = jsTabResults.runtimeMetadata.chartsInsights;
                 result.extra.sideMarkdown = jsTabResults.runtimeMetadata.sideMarkdown;
-
+                const getAvailablePalettesMap =
+                    registry.common.functions.get('getAvailablePalettesMap');
+                const systemPalettes = getAvailablePalettesMap();
+                result.extra.colors = selectServerPalette({
+                    defaultColorPaletteId: defaultColorPaletteId ?? '',
+                    customColorPalettes: tenantColorPalettes,
+                    availablePalettes: systemPalettes,
+                });
                 result.sources = merge(
                     resolvedSources,
                     jsTabResults.runtimeMetadata.dataSourcesInfos,

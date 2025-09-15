@@ -33,11 +33,12 @@ export const DefaultPaletteSelect = ({colorPalettes, disabled}: DefaultPaletteSe
         [colorPalettes],
     );
 
-    const defaultColorPaletteIdValue = React.useMemo(() => {
+    const getDefaultColorPaletteValue = React.useCallback(() => {
         const allPalettes = [
             ...Object.values(getAvailableClientPalettesMap()).map((p) => p.id),
             ...colorPalettes.map((p) => p.colorPaletteId),
         ];
+
         const tenantDefaultValue = window.DL.tenantSettings?.defaultColorPaletteId;
         if (tenantDefaultValue && allPalettes.includes(tenantDefaultValue)) {
             return tenantDefaultValue;
@@ -47,8 +48,12 @@ export const DefaultPaletteSelect = ({colorPalettes, disabled}: DefaultPaletteSe
     }, [colorPalettes]);
 
     const [defaultColorPaletteId, setDefaultPaletteId] = React.useState<string>(
-        defaultColorPaletteIdValue,
+        getDefaultColorPaletteValue(),
     );
+
+    React.useEffect(() => {
+        setDefaultPaletteId(getDefaultColorPaletteValue());
+    }, [getDefaultColorPaletteValue]);
 
     const handleDefaultPaletteUpdate = (value: string[]) => {
         setIsLoading(true);
@@ -58,7 +63,12 @@ export const DefaultPaletteSelect = ({colorPalettes, disabled}: DefaultPaletteSe
             .sdk.us.setDefaultColorPalette({defaultColorPaletteId: value[0]})
             .then((response) => {
                 if (response.settings.defaultColorPaletteId !== value[0]) {
-                    setDefaultPaletteId(response.settings.defaultColorPaletteId || fallbackValue);
+                    const newPaletteValue =
+                        response.settings.defaultColorPaletteId || fallbackValue;
+                    setDefaultPaletteId(newPaletteValue);
+                    if (window.DL.tenantSettings) {
+                        window.DL.tenantSettings.defaultColorPaletteId = newPaletteValue;
+                    }
                 }
                 dispatch(
                     showToast({
