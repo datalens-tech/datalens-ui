@@ -34,6 +34,7 @@ export async function datalensTestSetup({
         recordVideo: {
             dir: DEFAULT_SCREENSHOT_PATH,
         },
+        ignoreHTTPSErrors: true,
     });
     const page = await context.newPage();
 
@@ -103,5 +104,6 @@ export async function datalensTestSetup({
     } finally {
         await page.close();
         await context.close();
+        await browser.close();
     }
 }
