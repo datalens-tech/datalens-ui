@@ -9,7 +9,8 @@ import {
     DashTabItemControlSourceType,
     DashTabItemTitleSizes,
     DashTabItemType,
-} from '../..';
+} from '..';
+
 const DASH_DEFAULT_NAMESPACE = 'default';
 
 // Text definition

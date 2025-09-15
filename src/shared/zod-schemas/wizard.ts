@@ -7,10 +7,10 @@ import {
     LabelsPositions,
     MapCenterMode,
     ZoomMode,
-} from '../..';
-import {WidgetSize} from '../../constants';
-import {MARKUP_TYPE} from '../../types/charts';
-import type {DatasetFieldCalcMode} from '../../types/dataset';
+} from '..';
+import {WidgetSize} from '../constants';
+import {MARKUP_TYPE} from '../types/charts';
+import type {DatasetFieldCalcMode} from '../types/dataset';
 import {
     AxisLabelFormatMode,
     AxisMode,
@@ -18,7 +18,7 @@ import {
     ChartsConfigVersion,
     NumberFormatType,
     NumberFormatUnit,
-} from '../../types/wizard';
+} from '../types/wizard';
 
 // Helper type for enum to literal conversion
 type EnumToLiteral<T extends string | number> = T extends string
