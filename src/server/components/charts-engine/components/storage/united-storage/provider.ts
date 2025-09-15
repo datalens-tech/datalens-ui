@@ -278,8 +278,10 @@ export class USProvider {
             revId?: string;
             includeServicePlan?: boolean;
             includeTenantFeatures?: boolean;
+            includeFavorite?: boolean;
         } = {
             branch: unreleased ? 'saved' : 'published',
+            includeFavorite: true,
         };
 
         if (includeServicePlan) {

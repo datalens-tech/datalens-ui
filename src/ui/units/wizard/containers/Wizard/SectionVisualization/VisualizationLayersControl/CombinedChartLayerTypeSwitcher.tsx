@@ -1,6 +1,6 @@
 import React, {useCallback} from 'react';
 
-import {Icon, RadioButton} from '@gravity-ui/uikit';
+import {Icon, SegmentedRadioGroup as RadioButton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
 import type {VisualizationLayerType} from 'shared';

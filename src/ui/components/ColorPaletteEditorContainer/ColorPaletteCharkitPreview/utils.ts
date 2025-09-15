@@ -1,4 +1,4 @@
-import type {BarXSeries, BarXSeriesData, ChartData} from '@gravity-ui/chartkit/d3';
+import type {BarXSeries, BarXSeriesData, ChartData} from '@gravity-ui/chartkit/gravity-charts';
 import {interpolateRgbBasis, scaleSequential} from 'd3';
 import cloneDeep from 'lodash/cloneDeep';
 import merge from 'lodash/merge';

@@ -312,6 +312,7 @@ class DashboardPage extends BasePage {
         const workbookPO = new Workbook(this.page);
 
         await workbookPO.openE2EWorkbookPage();
+        await this.page.locator(slct(DatalensTabs.Item), {hasText: 'Dashboards'}).click();
 
         await workbookPO.openWorkbookItemMenu(dashId);
 
@@ -410,25 +411,6 @@ class DashboardPage extends BasePage {
 
     getDashKitTextItem(text: string) {
         return this.page.locator(slct(DashkitQa.GRID_ITEM)).getByText(text, {exact: true});
-    }
-
-    async getGlobalRelationsDialogType(): Promise<'new' | 'old' | null> {
-        const isEnabledShowNewRelationsButton = await isEnabledFeature(
-            this.page,
-            Feature.ShowNewRelationsButton,
-        );
-
-        if (isEnabledShowNewRelationsButton) {
-            return 'new';
-        }
-
-        const hideOldRelations = await isEnabledFeature(this.page, Feature.HideOldRelations);
-
-        if (!hideOldRelations) {
-            return 'old';
-        }
-
-        return null;
     }
 
     async deleteSelector(controlTitle: string) {

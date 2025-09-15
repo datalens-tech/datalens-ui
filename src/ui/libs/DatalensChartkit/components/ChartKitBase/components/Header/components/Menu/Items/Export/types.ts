@@ -1,6 +1,6 @@
 import type {AxiosError} from 'axios';
 import type {ExportParams} from 'shared';
-import type {ChartWidgetDataRef} from 'ui/components/Widgets/Chart/types';
+import type {ChartRevIdRef, ChartWidgetDataRef} from 'ui/components/Widgets/Chart/types';
 import type {MenuLoadedData} from 'ui/libs/DatalensChartkit/menu/Menu';
 import type {ChartsData, ChartsProps} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
 import type DatalensChartkitCustomError from 'ui/libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
@@ -22,6 +22,7 @@ export type ExportActionArgs = {
     propsData: ChartKitProps<ChartsProps, ChartsData>;
     widget: Highcharts.Chart & LoadedChartInfo & WidgetBase;
     widgetDataRef: ChartWidgetDataRef;
+    chartRevIdRef: ChartRevIdRef;
     event: React.MouseEvent;
     error?: DatalensChartkitCustomError;
     dispatch?: Dispatch
@@ -31,5 +32,4 @@ export type ExportChartArgs = {
     chartData: ExportActionArgs;
     params?: ExportParams;
     onExportLoading?: (isLoading: boolean) => void;
-    chartRevId?: string;
 };

@@ -13,7 +13,6 @@ import { DIALOG_EXPORT_PDF } from './ExportDialog';
 import { closeDialog, openDialog } from 'ui/store/actions/dialog';
 import {isExportPdfVisible} from './utils';
 import {
-    ICONS_MENU_DEFAULT_CLASSNAME,
     ICONS_MENU_DEFAULT_SIZE,
     type MenuItemArgs,
 } from '../../../../../../../../menu/MenuItems';
@@ -172,7 +171,7 @@ export const getExportPDF = ({
                 <Icon
                     size={ICONS_MENU_DEFAULT_SIZE}
                     data={iconData}
-                    className={ICONS_MENU_DEFAULT_CLASSNAME}
+                    //className={ICONS_MENU_DEFAULT_CLASSNAME}
                 />
             );
         },
@@ -221,13 +220,7 @@ export const getExportItem = ({
     },
     icon: ({loadedData, error}: MenuItemArgs) => {
         const iconData = isExportVisible({loadedData, error}) && !error ? ArrowDownToLine : Picture;
-        return (
-            <Icon
-                size={ICONS_MENU_DEFAULT_SIZE}
-                data={iconData}
-                className={ICONS_MENU_DEFAULT_CLASSNAME}
-            />
-        );
+        return <Icon size={ICONS_MENU_DEFAULT_SIZE} data={iconData} />;
     },
     items: getSubItems({
         showWiki,

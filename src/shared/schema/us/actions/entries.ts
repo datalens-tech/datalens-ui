@@ -3,6 +3,7 @@ import {omit, uniqBy} from 'lodash';
 import {
     DL_COMPONENT_HEADER,
     DlComponentHeader,
+    TIMEOUT_60_SEC,
     TIMEOUT_90_SEC,
     US_MASTER_TOKEN_HEADER,
     WORKBOOK_ID_HEADER,
@@ -100,7 +101,10 @@ export const entriesActions = {
         method: 'GET',
         path: ({entryId}) => `${PATH_PREFIX}/entries/${filterUrlFragment(entryId)}`,
         params: ({entryId: _entryId, workbookId, includeDlComponentUiData, ...query}, headers) => ({
-            query,
+            query: {
+                ...query,
+                includeFavorite: true,
+            },
             headers: {
                 ...headers,
                 ...(includeDlComponentUiData ? {[DL_COMPONENT_HEADER]: DlComponentHeader.UI} : {}),
@@ -108,6 +112,9 @@ export const entriesActions = {
             },
         }),
     }),
+    /**
+     * @deprecated Use gatewayApi.usPrivate._proxyGetEntry instead
+     */
     _proxyGetEntry: createAction<GetEntryResponse, PrivateGetEntryArgs>({
         method: 'GET',
         path: ({entryId}) => `${PRIVATE_PATH_PREFIX}/entries/${filterUrlFragment(entryId)}`,
@@ -120,6 +127,9 @@ export const entriesActions = {
             },
         }),
     }),
+    /**
+     * @deprecated Use gatewayApi.usPrivate._proxyCreateEntry instead
+     */
     _proxyCreateEntry: createAction<GetEntryResponse, ProxyCreateEntryArgs>({
         method: 'POST',
         path: () => `${PRIVATE_PATH_PREFIX}/entries/`,
@@ -168,6 +178,9 @@ export const entriesActions = {
         path: ({entryId}) => `${PATH_PREFIX}/entries/${filterUrlFragment(entryId)}/meta`,
         params: (_, headers) => ({headers}),
     }),
+    /**
+     * @deprecated Use gatewayApi.usPrivate._getEntryMeta instead
+     */
     _getEntryMeta: createAction<GetEntryMetaResponse, GetEntryMetaArgs>({
         method: 'GET',
         path: ({entryId}) => `${PRIVATE_PATH_PREFIX}/entries/${entryId}/meta`,
@@ -268,6 +281,7 @@ export const entriesActions = {
             }
             return {body, headers};
         },
+        timeout: TIMEOUT_60_SEC,
     }),
     copyEntry: createAction<CopyEntryResponse, CopyEntryArgs>({
         method: 'POST',
@@ -307,6 +321,7 @@ export const entriesActions = {
         method: 'POST',
         path: ({entryId}) => `${PATH_PREFIX}/entries/${filterUrlFragment(entryId)}/rename`,
         params: ({name}, headers) => ({body: {name}, headers}),
+        timeout: TIMEOUT_60_SEC,
     }),
     createFolder: createAction<CreateFolderResponse, CreateFolderArgs>({
         method: 'POST',

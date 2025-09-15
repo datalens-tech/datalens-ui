@@ -190,6 +190,10 @@ $fullscreenZIndex: 999;
 
     & .chartkit {
         --highcharts-series-border: var(--g-color-base-float);
+
+        .gcharts-chart {
+            --gcharts-data-labels: var(--g-color-text-complementary);
+        }
     }
 
     &_default-mobile {

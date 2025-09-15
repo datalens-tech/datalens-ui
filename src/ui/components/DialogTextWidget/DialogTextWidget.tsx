@@ -99,7 +99,6 @@ class DialogTextWidget extends React.PureComponent<DialogTextWidgetProps, Dialog
                 open={dialogIsVisible}
                 onClose={this.props.closeDialog}
                 disableOutsideClick={true}
-                disableFocusTrap={true}
                 qa={DialogDashWidgetItemQA.Text}
             >
                 <Dialog.Header

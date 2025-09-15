@@ -1,4 +1,4 @@
-import type {ChartData, ChartSeries} from '@gravity-ui/chartkit/d3';
+import type {ChartData, ChartSeries} from '@gravity-ui/chartkit/gravity-charts';
 import get from 'lodash/get';
 import type {ColumnExportSettings, SeriesExportSettings, TableRow} from 'shared';
 import type {TableData} from 'ui/libs/DatalensChartkit/types';

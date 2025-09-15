@@ -9,6 +9,7 @@ import {getRestrictedParamNames} from 'ui/utils/getRestrictedParamNames';
 import {setEntryKey} from 'ui/utils/setEntryKey';
 
 import {formatNumber} from '../../../../shared/modules/format-units/formatUnit';
+import {DialogEntryDescription} from '../../../components/DialogEntryDescription';
 import {EntryBreadcrumbs} from '../../../components/EntryBreadcrumbs/EntryBreadcrumbs';
 import {getEntryMenuConfig, getMenuGroupConfig} from '../../../components/EntryContextMenu/helpers';
 import {getAdditionalEntryContextMenuItems} from '../../../components/EntryContextMenu/utils';
@@ -61,6 +62,7 @@ export const registerCommonPlugins = () => {
         DatepickerControl,
         MarkdownControl,
         WorkbookEntriesTableTabs,
+        DialogEntryDescription,
     });
 
     registry.common.functions.register({

@@ -3,6 +3,7 @@ export const enum WizardPageQa {
     VisualizationSelectPopup = 'visualization-select-popup',
     UndoButton = 'undo-btn',
     RedoButton = 'redo-btn',
+    PlaceholderIconTooltipContent = 'placeholder-icon-tooltip-content',
 }
 
 export const enum SectionDatasetQA {
@@ -48,6 +49,7 @@ export const enum DialogFieldBackgroundSettingsQa {
     EnableButton = 'dialog-field-bg-switcher',
     FillTypeButtons = 'dialog-field-bg-fill-type',
     ButtonColorDialog = 'button-color-dialog',
+    NullModeRadioButtons = 'null-node-radio-buttons',
 }
 
 export const enum DialogFieldBarsSettingsQa {

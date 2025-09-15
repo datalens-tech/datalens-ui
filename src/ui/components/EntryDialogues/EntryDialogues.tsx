@@ -106,8 +106,8 @@ interface MapDialoguesProps {
     [EntryDialogName.Access]: DialogAccessProps;
     [EntryDialogName.AccessDescription]: DialogAccessDescriptionProps;
     [EntryDialogName.Unlock]: DialogUnlockProps;
-    [EntryDialogName.DashMeta]: DialogDashMetaProps;
     [EntryDialogName.Delete]: DialogDeleteEntryProps;
+    [EntryDialogName.DashMeta]: DialogDashMetaProps;
     [EntryDialogName.Move]: DialogMoveEntryProps;
     [EntryDialogName.Copy]: DialogCopyEntryProps;
     [EntryDialogName.CreateFolder]: DialogCreateFolderProps;

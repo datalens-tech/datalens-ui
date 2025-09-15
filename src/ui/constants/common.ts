@@ -187,6 +187,9 @@ export const DL = {
     get AUTH_MANAGE_LOCAL_USERS_DISABLED() {
         return window.DL.authManageLocalUsersDisabled === true;
     },
+    get AUTH_SIGNUP_DISABLED() {
+        return window.DL.authSignupDisabled === true;
+    },
     get IS_AUTH_PAGE() {
         return Boolean(window.DL.authPageSettings?.isAuthPage);
     },
@@ -291,6 +294,9 @@ export const DL = {
     get EXPORT_DASH_EXCEL() {
         return window.DL.exportDashExcel === true;
     },
+    get DOCS_URL() {
+        return window.DL.docsUrl;
+    },
     get IS_NATIVE_AUTH_ADMIN() {
         return window.DL.user.roles?.includes(UserRole.Admin);
     },
@@ -309,6 +315,7 @@ export const DATALENS_DARK_THEME_MONACO = 'vs-dark-datalens';
 export const DATALENS_DARK_HC_THEME_MONACO = 'vs-dark-hc-datalens';
 
 export const PRODUCT_NAME = 'DataLens';
+export const REBRANDING_PRODUCT_NAME = `Yandex ${PRODUCT_NAME}`;
 
 export const URL_OPTIONS = {
     THEME: '_theme',

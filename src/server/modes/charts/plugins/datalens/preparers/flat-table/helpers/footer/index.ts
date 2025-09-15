@@ -71,6 +71,7 @@ export const getFooterCellWithStyles = (args: GetFooterCellWithStylesArgs) => {
             field: column,
             columnValues,
             isTotalCell: true,
+            availablePalettes: colorsConfig.availablePalettes,
             loadedColorPalettes: colorsConfig.loadedColorPalettes,
         });
 

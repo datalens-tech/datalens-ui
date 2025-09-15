@@ -1,4 +1,5 @@
 import type React from 'react';
+import type {CSSProperties} from 'react';
 
 import type {PluginWidgetProps} from '@gravity-ui/dashkit';
 import type {DashTabItemControlElement} from 'shared';
@@ -269,18 +270,23 @@ export function getControlHint(source: DashTabItemControlElement) {
     return source.showHint ? source.hint : undefined;
 }
 
-export function getPreparedWrapSettings(showBgColor: boolean, color?: string) {
+export function getPreparedWrapSettings(
+    showBgColor: boolean,
+    color?: string,
+    additionalStyle?: CSSProperties,
+    textColor?: string,
+) {
     const wrapperClassMod =
         (showBgColor &&
             (color === CustomPaletteBgColors.LIKE_CHART ? 'with-default-color' : 'with-color')) ||
         '';
 
-    const style = showBgColor
-        ? {
-              backgroundColor: color === CustomPaletteBgColors.LIKE_CHART ? undefined : color,
-          }
-        : {};
-
+    const style: CSSProperties = {
+        ...additionalStyle,
+        backgroundColor:
+            !showBgColor || color === CustomPaletteBgColors.LIKE_CHART ? undefined : color,
+        color: textColor,
+    };
     return {
         classMod: wrapperClassMod,
         style,

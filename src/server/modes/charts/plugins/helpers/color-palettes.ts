@@ -5,7 +5,7 @@ import {
     isSystemPaletteId,
     isVisualizationWithLayers,
 } from '../../../../../shared';
-import type {SourceRequest} from '../datalens/url/build-sources/types';
+import type {SourceRequest} from '../datalens/url/types';
 
 type GetColorPalettesRequestArgs = {
     config: ServerChartsConfig;
@@ -30,7 +30,10 @@ export function getColorPalettesRequests(args: GetColorPalettesRequestArgs) {
         });
     } else {
         const colorPaletteId =
-            config.colorsConfig?.palette || config.colorsConfig?.gradientPalette || '';
+            config.colorsConfig?.palette ||
+            config.colorsConfig?.gradientPalette ||
+            config.extraSettings?.metricFontColorPalette ||
+            '';
         colorPalettes.add(colorPaletteId);
     }
 

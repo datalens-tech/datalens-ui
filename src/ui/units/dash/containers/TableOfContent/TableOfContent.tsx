@@ -11,6 +11,7 @@ import throttle from 'lodash/throttle';
 import {useDispatch, useSelector} from 'react-redux';
 import {Link, useLocation} from 'react-router-dom';
 import {TableOfContentQa} from 'shared';
+import {MarkdownHelpPopover} from 'ui/components/MarkdownHelpPopover/MarkdownHelpPopover';
 import {DL} from 'ui/constants';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
 import {
@@ -203,6 +204,15 @@ const TableOfContent = React.memo(
                                     key={item.id}
                                 >
                                     {item.title}
+                                    {item.hint && (
+                                        <MarkdownHelpPopover
+                                            className={b('hint')}
+                                            markdown={item.hint}
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                            }}
+                                        />
+                                    )}
                                 </Link>
                             ))}
                         </div>
@@ -224,6 +234,7 @@ const TableOfContent = React.memo(
                         id="dash-table-of-content"
                         allowHideOnContentScroll={false}
                         onClose={handleSheetClose}
+                        className={b('sheet')}
                     >
                         <div className={b('tabs')}>{tabsItems}</div>
                     </Sheet>

@@ -8,42 +8,55 @@ import {
 import type {Plugin, PluginTitleProps} from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
-import type {DashTabItemTitle} from 'shared';
+import {type DashTabItemTitle, EXPORT_PRINT_HIDDEN_ATTR} from 'shared';
 import {CustomPaletteBgColors} from 'shared/constants/widgets';
 import {
     adjustWidgetLayout as dashkitAdjustWidgetLayout,
     getPreparedWrapSettings,
 } from 'ui/components/DashKit/utils';
+import {MarkdownHelpPopover} from 'ui/components/MarkdownHelpPopover/MarkdownHelpPopover';
+import {DL} from 'ui/constants';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
+import {useWidgetContext} from '../../context/WidgetContext';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
 import {AnchorLink} from './AnchorLink/AnchorLink';
+import {
+    getFontStyleBySize,
+    getHelpIconSizeBySize,
+    getTopOffsetBySize,
+    isTitleOverflowed,
+} from './utils';
 
 import './Title.scss';
 
 const b = block('dashkit-plugin-title-container');
 
-type PluginTitleObjectSettings = {hideAnchor?: boolean};
+type PluginTitleObjectSettings = {hideAnchor?: boolean; hideHint?: boolean};
 
 type Props = PluginTitleProps & PluginTitleObjectSettings;
 
 type PluginTitle = Plugin<Props> & {
     setSettings: (settings: PluginTitleObjectSettings) => PluginTitle;
     hideAnchor?: boolean;
+    hideHint?: boolean;
 };
 
 const WIDGET_RESIZE_DEBOUNCE_TIMEOUT = 100;
-const MAX_ANCHOR_WIDTH = 28;
+
 // text can be placed directly on the upper border of container,
 // in which case a small negative offset is needed
-const MIN_AVAILABLE_ANCHOR_OFFSET = -5;
+const MIN_AVAILABLE_TOP_OFFSET = -5;
 
 const titlePlugin: PluginTitle = {
     ...pluginTitle,
     setSettings(settings: PluginTitleObjectSettings) {
-        const {hideAnchor} = settings;
+        const {hideAnchor, hideHint} = settings;
+
         titlePlugin.hideAnchor = hideAnchor;
+        titlePlugin.hideHint = hideHint;
+
         return titlePlugin;
     },
     renderer: function Wrapper(
@@ -52,9 +65,19 @@ const titlePlugin: PluginTitle = {
     ) {
         const rootNodeRef = React.useRef<HTMLDivElement>(null);
         const contentRef = React.useRef<HTMLDivElement>(null);
+        const extraRef = React.useRef<HTMLDivElement>(null);
 
-        const [isInlineAnchor, setIsInlineAnchor] = React.useState<boolean>(false);
-        const [anchorTop, setAnchorTop] = React.useState(0);
+        useWidgetContext({
+            id: props.id,
+            elementRef: rootNodeRef,
+        });
+
+        const [isInlineExtraElements, setIsInlineExtraElements] = React.useState<boolean | null>(
+            false,
+        );
+        const [extraElementsTop, setExtraElementsTop] = React.useState<number | undefined>(
+            undefined,
+        );
 
         const data = props.data as DashTabItemTitle['data'];
 
@@ -86,7 +109,7 @@ const titlePlugin: PluginTitle = {
                     needHeightReset: true,
                 });
             }, WIDGET_RESIZE_DEBOUNCE_TIMEOUT),
-            [props.id, rootNodeRef, layoutRef, props.adjustWidgetLayout, props.gridLayout],
+            [props.id, props.adjustWidgetLayout, props.gridLayout],
         );
 
         React.useEffect(() => {
@@ -101,7 +124,22 @@ const titlePlugin: PluginTitle = {
                 data.background?.color !== CustomPaletteBgColors.NONE,
         );
 
-        const {classMod, style} = getPreparedWrapSettings(showBgColor, data.background?.color);
+        const showHint = Boolean(!titlePlugin.hideHint && data.hint?.enabled && data.hint.text);
+        const showAnchor = !titlePlugin.hideAnchor && !DL.IS_MOBILE;
+
+        const withInlineExtraElements = (showAnchor || showHint) && isInlineExtraElements;
+
+        const withAbsoluteAnchor = showAnchor && !isInlineExtraElements;
+        const withAbsoluteHint = showHint && !isInlineExtraElements;
+
+        const {classMod, style} = getPreparedWrapSettings(
+            showBgColor,
+            data.background?.color,
+            {
+                position: showAnchor ? undefined : 'relative',
+            },
+            data.textColor,
+        );
 
         const currentLayout = props.layout.find(({i}) => i === props.id) || {
             x: null,
@@ -124,34 +162,32 @@ const titlePlugin: PluginTitle = {
             data.text,
         ]);
 
-        const showAnchor = !titlePlugin.hideAnchor && !props.editMode;
-        const withInlineAnchor = showAnchor && isInlineAnchor;
-        const withAbsoluteAnchor = showAnchor && !isInlineAnchor;
-
-        const calculateAnchor = React.useCallback(() => {
+        const calculateExtraElements = React.useCallback(() => {
             if (contentRef.current && rootNodeRef.current) {
                 const contentRect = contentRef.current.getBoundingClientRect();
                 const rootRect = rootNodeRef.current.getBoundingClientRect();
 
                 const offsetTop = contentRect.top - rootRect.top;
 
-                const isWidthFits = contentRect.width + MAX_ANCHOR_WIDTH < rootRect.width;
-                const isHeightFits = contentRect.height <= rootRect.height;
+                const titleElement = contentRef.current.children[0];
+                const isWidthFits =
+                    titleElement instanceof HTMLDivElement && extraRef.current
+                        ? !isTitleOverflowed(contentRef.current, extraRef.current)
+                        : contentRect.width <= rootRect.width;
 
-                const enableInlineAnchor = isWidthFits && isHeightFits;
                 const calculatedAnchorTop =
-                    offsetTop < MIN_AVAILABLE_ANCHOR_OFFSET || enableInlineAnchor ? 0 : offsetTop;
+                    offsetTop < MIN_AVAILABLE_TOP_OFFSET || isWidthFits ? 0 : offsetTop;
 
-                setAnchorTop(calculatedAnchorTop);
-                setIsInlineAnchor(enableInlineAnchor);
+                setExtraElementsTop(calculatedAnchorTop);
+                setIsInlineExtraElements(isWidthFits);
             }
         }, []);
 
         React.useLayoutEffect(() => {
-            if (showAnchor) {
-                calculateAnchor();
+            if (showAnchor || showHint) {
+                calculateExtraElements();
             } else {
-                setIsInlineAnchor(false);
+                setIsInlineExtraElements(false);
             }
         }, [
             currentLayout.x,
@@ -159,17 +195,18 @@ const titlePlugin: PluginTitle = {
             currentLayout.w,
             data.text,
             data.size,
-            calculateAnchor,
+            calculateExtraElements,
             showAnchor,
+            showHint,
         ]);
 
         React.useEffect(() => {
-            if (!showAnchor) {
+            if (!showAnchor && !showHint) {
                 return undefined;
             }
 
             const debouncedCalculateAnchor = debounce(
-                calculateAnchor,
+                calculateExtraElements,
                 WIDGET_RESIZE_DEBOUNCE_TIMEOUT,
             );
             window.addEventListener('resize', debouncedCalculateAnchor);
@@ -177,7 +214,20 @@ const titlePlugin: PluginTitle = {
             return () => {
                 window.removeEventListener('resize', debouncedCalculateAnchor);
             };
-        }, [calculateAnchor, showAnchor]);
+        }, [showAnchor, showHint]);
+
+        const getStyles = () => {
+            const fontStyles = getFontStyleBySize(data.size);
+
+            if (isInlineExtraElements) {
+                return fontStyles;
+            }
+
+            return {
+                ...fontStyles,
+                top: showAnchor ? extraElementsTop : getTopOffsetBySize(data.size, showBgColor),
+            };
+        };
 
         return (
             <RendererWrapper
@@ -191,19 +241,39 @@ const titlePlugin: PluginTitle = {
                     className={b({
                         'with-auto-height': Boolean(data.autoHeight),
                         'with-color': Boolean(showBgColor),
-                        'with-inline-anchor': Boolean(withInlineAnchor),
-                        'with-absolute-anchor': Boolean(withAbsoluteAnchor),
+                        'with-inline-extra-elements': Boolean(withInlineExtraElements),
+                        'with-absolute-anchor': withAbsoluteAnchor && !withAbsoluteHint,
+                        'with-absolute-hint': withAbsoluteHint && !withAbsoluteAnchor,
+                        'with-absolute-hint-and-anchor': withAbsoluteHint && withAbsoluteAnchor,
+                        absolute: !isInlineExtraElements,
+                        relative: !showAnchor,
                     })}
                     ref={contentRef}
                 >
                     {content}
-                    <AnchorLink
-                        size={data.size}
-                        to={data.text}
-                        show={showAnchor}
-                        top={anchorTop}
-                        absolute={!isInlineAnchor}
-                    />
+                    <div
+                        className={b('extra-elements-container', {
+                            absolute: !isInlineExtraElements,
+                        })}
+                        style={getStyles()}
+                        ref={extraRef}
+                        {...{[EXPORT_PRINT_HIDDEN_ATTR]: true}}
+                    >
+                        {showHint && (
+                            <MarkdownHelpPopover
+                                iconSize={getHelpIconSizeBySize(data.size)}
+                                markdown={data.hint?.text ?? ''}
+                                className={b('hint')}
+                                popoverProps={{
+                                    placement: 'bottom',
+                                }}
+                                buttonProps={{
+                                    className: b('hint-button'),
+                                }}
+                            />
+                        )}
+                        <AnchorLink to={data.text} show={showAnchor} />
+                    </div>
                 </div>
             </RendererWrapper>
         );

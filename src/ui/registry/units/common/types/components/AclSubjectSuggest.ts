@@ -8,10 +8,6 @@ import type {
 export type AclSubject = ListItemData<SubjectClaims>;
 
 export type AclSubjectSuggestProps = {
-    availableGroups: {
-        id: ClaimsSubjectType;
-        name: string;
-    }[];
     fetchSubjects?: (
         search: string,
         tabId: ClaimsSubjectType,
@@ -24,4 +20,5 @@ export type AclSubjectSuggestProps = {
         | AclSubject[]
     >;
     onSubjectChange: (subject: AclSubject) => void;
+    selectedTab?: ClaimsSubjectType;
 };

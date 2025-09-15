@@ -53,6 +53,7 @@ import type {
     PrepareFunctionResultData,
     ResultDataOrderItem,
 } from '../preparers/types';
+import type {ChartPlugin} from '../types';
 import {mapChartsConfigToServerConfig} from '../utils/config-helpers';
 import {LAT, LONG} from '../utils/constants';
 import {preprocessHierarchies} from '../utils/hierarchy-helpers';
@@ -383,6 +384,7 @@ type PrepareSingleResultArgs = {
     layerChartMeta?: LayerChartMeta;
     usedColors?: (string | undefined)[];
     features: FeatureConfig;
+    plugin?: ChartPlugin;
 };
 
 // eslint-disable-next-line complexity
@@ -401,6 +403,7 @@ function prepareSingleResult({
     usedColors,
     palettes,
     features,
+    plugin,
 }: PrepareSingleResultArgs) {
     const isVisualizationWithLayers = Boolean(
         (visualization as ServerVisualizationLayer).layerSettings,
@@ -542,7 +545,12 @@ function prepareSingleResult({
 
         case 'pie':
         case 'donut':
-            prepare = prepareHighchartsPie;
+            if (plugin === 'gravity-charts') {
+                prepare = prepareD3Pie;
+            } else {
+                prepare = prepareHighchartsPie;
+            }
+
             rowsLimit = 1000;
             break;
 
@@ -558,7 +566,11 @@ function prepareSingleResult({
             break;
 
         case 'treemap':
-            prepare = prepareHighchartsTreemap;
+            if (plugin === 'gravity-charts') {
+                prepare = prepareD3Treemap;
+            } else {
+                prepare = prepareHighchartsTreemap;
+            }
             rowsLimit = 800;
             break;
 
@@ -726,8 +738,9 @@ export const buildGraphPrivate = (args: {
     data: any;
     palettes: Record<string, Palette>;
     features: FeatureConfig;
+    plugin?: ChartPlugin;
 }) => {
-    const {shared: chartSharedConfig, ChartEditor, data, palettes, features} = args;
+    const {shared: chartSharedConfig, ChartEditor, data, palettes, features, plugin} = args;
 
     log('LOADED DATA:');
     log(data);
@@ -912,6 +925,7 @@ export const buildGraphPrivate = (args: {
                 usedColors,
                 palettes,
                 features,
+                plugin,
             });
 
             if (localResult && localResult[0] && localResult[0].bounds) {
@@ -975,6 +989,7 @@ export const buildGraphPrivate = (args: {
             loadedColorPalettes,
             palettes,
             features,
+            plugin,
         });
 
         if (result?.[0]?.bounds) {
@@ -986,6 +1001,20 @@ export const buildGraphPrivate = (args: {
         ChartEditor.updateHighchartsConfig({
             ...(Boolean(bounds) && {state: {bounds}}),
         });
+    }
+
+    const isTableChart = [
+        WizardVisualizationId.FlatTable,
+        WizardVisualizationId.PivotTable,
+    ].includes(shared.visualization.id as WizardVisualizationId);
+
+    if (isTableChart) {
+        const page = ChartEditor.getCurrentPage();
+        const limit = shared.extraSettings?.limit;
+        const shouldDisablePaginator = page === 1 && limit && limit > (result.rows?.length ?? 0);
+        if (shouldDisablePaginator) {
+            ChartEditor.updateConfig({paginator: {enabled: false}});
+        }
     }
 
     log('RESULT:');

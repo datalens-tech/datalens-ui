@@ -1,6 +1,7 @@
 export enum ActionPanelQA {
     MoreBtn = 'entry-panel-more-btn',
     ActionPanel = 'entry-action-panel',
+    EntryBreadcrumbs = 'entry-breadcrumbs',
 }
 
 export enum RevisionsPanelQa {
@@ -180,6 +181,12 @@ export const enum DialogCreateWorkbookEntryQa {
     Root = 'dialog-create-workbook-entry-root',
     Input = 'dialog-create-workbook-entry-input',
     ApplyButton = 'dialog-create-workbook-entry-apply-button',
+}
+
+export const enum DialogEntryDescriptionQa {
+    Root = 'dialog-dash-meta',
+    SaveButton = 'dash-meta-save-button',
+    EditButton = 'dash-meta-edit-button',
 }
 
 export const enum CreateEntityButton {

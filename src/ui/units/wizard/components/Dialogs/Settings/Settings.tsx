@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
-import {Dialog, Loader, RadioButton} from '@gravity-ui/uikit';
+import {Dialog, Loader, SegmentedRadioGroup as RadioButton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import _isEqual from 'lodash/isEqual';
@@ -32,7 +32,6 @@ import {
     WizardVisualizationId,
     ZoomMode,
     getIsNavigatorAvailable,
-    isD3Visualization,
     isDateField,
     isTreeField,
 } from 'shared';
@@ -47,11 +46,6 @@ import {DEFAULT_PAGE_ROWS_LIMIT} from '../../../../../constants/misc';
 import {getQlAutoExecuteChartValue} from '../../../../ql/utils/chart-settings';
 import {CHART_SETTINGS, SETTINGS, VISUALIZATION_IDS} from '../../../constants';
 import {getDefaultChartName} from '../../../utils/helpers';
-import {
-    getAvailableVisualizations,
-    getD3Analog,
-    getHighchartsAnalog,
-} from '../../../utils/visualization';
 
 import {CenterSetting} from './CenterSetting/CenterSetting';
 import IndicatorTitleSetting from './IndicatorTitleSetting/IndicatorTitleSetting';
@@ -196,7 +190,6 @@ interface State {
     pivotFallback?: string;
     navigatorSettings: NavigatorSettings;
     navigatorSeries: string[];
-    d3Fallback: string;
     qlAutoExecuteChart?: string;
     isPivotTable: boolean;
     pivotInlineSort: string;
@@ -316,9 +309,6 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
             navigatorSeries,
             ...(isDonut && {totals}),
             ...tableSettings,
-            d3Fallback: isD3Visualization(visualization.id as WizardVisualizationId)
-                ? CHART_SETTINGS.D3_FALLBACK.OFF
-                : CHART_SETTINGS.D3_FALLBACK.ON,
             tooltip,
             stacking,
             size,
@@ -446,7 +436,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
             this.props.qlMode ? QL_SETTINGS_KEYS : BASE_SETTINGS_KEYS,
         );
 
-        let isSettingsEqual = _isEqual(settings, this.props.extraSettings);
+        const isSettingsEqual = _isEqual(settings, this.props.extraSettings);
 
         let extraSettings: CommonSharedExtraSettings = {
             ...this.props.extraSettings,
@@ -483,37 +473,12 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
             } as Shared['visualization'];
         }
 
-        const newVisualizationId = this.getNewVisualizationId();
-        const newVisualization = getAvailableVisualizations().find(
-            (v) => v.id === newVisualizationId,
-        ) as Shared['visualization'];
-
-        if (newVisualization) {
-            visualization = newVisualization as Shared['visualization'];
-            isSettingsEqual = false;
-        }
-
         this.props.onApply({
             extraSettings,
             visualization,
             isSettingsEqual,
             qlMode: this.props.qlMode,
         });
-    };
-
-    getNewVisualizationId = () => {
-        const {visualization} = this.props;
-        const {d3Fallback} = this.state;
-
-        if (d3Fallback === CHART_SETTINGS.D3_FALLBACK.OFF) {
-            return getD3Analog(visualization.id as WizardVisualizationId);
-        }
-
-        if (d3Fallback === CHART_SETTINGS.D3_FALLBACK.ON) {
-            return getHighchartsAnalog(visualization.id as WizardVisualizationId);
-        }
-
-        return null;
     };
 
     handleNavigatorSelectedLineUpdate = (updatedSelectedLines: string[]) => {
@@ -1023,35 +988,6 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
         );
     }
 
-    renderD3Switch() {
-        const {visualization} = this.props;
-        const {d3Fallback} = this.state;
-        const visualizationId = visualization.id as WizardVisualizationId;
-        const hasOtherLibraryAnalog = isD3Visualization(visualizationId)
-            ? getHighchartsAnalog(visualizationId)
-            : getD3Analog(visualizationId);
-        const enabled = hasOtherLibraryAnalog && isEnabledFeature(Feature.D3Visualizations);
-
-        if (!enabled) {
-            return null;
-        }
-
-        return (
-            <SettingSwitcher
-                currentValue={d3Fallback}
-                checkedValue={CHART_SETTINGS.D3_FALLBACK.ON}
-                uncheckedValue={CHART_SETTINGS.D3_FALLBACK.OFF}
-                onChange={(value) => {
-                    this.setState({
-                        d3Fallback: value,
-                    });
-                }}
-                title={i18n('wizard', 'label_d3-fallback')}
-                qa="d3-fallback-switcher"
-            />
-        );
-    }
-
     renderQlAutoExecutionChart() {
         const {qlMode} = this.props;
 
@@ -1133,7 +1069,6 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
                 {this.renderFeed()}
                 {this.renderPivotFallback()}
                 {this.renderNavigator()}
-                {this.renderD3Switch()}
                 {this.renderQlAutoExecutionChart()}
                 {this.renderInlineSortSwitch()}
                 {this.renderStackingSwitch()}
@@ -1147,12 +1082,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
         const {valid} = this.state;
 
         return (
-            <Dialog
-                open={true}
-                className={b()}
-                onClose={this.props.onCancel}
-                disableFocusTrap={true}
-            >
+            <Dialog open={true} className={b()} onClose={this.props.onCancel}>
                 <div className={b('content')}>
                     <Dialog.Header caption={i18n('wizard', 'label_chart-settings')} />
                     <Dialog.Body>{this.renderModalBody()}</Dialog.Body>

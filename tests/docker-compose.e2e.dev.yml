@@ -13,7 +13,7 @@ services:
       file: docker-compose.e2e.yml
       service: control-api
     ports:
-      - 8081:8080
+      - 8010:8080
     networks:
       - default
 
@@ -25,7 +25,7 @@ services:
       postgres:
         condition: service_healthy
     ports:
-      - 8082:8080
+      - 8020:8080
     networks:
       - default
 
@@ -37,7 +37,19 @@ services:
       postgres:
         condition: service_healthy
     ports:
-      - 8083:8080
+      - 3030:8080
+    networks:
+      - default
+
+  auth:
+    extends:
+      file: docker-compose.e2e.yml
+      service: auth
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - 8088:8080
     networks:
       - default
 

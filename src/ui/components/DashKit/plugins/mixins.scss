@@ -1,16 +1,9 @@
-@mixin with-fade-effect() {
-    --_--fade-effect-color: var(--dash-current-background, var(--g-color-base-generic-ultralight));
-
-    content: '';
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 44px;
-    right: 0;
-    background: linear-gradient(
+@mixin text-with-fade-effect($fadeWidth) {
+    mask-image: linear-gradient(
         to right,
-        transparent,
-        var(--_--fade-effect-color) 50%,
-        var(--_--fade-effect-color)
+        rgb(0, 0, 0) calc(100% - $fadeWidth),
+        rgba(0, 0, 0, 0.5) calc(100% - $fadeWidth + 5px),
+        rgba(0, 0, 0, 0) calc(100% - $fadeWidth + 15px),
+        rgba(0, 0, 0, 0) 100%
     );
 }

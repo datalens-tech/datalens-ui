@@ -52,6 +52,7 @@ export class Menu extends React.PureComponent {
         widget: PropTypes.object,
         widgetDataRef: PropTypes.object,
         loadedData: PropTypes.object,
+        chartRevIdRef: PropTypes.object,
         error: PropTypes.object,
         propsData: PropTypes.object.isRequired,
         requestId: PropTypes.string.isRequired,
@@ -118,7 +119,7 @@ export class Menu extends React.PureComponent {
                 this.setState({modal: component});
             },
             disabled,
-            children: (
+            text: (
                 <div className={b('menu-item-content')}>
                     {titleStr}
                     {typeof disabledHint === 'string' ? (
@@ -129,7 +130,7 @@ export class Menu extends React.PureComponent {
                 </div>
             ),
             items: disabled ? undefined : subItems,
-            icon: itemIcon,
+            iconStart: itemIcon,
             className: b('popup-item', {disabled}),
         };
     };
@@ -234,7 +235,7 @@ export class Menu extends React.PureComponent {
                                     ? this.handleFullscreenOpen(item.action)
                                     : item.action
                             }
-                            iconStart={item.icon}
+                            iconStart={item.iconStart}
                         >
                             {item.text}
                         </ListMenu.Item>
@@ -250,6 +251,7 @@ export class Menu extends React.PureComponent {
             widget,
             widgetDataRef,
             loadedData,
+            chartRevIdRef,
             requestId,
             widgetRendering,
             yandexMapAPIWaiting,
@@ -271,6 +273,7 @@ export class Menu extends React.PureComponent {
             widget,
             widgetDataRef,
             loadedData,
+            chartRevIdRef,
             propsData,
             requestId,
             widgetRendering,

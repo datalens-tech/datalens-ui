@@ -5,7 +5,7 @@ import type {HttpMethod} from '@gravity-ui/expresskit/dist/types';
 import type {AppContext} from '@gravity-ui/nodekit';
 
 import type {EDITOR_TYPE_CONFIG_TABS} from '../../../shared';
-import type {SourcesArgs} from '../../modes/charts/plugins/datalens/url/build-sources/types';
+import type {SourcesArgs} from '../../modes/charts/plugins/datalens/url/types';
 import type {MiddlewareSourceAdapterArgs, MiddlewareUrl} from '../../modes/charts/plugins/types';
 
 import type {Runner} from './runners';
@@ -212,6 +212,7 @@ export interface PluginRoute {
     method: Uppercase<HttpMethod>;
     path: string;
     handler: AppRouteDescription['handler'];
+    handlerName?: AppRouteDescription['handlerName'];
     authPolicy?: AppRouteDescription['authPolicy'];
     disableCsrf?: boolean;
     validationConfig?: {

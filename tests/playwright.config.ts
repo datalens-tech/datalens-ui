@@ -5,12 +5,16 @@ import path from 'path';
 import {PlaywrightTestConfig, ReporterDescription, expect} from '@playwright/test';
 
 import {DatalensTestFixtures} from './utils/playwright/globalTestDefinition';
+import {isTrueArg} from '../src/shared';
 
 const ROOT_ENV_PATH = path.resolve(__dirname, '..', '.env');
 
 dotenv.config({path: ROOT_ENV_PATH});
 
-const maxWorkers = process.env.DLCI ? 6 : Number(process.env.E2E_MAX_WORKERS || os.cpus().length);
+const maxWorkers =
+    process.env.CI === 'true'
+        ? 6
+        : parseInt(process.env.E2E_MAX_WORKERS || os.cpus().length.toString(), 10);
 
 const testMatch = process.env.E2E_TEST_MATCH
     ? `**/${process.env.E2E_TEST_MATCH}.test.ts`
@@ -20,11 +24,17 @@ const grep = process.env.E2E_TEST_NAME_PATTERN
     ? new RegExp(process.env.E2E_TEST_NAME_PATTERN)
     : undefined;
 
+const grepInvert = process.env.E2E_TEST_NAME_PATTERN_INVERT
+    ? process.env.E2E_TEST_NAME_PATTERN_INVERT.trim()
+          .split('/[\n,]+/')
+          .map((pattern) => new RegExp(pattern.trim()))
+    : undefined;
+
 const workers = process.env.E2E_DEBUG ? 1 : maxWorkers;
 
 const retries = process.env.E2E_RETRY_TIMES ? Number(process.env.E2E_RETRY_TIMES) : 0;
 
-const headful = Boolean(process.env.E2E_HEADFUL);
+const headful = isTrueArg(process.env.E2E_HEADFUL);
 
 const slowMo = Number.isInteger(Number(process.env.E2E_SLOW_MO))
     ? Number(process.env.E2E_SLOW_MO)
@@ -32,6 +42,7 @@ const slowMo = Number.isInteger(Number(process.env.E2E_SLOW_MO))
 
 const reporter: ReporterDescription[] = [
     ['html', {outputFolder: 'artifacts/report', open: 'never'}],
+    ['json', {outputFile: 'artifacts/results.json'}],
     ['list'],
 ];
 
@@ -46,8 +57,9 @@ Object.defineProperty(global, 'expect', {
 
 const baseURL = process.env.E2E_DOMAIN;
 
-const globalSetupPath = './utils/playwright/datalens/e2e/setup-e2e';
+const globalSetupPath = './utils/playwright/datalens/setup-e2e';
 
+// eslint-disable-next-line no-console
 console.log(`Base URL for tests is: ${baseURL}`);
 
 const testTimeout = process.env.E2E_TEST_TIMEOUT
@@ -59,12 +71,17 @@ const expectTimeout = process.env.E2E_EXPECT_TIMEOUT
 const actionTimeout = process.env.E2E_ACTION_TIMEOUT
     ? parseInt(process.env.E2E_ACTION_TIMEOUT, 10)
     : testTimeout;
+const isAuthDisabled =
+    isTrueArg(process.env.NO_AUTH) ||
+    isTrueArg(process.env.E2E_NO_AUTH) ||
+    !isTrueArg(process.env.AUTH_ENABLED || 'true');
 const playwrightConfig: PlaywrightTestConfig<DatalensTestFixtures> = {
     workers,
     testMatch,
     retries,
     reporter,
     grep,
+    grepInvert,
     fullyParallel: true,
     globalSetup: require.resolve(globalSetupPath),
     timeout: testTimeout,
@@ -87,7 +104,9 @@ const playwrightConfig: PlaywrightTestConfig<DatalensTestFixtures> = {
         trace: {mode: 'on-first-retry', screenshots: false, sources: false},
         actionTimeout: actionTimeout,
         testIdAttribute: 'data-qa',
-        storageState: process.env.NO_AUTH === 'true' ? undefined : 'artifacts/storageState.json',
+        storageState: isAuthDisabled
+            ? undefined
+            : path.join(__dirname, 'artifacts/storageState.json'),
     },
     projects: [
         {

@@ -14,6 +14,7 @@ import type {
     ServerChartsConfig,
     ServerDatasetField,
     ServerField,
+    ServerVisualizationLayer,
     Shared,
     SharedData,
     StringParams,
@@ -719,7 +720,8 @@ export const getUrlsRequestBody = (args: {
 
     const links = config.links;
     const segments = config.segments;
-    const sort = config.sort;
+    const sort =
+        (currentLayer as ServerVisualizationLayer)?.commonPlaceholders?.sort ?? config.sort;
     const updates = config.updates;
     const extraSettings = config.extraSettings;
     const sharedData = shared.sharedData;

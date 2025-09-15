@@ -48,7 +48,7 @@ import {
     selectMeasures,
 } from 'units/wizard/selectors/dataset';
 import {selectUpdates} from 'units/wizard/selectors/preview';
-import {selectDefaultPath, selectIsNavigationVisible} from 'units/wizard/selectors/settings';
+import {selectIsNavigationVisible} from 'units/wizard/selectors/settings';
 import {selectHierarchies, selectVisualization} from 'units/wizard/selectors/visualization';
 import {selectWidget} from 'units/wizard/selectors/widget';
 import {v1 as uuidv1} from 'uuid';
@@ -950,17 +950,19 @@ class SectionDataset extends React.Component<Props, State> {
             <DropdownMenu
                 size="s"
                 switcherWrapperClassName="add-param-btn-wrapper"
-                switcher={
+                renderSwitcher={({onClick, onKeyDown}) => (
                     <Button
                         className="add-param-btn"
                         view="outlined"
                         size="m"
                         loading={this.state.fieldEditorLoading}
                         qa="add-param"
+                        onClick={onClick}
+                        onKeyDown={onKeyDown}
                     >
                         <Icon data={iconPlus} size={15} />
                     </Button>
-                }
+                )}
                 items={this.getDropdownItems()}
             />
         );
@@ -972,7 +974,6 @@ class SectionDataset extends React.Component<Props, State> {
             dataset,
             datasets,
             datasetApiErrors,
-            defaultPath,
             datasetLoading,
             isNavigationVisible,
             datasetLoaded,
@@ -980,6 +981,8 @@ class SectionDataset extends React.Component<Props, State> {
         } = this.props;
 
         const workbookId = widget.workbookId as string;
+
+        const startFrom = widget?.key.replace(/[^/]+$/, '');
 
         const {getPlaceSelectParameters} = registry.common.functions.getAll();
 
@@ -1030,7 +1033,7 @@ class SectionDataset extends React.Component<Props, State> {
                                     onEntryClick={this.onNavigationClick}
                                     clickableScope="dataset"
                                     scope="dataset"
-                                    startFrom={defaultPath}
+                                    startFrom={startFrom}
                                     ignoreWorkbookEntries={true}
                                     placeSelectParameters={getPlaceSelectParameters([
                                         PLACE.ROOT,
@@ -1151,7 +1154,6 @@ const mapStateToProps = (state: DatalensGlobalState, ownProps: OwnProps) => {
         datasetError: selectDatasetError(state),
         measures: selectMeasures(state),
         dimensions: selectDimensions(state),
-        defaultPath: selectDefaultPath(state),
         visualization: selectVisualization(state),
         hierarchies: selectHierarchies(state),
         widget,

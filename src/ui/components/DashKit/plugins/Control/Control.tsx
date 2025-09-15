@@ -20,10 +20,10 @@ import type {
 } from 'shared';
 import {ControlType, DATASET_FIELD_TYPES, DashTabItemControlSourceType, Feature} from 'shared';
 import {ChartWrapper} from 'ui/components/Widgets/Chart/ChartWidgetWithProvider';
+import type {ChartWidgetWithWrapRefProps} from 'ui/components/Widgets/Chart/types';
 import {DL} from 'ui/constants/common';
 import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import type {ChartKitWrapperOnLoadProps} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
-import type {ChartsChartKit} from 'ui/libs/DatalensChartkit/types/charts';
 import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
@@ -55,7 +55,6 @@ import {Error} from './Error/Error';
 import {ELEMENT_TYPE, LOAD_STATUS, TYPE} from './constants';
 import {prerenderMiddleware} from './prerenderMiddleware';
 import type {
-    ChartControlRef,
     ControlSettings,
     ErrorData,
     LoadStatus,
@@ -96,7 +95,7 @@ const ControlWrapper = React.forwardRef<
     HTMLDivElement,
     {id: string; children: React.ReactNode; className: string}
 >(function ControlWrapper(props, nodeRef) {
-    useWidgetContext(props.id, nodeRef as React.RefObject<HTMLElement>);
+    useWidgetContext({id: props.id, elementRef: nodeRef as React.RefObject<HTMLElement>});
 
     return (
         <div ref={nodeRef} className={props.className}>
@@ -110,7 +109,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
     declare context: React.ContextType<typeof ExtendedDashKitContext>;
 
-    chartKitRef: React.RefObject<ChartsChartKit> = React.createRef<ChartsChartKit>();
+    chartKitRef = React.createRef<ChartWidgetWithWrapRefProps>();
     rootNode: React.RefObject<HTMLDivElement> = React.createRef<HTMLDivElement>();
 
     _isUnmounted = false;
@@ -287,14 +286,12 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     // public
     getMeta() {
         if (this.props.data.sourceType === DashTabItemControlSourceType.External) {
-            return (this.chartKitRef.current as ChartControlRef)?.getMeta();
+            return this.chartKitRef.current?.getMeta();
         }
         if (this.context?.isNewRelations) {
             return this.getCurrentWidgetMetaInfo();
         }
-        if (this.chartKitRef && this.chartKitRef.current) {
-            this.chartKitRef.current.undeferred();
-        }
+
         return new Promise((resolve) => {
             this.resolve = resolve;
             if (this.state.loadedData) {
@@ -307,10 +304,6 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     }
 
     getCurrentWidgetMetaInfo() {
-        if (this.chartKitRef.current) {
-            this.chartKitRef.current.undeferred();
-        }
-
         return new Promise((resolve: (value: unknown) => void) => {
             this.resolve = resolve;
             if (this.state.status !== LOAD_STATUS.PENDING) {
@@ -799,7 +792,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                         onChange={this.onChangeExternal}
                         widgetType={sourceType}
                         editMode={editMode}
-                        forwardedRef={this.chartKitRef as any}
+                        forwardedRef={this.chartKitRef}
                         workbookId={workbookId}
                     />
                 </ControlWrapper>

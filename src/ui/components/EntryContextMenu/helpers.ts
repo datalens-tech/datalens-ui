@@ -226,14 +226,16 @@ export type MenuGroup<T = unknown> = Array<MenuGroupConfigIds<T>>;
 
 export type EntryContextMenuItems = Array<EntryContextMenuItem>;
 
+export type ShortEntry = {
+    entryId: string;
+    scope: string;
+    type: string;
+    key: string;
+};
+
 export type WrapperParams = {
     children: React.ReactElement;
-    entry: {
-        entryId: string;
-        scope: string;
-        type: string;
-        key: string;
-    };
+    entry: ShortEntry;
 };
 
 export type EntryContextMenuItem<T = unknown> = {

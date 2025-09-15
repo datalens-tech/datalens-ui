@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {ArrowRight} from '@gravity-ui/icons';
+import type {ButtonProps} from '@gravity-ui/uikit';
 import {
     Button,
     Card,
@@ -11,12 +12,12 @@ import {
     useLayoutContext,
     useThemeType,
 } from '@gravity-ui/uikit';
-import type {ButtonProps} from '@gravity-ui/uikit';
 import sortBy from 'lodash/sortBy';
 import {Link as RouterLink} from 'react-router-dom';
+import type {GetMetaRespose} from 'shared/schema/anonymous-schema/public-gallery/actions';
 import type {GalleryItemShort} from 'shared/types';
-import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 import type {AsyncImageProps} from 'ui/components/AsyncImage/AsyncImage';
+import {AsyncImage} from 'ui/components/AsyncImage/AsyncImage';
 import type {CreateIllustrationProps} from 'ui/components/Illustration/types';
 import {createIllustration} from 'ui/components/Illustration/utils';
 import {InterpolatedText} from 'ui/components/InterpolatedText/InterpolatedText';
@@ -27,6 +28,7 @@ import {useGetGalleryItemsQuery, useGetGalleryMetaQuery} from '../../../store/ap
 import {GalleryCardPreview, SectionHeader} from '../../blocks';
 import {WorkOfMonth} from '../../blocks/WorkOfMonth/WorkOfMonth';
 import type {ActiveMediaQuery} from '../../types';
+import type {CnMods} from '../../utils';
 import {
     block,
     galleryAllPageI18n,
@@ -37,7 +39,6 @@ import {
     groupGalleryItemsByLabels,
     galleryLandingI18n as i18n,
 } from '../../utils';
-import type {CnMods} from '../../utils';
 import {ADD_DASH_FORM_LINK, PROMO_BLOCK_CATEGORIES, SPECIAL_CATEGORY} from '../constants';
 
 import './LandingPage.scss';
@@ -152,6 +153,7 @@ function PromoBlockRow({galleryItems, activeMediaQuery, editorChoiceIds}: PromoB
         editorChoiceIds?.indexOf(item.id),
     )
         .slice(0, 3)
+        .reverse()
         .map((item, index, list) => {
             const opacity = activeMediaQuery === 's' ? 1 : 1 - (list.length - 1 - index) * 0.1;
             return {
@@ -231,20 +233,19 @@ interface HeaderActionsProps {
 function HeaderActions({activeMediaQuery}: HeaderActionsProps) {
     const isActiveMediaQueryS = activeMediaQuery === 's';
     const mods: CnMods = {media: activeMediaQuery};
-    const buttonSize: ButtonProps['size'] = isActiveMediaQueryS ? 'xl' : 'l';
     const buttonWidth: ButtonProps['width'] = isActiveMediaQueryS ? 'max' : undefined;
 
     return (
         <div className={b('header-actions')}>
             <RouterLink className={b('header-actions-link', mods)} to={getAllPageUrl()}>
-                <Button width={buttonWidth} size={buttonSize} view="action">
+                <Button width={buttonWidth} size="xl" view="action">
                     {galleryAllPageI18n('title_all_entries')}
                 </Button>
             </RouterLink>
             <Button
                 href={ADD_DASH_FORM_LINK}
                 target="_blank"
-                size={buttonSize}
+                size="xl"
                 width={buttonWidth}
                 view="outlined"
             >
@@ -254,9 +255,59 @@ function HeaderActions({activeMediaQuery}: HeaderActionsProps) {
     );
 }
 
+interface CategoryBlockRowProps {
+    galleryItems: GalleryItemShort[];
+    landingCategory: GetMetaRespose['landingCategories'][number];
+    activeMediaQuery?: ActiveMediaQuery;
+    editorChoiceIds?: string[];
+    style?: React.CSSProperties;
+}
+
+function CategoryBlockRow(props: CategoryBlockRowProps) {
+    const {galleryItems, landingCategory, activeMediaQuery, editorChoiceIds, style} = props;
+    const themeType = useThemeType();
+    const lang = getLang();
+    const filteredGalleryItems = galleryItems.filter((item) => {
+        if (landingCategory.category === SPECIAL_CATEGORY.EDITORS_CHOICE) {
+            return editorChoiceIds?.includes(item.id);
+        }
+
+        return item.labels?.includes(landingCategory.category);
+    });
+    const categoryItems = sortBy(filteredGalleryItems, (item) => {
+        const index = landingCategory.ids?.indexOf(item.id);
+
+        return index === -1 ? Infinity : index;
+    }).slice(0, 3);
+
+    return (
+        <Row space="6" style={style}>
+            <Col s="12">
+                <SectionHeader
+                    activeMediaQuery={activeMediaQuery}
+                    title={landingCategory.title[lang]}
+                    category={landingCategory.category}
+                />
+            </Col>
+            {categoryItems.map((item) => {
+                return (
+                    <Col key={item.id} l="4" m="4" s="12">
+                        <GalleryCardPreview
+                            id={item.id}
+                            title={item.title}
+                            createdBy={item.createdBy}
+                            labels={item.labels}
+                            imageSrc={item.images?.[themeType]?.[0] || ''}
+                        />
+                    </Col>
+                );
+            })}
+        </Row>
+    );
+}
+
 export function LandingPage() {
     const {activeMediaQuery} = useLayoutContext();
-    const themeType = useThemeType();
     const {isLoading: isDataLoading, data} = useGetGalleryItemsQuery();
     const {isLoading: isMetaLoading, data: metaData} = useGetGalleryMetaQuery();
 
@@ -268,7 +319,6 @@ export function LandingPage() {
     const isActiveMediaQueryS = activeMediaQuery === 's';
     const isPromo = DL.IS_NOT_AUTHENTICATED;
     const baseMods: CnMods = {media: activeMediaQuery, maxWidth: isPromo};
-    const lang = getLang();
     const landingCategories = Array.isArray(metaData?.landingCategories)
         ? metaData.landingCategories
         : [];
@@ -282,8 +332,13 @@ export function LandingPage() {
                     <Flex className={b('header-illustration-flex', baseMods)}>
                         <GalleryIllustration
                             name="header"
-                            className={b('header-illustration', baseMods)}
+                            className={b('header-illustration', {
+                                ...baseMods,
+                                medium: Boolean(DL.USER_ID),
+                            })}
                             showSkeleton={true}
+                            role="presentation"
+                            aria-hidden="true"
                         />
                     </Flex>
                 </Col>
@@ -303,46 +358,21 @@ export function LandingPage() {
                 editorChoiceIds={metaData?.editorChoice?.ids}
             />
             {workOfMonthId && <WorkOfMonth id={workOfMonthId} />}
-            {landingCategories.map((landingCategoriy, i) => {
+            {landingCategories.map((landingCategory, i) => {
                 const isLastCategory = i === landingCategories.length - 1;
+
                 return (
-                    <Row
-                        key={`landing-category-${landingCategoriy}-${i}`}
-                        space="6"
+                    <CategoryBlockRow
+                        key={`landing-category-${landingCategory}-${i}`}
+                        galleryItems={galleryItems}
+                        landingCategory={landingCategory}
+                        activeMediaQuery={activeMediaQuery}
+                        editorChoiceIds={metaData?.editorChoice?.ids}
                         style={{
                             marginTop: 24,
                             marginBottom: isActiveMediaQueryS && !isLastCategory ? 24 : 48,
                         }}
-                    >
-                        <Col s="12">
-                            <SectionHeader
-                                activeMediaQuery={activeMediaQuery}
-                                title={landingCategoriy.title[lang]}
-                                category={landingCategoriy.category}
-                            />
-                        </Col>
-                        {galleryItems
-                            .filter((item) => {
-                                if (landingCategoriy.category === SPECIAL_CATEGORY.EDITORS_CHOICE) {
-                                    return metaData?.editorChoice?.ids.includes(item.id);
-                                }
-                                return item.labels?.includes(landingCategoriy.category);
-                            })
-                            .slice(0, 3)
-                            .map((item) => {
-                                return (
-                                    <Col key={item.id} l="4" m="4" s="12">
-                                        <GalleryCardPreview
-                                            id={item.id}
-                                            title={item.title}
-                                            createdBy={item.createdBy}
-                                            labels={item.labels}
-                                            imageSrc={item.images?.[themeType]?.[0] || ''}
-                                        />
-                                    </Col>
-                                );
-                            })}
-                    </Row>
+                    />
                 );
             })}
             <Row className={b('add-card', baseMods)} space="0">

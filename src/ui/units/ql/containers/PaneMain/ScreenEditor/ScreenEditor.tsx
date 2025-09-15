@@ -58,8 +58,7 @@ interface ScreenEditorState {
 
 class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEditorState> {
     decorations: string[] = [];
-    navigationButtonRef: React.RefObject<HTMLDivElement>;
-    navigationButtonNoConnectionRef: React.RefObject<HTMLDivElement>;
+    navigationButtonRef: React.RefObject<HTMLButtonElement>;
     monaco: typeof MonacoTypes | null = null;
 
     tabs = [
@@ -79,7 +78,6 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
         super(props);
 
         this.navigationButtonRef = React.createRef();
-        this.navigationButtonNoConnectionRef = React.createRef();
 
         this.state = {
             isNavigationVisible: false,
@@ -102,16 +100,17 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
         return (
             chartType && (
                 <div className={b()}>
-                    <div className={b('action-bar-top')} ref={this.navigationButtonRef}>
-                        {edit == true && <AdaptiveTabs
+                    <div className={b('action-bar-top')}>
+                        <AdaptiveTabs
                             className={b('action-bar-top_tabs')}
                             breakpointsConfig={this.breakpointsConfig}
                             items={this.tabs}
                             onSelectTab={this.setActiveTab}
                             activeTab={this.state.activeTab}
                         />
-                        }
-                        {edit == true && this.renderConnectionBlock()}
+                        <div className={b('action-bar-top_connection-select-btn-wrapper')}>
+                            {this.renderConnectionBlock()}
+                        </div>
                         {workbookId ? (
                             <WorkbookNavigationMinimal
                                 anchor={this.navigationButtonRef}
@@ -176,18 +175,22 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
                 <DropdownMenu
                     size="s"
                     switcherWrapperClassName={b('action-bar-top_connection-select-btn_more')}
-                    switcher={
+                    renderSwitcher={({onClick, onKeyDown}) => (
                         <Button
-                            className={b('action-bar-top_connection-select-btn')}
+                            ref={this.navigationButtonRef}
                             view="flat"
                             pin="brick-brick"
                             size="l"
+                            onClick={onClick}
+                            onKeyDown={onKeyDown}
                             qa={TabQueryQA.SelectConnection}
                         >
                             <EntryIcon entry={connection} size={24} className={b('entry-icon')} />
-                            {connection.name}
+                            <span className={b('action-bar-top_connection-select-btn-text')}>
+                                {connection.name}
+                            </span>
                         </Button>
-                    }
+                    )}
                     items={[
                         {
                             action: () => {
@@ -206,9 +209,12 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
             );
         } else if (connectionStatus === ConnectionStatus.Empty) {
             return (
-                <div className={b('action-bar-top_connection-select-btn-wrapper')}>
-                    <span>{i18n('sql', 'label_new-connection-text')}</span>
+                <>
+                    <span className={b('action-bar-top_connection-label')}>
+                        {i18n('sql', 'label_new-connection-text')}
+                    </span>
                     <Button
+                        ref={this.navigationButtonRef}
                         className={b('action-bar-top_connection-select-btn')}
                         view="flat"
                         pin="brick-brick"
@@ -220,14 +226,17 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
                     >
                         {i18n('sql', 'label_select-connection')}
                     </Button>
-                </div>
+                </>
             );
         } else {
             // This means that connectionStatus === ConnectionStatus.Failed
             return (
-                <div className={b('action-bar-top_connection-select-btn-wrapper')}>
-                    <span>{i18n('sql', 'label_failed-connection-text')}</span>
+                <>
+                    <span className={b('action-bar-top_connection-label')}>
+                        {i18n('sql', 'label_failed-connection-text')}
+                    </span>
                     <Button
+                        ref={this.navigationButtonRef}
                         className={b('action-bar-top_connection-select-btn')}
                         view="flat"
                         pin="brick-brick"
@@ -239,7 +248,7 @@ class ScreenEditor extends React.PureComponent<ScreenEditorInnerProps, ScreenEdi
                     >
                         {i18n('sql', 'label_select-connection')}
                     </Button>
-                </div>
+                </>
             );
         }
     }

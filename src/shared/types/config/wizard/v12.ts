@@ -61,6 +61,7 @@ export interface V12CommonSharedExtraSettings {
     legendMode?: 'show' | 'hide';
     metricFontSize?: string;
     metricFontColor?: string;
+    metricFontColorPalette?: string;
     tooltip?: 'show' | 'hide';
     tooltipSum?: 'on' | 'off';
     limit?: number;

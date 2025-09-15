@@ -3,7 +3,6 @@ import React from 'react';
 import {ArrowUturnCcwLeft, ArrowUturnCwRight} from '@gravity-ui/icons';
 import {i18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import {Feature} from 'shared';
 import type {AdditionalButtonTemplate} from 'ui/components/ActionPanel/components/ChartSaveControls/types';
 import {useAdditionalItems} from 'ui/components/ActionPanel/components/ChartSaveControls/useAdditionalItems';
 import {HOTKEYS_SCOPES, REDO_HOTKEY, UNDO_HOTKEY} from 'ui/constants/misc';
@@ -11,7 +10,6 @@ import {useBindHotkey} from 'ui/hooks/useBindHotkey';
 import type {DatalensGlobalState} from 'ui/index';
 import {goBack, goForward} from 'ui/store/actions/editHistory';
 import {selectCanGoBack, selectCanGoForward} from 'ui/store/selectors/editHistory';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {DATASETS_EDIT_HISTORY_UNIT_ID} from '../../constants';
 
@@ -41,7 +39,6 @@ const canGoForwardSelector = (state: DatalensGlobalState) => {
 
 export function useHistoryActions() {
     const dispatch = useDispatch();
-    const featureEnabled = isEnabledFeature(Feature.EnableEditHistoryDatasets);
     const canGoBack = useSelector(canGoBackSelector);
     const canGoForward = useSelector(canGoForwardSelector);
 
@@ -58,10 +55,6 @@ export function useHistoryActions() {
     }, [canGoForward, dispatch]);
 
     const items: AdditionalButtonTemplate[] = React.useMemo(() => {
-        if (!featureEnabled) {
-            return [];
-        }
-
         return [
             {
                 key: 'undo',
@@ -82,18 +75,18 @@ export function useHistoryActions() {
                 hotkey: REDO_HOTKEY.join('+'),
             },
         ];
-    }, [canGoBack, canGoForward, featureEnabled, handleGoBack, handleGoForward]);
+    }, [canGoBack, canGoForward, handleGoBack, handleGoForward]);
     const actions = useAdditionalItems({items});
 
     useBindHotkey({
         key: UNDO_HOTKEY,
         handler: handleGoBack,
-        options: {enabled: featureEnabled && canGoBack, scopes: HOTKEYS_SCOPES.DATASETS},
+        options: {enabled: canGoBack, scopes: HOTKEYS_SCOPES.DATASETS},
     });
     useBindHotkey({
         key: REDO_HOTKEY,
         handler: handleGoForward,
-        options: {enabled: featureEnabled && canGoForward, scopes: HOTKEYS_SCOPES.DATASETS},
+        options: {enabled: canGoForward, scopes: HOTKEYS_SCOPES.DATASETS},
     });
 
     return actions;

@@ -18,11 +18,13 @@ import {PaletteIcon, PaletteType} from '../components/PaletteIcon/PaletteIcon';
 
 export const getPaletteSelectorItems = ({
     colorPalettes = [],
+    order,
 }: {
     colorPalettes?: ColorPalette[];
+    order?: (keyof Palettes)[];
 }): SelectOptionGroup<{icon: JSX.Element}>[] => {
     const availablePalettes = selectAvailableClientPalettes();
-    const palettesOrder = getPalettesOrder();
+    const palettesOrder = order || getPalettesOrder();
 
     const result: SelectOptionGroup<{icon: JSX.Element}>[] = palettesOrder.map(
         (paletteName: keyof Palettes): SelectOptionGroup<{icon: JSX.Element}> => {

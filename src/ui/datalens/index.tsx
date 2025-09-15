@@ -18,6 +18,7 @@ import {DL} from 'ui/constants';
 import {useClearReloadedQuery} from '../units/auth/hooks/useClearReloadedQuery';
 import {reducer} from 'ui/units/auth/store/reducers';
 import {useIframeRender} from './hooks';
+import {OPEN_SOURCE_INSTALLATION_INFO} from 'ui/constants/navigation';
 
 import {getSdk} from '../libs/schematic-sdk';
 import {
@@ -202,11 +203,22 @@ const DatalensPage: React.FC = () => {
     useIframeRender();
 
     if (token && showMobileHeader && superUser) {
-        return <MobileHeaderComponent renderContent={() => <DatalensPageView token={token} setToken={setToken} superUser={superUser} setSuperUser={setSuperUser} />} />;
+        return (
+            <MobileHeaderComponent 
+                renderContent={() => <DatalensPageView token={token} setToken={setToken} superUser={superUser} setSuperUser={setSuperUser} />} 
+                installationInfo={OPEN_SOURCE_INSTALLATION_INFO}
+            />
+        );
     }
 
     if (token && showAsideHeaderAdapter && superUser) {
-        return <AsideHeaderAdapter superUser={superUser} renderContent={() => <DatalensPageView token={token} setToken={setToken} superUser={superUser} setSuperUser={setSuperUser} />} />;
+        return ( 
+            <AsideHeaderAdapter 
+                superUser={superUser} 
+                renderContent={() => <DatalensPageView token={token} setToken={setToken} superUser={superUser} setSuperUser={setSuperUser} />} 
+                installationInfo={OPEN_SOURCE_INSTALLATION_INFO}
+            />
+        );
     }
 
     if (superUser) {

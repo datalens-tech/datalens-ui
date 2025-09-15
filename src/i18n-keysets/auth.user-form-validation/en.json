@@ -6,7 +6,7 @@
   "label_error-login-invalid": "The login can consist of Latin letters, numbers, and the symbols - and _. It must start with a letter and end with a letter or a number. It can also be in the correct email format.",
   "label_error-login-max": "Login can be up to {{max}} characters in length",
   "label_error-login-min": "Login must be at least {{min}} characters in length",
-  "label_error-password-invalid": "Create a strong password:<br></br>– minimum length: {{min}} characters<br></br>– contains at least one upper and lowercase letter, a number, and a special character.",
+  "label_error-password-invalid": "Create a strong password:<br></br>– minimum length: {{min}} characters<br></br>– contains at least one upper and lowercase letter and a number<br></br>– contains at least one special character: !@#$%^&*-_",
   "label_error-password-max": "Password can be up to {{max}} characters in length",
   "label_error-password-not-match": "Passwords do not match",
   "label_error-required-fields": "Please fill in all required fields"

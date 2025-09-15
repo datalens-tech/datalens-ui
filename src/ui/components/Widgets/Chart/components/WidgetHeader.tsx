@@ -260,6 +260,7 @@ export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
                             error={headerWithControlsProps.error || null}
                             dataProps={headerWithControlsProps.dataProps}
                             requestId={headerWithControlsProps.requestId || ''}
+                            chartRevIdRef={null}
                             loadedData={headerWithControlsProps.loadedData}
                             widgetDataRef={headerWithControlsProps.widgetDataRef}
                             widgetRenderTimeRef={headerWithControlsProps.widgetRenderTimeRef}
