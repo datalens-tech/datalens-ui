@@ -16,7 +16,6 @@ export enum Feature {
     UseComponentHeader = 'UseComponentHeader',
     FetchDocumentation = 'FetchDocumentation',
     Comments = 'Comments',
-    EmptySelector = 'emptySelector',
     // Check access rights when processing ChartEditor charts
     ChartEditorDeveloperModeCheck = 'ChartEditorDeveloperModeCheck',
     QLPrometheus = 'QLPrometheus',
