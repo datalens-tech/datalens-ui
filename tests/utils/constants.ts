@@ -96,6 +96,7 @@ export enum RobotChartsSQLEditorUrls {
     QLWithWizardId = '/ql/ikblc7qjn4reb',
     QLWithEditorId = '/ql/j2ac4oofeuzm9',
     QLWithForbiddenExport = '/ql/yyx1xdf1he1qj',
+    QLColumnChart = '/ql/subz5vkquklud',
 }
 
 export enum RobotChartsWizardId {
@@ -145,9 +146,13 @@ export enum RobotChartsPreviewUrls {
     PreviewTableAndInputWithReset = '/preview/fx6iv2zoy27i5',
     PreviewTableAndSelectWithReset = '/preview/j2ac4oofeuzm9',
 
+    PreviewWizardWithLocalParameterChart = '/preview/py2j397j7zceh',
+
     PreviewWizardWithForbiddenOnConnectionExport = '/preview/ptvmml92bmrse',
     PreviewWizardWithForbiddenOnDatasetExport = '/preview/44w8127jr8gip',
+
     PreviewQLWithForbiddenExport = '/preview/yyx1xdf1he1qj',
+    PreviewQLColumnChart = '/preview/subz5vkquklud',
 }
 
 export const enum RobotChartsDatasetUrls {
