@@ -247,31 +247,58 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         if (!this.props.entryId) {
             return;
         }
-        const {hash} = await getSdk().sdk.us.createDashState({
-            entryId: this.props.entryId,
-            data,
-        });
-        // check if we are still on the same tab (user could switch to another when request is still in progress)
-        if (tabId !== this.props.tabId) {
+
+        try {
+            const {hash} = await getSdk().sdk.us.createDashState({
+                entryId: this.props.entryId,
+                data,
+            });
+            // check if we are still on the same tab (user could switch to another when request is still in progress)
+            if (tabId !== this.props.tabId) {
+                this.props.setStateHashId({hash, tabId});
+                return;
+            }
+            const {history, location} = this.props;
+
+            const searchParams = new URLSearchParams(location.search);
+
+            if (hash) {
+                searchParams.set('state', hash);
+            } else {
+                searchParams.delete('state');
+            }
+
             this.props.setStateHashId({hash, tabId});
-            return;
+
+            history.push({
+                ...location,
+                search: `?${searchParams.toString()}`,
+            });
+        } catch (error) {
+            const details = error?.details?.details;
+            const isStateLimitError = details?.some(
+                ({params, path}: {path?: string[]; params?: {code?: string}}) =>
+                    path?.length === 1 &&
+                    path[0] === 'data' &&
+                    params?.code === 'OBJECT_SIZE_LIMIT_EXCEEDED',
+            );
+
+            const title = isStateLimitError
+                ? i18n('dash.main.view', 'value_state-limit-error')
+                : error.message;
+
+            const message = isStateLimitError
+                ? i18n('dash.main.view', 'value_state-limit-error-message')
+                : error.message;
+
+            this.props.showToast({
+                title,
+                content: message,
+                error: {...error, message},
+                withReport: true,
+            });
+            throw error;
         }
-        const {history, location} = this.props;
-
-        const searchParams = new URLSearchParams(location.search);
-
-        if (hash) {
-            searchParams.set('state', hash);
-        } else {
-            searchParams.delete('state');
-        }
-
-        this.props.setStateHashId({hash, tabId});
-
-        history.push({
-            ...location,
-            search: `?${searchParams.toString()}`,
-        });
     }, UPDATE_STATE_DEBOUNCE_TIME);
 
     scrollIntoViewWithDebounce = debounce(() => {
