@@ -283,7 +283,6 @@ class Dash {
         params: EntryReadParams | null,
         headers: IncomingHttpHeaders,
         ctx: AppContext,
-        options?: {forceMigrate?: boolean},
     ): Promise<DashEntry> {
         try {
             const headersWithMetadata = {
@@ -298,10 +297,7 @@ class Dash {
             const isServerMigrationEnabled = Boolean(
                 isEnabledServerFeature(Feature.DashServerMigrationEnable),
             );
-            if (
-                (options?.forceMigrate || isServerMigrationEnabled) &&
-                DashSchemeConverter.isUpdateNeeded(result.data)
-            ) {
+            if (isServerMigrationEnabled && DashSchemeConverter.isUpdateNeeded(result.data)) {
                 result.data = await Dash.migrate(result.data);
             }
 
@@ -402,7 +398,6 @@ class Dash {
         headers: IncomingHttpHeaders,
         ctx: AppContext,
         I18n: ServerI18n,
-        options?: {forceMigrate?: boolean},
     ): Promise<DashEntry> {
         try {
             const usData: typeof data & {skipSyncLinks?: boolean} = {...data};
@@ -411,7 +406,7 @@ class Dash {
             const needDataSend = !(mode === EntryUpdateMode.Publish && data.revId);
             if (needDataSend) {
                 if (needSetDefaultData(usData.data)) {
-                    const initialData = await Dash.read(entryId, null, headers, ctx, options);
+                    const initialData = await Dash.read(entryId, null, headers, ctx);
                     usData.data = setDefaultData(I18n, usData.data, initialData.data);
                 }
 
