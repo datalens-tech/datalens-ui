@@ -14,6 +14,7 @@ const ARTIFACTS_PATH = path.resolve(__dirname, '../../../artifacts');
 type DatalensTestSetupArgs = {
     config: FullConfig;
     authSettings: AuthRobotSettings;
+    authType?: AuthenticateType;
     afterAuth?: (args: {page: Page}) => Promise<void>;
     customAuth?: (args: AuthenticateCustomArgs) => Promise<void>;
 };
@@ -21,6 +22,7 @@ type DatalensTestSetupArgs = {
 export async function datalensTestSetup({
     config,
     authSettings,
+    authType,
     afterAuth,
     customAuth,
 }: DatalensTestSetupArgs) {
@@ -34,6 +36,7 @@ export async function datalensTestSetup({
         recordVideo: {
             dir: DEFAULT_SCREENSHOT_PATH,
         },
+        ignoreHTTPSErrors: true,
     });
     const page = await context.newPage();
 
@@ -85,13 +88,13 @@ export async function datalensTestSetup({
         if (isAuthDisabled) {
             await afterAuth?.({page});
         } else {
-            const authType = process.env.E2E_AUTH_TYPE as AuthenticateType | undefined;
+            const authTypeFromEnv = process.env.E2E_AUTH_TYPE as AuthenticateType | undefined;
 
             await authenticate({
                 page,
                 baseUrl,
                 authUrl: authSettings.url,
-                authType: authType || AUTH_TYPE.DATALENS,
+                authType: authType || authTypeFromEnv || AUTH_TYPE.DATALENS,
                 login: authSettings.login,
                 password: authSettings.password,
                 afterAuth,
@@ -103,5 +106,6 @@ export async function datalensTestSetup({
     } finally {
         await page.close();
         await context.close();
+        await browser.close();
     }
 }
