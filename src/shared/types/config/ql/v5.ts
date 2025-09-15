@@ -39,6 +39,7 @@ export interface QLParamIntervalV5 {
 export interface QLParamV5 {
     name: string;
     type: string;
+    label: string;
     defaultValue: string | string[] | QLParamIntervalV5 | undefined;
     overridenValue?: string | string[] | QLParamIntervalV5;
 }

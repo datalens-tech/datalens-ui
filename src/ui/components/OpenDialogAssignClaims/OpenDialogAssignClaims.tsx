@@ -161,7 +161,7 @@ function DialogAssignClaims(props: DialogAssignClaimsProps) {
             <Dialog.Footer
                 preset={'default'}
                 showError={false}
-                listenKeyEnter={false}
+                //listenKeyEnter={false}
                 textButtonCancel={i18n('cancel')}
                 onClickButtonCancel={onClose}
                 textButtonApply={i18n('save')}
