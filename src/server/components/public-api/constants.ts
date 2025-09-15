@@ -27,27 +27,6 @@ export const PUBLIC_API_PROXY_MAP = {
         //         tags: [ApiTag.Navigation],
         //     },
         // },
-        // getStructureItems: {
-        //     resolve: (api) => api.us.getStructureItems,
-        //     openApi: {
-        //         summary: 'Get structure list',
-        //         tags: [ApiTag.Navigation],
-        //     },
-        // },
-        // createWorkbook: {
-        //     resolve: (api) => api.us.createWorkbook,
-        //     openApi: {
-        //         summary: 'Create workbook',
-        //         tags: [ApiTag.Navigation],
-        //     },
-        // },
-        // createCollection: {
-        //     resolve: (api) => api.us.createCollection,
-        //     openApi: {
-        //         summary: 'Create collection',
-        //         tags: [ApiTag.Navigation],
-        //     },
-        // },
         // connection
         // getConnection: {
         //     resolve: (api) => api.bi.getConnection,
@@ -70,13 +49,13 @@ export const PUBLIC_API_PROXY_MAP = {
         //         tags: [ApiTag.Connection],
         //     },
         // },
-        // deleteConnection: {
-        //     resolve: (api) => api.bi.deleteConnection,
-        //     openApi: {
-        //         summary: 'Delete connection',
-        //         tags: [ApiTag.Connection],
-        //     },
-        // },
+        deleteConnection: {
+            resolve: (api) => api.bi.deleteConnection,
+            openApi: {
+                summary: 'Delete connection',
+                tags: [ApiTag.Connection],
+            },
+        },
         // dataset
         getDataset: {
             resolve: (api) => api.bi.getDatasetByVersion,

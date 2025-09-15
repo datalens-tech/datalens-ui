@@ -4,7 +4,6 @@ import {
     US_MASTER_TOKEN_HEADER,
     WORKBOOK_ID_HEADER,
 } from '../../../constants';
-import {datasetSchema} from '../../../sdk/zod-schemas/dataset-api.schema';
 import {createAction, createTypedAction} from '../../gateway-utils';
 import {filterUrlFragment} from '../../utils';
 import {
@@ -19,6 +18,7 @@ import {
     deleteDatasetArgsSchema,
     deleteDatasetResultSchema,
     getDatasetByVersionArgsSchema,
+    getDatasetByVersionResultSchema,
     updateDatasetArgsSchema,
     updateDatasetResultSchema,
 } from '../schemas';
@@ -68,7 +68,7 @@ export const actions = {
     getDatasetByVersion: createTypedAction(
         {
             paramsSchema: getDatasetByVersionArgsSchema,
-            resultSchema: datasetSchema,
+            resultSchema: getDatasetByVersionResultSchema,
         },
         {
             method: 'GET',

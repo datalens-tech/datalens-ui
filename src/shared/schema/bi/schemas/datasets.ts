@@ -1,6 +1,10 @@
 import z from 'zod/v4';
 
-import {datasetBodySchema, datasetOptionsSchema} from '../../../sdk/zod-schemas/dataset-api.schema';
+import {
+    datasetBodySchema,
+    datasetOptionsSchema,
+    datasetSchema,
+} from '../../../sdk/zod-schemas/dataset-api.schema';
 
 const createDatasetDefaultArgsSchema = z.object({
     name: z.string(),
@@ -45,3 +49,5 @@ export const getDatasetByVersionArgsSchema = z.object({
     workbookId: z.union([z.null(), z.string()]),
     rev_id: z.string().optional(),
 });
+
+export const getDatasetByVersionResultSchema = datasetSchema;
