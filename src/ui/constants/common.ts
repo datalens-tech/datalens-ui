@@ -390,10 +390,7 @@ export function getDefaultColorPaletteId() {
 }
 
 export function getTenantDefaultColorPaletteId() {
-    if (
-        isEnabledFeature(Feature.EnableTenantSettingPalettes) &&
-        window.DL.tenantSettings?.defaultColorPaletteId
-    ) {
+    if (window.DL.tenantSettings?.defaultColorPaletteId) {
         return window.DL.tenantSettings?.defaultColorPaletteId;
     }
 
