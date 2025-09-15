@@ -9,7 +9,6 @@ export const PUBLIC_API_URL = '/rpc/:version/:action';
 export const PUBLIC_API_ROUTE = `${PUBLIC_API_HTTP_METHOD} ${PUBLIC_API_URL}`;
 
 enum ApiTag {
-    Navigation = 'Navigation',
     Connection = 'Connection',
     Dataset = 'Dataset',
     Wizard = 'Wizard',
@@ -19,36 +18,7 @@ enum ApiTag {
 
 export const PUBLIC_API_PROXY_MAP = {
     v0: {
-        // navigation
-        // getNavigationList: {
-        //     resolve: (api) => api.mix.getNavigationList,
-        //     openApi: {
-        //         summary: 'Get navigation list',
-        //         tags: [ApiTag.Navigation],
-        //     },
-        // },
-        // connection
-        // getConnection: {
-        //     resolve: (api) => api.bi.getConnection,
-        //     openApi: {
-        //         summary: 'Get connection',
-        //         tags: [ApiTag.Connection],
-        //     },
-        // },
-        // updateConnection: {
-        //     resolve: (api) => api.bi.updateConnection,
-        //     openApi: {
-        //         summary: 'Update connection',
-        //         tags: [ApiTag.Connection],
-        //     },
-        // },
-        // createConnection: {
-        //     resolve: (api) => api.bi.createConnection,
-        //     openApi: {
-        //         summary: 'Create connection',
-        //         tags: [ApiTag.Connection],
-        //     },
-        // },
+        // Connection
         deleteConnection: {
             resolve: (api) => api.bi.deleteConnection,
             openApi: {
@@ -56,7 +26,7 @@ export const PUBLIC_API_PROXY_MAP = {
                 tags: [ApiTag.Connection],
             },
         },
-        // dataset
+        // Dataset
         getDataset: {
             resolve: (api) => api.bi.getDatasetByVersion,
             openApi: {
@@ -85,7 +55,7 @@ export const PUBLIC_API_PROXY_MAP = {
                 tags: [ApiTag.Dataset],
             },
         },
-        // wizard
+        // Wizard
         getWizardChart: {
             resolve: (api) => api.mix.__getWizardChart__,
             openApi: {
@@ -114,7 +84,7 @@ export const PUBLIC_API_PROXY_MAP = {
                 tags: [ApiTag.Wizard],
             },
         },
-        // editor
+        // Editor
         getEditorChart: {
             resolve: (api) => api.mix.__getEditorChart__,
             openApi: {
@@ -143,7 +113,7 @@ export const PUBLIC_API_PROXY_MAP = {
                 tags: [ApiTag.Editor],
             },
         },
-        // Dash
+        // Dashboard
         getDashboard: {
             resolve: (api) => api.mix.__getDashboard__,
             openApi: {
