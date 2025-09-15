@@ -7,8 +7,8 @@ import {
     DashTabItemControlSourceType,
     DashTabItemTitleSizes,
     DashTabItemType,
-} from '../..';
-import {type DashSchema, dashSchema} from '../dash';
+} from '../../..';
+import {type DashSchema, dashSchema} from '../dash-api.schema';
 
 const DASH_DEFAULT_NAMESPACE = 'default';
 
