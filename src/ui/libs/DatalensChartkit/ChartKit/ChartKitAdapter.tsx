@@ -4,6 +4,8 @@ import type {ChartKitLang, ChartKitProps, ChartKitRef} from '@gravity-ui/chartki
 import OpensourceChartKit, {settings} from '@gravity-ui/chartkit';
 import throttle from 'lodash/throttle';
 import {ErrorBoundary} from 'ui/components/ErrorBoundary/ErrorBoundary';
+import type {ChartKitHolidays} from 'ui/store/toolkit/chartkit/types';
+// import {useGetChartkitHolidaysAsyncQuery} from 'ui/store/toolkit';
 
 import {registry} from '../../../registry';
 import {ChartkitError} from '../components/ChartKitBase/components/ChartkitError/ChartkitError';
@@ -37,6 +39,8 @@ const ChartkitWidget = React.forwardRef<ChartKit | ChartKitRef | undefined, Char
             backgroundColor,
         } = props;
 
+        // const {data: chartkitHolidays} = useGetChartkitHolidaysAsyncQuery();
+
         const chartkitType = React.useMemo(() => {
             const getChartkitType = registry.chart.functions.get('getChartkitType');
             return getChartkitType(loadedData);
@@ -50,7 +54,7 @@ const ChartkitWidget = React.forwardRef<ChartKit | ChartKitRef | undefined, Char
                 return undefined;
             }
 
-            const holidays = getChartkitHolidays();
+            const holidays = getChartkitHolidays() as ChartKitHolidays;
 
             settings.set({
                 plugins: getChartkitPlugins(),
@@ -91,6 +95,8 @@ const ChartkitWidget = React.forwardRef<ChartKit | ChartKitRef | undefined, Char
             chartkitType,
             paneSplitOrientation,
             widgetDashState,
+            backgroundColor,
+            // chartkitHolidays,
         ]);
 
         React.useEffect(() => {
