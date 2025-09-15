@@ -1,4 +1,3 @@
-import get from 'lodash/get';
 import keyBy from 'lodash/keyBy';
 import type {Required} from 'utility-types';
 
@@ -10,7 +9,11 @@ import type {
     GetRelationsEntry,
     SwitchPublicationStatusResponse,
 } from '../../us/types';
-import {checkEntriesForPublication, escapeStringForLike} from '../helpers';
+import {
+    checkEntriesForPublication,
+    escapeStringForLike,
+    getEntryMetaStatusByError,
+} from '../helpers';
 import {isValidPublishLink} from '../helpers/validation';
 import type {
     DeleteEntryArgs,
@@ -161,35 +164,7 @@ export const entriesActions = {
                 await typedApi.us.getEntryMeta({entryId});
                 return {code: 'OK'};
             } catch (errorWrapper) {
-                let error;
-                if (errorWrapper instanceof Object && 'error' in errorWrapper) {
-                    error = errorWrapper.error;
-                }
-                if (typeof error === 'object' && error !== null && 'status' in error) {
-                    switch (error.status) {
-                        case 400:
-                            // us ajv validation
-                            if ('code' in error && error.code === 'DECODE_ID_FAILED') {
-                                return {code: 'NOT_FOUND'};
-                            }
-                            // us zod validation
-                            if ('code' in error && error.code === 'VALIDATION_ERROR') {
-                                const path = get(error, ['details', 'details', 0, 'path', 0]);
-                                if (path === 'entryId') {
-                                    return {code: 'NOT_FOUND'};
-                                }
-                            }
-                            return {code: 'UNHANDLED'};
-                        case 403:
-                            return {code: 'FORBIDDEN'};
-                        case 404:
-                            return {code: 'NOT_FOUND'};
-                        default:
-                            return {code: 'UNHANDLED'};
-                    }
-                } else {
-                    return {code: 'UNHANDLED'};
-                }
+                return getEntryMetaStatusByError(errorWrapper);
             }
         },
     ),
