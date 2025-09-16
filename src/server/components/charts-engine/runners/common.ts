@@ -14,7 +14,7 @@ import {Processor} from '../components/processor';
 import {ProcessorHooks} from '../components/processor/hooks';
 import type {ChartBuilder} from '../components/processor/types';
 import type {ResolvedConfig} from '../components/storage/types';
-import {getDuration} from '../components/utils';
+import {getDefaultColorPaletteId, getDuration} from '../components/utils';
 import type {ChartsEngine} from '../index';
 import type {ChartStorageType} from '../types';
 
@@ -240,6 +240,10 @@ export const getSerializableProcessorParams = ({
         adapterContext,
         hooksContext,
         configOverride: generatedConfig,
+        defaultColorPaletteId: getDefaultColorPaletteId({
+            ctx,
+            tenantSettings: localConfig?.tenantSettings,
+        }),
     };
 
     const configWorkbook = workbookId ?? localConfig?.workbookId;

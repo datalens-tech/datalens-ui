@@ -8,6 +8,7 @@ import type {
     TenantSettings,
 } from '../../../../../shared';
 import {getServerFeatures} from '../../../../../shared';
+import {addColorPaletteRequest} from '../../../../modes/charts/plugins/helpers/color-palettes';
 import {registry} from '../../../../registry';
 import {getDefaultColorPaletteId} from '../utils';
 import type {WizardWorker} from '../wizard-worker/types';
@@ -121,6 +122,12 @@ export const getWizardChartBuilder = async (
                     palettes,
                 })
                 .timeout(timeouts.sources || ONE_SECOND);
+
+            addColorPaletteRequest({
+                result: execResult.exports,
+                colorPaletteId: defaultColorPaletteId,
+                palettes,
+            });
 
             return {
                 executionTiming: process.hrtime(timeStart),

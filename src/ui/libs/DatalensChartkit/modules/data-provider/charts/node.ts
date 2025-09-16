@@ -203,6 +203,17 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
                 (result as GraphWidget).sideMarkdown = loaded.extra.sideMarkdown;
             }
 
+            if ('colors' in loaded.extra && loaded.extra.colors) {
+                if (result.type === WidgetKind.GravityCharts) {
+                    //@ts-ignore
+                    result.data.colors = loaded.extra?.colors;
+                }
+
+                if (result.type === WidgetKind.Graph && result.libraryConfig) {
+                    result.libraryConfig.colors = loaded.extra.colors;
+                }
+            }
+
             if ('chartsInsights' in loaded.extra && loaded.extra.chartsInsights) {
                 const {chartsInsightsLocators = ''} = UserSettings.getInstance().getSettings();
 

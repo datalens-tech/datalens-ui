@@ -170,14 +170,13 @@ export const isDashEntry = (entry: EmbeddingInfo['entry']): entry is DashEntryDa
 export function getDefaultColorPaletteId({
     ctx,
     tenantSettings,
-    palettes,
 }: {
     ctx: AppContext;
     tenantSettings?: TenantSettings;
-    palettes: Record<string, unknown>;
+    palettes?: Record<string, unknown>;
 }) {
     const tenantDefaultPalette = tenantSettings?.defaultColorPaletteId;
-    if (tenantDefaultPalette && palettes?.[tenantDefaultPalette]) {
+    if (tenantDefaultPalette) {
         return tenantDefaultPalette;
     }
 

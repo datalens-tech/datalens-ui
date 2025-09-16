@@ -67,6 +67,10 @@ export const selectServerPalette = (args: {
         }
     }
 
+    if (customColorPalettes?.[defaultColorPaletteId]) {
+        return customColorPalettes[defaultColorPaletteId].colors;
+    }
+
     return availablePalettes[defaultColorPaletteId]?.scheme ?? [];
 };
 
