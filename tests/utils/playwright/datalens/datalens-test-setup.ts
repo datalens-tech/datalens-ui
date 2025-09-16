@@ -15,6 +15,7 @@ type DatalensTestSetupArgs = {
     config: FullConfig;
     authSettings: AuthRobotSettings;
     authType?: AuthenticateType;
+    authDisabled?: boolean;
     afterAuth?: (args: {page: Page}) => Promise<void>;
     customAuth?: (args: AuthenticateCustomArgs) => Promise<void>;
 };
@@ -23,6 +24,7 @@ export async function datalensTestSetup({
     config,
     authSettings,
     authType,
+    authDisabled,
     afterAuth,
     customAuth,
 }: DatalensTestSetupArgs) {
@@ -80,6 +82,7 @@ export async function datalensTestSetup({
     console.log(`Ping ready: ok`);
 
     const isAuthDisabled =
+        Boolean(authDisabled) ||
         isTrueArg(process.env.NO_AUTH) ||
         isTrueArg(process.env.E2E_NO_AUTH) ||
         !isTrueArg(process.env.AUTH_ENABLED || 'true');
