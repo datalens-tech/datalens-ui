@@ -190,6 +190,7 @@ export const getOpenAsTableMenuItem = ({
     icon: customConfig?.icon || <Icon data={LayoutCells} size={ICONS_MENU_DEFAULT_SIZE} />,
     isVisible: (args: MenuItemArgs) => {
         const {loadedData, error} = args;
+        const customIsVisible = customConfig?.isVisible?.(args) ?? true;
         const isExportAllowed =
             !loadedData?.extra.dataExportForbidden &&
             !isExportItemDisabled({extraOptions: extraOptions})(args);
@@ -198,7 +199,7 @@ export const getOpenAsTableMenuItem = ({
             loadedData?.data &&
             ([WidgetKind.Graph, WidgetKind.GravityCharts] as string[]).includes(loadedData?.type);
 
-        return Boolean(!isCriticalError && isExportAllowed && isChart);
+        return Boolean(!isCriticalError && isExportAllowed && isChart && customIsVisible);
     },
     action:
         customConfig?.action ||

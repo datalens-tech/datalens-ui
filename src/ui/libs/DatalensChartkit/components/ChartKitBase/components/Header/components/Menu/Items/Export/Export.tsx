@@ -7,6 +7,7 @@ import type {ExportFormatsType} from 'shared';
 import {EXPORT_FORMATS, Feature, MenuItemsIds} from 'shared';
 import {URL_OPTIONS} from 'ui/constants/common';
 import type {MenuItemConfig, MenuItemModalProps} from 'ui/libs/DatalensChartkit/menu/Menu';
+import {isChartkitMenuItemVisible} from 'ui/libs/DatalensChartkit/modules/menu/menu';
 import {registry} from 'ui/registry';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
@@ -186,11 +187,17 @@ export const getExportItem = ({
         chartsDataProvider,
         customConfig,
     }),
-    isDisabled: isExportItemDisabled({extraOptions}),
+    isDisabled: (args) => {
+        const customIsDisabled = customConfig?.isDisabled?.(args) ?? false;
+        return customIsDisabled || isExportItemDisabled({extraOptions})(args);
+    },
     isVisible: ({loadedData, error}: MenuItemArgs) => {
         const isScreenshotVisible = loadedData?.data && showScreenshot;
 
-        return Boolean(isExportVisible({loadedData, error}) || isScreenshotVisible);
+        return (
+            isChartkitMenuItemVisible() &&
+            Boolean(isExportVisible({loadedData, error}) || isScreenshotVisible)
+        );
     },
     action: (data: ExportActionArgs) => {
         if (!isExportVisible({loadedData: data.loadedData, error: data.error})) {
