@@ -76,6 +76,7 @@ const Settings = () => {
     const [otherSettinsState, setOtherSettingsState] = React.useState<Partial<DashSettings>>({});
 
     const entryDialoguesRef = React.useRef<EntryDialogues>(null);
+    const [isDescriptionOpened, setIsDescriptionOpened] = React.useState(false);
 
     const {getMinAutoupdateInterval} = registry.dash.functions.getAll();
 
@@ -169,6 +170,7 @@ const Settings = () => {
     };
 
     const handleButtonSetupAccessDescription = React.useCallback(() => {
+        setIsDescriptionOpened(true);
         dispatch(
             openDialog({
                 id: DIALOG_ENTRY_DESCRIPTION,
@@ -178,12 +180,14 @@ const Settings = () => {
                     canEdit: true,
                     isEditMode: true,
                     onApply: (text: string) => setAccessDesc(text),
+                    onCloseCallback: () => setIsDescriptionOpened(false),
                 },
             }),
         );
     }, [dispatch, accessDescription]);
 
     const handleButtonSetupSupportDescription = React.useCallback(() => {
+        setIsDescriptionOpened(true);
         dispatch(
             openDialog({
                 id: DIALOG_ENTRY_DESCRIPTION,
@@ -193,6 +197,7 @@ const Settings = () => {
                     canEdit: true,
                     isEditMode: true,
                     onApply: (text: string) => setSupportDesc(text),
+                    onCloseCallback: () => setIsDescriptionOpened(false),
                 },
             }),
         );
@@ -222,6 +227,7 @@ const Settings = () => {
             disableEscapeKeyDown={true}
             disableHeightTransition={true}
             qa={DashboardDialogSettingsQa.DialogRoot}
+            disableOutsideClick={isDescriptionOpened}
         >
             <Dialog.Header caption={i18n('dash.settings-dialog.edit', 'label_settings')} />
             <Dialog.Body className={b()}>
