@@ -186,7 +186,10 @@ export const getExportItem = ({
         chartsDataProvider,
         customConfig,
     }),
-    isDisabled: isExportItemDisabled({extraOptions}),
+    isDisabled: (args) => {
+        const customIsDisabled = customConfig?.isDisabled?.(args) ?? false;
+        return customIsDisabled || isExportItemDisabled({extraOptions})(args);
+    },
     isVisible: ({loadedData, error}: MenuItemArgs) => {
         const isScreenshotVisible = loadedData?.data && showScreenshot;
 
