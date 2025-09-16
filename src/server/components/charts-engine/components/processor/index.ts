@@ -2,7 +2,7 @@ import {transformParamsToActionParams} from '@gravity-ui/dashkit/helpers';
 import {type AppContext, REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 import {AxiosError} from 'axios';
 import JSONfn from 'json-fn';
-import {isNumber, isObject, isString, merge, mergeWith} from 'lodash';
+import {isEmpty, isNumber, isObject, isString, merge, mergeWith} from 'lodash';
 import get from 'lodash/get';
 
 import type {ChartsEngine} from '../..';
@@ -878,11 +878,15 @@ export class Processor {
                 const getAvailablePalettesMap =
                     registry.common.functions.get('getAvailablePalettesMap');
                 const systemPalettes = getAvailablePalettesMap();
-                result.extra.colors = selectServerPalette({
+                const colors = selectServerPalette({
                     defaultColorPaletteId: defaultColorPaletteId ?? '',
                     customColorPalettes: tenantColorPalettes,
                     availablePalettes: systemPalettes,
                 });
+                if (!isEmpty(colors)) {
+                    result.extra.colors = colors;
+                }
+
                 result.sources = merge(
                     resolvedSources,
                     jsTabResults.runtimeMetadata.dataSourcesInfos,
