@@ -54,6 +54,7 @@ import {
     SET_CURRENT_TAB,
     SET_DATASET_REVISION_MISMATCH,
     SET_DATA_EXPORT_ENABLED,
+    SET_DESCRIPTION,
     SET_EDIT_HISTORY_STATE,
     SET_FREEFORM_SOURCES,
     SET_INITIAL_SOURCES,
@@ -205,7 +206,11 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
             };
         }
         case DATASET_FETCH_SUCCESS: {
-            const {dataset, dataset: {id, connection, dataset: content} = {}} = action.payload;
+            const {
+                dataset,
+                dataset: {id, connection, dataset: content} = {},
+                annotation,
+            } = action.payload;
             const {
                 preview: {enabled: previewEnabled},
             } = dataset.options!;
@@ -227,6 +232,8 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 },
                 isRefetchingDataset: false,
                 isLoading: false,
+                annotation,
+                prevAnnotation: annotation,
             };
         }
         case DATASET_FETCH_FAILURE: {
@@ -262,6 +269,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 },
                 publishedId,
                 currentRevId,
+                annotation,
             } = action.payload;
 
             return {
@@ -288,6 +296,8 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 permissions,
                 isLoading: false,
                 isRefetchingDataset: false,
+                annotation,
+                prevAnnotation: annotation,
             };
         }
         case DATASET_INITIAL_FETCH_FAILURE: {
@@ -326,6 +336,9 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 ui: {
                     ...state.ui,
                     isDatasetChanged: false,
+                },
+                prevAnnotation: {
+                    ...state.annotation,
                 },
             };
         }
@@ -1392,6 +1405,14 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
             return {
                 ...state,
                 updates: [...state.updates, ...updates],
+            };
+        }
+        case SET_DESCRIPTION: {
+            return {
+                ...state,
+                annotation: {
+                    description: action.payload,
+                },
             };
         }
         default: {

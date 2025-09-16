@@ -1,4 +1,4 @@
-import type {ConnectionData} from 'shared';
+import type {ConnectionData, EntryAnnotationArgs} from 'shared';
 import {TIMEOUT_65_SEC} from 'shared';
 import {CounterName, GoalId, reachMetricaGoal} from 'ui/libs/metrica';
 import {registry} from 'ui/registry';
@@ -118,9 +118,10 @@ const fetchRenderedMarkdown = async (text = '') => {
 
 const createConnection = async (
     form: FormDict,
+    annotation: EntryAnnotationArgs,
 ): Promise<{id?: string; error?: DataLensApiError}> => {
     try {
-        const {id} = await getSdk().sdk.bi.createConnection(form);
+        const {id} = await getSdk().sdk.bi.createConnection({...form, annotation});
         reachMetricaGoal(CounterName.Main, GoalId.ConnectionCreateSubmit, {
             type: form.type,
         });
@@ -135,9 +136,10 @@ const updateConnection = async (
     form: FormDict,
     connectionId: string,
     dbType: string,
+    annotation: EntryAnnotationArgs,
 ): Promise<{error?: DataLensApiError}> => {
     try {
-        await getSdk().sdk.bi.updateConnection({...form, connectionId});
+        await getSdk().sdk.bi.updateConnection({...form, connectionId, annotation});
         reachMetricaGoal(CounterName.Main, GoalId.ConnectionEditSubmit, {
             type: dbType,
         });

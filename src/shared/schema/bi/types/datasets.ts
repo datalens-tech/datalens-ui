@@ -3,6 +3,7 @@ import type {
     DatasetField,
     DatasetFieldCalcMode,
     DatasetFieldError,
+    EntryAnnotationArgs,
     TransferIdMapping,
     TransferNotification,
 } from '../../../types';
@@ -147,6 +148,7 @@ type CreateDatasetBaseArgs = {
     multisource: boolean;
     name: string;
     created_via?: string;
+    annotation: EntryAnnotationArgs;
 };
 
 type CreateDirDatasetArgs = CreateDatasetBaseArgs & {
@@ -165,6 +167,7 @@ export type UpdateDatasetArgs = {
     dataset: Dataset['dataset'];
     version: DatasetVersion;
     multisource: boolean;
+    annotation: EntryAnnotationArgs;
 } & DatasetId;
 
 export type GetPreviewResponse = Partial<DistinctResult & DistinctRegularResult>;

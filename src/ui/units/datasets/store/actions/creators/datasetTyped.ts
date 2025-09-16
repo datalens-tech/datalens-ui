@@ -59,6 +59,7 @@ import type {
     UpdateSetting,
 } from '../../types';
 import * as DATASET_ACTION_TYPES from '../types/dataset';
+import {SET_DESCRIPTION} from '../types/dataset';
 
 import {updateDatasetByValidation} from './dataset';
 import {isContendChanged, prepareUpdates} from './utils';
@@ -1173,3 +1174,8 @@ export function updateSetting(
         });
     };
 }
+
+export const setDatasetDescription = (payload: string) => ({
+    type: SET_DESCRIPTION,
+    payload,
+});

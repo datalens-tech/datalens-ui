@@ -3,6 +3,7 @@ import type {
     ConnectionData,
     ConnectionTypedQueryApiRequest,
     ConnectionTypedQueryApiResponse,
+    EntryAnnotationArgs,
     TransferNotification,
 } from '../../../types';
 
@@ -83,11 +84,11 @@ export type ConnectionErrorResponse = {
     details: {data: unknown};
 };
 
-export type CreateConnectionArgs = ConnectionData;
+export type CreateConnectionArgs = ConnectionData & {annotation: EntryAnnotationArgs};
 
 export type UpdateConnectionResponse = {};
 
-export type UpdateConnectionArgs = BaseArgs & ConnectionData;
+export type UpdateConnectionArgs = BaseArgs & ConnectionData & {annotation: EntryAnnotationArgs};
 
 export type VerifyConnectionResponse = {};
 

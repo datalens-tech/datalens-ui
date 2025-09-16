@@ -10,6 +10,7 @@ import {DatasetActionQA, Feature, RAW_SQL_LEVEL} from 'shared';
 import {registry} from 'ui/registry';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
+import {DescriptionButton} from '../../components/DescriptionButton/DescriptionButton';
 import {
     toggleLoadPreviewByDefault,
     toggletDataExportEnabled,
@@ -192,6 +193,7 @@ export function ActionPanelRightItems(props: Props) {
             >
                 {settingsSelectOptions}
             </Select>
+            <DescriptionButton />
             <Button
                 view="normal"
                 size="m"

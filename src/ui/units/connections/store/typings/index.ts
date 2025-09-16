@@ -1,3 +1,4 @@
+import type {EntryAnnotation} from 'shared';
 import type {
     ConnectorItem,
     FormSchema,
@@ -5,7 +6,6 @@ import type {
     GetEntryResponse,
 } from 'shared/schema/types';
 import type {DatalensGlobalState} from 'ui';
-import type {EntryAnnotation} from 'shared';
 
 import type {AppDispatch} from '../../../../store';
 import type {CloseDialogAction, OpenDialogAction} from '../../../../store/actions/dialog';
@@ -18,6 +18,7 @@ import type {
     SET_CACHED_HTML_ITEM,
     SET_CHECK_DATA,
     SET_CHECK_LOADING,
+    SET_CONNECTION_DESCRIPTION,
     SET_CONNECTION_KEY,
     SET_CONNECTOR_DATA,
     SET_ENTRY,
@@ -47,7 +48,6 @@ import type {
     SET_YADOCS_COLUMN_FILTER,
     SET_YADOCS_ITEMS,
     SET_YADOCS_SELECTED_ITEM_ID,
-    SET_CONNECTION_DESCRIPTION,
 } from '../actions';
 
 import type {FileSource, ReplaceSourceActionData, UploadedFile} from './file';

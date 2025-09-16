@@ -164,9 +164,9 @@ export const actions = {
             `${API_V1}/datasets/${filterUrlFragment(datasetId)}/versions/${filterUrlFragment(
                 version,
             )}`,
-        params: ({dataset, multisource}, headers, {ctx}) => {
+        params: ({dataset, annotation, multisource}, headers, {ctx}) => {
             const resultDataset = prepareDatasetProperty(ctx, dataset);
-            return {body: {dataset: resultDataset, multisource}, headers};
+            return {body: {dataset: resultDataset, multisource, annotation}, headers};
         },
     }),
     getPreview: createAction<GetPreviewResponse, GetPreviewArgs>({

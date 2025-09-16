@@ -7,6 +7,7 @@ import type {
     DatasetField,
     DatasetSource,
     DatasetSourceAvatar,
+    EntryAnnotation,
     Permissions,
     WorkbookId,
 } from '../../../../../shared';
@@ -59,6 +60,7 @@ import type {
     SET_CURRENT_TAB,
     SET_DATASET_REVISION_MISMATCH,
     SET_DATA_EXPORT_ENABLED,
+    SET_DESCRIPTION,
     SET_EDIT_HISTORY_STATE,
     SET_FREEFORM_SOURCES,
     SET_INITIAL_SOURCES,
@@ -364,6 +366,8 @@ export type DatasetReduxState = {
     error: DatasetError;
     currentTab: DatasetTab;
     lastModifiedTab?: DatasetTab;
+    prevAnnotation: EntryAnnotation | null;
+    annotation: EntryAnnotation | null;
 };
 
 type SetFreeformSources = {
@@ -729,6 +733,7 @@ type DatasetInitialFetchSuccess = {
         };
         publishedId: EntryFieldPublishedId;
         currentRevId: string | null;
+        annotation: EntryAnnotation | null;
     };
 };
 
@@ -747,6 +752,7 @@ type DatasetFetchSuccess = {
     type: typeof DATASET_FETCH_SUCCESS;
     payload: {
         dataset: Dataset & {connection: ConnectionEntry | null};
+        annotation: EntryAnnotation | null;
     };
 };
 
@@ -838,6 +844,11 @@ type SetUpdates = {
     } & EditHistoryOptionsProperty;
 };
 
+type SetDescription = {
+    type: typeof SET_DESCRIPTION;
+    payload: string;
+};
+
 export type DatasetReduxAction =
     | SetFreeformSources
     | ResetDatasetState
@@ -908,4 +919,5 @@ export type DatasetReduxAction =
     | SetValidationState
     | SetTemplateEnabled
     | SetDataExportEnabled
-    | SetUpdates;
+    | SetUpdates
+    | SetDescription;

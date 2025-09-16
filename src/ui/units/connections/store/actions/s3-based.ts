@@ -30,7 +30,7 @@ export const createS3BasedConnection = (args: {
 }) => {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
         const {name, dirPath, workbookId = getWorkbookIdFromPathname()} = args;
-        const form = getState().connections.form;
+        const {form, annotation: annotationState} = getState().connections;
         const placementData: Record<string, string> = dirPath
             ? {[FieldKey.DirPath]: dirPath}
             : {[FieldKey.WorkbookId]: workbookId};
@@ -39,10 +39,13 @@ export const createS3BasedConnection = (args: {
             ...placementData,
             [FieldKey.Name]: name,
         };
+        const annotation = {
+            description: annotationState?.description ?? '',
+        };
 
         dispatch(setSubmitLoading({loading: true}));
 
-        const {id, error} = await api.createConnection(resultForm);
+        const {id, error} = await api.createConnection(resultForm, annotation);
 
         if (id) {
             batch(() => {
@@ -80,11 +83,16 @@ export const updateS3BasedConnection = (type?: ConnectorType) => {
         const entry = get(getState().connections, ['entry']);
         const connectionData = get(getState().connections, ['connectionData']);
         const form = get(getState().connections, ['form']);
+        const annotationState = get(getState().connections, ['annotation']);
+        const annotation = {
+            description: annotationState?.description ?? '',
+        };
 
         const {error} = await api.updateConnection(
             form,
             connectionData.id as string,
             connectionData.db_type as string,
+            annotation,
         );
 
         batch(() => {
