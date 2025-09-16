@@ -2,12 +2,18 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {useSelector} from 'react-redux';
-import type {WorkbookId} from 'shared';
+import {Feature, type WorkbookId} from 'shared';
 import {registry} from 'ui/registry';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {schemaLoadingSelector, uiSchemaSelector} from '../../store';
 
-import {CreateDatasetButton, CreateQlChartButton, DescriptionButton, S3BasedConnButton} from './components';
+import {
+    CreateDatasetButton,
+    CreateQlChartButton,
+    DescriptionButton,
+    S3BasedConnButton,
+} from './components';
 
 import './ConnPanelActions.scss';
 
@@ -31,9 +37,11 @@ const ConnPanelActions = ({
     const {showCreateEditorChartButton} = uiSchema || {};
     const {CreateEditorChartButton} = registry.connections.components.getAll();
 
+    const isDescriptionEnabled = isEnabledFeature(Feature.EnableConnectionDescription);
+
     return schemaLoading ? null : (
         <div className={b()}>
-            <DescriptionButton />
+            {isDescriptionEnabled && <DescriptionButton />}
             {showCreateEditorChartButton && entryId && (
                 <CreateEditorChartButton entryId={entryId} workbookId={workbookId} />
             )}
