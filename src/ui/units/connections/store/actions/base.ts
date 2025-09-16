@@ -42,6 +42,7 @@ import type {
     SetYadocsColumnFilter,
     SetYadocsItems,
     SetYadocsSelectedItemId,
+    SetConnectionDescription,
 } from '../typings';
 
 import {getFilteredReplaceSources} from './gsheet/utils';
@@ -81,6 +82,7 @@ export const SET_YADOCS_SELECTED_ITEM_ID = Symbol('connections/SET_YADOCS_SELECT
 export const SET_YADOCS_ITEMS = Symbol('connections/SET_YADOCS_ITEMS');
 export const SET_YADOCS_ACTIVE_DIALOG = Symbol('connections/SET_YADOCS_ACTIVE_DIALOG');
 export const SET_YADOCS_COLUMN_FILTER = Symbol('connections/SET_YADOCS_COLUMN_FILTER');
+export const SET_CONNECTION_DESCRIPTION = Symbol('connections/SET_CONNECTION_DESCRIPTION');
 
 export function setEntry(payload: SetEntry['payload']): SetEntry {
     return {type: SET_ENTRY, payload};
@@ -388,3 +390,10 @@ export const handleReplacedSources = (args: HandleReplacedSourcesArgs) => {
         }
     };
 };
+
+export function setConnectionDescription(payload: string): SetConnectionDescription {
+    return {
+        type: SET_CONNECTION_DESCRIPTION,
+        payload,
+    };
+}

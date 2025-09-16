@@ -7,7 +7,7 @@ import {registry} from 'ui/registry';
 
 import {schemaLoadingSelector, uiSchemaSelector} from '../../store';
 
-import {CreateDatasetButton, CreateQlChartButton, S3BasedConnButton} from './components';
+import {CreateDatasetButton, CreateQlChartButton, DescriptionButton, S3BasedConnButton} from './components';
 
 import './ConnPanelActions.scss';
 
@@ -33,6 +33,7 @@ const ConnPanelActions = ({
 
     return schemaLoading ? null : (
         <div className={b()}>
+            <DescriptionButton />
             {showCreateEditorChartButton && entryId && (
                 <CreateEditorChartButton entryId={entryId} workbookId={workbookId} />
             )}
