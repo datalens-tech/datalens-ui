@@ -128,7 +128,7 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
 
     render() {
         const {onlyFormulaEditor} = this.props;
-        const {field, errors, dialogConfirmVisible} = this.state;
+        const {field, errors, dialogConfirmVisible, saveAsNewField} = this.state;
 
         return (
             <Dialog
@@ -146,7 +146,6 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
                     className={b({'additional-panel-open': this.state.additionalPanelVisible})}
                     data-qa={FieldEditorQa.Dialog}
                 >
-                    <Dialog.Header caption={i18n('label_title')} />
                     <Settings
                         field={field}
                         errors={errors}
@@ -155,6 +154,7 @@ class FieldEditor extends React.Component<Props, FieldEditorState> {
                         toggleDocumentationPanel={this.toggleDocumentationPanel}
                         toggleAdditionalPanel={this.toggleAdditionalPanel}
                         additionalPanelVisible={this.state.additionalPanelVisible}
+                        isNewField={!this.props.field || saveAsNewField}
                     />
                     {this.renderContent()}
                 </div>

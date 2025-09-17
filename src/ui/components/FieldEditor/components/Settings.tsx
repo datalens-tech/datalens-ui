@@ -1,6 +1,15 @@
 import React from 'react';
 
-import {Button, Checkbox, SegmentedRadioGroup as RadioButton, TextInput} from '@gravity-ui/uikit';
+import {Eye, EyeSlash} from '@gravity-ui/icons';
+import {
+    ActionTooltip,
+    Button,
+    Dialog,
+    Icon,
+    SegmentedRadioGroup as RadioButton,
+    TextInput,
+    useOutsideClick,
+} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import type {DatasetField, DatasetFieldCalcMode} from 'shared';
 import {Feature} from 'shared';
@@ -11,6 +20,8 @@ import {registry} from '../../../registry';
 import {DUPLICATE_TITLE, EMPTY_TITLE} from '../constants';
 import type {FieldEditorErrors, ModifyField} from '../typings';
 import {getErrorMessageKey} from '../utils';
+
+import {NameHeader} from './NameHeader';
 
 const b = block('dl-field-editor');
 const i18n = I18n.keyset('component.dl-field-editor.view');
@@ -23,6 +34,7 @@ interface SettingsProps {
     errors: FieldEditorErrors;
     onlyFormulaEditor?: boolean;
     additionalPanelVisible: boolean;
+    isNewField: boolean;
 }
 
 export const Settings: React.FC<SettingsProps> = ({
@@ -32,8 +44,10 @@ export const Settings: React.FC<SettingsProps> = ({
     modifyField,
     toggleDocumentationPanel,
     toggleAdditionalPanel,
+    isNewField,
 }) => {
     const inputRef = React.useRef<HTMLInputElement>(null);
+    const [titleEditMode, setTitleEditMode] = React.useState(!title);
 
     const {AdditionalButtonsWrapper} = registry.fieldEditor.components.getAll();
 
@@ -64,20 +78,49 @@ export const Settings: React.FC<SettingsProps> = ({
     const errorMessageKey = getErrorMessageKey([DUPLICATE_TITLE, EMPTY_TITLE], errors);
     const showDocButton = isEnabledFeature(Feature.FieldEditorDocSection) && calcMode === 'formula';
 
+    const onStopEditTitle = React.useCallback(() => {
+        if (inputTitle) {
+            setTitleEditMode(false);
+        }
+    }, [inputTitle]);
+
+    useOutsideClick({ref: inputRef, handler: onStopEditTitle});
+
     return (
-        <div className={b('settings')}>
-            <div className={b('settings-field-name')}>
-                <TextInput
-                    controlRef={inputRef}
-                    qa="field-name"
-                    placeholder={i18n('label_field-name-placeholder')}
-                    value={inputTitle}
-                    error={errorMessageKey && i18n(errorMessageKey)}
-                    onUpdate={onChangeTitle}
-                />
-            </div>
-            {!onlyFormulaEditor && (
-                <React.Fragment>
+        <React.Fragment>
+            <Dialog.Header
+                caption={
+                    titleEditMode ? (
+                        <TextInput
+                            className={b('settings-field-name')}
+                            controlProps={{
+                                className: b('settings-field-name-input'),
+                            }}
+                            controlRef={inputRef}
+                            qa="field-name"
+                            placeholder={
+                                isNewField
+                                    ? i18n('label_field-name-placeholder-new')
+                                    : i18n('label_field-name-placeholder')
+                            }
+                            value={inputTitle}
+                            error={errorMessageKey && i18n(errorMessageKey)}
+                            onUpdate={onChangeTitle}
+                            size="l"
+                            errorPlacement="inside"
+                            onKeyDown={(event) => {
+                                if (event.key === 'Enter' && inputTitle) {
+                                    setTitleEditMode(false);
+                                }
+                            }}
+                        />
+                    ) : (
+                        <NameHeader title={inputTitle} onStartEdit={() => setTitleEditMode(true)} />
+                    )
+                }
+            />
+            <div className={b('settings')}>
+                {!onlyFormulaEditor && (
                     <RadioButton
                         className={b('settings-switcher')}
                         value={calcMode}
@@ -89,27 +132,32 @@ export const Settings: React.FC<SettingsProps> = ({
                             value="direct"
                         />
                     </RadioButton>
-                    <Checkbox
-                        className={b('settings-checkbox')}
-                        content={i18n('label_hide-in-wizard')}
-                        checked={hidden}
-                        onChange={() => modifyField({hidden: !hidden})}
-                    />
-                </React.Fragment>
-            )}
-            <div className={b('settings-buttons-container')}>
-                {showDocButton && (
-                    <React.Fragment>
+                )}
+                <div className={b('settings-buttons-container')}>
+                    {showDocButton && (
                         <AdditionalButtonsWrapper toggleAdditionalPanel={toggleAdditionalPanel} />
-                        <Button
-                            className={b('settings-doc-btn')}
-                            onClick={toggleDocumentationPanel}
+                    )}
+                    {!onlyFormulaEditor && (
+                        <ActionTooltip
+                            title={
+                                hidden ? i18n('label_hide-in-wizard') : i18n('label_show-in-wizard')
+                            }
                         >
+                            <Button
+                                onClick={() => modifyField({hidden: !hidden})}
+                                className={'hide-in-wizard-button'}
+                            >
+                                <Icon data={hidden ? EyeSlash : Eye} />
+                            </Button>
+                        </ActionTooltip>
+                    )}
+                    {showDocButton && (
+                        <Button onClick={toggleDocumentationPanel}>
                             {i18n('button_documentation')}
                         </Button>
-                    </React.Fragment>
-                )}
+                    )}
+                </div>
             </div>
-        </div>
+        </React.Fragment>
     );
 };
