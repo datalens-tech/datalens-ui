@@ -50,6 +50,10 @@ export const Settings: React.FC<SettingsProps> = ({
 
     const {AdditionalButtonsWrapper} = registry.fieldEditor.components.getAll();
 
+    React.useEffect(() => {
+        inputRef.current?.focus();
+    }, []);
+
     const onChangeTitle = (inputTitle: string) => {
         const errorMessageKey = getErrorMessageKey([DUPLICATE_TITLE, EMPTY_TITLE], errors);
         let errorUpdates;
