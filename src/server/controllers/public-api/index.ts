@@ -1,6 +1,5 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
 import {AppError, REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
-import _ from 'lodash';
 
 import {getValidationSchema} from '../../../shared/schema/gateway-utils';
 import {registerActionToOpenApi} from '../../components/public-api';

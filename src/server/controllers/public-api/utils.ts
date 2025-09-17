@@ -1,6 +1,6 @@
 import {AppError} from '@gravity-ui/nodekit';
 import {AxiosError} from 'axios';
-import _, {isObject} from 'lodash';
+import isObject from 'lodash/isObject';
 import type z from 'zod/v4';
 import {ZodError} from 'zod/v4';
 
