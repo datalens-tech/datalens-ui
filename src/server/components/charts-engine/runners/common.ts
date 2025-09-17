@@ -2,7 +2,7 @@ import type {Request, Response} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
 import {isObject} from 'lodash';
 
-import type {ControlType, EntryPublicAuthor, Palette, WorkbookId} from '../../../../shared';
+import type {ControlType, EntryPublicAuthor, WorkbookId} from '../../../../shared';
 import {
     DISABLE,
     DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME,
@@ -295,7 +295,6 @@ export function commonRunner({
     subrequestHeadersKind,
     forbiddenFields,
     secureConfig,
-    systemPalettes,
 }: {
     res: Response;
     req: Request;
@@ -318,7 +317,6 @@ export function commonRunner({
     subrequestHeadersKind?: string;
     forbiddenFields?: ProcessorParams['forbiddenFields'];
     secureConfig?: ProcessorParams['secureConfig'];
-    systemPalettes: Record<string, Palette>;
 }) {
     const telemetryCallbacks = chartsEngine.telemetryCallbacks;
     const cacheClient = chartsEngine.cacheClient;
@@ -354,7 +352,6 @@ export function commonRunner({
                     hooks,
                     sourcesConfig,
                     secureConfig,
-                    systemPalettes,
                 },
                 runnerType: runnerType as Runners,
             });
