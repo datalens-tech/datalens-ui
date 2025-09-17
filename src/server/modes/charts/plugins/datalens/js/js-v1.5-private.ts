@@ -266,6 +266,10 @@ export const fallbackJSFunctionPrivate = ({
             // Hiding the data export button in the ChartKit menu
             ChartEditor.setExtra?.('dataExportForbidden', true);
         }
+
+        if (value.result && value.result.data_export) {
+            ChartEditor.setExtraDataExport(key, value.result.data_export);
+        }
     });
 
     const newParams: Record<string, any> = {};

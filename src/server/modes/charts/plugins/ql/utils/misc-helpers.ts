@@ -28,6 +28,7 @@ import type {
     QlConfigResultEntryMetadataDataColumnOrGroup,
     QlConfigResultEntryMetadataDataGroup,
 } from '../../../../../../shared/types/config/ql';
+import {CONNECTIONS_DASHSQL, CONNECTION_ID_PLACEHOLDER} from '../../control/url/constants';
 
 import type {QLConnectionTypeMap} from './connection';
 import {convertConnectionType} from './connection';
@@ -75,7 +76,10 @@ export interface QLResultEntryData {
 }
 
 export interface QLResult {
-    [key: string]: QLResultEntry[];
+    [key: string]: {
+        events: QLResultEntry[];
+        data_export: any;
+    };
 }
 
 export interface QLRenderResultTable {
@@ -492,7 +496,7 @@ export function buildSource({
     };
 
     return {
-        url: `/_bi_connections/${id}/dashsql`,
+        url: CONNECTIONS_DASHSQL.replace(CONNECTION_ID_PLACEHOLDER, id),
         method: 'post',
         data: payload,
     };
@@ -501,7 +505,7 @@ export function buildSource({
 export function getRows(data: QLResult, field = 'sql'): string[][] {
     let rows: string[][] = [];
 
-    rows = data[field]
+    rows = data[field].events
         .filter((entry: QLResultEntry) => entry.event === 'row')
         .map((entry: QLResultEntry) => entry.data) as string[][];
 
@@ -515,7 +519,7 @@ export function getColumns(args: {
     qlConnectionTypeMap: QLConnectionTypeMap;
 }): QlConfigResultEntryMetadataDataColumn[] | null {
     const {data, connectionType, field = 'sql', qlConnectionTypeMap} = args;
-    const row = data[field].find((entry: QLResultEntry) => entry.event === 'metadata');
+    const row = data[field].events.find((entry: QLResultEntry) => entry.event === 'metadata');
 
     const datalensQLConnectionType = convertConnectionType(qlConnectionTypeMap, connectionType);
 

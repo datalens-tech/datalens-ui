@@ -56,6 +56,7 @@ export const getChartApiContext = (args: GetChartApiContextArgs): ChartApiContex
     context.__runtimeMetadata.userConfigOverride = getOrphanedObject();
     context.__runtimeMetadata.libraryConfigOverride = getOrphanedObject();
     context.__runtimeMetadata.extra = getOrphanedObject();
+    context.__runtimeMetadata.extra.dataExport = getOrphanedObject();
     context.__runtimeMetadata.dataSourcesInfos = getOrphanedObject();
 
     api.setError = (value) => {
@@ -157,6 +158,9 @@ export const getChartApiContext = (args: GetChartApiContextArgs): ChartApiContex
             };
             api.setExtra = (key, value) => {
                 context.__runtimeMetadata.extra[key] = value;
+            };
+            api.setExtraDataExport = (key, value) => {
+                context.__runtimeMetadata.extra.dataExport[key] = value;
             };
             api.setExportFilename = (filename: string) => {
                 context.__runtimeMetadata.exportFilename = filename;

@@ -102,6 +102,12 @@ export function buildGraph(args: BuildGraphArgs) {
         ChartEditor.setExtra?.('dataExportForbidden', true);
     }
 
+    Object.entries(loadedData).forEach(([key, value]) => {
+        if (typeof value === 'object' && value && value.data_export) {
+            ChartEditor.setExtraDataExport(key, value.data_export);
+        }
+    });
+
     const sharedVisualization = config.visualization as ServerVisualization;
     const {
         colors: sharedColors,

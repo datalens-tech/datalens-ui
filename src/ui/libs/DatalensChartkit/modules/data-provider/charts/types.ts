@@ -3,6 +3,7 @@ import type {IncomingHttpHeaders} from 'http';
 import type {HighchartsComment} from '@gravity-ui/chartkit/highcharts';
 import type {AxiosRequestConfig} from 'axios';
 import type {
+    ApiV2DataExportField,
     ChartsInsightsItem,
     DashLoadPriority,
     DashTabItemControlSourceType,
@@ -172,6 +173,7 @@ export interface ChartsData extends DashWidgetConfig {
     isEditor?: boolean;
     extra: {
         exportFilename?: string;
+        dataExport: Record<string, ApiV2DataExportField>;
         dataExportForbidden?: boolean;
         datasets?: {
             id: string;
@@ -338,6 +340,7 @@ export interface ResponseSuccessNodeBase extends DashWidgetConfig {
     sources: {fields?: {datasetId?: string}} | ResponseSourcesSuccess;
     extra: {
         exportFilename?: string;
+        dataExport: Record<string, ApiV2DataExportField>;
         dataExportForbidden?: boolean;
         colors?: string[];
     };

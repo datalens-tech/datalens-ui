@@ -336,6 +336,7 @@ function _processExtra({confStorageConfig, data, params}) {
 function run(loaded) {
     const {
         data,
+        extra,
         params: fullParams,
         sources,
         usedParams,
@@ -362,7 +363,7 @@ function run(loaded) {
             traceId,
             isNewWizard: false,
             isOldWizard: true,
-            extra: {},
+            extra,
             widgetConfig,
         };
 
