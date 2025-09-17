@@ -2,7 +2,7 @@ import {transformParamsToActionParams} from '@gravity-ui/dashkit/helpers';
 import {type AppContext, REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 import {AxiosError} from 'axios';
 import JSONfn from 'json-fn';
-import {isNumber, isObject, isString, merge, mergeWith} from 'lodash';
+import {isEmpty, isNumber, isObject, isString, merge, mergeWith} from 'lodash';
 import get from 'lodash/get';
 
 import type {ChartsEngine} from '../..';
@@ -11,6 +11,7 @@ import type {
     DashWidgetConfig,
     EDITOR_TYPE_CONFIG_TABS,
     EntryPublicAuthor,
+    Palette,
     StringParams,
     WorkbookId,
 } from '../../../../../shared';
@@ -184,6 +185,7 @@ export type SerializableProcessorParams = {
     adapterContext: AdapterContext;
     hooksContext: HooksContext;
     defaultColorPaletteId?: string;
+    systemPalettes?: Record<string, Palette>;
 };
 
 export class Processor {
@@ -221,6 +223,7 @@ export class Processor {
         sourcesConfig,
         secureConfig,
         defaultColorPaletteId,
+        systemPalettes,
     }: ProcessorParams): Promise<
         ProcessorSuccessResponse | ProcessorErrorResponse | {error: string}
     > {
@@ -875,14 +878,15 @@ export class Processor {
                 result.extra = jsTabResults.runtimeMetadata.extra || {};
                 result.extra.chartsInsights = jsTabResults.runtimeMetadata.chartsInsights;
                 result.extra.sideMarkdown = jsTabResults.runtimeMetadata.sideMarkdown;
-                const getAvailablePalettesMap =
-                    registry.common.functions.get('getAvailablePalettesMap');
-                const systemPalettes = getAvailablePalettesMap();
-                result.extra.colors = selectServerPalette({
+                const colors = selectServerPalette({
                     defaultColorPaletteId: defaultColorPaletteId ?? '',
                     customColorPalettes: tenantColorPalettes,
-                    availablePalettes: systemPalettes,
+                    availablePalettes: systemPalettes ?? {},
                 });
+                if (!isEmpty(colors)) {
+                    result.extra.colors = colors;
+                }
+
                 result.sources = merge(
                     resolvedSources,
                     jsTabResults.runtimeMetadata.dataSourcesInfos,
