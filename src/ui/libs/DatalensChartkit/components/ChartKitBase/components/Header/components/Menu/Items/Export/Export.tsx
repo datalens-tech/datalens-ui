@@ -142,27 +142,41 @@ const getSubItems = ({
     return submenuItems;
 };
 
-export function isExportItemDisabled(_: {extraOptions?: Record<string, unknown>}) {
+export function isExportItemDisabled({extraOptions}: {extraOptions?: Record<string, unknown>}) {
+    const isBackendExportInfoFeatureEnabled = isEnabledFeature(Feature.EnableBackendExportInfo);
+
     return ({loadedData}: MenuItemArgs) => {
+        if (!isBackendExportInfoFeatureEnabled) {
+            const exportForbiddenResult =
+                extraOptions &&
+                'exportForbiddenResult' in extraOptions &&
+                extraOptions.exportForbiddenResult;
+
+            const isExportDisabled =
+                loadedData?.extra.dataExportForbidden || Boolean(exportForbiddenResult);
+
+            let disabledReason = i18n('label_data-export-forbidden');
+            if (isExportDisabled && typeof exportForbiddenResult === 'string') {
+                disabledReason = exportForbiddenResult;
+            }
+
+            return isExportDisabled ? disabledReason : false;
+        }
+
         const dataExports = Object.values(loadedData?.extra.dataExport || {}).filter(Boolean);
         if (dataExports.length > 0) {
-            if (dataExports.every((exp) => exp.basic.allowed && exp.background.allowed)) {
+            if (dataExports.every((exp) => exp.basic.allowed)) {
                 return false;
             }
 
-            const uniqDisableReasons = uniq(
-                flatMap(dataExports, (exp) =>
-                    (exp.basic.reason || []).concat(exp.background.reason || []),
-                ),
-            );
+            const uniqDisableReasons = uniq(flatMap(dataExports, (exp) => exp.basic.reason || []));
             const reason = uniqDisableReasons[0]
                 ? i18n(`label_export-forbidden.${uniqDisableReasons[0]}`)
                 : undefined;
 
             return reason ?? i18n('label_data-export-forbidden');
         }
-        // fallback
-        return loadedData?.extra.dataExportForbidden ? i18n('label_data-export-forbidden') : false;
+        return false;
     };
 }
 

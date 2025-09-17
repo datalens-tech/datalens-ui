@@ -2,6 +2,7 @@ import {isObject, isString} from 'lodash';
 
 import {
     CONNECTIONS_DASHSQL,
+    CONNECTIONS_DASHSQL_WITH_EXPORT_INFO,
     CONNECTIONS_TYPED_QUERY_RAW_URL,
     CONNECTION_ID_PLACEHOLDER,
     DATASET_DISTINCTS_URL,
@@ -97,8 +98,14 @@ export const isQLConnectionSource = (source: Source): source is SourceWithQLConn
     return isString(source.qlConnectionId) && validateQLConnectionSource(source);
 };
 
-export const prepareSourceWithQLConnection = (source: SourceWithQLConnector) => {
-    const sourceUrl = CONNECTIONS_DASHSQL.replace(
+export const prepareSourceWithQLConnection = (
+    source: SourceWithQLConnector,
+    isUseDataExportFieldEnabled?: boolean,
+) => {
+    const dashSqlUrl = isUseDataExportFieldEnabled
+        ? CONNECTIONS_DASHSQL_WITH_EXPORT_INFO
+        : CONNECTIONS_DASHSQL;
+    const sourceUrl = dashSqlUrl.replace(
         CONNECTION_ID_PLACEHOLDER,
         encodeURIComponent(source.qlConnectionId),
     );
@@ -148,7 +155,7 @@ export const prepareSourceWithDataset = (source: SourceWithDatasetId) => {
     return source;
 };
 
-export const prepareSource = (source: Source): Source => {
+export const prepareSource = (source: Source, isUseDataExportFieldEnabled?: boolean): Source => {
     if (!isObject(source)) {
         return source;
     }
@@ -158,7 +165,7 @@ export const prepareSource = (source: Source): Source => {
     }
 
     if (isQLConnectionSource(source)) {
-        return prepareSourceWithQLConnection(source);
+        return prepareSourceWithQLConnection(source, isUseDataExportFieldEnabled);
     }
 
     if (isDatasetSource(source)) {

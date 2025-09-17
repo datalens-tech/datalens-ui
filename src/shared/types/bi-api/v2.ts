@@ -18,7 +18,7 @@ export type ApiV2ResultData = {
     blocks: {
         query: string;
     }[];
-    data_export: ApiV2DataExportField;
+    data_export?: ApiV2DataExportField;
     data_export_forbidden?: boolean;
     pivot_data?: unknown;
     notifications?: unknown[];
