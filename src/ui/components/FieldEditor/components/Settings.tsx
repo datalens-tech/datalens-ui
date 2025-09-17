@@ -121,11 +121,7 @@ export const Settings: React.FC<SettingsProps> = ({
             />
             <div className={b('settings')}>
                 {!onlyFormulaEditor && (
-                    <RadioButton
-                        className={b('settings-switcher')}
-                        value={calcMode}
-                        onChange={onCalcModeChange}
-                    >
+                    <RadioButton value={calcMode} onChange={onCalcModeChange}>
                         <RadioButton.Option content={i18n('value_formula')} value="formula" />
                         <RadioButton.Option
                             content={i18n('value_source-from-field')}
@@ -145,7 +141,9 @@ export const Settings: React.FC<SettingsProps> = ({
                         >
                             <Button
                                 onClick={() => modifyField({hidden: !hidden})}
-                                className={'hide-in-wizard-button'}
+                                className={b('hide-in-wizard-button', {
+                                    last: !showDocButton,
+                                })}
                             >
                                 <Icon data={hidden ? EyeSlash : Eye} />
                             </Button>
