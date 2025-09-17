@@ -17,8 +17,10 @@ import {
     SuperuserHeader,
     TENANT_ID_HEADER,
     US_MASTER_TOKEN_HEADER,
+    makeTenantIdFromOrgId,
 } from '../../shared';
 import {isOpensourceInstallation} from '../app-env';
+import {PUBLIC_API_ORG_ID_HEADER} from '../constants/public-api';
 
 import {isGatewayError} from './gateway';
 
@@ -81,6 +83,19 @@ class Utils {
             ...(req.ctx.config.isZitadelEnabled ? {...Utils.pickZitadelHeaders(req)} : {}),
             ...(req.ctx.config.isAuthEnabled ? {...Utils.pickAuthHeaders(req)} : {}),
             [REQUEST_ID_HEADER]: req.id,
+        };
+    }
+
+    static pickRpcHeaders(req: Request) {
+        const headersMap = req.ctx.config.headersMap;
+
+        const orgId = req.headers[PUBLIC_API_ORG_ID_HEADER];
+        const tenantId = orgId && !Array.isArray(orgId) ? makeTenantIdFromOrgId(orgId) : undefined;
+
+        return {
+            ...pick(req.headers, [AuthHeader.Authorization, headersMap.subjectToken]),
+            ...Utils.pickForwardHeaders(req.headers),
+            [TENANT_ID_HEADER]: tenantId,
         };
     }
 
