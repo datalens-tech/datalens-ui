@@ -1,6 +1,7 @@
 import type {AppContext} from '@gravity-ui/nodekit';
 
 import {ControlType} from '../../../../shared';
+import {registry} from '../../../registry';
 import {getControlBuilder} from '../components/processor/control-builder';
 import type {ResolvedConfig} from '../components/storage/types';
 
@@ -61,6 +62,7 @@ export const runControl: RunnerHandler = async (cx: AppContext, props: RunnerHan
         config: generatedConfig,
     });
 
+    const getAvailablePalettesMap = registry.common.functions.get('getAvailablePalettesMap');
     return commonRunner({
         res,
         req,
@@ -75,5 +77,6 @@ export const runControl: RunnerHandler = async (cx: AppContext, props: RunnerHan
         localConfig: config,
         forbiddenFields,
         secureConfig,
+        systemPalettes: getAvailablePalettesMap(),
     });
 };

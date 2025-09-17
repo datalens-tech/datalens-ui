@@ -2,13 +2,14 @@ import type {Request, Response} from '@gravity-ui/expresskit';
 import type {AppContext} from '@gravity-ui/nodekit';
 import {isObject} from 'lodash';
 
-import type {ControlType, EntryPublicAuthor, WorkbookId} from '../../../../shared';
+import type {ControlType, EntryPublicAuthor, Palette, WorkbookId} from '../../../../shared';
 import {
     DISABLE,
     DISABLE_JSONFN_SWITCH_MODE_COOKIE_NAME,
     DL_EMBED_TOKEN_HEADER,
     Feature,
 } from '../../../../shared';
+import {registry} from '../../../registry';
 import type {ProcessorParams, SerializableProcessorParams} from '../components/processor';
 import {Processor} from '../components/processor';
 import {ProcessorHooks} from '../components/processor/hooks';
@@ -215,6 +216,8 @@ export const getSerializableProcessorParams = ({
         },
     };
 
+    const getAvailablePalettesMap = registry.common.functions.get('getAvailablePalettesMap');
+
     const processorParams: SerializableProcessorParams = {
         paramsOverride: params,
         actionParamsOverride: actionParams,
@@ -244,6 +247,7 @@ export const getSerializableProcessorParams = ({
             ctx,
             tenantSettings: localConfig?.tenantSettings,
         }),
+        systemPalettes: getAvailablePalettesMap(),
     };
 
     const configWorkbook = workbookId ?? localConfig?.workbookId;
@@ -291,6 +295,7 @@ export function commonRunner({
     subrequestHeadersKind,
     forbiddenFields,
     secureConfig,
+    systemPalettes,
 }: {
     res: Response;
     req: Request;
@@ -313,6 +318,7 @@ export function commonRunner({
     subrequestHeadersKind?: string;
     forbiddenFields?: ProcessorParams['forbiddenFields'];
     secureConfig?: ProcessorParams['secureConfig'];
+    systemPalettes: Record<string, Palette>;
 }) {
     const telemetryCallbacks = chartsEngine.telemetryCallbacks;
     const cacheClient = chartsEngine.cacheClient;
@@ -348,6 +354,7 @@ export function commonRunner({
                     hooks,
                     sourcesConfig,
                     secureConfig,
+                    systemPalettes,
                 },
                 runnerType: runnerType as Runners,
             });

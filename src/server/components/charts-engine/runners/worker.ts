@@ -1,5 +1,6 @@
 import type {AppContext} from '@gravity-ui/nodekit';
 
+import {registry} from '../../../registry';
 import {chartGenerator} from '../components/chart-generator';
 import type {ChartBuilder} from '../components/processor/types';
 import type {ChartStorageType} from '../types';
@@ -108,6 +109,7 @@ export const runWorkerChart = async (
     }
 
     const hrStart = process.hrtime();
+    const getAvailablePalettesMap = registry.common.functions.get('getAvailablePalettesMap');
 
     return commonRunner({
         res,
@@ -123,5 +125,6 @@ export const runWorkerChart = async (
         hrStart,
         localConfig: config,
         forbiddenFields,
+        systemPalettes: getAvailablePalettesMap(),
     });
 };
