@@ -8,7 +8,6 @@ import {
     Icon,
     SegmentedRadioGroup as RadioButton,
     TextInput,
-    useOutsideClick,
 } from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import type {DatasetField, DatasetFieldCalcMode} from 'shared';
@@ -78,13 +77,11 @@ export const Settings: React.FC<SettingsProps> = ({
     const errorMessageKey = getErrorMessageKey([DUPLICATE_TITLE, EMPTY_TITLE], errors);
     const showDocButton = isEnabledFeature(Feature.FieldEditorDocSection) && calcMode === 'formula';
 
-    const onStopEditTitle = React.useCallback(() => {
+    const handleStopEditTitle = React.useCallback(() => {
         if (inputTitle) {
             setTitleEditMode(false);
         }
     }, [inputTitle]);
-
-    useOutsideClick({ref: inputRef, handler: onStopEditTitle});
 
     return (
         <React.Fragment>
@@ -109,10 +106,11 @@ export const Settings: React.FC<SettingsProps> = ({
                             size="l"
                             errorPlacement="inside"
                             onKeyDown={(event) => {
-                                if (event.key === 'Enter' && inputTitle) {
-                                    setTitleEditMode(false);
+                                if (event.key === 'Enter') {
+                                    handleStopEditTitle();
                                 }
                             }}
+                            onBlur={handleStopEditTitle}
                         />
                     ) : (
                         <NameHeader title={inputTitle} onStartEdit={() => setTitleEditMode(true)} />
