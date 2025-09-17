@@ -789,7 +789,7 @@ export const buildGraphPrivate = (args: {
             ChartEditor.setExtra?.('dataExportForbidden', true);
         }
         if (value.data_export) {
-            ChartEditor.setExtraDataExport(key, value.data_export);
+            ChartEditor.setExtraDataExport?.(key, value.data_export);
         }
     });
 

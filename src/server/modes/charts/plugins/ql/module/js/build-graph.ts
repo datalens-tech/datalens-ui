@@ -104,7 +104,7 @@ export function buildGraph(args: BuildGraphArgs) {
 
     Object.entries(loadedData).forEach(([key, value]) => {
         if (typeof value === 'object' && value && value.data_export) {
-            ChartEditor.setExtraDataExport(key, value.data_export);
+            ChartEditor.setExtraDataExport?.(key, value.data_export);
         }
     });
 

@@ -131,7 +131,7 @@ export interface IChartEditor {
 
     setExtra(key: string, value: any): void;
 
-    setExtraDataExport(source: string, value: ApiV2DataExportField): void;
+    setExtraDataExport?: (source: string, value: ApiV2DataExportField) => void;
 
     updateParams(params: object): void;
 
