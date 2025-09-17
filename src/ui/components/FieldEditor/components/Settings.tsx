@@ -77,6 +77,13 @@ export const Settings: React.FC<SettingsProps> = ({
     const errorMessageKey = getErrorMessageKey([DUPLICATE_TITLE, EMPTY_TITLE], errors);
     const showDocButton = isEnabledFeature(Feature.FieldEditorDocSection) && calcMode === 'formula';
 
+    const handleStartEditTitle = React.useCallback(() => {
+        setTitleEditMode(true);
+        setTimeout(() => {
+            inputRef.current?.focus();
+        });
+    }, []);
+
     const handleStopEditTitle = React.useCallback(() => {
         if (inputTitle) {
             setTitleEditMode(false);
@@ -113,7 +120,7 @@ export const Settings: React.FC<SettingsProps> = ({
                             onBlur={handleStopEditTitle}
                         />
                     ) : (
-                        <NameHeader title={inputTitle} onStartEdit={() => setTitleEditMode(true)} />
+                        <NameHeader title={inputTitle} onStartEdit={handleStartEditTitle} />
                     )
                 }
             />
