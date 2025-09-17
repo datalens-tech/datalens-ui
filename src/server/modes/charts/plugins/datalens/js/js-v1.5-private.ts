@@ -268,7 +268,7 @@ export const fallbackJSFunctionPrivate = ({
         }
 
         if (value.result && value.result.data_export) {
-            ChartEditor.setExtraDataExport(key, value.result.data_export);
+            ChartEditor.setExtraDataExport?.(key, value.result.data_export);
         }
     });
 
