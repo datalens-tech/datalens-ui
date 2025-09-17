@@ -1,3 +1,5 @@
+import type z from 'zod/v4';
+
 import type {ConnectorType} from '../../../constants';
 import type {
     ConnectionData,
@@ -5,6 +7,7 @@ import type {
     ConnectionTypedQueryApiResponse,
     TransferNotification,
 } from '../../../types';
+import type {deleteConnectionResultSchema} from '../schemas/connections';
 
 import type {WorkbookIdArg} from './common';
 
@@ -56,9 +59,7 @@ export type GetAvailableCountersResponse = {
 
 export type GetAvailableCountersArgs = BaseArgs;
 
-export type DeleteConnectionResponse = unknown;
-
-export type DeleteConnectionArgs = BaseArgs;
+export type DeleteConnectionResponse = z.infer<typeof deleteConnectionResultSchema>;
 
 export type GetConnectorsResponse = {
     /** @deprecated use `sections` & `uncategorized` fields instead */
