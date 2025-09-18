@@ -525,10 +525,10 @@ export class DataFetcher {
             ctx.config.singleFetchingTimeout || DEFAULT_SINGLE_FETCHING_TIMEOUT;
 
         const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
-        const isUseDataExportFieldEnabled = isEnabledServerFeature(Feature.EnableBackendExportInfo);
+        const useChartsEngineLogin = Boolean(isEnabledServerFeature(Feature.UseChartsEngineLogin));
 
         try {
-            source = prepareSource(source, isUseDataExportFieldEnabled);
+            source = prepareSource(source);
         } catch (e) {
             return {
                 sourceId: sourceName,
@@ -558,8 +558,6 @@ export class DataFetcher {
             sourceName,
             source: loggedSource,
         };
-
-        const useChartsEngineLogin = Boolean(isEnabledServerFeature(Feature.UseChartsEngineLogin));
 
         if (useChartsEngineLogin && userLogin) {
             loggedInfo.login = userLogin;

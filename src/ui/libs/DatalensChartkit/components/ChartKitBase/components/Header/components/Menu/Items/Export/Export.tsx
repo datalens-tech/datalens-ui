@@ -163,13 +163,16 @@ export function isExportItemDisabled({extraOptions}: {extraOptions?: Record<stri
             return isExportDisabled ? disabledReason : false;
         }
 
+        const forbiddenExportFromExtra = loadedData?.extra.dataExportForbidden
+            ? i18n('label_data-export-forbidden')
+            : false;
         const dataExports = loadedData?.dataExport
             ? Object.values(loadedData.dataExport).filter(Boolean)
             : [];
 
         if (dataExports.length > 0) {
             if (dataExports.every((exp) => !exp || exp.basic.allowed)) {
-                return false;
+                return forbiddenExportFromExtra;
             }
 
             const uniqDisableReasons = uniq(flatMap(dataExports, (exp) => exp?.basic.reason || []));
@@ -179,7 +182,7 @@ export function isExportItemDisabled({extraOptions}: {extraOptions?: Record<stri
 
             return reason ?? i18n('label_data-export-forbidden');
         }
-        return false;
+        return forbiddenExportFromExtra;
     };
 }
 
