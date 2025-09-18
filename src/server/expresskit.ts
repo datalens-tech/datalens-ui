@@ -20,5 +20,7 @@ export function getExpressKit({
         routes[route] = params;
     });
 
-    return new ExpressKit(nodekit, routes);
+    const app = new ExpressKit(nodekit, routes);
+
+    return app;
 }

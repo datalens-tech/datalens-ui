@@ -1,6 +1,5 @@
 import React from 'react';
 
-import _ from 'lodash';
 import type {EntryScope} from 'shared';
 import type {GetEntryResponse} from 'shared/schema';
 import Utils from 'utils';

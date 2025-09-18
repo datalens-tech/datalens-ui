@@ -188,16 +188,18 @@ export const getOpenAsTableMenuItem = ({
         return customConfig?.title || i18n('chartkit.menu', 'open-as-table');
     },
     icon: customConfig?.icon || <Icon data={LayoutCells} size={ICONS_MENU_DEFAULT_SIZE} />,
-    isVisible: ({loadedData, error}: MenuItemArgs) => {
+    isVisible: (args: MenuItemArgs) => {
+        const {loadedData, error} = args;
+        const customIsVisible = customConfig?.isVisible?.(args) ?? true;
         const isExportAllowed =
             !loadedData?.extra.dataExportForbidden &&
-            !isExportItemDisabled({extraOptions: extraOptions});
+            !isExportItemDisabled({extraOptions: extraOptions})(args);
         const isCriticalError = error && !error?.extra?.rowsExceededLimit;
         const isChart =
             loadedData?.data &&
             ([WidgetKind.Graph, WidgetKind.GravityCharts] as string[]).includes(loadedData?.type);
 
-        return Boolean(!isCriticalError && isExportAllowed && isChart);
+        return Boolean(!isCriticalError && isExportAllowed && isChart && customIsVisible);
     },
     action:
         customConfig?.action ||

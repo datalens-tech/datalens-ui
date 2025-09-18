@@ -9,12 +9,13 @@ import {
     DL_EMBED_TOKEN_HEADER,
     Feature,
 } from '../../../../shared';
+import {registry} from '../../../registry';
 import type {ProcessorParams, SerializableProcessorParams} from '../components/processor';
 import {Processor} from '../components/processor';
 import {ProcessorHooks} from '../components/processor/hooks';
 import type {ChartBuilder} from '../components/processor/types';
 import type {ResolvedConfig} from '../components/storage/types';
-import {getDuration} from '../components/utils';
+import {getDefaultColorPaletteId, getDuration} from '../components/utils';
 import type {ChartsEngine} from '../index';
 import type {ChartStorageType} from '../types';
 
@@ -215,6 +216,8 @@ export const getSerializableProcessorParams = ({
         },
     };
 
+    const getAvailablePalettesMap = registry.common.functions.get('getAvailablePalettesMap');
+
     const processorParams: SerializableProcessorParams = {
         paramsOverride: params,
         actionParamsOverride: actionParams,
@@ -240,6 +243,11 @@ export const getSerializableProcessorParams = ({
         adapterContext,
         hooksContext,
         configOverride: generatedConfig,
+        defaultColorPaletteId: getDefaultColorPaletteId({
+            ctx,
+            tenantSettings: localConfig?.tenantSettings,
+        }),
+        systemPalettes: getAvailablePalettesMap(),
     };
 
     const configWorkbook = workbookId ?? localConfig?.workbookId;

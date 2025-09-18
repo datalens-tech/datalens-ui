@@ -1,7 +1,7 @@
 import type {DeepNonNullable} from 'utility-types';
 
 import type {ChartsStats} from '../../../types/charts';
-import {createAction} from '../../gateway-utils';
+import {createAction, createTypedAction} from '../../gateway-utils';
 import {getTypedApi} from '../../simple-schema';
 import {getEntryVisualizationType} from '../helpers';
 import type {DatasetDictResponse, DatasetFieldsDictResponse} from '../helpers/dash';
@@ -11,18 +11,37 @@ import {
     prepareDatasetData,
     prepareWidgetDatasetData,
 } from '../helpers/dash';
-import {
-    type CollectChartkitStatsArgs,
-    type CollectChartkitStatsResponse,
-    type CollectDashStatsArgs,
-    type CollectDashStatsResponse,
-    type GetEntriesDatasetsFieldsArgs,
-    type GetEntriesDatasetsFieldsResponse,
-    type GetWidgetsDatasetsFieldsArgs,
-    type GetWidgetsDatasetsFieldsResponse,
+import {deleteDashArgsSchema, deleteDashResultSchema} from '../schemas/dash';
+import type {
+    CollectChartkitStatsArgs,
+    CollectChartkitStatsResponse,
+    CollectDashStatsArgs,
+    CollectDashStatsResponse,
+    GetEntriesDatasetsFieldsArgs,
+    GetEntriesDatasetsFieldsResponse,
+    GetWidgetsDatasetsFieldsArgs,
+    GetWidgetsDatasetsFieldsResponse,
 } from '../types';
 
 export const dashActions = {
+    // WIP
+    __deleteDashboard__: createTypedAction(
+        {
+            paramsSchema: deleteDashArgsSchema,
+            resultSchema: deleteDashResultSchema,
+        },
+        async (api, {lockToken, dashboardId}) => {
+            const typedApi = getTypedApi(api);
+
+            await typedApi.us._deleteUSEntry({
+                entryId: dashboardId,
+                lockToken,
+            });
+
+            return {};
+        },
+    ),
+
     collectDashStats: createAction<CollectDashStatsResponse, CollectDashStatsArgs>(
         async (_, args, {ctx}) => {
             ctx.stats('dashStats', {

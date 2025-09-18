@@ -64,6 +64,7 @@ export type ProcessorSuccessResponse = {
         chartsInsights?: ChartsInsight[];
         sideMarkdown?: string;
         exportFilename?: string;
+        colors?: string[];
     };
     timings: {};
     data?: {

@@ -2,7 +2,7 @@ import {transformParamsToActionParams} from '@gravity-ui/dashkit/helpers';
 import {type AppContext, REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 import {AxiosError} from 'axios';
 import JSONfn from 'json-fn';
-import {isNumber, isObject, isString, merge, mergeWith} from 'lodash';
+import {isEmpty, isNumber, isObject, isString, merge, mergeWith} from 'lodash';
 import get from 'lodash/get';
 
 import type {ChartsEngine} from '../..';
@@ -11,11 +11,14 @@ import type {
     DashWidgetConfig,
     EDITOR_TYPE_CONFIG_TABS,
     EntryPublicAuthor,
+    Palette,
     StringParams,
     WorkbookId,
 } from '../../../../../shared';
 import {DL_CONTEXT_HEADER, Feature} from '../../../../../shared';
 import {renderHTML} from '../../../../../shared/modules/markdown/markdown';
+import {selectServerPalette} from '../../../../constants';
+import {extractColorPalettesFromData} from '../../../../modes/charts/plugins/helpers/color-palettes';
 import {registry} from '../../../../registry';
 import type {CacheClient} from '../../../cache-client';
 import {config as configConstants} from '../../constants';
@@ -181,6 +184,8 @@ export type SerializableProcessorParams = {
     originalReqHeaders: DataFetcherOriginalReqHeaders;
     adapterContext: AdapterContext;
     hooksContext: HooksContext;
+    defaultColorPaletteId?: string;
+    systemPalettes?: Record<string, Palette>;
 };
 
 export class Processor {
@@ -217,6 +222,8 @@ export class Processor {
         hooks,
         sourcesConfig,
         secureConfig,
+        defaultColorPaletteId,
+        systemPalettes,
     }: ProcessorParams): Promise<
         ProcessorSuccessResponse | ProcessorErrorResponse | {error: string}
     > {
@@ -665,6 +672,8 @@ export class Processor {
                 return acc;
             }, {});
 
+            const {colorPalettes: tenantColorPalettes} = extractColorPalettesFromData(data);
+
             hrStart = process.hrtime();
             const libraryTabResult = await builder.buildChartLibraryConfig({
                 data,
@@ -869,6 +878,14 @@ export class Processor {
                 result.extra = jsTabResults.runtimeMetadata.extra || {};
                 result.extra.chartsInsights = jsTabResults.runtimeMetadata.chartsInsights;
                 result.extra.sideMarkdown = jsTabResults.runtimeMetadata.sideMarkdown;
+                const colors = selectServerPalette({
+                    defaultColorPaletteId: defaultColorPaletteId ?? '',
+                    customColorPalettes: tenantColorPalettes,
+                    availablePalettes: systemPalettes ?? {},
+                });
+                if (!isEmpty(colors)) {
+                    result.extra.colors = colors;
+                }
 
                 result.sources = merge(
                     resolvedSources,
