@@ -788,9 +788,6 @@ export const buildGraphPrivate = (args: {
             // Hiding the data export button in the ChartKit menu
             ChartEditor.setExtra?.('dataExportForbidden', true);
         }
-        if (value.data_export) {
-            ChartEditor.setExtraDataExport?.(key, value.data_export);
-        }
     });
 
     const newParams: Record<string, any> = {};

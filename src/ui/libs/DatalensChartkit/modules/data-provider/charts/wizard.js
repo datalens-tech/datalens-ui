@@ -336,7 +336,7 @@ function _processExtra({confStorageConfig, data, params}) {
 function run(loaded) {
     const {
         data,
-        extra,
+        dataExport,
         params: fullParams,
         sources,
         usedParams,
@@ -354,6 +354,7 @@ function run(loaded) {
         let result = {
             type: type.match(/^[^_]*/)[0],
             data,
+            dataExport,
             params,
             entryId,
             key: key,
@@ -363,7 +364,7 @@ function run(loaded) {
             traceId,
             isNewWizard: false,
             isOldWizard: true,
-            extra,
+            extra: {},
             widgetConfig,
         };
 

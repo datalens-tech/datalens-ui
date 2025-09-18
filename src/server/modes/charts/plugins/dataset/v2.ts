@@ -241,9 +241,6 @@ function processData(
         if (dataResult.data_export_forbidden) {
             ChartEditor.setExtra?.('dataExportForbidden', true);
         }
-        if (dataResult.data_export) {
-            ChartEditor.setExtraDataExport?.(field, dataResult.data_export);
-        }
     }
 
     return processTableData(dataResult.result_data, dataResult.fields, options);

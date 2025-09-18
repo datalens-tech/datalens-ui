@@ -5,7 +5,6 @@ import type {WidgetSize} from '../constants/charts';
 import type {WRAPPED_FN_KEY} from '../constants/ui-sandbox';
 import type {ChartsInsight, IntervalPart} from '../modules';
 
-import type {ApiV2DataExportField} from './bi-api';
 import type {StringParams} from './common';
 import type {UISandboxWrappedFunction} from './ui-sandbox';
 
@@ -130,8 +129,6 @@ export interface IChartEditor {
     setDataSourceInfo(key: string, value: object): void;
 
     setExtra(key: string, value: any): void;
-
-    setExtraDataExport?: (source: string, value: ApiV2DataExportField) => void;
 
     updateParams(params: object): void;
 

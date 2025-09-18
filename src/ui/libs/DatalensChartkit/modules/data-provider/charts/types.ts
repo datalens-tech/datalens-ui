@@ -173,7 +173,6 @@ export interface ChartsData extends DashWidgetConfig {
     isEditor?: boolean;
     extra: {
         exportFilename?: string;
-        dataExport: Record<string, ApiV2DataExportField>;
         dataExportForbidden?: boolean;
         datasets?: {
             id: string;
@@ -338,9 +337,9 @@ export interface ResponseSuccessNodeBase extends DashWidgetConfig {
     id: string;
     revId?: string;
     sources: {fields?: {datasetId?: string}} | ResponseSourcesSuccess;
+    dataExport?: Record<string, ApiV2DataExportField | undefined>;
     extra: {
         exportFilename?: string;
-        dataExport: Record<string, ApiV2DataExportField>;
         dataExportForbidden?: boolean;
         colors?: string[];
     };

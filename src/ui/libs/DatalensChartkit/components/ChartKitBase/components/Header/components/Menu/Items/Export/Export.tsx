@@ -163,13 +163,16 @@ export function isExportItemDisabled({extraOptions}: {extraOptions?: Record<stri
             return isExportDisabled ? disabledReason : false;
         }
 
-        const dataExports = Object.values(loadedData?.extra.dataExport || {}).filter(Boolean);
+        const dataExports = loadedData?.dataExport
+            ? Object.values(loadedData.dataExport).filter(Boolean)
+            : [];
+
         if (dataExports.length > 0) {
-            if (dataExports.every((exp) => exp.basic.allowed)) {
+            if (dataExports.every((exp) => !exp || exp.basic.allowed)) {
                 return false;
             }
 
-            const uniqDisableReasons = uniq(flatMap(dataExports, (exp) => exp.basic.reason || []));
+            const uniqDisableReasons = uniq(flatMap(dataExports, (exp) => exp?.basic.reason || []));
             const reason = uniqDisableReasons[0]
                 ? i18n(`label_export-forbidden.${uniqDisableReasons[0]}`)
                 : undefined;
