@@ -120,6 +120,7 @@ export const getWizardChartBuilder = async (
                     widgetConfig,
                     userLang,
                     palettes,
+                    features,
                 })
                 .timeout(timeouts.sources || ONE_SECOND);
 
