@@ -336,6 +336,7 @@ function _processExtra({confStorageConfig, data, params}) {
 function run(loaded) {
     const {
         data,
+        dataExport,
         params: fullParams,
         sources,
         usedParams,
@@ -353,6 +354,7 @@ function run(loaded) {
         let result = {
             type: type.match(/^[^_]*/)[0],
             data,
+            dataExport,
             params,
             entryId,
             key: key,
