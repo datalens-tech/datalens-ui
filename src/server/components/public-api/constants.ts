@@ -76,6 +76,27 @@ export const PUBLIC_API_PROXY_MAP = {
         },
 
         // Dashboard
+        getDashboard: {
+            resolve: (api) => api.mix.__getDashboard__,
+            openApi: {
+                summary: 'Get dashboard',
+                tags: [ApiTag.Dashboard],
+            },
+        },
+        updateDashboard: {
+            resolve: (api) => api.mix.__updateDashboard__,
+            openApi: {
+                summary: 'Delete dashboard',
+                tags: [ApiTag.Dashboard],
+            },
+        },
+        createDashboard: {
+            resolve: (api) => api.mix.__createDashboard__,
+            openApi: {
+                summary: 'Create dashboard',
+                tags: [ApiTag.Dashboard],
+            },
+        },
         deleteDashboard: {
             resolve: (api) => api.mix.__deleteDashboard__,
             openApi: {
