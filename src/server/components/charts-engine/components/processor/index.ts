@@ -12,6 +12,7 @@ import type {
     DashWidgetConfig,
     EDITOR_TYPE_CONFIG_TABS,
     EntryPublicAuthor,
+    Palette,
     StringParams,
     WorkbookId,
 } from '../../../../../shared';
@@ -185,6 +186,7 @@ export type SerializableProcessorParams = {
     adapterContext: AdapterContext;
     hooksContext: HooksContext;
     defaultColorPaletteId?: string;
+    systemPalettes?: Record<string, Palette>;
 };
 
 export class Processor {
@@ -222,6 +224,7 @@ export class Processor {
         sourcesConfig,
         secureConfig,
         defaultColorPaletteId,
+        systemPalettes,
     }: ProcessorParams): Promise<
         ProcessorSuccessResponse | ProcessorErrorResponse | {error: string}
     > {
@@ -892,13 +895,10 @@ export class Processor {
                     });
                 }
 
-                const getAvailablePalettesMap =
-                    registry.common.functions.get('getAvailablePalettesMap');
-                const systemPalettes = getAvailablePalettesMap();
                 const colors = selectServerPalette({
                     defaultColorPaletteId: defaultColorPaletteId ?? '',
                     customColorPalettes: tenantColorPalettes,
-                    availablePalettes: systemPalettes,
+                    availablePalettes: systemPalettes ?? {},
                 });
                 if (!isEmpty(colors)) {
                     result.extra.colors = colors;
