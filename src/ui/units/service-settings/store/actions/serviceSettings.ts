@@ -14,6 +14,8 @@ import {removeEmptyFields} from 'ui/units/auth/utils/fields';
 import {
     RESET_CREATE_USER,
     RESET_SERVICE_USERS_LIST,
+    RESTORE_USERS_STATE_AFTER_FILTER,
+    SAVE_USERS_STATE_BEFORE_FILTER,
     SET_CREATE_USER_FAILED,
     SET_CREATE_USER_LOADING,
     SET_CREATE_USER_SUCCESS,
@@ -30,7 +32,9 @@ export type ServiceSettingsActions =
     | SetCreateUserLoadingAction
     | SetCreateUserSuccessAction
     | SetCreateUserFailedAction
-    | ResetCreateUserAction;
+    | ResetCreateUserAction
+    | SaveUsersStateBeforeFilterAction
+    | RestoreUsersStateAfterFilterAction;
 
 export type ServiceSettingsDispatch = ThunkDispatch<
     DatalensGlobalState,
@@ -127,6 +131,22 @@ type ResetCreateUserAction = {
 
 export const resetCreateUser = (): ResetCreateUserAction => ({
     type: RESET_CREATE_USER,
+});
+
+type SaveUsersStateBeforeFilterAction = {
+    type: typeof SAVE_USERS_STATE_BEFORE_FILTER;
+};
+
+export const saveUsersStateBeforeFilter = (): SaveUsersStateBeforeFilterAction => ({
+    type: SAVE_USERS_STATE_BEFORE_FILTER,
+});
+
+type RestoreUsersStateAfterFilterAction = {
+    type: typeof RESTORE_USERS_STATE_AFTER_FILTER;
+};
+
+export const restoreUsersStateAfterFilter = (): RestoreUsersStateAfterFilterAction => ({
+    type: RESTORE_USERS_STATE_AFTER_FILTER,
 });
 
 export const createUser = ({
