@@ -54,7 +54,7 @@ function mapScatterSeries(args: MapScatterSeriesArgs): ScatterSeries<PointCustom
                         sLabel: point.sLabel,
                         sizeLabel: point.sizeLabel,
                     },
-                    color: point.color,
+                    color: typeof point.color === 'string' ? point.color : undefined,
                 };
 
                 if (xAxisType === 'category') {
