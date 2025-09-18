@@ -4,8 +4,7 @@ import type {ChartKitLang, ChartKitProps, ChartKitRef} from '@gravity-ui/chartki
 import OpensourceChartKit, {settings} from '@gravity-ui/chartkit';
 import throttle from 'lodash/throttle';
 import {ErrorBoundary} from 'ui/components/ErrorBoundary/ErrorBoundary';
-import type {ChartKitHolidays} from 'ui/store/toolkit/chartkit/types';
-// import {useGetChartkitHolidaysAsyncQuery} from 'ui/store/toolkit';
+import {useGetChartkitHolidaysAsyncQuery} from 'ui/store/toolkit';
 
 import {registry} from '../../../registry';
 import {ChartkitError} from '../components/ChartKitBase/components/ChartkitError/ChartkitError';
@@ -39,7 +38,7 @@ const ChartkitWidget = React.forwardRef<ChartKit | ChartKitRef | undefined, Char
             backgroundColor,
         } = props;
 
-        // const {data: chartkitHolidays} = useGetChartkitHolidaysAsyncQuery();
+        const {data: chartkitHolidays} = useGetChartkitHolidaysAsyncQuery();
 
         const chartkitType = React.useMemo(() => {
             const getChartkitType = registry.chart.functions.get('getChartkitType');
@@ -48,17 +47,15 @@ const ChartkitWidget = React.forwardRef<ChartKit | ChartKitRef | undefined, Char
 
         const opensourceChartKitProps = React.useMemo(() => {
             const getFormatNumber = registry.common.functions.get('getFormatNumber');
-            const {getChartkitHolidays, getChartkitPlugins} = registry.chart.functions.getAll();
+            const {getChartkitPlugins} = registry.chart.functions.getAll();
 
             if (!chartkitType) {
                 return undefined;
             }
 
-            const holidays = getChartkitHolidays() as ChartKitHolidays;
-
             settings.set({
                 plugins: getChartkitPlugins(),
-                extra: {holidays},
+                extra: {holidays: chartkitHolidays},
             });
 
             const additionalProps = getAdditionalProps({type: chartkitType, splitTooltip});
@@ -96,7 +93,7 @@ const ChartkitWidget = React.forwardRef<ChartKit | ChartKitRef | undefined, Char
             paneSplitOrientation,
             widgetDashState,
             backgroundColor,
-            // chartkitHolidays,
+            chartkitHolidays,
         ]);
 
         React.useEffect(() => {
