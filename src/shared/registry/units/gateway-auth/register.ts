@@ -1,10 +1,10 @@
 import {
     getAuthArgsBiPrivate,
     getAuthArgsProxyBiPrivate,
+    getAuthArgsProxyUSPrivate,
     getAuthArgsUSPrivate,
     getAuthHeadersBiPrivate,
     getAuthHeadersUSPrivate,
-    getProxyingAuthArgsUSPrivate,
     hasValidWorkbookTransferAuthHeaders,
 } from '../../../components/auth/gateway-auth-helpers';
 import {sharedRegistry} from '../../index';
@@ -16,7 +16,7 @@ export const registerGatewayAuthPlugins = () => {
         getAuthArgsBiPrivate,
         getAuthHeadersBiPrivate,
         hasValidWorkbookTransferAuthHeaders,
-        getProxyingAuthArgsUSPrivate,
-        getProxyingAuthArgsBiPrivate: getAuthArgsProxyBiPrivate,
+        getAuthArgsProxyBiPrivate,
+        getAuthArgsProxyUSPrivate,
     });
 };

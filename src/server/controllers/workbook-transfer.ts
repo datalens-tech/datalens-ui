@@ -66,8 +66,8 @@ export const proxyGetEntry = async (
     };
     const requestId = getRequestId(ctx);
 
-    const {getProxyingAuthArgsUSPrivate} = sharedRegistry.gatewayAuth.functions.getAll();
-    const authArgs = getProxyingAuthArgsUSPrivate(req, res);
+    const {getAuthArgsProxyBiPrivate} = sharedRegistry.gatewayAuth.functions.getAll();
+    const authArgs = getAuthArgsProxyBiPrivate(req, res);
 
     try {
         return await gatewayApi.usPrivate._proxyGetEntry({
@@ -204,7 +204,7 @@ export const prepareImportData = async (req: Request, res: Response) => {
 
     const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
 
-    const {getProxyingAuthArgsBiPrivate, getProxyingAuthArgsUSPrivate} =
+    const {getProxyingAuthArgsBiPrivate, getAuthArgsProxyBiPrivate} =
         sharedRegistry.gatewayAuth.functions.getAll();
 
     switch (scope) {
@@ -265,7 +265,7 @@ export const prepareImportData = async (req: Request, res: Response) => {
                     annotation: widget.annotation,
                 },
                 ctx,
-                authArgs: getProxyingAuthArgsUSPrivate(req, res),
+                authArgs: getAuthArgsProxyBiPrivate(req, res),
                 requestId: getRequestId(ctx),
             });
 
@@ -296,7 +296,7 @@ export const prepareImportData = async (req: Request, res: Response) => {
                     },
                 },
                 ctx,
-                authArgs: getProxyingAuthArgsUSPrivate(req, res),
+                authArgs: getAuthArgsProxyBiPrivate(req, res),
                 requestId: getRequestId(ctx),
             });
 
