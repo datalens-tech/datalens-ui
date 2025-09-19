@@ -337,7 +337,7 @@ export const AsideHeaderAdapter = ({
             renderFooter={renderFooter}
             renderContent={renderAsideHeaderContent}
             onClosePanel={handleClosePanel}
-            className={b({rebranding: isRebrandingEnabled})}
+            className={b()}
             collapseButtonWrapper={collapseButtonWrapper}
         />
     );

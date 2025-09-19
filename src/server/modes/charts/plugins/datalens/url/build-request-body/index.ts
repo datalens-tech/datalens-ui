@@ -433,7 +433,7 @@ export function prepareSingleRequest({
     layerId: string | undefined;
     extraSettings?: ServerChartsConfig['extraSettings'];
     sharedData: SharedData;
-    revisionId: string;
+    revisionId?: string;
 }): ApiV2RequestBody {
     preprocessHierarchies({
         visualizationId: visualization.id,
@@ -682,7 +682,7 @@ export const getUrlsRequestBody = (args: {
     datasetFields: ServerDatasetField[];
     datasetId: string;
     layerId: string;
-    revisionId: string;
+    revisionId?: string;
 }): ApiV2RequestBody => {
     const {params, shared, datasetId, layerId, revisionId} = args;
 
