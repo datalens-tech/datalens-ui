@@ -23,6 +23,10 @@ for _ in "$@"; do
         IS_CLEAR_E2E="true"
         shift # past argument with no value
         ;;
+    --clear-revisions)
+        IS_CLEAR_REVISIONS="true"
+        shift # past argument with no value
+        ;;
     -*)
         echo "unknown arg: ${1}"
         exit 1
@@ -52,6 +56,9 @@ fi
 COMPOSE_FILE=$(readlink -f "${SCRIPT_DIR}/../../tests/docker-compose.e2e.yml")
 DUMP_FILE=$(readlink -f "${SCRIPT_DIR}/../../tests/data/us-e2e-data.sql")
 
+echo ""
+echo "========================"
+
 echo "BEGIN;" >"${DUMP_FILE}"
 
 docker --log-level error compose -f "${COMPOSE_FILE}" exec \
@@ -70,7 +77,13 @@ EXIT="$?"
 
 echo "COMMIT;" >>"${DUMP_FILE}"
 
+echo ""
+echo "========================"
+
 if [ "${IS_CLEAR_DELETED}" = "true" ]; then
+    echo ""
+    echo "Clear deleted entries..."
+
     DUMP=$(cat "${DUMP_FILE}")
     DELETED_ENTRIES=$(
         echo "${DUMP}" |
@@ -95,6 +108,9 @@ if [ "${IS_CLEAR_DELETED}" = "true" ]; then
 fi
 
 if [ "${IS_CLEAR_E2E}" = "true" ]; then
+    echo ""
+    echo "Clear e2e entries..."
+
     DUMP=$(cat "${DUMP_FILE}")
     E2E_ENTRIES=$(
         echo "${DUMP}" |
@@ -119,6 +135,9 @@ if [ "${IS_CLEAR_E2E}" = "true" ]; then
 fi
 
 if [ "${IS_CLEAR_REVISIONS}" = "true" ]; then
+    echo ""
+    echo "Clear not actual revisions..."
+
     DUMP=$(cat "${DUMP_FILE}")
     ENTRIES=$(
         echo "${DUMP}" |
@@ -184,6 +203,7 @@ fi
 sed '/^$/N;/^\n$/D' "${DUMP_FILE}" >"${DUMP_FILE}.tmp" && mv "${DUMP_FILE}.tmp" "${DUMP_FILE}"
 
 if [ "${EXIT}" != "0" ]; then
+    echo ""
     echo "Dump error, exit..."
     exit "${EXIT}"
 else
