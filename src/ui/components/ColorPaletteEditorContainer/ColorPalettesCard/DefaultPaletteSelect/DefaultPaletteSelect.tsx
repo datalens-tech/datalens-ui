@@ -62,13 +62,14 @@ export const DefaultPaletteSelect = ({colorPalettes, disabled}: DefaultPaletteSe
         getSdk()
             .sdk.us.setDefaultColorPalette({defaultColorPaletteId: value[0]})
             .then((response) => {
-                if (response.settings.defaultColorPaletteId !== value[0]) {
-                    const newPaletteValue =
-                        response.settings.defaultColorPaletteId || fallbackValue;
+                let newPaletteValue = value[0];
+                if (response.settings.defaultColorPaletteId !== newPaletteValue) {
+                    newPaletteValue = response.settings.defaultColorPaletteId || fallbackValue;
                     setDefaultPaletteId(newPaletteValue);
-                    if (window.DL.tenantSettings) {
-                        window.DL.tenantSettings.defaultColorPaletteId = newPaletteValue;
-                    }
+                }
+
+                if (window.DL.tenantSettings) {
+                    window.DL.tenantSettings.defaultColorPaletteId = newPaletteValue;
                 }
                 dispatch(
                     showToast({
