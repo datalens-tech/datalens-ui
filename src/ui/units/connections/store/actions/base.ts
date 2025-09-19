@@ -14,6 +14,7 @@ import type {
     SetCheckData,
     SetCheckLoading,
     SetConectorData,
+    SetConnectionDescription,
     SetConnectionKey,
     SetEntry,
     SetFileColumnFilter,
@@ -42,7 +43,6 @@ import type {
     SetYadocsColumnFilter,
     SetYadocsItems,
     SetYadocsSelectedItemId,
-    SetConnectionDescription,
 } from '../typings';
 
 import {getFilteredReplaceSources} from './gsheet/utils';
