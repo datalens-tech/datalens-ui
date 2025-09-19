@@ -30,7 +30,7 @@ export const createS3BasedConnection = (args: {
 }) => {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
         const {name, dirPath, workbookId = getWorkbookIdFromPathname()} = args;
-        const {form, annotation: annotationState} = getState().connections;
+        const {form, annotation} = getState().connections;
         const placementData: Record<string, string> = dirPath
             ? {[FieldKey.DirPath]: dirPath}
             : {[FieldKey.WorkbookId]: workbookId};
@@ -38,9 +38,6 @@ export const createS3BasedConnection = (args: {
             ...form,
             ...placementData,
             [FieldKey.Name]: name,
-        };
-        const annotation = {
-            description: annotationState?.description ?? '',
         };
 
         dispatch(setSubmitLoading({loading: true}));

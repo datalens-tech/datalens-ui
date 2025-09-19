@@ -139,14 +139,12 @@ const updateConnection = async (
     description: string,
 ): Promise<{error?: DataLensApiError}> => {
     try {
-        console.error('!', JSON.stringify({...form, connectionId, description}));
         await getSdk().sdk.bi.updateConnection({...form, connectionId, description});
         reachMetricaGoal(CounterName.Main, GoalId.ConnectionEditSubmit, {
             type: dbType,
         });
         return {error: undefined};
     } catch (error) {
-        console.error(error);
         logger.logError('Redux actions (conn): fetchMetricaCounters failed', error);
         return {error};
     }
