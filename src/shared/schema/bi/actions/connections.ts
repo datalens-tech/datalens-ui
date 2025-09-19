@@ -1,4 +1,5 @@
-import {US_MASTER_TOKEN_HEADER, WORKBOOK_ID_HEADER} from '../../../constants';
+import {sharedRegistry} from '../../../../shared/registry';
+import {WORKBOOK_ID_HEADER} from '../../../constants';
 import {createAction, createTypedAction} from '../../gateway-utils';
 import {filterUrlFragment} from '../../utils';
 import {transformConnectionResponseError} from '../helpers';
@@ -149,22 +150,23 @@ export const actions = {
     _proxyExportConnection: createAction<ExportConnectionResponse, ExportConnectionArgs>({
         method: 'GET',
         path: ({connectionId}) => `${PATH_PREFIX}/connections/export/${connectionId}`,
-        params: ({usMasterToken, workbookId}, headers) => ({
+        params: ({workbookId}, headers) => ({
             headers: {
                 ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
                 ...headers,
-                [US_MASTER_TOKEN_HEADER]: usMasterToken,
             },
         }),
+        getAuthHeaders: (params) => {
+            return sharedRegistry.gatewayAuth.functions.getAll().getAuthHeadersBiPrivate(params);
+        },
     }),
     _proxyImportConnection: createAction<ImportConnectionResponse, ImportConnectionArgs>({
         method: 'POST',
         path: () => `${PATH_PREFIX}/connections/import`,
-        params: ({usMasterToken, workbookId, connection}, headers) => ({
+        params: ({workbookId, connection}, headers) => ({
             headers: {
                 ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
                 ...headers,
-                [US_MASTER_TOKEN_HEADER]: usMasterToken,
             },
             body: {
                 data: {
@@ -174,5 +176,8 @@ export const actions = {
                 id_mapping: {},
             },
         }),
+        getAuthHeaders: (params) => {
+            return sharedRegistry.gatewayAuth.functions.getAll().getAuthHeadersBiPrivate(params);
+        },
     }),
 };
