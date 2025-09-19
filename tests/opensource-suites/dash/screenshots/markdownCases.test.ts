@@ -30,4 +30,21 @@ datalensTest.describe('Dashboards - Markdown cases screenshots', () => {
             await expect(contentContainer).toHaveScreenshot();
         },
     );
+
+    datalensTest(
+        'Tab with different markdown widgets with special blocks @screenshot',
+        async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
+            const dashboardPage = new DashboardPage({page});
+            await openTestPage(
+                page,
+                `${config.dash.urls.DashboardWithMarkdownWidgets}?_embedded=1`,
+            );
+
+            await dashboardPage.waitForWidgetsRender();
+
+            const contentContainer = page.locator(slct(DashBodyQa.ContentWrapper));
+
+            await expect(contentContainer).toHaveScreenshot();
+        },
+    );
 });
