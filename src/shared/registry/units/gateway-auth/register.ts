@@ -1,5 +1,4 @@
 import {
-    getAuthArgsBiPrivate,
     getAuthArgsProxyBiPrivate,
     getAuthArgsProxyUSPrivate,
     getAuthArgsUSPrivate,
@@ -13,7 +12,6 @@ export const registerGatewayAuthPlugins = () => {
     sharedRegistry.gatewayAuth.functions.register({
         getAuthArgsUSPrivate,
         getAuthHeadersUSPrivate,
-        getAuthArgsBiPrivate,
         getAuthHeadersBiPrivate,
         hasValidWorkbookTransferAuthHeaders,
         getAuthArgsProxyBiPrivate,

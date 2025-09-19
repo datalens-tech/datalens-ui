@@ -7,13 +7,6 @@ type AuthArgsData = {
     usMasterToken?: string;
 };
 
-export const getAuthArgsBiPrivate = ({ctx}: Request, _res: Response): AuthArgsData => {
-    const usMasterToken = ctx.config.usMasterToken as string;
-    return {
-        usMasterToken,
-    };
-};
-
 export const getAuthHeadersBiPrivate: GetAuthHeaders<AuthArgsData> = ({authArgs}) => {
     const usMasterToken = authArgs?.usMasterToken as string;
     return {
