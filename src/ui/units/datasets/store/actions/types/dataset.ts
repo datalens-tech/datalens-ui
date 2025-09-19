@@ -99,3 +99,5 @@ export const SET_TEMPLATE_ENABLED = Symbol('dataset/SET_TEMPLATE_ENABLED');
 export const SET_DATA_EXPORT_ENABLED = Symbol('dataset/SET_DATA_EXPORT_ENABLED');
 
 export const SET_UPDATES = Symbol('dataset/SET_UPDATES');
+
+export const SET_DESCRIPTION = Symbol('dataset/SET_DESCRIPTION');

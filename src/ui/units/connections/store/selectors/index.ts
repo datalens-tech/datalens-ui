@@ -1,3 +1,4 @@
+import {createSelector} from 'reselect';
 import type {DatalensGlobalState} from 'ui';
 
 import {hasPermissionsToEdit} from '../../utils';
@@ -50,3 +51,13 @@ export const uiSchemaSelector = (state: DatalensGlobalState) => {
 export const flattenConnectorsSelector = (state: DatalensGlobalState) => {
     return state.connections.flattenConnectors;
 };
+
+export const selectConnectionEntry = (state: DatalensGlobalState) => state.connections.entry;
+
+export const selectConnectionDescription = (state: DatalensGlobalState) =>
+    state.connections.annotation?.description ?? '';
+
+export const selectIsConnectionDescriptionChanged = createSelector(
+    [selectConnectionEntry, selectConnectionDescription],
+    (entry, description) => entry && (entry.annotation?.description ?? '') !== description,
+);

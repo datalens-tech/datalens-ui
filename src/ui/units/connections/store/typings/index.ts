@@ -1,3 +1,4 @@
+import type {EntryAnnotation} from 'shared';
 import type {
     ConnectorItem,
     FormSchema,
@@ -17,6 +18,7 @@ import type {
     SET_CACHED_HTML_ITEM,
     SET_CHECK_DATA,
     SET_CHECK_LOADING,
+    SET_CONNECTION_DESCRIPTION,
     SET_CONNECTION_KEY,
     SET_CONNECTOR_DATA,
     SET_ENTRY,
@@ -120,6 +122,7 @@ export type ConnectionsReduxState = {
     currentTenantId?: string;
     entry?: GetEntryResponse;
     schema?: FormSchema;
+    annotation: EntryAnnotation | null;
 };
 
 export type SetGroupedConnectors = {
@@ -357,6 +360,11 @@ export type SetYadocsColumnFilter = {
     };
 };
 
+export type SetConnectionDescription = {
+    type: typeof SET_CONNECTION_DESCRIPTION;
+    payload: string;
+};
+
 export type ConnectionsReduxAction =
     | SetGroupedConnectors
     | SetFlattenConnectors
@@ -394,7 +402,8 @@ export type ConnectionsReduxAction =
     | SetYadocsItems
     | SetYadocsSelectedItemId
     | SetYadocsActiveDialog
-    | SetYadocsColumnFilter;
+    | SetYadocsColumnFilter
+    | SetConnectionDescription;
 
 export type ConnectionsReduxDispatch = AppDispatch<ConnectionsReduxAction>;
 

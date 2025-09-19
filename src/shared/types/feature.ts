@@ -97,6 +97,10 @@ export enum Feature {
     StoreFieldSettingsAtDataset = 'StoreFieldSettingsAtDataset',
     /** Enable dataset revisions */
     EnableDatasetRevisions = 'EnableDatasetRevisions',
+    /** Show dataset description button */
+    EnableDatasetDescription = 'EnableDatasetDescription',
+    /** Show connection description button */
+    EnableConnectionDescription = 'EnableConnectionDescription',
     /** Enables getting info about forbidden export from dataset/connection info endpoints  */
     EnableBackendExportInfo = 'EnableBackendExportInfo',
 }

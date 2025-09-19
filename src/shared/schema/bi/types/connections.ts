@@ -5,6 +5,7 @@ import type {
     ConnectionData,
     ConnectionTypedQueryApiRequest,
     ConnectionTypedQueryApiResponse,
+    EntryAnnotationArgs,
     TransferNotification,
 } from '../../../types';
 import type {deleteConnectionResultSchema} from '../schemas/connections';
@@ -84,11 +85,11 @@ export type ConnectionErrorResponse = {
     details: {data: unknown};
 };
 
-export type CreateConnectionArgs = ConnectionData;
+export type CreateConnectionArgs = ConnectionData & EntryAnnotationArgs;
 
 export type UpdateConnectionResponse = {};
 
-export type UpdateConnectionArgs = BaseArgs & ConnectionData;
+export type UpdateConnectionArgs = BaseArgs & ConnectionData & EntryAnnotationArgs;
 
 export type VerifyConnectionResponse = {};
 

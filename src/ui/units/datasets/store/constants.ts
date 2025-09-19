@@ -100,6 +100,8 @@ export const initialState: DatasetReduxState = {
     sourceTemplate: null,
     error: null,
     currentTab: getCurrentTab(),
+    prevAnnotation: null,
+    annotation: null,
 };
 
 export const getInitialState = (extra?: Partial<DatasetReduxState>): DatasetReduxState => ({

@@ -6,6 +6,7 @@ import {
     SET_CACHED_HTML_ITEM,
     SET_CHECK_DATA,
     SET_CHECK_LOADING,
+    SET_CONNECTION_DESCRIPTION,
     SET_CONNECTION_KEY,
     SET_CONNECTOR_DATA,
     SET_ENTRY,
@@ -387,6 +388,14 @@ export default (state = initialState, action: ConnectionsReduxAction): Connectio
                 yadocs: {
                     ...state.yadocs,
                     columnFilter,
+                },
+            };
+        }
+        case SET_CONNECTION_DESCRIPTION: {
+            return {
+                ...state,
+                annotation: {
+                    description: action.payload,
                 },
             };
         }

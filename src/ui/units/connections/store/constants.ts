@@ -60,4 +60,5 @@ export const initialState: ConnectionsReduxState = {
     },
     entry: undefined,
     schema: undefined,
+    annotation: null,
 };
