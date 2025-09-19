@@ -5,6 +5,7 @@ import type {SeriesExportSettings, ServerField} from '../../../../../../../share
 import {
     PlaceholderId,
     WizardVisualizationId,
+    getFakeTitleOrTitle,
     isHtmlField,
     isMarkdownField,
     isMarkupField,
@@ -12,6 +13,7 @@ import {
 import {getBaseChartConfig} from '../../gravity-charts/utils';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getExportColumnSettings} from '../../utils/export-helpers';
+import {shouldUseGradientLegend} from '../helpers/legend';
 import type {PrepareFunctionArgs} from '../types';
 
 import {prepareBarYData} from './prepare-bar-y-data';
@@ -19,7 +21,7 @@ import {prepareBarYData} from './prepare-bar-y-data';
 type BarYPoint = {x: number; y: number} & Record<string, unknown>;
 
 export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
-    const {shared, visualizationId, colors, labels, placeholders} = args;
+    const {shared, visualizationId, colors, colorsConfig, labels, placeholders} = args;
     const {graphs, categories} = prepareBarYData(args);
     const hasCategories = Boolean(categories?.length);
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
@@ -83,6 +85,20 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
             type: 'linear',
         },
     };
+
+    if (config.series.data.length && shouldUseGradientLegend(colorItem, colorsConfig, shared)) {
+        config.legend = {
+            enabled: true,
+            type: 'continuous',
+            title: {text: getFakeTitleOrTitle(colorItem), style: {fontWeight: '500'}},
+            colorScale: {
+                colors: colorsConfig.gradientColors,
+                stops: colorsConfig.gradientColors.length === 2 ? [0, 1] : [0, 0.5, 1],
+            },
+        };
+    } else if (graphs.length <= 1) {
+        config.legend = {enabled: false};
+    }
 
     if (xField) {
         config.tooltip = {

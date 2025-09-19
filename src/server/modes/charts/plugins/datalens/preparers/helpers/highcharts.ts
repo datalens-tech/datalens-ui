@@ -1,42 +1,7 @@
-import type {
-    ServerChartsConfig,
-    ServerColor,
-    ServerField,
-    ServerSort,
-} from '../../../../../../../shared';
-import {
-    WizardVisualizationId,
-    isDateField,
-    isDimensionField,
-    isNumberField,
-} from '../../../../../../../shared';
+import type {ServerField, ServerSort} from '../../../../../../../shared';
+import {WizardVisualizationId, isDateField, isNumberField} from '../../../../../../../shared';
 import type {ChartColorsConfig} from '../../types';
 import {getGradientStops} from '../../utils/get-gradient-stops';
-import {isGradientMode} from '../../utils/misc-helpers';
-
-export function shouldUseGradientLegend(
-    colorField: ServerColor | undefined,
-    colorsConfig: ChartColorsConfig,
-    shared: ServerChartsConfig,
-) {
-    if (!colorField) {
-        return false;
-    }
-
-    const isCombinedChartColorizedBySomeDimenstion =
-        shared.visualization.id === WizardVisualizationId.CombinedChart &&
-        shared.visualization.layers?.some((layer) =>
-            layer.commonPlaceholders.colors.some(isDimensionField),
-        );
-
-    const isGradient = isGradientMode({
-        colorField,
-        colorFieldDataType: colorField.data_type,
-        colorsConfig,
-    });
-
-    return isGradient && !isCombinedChartColorizedBySomeDimenstion;
-}
 
 export function getHighchartsColorAxis(
     graphs: any[],
