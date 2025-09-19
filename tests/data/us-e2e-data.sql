@@ -1333,3 +1333,4 @@ INSERT INTO public.revisions (data, meta, created_by, created_at, updated_by, up
 
 
 
+COMMIT;
