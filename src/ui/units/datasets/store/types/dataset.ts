@@ -752,7 +752,6 @@ type DatasetFetchSuccess = {
     type: typeof DATASET_FETCH_SUCCESS;
     payload: {
         dataset: Dataset & {connection: ConnectionEntry | null};
-        annotation: EntryAnnotation | null;
     };
 };
 

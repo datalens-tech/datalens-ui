@@ -1,5 +1,4 @@
 import {createSelector} from 'reselect';
-
 import type {DatalensGlobalState} from 'ui';
 
 import {hasPermissionsToEdit} from '../../utils';
@@ -53,8 +52,7 @@ export const flattenConnectorsSelector = (state: DatalensGlobalState) => {
     return state.connections.flattenConnectors;
 };
 
-export const selectConnectionEntry = (state: DatalensGlobalState) =>
-    state.connections.entry;
+export const selectConnectionEntry = (state: DatalensGlobalState) => state.connections.entry;
 
 export const selectConnectionDescription = (state: DatalensGlobalState) =>
     state.connections.annotation?.description ?? '';

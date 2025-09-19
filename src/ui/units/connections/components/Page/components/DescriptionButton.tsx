@@ -11,8 +11,8 @@ import {
 import {updateDialogProps} from 'ui/store/actions/dialog';
 
 import {
-    selectConnectionDescription,
     readonlySelector,
+    selectConnectionDescription,
     selectIsConnectionDescriptionChanged,
     setConnectionDescription,
 } from '../../../store';
@@ -68,4 +68,4 @@ export const DescriptionButton = () => {
             size={16}
         />
     );
-}
+};

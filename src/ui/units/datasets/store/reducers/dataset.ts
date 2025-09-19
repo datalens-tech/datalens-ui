@@ -206,11 +206,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
             };
         }
         case DATASET_FETCH_SUCCESS: {
-            const {
-                dataset,
-                dataset: {id, connection, dataset: content} = {},
-                annotation,
-            } = action.payload;
+            const {dataset, dataset: {id, connection, dataset: content} = {}} = action.payload;
             const {
                 preview: {enabled: previewEnabled},
             } = dataset.options!;
@@ -232,8 +228,8 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 },
                 isRefetchingDataset: false,
                 isLoading: false,
-                annotation,
-                prevAnnotation: annotation,
+                annotation: null,
+                prevAnnotation: null,
             };
         }
         case DATASET_FETCH_FAILURE: {

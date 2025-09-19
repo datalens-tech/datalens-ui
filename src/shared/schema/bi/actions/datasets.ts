@@ -64,7 +64,6 @@ export const actions = {
         }),
         timeout: TIMEOUT_60_SEC,
     }),
-
     getDatasetByVersion: createTypedAction(
         {
             paramsSchema: getDatasetByVersionArgsSchema,
