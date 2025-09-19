@@ -33,19 +33,32 @@ docker --log-level error compose -f "${COMPOSE_FILE}" exec \
     sed -E 's|"username": "[^"]+"|"username": "{{POSTGRES_USER}}"|' \
         >>"${DUMP_FILE}"
 
-E2E_ENTRIES=$(grep -E "INSERT INTO public.entries.*key.e2e-entry-" "${DUMP_FILE}" | grep -v "__trash/" | \
-              sed -E "s/.*'([^']*e2e-entry-[^']*)'.*/\1/")
+E2E_ENTRIES=$(cat "${DUMP_FILE}" | { grep "e2e-entry-" || true; })
+DELETED_ENTRIES=$(cat "${DUMP_FILE}" | { grep "__trash/" || true; })
 
 if [ -n "${E2E_ENTRIES}" ]; then
-    echo "WARNING: Found entries with 'e2e-entry-' in key (excluding __trash/):" >&2
-    echo "Keys:" >&2
-    echo "${E2E_ENTRIES}" >&2
-    echo "These entries might be test entries and should be reviewed." >&2
+    ENTRIES_KEYS=$(echo "${E2E_ENTRIES}" | sed -E "s|INSERT INTO ([^ ]+) .*'([^']*e2e-entry-[^']*)'.*|\1 - \2|" | sed 's|^|  - |')
+
+    echo ""
+    echo "⚠️ WARNING: Found entries with 'e2e-entry-' in key:" >&2
+    echo "${ENTRIES_KEYS}" >&2
+    echo "These entries might be test entries and should be reviewed..." >&2
+fi
+
+if [ -n "${DELETED_ENTRIES}" ]; then
+    ENTRIES_KEYS=$(echo "${DELETED_ENTRIES}" | sed -E "s|INSERT INTO ([^ ]+) .*'([^']*__trash/[^']*)'.*|\1 - \2|" | sed 's|^|  - |')
+
+    echo ""
+    echo "⚠️ WARNING: Found deleted entries:" >&2
+    echo "${ENTRIES_KEYS}" >&2
 fi
 
 EXIT="$?"
 
 echo "COMMIT;" >>"${DUMP_FILE}"
+
+# remove empty lines
+sed '/^$/N;/^\n$/D' "${DUMP_FILE}" >"${DUMP_FILE}.tmp" && mv "${DUMP_FILE}.tmp" "${DUMP_FILE}"
 
 if [ "${EXIT}" != "0" ]; then
     echo "Dump error, exit..."
