@@ -345,9 +345,7 @@ export function saveDataset({
                     dataset,
                     multisource: true,
                     ...(isAuto && {created_via: 'yt_to_dl'}),
-                    annotation: {
-                        description: annotation?.description ?? '',
-                    },
+                    description: annotation?.description ?? '',
                 };
 
                 if (workbookId) {
@@ -366,7 +364,7 @@ export function saveDataset({
             } else {
                 const validation = await getSdk().sdk.bi.updateDataset({
                     datasetId,
-                    dataset,
+                    dataset: {...dataset, description: annotation?.description ?? ''},
                     multisource: true,
                     version: 'draft',
                 });

@@ -250,7 +250,7 @@ export function changeInitialForm(initialFormUpdates: ConnectionsReduxState['ini
 export function createConnection(args: {name: string; dirPath?: string; workbookId?: string}) {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
         const {name, dirPath, workbookId = getWorkbookIdFromPathname()} = args;
-        const {form, innerForm, schema, annotation: annotationState} = getState().connections;
+        const {form, innerForm, schema, annotation} = getState().connections;
 
         if (!schema || !schema.apiSchema?.create) {
             logger.logError(
@@ -274,14 +274,10 @@ export function createConnection(args: {name: string; dirPath?: string; workbook
             resultForm[FieldKey.WorkbookId] = workbookId;
         }
 
-        const annotation = {
-            description: annotationState?.description ?? '',
-        };
-
         flow([setSubmitLoading, dispatch])({loading: true});
         const {id: connectionId, error: connError} = await api.createConnection(
             resultForm,
-            annotation,
+            annotation?.description ?? '',
         );
         let templateFolderId: string | undefined;
         let templateWorkbookId: string | undefined;
@@ -349,13 +345,7 @@ export function createConnection(args: {name: string; dirPath?: string; workbook
 
 export function updateConnection() {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
-        const {
-            form,
-            innerForm,
-            schema,
-            connectionData,
-            annotation: annotationState,
-        } = getState().connections;
+        const {form, innerForm, schema, connectionData, annotation} = getState().connections;
 
         if (!schema || !schema.apiSchema?.edit) {
             logger.logError(
@@ -385,16 +375,12 @@ export function updateConnection() {
             return;
         }
 
-        const annotation = {
-            description: annotationState?.description ?? '',
-        };
-
         flow([setSubmitLoading, dispatch])({loading: true});
         const {error} = await api.updateConnection(
             resultForm,
             connectionData.id as string,
             connectionData.db_type as string,
-            annotation,
+            annotation?.description ?? '',
         );
         batch(() => {
             if (error) {

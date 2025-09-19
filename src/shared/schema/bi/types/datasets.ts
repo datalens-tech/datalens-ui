@@ -5,7 +5,6 @@ import type {
     DatasetField,
     DatasetFieldCalcMode,
     DatasetFieldError,
-    EntryAnnotationArgs,
     TransferIdMapping,
     TransferNotification,
 } from '../../../types';

@@ -45,7 +45,7 @@ export const createS3BasedConnection = (args: {
 
         dispatch(setSubmitLoading({loading: true}));
 
-        const {id, error} = await api.createConnection(resultForm, annotation);
+        const {id, error} = await api.createConnection(resultForm, annotation?.description ?? '');
 
         if (id) {
             batch(() => {
@@ -83,16 +83,13 @@ export const updateS3BasedConnection = (type?: ConnectorType) => {
         const entry = get(getState().connections, ['entry']);
         const connectionData = get(getState().connections, ['connectionData']);
         const form = get(getState().connections, ['form']);
-        const annotationState = get(getState().connections, ['annotation']);
-        const annotation = {
-            description: annotationState?.description ?? '',
-        };
+        const annotation = get(getState().connections, ['annotation']);
 
         const {error} = await api.updateConnection(
             form,
             connectionData.id as string,
             connectionData.db_type as string,
-            annotation,
+            annotation?.description ?? '',
         );
 
         batch(() => {

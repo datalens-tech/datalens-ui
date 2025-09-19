@@ -1,4 +1,4 @@
-import type {ConnectionData, EntryAnnotationArgs} from 'shared';
+import type {ConnectionData} from 'shared';
 import {TIMEOUT_65_SEC} from 'shared';
 import {CounterName, GoalId, reachMetricaGoal} from 'ui/libs/metrica';
 import {registry} from 'ui/registry';
@@ -118,10 +118,10 @@ const fetchRenderedMarkdown = async (text = '') => {
 
 const createConnection = async (
     form: FormDict,
-    annotation: EntryAnnotationArgs,
+    description: string,
 ): Promise<{id?: string; error?: DataLensApiError}> => {
     try {
-        const {id} = await getSdk().sdk.bi.createConnection({...form, annotation});
+        const {id} = await getSdk().sdk.bi.createConnection({...form, description});
         reachMetricaGoal(CounterName.Main, GoalId.ConnectionCreateSubmit, {
             type: form.type,
         });
@@ -136,15 +136,17 @@ const updateConnection = async (
     form: FormDict,
     connectionId: string,
     dbType: string,
-    annotation: EntryAnnotationArgs,
+    description: string,
 ): Promise<{error?: DataLensApiError}> => {
     try {
-        await getSdk().sdk.bi.updateConnection({...form, connectionId, annotation});
+        console.error('!', JSON.stringify({...form, connectionId, description}));
+        await getSdk().sdk.bi.updateConnection({...form, connectionId, description});
         reachMetricaGoal(CounterName.Main, GoalId.ConnectionEditSubmit, {
             type: dbType,
         });
         return {error: undefined};
     } catch (error) {
+        console.error(error);
         logger.logError('Redux actions (conn): fetchMetricaCounters failed', error);
         return {error};
     }
