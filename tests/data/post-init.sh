@@ -43,7 +43,7 @@ if [ ! -z "${US_ENDPOINT}" ]; then
   echo "  [post-init] us endpoint: ${US_ENDPOINT}"
 
   echo "  [post-init] sleep 5 seconds..."
-  # sleep 5
+  sleep 5
 
   RETRIES="10"
   echo "  [post-init] retries: ${RETRIES}"
@@ -72,7 +72,7 @@ echo "  [post-init] import e2e data..."
 echo "  [post-init] postgres host: ${POSTGRES_HOST}"
 echo "  [post-init] postgres port: ${POSTGRES_PORT}"
 
-# psql -v ON_ERROR_STOP=1 --username "${POSTGRES_USER_DEMO}" --dbname "${POSTGRES_DB_DEMO}" </init/post-init/sales-db.sql || exit 1
+psql -v ON_ERROR_STOP=1 --username "${POSTGRES_USER_DEMO}" --dbname "${POSTGRES_DB_DEMO}" </init/post-init/sales-db.sql || exit 1
 
 echo "  [post-init] import us demo entries..."
 
@@ -94,6 +94,6 @@ cat /init/post-init/us-e2e-data.sql |
   sed "s|{{POSTGRES_DB}}|${POSTGRES_DB_DEMO}|" |
   sed "s|{{POSTGRES_USER}}|${POSTGRES_USER_DEMO}|" |
   sed "s|{{POSTGRES_PASSWORD}}|${FERNET_POSTGRES_PASSWORD}|" |
-  psql -v ON_ERROR_STOP=0 --username "${POSTGRES_USER_US}" --dbname "${POSTGRES_DB_US}" || exit 1
+  psql -v ON_ERROR_STOP=1 --username "${POSTGRES_USER_US}" --dbname "${POSTGRES_DB_US}" || exit 1
 
 echo "  [post-init] finish e2e data migration..."
