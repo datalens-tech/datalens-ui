@@ -10,6 +10,7 @@ SCRIPT_DIR=$(dirname -- "$(readlink -f -- "$0")")
 
 IS_CLEAR_DELETED="false"
 IS_CLEAR_E2E="false"
+IS_CLEAR_REVISIONS="false"
 
 # parse args
 for _ in "$@"; do
@@ -44,6 +45,9 @@ fi
 if [ "${IS_CLEAR_E2E}" = "true" ]; then
     echo "+ clear e2e entries automatically..."
 fi
+if [ "${IS_CLEAR_REVISIONS}" = "true" ]; then
+    echo "+ clear not actual entries revisions automatically..."
+fi
 
 COMPOSE_FILE=$(readlink -f "${SCRIPT_DIR}/../../tests/docker-compose.e2e.yml")
 DUMP_FILE=$(readlink -f "${SCRIPT_DIR}/../../tests/data/us-e2e-data.sql")
@@ -62,13 +66,17 @@ docker --log-level error compose -f "${COMPOSE_FILE}" exec \
     sed -E 's|"username": "[^"]+"|"username": "{{POSTGRES_USER}}"|' \
         >>"${DUMP_FILE}"
 
+EXIT="$?"
+
+echo "COMMIT;" >>"${DUMP_FILE}"
+
 if [ "${IS_CLEAR_DELETED}" = "true" ]; then
     DUMP=$(cat "${DUMP_FILE}")
     DELETED_ENTRIES=$(
         echo "${DUMP}" |
-            grep '__trash/' |
-            grep 'public.entries' |
-            grep -oE '__trash/[0-9]+_' |
+            { grep ' public.entries ' || true; } |
+            { grep '__trash/' || true; } |
+            { grep -oE '__trash/[0-9]+_' || true; } |
             sed 's|__trash/||' |
             sed 's|_||' |
             tr -d ' ' |
@@ -78,19 +86,21 @@ if [ "${IS_CLEAR_DELETED}" = "true" ]; then
 
     IFS=$'\n'
     for DELETED_ENTRY in ${DELETED_ENTRIES}; do
-        echo "  removing entry: ${DELETED_ENTRY}"
+        echo "  clear deleted entry: ${DELETED_ENTRY}"
         DUMP=$(echo "${DUMP}" | { grep -v ", ${DELETED_ENTRY}, " || true; } | { grep -v "(${DELETED_ENTRY}, " || true; })
     done
-    unset
+    unset IFS
+
+    echo "${DUMP}" >"${DUMP_FILE}"
 fi
 
 if [ "${IS_CLEAR_E2E}" = "true" ]; then
     DUMP=$(cat "${DUMP_FILE}")
     E2E_ENTRIES=$(
         echo "${DUMP}" |
-            grep 'e2e-entry-' |
-            grep 'public.entries' |
-            grep -oE ", '[0-9]+/" |
+            { grep ' public.entries ' || true; } |
+            { grep 'e2e-entry-' || true; } |
+            { grep -oE ", '[0-9]+/" || true; } |
             sed "s|, '||" |
             sed 's|/||' |
             tr -d ' ' |
@@ -100,10 +110,54 @@ if [ "${IS_CLEAR_E2E}" = "true" ]; then
 
     IFS=$'\n'
     for E2E_ENTRY in ${E2E_ENTRIES}; do
-        echo "  removing entry: ${E2E_ENTRY}"
+        echo "  clear e2e entry: ${E2E_ENTRY}"
         DUMP=$(echo "${DUMP}" | { grep -v ", ${E2E_ENTRY}, " || true; } | { grep -v "(${E2E_ENTRY}, " || true; })
     done
-    unset
+    unset IFS
+
+    echo "${DUMP}" >"${DUMP_FILE}"
+fi
+
+if [ "${IS_CLEAR_REVISIONS}" = "true" ]; then
+    DUMP=$(cat "${DUMP_FILE}")
+    ENTRIES=$(
+        echo "${DUMP}" |
+            grep ' public.entries ' |
+            grep -oE ", '[0-9]+/" |
+            sed "s|, '||" |
+            sed 's|/||' |
+            tr -d ' ' |
+            sort |
+            uniq
+    )
+
+    IFS=$'\n'
+    for ENTRY in ${ENTRIES}; do
+        echo "  entry: ${ENTRY}"
+        REVISIONS=$(echo "${DUMP}" | { grep " public.revisions " || true; } | { grep ", ${ENTRY}, " || true; } | sed 's|INSERT INTO public.revisions .*VALUES|VALUES|' | sed "s|''||g" | sed -E "s|VALUES \('[^']+',||")
+        REVISIONS_COUNT=$(echo "${REVISIONS}" | wc -l | tr -d ' ')
+        echo "  revisions count: ${REVISIONS_COUNT}"
+
+        if [ "${REVISIONS_COUNT}" == "0" ] || [ "${REVISIONS_COUNT}" == "1" ]; then
+            continue
+        fi
+        echo "  clear revisions..."
+        for REVISION in ${REVISIONS}; do
+            REVISION_ID=$(echo "${REVISION}" | { grep -oE ", [0-9]+," || true; } | sed 's|,||g' | tr -d ' ')
+
+            ENTRY_REVISION=$(echo "${DUMP}" | { grep ' public.entries ' || true; } | { grep ", ${REVISION_ID}, " || true; } | tr -d ' ')
+            if [ ! -z "${ENTRY_REVISION}" ]; then
+                echo "  actual revision id: ${REVISION_ID}"
+                continue
+            fi
+
+            echo "  clear revision id: ${REVISION_ID}"
+            DUMP=$(echo "${DUMP}" | { grep -v ", ${REVISION_ID}, " || true; })
+        done
+    done
+    unset IFS
+
+    echo "${DUMP}" >"${DUMP_FILE}"
 fi
 
 E2E_ENTRIES=$(cat "${DUMP_FILE}" | { grep "e2e-entry-" || true; })
@@ -125,10 +179,6 @@ if [ -n "${DELETED_ENTRIES}" ]; then
     echo "⚠️ WARNING: Found deleted entries:" >&2
     echo "${ENTRIES_KEYS}" >&2
 fi
-
-EXIT="$?"
-
-echo "COMMIT;" >>"${DUMP_FILE}"
 
 # remove empty lines
 sed '/^$/N;/^\n$/D' "${DUMP_FILE}" >"${DUMP_FILE}.tmp" && mv "${DUMP_FILE}.tmp" "${DUMP_FILE}"
