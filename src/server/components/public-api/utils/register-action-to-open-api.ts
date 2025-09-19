@@ -1,4 +1,4 @@
-import type {ZodMediaTypeObject} from '@asteasolutions/zod-to-openapi';
+import type {OpenAPIRegistry, ZodMediaTypeObject} from '@asteasolutions/zod-to-openapi';
 import z from 'zod';
 import z4 from 'zod/v4';
 
@@ -6,10 +6,10 @@ import {getValidationSchema} from '../../../../shared/schema/gateway-utils';
 import {registry} from '../../../registry';
 import type {AnyApiServiceActionConfig} from '../../../types/gateway';
 import {CONTENT_TYPE_JSON} from '../../api-docs/constants';
-import {PUBLIC_API_HTTP_METHOD, PUBLIC_API_URL, publicApiOpenApiRegistry} from '../constants';
+import {PUBLIC_API_HTTP_METHOD, PUBLIC_API_URL} from '../constants';
 
-const resolveUrl = ({version, actionName}: {version: string; actionName: string}) => {
-    return PUBLIC_API_URL.replace(':version', version).replace(':action', actionName);
+const resolveUrl = ({actionName}: {actionName: string}) => {
+    return PUBLIC_API_URL.replace(':action', actionName);
 };
 
 const defaultSchema = {
@@ -37,17 +37,17 @@ const defaultSchema = {
 
 export const registerActionToOpenApi = ({
     actionConfig,
-    version,
     actionName,
     openApi,
+    openApiRegistry,
 }: {
     actionConfig: AnyApiServiceActionConfig;
-    version: string;
     actionName: string;
     openApi: {
         summary: string;
         tags?: string[];
     };
+    openApiRegistry: OpenAPIRegistry;
 }) => {
     const {securityTypes} = registry.getPublicApiConfig();
 
@@ -58,11 +58,11 @@ export const registerActionToOpenApi = ({
     }));
 
     if (actionSchema) {
-        publicApiOpenApiRegistry.registerPath({
+        openApiRegistry.registerPath({
             method: PUBLIC_API_HTTP_METHOD.toLocaleLowerCase() as Lowercase<
                 typeof PUBLIC_API_HTTP_METHOD
             >,
-            path: resolveUrl({version, actionName}),
+            path: resolveUrl({actionName}),
             ...openApi,
             request: {
                 body: {
@@ -90,11 +90,11 @@ export const registerActionToOpenApi = ({
             security,
         });
     } else {
-        publicApiOpenApiRegistry.registerPath({
+        openApiRegistry.registerPath({
             method: PUBLIC_API_HTTP_METHOD.toLocaleLowerCase() as Lowercase<
                 typeof PUBLIC_API_HTTP_METHOD
             >,
-            path: resolveUrl({version, actionName}),
+            path: resolveUrl({actionName}),
             ...openApi,
             ...defaultSchema,
             security,

@@ -6,7 +6,7 @@ import type {AppContext, NodeKit} from '@gravity-ui/nodekit';
 import {AppError} from '@gravity-ui/nodekit';
 
 import {getAuthArgs, getAuthHeaders} from '../../shared/schema/gateway-utils';
-import {IPV6_AXIOS_OPTIONS} from '../constants/axios';
+import {IPV6_AXIOS_OPTIONS} from '../../shared/server/axios';
 
 export type GatewayApiErrorResponse<T = GatewayError> = {
     error: T;
