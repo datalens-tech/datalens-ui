@@ -112,7 +112,7 @@ export const prepareExportData = async (req: Request, res: Response) => {
     const {exportId, scope, idMapping} = req.body;
     const workbookId = (req.body?.workbookId as string) ?? null;
 
-    const {getProxyingAuthArgsBiPrivate} = sharedRegistry.gatewayAuth.functions.getAll();
+    const {getAuthArgsProxyBiPrivate} = sharedRegistry.gatewayAuth.functions.getAll();
 
     switch (scope) {
         case EntryScope.Dash: {
@@ -159,7 +159,7 @@ export const prepareExportData = async (req: Request, res: Response) => {
                     connectionId: exportId,
                     workbookId,
                 },
-                authArgs: getProxyingAuthArgsBiPrivate(req, res),
+                authArgs: getAuthArgsProxyBiPrivate(req, res),
                 ctx,
                 requestId: getRequestId(ctx),
             });
@@ -176,7 +176,7 @@ export const prepareExportData = async (req: Request, res: Response) => {
                     idMapping,
                     workbookId,
                 },
-                authArgs: getProxyingAuthArgsBiPrivate(req, res),
+                authArgs: getAuthArgsProxyBiPrivate(req, res),
                 ctx,
                 requestId: getRequestId(ctx),
             });
@@ -204,7 +204,7 @@ export const prepareImportData = async (req: Request, res: Response) => {
 
     const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
 
-    const {getProxyingAuthArgsBiPrivate, getAuthArgsProxyBiPrivate} =
+    const {getAuthArgsProxyBiPrivate, getAuthArgsProxyUSPrivate} =
         sharedRegistry.gatewayAuth.functions.getAll();
 
     switch (scope) {
@@ -217,7 +217,7 @@ export const prepareImportData = async (req: Request, res: Response) => {
                 },
                 ctx,
                 requestId: getRequestId(ctx),
-                authArgs: getProxyingAuthArgsBiPrivate(req, res),
+                authArgs: getAuthArgsProxyBiPrivate(req, res),
             });
 
             return createImportResponseData(responseData.notifications, responseData.id);
@@ -232,7 +232,7 @@ export const prepareImportData = async (req: Request, res: Response) => {
                 },
                 ctx,
                 requestId: getRequestId(ctx),
-                authArgs: getProxyingAuthArgsBiPrivate(req, res),
+                authArgs: getAuthArgsProxyBiPrivate(req, res),
             });
 
             return createImportResponseData(responseData.notifications, responseData.id);
@@ -265,7 +265,7 @@ export const prepareImportData = async (req: Request, res: Response) => {
                     annotation: widget.annotation,
                 },
                 ctx,
-                authArgs: getAuthArgsProxyBiPrivate(req, res),
+                authArgs: getAuthArgsProxyUSPrivate(req, res),
                 requestId: getRequestId(ctx),
             });
 
@@ -296,7 +296,7 @@ export const prepareImportData = async (req: Request, res: Response) => {
                     },
                 },
                 ctx,
-                authArgs: getAuthArgsProxyBiPrivate(req, res),
+                authArgs: getAuthArgsProxyUSPrivate(req, res),
                 requestId: getRequestId(ctx),
             });
 
