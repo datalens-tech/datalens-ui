@@ -1,23 +1,15 @@
 import {OpenAPIRegistry} from '@asteasolutions/zod-to-openapi';
 
-import type {PublicApiRpcMap} from './types';
+import type {PublicApiVersionConfig} from '../types';
 
-export const publicApiOpenApiRegistry = new OpenAPIRegistry();
+import {ApiTag} from './common';
 
-export const PUBLIC_API_HTTP_METHOD = 'POST';
-export const PUBLIC_API_URL = '/rpc/:version/:action';
-export const PUBLIC_API_ROUTE = `${PUBLIC_API_HTTP_METHOD} ${PUBLIC_API_URL}`;
+export const PUBLIC_API_V0_CONFIG = {
+    openApi: {
+        registry: new OpenAPIRegistry(),
+    },
 
-enum ApiTag {
-    Connection = 'Connection',
-    Dataset = 'Dataset',
-    Wizard = 'Wizard',
-    Editor = 'Editor',
-    Dashboard = 'Dashboard',
-}
-
-export const PUBLIC_API_PROXY_MAP = {
-    v0: {
+    actions: {
         // Connection
         deleteConnection: {
             resolve: (api) => api.bi.deleteConnection,
@@ -105,4 +97,4 @@ export const PUBLIC_API_PROXY_MAP = {
             },
         },
     },
-} satisfies PublicApiRpcMap;
+} satisfies PublicApiVersionConfig;
