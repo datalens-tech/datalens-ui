@@ -29,6 +29,7 @@ const buildSources = ({shared, ChartEditor}: {shared: QlConfig; ChartEditor: ICh
         ChartEditor,
         palettes: __palettes,
         qlConnectionTypeMap: __qlConnectionTypeMap,
+        features: __features,
     });
 };
 

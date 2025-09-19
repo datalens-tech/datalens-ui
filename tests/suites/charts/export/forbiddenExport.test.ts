@@ -148,8 +148,8 @@ datalensTest.describe('Chart export availability', () => {
                 expect(openAsTableMenuItem).not.toBeVisible();
             },
         );
-        // TODO: unskip after CHARTS-11822
-        datalensTest.skip(
+
+        datalensTest(
             'Ql preview - Export menu item is disabled if export is forbidden on connection',
             async ({page}: {page: Page}) => {
                 const wizardPage = new WizardPage({page});
