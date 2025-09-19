@@ -1,9 +1,11 @@
+import type {ChartData} from '@gravity-ui/chartkit/gravity-charts';
 import {i18n} from 'i18n';
 import JSONfn from 'json-fn';
 import logger from 'libs/logger';
 import {UserSettings} from 'libs/userSettings';
-import {omit} from 'lodash';
 import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
+import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import set from 'lodash/set';
 import {WidgetKind} from 'shared/types/widget';
@@ -207,11 +209,18 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
 
             if ('colors' in loaded.extra && loaded.extra.colors) {
                 if (result.type === WidgetKind.GravityCharts) {
-                    //@ts-ignore
-                    result.data.colors = loaded.extra?.colors;
+                    const gravityUIChartsConfig = result.data as ChartData;
+
+                    if (isEmpty(gravityUIChartsConfig.colors)) {
+                        gravityUIChartsConfig.colors = loaded.extra?.colors;
+                    }
                 }
 
-                if (result.type === WidgetKind.Graph && result.libraryConfig) {
+                if (
+                    result.type === WidgetKind.Graph &&
+                    result.libraryConfig &&
+                    isEmpty(result.libraryConfig.colors)
+                ) {
                     result.libraryConfig.colors = loaded.extra.colors;
                 }
             }
