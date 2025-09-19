@@ -1,6 +1,6 @@
 import type {BaseSchema} from '@gravity-ui/gateway';
 
-import {registry} from '../../../server/registry';
+import {sharedRegistry} from '../../../shared/registry';
 import {getServiceEndpoints} from '../../endpoints/schema';
 
 import {actions} from './actions';
@@ -10,11 +10,11 @@ export default {
     endpoints: getServiceEndpoints('us'),
     serviceName: 'us-private',
     getAuthArgs: (req, res) => {
-        const {getAuthArgsUSPrivate} = registry.common.auth.getAll();
+        const {getAuthArgsUSPrivate} = sharedRegistry.gatewayAuth.functions.getAll();
         return getAuthArgsUSPrivate(req, res);
     },
     getAuthHeaders: (params) => {
-        const {getAuthHeadersUSPrivate} = registry.common.auth.getAll();
+        const {getAuthHeadersUSPrivate} = sharedRegistry.gatewayAuth.functions.getAll();
         return getAuthHeadersUSPrivate(params);
     },
 } satisfies BaseSchema[string];
