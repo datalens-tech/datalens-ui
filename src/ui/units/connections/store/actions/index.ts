@@ -31,6 +31,7 @@ import {
     setCheckData,
     setCheckLoading,
     setConectorData,
+    setConnectionDescription,
     setEntry,
     setFlattenConnectors,
     setForm,
@@ -81,6 +82,7 @@ export function setPageData({entryId, workbookId}: {entryId?: string | null; wor
             dispatch(setGroupedConnectors({groupedConnectors}));
             dispatch(setFlattenConnectors({flattenConnectors}));
             dispatch(setEntry({entry, error: entryError}));
+            dispatch(setConnectionDescription(entry.annotation?.description ?? ''));
 
             if (Object.keys(form).length) {
                 dispatch(resetFormsData());
