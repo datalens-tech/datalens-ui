@@ -2,11 +2,12 @@ import {transformParamsToActionParams} from '@gravity-ui/dashkit/helpers';
 import {type AppContext, REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 import {AxiosError} from 'axios';
 import JSONfn from 'json-fn';
-import {isEmpty, isNumber, isObject, isString, merge, mergeWith} from 'lodash';
+import {isEmpty, isNumber, isObject, isString, mapValues, merge, mergeWith} from 'lodash';
 import get from 'lodash/get';
 
 import type {ChartsEngine} from '../..';
 import type {
+    ApiV2DataExportField,
     ControlType,
     DashWidgetConfig,
     EDITOR_TYPE_CONFIG_TABS,
@@ -239,6 +240,10 @@ export class Processor {
         let actionParams: Record<string, string | string[]>;
         let usedParams: Record<string, string | string[]>;
 
+        const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
+
+        const isUseDataExportFieldEnabled = isEnabledServerFeature(Feature.EnableBackendExportInfo);
+
         const timings: {
             configResolving: number;
             dataFetching: null | number;
@@ -254,7 +259,6 @@ export class Processor {
 
         function injectConfigAndParams({target}: {target: ProcessorSuccessResponse}) {
             let responseConfig;
-            const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
             const useChartsEngineResponseConfig = Boolean(
                 isEnabledServerFeature(Feature.UseChartsEngineResponseConfig),
             );
@@ -852,7 +856,6 @@ export class Processor {
                     entryId: config.entryId || configId,
                 });
 
-                const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
                 const disableFnAndHtml = isEnabledServerFeature(Feature.DisableFnAndHtml);
                 if (
                     disableFnAndHtml ||
@@ -878,6 +881,20 @@ export class Processor {
                 result.extra = jsTabResults.runtimeMetadata.extra || {};
                 result.extra.chartsInsights = jsTabResults.runtimeMetadata.chartsInsights;
                 result.extra.sideMarkdown = jsTabResults.runtimeMetadata.sideMarkdown;
+
+                if (isUseDataExportFieldEnabled) {
+                    result.dataExport = mapValues(data, (sourceResponse) => {
+                        if (
+                            typeof sourceResponse === 'object' &&
+                            sourceResponse &&
+                            'data_export' in sourceResponse
+                        ) {
+                            return sourceResponse.data_export as ApiV2DataExportField;
+                        }
+                        return undefined;
+                    });
+                }
+
                 const colors = selectServerPalette({
                     defaultColorPaletteId: defaultColorPaletteId ?? '',
                     customColorPalettes: tenantColorPalettes,
