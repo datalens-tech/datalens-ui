@@ -24,16 +24,22 @@ RUN useradd -m -u 1001 app && mkdir /opt/app && chown app:app /opt/app
 
 WORKDIR /opt/app
 
-COPY highcharts-load.sh fonts-load.sh package.json package-lock.json .npmrc patches /opt/app/
-RUN npm ci
+COPY highcharts-load.sh fonts-load.sh package.json package-lock.json .npmrc /opt/app/
+COPY patches/ /opt/app/patches/
+# нужен для выполнения postinstall (express-openid-connect)
+RUN npm ci --also=dev
 RUN chmod 775 /opt/app/highcharts-load.sh
 RUN chmod 775 /opt/app/fonts-load.sh
-#RUN /opt/app/highcharts-load.sh
-#RUN /opt/app/fonts-load.sh
+
 COPY ./dist /opt/app/dist
 COPY ./src /opt/app/src
+
+RUN /opt/app/highcharts-load.sh
+RUN /opt/app/fonts-load.sh
+
 COPY app-builder.config.ts tsconfig.json /opt/app/
 
+RUN npx patch-package
 RUN npm run build && chown app /opt/app/dist/run
 
 # runtime base image for both platform
@@ -77,9 +83,11 @@ RUN apt-get update && apt-get -y install g++ make
 
 WORKDIR /opt/app
 
-COPY package.json package-lock.json .npmrc patches /opt/app/
+COPY package.json package-lock.json .npmrc /opt/app/
+COPY patches/ /opt/app/patches/
 
-RUN npm ci && npm prune --production
+# нужен для выполнения postinstall (express-openid-connect)
+RUN npm ci --also=dev && npx patch-package && npm prune --production
 
 # production running stage
 FROM base-stage AS runtime-stage

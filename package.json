@@ -7,6 +7,7 @@
   ],
   "description": "DataLens",
   "scripts": {
+    "install:ci": "npm ci && npm run postinstall",
     "postinstall": "patch-package",
     "i18n:prepare": "tsc src/i18n/prepare-keysets/index.ts --esModuleInterop --outDir dist/i18n && node dist/i18n/prepare-keysets/index.js",
     "dev": "npm run i18n:prepare && SETUP_DEV_ENV_INSTALLATION=opensource node ./scripts/setup-dev-env.js && APP_BUILDER_ENTRY_FILTER=dl-main LOCAL_DEV_PORT=3030 app-builder dev",
@@ -30,7 +31,7 @@
     "test:jest": "npm run i18n:prepare && jest",
     "test:jestWatch": "npm run i18n:prepare && jest --watchAll",
     "platform-tools": "platform-tools",
-    "prepare": "husky install",
+    "prepare": "husky install && patch-package",
     "test:install:chromium": "npx playwright install --with-deps chromium",
     "test:e2e": "cd tests && npx playwright test --config=./playwright.config.ts --project=basic",
     "test:e2e:opensource": "cd tests && npx playwright test --config=./playwright.config.ts --project=opensource",

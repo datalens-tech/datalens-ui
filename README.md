@@ -135,6 +135,15 @@ git pull upstream main
 }
 </pre>
 
+## Дополнительные зависимости
+
+<pre>
+npm install mkdir-recursive@^0.4.0
+npm install path-to-regexp@^6.2.0
+npm install puppeteer@^23.4.0
+npm install express-openid-connect@^2.19.2
+</pre>
+
 ## Running Puppeteer
 
 На локальном компьютере должен быть установлен `google-chrome-stable`:

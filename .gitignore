@@ -13,7 +13,6 @@ dist/ui/*
 dist/i18n
 dist/shared
 dist/public/build
-dist/public/highcharts
 dist/run/*
 artifacts
 export/*.csv

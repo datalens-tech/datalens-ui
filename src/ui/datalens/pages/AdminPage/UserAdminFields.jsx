@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Icon, RadioButton, Select, Text, TextInput } from '@gravity-ui/uikit';
+import { Button, Icon, Select, Text, TextInput } from '@gravity-ui/uikit';
+import {SegmentedRadioGroup as RadioButton} from '@gravity-ui/uikit';
 import { I18n } from 'i18n';
 import { Eye } from '@gravity-ui/icons';
 import block from 'bem-cn-lite';
