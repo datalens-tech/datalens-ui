@@ -282,6 +282,7 @@ export const dashActions = {
             await typedApi.us._deleteUSEntry({
                 entryId: dashboardId,
                 lockToken,
+                scope: EntryScope.Dash,
             });
 
             return {};
