@@ -30,6 +30,7 @@ import type {
     SetGSheetSelectedItemId,
     SetGroupedConnectors,
     SetGsheetAddSectionState,
+    SetInitialConnectionDescription,
     SetInitialForm,
     SetInitialState,
     SetInnerForm,
@@ -83,6 +84,9 @@ export const SET_YADOCS_ITEMS = Symbol('connections/SET_YADOCS_ITEMS');
 export const SET_YADOCS_ACTIVE_DIALOG = Symbol('connections/SET_YADOCS_ACTIVE_DIALOG');
 export const SET_YADOCS_COLUMN_FILTER = Symbol('connections/SET_YADOCS_COLUMN_FILTER');
 export const SET_CONNECTION_DESCRIPTION = Symbol('connections/SET_CONNECTION_DESCRIPTION');
+export const SET_INITIAL_CONNECTION_DESCRIPTION = Symbol(
+    'connections/SET_INITIAL_CONNECTION_DESCRIPTION',
+);
 
 export function setEntry(payload: SetEntry['payload']): SetEntry {
     return {type: SET_ENTRY, payload};
@@ -394,6 +398,13 @@ export const handleReplacedSources = (args: HandleReplacedSourcesArgs) => {
 export function setConnectionDescription(payload: string): SetConnectionDescription {
     return {
         type: SET_CONNECTION_DESCRIPTION,
+        payload,
+    };
+}
+
+export function setInitialConnectionDescription(payload: string): SetInitialConnectionDescription {
+    return {
+        type: SET_INITIAL_CONNECTION_DESCRIPTION,
         payload,
     };
 }

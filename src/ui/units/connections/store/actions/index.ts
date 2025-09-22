@@ -36,6 +36,7 @@ import {
     setFlattenConnectors,
     setForm,
     setGroupedConnectors,
+    setInitialConnectionDescription,
     setInitialForm,
     setInnerForm,
     setPageLoading,
@@ -389,6 +390,7 @@ export function updateConnection() {
                 flow([showToast, dispatch])({title: i18n('toast_modify-connection-error'), error});
             } else {
                 flow([setInitialForm, dispatch])({updates: form});
+                flow([setInitialConnectionDescription, dispatch])(annotation?.description ?? '');
             }
 
             flow([setSubmitLoading, dispatch])({loading: false});

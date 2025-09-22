@@ -34,6 +34,7 @@ import type {
     SET_GSHEET_COLUMN_FILTER,
     SET_GSHEET_ITEMS,
     SET_GSHEET_SELECTED_ITEM_ID,
+    SET_INITIAL_CONNECTION_DESCRIPTION,
     SET_INITIAL_FORM,
     SET_INITIAL_STATE,
     SET_INNER_FORM,
@@ -365,6 +366,11 @@ export type SetConnectionDescription = {
     payload: string;
 };
 
+export type SetInitialConnectionDescription = {
+    type: typeof SET_INITIAL_CONNECTION_DESCRIPTION;
+    payload: string;
+};
+
 export type ConnectionsReduxAction =
     | SetGroupedConnectors
     | SetFlattenConnectors
@@ -403,7 +409,8 @@ export type ConnectionsReduxAction =
     | SetYadocsSelectedItemId
     | SetYadocsActiveDialog
     | SetYadocsColumnFilter
-    | SetConnectionDescription;
+    | SetConnectionDescription
+    | SetInitialConnectionDescription;
 
 export type ConnectionsReduxDispatch = AppDispatch<ConnectionsReduxAction>;
 

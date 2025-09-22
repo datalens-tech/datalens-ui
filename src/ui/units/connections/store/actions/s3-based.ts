@@ -15,6 +15,7 @@ import {
     resetFormsData,
     resetS3BasedData,
     setFileReplaceSources,
+    setInitialConnectionDescription,
     setInitialForm,
     setSubmitLoading,
 } from './base';
@@ -99,6 +100,7 @@ export const updateS3BasedConnection = (type?: ConnectorType) => {
                 );
             } else {
                 dispatch(setInitialForm({updates: form}));
+                dispatch(setInitialConnectionDescription(annotation?.description ?? ''));
                 dispatch(setPageData({entryId: entry?.entryId}));
 
                 switch (type) {
