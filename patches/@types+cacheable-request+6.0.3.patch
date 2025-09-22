@@ -1,0 +1,71 @@
+diff --git a/node_modules/@types/cacheable-request/index.d.ts b/node_modules/@types/cacheable-request/index.d.ts
+index 832f9b9..6d7728a 100755
+--- a/node_modules/@types/cacheable-request/index.d.ts
++++ b/node_modules/@types/cacheable-request/index.d.ts
+@@ -23,7 +23,7 @@ type RequestFn = typeof request;
+ interface CacheableRequest {
+     new (requestFn: RequestFn, storageAdapter?: string | CacheableRequest.StorageAdapter): (
+         opts: string | URL | (RequestOptions & CacheSemanticsOptions),
+-        cb?: (response: ServerResponse | ResponseLike) => void
++        cb?: (response: ServerResponse | ResponseLike.Options) => void
+     ) => CacheableRequest.Emitter;
+ 
+     RequestError: typeof RequestErrorCls;
+@@ -74,25 +74,25 @@ declare namespace CacheableRequest {
+         addListener(event: 'request', listener: (request: ClientRequest) => void): this;
+         addListener(
+             event: 'response',
+-            listener: (response: ServerResponse | ResponseLike) => void
++            listener: (response: ServerResponse | ResponseLike.Options) => void
+         ): this;
+         addListener(event: 'error', listener: (error: RequestError | CacheError) => void): this;
+         on(event: 'request', listener: (request: ClientRequest) => void): this;
+-        on(event: 'response', listener: (response: ServerResponse | ResponseLike) => void): this;
++        on(event: 'response', listener: (response: ServerResponse | ResponseLike.Options) => void): this;
+         on(event: 'error', listener: (error: RequestError | CacheError) => void): this;
+         once(event: 'request', listener: (request: ClientRequest) => void): this;
+-        once(event: 'response', listener: (response: ServerResponse | ResponseLike) => void): this;
++        once(event: 'response', listener: (response: ServerResponse | ResponseLike.Options) => void): this;
+         once(event: 'error', listener: (error: RequestError | CacheError) => void): this;
+         prependListener(event: 'request', listener: (request: ClientRequest) => void): this;
+         prependListener(
+             event: 'response',
+-            listener: (response: ServerResponse | ResponseLike) => void
++            listener: (response: ServerResponse | ResponseLike.Options) => void
+         ): this;
+         prependListener(event: 'error', listener: (error: RequestError | CacheError) => void): this;
+         prependOnceListener(event: 'request', listener: (request: ClientRequest) => void): this;
+         prependOnceListener(
+             event: 'response',
+-            listener: (response: ServerResponse | ResponseLike) => void
++            listener: (response: ServerResponse | ResponseLike.Options) => void
+         ): this;
+         prependOnceListener(
+             event: 'error',
+@@ -101,21 +101,21 @@ declare namespace CacheableRequest {
+         removeListener(event: 'request', listener: (request: ClientRequest) => void): this;
+         removeListener(
+             event: 'response',
+-            listener: (response: ServerResponse | ResponseLike) => void
++            listener: (response: ServerResponse | ResponseLike.Options) => void
+         ): this;
+         removeListener(event: 'error', listener: (error: RequestError | CacheError) => void): this;
+         off(event: 'request', listener: (request: ClientRequest) => void): this;
+-        off(event: 'response', listener: (response: ServerResponse | ResponseLike) => void): this;
++        off(event: 'response', listener: (response: ServerResponse | ResponseLike.Options) => void): this;
+         off(event: 'error', listener: (error: RequestError | CacheError) => void): this;
+         removeAllListeners(event?: 'request' | 'response' | 'error'): this;
+         listeners(event: 'request'): Array<(request: ClientRequest) => void>;
+-        listeners(event: 'response'): Array<(response: ServerResponse | ResponseLike) => void>;
++        listeners(event: 'response'): Array<(response: ServerResponse | ResponseLike.Options) => void>;
+         listeners(event: 'error'): Array<(error: RequestError | CacheError) => void>;
+         rawListeners(event: 'request'): Array<(request: ClientRequest) => void>;
+-        rawListeners(event: 'response'): Array<(response: ServerResponse | ResponseLike) => void>;
++        rawListeners(event: 'response'): Array<(response: ServerResponse | ResponseLike.Options) => void>;
+         rawListeners(event: 'error'): Array<(error: RequestError | CacheError) => void>;
+         emit(event: 'request', request: ClientRequest): boolean;
+-        emit(event: 'response', response: ServerResponse | ResponseLike): boolean;
++        emit(event: 'response', response: ServerResponse | ResponseLike.Options): boolean;
+         emit(event: 'error', error: RequestError | CacheError): boolean;
+         eventNames(): Array<'request' | 'response' | 'error'>;
+         listenerCount(type: 'request' | 'response' | 'error'): number;

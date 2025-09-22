@@ -152,6 +152,28 @@ sudo apt-get update \
 
 В файле `src\server\controllers\print-entry.ts` указывается путь к `google-chrome-stable`. Для определения этого пути используется команда: `which google-chrome-stable`.
 
+## Ошибка в библиотеке express-openid-connect
+
+При добавлении библиотеки `npm install express-openid-connect` компилятор будет выдвавать ошибку `npm run dev`. Чтобы устранить её была выполнена инструкция:
+
+<pre>
+npm install --save-dev patch-package
+
+## Replace ResponseLike to ResponseLike.Options
+
+## Create a patch:
+
+npx patch-package @types/cacheable-request
+
+# Add to your package.json scripts:
+
+{
+  "scripts": {
+    "postinstall": "patch-package"
+  }
+}
+</pre>
+
 ## Авторы доработки
 
 * Александр Краснов - https://github.com/akrasnov87

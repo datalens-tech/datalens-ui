@@ -24,12 +24,12 @@ RUN useradd -m -u 1001 app && mkdir /opt/app && chown app:app /opt/app
 
 WORKDIR /opt/app
 
-COPY highcharts-load.sh fonts-load.sh package.json package-lock.json .npmrc /opt/app/
+COPY highcharts-load.sh fonts-load.sh package.json package-lock.json .npmrc patches /opt/app/
 RUN npm ci
 RUN chmod 775 /opt/app/highcharts-load.sh
 RUN chmod 775 /opt/app/fonts-load.sh
-RUN /opt/app/highcharts-load.sh
-RUN /opt/app/fonts-load.sh
+#RUN /opt/app/highcharts-load.sh
+#RUN /opt/app/fonts-load.sh
 COPY ./dist /opt/app/dist
 COPY ./src /opt/app/src
 COPY app-builder.config.ts tsconfig.json /opt/app/
@@ -77,7 +77,7 @@ RUN apt-get update && apt-get -y install g++ make
 
 WORKDIR /opt/app
 
-COPY package.json package-lock.json .npmrc /opt/app/
+COPY package.json package-lock.json .npmrc patches /opt/app/
 
 RUN npm ci && npm prune --production
 
