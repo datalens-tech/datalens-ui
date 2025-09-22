@@ -3,8 +3,8 @@ import merge from 'lodash/merge';
 
 import type {SeriesExportSettings, ServerField} from '../../../../../../../shared';
 import {
+    PERCENT_VISUALIZATIONS,
     PlaceholderId,
-    WizardVisualizationId,
     isHtmlField,
     isMarkdownField,
     isMarkupField,
@@ -46,12 +46,13 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
         isMarkupField(labelField) || isHtmlField(labelField) || isMarkdownField(labelField);
 
     const dataLabelFormat = getFieldFormatOptions({field: labelField});
+    const shouldUsePercentStacking = PERCENT_VISUALIZATIONS.has(visualizationId);
     const series = graphs.map<BarYSeries>((graph) => {
         return {
             ...graph,
             type: 'bar-y',
             stackId: graph.stack,
-            stacking: visualizationId === WizardVisualizationId.BarY100pD3 ? 'percent' : 'normal',
+            stacking: shouldUsePercentStacking ? 'percent' : 'normal',
             name: graph.title,
             data: graph.data
                 .filter((d: BarYPoint) => d !== null && d.y !== null)
@@ -62,7 +63,7 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
                 }),
             dataLabels: {
                 enabled: graph.dataLabels?.enabled,
-                inside: visualizationId === WizardVisualizationId.BarY100pD3,
+                inside: shouldUsePercentStacking,
                 html: shouldUseHtmlForLabels,
                 format: dataLabelFormat,
             },
