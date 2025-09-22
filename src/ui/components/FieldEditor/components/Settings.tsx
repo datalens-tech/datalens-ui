@@ -91,6 +91,12 @@ export const Settings: React.FC<SettingsProps> = ({
         }
     }, [inputTitle, errorMessageKey]);
 
+    React.useEffect(() => {
+        if (errorMessageKey) {
+            setTitleEditMode(true);
+        }
+    }, [errorMessageKey]);
+
     return (
         <React.Fragment>
             <Dialog.Header
