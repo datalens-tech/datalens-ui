@@ -46,7 +46,6 @@ export const Settings: React.FC<SettingsProps> = ({
     isNewField,
 }) => {
     const inputRef = React.useRef<HTMLInputElement>(null);
-    const [titleEditMode, setTitleEditMode] = React.useState(!title);
 
     const {AdditionalButtonsWrapper} = registry.fieldEditor.components.getAll();
 
@@ -76,6 +75,8 @@ export const Settings: React.FC<SettingsProps> = ({
 
     const errorMessageKey = getErrorMessageKey([DUPLICATE_TITLE, EMPTY_TITLE], errors);
     const showDocButton = isEnabledFeature(Feature.FieldEditorDocSection) && calcMode === 'formula';
+
+    const [titleEditMode, setTitleEditMode] = React.useState(!title || Boolean(errorMessageKey));
 
     const handleStartEditTitle = React.useCallback(() => {
         setTitleEditMode(true);
