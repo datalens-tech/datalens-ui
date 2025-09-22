@@ -61,7 +61,7 @@ class DialogMetricSettings extends React.PureComponent<Props, State> {
     constructor(props: Props) {
         super(props);
 
-        const palette = props.palette || '';
+        const palette = props.palette;
         const paletteColors = getPaletteColors(palette, props.colorPalettes);
 
         // if font settings is empty take index 0 by default
@@ -76,7 +76,7 @@ class DialogMetricSettings extends React.PureComponent<Props, State> {
                 color: props.metricFontColor,
             }),
             palette,
-            colorIndex: props.metricFontColorIndex || defaultIndex,
+            colorIndex: props.metricFontColorIndex ?? defaultIndex,
             paletteColors,
         };
     }

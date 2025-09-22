@@ -1,19 +1,46 @@
 import {type ColorPalette} from 'shared';
-import {getAvailableClientPalettesMap, getTenantDefaultColorPaletteId} from 'ui/constants';
+import {
+    getAvailableClientPalettesMap,
+    getDefaultColorPaletteId,
+    getTenantDefaultColorPaletteId,
+} from 'ui/constants';
+
+export const getDefaultColorPalette = ({colorPalettes}: {colorPalettes?: ColorPalette[]}) => {
+    const tenantDefaultColorPaletteId = getTenantDefaultColorPaletteId();
+    const customPalette = colorPalettes?.find(
+        (p) => p.colorPaletteId === tenantDefaultColorPaletteId,
+    );
+
+    if (customPalette) {
+        return customPalette;
+    }
+
+    const systemPalettes = getAvailableClientPalettesMap();
+    const defaultColorPaletteId = getDefaultColorPaletteId();
+    const systemPalette =
+        systemPalettes[tenantDefaultColorPaletteId] ?? systemPalettes[defaultColorPaletteId];
+
+    return systemPalette;
+};
 
 export function getPaletteColors(paletteName: string | undefined, clientPalettes?: ColorPalette[]) {
-    const clientPalette = clientPalettes?.find((item) => item.colorPaletteId === paletteName);
-    if (clientPalette) {
-        return clientPalette.colors;
+    if (paletteName) {
+        const clientPalette = clientPalettes?.find((item) => item.colorPaletteId === paletteName);
+        if (clientPalette) {
+            return clientPalette.colors;
+        }
+
+        const availablePalettesMap = getAvailableClientPalettesMap();
+        if (availablePalettesMap[paletteName]) {
+            return availablePalettesMap[paletteName].scheme;
+        }
     }
 
-    const availablePalettesMap = getAvailableClientPalettesMap();
-    if (paletteName && availablePalettesMap[paletteName]) {
-        return availablePalettesMap[paletteName].scheme;
-    }
+    const defaultColorPalette = getDefaultColorPalette({colorPalettes: clientPalettes});
 
-    const currentPalette = availablePalettesMap[getTenantDefaultColorPaletteId()];
-    return currentPalette?.scheme || [];
+    return 'colors' in defaultColorPalette
+        ? defaultColorPalette.colors
+        : defaultColorPalette.scheme;
 }
 
 export function isValidHexColor(hexColor: string) {

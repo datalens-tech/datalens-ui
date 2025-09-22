@@ -8,7 +8,8 @@ import {useDispatch, useSelector} from 'react-redux';
 import type {ColorsConfig, Field, GradientType, InternalPaletteId, Palette} from 'shared';
 import {fetchColorPalettes} from 'store/actions/colorPaletteEditor';
 import {selectColorPalettesDict} from 'store/selectors/colorPaletteEditor';
-import {getDefaultColorPalette, getDefaultPaletteLabel} from 'ui/units/wizard/utils/palette';
+import {getDefaultPaletteLabel} from 'ui/units/wizard/utils/palette';
+import {getDefaultColorPalette} from 'ui/utils';
 
 import {openDialogColor} from '../../../../../actions/dialogColor';
 import {PaletteIcon, PaletteType} from '../../../../PaletteIcon/PaletteIcon';

@@ -14,32 +14,10 @@ import type {
     Palettes,
 } from 'shared';
 import {getPalettesOrder} from 'shared';
-import {
-    getAvailableClientPalettesMap,
-    getDefaultColorPaletteId,
-    getTenantDefaultColorPaletteId,
-    selectAvailableClientPalettes,
-} from 'ui';
+import {selectAvailableClientPalettes} from 'ui';
+import {getDefaultColorPalette} from 'ui/utils';
 
 import {PaletteIcon, PaletteType} from '../components/PaletteIcon/PaletteIcon';
-
-export const getDefaultColorPalette = ({colorPalettes}: {colorPalettes?: ColorPalette[]}) => {
-    const tenantDefaultColorPaletteId = getTenantDefaultColorPaletteId();
-    const customPalette = colorPalettes?.find(
-        (p) => p.colorPaletteId === tenantDefaultColorPaletteId,
-    );
-
-    if (customPalette) {
-        return customPalette;
-    }
-
-    const systemPalettes = getAvailableClientPalettesMap();
-    const defaultColorPaletteId = getDefaultColorPaletteId();
-    const systemPalette =
-        systemPalettes[tenantDefaultColorPaletteId] ?? systemPalettes[defaultColorPaletteId];
-
-    return systemPalette;
-};
 
 export const getDefaultPaletteLabel = (defaultColorPalette: ColorPalette | Palette) => {
     let defaultPaletteName: string;
