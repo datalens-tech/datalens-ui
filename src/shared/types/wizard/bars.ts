@@ -74,7 +74,7 @@ export interface BarOneColorSettings {
 export interface BarTwoColorSettings {
     colorType: BarsColorType.TwoColor;
     settings: {
-        palette: string;
+        palette: string | undefined;
         negativeColorIndex?: number;
         negativeColor?: string;
         positiveColorIndex?: number;
