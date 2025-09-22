@@ -6,7 +6,7 @@ export enum ApiTag {
     Dashboard = 'Dashboard',
 }
 
-export const PUBLIC_API_VERSION_HEADER = 'X-DL-API-Version';
+export const PUBLIC_API_VERSION_HEADER = 'x-dl-api-version';
 
 export const PUBLIC_API_VERSION_HEADER_LATEST_VALUE = 'latest';
 

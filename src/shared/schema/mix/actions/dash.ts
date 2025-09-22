@@ -203,7 +203,8 @@ export const dashActions = {
             resultSchema: getDashResultSchema,
         },
         async (_, args, {headers, ctx}) => {
-            const {dashboardId, includePermissions, includeLinks, branch, revId} = args;
+            const {dashboardId, includePermissions, includeLinks, includeFavorite, branch, revId} =
+                args;
 
             if (!dashboardId || dashboardId === 'null') {
                 throw new Error(`Not found ${dashboardId} id`);
@@ -212,8 +213,9 @@ export const dashActions = {
             const result = await Dash.read(
                 dashboardId,
                 {
-                    includePermissions: includePermissions ? includePermissions?.toString() : '0',
-                    includeLinks: includeLinks ? includeLinks?.toString() : '0',
+                    includePermissions: includePermissions ? includePermissions.toString() : '0',
+                    includeLinks: includeLinks ? includeLinks.toString() : '0',
+                    includeFavorite,
                     ...(branch ? {branch} : {branch: 'published'}),
                     ...(revId ? {revId} : {}),
                 },
@@ -244,7 +246,7 @@ export const dashActions = {
             const I18n = ctx.get('i18n');
 
             return (await Dash.update(
-                entryId as any,
+                entryId,
                 args as any,
                 headers,
                 ctx,

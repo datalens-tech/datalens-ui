@@ -51,6 +51,7 @@ export const getDashArgsSchema = z.object({
     revId: z.string().optional(),
     includePermissions: z.boolean().optional().default(false),
     includeLinks: z.boolean().optional().default(false),
+    includeFavorite: z.boolean().optional().default(false),
     branch: z.literal(['published', 'saved']).optional().default('published'),
 });
 
