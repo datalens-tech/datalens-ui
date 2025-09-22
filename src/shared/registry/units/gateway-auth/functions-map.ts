@@ -18,7 +18,7 @@ export const gatewayAuthFunctionsMap = {
                 params: GetAuthHeadersParams<Record<string, unknown>>,
             ) => Record<string, string> | undefined
         >(),
-    hasValidWorkbookTransferAuthHeaders: makeFunctionTemplate<(req: Request) => boolean>(),
+    hasValidWorkbookTransferAuthHeaders: makeFunctionTemplate<(req: Request) => Promise<boolean>>(),
     getAuthArgsProxyBiPrivate:
         makeFunctionTemplate<(req: Request, res: Response) => Record<string, string>>(),
     getAuthArgsProxyUSPrivate:

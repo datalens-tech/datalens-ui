@@ -319,7 +319,7 @@ export const workbooksTransferController = {
             const {hasValidWorkbookTransferAuthHeaders} =
                 sharedRegistry.gatewayAuth.functions.getAll();
 
-            if (!hasValidWorkbookTransferAuthHeaders(req)) {
+            if (!(await hasValidWorkbookTransferAuthHeaders(req))) {
                 res.status(403).send({
                     code: TransferErrorCode.TransferInvalidToken,
                 });
@@ -337,7 +337,7 @@ export const workbooksTransferController = {
             const {hasValidWorkbookTransferAuthHeaders} =
                 sharedRegistry.gatewayAuth.functions.getAll();
 
-            if (!hasValidWorkbookTransferAuthHeaders(req)) {
+            if (!(await hasValidWorkbookTransferAuthHeaders(req))) {
                 res.status(403).send({
                     code: TransferErrorCode.TransferInvalidToken,
                 });

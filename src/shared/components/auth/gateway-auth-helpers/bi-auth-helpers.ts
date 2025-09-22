@@ -14,7 +14,7 @@ export const getAuthHeadersBiPrivate: GetAuthHeaders<AuthArgsData> = ({authArgs}
     };
 };
 
-export const hasValidWorkbookTransferAuthHeaders = (req: Request) => {
+export const hasValidWorkbookTransferAuthHeaders = async (req: Request) => {
     return req.headers[US_MASTER_TOKEN_HEADER] !== undefined;
 };
 
