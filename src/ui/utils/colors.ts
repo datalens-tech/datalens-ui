@@ -1,17 +1,18 @@
 import {type ColorPalette} from 'shared';
 import {getAvailableClientPalettesMap, getTenantDefaultColorPaletteId} from 'ui/constants';
 
-export function getPaletteColors(paletteName: string, clientPalettes?: ColorPalette[]) {
+export function getPaletteColors(paletteName: string | undefined, clientPalettes?: ColorPalette[]) {
     const clientPalette = clientPalettes?.find((item) => item.colorPaletteId === paletteName);
     if (clientPalette) {
         return clientPalette.colors;
     }
 
     const availablePalettesMap = getAvailableClientPalettesMap();
+    if (paletteName && availablePalettesMap[paletteName]) {
+        return availablePalettesMap[paletteName].scheme;
+    }
 
-    const currentPalette =
-        availablePalettesMap[paletteName] || availablePalettesMap[getTenantDefaultColorPaletteId()];
-
+    const currentPalette = availablePalettesMap[getTenantDefaultColorPaletteId()];
     return currentPalette?.scheme || [];
 }
 
