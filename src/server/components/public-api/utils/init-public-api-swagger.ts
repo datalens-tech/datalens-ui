@@ -5,7 +5,11 @@ import swaggerUi from 'swagger-ui-express';
 
 import {objectKeys} from '../../../../shared';
 import {registry} from '../../../registry';
-import {PUBLIC_API_LATEST_VERSION} from '../constants';
+import {
+    OPEN_API_VERSION_HEADER_COMPONENT_NAME,
+    PUBLIC_API_LATEST_VERSION,
+    PUBLIC_API_VERSION_HEADER,
+} from '../constants';
 
 export const initPublicApiSwagger = (app: ExpressKit) => {
     const {config} = app;
@@ -27,6 +31,22 @@ export const initPublicApiSwagger = (app: ExpressKit) => {
                     });
                 });
             }
+
+            openApi.registry.registerComponent(
+                'parameters',
+                OPEN_API_VERSION_HEADER_COMPONENT_NAME,
+                {
+                    name: PUBLIC_API_VERSION_HEADER,
+                    in: 'header',
+                    required: true,
+                    schema: {
+                        type: 'string',
+                        const: version,
+                        example: version,
+                    },
+                    description: `API version header.`,
+                },
+            );
 
             const generator = new OpenApiGeneratorV31(openApi.registry.definitions);
 

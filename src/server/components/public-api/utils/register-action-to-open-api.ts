@@ -6,7 +6,11 @@ import {getValidationSchema} from '../../../../shared/schema/gateway-utils';
 import {registry} from '../../../registry';
 import type {AnyApiServiceActionConfig} from '../../../types/gateway';
 import {CONTENT_TYPE_JSON} from '../../api-docs/constants';
-import {PUBLIC_API_HTTP_METHOD, PUBLIC_API_URL} from '../constants';
+import {
+    OPEN_API_VERSION_HEADER_COMPONENT_NAME,
+    PUBLIC_API_HTTP_METHOD,
+    PUBLIC_API_URL,
+} from '../constants';
 
 const resolveUrl = ({actionName}: {actionName: string}) => {
     return PUBLIC_API_URL.replace(':action', actionName);
@@ -88,6 +92,9 @@ export const registerActionToOpenApi = ({
                 },
             },
             security,
+            parameters: [
+                {$ref: `#/components/parameters/${OPEN_API_VERSION_HEADER_COMPONENT_NAME}`},
+            ],
         });
     } else {
         openApiRegistry.registerPath({
@@ -98,6 +105,9 @@ export const registerActionToOpenApi = ({
             ...openApi,
             ...defaultSchema,
             security,
+            parameters: [
+                {$ref: `#/components/parameters/${OPEN_API_VERSION_HEADER_COMPONENT_NAME}`},
+            ],
         });
     }
 };

@@ -3,7 +3,7 @@ import type {PublicApiBaseConfig} from '../types';
 import {PUBLIC_API_V0_CONFIG} from './v0';
 import {PUBLIC_API_VNULL_CONFIG} from './vNull';
 
-export {PUBLIC_API_VERSION_HEADER, PUBLIC_API_VERSION_HEADER_LATEST_VALUE} from './common';
+export * from './common';
 
 export const PUBLIC_API_HTTP_METHOD = 'POST';
 export const PUBLIC_API_URL = '/rpc/:action';
