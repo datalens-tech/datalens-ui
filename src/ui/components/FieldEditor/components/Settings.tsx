@@ -85,10 +85,10 @@ export const Settings: React.FC<SettingsProps> = ({
     }, []);
 
     const handleStopEditTitle = React.useCallback(() => {
-        if (inputTitle) {
+        if (inputTitle && !errorMessageKey) {
             setTitleEditMode(false);
         }
-    }, [inputTitle]);
+    }, [inputTitle, errorMessageKey]);
 
     return (
         <React.Fragment>
@@ -96,6 +96,7 @@ export const Settings: React.FC<SettingsProps> = ({
                 caption={
                     titleEditMode ? (
                         <TextInput
+                            name="title"
                             className={b('settings-field-name')}
                             controlProps={{
                                 className: b('settings-field-name-input'),
