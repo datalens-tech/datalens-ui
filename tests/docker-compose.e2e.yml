@@ -114,6 +114,7 @@ services:
     environment:
       APP_MODE: full
       APP_ENV: production
+      US_MASTER_TOKEN: ${US_MASTER_TOKEN:-us-master-token}
       APP_INSTALLATION: opensource
       AUTH_POLICY: disabled
       US_ENDPOINT: http://us:8080
@@ -140,6 +141,7 @@ services:
     environment:
       APP_MODE: full
       APP_ENV: production
+      US_MASTER_TOKEN: ${US_MASTER_TOKEN:-us-master-token}
       APP_INSTALLATION: opensource
       AUTH_POLICY: disabled
       US_ENDPOINT: http://us:8080
