@@ -337,15 +337,14 @@ export function saveDataset({
                 payload: {},
             });
 
-            const {entryContent, dataset: {id, content: dataset} = {}, annotation} = getState();
+            const {entryContent, dataset: {id, content: dataset, annotation} = {}} = getState();
             let datasetId = id;
 
             if (isCreationProcess) {
                 const creationData = {
-                    dataset,
+                    dataset: {...dataset, description: annotation?.description ?? ''},
                     multisource: true,
                     ...(isAuto && {created_via: 'yt_to_dl'}),
-                    description: annotation?.description ?? '',
                 };
 
                 if (workbookId) {
