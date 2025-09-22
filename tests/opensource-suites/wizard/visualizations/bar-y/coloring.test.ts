@@ -16,7 +16,7 @@ datalensTest.describe('Wizard', () => {
             await wizardPage.setVisualization(WizardVisualizationId.BarYD3);
         });
 
-        datalensTest('Coloring bay measure field (gradient) @screenshot', async ({page}) => {
+        datalensTest('Coloring by measure field (gradient) @screenshot', async ({page}) => {
             const wizardPage = new WizardPage({page});
 
             // Create measure field
