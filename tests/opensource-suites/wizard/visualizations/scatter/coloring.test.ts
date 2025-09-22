@@ -38,7 +38,7 @@ datalensTest.describe('Wizard', () => {
 
                 // set color by fake title
                 await wizardPage.colorDialog.open();
-                await wizardPage.colorDialog.selectColor('#FF7E00');
+                await wizardPage.colorDialog.selectColor('#FF8C00');
                 await wizardPage.colorDialog.apply();
 
                 await expect(previewLoader).not.toBeVisible();
