@@ -8,5 +8,4 @@ export enum DashUrls {
     DashboardWithAPIErrorChart = '/yn3ikt4znjyom',
     DashboardWithDifferentWidgets = '/em7qhqruwprq1',
     DashboardWithInvalidSelector = '/kkhvho2o035y5',
-    DashboardWithMarkdownWidgets = '/osr185udxjxa9',
 }
