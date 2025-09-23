@@ -24,7 +24,7 @@ import './ColorsDialog.scss';
 
 export const DEFAULT_COLOR = 'auto';
 
-// toDo: вынести в другое место
+// toDo: move to component keyset
 const i18n = I18n.keyset('wizard');
 
 const VALUES_LOAD_LIMIT = 1000;
