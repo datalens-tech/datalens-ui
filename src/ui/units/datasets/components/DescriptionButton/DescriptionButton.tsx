@@ -64,6 +64,10 @@ export const DescriptionButton = () => {
     }, [dispatch, description, canEdit, handleEditClick, isDescriptionChanged, handleOnApplyClick]);
 
     return (
-        <EntryAnnotationDescriptionButton isEditMode={canEdit} onClick={handleDescriptionClick} />
+        <EntryAnnotationDescriptionButton
+            description={description}
+            isEditMode={canEdit}
+            onClick={handleDescriptionClick}
+        />
     );
 };
