@@ -6,7 +6,6 @@ import {
     SET_CACHED_HTML_ITEM,
     SET_CHECK_DATA,
     SET_CHECK_LOADING,
-    SET_CONNECTION_DESCRIPTION,
     SET_CONNECTION_KEY,
     SET_CONNECTOR_DATA,
     SET_ENTRY,
@@ -22,7 +21,6 @@ import {
     SET_GSHEET_COLUMN_FILTER,
     SET_GSHEET_ITEMS,
     SET_GSHEET_SELECTED_ITEM_ID,
-    SET_INITIAL_CONNECTION_DESCRIPTION,
     SET_INITIAL_FORM,
     SET_INITIAL_STATE,
     SET_INNER_FORM,
@@ -391,28 +389,6 @@ export default (state = initialState, action: ConnectionsReduxAction): Connectio
                     columnFilter,
                 },
             };
-        }
-        case SET_CONNECTION_DESCRIPTION: {
-            return {
-                ...state,
-                annotation: {
-                    description: action.payload,
-                },
-            };
-        }
-        case SET_INITIAL_CONNECTION_DESCRIPTION: {
-            if (state.entry) {
-                return {
-                    ...state,
-                    entry: {
-                        ...state.entry,
-                        annotation: {
-                            description: action.payload,
-                        },
-                    },
-                };
-            }
-            return state;
         }
         default: {
             return state;

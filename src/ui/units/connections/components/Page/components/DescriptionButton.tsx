@@ -9,12 +9,14 @@ import {
     openDialogEntryAnnotationDescription,
 } from 'ui/components/DialogEntryDescription';
 import {updateDialogProps} from 'ui/store/actions/dialog';
+import {FieldKey} from 'ui/units/connections/constants';
 
 import {
+    isConnectionDescriptionChangedSelector,
+    pageLoadingSelector,
     readonlySelector,
     selectConnectionDescription,
-    selectIsConnectionDescriptionChanged,
-    setConnectionDescription,
+    setForm,
 } from '../../../store';
 
 const i18n = I18n.keyset('connections.form');
@@ -23,11 +25,12 @@ export const DescriptionButton = () => {
     const dispatch = useDispatch();
     const canEdit = !useSelector(readonlySelector);
     const description = useSelector(selectConnectionDescription);
-    const isDescriptionChanged = useSelector(selectIsConnectionDescriptionChanged);
+    const isDescriptionChanged = useSelector(isConnectionDescriptionChangedSelector);
+    const isPageLoading = useSelector(pageLoadingSelector);
 
     const handleOnApplyClick = React.useCallback(
         (text: string) => {
-            dispatch(setConnectionDescription(text));
+            dispatch(setForm({updates: {[FieldKey.Description]: text}}));
         },
         [dispatch],
     );
@@ -60,6 +63,10 @@ export const DescriptionButton = () => {
             }),
         );
     }, [dispatch, description, canEdit, handleEditClick, isDescriptionChanged, handleOnApplyClick]);
+
+    if (isPageLoading) {
+        return null;
+    }
 
     return (
         <EntryAnnotationDescriptionButton isEditMode={canEdit} onClick={handleDescriptionClick} />

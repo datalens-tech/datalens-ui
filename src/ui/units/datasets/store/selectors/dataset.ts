@@ -197,10 +197,10 @@ export const rawSqlLevelSelector = createSelector(
 );
 
 export const datasetInitialDescrioptionSelector = (state: DatalensGlobalState) =>
-    state.dataset.prevAnnotation?.description ?? '';
+    state.dataset.prevContent?.description ?? '';
 
 export const datasetDescrioptionSelector = (state: DatalensGlobalState) =>
-    state.dataset.annotation?.description ?? '';
+    state.dataset.content?.description ?? '';
 
 export const isDescriptionChangedSelector = createSelector(
     [datasetInitialDescrioptionSelector, datasetDescrioptionSelector],

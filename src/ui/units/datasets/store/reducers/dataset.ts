@@ -228,8 +228,6 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 },
                 isRefetchingDataset: false,
                 isLoading: false,
-                annotation: null,
-                prevAnnotation: null,
             };
         }
         case DATASET_FETCH_FAILURE: {
@@ -265,7 +263,6 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 },
                 publishedId,
                 currentRevId,
-                annotation,
             } = action.payload;
 
             return {
@@ -292,8 +289,6 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 permissions,
                 isLoading: false,
                 isRefetchingDataset: false,
-                annotation,
-                prevAnnotation: annotation,
             };
         }
         case DATASET_INITIAL_FETCH_FAILURE: {
@@ -332,9 +327,6 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 ui: {
                     ...state.ui,
                     isDatasetChanged: false,
-                },
-                prevAnnotation: {
-                    ...state.annotation,
                 },
             };
         }
@@ -1406,7 +1398,8 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
         case SET_DESCRIPTION: {
             return {
                 ...state,
-                annotation: {
+                content: {
+                    ...state.content,
                     description: action.payload,
                 },
             };

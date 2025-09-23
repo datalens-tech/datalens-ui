@@ -25,7 +25,7 @@ export const DescriptionButton = () => {
     const isDescriptionChanged = useSelector(isDescriptionChangedSelector);
 
     const permissions = useSelector(datasetPermissionsSelector);
-    const canEdit = Boolean(permissions?.edit);
+    const canEdit = Boolean(!permissions || permissions?.edit);
 
     const handleOnApplyClick = React.useCallback(
         (text: string) => {

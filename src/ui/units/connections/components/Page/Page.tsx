@@ -191,6 +191,7 @@ const PageComponent = (props: PageProps) => {
                                     entryKey={(connectionData[FieldKey.Key] as string) || ''}
                                     s3BasedFormOpened={s3BasedFormOpened}
                                     workbookId={workbookId || entry?.workbookId}
+                                    listPageOpened={listPageOpened}
                                 />
                             ),
                         ]}

@@ -15,7 +15,6 @@ import {
     resetFormsData,
     resetS3BasedData,
     setFileReplaceSources,
-    setInitialConnectionDescription,
     setInitialForm,
     setSubmitLoading,
 } from './base';
@@ -31,7 +30,7 @@ export const createS3BasedConnection = (args: {
 }) => {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
         const {name, dirPath, workbookId = getWorkbookIdFromPathname()} = args;
-        const {form, annotation} = getState().connections;
+        const {form} = getState().connections;
         const placementData: Record<string, string> = dirPath
             ? {[FieldKey.DirPath]: dirPath}
             : {[FieldKey.WorkbookId]: workbookId};
@@ -43,7 +42,7 @@ export const createS3BasedConnection = (args: {
 
         dispatch(setSubmitLoading({loading: true}));
 
-        const {id, error} = await api.createConnection(resultForm, annotation?.description ?? '');
+        const {id, error} = await api.createConnection(resultForm);
 
         if (id) {
             batch(() => {
@@ -81,13 +80,11 @@ export const updateS3BasedConnection = (type?: ConnectorType) => {
         const entry = get(getState().connections, ['entry']);
         const connectionData = get(getState().connections, ['connectionData']);
         const form = get(getState().connections, ['form']);
-        const annotation = get(getState().connections, ['annotation']);
 
         const {error} = await api.updateConnection(
             form,
             connectionData.id as string,
             connectionData.db_type as string,
-            annotation?.description ?? '',
         );
 
         batch(() => {
@@ -100,7 +97,6 @@ export const updateS3BasedConnection = (type?: ConnectorType) => {
                 );
             } else {
                 dispatch(setInitialForm({updates: form}));
-                dispatch(setInitialConnectionDescription(annotation?.description ?? ''));
                 dispatch(setPageData({entryId: entry?.entryId}));
 
                 switch (type) {

@@ -44,6 +44,10 @@ export const submitLoadingSelector = (state: DatalensGlobalState) => {
     return state.connections.ui.submitLoading;
 };
 
+export const pageLoadingSelector = (state: DatalensGlobalState) => {
+    return state.connections.ui.pageLoading;
+};
+
 export const uiSchemaSelector = (state: DatalensGlobalState) => {
     return state.connections.schema?.uiSchema;
 };
@@ -55,9 +59,12 @@ export const flattenConnectorsSelector = (state: DatalensGlobalState) => {
 export const selectConnectionEntry = (state: DatalensGlobalState) => state.connections.entry;
 
 export const selectConnectionDescription = (state: DatalensGlobalState) =>
-    state.connections.annotation?.description ?? '';
+    (state.connections.form.description as string) ?? '';
 
-export const selectIsConnectionDescriptionChanged = createSelector(
-    [selectConnectionEntry, selectConnectionDescription],
-    (entry, description) => entry && (entry.annotation?.description ?? '') !== description,
+export const selectInitialConnectionDescription = (state: DatalensGlobalState) =>
+    state.connections.initialForm.description ?? '';
+
+export const isConnectionDescriptionChangedSelector = createSelector(
+    [selectInitialConnectionDescription, selectConnectionDescription],
+    (initialDescription, description) => initialDescription !== description,
 );

@@ -31,12 +31,10 @@ import {
     setCheckData,
     setCheckLoading,
     setConectorData,
-    setConnectionDescription,
     setEntry,
     setFlattenConnectors,
     setForm,
     setGroupedConnectors,
-    setInitialConnectionDescription,
     setInitialForm,
     setInnerForm,
     setPageLoading,
@@ -83,7 +81,6 @@ export function setPageData({entryId, workbookId}: {entryId?: string | null; wor
             dispatch(setGroupedConnectors({groupedConnectors}));
             dispatch(setFlattenConnectors({flattenConnectors}));
             dispatch(setEntry({entry, error: entryError}));
-            dispatch(setConnectionDescription(entry.annotation?.description ?? ''));
 
             if (Object.keys(form).length) {
                 dispatch(resetFormsData());
@@ -150,6 +147,7 @@ function setFetchedFormData(schema: FormSchema) {
     return (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
         const {connectionData} = getState().connections;
         const {form: fetchedFormData} = getFetchedFormData(schema, connectionData);
+        fetchedFormData[FieldKey.Description] = connectionData[FieldKey.Description];
         // technotes [1]
         fetchedFormData[FieldKey.DbType] = connectionData[FieldKey.DbType];
 
@@ -253,7 +251,7 @@ export function changeInitialForm(initialFormUpdates: ConnectionsReduxState['ini
 export function createConnection(args: {name: string; dirPath?: string; workbookId?: string}) {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
         const {name, dirPath, workbookId = getWorkbookIdFromPathname()} = args;
-        const {form, innerForm, schema, annotation} = getState().connections;
+        const {form, innerForm, schema} = getState().connections;
 
         if (!schema || !schema.apiSchema?.create) {
             logger.logError(
@@ -278,10 +276,7 @@ export function createConnection(args: {name: string; dirPath?: string; workbook
         }
 
         flow([setSubmitLoading, dispatch])({loading: true});
-        const {id: connectionId, error: connError} = await api.createConnection(
-            resultForm,
-            annotation?.description ?? '',
-        );
+        const {id: connectionId, error: connError} = await api.createConnection(resultForm);
         let templateFolderId: string | undefined;
         let templateWorkbookId: string | undefined;
         let templateError: DataLensApiError | undefined;
@@ -348,7 +343,7 @@ export function createConnection(args: {name: string; dirPath?: string; workbook
 
 export function updateConnection() {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
-        const {form, innerForm, schema, connectionData, annotation} = getState().connections;
+        const {form, innerForm, schema, connectionData} = getState().connections;
 
         if (!schema || !schema.apiSchema?.edit) {
             logger.logError(
@@ -363,6 +358,7 @@ export function updateConnection() {
             innerForm,
             apiSchemaItem: schema.apiSchema?.edit,
         });
+        resultForm[FieldKey.Description] = form[FieldKey.Description] ?? '';
 
         // technotes [1]
         delete resultForm[FieldKey.DbType];
@@ -383,14 +379,12 @@ export function updateConnection() {
             resultForm,
             connectionData.id as string,
             connectionData.db_type as string,
-            annotation?.description ?? '',
         );
         batch(() => {
             if (error) {
                 flow([showToast, dispatch])({title: i18n('toast_modify-connection-error'), error});
             } else {
                 flow([setInitialForm, dispatch])({updates: form});
-                flow([setInitialConnectionDescription, dispatch])(annotation?.description ?? '');
             }
 
             flow([setSubmitLoading, dispatch])({loading: false});

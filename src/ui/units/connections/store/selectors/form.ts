@@ -4,20 +4,14 @@ import type {DatalensGlobalState} from 'ui';
 
 import {FieldKey} from '../../constants';
 
+import {isConnectionDescriptionChangedSelector} from '.';
+
 export const formSelector = (state: DatalensGlobalState) => {
     return state.connections.form;
 };
-
-export const descriptionChangedSelector = (state: DatalensGlobalState) => {
-    return (
-        (state.connections.annotation?.description ?? '') !==
-        (state.connections.entry?.annotation?.description ?? '')
-    );
-};
-
 export const formChangedSelector = (state: DatalensGlobalState) => {
     const {initialForm, form} = state.connections;
-    const isDescriptionChanged = descriptionChangedSelector(state);
+    const isDescriptionChanged = isConnectionDescriptionChangedSelector(state);
 
     return !isEqual(initialForm, form) || isDescriptionChanged;
 };

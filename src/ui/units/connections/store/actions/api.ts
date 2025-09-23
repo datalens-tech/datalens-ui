@@ -118,10 +118,9 @@ const fetchRenderedMarkdown = async (text = '') => {
 
 const createConnection = async (
     form: FormDict,
-    description: string,
 ): Promise<{id?: string; error?: DataLensApiError}> => {
     try {
-        const {id} = await getSdk().sdk.bi.createConnection({...form, description});
+        const {id} = await getSdk().sdk.bi.createConnection(form);
         reachMetricaGoal(CounterName.Main, GoalId.ConnectionCreateSubmit, {
             type: form.type,
         });
@@ -136,10 +135,9 @@ const updateConnection = async (
     form: FormDict,
     connectionId: string,
     dbType: string,
-    description: string,
 ): Promise<{error?: DataLensApiError}> => {
     try {
-        await getSdk().sdk.bi.updateConnection({...form, connectionId, description});
+        await getSdk().sdk.bi.updateConnection({...form, connectionId});
         reachMetricaGoal(CounterName.Main, GoalId.ConnectionEditSubmit, {
             type: dbType,
         });

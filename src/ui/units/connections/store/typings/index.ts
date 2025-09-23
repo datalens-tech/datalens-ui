@@ -1,4 +1,3 @@
-import type {EntryAnnotation} from 'shared';
 import type {
     ConnectorItem,
     FormSchema,
@@ -18,7 +17,6 @@ import type {
     SET_CACHED_HTML_ITEM,
     SET_CHECK_DATA,
     SET_CHECK_LOADING,
-    SET_CONNECTION_DESCRIPTION,
     SET_CONNECTION_KEY,
     SET_CONNECTOR_DATA,
     SET_ENTRY,
@@ -34,7 +32,6 @@ import type {
     SET_GSHEET_COLUMN_FILTER,
     SET_GSHEET_ITEMS,
     SET_GSHEET_SELECTED_ITEM_ID,
-    SET_INITIAL_CONNECTION_DESCRIPTION,
     SET_INITIAL_FORM,
     SET_INITIAL_STATE,
     SET_INNER_FORM,
@@ -123,7 +120,6 @@ export type ConnectionsReduxState = {
     currentTenantId?: string;
     entry?: GetEntryResponse;
     schema?: FormSchema;
-    annotation: EntryAnnotation | null;
 };
 
 export type SetGroupedConnectors = {
@@ -361,16 +357,6 @@ export type SetYadocsColumnFilter = {
     };
 };
 
-export type SetConnectionDescription = {
-    type: typeof SET_CONNECTION_DESCRIPTION;
-    payload: string;
-};
-
-export type SetInitialConnectionDescription = {
-    type: typeof SET_INITIAL_CONNECTION_DESCRIPTION;
-    payload: string;
-};
-
 export type ConnectionsReduxAction =
     | SetGroupedConnectors
     | SetFlattenConnectors
@@ -408,9 +394,7 @@ export type ConnectionsReduxAction =
     | SetYadocsItems
     | SetYadocsSelectedItemId
     | SetYadocsActiveDialog
-    | SetYadocsColumnFilter
-    | SetConnectionDescription
-    | SetInitialConnectionDescription;
+    | SetYadocsColumnFilter;
 
 export type ConnectionsReduxDispatch = AppDispatch<ConnectionsReduxAction>;
 

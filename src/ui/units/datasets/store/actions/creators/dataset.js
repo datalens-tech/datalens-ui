@@ -241,7 +241,6 @@ export function initialFetchDataset({datasetId, rev_id, isInitialFetch = true}) 
                     dataset,
                     publishedId,
                     currentRevId,
-                    annotation: meta.annotation,
                 },
             });
 
@@ -337,12 +336,15 @@ export function saveDataset({
                 payload: {},
             });
 
-            const {entryContent, dataset: {id, content: dataset, annotation} = {}} = getState();
+            const {
+                entryContent,
+                dataset: {id, content: dataset},
+            } = getState();
             let datasetId = id;
 
             if (isCreationProcess) {
                 const creationData = {
-                    dataset: {...dataset, description: annotation?.description ?? ''},
+                    dataset,
                     multisource: true,
                     ...(isAuto && {created_via: 'yt_to_dl'}),
                 };
@@ -363,7 +365,7 @@ export function saveDataset({
             } else {
                 const validation = await getSdk().sdk.bi.updateDataset({
                     datasetId,
-                    dataset: {...dataset, description: annotation?.description ?? ''},
+                    dataset,
                     multisource: true,
                     version: 'draft',
                 });

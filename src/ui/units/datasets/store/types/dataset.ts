@@ -7,7 +7,6 @@ import type {
     DatasetField,
     DatasetSource,
     DatasetSourceAvatar,
-    EntryAnnotation,
     Permissions,
     WorkbookId,
 } from '../../../../../shared';
@@ -366,8 +365,6 @@ export type DatasetReduxState = {
     error: DatasetError;
     currentTab: DatasetTab;
     lastModifiedTab?: DatasetTab;
-    prevAnnotation: EntryAnnotation | null;
-    annotation: EntryAnnotation | null;
 };
 
 type SetFreeformSources = {
@@ -733,7 +730,6 @@ type DatasetInitialFetchSuccess = {
         };
         publishedId: EntryFieldPublishedId;
         currentRevId: string | null;
-        annotation: EntryAnnotation | null;
     };
 };
 
