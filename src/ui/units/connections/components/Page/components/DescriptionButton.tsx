@@ -33,7 +33,7 @@ export const DescriptionButton = ({isS3BasedConnForm}: {isS3BasedConnForm: boole
     const schema = useSelector(formSchemaSelector);
     const apiSchema = schema?.apiSchema;
 
-    const canEdit = !readonly && Boolean(apiSchema?.create || apiSchema?.edit);
+    const canEdit = !readonly && Boolean(apiSchema?.create || apiSchema?.edit || isS3BasedConnForm);
     const hidden = !isS3BasedConnForm && !schema;
 
     const handleOnApplyClick = React.useCallback(
