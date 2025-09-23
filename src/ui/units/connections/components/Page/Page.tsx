@@ -51,7 +51,7 @@ type PageProps = DispatchProps &
     DispatchState &
     RouteChildrenProps<{id?: string; workbookId?: string; type?: ConnectorType}>;
 
-type PageContentProps = Omit<DispatchState, 'entry' | 'loading'> & {
+type PageContentProps = Omit<DispatchState, 'entry' | 'loading' | 'shema'> & {
     type: ConnectorType;
     getConnectionData: () => void;
     getConnectors: () => void;
@@ -126,6 +126,7 @@ const PageComponent = (props: PageProps) => {
         entry,
         connectionData,
         loading,
+        shema,
     } = props;
     const entryId = get(props.match?.params, 'id', '');
     const {extractEntryId} = registry.common.functions.getAll();
@@ -191,7 +192,7 @@ const PageComponent = (props: PageProps) => {
                                     entryKey={(connectionData[FieldKey.Key] as string) || ''}
                                     s3BasedFormOpened={s3BasedFormOpened}
                                     workbookId={workbookId || entry?.workbookId}
-                                    typeSelected={Boolean(type)}
+                                    showDescriptionButton={s3BasedFormOpened || Boolean(shema)}
                                 />
                             ),
                         ]}
@@ -226,6 +227,7 @@ const mapStateToProps = (state: DatalensGlobalState) => {
         flattenConnectors: state.connections.flattenConnectors,
         groupedConnectors: state.connections.groupedConnectors,
         loading: state.connections.ui.pageLoading,
+        shema: state.connections.schema,
     };
 };
 
