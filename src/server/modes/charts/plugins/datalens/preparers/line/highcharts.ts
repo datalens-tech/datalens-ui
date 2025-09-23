@@ -22,12 +22,9 @@ import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getFieldExportingOptions} from '../../utils/export-helpers';
 import {isLegendEnabled} from '../../utils/misc-helpers';
 import {addAxisFormatter, addAxisFormatting, getAxisFormatting, getAxisType} from '../helpers/axis';
-import {
-    getHighchartsColorAxis,
-    isXAxisReversed,
-    shouldUseGradientLegend,
-} from '../helpers/highcharts';
+import {getHighchartsColorAxis, isXAxisReversed} from '../helpers/highcharts';
 import {getYPlaceholders} from '../helpers/layers';
+import {shouldUseGradientLegend} from '../helpers/legend';
 import {getSegmentMap} from '../helpers/segments';
 import type {PrepareFunctionArgs} from '../types';
 
