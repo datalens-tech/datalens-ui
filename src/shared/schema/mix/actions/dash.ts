@@ -206,10 +206,6 @@ export const dashActions = {
             const {dashboardId, includePermissions, includeLinks, includeFavorite, branch, revId} =
                 args;
 
-            if (!dashboardId || dashboardId === 'null') {
-                throw new Error(`Not found ${dashboardId} id`);
-            }
-
             const result = await Dash.read(
                 dashboardId,
                 {
@@ -226,9 +222,6 @@ export const dashActions = {
             if (result.scope !== EntryScope.Dash) {
                 throw new Error('No entry found');
             }
-
-            // IS THIS NEEDED?!
-            // return pick(result, DASH_ENTRY_RELEVANT_FIELDS) as any;
 
             return result as any;
         },
