@@ -30,6 +30,7 @@ export const enum ChartKitQa {
     Loader = 'chartkit-loader',
     DrillBreadcrumbs = 'chartkit-drillbreadcrumbs',
     DrillBreadcrumbsItem = 'chartkit-drillbreadcrumbs-item',
+    Widget = 'chart-widget',
 }
 
 export const enum ChartQa {
