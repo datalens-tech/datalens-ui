@@ -33,7 +33,7 @@ import {
 } from '../../../../selectors/dialogColor';
 import type {ExtraSettings} from '../DialogColor';
 import DialogColorGradientBody from '../DialogColorGradient/DialogColorGradient';
-import DialogColorPalette, {DEFAULT_COLOR} from '../DialogColorPalette/DialogColorPalette';
+import {DEFAULT_COLOR, PaletteContainer} from '../DialogColorPalette/DialogColorPalette';
 
 import './ColorSettingsContainer.scss';
 
@@ -108,7 +108,7 @@ class ColorSettingsContainer extends React.Component<Props> {
 
     private renderPaletteBody = () => {
         return (
-            <DialogColorPalette
+            <PaletteContainer
                 onPaletteItemClick={this.onPaletteItemClick}
                 paletteState={this.props.paletteState}
                 setPaletteState={(paletteState: Partial<PaletteState>) => {
