@@ -276,6 +276,9 @@ export function createConnection(args: {name: string; dirPath?: string; workbook
             resultForm[FieldKey.WorkbookId] = workbookId;
         }
 
+        // TODO: remove after BI-6604
+        resultForm[FieldKey.Description] = form[FieldKey.Description] ?? '';
+
         flow([setSubmitLoading, dispatch])({loading: true});
         const {id: connectionId, error: connError} = await api.createConnection(resultForm);
         let templateFolderId: string | undefined;
