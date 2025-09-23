@@ -4,7 +4,7 @@ import type {AppContext} from '@gravity-ui/nodekit';
 import type z from 'zod/v4';
 
 import type {DatalensGatewaySchemas} from '../../../types/gateway';
-import type {PublicApiVersionAction} from '../types';
+import type {PublicApiAction, PublicApiActionOpenApi} from '../types';
 
 export const makeAction = <
     TSchema extends SchemasByScope = DatalensGatewaySchemas,
@@ -16,11 +16,8 @@ export const makeAction = <
         api: ApiWithRoot<TSchema, Request['ctx'], Request, Response>,
         schemas: {args: P; result: R},
     ) => (args: ApiActionConfig<AppContext, z.infer<P>, z.infer<R>>) => Promise<z.infer<R>>;
-    openApi: {
-        summary: string;
-        tags: string[];
-    };
-}): PublicApiVersionAction<TSchema> => {
+    openApi: PublicApiActionOpenApi;
+}): PublicApiAction<TSchema> => {
     return {
         schemas: opts.schemas,
         resolve: (api) => opts.resolve(api, opts.schemas),

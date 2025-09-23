@@ -11,7 +11,12 @@ import type {PUBLIC_API_VERSION} from './constants';
 
 export type PublicApiVersion = ValueOf<typeof PUBLIC_API_VERSION>;
 
-export type PublicApiVersionAction<TSchema extends SchemasByScope> = {
+export type PublicApiActionOpenApi = {
+    summary: string;
+    tags?: string[];
+};
+
+export type PublicApiAction<TSchema extends SchemasByScope> = {
     schemas: {
         args: z.ZodType;
         result: z.ZodType;
@@ -19,15 +24,12 @@ export type PublicApiVersionAction<TSchema extends SchemasByScope> = {
     resolve: (
         api: ApiWithRoot<TSchema, Request['ctx'], Request, Response>,
     ) => (params: any) => Promise<unknown>;
-    openApi: {
-        summary: string;
-        tags?: string[];
-    };
+    openApi: PublicApiActionOpenApi;
 };
 
 type PublicApiVersionActions<TSchema extends SchemasByScope> = Record<
     string,
-    PublicApiVersionAction<TSchema>
+    PublicApiAction<TSchema>
 >;
 
 type PublicApiVersionOpenApi = {
