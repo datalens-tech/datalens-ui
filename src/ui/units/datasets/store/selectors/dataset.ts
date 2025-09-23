@@ -196,7 +196,7 @@ export const rawSqlLevelSelector = createSelector(
     },
 );
 
-export const datasetInitialDescrioptionSelector = (state: DatalensGlobalState) =>
+const datasetInitialDescrioptionSelector = (state: DatalensGlobalState) =>
     state.dataset.prevContent?.description ?? '';
 
 export const datasetDescrioptionSelector = (state: DatalensGlobalState) =>

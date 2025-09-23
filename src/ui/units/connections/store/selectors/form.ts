@@ -7,6 +7,7 @@ import {FieldKey} from '../../constants';
 export const formSelector = (state: DatalensGlobalState) => {
     return state.connections.form;
 };
+
 export const formChangedSelector = (state: DatalensGlobalState) => {
     const {initialForm, form} = state.connections;
     return !isEqual(initialForm, form);
