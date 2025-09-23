@@ -322,8 +322,13 @@ class DatasetEditor extends React.Component {
     closeFieldSettingsDialog = () => {
         this.setState({
             visibleFieldSettingsDialog: false,
-            field: null,
         });
+    };
+
+    saveFieldSettings = (fieldSettings) => {
+        this.closeFieldSettingsDialog();
+
+        this.updateField({field: fieldSettings});
     };
 
     closeRLSDialog = () => {
@@ -336,7 +341,7 @@ class DatasetEditor extends React.Component {
 
     render() {
         const {sourceAvatars, validation, options, itemsToDisplay, rls, permissions} = this.props;
-        const {field, visibleRLSDialog, currentRLSField} = this.state;
+        const {field, visibleRLSDialog, currentRLSField, visibleFieldSettingsDialog} = this.state;
         const {renderRLSDialog} = registry.datasets.functions.getAll();
 
         return (
@@ -370,8 +375,9 @@ class DatasetEditor extends React.Component {
                     onSave: this.props.updateRLS,
                 })}
                 <FieldSettingsDialog
-                    open={this.state.visibleFieldSettingsDialog}
+                    open={visibleFieldSettingsDialog}
                     onClose={this.closeFieldSettingsDialog}
+                    onSave={this.saveFieldSettings}
                     field={field}
                 />
             </div>
