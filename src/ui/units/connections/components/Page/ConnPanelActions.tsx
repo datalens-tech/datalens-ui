@@ -22,7 +22,7 @@ type ConnPanelActionsProps = {
     entryKey: string;
     s3BasedFormOpened: boolean;
     workbookId?: WorkbookId;
-    listPageOpened?: boolean;
+    typeSelected?: boolean;
 };
 
 const b = block('conn-panel-actions');
@@ -32,7 +32,7 @@ const ConnPanelActions = ({
     entryKey,
     s3BasedFormOpened,
     workbookId,
-    listPageOpened,
+    typeSelected,
 }: ConnPanelActionsProps) => {
     const schemaLoading = useSelector(schemaLoadingSelector);
     const uiSchema = useSelector(uiSchemaSelector);
@@ -43,7 +43,7 @@ const ConnPanelActions = ({
 
     return schemaLoading ? null : (
         <div className={b()}>
-            {isDescriptionEnabled && !listPageOpened && <DescriptionButton />}
+            {isDescriptionEnabled && typeSelected && <DescriptionButton />}
             {showCreateEditorChartButton && entryId && (
                 <CreateEditorChartButton entryId={entryId} workbookId={workbookId} />
             )}

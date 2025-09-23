@@ -147,6 +147,7 @@ function setFetchedFormData(schema: FormSchema) {
     return (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
         const {connectionData} = getState().connections;
         const {form: fetchedFormData} = getFetchedFormData(schema, connectionData);
+        // TODO: remove after BI-6604
         fetchedFormData[FieldKey.Description] = connectionData[FieldKey.Description];
         // technotes [1]
         fetchedFormData[FieldKey.DbType] = connectionData[FieldKey.DbType];
@@ -358,6 +359,7 @@ export function updateConnection() {
             innerForm,
             apiSchemaItem: schema.apiSchema?.edit,
         });
+        // TODO: remove after BI-6604
         resultForm[FieldKey.Description] = form[FieldKey.Description] ?? '';
 
         // technotes [1]

@@ -23,10 +23,12 @@ const i18n = I18n.keyset('connections.form');
 
 export const DescriptionButton = () => {
     const dispatch = useDispatch();
-    const canEdit = !useSelector(readonlySelector);
+    const readonly = useSelector(readonlySelector);
     const description = useSelector(selectConnectionDescription);
     const isDescriptionChanged = useSelector(isConnectionDescriptionChangedSelector);
     const isPageLoading = useSelector(pageLoadingSelector);
+
+    const canEdit = !readonly;
 
     const handleOnApplyClick = React.useCallback(
         (text: string) => {

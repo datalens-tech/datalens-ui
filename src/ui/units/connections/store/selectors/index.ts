@@ -59,7 +59,7 @@ export const flattenConnectorsSelector = (state: DatalensGlobalState) => {
 export const selectConnectionDescription = (state: DatalensGlobalState) =>
     (state.connections.form.description as string) ?? '';
 
-export const selectInitialConnectionDescription = (state: DatalensGlobalState) =>
+const selectInitialConnectionDescription = (state: DatalensGlobalState) =>
     state.connections.initialForm.description ?? '';
 
 export const isConnectionDescriptionChangedSelector = createSelector(
