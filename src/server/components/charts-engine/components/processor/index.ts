@@ -242,8 +242,6 @@ export class Processor {
 
         const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
 
-        const isUseDataExportFieldEnabled = isEnabledServerFeature(Feature.EnableBackendExportInfo);
-
         const timings: {
             configResolving: number;
             dataFetching: null | number;
@@ -882,18 +880,16 @@ export class Processor {
                 result.extra.chartsInsights = jsTabResults.runtimeMetadata.chartsInsights;
                 result.extra.sideMarkdown = jsTabResults.runtimeMetadata.sideMarkdown;
 
-                if (isUseDataExportFieldEnabled) {
-                    result.dataExport = mapValues(data, (sourceResponse) => {
-                        if (
-                            typeof sourceResponse === 'object' &&
-                            sourceResponse &&
-                            'data_export' in sourceResponse
-                        ) {
-                            return sourceResponse.data_export as ApiV2DataExportField;
-                        }
-                        return undefined;
-                    });
-                }
+                result.dataExport = mapValues(data, (sourceResponse) => {
+                    if (
+                        typeof sourceResponse === 'object' &&
+                        sourceResponse &&
+                        'data_export' in sourceResponse
+                    ) {
+                        return sourceResponse.data_export as ApiV2DataExportField;
+                    }
+                    return undefined;
+                });
 
                 const colors = selectServerPalette({
                     defaultColorPaletteId: defaultColorPaletteId ?? '',
