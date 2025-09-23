@@ -19,5 +19,5 @@ export const getFieldUISettings = ({field}: {field: DatasetField | undefined}) =
 export const isFieldWithDisplaySettings = ({field}: {field: DatasetField}) => {
     const settings = getFieldUISettings({field});
 
-    return !isEmpty(settings?.numberFormatting);
+    return [settings?.numberFormatting, settings?.colors].some((d) => !isEmpty(d));
 };
