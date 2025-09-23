@@ -30,7 +30,7 @@ export const createS3BasedConnection = (args: {
 }) => {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
         const {name, dirPath, workbookId = getWorkbookIdFromPathname()} = args;
-        const {form} = getState().connections;
+        const form = getState().connections.form;
         const placementData: Record<string, string> = dirPath
             ? {[FieldKey.DirPath]: dirPath}
             : {[FieldKey.WorkbookId]: workbookId};
