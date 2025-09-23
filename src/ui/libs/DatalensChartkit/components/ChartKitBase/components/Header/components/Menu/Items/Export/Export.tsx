@@ -142,7 +142,7 @@ const getSubItems = ({
     return submenuItems;
 };
 
-export function isExportItemDisabled(_?: {extraOptions?: Record<string, unknown>}) {
+export function isExportItemDisabled() {
     return ({loadedData}: MenuItemArgs) => {
         const forbiddenExportFromExtra = loadedData?.extra.dataExportForbidden
             ? i18n('label_data-export-forbidden')

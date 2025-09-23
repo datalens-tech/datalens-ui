@@ -97,8 +97,6 @@ export enum Feature {
     StoreFieldSettingsAtDataset = 'StoreFieldSettingsAtDataset',
     /** Enable dataset revisions */
     EnableDatasetRevisions = 'EnableDatasetRevisions',
-    /** Enables getting info about forbidden export from dataset/connection info endpoints  */
-    EnableBackendExportInfo = 'EnableBackendExportInfo',
 }
 
 export type FeatureConfig = Record<string, boolean>;
