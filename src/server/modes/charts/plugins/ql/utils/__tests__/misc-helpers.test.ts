@@ -9,6 +9,7 @@ const commonBuildSourceArgsSet = {
     id: MOCK_ID,
     connectionType: 'postgres',
     qlConnectionTypeMap: {postgres: ConnectorType.Postgres},
+    features: {},
 };
 
 const mockedBuildSourceArgsSet = {

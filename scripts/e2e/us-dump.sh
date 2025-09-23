@@ -8,6 +8,33 @@ set -eo pipefail
 
 SCRIPT_DIR=$(dirname -- "$(readlink -f -- "$0")")
 
+IS_CLEAR_DELETED="false"
+IS_CLEAR_E2E="false"
+IS_CLEAR_REVISIONS="false"
+
+# parse args
+for _ in "$@"; do
+    case ${1} in
+    --clear-deleted)
+        IS_CLEAR_DELETED="true"
+        shift # past argument with no value
+        ;;
+    --clear-e2e)
+        IS_CLEAR_E2E="true"
+        shift # past argument with no value
+        ;;
+    --clear-revisions)
+        IS_CLEAR_REVISIONS="true"
+        shift # past argument with no value
+        ;;
+    -*)
+        echo "unknown arg: ${1}"
+        exit 1
+        ;;
+    *) ;;
+    esac
+done
+
 echo ""
 echo "Start dump UnitedStorage entries..."
 echo "  - workbooks"
@@ -16,8 +43,21 @@ echo "  - entries"
 echo "  - revisions"
 echo "  - links"
 
+if [ "${IS_CLEAR_DELETED}" = "true" ]; then
+    echo "+ clear deleted entries automatically..."
+fi
+if [ "${IS_CLEAR_E2E}" = "true" ]; then
+    echo "+ clear e2e entries automatically..."
+fi
+if [ "${IS_CLEAR_REVISIONS}" = "true" ]; then
+    echo "+ clear not actual entries revisions automatically..."
+fi
+
 COMPOSE_FILE=$(readlink -f "${SCRIPT_DIR}/../../tests/docker-compose.e2e.yml")
 DUMP_FILE=$(readlink -f "${SCRIPT_DIR}/../../tests/data/us-e2e-data.sql")
+
+echo ""
+echo "========================"
 
 echo "BEGIN;" >"${DUMP_FILE}"
 
@@ -33,21 +73,137 @@ docker --log-level error compose -f "${COMPOSE_FILE}" exec \
     sed -E 's|"username": "[^"]+"|"username": "{{POSTGRES_USER}}"|' \
         >>"${DUMP_FILE}"
 
-# TODO: fix check e2e entries
-E2E_ENTRIES=""
-
-if [ -n "${E2E_ENTRIES}" ]; then
-    echo "WARNING: Found entries with 'e2e-entry-' in key (excluding __trash/):" >&2
-    echo "Keys:" >&2
-    echo "${E2E_ENTRIES}" >&2
-    echo "These entries might be test entries and should be reviewed." >&2
-fi
-
 EXIT="$?"
 
 echo "COMMIT;" >>"${DUMP_FILE}"
 
+echo ""
+echo "========================"
+
+if [ "${IS_CLEAR_DELETED}" = "true" ]; then
+    echo ""
+    echo "Clear deleted entries..."
+
+    DUMP=$(cat "${DUMP_FILE}")
+    DELETED_ENTRIES=$(
+        echo "${DUMP}" |
+            { grep ' public.entries ' || true; } |
+            { grep '__trash/' || true; } |
+            { grep -oE '__trash/[0-9]+_' || true; } |
+            sed 's|__trash/||' |
+            sed 's|_||' |
+            tr -d ' ' |
+            sort |
+            uniq
+    )
+
+    IFS=$'\n'
+    for DELETED_ENTRY in ${DELETED_ENTRIES}; do
+        echo "  clear deleted entry: ${DELETED_ENTRY}"
+        DUMP=$(echo "${DUMP}" | { grep -v ", ${DELETED_ENTRY}, " || true; } | { grep -v "(${DELETED_ENTRY}, " || true; })
+    done
+    unset IFS
+
+    echo "${DUMP}" >"${DUMP_FILE}"
+fi
+
+if [ "${IS_CLEAR_E2E}" = "true" ]; then
+    echo ""
+    echo "Clear e2e entries..."
+
+    DUMP=$(cat "${DUMP_FILE}")
+    E2E_ENTRIES=$(
+        echo "${DUMP}" |
+            { grep ' public.entries ' || true; } |
+            { grep 'e2e-entry-' || true; } |
+            { grep -oE ", '[0-9]+/" || true; } |
+            sed "s|, '||" |
+            sed 's|/||' |
+            tr -d ' ' |
+            sort |
+            uniq
+    )
+
+    IFS=$'\n'
+    for E2E_ENTRY in ${E2E_ENTRIES}; do
+        echo "  clear e2e entry: ${E2E_ENTRY}"
+        DUMP=$(echo "${DUMP}" | { grep -v ", ${E2E_ENTRY}, " || true; } | { grep -v "(${E2E_ENTRY}, " || true; })
+    done
+    unset IFS
+
+    echo "${DUMP}" >"${DUMP_FILE}"
+fi
+
+if [ "${IS_CLEAR_REVISIONS}" = "true" ]; then
+    echo ""
+    echo "Clear not actual revisions..."
+
+    DUMP=$(cat "${DUMP_FILE}")
+    ENTRIES=$(
+        echo "${DUMP}" |
+            grep ' public.entries ' |
+            grep -oE ", '[0-9]+/" |
+            sed "s|, '||" |
+            sed 's|/||' |
+            tr -d ' ' |
+            sort |
+            uniq
+    )
+
+    IFS=$'\n'
+    for ENTRY in ${ENTRIES}; do
+        echo "  entry: ${ENTRY}"
+        REVISIONS=$(echo "${DUMP}" | { grep " public.revisions " || true; } | { grep ", ${ENTRY}, " || true; } | sed 's|INSERT INTO public.revisions .*VALUES|VALUES|' | sed "s|''||g" | sed -E "s|VALUES \('[^']+',||")
+        REVISIONS_COUNT=$(echo "${REVISIONS}" | wc -l | tr -d ' ')
+        echo "  revisions count: ${REVISIONS_COUNT}"
+
+        if [ "${REVISIONS_COUNT}" == "0" ] || [ "${REVISIONS_COUNT}" == "1" ]; then
+            continue
+        fi
+        echo "  clear revisions..."
+        for REVISION in ${REVISIONS}; do
+            REVISION_ID=$(echo "${REVISION}" | { grep -oE ", [0-9]+," || true; } | sed 's|,||g' | tr -d ' ')
+
+            ENTRY_REVISION=$(echo "${DUMP}" | { grep ' public.entries ' || true; } | { grep ", ${REVISION_ID}, " || true; } | tr -d ' ')
+            if [ ! -z "${ENTRY_REVISION}" ]; then
+                echo "  actual revision id: ${REVISION_ID}"
+                continue
+            fi
+
+            echo "  clear revision id: ${REVISION_ID}"
+            DUMP=$(echo "${DUMP}" | { grep -v ", ${REVISION_ID}, " || true; })
+        done
+    done
+    unset IFS
+
+    echo "${DUMP}" >"${DUMP_FILE}"
+fi
+
+E2E_ENTRIES=$(cat "${DUMP_FILE}" | { grep "e2e-entry-" || true; })
+DELETED_ENTRIES=$(cat "${DUMP_FILE}" | { grep "__trash/" || true; })
+
+if [ -n "${E2E_ENTRIES}" ]; then
+    ENTRIES_KEYS=$(echo "${E2E_ENTRIES}" | sed -E "s|INSERT INTO ([^ ]+) .*'([^']*e2e-entry-[^']*)'.*|\1 - \2|" | sed 's|^|  - |')
+
+    echo ""
+    echo "⚠️ WARNING: Found entries with 'e2e-entry-' in key:" >&2
+    echo "${ENTRIES_KEYS}" >&2
+    echo "These entries might be test entries and should be reviewed..." >&2
+fi
+
+if [ -n "${DELETED_ENTRIES}" ]; then
+    ENTRIES_KEYS=$(echo "${DELETED_ENTRIES}" | sed -E "s|INSERT INTO ([^ ]+) .*'([^']*__trash/[^']*)'.*|\1 - \2|" | sed 's|^|  - |')
+
+    echo ""
+    echo "⚠️ WARNING: Found deleted entries:" >&2
+    echo "${ENTRIES_KEYS}" >&2
+fi
+
+# remove empty lines
+sed '/^$/N;/^\n$/D' "${DUMP_FILE}" >"${DUMP_FILE}.tmp" && mv "${DUMP_FILE}.tmp" "${DUMP_FILE}"
+
 if [ "${EXIT}" != "0" ]; then
+    echo ""
     echo "Dump error, exit..."
     exit "${EXIT}"
 else
