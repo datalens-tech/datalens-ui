@@ -11,6 +11,8 @@ import {
     PUBLIC_API_VERSION_HEADER,
 } from '../constants';
 
+import {registerActionToOpenApi} from './register-action-to-open-api';
+
 export const initPublicApiSwagger = (app: ExpressKit) => {
     const {config} = app;
 
@@ -21,6 +23,17 @@ export const initPublicApiSwagger = (app: ExpressKit) => {
     const {baseConfig, securitySchemes} = registry.getPublicApiConfig();
 
     setImmediate(() => {
+        Object.values(baseConfig).forEach(({actions, openApi: versionOpenApi}) => {
+            Object.entries(actions).forEach(([actionName, {openApi, schemas}]) => {
+                registerActionToOpenApi({
+                    schemas,
+                    actionName,
+                    openApi,
+                    openApiRegistry: versionOpenApi.registry,
+                });
+            });
+        });
+
         const versionToDocument = Object.entries(baseConfig).reduce<
             Record<string, ReturnType<OpenApiGeneratorV31['generateDocument']>>
         >((acc, [version, {openApi}]) => {

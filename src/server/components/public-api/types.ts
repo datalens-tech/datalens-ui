@@ -1,6 +1,7 @@
 import type {OpenAPIRegistry} from '@asteasolutions/zod-to-openapi';
 import type {Request, Response} from '@gravity-ui/expresskit';
-import type {ApiWithRoot, GatewayActionUnaryResponse, SchemasByScope} from '@gravity-ui/gateway';
+import type {ApiWithRoot, SchemasByScope} from '@gravity-ui/gateway';
+import type z from 'zod/v4';
 
 import type {ValueOf} from '../../../shared';
 import type {DatalensGatewaySchemas} from '../../types/gateway';
@@ -10,10 +11,14 @@ import type {PUBLIC_API_VERSION} from './constants';
 
 export type PublicApiVersion = ValueOf<typeof PUBLIC_API_VERSION>;
 
-type PublicApiVersionAction<TSchema extends SchemasByScope> = {
+export type PublicApiVersionAction<TSchema extends SchemasByScope> = {
+    schemas: {
+        args: z.ZodType;
+        result: z.ZodType;
+    };
     resolve: (
         api: ApiWithRoot<TSchema, Request['ctx'], Request, Response>,
-    ) => (params: any) => Promise<GatewayActionUnaryResponse<unknown>>;
+    ) => (params: any) => Promise<unknown>;
     openApi: {
         summary: string;
         tags?: string[];
