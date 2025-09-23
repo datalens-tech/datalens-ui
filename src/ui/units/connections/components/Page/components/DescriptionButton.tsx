@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {spacing} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {
@@ -12,6 +13,7 @@ import {updateDialogProps} from 'ui/store/actions/dialog';
 import {FieldKey} from 'ui/units/connections/constants';
 
 import {
+    formSchemaSelector,
     isConnectionDescriptionChangedSelector,
     pageLoadingSelector,
     readonlySelector,
@@ -21,14 +23,18 @@ import {
 
 const i18n = I18n.keyset('connections.form');
 
-export const DescriptionButton = () => {
+export const DescriptionButton = ({isS3BasedConnForm}: {isS3BasedConnForm: boolean}) => {
     const dispatch = useDispatch();
     const readonly = useSelector(readonlySelector);
     const description = useSelector(selectConnectionDescription);
     const isDescriptionChanged = useSelector(isConnectionDescriptionChangedSelector);
     const isPageLoading = useSelector(pageLoadingSelector);
 
-    const canEdit = !readonly;
+    const schema = useSelector(formSchemaSelector);
+    const apiSchema = schema?.apiSchema;
+
+    const canEdit = !readonly && Boolean(apiSchema?.create || apiSchema?.edit);
+    const hidden = !isS3BasedConnForm && !schema;
 
     const handleOnApplyClick = React.useCallback(
         (text: string) => {
@@ -66,12 +72,13 @@ export const DescriptionButton = () => {
         );
     }, [dispatch, description, canEdit, handleEditClick, isDescriptionChanged, handleOnApplyClick]);
 
-    if (isPageLoading) {
+    if (isPageLoading || hidden) {
         return null;
     }
 
     return (
         <EntryAnnotationDescriptionButton
+            className={spacing({mr: 2})}
             description={description}
             isEditMode={canEdit}
             onClick={handleDescriptionClick}

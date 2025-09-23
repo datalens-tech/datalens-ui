@@ -35,7 +35,7 @@ import {
 import {getConnItemByType} from '../../utils';
 
 import ConnPanelActions from './ConnPanelActions';
-import {UnloadConfirmation} from './components';
+import {DescriptionButton, UnloadConfirmation} from './components';
 import {ConnSettings} from './components/ConnSettings';
 import {useApiErrors} from './useApiErrors';
 import {isListPageOpened, isS3BasedConnForm} from './utils';
@@ -51,7 +51,7 @@ type PageProps = DispatchProps &
     DispatchState &
     RouteChildrenProps<{id?: string; workbookId?: string; type?: ConnectorType}>;
 
-type PageContentProps = Omit<DispatchState, 'entry' | 'loading' | 'hasSchema'> & {
+type PageContentProps = Omit<DispatchState, 'entry' | 'loading'> & {
     type: ConnectorType;
     getConnectionData: () => void;
     getConnectors: () => void;
@@ -126,7 +126,6 @@ const PageComponent = (props: PageProps) => {
         entry,
         connectionData,
         loading,
-        hasSchema,
     } = props;
     const entryId = get(props.match?.params, 'id', '');
     const {extractEntryId} = registry.common.functions.getAll();
@@ -140,6 +139,7 @@ const PageComponent = (props: PageProps) => {
     const s3BasedFormOpened = isS3BasedConnForm(connectionData, type);
 
     const isExportSettingsFeatureEnabled = isEnabledFeature(Feature.EnableExportSettings);
+    const isDescriptionEnabled = isEnabledFeature(Feature.EnableConnectionDescription);
 
     const showSettings = !connector?.backend_driven_form;
     let isShowCreateButtons = true;
@@ -185,6 +185,9 @@ const PageComponent = (props: PageProps) => {
                                     connectionId={extractedEntryId}
                                 />
                             ),
+                            isDescriptionEnabled && (
+                                <DescriptionButton isS3BasedConnForm={s3BasedFormOpened} />
+                            ),
                             isShowCreateButtons && (
                                 <ConnPanelActions
                                     key="conn-panel-actions"
@@ -192,7 +195,6 @@ const PageComponent = (props: PageProps) => {
                                     entryKey={(connectionData[FieldKey.Key] as string) || ''}
                                     s3BasedFormOpened={s3BasedFormOpened}
                                     workbookId={workbookId || entry?.workbookId}
-                                    showDescriptionButton={s3BasedFormOpened || hasSchema}
                                 />
                             ),
                         ]}
@@ -227,7 +229,6 @@ const mapStateToProps = (state: DatalensGlobalState) => {
         flattenConnectors: state.connections.flattenConnectors,
         groupedConnectors: state.connections.groupedConnectors,
         loading: state.connections.ui.pageLoading,
-        hasSchema: Boolean(state.connections.schema),
     };
 };
 
