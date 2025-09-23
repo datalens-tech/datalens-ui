@@ -14,7 +14,6 @@ import {
     ConnectorType,
     DATALENS_QL_CONNECTION_TYPES,
     DATALENS_QL_TYPES,
-    Feature,
     QLParamType,
     WizardVisualizationId,
     biToDatalensQL,
@@ -32,7 +31,6 @@ import type {
     QlConfigResultEntryMetadataDataGroup,
 } from '../../../../../../shared/types/config/ql';
 import {
-    CONNECTIONS_DASHSQL,
     CONNECTIONS_DASHSQL_WITH_EXPORT_INFO,
     CONNECTION_ID_PLACEHOLDER,
 } from '../../control/url/constants';
@@ -408,7 +406,6 @@ export function buildSource({
     params,
     paramsDescription,
     qlConnectionTypeMap,
-    features,
 }: {
     id: string;
     connectionType: string;
@@ -510,10 +507,7 @@ export function buildSource({
         params: QLRequestParams,
     };
 
-    const isBackendExportInfoFeatureEnabled = features[Feature.EnableBackendExportInfo];
-    const connectionsUrl = isBackendExportInfoFeatureEnabled
-        ? CONNECTIONS_DASHSQL_WITH_EXPORT_INFO
-        : CONNECTIONS_DASHSQL;
+    const connectionsUrl = CONNECTIONS_DASHSQL_WITH_EXPORT_INFO;
 
     return {
         url: connectionsUrl.replace(CONNECTION_ID_PLACEHOLDER, id),
