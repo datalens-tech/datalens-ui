@@ -52,7 +52,7 @@ export interface Props {
     colorSectionFields?: Field[];
 }
 
-class PaletteContainer extends React.Component<Props> {
+export class PaletteContainer extends React.Component<Props> {
     render() {
         return (
             <div className={b('container')}>
@@ -105,6 +105,7 @@ class PaletteContainer extends React.Component<Props> {
 
         const options = getPaletteSelectorItems({
             colorPalettes,
+            withAuto: true,
         });
 
         return (
@@ -116,7 +117,7 @@ class PaletteContainer extends React.Component<Props> {
                     className={b('palette-select')}
                     onUpdate={([selectedPalette]) => {
                         this.props.setPaletteState({
-                            palette: selectedPalette,
+                            palette: selectedPalette ?? undefined,
                             mountedColors: {},
                         });
                     }}
