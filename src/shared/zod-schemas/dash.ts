@@ -22,20 +22,20 @@ const textSchema = z.object({
 const titleSchema = z.object({
     text: z.string(),
     size: z.enum(DashTabItemTitleSizes),
-    showInTOC: z.boolean().optional(),
+    showInTOC: z.boolean(),
 });
 
 // Widget definition
 const widgetSchema = z.object({
-    hideTitle: z.boolean().optional(),
+    hideTitle: z.boolean(),
     tabs: z.array(
         z.object({
             id: z.string().min(1),
             title: z.string().min(1),
-            description: z.string().optional(),
-            chartId: z.string().min(1).optional(),
-            isDefault: z.boolean().optional(),
-            params: z.record(z.any(), z.any()).optional(),
+            description: z.string(),
+            chartId: z.string().min(1),
+            isDefault: z.boolean(),
+            params: z.record(z.any(), z.any()),
             autoHeight: z.boolean().optional(),
         }),
     ),
@@ -46,28 +46,28 @@ const controlElementTypeSchema = z
     .object({
         required: z.boolean().optional(),
         showHint: z.boolean().optional(),
-        showTitle: z.boolean().optional(),
+        showTitle: z.boolean(),
         elementType: z.enum(DashTabItemControlElementType),
     })
     .and(
         z.discriminatedUnion('elementType', [
             z.object({
                 elementType: z.literal(DashTabItemControlElementType.Select),
-                defaultValue: z.union([z.string(), z.array(z.string()), z.null()]).optional(),
-                multiselectable: z.boolean().optional(),
+                defaultValue: z.union([z.string(), z.array(z.string())]),
+                multiselectable: z.boolean(),
             }),
             z.object({
                 elementType: z.literal(DashTabItemControlElementType.Date),
-                defaultValue: z.string().optional(),
-                isRange: z.boolean().optional(),
+                defaultValue: z.string(),
+                isRange: z.boolean(),
             }),
             z.object({
                 elementType: z.literal(DashTabItemControlElementType.Input),
-                defaultValue: z.string().optional(),
+                defaultValue: z.string(),
             }),
             z.object({
                 elementType: z.literal(DashTabItemControlElementType.Checkbox),
-                defaultValue: z.string().optional(),
+                defaultValue: z.string(),
             }),
         ]),
     );
@@ -84,22 +84,21 @@ const controlSourceDatasetSchema = controlElementTypeSchema.and(
 const controlSourceManualSchema = controlElementTypeSchema.and(
     z.object({
         fieldName: z.string().min(1),
-        acceptableValues: z
-            .union([
-                // elementType: select
-                z.array(
-                    z.object({
-                        value: z.string(),
-                        title: z.string(),
-                    }),
-                ),
-                // elementType: date
+        fieldType: z.string(),
+        acceptableValues: z.union([
+            // elementType: select
+            z.array(
                 z.object({
-                    from: z.string().optional(),
-                    to: z.string().optional(),
+                    value: z.string(),
+                    title: z.string(),
                 }),
-            ])
-            .optional(),
+            ),
+            // elementType: date
+            z.object({
+                from: z.string(),
+                to: z.string(),
+            }),
+        ]),
     }),
 );
 
@@ -113,6 +112,8 @@ const controlSourceExternalSchema = z.object({
 // Control definition
 const controlSchema = z
     .object({
+        id: z.string().min(1),
+        namespace: z.literal(DASH_DEFAULT_NAMESPACE),
         title: z.string().min(1),
         sourceType: z.enum(DashTabItemControlSourceType),
     })
@@ -163,10 +164,10 @@ const groupControlItemsSchema = z
 // Group control definition
 const groupControlSchema = z.object({
     group: z.array(groupControlItemsSchema),
-    autoHeight: z.boolean().optional(),
-    buttonApply: z.boolean().optional(),
-    buttonReset: z.boolean().optional(),
-    showGroupName: z.boolean().optional(),
+    autoHeight: z.boolean(),
+    buttonApply: z.boolean(),
+    buttonReset: z.boolean(),
+    showGroupName: z.boolean(),
     updateControlsOnChange: z.boolean().optional(),
 });
 
@@ -216,6 +217,7 @@ const tabItemSchema = z
             z.object({
                 type: z.literal(DashTabItemType.GroupControl),
                 data: groupControlSchema,
+                defaults: z.record(z.any(), z.union([z.string(), z.array(z.string())])),
             }),
         ]),
     );
@@ -241,31 +243,25 @@ const tabSchema = z
 
 // Settings definition
 const settingsSchema = z.object({
-    autoupdateInterval: z.union([z.number().min(30), z.string(), z.null()]).optional(),
-    maxConcurrentRequests: z.union([z.number().min(1), z.null()]).optional(),
+    autoupdateInterval: z.union([z.number().min(30), z.null()]),
+    maxConcurrentRequests: z.union([z.number().min(1), z.null()]),
     loadPriority: z.enum(DashLoadPriority).optional(),
-    silentLoading: z.boolean().optional(),
-    dependentSelectors: z.boolean().optional(),
+    silentLoading: z.boolean(),
+    dependentSelectors: z.boolean(),
     globalParams: z.record(z.any(), z.any()).optional(),
-    hideTabs: z.boolean().optional(),
+    hideTabs: z.boolean(),
     hideDashTitle: z.boolean().optional(),
-    expandTOC: z.boolean().optional(),
+    expandTOC: z.boolean(),
     assistantEnabled: z.boolean().optional(),
 });
 
 // Data definition
-const dataSchema = z.object({
-    counter: z.number().int().min(1).optional(),
-    salt: z.string().min(1).optional(),
-    schemeVersion: z
-        .number()
-        .int()
-        .min(1)
-        .max(DASH_CURRENT_SCHEME_VERSION)
-        .default(DASH_CURRENT_SCHEME_VERSION)
-        .optional(),
+export const dataSchema = z.object({
+    counter: z.number().int().min(1),
+    salt: z.string().min(1),
+    schemeVersion: z.number().int().min(1).max(DASH_CURRENT_SCHEME_VERSION), // !? HOW TO SET VERSION PROPERLY !?
     tabs: z.array(tabSchema),
-    settings: settingsSchema.optional(),
+    settings: settingsSchema,
     supportDescription: z.string().optional(),
     accessDescription: z.string().optional(),
 });

@@ -247,7 +247,7 @@ export const dashActions = {
 
             return (await Dash.update(
                 entryId,
-                args as any,
+                args,
                 headers,
                 ctx,
                 I18n,
@@ -263,12 +263,7 @@ export const dashActions = {
         async (_, args, {headers, ctx}) => {
             const I18n = ctx.get('i18n');
 
-            return (await Dash.create(
-                args as any,
-                headers,
-                ctx,
-                I18n,
-            )) as unknown as CreateDashResponse;
+            return (await Dash.create(args, headers, ctx, I18n)) as unknown as CreateDashResponse;
         },
     ),
 

@@ -1,7 +1,7 @@
 import z from 'zod/v4';
 
-import {EntryScope} from '../../..';
-import {dashSchema} from '../../../zod-schemas/dash';
+import {EntryScope, EntryUpdateMode} from '../../..';
+import {dashSchema, dataSchema} from '../../../zod-schemas/dash';
 
 export const deleteDashArgsSchema = z.object({
     dashboardId: z.string(),
@@ -31,17 +31,26 @@ const dashUsSchema = z.object({
 });
 
 export const updateDashArgsSchema = z.object({
-    ...dashSchema.partial().shape,
+    key: z.string().min(1),
+    workbookId: z.string().optional(),
+    data: dataSchema,
+    meta: z.record(z.any(), z.any()),
+    links: z.record(z.string(), z.string()),
     entryId: z.string(),
+    revId: z.string(),
+    mode: z.enum(EntryUpdateMode),
 });
 
 export const updateDashResultSchema = dashUsSchema;
 
 export const createDashArgsSchema = z.object({
-    ...dashSchema.shape,
-    workbookId: z.union([z.null(), z.string()]).optional(),
+    key: z.string().min(1),
+    data: dataSchema,
+    meta: z.record(z.any(), z.any()).optional(),
+    links: z.record(z.string(), z.string()).optional(),
+    workbookId: z.string().optional(),
     lockToken: z.string().optional(),
-    mode: z.literal(['publish', 'save']),
+    mode: z.enum(EntryUpdateMode),
 });
 
 export const createDashResultSchema = dashUsSchema;
