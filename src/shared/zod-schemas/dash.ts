@@ -259,7 +259,7 @@ const settingsSchema = z.object({
 export const dataSchema = z.object({
     counter: z.number().int().min(1),
     salt: z.string().min(1),
-    schemeVersion: z.number().int().min(1).max(DASH_CURRENT_SCHEME_VERSION), // !? HOW TO SET VERSION PROPERLY !?
+    schemeVersion: z.literal(DASH_CURRENT_SCHEME_VERSION).default(DASH_CURRENT_SCHEME_VERSION),
     tabs: z.array(tabSchema),
     settings: settingsSchema,
     supportDescription: z.string().optional(),
