@@ -47,7 +47,7 @@ describe('prepareBarYData', () => {
                 totals: [],
             },
         });
-        expect(result.categories).toEqual([11, 222]);
+        expect(result.categories).toEqual(['11', '222']);
     });
 
     test('X is empty, Y has datetime field -> categories_ms contains values from the Y field', () => {

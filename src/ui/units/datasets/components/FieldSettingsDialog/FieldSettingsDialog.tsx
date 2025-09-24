@@ -5,11 +5,10 @@ import {BucketPaint} from '@gravity-ui/icons';
 import {Button, Dialog, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import type {DatasetField} from 'shared';
+import type {DatasetField, FieldUISettings} from 'shared';
 import {isNumberField} from 'shared';
+import {getFieldUISettings, isFieldWithDisplaySettings} from 'shared/utils';
 import {NumberFormatSettings} from 'ui/components/NumberFormatSettings/NumberFormatSettings';
-
-import {isFieldWithDisplaySettings} from '../DatasetTable/utils';
 
 import './FieldSettingsDialog.scss';
 
@@ -21,31 +20,56 @@ type Props = {
     open: boolean;
     field: DatasetField | null;
     onClose: () => void;
+    onSave: (value: DatasetField | null) => void;
 };
 
 export const FieldSettingsDialog = (props: Props) => {
-    const {open, field, onClose} = props;
+    const {open, field, onClose, onSave} = props;
     const hasDisplaySettings = field && isFieldWithDisplaySettings({field});
+
+    const fieldUiSettings = React.useMemo<FieldUISettings>(() => {
+        if (field) {
+            return getFieldUISettings({field}) ?? {};
+        }
+
+        return {};
+    }, [field]);
+
+    const [numberFormatting, setNumberFormatting] = React.useState(
+        fieldUiSettings?.numberFormatting ?? {},
+    );
+
+    React.useEffect(() => {
+        if (open) {
+            setNumberFormatting(fieldUiSettings?.numberFormatting ?? {});
+        }
+    }, [open, fieldUiSettings]);
 
     const handleReset = () => {};
 
     const handleSave = () => {
-        onClose();
+        if (field) {
+            onSave({
+                ...field,
+                ui_settings: JSON.stringify({
+                    numberFormatting,
+                }),
+            });
+        }
     };
 
     const handleCancel = () => {
         onClose();
     };
 
-    const handleChangeFieldFormatting = () => {};
-
     const renderFormattingSection = () => {
         if (field && isNumberField(field)) {
             return (
                 <NumberFormatSettings
                     dataType={field.data_type}
-                    onChange={handleChangeFieldFormatting}
+                    onChange={setNumberFormatting}
                     rowClassName={b('row')}
+                    formatting={numberFormatting}
                 />
             );
         }

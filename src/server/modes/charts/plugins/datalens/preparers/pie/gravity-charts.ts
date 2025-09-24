@@ -56,7 +56,7 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
                     return {
                         ...item,
                         value: item.y,
-                        color: String(item.color),
+                        color: item.color,
                         formattedValue: getFormattedValue(String(item.y), {
                             ...measure,
                             data_type: idToDataType[measure.guid],

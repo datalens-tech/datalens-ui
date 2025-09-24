@@ -101,8 +101,6 @@ export enum Feature {
     EnableDatasetDescription = 'EnableDatasetDescription',
     /** Show connection description button */
     EnableConnectionDescription = 'EnableConnectionDescription',
-    /** Enables getting info about forbidden export from dataset/connection info endpoints  */
-    EnableBackendExportInfo = 'EnableBackendExportInfo',
 }
 
 export type FeatureConfig = Record<string, boolean>;

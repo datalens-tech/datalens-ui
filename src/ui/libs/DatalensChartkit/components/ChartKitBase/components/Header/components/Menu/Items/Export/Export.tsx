@@ -142,27 +142,8 @@ const getSubItems = ({
     return submenuItems;
 };
 
-export function isExportItemDisabled({extraOptions}: {extraOptions?: Record<string, unknown>}) {
-    const isBackendExportInfoFeatureEnabled = isEnabledFeature(Feature.EnableBackendExportInfo);
-
+export function isExportItemDisabled() {
     return ({loadedData}: MenuItemArgs) => {
-        if (!isBackendExportInfoFeatureEnabled) {
-            const exportForbiddenResult =
-                extraOptions &&
-                'exportForbiddenResult' in extraOptions &&
-                extraOptions.exportForbiddenResult;
-
-            const isExportDisabled =
-                loadedData?.extra.dataExportForbidden || Boolean(exportForbiddenResult);
-
-            let disabledReason = i18n('label_data-export-forbidden');
-            if (isExportDisabled && typeof exportForbiddenResult === 'string') {
-                disabledReason = exportForbiddenResult;
-            }
-
-            return isExportDisabled ? disabledReason : false;
-        }
-
         const forbiddenExportFromExtra = loadedData?.extra.dataExportForbidden
             ? i18n('label_data-export-forbidden')
             : false;
@@ -191,7 +172,6 @@ export const getExportItem = ({
     showScreenshot,
     chartsDataProvider,
     customConfig,
-    extraOptions,
 }: {
     showWiki?: boolean;
     showScreenshot?: boolean;
@@ -215,7 +195,7 @@ export const getExportItem = ({
     }),
     isDisabled: (args) => {
         const customIsDisabled = customConfig?.isDisabled?.(args) ?? false;
-        return customIsDisabled || isExportItemDisabled({extraOptions})(args);
+        return customIsDisabled || isExportItemDisabled()(args);
     },
     isVisible: ({loadedData, error}: MenuItemArgs) => {
         const isScreenshotVisible = loadedData?.data && showScreenshot;

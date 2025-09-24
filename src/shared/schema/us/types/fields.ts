@@ -95,12 +95,14 @@ export interface EntryRelationFields {
     isLocked: boolean;
 }
 
+export interface TenantSettings {
+    defaultColorPaletteId?: string;
+}
+
 export interface TenantFields {
     tenantId: string;
     createdAt: string;
     enabled: boolean;
     deleting: boolean;
-    settings: {
-        defaultColorPaletteId?: string;
-    };
+    settings: TenantSettings;
 }
