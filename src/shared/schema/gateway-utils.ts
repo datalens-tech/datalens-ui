@@ -13,15 +13,23 @@ export function createAction<TOutput, TParams = undefined, TTransformed = TOutpu
     return config;
 }
 
-export function createTypedAction<TOutputSchema extends z.ZodType, TParamsSchema extends z.ZodType>(
-    _: {paramsSchema: TParamsSchema; resultSchema: TOutputSchema},
+export function createTypedAction<
+    TOutputSchema extends z.ZodType,
+    TParamsSchema extends z.ZodType,
+    TTransformedSchema extends z.ZodType = TOutputSchema,
+>(
+    _: {
+        paramsSchema: TParamsSchema;
+        resultSchema: TOutputSchema;
+        transformedSchema?: TTransformedSchema;
+    },
     actionConfig: ApiServiceActionConfig<
         AppContext,
         Request,
         Response,
         z.infer<TOutputSchema>,
         z.infer<TParamsSchema>,
-        z.infer<TOutputSchema>
+        z.infer<TTransformedSchema>
     >,
 ) {
     return actionConfig;
