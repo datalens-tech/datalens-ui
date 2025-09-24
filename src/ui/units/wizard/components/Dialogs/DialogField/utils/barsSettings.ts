@@ -7,7 +7,6 @@ import {
     isMeasureType,
     isNumberField,
 } from 'shared';
-import {getTenantDefaultColorPaletteId} from 'ui/constants/common';
 
 const PLACEHOLDERS_WITH_BARS_SETTINGS: Record<string, Record<string, boolean>> = {
     [WizardVisualizationId.FlatTable]: {
@@ -23,7 +22,7 @@ export const getDefaultBarsSettings = (): TableBarsSettings => ({
     colorSettings: {
         colorType: BarsColorType.TwoColor,
         settings: {
-            palette: getTenantDefaultColorPaletteId(),
+            palette: undefined,
             positiveColorIndex: 2,
             negativeColorIndex: 1,
         },

@@ -2,7 +2,7 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {useSelector} from 'react-redux';
-import type {WorkbookId} from 'shared';
+import {type WorkbookId} from 'shared';
 import {registry} from 'ui/registry';
 
 import {schemaLoadingSelector, uiSchemaSelector} from '../../store';

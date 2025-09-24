@@ -433,7 +433,7 @@ export function getCategoryFormatter(args: {
         return (value: unknown) => wrapHtml(String(value));
     }
 
-    return (value: string | number) => value;
+    return (value: string | number) => String(value);
 }
 
 export function getSeriesTitleFormatter(args: {fields: (ServerField | undefined)[]}) {

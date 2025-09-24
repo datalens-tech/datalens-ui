@@ -45,6 +45,7 @@
   "label_column-field-id": "ID поля",
   "label_data-preparation-preview": "Загрузка данных для предпросмотра",
   "label_dataset-auto-creation-process": "Создаём датасет",
+  "label_dataset-info": "Информация о датасете",
   "label_display-fields-id": "Отображать ID полей",
   "label_display-hidden-fields": "Отображать скрытые поля",
   "label_enable-templating": "Включить параметризацию",
