@@ -48,7 +48,6 @@ export interface LandingPageSettings extends LandingLayoutPageError {
 }
 
 export interface DLUserSettings {
-    userPrompt?: string;
     email?: string;
     emailConfirmed?: boolean;
     phone?: string;
