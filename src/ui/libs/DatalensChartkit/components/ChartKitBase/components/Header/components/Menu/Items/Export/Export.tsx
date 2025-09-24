@@ -3,6 +3,8 @@ import React from 'react';
 import {ArrowDownToLine, Picture} from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
+import flatMap from 'lodash/flatMap';
+import uniq from 'lodash/uniq';
 import type {ExportFormatsType} from 'shared';
 import {EXPORT_FORMATS, Feature, MenuItemsIds} from 'shared';
 import {URL_OPTIONS} from 'ui/constants/common';
@@ -140,22 +142,28 @@ const getSubItems = ({
     return submenuItems;
 };
 
-export function isExportItemDisabled({extraOptions}: {extraOptions?: Record<string, unknown>}) {
+export function isExportItemDisabled() {
     return ({loadedData}: MenuItemArgs) => {
-        const exportForbiddenResult =
-            extraOptions &&
-            'exportForbiddenResult' in extraOptions &&
-            extraOptions.exportForbiddenResult;
+        const forbiddenExportFromExtra = loadedData?.extra.dataExportForbidden
+            ? i18n('label_data-export-forbidden')
+            : false;
+        const dataExports = loadedData?.dataExport
+            ? Object.values(loadedData.dataExport).filter(Boolean)
+            : [];
 
-        const isExportDisabled =
-            loadedData?.extra.dataExportForbidden || Boolean(exportForbiddenResult);
+        if (dataExports.length > 0) {
+            if (dataExports.every((exp) => !exp || exp.basic.allowed)) {
+                return forbiddenExportFromExtra;
+            }
 
-        let disabledReason = i18n('label_data-export-forbidden');
-        if (isExportDisabled && typeof exportForbiddenResult === 'string') {
-            disabledReason = exportForbiddenResult;
+            const uniqDisableReasons = uniq(flatMap(dataExports, (exp) => exp?.basic.reason || []));
+            const reason = uniqDisableReasons[0]
+                ? i18n(`label_export-forbidden.${uniqDisableReasons[0]}`)
+                : undefined;
+
+            return reason ?? i18n('label_data-export-forbidden');
         }
-
-        return isExportDisabled ? disabledReason : false;
+        return forbiddenExportFromExtra;
     };
 }
 
@@ -164,7 +172,6 @@ export const getExportItem = ({
     showScreenshot,
     chartsDataProvider,
     customConfig,
-    extraOptions,
 }: {
     showWiki?: boolean;
     showScreenshot?: boolean;
@@ -188,7 +195,7 @@ export const getExportItem = ({
     }),
     isDisabled: (args) => {
         const customIsDisabled = customConfig?.isDisabled?.(args) ?? false;
-        return customIsDisabled || isExportItemDisabled({extraOptions})(args);
+        return customIsDisabled || isExportItemDisabled()(args);
     },
     isVisible: ({loadedData, error}: MenuItemArgs) => {
         const isScreenshotVisible = loadedData?.data && showScreenshot;

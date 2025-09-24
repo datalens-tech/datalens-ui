@@ -54,7 +54,6 @@ export const getWizardChartBuilder = async (
     const defaultColorPaletteId = getDefaultColorPaletteId({
         ctx: app.nodekit.ctx,
         tenantSettings,
-        palettes,
     });
 
     // Nothing happens here - just for compatibility with the editor
@@ -120,6 +119,7 @@ export const getWizardChartBuilder = async (
                     widgetConfig,
                     userLang,
                     palettes,
+                    features,
                 })
                 .timeout(timeouts.sources || ONE_SECOND);
 

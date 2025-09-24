@@ -4,7 +4,7 @@ import {createFeatureConfig} from '../utils';
 export default createFeatureConfig({
     name: Feature.NewDefaultPalette,
     state: {
-        development: false,
-        production: false,
+        development: true,
+        production: true,
     },
 });
