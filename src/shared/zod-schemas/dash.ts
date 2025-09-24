@@ -274,8 +274,3 @@ export const dashSchema = z.object({
     meta: z.record(z.any(), z.any()).optional(),
     links: z.record(z.string(), z.string()).optional(),
 });
-
-export const dashApiValidationJsonSchema = z.toJSONSchema(dashSchema);
-
-// Export the type for TypeScript usage
-export type DashSchema = z.infer<typeof dashSchema>;
