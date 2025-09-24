@@ -30,6 +30,7 @@ export enum FieldKey {
     Username = 'username',
     Warehouse = 'warehouse',
     WorkbookId = 'workbook_id',
+    Description = 'description',
 }
 
 export enum InnerFieldKey {
