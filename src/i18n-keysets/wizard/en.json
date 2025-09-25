@@ -288,6 +288,7 @@
   "label_type": "Type",
   "label_type-preaggregated": "Type (before aggregation)",
   "label_use-previous": "Use previous",
+  "label_using-formula-warning": "Formula has been added to this field",
   "label_value": "Value",
   "label_vertical": "Vertical",
   "label_violet": "Violet (shades)",
