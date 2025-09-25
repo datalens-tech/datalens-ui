@@ -15,3 +15,4 @@ export * from './os';
 export * from './date';
 export * from './markdown';
 export * from './markup';
+export * from './palettes';

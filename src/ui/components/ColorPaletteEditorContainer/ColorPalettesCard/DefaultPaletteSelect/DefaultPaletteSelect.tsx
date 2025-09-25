@@ -1,14 +1,13 @@
 import React from 'react';
 
-import {Flex, Loader, Select, Text, spacing} from '@gravity-ui/uikit';
+import {Flex, Loader, Text, spacing} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import type {ColorPalette} from 'shared';
-import {SelectOptionWithIcon} from 'ui/components/SelectComponents';
+import {ColorPaletteSelect} from 'ui/components/ColorPaletteSelect/ColorPaletteSelect';
 import {getAvailableClientPalettesMap} from 'ui/constants/common';
 import {showToast} from 'ui/store/actions/toaster';
-import {getPaletteSelectorItems} from 'ui/units/wizard/utils/palette';
 
 import {getSdk} from '../../../../libs/schematic-sdk';
 
@@ -27,11 +26,6 @@ export const DefaultPaletteSelect = ({colorPalettes, disabled}: DefaultPaletteSe
     const dispatch = useDispatch();
 
     const [isLoading, setIsLoading] = React.useState(false);
-
-    const defaultPaletteOptions = React.useMemo(
-        () => getPaletteSelectorItems({colorPalettes}),
-        [colorPalettes],
-    );
 
     const getDefaultColorPaletteValue = React.useCallback(() => {
         const allPalettes = [
@@ -101,19 +95,12 @@ export const DefaultPaletteSelect = ({colorPalettes, disabled}: DefaultPaletteSe
         >
             <Text className={spacing({mb: 0.5})}>{i18n('label_default-palette')}</Text>
             <Flex gap={2} className={b('row')}>
-                <Select
-                    options={defaultPaletteOptions}
+                <ColorPaletteSelect
+                    colorPalettes={colorPalettes}
                     onUpdate={handleDefaultPaletteUpdate}
-                    value={[defaultColorPaletteId]}
-                    renderSelectedOption={(option) => {
-                        return <SelectOptionWithIcon option={option} />;
-                    }}
-                    renderOption={(option) => {
-                        return <SelectOptionWithIcon option={option} />;
-                    }}
-                    popupClassName={b('select-popup')}
-                    className={b('select')}
+                    value={defaultColorPaletteId}
                     disabled={isLoading || disabled}
+                    className={b('select')}
                 />
                 {isLoading && <Loader size="s" />}
             </Flex>

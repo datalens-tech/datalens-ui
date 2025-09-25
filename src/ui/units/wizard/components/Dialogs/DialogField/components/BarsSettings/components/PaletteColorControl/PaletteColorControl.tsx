@@ -7,7 +7,7 @@ import type {ColorPalette} from 'shared';
 import {MinifiedPalette} from 'ui/units/wizard/components/MinifiedPalette/MinifiedPalette';
 import {getPaletteColors, isValidHexColor} from 'ui/utils';
 
-import {PaletteItem} from '../../../../../../Palette/components/PaletteItem/PaletteItem';
+import {PaletteItem} from '../../../../../../../../../components/PaletteItem/PaletteItem';
 
 import './PaletteColorControl.scss';
 
