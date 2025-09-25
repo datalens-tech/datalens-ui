@@ -334,7 +334,10 @@ export function saveDataset({
                 payload: {},
             });
 
-            const {entryContent, dataset: {id, content: dataset} = {}} = getState();
+            const {
+                entryContent,
+                dataset: {id, content: dataset},
+            } = getState();
             let datasetId = id;
 
             if (isCreationProcess) {

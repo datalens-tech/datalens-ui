@@ -269,6 +269,7 @@ const datasetBodySchema = z.object({
     load_preview_by_default: z.boolean(),
     template_enabled: z.boolean(),
     data_export_forbidden: z.boolean().optional(),
+    description: z.string().optional(),
 });
 
 // Main Dataset schema
