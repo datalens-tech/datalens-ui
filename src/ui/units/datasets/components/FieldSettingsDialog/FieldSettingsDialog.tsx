@@ -2,7 +2,7 @@ import React from 'react';
 
 import {FormRow} from '@gravity-ui/components';
 import {BucketPaint} from '@gravity-ui/icons';
-import {Button, Dialog, Icon} from '@gravity-ui/uikit';
+import {Button, Dialog, Icon, Link} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
@@ -134,9 +134,18 @@ export const FieldSettingsDialog = (props: Props) => {
                             {Boolean(otherColors.length) && (
                                 <div className={b('field-color-row')} key="other">
                                     <div>
-                                        {i18n('label_field-other-colors', {
-                                            count: otherColors.length,
-                                        })}
+                                        <Link
+                                            view="secondary"
+                                            href={''}
+                                            onClick={(event) => {
+                                                event.preventDefault();
+                                                setColorDialogOpened(true);
+                                            }}
+                                        >
+                                            {i18n('label_field-other-colors', {
+                                                count: otherColors.length,
+                                            })}
+                                        </Link>
                                     </div>
                                 </div>
                             )}

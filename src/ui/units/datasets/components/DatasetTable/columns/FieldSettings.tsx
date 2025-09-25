@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {Brush} from '@gravity-ui/icons';
-import type {Column} from '@gravity-ui/react-data-table';
+import type {Column, SortedDataItem} from '@gravity-ui/react-data-table';
 import DataTable from '@gravity-ui/react-data-table';
 import {ActionTooltip, Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
@@ -16,12 +16,19 @@ type GetHiddenColumnArgs = {
     onUpdate: (row: DatasetField) => void;
 };
 
+const sortAscending = (row1: SortedDataItem<DatasetField>, row2: SortedDataItem<DatasetField>) => {
+    const value1 = isFieldWithDisplaySettings({field: row1.row});
+    const value2 = isFieldWithDisplaySettings({field: row2.row});
+    return Number(value1) - Number(value2);
+};
+
 export const getFieldSettingsColumn = ({onUpdate}: GetHiddenColumnArgs): Column<DatasetField> => ({
     name: 'field-settings',
     className: b('column'),
     align: DataTable.CENTER,
     width: 70,
     sortable: true,
+    sortAscending: sortAscending,
     header: <Icon className={b('header-icon')} data={Brush} width="24" />,
     render: function FieldSettingsColumnItem({index, row}) {
         if (!isDisplaySettingsAvailable({field: row})) {
