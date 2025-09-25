@@ -8,6 +8,7 @@ import type {DatasetField, DatasetFieldColorConfig} from 'shared';
 import {
     TIMEOUT_90_SEC,
     getFieldDistinctValues,
+    getFieldUISettings,
     getFieldsApiV2RequestSection,
     getParametersApiV2RequestSection,
 } from 'shared';
@@ -47,7 +48,11 @@ export const ColorsDialog = (props: Props) => {
     const [selectedValue, setSelectedValue] = React.useState<string | undefined>();
     const [isLoading, setLoading] = React.useState(true);
     const [error, setError] = React.useState(null);
-    const [mountedColors, setMountedColors] = React.useState<Record<string, string>>({});
+
+    const fieldUiSettings = React.useMemo(() => getFieldUISettings({field}), [field]);
+    const [mountedColors, setMountedColors] = React.useState<Record<string, string>>(
+        fieldUiSettings?.colors ?? {},
+    );
 
     const dispatch = useDispatch();
     const colorPalettes = useSelector(selectColorPalettesDict);
@@ -58,7 +63,9 @@ export const ColorsDialog = (props: Props) => {
     }, [colorPalettes.length, dispatch]);
 
     const defaultPaletteId = getTenantDefaultColorPaletteId();
-    const [selectedPaletteId, setSelectedPalette] = React.useState(defaultPaletteId);
+    const [selectedPaletteId, setSelectedPalette] = React.useState(
+        fieldUiSettings?.palette ?? defaultPaletteId,
+    );
 
     const colorsList: string[] = getPaletteColors(selectedPaletteId, Object.values(colorPalettes));
 
@@ -67,6 +74,13 @@ export const ColorsDialog = (props: Props) => {
             setSelectedValue(values[0]);
         }
     }, [values]);
+
+    React.useEffect(() => {
+        if (open) {
+            setMountedColors(fieldUiSettings?.colors ?? {});
+            setSelectedPalette(fieldUiSettings?.palette ?? defaultPaletteId);
+        }
+    }, [defaultPaletteId, fieldUiSettings?.colors, fieldUiSettings?.palette, open]);
 
     const loadValues = React.useCallback(async () => {
         getSdk().cancelRequest('getDistincts');
@@ -119,7 +133,10 @@ export const ColorsDialog = (props: Props) => {
         onClose();
     };
 
-    const handleReset = () => {};
+    const handleReset = () => {
+        setSelectedPalette(defaultPaletteId);
+        setMountedColors({});
+    };
 
     const renderValueItem = (value: string) => {
         const mountedColorIndex = mountedColors[value];
@@ -171,7 +188,6 @@ export const ColorsDialog = (props: Props) => {
                                 ),
                                 value: String(index),
                             }))}
-                            disabled={false}
                             onUpdate={handleSelectColor}
                         />
                     </div>

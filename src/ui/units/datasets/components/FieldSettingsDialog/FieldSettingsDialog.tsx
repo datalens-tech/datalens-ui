@@ -12,7 +12,7 @@ import type {
     DatasetFieldColorConfig,
     FieldUISettings,
 } from 'shared';
-import {isNumberField} from 'shared';
+import {isDimensionField, isNumberField} from 'shared';
 import {getFieldUISettings, isFieldWithDisplaySettings} from 'shared/utils';
 import {NumberFormatSettings} from 'ui/components/NumberFormatSettings/NumberFormatSettings';
 import {fetchColorPalettes} from 'ui/store/actions/colorPaletteEditor';
@@ -74,7 +74,9 @@ export const FieldSettingsDialog = (props: Props) => {
         });
     }, [colorPalettes, uiSettings.colors, uiSettings.palette]);
 
-    const handleReset = () => {};
+    const handleReset = () => {
+        setUISettings({});
+    };
 
     const handleSave = () => {
         if (field) {
@@ -105,6 +107,57 @@ export const FieldSettingsDialog = (props: Props) => {
         });
     };
 
+    const renderColorsSection = () => {
+        const canColorizeFieldValue = isDimensionField(field);
+
+        if (canColorizeFieldValue) {
+            const selectedColors = fieldColors.slice(0, 2);
+            const otherColors = fieldColors.slice(2);
+
+            return (
+                <FormRow className={b('row')} label={i18n('label_colors')}>
+                    <Button onClick={() => setColorDialogOpened(true)}>
+                        <Icon data={BucketPaint} width="16" height="16" />
+                        {i18n('button_colors')}
+                    </Button>
+                    {Boolean(selectedColors.length) && (
+                        <div className={b('field-colors')}>
+                            {selectedColors.map((item) => (
+                                <div className={b('field-color-row')} key={item.value}>
+                                    <div
+                                        className={b('field-color-icon')}
+                                        style={{backgroundColor: item.color}}
+                                    ></div>
+                                    <div>{item.value}</div>
+                                </div>
+                            ))}
+                            {Boolean(otherColors.length) && (
+                                <div className={b('field-color-row')} key="other">
+                                    <div>
+                                        {i18n('label_field-other-colors', {
+                                            count: otherColors.length,
+                                        })}
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                    )}
+                    <ColorsDialog
+                        field={field}
+                        datasetId={datasetId}
+                        workbookId={workbookId}
+                        open={colorDialogOpened}
+                        parameters={parameters}
+                        onClose={() => setColorDialogOpened(false)}
+                        onApply={handleApplyColors}
+                    />
+                </FormRow>
+            );
+        }
+
+        return null;
+    };
+
     const renderFormattingSection = () => {
         if (field && isNumberField(field)) {
             return (
@@ -124,34 +177,7 @@ export const FieldSettingsDialog = (props: Props) => {
         <Dialog onClose={onClose} open={open} className={b()} disableHeightTransition={true}>
             <Dialog.Header caption={i18n('label_title')} />
             <Dialog.Body>
-                <FormRow className={b('row')} label={i18n('label_colors')}>
-                    <Button onClick={() => setColorDialogOpened(true)}>
-                        <Icon data={BucketPaint} width="16" height="16" />
-                        {i18n('button_colors')}
-                    </Button>
-                    {Boolean(fieldColors.length) && (
-                        <div className={b('field-colors')}>
-                            {fieldColors.map((item) => (
-                                <div className={b('field-color-row')} key={item.value}>
-                                    <div
-                                        className={b('field-color-icon')}
-                                        style={{backgroundColor: item.color}}
-                                    ></div>
-                                    <div>{item.value}</div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                    <ColorsDialog
-                        field={field}
-                        datasetId={datasetId}
-                        workbookId={workbookId}
-                        open={colorDialogOpened}
-                        parameters={parameters}
-                        onClose={() => setColorDialogOpened(false)}
-                        onApply={handleApplyColors}
-                    />
-                </FormRow>
+                {renderColorsSection()}
                 {renderFormattingSection()}
             </Dialog.Body>
             <Dialog.Footer>

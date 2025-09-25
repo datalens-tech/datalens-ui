@@ -7,7 +7,7 @@ import {ActionTooltip, Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import type {DatasetField} from 'shared';
-import {isFieldWithDisplaySettings} from 'shared/utils';
+import {isDisplaySettingsAvailable, isFieldWithDisplaySettings} from 'shared/utils';
 
 const b = block('dataset-table');
 const i18n = I18n.keyset('dataset.dataset-editor.modify');
@@ -24,6 +24,10 @@ export const getFieldSettingsColumn = ({onUpdate}: GetHiddenColumnArgs): Column<
     sortable: true,
     header: <Icon className={b('header-icon')} data={Brush} width="24" />,
     render: function FieldSettingsColumnItem({index, row}) {
+        if (!isDisplaySettingsAvailable({field: row})) {
+            return null;
+        }
+
         const fieldHasSettings = isFieldWithDisplaySettings({field: row});
         const tooltipText = i18n('text_no-field-settings');
 
