@@ -69,7 +69,7 @@ class SortPlaceholder extends React.Component<Props> {
                 iconProps={{
                     data: BarsDescendingAlignLeft,
                 }}
-                items={multipleDatasets ? [] : items}
+                items={items}
                 capacity={SORT_CAPACITY}
                 capacityError={sortCapacityError}
                 checkAllowed={this.checkAllowedSort}
@@ -79,10 +79,9 @@ class SortPlaceholder extends React.Component<Props> {
                 disabled={Boolean(datasetError) || multipleDatasets}
                 onBeforeRemoveItem={onBeforeRemoveItem}
                 onAfterUpdate={this.props.onUpdate}
-                placeholderTooltipText={
+                addFieldDisableText={
                     multipleDatasets ? i18n('wizard', 'tooltip_sort_unavailable') : undefined
                 }
-                disableAddField={multipleDatasets}
             />
         );
     }
