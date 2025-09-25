@@ -1384,6 +1384,7 @@ export const createFieldFromVisualization = ({
             fieldNext.avatar_id = field.avatar_id;
         }
 
+        // CHECK
         if (field.grouping && field.grouping !== 'none') {
             const [operation, mode] = field.grouping.split('-');
 
@@ -1413,7 +1414,11 @@ export const createFieldFromVisualization = ({
                 argument = `DATE(${argument})`;
             }
 
-            field.formula = `${functionName}(${argument}, "${mode}")`;
+            //const formulaByGrouping = `${functionName}(${argument}, "${mode}")`;
+            if (!field.formula) {
+                field.formula = `${functionName}(${argument}, "${mode}")`;
+            }
+
             field.fakeTitle = field.fakeTitle || field.title;
 
             fieldNext.grouping = field.grouping;

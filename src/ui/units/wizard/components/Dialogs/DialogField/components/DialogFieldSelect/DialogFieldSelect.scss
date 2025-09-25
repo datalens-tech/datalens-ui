@@ -4,4 +4,14 @@
     &__popup {
         @include dl-select-popup;
     }
+
+    &__warning-popover-text {
+        padding: var(--g-spacing-2);
+    }
+
+    &__warning-icon {
+        color: var(--g-color-base-warning-heavy);
+        margin-left: var(--g-spacing-2);
+        vertical-align: middle;
+    }
 }
