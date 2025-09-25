@@ -1384,7 +1384,7 @@ export const createFieldFromVisualization = ({
             fieldNext.avatar_id = field.avatar_id;
         }
 
-        if (field.grouping && field.grouping !== 'none') {
+        if (field.grouping && field.grouping !== 'none' && quickFormula) {
             const [operation, mode] = field.grouping.split('-');
 
             let functionName;
