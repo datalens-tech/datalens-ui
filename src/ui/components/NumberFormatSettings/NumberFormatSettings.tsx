@@ -34,7 +34,7 @@ function setDefaultFormatting(data: Props) {
             unit: null,
             // so you can rewrite the values with explicit undefined, but we believe that there will be no such situation, therefore as
         },
-        data.formatting as CommonNumberFormattingOptions,
+        data.formatting,
     );
 
     if (data.dataType === DATASET_FIELD_TYPES.FLOAT || data.isAxisFormatting) {

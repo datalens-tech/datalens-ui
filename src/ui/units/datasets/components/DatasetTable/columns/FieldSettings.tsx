@@ -7,8 +7,7 @@ import {ActionTooltip, Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import type {DatasetField} from 'shared';
-
-import {isFieldWithDisplaySettings} from '../utils';
+import {isFieldWithDisplaySettings} from 'shared/utils';
 
 const b = block('dataset-table');
 const i18n = I18n.keyset('dataset.dataset-editor.modify');

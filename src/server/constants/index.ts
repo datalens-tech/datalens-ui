@@ -67,7 +67,11 @@ export const selectServerPalette = (args: {
         }
     }
 
-    return availablePalettes[defaultColorPaletteId]?.scheme ?? [];
+    if (customColorPalettes?.[defaultColorPaletteId]) {
+        return customColorPalettes[defaultColorPaletteId].colors;
+    }
+
+    return availablePalettes?.[defaultColorPaletteId]?.scheme ?? [];
 };
 
 const SERVICE_NAME_DATALENS = 'DataLens';

@@ -20,6 +20,7 @@ import type {
 import {getBaseChartConfig} from '../../gravity-charts/utils';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
+import {isGradientMode} from '../../utils/misc-helpers';
 import {getAxisType} from '../helpers/axis';
 import type {PrepareFunctionArgs} from '../types';
 
@@ -53,6 +54,7 @@ function mapScatterSeries(args: MapScatterSeriesArgs): ScatterSeries<PointCustom
                         sLabel: point.sLabel,
                         sizeLabel: point.sizeLabel,
                     },
+                    color: typeof point.color === 'string' ? point.color : undefined,
                 };
 
                 if (xAxisType === 'category') {
@@ -81,7 +83,7 @@ function mapScatterSeries(args: MapScatterSeriesArgs): ScatterSeries<PointCustom
 }
 
 export function prepareD3Scatter(args: PrepareFunctionArgs): ChartData<PointCustomData> {
-    const {shared, idToDataType, placeholders, colors, shapes} = args;
+    const {shared, idToDataType, placeholders, colors, colorsConfig, shapes} = args;
     const {categories: preparedXCategories, graphs, x, y, z, color, size} = prepareScatter(args);
     const xCategories = (preparedXCategories || []).map(String);
 
@@ -155,6 +157,28 @@ export function prepareD3Scatter(args: PrepareFunctionArgs): ChartData<PointCust
         }
     }
 
+    const colorFieldDataType = color ? idToDataType[color.guid] : null;
+    const gradientMode =
+        color &&
+        colorFieldDataType &&
+        isGradientMode({colorField: color, colorFieldDataType, colorsConfig});
+
+    let legend: ChartData['legend'] = {};
+
+    if (graphs.length && gradientMode) {
+        legend = {
+            enabled: true,
+            type: 'continuous',
+            title: {text: getFakeTitleOrTitle(color), style: {fontWeight: '500'}},
+            colorScale: {
+                colors: colorsConfig.gradientColors,
+                stops: colorsConfig.gradientColors.length === 2 ? [0, 1] : [0, 0.5, 1],
+            },
+        };
+    } else if (graphs.length <= 1) {
+        legend.enabled = false;
+    }
+
     const config: ChartData = {
         xAxis,
         series: {
@@ -163,11 +187,8 @@ export function prepareD3Scatter(args: PrepareFunctionArgs): ChartData<PointCust
                 custom: seriesCustomData,
             })),
         },
+        legend,
     };
-
-    if (config.series.data.length <= 1) {
-        config.legend = {enabled: false};
-    }
 
     return merge(getBaseChartConfig(shared), config);
 }

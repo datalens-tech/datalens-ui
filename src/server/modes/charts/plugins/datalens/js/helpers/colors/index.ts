@@ -23,6 +23,7 @@ export const getChartColorsConfig = ({
     const fallbackColors = selectServerPalette({
         palette: colorsConfig.palette,
         availablePalettes,
+        customColorPalettes: loadedColorPalettes,
         defaultColorPaletteId,
     });
 

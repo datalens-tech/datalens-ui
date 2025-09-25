@@ -1,5 +1,5 @@
 import type {ConnectorType} from '../constants';
-import type {Permissions} from '../types';
+import type {CommonNumberFormattingOptions, Permissions} from '../types';
 
 import type {CommonUpdate} from './common-update';
 
@@ -120,14 +120,15 @@ export interface Dataset {
             };
         };
         rls: {[key: string]: string};
-        rls2: unknown[];
+        rls2: {[key: string]: string};
         source_avatars: DatasetSourceAvatar[];
-        source_features: {};
+        source_features?: {};
         sources: DatasetSource[];
-        revisionId: string;
+        revisionId?: string;
         load_preview_by_default: boolean;
         template_enabled: boolean;
         data_export_forbidden?: boolean;
+        description?: string;
     };
     workbook_id?: string;
     permissions?: Permissions;
@@ -196,9 +197,14 @@ export interface DatasetField {
     value_constraint?:
         | {type: typeof DATASET_VALUE_CONSTRAINT_TYPE.DEFAULT}
         | {type: typeof DATASET_VALUE_CONSTRAINT_TYPE.NULL}
-        | {type: typeof DATASET_VALUE_CONSTRAINT_TYPE.REGEX; pattern: string};
+        | {type: typeof DATASET_VALUE_CONSTRAINT_TYPE.REGEX; pattern: string}
+        | null;
     ui_settings?: string;
 }
+
+export type FieldUISettings = {
+    numberFormatting?: CommonNumberFormattingOptions;
+};
 
 export interface DatasetFieldError {
     guid: string;
@@ -275,28 +281,28 @@ export type DatasetRawSchema = {
     has_auto_aggregation: boolean;
     native_type: {
         name: string;
-        conn_type: string;
+        conn_type?: string;
     };
 };
 
 export interface DatasetSource {
     id: string;
     connection_id: string;
-    ref_source_id: string | null;
-    name: string;
+    ref_source_id?: string | null;
+    name?: string;
     title: string;
     source_type: string;
     managed_by: string;
     parameter_hash: string;
     valid: boolean;
-    is_ref: boolean;
+    is_ref?: boolean;
     virtual: boolean;
     raw_schema: DatasetRawSchema[];
-    group: string[];
+    group?: string[];
     parameters: {
-        table_name: string;
-        db_version: string;
-        db_name: string | null;
+        table_name?: string;
+        db_version?: string;
+        db_name?: string | null;
     };
 }
 

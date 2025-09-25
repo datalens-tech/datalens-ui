@@ -51,7 +51,7 @@ services:
       BI_COMPENG_PG_ON: 1
       BI_COMPENG_PG_URL: postgresql://pg-user:postgres@postgres:5432/pg-compeng-db
       US_HOST: http://us:8080
-      US_MASTER_TOKEN: ${US_MASTER_TOKEN:-us-master-token}
+      US_MASTER_TOKEN: us-master-token
       AUTH__TYPE: ${AUTH_TYPE:-NATIVE}
       AUTH__JWT_ALGORITHM: 'PS256'
       AUTH__JWT_KEY: -----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA+HICDZMfimMIiGdd0dPr\n2N3zxHOJqiVXuvUj/aBBS7c8760rJUh4344sP/0Gid558yH/v1MtzZ0R9w09v6gb\nSNrSiNwIUNGPhbnm9Jf+kMezsI/rkcIdoVm3KJ8CFUYy6MRPzW7iJmIVRHBb82v1\nmAYCCQFU6IRtFIa9hQ8wedWwxqXZekSNS+6NB37dmmQB9kz2E3MY+KRLigOh4i3p\nCZ1ti3HVvMa9Rlgk9FmoWExzub5ECChqwm+vn8yFXjYW7kUSClcV2xx4nbQWqjrR\nyyLk6W2BNOuCFVvz0j+5XkpLAt7tljtVZc+572HBEKpF2mAdmAip5NzeDhKqucJ+\nZQIDAQAB\n-----END PUBLIC KEY-----
@@ -114,6 +114,7 @@ services:
     environment:
       APP_MODE: full
       APP_ENV: production
+      US_MASTER_TOKEN: us-master-token
       APP_INSTALLATION: opensource
       AUTH_POLICY: disabled
       US_ENDPOINT: http://us:8080
@@ -140,6 +141,7 @@ services:
     environment:
       APP_MODE: full
       APP_ENV: production
+      US_MASTER_TOKEN: us-master-token
       APP_INSTALLATION: opensource
       AUTH_POLICY: disabled
       US_ENDPOINT: http://us:8080
@@ -167,6 +169,8 @@ services:
       E2E_ACTION_TIMEOUT: ${E2E_ACTION_TIMEOUT}
       E2E_EXPECT_TIMEOUT: ${E2E_EXPECT_TIMEOUT}
       E2E_TEST_TIMEOUT: ${E2E_TEST_TIMEOUT}
+      E2E_MAX_FAILURES: ${E2E_MAX_FAILURES}
+      E2E_MAX_WORKERS: ${E2E_MAX_WORKERS}
       E2E_NO_AUTH: ${E2E_NO_AUTH:-false}
       E2E_USER_LOGIN: ${E2E_USER_LOGIN:-admin}
       E2E_USER_PASSWORD: ${E2E_USER_PASSWORD:-admin}

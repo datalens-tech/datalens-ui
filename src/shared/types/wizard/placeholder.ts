@@ -1,10 +1,11 @@
 import type {IconProps} from '@gravity-ui/uikit';
 
 import type {PlaceholderId} from '../../constants';
+import type {CommonNumberFormattingOptions} from '../formatting';
 
 import type {Field} from './field';
 
-import type {CommonNumberFormattingOptions, Sort} from './index';
+import type {Sort} from './index';
 
 export interface PlaceholderSettings {
     scale?: string;

@@ -265,6 +265,7 @@ export const load = ({
             const readDashParams: Omit<GetEntryArgs, 'entryId'> = {
                 includePermissionsInfo: true,
                 includeLinks: true,
+                includeFavorite: true,
                 branch: 'published',
             };
 
@@ -443,7 +444,9 @@ export const save = (mode: EntryUpdateMode, isDraft = false) => {
                     lockToken,
                     mode: mode,
                     meta: isPublishing ? {is_release: true} : {},
-                    description: annotation?.description,
+                    annotation: {
+                        description: annotation?.description ?? '',
+                    },
                 },
             };
             if (isDraft && isPublishing) {

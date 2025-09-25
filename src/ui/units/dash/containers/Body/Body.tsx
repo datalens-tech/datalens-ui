@@ -1,10 +1,5 @@
 import React from 'react';
 
-import {
-    DashKitDnDWrapper,
-    ActionPanel as DashkitActionPanel,
-    DashKit as GravityDashkit,
-} from '@gravity-ui/dashkit';
 import type {
     ConfigItem,
     ConfigLayout,
@@ -14,6 +9,11 @@ import type {
     DashkitGroupRenderProps,
     ItemDropProps,
     PreparedCopyItemOptions,
+} from '@gravity-ui/dashkit';
+import {
+    DashKitDnDWrapper,
+    ActionPanel as DashkitActionPanel,
+    DashKit as GravityDashkit,
 } from '@gravity-ui/dashkit';
 import {DEFAULT_GROUP, MenuItems} from '@gravity-ui/dashkit/helpers';
 import {
@@ -98,11 +98,7 @@ import {
     setWidgetCurrentTab,
 } from '../../store/actions/dashTyped';
 import {openDialog, openItemDialogAndSetData} from '../../store/actions/dialogs/actions';
-import {
-    closeDialogRelations,
-    openDialogRelations,
-    setNewRelations,
-} from '../../store/actions/relations/actions';
+import {closeDialogRelations, openDialogRelations} from '../../store/actions/relations/actions';
 import {
     canEdit,
     selectCurrentTab,
@@ -110,7 +106,6 @@ import {
     selectDashError,
     selectDashWorkbookId,
     selectEntryId,
-    selectIsNewRelations,
     selectLastModifiedItemId,
     selectSettings,
     selectShowTableOfContent,
@@ -252,31 +247,58 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         if (!this.props.entryId) {
             return;
         }
-        const {hash} = await getSdk().sdk.us.createDashState({
-            entryId: this.props.entryId,
-            data,
-        });
-        // check if we are still on the same tab (user could switch to another when request is still in progress)
-        if (tabId !== this.props.tabId) {
+
+        try {
+            const {hash} = await getSdk().sdk.us.createDashState({
+                entryId: this.props.entryId,
+                data,
+            });
+            // check if we are still on the same tab (user could switch to another when request is still in progress)
+            if (tabId !== this.props.tabId) {
+                this.props.setStateHashId({hash, tabId});
+                return;
+            }
+            const {history, location} = this.props;
+
+            const searchParams = new URLSearchParams(location.search);
+
+            if (hash) {
+                searchParams.set('state', hash);
+            } else {
+                searchParams.delete('state');
+            }
+
             this.props.setStateHashId({hash, tabId});
-            return;
+
+            history.push({
+                ...location,
+                search: `?${searchParams.toString()}`,
+            });
+        } catch (error) {
+            const details = error?.details?.details;
+            const isStateLimitError = details?.some(
+                ({params, path}: {path?: string[]; params?: {code?: string}}) =>
+                    path?.length === 1 &&
+                    path[0] === 'data' &&
+                    params?.code === 'OBJECT_SIZE_LIMIT_EXCEEDED',
+            );
+
+            const title = isStateLimitError
+                ? i18n('dash.main.view', 'value_state-limit-error')
+                : error.message;
+
+            const message = isStateLimitError
+                ? i18n('dash.main.view', 'value_state-limit-error-message')
+                : error.message;
+
+            this.props.showToast({
+                title,
+                content: message,
+                error: {...error, message},
+                withReport: true,
+            });
+            throw error;
         }
-        const {history, location} = this.props;
-
-        const searchParams = new URLSearchParams(location.search);
-
-        if (hash) {
-            searchParams.set('state', hash);
-        } else {
-            searchParams.delete('state');
-        }
-
-        this.props.setStateHashId({hash, tabId});
-
-        history.push({
-            ...location,
-            search: `?${searchParams.toString()}`,
-        });
     }, UPDATE_STATE_DEBOUNCE_TIME);
 
     scrollIntoViewWithDebounce = debounce(() => {
@@ -942,13 +964,10 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                         icon: iconRelations,
                         qa: ControlQA.controlLinks,
                         handler: (widget: DashTabItem) => {
-                            this.props.setNewRelations(true);
                             this.props.openDialogRelations({
                                 widget,
                                 dashKitRef: this.dashKitRef,
-                                onClose: () => {
-                                    this.props.setNewRelations(false);
-                                },
+                                onClose: () => {},
                             });
                         },
                     } as OverlayControlItem,
@@ -1149,7 +1168,6 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                         overlayControls={this.getOverlayControls()}
                         overlayMenuItems={this.getOverlayMenu()}
                         skipReload={this.props.skipReload}
-                        isNewRelations={this.props.isNewRelations}
                         onItemMountChange={this.handleItemMountChange}
                         onItemRender={this.handleItemRender}
                         hideErrorDetails={this.props.hideErrorDetails}
@@ -1327,7 +1345,6 @@ const mapStateToProps = (state: DatalensGlobalState) => ({
     workbookId: selectDashWorkbookId(state),
     error: selectDashError(state),
     skipReload: selectSkipReload(state),
-    isNewRelations: selectIsNewRelations(state),
     userSettings: selectUserSettings(state),
 });
 
@@ -1340,7 +1357,6 @@ const mapDispatchToProps = {
     setDashKitRef,
     openDialogRelations,
     closeDialogRelations,
-    setNewRelations,
     openDialog,
     showToast,
     setWidgetCurrentTab,
