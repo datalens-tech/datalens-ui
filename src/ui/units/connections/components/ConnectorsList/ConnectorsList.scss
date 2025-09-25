@@ -48,12 +48,21 @@
         display: flex;
         flex-direction: column;
         align-items: center;
+        justify-content: center;
         row-gap: 8px;
         height: 100%;
         padding: 15px 0;
         border-radius: 8px;
         text-decoration: none;
         color: var(--g-color-text-primary);
+        &:is(button) {
+            border: none;
+            font: inherit;
+            color: inherit;
+            cursor: pointer;
+            background-color: transparent;
+            width: 100%;
+        }
     }
 
     &__item-title {

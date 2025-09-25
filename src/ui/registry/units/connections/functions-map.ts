@@ -5,6 +5,7 @@ import {EXAMPLE_FUNCTION} from '../common/constants/functions';
 
 import type {BeforeConnectorFormUnmount} from './types/beforeConnectorFormUnmount';
 import type {GetFakeEntry} from './types/getFakeEntry';
+import type {GetIsShowBusinessConnectionLabel} from './types/getIsShowBusinessConnectionLabel';
 import type {GetMockedFormArgs} from './types/getMockedForm';
 import type {GetNewConnectionDestination} from './types/getNewConnectionDestination';
 import type {GetRenderConnectionSettingsPopup} from './types/getRenderConnectionSettingsPopup';
@@ -17,4 +18,5 @@ export const connectionsFunctionsMap = {
     getFakeEntry: makeFunctionTemplate<GetFakeEntry>(),
     beforeConnectorFormUnmount: makeFunctionTemplate<BeforeConnectorFormUnmount>(),
     getRenderConnectionSettingsPopup: makeFunctionTemplate<GetRenderConnectionSettingsPopup>(),
+    getIsShowBusinessConnectionLabel: makeFunctionTemplate<GetIsShowBusinessConnectionLabel>(),
 } as const;
