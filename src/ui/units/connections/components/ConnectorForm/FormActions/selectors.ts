@@ -1,5 +1,7 @@
-import {ConnectorType} from 'shared/constants';
+import {CONNECTOR_VISIBILITY_MODE, ConnectorType} from 'shared/constants';
+import type {ValueOf} from 'shared/types';
 import type {DatalensGlobalState} from 'ui';
+import {registry} from 'ui/registry';
 import {FieldKey} from 'ui/units/connections/constants';
 
 function getDbType(state: DatalensGlobalState) {
@@ -7,6 +9,15 @@ function getDbType(state: DatalensGlobalState) {
 
     return (form[FieldKey.DbType] || form[FieldKey.Type]) as string | undefined;
 }
+
+const getIsButtonHidden = (visibilityMode: ValueOf<typeof CONNECTOR_VISIBILITY_MODE>) => {
+    const {getIsShowBusinessConnectionLabel} = registry.connections.functions.getAll();
+    const isShowBusinessConnectionLabel = getIsShowBusinessConnectionLabel();
+    return (
+        visibilityMode === CONNECTOR_VISIBILITY_MODE.UNCREATABLE ||
+        (visibilityMode === CONNECTOR_VISIBILITY_MODE.BUSINESS && isShowBusinessConnectionLabel)
+    );
+};
 
 export const showSubmitButtonSelector = (state: DatalensGlobalState) => {
     const apiSchema = state.connections.schema?.apiSchema;
@@ -17,7 +28,7 @@ export const showSubmitButtonSelector = (state: DatalensGlobalState) => {
     const hasApiSchema = isNewConnection ? Boolean(apiSchema?.create) : Boolean(apiSchema?.edit);
     const hasUncreatableVisibilityMode =
         connectorItem && connectorItem.visibility_mode
-            ? connectorItem.visibility_mode !== 'uncreatable'
+            ? !getIsButtonHidden(connectorItem.visibility_mode)
             : undefined;
 
     return hasUncreatableVisibilityMode ?? hasApiSchema;

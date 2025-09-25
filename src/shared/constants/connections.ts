@@ -57,6 +57,7 @@ export enum ConnectorType {
     Extractor1c = 'extractor1c',
     Yadocs = 'yadocs',
     MonitoringV2 = 'monitoring_v2',
+    ApiConnector = 'json_api',
 }
 
 export type ActualConnectorType =
@@ -99,4 +100,11 @@ export const RAW_SQL_LEVEL = {
     SUBSELECT: 'subselect',
     TEMPLATE: 'template',
     DASHSQL: 'dashsql',
+} as const;
+
+export const CONNECTOR_VISIBILITY_MODE = {
+    FREE: 'free',
+    HIDDEN: 'hidden',
+    UNCREATABLE: 'uncreatable',
+    BUSINESS: 'business',
 } as const;

@@ -9,10 +9,12 @@ export const registerConnectionsPlugins = () => {
     registry.connections.components.registerMany({
         CreateEditorChartButton: () => null,
         PreparedRowItem,
+        BusinessConnectionLabel: () => null,
     });
     registry.connections.functions.register({
         getFakeEntry,
         getNewConnectionDestination,
         beforeConnectorFormUnmount: noop,
+        getIsShowBusinessConnectionLabel: noop,
     });
 };
