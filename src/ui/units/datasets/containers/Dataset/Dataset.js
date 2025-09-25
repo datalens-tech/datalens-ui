@@ -466,14 +466,14 @@ class Dataset extends React.Component {
         });
     };
 
-    setActualVersionHandler() {
+    setActualVersionHandler = () => {
         const {datasetId, history} = this.props;
         this.props.openDialogSaveDraftInstanceAsActualConfirm({
             onApply: () => {
                 this.props.setActualDataset({history, datasetId});
             },
         });
-    }
+    };
 
     renderErrorContent() {
         const {sdk, datasetError} = this.props;
@@ -573,7 +573,7 @@ class Dataset extends React.Component {
                 <ActionPanel
                     entry={this.getEntry()}
                     rightItems={this.getRightItems()}
-                    setActualVersion={this.setActualVersionHandler.bind(this)}
+                    setActualVersion={this.setActualVersionHandler}
                     expandablePanelDescription={description}
                     getRevisionRowExtendedProps={getRevisionRowExtendedProps}
                 />
