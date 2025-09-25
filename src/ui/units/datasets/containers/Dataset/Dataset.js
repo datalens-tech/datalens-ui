@@ -9,7 +9,7 @@ import {connect} from 'react-redux';
 import SplitPane from 'react-split-pane';
 import {compose} from 'recompose';
 import {createStructuredSelector} from 'reselect';
-import {ErrorCode, ErrorContentTypes, Feature} from 'shared';
+import {ErrorCode, ErrorContentTypes} from 'shared';
 import {SPLIT_PANE_RESIZER_CLASSNAME, URL_QUERY} from 'ui/constants/common';
 import {HOTKEYS_SCOPES} from 'ui/constants/misc';
 import {withHotkeysContext} from 'ui/hoc/withHotkeysContext';
@@ -176,13 +176,12 @@ class Dataset extends React.Component {
         const prevRevId = prevSearchParams.get(URL_QUERY.REV_ID) ?? undefined;
         const hasRevisionChanged = revId !== prevRevId;
         const isSavingUpdate = publishedId === currentRevId && !revId;
-        const revisionsEnabled = DatasetUtils.isEnabledFeature(Feature.EnableDatasetRevisions);
 
         if (datasetId && prevDatasetId !== datasetId) {
             initialFetchDataset({datasetId, rev_id: revId});
         }
 
-        if (revisionsEnabled && hasRevisionChanged && !isSavingUpdate) {
+        if (hasRevisionChanged && !isSavingUpdate) {
             initialFetchDataset({datasetId, rev_id: revId, isInitialFetch: false});
         }
 
@@ -552,12 +551,6 @@ class Dataset extends React.Component {
     }
 
     renderControls() {
-        const setActualVersionHandler = DatasetUtils.isEnabledFeature(
-            Feature.EnableDatasetRevisions,
-        )
-            ? this.setActualVersionHandler.bind(this)
-            : undefined;
-
         const DATASET_DISABLED_DATE = dateTimeUtc({input: MIN_AVAILABLE_DATASET_REV_DATE});
         const formattedMinDatasetDate = DATASET_DISABLED_DATE?.format(
             DATASET_DATE_AVAILABLE_FORMAT,
@@ -580,7 +573,7 @@ class Dataset extends React.Component {
                 <ActionPanel
                     entry={this.getEntry()}
                     rightItems={this.getRightItems()}
-                    setActualVersion={setActualVersionHandler}
+                    setActualVersion={this.setActualVersionHandler.bind(this)}
                     expandablePanelDescription={description}
                     getRevisionRowExtendedProps={getRevisionRowExtendedProps}
                 />
