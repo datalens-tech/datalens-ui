@@ -292,7 +292,7 @@ export const actions = {
             },
         }),
         getAuthHeaders: (params) => {
-            return sharedRegistry.gatewayAuth.functions.getAll().getAuthHeadersBiPrivate(params);
+            return sharedRegistry.gatewayAuth.functions.getAll().getAuthHeadersBIPrivate(params);
         },
     }),
     _proxyImportDataset: createAction<ImportDatasetResponse, ImportDatasetArgs>({
@@ -312,7 +312,7 @@ export const actions = {
             },
         }),
         getAuthHeaders: (params) => {
-            return sharedRegistry.gatewayAuth.functions.getAll().getAuthHeadersBiPrivate(params);
+            return sharedRegistry.gatewayAuth.functions.getAll().getAuthHeadersBIPrivate(params);
         },
     }),
 };

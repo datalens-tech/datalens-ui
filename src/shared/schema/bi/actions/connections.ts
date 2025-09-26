@@ -157,7 +157,7 @@ export const actions = {
             },
         }),
         getAuthHeaders: (params) => {
-            return sharedRegistry.gatewayAuth.functions.getAll().getAuthHeadersBiPrivate(params);
+            return sharedRegistry.gatewayAuth.functions.getAll().getAuthHeadersBIPrivate(params);
         },
     }),
     _proxyImportConnection: createAction<ImportConnectionResponse, ImportConnectionArgs>({
@@ -177,7 +177,7 @@ export const actions = {
             },
         }),
         getAuthHeaders: (params) => {
-            return sharedRegistry.gatewayAuth.functions.getAll().getAuthHeadersBiPrivate(params);
+            return sharedRegistry.gatewayAuth.functions.getAll().getAuthHeadersBIPrivate(params);
         },
     }),
 };

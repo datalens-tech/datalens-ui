@@ -7,7 +7,7 @@ type AuthArgsData = {
     usMasterToken?: string;
 };
 
-export const getAuthHeadersBiPrivate: GetAuthHeaders<AuthArgsData> = ({authArgs}) => {
+export const getAuthHeadersBIPrivate: GetAuthHeaders<AuthArgsData> = ({authArgs}) => {
     const usMasterToken = authArgs?.usMasterToken as string;
     return {
         [US_MASTER_TOKEN_HEADER]: usMasterToken,

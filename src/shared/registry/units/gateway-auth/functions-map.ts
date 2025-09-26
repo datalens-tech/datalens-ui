@@ -12,7 +12,7 @@ export const gatewayAuthFunctionsMap = {
                 params: GetAuthHeadersParams<Record<string, unknown>>,
             ) => Record<string, string> | undefined
         >(),
-    getAuthHeadersBiPrivate:
+    getAuthHeadersBIPrivate:
         makeFunctionTemplate<
             (
                 params: GetAuthHeadersParams<Record<string, unknown>>,
