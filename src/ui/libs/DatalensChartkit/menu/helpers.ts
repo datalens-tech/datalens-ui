@@ -38,7 +38,6 @@ export const getWidgetChartMenu = ({
         getExportMenuItem({
             chartsDataProvider,
             customConfig: customOptions[MenuItemsIds.EXPORT],
-            extraOptions,
         }),
         getNewWindowMenuItem({
             chartsDataProvider,
@@ -60,16 +59,11 @@ export const getWidgetChartMenu = ({
  * @param chartsDataProvider
  * @param customOptions
  */
-export const getWizardChartMenu = ({
-    chartsDataProvider,
-    customOptions,
-    extraOptions,
-}: GetWizardChartMenuArgs) => {
+export const getWizardChartMenu = ({chartsDataProvider, customOptions}: GetWizardChartMenuArgs) => {
     return [
         getExportMenuItem({
             chartsDataProvider,
             customConfig: customOptions[MenuItemsIds.EXPORT],
-            extraOptions,
         }),
         getNewWindowMenuItem({
             chartsDataProvider,
@@ -78,7 +72,6 @@ export const getWizardChartMenu = ({
         getOpenAsTableMenuItem({
             chartsDataProvider,
             customConfig: customOptions[MenuItemsIds.OPEN_AS_TABLE],
-            extraOptions,
         }),
         getInspectorMenuItem(),
     ];
@@ -112,7 +105,6 @@ export const getDefaultChartMenu = ({
         getExportMenuItem({
             chartsDataProvider,
             customConfig: customOptions[MenuItemsIds.EXPORT],
-            extraOptions,
         }),
         getNewWindowMenuItem({
             chartsDataProvider,

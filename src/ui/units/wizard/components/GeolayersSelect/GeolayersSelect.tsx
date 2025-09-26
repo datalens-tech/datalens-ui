@@ -104,6 +104,7 @@ class GeolayersSelect extends React.Component<GeolayersSelectProps, GeolayersSel
                     e.stopPropagation();
 
                     this.setState({
+                        active: false,
                         dialogGeolayerVisible: true,
                         editableLayerId: data,
                     });
@@ -116,6 +117,7 @@ class GeolayersSelect extends React.Component<GeolayersSelectProps, GeolayersSel
                     e.stopPropagation();
 
                     this.setState({
+                        active: false,
                         dialogConfirmVisible: true,
                         editableLayerId: data,
                     });

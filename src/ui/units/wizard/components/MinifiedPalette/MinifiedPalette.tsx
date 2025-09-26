@@ -55,7 +55,7 @@ export const MinifiedPalette: React.FC<MinifiedPaletteProps> = (props: MinifiedP
 
     useEnterClick(paletteRef, handleEnterPress);
 
-    const options = getPaletteSelectorItems({colorPalettes});
+    const options = getPaletteSelectorItems({colorPalettes, withAuto: true});
 
     const colors = React.useMemo(
         () => getPaletteColors(palette, colorPalettes),
@@ -68,7 +68,7 @@ export const MinifiedPalette: React.FC<MinifiedPaletteProps> = (props: MinifiedP
                 qa={DialogFieldBarsSettingsQa.MinifiedPaletteSelector}
                 className={b('selector')}
                 popupClassName={b('selector-popup')}
-                onUpdate={([paletteId]) => onPaletteUpdate(paletteId)}
+                onUpdate={([paletteId]) => onPaletteUpdate(paletteId ?? undefined)}
                 renderSelectedOption={(option) => {
                     return <SelectOptionWithIcon option={option} />;
                 }}

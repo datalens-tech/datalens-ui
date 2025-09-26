@@ -29,7 +29,6 @@ import type {Field} from './field';
 import type {Placeholder} from './placeholder';
 import type {ChartsConfigVersion} from './versions';
 
-export * from './formatting';
 export * from './field';
 export * from './versions';
 export * from './bars';

@@ -9,6 +9,7 @@ import type {
 } from '../../..';
 import type {ColorMode} from '../../../constants';
 import type {DatasetFieldCalcMode, ParameterDefaultValue} from '../../dataset';
+import type {NumberFormatType, NumberFormatUnit} from '../../formatting';
 import type {
     AxisLabelFormatMode,
     AxisMode,
@@ -18,8 +19,6 @@ import type {
     HintSettings,
     IndicatorTitleMode,
     LabelsPositions,
-    NumberFormatType,
-    NumberFormatUnit,
     TableBarsSettings,
     TableFieldBackgroundSettings,
     TableSubTotalsSettings,
