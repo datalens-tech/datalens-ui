@@ -277,7 +277,7 @@ export function createConnection(args: {name: string; dirPath?: string; workbook
         }
 
         // TODO: remove after BI-6604
-        resultForm[FieldKey.Description] = form[FieldKey.Description] ?? '';
+        resultForm[FieldKey.Description] = form[FieldKey.Description];
 
         flow([setSubmitLoading, dispatch])({loading: true});
         const {id: connectionId, error: connError} = await api.createConnection(resultForm);
@@ -363,7 +363,7 @@ export function updateConnection() {
             apiSchemaItem: schema.apiSchema?.edit,
         });
         // TODO: remove after BI-6604
-        resultForm[FieldKey.Description] = form[FieldKey.Description] ?? '';
+        resultForm[FieldKey.Description] = form[FieldKey.Description];
 
         // technotes [1]
         delete resultForm[FieldKey.DbType];
