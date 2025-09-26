@@ -1,5 +1,5 @@
 import type {ConnectorType} from '../constants';
-import type {Permissions} from '../types';
+import type {CommonNumberFormattingOptions, Permissions} from '../types';
 
 import type {CommonUpdate} from './common-update';
 
@@ -128,6 +128,7 @@ export interface Dataset {
         load_preview_by_default: boolean;
         template_enabled: boolean;
         data_export_forbidden?: boolean;
+        description?: string;
     };
     workbook_id?: string;
     permissions?: Permissions;
@@ -200,6 +201,10 @@ export interface DatasetField {
         | null;
     ui_settings?: string;
 }
+
+export type FieldUISettings = {
+    numberFormatting?: CommonNumberFormattingOptions;
+};
 
 export interface DatasetFieldError {
     guid: string;

@@ -8,9 +8,9 @@ import DebugInfoTool from 'components/DashKit/plugins/DebugInfoTool/DebugInfoToo
 import type {CurrentTab} from 'components/DashKit/plugins/Widget/types';
 import {useDispatch} from 'react-redux';
 import {ChartkitMenuDialogsQA} from 'shared';
+import {Header as ChartHeader} from 'ui/components/Widgets/Chart/components/Header';
 import {DL} from 'ui/constants/common';
 import {DL_ADAPTIVE_TABS_BREAK_POINT_CONFIG} from 'ui/constants/misc';
-import {registry} from 'ui/registry';
 import {setSkipReload} from 'ui/units/dash/store/actions/dashTyped';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 
@@ -115,8 +115,6 @@ export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
         currentTab?.enableHint && currentTab?.hint?.trim() ? currentTab?.hint?.trim() : '';
 
     const dispatch = useDispatch();
-
-    const {ChartHeader} = registry.chart.components.getAll();
 
     const handleExportLoading = React.useCallback(
         (isLoading: boolean) => {

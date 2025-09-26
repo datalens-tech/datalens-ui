@@ -22,7 +22,7 @@ const mockedBuildSourceArgsSet = {
 };
 
 const expectedBuildSourceResultSet = {
-    url: `/_bi_connections/${MOCK_ID}/dashsql`,
+    url: `/_bi_connections/${MOCK_ID}/dashsql?with_export_info=true`,
     method: 'post',
     data: {
         sql_query:
@@ -41,7 +41,7 @@ const mockedBuildSourceArgsSingle = {
 };
 
 const expectedBuildSourceResultSingle = {
-    url: `/_bi_connections/${MOCK_ID}/dashsql`,
+    url: `/_bi_connections/${MOCK_ID}/dashsql?with_export_info=true`,
     method: 'post',
     data: {
         sql_query:
@@ -60,7 +60,7 @@ const mockedBuildSourceArgsPrewrapped = {
 };
 
 const expectedBuildSourceResultPrewrapped = {
-    url: `/_bi_connections/${MOCK_ID}/dashsql`,
+    url: `/_bi_connections/${MOCK_ID}/dashsql?with_export_info=true`,
     method: 'post',
     data: {
         sql_query:
