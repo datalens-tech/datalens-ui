@@ -1,6 +1,7 @@
 import type {NextFunction, Request, Response} from '@gravity-ui/expresskit';
 import {REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 
+import {sharedRegistry} from '../../shared/registry';
 import {onFail} from '../callbacks';
 import {registry} from '../registry';
 import type {DatalensGatewaySchemas} from '../types/gateway';
@@ -13,7 +14,7 @@ export function getTenantSettingsMiddleware() {
         const currentTenantId = 'common';
 
         const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
-        const {getAuthArgsUSPrivate} = registry.common.auth.getAll();
+        const {getAuthArgsUSPrivate} = sharedRegistry.gatewayAuth.functions.getAll();
         const authArgsUSPrivate = getAuthArgsUSPrivate(req, res);
 
         const tenantDetailsResponce = await gatewayApi.usPrivate._getTenantDetails({

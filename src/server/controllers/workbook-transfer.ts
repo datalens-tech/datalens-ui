@@ -112,7 +112,7 @@ export const prepareExportData = async (req: Request, res: Response) => {
     const {exportId, scope, idMapping} = req.body;
     const workbookId = (req.body?.workbookId as string) ?? null;
 
-    const {getAuthArgsProxyBiPrivate} = sharedRegistry.gatewayAuth.functions.getAll();
+    const {getAuthArgsProxyBIPrivate} = sharedRegistry.gatewayAuth.functions.getAll();
 
     switch (scope) {
         case EntryScope.Dash: {
@@ -159,7 +159,7 @@ export const prepareExportData = async (req: Request, res: Response) => {
                     connectionId: exportId,
                     workbookId,
                 },
-                authArgs: getAuthArgsProxyBiPrivate(req, res),
+                authArgs: getAuthArgsProxyBIPrivate(req, res),
                 ctx,
                 requestId: getRequestId(ctx),
             });
@@ -176,7 +176,7 @@ export const prepareExportData = async (req: Request, res: Response) => {
                     idMapping,
                     workbookId,
                 },
-                authArgs: getAuthArgsProxyBiPrivate(req, res),
+                authArgs: getAuthArgsProxyBIPrivate(req, res),
                 ctx,
                 requestId: getRequestId(ctx),
             });
@@ -204,7 +204,7 @@ export const prepareImportData = async (req: Request, res: Response) => {
 
     const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
 
-    const {getAuthArgsProxyBiPrivate, getAuthArgsProxyUSPrivate} =
+    const {getAuthArgsProxyBIPrivate, getAuthArgsProxyUSPrivate} =
         sharedRegistry.gatewayAuth.functions.getAll();
 
     switch (scope) {
@@ -217,7 +217,7 @@ export const prepareImportData = async (req: Request, res: Response) => {
                 },
                 ctx,
                 requestId: getRequestId(ctx),
-                authArgs: getAuthArgsProxyBiPrivate(req, res),
+                authArgs: getAuthArgsProxyBIPrivate(req, res),
             });
 
             return createImportResponseData(responseData.notifications, responseData.id);
@@ -232,7 +232,7 @@ export const prepareImportData = async (req: Request, res: Response) => {
                 },
                 ctx,
                 requestId: getRequestId(ctx),
-                authArgs: getAuthArgsProxyBiPrivate(req, res),
+                authArgs: getAuthArgsProxyBIPrivate(req, res),
             });
 
             return createImportResponseData(responseData.notifications, responseData.id);

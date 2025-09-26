@@ -1,5 +1,5 @@
 import {
-    getAuthArgsProxyBiPrivate,
+    getAuthArgsProxyBIPrivate,
     getAuthArgsProxyUSPrivate,
     getAuthArgsUSPrivate,
     getAuthHeadersBiPrivate,
@@ -14,7 +14,7 @@ export const registerGatewayAuthPlugins = () => {
         getAuthHeadersUSPrivate,
         getAuthHeadersBiPrivate,
         hasValidWorkbookTransferAuthHeaders,
-        getAuthArgsProxyBiPrivate,
+        getAuthArgsProxyBIPrivate,
         getAuthArgsProxyUSPrivate,
     });
 };
