@@ -22,7 +22,6 @@ export const wrapperGetGatewayControllers = (
 ) => getGatewayControllers<SchemasByScope, AppContext, Request, Response>(schemasByScope, config);
 
 let gateway: ReturnType<typeof wrapperGetGatewayControllers>;
-let gatewaySchemasByScope: SchemasByScope;
 let getLayoutConfig: GetLayoutConfig | undefined;
 let yfmPlugins: MarkdownItPluginCb[];
 let getXlsxConverter: XlsxConverterFn | undefined;
@@ -63,7 +62,6 @@ export const registry = {
             throw new Error('The method must not be called more than once');
         }
         gateway = wrapperGetGatewayControllers(schemasByScope, config);
-        gatewaySchemasByScope = schemasByScope;
     },
     getGatewayController() {
         if (!gateway) {
@@ -80,13 +78,6 @@ export const registry = {
         return {gatewayApi: gateway.api} as {
             gatewayApi: ApiWithRoot<TSchema, Request['ctx'], Request, Response>;
         };
-    },
-    getGatewaySchemasByScope() {
-        if (!gatewaySchemasByScope) {
-            throw new Error('First of all setup the gateway');
-        }
-
-        return gatewaySchemasByScope;
     },
     registerGetLayoutConfig(fn: GetLayoutConfig) {
         if (getLayoutConfig) {
