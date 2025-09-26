@@ -4,7 +4,7 @@ import {createFeatureConfig} from '../utils';
 export default createFeatureConfig({
     name: Feature.EnableTenantSettingPalettes,
     state: {
-        development: false,
-        production: false,
+        development: true,
+        production: true,
     },
 });

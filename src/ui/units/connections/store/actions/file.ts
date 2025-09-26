@@ -557,8 +557,14 @@ export const setDataFileFormData = () => {
                 [],
             ) as StandaloneFileSource[];
 
+            const description = get(getState().connections, [
+                'connectionData',
+                FieldKey.Description,
+            ]);
+
             form = {
                 [FieldKey.Sources]: mapSourcesToAPIFormat(sources),
+                [FieldKey.Description]: description,
             };
         }
 

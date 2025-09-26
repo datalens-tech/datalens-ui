@@ -82,7 +82,9 @@ export const BarsSettings: React.FC<BarsSettingsProps> = (props: BarsSettingsPro
 
     const handlePaletteUpdate = React.useCallback(
         (palette: string) => {
-            let updateParams: Partial<TableBarsSettings['colorSettings']['settings']> = {palette};
+            let updateParams: Partial<TableBarsSettings['colorSettings']['settings']> = {
+                palette: palette || undefined,
+            };
 
             switch (state.colorSettings.colorType) {
                 case BarsColorType.OneColor: {
