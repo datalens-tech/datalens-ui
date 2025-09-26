@@ -33,13 +33,14 @@ import type {CommonPlaceholderProps} from '../PlaceholdersContainer';
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
 
-type Props = CommonPlaceholderProps & StateProps & DispatchProps;
+type Props = CommonPlaceholderProps & StateProps & DispatchProps & {multipleDatasets: boolean};
 
 const SORT_CAPACITY = 10;
 
 class SortPlaceholder extends React.Component<Props> {
     render() {
-        const {sort, visualization, wrapTo, datasetError, onBeforeRemoveItem} = this.props;
+        const {sort, visualization, wrapTo, datasetError, onBeforeRemoveItem, multipleDatasets} =
+            this.props;
         const sortTitle = visualization.id === 'polyline' ? 'section_order' : 'section_sort';
         const sortCapacityError =
             visualization.id === 'polyline' ? 'label_order-overflow' : 'label_order-overflow';
@@ -75,15 +76,22 @@ class SortPlaceholder extends React.Component<Props> {
                 onUpdate={this.onSortUpdate}
                 additionalItemsClassName="sort-item"
                 wrapTo={wrapTo}
-                disabled={Boolean(datasetError)}
+                disabled={Boolean(datasetError) || multipleDatasets}
                 onBeforeRemoveItem={onBeforeRemoveItem}
                 onAfterUpdate={this.props.onUpdate}
+                addFieldDisableText={
+                    multipleDatasets ? i18n('wizard', 'tooltip_sort_unavailable') : undefined
+                }
             />
         );
     }
 
     private checkAllowedSort = (item: Field) => {
-        const {colors, visualization, segments, globalVisualization} = this.props;
+        const {colors, visualization, segments, globalVisualization, multipleDatasets} = this.props;
+
+        if (multipleDatasets) {
+            return false;
+        }
 
         if (isMeasureName(item)) {
             return false;
