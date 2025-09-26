@@ -66,8 +66,8 @@ export const proxyGetEntry = async (
     };
     const requestId = getRequestId(ctx);
 
-    const {getAuthArgsProxyBiPrivate} = sharedRegistry.gatewayAuth.functions.getAll();
-    const authArgs = getAuthArgsProxyBiPrivate(req, res);
+    const {getAuthArgsProxyUSPrivate} = sharedRegistry.gatewayAuth.functions.getAll();
+    const authArgs = getAuthArgsProxyUSPrivate(req, res);
 
     try {
         return await gatewayApi.usPrivate._proxyGetEntry({
