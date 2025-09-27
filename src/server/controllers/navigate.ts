@@ -1,6 +1,7 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
 
 import {ENTRY_TYPES, TENANT_ID_HEADER, isEntryId} from '../../shared';
+import {sharedRegistry} from '../../shared/registry';
 import {registry} from '../registry';
 import type {DatalensGatewaySchemas} from '../types/gateway';
 import Utils from '../utils';
@@ -29,7 +30,7 @@ export const navigateController = async (req: Request, res: Response) => {
 
         const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
 
-        const {getAuthArgsUSPrivate} = registry.common.auth.getAll();
+        const {getAuthArgsUSPrivate} = sharedRegistry.gatewayAuth.functions.getAll();
 
         const {responseData: entryMeta} = await gatewayApi.usPrivate._getEntryMeta({
             ctx: req.ctx,
