@@ -1,5 +1,7 @@
 import noop from 'lodash/noop';
+import {getIsShowCreateConnectionButton} from 'ui/units/connections/components/ConnectorForm/FormActions/utils';
 import {PreparedRowItem} from 'ui/units/connections/components/ConnectorForm/FormRow/PreparedRowItem';
+import {listItemRender} from 'ui/units/connections/components/ConnectorsList/utils/listItemRender';
 import {getFakeEntry} from 'ui/units/connections/store/utils/entry';
 import {getNewConnectionDestination} from 'ui/units/connections/utils/entry';
 
@@ -14,5 +16,7 @@ export const registerConnectionsPlugins = () => {
         getFakeEntry,
         getNewConnectionDestination,
         beforeConnectorFormUnmount: noop,
+        getConnectionItemRender: listItemRender,
+        getIsShowCreateConnectionButton,
     });
 };
