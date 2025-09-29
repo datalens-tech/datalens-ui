@@ -10,7 +10,7 @@ import {Content} from './Content';
 
 import './MarkdownHelpPopover.scss';
 
-const i18n = I18n.keyset('dash.shared');
+const i18n = I18n.keyset('common.components');
 const b = block('markdown-help-popover');
 
 type IconSize = 's' | 'm' | 'l' | 'xl';

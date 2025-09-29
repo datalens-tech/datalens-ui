@@ -2,7 +2,6 @@ import React from 'react';
 
 import {SharePopover} from '@gravity-ui/components';
 import {ArrowShapeTurnUpRight, Code} from '@gravity-ui/icons';
-import type {ButtonProps} from '@gravity-ui/uikit';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -28,7 +27,6 @@ export const ShareButton = ({
     iconSize = 18,
     popoverClassName,
     dialogShareProps,
-    embedButtonProps,
 }: {
     enablePopover?: boolean;
     popoverText?: string;
@@ -36,7 +34,6 @@ export const ShareButton = ({
     iconSize?: number;
     popoverClassName?: string;
     dialogShareProps?: DialogSharePropsForShareButton;
-    embedButtonProps?: ButtonProps;
 }) => {
     const {DialogShare} = registry.common.components.getAll();
 
@@ -75,18 +72,20 @@ export const ShareButton = ({
                     iconSize={iconSize}
                     withCopyLink={Boolean(dialogShareProps?.propsData.id)}
                     className={popoverClassName}
+                    buttonAriaLabel={i18n('get-code')}
                     renderCopy={({icon}) => (
                         <Button
                             view="flat-secondary"
                             size="l"
                             width="max"
                             onClick={handleShareButtonClick}
-                            {...(embedButtonProps ?? {})}
+                            aria-label={i18n('embedded')}
                         >
                             <Icon data={icon} size={16} />
                             {i18n('embedded')}
                         </Button>
                     )}
+                    autoclosable={false}
                 />
             );
         }
@@ -100,7 +99,7 @@ export const ShareButton = ({
                 view="flat"
                 onClick={handleShareButtonClick}
                 className={b('mobile-share-button')}
-                {...(embedButtonProps ?? {})}
+                aria-label={i18n('get-code')}
             >
                 <Icon size={18} data={ArrowShapeTurnUpRight} />
             </Button>
