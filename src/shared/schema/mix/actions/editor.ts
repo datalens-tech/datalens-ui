@@ -1,3 +1,4 @@
+import {ENTRY_TYPES, EntryScope} from '../../..';
 import {DeveloperModeCheckStatus} from '../../../types';
 import {createAction, createTypedAction} from '../../gateway-utils';
 import {getTypedApi} from '../../simple-schema';
@@ -57,6 +58,8 @@ export const editorActions = {
 
             await typedApi.us._deleteUSEntry({
                 entryId: chartId,
+                scope: EntryScope.Widget,
+                types: [...ENTRY_TYPES.editor, ...ENTRY_TYPES.legacyEditor],
             });
 
             return {};

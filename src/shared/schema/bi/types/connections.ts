@@ -1,11 +1,12 @@
 import type z from 'zod/v4';
 
-import type {ConnectorType} from '../../../constants';
+import type {CONNECTOR_VISIBILITY_MODE, ConnectorType} from '../../../constants';
 import type {
     ConnectionData,
     ConnectionTypedQueryApiRequest,
     ConnectionTypedQueryApiResponse,
     TransferNotification,
+    ValueOf,
 } from '../../../types';
 import type {deleteConnectionResultSchema} from '../schemas/connections';
 
@@ -31,8 +32,9 @@ type BaseConnectorItem = {
      * 1. `free` - connector **is** shown in the list and **is** available for creation
      * 2. `hidden` - connector **is not** shown in the list and **is** available for creation
      * 3. `uncreatable` - connector **is not** shown in the list and **is not** available for creation
+     * 4. `business` - connector **is** shown in the list and **is not** available for creation
      */
-    visibility_mode: 'free' | 'hidden' | 'uncreatable';
+    visibility_mode: ValueOf<typeof CONNECTOR_VISIBILITY_MODE>;
     alias?: string;
 };
 

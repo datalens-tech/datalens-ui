@@ -4,5 +4,10 @@
   "button_reset": "Reset",
   "button_save": "Save",
   "label_colors": "Colors",
+  "label_field-other-colors": [
+    "{{count}} more color",
+    "{{count}} more colors",
+    "{{count}} more colors"
+  ],
   "label_title": "Diaplay settings"
 }
