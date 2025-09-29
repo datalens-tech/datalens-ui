@@ -55,7 +55,7 @@ const usePageTitle = ({
 
     useEffect(() => {
         changeTitle(getPageTitle({entry, defaultTitle, extraSettings, title, hideDefaultTitle}));
-    }, [entry, defaultTitle, extraSettings, extraSettings.subtitle, title, hideDefaultTitle]);
+    }, [entry, defaultTitle, extraSettings, extraSettings?.subtitle, title, hideDefaultTitle]);
 
     useTitle(documentTitle, defaultTitle);
 };
