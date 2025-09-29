@@ -18,7 +18,6 @@ export const initPublicApiSwagger = (app: ExpressKit) => {
 
     const installationText = `Installation – <b>${config.appInstallation}</b>`;
     const envText = `Env – <b>${config.appEnv}</b>`;
-    const descriptionText = `<br />Datalens api.`;
 
     const {baseConfig, securitySchemes} = registry.getPublicApiConfig();
 
@@ -68,7 +67,7 @@ export const initPublicApiSwagger = (app: ExpressKit) => {
                 info: {
                     version,
                     title: `DataLens API `,
-                    description: [installationText, envText, descriptionText].join('<br />'),
+                    description: [installationText, envText].join('<br />'),
                 },
                 servers: [{url: '/'}],
             };
