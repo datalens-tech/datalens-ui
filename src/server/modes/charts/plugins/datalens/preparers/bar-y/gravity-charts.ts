@@ -13,6 +13,7 @@ import {
 import {getBaseChartConfig} from '../../gravity-charts/utils';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getExportColumnSettings} from '../../utils/export-helpers';
+import {getAxisFormatting} from '../helpers/axis';
 import {shouldUseGradientLegend} from '../helpers/legend';
 import type {PrepareFunctionArgs} from '../types';
 
@@ -77,6 +78,13 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
         } as BarYSeries;
     });
 
+    const xAxisLabelNumberFormat = xPlaceholder
+        ? getAxisFormatting({
+              placeholder: xPlaceholder,
+              visualizationId,
+          })
+        : undefined;
+
     const config: ChartData = {
         series: {
             data: series.filter((s) => s.data.length),
@@ -84,6 +92,9 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
         xAxis: {
             min: 0,
             type: 'linear',
+            labels: {
+                numberFormat: xAxisLabelNumberFormat ?? undefined,
+            },
         },
     };
 
@@ -112,6 +123,21 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
             {
                 type: 'category',
                 categories: categories as string[],
+            },
+        ];
+    } else {
+        const axisLabelNumberFormat = yPlaceholder
+            ? getAxisFormatting({
+                  placeholder: yPlaceholder,
+                  visualizationId,
+              })
+            : undefined;
+
+        config.yAxis = [
+            {
+                labels: {
+                    numberFormat: axisLabelNumberFormat ?? undefined,
+                },
             },
         ];
     }
