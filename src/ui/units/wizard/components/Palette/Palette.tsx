@@ -5,10 +5,9 @@ import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import type {LineShapeType, PointsShapeType} from 'shared';
 
+import {PaletteItem} from '../../../../components/PaletteItem/PaletteItem';
 import IconRenderer from '../../../../libs/DatalensChartkit/ChartKit/components/IconRenderer/IconRenderer';
 import {PaletteTypes} from '../../constants';
-
-import {PaletteItem} from './components/PaletteItem/PaletteItem';
 
 import './Palette.scss';
 
