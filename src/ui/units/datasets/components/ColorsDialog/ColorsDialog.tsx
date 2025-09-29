@@ -141,15 +141,15 @@ export const ColorsDialog = (props: Props) => {
 
     const renderValueItem = (value: string) => {
         const mountedColorIndex = mountedColors[value];
+        const style: React.CSSProperties | undefined = mountedColorIndex
+            ? {
+                  backgroundColor: colorsList[Number(mountedColorIndex)],
+              }
+            : undefined;
 
         return (
             <React.Fragment>
-                <div
-                    className={b('value-color', {default: !mountedColorIndex})}
-                    style={{
-                        backgroundColor: colorsList[Number(mountedColorIndex)],
-                    }}
-                >
+                <div className={b('value-color', {default: !mountedColorIndex})} style={style}>
                     {mountedColorIndex ? null : 'a'}
                 </div>
                 <div className={b('value-label')} title={value}>
