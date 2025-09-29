@@ -1,9 +1,11 @@
+import type {ChartData} from '@gravity-ui/chartkit/gravity-charts';
 import {i18n} from 'i18n';
 import JSONfn from 'json-fn';
 import logger from 'libs/logger';
 import {UserSettings} from 'libs/userSettings';
-import {omit} from 'lodash';
 import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
+import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import set from 'lodash/set';
 import {WidgetKind} from 'shared/types/widget';
@@ -85,6 +87,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
         sources,
         logs_v2,
         timings,
+        dataExport,
         extra,
         requestId,
         traceId,
@@ -104,6 +107,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
             sources,
             logs_v2,
             timings,
+            dataExport,
             extra,
             requestId,
             traceId,
@@ -201,6 +205,24 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
 
             if ('sideMarkdown' in loaded.extra && loaded.extra.sideMarkdown) {
                 (result as GraphWidget).sideMarkdown = loaded.extra.sideMarkdown;
+            }
+
+            if ('colors' in loaded.extra && loaded.extra.colors) {
+                if (result.type === WidgetKind.GravityCharts) {
+                    const gravityUIChartsConfig = result.data as ChartData;
+
+                    if (isEmpty(gravityUIChartsConfig.colors)) {
+                        gravityUIChartsConfig.colors = loaded.extra?.colors;
+                    }
+                }
+
+                if (
+                    result.type === WidgetKind.Graph &&
+                    result.libraryConfig &&
+                    isEmpty(result.libraryConfig.colors)
+                ) {
+                    result.libraryConfig.colors = loaded.extra.colors;
+                }
             }
 
             if ('chartsInsights' in loaded.extra && loaded.extra.chartsInsights) {

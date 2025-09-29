@@ -30,7 +30,7 @@ type ExtendedPieSeries = Omit<PieSeries, 'data'> & {
 
 export function prepareD3Pie(args: PrepareFunctionArgs) {
     const {shared, labels, visualizationId, ChartEditor, colorsConfig, idToDataType} = args;
-    const {graphs, label, measure, totals} = preparePieData(args);
+    const {graphs, label, measure, totals, color, dimension} = preparePieData(args);
     const isLabelsEnabled = Boolean(labels?.length && label && measure?.hideLabelMode !== 'hide');
 
     const shouldUseHtmlForLabels =
@@ -56,7 +56,7 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
                     return {
                         ...item,
                         value: item.y,
-                        color: String(item.color),
+                        color: item.color,
                         formattedValue: getFormattedValue(String(item.y), {
                             ...measure,
                             data_type: idToDataType[measure.guid],
@@ -95,7 +95,7 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
         data = [];
     }
 
-    let legend: ChartData['legend'];
+    let legend: ChartData['legend'] = {};
     if (graphs.length && isColoringByMeasure(args)) {
         legend = {
             enabled: true,
@@ -106,6 +106,11 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
                 stops: colorsConfig.gradientColors.length === 2 ? [0, 1] : [0, 0.5, 1],
             },
         };
+    } else {
+        const shouldUseHtmlForLegend = [dimension, color].some(isHtmlField);
+        if (shouldUseHtmlForLegend) {
+            legend.html = true;
+        }
     }
 
     return merge(getBaseChartConfig(shared), {

@@ -1173,3 +1173,15 @@ export function updateSetting(
         });
     };
 }
+
+export function setDatasetDescription(payload: string) {
+    return (dispatch: Dispatch<DatasetReduxAction>) => {
+        batch(() => {
+            dispatch({
+                type: DATASET_ACTION_TYPES.SET_DESCRIPTION,
+                payload,
+            });
+            dispatch(toggleSaveDataset({enable: true}));
+        });
+    };
+}

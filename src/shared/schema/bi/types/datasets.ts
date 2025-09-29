@@ -1,3 +1,5 @@
+import type z from 'zod/v4';
+
 import type {
     Dataset,
     DatasetField,
@@ -8,6 +10,7 @@ import type {
 } from '../../../types';
 import type {ApiV2RequestBody, ApiV2ResultData} from '../../../types/bi-api/v2';
 import type {EntryFieldData} from '../../types';
+import type {createDatasetResultSchema, deleteDatasetResultSchema} from '../schemas';
 
 import type {WorkbookIdArg} from './common';
 
@@ -63,14 +66,7 @@ export type GetSourceArgs = {
     limit?: number;
 } & WorkbookIdArg;
 
-export type DeleteDatasetResponse = unknown;
-
-export type DeleteDatasetArgs = DatasetId;
-
-export type GetDatasetByVersionResponse = Dataset;
-
-export type GetDatasetByVersionArgs = {version: string; rev_id?: string} & DatasetId &
-    WorkbookIdArg;
+export type DeleteDatasetResponse = z.infer<typeof deleteDatasetResultSchema>;
 
 export type CheckDatasetsForPublicationResponse = {
     result: {
@@ -140,32 +136,7 @@ export type GetDataSetFieldsByIdArgs = WorkbookIdArg & {
     dataSetId: string;
 };
 
-export type CreateDatasetResponse = Id & DatasetWithOptions;
-
-type CreateDatasetBaseArgs = {
-    dataset: Dataset['dataset'];
-    multisource: boolean;
-    name: string;
-    created_via?: string;
-};
-
-type CreateDirDatasetArgs = CreateDatasetBaseArgs & {
-    dir_path: string;
-};
-
-type CreateWorkbookDatsetArgs = CreateDatasetBaseArgs & {
-    workbook_id: string;
-};
-
-export type CreateDatasetArgs = CreateDirDatasetArgs | CreateWorkbookDatsetArgs;
-
-export type UpdateDatasetResponse = DatasetWithOptions;
-
-export type UpdateDatasetArgs = {
-    dataset: Dataset['dataset'];
-    version: DatasetVersion;
-    multisource: boolean;
-} & DatasetId;
+export type CreateDatasetResponse = z.infer<typeof createDatasetResultSchema>;
 
 export type GetPreviewResponse = Partial<DistinctResult & DistinctRegularResult>;
 

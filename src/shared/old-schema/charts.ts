@@ -79,7 +79,9 @@ const CHARTS_API_SCHEMA = {
         headers,
         data: {
             template,
-            annotation: annotation ? annotation : {description},
+            annotation: {
+                description: annotation?.description ?? description,
+            },
             ...restArgs,
         },
     }),
@@ -110,7 +112,9 @@ const CHARTS_API_SCHEMA = {
             data,
             mode,
             template,
-            annotation: annotation ? annotation : {description},
+            annotation: {
+                description: annotation?.description ?? description,
+            },
         },
     }),
 
@@ -127,7 +131,9 @@ const CHARTS_API_SCHEMA = {
         headers,
         data: {
             ...restArgs,
-            annotation: annotation ? annotation : {description},
+            annotation: {
+                description: annotation?.description ?? description,
+            },
         },
     }),
     readDash: (
@@ -162,7 +168,9 @@ const CHARTS_API_SCHEMA = {
         headers,
         data: {
             ...restArgs,
-            annotation: annotation ? annotation : {description},
+            annotation: {
+                description: annotation?.description ?? description,
+            },
         },
     }),
 };

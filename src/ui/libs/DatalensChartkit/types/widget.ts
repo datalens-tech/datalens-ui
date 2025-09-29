@@ -11,6 +11,7 @@ import type DataTable from '@gravity-ui/react-data-table';
 import type {Optional, Required} from 'utility-types';
 
 import type {
+    ApiV2DataExportField,
     ChartkitHandlers,
     ChartsInsightsItem,
     GraphTooltipLine,
@@ -83,6 +84,7 @@ export interface WidgetBase {
     entryId?: string;
     revId?: string;
     data?: object;
+    dataExport?: Record<string, ApiV2DataExportField | undefined>;
     params: StringParams;
     unresolvedParams?: StringParams;
     initialParams?: StringParams;

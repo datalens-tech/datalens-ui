@@ -10,6 +10,7 @@ import {SMALL_SCREENSHOT_VIEWPORT_SIZE} from '../constants';
 datalensTest.describe('Wizard', () => {
     datalensTest.describe('Scatter chart', () => {
         datalensTest.beforeEach(async ({page, config}) => {
+            await page.setViewportSize(SMALL_SCREENSHOT_VIEWPORT_SIZE);
             await openTestPage(page, config.wizard.urls.WizardBasicDataset);
             const wizardPage = new WizardPage({page});
             await wizardPage.createNewFieldWithFormula('sum', 'sum([Sales])');
@@ -19,7 +20,6 @@ datalensTest.describe('Wizard', () => {
         datalensTest(
             'Point color set by the fake title of the field @screenshot',
             async ({page}) => {
-                await page.setViewportSize(SMALL_SCREENSHOT_VIEWPORT_SIZE);
                 const wizardPage = new WizardPage({page});
                 const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
                 const chart = chartContainer.locator('.gcharts-chart');
@@ -38,12 +38,27 @@ datalensTest.describe('Wizard', () => {
 
                 // set color by fake title
                 await wizardPage.colorDialog.open();
-                await wizardPage.colorDialog.selectColor('#FF7E00');
+                await wizardPage.colorDialog.selectColor('#FF8C00');
                 await wizardPage.colorDialog.apply();
 
                 await expect(previewLoader).not.toBeVisible();
                 await expect(chart).toHaveScreenshot();
             },
         );
+
+        datalensTest('Coloring by measure field (gradient) @screenshot', async ({page}) => {
+            const wizardPage = new WizardPage({page});
+
+            const preview = page.locator(slct(WizardPageQa.SectionPreview));
+            const previewLoader = preview.locator(slct(ChartKitQa.Loader));
+
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'segment');
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'sum');
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Colors, 'sum');
+
+            await expect(previewLoader).not.toBeVisible();
+
+            await expect(preview).toHaveScreenshot();
+        });
     });
 });

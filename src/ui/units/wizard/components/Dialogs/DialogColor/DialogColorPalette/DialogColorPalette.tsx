@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {SegmentedRadioGroup as RadioButton, Select} from '@gravity-ui/uikit';
+import {SegmentedRadioGroup as RadioButton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {
@@ -10,10 +10,9 @@ import {
     type FilterField,
     type Update,
 } from 'shared';
-import {SelectOptionWithIcon} from 'ui/components/SelectComponents';
+import {ColorPaletteSelect} from 'ui/components/ColorPaletteSelect/ColorPaletteSelect';
 
 import {PaletteTypes} from '../../../../constants';
-import {getPaletteSelectorItems} from '../../../../utils/palette';
 import Palette from '../../../Palette/Palette';
 import ValuesList from '../../../ValuesList/ValuesList';
 import type {ExtraSettings} from '../DialogColor';
@@ -52,7 +51,7 @@ export interface Props {
     colorSectionFields?: Field[];
 }
 
-class PaletteContainer extends React.Component<Props> {
+export class PaletteContainer extends React.Component<Props> {
     render() {
         return (
             <div className={b('container')}>
@@ -103,30 +102,20 @@ class PaletteContainer extends React.Component<Props> {
         const {mountedColors, selectedValue, polygonBorders, palette} = this.props.paletteState;
         const {extra, colorPalettes, colorsList} = this.props;
 
-        const options = getPaletteSelectorItems({
-            colorPalettes,
-        });
-
         return (
             <div className={b('palette-container')}>
-                <Select
-                    qa="palette-select"
-                    value={[palette]}
-                    options={options}
+                <ColorPaletteSelect
                     className={b('palette-select')}
+                    qa="palette-select"
+                    colorPalettes={colorPalettes}
                     onUpdate={([selectedPalette]) => {
                         this.props.setPaletteState({
-                            palette: selectedPalette,
+                            palette: selectedPalette ?? undefined,
                             mountedColors: {},
                         });
                     }}
-                    popupClassName={b('palette-select-popup')}
-                    renderSelectedOption={(option) => {
-                        return <SelectOptionWithIcon option={option} />;
-                    }}
-                    renderOption={(option) => {
-                        return <SelectOptionWithIcon option={option} />;
-                    }}
+                    value={palette}
+                    withAuto={true}
                 />
                 <Palette
                     key={palette}

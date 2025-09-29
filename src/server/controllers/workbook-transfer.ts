@@ -3,10 +3,10 @@ import {REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 
 import type {DashEntry, TransferNotification} from '../../shared';
 import {EntryScope} from '../../shared';
+import {Dash} from '../../shared/components/sdk';
 import {TransferCapabilities, TransferErrorCode} from '../../shared/constants/workbook-transfer';
 import type {EntryFieldData, EntryFieldLinks} from '../../shared/schema';
 import {Utils} from '../components';
-import {Dash} from '../components/sdk';
 import {
     prepareExportChartData,
     prepareImportChartData,

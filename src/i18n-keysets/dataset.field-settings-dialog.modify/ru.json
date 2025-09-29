@@ -4,5 +4,10 @@
   "button_reset": "Сбросить",
   "button_save": "Сохранить",
   "label_colors": "Цвета",
+  "label_field-other-colors": [
+    "Ещё {{count}} цвет",
+    "Ещё {{count}} цвета",
+    "Ещё {{count}} цветов"
+  ],
   "label_title": "Настройки отображения"
 }

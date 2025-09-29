@@ -1,12 +1,11 @@
 import {US_MASTER_TOKEN_HEADER, WORKBOOK_ID_HEADER} from '../../../constants';
-import {createAction} from '../../gateway-utils';
+import {createAction, createTypedAction} from '../../gateway-utils';
 import {filterUrlFragment} from '../../utils';
 import {transformConnectionResponseError} from '../helpers';
+import {deleteConnectionArgsSchema, deleteConnectionResultSchema} from '../schemas/connections';
 import type {
     CreateConnectionArgs,
     CreateConnectionResponse,
-    DeleteConnectionArgs,
-    DeleteConnectionResponse,
     EnsureUploadRobotArgs,
     EnsureUploadRobotResponse,
     ExportConnectionArgs,
@@ -95,11 +94,18 @@ export const actions = {
         params: ({connectionId: _connectionId, ...body}, headers) => ({body, headers}),
         transformResponseError: transformConnectionResponseError,
     }),
-    deleteConnnection: createAction<DeleteConnectionResponse, DeleteConnectionArgs>({
-        method: 'DELETE',
-        path: ({connectionId}) => `${PATH_PREFIX}/connections/${filterUrlFragment(connectionId)}`,
-        params: (_, headers) => ({headers}),
-    }),
+    deleteConnection: createTypedAction(
+        {
+            paramsSchema: deleteConnectionArgsSchema,
+            resultSchema: deleteConnectionResultSchema,
+        },
+        {
+            method: 'DELETE',
+            path: ({connectionId}) =>
+                `${PATH_PREFIX}/connections/${filterUrlFragment(connectionId)}`,
+            params: (_, headers) => ({headers}),
+        },
+    ),
     getConnectionSources: createAction<GetConnectionSourcesResponse, GetConnectionSourcesArgs>({
         method: 'GET',
         path: ({connectionId}) => `${PATH_PREFIX}/connections/${connectionId}/info/sources`,

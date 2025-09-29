@@ -16,7 +16,6 @@ export enum Feature {
     UseComponentHeader = 'UseComponentHeader',
     FetchDocumentation = 'FetchDocumentation',
     Comments = 'Comments',
-    EmptySelector = 'emptySelector',
     // Check access rights when processing ChartEditor charts
     ChartEditorDeveloperModeCheck = 'ChartEditorDeveloperModeCheck',
     QLPrometheus = 'QLPrometheus',
@@ -78,8 +77,6 @@ export enum Feature {
     EnableCustomDashMargins = 'EnableCustomDashMargins',
     /** Enabled Dash elements auto-focus */
     EnableDashAutoFocus = 'EnableDashAutoFocus',
-    /** Enable public gallery unit */
-    EnablePublicGallery = 'EnablePublicGallery',
     /** Enable new secure parameters behavior */
     EnableSecureParamsV2 = 'EnableSecureParamsV2',
     /** Enable export settings in connections & datasets */
@@ -98,8 +95,10 @@ export enum Feature {
     GravityChartsForBarYAndScatter = 'GravityChartsForBarYAndScatter',
     /** Save field settings (formatting and colors) in the dataset */
     StoreFieldSettingsAtDataset = 'StoreFieldSettingsAtDataset',
-    /** Enable dataset revisions */
-    EnableDatasetRevisions = 'EnableDatasetRevisions',
+    /** Show dataset description button */
+    EnableDatasetDescription = 'EnableDatasetDescription',
+    /** Show connection description button */
+    EnableConnectionDescription = 'EnableConnectionDescription',
 }
 
 export type FeatureConfig = Record<string, boolean>;

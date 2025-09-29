@@ -17,6 +17,25 @@ function isCustomColorPaletteId(value: string, systemPalettes: Record<string, Pa
     return !isSystem && isEntryId(value);
 }
 
+export function addColorPaletteRequest({
+    colorPaletteId,
+    palettes,
+    result,
+}: {
+    colorPaletteId: string;
+    palettes: Record<string, Palette>;
+    result: Record<string, unknown>;
+}) {
+    if (isCustomColorPaletteId(colorPaletteId, palettes)) {
+        // eslint-disable-next-line no-param-reassign
+        result[`colorPalettes_${colorPaletteId}`] = {
+            method: 'GET',
+            url: `/_us_color_palettes/${colorPaletteId}`,
+            hideInInspector: true,
+        };
+    }
+}
+
 export function getColorPalettesRequests(args: GetColorPalettesRequestArgs) {
     const {config, palettes} = args;
     const visualization = config.visualization;
@@ -37,15 +56,9 @@ export function getColorPalettesRequests(args: GetColorPalettesRequestArgs) {
         colorPalettes.add(colorPaletteId);
     }
 
-    colorPalettes.forEach((colorPaletteId) => {
-        if (isCustomColorPaletteId(colorPaletteId, palettes)) {
-            result[`colorPalettes_${colorPaletteId}`] = {
-                method: 'GET',
-                url: `/_us_color_palettes/${colorPaletteId}`,
-                hideInInspector: true,
-            };
-        }
-    });
+    colorPalettes.forEach((colorPaletteId) =>
+        addColorPaletteRequest({colorPaletteId, palettes, result}),
+    );
 
     visualization.placeholders?.forEach((placeholder) => {
         placeholder.items.forEach((item) => {
@@ -55,34 +68,21 @@ export function getColorPalettesRequests(args: GetColorPalettesRequestArgs) {
                 const gradientPaletteId =
                     backgroundSettings.settings?.gradientState?.gradientPalette;
 
-                if (gradientPaletteId && isCustomColorPaletteId(gradientPaletteId, palettes)) {
-                    result[`colorPalettes_${gradientPaletteId}`] = {
-                        method: 'GET',
-                        url: `/_us_color_palettes/${gradientPaletteId}`,
-                        hideInInspector: true,
-                    };
+                if (gradientPaletteId) {
+                    addColorPaletteRequest({colorPaletteId: gradientPaletteId, palettes, result});
                 }
 
                 const regularPaletteId = backgroundSettings.settings?.paletteState?.palette;
-
-                if (regularPaletteId && isCustomColorPaletteId(regularPaletteId, palettes)) {
-                    result[`colorPalettes_${regularPaletteId}`] = {
-                        method: 'GET',
-                        url: `/_us_color_palettes/${regularPaletteId}`,
-                        hideInInspector: true,
-                    };
+                if (regularPaletteId) {
+                    addColorPaletteRequest({colorPaletteId: regularPaletteId, palettes, result});
                 }
             }
 
             if (barsSettings && barsSettings.enabled) {
                 const gradientPaletteId = barsSettings.colorSettings.settings?.palette;
 
-                if (gradientPaletteId && isCustomColorPaletteId(gradientPaletteId, palettes)) {
-                    result[`colorPalettes_${gradientPaletteId}`] = {
-                        method: 'GET',
-                        url: `/_us_color_palettes/${gradientPaletteId}`,
-                        hideInInspector: true,
-                    };
+                if (gradientPaletteId) {
+                    addColorPaletteRequest({colorPaletteId: gradientPaletteId, palettes, result});
                 }
             }
         });

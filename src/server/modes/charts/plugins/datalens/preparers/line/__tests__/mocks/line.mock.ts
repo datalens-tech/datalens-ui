@@ -480,5 +480,5 @@ export const linesColoredByFieldWithPostfixResult = {
             dashStyle: 'Solid',
         },
     ],
-    categories: [1, 2, 3],
+    categories: ['1', '2', '3'],
 };

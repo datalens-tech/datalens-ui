@@ -29,6 +29,7 @@ import {getSdk} from '../../libs/schematic-sdk';
 import type {EntryContextMenuItems} from '../EntryContextMenu/helpers';
 import ExpandablePanel from '../ExpandablePanel/ExpandablePanel';
 import Revisions from '../Revisions/Revisions';
+import type {GetRevisionRowExtendedProps} from '../Revisions/types';
 import RevisionsPanel from '../RevisionsPanel/RevisionsPanel';
 
 import EntryPanel from './components/EntryPanel/EntryPanel';
@@ -58,6 +59,8 @@ type OwnProps = {
     renderRevisionItemActions?: (item: GetRevisionsEntry, currentRevId: string) => React.ReactNode;
     wrapperRef?: React.Ref<HTMLDivElement> | React.RefCallback<HTMLDivElement>;
     style?: React.CSSProperties;
+    expandablePanelDescription?: string;
+    getRevisionRowExtendedProps?: GetRevisionRowExtendedProps;
 };
 
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
@@ -157,11 +160,19 @@ class ActionPanel extends React.Component<Props, State> {
             renderRevisionItemActions,
             wrapperRef,
             style: externalStyle,
+            expandablePanelDescription,
+            getRevisionRowExtendedProps,
         } = this.props;
 
         const style: React.CSSProperties = {left: sidebarSize, ...externalStyle};
 
         const entry = this.getEntry();
+
+        const revisionsListDescription = isEnabledFeature(Feature.RevisionsListNoLimit)
+            ? undefined
+            : i18n('label_history-changes-date-limit');
+
+        const description = expandablePanelDescription ?? revisionsListDescription;
 
         return (
             <div className={b()} ref={wrapperRef}>
@@ -200,15 +211,14 @@ class ActionPanel extends React.Component<Props, State> {
                         <ExpandablePanel
                             className={b('expandable-panel')}
                             title={i18n('label_history-changes')}
-                            description={
-                                isEnabledFeature(Feature.RevisionsListNoLimit)
-                                    ? undefined
-                                    : i18n('label_history-changes-date-limit')
-                            }
+                            description={description}
                             active={isRevisionsOpened || false}
                             onClose={this.handleExpandablePanelClose}
                         >
-                            <Revisions renderItemActions={renderRevisionItemActions} />
+                            <Revisions
+                                getRevisionRowExtendedProps={getRevisionRowExtendedProps}
+                                renderItemActions={renderRevisionItemActions}
+                            />
                         </ExpandablePanel>
                     </React.Fragment>
                 )}

@@ -8,7 +8,7 @@ import {Feature} from 'shared';
 import type {CreateWorkbookDialogProps} from 'ui/components/CollectionsStructure/CreateWorkbookDialog/CreateWorkbookDialog';
 import type {PublicGalleryData} from 'ui/components/CollectionsStructure/types';
 import {DL} from 'ui/constants/common';
-import {getSdk} from 'ui/libs/schematic-sdk';
+import {registry} from 'ui/registry';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {AnimateBlock} from '../../../../components/AnimateBlock';
@@ -136,20 +136,13 @@ export const CollectionPage = (props: RouteComponentProps) => {
             return;
         }
 
-        getSdk()
-            .sdk.anonymous.publicGallery.getItem({fileId: publicGalleryId})
-            .then((publicGalleryEntry) => {
-                if (publicGalleryEntry.data) {
-                    handleOpenCreateDialog('default', {
-                        publicGallery: {
-                            id: publicGalleryEntry.id,
-                            title: publicGalleryEntry.title[DL.USER_LANG] || '',
-                            description: publicGalleryEntry.shortDescription?.[DL.USER_LANG] || '',
-                            data: publicGalleryEntry.data,
-                        },
-                    });
-                }
-            });
+        const {getPublicGalleryEntry} = registry.collections.functions.getAll();
+
+        getPublicGalleryEntry(publicGalleryId).then((publicGalleryEntry) => {
+            if (publicGalleryEntry.publicGallery) {
+                handleOpenCreateDialog('default', publicGalleryEntry);
+            }
+        });
     }, [handleOpenCreateDialog, search]);
 
     const collection = useSelector(selectCollection);

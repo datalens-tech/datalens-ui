@@ -1,5 +1,6 @@
+import {ENTRY_TYPES, EntryScope} from '../../..';
 import {DeveloperModeCheckStatus} from '../../../types';
-import {createAction} from '../../gateway-utils';
+import {createAction, createTypedAction} from '../../gateway-utils';
 import {getTypedApi} from '../../simple-schema';
 import type {
     CreateEditorChartArgs,
@@ -9,6 +10,7 @@ import type {
 } from '../../us/types';
 import {getEntryLinks} from '../helpers';
 import {validateData} from '../helpers/editor/validation';
+import {deleteEditorChartArgsSchema, deleteEditorChartResultSchema} from '../schemas/editor';
 
 export const editorActions = {
     createEditorChart: createAction<CreateEditorChartResponse, CreateEditorChartArgs>(
@@ -43,6 +45,24 @@ export const editorActions = {
             } else {
                 throw new Error('Access to Editor developer mode was denied');
             }
+        },
+    ),
+    // WIP
+    __deleteEditorChart__: createTypedAction(
+        {
+            paramsSchema: deleteEditorChartArgsSchema,
+            resultSchema: deleteEditorChartResultSchema,
+        },
+        async (api, {chartId}) => {
+            const typedApi = getTypedApi(api);
+
+            await typedApi.us._deleteUSEntry({
+                entryId: chartId,
+                scope: EntryScope.Widget,
+                types: [...ENTRY_TYPES.editor, ...ENTRY_TYPES.legacyEditor],
+            });
+
+            return {};
         },
     ),
 };

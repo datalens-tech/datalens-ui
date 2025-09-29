@@ -242,12 +242,9 @@ export function preparePieData(args: PrepareFunctionArgs) {
             formattedName = wrapHtml(formattedName);
         }
 
-        // toDo: return as soon as the html legend in gravity-charts is supported
-        // const shouldWrapPointName = isHtmlColor || isHtmlDimension;
-
+        const shouldWrapPointName = isHtmlColor || isHtmlDimension;
         const point: PiePoint = {
-            // name: shouldWrapPointName ? wrapHtml(pointName) : pointName,
-            name: pointName,
+            name: shouldWrapPointName ? wrapHtml(pointName) : pointName,
             formattedName,
             drillDownFilterValue,
             y: Number(measureValue),

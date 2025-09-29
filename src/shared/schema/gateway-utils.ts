@@ -1,6 +1,7 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
 import type {ApiServiceActionConfig, GetAuthHeaders} from '@gravity-ui/gateway';
 import type {AppContext} from '@gravity-ui/nodekit';
+import type z from 'zod/v4';
 
 import {AuthHeader, SERVICE_USER_ACCESS_TOKEN_HEADER} from '../constants';
 
@@ -10,6 +11,28 @@ export function createAction<TOutput, TParams = undefined, TTransformed = TOutpu
     config: ApiServiceActionConfig<AppContext, Request, Response, TOutput, TParams, TTransformed>,
 ) {
     return config;
+}
+
+export function createTypedAction<
+    TOutputSchema extends z.ZodType,
+    TParamsSchema extends z.ZodType,
+    TTransformedSchema extends z.ZodType = TOutputSchema,
+>(
+    _: {
+        paramsSchema: TParamsSchema;
+        resultSchema: TOutputSchema;
+        transformedSchema?: TTransformedSchema;
+    },
+    actionConfig: ApiServiceActionConfig<
+        AppContext,
+        Request,
+        Response,
+        z.infer<TOutputSchema>,
+        z.infer<TParamsSchema>,
+        z.infer<TTransformedSchema>
+    >,
+) {
+    return actionConfig;
 }
 
 type AuthArgsData = {

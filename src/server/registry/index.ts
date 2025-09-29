@@ -5,6 +5,7 @@ import {getGatewayControllers} from '@gravity-ui/gateway';
 import type {AppContext} from '@gravity-ui/nodekit';
 
 import type {ChartsEngine} from '../components/charts-engine';
+import type {PublicApiConfig} from '../components/public-api/types';
 import type {QLConnectionTypeMap} from '../modes/charts/plugins/ql/utils/connection';
 import {getConnectorToQlConnectionTypeMap} from '../modes/charts/plugins/ql/utils/connection';
 import type {GetLayoutConfig} from '../types/app-layout';
@@ -25,6 +26,7 @@ let getLayoutConfig: GetLayoutConfig | undefined;
 let yfmPlugins: MarkdownItPluginCb[];
 let getXlsxConverter: XlsxConverterFn | undefined;
 let qLConnectionTypeMap: QLConnectionTypeMap | undefined;
+let publicApiConfig: PublicApiConfig | undefined;
 
 export const registry = {
     common: commonRegistry,
@@ -116,5 +118,18 @@ export const registry = {
     },
     getQLConnectionTypeMap() {
         return qLConnectionTypeMap ?? getConnectorToQlConnectionTypeMap();
+    },
+    setupPublicApiConfig(config: PublicApiConfig) {
+        if (publicApiConfig) {
+            throw new Error('The method must not be called more than once [setupPublicApiConfig]');
+        }
+        publicApiConfig = config;
+    },
+    getPublicApiConfig() {
+        if (!publicApiConfig) {
+            throw new Error('First of all setup the publicApiConfig');
+        }
+
+        return publicApiConfig;
     },
 };

@@ -68,6 +68,7 @@
   "label_chyt-user-auth-description": "Аутентификация по cookie, запросы будут выполняться от имени пользователя, просматривающего датасет, чарт или дашборд",
   "label_cloud-tree-fetching-failed": "Не удалось загрузить список облаков",
   "label_connection-csv-name": "Название подключения",
+  "label_connection-info": "Информация о подключении",
   "label_connection-loading": "Загрузка",
   "label_connections-empty-msg": "У вас пока нет ни одного подключения",
   "label_connections-list-failed": "Ошибка: не удалось загрузить список подключений",
