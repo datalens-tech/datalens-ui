@@ -85,7 +85,6 @@ export const ShareButton = ({
                             {i18n('embedded')}
                         </Button>
                     )}
-                    autoclosable={false}
                 />
             );
         }
