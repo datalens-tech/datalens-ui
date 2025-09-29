@@ -139,7 +139,7 @@ class DNDContainer extends Component<DNDContainerProps, DNDContainerState> {
                     ></div>
                 }
                 {items.map((item, index) => {
-                    const itemClassName = item.disabled ? b('item', {short: true}) : '';
+                    const itemClassName = b('item', item.disabled ? {short: true} : {});
                     return (
                         <div className={itemClassName} key={`${item.id}-${index}`}>
                             <DNDItem

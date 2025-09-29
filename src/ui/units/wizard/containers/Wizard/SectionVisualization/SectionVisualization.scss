@@ -82,10 +82,9 @@
 
     .subcontainer {
         border-bottom: 1px solid var(--g-color-line-generic);
-        min-height: 90px;
 
         .subheader {
-            margin-bottom: 11px;
+            margin-bottom: var(--g-spacing-2);
             display: flex;
             align-items: center;
             color: var(--g-color-text-complementary);
@@ -128,13 +127,16 @@
         .dnd-container {
             margin: 2px;
             border-radius: 4px;
-            padding: 13px 17px var(--g-spacing-3);
-            min-height: 90px;
+            padding: var(--g-spacing-3) var(--g-spacing-3) var(--g-spacing-1);
             border: solid 1px transparent;
 
             .item-icon {
                 display: inline-block;
                 margin-right: 8px;
+            }
+
+            &__item:last-child {
+                margin-bottom: var(--g-spacing-2);
             }
 
             &__item_short {
@@ -156,6 +158,7 @@
                 position: relative;
                 margin: 0 0 -2px;
                 display: none;
+                margin-bottom: var(--g-spacing-3);
             }
 
             &_cannot-drop {
