@@ -180,7 +180,6 @@ export const getOpenAsTableMenuItem = ({
 }: {
     chartsDataProvider: ChartKitDataProvider;
     customConfig?: Partial<MenuItemConfig>;
-    extraOptions?: Record<string, unknown>;
 }): MenuItemConfig => ({
     id: MenuItemsIds.OPEN_AS_TABLE,
     get title() {

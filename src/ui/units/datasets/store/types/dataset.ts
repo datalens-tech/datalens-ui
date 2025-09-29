@@ -59,6 +59,7 @@ import type {
     SET_CURRENT_TAB,
     SET_DATASET_REVISION_MISMATCH,
     SET_DATA_EXPORT_ENABLED,
+    SET_DESCRIPTION,
     SET_EDIT_HISTORY_STATE,
     SET_FREEFORM_SOURCES,
     SET_INITIAL_SOURCES,
@@ -838,6 +839,11 @@ type SetUpdates = {
     } & EditHistoryOptionsProperty;
 };
 
+type SetDescription = {
+    type: typeof SET_DESCRIPTION;
+    payload: string;
+};
+
 export type DatasetReduxAction =
     | SetFreeformSources
     | ResetDatasetState
@@ -908,4 +914,5 @@ export type DatasetReduxAction =
     | SetValidationState
     | SetTemplateEnabled
     | SetDataExportEnabled
-    | SetUpdates;
+    | SetUpdates
+    | SetDescription;

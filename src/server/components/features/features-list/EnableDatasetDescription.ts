@@ -2,9 +2,9 @@ import {Feature} from '../../../../shared';
 import {createFeatureConfig} from '../utils';
 
 export default createFeatureConfig({
-    name: Feature.EnableBackendExportInfo,
+    name: Feature.EnableDatasetDescription,
     state: {
-        development: false,
+        development: true,
         production: false,
     },
 });

@@ -45,6 +45,7 @@
   "label_column-field-id": "Field ID",
   "label_data-preparation-preview": "Loading data for preview",
   "label_dataset-auto-creation-process": "Creating dataset",
+  "label_dataset-info": "Dataset info",
   "label_display-fields-id": "Show field IDs",
   "label_display-hidden-fields": "Show hidden fields",
   "label_enable-templating": "Enable parameterization",

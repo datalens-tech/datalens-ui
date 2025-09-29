@@ -25,6 +25,7 @@ datalensTest.describe('Wizard - Geo Layers', () => {
 
         await wizardPage.sectionVisualization.removeGeoLayer('geolayer-select-layer-0');
 
+        await wizardPage.sectionVisualization.toggleLayerList();
         await wizardPage.sectionVisualization.expectLayersSelectItemsCount(1);
     });
 });

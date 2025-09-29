@@ -2,7 +2,7 @@ import {Feature} from '../../../../shared';
 import {createFeatureConfig} from '../utils';
 
 export default createFeatureConfig({
-    name: Feature.EnableDatasetRevisions,
+    name: Feature.EnableConnectionDescription,
     state: {
         development: true,
         production: false,
