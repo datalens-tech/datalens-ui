@@ -31,7 +31,7 @@ const UserProfilePage = () => {
 
     return (
         <main className={b()}>
-            <PageTitle entry={{key: i18n('title_profile')}} />
+            <PageTitle title={i18n('title_profile')} />
 
             <ActionPanel
                 leftItems={
