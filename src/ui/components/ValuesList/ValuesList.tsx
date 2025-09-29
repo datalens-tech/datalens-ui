@@ -35,10 +35,6 @@ export const ValuesList = (props: Props) => {
     } = props;
     const [searchValue, setSearchValue] = React.useState('');
 
-    const handleSearch = (value: string) => {
-        setSearchValue(value);
-    };
-
     const items = React.useMemo(() => {
         let shownValues;
 
@@ -63,7 +59,7 @@ export const ValuesList = (props: Props) => {
                             size="m"
                             placeholder={i18n('field_search')}
                             value={searchValue}
-                            onUpdate={handleSearch}
+                            onUpdate={setSearchValue}
                         />
                     </div>
                     <div className={b('items')}>

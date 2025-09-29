@@ -1,10 +1,12 @@
 @import '../../../../styles/mixins.scss';
 
-.colors-dialog {
+$class: 'colors-dialog';
+
+.#{$class} {
     width: 680px;
 
-    &__body {
-        --_--side-padding: 0;
+    .#{$class} &__body {
+        padding: 10px 0;
     }
 
     &__content {

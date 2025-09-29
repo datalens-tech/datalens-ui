@@ -4,7 +4,7 @@ import {Button, Dialog, Palette} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import type {DatasetField, DatasetFieldColorConfig} from 'shared';
+import type {DatasetField, DatasetFieldColorConfig, FieldUISettings} from 'shared';
 import {
     TIMEOUT_90_SEC,
     getFieldDistinctValues,
@@ -49,7 +49,10 @@ export const ColorsDialog = (props: Props) => {
     const [isLoading, setLoading] = React.useState(true);
     const [error, setError] = React.useState(null);
 
-    const fieldUiSettings = React.useMemo(() => getFieldUISettings({field}), [field]);
+    const fieldUiSettings = React.useMemo<FieldUISettings | null>(
+        () => getFieldUISettings({field}),
+        [field],
+    );
     const [mountedColors, setMountedColors] = React.useState<Record<string, string>>(
         fieldUiSettings?.colors ?? {},
     );
@@ -70,9 +73,7 @@ export const ColorsDialog = (props: Props) => {
     const colorsList: string[] = getPaletteColors(selectedPaletteId, Object.values(colorPalettes));
 
     React.useEffect(() => {
-        if (values.length) {
-            setSelectedValue(values[0]);
-        }
+        setSelectedValue(values?.[0] ?? undefined);
     }, [values]);
 
     React.useEffect(() => {
