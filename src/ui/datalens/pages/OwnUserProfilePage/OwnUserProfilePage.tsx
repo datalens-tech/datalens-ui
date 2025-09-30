@@ -20,7 +20,7 @@ function OwnUserProfilePage() {
 
     return (
         <main className={b()}>
-            <PageTitle entry={{key: pageTitle}} />
+            <PageTitle title={pageTitle} />
             <ActionPanel
                 leftItems={
                     <Breadcrumbs>
