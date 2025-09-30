@@ -2,9 +2,7 @@ import React from 'react';
 
 import {Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {I18n} from 'i18n';
 import {Redirect, Route, Switch} from 'react-router-dom';
-import {PageTitle} from 'ui/components/PageTitle';
 import {DL} from 'ui/constants';
 import {reducerRegistry} from 'ui/store/reducer-registry';
 
@@ -14,8 +12,6 @@ import type {MainPageProps as MainServiceSettingsPageProps} from '../MainPage/Ma
 import './App.scss';
 
 reducerRegistry.register({serviceSettings});
-
-const i18n = I18n.keyset('service-settings.main.view');
 
 const b = block('service-settings-container');
 
@@ -29,7 +25,6 @@ type ServiceSettingsProps = MainServiceSettingsPageProps & {
 
 export const App = ({children, ...props}: ServiceSettingsProps) => (
     <React.Suspense fallback={<Loader size="l" className={b('loader')} />}>
-        <PageTitle title={i18n('label_header')} />
         <Switch>
             {children}
             {DL.AUTH_ENABLED && (
