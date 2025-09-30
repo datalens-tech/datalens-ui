@@ -29,7 +29,7 @@ type ServiceSettingsProps = MainServiceSettingsPageProps & {
 
 export const App = ({children, ...props}: ServiceSettingsProps) => (
     <React.Suspense fallback={<Loader size="l" className={b('loader')} />}>
-        <PageTitle entry={{key: i18n('label_header')}} />
+        <PageTitle title={i18n('label_header')} />
         <Switch>
             {children}
             {DL.AUTH_ENABLED && (

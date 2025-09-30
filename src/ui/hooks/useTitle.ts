@@ -1,8 +1,10 @@
 import {useEffect} from 'react';
 
-export const useTitle = (title, unmoutTitle) => {
+export const useTitle = (title?: string, unmoutTitle?: string) => {
     useEffect(() => {
-        document.title = title;
+        if (title) {
+            document.title = title;
+        }
         return () => {
             if (unmoutTitle) {
                 document.title = unmoutTitle;
