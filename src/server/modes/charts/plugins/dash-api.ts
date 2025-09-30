@@ -6,9 +6,9 @@ import pick from 'lodash/pick';
 
 import type {DashEntry, EntryReadParams} from '../../../../shared';
 import {DASH_API_BASE_URL, EntryScope, ErrorCode} from '../../../../shared';
-import {Dash} from '../../../../shared/components/sdk';
 import {Utils} from '../../../components';
 import type {Plugin, PluginRoute} from '../../../components/charts-engine/types';
+import {Dash} from '../../../components/sdk';
 import {DASH_ENTRY_RELEVANT_FIELDS} from '../../../constants';
 
 function purgeResult(result: DashEntry) {

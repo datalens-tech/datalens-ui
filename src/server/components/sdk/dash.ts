@@ -6,15 +6,8 @@ import assign from 'lodash/assign';
 import intersection from 'lodash/intersection';
 
 import type {ServerI18n} from '../../../i18n/types';
-import {DASH_CURRENT_SCHEME_VERSION, DASH_DATA_REQUIRED_FIELDS} from '../../constants';
-import {DashSchemeConverter} from '../../modules';
-import {
-    DashTabItemControlSourceType,
-    DashTabItemType,
-    EntryScope,
-    EntryUpdateMode,
-    Feature,
-} from '../../types';
+import {DASH_CURRENT_SCHEME_VERSION, DASH_DATA_REQUIRED_FIELDS} from '../../../shared/constants';
+import {DashSchemeConverter} from '../../../shared/modules';
 import type {
     CreateEntryRequest,
     DashData,
@@ -25,7 +18,14 @@ import type {
     Dictionary,
     EntryReadParams,
     UpdateEntryRequest,
-} from '../../types';
+} from '../../../shared/types';
+import {
+    DashTabItemControlSourceType,
+    DashTabItemType,
+    EntryScope,
+    EntryUpdateMode,
+    Feature,
+} from '../../../shared/types';
 
 import US from './us';
 
