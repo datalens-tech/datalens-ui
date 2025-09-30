@@ -79,7 +79,6 @@ export const ShareButton = ({
                             size="l"
                             width="max"
                             onClick={handleShareButtonClick}
-                            aria-label={i18n('embedded')}
                         >
                             <Icon data={icon} size={16} />
                             {i18n('embedded')}
