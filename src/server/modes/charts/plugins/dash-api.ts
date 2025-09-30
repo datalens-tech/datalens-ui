@@ -159,8 +159,9 @@ const getRoutes = (options?: ConfiguredDashApiPluginOptions): Plugin['routes'] =
                     res.status(200).send(purgeResult(result));
                 } catch (error) {
                     let errorStatus = 500;
-                    if (Utils.getErrorStatus(error) === 403) {
-                        errorStatus = 403;
+                    const originalStatus = Utils.getErrorStatus(error);
+                    if (originalStatus === 403 || originalStatus === 423) {
+                        errorStatus = originalStatus;
                     } else if (Utils.getErrorCode(error) === ErrorCode.ReadOnlyMode) {
                         errorStatus = 451;
                     }
