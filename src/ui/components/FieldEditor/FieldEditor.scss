@@ -17,6 +17,11 @@
 
     &__dialog_additional-panel-open {
         padding-right: 330px;
+
+        /** hotfix clip-path for additional panel */
+        & .g-modal__content {
+            clip-path: none;
+        }
     }
 
     &__settings {

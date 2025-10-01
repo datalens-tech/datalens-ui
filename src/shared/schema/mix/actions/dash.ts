@@ -1,7 +1,7 @@
 import type {DeepNonNullable} from 'utility-types';
 
 import {EntryScope} from '../../..';
-import Dash from '../../../components/sdk/dash';
+import Dash from '../../../../server/components/sdk/dash';
 import type {ChartsStats} from '../../../types/charts';
 import {createAction, createTypedAction} from '../../gateway-utils';
 import {getTypedApi} from '../../simple-schema';

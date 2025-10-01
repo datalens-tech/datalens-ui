@@ -6,9 +6,9 @@ import pick from 'lodash/pick';
 
 import type {DashEntry, EntryReadParams} from '../../../../shared';
 import {DASH_API_BASE_URL, EntryScope, ErrorCode} from '../../../../shared';
-import {Dash} from '../../../../shared/components/sdk';
 import {Utils} from '../../../components';
 import type {Plugin, PluginRoute} from '../../../components/charts-engine/types';
+import {Dash} from '../../../components/sdk';
 import {DASH_ENTRY_RELEVANT_FIELDS} from '../../../constants';
 
 function purgeResult(result: DashEntry) {
@@ -159,8 +159,9 @@ const getRoutes = (options?: ConfiguredDashApiPluginOptions): Plugin['routes'] =
                     res.status(200).send(purgeResult(result));
                 } catch (error) {
                     let errorStatus = 500;
-                    if (Utils.getErrorStatus(error) === 403) {
-                        errorStatus = 403;
+                    const originalStatus = Utils.getErrorStatus(error);
+                    if (originalStatus === 403 || originalStatus === 423) {
+                        errorStatus = originalStatus;
                     } else if (Utils.getErrorCode(error) === ErrorCode.ReadOnlyMode) {
                         errorStatus = 451;
                     }
