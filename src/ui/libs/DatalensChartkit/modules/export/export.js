@@ -133,6 +133,8 @@ function getXlsxFormattedCellData(value, options) {
                     t: 'd',
                     z: dateFormat.toLowerCase(),
                 };
+            } else {
+                dateValue = null;
             }
         }
 
@@ -249,7 +251,8 @@ function prepareValues({widget, data, widgetType, extra, options = {}}) {
                         const dateFormat = graph.format
                             ? graph.format
                             : TABLE_DATE_FORMAT_BY_SCALE[graph.scale];
-                        graph.data[rowIndex] = value ? moment.utc(value).format(dateFormat) : value;
+                        const date = moment.utc(value);
+                        graph.data[rowIndex] = date.isValid() ? date.format(dateFormat) : value;
                     } else if (graph.type === 'grid') {
                         if (index === 0) {
                             const prepared = prepareRowHeadersForGrid(value);
