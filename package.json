@@ -137,7 +137,7 @@
     "@gravity-ui/stylelint-config": "^4.0.1",
     "@gravity-ui/tsconfig": "^1.0.0",
     "@gravity-ui/ui-logger": "^1.1.0",
-    "@gravity-ui/uikit": "^7.16.0",
+    "@gravity-ui/uikit": "^7.18.0",
     "@jest/types": "^29.6.3",
     "@microsoft/fetch-event-source": "^2.0.1",
     "@playwright/test": "^1.48.2",
