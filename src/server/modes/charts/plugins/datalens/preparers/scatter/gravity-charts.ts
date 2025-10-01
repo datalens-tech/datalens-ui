@@ -21,7 +21,7 @@ import {getBaseChartConfig} from '../../gravity-charts/utils';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import {isGradientMode} from '../../utils/misc-helpers';
-import {getAxisType} from '../helpers/axis';
+import {getAxisFormatting, getAxisType} from '../helpers/axis';
 import type {PrepareFunctionArgs} from '../types';
 
 import type {ScatterGraph} from './prepare-scatter';
@@ -82,8 +82,10 @@ function mapScatterSeries(args: MapScatterSeriesArgs): ScatterSeries<PointCustom
     return series;
 }
 
+// eslint-disable-next-line complexity
 export function prepareD3Scatter(args: PrepareFunctionArgs): ChartData<PointCustomData> {
-    const {shared, idToDataType, placeholders, colors, colorsConfig, shapes} = args;
+    const {shared, idToDataType, placeholders, colors, colorsConfig, shapes, visualizationId} =
+        args;
     const {categories: preparedXCategories, graphs, x, y, z, color, size} = prepareScatter(args);
     const xCategories = (preparedXCategories || []).map(String);
 
@@ -155,6 +157,17 @@ export function prepareD3Scatter(args: PrepareFunctionArgs): ChartData<PointCust
         if (isNumberField(x)) {
             xAxis.type = xPlaceholder?.settings?.type === 'logarithmic' ? 'logarithmic' : 'linear';
         }
+
+        const xAxisLabelNumberFormat = xPlaceholder
+            ? getAxisFormatting({
+                  placeholder: xPlaceholder,
+                  visualizationId,
+              })
+            : undefined;
+
+        if (xAxisLabelNumberFormat) {
+            xAxis.labels = {numberFormat: xAxisLabelNumberFormat};
+        }
     }
 
     const colorFieldDataType = color ? idToDataType[color.guid] : null;
@@ -179,8 +192,22 @@ export function prepareD3Scatter(args: PrepareFunctionArgs): ChartData<PointCust
         legend.enabled = false;
     }
 
+    const axisLabelNumberFormat = yPlaceholder
+        ? getAxisFormatting({
+              placeholder: yPlaceholder,
+              visualizationId,
+          })
+        : undefined;
+
     const config: ChartData = {
         xAxis,
+        yAxis: [
+            {
+                labels: {
+                    numberFormat: axisLabelNumberFormat ?? undefined,
+                },
+            },
+        ],
         series: {
             data: graphs.map((graph) => ({
                 ...mapScatterSeries({graph, xAxisType, yAxisType}),
