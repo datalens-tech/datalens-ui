@@ -233,7 +233,10 @@ export const entriesActions = {
     _deleteUSEntry: createAction<DeleteUSEntryResponse, DeleteUSEntryArgs>({
         method: 'DELETE',
         path: ({entryId}) => `${PATH_PREFIX}/entries/${filterUrlFragment(entryId)}`,
-        params: ({lockToken}, headers) => ({query: {lockToken}, headers}),
+        params: ({lockToken, scope, types}, headers) => ({
+            query: {lockToken, scope, types},
+            headers,
+        }),
     }),
     _switchPublicationStatus: createAction<
         SwitchPublicationStatusResponse,

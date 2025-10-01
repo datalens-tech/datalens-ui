@@ -4,12 +4,7 @@ $paletteItemSizeM: 28px;
 
 .minified-palette {
     &__selector {
-        width: 100%;
         margin-bottom: 12px;
-    }
-
-    &__selector-popup {
-        @include dl-select-popup;
     }
 
     &__color-input-wrapper {

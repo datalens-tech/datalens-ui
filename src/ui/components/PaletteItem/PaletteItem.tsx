@@ -22,7 +22,7 @@ type PaletteItemProps = {
 const b = block('palette-item');
 
 export const PaletteItem = forwardRef<HTMLDivElement | null, PropsWithChildren<PaletteItemProps>>(
-    (
+    function PaletteItem(
         {
             children,
             qa,
@@ -35,7 +35,7 @@ export const PaletteItem = forwardRef<HTMLDivElement | null, PropsWithChildren<P
             isSelectable = true,
         },
         ref,
-    ) => {
+    ) {
         const mods = {
             default: Boolean(isDefault),
             selected: Boolean(isSelected),
