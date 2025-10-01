@@ -1,7 +1,7 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
 import type {GetAuthHeaders} from '@gravity-ui/gateway';
 
-import {US_MASTER_TOKEN_HEADER} from '../../../constants/header';
+import {US_MASTER_TOKEN_HEADER} from '../../../shared/constants/header';
 
 type AuthArgsData = {
     usMasterToken?: string;

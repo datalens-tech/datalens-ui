@@ -4,7 +4,6 @@ import {REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 import type {DashEntry, TransferNotification} from '../../shared';
 import {EntryScope} from '../../shared';
 import {TransferCapabilities, TransferErrorCode} from '../../shared/constants/workbook-transfer';
-import {sharedRegistry} from '../../shared/registry';
 import type {EntryFieldData, EntryFieldLinks} from '../../shared/schema';
 import {Utils} from '../components';
 import {Dash} from '../components/sdk';
@@ -66,7 +65,7 @@ export const proxyGetEntry = async (
     };
     const requestId = getRequestId(ctx);
 
-    const {getAuthArgsProxyUSPrivate} = sharedRegistry.gatewayAuth.functions.getAll();
+    const {getAuthArgsProxyUSPrivate} = registry.common.auth.getAll();
     const authArgs = getAuthArgsProxyUSPrivate(req, res);
 
     try {
@@ -112,7 +111,7 @@ export const prepareExportData = async (req: Request, res: Response) => {
     const {exportId, scope, idMapping} = req.body;
     const workbookId = (req.body?.workbookId as string) ?? null;
 
-    const {getAuthArgsProxyBIPrivate} = sharedRegistry.gatewayAuth.functions.getAll();
+    const {getAuthArgsProxyBIPrivate} = registry.common.auth.getAll();
 
     switch (scope) {
         case EntryScope.Dash: {
@@ -204,8 +203,7 @@ export const prepareImportData = async (req: Request, res: Response) => {
 
     const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
 
-    const {getAuthArgsProxyBIPrivate, getAuthArgsProxyUSPrivate} =
-        sharedRegistry.gatewayAuth.functions.getAll();
+    const {getAuthArgsProxyBIPrivate, getAuthArgsProxyUSPrivate} = registry.common.auth.getAll();
 
     switch (scope) {
         case EntryScope.Connection: {
@@ -316,8 +314,7 @@ export const workbooksTransferController = {
     },
     export: async (req: Request, res: Response) => {
         try {
-            const {hasValidWorkbookTransferAuthHeaders} =
-                sharedRegistry.gatewayAuth.functions.getAll();
+            const {hasValidWorkbookTransferAuthHeaders} = registry.common.auth.getAll();
 
             if (!(await hasValidWorkbookTransferAuthHeaders(req))) {
                 res.status(403).send({
@@ -334,8 +331,7 @@ export const workbooksTransferController = {
     },
     import: async (req: Request, res: Response) => {
         try {
-            const {hasValidWorkbookTransferAuthHeaders} =
-                sharedRegistry.gatewayAuth.functions.getAll();
+            const {hasValidWorkbookTransferAuthHeaders} = registry.common.auth.getAll();
 
             if (!(await hasValidWorkbookTransferAuthHeaders(req))) {
                 res.status(403).send({

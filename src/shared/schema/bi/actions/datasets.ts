@@ -1,5 +1,5 @@
+import {registry} from '../../../../server/registry';
 import {TIMEOUT_60_SEC, TIMEOUT_95_SEC, WORKBOOK_ID_HEADER} from '../../../constants';
-import {sharedRegistry} from '../../../registry';
 import {createAction, createTypedAction} from '../../gateway-utils';
 import {filterUrlFragment} from '../../utils';
 import {
@@ -292,7 +292,7 @@ export const actions = {
             },
         }),
         getAuthHeaders: (params) => {
-            return sharedRegistry.gatewayAuth.functions.getAll().getAuthHeadersBIPrivate(params);
+            return registry.common.auth.getAll().getAuthHeadersBIPrivate(params);
         },
     }),
     _proxyImportDataset: createAction<ImportDatasetResponse, ImportDatasetArgs>({
@@ -312,7 +312,7 @@ export const actions = {
             },
         }),
         getAuthHeaders: (params) => {
-            return sharedRegistry.gatewayAuth.functions.getAll().getAuthHeadersBIPrivate(params);
+            return registry.common.auth.getAll().getAuthHeadersBIPrivate(params);
         },
     }),
 };

@@ -31,6 +31,7 @@ let publicApiConfig: PublicApiConfig | undefined;
 
 export const registry = {
     common: commonRegistry,
+    auth: commonRegistry,
     setupApp(appInstance: ExpressKit) {
         if (app) {
             throw new Error('The method must not be called more than once');

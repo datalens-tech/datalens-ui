@@ -1,4 +1,4 @@
-import {sharedRegistry} from '../../../../shared/registry';
+import {registry} from '../../../../server/registry';
 import {WORKBOOK_ID_HEADER} from '../../../constants';
 import {createAction, createTypedAction} from '../../gateway-utils';
 import {filterUrlFragment} from '../../utils';
@@ -157,7 +157,7 @@ export const actions = {
             },
         }),
         getAuthHeaders: (params) => {
-            return sharedRegistry.gatewayAuth.functions.getAll().getAuthHeadersBIPrivate(params);
+            return registry.common.auth.getAll().getAuthHeadersBIPrivate(params);
         },
     }),
     _proxyImportConnection: createAction<ImportConnectionResponse, ImportConnectionArgs>({
@@ -177,7 +177,7 @@ export const actions = {
             },
         }),
         getAuthHeaders: (params) => {
-            return sharedRegistry.gatewayAuth.functions.getAll().getAuthHeadersBIPrivate(params);
+            return registry.common.auth.getAll().getAuthHeadersBIPrivate(params);
         },
     }),
 };

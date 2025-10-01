@@ -1,9 +1,9 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
 import type {GetAuthHeadersParams} from '@gravity-ui/gateway';
 
-import {makeFunctionTemplate} from '../../../utils/makeFunctionTemplate';
+import {makeFunctionTemplate} from '../../../../shared/utils/makeFunctionTemplate';
 
-export const gatewayAuthFunctionsMap = {
+export const authFunctionsMap = {
     getAuthArgsUSPrivate:
         makeFunctionTemplate<(req: Request, res: Response) => Record<string, string>>(),
     getAuthHeadersUSPrivate:
