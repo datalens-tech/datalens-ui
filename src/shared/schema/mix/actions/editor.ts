@@ -41,10 +41,10 @@ export const editorActions = {
             const getEntryResponse = await typedApi.us.getEntry({
                 entryId: chartId,
                 includePermissionsInfo: includePermissions,
-                includeLinks: includeLinks,
+                includeLinks,
                 includeFavorite,
                 revId,
-                workbookId: workbookId,
+                workbookId,
                 branch: branch ?? 'published',
             });
 
