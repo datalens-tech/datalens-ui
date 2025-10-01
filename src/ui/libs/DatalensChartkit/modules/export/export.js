@@ -133,8 +133,6 @@ function getXlsxFormattedCellData(value, options) {
                     t: 'd',
                     z: dateFormat.toLowerCase(),
                 };
-            } else {
-                dateValue = null;
             }
         }
 
@@ -247,12 +245,13 @@ function prepareValues({widget, data, widgetType, extra, options = {}}) {
 
                     if (isMarkupItem(value)) {
                         graph.data.push(markupToRawString(value));
+                    } else if (cell.type === 'text') {
+                        graph.data[rowIndex] = value;
                     } else if (graph.type === 'date') {
                         const dateFormat = graph.format
                             ? graph.format
                             : TABLE_DATE_FORMAT_BY_SCALE[graph.scale];
-                        const date = moment.utc(value);
-                        graph.data[rowIndex] = date.isValid() ? date.format(dateFormat) : value;
+                        graph.data[rowIndex] = value ? moment.utc(value).format(dateFormat) : value;
                     } else if (graph.type === 'grid') {
                         if (index === 0) {
                             const prepared = prepareRowHeadersForGrid(value);
