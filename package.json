@@ -54,7 +54,7 @@
   "author": "DataLens Team <https://github.com/datalens-tech>",
   "license": "Apache-2.0",
   "dependencies": {
-    "@asteasolutions/zod-to-openapi": "^7.3.4",
+    "@asteasolutions/zod-to-openapi": "^8.1.0",
     "@braintree/sanitize-url": "^6.0.0",
     "@datalens-tech/ui-sandbox-modules": "^0.36.0",
     "@datalens-tech/xlsx": "^0.20.1",
@@ -121,7 +121,7 @@
     "set-cookie-parser": "^2.7.1",
     "swagger-ui-express": "^5.0.1",
     "workerpool": "^9.1.1",
-    "zod": "^3.25.64"
+    "zod": "^4.0.5"
   },
   "devDependencies": {
     "@floating-ui/react": "^0.27.13",
