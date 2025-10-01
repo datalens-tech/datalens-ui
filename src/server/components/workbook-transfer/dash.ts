@@ -7,11 +7,11 @@ import {
     type TransferNotification,
     getEntryNameByKey,
 } from '../../../shared';
-import Dash from '../../../shared/components/sdk/dash';
 import {
     TRANSFER_UNKNOWN_ENTRY_ID,
     TransferErrorCode,
 } from '../../../shared/constants/workbook-transfer';
+import Dash from '../sdk/dash';
 
 import {
     criticalTransferNotification,

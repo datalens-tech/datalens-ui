@@ -4,8 +4,8 @@ import {stringify} from 'querystring';
 import type {AppContext} from '@gravity-ui/nodekit';
 import pick from 'lodash/pick';
 
-import type {GetEntryByKeyResponse, GetEntryMetaResponse} from '../../schema';
-import {filterUrlFragment} from '../../schema/utils';
+import type {GetEntryByKeyResponse, GetEntryMetaResponse} from '../../../shared/schema';
+import {filterUrlFragment} from '../../../shared/schema/utils';
 import type {
     CreateEntryRequest,
     Entry,
@@ -14,9 +14,8 @@ import type {
     EntryUpdateMode,
     State,
     UpdateEntryRequest,
-} from '../../types';
-
-import {getAxios} from './axios';
+} from '../../../shared/types';
+import {getAxios} from '../axios';
 
 class US {
     static async createEntry(
