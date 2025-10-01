@@ -475,9 +475,6 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                             <MarkdownHelpPopover
                                 markdown={item.hint}
                                 className={b('chart-title-hint')}
-                                buttonProps={{
-                                    className: b('chart-title-hint-button'),
-                                }}
                                 onClick={handleClickHint}
                             />
                         )}
