@@ -1,4 +1,7 @@
+import type z from 'zod/v4';
+
 import type {EntryAnnotationArgs, EntryUpdateMode} from '../../..';
+import type {editorChartData} from '../schemas/editor';
 
 import type {EntryFieldData, EntryFieldLinks, EntryFieldMeta, EntryFields} from './fields';
 
@@ -33,3 +36,5 @@ export interface UpdateEditorChartArgs {
     description?: string;
     annotation?: EntryAnnotationArgs;
 }
+
+export type EditorChartData = z.infer<typeof editorChartData>;

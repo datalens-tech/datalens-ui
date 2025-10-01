@@ -10,6 +10,13 @@ export const PUBLIC_API_V0_CONFIG = {
 
     actions: {
         // Connection
+        getConnection: {
+            resolve: (api) => api.bi.getConnection,
+            openApi: {
+                summary: 'Get connection',
+                tags: [ApiTag.Connection],
+            },
+        },
         deleteConnection: {
             resolve: (api) => api.bi.deleteConnection,
             openApi: {
@@ -58,6 +65,13 @@ export const PUBLIC_API_V0_CONFIG = {
         },
 
         // Editor
+        getEditorChart: {
+            resolve: (api) => api.mix.__getEditorChart__,
+            openApi: {
+                summary: 'Get editor chart',
+                tags: [ApiTag.Editor],
+            },
+        },
         deleteEditorChart: {
             resolve: (api) => api.mix.__deleteEditorChart__,
             openApi: {

@@ -10,9 +10,48 @@ import type {
 } from '../../us/types';
 import {getEntryLinks} from '../helpers';
 import {validateData} from '../helpers/editor/validation';
-import {deleteEditorChartArgsSchema, deleteEditorChartResultSchema} from '../schemas/editor';
+import {
+    deleteEditorChartArgsSchema,
+    deleteEditorChartResultSchema,
+    getEditorChartArgsSchema,
+    getEditorChartResultSchema,
+} from '../schemas/editor';
+import {convertGetEntryResponseToGetEditorChartResponse} from '../utils/editor';
 
 export const editorActions = {
+    // WIP
+    __getEditorChart__: createTypedAction(
+        {
+            paramsSchema: getEditorChartArgsSchema,
+            resultSchema: getEditorChartResultSchema,
+        },
+        async (api, args) => {
+            const {
+                includePermissions,
+                includeLinks,
+                includeFavorite = false,
+                revId,
+                chartId,
+                branch,
+                workbookId,
+            } = args;
+
+            const typedApi = getTypedApi(api);
+
+            const getEntryResponse = await typedApi.us.getEntry({
+                entryId: chartId,
+                includePermissionsInfo: includePermissions,
+                includeLinks: includeLinks,
+                includeFavorite,
+                revId,
+                workbookId: workbookId,
+                branch: branch ?? 'published',
+            });
+
+            return convertGetEntryResponseToGetEditorChartResponse(getEntryResponse);
+        },
+    ),
+
     createEditorChart: createAction<CreateEditorChartResponse, CreateEditorChartArgs>(
         async (api, args, {ctx}) => {
             const {checkRequestForDeveloperModeAccess} = ctx.get('gateway');
@@ -47,6 +86,7 @@ export const editorActions = {
             }
         },
     ),
+
     // WIP
     __deleteEditorChart__: createTypedAction(
         {

@@ -2,7 +2,12 @@ import {US_MASTER_TOKEN_HEADER, WORKBOOK_ID_HEADER} from '../../../constants';
 import {createAction, createTypedAction} from '../../gateway-utils';
 import {filterUrlFragment} from '../../utils';
 import {transformConnectionResponseError} from '../helpers';
-import {deleteConnectionArgsSchema, deleteConnectionResultSchema} from '../schemas/connections';
+import {
+    deleteConnectionArgsSchema,
+    deleteConnectionResultSchema,
+    getConnectionArgsSchema,
+    getConnectionResultSchema,
+} from '../schemas/connections';
 import type {
     CreateConnectionArgs,
     CreateConnectionResponse,
@@ -12,8 +17,6 @@ import type {
     ExportConnectionResponse,
     GetAvailableCountersArgs,
     GetAvailableCountersResponse,
-    GetConnectionArgs,
-    GetConnectionResponse,
     GetConnectionSourceSchemaArgs,
     GetConnectionSourceSchemaResponse,
     GetConnectionSourcesArgs,
@@ -57,13 +60,19 @@ export const actions = {
         path: () => `${PATH_PREFIX}/info/connectors`,
         params: (_, headers) => ({headers}),
     }),
-    getConnection: createAction<GetConnectionResponse, GetConnectionArgs>({
-        method: 'GET',
-        path: ({connectionId}) => `${PATH_PREFIX}/connections/${connectionId}`,
-        params: ({workbookId}, headers) => ({
-            headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
-        }),
-    }),
+    getConnection: createTypedAction(
+        {
+            paramsSchema: getConnectionArgsSchema,
+            resultSchema: getConnectionResultSchema,
+        },
+        {
+            method: 'GET',
+            path: ({connectionId}) => `${PATH_PREFIX}/connections/${connectionId}`,
+            params: ({workbookId}, headers) => ({
+                headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
+            }),
+        },
+    ),
     createConnection: createAction<CreateConnectionResponse, CreateConnectionArgs>({
         method: 'POST',
         path: () => `${PATH_PREFIX}/connections`,

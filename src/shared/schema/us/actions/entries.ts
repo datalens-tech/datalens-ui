@@ -63,10 +63,19 @@ export const entriesActions = {
     getEntry: createAction<GetEntryResponse, GetEntryArgs>({
         method: 'GET',
         path: ({entryId}) => `${PATH_PREFIX}/entries/${filterUrlFragment(entryId)}`,
-        params: ({entryId: _entryId, workbookId, includeDlComponentUiData, ...query}, headers) => ({
+        params: (
+            {
+                entryId: _entryId,
+                workbookId,
+                includeDlComponentUiData,
+                includeFavorite = true,
+                ...query
+            },
+            headers,
+        ) => ({
             query: {
                 ...query,
-                includeFavorite: true,
+                includeFavorite,
             },
             headers: {
                 ...headers,
