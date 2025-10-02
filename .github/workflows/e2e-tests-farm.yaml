@@ -40,8 +40,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 22
-          cache: 'npm'
-          cache-dependency-path: ./package-lock.json
       - name: check closed and extensions branch exists
         run: |
           if gh api "repos/${GH_REPO_OWNER}/${GH_REPO_CLOSED}/branches/${GH_BRANCH_NAME}" >/dev/null 2>&1; then
