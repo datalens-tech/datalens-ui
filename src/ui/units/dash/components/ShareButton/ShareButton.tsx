@@ -72,6 +72,7 @@ export const ShareButton = ({
                     iconSize={iconSize}
                     withCopyLink={Boolean(dialogShareProps?.propsData.id)}
                     className={popoverClassName}
+                    buttonAriaLabel={i18n('get-code')}
                     renderCopy={({icon}) => (
                         <Button
                             view="flat-secondary"
@@ -96,6 +97,7 @@ export const ShareButton = ({
                 view="flat"
                 onClick={handleShareButtonClick}
                 className={b('mobile-share-button')}
+                aria-label={i18n('get-code')}
             >
                 <Icon size={18} data={ArrowShapeTurnUpRight} />
             </Button>

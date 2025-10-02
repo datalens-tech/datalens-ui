@@ -73,7 +73,7 @@ jobs:
 
           if [ "${IS_SKIP_FARM_CREATION}" != "true" ]; then
             curl -k -q -s -X POST -H "content-type: application/json" \
-            --data "{\"project\":\"${GH_REPO_CLOSED}\", \"organization\":\"${GH_REPO_OWNER}\", \"name\":\"${FARM_NAME}\",\"vcs\":\"git\",\"branch\":\"${GH_BRANCH_NAME_CLOSED}\",\"instanceConfigName\":\"${FARM_INSTANCE_CONFIG_NAME}\",\"env.GITHUB_BRANCH_NAME\":\"${GH_BRANCH_NAME_PLATFORM}\",\"env.GITHUB_EXTENSIONS_BRANCH_NAME\":\"${GH_BRANCH_NAME_EXTENSIONS}\"}" \
+            --data "{\"project\":\"${GH_REPO_CLOSED}\", \"organization\":\"${GH_REPO_OWNER}\", \"name\":\"${FARM_NAME}\",\"vcs\":\"git\",\"branch\":\"${GH_BRANCH_NAME_CLOSED}\",\"instanceConfigName\":\"${FARM_INSTANCE_CONFIG_NAME}\",\"env.GITHUB_PLATFORM_BRANCH_NAME\":\"${GH_BRANCH_NAME_PLATFORM}\",\"env.GITHUB_EXTENSIONS_BRANCH_NAME\":\"${GH_BRANCH_NAME_EXTENSIONS}\"}" \
             "${FARM_ENDPOINT}/api/generate"
           fi
 
