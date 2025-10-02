@@ -56,11 +56,34 @@ export const PUBLIC_API_V0_CONFIG = {
         },
 
         // Wizard
+        getWizardChart: {
+            resolve: (api) => api.mix.__getWizardChart__,
+            openApi: {
+                summary: 'Get wizard chart',
+                tags: [ApiTag.Wizard],
+            },
+        },
         deleteWizardChart: {
             resolve: (api) => api.mix.__deleteWizardChart__,
             openApi: {
                 summary: 'Delete wizard chart',
                 tags: [ApiTag.Wizard],
+            },
+        },
+
+        // QL
+        getQLChart: {
+            resolve: (api) => api.mix.__getQLChart__,
+            openApi: {
+                summary: 'Get QL chart',
+                tags: [ApiTag.QL],
+            },
+        },
+        deleteQLChart: {
+            resolve: (api) => api.mix.__deleteQLChart__,
+            openApi: {
+                summary: 'Delete QL chart',
+                tags: [ApiTag.QL],
             },
         },
 
