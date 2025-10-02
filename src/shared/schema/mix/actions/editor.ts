@@ -1,10 +1,13 @@
 import {ENTRY_TYPES, EntryScope} from '../../..';
+import {ServerError} from '../../../constants/error';
 import {DeveloperModeCheckStatus} from '../../../types';
+import {isEditorEntryType, isLegacyEditorEntryType} from '../../../utils/entry';
 import {createAction, createTypedAction} from '../../gateway-utils';
 import {getTypedApi} from '../../simple-schema';
 import type {
     CreateEditorChartArgs,
     CreateEditorChartResponse,
+    EditorChartData,
     UpdateEditorChartArgs,
     UpdateEditorChartResponse,
 } from '../../us/types';
@@ -16,7 +19,7 @@ import {
     getEditorChartArgsSchema,
     getEditorChartResultSchema,
 } from '../schemas/editor';
-import {convertGetEntryResponseToGetEditorChartResponse} from '../utils/editor';
+import type {GetEditorChartResponse} from '../types/editor';
 
 export const editorActions = {
     // WIP
@@ -48,7 +51,26 @@ export const editorActions = {
                 branch: branch ?? 'published',
             });
 
-            return convertGetEntryResponseToGetEditorChartResponse(getEntryResponse);
+            const scope = getEntryResponse.scope;
+            const type = getEntryResponse.type;
+
+            if (
+                scope !== EntryScope.Widget ||
+                (!isEditorEntryType(type) && !isLegacyEditorEntryType(type))
+            ) {
+                throw new ServerError('Entry not found', {
+                    status: 404,
+                });
+            }
+
+            const result: GetEditorChartResponse = {
+                ...getEntryResponse,
+                scope,
+                type,
+                data: getEntryResponse.data as EditorChartData,
+            };
+
+            return result;
         },
     ),
 
