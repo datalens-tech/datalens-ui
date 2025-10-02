@@ -215,6 +215,7 @@ export function updatePreviewAndClientChartsConfig(
                         addEditHistoryPoint({
                             unitId: WIZARD_EDIT_HISTORY_UNIT_ID,
                             newState: getState().wizard,
+                            stacked: preview.stackedHistoryPoint,
                         }),
                     );
                 }
@@ -259,6 +260,7 @@ type UpdateClientChartsConfigArgs = {
     withoutRerender?: boolean;
     isInitialPreview?: boolean;
     qlMode?: boolean;
+    stackedHistoryPoint?: boolean;
 };
 
 type UpdateClientChartsConfigAction = {
