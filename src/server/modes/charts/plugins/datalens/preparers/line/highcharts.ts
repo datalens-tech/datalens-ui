@@ -21,7 +21,8 @@ import {isHtmlField} from '../../../../../../../shared/types/index';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getFieldExportingOptions} from '../../utils/export-helpers';
 import {isLegendEnabled} from '../../utils/misc-helpers';
-import {addAxisFormatter, addAxisFormatting, getAxisFormatting, getAxisType} from '../helpers/axis';
+import {addAxisFormatter, addAxisFormatting, getAxisType} from '../helpers/axis';
+import {getAxisChartkitFormatting} from '../helpers/axis/get-axis-formatting';
 import {getHighchartsColorAxis, isXAxisReversed} from '../helpers/highcharts';
 import {getYPlaceholders} from '../helpers/layers';
 import {shouldUseGradientLegend} from '../helpers/legend';
@@ -146,7 +147,7 @@ function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
 
             const formatMode = layerY2Placeholder?.settings?.axisFormatMode;
             if (formatMode && formatMode !== AxisLabelFormatMode.Auto) {
-                const formatting = getAxisFormatting(layerY2Placeholder, visualizationId);
+                const formatting = getAxisChartkitFormatting(layerY2Placeholder, visualizationId);
                 if (formatting) {
                     if (customConfig.axesFormatting.yAxis.length === 0) {
                         customConfig.axesFormatting.yAxis.push({});
