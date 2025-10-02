@@ -142,9 +142,6 @@ export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
                         <MarkdownHelpPopover
                             markdown={widgetTitleHint}
                             className={b('chart-title-hint')}
-                            buttonProps={{
-                                className: b('chart-title-hint-button'),
-                            }}
                             onClick={handleClickHint}
                         />
                     )}
