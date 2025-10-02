@@ -4,6 +4,7 @@ import type {
     ExtendedSeriesLineOptions,
     RGBColor,
     RGBGradient,
+    ServerField,
     TableCellsRow,
     WrappedHTML,
     WrappedMarkup,
@@ -12,10 +13,10 @@ import {
     GradientType,
     getRangeDelta,
     getRgbColorValue,
-    getSortedData,
     transformHexToRgb,
 } from '../../../../../../shared';
 import type {WrappedMarkdown} from '../../../../../../shared/utils/markdown';
+import {getColorsSettings} from '../../helpers/color-palettes';
 import type {ChartColorsConfig} from '../types';
 
 import {getColor, getMountedColor} from './constants';
@@ -202,8 +203,15 @@ function mapAndColorizeHashTableByGradient(hashTable: HashTable, colorsConfig: C
     return {colorData, min, mid: min + rangeMiddle, max};
 }
 
-function mapAndColorizeHashTableByPalette(hashTable: HashTable, colorsConfig: ChartColorsConfig) {
-    const {colorGuid} = hashTable;
+function mapAndColorizeHashTableByPalette({
+    hashTable,
+    colors,
+    mountedColors,
+}: {
+    hashTable: HashTable;
+    colors: string[];
+    mountedColors: Record<string, string>;
+}) {
     const knownValues: number[] = [];
     const result: Record<string, {backgroundColor: string}> = {};
 
@@ -217,14 +225,10 @@ function mapAndColorizeHashTableByPalette(hashTable: HashTable, colorsConfig: Ch
             colorIndex = knownValues.length - 1;
         }
 
-        if (
-            colorGuid === colorsConfig.fieldGuid &&
-            colorsConfig.mountedColors &&
-            colorsConfig.mountedColors[value]
-        ) {
-            color = getMountedColor(colorsConfig, value);
+        if (mountedColors && mountedColors[value]) {
+            color = getMountedColor({mountedColors, colors, value});
         } else {
-            color = getColor(colorIndex, colorsConfig.colors);
+            color = getColor(colorIndex, colors);
         }
 
         result[key] = {backgroundColor: color};
@@ -292,58 +296,27 @@ function mapAndColorizeGraphsByGradient(
     }
 }
 
-function mapAndColorizeCoordinatesByDimension(
-    points: Record<string, string>,
-    colorsConfig: ChartColorsConfig,
-    colorGuid: string,
-) {
-    const knownValues: {point: string; value: string; backgroundColor?: string}[] = [];
-
-    const colorData: Record<string, {backgroundColor?: string; colorIndex?: number}> = {};
-    const colorDictionary: Record<string, string> = {};
-
-    // eslint-disable-next-line guard-for-in
-    for (const point in points) {
-        const value = points[point];
-        colorData[point] = {};
-        let colorIndex = knownValues.findIndex(({value: knownValue}) => knownValue === value);
-
-        if (colorIndex === -1) {
-            knownValues.push({point, value});
-            colorIndex = knownValues.length - 1;
-
-            let color;
-
-            if (
-                colorsConfig &&
-                colorGuid === colorsConfig.fieldGuid &&
-                colorsConfig.mountedColors &&
-                colorsConfig.mountedColors[value]
-            ) {
-                color = getMountedColor(colorsConfig, value);
-            } else {
-                color = getColor(colorIndex, colorsConfig.colors);
-            }
-            knownValues[knownValues.length - 1].backgroundColor = color;
-            colorData[point].backgroundColor = color;
-
-            colorDictionary[value] = color;
-        } else {
-            colorData[point].backgroundColor = knownValues[colorIndex].backgroundColor;
-        }
-
-        colorData[point].colorIndex = colorIndex;
-    }
-
-    return {colorData, colorDictionary: getSortedData(colorDictionary)};
-}
-
-function mapAndColorizePointsByPalette(
-    points: ExtendedPointOptionsObject[],
-    chartColorConfig: ChartColorsConfig,
-): ExtendedSeriesScatterOptions[] {
+export function mapAndColorizePointsByPalette({
+    points,
+    colorsConfig,
+    colorField,
+    defaultColorPaletteId,
+}: {
+    points: ExtendedPointOptionsObject[];
+    colorsConfig: ChartColorsConfig;
+    colorField: ServerField;
+    defaultColorPaletteId: string;
+}): ExtendedSeriesScatterOptions[] {
     const series: ExtendedSeriesScatterOptions[] = [];
     const knownValues: (string | null | undefined)[] = [];
+
+    const {mountedColors, colors} = getColorsSettings({
+        field: colorField,
+        colorsConfig: colorsConfig,
+        defaultColorPaletteId,
+        availablePalettes: colorsConfig.availablePalettes,
+        customColorPalettes: colorsConfig.loadedColorPalettes,
+    });
 
     points.forEach((point) => {
         const value = point.colorValue;
@@ -353,16 +326,10 @@ function mapAndColorizePointsByPalette(
             colorIndex = knownValues.length - 1;
             let color;
 
-            if (
-                chartColorConfig &&
-                point.colorGuid === chartColorConfig.fieldGuid &&
-                chartColorConfig.mountedColors &&
-                point.colorValue &&
-                chartColorConfig.mountedColors[point.colorValue]
-            ) {
-                color = getMountedColor(chartColorConfig, point.colorValue);
+            if (point.colorValue && mountedColors[point.colorValue]) {
+                color = getMountedColor({mountedColors, colors, value: point.colorValue});
             } else {
-                color = getColor(colorIndex, chartColorConfig.colors);
+                color = getColor(colorIndex, colors);
             }
 
             series[colorIndex] = {
@@ -388,6 +355,8 @@ type MapAndColorizeGraphsByPalette = {
     isColorsItemExists?: boolean;
     isSegmentsExists?: boolean;
     usedColors?: (string | undefined)[];
+    colorField: ServerField | undefined;
+    defaultColorPaletteId: string;
 };
 
 function mapAndColorizeGraphsByPalette({
@@ -397,7 +366,17 @@ function mapAndColorizeGraphsByPalette({
     isShapesItemExists,
     isSegmentsExists,
     usedColors = [],
+    colorField,
+    defaultColorPaletteId,
 }: MapAndColorizeGraphsByPalette) {
+    const {mountedColors, colors} = getColorsSettings({
+        field: colorField,
+        colorsConfig,
+        defaultColorPaletteId,
+        availablePalettes: colorsConfig.availablePalettes,
+        customColorPalettes: colorsConfig.loadedColorPalettes,
+    });
+
     // eslint-disable-next-line complexity
     graphs.forEach((graph, i) => {
         let colorKey;
@@ -414,14 +393,8 @@ function mapAndColorizeGraphsByPalette({
             colorKey = colorTitle;
         }
 
-        if (
-            colorsConfig &&
-            colorsConfig.mountedColors &&
-            (graph.colorGuid === colorsConfig.fieldGuid || colorsConfig.coloredByMeasure) &&
-            colorKey &&
-            colorsConfig.mountedColors[colorKey]
-        ) {
-            graph.color = getMountedColor(colorsConfig, colorKey);
+        if (colorKey && mountedColors[colorKey]) {
+            graph.color = getMountedColor({mountedColors, colors, value: colorKey});
         } else {
             let value = graph.colorValue;
 
@@ -442,7 +415,7 @@ function mapAndColorizeGraphsByPalette({
                 colorIndex = usedColors.length - 1;
             }
 
-            graph.color = getColor(colorIndex, colorsConfig.colors);
+            graph.color = getColor(colorIndex, colors);
         }
     });
 
@@ -513,8 +486,6 @@ export {
     mapAndColorizeTableCells,
     mapAndColorizeHashTableByPalette,
     mapAndColorizeHashTableByGradient,
-    mapAndColorizeCoordinatesByDimension,
-    mapAndColorizePointsByPalette,
     mapAndColorizePointsByGradient,
     mapAndColorizeGraphsByPalette,
     mapAndColorizeGraphsByGradient,

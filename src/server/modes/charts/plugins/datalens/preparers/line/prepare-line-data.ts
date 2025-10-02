@@ -66,6 +66,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
         layerChartMeta,
         usedColors,
         disableDefaultSorting = false,
+        defaultColorPaletteId,
     } = args;
     const widgetConfig = ChartEditor.getWidgetConfig();
     const isActionParamsEnable = widgetConfig?.actionParams?.enable;
@@ -541,6 +542,8 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                 isColorsItemExists: isColorItemExist,
                 isSegmentsExists: isSegmentsExists,
                 usedColors,
+                colorField: colorItem,
+                defaultColorPaletteId,
             });
         }
 

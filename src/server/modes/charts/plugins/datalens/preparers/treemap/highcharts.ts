@@ -7,6 +7,7 @@ import {
 import type {WrappedMarkdown} from '../../../../../../../shared/utils/markdown';
 import {wrapMarkdownValue} from '../../../../../../../shared/utils/markdown';
 import {wrapHtml} from '../../../../../../../shared/utils/ui-sandbox';
+import {getColorsSettings} from '../../../helpers/color-palettes';
 import {
     mapAndColorizeHashTableByGradient,
     mapAndColorizeHashTableByPalette,
@@ -41,6 +42,8 @@ export function prepareHighchartsTreemap({
     idToTitle,
     idToDataType,
     ChartEditor,
+    defaultColorPaletteId,
+    shared,
 }: PrepareFunctionArgs) {
     // Dimensions
     const d = placeholders[0].items;
@@ -218,7 +221,19 @@ export function prepareHighchartsTreemap({
                 colorsConfig,
             ).colorData;
         } else {
-            colorData = mapAndColorizeHashTableByPalette(valuesForColorData, colorsConfig);
+            const {mountedColors, colors: paletteColors} = getColorsSettings({
+                field: color,
+                colorsConfig: shared.colorsConfig,
+                defaultColorPaletteId,
+                availablePalettes: colorsConfig.availablePalettes,
+                customColorPalettes: colorsConfig.loadedColorPalettes,
+            });
+
+            colorData = mapAndColorizeHashTableByPalette({
+                hashTable: valuesForColorData,
+                colors: paletteColors,
+                mountedColors,
+            });
         }
 
         treemap = treemap.map((obj) => {
