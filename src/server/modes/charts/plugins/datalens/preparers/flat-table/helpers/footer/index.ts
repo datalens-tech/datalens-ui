@@ -11,6 +11,10 @@ import {getBarSettingsValue} from '../../../helpers/barsSettings';
 
 import type {GetFooterArgs, GetFooterCellWithStylesArgs, PrepareFooterValueArgs} from './types';
 
+const isTotalTitleCell = (columnIndex: number) => {
+    return columnIndex === 0;
+};
+
 export const getTotalTitle = (
     value: string | number | undefined,
     i18n: (label: string, params?: Record<string, string | number>) => string,
@@ -45,7 +49,7 @@ export const prepareFooterValue = (
         value = total;
     }
 
-    if (columnIndex === 0) {
+    if (isTotalTitleCell(columnIndex)) {
         value = getTotalTitle(value, i18n);
     }
 
@@ -65,7 +69,7 @@ export const getFooterCellWithStyles = (args: GetFooterCellWithStylesArgs) => {
         css: TABLE_TOTALS_STYLES,
     };
 
-    if (columnIndex === 0) {
+    if (isTotalTitleCell(columnIndex)) {
         cell.type = 'text';
     }
 
