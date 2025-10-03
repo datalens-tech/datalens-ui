@@ -438,22 +438,17 @@ export const getImportProgress = ({importId}: {importId: string}) => {
                 const isCanceled = getSdk().sdk.isCancel(error);
 
                 if (!isCanceled) {
-                    if (isSdkError(error) && error.status === 404) {
-                        dispatch(
-                            showToast({
-                                title: i18n('toast_outdated-workbook-info'),
-                                type: 'danger',
-                            }),
-                        );
-                        return;
-                    }
-
                     logger.logError('collectionsStructure/getImportProgress failed', error);
                 }
 
+                const finalError =
+                    isSdkError(error) && error.status === 404
+                        ? {...error, message: i18n('toast_outdated-workbook-info')}
+                        : error;
+
                 dispatch({
                     type: GET_IMPORT_PROGRESS_FAILED,
-                    error: isCanceled ? null : error,
+                    error: isCanceled ? null : finalError,
                 });
             });
     };
