@@ -70,6 +70,7 @@ export function prepareBarX(args: PrepareFunctionArgs) {
         usedColors,
         ChartEditor,
         disableDefaultSorting = false,
+        defaultColorPaletteId,
     } = args;
     const {data, order} = resultData;
     const widgetConfig = ChartEditor.getWidgetConfig();
@@ -490,6 +491,8 @@ export function prepareBarX(args: PrepareFunctionArgs) {
                 isColorsItemExists: isColorItemExist,
                 isSegmentsExists: isSegmentsExists,
                 usedColors,
+                colorField: colorItem,
+                defaultColorPaletteId,
             });
         }
 

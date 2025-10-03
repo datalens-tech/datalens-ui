@@ -57,6 +57,7 @@ export function prepareBarYData({
     layerChartMeta,
     usedColors,
     disableDefaultSorting = false,
+    defaultColorPaletteId,
 }: PrepareFunctionArgs) {
     const {data, order} = resultData;
     const widgetConfig = ChartEditor.getWidgetConfig();
@@ -447,6 +448,8 @@ export function prepareBarYData({
                 isColorsItemExists: isColorItemExist,
                 isSegmentsExists: false,
                 usedColors,
+                colorField: colorItem,
+                defaultColorPaletteId,
             });
         }
 

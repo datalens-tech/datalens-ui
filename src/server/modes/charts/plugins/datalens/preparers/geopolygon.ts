@@ -148,6 +148,7 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
         shared,
         idToDataType,
         ChartEditor,
+        defaultColorPaletteId,
     } = options;
     const widgetConfig = ChartEditor.getWidgetConfig();
     const isActionParamsEnabled = widgetConfig?.actionParams?.enable;
@@ -322,7 +323,12 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
 
             colorData = colorizedResult.colorData;
         } else {
-            colorizedResult = colorizeGeoByPalette(hashTable, colorsConfig, color.guid);
+            colorizedResult = colorizeGeoByPalette({
+                data: hashTable,
+                colorsConfig,
+                colorField: color,
+                defaultColorPaletteId,
+            });
 
             colorData = colorizedResult.colorData;
             colorDictionary = colorizedResult.colorDictionary;

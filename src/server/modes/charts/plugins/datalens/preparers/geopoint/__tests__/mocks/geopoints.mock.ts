@@ -32,6 +32,10 @@ export const PREPARE_FUNCTION_ARGS = {
         loadedColorPalettes: {},
         colors: ['defaultColor', 'blue', 'red', 'orange'],
         gradientColors: [],
+        availablePalettes: {
+            custom: {id: 'custom', scheme: ['defaultColor', 'blue', 'red', 'orange']},
+        },
+        palette: 'custom',
     },
     labels: [],
     tooltips: [],
