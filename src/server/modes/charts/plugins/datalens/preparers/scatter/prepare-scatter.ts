@@ -84,6 +84,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         shapesConfig,
         ChartEditor,
         shared,
+        defaultColorPaletteId,
     } = options;
     const widgetConfig = ChartEditor.getWidgetConfig();
     const isActionParamsEnable = widgetConfig?.actionParams?.enable;
@@ -402,7 +403,12 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         if (gradientMode) {
             mapAndColorizePointsByGradient(points as Highcharts.PointOptionsObject[], colorsConfig);
         } else {
-            graphs = mapAndColorizePointsByPalette(points, colorsConfig);
+            graphs = mapAndColorizePointsByPalette({
+                points,
+                colorsConfig,
+                defaultColorPaletteId,
+                colorField: color,
+            });
         }
 
         if (graphs.length) {
@@ -411,7 +417,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
     } else {
         const yField = {...y, title: idToTitle[y.guid] ?? y.title};
         const value = getFakeTitleOrTitle(yField);
-        const colorFromConfig = getMountedColor(colorsConfig, value) || colorsConfig.colors[0];
+        const colorFromConfig = getMountedColor({...colorsConfig, value}) || colorsConfig.colors[0];
         graphs.forEach((graph) => {
             graph.color = colorFromConfig;
         });

@@ -84,7 +84,7 @@ const getFieldData = (
 };
 
 const preparePolyline = (options: PrepareFunctionArgs) => {
-    const {shared, ChartEditor} = options;
+    const {shared, defaultColorPaletteId, ChartEditor} = options;
     const i18n = (key: string, params?: Record<string, string | string[]>) =>
         ChartEditor.getTranslation('wizard.prepares', key, params);
 
@@ -183,7 +183,12 @@ const preparePolyline = (options: PrepareFunctionArgs) => {
         if (gradientMode) {
             colorData = colorizeGeoByGradient(hashTable, colorsConfig).colorData;
         } else {
-            colorData = colorizeGeoByPalette(hashTable, colorsConfig, color?.guid).colorData;
+            colorData = colorizeGeoByPalette({
+                data: hashTable,
+                colorsConfig,
+                colorField: color,
+                defaultColorPaletteId,
+            }).colorData;
         }
     }
 
