@@ -53,7 +53,7 @@ const getDiscreteColorValue = (args: {
     const mountedColors = settings.paletteState.mountedColors;
     const palette = settings.paletteState.palette;
 
-    if (!mountedColors || !palette || !colorValue) {
+    if (!mountedColors || !colorValue) {
         return null;
     }
 
