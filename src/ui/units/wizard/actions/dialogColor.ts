@@ -1,4 +1,12 @@
-import type {ColorsConfig, Field, GradientNullMode, GradientType, PartialBy} from 'shared';
+import {getFieldUISettings} from 'shared';
+import type {
+    ColorsConfig,
+    Field,
+    GradientNullMode,
+    GradientType,
+    PartialBy,
+    ServerField,
+} from 'shared';
 import {closeDialog, openDialog} from 'store/actions/dialog';
 import type {DatalensGlobalState} from 'ui';
 
@@ -111,20 +119,27 @@ export function openDialogColor(props: PartialBy<OpenDialogColorArgs['props'], '
 export function prepareDialogColorState(props: {
     colorsConfig: ColorsConfig | undefined;
     items?: Field[];
+    field?: ServerField;
 }) {
     return function (dispatch: WizardDispatch, getState: () => DatalensGlobalState) {
         const state = getState();
-        const {colorsConfig} = props;
+        const {field, colorsConfig} = props;
 
         const defaultPaletteState = selectDialogColorPaletteState(state);
         const defaultGradientState = selectDialogColorGradientState(state);
 
-        const palette = colorsConfig?.palette || defaultPaletteState.palette;
+        const fieldUISettings = field ? getFieldUISettings({field}) : {};
+
+        const palette =
+            colorsConfig?.palette || fieldUISettings?.palette || defaultPaletteState.palette;
 
         const isReversedDefined = typeof colorsConfig?.reversed === 'boolean';
 
         const paletteState: PaletteState = {
-            mountedColors: colorsConfig?.mountedColors || defaultPaletteState.mountedColors,
+            mountedColors:
+                colorsConfig?.mountedColors ||
+                fieldUISettings?.colors ||
+                defaultPaletteState.mountedColors,
             palette,
             polygonBorders: colorsConfig?.polygonBorders || defaultPaletteState.polygonBorders,
             selectedValue: defaultPaletteState.selectedValue,
