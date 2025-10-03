@@ -5,6 +5,7 @@ import isObject from 'lodash/isObject';
 import type z from 'zod/v4';
 import {ZodError} from 'zod/v4';
 
+import {ServerError} from '../../../shared/constants/error';
 import {
     PUBLIC_API_LATEST_VERSION,
     PUBLIC_API_VERSION_HEADER,
@@ -16,6 +17,7 @@ import {isGatewayError} from '../../utils/gateway';
 
 import {PUBLIC_API_ERRORS, PublicApiError} from './constants';
 
+// eslint-disable-next-line complexity
 export const prepareError = (
     error: unknown,
 ): {status: number; message: string; code?: string; details?: unknown} => {
@@ -89,6 +91,12 @@ export const prepareError = (
             const details = originalError.details;
 
             return {status: innerError.status, message, code, details};
+        }
+
+        if (originalError instanceof ServerError) {
+            const {status, message, code, details} = originalError;
+
+            return {status, message, code, details};
         }
 
         if (

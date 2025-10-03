@@ -71,11 +71,6 @@ export type GetConnectorsResponse = {
     /** Represent connectors out of groups. These one should be rendered before grouped connectors */
     uncategorized?: ConnectorItem[];
 };
-
-export type GetConnectionResponse = ConnectionData;
-
-export type GetConnectionArgs = BaseArgs & WorkbookIdArg;
-
 export type CreateConnectionResponse = {
     id: string;
 };
