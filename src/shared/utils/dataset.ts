@@ -1,6 +1,7 @@
 import isEmpty from 'lodash/isEmpty';
 
-import type {DatasetField, FieldUISettings} from '../types';
+import {isDimensionField} from '../modules/helpers';
+import {type DatasetField, type FieldUISettings, isNumberField} from '../types';
 
 export const getFieldUISettings = ({field}: {field: DatasetField | undefined}) => {
     const value = field?.ui_settings;
@@ -16,8 +17,15 @@ export const getFieldUISettings = ({field}: {field: DatasetField | undefined}) =
     return result;
 };
 
+export const isDisplaySettingsAvailable = ({field}: {field: DatasetField}) => {
+    const isNumberFormattingAvailable = isNumberField(field);
+    const isColoringAvailable = isDimensionField(field);
+
+    return isNumberFormattingAvailable || isColoringAvailable;
+};
+
 export const isFieldWithDisplaySettings = ({field}: {field: DatasetField}) => {
     const settings = getFieldUISettings({field});
 
-    return !isEmpty(settings?.numberFormatting);
+    return [settings?.numberFormatting, settings?.colors].some((d) => !isEmpty(d));
 };

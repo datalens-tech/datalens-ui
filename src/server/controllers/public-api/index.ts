@@ -8,12 +8,12 @@ import type {AnyApiServiceActionConfig, DatalensGatewaySchemas} from '../../type
 import Utils from '../../utils';
 
 import {PUBLIC_API_ERRORS, PublicApiError} from './constants';
-import {prepareError, validateRequestBody} from './utils';
+import {parseRequestApiVersion, prepareError, validateRequestBody} from './utils';
 
 export const createPublicApiController = () => {
     const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
+    const {baseConfig} = registry.getPublicApiConfig();
     const schemasByScope = registry.getGatewaySchemasByScope();
-    const {proxyMap} = registry.getPublicApiConfig();
 
     const actionToPathMap = new Map<Function, {serviceName: string; actionName: string}>();
 
@@ -25,7 +25,7 @@ export const createPublicApiController = () => {
 
     const actionToConfigMap = new Map<Function, AnyApiServiceActionConfig>();
 
-    Object.entries(proxyMap).forEach(([version, actions]) => {
+    Object.values(baseConfig).forEach(({actions, openApi: versionOpenApi}) => {
         Object.entries(actions).forEach(([actionName, {resolve, openApi}]) => {
             const gatewayAction = resolve(gatewayApi);
             const pathObject = actionToPathMap.get(gatewayAction);
@@ -39,21 +39,28 @@ export const createPublicApiController = () => {
 
             actionToConfigMap.set(gatewayAction, actionConfig);
 
-            registerActionToOpenApi({actionConfig, actionName, version, openApi});
+            registerActionToOpenApi({
+                actionConfig,
+                actionName,
+                openApi,
+                openApiRegistry: versionOpenApi.registry,
+            });
         });
     });
 
     return async function publicApiController(req: Request, res: Response) {
         try {
-            const {version, action: actionName} = req.params;
+            const {action: actionName} = req.params;
 
-            if (!version || !actionName || !proxyMap[version] || !proxyMap[version][actionName]) {
+            const version = parseRequestApiVersion(req);
+
+            if (!actionName || !baseConfig[version].actions[actionName]) {
                 throw new PublicApiError(`Endpoint ${req.path} does not exist`, {
                     code: PUBLIC_API_ERRORS.ENDPOINT_NOT_FOUND,
                 });
             }
 
-            const action = proxyMap[version][actionName];
+            const action = baseConfig[version].actions[actionName];
 
             const {ctx} = req;
 
@@ -73,7 +80,7 @@ export const createPublicApiController = () => {
             const validationSchema = getValidationSchema(gatewayActionConfig);
 
             if (!validationSchema) {
-                req.ctx.logError(`Couldn't find action validation schema`);
+                req.ctx.logError(`Couldn't find action validation schema [${actionName}]`);
                 throw new PublicApiError(PUBLIC_API_ERRORS.ACTION_VALIDATION_SCHEMA_NOT_FOUND, {
                     code: PUBLIC_API_ERRORS.ACTION_VALIDATION_SCHEMA_NOT_FOUND,
                 });

@@ -35,6 +35,7 @@ describe('prepareFlatTable', () => {
                                 'background-color': 'var(--g-color-base-generic)',
                                 'font-weight': 500,
                             },
+                            type: 'text',
                         },
                         {
                             value: '',

@@ -1,23 +1,14 @@
 import {OpenAPIRegistry} from '@asteasolutions/zod-to-openapi';
 
-import type {PublicApiRpcMap} from './types';
+import {ApiTag} from '../constants';
+import type {PublicApiVersionConfig} from '../types';
 
-export const publicApiOpenApiRegistry = new OpenAPIRegistry();
+export const PUBLIC_API_V0_CONFIG = {
+    openApi: {
+        registry: new OpenAPIRegistry(),
+    },
 
-export const PUBLIC_API_HTTP_METHOD = 'POST';
-export const PUBLIC_API_URL = '/rpc/:version/:action';
-export const PUBLIC_API_ROUTE = `${PUBLIC_API_HTTP_METHOD} ${PUBLIC_API_URL}`;
-
-enum ApiTag {
-    Connection = 'Connection',
-    Dataset = 'Dataset',
-    Wizard = 'Wizard',
-    Editor = 'Editor',
-    Dashboard = 'Dashboard',
-}
-
-export const PUBLIC_API_PROXY_MAP = {
-    v0: {
+    actions: {
         // Connection
         deleteConnection: {
             resolve: (api) => api.bi.deleteConnection,
@@ -76,6 +67,27 @@ export const PUBLIC_API_PROXY_MAP = {
         },
 
         // Dashboard
+        getDashboard: {
+            resolve: (api) => api.mix.__getDashboard__,
+            openApi: {
+                summary: 'Get dashboard',
+                tags: [ApiTag.Dashboard],
+            },
+        },
+        updateDashboard: {
+            resolve: (api) => api.mix.__updateDashboard__,
+            openApi: {
+                summary: 'Update dashboard',
+                tags: [ApiTag.Dashboard],
+            },
+        },
+        createDashboard: {
+            resolve: (api) => api.mix.__createDashboard__,
+            openApi: {
+                summary: 'Create dashboard',
+                tags: [ApiTag.Dashboard],
+            },
+        },
         deleteDashboard: {
             resolve: (api) => api.mix.__deleteDashboard__,
             openApi: {
@@ -84,4 +96,4 @@ export const PUBLIC_API_PROXY_MAP = {
             },
         },
     },
-} satisfies PublicApiRpcMap;
+} satisfies PublicApiVersionConfig;

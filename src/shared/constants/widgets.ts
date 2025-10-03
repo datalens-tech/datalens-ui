@@ -97,4 +97,4 @@ export const CONTROLS_PLACEMENT_MODE = {
     AUTO: 'auto',
     PERCENT: '%',
     PIXELS: 'px',
-};
+} as const;
