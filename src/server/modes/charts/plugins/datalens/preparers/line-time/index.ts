@@ -32,8 +32,16 @@ const collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base
 
 // eslint-disable-next-line complexity
 function prepareLineTime(options: PrepareFunctionArgs) {
-    const {placeholders, resultData, colors, idToTitle, colorsConfig, shared, ChartEditor} =
-        options;
+    const {
+        placeholders,
+        resultData,
+        colors,
+        idToTitle,
+        colorsConfig,
+        defaultColorPaletteId,
+        shared,
+        ChartEditor,
+    } = options;
 
     const {data, order} = resultData;
 
@@ -228,6 +236,8 @@ function prepareLineTime(options: PrepareFunctionArgs) {
             graphs: result.graphs as unknown as ExtendedSeriesLineOptions[],
             colorsConfig,
             isColorsItemExists: Boolean(colors),
+            defaultColorPaletteId,
+            colorField: undefined,
         });
     } else {
         // Else apply colorizing from YAGR for compatibility with Monitoring
