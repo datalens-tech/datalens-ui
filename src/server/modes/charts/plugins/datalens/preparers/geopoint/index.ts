@@ -113,7 +113,7 @@ const setPointProperty = ({
 };
 
 // eslint-disable-next-line complexity
-function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = false} = {}) {
+export function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = false} = {}) {
     const {
         colors,
         colorsConfig,
@@ -213,11 +213,12 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
     } else {
         const colorSettings = getColorsSettings({
             field: color,
-            colorsConfig: shared.colorsConfig,
+            colorsConfig,
             defaultColorPaletteId,
             availablePalettes: colorsConfig.availablePalettes,
             customColorPalettes: colorsConfig.loadedColorPalettes,
         });
+
         mountedColors = colorSettings.mountedColors;
         paletteColors = colorSettings.colors;
     }

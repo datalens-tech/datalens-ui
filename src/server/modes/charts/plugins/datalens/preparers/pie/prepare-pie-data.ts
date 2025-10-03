@@ -308,7 +308,7 @@ export function preparePieData(args: PrepareFunctionArgs) {
     } else {
         const {mountedColors, colors} = getColorsSettings({
             field: colorField,
-            colorsConfig: shared.colorsConfig,
+            colorsConfig: colorsConfig,
             defaultColorPaletteId,
             availablePalettes: colorsConfig.availablePalettes,
             customColorPalettes: colorsConfig.loadedColorPalettes,
