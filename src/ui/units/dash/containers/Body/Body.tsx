@@ -1155,7 +1155,6 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                                 hasFixedHeaderContainerElements || hasFixedHeaderControlsElements
                             }
                             fixedContentInitiallyOpened={mobileFixedHeaderInitiallyOpened}
-                            entryDialoguesRef={this.entryDialoguesRef}
                             fixedHeaderControlsRef={this._fixedHeaderControlsRef}
                             fixedHeaderContainerRef={this._fixedHeaderContainerRef}
                         />
