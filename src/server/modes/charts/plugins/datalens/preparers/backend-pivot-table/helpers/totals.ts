@@ -37,9 +37,11 @@ export const setTotalsHeadersToRows = (rows: ChartkitTableRows, i18n: (key: stri
                         cell.value = markupValue;
                     } else {
                         cell.value = `${totalTitle} ${prevCell.value}`;
+                        cell.type = 'text';
                     }
                 } else {
                     cell.value = totalTitle;
+                    cell.type = 'text';
                 }
             }
         });
