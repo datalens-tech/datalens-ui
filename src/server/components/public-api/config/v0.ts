@@ -1,14 +1,11 @@
-import {OpenAPIRegistry} from '@asteasolutions/zod-to-openapi';
-
+import type {DatalensGatewaySchemas} from '../../../types/gateway';
 import {ApiTag} from '../constants';
-import type {PublicApiVersionConfig} from '../types';
+import type {PublicApiVersionActions} from '../types';
 
-export const PUBLIC_API_V0_CONFIG = {
-    openApi: {
-        registry: new OpenAPIRegistry(),
-    },
-
-    actions: {
+export const getPublicApiActionsV0 = <
+    TSchema extends {root: Pick<DatalensGatewaySchemas['root'], 'bi' | 'mix'>},
+>(): PublicApiVersionActions<TSchema> => {
+    return {
         // Connection
         getConnection: {
             resolve: (api) => api.bi.getConnection,
@@ -87,22 +84,6 @@ export const PUBLIC_API_V0_CONFIG = {
             },
         },
 
-        // Editor
-        getEditorChart: {
-            resolve: (api) => api.mix.__getEditorChart__,
-            openApi: {
-                summary: 'Get editor chart',
-                tags: [ApiTag.Editor],
-            },
-        },
-        deleteEditorChart: {
-            resolve: (api) => api.mix.__deleteEditorChart__,
-            openApi: {
-                summary: 'Delete editor chart',
-                tags: [ApiTag.Editor],
-            },
-        },
-
         // Dashboard
         getDashboard: {
             resolve: (api) => api.mix.__getDashboard__,
@@ -132,5 +113,5 @@ export const PUBLIC_API_V0_CONFIG = {
                 tags: [ApiTag.Dashboard],
             },
         },
-    },
-} satisfies PublicApiVersionConfig;
+    };
+};

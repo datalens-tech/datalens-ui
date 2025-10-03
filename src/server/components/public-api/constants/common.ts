@@ -2,7 +2,6 @@ export enum ApiTag {
     Connection = 'Connection',
     Dataset = 'Dataset',
     Wizard = 'Wizard',
-    Editor = 'Editor',
     Dashboard = 'Dashboard',
     QL = 'QL',
 }

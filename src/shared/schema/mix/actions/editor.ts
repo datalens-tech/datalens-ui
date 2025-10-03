@@ -1,79 +1,16 @@
-import {ENTRY_TYPES, EntryScope} from '../../..';
-import {ServerError} from '../../../constants/error';
 import {DeveloperModeCheckStatus} from '../../../types';
-import {isEditorEntryType, isLegacyEditorEntryType} from '../../../utils/entry';
-import {createAction, createTypedAction} from '../../gateway-utils';
+import {createAction} from '../../gateway-utils';
 import {getTypedApi} from '../../simple-schema';
 import type {
     CreateEditorChartArgs,
     CreateEditorChartResponse,
-    EditorChartData,
     UpdateEditorChartArgs,
     UpdateEditorChartResponse,
 } from '../../us/types';
 import {getEntryLinks} from '../helpers';
 import {validateData} from '../helpers/editor/validation';
-import {
-    deleteEditorChartArgsSchema,
-    deleteEditorChartResultSchema,
-    getEditorChartArgsSchema,
-    getEditorChartResultSchema,
-} from '../schemas/editor';
-import type {GetEditorChartResponse} from '../types/editor';
 
 export const editorActions = {
-    // WIP
-    __getEditorChart__: createTypedAction(
-        {
-            paramsSchema: getEditorChartArgsSchema,
-            resultSchema: getEditorChartResultSchema,
-        },
-        async (api, args) => {
-            const {
-                includePermissions,
-                includeLinks,
-                includeFavorite = false,
-                revId,
-                chartId,
-                branch,
-                workbookId,
-            } = args;
-
-            const typedApi = getTypedApi(api);
-
-            const getEntryResponse = await typedApi.us.getEntry({
-                entryId: chartId,
-                includePermissionsInfo: includePermissions,
-                includeLinks,
-                includeFavorite,
-                revId,
-                workbookId,
-                branch: branch ?? 'published',
-            });
-
-            const scope = getEntryResponse.scope;
-            const type = getEntryResponse.type;
-
-            if (
-                scope !== EntryScope.Widget ||
-                (!isEditorEntryType(type) && !isLegacyEditorEntryType(type))
-            ) {
-                throw new ServerError('Entry not found', {
-                    status: 404,
-                });
-            }
-
-            const result: GetEditorChartResponse = {
-                ...getEntryResponse,
-                scope,
-                type,
-                data: getEntryResponse.data as EditorChartData,
-            };
-
-            return result;
-        },
-    ),
-
     createEditorChart: createAction<CreateEditorChartResponse, CreateEditorChartArgs>(
         async (api, args, {ctx}) => {
             const {checkRequestForDeveloperModeAccess} = ctx.get('gateway');
@@ -106,25 +43,6 @@ export const editorActions = {
             } else {
                 throw new Error('Access to Editor developer mode was denied');
             }
-        },
-    ),
-
-    // WIP
-    __deleteEditorChart__: createTypedAction(
-        {
-            paramsSchema: deleteEditorChartArgsSchema,
-            resultSchema: deleteEditorChartResultSchema,
-        },
-        async (api, {chartId}) => {
-            const typedApi = getTypedApi(api);
-
-            await typedApi.us._deleteUSEntry({
-                entryId: chartId,
-                scope: EntryScope.Widget,
-                types: [...ENTRY_TYPES.editor, ...ENTRY_TYPES.legacyEditor],
-            });
-
-            return {};
         },
     ),
 };
