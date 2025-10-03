@@ -11,6 +11,10 @@ import {getBarSettingsValue} from '../../../helpers/barsSettings';
 
 import type {GetFooterArgs, GetFooterCellWithStylesArgs, PrepareFooterValueArgs} from './types';
 
+const isTotalTitleCell = (columnIndex: number) => {
+    return columnIndex === 0;
+};
+
 export const getTotalTitle = (
     value: string | number | undefined,
     i18n: (label: string, params?: Record<string, string | number>) => string,
@@ -45,7 +49,7 @@ export const prepareFooterValue = (
         value = total;
     }
 
-    if (columnIndex === 0) {
+    if (isTotalTitleCell(columnIndex)) {
         value = getTotalTitle(value, i18n);
     }
 
@@ -57,12 +61,18 @@ export const prepareFooterValue = (
 };
 
 export const getFooterCellWithStyles = (args: GetFooterCellWithStylesArgs) => {
-    const {column, value, columnValuesByColumn, colorsConfig, defaultColorPaletteId} = args;
+    const {column, columnIndex, value, columnValuesByColumn, colorsConfig, defaultColorPaletteId} =
+        args;
 
     const cell: TableCommonCell | BarTableCell = {
         value,
         css: TABLE_TOTALS_STYLES,
     };
+
+    if (isTotalTitleCell(columnIndex)) {
+        cell.type = 'text';
+    }
+
     if (isTableBarsSettingsEnabled(column)) {
         const columnValues = columnValuesByColumn[column.guid];
 
@@ -108,9 +118,10 @@ export const getFooter = (args: GetFooterArgs) => {
         });
     });
 
-    const cells = valuesWithColumns.map(({value, column}) => {
+    const cells = valuesWithColumns.map(({value, column}, columnIndex) => {
         return getFooterCellWithStyles({
             column,
+            columnIndex,
             value,
             columnValuesByColumn,
             colorsConfig,

@@ -1,5 +1,7 @@
 import type {DeepNonNullable} from 'utility-types';
 
+import {EntryScope} from '../../..';
+import Dash from '../../../../server/components/sdk/dash';
 import type {ChartsStats} from '../../../types/charts';
 import {createAction, createTypedAction} from '../../gateway-utils';
 import {getTypedApi} from '../../simple-schema';
@@ -11,37 +13,30 @@ import {
     prepareDatasetData,
     prepareWidgetDatasetData,
 } from '../helpers/dash';
-import {deleteDashArgsSchema, deleteDashResultSchema} from '../schemas/dash';
+import {
+    createDashArgsSchema,
+    createDashResultSchema,
+    deleteDashArgsSchema,
+    deleteDashResultSchema,
+    getDashArgsSchema,
+    getDashResultSchema,
+    updateDashArgsSchema,
+    updateDashResultSchema,
+} from '../schemas/dash';
 import type {
     CollectChartkitStatsArgs,
     CollectChartkitStatsResponse,
     CollectDashStatsArgs,
     CollectDashStatsResponse,
+    CreateDashResponse,
     GetEntriesDatasetsFieldsArgs,
     GetEntriesDatasetsFieldsResponse,
     GetWidgetsDatasetsFieldsArgs,
     GetWidgetsDatasetsFieldsResponse,
+    UpdateDashResponse,
 } from '../types';
 
 export const dashActions = {
-    // WIP
-    __deleteDashboard__: createTypedAction(
-        {
-            paramsSchema: deleteDashArgsSchema,
-            resultSchema: deleteDashResultSchema,
-        },
-        async (api, {lockToken, dashboardId}) => {
-            const typedApi = getTypedApi(api);
-
-            await typedApi.us._deleteUSEntry({
-                entryId: dashboardId,
-                lockToken,
-            });
-
-            return {};
-        },
-    ),
-
     collectDashStats: createAction<CollectDashStatsResponse, CollectDashStatsArgs>(
         async (_, args, {ctx}) => {
             ctx.stats('dashStats', {
@@ -200,4 +195,87 @@ export const dashActions = {
         });
         return res;
     }),
+
+    // WIP
+    __getDashboard__: createTypedAction(
+        {
+            paramsSchema: getDashArgsSchema,
+            resultSchema: getDashResultSchema,
+        },
+        async (_, args, {headers, ctx}) => {
+            const {dashboardId, includePermissions, includeLinks, includeFavorite, branch, revId} =
+                args;
+
+            const result = await Dash.read(
+                dashboardId,
+                {
+                    includePermissions: includePermissions ? includePermissions.toString() : '0',
+                    includeLinks: includeLinks ? includeLinks.toString() : '0',
+                    includeFavorite,
+                    ...(branch ? {branch} : {branch: 'published'}),
+                    ...(revId ? {revId} : {}),
+                },
+                headers,
+                ctx,
+            );
+
+            if (result.scope !== EntryScope.Dash) {
+                throw new Error('No entry found');
+            }
+
+            return result as any;
+        },
+    ),
+
+    // WIP
+    __updateDashboard__: createTypedAction(
+        {
+            paramsSchema: updateDashArgsSchema,
+            resultSchema: updateDashResultSchema,
+        },
+        async (_, args, {headers, ctx}) => {
+            const {entryId} = args;
+
+            const I18n = ctx.get('i18n');
+
+            return (await Dash.update(
+                entryId,
+                args,
+                headers,
+                ctx,
+                I18n,
+            )) as unknown as UpdateDashResponse;
+        },
+    ),
+    // WIP
+    __createDashboard__: createTypedAction(
+        {
+            paramsSchema: createDashArgsSchema,
+            resultSchema: createDashResultSchema,
+        },
+        async (_, args, {headers, ctx}) => {
+            const I18n = ctx.get('i18n');
+
+            return (await Dash.create(args, headers, ctx, I18n)) as unknown as CreateDashResponse;
+        },
+    ),
+
+    // WIP
+    __deleteDashboard__: createTypedAction(
+        {
+            paramsSchema: deleteDashArgsSchema,
+            resultSchema: deleteDashResultSchema,
+        },
+        async (api, {lockToken, dashboardId}) => {
+            const typedApi = getTypedApi(api);
+
+            await typedApi.us._deleteUSEntry({
+                entryId: dashboardId,
+                lockToken,
+                scope: EntryScope.Dash,
+            });
+
+            return {};
+        },
+    ),
 };
