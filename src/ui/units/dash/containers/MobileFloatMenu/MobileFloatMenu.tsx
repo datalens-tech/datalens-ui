@@ -4,7 +4,7 @@ import {BookOpen} from '@gravity-ui/icons';
 import {Button, Icon} from '@gravity-ui/uikit';
 import {type ResolveThunks, connect} from 'react-redux';
 import {FloatMenu} from 'ui/components/FloatMenu/FloatMenu';
-import type {DatalensGlobalState, EntryDialogues} from 'ui/index';
+import type {DatalensGlobalState} from 'ui/index';
 
 import {Description} from '../../components/DashActionPanel/Description/Description';
 import {ShareButton} from '../../components/ShareButton/ShareButton';
@@ -20,7 +20,6 @@ export interface MobileFloatMenuOwnProps {
     entryId: string;
     hasFixedContent: boolean;
     fixedContentInitiallyOpened?: boolean;
-    entryDialoguesRef: React.RefObject<EntryDialogues>;
     fixedHeaderControlsRef: React.RefCallback<HTMLDivElement>;
     fixedHeaderContainerRef: React.RefCallback<HTMLDivElement>;
     dashEl: HTMLDivElement | null;
@@ -50,7 +49,6 @@ function MobileFloatMenuComponent({
     hasTableOfContent: showTocButton,
     hasFixedContent: showFixedHeaderButton,
     fixedContentInitiallyOpened,
-    entryDialoguesRef,
     fixedHeaderControlsRef,
     fixedHeaderContainerRef,
     dashEl,
@@ -76,7 +74,6 @@ function MobileFloatMenuComponent({
             <Description
                 key="dash-description"
                 canEdit={false}
-                entryDialoguesRef={entryDialoguesRef}
                 showOpenedDescription={showOpenedDescription}
                 iconSize={24}
             />
