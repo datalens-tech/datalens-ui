@@ -1033,10 +1033,6 @@ export function setSelectedLayerId({
     withoutRerender = false,
 }: SetSelectedLayerIdArgs) {
     return (dispatch: WizardDispatch, getState: () => DatalensGlobalState) => {
-        const prevVisualisation = getState().wizard.visualization
-            .visualization as VisualizationWithLayersShared['visualization'];
-        const prevSelectedLayerId = prevVisualisation?.selectedLayerId;
-
         dispatch(_setSelectedLayerId({layerId}));
 
         const {
@@ -1082,12 +1078,7 @@ export function setSelectedLayerId({
         }
 
         if (needUpdatePreview) {
-            dispatch(
-                updatePreviewAndClientChartsConfig({
-                    withoutRerender,
-                    stackedHistoryPoint: prevSelectedLayerId === '',
-                }),
-            );
+            dispatch(updatePreviewAndClientChartsConfig({withoutRerender}));
         }
     };
 }
