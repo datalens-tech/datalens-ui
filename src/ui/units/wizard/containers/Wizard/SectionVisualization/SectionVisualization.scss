@@ -158,7 +158,6 @@
                 position: relative;
                 margin: 0 0 -2px;
                 display: none;
-                margin-bottom: var(--g-spacing-3);
             }
 
             &_cannot-drop {
@@ -171,6 +170,7 @@
                 background: var(--g-color-base-generic);
                 border: 1px dashed var(--g-color-line-generic-active);
                 border-radius: 4px;
+                padding-bottom: var(--g-spacing-3);
             }
         }
 
