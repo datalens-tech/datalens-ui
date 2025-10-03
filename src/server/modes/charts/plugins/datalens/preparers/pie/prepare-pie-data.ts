@@ -16,6 +16,7 @@ import {
 } from '../../../../../../../shared';
 import {wrapMarkdownValue} from '../../../../../../../shared/utils/markdown';
 import {wrapHtml} from '../../../../../../../shared/utils/ui-sandbox';
+import {getColorsSettings} from '../../../helpers/color-palettes';
 import type {ChartColorsConfig} from '../../types';
 import type {ColorValue} from '../../utils/color-helpers';
 import {getColorsByMeasureField, getThresholdValues} from '../../utils/color-helpers';
@@ -60,29 +61,29 @@ function mapAndColorizePieByGradient(
 }
 
 function getPieSegmentColor({
-    item,
-    colorsConfig,
+    colorValue,
     usedColors,
+    colors,
+    mountedColors,
 }: {
-    item: PiePoint;
-    colorsConfig: ChartColorsConfig;
+    colorValue: string | undefined;
     usedColors: Map<PiePoint['colorValue'], string>;
+    colors: string[];
+    mountedColors: Record<string, string>;
 }) {
-    if (!usedColors.has(item.colorValue)) {
-        usedColors.set(item.colorValue, getColor(usedColors.size, colorsConfig.colors));
+    if (!usedColors.has(colorValue)) {
+        usedColors.set(colorValue, getColor(usedColors.size, colors));
     }
 
-    if (
-        colorsConfig &&
-        colorsConfig.mountedColors &&
-        (item.colorGuid === colorsConfig.fieldGuid || colorsConfig.coloredByMeasure) &&
-        item.colorValue &&
-        colorsConfig.mountedColors[item.colorValue]
-    ) {
-        return getMountedColor(colorsConfig, item.colorValue);
+    if (colorValue && mountedColors[colorValue]) {
+        return getMountedColor({
+            mountedColors,
+            colors,
+            value: colorValue,
+        });
     }
 
-    return usedColors.get(item.colorValue);
+    return usedColors.get(colorValue);
 }
 
 // eslint-disable-next-line complexity
@@ -98,6 +99,7 @@ export function preparePieData(args: PrepareFunctionArgs) {
         ChartEditor,
         disableDefaultSorting = false,
         shared,
+        defaultColorPaletteId,
     } = args;
     const {data, order, totals} = resultData;
     const widgetConfig = ChartEditor.getWidgetConfig();
@@ -304,9 +306,22 @@ export function preparePieData(args: PrepareFunctionArgs) {
     if (shouldUseGradient) {
         pie.data = mapAndColorizePieByGradient(pie.data, colorsConfig);
     } else {
+        const {mountedColors, colors} = getColorsSettings({
+            field: colorField,
+            colorsConfig: colorsConfig,
+            defaultColorPaletteId,
+            availablePalettes: colorsConfig.availablePalettes,
+            customColorPalettes: colorsConfig.loadedColorPalettes,
+        });
+
         const usedColors = new Map();
         pie.data.forEach((d) => {
-            d.color = getPieSegmentColor({item: d, colorsConfig, usedColors});
+            d.color = getPieSegmentColor({
+                colorValue: d.colorValue,
+                colors,
+                usedColors,
+                mountedColors,
+            });
         });
     }
 
