@@ -11,7 +11,7 @@ import {batch, connect} from 'react-redux';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
 import type {Shared, VisualizationIconProps, VisualizationWithLayersShared} from 'shared';
-import {WizardPageQa} from 'shared';
+import {WizardPageQa, isVisualizationWithLayers} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {registry} from 'ui/registry';
 import {selectDataset, selectDatasets} from 'units/wizard/selectors/dataset';
@@ -181,7 +181,12 @@ class VisualizationSelector extends React.Component<Props> {
 
             if (dataset) {
                 this.props.actualizeAndSetUpdates({updates});
-                this.props.updatePreviewAndClientChartsConfig({});
+                const isSkipUpdate =
+                    isVisualizationWithLayers(visualizationItem) &&
+                    !visualizationItem.selectedLayerId;
+                if (!isSkipUpdate) {
+                    this.props.updatePreviewAndClientChartsConfig({});
+                }
             }
         });
 
