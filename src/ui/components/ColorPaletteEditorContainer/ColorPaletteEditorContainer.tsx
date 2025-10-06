@@ -38,6 +38,8 @@ type ColorPaletteEditorProps = StateProps &
     DispatchProps & {
         condensed?: boolean;
         hasEditRights?: boolean;
+        // ToDo: remove
+        enableDefaultColorPalette?: boolean;
     };
 
 class ColorPaletteEditorContainer extends React.Component<ColorPaletteEditorProps> {
