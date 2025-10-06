@@ -15,6 +15,7 @@ import type {
     WorkbookWithPermissions,
 } from '../../../../../shared/schema';
 import {AnimateBlock} from '../../../../components/AnimateBlock';
+import {useRefreshPageAfterImport} from '../../hooks/useRefreshPageAfterImport';
 import {selectStructureItems} from '../../store/selectors';
 import type {SelectedMap, UpdateCheckboxArgs} from '../CollectionPage/hooks';
 
@@ -38,6 +39,7 @@ type Props = {
     getCollectionActions: (
         item: CollectionWithPermissions,
     ) => (DropdownMenuItem[] | DropdownMenuItem)[];
+    refreshPage: () => void;
     onUpdateCheckboxClick: (args: UpdateCheckboxArgs) => void;
     onUpdateAllCheckboxesClick: (checked: boolean) => void;
 };
@@ -48,6 +50,7 @@ export const CollectionContentTable = React.memo<Props>(
         itemsAvailableForSelectionCount,
         getWorkbookActions,
         getCollectionActions,
+        refreshPage,
         onUpdateCheckboxClick,
         onUpdateAllCheckboxesClick,
     }) => {
@@ -73,6 +76,8 @@ export const CollectionContentTable = React.memo<Props>(
 
         const dateTimeFormat = useSelector(selectDateTimeFormat);
 
+        const {refreshPageAfterImport} = useRefreshPageAfterImport({refreshPage});
+
         if (DL.IS_MOBILE) {
             return (
                 <div className={b({mobile: true})} data-qa={CollectionContentTableQa.Table}>
@@ -91,6 +96,7 @@ export const CollectionContentTable = React.memo<Props>(
                                             }
                                             item={item}
                                             isDisabled={isCreating || isDeleting}
+                                            refreshPageAfterImport={refreshPageAfterImport}
                                         >
                                             <CollectionTitleCell
                                                 isWorkbook={'workbookId' in item}
@@ -163,6 +169,7 @@ export const CollectionContentTable = React.memo<Props>(
                                         }
                                         item={item}
                                         isDisabled={nonInteractive}
+                                        refreshPageAfterImport={refreshPageAfterImport}
                                     >
                                         <CollectionCheckboxCell
                                             item={item}
