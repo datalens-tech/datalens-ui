@@ -13,6 +13,7 @@ import {
     WRAPPED_MARKDOWN_KEY,
     ZoomMode,
     getFakeTitleOrTitle,
+    getFormatOptions,
     isMarkupDataType,
 } from '../../../../../../../shared';
 import {wrapHtml} from '../../../../../../../shared/utils/ui-sandbox';
@@ -278,13 +279,14 @@ export function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints
             }
 
             if (label && label.title === dataTitle) {
+                const formatting = getFormatOptions(label);
                 allPoints[`points-${valuesIndex}`].forEach((point) =>
                     setPointProperty({
                         point,
                         propName: 'label',
                         propValue: columnData,
                         propType: label.data_type,
-                        formatting: label.formatting,
+                        formatting,
                     }),
                 );
             }
@@ -349,10 +351,11 @@ export function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints
                     pointData.key = itemTitle;
                     pointData.value = columnData;
                 } else {
+                    const tooltipFieldFormatting = getFormatOptions(tooltipField);
                     const value = prepareValue(
                         columnData,
                         tooltipField.data_type,
-                        tooltipField.formatting,
+                        tooltipFieldFormatting,
                     );
                     const text = itemTitle ? `${itemTitle}: ${value}` : value;
 
