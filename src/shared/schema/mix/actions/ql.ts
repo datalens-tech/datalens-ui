@@ -1,20 +1,20 @@
-import {ENTRY_TYPES, EntryScope, mapChartsConfigToLatestVersion} from '../../..';
+import {ENTRY_TYPES, EntryScope} from '../../..';
 import {ServerError} from '../../../constants/error';
 import {createTypedAction} from '../../gateway-utils';
 import {getTypedApi} from '../../simple-schema';
 import {
-    deleteWizardChartArgsSchema,
-    deleteWizardChartResultSchema,
-    getWizardChartArgsSchema,
-    getWizardChartResultSchema,
-} from '../schemas/wizard';
+    deleteQLChartArgsSchema,
+    deleteQLChartResultSchema,
+    getQLChartArgsSchema,
+    getQLChartResultSchema,
+} from '../schemas/ql';
 
-export const wizardActions = {
+export const qlActions = {
     // WIP
-    __getWizardChart__: createTypedAction(
+    __getQLChart__: createTypedAction(
         {
-            paramsSchema: getWizardChartArgsSchema,
-            resultSchema: getWizardChartResultSchema,
+            paramsSchema: getQLChartArgsSchema,
+            resultSchema: getQLChartResultSchema,
         },
         async (api, args) => {
             const {
@@ -41,19 +41,11 @@ export const wizardActions = {
 
             if (
                 getEntryResponse.scope !== EntryScope.Widget ||
-                !ENTRY_TYPES.wizard.includes(getEntryResponse.type)
+                !ENTRY_TYPES.ql.includes(getEntryResponse.type)
             ) {
                 throw new ServerError('Entry not found', {
                     status: 404,
                 });
-            }
-
-            if (getEntryResponse.data) {
-                const mappedData = mapChartsConfigToLatestVersion(
-                    JSON.parse(getEntryResponse.data.shared as string),
-                );
-
-                getEntryResponse.data.shared = JSON.stringify(mappedData);
             }
 
             return getEntryResponse;
@@ -61,10 +53,10 @@ export const wizardActions = {
     ),
 
     // WIP
-    __deleteWizardChart__: createTypedAction(
+    __deleteQLChart__: createTypedAction(
         {
-            paramsSchema: deleteWizardChartArgsSchema,
-            resultSchema: deleteWizardChartResultSchema,
+            paramsSchema: deleteQLChartArgsSchema,
+            resultSchema: deleteQLChartResultSchema,
         },
         async (api, {chartId}) => {
             const typedApi = getTypedApi(api);
@@ -72,7 +64,7 @@ export const wizardActions = {
             await typedApi.us._deleteUSEntry({
                 entryId: chartId,
                 scope: EntryScope.Widget,
-                types: ENTRY_TYPES.wizard,
+                types: ENTRY_TYPES.ql,
             });
 
             return {};
