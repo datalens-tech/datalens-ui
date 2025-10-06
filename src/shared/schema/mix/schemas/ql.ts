@@ -1,12 +1,12 @@
 import z from 'zod/v4';
 
-export const deleteWizardChartArgsSchema = z.object({
+export const deleteQLChartArgsSchema = z.object({
     chartId: z.string(),
 });
 
-export const deleteWizardChartResultSchema = z.object({});
+export const deleteQLChartResultSchema = z.object({});
 
-export const getWizardChartArgsSchema = z.object({
+export const getQLChartArgsSchema = z.object({
     chartId: z.string(),
     workbookId: z.union([z.string(), z.null()]).optional(),
     revId: z.string().optional(),
@@ -16,4 +16,4 @@ export const getWizardChartArgsSchema = z.object({
     branch: z.literal(['saved', 'published']).optional(),
 });
 
-export const getWizardChartResultSchema = z.unknown();
+export const getQLChartResultSchema = z.unknown();

@@ -1,15 +1,19 @@
-import {OpenAPIRegistry} from '@asteasolutions/zod-to-openapi';
-
+import type {DatalensGatewaySchemas} from '../../../types/gateway';
 import {ApiTag} from '../constants';
-import type {PublicApiVersionConfig} from '../types';
+import type {PublicApiVersionActions} from '../types';
 
-export const PUBLIC_API_V0_CONFIG = {
-    openApi: {
-        registry: new OpenAPIRegistry(),
-    },
-
-    actions: {
+export const getPublicApiActionsV0 = <
+    TSchema extends {root: Pick<DatalensGatewaySchemas['root'], 'bi' | 'mix'>},
+>(): PublicApiVersionActions<TSchema> => {
+    return {
         // Connection
+        getConnection: {
+            resolve: (api) => api.bi.getConnection,
+            openApi: {
+                summary: 'Get connection',
+                tags: [ApiTag.Connection],
+            },
+        },
         deleteConnection: {
             resolve: (api) => api.bi.deleteConnection,
             openApi: {
@@ -49,6 +53,13 @@ export const PUBLIC_API_V0_CONFIG = {
         },
 
         // Wizard
+        getWizardChart: {
+            resolve: (api) => api.mix.__getWizardChart__,
+            openApi: {
+                summary: 'Get wizard chart',
+                tags: [ApiTag.Wizard],
+            },
+        },
         deleteWizardChart: {
             resolve: (api) => api.mix.__deleteWizardChart__,
             openApi: {
@@ -57,12 +68,19 @@ export const PUBLIC_API_V0_CONFIG = {
             },
         },
 
-        // Editor
-        deleteEditorChart: {
-            resolve: (api) => api.mix.__deleteEditorChart__,
+        // QL
+        getQLChart: {
+            resolve: (api) => api.mix.__getQLChart__,
             openApi: {
-                summary: 'Delete editor chart',
-                tags: [ApiTag.Editor],
+                summary: 'Get QL chart',
+                tags: [ApiTag.QL],
+            },
+        },
+        deleteQLChart: {
+            resolve: (api) => api.mix.__deleteQLChart__,
+            openApi: {
+                summary: 'Delete QL chart',
+                tags: [ApiTag.QL],
             },
         },
 
@@ -95,5 +113,5 @@ export const PUBLIC_API_V0_CONFIG = {
                 tags: [ApiTag.Dashboard],
             },
         },
-    },
-} satisfies PublicApiVersionConfig;
+    };
+};

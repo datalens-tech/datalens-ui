@@ -30,20 +30,31 @@ interface Props extends StateProps {
     onUpdate: (items: AddableField[]) => void;
     checkAllowed: (item: AddableField) => boolean;
     transform?: (item: AddableField) => Promise<AddableField>;
+    disabledText?: string;
 }
 
 class AddFieldContainer extends React.Component<Props> {
     render() {
-        const {items, className, capacity, capacityError, capacityErrorQa, dlDebugMode} =
-            this.props;
+        const {
+            items,
+            className,
+            capacity,
+            capacityError,
+            capacityErrorQa,
+            dlDebugMode,
+            disabledText: disabledTextOrigin,
+        } = this.props;
         const addableFields = this.getAddableFields();
         const disabled =
+            Boolean(disabledTextOrigin) ||
             addableFields.length === 0 ||
             (Number.isInteger(capacity) ? capacity! <= items.length : false);
-        const disabledText =
+        const disabledTextLocal =
             addableFields.length === 0
                 ? i18n('wizard', 'tooltip_no-available-fields')
                 : capacityError;
+
+        const disabledText = disabledTextOrigin || disabledTextLocal;
         const disabledTextQa =
             addableFields.length === 0
                 ? SectionVisualizationAddItemQa.NoFieldsErrorTooltip

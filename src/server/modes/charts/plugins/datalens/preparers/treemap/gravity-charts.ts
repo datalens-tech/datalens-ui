@@ -19,6 +19,7 @@ import {
 } from '../../../../../../../shared';
 import {wrapMarkdownValue} from '../../../../../../../shared/utils/markdown';
 import {wrapHtml} from '../../../../../../../shared/utils/ui-sandbox';
+import {getColorsSettings} from '../../../helpers/color-palettes';
 import {getBaseChartConfig} from '../../gravity-charts/utils';
 import {
     mapAndColorizeHashTableByGradient,
@@ -56,6 +57,7 @@ export function prepareD3Treemap({
     idToTitle,
     idToDataType,
     ChartEditor,
+    defaultColorPaletteId,
 }: PrepareFunctionArgs): Partial<ChartData> {
     const dimensions = placeholders.find((p) => p.id === PlaceholderId.Dimensions)?.items ?? [];
     const dTypes = dimensions.map((item) => item.data_type);
@@ -202,7 +204,19 @@ export function prepareD3Treemap({
                 colorsConfig,
             ).colorData;
         } else {
-            colorData = mapAndColorizeHashTableByPalette(valuesForColorData, colorsConfig);
+            const {mountedColors, colors: paletteColors} = getColorsSettings({
+                field: color,
+                colorsConfig: shared.colorsConfig,
+                defaultColorPaletteId,
+                availablePalettes: colorsConfig.availablePalettes,
+                customColorPalettes: colorsConfig.loadedColorPalettes,
+            });
+
+            colorData = mapAndColorizeHashTableByPalette({
+                hashTable: valuesForColorData,
+                colors: paletteColors,
+                mountedColors,
+            });
         }
 
         treemap = treemap.map((obj) => {
