@@ -80,7 +80,7 @@ export const CollectionContentTable = React.memo<Props>(
                         <div className={b('table')}>
                             <div className={b('content')}>
                                 {items.map((item) => {
-                                    const {status, isDisabled} = getItemParams(item);
+                                    const {status, isCreating, isDeleting} = getItemParams(item);
 
                                     return (
                                         <CollectionLinkRow
@@ -90,7 +90,7 @@ export const CollectionContentTable = React.memo<Props>(
                                                     : item.collectionId
                                             }
                                             item={item}
-                                            isDisabled={isDisabled}
+                                            isDisabled={isCreating || isDeleting}
                                         >
                                             <CollectionTitleCell
                                                 isWorkbook={'workbookId' in item}
@@ -146,7 +146,9 @@ export const CollectionContentTable = React.memo<Props>(
                         <div className={b('content')}>
                             {items.map((item) => {
                                 const isWorkbookItem = 'workbookId' in item;
-                                const {status, isDisabled} = getItemParams(item);
+                                const {status, isCreating, isDeleting} = getItemParams(item);
+
+                                const nonInteractive = isCreating || isDeleting;
 
                                 const actions = isWorkbookItem
                                     ? getWorkbookActions(item)
@@ -160,13 +162,13 @@ export const CollectionContentTable = React.memo<Props>(
                                                 : item.collectionId
                                         }
                                         item={item}
-                                        isDisabled={isDisabled}
+                                        isDisabled={nonInteractive}
                                     >
                                         <CollectionCheckboxCell
                                             item={item}
                                             onUpdateCheckboxClick={onUpdateCheckboxClick}
                                             selectedMap={selectedMap}
-                                            disabled={isDisabled}
+                                            disabled={nonInteractive}
                                         />
                                         <CollectionTitleCell
                                             isWorkbook={'workbookId' in item}
@@ -176,7 +178,7 @@ export const CollectionContentTable = React.memo<Props>(
                                         />
 
                                         <div className={b('content-cell', {date: true})}>
-                                            {!isDisabled && (
+                                            {!nonInteractive && (
                                                 <Tooltip
                                                     content={dateTime({
                                                         input: item.updatedAt,
@@ -194,7 +196,7 @@ export const CollectionContentTable = React.memo<Props>(
                                         <div
                                             className={b('content-cell', {
                                                 control: true,
-                                                import: isDisabled,
+                                                import: isDeleting,
                                             })}
                                             onClick={(e) => {
                                                 if (actions.length > 0) {
@@ -207,7 +209,7 @@ export const CollectionContentTable = React.memo<Props>(
                                                 <DropdownMenu
                                                     size="s"
                                                     items={actions}
-                                                    disabled={isDisabled}
+                                                    disabled={isDeleting}
                                                 />
                                             )}
                                         </div>

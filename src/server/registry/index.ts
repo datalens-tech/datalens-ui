@@ -27,7 +27,7 @@ let getLayoutConfig: GetLayoutConfig | undefined;
 let yfmPlugins: MarkdownItPluginCb[];
 let getXlsxConverter: XlsxConverterFn | undefined;
 let qLConnectionTypeMap: QLConnectionTypeMap | undefined;
-let publicApiConfig: PublicApiConfig | undefined;
+let publicApiConfig: PublicApiConfig<SchemasByScope> | undefined;
 
 export const registry = {
     common: commonRegistry,
@@ -128,11 +128,11 @@ export const registry = {
     getQLConnectionTypeMap() {
         return qLConnectionTypeMap ?? getConnectorToQlConnectionTypeMap();
     },
-    setupPublicApiConfig(config: PublicApiConfig) {
+    setupPublicApiConfig<TSchema extends SchemasByScope>(config: PublicApiConfig<TSchema>) {
         if (publicApiConfig) {
             throw new Error('The method must not be called more than once [setupPublicApiConfig]');
         }
-        publicApiConfig = config;
+        publicApiConfig = config as PublicApiConfig<SchemasByScope>;
     },
     getPublicApiConfig() {
         if (!publicApiConfig) {

@@ -16,6 +16,7 @@ import {
     WRAPPED_MARKDOWN_KEY,
     ZoomMode,
     getFakeTitleOrTitle,
+    getFormatOptions,
     isHtmlField,
     isMarkdownField,
 } from '../../../../../../shared';
@@ -238,9 +239,10 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
         }
 
         const tooltip = tooltips[tooltipIndex];
+        const formatting = getFormatOptions(tooltip);
         const formattedText = prepareFormattedValue({
             dataType: tooltip.data_type,
-            formatting: tooltip.formatting,
+            formatting,
             value: text,
         });
         const shouldUseFieldTitle = tooltipConfig?.fieldTitle !== 'off';

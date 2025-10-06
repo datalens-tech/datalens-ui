@@ -22,7 +22,7 @@ export type PublicApiAction<TSchema extends SchemasByScope> = {
     openApi: PublicApiActionOpenApi;
 };
 
-type PublicApiVersionActions<TSchema extends SchemasByScope> = Record<
+export type PublicApiVersionActions<TSchema extends SchemasByScope> = Record<
     string,
     PublicApiAction<TSchema>
 >;
