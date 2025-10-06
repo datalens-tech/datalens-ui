@@ -42,6 +42,7 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
     if (measure && graphs.length > 0) {
         const graph = graphs[0];
         const total = graph.data?.reduce((sum, d) => sum + (d.y || 0), 0) ?? 0;
+        const labelFormatting = labelField ? getFormatOptions(labelField) : undefined;
         const seriesConfig: ExtendedPieSeries = {
             type: 'pie',
             minRadius: '50%',
@@ -62,7 +63,7 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
                             data_type: idToDataType[measure.guid],
                         }),
                         percentage,
-                        label: label?.formatting?.labelMode === 'percent' ? percentage : item.label,
+                        label: labelFormatting?.labelMode === 'percent' ? percentage : item.label,
                     };
                 }) ?? [],
         };

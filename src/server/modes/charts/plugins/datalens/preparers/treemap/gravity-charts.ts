@@ -13,6 +13,7 @@ import type {
 import {
     MINIMUM_FRACTION_DIGITS,
     PlaceholderId,
+    getFormatOptions,
     isDateField,
     isHtmlField,
     isMarkdownField,
@@ -121,10 +122,11 @@ export function prepareD3Treemap({
                     value: rawValue,
                     format: item.format,
                 });
-            } else if (isNumericalDataType(dTypes[level]) && item.formatting) {
+            } else if (isNumericalDataType(dTypes[level])) {
+                const formatting = getFormatOptions(item);
                 value = chartKitFormatNumberWrapper(rawValue as unknown as number, {
                     lang: 'ru',
-                    ...item.formatting,
+                    ...formatting,
                 });
             } else {
                 value = rawValue;
@@ -162,9 +164,10 @@ export function prepareD3Treemap({
             const actualTitle = idToTitle[measureItem.guid];
             const i = findIndexInOrder(order, measureItem, actualTitle);
             const value = values[i];
+            const formatting = getFormatOptions(measureItem);
             const label = chartKitFormatNumberWrapper(Number(value), {
                 lang: 'ru',
-                ...(measureItem.formatting ?? {precision: isFloat ? MINIMUM_FRACTION_DIGITS : 0}),
+                ...(formatting ?? {precision: isFloat ? MINIMUM_FRACTION_DIGITS : 0}),
             });
 
             hashTable[key] = {value: value, label};

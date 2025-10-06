@@ -1,10 +1,8 @@
-import type {
-    CommonNumberFormattingOptions,
-    ExtendedSeriesLineOptions,
-} from '../../../../../../../shared';
+import type {ExtendedSeriesLineOptions} from '../../../../../../../shared';
 import {
     AxisNullsMode,
     DATALENS_QL_TYPES,
+    getFormatOptions,
     getUtcDateTime,
     isDateField,
 } from '../../../../../../../shared';
@@ -166,7 +164,7 @@ function prepareLineTime(options: PrepareFunctionArgs) {
                     }),
                 };
 
-                const formatting = y.formatting as CommonNumberFormattingOptions | undefined;
+                const formatting = getFormatOptions(y);
                 const tooltipOptions = getFormatOptionsFromFieldFormatting(formatting, y.data_type);
 
                 // TODO: add other options when they will be available in Chartkit

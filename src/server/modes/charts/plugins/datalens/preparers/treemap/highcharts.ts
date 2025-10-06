@@ -1,5 +1,6 @@
 import {
     MINIMUM_FRACTION_DIGITS,
+    getFormatOptions,
     isDateField,
     isHtmlField,
     isMarkdownField,
@@ -128,10 +129,11 @@ export function prepareHighchartsTreemap({
                     value: rawValue,
                     format: item.format,
                 });
-            } else if (isNumericalDataType(dTypes[level]) && item.formatting) {
+            } else if (isNumericalDataType(dTypes[level])) {
+                const formatting = getFormatOptions(item);
                 value = chartKitFormatNumberWrapper(rawValue as unknown as number, {
                     lang: 'ru',
-                    ...item.formatting,
+                    ...formatting,
                 });
             } else {
                 value = rawValue;
@@ -169,9 +171,10 @@ export function prepareHighchartsTreemap({
             const actualTitle = idToTitle[measureItem.guid];
             const i = findIndexInOrder(order, measureItem, actualTitle);
             const value = values[i];
+            const formatting = getFormatOptions(measureItem);
             const label = chartKitFormatNumberWrapper(Number(value), {
                 lang: 'ru',
-                ...(measureItem.formatting ?? {precision: isFloat ? MINIMUM_FRACTION_DIGITS : 0}),
+                ...(formatting ?? {precision: isFloat ? MINIMUM_FRACTION_DIGITS : 0}),
             });
 
             if (multimeasure) {

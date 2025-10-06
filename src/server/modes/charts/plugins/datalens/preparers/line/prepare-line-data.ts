@@ -9,6 +9,7 @@ import {
     WizardVisualizationId,
     getAxisNullsSettings,
     getFakeTitleOrTitle,
+    getFormatOptions,
     getXAxisMode,
     isDateField,
     isHtmlField,
@@ -427,15 +428,17 @@ export function prepareLineData(args: PrepareFunctionArgs) {
 
                                 point.x = pointX;
 
-                                if (
-                                    xField &&
-                                    isNumericalDataType(xField.data_type) &&
-                                    xField.formatting
-                                ) {
-                                    point.xFormatted = chartKitFormatNumberWrapper(Number(pointX), {
-                                        lang: 'ru',
-                                        ...xField.formatting,
-                                    });
+                                if (xField && isNumericalDataType(xField.data_type)) {
+                                    const formatting = getFormatOptions(xField);
+                                    if (formatting) {
+                                        point.xFormatted = chartKitFormatNumberWrapper(
+                                            Number(pointX),
+                                            {
+                                                lang: 'ru',
+                                                ...formatting,
+                                            },
+                                        );
+                                    }
                                 }
                             }
 
