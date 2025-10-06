@@ -38,7 +38,6 @@ type ColorPaletteEditorProps = StateProps &
     DispatchProps & {
         condensed?: boolean;
         hasEditRights?: boolean;
-        enableDefaultColorPalette?: boolean;
     };
 
 class ColorPaletteEditorContainer extends React.Component<ColorPaletteEditorProps> {
@@ -51,12 +50,7 @@ class ColorPaletteEditorContainer extends React.Component<ColorPaletteEditorProp
     }
 
     render() {
-        const {
-            colorPalettes,
-            condensed,
-            hasEditRights = true,
-            enableDefaultColorPalette,
-        } = this.props;
+        const {colorPalettes, condensed, hasEditRights = true} = this.props;
 
         return (
             <div className={b()}>
@@ -88,7 +82,6 @@ class ColorPaletteEditorContainer extends React.Component<ColorPaletteEditorProp
                     condensed={condensed}
                     qa={ServiceSettingsQA.ColorPalettes}
                     hasEditRights={hasEditRights}
-                    enableDefaultPalette={enableDefaultColorPalette}
                 />
                 <ColorPaletteEditor hasEditRights={hasEditRights} />
                 <GradientColorPaletteEditor hasEditRights={hasEditRights} />
