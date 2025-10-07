@@ -4,7 +4,9 @@ import {Alert, Flex, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
+import {Feature} from 'shared/types';
 import {InterpolatedText} from 'ui/components/InterpolatedText/InterpolatedText';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {
     resetUserInfoFormValidation,
@@ -52,7 +54,11 @@ export const Signup = () => {
     };
 
     return (
-        <Flex className={b()} justifyContent="center" alignItems="center">
+        <Flex
+            className={b({rebranding: isEnabledFeature(Feature.EnableDLRebranding)})}
+            justifyContent="center"
+            alignItems="center"
+        >
             <Flex
                 className={b('form-container')}
                 direction="column"
