@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {Button, Flex} from '@gravity-ui/uikit';
+import {toaster} from '@gravity-ui/uikit/toaster-singleton';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
@@ -360,7 +361,16 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
             return null;
         }
 
-        const publicGalleryFile = publicGalleryState?.data?.split('/').pop() || undefined;
+        let publicGalleryFile;
+        try {
+            publicGalleryFile = publicGalleryState?.data?.split('/').pop() || undefined;
+        } catch (error) {
+            toaster.add({
+                theme: 'danger',
+                name: 'toastAfterParsingGalleryData',
+                title: i18n('toast_get-gallery-file-error'),
+            });
+        }
 
         return (
             <ImportFileField
