@@ -11,6 +11,9 @@ import {
     getFakeTitleOrTitle,
     getXAxisMode,
     isDateField,
+    isHtmlField,
+    isMarkdownField,
+    isMarkupField,
     isNumberField,
 } from '../../../../../../../shared';
 import type {
@@ -176,7 +179,11 @@ export function prepareD3Scatter(args: PrepareFunctionArgs): ChartData<PointCust
         colorFieldDataType &&
         isGradientMode({colorField: color, colorFieldDataType, colorsConfig});
 
-    let legend: ChartData['legend'] = {};
+    let legend: ChartData['legend'] = {
+        html: [x, y, z].some(
+            (field) => isHtmlField(field) || isMarkdownField(field) || isMarkupField(field),
+        ),
+    };
 
     if (graphs.length && gradientMode) {
         legend = {
@@ -206,6 +213,7 @@ export function prepareD3Scatter(args: PrepareFunctionArgs): ChartData<PointCust
                 labels: {
                     numberFormat: axisLabelNumberFormat ?? undefined,
                 },
+                maxPadding: 0,
             },
         ],
         series: {

@@ -123,7 +123,7 @@ import {
     FixedHeaderControls,
     FixedHeaderWrapper,
 } from '../FixedHeader/FixedHeader';
-import type {MobileFloatMenuOwnProps} from '../MobileFloatMenu/MobileFloatMenu';
+import type {MobileFloatMenuProps} from '../MobileFloatMenu/MobileFloatMenu';
 import {MobileFloatMenu} from '../MobileFloatMenu/MobileFloatMenu';
 import TableOfContent from '../TableOfContent/TableOfContent';
 import {Tabs} from '../Tabs/Tabs';
@@ -1428,7 +1428,7 @@ function FixedContainerWrapperWithContext({content}: {content: React.ReactNode})
     return null;
 }
 
-function FloatingMobileMenuWithContext(props: Omit<MobileFloatMenuOwnProps, 'dashEl'>) {
+function FloatingMobileMenuWithContext(props: Omit<MobileFloatMenuProps, 'dashEl'>) {
     const {dashEl} = React.useContext(RefsContext);
 
     if (dashEl) {

@@ -86,9 +86,10 @@ export const MobileHeaderComponent = ({
     const setupRefs = React.useCallback(
         (container: HTMLDivElement) => {
             ref.current = container;
-            const getScrollableContainer = () =>
-                document.querySelector<HTMLDivElement>(`.${CONTENT_CLASSNAME}`);
-            mergeRefs(scrollableContainerRef, contentRef)(getScrollableContainer());
+            const scrollableContainer = document.querySelector<HTMLDivElement>(
+                `.${CONTENT_CLASSNAME}`,
+            );
+            mergeRefs(scrollableContainerRef, contentRef)(scrollableContainer);
         },
         [scrollableContainerRef],
     );
