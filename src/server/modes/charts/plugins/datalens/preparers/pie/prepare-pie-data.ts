@@ -5,6 +5,7 @@ import {
     PlaceholderId,
     getDistinctValue,
     getFakeTitleOrTitle,
+    getFormatOptions,
     isFieldHierarchy,
     isHtmlField,
     isMarkdownField,
@@ -161,8 +162,10 @@ export function preparePieData(args: PrepareFunctionArgs) {
     const title = idToTitle[measure.guid];
     const name =
         title.includes(measure.guid) && measure.originalTitle ? measure.originalTitle : title;
-    const measureFormatting = measure?.formatting;
-    const labelFormatting = isMeasureValue(labelField) ? measureFormatting : labelField?.formatting;
+    const measureFormatting = getFormatOptions(measure);
+    const labelFormatting = isMeasureValue(labelField)
+        ? measureFormatting
+        : getFormatOptions(labelField);
     const labelFinalDataType = isPseudoField(labelField) ? measureDataType : labelField?.data_type;
 
     const pie: PieConfig = {

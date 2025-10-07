@@ -8,7 +8,6 @@ import type {DatasetField, DatasetFieldColorConfig, FieldUISettings} from 'share
 import {
     TIMEOUT_90_SEC,
     getFieldDistinctValues,
-    getFieldUISettings,
     getFieldsApiV2RequestSection,
     getParametersApiV2RequestSection,
 } from 'shared';
@@ -35,6 +34,7 @@ const b = block('colors-dialog');
 type Props = {
     open: boolean;
     field: DatasetField;
+    fieldUiSettings: FieldUISettings;
     datasetId: string;
     workbookId?: string;
     parameters: DatasetField[];
@@ -43,16 +43,13 @@ type Props = {
 };
 
 export const ColorsDialog = (props: Props) => {
-    const {open, field, datasetId, workbookId, parameters, onClose, onApply} = props;
+    const {open, field, fieldUiSettings, datasetId, workbookId, parameters, onClose, onApply} =
+        props;
     const [values, setValues] = React.useState<string[]>([]);
     const [selectedValue, setSelectedValue] = React.useState<string | undefined>();
     const [isLoading, setLoading] = React.useState(true);
     const [error, setError] = React.useState(null);
 
-    const fieldUiSettings = React.useMemo<FieldUISettings | null>(
-        () => getFieldUISettings({field}),
-        [field],
-    );
     const [mountedColors, setMountedColors] = React.useState<Record<string, string>>(
         fieldUiSettings?.colors ?? {},
     );
@@ -77,11 +74,9 @@ export const ColorsDialog = (props: Props) => {
     }, [values]);
 
     React.useEffect(() => {
-        if (open) {
-            setMountedColors(fieldUiSettings?.colors ?? {});
-            setSelectedPalette(fieldUiSettings?.palette ?? defaultPaletteId);
-        }
-    }, [defaultPaletteId, fieldUiSettings?.colors, fieldUiSettings?.palette, open]);
+        setMountedColors(fieldUiSettings?.colors ?? {});
+        setSelectedPalette(fieldUiSettings?.palette ?? defaultPaletteId);
+    }, [defaultPaletteId, fieldUiSettings?.colors, fieldUiSettings?.palette]);
 
     const loadValues = React.useCallback(async () => {
         getSdk().cancelRequest('getDistincts');

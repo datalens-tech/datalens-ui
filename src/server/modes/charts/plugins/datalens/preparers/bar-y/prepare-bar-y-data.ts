@@ -1,3 +1,5 @@
+import isEmpty from 'lodash/isEmpty';
+
 import type {
     HighchartsSeriesCustomObject,
     ServerField,
@@ -8,6 +10,7 @@ import {
     AxisMode,
     AxisNullsMode,
     getFakeTitleOrTitle,
+    getFormatOptions,
     getXAxisMode,
     isDateField,
     isHtmlField,
@@ -352,11 +355,17 @@ export function prepareBarYData({
 
                                 point.x = pointX;
 
-                                if (isNumberField(x) && x.formatting) {
-                                    point.xFormatted = chartKitFormatNumberWrapper(Number(pointX), {
-                                        lang: 'ru',
-                                        ...x.formatting,
-                                    });
+                                if (isNumberField(x)) {
+                                    const formatting = getFormatOptions(x);
+                                    if (!isEmpty(formatting)) {
+                                        point.xFormatted = chartKitFormatNumberWrapper(
+                                            Number(pointX),
+                                            {
+                                                lang: 'ru',
+                                                ...formatting,
+                                            },
+                                        );
+                                    }
                                 }
                             }
 
