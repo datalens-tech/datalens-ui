@@ -12,7 +12,10 @@ import {Link, useLocation} from 'react-router-dom';
 import {DlNavigationQA, Feature} from 'shared';
 import {DL} from 'ui/constants';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
-import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
+import {
+    selectAsideHeaderIsCompact,
+    selectAsideHeaderIsHidden,
+} from 'ui/store/selectors/asideHeader';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {setAsideHeaderData, updateAsideHeaderIsCompact} from '../../store/actions/asideHeader';
@@ -54,7 +57,6 @@ export type AsideHeaderAdapterProps = {
     logoText?: LogoTextProps & {ref?: React.RefObject<HTMLDivElement>};
     collapseButtonWrapper?: AsideHeaderProps['collapseButtonWrapper'];
     customMenuItems?: MenuItem[];
-    className?: string;
     logoWrapperRef?: React.RefObject<HTMLAnchorElement>;
     asideRef?: React.RefObject<HTMLDivElement>;
 };
@@ -111,13 +113,13 @@ export const AsideHeaderAdapter = ({
     logoText,
     collapseButtonWrapper,
     customMenuItems,
-    className,
     logoWrapperRef,
     asideRef,
 }: AsideHeaderAdapterProps) => {
     const dispatch = useDispatch();
     const {pathname} = useLocation();
     const isCompact = useSelector(selectAsideHeaderIsCompact);
+    const isHidden = useSelector(selectAsideHeaderIsHidden);
     const [visiblePanel, setVisiblePanel] = React.useState<Panel>();
     const [currentPopup, setCurrentPopup] = React.useState<PopupName | null>(null);
 
@@ -351,7 +353,9 @@ export const AsideHeaderAdapter = ({
             renderFooter={renderFooter}
             renderContent={renderAsideHeaderContent}
             onClosePanel={handleClosePanel}
-            className={b(null, className)}
+            className={b({
+                hidden: isHidden,
+            })}
             collapseButtonWrapper={collapseButtonWrapper}
             ref={asideRef}
         />

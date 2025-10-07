@@ -33,4 +33,16 @@
         text-decoration: none;
         color: var(--g-color-text-primary);
     }
+
+    &_hidden .gn-aside-header__aside {
+        display: none;
+    }
+
+    &_hidden .gn-aside-header__pane-container {
+        height: 100%;
+    }
+
+    &_hidden .gn-aside-header__content {
+        width: 100%;
+    }
 }
