@@ -4,6 +4,7 @@ import {Loader, Tab, TabList, TabProvider, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Redirect, Route, Switch, useHistory, useParams} from 'react-router-dom';
+import {PageTitle} from 'ui/components/PageTitle';
 import {DL} from 'ui/constants';
 
 import './MainPage.scss';
@@ -80,6 +81,7 @@ const MainPage = ({
 
     return (
         <div className={b()}>
+            <PageTitle title={i18n('label_header')} />
             <Text as={'h3' as const} variant="subheader-3" className={b('header')}>
                 {i18n('label_header')}
             </Text>

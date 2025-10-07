@@ -2,7 +2,6 @@ export {CacheClient} from '../../src/server/components/cache-client';
 export {RedisConfig, getRedisConfig} from '../../src/server/utils/redis';
 export {
     getLandingLayout,
-    SDK,
     Utils,
     getChartkitLayoutSettings,
     getPlatform,
@@ -22,9 +21,10 @@ export {renderHTML} from '../../src/server/components/charts-engine/components/m
 
 export {initPublicApiSwagger} from '../../src/server/components/public-api';
 
-export {PUBLIC_API_PROXY_MAP, PUBLIC_API_ROUTE} from '../../src/server/components/public-api';
+export {PUBLIC_API_ROUTE, PUBLIC_API_VERSION} from '../../src/server/components/public-api';
+export {getPublicApiActionsV0} from '../../src/server/components/public-api/config';
 export type {
-    PublicApiRpcMap,
+    PublicApiBaseConfig,
     PublicApiConfig,
     PublicApiSecuritySchemes,
 } from '../../src/server/components/public-api/types';

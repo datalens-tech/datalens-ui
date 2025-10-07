@@ -777,6 +777,7 @@ export const buildGraphPrivate = (args: {
     Object.entries(loadedData).forEach(([key, value]: [string, V1ServerResponse]) => {
         const query = (value.blocks || [])
             .map((block: {query: string}) => block.query)
+            .filter(Boolean)
             .join('\n\n');
 
         if (query) {

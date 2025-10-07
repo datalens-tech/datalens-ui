@@ -39,24 +39,32 @@ export const getValidationSchema = (value: object): TypedActionSchema | null => 
     return hasValidationSchema(value) ? value[VALIDATION_SCHEMA_KEY] : null;
 };
 
-export function createTypedAction<TOutputSchema extends z.ZodType, TParamsSchema extends z.ZodType>(
-    schema: {paramsSchema: TParamsSchema; resultSchema: TOutputSchema},
+export const createTypedAction = <
+    TOutputSchema extends z.ZodType,
+    TParamsSchema extends z.ZodType,
+    TTransformedSchema extends z.ZodType = TOutputSchema,
+>(
+    schema: {
+        paramsSchema: TParamsSchema;
+        resultSchema: TOutputSchema;
+        transformedSchema?: TTransformedSchema;
+    },
     actionConfig: ApiServiceActionConfig<
         AppContext,
         Request,
         Response,
         z.infer<TOutputSchema>,
         z.infer<TParamsSchema>,
-        z.infer<TOutputSchema>
+        z.infer<TTransformedSchema>
     >,
-) {
+) => {
     const schemaValidationObject = {
         paramsSchema: schema.paramsSchema,
         resultSchema: schema.resultSchema,
     };
 
     return registerValidationSchema(actionConfig, schemaValidationObject);
-}
+};
 
 type AuthArgsData = {
     userAccessToken?: string;

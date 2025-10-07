@@ -16,6 +16,7 @@ import {
     WRAPPED_MARKDOWN_KEY,
     ZoomMode,
     getFakeTitleOrTitle,
+    getFormatOptions,
     isHtmlField,
     isMarkdownField,
 } from '../../../../../../shared';
@@ -148,6 +149,7 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
         shared,
         idToDataType,
         ChartEditor,
+        defaultColorPaletteId,
     } = options;
     const widgetConfig = ChartEditor.getWidgetConfig();
     const isActionParamsEnabled = widgetConfig?.actionParams?.enable;
@@ -237,9 +239,10 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
         }
 
         const tooltip = tooltips[tooltipIndex];
+        const formatting = getFormatOptions(tooltip);
         const formattedText = prepareFormattedValue({
             dataType: tooltip.data_type,
-            formatting: tooltip.formatting,
+            formatting,
             value: text,
         });
         const shouldUseFieldTitle = tooltipConfig?.fieldTitle !== 'off';
@@ -322,7 +325,12 @@ function prepareGeopolygon(options: PrepareFunctionArgs) {
 
             colorData = colorizedResult.colorData;
         } else {
-            colorizedResult = colorizeGeoByPalette(hashTable, colorsConfig, color.guid);
+            colorizedResult = colorizeGeoByPalette({
+                data: hashTable,
+                colorsConfig,
+                colorField: color,
+                defaultColorPaletteId,
+            });
 
             colorData = colorizedResult.colorData;
             colorDictionary = colorizedResult.colorDictionary;

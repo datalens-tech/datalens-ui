@@ -1,10 +1,20 @@
-import type {Palette, ServerChartsConfig} from '../../../../../shared';
+import {isEmpty} from 'lodash';
+
+import type {
+    ColorPalette,
+    Palette,
+    ServerChartsConfig,
+    ServerColorsConfig,
+    ServerField,
+} from '../../../../../shared';
 import {
+    getFieldUISettings,
     isEntryId,
     isSystemGradientPaletteId,
     isSystemPaletteId,
     isVisualizationWithLayers,
 } from '../../../../../shared';
+import {selectServerPalette} from '../../../../constants';
 import type {SourceRequest} from '../datalens/url/types';
 
 type GetColorPalettesRequestArgs = {
@@ -106,4 +116,48 @@ export function extractColorPalettesFromData(data: {[key: string]: any}) {
     });
 
     return {colorPalettes: palettes, loadedData};
+}
+
+export function getColorsSettings({
+    defaultColorPaletteId,
+    colorsConfig,
+    field,
+    customColorPalettes,
+    availablePalettes,
+}: {
+    defaultColorPaletteId: string;
+    colorsConfig: ServerColorsConfig | undefined;
+    field: ServerField | undefined;
+    customColorPalettes: Record<string, ColorPalette>;
+    availablePalettes: Record<string, Palette>;
+}) {
+    let mountedColors: Record<string, string> = {};
+    let colors: string[] = [];
+
+    if (
+        colorsConfig?.mountedColors &&
+        (field?.guid === colorsConfig.fieldGuid || colorsConfig.coloredByMeasure)
+    ) {
+        mountedColors = colorsConfig.mountedColors ?? {};
+    } else if (field) {
+        const fieldSettings = getFieldUISettings({field});
+        mountedColors = fieldSettings?.colors ?? {};
+        colors = selectServerPalette({
+            palette: fieldSettings?.palette,
+            availablePalettes,
+            customColorPalettes,
+            defaultColorPaletteId,
+        });
+    }
+
+    if (isEmpty(colors)) {
+        colors = selectServerPalette({
+            palette: colorsConfig?.palette,
+            availablePalettes,
+            customColorPalettes,
+            defaultColorPaletteId,
+        });
+    }
+
+    return {mountedColors, colors};
 }

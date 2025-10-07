@@ -18,7 +18,8 @@ import {
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getFieldExportingOptions} from '../../utils/export-helpers';
 import {isLegendEnabled, isNumericalDataType} from '../../utils/misc-helpers';
-import {addAxisFormatter, addAxisFormatting, getAxisFormatting} from '../helpers/axis';
+import {addAxisFormatter, addAxisFormatting} from '../helpers/axis';
+import {getAxisChartkitFormatting} from '../helpers/axis/get-axis-formatting';
 import {getHighchartsColorAxis, isXAxisReversed} from '../helpers/highcharts';
 import {getYPlaceholders} from '../helpers/layers';
 import {shouldUseGradientLegend} from '../helpers/legend';
@@ -98,7 +99,7 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
 
             const formatMode = layerYPlaceholder?.settings?.axisFormatMode;
             if (formatMode && formatMode !== AxisLabelFormatMode.Auto && !isSegmentsExists) {
-                const formatting = getAxisFormatting(layerYPlaceholder, visualizationId);
+                const formatting = getAxisChartkitFormatting(layerYPlaceholder, visualizationId);
                 if (formatting) {
                     customConfig.axesFormatting.yAxis.push(formatting);
                 }
