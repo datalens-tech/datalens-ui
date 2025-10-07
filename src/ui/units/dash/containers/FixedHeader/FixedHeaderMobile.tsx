@@ -14,8 +14,10 @@ export function FixedHeaderMobile({
     fixedContentInitiallyOpened,
     fixedHeaderControlsRef,
     fixedHeaderContainerRef,
+    fixedContentWidgetFocused,
 }: {
     fixedContentInitiallyOpened?: boolean;
+    fixedContentWidgetFocused?: boolean;
     fixedHeaderControlsRef: React.RefCallback<HTMLDivElement>;
     fixedHeaderContainerRef: React.RefCallback<HTMLDivElement>;
 }) {
@@ -60,6 +62,7 @@ export function FixedHeaderMobile({
             <Sheet
                 className={b(null, DASHKIT_MOBILE_LAYOUT_CLASSNAME)}
                 visible={sheetVisible}
+                alwaysFullHeight={fixedContentWidgetFocused}
                 allowHideOnContentScroll
                 onClose={toggleSheet}
             >

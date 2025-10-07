@@ -20,6 +20,7 @@ export interface MobileFloatMenuOwnProps {
     entryId: string;
     hasFixedContent: boolean;
     fixedContentInitiallyOpened?: boolean;
+    fixedContentWidgetFocused?: boolean;
     fixedHeaderControlsRef: React.RefCallback<HTMLDivElement>;
     fixedHeaderContainerRef: React.RefCallback<HTMLDivElement>;
     dashEl: HTMLDivElement | null;
@@ -49,6 +50,7 @@ function MobileFloatMenuComponent({
     hasTableOfContent: showTocButton,
     hasFixedContent: showFixedHeaderButton,
     fixedContentInitiallyOpened,
+    fixedContentWidgetFocused,
     fixedHeaderControlsRef,
     fixedHeaderContainerRef,
     dashEl,
@@ -66,6 +68,7 @@ function MobileFloatMenuComponent({
             <FixedHeaderMobile
                 key="dash-fixed-header"
                 fixedContentInitiallyOpened={fixedContentInitiallyOpened}
+                fixedContentWidgetFocused={fixedContentWidgetFocused}
                 fixedHeaderControlsRef={fixedHeaderControlsRef}
                 fixedHeaderContainerRef={fixedHeaderContainerRef}
             />

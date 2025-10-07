@@ -41,7 +41,6 @@ $fullscreenZIndex: 999;
         background-color: var(--g-color-base-float);
         z-index: $fullscreenZIndex;
         transform: translateY(var(--fullscreen-widget-transform-y, 0));
-        transition: transform 0.5s ease-out;
     }
 
     &__description {

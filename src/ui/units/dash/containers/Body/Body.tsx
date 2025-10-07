@@ -1138,9 +1138,17 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
 
         const shouldRenderMobileMenu = DL.IS_MOBILE && isMobileFixedHeaderEnabled;
         const searchParams = new URLSearchParams(location.search);
+        const focusedWidget = searchParams.get(FOCUSED_WIDGET_PARAM_NAME);
+        const focusedWidgetParent = focusedWidget
+            ? tabDataConfig?.layout?.find((item) => item.i === focusedWidget)?.parent
+            : undefined;
+        const isFixedHeaderWidgetFocused = Boolean(
+            focusedWidgetParent &&
+                [FIXED_GROUP_HEADER_ID, FIXED_GROUP_CONTAINER_ID].includes(focusedWidgetParent),
+        );
         const mobileFixedHeaderInitiallyOpened =
-            shouldRenderMobileMenu &&
-            tabDataConfig?.items?.some((i) => i.id === searchParams.get(FOCUSED_WIDGET_PARAM_NAME));
+            shouldRenderMobileMenu && isFixedHeaderWidgetFocused;
+
         return (
             <RefsContextProvider
                 fixedHeaderControlsEl={this.state.fixedHeaderControlsEl}
@@ -1155,6 +1163,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                                 hasFixedHeaderContainerElements || hasFixedHeaderControlsElements
                             }
                             fixedContentInitiallyOpened={mobileFixedHeaderInitiallyOpened}
+                            fixedContentWidgetFocused={isFixedHeaderWidgetFocused}
                             fixedHeaderControlsRef={this._fixedHeaderControlsRef}
                             fixedHeaderContainerRef={this._fixedHeaderContainerRef}
                         />
