@@ -85,10 +85,6 @@ export enum Feature {
     EnableUpdatingDsSettingsByAction = 'EnableUpdatingDsSettingsByAction',
     /** Enable new favicon, icon, theme, decorations and illustrations */
     EnableDLRebranding = 'EnableDLRebranding',
-    /** Add "auto" palette to the list. If enabled, "auto" is parsed to the value of the tenant settings, otherwise to the default palette. */
-    EnableTenantSettingPalettes = 'EnableTenantSettingPalettes',
-    /** Use default20 instead of classic20 as deafult palette. */
-    NewDefaultPalette = 'NewDefaultPalette',
     /** Use GravityUI Charts as the default library for some wizard visualizations(pie, donut, treemap) */
     GravityChartsForPieAndTreemap = 'GravityChartsForPieAndTreemap',
     /** Use GravityUI Charts as the default library for some wizard visualizations(scatter and bar-y) */
