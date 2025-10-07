@@ -253,6 +253,20 @@
       "@rspack/core": "1.4.2"
     }
   },
+  "lint-staged": {
+    "!(src/ui/**/*)*.{js,jsx,ts,tsx}": [
+      "eslint --fix --quiet",
+      "prettier --write"
+    ],
+    "src/ui/**/*.{js,jsx,ts,tsx}": [
+      "eslint -c src/ui/.ci-eslintrc --fix --quiet",
+      "prettier --write"
+    ],
+    "*.{css,scss}": [
+      "stylelint --fix --quiet",
+      "prettier --write"
+    ]
+  },
   "deploy": {
     "project": "stat",
     "app": "dx",
