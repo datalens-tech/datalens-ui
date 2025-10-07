@@ -1,12 +1,12 @@
 import React from 'react';
 
-import {Alert, Button, Flex, Icon, Text} from '@gravity-ui/uikit';
+import {Alert, Button, Flex, Icon, Text, useThemeType} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {Link} from 'react-router-dom';
+import {Feature} from 'shared';
 import {SignInQa} from 'shared/constants';
-import {Feature} from 'shared/types';
 import {DL} from 'ui/constants';
 import type {SdkError} from 'ui/libs/schematic-sdk';
 import type {SigninProps} from 'ui/registry/units/auth/types/components/Signin';
@@ -20,8 +20,9 @@ import {selectFormData} from '../../store/selectors/signin';
 import {Login} from './components/Login';
 import {Password} from './components/Password';
 
+import darkLogo from 'ui/assets/icons/dl-auth-logo-dark.svg';
+import lightLogo from 'ui/assets/icons/dl-auth-logo-light.svg';
 import defaultLogoIcon from 'ui/assets/icons/logo.svg';
-import rebrandingLogoIcon from 'ui/assets/icons/os-logo.svg';
 
 import './Signin.scss';
 
@@ -35,6 +36,12 @@ export const Signin = ({alternativeAuthOptions, logoIcon}: SigninProps) => {
     const [errorMessage, setErrorMessage] = React.useState<null | string>(null);
 
     const formData = useSelector(selectFormData);
+
+    const isEnabledRebranding = isEnabledFeature(Feature.EnableDLRebranding);
+
+    const theme = useThemeType();
+    const updatedLogo = theme === 'dark' ? darkLogo : lightLogo;
+    const logo = isEnabledRebranding ? updatedLogo : defaultLogoIcon;
 
     const handleSigninError = (error: SdkError) => {
         // TODO: use code
@@ -62,12 +69,12 @@ export const Signin = ({alternativeAuthOptions, logoIcon}: SigninProps) => {
         }
     }, [errorMessage]);
 
-    const defaultLogo = isEnabledFeature(Feature.EnableDLRebranding)
-        ? rebrandingLogoIcon
-        : defaultLogoIcon;
-
     return (
-        <Flex className={b()} justifyContent="center" alignItems="center">
+        <Flex
+            className={b({rebranding: isEnabledRebranding})}
+            justifyContent="center"
+            alignItems="center"
+        >
             <Flex
                 className={b('form-container')}
                 direction="column"
@@ -77,11 +84,15 @@ export const Signin = ({alternativeAuthOptions, logoIcon}: SigninProps) => {
                 onChange={handleFormChange}
                 onSubmit={handleSubmit}
             >
-                <Flex direction="column" gap="2" alignItems="center">
-                    <Icon size={32} data={logoIcon || defaultLogo} />
-                    <Text variant="subheader-3">{i18n('title_product')}</Text>
-                </Flex>
-                <Flex direction="column" gap="4">
+                {isEnabledRebranding ? (
+                    <Icon data={logo} width="100%" />
+                ) : (
+                    <Flex direction="column" gap="2" alignItems="center">
+                        <Icon size={32} data={logoIcon || logo} />
+                        <Text variant="subheader-3">{i18n('title_product')}</Text>
+                    </Flex>
+                )}
+                <Flex direction="column" gap={isEnabledRebranding ? 6 : 4}>
                     {errorMessage && <Alert theme="danger" message={errorMessage} />}
                     <Login qa={SignInQa.INPUT_LOGIN} />
                     <Password qa={SignInQa.INPUT_PASSWORD} />
