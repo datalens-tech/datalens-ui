@@ -1,6 +1,8 @@
 import type {Column} from '@gravity-ui/react-data-table';
+import get from 'lodash/get';
 import type {TableHead, TableRow} from 'shared';
 import {isMacintosh} from 'ui/utils';
+import {isActivityResultDataValid} from 'ui/utils/chart-activity';
 
 import {CLICK_ACTION_TYPE} from '../../../../../../modules/constants/constants';
 import type {DataTableData} from '../../../../../../types';
@@ -22,10 +24,12 @@ export const getCellClickArgs = (row: DataTableData | undefined, columnName: str
 export function getCellOnClickHandler(args: {
     actionParamsData?: ActionParamsData;
     onChange: TableProps['onChange'];
+    runAction: TableProps['runAction'];
+    onAction: TableProps['onAction'];
     head: TableHead[];
     rows: TableRow[];
 }) {
-    const {actionParamsData, head, rows, onChange} = args;
+    const {actionParamsData, head, rows, onChange, onAction, runAction} = args;
 
     const handleCellClick: Column<DataTableData>['onClick'] = ({row}, col, event) => {
         const onClick = getCellOnClick(row, col.name);
@@ -60,6 +64,21 @@ export function getCellOnClickHandler(args: {
             }
             case 'showMsg': {
                 // no additional processing is required - the tooltip is generated in the render function
+                break;
+            }
+            case 'runAction': {
+                runAction?.({...onClick?.args}).then((responseData) => {
+                    const activityResultData = get(responseData, 'data');
+
+                    if (onAction) {
+                        if (isActivityResultDataValid(activityResultData)) {
+                            onAction({data: activityResultData});
+                        } else {
+                            throw new Error('Invalid activity result format');
+                        }
+                    }
+                });
+
                 break;
             }
             default: {

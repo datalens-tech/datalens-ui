@@ -32,6 +32,8 @@ const ChartkitWidget = React.forwardRef<ChartKit | ChartKitRef | undefined, Char
             onChange,
             onRender,
             onChartLoad,
+            onAction,
+            runAction,
             renderPluginLoader,
             paneSplitOrientation,
             widgetDashState,
@@ -79,21 +81,21 @@ const ChartkitWidget = React.forwardRef<ChartKit | ChartKitRef | undefined, Char
                 ...additionalProps,
             } as ChartKitProps<typeof chartkitType>;
         }, [
+            chartkitType,
+            chartkitHolidays,
+            splitTooltip,
+            loadedData,
             onChange,
+            lang,
+            isMobile,
             onLoad,
             onChartLoad,
             onRender,
             onError,
             renderPluginLoader,
-            lang,
-            loadedData,
-            splitTooltip,
-            isMobile,
-            chartkitType,
             paneSplitOrientation,
             widgetDashState,
             backgroundColor,
-            chartkitHolidays,
         ]);
 
         React.useEffect(() => {
@@ -125,6 +127,8 @@ const ChartkitWidget = React.forwardRef<ChartKit | ChartKitRef | undefined, Char
                 paneSplitOrientation={paneSplitOrientation}
                 widgetDashState={widgetDashState}
                 backgroundColor={backgroundColor}
+                runAction={runAction}
+                onAction={onAction}
             />
         );
     },

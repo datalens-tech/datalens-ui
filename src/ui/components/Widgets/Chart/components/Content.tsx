@@ -1,6 +1,7 @@
 /* eslint-disable complexity */
 import React from 'react';
 
+import {Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {useDispatch} from 'react-redux';
 import {Header as ChartHeader} from 'ui/components/Widgets/Chart/components/Header';
@@ -120,7 +121,7 @@ export const Content = (props: ChartContentProps) => {
     const showContentLoader = showLoader || isExportLoading;
     const showLoaderVeil = veil && !isExportLoading;
 
-    const {onAction} = useChartActions({onChange});
+    const {onAction, activityPopupProps} = useChartActions({onChange});
 
     const isFirstLoadingFloat = loadedData === null;
 
@@ -225,6 +226,8 @@ export const Content = (props: ChartContentProps) => {
                     widgetDashState={widgetDashState}
                     rootNodeRef={rootNodeRef}
                     backgroundColor={backgroundColor}
+                    runAction={runAction}
+                    onAction={onAction}
                 />
                 {showChartOverlay && (
                     <div
@@ -232,6 +235,16 @@ export const Content = (props: ChartContentProps) => {
                         onClick={onFullscreenClick}
                         data-qa="chart-widget-overlay"
                     />
+                )}
+                {activityPopupProps && (
+                    <Dialog
+                        className={b('activity-popup')}
+                        open={activityPopupProps.open}
+                        onClose={activityPopupProps.onClose}
+                    >
+                        <Dialog.Header caption={activityPopupProps.title ?? ''} />
+                        <Dialog.Body>{activityPopupProps.content ?? ''}</Dialog.Body>
+                    </Dialog>
                 )}
             </div>
         </div>

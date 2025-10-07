@@ -4,6 +4,7 @@ import type {ChartKitRef} from '@gravity-ui/chartkit';
 import type {CancelTokenSource} from 'axios';
 import type {Split} from 'react-split-pane';
 import type {DashTabItemControlSourceType, StringParams} from 'shared';
+import type {ActivityResultData} from 'ui/utils/chart-activity';
 
 import type {ChartWidgetDataRef} from '../../../../components/Widgets/Chart/types';
 import type {WidgetType} from '../../../../units/dash/modules/constants';
@@ -120,6 +121,8 @@ export type ChartKitWrapperParams = {
         callExternalOnChange?: boolean,
         callChangeByClick?: boolean,
     ) => void;
+    runAction?: (args: StringParams) => Promise<unknown>;
+    onAction?: (args: {data: ActivityResultData}) => void;
     getControls: (params: StringParams) => void;
 };
 

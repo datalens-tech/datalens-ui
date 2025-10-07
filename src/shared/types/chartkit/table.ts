@@ -20,6 +20,11 @@ export type OnClickShowMessage = {
     args: StringParams;
 };
 
+export type OnClickRunAction = {
+    action: 'runAction';
+    args: StringParams;
+};
+
 type TableCommonCellType = 'text' | 'date' | 'number' | 'diff' | 'diff_only' | 'markup' | 'bar';
 
 // interface used because it is expanded in chartkit.d.ts
@@ -37,7 +42,7 @@ export interface TableCommonCell {
         href: string;
         newWindow: boolean;
     };
-    onClick?: OnClickSetParams | OnClickShowMessage;
+    onClick?: OnClickSetParams | OnClickShowMessage | OnClickRunAction;
     sortDirection?: 'asc' | 'desc' | null;
     type?: TableCommonCellType;
     fieldId?: string;

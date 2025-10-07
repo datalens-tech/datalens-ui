@@ -8,6 +8,7 @@ import type {Yagr, YagrWidgetData} from '@gravity-ui/chartkit/yagr';
 import type {ItemStateAndParamsChangeOptions} from '@gravity-ui/dashkit';
 import type {DataTableProps} from '@gravity-ui/react-data-table';
 import type DataTable from '@gravity-ui/react-data-table';
+import type {ActivityResultData} from 'ui/utils/chart-activity';
 import type {Optional, Required} from 'utility-types';
 
 import type {
@@ -224,6 +225,9 @@ export type WidgetProps = {
         callExternalOnChange?: boolean,
         callChangeByClick?: boolean,
     ) => void;
+
+    runAction?: (args: StringParams) => Promise<unknown>;
+    onAction?: (args: {data: ActivityResultData}) => void;
 } & Pick<OpenSourceChartKitProps<ChartKitType>, 'onRender' | 'onChartLoad'>;
 
 export type ChartKitProps = {
