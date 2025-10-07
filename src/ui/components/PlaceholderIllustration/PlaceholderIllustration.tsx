@@ -1,10 +1,15 @@
 import React from 'react';
 
 import {PlaceholderContainer} from '@gravity-ui/uikit';
+import block from 'bem-cn-lite';
 import {DL} from 'ui/constants';
 import {registry} from 'ui/registry';
 
 import type {PlaceholderIllustrationProps} from './types';
+
+import './PlaceholderIllustration.scss';
+
+const b = block('placeholder-illustration');
 
 export const PlaceholderIllustration = ({
     name,
@@ -23,7 +28,15 @@ export const PlaceholderIllustration = ({
 
         const store = getIllustrationStore();
 
-        return <PlaceholderIllustrationImage illustrationStore={store} name={name} size={size} />;
+        return (
+            <PlaceholderIllustrationImage
+                illustrationStore={store}
+                name={name}
+                size={size}
+                skeletonClassName={b('skeleton-image', {size})}
+                skeletonTimeout={200}
+            />
+        );
     }, [name, size]);
 
     const actions = renderAction?.();

@@ -1,12 +1,12 @@
 import type {PlaceholderContainerProps} from '@gravity-ui/uikit';
 
 import type {
+    CreateIllustrationProps,
     IllustrationName,
-    IllustrationStore,
 } from '../../../../../components/Illustration/types';
 
-export type PlaceholderIllustrationImageProps = {
+export type PlaceholderIllustrationImageProps = CreateIllustrationProps & {
     name: IllustrationName;
-    illustrationStore: IllustrationStore;
     size?: PlaceholderContainerProps['size'];
+    className?: string;
 };

@@ -13,13 +13,10 @@ export type IllustrationName =
     | 'badRequest'
     | 'noAccounts';
 
-export type IllustrationProps = {
-    name: IllustrationName;
+export type CreateIllustrationProps = {
+    name: IllustrationName | 'barchar' | 'logo' | 'logoShort' | 'logoInit' | 'galleryHeader';
     illustrationStore: IllustrationStore;
     showSkeleton?: boolean;
-    [prop: string]: unknown;
-};
-
-export type CreateIllustrationProps = Omit<IllustrationProps, 'name'> & {
-    name: IllustrationName | 'barchar' | 'logo' | 'logoShort' | 'logoInit' | 'galleryHeader';
+    skeletonClassName?: string;
+    skeletonTimeout?: number;
 };
