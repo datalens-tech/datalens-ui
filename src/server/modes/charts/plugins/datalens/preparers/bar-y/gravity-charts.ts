@@ -115,6 +115,7 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
     if (xField) {
         config.tooltip = {
             valueFormat: getFieldFormatOptions({field: xField}),
+            totals: {enabled: true},
         };
     }
 
