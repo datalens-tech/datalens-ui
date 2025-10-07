@@ -138,6 +138,7 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
                 labels: {
                     numberFormat: axisLabelNumberFormat ?? undefined,
                 },
+                maxPadding: 0,
             },
         ];
     }
