@@ -1,10 +1,8 @@
-import type {
-    CommonNumberFormattingOptions,
-    ExtendedSeriesLineOptions,
-} from '../../../../../../../shared';
+import type {ExtendedSeriesLineOptions} from '../../../../../../../shared';
 import {
     AxisNullsMode,
     DATALENS_QL_TYPES,
+    getFormatOptions,
     getUtcDateTime,
     isDateField,
 } from '../../../../../../../shared';
@@ -32,8 +30,16 @@ const collator = new Intl.Collator(undefined, {numeric: true, sensitivity: 'base
 
 // eslint-disable-next-line complexity
 function prepareLineTime(options: PrepareFunctionArgs) {
-    const {placeholders, resultData, colors, idToTitle, colorsConfig, shared, ChartEditor} =
-        options;
+    const {
+        placeholders,
+        resultData,
+        colors,
+        idToTitle,
+        colorsConfig,
+        defaultColorPaletteId,
+        shared,
+        ChartEditor,
+    } = options;
 
     const {data, order} = resultData;
 
@@ -158,7 +164,7 @@ function prepareLineTime(options: PrepareFunctionArgs) {
                     }),
                 };
 
-                const formatting = y.formatting as CommonNumberFormattingOptions | undefined;
+                const formatting = getFormatOptions(y);
                 const tooltipOptions = getFormatOptionsFromFieldFormatting(formatting, y.data_type);
 
                 // TODO: add other options when they will be available in Chartkit
@@ -228,6 +234,8 @@ function prepareLineTime(options: PrepareFunctionArgs) {
             graphs: result.graphs as unknown as ExtendedSeriesLineOptions[],
             colorsConfig,
             isColorsItemExists: Boolean(colors),
+            defaultColorPaletteId,
+            colorField: undefined,
         });
     } else {
         // Else apply colorizing from YAGR for compatibility with Monitoring

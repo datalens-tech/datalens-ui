@@ -1,6 +1,6 @@
 import {AxisLabelFormatMode, type ServerPlaceholder} from '../../../../../../../../shared';
 
-import {getAxisFormatting} from './getAxisFormatting';
+import {getAxisChartkitFormatting} from './get-axis-formatting';
 
 export const addAxisFormatting = (
     arrToPush: unknown[],
@@ -9,7 +9,7 @@ export const addAxisFormatting = (
 ) => {
     const formatMode = placeholder?.settings?.axisFormatMode;
     if (formatMode && formatMode !== AxisLabelFormatMode.Auto) {
-        const formatting = getAxisFormatting(placeholder, visualizationId);
+        const formatting = getAxisChartkitFormatting(placeholder, visualizationId);
         if (formatting) {
             arrToPush.push(formatting);
         }

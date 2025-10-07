@@ -9,6 +9,7 @@ import {
     WizardVisualizationId,
     getAxisNullsSettings,
     getFakeTitleOrTitle,
+    getFormatOptions,
     getXAxisMode,
     isDateField,
     isHtmlField,
@@ -66,6 +67,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
         layerChartMeta,
         usedColors,
         disableDefaultSorting = false,
+        defaultColorPaletteId,
     } = args;
     const widgetConfig = ChartEditor.getWidgetConfig();
     const isActionParamsEnable = widgetConfig?.actionParams?.enable;
@@ -426,15 +428,17 @@ export function prepareLineData(args: PrepareFunctionArgs) {
 
                                 point.x = pointX;
 
-                                if (
-                                    xField &&
-                                    isNumericalDataType(xField.data_type) &&
-                                    xField.formatting
-                                ) {
-                                    point.xFormatted = chartKitFormatNumberWrapper(Number(pointX), {
-                                        lang: 'ru',
-                                        ...xField.formatting,
-                                    });
+                                if (xField && isNumericalDataType(xField.data_type)) {
+                                    const formatting = getFormatOptions(xField);
+                                    if (formatting) {
+                                        point.xFormatted = chartKitFormatNumberWrapper(
+                                            Number(pointX),
+                                            {
+                                                lang: 'ru',
+                                                ...formatting,
+                                            },
+                                        );
+                                    }
                                 }
                             }
 
@@ -541,6 +545,8 @@ export function prepareLineData(args: PrepareFunctionArgs) {
                 isColorsItemExists: isColorItemExist,
                 isSegmentsExists: isSegmentsExists,
                 usedColors,
+                colorField: colorItem,
+                defaultColorPaletteId,
             });
         }
 

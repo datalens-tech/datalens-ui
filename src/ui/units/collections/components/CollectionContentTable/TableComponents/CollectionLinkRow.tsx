@@ -67,7 +67,7 @@ export const CollectionLinkRow: React.FC<CollectionLinkRowProps> = ({
         return (
             <div
                 role={isImport ? 'button' : undefined}
-                className={b('content-row')}
+                className={b('content-row', {disabled: true})}
                 onClick={isImport ? handleImportingWorkbookClick : undefined}
             >
                 {children}

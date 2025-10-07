@@ -128,8 +128,7 @@ function getRowCellMetadata(args: GetRowCellMetadataArgs): ChartkitCell {
             cell.value = Number(value);
             cell.formattedValue = chartKitFormatNumberWrapper(cell.value, {
                 lang: 'ru',
-                ...field.formatting,
-                precision: formatting.precision,
+                ...formatting,
             });
         }
     } else if (isDateField(field)) {

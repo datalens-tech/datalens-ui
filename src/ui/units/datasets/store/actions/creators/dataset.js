@@ -2,7 +2,7 @@ import {toaster} from '@gravity-ui/uikit/toaster-singleton';
 import {i18n} from 'i18n';
 import get from 'lodash/get';
 import {batch} from 'react-redux';
-import {Feature, TIMEOUT_65_SEC} from 'shared';
+import {TIMEOUT_65_SEC} from 'shared';
 import {URL_QUERY} from 'ui';
 import {resetEditHistoryUnit} from 'ui/store/actions/editHistory';
 import {loadRevisions, setEntryContent} from 'ui/store/actions/entryContent';
@@ -211,9 +211,7 @@ export function initialFetchDataset({datasetId, rev_id, isInitialFetch = true}) 
             const dataset = await getSdk().sdk.bi.getDatasetByVersion({
                 datasetId,
                 workbookId,
-                rev_id: DatasetUtils.isEnabledFeature(Feature.EnableDatasetRevisions)
-                    ? rev_id
-                    : undefined,
+                rev_id,
                 version: 'draft',
             });
             const {
@@ -336,10 +334,7 @@ export function saveDataset({
                 payload: {},
             });
 
-            const {
-                entryContent,
-                dataset: {id, content: dataset},
-            } = getState();
+            const {entryContent, dataset: {id, content: dataset} = {}} = getState();
             let datasetId = id;
 
             if (isCreationProcess) {
@@ -373,10 +368,7 @@ export function saveDataset({
                 dispatch(setValidationData(validation));
             }
 
-            if (
-                DatasetUtils.isEnabledFeature(Feature.EnableDatasetRevisions) &&
-                !isCreationProcess
-            ) {
+            if (!isCreationProcess) {
                 const meta = await getSdk().sdk.us.getEntryMeta({entryId: datasetId});
                 const publishedId = meta.publishedId ?? null;
                 const entryId = meta.entryId;

@@ -69,8 +69,15 @@ export type CommonPlaceholderProps = {
 
 class PlaceholdersContainer extends React.PureComponent<Props> {
     render() {
-        const {qlMode, qlChartType, visualization, datasetError, globalVisualization, onUpdate} =
-            this.props;
+        const {
+            qlMode,
+            qlChartType,
+            visualization,
+            datasetError,
+            globalVisualization,
+            onUpdate,
+            datasets,
+        } = this.props;
         const currentVisualization = getVisualizationById(
             visualization.id as WizardVisualizationId,
             qlMode,
@@ -148,6 +155,7 @@ class PlaceholdersContainer extends React.PureComponent<Props> {
                 )}
                 {visualization.allowSort && (
                     <SortPlaceholder
+                        multipleDatasets={datasets.length > 1}
                         wrapTo={this.renderDatasetItem}
                         onBeforeRemoveItem={this.removeItemQuickFormula}
                         datasetError={datasetError}

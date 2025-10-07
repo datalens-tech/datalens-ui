@@ -13,12 +13,14 @@ import type {
 import {
     MINIMUM_FRACTION_DIGITS,
     PlaceholderId,
+    getFormatOptions,
     isDateField,
     isHtmlField,
     isMarkdownField,
 } from '../../../../../../../shared';
 import {wrapMarkdownValue} from '../../../../../../../shared/utils/markdown';
 import {wrapHtml} from '../../../../../../../shared/utils/ui-sandbox';
+import {getColorsSettings} from '../../../helpers/color-palettes';
 import {getBaseChartConfig} from '../../gravity-charts/utils';
 import {
     mapAndColorizeHashTableByGradient,
@@ -56,6 +58,7 @@ export function prepareD3Treemap({
     idToTitle,
     idToDataType,
     ChartEditor,
+    defaultColorPaletteId,
 }: PrepareFunctionArgs): Partial<ChartData> {
     const dimensions = placeholders.find((p) => p.id === PlaceholderId.Dimensions)?.items ?? [];
     const dTypes = dimensions.map((item) => item.data_type);
@@ -119,10 +122,11 @@ export function prepareD3Treemap({
                     value: rawValue,
                     format: item.format,
                 });
-            } else if (isNumericalDataType(dTypes[level]) && item.formatting) {
+            } else if (isNumericalDataType(dTypes[level])) {
+                const formatting = getFormatOptions(item);
                 value = chartKitFormatNumberWrapper(rawValue as unknown as number, {
                     lang: 'ru',
-                    ...item.formatting,
+                    ...formatting,
                 });
             } else {
                 value = rawValue;
@@ -160,9 +164,10 @@ export function prepareD3Treemap({
             const actualTitle = idToTitle[measureItem.guid];
             const i = findIndexInOrder(order, measureItem, actualTitle);
             const value = values[i];
+            const formatting = getFormatOptions(measureItem);
             const label = chartKitFormatNumberWrapper(Number(value), {
                 lang: 'ru',
-                ...(measureItem.formatting ?? {precision: isFloat ? MINIMUM_FRACTION_DIGITS : 0}),
+                ...(formatting ?? {precision: isFloat ? MINIMUM_FRACTION_DIGITS : 0}),
             });
 
             hashTable[key] = {value: value, label};
@@ -202,7 +207,19 @@ export function prepareD3Treemap({
                 colorsConfig,
             ).colorData;
         } else {
-            colorData = mapAndColorizeHashTableByPalette(valuesForColorData, colorsConfig);
+            const {mountedColors, colors: paletteColors} = getColorsSettings({
+                field: color,
+                colorsConfig: shared.colorsConfig,
+                defaultColorPaletteId,
+                availablePalettes: colorsConfig.availablePalettes,
+                customColorPalettes: colorsConfig.loadedColorPalettes,
+            });
+
+            colorData = mapAndColorizeHashTableByPalette({
+                hashTable: valuesForColorData,
+                colors: paletteColors,
+                mountedColors,
+            });
         }
 
         treemap = treemap.map((obj) => {

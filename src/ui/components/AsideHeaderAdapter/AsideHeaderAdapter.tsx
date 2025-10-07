@@ -52,6 +52,7 @@ type AsideHeaderAdapterProps = {
     logoIcon?: IconData;
     installationInfo?: string;
     collapseButtonWrapper?: AsideHeaderProps['collapseButtonWrapper'];
+    customMenuItems?: MenuItem[];
 };
 
 enum Panel {
@@ -63,7 +64,7 @@ enum PopupName {
     Account = 'account',
 }
 
-const getLinkWrapper = (node: React.ReactNode, path: string) => {
+export const getLinkWrapper = (node: React.ReactNode, path: string) => {
     return (
         <Link to={path} className={b('item-link')} data-qa={DlNavigationQA.AsideMenuItem}>
             <div className={b('item-wrap')}>{node}</div>
@@ -105,6 +106,7 @@ export const AsideHeaderAdapter = ({
     logoIcon,
     installationInfo,
     collapseButtonWrapper,
+    customMenuItems,
 }: AsideHeaderAdapterProps) => {
     const dispatch = useDispatch();
     const {pathname} = useLocation();
@@ -154,6 +156,7 @@ export const AsideHeaderAdapter = ({
                     return getLinkWrapper(makeItem(params), COLLECTIONS_PATH);
                 },
             },
+            ...(customMenuItems || []),
             {
                 id: 'settings',
                 title: i18n('switch_service-settings'),
@@ -165,7 +168,7 @@ export const AsideHeaderAdapter = ({
                 },
             },
         ],
-        [pathname],
+        [pathname, customMenuItems],
     );
 
     const panelItems = React.useMemo(
