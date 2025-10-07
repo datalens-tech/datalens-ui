@@ -2,9 +2,8 @@ import React from 'react';
 
 import {BookOpen} from '@gravity-ui/icons';
 import {Button, Icon} from '@gravity-ui/uikit';
-import {type ResolveThunks, connect} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
 import {FloatMenu} from 'ui/components/FloatMenu/FloatMenu';
-import type {DatalensGlobalState} from 'ui/index';
 
 import {Description} from '../../components/DashActionPanel/Description/Description';
 import {ShareButton} from '../../components/ShareButton/ShareButton';
@@ -16,7 +15,7 @@ import {
 } from '../../store/selectors/dashTypedSelectors';
 import {FixedHeaderMobile} from '../FixedHeader/FixedHeaderMobile';
 
-export interface MobileFloatMenuOwnProps {
+export interface MobileFloatMenuProps {
     entryId: string;
     hasFixedContent: boolean;
     fixedContentInitiallyOpened?: boolean;
@@ -26,36 +25,24 @@ export interface MobileFloatMenuOwnProps {
     dashEl: HTMLDivElement | null;
 }
 
-const mapStateToProps = (state: DatalensGlobalState) => ({
-    dashDescription: selectDashDescription(state),
-    showOpenedDescription: selectDashShowOpenedDescription(state),
-    hasTableOfContent: hasTableOfContent(state),
-});
-
-const mapDispatchToProps = {
-    toggleTableOfContent,
-};
-
-type MobileFloatMenuStateProps = ReturnType<typeof mapStateToProps>;
-type MobileFloatMenuDispatchProps = ResolveThunks<typeof mapDispatchToProps>;
-
-type MobileFloatMenuProps = MobileFloatMenuOwnProps &
-    MobileFloatMenuStateProps &
-    MobileFloatMenuDispatchProps;
-
-function MobileFloatMenuComponent({
+export function MobileFloatMenu({
     entryId,
-    dashDescription,
-    showOpenedDescription,
-    hasTableOfContent: showTocButton,
     hasFixedContent: showFixedHeaderButton,
     fixedContentInitiallyOpened,
     fixedContentWidgetFocused,
     fixedHeaderControlsRef,
     fixedHeaderContainerRef,
     dashEl,
-    toggleTableOfContent: toggleToc,
 }: MobileFloatMenuProps) {
+    const dashDescription = useSelector(selectDashDescription);
+    const showOpenedDescription = useSelector(selectDashShowOpenedDescription);
+    const showTocButton = useSelector(hasTableOfContent);
+    const dispatch = useDispatch();
+
+    const toggleToc = React.useCallback(() => {
+        dispatch(toggleTableOfContent());
+    }, [dispatch]);
+
     const showDescriptionButton = Boolean(dashDescription);
 
     const actions: React.ReactNode[] = [
@@ -100,7 +87,3 @@ function MobileFloatMenuComponent({
         </FloatMenu>
     );
 }
-export const MobileFloatMenu = connect(
-    mapStateToProps,
-    mapDispatchToProps,
-)(MobileFloatMenuComponent);
