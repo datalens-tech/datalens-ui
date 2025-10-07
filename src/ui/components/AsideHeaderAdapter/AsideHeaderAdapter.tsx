@@ -12,7 +12,10 @@ import {Link, useLocation} from 'react-router-dom';
 import {DlNavigationQA, Feature} from 'shared';
 import {DL} from 'ui/constants';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
-import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
+import {
+    selectAsideHeaderIsCompact,
+    selectAsideHeaderIsHidden,
+} from 'ui/store/selectors/asideHeader';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {setAsideHeaderData, updateAsideHeaderIsCompact} from '../../store/actions/asideHeader';
@@ -111,6 +114,7 @@ export const AsideHeaderAdapter = ({
     const dispatch = useDispatch();
     const {pathname} = useLocation();
     const isCompact = useSelector(selectAsideHeaderIsCompact);
+    const isHidden = useSelector(selectAsideHeaderIsHidden);
     const [visiblePanel, setVisiblePanel] = React.useState<Panel>();
     const [currentPopup, setCurrentPopup] = React.useState<PopupName | null>(null);
 
@@ -340,7 +344,9 @@ export const AsideHeaderAdapter = ({
             renderFooter={renderFooter}
             renderContent={renderAsideHeaderContent}
             onClosePanel={handleClosePanel}
-            className={b()}
+            className={b({
+                hidden: isHidden,
+            })}
             collapseButtonWrapper={collapseButtonWrapper}
         />
     );
