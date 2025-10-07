@@ -19,10 +19,7 @@
     }
 
     &__logo {
-        // temp fix for background on hover
-        // background color may break due to the css order
-        // TODO: wait for uikit@7 and check new logic
-        --g-button-background-color-hover: transparent;
+        @include link-reset;
     }
 
     &__docs-link,

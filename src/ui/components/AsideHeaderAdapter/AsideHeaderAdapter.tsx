@@ -20,6 +20,7 @@ import type {AsideHeaderData} from '../../store/typings/asideHeader';
 import {UserAvatar} from '../UserMenu/UserAvatar';
 import {UserMenu} from '../UserMenu/UserMenu';
 
+import type {LogoTextProps} from './LogoText/LogoText';
 import {LogoText} from './LogoText/LogoText';
 import {Settings as SettingsPanel} from './Settings/Settings';
 import {DIALOG_RELEASE_VERSION} from './VersionDialog/VersionDialog';
@@ -47,12 +48,15 @@ export const DOCUMENTATION_LINK =
 
 export const ITEMS_NAVIGATION_DEFAULT_SIZE = 18;
 
-type AsideHeaderAdapterProps = {
+export type AsideHeaderAdapterProps = {
     renderContent?: AsideHeaderProps['renderContent'];
     logoIcon?: IconData;
-    installationInfo?: string;
+    logoText?: LogoTextProps & {ref?: React.RefObject<HTMLDivElement>};
     collapseButtonWrapper?: AsideHeaderProps['collapseButtonWrapper'];
     customMenuItems?: MenuItem[];
+    className?: string;
+    logoWrapperRef?: React.RefObject<HTMLAnchorElement>;
+    asideRef?: React.RefObject<HTMLDivElement>;
 };
 
 enum Panel {
@@ -104,9 +108,12 @@ const renderDocsItem = (item: DocsItem) => {
 export const AsideHeaderAdapter = ({
     renderContent,
     logoIcon,
-    installationInfo,
+    logoText,
     collapseButtonWrapper,
     customMenuItems,
+    className,
+    logoWrapperRef,
+    asideRef,
 }: AsideHeaderAdapterProps) => {
     const dispatch = useDispatch();
     const {pathname} = useLocation();
@@ -325,12 +332,16 @@ export const AsideHeaderAdapter = ({
         <AsideHeader
             compact={isCompact}
             logo={{
-                text: () => <LogoText installationInfo={installationInfo} />,
+                text: () => <LogoText {...logoText} />,
                 icon: logoIcon ?? defaultLogo,
                 iconSize: ASIDE_HEADER_LOGO_ICON_SIZE,
                 iconClassName: b('logo-icon'),
-                href: '/',
                 className: b('logo'),
+                wrapper: (logoElement) => (
+                    <a ref={logoWrapperRef} href="/" className={b('logo')}>
+                        {logoElement}
+                    </a>
+                ),
             }}
             topAlert={topAlert}
             menuItems={menuItems}
@@ -340,8 +351,9 @@ export const AsideHeaderAdapter = ({
             renderFooter={renderFooter}
             renderContent={renderAsideHeaderContent}
             onClosePanel={handleClosePanel}
-            className={b()}
+            className={b(null, className)}
             collapseButtonWrapper={collapseButtonWrapper}
+            ref={asideRef}
         />
     );
 };
