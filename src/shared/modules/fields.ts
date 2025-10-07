@@ -1,7 +1,7 @@
 import isEmpty from 'lodash/isEmpty';
 
 import type {DatasetField, Field, MarkupItem, ServerField, ServerFieldFormatting} from '../types';
-import {DATASET_FIELD_TYPES} from '../types';
+import {DATASET_FIELD_TYPES, isFloatField, isNumberField} from '../types';
 import {getFieldUISettings} from '../utils';
 
 import {getDistinctValue} from './colors/distincts-helpers';
@@ -16,20 +16,20 @@ type GetFormatOptionsArgs = {
 };
 
 export const getFormatOptions = (field: GetFormatOptionsArgs) => {
-    let formatOptions = field.formatting ?? {};
+    if (isNumberField(field)) {
+        let formatOptions = field.formatting ?? {};
 
-    if (isEmpty(formatOptions)) {
-        const fieldUISettings = getFieldUISettings({field});
-        formatOptions = fieldUISettings?.numberFormatting ?? {};
-    }
+        if (isEmpty(formatOptions)) {
+            const fieldUISettings = getFieldUISettings({field});
+            formatOptions = fieldUISettings?.numberFormatting ?? {};
+        }
 
-    if (
-        typeof formatOptions?.precision !== 'number' &&
-        field.data_type === DATASET_FIELD_TYPES.FLOAT
-    ) {
-        formatOptions.precision = MINIMUM_FRACTION_DIGITS;
+        if (typeof formatOptions?.precision !== 'number' && isFloatField(field)) {
+            formatOptions.precision = MINIMUM_FRACTION_DIGITS;
+        }
+        return formatOptions;
     }
-    return formatOptions;
+    return undefined;
 };
 
 export function getFakeTitleOrTitle(field?: ServerField) {

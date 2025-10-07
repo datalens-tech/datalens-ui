@@ -1,4 +1,4 @@
-import type {ServerField, ServerFieldFormatting, ServerPlaceholder} from '../../../../../shared';
+import {type ServerField, type ServerPlaceholder, getFormatOptions} from '../../../../../shared';
 import {
     DATASET_ID_KEY_PLACEHOLDER,
     DATASET_ID_KEY_TEMPLATE,
@@ -45,7 +45,7 @@ export function getFieldList(datasetFields: ServerField[], placeholders: ServerP
             title: field.title,
             guid: fieldId,
             dataType: field.data_type,
-            formatting: placeholdersField?.formatting as ServerFieldFormatting,
+            formatting: placeholdersField ? getFormatOptions(placeholdersField) : undefined,
         };
     });
 }
