@@ -1,4 +1,4 @@
-import z from 'zod/v4';
+import z from 'zod';
 
 export const deleteConnectionArgsSchema = z.object({
     connectionId: z.string(),
@@ -13,15 +13,16 @@ export const getConnectionArgsSchema = z.object({
 
 const connectionData = z.record(
     z.string(),
-    z.union([
-        z.string(),
-        z.number(),
-        z.boolean(),
-        z.array(z.unknown()),
-        z.null(),
-        z.undefined(),
-        z.record(z.string(), z.unknown()),
-    ]),
+    z
+        .union([
+            z.string(),
+            z.number(),
+            z.boolean(),
+            z.array(z.unknown()),
+            z.null(),
+            z.record(z.string(), z.unknown()),
+        ])
+        .optional(),
 );
 
 export const getConnectionResultSchema = connectionData;

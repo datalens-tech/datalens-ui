@@ -24,21 +24,21 @@ export const getPublicApiActionsV0 = <
 
         // Dataset
         getDataset: {
-            resolve: (api) => api.bi.getDatasetByVersion,
+            resolve: (api) => api.bi.getDatasetByVersionApi,
             openApi: {
                 summary: 'Get dataset',
                 tags: [ApiTag.Dataset],
             },
         },
         updateDataset: {
-            resolve: (api) => api.bi.updateDataset,
+            resolve: (api) => api.bi.updateDatasetApi,
             openApi: {
                 summary: 'Update dataset',
                 tags: [ApiTag.Dataset],
             },
         },
         createDataset: {
-            resolve: (api) => api.bi.createDataset,
+            resolve: (api) => api.bi.createDatasetApi,
             openApi: {
                 summary: 'Create dataset',
                 tags: [ApiTag.Dataset],

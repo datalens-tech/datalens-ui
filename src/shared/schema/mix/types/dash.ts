@@ -1,4 +1,4 @@
-import type z from 'zod/v4';
+import type z from 'zod';
 
 import type {WizardVisualizationId} from '../../../constants';
 import type {ChartsStats, DashStats, WorkbookId} from '../../../types';

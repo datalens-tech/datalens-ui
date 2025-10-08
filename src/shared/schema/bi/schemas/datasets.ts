@@ -1,36 +1,35 @@
-import z from 'zod/v4';
+import z from 'zod';
 
-import {datasetBodySchema, datasetOptionsSchema, datasetSchema} from '../../../zod-schemas/dataset';
+import {makeSchemaRef} from '../../../utils/openapi';
 
-const createDatasetDefaultArgsSchema = z.object({
-    name: z.string(),
-    created_via: z.string().optional(),
-    multisource: z.boolean(),
-    dataset: datasetBodySchema,
+const BI_SCHEMA_NAME = {
+    CreateDatasetSchema: 'CreateDatasetSchema',
+    CreateDatasetResponseSchema: 'CreateDatasetResponseSchema',
+    DatasetUpdateSchema: 'DatasetUpdateSchema',
+    DatasetContentSchema: 'DatasetContentSchema',
+    GetDatasetVersionResponseSchema: 'GetDatasetVersionResponseSchema',
+};
+
+export const createDatasetArgsSchemaApi = z.object({
+    data: z.any().meta({
+        $ref: makeSchemaRef(BI_SCHEMA_NAME.CreateDatasetSchema),
+    }),
 });
 
-export const createDatasetArgsSchema = z.union([
-    z.object({...createDatasetDefaultArgsSchema.shape, dir_path: z.string()}),
-    z.object({...createDatasetDefaultArgsSchema.shape, workbook_id: z.string()}),
-]);
-
-export const createDatasetResultSchema = z.object({
-    id: z.string(),
-    dataset: datasetBodySchema,
-    options: datasetOptionsSchema,
+export const createDatasetResultSchemaApi = z.any().meta({
+    $ref: makeSchemaRef(BI_SCHEMA_NAME.CreateDatasetResponseSchema),
 });
 
-export const updateDatasetArgsSchema = z.object({
+export const updateDatasetArgsSchemaApi = z.object({
     version: z.literal('draft'),
     datasetId: z.string(),
-    multisource: z.boolean(),
-    dataset: datasetBodySchema,
+    data: z.any().meta({
+        $ref: makeSchemaRef(BI_SCHEMA_NAME.DatasetUpdateSchema),
+    }),
 });
 
-export const updateDatasetResultSchema = z.object({
-    id: z.string(),
-    dataset: datasetBodySchema,
-    options: datasetOptionsSchema,
+export const updateDatasetResultSchemaApi = z.any().meta({
+    $ref: makeSchemaRef(BI_SCHEMA_NAME.DatasetContentSchema),
 });
 
 export const deleteDatasetArgsSchema = z.object({
@@ -39,11 +38,13 @@ export const deleteDatasetArgsSchema = z.object({
 
 export const deleteDatasetResultSchema = z.unknown();
 
-export const getDatasetByVersionArgsSchema = z.object({
+export const getDatasetByVersionArgsSchemaApi = z.object({
     datasetId: z.string(),
     version: z.literal('draft'),
     workbookId: z.union([z.null(), z.string()]),
     rev_id: z.string().optional(),
 });
 
-export const getDatasetByVersionResultSchema = datasetSchema;
+export const getDatasetByVersionResultSchemaApi = z.any().meta({
+    $ref: makeSchemaRef(BI_SCHEMA_NAME.GetDatasetVersionResponseSchema),
+});

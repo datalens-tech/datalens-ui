@@ -1,4 +1,4 @@
-import type z from 'zod/v4';
+import type z from 'zod';
 
 import type {CONNECTOR_VISIBILITY_MODE, ConnectorType} from '../../../constants';
 import type {
