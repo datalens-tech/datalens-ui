@@ -50,6 +50,7 @@ import {
     DashKitOverlayMenuQa,
     DashTabItemType,
     EntryScope,
+    FOCUSED_WIDGET_PARAM_NAME,
     Feature,
     FixedHeaderQa,
     LOADED_DASH_CLASS,
@@ -96,6 +97,7 @@ import {
     setHashState,
     setStateHashId,
     setWidgetCurrentTab,
+    toggleTableOfContent,
 } from '../../store/actions/dashTyped';
 import {openDialog, openItemDialogAndSetData} from '../../store/actions/dialogs/actions';
 import {closeDialogRelations, openDialogRelations} from '../../store/actions/relations/actions';
@@ -121,14 +123,20 @@ import {
     FixedHeaderControls,
     FixedHeaderWrapper,
 } from '../FixedHeader/FixedHeader';
+import type {MobileFloatMenuProps} from '../MobileFloatMenu/MobileFloatMenu';
+import {MobileFloatMenu} from '../MobileFloatMenu/MobileFloatMenu';
 import TableOfContent from '../TableOfContent/TableOfContent';
 import {Tabs} from '../Tabs/Tabs';
+
+import {RefsContext, RefsContextProvider} from './context';
 
 import iconRelations from 'ui/assets/icons/relations.svg';
 
 import './Body.scss';
 
 const b = block('dash-body');
+
+const isMobileFixedHeaderEnabled = isEnabledFeature(Feature.EnableMobileFixedHeader);
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
@@ -161,6 +169,7 @@ type DashBodyState = {
     fixedHeaderCollapsed: Record<string, boolean>;
     fixedHeaderControlsEl: HTMLDivElement | null;
     fixedHeaderContainerEl: HTMLDivElement | null;
+    dashEl: HTMLDivElement | null;
     isGlobalDragging: boolean;
     hasCopyInBuffer: CopiedConfigData | null;
     loaded: boolean;
@@ -329,7 +338,6 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         key: DashKitProps['config'];
         config: DashKitProps['config'];
     };
-    _dashBodyRef: React.RefObject<HTMLDivElement>;
 
     state: DashBodyState;
 
@@ -340,6 +348,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             fixedHeaderCollapsed: {},
             fixedHeaderControlsEl: null,
             fixedHeaderContainerEl: null,
+            dashEl: null,
             isGlobalDragging: false,
             hasCopyInBuffer: null,
             prevMeta: {tabId: null, entryId: null},
@@ -368,8 +377,6 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                 ],
             },
         };
-
-        this._dashBodyRef = React.createRef();
     }
 
     componentDidMount() {
@@ -424,6 +431,9 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
     };
     _fixedHeaderContainerRef: React.RefCallback<HTMLDivElement> = (el) => {
         this.setState({fixedHeaderContainerEl: el});
+    };
+    _dashBodyRef: React.RefCallback<HTMLDivElement> = (el) => {
+        this.setState({dashEl: el});
     };
 
     updateMargins() {
@@ -803,17 +813,15 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             return null;
         }
 
-        if (params.isMobile) {
+        if (params.isMobile && !isMobileFixedHeaderEnabled) {
             return children;
         }
 
         const {fixedHeaderCollapsed = false} = params.context;
 
-        if (!this.state.fixedHeaderControlsEl) {
-            return null;
-        }
-
-        return createPortal(
+        const content = params.isMobile ? (
+            children
+        ) : (
             <FixedHeaderControls
                 isEmpty={isEmpty}
                 isContainerGroupEmpty={!hasFixedContainerElements}
@@ -826,9 +834,10 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                 )}
             >
                 {children}
-            </FixedHeaderControls>,
-            this.state.fixedHeaderControlsEl,
+            </FixedHeaderControls>
         );
+
+        return <FixedControlsWrapperWithContext content={content} />;
     };
 
     renderFixedGroupContainer = (
@@ -845,15 +854,13 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             return null;
         }
 
-        if (params.isMobile) {
+        if (params.isMobile && !isMobileFixedHeaderEnabled) {
             return children;
         }
 
-        if (!this.state.fixedHeaderContainerEl) {
-            return null;
-        }
-
-        return createPortal(
+        const content = params.isMobile ? (
+            children
+        ) : (
             <FixedHeaderContainer
                 isEmpty={isEmpty}
                 isControlsGroupEmpty={!hasFixedHeaderElements}
@@ -861,9 +868,10 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                 editMode={params.editMode}
             >
                 {children}
-            </FixedHeaderContainer>,
-            this.state.fixedHeaderContainerEl,
+            </FixedHeaderContainer>
         );
+
+        return <FixedContainerWrapperWithContext content={content} />;
     };
 
     storageHandler = () => {
@@ -1112,9 +1120,6 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             this.getWidgetLayoutByGroup(FIXED_GROUP_CONTAINER_ID)?.length,
         );
 
-        const canRenderDashkit =
-            this.state.fixedHeaderControlsEl && this.state.fixedHeaderContainerEl;
-
         const fixedHeaderHasNoVisibleContent =
             !hasFixedHeaderControlsElements &&
             (!hasFixedHeaderContainerElements || fixedHeaderCollapsed);
@@ -1131,19 +1136,53 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             );
         }
 
+        const shouldRenderMobileMenu = DL.IS_MOBILE && isMobileFixedHeaderEnabled;
+        const searchParams = new URLSearchParams(location.search);
+        const focusedWidget = searchParams.get(FOCUSED_WIDGET_PARAM_NAME);
+        const focusedWidgetParent = focusedWidget
+            ? tabDataConfig?.layout?.find((item) => item.i === focusedWidget)?.parent
+            : undefined;
+        const isFixedHeaderWidgetFocused = Boolean(
+            focusedWidgetParent &&
+                [FIXED_GROUP_HEADER_ID, FIXED_GROUP_CONTAINER_ID].includes(focusedWidgetParent),
+        );
+        const mobileFixedHeaderInitiallyOpened =
+            shouldRenderMobileMenu && isFixedHeaderWidgetFocused;
+
         return (
-            <WidgetContextProvider onWidgetMountChange={this.itemAddHandler}>
-                <FixedHeaderWrapper
-                    className={b('fixed-header', {'no-content': fixedHeaderHasNoVisibleContent})}
-                    dashBodyRef={this._dashBodyRef}
-                    controlsRef={this._fixedHeaderControlsRef}
-                    containerRef={this._fixedHeaderContainerRef}
-                    isCollapsed={fixedHeaderCollapsed}
-                    editMode={isEditMode}
-                    isControlsGroupEmpty={!hasFixedHeaderControlsElements}
-                    isContainerGroupEmpty={!hasFixedHeaderContainerElements}
-                />
-                {canRenderDashkit ? (
+            <RefsContextProvider
+                fixedHeaderControlsEl={this.state.fixedHeaderControlsEl}
+                fixedHeaderContainerEl={this.state.fixedHeaderContainerEl}
+                dashEl={this.state.dashEl}
+            >
+                <WidgetContextProvider onWidgetMountChange={this.itemAddHandler}>
+                    {shouldRenderMobileMenu && this.props.entryId && (
+                        <FloatingMobileMenuWithContext
+                            entryId={this.props.entryId}
+                            hasFixedContent={
+                                hasFixedHeaderContainerElements || hasFixedHeaderControlsElements
+                            }
+                            fixedContentInitiallyOpened={mobileFixedHeaderInitiallyOpened}
+                            fixedContentWidgetFocused={isFixedHeaderWidgetFocused}
+                            fixedHeaderControlsRef={this._fixedHeaderControlsRef}
+                            fixedHeaderContainerRef={this._fixedHeaderContainerRef}
+                        />
+                    )}
+
+                    {!DL.IS_MOBILE && (
+                        <FixedHeaderWrapper
+                            className={b('fixed-header', {
+                                'no-content': fixedHeaderHasNoVisibleContent,
+                            })}
+                            dashBodyEl={this.state.dashEl}
+                            controlsRef={this._fixedHeaderControlsRef}
+                            containerRef={this._fixedHeaderContainerRef}
+                            isCollapsed={fixedHeaderCollapsed}
+                            editMode={isEditMode}
+                            isControlsGroupEmpty={!hasFixedHeaderControlsElements}
+                            isContainerGroupEmpty={!hasFixedHeaderContainerElements}
+                        />
+                    )}
                     <DashKit
                         ref={this.dashKitRef}
                         config={tabDataConfig as DashKitProps['config']}
@@ -1174,8 +1213,8 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                         setWidgetCurrentTab={this.props.setWidgetCurrentTab}
                         dataProviderContextGetter={this.dataProviderContextGetter}
                     />
-                ) : null}
-            </WidgetContextProvider>
+                </WidgetContextProvider>
+            </RefsContextProvider>
         );
     };
 
@@ -1257,11 +1296,14 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
 
         const localTabs = memoizedGetLocalTabs(tabs);
 
-        const hasTableOfContent = !(localTabs.length === 1 && !localTabs[0].items.length);
+        const hasTableOfContentForTab = !(localTabs.length === 1 && !localTabs[0].items.length);
 
         const showEditActionPanel = this.isEditMode();
 
         const loadedMixin = loaded ? LOADED_DASH_CLASS : undefined;
+
+        const showDashTitle =
+            !settings.hideDashTitle && (!DL.IS_MOBILE || isMobileFixedHeaderEnabled);
 
         const content = (
             <div
@@ -1284,14 +1326,14 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                     <div
                         className={b('content', {
                             condensed: this.isCondensed(),
-                            'with-table-of-content': showTableOfContent && hasTableOfContent,
+                            'with-table-of-content': showTableOfContent && hasTableOfContentForTab,
                             mobile: DL.IS_MOBILE,
                             aside: getIsAsideHeaderEnabled(),
                             'with-edit-panel': showEditActionPanel,
                             'with-footer': isEnabledFeature(Feature.EnableFooter),
                         })}
                     >
-                        {!settings.hideDashTitle && !DL.IS_MOBILE && (
+                        {showDashTitle && (
                             <div className={b('entry-name')} data-qa={DashEntryQa.EntryName}>
                                 {Utils.getEntryNameFromKey(this.props.entry?.key)}
                             </div>
@@ -1360,9 +1402,37 @@ const mapDispatchToProps = {
     openDialog,
     showToast,
     setWidgetCurrentTab,
+    toggleTableOfContent,
 };
 
 export default compose<BodyProps, OwnProps>(
     withRouter,
     connect(mapStateToProps, mapDispatchToProps),
 )(Body);
+
+function FixedControlsWrapperWithContext({content}: {content: React.ReactNode}) {
+    const {fixedHeaderControlsEl} = React.useContext(RefsContext);
+
+    if (fixedHeaderControlsEl) {
+        return createPortal(content, fixedHeaderControlsEl, 'fixed-header-controls-mounted');
+    }
+    return null;
+}
+
+function FixedContainerWrapperWithContext({content}: {content: React.ReactNode}) {
+    const {fixedHeaderContainerEl} = React.useContext(RefsContext);
+
+    if (fixedHeaderContainerEl) {
+        return createPortal(content, fixedHeaderContainerEl, 'fixed-header-container-mounted');
+    }
+    return null;
+}
+
+function FloatingMobileMenuWithContext(props: Omit<MobileFloatMenuProps, 'dashEl'>) {
+    const {dashEl} = React.useContext(RefsContext);
+
+    if (dashEl) {
+        return <MobileFloatMenu {...props} dashEl={dashEl} />;
+    }
+    return null;
+}

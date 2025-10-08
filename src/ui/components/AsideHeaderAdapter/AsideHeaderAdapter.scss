@@ -19,10 +19,7 @@
     }
 
     &__logo {
-        // temp fix for background on hover
-        // background color may break due to the css order
-        // TODO: wait for uikit@7 and check new logic
-        --g-button-background-color-hover: transparent;
+        @include link-reset;
     }
 
     &__docs-link,
@@ -35,5 +32,17 @@
         padding: 8px 16px;
         text-decoration: none;
         color: var(--g-color-text-primary);
+    }
+
+    &_hidden .gn-aside-header__aside {
+        display: none;
+    }
+
+    &_hidden .gn-aside-header__pane-container {
+        height: 100%;
+    }
+
+    &_hidden .gn-aside-header__content {
+        width: 100%;
     }
 }
