@@ -63,7 +63,7 @@ export const MobileHeaderComponent = ({
         </div>
     );
 
-    const panelItems: MobileHeaderProps['panelItems'] = DL.ZITADEL_ENABLED
+    const panelItems: MobileHeaderProps['panelItems'] = DL.AUTH_ENABLED
         ? [
               {
                   id: Panel.User,
@@ -108,7 +108,7 @@ export const MobileHeaderComponent = ({
             }}
             burgerMenu={{items: menuItems, renderFooter: () => <BurgerMenuFooter />}}
             contentClassName={CONTENT_CLASSNAME}
-            className={b('container')}
+            className={b()}
             renderContent={renderContent}
             sideItemRenderContent={DL.AUTH_ENABLED ? () => sideItem : undefined}
             panelItems={panelItems}
