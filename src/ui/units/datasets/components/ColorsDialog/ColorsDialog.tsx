@@ -3,8 +3,8 @@ import React from 'react';
 import {Button, Dialog, Palette} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {useDispatch, useSelector} from 'react-redux';
-import type {DatasetField, DatasetFieldColorConfig, FieldUISettings} from 'shared';
+import {useSelector} from 'react-redux';
+import type {DatasetField, DatasetFieldColorConfig, DatasetUpdate, FieldUISettings} from 'shared';
 import {
     TIMEOUT_90_SEC,
     getFieldDistinctValues,
@@ -16,7 +16,6 @@ import {PaletteItem} from 'ui/components/PaletteItem/PaletteItem';
 import {ValuesList} from 'ui/components/ValuesList/ValuesList';
 import {getTenantDefaultColorPaletteId} from 'ui/constants';
 import {getSdk} from 'ui/libs/schematic-sdk';
-import {fetchColorPalettes} from 'ui/store/actions/colorPaletteEditor';
 import {selectColorPalettesDict} from 'ui/store/selectors/colorPaletteEditor';
 import {getPaletteColors} from 'ui/utils';
 
@@ -36,6 +35,7 @@ type Props = {
     field: DatasetField;
     fieldUiSettings: FieldUISettings;
     datasetId: string;
+    updates?: DatasetUpdate[];
     workbookId?: string;
     parameters: DatasetField[];
     onClose: () => void;
@@ -43,8 +43,17 @@ type Props = {
 };
 
 export const ColorsDialog = (props: Props) => {
-    const {open, field, fieldUiSettings, datasetId, workbookId, parameters, onClose, onApply} =
-        props;
+    const {
+        open,
+        field,
+        fieldUiSettings,
+        datasetId,
+        updates,
+        workbookId,
+        parameters,
+        onClose,
+        onApply,
+    } = props;
     const [values, setValues] = React.useState<string[]>([]);
     const [selectedValue, setSelectedValue] = React.useState<string | undefined>();
     const [isLoading, setLoading] = React.useState(true);
@@ -54,13 +63,7 @@ export const ColorsDialog = (props: Props) => {
         fieldUiSettings?.colors ?? {},
     );
 
-    const dispatch = useDispatch();
     const colorPalettes = useSelector(selectColorPalettesDict);
-    React.useEffect(() => {
-        if (!colorPalettes.length) {
-            dispatch(fetchColorPalettes());
-        }
-    }, [colorPalettes.length, dispatch]);
 
     const defaultPaletteId = getTenantDefaultColorPaletteId();
     const [selectedPaletteId, setSelectedPalette] = React.useState(
@@ -85,6 +88,7 @@ export const ColorsDialog = (props: Props) => {
             const resp = await getSdk().sdk.bi.getDistinctsApiV2(
                 {
                     datasetId,
+                    updates,
                     workbookId: workbookId ?? null,
                     limit: VALUES_LOAD_LIMIT,
                     fields: getFieldsApiV2RequestSection([field], 'distinct'),
