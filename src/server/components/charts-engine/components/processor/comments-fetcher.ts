@@ -8,25 +8,11 @@ import axios from 'axios';
 import get from 'lodash/get';
 import moment from 'moment';
 
+import type {ChartComment} from '../../../../../shared';
+
 const TEN_SECONDS = 10000;
 
-type UsComment = {
-    id: number;
-    creatorLogin: string;
-    createdDate: string;
-    modifierLogin: string;
-    modifiedDate: string;
-    feed: string;
-    date: string;
-    dateUntil?: string;
-    type: 'line-x' | 'band-x' | 'flag-x' | 'dot-x-y';
-    text: string;
-    meta: Record<string, string>;
-    params?: {
-        scale?: string | string[];
-        region?: string | string[];
-    };
-};
+type UsComment = ChartComment;
 
 export type Graph = {
     id?: string;
