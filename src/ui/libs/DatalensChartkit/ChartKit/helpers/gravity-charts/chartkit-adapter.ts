@@ -105,7 +105,7 @@ export function getGravityChartsChartKitData(args: {
     const comments = hideComments ? [] : get(loadedData, 'comments', []);
     const {plotBands, plotLines} = convertChartCommentsToPlotBandsAndLines({comments});
 
-    const shouldUseCommentsOnYAxis = result.series.data.some((s) => s.type === 'bar-y');
+    const shouldUseCommentsOnYAxis = result.series?.data?.some((s) => s.type === 'bar-y');
     if (shouldUseCommentsOnYAxis) {
         set(result, 'yAxis[0].plotBands', [...(result.yAxis?.[0]?.plotBands ?? []), ...plotBands]);
         set(result, 'yAxis[0].plotLines', [...(result.yAxis?.[0]?.plotLines ?? []), ...plotLines]);
