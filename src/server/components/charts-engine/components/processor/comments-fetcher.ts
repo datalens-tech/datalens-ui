@@ -1,8 +1,11 @@
 import {stringify} from 'querystring';
 
+import type {ChartData} from '@gravity-ui/chartkit/gravity-charts';
+import type {StringParams} from '@gravity-ui/chartkit/highcharts';
 import type {AppContext} from '@gravity-ui/nodekit';
 import type {AxiosRequestConfig} from 'axios';
 import axios from 'axios';
+import get from 'lodash/get';
 import moment from 'moment';
 
 const TEN_SECONDS = 10000;
@@ -34,6 +37,18 @@ export type Graph = {
     type?: string;
 };
 
+type CommentsConfig = {
+    feeds?: [
+        {
+            feed: string;
+            matchedParams: string[];
+        },
+    ];
+    matchType?: 'full' | 'contains';
+    matchedParams?: string[];
+    path?: string;
+};
+
 type CommentsFetcherFetchParams = {
     feeds: {feed: string; params: UsComment['params']}[];
     statFeed: {path: string; field_name: string} | null;
@@ -42,12 +57,7 @@ type CommentsFetcherFetchParams = {
 
 export type CommentsFetcherPrepareCommentsParams = {
     chartName: string;
-    config?: {
-        feeds?: [{feed: string; matchedParams: string[]}];
-        matchType?: 'full' | 'contains';
-        matchedParams?: string[];
-        path?: string;
-    };
+    config?: CommentsConfig;
     data:
         | {
               graphs: Graph[];
@@ -130,8 +140,6 @@ export class CommentsFetcher {
         headers: AxiosRequestConfig['headers'],
         ctx: AppContext,
     ) {
-        const {path, matchedParams = [], matchType, feeds = []} = config;
-
         // Possible data structure:
         // * [{...},...]
         // * {graphs: [{...},...]}
@@ -177,31 +185,113 @@ export class CommentsFetcher {
             return undefined;
         }
 
+        const fetchCommentsArgs = getFetchCommentsArgs({
+            config,
+            chartName,
+            params,
+            seriesIds,
+            dateFromMs,
+            dateToMs,
+        });
         return CommentsFetcher.fetch(
             {
-                feeds: [{feed: chartName, matchedParams}]
-                    .concat(feeds)
-                    .map(({feed, matchedParams = []}) =>
-                        matchedParams.reduce<{
-                            feed: string;
-                            params: Record<string, string | string[]>;
-                        }>(
-                            (result, name) => {
-                                result.params[name] = params[name];
-                                return result;
-                            },
-                            {feed, params: {}},
-                        ),
-                    ),
-                statFeed: path ? {path, field_name: ['none'].concat(seriesIds).join(',')} : null,
-                meta: {
-                    matchType,
-                    dateFrom: moment.utc(dateFromMs).format(),
-                    dateTo: moment.utc(dateToMs).format(),
-                },
+                ...fetchCommentsArgs,
             },
             headers,
             ctx,
         );
     }
+
+    static prepareGravityChartsComments(
+        {
+            chartName,
+            config = {},
+            data,
+            params,
+        }: {
+            chartName: string;
+            config?: CommentsConfig;
+            data: Partial<ChartData>;
+            params: StringParams;
+        },
+        headers: AxiosRequestConfig['headers'],
+        ctx: AppContext,
+    ) {
+        const series = data.series?.data ?? [];
+
+        const seriesIds = series.map<string>((s) => get(s, 'name', ''));
+
+        let dateFromMs: number | undefined;
+        let dateToMs: number | undefined;
+
+        series.forEach((s) => {
+            s.data.forEach((value) => {
+                const field = s.type === 'bar-y' ? 'y' : 'x';
+                const val = get(value, field);
+
+                if (typeof val === 'number') {
+                    dateFromMs = dateFromMs === undefined ? val : Math.min(dateFromMs, val);
+                    dateToMs = dateToMs === undefined ? val : Math.max(dateToMs, val);
+                }
+            });
+        });
+
+        if (!dateFromMs || !dateToMs) {
+            return undefined;
+        }
+
+        const fetchCommentsArgs = getFetchCommentsArgs({
+            config,
+            chartName,
+            params,
+            seriesIds,
+            dateFromMs,
+            dateToMs,
+        });
+        return CommentsFetcher.fetch(
+            {
+                ...fetchCommentsArgs,
+            },
+            headers,
+            ctx,
+        );
+    }
+}
+
+function getFetchCommentsArgs({
+    config,
+    chartName,
+    params,
+    seriesIds,
+    dateFromMs,
+    dateToMs,
+}: {
+    config: CommentsConfig;
+    chartName: string;
+    params: StringParams;
+    seriesIds: string[];
+    dateFromMs: number;
+    dateToMs: number;
+}) {
+    const {path, matchedParams = [], matchType, feeds = []} = config;
+    return {
+        feeds: [{feed: chartName, matchedParams}].concat(feeds).map(({feed, matchedParams = []}) =>
+            matchedParams.reduce<{
+                feed: string;
+                params: Record<string, string | string[]>;
+            }>(
+                (result, name) => {
+                    result.params[name] = params[name];
+                    return result;
+                },
+                {feed, params: {}},
+            ),
+        ),
+        statFeed: path ? {path, field_name: ['none'].concat(seriesIds).join(',')} : null,
+        meta: {
+            matchType,
+            dateFrom: moment.utc(dateFromMs).format(),
+            dateTo: moment.utc(dateToMs).format(),
+        },
+    };
 }
