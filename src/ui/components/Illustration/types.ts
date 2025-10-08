@@ -15,9 +15,10 @@ export type IllustrationName =
 
 export type CreateIllustrationProps = {
     name: IllustrationName | 'barchar' | 'logo' | 'logoShort' | 'logoInit' | 'galleryHeader';
-    illustrationStore: IllustrationStore;
     showSkeleton?: boolean;
     skeletonClassName?: string;
     skeletonTimeout?: number;
     className?: string;
+    alt?: string;
+    [prop: string]: unknown;
 };
