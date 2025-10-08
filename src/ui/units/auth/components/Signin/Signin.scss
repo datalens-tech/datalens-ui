@@ -27,7 +27,7 @@
     }
 
     &_rebranding {
-        background-color: none;
+        background-color: unset;
 
         #{$class}__form-container {
             border-radius: 32px;
