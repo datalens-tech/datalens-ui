@@ -86,11 +86,20 @@ function mapScatterSeries(args: MapScatterSeriesArgs): ScatterSeries<PointCustom
 }
 
 // eslint-disable-next-line complexity
-export function prepareD3Scatter(args: PrepareFunctionArgs): ChartData<PointCustomData> {
+export function prepareGravityChartsScatter(args: PrepareFunctionArgs): ChartData<PointCustomData> {
     const {shared, idToDataType, placeholders, colors, colorsConfig, shapes, visualizationId} =
         args;
-    const {categories: preparedXCategories, graphs, x, y, z, color, size} = prepareScatter(args);
-    const xCategories = (preparedXCategories || []).map(String);
+    const {
+        categories: preparedXCategories,
+        graphs,
+        x,
+        y,
+        z,
+        color,
+        shape,
+        size,
+    } = prepareScatter(args);
+    const xCategories = preparedXCategories;
 
     const exportSettings: SeriesExportSettings = {
         columns: [
@@ -129,6 +138,7 @@ export function prepareD3Scatter(args: PrepareFunctionArgs): ChartData<PointCust
         pointTitle: getFakeTitleOrTitle(z),
         colorTitle: getFakeTitleOrTitle(color),
         sizeTitle: getFakeTitleOrTitle(size),
+        shapeTitle: getFakeTitleOrTitle(shape),
         exportSettings,
     };
 
@@ -150,6 +160,7 @@ export function prepareD3Scatter(args: PrepareFunctionArgs): ChartData<PointCust
     if (xAxisType === 'category' && xCategories?.length) {
         xAxis = {
             type: 'category',
+            // @ts-ignore There may be a type mismatch due to the wrapper over html, markup and markdown
             categories: xCategories,
         };
     } else {
