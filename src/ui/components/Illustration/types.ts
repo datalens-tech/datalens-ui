@@ -19,4 +19,5 @@ export type CreateIllustrationProps = {
     showSkeleton?: boolean;
     skeletonClassName?: string;
     skeletonTimeout?: number;
+    className?: string;
 };
