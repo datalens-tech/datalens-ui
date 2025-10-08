@@ -11,24 +11,24 @@ const BI_SCHEMA_NAME = {
 };
 
 export const createDatasetArgsSchemaApi = z.object({
-    data: z.any().meta({
+    data: z.unknown().meta({
         $ref: makeSchemaRef(BI_SCHEMA_NAME.CreateDatasetSchema),
     }),
 });
 
-export const createDatasetResultSchemaApi = z.any().meta({
+export const createDatasetResultSchemaApi = z.unknown().meta({
     $ref: makeSchemaRef(BI_SCHEMA_NAME.CreateDatasetResponseSchema),
 });
 
 export const updateDatasetArgsSchemaApi = z.object({
     version: z.literal('draft'),
     datasetId: z.string(),
-    data: z.any().meta({
+    data: z.unknown().meta({
         $ref: makeSchemaRef(BI_SCHEMA_NAME.DatasetUpdateSchema),
     }),
 });
 
-export const updateDatasetResultSchemaApi = z.any().meta({
+export const updateDatasetResultSchemaApi = z.unknown().meta({
     $ref: makeSchemaRef(BI_SCHEMA_NAME.DatasetContentSchema),
 });
 
@@ -45,6 +45,6 @@ export const getDatasetByVersionArgsSchemaApi = z.object({
     rev_id: z.string().optional(),
 });
 
-export const getDatasetByVersionResultSchemaApi = z.any().meta({
+export const getDatasetByVersionResultSchemaApi = z.unknown().meta({
     $ref: makeSchemaRef(BI_SCHEMA_NAME.GetDatasetVersionResponseSchema),
 });
