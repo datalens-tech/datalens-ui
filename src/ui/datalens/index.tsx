@@ -139,7 +139,7 @@ const DatalensPage: React.FC = () => {
         return (
             <AsideHeaderAdapter
                 renderContent={() => <DatalensPageView />}
-                logoText={{installationInfo: OPEN_SOURCE_INSTALLATION_INFO}}
+                logoTextProps={{installationInfo: OPEN_SOURCE_INSTALLATION_INFO}}
             />
         );
     }

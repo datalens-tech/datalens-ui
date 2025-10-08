@@ -54,7 +54,7 @@ export const ITEMS_NAVIGATION_DEFAULT_SIZE = 18;
 export type AsideHeaderAdapterProps = {
     renderContent?: AsideHeaderProps['renderContent'];
     logoIcon?: IconData;
-    logoText?: LogoTextProps & {ref?: React.RefObject<HTMLDivElement>};
+    logoTextProps?: LogoTextProps & {ref?: React.RefObject<HTMLDivElement>};
     collapseButtonWrapper?: AsideHeaderProps['collapseButtonWrapper'];
     customMenuItems?: MenuItem[];
     logoWrapperRef?: React.RefObject<HTMLAnchorElement>;
@@ -110,7 +110,7 @@ const renderDocsItem = (item: DocsItem) => {
 export const AsideHeaderAdapter = ({
     renderContent,
     logoIcon,
-    logoText,
+    logoTextProps,
     collapseButtonWrapper,
     customMenuItems,
     logoWrapperRef,
@@ -334,7 +334,7 @@ export const AsideHeaderAdapter = ({
         <AsideHeader
             compact={isCompact}
             logo={{
-                text: () => <LogoText {...logoText} />,
+                text: () => <LogoText {...logoTextProps} />,
                 icon: logoIcon ?? defaultLogo,
                 iconSize: ASIDE_HEADER_LOGO_ICON_SIZE,
                 iconClassName: b('logo-icon'),
