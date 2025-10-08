@@ -9,6 +9,7 @@ import type {
     DashkitGroupRenderProps,
     ItemDropProps,
     PreparedCopyItemOptions,
+    ReactGridLayoutProps,
 } from '@gravity-ui/dashkit';
 import {
     DashKitDnDWrapper,
@@ -62,6 +63,8 @@ import {
     DEFAULT_DASH_MARGINS,
     FIXED_GROUP_CONTAINER_ID,
     FIXED_GROUP_HEADER_ID,
+    MIN_AUTO_HEIGHT_PX,
+    MIN_AUTO_HEIGHT_ROWS,
 } from 'ui/components/DashKit/constants';
 import {WidgetContextProvider} from 'ui/components/DashKit/context/WidgetContext';
 import {getDashKitMenu} from 'ui/components/DashKit/helpers';
@@ -115,7 +118,6 @@ import {
     selectTabHashState,
     selectTabs,
 } from '../../store/selectors/dashTypedSelectors';
-import {getPropertiesWithResizeHandles} from '../../utils/dashkitProps';
 import {scrollIntoView} from '../../utils/scrollUtils';
 import {DashError} from '../DashError/DashError';
 import {
@@ -338,6 +340,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         key: DashKitProps['config'];
         config: DashKitProps['config'];
     };
+    _memoizedPropertiesCache: Map<string, any> = new Map();
 
     state: DashBodyState;
 
@@ -363,16 +366,16 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                     {
                         id: FIXED_GROUP_HEADER_ID,
                         render: this.renderFixedGroupHeader,
-                        gridProperties: getPropertiesWithResizeHandles(),
+                        gridProperties: this.getPropertiesWithResizeHandles('fixed-header'),
                     },
                     {
                         id: FIXED_GROUP_CONTAINER_ID,
                         render: this.renderFixedGroupContainer,
-                        gridProperties: getPropertiesWithResizeHandles(),
+                        gridProperties: this.getPropertiesWithResizeHandles('fixed-container'),
                     },
                     {
                         id: DEFAULT_GROUP,
-                        gridProperties: getPropertiesWithResizeHandles(),
+                        gridProperties: this.getPropertiesWithResizeHandles('default-group'),
                     },
                 ],
             },
@@ -447,13 +450,39 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                     renderers: this.state.groups.renderers.map((group) => {
                         return {
                             ...group,
-                            gridProperties: getPropertiesWithResizeHandles({margin: propsMargins}),
+                            gridProperties: this.getPropertiesWithResizeHandles(
+                                `${group.id}-update`,
+                                {margin: propsMargins},
+                            ),
                         };
                     }),
                 },
             });
         }
     }
+
+    getPropertiesWithResizeHandles = (
+        id: string,
+        extendedProps: Partial<DashKitGroup['gridProperties']> | undefined = {},
+    ) => {
+        return (props: ReactGridLayoutProps) => {
+            const updatedResult: ReactGridLayoutProps = {...props, ...extendedProps};
+            if (
+                (props.margin && props.margin[1] !== DEFAULT_DASH_MARGINS[1]) ||
+                !this._memoizedPropertiesCache.has(id)
+            ) {
+                updatedResult.rowHeight =
+                    (MIN_AUTO_HEIGHT_PX - props.margin[1] * (MIN_AUTO_HEIGHT_ROWS - 1)) /
+                    MIN_AUTO_HEIGHT_ROWS;
+
+                this._memoizedPropertiesCache.set(id, updatedResult);
+
+                return updatedResult;
+            }
+
+            return this._memoizedPropertiesCache.get(id);
+        };
+    };
 
     isCondensed = () => {
         return this.state.groups.margins[0] === 0 || this.state.groups.margins[1] === 0;
