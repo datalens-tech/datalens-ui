@@ -372,12 +372,14 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         if (shape) {
             const cTitle = idToTitle[shape.guid];
             const i = findIndexInOrder(order, shape, cTitle);
-            const shapeValue = String(values[i] ?? '');
-            let shapeLabel: WrappedMarkdown | string | WrappedHTML = shapeValue;
+            const shapeValue = values[i] ?? '';
+            let shapeLabel: WrappedMarkdown | string | WrappedHTML | WrappedMarkup = shapeValue;
             if (isMarkdownField(shape)) {
                 shapeLabel = wrapMarkdownValue(shapeValue);
             } else if (isHtmlField(shape)) {
                 shapeLabel = wrapHtml(shapeValue);
+            } else if (isMarkupField(shape)) {
+                shapeLabel = wrapMarkupValue(shapeValue);
             }
 
             point.shapeValue = shapeValue;
@@ -431,7 +433,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
     }
 
     if (shape || shapesConfigured) {
-        graphs = mapPointsByShape(graphs, shapesConfig);
+        graphs = mapPointsByShape({graphs, shapesConfig, field: shape});
     } else {
         graphs.forEach((graph) => {
             graph.marker = {
@@ -467,7 +469,8 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         ChartEditor.updateConfig({useMarkdown: true});
     }
 
-    if (isMarkupField(z)) {
+    const hasMarkup = [x, y, z, size, color, shape].some((field) => isMarkupField(field));
+    if (hasMarkup) {
         ChartEditor.updateConfig({useMarkup: true});
     }
 
