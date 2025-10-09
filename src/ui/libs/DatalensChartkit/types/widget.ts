@@ -90,6 +90,7 @@ export interface WidgetBase {
     initialParams?: StringParams;
     config?: {
         drillDown?: DrillDownConfig;
+        hideComments?: boolean;
         comments?: {
             matchedParams: Array<any>;
             feeds: {

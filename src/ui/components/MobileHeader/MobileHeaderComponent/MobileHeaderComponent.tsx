@@ -47,7 +47,7 @@ const CONTENT_CLASSNAME = b('content');
 export const MobileHeaderComponent = ({
     renderContent,
     logoIcon,
-    installationInfo,
+    logoTextProps,
 }: MobileHeaderComponentProps) => {
     const ref = React.useRef<HTMLDivElement>();
 
@@ -63,7 +63,7 @@ export const MobileHeaderComponent = ({
         </div>
     );
 
-    const panelItems: MobileHeaderProps['panelItems'] = DL.ZITADEL_ENABLED
+    const panelItems: MobileHeaderProps['panelItems'] = DL.AUTH_ENABLED
         ? [
               {
                   id: Panel.User,
@@ -99,16 +99,14 @@ export const MobileHeaderComponent = ({
             ref={setupRefs}
             logo={{
                 icon: logoIcon ?? defaultLogo,
-                text: isRebrandingEnabled
-                    ? () => <LogoText installationInfo={installationInfo} />
-                    : PRODUCT_NAME,
+                text: isRebrandingEnabled ? () => <LogoText {...logoTextProps} /> : PRODUCT_NAME,
                 iconClassName: b('logo-icon', {rebranding: isRebrandingEnabled}),
                 className: b('logo', {rebranding: isRebrandingEnabled}),
                 iconSize: isRebrandingEnabled ? MOBILE_HEADER_LOGO_ICON_SIZE : undefined,
             }}
             burgerMenu={{items: menuItems, renderFooter: () => <BurgerMenuFooter />}}
             contentClassName={CONTENT_CLASSNAME}
-            className={b('container')}
+            className={b()}
             renderContent={renderContent}
             sideItemRenderContent={DL.AUTH_ENABLED ? () => sideItem : undefined}
             panelItems={panelItems}
