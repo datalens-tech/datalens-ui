@@ -20,7 +20,7 @@ export function createIllustration(
     });
     const store: IllustrationStore = merge({}, ...getCustomStores);
 
-    function Illustration({name, ...props}: CreateIllustrationProps) {
+    function Illustration({name, ...props}: Omit<CreateIllustrationProps, 'illustrationStore'>) {
         const theme = useThemeType();
         const src = store[theme] && store[theme][name];
         return <AsyncImage alt={name} src={src} showSkeleton={true} {...props} />;
