@@ -24,3 +24,5 @@ export type CreateIllustrationProps = {
     role?: string;
     'aria-hidden'?: boolean;
 };
+
+export type IllustrationComponent = Omit<CreateIllustrationProps, 'illustrationStore'>;
