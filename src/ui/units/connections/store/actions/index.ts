@@ -2,9 +2,11 @@ import {I18n} from 'i18n';
 import {flow} from 'lodash';
 import {batch} from 'react-redux';
 import type {ConnectionData, ConnectorType} from 'shared';
+import {Feature} from 'shared';
 import type {FormSchema, GetEntryResponse} from 'shared/schema/types';
 import {URL_QUERY} from 'ui';
 import {registry} from 'ui/registry';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {isEntryAlreadyExists} from 'utils/errors/errorByCode';
 
 import logger from '../../../../libs/logger';
@@ -15,6 +17,7 @@ import type {DataLensApiError} from '../../../../typings';
 import {getWorkbookIdFromPathname} from '../../../../utils';
 import history from '../../../../utils/history';
 import {FieldKey, InnerFieldKey} from '../../constants';
+import {getConnItemByType} from '../../utils';
 import {connectionIdSelector, newConnectionSelector} from '../selectors';
 import type {ConnectionsReduxDispatch, ConnectionsReduxState, GetState} from '../typings';
 import {
@@ -56,6 +59,22 @@ export * from './yadoc';
 
 const i18n = I18n.keyset('connections.form');
 
+function updateRevisions(entry: GetEntryResponse) {
+    return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
+        const {entryContent} = getState();
+        dispatch(setEntryContent(entry));
+
+        if (entryContent.revisionsMode === RevisionsMode.Opened) {
+            await dispatch(
+                loadRevisions({
+                    entryId: entry?.entryId ?? '',
+                    page: 0,
+                }),
+            );
+        }
+    };
+}
+
 export function setPageData({
     entryId,
     workbookId,
@@ -71,21 +90,29 @@ export function setPageData({
         dispatch(setPageLoading({pageLoading: true}));
         const groupedConnectors = await api.fetchConnectors();
         const flattenConnectors = getFlattenConnectors(groupedConnectors);
-        const {
-            connections: {checkData, form, validationErrors},
-            entryContent,
-        } = getState();
+        const {checkData, form, validationErrors} = getState().connections;
         let entry: GetEntryResponse | undefined;
         let entryError: DataLensApiError | undefined;
         let connectionData: ConnectionData | undefined;
         let connectionError: DataLensApiError | undefined;
+        let revId: string | undefined;
+        let isRevisionsSupported: boolean | undefined;
 
         if (entryId) {
             ({entry, error: entryError} = await api.fetchEntry(entryId));
+            const connector = getConnItemByType({
+                connectors: flattenConnectors,
+                type: entry?.type ?? '',
+            });
+            const isRevisionsEnabled = isEnabledFeature(Feature.EnableConnectionRevisions);
+            isRevisionsSupported = connector?.history && isRevisionsEnabled;
+            if (isRevisionsSupported) {
+                revId = rev_id;
+            }
             ({connectionData, error: connectionError} = await api.fetchConnectionData(
                 entryId,
                 entry?.workbookId ?? null,
-                rev_id,
+                revId,
             ));
         }
 
@@ -94,18 +121,9 @@ export function setPageData({
             entry = getFakeEntry(workbookId);
         }
 
-        const updateAfterSave = !initialSet && entry?.publishedId === entry?.revId && !rev_id;
-        if (updateAfterSave && entry) {
-            dispatch(setEntryContent(entry));
-
-            if (entryContent.revisionsMode === RevisionsMode.Opened) {
-                await dispatch(
-                    loadRevisions({
-                        entryId: entry?.entryId ?? '',
-                        page: 0,
-                    }),
-                );
-            }
+        const updateAfterSave = !initialSet && entry?.publishedId === entry?.revId && !revId;
+        if (updateAfterSave && entry && isRevisionsSupported) {
+            await dispatch(updateRevisions(entry));
         }
 
         batch(() => {
@@ -113,7 +131,7 @@ export function setPageData({
             dispatch(setFlattenConnectors({flattenConnectors}));
             dispatch(
                 setEntry({
-                    entry: {...entry, revId: rev_id ?? entry?.publishedId ?? ''},
+                    entry: {...entry, revId: revId ?? entry?.publishedId ?? ''},
                     error: entryError,
                 }),
             );
@@ -381,9 +399,9 @@ export function createConnection(args: {name: string; dirPath?: string; workbook
     };
 }
 
-export function updateConnection() {
+export function _updateConnection(updateRevisionsList: boolean) {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
-        const {form, innerForm, schema, connectionData} = getState().connections;
+        const {form, innerForm, schema, connectionData, entry} = getState().connections;
 
         if (!schema || !schema.apiSchema?.edit) {
             logger.logError(
@@ -421,11 +439,19 @@ export function updateConnection() {
             connectionData.id as string,
             connectionData.db_type as string,
         );
+        let updatedEntry: GetEntryResponse | undefined;
+        if (!error && entry?.entryId && updateRevisionsList) {
+            const response = await api.fetchEntry(entry.entryId);
+            updatedEntry = response.entry;
+        }
         batch(() => {
             if (error) {
                 flow([showToast, dispatch])({title: i18n('toast_modify-connection-error'), error});
             } else {
                 flow([setInitialForm, dispatch])({updates: form});
+                if (updatedEntry) {
+                    flow([updateRevisions, dispatch])(updatedEntry);
+                }
             }
 
             flow([setSubmitLoading, dispatch])({loading: false});
@@ -433,16 +459,29 @@ export function updateConnection() {
     };
 }
 
-export function setActualConnection() {
-    return async (dispatch: ConnectionsReduxDispatch) => {
-        await dispatch(updateConnection());
+export function updateConnection() {
+    return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
+        const {
+            connections: {flattenConnectors, entry},
+        } = getState();
+        const connector = getConnItemByType({
+            connectors: flattenConnectors,
+            type: entry?.type ?? '',
+        });
+        const isRevisionsEnabled = isEnabledFeature(Feature.EnableConnectionRevisions);
+        const isRevisionsSupported = Boolean(connector?.history && isRevisionsEnabled);
 
         const searchParams = new URLSearchParams(location.search);
+        const isRevIdExists = Boolean(searchParams.get(URL_QUERY.REV_ID));
         searchParams.delete(URL_QUERY.REV_ID);
-        history.push({
-            ...location,
-            search: `?${searchParams.toString()}`,
-        });
+        await dispatch(_updateConnection(!isRevIdExists && isRevisionsSupported));
+
+        if (isRevisionsSupported) {
+            history.push({
+                ...location,
+                search: `?${searchParams.toString()}`,
+            });
+        }
     };
 }
 

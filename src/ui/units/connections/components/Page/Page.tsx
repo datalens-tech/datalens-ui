@@ -14,6 +14,8 @@ import {bindActionCreators} from 'redux';
 import {type ConnectorType, Feature} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {PageTitle, SlugifyUrl, URL_QUERY, Utils} from 'ui';
+import type {FilterEntryContextMenuItems} from 'ui/components/EntryContextMenu';
+import {ENTRY_CONTEXT_MENU_ACTION} from 'ui/components/EntryContextMenu';
 import {registry} from 'ui/registry';
 import {
     openDialogErrorWithTabs,
@@ -32,9 +34,9 @@ import {
     getConnectionData,
     getConnectorSchema,
     getConnectors,
-    setActualConnection,
     setInitialState,
     setPageData,
+    updateConnection,
 } from '../../store';
 import {getConnItemByType} from '../../utils';
 
@@ -143,10 +145,13 @@ const PageComponent = (props: PageProps) => {
     const listPageOpened = isListPageOpened(location.pathname);
     const s3BasedFormOpened = isS3BasedConnForm(connectionData, type);
     const currentSearchParams = new URLSearchParams(location.search);
-    const revId = currentSearchParams.get(URL_QUERY.REV_ID) ?? undefined;
 
+    const isRevisionsEnabled = isEnabledFeature(Feature.EnableConnectionRevisions);
     const isExportSettingsFeatureEnabled = isEnabledFeature(Feature.EnableExportSettings);
     const isDescriptionEnabled = isEnabledFeature(Feature.EnableConnectionDescription);
+
+    const revisionsSupported = connector?.history && isRevisionsEnabled;
+    const revId = currentSearchParams.get(URL_QUERY.REV_ID) ?? undefined;
 
     const showSettings = !connector?.backend_driven_form;
     let isShowCreateButtons = true;
@@ -176,6 +181,29 @@ const PageComponent = (props: PageProps) => {
         });
         setIsFirstRender(false);
     }, [actions, extractedEntryId, workbookId, revId]);
+
+    const setActualVersion = React.useMemo(
+        () =>
+            revisionsSupported
+                ? () => {
+                      actions.openDialogSaveDraftChartAsActualConfirm({
+                          onApply: () => {
+                              actions.updateConnection();
+                          },
+                      });
+                  }
+                : undefined,
+        [revisionsSupported, actions],
+    );
+
+    const filterEntryContextMenuItems: FilterEntryContextMenuItems | undefined = React.useMemo(
+        () =>
+            revisionsSupported
+                ? undefined
+                : ({items}) =>
+                      items.filter((item) => item.id !== ENTRY_CONTEXT_MENU_ACTION.REVISIONS),
+        [revisionsSupported],
+    );
 
     return (
         <React.Fragment>
@@ -211,13 +239,8 @@ const PageComponent = (props: PageProps) => {
                                 />
                             ),
                         ]}
-                        setActualVersion={() => {
-                            actions.openDialogSaveDraftChartAsActualConfirm({
-                                onApply: () => {
-                                    actions.setActualConnection();
-                                },
-                            });
-                        }}
+                        setActualVersion={setActualVersion}
+                        filterEntryContextMenuItems={filterEntryContextMenuItems}
                     />
                 )}
                 {loading || !entry ? (
@@ -263,7 +286,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
                 getConnectorSchema,
                 openDialogErrorWithTabs,
                 openDialogSaveDraftChartAsActualConfirm,
-                setActualConnection,
+                updateConnection,
             },
             dispatch,
         ),
