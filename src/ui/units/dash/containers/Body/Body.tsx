@@ -487,7 +487,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                 return updatedResult;
             }
 
-            return this._memoizedPropertiesCache.get(id);
+            return cachedResult;
         };
     };
 
