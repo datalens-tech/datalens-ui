@@ -476,9 +476,10 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             const cachedResult = this._memoizedPropertiesCache.get(id);
 
             if (!isEqual(cachedResult, updatedResult) || !cachedResult) {
-                if (props?.margin[1] !== DEFAULT_DASH_MARGINS[1]) {
+                if (updatedResult.margin && updatedResult.margin[1] !== DEFAULT_DASH_MARGINS[1]) {
                     updatedResult.rowHeight =
-                        (MIN_AUTO_HEIGHT_PX - props.margin[1] * (MIN_AUTO_HEIGHT_ROWS - 1)) /
+                        (MIN_AUTO_HEIGHT_PX -
+                            updatedResult.margin[1] * (MIN_AUTO_HEIGHT_ROWS - 1)) /
                         MIN_AUTO_HEIGHT_ROWS;
                 }
 
