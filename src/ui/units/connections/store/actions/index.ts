@@ -264,18 +264,24 @@ export function getConnectorSchema(type: ConnectorType) {
     };
 }
 
-export function getConnectionData() {
+export function getConnectionData(revId?: string) {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
-        const {entry} = getState().connections;
+        const {entry, flattenConnectors} = getState().connections;
 
         if (!entry) {
             return;
         }
-
+        const isRevisionsEnabled = isEnabledFeature(Feature.EnableConnectionRevisions);
+        const connector = getConnItemByType({
+            connectors: flattenConnectors,
+            type: entry?.type ?? '',
+        });
+        const isRevisionsSupported = connector?.history && isRevisionsEnabled;
         dispatch(setPageLoading({pageLoading: true}));
         const {connectionData, error} = await api.fetchConnectionData(
             entry.entryId,
             entry?.workbookId,
+            isRevisionsSupported ? revId : undefined,
         );
 
         batch(() => {

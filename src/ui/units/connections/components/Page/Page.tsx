@@ -59,15 +59,28 @@ type PageProps = DispatchProps &
 
 type PageContentProps = Omit<DispatchState, 'entry' | 'loading'> & {
     type: ConnectorType;
-    getConnectionData: () => void;
+    getConnectionData: (revId?: string) => void;
     getConnectors: () => void;
     getConnectorSchema: (type: ConnectorType) => void;
     openDialogErrorWithTabs: typeof openDialogErrorWithTabs;
+    revId?: string;
 };
 
 const PageContent = (props: PageContentProps) => {
-    const {type, apiErrors, flattenConnectors, groupedConnectors, connectionData} = props;
+    const {
+        type,
+        apiErrors,
+        flattenConnectors,
+        groupedConnectors,
+        connectionData,
+        revId,
+        getConnectionData,
+    } = props;
     const {error, scope, details} = useApiErrors({apiErrors});
+    const getConnectionDataHandler = React.useCallback(
+        () => getConnectionData(revId),
+        [revId, getConnectionData],
+    );
 
     if (error) {
         let handler: NonNullable<ErrorViewProps['action']>['handler'];
@@ -78,7 +91,7 @@ const PageContent = (props: PageContentProps) => {
                 if (details.includes('platform-permission-required')) {
                     content = (
                         <div style={{display: 'flex', columnGap: 10, marginTop: 20}}>
-                            <Button view="action" onClick={props.getConnectionData}>
+                            <Button view="action" onClick={getConnectionDataHandler}>
                                 {i18n('button_retry')}
                             </Button>
                             <Button
@@ -95,7 +108,7 @@ const PageContent = (props: PageContentProps) => {
                         </div>
                     );
                 } else {
-                    handler = props.getConnectionData;
+                    handler = getConnectionDataHandler;
                 }
                 break;
             }
@@ -256,6 +269,7 @@ const PageComponent = (props: PageProps) => {
                         getConnectors={actions.getConnectors}
                         getConnectorSchema={actions.getConnectorSchema}
                         openDialogErrorWithTabs={actions.openDialogErrorWithTabs}
+                        revId={revId}
                     />
                 )}
             </div>
