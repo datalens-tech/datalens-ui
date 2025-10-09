@@ -36,6 +36,7 @@ import PaletteEditor from 'libs/DatalensChartkit/components/Palette/PaletteEdito
 import logger from 'libs/logger';
 import {getSdk} from 'libs/schematic-sdk';
 import debounce from 'lodash/debounce';
+import isEqual from 'lodash/isEqual';
 import {createPortal} from 'react-dom';
 import type {ResolveThunks} from 'react-redux';
 import {connect} from 'react-redux';
@@ -463,17 +464,23 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
 
     getPropertiesWithResizeHandles = (
         id: string,
-        extendedProps: Partial<DashKitGroup['gridProperties']> | undefined = {},
+        extendedProps: Partial<ReactGridLayoutProps> | undefined = {},
     ) => {
         return (props: ReactGridLayoutProps) => {
-            const updatedResult: ReactGridLayoutProps = {...props, ...extendedProps};
-            if (
-                (props.margin && props.margin[1] !== DEFAULT_DASH_MARGINS[1]) ||
-                !this._memoizedPropertiesCache.has(id)
-            ) {
-                updatedResult.rowHeight =
-                    (MIN_AUTO_HEIGHT_PX - props.margin[1] * (MIN_AUTO_HEIGHT_ROWS - 1)) /
-                    MIN_AUTO_HEIGHT_ROWS;
+            const updatedResult: ReactGridLayoutProps = {
+                ...props,
+                ...extendedProps,
+                resizeHandles: ['sw', 'se'],
+            };
+
+            const cachedResult = this._memoizedPropertiesCache.get(id);
+
+            if (!isEqual(cachedResult, updatedResult) || !cachedResult) {
+                if (props?.margin[1] !== DEFAULT_DASH_MARGINS[1]) {
+                    updatedResult.rowHeight =
+                        (MIN_AUTO_HEIGHT_PX - props.margin[1] * (MIN_AUTO_HEIGHT_ROWS - 1)) /
+                        MIN_AUTO_HEIGHT_ROWS;
+                }
 
                 this._memoizedPropertiesCache.set(id, updatedResult);
 
