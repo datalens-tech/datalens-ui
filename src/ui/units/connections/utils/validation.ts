@@ -11,6 +11,7 @@ export const getValidationError = (fieldKey: string, errors: ValidationError[] =
 
 export const getErrorMessage = (type?: ValidationErrorType) => {
     switch (type) {
+        case ValidationErrorType.Optionality:
         case ValidationErrorType.Required: {
             return i18n('label_error-empty-field');
         }

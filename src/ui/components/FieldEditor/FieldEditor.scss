@@ -1,4 +1,7 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
 .dl-field-editor {
+    $class: &;
     $docPaddingSide: 24px;
     $controlsPaddingSide: 32px;
 
@@ -14,35 +17,48 @@
 
     &__dialog_additional-panel-open {
         padding-right: 330px;
+
+        /** hotfix clip-path for additional panel */
+        & .g-modal__content {
+            clip-path: none;
+        }
     }
 
     &__settings {
         display: flex;
         align-items: center;
-        padding: 5px $controlsPaddingSide 20px;
+        padding: 0 $controlsPaddingSide 20px;
         border-bottom: 1px solid var(--g-color-line-generic);
     }
 
     &__settings-field-name {
-        height: 28px;
         width: 300px;
     }
 
-    &__settings-switcher {
-        height: 28px;
-        margin-left: 15px;
+    &__settings-name {
+        height: 36px;
+        width: 334px;
     }
 
-    &__settings-checkbox {
-        display: flex;
-        align-items: center;
-        flex: 0 0 180px;
-        height: 28px;
-        margin-left: 15px;
+    #{$class}__settings-field-name-input {
+        @include text-subheader-3();
+    }
+
+    &__settings-field-name-icon {
+        color: var(--g-color-text-secondary);
+        margin-left: 6px;
     }
 
     &__settings-buttons-container {
         margin-left: auto;
+    }
+
+    &__hide-in-wizard-button {
+        margin-right: 8px;
+
+        &_last {
+            margin-right: 0;
+        }
     }
 
     &__content {

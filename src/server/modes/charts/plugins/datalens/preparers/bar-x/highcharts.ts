@@ -18,13 +18,11 @@ import {
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getFieldExportingOptions} from '../../utils/export-helpers';
 import {isLegendEnabled, isNumericalDataType} from '../../utils/misc-helpers';
-import {addAxisFormatter, addAxisFormatting, getAxisFormatting} from '../helpers/axis';
-import {
-    getHighchartsColorAxis,
-    isXAxisReversed,
-    shouldUseGradientLegend,
-} from '../helpers/highcharts';
+import {addAxisFormatter, addAxisFormatting} from '../helpers/axis';
+import {getAxisChartkitFormatting} from '../helpers/axis/get-axis-formatting';
+import {getHighchartsColorAxis, isXAxisReversed} from '../helpers/highcharts';
 import {getYPlaceholders} from '../helpers/layers';
+import {shouldUseGradientLegend} from '../helpers/legend';
 import {getSegmentMap} from '../helpers/segments';
 import {getSegmentsYAxis} from '../line/helpers';
 import type {PrepareFunctionArgs} from '../types';
@@ -101,7 +99,7 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
 
             const formatMode = layerYPlaceholder?.settings?.axisFormatMode;
             if (formatMode && formatMode !== AxisLabelFormatMode.Auto && !isSegmentsExists) {
-                const formatting = getAxisFormatting(layerYPlaceholder, visualizationId);
+                const formatting = getAxisChartkitFormatting(layerYPlaceholder, visualizationId);
                 if (formatting) {
                     customConfig.axesFormatting.yAxis.push(formatting);
                 }
@@ -204,32 +202,30 @@ export function prepareHighchartsBarX(args: PrepareFunctionArgs) {
                 customConfig.yAxis = yAxisSettings;
                 customConfig.axesFormatting.yAxis = yAxisFormattings;
             }
-        } else {
-            if (xIsDate || xIsNumber) {
-                customConfig.xAxis.reversed = isXAxisReversed(
-                    x,
-                    sort,
-                    visualizationId as WizardVisualizationId,
-                );
+        } else if (xIsDate || xIsNumber) {
+            customConfig.xAxis.reversed = isXAxisReversed(
+                x,
+                sort,
+                visualizationId as WizardVisualizationId,
+            );
 
-                const wizardXAxisFormatter =
-                    isXDiscrete && xIsDate ? ChartkitHandlers.WizardXAxisFormatter : undefined;
+            const wizardXAxisFormatter =
+                isXDiscrete && xIsDate ? ChartkitHandlers.WizardXAxisFormatter : undefined;
 
-                if (xIsDate) {
-                    if (!isXDiscrete) {
-                        customConfig.xAxis.type = 'datetime';
-                    }
-                } else if (!xIsFloat) {
-                    customConfig.xAxis.type = 'category';
+            if (xIsDate) {
+                if (!isXDiscrete) {
+                    customConfig.xAxis.type = 'datetime';
                 }
-
-                addAxisFormatter({
-                    axisConfig: customConfig.xAxis,
-                    placeholder: xPlaceholder,
-                    otherwiseFormatter: wizardXAxisFormatter,
-                    chartConfig,
-                });
+            } else if (!xIsFloat) {
+                customConfig.xAxis.type = 'category';
             }
+
+            addAxisFormatter({
+                axisConfig: customConfig.xAxis,
+                placeholder: xPlaceholder,
+                otherwiseFormatter: wizardXAxisFormatter,
+                chartConfig,
+            });
         }
 
         ChartEditor.updateHighchartsConfig(customConfig);

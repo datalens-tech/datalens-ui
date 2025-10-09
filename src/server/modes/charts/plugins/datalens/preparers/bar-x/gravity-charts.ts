@@ -25,7 +25,8 @@ import {getFormattedLabel} from '../../gravity-charts/utils/dataLabels';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
-import {getAxisType} from '../helpers/axis';
+import {getAxisFormatting, getAxisType} from '../helpers/axis';
+import {shouldUseGradientLegend} from '../helpers/legend';
 import type {PrepareFunctionArgs} from '../types';
 
 import {prepareBarX} from './prepare-bar-x';
@@ -35,6 +36,7 @@ type OldBarXDataItem = {
     x?: number;
     label?: string | number;
     custom?: any;
+    color?: string;
 } | null;
 
 type ExtendedBaXrSeriesData = Omit<BarXSeriesData, 'x'> & {
@@ -49,6 +51,7 @@ type ExtendedBarXSeries = Omit<BarXSeries, 'data'> & {
     data: ExtendedBaXrSeriesData[];
 };
 
+// eslint-disable-next-line complexity
 export function prepareD3BarX(args: PrepareFunctionArgs) {
     const {
         shared,
@@ -57,6 +60,8 @@ export function prepareD3BarX(args: PrepareFunctionArgs) {
         disableDefaultSorting = false,
         idToDataType,
         colors,
+        colorsConfig,
+        visualizationId,
     } = args;
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xField: ServerField | undefined = xPlaceholder?.items?.[0];
@@ -119,6 +124,7 @@ export function prepareD3BarX(args: PrepareFunctionArgs) {
                     const dataItem: ExtendedBaXrSeriesData = {
                         y: item?.y || 0,
                         custom: item?.custom,
+                        color: item?.color,
                     };
 
                     if (isDataLabelsEnabled) {
@@ -155,7 +161,17 @@ export function prepareD3BarX(args: PrepareFunctionArgs) {
     });
 
     let legend: ChartData['legend'];
-    if (seriesData.length <= 1) {
+    if (seriesData.length && shouldUseGradientLegend(colorItem, colorsConfig, shared)) {
+        legend = {
+            enabled: true,
+            type: 'continuous',
+            title: {text: getFakeTitleOrTitle(colorItem), style: {fontWeight: '500'}},
+            colorScale: {
+                colors: colorsConfig.gradientColors,
+                stops: colorsConfig.gradientColors.length === 2 ? [0, 1] : [0, 0.5, 1],
+            },
+        };
+    } else if (seriesData.length <= 1) {
         legend = {enabled: false};
     }
 
@@ -173,14 +189,38 @@ export function prepareD3BarX(args: PrepareFunctionArgs) {
         if (isNumberField(xField)) {
             xAxis.type = xPlaceholder?.settings?.type === 'logarithmic' ? 'logarithmic' : 'linear';
         }
+
+        const xAxisLabelNumberFormat = xPlaceholder
+            ? getAxisFormatting({
+                  placeholder: xPlaceholder,
+                  visualizationId,
+              })
+            : undefined;
+
+        if (xAxisLabelNumberFormat) {
+            xAxis.labels = {numberFormat: xAxisLabelNumberFormat};
+        }
     }
 
+    const axisLabelNumberFormat = yPlaceholder
+        ? getAxisFormatting({
+              placeholder: yPlaceholder,
+              visualizationId,
+          })
+        : undefined;
     const config: ChartData = {
         series: {
             data: seriesData as ChartSeries[],
         },
         legend,
         xAxis,
+        yAxis: [
+            {
+                labels: {
+                    numberFormat: axisLabelNumberFormat ?? undefined,
+                },
+            },
+        ],
     };
 
     if (yField) {

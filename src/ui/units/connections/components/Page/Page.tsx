@@ -39,7 +39,7 @@ import {
 import {getConnItemByType} from '../../utils';
 
 import ConnPanelActions from './ConnPanelActions';
-import {UnloadConfirmation} from './components';
+import {DescriptionButton, UnloadConfirmation} from './components';
 import {ConnSettings} from './components/ConnSettings';
 import {useApiErrors} from './useApiErrors';
 import {isListPageOpened, isS3BasedConnForm} from './utils';
@@ -146,6 +146,7 @@ const PageComponent = (props: PageProps) => {
     const revId = currentSearchParams.get(URL_QUERY.REV_ID) ?? undefined;
 
     const isExportSettingsFeatureEnabled = isEnabledFeature(Feature.EnableExportSettings);
+    const isDescriptionEnabled = isEnabledFeature(Feature.EnableConnectionDescription);
 
     const showSettings = !connector?.backend_driven_form;
     let isShowCreateButtons = true;
@@ -196,6 +197,9 @@ const PageComponent = (props: PageProps) => {
                                     key="additional-actions"
                                     connectionId={extractedEntryId}
                                 />
+                            ),
+                            isDescriptionEnabled && (
+                                <DescriptionButton isS3BasedConnForm={s3BasedFormOpened} />
                             ),
                             isShowCreateButtons && (
                                 <ConnPanelActions

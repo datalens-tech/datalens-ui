@@ -5,6 +5,7 @@ import {getGatewayControllers} from '@gravity-ui/gateway';
 import type {AppContext} from '@gravity-ui/nodekit';
 
 import type {ChartsEngine} from '../components/charts-engine';
+import type {PublicApiConfig} from '../components/public-api/types';
 import type {QLConnectionTypeMap} from '../modes/charts/plugins/ql/utils/connection';
 import {getConnectorToQlConnectionTypeMap} from '../modes/charts/plugins/ql/utils/connection';
 import type {GetLayoutConfig} from '../types/app-layout';
@@ -21,10 +22,12 @@ export const wrapperGetGatewayControllers = (
 ) => getGatewayControllers<SchemasByScope, AppContext, Request, Response>(schemasByScope, config);
 
 let gateway: ReturnType<typeof wrapperGetGatewayControllers>;
+let gatewaySchemasByScope: SchemasByScope;
 let getLayoutConfig: GetLayoutConfig | undefined;
 let yfmPlugins: MarkdownItPluginCb[];
 let getXlsxConverter: XlsxConverterFn | undefined;
 let qLConnectionTypeMap: QLConnectionTypeMap | undefined;
+let publicApiConfig: PublicApiConfig<SchemasByScope> | undefined;
 
 export const registry = {
     common: commonRegistry,
@@ -60,6 +63,7 @@ export const registry = {
             throw new Error('The method must not be called more than once');
         }
         gateway = wrapperGetGatewayControllers(schemasByScope, config);
+        gatewaySchemasByScope = schemasByScope;
     },
     getGatewayController() {
         if (!gateway) {
@@ -76,6 +80,13 @@ export const registry = {
         return {gatewayApi: gateway.api} as {
             gatewayApi: ApiWithRoot<TSchema, Request['ctx'], Request, Response>;
         };
+    },
+    getGatewaySchemasByScope() {
+        if (!gatewaySchemasByScope) {
+            throw new Error('First of all setup the gateway');
+        }
+
+        return gatewaySchemasByScope;
     },
     registerGetLayoutConfig(fn: GetLayoutConfig) {
         if (getLayoutConfig) {
@@ -116,5 +127,18 @@ export const registry = {
     },
     getQLConnectionTypeMap() {
         return qLConnectionTypeMap ?? getConnectorToQlConnectionTypeMap();
+    },
+    setupPublicApiConfig<TSchema extends SchemasByScope>(config: PublicApiConfig<TSchema>) {
+        if (publicApiConfig) {
+            throw new Error('The method must not be called more than once [setupPublicApiConfig]');
+        }
+        publicApiConfig = config as PublicApiConfig<SchemasByScope>;
+    },
+    getPublicApiConfig() {
+        if (!publicApiConfig) {
+            throw new Error('First of all setup the publicApiConfig');
+        }
+
+        return publicApiConfig;
     },
 };

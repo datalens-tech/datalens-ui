@@ -54,6 +54,7 @@ import {
     SET_CURRENT_TAB,
     SET_DATASET_REVISION_MISMATCH,
     SET_DATA_EXPORT_ENABLED,
+    SET_DESCRIPTION,
     SET_EDIT_HISTORY_STATE,
     SET_FREEFORM_SOURCES,
     SET_INITIAL_SOURCES,
@@ -1392,6 +1393,16 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
             return {
                 ...state,
                 updates: [...state.updates, ...updates],
+            };
+        }
+        // TODO: Will be fixed in CHARTS-11898
+        case SET_DESCRIPTION: {
+            return {
+                ...state,
+                content: {
+                    ...state.content,
+                    description: action.payload,
+                },
             };
         }
         default: {

@@ -177,27 +177,26 @@ export const getEditMenuItem = ({
 export const getOpenAsTableMenuItem = ({
     chartsDataProvider,
     customConfig,
-    extraOptions,
 }: {
     chartsDataProvider: ChartKitDataProvider;
     customConfig?: Partial<MenuItemConfig>;
-    extraOptions?: Record<string, unknown>;
 }): MenuItemConfig => ({
     id: MenuItemsIds.OPEN_AS_TABLE,
     get title() {
         return customConfig?.title || i18n('chartkit.menu', 'open-as-table');
     },
     icon: customConfig?.icon || <Icon data={LayoutCells} size={ICONS_MENU_DEFAULT_SIZE} />,
-    isVisible: ({loadedData, error}: MenuItemArgs) => {
+    isVisible: (args: MenuItemArgs) => {
+        const {loadedData, error} = args;
+        const customIsVisible = customConfig?.isVisible?.(args) ?? true;
         const isExportAllowed =
-            !loadedData?.extra.dataExportForbidden &&
-            !isExportItemDisabled({extraOptions: extraOptions});
+            !loadedData?.extra.dataExportForbidden && !isExportItemDisabled()(args);
         const isCriticalError = error && !error?.extra?.rowsExceededLimit;
         const isChart =
             loadedData?.data &&
             ([WidgetKind.Graph, WidgetKind.GravityCharts] as string[]).includes(loadedData?.type);
 
-        return Boolean(!isCriticalError && isExportAllowed && isChart);
+        return Boolean(!isCriticalError && isExportAllowed && isChart && customIsVisible);
     },
     action:
         customConfig?.action ||

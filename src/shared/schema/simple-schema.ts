@@ -1,6 +1,5 @@
 import {getTypedApiFactory} from '@gravity-ui/gateway';
 
-import type {anonymousSimpleSchema} from './anonymous-schema/simple-schema';
 import auth from './auth';
 import type {authSimpleSchema} from './auth-schema/simple-schema';
 import bi from './bi';
@@ -24,7 +23,6 @@ export const simpleSchema = {
 export const getTypedApi = getTypedApiFactory<{
     root: typeof simpleSchema;
     auth: typeof authSimpleSchema;
-    anonymous: typeof anonymousSimpleSchema;
 }>();
 
 export type TypedApi = ReturnType<typeof getTypedApi>;

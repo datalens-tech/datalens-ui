@@ -19,9 +19,13 @@ import {useClearReloadedQuery} from '../units/auth/hooks/useClearReloadedQuery';
 import {reducer} from 'ui/units/auth/store/reducers';
 import {useIframeRender} from './hooks';
 import {OPEN_SOURCE_INSTALLATION_INFO} from 'ui/constants/navigation';
+import {chartkitApi} from 'ui/store/toolkit/chartkit/api';
 
 reducerRegistry.register(coreReducers);
 reducerRegistry.register({auth: reducer});
+reducerRegistry.register({chartkitApi: chartkitApi.reducer});
+
+reducerRegistry.registerMiddleware(chartkitApi.middleware);
 
 const DatasetPage = React.lazy(() => import('./pages/DatasetPage/DatasetPage'));
 const PreviewPage = React.lazy(() => import('./pages/PreviewPage/PreviewPage'));
@@ -135,7 +139,7 @@ const DatalensPage: React.FC = () => {
         return (
             <AsideHeaderAdapter
                 renderContent={() => <DatalensPageView />}
-                installationInfo={OPEN_SOURCE_INSTALLATION_INFO}
+                logoTextProps={{installationInfo: OPEN_SOURCE_INSTALLATION_INFO}}
             />
         );
     }

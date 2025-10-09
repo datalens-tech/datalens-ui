@@ -50,8 +50,8 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
 
     --dl-color-text-workbook-icon: var(--g-color-text-dark-primary);
 
-    --dl-viz-icon-main-color: #1a82e3;
-    --dl-viz-icon-secondary-color: #fc4f51;
+    --dl-viz-icon-main-color: #3d97f2;
+    --dl-viz-icon-secondary-color: #ff6a59;
 
     &_theme_light {
         --ds-color-relation-line: #d9d9d9;
@@ -111,12 +111,5 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
         --dl-color-ymap-background: transparent;
         --dl-filter-zoom-control: invert(1);
         --dl-color-fixed-header-background: var(--g-color-base-background);
-    }
-}
-
-.dl-root {
-    &_new-palette {
-        --dl-viz-icon-main-color: #3d97f2;
-        --dl-viz-icon-secondary-color: #ff6a59;
     }
 }

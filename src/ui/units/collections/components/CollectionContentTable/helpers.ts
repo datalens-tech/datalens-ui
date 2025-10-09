@@ -4,12 +4,12 @@ import {Feature} from 'shared/types';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 export const getItemParams = (item: CollectionWithPermissions | WorkbookWithPermissions) => {
-    const isDisabled =
-        isEnabledFeature(Feature.EnableExportWorkbookFile) &&
-        'status' in item &&
-        (item.status === WORKBOOK_STATUS.CREATING || item.status === WORKBOOK_STATUS.DELETING);
+    const hasStatus = isEnabledFeature(Feature.EnableExportWorkbookFile) && 'status' in item;
 
-    const status = isDisabled ? item.status : null;
+    const isCreating = hasStatus && item.status === WORKBOOK_STATUS.CREATING;
+    const isDeleting = hasStatus && item.status === WORKBOOK_STATUS.DELETING;
 
-    return {status, isDisabled};
+    const status = hasStatus ? item.status : null;
+
+    return {status, isCreating, isDeleting};
 };

@@ -1,6 +1,7 @@
 import type {AppContext} from '@gravity-ui/nodekit';
 
 import type {
+    ApiV2DataExportField,
     ChartsInsight,
     DashWidgetConfig,
     EntryPublicAuthor,
@@ -64,7 +65,9 @@ export type ProcessorSuccessResponse = {
         chartsInsights?: ChartsInsight[];
         sideMarkdown?: string;
         exportFilename?: string;
+        colors?: string[];
     };
+    dataExport?: Record<string, ApiV2DataExportField | undefined>;
     timings: {};
     data?: {
         markdown?: string;

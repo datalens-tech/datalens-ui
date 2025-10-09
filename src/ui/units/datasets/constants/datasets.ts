@@ -28,3 +28,6 @@ export const mapYTClusterToConnId: Record<string, string> = {
 export const MANAGED_BY = {
     USER: 'user',
 };
+
+export const MIN_AVAILABLE_DATASET_REV_DATE = '2024-12-01T00:00:00.000Z';
+export const DATASET_DATE_AVAILABLE_FORMAT = 'DD.MM.YYYY';

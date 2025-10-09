@@ -44,7 +44,7 @@ const worker: WizardWorker = {
     },
 
     buildSources: async (args: BuildSourceArgs) => {
-        const {shared, params, actionParams, widgetConfig, userLang, palettes} = args;
+        const {shared, params, actionParams, widgetConfig, userLang, palettes, features} = args;
         const context = getChartApiContext({
             name: 'Sources',
             shared,
@@ -64,6 +64,7 @@ const worker: WizardWorker = {
                 ChartEditor: context.ChartEditor,
                 palettes,
                 qlConnectionTypeMap,
+                features,
             }),
             runtimeMetadata: context.__runtimeMetadata,
             logs: console.getLogs(),

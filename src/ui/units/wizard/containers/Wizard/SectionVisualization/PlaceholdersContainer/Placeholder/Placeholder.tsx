@@ -61,6 +61,7 @@ type Props = StateProps &
         disableAddField?: boolean;
         addFieldItems?: Field[];
         onAfterUpdate?: () => void;
+        addFieldDisableText?: string;
     };
 
 export type CustomPlaceholderAction = {
@@ -142,6 +143,7 @@ class PlaceholderComponent extends React.PureComponent<Props> {
             customPlaceholderActions,
             disableAddField,
             capacityErrorQa,
+            addFieldDisableText,
         } = this.props;
 
         const iconSize = iconProps.size || iconProps.width || PLACEHOLDER_DEFAULT_ICON_SIZE;
@@ -173,6 +175,7 @@ class PlaceholderComponent extends React.PureComponent<Props> {
                             checkAllowed={this.checkAllowed}
                             onUpdate={this.onPlaceholderUpdate}
                             transform={transform}
+                            disabledText={addFieldDisableText}
                         />
                     )}
                     {customPlaceholderActions?.map((action) => {

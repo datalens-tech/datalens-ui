@@ -4,6 +4,7 @@ import type {ChartKitLang, ChartKitProps, ChartKitRef} from '@gravity-ui/chartki
 import OpensourceChartKit, {settings} from '@gravity-ui/chartkit';
 import throttle from 'lodash/throttle';
 import {ErrorBoundary} from 'ui/components/ErrorBoundary/ErrorBoundary';
+import {useGetChartkitHolidaysAsyncQuery} from 'ui/store/toolkit';
 
 import {registry} from '../../../registry';
 import {ChartkitError} from '../components/ChartKitBase/components/ChartkitError/ChartkitError';
@@ -37,6 +38,8 @@ const ChartkitWidget = React.forwardRef<ChartKit | ChartKitRef | undefined, Char
             backgroundColor,
         } = props;
 
+        const {data: chartkitHolidays} = useGetChartkitHolidaysAsyncQuery();
+
         const chartkitType = React.useMemo(() => {
             const getChartkitType = registry.chart.functions.get('getChartkitType');
             return getChartkitType(loadedData);
@@ -44,17 +47,15 @@ const ChartkitWidget = React.forwardRef<ChartKit | ChartKitRef | undefined, Char
 
         const opensourceChartKitProps = React.useMemo(() => {
             const getFormatNumber = registry.common.functions.get('getFormatNumber');
-            const {getChartkitHolidays, getChartkitPlugins} = registry.chart.functions.getAll();
+            const {getChartkitPlugins} = registry.chart.functions.getAll();
 
             if (!chartkitType) {
                 return undefined;
             }
 
-            const holidays = getChartkitHolidays();
-
             settings.set({
                 plugins: getChartkitPlugins(),
-                extra: {holidays},
+                extra: {holidays: chartkitHolidays},
             });
 
             const additionalProps = getAdditionalProps({type: chartkitType, splitTooltip});
@@ -91,6 +92,8 @@ const ChartkitWidget = React.forwardRef<ChartKit | ChartKitRef | undefined, Char
             chartkitType,
             paneSplitOrientation,
             widgetDashState,
+            backgroundColor,
+            chartkitHolidays,
         ]);
 
         React.useEffect(() => {

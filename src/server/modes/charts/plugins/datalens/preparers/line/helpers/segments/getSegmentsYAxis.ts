@@ -5,7 +5,8 @@ import type {ServerField, ServerPlaceholder} from '../../../../../../../../../sh
 import {wrapHtml} from '../../../../../../../../../shared/utils/ui-sandbox';
 import type {AxisOptions} from '../../../../types';
 import {applyPlaceholderSettingsToAxis} from '../../../../utils/axis-helpers';
-import {addAxisFormatter, getAxisFormatting} from '../../../helpers/axis';
+import {addAxisFormatter} from '../../../helpers/axis';
+import {getAxisChartkitFormatting} from '../../../helpers/axis/get-axis-formatting';
 
 import type {SegmentsMap} from './types';
 
@@ -84,7 +85,7 @@ export const getSegmentsYAxis = (args: {
 
         const formatMode = placeholder?.settings?.axisFormatMode;
         if (formatMode && formatMode !== AxisLabelFormatMode.Auto) {
-            yAxisFormattings[yAxisIndex] = getAxisFormatting(placeholder, visualizationId);
+            yAxisFormattings[yAxisIndex] = getAxisChartkitFormatting(placeholder, visualizationId);
         }
     });
 

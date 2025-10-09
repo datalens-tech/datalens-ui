@@ -1,17 +1,16 @@
 import React, {useCallback, useRef} from 'react';
 
-import {Select, TextInput} from '@gravity-ui/uikit';
+import {TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import type {ColorPalette} from 'shared';
 import {DialogFieldBarsSettingsQa} from 'shared';
-import {SelectOptionWithIcon} from 'ui/components/SelectComponents';
+import {ColorPaletteSelect} from 'ui/components/ColorPaletteSelect/ColorPaletteSelect';
 import {useEnterClick} from 'ui/hooks/useEnterClick';
 import {PaletteTypes} from 'ui/units/wizard/constants';
-import {getPaletteSelectorItems} from 'ui/units/wizard/utils/palette';
 import {getPaletteColors} from 'ui/utils';
 
+import {PaletteItem} from '../../../../components/PaletteItem/PaletteItem';
 import {Palette} from '../Palette/Palette';
-import {PaletteItem} from '../Palette/components/PaletteItem/PaletteItem';
 
 import './MinifiedPalette.scss';
 
@@ -55,8 +54,6 @@ export const MinifiedPalette: React.FC<MinifiedPaletteProps> = (props: MinifiedP
 
     useEnterClick(paletteRef, handleEnterPress);
 
-    const options = getPaletteSelectorItems({colorPalettes});
-
     const colors = React.useMemo(
         () => getPaletteColors(palette, colorPalettes),
         [colorPalettes, palette],
@@ -64,19 +61,13 @@ export const MinifiedPalette: React.FC<MinifiedPaletteProps> = (props: MinifiedP
 
     return (
         <div className={b()} ref={paletteRef}>
-            <Select
-                qa={DialogFieldBarsSettingsQa.MinifiedPaletteSelector}
+            <ColorPaletteSelect
                 className={b('selector')}
-                popupClassName={b('selector-popup')}
-                onUpdate={([paletteId]) => onPaletteUpdate(paletteId)}
-                renderSelectedOption={(option) => {
-                    return <SelectOptionWithIcon option={option} />;
-                }}
-                renderOption={(option) => {
-                    return <SelectOptionWithIcon option={option} />;
-                }}
-                value={[palette]}
-                options={options}
+                qa={DialogFieldBarsSettingsQa.MinifiedPaletteSelector}
+                colorPalettes={colorPalettes}
+                onUpdate={([paletteId]) => onPaletteUpdate(paletteId ?? undefined)}
+                value={palette}
+                withAuto={true}
             />
             <Palette
                 paletteType={PaletteTypes.Colors}
