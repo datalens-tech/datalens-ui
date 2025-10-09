@@ -11,6 +11,7 @@ import {isValidRequiredValue} from 'ui/components/DashKit/plugins/Control/utils'
 import {DL} from 'ui/constants/common';
 import {addOperationForValue, unwrapFromArrayAndSkipOperation} from 'units/dash/modules/helpers';
 
+import {isActivityResultDataValid} from '../../../../utils/chart-activity';
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from '../../ChartKit/helpers/constants';
 import {wrapToArray} from '../../helpers/helpers';
 import {CLICK_ACTION_TYPE, CONTROL_TYPE} from '../../modules/constants/constants';
@@ -159,7 +160,13 @@ class Control<TProviderData> extends React.PureComponent<
         }
 
         const responseData = await this.props.runAction({...this.state.params, ...args});
-        this.props.onAction({data: get(responseData, 'data')});
+        const activityResultData = get(responseData, 'data');
+
+        if (isActivityResultDataValid(activityResultData)) {
+            this.props.onAction({data: activityResultData});
+        } else {
+            throw new Error('Invalid activity result format');
+        }
     }
 
     onChange(control: ActiveControl, value: SimpleControlValue, index: number) {

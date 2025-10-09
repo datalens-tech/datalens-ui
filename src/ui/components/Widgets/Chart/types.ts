@@ -223,6 +223,7 @@ export type ChartKitWrapperParams = {
     getControls: (params: StringParams) => void;
     paneSplitOrientation?: 'vertical' | 'horizontal';
     widgetDashState?: WidgetDashState;
+    runAction?: (args: StringParams) => Promise<unknown>;
 };
 
 export type ChartWidgetData =

@@ -22,7 +22,10 @@ type ChartProps = Pick<
     | 'paneSplitOrientation'
     | 'widgetDashState'
 > &
-    Pick<ChartKitWrapperParams, 'onLoad' | 'onChange' | 'onError' | 'onRetry'> &
+    Pick<
+        ChartKitWrapperParams,
+        'onLoad' | 'onChange' | 'onError' | 'onRetry' | 'runAction' | 'onAction'
+    > &
     Pick<ChartKitWrapperState, 'requestId'> &
     Pick<State, 'loadedData' | 'error'> &
     Pick<ChartKitProps<ChartKitType>, 'onRender' | 'onChartLoad' | 'renderPluginLoader'> & {
@@ -69,6 +72,8 @@ export const Chart = (props: ChartProps) => {
                 widgetDashState={props.widgetDashState}
                 rootNodeRef={props.rootNodeRef}
                 backgroundColor={props.backgroundColor}
+                runAction={props.runAction}
+                onAction={props.onAction}
             />
         );
     }

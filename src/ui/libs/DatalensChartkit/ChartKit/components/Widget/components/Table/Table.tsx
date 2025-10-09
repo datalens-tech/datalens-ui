@@ -210,6 +210,8 @@ export class Table extends React.PureComponent<TableProps, TableState> {
                 unresolvedParams,
             },
             onChange,
+            onAction,
+            runAction,
         } = this.props;
         // dynamicRender, highlightRows, sorting does not work properly if there is a group
         const isHasGroups = hasGroups(head);
@@ -230,6 +232,8 @@ export class Table extends React.PureComponent<TableProps, TableState> {
             context,
             tableWidth: this.tableWidth,
             onChange,
+            onAction,
+            runAction,
             tableRef: this.dataTableRef,
             actionParamsData,
         });
