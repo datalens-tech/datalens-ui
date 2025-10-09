@@ -5,7 +5,7 @@ import type {
     IllustrationName,
 } from '../../../../../components/Illustration/types';
 
-export type PlaceholderIllustrationImageProps = CreateIllustrationProps & {
+export type PlaceholderIllustrationImageProps = Omit<CreateIllustrationProps, 'name'> & {
     name: IllustrationName;
     size?: PlaceholderContainerProps['size'];
     className?: string;
