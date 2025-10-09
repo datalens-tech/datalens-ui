@@ -23,7 +23,7 @@ export function createIllustration(
     function Illustration({name, ...props}: IllustrationComponent) {
         const theme = useThemeType();
         const src = store[theme] && store[theme][name];
-        return <AsyncImage alt={name} src={src} showSkeleton={true} {...props} />;
+        return <AsyncImage alt={props.alt || name} src={src} {...props} />;
     }
 
     return Illustration;

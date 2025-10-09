@@ -1,9 +1,9 @@
-.placeholder-illustration {
+.created-illustration {
     $sizeS: 100px;
     $sizeM: 150px;
     $sizeL: 230px;
 
-    &__skeleton-image {
+    &__skeleton {
         &_size_s {
             height: $sizeS;
             width: $sizeS;
