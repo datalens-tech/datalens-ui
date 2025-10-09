@@ -14,6 +14,7 @@ import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import type {ChartsStats} from '../../../../../shared/types/charts';
 import type {ChartKitLoadSuccess} from '../../../../libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import type {ChartKitWrapperOnLoadProps} from '../../../../libs/DatalensChartkit/components/ChartKitBase/types';
+import {convertChartToTable} from '../../../../libs/DatalensChartkit/helpers/convert-data-to-table';
 import type {
     ChartsData,
     ResponseError,
@@ -39,6 +40,7 @@ import type {
     ChartContentProps,
     ChartWithProviderProps,
     ResolveWidgetControlDataRefArgs,
+    WidgetDataRef,
 } from '../types';
 
 export const COMPONENT_CLASSNAME = 'dl-widget';
@@ -122,12 +124,14 @@ export const getWidgetMeta = ({
     loadData,
     savedData,
     error,
+    widgetDataRef,
 }: {
     tabs: Array<CurrentTab>;
     id: string;
     loadData: LoadedWidgetData<ChartsData>;
     savedData: LoadedWidgetData<ChartsData>;
     error: CombinedError | null;
+    widgetDataRef?: WidgetDataRef;
 }) => {
     return tabs.map((tabWidget) => {
         let loadedData: WidgetLoadedData = null;
@@ -170,7 +174,11 @@ export const getWidgetMeta = ({
             isWizard: Boolean(loadedData?.isNewWizard || loadedData?.isOldWizard),
             isEditor: Boolean(loadedData?.isEditor),
             isQL: Boolean(loadedData?.isQL),
-            getLoadedData: () => loadedData,
+            getSimpleLoadedData: () =>
+                convertChartToTable({
+                    widget: widgetDataRef?.current,
+                    widgetData: loadedData as LoadedWidgetData<unknown>,
+                }) || loadedData,
         };
 
         return metaInfo;
@@ -222,7 +230,7 @@ export const getWidgetSelectorMeta = ({
             type: (loadedData?.type as DashTabItemType) || null,
             visualizationType: null,
             loadError: loadedWithError,
-            getLoadedData: () => loadedData,
+            getSimpleLoadedData: () => loadedData,
         };
 
     return metaInfo;
