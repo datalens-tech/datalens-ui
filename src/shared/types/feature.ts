@@ -99,6 +99,7 @@ export enum Feature {
     EnableConnectionRevisions = 'EnableConnectionRevisions',
 
     EnableMobileFixedHeader = 'EnableMobileFixedHeader',
+    EnableCommonChartDashSettings = 'EnableCommonChartDashSettings',
 }
 
 export type FeatureConfig = Record<string, boolean>;
