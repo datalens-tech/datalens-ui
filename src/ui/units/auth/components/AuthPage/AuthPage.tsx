@@ -3,7 +3,7 @@ import React from 'react';
 import {Flex, useThemeType} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
-import {Redirect, Route, Switch} from 'react-router-dom';
+import {Redirect, Route, Switch, useLocation} from 'react-router-dom';
 import {Feature} from 'shared';
 import {DL} from 'ui/constants';
 import {registry} from 'ui/registry';
@@ -27,41 +27,16 @@ const b = block('auth-page');
 
 export type AuthPageProps = {backgroundImage?: {light: string; dark: string}};
 
-const ContentWithBackground = ({
-    children,
-    backgroundImage,
-}: {
-    children: React.ReactNode;
-    backgroundImage: string;
-}) => {
-    const [backgroundImageLoaded, setBackgroundImageLoaded] = React.useState(false);
-
-    return (
-        <React.Fragment>
-            {isEnabledFeature(Feature.EnableDLRebranding) && (
-                <img
-                    className={b('background-image', {
-                        loaded: backgroundImageLoaded,
-                    })}
-                    src={backgroundImage}
-                    onLoad={() => setBackgroundImageLoaded(true)}
-                    aria-hidden="true"
-                />
-            )}
-
-            {children}
-        </React.Fragment>
-    );
-};
-
 export function AuthPage({backgroundImage}: AuthPageProps) {
     const dispatch = useDispatch();
     const authPageInited = useSelector(selectAuthPageInited);
 
     const theme = useThemeType();
+    const {pathname} = useLocation();
+
+    const [backgroundImageLoaded, setBackgroundImageLoaded] = React.useState(false);
 
     const {Signin} = registry.auth.components.getAll();
-
     useAuthPageInit();
 
     React.useEffect(() => {
@@ -79,33 +54,29 @@ export function AuthPage({backgroundImage}: AuthPageProps) {
     const currentDefaultImage = theme === 'dark' ? defaultBackgroundDark : defaultBackgroundLight;
     const currentImage = backgroundImage?.[theme] || currentDefaultImage;
 
+    const showBackgroundImage =
+        isEnabledFeature(Feature.EnableDLRebranding) &&
+        [AUTH_ROUTE.SIGNIN, AUTH_ROUTE.SIGNUP].includes(pathname);
+
     return (
         <Flex
             direction="column"
             height="100%"
             className={b({rebranding: isEnabledFeature(Feature.EnableDLRebranding), theme})}
         >
+            {showBackgroundImage && (
+                <img
+                    className={b('background-image', {
+                        loaded: backgroundImageLoaded,
+                    })}
+                    src={currentImage}
+                    onLoad={() => setBackgroundImageLoaded(true)}
+                    aria-hidden="true"
+                />
+            )}
             <Switch>
-                {needToSign && (
-                    <Route
-                        path={AUTH_ROUTE.SIGNIN}
-                        component={() => (
-                            <ContentWithBackground backgroundImage={currentImage}>
-                                <Signin />
-                            </ContentWithBackground>
-                        )}
-                    />
-                )}
-                {needToSign && (
-                    <Route
-                        path={AUTH_ROUTE.SIGNUP}
-                        component={() => (
-                            <ContentWithBackground backgroundImage={currentImage}>
-                                <Signup />
-                            </ContentWithBackground>
-                        )}
-                    />
-                )}
+                {needToSign && <Route path={AUTH_ROUTE.SIGNIN} component={Signin} />}
+                {needToSign && <Route path={AUTH_ROUTE.SIGNUP} component={Signup} />}
                 <Route path={AUTH_ROUTE.RELOAD} component={Reload} />
                 <Route path={AUTH_ROUTE.LOGOUT} component={Logout} />
                 <Redirect to="/" />
