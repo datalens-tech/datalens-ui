@@ -312,6 +312,12 @@ function dash(state = initialState, action) {
                 },
             });
 
+            // тут типа проверка, что если хотя бы один элемент глобальный, то мы убираем из items текущего таба этот item
+            // если хотя бы у одного элемента есть честное all - проходим по всем табам, иначе сначала собираем табы и проходим только по ним
+            // для каждого таба фильтруем группу, чтобы остались только соответствующие селекторы
+            // для каждого таба делаем reflowLayout
+            // в конце - обновляем все табы и добавляем item в globalItems
+
             // migration of connections if old selector becomes a group selector
             // 1. state.openedItemId existance means that widget already exist
             // 2. !action.payload.data.group[0].id - first selector doesn't have an id because it was just converted
@@ -358,6 +364,9 @@ function dash(state = initialState, action) {
                 ...state,
                 lastModifiedItemId: modifiedItem.i,
                 data: update(data, {
+                    globalItems: {
+                        []
+                    },
                     tabs: {
                         [tabIndex]: {$set: pick(tabData, TAB_PROPERTIES)},
                     },

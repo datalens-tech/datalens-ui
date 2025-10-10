@@ -1,4 +1,4 @@
-import type {ItemDropProps} from '@gravity-ui/dashkit';
+import type {ConfigItem, ItemDropProps} from '@gravity-ui/dashkit';
 
 import type {Operations} from '../modules';
 
@@ -93,6 +93,7 @@ export type DashSettings = {
 
 export interface DashData {
     counter: number;
+    globalItems?: ConfigItem[];
     tabs: DashTab[];
     salt: string;
     schemeVersion: number;

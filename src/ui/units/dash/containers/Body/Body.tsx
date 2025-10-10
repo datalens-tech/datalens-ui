@@ -1062,7 +1062,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
     }
 
     private getConfig = () => {
-        const {tabData} = this.props;
+        const {tabData, globalItems = []} = this.props;
         const tabDataConfig = tabData;
 
         if (!tabDataConfig || !DL.IS_MOBILE) {
@@ -1073,7 +1073,44 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
 
         if (!memoItems || memoItems.key !== tabDataConfig) {
             const layoutIndex: Record<string, number> = {};
-            const sortedItems = getGroupedItems(tabDataConfig.items, tabDataConfig.layout)
+            const filteredGlobalItems: DashTabItem[] = [];
+            if (globalItems.length > 0) {
+                globalItems.forEach((item) => {
+                    const defaultTabsScope =
+                        item.type === DashTabItemType.GroupControl
+                            ? item.group.tabsScope
+                            : item.tabsScope;
+
+                    if (item.type === DashTabItemType.GroupControl) {
+                        const acceptableItems = item.group.items.filter((item) => {
+                            if (
+                                !item.tabsScope &&
+                                (defaultTabsScope === 'all' ||
+                                    defaultTabsScope.includes(tabData.id))
+                            ) {
+                                return true;
+                            }
+                            return item.tabsScope.includes(tabData.id);
+                        });
+
+                        if (acceptableItems.length > 0) {
+                            filteredGlobalItems.push({
+                                ...item,
+                                group: {...item.group, items: acceptableItems},
+                            });
+                        }
+                    } else if (
+                        defaultTabsScope === 'all' ||
+                        defaultTabsScope.includes(tabData.id)
+                    ) {
+                        filteredGlobalItems.push(item);
+                    }
+                });
+            }
+            const sortedItems = getGroupedItems(
+                [...tabDataConfig.items, ...filteredGlobalItems],
+                tabDataConfig.layout,
+            )
                 .reduce((list, group) => {
                     group.forEach((item) => {
                         layoutIndex[item.id] = item.orderId;
@@ -1210,6 +1247,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                     )}
                     <DashKit
                         ref={this.dashKitRef}
+                        // нужно мерджить items и globalItems где-то здесь
                         config={tabDataConfig as DashKitProps['config']}
                         editMode={isEditMode}
                         focusable={true}
