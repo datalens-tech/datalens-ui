@@ -180,12 +180,25 @@ export const getWidgetMeta = ({
                     widget: widgetDataRef?.current,
                     widgetData: loadedData as LoadedWidgetData<unknown>,
                 });
+
+                let queries;
+
+                if (loadedData && 'sources' in loadedData) {
+                    const sources = loadedData.sources;
+                    const sourceValues = Object.values(sources);
+
+                    queries = sourceValues.map((source) => {
+                        return 'info' in source ? source?.info : '';
+                    });
+                }
+
                 // eslint-disable-next-line no-nested-ternary
-                return isEmpty(convertedToTableData)
+                const data = isEmpty(convertedToTableData)
                     ? ['metric2', 'metric', 'markup', 'markdown'].includes(loadedData?.type || '')
                         ? loadedData?.data
                         : loadedData
                     : convertedToTableData;
+                return {queries, data};
             },
         };
 
