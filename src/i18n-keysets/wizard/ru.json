@@ -288,6 +288,7 @@
   "label_type": "Тип",
   "label_type-preaggregated": "Тип (до агрегации)",
   "label_use-previous": "Использовать предыдущее",
+  "label_using-formula-warning": "К этому полю добавлена формула",
   "label_value": "Значение",
   "label_vertical": "Вертикальные",
   "label_violet": "Фиолетовый (оттенки)",
