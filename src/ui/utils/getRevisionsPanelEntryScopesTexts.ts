@@ -3,6 +3,10 @@ import {I18n} from 'i18n';
 const i18n = I18n.keyset('component.revisions-panel.view');
 
 const ENTRY_SCOPE_TEXTS = {
+    connection: {
+        scopeText: i18n('label_connection'),
+        panelText: i18n('label_of-connection'),
+    },
     dataset: {
         scopeText: i18n('label_dataset'),
         panelText: i18n('label_of-dataset'),

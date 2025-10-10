@@ -19,6 +19,7 @@ import {
 import {selectAsideHeaderData} from 'store/selectors/asideHeader';
 import {selectEntryContent, selectIsRevisionsOpened} from 'store/selectors/entryContent';
 import {RevisionsListMode, RevisionsMode} from 'store/typings/entryContent';
+import type {FilterEntryContextMenuItems} from 'ui/components/EntryContextMenu';
 import {DL} from 'ui/constants/common';
 import {registry} from 'ui/registry';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -61,6 +62,7 @@ type OwnProps = {
     style?: React.CSSProperties;
     expandablePanelDescription?: string;
     getRevisionRowExtendedProps?: GetRevisionRowExtendedProps;
+    filterEntryContextMenuItems?: FilterEntryContextMenuItems;
 };
 
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
@@ -162,6 +164,7 @@ class ActionPanel extends React.Component<Props, State> {
             style: externalStyle,
             expandablePanelDescription,
             getRevisionRowExtendedProps,
+            filterEntryContextMenuItems,
         } = this.props;
 
         const style: React.CSSProperties = {left: sidebarSize, ...externalStyle};
@@ -186,6 +189,7 @@ class ActionPanel extends React.Component<Props, State> {
                                 entry={entry}
                                 additionalEntryItems={additionalEntryItems}
                                 enablePublish={this.getEnablePublish()}
+                                filterEntryContextMenuItems={filterEntryContextMenuItems}
                             >
                                 {centerItems}
                             </EntryPanel>
