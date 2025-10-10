@@ -2,11 +2,9 @@ import {I18n} from 'i18n';
 import {flow} from 'lodash';
 import {batch} from 'react-redux';
 import type {ConnectionData, ConnectorType} from 'shared';
-import {Feature} from 'shared';
-import type {FormSchema, GetEntryResponse} from 'shared/schema/types';
+import type {ConnectorItem, FormSchema, GetEntryResponse} from 'shared/schema/types';
 import {URL_QUERY} from 'ui';
 import {registry} from 'ui/registry';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {isEntryAlreadyExists} from 'utils/errors/errorByCode';
 
 import logger from '../../../../libs/logger';
@@ -17,7 +15,7 @@ import type {DataLensApiError} from '../../../../typings';
 import {getWorkbookIdFromPathname} from '../../../../utils';
 import history from '../../../../utils/history';
 import {FieldKey, InnerFieldKey} from '../../constants';
-import {getConnItemByType} from '../../utils';
+import {getIsRevisionsSupported} from '../../utils';
 import {connectionIdSelector, newConnectionSelector} from '../selectors';
 import type {ConnectionsReduxDispatch, ConnectionsReduxState, GetState} from '../typings';
 import {
@@ -75,16 +73,62 @@ function updateRevisions(entry: GetEntryResponse) {
     };
 }
 
+interface GetConnectionDataRequestProps {
+    entry?: GetEntryResponse;
+    flattenConnectors: ConnectorItem[];
+    rev_id?: string;
+}
+export async function getConnectionDataRequest({
+    entry,
+    flattenConnectors,
+    rev_id,
+}: GetConnectionDataRequestProps) {
+    let revId: string | undefined;
+    let connectionData: ConnectionData | undefined;
+    let connectionError: DataLensApiError | undefined;
+
+    if (entry) {
+        const isRevisionsSupported = getIsRevisionsSupported({entry, flattenConnectors});
+        if (isRevisionsSupported) {
+            revId = rev_id;
+        }
+        ({connectionData, error: connectionError} = await api.fetchConnectionData(
+            entry.entryId,
+            entry?.workbookId ?? null,
+            revId,
+        ));
+    }
+    return {connectionData, connectionError};
+}
+
+export function setRevision(revId?: string) {
+    return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
+        dispatch(setPageLoading({pageLoading: true}));
+        const {
+            connections: {flattenConnectors, entry},
+        } = getState();
+        const {connectionData, connectionError} = await getConnectionDataRequest({
+            entry,
+            flattenConnectors,
+            rev_id: revId,
+        });
+        batch(() => {
+            dispatch(
+                setConectorData({connectionData: connectionData ?? {}, error: connectionError}),
+            );
+            dispatch(setPageLoading({pageLoading: false}));
+        });
+    };
+}
+
 export function setPageData({
     entryId,
     workbookId,
     rev_id,
-    initialSet,
 }: {
     entryId?: string | null;
     workbookId?: string;
     rev_id?: string;
-    initialSet?: boolean;
 }) {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
         dispatch(setPageLoading({pageLoading: true}));
@@ -95,25 +139,14 @@ export function setPageData({
         let entryError: DataLensApiError | undefined;
         let connectionData: ConnectionData | undefined;
         let connectionError: DataLensApiError | undefined;
-        let revId: string | undefined;
-        let isRevisionsSupported: boolean | undefined;
 
         if (entryId) {
             ({entry, error: entryError} = await api.fetchEntry(entryId));
-            const connector = getConnItemByType({
-                connectors: flattenConnectors,
-                type: entry?.type ?? '',
-            });
-            const isRevisionsEnabled = isEnabledFeature(Feature.EnableConnectionRevisions);
-            isRevisionsSupported = connector?.history && isRevisionsEnabled;
-            if (isRevisionsSupported) {
-                revId = rev_id;
-            }
-            ({connectionData, error: connectionError} = await api.fetchConnectionData(
-                entryId,
-                entry?.workbookId ?? null,
-                revId,
-            ));
+            ({connectionData, connectionError} = await getConnectionDataRequest({
+                entry,
+                flattenConnectors,
+                rev_id,
+            }));
         }
 
         if (!entry) {
@@ -121,17 +154,12 @@ export function setPageData({
             entry = getFakeEntry(workbookId);
         }
 
-        const updateAfterSave = !initialSet && entry?.publishedId === entry?.revId && !revId;
-        if (updateAfterSave && entry && isRevisionsSupported) {
-            await dispatch(updateRevisions(entry));
-        }
-
         batch(() => {
             dispatch(setGroupedConnectors({groupedConnectors}));
             dispatch(setFlattenConnectors({flattenConnectors}));
             dispatch(
                 setEntry({
-                    entry: {...entry, revId: revId ?? entry?.publishedId ?? ''},
+                    entry: {...entry, revId: rev_id ?? entry?.publishedId ?? ''},
                     error: entryError,
                 }),
             );
@@ -271,21 +299,17 @@ export function getConnectionData(revId?: string) {
         if (!entry) {
             return;
         }
-        const isRevisionsEnabled = isEnabledFeature(Feature.EnableConnectionRevisions);
-        const connector = getConnItemByType({
-            connectors: flattenConnectors,
-            type: entry?.type ?? '',
-        });
-        const isRevisionsSupported = connector?.history && isRevisionsEnabled;
         dispatch(setPageLoading({pageLoading: true}));
-        const {connectionData, error} = await api.fetchConnectionData(
-            entry.entryId,
-            entry?.workbookId,
-            isRevisionsSupported ? revId : undefined,
-        );
 
+        const {connectionData, connectionError} = await getConnectionDataRequest({
+            entry,
+            flattenConnectors,
+            rev_id: revId,
+        });
         batch(() => {
-            dispatch(setConectorData({connectionData, error}));
+            dispatch(
+                setConectorData({connectionData: connectionData ?? {}, error: connectionError}),
+            );
             dispatch(setPageLoading({pageLoading: false}));
         });
     };
@@ -405,7 +429,7 @@ export function createConnection(args: {name: string; dirPath?: string; workbook
     };
 }
 
-export function _updateConnection(updateRevisionsList: boolean) {
+export function _updateConnection() {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
         const {form, innerForm, schema, connectionData, entry} = getState().connections;
 
@@ -446,7 +470,7 @@ export function _updateConnection(updateRevisionsList: boolean) {
             connectionData.db_type as string,
         );
         let updatedEntry: GetEntryResponse | undefined;
-        if (!error && entry?.entryId && updateRevisionsList) {
+        if (!error && entry?.entryId) {
             const response = await api.fetchEntry(entry.entryId);
             updatedEntry = response.entry;
         }
@@ -470,17 +494,10 @@ export function updateConnection() {
         const {
             connections: {flattenConnectors, entry},
         } = getState();
-        const connector = getConnItemByType({
-            connectors: flattenConnectors,
-            type: entry?.type ?? '',
-        });
-        const isRevisionsEnabled = isEnabledFeature(Feature.EnableConnectionRevisions);
-        const isRevisionsSupported = Boolean(connector?.history && isRevisionsEnabled);
-
+        const isRevisionsSupported = getIsRevisionsSupported({entry, flattenConnectors});
         const searchParams = new URLSearchParams(location.search);
-        const isRevIdExists = Boolean(searchParams.get(URL_QUERY.REV_ID));
         searchParams.delete(URL_QUERY.REV_ID);
-        await dispatch(_updateConnection(!isRevIdExists && isRevisionsSupported));
+        await dispatch(_updateConnection());
 
         if (isRevisionsSupported) {
             history.push({

@@ -36,6 +36,7 @@ import {
     getConnectors,
     setInitialState,
     setPageData,
+    setRevision,
     updateConnection,
 } from '../../store';
 import {getConnItemByType} from '../../utils';
@@ -146,7 +147,6 @@ const PageComponent = (props: PageProps) => {
         connectionData,
         loading,
     } = props;
-    const [isFirstRender, setIsFirstRender] = React.useState(true);
     const entryId = get(props.match?.params, 'id', '');
     const {extractEntryId} = registry.common.functions.getAll();
     const extractedEntryId = extractEntryId(entryId);
@@ -190,10 +190,12 @@ const PageComponent = (props: PageProps) => {
             entryId: extractedEntryId,
             workbookId,
             rev_id: revId,
-            initialSet: isFirstRender,
         });
-        setIsFirstRender(false);
-    }, [actions, extractedEntryId, workbookId, revId]);
+    }, [actions, extractedEntryId, workbookId]);
+
+    React.useEffect(() => {
+        actions.setRevision(revId);
+    }, [revId, actions]);
 
     const setActualVersion = React.useMemo(
         () =>
@@ -301,6 +303,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
                 openDialogErrorWithTabs,
                 openDialogSaveDraftChartAsActualConfirm,
                 updateConnection,
+                setRevision,
             },
             dispatch,
         ),
