@@ -3,7 +3,7 @@ import React from 'react';
 import {Flex, useThemeType} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
-import {Redirect, Route, Switch} from 'react-router-dom';
+import {Redirect, Route, Switch, useLocation} from 'react-router-dom';
 import {Feature} from 'shared';
 import {DL} from 'ui/constants';
 import {registry} from 'ui/registry';
@@ -31,12 +31,12 @@ export function AuthPage({backgroundImage}: AuthPageProps) {
     const dispatch = useDispatch();
     const authPageInited = useSelector(selectAuthPageInited);
 
+    const theme = useThemeType();
+    const {pathname} = useLocation();
+
     const [backgroundImageLoaded, setBackgroundImageLoaded] = React.useState(false);
 
-    const theme = useThemeType();
-
     const {Signin} = registry.auth.components.getAll();
-
     useAuthPageInit();
 
     React.useEffect(() => {
@@ -52,7 +52,11 @@ export function AuthPage({backgroundImage}: AuthPageProps) {
     const needToSign = !DL.USER?.uid;
 
     const currentDefaultImage = theme === 'dark' ? defaultBackgroundDark : defaultBackgroundLight;
-    const currentJpgImage = backgroundImage?.[theme] || currentDefaultImage;
+    const currentImage = backgroundImage?.[theme] || currentDefaultImage;
+
+    const showBackgroundImage =
+        isEnabledFeature(Feature.EnableDLRebranding) &&
+        [AUTH_ROUTE.SIGNIN, AUTH_ROUTE.SIGNUP].includes(pathname);
 
     return (
         <Flex
@@ -60,12 +64,12 @@ export function AuthPage({backgroundImage}: AuthPageProps) {
             height="100%"
             className={b({rebranding: isEnabledFeature(Feature.EnableDLRebranding), theme})}
         >
-            {isEnabledFeature(Feature.EnableDLRebranding) && (
+            {showBackgroundImage && (
                 <img
                     className={b('background-image', {
                         loaded: backgroundImageLoaded,
                     })}
-                    src={currentJpgImage}
+                    src={currentImage}
                     onLoad={() => setBackgroundImageLoaded(true)}
                     aria-hidden="true"
                 />
