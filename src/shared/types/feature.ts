@@ -22,7 +22,6 @@ export enum Feature {
     QLMonitoring = 'QLMonitoring',
     CollectionsEnabled = 'CollectionsEnabled',
     CollectionsAccessEnabled = 'CollectionsAccessEnabled',
-    DashBoardAccessDescription = 'DashBoardAccessDescription',
     DashBoardSupportDescription = 'DashBoardSupportDescription',
     // Show request body in the Inspector dialog
     ShowInspectorDetails = 'ShowInspectorDetails',
