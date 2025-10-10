@@ -42,7 +42,7 @@
   "section_delete-workbook": "Вы действительно хотите удалить воркбук \"{{name}}\"?",
   "title_deploy": "Куда развернуть",
   "title_import-exit": "Закрыть окно импорта?",
-  "toast_get-gallery-file-error": "Ошибка при попытке получить файл для импорта",
+  "toast_get-gallery-file-error": "Ошибка при развёртывании, обратитесь в поддержку",
   "toast_get-json-error": "Ошибка при попытке получить JSON из файла",
   "toast_outdated-workbook-info": "Информация о воркбуке устарела. Пожалуйста, обновите страницу."
 }
