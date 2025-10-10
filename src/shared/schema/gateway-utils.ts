@@ -1,7 +1,7 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
 import type {ApiServiceActionConfig, GetAuthHeaders} from '@gravity-ui/gateway';
 import type {AppContext} from '@gravity-ui/nodekit';
-import type z from 'zod/v4';
+import type z from 'zod';
 
 import {AuthHeader, SERVICE_USER_ACCESS_TOKEN_HEADER} from '../constants';
 
