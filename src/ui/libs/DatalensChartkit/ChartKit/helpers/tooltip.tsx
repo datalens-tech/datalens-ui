@@ -43,28 +43,36 @@ export const scatterTooltipRenderer = (
         <div className={b({mobile: DL.IS_MOBILE})} data-qa={qa}>
             {pointTitle && (
                 <div>
-                    {pointTitle}: <b>{point.custom?.name}</b>
+                    {pointTitle}:{' '}
+                    <b dangerouslySetInnerHTML={{__html: String(point.custom?.name ?? '')}} />
                 </div>
             )}
             <div>
-                {xTitle}: {point.custom?.xLabel}
+                {xTitle}:{' '}
+                <span dangerouslySetInnerHTML={{__html: String(point.custom?.xLabel ?? '')}} />
             </div>
             <div>
-                {yTitle}: {point.custom?.yLabel}
+                {yTitle}:{' '}
+                <span dangerouslySetInnerHTML={{__html: String(point.custom?.yLabel ?? '')}} />
             </div>
             {sizeTitle && (
                 <div>
-                    {sizeTitle}: {point.custom?.sizeLabel}
+                    {sizeTitle}:{' '}
+                    <span
+                        dangerouslySetInnerHTML={{__html: String(point.custom?.sizeLabel ?? '')}}
+                    />
                 </div>
             )}
             {shouldShowShape && (
                 <div>
-                    {shapeTitle}: {point.custom?.sLabel}
+                    {shapeTitle}:{' '}
+                    <span dangerouslySetInnerHTML={{__html: String(point.custom?.sLabel ?? '')}} />
                 </div>
             )}
             {colorTitle && (
                 <div>
-                    {colorTitle}: {point.custom?.cLabel}
+                    {colorTitle}:{' '}
+                    <span dangerouslySetInnerHTML={{__html: String(point.custom?.cLabel ?? '')}} />
                 </div>
             )}
         </div>
@@ -159,7 +167,7 @@ export const getTooltipRenderer = ({
         return (...args) => customTooltipRenderer(widgetData, args);
     }
 
-    const seriesTypes = (widgetData?.series?.data || []).map((s) => s.type);
+    const seriesTypes = Array.from(new Set((widgetData?.series?.data || []).map((s) => s.type)));
 
     if (seriesTypes.length === 1) {
         switch (seriesTypes[0]) {

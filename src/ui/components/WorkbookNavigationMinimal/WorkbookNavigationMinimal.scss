@@ -79,6 +79,19 @@
     }
 
     &__control {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: flex-start;
+        gap: 8px;
         padding: 8px 20px;
+    }
+
+    &__sort-control {
+        min-width: fit-content;
+    }
+
+    &__sort-select {
+        min-width: 140px;
     }
 }

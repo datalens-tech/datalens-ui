@@ -18,3 +18,21 @@ export type ChartkitGlobalSettings = {
         enabled?: boolean;
     };
 };
+
+export type ChartComment = {
+    id: number;
+    creatorLogin: string;
+    createdDate: string;
+    modifierLogin: string;
+    modifiedDate: string;
+    feed: string;
+    date: string;
+    dateUntil?: string;
+    type: 'line-x' | 'band-x' | 'flag-x' | 'dot-x-y';
+    text: string;
+    meta: Record<string, string | number>;
+    params?: {
+        scale?: string | string[];
+        region?: string | string[];
+    };
+};

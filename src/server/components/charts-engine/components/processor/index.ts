@@ -1,3 +1,4 @@
+import type {ChartData} from '@gravity-ui/chartkit/gravity-charts';
 import {transformParamsToActionParams} from '@gravity-ui/dashkit/helpers';
 import {type AppContext, REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 import {AxiosError} from 'axios';
@@ -16,7 +17,7 @@ import type {
     StringParams,
     WorkbookId,
 } from '../../../../../shared';
-import {DL_CONTEXT_HEADER, Feature} from '../../../../../shared';
+import {DL_CONTEXT_HEADER, Feature, WizardType} from '../../../../../shared';
 import {renderHTML} from '../../../../../shared/modules/markdown/markdown';
 import {selectServerPalette} from '../../../../constants';
 import {extractColorPalettesFromData} from '../../../../modes/charts/plugins/helpers/color-palettes';
@@ -915,7 +916,8 @@ export class Processor {
                     ctx.config.chartsEngineConfig.flags?.chartComments &&
                     (type === CONFIG_TYPE.GRAPH_NODE ||
                         type === CONFIG_TYPE.GRAPH_WIZARD_NODE ||
-                        type === CONFIG_TYPE.GRAPH_QL_NODE)
+                        type === CONFIG_TYPE.GRAPH_QL_NODE ||
+                        type === WizardType.GravityChartsWizardNode)
                 ) {
                     try {
                         const chartName =
@@ -925,16 +927,29 @@ export class Processor {
 
                         hrStart = process.hrtime();
 
-                        result.comments = await CommentsFetcher.prepareComments(
-                            {
-                                chartName,
-                                config: resultConfig.comments,
-                                data: result.data as CommentsFetcherPrepareCommentsParams['data'],
-                                params,
-                            },
-                            subrequestHeaders,
-                            ctx,
-                        );
+                        if (type === WizardType.GravityChartsWizardNode) {
+                            result.comments = await CommentsFetcher.prepareGravityChartsComments(
+                                {
+                                    chartName,
+                                    config: resultConfig.comments,
+                                    data: result.data as ChartData,
+                                    params,
+                                },
+                                subrequestHeaders,
+                                ctx,
+                            );
+                        } else {
+                            result.comments = await CommentsFetcher.prepareComments(
+                                {
+                                    chartName,
+                                    config: resultConfig.comments,
+                                    data: result.data as CommentsFetcherPrepareCommentsParams['data'],
+                                    params,
+                                },
+                                subrequestHeaders,
+                                ctx,
+                            );
+                        }
 
                         ctx.log('EditorEngine::Comments', {duration: getDuration(hrStart)});
                     } catch (error) {
