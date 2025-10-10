@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import type {ConfigItemData} from '@gravity-ui/dashkit';
 import type {AxiosResponse} from 'axios';
 import type {History} from 'history';
@@ -149,6 +150,11 @@ export const getWidgetMeta = ({
                 (typeof errorCode !== 'string' || !ALLOWED_ERRORS.includes(errorCode)),
         );
 
+        const convertedToTableData = convertChartToTable({
+            widget: widgetDataRef?.current,
+            widgetData: loadedData as LoadedWidgetData<unknown>,
+        });
+
         const metaInfo: Omit<DashkitMetaDataItemBase, 'defaultParams'> = {
             layoutId: id,
             chartId: tabWidget.chartId,
@@ -175,10 +181,12 @@ export const getWidgetMeta = ({
             isEditor: Boolean(loadedData?.isEditor),
             isQL: Boolean(loadedData?.isQL),
             getSimpleLoadedData: () =>
-                convertChartToTable({
-                    widget: widgetDataRef?.current,
-                    widgetData: loadedData as LoadedWidgetData<unknown>,
-                }) || loadedData,
+                // eslint-disable-next-line no-nested-ternary
+                isEmpty(convertedToTableData)
+                    ? ['metric2', 'metric', 'markup', 'markdown'].includes(loadedData?.type || '')
+                        ? loadedData?.data
+                        : loadedData
+                    : convertedToTableData,
         };
 
         return metaInfo;
