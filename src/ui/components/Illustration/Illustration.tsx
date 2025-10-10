@@ -9,7 +9,7 @@ import './Illustration.scss';
 
 const b = block('created-illustration');
 
-const SKELETO_TIMEOUT = 300;
+const SKELETON_TIMEOUT = 300;
 
 export const Illustration = ({illustrationStore, ...props}: PlaceholderIllustrationImageProps) => {
     const CreatedIllustration = createIllustration([illustrationStore]);
@@ -17,7 +17,7 @@ export const Illustration = ({illustrationStore, ...props}: PlaceholderIllustrat
     return (
         <CreatedIllustration
             showSkeleton={Boolean(props.size)}
-            skeletonTimeout={SKELETO_TIMEOUT}
+            skeletonTimeout={SKELETON_TIMEOUT}
             skeletonClassName={b('skeleton', {size: props.size})}
             {...props}
         />
