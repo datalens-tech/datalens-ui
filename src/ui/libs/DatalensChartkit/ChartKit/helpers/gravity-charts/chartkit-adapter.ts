@@ -10,7 +10,7 @@ import type {ChartKitAdapterProps} from '../../types';
 import {getTooltipRenderer} from '../tooltip';
 import {getNormalizedClickActions} from '../utils';
 
-import {convertChartCommentsToPlotBandsAndLines} from './comments';
+import {convertChartCommentsToPlotBandsAndLines, shouldUseCommentsOnYAxis} from './comments';
 import {handleClick} from './event-handlers';
 import {
     getCustomShapeRenderer,
@@ -105,8 +105,7 @@ export function getGravityChartsChartKitData(args: {
     const comments = hideComments ? [] : get(loadedData, 'comments', []);
     const {plotBands, plotLines} = convertChartCommentsToPlotBandsAndLines({comments});
 
-    const shouldUseCommentsOnYAxis = result.series?.data?.some((s) => s.type === 'bar-y');
-    if (shouldUseCommentsOnYAxis) {
+    if (shouldUseCommentsOnYAxis(result)) {
         set(result, 'yAxis[0].plotBands', [...(result.yAxis?.[0]?.plotBands ?? []), ...plotBands]);
         set(result, 'yAxis[0].plotLines', [...(result.yAxis?.[0]?.plotLines ?? []), ...plotLines]);
     } else {

@@ -125,6 +125,7 @@ type ChartKitBaseWrapperProps = ChartsProps & {
     onFiltersClear?: () => void;
 
     needRenderContentControls?: boolean;
+    reload?: (args?: {silentLoading?: boolean; noVeil?: boolean}) => void;
 };
 
 export type ChartWidgetProviderPropsWithRefProps = ChartRefProp &
@@ -284,6 +285,7 @@ export type ChartContentProps = Pick<
     | 'showActionParamsFilter'
     | 'onFiltersClear'
     | 'needRenderContentControls'
+    | 'reload'
 > &
     ChartKitWrapperParams & {
         hasHiddenClassMod: boolean;

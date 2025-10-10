@@ -48,6 +48,7 @@ export type HeaderProps = Pick<
     | 'enableActionParams'
     | 'showActionParamsFilter'
     | 'onFiltersClear'
+    | 'reload'
 > &
     Pick<GetChartkitMenuByType, 'extraOptions'> & {
         chartsInsightsData?: ChartsInsightsData;
@@ -93,6 +94,7 @@ export const Header = (props: HeaderProps) => {
         showActionParamsFilter,
         onFiltersClear,
         extraOptions,
+        reload,
     } = props;
 
     const dispatch = useDispatch();
@@ -106,9 +108,13 @@ export const Header = (props: HeaderProps) => {
 
     const isEditAvaible = useSelector(selectWorkbookEditPermission);
 
-    const handleCommentsChanged = React.useCallback((length) => {
-        setCommentsLength(length);
-    }, []);
+    const handleCommentsChanged = React.useCallback(
+        (length) => {
+            setCommentsLength(length);
+            reload?.();
+        },
+        [reload],
+    );
 
     /**
      * extra prop for rerender chart after show/hide comments menu

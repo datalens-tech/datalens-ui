@@ -74,6 +74,8 @@ export function getBaseChartConfig(args: {
     ];
 
     const visualizationWithYMainAxis = [
+        WizardVisualizationId.Bar,
+        WizardVisualizationId.Bar100p,
         WizardVisualizationId.BarYD3,
         WizardVisualizationId.BarY100pD3,
     ];
@@ -101,7 +103,7 @@ export function getBaseChartConfig(args: {
                     type: isDateField(yItem) ? 'datetime' : 'linear',
                     visible: yPlaceholderSettings?.axisVisibility !== 'hide',
                     labels: {
-                        enabled: Boolean(yItem) && yPlaceholder?.settings?.hideLabels !== 'yes',
+                        enabled: yPlaceholder?.settings?.hideLabels !== 'yes',
                     },
                     title: {
                         text: getAxisTitle(yPlaceholderSettings, yItem) || undefined,

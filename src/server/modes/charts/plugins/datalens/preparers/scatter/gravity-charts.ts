@@ -156,7 +156,9 @@ export function prepareGravityChartsScatter(args: PrepareFunctionArgs): ChartDat
         settings: yPlaceholder?.settings,
     });
 
-    let xAxis: ChartData['xAxis'] = {};
+    let xAxis: ChartData['xAxis'] = {
+        maxPadding: 0,
+    };
     if (xAxisType === 'category' && xCategories?.length) {
         xAxis = {
             type: 'category',
