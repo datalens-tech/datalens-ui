@@ -5,8 +5,9 @@ import {Button, Checkbox, HelpMark} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {registry} from 'ui/registry';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
-import type {DashLoadPriority, DashSettings} from '../../../../../../../shared';
+import {type DashLoadPriority, type DashSettings, Feature} from '../../../../../../../shared';
 import {SectionWrapper} from '../../../../../../components/SectionWrapper/SectionWrapper';
 
 import {LoadPriority} from './LoadPriority';
@@ -52,6 +53,7 @@ export const OtherSettings = ({
     settings,
     onChange,
 }: OtherSettingsProps) => {
+    const showSupportDescriptionSetting = isEnabledFeature(Feature.DashBoardSupportDescription);
     const {DialogDashOtherSettingsPrepend} = registry.dash.components.getAll();
 
     return (
@@ -88,13 +90,14 @@ export const OtherSettings = ({
                     />
                 </Row>
             )}
-            <Row>
-                <Title text={i18n('label_support-description')} />
-                <Button className={b('box')} onClick={onSupportDescriptionClick}>
-                    {i18n('button_setup')}
-                </Button>
-            </Row>
-
+            {showSupportDescriptionSetting && (
+                <Row>
+                    <Title text={i18n('label_support-description')} />
+                    <Button className={b('box')} onClick={onSupportDescriptionClick}>
+                        {i18n('button_setup')}
+                    </Button>
+                </Row>
+            )}
             <Row>
                 <Title text={i18n('label_access-description')} />
                 <Button className={b('box')} onClick={onAccessDescriptionClick}>
