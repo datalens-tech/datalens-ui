@@ -14,6 +14,7 @@ import {selectCollectionBreadcrumbs} from 'ui/units/collections-navigation/store
 import {COLLECTIONS_PATH, WORKBOOKS_PATH} from '../../../../collections-navigation/constants';
 import {setCollectionBreadcrumbs} from '../../../../collections-navigation/store/actions';
 import {setWorkbook} from '../../../../workbooks/store/actions';
+import type {RefreshPageAfterImport} from '../../../hooks/useRefreshPageAfterImport';
 import {setCollection} from '../../../store/actions';
 
 import '../CollectionContentTable.scss';
@@ -23,12 +24,14 @@ const b = block('dl-collection-content-table');
 type CollectionLinkRowProps = {
     item: WorkbookWithPermissions | CollectionWithPermissions;
     isDisabled: boolean;
+    refreshPageAfterImport: RefreshPageAfterImport;
 };
 
 export const CollectionLinkRow: React.FC<CollectionLinkRowProps> = ({
     children,
     item,
     isDisabled,
+    refreshPageAfterImport,
 }) => {
     const dispatch = useDispatch();
 
@@ -56,6 +59,7 @@ export const CollectionLinkRow: React.FC<CollectionLinkRowProps> = ({
                         },
                         onClose: () => {
                             dispatch(closeDialog());
+                            refreshPageAfterImport('pending');
                         },
                         importId: item.meta.importId,
                     },

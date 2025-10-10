@@ -18,20 +18,14 @@ import {Signup} from '../Signup/Signup';
 
 import {useAuthPageInit} from './useAuthPageInit';
 
-import defaultBackgroundDark from '../../../../assets/images/dl-auth-background-dark.png';
-import defaultBackgroundLight from '../../../../assets/images/dl-auth-background-light.png';
+import defaultBackgroundDark from '../../../../assets/images/dl-auth-background-dark.jpg';
+import defaultBackgroundLight from '../../../../assets/images/dl-auth-background-light.jpg';
 
 import './AuthPage.scss';
 
 const b = block('auth-page');
 
-type BackgroundImage = {
-    webp?: string;
-    jpg?: string;
-    png?: string;
-};
-
-export type AuthPageProps = {backgroundImage?: {light: BackgroundImage; dark: BackgroundImage}};
+export type AuthPageProps = {backgroundImage?: {light: string; dark: string}};
 
 export function AuthPage({backgroundImage}: AuthPageProps) {
     const dispatch = useDispatch();
@@ -58,7 +52,7 @@ export function AuthPage({backgroundImage}: AuthPageProps) {
     const needToSign = !DL.USER?.uid;
 
     const currentDefaultImage = theme === 'dark' ? defaultBackgroundDark : defaultBackgroundLight;
-    const currentPngImage = backgroundImage?.[theme].png || currentDefaultImage;
+    const currentJpgImage = backgroundImage?.[theme] || currentDefaultImage;
 
     return (
         <Flex
@@ -67,24 +61,14 @@ export function AuthPage({backgroundImage}: AuthPageProps) {
             className={b({rebranding: isEnabledFeature(Feature.EnableDLRebranding), theme})}
         >
             {isEnabledFeature(Feature.EnableDLRebranding) && (
-                <picture
-                    className={b('background-image-container', {
+                <img
+                    className={b('background-image', {
                         loaded: backgroundImageLoaded,
                     })}
+                    src={currentJpgImage}
                     onLoad={() => setBackgroundImageLoaded(true)}
                     aria-hidden="true"
-                >
-                    {/* TODO: add webp support */}
-                    {/* <source type="image/webp" className={b('background-image', {
-                            loaded: backgroundImageLoaded,
-                        })}  src="" /> */}
-                    <img
-                        className={b('background-image', {
-                            loaded: backgroundImageLoaded,
-                        })}
-                        src={currentPngImage}
-                    />
-                </picture>
+                />
             )}
             <Switch>
                 {needToSign && <Route path={AUTH_ROUTE.SIGNIN} component={Signin} />}
