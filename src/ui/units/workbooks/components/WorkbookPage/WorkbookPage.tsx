@@ -7,12 +7,11 @@ import {ViewError} from 'components/ViewError/ViewError';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {Redirect, useLocation, useParams} from 'react-router-dom';
-import {Feature, WorkbookPageQa} from 'shared';
+import {WorkbookPageQa} from 'shared';
 import {WORKBOOK_STATUS} from 'shared/constants/workbooks';
 import {DL} from 'ui/constants/common';
 import type {AppDispatch} from 'ui/store';
 import {COLLECTIONS_PATH} from 'ui/units/collections-navigation/constants';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import Utils from 'ui/utils/utils';
 
 import {registry} from '../../../../registry';
@@ -53,9 +52,7 @@ export const WorkbookPage = () => {
 
     const [showImportAlert, setShowImportAlert] = React.useState(
         // TODO (Export workbook): enable when logic of alert is ready
-        // isEnabledFeature(Feature.EnableExportWorkbookFile) &&
-        //     workbook?.meta &&
-        //     'importId' in workbook.meta,
+        // workbook?.meta && 'importId' in workbook.meta,
         false,
     );
 
@@ -104,11 +101,7 @@ export const WorkbookPage = () => {
 
     useLayout({workbookId, refreshWorkbookInfo});
 
-    if (
-        isEnabledFeature(Feature.EnableExportWorkbookFile) &&
-        workbook?.status === WORKBOOK_STATUS.CREATING &&
-        workbook?.meta.importId
-    ) {
+    if (workbook?.status === WORKBOOK_STATUS.CREATING && workbook?.meta.importId) {
         const redirectPath = collectionId
             ? `${COLLECTIONS_PATH}/${collectionId}`
             : COLLECTIONS_PATH;

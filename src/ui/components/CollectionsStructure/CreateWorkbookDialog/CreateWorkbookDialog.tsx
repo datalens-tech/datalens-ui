@@ -5,12 +5,10 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {WorkbookDialogQA} from 'shared/constants/qa';
-import {Feature} from 'shared/types/feature';
 import type {AppDispatch} from 'store';
 import {DIALOG_DEFAULT} from 'ui/components/DialogDefault/DialogDefault';
 import {useMountedState} from 'ui/hooks';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {CreateWorkbookResponse} from '../../../../shared/schema';
 import {
@@ -254,16 +252,12 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
             description?: string;
             onClose: () => void;
         }) => {
-            if (isEnabledFeature(Feature.EnableExportWorkbookFile) && importStatus === 'success') {
+            if (importStatus === 'success') {
                 onClose();
                 handleCreateCallback(importProgressData?.workbookId);
                 return;
             }
-            if (
-                isEnabledFeature(Feature.EnableExportWorkbookFile) &&
-                importFiles.length > 0 &&
-                !importFiles[0].name.toLowerCase().endsWith('.json')
-            ) {
+            if (importFiles.length > 0 && !importFiles[0].name.toLowerCase().endsWith('.json')) {
                 setImportValidationError(i18n('label_error-file-type'));
                 return;
             }
@@ -274,10 +268,7 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
                 collectionId,
             };
 
-            if (
-                isEnabledFeature(Feature.EnableExportWorkbookFile) &&
-                (importFiles.length > 0 || publicGalleryState)
-            ) {
+            if (importFiles.length > 0 || publicGalleryState) {
                 startImport(workbookData);
                 return;
             }
@@ -356,7 +347,7 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
     }, [currentImportId, importStatus, pollImportStatus]);
 
     const renderImportSection = () => {
-        if (!isEnabledFeature(Feature.EnableExportWorkbookFile) || !showImport) {
+        if (!showImport) {
             return null;
         }
 

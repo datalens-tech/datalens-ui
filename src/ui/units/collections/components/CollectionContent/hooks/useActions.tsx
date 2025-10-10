@@ -308,11 +308,7 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
                 });
             }
 
-            if (
-                isEnabledFeature(Feature.EnableExportWorkbookFile) &&
-                currentUserRights.admin &&
-                !isWorkbookExportDisabled
-            ) {
+            if (currentUserRights.admin && !isWorkbookExportDisabled) {
                 actions.push({
                     action: () => {
                         dispatch(
