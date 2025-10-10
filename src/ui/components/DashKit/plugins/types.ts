@@ -1,5 +1,6 @@
 import type {DashTabItemControlSourceType, DashTabItemType, StringParams} from 'shared';
 
+import type {Widget} from '../../../../ui/libs/DatalensChartkit/types/widget';
 import type {DASH_WIDGET_TYPES} from '../../../units/dash/modules/constants';
 
 import type {WidgetLoadedData} from './../../Widgets/Chart/helpers/helpers';
@@ -28,7 +29,7 @@ export type DashkitMetaDataItemBase = {
     isWizard?: boolean;
     isEditor?: boolean;
     isQL?: boolean;
-    getLoadedData?: () => WidgetLoadedData;
+    getSimpleLoadedData?: () => WidgetLoadedData | Widget['data'] | string[];
 };
 
 export type DatasetsData = {
