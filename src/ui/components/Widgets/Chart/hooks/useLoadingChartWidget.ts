@@ -495,6 +495,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
                 loadData,
                 savedData: loadedData,
                 error,
+                widgetDataRef,
             });
 
             if (resolveMetaDataRef.current) {
