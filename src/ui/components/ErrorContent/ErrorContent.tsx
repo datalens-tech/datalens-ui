@@ -5,10 +5,9 @@ import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import type {ValueOf} from 'shared';
-import {ErrorContentTypes, Feature} from 'shared';
+import {ErrorContentTypes} from 'shared';
 import {DL} from 'ui/constants/common';
 import {type DataLensApiError, type ParsedError, isParsedError} from 'ui/typings';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 import Utils from 'ui/utils/utils';
 
@@ -99,10 +98,6 @@ class ErrorContent extends React.PureComponent<ErrorContentProps> {
     }
 
     getAccessDescription() {
-        if (!isEnabledFeature(Feature.DashBoardAccessDescription)) {
-            return '';
-        }
-
         const pageEntryMeta = DL.LANDING_PAGE_ENTRY_META;
         return this.props.accessDescription || pageEntryMeta?.accessDescription || '';
     }
