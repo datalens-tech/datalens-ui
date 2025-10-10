@@ -150,11 +150,6 @@ export const getWidgetMeta = ({
                 (typeof errorCode !== 'string' || !ALLOWED_ERRORS.includes(errorCode)),
         );
 
-        const convertedToTableData = convertChartToTable({
-            widget: widgetDataRef?.current,
-            widgetData: loadedData as LoadedWidgetData<unknown>,
-        });
-
         const metaInfo: Omit<DashkitMetaDataItemBase, 'defaultParams'> = {
             layoutId: id,
             chartId: tabWidget.chartId,
@@ -180,13 +175,18 @@ export const getWidgetMeta = ({
             isWizard: Boolean(loadedData?.isNewWizard || loadedData?.isOldWizard),
             isEditor: Boolean(loadedData?.isEditor),
             isQL: Boolean(loadedData?.isQL),
-            getSimpleLoadedData: () =>
+            getSimpleLoadedData: () => {
+                const convertedToTableData = convertChartToTable({
+                    widget: widgetDataRef?.current,
+                    widgetData: loadedData as LoadedWidgetData<unknown>,
+                });
                 // eslint-disable-next-line no-nested-ternary
-                isEmpty(convertedToTableData)
+                return isEmpty(convertedToTableData)
                     ? ['metric2', 'metric', 'markup', 'markdown'].includes(loadedData?.type || '')
                         ? loadedData?.data
                         : loadedData
-                    : convertedToTableData,
+                    : convertedToTableData;
+            },
         };
 
         return metaInfo;
