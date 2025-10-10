@@ -27,11 +27,36 @@ const b = block('auth-page');
 
 export type AuthPageProps = {backgroundImage?: {light: string; dark: string}};
 
+const ContentWithBackground = ({
+    children,
+    backgroundImage,
+}: {
+    children: React.ReactNode;
+    backgroundImage: string;
+}) => {
+    const [backgroundImageLoaded, setBackgroundImageLoaded] = React.useState(false);
+
+    return (
+        <React.Fragment>
+            {isEnabledFeature(Feature.EnableDLRebranding) && (
+                <img
+                    className={b('background-image', {
+                        loaded: backgroundImageLoaded,
+                    })}
+                    src={backgroundImage}
+                    onLoad={() => setBackgroundImageLoaded(true)}
+                    aria-hidden="true"
+                />
+            )}
+
+            {children}
+        </React.Fragment>
+    );
+};
+
 export function AuthPage({backgroundImage}: AuthPageProps) {
     const dispatch = useDispatch();
     const authPageInited = useSelector(selectAuthPageInited);
-
-    const [backgroundImageLoaded, setBackgroundImageLoaded] = React.useState(false);
 
     const theme = useThemeType();
 
@@ -52,7 +77,7 @@ export function AuthPage({backgroundImage}: AuthPageProps) {
     const needToSign = !DL.USER?.uid;
 
     const currentDefaultImage = theme === 'dark' ? defaultBackgroundDark : defaultBackgroundLight;
-    const currentJpgImage = backgroundImage?.[theme] || currentDefaultImage;
+    const currentImage = backgroundImage?.[theme] || currentDefaultImage;
 
     return (
         <Flex
@@ -60,19 +85,27 @@ export function AuthPage({backgroundImage}: AuthPageProps) {
             height="100%"
             className={b({rebranding: isEnabledFeature(Feature.EnableDLRebranding), theme})}
         >
-            {isEnabledFeature(Feature.EnableDLRebranding) && (
-                <img
-                    className={b('background-image', {
-                        loaded: backgroundImageLoaded,
-                    })}
-                    src={currentJpgImage}
-                    onLoad={() => setBackgroundImageLoaded(true)}
-                    aria-hidden="true"
-                />
-            )}
             <Switch>
-                {needToSign && <Route path={AUTH_ROUTE.SIGNIN} component={Signin} />}
-                {needToSign && <Route path={AUTH_ROUTE.SIGNUP} component={Signup} />}
+                {needToSign && (
+                    <Route
+                        path={AUTH_ROUTE.SIGNIN}
+                        component={() => (
+                            <ContentWithBackground backgroundImage={currentImage}>
+                                <Signin />
+                            </ContentWithBackground>
+                        )}
+                    />
+                )}
+                {needToSign && (
+                    <Route
+                        path={AUTH_ROUTE.SIGNUP}
+                        component={() => (
+                            <ContentWithBackground backgroundImage={currentImage}>
+                                <Signup />
+                            </ContentWithBackground>
+                        )}
+                    />
+                )}
                 <Route path={AUTH_ROUTE.RELOAD} component={Reload} />
                 <Route path={AUTH_ROUTE.LOGOUT} component={Logout} />
                 <Redirect to="/" />
