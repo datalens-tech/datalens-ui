@@ -17,6 +17,8 @@ import {
     getDatasetByVersionResultSchemaApi,
     updateDatasetArgsSchemaApi,
     updateDatasetResultSchemaApi,
+    validateDatasetArgsSchemaApi,
+    validateDatasetResultSchemaApi,
 } from '../schemas';
 import type {
     CheckConnectionsForPublicationArgs,
@@ -156,24 +158,33 @@ export const actions = {
             },
         },
     ),
-    validateDataset: createAction<ValidateDatasetResponse, ValidateDatasetArgs>({
-        method: 'POST',
-        path: ({datasetId, version}) =>
-            datasetId
-                ? `${API_V1}/datasets/${filterUrlFragment(datasetId)}/versions/${filterUrlFragment(
-                      version,
-                  )}/validators/schema`
-                : `${API_V1}/datasets/validators/dataset`,
-        params: ({dataset, workbookId, updates}, headers, {ctx}) => {
-            const resultDataset = prepareDatasetProperty(ctx, dataset);
-            return {
-                body: {dataset: resultDataset, updates},
-                headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
-            };
+    validateDataset: createTypedAction<ValidateDatasetResponse, ValidateDatasetArgs>(
+        {
+            paramsSchema: validateDatasetArgsSchemaApi,
+            resultSchema: validateDatasetResultSchemaApi,
         },
-        transformResponseError: transformValidateDatasetResponseError,
-        timeout: TIMEOUT_95_SEC,
-    }),
+        {
+            method: 'POST',
+            path: ({datasetId, version}) =>
+                datasetId
+                    ? `${API_V1}/datasets/${filterUrlFragment(datasetId)}/versions/${filterUrlFragment(
+                          version,
+                      )}/validators/schema`
+                    : `${API_V1}/datasets/validators/dataset`,
+            params: ({data: {dataset, updates}, workbookId}, headers, {ctx}) => {
+                const resultDataset = prepareDatasetProperty(ctx, dataset);
+                return {
+                    body: {dataset: resultDataset, updates},
+                    headers: {
+                        ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
+                        ...headers,
+                    },
+                };
+            },
+            transformResponseError: transformValidateDatasetResponseError,
+            timeout: TIMEOUT_95_SEC,
+        },
+    ),
     updateDataset: createTypedAction<UpdateDatasetResponse, UpdateDatasetArgs>(
         {
             paramsSchema: updateDatasetArgsSchemaApi,

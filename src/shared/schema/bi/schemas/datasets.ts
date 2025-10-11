@@ -6,6 +6,7 @@ const BI_SCHEMA_NAME = {
     DatasetCreate: 'DatasetCreate',
     DatasetUpdate: 'DatasetUpdate',
     DatasetRead: 'DatasetRead',
+    DatasetValidate: 'DatasetValidate',
 };
 
 export const createDatasetArgsSchemaApi = z.any().meta({
@@ -42,5 +43,18 @@ export const getDatasetByVersionArgsSchemaApi = z.object({
 });
 
 export const getDatasetByVersionResultSchemaApi = z.any().meta({
+    $ref: makeSchemaRef(BI_SCHEMA_NAME.DatasetRead),
+});
+
+export const validateDatasetArgsSchemaApi = z.object({
+    datasetId: z.string(),
+    version: z.literal('draft'),
+    workbookId: z.union([z.null(), z.string()]),
+    data: z.any().meta({
+        $ref: makeSchemaRef(BI_SCHEMA_NAME.DatasetValidate),
+    }),
+});
+
+export const validateDatasetResultSchemaApi = z.any().meta({
     $ref: makeSchemaRef(BI_SCHEMA_NAME.DatasetRead),
 });

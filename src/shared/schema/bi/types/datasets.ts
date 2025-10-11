@@ -110,9 +110,11 @@ export type ValidateDatasetResponse = {
 } & DatasetWithOptions;
 
 export type ValidateDatasetArgs = {
-    dataset: Partial<Dataset['dataset']>;
-    updates: ValidateDatasetUpdate[];
     version: DatasetVersion;
+    data: {
+        dataset: Partial<Dataset['dataset']>;
+        updates: ValidateDatasetUpdate[];
+    };
 } & DatasetId &
     WorkbookIdArg;
 

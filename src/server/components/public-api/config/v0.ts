@@ -51,6 +51,13 @@ export const getPublicApiActionsV0 = <
                 tags: [ApiTag.Dataset],
             },
         },
+        validateDataset: {
+            resolve: (api) => api.bi.validateDataset,
+            openApi: {
+                summary: 'Validate dataset',
+                tags: [ApiTag.Dataset],
+            },
+        },
 
         // Wizard
         getWizardChart: {
