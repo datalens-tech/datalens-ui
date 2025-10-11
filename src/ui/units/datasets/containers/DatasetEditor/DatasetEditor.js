@@ -27,7 +27,7 @@ import {CounterName, GoalId, reachMetricaGoal} from '../../../../libs/metrica';
 import {closeDialog, openDialog, openDialogConfirm} from '../../../../store/actions/dialog';
 import DatasetTable from '../../components/DatasetTable/DatasetTable';
 import {FieldSettingsDialog} from '../../components/FieldSettingsDialog/FieldSettingsDialog';
-import {DATASET_VALIDATION_TIMEOUT, TAB_DATASET} from '../../constants';
+import {DATASET_UPDATE_ACTIONS, DATASET_VALIDATION_TIMEOUT, TAB_DATASET} from '../../constants';
 import {
     UISelector,
     avatarsSelector,
@@ -393,6 +393,11 @@ class DatasetEditor extends React.Component {
                         datasetId={datasetId}
                         workbookId={workbookId}
                         parameters={parameters}
+                        // a temporary solution, only the changed fields need to be calculated
+                        updates={this.filteredFields.map((f) => ({
+                            action: DATASET_UPDATE_ACTIONS.FIELD_ADD,
+                            field: f,
+                        }))}
                     />
                 )}
             </div>
