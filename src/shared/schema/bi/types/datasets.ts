@@ -140,7 +140,6 @@ export type GetDataSetFieldsByIdResponse = {
 export type GetDataSetFieldsByIdArgs = WorkbookIdArg & {
     dataSetId: string;
 };
-export type CreateDatasetResponse = Id & DatasetWithOptions;
 
 type CreateDatasetBaseArgs = {
     dataset: Dataset['dataset'];
@@ -159,12 +158,16 @@ type CreateWorkbookDatsetArgs = CreateDatasetBaseArgs & {
 
 export type CreateDatasetArgs = CreateDirDatasetArgs | CreateWorkbookDatsetArgs;
 
+export type CreateDatasetResponse = Id & DatasetWithOptions;
+
 export type UpdateDatasetResponse = DatasetWithOptions;
 
 export type UpdateDatasetArgs = {
-    dataset: Dataset['dataset'];
     version: DatasetVersion;
-    multisource: boolean;
+    data: {
+        dataset: Dataset['dataset'];
+        multisource: boolean;
+    };
 } & DatasetId;
 
 export type GetPreviewResponse = Partial<DistinctResult & DistinctRegularResult>;

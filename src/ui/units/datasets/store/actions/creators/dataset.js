@@ -360,9 +360,11 @@ export function saveDataset({
             } else {
                 const validation = await getSdk().sdk.bi.updateDataset({
                     datasetId,
-                    dataset,
-                    multisource: true,
                     version: 'draft',
+                    data: {
+                        dataset,
+                        multisource: true,
+                    },
                 });
 
                 dispatch(setValidationData(validation));

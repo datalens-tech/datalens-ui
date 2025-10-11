@@ -3,33 +3,29 @@ import z from 'zod';
 import {makeSchemaRef} from '../../../utils/openapi';
 
 const BI_SCHEMA_NAME = {
-    CreateDatasetSchema: 'CreateDatasetSchema',
-    CreateDatasetResponseSchema: 'CreateDatasetResponseSchema',
-    DatasetUpdateSchema: 'DatasetUpdateSchema',
-    DatasetContentSchema: 'DatasetContentSchema',
-    GetDatasetVersionResponseSchema: 'GetDatasetVersionResponseSchema',
+    DatasetCreate: 'DatasetCreate',
+    DatasetUpdate: 'DatasetUpdate',
+    DatasetRead: 'DatasetRead',
 };
 
-export const createDatasetArgsSchemaApi = z.object({
-    data: z.unknown().meta({
-        $ref: makeSchemaRef(BI_SCHEMA_NAME.CreateDatasetSchema),
-    }),
+export const createDatasetArgsSchemaApi = z.any().meta({
+    $ref: makeSchemaRef(BI_SCHEMA_NAME.DatasetCreate),
 });
 
-export const createDatasetResultSchemaApi = z.unknown().meta({
-    $ref: makeSchemaRef(BI_SCHEMA_NAME.CreateDatasetResponseSchema),
+export const createDatasetResultSchemaApi = z.any().meta({
+    $ref: makeSchemaRef(BI_SCHEMA_NAME.DatasetRead),
 });
 
 export const updateDatasetArgsSchemaApi = z.object({
     version: z.literal('draft'),
     datasetId: z.string(),
-    data: z.unknown().meta({
-        $ref: makeSchemaRef(BI_SCHEMA_NAME.DatasetUpdateSchema),
+    data: z.any().meta({
+        $ref: makeSchemaRef(BI_SCHEMA_NAME.DatasetUpdate),
     }),
 });
 
-export const updateDatasetResultSchemaApi = z.unknown().meta({
-    $ref: makeSchemaRef(BI_SCHEMA_NAME.DatasetContentSchema),
+export const updateDatasetResultSchemaApi = z.any().meta({
+    $ref: makeSchemaRef(BI_SCHEMA_NAME.DatasetRead),
 });
 
 export const deleteDatasetArgsSchema = z.object({
@@ -45,6 +41,6 @@ export const getDatasetByVersionArgsSchemaApi = z.object({
     rev_id: z.string().optional(),
 });
 
-export const getDatasetByVersionResultSchemaApi = z.unknown().meta({
-    $ref: makeSchemaRef(BI_SCHEMA_NAME.GetDatasetVersionResponseSchema),
+export const getDatasetByVersionResultSchemaApi = z.any().meta({
+    $ref: makeSchemaRef(BI_SCHEMA_NAME.DatasetRead),
 });

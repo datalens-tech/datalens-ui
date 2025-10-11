@@ -66,17 +66,23 @@ export const actions = {
         }),
         timeout: TIMEOUT_60_SEC,
     }),
-    getDatasetByVersion: createAction<GetDatasetByVersionResponse, GetDatasetByVersionArgs>({
-        method: 'GET',
-        path: ({datasetId, version}) =>
-            `${API_V1}/datasets/${filterUrlFragment(datasetId)}/versions/${filterUrlFragment(
-                version,
-            )}`,
-        params: ({workbookId, rev_id}, headers) => ({
-            headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
-            query: {rev_id},
-        }),
-    }),
+    getDatasetByVersion: createTypedAction<GetDatasetByVersionResponse, GetDatasetByVersionArgs>(
+        {
+            paramsSchema: getDatasetByVersionArgsSchemaApi,
+            resultSchema: getDatasetByVersionResultSchemaApi,
+        },
+        {
+            method: 'GET',
+            path: ({datasetId, version}) =>
+                `${API_V1}/datasets/${filterUrlFragment(datasetId)}/versions/${filterUrlFragment(
+                    version,
+                )}`,
+            params: ({workbookId, rev_id}, headers) => ({
+                headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
+                query: {rev_id},
+            }),
+        },
+    ),
     getFieldTypes: createAction<GetFieldTypesResponse>({
         method: 'GET',
         path: () => `${API_V1}/info/field_types`,
@@ -136,14 +142,20 @@ export const actions = {
             headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
         }),
     }),
-    createDataset: createAction<CreateDatasetResponse, CreateDatasetArgs>({
-        method: 'POST',
-        path: () => `${API_V1}/datasets`,
-        params: ({dataset, ...restBody}, headers, {ctx}) => {
-            const resultDataset = prepareDatasetProperty(ctx, dataset);
-            return {body: {...restBody, dataset: resultDataset}, headers};
+    createDataset: createTypedAction<CreateDatasetResponse, CreateDatasetArgs>(
+        {
+            paramsSchema: createDatasetArgsSchemaApi,
+            resultSchema: createDatasetResultSchemaApi,
         },
-    }),
+        {
+            method: 'POST',
+            path: () => `${API_V1}/datasets`,
+            params: ({dataset, ...restBody}, headers, {ctx}) => {
+                const resultDataset = prepareDatasetProperty(ctx, dataset);
+                return {body: {...restBody, dataset: resultDataset}, headers};
+            },
+        },
+    ),
     validateDataset: createAction<ValidateDatasetResponse, ValidateDatasetArgs>({
         method: 'POST',
         path: ({datasetId, version}) =>
@@ -162,17 +174,23 @@ export const actions = {
         transformResponseError: transformValidateDatasetResponseError,
         timeout: TIMEOUT_95_SEC,
     }),
-    updateDataset: createAction<UpdateDatasetResponse, UpdateDatasetArgs>({
-        method: 'PUT',
-        path: ({datasetId, version}) =>
-            `${API_V1}/datasets/${filterUrlFragment(datasetId)}/versions/${filterUrlFragment(
-                version,
-            )}`,
-        params: ({dataset, multisource}, headers, {ctx}) => {
-            const resultDataset = prepareDatasetProperty(ctx, dataset);
-            return {body: {dataset: resultDataset, multisource}, headers};
+    updateDataset: createTypedAction<UpdateDatasetResponse, UpdateDatasetArgs>(
+        {
+            paramsSchema: updateDatasetArgsSchemaApi,
+            resultSchema: updateDatasetResultSchemaApi,
         },
-    }),
+        {
+            method: 'PUT',
+            path: ({datasetId, version}) =>
+                `${API_V1}/datasets/${filterUrlFragment(datasetId)}/versions/${filterUrlFragment(
+                    version,
+                )}`,
+            params: ({data: {dataset, ...restData}}, headers, {ctx}) => {
+                const resultDataset = prepareDatasetProperty(ctx, dataset);
+                return {body: {...restData, dataset: resultDataset}, headers};
+            },
+        },
+    ),
     getPreview: createAction<GetPreviewResponse, GetPreviewArgs>({
         method: 'POST',
         endpoint: 'datasetDataApiEndpoint',
@@ -298,51 +316,4 @@ export const actions = {
             return registry.common.auth.getAll().getAuthHeadersBIPrivate(params);
         },
     }),
-
-    getDatasetByVersionApi: createTypedAction(
-        {
-            paramsSchema: getDatasetByVersionArgsSchemaApi,
-            resultSchema: getDatasetByVersionResultSchemaApi,
-        },
-        {
-            method: 'GET',
-            path: ({datasetId, version}) =>
-                `${API_V1}/datasets/${filterUrlFragment(datasetId)}/versions/${filterUrlFragment(
-                    version,
-                )}`,
-            params: ({workbookId, rev_id}, headers) => ({
-                headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
-                query: {rev_id},
-            }),
-        },
-    ),
-    createDatasetApi: createTypedAction(
-        {
-            paramsSchema: createDatasetArgsSchemaApi,
-            resultSchema: createDatasetResultSchemaApi,
-        },
-        {
-            method: 'POST',
-            path: () => `${API_V1}/datasets`,
-            params: ({data}, headers) => {
-                return {body: data, headers};
-            },
-        },
-    ),
-    updateDatasetApi: createTypedAction(
-        {
-            paramsSchema: updateDatasetArgsSchemaApi,
-            resultSchema: updateDatasetResultSchemaApi,
-        },
-        {
-            method: 'PUT',
-            path: ({datasetId, version}) =>
-                `${API_V1}/datasets/${filterUrlFragment(datasetId)}/versions/${filterUrlFragment(
-                    version,
-                )}`,
-            params: ({data}, headers) => {
-                return {body: data, headers};
-            },
-        },
-    ),
 };
