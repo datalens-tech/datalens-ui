@@ -6,7 +6,7 @@ import swaggerUi from 'swagger-ui-express';
 import {objectKeys} from '../../../../shared';
 import {registry} from '../../../registry';
 import {
-    BI_SCHEMAS,
+    BI_OPENAPI_SCHEMAS,
     OPEN_API_VERSION_HEADER_COMPONENT_NAME,
     PUBLIC_API_LATEST_VERSION,
     PUBLIC_API_VERSION_HEADER,
@@ -70,6 +70,12 @@ export const initPublicApiSwagger = (app: ExpressKit) => {
         versions.forEach((version) => {
             const openApiDocument = versionToDocument[version];
 
+            openApiDocument.components = openApiDocument.components ?? {};
+
+            openApiDocument.components.schemas = {
+                ...openApiDocument.components?.schemas,
+                ...BI_OPENAPI_SCHEMAS,
+            };
             const versionPath = `/${version}/`;
             const isLatest = version === PUBLIC_API_LATEST_VERSION;
 
@@ -80,19 +86,9 @@ export const initPublicApiSwagger = (app: ExpressKit) => {
                     const host = req.get('host');
                     const serverUrl = `https://${host}`;
 
-                    const result: typeof openApiDocument = {
-                        ...openApiDocument,
-                        servers: [{url: serverUrl}],
-                    };
+                    openApiDocument.servers = [{url: serverUrl}];
 
-                    openApiDocument.components = openApiDocument.components ?? {};
-
-                    openApiDocument.components.schemas = {
-                        ...openApiDocument.components?.schemas,
-                        ...BI_SCHEMAS,
-                    };
-
-                    return res.json(result);
+                    return res.json(openApiDocument);
                 });
 
                 const swaggerOptions = {

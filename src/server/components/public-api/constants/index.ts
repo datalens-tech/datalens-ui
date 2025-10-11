@@ -1,2 +1,2 @@
 export * from './common';
-export {BI_SCHEMAS} from './bi-openapi-schemas';
+export {BI_OPENAPI_SCHEMAS} from './bi-openapi-schemas';

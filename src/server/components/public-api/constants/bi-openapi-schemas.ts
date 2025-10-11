@@ -1,6 +1,4 @@
-import type {ComponentsObject} from '@asteasolutions/zod-to-openapi/dist/types';
-
-export const BI_SCHEMAS: ComponentsObject['schemas'] = {
+export const BI_OPENAPI_SCHEMAS: any = {
     appmetrica_api: {
         type: 'object',
         properties: {
