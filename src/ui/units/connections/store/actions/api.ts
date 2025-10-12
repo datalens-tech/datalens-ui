@@ -137,7 +137,7 @@ const updateConnection = async (
     dbType: string,
 ): Promise<{error?: DataLensApiError}> => {
     try {
-        await getSdk().sdk.bi.updateConnection({...form, connectionId});
+        await getSdk().sdk.bi.updateConnection({data: form, connectionId});
         reachMetricaGoal(CounterName.Main, GoalId.ConnectionEditSubmit, {
             type: dbType,
         });

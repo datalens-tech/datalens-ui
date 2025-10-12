@@ -4,10 +4,14 @@ import {createAction, createTypedAction} from '../../gateway-utils';
 import {filterUrlFragment} from '../../utils';
 import {transformConnectionResponseError} from '../helpers';
 import {
+    createConnectionArgsSchema,
+    createConnectionResultSchema,
     deleteConnectionArgsSchema,
     deleteConnectionResultSchema,
     getConnectionArgsSchema,
     getConnectionResultSchema,
+    updateConnectionArgsSchema,
+    updateConnectionResultSchema,
 } from '../schemas/connections';
 import type {
     CreateConnectionArgs,
@@ -18,6 +22,8 @@ import type {
     ExportConnectionResponse,
     GetAvailableCountersArgs,
     GetAvailableCountersResponse,
+    GetConnectionArgs,
+    GetConnectionResponse,
     GetConnectionSourceSchemaArgs,
     GetConnectionSourceSchemaResponse,
     GetConnectionSourcesArgs,
@@ -61,7 +67,7 @@ export const actions = {
         path: () => `${PATH_PREFIX}/info/connectors`,
         params: (_, headers) => ({headers}),
     }),
-    getConnection: createTypedAction(
+    getConnection: createTypedAction<GetConnectionResponse, GetConnectionArgs>(
         {
             paramsSchema: getConnectionArgsSchema,
             resultSchema: getConnectionResultSchema,
@@ -74,12 +80,18 @@ export const actions = {
             }),
         },
     ),
-    createConnection: createAction<CreateConnectionResponse, CreateConnectionArgs>({
-        method: 'POST',
-        path: () => `${PATH_PREFIX}/connections`,
-        params: (body, headers) => ({body, headers}),
-        transformResponseError: transformConnectionResponseError,
-    }),
+    createConnection: createTypedAction<CreateConnectionResponse, CreateConnectionArgs>(
+        {
+            paramsSchema: createConnectionArgsSchema,
+            resultSchema: createConnectionResultSchema,
+        },
+        {
+            method: 'POST',
+            path: () => `${PATH_PREFIX}/connections`,
+            params: (body, headers) => ({body, headers}),
+            transformResponseError: transformConnectionResponseError,
+        },
+    ),
     verifyConnection: createAction<VerifyConnectionResponse, VerifyConnectionArgs>({
         method: 'POST',
         path: ({connectionId}) => `${PATH_PREFIX}/connections/test_connection/${connectionId}`,
@@ -98,12 +110,18 @@ export const actions = {
         params: (body, headers) => ({body, headers}),
         transformResponseError: transformConnectionResponseError,
     }),
-    updateConnection: createAction<UpdateConnectionResponse, UpdateConnectionArgs>({
-        method: 'PUT',
-        path: ({connectionId}) => `${PATH_PREFIX}/connections/${connectionId}`,
-        params: ({connectionId: _connectionId, ...body}, headers) => ({body, headers}),
-        transformResponseError: transformConnectionResponseError,
-    }),
+    updateConnection: createTypedAction<UpdateConnectionResponse, UpdateConnectionArgs>(
+        {
+            paramsSchema: updateConnectionArgsSchema,
+            resultSchema: updateConnectionResultSchema,
+        },
+        {
+            method: 'PUT',
+            path: ({connectionId}) => `${PATH_PREFIX}/connections/${connectionId}`,
+            params: ({data}, headers) => ({body: data, headers}),
+            transformResponseError: transformConnectionResponseError,
+        },
+    ),
     deleteConnection: createTypedAction(
         {
             paramsSchema: deleteConnectionArgsSchema,

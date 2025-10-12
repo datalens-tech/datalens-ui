@@ -9,16 +9,16 @@ import {
     transformValidateDatasetResponseError,
 } from '../helpers';
 import {
-    createDatasetArgsSchemaApi,
-    createDatasetResultSchemaApi,
+    createDatasetArgsSchema,
+    createDatasetResultSchema,
     deleteDatasetArgsSchema,
     deleteDatasetResultSchema,
-    getDatasetByVersionArgsSchemaApi,
-    getDatasetByVersionResultSchemaApi,
-    updateDatasetArgsSchemaApi,
-    updateDatasetResultSchemaApi,
-    validateDatasetArgsSchemaApi,
-    validateDatasetResultSchemaApi,
+    getDatasetByVersionArgsSchema,
+    getDatasetByVersionResultSchema,
+    updateDatasetArgsSchema,
+    updateDatasetResultSchema,
+    validateDatasetArgsSchema,
+    validateDatasetResultSchema,
 } from '../schemas';
 import type {
     CheckConnectionsForPublicationArgs,
@@ -70,8 +70,8 @@ export const actions = {
     }),
     getDatasetByVersion: createTypedAction<GetDatasetByVersionResponse, GetDatasetByVersionArgs>(
         {
-            paramsSchema: getDatasetByVersionArgsSchemaApi,
-            resultSchema: getDatasetByVersionResultSchemaApi,
+            paramsSchema: getDatasetByVersionArgsSchema,
+            resultSchema: getDatasetByVersionResultSchema,
         },
         {
             method: 'GET',
@@ -146,8 +146,8 @@ export const actions = {
     }),
     createDataset: createTypedAction<CreateDatasetResponse, CreateDatasetArgs>(
         {
-            paramsSchema: createDatasetArgsSchemaApi,
-            resultSchema: createDatasetResultSchemaApi,
+            paramsSchema: createDatasetArgsSchema,
+            resultSchema: createDatasetResultSchema,
         },
         {
             method: 'POST',
@@ -160,8 +160,8 @@ export const actions = {
     ),
     validateDataset: createTypedAction<ValidateDatasetResponse, ValidateDatasetArgs>(
         {
-            paramsSchema: validateDatasetArgsSchemaApi,
-            resultSchema: validateDatasetResultSchemaApi,
+            paramsSchema: validateDatasetArgsSchema,
+            resultSchema: validateDatasetResultSchema,
         },
         {
             method: 'POST',
@@ -187,8 +187,8 @@ export const actions = {
     ),
     updateDataset: createTypedAction<UpdateDatasetResponse, UpdateDatasetArgs>(
         {
-            paramsSchema: updateDatasetArgsSchemaApi,
-            resultSchema: updateDatasetResultSchemaApi,
+            paramsSchema: updateDatasetArgsSchema,
+            resultSchema: updateDatasetResultSchema,
         },
         {
             method: 'PUT',
