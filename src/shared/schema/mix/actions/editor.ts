@@ -1,5 +1,5 @@
 import {DeveloperModeCheckStatus} from '../../../types';
-import {createAction} from '../../gateway-utils';
+import {createAction, createTypedAction} from '../../gateway-utils';
 import {getTypedApi} from '../../simple-schema';
 import type {
     CreateEditorChartArgs,
@@ -9,8 +9,20 @@ import type {
 } from '../../us/types';
 import {getEntryLinks} from '../helpers';
 import {validateData} from '../helpers/editor/validation';
+import {getRawEditorActions} from '../raw-actions/editor';
+import {getEditorChartParamsSchema, getEditorChartResultSchema} from '../schemas/editor';
+
+const rawEditorActions = getRawEditorActions();
 
 export const editorActions = {
+    getEditorChart: createTypedAction(
+        {
+            paramsSchema: getEditorChartParamsSchema,
+            resultSchema: getEditorChartResultSchema,
+        },
+        rawEditorActions.getEditorChart,
+    ),
+
     createEditorChart: createAction<CreateEditorChartResponse, CreateEditorChartArgs>(
         async (api, args, {ctx}) => {
             const {checkRequestForDeveloperModeAccess} = ctx.get('gateway');

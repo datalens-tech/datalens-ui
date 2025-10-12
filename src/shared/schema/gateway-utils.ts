@@ -43,6 +43,9 @@ export const createTypedAction = <
     TOutputSchema extends z.ZodType,
     TParamsSchema extends z.ZodType,
     TTransformedSchema extends z.ZodType = TOutputSchema,
+    TOutputAction = z.infer<TOutputSchema>,
+    TParamsAction = z.infer<TParamsSchema>,
+    TTransformedAction = z.infer<TTransformedSchema>,
 >(
     schema: {
         paramsSchema: TParamsSchema;
@@ -53,9 +56,10 @@ export const createTypedAction = <
         AppContext,
         Request,
         Response,
-        z.infer<TOutputSchema>,
-        z.infer<TParamsSchema>,
-        z.infer<TTransformedSchema>
+        // Action types can be wider than schema types, but they must be compatible
+        TOutputAction | z.infer<TOutputSchema>,
+        TParamsAction | z.infer<TParamsSchema>,
+        TTransformedAction | z.infer<TTransformedSchema>
     >,
 ) => {
     const schemaValidationObject = {
@@ -63,7 +67,18 @@ export const createTypedAction = <
         resultSchema: schema.resultSchema,
     };
 
-    return registerValidationSchema(actionConfig, schemaValidationObject);
+    return registerValidationSchema(
+        actionConfig as ApiServiceActionConfig<
+            AppContext,
+            Request,
+            Response,
+            // Return only schema types
+            z.infer<TOutputSchema>,
+            z.infer<TParamsSchema>,
+            z.infer<TTransformedSchema>
+        >,
+        schemaValidationObject,
+    );
 };
 
 type AuthArgsData = {
