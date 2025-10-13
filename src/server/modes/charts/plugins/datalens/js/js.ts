@@ -43,7 +43,7 @@ import prepareMetricData from '../preparers/metric';
 import preparePivotTableData from '../preparers/old-pivot-table/old-pivot-table';
 import {prepareD3Pie, prepareHighchartsPie} from '../preparers/pie';
 import preparePolylineData from '../preparers/polyline';
-import {prepareD3Scatter, prepareHighchartsScatter} from '../preparers/scatter';
+import {prepareGravityChartsScatter, prepareHighchartsScatter} from '../preparers/scatter';
 import {prepareD3Treemap, prepareHighchartsTreemap} from '../preparers/treemap';
 import type {
     LayerChartMeta,
@@ -498,7 +498,11 @@ function prepareSingleResult({
 
         case WizardVisualizationId.Bar:
         case WizardVisualizationId.Bar100p: {
-            prepare = prepareHighchartsBarY;
+            if (plugin === 'gravity-charts') {
+                prepare = prepareGravityChartsBarY;
+            } else {
+                prepare = prepareHighchartsBarY;
+            }
             rowsLimit = 75000;
             break;
         }
@@ -531,17 +535,22 @@ function prepareSingleResult({
             break;
         }
 
-        case 'scatter':
+        case WizardVisualizationId.Scatter: {
+            if (plugin === 'gravity-charts') {
+                prepare = prepareGravityChartsScatter;
+            } else {
+                prepare = prepareHighchartsScatter;
+            }
             shapes = shared.shapes || [];
             shapesConfig = shared.shapesConfig;
-            prepare = prepareHighchartsScatter;
             rowsLimit = 75000;
             break;
+        }
 
         case 'scatter-d3':
             shapes = shared.shapes || [];
             shapesConfig = shared.shapesConfig;
-            prepare = prepareD3Scatter;
+            prepare = prepareGravityChartsScatter;
             rowsLimit = 75000;
             break;
 
@@ -768,6 +777,7 @@ export const buildGraphPrivate = (args: {
     Object.entries(loadedData).forEach(([key, value]: [string, V1ServerResponse]) => {
         const query = (value.blocks || [])
             .map((block: {query: string}) => block.query)
+            .filter(Boolean)
             .join('\n\n');
 
         if (query) {

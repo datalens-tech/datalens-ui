@@ -27,6 +27,7 @@ import {
     isFloatField,
     isNumberField,
 } from '../types';
+import {getFieldUISettings} from '../utils';
 
 import {isMeasureField} from './helpers';
 
@@ -64,10 +65,17 @@ export const getDefaultFormatting = (
     if (!field) {
         return {} as CommonNumberFormattingOptions;
     }
+
+    const fieldUISettings = getFieldUISettings({field});
+
     return {
         ...DEFAULT_FORMATTING,
-        labelMode: (field as V3Label).labelMode || DEFAULT_FORMATTING.labelMode,
         precision: isFloatField(field) ? DEFAULT_FLOAT_NUMBERS : DEFAULT_INTEGER_NUMBERS,
+        ...fieldUISettings?.numberFormatting,
+        labelMode:
+            (field as V3Label).labelMode ||
+            fieldUISettings?.numberFormatting?.labelMode ||
+            DEFAULT_FORMATTING.labelMode,
     };
 };
 export const getResultSchemaFromDataset = (dataset?: Dataset | Dataset['dataset']): Field[] => {

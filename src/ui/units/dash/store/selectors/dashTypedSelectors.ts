@@ -1,7 +1,6 @@
 import type {DatalensGlobalState} from 'index';
 import isEqual from 'lodash/isEqual';
 import {createSelector} from 'reselect';
-import type {DashTabItem, DashTabItemWidget, DashTabItemWidgetTab} from 'shared';
 
 import {ITEM_TYPE} from '../../../../constants/dialogs';
 import {isOrderIdsChanged} from '../../containers/Dialogs/Tabs/PopupWidgetsOrder/helpers';
@@ -63,8 +62,8 @@ export const selectStateHashId = (state: DatalensGlobalState) => state.dash.stat
 
 export const selectLoadingEditMode = (state: DatalensGlobalState) => state.dash.isLoadingEditMode;
 
-export const selectDashDescription = (state: DatalensGlobalState) =>
-    state.dash.data?.description || '';
+export const selectDashDescription = (state: DatalensGlobalState): string =>
+    state.dash.annotation?.description ?? '';
 
 export const selectDashShowOpenedDescription = (state: DatalensGlobalState) =>
     Boolean(state.dash?.openInfoOnLoad);
@@ -78,9 +77,6 @@ export const selectDashSupportDescription = (state: DatalensGlobalState) => {
     const supportDesc = state.dash?.data?.supportDescription || '';
     return dashEntryId && currentPageEntryId === dashEntryId ? supportDesc : '';
 };
-
-export const selectIsNewRelations = (state: DatalensGlobalState) =>
-    state.dash?.isNewRelationsOpened || false;
 
 export const selectIsFullscreenMode = (state: DatalensGlobalState) => state.dash.isFullscreenMode;
 
@@ -112,9 +108,22 @@ const selectTabsItemsOrderChanged = createSelector(
     (initTabs, currentTabs) => (initTabs ? isOrderIdsChanged(initTabs, currentTabs || []) : false),
 );
 
-const selectDashChanged = createSelector([selectDashEntry, selectDashData], (entry, dashData) => {
-    return Boolean(entry) && !isEqual({...entry.data, counter: 0}, {...dashData, counter: 0});
-});
+const selectDashChanged = createSelector(
+    [selectDashEntry, selectDashData, selectDashDescription],
+    (entry, dashData, description = '') => {
+        return (
+            Boolean(entry) &&
+            !isEqual(
+                {
+                    ...entry.data,
+                    description: entry.annotation?.description || '',
+                    counter: 0,
+                },
+                {...dashData, description, counter: 0},
+            )
+        );
+    },
+);
 
 export const isDraft = createSelector(
     [selectTabsItemsOrderChanged, selectDashChanged],
@@ -184,51 +193,6 @@ export const selectOpenedItem = createSelector(
         return undefined;
     },
 );
-
-export const selectCurrentTabConnectableItems = createSelector([selectCurrentTab], (currentTab) => {
-    if (!currentTab) {
-        return undefined;
-    }
-    return currentTab.items
-        .filter(
-            ({type}) =>
-                type === ITEM_TYPE.CONTROL ||
-                type === ITEM_TYPE.WIDGET ||
-                type === ITEM_TYPE.GROUP_CONTROL,
-        )
-        .reduce((result, {id, data, type, namespace}: DashTabItem) => {
-            if (type === ITEM_TYPE.GROUP_CONTROL && 'group' in data) {
-                data.group.forEach((groupItem) => {
-                    result.push({
-                        id: groupItem.id,
-                        namespace: groupItem.namespace,
-                        type,
-                        title: groupItem.title,
-                    } as DashTabItem);
-                });
-            } else if (type === ITEM_TYPE.WIDGET) {
-                (data as DashTabItemWidget['data']).tabs.forEach(
-                    (tabItem: DashTabItemWidgetTab) => {
-                        result.push({
-                            id: tabItem.id,
-                            namespace,
-                            type,
-                            title: tabItem.title,
-                        } as DashTabItem);
-                    },
-                );
-            } else {
-                result.push({
-                    id,
-                    namespace,
-                    type,
-                    title: 'title' in data ? data.title : '',
-                } as DashTabItem);
-            }
-
-            return result;
-        }, [] as DashTabItem[]);
-});
 
 export const selectCurrentTabRelationDataItems = createSelector(
     [selectCurrentTab],

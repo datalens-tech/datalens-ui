@@ -21,18 +21,15 @@ import {isHtmlField} from '../../../../../../../shared/types/index';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getFieldExportingOptions} from '../../utils/export-helpers';
 import {isLegendEnabled} from '../../utils/misc-helpers';
-import {getAxisType} from '../helpers/axis';
-import {
-    getHighchartsColorAxis,
-    isXAxisReversed,
-    shouldUseGradientLegend,
-} from '../helpers/highcharts';
+import {addAxisFormatter, addAxisFormatting, getAxisType} from '../helpers/axis';
+import {getAxisChartkitFormatting} from '../helpers/axis/get-axis-formatting';
+import {getHighchartsColorAxis, isXAxisReversed} from '../helpers/highcharts';
 import {getYPlaceholders} from '../helpers/layers';
+import {shouldUseGradientLegend} from '../helpers/legend';
 import {getSegmentMap} from '../helpers/segments';
 import type {PrepareFunctionArgs} from '../types';
 
 import {getSegmentsYAxis} from './helpers';
-import {getAxisFormattingByField} from './helpers/axis/getAxisFormattingByField';
 import {prepareLineData} from './prepare-line-data';
 
 // eslint-disable-next-line complexity
@@ -75,23 +72,22 @@ function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
         axisMode: xAxisMode,
     });
 
+    const wizardXAxisFormatter =
+        isDateField(x) && xAxisType === 'category'
+            ? ChartkitHandlers.WizardXAxisFormatter
+            : undefined;
+
     const customConfig: any = {
         xAxis: {
             type: xAxisType,
             reversed: isXAxisReversed(x, sort, visualizationId as WizardVisualizationId),
             labels: {
-                formatter:
-                    isDateField(x) && xAxisType === 'category'
-                        ? ChartkitHandlers.WizardXAxisFormatter
-                        : undefined,
                 useHTML: isHtmlField(x),
             },
         },
+        yAxis: {},
         axesFormatting: {
-            xAxis:
-                xPlaceholder?.settings?.axisFormatMode === AxisLabelFormatMode.ByField
-                    ? [getAxisFormattingByField(xPlaceholder, visualizationId)]
-                    : [],
+            xAxis: [],
             yAxis: [],
         },
         exporting: {
@@ -103,6 +99,14 @@ function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
             },
         },
     };
+
+    addAxisFormatting(customConfig.axesFormatting.xAxis, visualizationId, xPlaceholder);
+    addAxisFormatter({
+        axisConfig: customConfig.xAxis,
+        placeholder: xPlaceholder,
+        otherwiseFormatter: wizardXAxisFormatter,
+        chartConfig,
+    });
 
     if (mergedYSections.length) {
         if (shouldUseGradientLegend(colorItem, colorsConfig, shared)) {
@@ -135,20 +139,46 @@ function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
         if (_isEmpty(segmentsMap)) {
             const [layerYPlaceholder, layerY2Placeholder] = getYPlaceholders(args);
 
-            if (layerYPlaceholder?.settings?.axisFormatMode === AxisLabelFormatMode.ByField) {
-                customConfig.axesFormatting.yAxis.push(
-                    getAxisFormattingByField(layerYPlaceholder, visualizationId),
-                );
+            addAxisFormatting(
+                customConfig.axesFormatting.yAxis,
+                visualizationId,
+                layerYPlaceholder,
+            );
+
+            const formatMode = layerY2Placeholder?.settings?.axisFormatMode;
+            if (formatMode && formatMode !== AxisLabelFormatMode.Auto) {
+                const formatting = getAxisChartkitFormatting(layerY2Placeholder, visualizationId);
+                if (formatting) {
+                    if (customConfig.axesFormatting.yAxis.length === 0) {
+                        customConfig.axesFormatting.yAxis.push({});
+                    }
+
+                    customConfig.axesFormatting.yAxis.push(formatting);
+                }
             }
 
-            if (layerY2Placeholder?.settings?.axisFormatMode === AxisLabelFormatMode.ByField) {
-                if (customConfig.axesFormatting.yAxis.length === 0) {
-                    customConfig.axesFormatting.yAxis.push({});
-                }
-
-                customConfig.axesFormatting.yAxis.push(
-                    getAxisFormattingByField(layerY2Placeholder, visualizationId),
-                );
+            if (layerYPlaceholder?.items.length && layerY2Placeholder?.items.length) {
+                const y1 = {};
+                const y2 = {};
+                addAxisFormatter({
+                    axisConfig: y1,
+                    placeholder: layerYPlaceholder,
+                });
+                addAxisFormatter({
+                    axisConfig: y2,
+                    placeholder: layerY2Placeholder,
+                });
+                customConfig.yAxis = [y1, y2];
+            } else if (layerYPlaceholder?.items.length) {
+                addAxisFormatter({
+                    axisConfig: customConfig.yAxis,
+                    placeholder: layerYPlaceholder,
+                });
+            } else {
+                addAxisFormatter({
+                    axisConfig: customConfig.yAxis,
+                    placeholder: layerY2Placeholder,
+                });
             }
         } else {
             customConfig.legend = {

@@ -7,6 +7,7 @@ import type {
     CreateEntryRequest,
     DashEntry,
     DashEntryCreateParams,
+    EntryAnnotationArgs,
     EntryReadParams,
     Params,
     UpdateEntryRequest,
@@ -20,12 +21,16 @@ export type CreateWidgetArgs =
           key: string;
           data: Record<string, unknown>;
           template?: string;
+          description?: string;
+          annotation?: EntryAnnotationArgs;
       }
     | {
           workbookId: string;
           name: string;
           data: Record<string, unknown>;
           template?: string;
+          description?: string;
+          annotation?: EntryAnnotationArgs;
       };
 
 const CHARTS_API_SCHEMA = {
@@ -67,13 +72,16 @@ const CHARTS_API_SCHEMA = {
     createWidget: (
         headers: IncomingHttpHeaders,
         endpoints: UiEndpoints,
-        {template = 'datalens', ...restArgs}: CreateWidgetArgs,
+        {template = 'datalens', annotation, description = '', ...restArgs}: CreateWidgetArgs,
     ) => ({
         method: 'post',
         url: `${endpoints.charts}${CHARTS_API_BASE_URL}`,
         headers,
         data: {
             template,
+            annotation: {
+                description: annotation?.description ?? description,
+            },
             ...restArgs,
         },
     }),
@@ -85,12 +93,16 @@ const CHARTS_API_SCHEMA = {
             data,
             template = 'datalens',
             mode = EntryUpdateMode.Publish,
+            annotation,
+            description = '',
         }: {
             entryId: string;
             revId: string;
             data: any;
             template: string;
             mode?: EntryUpdateMode;
+            annotation?: EntryAnnotationArgs;
+            description?: string;
         },
     ) => ({
         method: 'post',
@@ -100,6 +112,9 @@ const CHARTS_API_SCHEMA = {
             data,
             mode,
             template,
+            annotation: {
+                description: annotation?.description ?? description,
+            },
         },
     }),
 
@@ -107,12 +122,19 @@ const CHARTS_API_SCHEMA = {
     createDash: (
         headers: IncomingHttpHeaders,
         endpoints: UiEndpoints,
-        {data}: {data: CreateEntryRequest<DashEntry | DashEntryCreateParams>},
+        {
+            data: {annotation, description, ...restArgs},
+        }: {data: CreateEntryRequest<DashEntry | DashEntryCreateParams>},
     ) => ({
         method: 'post',
         url: `${endpoints.charts}${DASH_API_BASE_URL}`,
         headers,
-        data,
+        data: {
+            ...restArgs,
+            annotation: {
+                description: annotation?.description ?? description,
+            },
+        },
     }),
     readDash: (
         headers: IncomingHttpHeaders,
@@ -135,7 +157,7 @@ const CHARTS_API_SCHEMA = {
         endpoints: UiEndpoints,
         {
             id,
-            data,
+            data: {annotation, description, ...restArgs},
         }: {
             id: string;
             data: UpdateEntryRequest<DashEntry>;
@@ -144,7 +166,12 @@ const CHARTS_API_SCHEMA = {
         method: 'post',
         url: `${endpoints.charts}${DASH_API_BASE_URL}/${filterUrlFragment(id)}`,
         headers,
-        data,
+        data: {
+            ...restArgs,
+            annotation: {
+                description: annotation?.description ?? description,
+            },
+        },
     }),
 };
 

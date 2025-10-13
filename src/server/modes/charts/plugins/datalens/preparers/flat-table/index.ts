@@ -10,6 +10,7 @@ import {
     GradientNullModes,
     IS_NULL_FILTER_TEMPLATE,
     MINIMUM_FRACTION_DIGITS,
+    getFormatOptions,
     isDateField,
     isDateType,
     isMarkupDataType,
@@ -132,18 +133,19 @@ function prepareFlatTable({
             } else {
                 // TODO: in theory, this is not necessary, because you need to look at the dataType
                 if (isNumberField(item)) {
-                    if (item.formatting) {
+                    const formatting = getFormatOptions(item);
+                    if (formatting) {
                         numberHeadCell.formatter = {
-                            format: item.formatting.format,
-                            suffix: item.formatting.postfix,
-                            prefix: item.formatting.prefix,
-                            showRankDelimiter: item.formatting.showRankDelimiter,
-                            unit: item.formatting.unit,
+                            format: formatting.format,
+                            suffix: formatting.postfix,
+                            prefix: formatting.prefix,
+                            showRankDelimiter: formatting.showRankDelimiter,
+                            unit: formatting.unit,
                         };
 
                         if (dataType === DATASET_FIELD_TYPES.FLOAT) {
                             numberHeadCell.formatter.precision =
-                                item.formatting.precision ?? MINIMUM_FRACTION_DIGITS;
+                                formatting.precision ?? MINIMUM_FRACTION_DIGITS;
                         }
                     } else {
                         numberHeadCell.precision =

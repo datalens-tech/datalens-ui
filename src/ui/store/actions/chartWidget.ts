@@ -1,5 +1,5 @@
 import type {AxiosError} from 'axios';
-import {EntryUpdateMode} from 'shared';
+import {type EntryAnnotationArgs, EntryUpdateMode} from 'shared';
 import {sdk, Utils} from 'ui';
 import {reloadRevisionsOnSave, setChartsEntryContent} from './entryContent';
 import type {AppDispatch} from '../index';
@@ -14,6 +14,7 @@ export type UpdateWidgetArguments<RequestData> = {
     data: RequestData;
     mode?: EntryUpdateMode;
     template?: string;
+    annotation?: EntryAnnotationArgs;
 };
 
 export type RequestUpdateWidgetArgs<RequestData, ResponseData> = {
@@ -71,11 +72,15 @@ export const setActualChart = <
 ) => {
     return async (dispatch: AppDispatch) => {
         const {data, isDraftEntry, entry, template} = args;
+        const annotation = entry.annotation;
         const updateParams: UpdateWidgetArguments<RequestData> = {
             data,
             mode: EntryUpdateMode.Publish,
             entryId: entry.entryId,
             template,
+            annotation: {
+                description: annotation?.description ?? '',
+            },
         };
 
         if (isDraftEntry) {
@@ -118,6 +123,7 @@ export type SaveWidgetArgs<RequestData, ResponseData> = {
     data: RequestData;
     mode?: EntryUpdateMode;
     template?: string;
+    annotation?: EntryAnnotationArgs;
 } & Omit<RequestUpdateWidgetArgs<RequestData, ResponseData>, 'updateParams'>;
 
 export const saveWidget = <
@@ -127,12 +133,13 @@ export const saveWidget = <
     args: SaveWidgetArgs<RequestData, ResponseData>,
 ) => {
     return async (dispatch: AppDispatch) => {
-        const {entry, data, mode, template, ...restArgs} = args;
+        const {entry, data, mode, template, annotation, ...restArgs} = args;
         const updateParams: UpdateWidgetArguments<RequestData> = {
             entryId: entry.entryId,
             data,
             mode,
             template,
+            annotation,
         };
 
         if (updateParams.mode === EntryUpdateMode.Publish) {

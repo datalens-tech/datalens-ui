@@ -56,6 +56,7 @@ import DatalensChartkitCustomError, {
     ERROR_CODE,
 } from '../../datalens-chartkit-custom-error/datalens-chartkit-custom-error';
 import URI from '../../uri/uri';
+import {getChartKind} from '../helpers';
 
 import {getGraph} from './get-graph/get-graph';
 import processNode from './node';
@@ -407,6 +408,24 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             }
         }
 
+        if (processed.type === WidgetKind.GravityCharts) {
+            const newConfig: GraphWidget['config'] = {
+                hideComments:
+                    denormalizedParams[URL_OPTIONS.HIDE_COMMENTS] === '1' ||
+                    (processed.config?.hideComments &&
+                        denormalizedParams[URL_OPTIONS.HIDE_COMMENTS] !== '0'),
+                hideHolidays: denormalizedParams[URL_OPTIONS.HIDE_HOLIDAYS] === '1',
+            };
+
+            return {
+                ...processed,
+                config: {
+                    ...processed.config,
+                    ...newConfig,
+                },
+            };
+        }
+
         if (processed.type === 'graph') {
             const newConfig: GraphWidget['config'] = {
                 hideComments:
@@ -477,6 +496,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
             configResolving: null,
             dataFetching: null,
             jsExecution: null,
+            chartKind: getChartKind(loadedData),
         };
 
         if (loadedData.timings) {

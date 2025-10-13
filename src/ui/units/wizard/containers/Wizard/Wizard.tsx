@@ -72,6 +72,7 @@ import {
     selectConfigForSaving,
     selectConfigType,
     selectInitialPreviewHash,
+    selectPreviewDescription,
     selectPreviewEntryId,
     selectPreviewHash,
 } from '../../selectors/preview';
@@ -300,8 +301,15 @@ class Wizard extends React.Component<Props, State> {
     };
 
     openSaveAsWidgetDialog = async (convert = false) => {
-        const {dataset, visualization, extraSettings, defaultPath, widget, configForSaving} =
-            this.props;
+        const {
+            dataset,
+            visualization,
+            extraSettings,
+            defaultPath,
+            widget,
+            configForSaving,
+            description,
+        } = this.props;
 
         const resultConfig = mapClientConfigToChartsConfig(configForSaving);
 
@@ -325,6 +333,9 @@ class Wizard extends React.Component<Props, State> {
                 initName,
                 initDestination: path,
                 workbookId: widget.workbookId,
+                annotation: {
+                    description,
+                },
             },
         });
 
@@ -349,12 +360,17 @@ class Wizard extends React.Component<Props, State> {
     };
 
     openSaveWidgetDialog = async (mode?: EntryUpdateMode) => {
-        const {widget, configForSaving} = this.props;
+        const {widget, configForSaving, description} = this.props;
 
         // Are we updating an existing one or saving a new one?
         if (widget && !widget.fake) {
             // Updating an existing one
-            this.props.updateWizardWidget({entry: widget, config: configForSaving, mode});
+            this.props.updateWizardWidget({
+                entry: widget,
+                config: configForSaving,
+                mode,
+                annotation: {description},
+            });
 
             this.props.updateClientChartsConfig({
                 isInitialPreview: true,
@@ -626,6 +642,7 @@ const mapStateToProps = (state: DatalensGlobalState, ownProps: OwnProps) => {
         isParentDashWasChanged: isDraft(state) && isEditMode(state),
         initialPreviewHash: selectInitialPreviewHash(state),
         wizardState: state.wizard,
+        description: selectPreviewDescription(state),
     };
 };
 

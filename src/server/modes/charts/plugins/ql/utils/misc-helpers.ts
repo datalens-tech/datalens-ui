@@ -2,6 +2,8 @@ import type {YagrConfig} from '@gravity-ui/chartkit/yagr';
 import {dateTimeParse} from '@gravity-ui/date-utils';
 
 import type {
+    ApiV2DataExportField,
+    FeatureConfig,
     IChartEditor,
     QLChartType,
     QlConfigPreviewTableData,
@@ -28,6 +30,10 @@ import type {
     QlConfigResultEntryMetadataDataColumnOrGroup,
     QlConfigResultEntryMetadataDataGroup,
 } from '../../../../../../shared/types/config/ql';
+import {
+    CONNECTIONS_DASHSQL_WITH_EXPORT_INFO,
+    CONNECTION_ID_PLACEHOLDER,
+} from '../../control/url/constants';
 
 import type {QLConnectionTypeMap} from './connection';
 import {convertConnectionType} from './connection';
@@ -74,9 +80,18 @@ export interface QLResultEntryData {
     data: string[];
 }
 
-export interface QLResult {
+export interface QLResultOld {
     [key: string]: QLResultEntry[];
 }
+
+export interface QLResultWithDataExport {
+    [key: string]: {
+        events: QLResultEntry[];
+        data_export: ApiV2DataExportField;
+    };
+}
+
+export type QLResult = QLResultWithDataExport | QLResultOld;
 
 export interface QLRenderResultTable {
     head: {};
@@ -398,6 +413,7 @@ export function buildSource({
     params: StringParams;
     paramsDescription: QlConfigParam[];
     qlConnectionTypeMap: QLConnectionTypeMap;
+    features: FeatureConfig;
 }) {
     let sqlQuery = query;
 
@@ -491,8 +507,10 @@ export function buildSource({
         params: QLRequestParams,
     };
 
+    const connectionsUrl = CONNECTIONS_DASHSQL_WITH_EXPORT_INFO;
+
     return {
-        url: `/_bi_connections/${id}/dashsql`,
+        url: connectionsUrl.replace(CONNECTION_ID_PLACEHOLDER, id),
         method: 'post',
         data: payload,
     };
@@ -501,7 +519,8 @@ export function buildSource({
 export function getRows(data: QLResult, field = 'sql'): string[][] {
     let rows: string[][] = [];
 
-    rows = data[field]
+    const events = 'events' in data[field] ? data[field].events : data[field];
+    rows = events
         .filter((entry: QLResultEntry) => entry.event === 'row')
         .map((entry: QLResultEntry) => entry.data) as string[][];
 
@@ -515,7 +534,8 @@ export function getColumns(args: {
     qlConnectionTypeMap: QLConnectionTypeMap;
 }): QlConfigResultEntryMetadataDataColumn[] | null {
     const {data, connectionType, field = 'sql', qlConnectionTypeMap} = args;
-    const row = data[field].find((entry: QLResultEntry) => entry.event === 'metadata');
+    const events = 'events' in data[field] ? data[field].events : data[field];
+    const row = events.find((entry: QLResultEntry) => entry.event === 'metadata');
 
     const datalensQLConnectionType = convertConnectionType(qlConnectionTypeMap, connectionType);
 

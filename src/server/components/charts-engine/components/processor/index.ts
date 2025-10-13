@@ -1,21 +1,26 @@
+import type {ChartData} from '@gravity-ui/chartkit/gravity-charts';
 import {transformParamsToActionParams} from '@gravity-ui/dashkit/helpers';
 import {type AppContext, REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 import {AxiosError} from 'axios';
 import JSONfn from 'json-fn';
-import {isNumber, isObject, isString, merge, mergeWith} from 'lodash';
+import {isEmpty, isNumber, isObject, isString, mapValues, merge, mergeWith} from 'lodash';
 import get from 'lodash/get';
 
 import type {ChartsEngine} from '../..';
 import type {
+    ApiV2DataExportField,
     ControlType,
     DashWidgetConfig,
     EDITOR_TYPE_CONFIG_TABS,
     EntryPublicAuthor,
+    Palette,
     StringParams,
     WorkbookId,
 } from '../../../../../shared';
-import {DL_CONTEXT_HEADER, Feature} from '../../../../../shared';
+import {DL_CONTEXT_HEADER, Feature, WizardType} from '../../../../../shared';
 import {renderHTML} from '../../../../../shared/modules/markdown/markdown';
+import {selectServerPalette} from '../../../../constants';
+import {extractColorPalettesFromData} from '../../../../modes/charts/plugins/helpers/color-palettes';
 import {registry} from '../../../../registry';
 import type {CacheClient} from '../../../cache-client';
 import {config as configConstants} from '../../constants';
@@ -181,6 +186,8 @@ export type SerializableProcessorParams = {
     originalReqHeaders: DataFetcherOriginalReqHeaders;
     adapterContext: AdapterContext;
     hooksContext: HooksContext;
+    defaultColorPaletteId?: string;
+    systemPalettes?: Record<string, Palette>;
 };
 
 export class Processor {
@@ -217,6 +224,8 @@ export class Processor {
         hooks,
         sourcesConfig,
         secureConfig,
+        defaultColorPaletteId,
+        systemPalettes,
     }: ProcessorParams): Promise<
         ProcessorSuccessResponse | ProcessorErrorResponse | {error: string}
     > {
@@ -231,6 +240,8 @@ export class Processor {
         let params: Record<string, string | string[]> | StringParams;
         let actionParams: Record<string, string | string[]>;
         let usedParams: Record<string, string | string[]>;
+
+        const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
 
         const timings: {
             configResolving: number;
@@ -247,7 +258,6 @@ export class Processor {
 
         function injectConfigAndParams({target}: {target: ProcessorSuccessResponse}) {
             let responseConfig;
-            const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
             const useChartsEngineResponseConfig = Boolean(
                 isEnabledServerFeature(Feature.UseChartsEngineResponseConfig),
             );
@@ -665,6 +675,8 @@ export class Processor {
                 return acc;
             }, {});
 
+            const {colorPalettes: tenantColorPalettes} = extractColorPalettesFromData(data);
+
             hrStart = process.hrtime();
             const libraryTabResult = await builder.buildChartLibraryConfig({
                 data,
@@ -843,7 +855,6 @@ export class Processor {
                     entryId: config.entryId || configId,
                 });
 
-                const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
                 const disableFnAndHtml = isEnabledServerFeature(Feature.DisableFnAndHtml);
                 if (
                     disableFnAndHtml ||
@@ -870,6 +881,26 @@ export class Processor {
                 result.extra.chartsInsights = jsTabResults.runtimeMetadata.chartsInsights;
                 result.extra.sideMarkdown = jsTabResults.runtimeMetadata.sideMarkdown;
 
+                result.dataExport = mapValues(data, (sourceResponse) => {
+                    if (
+                        typeof sourceResponse === 'object' &&
+                        sourceResponse &&
+                        'data_export' in sourceResponse
+                    ) {
+                        return sourceResponse.data_export as ApiV2DataExportField;
+                    }
+                    return undefined;
+                });
+
+                const colors = selectServerPalette({
+                    defaultColorPaletteId: defaultColorPaletteId ?? '',
+                    customColorPalettes: tenantColorPalettes,
+                    availablePalettes: systemPalettes ?? {},
+                });
+                if (!isEmpty(colors)) {
+                    result.extra.colors = colors;
+                }
+
                 result.sources = merge(
                     resolvedSources,
                     jsTabResults.runtimeMetadata.dataSourcesInfos,
@@ -885,7 +916,8 @@ export class Processor {
                     ctx.config.chartsEngineConfig.flags?.chartComments &&
                     (type === CONFIG_TYPE.GRAPH_NODE ||
                         type === CONFIG_TYPE.GRAPH_WIZARD_NODE ||
-                        type === CONFIG_TYPE.GRAPH_QL_NODE)
+                        type === CONFIG_TYPE.GRAPH_QL_NODE ||
+                        type === WizardType.GravityChartsWizardNode)
                 ) {
                     try {
                         const chartName =
@@ -895,16 +927,29 @@ export class Processor {
 
                         hrStart = process.hrtime();
 
-                        result.comments = await CommentsFetcher.prepareComments(
-                            {
-                                chartName,
-                                config: resultConfig.comments,
-                                data: result.data as CommentsFetcherPrepareCommentsParams['data'],
-                                params,
-                            },
-                            subrequestHeaders,
-                            ctx,
-                        );
+                        if (type === WizardType.GravityChartsWizardNode) {
+                            result.comments = await CommentsFetcher.prepareGravityChartsComments(
+                                {
+                                    chartName,
+                                    config: resultConfig.comments,
+                                    data: result.data as ChartData,
+                                    params,
+                                },
+                                subrequestHeaders,
+                                ctx,
+                            );
+                        } else {
+                            result.comments = await CommentsFetcher.prepareComments(
+                                {
+                                    chartName,
+                                    config: resultConfig.comments,
+                                    data: result.data as CommentsFetcherPrepareCommentsParams['data'],
+                                    params,
+                                },
+                                subrequestHeaders,
+                                ctx,
+                            );
+                        }
 
                         ctx.log('EditorEngine::Comments', {duration: getDuration(hrStart)});
                     } catch (error) {

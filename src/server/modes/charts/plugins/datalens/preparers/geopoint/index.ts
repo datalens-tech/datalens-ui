@@ -13,9 +13,11 @@ import {
     WRAPPED_MARKDOWN_KEY,
     ZoomMode,
     getFakeTitleOrTitle,
+    getFormatOptions,
     isMarkupDataType,
 } from '../../../../../../../shared';
 import {wrapHtml} from '../../../../../../../shared/utils/ui-sandbox';
+import {getColorsSettings} from '../../../helpers/color-palettes';
 import {getColorsByMeasureField, getThresholdValues} from '../../utils/color-helpers';
 import {GEO_MAP_LAYERS_LEVEL, getMountedColor} from '../../utils/constants';
 import type {Coordinate, GradientOptions} from '../../utils/geo-helpers';
@@ -112,7 +114,7 @@ const setPointProperty = ({
 };
 
 // eslint-disable-next-line complexity
-function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = false} = {}) {
+export function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = false} = {}) {
     const {
         colors,
         colorsConfig,
@@ -125,6 +127,7 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
         shared,
         idToDataType,
         ChartEditor,
+        defaultColorPaletteId,
     } = options;
     const widgetConfig = ChartEditor.getWidgetConfig();
     const isActionParamsEnabled = widgetConfig?.actionParams?.enable;
@@ -191,6 +194,9 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
         });
     }
 
+    let mountedColors: Record<string, string> = {};
+    let paletteColors: string[] = [];
+
     if (gradientMode) {
         const gradientThresholdValues = getThresholdValues(colorsConfig, colorValues);
         const {min, rangeMiddle, max} = gradientThresholdValues;
@@ -205,6 +211,17 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
             mid: min + rangeMiddle,
             max: max,
         };
+    } else {
+        const colorSettings = getColorsSettings({
+            field: color,
+            colorsConfig,
+            defaultColorPaletteId,
+            availablePalettes: colorsConfig.availablePalettes,
+            customColorPalettes: colorsConfig.loadedColorPalettes,
+        });
+
+        mountedColors = colorSettings.mountedColors;
+        paletteColors = colorSettings.colors;
     }
 
     let colorIndex = -1;
@@ -262,13 +279,14 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
             }
 
             if (label && label.title === dataTitle) {
+                const formatting = getFormatOptions(label);
                 allPoints[`points-${valuesIndex}`].forEach((point) =>
                     setPointProperty({
                         point,
                         propName: 'label',
                         propValue: columnData,
                         propType: label.data_type,
-                        formatting: label.formatting,
+                        formatting,
                     }),
                 );
             }
@@ -287,7 +305,11 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
                             iconColor = colorData[key];
                         }
                     } else {
-                        let mountedColor = getMountedColor(colorsConfig, colorValue);
+                        let mountedColor = getMountedColor({
+                            colors: paletteColors,
+                            mountedColors,
+                            value: colorValue,
+                        });
 
                         if (!mountedColor || mountedColor === 'auto') {
                             if (!colorsByValue.has(colorValue)) {
@@ -329,10 +351,11 @@ function prepareGeopoint(options: PrepareFunctionArgs, {isClusteredPoints = fals
                     pointData.key = itemTitle;
                     pointData.value = columnData;
                 } else {
+                    const tooltipFieldFormatting = getFormatOptions(tooltipField);
                     const value = prepareValue(
                         columnData,
                         tooltipField.data_type,
-                        tooltipField.formatting,
+                        tooltipFieldFormatting,
                     );
                     const text = itemTitle ? `${itemTitle}: ${value}` : value;
 

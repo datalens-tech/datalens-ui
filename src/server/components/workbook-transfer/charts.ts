@@ -9,6 +9,7 @@ import {
 } from '../../../shared/constants/workbook-transfer';
 import type {EntryFields} from '../../../shared/schema';
 import {
+    type EntryAnnotation,
     EntryScope,
     EntryUpdateMode,
     type TransferIdMapping,
@@ -32,6 +33,7 @@ type TransferChartDataOptions = {
     type: string;
     key?: string;
     name: string;
+    annotation?: EntryAnnotation | null;
 };
 
 const validateChartShared = (chartOptions: TransferChartDataOptions) => {
@@ -155,6 +157,7 @@ export const prepareImportChartData = async (
 ) => {
     const {ctx} = req;
 
+    const description = chartOptions.annotation?.description ?? '';
     const defaults = {
         key: chartOptions.key,
         name: chartOptions.name,
@@ -162,6 +165,7 @@ export const prepareImportChartData = async (
         links: {},
         scope: EntryScope.Widget,
         mode: EntryUpdateMode.Publish,
+        annotation: {description},
     };
     const notifications: TransferNotification[] = [];
 
@@ -257,13 +261,14 @@ export const prepareImportChartData = async (
 export const prepareExportChartData = async (entry: EntryFields, idMapping: TransferIdMapping) => {
     let data;
 
-    const {key, type} = entry;
+    const {key, type, annotation} = entry;
     const name = getEntryNameByKey({key});
 
     const widget = {
         data,
         name,
         type,
+        annotation,
     };
 
     const notifications: TransferNotification[] = [];

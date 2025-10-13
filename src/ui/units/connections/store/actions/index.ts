@@ -12,7 +12,7 @@ import type {DataLensApiError} from '../../../../typings';
 import {getWorkbookIdFromPathname} from '../../../../utils';
 import history from '../../../../utils/history';
 import {FieldKey, InnerFieldKey} from '../../constants';
-import {newConnectionSelector} from '../selectors';
+import {connectionIdSelector, newConnectionSelector} from '../selectors';
 import type {ConnectionsReduxDispatch, ConnectionsReduxState, GetState} from '../typings';
 import {
     getConnectorItemFromFlattenList,
@@ -147,6 +147,8 @@ function setFetchedFormData(schema: FormSchema) {
     return (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
         const {connectionData} = getState().connections;
         const {form: fetchedFormData} = getFetchedFormData(schema, connectionData);
+        // TODO: remove after BI-6604
+        fetchedFormData[FieldKey.Description] = connectionData[FieldKey.Description];
         // technotes [1]
         fetchedFormData[FieldKey.DbType] = connectionData[FieldKey.DbType];
 
@@ -176,6 +178,7 @@ export function getConnectorSchema(type: ConnectorType) {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
         const {flattenConnectors} = getState().connections;
         const isNewConnection = newConnectionSelector(getState());
+        const connectionId = connectionIdSelector(getState());
         const connectorItem = getConnectorItemFromFlattenList(flattenConnectors, type);
         const useBackendSchema = Boolean(connectorItem?.backend_driven_form);
         let schema: FormSchema | undefined;
@@ -186,6 +189,7 @@ export function getConnectorSchema(type: ConnectorType) {
             ({schema, error} = await api.fetchConnectorSchema({
                 type,
                 mode: isNewConnection ? 'create' : 'edit',
+                connectionId: isNewConnection ? undefined : connectionId,
             }));
         } else {
             const getMockedForm = registry.connections.functions.get('getMockedForm');
@@ -272,6 +276,9 @@ export function createConnection(args: {name: string; dirPath?: string; workbook
             resultForm[FieldKey.WorkbookId] = workbookId;
         }
 
+        // TODO: remove after BI-6604
+        resultForm[FieldKey.Description] = form[FieldKey.Description];
+
         flow([setSubmitLoading, dispatch])({loading: true});
         const {id: connectionId, error: connError} = await api.createConnection(resultForm);
         let templateFolderId: string | undefined;
@@ -355,6 +362,8 @@ export function updateConnection() {
             innerForm,
             apiSchemaItem: schema.apiSchema?.edit,
         });
+        // TODO: remove after BI-6604
+        resultForm[FieldKey.Description] = form[FieldKey.Description];
 
         // technotes [1]
         delete resultForm[FieldKey.DbType];

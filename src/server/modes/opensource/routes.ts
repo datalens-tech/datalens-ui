@@ -12,6 +12,7 @@ import {getZitadelRoutes} from '../../components/zitadel/routes';
 import {ping} from '../../controllers/ping';
 import {workbooksTransferController} from '../../controllers/workbook-transfer';
 import {getConnectorIconsMiddleware} from '../../middlewares';
+import {getTenantSettingsMiddleware} from '../../middlewares/tenant-settings';
 import type {ExtendedAppRouteDescription} from '../../types/controllers';
 import {getConfiguredRoute} from '../../utils/routes';
 import {applyPluginRoutes} from '../charts/init-charts-engine';
@@ -119,6 +120,7 @@ function getDataLensRoutes({
                     authArgs: getAuthArgs(req, res),
                 }),
             }),
+            getTenantSettingsMiddleware(),
         ],
         ui: true,
     };

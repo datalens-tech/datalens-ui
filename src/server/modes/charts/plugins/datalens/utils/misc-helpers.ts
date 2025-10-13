@@ -335,13 +335,15 @@ function isColumnSettingsWidthEnabled(
 function getFormatOptionsFromFieldFormatting(
     formatting: CommonNumberFormattingOptions | undefined,
     dataType: string,
+    isAxisFormatting = false,
 ): ChartKitFormatSettings {
     let chartKitPrecision = 0;
-    if (dataType === 'float') {
+    if (dataType === 'float' || isAxisFormatting) {
+        const minimumFractionDigits = isAxisFormatting ? 0 : MINIMUM_FRACTION_DIGITS;
         chartKitPrecision =
             typeof formatting?.precision === 'number'
                 ? formatting.precision
-                : MINIMUM_FRACTION_DIGITS;
+                : minimumFractionDigits;
     }
 
     return typeof formatting === 'undefined' || isEmpty(formatting)
@@ -431,7 +433,7 @@ export function getCategoryFormatter(args: {
         return (value: unknown) => wrapHtml(String(value));
     }
 
-    return (value: string | number) => value;
+    return (value: string | number) => String(value);
 }
 
 export function getSeriesTitleFormatter(args: {fields: (ServerField | undefined)[]}) {

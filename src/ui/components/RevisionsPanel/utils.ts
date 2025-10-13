@@ -4,7 +4,7 @@ import {EntryScope} from '../../../shared';
  * Which sections should be allowed to show a new panel with versions
  */
 export function getEntryScopesWithRevisionsList(): EntryScope[] {
-    return [EntryScope.Dash, EntryScope.Widget];
+    return [EntryScope.Dash, EntryScope.Widget, EntryScope.Dataset];
 }
 
 /**

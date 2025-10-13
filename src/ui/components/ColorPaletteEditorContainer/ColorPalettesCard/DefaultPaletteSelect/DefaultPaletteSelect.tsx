@@ -1,13 +1,13 @@
 import React from 'react';
 
-import {Flex, Loader, Select, Text, spacing} from '@gravity-ui/uikit';
+import {Flex, Loader, Text, spacing} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import type {ColorPalette} from 'shared';
-import {SelectOptionWithIcon} from 'ui/components/SelectComponents';
+import {ColorPaletteSelect} from 'ui/components/ColorPaletteSelect/ColorPaletteSelect';
+import {getAvailableClientPalettesMap} from 'ui/constants/common';
 import {showToast} from 'ui/store/actions/toaster';
-import {getPaletteSelectorItems} from 'ui/units/wizard/utils/palette';
 
 import {getSdk} from '../../../../libs/schematic-sdk';
 
@@ -19,23 +19,35 @@ const i18n = I18n.keyset('component.color-palette-editor');
 
 type DefaultPaletteSelectProps = {
     colorPalettes: ColorPalette[];
+    disabled?: boolean;
 };
 
-export const DefaultPaletteSelect = ({colorPalettes}: DefaultPaletteSelectProps) => {
+export const DefaultPaletteSelect = ({colorPalettes, disabled}: DefaultPaletteSelectProps) => {
     const dispatch = useDispatch();
 
     const [isLoading, setIsLoading] = React.useState(false);
 
-    const defaultPaletteOptions = React.useMemo(
-        () => getPaletteSelectorItems({colorPalettes}),
-        [colorPalettes],
-    );
+    const getDefaultColorPaletteValue = React.useCallback(() => {
+        const allPalettes = [
+            ...Object.values(getAvailableClientPalettesMap()).map((p) => p.id),
+            ...colorPalettes.map((p) => p.colorPaletteId),
+        ];
+
+        const tenantDefaultValue = window.DL.tenantSettings?.defaultColorPaletteId;
+        if (tenantDefaultValue && allPalettes.includes(tenantDefaultValue)) {
+            return tenantDefaultValue;
+        }
+
+        return window.DL.defaultColorPaletteId ?? '';
+    }, [colorPalettes]);
 
     const [defaultColorPaletteId, setDefaultPaletteId] = React.useState<string>(
-        window.DL.tenantSettings?.defaultColorPaletteId ??
-            window.DL.defaultColorPaletteId ??
-            colorPalettes[0].colorPaletteId,
+        getDefaultColorPaletteValue(),
     );
+
+    React.useEffect(() => {
+        setDefaultPaletteId(getDefaultColorPaletteValue());
+    }, [getDefaultColorPaletteValue]);
 
     const handleDefaultPaletteUpdate = (value: string[]) => {
         setIsLoading(true);
@@ -44,8 +56,14 @@ export const DefaultPaletteSelect = ({colorPalettes}: DefaultPaletteSelectProps)
         getSdk()
             .sdk.us.setDefaultColorPalette({defaultColorPaletteId: value[0]})
             .then((response) => {
-                if (response.settings.defaultColorPaletteId !== value[0]) {
-                    setDefaultPaletteId(response.settings.defaultColorPaletteId || fallbackValue);
+                let newPaletteValue = value[0];
+                if (response.settings.defaultColorPaletteId !== newPaletteValue) {
+                    newPaletteValue = response.settings.defaultColorPaletteId || fallbackValue;
+                    setDefaultPaletteId(newPaletteValue);
+                }
+
+                if (window.DL.tenantSettings) {
+                    window.DL.tenantSettings.defaultColorPaletteId = newPaletteValue;
                 }
                 dispatch(
                     showToast({
@@ -77,19 +95,12 @@ export const DefaultPaletteSelect = ({colorPalettes}: DefaultPaletteSelectProps)
         >
             <Text className={spacing({mb: 0.5})}>{i18n('label_default-palette')}</Text>
             <Flex gap={2} className={b('row')}>
-                <Select
-                    options={defaultPaletteOptions}
+                <ColorPaletteSelect
+                    colorPalettes={colorPalettes}
                     onUpdate={handleDefaultPaletteUpdate}
-                    value={[defaultColorPaletteId]}
-                    renderSelectedOption={(option) => {
-                        return <SelectOptionWithIcon option={option} />;
-                    }}
-                    renderOption={(option) => {
-                        return <SelectOptionWithIcon option={option} />;
-                    }}
-                    popupClassName={b('select-popup')}
+                    value={defaultColorPaletteId}
+                    disabled={isLoading || disabled}
                     className={b('select')}
-                    disabled={isLoading}
                 />
                 {isLoading && <Loader size="s" />}
             </Flex>

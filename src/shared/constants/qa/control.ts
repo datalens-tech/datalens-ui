@@ -29,6 +29,8 @@ export const ControlQA = {
     dialogControlCancelBtn: 'control-dialog-cancel-button',
 
     groupCommonLockedBlock: 'group-control-common-locked-block',
+
+    errorBlock: 'type-error',
 };
 
 export const DialogControlQa = {

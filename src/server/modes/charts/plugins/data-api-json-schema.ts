@@ -631,6 +631,9 @@ export const dashApiValidation: ValidationConfig = {
             links: {
                 type: 'object',
             },
+            annotation: {
+                type: 'object',
+            },
         },
     },
 };

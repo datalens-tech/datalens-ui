@@ -265,6 +265,7 @@ export const load = ({
             const readDashParams: Omit<GetEntryArgs, 'entryId'> = {
                 includePermissionsInfo: true,
                 includeLinks: true,
+                includeFavorite: true,
                 branch: 'published',
             };
 
@@ -368,6 +369,7 @@ export const load = ({
                     currentRevId: entry.revId,
                     widgetsCurrentTab,
                     openInfoOnLoad: searchParams.get(URL_QUERY.OPEN_DASH_INFO) === '1',
+                    annotation: entry.annotation,
                 },
             });
 
@@ -427,13 +429,14 @@ export const save = (mode: EntryUpdateMode, isDraft = false) => {
     return async function (dispatch: DashDispatch, getState: () => DatalensGlobalState) {
         try {
             const isPublishing = mode === 'publish';
-            const {entry: prevEntry, data, lockToken} = getState().dash;
+            const {entry: prevEntry, data, lockToken, annotation} = getState().dash;
 
             // TODO Refactor old api schema
             const updateData: {
                 id: string;
                 data: Partial<DashEntry> & {
                     lockToken: string | null;
+                    description?: string;
                 };
             } = {
                 id: prevEntry.entryId,
@@ -441,6 +444,9 @@ export const save = (mode: EntryUpdateMode, isDraft = false) => {
                     lockToken,
                     mode: mode,
                     meta: isPublishing ? {is_release: true} : {},
+                    annotation: {
+                        description: annotation?.description ?? '',
+                    },
                 },
             };
             if (isDraft && isPublishing) {
@@ -448,6 +454,7 @@ export const save = (mode: EntryUpdateMode, isDraft = false) => {
             } else {
                 updateData.data.data = purgeData(data);
             }
+
             // TODO Refactor old api schema
             const entry = await (sdk.charts as any).updateDash(updateData);
 
@@ -471,6 +478,7 @@ export const save = (mode: EntryUpdateMode, isDraft = false) => {
                         ...prevEntry,
                         ...entry,
                     },
+                    annotation: entry.annotation,
                 },
             });
         } catch (error) {

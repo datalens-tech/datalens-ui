@@ -28,6 +28,8 @@ export const ColorsControl: React.FC<ColorsControlProps> = (props: ColorsControl
         return getPaletteColors(colorSettings.settings.palette, colorPalettes);
     }, [colorPalettes, colorSettings.settings.palette]);
 
+    const selectedPalette = colorSettings.settings.palette ?? '';
+
     switch (colorSettings.colorType) {
         case BarsColorType.OneColor: {
             const currentColor = getColorByColorSettings({
@@ -41,7 +43,7 @@ export const ColorsControl: React.FC<ColorsControlProps> = (props: ColorsControl
                     title={i18n('wizard', 'label_bars-color')}
                     setting={
                         <PaletteColorControl
-                            palette={colorSettings.settings.palette}
+                            palette={selectedPalette}
                             controlQa={DialogFieldBarsSettingsQa.ColorSelector}
                             currentColor={currentColor}
                             currentColorIndex={colorSettings.settings.colorIndex}
@@ -77,7 +79,7 @@ export const ColorsControl: React.FC<ColorsControlProps> = (props: ColorsControl
                         title={i18n('wizard', 'label_bars-positive-color')}
                         setting={
                             <PaletteColorControl
-                                palette={colorSettings.settings.palette}
+                                palette={selectedPalette}
                                 controlQa={DialogFieldBarsSettingsQa.PositiveColorSelector}
                                 currentColor={positiveColor}
                                 currentColorIndex={colorSettings.settings.positiveColorIndex}
@@ -96,7 +98,7 @@ export const ColorsControl: React.FC<ColorsControlProps> = (props: ColorsControl
                         title={i18n('wizard', 'label_bars-negative-color')}
                         setting={
                             <PaletteColorControl
-                                palette={colorSettings.settings.palette}
+                                palette={selectedPalette}
                                 controlQa={DialogFieldBarsSettingsQa.NegativeColorSelector}
                                 currentColor={negativeColor}
                                 currentColorIndex={colorSettings.settings.negativeColorIndex}

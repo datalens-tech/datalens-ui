@@ -12,4 +12,15 @@ export const authFunctionsMap = {
                 params: GetAuthHeadersParams<Record<string, unknown>>,
             ) => Record<string, string> | undefined
         >(),
+    getAuthArgsProxyUSPrivate:
+        makeFunctionTemplate<(req: Request, res: Response) => Record<string, string>>(),
+    getAuthHeadersBIPrivate:
+        makeFunctionTemplate<
+            (
+                params: GetAuthHeadersParams<Record<string, unknown>>,
+            ) => Record<string, string> | undefined
+        >(),
+    hasValidWorkbookTransferAuthHeaders: makeFunctionTemplate<(req: Request) => Promise<boolean>>(),
+    getAuthArgsProxyBIPrivate:
+        makeFunctionTemplate<(req: Request, res: Response) => Record<string, string>>(),
 } as const;

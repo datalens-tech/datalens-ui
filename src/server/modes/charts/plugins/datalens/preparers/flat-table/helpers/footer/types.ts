@@ -12,6 +12,7 @@ export type PrepareFooterValueArgs = {
 
 export type GetFooterCellWithStylesArgs = {
     column: ServerField;
+    columnIndex: number;
     value: string | number;
     columnValuesByColumn: Record<string, PrepareFunctionDataRow>;
     colorsConfig: ChartColorsConfig;

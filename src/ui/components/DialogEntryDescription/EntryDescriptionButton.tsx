@@ -15,20 +15,27 @@ type Props = {
     isEditMode: boolean;
     onClick: () => void;
     size?: number;
+    className?: string;
 };
 
 const DEFAILT_SIZE = 20;
 export const MAX_ENTRY_DESCRIPTION_LENGTH = 36_000;
 
 export const EntryAnnotationDescriptionButton = (props: Props) => {
-    const {description, isEditMode, onClick, size = DEFAILT_SIZE} = props;
+    const {description, isEditMode, onClick, size = DEFAILT_SIZE, className} = props;
 
     if (!isEditMode && !description) {
         return null;
     }
 
     return (
-        <Button view="flat" size="m" onClick={onClick} qa="action-button-description">
+        <Button
+            view="flat"
+            size="m"
+            onClick={onClick}
+            qa="action-button-description"
+            className={className}
+        >
             <Icon data={CircleInfo} size={size} />
         </Button>
     );

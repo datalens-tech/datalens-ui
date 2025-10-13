@@ -1,4 +1,4 @@
-import type {WorkbookId} from '../../../../shared';
+import type {EntryScope, WorkbookId} from '../../..';
 import type {Permissions} from '../../../types';
 
 import type {EntriesCommonArgs} from './common';
@@ -26,6 +26,7 @@ export interface GetEntryArgs {
     branch?: string;
     includePermissionsInfo?: boolean;
     includeLinks?: boolean;
+    includeFavorite?: boolean;
     includeDlComponentUiData?: boolean;
 }
 
@@ -198,6 +199,8 @@ export interface DeleteUSEntryResponse extends EntryFields {
 export interface DeleteUSEntryArgs {
     entryId: string;
     lockToken?: string;
+    scope?: EntryScope;
+    types?: string[];
 }
 
 interface GetRelationsEntryOutput extends EntryRelationFields {

@@ -5,7 +5,6 @@ import {
     DlComponentHeader,
     TIMEOUT_60_SEC,
     TIMEOUT_90_SEC,
-    US_MASTER_TOKEN_HEADER,
     WORKBOOK_ID_HEADER,
 } from '../../../constants';
 import {getEntryNameByKey, normalizeDestination} from '../../../modules';
@@ -47,8 +46,6 @@ import type {
     ListDirectoryResponse,
     MoveEntryArgs,
     MoveEntryResponse,
-    PrivateGetEntryArgs,
-    ProxyCreateEntryArgs,
     RenameEntryArgs,
     RenameEntryResponse,
     SwitchPublicationStatusArgs,
@@ -63,71 +60,24 @@ export const entriesActions = {
     getEntry: createAction<GetEntryResponse, GetEntryArgs>({
         method: 'GET',
         path: ({entryId}) => `${PATH_PREFIX}/entries/${filterUrlFragment(entryId)}`,
-        params: ({entryId: _entryId, workbookId, includeDlComponentUiData, ...query}, headers) => ({
+        params: (
+            {
+                entryId: _entryId,
+                workbookId,
+                includeDlComponentUiData,
+                includeFavorite = true,
+                ...query
+            },
+            headers,
+        ) => ({
             query: {
                 ...query,
-                includeFavorite: true,
+                includeFavorite,
             },
             headers: {
                 ...headers,
                 ...(includeDlComponentUiData ? {[DL_COMPONENT_HEADER]: DlComponentHeader.UI} : {}),
                 ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
-            },
-        }),
-    }),
-    /**
-     * @deprecated Use gatewayApi.usPrivate._proxyGetEntry instead
-     */
-    _proxyGetEntry: createAction<GetEntryResponse, PrivateGetEntryArgs>({
-        method: 'GET',
-        path: ({entryId}) => `${PRIVATE_PATH_PREFIX}/entries/${filterUrlFragment(entryId)}`,
-        params: ({entryId: _entryId, workbookId, usMasterToken, ...query}, headers) => ({
-            query,
-            headers: {
-                ...headers,
-                ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
-                [US_MASTER_TOKEN_HEADER]: usMasterToken,
-            },
-        }),
-    }),
-    /**
-     * @deprecated Use gatewayApi.usPrivate._proxyCreateEntry instead
-     */
-    _proxyCreateEntry: createAction<GetEntryResponse, ProxyCreateEntryArgs>({
-        method: 'POST',
-        path: () => `${PRIVATE_PATH_PREFIX}/entries/`,
-        params: (
-            {
-                usMasterToken,
-                workbookId,
-                data,
-                name,
-                type,
-                scope,
-                mode,
-                links,
-                key,
-                recursion,
-                includePermissionsInfo,
-            },
-            headers,
-        ) => ({
-            headers: {
-                ...headers,
-                ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
-                [US_MASTER_TOKEN_HEADER]: usMasterToken,
-            },
-            body: {
-                workbookId,
-                data,
-                name,
-                type,
-                scope,
-                mode,
-                links,
-                recursion,
-                includePermissionsInfo,
-                ...(key ? {key} : {}),
             },
         }),
     }),
@@ -140,19 +90,6 @@ export const entriesActions = {
         method: 'GET',
         path: ({entryId}) => `${PATH_PREFIX}/entries/${filterUrlFragment(entryId)}/meta`,
         params: (_, headers) => ({headers}),
-    }),
-    /**
-     * @deprecated Use gatewayApi.usPrivate._getEntryMeta instead
-     */
-    _getEntryMeta: createAction<GetEntryMetaResponse, GetEntryMetaArgs>({
-        method: 'GET',
-        path: ({entryId}) => `${PRIVATE_PATH_PREFIX}/entries/${entryId}/meta`,
-        params: (_, headers, {ctx}) => ({
-            headers: {
-                ...headers,
-                [US_MASTER_TOKEN_HEADER]: ctx.config.usMasterToken,
-            },
-        }),
     }),
     getRevisions: createAction<GetRevisionsOutput, GetRevisionsArgs, GetRevisionsResponse>({
         method: 'GET',
@@ -305,7 +242,10 @@ export const entriesActions = {
     _deleteUSEntry: createAction<DeleteUSEntryResponse, DeleteUSEntryArgs>({
         method: 'DELETE',
         path: ({entryId}) => `${PATH_PREFIX}/entries/${filterUrlFragment(entryId)}`,
-        params: ({lockToken}, headers) => ({query: {lockToken}, headers}),
+        params: ({lockToken, scope, types}, headers) => ({
+            query: {lockToken, scope, types},
+            headers,
+        }),
     }),
     _switchPublicationStatus: createAction<
         SwitchPublicationStatusResponse,

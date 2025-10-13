@@ -20,3 +20,9 @@ export const getAuthHeadersUSPrivate: GetAuthHeaders<AuthArgsData> = ({authArgs}
         [US_MASTER_TOKEN_HEADER]: usMasterToken,
     };
 };
+
+export const getAuthArgsProxyUSPrivate = (req: Request, _res: Response): AuthArgsData => {
+    return {
+        usMasterToken: req.headers[US_MASTER_TOKEN_HEADER] as string,
+    };
+};

@@ -5,13 +5,18 @@ import {Button, Dialog, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
 import {i18n} from 'i18n';
+import isEqual from 'lodash/isEqual';
+import pick from 'lodash/pick';
 import {connect} from 'react-redux';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
 import type {ColorsConfig, Field} from 'shared';
-import {ColorMode, isMeasureValue} from 'shared';
+import {ColorMode, getFieldUISettings, isMeasureValue} from 'shared';
 import type {DatalensGlobalState} from 'ui';
-import {ALLOWED_FOR_NULL_MODE_VISUALIZATIONS} from 'ui/units/wizard/constants/dialogColor';
+import {
+    ALLOWED_FOR_NULL_MODE_VISUALIZATIONS,
+    DEFAULT_PALETTE_STATE,
+} from 'ui/units/wizard/constants/dialogColor';
 import {setDialogColorPaletteState} from 'units/wizard/actions/dialogColor';
 import {selectDataset, selectParameters} from 'units/wizard/selectors/dataset';
 import {selectUpdates} from 'units/wizard/selectors/preview';
@@ -101,7 +106,6 @@ class DialogColorComponent extends React.Component<Props, State> {
             colorSectionFields,
             visualization,
         } = this.props;
-        const {mountedColors = {}} = this.props.paletteState;
         const {validationStatus} = this.props.gradientState;
         const {colorMode} = this.state;
 
@@ -112,6 +116,12 @@ class DialogColorComponent extends React.Component<Props, State> {
         const canSetNullMode =
             this.props.canSetNullMode &&
             (ALLOWED_FOR_NULL_MODE_VISUALIZATIONS as string[]).includes(visualization.id);
+
+        const deafultPaletteState = this.getDefaultPaletteState();
+        const hasPaletteColorSettings = !isEqual(
+            deafultPaletteState,
+            pick(this.props.paletteState, ...Object.keys(deafultPaletteState)),
+        );
 
         return (
             <Dialog open={true} onClose={this.onClose}>
@@ -152,7 +162,7 @@ class DialogColorComponent extends React.Component<Props, State> {
                             <Button
                                 view="outlined"
                                 size="l"
-                                disabled={!Object.keys(mountedColors).length}
+                                disabled={!hasPaletteColorSettings}
                                 onClick={this.onResetButtonClick}
                             >
                                 {i18n('wizard', 'button_reset')}
@@ -168,11 +178,23 @@ class DialogColorComponent extends React.Component<Props, State> {
         this.setState({colorMode});
     };
 
+    getDefaultPaletteState = () => {
+        const {item: field} = this.props;
+        const fieldUISettings = field ? getFieldUISettings({field}) : {};
+
+        return {
+            palette: fieldUISettings?.palette || DEFAULT_PALETTE_STATE.palette,
+            mountedColors: fieldUISettings?.colors || DEFAULT_PALETTE_STATE.mountedColors,
+        };
+    };
+
     onResetButtonClick = () => {
-        this.props.actions.setDialogColorPaletteState({
+        const defaultPaletteState = {
             ...this.props.paletteState,
-            mountedColors: {},
-        });
+            ...this.getDefaultPaletteState(),
+        };
+
+        this.props.actions.setDialogColorPaletteState(defaultPaletteState);
     };
 
     onCancelButtonClick = () => {

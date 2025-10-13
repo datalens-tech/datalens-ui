@@ -27,7 +27,7 @@ import {CounterName, GoalId, reachMetricaGoal} from '../../../../libs/metrica';
 import {closeDialog, openDialog, openDialogConfirm} from '../../../../store/actions/dialog';
 import DatasetTable from '../../components/DatasetTable/DatasetTable';
 import {FieldSettingsDialog} from '../../components/FieldSettingsDialog/FieldSettingsDialog';
-import {DATASET_VALIDATION_TIMEOUT, TAB_DATASET} from '../../constants';
+import {DATASET_UPDATE_ACTIONS, DATASET_VALIDATION_TIMEOUT, TAB_DATASET} from '../../constants';
 import {
     UISelector,
     avatarsSelector,
@@ -322,8 +322,13 @@ class DatasetEditor extends React.Component {
     closeFieldSettingsDialog = () => {
         this.setState({
             visibleFieldSettingsDialog: false,
-            field: null,
         });
+    };
+
+    saveFieldSettings = (fieldSettings) => {
+        this.closeFieldSettingsDialog();
+
+        this.updateField({field: fieldSettings});
     };
 
     closeRLSDialog = () => {
@@ -335,8 +340,18 @@ class DatasetEditor extends React.Component {
     };
 
     render() {
-        const {sourceAvatars, validation, options, itemsToDisplay, rls, permissions} = this.props;
-        const {field, visibleRLSDialog, currentRLSField} = this.state;
+        const {
+            sourceAvatars,
+            validation,
+            options,
+            itemsToDisplay,
+            rls,
+            permissions,
+            datasetId,
+            workbookId,
+            parameters,
+        } = this.props;
+        const {field, visibleRLSDialog, currentRLSField, visibleFieldSettingsDialog} = this.state;
         const {renderRLSDialog} = registry.datasets.functions.getAll();
 
         return (
@@ -369,11 +384,22 @@ class DatasetEditor extends React.Component {
                     onClose: this.closeRLSDialog,
                     onSave: this.props.updateRLS,
                 })}
-                <FieldSettingsDialog
-                    open={this.state.visibleFieldSettingsDialog}
-                    onClose={this.closeFieldSettingsDialog}
-                    field={field}
-                />
+                {field && (
+                    <FieldSettingsDialog
+                        open={visibleFieldSettingsDialog}
+                        onClose={this.closeFieldSettingsDialog}
+                        onSave={this.saveFieldSettings}
+                        field={field}
+                        datasetId={datasetId}
+                        workbookId={workbookId}
+                        parameters={parameters}
+                        // a temporary solution, only the changed fields need to be calculated
+                        updates={this.filteredFields.map((f) => ({
+                            action: DATASET_UPDATE_ACTIONS.FIELD_ADD,
+                            field: f,
+                        }))}
+                    />
+                )}
             </div>
         );
     }

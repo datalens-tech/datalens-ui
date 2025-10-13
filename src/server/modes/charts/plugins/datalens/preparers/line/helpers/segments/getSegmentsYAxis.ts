@@ -1,11 +1,12 @@
 import sortBy from 'lodash/sortBy';
 
-import type {ServerField, ServerPlaceholder} from '../../../../../../../../../shared';
 import {AxisLabelFormatMode, isHtmlField} from '../../../../../../../../../shared';
+import type {ServerField, ServerPlaceholder} from '../../../../../../../../../shared';
 import {wrapHtml} from '../../../../../../../../../shared/utils/ui-sandbox';
 import type {AxisOptions} from '../../../../types';
 import {applyPlaceholderSettingsToAxis} from '../../../../utils/axis-helpers';
-import {getAxisFormattingByField} from '../axis/getAxisFormattingByField';
+import {addAxisFormatter} from '../../../helpers/axis';
+import {getAxisChartkitFormatting} from '../../../helpers/axis/get-axis-formatting';
 
 import type {SegmentsMap} from './types';
 
@@ -47,6 +48,7 @@ export const getSegmentsYAxis = (args: {
         }
 
         const segmentTitle = isHtmlSegment ? wrapHtml(segment.title) : String(segment.title);
+        const placeholder = isY2Axis ? placeholders.y2 : placeholders.y;
 
         const axis: AxisOptions = {
             top: `${DEFAULT_SPACE_BETWEEN_SEGMENTS * segmentIndex + segmentsSpace * segmentIndex}%`,
@@ -74,13 +76,16 @@ export const getSegmentsYAxis = (args: {
                   },
         };
 
-        const placeholder = isY2Axis ? placeholders.y2 : placeholders.y;
-
         applyPlaceholderSettingsToAxis(placeholder, axis, {title: true});
-
+        addAxisFormatter({
+            axisConfig: axis,
+            placeholder: placeholder,
+        });
         yAxis[yAxisIndex] = axis;
-        if (placeholder && placeholder.settings?.axisFormatMode === AxisLabelFormatMode.ByField) {
-            yAxisFormattings[yAxisIndex] = getAxisFormattingByField(placeholder, visualizationId);
+
+        const formatMode = placeholder?.settings?.axisFormatMode;
+        if (formatMode && formatMode !== AxisLabelFormatMode.Auto) {
+            yAxisFormattings[yAxisIndex] = getAxisChartkitFormatting(placeholder, visualizationId);
         }
     });
 

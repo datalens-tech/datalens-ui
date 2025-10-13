@@ -9,7 +9,7 @@ import {HotkeysProvider} from 'react-hotkeys-hook';
 
 import DialogManager from 'components/DialogManager/DialogManagerContainer';
 import {registerSDKDispatch} from 'libs/schematic-sdk/parse-error';
-import {Utils, DL} from 'ui';
+import {Utils, DL, APP_ROOT_CLASS} from 'ui';
 
 import DatalensPage from '../datalens';
 import {renderDatalens} from '../datalens/render';
@@ -30,6 +30,7 @@ import 'ui/styles/theme.scss';
 import 'ui/styles/rebranding-theme.scss';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {Feature} from 'shared';
+import {ScrollableContainerContextProvider} from 'ui/utils/scrollableContainerContext';
 
 const Content = () => {
     const userTheme = useSelector(selectTheme);
@@ -40,9 +41,7 @@ const Content = () => {
         Utils.addBodyClass('dl-root', 'dl-root_rebranding');
     }
 
-    if (isEnabledFeature(Feature.NewDefaultPalette)) {
-        Utils.addBodyClass('dl-root_new-palette');
-    }
+    Utils.addBodyClass('dl-root_new-palette');
 
     return (
         <ThemeProvider
@@ -50,14 +49,17 @@ const Content = () => {
             layout={{fixBreakpoints: true}}
             systemLightTheme={themeSettings?.systemLightTheme}
             systemDarkTheme={themeSettings?.systemDarkTheme}
+            rootClassName={APP_ROOT_CLASS}
         >
             <ToasterProvider toaster={toaster}>
                 <MobileProvider mobile={DL.IS_MOBILE}>
                     <HotkeysProvider initiallyActiveScopes={[HOTKEYS_SCOPES.GLOBAL]}>
-                        <React.Fragment>
-                            <DialogManager />
-                            <DatalensPage />
-                        </React.Fragment>
+                        <ScrollableContainerContextProvider>
+                            <React.Fragment>
+                                <DialogManager />
+                                <DatalensPage />
+                            </React.Fragment>
+                        </ScrollableContainerContextProvider>
                     </HotkeysProvider>
                 </MobileProvider>
                 <ToasterComponent />

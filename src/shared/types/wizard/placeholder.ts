@@ -1,6 +1,7 @@
 import type {IconProps} from '@gravity-ui/uikit';
 
 import type {PlaceholderId} from '../../constants';
+import type {CommonNumberFormattingOptions} from '../formatting';
 
 import type {Field} from './field';
 
@@ -21,6 +22,8 @@ export interface PlaceholderSettings {
     holidays?: string;
     polylinePoints?: string;
     axisFormatMode?: string;
+    axisLabelFormating?: CommonNumberFormattingOptions;
+    axisLabelDateFormat?: string;
     axisModeMap?: Record<string, string>;
     disableAxisMode?: boolean;
     axisVisibility?: string;

@@ -5,9 +5,19 @@
 @import '~@diplodoc/tabs-extension/runtime/styles.css';
 @import '../../styles/mixins';
 
+// yfm overrides works only for main app
+$rootClass: '.app-root.g-root';
+
 // support yfm dark theme
 
-.g-root .yfm {
+#{$rootClass} {
+    --yfm-code-background: var(--g-color-base-misc-light);
+    --yfm-code-color: var(--g-color-text-misc-heavy);
+    --yfm-pre-code-background: var(--g-color-base-misc-light);
+    --yfm-pre-code-color: var(--g-color-text-complementary);
+}
+
+#{$rootClass} .yfm {
     --yfm-list-text-last-margin-block: 15px;
     --yfm-list-text-only-margin-block: 15px;
     --yfm-font-family-sans: var(--g-font-family-sans);
@@ -89,7 +99,7 @@
     }
 }
 
-.g-root .yfm:not(.yfm_only-light) {
+#{$rootClass} .yfm:not(.yfm_only-light) {
     color: var(--g-color-text-primary);
 
     --yfm-color-hljs-background: var(--g-color-base-background);
@@ -137,13 +147,13 @@
     }
 
     code {
-        background: var(--g-color-base-misc-light);
-        color: var(--g-color-text-misc-heavy);
+        background: var(--yfm-code-background);
+        color: var(--yfm-code-color);
     }
 
     pre > code {
-        background: var(--g-color-base-misc-light);
-        color: var(--g-color-text-complementary);
+        background: var(--yfm-pre-code-background);
+        color: var(--yfm-pre-code-color);
     }
 
     table {
@@ -185,20 +195,20 @@
 
 // fix for reassign style by weight
 
-.g-root .editor-page div.yfm * img,
-.g-root .dash-app div.yfm * img,
-.g-root .app div.yfm * img {
+#{$rootClass} .editor-page div.yfm * img,
+#{$rootClass} .dash-app div.yfm * img,
+#{$rootClass} .app div.yfm * img {
     background: transparent;
 }
 
-.g-root_theme_dark .yfm,
-.g-root_theme_dark-hc .yfm {
+#{$rootClass}_theme_dark .yfm,
+#{$rootClass}_theme_dark-hc .yfm {
     .yfm-cut-title:before {
         background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxNiI+PHBhdGggc3Ryb2tlPSJyZ2JhKDI1NSwgMjU1LCAyNTUsIDAuNykiIGZpbGw9Im5vbmUiIGQ9Ik0zIDZsNSA1IDUtNSI+PC9wYXRoPjwvc3ZnPg==');
     }
 }
 
-.g-root .yfm .yfm-colorify {
+#{$rootClass} .yfm .yfm-colorify {
     $colors: (
         'gray': '--g-color-text-secondary',
         'yellow': '--g-color-text-warning',
@@ -228,7 +238,7 @@
     }
 }
 
-.g-root_theme_dark .yfm .yfm-colorify,
-.g-root_theme_dark-hc .yfm .yfm-colorify {
+#{$rootClass}_theme_dark .yfm .yfm-colorify,
+#{$rootClass}_theme_dark-hc .yfm .yfm-colorify {
     --yfm-color-text-orange: var(--g-color-private-orange-750-solid);
 }

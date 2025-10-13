@@ -1,0 +1,30 @@
+.auth-page {
+    position: relative;
+    z-index: 1;
+
+    &_rebranding#{&}_theme_dark {
+        background: #081b38;
+    }
+
+    &_rebranding#{&}_theme_light {
+        background: #f5f9fe;
+    }
+
+    &__background-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: -1;
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        object-position: center;
+
+        opacity: 0;
+        transition: opacity 0.5s ease-in-out;
+
+        &_loaded {
+            opacity: 1;
+        }
+    }
+}

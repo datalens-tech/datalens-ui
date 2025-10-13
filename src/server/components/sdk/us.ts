@@ -14,7 +14,6 @@ import type {
     EntryUpdateMode,
     State,
     UpdateEntryRequest,
-    // Lock,
 } from '../../../shared/types';
 import {getAxios} from '../axios';
 

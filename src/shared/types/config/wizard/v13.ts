@@ -8,6 +8,7 @@ import type {
 } from '../../..';
 import type {ColorMode} from '../../../constants';
 import type {DatasetFieldCalcMode, ParameterDefaultValue} from '../../dataset';
+import type {NumberFormatType, NumberFormatUnit} from '../../formatting';
 import type {
     AxisLabelFormatMode,
     AxisMode,
@@ -17,8 +18,6 @@ import type {
     HintSettings,
     IndicatorTitleMode,
     LabelsPositions,
-    NumberFormatType,
-    NumberFormatUnit,
     TableBarsSettings,
     TableFieldBackgroundSettings,
     TableSubTotalsSettings,
@@ -191,6 +190,8 @@ export type V13PlaceholderSettings = {
     nulls?: AxisNullsMode;
     holidays?: 'on' | 'off';
     axisFormatMode?: AxisLabelFormatMode;
+    axisLabelFormating?: V13Formatting;
+    axisLabelDateFormat?: string;
     axisModeMap?: Record<string, AxisMode>;
     disableAxisMode?: boolean;
     /* Whether axis, including axis title, line, ticks and labels, should be visible

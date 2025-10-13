@@ -36,3 +36,6 @@ export const selectWidgetHash = (state: DatalensGlobalState) => state.wizard.wid
 
 export const selectExtraSettings = (state: DatalensGlobalState) =>
     state.wizard.widget.extraSettings;
+
+export const selectInitialDescription = (state: DatalensGlobalState): string =>
+    state.wizard.widget.widget?.annotation?.description ?? '';

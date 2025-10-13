@@ -6,6 +6,7 @@ import {I18n} from 'i18n';
 import type {CommonNumberFormattingOptions} from 'shared';
 import {
     DATASET_FIELD_TYPES,
+    DEFAULT_FLOAT_NUMBERS,
     DialogFieldMainSectionQa,
     NumberFormatType,
     NumberFormatUnit,
@@ -18,6 +19,7 @@ type Props = {
     formatting?: CommonNumberFormattingOptions;
     onChange: (formatting: CommonNumberFormattingOptions) => void;
     rowClassName?: string;
+    isAxisFormatting?: boolean;
 };
 
 const i18n = I18n.keyset('component.number-field-formatting.view');
@@ -32,11 +34,15 @@ function setDefaultFormatting(data: Props) {
             unit: null,
             // so you can rewrite the values with explicit undefined, but we believe that there will be no such situation, therefore as
         },
-        data.formatting as CommonNumberFormattingOptions,
+        data.formatting,
     );
 
-    if (data.dataType === DATASET_FIELD_TYPES.FLOAT) {
-        formatting.precision = formatting.precision ?? 2;
+    if (data.dataType === DATASET_FIELD_TYPES.FLOAT || data.isAxisFormatting) {
+        const minimumFractionDigits =
+            data.dataType !== DATASET_FIELD_TYPES.FLOAT && data.isAxisFormatting
+                ? 0
+                : DEFAULT_FLOAT_NUMBERS;
+        formatting.precision = formatting.precision ?? minimumFractionDigits;
     } else {
         formatting.precision = 0;
     }
@@ -73,6 +79,9 @@ const getUnitItems = () => [
 
 export const NumberFormatSettings = (props: Props) => {
     const {onChange, formatting, rowClassName} = setDefaultFormatting(props);
+
+    const isShowDigitsAfterDot =
+        props.dataType === DATASET_FIELD_TYPES.FLOAT || props.isAxisFormatting;
 
     const handleChange = React.useCallback(
         (data: Partial<Props['formatting']>) => {
@@ -118,7 +127,7 @@ export const NumberFormatSettings = (props: Props) => {
                     </RadioButton.Option>
                 </RadioButton>
             </FormRow>
-            {props.dataType === DATASET_FIELD_TYPES.FLOAT && (
+            {isShowDigitsAfterDot && (
                 <FormRow className={rowClassName} label={i18n('field_precision')}>
                     <NumberInput
                         qa="precision-input"

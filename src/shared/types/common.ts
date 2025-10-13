@@ -270,6 +270,12 @@ export enum EntryScope {
     Connection = 'connection',
 }
 
+export interface EntryAnnotation {
+    description?: string;
+}
+
+export type EntryAnnotationArgs = Required<EntryAnnotation>;
+
 export interface Entry {
     entryId: string;
     key: string;
@@ -280,12 +286,22 @@ export interface Entry {
     meta: object;
     workbookId?: string;
     mode?: EntryUpdateMode;
+    annotation?: EntryAnnotation | null;
 }
 
 export type CreateEntryRequest<T = Entry> = Partial<Omit<T, 'entryId'>> &
-    Required<{key: string; data: EntryData}>;
+    Required<{key: string; data: EntryData}> & {
+        description?: string;
+        annotation?: EntryAnnotationArgs;
+    };
 
-export type UpdateEntryRequest<T = Entry> = Omit<T, 'entryId' | 'scope' | 'type'>;
+export type UpdateEntryRequest<T = Entry> = Omit<
+    T,
+    'entryId' | 'scope' | 'type' | 'updatedAt' | 'savedId' | 'publishedId'
+> & {
+    description?: string;
+    annotation?: EntryAnnotationArgs;
+};
 
 export type EntryData = DashData; // | WidgetData | DatasetData | ConnectionData | FolderData
 
@@ -296,6 +312,7 @@ export interface EntryReadParams {
     revId?: string;
     includePermissions: string;
     includeLinks: string;
+    includeFavorite?: boolean;
     branch?: string;
 }
 

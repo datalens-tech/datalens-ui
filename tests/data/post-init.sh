@@ -35,6 +35,12 @@ if [ -z "${POSTGRES_PORT}" ]; then
   POSTGRES_PORT="5432"
 fi
 export PGPORT="${POSTGRES_PORT}"
+if [ -z "${POST_INIT_SLEEP}" ]; then
+  POST_INIT_SLEEP="5"
+fi
+if [ -z "${POST_INIT_RETRIES}" ]; then
+  POST_INIT_RETRIES="10"
+fi
 
 echo "  [post-init] start e2e data migration..."
 
@@ -42,13 +48,13 @@ echo "  [post-init] start e2e data migration..."
 if [ ! -z "${US_ENDPOINT}" ]; then
   echo "  [post-init] us endpoint: ${US_ENDPOINT}"
 
-  echo "  [post-init] sleep 5 seconds..."
-  sleep 5
+  echo "  [post-init] sleep ${POST_INIT_SLEEP} seconds..."
+  sleep "${POST_INIT_SLEEP}"
 
-  RETRIES="10"
+  RETRIES="${POST_INIT_RETRIES}"
   echo "  [post-init] retries: ${RETRIES}"
 
-  for RETRY in $(seq 1 $RETRIES); do
+  for RETRY in $(seq 1 "${RETRIES}"); do
     if curl --output /dev/null --silent --head --fail "${US_ENDPOINT}/ping-db"; then
       echo "  [post-init] us /ping-db success, continue..."
       break

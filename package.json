@@ -13,6 +13,7 @@
     "build:analyze": "npm run i18n:prepare && APP_BUILDER_ANALYZE_BUNDLE=statoscope UI_CORE_CDN=false APP_BUILDER_CDN=false NODE_ENV=production NODE_ENV=production NODE_OPTIONS=--max_old_space_size=4096 app-builder build",
     "cdn": "npm run i18n:prepare && NODE_ENV=production NODE_OPTIONS=--max_old_space_size=4096 app-builder build",
     "start": "NODE_ENV=production node dist/server",
+    "deps": "bash ./scripts/ci/cached-npm-install.sh",
     "lint:js:main": "eslint --ignore-pattern 'src/ui/*' '**/*.{js,jsx,ts,tsx}' --quiet",
     "lint:js:ui": "eslint -c src/ui/.ci-eslintrc 'src/ui/**/*.{js,jsx,ts,tsx}' --quiet",
     "lint:styles": "stylelint 'src/ui/**/*.scss'",
@@ -33,10 +34,10 @@
     "test:install:chromium": "npx playwright install --with-deps chromium",
     "test:e2e": "cd tests && npx playwright test --config=./playwright.config.ts --project=basic",
     "test:e2e:opensource": "cd tests && npx playwright test --config=./playwright.config.ts --project=opensource",
-    "test:e2e:us-dump": "./scripts/e2e/us-dump.sh",
+    "test:e2e:us-dump": "./scripts/e2e/us-dump.sh --clear-deleted --clear-e2e --clear-revisions",
     "test:e2e:docker": "cd ./tests && docker compose -f ./docker-compose.e2e.yml down --volumes && docker compose -f ./docker-compose.e2e.yml up --quiet-pull --pull always --no-log-prefix --exit-code-from datalens-from-image-tests datalens-from-image-tests",
     "test:e2e:docker:playwright": "bash scripts/e2e/playwright-docker.sh 'npm run test:e2e:opensource'",
-    "test:e2e:docker:playwright:clear": "bash scripts/e2e/playwright-docker.sh 'clear-cache'",
+    "test:e2e:docker:playwright:clear": "bash scripts/e2e/playwright-docker.sh --clear",
     "test:e2e:docker:report": "cd ./tests && docker compose -f ./docker-compose.e2e.yml cp datalens-from-image-tests:/opt/app/tests/artifacts ./artifacts",
     "test:e2e:docker:check": "cd ./tests && docker compose -f ./docker-compose.e2e.yml config",
     "test:e2e:docker:up": "cd ./tests && docker compose -f ./docker-compose.e2e.yml up --quiet-pull --pull always --build -d datalens-from-build",
@@ -54,6 +55,7 @@
   "author": "DataLens Team <https://github.com/datalens-tech>",
   "license": "Apache-2.0",
   "dependencies": {
+    "@asteasolutions/zod-to-openapi": "^7.3.4",
     "@braintree/sanitize-url": "^6.0.0",
     "@datalens-tech/ui-sandbox-modules": "^0.36.0",
     "@datalens-tech/xlsx": "^0.20.1",
@@ -62,10 +64,10 @@
     "@diplodoc/latex-extension": "^1.1.0",
     "@diplodoc/mermaid-extension": "^1.2.3",
     "@diplodoc/tabs-extension": "^3.5.1",
-    "@diplodoc/transform": "^4.59.0",
+    "@diplodoc/transform": "^4.60.2",
     "@gravity-ui/app-layout": "^2.1.0",
     "@gravity-ui/browserslist-config": "^4.3.0",
-    "@gravity-ui/chartkit": "^7.6.2",
+    "@gravity-ui/chartkit": "^7.13.1",
     "@gravity-ui/dashkit": "^9.1.1",
     "@gravity-ui/date-utils": "^2.5.6",
     "@gravity-ui/expresskit": "^2.4.0",
@@ -118,7 +120,9 @@
     "request-ip": "^3.3.0",
     "request-promise-native": "^1.0.9",
     "set-cookie-parser": "^2.7.1",
-    "workerpool": "^9.1.1"
+    "swagger-ui-express": "^5.0.1",
+    "workerpool": "^9.1.1",
+    "zod": "^3.25.64"
   },
   "devDependencies": {
     "@floating-ui/react": "^0.27.13",
@@ -134,7 +138,7 @@
     "@gravity-ui/stylelint-config": "^4.0.1",
     "@gravity-ui/tsconfig": "^1.0.0",
     "@gravity-ui/ui-logger": "^1.1.0",
-    "@gravity-ui/uikit": "^7.16.0",
+    "@gravity-ui/uikit": "^7.18.0",
     "@jest/types": "^29.6.3",
     "@microsoft/fetch-event-source": "^2.0.1",
     "@playwright/test": "^1.48.2",
@@ -181,6 +185,7 @@
     "@types/request-ip": "^0.0.41",
     "@types/request-promise-native": "^1.0.21",
     "@types/set-cookie-parser": "^2.4.10",
+    "@types/swagger-ui-express": "^4.1.8",
     "@types/uuid": "^9.0.8",
     "@types/webpack-env": "^1.16.0",
     "bem-cn-lite": "^4.0.0",
@@ -247,8 +252,7 @@
     },
     "@gravity-ui/app-builder": {
       "@rspack/core": "1.4.2"
-    },
-    "@gravity-ui/charts": "1.6.7"
+    }
   },
   "deploy": {
     "project": "stat",

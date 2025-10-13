@@ -56,6 +56,7 @@ import type {DashState} from '../reducers/dashTypedReducer';
 import {
     selectDash,
     selectDashData,
+    selectDashDescription,
     selectDashEntry,
     selectEntryId,
 } from '../selectors/dashTypedSelectors';
@@ -739,17 +740,24 @@ export function copyDash({
     return async (_: DashDispatch, getState: () => DatalensGlobalState) => {
         const state = getState();
         let dashData: DashData;
+        let description: string;
 
         if (selectDash(state) === null || selectEntryId(state) !== entryId) {
             const response = await getSdk().sdk.us.getEntry({entryId});
 
             if (response.scope === EntryScope.Dash) {
-                dashData = (response as any as DashEntry).data;
+                const dashEntry = response as any as DashEntry;
+
+                dashData = dashEntry.data;
+                description = dashEntry.annotation?.description ?? '';
             } else {
                 throw Error(`Invalid entry type: ${response.scope}`);
             }
         } else {
             dashData = withUnsavedChanges ? selectDashData(state) : selectDashEntry(state).data;
+            description = withUnsavedChanges
+                ? selectDashDescription(state)
+                : selectDashEntry(state).annotation?.description ?? '';
         }
 
         return sdk.charts.createDash({
@@ -760,6 +768,7 @@ export function copyDash({
                 key,
                 workbookId,
                 name,
+                annotation: {description},
             },
         });
     };

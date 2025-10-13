@@ -2,21 +2,14 @@ import type {Store, AnyAction} from 'redux';
 import {createStore, applyMiddleware, combineReducers, compose} from 'redux';
 import thunk from 'redux-thunk';
 import {createLogger} from 'redux-logger';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
-import {Feature} from 'shared';
 import {reducerRegistry} from './reducer-registry';
 import type {DatalensGlobalState} from '../';
 import {editHistoryDsMiddleware} from '../units/datasets/store/edit-history-middleware';
-import {galleryApi} from '../units/gallery/store/api';
 
 let store: Store<DatalensGlobalState, AnyAction>;
 
 function configureStore(services: unknown = {}) {
     const middlewares = [thunk.withExtraArgument(services), editHistoryDsMiddleware];
-
-    if (isEnabledFeature(Feature.EnablePublicGallery)) {
-        middlewares.push(galleryApi.middleware);
-    }
 
     let composeEnhancers = compose;
 
@@ -30,9 +23,11 @@ function configureStore(services: unknown = {}) {
         }
     }
 
+    middlewares.forEach((mw) => reducerRegistry.registerMiddleware(mw));
+
     const newStore = createStore(
         combineReducers(reducerRegistry.getReducers()),
-        composeEnhancers(applyMiddleware(...middlewares)),
+        composeEnhancers(applyMiddleware(reducerRegistry.getMiddlewares())),
     );
 
     reducerRegistry.setChangeListener(() => {

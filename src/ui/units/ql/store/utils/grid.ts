@@ -116,7 +116,7 @@ export class Helper {
             shapes: [],
             labels: [],
             tooltips: [],
-            version: QlConfigVersions.V5,
+            version: QlConfigVersions.V6,
         };
 
         return {
@@ -149,6 +149,7 @@ export class Helper {
             },
             connection: null,
             workbookId: null,
+            annotation: null,
         };
     }
 

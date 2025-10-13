@@ -25,9 +25,13 @@ export default {
         extended: false,
     },
     expressTrustProxyNumber: 2,
-    workers: (process.env.WORKERS && parseInt(process.env.WORKERS)) || 1,
-    fetchingTimeout: 95 * 1000,
-    singleFetchingTimeout: 95 * 1000,
+    workers: process.env.WORKERS ? parseInt(process.env.WORKERS, 10) : 1,
+    fetchingTimeout: process.env.DATA_FETCHING_TIMEOUT_MS
+        ? parseInt(process.env.DATA_FETCHING_TIMEOUT_MS, 10)
+        : undefined,
+    singleFetchingTimeout: process.env.DATA_SINGLE_FETCHING_TIMEOUT_MS
+        ? parseInt(process.env.DATA_SINGLE_FETCHING_TIMEOUT_MS, 10)
+        : undefined,
     faviconUrl: '/favicon.ico',
     appMode: process.env.APP_MODE,
     serviceName: SERVICE_NAME_DATALENS,

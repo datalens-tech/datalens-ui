@@ -10,7 +10,7 @@ import type {
     Permissions,
     WorkbookId,
 } from '../../../../../shared';
-import type {ValidateDatasetResponse} from '../../../../../shared/schema';
+import type {EntryFieldPublishedId, ValidateDatasetResponse} from '../../../../../shared/schema';
 import type {DatasetTab} from '../../constants';
 import type {
     ADD_AVATAR_PROTOTYPES,
@@ -59,6 +59,7 @@ import type {
     SET_CURRENT_TAB,
     SET_DATASET_REVISION_MISMATCH,
     SET_DATA_EXPORT_ENABLED,
+    SET_DESCRIPTION,
     SET_EDIT_HISTORY_STATE,
     SET_FREEFORM_SOURCES,
     SET_INITIAL_SOURCES,
@@ -297,9 +298,12 @@ export type Update =
 export type EditorItemToDisplay = 'fieldsId' | 'hiddenFields';
 
 export type DatasetReduxState = {
+    isRefetchingDataset: boolean;
     isLoading: boolean;
     isFavorite: boolean;
     isDatasetRevisionMismatch: boolean;
+    publishedId: EntryFieldPublishedId;
+    currentRevId: string | null;
     id: string;
     key: string;
     workbookId: WorkbookId;
@@ -702,6 +706,9 @@ type DatasetSaveRequest = {
 
 type DatasetSaveSuccess = {
     type: typeof DATASET_SAVE_SUCCESS;
+    payload: {
+        publishedId?: EntryFieldPublishedId;
+    };
 };
 
 type DatasetSaveFailure = {
@@ -718,7 +725,11 @@ type DatasetInitialFetchRequest = {
 type DatasetInitialFetchSuccess = {
     type: typeof DATASET_INITIAL_FETCH_SUCCESS;
     payload: {
-        dataset: Dataset & {connection: ConnectionEntry | null};
+        dataset: Dataset & {
+            connection: ConnectionEntry | null;
+        };
+        publishedId: EntryFieldPublishedId;
+        currentRevId: string | null;
     };
 };
 
@@ -828,6 +839,11 @@ type SetUpdates = {
     } & EditHistoryOptionsProperty;
 };
 
+type SetDescription = {
+    type: typeof SET_DESCRIPTION;
+    payload: string;
+};
+
 export type DatasetReduxAction =
     | SetFreeformSources
     | ResetDatasetState
@@ -898,4 +914,5 @@ export type DatasetReduxAction =
     | SetValidationState
     | SetTemplateEnabled
     | SetDataExportEnabled
-    | SetUpdates;
+    | SetUpdates
+    | SetDescription;

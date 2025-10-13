@@ -39,7 +39,6 @@ import type {
     ToggleTableOfContentAction,
 } from './dashTyped';
 import type {CloseDialogAction, OpenDialogAction, OpenItemDialogAction} from './dialogs/actions';
-import type {SetNewRelationsAction} from './relations/actions';
 
 export type DashAction<T = unknown> =
     | SetStateAction<T>
@@ -65,7 +64,6 @@ export type DashAction<T = unknown> =
     | SetLoadingEditModeAction
     | EntryContentAction
     | SetDashUpdateStatusAction
-    | SetNewRelationsAction
     | SetItemDataAction
     | SetDashKeyAction
     | SetActiveSelectorIndexAction
