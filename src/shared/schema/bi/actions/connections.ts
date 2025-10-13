@@ -69,8 +69,9 @@ export const actions = {
         {
             method: 'GET',
             path: ({connectionId}) => `${PATH_PREFIX}/connections/${connectionId}`,
-            params: ({workbookId}, headers) => ({
+            params: ({workbookId, rev_id}, headers) => ({
                 headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
+                query: {rev_id},
             }),
         },
     ),

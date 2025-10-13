@@ -25,6 +25,7 @@ type BaseConnectorItem = {
     conn_type: ConnectorType;
     backend_driven_form: boolean;
     hidden: boolean;
+    history: boolean;
     title: string;
     /**
      * Controls the behavior of connector's list item in the list.

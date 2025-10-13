@@ -12,6 +12,7 @@ import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
 import {ActionPanelQA, EntryScope} from 'shared';
 import type {DatalensGlobalState, EntryDialogues} from 'ui';
+import type {FilterEntryContextMenuItems} from 'ui/components/EntryContextMenu';
 import {CounterName, GoalId, reachMetricaGoal} from 'ui/libs/metrica';
 import {registry} from 'ui/registry';
 import type {BreadcrumbsItem} from 'ui/registry/units/common/types/components/EntryBreadcrumbs';
@@ -46,6 +47,7 @@ type OwnProps = {
     entry?: GetEntryResponse;
     onCloseNavigation?: () => void;
     enablePublish?: boolean;
+    filterEntryContextMenuItems?: FilterEntryContextMenuItems;
 };
 
 type Props = OwnProps & DispatchProps & StateProps & RouteComponentProps;
@@ -187,6 +189,7 @@ class EntryPanel extends React.Component<Props, State> {
                         entry={entry}
                         additionalItems={additionalItems}
                         showSpecificItems={true}
+                        filterEntryContextMenuItems={this.props.filterEntryContextMenuItems}
                     />
                 )}
             </div>
