@@ -13,7 +13,7 @@ import type {RunnerHandlerProps} from '.';
 export const runWorkerChart = async (
     cx: AppContext,
     props: RunnerHandlerProps & {chartBuilder: ChartBuilder; runnerType?: Runners},
-) => {
+): Promise<void> => {
     const {
         chartsEngine,
         req,
@@ -80,9 +80,10 @@ export const runWorkerChart = async (
             ctx.logError('Failed to generate chart in chart runner', error);
             ctx.end();
 
-            return res.status(400).send({
+            res.status(400).send({
                 error,
             });
+            return;
         }
 
         generatedConfig = {
@@ -102,9 +103,10 @@ export const runWorkerChart = async (
         ctx.logError('CHART_RUNNER_CONFIG_MISSING', error);
         ctx.end();
 
-        return res.status(400).send({
+        res.status(400).send({
             error,
         });
+        return;
     }
 
     const hrStart = process.hrtime();

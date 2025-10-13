@@ -95,6 +95,8 @@ export enum Feature {
     EnableDatasetDescription = 'EnableDatasetDescription',
     /** Show connection description button */
     EnableConnectionDescription = 'EnableConnectionDescription',
+    /** Enable connection revisions  */
+    EnableConnectionRevisions = 'EnableConnectionRevisions',
     /** Enable pagination in dataset sources table */
     EnableDatasetSourcesPagination = 'EnableDatasetSourcesPagination',
 
