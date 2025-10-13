@@ -1,3 +1,4 @@
+/* eslint-disable complexity */
 import type {ConfigItemData} from '@gravity-ui/dashkit';
 import type {AxiosResponse} from 'axios';
 import type {History} from 'history';
@@ -174,11 +175,31 @@ export const getWidgetMeta = ({
             isWizard: Boolean(loadedData?.isNewWizard || loadedData?.isOldWizard),
             isEditor: Boolean(loadedData?.isEditor),
             isQL: Boolean(loadedData?.isQL),
-            getSimpleLoadedData: () =>
-                convertChartToTable({
+            getSimpleLoadedData: () => {
+                const convertedToTableData = convertChartToTable({
                     widget: widgetDataRef?.current,
                     widgetData: loadedData as LoadedWidgetData<unknown>,
-                }) || loadedData,
+                });
+
+                let queries;
+
+                if (loadedData && 'sources' in loadedData) {
+                    const sources = loadedData.sources;
+                    const sourceValues = Object.values(sources);
+
+                    queries = sourceValues.map((source) => {
+                        return 'info' in source ? source?.info : '';
+                    });
+                }
+
+                // eslint-disable-next-line no-nested-ternary
+                const data = isEmpty(convertedToTableData)
+                    ? ['metric2', 'metric', 'markup', 'markdown'].includes(loadedData?.type || '')
+                        ? loadedData?.data
+                        : loadedData
+                    : convertedToTableData;
+                return {queries, data};
+            },
         };
 
         return metaInfo;
