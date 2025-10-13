@@ -37,7 +37,7 @@ import {
     setInitialState,
     setPageData,
     setRevision,
-    updateConnection,
+    updateConnectionWithRevision,
 } from '../../store';
 import {getConnItemByType} from '../../utils';
 
@@ -191,6 +191,8 @@ const PageComponent = (props: PageProps) => {
             workbookId,
             rev_id: revId,
         });
+        //This is initial request data, there is no need to request it when changing revId
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [actions, extractedEntryId, workbookId]);
 
     React.useEffect(() => {
@@ -203,7 +205,7 @@ const PageComponent = (props: PageProps) => {
                 ? () => {
                       actions.openDialogSaveDraftChartAsActualConfirm({
                           onApply: () => {
-                              actions.updateConnection();
+                              actions.updateConnectionWithRevision();
                           },
                       });
                   }
@@ -302,7 +304,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
                 getConnectorSchema,
                 openDialogErrorWithTabs,
                 openDialogSaveDraftChartAsActualConfirm,
-                updateConnection,
+                updateConnectionWithRevision,
                 setRevision,
             },
             dispatch,

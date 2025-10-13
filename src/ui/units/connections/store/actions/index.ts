@@ -103,21 +103,23 @@ export async function getConnectionDataRequest({
 
 export function setRevision(revId?: string) {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
-        dispatch(setPageLoading({pageLoading: true}));
         const {
             connections: {flattenConnectors, entry},
         } = getState();
-        const {connectionData, connectionError} = await getConnectionDataRequest({
-            entry,
-            flattenConnectors,
-            rev_id: revId,
-        });
-        batch(() => {
-            dispatch(
-                setConectorData({connectionData: connectionData ?? {}, error: connectionError}),
-            );
-            dispatch(setPageLoading({pageLoading: false}));
-        });
+        if (entry) {
+            dispatch(setPageLoading({pageLoading: true}));
+            const {connectionData, connectionError} = await getConnectionDataRequest({
+                entry,
+                flattenConnectors,
+                rev_id: revId,
+            });
+            batch(() => {
+                dispatch(
+                    setConectorData({connectionData: connectionData ?? {}, error: connectionError}),
+                );
+                dispatch(setPageLoading({pageLoading: false}));
+            });
+        }
     };
 }
 
@@ -429,7 +431,7 @@ export function createConnection(args: {name: string; dirPath?: string; workbook
     };
 }
 
-export function _updateConnection() {
+export function updateConnection() {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
         const {form, innerForm, schema, connectionData, entry} = getState().connections;
 
@@ -489,7 +491,7 @@ export function _updateConnection() {
     };
 }
 
-export function updateConnection() {
+export function updateConnectionWithRevision() {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
         const {
             connections: {flattenConnectors, entry},
@@ -497,7 +499,7 @@ export function updateConnection() {
         const isRevisionsSupported = getIsRevisionsSupported({entry, flattenConnectors});
         const searchParams = new URLSearchParams(location.search);
         searchParams.delete(URL_QUERY.REV_ID);
-        await dispatch(_updateConnection());
+        await dispatch(updateConnection());
 
         if (isRevisionsSupported) {
             history.push({
