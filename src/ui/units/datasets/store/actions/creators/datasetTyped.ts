@@ -14,7 +14,12 @@ import type {
     WorkbookId,
 } from 'shared';
 import {TIMEOUT_100_SEC, TIMEOUT_65_SEC} from 'shared';
-import type {GetPreviewResponse, GetSourceResponse, ValidateDatasetResponse} from 'shared/schema';
+import type {
+    BaseSource,
+    GetPreviewResponse,
+    GetSourceResponse,
+    ValidateDatasetResponse,
+} from 'shared/schema';
 import {sdk} from 'ui';
 import {BI_ERRORS} from 'ui/constants';
 import {addEditHistoryPoint, resetEditHistoryUnit} from 'ui/store/actions/editHistory';
@@ -45,7 +50,6 @@ import {
     workbookIdSelector,
 } from '../../selectors';
 import type {
-    BaseSource,
     ConnectionEntry,
     DatasetError,
     DatasetReduxAction,

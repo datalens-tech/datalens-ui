@@ -22,14 +22,7 @@ export const BASE_TITLE_FORM_OPTIONS: Pick<
     name: TITLE_INPUT,
     input_type: 'text',
     default: '',
-    title: {
-        get en() {
-            return i18n('label_title');
-        },
-        get ru() {
-            return i18n('label_title');
-        },
-    },
+    title: i18n('label_title'),
     required: true,
 };
 
