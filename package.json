@@ -73,7 +73,7 @@
     "@gravity-ui/expresskit": "^2.4.0",
     "@gravity-ui/gateway": "^4.8.0",
     "@gravity-ui/i18n": "^1.7.0",
-    "@gravity-ui/nodekit": "^2.4.1",
+    "@gravity-ui/nodekit": "^2.6.2",
     "@node-rs/crc32": "^1.7.2",
     "ajv": "^8.12.0",
     "axios": "^1.7.7",
