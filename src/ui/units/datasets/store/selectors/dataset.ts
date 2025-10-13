@@ -38,6 +38,8 @@ export const datasetFieldsSelector = (state: DatalensGlobalState) =>
 export const dataExportEnabledSelector = (state: DatalensGlobalState) =>
     !(state.dataset.content.data_export_forbidden ?? false);
 export const sourcesSelector = (state: DatalensGlobalState) => state.dataset.content.sources;
+export const sourcesPaginationSelector = (state: DatalensGlobalState) =>
+    state.dataset.sourcesPagination;
 export const avatarsSelector = (state: DatalensGlobalState) => state.dataset.content.source_avatars;
 export const relationsSelector = (state: DatalensGlobalState) =>
     state.dataset.content.avatar_relations;
@@ -49,6 +51,9 @@ export const rlsSelector = (state: DatalensGlobalState) => {
     return state.dataset.content.rls;
 };
 export const optionsSelector = (state: DatalensGlobalState) => state.dataset.options;
+export const currentDbNameSelector = (state: DatalensGlobalState) => state.dataset.currentDbName;
+export const connectionsDbNamesSelector = (state: DatalensGlobalState) =>
+    state.dataset.connectionsDbNames;
 
 export const datasetPreviewSelector = (state: DatalensGlobalState) => state.dataset.preview;
 export const isLoadPreviewByDefaultSelector = (state: DatalensGlobalState) =>
@@ -163,6 +168,13 @@ export const selectedConnectionSelector = (state: DatalensGlobalState) => {
         return existedConnectionId === selectedConnectionId;
     });
 };
+export const currentDbNamesSelector = createSelector(
+    selectedConnectionSelector,
+    connectionsDbNamesSelector,
+    (connection, dbNames) => {
+        return dbNames?.[connection?.entryId ?? ''];
+    },
+);
 
 export const editorFilterSelector = (state: DatalensGlobalState) => state.dataset.editor.filter;
 export const editorItemsToDisplaySelector = (state: DatalensGlobalState) => {

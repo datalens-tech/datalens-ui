@@ -25,6 +25,17 @@
         justify-content: space-between;
     }
 
+    &__select-db-name {
+        margin-top: 8px;
+        margin-bottom: 16px;
+        width: 100%;
+    }
+
+    &__input-search {
+        margin-top: 8px;
+        width: 100%;
+    }
+
     &__connections {
         border-bottom: 1px solid var(--ds-color-divider);
         max-height: 50%;

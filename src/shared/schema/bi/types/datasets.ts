@@ -1,5 +1,6 @@
 import type z from 'zod/v4';
 
+import type {FreeformSource} from '../../../../ui/units/datasets/store/types';
 import type {
     Dataset,
     DatasetField,
@@ -28,6 +29,7 @@ export type ValidateDatasetUpdate = {
 type DatasetSource = {
     connection_id: string;
     form: Record<string, string>[] | null;
+    disabled: boolean;
     group: string[];
     is_ref: boolean;
     parameter_hash: string;
@@ -57,13 +59,16 @@ export type DatasetDistinctWhere = {
 };
 
 export type GetSourceResponse = {
-    freeform_sources: DatasetSource[];
+    freeform_sources: FreeformSource[];
     sources: DatasetSource[];
 };
 
 export type GetSourceArgs = {
     connectionId: string;
     limit?: number;
+    offset?: number;
+    db_name?: string;
+    search_text?: string;
 } & WorkbookIdArg;
 
 export type DeleteDatasetResponse = z.infer<typeof deleteDatasetResultSchema>;
@@ -210,4 +215,8 @@ export type ImportDatasetArgs = {
     workbookId: string;
     dataset: EntryFieldData;
     idMapping: TransferIdMapping;
+};
+
+export type GetDbNamesResponse = {
+    db_names: string[];
 };

@@ -1,6 +1,7 @@
 import type {Toaster} from '@gravity-ui/uikit';
 import type {DatalensGlobalState} from 'index';
 import _debounce from 'lodash/debounce';
+import get from 'lodash/get';
 import {batch} from 'react-redux';
 import type {Dispatch} from 'redux';
 import type {ThunkDispatch} from 'redux-thunk';
@@ -13,7 +14,7 @@ import type {
     WorkbookId,
 } from 'shared';
 import {TIMEOUT_100_SEC, TIMEOUT_65_SEC} from 'shared';
-import type {GetPreviewResponse, ValidateDatasetResponse} from 'shared/schema';
+import type {GetPreviewResponse, GetSourceResponse, ValidateDatasetResponse} from 'shared/schema';
 import {sdk} from 'ui';
 import {BI_ERRORS} from 'ui/constants';
 import {addEditHistoryPoint, resetEditHistoryUnit} from 'ui/store/actions/editHistory';
@@ -32,7 +33,7 @@ import {
     TAB_SOURCES,
     TOASTERS_NAMES,
 } from '../../../constants';
-import {EDIT_HISTORY_OPTIONS_KEY} from '../../constants';
+import {EDIT_HISTORY_OPTIONS_KEY, initialState} from '../../constants';
 import {
     datasetContentSelector,
     datasetFieldsSelector,
@@ -40,6 +41,7 @@ import {
     datasetPreviewSelector,
     datasetValidationSelector,
     isLoadPreviewByDefaultSelector,
+    selectedConnectionSelector,
     workbookIdSelector,
 } from '../../selectors';
 import type {
@@ -51,9 +53,12 @@ import type {
     EditHistoryOptions,
     EditorItemToDisplay,
     FreeformSource,
+    SetCurrentDbName,
     SetCurrentTab,
     SetLastModifiedTab,
+    SetSourcesPagination,
     SetValidationState,
+    SourcesPagination,
     ToggleAllowanceSave,
     Update,
     UpdateSetting,
@@ -61,7 +66,7 @@ import type {
 import * as DATASET_ACTION_TYPES from '../types/dataset';
 
 import {updateDatasetByValidation} from './dataset';
-import {isContendChanged, prepareUpdates} from './utils';
+import {filterSources, isContendChanged, prepareUpdates} from './utils';
 
 export type DatasetDispatch = ThunkDispatch<DatalensGlobalState, void, DatasetReduxAction>;
 export type GetState = () => DatalensGlobalState;
@@ -483,7 +488,7 @@ export function addAvatarPrototypes({
     templates,
 }: {
     list: BaseSource[];
-    templates: FreeformSource;
+    templates: FreeformSource | null;
 }) {
     return (dispatch: DatasetDispatch) => {
         dispatch({
@@ -1183,5 +1188,259 @@ export function setDatasetDescription(payload: string) {
             });
             dispatch(toggleSaveDataset({enable: true}));
         });
+    };
+}
+
+export function resetSourcesPagination(): SetSourcesPagination {
+    return {
+        type: DATASET_ACTION_TYPES.SET_SOURCES_PAGINATION,
+        payload: initialState.sourcesPagination,
+    };
+}
+
+export function setSourcesPagination(payload: Partial<SourcesPagination>): SetSourcesPagination {
+    return {
+        type: DATASET_ACTION_TYPES.SET_SOURCES_PAGINATION,
+        payload,
+    };
+}
+
+export function changeCurrentDbName(payload: string) {
+    return (dispatch: DatasetDispatch, getState: GetState) => {
+        const state = getState();
+        const {sourcesPagination} = state.dataset;
+
+        const connection = selectedConnectionSelector(state);
+        const workbookId = workbookIdSelector(state);
+
+        if (!connection?.entryId || !workbookId) {
+            return;
+        }
+
+        batch(() => {
+            dispatch(setCurrentDbName(payload));
+            dispatch(resetSourcesPagination());
+            dispatch(
+                getSources({
+                    connectionId: connection.entryId,
+                    workbookId,
+                    currentDbName: payload,
+                    limit: sourcesPagination.limit,
+                    offset: 0,
+                }),
+            );
+        });
+    };
+}
+
+export function searchSources(searchValue: string) {
+    return async (dispatch: DatasetDispatch, getState: GetState) => {
+        const state = getState();
+        const {sourcesPagination, currentDbName, errors} = state.dataset;
+
+        const connection = selectedConnectionSelector(state);
+        const workbookId = workbookIdSelector(state);
+
+        if (
+            !connection?.entryId ||
+            !workbookId ||
+            errors.sourceLoadingError ||
+            sourcesPagination.searchValue === searchValue
+        ) {
+            return;
+        }
+
+        batch(() => {
+            dispatch(
+                setSourcesPagination({...initialState.sourcesPagination, searchValue: searchValue}),
+            );
+            dispatch(
+                getSources({
+                    connectionId: connection.entryId,
+                    workbookId,
+                    currentDbName,
+                    limit: sourcesPagination.limit,
+                    offset: 0,
+                    searchText: searchValue ? searchValue : undefined,
+                }),
+            );
+        });
+    };
+}
+
+export function setCurrentDbName(payload: string): SetCurrentDbName {
+    return {
+        type: DATASET_ACTION_TYPES.SET_CURRENT_DB_NAME,
+        payload,
+    };
+}
+
+export function incrementSourcesPage() {
+    return async (dispatch: DatasetDispatch, getState: GetState) => {
+        dispatch({
+            type: DATASET_ACTION_TYPES.SOURCES_NEXT_PAGE_REQUEST,
+        });
+
+        const state = getState();
+        const connection = selectedConnectionSelector(state);
+        const workbookId = workbookIdSelector(state);
+
+        const {
+            dataset: {sourcesPagination, currentDbName, errors},
+        } = state;
+
+        if (!connection?.entryId || !workbookId || errors.sourceLoadingError) {
+            return;
+        }
+
+        const sources = await dispatch(
+            getSources({
+                connectionId: connection.entryId,
+                workbookId,
+                limit: sourcesPagination.limit,
+                offset: (sourcesPagination.page + 1) * sourcesPagination.limit,
+                currentDbName,
+                searchText: sourcesPagination.searchValue,
+                isSideEffect: true,
+            }),
+        );
+
+        if (sources.length) {
+            const list = filterSources(sources);
+
+            dispatch({
+                type: DATASET_ACTION_TYPES.SOURCES_NEXT_PAGE_SUCCESS,
+                payload: list,
+            });
+        } else {
+            setSourcesPagination({...sourcesPagination, isFetchingNextPage: false});
+        }
+    };
+}
+
+interface GetSourcesProps {
+    connectionId: string;
+    workbookId: string;
+    searchText?: string;
+    offset?: number;
+    currentDbName?: string;
+    limit?: number;
+    isSideEffect?: boolean;
+}
+
+export function getSources({
+    connectionId,
+    workbookId,
+    searchText,
+    offset,
+    currentDbName,
+    limit,
+    isSideEffect = false,
+}: GetSourcesProps) {
+    return async (dispatch: DatasetDispatch, getState: GetState) => {
+        if (!isSideEffect) {
+            dispatch(toggleSourcesLoader(true));
+        }
+
+        let sources: GetSourceResponse['sources'] = [];
+        const currentLimit = limit ? limit + 1 : 10000;
+        try {
+            const result = await getSdk().sdk.bi.getSources(
+                {
+                    connectionId,
+                    workbookId,
+                    limit: currentLimit,
+                    offset,
+                    db_name: currentDbName,
+                    search_text: searchText,
+                },
+                {concurrentId: 'getSources', timeout: TIMEOUT_65_SEC},
+            );
+            const freeformSources = result.freeform_sources;
+            sources = result.sources;
+
+            const templates = freeformSources.length ? freeformSources[0] : null;
+            // TODO[2]: tear off the filter after - BI-1603
+            const list = filterSources(sources);
+
+            batch(() => {
+                if (!isSideEffect) {
+                    dispatch(
+                        addAvatarPrototypes({
+                            templates,
+                            list,
+                        }),
+                    );
+                    dispatch(setFreeformSources(freeformSources));
+                }
+                dispatch(setSourcesLoadingError(null));
+            });
+        } catch (error) {
+            if (!getSdk().sdk.isCancel(error)) {
+                logger.logError('dataset: getSources failed', error);
+                error.connectionId = connectionId;
+                batch(() => {
+                    dispatch(
+                        addAvatarPrototypes({
+                            templates: null,
+                            list: [],
+                        }),
+                    );
+                    dispatch(setFreeformSources([]));
+                    dispatch(setSourcesLoadingError(error));
+                });
+            }
+        } finally {
+            batch(() => {
+                const diffs = get(getState(), 'editHistory.units.datasets.diffs', []);
+                dispatch(toggleSourcesLoader(false));
+                // Set initial history point
+                if (!isSideEffect) {
+                    dispatch(addEditHistoryPointDs({stacked: Boolean(diffs.length)}));
+                }
+            });
+        }
+
+        return sources;
+    };
+}
+
+export function getDbNames(connectionIds: string[]) {
+    return async (dispatch: DatasetDispatch, getState: GetState) => {
+        try {
+            if (connectionIds.length) {
+                const state = getState();
+                const {
+                    options: {source_listing},
+                } = state.dataset;
+                const currentEntryId = selectedConnectionSelector(state)?.entryId;
+                const result = await Promise.allSettled(
+                    connectionIds.map((id) =>
+                        getSdk()
+                            .sdk.bi.getDbNames({connectionId: id})
+                            .then((res) => ({id, ...res})),
+                    ),
+                );
+                const existingDbNames = result
+                    .filter((item) => item.status === 'fulfilled')
+                    .reduce<Record<string, string[]>>((acc, item) => {
+                        acc[item.value.id] = item.value.db_names;
+                        return acc;
+                    }, {});
+
+                batch(() => {
+                    dispatch({
+                        type: DATASET_ACTION_TYPES.SET_CONNECTIONS_DB_NAMES,
+                        payload: existingDbNames,
+                    });
+                    if (source_listing?.db_name_required_for_search && currentEntryId) {
+                        dispatch(setCurrentDbName(existingDbNames[currentEntryId]?.[0]));
+                    }
+                });
+            }
+        } catch (e) {
+            logger.logError('dataset: getDbNames failed', e);
+            console.error(`getDbNames action failed: ${e}`);
+        }
     };
 }

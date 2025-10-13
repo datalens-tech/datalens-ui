@@ -51,6 +51,8 @@ import {
     RELATION_DELETE,
     RELATION_UPDATE,
     RENAME_DATASET,
+    SET_CONNECTIONS_DB_NAMES,
+    SET_CURRENT_DB_NAME,
     SET_CURRENT_TAB,
     SET_DATASET_REVISION_MISMATCH,
     SET_DATA_EXPORT_ENABLED,
@@ -62,9 +64,12 @@ import {
     SET_LAST_MODIFIED_TAB,
     SET_QUEUE_TO_LOAD_PREVIEW,
     SET_SOURCES_LOADING_ERROR,
+    SET_SOURCES_PAGINATION,
     SET_TEMPLATE_ENABLED,
     SET_UPDATES,
     SET_VALIDATION_STATE,
+    SOURCES_NEXT_PAGE_REQUEST,
+    SOURCES_NEXT_PAGE_SUCCESS,
     SOURCES_REFRESH,
     SOURCE_ADD,
     SOURCE_DELETE,
@@ -1266,11 +1271,15 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
         }
         case ADD_AVATAR_PROTOTYPES: {
             const {list, templates: sourceTemplate} = action.payload;
-
+            const isLastPage = list.length <= state.sourcesPagination.limit;
             return {
                 ...state,
                 sourceTemplate,
                 sourcePrototypes: list,
+                sourcesPagination: {
+                    ...state.sourcesPagination,
+                    isFinished: isLastPage,
+                },
             };
         }
         case ADD_AVATAR_TEMPLATE: {
@@ -1403,6 +1412,54 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                     ...state.content,
                     description: action.payload,
                 },
+            };
+        }
+        case SET_CONNECTIONS_DB_NAMES: {
+            return {
+                ...state,
+                connectionsDbNames: action.payload,
+            };
+        }
+        case SET_CURRENT_DB_NAME: {
+            return {
+                ...state,
+                currentDbName: action.payload,
+            };
+        }
+        case SET_SOURCES_PAGINATION: {
+            return {
+                ...state,
+                sourcesPagination: {
+                    ...state.sourcesPagination,
+                    ...action.payload,
+                },
+            };
+        }
+        case SOURCES_NEXT_PAGE_REQUEST: {
+            return {
+                ...state,
+                sourcesPagination: {
+                    ...state.sourcesPagination,
+                    isFetchingNextPage: true,
+                },
+            };
+        }
+        case SOURCES_NEXT_PAGE_SUCCESS: {
+            const isLastPage = action.payload.length <= state.sourcesPagination.limit;
+            const sourcePrototypes = [
+                ...state.sourcePrototypes,
+                ...(isLastPage ? action.payload : action.payload.slice(0, -1)),
+            ];
+            return {
+                ...state,
+                sourcesPagination: {
+                    ...state.sourcesPagination,
+                    limit: state.sourcesPagination.limit,
+                    page: state.sourcesPagination.page + 1,
+                    isFetchingNextPage: false,
+                    isFinished: isLastPage,
+                },
+                sourcePrototypes,
             };
         }
         default: {

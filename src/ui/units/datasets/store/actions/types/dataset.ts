@@ -101,3 +101,12 @@ export const SET_DATA_EXPORT_ENABLED = Symbol('dataset/SET_DATA_EXPORT_ENABLED')
 export const SET_UPDATES = Symbol('dataset/SET_UPDATES');
 
 export const SET_DESCRIPTION = Symbol('dataset/SET_DESCRIPTION');
+
+export const SET_CONNECTIONS_DB_NAMES = Symbol('dataset/SET_CONNECTIONS_DB_NAMES');
+
+export const SET_CURRENT_DB_NAME = Symbol('dataset/SET_CURRENT_DB_NAME');
+
+export const SOURCES_NEXT_PAGE_REQUEST = Symbol('dataset/SOURCES_NEXT_PAGE_REQUEST');
+export const SOURCES_NEXT_PAGE_SUCCESS = Symbol('dataset/SOURCES_NEXT_PAGE_SUCCESS');
+
+export const SET_SOURCES_PAGINATION = Symbol('dataset/SET_SOURCES_PAGINATION');

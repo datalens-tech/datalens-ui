@@ -1,8 +1,6 @@
 import {toaster} from '@gravity-ui/uikit/toaster-singleton';
 import {i18n} from 'i18n';
-import get from 'lodash/get';
-import {batch} from 'react-redux';
-import {TIMEOUT_65_SEC} from 'shared';
+import {Feature} from 'shared';
 import {URL_QUERY} from 'ui';
 import {resetEditHistoryUnit} from 'ui/store/actions/editHistory';
 import {loadRevisions, setEntryContent} from 'ui/store/actions/entryContent';
@@ -10,11 +8,7 @@ import {RevisionsMode} from 'ui/store/typings/entryContent';
 
 import logger from '../../../../../libs/logger';
 import {getSdk} from '../../../../../libs/schematic-sdk';
-import {
-    ComponentErrorType,
-    DATASETS_EDIT_HISTORY_UNIT_ID,
-    SUBSELECT_SOURCE_TYPES,
-} from '../../../constants';
+import {ComponentErrorType, DATASETS_EDIT_HISTORY_UNIT_ID} from '../../../constants';
 import {getToastTitle} from '../../../helpers/dataset-error-helpers';
 import {getComponentErrorsByType} from '../../../helpers/datasets';
 import DatasetUtils from '../../../helpers/utils';
@@ -22,19 +16,17 @@ import {workbookIdSelector} from '../../selectors';
 import * as DATASET_ACTION_TYPES from '../types/dataset';
 
 import {
-    addAvatarPrototypes,
     addEditHistoryPointDs,
     clearDatasetPreview,
     clearToasters,
     closePreview,
     fetchPreviewDataset,
+    getDbNames,
+    getSources,
     queuePreviewToOpen,
-    setFreeformSources,
-    setSourcesLoadingError,
     setValidationData,
     setValidationState,
     toggleSaveDataset,
-    toggleSourcesLoader,
     validateDataset,
 } from './datasetTyped';
 
@@ -214,12 +206,20 @@ export function initialFetchDataset({datasetId, rev_id, isInitialFetch = true}) 
                 rev_id,
                 version: 'draft',
             });
+
+            if (!DatasetUtils.isEnabledFeature(Feature.EnableDatasetSourcesPagination)) {
+                dataset.options.source_listing = undefined;
+            }
+
             const {
                 dataset: {sources = []},
                 options: {
                     preview: {enabled: previewEnabled},
+                    source_listing,
                 },
             } = dataset;
+            const supportsDbNameListing = source_listing?.supports_db_name_listing;
+            const dbNameRequiredForSearch = source_listing?.db_name_required_for_search;
 
             const connectionsIds = new Set(
                 sources
@@ -241,6 +241,10 @@ export function initialFetchDataset({datasetId, rev_id, isInitialFetch = true}) 
                     currentRevId,
                 },
             });
+
+            if (dbNameRequiredForSearch || supportsDbNameListing) {
+                await dispatch(getDbNames(ids));
+            }
 
             dispatch(_getSources());
 
@@ -502,11 +506,15 @@ function _getSources() {
     return (dispatch, getState) => {
         const {
             dataset: {
+                sourcesPagination,
                 selectedConnections,
+                currentDbName,
+                options,
                 ui: {selectedConnectionId},
             },
         } = getState();
-
+        const supportsSourcePagination = options?.source_listing?.supports_source_pagination;
+        const dbNameRequiredForSearch = options?.source_listing?.db_name_required_for_search;
         const workbookId = workbookIdSelector(getState());
 
         const selectedConnection = selectedConnections.find(
@@ -515,54 +523,14 @@ function _getSources() {
 
         if (selectedConnection && !selectedConnection.deleted) {
             const {entryId} = selectedConnection;
-            dispatch(getSources(entryId, workbookId));
-        }
-    };
-}
-
-export function getSources(connectionId, workbookId) {
-    return async (dispatch, getState) => {
-        dispatch(toggleSourcesLoader(true));
-
-        let sources = [];
-
-        try {
-            const result = await getSdk().sdk.bi.getSources(
-                {connectionId, workbookId, limit: 10000},
-                {concurrentId: 'getSources', timeout: TIMEOUT_65_SEC},
-            );
-            const freeformSources = result.freeform_sources;
-            sources = result.sources;
-
-            const templates = freeformSources.length ? freeformSources[0] : null;
-            // TODO[2]: tear off the filter after - BI-1603
-            const list = sources.filter(
-                ({source_type: sourceType}) => !SUBSELECT_SOURCE_TYPES.includes(sourceType),
-            );
-
             dispatch(
-                addAvatarPrototypes({
-                    templates,
-                    list,
+                getSources({
+                    connectionId: entryId,
+                    workbookId,
+                    limit: supportsSourcePagination ? sourcesPagination.limit : undefined,
+                    currentDbName: dbNameRequiredForSearch ? currentDbName : undefined,
                 }),
             );
-            dispatch(setFreeformSources(freeformSources));
-            dispatch(setSourcesLoadingError(null));
-        } catch (error) {
-            if (!getSdk().sdk.isCancel(error)) {
-                logger.logError('dataset: getSources failed', error);
-                error.connectionId = connectionId;
-                dispatch(setSourcesLoadingError(error));
-            }
-        } finally {
-            batch(() => {
-                const diffs = get(getState(), 'editHistory.units.datasets.diffs', []);
-                dispatch(toggleSourcesLoader(false));
-                // Set initial history point
-                dispatch(addEditHistoryPointDs({stacked: Boolean(diffs.length)}));
-            });
         }
-
-        return sources;
     };
 }

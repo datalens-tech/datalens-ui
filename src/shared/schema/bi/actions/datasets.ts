@@ -29,6 +29,7 @@ import type {
     ExportDatasetResponse,
     GetDataSetFieldsByIdArgs,
     GetDataSetFieldsByIdResponse,
+    GetDbNamesResponse,
     GetDistinctsApiV2Args,
     GetDistinctsApiV2Response,
     GetDistinctsApiV2TransformedResponse,
@@ -54,8 +55,8 @@ export const actions = {
         method: 'GET',
         path: ({connectionId}) =>
             `${API_V1}/connections/${filterUrlFragment(connectionId)}/info/sources`,
-        params: ({limit, workbookId}, headers) => ({
-            query: {limit},
+        params: ({limit, offset, search_text, db_name, workbookId}, headers) => ({
+            query: {limit, offset, db_name, search_text},
             headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
         }),
         timeout: TIMEOUT_60_SEC,
@@ -78,6 +79,13 @@ export const actions = {
             }),
         },
     ),
+
+    getDbNames: createAction<GetDbNamesResponse, Pick<GetSourceArgs, 'connectionId'>>({
+        method: 'GET',
+        path: ({connectionId}) =>
+            `${API_V1}/connections/${filterUrlFragment(connectionId)}/db_names`,
+        params: (_, headers) => ({headers}),
+    }),
 
     getFieldTypes: createAction<GetFieldTypesResponse>({
         method: 'GET',
