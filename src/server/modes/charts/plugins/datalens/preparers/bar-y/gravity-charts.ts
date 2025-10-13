@@ -129,6 +129,9 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
                 type: 'category',
                 categories: categories as string[],
                 order: 'reverse',
+                labels: {
+                    enabled: yPlaceholder?.settings?.hideLabels !== 'yes',
+                },
             },
         ];
     } else {
@@ -142,6 +145,7 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
         config.yAxis = [
             {
                 labels: {
+                    enabled: yPlaceholder?.settings?.hideLabels !== 'yes',
                     numberFormat: axisLabelNumberFormat ?? undefined,
                 },
                 maxPadding: 0,

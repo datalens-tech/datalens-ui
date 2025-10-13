@@ -103,7 +103,7 @@ export function getBaseChartConfig(args: {
                     type: isDateField(yItem) ? 'datetime' : 'linear',
                     visible: yPlaceholderSettings?.axisVisibility !== 'hide',
                     labels: {
-                        enabled: yPlaceholder?.settings?.hideLabels !== 'yes',
+                        enabled: Boolean(yItem) && yPlaceholder?.settings?.hideLabels !== 'yes',
                     },
                     title: {
                         text: getAxisTitle(yPlaceholderSettings, yItem) || undefined,
