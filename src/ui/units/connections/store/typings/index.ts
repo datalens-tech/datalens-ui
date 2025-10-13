@@ -8,6 +8,7 @@ import type {DatalensGlobalState} from 'ui';
 
 import type {AppDispatch} from '../../../../store';
 import type {CloseDialogAction, OpenDialogAction} from '../../../../store/actions/dialog';
+import type {EntryContentAction} from '../../../../store/actions/entryContent';
 import type {DataLensApiError} from '../../../../typings';
 import type {FormDict, ValidationError} from '../../typings';
 import type {
@@ -391,6 +392,7 @@ export type ConnectionsReduxAction =
     | SetGSheetActiveDialog
     | OpenDialogAction
     | CloseDialogAction
+    | EntryContentAction
     | SetYadocsItems
     | SetYadocsSelectedItemId
     | SetYadocsActiveDialog

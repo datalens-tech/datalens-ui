@@ -32,9 +32,10 @@ export const runControl: RunnerHandler = async (cx: AppContext, props: RunnerHan
         ctx.logError('CONTROL_RUNNER_CONFIG_MISSING', error);
         ctx.end();
 
-        return res.status(400).send({
+        res.status(400).send({
             error,
         });
+        return;
     }
 
     const generatedConfig = {
