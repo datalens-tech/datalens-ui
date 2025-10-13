@@ -177,7 +177,22 @@ export class DialogFieldMainSection extends React.Component<Props> {
             ],
         };
 
-        const isCustomFormula = item.quickFormula === false;
+        let isCustomFormula = false;
+
+        if (item.grouping) {
+            const [operation, mode] = item.grouping.split('-');
+
+            let functionName;
+            if (operation === 'trunc') {
+                functionName = 'datetrunc';
+            } else {
+                functionName = 'datepart';
+            }
+
+            const formula = `${functionName}([${item.originalTitle || item.title}], "${mode}")`;
+
+            isCustomFormula = Boolean(item.local && formula !== item.formula);
+        }
 
         const restItems: SelectOptionGroup[] = isCustomFormula
             ? []
