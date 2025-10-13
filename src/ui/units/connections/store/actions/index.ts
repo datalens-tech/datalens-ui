@@ -431,7 +431,7 @@ export function createConnection(args: {name: string; dirPath?: string; workbook
     };
 }
 
-export function updateConnection() {
+function updateConnection() {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
         const {form, innerForm, schema, connectionData, entry} = getState().connections;
 
