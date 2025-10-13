@@ -315,6 +315,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
                 rootNodeRef={rootNodeRef}
                 needRenderContentControls={true}
                 enableAssistant={enableAssistant}
+                reload={reloadChart}
             />
         </div>
     );
