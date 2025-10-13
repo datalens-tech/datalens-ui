@@ -276,7 +276,7 @@ async function filterParams({
     };
 }
 
-function findAndExecuteRunner(
+async function findAndExecuteRunner(
     entry: ReducedResolvedConfig,
     chartsEngine: ChartsEngine,
     ctx: AppContext,
@@ -299,7 +299,7 @@ function findAndExecuteRunner(
         res.status(400).send({
             error: `Unknown config type ${configType}`,
         });
-        return Promise.resolve(null);
+        return null;
     }
 
     const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
@@ -308,7 +308,7 @@ function findAndExecuteRunner(
         res.status(400).send({
             error: 'Editor is disabled',
         });
-        return Promise.resolve(null);
+        return null;
     }
 
     req.body.config = entry;
@@ -319,7 +319,7 @@ function findAndExecuteRunner(
         enableExport: embeddingInfo.embed.settings?.enableExport === true,
     };
 
-    return runnerFound.handler(ctx, {
+    return await runnerFound.handler(ctx, {
         chartsEngine,
         req,
         res,
