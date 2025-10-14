@@ -83,9 +83,10 @@ describe('prepareGeopoint', () => {
         const options = getPrepareFunctionArgs({
             colors: [DIMENSION_COLOR_FIELD],
             colorsConfig: {
+                fieldGuid: DIMENSION_COLOR_FIELD.guid,
                 mountedColors: {
-                    Color1: 'red',
-                    Color2: 'blue',
+                    Color1: '2',
+                    Color2: '1',
                 },
             } as unknown as PrepareFunctionArgs['colorsConfig'],
             resultData: {

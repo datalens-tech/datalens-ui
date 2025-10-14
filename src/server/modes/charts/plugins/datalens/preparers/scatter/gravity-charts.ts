@@ -11,6 +11,9 @@ import {
     getFakeTitleOrTitle,
     getXAxisMode,
     isDateField,
+    isHtmlField,
+    isMarkdownField,
+    isMarkupField,
     isNumberField,
 } from '../../../../../../../shared';
 import type {
@@ -21,7 +24,8 @@ import {getBaseChartConfig} from '../../gravity-charts/utils';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import {isGradientMode} from '../../utils/misc-helpers';
-import {getAxisType} from '../helpers/axis';
+import {getAxisFormatting, getAxisType} from '../helpers/axis';
+import {getLegendColorScale} from '../helpers/legend';
 import type {PrepareFunctionArgs} from '../types';
 
 import type {ScatterGraph} from './prepare-scatter';
@@ -82,10 +86,21 @@ function mapScatterSeries(args: MapScatterSeriesArgs): ScatterSeries<PointCustom
     return series;
 }
 
-export function prepareD3Scatter(args: PrepareFunctionArgs): ChartData<PointCustomData> {
-    const {shared, idToDataType, placeholders, colors, colorsConfig, shapes} = args;
-    const {categories: preparedXCategories, graphs, x, y, z, color, size} = prepareScatter(args);
-    const xCategories = (preparedXCategories || []).map(String);
+// eslint-disable-next-line complexity
+export function prepareGravityChartsScatter(args: PrepareFunctionArgs): ChartData<PointCustomData> {
+    const {shared, idToDataType, placeholders, colors, colorsConfig, shapes, visualizationId} =
+        args;
+    const {
+        categories: preparedXCategories,
+        graphs,
+        x,
+        y,
+        z,
+        color,
+        shape,
+        size,
+    } = prepareScatter(args);
+    const xCategories = preparedXCategories;
 
     const exportSettings: SeriesExportSettings = {
         columns: [
@@ -124,6 +139,7 @@ export function prepareD3Scatter(args: PrepareFunctionArgs): ChartData<PointCust
         pointTitle: getFakeTitleOrTitle(z),
         colorTitle: getFakeTitleOrTitle(color),
         sizeTitle: getFakeTitleOrTitle(size),
+        shapeTitle: getFakeTitleOrTitle(shape),
         exportSettings,
     };
 
@@ -145,7 +161,11 @@ export function prepareD3Scatter(args: PrepareFunctionArgs): ChartData<PointCust
     if (xAxisType === 'category' && xCategories?.length) {
         xAxis = {
             type: 'category',
+            // @ts-ignore There may be a type mismatch due to the wrapper over html, markup and markdown
             categories: xCategories,
+            labels: {
+                html: isHtmlField(x) || isMarkdownField(x) || isMarkupField(x),
+            },
         };
     } else {
         if (isDateField(x)) {
@@ -155,6 +175,17 @@ export function prepareD3Scatter(args: PrepareFunctionArgs): ChartData<PointCust
         if (isNumberField(x)) {
             xAxis.type = xPlaceholder?.settings?.type === 'logarithmic' ? 'logarithmic' : 'linear';
         }
+
+        const xAxisLabelNumberFormat = xPlaceholder
+            ? getAxisFormatting({
+                  placeholder: xPlaceholder,
+                  visualizationId,
+              })
+            : undefined;
+
+        if (xAxisLabelNumberFormat) {
+            xAxis.labels = {numberFormat: xAxisLabelNumberFormat};
+        }
     }
 
     const colorFieldDataType = color ? idToDataType[color.guid] : null;
@@ -163,24 +194,51 @@ export function prepareD3Scatter(args: PrepareFunctionArgs): ChartData<PointCust
         colorFieldDataType &&
         isGradientMode({colorField: color, colorFieldDataType, colorsConfig});
 
-    let legend: ChartData['legend'] = {};
+    let legend: ChartData['legend'] = {
+        html: [x, y, z].some(
+            (field) => isHtmlField(field) || isMarkdownField(field) || isMarkupField(field),
+        ),
+    };
 
     if (graphs.length && gradientMode) {
+        const points = graphs
+            .map((graph) => (graph.data ?? []).map((d) => ({colorValue: d.colorValue})))
+            .flat(2);
+        const colorScale = getLegendColorScale({
+            colorsConfig,
+            points,
+        });
+
         legend = {
             enabled: true,
             type: 'continuous',
             title: {text: getFakeTitleOrTitle(color), style: {fontWeight: '500'}},
-            colorScale: {
-                colors: colorsConfig.gradientColors,
-                stops: colorsConfig.gradientColors.length === 2 ? [0, 1] : [0, 0.5, 1],
-            },
+            colorScale,
         };
     } else if (graphs.length <= 1) {
         legend.enabled = false;
     }
 
+    const axisLabelNumberFormat = yPlaceholder
+        ? getAxisFormatting({
+              placeholder: yPlaceholder,
+              visualizationId,
+          })
+        : undefined;
+
     const config: ChartData = {
         xAxis,
+        yAxis: [
+            {
+                labels: {
+                    numberFormat: axisLabelNumberFormat ?? undefined,
+                    html:
+                        yAxisType === 'category' &&
+                        (isHtmlField(y) || isMarkdownField(y) || isMarkupField(y)),
+                },
+                maxPadding: 0,
+            },
+        ],
         series: {
             data: graphs.map((graph) => ({
                 ...mapScatterSeries({graph, xAxisType, yAxisType}),

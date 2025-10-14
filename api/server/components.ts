@@ -21,7 +21,8 @@ export {renderHTML} from '../../src/server/components/charts-engine/components/m
 
 export {initPublicApiSwagger} from '../../src/server/components/public-api';
 
-export {PUBLIC_API_BASE_CONFIG, PUBLIC_API_ROUTE} from '../../src/server/components/public-api';
+export {PUBLIC_API_ROUTE, PUBLIC_API_VERSION} from '../../src/server/components/public-api';
+export {getPublicApiActionsV0} from '../../src/server/components/public-api/config';
 export type {
     PublicApiBaseConfig,
     PublicApiConfig,

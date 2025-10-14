@@ -6,15 +6,8 @@ import assign from 'lodash/assign';
 import intersection from 'lodash/intersection';
 
 import type {ServerI18n} from '../../../i18n/types';
-import {DASH_CURRENT_SCHEME_VERSION, DASH_DATA_REQUIRED_FIELDS} from '../../constants';
-import {DashSchemeConverter} from '../../modules';
-import {
-    DashTabItemControlSourceType,
-    DashTabItemType,
-    EntryScope,
-    EntryUpdateMode,
-    Feature,
-} from '../../types';
+import {DASH_CURRENT_SCHEME_VERSION, DASH_DATA_REQUIRED_FIELDS} from '../../../shared/constants';
+import {DashSchemeConverter} from '../../../shared/modules';
 import type {
     CreateEntryRequest,
     DashData,
@@ -25,7 +18,14 @@ import type {
     Dictionary,
     EntryReadParams,
     UpdateEntryRequest,
-} from '../../types';
+} from '../../../shared/types';
+import {
+    DashTabItemControlSourceType,
+    DashTabItemType,
+    EntryScope,
+    EntryUpdateMode,
+    Feature,
+} from '../../../shared/types';
 
 import US from './us';
 
@@ -283,6 +283,7 @@ class Dash {
         params: EntryReadParams | null,
         headers: IncomingHttpHeaders,
         ctx: AppContext,
+        options?: {forceMigrate?: boolean},
     ): Promise<DashEntry> {
         try {
             const headersWithMetadata = {
@@ -297,7 +298,10 @@ class Dash {
             const isServerMigrationEnabled = Boolean(
                 isEnabledServerFeature(Feature.DashServerMigrationEnable),
             );
-            if (isServerMigrationEnabled && DashSchemeConverter.isUpdateNeeded(result.data)) {
+            if (
+                (options?.forceMigrate || isServerMigrationEnabled) &&
+                DashSchemeConverter.isUpdateNeeded(result.data)
+            ) {
                 result.data = await Dash.migrate(result.data);
             }
 
@@ -398,6 +402,7 @@ class Dash {
         headers: IncomingHttpHeaders,
         ctx: AppContext,
         I18n: ServerI18n,
+        options?: {forceMigrate?: boolean},
     ): Promise<DashEntry> {
         try {
             const usData: typeof data & {skipSyncLinks?: boolean} = {...data};
@@ -406,7 +411,7 @@ class Dash {
             const needDataSend = !(mode === EntryUpdateMode.Publish && data.revId);
             if (needDataSend) {
                 if (needSetDefaultData(usData.data)) {
-                    const initialData = await Dash.read(entryId, null, headers, ctx);
+                    const initialData = await Dash.read(entryId, null, headers, ctx, options);
                     usData.data = setDefaultData(I18n, usData.data, initialData.data);
                 }
 

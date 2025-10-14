@@ -74,6 +74,8 @@ export function getBaseChartConfig(args: {
     ];
 
     const visualizationWithYMainAxis = [
+        WizardVisualizationId.Bar,
+        WizardVisualizationId.Bar100p,
         WizardVisualizationId.BarYD3,
         WizardVisualizationId.BarY100pD3,
     ];

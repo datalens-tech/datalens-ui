@@ -31,7 +31,7 @@ export const UserPanel = () => {
             </div>
             <Divider orientation="horizontal" />
             <Menu>
-                <Menu.Item key="logout" href="/logout" className={b('menu-item')}>
+                <Menu.Item key="logout" href="/auth/logout" className={b('menu-item')}>
                     <Icon data={ArrowRightFromSquare} size={20} className={b('menu-icon')} />
                     {i18n('label_logout')}
                 </Menu.Item>

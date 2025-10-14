@@ -1,8 +1,9 @@
 import React from 'react';
 
-import {Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {DebouncedInput} from 'components/DebouncedInput/DebouncedInput';
+import {OrderBySelect, SORT_TYPE} from 'components/OrderBySelect';
+import type {OrderBy, OrderByOptions, SortType} from 'components/OrderBySelect';
 import {I18n} from 'i18n';
 import {WorkbookPageQa} from 'shared/constants/qa/workbooks';
 import type {OrderDirection, OrderWorkbookEntriesField} from 'shared/schema/us/types/sort';
@@ -14,32 +15,26 @@ import './WorkbookFilters.scss';
 const b = block('dl-workbook-filters');
 const i18n = I18n.keyset('new-workbooks.table-filters');
 
-enum SortType {
-    FirstNew = 'firstNew',
-    FirstOld = 'firstOld',
-    AlphabetAsc = 'alphabetAsc',
-    AlphabetDesc = 'alphabetDesc',
-}
-
-const SORT_TYPE_VALUES: Record<
-    SortType,
-    {orderField: OrderWorkbookEntriesField; orderDirection: OrderDirection}
-> = {
-    [SortType.FirstNew]: {
-        orderField: 'createdAt',
-        orderDirection: 'desc',
+const SORT_TYPE_VALUES: OrderByOptions<SortType, OrderWorkbookEntriesField, OrderDirection> = {
+    [SORT_TYPE.FIRST_NEW]: {
+        field: 'createdAt',
+        direction: 'desc',
+        content: i18n('label_sort-first-new'),
     },
-    [SortType.FirstOld]: {
-        orderField: 'createdAt',
-        orderDirection: 'asc',
+    [SORT_TYPE.FIRST_OLD]: {
+        field: 'createdAt',
+        direction: 'asc',
+        content: i18n('label_sort-first-old'),
     },
-    [SortType.AlphabetAsc]: {
-        orderField: 'name',
-        orderDirection: 'asc',
+    [SORT_TYPE.ALPHABET_ASC]: {
+        field: 'name',
+        direction: 'asc',
+        content: i18n('label_sort-first-alphabet-asc'),
     },
-    [SortType.AlphabetDesc]: {
-        orderField: 'name',
-        orderDirection: 'desc',
+    [SORT_TYPE.ALPHABET_DESC]: {
+        field: 'name',
+        direction: 'desc',
+        content: i18n('label_sort-first-alphabet-desc'),
     },
 };
 
@@ -67,30 +62,20 @@ export const WorkbookFilters = ({className, filters, onChange}: Props) => {
     );
 
     const handleChangeSort = React.useCallback(
-        (val) => {
-            const type = val[0] as SortType;
-            const sortTypeValues = SORT_TYPE_VALUES[type];
-
+        ({field, direction}: OrderBy<OrderWorkbookEntriesField, OrderDirection>) => {
             handleChangeFilters({
-                orderField: sortTypeValues.orderField,
-                orderDirection: sortTypeValues.orderDirection,
+                orderField: field,
+                orderDirection: direction,
             });
         },
         [handleChangeFilters],
     );
 
-    const sortType = React.useMemo<SortType | undefined>(() => {
-        const types = Object.keys(SORT_TYPE_VALUES) as SortType[];
-
-        return types.find((val) => {
-            const type = val as SortType;
-            const sortTypeValues = SORT_TYPE_VALUES[type];
-
-            return (
-                sortTypeValues.orderField === orderField &&
-                sortTypeValues.orderDirection === orderDirection
-            );
-        });
+    const orderBy = React.useMemo(() => {
+        return {
+            field: orderField,
+            direction: orderDirection,
+        };
     }, [orderField, orderDirection]);
 
     return (
@@ -105,25 +90,13 @@ export const WorkbookFilters = ({className, filters, onChange}: Props) => {
                     hasClear={true}
                 />
 
-                <Select
+                <OrderBySelect
                     className={b('sort')}
-                    value={[sortType ? sortType : '']}
+                    orderBy={orderBy}
+                    orderByOptions={SORT_TYPE_VALUES}
                     size="l"
-                    onUpdate={handleChangeSort}
-                >
-                    <Select.Option value={SortType.FirstNew}>
-                        {i18n('label_sort-first-new')}
-                    </Select.Option>
-                    <Select.Option value={SortType.FirstOld}>
-                        {i18n('label_sort-first-old')}
-                    </Select.Option>
-                    <Select.Option value={SortType.AlphabetAsc}>
-                        {i18n('label_sort-first-alphabet-asc')}
-                    </Select.Option>
-                    <Select.Option value={SortType.AlphabetDesc}>
-                        {i18n('label_sort-first-alphabet-desc')}
-                    </Select.Option>
-                </Select>
+                    onChange={handleChangeSort}
+                />
             </div>
         </div>
     );

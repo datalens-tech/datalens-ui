@@ -24,7 +24,7 @@ import prepareMetricData from '../../../preparers/metric';
 import preparePivotTableData from '../../../preparers/old-pivot-table/old-pivot-table';
 import {prepareD3Pie, prepareHighchartsPie} from '../../../preparers/pie';
 import preparePolylineData from '../../../preparers/polyline';
-import {prepareD3Scatter, prepareHighchartsScatter} from '../../../preparers/scatter';
+import {prepareGravityChartsScatter, prepareHighchartsScatter} from '../../../preparers/scatter';
 import {prepareD3Treemap, prepareHighchartsTreemap} from '../../../preparers/treemap';
 import type {
     PrepareFunction,
@@ -178,7 +178,7 @@ export default ({
 
         case WizardVisualizationId.Scatter:
             if (plugin === 'gravity-charts') {
-                prepare = prepareD3Scatter;
+                prepare = prepareGravityChartsScatter;
             } else {
                 prepare = prepareHighchartsScatter;
             }
@@ -186,7 +186,7 @@ export default ({
             break;
 
         case WizardVisualizationId.ScatterD3:
-            prepare = prepareD3Scatter;
+            prepare = prepareGravityChartsScatter;
             rowsLimit = 75000;
             break;
 

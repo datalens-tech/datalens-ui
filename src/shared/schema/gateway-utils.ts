@@ -13,12 +13,38 @@ export function createAction<TOutput, TParams = undefined, TTransformed = TOutpu
     return config;
 }
 
-export function createTypedAction<
+type TypedActionSchema = {
+    paramsSchema: z.ZodType;
+    resultSchema: z.ZodType;
+};
+
+const VALIDATION_SCHEMA_KEY = Symbol('$schema');
+
+const registerValidationSchema = <T extends object>(value: T, schema: TypedActionSchema): T => {
+    Object.defineProperty(value, VALIDATION_SCHEMA_KEY, {
+        value: schema,
+        enumerable: false,
+    });
+
+    return value;
+};
+
+export const hasValidationSchema = (
+    value: object,
+): value is {[VALIDATION_SCHEMA_KEY]: TypedActionSchema} => {
+    return Object.prototype.hasOwnProperty.call(value, VALIDATION_SCHEMA_KEY);
+};
+
+export const getValidationSchema = (value: object): TypedActionSchema | null => {
+    return hasValidationSchema(value) ? value[VALIDATION_SCHEMA_KEY] : null;
+};
+
+export const createTypedAction = <
     TOutputSchema extends z.ZodType,
     TParamsSchema extends z.ZodType,
     TTransformedSchema extends z.ZodType = TOutputSchema,
 >(
-    _: {
+    schema: {
         paramsSchema: TParamsSchema;
         resultSchema: TOutputSchema;
         transformedSchema?: TTransformedSchema;
@@ -31,9 +57,14 @@ export function createTypedAction<
         z.infer<TParamsSchema>,
         z.infer<TTransformedSchema>
     >,
-) {
-    return actionConfig;
-}
+) => {
+    const schemaValidationObject = {
+        paramsSchema: schema.paramsSchema,
+        resultSchema: schema.resultSchema,
+    };
+
+    return registerValidationSchema(actionConfig, schemaValidationObject);
+};
 
 type AuthArgsData = {
     userAccessToken?: string;

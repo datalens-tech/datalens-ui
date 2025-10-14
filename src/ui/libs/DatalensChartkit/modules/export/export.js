@@ -245,6 +245,8 @@ function prepareValues({widget, data, widgetType, extra, options = {}}) {
 
                     if (isMarkupItem(value)) {
                         graph.data.push(markupToRawString(value));
+                    } else if (cell.type === 'text') {
+                        graph.data[rowIndex] = value;
                     } else if (graph.type === 'date') {
                         const dateFormat = graph.format
                             ? graph.format

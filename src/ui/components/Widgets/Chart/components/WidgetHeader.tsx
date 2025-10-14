@@ -82,6 +82,7 @@ export type HeaderWithControlsProps = HeaderProps &
         ) => void;
 
         setIsExportLoading: (arg: boolean) => void;
+        reload?: (args?: {silentLoading?: boolean; noVeil?: boolean}) => void;
     };
 
 const b = block('widget-header');
@@ -142,9 +143,6 @@ export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
                         <MarkdownHelpPopover
                             markdown={widgetTitleHint}
                             className={b('chart-title-hint')}
-                            buttonProps={{
-                                className: b('chart-title-hint-button'),
-                            }}
                             onClick={handleClickHint}
                         />
                     )}
@@ -247,6 +245,7 @@ export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
                     showActionParamsFilter={showActionParamsFilter}
                     onFiltersClear={onFiltersClear}
                     canBeDisplayedFilters={true}
+                    reload={headerWithControlsProps.reload}
                 />
             </div>
         </React.Fragment>

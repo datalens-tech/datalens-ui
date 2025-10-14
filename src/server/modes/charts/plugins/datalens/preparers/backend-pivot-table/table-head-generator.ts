@@ -222,7 +222,7 @@ export const getHeaderCellMetadata = (
         cell.formattedName = String(cell.name);
         cell.sortable = false;
     } else if (isNumericalDataType(field.data_type)) {
-        const formatting = field.formatting || {};
+        const formatting = getFormatOptions(field);
 
         cell.formattedName = chartKitFormatNumberWrapper(Number(name), {
             lang: 'ru',

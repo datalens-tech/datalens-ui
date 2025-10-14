@@ -475,9 +475,6 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                             <MarkdownHelpPopover
                                 markdown={item.hint}
                                 className={b('chart-title-hint')}
-                                buttonProps={{
-                                    className: b('chart-title-hint-button'),
-                                }}
                                 onClick={handleClickHint}
                             />
                         )}
@@ -488,18 +485,23 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         [tabs, isLoading],
     );
 
+    const reload = React.useCallback(
+        (args: {silentLoading?: boolean; noVeil?: boolean} = {}) => {
+            if (skipReload) {
+                return;
+            }
+            setLoadingProps(args);
+            loadChartData();
+        },
+        [loadChartData, setLoadingProps, skipReload],
+    );
+
     React.useImperativeHandle<ChartKit | ChartKitRef, ChartWidgetWithWrapRefProps>(
         forwardedRef,
         () => ({
             props,
             reflow: handleChartkitReflow,
-            reload: (arg: {silentLoading?: boolean; noVeil?: boolean}) => {
-                if (skipReload) {
-                    return;
-                }
-                setLoadingProps(arg);
-                loadChartData();
-            },
+            reload,
             getMeta: () => new Promise((resolve) => handleGetWidgetMeta(resolve)),
             getCurrentTabChartId: () => chartId || '',
         }),
@@ -507,9 +509,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
             forwardedRef,
             handleChartkitReflow,
             handleGetWidgetMeta,
-            skipReload,
-            loadChartData,
-            setLoadingProps,
+            reload,
             chartId,
             loadedData, // loadedData in deps for meta actual data
         ],
@@ -568,6 +568,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         showActionParamsFilter,
         noControls: disableControls,
         onFiltersClear: handleFiltersClear,
+        reload,
     };
 
     const withInsights = Boolean(loadedData?.chartsInsightsData);

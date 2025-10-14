@@ -1,7 +1,7 @@
 import type {DeepNonNullable} from 'utility-types';
 
 import {EntryScope} from '../../..';
-import Dash from '../../../components/sdk/dash';
+import Dash from '../../../../server/components/sdk/dash';
 import type {ChartsStats} from '../../../types/charts';
 import {createAction, createTypedAction} from '../../gateway-utils';
 import {getTypedApi} from '../../simple-schema';
@@ -217,6 +217,7 @@ export const dashActions = {
                 },
                 headers,
                 ctx,
+                {forceMigrate: true},
             );
 
             if (result.scope !== EntryScope.Dash) {
@@ -238,13 +239,9 @@ export const dashActions = {
 
             const I18n = ctx.get('i18n');
 
-            return (await Dash.update(
-                entryId,
-                args,
-                headers,
-                ctx,
-                I18n,
-            )) as unknown as UpdateDashResponse;
+            return (await Dash.update(entryId, args, headers, ctx, I18n, {
+                forceMigrate: true,
+            })) as unknown as UpdateDashResponse;
         },
     ),
     // WIP

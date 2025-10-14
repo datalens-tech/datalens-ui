@@ -22,7 +22,7 @@ import {
     readonlySelector,
     setValidationErrors,
     submitLoadingSelector,
-    updateConnection,
+    updateConnectionWithRevision,
 } from '../../../store';
 import {validateFormBeforeAction} from '../../../store/utils';
 import {useCreateConnectionHandler} from '../../hooks';
@@ -103,7 +103,7 @@ export const FormActionsComponent = (props: FormActionsProps) => {
                 createConnectionHandler(getOpenDialogArs());
             }
         } else {
-            dispatch(updateConnection());
+            dispatch(updateConnectionWithRevision());
         }
     }, [
         form,

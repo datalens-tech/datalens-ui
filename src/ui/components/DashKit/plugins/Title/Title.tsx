@@ -267,9 +267,6 @@ const titlePlugin: PluginTitle = {
                                 popoverProps={{
                                     placement: 'bottom',
                                 }}
-                                buttonProps={{
-                                    className: b('hint-button'),
-                                }}
                             />
                         )}
                         <AnchorLink to={data.text} show={showAnchor} />

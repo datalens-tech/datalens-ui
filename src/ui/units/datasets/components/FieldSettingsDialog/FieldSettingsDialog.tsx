@@ -10,6 +10,7 @@ import type {
     CommonNumberFormattingOptions,
     DatasetField,
     DatasetFieldColorConfig,
+    DatasetUpdate,
     FieldUISettings,
 } from 'shared';
 import {isDimensionField, isNumberField} from 'shared';
@@ -32,13 +33,14 @@ type Props = {
     field: DatasetField;
     parameters: DatasetField[];
     datasetId: string;
+    updates?: DatasetUpdate[];
     workbookId?: string;
     onClose: () => void;
     onSave: (value: DatasetField | null) => void;
 };
 
 export const FieldSettingsDialog = (props: Props) => {
-    const {open, field, parameters, datasetId, workbookId, onClose, onSave} = props;
+    const {open, field, parameters, datasetId, workbookId, updates, onClose, onSave} = props;
     const hasDisplaySettings = field && isFieldWithDisplaySettings({field});
 
     const fieldUiSettings = React.useMemo<FieldUISettings>(() => {
@@ -153,10 +155,12 @@ export const FieldSettingsDialog = (props: Props) => {
                     )}
                     <ColorsDialog
                         field={field}
+                        fieldUiSettings={uiSettings}
                         datasetId={datasetId}
                         workbookId={workbookId}
                         open={colorDialogOpened}
                         parameters={parameters}
+                        updates={updates}
                         onClose={() => setColorDialogOpened(false)}
                         onApply={handleApplyColors}
                     />

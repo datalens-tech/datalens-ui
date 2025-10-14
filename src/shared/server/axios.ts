@@ -13,5 +13,3 @@ export const getAgents = ({family}: {family: 4 | 6}) => {
         }),
     };
 };
-
-export const IPV6_AXIOS_OPTIONS = getAgents({family: 6});

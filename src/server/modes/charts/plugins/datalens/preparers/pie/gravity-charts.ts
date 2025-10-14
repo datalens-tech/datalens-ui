@@ -8,6 +8,7 @@ import {isHtmlField, isMarkdownField, isMarkupField} from '../../../../../../../
 import {getBaseChartConfig} from '../../gravity-charts/utils';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getExportColumnSettings} from '../../utils/export-helpers';
+import {getLegendColorScale} from '../helpers/legend';
 import type {PiePoint, PrepareFunctionArgs} from '../types';
 
 import preparePieData from './prepare-pie-data';
@@ -42,6 +43,7 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
     if (measure && graphs.length > 0) {
         const graph = graphs[0];
         const total = graph.data?.reduce((sum, d) => sum + (d.y || 0), 0) ?? 0;
+        const labelFormatting = labelField ? getFormatOptions(labelField) : undefined;
         const seriesConfig: ExtendedPieSeries = {
             type: 'pie',
             minRadius: '50%',
@@ -62,7 +64,7 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
                             data_type: idToDataType[measure.guid],
                         }),
                         percentage,
-                        label: label?.formatting?.labelMode === 'percent' ? percentage : item.label,
+                        label: labelFormatting?.labelMode === 'percent' ? percentage : item.label,
                     };
                 }) ?? [],
         };
@@ -97,14 +99,20 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
 
     let legend: ChartData['legend'] = {};
     if (graphs.length && isColoringByMeasure(args)) {
+        const points = graphs
+            .map((graph) => (graph.data ?? []).map((d) => ({colorValue: d.colorValue as unknown})))
+            .flat(2);
+
+        const colorScale = getLegendColorScale({
+            colorsConfig,
+            points,
+        });
+
         legend = {
             enabled: true,
             type: 'continuous',
             title: {text: getFakeTitleOrTitle(measure), style: {fontWeight: '500'}},
-            colorScale: {
-                colors: colorsConfig.gradientColors,
-                stops: colorsConfig.gradientColors.length === 2 ? [0, 1] : [0, 0.5, 1],
-            },
+            colorScale,
         };
     } else {
         const shouldUseHtmlForLegend = [dimension, color].some(isHtmlField);

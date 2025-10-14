@@ -3,8 +3,8 @@ import type {AxiosInstance} from 'axios';
 import axios from 'axios';
 import axiosRetry from 'axios-retry';
 
-import {DEFAULT_TIMEOUT} from '../..';
-import {IPV6_AXIOS_OPTIONS} from '../../server/axios';
+import {DEFAULT_TIMEOUT} from '../../shared';
+import {IPV6_AXIOS_OPTIONS} from '../constants/axios';
 
 let axiosInstance: AxiosInstance | undefined;
 export const getAxios = (config: AppConfig): AxiosInstance => {

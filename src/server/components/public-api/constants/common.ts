@@ -2,8 +2,8 @@ export enum ApiTag {
     Connection = 'Connection',
     Dataset = 'Dataset',
     Wizard = 'Wizard',
-    Editor = 'Editor',
     Dashboard = 'Dashboard',
+    QL = 'QL',
 }
 
 export const PUBLIC_API_VERSION_HEADER = 'x-dl-api-version';

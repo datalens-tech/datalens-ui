@@ -1,5 +1,6 @@
 import {
     MINIMUM_FRACTION_DIGITS,
+    getFormatOptions,
     isDateField,
     isHtmlField,
     isMarkdownField,
@@ -7,6 +8,7 @@ import {
 import type {WrappedMarkdown} from '../../../../../../../shared/utils/markdown';
 import {wrapMarkdownValue} from '../../../../../../../shared/utils/markdown';
 import {wrapHtml} from '../../../../../../../shared/utils/ui-sandbox';
+import {getColorsSettings} from '../../../helpers/color-palettes';
 import {
     mapAndColorizeHashTableByGradient,
     mapAndColorizeHashTableByPalette,
@@ -41,6 +43,8 @@ export function prepareHighchartsTreemap({
     idToTitle,
     idToDataType,
     ChartEditor,
+    defaultColorPaletteId,
+    shared,
 }: PrepareFunctionArgs) {
     // Dimensions
     const d = placeholders[0].items;
@@ -125,10 +129,11 @@ export function prepareHighchartsTreemap({
                     value: rawValue,
                     format: item.format,
                 });
-            } else if (isNumericalDataType(dTypes[level]) && item.formatting) {
+            } else if (isNumericalDataType(dTypes[level])) {
+                const formatting = getFormatOptions(item);
                 value = chartKitFormatNumberWrapper(rawValue as unknown as number, {
                     lang: 'ru',
-                    ...item.formatting,
+                    ...formatting,
                 });
             } else {
                 value = rawValue;
@@ -166,9 +171,10 @@ export function prepareHighchartsTreemap({
             const actualTitle = idToTitle[measureItem.guid];
             const i = findIndexInOrder(order, measureItem, actualTitle);
             const value = values[i];
+            const formatting = getFormatOptions(measureItem);
             const label = chartKitFormatNumberWrapper(Number(value), {
                 lang: 'ru',
-                ...(measureItem.formatting ?? {precision: isFloat ? MINIMUM_FRACTION_DIGITS : 0}),
+                ...(formatting ?? {precision: isFloat ? MINIMUM_FRACTION_DIGITS : 0}),
             });
 
             if (multimeasure) {
@@ -218,7 +224,19 @@ export function prepareHighchartsTreemap({
                 colorsConfig,
             ).colorData;
         } else {
-            colorData = mapAndColorizeHashTableByPalette(valuesForColorData, colorsConfig);
+            const {mountedColors, colors: paletteColors} = getColorsSettings({
+                field: color,
+                colorsConfig: shared.colorsConfig,
+                defaultColorPaletteId,
+                availablePalettes: colorsConfig.availablePalettes,
+                customColorPalettes: colorsConfig.loadedColorPalettes,
+            });
+
+            colorData = mapAndColorizeHashTableByPalette({
+                hashTable: valuesForColorData,
+                colors: paletteColors,
+                mountedColors,
+            });
         }
 
         treemap = treemap.map((obj) => {

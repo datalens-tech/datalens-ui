@@ -47,6 +47,7 @@ import type {GloballyEntrySettings} from './types/functions/getGloballyEntrySett
 import type {GetIllustrationStore} from './types/functions/getIllustrationStore';
 import type {GetLoginById} from './types/functions/getLoginById';
 import type {GetLogoIcon} from './types/functions/getLogoIcon';
+import type {GetShouldShowAIAssistant} from './types/functions/getShouldShowAIAssistant';
 import type {GetUIEntryRouteArgs} from './types/functions/getUIEntryRoute';
 import type {IsValidLogoUrl} from './types/functions/isValidLogoUrl';
 import type {OpenDialogOrganizationInvite} from './types/functions/openDialogOrganizationInvite';
@@ -176,4 +177,5 @@ export const commonFunctionsMap = {
     getUsersById: makeFunctionTemplate<GetUsersById>(),
     getLogoIcon: makeFunctionTemplate<GetLogoIcon>(),
     isValidLogoUrl: makeFunctionTemplate<IsValidLogoUrl>(),
+    getShouldShowAIAssistant: makeFunctionTemplate<GetShouldShowAIAssistant>(),
 } as const;
