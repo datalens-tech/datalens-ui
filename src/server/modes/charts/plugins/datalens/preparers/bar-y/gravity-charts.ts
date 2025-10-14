@@ -14,7 +14,7 @@ import {getBaseChartConfig} from '../../gravity-charts/utils';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import {getAxisFormatting} from '../helpers/axis';
-import {shouldUseGradientLegend} from '../helpers/legend';
+import {getLegendColorScale, shouldUseGradientLegend} from '../helpers/legend';
 import type {PrepareFunctionArgs} from '../types';
 
 import {prepareBarYData} from './prepare-bar-y-data';
@@ -103,14 +103,20 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
     };
 
     if (config.series.data.length && shouldUseGradientLegend(colorItem, colorsConfig, shared)) {
+        const points = graphs
+            .map((graph) => (graph.data ?? []).map((d: BarYPoint) => ({colorValue: d.colorValue})))
+            .flat(2);
+
+        const colorScale = getLegendColorScale({
+            colorsConfig,
+            points,
+        });
+
         config.legend = {
             enabled: true,
             type: 'continuous',
             title: {text: getFakeTitleOrTitle(colorItem), style: {fontWeight: '500'}},
-            colorScale: {
-                colors: colorsConfig.gradientColors,
-                stops: colorsConfig.gradientColors.length === 2 ? [0, 1] : [0, 0.5, 1],
-            },
+            colorScale,
         };
     } else if (graphs.length <= 1) {
         config.legend = {enabled: false};
