@@ -145,7 +145,6 @@ export type GetDataSetFieldsByIdArgs = WorkbookIdArg & {
 
 type CreateDatasetBaseArgs = {
     dataset: Dataset['dataset'];
-    multisource: boolean;
     name: string;
     created_via?: string;
 };
@@ -168,7 +167,6 @@ export type UpdateDatasetArgs = {
     version: DatasetVersion;
     data: {
         dataset: Dataset['dataset'];
-        multisource: boolean;
     };
 } & DatasetId;
 

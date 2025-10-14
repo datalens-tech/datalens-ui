@@ -340,7 +340,6 @@ export function saveDataset({
             if (isCreationProcess) {
                 const creationData = {
                     dataset,
-                    multisource: true,
                     ...(isAuto && {created_via: 'yt_to_dl'}),
                 };
 
@@ -363,7 +362,6 @@ export function saveDataset({
                     version: 'draft',
                     data: {
                         dataset,
-                        multisource: true,
                     },
                 });
 
