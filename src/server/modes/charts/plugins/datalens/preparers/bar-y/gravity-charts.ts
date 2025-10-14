@@ -1,6 +1,5 @@
 import type {BarYSeries, ChartData} from '@gravity-ui/chartkit/gravity-charts';
 import merge from 'lodash/merge';
-import reverse from 'lodash/reverse';
 import sortBy from 'lodash/sortBy';
 
 import type {SeriesExportSettings, ServerField} from '../../../../../../../shared';
