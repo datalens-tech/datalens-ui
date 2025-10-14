@@ -162,6 +162,9 @@ export function prepareGravityChartsScatter(args: PrepareFunctionArgs): ChartDat
             type: 'category',
             // @ts-ignore There may be a type mismatch due to the wrapper over html, markup and markdown
             categories: xCategories,
+            labels: {
+                html: isHtmlField(x) || isMarkdownField(x) || isMarkupField(x),
+            },
         };
     } else {
         if (isDateField(x)) {
@@ -223,6 +226,9 @@ export function prepareGravityChartsScatter(args: PrepareFunctionArgs): ChartDat
             {
                 labels: {
                     numberFormat: axisLabelNumberFormat ?? undefined,
+                    html:
+                        yAxisType === 'category' &&
+                        (isHtmlField(y) || isMarkdownField(y) || isMarkupField(y)),
                 },
                 maxPadding: 0,
             },

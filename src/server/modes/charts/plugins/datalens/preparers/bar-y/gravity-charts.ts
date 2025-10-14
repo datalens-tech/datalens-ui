@@ -131,6 +131,7 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
                 order: 'reverse',
                 labels: {
                     enabled: yPlaceholder?.settings?.hideLabels !== 'yes',
+                    html: isHtmlField(yField) || isMarkdownField(yField) || isMarkupField(yField),
                 },
             },
         ];
