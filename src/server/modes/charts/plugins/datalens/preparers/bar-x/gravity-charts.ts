@@ -37,6 +37,7 @@ type OldBarXDataItem = {
     label?: string | number;
     custom?: any;
     color?: string;
+    colorValue?: number;
 } | null;
 
 type ExtendedBaXrSeriesData = Omit<BarXSeriesData, 'x'> & {
@@ -163,19 +164,13 @@ export function prepareD3BarX(args: PrepareFunctionArgs) {
     let legend: ChartData['legend'];
     if (seriesData.length && shouldUseGradientLegend(colorItem, colorsConfig, shared)) {
         const points = preparedData.graphs
-            .map((graph) => (graph.data ?? []).map((d) => ({colorValue: d.colorValue})))
+            .map((graph) =>
+                (graph.data ?? []).map((d: OldBarXDataItem) => ({colorValue: d?.colorValue})),
+            )
             .flat(2);
-        const colorValues = points
-            .map((point) => point.colorValue)
-            .filter((cv): cv is number => Boolean(cv));
-
-        const minColorValue = Math.min(...colorValues);
-        const maxColorValue = Math.max(...colorValues);
 
         const colorScale = getLegendColorScale({
             colorsConfig,
-            minColorValue,
-            maxColorValue,
             points,
         });
 

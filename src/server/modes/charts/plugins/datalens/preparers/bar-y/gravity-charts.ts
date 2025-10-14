@@ -104,19 +104,11 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
 
     if (config.series.data.length && shouldUseGradientLegend(colorItem, colorsConfig, shared)) {
         const points = graphs
-            .map((graph) => (graph.data ?? []).map((d) => ({colorValue: d.colorValue})))
+            .map((graph) => (graph.data ?? []).map((d: BarYPoint) => ({colorValue: d.colorValue})))
             .flat(2);
-        const colorValues = points
-            .map((point) => point.colorValue)
-            .filter((cv): cv is number => Boolean(cv));
-
-        const minColorValue = Math.min(...colorValues);
-        const maxColorValue = Math.max(...colorValues);
 
         const colorScale = getLegendColorScale({
             colorsConfig,
-            minColorValue,
-            maxColorValue,
             points,
         });
 

@@ -32,15 +32,18 @@ export function shouldUseGradientLegend(
 
 export function getLegendColorScale({
     colorsConfig,
-    minColorValue,
-    maxColorValue,
     points,
 }: {
     colorsConfig: ChartColorsConfig;
-    minColorValue: number | undefined;
-    maxColorValue: number | undefined;
     points: {colorValue?: unknown}[];
 }) {
+    const colorValues = points
+        .map((point) => point.colorValue)
+        .filter((d): d is number => Boolean(d));
+
+    const minColorValue = Math.min(...colorValues);
+    const maxColorValue = Math.max(...colorValues);
+
     let colorScaleColors = colorsConfig.gradientColors;
     if (colorsConfig.reversed) {
         colorScaleColors = reverse(colorScaleColors);

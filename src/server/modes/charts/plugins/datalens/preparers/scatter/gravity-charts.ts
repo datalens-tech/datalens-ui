@@ -99,8 +99,6 @@ export function prepareGravityChartsScatter(args: PrepareFunctionArgs): ChartDat
         color,
         shape,
         size,
-        minColorValue,
-        maxColorValue,
     } = prepareScatter(args);
     const xCategories = preparedXCategories;
 
@@ -208,8 +206,6 @@ export function prepareGravityChartsScatter(args: PrepareFunctionArgs): ChartDat
             .flat(2);
         const colorScale = getLegendColorScale({
             colorsConfig,
-            minColorValue,
-            maxColorValue,
             points,
         });
 
