@@ -51,7 +51,7 @@ export function UserMenu({onClose}: {onClose: () => void}) {
                     {DL.AUTH_ENABLED && (
                         <Link to="/profile">
                             <Button
-                                view="flat-secondary"
+                                view="flat"
                                 className={b('entry-button')}
                                 title={i18nAsideHeader('label_profile-settings')}
                                 onClick={onClose}
@@ -64,7 +64,7 @@ export function UserMenu({onClose}: {onClose: () => void}) {
                         className={b('entry-button')}
                         title={i18n('label_logout')}
                         href={DL.AUTH_ENABLED ? '/auth/logout' : '/logout'}
-                        view="flat-secondary"
+                        view="flat"
                     >
                         <Icon data={ArrowRightFromSquare} size={18} />
                     </Button>

@@ -113,7 +113,10 @@ jobs:
           FARM_ENDPOINT: ${{ vars.FARM_ENDPOINT }}
           FARM_POLL_TIMEOUT_SEC: ${{ env.FARM_POLL_SLEEP_SEC }}
           FARM_NAME_PREFIX: ${{ vars.FARM_NAME_PREFIX }}
-      - run: npm ci
+      - run: npm run deps
+        env:
+          # folder in docker container
+          NPM_CACHE_ROOT: /__w/.cache/npm-cache
       - name: run e2e tests
         timeout-minutes: ${{ fromJSON(env.E2E_TESTS_TIMEOUT_MIN) }}
         run: npm run test:e2e

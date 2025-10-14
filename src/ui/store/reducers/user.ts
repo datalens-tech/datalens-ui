@@ -6,7 +6,7 @@ import {getLocalTheme} from 'ui/components/AsideHeaderAdapter/Settings/utils';
 
 const {theme, themeSettings} = getLocalTheme();
 
-function getUserState(): UserState {
+export function getUserState(): UserState {
     return {
         settings: {
             data: DL.USER_SETTINGS,

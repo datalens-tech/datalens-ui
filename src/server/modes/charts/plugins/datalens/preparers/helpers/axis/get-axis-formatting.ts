@@ -1,6 +1,7 @@
 import type {ServerPlaceholder} from '../../../../../../../../shared';
 import {
     AxisLabelFormatMode,
+    getFormatOptions,
     isNumberField,
     isPercentVisualization,
 } from '../../../../../../../../shared';
@@ -25,7 +26,7 @@ export const getAxisFormatting = ({
 
     switch (placeholder.settings?.axisFormatMode) {
         case AxisLabelFormatMode.ByField:
-            return field.formatting ?? {};
+            return getFormatOptions(field) ?? {};
         case AxisLabelFormatMode.Manual:
             return placeholder.settings?.axisLabelFormating ?? {};
         default:

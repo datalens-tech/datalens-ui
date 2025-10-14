@@ -282,6 +282,7 @@ async function processNode<T extends CurrentResponse, R extends Widget | Control
 
 async function unwrapMarkdown(args: {config: Widget['config']; data: Widget['data']}) {
     const {config, data} = args;
+
     if (config?.useMarkdown) {
         const renderMarkdown = await getRenderMarkdownFn();
         const unwrapItem = (item: unknown) => {
@@ -317,6 +318,8 @@ async function unwrapMarkdown(args: {config: Widget['config']; data: Widget['dat
         try {
             unwrapItem(get(data, 'graphs', []));
             unwrapItem(get(data, 'series.data', []));
+            unwrapItem(get(data, 'xAxis'));
+            unwrapItem(get(data, 'yAxis'));
             unwrapItem(get(data, 'categories', []));
         } catch (e) {
             console.error(e);

@@ -289,6 +289,7 @@ export type V14Field = {
     backgroundSettings?: TableFieldBackgroundSettings;
     columnSettings?: ColumnSettings;
     hintSettings?: HintSettings;
+    ui_settings?: string;
 } & V14ClientOnlyFields;
 
 export type V14ColorsConfig = {

@@ -6,7 +6,12 @@ import type {
     ServerCommonSharedExtraSettings,
     ServerField,
 } from '../../../../../../../../shared';
-import {MINIMUM_FRACTION_DIGITS, formatNumber, isDateField} from '../../../../../../../../shared';
+import {
+    MINIMUM_FRACTION_DIGITS,
+    formatNumber,
+    getFormatOptions,
+    isDateField,
+} from '../../../../../../../../shared';
 import {getColorByColorSettings} from '../../../../../../../../shared/utils/palettes';
 import {prepareMetricObject} from '../../../utils/markup-helpers';
 import {isFloatDataType, isNumericalDataType} from '../../../utils/misc-helpers';
@@ -65,9 +70,7 @@ export const prepareMarkupMetricVariant = ({
         let formattedValue = String(value);
 
         if (isNumericalDataType(measure.data_type)) {
-            const measureFormatting = measure.formatting as
-                | CommonNumberFormattingOptions
-                | undefined;
+            const measureFormatting = getFormatOptions(measure);
 
             if (measureFormatting) {
                 formatOptions.format = measureFormatting.format;

@@ -238,6 +238,10 @@ export function fetchDataset({id, replacing}: FetchDatasetArgs) {
                 };
                 dispatch(setOriginalDatasets({originalDatasets: updatedOriginalDatasets}));
 
+                if (Object.keys(updatedOriginalDatasets).length > 1) {
+                    dispatch(setSort({sort: []}));
+                }
+
                 const {
                     dataset: {datasets, dimensions, measures} = {
                         datasets: [],
@@ -1861,6 +1865,9 @@ function processWidget(args: ProcessWidgetArgs) {
 
             dispatch(setDatasetApiErrors({datasetApiErrors}));
             dispatch(setOriginalDatasets({originalDatasets}));
+            if (Object.keys(originalDatasets).length > 1) {
+                dispatch(setSort({sort: []}));
+            }
 
             return loadedOriginalDatasets;
         })

@@ -1,5 +1,4 @@
 import {isTrueArg} from '../../../../../../shared';
-import type {ChartColorsConfig} from '../types';
 
 export const LOG_TIMING = 'process' in globalThis && isTrueArg(process.env.SHOW_CHARTS_LOG_TIMING);
 export const LOG_INFO = 'process' in globalThis && isTrueArg(process.env.SHOW_CHARTS_LOG);
@@ -22,12 +21,18 @@ export const getColor = (colorIndex: number, colors: string[]) => {
     return colors[index];
 };
 
-export const getMountedColor = (colorsConfig: ChartColorsConfig, value: string | number) => {
-    const {mountedColors = {}} = colorsConfig;
-
+export const getMountedColor = ({
+    mountedColors = {},
+    colors,
+    value,
+}: {
+    mountedColors?: Record<string, string>;
+    colors: string[];
+    value: string | number;
+}) => {
     const color = mountedColors[value];
 
-    return isNaN(Number(color)) ? color : getColor(Number(color), colorsConfig.colors);
+    return isNaN(Number(color)) ? color : getColor(Number(color), colors);
 };
 
 export const SORT_ORDER = {

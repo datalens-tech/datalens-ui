@@ -82,6 +82,7 @@ export type HeaderWithControlsProps = HeaderProps &
         ) => void;
 
         setIsExportLoading: (arg: boolean) => void;
+        reload?: (args?: {silentLoading?: boolean; noVeil?: boolean}) => void;
     };
 
 const b = block('widget-header');
@@ -244,6 +245,7 @@ export const WidgetHeader = (props: HeaderProps | HeaderWithControlsProps) => {
                     showActionParamsFilter={showActionParamsFilter}
                     onFiltersClear={onFiltersClear}
                     canBeDisplayedFilters={true}
+                    reload={headerWithControlsProps.reload}
                 />
             </div>
         </React.Fragment>

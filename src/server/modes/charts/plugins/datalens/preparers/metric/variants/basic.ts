@@ -1,12 +1,15 @@
 import {dateTime} from '@gravity-ui/date-utils';
 
 import type {
-    CommonNumberFormattingOptions,
     NumberFormatType,
     NumberFormatUnit,
     ServerCommonSharedExtraSettings,
 } from '../../../../../../../../shared';
-import {MINIMUM_FRACTION_DIGITS, isDateField} from '../../../../../../../../shared';
+import {
+    MINIMUM_FRACTION_DIGITS,
+    getFormatOptions,
+    isDateField,
+} from '../../../../../../../../shared';
 import {getColorByColorSettings} from '../../../../../../../../shared/utils/palettes';
 import {isFloatDataType, isNumericalDataType} from '../../../utils/misc-helpers';
 import {getTitle} from '../utils';
@@ -44,7 +47,7 @@ export const prepareBasicMetricVariant = ({
     const current: MetricCurrent = {value};
     if (measure && isNumericalDataType(measure.data_type)) {
         current.value = Number(current.value);
-        const measureFormatting = measure.formatting as CommonNumberFormattingOptions | undefined;
+        const measureFormatting = getFormatOptions(measure);
 
         if (measureFormatting) {
             current.format = measureFormatting.format;

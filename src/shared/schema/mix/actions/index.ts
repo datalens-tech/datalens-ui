@@ -3,6 +3,7 @@ import {editorActions} from './editor';
 import {entriesActions} from './entries';
 import {markdownActions} from './markdown';
 import {navigationActions} from './navigation';
+import {qlActions} from './ql';
 import {wizardActions} from './wizard';
 
 export const actions = {
@@ -12,4 +13,5 @@ export const actions = {
     ...dashActions,
     ...editorActions,
     ...wizardActions,
+    ...qlActions,
 };

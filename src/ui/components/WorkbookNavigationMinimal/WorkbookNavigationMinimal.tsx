@@ -5,12 +5,19 @@ import {List, Loader, Popup} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {DebouncedInput} from 'components/DebouncedInput';
 import {EntryIcon} from 'components/EntryIcon/EntryIcon';
+import {OrderBySelect, SORT_TYPE} from 'components/OrderBySelect';
+import type {OrderBy, OrderByOptions, SortType} from 'components/OrderBySelect';
 import {i18n} from 'i18n';
 import {getSdk} from 'libs/schematic-sdk';
 import moment from 'moment';
 import type {EntryScope} from 'shared';
 import {WorkbookNavigationMinimalQa, getEntryNameByKey} from 'shared';
-import type {GetEntryResponse, GetWorkbookEntriesArgs} from 'shared/schema';
+import type {
+    GetEntryResponse,
+    GetWorkbookEntriesArgs,
+    OrderDirection,
+    OrderWorkbookEntriesField,
+} from 'shared/schema';
 import {DEFAULT_DATE_FORMAT} from 'ui/constants/misc';
 
 import {PlaceholderIllustration} from '../PlaceholderIllustration/PlaceholderIllustration';
@@ -18,6 +25,29 @@ import {PlaceholderIllustration} from '../PlaceholderIllustration/PlaceholderIll
 import './WorkbookNavigationMinimal.scss';
 
 const b = block('dl-core-workbook-navigation-minimal');
+
+const SORT_TYPE_VALUES: OrderByOptions<SortType, OrderWorkbookEntriesField, OrderDirection> = {
+    [SORT_TYPE.FIRST_NEW]: {
+        field: 'createdAt',
+        direction: 'desc',
+        content: i18n('new-workbooks.table-filters', 'label_sort-first-new'),
+    },
+    [SORT_TYPE.FIRST_OLD]: {
+        field: 'createdAt',
+        direction: 'asc',
+        content: i18n('new-workbooks.table-filters', 'label_sort-first-old'),
+    },
+    [SORT_TYPE.ALPHABET_ASC]: {
+        field: 'name',
+        direction: 'asc',
+        content: i18n('new-workbooks.table-filters', 'label_sort-first-alphabet-asc'),
+    },
+    [SORT_TYPE.ALPHABET_DESC]: {
+        field: 'name',
+        direction: 'desc',
+        content: i18n('new-workbooks.table-filters', 'label_sort-first-alphabet-desc'),
+    },
+};
 
 const ROW_HEIGHT = 40;
 
@@ -44,6 +74,8 @@ type Props = {
 type State = {
     filter: string;
     items?: Item[];
+    orderByField: OrderWorkbookEntriesField;
+    orderByDirection: OrderDirection;
 };
 
 class WorkbookNavigationMinimal extends React.Component<Props, State> {
@@ -52,8 +84,10 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
         popupPlacement: ['bottom-start'],
     };
 
-    state = {
+    state: State = {
         filter: '',
+        orderByField: 'createdAt',
+        orderByDirection: 'desc',
         items: undefined,
     };
 
@@ -117,6 +151,17 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
                                     'label_placeholder-filter-by-name',
                                 )}
                             />
+                            <div className={b('sort-control')}>
+                                <OrderBySelect
+                                    className={b('sort-select')}
+                                    orderBy={{
+                                        field: this.state.orderByField,
+                                        direction: this.state.orderByDirection,
+                                    }}
+                                    orderByOptions={SORT_TYPE_VALUES}
+                                    onChange={this.onUpdateOrderBy}
+                                />
+                            </div>
                         </div>
                         {!items ? <Loader className={b('loader')} /> : null}
                         {items && !items.length ? (
@@ -187,7 +232,15 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
 
         getSdk()
             .sdk.us.getWorkbookEntries(
-                {workbookId: this.props.workbookId, scope: this.props.scope, filters},
+                {
+                    workbookId: this.props.workbookId,
+                    scope: this.props.scope,
+                    filters,
+                    orderBy: {
+                        field: this.state.orderByField,
+                        direction: this.state.orderByDirection,
+                    },
+                },
                 {concurrentId: 'WorkbookNavigationMinimal/getWorkbookEntries'},
             )
             .then(({entries}) => {
@@ -241,6 +294,15 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
 
     private onUpdateFilter = (filter: string) =>
         this.setState({filter}, () => this.fetchWorkbooEntries());
+
+    private onUpdateOrderBy = ({
+        field,
+        direction,
+    }: OrderBy<OrderWorkbookEntriesField, OrderDirection>): void => {
+        this.setState({orderByField: field, orderByDirection: direction}, () =>
+            this.fetchWorkbooEntries(),
+        );
+    };
 }
 
 export default WorkbookNavigationMinimal;

@@ -1,5 +1,4 @@
 import {UserRole} from 'shared/components/auth/constants/role';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {LineShapeType} from '../../shared';
 import {
@@ -7,7 +6,6 @@ import {
     DeviceType,
     ErrorContentTypes,
     FALLBACK_LANGUAGES,
-    Feature,
     GRADIENT_PALETTES,
     GradientType,
     PALETTES,
@@ -374,19 +372,11 @@ export const getAvailableClientPalettesMap = () => {
         ...DL.EXTRA_PALETTES,
     };
 
-    if (!isEnabledFeature(Feature.NewDefaultPalette)) {
-        delete palettes[PALETTES.default20.id];
-    }
-
     return palettes;
 };
 
 export function getDefaultColorPaletteId() {
-    if (isEnabledFeature(Feature.NewDefaultPalette) && window.DL.defaultColorPaletteId) {
-        return window.DL.defaultColorPaletteId;
-    }
-
-    return PALETTES.classic.id;
+    return window.DL.defaultColorPaletteId ?? PALETTES.classic.id;
 }
 
 export function getTenantDefaultColorPaletteId() {

@@ -51,14 +51,10 @@ const getRequestId = (ctx: Request['ctx']) => ctx.get(REQUEST_ID_PARAM_NAME) || 
 
 export const proxyGetEntry = async (
     req: Request,
-    _res: Response,
-    {
-        usMasterToken,
-        ...args
-    }: {
+    res: Response,
+    args: {
         workbookId: string | null;
         entryId: string;
-        usMasterToken: string;
     },
 ) => {
     const {ctx} = req;
@@ -69,6 +65,9 @@ export const proxyGetEntry = async (
     };
     const requestId = getRequestId(ctx);
 
+    const {getAuthArgsProxyUSPrivate} = registry.common.auth.getAll();
+    const authArgs = getAuthArgsProxyUSPrivate(req, res);
+
     try {
         return await gatewayApi.usPrivate._proxyGetEntry({
             headers,
@@ -76,7 +75,7 @@ export const proxyGetEntry = async (
                 ...args,
                 branch: 'published',
             },
-            authArgs: {usMasterToken},
+            authArgs,
             ctx,
             requestId,
         });
@@ -88,7 +87,7 @@ export const proxyGetEntry = async (
             return gatewayApi.usPrivate._proxyGetEntry({
                 headers,
                 args,
-                authArgs: {usMasterToken},
+                authArgs,
                 ctx,
                 requestId,
             });
@@ -102,11 +101,7 @@ const resolveScopeForEntryData = (entryData: Record<keyof EntryScope, unknown>) 
     return Object.values(EntryScope).find((key) => key in entryData);
 };
 
-export const prepareExportData = async (
-    req: Request,
-    res: Response,
-    {usMasterToken}: {usMasterToken: string},
-) => {
+export const prepareExportData = async (req: Request, res: Response) => {
     const {ctx} = req;
     const headers = {
         ...Utils.pickHeaders(req),
@@ -116,12 +111,13 @@ export const prepareExportData = async (
     const {exportId, scope, idMapping} = req.body;
     const workbookId = (req.body?.workbookId as string) ?? null;
 
+    const {getAuthArgsProxyBIPrivate} = registry.common.auth.getAll();
+
     switch (scope) {
         case EntryScope.Dash: {
             const {responseData: entry} = await proxyGetEntry(req, res, {
                 entryId: exportId,
                 workbookId,
-                usMasterToken,
             });
 
             if (entry.scope !== scope) {
@@ -143,7 +139,6 @@ export const prepareExportData = async (
             const {responseData: entry} = await proxyGetEntry(req, res, {
                 entryId: exportId,
                 workbookId,
-                usMasterToken,
             });
 
             if (entry.scope !== scope) {
@@ -162,8 +157,8 @@ export const prepareExportData = async (
                 args: {
                     connectionId: exportId,
                     workbookId,
-                    usMasterToken,
                 },
+                authArgs: getAuthArgsProxyBIPrivate(req, res),
                 ctx,
                 requestId: getRequestId(ctx),
             });
@@ -179,8 +174,8 @@ export const prepareExportData = async (
                     datasetId: exportId,
                     idMapping,
                     workbookId,
-                    usMasterToken,
                 },
+                authArgs: getAuthArgsProxyBIPrivate(req, res),
                 ctx,
                 requestId: getRequestId(ctx),
             });
@@ -197,11 +192,7 @@ export const prepareExportData = async (
     }
 };
 
-export const prepareImportData = async (
-    req: Request,
-    _res: Response,
-    {usMasterToken}: {usMasterToken: string},
-) => {
+export const prepareImportData = async (req: Request, res: Response) => {
     const {ctx} = req;
     const headers = {
         ...Utils.pickHeaders(req),
@@ -212,6 +203,8 @@ export const prepareImportData = async (
 
     const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
 
+    const {getAuthArgsProxyBIPrivate, getAuthArgsProxyUSPrivate} = registry.common.auth.getAll();
+
     switch (scope) {
         case EntryScope.Connection: {
             const {responseData} = await gatewayApi.bi._proxyImportConnection({
@@ -219,10 +212,10 @@ export const prepareImportData = async (
                 args: {
                     workbookId,
                     connection: entryData.connection,
-                    usMasterToken,
                 },
                 ctx,
                 requestId: getRequestId(ctx),
+                authArgs: getAuthArgsProxyBIPrivate(req, res),
             });
 
             return createImportResponseData(responseData.notifications, responseData.id);
@@ -234,10 +227,10 @@ export const prepareImportData = async (
                     workbookId,
                     dataset: entryData.dataset,
                     idMapping,
-                    usMasterToken,
                 },
                 ctx,
                 requestId: getRequestId(ctx),
+                authArgs: getAuthArgsProxyBIPrivate(req, res),
             });
 
             return createImportResponseData(responseData.notifications, responseData.id);
@@ -270,7 +263,7 @@ export const prepareImportData = async (
                     annotation: widget.annotation,
                 },
                 ctx,
-                authArgs: {usMasterToken},
+                authArgs: getAuthArgsProxyUSPrivate(req, res),
                 requestId: getRequestId(ctx),
             });
 
@@ -301,7 +294,7 @@ export const prepareImportData = async (
                     },
                 },
                 ctx,
-                authArgs: {usMasterToken},
+                authArgs: getAuthArgsProxyUSPrivate(req, res),
                 requestId: getRequestId(ctx),
             });
 
@@ -321,16 +314,16 @@ export const workbooksTransferController = {
     },
     export: async (req: Request, res: Response) => {
         try {
-            const usMasterToken = Utils.pickUsMasterToken(req);
+            const {hasValidWorkbookTransferAuthHeaders} = registry.common.auth.getAll();
 
-            if (!usMasterToken) {
+            if (!(await hasValidWorkbookTransferAuthHeaders(req))) {
                 res.status(403).send({
                     code: TransferErrorCode.TransferInvalidToken,
                 });
                 return;
             }
 
-            sendResponse(res, await prepareExportData(req, res, {usMasterToken}));
+            sendResponse(res, await prepareExportData(req, res));
         } catch (ex) {
             const {error} = ex as GatewayApiErrorResponse;
             res.status(error?.status || 500).send(error);
@@ -338,16 +331,16 @@ export const workbooksTransferController = {
     },
     import: async (req: Request, res: Response) => {
         try {
-            const usMasterToken = Utils.pickUsMasterToken(req);
+            const {hasValidWorkbookTransferAuthHeaders} = registry.common.auth.getAll();
 
-            if (!usMasterToken) {
+            if (!(await hasValidWorkbookTransferAuthHeaders(req))) {
                 res.status(403).send({
                     code: TransferErrorCode.TransferInvalidToken,
                 });
                 return;
             }
 
-            sendResponse(res, await prepareImportData(req, res, {usMasterToken}));
+            sendResponse(res, await prepareImportData(req, res));
         } catch (ex) {
             const {error} = ex as GatewayApiErrorResponse;
             res.status(error?.status || 500).send(error);

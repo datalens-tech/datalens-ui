@@ -3,7 +3,7 @@ import isEmpty from 'lodash/isEmpty';
 import {isDimensionField} from '../modules/helpers';
 import {type DatasetField, type FieldUISettings, isNumberField} from '../types';
 
-export const getFieldUISettings = ({field}: {field: DatasetField | undefined}) => {
+export const getFieldUISettings = ({field}: {field: {ui_settings?: string} | undefined}) => {
     const value = field?.ui_settings;
     let result: FieldUISettings | null = null;
     try {

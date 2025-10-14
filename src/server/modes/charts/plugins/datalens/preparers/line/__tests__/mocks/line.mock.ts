@@ -1,4 +1,5 @@
 import {COMMON_PALETTE_ID} from '../../../../../../../../../shared';
+import classic20 from '../../../../../../../../../shared/constants/colors/common/classic-20';
 import {EmptyPrepapreArgs} from '../../../__tests__/common.mock';
 
 const chartEditorMock = {
@@ -215,28 +216,7 @@ export const linesColoredByFieldWithPostfixArgs = {
         fieldGuid: 'd0ab8220-16e9-4320-b6da-1ca12163d956',
         coloredByMeasure: false,
         colorMode: 'palette',
-        colors: [
-            '#4DA2F1',
-            '#FF3D64',
-            '#8AD554',
-            '#FFC636',
-            '#FFB9DD',
-            '#84D1EE',
-            '#FF91A1',
-            '#54A520',
-            '#DB9100',
-            '#BA74B3',
-            '#1F68A9',
-            '#ED65A9',
-            '#0FA08D',
-            '#FF7E00',
-            '#E8B0A4',
-            '#52A6C5',
-            '#BE2443',
-            '#70C1AF',
-            '#FFB46C',
-            '#DCA3D7',
-        ],
+        availablePalettes: {[COMMON_PALETTE_ID.CLASSIC_20]: classic20},
         gradientColors: ['#0044A3', '#8CCBFF'],
         loadedColorPalettes: {},
     },

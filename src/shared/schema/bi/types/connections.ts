@@ -25,6 +25,7 @@ type BaseConnectorItem = {
     conn_type: ConnectorType;
     backend_driven_form: boolean;
     hidden: boolean;
+    history: boolean;
     title: string;
     /**
      * Controls the behavior of connector's list item in the list.
@@ -71,11 +72,6 @@ export type GetConnectorsResponse = {
     /** Represent connectors out of groups. These one should be rendered before grouped connectors */
     uncategorized?: ConnectorItem[];
 };
-
-export type GetConnectionResponse = ConnectionData;
-
-export type GetConnectionArgs = BaseArgs & WorkbookIdArg;
-
 export type CreateConnectionResponse = {
     id: string;
 };
@@ -161,7 +157,6 @@ export type ListConnectorIconsResponse = {
 };
 
 export type ExportConnectionArgs = {
-    usMasterToken: string;
     connectionId: string;
     workbookId?: string | null;
 };
@@ -177,7 +172,6 @@ export type ImportConnectionResponse = {
 };
 
 export type ImportConnectionArgs = {
-    usMasterToken: string;
     workbookId: string;
     connection: ConnectionData;
 };

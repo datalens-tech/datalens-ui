@@ -6,21 +6,23 @@ function isHtmlString(value: unknown) {
     return typeof value === 'string' && /<\/?[a-z][\s\S]*>/i.test(value);
 }
 
+const EDITOR_UNSAFE_CHART_TYPES = [
+    EDITOR_TYPE.GRAPH_NODE,
+    EDITOR_TYPE.MAP_NODE,
+    EDITOR_TYPE.YMAP_NODE,
+    EDITOR_TYPE.TIMESERIES_NODE,
+    EDITOR_TYPE.BLANK_CHART_NODE,
+    EDITOR_TYPE.ADVANCED_CHART_NODE,
+    EDITOR_TYPE.GRAVITY_CHARTS_NODE,
+];
+
+const WIZARD_UNSAFE_CHART_TYPES = [WizardType.GraphWizardNode, WizardType.GravityChartsWizardNode];
+
 export function isPotentiallyUnsafeChart(chartType: string) {
-    const editorUnsafeCharts = [
-        EDITOR_TYPE.GRAPH_NODE,
-        EDITOR_TYPE.MAP_NODE,
-        EDITOR_TYPE.YMAP_NODE,
-        EDITOR_TYPE.TIMESERIES_NODE,
-        EDITOR_TYPE.BLANK_CHART_NODE,
-        EDITOR_TYPE.ADVANCED_CHART_NODE,
-        EDITOR_TYPE.GRAVITY_CHARTS_NODE,
-    ];
-    const wizardUnsafeCharts: string[] = [
-        WizardType.GraphWizardNode,
-        WizardType.GravityChartsWizardNode,
-    ];
-    return editorUnsafeCharts.includes(chartType) || wizardUnsafeCharts.includes(chartType);
+    return (
+        (EDITOR_UNSAFE_CHART_TYPES as string[]).includes(chartType) ||
+        (WIZARD_UNSAFE_CHART_TYPES as string[]).includes(chartType)
+    );
 }
 
 export function getSafeChartWarnings(chartType: string, widgetData?: unknown) {

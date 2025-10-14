@@ -3,6 +3,7 @@ import merge from 'lodash/merge';
 
 import type {SeriesExportSettings, ServerField} from '../../../../../../../shared';
 import {
+    LabelsPositions,
     PERCENT_VISUALIZATIONS,
     PlaceholderId,
     getFakeTitleOrTitle,
@@ -14,7 +15,7 @@ import {getBaseChartConfig} from '../../gravity-charts/utils';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import {getAxisFormatting} from '../helpers/axis';
-import {shouldUseGradientLegend} from '../helpers/legend';
+import {getLegendColorScale, shouldUseGradientLegend} from '../helpers/legend';
 import type {PrepareFunctionArgs} from '../types';
 
 import {prepareBarYData} from './prepare-bar-y-data';
@@ -50,6 +51,9 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
 
     const dataLabelFormat = getFieldFormatOptions({field: labelField});
     const shouldUsePercentStacking = PERCENT_VISUALIZATIONS.has(visualizationId);
+    const dataLabelsInside =
+        shouldUsePercentStacking ||
+        shared.extraSettings?.labelsPosition !== LabelsPositions.Outside;
     const series = graphs.map<BarYSeries>((graph) => {
         return {
             ...graph,
@@ -57,16 +61,14 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
             stackId: graph.stack,
             stacking: shouldUsePercentStacking ? 'percent' : 'normal',
             name: graph.title,
-            data: graph.data
-                .filter((d: BarYPoint) => d !== null && d.y !== null)
-                .map((d: BarYPoint) => {
-                    const {x, y, ...other} = d;
+            data: graph.data.map((d: BarYPoint) => {
+                const {x, y, ...other} = d;
 
-                    return {y: x, x: y, ...other};
-                }),
+                return {y: x, x: y, ...other};
+            }),
             dataLabels: {
                 enabled: graph.dataLabels?.enabled,
-                inside: shouldUsePercentStacking,
+                inside: dataLabelsInside,
                 html: shouldUseHtmlForLabels,
                 format: dataLabelFormat,
             },
@@ -88,6 +90,12 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
     const config: ChartData = {
         series: {
             data: series.filter((s) => s.data.length),
+            options: {
+                'bar-y': {
+                    stackGap: 0,
+                    borderWidth: 1,
+                },
+            },
         },
         xAxis: {
             min: 0,
@@ -99,14 +107,20 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
     };
 
     if (config.series.data.length && shouldUseGradientLegend(colorItem, colorsConfig, shared)) {
+        const points = graphs
+            .map((graph) => (graph.data ?? []).map((d: BarYPoint) => ({colorValue: d.colorValue})))
+            .flat(2);
+
+        const colorScale = getLegendColorScale({
+            colorsConfig,
+            points,
+        });
+
         config.legend = {
             enabled: true,
             type: 'continuous',
             title: {text: getFakeTitleOrTitle(colorItem), style: {fontWeight: '500'}},
-            colorScale: {
-                colors: colorsConfig.gradientColors,
-                stops: colorsConfig.gradientColors.length === 2 ? [0, 1] : [0, 0.5, 1],
-            },
+            colorScale,
         };
     } else if (graphs.length <= 1) {
         config.legend = {enabled: false};
@@ -115,6 +129,7 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
     if (xField) {
         config.tooltip = {
             valueFormat: getFieldFormatOptions({field: xField}),
+            totals: {enabled: true},
         };
     }
 
@@ -123,6 +138,11 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
             {
                 type: 'category',
                 categories: categories as string[],
+                order: 'reverse',
+                labels: {
+                    enabled: yPlaceholder?.settings?.hideLabels !== 'yes',
+                    html: isHtmlField(yField) || isMarkdownField(yField) || isMarkupField(yField),
+                },
             },
         ];
     } else {
@@ -136,8 +156,11 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
         config.yAxis = [
             {
                 labels: {
+                    enabled: yPlaceholder?.settings?.hideLabels !== 'yes',
                     numberFormat: axisLabelNumberFormat ?? undefined,
                 },
+                maxPadding: 0,
+                order: 'reverse',
             },
         ];
     }

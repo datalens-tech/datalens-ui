@@ -1,14 +1,14 @@
 import React from 'react';
 
+import type {PaletteOption} from '@gravity-ui/uikit';
 import {Button, Dialog, Palette} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {useDispatch, useSelector} from 'react-redux';
-import type {DatasetField, DatasetFieldColorConfig, FieldUISettings} from 'shared';
+import {useSelector} from 'react-redux';
+import type {DatasetField, DatasetFieldColorConfig, DatasetUpdate, FieldUISettings} from 'shared';
 import {
     TIMEOUT_90_SEC,
     getFieldDistinctValues,
-    getFieldUISettings,
     getFieldsApiV2RequestSection,
     getParametersApiV2RequestSection,
 } from 'shared';
@@ -17,7 +17,6 @@ import {PaletteItem} from 'ui/components/PaletteItem/PaletteItem';
 import {ValuesList} from 'ui/components/ValuesList/ValuesList';
 import {getTenantDefaultColorPaletteId} from 'ui/constants';
 import {getSdk} from 'ui/libs/schematic-sdk';
-import {fetchColorPalettes} from 'ui/store/actions/colorPaletteEditor';
 import {selectColorPalettesDict} from 'ui/store/selectors/colorPaletteEditor';
 import {getPaletteColors} from 'ui/utils';
 
@@ -35,7 +34,9 @@ const b = block('colors-dialog');
 type Props = {
     open: boolean;
     field: DatasetField;
+    fieldUiSettings: FieldUISettings;
     datasetId: string;
+    updates?: DatasetUpdate[];
     workbookId?: string;
     parameters: DatasetField[];
     onClose: () => void;
@@ -43,27 +44,27 @@ type Props = {
 };
 
 export const ColorsDialog = (props: Props) => {
-    const {open, field, datasetId, workbookId, parameters, onClose, onApply} = props;
+    const {
+        open,
+        field,
+        fieldUiSettings,
+        datasetId,
+        updates,
+        workbookId,
+        parameters,
+        onClose,
+        onApply,
+    } = props;
     const [values, setValues] = React.useState<string[]>([]);
     const [selectedValue, setSelectedValue] = React.useState<string | undefined>();
     const [isLoading, setLoading] = React.useState(true);
     const [error, setError] = React.useState(null);
 
-    const fieldUiSettings = React.useMemo<FieldUISettings | null>(
-        () => getFieldUISettings({field}),
-        [field],
-    );
     const [mountedColors, setMountedColors] = React.useState<Record<string, string>>(
         fieldUiSettings?.colors ?? {},
     );
 
-    const dispatch = useDispatch();
     const colorPalettes = useSelector(selectColorPalettesDict);
-    React.useEffect(() => {
-        if (!colorPalettes.length) {
-            dispatch(fetchColorPalettes());
-        }
-    }, [colorPalettes.length, dispatch]);
 
     const defaultPaletteId = getTenantDefaultColorPaletteId();
     const [selectedPaletteId, setSelectedPalette] = React.useState(
@@ -77,11 +78,9 @@ export const ColorsDialog = (props: Props) => {
     }, [values]);
 
     React.useEffect(() => {
-        if (open) {
-            setMountedColors(fieldUiSettings?.colors ?? {});
-            setSelectedPalette(fieldUiSettings?.palette ?? defaultPaletteId);
-        }
-    }, [defaultPaletteId, fieldUiSettings?.colors, fieldUiSettings?.palette, open]);
+        setMountedColors(fieldUiSettings?.colors ?? {});
+        setSelectedPalette(fieldUiSettings?.palette ?? defaultPaletteId);
+    }, [defaultPaletteId, fieldUiSettings?.colors, fieldUiSettings?.palette]);
 
     const loadValues = React.useCallback(async () => {
         getSdk().cancelRequest('getDistincts');
@@ -90,6 +89,7 @@ export const ColorsDialog = (props: Props) => {
             const resp = await getSdk().sdk.bi.getDistinctsApiV2(
                 {
                     datasetId,
+                    updates,
                     workbookId: workbookId ?? null,
                     limit: VALUES_LOAD_LIMIT,
                     fields: getFieldsApiV2RequestSection([field], 'distinct'),
@@ -106,18 +106,23 @@ export const ColorsDialog = (props: Props) => {
             setError(e);
         }
         setLoading(false);
-    }, [datasetId, field, parameters, workbookId]);
+    }, [datasetId, field, parameters, updates, workbookId]);
 
     React.useEffect(() => {
         loadValues();
     }, [loadValues]);
 
     const handleSelectColor = (items: string[]) => {
+        const colorIndex = items[0];
         if (selectedValue) {
-            setMountedColors({
-                ...mountedColors,
-                [selectedValue]: items[0],
-            });
+            const newMountedColors = {...mountedColors};
+            if (colorIndex) {
+                newMountedColors[selectedValue] = colorIndex;
+            } else {
+                delete newMountedColors[selectedValue];
+            }
+
+            setMountedColors(newMountedColors);
         }
     };
 
@@ -159,6 +164,34 @@ export const ColorsDialog = (props: Props) => {
         );
     };
 
+    const paletteSelectedValue = selectedValue ? mountedColors[selectedValue] : undefined;
+
+    const paletteOptions: PaletteOption[] = React.useMemo(() => {
+        const items = colorsList.map((color, index) => ({
+            content: (
+                <PaletteItem
+                    isSelected={String(index) === paletteSelectedValue}
+                    className={b('palette-item')}
+                    color={color}
+                />
+            ),
+            value: String(index),
+        }));
+        items.push({
+            content: (
+                <PaletteItem
+                    isSelected={paletteSelectedValue === undefined}
+                    className={b('palette-item')}
+                    isDefault={true}
+                >
+                    auto
+                </PaletteItem>
+            ),
+            value: '',
+        });
+        return items;
+    }, [colorsList, paletteSelectedValue]);
+
     return (
         <Dialog onClose={onClose} open={open} className={b()} disableHeightTransition={true}>
             <Dialog.Header caption={i18n('label_colors-settings')} />
@@ -183,12 +216,8 @@ export const ColorsDialog = (props: Props) => {
                             multiple={false}
                             className={b('palette')}
                             size="l"
-                            options={colorsList.map((color, index) => ({
-                                content: (
-                                    <PaletteItem className={b('palette-item')} color={color} />
-                                ),
-                                value: String(index),
-                            }))}
+                            options={paletteOptions}
+                            value={paletteSelectedValue ? [paletteSelectedValue] : undefined}
                             onUpdate={handleSelectColor}
                         />
                     </div>

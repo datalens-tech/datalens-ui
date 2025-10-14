@@ -11,9 +11,12 @@ services:
       CONTROL_API_CRYPTO_KEY: "ZGF0YWxlbnN1bnNlY3VyZWZlcm5ldGNyeXB0b2tleQo="
       US_ENDPOINT: http://us:8080
       POSTGRES_PASSWORD: postgres
-      INIT_DEMO_DB: 1
       INIT_DEMO_DATA: 0
-      INIT_META_MANAGER: 0
+      INIT_DB_DEMO: 1
+      INIT_DB_META_MANAGER: 0
+      INIT_DB_TEMPORAL: 0
+      POST_INIT_RETRIES: ${POST_INIT_RETRIES:-30}
+      POST_INIT_SLEEP: ${POST_INIT_SLEEP:-5}
     volumes:
       - ./data:/init/post-init
     networks:

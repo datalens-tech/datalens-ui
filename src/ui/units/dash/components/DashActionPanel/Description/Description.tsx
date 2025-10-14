@@ -23,10 +23,11 @@ type DescriptionProps = {
     canEdit: boolean;
     onEditClick?: (onConfirmCallback?: () => void, onCancelCallback?: () => void) => void;
     showOpenedDescription: boolean;
+    iconSize?: number;
 };
 
 export const Description = (props: DescriptionProps) => {
-    const {canEdit, onEditClick, showOpenedDescription} = props;
+    const {canEdit, onEditClick, showOpenedDescription, iconSize = 20} = props;
 
     const history = useHistory();
 
@@ -110,6 +111,7 @@ export const Description = (props: DescriptionProps) => {
             onClick={openEntryDescriptionDialog}
             description={description}
             isEditMode={isDashEditMode}
+            size={iconSize}
         />
     );
 };

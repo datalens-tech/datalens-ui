@@ -1,17 +1,18 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
+import type {SchemasByScope} from '@gravity-ui/gateway';
 import {AppError, REQUEST_ID_PARAM_NAME} from '@gravity-ui/nodekit';
 
 import {getValidationSchema} from '../../../shared/schema/gateway-utils';
 import {registerActionToOpenApi} from '../../components/public-api';
 import {registry} from '../../registry';
-import type {AnyApiServiceActionConfig, DatalensGatewaySchemas} from '../../types/gateway';
+import type {AnyApiServiceActionConfig} from '../../types/gateway';
 import Utils from '../../utils';
 
 import {PUBLIC_API_ERRORS, PublicApiError} from './constants';
 import {parseRequestApiVersion, prepareError, validateRequestBody} from './utils';
 
 export const createPublicApiController = () => {
-    const {gatewayApi} = registry.getGatewayApi<DatalensGatewaySchemas>();
+    const {gatewayApi} = registry.getGatewayApi<SchemasByScope>();
     const {baseConfig} = registry.getPublicApiConfig();
     const schemasByScope = registry.getGatewaySchemasByScope();
 

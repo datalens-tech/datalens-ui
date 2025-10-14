@@ -42,6 +42,7 @@
   "section_delete-workbook": "Are you sure you want to delete the workbook \"{{name}}\"?",
   "title_deploy": "Deploy to",
   "title_import-exit": "Do you want to close the import window?",
+  "toast_get-gallery-file-error": "Deployment error, please contact the support service",
   "toast_get-json-error": "An error occurred while trying to get a JSON from the file",
   "toast_outdated-workbook-info": "The workbook information is outdated. Please refresh the page."
 }

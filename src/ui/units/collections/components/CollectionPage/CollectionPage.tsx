@@ -3,29 +3,24 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
 import type {RouteComponentProps} from 'react-router-dom';
-import {useHistory, useLocation, useParams} from 'react-router-dom';
+import {useParams} from 'react-router-dom';
 import {Feature} from 'shared';
-import type {CreateWorkbookDialogProps} from 'ui/components/CollectionsStructure/CreateWorkbookDialog/CreateWorkbookDialog';
-import type {PublicGalleryData} from 'ui/components/CollectionsStructure/types';
 import {DL} from 'ui/constants/common';
-import {registry} from 'ui/registry';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {AnimateBlock} from '../../../../components/AnimateBlock';
 import {CollectionFilters} from '../../../../components/CollectionFilters';
 import {
-    DIALOG_CREATE_WORKBOOK,
     DIALOG_DELETE_COLLECTIONS_WORKBOOKS,
     DIALOG_MOVE_COLLECTIONS_WORKBOOKS,
     DIALOG_NO_CREATE_COLLECTION_PERMISSION,
 } from '../../../../components/CollectionsStructure';
-import {DIALOG_CREATE_PUBLIC_GALLERY_WORKBOOK} from '../../../../components/CollectionsStructure/CreatePublicGalleryWorkbookDialog';
 import {ViewError} from '../../../../components/ViewError/ViewError';
 import type {AppDispatch} from '../../../../store';
 import {closeDialog, openDialog} from '../../../../store/actions/dialog';
 import Utils from '../../../../utils';
-import {WORKBOOKS_PATH} from '../../../collections-navigation/constants';
 import {selectCollectionBreadcrumbsError} from '../../../collections-navigation/store/selectors';
+import {useRefreshPageAfterImport} from '../../hooks/useRefreshPageAfterImport';
 import {
     selectCollection,
     selectCollectionError,
@@ -33,117 +28,21 @@ import {
     selectStructureItems,
 } from '../../store/selectors';
 import {CollectionContent} from '../CollectionContent';
-import {DEFAULT_FILTERS, PUBLIC_GALLERY_ID_SEARCH_PARAM} from '../constants';
+import {DEFAULT_FILTERS} from '../constants';
 
 import {useData, useFilters, useLayout, useSelection, useViewMode} from './hooks';
+import {useCreateWorkbookDialogHandlers} from './hooks/useCreateWorkbookDialogHandlers';
+import {useOpenCreateWorkbookDialog} from './hooks/useOpenCreateWorkbookDialog';
 
 import './CollectionPage.scss';
 
 const b = block('dl-collection-page');
-
-type LocationImportState = {
-    importId?: string;
-};
 
 export const CollectionPage = (props: RouteComponentProps) => {
     const {collectionId} = useParams<{collectionId?: string}>();
     const curCollectionId = collectionId ?? null;
 
     const dispatch: AppDispatch = useDispatch();
-
-    const {state: locationState} = useLocation<LocationImportState>();
-    const history = useHistory();
-
-    const handleOpenCreateDialog = React.useCallback(
-        (
-            defaultView?: CreateWorkbookDialogProps['defaultView'],
-            options?: {importId?: string; publicGallery?: PublicGalleryData},
-        ) => {
-            if (options?.publicGallery) {
-                dispatch(
-                    openDialog({
-                        id: DIALOG_CREATE_PUBLIC_GALLERY_WORKBOOK,
-                        props: {
-                            open: true,
-                            workbookTitle: options.publicGallery.title,
-                            onClose: () => {
-                                dispatch(closeDialog());
-                                // Clean up url
-                                if (options?.publicGallery) {
-                                    history.replace(location.pathname);
-                                }
-                            },
-                            onApply: (workbookId?: string) => {
-                                if (workbookId) {
-                                    history.push(`${WORKBOOKS_PATH}/${workbookId}`);
-                                }
-                            },
-                            publicGallery: options.publicGallery,
-                        },
-                    }),
-                );
-                return;
-            }
-            dispatch(
-                openDialog({
-                    id: DIALOG_CREATE_WORKBOOK,
-                    props: {
-                        open: true,
-                        collectionId: curCollectionId,
-                        onCreateWorkbook: ({workbookId}) => {
-                            if (workbookId) {
-                                history.push(`${WORKBOOKS_PATH}/${workbookId}`);
-                            }
-                        },
-                        onClose: () => {
-                            dispatch(closeDialog());
-                            // Clean up url
-                            if (options?.publicGallery) {
-                                history.replace(location.pathname);
-                            }
-                        },
-                        defaultView,
-                        showImport: true,
-                        ...options,
-                    },
-                }),
-            );
-        },
-        [curCollectionId, dispatch, history],
-    );
-
-    const handleCreateDialogAction = React.useCallback(() => {
-        handleOpenCreateDialog();
-    }, [handleOpenCreateDialog]);
-
-    React.useEffect(() => {
-        const importId = locationState && locationState?.importId;
-        if (importId) {
-            // after the replaceState, the page is re-rendered,
-            // so it is important that the dialog is opened after that.
-            // clearing the state is necessary so that it does not persist when the page is reloaded.
-            history.replace({state: {...locationState, importId: undefined}});
-            handleOpenCreateDialog('import', {importId});
-        }
-    }, [handleOpenCreateDialog, history, locationState, locationState?.importId]);
-
-    const {search} = props.location;
-    React.useEffect(() => {
-        const searchParams = new URLSearchParams(search);
-        const publicGalleryId = searchParams.get(PUBLIC_GALLERY_ID_SEARCH_PARAM);
-
-        if (!publicGalleryId) {
-            return;
-        }
-
-        const {getPublicGalleryEntry} = registry.collections.functions.getAll();
-
-        getPublicGalleryEntry(publicGalleryId).then((publicGalleryEntry) => {
-            if (publicGalleryEntry.publicGallery) {
-                handleOpenCreateDialog('default', publicGalleryEntry);
-            }
-        });
-    }, [handleOpenCreateDialog, search]);
 
     const collection = useSelector(selectCollection);
     const collectionError = useSelector(selectCollectionError);
@@ -183,6 +82,18 @@ export const CollectionPage = (props: RouteComponentProps) => {
             filters,
         });
 
+    const {refreshPageAfterImport} = useRefreshPageAfterImport({refreshPage});
+
+    const {handleOpenCreateDialog, handleOpenCreateDialogWithConnection} =
+        useCreateWorkbookDialogHandlers();
+
+    const handleCreateDialogAction = React.useCallback(() => {
+        handleOpenCreateDialog('default', {refreshPageAfterImport, initialImportStatus: null});
+    }, [handleOpenCreateDialog, refreshPageAfterImport]);
+
+    const {search} = props.location;
+    useOpenCreateWorkbookDialog({search, refreshPageAfterImport});
+
     const handeCloseMoveDialog = React.useCallback(
         (structureChanged: boolean) => {
             if (structureChanged) {
@@ -206,26 +117,6 @@ export const CollectionPage = (props: RouteComponentProps) => {
             }),
         );
     }, [dispatch]);
-
-    const handleOpenCreateDialogWithConnection = React.useCallback(() => {
-        dispatch(
-            openDialog({
-                id: DIALOG_CREATE_WORKBOOK,
-                props: {
-                    open: true,
-                    collectionId: curCollectionId,
-                    onCreateWorkbook: ({workbookId}) => {
-                        if (workbookId) {
-                            history.push(`${WORKBOOKS_PATH}/${workbookId}/connections/new`);
-                        }
-                    },
-                    onClose: () => {
-                        dispatch(closeDialog());
-                    },
-                },
-            }),
-        );
-    }, [curCollectionId, dispatch, history]);
 
     const handleMoveSelectedEntities = React.useCallback(() => {
         const workbookIds: string[] = [];
@@ -412,6 +303,7 @@ export const CollectionPage = (props: RouteComponentProps) => {
                     onUpdateCheckboxClick={updateCheckbox}
                     onUpdateAllCheckboxesClick={updateAllCheckboxes}
                     isEmptyItems={items.length === 0}
+                    refreshPage={refreshPage}
                 />
             </div>
         </div>

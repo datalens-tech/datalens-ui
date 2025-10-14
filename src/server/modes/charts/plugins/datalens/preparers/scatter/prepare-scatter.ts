@@ -84,6 +84,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         shapesConfig,
         ChartEditor,
         shared,
+        defaultColorPaletteId,
     } = options;
     const widgetConfig = ChartEditor.getWidgetConfig();
     const isActionParamsEnable = widgetConfig?.actionParams?.enable;
@@ -147,6 +148,9 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
 
     const keys = new Set(['x', 'y']);
 
+    const xFormatting = getFormatOptions(x);
+    const yFormatting = getFormatOptions(y);
+
     // eslint-disable-next-line complexity
     data.forEach((values) => {
         const xTitle = idToTitle[x.guid];
@@ -184,7 +188,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         } else if (xIsNumber) {
             point.xLabel = chartKitFormatNumberWrapper(xValue as number, {
                 lang: 'ru',
-                ...(x?.formatting ?? {
+                ...(xFormatting ?? {
                     precision: xDataType === 'float' ? MINIMUM_FRACTION_DIGITS : 0,
                 }),
             });
@@ -237,7 +241,7 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         } else if (yIsNumber) {
             point.yLabel = chartKitFormatNumberWrapper(yValue as number, {
                 lang: 'ru',
-                ...(y?.formatting ?? {
+                ...(yFormatting ?? {
                     precision: yDataType === 'float' ? MINIMUM_FRACTION_DIGITS : 0,
                 }),
             });
@@ -273,11 +277,14 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
             let formattedZValue: string | null | WrappedMarkdown | WrappedMarkup | WrappedHTML =
                 zValueRaw;
 
-            if (isNumericalDataType(z.data_type) && z.formatting) {
-                formattedZValue = chartKitFormatNumberWrapper(Number(formattedZValue), {
-                    lang: 'ru',
-                    ...z.formatting,
-                });
+            if (isNumericalDataType(z.data_type)) {
+                const formatting = getFormatOptions(z);
+                if (formatting) {
+                    formattedZValue = chartKitFormatNumberWrapper(Number(formattedZValue), {
+                        lang: 'ru',
+                        ...formatting,
+                    });
+                }
             }
 
             if (isStringField(z)) {
@@ -344,9 +351,10 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
                     maxColorValue = numberColorValue;
                 }
 
+                const formatting = getFormatOptions(color);
                 point.cLabel = chartKitFormatNumberWrapper(numberColorValue, {
                     lang: 'ru',
-                    ...(color.formatting ?? {
+                    ...(formatting ?? {
                         precision: cDataType === 'float' ? MINIMUM_FRACTION_DIGITS : 0,
                     }),
                 });
@@ -364,12 +372,14 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         if (shape) {
             const cTitle = idToTitle[shape.guid];
             const i = findIndexInOrder(order, shape, cTitle);
-            const shapeValue = String(values[i] ?? '');
-            let shapeLabel: WrappedMarkdown | string | WrappedHTML = shapeValue;
+            const shapeValue = values[i] ?? '';
+            let shapeLabel: WrappedMarkdown | string | WrappedHTML | WrappedMarkup = shapeValue;
             if (isMarkdownField(shape)) {
                 shapeLabel = wrapMarkdownValue(shapeValue);
             } else if (isHtmlField(shape)) {
                 shapeLabel = wrapHtml(shapeValue);
+            } else if (isMarkupField(shape)) {
+                shapeLabel = wrapMarkupValue(shapeValue);
             }
 
             point.shapeValue = shapeValue;
@@ -402,7 +412,12 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         if (gradientMode) {
             mapAndColorizePointsByGradient(points as Highcharts.PointOptionsObject[], colorsConfig);
         } else {
-            graphs = mapAndColorizePointsByPalette(points, colorsConfig);
+            graphs = mapAndColorizePointsByPalette({
+                points,
+                colorsConfig,
+                defaultColorPaletteId,
+                colorField: color,
+            });
         }
 
         if (graphs.length) {
@@ -411,14 +426,14 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
     } else {
         const yField = {...y, title: idToTitle[y.guid] ?? y.title};
         const value = getFakeTitleOrTitle(yField);
-        const colorFromConfig = getMountedColor(colorsConfig, value) || colorsConfig.colors[0];
+        const colorFromConfig = getMountedColor({...colorsConfig, value}) || colorsConfig.colors[0];
         graphs.forEach((graph) => {
             graph.color = colorFromConfig;
         });
     }
 
     if (shape || shapesConfigured) {
-        graphs = mapPointsByShape(graphs, shapesConfig);
+        graphs = mapPointsByShape({graphs, shapesConfig, field: shape});
     } else {
         graphs.forEach((graph) => {
             graph.marker = {
@@ -454,7 +469,8 @@ export function prepareScatter(options: PrepareFunctionArgs): PrepareScatterResu
         ChartEditor.updateConfig({useMarkdown: true});
     }
 
-    if (isMarkupField(z)) {
+    const hasMarkup = [x, y, z, size, color, shape].some((field) => isMarkupField(field));
+    if (hasMarkup) {
         ChartEditor.updateConfig({useMarkup: true});
     }
 

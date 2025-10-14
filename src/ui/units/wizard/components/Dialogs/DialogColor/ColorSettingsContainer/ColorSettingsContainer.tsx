@@ -59,9 +59,9 @@ interface Props extends OwnProps, StateProps, DispatchProps {}
 
 class ColorSettingsContainer extends React.Component<Props> {
     componentDidMount() {
-        const {colorsConfig, items} = this.props;
+        const {colorsConfig, items, item} = this.props;
 
-        this.props.actions.prepareDialogColorState({colorsConfig, items});
+        this.props.actions.prepareDialogColorState({colorsConfig, items, field: item});
         this.props.actions.fetchColorPalettes();
     }
 

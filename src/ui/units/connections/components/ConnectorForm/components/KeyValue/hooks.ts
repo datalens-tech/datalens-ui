@@ -58,8 +58,9 @@ export function useKeyValueProps(props: KeyValueProps) {
     const validationErrors = useSelector(validationErrorsSelector);
     const value = (inner ? innerForm[name] : form[name]) as KeyValueResult | undefined;
     const error = getValidationError(name, validationErrors);
+    const errorType = validationErrors.find((e) => e.name === props.name)?.type;
     const hasRequiredError =
-        validationErrors.find((e) => e.name === props.name)?.type === ValidationErrorType.Required;
+        errorType === ValidationErrorType.Required || errorType === ValidationErrorType.Optionality;
 
     const updateForm = (nextKeyValues: KeyValueEntry[]) => {
         const validatedNextKeyValues = getValidatedKeyValues(nextKeyValues);

@@ -7,9 +7,10 @@ import set from 'lodash/set';
 
 import type {GraphWidget} from '../../../types';
 import type {ChartKitAdapterProps} from '../../types';
-import {getTooltipRenderer} from '../tooltip';
+import {getTooltipRenderer, getTooltipRowRenderer} from '../tooltip';
 import {getNormalizedClickActions} from '../utils';
 
+import {convertChartCommentsToPlotBandsAndLines, shouldUseCommentsOnYAxis} from './comments';
 import {handleClick} from './event-handlers';
 import {
     getCustomShapeRenderer,
@@ -56,12 +57,17 @@ export function getGravityChartsChartKitData(args: {
     };
 
     const result = merge({}, chartWidgetData, widgetData);
-    if (result.tooltip) {
-        result.tooltip.renderer = getTooltipRenderer({
-            widgetData,
-            qa: `chartkit-tooltip-entry-${chartId}`,
-        });
+
+    if (!result.tooltip) {
+        result.tooltip = {};
     }
+    result.tooltip.renderer = getTooltipRenderer({
+        widgetData,
+        qa: `chartkit-tooltip-entry-${chartId}`,
+    });
+    result.tooltip.rowRenderer = getTooltipRowRenderer({
+        widgetData,
+    });
 
     result.series?.data.forEach((s) => {
         set(s, 'legend.symbol', {
@@ -99,6 +105,18 @@ export function getGravityChartsChartKitData(args: {
             }
         }
     });
+
+    const hideComments = get(loadedData, 'config.hideComments', false);
+    const comments = hideComments ? [] : get(loadedData, 'comments', []);
+    const {plotBands, plotLines} = convertChartCommentsToPlotBandsAndLines({comments});
+
+    if (shouldUseCommentsOnYAxis(result)) {
+        set(result, 'yAxis[0].plotBands', [...(result.yAxis?.[0]?.plotBands ?? []), ...plotBands]);
+        set(result, 'yAxis[0].plotLines', [...(result.yAxis?.[0]?.plotLines ?? []), ...plotLines]);
+    } else {
+        set(result, 'xAxis.plotBands', [...(result.xAxis?.plotBands ?? []), ...plotBands]);
+        set(result, 'xAxis.plotLines', [...(result.xAxis?.plotLines ?? []), ...plotLines]);
+    }
 
     return result;
 }

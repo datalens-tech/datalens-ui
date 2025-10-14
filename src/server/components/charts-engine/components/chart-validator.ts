@@ -3,7 +3,7 @@ import {isEqual} from 'lodash';
 import {EDITOR_TYPE} from '../../../../shared/constants';
 
 // Parts in Set keys should be separeted by comma and defined in alphabetic order
-const MODEL_TABS = {
+const MODEL_TABS: Record<string, Set<string>> = {
     [EDITOR_TYPE.GRAPH_NODE]: new Set([
         'graph,js,params,shared,statface_graph,ui,url',
         'graph,js,meta,params,shared,statface_graph,ui,url',
