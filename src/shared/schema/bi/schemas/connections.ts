@@ -17,6 +17,7 @@ export const deleteConnectionResultSchema = z.unknown();
 export const getConnectionArgsSchema = z.object({
     connectionId: z.string(),
     workbookId: z.string().nullable(),
+    rev_id: z.string().optional(),
 });
 
 export const getConnectionResultSchema = z.any().meta({

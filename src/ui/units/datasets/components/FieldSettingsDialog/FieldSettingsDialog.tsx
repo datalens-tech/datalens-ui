@@ -155,7 +155,7 @@ export const FieldSettingsDialog = (props: Props) => {
                     )}
                     <ColorsDialog
                         field={field}
-                        fieldUiSettings={fieldUiSettings}
+                        fieldUiSettings={uiSettings}
                         datasetId={datasetId}
                         workbookId={workbookId}
                         open={colorDialogOpened}

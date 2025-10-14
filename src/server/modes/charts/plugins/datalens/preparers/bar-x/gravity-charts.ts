@@ -26,7 +26,7 @@ import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import {getAxisFormatting, getAxisType} from '../helpers/axis';
-import {shouldUseGradientLegend} from '../helpers/legend';
+import {getLegendColorScale, shouldUseGradientLegend} from '../helpers/legend';
 import type {PrepareFunctionArgs} from '../types';
 
 import {prepareBarX} from './prepare-bar-x';
@@ -37,6 +37,7 @@ type OldBarXDataItem = {
     label?: string | number;
     custom?: any;
     color?: string;
+    colorValue?: number;
 } | null;
 
 type ExtendedBaXrSeriesData = Omit<BarXSeriesData, 'x'> & {
@@ -162,14 +163,22 @@ export function prepareD3BarX(args: PrepareFunctionArgs) {
 
     let legend: ChartData['legend'];
     if (seriesData.length && shouldUseGradientLegend(colorItem, colorsConfig, shared)) {
+        const points = preparedData.graphs
+            .map((graph) =>
+                (graph.data ?? []).map((d: OldBarXDataItem) => ({colorValue: d?.colorValue})),
+            )
+            .flat(2);
+
+        const colorScale = getLegendColorScale({
+            colorsConfig,
+            points,
+        });
+
         legend = {
             enabled: true,
             type: 'continuous',
             title: {text: getFakeTitleOrTitle(colorItem), style: {fontWeight: '500'}},
-            colorScale: {
-                colors: colorsConfig.gradientColors,
-                stops: colorsConfig.gradientColors.length === 2 ? [0, 1] : [0, 0.5, 1],
-            },
+            colorScale,
         };
     } else if (seriesData.length <= 1) {
         legend = {enabled: false};

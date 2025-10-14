@@ -1,10 +1,15 @@
-import {EntryScope} from '../../../shared';
+import {EntryScope, Feature} from '../../../shared';
+import {isEnabledFeature} from '../../utils/isEnabledFeature';
 
 /**
  * Which sections should be allowed to show a new panel with versions
  */
 export function getEntryScopesWithRevisionsList(): EntryScope[] {
-    return [EntryScope.Dash, EntryScope.Widget, EntryScope.Dataset];
+    const arr = [EntryScope.Dash, EntryScope.Widget, EntryScope.Dataset];
+    if (isEnabledFeature(Feature.EnableConnectionRevisions)) {
+        arr.push(EntryScope.Connection);
+    }
+    return arr;
 }
 
 /**

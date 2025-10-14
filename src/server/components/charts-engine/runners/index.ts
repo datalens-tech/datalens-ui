@@ -20,7 +20,7 @@ export type Runner = {
 export type RunnerHandler = (
     ctx: AppContext,
     {chartsEngine, req, res, config, configResolving}: RunnerHandlerProps,
-) => void;
+) => void | Promise<void>;
 
 export type RunnerHandlerProps = {
     chartsEngine: ChartsEngine;

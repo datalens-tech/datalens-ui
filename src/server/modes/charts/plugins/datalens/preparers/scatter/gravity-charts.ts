@@ -25,6 +25,7 @@ import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import {isGradientMode} from '../../utils/misc-helpers';
 import {getAxisFormatting, getAxisType} from '../helpers/axis';
+import {getLegendColorScale} from '../helpers/legend';
 import type {PrepareFunctionArgs} from '../types';
 
 import type {ScatterGraph} from './prepare-scatter';
@@ -162,6 +163,9 @@ export function prepareGravityChartsScatter(args: PrepareFunctionArgs): ChartDat
             type: 'category',
             // @ts-ignore There may be a type mismatch due to the wrapper over html, markup and markdown
             categories: xCategories,
+            labels: {
+                html: isHtmlField(x) || isMarkdownField(x) || isMarkupField(x),
+            },
         };
     } else {
         if (isDateField(x)) {
@@ -197,14 +201,19 @@ export function prepareGravityChartsScatter(args: PrepareFunctionArgs): ChartDat
     };
 
     if (graphs.length && gradientMode) {
+        const points = graphs
+            .map((graph) => (graph.data ?? []).map((d) => ({colorValue: d.colorValue})))
+            .flat(2);
+        const colorScale = getLegendColorScale({
+            colorsConfig,
+            points,
+        });
+
         legend = {
             enabled: true,
             type: 'continuous',
             title: {text: getFakeTitleOrTitle(color), style: {fontWeight: '500'}},
-            colorScale: {
-                colors: colorsConfig.gradientColors,
-                stops: colorsConfig.gradientColors.length === 2 ? [0, 1] : [0, 0.5, 1],
-            },
+            colorScale,
         };
     } else if (graphs.length <= 1) {
         legend.enabled = false;
@@ -223,6 +232,9 @@ export function prepareGravityChartsScatter(args: PrepareFunctionArgs): ChartDat
             {
                 labels: {
                     numberFormat: axisLabelNumberFormat ?? undefined,
+                    html:
+                        yAxisType === 'category' &&
+                        (isHtmlField(y) || isMarkdownField(y) || isMarkupField(y)),
                 },
                 maxPadding: 0,
             },

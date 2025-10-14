@@ -95,8 +95,11 @@ export enum Feature {
     EnableDatasetDescription = 'EnableDatasetDescription',
     /** Show connection description button */
     EnableConnectionDescription = 'EnableConnectionDescription',
+    /** Enable connection revisions  */
+    EnableConnectionRevisions = 'EnableConnectionRevisions',
 
     EnableMobileFixedHeader = 'EnableMobileFixedHeader',
+    EnableCommonChartDashSettings = 'EnableCommonChartDashSettings',
 }
 
 export type FeatureConfig = Record<string, boolean>;
