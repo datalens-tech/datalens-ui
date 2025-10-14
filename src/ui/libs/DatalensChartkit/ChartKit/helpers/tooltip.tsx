@@ -1,6 +1,8 @@
 import React from 'react';
 
 import type {
+    BarYSeries,
+    BarYSeriesData,
     ChartData,
     ChartTooltip,
     PieSeriesData,
@@ -167,7 +169,8 @@ export const getTooltipRenderer = ({
         return (...args) => customTooltipRenderer(widgetData, args);
     }
 
-    const seriesTypes = Array.from(new Set((widgetData?.series?.data || []).map((s) => s.type)));
+    const seriesData = widgetData?.series?.data || [];
+    const seriesTypes = Array.from(new Set(seriesData.map((s) => s.type)));
 
     if (seriesTypes.length === 1) {
         switch (seriesTypes[0]) {
@@ -182,6 +185,68 @@ export const getTooltipRenderer = ({
             case 'pie': {
                 return (data: Parameters<TooltipRenderer>[0]) =>
                     pieTooltipRenderer(widgetData, data, qa);
+            }
+            default: {
+                return undefined;
+            }
+        }
+    }
+
+    return undefined;
+};
+
+const barYWithPercentRowRenderer: ChartTooltip['rowRenderer'] = ({
+    name,
+    value,
+    formattedValue,
+    hovered,
+    className,
+    color,
+}) => {
+    const total =
+        hovered?.reduce((acc, item) => acc + Number((item.data as BarYSeriesData).x ?? 0), 0) ?? 0;
+    const percentage = value
+        ? formatNumber(Number(value) / total, {format: 'percent', precision: 1})
+        : '';
+
+    return (
+        <div className={b('row', className)}>
+            <div className={b('block')}>
+                <span className={b('color')} style={{backgroundColor: color}} />
+            </div>
+            <div
+                className={b('block')}
+                style={DL.IS_MOBILE ? {marginRight: 'auto'} : {}}
+                dangerouslySetInnerHTML={{__html: name}}
+            />
+            <div style={{marginLeft: 'auto'}} className={b('block')}>
+                <span style={{marginRight: 12}}>{percentage}</span>
+                {formattedValue}
+            </div>
+        </div>
+    );
+};
+
+export const getTooltipRowRenderer = ({
+    widgetData,
+}: {
+    widgetData: ChartData;
+}): ChartTooltip['rowRenderer'] => {
+    if (widgetData?.tooltip?.rowRenderer) {
+        return widgetData.tooltip.rowRenderer;
+    }
+
+    const seriesData = widgetData?.series?.data || [];
+    const seriesTypes = Array.from(new Set(seriesData.map((s) => s.type)));
+
+    if (seriesTypes.length === 1) {
+        switch (seriesTypes[0]) {
+            case 'bar-y': {
+                if (seriesData.some((s) => (s as BarYSeries).stacking === 'percent')) {
+                    return (args) => barYWithPercentRowRenderer(args);
+                }
+
+                break;
             }
             default: {
                 return undefined;

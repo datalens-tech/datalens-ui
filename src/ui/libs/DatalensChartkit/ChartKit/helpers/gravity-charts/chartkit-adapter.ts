@@ -7,7 +7,7 @@ import set from 'lodash/set';
 
 import type {GraphWidget} from '../../../types';
 import type {ChartKitAdapterProps} from '../../types';
-import {getTooltipRenderer} from '../tooltip';
+import {getTooltipRenderer, getTooltipRowRenderer} from '../tooltip';
 import {getNormalizedClickActions} from '../utils';
 
 import {convertChartCommentsToPlotBandsAndLines, shouldUseCommentsOnYAxis} from './comments';
@@ -57,12 +57,17 @@ export function getGravityChartsChartKitData(args: {
     };
 
     const result = merge({}, chartWidgetData, widgetData);
-    if (result.tooltip) {
-        result.tooltip.renderer = getTooltipRenderer({
-            widgetData,
-            qa: `chartkit-tooltip-entry-${chartId}`,
-        });
+
+    if (!result.tooltip) {
+        result.tooltip = {};
     }
+    result.tooltip.renderer = getTooltipRenderer({
+        widgetData,
+        qa: `chartkit-tooltip-entry-${chartId}`,
+    });
+    result.tooltip.rowRenderer = getTooltipRowRenderer({
+        widgetData,
+    });
 
     result.series?.data.forEach((s) => {
         set(s, 'legend.symbol', {
