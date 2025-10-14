@@ -53,7 +53,7 @@ export interface GetUsersByIdsArgs {
 }
 
 export interface GetUsersByIdsResponse {
-    users: UserSubject[];
+    users: UserProfile[];
 }
 
 export interface UserProfile extends UserSubject {

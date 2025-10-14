@@ -2,7 +2,11 @@ import type {DropdownMenuItem} from '@gravity-ui/uikit';
 import type {CollectionWithPermissions, WorkbookWithPermissions} from 'shared/schema';
 import {makeFunctionTemplate} from 'shared/utils/makeFunctionTemplate';
 
-import type {CustomizeEmptyPlaceholder, CustomizeNoCreatePermissionDialog} from './types';
+import type {
+    CustomizeEmptyPlaceholder,
+    CustomizeNoCreatePermissionDialog,
+    GetPublicGalleryEntry,
+} from './types';
 
 export const collectionsFunctionsMap = {
     customizeCollectionsActions:
@@ -21,4 +25,5 @@ export const collectionsFunctionsMap = {
         >(),
     customizeEmptyPlaceholder: makeFunctionTemplate<CustomizeEmptyPlaceholder>(),
     customizeNoCreatePermissionDialog: makeFunctionTemplate<CustomizeNoCreatePermissionDialog>(),
+    getPublicGalleryEntry: makeFunctionTemplate<GetPublicGalleryEntry>(),
 } as const;

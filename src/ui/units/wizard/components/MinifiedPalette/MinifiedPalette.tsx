@@ -1,17 +1,16 @@
 import React, {useCallback, useRef} from 'react';
 
-import {Select, TextInput} from '@gravity-ui/uikit';
+import {TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import type {ColorPalette} from 'shared';
 import {DialogFieldBarsSettingsQa} from 'shared';
-import {SelectOptionWithIcon} from 'ui/components/SelectComponents';
+import {ColorPaletteSelect} from 'ui/components/ColorPaletteSelect/ColorPaletteSelect';
 import {useEnterClick} from 'ui/hooks/useEnterClick';
 import {PaletteTypes} from 'ui/units/wizard/constants';
-import {getPaletteSelectorItems} from 'ui/units/wizard/utils/palette';
 import {getPaletteColors} from 'ui/utils';
 
-import Palette from '../Palette/Palette';
-import {PaletteItem} from '../Palette/components/PaletteItem/PaletteItem';
+import {PaletteItem} from '../../../../components/PaletteItem/PaletteItem';
+import {Palette} from '../Palette/Palette';
 
 import './MinifiedPalette.scss';
 
@@ -25,7 +24,8 @@ type MinifiedPaletteProps = {
     colorPalettes: ColorPalette[];
     errorText?: string;
     controlQa?: string;
-    size?: 's' | 'm';
+    customColorSelected?: boolean;
+    customColorBtnQa?: string;
 };
 
 const b = block('minified-palette');
@@ -41,7 +41,8 @@ export const MinifiedPalette: React.FC<MinifiedPaletteProps> = (props: MinifiedP
         onInputColorUpdate,
         onEnterPress,
         colorPalettes,
-        size = 's',
+        customColorSelected,
+        customColorBtnQa,
     } = props;
 
     const paletteRef = useRef<HTMLDivElement | null>(null);
@@ -53,8 +54,6 @@ export const MinifiedPalette: React.FC<MinifiedPaletteProps> = (props: MinifiedP
 
     useEnterClick(paletteRef, handleEnterPress);
 
-    const options = getPaletteSelectorItems({colorPalettes});
-
     const colors = React.useMemo(
         () => getPaletteColors(palette, colorPalettes),
         [colorPalettes, palette],
@@ -62,39 +61,41 @@ export const MinifiedPalette: React.FC<MinifiedPaletteProps> = (props: MinifiedP
 
     return (
         <div className={b()} ref={paletteRef}>
-            <Select
-                qa={DialogFieldBarsSettingsQa.MinifiedPaletteSelector}
+            <ColorPaletteSelect
                 className={b('selector')}
-                popupClassName={b('selector-popup')}
-                onUpdate={([paletteId]) => onPaletteUpdate(paletteId)}
-                renderSelectedOption={(option) => {
-                    return <SelectOptionWithIcon option={option} />;
-                }}
-                renderOption={(option) => {
-                    return <SelectOptionWithIcon option={option} />;
-                }}
-                value={[palette]}
-                options={options}
+                qa={DialogFieldBarsSettingsQa.MinifiedPaletteSelector}
+                colorPalettes={colorPalettes}
+                onUpdate={([paletteId]) => onPaletteUpdate(paletteId ?? undefined)}
+                value={palette}
+                withAuto={true}
             />
             <Palette
                 paletteType={PaletteTypes.Colors}
                 palette={colors}
                 onPaletteItemClick={onPaletteItemClick}
-                isSelectedItem={(color) => color === currentColor}
-                className={b('palette', {size})}
-                itemClassName={b('item', {size})}
+                isSelectedItem={(color) => !customColorSelected && color === currentColor}
+                className={b('palette')}
+                itemClassName={b('item')}
+                customColor={{
+                    enabled: true,
+                    selected: Boolean(customColorSelected),
+                    onSelect: () => onInputColorUpdate(currentColor.slice(1)),
+                    qa: customColorBtnQa,
+                }}
             />
-            <div className={b('color-input-wrapper')}>
-                <PaletteItem color={currentColor} className={b('color-input-icon')} />
-                <TextInput
-                    error={errorText}
-                    // Cut # from color in HEX format
-                    value={currentColor.slice(1)}
-                    qa={controlQa ? `${controlQa}-palette-input` : undefined}
-                    onUpdate={onInputColorUpdate}
-                    className={b('color-input')}
-                />
-            </div>
+            {customColorSelected && (
+                <div className={b('color-input-wrapper')}>
+                    <PaletteItem color={currentColor} className={b('color-input-icon')} />
+                    <TextInput
+                        error={errorText}
+                        // Cut # from color in HEX format
+                        value={currentColor.slice(1)}
+                        qa={controlQa ? `${controlQa}-palette-input` : undefined}
+                        onUpdate={onInputColorUpdate}
+                        className={b('color-input')}
+                    />
+                </div>
+            )}
         </div>
     );
 };

@@ -152,7 +152,10 @@ export function visualization(
 
             let prevColors = state.colors;
 
-            if (oldVisualization && oldVisualization.id !== visualization.id) {
+            const isVisualizationChanged =
+                oldVisualization && oldVisualization.id !== visualization.id;
+
+            if (isVisualizationChanged) {
                 const transition = `${oldVisualization.id}-${visualization.id}`;
 
                 visualization.placeholders = getPlaceholdersWithMergedSettings({
@@ -685,7 +688,7 @@ export function visualization(
             const onDesignItemsChange = (visualization as GraphShared['visualization'])
                 .onDesignItemsChange;
 
-            if (onDesignItemsChange) {
+            if (isVisualizationChanged && onDesignItemsChange) {
                 onDesignItemsChange({
                     visualization: visualization as GraphShared['visualization'],
                     colors,

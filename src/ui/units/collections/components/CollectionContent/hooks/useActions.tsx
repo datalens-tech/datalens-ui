@@ -5,6 +5,7 @@ import type {DropdownMenuItem} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {useHistory} from 'react-router-dom';
+import {WORKBOOK_STATUS} from 'shared/constants/workbooks';
 import {DIALOG_EXPORT_WORKBOOK} from 'ui/components/CollectionsStructure/ExportWorkbookDialog/ExportWorkbookDialog';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
@@ -181,6 +182,33 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
                 globallyEntrySettings?.isWorkbookExportDisabled,
             );
 
+            const deleteAction: DropdownMenuItem = {
+                text: <DropdownAction icon={TrashBin} text={i18n('action_delete')} />,
+                action: () => {
+                    dispatch(
+                        openDialog({
+                            id: DIALOG_DELETE_WORKBOOK,
+                            props: {
+                                open: true,
+                                workbookId: item.workbookId,
+                                workbookTitle: item.title,
+                                onSuccessApply: (id) => {
+                                    dispatch(deleteWorkbookInItems(id));
+                                },
+                                onClose: () => {
+                                    dispatch(closeDialog());
+                                },
+                            },
+                        }),
+                    );
+                },
+                theme: 'danger',
+            };
+
+            if (item.status === WORKBOOK_STATUS.CREATING && item.permissions.delete) {
+                return [[deleteAction]];
+            }
+
             if (item.permissions.update) {
                 actions.push({
                     text: <DropdownAction icon={PencilToLine} text={i18n('action_edit')} />,
@@ -308,28 +336,7 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
             const otherActions: DropdownMenuItem[] = [];
 
             if (item.permissions.delete) {
-                otherActions.push({
-                    text: <DropdownAction icon={TrashBin} text={i18n('action_delete')} />,
-                    action: () => {
-                        dispatch(
-                            openDialog({
-                                id: DIALOG_DELETE_WORKBOOK,
-                                props: {
-                                    open: true,
-                                    workbookId: item.workbookId,
-                                    workbookTitle: item.title,
-                                    onSuccessApply: (id) => {
-                                        dispatch(deleteWorkbookInItems(id));
-                                    },
-                                    onClose: () => {
-                                        dispatch(closeDialog());
-                                    },
-                                },
-                            }),
-                        );
-                    },
-                    theme: 'danger',
-                });
+                otherActions.push(deleteAction);
             }
 
             if (otherActions.length > 0) {
@@ -345,6 +352,7 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
             fetchStructureItems,
             onCloseMoveDialog,
             history,
+            currentUserRights.admin,
         ],
     );
 

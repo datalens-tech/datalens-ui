@@ -59,6 +59,7 @@ export const getFakeDashEntry = (workbookId?: string) => {
             fakeName: dashCreateI18n('label_default-name'),
             workbookId,
             scope: EntryScope.Dash,
+            annotation: null,
         },
         data,
         tabId: newTabId,
@@ -70,5 +71,6 @@ export const getFakeDashEntry = (workbookId?: string) => {
             admin: true,
         },
         navigationPath: Utils.getNavigationPathFromKey(initialKey),
+        annotation: null,
     };
 };

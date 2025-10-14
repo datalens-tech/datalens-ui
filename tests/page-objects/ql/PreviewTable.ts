@@ -1,4 +1,5 @@
 import {Page} from '@playwright/test';
+import {ChartKitQlPreviewTableQa} from '../../../src/shared';
 
 export default class PreviewTable {
     static slct() {
@@ -7,15 +8,15 @@ export default class PreviewTable {
 
     private page: Page;
 
-    private tableRowSelector = `${PreviewTable.slct()} .data-table .data-table__row`;
-    private tableHeadSelector = `${PreviewTable.slct()} .data-table .data-table__head-row`;
+    private tableRowSelector = `${PreviewTable.slct()} [data-qa="${ChartKitQlPreviewTableQa.Widget}"] .dl-table__body .dl-table__tr`;
+    private tableHeadSelector = `${PreviewTable.slct()} [data-qa="${ChartKitQlPreviewTableQa.Widget}"] .dl-table__header .dl-table__tr`;
 
     constructor(page: Page) {
         this.page = page;
     }
 
     async getRowsTexts() {
-        const rows = await this.getRowContent(this.tableRowSelector, '.data-table__td', 'text');
+        const rows = await this.getRowContent(this.tableRowSelector, '.dl-table__td', 'text');
 
         return rows.map((row) => {
             return row.map((rowValue) => rowValue.replace(/\u00a0/g, ' '));
@@ -23,7 +24,7 @@ export default class PreviewTable {
     }
 
     async getHeadRowsTexts() {
-        const rows = await this.getRowContent(this.tableHeadSelector, '.data-table__th', 'text');
+        const rows = await this.getRowContent(this.tableHeadSelector, '.dl-table__th', 'text');
 
         return rows.map((row) => {
             return row.map((rowValue) => rowValue.replace(/\u00a0/g, ' '));

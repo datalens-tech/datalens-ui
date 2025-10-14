@@ -1,10 +1,14 @@
-import type {ConnectorType} from '../../../constants';
+import type z from 'zod/v4';
+
+import type {CONNECTOR_VISIBILITY_MODE, ConnectorType} from '../../../constants';
 import type {
     ConnectionData,
     ConnectionTypedQueryApiRequest,
     ConnectionTypedQueryApiResponse,
     TransferNotification,
+    ValueOf,
 } from '../../../types';
+import type {deleteConnectionResultSchema} from '../schemas/connections';
 
 import type {WorkbookIdArg} from './common';
 
@@ -21,6 +25,7 @@ type BaseConnectorItem = {
     conn_type: ConnectorType;
     backend_driven_form: boolean;
     hidden: boolean;
+    history: boolean;
     title: string;
     /**
      * Controls the behavior of connector's list item in the list.
@@ -28,8 +33,9 @@ type BaseConnectorItem = {
      * 1. `free` - connector **is** shown in the list and **is** available for creation
      * 2. `hidden` - connector **is not** shown in the list and **is** available for creation
      * 3. `uncreatable` - connector **is not** shown in the list and **is not** available for creation
+     * 4. `business` - connector **is** shown in the list and **is not** available for creation
      */
-    visibility_mode: 'free' | 'hidden' | 'uncreatable';
+    visibility_mode: ValueOf<typeof CONNECTOR_VISIBILITY_MODE>;
     alias?: string;
 };
 
@@ -56,9 +62,7 @@ export type GetAvailableCountersResponse = {
 
 export type GetAvailableCountersArgs = BaseArgs;
 
-export type DeleteConnectionResponse = unknown;
-
-export type DeleteConnectionArgs = BaseArgs;
+export type DeleteConnectionResponse = z.infer<typeof deleteConnectionResultSchema>;
 
 export type GetConnectorsResponse = {
     /** @deprecated use `sections` & `uncategorized` fields instead */
@@ -68,11 +72,6 @@ export type GetConnectorsResponse = {
     /** Represent connectors out of groups. These one should be rendered before grouped connectors */
     uncategorized?: ConnectorItem[];
 };
-
-export type GetConnectionResponse = ConnectionData;
-
-export type GetConnectionArgs = BaseArgs & WorkbookIdArg;
-
 export type CreateConnectionResponse = {
     id: string;
 };
@@ -158,7 +157,6 @@ export type ListConnectorIconsResponse = {
 };
 
 export type ExportConnectionArgs = {
-    usMasterToken: string;
     connectionId: string;
     workbookId?: string | null;
 };
@@ -174,7 +172,6 @@ export type ImportConnectionResponse = {
 };
 
 export type ImportConnectionArgs = {
-    usMasterToken: string;
     workbookId: string;
     connection: ConnectionData;
 };

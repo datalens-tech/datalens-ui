@@ -8,7 +8,7 @@ export type PointCustomData = {
     xLabel?: string | WrappedMarkdown | WrappedHTML;
     yLabel?: string | WrappedMarkdown | WrappedHTML;
     cLabel?: string | null | WrappedMarkdown | WrappedHTML;
-    sLabel?: string | null | WrappedMarkdown | WrappedHTML;
+    sLabel?: string | null | WrappedMarkdown | WrappedHTML | WrappedMarkup;
     sizeLabel?: string | null | WrappedMarkdown | WrappedHTML;
 };
 

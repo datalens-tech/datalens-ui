@@ -14,4 +14,6 @@ export type TableWidgetProps = {
     onLoad?: (data?: ChartKitOnLoadData<'table'>) => void;
     widgetDashState?: WidgetDashState;
     backgroundColor?: string;
+    isQlPreviewTable?: boolean;
+    qa?: string;
 };

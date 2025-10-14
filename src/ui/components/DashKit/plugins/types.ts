@@ -1,6 +1,9 @@
 import type {DashTabItemControlSourceType, DashTabItemType, StringParams} from 'shared';
 
+import type {Widget} from '../../../../ui/libs/DatalensChartkit/types/widget';
 import type {DASH_WIDGET_TYPES} from '../../../units/dash/modules/constants';
+
+import type {WidgetLoadedData} from './../../Widgets/Chart/helpers/helpers';
 
 export type DashkitMetaDataItemBase = {
     layoutId: string;
@@ -26,33 +29,8 @@ export type DashkitMetaDataItemBase = {
     isWizard?: boolean;
     isEditor?: boolean;
     isQL?: boolean;
+    getSimpleLoadedData?: () => WidgetLoadedData | Widget['data'] | string[];
 };
-
-// Create new temporary type, Because the types of meta information of the plugin of the current implementation and the new one are slightly different.
-export type DashkitOldMetaDataItemBase = Partial<
-    Pick<
-        DashkitMetaDataItemBase,
-        | 'layoutId'
-        | 'widgetId'
-        | 'entryId'
-        | 'title'
-        | 'label'
-        | 'params'
-        | 'defaultParams'
-        | 'loaded'
-        | 'usedParams'
-        | 'type'
-        | 'visualizationType'
-        | 'loadError'
-        | 'datasets'
-        | 'datasetId'
-        | 'datasetFields'
-        | 'enableFiltering'
-    > & {
-        id: string;
-        usedDatasetsId?: string;
-    }
->;
 
 export type DatasetsData = {
     id: string;

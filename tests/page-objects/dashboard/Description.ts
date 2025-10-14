@@ -3,7 +3,7 @@ import {Page} from '@playwright/test';
 import {slct, waitForCondition} from '../../utils';
 import {COMMON_SELECTORS} from '../../utils/constants';
 
-import {DashMetaQa} from '../../../src/shared';
+import {DialogEntryDescriptionQa} from '../../../src/shared';
 
 export default class Description {
     page: Page;
@@ -18,16 +18,16 @@ export default class Description {
     }
 
     async close() {
-        await this.page.click(`${slct(DashMetaQa.Dialog)} .g-dialog-btn-close__btn`);
+        await this.page.click(`${slct(DialogEntryDescriptionQa.Root)} .g-dialog-btn-close__btn`);
         await this.closed();
     }
 
     async isViewMode() {
-        await this.page.waitForSelector(slct(DashMetaQa.EditButton));
+        await this.page.waitForSelector(slct(DialogEntryDescriptionQa.EditButton));
     }
 
     async isEditMode() {
-        await this.page.waitForSelector(slct(DashMetaQa.SaveButton));
+        await this.page.waitForSelector(slct(DialogEntryDescriptionQa.SaveButton));
     }
 
     private async clickDescription() {
@@ -35,12 +35,12 @@ export default class Description {
     }
 
     private async opened() {
-        await this.page.waitForSelector(slct(DashMetaQa.Dialog));
+        await this.page.waitForSelector(slct(DialogEntryDescriptionQa.Root));
     }
 
     private async closed() {
         await waitForCondition(async () => {
-            const elements = await this.page.$$(slct(DashMetaQa.Dialog));
+            const elements = await this.page.$$(slct(DialogEntryDescriptionQa.Root));
             return elements.length === 0;
         });
     }

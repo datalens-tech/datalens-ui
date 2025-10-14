@@ -1,16 +1,18 @@
 import React from 'react';
 
+import {PencilToLine} from '@gravity-ui/icons';
+import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import type {LineShapeType, PointsShapeType} from 'shared';
 
+import {PaletteItem} from '../../../../components/PaletteItem/PaletteItem';
 import IconRenderer from '../../../../libs/DatalensChartkit/ChartKit/components/IconRenderer/IconRenderer';
 import {PaletteTypes} from '../../constants';
-
-import {PaletteItem} from './components/PaletteItem/PaletteItem';
 
 import './Palette.scss';
 
 const b = block('palette');
+
 interface Props {
     paletteType: PaletteTypes;
     className?: string;
@@ -19,18 +21,27 @@ interface Props {
     onPaletteItemClick: (color: string, index: number) => void;
     isSelectedItem: (item: string, index: number) => boolean;
     isDefaultItem?: (item: string) => boolean;
+    customColor?: {
+        enabled: boolean;
+        selected: boolean;
+        onSelect: () => void;
+        qa?: string;
+    };
 }
 
-class Palette extends React.Component<Props> {
-    render() {
-        const {palette, className} = this.props;
-        return <div className={b(null, className)}>{palette.map(this.renderPaletteItem)}</div>;
-    }
+export const Palette = (props: Props) => {
+    const {
+        palette,
+        className,
+        customColor,
+        isSelectedItem,
+        onPaletteItemClick,
+        isDefaultItem,
+        paletteType,
+        itemClassName,
+    } = props;
 
-    renderPaletteItem = (item: string, index: number) => {
-        const {isSelectedItem, onPaletteItemClick, isDefaultItem, paletteType, itemClassName} =
-            this.props;
-
+    const renderPaletteItem = (item: string, index: number) => {
         const isDefault = isDefaultItem?.(item);
         const isSelected = isSelectedItem(item, index);
 
@@ -77,6 +88,25 @@ class Palette extends React.Component<Props> {
             </PaletteItem>
         );
     };
-}
+
+    return (
+        <div className={b(null, className)}>
+            {palette.map(renderPaletteItem)}
+            {customColor?.enabled && (
+                <PaletteItem
+                    key={'custom-color'}
+                    className={b('custom-color-btn', itemClassName)}
+                    onClick={customColor.onSelect}
+                    isSelected={customColor.selected}
+                    qa={customColor.qa}
+                >
+                    <Button view="flat">
+                        <Icon data={PencilToLine} />
+                    </Button>
+                </PaletteItem>
+            )}
+        </div>
+    );
+};
 
 export default Palette;

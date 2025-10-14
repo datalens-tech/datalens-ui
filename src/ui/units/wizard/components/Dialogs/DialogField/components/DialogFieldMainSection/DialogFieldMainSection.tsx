@@ -86,14 +86,16 @@ export class DialogFieldMainSection extends React.Component<Props> {
 
         const commonDataType = getCommonDataType(cast || data_type!);
 
+        const placeholderSettings = currentPlaceholder?.settings as PlaceholderSettings;
+        const isDateFieldItem = isDateField(item);
+        const isDiscreteMode = placeholderSettings?.axisModeMap?.[item.guid] === AxisMode.Discrete;
+        const isDateAndDiscreteMode = isDateFieldItem && isDiscreteMode;
+        const hasValidDataType = commonDataType === 'date' || item.grouping;
+
         const enableFormat =
             visualizationId &&
-            ((isDateField(item) &&
-                (currentPlaceholder?.settings as PlaceholderSettings)?.axisModeMap?.[item.guid] ===
-                    AxisMode.Discrete) ||
-                this.isTableVisualization ||
-                this.isMetricVisualization) &&
-            (commonDataType === 'date' || item.grouping);
+            hasValidDataType &&
+            (isDateAndDiscreteMode || this.isTableVisualization || this.isMetricVisualization);
 
         return (
             <React.Fragment>

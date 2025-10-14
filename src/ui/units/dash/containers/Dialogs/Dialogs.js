@@ -21,7 +21,6 @@ import {
     selectWidgetsCurrentTab,
 } from '../../store/selectors/dashTypedSelectors';
 
-import Connections from './Connections/Connections';
 import Settings from './Settings/Settings';
 import Tabs from './Tabs/Tabs';
 
@@ -91,8 +90,6 @@ export function Dialogs() {
     }
 
     switch (openedDialog) {
-        case DIALOG_TYPE.CONNECTIONS:
-            return <Connections />;
         case DIALOG_TYPE.TABS:
             return <Tabs />;
         case DIALOG_TYPE.SETTINGS:

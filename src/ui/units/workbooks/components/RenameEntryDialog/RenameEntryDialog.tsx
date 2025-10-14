@@ -35,6 +35,7 @@ const RenameEntryDialog = React.memo<Props>(({open, data, onClose}) => {
     const isLoading = useSelector(selectRenameEntryIsLoading);
 
     const [newNameValue, setNewNameValue] = React.useState(data.name);
+    const textInputControlRef = React.useRef<HTMLInputElement>(null);
 
     const handleApply = React.useCallback(() => {
         dispatch(
@@ -55,11 +56,21 @@ const RenameEntryDialog = React.memo<Props>(({open, data, onClose}) => {
     }, [data.name, newNameValue]);
 
     return (
-        <Dialog size="s" open={open} onClose={onClose} onEnterKeyDown={handleApply}>
+        <Dialog
+            size="s"
+            open={open}
+            onClose={onClose}
+            onEnterKeyDown={handleApply}
+            initialFocus={textInputControlRef}
+        >
             <Dialog.Header caption={i18n('label_rename-entry')} />
             <Dialog.Body>
                 <div className={b('label')}>{i18n('label_title')}</div>
-                <TextInput value={newNameValue} onUpdate={setNewNameValue} />
+                <TextInput
+                    value={newNameValue}
+                    controlRef={textInputControlRef}
+                    onUpdate={setNewNameValue}
+                />
             </Dialog.Body>
             <Dialog.Footer
                 onClickButtonCancel={onClose}

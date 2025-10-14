@@ -1,4 +1,4 @@
-import type {ExtendedChartsConfig} from '../../../../types';
+import {ChartsConfigVersion, type ExtendedChartsConfig} from '../../../../types';
 import {mapChartsConfigToLatestVersion} from '../mapChartsConfigToLatestVersion';
 
 describe('mapChartsConfigToLatestVersion', () => {
@@ -8,6 +8,6 @@ describe('mapChartsConfigToLatestVersion', () => {
 
         const result = mapChartsConfigToLatestVersion(mockedConfigWithNumericVersion);
 
-        expect(result).toEqual({version: '12'});
+        expect(result).toEqual({version: ChartsConfigVersion.V14});
     });
 });

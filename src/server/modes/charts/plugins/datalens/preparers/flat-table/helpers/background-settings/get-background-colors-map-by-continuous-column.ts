@@ -64,7 +64,13 @@ export function colorizeFlatTableColumn({
 
     if (min === max) {
         // If all values are the same, then we paint in the maximum color.
-        deltas = colorValues.map(() => MAX_COLOR_DELTA_VALUE);
+        deltas = colorValues.map((colorValue) => {
+            if (colorValue === null) {
+                return null;
+            }
+
+            return MAX_COLOR_DELTA_VALUE;
+        });
     } else {
         deltas = colorValues.map((colorValue) => {
             if (colorValue === null) {

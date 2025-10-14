@@ -251,6 +251,7 @@ class VisualizationPlaceholder extends React.Component<Props> {
             geopointsConfig: geopointsConfig as PointSizeConfig,
             placeholder,
             visualization,
+            onApply: this.props.onUpdate,
         });
     };
 

@@ -3,12 +3,10 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {useDispatch} from 'react-redux';
-import {Feature} from 'shared';
+import {Header as ChartHeader} from 'ui/components/Widgets/Chart/components/Header';
 import {DL} from 'ui/constants';
 import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
-import {registry} from 'ui/registry';
 import {setSkipReload} from 'ui/units/dash/store/actions/dashTyped';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {getRandomCKId} from '../../../../libs/DatalensChartkit/ChartKit/helpers/getRandomCKId';
 import {DatalensChartkitContent} from '../../../../libs/DatalensChartkit/components/ChartKitBase/components/Chart/Chart';
@@ -87,6 +85,7 @@ export const Content = (props: ChartContentProps) => {
         backgroundColor,
         showActionParamsFilter,
         onFiltersClear,
+        reload,
     } = props;
 
     const [isExportLoading, setIsExportLoading] = React.useState(false);
@@ -124,19 +123,14 @@ export const Content = (props: ChartContentProps) => {
 
     const {onAction} = useChartActions({onChange});
 
-    const showFloatControls = isEnabledFeature(Feature.DashFloatControls);
-    const isFirstLoadingFloat = showFloatControls && loadedData === null;
+    const isFirstLoadingFloat = loadedData === null;
 
     // chartkit doesn't call onLoad when spltTooltip is enabled
-    const [hasDummy, setHasDummy] = React.useState<boolean>(
-        DL.IS_MOBILE && showFloatControls && !splitTooltip,
-    );
+    const [hasDummy, setHasDummy] = React.useState<boolean>(DL.IS_MOBILE && !splitTooltip);
 
     const chartInnerLoaderComponent = isFirstLoadingFloat
         ? emptyLoaderComponent
         : renderPluginLoader;
-
-    const {ChartHeader} = registry.chart.components.getAll();
 
     const handleRender = React.useCallback(
         (args: OnLoadChartkitData) => {
@@ -179,6 +173,7 @@ export const Content = (props: ChartContentProps) => {
                         onFullscreenClick={onFullscreenClick}
                         showActionParamsFilter={showActionParamsFilter}
                         onFiltersClear={onFiltersClear}
+                        reload={reload}
                     />
                 </React.Fragment>
             )}

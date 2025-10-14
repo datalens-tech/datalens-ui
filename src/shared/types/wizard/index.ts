@@ -29,7 +29,6 @@ import type {Field} from './field';
 import type {Placeholder} from './placeholder';
 import type {ChartsConfigVersion} from './versions';
 
-export * from './formatting';
 export * from './field';
 export * from './versions';
 export * from './bars';
@@ -97,15 +96,44 @@ export const enum IndicatorTitleMode {
     Hide = 'hide',
 }
 
-export interface CommonSharedExtraSettings {
+// TODO: use either index or color
+// type MetricColorWithIndex = {
+//     metricFontColor?: undefined;
+//     metricFontColorIndex: number;
+// };
+
+// type MetricColorWithCustomColor = {
+//     metricFontColor: string;
+//     metricFontColorIndex?: undefined;
+// };
+
+// export type DefinedMetricFontSettings = {metricFontColorPalette: string; metricFontSize: string} & (
+//     | MetricColorWithIndex
+//     | MetricColorWithCustomColor
+// );
+
+// export type MetricFontSettings =
+//     | DefinedMetricFontSettings
+//     | {
+//           metricFontColorPalette?: undefined;
+//           metricFontSize?: undefined;
+//           metricFontColor?: undefined;
+//           metricFontColorIndex?: undefined;
+//       };
+
+export type MetricFontSettings = {
+    metricFontColorPalette?: string;
+    metricFontSize?: string;
+    metricFontColor?: string;
+    metricFontColorIndex?: number;
+};
+
+export type CommonSharedExtraSettings = {
     title?: string;
     titleMode?: 'show' | 'hide';
     indicatorTitleMode?: IndicatorTitleMode;
     legendMode?: LegendDisplayMode;
     overlap?: 'on' | 'off';
-    metricFontSize?: string;
-    metricFontColor?: string;
-    metricFontColorPalette?: string;
     tooltip?: ServerCommonSharedExtraSettings['tooltip'];
     tooltipSum?: 'on' | 'off';
     limit?: number;
@@ -130,7 +158,7 @@ export interface CommonSharedExtraSettings {
     mapCenterMode?: MapCenterModes;
     mapCenterValue?: string | null;
     preserveWhiteSpace?: boolean;
-}
+} & MetricFontSettings;
 
 interface CommonShared {
     visualization: {

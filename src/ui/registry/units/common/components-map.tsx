@@ -15,6 +15,7 @@ import type {AclSubjectSuggestProps} from './types/components/AclSubjectSuggest'
 import type {ActionPanelEntrySelectProps} from './types/components/ActionPanelEntrySelect';
 import type {ButtonFavoriteProps} from './types/components/ButtonFavorite';
 import type {DialogAddParticipantsProps} from './types/components/DialogAddParticipants';
+import type {DialogEntryDescriptionProps} from './types/components/DialogEntryDescription';
 import type {DialogImageWidgetLinkHintProps} from './types/components/DialogImageWidgetLinkHint';
 import type {DialogRelatedEntitiesRadioHintProps} from './types/components/DialogRelatedEntitiesRadioHint';
 import type {DialogShareProps} from './types/components/DialogShare';
@@ -61,4 +62,5 @@ export const commonComponentsMap = {
     DialogImageWidgetLinkHint: makeDefaultEmpty<DialogImageWidgetLinkHintProps>(),
     DialogRelatedEntitiesRadioHint: makeDefaultEmpty<DialogRelatedEntitiesRadioHintProps>(),
     WorkbookEntriesTableTabs: makeDefaultEmpty<WorkbookEntriesTableTabsProps>(),
+    DialogEntryDescription: makeDefaultEmpty<DialogEntryDescriptionProps>(),
 } as const;

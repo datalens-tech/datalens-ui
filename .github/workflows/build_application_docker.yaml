@@ -76,5 +76,5 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           platforms: linux/amd64,linux/arm64
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-from: type=s3,endpoint_url=${{ vars.DOCKER_CACHE_S3_ENDPOINT }},region=${{ vars.DOCKER_CACHE_S3_REGION }},bucket=${{ vars.DOCKER_CACHE_S3_BUCKET }},access_key_id=${{ secrets.DOCKER_CACHE_S3_ACCESS_KEY }},secret_access_key=${{ secrets.DOCKER_CACHE_S3_SECRET_KEY }},blobs_prefix=${{ github.repository }}/,manifests_prefix=${{ github.repository }}/manifests/build-application-docker/
+          cache-to: type=s3,upload_parallelism=8,mode=max,endpoint_url=${{ vars.DOCKER_CACHE_S3_ENDPOINT }},region=${{ vars.DOCKER_CACHE_S3_REGION }},bucket=${{ vars.DOCKER_CACHE_S3_BUCKET }},access_key_id=${{ secrets.DOCKER_CACHE_S3_ACCESS_KEY }},secret_access_key=${{ secrets.DOCKER_CACHE_S3_SECRET_KEY }},blobs_prefix=${{ github.repository }}/,manifests_prefix=${{ github.repository }}/manifests/build-application-docker/

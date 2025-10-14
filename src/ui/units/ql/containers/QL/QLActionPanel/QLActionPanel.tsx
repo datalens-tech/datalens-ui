@@ -82,7 +82,7 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
     const previewData = useSelector(getPreviewData);
     const entry = useSelector(getEntry);
 
-    const entryLocked = entry && entry.permissions && entry.permissions.edit === false;
+    const canEdit = !(entry && entry.permissions && entry.permissions.edit === false);
 
     const isCurrentRevisionActual = entry?.revId && entry?.revId === entry?.publishedId;
     const isNewChart = typeof entry?.fake !== 'undefined' && entry?.fake;
@@ -180,6 +180,8 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
                       })
                     : defaultChartName;
 
+            const description = qlState.annotation?.description ?? '';
+
             const result = await entryDialoguesRef.current?.open({
                 dialog: EntryDialogName.CreateQLChart,
                 dialogProps: {
@@ -187,6 +189,7 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
                     initName,
                     initDestination: path,
                     workbookId: entry?.workbookId,
+                    annotation: {description},
                 },
             });
 
@@ -327,6 +330,7 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
     );
 
     const additionalButtons = useQLActionPanel({
+        canEdit,
         handleClickButtonToggleTablePreview,
     });
 
@@ -344,7 +348,7 @@ export const QLActionPanel: React.FC<QLActionPanelProps> = (props: QLActionPanel
                         key="header-right-controls"
                         onClickButtonSave={handleClickButtonSave}
                         onOpenNoRightsDialog={openNoRightsDialog}
-                        isLocked={Boolean(entryLocked)}
+                        canEdit={canEdit}
                         isSaveButtonDisabled={isSaveButtonDisabled}
                         isDropdownDisabled={!valid || isNewChart}
                         isCurrentRevisionActual={Boolean(isCurrentRevisionActual)}

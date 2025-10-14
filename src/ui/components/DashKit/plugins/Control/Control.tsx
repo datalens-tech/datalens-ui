@@ -18,14 +18,13 @@ import type {
     StringParams,
     WorkbookId,
 } from 'shared';
-import {ControlType, DATASET_FIELD_TYPES, DashTabItemControlSourceType, Feature} from 'shared';
+import {ControlType, DATASET_FIELD_TYPES, DashTabItemControlSourceType} from 'shared';
 import {ChartWrapper} from 'ui/components/Widgets/Chart/ChartWidgetWithProvider';
 import type {ChartWidgetWithWrapRefProps} from 'ui/components/Widgets/Chart/types';
 import {DL} from 'ui/constants/common';
 import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 import type {ChartKitWrapperOnLoadProps} from 'ui/libs/DatalensChartkit/components/ChartKitBase/types';
 import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {chartsDataProvider} from '../../../../libs/DatalensChartkit';
 import {
@@ -95,7 +94,7 @@ const ControlWrapper = React.forwardRef<
     HTMLDivElement,
     {id: string; children: React.ReactNode; className: string}
 >(function ControlWrapper(props, nodeRef) {
-    useWidgetContext(props.id, nodeRef as React.RefObject<HTMLElement>);
+    useWidgetContext({id: props.id, elementRef: nodeRef as React.RefObject<HTMLElement>});
 
     return (
         <div ref={nodeRef} className={props.className}>
@@ -288,34 +287,10 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         if (this.props.data.sourceType === DashTabItemControlSourceType.External) {
             return this.chartKitRef.current?.getMeta();
         }
-        if (this.context?.isNewRelations) {
-            return this.getCurrentWidgetMetaInfo();
-        }
-        // TODO: remove
-        if (this.chartKitRef && this.chartKitRef.current) {
-            (
-                this.chartKitRef.current as ChartWidgetWithWrapRefProps & {undeferred: () => void}
-            ).undeferred();
-        }
-        return new Promise((resolve) => {
-            this.resolve = resolve;
-            if (this.state.loadedData) {
-                this.resolveMeta(this.state.loadedData);
-            }
-            if (this.state.status === LOAD_STATUS.FAIL) {
-                this.resolveMeta(null);
-            }
-        });
+        return this.getCurrentWidgetMetaInfo();
     }
 
     getCurrentWidgetMetaInfo() {
-        // TODO: remove
-        if (this.chartKitRef.current) {
-            (
-                this.chartKitRef.current as ChartWidgetWithWrapRefProps & {undeferred: () => void}
-            ).undeferred();
-        }
-
         return new Promise((resolve: (value: unknown) => void) => {
             this.resolve = resolve;
             if (this.state.status !== LOAD_STATUS.PENDING) {
@@ -381,37 +356,8 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         this.resolve(widgetMetaInfo);
     }
 
-    resolveMeta(loadedData?: any) {
-        // @ts-ignore
-        if (this.resolve) {
-            let result: any = {id: this.props.id};
-
-            if (loadedData && loadedData.extra) {
-                result = {
-                    id: this.props.id,
-                    usedParams: loadedData.usedParams
-                        ? Object.keys(this.filterSignificantParams(loadedData.usedParams))
-                        : null,
-                    datasets: loadedData.extra.datasets,
-                    // deprecated
-                    datasetId: loadedData.extra.datasetId,
-                    datasetFields: loadedData.extra.datasetFields,
-                    type: 'control',
-                    sourceType: this.props.data?.sourceType,
-                };
-            }
-
-            // @ts-ignore
-            this.resolve(result);
-        }
-    }
-
     setLoadedData = (loadedData: ResponseSuccessControls, status: LoadStatus) => {
-        const isNewRelations = this.context?.isNewRelations;
-
-        const isAvailableStatus = isNewRelations
-            ? [LOAD_STATUS.SUCCESS, LOAD_STATUS.FAIL].includes(status)
-            : true;
+        const isAvailableStatus = [LOAD_STATUS.SUCCESS, LOAD_STATUS.FAIL].includes(status);
 
         if (this._isUnmounted || !isAvailableStatus) {
             return;
@@ -435,12 +381,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
             });
         }
 
-        if (isNewRelations) {
-            this.getCurrentWidgetResolvedMetaInfo(loadedData);
-        } else {
-            const resolveDataArg = status === LOAD_STATUS.SUCCESS ? loadedData : null;
-            this.resolveMeta(resolveDataArg);
-        }
+        this.getCurrentWidgetResolvedMetaInfo(loadedData);
 
         this._onRedraw?.();
     };
@@ -640,27 +581,10 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 
         const {sourceType} = data;
         const {id} = this.props;
-        const showFloatControls = isEnabledFeature(Feature.DashFloatControls);
 
         switch (this.state.status) {
             case LOAD_STATUS.PENDING:
-                if (showFloatControls) {
-                    if (!this.state.loadedData) {
-                        return (
-                            <div className={b()}>
-                                <Loader size="s" />
-                            </div>
-                        );
-                    }
-                    return;
-                }
-
-                // save previous logic without flag
-                if (
-                    !this.state.silentLoading ||
-                    !this.state.loadedData ||
-                    !this.state.loadedData.uiScheme
-                ) {
+                if (!this.state.loadedData) {
                     return (
                         <div className={b()}>
                             <Loader size="s" />

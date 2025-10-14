@@ -1,5 +1,6 @@
 import React from 'react';
 
+import type {DropdownMenuItem} from '@gravity-ui/uikit';
 import {Button, DropdownMenu, Icon, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -329,12 +330,14 @@ const getDropdownItems = ({
     currentWidget: string;
     currentRow: DashkitMetaDataItem;
     onChange: (props: ChangedRelationType) => void;
-}) =>
+}): DropdownMenuItem[] =>
     items.map((item) => ({
         action: () => {
             onChange({type: item, widgetId: currentRow.widgetId, itemId: currentRow.itemId});
         },
-        icon: <Icon data={getLinkIcon(item)} size={ICON_SIZE} className={b('icon-link', item)} />,
+        iconStart: (
+            <Icon data={getLinkIcon(item)} size={ICON_SIZE} className={b('icon-link', item)} />
+        ),
         text: (
             <div className={b('list-link')} data-qa={DashRelationTypes[item as RelationType]}>
                 <span>{i18n(`label_${item}`)}</span>

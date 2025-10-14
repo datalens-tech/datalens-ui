@@ -153,6 +153,7 @@ export const AXIS_FORMAT_MODE_RADIO_BUTTON_OPTIONS: SegmentedRadioGroupOptionPro
         value: SETTINGS.AXIS_FORMAT_MODE.BY_FIELD,
         content: '',
     },
+    {value: SETTINGS.AXIS_FORMAT_MODE.MANUAL, content: i18n('wizard', 'label_manual')},
 ];
 
 export const AXIS_MODE_RADIO_BUTTONS: SegmentedRadioGroupOptionProps[] = [

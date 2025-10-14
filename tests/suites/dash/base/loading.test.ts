@@ -3,7 +3,13 @@ import {DashCommonQa} from '../../../../src/shared/constants';
 
 import {COMMON_CHARTKIT_SELECTORS} from '../../../page-objects/constants/chartkit';
 import DashboardPage from '../../../page-objects/dashboard/DashboardPage';
-import {getUniqueTimestamp, openTestPage, slct, waitForCondition} from '../../../utils';
+import {
+    getUniqueTimestamp,
+    openTestPage,
+    slct,
+    clickGSelectOption,
+    waitForCondition,
+} from '../../../utils';
 import {RobotChartsDashboardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {COMMON_DASH_SELECTORS} from '../constants';
@@ -11,6 +17,10 @@ import {COMMON_DASH_SELECTORS} from '../constants';
 const TEXTS = {
     TAB2: 'Tab 2',
     TAB4: 'Tab 4',
+};
+
+const PARAMS = {
+    CHART_WITH_COMMENTS: 'chart-with-comments-e2e',
 };
 
 const waitForDashFirstResponseSentData = async ({
@@ -84,7 +94,7 @@ datalensTest.describe('Dashboards - Widget loading', () => {
         "Dashboard with delayed loading of widgets (doesn't get into viewport)",
         async ({page}: {page: Page}) => {
             // we set small viewport sizes for a more stable check
-            page.setViewportSize({width: 1000, height: 300});
+            await page.setViewportSize({width: 1000, height: 300});
 
             const initPromise = page.waitForRequest('/api/run');
 
@@ -121,10 +131,10 @@ datalensTest.describe('Dashboards - Widget loading', () => {
             const dashboardPage = new DashboardPage({page});
             await openTestPage(page, RobotChartsDashboardUrls.DashboardWithLongContentBeforeChart);
 
-            await dashboardPage.copyDashboard(dashName);
-
             // we set small viewport sizes for a more stable check
-            page.setViewportSize({width: 1000, height: 300});
+            await page.setViewportSize({width: 1000, height: 300});
+
+            await dashboardPage.copyDashboard(dashName);
 
             const initPromise = page.waitForRequest('/api/run');
 
@@ -138,6 +148,13 @@ datalensTest.describe('Dashboards - Widget loading', () => {
             });
 
             await dashboardPage.openDashConnections();
+
+            // select the widget
+            await clickGSelectOption({
+                page,
+                key: DashCommonQa.RelationsWidgetSelect,
+                optionText: PARAMS.CHART_WITH_COMMENTS,
+            });
 
             // waiting for the chart to load
             await initPromise;

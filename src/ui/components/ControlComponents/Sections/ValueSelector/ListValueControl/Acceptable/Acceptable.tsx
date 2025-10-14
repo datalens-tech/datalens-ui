@@ -1,11 +1,7 @@
 import React from 'react';
 
-import {Xmark} from '@gravity-ui/icons';
-import type {ListItemData} from '@gravity-ui/uikit';
-import {Button, Icon, List, TextInput} from '@gravity-ui/uikit';
-import block from 'bem-cn-lite';
+import {Button} from '@gravity-ui/uikit';
 import {i18n} from 'i18n';
-import update from 'immutability-helper';
 import {useDispatch, useSelector} from 'react-redux';
 import {ControlQA} from 'shared';
 import {DashboardDialogControl} from 'shared/constants/qa/dash';
@@ -15,9 +11,7 @@ import type {AcceptableValue} from 'ui/store/typings/controlDialog';
 
 import Dialog from '../../../../Dialog/Dialog';
 
-import './Acceptable.scss';
-
-const b = block('control-select-acceptable');
+import {SelectorValuesDialogBody} from './SelectorValuesDialogBody';
 
 const convertFromDefaultValue = (values: AcceptableValue[]) => {
     return values ? values.map(({value}) => value) : values;
@@ -52,122 +46,14 @@ export const Acceptable = () => {
         );
     };
 
-    const handleRemoveItemClick = (index: number, acceptableValues: string[]) => {
-        setCurrentAcceptableValues([
-            ...acceptableValues.slice(0, index),
-            ...acceptableValues.slice(index + 1),
-        ]);
-    };
-
-    const handleOnSortEnd = ({
-        oldIndex,
-        newIndex,
-        acceptableValues,
-    }: {
-        oldIndex: number;
-        newIndex: number;
-        acceptableValues: string[];
-    }) => {
-        if (oldIndex === newIndex) {
-            return;
-        }
-        const newItems = update(acceptableValues, {
-            $splice: [
-                [oldIndex, 1],
-                [newIndex, 0, acceptableValues[oldIndex]],
-            ],
-        });
-
-        setCurrentAcceptableValues(newItems);
-    };
-
     const handleKeyPress: React.KeyboardEventHandler<HTMLInputElement> = (event) => {
         if (event.code === 'Enter') {
             addItem();
         }
     };
 
-    const renderListItem = (args: {
-        item: ListItemData<string>;
-        itemIndex: number;
-        acceptableValues: string[];
-    }) => {
-        const {item, itemIndex, acceptableValues} = args;
-        return (
-            <div className={b('item')} key={item} data-qa={ControlQA.controlSelectAcceptableItem}>
-                <span title={item}>{item}</span>
-                <Button
-                    onClick={() => handleRemoveItemClick(itemIndex, acceptableValues)}
-                    className={b('remove')}
-                    qa={ControlQA.controlSelectAcceptableRemoveButton}
-                    view="flat"
-                    size="s"
-                >
-                    <Icon data={Xmark} width="16" />
-                </Button>
-            </div>
-        );
-    };
-
     const handleUpdate = (updatedValue: string) => {
         setNewValue(updatedValue);
-    };
-
-    const renderBody = () => {
-        const isEmpty = !currentAcceptableValues.length;
-        return (
-            <React.Fragment>
-                <div className={b('header')} data-qa={ControlQA.controlSelectAcceptable}>
-                    <TextInput
-                        size="m"
-                        qa={ControlQA.controlSelectAcceptableInput}
-                        placeholder={i18n('dash.control-dialog.edit', 'context_add-value')}
-                        onUpdate={handleUpdate}
-                        value={newValue}
-                        onKeyDown={handleKeyPress}
-                        controlRef={inputRef}
-                    />
-                    <Button
-                        view="normal"
-                        size="m"
-                        qa={ControlQA.controlSelectAcceptableButton}
-                        onClick={addItem}
-                    >
-                        {i18n('dash.control-dialog.edit', 'button_add')}
-                    </Button>
-                </div>
-                <div className={b('items', {empty: isEmpty})}>
-                    {isEmpty ? (
-                        i18n('dash.control-dialog.edit', 'label_empty-list')
-                    ) : (
-                        <List
-                            filterable={false}
-                            virtualized={false}
-                            sortable={true}
-                            items={currentAcceptableValues}
-                            itemClassName={b('list-item')}
-                            onSortEnd={(args) =>
-                                handleOnSortEnd({
-                                    ...args,
-                                    acceptableValues: currentAcceptableValues,
-                                })
-                            }
-                            renderItem={(
-                                item: ListItemData<string>,
-                                _isItemActive: boolean,
-                                itemIndex: number,
-                            ) =>
-                                renderListItem({
-                                    item,
-                                    itemIndex,
-                                    acceptableValues: currentAcceptableValues,
-                                })
-                            }
-                        />
-                    )}
-                </div>
-            </React.Fragment>
-        );
     };
 
     const handleApply = () => {
@@ -198,7 +84,16 @@ export const Acceptable = () => {
                 onClose={handleClose}
                 onTransitionInComplete={handleDialogTransitionEntered}
             >
-                {renderBody()}
+                <SelectorValuesDialogBody
+                    currentAcceptableValues={currentAcceptableValues}
+                    handleUpdate={handleUpdate}
+                    newValue={newValue}
+                    handleKeyPress={handleKeyPress}
+                    inputRef={inputRef}
+                    addItem={addItem}
+                    setCurrentAcceptableValues={setCurrentAcceptableValues}
+                    setNewValue={setNewValue}
+                />
             </Dialog>
         );
     };

@@ -26,6 +26,8 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
             onLoad,
             data: {data: originalData, config},
             backgroundColor,
+            isQlPreviewTable = false,
+            qa = ChartKitTableQa.Widget,
         } = props;
 
         const generatedId = React.useMemo(
@@ -89,7 +91,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
         );
 
         return (
-            <div className={b()} data-qa={ChartKitTableQa.Widget} ref={ref}>
+            <div className={b()} data-qa={qa} ref={ref}>
                 {dimensions ? (
                     <Table
                         widgetData={props.data}
@@ -97,6 +99,7 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
                         onChangeParams={handleChangeParams}
                         onReady={handleTableReady}
                         backgroundColor={backgroundColor}
+                        disableCellFormatting={isQlPreviewTable}
                     />
                 ) : (
                     <Loader />

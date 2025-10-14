@@ -1,4 +1,7 @@
-import type {ConnectorItem} from '../../../../shared/schema/types';
+import {Feature} from 'shared';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+
+import type {ConnectorItem, GetEntryResponse} from '../../../../shared/schema/types';
 
 export const isConnectorInList = (connectors: ConnectorItem[], connType?: string) => {
     return connectors.findIndex((connector) => connector.conn_type === connType) !== -1;
@@ -24,4 +27,19 @@ export const getConnItemByType = (args: {connectors: ConnectorItem[]; type: stri
 
         return matchedWithIncludes || isMatchedByTypeOrAlias(connector, type);
     });
+};
+
+export const getIsRevisionsSupported = ({
+    entry,
+    flattenConnectors,
+}: {
+    entry?: GetEntryResponse;
+    flattenConnectors: ConnectorItem[];
+}) => {
+    const connector = getConnItemByType({
+        connectors: flattenConnectors,
+        type: entry?.type ?? '',
+    });
+    const isRevisionsEnabled = isEnabledFeature(Feature.EnableConnectionRevisions);
+    return Boolean(connector?.history && isRevisionsEnabled);
 };

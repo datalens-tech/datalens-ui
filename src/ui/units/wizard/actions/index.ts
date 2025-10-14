@@ -41,7 +41,6 @@ import {
     isMeasureValue,
     isParameter,
     isVisualizationWithLayers,
-    mapChartsConfigToLatestVersion,
     prepareUrlParams,
     splitParamsToParametersAndFilters,
 } from 'shared';
@@ -58,6 +57,7 @@ import type {DatasetState} from 'units/wizard/reducers/dataset';
 import {selectDataset, selectDatasets} from 'units/wizard/selectors/dataset';
 import {v1 as uuidv1} from 'uuid';
 
+import {mapChartsConfigToLatestVersion} from '../../../../shared/modules/config/wizard';
 import {WIZARD_DATASET_ID_PARAMETER_KEY} from '../../../constants/misc';
 import type {ChartKitCustomError} from '../../../libs/DatalensChartkit/ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
 import logger from '../../../libs/logger';
@@ -237,6 +237,10 @@ export function fetchDataset({id, replacing}: FetchDatasetArgs) {
                     [id]: dataset,
                 };
                 dispatch(setOriginalDatasets({originalDatasets: updatedOriginalDatasets}));
+
+                if (Object.keys(updatedOriginalDatasets).length > 1) {
+                    dispatch(setSort({sort: []}));
+                }
 
                 const {
                     dataset: {datasets, dimensions, measures} = {
@@ -1861,6 +1865,9 @@ function processWidget(args: ProcessWidgetArgs) {
 
             dispatch(setDatasetApiErrors({datasetApiErrors}));
             dispatch(setOriginalDatasets({originalDatasets}));
+            if (Object.keys(originalDatasets).length > 1) {
+                dispatch(setSort({sort: []}));
+            }
 
             return loadedOriginalDatasets;
         })

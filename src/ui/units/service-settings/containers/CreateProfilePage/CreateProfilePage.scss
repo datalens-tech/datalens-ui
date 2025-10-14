@@ -4,4 +4,12 @@
     &__content {
         padding: var(--g-spacing-8) var(--g-spacing-5) var(--g-spacing-5) 82px;
     }
+
+    &__breadcrumbs {
+        flex-grow: 1;
+    }
+
+    &__breadcrumbs-item {
+        height: 100%;
+    }
 }

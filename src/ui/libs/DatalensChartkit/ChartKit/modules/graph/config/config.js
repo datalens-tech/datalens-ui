@@ -13,7 +13,6 @@ import throttle from 'lodash/throttle';
 import moment from 'moment';
 import {formatNumber} from 'shared/modules/format-units/formatUnit';
 
-import {registry} from '../../../../../../registry';
 import {
     drawComments,
     drawOnlyRendererComments,
@@ -661,20 +660,10 @@ function getTooltip(tooltip, options, comments) {
     }
 
     if (options.scale === 'd' && isDatetimeXAxis) {
-        const pointTimestamp = Number(chart.time.dateFormat('%Y%m%d', this.x));
         const region = (options.region || 'TOT').toLowerCase();
 
         if (region !== 'tot') {
             json.region = region;
-        }
-
-        const holidays = registry.chart.functions.get('getChartkitHolidays');
-
-        if (holidays && holidays.holiday[region][pointTimestamp]) {
-            json.holiday = true;
-            json.holidayText = holidays.holiday[region][pointTimestamp];
-        } else if (holidays?.weekend[region][pointTimestamp]) {
-            json.weekend = true;
         }
 
         json.dayOfWeek = chart.time.dateFormat('%a', this.x);

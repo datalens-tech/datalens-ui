@@ -215,6 +215,10 @@ const SourceEditorDialog: React.FC<SourceEditorDialogProps> = (props) => {
             className={b()}
             open={open}
             onClose={attemptToCloseDialog}
+            onTransitionInComplete={() => {
+                // in order for the monaco editor to calculate the dimensions correctly
+                window.dispatchEvent(new Event('resize'));
+            }}
         >
             <Dialog.Header caption={i18n('label_source-editor-header')} />
             <Dialog.Body>

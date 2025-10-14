@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {dateTimeParse} from '@gravity-ui/date-utils';
-import {Popover} from '@gravity-ui/uikit';
+import {ActionTooltip, Popover} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {RevisionsListQa} from 'shared/constants/qa';
 import {RevisionStatusPoint} from 'ui/components/RevisionStatusPoint/RevisionStatusPoint';
@@ -15,7 +15,7 @@ import {
 
 import type {GetRevisionsEntry} from '../../../../shared/schema';
 import {prepareRevisionListItems} from '../helpers';
-import type {RevisionsListItems} from '../types';
+import type {GetRevisionRowExtendedProps, RevisionsListItems} from '../types';
 
 import './RevisionsList.scss';
 
@@ -30,6 +30,7 @@ export type RevisionRowProps = {
     onItemClick: (param: string) => void;
     currentRevId: string;
     renderItemActions?: (item: GetRevisionsEntry, currentRevId: string) => React.ReactNode;
+    getRevisionRowExtendedProps?: GetRevisionRowExtendedProps;
 };
 
 const RevisionRow: React.FC<RevisionRowProps> = ({
@@ -37,6 +38,7 @@ const RevisionRow: React.FC<RevisionRowProps> = ({
     onItemClick,
     currentRevId,
     renderItemActions,
+    getRevisionRowExtendedProps,
 }) => {
     const handlerClick = () => onItemClick(item.revId);
     const {updatedAt, updatedBy} = item;
@@ -50,40 +52,45 @@ const RevisionRow: React.FC<RevisionRowProps> = ({
 
     const revisionStatusKey = getRevisionStatusKey(item);
 
+    const {disabledText = '', disabled = false} = getRevisionRowExtendedProps?.(item) ?? {};
+
     return (
-        <li
-            className={b('row', {
-                published: isPublished,
-                current: currentRevId === item.revId,
-                draft: isDraft,
-            })}
-            data-qa={RevisionsListQa.RevisionsListRow}
-            data-qa-revid={item.revId}
-            onClick={handlerClick}
-        >
-            {tooltipText ? (
-                <Popover
-                    placement={'bottom'}
-                    hasArrow={false}
-                    closeDelay={TOOLTIP_DELAY_CLOSING}
-                    content={tooltipText}
-                    className={b('point-tooltip')}
-                >
+        <ActionTooltip title={disabledText} disabled={!disabledText || !disabled}>
+            <li
+                className={b('row', {
+                    published: isPublished,
+                    current: currentRevId === item.revId,
+                    draft: isDraft,
+                    disabled,
+                })}
+                data-qa={RevisionsListQa.RevisionsListRow}
+                data-qa-revid={item.revId}
+                onClick={disabled ? undefined : handlerClick}
+            >
+                {tooltipText ? (
+                    <Popover
+                        placement={'bottom'}
+                        hasArrow={false}
+                        closeDelay={TOOLTIP_DELAY_CLOSING}
+                        content={tooltipText}
+                        className={b('point-tooltip')}
+                    >
+                        <div className={b('point-wrap')}>
+                            <RevisionStatusPoint status={revisionStatusKey} />
+                        </div>
+                    </Popover>
+                ) : (
                     <div className={b('point-wrap')}>
                         <RevisionStatusPoint status={revisionStatusKey} />
                     </div>
-                </Popover>
-            ) : (
-                <div className={b('point-wrap')}>
-                    <RevisionStatusPoint status={revisionStatusKey} />
+                )}
+                <UserAvatarById loginOrId={updatedBy} size="s" className={b('avatar')} />
+                <div className={b('text')}>
+                    {dateTimeParse(updatedAt)?.format(TIME_FORMAT) || updatedAt}
                 </div>
-            )}
-            <UserAvatarById loginOrId={updatedBy} size="s" className={b('avatar')} />
-            <div className={b('text')}>
-                {dateTimeParse(updatedAt)?.format(TIME_FORMAT) || updatedAt}
-            </div>
-            {customActions && <div className={b('row-actions')}>{customActions}</div>}
-        </li>
+                {customActions && <div className={b('row-actions')}>{customActions}</div>}
+            </li>
+        </ActionTooltip>
     );
 };
 
@@ -92,7 +99,7 @@ type RevisionsListDayProps = {
     items: Array<GetRevisionsEntry>;
     onItemClick: (param: string) => void;
     currentRevId: string;
-
+    getRevisionRowExtendedProps?: GetRevisionRowExtendedProps;
     renderItemActions?: RevisionRowProps['renderItemActions'];
 };
 
@@ -102,6 +109,7 @@ const RevisionsListDay: React.FC<RevisionsListDayProps> = ({
     onItemClick,
     currentRevId,
     renderItemActions,
+    getRevisionRowExtendedProps,
 }) => {
     const list = items.map((item) => (
         <RevisionRow
@@ -110,6 +118,7 @@ const RevisionsListDay: React.FC<RevisionsListDayProps> = ({
             onItemClick={onItemClick}
             currentRevId={currentRevId}
             renderItemActions={renderItemActions}
+            getRevisionRowExtendedProps={getRevisionRowExtendedProps}
         />
     ));
     return (
@@ -129,6 +138,7 @@ type RevisionsListProps = {
     onItemClick: (param: string) => void;
     currentRevId: string;
     renderItemActions?: RevisionsListDayProps['renderItemActions'];
+    getRevisionRowExtendedProps?: GetRevisionRowExtendedProps;
 };
 
 export const RevisionsList: React.FC<RevisionsListProps> = ({
@@ -136,6 +146,7 @@ export const RevisionsList: React.FC<RevisionsListProps> = ({
     onItemClick,
     currentRevId,
     renderItemActions,
+    getRevisionRowExtendedProps,
 }) => {
     const preparedItems = React.useMemo(() => prepareRevisionListItems(items), [items]);
     const list = preparedItems.map((listItems, index) => (
@@ -146,6 +157,7 @@ export const RevisionsList: React.FC<RevisionsListProps> = ({
             onItemClick={onItemClick}
             currentRevId={currentRevId}
             renderItemActions={renderItemActions}
+            getRevisionRowExtendedProps={getRevisionRowExtendedProps}
         />
     ));
 

@@ -9,6 +9,7 @@ import type {
 import {
     AxisNullsMode,
     getFakeTitleOrTitle,
+    getFormatOptions,
     isDateField,
     isMarkupField,
     isMeasureName,
@@ -149,7 +150,7 @@ const mergeLabelDataWithLines = (args: MergeLabelDataWithLinesArgs) => {
     if (isLabelPseudo) {
         labelFormatting = yItemFormatting;
     } else {
-        labelFormatting = labelItem.formatting as CommonNumberFormattingOptions | undefined;
+        labelFormatting = getFormatOptions(labelItem);
     }
 
     lines[key].dataLabels = getFormatOptionsFromFieldFormatting(
@@ -245,7 +246,7 @@ export const prepareLines = (args: PrepareLinesArgs) => {
             yValue = getDateAxisValue(yValue, yDataType);
         }
 
-        const yItemFormatting = field.formatting as CommonNumberFormattingOptions | undefined;
+        const yItemFormatting = getFormatOptions(field);
         const tooltipOptions = getFormatOptionsFromFieldFormatting(yItemFormatting, yDataType);
 
         const seriesOptions = {

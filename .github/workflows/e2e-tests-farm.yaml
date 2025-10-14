@@ -1,0 +1,230 @@
+name: E2E Tests Farm
+
+on:
+  workflow_dispatch:
+    inputs:
+      skip-farm-creation:
+        type: boolean
+        description: 'Skip farm creation'
+        default: false
+  pull_request:
+    branches-ignore:
+      - 'weblate-**'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+
+env:
+  FARM_POLL_SLEEP_SEC: 10
+  FARM_POLL_TIMEOUT_MIN: 20
+  E2E_TESTS_TIMEOUT_MIN: 15
+  E2E_MAX_FAILURES: 30
+
+jobs:
+  run:
+    name: e2e-tests-farm
+    runs-on:
+      - self-hosted
+      - linux
+      - qyp
+    container:
+      image: ghcr.io/datalens-tech/datalens-playwright:1.48.2-24.04
+      options: --user 1092:1092
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 22
+      - name: check closed and extensions branch exists
+        run: |
+          if gh api "repos/${GH_REPO_OWNER}/${GH_REPO_CLOSED}/branches/${GH_BRANCH_NAME}" >/dev/null 2>&1; then
+            echo "GH_BRANCH_NAME_CLOSED=${GH_BRANCH_NAME}" >> "$GITHUB_ENV"
+            echo "  branch closed: ${GH_BRANCH_NAME}"
+          else
+            echo "GH_BRANCH_NAME_CLOSED=main" >> "$GITHUB_ENV"
+            echo "  branch closed: main"
+          fi
+          if gh api "repos/${GH_REPO_OWNER}/${GH_REPO_EXTENSIONS}/branches/${GH_BRANCH_NAME}" >/dev/null 2>&1; then
+            echo "GH_BRANCH_NAME_EXTENSIONS=${GH_BRANCH_NAME}" >> "$GITHUB_ENV"
+            echo "  branch extensions: ${GH_BRANCH_NAME}"
+          else
+            echo "GH_BRANCH_NAME_EXTENSIONS=" >> "$GITHUB_ENV"
+            echo "  branch extensions: <from closed extensions config version>"
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GH_REPO_OWNER: ${{ github.repository_owner }}
+          GH_REPO_CLOSED: ${{ vars.GH_REPO_CLOSED }}
+          GH_REPO_EXTENSIONS: ${{ vars.GH_REPO_EXTENSIONS }}
+          GH_REPO_PLATFORM: ${{ vars.GH_REPO_PLATFORM }}
+          GH_BRANCH_NAME: ${{ github.head_ref }}
+      - name: create farm and wait for it to be ready
+        timeout-minutes: ${{ fromJSON(env.FARM_POLL_TIMEOUT_MIN) }}
+        run: |
+          FARM_NAME=$(echo "${GH_BRANCH_NAME}" | tr '[:upper:]' '[:lower:]')
+          FARM_NAME="${FARM_NAME_PREFIX}${FARM_NAME}"
+
+          IS_SKIP_FARM_CREATION=${{ github.event.inputs.skip-farm-creation }}
+
+          if [ "${IS_SKIP_FARM_CREATION}" != "true" ]; then
+            curl -k -q -s -X POST -H "content-type: application/json" \
+            --data "{\"project\":\"${GH_REPO_CLOSED}\", \"organization\":\"${GH_REPO_OWNER}\", \"name\":\"${FARM_NAME}\",\"vcs\":\"git\",\"branch\":\"${GH_BRANCH_NAME_CLOSED}\",\"instanceConfigName\":\"${FARM_INSTANCE_CONFIG_NAME}\",\"env.GITHUB_PLATFORM_BRANCH_NAME\":\"${GH_BRANCH_NAME_PLATFORM}\",\"env.GITHUB_EXTENSIONS_BRANCH_NAME\":\"${GH_BRANCH_NAME_EXTENSIONS}\"}" \
+            "${FARM_ENDPOINT}/api/generate"
+          fi
+
+          FARM_STATUS="queued"
+          FARM_URL=""
+
+          echo "⏳ wait for farm to be ready..."
+
+          while true; do
+            FARM_DATA=$(
+              curl -k -q -s -X POST -H "content-type: application/json" \
+              --data "{\"project\":\"${GH_REPO_CLOSED}\", \"name\":\"${FARM_NAME}\",\"vcs\":\"git\",\"branch\":\"${GH_BRANCH_NAME_CLOSED}\",\"instanceConfigName\":\"${FARM_INSTANCE_CONFIG_NAME}\"}" \
+              "${FARM_ENDPOINT}/api/getInstance"
+            )
+            FARM_STATUS=$(echo "${FARM_DATA}" | jq -r '.instance.status')
+            FARM_URL=$(echo "${FARM_DATA}" | jq -r '.url')
+            if [ "${FARM_STATUS}" = "running" ]; then
+              break
+            fi
+            echo "  retry, status [${FARM_STATUS}]..."
+            sleep "${FARM_POLL_SLEEP_SEC}"
+          done
+
+          echo "  farm status: ${FARM_STATUS}"
+          echo "  farm url: ${FARM_URL}"
+          echo "E2E_DOMAIN=${FARM_URL}" >> "$GITHUB_ENV"
+
+          echo "✅ farm success ready"
+        env:
+          GH_REPO_OWNER: ${{ github.repository_owner }}
+          GH_REPO_CLOSED: ${{ vars.GH_REPO_CLOSED }}
+          GH_BRANCH_NAME: ${{ github.head_ref }}
+          GH_BRANCH_NAME_CLOSED: ${{ env.GH_BRANCH_NAME_CLOSED }}
+          GH_BRANCH_NAME_EXTENSIONS: ${{ env.GH_BRANCH_NAME_EXTENSIONS }}
+          GH_BRANCH_NAME_PLATFORM: ${{ github.head_ref }}
+          FARM_INSTANCE_CONFIG_NAME: ${{ vars.FARM_INSTANCE_CONFIG_NAME }}
+          FARM_ENDPOINT: ${{ vars.FARM_ENDPOINT }}
+          FARM_POLL_TIMEOUT_SEC: ${{ env.FARM_POLL_SLEEP_SEC }}
+          FARM_NAME_PREFIX: ${{ vars.FARM_NAME_PREFIX }}
+      - run: npm run deps
+        env:
+          # folder in docker container
+          NPM_CACHE_ROOT: /__w/.cache/npm-cache
+      - name: run e2e tests
+        timeout-minutes: ${{ fromJSON(env.E2E_TESTS_TIMEOUT_MIN) }}
+        run: npm run test:e2e
+        env:
+          GH_BRANCH_NAME: ${{ github.head_ref }}
+          GH_BRANCH_NAME_CLOSED: ${{ env.GH_BRANCH_NAME_CLOSED }}
+          GH_BRANCH_NAME_EXTENSIONS: ${{ env.GH_BRANCH_NAME_EXTENSIONS }}
+          GH_BRANCH_NAME_PLATFORM: ${{ github.head_ref }}
+          E2E_DOMAIN: ${{ env.E2E_DOMAIN }}
+          E2E_AUTH_TYPE: ${{ vars.E2E_AUTH_TYPE }}
+          E2E_PASSPORT_URL: ${{ vars.E2E_PASSPORT_URL }}
+          E2E_USER_LOGIN: ${{ secrets.E2E_USER_LOGIN }}
+          E2E_USER_PASSWORD: ${{ secrets.E2E_USER_PASSWORD }}
+          E2E_YT_PATH: ${{ secrets.E2E_YT_PATH }}
+          E2E_MAX_WORKERS: '12'
+          E2E_RETRY_TIMES: '2'
+          E2E_MAX_FAILURES: ${{ env.E2E_MAX_FAILURES }}
+          NODE_TLS_REJECT_UNAUTHORIZED: '0'
+      - name: save report link and pr number
+        if: always()
+        run: |
+          echo "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" > ./tests/artifacts/report-link
+          echo "${{ github.event.pull_request.number }}" > ./tests/artifacts/report-pr
+      - uses: actions/upload-artifact@v4
+        if: always()
+        id: upload-artifact
+        with:
+          name: playwright-report
+          path: ./tests/artifacts/
+          retention-days: 30
+      - name: extract report link from workflow
+        if: always()
+        id: e2e_report_link
+        run: |
+          echo "e2e_report_link=${{ steps.upload-artifact.outputs.artifact-url }}" >> "$GITHUB_OUTPUT"
+    outputs:
+      e2e_report_link: ${{ steps.e2e_report_link.outputs.e2e_report_link }}
+
+  report:
+    name: e2e-tests-farm-report
+    needs: run
+    if: always()
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: playwright-report
+          path: ./tests/artifacts/
+      - uses: daun/playwright-report-summary@v3
+        if: always()
+        id: report-md
+        with:
+          report-file: ./tests/artifacts/results.json
+          create-comment: false
+      - name: create or update pr comment
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issueNumber = context.issue.number;
+            const repo = context.repo;
+
+            const commentIdentifier = "<!-- e2e-tests-farm-report -->";
+            const { data: comments } = await github.rest.issues.listComments({
+              ...repo,
+              issue_number: issueNumber,
+            });
+
+            const botComment = comments.find(comment => 
+              comment.body.includes(commentIdentifier) && 
+              comment.user.login === 'github-actions[bot]'
+            );
+
+            const timestamp = new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString().replace('T', ' ').slice(0, 19) + ' MSK';
+
+            let commentBody = `
+            ## ![](https://storage.yandexcloud.net/e2e-report/icons/yt-small.svg) E2E Tests Farm
+
+            ${{ steps.report-md.outputs.summary }}
+
+            ---
+
+            👉 Link with detailed report: [report](${process.env.E2E_REPORT_LINK})
+
+            Last updated: ${timestamp}
+
+            ${commentIdentifier}
+            `;
+
+            commentBody = commentBody.replace(/@screenshot/g, '`@screenshot`');
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                ...repo,
+                comment_id: botComment.id,
+                body: commentBody
+              });
+              
+              console.log('updated existing comment on PR #' + issueNumber);
+            } else {
+              await github.rest.issues.createComment({
+                ...repo,
+                issue_number: issueNumber,
+                body: commentBody
+              });
+              
+              console.log('added new comment to PR #' + issueNumber);
+            }
+        env:
+          E2E_REPORT_LINK: ${{ needs.run.outputs.e2e_report_link }}

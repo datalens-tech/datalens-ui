@@ -97,6 +97,7 @@ export interface DashData {
     salt: string;
     schemeVersion: number;
     settings: DashSettings;
+    // only in old dashbords (now migrating to annotation)
     description?: string;
     accessDescription?: string;
     supportDescription?: string;
@@ -141,6 +142,18 @@ export type BackgroundSettings = {
     enabled?: boolean;
     color: string;
 };
+
+export function isBackgroundSettings(value: unknown): value is BackgroundSettings {
+    return (
+        typeof value === 'object' &&
+        value !== null &&
+        'color' in value &&
+        typeof value.color === 'string' &&
+        ('enabled' in value
+            ? typeof value.enabled === 'boolean' || value.enabled === undefined
+            : true)
+    );
+}
 
 export interface DashTabItemBase {
     id: string;

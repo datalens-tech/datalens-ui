@@ -26,7 +26,8 @@ import {DIALOG_FIELD_EDITOR} from '../../../../components/DialogFieldEditor/Dial
 import {CounterName, GoalId, reachMetricaGoal} from '../../../../libs/metrica';
 import {closeDialog, openDialog, openDialogConfirm} from '../../../../store/actions/dialog';
 import DatasetTable from '../../components/DatasetTable/DatasetTable';
-import {DATASET_VALIDATION_TIMEOUT, TAB_DATASET} from '../../constants';
+import {FieldSettingsDialog} from '../../components/FieldSettingsDialog/FieldSettingsDialog';
+import {DATASET_UPDATE_ACTIONS, DATASET_VALIDATION_TIMEOUT, TAB_DATASET} from '../../constants';
 import {
     UISelector,
     avatarsSelector,
@@ -59,6 +60,7 @@ class DatasetEditor extends React.Component {
         field: null,
         updates: [],
         visibleRLSDialog: false,
+        visibleFieldSettingsDialog: false,
         currentRLSField: isEnabledFeature(Feature.EnableRLSV2) ? [] : '',
     };
 
@@ -310,6 +312,25 @@ class DatasetEditor extends React.Component {
         }
     };
 
+    openFieldSettingsDialog = ({field}) => {
+        this.setState({
+            visibleFieldSettingsDialog: true,
+            field,
+        });
+    };
+
+    closeFieldSettingsDialog = () => {
+        this.setState({
+            visibleFieldSettingsDialog: false,
+        });
+    };
+
+    saveFieldSettings = (fieldSettings) => {
+        this.closeFieldSettingsDialog();
+
+        this.updateField({field: fieldSettings});
+    };
+
     closeRLSDialog = () => {
         this.setState({
             visibleRLSDialog: false,
@@ -319,8 +340,18 @@ class DatasetEditor extends React.Component {
     };
 
     render() {
-        const {sourceAvatars, validation, options, itemsToDisplay, rls, permissions} = this.props;
-        const {field, visibleRLSDialog, currentRLSField} = this.state;
+        const {
+            sourceAvatars,
+            validation,
+            options,
+            itemsToDisplay,
+            rls,
+            permissions,
+            datasetId,
+            workbookId,
+            parameters,
+        } = this.props;
+        const {field, visibleRLSDialog, currentRLSField, visibleFieldSettingsDialog} = this.state;
         const {renderRLSDialog} = registry.datasets.functions.getAll();
 
         return (
@@ -340,6 +371,7 @@ class DatasetEditor extends React.Component {
                     removeField={this.removeField}
                     batchRemoveFields={this.batchRemoveFields}
                     openRLSDialog={this.openRLSDialog}
+                    openFieldSettingsDialog={this.openFieldSettingsDialog}
                     openDialog={this.props.openDialog}
                     closeDialog={this.props.closeDialog}
                     openDialogConfirm={this.props.openDialogConfirm}
@@ -352,6 +384,22 @@ class DatasetEditor extends React.Component {
                     onClose: this.closeRLSDialog,
                     onSave: this.props.updateRLS,
                 })}
+                {field && (
+                    <FieldSettingsDialog
+                        open={visibleFieldSettingsDialog}
+                        onClose={this.closeFieldSettingsDialog}
+                        onSave={this.saveFieldSettings}
+                        field={field}
+                        datasetId={datasetId}
+                        workbookId={workbookId}
+                        parameters={parameters}
+                        // a temporary solution, only the changed fields need to be calculated
+                        updates={this.filteredFields.map((f) => ({
+                            action: DATASET_UPDATE_ACTIONS.FIELD_ADD,
+                            field: f,
+                        }))}
+                    />
+                )}
             </div>
         );
     }

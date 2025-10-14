@@ -7,7 +7,7 @@ import {DashRelationTypes} from '../../../../src/shared';
 import {RobotChartsDashboardUrls} from '../../../utils/constants';
 
 const SELECTORS = {
-    CHART_LEGEND_ITEM: '.highcharts-legend-item',
+    CHART_LEGEND_ITEM: '.highcharts-legend-item, .gcharts-legend__item',
     CONTROL_SELECT_KEY: 'chartkit-control-select',
     CONTROL_SELECT_ITEMS_KEY: 'chartkit-control-select-items',
 };

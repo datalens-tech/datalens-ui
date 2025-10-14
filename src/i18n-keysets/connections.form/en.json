@@ -68,6 +68,7 @@
   "label_chyt-user-auth-description": "Authentication by cookie, requests will be executed for the user viewing the dataset, chart, or dashboard",
   "label_cloud-tree-fetching-failed": "Failed to load clouds tree",
   "label_connection-csv-name": "Connection name",
+  "label_connection-info": "Connection info",
   "label_connection-loading": "Upload",
   "label_connections-empty-msg": "You don't have any connections",
   "label_connections-list-failed": "Error: failed to load list of connections",

@@ -1,14 +1,21 @@
 import type {BarYSeries, ChartData} from '@gravity-ui/chartkit/gravity-charts';
+import merge from 'lodash/merge';
 
 import type {SeriesExportSettings, ServerField} from '../../../../../../../shared';
 import {
+    LabelsPositions,
+    PERCENT_VISUALIZATIONS,
     PlaceholderId,
-    WizardVisualizationId,
+    getFakeTitleOrTitle,
     isHtmlField,
     isMarkdownField,
     isMarkupField,
 } from '../../../../../../../shared';
+import {getBaseChartConfig} from '../../gravity-charts/utils';
+import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getExportColumnSettings} from '../../utils/export-helpers';
+import {getAxisFormatting} from '../helpers/axis';
+import {getLegendColorScale, shouldUseGradientLegend} from '../helpers/legend';
 import type {PrepareFunctionArgs} from '../types';
 
 import {prepareBarYData} from './prepare-bar-y-data';
@@ -16,7 +23,7 @@ import {prepareBarYData} from './prepare-bar-y-data';
 type BarYPoint = {x: number; y: number} & Record<string, unknown>;
 
 export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
-    const {visualizationId, colors, labels, placeholders} = args;
+    const {shared, visualizationId, colors, colorsConfig, labels, placeholders} = args;
     const {graphs, categories} = prepareBarYData(args);
     const hasCategories = Boolean(categories?.length);
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
@@ -42,24 +49,28 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
     const shouldUseHtmlForLabels =
         isMarkupField(labelField) || isHtmlField(labelField) || isMarkdownField(labelField);
 
+    const dataLabelFormat = getFieldFormatOptions({field: labelField});
+    const shouldUsePercentStacking = PERCENT_VISUALIZATIONS.has(visualizationId);
+    const dataLabelsInside =
+        shouldUsePercentStacking ||
+        shared.extraSettings?.labelsPosition !== LabelsPositions.Outside;
     const series = graphs.map<BarYSeries>((graph) => {
         return {
             ...graph,
             type: 'bar-y',
             stackId: graph.stack,
-            stacking: visualizationId === WizardVisualizationId.BarY100pD3 ? 'percent' : 'normal',
+            stacking: shouldUsePercentStacking ? 'percent' : 'normal',
             name: graph.title,
-            data: graph.data
-                .filter((d: BarYPoint) => d !== null && d.y !== null)
-                .map((d: BarYPoint) => {
-                    const {x, y, ...other} = d;
+            data: graph.data.map((d: BarYPoint) => {
+                const {x, y, ...other} = d;
 
-                    return {y: x, x: y, ...other};
-                }),
+                return {y: x, x: y, ...other};
+            }),
             dataLabels: {
                 enabled: graph.dataLabels?.enabled,
-                inside: visualizationId === WizardVisualizationId.BarY100pD3,
+                inside: dataLabelsInside,
                 html: shouldUseHtmlForLabels,
+                format: dataLabelFormat,
             },
             custom: {
                 ...graph.custom,
@@ -69,24 +80,90 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
         } as BarYSeries;
     });
 
+    const xAxisLabelNumberFormat = xPlaceholder
+        ? getAxisFormatting({
+              placeholder: xPlaceholder,
+              visualizationId,
+          })
+        : undefined;
+
     const config: ChartData = {
         series: {
             data: series.filter((s) => s.data.length),
+            options: {
+                'bar-y': {
+                    stackGap: 0,
+                    borderWidth: 1,
+                },
+            },
         },
         xAxis: {
             min: 0,
             type: 'linear',
+            labels: {
+                numberFormat: xAxisLabelNumberFormat ?? undefined,
+            },
         },
     };
+
+    if (config.series.data.length && shouldUseGradientLegend(colorItem, colorsConfig, shared)) {
+        const points = graphs
+            .map((graph) => (graph.data ?? []).map((d: BarYPoint) => ({colorValue: d.colorValue})))
+            .flat(2);
+
+        const colorScale = getLegendColorScale({
+            colorsConfig,
+            points,
+        });
+
+        config.legend = {
+            enabled: true,
+            type: 'continuous',
+            title: {text: getFakeTitleOrTitle(colorItem), style: {fontWeight: '500'}},
+            colorScale,
+        };
+    } else if (graphs.length <= 1) {
+        config.legend = {enabled: false};
+    }
+
+    if (xField) {
+        config.tooltip = {
+            valueFormat: getFieldFormatOptions({field: xField}),
+            totals: {enabled: true},
+        };
+    }
 
     if (hasCategories) {
         config.yAxis = [
             {
                 type: 'category',
                 categories: categories as string[],
+                order: 'reverse',
+                labels: {
+                    enabled: yPlaceholder?.settings?.hideLabels !== 'yes',
+                    html: isHtmlField(yField) || isMarkdownField(yField) || isMarkupField(yField),
+                },
+            },
+        ];
+    } else {
+        const axisLabelNumberFormat = yPlaceholder
+            ? getAxisFormatting({
+                  placeholder: yPlaceholder,
+                  visualizationId,
+              })
+            : undefined;
+
+        config.yAxis = [
+            {
+                labels: {
+                    enabled: yPlaceholder?.settings?.hideLabels !== 'yes',
+                    numberFormat: axisLabelNumberFormat ?? undefined,
+                },
+                maxPadding: 0,
+                order: 'reverse',
             },
         ];
     }
 
-    return config;
+    return merge(getBaseChartConfig(shared), config);
 }

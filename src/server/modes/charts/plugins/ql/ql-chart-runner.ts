@@ -33,6 +33,7 @@ export const runQlChart: RunnerHandler = async (cx: AppContext, props: RunnerHan
     const {req, res, config} = props;
     const {widgetConfig} = req.body;
     const timeouts = cx.config.runnerExecutionTimeouts?.qlChart;
+
     const chartBuilder = await getWizardChartBuilder({
         userLang: res.locals && res.locals.lang,
         userLogin: res.locals && res.locals.login,
@@ -43,6 +44,7 @@ export const runQlChart: RunnerHandler = async (cx: AppContext, props: RunnerHan
             maxWorkers: cx.config.chartsEngineConfig.maxWorkers ?? 1,
         }),
         timeouts,
+        tenantSettings: {defaultColorPaletteId: config.tenantSettings?.defaultColorPaletteId},
     });
 
     return runWorkerChart(cx, {...props, chartBuilder, runnerType: 'Ql'});

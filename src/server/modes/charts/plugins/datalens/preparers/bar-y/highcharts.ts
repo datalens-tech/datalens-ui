@@ -2,7 +2,6 @@ import set from 'lodash/set';
 
 import type {ServerField, WizardVisualizationId} from '../../../../../../../shared';
 import {
-    AxisLabelFormatMode,
     AxisMode,
     ChartkitHandlers,
     MINIMUM_FRACTION_DIGITS,
@@ -19,14 +18,10 @@ import {
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getFieldExportingOptions} from '../../utils/export-helpers';
 import {isLegendEnabled} from '../../utils/misc-helpers';
-import {getAxisType} from '../helpers/axis';
-import {
-    getHighchartsColorAxis,
-    isXAxisReversed,
-    shouldUseGradientLegend,
-} from '../helpers/highcharts';
+import {addAxisFormatter, addAxisFormatting, getAxisType} from '../helpers/axis';
+import {getHighchartsColorAxis, isXAxisReversed} from '../helpers/highcharts';
 import {getYPlaceholders} from '../helpers/layers';
-import {getAxisFormattingByField} from '../line/helpers/axis/getAxisFormattingByField';
+import {shouldUseGradientLegend} from '../helpers/legend';
 import type {PrepareFunctionArgs} from '../types';
 
 import {prepareBarYData} from './prepare-bar-y-data';
@@ -56,6 +51,9 @@ function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
     const chartConfig = getConfigWithActualFieldTypes({config: shared, idToDataType});
     const xAxisMode = getXAxisMode({config: chartConfig}) ?? AxisMode.Discrete;
 
+    const wizardXAxisFormatter =
+        isDateField(x) && isXDiscrete ? ChartkitHandlers.WizardXAxisFormatter : undefined;
+
     const customConfig: any = {
         xAxis: {
             type: getAxisType({
@@ -65,18 +63,12 @@ function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
             }),
             reversed: isXAxisReversed(x, sort, visualizationId as WizardVisualizationId),
             labels: {
-                formatter:
-                    isDateField(x) && isXDiscrete
-                        ? ChartkitHandlers.WizardXAxisFormatter
-                        : undefined,
                 useHTML: isHtmlField(x),
             },
         },
+        yAxis: {},
         axesFormatting: {
-            yAxis:
-                yPlaceholder?.settings?.axisFormatMode === AxisLabelFormatMode.ByField
-                    ? [getAxisFormattingByField(yPlaceholder, visualizationId)]
-                    : [],
+            yAxis: [],
             xAxis: [],
         },
         exporting: {
@@ -119,11 +111,18 @@ function getHighchartsConfig(args: PrepareFunctionArgs & {graphs: any[]}) {
 
         const [layerYPlaceholder] = getYPlaceholders(args);
 
-        if (layerYPlaceholder?.settings?.axisFormatMode === AxisLabelFormatMode.ByField) {
-            customConfig.axesFormatting.xAxis.push(
-                getAxisFormattingByField(layerYPlaceholder, visualizationId),
-            );
-        }
+        addAxisFormatting(customConfig.axesFormatting.yAxis, visualizationId, yPlaceholder);
+        addAxisFormatting(customConfig.axesFormatting.xAxis, visualizationId, layerYPlaceholder);
+        addAxisFormatter({
+            axisConfig: customConfig.xAxis,
+            placeholder: layerYPlaceholder,
+            otherwiseFormatter: wizardXAxisFormatter,
+            chartConfig,
+        });
+        addAxisFormatter({
+            axisConfig: customConfig.yAxis,
+            placeholder: yPlaceholder,
+        });
     }
 
     const shouldUseHtmlForLegend = isHtmlField(colorItem);

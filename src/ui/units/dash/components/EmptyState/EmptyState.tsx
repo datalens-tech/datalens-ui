@@ -43,7 +43,12 @@ export const EmptyState = ({
 
     const viewControl =
         (!isEditMode && (
-            <Button view="action" size="l" loading={isEditModeLoading} onClick={onEditClick}>
+            <Button
+                view="action"
+                size="l"
+                loading={isEditModeLoading}
+                onClick={() => onEditClick?.()}
+            >
                 {i18n('button_edit')}
             </Button>
         )) ||

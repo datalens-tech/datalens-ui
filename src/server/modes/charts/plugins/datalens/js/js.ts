@@ -43,7 +43,7 @@ import prepareMetricData from '../preparers/metric';
 import preparePivotTableData from '../preparers/old-pivot-table/old-pivot-table';
 import {prepareD3Pie, prepareHighchartsPie} from '../preparers/pie';
 import preparePolylineData from '../preparers/polyline';
-import {prepareD3Scatter, prepareHighchartsScatter} from '../preparers/scatter';
+import {prepareGravityChartsScatter, prepareHighchartsScatter} from '../preparers/scatter';
 import {prepareD3Treemap, prepareHighchartsTreemap} from '../preparers/treemap';
 import type {
     LayerChartMeta,
@@ -53,6 +53,7 @@ import type {
     PrepareFunctionResultData,
     ResultDataOrderItem,
 } from '../preparers/types';
+import type {ChartPlugin} from '../types';
 import {mapChartsConfigToServerConfig} from '../utils/config-helpers';
 import {LAT, LONG} from '../utils/constants';
 import {preprocessHierarchies} from '../utils/hierarchy-helpers';
@@ -383,6 +384,8 @@ type PrepareSingleResultArgs = {
     layerChartMeta?: LayerChartMeta;
     usedColors?: (string | undefined)[];
     features: FeatureConfig;
+    plugin?: ChartPlugin;
+    defaultColorPaletteId: string;
 };
 
 // eslint-disable-next-line complexity
@@ -401,6 +404,8 @@ function prepareSingleResult({
     usedColors,
     palettes,
     features,
+    plugin,
+    defaultColorPaletteId,
 }: PrepareSingleResultArgs) {
     const isVisualizationWithLayers = Boolean(
         (visualization as ServerVisualizationLayer).layerSettings,
@@ -493,7 +498,11 @@ function prepareSingleResult({
 
         case WizardVisualizationId.Bar:
         case WizardVisualizationId.Bar100p: {
-            prepare = prepareHighchartsBarY;
+            if (plugin === 'gravity-charts') {
+                prepare = prepareGravityChartsBarY;
+            } else {
+                prepare = prepareHighchartsBarY;
+            }
             rowsLimit = 75000;
             break;
         }
@@ -526,23 +535,33 @@ function prepareSingleResult({
             break;
         }
 
-        case 'scatter':
+        case WizardVisualizationId.Scatter: {
+            if (plugin === 'gravity-charts') {
+                prepare = prepareGravityChartsScatter;
+            } else {
+                prepare = prepareHighchartsScatter;
+            }
             shapes = shared.shapes || [];
             shapesConfig = shared.shapesConfig;
-            prepare = prepareHighchartsScatter;
             rowsLimit = 75000;
             break;
+        }
 
         case 'scatter-d3':
             shapes = shared.shapes || [];
             shapesConfig = shared.shapesConfig;
-            prepare = prepareD3Scatter;
+            prepare = prepareGravityChartsScatter;
             rowsLimit = 75000;
             break;
 
         case 'pie':
         case 'donut':
-            prepare = prepareHighchartsPie;
+            if (plugin === 'gravity-charts') {
+                prepare = prepareD3Pie;
+            } else {
+                prepare = prepareHighchartsPie;
+            }
+
             rowsLimit = 1000;
             break;
 
@@ -558,7 +577,11 @@ function prepareSingleResult({
             break;
 
         case 'treemap':
-            prepare = prepareHighchartsTreemap;
+            if (plugin === 'gravity-charts') {
+                prepare = prepareD3Treemap;
+            } else {
+                prepare = prepareHighchartsTreemap;
+            }
             rowsLimit = 800;
             break;
 
@@ -686,6 +709,7 @@ function prepareSingleResult({
         loadedColorPalettes,
         colorsConfig,
         availablePalettes: palettes,
+        defaultColorPaletteId,
     });
 
     const prepareFunctionArgs: PrepareFunctionArgs = {
@@ -713,6 +737,7 @@ function prepareSingleResult({
         layerChartMeta,
         usedColors,
         features,
+        defaultColorPaletteId,
     };
 
     return (prepare as PrepareFunction)(prepareFunctionArgs);
@@ -726,8 +751,18 @@ export const buildGraphPrivate = (args: {
     data: any;
     palettes: Record<string, Palette>;
     features: FeatureConfig;
+    plugin?: ChartPlugin;
+    defaultColorPaletteId: string;
 }) => {
-    const {shared: chartSharedConfig, ChartEditor, data, palettes, features} = args;
+    const {
+        shared: chartSharedConfig,
+        ChartEditor,
+        data,
+        palettes,
+        features,
+        plugin,
+        defaultColorPaletteId,
+    } = args;
 
     log('LOADED DATA:');
     log(data);
@@ -742,6 +777,7 @@ export const buildGraphPrivate = (args: {
     Object.entries(loadedData).forEach(([key, value]: [string, V1ServerResponse]) => {
         const query = (value.blocks || [])
             .map((block: {query: string}) => block.query)
+            .filter(Boolean)
             .join('\n\n');
 
         if (query) {
@@ -912,6 +948,8 @@ export const buildGraphPrivate = (args: {
                 usedColors,
                 palettes,
                 features,
+                plugin,
+                defaultColorPaletteId,
             });
 
             if (localResult && localResult[0] && localResult[0].bounds) {
@@ -975,6 +1013,8 @@ export const buildGraphPrivate = (args: {
             loadedColorPalettes,
             palettes,
             features,
+            plugin,
+            defaultColorPaletteId,
         });
 
         if (result?.[0]?.bounds) {
@@ -986,6 +1026,20 @@ export const buildGraphPrivate = (args: {
         ChartEditor.updateHighchartsConfig({
             ...(Boolean(bounds) && {state: {bounds}}),
         });
+    }
+
+    const isTableChart = [
+        WizardVisualizationId.FlatTable,
+        WizardVisualizationId.PivotTable,
+    ].includes(shared.visualization.id as WizardVisualizationId);
+
+    if (isTableChart) {
+        const page = ChartEditor.getCurrentPage();
+        const limit = shared.extraSettings?.limit;
+        const shouldDisablePaginator = page === 1 && limit && limit > (result.rows?.length ?? 0);
+        if (shouldDisablePaginator) {
+            ChartEditor.updateConfig({paginator: {enabled: false}});
+        }
     }
 
     log('RESULT:');

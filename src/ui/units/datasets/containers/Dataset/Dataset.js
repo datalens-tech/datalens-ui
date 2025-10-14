@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {dateTimeUtc} from '@gravity-ui/date-utils';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import omit from 'lodash/omit';
@@ -12,7 +13,10 @@ import {ErrorCode, ErrorContentTypes} from 'shared';
 import {SPLIT_PANE_RESIZER_CLASSNAME, URL_QUERY} from 'ui/constants/common';
 import {HOTKEYS_SCOPES} from 'ui/constants/misc';
 import {withHotkeysContext} from 'ui/hoc/withHotkeysContext';
-import {openDialogErrorWithTabs} from 'ui/store/actions/dialog';
+import {
+    openDialogErrorWithTabs,
+    openDialogSaveDraftChartAsActualConfirm,
+} from 'ui/store/actions/dialog';
 import {initEditHistoryUnit} from 'ui/store/actions/editHistory';
 import {
     addAvatar,
@@ -26,6 +30,7 @@ import {
     openPreview,
     refreshSources,
     saveDataset,
+    setActualDataset,
     setCurrentTab,
     setEditHistoryState,
     togglePreview,
@@ -48,6 +53,8 @@ import DatasetPanel from '../../components/DatasetPanel/DatasetPanel';
 import DialogCreateDataset from '../../components/DialogCreateDataset/DialogCreateDataset';
 import {
     DATASETS_EDIT_HISTORY_UNIT_ID,
+    DATASET_DATE_AVAILABLE_FORMAT,
+    MIN_AVAILABLE_DATASET_REV_DATE,
     TAB_DATASET,
     TAB_SOURCES,
     VIEW_PREVIEW,
@@ -60,16 +67,19 @@ import DatasetUtils from '../../helpers/utils';
 import {
     UISelector,
     currentTabSelector,
+    datasetCurrentRevIdSelector,
     datasetErrorSelector,
     datasetKeySelector,
     datasetPermissionsSelector,
     datasetPreviewErrorSelector,
     datasetPreviewSelector,
+    datasetPublishedIdSelector,
     datasetSavingErrorSelector,
     datasetValidationErrorSelector,
     isDatasetRevisionMismatchSelector,
     isFavoriteDatasetSelector,
     isLoadingDatasetSelector,
+    isRefetchingDatasetSelector,
     previewEnabledSelector,
     sourcePrototypesSelector,
     sourceTemplateSelector,
@@ -84,6 +94,7 @@ import './Dataset.scss';
 const b = block('dataset');
 const i18n = I18n.keyset('dataset.dataset-editor.modify');
 const i18nError = I18n.keyset('component.view-error.view');
+const i18nActionPanel = I18n.keyset('component.action-panel.view');
 const RIGHT_PREVIEW_PANEL_MIN_SIZE = 500;
 const BOTTOM_PREVIEW_PANEL_MIN_SIZE = 48;
 const BOTTOM_PREVIEW_PANEL_DEFAULT_SIZE = 200;
@@ -122,14 +133,17 @@ class Dataset extends React.Component {
             initialFetchDataset,
             initializeDataset,
             fetchFieldTypes,
+            location,
         } = this.props;
+        const currentSearchParams = new URLSearchParams(location.search);
+        const revId = currentSearchParams.get(URL_QUERY.REV_ID) ?? undefined;
 
         fetchFieldTypes();
 
         if (isCreationProcess) {
             initializeDataset({connectionId});
         } else if (datasetId) {
-            initialFetchDataset({datasetId});
+            initialFetchDataset({datasetId, rev_id: revId});
         }
 
         this.props.hotkeysContext?.enableScope(HOTKEYS_SCOPES.DATASETS);
@@ -140,6 +154,7 @@ class Dataset extends React.Component {
             datasetId: prevDatasetId,
             datasetPreview: {view: prevView},
             ui: {isSourcesLoading: prevIsSourcesLoading},
+            location: prevLocation,
         } = prevProps;
         const {
             currentTab,
@@ -148,11 +163,26 @@ class Dataset extends React.Component {
             datasetPreview: {view: curView},
             ui: {isSourcesLoading},
             savingError,
+            location,
+            initialFetchDataset,
+            publishedId,
+            currentRevId,
         } = this.props;
         const {isAuto} = this.state;
 
+        const currentSearchParams = new URLSearchParams(location.search);
+        const prevSearchParams = new URLSearchParams(prevLocation.search);
+        const revId = currentSearchParams.get(URL_QUERY.REV_ID) ?? undefined;
+        const prevRevId = prevSearchParams.get(URL_QUERY.REV_ID) ?? undefined;
+        const hasRevisionChanged = revId !== prevRevId;
+        const isSavingUpdate = publishedId === currentRevId && !revId;
+
         if (datasetId && prevDatasetId !== datasetId) {
-            this.props.initialFetchDataset({datasetId});
+            initialFetchDataset({datasetId, rev_id: revId});
+        }
+
+        if (hasRevisionChanged && !isSavingUpdate) {
+            initialFetchDataset({datasetId, rev_id: revId, isInitialFetch: false});
         }
 
         if (prevView !== curView) {
@@ -322,9 +352,15 @@ class Dataset extends React.Component {
     };
 
     getEntry() {
-        const {isCreationProcess, datasetId, isFavorite, datasetKey, datasetPermissions} =
-            this.props;
-
+        const {
+            isCreationProcess,
+            datasetId,
+            isFavorite,
+            datasetKey,
+            datasetPermissions,
+            publishedId,
+            currentRevId,
+        } = this.props;
         const workbookId = this.getWorkbookId();
 
         if (isCreationProcess) {
@@ -337,6 +373,8 @@ class Dataset extends React.Component {
         return {
             workbookId,
             isFavorite,
+            publishedId,
+            revId: currentRevId,
             entryId: datasetId,
             key: datasetKey,
             scope: 'dataset',
@@ -428,6 +466,15 @@ class Dataset extends React.Component {
         });
     };
 
+    setActualVersionHandler = () => {
+        const {datasetId, history} = this.props;
+        this.props.openDialogSaveDraftInstanceAsActualConfirm({
+            onApply: () => {
+                this.props.setActualDataset({history, datasetId});
+            },
+        });
+    };
+
     renderErrorContent() {
         const {sdk, datasetError} = this.props;
         const {status, requestId, traceId, message, code} =
@@ -504,9 +551,32 @@ class Dataset extends React.Component {
     }
 
     renderControls() {
+        const DATASET_DISABLED_DATE = dateTimeUtc({input: MIN_AVAILABLE_DATASET_REV_DATE});
+        const formattedMinDatasetDate = DATASET_DISABLED_DATE?.format(
+            DATASET_DATE_AVAILABLE_FORMAT,
+        );
+        const description = `${i18nActionPanel('label_history-changes-date-limit-dataset')} ${formattedMinDatasetDate ?? ''}`;
+
+        const getRevisionRowExtendedProps = (item) => {
+            const updatedTime = dateTimeUtc({input: item.updatedAt});
+            const disabled =
+                (updatedTime?.isValid() && updatedTime?.isBefore(DATASET_DISABLED_DATE)) ?? false;
+            const disabledText = disabled ? i18n('label_status-tooltip-disable') : '';
+            return {
+                disabled,
+                disabledText,
+            };
+        };
+
         return (
             <React.Fragment>
-                <ActionPanel entry={this.getEntry()} rightItems={this.getRightItems()} />
+                <ActionPanel
+                    entry={this.getEntry()}
+                    rightItems={this.getRightItems()}
+                    setActualVersion={this.setActualVersionHandler}
+                    expandablePanelDescription={description}
+                    getRevisionRowExtendedProps={getRevisionRowExtendedProps}
+                />
                 <DatasetPanel
                     isCreationProcess={this.props.isCreationProcess}
                     tab={this.props.currentTab}
@@ -521,13 +591,14 @@ class Dataset extends React.Component {
     }
 
     renderContent() {
+        const {isRefetchingDataset} = this.props;
         const {isVisibleDialogCreateDataset} = this.state;
         const workbookId = this.getWorkbookId();
 
         return (
             <div className={b()}>
                 {this.renderControls()}
-                {this.renderPanels()}
+                {isRefetchingDataset ? this.renderLoader() : this.renderPanels()}
                 <DialogCreateDataset
                     creationScope={workbookId ? 'workbook' : 'navigation'}
                     visible={isVisibleDialogCreateDataset}
@@ -625,9 +696,15 @@ Dataset.propTypes = {
     sourcePrototypes: PropTypes.array,
     datasetPreview: PropTypes.object.isRequired,
     history: PropTypes.object.isRequired,
+    location: PropTypes.object.isRequired,
     datasetPermissions: PropTypes.object,
     workbookId: PropTypes.string,
     workbookIdFromPath: PropTypes.string,
+    isRefetchingDataset: PropTypes.bool.isRequired,
+    publishedId: PropTypes.string,
+    currentRevId: PropTypes.string,
+    openDialogSaveDraftInstanceAsActualConfirm: PropTypes.func,
+    setActualDataset: PropTypes.func,
 };
 
 Dataset.defaultProps = {
@@ -643,6 +720,9 @@ const mapStateToProps = createStructuredSelector({
     validationError: datasetValidationErrorSelector,
     datasetPreview: datasetPreviewSelector,
     isLoading: isLoadingDatasetSelector,
+    isRefetchingDataset: isRefetchingDatasetSelector,
+    publishedId: datasetPublishedIdSelector,
+    currentRevId: datasetCurrentRevIdSelector,
     isFavorite: isFavoriteDatasetSelector,
     isDatasetRevisionMismatch: isDatasetRevisionMismatchSelector,
     previewEnabled: previewEnabledSelector,
@@ -666,10 +746,12 @@ const mapDispatchToProps = {
     refreshSources,
     addSource,
     addAvatar,
+    openDialogSaveDraftInstanceAsActualConfirm: openDialogSaveDraftChartAsActualConfirm,
     openDialogErrorWithTabs,
     initEditHistoryUnit,
     setEditHistoryState,
     setCurrentTab,
+    setActualDataset,
 };
 
 export default compose(connect(mapStateToProps, mapDispatchToProps))(withHotkeysContext(Dataset));

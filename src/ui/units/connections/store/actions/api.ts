@@ -57,12 +57,17 @@ const fetchEntry = async (
 const fetchConnectionData = async (
     connectionId: string,
     workbookId: string | null,
+    rev_id?: string,
 ): Promise<{
     connectionData: ConnectionData;
     error?: DataLensApiError;
 }> => {
     try {
-        const connectionData = await getSdk().sdk.bi.getConnection({connectionId, workbookId});
+        const connectionData = await getSdk().sdk.bi.getConnection({
+            connectionId,
+            workbookId,
+            rev_id,
+        });
         return {connectionData};
     } catch (error) {
         logger.logError('Redux actions (conn): fetchConnectionData failed', error);
@@ -86,12 +91,17 @@ const fetchConnectors = async (): Promise<
 const fetchConnectorSchema = async ({
     type,
     mode,
+    connectionId,
 }: GetConnectorSchemaArgs): Promise<{
     schema?: FormSchema;
     error?: DataLensApiError;
 }> => {
     try {
-        const {form: schema} = await getSdk().sdk.bi.getConnectorSchema({type, mode});
+        const {form: schema} = await getSdk().sdk.bi.getConnectorSchema({
+            type,
+            mode,
+            connectionId,
+        });
         return {schema};
     } catch (error) {
         logger.logError('Redux actions (conn): fetchConnectorForm failed', error);

@@ -1,17 +1,20 @@
 import React from 'react';
 
-import type {SegmentedRadioGroupOptionProps} from '@gravity-ui/uikit';
+import type {SegmentedRadioGroupOptionProps, SelectOption} from '@gravity-ui/uikit';
 import {Dialog, HelpMark, Icon, TextInput} from '@gravity-ui/uikit';
 import {Popover as LegacyPopover} from '@gravity-ui/uikit/legacy';
 import type {PopoverInstanceProps} from '@gravity-ui/uikit/legacy';
 import block from 'bem-cn-lite';
 import DialogManager from 'components/DialogManager/DialogManager';
+import {NumberFormatSettings} from 'components/NumberFormatSettings/NumberFormatSettings';
 import {i18n} from 'i18n';
 import type {
     AxisNullsMode,
+    CommonNumberFormattingOptions,
     Field,
     Placeholder,
     PlaceholderSettings,
+    QLChartType,
     ServerChartsConfig,
     ServerPlaceholderSettings,
     ServerSort,
@@ -25,15 +28,19 @@ import {
     getAxisNullsSettings,
     hasSortThanAffectAxisMode,
     isContinuousAxisModeDisabled,
+    isD3Visualization,
+    isDateField,
     isFieldHierarchy,
     isNumberField,
     isPercentVisualization,
+    isYAGRVisualization,
 } from 'shared';
 import {AREA_OR_AREA100P} from 'ui/constants/misc';
 import {withHiddenUnmount} from 'ui/hoc';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
-import {SETTINGS} from '../../../constants';
+import {AVAILABLE_DATE_FORMATS, SETTINGS} from '../../../constants';
+import {DialogFieldSelect} from '../DialogField/components/DialogFieldSelect/DialogFieldSelect';
 import {DialogRadioButtons} from '../components/DialogRadioButtons/DialogRadioButtons';
 
 import {DialogPlaceholderRow} from './components/DialogPlaceholderRow/DialogPlaceholderRow';
@@ -79,6 +86,7 @@ interface Props {
     visible: boolean;
     onCancel: () => void;
     visualizationId: WizardVisualizationId;
+    qlChartType: QLChartType | null;
     segments: Field[];
     onApply: (placeholderSettings: PlaceholderSettings) => void;
     sort: Field[];
@@ -121,12 +129,12 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
 
         const isAxisWithPercent = isPercentVisualization(props.visualizationId);
 
-        const isFirstFieldIsNumeric = isNumberField(placeholderItems[0]);
+        const isNumeric = isNumberField(placeholderItems[0]);
+        const isDate = isDateField(placeholderItems[0]);
 
-        if (
-            (isAxisWithPercent || !isFirstFieldIsNumeric) &&
-            typeof settings.axisFormatMode !== 'undefined'
-        ) {
+        const isFormatless = !isNumeric && !isDate;
+
+        if ((isAxisWithPercent || isFormatless) && typeof settings.axisFormatMode !== 'undefined') {
             settings.axisFormatMode = 'auto';
         }
         const axisModeMap = settings.axisModeMap;
@@ -170,7 +178,9 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                             caption={i18n('wizard', item.title)}
                         />
                     )}
-                    <Dialog.Body>{this.renderModalBody()}</Dialog.Body>
+                    <div className={b('body-container')}>
+                        <Dialog.Body>{this.renderModalBody()}</Dialog.Body>
+                    </div>
                     <Dialog.Footer
                         preset="default"
                         onClickButtonCancel={() => {
@@ -332,10 +342,15 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
     }
 
     renderAxisTypeSettings() {
-        const {visualizationId} = this.props;
+        const {visualizationId, qlChartType} = this.props;
         const {type} = this.state.settings;
 
-        if (typeof type === 'undefined' || !isAxisTypeEnabled(visualizationId)) {
+        const isYagr = qlChartType && isYAGRVisualization(qlChartType, visualizationId);
+
+        const isAixsTypeNotExist =
+            typeof type === 'undefined' || !isAxisTypeEnabled(visualizationId) || isYagr;
+
+        if (isAixsTypeNotExist) {
             return null;
         }
 
@@ -359,7 +374,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
 
     renderAxisFormatSettings() {
         const {axisFormatMode} = this.state.settings;
-        const {visualizationId, item} = this.props;
+        const {visualizationId, item, qlChartType} = this.props;
 
         if (typeof axisFormatMode === 'undefined' || !isAxisFormatEnabled(visualizationId)) {
             return null;
@@ -368,39 +383,108 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
         const isAxisWithPercent = isPercentVisualization(visualizationId);
         const placeholderItems = item.items || [];
 
-        const isFirstFieldIsNumeric = isNumberField(placeholderItems[0]);
+        const isNumeric = isNumberField(placeholderItems[0]);
+        const isDate = isDateField(placeholderItems[0]);
+
+        const isFormatless = !isNumeric && !isDate;
+
         const section = `section_${item.id}`;
 
-        const radioOptions = AXIS_FORMAT_MODE_RADIO_BUTTON_OPTIONS.map((option) => {
-            if (option.value === SETTINGS.AXIS_FORMAT_MODE.BY_FIELD) {
-                return {
-                    ...option,
-                    content: i18n(
-                        'wizard',
-                        visualizationId === 'combined-chart'
-                            ? 'label_combined-chart-axis-format-by-field'
-                            : 'label_axis-format-by-field',
-                        {axisName: i18n('wizard', section)},
-                    ),
-                    disabled: isAxisWithPercent || !isFirstFieldIsNumeric,
-                };
+        const isYagr = qlChartType && isYAGRVisualization(qlChartType, visualizationId);
+        const isD3 = isD3Visualization(visualizationId);
+
+        const radioOptions = AXIS_FORMAT_MODE_RADIO_BUTTON_OPTIONS.reduce<
+            SegmentedRadioGroupOptionProps[]
+        >((acc, option) => {
+            switch (option.value) {
+                case SETTINGS.AXIS_FORMAT_MODE.MANUAL:
+                    if (!isYagr && !isD3) {
+                        acc.push({
+                            ...option,
+                            disabled: isAxisWithPercent || isFormatless,
+                        });
+                    }
+                    break;
+                case SETTINGS.AXIS_FORMAT_MODE.BY_FIELD:
+                    acc.push({
+                        ...option,
+                        content: i18n(
+                            'wizard',
+                            visualizationId === 'combined-chart'
+                                ? 'label_combined-chart-axis-format-by-field'
+                                : 'label_axis-format-by-field',
+                            {axisName: i18n('wizard', section)},
+                        ),
+                        disabled: isAxisWithPercent || !isNumeric,
+                    });
+                    break;
+                default:
+                    acc.push(option);
             }
-            return option;
-        });
+            return acc;
+        }, []);
 
         return (
-            <DialogPlaceholderRow
-                title={i18n('wizard', 'label_axis-format-settings')}
-                setting={
-                    <DialogRadioButtons
-                        items={radioOptions}
-                        value={axisFormatMode}
-                        onUpdate={this.handleAxisFormatModeRadioButtonUpdate}
-                        qa={DialogPlaceholderQa.AxisFormatMode}
-                        disabled={this.isAxisHidden()}
+            <>
+                <DialogPlaceholderRow
+                    title={i18n('wizard', 'label_axis-format-settings')}
+                    setting={
+                        <DialogRadioButtons
+                            items={radioOptions}
+                            value={axisFormatMode}
+                            onUpdate={this.handleAxisFormatModeRadioButtonUpdate}
+                            qa={DialogPlaceholderQa.AxisFormatMode}
+                            disabled={this.isAxisHidden()}
+                        />
+                    }
+                />
+                {axisFormatMode === SETTINGS.AXIS_FORMAT_MODE.MANUAL && (
+                    <DialogPlaceholderRow
+                        title={''}
+                        rowCustomMarginBottom="0"
+                        setting={this.renderAxisFormattingSettings()}
                     />
-                }
-            />
+                )}
+            </>
+        );
+    }
+
+    renderAxisFormattingSettings() {
+        const {item} = this.props;
+        const {axisLabelFormating, axisLabelDateFormat} = this.state.settings;
+        const placeholderItems = item.items || [];
+        const field = placeholderItems[0];
+        const isNumber = isNumberField(field);
+        const isDate = isDateField(field);
+
+        const items: SelectOption[] = AVAILABLE_DATE_FORMATS.map((item) => ({
+            value: item,
+            content: item,
+        }));
+
+        return (
+            <>
+                {isNumber && (
+                    <NumberFormatSettings
+                        onChange={this.handleAxisFormattingUpdate}
+                        dataType={field.data_type}
+                        formatting={axisLabelFormating}
+                        isAxisFormatting
+                    />
+                )}
+                {isDate && (
+                    <DialogPlaceholderRow
+                        title={i18n('wizard', 'label_date-format')}
+                        setting={
+                            <DialogFieldSelect
+                                options={items}
+                                value={axisLabelDateFormat}
+                                onUpdate={this.handleAxisDateFormatUpdate}
+                            />
+                        }
+                    />
+                )}
+            </>
         );
     }
 
@@ -790,6 +874,24 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                 gridStepValue: undefined,
             },
         });
+    };
+
+    handleAxisFormattingUpdate = (updatedFormatting: CommonNumberFormattingOptions) => {
+        this.setState((state) => ({
+            settings: {
+                ...state.settings,
+                axisLabelFormating: updatedFormatting,
+            },
+        }));
+    };
+
+    handleAxisDateFormatUpdate = (updatedFormat: string) => {
+        this.setState((state) => ({
+            settings: {
+                ...state.settings,
+                axisLabelDateFormat: updatedFormat,
+            },
+        }));
     };
 
     handleAxisFormatModeRadioButtonUpdate = (axisFormatMode: string) => {

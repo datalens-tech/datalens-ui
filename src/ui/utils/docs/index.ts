@@ -6,7 +6,7 @@ const regexpToMatchRelativePath = /href=(\.[^a-zA-Z0-9]+|\/|)(.+)/;
 const regexpToMatchRelativeHref = /href="((?:(?!http|"|#).)*)"/g;
 const PATH_IN_REGEXP_INDEX = 2;
 
-function formUrl(endpoint: string, path: string) {
+export function formUrl(endpoint: string, path: string) {
     const normalizedEndpoint = endpoint.slice(-1) === '/' ? endpoint.slice(0, -1) : endpoint;
     const normalizedPath = path[0] === '/' ? path : '/' + path;
     return normalizedEndpoint + normalizedPath;

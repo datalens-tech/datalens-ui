@@ -1,6 +1,6 @@
-export type ChartKitHolidays = {
-    holiday: Record<string, Record<string, string>>;
-    weekend: Record<string, Record<string, string>>;
-};
+import type {ChartKitHolidays} from '../../../../../store/toolkit/chartkit/types';
 
-export type GetChartkitHolidaysFn = () => ChartKitHolidays;
+export type GetChartkitHolidaysFn = () =>
+    | ChartKitHolidays
+    | Promise<ChartKitHolidays | undefined>
+    | undefined;

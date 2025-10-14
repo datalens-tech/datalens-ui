@@ -34,6 +34,7 @@ export const navigationActions = {
                         excludeLocked: true,
                     });
             }
+
             return {
                 breadCrumbs: 'breadCrumbs' in data ? data.breadCrumbs : [],
                 hasNextPage: data.hasNextPage,

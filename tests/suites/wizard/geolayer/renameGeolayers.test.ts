@@ -26,6 +26,7 @@ datalensTest.describe('Wizard - Geo Layers', () => {
             updatedFirstLayerName,
         );
 
+        await wizardPage.sectionVisualization.toggleLayerList();
         await wizardPage.sectionVisualization.waitForLayers([
             'geolayer-select-layer-1',
             'geolayer-select-layer-0',
@@ -36,6 +37,7 @@ datalensTest.describe('Wizard - Geo Layers', () => {
             updatedSecondLayerName,
         );
 
+        await wizardPage.sectionVisualization.toggleLayerList();
         await wizardPage.sectionVisualization.expectLayersSelectItemsTexts([
             updatedFirstLayerName,
             updatedSecondLayerName,

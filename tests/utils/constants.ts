@@ -49,7 +49,8 @@ export enum RobotChartsWizardUrls {
     WizardWithComments = '/wizard/khbq6k08b8d0a',
     WizardWithNavigator = '/wizard/rth7afdo4zfeh',
     WizardWithOverLimitsChart = '/wizard/mvhpugtqlktcc',
-    WizardWithForbiddenExport = '/wizard/ptvmml92bmrse',
+    WizardWithForbiddenOnConnectionExport = '/wizard/ptvmml92bmrse',
+    WizardWithForbiddenOnDatasetExport = '/wizard/44w8127jr8gip',
 
     WizardGeopoints = '/wizard/q4zz72oendrgk',
     WizardLabels = '/wizard/ikblc7qjn4reb',
@@ -94,6 +95,8 @@ export enum RobotChartsSQLEditorUrls {
     QLMonitoringChart = '/ql/juti3rn4g6s88',
     QLWithWizardId = '/ql/ikblc7qjn4reb',
     QLWithEditorId = '/ql/j2ac4oofeuzm9',
+    QLWithForbiddenExport = '/ql/yyx1xdf1he1qj',
+    QLColumnChart = '/ql/subz5vkquklud',
 }
 
 export enum RobotChartsWizardId {
@@ -142,6 +145,14 @@ export enum RobotChartsPreviewUrls {
     PreviewSelectWithReset = '/preview/j292h1eiuv7i9',
     PreviewTableAndInputWithReset = '/preview/fx6iv2zoy27i5',
     PreviewTableAndSelectWithReset = '/preview/j2ac4oofeuzm9',
+
+    PreviewWizardWithLocalParameterChart = '/preview/py2j397j7zceh',
+
+    PreviewWizardWithForbiddenOnConnectionExport = '/preview/ptvmml92bmrse',
+    PreviewWizardWithForbiddenOnDatasetExport = '/preview/44w8127jr8gip',
+
+    PreviewQLWithForbiddenExport = '/preview/yyx1xdf1he1qj',
+    PreviewQLColumnChart = '/preview/subz5vkquklud',
 }
 
 export const enum RobotChartsDatasetUrls {
@@ -159,16 +170,16 @@ export const mapDatasetToDatasetPath = {
 
 export const RobotChartsIds = {
     CHARTS_WITH_TOOLTIPS: [
-        'c6szja3hbg2e7', // columnar
-        'hbx4u49rqnv8c', // linear
-        'pj5c63epjm6wk', // eria
-        'gaw4zfnw1ttub', // normalized eria
-        'd7t10mjlnkks8', // normalized columnar
-        'gaw51gkxs0uib', // linear
-        'oi4dd24ocn4ej', // normalized linear
+        'c6szja3hbg2e7', // column (bar-x)
+        'hbx4u49rqnv8c', // line
+        'pj5c63epjm6wk', // area
+        'gaw4zfnw1ttub', // normalized area
+        'd7t10mjlnkks8', // normalized column (bar-x)
+        'gaw51gkxs0uib', // linear (bar-y)
+        'oi4dd24ocn4ej', // normalized linear (bar-y)
         '5zlux5o14uqg0', // scatter
-        'e8u4azq46mr69', // share
-        'wqcmwqftjroqr', // trimap
+        'e8u4azq46mr69', // pie
+        'wqcmwqftjroqr', // treemap
         // 'nh3e6sgyyqu4i', // map (commented out, as it is not clear how to samulate the hover to the polygon in canvas)
     ],
     CHARTS_WITH_CUSTOM_TOOLTIPS: {

@@ -161,6 +161,7 @@ export default (state = initialState, action: ConnectionsReduxAction): Connectio
                 validationErrors: [],
                 file: initialState.file,
                 gsheet: initialState.gsheet,
+                yadocs: initialState.yadocs,
                 schema: undefined,
             };
         }

@@ -12,6 +12,7 @@ export const enum DashKitOverlayMenuQa {
     CopyButton = 'dashkit-overlay-control-dl-copy-button',
     PinButton = 'dashkit-overlay-control-dl-pin-button',
     UnpinButton = 'dashkit-overlay-control-dl-unpin-button',
+    SettingsButton = 'dashkit-overlay-control-settings',
 }
 
 export const enum DashboardActionPanelControlsQa {
@@ -51,12 +52,6 @@ export enum TableOfContentQa {
     TableOfContent = 'table-of-content',
     CloseBtn = 'table-of-content-close',
     MobileTableOfContent = 'mobile-table-of-content',
-}
-
-export enum DashMetaQa {
-    Dialog = 'dialog-dash-meta',
-    SaveButton = 'dash-meta-save-button',
-    EditButton = 'dash-meta-edit-button',
 }
 
 export enum DashCommonQa {

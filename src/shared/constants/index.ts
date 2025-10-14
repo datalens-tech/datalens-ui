@@ -30,4 +30,3 @@ export * from './markup';
 export * from './print';
 export * from './charts';
 export * from './widgets';
-export * from './public-gallery';

@@ -2,7 +2,6 @@ import type {Field, TableBarsSettings} from 'shared';
 import {
     BarsAlignValues,
     BarsColorType,
-    DEFAULT_PALETTE,
     PlaceholderId,
     WizardVisualizationId,
     isMeasureType,
@@ -23,9 +22,9 @@ export const getDefaultBarsSettings = (): TableBarsSettings => ({
     colorSettings: {
         colorType: BarsColorType.TwoColor,
         settings: {
-            palette: DEFAULT_PALETTE.id,
-            positiveColor: '#8AD554',
-            negativeColor: '#FF3D64',
+            palette: undefined,
+            positiveColorIndex: 2,
+            negativeColorIndex: 1,
         },
     },
     showLabels: true,

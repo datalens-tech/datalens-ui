@@ -10,7 +10,7 @@ import type {ChartKitBaseOnLoadProps} from '../../../../libs/DatalensChartkit/co
 import type {ChartsData} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
 import type {Widget} from '../../../../libs/DatalensChartkit/types';
 import type {AdjustWidgetLayoutProps} from '../../utils';
-import type {DashkitOldMetaDataItemBase} from '../types';
+import type {DashkitMetaDataItemBase} from '../types';
 
 export type CurrentTab = {
     id: string;
@@ -36,12 +36,11 @@ export type WidgetPluginDataWithTabs = ConfigItemWithTabs['data'] & {tabs: Array
 
 export type WidgetPluginProps = Omit<PluginWidgetProps, 'data'> & {
     forwardedRef: React.RefObject<ChartKit | ChartKitRef>;
-    isNewRelations?: boolean;
     data: WidgetPluginDataWithTabs | WidgetPluginData;
     getMarkdown?: (props: {text: string}) => Promise<{result: string; meta?: object}>;
     debouncedAdjustWidgetLayout: DebouncedFunc<(props: AdjustWidgetLayoutProps) => void>;
 };
 
 export type WidgetLoadedData = ChartKitBaseOnLoadProps<ChartsData & Widget> & {
-    data?: {loadedData?: DashkitOldMetaDataItemBase & ChartsData & Widget};
+    data?: {loadedData?: DashkitMetaDataItemBase & ChartsData & Widget};
 };

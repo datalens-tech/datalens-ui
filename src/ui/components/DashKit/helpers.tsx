@@ -110,7 +110,6 @@ interface DashkitWrapperProps extends DashKitProps {
     noOverlay?: boolean;
     // Extended Controls props
     skipReload?: boolean;
-    isNewRelations?: boolean;
     hideErrorDetails?: boolean;
     selectorsGroupTitlePlaceholder?: string;
     // Extended headers context for widgets
@@ -126,13 +125,7 @@ export const DashkitWrapper: React.FC<
         )
 > = React.forwardRef(
     (
-        {
-            skipReload = false,
-            isNewRelations = false,
-            dataProviderContextGetter,
-            setWidgetCurrentTab,
-            ...props
-        },
+        {skipReload = false, dataProviderContextGetter, setWidgetCurrentTab, ...props},
         ref: React.ForwardedRef<DashKit>,
     ) => {
         const contextValue = React.useMemo(() => {
@@ -140,7 +133,6 @@ export const DashkitWrapper: React.FC<
                 config: props.config,
                 defaultGlobalParams: props.defaultGlobalParams,
                 skipReload,
-                isNewRelations,
                 setWidgetCurrentTab,
                 dataProviderContextGetter,
                 hideErrorDetails: props.hideErrorDetails,
@@ -150,7 +142,6 @@ export const DashkitWrapper: React.FC<
             props.config,
             props.defaultGlobalParams,
             skipReload,
-            isNewRelations,
             setWidgetCurrentTab,
             dataProviderContextGetter,
             props.hideErrorDetails,

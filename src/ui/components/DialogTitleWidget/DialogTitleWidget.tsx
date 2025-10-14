@@ -85,7 +85,7 @@ export interface DialogTitleWidgetFeatureProps {
     enableShowInTOC?: boolean;
     enableCustomFontSize?: boolean;
     enableCustomBgColorSelector?: boolean;
-    enableTextColorSelector?: boolean;
+    enableCustomTextColorSelector?: boolean;
 }
 interface DialogTitleWidgetProps extends DialogTitleWidgetFeatureProps {
     openedItemId: string | null;
@@ -121,7 +121,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         enableAutoheight = true,
         enableShowInTOC = true,
         enableCustomBgColorSelector,
-        enableTextColorSelector = false,
+        enableCustomTextColorSelector = false,
         theme,
         closeDialog,
         setItemData,
@@ -396,18 +396,17 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
                         enableCustomBgColorSelector={enableCustomBgColorSelector}
                     />
                 </FormRow>
-                {enableTextColorSelector && (
-                    <FormRow
-                        className={b('row')}
-                        label={i18n('dash.title-dialog.edit', 'label_text-color')}
-                    >
-                        <PaletteText
-                            color={textColor}
-                            theme={theme}
-                            onSelect={handleTextColorChanged}
-                        />
-                    </FormRow>
-                )}
+                <FormRow
+                    className={b('row')}
+                    label={i18n('dash.title-dialog.edit', 'label_text-color')}
+                >
+                    <PaletteText
+                        color={textColor}
+                        theme={theme}
+                        onSelect={handleTextColorChanged}
+                        enableCustomColorSelector={enableCustomTextColorSelector}
+                    />
+                </FormRow>
                 <FormRow className={b('row')} label={i18n('dash.widget-dialog.edit', 'field_hint')}>
                     <div className={b('settings-container')}>
                         <Checkbox

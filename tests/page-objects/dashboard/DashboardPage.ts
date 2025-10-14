@@ -1,7 +1,6 @@
 import {Page, Response, Route, expect} from '@playwright/test';
 
 import {
-    ConnectionsDialogQA,
     ControlQA,
     DashCommonQa,
     DashEntryQa,
@@ -34,6 +33,7 @@ import {COMMON_SELECTORS} from '../../utils/constants';
 import {BasePage, BasePageProps} from '../BasePage';
 import Revisions from '../common/Revisions';
 
+import {Locator} from 'playwright-core';
 import {
     DashboardDialogSettingsQa,
     DialogDashTitleQA,
@@ -51,22 +51,21 @@ import {
     DashboardAddWidgetQa,
     DashkitQa,
 } from '../../../src/shared/constants/qa/dash';
+import {WorkbookPageQa} from '../../../src/shared/constants/qa/workbooks';
+import {WorkbookIds, WorkbooksUrls} from '../../constants/constants';
+import {getUrlStateParam} from '../../suites/dash/helpers';
+import {COMMON_CHARTKIT_SELECTORS} from '../constants/chartkit';
+import {CommonUrls} from '../constants/common-urls';
+import {DialogCreateEntry} from '../workbook/DialogCreateEntry';
+import {EditEntityButton} from '../workbook/EditEntityButton';
+import {Workbook} from '../workbook/Workbook';
+import {ChartkitControl} from './ChartkitControl';
+import ControlActions from './ControlActions';
 import {DashTabs} from './DashTabs';
 import DashboardSettings from './DashboardSettings';
 import Description from './Description';
-import TableOfContent from './TableOfContent';
-import {Locator} from 'playwright-core';
-import {Workbook} from '../workbook/Workbook';
-import {WorkbookPageQa} from '../../../src/shared/constants/qa/workbooks';
-import {ChartkitControl} from './ChartkitControl';
-import {DialogCreateEntry} from '../workbook/DialogCreateEntry';
-import {WorkbookIds, WorkbooksUrls} from '../../constants/constants';
-import {COMMON_CHARTKIT_SELECTORS} from '../constants/chartkit';
-import {CommonUrls} from '../constants/common-urls';
-import {EditEntityButton} from '../workbook/EditEntityButton';
-import ControlActions from './ControlActions';
-import {getUrlStateParam} from '../../suites/dash/helpers';
 import {FixedHeader} from './FixedHeader';
+import TableOfContent from './TableOfContent';
 
 export const BUTTON_CHECK_TIMEOUT = 3000;
 export const RENDER_TIMEOUT = 4000;
@@ -181,18 +180,7 @@ class DashboardPage extends BasePage {
         waitForLoader?: boolean;
         action?: () => Promise<void>;
     }) {
-        const isEnabledDashFloatControls = await isEnabledFeature(
-            this.page,
-            Feature.DashFloatControls,
-        );
-
-        const loader = this.page.locator(
-            slct(
-                isEnabledDashFloatControls
-                    ? ControlQA.groupCommonLockedBlock
-                    : ControlQA.groupCommonLoader,
-            ),
-        );
+        const loader = this.page.locator(slct(ControlQA.groupCommonLockedBlock));
 
         const handler = async (route: Route) => {
             await expect(loader).toBeVisible();
@@ -623,49 +611,6 @@ class DashboardPage extends BasePage {
         await this.page.click(slct(DashCommonQa.AliasAddBtn));
         await this.applyAliasesChanges();
         await this.applyRelationsChanges();
-    }
-
-    async setupLinks({
-        selectorName,
-        linkType,
-        chartField,
-    }: {
-        selectorName: string;
-        linkType:
-            | ConnectionsDialogQA.TypeSelectConnectedOption
-            | ConnectionsDialogQA.TypeSelectInputOption
-            | ConnectionsDialogQA.TypeSelectOutputOption
-            | ConnectionsDialogQA.TypeSelectIgnoreOption;
-        chartField: string;
-    }) {
-        // click on the "connections" button
-        await this.clickOnLinksBtn();
-
-        // select the selector
-        await clickGSelectOption({
-            page: this.page,
-            key: ConnectionsDialogQA.ElementSelect,
-            optionText: selectorName,
-        });
-
-        // changing the value from "no connection" to "outgoing connection"
-        await clickGSelectOption({
-            page: this.page,
-            key: ConnectionsDialogQA.TypeSelect,
-            optionQa: linkType,
-        });
-
-        // link to the "City" field of the chart
-        await clickGSelectOption({
-            page: this.page,
-            key: 'connect-by-alias-to-select',
-            optionText: chartField,
-        });
-
-        // save
-        await this.page.click(slct('connect-by-alias-dialog-apply-button'));
-        // applying changes in the communication dialog
-        await this.page.click(slct(ConnectionsDialogQA.Apply));
     }
 
     async hasChanges() {

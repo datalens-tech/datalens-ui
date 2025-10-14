@@ -1,7 +1,5 @@
 import lodashMin from 'lodash/min';
-import moment from 'moment';
 
-import {registry} from '../../../../../registry';
 import {ChartKitCustomError, ERROR_CODE} from '../chartkit-custom-error/chartkit-custom-error';
 
 /* eslint-disable complexity */
@@ -71,34 +69,6 @@ function computeXTickScale(range) {
     }
 
     return previous;
-}
-
-function removeHolidays(data, options) {
-    const timeline = [];
-    const graphsData = [];
-
-    data.graphs.forEach((graph, i) => {
-        graphsData[i] = [];
-    });
-
-    const holidays = registry.chart.functions.get('getChartkitHolidays');
-
-    data.categories_ms.forEach((ts, i) => {
-        const datetime = moment(ts).format('YYYYMMDD');
-        const region = (options.region && options.region.toLowerCase()) || 'tot';
-        const holiday =
-            holidays && (holidays.holiday[region][datetime] || holidays.weekend[region][datetime]);
-
-        if (!holiday) {
-            timeline.push(ts);
-            data.graphs.forEach((graph, j) => graphsData[j].push(graph.data[i]));
-        }
-    });
-
-    data.categories_ms = timeline;
-    data.graphs.forEach((graph, i) => {
-        graph.data = graphsData[i];
-    });
 }
 
 export function prepareData(data, options) {
@@ -214,10 +184,6 @@ export function prepareData(data, options) {
             options.orderSort === 'fromBottom'
         ) {
             data.graphs.reverse();
-        }
-
-        if (options.hideHolidays) {
-            removeHolidays(data, options);
         }
 
         options.max = max;

@@ -7,6 +7,7 @@ import {DashTabItemType} from 'shared';
 import {CustomPaletteBgColors} from 'shared/constants/widgets';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
+import {useWidgetContext} from '../../context/WidgetContext';
 import {getPreparedWrapSettings} from '../../utils';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
@@ -24,6 +25,13 @@ function PluginImage(props: Props, _ref?: React.LegacyRef<HTMLDivElement>) {
         data: {alt, background, src, preserveAspectRatio},
         layout,
     } = props;
+
+    const rootNodeRef = React.useRef<HTMLDivElement>(null);
+    useWidgetContext({
+        id: props.id,
+        elementRef: rootNodeRef,
+    });
+
     const handleUpdate = useBeforeLoad(props.onBeforeLoad);
     const currentLayout = layout.find(({i}) => i === props.id) || {
         x: null,
@@ -53,7 +61,13 @@ function PluginImage(props: Props, _ref?: React.LegacyRef<HTMLDivElement>) {
     ]);
 
     return (
-        <RendererWrapper id={id} type={DashTabItemType.Image} classMod={classMod} style={style}>
+        <RendererWrapper
+            id={id}
+            type={DashTabItemType.Image}
+            nodeRef={rootNodeRef}
+            classMod={classMod}
+            style={style}
+        >
             <img
                 className={b({'preserve-aspect-ratio': preserveAspectRatio})}
                 alt={alt}

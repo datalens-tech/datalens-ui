@@ -1,4 +1,4 @@
-import type {ServerColor, ServerShape} from '../../../../../../../../shared';
+import {type ServerColor, type ServerShape, getFormatOptions} from '../../../../../../../../shared';
 import {
     chartKitFormatNumberWrapper,
     findIndexInOrder,
@@ -19,7 +19,7 @@ export const getItemsValues = (
 
     if (item && 'formatting' in item && isNumericalDataType(item.data_type)) {
         formattedValue = chartKitFormatNumberWrapper(value as number, {
-            ...item.formatting,
+            ...getFormatOptions(item),
             lang: 'ru',
         });
     } else {

@@ -26,9 +26,9 @@ type FixedHeaderContainerProps = CommonFixedHeaderProps & {
 const b = block('dash-fixed-header');
 const i18n = I18n.keyset('dash.empty-state.view');
 
-const calculateOffset = (dashBodyRef: React.RefObject<HTMLDivElement>) => {
+const calculateOffset = (dashBodyEl: HTMLDivElement | null) => {
     const pageBodyY = document.body.getBoundingClientRect().y;
-    const dashBodyY = dashBodyRef.current?.getBoundingClientRect()?.y ?? pageBodyY;
+    const dashBodyY = dashBodyEl?.getBoundingClientRect()?.y ?? pageBodyY;
 
     return dashBodyY - pageBodyY;
 };
@@ -158,14 +158,14 @@ type FixedHeaderWrapperProps = CommonFixedHeaderProps & {
     isCollapsed: boolean;
     isControlsGroupEmpty?: boolean;
     isContainerGroupEmpty?: boolean;
-    dashBodyRef: React.RefObject<HTMLDivElement>;
+    dashBodyEl: HTMLDivElement | null;
     controlsRef: React.Ref<HTMLDivElement>;
     containerRef: React.Ref<HTMLDivElement>;
     className?: string;
 };
 
 export function FixedHeaderWrapper({
-    dashBodyRef,
+    dashBodyEl,
     controlsRef,
     containerRef,
     editMode,
@@ -182,7 +182,7 @@ export function FixedHeaderWrapper({
     const [scrollableContainerOverflow, setScrollableContainerOverflow] =
         React.useState<React.CSSProperties['overflow']>('auto');
 
-    const topOffset = calculateOffset(dashBodyRef);
+    const topOffset = calculateOffset(dashBodyEl);
     const {isFixed, leftOffset, width} = useFixedHeaderRef(rootRef, topOffset);
     const style = isFixed && !editMode ? {left: leftOffset, top: topOffset, width} : {};
 

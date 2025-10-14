@@ -1,5 +1,5 @@
 import {PlaceholderId, WizardVisualizationId} from '../../constants';
-import type {ServerChartsConfig, ServerField, ServerSort, V11Placeholder} from '../../types';
+import type {ServerChartsConfig, ServerField, ServerPlaceholder, ServerSort} from '../../types';
 import {AxisMode} from '../../types';
 import {isMeasureField} from '../helpers';
 import {isContinuousAxisModeDisabled} from '../wizard-helpers';
@@ -7,6 +7,8 @@ import {isContinuousAxisModeDisabled} from '../wizard-helpers';
 const Y_AS_MAIN_AXIS: WizardVisualizationId[] = [
     WizardVisualizationId.Bar,
     WizardVisualizationId.Bar100p,
+    WizardVisualizationId.BarYD3,
+    WizardVisualizationId.BarY100pD3,
 ];
 
 type GetXAxisModeArgs = {
@@ -15,7 +17,7 @@ type GetXAxisModeArgs = {
     xField?: ServerField;
 };
 
-function getXPlaceholder(args: {id: WizardVisualizationId; placeholders: V11Placeholder[]}) {
+function getXPlaceholder(args: {id: WizardVisualizationId; placeholders: ServerPlaceholder[]}) {
     const {id, placeholders} = args;
     // Historically, x for a bar chart is y
     return placeholders.find((p) => {
@@ -28,7 +30,7 @@ export function getXAxisMode(args: GetXAxisModeArgs): AxisMode {
     const layers = config.visualization?.layers ?? [];
 
     const getVisualizationAxisMode = (visualization: {
-        placeholders: V11Placeholder[];
+        placeholders: ServerPlaceholder[];
         id: WizardVisualizationId;
         xField?: ServerField;
         sort?: ServerSort[];

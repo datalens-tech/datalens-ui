@@ -1,7 +1,13 @@
 import type {RenderParams} from '@gravity-ui/app-layout';
 
-import type {AppEnvironment, AppInstallation, DLGlobalData, DLUser} from '../../../shared';
-import {FALLBACK_LANGUAGES, Language, USER_SETTINGS_KEY} from '../../../shared';
+import type {
+    AppEnvironment,
+    AppInstallation,
+    DLGlobalData,
+    DLUser,
+    TenantSettings,
+} from '../../../shared';
+import {FALLBACK_LANGUAGES, Feature, Language, USER_SETTINGS_KEY} from '../../../shared';
 import type {AppLayoutSettings, GetLayoutConfig} from '../../types/app-layout';
 import {addTranslationsScript} from '../../utils/language';
 import {getUserInfo} from '../zitadel/utils';
@@ -66,6 +72,15 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         };
     }
 
+    const isRebrandingEnabled = req.ctx.get('isEnabledServerFeature')(Feature.EnableDLRebranding);
+
+    // applying new favicon from rebranding
+    const faviconUrl = isRebrandingEnabled ? '/os-favicon.ico' : config.faviconUrl;
+
+    const tenantSettings: TenantSettings = {
+        defaultColorPaletteId: res.locals.tenantDefaultColorPaletteId,
+    };
+
     const DL: DLGlobalData = {
         user,
         userSettings,
@@ -79,6 +94,7 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         features: config.features,
         meta: req.ctx.getMetadata(),
         chartkitSettings: config.chartkitSettings,
+        defaultColorPaletteId: config.defaultColorPaletteId,
         allowLanguages,
         headersMap: req.ctx.config.headersMap,
         isZitadelEnabled,
@@ -87,8 +103,10 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         connectorIcons: res.locals.connectorIcons,
         apiPrefix: config.apiPrefix,
         releaseVersion: config.releaseVersion,
+        docsUrl: config.docsUrl,
         orderedAuthRoles: config.orderedAuthRoles,
         authSignupDisabled: req.ctx.config.authSignupDisabled,
+        tenantSettings,
         ...appLayoutSettings.DL,
     };
     const renderConfig: RenderParams<{DL: DLGlobalData}> = {
@@ -97,7 +115,7 @@ export const getOpensourceLayoutConfig: GetLayoutConfig = async (args) => {
         lang,
         icon: {
             type: 'image/ico',
-            href: config.faviconUrl,
+            href: faviconUrl,
             sizes: '32x32',
         },
         inlineScripts: ['window.DL = window.__DATA__.DL', ...chartkitInlineScripts],

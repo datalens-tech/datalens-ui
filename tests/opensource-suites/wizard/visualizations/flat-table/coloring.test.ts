@@ -2,6 +2,8 @@ import {expect} from '@playwright/test';
 
 import {
     ChartKitQa,
+    DialogFieldBackgroundSettingsQa,
+    GradientNullModes,
     GradientType,
     Operations,
     WizardPageQa,
@@ -118,6 +120,39 @@ datalensTest.describe('Wizard', () => {
                 PlaceholderName.Colors,
                 'id_null',
             );
+
+            await expect(previewLoader).not.toBeVisible();
+            await expect(chartContainer).toHaveScreenshot();
+        });
+
+        datalensTest('Empty values - ignore nulls @screenshot', async ({page}) => {
+            const wizardPage = new WizardPage({page});
+            const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
+            const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
+
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Filters, 'id');
+            await wizardPage.filterEditor.selectFilterOperation(Operations.LTE);
+            await wizardPage.filterEditor.setInputValue('2');
+            await wizardPage.filterEditor.apply();
+
+            await wizardPage.createNewFieldWithFormula(
+                'nullable',
+                'if ([id] = 1) then null else 1 end',
+            );
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.FlatTableColumns,
+                'nullable',
+            );
+            await wizardPage.visualizationItemDialog.open(
+                PlaceholderName.FlatTableColumns,
+                'nullable',
+            );
+            const nullModeButtonLocator = page.locator(
+                slct(DialogFieldBackgroundSettingsQa.NullModeRadioButtons),
+            );
+            await wizardPage.visualizationItemDialog.setGradientBackground(GradientType.TWO_POINT);
+            await nullModeButtonLocator.locator(`[value=${GradientNullModes.Ignore}]`).click();
+            await wizardPage.visualizationItemDialog.clickOnApplyButton();
 
             await expect(previewLoader).not.toBeVisible();
             await expect(chartContainer).toHaveScreenshot();

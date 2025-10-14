@@ -43,8 +43,9 @@ export function mapHeadCell(args: {
     th: TableHead;
     tableWidth: number | undefined;
     onRenderCell?: () => void;
+    disableCellFormatting?: boolean;
 }): HeadCell {
-    const {th, tableWidth, onRenderCell} = args;
+    const {th, tableWidth, onRenderCell, disableCellFormatting = false} = args;
     const columnType: TableCommonCell['type'] = get(th, 'type');
     const hint = get(th, 'hint');
 
@@ -71,7 +72,9 @@ export function mapHeadCell(args: {
             const cell = (cellData || {}) as TableCommonCell;
             return (
                 <React.Fragment>
-                    {renderCellContent({cell, column: th, onRender: onRenderCell})}
+                    {disableCellFormatting
+                        ? cellData?.value ?? ''
+                        : renderCellContent({cell, column: th, onRender: onRenderCell})}
                     {cell.sortDirection && (
                         <Icon
                             className={b('sort-icon')}

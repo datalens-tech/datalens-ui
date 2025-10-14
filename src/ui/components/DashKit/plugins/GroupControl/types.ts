@@ -25,16 +25,6 @@ export interface PluginGroupControlState {
     disableButtons?: boolean;
 }
 
-export type ResolveMetaResult = {
-    id: string;
-    usedParams?: string[] | null;
-    datasets?: ExtendedLoadedData['extra']['datasets'];
-    datasetId?: string;
-    datasetFields?: Record<string, string>;
-    type?: string;
-    sourceType?: DashTabItemControlSourceType;
-};
-
 export type GroupControlLocalMeta = Omit<StateAndParamsMetaData, 'queue'> & {
     queue: (QueueItem & {param?: string})[];
 };

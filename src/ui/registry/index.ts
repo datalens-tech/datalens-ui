@@ -8,6 +8,7 @@ import dashRegistry from './units/dash';
 import datasetsRegistry from './units/datasets';
 import docsRegistry from './units/docs';
 import editorRegistry from './units/editor';
+import {fieldEditorRegistry} from './units/fieldEditor';
 import mainRegistry from './units/main';
 import previewRegistry from './units/preview';
 import publicRegistry from './units/public';
@@ -22,6 +23,7 @@ export const registry = {
     datasets: datasetsRegistry,
     dash: dashRegistry,
     editor: editorRegistry,
+    fieldEditor: fieldEditorRegistry,
     preview: previewRegistry,
     ql: qlRegistry,
     wizard: wizardRegistry,

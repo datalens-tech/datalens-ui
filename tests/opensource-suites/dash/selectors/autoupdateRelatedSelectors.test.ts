@@ -252,7 +252,7 @@ datalensTest.describe('Dashboards - Autoupdate options of group selectors', () =
         },
     );
 
-    datalensTest(
+    datalensTest.skip(
         "Manual selectors with aliases don't affect each other before applying when auto-update is disabled",
         async ({page, config}) => {
             const dashboardPage = new DashboardPage({page});

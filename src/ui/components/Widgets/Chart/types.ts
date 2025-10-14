@@ -5,6 +5,7 @@ import type {CkHighchartsSeriesOptionsType, Highcharts} from '@gravity-ui/chartk
 import type {CancelTokenSource} from 'axios';
 import type {Split} from 'react-split-pane';
 import type {DashTabItemControlSourceType, MenuItemsIds, StringParams} from 'shared';
+import type {OnWidgetLoadDataHandler} from 'ui/components/DashKit/context/WidgetContext';
 import type {
     Widget as ChartWidget,
     CombinedError,
@@ -124,12 +125,14 @@ type ChartKitBaseWrapperProps = ChartsProps & {
     onFiltersClear?: () => void;
 
     needRenderContentControls?: boolean;
+    reload?: (args?: {silentLoading?: boolean; noVeil?: boolean}) => void;
 };
 
 export type ChartWidgetProviderPropsWithRefProps = ChartRefProp &
     Omit<WidgetPluginProps, 'debouncedAdjustWidgetLayout' | 'forwardedRef'> &
     ChartsProps & {
         usageType: 'widget';
+        onWidgetLoadData?: OnWidgetLoadDataHandler;
     };
 
 export type ChartProviderPropsWithRefProps = ChartRefProp &
@@ -282,6 +285,7 @@ export type ChartContentProps = Pick<
     | 'showActionParamsFilter'
     | 'onFiltersClear'
     | 'needRenderContentControls'
+    | 'reload'
 > &
     ChartKitWrapperParams & {
         hasHiddenClassMod: boolean;

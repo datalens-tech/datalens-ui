@@ -18,11 +18,6 @@
         @include dl-select-popup;
         min-width: 170px;
     }
-
-    &__popup-content {
-        display: inline-block;
-        padding: var(--g-spacing-4);
-    }
 }
 
 .add-field__dimension-icon {

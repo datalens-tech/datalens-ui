@@ -1,5 +1,5 @@
 import type {IChartEditor, MarkupItem} from '../../../../../../../../shared';
-import {markupToRawString} from '../../../../../../../../shared';
+import {isMarkupItem, markupToRawString} from '../../../../../../../../shared';
 import type {CharkitTableHead, ChartkitTableRows, PivotDataRowsHeader, PivotField} from '../types';
 
 export const isRowWithTotals = (
@@ -29,18 +29,19 @@ export const setTotalsHeadersToRows = (rows: ChartkitTableRows, i18n: (key: stri
                 const prevCell = row.cells[index - 1];
 
                 if (prevCell) {
-                    const isParentMarkup =
-                        prevCell.value &&
-                        typeof prevCell.value === 'object' &&
-                        'content' in prevCell.value;
-
-                    const parentCellValue = isParentMarkup
-                        ? markupToRawString(prevCell.value)
-                        : prevCell.value;
-
-                    cell.value = `${totalTitle} ${parentCellValue}`;
+                    if (isMarkupItem(prevCell.value)) {
+                        const markupValue: MarkupItem = {
+                            type: 'concat',
+                            children: [{type: 'text', content: `${totalTitle} `}, prevCell.value],
+                        };
+                        cell.value = markupValue;
+                    } else {
+                        cell.value = `${totalTitle} ${prevCell.value}`;
+                        cell.type = 'text';
+                    }
                 } else {
                     cell.value = totalTitle;
+                    cell.type = 'text';
                 }
             }
         });

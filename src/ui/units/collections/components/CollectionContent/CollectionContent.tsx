@@ -66,6 +66,7 @@ interface Props {
     onUpdateCheckboxClick: (args: UpdateCheckboxArgs) => void;
     onUpdateAllCheckboxesClick: (checked: boolean) => void;
     resetSelected: () => void;
+    refreshPage: () => void;
 }
 
 export const CollectionContent: React.FC<Props> = ({
@@ -90,6 +91,7 @@ export const CollectionContent: React.FC<Props> = ({
     onUpdateCheckboxClick,
     onUpdateAllCheckboxesClick,
     resetSelected,
+    refreshPage,
 }) => {
     const dispatch: AppDispatch = useDispatch();
     const history = useHistory();
@@ -263,6 +265,7 @@ export const CollectionContent: React.FC<Props> = ({
                     itemsAvailableForSelectionCount={itemsAvailableForSelection.length}
                     getWorkbookActions={getWorkbookActions}
                     getCollectionActions={getCollectionActions}
+                    refreshPage={refreshPage}
                     onUpdateCheckboxClick={onUpdateCheckboxClick}
                     onUpdateAllCheckboxesClick={onUpdateAllCheckboxesClick}
                 />

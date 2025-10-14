@@ -303,22 +303,26 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
         this.props.setRevisionsListMode?.(RevisionsListMode.Expanded);
     };
 
-    private setEditMode = async () => {
+    private setEditMode = async (successCallback?: () => void) => {
         try {
             this.setState({isEditModeLoading: true});
-            await this.props.setEditMode();
+            await this.props.setEditMode(successCallback);
         } catch (error) {
             logger.logError('dash Header: setEditMode failed', error);
         }
         this.setState({isEditModeLoading: false});
     };
 
-    private setEditDash = () => {
+    private setEditDash = (successCallback?: () => void) => {
         this.props.setRevisionsMode?.(RevisionsMode.Closed);
-        this.setEditMode();
+        this.setEditMode(successCallback);
     };
 
-    private handlerEditClick = () => {
+    private handlerEditClick = (onConfirmCallback?: () => void, onCancelCallback?: () => void) => {
+        if (this.state.isEditModeLoading) {
+            return;
+        }
+
         const {savedId, publishedId, revId} = this.props.entry;
         const hasLatestUnpublishedVersion = savedId !== publishedId && savedId !== revId;
 
@@ -326,14 +330,19 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
             this.entryDialoguesRef.current?.open({
                 dialog: EntryDialogName.EditWarning,
                 dialogProps: {
-                    onEditClick: this.setEditDash,
-                    onShowHistoryClick: this.setExpandedRevisions,
+                    onEditClick: () => {
+                        this.setEditDash(onConfirmCallback);
+                    },
+                    onShowHistoryClick: () => {
+                        onCancelCallback?.();
+                        this.setExpandedRevisions();
+                    },
                 },
             });
             return;
         }
 
-        this.setEditDash();
+        this.setEditDash(onConfirmCallback);
     };
 
     private handleRetry = () => {

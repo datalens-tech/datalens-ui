@@ -1,4 +1,5 @@
 import {ENTRY_TYPES, EntryScope, getEntryNameByKey, makeSlugName} from 'shared';
+import {isEditorEntryType} from 'shared/utils/entry';
 import {URL_QUERY} from 'ui/constants';
 
 import type {GetUIEntryRouteArgs} from '../registry/units/common/types/functions/getUIEntryRoute';
@@ -25,7 +26,7 @@ export function getUIEntryRoute({entry, origin, endpoints}: GetUIEntryRouteArgs)
             case EntryScope.Dash:
                 return `/${slugName}`;
             case EntryScope.Widget:
-                if (ENTRY_TYPES.editor.includes(type)) {
+                if (isEditorEntryType(type)) {
                     return `${endpoints.editor}/${slugName}`;
                 }
 

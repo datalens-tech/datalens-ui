@@ -53,6 +53,11 @@ export function buildChartConfig(args: BuildChartsConfigArgs) {
     const visualizationId = qlConfig?.visualization?.id;
     const isTableWidget = visualizationId === WizardVisualizationId.FlatTable;
     const isIndicatorWidget = visualizationId === WizardVisualizationId.Metric;
+    const isScatterWidget = visualizationId === WizardVisualizationId.Scatter;
+    const isTreemapWidget = visualizationId === WizardVisualizationId.Treemap;
+
+    const isSetManageTooltipConfig =
+        !isIndicatorWidget && !isTableWidget && !isScatterWidget && !isTreemapWidget;
 
     if (isTableWidget) {
         const size = widgetConfig?.size ?? shared?.extraSettings?.size;
@@ -70,7 +75,7 @@ export function buildChartConfig(args: BuildChartsConfigArgs) {
     config.hideHolidaysBands = !features[Feature.HolidaysOnChart];
     config.linesLimit = DEFAULT_CHART_LINES_LIMIT;
 
-    if (!isIndicatorWidget && !isTableWidget) {
+    if (isSetManageTooltipConfig) {
         config.manageTooltipConfig = ChartkitHandlers.WizardManageTooltipConfig;
     }
 

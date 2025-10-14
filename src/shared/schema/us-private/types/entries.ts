@@ -1,3 +1,4 @@
+import type {EntryAnnotationArgs} from '../../..';
 import type {EntryFieldData, EntryFieldLinks, GetEntryArgs} from '../../us/types';
 
 export interface PrivateGetEntryArgs extends GetEntryArgs {
@@ -15,4 +16,5 @@ export interface ProxyCreateEntryArgs {
     key?: string;
     includePermissionsInfo?: boolean;
     recursion?: boolean;
+    annotation?: EntryAnnotationArgs;
 }

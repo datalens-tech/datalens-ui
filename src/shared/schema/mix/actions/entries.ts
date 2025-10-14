@@ -9,7 +9,11 @@ import type {
     GetRelationsEntry,
     SwitchPublicationStatusResponse,
 } from '../../us/types';
-import {checkEntriesForPublication, escapeStringForLike} from '../helpers';
+import {
+    checkEntriesForPublication,
+    escapeStringForLike,
+    getEntryMetaStatusByError,
+} from '../helpers';
 import {isValidPublishLink} from '../helpers/validation';
 import type {
     DeleteEntryArgs,
@@ -39,7 +43,7 @@ export const entriesActions = {
                 return data;
             }
             case EntryScope.Connection: {
-                const data = await typedApi.bi.deleteConnnection({connectionId: entryId});
+                const data = await typedApi.bi.deleteConnection({connectionId: entryId});
                 return data;
             }
             default: {
@@ -160,22 +164,7 @@ export const entriesActions = {
                 await typedApi.us.getEntryMeta({entryId});
                 return {code: 'OK'};
             } catch (errorWrapper) {
-                let error;
-                if (errorWrapper instanceof Object && 'error' in errorWrapper) {
-                    error = errorWrapper.error;
-                }
-                if (typeof error === 'object' && error !== null && 'status' in error) {
-                    switch (error.status) {
-                        case 403:
-                            return {code: 'FORBIDDEN'};
-                        case 404:
-                            return {code: 'NOT_FOUND'};
-                        default:
-                            return {code: 'UNHANDLED'};
-                    }
-                } else {
-                    return {code: 'UNHANDLED'};
-                }
+                return getEntryMetaStatusByError(errorWrapper);
             }
         },
     ),

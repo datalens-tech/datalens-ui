@@ -233,4 +233,5 @@ export type GetConnectorSchemaResponse = {
 export type GetConnectorSchemaArgs = {
     type: string;
     mode: 'create' | 'edit';
+    connectionId?: string;
 };

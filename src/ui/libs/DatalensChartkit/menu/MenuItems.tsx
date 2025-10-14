@@ -20,7 +20,10 @@ import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {ChartWidgetDataRef} from '../../../components/Widgets/Chart/types';
 import {CHARTKIT_WIDGET_TYPE} from '../ChartKit/components/Widget/Widget';
-import {getExportItem} from '../components/ChartKitBase/components/Header/components/Menu/Items/Export/Export';
+import {
+    getExportItem,
+    isExportItemDisabled,
+} from '../components/ChartKitBase/components/Header/components/Menu/Items/Export/Export';
 import Inspector from '../components/ChartKitBase/components/Header/components/Menu/Items/Inspector/Inspector';
 import type {ChartKitDataProvider} from '../components/ChartKitBase/types';
 import ChartKitIcon from '../components/ChartKitIcon/ChartKitIcon';
@@ -183,14 +186,17 @@ export const getOpenAsTableMenuItem = ({
         return customConfig?.title || i18n('chartkit.menu', 'open-as-table');
     },
     icon: customConfig?.icon || <Icon data={LayoutCells} size={ICONS_MENU_DEFAULT_SIZE} />,
-    isVisible: ({loadedData, error}: MenuItemArgs) => {
-        const isExportAllowed = !loadedData?.extra.dataExportForbidden;
+    isVisible: (args: MenuItemArgs) => {
+        const {loadedData, error} = args;
+        const customIsVisible = customConfig?.isVisible?.(args) ?? true;
+        const isExportAllowed =
+            !loadedData?.extra.dataExportForbidden && !isExportItemDisabled()(args);
         const isCriticalError = error && !error?.extra?.rowsExceededLimit;
         const isChart =
             loadedData?.data &&
             ([WidgetKind.Graph, WidgetKind.GravityCharts] as string[]).includes(loadedData?.type);
 
-        return Boolean(!isCriticalError && isExportAllowed && isChart);
+        return Boolean(!isCriticalError && isExportAllowed && isChart && customIsVisible);
     },
     action:
         customConfig?.action ||

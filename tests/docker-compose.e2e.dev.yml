@@ -41,5 +41,17 @@ services:
     networks:
       - default
 
+  auth:
+    extends:
+      file: docker-compose.e2e.yml
+      service: auth
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - 8088:8080
+    networks:
+      - default
+
 networks:
   default:

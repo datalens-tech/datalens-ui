@@ -3,15 +3,15 @@ import type {FilterBody, MarkupType} from '../charts';
 import type {ServerField} from '../config/wizard';
 import type {DatasetField, DatasetFieldType} from '../dataset';
 import {DATASET_FIELD_TYPES} from '../dataset';
-
-import type {TableFieldBackgroundSettings} from './background-settings';
-import type {TableBarsSettings} from './bars';
-import type {ColumnSettings} from './column';
 import type {
     CommonNumberFormattingOptions,
     FloatNumberFormattingOptions,
     IntegerNumberFormattingOptions,
-} from './formatting';
+} from '../formatting';
+
+import type {TableFieldBackgroundSettings} from './background-settings';
+import type {TableBarsSettings} from './bars';
+import type {ColumnSettings} from './column';
 import type {TableSubTotalsSettings} from './sub-totals';
 
 export interface WizardDatasetField extends DatasetField {

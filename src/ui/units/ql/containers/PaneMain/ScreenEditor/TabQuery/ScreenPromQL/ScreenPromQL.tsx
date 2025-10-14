@@ -225,7 +225,7 @@ class TabQuery extends React.PureComponent<TabQueryInnerProps, TabQueryState> {
                                                     glyphMargin: true,
                                                     hideCursorInOverviewRuler: true,
                                                     lineNumbersMinChars: 1,
-                                                    wordWrap: 'bounded',
+                                                    wordWrap: 'on',
                                                     automaticLayout: true,
                                                 }}
                                                 onChange={(newQueryValue) => {

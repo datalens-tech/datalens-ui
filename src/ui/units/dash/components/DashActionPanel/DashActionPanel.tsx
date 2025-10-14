@@ -45,6 +45,7 @@ import {openEmptyDialogRelations} from '../../store/actions/relations/actions';
 import {DASH_EDIT_HISTORY_UNIT_ID} from '../../store/constants';
 import {
     selectDashAccessDescription,
+    selectDashDescription,
     selectDashShowOpenedDescription,
     selectLoadingEditMode,
     selectStateMode,
@@ -92,6 +93,9 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
         const enablePublish = isEnabledFeature(Feature.EnablePublishEntry) && !entry?.fake;
 
         const DashSelectState = registry.dash.components.get('DashSelectState');
+        const DashActionPanelAdditionalButtons = registry.dash.components.get(
+            'DashActionPanelAdditionalButtons',
+        );
 
         let deprecationWarning = null;
         if (this.isDeprecated()) {
@@ -109,6 +113,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
                             entry={entry as GetEntryResponse}
                             additionalEntryItems={this.getAdditionalEntryItems()}
                             rightItems={[
+                                <DashActionPanelAdditionalButtons key="additional-buttons" />,
                                 <div className={b('controls')} key="controls">
                                     {this.renderControls()}
                                 </div>,
@@ -328,6 +333,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
                 workbookId: entry?.workbookId,
                 initDestination: Utils.getPathBefore({path: entry.key}),
                 data,
+                annotation: {description: this.props.description},
             },
         });
 
@@ -353,6 +359,7 @@ const mapStateToProps = (state: DatalensGlobalState) => {
         isSelectStateMode: selectStateMode(state),
         accessDescription: selectDashAccessDescription(state),
         showOpenedDescription: selectDashShowOpenedDescription(state),
+        description: selectDashDescription(state),
     };
 };
 

@@ -110,6 +110,14 @@
     pointer-events: none;
 }
 
+@mixin hidden-scrollbar() {
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
 @mixin scrollbar-on-hover($width) {
     scrollbar-width: none;
 
@@ -161,4 +169,23 @@
 
 @mixin loading-pulsate-animation-style {
     animation: pulseAnimation 1.5s ease-in-out infinite;
+}
+
+@mixin installation-info-font {
+    font-size: 10px;
+    line-height: 15px;
+    font-weight: bold;
+    letter-spacing: 0.7px;
+    text-transform: uppercase;
+}
+
+@mixin palette-item-border($borderColor, $top, $left, $width, $height) {
+    content: '';
+    position: absolute;
+    top: $top;
+    left: $left;
+    width: $width;
+    height: $height;
+    border: 2px solid $borderColor;
+    border-radius: 6px;
 }

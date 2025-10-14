@@ -4,7 +4,7 @@ import {NodeKit} from '@gravity-ui/nodekit';
 import dotenv from 'dotenv';
 dotenv.config();
 
-import {anonymousSchema, authSchema, schema} from '../shared/schema';
+import {authSchema, schema} from '../shared/schema';
 
 import {getFeaturesConfig} from './components/features';
 import {registry} from './registry';
@@ -27,7 +27,6 @@ nodekit.config.features = getFeaturesConfig(appEnv);
 registry.setupGateway(getGatewayConfig(nodekit), {
     root: schema,
     auth: authSchema,
-    anonymous: anonymousSchema,
 });
 
 export {nodekit};

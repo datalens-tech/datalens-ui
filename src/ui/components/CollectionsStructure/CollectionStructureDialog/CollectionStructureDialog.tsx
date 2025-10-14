@@ -368,6 +368,7 @@ export const CollectionStructureDialog = React.memo<Props>(
                     open={open}
                     onClose={handleClose}
                     onEnterKeyDown={handleClickApplyButton}
+                    disableHeightTransition={true}
                 >
                     <Dialog.Header caption={caption} />
                     <Dialog.Body>

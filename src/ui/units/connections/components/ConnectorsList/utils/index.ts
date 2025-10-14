@@ -1,3 +1,5 @@
+import {CONNECTOR_VISIBILITY_MODE} from 'shared';
+
 import type {ConnectorItem} from '../../../../../../shared/schema';
 
 export const getConnectorListItemUrl = (args: {connector: ConnectorItem; workbookId?: string}) => {
@@ -16,7 +18,8 @@ export const getConnectorListItemUrl = (args: {connector: ConnectorItem; workboo
 export const getVisibleConnectors = (connectors: ConnectorItem[]) => {
     return connectors.filter(({hidden, visibility_mode}) => {
         return visibility_mode
-            ? visibility_mode === 'free'
+            ? visibility_mode === CONNECTOR_VISIBILITY_MODE.FREE ||
+                  visibility_mode === CONNECTOR_VISIBILITY_MODE.BUSINESS
             : typeof hidden === 'boolean' && !hidden;
     });
 };

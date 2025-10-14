@@ -6,6 +6,7 @@ import {I18n, i18n as i18nGlobal} from 'i18n';
 import {useSelector} from 'react-redux';
 import {useParams} from 'react-router';
 import {ActionPanel} from 'ui/components/ActionPanel';
+import {BreadcrumbsItemLink} from 'ui/components/BreadcrumbsItemLink/BreadcrumbsItemLink';
 import {PageTitle} from 'ui/components/PageTitle';
 import {DL} from 'ui/constants/common';
 import {UserProfile} from 'ui/units/auth/containers/UserProfile/UserProfile';
@@ -30,20 +31,20 @@ const UserProfilePage = () => {
 
     return (
         <main className={b()}>
-            <PageTitle entry={{key: i18n('title_profile')}} />
+            <PageTitle title={i18n('title_profile')} />
 
             <ActionPanel
                 leftItems={
-                    <Breadcrumbs>
-                        <Breadcrumbs.Item href="/settings">
+                    <Breadcrumbs className={b('breadcrumbs')} itemComponent={BreadcrumbsItemLink}>
+                        <BreadcrumbsItemLink to="/settings">
                             {i18nGlobal('service-settings.main.view', 'label_header')}
-                        </Breadcrumbs.Item>
-                        <Breadcrumbs.Item href="/settings/users">
+                        </BreadcrumbsItemLink>
+                        <BreadcrumbsItemLink to="/settings/users">
                             {i18nGlobal('service-settings.main.view', 'section_users')}
-                        </Breadcrumbs.Item>
-                        <Breadcrumbs.Item disabled>
+                        </BreadcrumbsItemLink>
+                        <BreadcrumbsItemLink disabled className={b('breadcrumbs-item')}>
                             {userProfile ? getUserDisplayName(userProfile) : userId}
-                        </Breadcrumbs.Item>
+                        </BreadcrumbsItemLink>
                     </Breadcrumbs>
                 }
             />
