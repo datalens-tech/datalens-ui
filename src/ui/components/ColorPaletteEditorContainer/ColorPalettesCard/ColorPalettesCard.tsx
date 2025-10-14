@@ -28,6 +28,7 @@ type Props = {
     condensed?: boolean;
     qa?: string;
     hasEditRights?: boolean;
+    hasDefaultPalette?: boolean;
 };
 
 const ColorPalettesCard = ({
@@ -41,6 +42,7 @@ const ColorPalettesCard = ({
     hasEditRights,
     handleRemoveColorPaletteClick,
     handleItemClick,
+    hasDefaultPalette,
 }: Props) => {
     const hasPalettes = colorPalettes.length > 0;
 
@@ -97,7 +99,9 @@ const ColorPalettesCard = ({
                 <div className={b('title')}>{title}</div>
                 <div className={b('description')}>{description}</div>
             </div>
-            <DefaultPaletteSelect disabled={!hasEditRights} colorPalettes={colorPalettes} />
+            {hasDefaultPalette && (
+                <DefaultPaletteSelect disabled={!hasEditRights} colorPalettes={colorPalettes} />
+            )}
             {hasPalettes && (
                 <List<ColorPalette>
                     className={b('list-items', {condensed})}
