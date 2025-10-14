@@ -57,13 +57,11 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
             stackId: graph.stack,
             stacking: shouldUsePercentStacking ? 'percent' : 'normal',
             name: graph.title,
-            data: graph.data
-                .filter((d: BarYPoint) => d !== null && d.y !== null)
-                .map((d: BarYPoint) => {
-                    const {x, y, ...other} = d;
+            data: graph.data.map((d: BarYPoint) => {
+                const {x, y, ...other} = d;
 
-                    return {y: x, x: y, ...other};
-                }),
+                return {y: x, x: y, ...other};
+            }),
             dataLabels: {
                 enabled: graph.dataLabels?.enabled,
                 inside: shouldUsePercentStacking,
@@ -88,6 +86,12 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
     const config: ChartData = {
         series: {
             data: series.filter((s) => s.data.length),
+            options: {
+                'bar-y': {
+                    stackGap: 0,
+                    borderWidth: 1,
+                },
+            },
         },
         xAxis: {
             min: 0,
@@ -124,6 +128,11 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
             {
                 type: 'category',
                 categories: categories as string[],
+                order: 'reverse',
+                labels: {
+                    enabled: yPlaceholder?.settings?.hideLabels !== 'yes',
+                    html: isHtmlField(yField) || isMarkdownField(yField) || isMarkupField(yField),
+                },
             },
         ];
     } else {
@@ -137,9 +146,11 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
         config.yAxis = [
             {
                 labels: {
+                    enabled: yPlaceholder?.settings?.hideLabels !== 'yes',
                     numberFormat: axisLabelNumberFormat ?? undefined,
                 },
                 maxPadding: 0,
+                order: 'reverse',
             },
         ];
     }
