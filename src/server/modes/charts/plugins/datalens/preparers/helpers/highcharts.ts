@@ -1,7 +1,7 @@
 import type {ServerField, ServerSort} from '../../../../../../../shared';
 import {WizardVisualizationId, isDateField, isNumberField} from '../../../../../../../shared';
 import type {ChartColorsConfig} from '../../types';
-import {getGradientStops} from '../../utils/get-gradient-stops';
+import {getHighchartsGradientStops} from '../../utils/get-gradient-stops';
 
 export function getHighchartsColorAxis(
     graphs: any[],
@@ -23,7 +23,7 @@ export function getHighchartsColorAxis(
         endOnTick: false,
         min: minColorValue,
         max: maxColorValue,
-        stops: getGradientStops({colorsConfig, points, minColorValue, maxColorValue}),
+        stops: getHighchartsGradientStops({colorsConfig, points, minColorValue, maxColorValue}),
     };
 }
 

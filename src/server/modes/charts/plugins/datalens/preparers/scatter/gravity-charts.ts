@@ -25,6 +25,7 @@ import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import {isGradientMode} from '../../utils/misc-helpers';
 import {getAxisFormatting, getAxisType} from '../helpers/axis';
+import {getLegendColorScale} from '../helpers/legend';
 import type {PrepareFunctionArgs} from '../types';
 
 import type {ScatterGraph} from './prepare-scatter';
@@ -98,6 +99,8 @@ export function prepareGravityChartsScatter(args: PrepareFunctionArgs): ChartDat
         color,
         shape,
         size,
+        minColorValue,
+        maxColorValue,
     } = prepareScatter(args);
     const xCategories = preparedXCategories;
 
@@ -200,14 +203,21 @@ export function prepareGravityChartsScatter(args: PrepareFunctionArgs): ChartDat
     };
 
     if (graphs.length && gradientMode) {
+        const points = graphs
+            .map((graph) => (graph.data ?? []).map((d) => ({colorValue: d.colorValue})))
+            .flat(2);
+        const colorScale = getLegendColorScale({
+            colorsConfig,
+            minColorValue,
+            maxColorValue,
+            points,
+        });
+
         legend = {
             enabled: true,
             type: 'continuous',
             title: {text: getFakeTitleOrTitle(color), style: {fontWeight: '500'}},
-            colorScale: {
-                colors: colorsConfig.gradientColors,
-                stops: colorsConfig.gradientColors.length === 2 ? [0, 1] : [0, 0.5, 1],
-            },
+            colorScale,
         };
     } else if (graphs.length <= 1) {
         legend.enabled = false;

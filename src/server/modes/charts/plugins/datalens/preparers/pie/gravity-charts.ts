@@ -8,6 +8,7 @@ import {isHtmlField, isMarkdownField, isMarkupField} from '../../../../../../../
 import {getBaseChartConfig} from '../../gravity-charts/utils';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getExportColumnSettings} from '../../utils/export-helpers';
+import {getLegendColorScale} from '../helpers/legend';
 import type {PiePoint, PrepareFunctionArgs} from '../types';
 
 import preparePieData from './prepare-pie-data';
@@ -98,14 +99,28 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
 
     let legend: ChartData['legend'] = {};
     if (graphs.length && isColoringByMeasure(args)) {
+        const points = graphs
+            .map((graph) => (graph.data ?? []).map((d) => ({colorValue: d.colorValue as unknown})))
+            .flat(2);
+        const colorValues = points
+            .map((point) => point.colorValue)
+            .filter((cv): cv is number => Boolean(cv));
+
+        const minColorValue = Math.min(...colorValues);
+        const maxColorValue = Math.max(...colorValues);
+
+        const colorScale = getLegendColorScale({
+            colorsConfig,
+            minColorValue,
+            maxColorValue,
+            points,
+        });
+
         legend = {
             enabled: true,
             type: 'continuous',
             title: {text: getFakeTitleOrTitle(measure), style: {fontWeight: '500'}},
-            colorScale: {
-                colors: colorsConfig.gradientColors,
-                stops: colorsConfig.gradientColors.length === 2 ? [0, 1] : [0, 0.5, 1],
-            },
+            colorScale,
         };
     } else {
         const shouldUseHtmlForLegend = [dimension, color].some(isHtmlField);
