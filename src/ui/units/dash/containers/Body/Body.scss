@@ -10,7 +10,12 @@ $actionPanelDefaultBottom: 20px;
     --dashkit-overlay-border-color: var(--g-color-base-float);
     --dashkit-overlay-opacity: 0.5;
 
-    --dash-current-background: var(--dl-color-dashboard-background);
+    --_--dash-background: var(
+        --dl-color-dashboard-background,
+        var(--g-color-base-generic-ultralight)
+    );
+
+    --dash-current-background: var(--_--dash-background);
 
     position: relative;
     display: flex;
@@ -127,7 +132,7 @@ $actionPanelDefaultBottom: 20px;
         font-size: var(--g-text-header-2-font-size);
         line-height: var(--g-text-header-2-line-height);
         font-weight: 500;
-        background-color: var(--dl-color-dashboard-background);
+        background-color: var(--_--dash-background);
         padding: 16px 0 4px;
     }
 
