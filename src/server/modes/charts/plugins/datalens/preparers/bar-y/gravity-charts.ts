@@ -3,6 +3,7 @@ import merge from 'lodash/merge';
 
 import type {SeriesExportSettings, ServerField} from '../../../../../../../shared';
 import {
+    LabelsPositions,
     PERCENT_VISUALIZATIONS,
     PlaceholderId,
     getFakeTitleOrTitle,
@@ -50,6 +51,9 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
 
     const dataLabelFormat = getFieldFormatOptions({field: labelField});
     const shouldUsePercentStacking = PERCENT_VISUALIZATIONS.has(visualizationId);
+    const dataLabelsInside =
+        shouldUsePercentStacking ||
+        shared.extraSettings?.labelsPosition !== LabelsPositions.Outside;
     const series = graphs.map<BarYSeries>((graph) => {
         return {
             ...graph,
@@ -64,7 +68,7 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
             }),
             dataLabels: {
                 enabled: graph.dataLabels?.enabled,
-                inside: shouldUsePercentStacking,
+                inside: dataLabelsInside,
                 html: shouldUseHtmlForLabels,
                 format: dataLabelFormat,
             },
