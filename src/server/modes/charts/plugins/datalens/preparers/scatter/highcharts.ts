@@ -11,7 +11,7 @@ import {
 } from '../../../../../../../shared';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getFieldExportingOptions, getFieldsExportingOptions} from '../../utils/export-helpers';
-import {getGradientStops} from '../../utils/get-gradient-stops';
+import {getHighchartsGradientStops} from '../../utils/get-gradient-stops';
 import {isGradientMode, isNumericalDataType} from '../../utils/misc-helpers';
 import {addAxisFormatter, addAxisFormatting} from '../helpers/axis';
 import type {ChartKitFormatSettings, PrepareFunctionArgs} from '../types';
@@ -129,7 +129,12 @@ export function prepareHighchartsScatter(options: PrepareFunctionArgs) {
                 customConfig.colorAxis = {
                     min: minColorValue,
                     max: maxColorValue,
-                    stops: getGradientStops({colorsConfig, points, minColorValue, maxColorValue}),
+                    stops: getHighchartsGradientStops({
+                        colorsConfig,
+                        points,
+                        minColorValue,
+                        maxColorValue,
+                    }),
                 } as Highcharts.ColorAxisOptions;
             }
 
