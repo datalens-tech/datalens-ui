@@ -39,8 +39,8 @@ jobs:
           NPM_CACHE_ROOT: /home/github/actions-runner/_work/.cache/npm-cache
       - name: run build and tests local from repo
         run: |
-          npm run build
           mkdir -p ./tests/logs
+          npm run build
           node dist/server 1>./tests/logs/ui.stdout.log 2>./tests/logs/ui.stderr.log &
           echo $! > ./tests/logs/ui.pid
           npm run test:e2e:opensource
@@ -85,6 +85,7 @@ jobs:
       - name: get docker compose logs
         if: always()
         run: |
+          mkdir -p ./tests/logs
           npm run test:e2e:docker:logs > ./tests/logs/docker-compose.log
           npm run test:e2e:docker:logs-nginx > ./tests/logs/docker-compose.nginx.log
       - name: run docker compose down
