@@ -1,5 +1,6 @@
 import type {BarYSeries, ChartData} from '@gravity-ui/chartkit/gravity-charts';
 import merge from 'lodash/merge';
+import sortBy from 'lodash/sortBy';
 
 import type {SeriesExportSettings, ServerField} from '../../../../../../../shared';
 import {
@@ -87,9 +88,28 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
           })
         : undefined;
 
+    const getMaxStackValue = (s: BarYSeries) =>
+        s.data.reduce((acc, d) => (typeof d.x === 'number' ? Math.max(acc, d.x) : acc), -Infinity);
+    const groupIndex = series.reduce(
+        (acc, s, index) => {
+            const key = String(s.stackId);
+            acc[key] = acc[key] ?? index;
+            return acc;
+        },
+        {} as Record<string, number>,
+    );
+
     const config: ChartData = {
+        //@ts-ignore
+        groupIndex,
         series: {
-            data: series.filter((s) => s.data.length),
+            data: sortBy(
+                series.filter((s) => s.data.length),
+                // save order for groups as is
+                (s) => groupIndex[String(s.stackId)],
+                // and sort stacked values in descending order
+                (s) => -1 * getMaxStackValue(s),
+            ),
             options: {
                 'bar-y': {
                     stackGap: 0,
