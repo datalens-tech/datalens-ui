@@ -10,6 +10,10 @@ concurrency:
   group: ${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+  pull-requests: write
+
 jobs:
   run:
     name: e2e-tests
@@ -24,7 +28,7 @@ jobs:
         with:
           node-version: 22
       - name: check docker compose config
-        run: npm run test:e2e:docker:check
+        run: npm run test:e2e:docker:check &>dev/null
       - name: up docker compose
         run: npm run test:e2e:docker:up-no-ui
       - run: npm run deps
@@ -39,11 +43,6 @@ jobs:
           echo $! > ./tests/logs/ui.pid
           npm run test:e2e:opensource
         env:
-          US_ENDPOINT: http://localhost:3030
-          BI_API_ENDPOINT: http://localhost:8010
-          BI_DATA_ENDPOINT: http://localhost:8020
-          AUTH_ENDPOINT: http://localhost:8088
-
           E2E_NO_AUTH: 'false'
           E2E_RETRY_TIMES: '2'
           E2E_TEST_TIMEOUT: '90000'
@@ -62,6 +61,19 @@ jobs:
           APP_ENV: production
           APP_INSTALLATION: opensource
           APP_PORT: '8080'
+
+          US_ENDPOINT: http://localhost:3030
+          BI_API_ENDPOINT: http://localhost:8010
+          BI_DATA_ENDPOINT: http://localhost:8020
+          AUTH_ENDPOINT: http://localhost:8088
+
+          US_MASTER_TOKEN: us-master-token
+          AUTH_POLICY: disabled
+          HC: '0'
+          AUTH_ENABLED: 'true'
+          AUTH_MASTER_TOKEN: auth-master-token
+          AUTH_TOKEN_PUBLIC_KEY: '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA+HICDZMfimMIiGdd0dPr\n2N3zxHOJqiVXuvUj/aBBS7c8760rJUh4344sP/0Gid558yH/v1MtzZ0R9w09v6gb\nSNrSiNwIUNGPhbnm9Jf+kMezsI/rkcIdoVm3KJ8CFUYy6MRPzW7iJmIVRHBb82v1\nmAYCCQFU6IRtFIa9hQ8wedWwxqXZekSNS+6NB37dmmQB9kz2E3MY+KRLigOh4i3p\nCZ1ti3HVvMa9Rlgk9FmoWExzub5ECChqwm+vn8yFXjYW7kUSClcV2xx4nbQWqjrR\nyyLk6W2BNOuCFVvz0j+5XkpLAt7tljtVZc+572HBEKpF2mAdmAip5NzeDhKqucJ+\nZQIDAQAB\n-----END PUBLIC KEY-----'
+          AUTH_SIGNUP_DISABLED: 'false'
       - name: kill ui service
         if: always()
         run: |
