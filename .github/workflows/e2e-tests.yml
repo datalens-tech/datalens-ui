@@ -54,7 +54,8 @@ jobs:
           E2E_ACTION_TIMEOUT: '10000'
           E2E_EXPECT_TIMEOUT: '10000'
           E2E_MAX_FAILURES: '30'
-          E2E_MAX_WORKERS: '6'
+          E2E_MAX_WORKERS: '12'
+          E2E_TRACE_SCREENSHOTS: 'true'
           E2E_DOMAIN: http://localhost:8080
           E2E_USER_LOGIN: admin
           E2E_USER_PASSWORD: admin
@@ -148,13 +149,13 @@ jobs:
       - name: upload report to s3
         run: |
           E2E_REPORT_PATH="reports/${{ github.head_ref || github.ref_name }}/${{ github.run_id }}/${{ github.run_attempt }}"
-          aws --region "${STORAGE_REGION}" --endpoint-url "${STORAGE_ENDPOINT}" s3 cp ./tests/artifacts/report.tar.gz "s3://${STORAGE_BUCKET}/${STORAGE_PREFIX}/${E2E_REPORT_PATH}/report.tar.gz"
-          EXPIRE_LINK_SEC=604800 # 7 days
-          LINK_S3=$(aws --region "${STORAGE_REGION}" --endpoint-url "${STORAGE_ENDPOINT}" s3 presign --expires-in ${EXPIRE_LINK_SEC} "s3://${STORAGE_BUCKET}/${STORAGE_PREFIX}/${E2E_REPORT_PATH}/report.tar.gz")
-          echo "🔗 link to s3: ${LINK_S3}"
+          aws --region "${STORAGE_REGION}" --endpoint-url "${STORAGE_ENDPOINT}" s3 cp ./tests/artifacts/ "s3://${STORAGE_BUCKET}/${STORAGE_PREFIX}/${E2E_REPORT_PATH}/"
+          LINK_S3="${STORAGE_ENDPOINT}/${STORAGE_BUCKET}/${STORAGE_PREFIX}/${E2E_REPORT_PATH}/report.tar.gz"
+          LINK_S3_WEBSITE="https://${STORAGE_BUCKET}.${HTML_ENDPOINT}/${STORAGE_PREFIX}/${E2E_REPORT_PATH}"
+          echo "🔗 link to s3: ${LINK_S3_WEBSITE}"
           LINK_S3_ENCODED=$(jq -rn --arg X "${LINK_S3}" '$X|@uri')
           LINK_TRACE="https://playwright-trace-viewer.website.yandexcloud.net/?trace=${LINK_S3_ENCODED}"
-          echo "E2E_REPORT_LINK_S3=${LINK_S3}" >> "$GITHUB_ENV"
+          echo "E2E_REPORT_LINK_S3=${LINK_S3_WEBSITE}" >> "$GITHUB_ENV"
           echo "E2E_TRACE_LINK_S3=${LINK_TRACE}" >> "$GITHUB_ENV"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.E2E_REPORT_S3_ACCESS_KEY }}
@@ -163,6 +164,7 @@ jobs:
           STORAGE_REGION: ${{ vars.E2E_REPORT_S3_REGION }}
           STORAGE_BUCKET: ${{ vars.E2E_REPORT_S3_BUCKET }}
           STORAGE_PREFIX: ${{ vars.E2E_REPORT_S3_PREFIX }}
+          HTML_ENDPOINT: ${{ vars.E2E_REPORT_HTML_ENDPOINT }}
       - uses: daun/playwright-report-summary@v3
         if: always()
         id: report-md
