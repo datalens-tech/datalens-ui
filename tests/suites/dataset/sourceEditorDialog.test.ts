@@ -13,7 +13,7 @@ const checkSourceType = async (page: Page, expectedSourceType: string) => {
     await page.waitForTimeout(1000);
 
     const request = await promise;
-    expect(request.postDataJSON().updates[0].source.source_type).toEqual(expectedSourceType);
+    expect(request.postDataJSON().data.updates[0].source.source_type).toEqual(expectedSourceType);
 };
 
 const YT_PATH = process.env.E2E_YT_PATH as string;
