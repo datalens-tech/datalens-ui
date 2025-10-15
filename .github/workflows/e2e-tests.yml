@@ -198,7 +198,7 @@ jobs:
               comment.user.login === 'github-actions[bot]'
             );
 
-            const traceLinks = process.env.E2E_TRACE_LINKS ? `🧐 Links with traces:\n${process.env.E2E_TRACE_LINKS.split('###').map((url)=>'- [trace](' + url + ')').join('\n')}` : '';
+            const traceLinks = process.env.E2E_TRACE_LINKS ? `🧐 Links with traces:\n${process.env.E2E_TRACE_LINKS.split('---').map((url)=>'- [trace](' + url + ')').join('\n')}` : '';
             const dockerComposeLogsLink = process.env.E2E_DOCKER_COMPOSE_LINKS ? `🐳 Link with docker compose logs: [logs](${process.env.E2E_DOCKER_COMPOSE_LINKS})` : '';
 
             const timestamp = new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString().replace('T', ' ').slice(0, 19) + ' MSK';
