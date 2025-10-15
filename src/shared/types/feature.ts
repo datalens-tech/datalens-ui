@@ -101,6 +101,7 @@ export enum Feature {
     EnableDatasetSourcesPagination = 'EnableDatasetSourcesPagination',
 
     EnableMobileFixedHeader = 'EnableMobileFixedHeader',
+    EnableCommonChartDashSettings = 'EnableCommonChartDashSettings',
 }
 
 export type FeatureConfig = Record<string, boolean>;
