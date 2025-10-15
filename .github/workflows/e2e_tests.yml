@@ -1,9 +1,8 @@
 name: E2E Tests
 
 on:
-  pull_request:
-    branches-ignore:
-      - 'weblate-**'
+  # used by datalens-tech/datalens-backend repo
+  # https://github.com/datalens-tech/datalens-backend/blob/main/.github/workflows/run_e2e.yml#L30
   workflow_dispatch:
     inputs:
       distinct_id:

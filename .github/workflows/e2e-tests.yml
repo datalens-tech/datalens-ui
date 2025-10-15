@@ -1,0 +1,210 @@
+name: E2E Tests
+
+on:
+  workflow_dispatch:
+  pull_request:
+    branches-ignore:
+      - 'weblate-**'
+
+concurrency:
+  group: ${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  run:
+    name: e2e-tests
+    runs-on:
+      - self-hosted
+      - linux
+      - cloud
+      - datalens-opensource
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 22
+      - name: check docker compose config
+        run: npm run test:e2e:docker:check
+      - name: up docker compose
+        run: npm run test:e2e:docker:up-no-ui
+      - run: npm run deps
+        env:
+          # folder in docker container
+          NPM_CACHE_ROOT: /home/github/actions-runner/_work/.cache/npm-cache
+      - name: run build and tests local from repo
+        run: |
+          npm run build
+          mkdir -p ./tests/logs
+          node dist/server 1>./tests/logs/ui.stdout.log 2>./tests/logs/ui.stderr.log &
+          echo $! > ./tests/logs/ui.pid
+          exec 'npm run test:e2e:opensource'
+        env:
+          E2E_NO_AUTH: 'false'
+          E2E_RETRY_TIMES: '2'
+          E2E_TEST_TIMEOUT: '90000'
+          E2E_ACTION_TIMEOUT: '10000'
+          E2E_EXPECT_TIMEOUT: '10000'
+          E2E_MAX_FAILURES: '30'
+          E2E_MAX_WORKERS: '6'
+          E2E_DOMAIN: http://localhost:8080
+          E2E_USER_LOGIN: admin
+          E2E_USER_PASSWORD: admin
+
+          NODE_ENV: production
+          APP_BUILDER_CDN: 'false'
+          UI_CORE_CDN: 'false'
+          APP_MODE: full
+          APP_ENV: production
+          APP_INSTALLATION: opensource
+          APP_PORT: '8080'
+      - name: kill ui service
+        if: always()
+        run: |
+          kill -9 $(cat ./tests/logs/ui.pid)
+          rm -rf ./tests/logs/ui.pid
+      - name: get docker compose logs
+        if: always()
+        run: |
+          npm run test:e2e:docker:logs > ./tests/logs/docker-compose.log
+      - name: run docker compose down
+        if: always()
+        run: npm run test:e2e:docker:down
+      - name: save report link and pr number
+        if: always()
+        run: |
+          echo "https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}" > ./tests/artifacts/report-link
+          echo "${{ github.event.pull_request.number }}" > ./tests/artifacts/report-pr
+      - uses: actions/upload-artifact@v4
+        if: always()
+        id: upload-artifact-report
+        with:
+          name: playwright-report
+          path: ./tests/artifacts/
+          retention-days: 7
+      - uses: actions/upload-artifact@v4
+        if: always()
+        id: upload-artifact-docker-compose-logs
+        with:
+          name: docker-compose-logs
+          path: ./tests/logs/
+          retention-days: 7
+      - name: extract e2e links from workflow
+        if: always()
+        id: e2e_links
+        run: |
+          echo "e2e_report_link=${{ steps.upload-artifact-report.outputs.artifact-url }}" >> "$GITHUB_OUTPUT"
+          echo "e2e_docker_compose_logs_link=${{ steps.upload-artifact-docker-compose-logs.outputs.artifact-url }}" >> "$GITHUB_OUTPUT"
+    outputs:
+      e2e_report_link: ${{ steps.e2e_links.outputs.e2e_report_link }}
+      e2e_docker_compose_logs_link: ${{ steps.e2e_links.outputs.e2e_docker_compose_logs_link }}
+
+  report:
+    name: e2e-tests-report
+    needs: run
+    if: always()
+    runs-on:
+      - self-hosted
+      - linux
+      - cloud
+      - datalens-opensource
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/download-artifact@v4
+        with:
+          name: playwright-report
+          path: ./tests/artifacts/
+      - name: pack to single archive
+        run: |
+          cd ./tests/artifacts && tar --no-xattrs -cvf "./../report.tmp" * &>/dev/null && mv "./../report.tmp" "./report.tar.gz"
+        env:
+          COPYFILE_DISABLE: 1
+      - name: upload report to s3
+        run: |
+          E2E_REPORT_PATH="reports/${{ github.head_ref || github.ref_name }}/${{ github.run_id }}/${{ github.run_attempt }}"
+          aws --region "${STORAGE_REGION}" --endpoint-url "${STORAGE_ENDPOINT}" s3 cp ./tests/artifacts/report.tar.gz "s3://${STORAGE_BUCKET}/${STORAGE_PREFIX}/${E2E_REPORT_PATH}/report.tar.gz"
+          EXPIRE_LINK_SEC=604800 # 7 days
+          LINK_S3=$(aws --region "${STORAGE_REGION}" --endpoint-url "${STORAGE_ENDPOINT}" s3 presign --expires-in ${EXPIRE_LINK_SEC} "s3://${STORAGE_BUCKET}/${STORAGE_PREFIX}/${E2E_REPORT_PATH}/report.tar.gz")
+          echo "🔗 link to s3: ${LINK_S3}"
+          LINK_S3_ENCODED=$(jq -rn --arg X "${LINK_S3}" '$X|@uri')
+          LINK_TRACE="https://playwright-trace-viewer.website.yandexcloud.net/?trace=${LINK_S3_ENCODED}"
+          echo "E2E_REPORT_LINK_S3=${LINK_S3}" >> "$GITHUB_ENV"
+          echo "E2E_TRACE_LINK_S3=${LINK_TRACE}" >> "$GITHUB_ENV"
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.E2E_REPORT_S3_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.E2E_REPORT_S3_SECRET_KEY }}
+          STORAGE_ENDPOINT: ${{ vars.E2E_REPORT_S3_ENDPOINT }}
+          STORAGE_REGION: ${{ vars.E2E_REPORT_S3_REGION }}
+          STORAGE_BUCKET: ${{ vars.E2E_REPORT_S3_BUCKET }}
+          STORAGE_PREFIX: ${{ vars.E2E_REPORT_S3_PREFIX }}
+      - uses: daun/playwright-report-summary@v3
+        if: always()
+        id: report-md
+        with:
+          report-file: ./tests/artifacts/results.json
+          create-comment: false
+      - name: create or update pr comment
+        uses: actions/github-script@v7
+        if: always()
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const issueNumber = context.issue.number;
+            const repo = context.repo;
+
+            const commentIdentifier = "<!-- e2e-tests-report -->";
+            const { data: comments } = await github.rest.issues.listComments({
+              ...repo,
+              issue_number: issueNumber,
+            });
+
+            const botComment = comments.find(comment => 
+              comment.body.includes(commentIdentifier) && 
+              comment.user.login === 'github-actions[bot]'
+            );
+
+            const traceLink = process.env.E2E_TRACE_LINK ? `🧐 Link with trace: [trace](${process.env.E2E_TRACE_LINK})` : '';
+            const dockerComposeLogsLink = process.env.E2E_DOCKER_COMPOSE_LINKS ? `🐳 Link with docker compose logs: [logs](${process.env.E2E_DOCKER_COMPOSE_LINKS})` : '';
+
+            const timestamp = new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString().replace('T', ' ').slice(0, 19) + ' MSK';
+
+            let commentBody = `
+            ## ![](https://storage.yandexcloud.net/e2e-report/icons/os-small.svg) E2E Tests
+
+            ${{ steps.report-md.outputs.summary }}
+
+            ---
+
+            ${traceLink}
+
+            👉 Link with detailed report: [report](${process.env.E2E_REPORT_LINK})
+
+            ${dockerComposeLogsLink}
+
+            Last updated: ${timestamp}
+
+            ${commentIdentifier}
+            `;
+
+            commentBody = commentBody.replace(/@screenshot/g, '`@screenshot`');
+
+            if (botComment) {
+              await github.rest.issues.updateComment({
+                ...repo,
+                comment_id: botComment.id,
+                body: commentBody
+              });
+              
+              console.log('updated existing comment on PR #' + issueNumber);
+            } else {
+              await github.rest.issues.createComment({
+                ...repo,
+                issue_number: issueNumber,
+                body: commentBody
+              });
+              
+              console.log('added new comment to PR #' + issueNumber);
+            }
+        env:
+          E2E_REPORT_LINK: ${{ needs.run.outputs.e2e_report_link }}
+          E2E_DOCKER_COMPOSE_LINKS: ${{ needs.run.outputs.e2e_docker_compose_logs_link }}
+          E2E_TRACE_LINK: ${{ env.E2E_TRACE_LINK_S3 }}
