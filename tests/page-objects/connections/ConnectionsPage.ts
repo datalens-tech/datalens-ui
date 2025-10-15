@@ -1,4 +1,5 @@
 import {
+    ActionPanelQA,
     ConnectionsActionPanelControls,
     ConnectionsBaseQA,
     ConnectionsS3BaseQA,
@@ -6,24 +7,29 @@ import {
     DialogCreateWorkbookEntryQa,
     EntryDialogQA,
 } from '../../../src/shared/constants';
+import {ActionPanelEntryContextMenuQa} from '../../../src/shared/constants/qa/action-panel';
 import {v1 as uuidv1} from 'uuid';
 
 import {slct, waitForCondition} from '../../utils';
 import {BasePage} from '../BasePage';
 import type {BasePageProps} from '../BasePage';
 import type {ConsoleMessage, Request} from '@playwright/test';
+import Revisions from '../common/Revisions';
 
 type ConnectionsPageProps = BasePageProps;
 type FillInputArgs = {name: string; value: string};
 type FillFormInputArgs = {id: 'input'} & FillInputArgs;
 
 class ConnectionsPage extends BasePage {
+    revisions: Revisions;
+
     private createQlChartButtonSelector = slct(
         ConnectionsActionPanelControls.CREATE_QL_CHART_BUTTON,
     );
 
     constructor({page}: ConnectionsPageProps) {
         super({page});
+        this.revisions = new Revisions(page);
     }
 
     async createQlChart() {
@@ -97,8 +103,12 @@ class ConnectionsPage extends BasePage {
         this.page.off('console', onConsoleLog);
     }
 
+    getFieldSelector(name: string) {
+        return `conn-input-${name}`;
+    }
+
     async fillInput({name, value}: {name: string; value: string}) {
-        const selector = `conn-input-${name}`;
+        const selector = this.getFieldSelector(name);
         const input = await this.page.waitForSelector(slct(selector));
         // focus input
         await input.click();
@@ -146,6 +156,27 @@ class ConnectionsPage extends BasePage {
                 expect(response?.status()).toBe(200);
             }),
         );
+    }
+
+    async saveUpdatedConnection() {
+        await this.page.locator(slct(ConnectionsBaseQA.SUBMIT_ACTION_BUTTON)).click();
+    }
+
+    async removeConnection() {
+        const moreButton = await this.page.locator(slct(ActionPanelQA.MoreBtn));
+        await expect(moreButton).toBeVisible();
+        await moreButton.click();
+
+        const menuItemRemove = await this.page
+            .locator(slct(ActionPanelEntryContextMenuQa.Menu))
+            .locator(slct(ActionPanelEntryContextMenuQa.Remove));
+        await expect(menuItemRemove).toBeVisible();
+        await menuItemRemove.click();
+
+        const applyButton = await this.page.locator(slct(EntryDialogQA.Apply));
+        await expect(applyButton).toBeVisible();
+
+        await applyButton.click();
     }
 }
 
