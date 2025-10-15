@@ -86,6 +86,7 @@ jobs:
         if: always()
         run: |
           npm run test:e2e:docker:logs > ./tests/logs/docker-compose.log
+          npm run test:e2e:docker:logs-nginx > ./tests/logs/docker-compose.nginx.log
       - name: run docker compose down
         if: always()
         run: |
