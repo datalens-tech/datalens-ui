@@ -30,8 +30,9 @@ export function FloatMenu({children, align = 'center', container}: FloatMenuProp
             const currentScrollY = scrollableContainer?.scrollTop || 0;
 
             if (
-                currentScrollY < prevScrollY.current &&
-                currentScrollY > MIN_SCROLL_POSITION_FOR_HIDING
+                currentScrollY === 0 ||
+                (currentScrollY < prevScrollY.current &&
+                    currentScrollY > MIN_SCROLL_POSITION_FOR_HIDING)
             ) {
                 setIsVisible(true);
             } else if (currentScrollY > prevScrollY.current) {
