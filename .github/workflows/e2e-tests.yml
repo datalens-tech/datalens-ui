@@ -37,10 +37,19 @@ jobs:
         env:
           # folder in docker container
           NPM_CACHE_ROOT: /home/github/actions-runner/_work/.cache/npm-cache
-      - name: run build and tests local from repo
+      - name: run build
+        run: npm run build
+        env:
+          NODE_ENV: production
+          APP_BUILDER_CDN: 'false'
+          UI_CORE_CDN: 'false'
+          APP_MODE: full
+          APP_ENV: production
+          APP_INSTALLATION: opensource
+          APP_PORT: '3030'
+      - name: run tests local from repo
         run: |
           mkdir -p ./tests/logs
-          npm run build
           node dist/server 1>./tests/logs/ui.stdout.log 2>./tests/logs/ui.stderr.log &
           echo $! > ./tests/logs/ui.pid
           npm run test:e2e:opensource
