@@ -80,7 +80,7 @@ jobs:
       - name: kill ui service
         if: always()
         run: |
-          kill -9 $(cat ./tests/logs/ui.pid)
+          kill -9 $(cat ./tests/logs/ui.pid) || true
           rm -rf ./tests/logs/ui.pid
       - name: get docker compose logs
         if: always()
