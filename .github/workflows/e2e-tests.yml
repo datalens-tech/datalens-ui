@@ -151,12 +151,19 @@ jobs:
           E2E_REPORT_PATH="reports/${{ github.head_ref || github.ref_name }}/${{ github.run_id }}/${{ github.run_attempt }}"
           aws --region "${STORAGE_REGION}" --endpoint-url "${STORAGE_ENDPOINT}" s3 cp ./tests/artifacts "s3://${STORAGE_BUCKET}/${STORAGE_PREFIX}/${E2E_REPORT_PATH}/" --recursive
           LINK_S3="${STORAGE_ENDPOINT}/${STORAGE_BUCKET}/${STORAGE_PREFIX}/${E2E_REPORT_PATH}/report.tar.gz"
-          LINK_S3_WEBSITE="https://${STORAGE_BUCKET}.${HTML_ENDPOINT}/${STORAGE_PREFIX}/${E2E_REPORT_PATH}"
+          LINK_S3_WEBSITE="https://${STORAGE_BUCKET}.${HTML_ENDPOINT}/${STORAGE_PREFIX}/${E2E_REPORT_PATH}/report"
           echo "🔗 link to s3: ${LINK_S3_WEBSITE}"
-          LINK_S3_ENCODED=$(jq -rn --arg X "${LINK_S3}" '$X|@uri')
-          LINK_TRACE="https://playwright-trace-viewer.website.yandexcloud.net/?trace=${LINK_S3_ENCODED}"
+          echo -n "" >./tests/artifacts/trace-links
+          for TRACE in $(ls -1 tests/artifacts/report/data 2>/dev/null || true); do
+            LINK_TRACE="${STORAGE_ENDPOINT}/${STORAGE_BUCKET}/${STORAGE_PREFIX}/${E2E_REPORT_PATH}/report/data/${TRACE}"
+            LINK_TRACE_ENCODED=$(jq -rn --arg X "${LINK_TRACE}" '$X|@uri')
+            LINK_TRACE_VIEWER="https://playwright-trace-viewer.website.yandexcloud.net/?trace=${LINK_TRACE_ENCODED}"
+            echo -n "${LINK_TRACE_VIEWER}---" >>./tests/artifacts/trace-links
+          done
+          TRACE_LINKS=$(cat ./tests/artifacts/trace-links)
+          echo "${TRACE_LINKS}" | sed 's|---$||' >./tests/artifacts/trace-links
           echo "E2E_REPORT_LINK_S3=${LINK_S3_WEBSITE}" >> "$GITHUB_ENV"
-          echo "E2E_TRACE_LINK_S3=${LINK_TRACE}" >> "$GITHUB_ENV"
+          echo "E2E_TRACE_LINKS_S3=$(cat ./tests/artifacts/trace-links)" >> "$GITHUB_ENV"
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.E2E_REPORT_S3_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.E2E_REPORT_S3_SECRET_KEY }}
@@ -191,7 +198,7 @@ jobs:
               comment.user.login === 'github-actions[bot]'
             );
 
-            const traceLink = process.env.E2E_TRACE_LINK ? `🧐 Link with trace: [trace](${process.env.E2E_TRACE_LINK})` : '';
+            const traceLinks = process.env.E2E_TRACE_LINKS ? `🧐 Links with traces:\n\n${process.env.E2E_TRACE_LINKS.split('###').map((url)=>'- [trace](' + url + ')').join('\n')}` : '';
             const dockerComposeLogsLink = process.env.E2E_DOCKER_COMPOSE_LINKS ? `🐳 Link with docker compose logs: [logs](${process.env.E2E_DOCKER_COMPOSE_LINKS})` : '';
 
             const timestamp = new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString().replace('T', ' ').slice(0, 19) + ' MSK';
@@ -236,4 +243,4 @@ jobs:
         env:
           E2E_REPORT_LINK: ${{ env.E2E_REPORT_LINK_S3 }}
           E2E_DOCKER_COMPOSE_LINKS: ${{ needs.run.outputs.e2e_docker_compose_logs_link }}
-          E2E_TRACE_LINK: ${{ env.E2E_TRACE_LINK_S3 }}
+          E2E_TRACE_LINKS: ${{ env.E2E_TRACE_LINKS_S3 }}
