@@ -234,6 +234,6 @@ jobs:
               console.log('added new comment to PR #' + issueNumber);
             }
         env:
-          E2E_REPORT_LINK: ${{ needs.run.outputs.e2e_report_link }}
+          E2E_REPORT_LINK: ${{ env.E2E_REPORT_LINK_S3 }}
           E2E_DOCKER_COMPOSE_LINKS: ${{ needs.run.outputs.e2e_docker_compose_logs_link }}
           E2E_TRACE_LINK: ${{ env.E2E_TRACE_LINK_S3 }}
