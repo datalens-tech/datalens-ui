@@ -210,7 +210,7 @@ jobs:
 
             ---
 
-            ${traceLink}
+            ${traceLinks}
 
             👉 Link with detailed report: [report](${process.env.E2E_REPORT_LINK})
 
