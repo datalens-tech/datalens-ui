@@ -20,6 +20,7 @@ export enum SubjectType {
 }
 
 export enum ClaimsSubjectType {
+    Unspecified = 'SUBJECT_TYPE_UNSPECIFIED',
     UserAccount = 'USER_ACCOUNT',
     Group = 'GROUP',
     Invitee = 'INVITEE',
@@ -130,4 +131,33 @@ export type BatchListMembersArgs = {
 export type BatchListMembersResponse = {
     members: SubjectClaims[];
     nextPageToken: string;
+};
+
+export interface BatchListAccessBindingsResponse {
+    subjectsWithBindings: SubjectWithBindings[];
+    nextPageToken: string;
+}
+
+export interface SubjectWithBindings {
+    subjectClaims: SubjectClaims;
+    accessBindings: InheritedAccessBindings[];
+    inheritedAccessBindings: InheritedAccessBindings[];
+}
+
+export interface InheritedAccessBindings {
+    roleId: string;
+    inheritedFrom: AccessBindingsResource | null;
+}
+
+export interface AccessBindingsResource {
+    id: string;
+    type: string;
+}
+
+export type BatchListAccessBindingsArgs = {
+    resourcePath: AccessBindingsResource[];
+    getInheritedBindings?: boolean;
+    filter?: string;
+    pageSize?: number;
+    pageToken?: string;
 };

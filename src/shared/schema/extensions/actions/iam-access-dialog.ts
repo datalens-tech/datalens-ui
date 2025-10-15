@@ -1,6 +1,8 @@
 import {createAction} from '../../gateway-utils';
 import type {GetDatalensOperationResponse} from '../../us/types/operations';
 import type {
+    BatchListAccessBindingsArgs,
+    BatchListAccessBindingsResponse,
     BatchListMembersArgs,
     BatchListMembersResponse,
     GetClaimsArgs,
@@ -39,5 +41,14 @@ export const iamAccessDialogActions = {
     }),
     batchListMembers: createAction<BatchListMembersResponse, BatchListMembersArgs>(async () => {
         return {members: [], nextPageToken: ''};
+    }),
+    batchListAccessBindings: createAction<
+        BatchListAccessBindingsResponse,
+        BatchListAccessBindingsArgs
+    >(async () => {
+        return {
+            subjectsWithBindings: [],
+            nextPageToken: '',
+        };
     }),
 };
