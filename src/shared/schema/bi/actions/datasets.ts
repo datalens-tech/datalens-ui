@@ -171,10 +171,10 @@ export const actions = {
                           version,
                       )}/validators/schema`
                     : `${API_V1}/datasets/validators/dataset`,
-            params: ({data: {dataset, updates}, workbookId}, headers, {ctx}) => {
+            params: ({data: {dataset, ...restData}, workbookId}, headers, {ctx}) => {
                 const resultDataset = prepareDatasetProperty(ctx, dataset);
                 return {
-                    body: {dataset: resultDataset, updates},
+                    body: {...restData, dataset: resultDataset},
                     headers: {
                         ...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}),
                         ...headers,
