@@ -240,20 +240,23 @@ export type ImportWorkbookAction =
     | ImportWorkbookFailedAction
     | ResetImportWorkbookAction;
 
-export const importWorkbook = ({
-    title,
-    description,
-    collectionId,
-    importFile,
-    publicGalleryUrl,
-}: {
-    title: string;
-    description?: string;
-    collectionId: string | null;
-} & (
-    | {importFile: File; publicGalleryUrl?: undefined}
-    | {publicGalleryUrl: string; importFile?: undefined}
-)) => {
+export const importWorkbook = (
+    {
+        title,
+        description,
+        collectionId,
+        importFile,
+        publicGalleryUrl,
+    }: {
+        title: string;
+        description?: string;
+        collectionId: string | null;
+    } & (
+        | {importFile: File; publicGalleryUrl?: undefined}
+        | {publicGalleryUrl: string; importFile?: undefined}
+    ),
+    shouldThrow = false,
+) => {
     return async (dispatch: CollectionsStructureDispatch) => {
         let data;
 
@@ -267,6 +270,11 @@ export const importWorkbook = ({
                         error: err,
                     }),
                 );
+
+                if (shouldThrow) {
+                    throw err;
+                }
+
                 return Promise.resolve();
             }
         } else {
@@ -280,6 +288,11 @@ export const importWorkbook = ({
                         error: err,
                     }),
                 );
+
+                if (shouldThrow) {
+                    throw err;
+                }
+
                 return Promise.resolve();
             }
         }
@@ -309,7 +322,7 @@ export const importWorkbook = ({
                     logger.logError('collectionsStructure/importWorkbook failed', error);
                     dispatch(
                         showToast({
-                            title: error.message,
+                            title: i18n('toast_workbook-already-exists-error'),
                             error,
                         }),
                     );
@@ -319,6 +332,10 @@ export const importWorkbook = ({
                     type: IMPORT_WORKBOOK_FAILED,
                     error: isCanceled ? null : error,
                 });
+
+                if (shouldThrow) {
+                    throw error;
+                }
 
                 return null;
             });

@@ -2,6 +2,7 @@ import {getSdk} from 'libs/schematic-sdk';
 import logger from 'libs/logger';
 import {waitOperation} from '../../../utils/waitOperation';
 import {showToast} from 'store/actions/toaster';
+import {I18n} from 'i18n';
 
 import type {GET_ROOT_COLLECTION_PERMISSIONS_FAILED} from '../../constants/collectionsStructure';
 import {
@@ -85,6 +86,8 @@ import type {CollectionsStructureDispatch} from './index';
 export type ResetStateAction = {
     type: typeof RESET_STATE;
 };
+
+const i18n = I18n.keyset('component.collections-structure');
 
 export const resetState = () => (dispatch: CollectionsStructureDispatch) => {
     dispatch({
@@ -368,15 +371,18 @@ export type CreateCollectionAction =
     | CreateCollectionSuccessAction
     | CreateCollectionFailedAction;
 
-export const createCollection = ({
-    title,
-    description,
-    parentId,
-}: {
-    title: string;
-    description?: string;
-    parentId: string | null;
-}) => {
+export const createCollection = (
+    {
+        title,
+        description,
+        parentId,
+    }: {
+        title: string;
+        description?: string;
+        parentId: string | null;
+    },
+    shouldThrow = false,
+) => {
     return (dispatch: CollectionsStructureDispatch) => {
         dispatch({
             type: CREATE_COLLECTION_LOADING,
@@ -415,7 +421,7 @@ export const createCollection = ({
                     logger.logError('collectionsStructure/createCollection failed', error);
                     dispatch(
                         showToast({
-                            title: error.message,
+                            title: i18n('toast_collection-already-exists-error'),
                             error,
                         }),
                     );
@@ -425,6 +431,10 @@ export const createCollection = ({
                     type: CREATE_COLLECTION_FAILED,
                     error: isCanceled ? null : error,
                 });
+
+                if (shouldThrow) {
+                    throw error;
+                }
 
                 return null;
             });
@@ -447,15 +457,18 @@ export type CreateWorkbookAction =
     | CreateWorkbookSuccessAction
     | CreateWorkbookFailedAction;
 
-export const createWorkbook = ({
-    title,
-    description,
-    collectionId,
-}: {
-    title: string;
-    description?: string;
-    collectionId: string | null;
-}) => {
+export const createWorkbook = (
+    {
+        title,
+        description,
+        collectionId,
+    }: {
+        title: string;
+        description?: string;
+        collectionId: string | null;
+    },
+    shouldThrow = false,
+) => {
     return (dispatch: CollectionsStructureDispatch) => {
         dispatch({
             type: CREATE_WORKBOOK_LOADING,
@@ -494,7 +507,7 @@ export const createWorkbook = ({
                     logger.logError('collectionsStructure/createWorkbook failed', error);
                     dispatch(
                         showToast({
-                            title: error.message,
+                            title: i18n('toast_workbook-already-exists-error'),
                             error,
                         }),
                     );
@@ -504,6 +517,10 @@ export const createWorkbook = ({
                     type: CREATE_WORKBOOK_FAILED,
                     error: isCanceled ? null : error,
                 });
+
+                if (shouldThrow) {
+                    throw error;
+                }
 
                 return null;
             });
@@ -973,15 +990,18 @@ export type UpdateWorkbookAction =
     | UpdateWorkbookSuccessAction
     | UpdateWorkbookFailedAction;
 
-export const updateWorkbook = ({
-    workbookId,
-    title,
-    description,
-}: {
-    workbookId: string;
-    title: string;
-    description: string;
-}) => {
+export const updateWorkbook = (
+    {
+        workbookId,
+        title,
+        description,
+    }: {
+        workbookId: string;
+        title: string;
+        description: string;
+    },
+    shouldThrow = false,
+) => {
     return (dispatch: CollectionsStructureDispatch) => {
         dispatch({
             type: UPDATE_WORKBOOK_LOADING,
@@ -1007,7 +1027,7 @@ export const updateWorkbook = ({
                     logger.logError('collectionsStructure/updateWorkbook failed', error);
                     dispatch(
                         showToast({
-                            title: error.message,
+                            title: i18n('toast_workbook-already-exists-error'),
                             error,
                         }),
                     );
@@ -1017,6 +1037,10 @@ export const updateWorkbook = ({
                     type: UPDATE_WORKBOOK_FAILED,
                     error: isCanceled ? null : error,
                 });
+
+                if (shouldThrow) {
+                    throw error;
+                }
 
                 return null;
             });
@@ -1040,15 +1064,18 @@ export type UpdateCollectionAction =
     | UpdateCollectionSuccessAction
     | UpdateCollectionFailedAction;
 
-export const updateCollection = ({
-    collectionId,
-    title,
-    description,
-}: {
-    collectionId: string;
-    title: string;
-    description: string;
-}) => {
+export const updateCollection = (
+    {
+        collectionId,
+        title,
+        description,
+    }: {
+        collectionId: string;
+        title: string;
+        description: string;
+    },
+    shouldThrow = false,
+) => {
     return (dispatch: CollectionsStructureDispatch) => {
         dispatch({
             type: UPDATE_COLLECTION_LOADING,
@@ -1074,7 +1101,7 @@ export const updateCollection = ({
                     logger.logError('collectionsStructure/updateCollection failed', error);
                     dispatch(
                         showToast({
-                            title: error.message,
+                            title: i18n('toast_collection-already-exists-error'),
                             error,
                         }),
                     );
@@ -1084,6 +1111,10 @@ export const updateCollection = ({
                     type: UPDATE_COLLECTION_FAILED,
                     error: isCanceled ? null : error,
                 });
+
+                if (shouldThrow) {
+                    throw error;
+                }
 
                 return null;
             });
