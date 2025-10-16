@@ -1395,7 +1395,6 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 updates: [...state.updates, ...updates],
             };
         }
-        // TODO: Will be fixed in CHARTS-11898
         case SET_DESCRIPTION: {
             return {
                 ...state,
