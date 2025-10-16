@@ -1,5 +1,12 @@
 import _get from 'lodash/get';
-import type {DatasetField, DatasetSource, DatasetSourceAvatar, Feature, WorkbookId} from 'shared';
+import type {
+    DatasetField,
+    DatasetOptions,
+    DatasetSource,
+    DatasetSourceAvatar,
+    Feature,
+    WorkbookId,
+} from 'shared';
 import {DL} from 'ui';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
@@ -152,4 +159,20 @@ export default class DatasetUtils {
 export function isCreationProcess(pathname = '') {
     const lastPathnamePart = pathname.split('/').filter(Boolean).slice(-1)[0];
     return lastPathnamePart === 'new';
+}
+
+export function getSourceListingValues(sourceListing?: DatasetOptions['source_listing']) {
+    const serverPagination = sourceListing?.supports_source_pagination;
+    const serverSearch = sourceListing?.supports_source_search;
+    const supportsDbNameListing = sourceListing?.supports_db_name_listing;
+    const parentLabel = sourceListing?.db_name_label;
+    const dbNameRequiredForSearch = sourceListing?.db_name_required_for_search;
+
+    return {
+        serverSearch,
+        serverPagination,
+        supportsDbNameListing,
+        parentLabel,
+        dbNameRequiredForSearch,
+    };
 }

@@ -10,7 +10,12 @@ import type {
     Permissions,
     WorkbookId,
 } from '../../../../../shared';
-import type {EntryFieldPublishedId, ValidateDatasetResponse} from '../../../../../shared/schema';
+import type {
+    BaseSource,
+    EntryFieldPublishedId,
+    FormOptions as SchemaFormOptions,
+    ValidateDatasetResponse,
+} from '../../../../../shared/schema';
 import type {DatasetTab} from '../../constants';
 import type {
     ADD_AVATAR_PROTOTYPES,
@@ -56,6 +61,8 @@ import type {
     RELATION_UPDATE,
     RENAME_DATASET,
     RESET_DATASET_STATE,
+    SET_CONNECTIONS_DB_NAMES,
+    SET_CURRENT_DB_NAME,
     SET_CURRENT_TAB,
     SET_DATASET_REVISION_MISMATCH,
     SET_DATA_EXPORT_ENABLED,
@@ -67,9 +74,13 @@ import type {
     SET_LAST_MODIFIED_TAB,
     SET_QUEUE_TO_LOAD_PREVIEW,
     SET_SOURCES_LOADING_ERROR,
+    SET_SOURCES_PAGINATION,
+    SET_SOURCES_SEARCH_LOADING,
     SET_TEMPLATE_ENABLED,
     SET_UPDATES,
     SET_VALIDATION_STATE,
+    SOURCES_NEXT_PAGE_REQUEST,
+    SOURCES_NEXT_PAGE_SUCCESS,
     SOURCES_REFRESH,
     SOURCE_ADD,
     SOURCE_DELETE,
@@ -99,42 +110,6 @@ export type ConnectionEntry = {
     workbookId: WorkbookId;
 };
 
-export type BaseSource = {
-    connection_id: string;
-    disabled: boolean;
-    group: []; // TODO: correctly describe the type
-    is_ref: boolean;
-    parameter_hash: string;
-    parameters: {[k: string]: string};
-    ref_source_id: string | null;
-    source_type: string; // perhaps it will be necessary to clarify the type here
-    title: string;
-    managed_by?: 'user';
-};
-
-type FieldDocKey =
-    | 'CHYT_TABLE/table_name'
-    | 'CHYT_TABLE_LIST/table_names'
-    | 'CHYT_TABLE_LIST/title'
-    | 'CHYT_TABLE_RANGE/title'
-    | 'CHYT_USER_AUTH_TABLE_LIST/title'
-    | 'CHYT_USER_AUTH_TABLE_RANGE/title'
-    | 'CHYT_USER_AUTH_TABLE/table_name'
-    | 'CHYT_USER_AUTH_TABLE/table_names'
-    | 'CHYT_TABLE_RANGE/directory_path'
-    | 'CHYDB_TABLE/table_name'
-    | 'CHYDB_TABLE/ydb_database'
-    | 'ANY_SUBSELECT/subsql'
-    | 'CHYT_SUBSELECT/subsql'
-    | 'MSSQL_SUBSELECT/subsql'
-    | 'PG_SUBSELECT/subsql'
-    | 'YTsaurus/CHYT_TABLE/table_name'
-    | 'CHYT_YTSAURUS_TABLE_LIST/title'
-    | 'YTsaurus/CHYT_TABLE_LIST/table_names'
-    | 'CHYT_YTSAURUS_TABLE_RANGE/title'
-    | 'YTsaurus/CHYT_TABLE_RANGE/directory_path'
-    | 'YTsaurus/CHYT_SUBSELECT/subsql';
-
 export type TranslatedItem = {
     en: string;
     ru: string;
@@ -148,37 +123,8 @@ export type SourcePrototype = DatasetSource & {
     isConnectedWithAvatar?: boolean;
 };
 
-type BaseOptions = {
-    name: string;
-    default: string;
-    title: TranslatedItem;
-    required?: boolean;
-    field_doc_key?: FieldDocKey;
-    template_enabled?: boolean;
-};
-
-export type TextFormOptions = {input_type: 'text'} & BaseOptions;
-
-export type TextareaFormOptions = {input_type: 'textarea'} & BaseOptions;
-
-type SqlFormOptions = {input_type: 'sql'} & BaseOptions;
-
-export type SelectFormOptions = {
-    input_type: 'select';
-    select_options: string[];
-    select_allow_user_input: boolean;
-} & BaseOptions;
-
-export type FormOptions =
-    | TextFormOptions
-    | TextareaFormOptions
-    | SqlFormOptions
-    | SelectFormOptions;
-
-export type FreeformSource = {
-    form: FormOptions[];
-    tab_title: TranslatedItem;
-} & BaseSource;
+export type FormOptions = SchemaFormOptions;
+export type FreeformSource = BaseSource;
 
 export type EditHistoryOptions = {
     stacked?: boolean;
@@ -297,6 +243,14 @@ export type Update =
 
 export type EditorItemToDisplay = 'fieldsId' | 'hiddenFields';
 
+export type SourcesPagination = {
+    page: number;
+    limit: number;
+    isFetchingNextPage: boolean;
+    isFinished: boolean;
+    searchValue: string;
+};
+
 export type DatasetReduxState = {
     isRefetchingDataset: boolean;
     isLoading: boolean;
@@ -311,7 +265,10 @@ export type DatasetReduxState = {
     connection: ConnectionEntry | null;
     content: Partial<Dataset['dataset']>;
     prevContent: Partial<Dataset['dataset']>;
-    options: Dataset['options'] | object;
+    options: Partial<Dataset['options']>;
+    currentDbName?: string;
+    connectionsDbNames: Record<string, string[]>;
+    sourcesPagination: SourcesPagination;
     preview: {
         previewEnabled: boolean;
         readyPreview: 'loading' | 'failed' | null;
@@ -352,6 +309,7 @@ export type DatasetReduxState = {
         isDatasetChanged: boolean;
         isFieldEditorModuleLoading: boolean;
         isSourcesLoading: boolean;
+        isSourcesSearchLoading: boolean;
     };
     editor: {
         filter: string;
@@ -412,7 +370,7 @@ type AddAvatarPrototypes = {
     type: typeof ADD_AVATAR_PROTOTYPES;
     payload: {
         list: BaseSource[];
-        templates: FreeformSource;
+        templates: FreeformSource | null;
     };
 };
 
@@ -844,6 +802,35 @@ type SetDescription = {
     payload: string;
 };
 
+type SetConnectionDbNames = {
+    type: typeof SET_CONNECTIONS_DB_NAMES;
+    payload: Record<string, string[]>;
+};
+
+export type SetCurrentDbName = {
+    type: typeof SET_CURRENT_DB_NAME;
+    payload: string;
+};
+
+export type SetSourcesPagination = {
+    type: typeof SET_SOURCES_PAGINATION;
+    payload: Partial<SourcesPagination>;
+};
+
+type SourcesNextPageRequest = {
+    type: typeof SOURCES_NEXT_PAGE_REQUEST;
+};
+
+type SourcesNextPageSuccess = {
+    type: typeof SOURCES_NEXT_PAGE_SUCCESS;
+    payload: BaseSource[];
+};
+
+type SetSourcesSearchLoading = {
+    type: typeof SET_SOURCES_SEARCH_LOADING;
+    payload: boolean;
+};
+
 export type DatasetReduxAction =
     | SetFreeformSources
     | ResetDatasetState
@@ -915,4 +902,10 @@ export type DatasetReduxAction =
     | SetTemplateEnabled
     | SetDataExportEnabled
     | SetUpdates
-    | SetDescription;
+    | SetDescription
+    | SetConnectionDbNames
+    | SetCurrentDbName
+    | SetSourcesPagination
+    | SourcesNextPageRequest
+    | SourcesNextPageSuccess
+    | SetSourcesSearchLoading;
