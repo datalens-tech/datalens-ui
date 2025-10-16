@@ -11,7 +11,7 @@ import {getSdk} from '../../../../../libs/schematic-sdk';
 import {ComponentErrorType, DATASETS_EDIT_HISTORY_UNIT_ID} from '../../../constants';
 import {getToastTitle} from '../../../helpers/dataset-error-helpers';
 import {getComponentErrorsByType} from '../../../helpers/datasets';
-import DatasetUtils from '../../../helpers/utils';
+import DatasetUtils, {getSourceListingValues} from '../../../helpers/utils';
 import {workbookIdSelector} from '../../selectors';
 import * as DATASET_ACTION_TYPES from '../types/dataset';
 
@@ -218,8 +218,8 @@ export function initialFetchDataset({datasetId, rev_id, isInitialFetch = true}) 
                     source_listing,
                 },
             } = dataset;
-            const supportsDbNameListing = source_listing?.supports_db_name_listing;
-            const dbNameRequiredForSearch = source_listing?.db_name_required_for_search;
+            const {dbNameRequiredForSearch, supportsDbNameListing} =
+                getSourceListingValues(source_listing);
 
             const connectionsIds = new Set(
                 sources
@@ -509,12 +509,11 @@ function _getSources() {
                 sourcesPagination,
                 selectedConnections,
                 currentDbName,
-                options,
+                options: {source_listing},
                 ui: {selectedConnectionId},
             },
         } = getState();
-        const supportsSourcePagination = options?.source_listing?.supports_source_pagination;
-        const dbNameRequiredForSearch = options?.source_listing?.db_name_required_for_search;
+        const {serverPagination, dbNameRequiredForSearch} = getSourceListingValues(source_listing);
         const workbookId = workbookIdSelector(getState());
 
         const selectedConnection = selectedConnections.find(
@@ -527,7 +526,7 @@ function _getSources() {
                 getSources({
                     connectionId: entryId,
                     workbookId,
-                    limit: supportsSourcePagination ? sourcesPagination.limit : undefined,
+                    limit: serverPagination ? sourcesPagination.limit : undefined,
                     currentDbName: dbNameRequiredForSearch ? currentDbName : undefined,
                 }),
             );

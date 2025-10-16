@@ -126,6 +126,14 @@ const getSourceHashTitleId = <T extends {parameter_hash: string; title: string}>
 };
 
 export const sourcePrototypesSelector = (state: DatalensGlobalState) => {
+    return state.dataset.sourcePrototypes;
+};
+
+export const sourcesSearchLoadingSelector = (state: DatalensGlobalState) => {
+    return state.dataset.ui.isSourcesSearchLoading;
+};
+
+export const sortedSourcePrototypesSelector = (state: DatalensGlobalState) => {
     const {
         sourcePrototypes = [],
         content: {sources = [], source_avatars: sourceAvatars = []},

@@ -81,7 +81,7 @@ import {
     isLoadingDatasetSelector,
     isRefetchingDatasetSelector,
     previewEnabledSelector,
-    sourcePrototypesSelector,
+    sortedSourcePrototypesSelector,
     sourceTemplateSelector,
     workbookIdSelector,
 } from '../../store/selectors';
@@ -726,7 +726,7 @@ const mapStateToProps = createStructuredSelector({
     isFavorite: isFavoriteDatasetSelector,
     isDatasetRevisionMismatch: isDatasetRevisionMismatchSelector,
     previewEnabled: previewEnabledSelector,
-    sourcePrototypes: sourcePrototypesSelector,
+    sourcePrototypes: sortedSourcePrototypesSelector,
     sourceTemplate: sourceTemplateSelector,
     ui: UISelector,
     workbookId: workbookIdSelector,

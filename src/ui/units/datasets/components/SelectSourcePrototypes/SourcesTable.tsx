@@ -6,11 +6,12 @@ import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
 import {useDispatch, useSelector} from 'react-redux';
 import {openDialogErrorWithTabs} from 'store/actions/dialog';
+import {usePrevious} from 'ui';
 
 import {I18n} from '../../../../../i18n';
 import type {DatasetSource} from '../../../../../shared/types';
 import type {DataLensApiError} from '../../../../typings';
-import DatasetUtils from '../../helpers/utils';
+import DatasetUtils, {getSourceListingValues} from '../../helpers/utils';
 import {
     changeCurrentDbName,
     incrementSourcesPage,
@@ -20,13 +21,15 @@ import {
     currentDbNameSelector,
     currentDbNamesSelector,
     optionsSelector,
+    sourcePrototypesSelector,
     sourcesErrorSelector,
     sourcesPaginationSelector,
+    sourcesSearchLoadingSelector,
 } from '../../store/selectors';
 import Source from '../Source/Source';
 import {withDragging} from '../hoc/AvatarDnD';
 
-import {ICON_PLUS_SIZE, SEARCH_DELAY} from './constants';
+import {ICON_PLUS_SIZE, LIST_ITEM_HEIGHT, SEARCH_DELAY} from './constants';
 
 import iconPlus from 'ui/assets/icons/plus.svg';
 
@@ -122,17 +125,34 @@ export const SourcesTable: React.FC<SourcesTableProps> = ({
     onRetry,
 }) => {
     const [search, setSearch] = React.useState('');
+    const searchInputRef = React.useRef<HTMLInputElement>(null);
     const dispatch = useDispatch();
     const {source_listing} = useSelector(optionsSelector);
     const currentDbName = useSelector(currentDbNameSelector);
     const sourcesPagination = useSelector(sourcesPaginationSelector);
+    const sourcePrototypes = useSelector(sourcePrototypesSelector);
+    const sourcesSearchLoading = useSelector(sourcesSearchLoadingSelector);
     const sourcesError = useSelector(sourcesErrorSelector);
     const dbNames = useSelector(currentDbNamesSelector);
 
-    const serverPagination = source_listing?.supports_source_pagination;
-    const serverSearch = source_listing?.supports_source_search;
-    const canChangeSourceParent = source_listing?.supports_db_name_listing;
-    const parentLabel = source_listing?.db_name_label ?? '';
+    const prevLoading = usePrevious(sourcesSearchLoading);
+
+    React.useEffect(() => {
+        if (
+            !sourcesSearchLoading &&
+            prevLoading !== undefined &&
+            sourcesSearchLoading !== prevLoading
+        ) {
+            searchInputRef.current?.focus?.();
+        }
+    }, [sourcesSearchLoading, prevLoading]);
+
+    const {
+        serverSearch,
+        serverPagination,
+        supportsDbNameListing,
+        parentLabel = '',
+    } = getSourceListingValues(source_listing);
 
     React.useEffect(() => {
         setSearch(sourcesPagination.searchValue);
@@ -150,34 +170,39 @@ export const SourcesTable: React.FC<SourcesTableProps> = ({
             !sourcesPagination.isFetchingNextPage &&
             !loading &&
             !sourcesPagination.isFinished &&
-            !sourcesError
+            !sourcesError &&
+            sourcePrototypes.length > 0
         ) {
             dispatch(incrementSourcesPage());
         }
-    }, [dispatch, loading, sourcesPagination, sourcesError]);
+    }, [dispatch, loading, sourcesPagination, sourcesError, sourcePrototypes.length]);
 
     const debouncedSearch = React.useMemo(
         () =>
             debounce((value: string) => {
                 dispatch(searchSources(value));
             }, SEARCH_DELAY),
-        [],
+        [dispatch],
     );
+
+    React.useEffect(() => {
+        return () => {
+            debouncedSearch.cancel();
+        };
+    }, [debouncedSearch]);
 
     const onSearch = React.useCallback(
         (value: string) => {
-            const currentValue = value.trim();
-            setSearch(currentValue);
-            debouncedSearch(currentValue);
+            setSearch(value);
+            debouncedSearch(value);
         },
         [debouncedSearch],
     );
 
     return (
         <div className={b('sources')}>
-            {error ? <ErrorView onRetry={onRetry} error={error} /> : null}
             <div className={b('top-section')}>
-                {canChangeSourceParent && (
+                {supportsDbNameListing && (
                     <>
                         <div className={b('header')}>
                             <span>{parentLabel}</span>
@@ -207,6 +232,7 @@ export const SourcesTable: React.FC<SourcesTableProps> = ({
                         hasClear={true}
                         onUpdate={onSearch}
                         disabled={loading || sourcesError}
+                        controlRef={searchInputRef}
                     />
                 )}
             </div>
@@ -220,7 +246,8 @@ export const SourcesTable: React.FC<SourcesTableProps> = ({
                         className={b('list')}
                         items={sources}
                         itemClassName={b('source-item')}
-                        itemHeight={32}
+                        itemHeight={LIST_ITEM_HEIGHT}
+                        itemsHeight={error ? sources.length * LIST_ITEM_HEIGHT : undefined}
                         selectedItemIndex={-1}
                         filterPlaceholder={i18n('field_placeholder-title')}
                         filterable={!serverSearch && sources.length >= 10}
@@ -241,6 +268,7 @@ export const SourcesTable: React.FC<SourcesTableProps> = ({
                     {allowAddSource && <AddSourceButton disabled={dragDisabled} onClick={onAdd} />}
                 </>
             )}
+            {error ? <ErrorView onRetry={onRetry} error={error} /> : null}
         </div>
     );
 };

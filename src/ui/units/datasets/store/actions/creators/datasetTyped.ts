@@ -1239,6 +1239,10 @@ export function changeCurrentDbName(payload: string) {
 
 export function searchSources(searchValue: string) {
     return async (dispatch: DatasetDispatch, getState: GetState) => {
+        dispatch({
+            type: DATASET_ACTION_TYPES.SET_SOURCES_SEARCH_LOADING,
+            payload: true,
+        });
         const state = getState();
         const {sourcesPagination, currentDbName, errors} = state.dataset;
 
@@ -1254,11 +1258,11 @@ export function searchSources(searchValue: string) {
             return;
         }
 
-        batch(() => {
+        batch(async () => {
             dispatch(
                 setSourcesPagination({...initialState.sourcesPagination, searchValue: searchValue}),
             );
-            dispatch(
+            await dispatch(
                 getSources({
                     connectionId: connection.entryId,
                     workbookId,
@@ -1268,6 +1272,10 @@ export function searchSources(searchValue: string) {
                     searchText: searchValue ? searchValue : undefined,
                 }),
             );
+            dispatch({
+                type: DATASET_ACTION_TYPES.SET_SOURCES_SEARCH_LOADING,
+                payload: false,
+            });
         });
     };
 }
@@ -1304,7 +1312,9 @@ export function incrementSourcesPage() {
                 limit: sourcesPagination.limit,
                 offset: (sourcesPagination.page + 1) * sourcesPagination.limit,
                 currentDbName,
-                searchText: sourcesPagination.searchValue,
+                searchText: sourcesPagination.searchValue
+                    ? sourcesPagination.searchValue
+                    : undefined,
                 isSideEffect: true,
             }),
         );
@@ -1345,7 +1355,7 @@ export function getSources({
         if (!isSideEffect) {
             dispatch(toggleSourcesLoader(true));
         }
-
+        const {sourcesPagination} = getState().dataset;
         let sources: GetSourceResponse['sources'] = [];
         const currentLimit = limit ? limit + 1 : 10000;
         try {
@@ -1375,6 +1385,9 @@ export function getSources({
                             list,
                         }),
                     );
+                    if (list.length <= sourcesPagination.limit) {
+                        dispatch(setSourcesPagination({isFinished: true}));
+                    }
                     dispatch(setFreeformSources(freeformSources));
                 }
                 dispatch(setSourcesLoadingError(null));
@@ -1411,6 +1424,7 @@ export function getSources({
 
 export function getDbNames(connectionIds: string[]) {
     return async (dispatch: DatasetDispatch, getState: GetState) => {
+        dispatch(toggleSourcesLoader(true));
         try {
             if (connectionIds.length) {
                 const state = getState();
@@ -1444,7 +1458,8 @@ export function getDbNames(connectionIds: string[]) {
             }
         } catch (e) {
             logger.logError('dataset: getDbNames failed', e);
-            console.error(`getDbNames action failed: ${e}`);
+        } finally {
+            dispatch(toggleSourcesLoader(false));
         }
     };
 }

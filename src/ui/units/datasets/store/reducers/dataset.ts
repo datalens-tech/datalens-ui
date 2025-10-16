@@ -65,6 +65,7 @@ import {
     SET_QUEUE_TO_LOAD_PREVIEW,
     SET_SOURCES_LOADING_ERROR,
     SET_SOURCES_PAGINATION,
+    SET_SOURCES_SEARCH_LOADING,
     SET_TEMPLATE_ENABLED,
     SET_UPDATES,
     SET_VALIDATION_STATE,
@@ -1271,15 +1272,10 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
         }
         case ADD_AVATAR_PROTOTYPES: {
             const {list, templates: sourceTemplate} = action.payload;
-            const isLastPage = list.length <= state.sourcesPagination.limit;
             return {
                 ...state,
                 sourceTemplate,
                 sourcePrototypes: list,
-                sourcesPagination: {
-                    ...state.sourcesPagination,
-                    isFinished: isLastPage,
-                },
             };
         }
         case ADD_AVATAR_TEMPLATE: {
@@ -1441,6 +1437,15 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 sourcesPagination: {
                     ...state.sourcesPagination,
                     isFetchingNextPage: true,
+                },
+            };
+        }
+        case SET_SOURCES_SEARCH_LOADING: {
+            return {
+                ...state,
+                ui: {
+                    ...state.ui,
+                    isSourcesSearchLoading: action.payload,
                 },
             };
         }

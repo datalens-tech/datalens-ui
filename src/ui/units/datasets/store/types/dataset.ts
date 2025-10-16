@@ -75,6 +75,7 @@ import type {
     SET_QUEUE_TO_LOAD_PREVIEW,
     SET_SOURCES_LOADING_ERROR,
     SET_SOURCES_PAGINATION,
+    SET_SOURCES_SEARCH_LOADING,
     SET_TEMPLATE_ENABLED,
     SET_UPDATES,
     SET_VALIDATION_STATE,
@@ -308,6 +309,7 @@ export type DatasetReduxState = {
         isDatasetChanged: boolean;
         isFieldEditorModuleLoading: boolean;
         isSourcesLoading: boolean;
+        isSourcesSearchLoading: boolean;
     };
     editor: {
         filter: string;
@@ -824,6 +826,11 @@ type SourcesNextPageSuccess = {
     payload: BaseSource[];
 };
 
+type SetSourcesSearchLoading = {
+    type: typeof SET_SOURCES_SEARCH_LOADING;
+    payload: boolean;
+};
+
 export type DatasetReduxAction =
     | SetFreeformSources
     | ResetDatasetState
@@ -900,4 +907,5 @@ export type DatasetReduxAction =
     | SetCurrentDbName
     | SetSourcesPagination
     | SourcesNextPageRequest
-    | SourcesNextPageSuccess;
+    | SourcesNextPageSuccess
+    | SetSourcesSearchLoading;

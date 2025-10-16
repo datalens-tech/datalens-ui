@@ -150,6 +150,7 @@
     }
 
     &__sources-error {
+        height: 100%;
         border-bottom: 1px solid var(--ds-color-divider);
         padding: 16px 20px 6px;
     }
@@ -179,7 +180,7 @@
     }
 
     &__loader-sources {
-        flex: 0 1 100%;
+        flex: 0 2 100%;
         display: flex;
         align-items: center;
         justify-content: center;

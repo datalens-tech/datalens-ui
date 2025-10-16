@@ -48,7 +48,7 @@ import {
     TOAST_TYPES,
 } from '../../constants';
 import {getComponentErrorsByType} from '../../helpers/datasets';
-import DatasetUtils from '../../helpers/utils';
+import DatasetUtils, {getSourceListingValues} from '../../helpers/utils';
 import {
     UISelector,
     componentErrorsSelector,
@@ -60,7 +60,7 @@ import {
     freeformSourcesSelector,
     optionsSelector,
     selectedConnectionSelector,
-    sourcePrototypesSelector,
+    sortedSourcePrototypesSelector,
     sourceTemplateSelector,
     sourcesErrorSelector,
     sourcesPaginationSelector,
@@ -252,13 +252,14 @@ class DatasetSources extends React.Component {
         this.props.clickConnection({connectionId});
 
         resetSourcesPagination();
-        const supportsSourcePagination = options?.source_listing?.supports_source_pagination;
-        const dbNameRequiredForSearch = options?.source_listing?.db_name_required_for_search;
+        const {serverPagination, dbNameRequiredForSearch} = getSourceListingValues(
+            options?.source_listing,
+        );
 
         return this.props.getSources({
             connectionId,
             workbookId,
-            limit: supportsSourcePagination ? sourcesPagination.limit : undefined,
+            limit: serverPagination ? sourcesPagination.limit : undefined,
             currentDbName: dbNameRequiredForSearch ? currentDbName : undefined,
         });
     };
@@ -287,13 +288,14 @@ class DatasetSources extends React.Component {
         if (!entryId) {
             return;
         }
-        const supportsSourcePagination = options?.source_listing?.supports_source_pagination;
-        const dbNameRequiredForSearch = options?.source_listing?.db_name_required_for_search;
+        const {serverPagination, dbNameRequiredForSearch} = getSourceListingValues(
+            options?.source_listing,
+        );
 
         this.props.getSources({
             connectionId: entryId,
             workbookId,
-            limit: supportsSourcePagination ? sourcesPagination.limit : undefined,
+            limit: serverPagination ? sourcesPagination.limit : undefined,
             currentDbName: dbNameRequiredForSearch ? currentDbName : undefined,
         });
     };
@@ -798,7 +800,7 @@ DatasetSources.propTypes = {
 const mapStateToProps = createStructuredSelector({
     connections: connectionsSelector,
     componentErrors: componentErrorsSelector,
-    sourcePrototypes: sourcePrototypesSelector,
+    sourcePrototypes: sortedSourcePrototypesSelector,
     sourceTemplate: sourceTemplateSelector,
     sources: filteredSourcesSelector,
     avatars: filteredSourceAvatarsSelector,
