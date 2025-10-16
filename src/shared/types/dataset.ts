@@ -265,6 +265,13 @@ export interface DatasetOptions {
         }[];
         max: number;
     };
+    source_listing: {
+        supports_source_search: boolean;
+        supports_source_pagination: boolean;
+        supports_db_name_listing: boolean;
+        db_name_label: string;
+        db_name_required_for_search: boolean;
+    };
     schema_update_enabled: boolean;
     supports_offset: boolean;
     supported_functions: string[];

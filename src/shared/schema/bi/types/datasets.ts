@@ -25,9 +25,60 @@ export type ValidateDatasetUpdate = {
     field: Partial<DatasetField>;
 };
 
-type DatasetSource = {
+type FieldDocKey =
+    | 'CHYT_TABLE/table_name'
+    | 'CHYT_TABLE_LIST/table_names'
+    | 'CHYT_TABLE_LIST/title'
+    | 'CHYT_TABLE_RANGE/title'
+    | 'CHYT_USER_AUTH_TABLE_LIST/title'
+    | 'CHYT_USER_AUTH_TABLE_RANGE/title'
+    | 'CHYT_USER_AUTH_TABLE/table_name'
+    | 'CHYT_USER_AUTH_TABLE/table_names'
+    | 'CHYT_TABLE_RANGE/directory_path'
+    | 'CHYDB_TABLE/table_name'
+    | 'CHYDB_TABLE/ydb_database'
+    | 'ANY_SUBSELECT/subsql'
+    | 'CHYT_SUBSELECT/subsql'
+    | 'MSSQL_SUBSELECT/subsql'
+    | 'PG_SUBSELECT/subsql'
+    | 'YTsaurus/CHYT_TABLE/table_name'
+    | 'CHYT_YTSAURUS_TABLE_LIST/title'
+    | 'YTsaurus/CHYT_TABLE_LIST/table_names'
+    | 'CHYT_YTSAURUS_TABLE_RANGE/title'
+    | 'YTsaurus/CHYT_TABLE_RANGE/directory_path'
+    | 'YTsaurus/CHYT_SUBSELECT/subsql';
+
+type BaseOptions = {
+    name: string;
+    default: string;
+    title: string;
+    required?: boolean;
+    field_doc_key?: FieldDocKey;
+    template_enabled?: boolean;
+};
+
+export type TextFormOptions = {input_type: 'text'} & BaseOptions;
+
+export type TextareaFormOptions = {input_type: 'textarea'} & BaseOptions;
+
+type SqlFormOptions = {input_type: 'sql'} & BaseOptions;
+
+export type SelectFormOptions = {
+    input_type: 'select';
+    select_options: string[];
+    select_allow_user_input: boolean;
+} & BaseOptions;
+
+export type FormOptions =
+    | TextFormOptions
+    | TextareaFormOptions
+    | SqlFormOptions
+    | SelectFormOptions;
+
+export type BaseSource = {
     connection_id: string;
-    form: Record<string, string>[] | null;
+    form: FormOptions[];
+    disabled: boolean;
     group: string[];
     is_ref: boolean;
     parameter_hash: string;
@@ -35,7 +86,9 @@ type DatasetSource = {
     ref_source_id: string | null;
     source_type: string;
     title: string;
-} & Id;
+    managed_by?: 'user';
+    tab_title: string;
+};
 
 type DatasetWithOptions = {
     dataset: Dataset['dataset'];
@@ -57,13 +110,16 @@ export type DatasetDistinctWhere = {
 };
 
 export type GetSourceResponse = {
-    freeform_sources: DatasetSource[];
-    sources: DatasetSource[];
+    freeform_sources: BaseSource[];
+    sources: BaseSource[];
 };
 
 export type GetSourceArgs = {
     connectionId: string;
     limit?: number;
+    offset?: number;
+    db_name?: string;
+    search_text?: string;
 } & WorkbookIdArg;
 
 export type DeleteDatasetResponse = z.infer<typeof deleteDatasetResultSchema>;
@@ -210,4 +266,8 @@ export type ImportDatasetArgs = {
     workbookId: string;
     dataset: EntryFieldData;
     idMapping: TransferIdMapping;
+};
+
+export type GetDbNamesResponse = {
+    db_names: string[];
 };
