@@ -126,7 +126,7 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
             margin: {top: 20, left: 12, right: 12, bottom: 20},
         },
         series: {
-            data,
+            data: data.filter((s) => s.data.length),
         },
         legend,
     });

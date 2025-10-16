@@ -4,9 +4,11 @@ $class: 'colors-dialog';
 
 .#{$class} {
     width: 680px;
+    max-height: 80vh;
 
     .#{$class} &__body {
         padding: 10px 0;
+        display: flex;
     }
 
     &__content {
@@ -19,6 +21,7 @@ $class: 'colors-dialog';
     &__palette-container {
         padding: 20px 32px;
         width: 50%;
+        height: 100%;
     }
 
     &__palette-select {
