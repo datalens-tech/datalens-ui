@@ -7,6 +7,7 @@ import {showToast} from 'store/actions/toaster';
 import type {DataLensApiError} from 'typings';
 import {isEntryAlreadyExists} from 'utils/errors/errorByCode';
 
+import {EntryScope} from '../../../../shared';
 import type {CreateFolderResponse} from '../../../../shared/schema';
 import {getSdk} from '../../../libs/schematic-sdk';
 import {EntryDialogBase} from '../EntryDialogBase/EntryDialogBase';
@@ -41,6 +42,7 @@ class DialogCreateFolder extends React.Component<Props> {
                 textButtonCancel={i18n('button_cancel')}
                 textButtonApply={i18n('button_apply')}
                 placeholder={i18n('label_placeholder')}
+                entryScope={EntryScope.Folder}
             />
         );
     }
