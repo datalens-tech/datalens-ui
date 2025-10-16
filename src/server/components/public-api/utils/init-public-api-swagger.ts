@@ -6,7 +6,6 @@ import swaggerUi from 'swagger-ui-express';
 import {objectKeys} from '../../../../shared';
 import {registry} from '../../../registry';
 import {
-    BI_OPENAPI_SCHEMAS,
     OPEN_API_VERSION_HEADER_COMPONENT_NAME,
     PUBLIC_API_LATEST_VERSION,
     PUBLIC_API_VERSION_HEADER,
@@ -18,7 +17,7 @@ export const initPublicApiSwagger = (app: ExpressKit) => {
     const installationText = `Installation – <b>${config.appInstallation}</b>`;
     const envText = `Env – <b>${config.appEnv}</b>`;
 
-    const {baseConfig, securitySchemes} = registry.getPublicApiConfig();
+    const {baseConfig, securitySchemes, biOpenapiSchemas} = registry.getPublicApiConfig();
 
     setImmediate(() => {
         const versionToDocument = Object.entries(baseConfig).reduce<
@@ -74,7 +73,7 @@ export const initPublicApiSwagger = (app: ExpressKit) => {
 
             openApiDocument.components.schemas = {
                 ...openApiDocument.components?.schemas,
-                ...BI_OPENAPI_SCHEMAS,
+                ...biOpenapiSchemas,
             };
             const versionPath = `/${version}/`;
             const isLatest = version === PUBLIC_API_LATEST_VERSION;
