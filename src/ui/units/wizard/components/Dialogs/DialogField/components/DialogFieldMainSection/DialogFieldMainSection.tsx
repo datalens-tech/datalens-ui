@@ -177,38 +177,19 @@ export class DialogFieldMainSection extends React.Component<Props> {
             ],
         };
 
-        let isCustomFormula = false;
-
-        if (item.grouping) {
-            const [operation, mode] = item.grouping.split('-');
-
-            let functionName;
-            if (operation === 'trunc') {
-                functionName = 'datetrunc';
-            } else {
-                functionName = 'datepart';
-            }
-
-            const formula = `${functionName}([${item.originalTitle || item.title}], "${mode}")`;
-
-            isCustomFormula = Boolean(item.local && formula !== item.formula);
-        }
-
-        const restItems: SelectOptionGroup[] = isCustomFormula
-            ? []
-            : availableModes.map(
-                  ([groupTitle, values]): SelectOptionGroup => ({
-                      label: i18n('wizard', `label_${groupTitle as AvailableFieldType}`),
-                      options: getDialogFieldSelectItems({
-                          arr: values,
-                          generateValue: (value) => `${groupTitle}-${value}`,
-                          generateTitle: (value) =>
-                              i18n('wizard', `label_${value as AvailableFieldType}`),
-                          generateQa: (value) =>
-                              `${DialogFieldMainSectionQa.GroupingSelector}-${groupTitle}-${value}`,
-                      }),
-                  }),
-              );
+        const restItems: SelectOptionGroup[] = availableModes.map(
+            ([groupTitle, values]): SelectOptionGroup => ({
+                label: i18n('wizard', `label_${groupTitle as AvailableFieldType}`),
+                options: getDialogFieldSelectItems({
+                    arr: values,
+                    generateValue: (value) => `${groupTitle}-${value}`,
+                    generateTitle: (value) =>
+                        i18n('wizard', `label_${value as AvailableFieldType}`),
+                    generateQa: (value) =>
+                        `${DialogFieldMainSectionQa.GroupingSelector}-${groupTitle}-${value}`,
+                }),
+            }),
+        );
 
         const items: SelectOptionGroup[] = [noneItem, ...restItems];
         const title = i18n(
@@ -225,17 +206,11 @@ export class DialogFieldMainSection extends React.Component<Props> {
                 title={title}
                 setting={
                     <DialogFieldSelect
-                        disabled={isCustomFormula}
                         placeholder={placeholder}
                         options={items}
-                        value={isCustomFormula ? 'none' : grouping}
+                        value={grouping}
                         onUpdate={this.props.handleDateGroupUpdate}
                         controlTestAnchor={DialogFieldMainSectionQa.GroupingSelector}
-                        warning={
-                            isCustomFormula
-                                ? i18n('wizard', 'label_using-formula-warning')
-                                : undefined
-                        }
                     />
                 }
             />
