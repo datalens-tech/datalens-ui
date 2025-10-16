@@ -170,16 +170,16 @@ export const mapDatasetToDatasetPath = {
 
 export const RobotChartsIds = {
     CHARTS_WITH_TOOLTIPS: [
-        'c6szja3hbg2e7', // columnar
-        'hbx4u49rqnv8c', // linear
-        'pj5c63epjm6wk', // eria
-        'gaw4zfnw1ttub', // normalized eria
-        'd7t10mjlnkks8', // normalized columnar
-        'gaw51gkxs0uib', // linear
-        'oi4dd24ocn4ej', // normalized linear
+        'c6szja3hbg2e7', // column (bar-x)
+        'hbx4u49rqnv8c', // line
+        'pj5c63epjm6wk', // area
+        'gaw4zfnw1ttub', // normalized area
+        'd7t10mjlnkks8', // normalized column (bar-x)
+        'gaw51gkxs0uib', // linear (bar-y)
+        'oi4dd24ocn4ej', // normalized linear (bar-y)
         '5zlux5o14uqg0', // scatter
-        'e8u4azq46mr69', // share
-        'wqcmwqftjroqr', // trimap
+        'e8u4azq46mr69', // pie
+        'wqcmwqftjroqr', // treemap
         // 'nh3e6sgyyqu4i', // map (commented out, as it is not clear how to samulate the hover to the polygon in canvas)
     ],
     CHARTS_WITH_CUSTOM_TOOLTIPS: {

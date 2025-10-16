@@ -22,7 +22,6 @@ export enum Feature {
     QLMonitoring = 'QLMonitoring',
     CollectionsEnabled = 'CollectionsEnabled',
     CollectionsAccessEnabled = 'CollectionsAccessEnabled',
-    DashBoardAccessDescription = 'DashBoardAccessDescription',
     DashBoardSupportDescription = 'DashBoardSupportDescription',
     // Show request body in the Inspector dialog
     ShowInspectorDetails = 'ShowInspectorDetails',
@@ -99,6 +98,7 @@ export enum Feature {
     EnableConnectionRevisions = 'EnableConnectionRevisions',
 
     EnableMobileFixedHeader = 'EnableMobileFixedHeader',
+    EnableCommonChartDashSettings = 'EnableCommonChartDashSettings',
 }
 
 export type FeatureConfig = Record<string, boolean>;
