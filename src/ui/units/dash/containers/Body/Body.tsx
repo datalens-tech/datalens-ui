@@ -1336,8 +1336,8 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
 
         const loadedMixin = loaded ? LOADED_DASH_CLASS : undefined;
 
-        const showDashTitle =
-            !settings.hideDashTitle && (!DL.IS_MOBILE || isMobileFixedHeaderEnabled);
+        const hideDashTitle =
+            settings.hideDashTitle || (DL.IS_MOBILE && !isMobileFixedHeaderEnabled);
 
         const content = (
             <div
@@ -1367,7 +1367,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                             'with-footer': isEnabledFeature(Feature.EnableFooter),
                         })}
                     >
-                        {showDashTitle && (
+                        {!hideDashTitle && this.props.entry?.key && (
                             <div className={b('entry-name')} data-qa={DashEntryQa.EntryName}>
                                 {Utils.getEntryNameFromKey(this.props.entry?.key)}
                             </div>
