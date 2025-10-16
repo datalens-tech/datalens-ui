@@ -28,6 +28,7 @@ import {
     showRelatedEntities,
     showShareDialog,
 } from './helpers';
+import type {FilterEntryContextMenuItems} from './withConfiguredEntryContextMenu/withConfiguredEntryContextMenu';
 import {withConfiguredEntryContextMenu} from './withConfiguredEntryContextMenu/withConfiguredEntryContextMenu';
 
 const contextMenuI18n = I18n.keyset('component.entry-context-menu.view');
@@ -48,6 +49,7 @@ type OwnProps = {
     anchorElement: PopupAnchorElement;
     visible?: boolean;
     entry?: GetEntryResponse;
+    filterEntryContextMenuItems?: FilterEntryContextMenuItems;
 };
 
 type EntryContextMenuDefaultProps = {
@@ -97,6 +99,7 @@ class EntryContextMenu extends React.PureComponent<Props> {
                         additionalItems={this.props.additionalItems}
                         showSpecificItems={this.props.showSpecificItems}
                         isLimitedView={this.props.isLimitedView}
+                        filterEntryContextMenuItems={this.props.filterEntryContextMenuItems}
                     />
                     <EntryDialogues ref={this.entryDialoguesRef} />
                 </React.Fragment>

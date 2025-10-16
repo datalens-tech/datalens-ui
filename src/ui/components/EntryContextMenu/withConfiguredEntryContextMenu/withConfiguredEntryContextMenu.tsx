@@ -56,16 +56,32 @@ export const getEntryContextMenuItems = (
     return entryContextMenuItems;
 };
 
+export type FilterEntryContextMenuItems = (args: {
+    entry?: GetEntryResponse;
+    items: EntryContextMenuItem[];
+}) => EntryContextMenuItem[];
+
 export const withConfiguredEntryContextMenu = (
     Component: typeof EntryContextMenuBase,
     itemsPropName = 'items',
 ) =>
-    function WithConfiguredEntryContextMenu(
-        props: EntryContextMenuNestedProps &
-            ContextMenuParams & {
-                onMenuClick: MenuClickHandler<GetEntryResponse>;
-            },
-    ) {
+    function WithConfiguredEntryContextMenu({
+        filterEntryContextMenuItems,
+        ...props
+    }: EntryContextMenuNestedProps &
+        ContextMenuParams & {
+            onMenuClick: MenuClickHandler<GetEntryResponse>;
+            filterEntryContextMenuItems?: FilterEntryContextMenuItems;
+        }) {
+        const entryContextMenuItems = getEntryContextMenuItems({
+            entry: props.entry, // eslint-disable-line react/prop-types
+            isEditMode: props.isEditMode,
+            showSpecificItems: props.showSpecificItems,
+            isLimitedView: props.isLimitedView,
+        });
+        const filteredContextMenuItems =
+            filterEntryContextMenuItems?.({entry: props.entry, items: entryContextMenuItems}) ??
+            entryContextMenuItems;
         const resultProps = {
             ...props,
             [itemsPropName]:
@@ -74,18 +90,10 @@ export const withConfiguredEntryContextMenu = (
                           type: 'entry',
                           isFlat: isEnabledFeature(Feature.MenuItemsFlatView),
                       })
-                    : getGroupedMenu(
-                          getEntryContextMenuItems({
-                              entry: props.entry, // eslint-disable-line react/prop-types
-                              isEditMode: props.isEditMode,
-                              showSpecificItems: props.showSpecificItems,
-                              isLimitedView: props.isLimitedView,
-                          }).concat(props.additionalItems),
-                          {
-                              type: 'entry',
-                              isFlat: isEnabledFeature(Feature.MenuItemsFlatView),
-                          },
-                      ),
+                    : getGroupedMenu(filteredContextMenuItems.concat(props.additionalItems), {
+                          type: 'entry',
+                          isFlat: isEnabledFeature(Feature.MenuItemsFlatView),
+                      }),
         };
         return <Component {...resultProps} />;
     };
