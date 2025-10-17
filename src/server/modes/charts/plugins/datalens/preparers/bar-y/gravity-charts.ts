@@ -12,6 +12,7 @@ import {
     isMarkdownField,
     isMarkupField,
 } from '../../../../../../../shared';
+import type {ExtendedChartData} from '../../../../../../../shared/types/chartkit';
 import {getBaseChartConfig} from '../../gravity-charts/utils';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getExportColumnSettings} from '../../utils/export-helpers';
@@ -99,9 +100,7 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
         {} as Record<string, number>,
     );
 
-    const config: ChartData = {
-        //@ts-ignore
-        groupIndex,
+    const config: ExtendedChartData = {
         series: {
             data: sortBy(
                 series.filter((s) => s.data.length),
@@ -122,6 +121,12 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
             type: 'linear',
             labels: {
                 numberFormat: xAxisLabelNumberFormat ?? undefined,
+                margin: 4,
+            },
+        },
+        custom: {
+            tooltip: {
+                headerLabel: getFakeTitleOrTitle(yField),
             },
         },
     };
@@ -148,8 +153,8 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
 
     if (xField) {
         config.tooltip = {
+            ...config.tooltip,
             valueFormat: getFieldFormatOptions({field: xField}),
-            totals: {enabled: true},
         };
     }
 
