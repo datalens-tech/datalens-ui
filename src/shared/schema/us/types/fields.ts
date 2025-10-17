@@ -88,6 +88,7 @@ export interface EntryRelationFields {
     type: string;
     key: string;
     meta: EntryFieldMeta;
+    links: EntryFieldLinks;
     depth: number;
     tenantId: string;
     public: boolean;

@@ -2,22 +2,19 @@ import React from 'react';
 
 import {BookOpen} from '@gravity-ui/icons';
 import {Button, Icon} from '@gravity-ui/uikit';
-import {useDispatch, useSelector} from 'react-redux';
 import {FloatMenu} from 'ui/components/FloatMenu/FloatMenu';
+import {registry} from 'ui/registry';
 
 import {Description} from '../../components/DashActionPanel/Description/Description';
-import {ShareButton} from '../../components/ShareButton/ShareButton';
-import {toggleTableOfContent} from '../../store/actions/dashTyped';
-import {
-    hasTableOfContent,
-    selectDashDescription,
-    selectDashShowOpenedDescription,
-} from '../../store/selectors/dashTypedSelectors';
 import {FixedHeaderMobile} from '../FixedHeader/FixedHeaderMobile';
 
 export interface MobileFloatMenuProps {
     entryId: string;
     hasFixedContent: boolean;
+    dashDescription?: string;
+    showOpenedDescription: boolean;
+    hasTableOfContent: boolean;
+    toggleTableOfContent: () => void;
     fixedContentInitiallyOpened?: boolean;
     fixedContentWidgetFocused?: boolean;
     fixedHeaderControlsRef: React.RefCallback<HTMLDivElement>;
@@ -28,20 +25,17 @@ export interface MobileFloatMenuProps {
 export function MobileFloatMenu({
     entryId,
     hasFixedContent: showFixedHeaderButton,
+    dashDescription,
+    showOpenedDescription,
+    hasTableOfContent: showTocButton,
+    toggleTableOfContent: toggleToc,
     fixedContentInitiallyOpened,
     fixedContentWidgetFocused,
     fixedHeaderControlsRef,
     fixedHeaderContainerRef,
     dashEl,
 }: MobileFloatMenuProps) {
-    const dashDescription = useSelector(selectDashDescription);
-    const showOpenedDescription = useSelector(selectDashShowOpenedDescription);
-    const showTocButton = useSelector(hasTableOfContent);
-    const dispatch = useDispatch();
-
-    const toggleToc = React.useCallback(() => {
-        dispatch(toggleTableOfContent());
-    }, [dispatch]);
+    const {ShareButton} = registry.common.components.getAll();
 
     const showDescriptionButton = Boolean(dashDescription);
 
