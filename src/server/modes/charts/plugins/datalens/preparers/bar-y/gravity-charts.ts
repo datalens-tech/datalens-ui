@@ -121,7 +121,6 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
             type: 'linear',
             labels: {
                 numberFormat: xAxisLabelNumberFormat ?? undefined,
-                margin: 4,
             },
         },
         custom: {
