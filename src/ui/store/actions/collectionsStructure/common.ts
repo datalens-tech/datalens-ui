@@ -2,7 +2,6 @@ import {getSdk} from 'libs/schematic-sdk';
 import logger from 'libs/logger';
 import {waitOperation} from '../../../utils/waitOperation';
 import {showToast} from 'store/actions/toaster';
-import {I18n} from 'i18n';
 
 import type {GET_ROOT_COLLECTION_PERMISSIONS_FAILED} from '../../constants/collectionsStructure';
 import {
@@ -82,12 +81,11 @@ import type {
     DeleteWorkbooksResponse,
 } from '../../../../shared/schema';
 import type {CollectionsStructureDispatch} from './index';
+import {showCollectionEntityErrorToast} from './showCollectionEntityErrorToast';
 
 export type ResetStateAction = {
     type: typeof RESET_STATE;
 };
-
-const i18n = I18n.keyset('component.collections-structure');
 
 export const resetState = () => (dispatch: CollectionsStructureDispatch) => {
     dispatch({
@@ -419,12 +417,8 @@ export const createCollection = (
 
                 if (!isCanceled) {
                     logger.logError('collectionsStructure/createCollection failed', error);
-                    dispatch(
-                        showToast({
-                            title: i18n('toast_collection-already-exists-error'),
-                            error,
-                        }),
-                    );
+
+                    dispatch(showCollectionEntityErrorToast(error));
                 }
 
                 dispatch({
@@ -505,12 +499,8 @@ export const createWorkbook = (
 
                 if (!isCanceled) {
                     logger.logError('collectionsStructure/createWorkbook failed', error);
-                    dispatch(
-                        showToast({
-                            title: i18n('toast_workbook-already-exists-error'),
-                            error,
-                        }),
-                    );
+
+                    dispatch(showCollectionEntityErrorToast(error));
                 }
 
                 dispatch({
@@ -1025,12 +1015,8 @@ export const updateWorkbook = (
 
                 if (!isCanceled) {
                     logger.logError('collectionsStructure/updateWorkbook failed', error);
-                    dispatch(
-                        showToast({
-                            title: i18n('toast_workbook-already-exists-error'),
-                            error,
-                        }),
-                    );
+
+                    dispatch(showCollectionEntityErrorToast(error));
                 }
 
                 dispatch({
@@ -1099,12 +1085,8 @@ export const updateCollection = (
 
                 if (!isCanceled) {
                     logger.logError('collectionsStructure/updateCollection failed', error);
-                    dispatch(
-                        showToast({
-                            title: i18n('toast_collection-already-exists-error'),
-                            error,
-                        }),
-                    );
+
+                    dispatch(showCollectionEntityErrorToast(error));
                 }
 
                 dispatch({

@@ -1,6 +1,7 @@
 import {getSdk, isSdkError} from 'libs/schematic-sdk';
 import logger from 'libs/logger';
 import {showToast} from 'store/actions/toaster';
+import {showCollectionEntityErrorToast} from './showCollectionEntityErrorToast';
 
 import {
     RESET_IMPORT_PROGRESS,
@@ -320,12 +321,8 @@ export const importWorkbook = (
 
                 if (!isCanceled) {
                     logger.logError('collectionsStructure/importWorkbook failed', error);
-                    dispatch(
-                        showToast({
-                            title: i18n('toast_workbook-already-exists-error'),
-                            error,
-                        }),
-                    );
+
+                    dispatch(showCollectionEntityErrorToast(error));
                 }
 
                 dispatch({
