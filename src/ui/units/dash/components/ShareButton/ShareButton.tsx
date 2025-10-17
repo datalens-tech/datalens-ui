@@ -20,6 +20,17 @@ const i18n = I18n.keyset('chartkit.menu');
 
 interface DialogSharePropsForShareButton extends Omit<DialogShareProps, 'onClose'> {}
 
+export interface ShareButtonProps {
+    enablePopover?: boolean;
+    popoverText?: string;
+    popoverTitle?: string;
+    iconSize?: number;
+    mobileShareIconSize?: number;
+    mobileShareIconColorPrimary?: boolean;
+    popoverClassName?: string;
+    dialogShareProps?: DialogSharePropsForShareButton;
+}
+
 export const ShareButton = ({
     enablePopover,
     popoverText,
@@ -29,16 +40,7 @@ export const ShareButton = ({
     mobileShareIconColorPrimary = false,
     popoverClassName,
     dialogShareProps,
-}: {
-    enablePopover?: boolean;
-    popoverText?: string;
-    popoverTitle?: string;
-    iconSize?: number;
-    mobileShareIconSize?: number;
-    mobileShareIconColorPrimary?: boolean;
-    popoverClassName?: string;
-    dialogShareProps?: DialogSharePropsForShareButton;
-}) => {
+}: ShareButtonProps) => {
     const {DialogShare} = registry.common.components.getAll();
 
     const [showDialogShare, setShowDialogShare] = React.useState(false);
