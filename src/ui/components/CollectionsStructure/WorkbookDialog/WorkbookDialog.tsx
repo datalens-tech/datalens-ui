@@ -22,6 +22,8 @@ export type WorkbookDialogValues = {
 type WorkbookDialogErrors = Partial<Record<keyof WorkbookDialogValues, string>>;
 
 export type Props = {
+    values: WorkbookDialogValues;
+    errors?: WorkbookDialogErrors;
     title: string;
     textButtonApply: string;
     open: boolean;
@@ -34,7 +36,7 @@ export type Props = {
     customActions?: React.ReactNode;
     customBody?: React.ReactNode;
     getDialogFooterPropsOverride?: GetDialogFooterPropsOverride;
-} & {values: WorkbookDialogValues} & {errors?: WorkbookDialogErrors} & QAProps;
+} & QAProps;
 
 export const WorkbookDialog = React.memo<Props>(
     ({

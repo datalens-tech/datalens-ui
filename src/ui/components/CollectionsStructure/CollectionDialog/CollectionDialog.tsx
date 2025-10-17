@@ -18,6 +18,8 @@ export type CollectionDialogValues = {
 type CollectionDialogErrors = Partial<Record<keyof CollectionDialogValues, string>>;
 
 export type Props = {
+    values: CollectionDialogValues;
+    errors?: CollectionDialogErrors;
     title: string;
     textButtonApply: string;
     open: boolean;
@@ -26,7 +28,7 @@ export type Props = {
     onChange: (values: CollectionDialogValues) => void;
     onApply: (values: CollectionDialogValues, onClose: () => void) => Promise<unknown>;
     onClose: () => void;
-} & {values: CollectionDialogValues} & {errors?: CollectionDialogErrors};
+};
 
 export const CollectionDialog = React.memo<Props>(
     ({
