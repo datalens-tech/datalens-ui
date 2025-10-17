@@ -24,6 +24,7 @@ import {
     openDialogParameterEdit,
     replaceConnection,
     replaceSource,
+    resetSourcesPagination,
     toggleSaveDataset,
     updateDatasetByValidation,
     updateRelation,
@@ -47,20 +48,22 @@ import {
     TOAST_TYPES,
 } from '../../constants';
 import {getComponentErrorsByType} from '../../helpers/datasets';
-import DatasetUtils from '../../helpers/utils';
+import DatasetUtils, {getSourceListingValues} from '../../helpers/utils';
 import {
     UISelector,
     componentErrorsSelector,
     connectionsSelector,
+    currentDbNameSelector,
     filteredRelationsSelector,
     filteredSourceAvatarsSelector,
     filteredSourcesSelector,
     freeformSourcesSelector,
     optionsSelector,
     selectedConnectionSelector,
-    sourcePrototypesSelector,
+    sortedSourcePrototypesSelector,
     sourceTemplateSelector,
     sourcesErrorSelector,
+    sourcesPaginationSelector,
 } from '../../store/selectors';
 
 import './DatasetSources.scss';
@@ -232,7 +235,15 @@ class DatasetSources extends React.Component {
     };
 
     clickConnection = (connectionId) => {
-        const {sourcePrototypes, selectedConnection: {entryId: selectedConnId} = {}} = this.props;
+        const {
+            sourcePrototypes,
+            options,
+            sourcesPagination,
+            currentDbName,
+            workbookId,
+            selectedConnection: {entryId: selectedConnId} = {},
+            resetSourcesPagination,
+        } = this.props;
 
         if (connectionId === selectedConnId) {
             return sourcePrototypes;
@@ -240,7 +251,17 @@ class DatasetSources extends React.Component {
 
         this.props.clickConnection({connectionId});
 
-        return this.props.getSources(connectionId, this.props.workbookId);
+        resetSourcesPagination();
+        const {serverPagination, dbNameRequiredForSearch} = getSourceListingValues(
+            options?.source_listing,
+        );
+
+        return this.props.getSources({
+            connectionId,
+            workbookId,
+            limit: serverPagination ? sourcesPagination.limit : undefined,
+            currentDbName: dbNameRequiredForSearch ? currentDbName : undefined,
+        });
     };
 
     deleteConnection = ({connectionId}) => {
@@ -256,13 +277,27 @@ class DatasetSources extends React.Component {
     };
 
     retryToGetSources = () => {
-        const {selectedConnection: {entryId} = {}} = this.props;
+        const {
+            selectedConnection: {entryId} = {},
+            workbookId,
+            sourcesPagination,
+            options,
+            currentDbName,
+        } = this.props;
 
         if (!entryId) {
             return;
         }
+        const {serverPagination, dbNameRequiredForSearch} = getSourceListingValues(
+            options?.source_listing,
+        );
 
-        this.props.getSources(entryId, this.props.workbookId);
+        this.props.getSources({
+            connectionId: entryId,
+            workbookId,
+            limit: serverPagination ? sourcesPagination.limit : undefined,
+            currentDbName: dbNameRequiredForSearch ? currentDbName : undefined,
+        });
     };
 
     updateDatasetByValidation = (data) => {
@@ -757,12 +792,15 @@ DatasetSources.propTypes = {
     options: PropTypes.object,
     showToast: PropTypes.func.isRequired,
     workbookId: PropTypes.string,
+    sourcesPagination: PropTypes.object,
+    currentDbName: PropTypes.string,
+    resetSourcesPagination: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = createStructuredSelector({
     connections: connectionsSelector,
     componentErrors: componentErrorsSelector,
-    sourcePrototypes: sourcePrototypesSelector,
+    sourcePrototypes: sortedSourcePrototypesSelector,
     sourceTemplate: sourceTemplateSelector,
     sources: filteredSourcesSelector,
     avatars: filteredSourceAvatarsSelector,
@@ -772,6 +810,8 @@ const mapStateToProps = createStructuredSelector({
     options: optionsSelector,
     ui: UISelector,
     freeformSources: freeformSourcesSelector,
+    sourcesPagination: sourcesPaginationSelector,
+    currentDbName: currentDbNameSelector,
 });
 const mapDispatchToProps = {
     updateDatasetByValidation,
@@ -793,6 +833,7 @@ const mapDispatchToProps = {
     showToast,
     openDialogParameterCreate,
     openDialogParameterEdit,
+    resetSourcesPagination,
 };
 
 export default compose(connect(mapStateToProps, mapDispatchToProps, null, {forwardRef: true}))(

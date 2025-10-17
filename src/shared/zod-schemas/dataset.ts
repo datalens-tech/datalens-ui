@@ -232,6 +232,13 @@ const datasetOptionsSchema = z.object({
         ),
         max: z.number(),
     }),
+    source_listing: z.object({
+        supports_source_search: z.boolean(),
+        supports_source_pagination: z.boolean(),
+        supports_db_name_listing: z.boolean(),
+        db_name_label: z.string(),
+        db_name_required_for_search: z.boolean(),
+    }),
     schema_update_enabled: z.boolean(),
     supports_offset: z.boolean(),
     supported_functions: z.array(z.string()),
