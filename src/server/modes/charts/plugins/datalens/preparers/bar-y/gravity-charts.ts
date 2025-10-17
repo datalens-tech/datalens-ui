@@ -8,6 +8,7 @@ import {
     PERCENT_VISUALIZATIONS,
     PlaceholderId,
     getFakeTitleOrTitle,
+    isDateField,
     isHtmlField,
     isMarkdownField,
     isMarkupField,
@@ -125,7 +126,8 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
         },
         custom: {
             tooltip: {
-                headerLabel: getFakeTitleOrTitle(yField),
+                headerLabel:
+                    isDateField(yField) && !hasCategories ? undefined : getFakeTitleOrTitle(yField),
             },
         },
     };
