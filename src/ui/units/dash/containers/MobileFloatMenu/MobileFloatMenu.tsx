@@ -3,9 +3,9 @@ import React from 'react';
 import {BookOpen} from '@gravity-ui/icons';
 import {Button, Icon} from '@gravity-ui/uikit';
 import {FloatMenu} from 'ui/components/FloatMenu/FloatMenu';
+import {registry} from 'ui/registry';
 
 import {Description} from '../../components/DashActionPanel/Description/Description';
-import {ShareButton} from '../../components/ShareButton/ShareButton';
 import {FixedHeaderMobile} from '../FixedHeader/FixedHeaderMobile';
 
 export interface MobileFloatMenuProps {
@@ -35,6 +35,8 @@ export function MobileFloatMenu({
     fixedHeaderContainerRef,
     dashEl,
 }: MobileFloatMenuProps) {
+    const {ShareButton} = registry.common.components.getAll();
+
     const showDescriptionButton = Boolean(dashDescription);
 
     const actions: React.ReactNode[] = [
