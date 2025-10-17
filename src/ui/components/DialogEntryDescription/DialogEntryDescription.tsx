@@ -1,17 +1,19 @@
 import React from 'react';
 
 import {Pencil, TrashBin} from '@gravity-ui/icons';
-import {Button, Dialog, Icon, Loader} from '@gravity-ui/uikit';
+import {Button, Icon, Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {DialogEntryDescriptionQa} from 'shared';
+import {DL, SHEET_IDS} from 'ui/constants';
 import {useMountedState} from 'ui/hooks';
 import {MarkdownProvider} from 'ui/modules';
 import type {DialogEntryDescriptionProps} from 'ui/registry/units/common/types/components/DialogEntryDescription';
 import {closeDialog} from 'ui/store/actions/dialog';
 
 import logger from '../../libs/logger';
+import {AdaptiveDialog} from '../AdaptiveDialog/AdaptiveDialog';
 import {TextEditor} from '../TextEditor/TextEditor';
 import {YfmWrapper} from '../YfmWrapper/YfmWrapper';
 
@@ -85,72 +87,88 @@ export const DialogEntryDescription: React.FC<DialogEntryDescriptionProps> = (pr
         : null;
     const isExceedLimit = maxLength ? text.length > maxLength : false;
 
+    const dialogFooterProps = isEditable
+        ? {
+              onClickButtonApply: handleApply,
+              textButtonApply: i18n('button_save'),
+              propsButtonApply: {
+                  disabled: isExceedLimit,
+                  qa: DialogEntryDescriptionQa.SaveButton,
+              },
+              onClickButtonCancel: handleClose,
+              textButtonCancel: i18n('button_cancel'),
+          }
+        : undefined;
+
+    const renderDialogFooter = () => {
+        if (isEditable) {
+            return (
+                <Button view="flat-danger" onClick={handleClear}>
+                    <Icon data={TrashBin} size={16} />
+                    {i18n('button_clear')}
+                </Button>
+            );
+        }
+
+        if (!loading && canEdit) {
+            return (
+                <Button
+                    view="flat-secondary"
+                    onClick={handleEdit}
+                    qa={DialogEntryDescriptionQa.EditButton}
+                >
+                    <Icon data={Pencil} size={16} />
+                    {i18n('button_edit')}
+                </Button>
+            );
+        }
+        return null;
+    };
+
     return (
-        <Dialog
-            open={true}
+        <AdaptiveDialog
+            visible={true}
             onClose={handleClose}
-            disableOutsideClick={true}
+            id={SHEET_IDS.DIALOG_ENTRY_DESCRIPTION}
+            dialogProps={{
+                disableOutsideClick: true,
+                // TODO: remove after https://github.com/gravity-ui/uikit/issues/2361
+                disableHeightTransition: true,
+            }}
+            dialogBodyClassName={b()}
+            sheetContentClassName={b({mobile: DL.IS_MOBILE})}
+            title={title}
+            dialogFooterProps={dialogFooterProps}
+            renderDialogFooter={renderDialogFooter}
             qa={DialogEntryDescriptionQa.Root}
         >
-            <Dialog.Header caption={title} />
             {isEditable ? (
                 <React.Fragment>
-                    <Dialog.Body className={b()}>
-                        {props.subTitle && <div className={b('subtitle')}>{props.subTitle}</div>}
-                        <TextEditor autofocus onTextUpdate={setText} text={text} />
-                        {Boolean(maxLength) && (
-                            <div
-                                className={b('length-counter', {
-                                    error: isExceedLimit,
-                                })}
-                            >
-                                <span>{renderSymbolsCounter}</span>
-                            </div>
-                        )}
-                    </Dialog.Body>
-                    <Dialog.Footer
-                        onClickButtonApply={handleApply}
-                        textButtonApply={i18n('button_save')}
-                        propsButtonApply={{
-                            disabled: isExceedLimit,
-                            qa: DialogEntryDescriptionQa.SaveButton,
-                        }}
-                        onClickButtonCancel={handleClose}
-                        textButtonCancel={i18n('button_cancel')}
-                    >
-                        <Button view="flat-danger" onClick={handleClear}>
-                            <Icon data={TrashBin} size={16} />
-                            {i18n('button_clear')}
-                        </Button>
-                    </Dialog.Footer>
+                    {props.subTitle && <div className={b('subtitle')}>{props.subTitle}</div>}
+                    <TextEditor autofocus onTextUpdate={setText} text={text} />
+                    {Boolean(maxLength) && (
+                        <div
+                            className={b('length-counter', {
+                                error: isExceedLimit,
+                            })}
+                        >
+                            <span>{renderSymbolsCounter}</span>
+                        </div>
+                    )}
                 </React.Fragment>
             ) : (
                 <React.Fragment>
-                    <Dialog.Body className={b()}>
-                        <div className={b('content')}>
-                            {loading ? (
-                                <div className={b('yfm-loader')}>
-                                    <Loader size="m" />
-                                </div>
-                            ) : (
-                                <YfmWrapper className={b()} content={markdown} setByInnerHtml />
-                            )}
-                        </div>
-                    </Dialog.Body>
-                    <Dialog.Footer>
-                        {!loading && canEdit && (
-                            <Button
-                                view="flat-secondary"
-                                onClick={handleEdit}
-                                qa={DialogEntryDescriptionQa.EditButton}
-                            >
-                                <Icon data={Pencil} size={16} />
-                                {i18n('button_edit')}
-                            </Button>
+                    <div className={b('content')}>
+                        {loading ? (
+                            <div className={b('yfm-loader')}>
+                                <Loader size="m" />
+                            </div>
+                        ) : (
+                            <YfmWrapper className={b()} content={markdown} setByInnerHtml />
                         )}
-                    </Dialog.Footer>
+                    </div>
                 </React.Fragment>
             )}
-        </Dialog>
+        </AdaptiveDialog>
     );
 };
