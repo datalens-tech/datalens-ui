@@ -7,6 +7,7 @@ import {I18n} from 'i18n';
 import type {DataLensApiError} from 'typings';
 
 import {EntryDialogQA, normalizeDestination} from '../../../../shared';
+import type {EntryScope} from '../../../../shared';
 import logger from '../../../libs/logger';
 import Utils from '../../../utils';
 import type {PathSelectProps} from '../../PathSelect/PathSelect';
@@ -34,6 +35,7 @@ interface EntryDialogBaseGeneralProps<T> {
     warningMessage?: React.ReactNode;
     confirmButtonView?: ButtonView;
     initialFocus?: DialogProps['initialFocus'];
+    entryScope?: EntryScope;
 }
 
 interface EntryDialogBaseDefaultProps {
@@ -157,6 +159,7 @@ export class EntryDialogBase<T> extends React.Component<
                                 onChangeInput={this.onChangeInput}
                                 placeholder={placeholder}
                                 inactiveEntryKeys={inactiveEntryKeys}
+                                entryScope={this.props.entryScope}
                             />
                         )}
                         {warningMessage && (
