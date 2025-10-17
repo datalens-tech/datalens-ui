@@ -263,3 +263,25 @@ export interface CopyEntriesToWorkbookArgs {
 export interface CopyEntriesToWorkbookResponse {
     workbookId: string;
 }
+
+export type GetEntriesAnnotationResponse = Array<{
+    entryId: string;
+    result?: {
+        scope?: EntryScope;
+        type?: string;
+        annotation?: {
+            description?: string;
+        };
+    };
+    error?: {
+        code?: string;
+        message?: string;
+        details?: unknown;
+    };
+}>;
+
+export interface GetEntriesAnnotationArgs {
+    entryIds: string[];
+    scope?: EntryScope;
+    type?: string;
+}
