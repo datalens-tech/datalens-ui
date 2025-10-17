@@ -68,5 +68,16 @@ export function isGravityChartsVisualization({
         return true;
     }
 
+    const isLineAreaOrBarX = [
+        WizardVisualizationId.Line,
+        WizardVisualizationId.Area,
+        WizardVisualizationId.Area100p,
+        WizardVisualizationId.Column,
+        WizardVisualizationId.Column100p,
+    ].includes(id as WizardVisualizationId);
+    if (isLineAreaOrBarX && features?.[Feature.GravityChartsForLineAreaAndBarX]) {
+        return true;
+    }
+
     return isD3Visualization(id);
 }
