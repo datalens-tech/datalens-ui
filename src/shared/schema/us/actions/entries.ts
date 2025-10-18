@@ -22,6 +22,8 @@ import type {
     CreateFolderResponse,
     DeleteUSEntryArgs,
     DeleteUSEntryResponse,
+    GetEntriesAnnotationArgs,
+    GetEntriesAnnotationResponse,
     GetEntriesArgs,
     GetEntriesByKeyPatternArgs,
     GetEntriesByKeyPatternResponse,
@@ -270,5 +272,13 @@ export const entriesActions = {
         method: 'GET',
         path: ({entryId}) => `${PATH_PREFIX}/entries/${filterUrlFragment(entryId)}/relations-graph`,
         timeout: TIMEOUT_90_SEC,
+    }),
+    getEntriesAnnotation: createAction<GetEntriesAnnotationResponse, GetEntriesAnnotationArgs>({
+        method: 'POST',
+        path: () => `${PATH_PREFIX}/get-entries-annotation`,
+        params: (params, headers) => ({
+            body: params,
+            headers,
+        }),
     }),
 };

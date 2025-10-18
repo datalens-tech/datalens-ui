@@ -1,6 +1,6 @@
 import React from 'react';
 
-import type {TextInputProps} from '@gravity-ui/uikit';
+import type {ButtonView, TextInputProps} from '@gravity-ui/uikit';
 import {Alert, Dialog, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {DialogCreateWorkbookEntryQa} from 'shared';
@@ -35,6 +35,7 @@ interface DialogCreateWorkbookEntryGeneralProps<T> {
 interface DialogCreateWorkbookEntryDefaultProps {
     name: string;
     defaultName: string;
+    confirmButtonView?: ButtonView;
 }
 
 export interface DialogCreateWorkbookEntryProps<T = unknown>
@@ -57,6 +58,7 @@ export class DialogCreateWorkbookEntry<T> extends React.Component<
     static defaultProps: DialogCreateWorkbookEntryDefaultProps = {
         name: '',
         defaultName: '',
+        confirmButtonView: 'action',
     };
 
     state: DialogCreateWorkbookEntryState = {
@@ -101,6 +103,7 @@ export class DialogCreateWorkbookEntry<T> extends React.Component<
             textButtonCancel,
             children,
             warningMessage,
+            confirmButtonView,
         } = this.props;
         const {name, loading, inputError} = this.state;
 
@@ -140,7 +143,10 @@ export class DialogCreateWorkbookEntry<T> extends React.Component<
                 <Dialog.Footer
                     onClickButtonCancel={this.onClose}
                     onClickButtonApply={this.onApply}
-                    propsButtonApply={{qa: DialogCreateWorkbookEntryQa.ApplyButton}}
+                    propsButtonApply={{
+                        qa: DialogCreateWorkbookEntryQa.ApplyButton,
+                        view: confirmButtonView,
+                    }}
                     textButtonApply={textButtonApply}
                     textButtonCancel={textButtonCancel}
                     loading={loading}
