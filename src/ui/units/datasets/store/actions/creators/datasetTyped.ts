@@ -1239,10 +1239,6 @@ export function changeCurrentDbName(payload: string) {
 
 export function searchSources(searchValue: string) {
     return async (dispatch: DatasetDispatch, getState: GetState) => {
-        dispatch({
-            type: DATASET_ACTION_TYPES.SET_SOURCES_SEARCH_LOADING,
-            payload: true,
-        });
         const state = getState();
         const {sourcesPagination, currentDbName, errors} = state.dataset;
 
@@ -1251,13 +1247,15 @@ export function searchSources(searchValue: string) {
 
         if (
             !connection?.entryId ||
-            !workbookId ||
             errors.sourceLoadingError ||
             sourcesPagination.searchValue === searchValue
         ) {
             return;
         }
-
+        dispatch({
+            type: DATASET_ACTION_TYPES.SET_SOURCES_SEARCH_LOADING,
+            payload: true,
+        });
         batch(async () => {
             dispatch(
                 setSourcesPagination({...initialState.sourcesPagination, searchValue: searchValue}),
@@ -1289,10 +1287,6 @@ export function setCurrentDbName(payload: string): SetCurrentDbName {
 
 export function incrementSourcesPage() {
     return async (dispatch: DatasetDispatch, getState: GetState) => {
-        dispatch({
-            type: DATASET_ACTION_TYPES.SOURCES_NEXT_PAGE_REQUEST,
-        });
-
         const state = getState();
         const connection = selectedConnectionSelector(state);
         const workbookId = workbookIdSelector(state);
@@ -1301,9 +1295,12 @@ export function incrementSourcesPage() {
             dataset: {sourcesPagination, currentDbName, errors},
         } = state;
 
-        if (!connection?.entryId || !workbookId || errors.sourceLoadingError) {
+        if (!connection?.entryId || errors.sourceLoadingError) {
             return;
         }
+        dispatch({
+            type: DATASET_ACTION_TYPES.SOURCES_NEXT_PAGE_REQUEST,
+        });
 
         const sources = await dispatch(
             getSources({
@@ -1334,7 +1331,7 @@ export function incrementSourcesPage() {
 
 interface GetSourcesProps {
     connectionId: string;
-    workbookId: string;
+    workbookId: string | null;
     searchText?: string;
     offset?: number;
     currentDbName?: string;
