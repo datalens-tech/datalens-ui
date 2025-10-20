@@ -1,36 +1,32 @@
-import z from 'zod/v4';
+import z from 'zod';
 
-import {datasetBodySchema, datasetOptionsSchema, datasetSchema} from '../../../zod-schemas/dataset';
+import {makeSchemaRef} from '../../../utils/openapi';
 
-const createDatasetDefaultArgsSchema = z.object({
-    name: z.string(),
-    created_via: z.string().optional(),
-    multisource: z.boolean(),
-    dataset: datasetBodySchema,
+const BI_SCHEMA_NAME = {
+    DatasetCreate: 'DatasetCreate',
+    DatasetUpdate: 'DatasetUpdate',
+    DatasetRead: 'DatasetRead',
+    DatasetValidate: 'DatasetValidate',
+};
+
+export const createDatasetArgsSchema = z.any().meta({
+    $ref: makeSchemaRef(BI_SCHEMA_NAME.DatasetCreate),
 });
 
-export const createDatasetArgsSchema = z.union([
-    z.object({...createDatasetDefaultArgsSchema.shape, dir_path: z.string()}),
-    z.object({...createDatasetDefaultArgsSchema.shape, workbook_id: z.string()}),
-]);
-
-export const createDatasetResultSchema = z.object({
-    id: z.string(),
-    dataset: datasetBodySchema,
-    options: datasetOptionsSchema,
+export const createDatasetResultSchema = z.any().meta({
+    $ref: makeSchemaRef(BI_SCHEMA_NAME.DatasetRead),
 });
 
 export const updateDatasetArgsSchema = z.object({
     version: z.literal('draft'),
     datasetId: z.string(),
-    multisource: z.boolean(),
-    dataset: datasetBodySchema,
+    data: z.any().meta({
+        $ref: makeSchemaRef(BI_SCHEMA_NAME.DatasetUpdate),
+    }),
 });
 
-export const updateDatasetResultSchema = z.object({
-    id: z.string(),
-    dataset: datasetBodySchema,
-    options: datasetOptionsSchema,
+export const updateDatasetResultSchema = z.any().meta({
+    $ref: makeSchemaRef(BI_SCHEMA_NAME.DatasetRead),
 });
 
 export const deleteDatasetArgsSchema = z.object({
@@ -46,4 +42,19 @@ export const getDatasetByVersionArgsSchema = z.object({
     rev_id: z.string().optional(),
 });
 
-export const getDatasetByVersionResultSchema = datasetSchema;
+export const getDatasetByVersionResultSchema = z.any().meta({
+    $ref: makeSchemaRef(BI_SCHEMA_NAME.DatasetRead),
+});
+
+export const validateDatasetArgsSchema = z.object({
+    datasetId: z.string(),
+    version: z.literal('draft'),
+    workbookId: z.union([z.null(), z.string()]),
+    data: z.any().meta({
+        $ref: makeSchemaRef(BI_SCHEMA_NAME.DatasetValidate),
+    }),
+});
+
+export const validateDatasetResultSchema = z.any().meta({
+    $ref: makeSchemaRef(BI_SCHEMA_NAME.DatasetRead),
+});
