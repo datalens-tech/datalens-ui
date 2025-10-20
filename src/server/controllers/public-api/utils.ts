@@ -2,8 +2,8 @@ import type {Request} from '@gravity-ui/expresskit';
 import {AppError} from '@gravity-ui/nodekit';
 import {AxiosError} from 'axios';
 import isObject from 'lodash/isObject';
-import type z from 'zod/v4';
-import {ZodError} from 'zod/v4';
+import type z from 'zod';
+import {ZodError} from 'zod';
 
 import {ServerError} from '../../../shared/constants/error';
 import {

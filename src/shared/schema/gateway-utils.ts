@@ -1,7 +1,7 @@
 import type {Request, Response} from '@gravity-ui/expresskit';
 import type {ApiServiceActionConfig, GetAuthHeaders} from '@gravity-ui/gateway';
 import type {AppContext} from '@gravity-ui/nodekit';
-import type z from 'zod/v4';
+import type z from 'zod';
 
 import {AuthHeader, SERVICE_USER_ACCESS_TOKEN_HEADER} from '../constants';
 
@@ -39,23 +39,19 @@ export const getValidationSchema = (value: object): TypedActionSchema | null => 
     return hasValidationSchema(value) ? value[VALIDATION_SCHEMA_KEY] : null;
 };
 
-export const createTypedAction = <
-    TOutputSchema extends z.ZodType,
-    TParamsSchema extends z.ZodType,
-    TTransformedSchema extends z.ZodType = TOutputSchema,
->(
+export const createTypedAction = <TOutput, TParams, TTransformed = TOutput>(
     schema: {
-        paramsSchema: TParamsSchema;
-        resultSchema: TOutputSchema;
-        transformedSchema?: TTransformedSchema;
+        resultSchema: z.ZodType<TOutput>;
+        paramsSchema: z.ZodType<TParams>;
+        transformedSchema?: z.ZodType<TTransformed>;
     },
     actionConfig: ApiServiceActionConfig<
         AppContext,
         Request,
         Response,
-        z.infer<TOutputSchema>,
-        z.infer<TParamsSchema>,
-        z.infer<TTransformedSchema>
+        NoInfer<TOutput>,
+        NoInfer<TParams>,
+        NoInfer<TTransformed>
     >,
 ) => {
     const schemaValidationObject = {
