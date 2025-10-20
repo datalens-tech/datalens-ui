@@ -1,5 +1,4 @@
-import type {OpenAPIRegistry, ZodMediaTypeObject} from '@asteasolutions/zod-to-openapi';
-import z from 'zod/v4';
+import type {OpenAPIRegistry} from '@asteasolutions/zod-to-openapi';
 
 import {getValidationSchema} from '../../../../shared/schema/gateway-utils';
 import {registry} from '../../../registry';
@@ -50,9 +49,7 @@ export const registerActionToOpenApi = ({
             body: {
                 content: {
                     [CONTENT_TYPE_JSON]: {
-                        schema: z.toJSONSchema(
-                            actionSchema.paramsSchema,
-                        ) as ZodMediaTypeObject['schema'],
+                        schema: actionSchema.paramsSchema,
                     },
                 },
             },
@@ -62,9 +59,7 @@ export const registerActionToOpenApi = ({
                 description: 'Response',
                 content: {
                     [CONTENT_TYPE_JSON]: {
-                        schema: z.toJSONSchema(
-                            actionSchema.resultSchema,
-                        ) as ZodMediaTypeObject['schema'],
+                        schema: actionSchema.resultSchema,
                     },
                 },
             },

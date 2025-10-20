@@ -344,7 +344,6 @@ export function saveDataset({
             if (isCreationProcess) {
                 const creationData = {
                     dataset,
-                    multisource: true,
                     ...(isAuto && {created_via: 'yt_to_dl'}),
                 };
 
@@ -364,9 +363,10 @@ export function saveDataset({
             } else {
                 const validation = await getSdk().sdk.bi.updateDataset({
                     datasetId,
-                    dataset,
-                    multisource: true,
                     version: 'draft',
+                    data: {
+                        dataset,
+                    },
                 });
 
                 dispatch(setValidationData(validation));

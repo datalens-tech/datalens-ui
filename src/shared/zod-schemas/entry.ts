@@ -1,4 +1,4 @@
-import z from 'zod/v4';
+import z from 'zod';
 
 export const ENTRY_SCHEMAS = {
     entryId: z.string(),
