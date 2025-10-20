@@ -45,6 +45,9 @@ export enum ErrorCode {
 
     ChartEditorNotAvailable = 'ERR.CHARTS.CHART_EDITOR_NOT_AVAILABLE',
     InsufficientServicePlan = 'ERR.CHARTS.INSUFFICIENT_SERVICE_PLAN',
+    WorkbookAlreadyExists = 'WORKBOOK_ALREADY_EXISTS',
+    MetaManagerWorkbookAlreadyExists = 'META_MANAGER.WORKBOOK_ALREADY_EXISTS',
+    CollectionAlreadyExists = 'COLLECTION_ALREADY_EXISTS',
 }
 
 export const ErrorContentTypes = {
