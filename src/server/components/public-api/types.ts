@@ -1,4 +1,5 @@
 import type {OpenAPIRegistry} from '@asteasolutions/zod-to-openapi';
+import type {ComponentsObject} from '@asteasolutions/zod-to-openapi/dist/types';
 import type {Request, Response} from '@gravity-ui/expresskit';
 import type {ApiWithRoot, GatewayActionUnaryResponse, SchemasByScope} from '@gravity-ui/gateway';
 
@@ -47,4 +48,5 @@ export type PublicApiConfig<TSchema extends SchemasByScope = DatalensGatewaySche
     baseConfig: PublicApiBaseConfig<TSchema>;
     securitySchemes: PublicApiSecuritySchemes;
     securityTypes: string[];
+    biOpenapiSchemas?: ComponentsObject['schemas'];
 };

@@ -987,8 +987,10 @@ export function validateDataset({compareContent, initial = false}: ValidateDatas
                     datasetId,
                     workbookId,
                     version: 'draft',
-                    dataset: prevContent,
-                    updates: prepareUpdates(updates),
+                    data: {
+                        dataset: prevContent,
+                        updates: prepareUpdates(updates),
+                    },
                 },
                 {timeout: TIMEOUT_65_SEC},
             );
