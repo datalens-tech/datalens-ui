@@ -144,7 +144,7 @@
     "@gravity-ui/uikit": "^7.18.0",
     "@jest/types": "^29.6.3",
     "@microsoft/fetch-event-source": "^2.0.1",
-    "@playwright/test": "^1.48.2",
+    "@playwright/test": "^1.56.1",
     "@reduxjs/toolkit": "^1.8.3",
     "@statoscope/cli": "^5.28.2",
     "@statoscope/stats-validator-plugin-webpack": "^5.28.2",
