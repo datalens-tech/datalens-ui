@@ -1,9 +1,8 @@
-name: E2E Tests
+name: E2E Tests Backend
 
 on:
-  pull_request:
-    branches-ignore:
-      - 'weblate-**'
+  # used by datalens-tech/datalens-backend repo
+  # https://github.com/datalens-tech/datalens-backend/blob/main/.github/workflows/run_e2e.yml#L30
   workflow_dispatch:
     inputs:
       distinct_id:
@@ -114,7 +113,7 @@ jobs:
           E2E_ACTION_TIMEOUT: '10000'
           E2E_EXPECT_TIMEOUT: '10000'
           E2E_MAX_FAILURES: '30'
-          E2E_MAX_WORKERS: '6'
+          E2E_MAX_WORKERS: '12'
           E2E_DOMAIN: http://localhost:8080
           E2E_USER_LOGIN: admin
           E2E_USER_PASSWORD: admin
@@ -135,7 +134,7 @@ jobs:
           E2E_ACTION_TIMEOUT: '10000'
           E2E_EXPECT_TIMEOUT: '10000'
           E2E_MAX_FAILURES: '30'
-          E2E_MAX_WORKERS: '6'
+          E2E_MAX_WORKERS: '12'
 
       - name: Copy tests report from docker run
         if: always()
