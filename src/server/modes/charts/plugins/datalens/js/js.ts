@@ -31,14 +31,14 @@ import {extractColorPalettesFromData} from '../../helpers/color-palettes';
 import {getDatasetIdAndLayerIdFromKey, getFieldList} from '../../helpers/misc';
 import prepareBackendPivotTableData from '../preparers/backend-pivot-table';
 import type {PivotData} from '../preparers/backend-pivot-table/types';
-import {prepareD3BarX, prepareHighchartsBarX} from '../preparers/bar-x';
+import {prepareGravityChartBarX, prepareHighchartsBarX} from '../preparers/bar-x';
 import {prepareGravityChartsBarY, prepareHighchartsBarY} from '../preparers/bar-y';
 import prepareFlatTableData from '../preparers/flat-table';
 import prepareGeopointData from '../preparers/geopoint';
 import prepareGeopointWithClusterData from '../preparers/geopoint-with-cluster';
 import prepareGeopolygonData from '../preparers/geopolygon';
 import prepareHeatmapData from '../preparers/heatmap';
-import {prepareD3Line, prepareHighchartsLine} from '../preparers/line';
+import {prepareGravityChartLine, prepareHighchartsLine} from '../preparers/line';
 import prepareMetricData from '../preparers/metric';
 import preparePivotTableData from '../preparers/old-pivot-table/old-pivot-table';
 import {prepareD3Pie, prepareHighchartsPie} from '../preparers/pie';
@@ -483,15 +483,19 @@ function prepareSingleResult({
     const segments: ServerField[] = shared.segments || [];
 
     switch (visualization.id) {
-        case 'line':
-        case 'area':
-        case 'area100p': {
-            if (visualization.id === 'line') {
+        case WizardVisualizationId.Line:
+        case WizardVisualizationId.Area:
+        case WizardVisualizationId.Area100p: {
+            if (visualization.id === WizardVisualizationId.Line) {
                 shapes = shared.shapes || [];
                 shapesConfig = shared.shapesConfig;
             }
 
-            prepare = prepareHighchartsLine;
+            if (plugin === 'gravity-charts') {
+                prepare = prepareGravityChartLine;
+            } else {
+                prepare = prepareHighchartsLine;
+            }
             rowsLimit = 75000;
             break;
         }
@@ -517,20 +521,24 @@ function prepareSingleResult({
         case WizardVisualizationId.LineD3: {
             shapes = shared.shapes || [];
             shapesConfig = shared.shapesConfig;
-            prepare = prepareD3Line;
+            prepare = prepareGravityChartLine;
             rowsLimit = 75000;
             break;
         }
 
-        case 'column':
-        case 'column100p': {
-            prepare = prepareHighchartsBarX;
+        case WizardVisualizationId.Column:
+        case WizardVisualizationId.Column100p: {
+            if (plugin === 'gravity-charts') {
+                prepare = prepareGravityChartBarX;
+            } else {
+                prepare = prepareHighchartsBarX;
+            }
             rowsLimit = 75000;
             break;
         }
 
         case 'bar-x-d3': {
-            prepare = prepareD3BarX;
+            prepare = prepareGravityChartBarX;
             rowsLimit = 75000;
             break;
         }
