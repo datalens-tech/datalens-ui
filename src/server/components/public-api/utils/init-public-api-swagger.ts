@@ -64,7 +64,7 @@ export const initPublicApiSwagger = (app: ExpressKit) => {
             return acc;
         }, {});
 
-        const versions = objectKeys(baseConfig);
+        const versions = objectKeys(baseConfig).map(Number);
 
         versions.forEach((version) => {
             const openApiDocument = versionToDocument[version];
