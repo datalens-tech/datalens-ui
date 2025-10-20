@@ -69,7 +69,9 @@ interface ResetEditHistoryUnitAction {
     unitId: string;
 }
 
-export function resetEditHistoryUnit({unitId}: Omit<ResetEditHistoryUnitAction, 'type'>) {
+export function resetEditHistoryUnit({
+    unitId,
+}: Omit<ResetEditHistoryUnitAction, 'type'>): ResetEditHistoryUnitAction {
     return {
         type: RESET_EDIT_HISTORY_UNIT,
         unitId,
