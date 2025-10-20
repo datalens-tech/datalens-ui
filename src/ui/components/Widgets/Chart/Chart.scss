@@ -35,7 +35,7 @@ $fullscreenZIndex: 999;
     &_fullscreen {
         position: fixed;
         width: 100vw;
-        height: 100vh;
+        height: 100dvh;
         left: 0;
         top: var(--fullscreen-widget-top, 0);
         background-color: var(--g-color-base-float);
