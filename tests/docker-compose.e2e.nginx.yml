@@ -1,0 +1,11 @@
+services:
+  nginx:
+    container_name: e2e-datalens-nginx
+    image: nginx:stable-alpine3.19
+    network_mode: host
+    command: ['nginx']
+    environment:
+      NGINX_ENVSUBST_OUTPUT_DIR: /etc/nginx
+    volumes:
+      - ../deploy/nginx/nginx.conf:/etc/nginx/templates/nginx.conf.template
+      - ../dist/public:/opt/app/dist/public
