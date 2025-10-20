@@ -1,7 +1,7 @@
 services:
   nginx:
     container_name: e2e-datalens-nginx
-    image: nginx:stable-alpine3.19
+    image: ghcr.io/datalens-tech/nginx:stable-alpine3.19
     network_mode: host
     command: ['nginx']
     environment:
