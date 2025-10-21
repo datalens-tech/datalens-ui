@@ -26,7 +26,7 @@ export type DialogCreateDatasetInWorkbookProps = {
     creationScope: 'workbook';
 };
 
-type DialogCreateDatasetProps =
+export type DialogCreateDatasetProps =
     | (DialogCreateDatasetBaseProps & DialogCreateDatasetInNavigationProps)
     | (DialogCreateDatasetBaseProps & DialogCreateDatasetInWorkbookProps);
 

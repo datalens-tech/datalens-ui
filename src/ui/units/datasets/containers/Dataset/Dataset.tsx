@@ -56,6 +56,7 @@ import DatasetPanel from '../../components/DatasetPanel/DatasetPanel';
 import type {
     DialogCreateDatasetInNavigationProps,
     DialogCreateDatasetInWorkbookProps,
+    DialogCreateDatasetProps,
 } from '../../components/DialogCreateDataset/DialogCreateDataset';
 import DialogCreateDataset from '../../components/DialogCreateDataset/DialogCreateDataset';
 import type {DatasetTab} from '../../constants';
@@ -415,7 +416,7 @@ class Dataset extends React.Component<Props, State> {
             const searchParams = new URLSearchParams(location.search);
             const searchCurrentPath = searchParams.get(URL_QUERY.CURRENT_PATH);
 
-            return getFakeEntry(EntryScope.Dataset, workbookId!, searchCurrentPath!);
+            return getFakeEntry(EntryScope.Dataset, workbookId, searchCurrentPath!);
         }
 
         return {
@@ -452,14 +453,14 @@ class Dataset extends React.Component<Props, State> {
         this.props.closePreview();
     };
 
-    createDatasetInNavigation: DialogCreateDatasetInNavigationProps['onApply'] = async (key) => {
+    createDatasetInNavigation: DialogCreateDatasetInNavigationProps['onApply'] = (key) => {
         const {isCreationProcess, history} = this.props;
-        await this.props.saveDataset({key, history, isCreationProcess, isErrorThrows: true});
+        return this.props.saveDataset({key, history, isCreationProcess, isErrorThrows: true});
     };
 
-    createDatasetInWorkbook: DialogCreateDatasetInWorkbookProps['onApply'] = async ({name}) => {
+    createDatasetInWorkbook: DialogCreateDatasetInWorkbookProps['onApply'] = ({name}) => {
         const {isCreationProcess, history} = this.props;
-        await this.props.saveDataset({
+        return this.props.saveDataset({
             name,
             history,
             isCreationProcess,
@@ -637,25 +638,18 @@ class Dataset extends React.Component<Props, State> {
         const {isVisibleDialogCreateDataset} = this.state;
         const workbookId = this.getWorkbookId();
 
+        const dialogProps = {
+            creationScope: workbookId ? 'workbook' : 'navigation',
+            visible: isVisibleDialogCreateDataset,
+            onApply: workbookId ? this.createDatasetInWorkbook : this.createDatasetInNavigation,
+            onClose: this.closeDialogCreateDataset,
+        } as DialogCreateDatasetProps;
+
         return (
             <div className={b()}>
                 {this.renderControls()}
                 {isRefetchingDataset ? this.renderLoader() : this.renderPanels()}
-                {workbookId ? (
-                    <DialogCreateDataset
-                        creationScope={'workbook'}
-                        visible={isVisibleDialogCreateDataset}
-                        onApply={this.createDatasetInWorkbook}
-                        onClose={this.closeDialogCreateDataset}
-                    />
-                ) : (
-                    <DialogCreateDataset
-                        creationScope={'navigation'}
-                        visible={isVisibleDialogCreateDataset}
-                        onApply={this.createDatasetInNavigation}
-                        onClose={this.closeDialogCreateDataset}
-                    />
-                )}
+                <DialogCreateDataset {...dialogProps} />
             </div>
         );
     }
