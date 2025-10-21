@@ -38,7 +38,7 @@ function TabSwitch(props: TabSwitchProps) {
         <RadioButton
             qa={DatasetPanelQA.TabRadio}
             value={tab}
-            onChange={(e) => switchTab(e.target.value)}
+            onUpdate={(value) => switchTab(value)}
         >
             {tabs.map(({value, label, disabled}) => (
                 <RadioButton.Option
@@ -57,7 +57,7 @@ type DatasetPanelProps = StateProps & {
     isCreationProcess: boolean;
     previewEnabled: boolean;
     tab: DatasetTab;
-    switchTab: (tab: string) => void;
+    switchTab: (tab: DatasetTab) => void;
     refreshSources: () => void;
     openDialogFieldEditor: () => void;
     togglePreview: () => void;

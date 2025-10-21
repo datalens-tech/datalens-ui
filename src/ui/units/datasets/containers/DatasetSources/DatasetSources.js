@@ -72,7 +72,7 @@ const b = block('dataset-sources');
 const SOURCES_PANEL_MIN_SIZE = 256;
 const SOURCES_PANEL_MAX_SIZE = 512;
 
-class DatasetSources extends React.Component {
+export class DatasetSources extends React.Component {
     state = {
         connectionId: null,
         dragSource: null,

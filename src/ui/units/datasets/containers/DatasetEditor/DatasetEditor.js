@@ -53,7 +53,7 @@ import './DatasetEditor.scss';
 
 const b = block('dataset-editor');
 
-class DatasetEditor extends React.Component {
+export class DatasetEditor extends React.Component {
     state = {
         isFieldEditorVisible: false,
         isShowHiddenFieldsAlreadyClicked: false,

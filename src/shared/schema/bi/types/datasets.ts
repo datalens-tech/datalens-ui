@@ -200,20 +200,20 @@ export type GetDataSetFieldsByIdArgs = WorkbookIdArg & {
 };
 
 type CreateDatasetBaseArgs = {
-    dataset: Dataset['dataset'];
+    dataset: Partial<Dataset['dataset']>;
     name: string;
     created_via?: string;
 };
 
-type CreateDirDatasetArgs = CreateDatasetBaseArgs & {
+export type CreateDirDatasetArgs = CreateDatasetBaseArgs & {
     dir_path: string;
 };
 
-type CreateWorkbookDatsetArgs = CreateDatasetBaseArgs & {
+export type CreateWorkbookDatasetArgs = CreateDatasetBaseArgs & {
     workbook_id: string;
 };
 
-export type CreateDatasetArgs = CreateDirDatasetArgs | CreateWorkbookDatsetArgs;
+export type CreateDatasetArgs = CreateDirDatasetArgs | CreateWorkbookDatasetArgs;
 
 export type CreateDatasetResponse = Id & DatasetWithOptions;
 
@@ -222,7 +222,7 @@ export type UpdateDatasetResponse = DatasetWithOptions;
 export type UpdateDatasetArgs = {
     version: DatasetVersion;
     data: {
-        dataset: Dataset['dataset'];
+        dataset: Partial<Dataset['dataset']>;
     };
 } & DatasetId;
 

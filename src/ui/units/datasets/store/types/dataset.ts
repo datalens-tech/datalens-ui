@@ -1,4 +1,5 @@
 import type {ApplyData} from 'components/DialogFilter/DialogFilter';
+import type {EditHistoryAction} from 'ui/store/actions/editHistory';
 
 import type {
     ConnectionData,
@@ -16,6 +17,7 @@ import type {
     FormOptions as SchemaFormOptions,
     ValidateDatasetResponse,
 } from '../../../../../shared/schema';
+import type {EntryContentAction} from '../../../../store/actions/entryContent';
 import type {DatasetTab} from '../../constants';
 import type {
     ADD_AVATAR_PROTOTYPES,
@@ -108,6 +110,7 @@ export type ConnectionEntry = {
     type: string;
     permissions?: Permissions;
     workbookId: WorkbookId;
+    deleted?: boolean;
 };
 
 export type TranslatedItem = {
@@ -297,8 +300,8 @@ export type DatasetReduxState = {
         error: DatasetError;
     };
     types: {
-        // TODO: the same type is in the scheme, it is necessary to sleep properly
         data: {
+            title: string;
             name: string;
             aggregations: string[];
         }[];
@@ -684,7 +687,7 @@ type DatasetInitialFetchSuccess = {
     type: typeof DATASET_INITIAL_FETCH_SUCCESS;
     payload: {
         dataset: Dataset & {
-            connection: ConnectionEntry | null;
+            connection?: ConnectionEntry | null;
         };
         publishedId: EntryFieldPublishedId;
         currentRevId: string | null;
@@ -720,12 +723,10 @@ type FieldTypesFetchSuccess = {
     type: typeof FIELD_TYPES_FETCH_SUCCESS;
     payload: {
         types: {
-            data: {
-                name: string;
-                aggregations: string[];
-            }[];
-            error: DatasetError;
-        };
+            title: string;
+            name: string;
+            aggregations: string[];
+        }[];
     };
 };
 
@@ -908,4 +909,6 @@ export type DatasetReduxAction =
     | SetSourcesPagination
     | SourcesNextPageRequest
     | SourcesNextPageSuccess
-    | SetSourcesSearchLoading;
+    | SetSourcesSearchLoading
+    | EntryContentAction
+    | EditHistoryAction;
