@@ -88,6 +88,8 @@ export enum Feature {
     GravityChartsForPieAndTreemap = 'GravityChartsForPieAndTreemap',
     /** Use GravityUI Charts as the default library for some wizard visualizations(scatter and bar-y) */
     GravityChartsForBarYAndScatter = 'GravityChartsForBarYAndScatter',
+    /** Use GravityUI Charts as the default library for some wizard visualizations(line, area and bar-x) */
+    GravityChartsForLineAreaAndBarX = 'GravityChartsForLineAreaAndBarX',
     /** Save field settings (formatting and colors) in the dataset */
     StoreFieldSettingsAtDataset = 'StoreFieldSettingsAtDataset',
     /** Show dataset description button */
