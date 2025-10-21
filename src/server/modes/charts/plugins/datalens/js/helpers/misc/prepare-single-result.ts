@@ -11,14 +11,14 @@ import type {
 import {WizardVisualizationId, isMonitoringOrPrometheusChart} from '../../../../../../../../shared';
 import prepareBackendPivotTableData from '../../../preparers/backend-pivot-table';
 import type {PivotData} from '../../../preparers/backend-pivot-table/types';
-import {prepareD3BarX, prepareHighchartsBarX} from '../../../preparers/bar-x';
+import {prepareGravityChartBarX, prepareHighchartsBarX} from '../../../preparers/bar-x';
 import {prepareGravityChartsBarY, prepareHighchartsBarY} from '../../../preparers/bar-y';
 import prepareFlatTableData from '../../../preparers/flat-table';
 import prepareGeopointData from '../../../preparers/geopoint';
 import prepareGeopolygonData from '../../../preparers/geopolygon';
 import prepareHeatmapData from '../../../preparers/heatmap';
 import {prepareHighchartsLine} from '../../../preparers/line';
-import {prepareD3Line} from '../../../preparers/line/gravity-charts';
+import {prepareGravityChartLine} from '../../../preparers/line/gravity-charts';
 import prepareLineTime from '../../../preparers/line-time';
 import prepareMetricData from '../../../preparers/metric';
 import preparePivotTableData from '../../../preparers/old-pivot-table/old-pivot-table';
@@ -131,23 +131,35 @@ export default ({
         case WizardVisualizationId.Area:
         case WizardVisualizationId.Area100p: {
             rowsLimit = 75000;
-            prepare = isMonitoringOrPrometheusChart(chartType)
-                ? prepareLineTime
-                : prepareHighchartsLine;
+            if (isMonitoringOrPrometheusChart(chartType)) {
+                prepare = prepareLineTime;
+            } else if (plugin === 'gravity-charts') {
+                prepare = prepareGravityChartLine;
+            } else {
+                prepare = prepareHighchartsLine;
+            }
             break;
         }
 
         case WizardVisualizationId.Column:
         case WizardVisualizationId.Column100p: {
             rowsLimit = 75000;
-            prepare = isMonitoringOrPrometheusChart(chartType)
-                ? prepareLineTime
-                : prepareHighchartsBarX;
+            if (isMonitoringOrPrometheusChart(chartType)) {
+                prepare = prepareLineTime;
+            } else if (plugin === 'gravity-charts') {
+                prepare = prepareGravityChartBarX;
+            } else {
+                prepare = prepareHighchartsBarX;
+            }
             break;
         }
 
         case WizardVisualizationId.LineD3: {
-            prepare = isMonitoringOrPrometheusChart(chartType) ? prepareLineTime : prepareD3Line;
+            if (isMonitoringOrPrometheusChart(chartType)) {
+                prepare = prepareLineTime;
+            } else {
+                prepare = prepareGravityChartLine;
+            }
             rowsLimit = 75000;
             break;
         }
@@ -171,7 +183,7 @@ export default ({
         }
 
         case WizardVisualizationId.BarXD3: {
-            prepare = prepareD3BarX;
+            prepare = prepareGravityChartBarX;
             rowsLimit = 75000;
             break;
         }

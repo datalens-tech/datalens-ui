@@ -37,7 +37,7 @@ services:
       postgres:
         condition: service_healthy
     ports:
-      - 3030:8080
+      - ${US_PORT:-3030}:8080
     networks:
       - default
 

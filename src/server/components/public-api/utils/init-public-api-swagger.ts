@@ -17,7 +17,7 @@ export const initPublicApiSwagger = (app: ExpressKit) => {
     const installationText = `Installation – <b>${config.appInstallation}</b>`;
     const envText = `Env – <b>${config.appEnv}</b>`;
 
-    const {baseConfig, securitySchemes} = registry.getPublicApiConfig();
+    const {baseConfig, securitySchemes, biOpenapiSchemas} = registry.getPublicApiConfig();
 
     setImmediate(() => {
         const versionToDocument = Object.entries(baseConfig).reduce<
@@ -64,11 +64,17 @@ export const initPublicApiSwagger = (app: ExpressKit) => {
             return acc;
         }, {});
 
-        const versions = objectKeys(baseConfig);
+        const versions = objectKeys(baseConfig).map(Number);
 
         versions.forEach((version) => {
             const openApiDocument = versionToDocument[version];
 
+            openApiDocument.components = openApiDocument.components ?? {};
+
+            openApiDocument.components.schemas = {
+                ...openApiDocument.components?.schemas,
+                ...biOpenapiSchemas,
+            };
             const versionPath = `/${version}/`;
             const isLatest = version === PUBLIC_API_LATEST_VERSION;
 
@@ -79,12 +85,9 @@ export const initPublicApiSwagger = (app: ExpressKit) => {
                     const host = req.get('host');
                     const serverUrl = `https://${host}`;
 
-                    const result: typeof openApiDocument = {
-                        ...openApiDocument,
-                        servers: [{url: serverUrl}],
-                    };
+                    openApiDocument.servers = [{url: serverUrl}];
 
-                    return res.json(result);
+                    return res.json(openApiDocument);
                 });
 
                 const swaggerOptions = {

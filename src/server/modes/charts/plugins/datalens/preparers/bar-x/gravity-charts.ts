@@ -53,7 +53,7 @@ type ExtendedBarXSeries = Omit<BarXSeries, 'data'> & {
 };
 
 // eslint-disable-next-line complexity
-export function prepareD3BarX(args: PrepareFunctionArgs) {
+export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
     const {
         shared,
         labels,

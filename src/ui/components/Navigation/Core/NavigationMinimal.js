@@ -31,6 +31,7 @@ class NavigationMinimal extends React.Component {
         clickableScope: PropTypes.string,
         onClose: PropTypes.func,
         onChooseFolder: PropTypes.func,
+        onCreateFolderClick: PropTypes.func,
         onCrumbClick: PropTypes.func,
         getPlaceParameters: PropTypes.func.isRequired,
         placeSelectNode: PropTypes.element,
@@ -102,27 +103,33 @@ class NavigationMinimal extends React.Component {
 
         return (
             <div className={b('footer')}>
-                <div className={b('button-place')}>
+                {this.props.onCreateFolderClick && (
                     <Button
+                        className={b('footer-button')}
+                        view="outlined"
+                        size="l"
+                        onClick={this.props.onCreateFolderClick}
+                    >
+                        {i18n('button_create-folder')}
+                    </Button>
+                )}
+
+                <div className={b('footer-navigation-actions')}>
+                    <Button
+                        className={b('footer-button')}
                         view="flat"
-                        width="max"
                         size="l"
                         onClick={this.onClose}
-                        className={b('button-cancel')}
-                        pin="brick-brick"
                     >
                         {i18n('button_cancel')}
                     </Button>
-                </div>
-                <div className={b('button-place')}>
+
                     <Button
+                        className={b('footer-button')}
                         view="action"
-                        width="max"
                         size="l"
                         onClick={this.onChooseFolder}
-                        className={b('button-done')}
                         disabled={disabledAccept}
-                        pin="brick-brick"
                         qa={DlNavigationQA.MinimalDoneBtn}
                     >
                         {hasIconLock && <Icon data={Lock} />}

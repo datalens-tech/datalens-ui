@@ -1237,8 +1237,10 @@ const validateDataset = ({dataset, updates}: {dataset: Dataset; updates: Update[
                     version: 'draft',
                     datasetId: dataset.id,
                     workbookId,
-                    dataset: dataset.dataset,
-                    updates: preparedUpdates,
+                    data: {
+                        dataset: dataset.dataset,
+                        updates: preparedUpdates,
+                    },
                 },
                 {timeout: TIMEOUT_95_SEC},
             );

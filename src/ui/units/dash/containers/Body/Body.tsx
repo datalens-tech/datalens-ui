@@ -37,7 +37,6 @@ import logger from 'libs/logger';
 import {getSdk} from 'libs/schematic-sdk';
 import debounce from 'lodash/debounce';
 import isEqual from 'lodash/isEqual';
-import {createPortal} from 'react-dom';
 import type {ResolveThunks} from 'react-redux';
 import {connect} from 'react-redux';
 import type {RouteComponentProps} from 'react-router-dom';
@@ -105,9 +104,12 @@ import {openDialog, openItemDialogAndSetData} from '../../store/actions/dialogs/
 import {closeDialogRelations, openDialogRelations} from '../../store/actions/relations/actions';
 import {
     canEdit,
+    hasTableOfContent,
     selectCurrentTab,
     selectCurrentTabId,
+    selectDashDescription,
     selectDashError,
+    selectDashShowOpenedDescription,
     selectDashWorkbookId,
     selectEntryId,
     selectLastModifiedItemId,
@@ -125,12 +127,15 @@ import {
     FixedHeaderControls,
     FixedHeaderWrapper,
 } from '../FixedHeader/FixedHeader';
-import type {MobileFloatMenuProps} from '../MobileFloatMenu/MobileFloatMenu';
-import {MobileFloatMenu} from '../MobileFloatMenu/MobileFloatMenu';
 import TableOfContent from '../TableOfContent/TableOfContent';
 import {Tabs} from '../Tabs/Tabs';
 
-import {RefsContext, RefsContextProvider} from './context';
+import {
+    FixedContainerWrapperWithContext,
+    FixedControlsWrapperWithContext,
+    FloatingMobileMenuWithContext,
+    RefsContextProvider,
+} from './context';
 
 import iconRelations from 'ui/assets/icons/relations.svg';
 
@@ -1187,6 +1192,10 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                             hasFixedContent={
                                 hasFixedHeaderContainerElements || hasFixedHeaderControlsElements
                             }
+                            dashDescription={this.props.dashDescription}
+                            showOpenedDescription={this.props.showOpenedDescription}
+                            hasTableOfContent={this.props.hasTableOfContent}
+                            toggleTableOfContent={this.props.toggleTableOfContent}
                             fixedContentInitiallyOpened={mobileFixedHeaderInitiallyOpened}
                             fixedContentWidgetFocused={isFixedHeaderWidgetFocused}
                             fixedHeaderControlsRef={this._fixedHeaderControlsRef}
@@ -1327,8 +1336,8 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
 
         const loadedMixin = loaded ? LOADED_DASH_CLASS : undefined;
 
-        const showDashTitle =
-            !settings.hideDashTitle && (!DL.IS_MOBILE || isMobileFixedHeaderEnabled);
+        const hideDashTitle =
+            settings.hideDashTitle || (DL.IS_MOBILE && !isMobileFixedHeaderEnabled);
 
         const content = (
             <div
@@ -1358,7 +1367,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                             'with-footer': isEnabledFeature(Feature.EnableFooter),
                         })}
                     >
-                        {showDashTitle && (
+                        {!hideDashTitle && this.props.entry?.key && (
                             <div className={b('entry-name')} data-qa={DashEntryQa.EntryName}>
                                 {Utils.getEntryNameFromKey(this.props.entry?.key)}
                             </div>
@@ -1413,6 +1422,9 @@ const mapStateToProps = (state: DatalensGlobalState) => ({
     error: selectDashError(state),
     skipReload: selectSkipReload(state),
     userSettings: selectUserSettings(state),
+    dashDescription: selectDashDescription(state),
+    showOpenedDescription: selectDashShowOpenedDescription(state),
+    hasTableOfContent: hasTableOfContent(state),
 });
 
 const mapDispatchToProps = {
@@ -1434,30 +1446,3 @@ export default compose<BodyProps, OwnProps>(
     withRouter,
     connect(mapStateToProps, mapDispatchToProps),
 )(Body);
-
-function FixedControlsWrapperWithContext({content}: {content: React.ReactNode}) {
-    const {fixedHeaderControlsEl} = React.useContext(RefsContext);
-
-    if (fixedHeaderControlsEl) {
-        return createPortal(content, fixedHeaderControlsEl, 'fixed-header-controls-mounted');
-    }
-    return null;
-}
-
-function FixedContainerWrapperWithContext({content}: {content: React.ReactNode}) {
-    const {fixedHeaderContainerEl} = React.useContext(RefsContext);
-
-    if (fixedHeaderContainerEl) {
-        return createPortal(content, fixedHeaderContainerEl, 'fixed-header-container-mounted');
-    }
-    return null;
-}
-
-function FloatingMobileMenuWithContext(props: Omit<MobileFloatMenuProps, 'dashEl'>) {
-    const {dashEl} = React.useContext(RefsContext);
-
-    if (dashEl) {
-        return <MobileFloatMenu {...props} dashEl={dashEl} />;
-    }
-    return null;
-}

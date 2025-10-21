@@ -1,4 +1,4 @@
-import type z from 'zod/v4';
+import type z from 'zod';
 
 import type {
     Dataset,
@@ -10,7 +10,7 @@ import type {
 } from '../../../types';
 import type {ApiV2RequestBody, ApiV2ResultData} from '../../../types/bi-api/v2';
 import type {EntryFieldData} from '../../types';
-import type {createDatasetResultSchema, deleteDatasetResultSchema} from '../schemas';
+import type {deleteDatasetResultSchema} from '../schemas';
 
 import type {WorkbookIdArg} from './common';
 
@@ -122,6 +122,11 @@ export type GetSourceArgs = {
     search_text?: string;
 } & WorkbookIdArg;
 
+export type GetDatasetByVersionResponse = Dataset;
+
+export type GetDatasetByVersionArgs = {version: string; rev_id?: string} & DatasetId &
+    WorkbookIdArg;
+
 export type DeleteDatasetResponse = z.infer<typeof deleteDatasetResultSchema>;
 
 export type CheckDatasetsForPublicationResponse = {
@@ -161,9 +166,11 @@ export type ValidateDatasetResponse = {
 } & DatasetWithOptions;
 
 export type ValidateDatasetArgs = {
-    dataset: Partial<Dataset['dataset']>;
-    updates: ValidateDatasetUpdate[];
     version: DatasetVersion;
+    data: {
+        dataset: Partial<Dataset['dataset']>;
+        updates: ValidateDatasetUpdate[];
+    };
 } & DatasetId &
     WorkbookIdArg;
 
@@ -192,7 +199,32 @@ export type GetDataSetFieldsByIdArgs = WorkbookIdArg & {
     dataSetId: string;
 };
 
-export type CreateDatasetResponse = z.infer<typeof createDatasetResultSchema>;
+type CreateDatasetBaseArgs = {
+    dataset: Dataset['dataset'];
+    name: string;
+    created_via?: string;
+};
+
+type CreateDirDatasetArgs = CreateDatasetBaseArgs & {
+    dir_path: string;
+};
+
+type CreateWorkbookDatsetArgs = CreateDatasetBaseArgs & {
+    workbook_id: string;
+};
+
+export type CreateDatasetArgs = CreateDirDatasetArgs | CreateWorkbookDatsetArgs;
+
+export type CreateDatasetResponse = Id & DatasetWithOptions;
+
+export type UpdateDatasetResponse = DatasetWithOptions;
+
+export type UpdateDatasetArgs = {
+    version: DatasetVersion;
+    data: {
+        dataset: Dataset['dataset'];
+    };
+} & DatasetId;
 
 export type GetPreviewResponse = Partial<DistinctResult & DistinctRegularResult>;
 
