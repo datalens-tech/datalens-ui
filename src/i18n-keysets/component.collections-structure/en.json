@@ -13,6 +13,7 @@
   "action_stay": "Remain",
   "button_choose-file": "Select a file",
   "button_deploy": "Deploy",
+  "label_collection-already-exists-error": "A collection with that name already exists",
   "label_connection": "connection",
   "label_copy": "Copy to",
   "label_copy-denied-title": "Insufficient permissions to copy",
@@ -38,11 +39,14 @@
   "label_report": "report",
   "label_title": "Name",
   "label_wizard": "chart",
+  "label_workbook-already-exists-error": "A workbook with that name already exists",
   "section_delete-collection": "Are you sure you want to delete the collection \"{{name}}\"?",
   "section_delete-workbook": "Are you sure you want to delete the workbook \"{{name}}\"?",
   "title_deploy": "Deploy to",
   "title_import-exit": "Do you want to close the import window?",
+  "toast_collection-already-exists-error": "A collection with that name already exists",
   "toast_get-gallery-file-error": "Deployment error, please contact the support service",
   "toast_get-json-error": "An error occurred while trying to get a JSON from the file",
-  "toast_outdated-workbook-info": "The workbook information is outdated. Please refresh the page."
+  "toast_outdated-workbook-info": "The workbook information is outdated. Please refresh the page.",
+  "toast_workbook-already-exists-error": "A workbook with that name already exists"
 }

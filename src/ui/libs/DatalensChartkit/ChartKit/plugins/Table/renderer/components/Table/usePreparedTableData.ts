@@ -269,7 +269,7 @@ export const usePreparedTableData = (props: {
                     return rowSpan <= 1;
                 });
 
-                return simpleCell?.getBoundingClientRect()?.height ?? 0;
+                return simpleCell?.offsetHeight ?? 0;
             };
 
             if (rowId && typeof rowMeasures[rowId] === 'undefined') {
