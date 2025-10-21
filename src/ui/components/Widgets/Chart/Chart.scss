@@ -36,6 +36,8 @@ $fullscreenZIndex: 999;
         position: fixed;
         width: 100vw;
         height: 100dvh;
+        // fallback for browsers that do not support dvh
+        height: 10vh;
         left: 0;
         top: var(--fullscreen-widget-top, 0);
         background-color: var(--g-color-base-float);
