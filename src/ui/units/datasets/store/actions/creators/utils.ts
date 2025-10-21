@@ -39,3 +39,28 @@ export function filterSources(sources: GetSourceResponse['sources']) {
         ({source_type: sourceType}) => !SUBSELECT_SOURCE_TYPES.includes(sourceType),
     );
 }
+
+export function checkFetchingPreview({
+    updatePreview,
+    updates,
+}: {
+    updatePreview: boolean;
+    updates?: Update[];
+}) {
+    return (
+        !updatePreview &&
+        updates &&
+        updates.length &&
+        !updates.every((update) => {
+            if ('field' in update) {
+                const {field: {description, title} = {}} = update;
+
+                if (description || title) {
+                    return true;
+                }
+            }
+
+            return false;
+        })
+    );
+}

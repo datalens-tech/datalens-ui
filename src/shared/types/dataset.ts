@@ -265,7 +265,7 @@ export interface DatasetOptions {
         }[];
         max: number;
     };
-    source_listing: {
+    source_listing?: {
         supports_source_search: boolean;
         supports_source_pagination: boolean;
         supports_db_name_listing: boolean;

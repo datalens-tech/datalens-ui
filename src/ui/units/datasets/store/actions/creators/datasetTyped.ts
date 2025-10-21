@@ -1,10 +1,13 @@
 import type {Toaster} from '@gravity-ui/uikit';
+import {toaster} from '@gravity-ui/uikit/toaster-singleton';
+import type {History} from 'history';
+import {i18n} from 'i18n';
 import type {DatalensGlobalState} from 'index';
+import {URL_QUERY} from 'index';
 import _debounce from 'lodash/debounce';
 import get from 'lodash/get';
 import {batch} from 'react-redux';
 import type {Dispatch} from 'redux';
-import type {ThunkDispatch} from 'redux-thunk';
 import type {
     Dataset,
     DatasetAvatarRelation,
@@ -13,31 +16,43 @@ import type {
     DatasetSourceAvatar,
     WorkbookId,
 } from 'shared';
-import {TIMEOUT_100_SEC, TIMEOUT_65_SEC} from 'shared';
+import {Feature, TIMEOUT_100_SEC, TIMEOUT_65_SEC} from 'shared';
 import type {
     BaseSource,
+    CreateDatasetArgs,
+    CreateDirDatasetArgs,
+    CreateWorkbookDatasetArgs,
+    GetEntryResponse,
     GetPreviewResponse,
     GetSourceResponse,
     ValidateDatasetResponse,
 } from 'shared/schema';
 import {sdk} from 'ui';
 import {BI_ERRORS} from 'ui/constants';
+import type {AppDispatch} from 'ui/store';
 import {addEditHistoryPoint, resetEditHistoryUnit} from 'ui/store/actions/editHistory';
+import {loadRevisions, setEntryContent} from 'ui/store/actions/entryContent';
 import {EDIT_HISTORY_ACTION} from 'ui/store/constants/editHistory';
 import type {EditHistoryUnit} from 'ui/store/reducers/editHistory';
-import Utils from 'ui/utils';
+import type {EntryGlobalState} from 'ui/store/typings/entryContent';
+import {RevisionsMode} from 'ui/store/typings/entryContent';
+import Utils, {getFilteredObject} from 'ui/utils';
 
 import type {ApplyData} from '../../../../../components/DialogFilter/DialogFilter';
 import logger from '../../../../../libs/logger';
 import {getSdk} from '../../../../../libs/schematic-sdk';
-import {getFilteredObject} from '../../../../../utils';
 import {
+    ComponentErrorType,
     DATASETS_EDIT_HISTORY_UNIT_ID,
     TAB_DATASET,
     TAB_FILTERS,
     TAB_SOURCES,
     TOASTERS_NAMES,
 } from '../../../constants';
+import type {ActionTypeNotification} from '../../../helpers/dataset-error-helpers';
+import {getToastTitle} from '../../../helpers/dataset-error-helpers';
+import {getComponentErrorsByType} from '../../../helpers/datasets';
+import DatasetUtils, {getSourceListingValues} from '../../../helpers/utils';
 import {EDIT_HISTORY_OPTIONS_KEY, initialState} from '../../constants';
 import {
     datasetContentSelector,
@@ -69,10 +84,9 @@ import type {
 } from '../../types';
 import * as DATASET_ACTION_TYPES from '../types/dataset';
 
-import {updateDatasetByValidation} from './dataset';
-import {filterSources, isContendChanged, prepareUpdates} from './utils';
+import {checkFetchingPreview, filterSources, isContendChanged, prepareUpdates} from './utils';
 
-export type DatasetDispatch = ThunkDispatch<DatalensGlobalState, void, DatasetReduxAction>;
+export type DatasetDispatch = AppDispatch<DatasetReduxAction>;
 export type GetState = () => DatalensGlobalState;
 
 type ValidateDatasetArgs = {
@@ -1165,7 +1179,7 @@ export function updateSetting(
     value: boolean,
     editHistoryOptions?: EditHistoryOptions,
 ) {
-    return (dispatch: Dispatch<DatasetReduxAction>) => {
+    return (dispatch: DatasetDispatch) => {
         const update: UpdateSetting = {
             action: 'update_setting',
             setting: {name, value},
@@ -1459,6 +1473,482 @@ export function getDbNames(connectionIds: string[]) {
             logger.logError('dataset: getDbNames failed', e);
         } finally {
             dispatch(toggleSourcesLoader(false));
+        }
+    };
+}
+
+interface SaveDatasetProps {
+    key?: string;
+    workbookId?: string | null;
+    name?: string;
+    history: History;
+    isCreationProcess?: boolean;
+    isAuto?: boolean;
+    isErrorThrows?: boolean;
+}
+
+export function saveDataset({
+    key,
+    workbookId,
+    name,
+    history,
+    isCreationProcess,
+    isAuto = false,
+    isErrorThrows = false,
+}: SaveDatasetProps) {
+    return async (dispatch: DatasetDispatch, getState: GetState) => {
+        try {
+            dispatch({
+                type: DATASET_ACTION_TYPES.DATASET_SAVE_REQUEST,
+                payload: {},
+            });
+
+            const {entryContent, dataset: {id, content: dataset} = {}} = getState();
+            let datasetId = id;
+
+            if (isCreationProcess) {
+                const creationData: Partial<CreateDatasetArgs> = {
+                    dataset: dataset,
+                    ...(isAuto && {created_via: 'yt_to_dl'}),
+                };
+
+                if (workbookId) {
+                    (creationData as CreateWorkbookDatasetArgs).workbook_id = workbookId;
+                    creationData.name = name;
+                } else {
+                    const dividedKey = DatasetUtils.divideKey(key);
+                    const nameFromKey = dividedKey.pop();
+                    (creationData as CreateDirDatasetArgs).dir_path = `${dividedKey.join('/')}/`;
+                    creationData.name = nameFromKey;
+                }
+
+                const {id: createdDatasetId} = await getSdk().sdk.bi.createDataset(
+                    creationData as CreateDatasetArgs,
+                );
+
+                datasetId = createdDatasetId;
+            } else {
+                const validation = await getSdk().sdk.bi.updateDataset({
+                    datasetId: datasetId!,
+                    version: 'draft',
+                    data: {
+                        dataset: dataset!,
+                    },
+                });
+
+                dispatch(setValidationData(validation as unknown as ValidateDatasetResponse));
+            }
+
+            if (!isCreationProcess) {
+                const meta = await getSdk().sdk.us.getEntryMeta({entryId: datasetId!});
+                const publishedId = meta.publishedId ?? null;
+                const entryId = meta.entryId;
+
+                dispatch({
+                    type: DATASET_ACTION_TYPES.DATASET_SAVE_SUCCESS,
+                    payload: {
+                        publishedId,
+                    },
+                });
+
+                dispatch(
+                    setEntryContent({
+                        publishedId,
+                        revId: publishedId,
+                    } as EntryGlobalState),
+                );
+
+                if (entryContent.revisionsMode === RevisionsMode.Opened) {
+                    await dispatch(
+                        loadRevisions({
+                            entryId,
+                            page: 0,
+                        }),
+                    );
+                }
+            } else {
+                dispatch({
+                    type: DATASET_ACTION_TYPES.DATASET_SAVE_SUCCESS,
+                    payload: {},
+                });
+            }
+
+            if (!isAuto) {
+                toaster.add({
+                    name: 'success_save_dataset',
+                    title: getToastTitle('NOTIFICATION_SUCCESS', 'save'),
+                    theme: 'success',
+                });
+            }
+
+            dispatch(toggleSaveDataset({enable: false}));
+
+            if (isAuto) {
+                history.replace(`/datasets/${datasetId}`);
+                DatasetUtils.openCreationWidgetPage({datasetId: datasetId!, target: '_self'});
+            } else if (isCreationProcess) {
+                history.push(`/datasets/${datasetId}`);
+            }
+
+            dispatch(resetEditHistoryUnit({unitId: DATASETS_EDIT_HISTORY_UNIT_ID}));
+            // Set initial history point, this is necessary so that the first change after saving can be reversed
+            dispatch(addEditHistoryPointDs());
+        } catch (error) {
+            logger.logError('dataset: saveDataset failed', error);
+            dispatch({
+                type: DATASET_ACTION_TYPES.DATASET_SAVE_FAILURE,
+                payload: {
+                    error,
+                },
+            });
+
+            if (isErrorThrows) {
+                throw error;
+            }
+        }
+    };
+}
+
+export function setActualDataset({history}: {history: History}) {
+    return async (dispatch: DatasetDispatch) => {
+        await dispatch(saveDataset({history}));
+
+        const searchParams = new URLSearchParams(location.search);
+        searchParams.delete(URL_QUERY.REV_ID);
+        history.push({
+            ...location,
+            search: `?${searchParams.toString()}`,
+        });
+    };
+}
+
+export function fetchFieldTypes() {
+    return async (dispatch: DatasetDispatch) => {
+        let types: DatasetReduxState['types']['data'] | undefined;
+
+        try {
+            const response = await getSdk().sdk.bi.getFieldTypes();
+
+            types = response.types
+                .map((type) => {
+                    const {name, aggregations} = type;
+                    const key = `value_${name}`;
+
+                    return {
+                        ...type,
+                        title: i18n('component.field-editor.view', key),
+                        aggregations: aggregations.sort((current, next) => {
+                            if (next === 'none') {
+                                return 1;
+                            } else {
+                                return DatasetUtils.sortStrings(current, next);
+                            }
+                        }),
+                    };
+                })
+                .sort(DatasetUtils.sortObjectBy('title'));
+
+            dispatch({
+                type: DATASET_ACTION_TYPES.FIELD_TYPES_FETCH_SUCCESS,
+                payload: {
+                    types,
+                },
+            });
+
+            return types;
+        } catch (error) {
+            logger.logError('dataset: fetchFieldTypes failed', error);
+        }
+
+        toaster.add({
+            name: 'error_fetch_types',
+            title: getToastTitle('NOTIFICATION_FAILURE', 'types'),
+            theme: 'danger',
+        });
+
+        return types;
+    };
+}
+
+interface UpdateDatasetByValidationProps {
+    actionTypeNotification?: ActionTypeNotification;
+    compareContent?: boolean;
+    updatePreview?: boolean;
+    validateEnabled?: boolean;
+}
+
+export function updateDatasetByValidation({
+    actionTypeNotification,
+    compareContent = false,
+    updatePreview = false,
+    validateEnabled = true,
+}: UpdateDatasetByValidationProps = {}) {
+    return async (dispatch: DatasetDispatch, getState: GetState) => {
+        let fetchingPreviewEnabled, updates;
+
+        clearToasters(toaster);
+        dispatch(setValidationState({validation: {isPending: false}}));
+
+        if (validateEnabled) {
+            updates = await dispatch(validateDataset({compareContent}));
+            fetchingPreviewEnabled = checkFetchingPreview({updatePreview, updates});
+        }
+
+        const {
+            dataset: {
+                id: datasetId,
+                content: {result_schema: resultSchema, component_errors: componentErrors} = {},
+                preview: {previewEnabled, amountPreviewRows} = {},
+            } = {},
+        } = getState();
+
+        const sourceErrors = getComponentErrorsByType(
+            componentErrors!,
+            ComponentErrorType.DataSource,
+        );
+        const fieldErrors = getComponentErrorsByType(componentErrors!, ComponentErrorType.Field);
+
+        if (previewEnabled && (fetchingPreviewEnabled || updatePreview)) {
+            if (fieldErrors.length) {
+                dispatch(clearDatasetPreview());
+            } else {
+                const workbookId = workbookIdSelector(getState());
+
+                dispatch(
+                    fetchPreviewDataset({
+                        datasetId: datasetId!,
+                        workbookId,
+                        resultSchema: resultSchema!,
+                        limit: amountPreviewRows!,
+                    }),
+                );
+            }
+        }
+
+        if (actionTypeNotification) {
+            toaster.add({
+                name: 'success_update_dataset',
+                title: getToastTitle('NOTIFICATION_SUCCESS', actionTypeNotification),
+                theme: 'success',
+            });
+        }
+
+        return Promise.resolve({
+            updates,
+            sourceErrors,
+        });
+    };
+}
+
+function setInitialSources(ids: string[]) {
+    return async (dispatch: DatasetDispatch) => {
+        try {
+            let initialConnections = [];
+
+            if (ids.length) {
+                const result = await Promise.allSettled(
+                    ids.map((id) =>
+                        getSdk().sdk.us.getEntry({
+                            entryId: id,
+                            includePermissionsInfo: true,
+                        }),
+                    ),
+                );
+                const entries = result
+                    .filter(
+                        (promise): promise is PromiseFulfilledResult<GetEntryResponse> =>
+                            promise.status === 'fulfilled',
+                    )
+                    .map(({value}) => value);
+
+                initialConnections = ids.map((id) => {
+                    const connectionEntry = entries.find((entry) => entry.entryId === id);
+
+                    if (connectionEntry) {
+                        return connectionEntry;
+                    }
+
+                    return {
+                        entryId: id,
+                        key: i18n('dataset.sources-tab.modify', 'label_deleted-connection'),
+                        deleted: true,
+                        data: {},
+                        // TODO[1]: Uncomment when there will be an icon [YCDESIGN-719]
+                        // type: 'deleted'
+                    };
+                });
+
+                dispatch({
+                    type: DATASET_ACTION_TYPES.SET_INITIAL_SOURCES,
+                    payload: {
+                        selectedConnections: initialConnections as ConnectionEntry[],
+                        selectedConnection: initialConnections[0] as ConnectionEntry,
+                    },
+                });
+            }
+        } catch (e) {
+            logger.logError('dataset: setInitialSources failed', e);
+            console.error(`setInitialSources action failed: ${e}`);
+        }
+    };
+}
+
+export function initializeDataset({connectionId}: {connectionId: string}) {
+    return async (dispatch: DatasetDispatch) => {
+        if (connectionId) {
+            await dispatch(setInitialSources([connectionId]));
+        }
+
+        dispatch(_getSources());
+
+        dispatch({
+            type: DATASET_ACTION_TYPES.INITIALIZE_DATASET,
+            payload: {},
+        });
+    };
+}
+
+export function initialFetchDataset({
+    datasetId,
+    rev_id,
+    isInitialFetch = true,
+}: {
+    datasetId: string;
+    rev_id?: string;
+    isInitialFetch?: boolean;
+}) {
+    return async (dispatch: DatasetDispatch, getState: GetState) => {
+        try {
+            if (isInitialFetch) {
+                dispatch({
+                    type: DATASET_ACTION_TYPES.DATASET_INITIAL_FETCH_REQUEST,
+                    payload: {},
+                });
+            } else {
+                dispatch({
+                    type: DATASET_ACTION_TYPES.DATASET_FETCH_REQUEST,
+                    payload: {},
+                });
+            }
+
+            const meta = await getSdk().sdk.us.getEntryMeta({entryId: datasetId});
+            const workbookId = meta.workbookId ?? null;
+
+            const dataset = await getSdk().sdk.bi.getDatasetByVersion({
+                datasetId,
+                workbookId,
+                rev_id,
+                version: 'draft',
+            });
+
+            if (!DatasetUtils.isEnabledFeature(Feature.EnableDatasetSourcesPagination)) {
+                dataset.options.source_listing = undefined;
+            }
+
+            const {
+                dataset: {sources = []},
+                options: {
+                    preview: {enabled: previewEnabled},
+                    source_listing,
+                },
+            } = dataset;
+            const {dbNameRequiredForSearch, supportsDbNameListing} =
+                getSourceListingValues(source_listing);
+
+            const connectionsIds = new Set(
+                sources
+                    .filter(DatasetUtils.filterVirtual)
+                    .map(({connection_id: connectionId}) => connectionId),
+            );
+            const ids = Array.from(connectionsIds);
+
+            await dispatch(setInitialSources(ids));
+
+            const publishedId = meta.publishedId ?? null;
+            const currentRevId = rev_id ?? publishedId;
+
+            dispatch({
+                type: DATASET_ACTION_TYPES.DATASET_INITIAL_FETCH_SUCCESS,
+                payload: {
+                    dataset: dataset as Dataset,
+                    publishedId,
+                    currentRevId,
+                },
+            });
+
+            if (dbNameRequiredForSearch || supportsDbNameListing) {
+                await dispatch(getDbNames(ids));
+            }
+
+            dispatch(_getSources());
+
+            dispatch(validateDataset({initial: true}));
+
+            const {
+                dataset: {
+                    content: {
+                        result_schema: resultSchema,
+                        load_preview_by_default: loadPreviewByDefault,
+                    } = {},
+                    preview: {amountPreviewRows} = {},
+                } = {},
+            } = getState();
+
+            if (previewEnabled) {
+                if (loadPreviewByDefault) {
+                    dispatch(
+                        fetchPreviewDataset({
+                            datasetId,
+                            workbookId,
+                            resultSchema: resultSchema!,
+                            limit: amountPreviewRows!,
+                        }),
+                    );
+                } else {
+                    dispatch(closePreview());
+                    dispatch(queuePreviewToOpen(true));
+                }
+            }
+        } catch (error) {
+            logger.logError('dataset: initialFetchDataset failed', error);
+            dispatch({
+                type: DATASET_ACTION_TYPES.DATASET_INITIAL_FETCH_FAILURE,
+                payload: {
+                    error,
+                },
+            });
+        }
+    };
+}
+
+function _getSources() {
+    return (dispatch: DatasetDispatch, getState: GetState) => {
+        const {
+            dataset: {
+                sourcesPagination,
+                selectedConnections,
+                currentDbName,
+                options: {source_listing},
+                ui: {selectedConnectionId},
+            },
+        } = getState();
+        const {serverPagination, dbNameRequiredForSearch} = getSourceListingValues(source_listing);
+        const workbookId = workbookIdSelector(getState());
+
+        const selectedConnection = selectedConnections.find(
+            ({entryId}) => entryId === selectedConnectionId,
+        );
+
+        if (selectedConnection && !selectedConnection.deleted) {
+            const {entryId} = selectedConnection;
+            dispatch(
+                getSources({
+                    connectionId: entryId,
+                    workbookId: workbookId!,
+                    limit: serverPagination ? sourcesPagination.limit : undefined,
+                    currentDbName: dbNameRequiredForSearch ? currentDbName : undefined,
+                }),
+            );
         }
     };
 }
