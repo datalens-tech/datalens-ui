@@ -1,6 +1,7 @@
 import React from 'react';
 
 import type {
+    Config,
     ConfigItem,
     ConfigLayout,
     DashKit as DashKitComponent,
@@ -93,6 +94,7 @@ import {
 } from '../../modules/helpers';
 import type {TabsHashStates} from '../../store/actions/dashTyped';
 import {
+    removeGlobalItems,
     setCurrentTabData,
     setDashKitRef,
     setErrorMode,
@@ -198,6 +200,7 @@ type MemoContext = {
     isPublicMode?: boolean;
     workbookId?: string | null;
     enableAssistant?: boolean;
+    currentTabId?: string | null;
 };
 type DashkitGroupRenderWithContextProps = DashkitGroupRenderProps & {context: MemoContext};
 
@@ -491,6 +494,19 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         config: DashKitProps['config'];
         itemsStateAndParams: DashKitProps['itemsStateAndParams'];
     }) => {
+        // if the widget was deleted and it was in globalItems, we need to remove it from other places manually
+        if (
+            this.props.tabData?.globalItems &&
+            this.props.tabData.globalItems.length !== config.globalItems?.length
+        ) {
+            const updatedGlobalItems = config.globalItems as DashTabItem[];
+            const removedItems = this.props.tabData.globalItems.filter(
+                (item) => !updatedGlobalItems?.includes(item),
+            );
+
+            this.props.removeGlobalItems({items: removedItems});
+        }
+
         if (
             this.props.hashStates !== itemsStateAndParams &&
             itemsStateAndParams &&
@@ -917,7 +933,8 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         if (
             memoContext.workbookId !== this.props.workbookId ||
             memoContext.fixedHeaderCollapsed !== isCollapsed ||
-            memoContext.enableAssistant !== enableAssistant
+            memoContext.enableAssistant !== enableAssistant ||
+            memoContext.currentTabId !== this.props.tabId
         ) {
             this._memoizedContext = {
                 ...(memoContext || {}),
@@ -926,6 +943,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                 isEmbeddedMode: isEmbeddedMode(),
                 isPublicMode: Boolean(this.props.isPublicMode),
                 enableAssistant,
+                currentTabId: this.props.tabId,
             };
         }
 
@@ -1093,6 +1111,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                     ...tabDataConfig,
                     layout: sortedLayout,
                     items: sortedItems as ConfigItem[],
+                    globalItems: tabDataConfig.globalItems as Config['globalItems'],
                 },
             };
         }
@@ -1134,7 +1153,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         const fixedHeaderCollapsed = context.fixedHeaderCollapsed || false;
         const isEditMode = this.isEditMode();
 
-        const isEmptyTab = !tabDataConfig?.items.length;
+        const isEmptyTab = !tabDataConfig?.items.length && !tabDataConfig?.globalItems?.length;
 
         const DashKit = getConfiguredDashKit(undefined, {disableHashNavigation});
 
@@ -1428,6 +1447,7 @@ const mapDispatchToProps = {
     showToast,
     setWidgetCurrentTab,
     toggleTableOfContent,
+    removeGlobalItems,
 };
 
 export default compose<BodyProps, OwnProps>(

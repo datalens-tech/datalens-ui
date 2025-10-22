@@ -34,6 +34,7 @@ export interface ListWithMenuProps<T> {
     iconOnHover?: boolean;
     /* * Callback on update item data via TabMenu */
     onUpdateItem: (title: string) => void;
+    renderIcon?: (item: T) => React.ReactNode;
 }
 
 type ItemWithTitleAndDraftId = {
@@ -49,6 +50,7 @@ export const ListWithMenu = <T extends ItemWithTitleAndDraftId>({
     onDuplicate,
     onCopy,
     onUpdateItem,
+    renderIcon,
 }: ListWithMenuProps<T>): React.ReactElement => {
     const {items, className, ...restListProps} = list;
 
@@ -150,6 +152,7 @@ export const ListWithMenu = <T extends ItemWithTitleAndDraftId>({
             >
                 {showEdit ? (
                     <div className={b('item')}>
+                        {renderIcon?.(item)}
                         <EditedTabItem
                             onCommit={handleTitleCommit}
                             id={item.draftId || String(itemIndex)}
@@ -163,6 +166,7 @@ export const ListWithMenu = <T extends ItemWithTitleAndDraftId>({
                         key={item.draftId || String(itemIndex)}
                         onDoubleClick={handleDoubleClick}
                     >
+                        {renderIcon?.(item)}
                         <div className={b('item-content')}>
                             <span title={item.title} className={b('item-text')}>
                                 {item.title}

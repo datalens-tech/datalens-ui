@@ -311,8 +311,13 @@ export const applyGroupControlDialog = ({
                     width: isSingleControl ? '' : selector.width,
                     defaults: getControlDefaultsForField(selector, hasChangedSourceType),
                     namespace: selector.namespace,
+                    tabsScope: selector.tabsScope,
                 };
             }),
+            tabsScope:
+                selectorsGroup.group.length > 1
+                    ? selectorsGroup.tabsScope ?? state.dash.tabId ?? undefined
+                    : undefined,
         };
 
         const getExtendedItemData = getExtendedItemDataAction();
@@ -418,7 +423,7 @@ export const applyExternalControlDialog = ({
     return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
         const state = getState();
         const selectorDialog = selectSelectorDialog(state);
-        const {title, sourceType, autoHeight} = selectorDialog;
+        const {title, sourceType, autoHeight, tabsScope} = selectorDialog;
 
         const validation = getControlValidation(selectorDialog);
 
@@ -439,6 +444,7 @@ export const applyExternalControlDialog = ({
             sourceType,
             autoHeight,
             source: getItemDataSource(selectorDialog),
+            tabsScope,
         };
         const getExtendedItemData = getExtendedItemDataAction();
         const itemData = dispatch(getExtendedItemData({data, defaults}));

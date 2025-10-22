@@ -23,6 +23,7 @@ import {
 } from 'ui/store/reducers/controlDialog';
 import {selectActiveSelectorIndex, selectSelectorsGroup} from 'ui/store/selectors/controlDialog';
 import type {SelectorDialogState, SelectorsGroupDialogState} from 'ui/store/typings/controlDialog';
+import {GlobalSelectorIcon} from 'ui/units/dash/components/GlobalSelectorIcon/GlobalSelectorIcon';
 import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
 import {isItemPasteAllowed} from 'ui/units/dash/modules/helpers';
 
@@ -91,11 +92,13 @@ export const GroupControlSidebar: React.FC<{
     selectorsGroupTitlePlaceholder?: string;
     enableAutoheightDefault?: boolean;
     showSelectorsGroupTitle?: boolean;
+    enableGlobalSelectors?: boolean;
 }> = ({
     handleCopyItem,
     selectorsGroupTitlePlaceholder,
     enableAutoheightDefault,
     showSelectorsGroupTitle,
+    enableGlobalSelectors,
 }) => {
     const selectorsGroup = useSelector(selectSelectorsGroup);
     const activeSelectorIndex = useSelector(selectActiveSelectorIndex);
@@ -150,6 +153,7 @@ export const GroupControlSidebar: React.FC<{
                     selectorsGroupTitlePlaceholder,
                     enableAutoheightDefault,
                     showSelectorsGroupTitle,
+                    enableGlobalSelectors,
                 },
             }),
         );
@@ -172,6 +176,19 @@ export const GroupControlSidebar: React.FC<{
         [dispatch],
     );
 
+    const renderControlIcon = React.useCallback(
+        (item: SelectorDialogState) => {
+            return (
+                <GlobalSelectorIcon
+                    withHint
+                    tabsScope={item.tabsScope ?? selectorsGroup.tabsScope}
+                    className={b('global-icon')}
+                />
+            );
+        },
+        [selectorsGroup.tabsScope],
+    );
+
     return (
         <div className={b('sidebar')}>
             <div className={b('selectors-list')}>
@@ -187,6 +204,7 @@ export const GroupControlSidebar: React.FC<{
                     canPasteItems={canPasteItems}
                     onCopyItem={handleCopyItem}
                     onUpdateItem={handleUpdateItem}
+                    renderIcon={renderControlIcon}
                 />
             </div>
             <div className={b('settings')}>

@@ -12,17 +12,8 @@ import {Mode} from '../../modules/constants';
 import {getUniqIdsFromDashData} from '../../modules/helpers';
 import * as actionTypes from '../constants/dashActionTypes';
 
+import {TAB_PROPERTIES, getStateForControlWithGlobalLogic, isItemGlobal} from './dashHelpers';
 import {dashTypedReducer} from './dashTypedReducer';
-
-export const TAB_PROPERTIES = [
-    'id',
-    'title',
-    'items',
-    'layout',
-    'connections',
-    'aliases',
-    'settings',
-];
 
 const initialState = {
     mode: Mode.Loading,
@@ -296,6 +287,14 @@ function dash(state = initialState, action) {
             };
         }
         case actionTypes.SET_ITEM_DATA: {
+            const itemType = action.payload.type;
+            const itemData = action.payload.data;
+
+            const isGlobal =
+                itemType === DashTabItemType.GroupControl || itemType === DashTabItemType.Control
+                    ? isItemGlobal(itemType, itemData)
+                    : false;
+
             const tabData = DashKit.setItem({
                 item: {
                     id: state.openedItemId,
@@ -309,6 +308,7 @@ function dash(state = initialState, action) {
                 options: {
                     excludeIds: getUniqIdsFromDashData(data),
                     updateLayout: state.dragOperationProps?.newLayout,
+                    ...(isGlobal ? {useGlobalItems: true} : {}),
                 },
             });
 
@@ -350,6 +350,24 @@ function dash(state = initialState, action) {
                 });
 
                 tabData.connections = updatedConnections;
+            }
+
+            // Handle global control items (GroupControl and Control types)
+            if (itemType === DashTabItemType.GroupControl || itemType === DashTabItemType.Control) {
+                const updatedState = getStateForControlWithGlobalLogic({
+                    state,
+                    data,
+                    tabData,
+                    tabIndex,
+                    itemType,
+                    itemData,
+                    isGlobal,
+                });
+
+                // If the function returned a state, return it
+                if (updatedState) {
+                    return updatedState;
+                }
             }
 
             const modifiedItem = tabData.layout[tabData.layout.length - 1];

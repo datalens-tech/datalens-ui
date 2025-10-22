@@ -92,6 +92,7 @@ export function getSelectorDialogInitialState(
         required: false,
         showHint: false,
         draftId: getRandomKey(),
+        tabsScope: undefined,
         ...(args.title ? {title: args.title} : {}),
     };
 }
@@ -103,6 +104,7 @@ export function getGroupSelectorDialogInitialState(): SelectorsGroupDialogState 
         buttonApply: false,
         buttonReset: false,
         updateControlsOnChange: true,
+        tabsScope: undefined,
         group: [],
     };
 }
@@ -167,6 +169,7 @@ export function getSelectorDialogFromData(
 
         id: data.id,
         namespace: data.namespace,
+        tabsScope: data.tabsScope,
     };
 }
 
@@ -407,15 +410,7 @@ export function controlDialog(
 
         case UPDATE_SELECTORS_GROUP: {
             const {selectorsGroup} = state;
-            const {
-                group,
-                autoHeight,
-                buttonApply,
-                buttonReset,
-                updateControlsOnChange,
-                showGroupName,
-                groupName,
-            } = action.payload;
+            const {group, autoHeight} = action.payload;
 
             const {enableAutoheightDefault} = state.features[DashTabItemType.GroupControl] || {};
 
@@ -432,13 +427,9 @@ export function controlDialog(
                 ...state,
                 selectorsGroup: {
                     ...selectorsGroup,
-                    group,
+                    ...action.payload,
+
                     autoHeight: updatedAutoHeight,
-                    buttonApply,
-                    buttonReset,
-                    updateControlsOnChange,
-                    showGroupName,
-                    groupName,
                 },
             };
         }
