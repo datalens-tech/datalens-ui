@@ -62,9 +62,12 @@ export function getGravityChartsChartKitData(args: {
     if (!result.tooltip) {
         result.tooltip = {};
     }
+
+    const tooltipQa = `chartkit-tooltip-entry-${chartId}`;
+    result.tooltip.qa = tooltipQa;
     result.tooltip.renderer = getTooltipRenderer({
         widgetData,
-        qa: `chartkit-tooltip-entry-${chartId}`,
+        qa: tooltipQa,
     });
     result.tooltip.rowRenderer = getTooltipRowRenderer({
         widgetData,
