@@ -43,12 +43,12 @@ datalensTest.describe('Wizard - export. Scatter plot', () => {
         const wizardPage = new WizardPage({page});
 
         const clipboardData = await wizardPage.chartkit.exportMarkdown();
-        const expected = `|Region|Profit|Sales|
+        const expected = `|Profit|Sales|Region|
 |:-|:-:|-:|
-|South|26153|216520.79994261265|
-|Central|26831|294532.10064288974|
-|East|52634|393775.10127949715|
-|West|67035|437618.3998544216|`;
+|52634|393775.10127949715|East|
+|67035|437618.3998544216|West|
+|26153|216520.79994261265|South|
+|26831|294532.10064288974|Central|`;
 
         await expect(clipboardData).toEqual(expected);
     });
@@ -68,12 +68,12 @@ datalensTest.describe('Wizard - export. Scatter plot', () => {
         await (await apiRunRequest).response();
 
         const clipboardData = await wizardPage.chartkit.exportMarkdown();
-        const expected = `|Region|Profit|Sales|Year|
+        const expected = `|Profit|Sales|Region|Year|
 |:-|:-:|:-:|-:|
-|South|26153|216520.79994261265|2017|
-|Central|26831|294532.10064288974|2017|
-|East|52634|393775.10127949715|2017|
-|West|67035|437618.3998544216|2017|`;
+|52634|393775.10127949715|East|2017|
+|67035|437618.3998544216|West|2017|
+|26153|216520.79994261265|South|2017|
+|26831|294532.10064288974|Central|2017|`;
 
         await expect(clipboardData).toEqual(expected);
     });
@@ -104,12 +104,12 @@ datalensTest.describe('Wizard - export. Scatter plot', () => {
         await (await apiRunRequest).response();
 
         const clipboardData = await wizardPage.chartkit.exportMarkdown();
-        const expected = `|Region|Profit|Sales|Year|Profit AVG|
+        const expected = `|Profit|Sales|Region|Year|Profit AVG|
 |:-|:-:|:-:|:-:|-:|
-|South|26153|216520.79994261265|2017|28.091299677765843|
-|Central|26831|294532.10064288974|2017|19.428674873280233|
-|East|52634|393775.10127949715|2017|31.19976289270895|
-|West|67035|437618.3998544216|2017|35.28157894736842|`;
+|52634|393775.10127949715|East|2017|31.19976289270895|
+|67035|437618.3998544216|West|2017|35.28157894736842|
+|26153|216520.79994261265|South|2017|28.091299677765843|
+|26831|294532.10064288974|Central|2017|19.428674873280233|`;
 
         await expect(clipboardData).toEqual(expected);
     });

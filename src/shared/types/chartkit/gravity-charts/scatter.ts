@@ -7,8 +7,11 @@ export type PointCustomData = {
     name?: string | number | WrappedMarkdown | WrappedMarkup | WrappedHTML;
     xLabel?: string | WrappedMarkdown | WrappedHTML;
     yLabel?: string | WrappedMarkdown | WrappedHTML;
+    colorValue?: unknown;
     cLabel?: string | null | WrappedMarkdown | WrappedHTML;
+    shapeValue?: unknown;
     sLabel?: string | null | WrappedMarkdown | WrappedHTML | WrappedMarkup;
+    sizeValue?: unknown;
     sizeLabel?: string | null | WrappedMarkdown | WrappedHTML;
 };
 

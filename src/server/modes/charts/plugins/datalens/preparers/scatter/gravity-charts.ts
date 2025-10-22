@@ -54,8 +54,11 @@ function mapScatterSeries(args: MapScatterSeriesArgs): ScatterSeries<PointCustom
                         name: point.name,
                         xLabel: point.xLabel,
                         yLabel: point.yLabel,
+                        colorValue: point.colorValue,
                         cLabel: point.cLabel,
+                        shapeValue: point.shapeValue,
                         sLabel: point.sLabel,
+                        sizeValue: point.sizeValue,
                         sizeLabel: point.sizeLabel,
                     },
                     color: typeof point.color === 'string' ? point.color : undefined,
@@ -115,21 +118,21 @@ export function prepareGravityChartsScatter(args: PrepareFunctionArgs): ChartDat
 
     if (size) {
         exportSettings.columns.push(
-            getExportColumnSettings({path: 'custom.sizeLabel', field: size}),
+            getExportColumnSettings({path: 'custom.sizeValue', field: size}),
         );
     }
 
     const colorItem = colors[0];
     if (colorItem) {
         exportSettings.columns.push(
-            getExportColumnSettings({path: 'custom.cLabel', field: colorItem}),
+            getExportColumnSettings({path: 'custom.colorValue', field: colorItem}),
         );
     }
 
     const shapeItem = shapes[0];
     if (shapeItem) {
         exportSettings.columns.push(
-            getExportColumnSettings({path: 'custom.sLabel', field: shapeItem}),
+            getExportColumnSettings({path: 'custom.shapeValue', field: shapeItem}),
         );
     }
 
