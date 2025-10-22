@@ -126,7 +126,7 @@ jobs:
       e2e_docker_compose_logs_link: ${{ steps.e2e_links.outputs.e2e_docker_compose_logs_link }}
 
   report:
-    name: e2e-tests-report
+    name: e2e-tests-no-auth-report
     needs: run
     if: always()
     runs-on:
@@ -186,7 +186,7 @@ jobs:
             const issueNumber = context.issue.number;
             const repo = context.repo;
 
-            const commentIdentifier = "<!-- e2e-tests-report -->";
+            const commentIdentifier = "<!-- e2e-tests-no-auth-report -->";
             const { data: comments } = await github.rest.issues.listComments({
               ...repo,
               issue_number: issueNumber,
@@ -203,7 +203,7 @@ jobs:
             const timestamp = new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString().replace('T', ' ').slice(0, 19) + ' MSK';
 
             let commentBody = `
-            ## ![](https://storage.yandexcloud.net/e2e-report/icons/os-small.svg) E2E Tests
+            ## ![](https://storage.yandexcloud.net/e2e-report/icons/os-small.svg) E2E Tests No Auth
 
             ${{ steps.report-md.outputs.summary }}
 
