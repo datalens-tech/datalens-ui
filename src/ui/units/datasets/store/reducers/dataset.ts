@@ -63,6 +63,7 @@ import {
     SET_IS_DATASET_CHANGED_FLAG,
     SET_LAST_MODIFIED_TAB,
     SET_QUEUE_TO_LOAD_PREVIEW,
+    SET_SOURCES_LISTING_OPTIONS,
     SET_SOURCES_LOADING_ERROR,
     SET_SOURCES_PAGINATION,
     SET_SOURCES_SEARCH_LOADING,
@@ -1465,6 +1466,15 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                     isFinished: isLastPage,
                 },
                 sourcePrototypes,
+            };
+        }
+        case SET_SOURCES_LISTING_OPTIONS: {
+            return {
+                ...state,
+                options: {
+                    ...state.options,
+                    source_listing: action.payload,
+                },
             };
         }
         default: {

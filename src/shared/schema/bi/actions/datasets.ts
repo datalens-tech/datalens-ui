@@ -86,14 +86,21 @@ export const actions = {
             }),
         },
     ),
-
     getDbNames: createAction<GetDbNamesResponse, Pick<GetSourceArgs, 'connectionId'>>({
         method: 'GET',
         path: ({connectionId}) =>
             `${API_V1}/connections/${filterUrlFragment(connectionId)}/db_names`,
         params: (_, headers) => ({headers}),
     }),
-
+    getSourceListingOptions: createAction<
+        Pick<GetDatasetByVersionResponse['options'], 'source_listing'>,
+        Pick<GetSourceArgs, 'connectionId'>
+    >({
+        method: 'GET',
+        path: ({connectionId}) =>
+            `${API_V1}/connections/${filterUrlFragment(connectionId)}/info/source_listing_options`,
+        params: (_, headers) => ({headers}),
+    }),
     getFieldTypes: createAction<GetFieldTypesResponse>({
         method: 'GET',
         path: () => `${API_V1}/info/field_types`,
