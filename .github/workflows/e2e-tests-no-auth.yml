@@ -7,7 +7,7 @@ on:
       - 'weblate-**'
 
 concurrency:
-  group: ${{ github.head_ref || github.run_id }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -243,4 +243,3 @@ jobs:
           E2E_REPORT_LINK: ${{ env.E2E_REPORT_LINK_S3 }}
           E2E_DOCKER_COMPOSE_LINKS: ${{ needs.run.outputs.e2e_docker_compose_logs_link }}
           E2E_TRACE_LINKS: ${{ env.E2E_TRACE_LINKS_S3 }}
-
