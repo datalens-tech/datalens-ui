@@ -154,7 +154,7 @@ jobs:
           LINK_S3_WEBSITE="https://${STORAGE_BUCKET}.${HTML_ENDPOINT}/${STORAGE_PREFIX}/${E2E_REPORT_PATH}/report"
           echo "🔗 link to s3: ${LINK_S3_WEBSITE}"
           echo -n "" >./tests/artifacts/trace-links
-          for TRACE in $(ls -1 tests/artifacts/report/data/*.zip 2>/dev/null || true); do
+          for TRACE in $(basename -a tests/artifacts/report/data/*.zip 2>/dev/null || true); do
             LINK_TRACE="${STORAGE_ENDPOINT}/${STORAGE_BUCKET}/${STORAGE_PREFIX}/${E2E_REPORT_PATH}/report/data/${TRACE}"
             LINK_TRACE_ENCODED=$(jq -rn --arg X "${LINK_TRACE}" '$X|@uri')
             LINK_TRACE_VIEWER="https://playwright-trace-viewer.website.yandexcloud.net/?trace=${LINK_TRACE_ENCODED}"
