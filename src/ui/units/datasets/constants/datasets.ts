@@ -22,6 +22,7 @@ export enum ComponentErrorType {
 export const mapYTClusterToConnId: Record<string, string> = {
     CHYT_ARNOLD: preprodEnv ? '5hs5qbuagvc2z' : '6in99m5b0dok0',
     CHYT_HAHN: preprodEnv ? '8kv9dgp8bqbs2' : '1di43d901khiv',
+    CHYT_KOLMOGOROV: preprodEnv ? 'einpf4xnhfzk0' : 'sw13ogot5wcse',
     CHYT_VANGA: preprodEnv ? 'eq1f0qaiwkaw8' : 'w8dy1hcbwrrcq',
 };
 
