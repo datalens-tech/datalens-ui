@@ -3,7 +3,7 @@ import z from 'zod';
 import {EntryScope, EntryUpdateMode} from '../../..';
 import {dashSchema, dataSchema} from '../../../zod-schemas/dash';
 
-export const deleteDashArgsSchema = z.object({
+export const deleteDashArgsSchema = z.strictObject({
     dashboardId: z.string(),
     lockToken: z.string().optional(),
 });
@@ -30,7 +30,7 @@ const dashUsSchema = z.object({
     type: z.literal(''),
 });
 
-export const updateDashArgsSchema = z.object({
+export const updateDashArgsSchema = z.strictObject({
     key: z.string().min(1),
     workbookId: z.string().optional(),
     data: dataSchema,
@@ -43,7 +43,7 @@ export const updateDashArgsSchema = z.object({
 
 export const updateDashResultSchema = dashUsSchema;
 
-export const createDashArgsSchema = z.object({
+export const createDashArgsSchema = z.strictObject({
     key: z.string().min(1),
     data: dataSchema,
     meta: z.record(z.any(), z.any()).optional(),
@@ -55,7 +55,7 @@ export const createDashArgsSchema = z.object({
 
 export const createDashResultSchema = dashUsSchema;
 
-export const getDashArgsSchema = z.object({
+export const getDashArgsSchema = z.strictObject({
     dashboardId: z.string(),
     revId: z.string().optional(),
     includePermissions: z.boolean().optional().default(false),

@@ -1,12 +1,12 @@
 import z from 'zod';
 
-export const deleteWizardChartArgsSchema = z.object({
+export const deleteWizardChartArgsSchema = z.strictObject({
     chartId: z.string(),
 });
 
 export const deleteWizardChartResultSchema = z.object({});
 
-export const getWizardChartArgsSchema = z.object({
+export const getWizardChartArgsSchema = z.strictObject({
     chartId: z.string(),
     workbookId: z.union([z.string(), z.null()]).optional(),
     revId: z.string().optional(),

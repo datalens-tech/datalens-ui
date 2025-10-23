@@ -1,3 +1,4 @@
+import type {DatasetOptions} from '../../..';
 import {registry} from '../../../../server/registry';
 import {TIMEOUT_60_SEC, TIMEOUT_95_SEC, WORKBOOK_ID_HEADER} from '../../../constants';
 import {createAction, createTypedAction} from '../../gateway-utils';
@@ -13,8 +14,8 @@ import {
     createDatasetResultSchema,
     deleteDatasetArgsSchema,
     deleteDatasetResultSchema,
-    getDatasetByVersionArgsSchema,
-    getDatasetByVersionResultSchema,
+    getDatasetArgsSchema,
+    getDatasetResultSchema,
     updateDatasetArgsSchema,
     updateDatasetResultSchema,
     validateDatasetArgsSchema,
@@ -33,8 +34,8 @@ import type {
     ExportDatasetResponse,
     GetDataSetFieldsByIdArgs,
     GetDataSetFieldsByIdResponse,
-    GetDatasetByVersionArgs,
-    GetDatasetByVersionResponse,
+    GetDatasetArgs,
+    GetDatasetResponse,
     GetDbNamesResponse,
     GetDistinctsApiV2Args,
     GetDistinctsApiV2Response,
@@ -69,17 +70,15 @@ export const actions = {
         }),
         timeout: TIMEOUT_60_SEC,
     }),
-    getDatasetByVersion: createTypedAction<GetDatasetByVersionResponse, GetDatasetByVersionArgs>(
+    getDataset: createTypedAction<GetDatasetResponse, GetDatasetArgs>(
         {
-            paramsSchema: getDatasetByVersionArgsSchema,
-            resultSchema: getDatasetByVersionResultSchema,
+            paramsSchema: getDatasetArgsSchema,
+            resultSchema: getDatasetResultSchema,
         },
         {
             method: 'GET',
-            path: ({datasetId, version}) =>
-                `${API_V1}/datasets/${filterUrlFragment(datasetId)}/versions/${filterUrlFragment(
-                    version,
-                )}`,
+            path: ({datasetId}) =>
+                `${API_V1}/datasets/${filterUrlFragment(datasetId)}/versions/draft`,
             params: ({workbookId, rev_id}, headers) => ({
                 headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
                 query: {rev_id},
@@ -93,7 +92,7 @@ export const actions = {
         params: (_, headers) => ({headers}),
     }),
     getSourceListingOptions: createAction<
-        Pick<GetDatasetByVersionResponse['options'], 'source_listing'>,
+        Pick<DatasetOptions, 'source_listing'>,
         Pick<GetSourceArgs, 'connectionId'>
     >({
         method: 'GET',
@@ -181,11 +180,9 @@ export const actions = {
         },
         {
             method: 'POST',
-            path: ({datasetId, version}) =>
+            path: ({datasetId}) =>
                 datasetId
-                    ? `${API_V1}/datasets/${filterUrlFragment(datasetId)}/versions/${filterUrlFragment(
-                          version,
-                      )}/validators/schema`
+                    ? `${API_V1}/datasets/${filterUrlFragment(datasetId)}/versions/draft/validators/schema`
                     : `${API_V1}/datasets/validators/dataset`,
             params: ({data: {dataset, ...restData}, workbookId}, headers, {ctx}) => {
                 const resultDataset = prepareDatasetProperty(ctx, dataset);
@@ -208,10 +205,8 @@ export const actions = {
         },
         {
             method: 'PUT',
-            path: ({datasetId, version}) =>
-                `${API_V1}/datasets/${filterUrlFragment(datasetId)}/versions/${filterUrlFragment(
-                    version,
-                )}`,
+            path: ({datasetId}) =>
+                `${API_V1}/datasets/${filterUrlFragment(datasetId)}/versions/draft`,
             params: ({data: {dataset, ...restData}}, headers, {ctx}) => {
                 const resultDataset = prepareDatasetProperty(ctx, dataset);
                 return {body: {...restData, dataset: resultDataset}, headers};

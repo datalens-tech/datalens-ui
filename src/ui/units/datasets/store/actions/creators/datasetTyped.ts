@@ -1000,7 +1000,6 @@ export function validateDataset({compareContent, initial = false}: ValidateDatas
                 {
                     datasetId,
                     workbookId,
-                    version: 'draft',
                     data: {
                         dataset: prevContent,
                         updates: prepareUpdates(updates),
@@ -1530,7 +1529,6 @@ export function saveDataset({
             } else {
                 const validation = await getSdk().sdk.bi.updateDataset({
                     datasetId: datasetId!,
-                    version: 'draft',
                     data: {
                         dataset: dataset!,
                     },
@@ -1834,11 +1832,10 @@ export function initialFetchDataset({
             const meta = await getSdk().sdk.us.getEntryMeta({entryId: datasetId});
             const workbookId = meta.workbookId ?? null;
 
-            const dataset = await getSdk().sdk.bi.getDatasetByVersion({
+            const dataset = await getSdk().sdk.bi.getDataset({
                 datasetId,
                 workbookId,
                 rev_id,
-                version: 'draft',
             });
 
             if (!DatasetUtils.isEnabledFeature(Feature.EnableDatasetSourcesPagination)) {

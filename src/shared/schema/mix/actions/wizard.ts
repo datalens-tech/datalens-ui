@@ -60,8 +60,7 @@ export const wizardActions = {
         },
     ),
 
-    // WIP
-    __deleteWizardChart__: createTypedAction(
+    _deleteWizardChart: createTypedAction(
         {
             paramsSchema: deleteWizardChartArgsSchema,
             resultSchema: deleteWizardChartResultSchema,

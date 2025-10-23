@@ -166,10 +166,9 @@ type GetDatasetArgs = {
 
 function getDataset({id, workbookId}: GetDatasetArgs) {
     return getSdk()
-        .sdk.bi.getDatasetByVersion({
+        .sdk.bi.getDataset({
             datasetId: id,
             workbookId,
-            version: 'draft',
         })
         .then((dataset) => {
             if (dataset && dataset.key) {
@@ -1234,7 +1233,6 @@ const validateDataset = ({dataset, updates}: {dataset: Dataset; updates: Update[
         try {
             return await getSdk().sdk.bi.validateDataset(
                 {
-                    version: 'draft',
                     datasetId: dataset.id,
                     workbookId,
                     data: {
