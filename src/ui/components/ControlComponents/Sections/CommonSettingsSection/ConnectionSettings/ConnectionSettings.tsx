@@ -2,9 +2,10 @@ import React from 'react';
 
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
-import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
+import {selectSelectorDialog, selectSelectorsGroup} from 'ui/store/selectors/controlDialog';
 
 import {ParameterNameInput} from '../ParameterNameInput/ParameterNameInput';
+import {TabsScopeSelect} from '../TabsScopeSelect/TabsScopeSelect';
 
 import {ConnectionSelector} from './components/ConnectionSelector/ConnectionSelector';
 import {QueryTypeControl} from './components/QueryTypeControl/QueryTypeControl';
@@ -15,12 +16,15 @@ export const ConnectionSettings = ({
     navigationPath,
     changeNavigationPath,
     rowClassName,
+    enableGlobalSelectors,
 }: {
     navigationPath: string | null;
     changeNavigationPath: (newNavigationPath: string) => void;
     rowClassName?: string;
+    enableGlobalSelectors?: boolean;
 }) => {
     const {connectionQueryTypes} = useSelector(selectSelectorDialog);
+    const {tabsScope, group} = useSelector(selectSelectorsGroup);
 
     return (
         <React.Fragment>
@@ -37,6 +41,12 @@ export const ConnectionSettings = ({
                     />
                     <QueryTypeControl connectionQueryTypes={connectionQueryTypes} />
                 </React.Fragment>
+            )}
+            {enableGlobalSelectors && (
+                <TabsScopeSelect
+                    groupTabsScope={tabsScope}
+                    hasMultipleSelectors={group.length > 1}
+                />
             )}
         </React.Fragment>
     );

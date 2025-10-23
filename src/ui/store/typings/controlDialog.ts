@@ -20,6 +20,7 @@ import type {DialogChartWidgetFeatureProps} from 'ui/components/DialogChartWidge
 import type {DialogGroupControlFeaturesProps} from 'ui/components/DialogGroupControl/DialogGroupControl';
 import type {DialogExternalControlFeaturesProps} from 'ui/components/DialogExternalControl/DialogExternalControl';
 import type {DialogImageWidgetFeatureProps} from 'ui/components/DialogImageWidget';
+import type {TabsScope} from 'ui/units/dash/typings/selectors';
 
 export type DialogEditItemFeaturesProp = {
     [DashTabItemType.Title]?: DialogTitleWidgetFeatureProps;
@@ -49,6 +50,7 @@ export type SelectorsGroupDialogState = {
     buttonReset: boolean;
     updateControlsOnChange: boolean;
     group: SelectorDialogState[];
+    tabsScope?: TabsScope;
 };
 
 export type SelectorElementType = 'select' | 'date' | 'input' | 'checkbox';
@@ -132,6 +134,8 @@ export type SelectorDialogState = {
     accentType?: AccentTypeValue;
     // unique id for manipulating selectors in the creation phase
     draftId?: string;
+    // which tabs display the selector
+    tabsScope?: TabsScope;
 };
 
 export type PastedSelectorDialogState = SelectorDialogState & {

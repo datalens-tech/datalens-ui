@@ -3,45 +3,47 @@ import React from 'react';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
 import {DashTabItemControlSourceType} from 'shared';
-import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
+import {selectSelectorDialog, selectSelectorsGroup} from 'ui/store/selectors/controlDialog';
 
 import {ConnectionSettings} from './ConnectionSettings/ConnectionSettings';
-import {DatasetSelector} from './DatasetSelector/DatasetSelector';
-import {ExternalSelectorSettings} from './ExternalSelectorSettings/ExternalSelectorSettings';
+import {DatasetSelectorSettings} from './DatasetSelectorSettings/DatasetSelectorSettings';
 import {ParameterNameInput} from './ParameterNameInput/ParameterNameInput';
+import {TabsScopeSelect} from './TabsScopeSelect/TabsScopeSelect';
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
 
-export const CommonSettingsSection = ({
+export const CommonGroupSettingsSection = ({
     navigationPath,
     changeNavigationPath,
-    enableAutoheightDefault,
+    enableGlobalSelectors,
     className,
 }: {
     navigationPath: string | null;
     changeNavigationPath: (newNavigationPath: string) => void;
-    enableAutoheightDefault?: boolean;
+    enableGlobalSelectors?: boolean;
     className?: string;
 }) => {
     const {sourceType} = useSelector(selectSelectorDialog);
+    const {group, tabsScope} = useSelector(selectSelectorsGroup);
+
+    const hasMultipleSelectors = group.length > 1;
 
     switch (sourceType) {
-        case DashTabItemControlSourceType.External:
-            return (
-                <ExternalSelectorSettings
-                    rowClassName={className}
-                    changeNavigationPath={changeNavigationPath}
-                    navigationPath={navigationPath}
-                    enableAutoheightDefault={enableAutoheightDefault}
-                />
-            );
         case DashTabItemControlSourceType.Manual:
             return (
-                <ParameterNameInput
-                    label={i18n('field_field-name')}
-                    note={i18n('field_field-name-note')}
-                    className={className}
-                />
+                <React.Fragment>
+                    <ParameterNameInput
+                        label={i18n('field_field-name')}
+                        note={i18n('field_field-name-note')}
+                        className={className}
+                    />
+                    {enableGlobalSelectors && (
+                        <TabsScopeSelect
+                            groupTabsScope={tabsScope}
+                            hasMultipleSelectors={hasMultipleSelectors}
+                        />
+                    )}
+                </React.Fragment>
             );
         case DashTabItemControlSourceType.Connection:
             return (
@@ -49,14 +51,16 @@ export const CommonSettingsSection = ({
                     rowClassName={className}
                     changeNavigationPath={changeNavigationPath}
                     navigationPath={navigationPath}
+                    enableGlobalSelectors={enableGlobalSelectors}
                 />
             );
         default:
             return (
-                <DatasetSelector
+                <DatasetSelectorSettings
                     rowClassName={className}
                     navigationPath={navigationPath}
                     changeNavigationPath={changeNavigationPath}
+                    enableGlobalSelectors={enableGlobalSelectors}
                 />
             );
     }

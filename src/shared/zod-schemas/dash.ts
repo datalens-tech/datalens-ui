@@ -116,6 +116,7 @@ const controlSchema = z
         namespace: z.literal(DASH_DEFAULT_NAMESPACE),
         title: z.string().min(1),
         sourceType: z.enum(DashTabItemControlSourceType),
+        tabsScope: z.union([z.string(), z.array(z.string())]).optional(),
     })
     .and(
         z.discriminatedUnion('sourceType', [
@@ -147,6 +148,7 @@ const groupControlItemsSchema = z
         defaults: z.record(z.any(), z.any()),
         placementMode: z.enum(CONTROLS_PLACEMENT_MODE).optional(),
         width: z.string().optional(),
+        tabsScope: z.union([z.string(), z.array(z.string())]).optional(),
     })
     .and(
         z.discriminatedUnion('sourceType', [

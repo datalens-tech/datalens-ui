@@ -15,7 +15,7 @@ import type {
     DashTabItemGroupControlData,
     StringParams,
 } from 'shared';
-import {ControlQA, DashTabItemType} from 'shared';
+import {ControlQA, DashTabItemType, Feature} from 'shared';
 import {DL} from 'ui/constants/common';
 import {CHARTKIT_SCROLLABLE_NODE_CLASSNAME} from 'ui/libs/DatalensChartkit/ChartKit/helpers/constants';
 import {ControlButton} from 'ui/libs/DatalensChartkit/components/Control/Items/Items';
@@ -23,7 +23,12 @@ import {
     CLICK_ACTION_TYPE,
     CONTROL_TYPE,
 } from 'ui/libs/DatalensChartkit/modules/constants/constants';
+import {
+    isGroupSettingAvailableOnTab,
+    isItemScopeAvailableOnTab,
+} from 'ui/units/dash/utils/selectors';
 import {getUrlGlobalParams} from 'ui/units/dash/utils/url';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {ExtendedDashKitContext} from '../../../../units/dash/utils/context';
 import {DEBOUNCE_RENDER_TIMEOUT, DEFAULT_CONTROL_LAYOUT} from '../../constants';
@@ -113,12 +118,12 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
     constructor(props: PluginGroupControlProps) {
         super(props);
-        const controlData = this.propsControlData;
+        const memoGroupItems = this.getVisibleGroupItems();
 
         this._onRedraw = debounce(this.props.onBeforeLoad(), DEBOUNCE_RENDER_TIMEOUT);
 
-        this.controlsProgressCount = controlData?.group?.length || 0;
-        controlData.group?.forEach((item) => {
+        this.controlsProgressCount = memoGroupItems.length || 0;
+        memoGroupItems.forEach((item) => {
             this.controlsStatus[item.id] = LOAD_STATUS.INITIAL;
             this.controlsData[item.id] = null;
         });
@@ -134,6 +139,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             localUpdateLoader: false,
             quickActionLoader: false,
             disableButtons: true,
+            memoGroupItems,
         };
     }
 
@@ -154,6 +160,14 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
         const hasDataChanged = !isEqual(this.props.data, prevProps.data);
         const hasParamsChanged = !isEqual(this.props.params, prevProps.params);
+
+        const hasTabChanged = this.props.context.currentTabId !== prevProps.context.currentTabId;
+
+        if (hasDataChanged || hasTabChanged) {
+            this.setState({
+                memoGroupItems: this.getVisibleGroupItems(),
+            });
+        }
 
         if (hasDataChanged) {
             this.setState({
@@ -293,6 +307,30 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         return this.props.data as unknown as DashTabItemGroupControlData;
     }
 
+    private getVisibleGroupItems() {
+        const controlData = this.propsControlData;
+        const currentTabId = this.props.context.currentTabId;
+
+        if (!isEnabledFeature(Feature.EnableGlobalSelectors) || !currentTabId) {
+            return controlData.group;
+        }
+
+        const isGroupSettingPrevails = controlData.group.every(
+            (item) => item.tabsScope === undefined,
+        );
+        const isGroupAvailable = isGroupSettingAvailableOnTab(controlData.tabsScope, currentTabId);
+
+        if (isGroupSettingPrevails && isGroupAvailable) {
+            return controlData.group;
+        }
+
+        return controlData.group.filter(
+            (item) =>
+                isItemScopeAvailableOnTab(item.tabsScope, currentTabId) ||
+                (item.tabsScope === undefined && isGroupAvailable),
+        );
+    }
+
     private get dependentSelectors() {
         return this.props.settings.dependentSelectors ?? false;
     }
@@ -300,7 +338,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     private fillQueueWithInitial = (checkByProps?: boolean) => {
         const initialQueue: string[] = [];
 
-        for (const groupItem of this.props.data.group || []) {
+        for (const groupItem of this.state.memoGroupItems || []) {
             if (!groupItem.defaults) {
                 continue;
             }
@@ -345,7 +383,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         data: DashTabItemGroupControlData;
         controlId?: string;
     }) => {
-        let controlIdOrder = data.group.map(({id}) => id);
+        let controlIdOrder = this.state.memoGroupItems.map(({id}) => id);
 
         if (!data.buttonApply || controlId) {
             return controlId ? [controlId] : controlIdOrder;
@@ -354,7 +392,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         // processing alias params so that the param from the alias that was entered last is applied
         // to all params from that alias
 
-        const paramsInGroup = data.group.map(
+        const paramsInGroup = this.state.memoGroupItems.map(
             (groupItem) => Object.keys(groupItem.defaults || {})[0],
         );
 
@@ -739,7 +777,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 break;
             case CLICK_ACTION_TYPE.SET_INITIAL_PARAMS: {
                 const defaultParams =
-                    this.props.data?.group?.reduce(
+                    this.state.memoGroupItems?.reduce(
                         (paramsState: Record<string, StringParams>, data) => {
                             paramsState[data.id] = data.defaults || {};
                             return paramsState;
@@ -845,12 +883,10 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
     }
 
     private renderControls() {
-        const controlData = this.propsControlData;
-
         return (
             <div className={b('controls')}>
                 {this.renderSubHeader()}
-                {controlData.group?.map((item: DashTabItemControlSingle) =>
+                {this.state.memoGroupItems?.map((item: DashTabItemControlSingle) =>
                     this.renderControl(item),
                 )}
                 {this.renderButtons()}

@@ -34,11 +34,14 @@ export interface ListWithMenuProps<T> {
     iconOnHover?: boolean;
     /* * Callback on update item data via TabMenu */
     onUpdateItem: (title: string) => void;
+    renderIcon?: (item: T) => React.ReactNode;
+    renderWrapper?: (item: T, children: React.ReactNode) => React.ReactNode;
 }
 
 type ItemWithTitleAndDraftId = {
     title?: string;
     draftId?: string;
+    secondary?: string;
 };
 
 export const ListWithMenu = <T extends ItemWithTitleAndDraftId>({
@@ -49,6 +52,8 @@ export const ListWithMenu = <T extends ItemWithTitleAndDraftId>({
     onDuplicate,
     onCopy,
     onUpdateItem,
+    renderIcon,
+    renderWrapper,
 }: ListWithMenuProps<T>): React.ReactElement => {
     const {items, className, ...restListProps} = list;
 
@@ -145,16 +150,34 @@ export const ListWithMenu = <T extends ItemWithTitleAndDraftId>({
 
         return (
             <div
-                className={b('wrapper', {'icon-on-hover': iconOnHover, active})}
+                className={b('wrapper', {
+                    'icon-on-hover': iconOnHover,
+                    active,
+                    secondary: item.secondary,
+                })}
                 data-qa={TabMenuQA.Item}
             >
                 {showEdit ? (
                     <div className={b('item')}>
-                        <EditedTabItem
-                            onCommit={handleTitleCommit}
-                            id={item.draftId || String(itemIndex)}
-                            title={item.title || ''}
-                        />
+                        {renderWrapper ? (
+                            renderWrapper(
+                                item,
+                                <EditedTabItem
+                                    onCommit={handleTitleCommit}
+                                    id={item.draftId || String(itemIndex)}
+                                    title={item.title || ''}
+                                />,
+                            )
+                        ) : (
+                            <React.Fragment>
+                                {renderIcon?.(item)}
+                                <EditedTabItem
+                                    onCommit={handleTitleCommit}
+                                    id={item.draftId || String(itemIndex)}
+                                    title={item.title || ''}
+                                />
+                            </React.Fragment>
+                        )}
                     </div>
                 ) : (
                     <div
@@ -163,11 +186,25 @@ export const ListWithMenu = <T extends ItemWithTitleAndDraftId>({
                         key={item.draftId || String(itemIndex)}
                         onDoubleClick={handleDoubleClick}
                     >
-                        <div className={b('item-content')}>
-                            <span title={item.title} className={b('item-text')}>
-                                {item.title}
-                            </span>
-                        </div>
+                        {renderWrapper ? (
+                            renderWrapper(
+                                item,
+                                <div className={b('item-content')}>
+                                    <span title={item.title} className={b('item-text')}>
+                                        {item.title}
+                                    </span>
+                                </div>,
+                            )
+                        ) : (
+                            <React.Fragment>
+                                {renderIcon?.(item)}
+                                <div className={b('item-content')}>
+                                    <span title={item.title} className={b('item-text')}>
+                                        {item.title}
+                                    </span>
+                                </div>
+                            </React.Fragment>
+                        )}
                     </div>
                 )}
 

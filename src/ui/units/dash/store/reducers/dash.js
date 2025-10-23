@@ -12,17 +12,14 @@ import {Mode} from '../../modules/constants';
 import {getUniqIdsFromDashData} from '../../modules/helpers';
 import * as actionTypes from '../constants/dashActionTypes';
 
+import {
+    TAB_PROPERTIES,
+    addItemToTab,
+    getGlobalItemsToCopy,
+    getStateForControlWithGlobalLogic,
+    isItemGlobal,
+} from './dashHelpers';
 import {dashTypedReducer} from './dashTypedReducer';
-
-export const TAB_PROPERTIES = [
-    'id',
-    'title',
-    'items',
-    'layout',
-    'connections',
-    'aliases',
-    'settings',
-];
 
 const initialState = {
     mode: Mode.Loading,
@@ -74,6 +71,10 @@ function dash(state = initialState, action) {
 
             const salt = data.salt;
             const dashDataUniqIds = getUniqIdsFromDashData(data);
+
+            // Get global items to copy from the first existing tab
+            const firstExistingTab = data.tabs.length > 0 ? data.tabs[0] : null;
+            const {globalItems: globalItemsToCopy, layout} = getGlobalItemsToCopy(firstExistingTab);
 
             const newTabs = action.payload.map((tab) => {
                 let tabItem = null;
@@ -183,7 +184,17 @@ function dash(state = initialState, action) {
                     const uniqTabIdData = generateUniqId({salt, counter, ids: dashDataUniqIds});
                     counter = uniqTabIdData.counter;
 
-                    tabItem = {id: uniqTabIdData.id, ...tab};
+                    tabItem = {
+                        id: uniqTabIdData.id,
+                        ...tab,
+                    };
+
+                    // Copy global items to new tab if they exist
+                    if (globalItemsToCopy.length > 0) {
+                        globalItemsToCopy.forEach((globalItem) => {
+                            tabItem = addItemToTab(tabItem, globalItem, layout[globalItem.id]);
+                        });
+                    }
                 }
 
                 return tabItem;
@@ -296,6 +307,14 @@ function dash(state = initialState, action) {
             };
         }
         case actionTypes.SET_ITEM_DATA: {
+            const itemType = action.payload.type;
+            const itemData = action.payload.data;
+
+            const isGlobal =
+                itemType === DashTabItemType.GroupControl || itemType === DashTabItemType.Control
+                    ? isItemGlobal(itemType, itemData)
+                    : false;
+
             const tabData = DashKit.setItem({
                 item: {
                     id: state.openedItemId,
@@ -309,6 +328,7 @@ function dash(state = initialState, action) {
                 options: {
                     excludeIds: getUniqIdsFromDashData(data),
                     updateLayout: state.dragOperationProps?.newLayout,
+                    ...(isGlobal ? {useGlobalItems: true} : {}),
                 },
             });
 
@@ -350,6 +370,24 @@ function dash(state = initialState, action) {
                 });
 
                 tabData.connections = updatedConnections;
+            }
+
+            // Handle global control items (GroupControl and Control types)
+            if (itemType === DashTabItemType.GroupControl || itemType === DashTabItemType.Control) {
+                const updatedState = getStateForControlWithGlobalLogic({
+                    state,
+                    data,
+                    tabData,
+                    tabIndex,
+                    itemType,
+                    itemData,
+                    isGlobal,
+                });
+
+                // If the function returned a state, return it
+                if (updatedState) {
+                    return updatedState;
+                }
             }
 
             const modifiedItem = tabData.layout[tabData.layout.length - 1];
