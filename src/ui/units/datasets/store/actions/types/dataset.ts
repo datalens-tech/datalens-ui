@@ -108,6 +108,8 @@ export const SET_CURRENT_DB_NAME = Symbol('dataset/SET_CURRENT_DB_NAME');
 
 export const SET_SOURCES_SEARCH_LOADING = Symbol('dataset/SOURCES_SEARCH_REQUEST');
 
+export const SET_SOURCES_LISTING_OPTIONS = Symbol('dataset/SET_SOURCES_LISTING_OPTIONS');
+
 export const SOURCES_NEXT_PAGE_REQUEST = Symbol('dataset/SOURCES_NEXT_PAGE_REQUEST');
 export const SOURCES_NEXT_PAGE_SUCCESS = Symbol('dataset/SOURCES_NEXT_PAGE_SUCCESS');
 

@@ -1952,3 +1952,32 @@ function _getSources() {
         }
     };
 }
+
+export function getSourcesListingOptions(connectionId: string) {
+    return async (dispatch: DatasetDispatch, getState: GetState) => {
+        dispatch(toggleSourcesLoader(true));
+
+        const result = await (DatasetUtils.isEnabledFeature(Feature.EnableDatasetSourcesPagination)
+            ? getSdk().sdk.bi.getSourceListingOptions({connectionId})
+            : undefined);
+
+        dispatch({
+            type: DATASET_ACTION_TYPES.SET_SOURCES_LISTING_OPTIONS,
+            payload: result?.source_listing,
+        });
+
+        const {dbNameRequiredForSearch, supportsDbNameListing} = getSourceListingValues(
+            result?.source_listing,
+        );
+
+        dispatch(toggleSourcesLoader(false));
+
+        if (dbNameRequiredForSearch || supportsDbNameListing) {
+            await dispatch(getDbNames([connectionId]));
+        }
+
+        const currentDbName = getState().dataset.currentDbName;
+
+        return {sourceListing: result?.source_listing, currentDbName};
+    };
+}

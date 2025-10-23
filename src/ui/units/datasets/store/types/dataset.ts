@@ -6,6 +6,7 @@ import type {
     Dataset,
     DatasetAvatarRelation,
     DatasetField,
+    DatasetOptions,
     DatasetSource,
     DatasetSourceAvatar,
     Permissions,
@@ -75,6 +76,7 @@ import type {
     SET_IS_DATASET_CHANGED_FLAG,
     SET_LAST_MODIFIED_TAB,
     SET_QUEUE_TO_LOAD_PREVIEW,
+    SET_SOURCES_LISTING_OPTIONS,
     SET_SOURCES_LOADING_ERROR,
     SET_SOURCES_PAGINATION,
     SET_SOURCES_SEARCH_LOADING,
@@ -832,6 +834,11 @@ type SetSourcesSearchLoading = {
     payload: boolean;
 };
 
+type SetSourcesListingOptions = {
+    type: typeof SET_SOURCES_LISTING_OPTIONS;
+    payload: DatasetOptions['source_listing'];
+};
+
 export type DatasetReduxAction =
     | SetFreeformSources
     | ResetDatasetState
@@ -911,4 +918,5 @@ export type DatasetReduxAction =
     | SourcesNextPageSuccess
     | SetSourcesSearchLoading
     | EntryContentAction
+    | SetSourcesListingOptions
     | EditHistoryAction;
