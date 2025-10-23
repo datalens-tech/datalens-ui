@@ -154,11 +154,16 @@ jobs:
           LINK_S3_WEBSITE="https://${STORAGE_BUCKET}.${HTML_ENDPOINT}/${STORAGE_PREFIX}/${E2E_REPORT_PATH}/report"
           echo "🔗 link to s3: ${LINK_S3_WEBSITE}"
           echo -n "" >./tests/artifacts/trace-links
-          for TRACE in $({ ls -1 tests/artifacts/report/data/*.zip 2>/dev/null || true; } | sed 's|tests/artifacts/report/data/||'); do
-            LINK_TRACE="${STORAGE_ENDPOINT}/${STORAGE_BUCKET}/${STORAGE_PREFIX}/${E2E_REPORT_PATH}/report/data/${TRACE}"
+          for TRACE_FILE in $(ls -1 tests/artifacts/report/data/*.zip 2>/dev/null || true); do
+            TRACE_NAME=$({ unzip -p "${TRACE_FILE}" 0-trace.trace || true; } | head -n1 | jq -r '.title | split(" › ")[1:] | join(" › ")')
+            if [ -z "${TRACE_NAME}" ]; then
+              TRACE_NAME="trace"
+            fi
+            TRACE_ZIP=$(echo "${TRACE_FILE}" | sed 's|tests/artifacts/||')
+            LINK_TRACE="${STORAGE_ENDPOINT}/${STORAGE_BUCKET}/${STORAGE_PREFIX}/${E2E_REPORT_PATH}/${TRACE_ZIP}"
             LINK_TRACE_ENCODED=$(jq -rn --arg X "${LINK_TRACE}" '$X|@uri')
             LINK_TRACE_VIEWER="https://playwright-trace-viewer.website.yandexcloud.net/?trace=${LINK_TRACE_ENCODED}"
-            echo -n "${LINK_TRACE_VIEWER}---" >>./tests/artifacts/trace-links
+            echo -n "[${TRACE_NAME}](${LINK_TRACE_VIEWER})---" >>./tests/artifacts/trace-links
           done
           TRACE_LINKS=$(cat ./tests/artifacts/trace-links)
           echo "${TRACE_LINKS}" | sed 's|---$||' >./tests/artifacts/trace-links
@@ -198,7 +203,7 @@ jobs:
               comment.user.login === 'github-actions[bot]'
             );
 
-            const traceLinks = process.env.E2E_TRACE_LINKS ? `🧐 Links with traces:\n${process.env.E2E_TRACE_LINKS.split('---').map((url)=>'- [trace](' + url + ')').join('\n')}` : '';
+            const traceLinks = process.env.E2E_TRACE_LINKS ? `<details>\n<summary>🧐 Links with traces:</summary>\n\n${process.env.E2E_TRACE_LINKS.split('---').map((url)=>'- ' + url).join('\n')}\n</details>` : '';
             const dockerComposeLogsLink = process.env.E2E_DOCKER_COMPOSE_LINKS ? `🐳 Link with docker compose logs: [logs](${process.env.E2E_DOCKER_COMPOSE_LINKS})` : '';
 
             const timestamp = new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString().replace('T', ' ').slice(0, 19) + ' MSK';
