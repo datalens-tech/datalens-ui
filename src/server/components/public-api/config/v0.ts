@@ -82,7 +82,7 @@ export const getPublicApiActionsV0 = <
             },
         },
         deleteWizardChart: {
-            resolve: (api) => api.mix.__deleteWizardChart__,
+            resolve: (api) => api.mix._deleteWizardChart,
             openApi: {
                 summary: 'Delete wizard chart',
                 tags: [ApiTag.Wizard],
@@ -98,7 +98,7 @@ export const getPublicApiActionsV0 = <
             },
         },
         deleteQLChart: {
-            resolve: (api) => api.mix.__deleteQLChart__,
+            resolve: (api) => api.mix._deleteQLChart,
             openApi: {
                 summary: 'Delete QL chart',
                 tags: [ApiTag.QL],
@@ -128,7 +128,7 @@ export const getPublicApiActionsV0 = <
             },
         },
         deleteDashboard: {
-            resolve: (api) => api.mix.__deleteDashboard__,
+            resolve: (api) => api.mix._deleteDashboard,
             openApi: {
                 summary: 'Delete dashboard',
                 tags: [ApiTag.Dashboard],

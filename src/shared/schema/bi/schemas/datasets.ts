@@ -17,8 +17,7 @@ export const createDatasetResultSchema = z.any().meta({
     $ref: makeSchemaRef(BI_SCHEMA_NAME.DatasetRead),
 });
 
-export const updateDatasetArgsSchema = z.object({
-    version: z.literal('draft'),
+export const updateDatasetArgsSchema = z.strictObject({
     datasetId: z.string(),
     data: z.any().meta({
         $ref: makeSchemaRef(BI_SCHEMA_NAME.DatasetUpdate),
@@ -29,16 +28,15 @@ export const updateDatasetResultSchema = z.any().meta({
     $ref: makeSchemaRef(BI_SCHEMA_NAME.DatasetRead),
 });
 
-export const deleteDatasetArgsSchema = z.object({
+export const deleteDatasetArgsSchema = z.strictObject({
     datasetId: z.string(),
 });
 
 export const deleteDatasetResultSchema = z.unknown();
 
-export const getDatasetByVersionArgsSchema = z.object({
+export const getDatasetByVersionArgsSchema = z.strictObject({
     datasetId: z.string(),
-    version: z.literal('draft'),
-    workbookId: z.union([z.null(), z.string()]),
+    workbookId: z.string().nullable().optional(),
     rev_id: z.string().optional(),
 });
 
@@ -46,10 +44,9 @@ export const getDatasetByVersionResultSchema = z.any().meta({
     $ref: makeSchemaRef(BI_SCHEMA_NAME.DatasetRead),
 });
 
-export const validateDatasetArgsSchema = z.object({
+export const validateDatasetArgsSchema = z.strictObject({
     datasetId: z.string(),
-    version: z.literal('draft'),
-    workbookId: z.union([z.null(), z.string()]),
+    workbookId: z.string().nullable().optional(),
     data: z.any().meta({
         $ref: makeSchemaRef(BI_SCHEMA_NAME.DatasetValidate),
     }),

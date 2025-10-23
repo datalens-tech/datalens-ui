@@ -244,6 +244,7 @@ export const dashActions = {
             })) as unknown as UpdateDashResponse;
         },
     ),
+
     // WIP
     __createDashboard__: createTypedAction(
         {
@@ -257,8 +258,7 @@ export const dashActions = {
         },
     ),
 
-    // WIP
-    __deleteDashboard__: createTypedAction(
+    _deleteDashboard: createTypedAction(
         {
             paramsSchema: deleteDashArgsSchema,
             resultSchema: deleteDashResultSchema,
