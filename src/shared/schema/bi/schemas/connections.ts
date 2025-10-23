@@ -8,15 +8,15 @@ const BI_SCHEMA_NAME = {
     ConnectionUpdate: 'ConnectionUpdate',
 };
 
-export const deleteConnectionArgsSchema = z.object({
+export const deleteConnectionArgsSchema = z.strictObject({
     connectionId: z.string(),
 });
 
 export const deleteConnectionResultSchema = z.unknown();
 
-export const getConnectionArgsSchema = z.object({
+export const getConnectionArgsSchema = z.strictObject({
     connectionId: z.string(),
-    workbookId: z.string().nullable(),
+    workbookId: z.string().nullable().optional(),
     rev_id: z.string().optional(),
 });
 
@@ -32,7 +32,7 @@ export const createConnectionResultSchema = z.object({
     id: z.string(),
 });
 
-export const updateConnectionArgsSchema = z.object({
+export const updateConnectionArgsSchema = z.strictObject({
     connectionId: z.string(),
     data: z.any().meta({
         $ref: makeSchemaRef(BI_SCHEMA_NAME.ConnectionUpdate),

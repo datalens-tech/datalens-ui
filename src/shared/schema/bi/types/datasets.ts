@@ -7,6 +7,7 @@ import type {
     DatasetFieldError,
     TransferIdMapping,
     TransferNotification,
+    WorkbookId,
 } from '../../../types';
 import type {ApiV2RequestBody, ApiV2ResultData} from '../../../types/bi-api/v2';
 import type {EntryFieldData} from '../../types';
@@ -124,8 +125,11 @@ export type GetSourceArgs = {
 
 export type GetDatasetByVersionResponse = Dataset;
 
-export type GetDatasetByVersionArgs = {version: string; rev_id?: string} & DatasetId &
-    WorkbookIdArg;
+export type GetDatasetByVersionArgs = DatasetId & {
+    version?: DatasetVersion;
+    workbookId?: WorkbookId;
+    rev_id?: string;
+};
 
 export type DeleteDatasetResponse = z.infer<typeof deleteDatasetResultSchema>;
 
@@ -166,13 +170,14 @@ export type ValidateDatasetResponse = {
 } & DatasetWithOptions;
 
 export type ValidateDatasetArgs = {
-    version: DatasetVersion;
+    version?: DatasetVersion;
     data: {
         dataset: Partial<Dataset['dataset']>;
         updates: ValidateDatasetUpdate[];
     };
-} & DatasetId &
-    WorkbookIdArg;
+    workbookId?: WorkbookId;
+    rev_id?: string;
+} & DatasetId;
 
 export type GetFieldTypesResponse = {
     types: {
@@ -220,7 +225,7 @@ export type CreateDatasetResponse = Id & DatasetWithOptions;
 export type UpdateDatasetResponse = DatasetWithOptions;
 
 export type UpdateDatasetArgs = {
-    version: DatasetVersion;
+    version?: DatasetVersion;
     data: {
         dataset: Partial<Dataset['dataset']>;
     };

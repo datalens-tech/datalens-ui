@@ -1,12 +1,12 @@
 import z from 'zod';
 
-export const deleteQLChartArgsSchema = z.object({
+export const deleteQLChartArgsSchema = z.strictObject({
     chartId: z.string(),
 });
 
 export const deleteQLChartResultSchema = z.object({});
 
-export const getQLChartArgsSchema = z.object({
+export const getQLChartArgsSchema = z.strictObject({
     chartId: z.string(),
     workbookId: z.union([z.string(), z.null()]).optional(),
     revId: z.string().optional(),
