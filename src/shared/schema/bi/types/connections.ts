@@ -7,6 +7,7 @@ import type {
     ConnectionTypedQueryApiResponse,
     TransferNotification,
     ValueOf,
+    WorkbookId,
 } from '../../../types';
 import type {deleteConnectionResultSchema} from '../schemas/connections';
 
@@ -75,7 +76,10 @@ export type GetConnectorsResponse = {
 
 export type GetConnectionResponse = ConnectionData;
 
-export type GetConnectionArgs = BaseArgs & WorkbookIdArg;
+export type GetConnectionArgs = BaseArgs & {
+    workbookId?: WorkbookId;
+    rev_id?: string;
+};
 
 export type CreateConnectionResponse = {
     id: string;

@@ -1,3 +1,4 @@
+import type {DatasetOptions} from '../../..';
 import {registry} from '../../../../server/registry';
 import {TIMEOUT_60_SEC, TIMEOUT_95_SEC, WORKBOOK_ID_HEADER} from '../../../constants';
 import {createAction, createTypedAction} from '../../gateway-utils';
@@ -76,7 +77,7 @@ export const actions = {
         },
         {
             method: 'GET',
-            path: ({datasetId, version}) =>
+            path: ({datasetId, version = 'draft'}) =>
                 `${API_V1}/datasets/${filterUrlFragment(datasetId)}/versions/${filterUrlFragment(
                     version,
                 )}`,
@@ -93,7 +94,7 @@ export const actions = {
         params: (_, headers) => ({headers}),
     }),
     getSourceListingOptions: createAction<
-        Pick<GetDatasetByVersionResponse['options'], 'source_listing'>,
+        Pick<DatasetOptions, 'source_listing'>,
         Pick<GetSourceArgs, 'connectionId'>
     >({
         method: 'GET',
@@ -181,7 +182,7 @@ export const actions = {
         },
         {
             method: 'POST',
-            path: ({datasetId, version}) =>
+            path: ({datasetId, version = 'draft'}) =>
                 datasetId
                     ? `${API_V1}/datasets/${filterUrlFragment(datasetId)}/versions/${filterUrlFragment(
                           version,
@@ -208,7 +209,7 @@ export const actions = {
         },
         {
             method: 'PUT',
-            path: ({datasetId, version}) =>
+            path: ({datasetId, version = 'draft'}) =>
                 `${API_V1}/datasets/${filterUrlFragment(datasetId)}/versions/${filterUrlFragment(
                     version,
                 )}`,

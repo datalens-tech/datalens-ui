@@ -43,7 +43,6 @@ function DatasetSelector(props: {
             .sdk.bi.getDatasetByVersion({
                 datasetId: entryId,
                 workbookId,
-                version: 'draft',
             })
             .then((dataset: Dataset) => {
                 dispatch(
