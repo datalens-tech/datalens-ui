@@ -34,13 +34,13 @@ export const deleteDatasetArgsSchema = z.strictObject({
 
 export const deleteDatasetResultSchema = z.unknown();
 
-export const getDatasetArgsSchema = z.strictObject({
+export const getDatasetByVersionArgsSchema = z.strictObject({
     datasetId: z.string(),
     workbookId: z.string().nullable().optional(),
     rev_id: z.string().optional(),
 });
 
-export const getDatasetResultSchema = z.any().meta({
+export const getDatasetByVersionResultSchema = z.any().meta({
     $ref: makeSchemaRef(BI_SCHEMA_NAME.DatasetRead),
 });
 

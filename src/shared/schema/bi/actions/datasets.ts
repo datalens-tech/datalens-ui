@@ -14,8 +14,8 @@ import {
     createDatasetResultSchema,
     deleteDatasetArgsSchema,
     deleteDatasetResultSchema,
-    getDatasetArgsSchema,
-    getDatasetResultSchema,
+    getDatasetByVersionArgsSchema,
+    getDatasetByVersionResultSchema,
     updateDatasetArgsSchema,
     updateDatasetResultSchema,
     validateDatasetArgsSchema,
@@ -72,13 +72,15 @@ export const actions = {
     }),
     getDatasetByVersion: createTypedAction<GetDatasetByVersionResponse, GetDatasetByVersionArgs>(
         {
-            paramsSchema: getDatasetArgsSchema,
-            resultSchema: getDatasetResultSchema,
+            paramsSchema: getDatasetByVersionArgsSchema,
+            resultSchema: getDatasetByVersionResultSchema,
         },
         {
             method: 'GET',
-            path: ({datasetId}) =>
-                `${API_V1}/datasets/${filterUrlFragment(datasetId)}/versions/draft`,
+            path: ({datasetId, version = 'draft'}) =>
+                `${API_V1}/datasets/${filterUrlFragment(datasetId)}/versions/${filterUrlFragment(
+                    version,
+                )}`,
             params: ({workbookId, rev_id}, headers) => ({
                 headers: {...(workbookId ? {[WORKBOOK_ID_HEADER]: workbookId} : {}), ...headers},
                 query: {rev_id},
@@ -180,9 +182,11 @@ export const actions = {
         },
         {
             method: 'POST',
-            path: ({datasetId}) =>
+            path: ({datasetId, version = 'draft'}) =>
                 datasetId
-                    ? `${API_V1}/datasets/${filterUrlFragment(datasetId)}/versions/draft/validators/schema`
+                    ? `${API_V1}/datasets/${filterUrlFragment(datasetId)}/versions/${filterUrlFragment(
+                          version,
+                      )}/validators/schema`
                     : `${API_V1}/datasets/validators/dataset`,
             params: ({data: {dataset, ...restData}, workbookId}, headers, {ctx}) => {
                 const resultDataset = prepareDatasetProperty(ctx, dataset);
@@ -205,8 +209,10 @@ export const actions = {
         },
         {
             method: 'PUT',
-            path: ({datasetId}) =>
-                `${API_V1}/datasets/${filterUrlFragment(datasetId)}/versions/draft`,
+            path: ({datasetId, version = 'draft'}) =>
+                `${API_V1}/datasets/${filterUrlFragment(datasetId)}/versions/${filterUrlFragment(
+                    version,
+                )}`,
             params: ({data: {dataset, ...restData}}, headers, {ctx}) => {
                 const resultDataset = prepareDatasetProperty(ctx, dataset);
                 return {body: {...restData, dataset: resultDataset}, headers};

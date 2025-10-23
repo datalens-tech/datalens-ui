@@ -126,6 +126,7 @@ export type GetSourceArgs = {
 export type GetDatasetByVersionResponse = Dataset;
 
 export type GetDatasetByVersionArgs = DatasetId & {
+    version?: DatasetVersion;
     workbookId?: WorkbookId;
     rev_id?: string;
 };
@@ -169,6 +170,7 @@ export type ValidateDatasetResponse = {
 } & DatasetWithOptions;
 
 export type ValidateDatasetArgs = {
+    version?: DatasetVersion;
     data: {
         dataset: Partial<Dataset['dataset']>;
         updates: ValidateDatasetUpdate[];
@@ -223,6 +225,7 @@ export type CreateDatasetResponse = Id & DatasetWithOptions;
 export type UpdateDatasetResponse = DatasetWithOptions;
 
 export type UpdateDatasetArgs = {
+    version?: DatasetVersion;
     data: {
         dataset: Partial<Dataset['dataset']>;
     };

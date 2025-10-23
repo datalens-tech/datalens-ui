@@ -16,7 +16,7 @@ datalensTest.describe('Wizard - loading dataset during chart opening', () => {
                 page,
             });
 
-            await wizardPage.page.route(/getDataset/, (route: Route) => {
+            await wizardPage.page.route(/getDatasetByVersion/, (route: Route) => {
                 route.abort();
             });
 
