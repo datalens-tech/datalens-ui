@@ -1,7 +1,6 @@
 import React from 'react';
 
 import {I18n} from '../../../../../i18n';
-import type {CreateDatasetResponse} from '../../../../../shared/schema/types';
 import type {
     DialogCreateWorkbookEntryProps,
     EntryDialogBaseProps,
@@ -17,18 +16,19 @@ type DialogCreateDatasetBaseProps = {
     visible: boolean;
 };
 
-type DialogCreateDatasetInNavigationProps = {
-    onApply: EntryDialogBaseProps<CreateDatasetResponse>['onApply'];
+export type DialogCreateDatasetInNavigationProps = {
+    onApply: EntryDialogBaseProps<void>['onApply'];
     creationScope: 'navigation';
 };
 
-type DialogCreateDatasetInWorkbookProps = {
-    onApply: DialogCreateWorkbookEntryProps<CreateDatasetResponse>['onApply'];
+export type DialogCreateDatasetInWorkbookProps = {
+    onApply: DialogCreateWorkbookEntryProps<void>['onApply'];
     creationScope: 'workbook';
 };
 
-type DialogCreateDatasetProps = DialogCreateDatasetBaseProps &
-    (DialogCreateDatasetInNavigationProps | DialogCreateDatasetInWorkbookProps);
+export type DialogCreateDatasetProps =
+    | (DialogCreateDatasetBaseProps & DialogCreateDatasetInNavigationProps)
+    | (DialogCreateDatasetBaseProps & DialogCreateDatasetInWorkbookProps);
 
 const DialogCreateDataset = (props: DialogCreateDatasetProps) => {
     const {visible, onClose} = props;

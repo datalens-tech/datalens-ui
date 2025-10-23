@@ -37,16 +37,18 @@ function getMessageText() {
     };
 }
 
+export type ActionTypeNotification =
+    | 'create'
+    | 'duplicate'
+    | 'remove'
+    | 'save'
+    | 'preview'
+    | 'validate'
+    | 'types';
+
 export function getToastTitle(
     type: 'NOTIFICATION_SUCCESS' | 'NOTIFICATION_FAILURE',
-    actionTypeNotification:
-        | 'create'
-        | 'duplicate'
-        | 'remove'
-        | 'save'
-        | 'preview'
-        | 'validate'
-        | 'types',
+    actionTypeNotification: ActionTypeNotification,
 ) {
     switch (actionTypeNotification) {
         case 'create': {

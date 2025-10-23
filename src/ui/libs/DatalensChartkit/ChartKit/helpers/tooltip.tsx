@@ -15,7 +15,11 @@ import get from 'lodash/get';
 import {formatNumber} from 'shared/modules/format-units/index';
 import {DL} from 'ui/constants';
 
-import type {PointCustomData, ScatterSeriesCustomData} from '../../../../../shared/types/chartkit';
+import type {
+    ExtendedChartData,
+    PointCustomData,
+    ScatterSeriesCustomData,
+} from '../../../../../shared/types/chartkit';
 
 const b = block('dl-chart-tooltip-content');
 
@@ -256,3 +260,25 @@ export const getTooltipRowRenderer = ({
 
     return undefined;
 };
+
+export function getTooltipHeaderFormat({
+    widgetData,
+}: {
+    widgetData: ExtendedChartData;
+}): ChartTooltip['headerFormat'] {
+    if (widgetData?.tooltip?.headerFormat) {
+        return widgetData.tooltip.headerFormat;
+    }
+
+    const tooltipHeaderLabel = widgetData?.custom?.tooltip?.headerLabel;
+    if (tooltipHeaderLabel) {
+        return {
+            type: 'custom',
+            formatter: ({value}) => {
+                return `${tooltipHeaderLabel}: ${value}`;
+            },
+        };
+    }
+
+    return undefined;
+}

@@ -38,6 +38,9 @@ export default {
             GravityChartsForBarYAndScatter: ctx.get('isEnabledServerFeature')(
                 Feature.GravityChartsForBarYAndScatter,
             ),
+            GravityChartsForLineAreaAndBarX: ctx.get('isEnabledServerFeature')(
+                Feature.GravityChartsForLineAreaAndBarX,
+            ),
         };
 
         if (isGravityChartsVisualization({id, features})) {

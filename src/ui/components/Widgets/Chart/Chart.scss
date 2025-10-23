@@ -98,6 +98,10 @@ $fullscreenZIndex: 999;
             opacity: 0;
             z-index: -1;
         }
+
+        &_d3 {
+            overflow: hidden;
+        }
     }
 
     &__description {

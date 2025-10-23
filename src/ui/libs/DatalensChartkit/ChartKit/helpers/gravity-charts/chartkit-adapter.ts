@@ -4,10 +4,11 @@ import {pickActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
 import get from 'lodash/get';
 import merge from 'lodash/merge';
 import set from 'lodash/set';
+import type {ExtendedChartData} from 'shared/types/chartkit';
 
 import type {GraphWidget} from '../../../types';
 import type {ChartKitAdapterProps} from '../../types';
-import {getTooltipRenderer, getTooltipRowRenderer} from '../tooltip';
+import {getTooltipHeaderFormat, getTooltipRenderer, getTooltipRowRenderer} from '../tooltip';
 import {getNormalizedClickActions} from '../utils';
 
 import {convertChartCommentsToPlotBandsAndLines, shouldUseCommentsOnYAxis} from './comments';
@@ -24,7 +25,7 @@ export function getGravityChartsChartKitData(args: {
     onChange?: ChartKitAdapterProps['onChange'];
 }) {
     const {loadedData, onChange} = args;
-    const widgetData = loadedData?.data as ChartData;
+    const widgetData = loadedData?.data as ExtendedChartData;
     const chartId = loadedData?.entryId;
 
     const chartWidgetData: Partial<ChartData> = {
@@ -61,11 +62,17 @@ export function getGravityChartsChartKitData(args: {
     if (!result.tooltip) {
         result.tooltip = {};
     }
+
+    const tooltipQa = `chartkit-tooltip-entry-${chartId}`;
+    result.tooltip.qa = tooltipQa;
     result.tooltip.renderer = getTooltipRenderer({
         widgetData,
-        qa: `chartkit-tooltip-entry-${chartId}`,
+        qa: tooltipQa,
     });
     result.tooltip.rowRenderer = getTooltipRowRenderer({
+        widgetData,
+    });
+    result.tooltip.headerFormat = getTooltipHeaderFormat({
         widgetData,
     });
 
