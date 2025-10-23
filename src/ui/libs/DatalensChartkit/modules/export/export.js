@@ -155,10 +155,12 @@ function prepareValues({widget, data, widgetType, extra, options = {}}) {
 
     switch (widgetType) {
         case WidgetKind.GravityCharts: {
+            const chartAsTable = chartToTable({chartData: data});
             return prepareValues({
                 widget: {},
-                data: chartToTable({chartData: data}),
+                data: chartAsTable,
                 widgetType: WidgetKind.Table,
+                options,
             });
         }
         case WidgetKind.Graph: {

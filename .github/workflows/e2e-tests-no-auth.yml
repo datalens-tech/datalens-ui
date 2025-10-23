@@ -1,4 +1,4 @@
-name: E2E Tests
+name: E2E Tests No Auth
 
 on:
   workflow_dispatch:
@@ -16,7 +16,7 @@ permissions:
 
 jobs:
   run:
-    name: e2e-tests
+    name: e2e-tests-no-auth
     runs-on:
       - self-hosted
       - linux
@@ -31,10 +31,12 @@ jobs:
         run: npm run test:e2e:docker:check &>dev/null
       - name: up docker compose
         run: |
-          npm run test:e2e:docker:up-no-ui
+          npm run test:e2e:docker:up-no-ui-no-auth
           npm run test:e2e:docker:up-nginx
         env:
           US_PORT: '3033'
+          AUTH_ENABLED: 'false'
+          AUTH_TYPE: 'NONE'
       - run: npm run deps
         env:
           # folder in docker container
@@ -48,7 +50,7 @@ jobs:
           echo $! > ./tests/logs/ui.pid
           npm run test:e2e:opensource
         env:
-          E2E_NO_AUTH: 'false'
+          E2E_NO_AUTH: 'true'
           E2E_RETRY_TIMES: '2'
           E2E_TEST_TIMEOUT: '90000'
           E2E_ACTION_TIMEOUT: '10000'
@@ -76,10 +78,7 @@ jobs:
           US_MASTER_TOKEN: us-master-token
           AUTH_POLICY: disabled
           HC: '0'
-          AUTH_ENABLED: 'true'
-          AUTH_MASTER_TOKEN: auth-master-token
-          AUTH_TOKEN_PUBLIC_KEY: '-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA+HICDZMfimMIiGdd0dPr\n2N3zxHOJqiVXuvUj/aBBS7c8760rJUh4344sP/0Gid558yH/v1MtzZ0R9w09v6gb\nSNrSiNwIUNGPhbnm9Jf+kMezsI/rkcIdoVm3KJ8CFUYy6MRPzW7iJmIVRHBb82v1\nmAYCCQFU6IRtFIa9hQ8wedWwxqXZekSNS+6NB37dmmQB9kz2E3MY+KRLigOh4i3p\nCZ1ti3HVvMa9Rlgk9FmoWExzub5ECChqwm+vn8yFXjYW7kUSClcV2xx4nbQWqjrR\nyyLk6W2BNOuCFVvz0j+5XkpLAt7tljtVZc+572HBEKpF2mAdmAip5NzeDhKqucJ+\nZQIDAQAB\n-----END PUBLIC KEY-----'
-          AUTH_SIGNUP_DISABLED: 'false'
+          AUTH_ENABLED: 'false'
       - name: kill ui service
         if: always()
         run: |
@@ -127,7 +126,7 @@ jobs:
       e2e_docker_compose_logs_link: ${{ steps.e2e_links.outputs.e2e_docker_compose_logs_link }}
 
   report:
-    name: e2e-tests-report
+    name: e2e-tests-no-auth-report
     needs: run
     if: always()
     runs-on:
@@ -187,7 +186,7 @@ jobs:
             const issueNumber = context.issue.number;
             const repo = context.repo;
 
-            const commentIdentifier = "<!-- e2e-tests-report -->";
+            const commentIdentifier = "<!-- e2e-tests-no-auth-report -->";
             const { data: comments } = await github.rest.issues.listComments({
               ...repo,
               issue_number: issueNumber,
@@ -204,7 +203,7 @@ jobs:
             const timestamp = new Date(Date.now() + 3 * 60 * 60 * 1000).toISOString().replace('T', ' ').slice(0, 19) + ' MSK';
 
             let commentBody = `
-            ## ![](https://storage.yandexcloud.net/e2e-report/icons/os-small.svg) E2E Tests
+            ## ![](https://storage.yandexcloud.net/e2e-report/icons/os-small.svg) E2E Tests No Auth
 
             ${{ steps.report-md.outputs.summary }}
 
