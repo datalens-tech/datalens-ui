@@ -638,7 +638,7 @@ export class DatasetSources extends React.Component {
             const newConnection = await getSdk().sdk.us.getEntry({entryId});
 
             const update = {connection, newConnection};
-            this.updateDatasetConfig({
+            await this.updateDatasetConfig({
                 type: DATASET_UPDATE_ACTIONS.CONNECTION_REPLACE,
                 update,
                 updatePreview: true,
