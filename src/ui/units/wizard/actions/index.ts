@@ -166,7 +166,7 @@ type GetDatasetArgs = {
 
 function getDataset({id, workbookId}: GetDatasetArgs) {
     return getSdk()
-        .sdk.bi.getDataset({
+        .sdk.bi.getDatasetByVersion({
             datasetId: id,
             workbookId,
         })

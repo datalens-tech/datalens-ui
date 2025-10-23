@@ -38,7 +38,7 @@ export const getPublicApiActionsV0 = <
 
         // Dataset
         getDataset: {
-            resolve: (api) => api.bi.getDataset,
+            resolve: (api) => api.bi.getDatasetByVersion,
             openApi: {
                 summary: 'Get dataset',
                 tags: [ApiTag.Dataset],

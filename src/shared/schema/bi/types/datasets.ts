@@ -123,9 +123,9 @@ export type GetSourceArgs = {
     search_text?: string;
 } & WorkbookIdArg;
 
-export type GetDatasetResponse = Dataset;
+export type GetDatasetByVersionResponse = Dataset;
 
-export type GetDatasetArgs = DatasetId & {
+export type GetDatasetByVersionArgs = DatasetId & {
     workbookId?: WorkbookId;
     rev_id?: string;
 };

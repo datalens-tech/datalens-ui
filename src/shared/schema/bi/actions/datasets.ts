@@ -34,8 +34,8 @@ import type {
     ExportDatasetResponse,
     GetDataSetFieldsByIdArgs,
     GetDataSetFieldsByIdResponse,
-    GetDatasetArgs,
-    GetDatasetResponse,
+    GetDatasetByVersionArgs,
+    GetDatasetByVersionResponse,
     GetDbNamesResponse,
     GetDistinctsApiV2Args,
     GetDistinctsApiV2Response,
@@ -70,7 +70,7 @@ export const actions = {
         }),
         timeout: TIMEOUT_60_SEC,
     }),
-    getDataset: createTypedAction<GetDatasetResponse, GetDatasetArgs>(
+    getDatasetByVersion: createTypedAction<GetDatasetByVersionResponse, GetDatasetByVersionArgs>(
         {
             paramsSchema: getDatasetArgsSchema,
             resultSchema: getDatasetResultSchema,

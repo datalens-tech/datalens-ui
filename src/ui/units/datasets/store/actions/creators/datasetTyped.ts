@@ -1832,7 +1832,7 @@ export function initialFetchDataset({
             const meta = await getSdk().sdk.us.getEntryMeta({entryId: datasetId});
             const workbookId = meta.workbookId ?? null;
 
-            const dataset = await getSdk().sdk.bi.getDataset({
+            const dataset = await getSdk().sdk.bi.getDatasetByVersion({
                 datasetId,
                 workbookId,
                 rev_id,
