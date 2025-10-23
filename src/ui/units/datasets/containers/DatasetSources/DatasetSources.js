@@ -20,6 +20,7 @@ import {
     deleteConnection,
     deleteSource,
     getSources,
+    getSourcesListingOptions,
     openDialogParameterCreate,
     openDialogParameterEdit,
     replaceConnection,
@@ -234,12 +235,10 @@ export class DatasetSources extends React.Component {
         }
     };
 
-    clickConnection = (connectionId) => {
+    clickConnection = async (connectionId) => {
         const {
             sourcePrototypes,
-            options,
             sourcesPagination,
-            currentDbName,
             workbookId,
             selectedConnection: {entryId: selectedConnId} = {},
             resetSourcesPagination,
@@ -252,9 +251,10 @@ export class DatasetSources extends React.Component {
         this.props.clickConnection({connectionId});
 
         resetSourcesPagination();
-        const {serverPagination, dbNameRequiredForSearch} = getSourceListingValues(
-            options?.source_listing,
-        );
+        const {sourceListing, currentDbName} =
+            await this.props.getSourcesListingOptions(connectionId);
+
+        const {serverPagination, dbNameRequiredForSearch} = getSourceListingValues(sourceListing);
 
         return this.props.getSources({
             connectionId,
@@ -638,7 +638,7 @@ export class DatasetSources extends React.Component {
             const newConnection = await getSdk().sdk.us.getEntry({entryId});
 
             const update = {connection, newConnection};
-            this.updateDatasetConfig({
+            await this.updateDatasetConfig({
                 type: DATASET_UPDATE_ACTIONS.CONNECTION_REPLACE,
                 update,
                 updatePreview: true,
@@ -795,6 +795,7 @@ DatasetSources.propTypes = {
     sourcesPagination: PropTypes.object,
     currentDbName: PropTypes.string,
     resetSourcesPagination: PropTypes.func.isRequired,
+    getSourcesListingOptions: PropTypes.func.isRequired,
 };
 
 const mapStateToProps = createStructuredSelector({
@@ -834,6 +835,7 @@ const mapDispatchToProps = {
     openDialogParameterCreate,
     openDialogParameterEdit,
     resetSourcesPagination,
+    getSourcesListingOptions,
 };
 
 export default compose(connect(mapStateToProps, mapDispatchToProps, null, {forwardRef: true}))(
