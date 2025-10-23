@@ -105,6 +105,7 @@ export function getBaseChartConfig(args: {
                 ticks: {
                     pixelInterval: getTickPixelInterval(xPlaceholderSettings) || 120,
                 },
+                lineColor: 'var(--g-color-line-generic)',
             },
             yAxis: [
                 {
@@ -123,6 +124,7 @@ export function getBaseChartConfig(args: {
                     ticks: {
                         pixelInterval: getTickPixelInterval(yPlaceholderSettings) || 72,
                     },
+                    lineColor: 'var(--g-color-line-generic)',
                 },
             ],
         };

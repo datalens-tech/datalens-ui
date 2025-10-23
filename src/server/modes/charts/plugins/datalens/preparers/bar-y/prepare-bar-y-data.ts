@@ -526,7 +526,7 @@ export function prepareBarYData({
         // Generating data
         const graphs = [
             {
-                data: categories.map(() => null),
+                data: categories.map((_, index) => ({y: null, x: index})),
             },
         ];
 
