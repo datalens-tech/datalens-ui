@@ -88,3 +88,5 @@ export enum Mode {
 export const socialNets = [ShareOptions.Telegram, ShareOptions.VK];
 
 export const CROSS_PASTE_ITEMS_ALLOWED = [ITEM_TYPE.TITLE, ITEM_TYPE.TEXT];
+
+export const TABS_SCOPE_ALL = 'all' as const;

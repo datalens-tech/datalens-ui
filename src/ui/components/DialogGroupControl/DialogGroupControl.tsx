@@ -24,6 +24,7 @@ export type DialogGroupControlFeaturesProps = {
     enableAutoheightDefault?: boolean;
     showSelectorsGroupTitle?: boolean;
     theme?: string;
+    enableGlobalSelectors?: boolean;
 };
 
 export type DialogGroupControlProps = {
@@ -45,6 +46,8 @@ export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
     enableAutoheightDefault,
     showSelectorsGroupTitle,
     selectorsGroupTitlePlaceholder,
+    // TODO: Add true by default
+    enableGlobalSelectors,
 }) => {
     const {id, draftId} = useSelector(selectSelectorDialog);
 
@@ -80,6 +83,7 @@ export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
                     selectorsGroupTitlePlaceholder={selectorsGroupTitlePlaceholder}
                     enableAutoheightDefault={enableAutoheightDefault}
                     showSelectorsGroupTitle={showSelectorsGroupTitle}
+                    enableGlobalSelectors={enableGlobalSelectors}
                     handleCopyItem={handleCopyItem}
                 />
             }
@@ -90,6 +94,7 @@ export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
                     key={draftId || id}
                     navigationPath={navigationPath}
                     changeNavigationPath={changeNavigationPath}
+                    enableGlobalSelectors={enableGlobalSelectors}
                 />
             }
             footer={<GroupControlFooter handleClose={handleClose} handleApply={handleApply} />}
