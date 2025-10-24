@@ -2,10 +2,11 @@ import {DashKit} from '@gravity-ui/dashkit';
 import {generateUniqId} from '@gravity-ui/dashkit/helpers';
 import update from 'immutability-helper';
 import pick from 'lodash/pick';
-import {DashTabItemTitleSizes, DashTabItemType} from 'shared';
+import {DashTabItemTitleSizes, DashTabItemType, Feature} from 'shared';
 import {CustomPaletteTextColors, TITLE_WIDGET_TEXT_COLORS_PRESET} from 'shared/constants/widgets';
 import {migrateConnectionsForGroupControl} from 'ui/store/utils/controlDialog';
 import {getUpdatedBackgroundValue, getUpdatedConnections} from 'ui/utils/copyItems';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {EMBEDDED_MODE} from '../../../../constants/embedded';
 import {Mode} from '../../modules/constants';
@@ -233,6 +234,8 @@ function dash(state = initialState, action) {
             };
         case actionTypes.SET_COPIED_ITEM_DATA: {
             const itemData = action.payload.item.data;
+            const widgetType = action.payload.item.type;
+
             if (
                 itemData.textColor &&
                 !CustomPaletteTextColors[itemData.textColor] &&
@@ -241,8 +244,12 @@ function dash(state = initialState, action) {
                 delete itemData.textColor;
             }
             const backgroundData =
-                'background' in itemData
-                    ? {background: getUpdatedBackgroundValue(itemData.background, false)}
+                'background' in itemData &&
+                (widgetType !== DashTabItemType.Widget ||
+                    isEnabledFeature(Feature.EnableCommonChartDashSettings))
+                    ? {
+                          background: getUpdatedBackgroundValue(itemData.background, false),
+                      }
                     : {};
             const newItem = {
                 ...action.payload.item,
