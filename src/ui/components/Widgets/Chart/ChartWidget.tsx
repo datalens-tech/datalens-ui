@@ -11,15 +11,24 @@ import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
-import {ChartkitMenuDialogsQA, type StringParams} from 'shared';
+import {
+    ChartkitMenuDialogsQA,
+    CustomPaletteBgColors,
+    Feature,
+    type StringParams,
+    getDefaultWidgetBackgroundColor,
+} from 'shared';
+import {useWidgetContext} from 'ui/components/DashKit/context/WidgetContext';
 import {DL} from 'ui/constants/common';
 import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import Loader from '../../../libs/DatalensChartkit/components/ChartKitBase/components/Loader/Loader';
 import {getDataProviderData} from '../../../libs/DatalensChartkit/components/ChartKitBase/helpers';
 import settings from '../../../libs/DatalensChartkit/modules/settings/settings';
 import DebugInfoTool from '../../DashKit/plugins/DebugInfoTool/DebugInfoTool';
+import {RendererWrapper} from '../../DashKit/plugins/RendererWrapper/RendererWrapper';
 import type {CurrentTab, WidgetPluginDataWithTabs} from '../../DashKit/plugins/Widget/types';
 import {getPreparedWrapSettings} from '../../DashKit/utils';
 import {MarkdownHelpPopover} from '../../MarkdownHelpPopover/MarkdownHelpPopover';
@@ -83,7 +92,6 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         usageType,
         workbookId,
         enableAssistant,
-        onWidgetLoadData,
     } = props;
 
     const extDashkitContext = React.useContext(ExtendedDashKitContext);
@@ -336,6 +344,11 @@ export const ChartWidget = (props: ChartWidgetProps) => {
     const widgetDataRef = React.useRef<ChartWidgetData>(null);
     const widgetRenderTimeRef = React.useRef<number | null>(null);
 
+    const {onWidgetLoadData} = useWidgetContext({
+        id: props.id,
+        elementRef: rootNodeRef,
+    });
+
     const [initialParams, setInitialParams] = React.useState<StringParams>({});
 
     const [isExportLoading, setIsExportLoading] = React.useState(false);
@@ -537,13 +550,14 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         };
     }, [editMode, widgetType]);
 
-    const showBgColor = Boolean(
-        currentTab?.enabled !== false &&
-            currentTab.background?.color &&
-            currentTab.background?.color !== 'transparent',
-    );
-
-    const {classMod, style} = getPreparedWrapSettings(showBgColor, currentTab.background?.color);
+    const {classMod, style} = getPreparedWrapSettings({
+        color:
+            currentTab.background?.color ??
+            getDefaultWidgetBackgroundColor(
+                isEnabledFeature(Feature.EnableCommonChartDashSettings),
+                CustomPaletteBgColors.LIKE_CHART,
+            ),
+    });
 
     const disableControls = noControls || urlNoControls;
 
@@ -602,73 +616,73 @@ export const ChartWidget = (props: ChartWidgetProps) => {
     const isFirstLoadingFloat = loadedData === null;
 
     return (
-        <div
-            ref={rootNodeRef}
-            className={`${b({
-                ...mods,
-                autoheight: isAutoHeightEnabled,
-                classMod,
-                ['wait-for-init']: !isInit,
-                'default-mobile': DL.IS_MOBILE && !isFullscreen,
-                pulsate: (showContentLoader || showLoaderVeil) && !isFirstLoadingFloat,
-                'loading-mobile-height': DL.IS_MOBILE && isFirstLoadingFloat,
-            })}`}
-            style={style}
-            data-qa={ChartkitMenuDialogsQA.chartWidget}
-            data-qa-mod={isFullscreen ? 'fullscreen' : ''}
-        >
-            <DebugInfoTool
-                data={[
-                    {label: 'widgetId', value: widgetId},
-                    {label: 'tabId', value: currentTab.id},
-                    {label: 'chartId', value: chartId},
-                ]}
-            />
-            <WidgetHeader {...(widgetHeaderProps as HeaderWithControlsProps)} />
-            {isFirstLoadingFloat && (
-                <Loader
-                    visible={showContentLoader}
-                    compact={false}
-                    size="s"
-                    veil={false}
-                    delay={1000}
+        <RendererWrapper id={props.id} type="widget" style={style} classMod={classMod}>
+            <div
+                ref={rootNodeRef}
+                className={`${b({
+                    ...mods,
+                    autoheight: isAutoHeightEnabled,
+                    ['wait-for-init']: !isInit,
+                    'default-mobile': DL.IS_MOBILE && !isFullscreen,
+                    pulsate: (showContentLoader || showLoaderVeil) && !isFirstLoadingFloat,
+                    'loading-mobile-height': DL.IS_MOBILE && isFirstLoadingFloat,
+                })}`}
+                data-qa={ChartkitMenuDialogsQA.chartWidget}
+                data-qa-mod={isFullscreen ? 'fullscreen' : ''}
+            >
+                <DebugInfoTool
+                    data={[
+                        {label: 'widgetId', value: widgetId},
+                        {label: 'tabId', value: currentTab.id},
+                        {label: 'chartId', value: chartId},
+                    ]}
                 />
-            )}
-            <Content
-                initialParams={initialParams}
-                showLoader={showLoader}
-                showOverlayWithControlsOnEdit={showOverlayWithControlsOnEdit}
-                veil={veil}
-                widgetBodyClassName={widgetBodyClassName}
-                hasHiddenClassMod={hasHiddenClassMod}
-                chartId={chartId}
-                transformLoadedData={transformLoadedData}
-                splitTooltip={splitTooltip || isFullscreen}
-                nonBodyScroll={nonBodyScroll}
-                onRender={handleRenderChart}
-                onRetry={handleRetry}
-                onError={handleError}
-                forwardedRef={chartKitRef}
-                getControls={loadControls}
-                drillDownFilters={drillDownFilters}
-                drillDownLevel={drillDownLevel}
-                widgetType={widgetType}
-                widgetDashState={widgetDashState}
-                rootNodeRef={rootNodeRef}
-                backgroundColor={style?.backgroundColor}
-                needRenderContentControls={false}
-                chartRevIdRef={null}
-                {...commonHeaderContentProps}
-            />
-            {Boolean(description || loadedData?.publicAuthor) && (
-                <WidgetFooter
-                    isFullscreen={Boolean(isFullscreen)}
-                    description={description || ''}
-                    metaScripts={descriptionMetaScript}
-                    enableDescription={currentTab.enableDescription}
-                    author={loadedData?.publicAuthor}
+                <WidgetHeader {...(widgetHeaderProps as HeaderWithControlsProps)} />
+                {isFirstLoadingFloat && (
+                    <Loader
+                        visible={showContentLoader}
+                        compact={false}
+                        size="s"
+                        veil={false}
+                        delay={1000}
+                    />
+                )}
+                <Content
+                    initialParams={initialParams}
+                    showLoader={showLoader}
+                    showOverlayWithControlsOnEdit={showOverlayWithControlsOnEdit}
+                    veil={veil}
+                    widgetBodyClassName={widgetBodyClassName}
+                    hasHiddenClassMod={hasHiddenClassMod}
+                    chartId={chartId}
+                    transformLoadedData={transformLoadedData}
+                    splitTooltip={splitTooltip || isFullscreen}
+                    nonBodyScroll={nonBodyScroll}
+                    onRender={handleRenderChart}
+                    onRetry={handleRetry}
+                    onError={handleError}
+                    forwardedRef={chartKitRef}
+                    getControls={loadControls}
+                    drillDownFilters={drillDownFilters}
+                    drillDownLevel={drillDownLevel}
+                    widgetType={widgetType}
+                    widgetDashState={widgetDashState}
+                    rootNodeRef={rootNodeRef}
+                    backgroundColor={style?.backgroundColor}
+                    needRenderContentControls={false}
+                    chartRevIdRef={null}
+                    {...commonHeaderContentProps}
                 />
-            )}
-        </div>
+                {Boolean(description || loadedData?.publicAuthor) && (
+                    <WidgetFooter
+                        isFullscreen={Boolean(isFullscreen)}
+                        description={description || ''}
+                        metaScripts={descriptionMetaScript}
+                        enableDescription={currentTab.enableDescription}
+                        author={loadedData?.publicAuthor}
+                    />
+                )}
+            </div>
+        </RendererWrapper>
     );
 };

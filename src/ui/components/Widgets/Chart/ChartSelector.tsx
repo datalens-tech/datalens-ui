@@ -11,9 +11,18 @@ import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import {useSelector} from 'react-redux';
 import type {StringParams} from 'shared';
-import {DashTabItemControlSourceType} from 'shared';
+import {
+    CustomPaletteBgColors,
+    DashTabItemControlSourceType,
+    Feature,
+    getDefaultWidgetBackgroundColor,
+} from 'shared';
+import {useWidgetContext} from 'ui/components/DashKit/context/WidgetContext';
+import {RendererWrapper} from 'ui/components/DashKit/plugins/RendererWrapper/RendererWrapper';
+import {getPreparedWrapSettings} from 'ui/components/DashKit/utils';
 import {DL} from 'ui/constants/common';
 import {useChangedValue} from 'ui/hooks/useChangedProp';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import type {ChartInitialParams} from '../../../libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
@@ -228,6 +237,11 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
 
     const widgetType = DashTabItemControlSourceType.External;
 
+    useWidgetContext({
+        id: chartId,
+        elementRef: rootNodeRef,
+    });
+
     const {
         loadedData,
         error,
@@ -266,6 +280,13 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
 
     const {onAction} = useChartActions({
         onChange: handleChange,
+    });
+
+    const {classMod, style} = getPreparedWrapSettings({
+        color: getDefaultWidgetBackgroundColor(
+            isEnabledFeature(Feature.EnableCommonChartDashSettings),
+            CustomPaletteBgColors.LIKE_CHART,
+        ),
     });
 
     const hasControl = Boolean((loadedData as ControlsOnlyWidget)?.controls?.controls?.length);
@@ -317,65 +338,72 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
     const showSpinner = isLoading && !hasControl;
 
     return (
-        <div
-            ref={rootNodeRef}
-            className={`${b({
-                ...mods,
-                autoheight: isAutoHeightEnabled,
-                pulsate,
-            })}`}
-            data-qa="chart-widget-selectors"
+        <RendererWrapper
+            type="widget"
+            nodeRef={rootNodeRef}
+            id={chartId}
+            style={style}
+            classMod={classMod}
         >
-            <DebugInfoTool
-                data={[
-                    {label: 'widgetId', value: widgetId},
-                    {label: 'chartId', value: chartId},
-                ]}
-            />
-            <div className={b('container', {[String(widgetType)]: Boolean(widgetType)})}>
-                {showSpinner && (
-                    <div className={b('loader')}>
-                        <CommonLoader size="s" />
-                    </div>
-                )}
-                <div
-                    className={b(
-                        'body',
-                        {hidden: hasHiddenClassMod, [String(widgetType)]: Boolean(widgetType)},
-                        widgetBodyClassName,
+            <div
+                className={`${b({
+                    ...mods,
+                    autoheight: isAutoHeightEnabled,
+                    pulsate,
+                })}`}
+                data-qa="chart-widget-selectors"
+            >
+                <DebugInfoTool
+                    data={[
+                        {label: 'widgetId', value: widgetId},
+                        {label: 'chartId', value: chartId},
+                    ]}
+                />
+                <div className={b('container', {[String(widgetType)]: Boolean(widgetType)})}>
+                    {showSpinner && (
+                        <div className={b('loader')}>
+                            <CommonLoader size="s" />
+                        </div>
                     )}
-                    data-qa={chartId ? `chartkit-body-entry-${chartId}` : null}
-                >
-                    {Boolean(!hasError && hasControl && getControls) && (
-                        <Control
-                            id={chartId}
-                            data={loadedData}
-                            onLoad={handleRenderChart}
-                            onError={handleError}
-                            onChange={handleChange}
-                            onUpdate={handleUpdate}
-                            getControls={getControls}
+                    <div
+                        className={b(
+                            'body',
+                            {hidden: hasHiddenClassMod, [String(widgetType)]: Boolean(widgetType)},
+                            widgetBodyClassName,
+                        )}
+                        data-qa={chartId ? `chartkit-body-entry-${chartId}` : null}
+                    >
+                        {Boolean(!hasError && hasControl && getControls) && (
+                            <Control
+                                id={chartId}
+                                data={loadedData}
+                                onLoad={handleRenderChart}
+                                onError={handleError}
+                                onChange={handleChange}
+                                onUpdate={handleUpdate}
+                                getControls={getControls}
+                                nonBodyScroll={nonBodyScroll}
+                                initialParams={controlInitialParams}
+                                runAction={runAction}
+                                onAction={onAction}
+                            />
+                        )}
+                        {/* DatalensChartkitContent for error displaying & retry */}
+                        <DatalensChartkitContent
                             nonBodyScroll={nonBodyScroll}
-                            initialParams={controlInitialParams}
-                            runAction={runAction}
-                            onAction={onAction}
+                            requestId={requestId}
+                            error={error}
+                            onLoad={handleRenderChart}
+                            onChange={handleChange}
+                            onError={handleError}
+                            onRetry={handleRetry}
+                            loadedData={loadedData}
+                            forwardedRef={forwardedRef}
+                            rootNodeRef={rootNodeRef}
                         />
-                    )}
-                    {/* DatalensChartkitContent for error displaying & retry */}
-                    <DatalensChartkitContent
-                        nonBodyScroll={nonBodyScroll}
-                        requestId={requestId}
-                        error={error}
-                        onLoad={handleRenderChart}
-                        onChange={handleChange}
-                        onError={handleError}
-                        onRetry={handleRetry}
-                        loadedData={loadedData}
-                        forwardedRef={forwardedRef}
-                        rootNodeRef={rootNodeRef}
-                    />
+                    </div>
                 </div>
             </div>
-        </div>
+        </RendererWrapper>
     );
 };

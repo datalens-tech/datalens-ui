@@ -33,6 +33,8 @@ $fullscreenZIndex: 999;
     filter: opacity(1);
 
     &_fullscreen {
+        --dl-resulted-chart-bg-color: var(--g-color-base-float);
+
         position: fixed;
         width: 100vw;
         height: 100dvh;

@@ -7,6 +7,7 @@ import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import {ChartkitMenuDialogsQA, type StringParams} from 'shared';
+import {useWidgetContext} from 'ui/components/DashKit/context/WidgetContext';
 import {DL} from 'ui/constants/common';
 import type {ChartKit} from 'ui/libs/DatalensChartkit/ChartKit/ChartKit';
 import {getDataProviderData} from 'ui/libs/DatalensChartkit/components/ChartKitBase/helpers';
@@ -138,6 +139,11 @@ export const Chart = (props: ChartNoWidgetProps) => {
     const renderPluginLoader = React.useMemo(() => {
         return disableChartLoader ? () => null : undefined;
     }, [disableChartLoader]);
+
+    useWidgetContext({
+        id: chartId || '',
+        elementRef: rootNodeRef,
+    });
 
     /**
      * for correct cancellation on rerender & changed request params & data props
