@@ -49,6 +49,7 @@ export const TableHead = React.memo<Props>((props: Props) => {
                                         className={b('th-content', {
                                             sortable: th.sortable,
                                         })}
+                                        style={th.contentStyle}
                                     >
                                         {th.content}
                                         <SortIcon className={b('sort-icon')} sorting={th.sorting} />

@@ -16,4 +16,6 @@ export type TableWidgetProps = {
     backgroundColor?: string;
     isQlPreviewTable?: boolean;
     qa?: string;
+    emptyDataMessage?: string;
+    className?: string;
 };
