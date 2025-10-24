@@ -230,6 +230,11 @@ export type UpdateSetting = {
     };
 };
 
+export type UpdateDescription = {
+    action: 'update_description';
+    description: string;
+};
+
 export type Update =
     | AddFieldUpdate
     | DeleteFieldUpdate
@@ -244,7 +249,8 @@ export type Update =
     | DeleteSourceUpdate
     | UpdateConnection
     | SourceRefreshUpdate
-    | UpdateSetting;
+    | UpdateSetting
+    | UpdateDescription;
 
 export type EditorItemToDisplay = 'fieldsId' | 'hiddenFields';
 

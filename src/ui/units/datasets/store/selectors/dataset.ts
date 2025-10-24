@@ -216,13 +216,13 @@ export const rawSqlLevelSelector = createSelector(
     },
 );
 
-const datasetInitialDescrioptionSelector = (state: DatalensGlobalState) =>
+const datasetInitialDescriptionSelector = (state: DatalensGlobalState) =>
     state.dataset.prevContent?.description ?? '';
 
-export const datasetDescrioptionSelector = (state: DatalensGlobalState) =>
+export const datasetDescriptionSelector = (state: DatalensGlobalState) =>
     state.dataset.content?.description ?? '';
 
 export const isDescriptionChangedSelector = createSelector(
-    [datasetInitialDescrioptionSelector, datasetDescrioptionSelector],
+    [datasetInitialDescriptionSelector, datasetDescriptionSelector],
     (initialDescription, previewDescription) => initialDescription !== previewDescription,
 );
