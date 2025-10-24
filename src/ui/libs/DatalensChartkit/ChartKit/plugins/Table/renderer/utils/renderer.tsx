@@ -33,7 +33,7 @@ import {calculateNumericProperty} from './math';
 const b = block('chartkit-table-widget');
 
 export type HeadCell = THead & {
-    name: string;
+    name: string | React.ReactElement;
     formattedName?: WrappedHTML | string;
     fieldId?: string;
     custom?: unknown;
@@ -60,7 +60,7 @@ export function mapHeadCell(args: {
                 type: th.markup ? 'markup' : columnType,
             } as TableCommonCell;
             return (
-                <span data-qa={ChartKitTableQa.HeadCellContent}>
+                <span style={th.innerContentCss} data-qa={ChartKitTableQa.HeadCellContent}>
                     {renderCellContent({cell, column: th, header: true, onRender: onRenderCell})}
                     {hint && <MarkdownHelpPopover markdown={hint} />}
                 </span>
@@ -126,6 +126,10 @@ export function renderCellContent(args: {
     const {cell, column, header, onRender} = args;
     const cellView = get(cell, 'view', get(column, 'view'));
     const cellType = cell.type ?? get(column, 'type');
+
+    if (React.isValidElement(cell.value)) {
+        return cell.value;
+    }
 
     if (cellType === 'markup' || isMarkupItem(cell.value)) {
         return <MarkupCell cell={cell} />;

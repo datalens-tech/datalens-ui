@@ -28,6 +28,8 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
             backgroundColor,
             isQlPreviewTable = false,
             qa = ChartKitTableQa.Widget,
+            emptyDataMessage,
+            className,
         } = props;
 
         const generatedId = React.useMemo(
@@ -91,11 +93,12 @@ const TableWidget = React.forwardRef<ChartKitWidgetRef | undefined, TableWidgetP
         );
 
         return (
-            <div className={b()} data-qa={qa} ref={ref}>
+            <div className={b({}, className)} data-qa={qa} ref={ref}>
                 {dimensions ? (
                     <Table
                         widgetData={props.data}
                         dimensions={dimensions}
+                        emptyDataMessage={emptyDataMessage}
                         onChangeParams={handleChangeParams}
                         onReady={handleTableReady}
                         backgroundColor={backgroundColor}

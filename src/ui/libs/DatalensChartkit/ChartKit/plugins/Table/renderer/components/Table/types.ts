@@ -81,6 +81,7 @@ export type HeadCellViewData = {
     sortable: boolean;
     pinned: boolean;
     style?: React.CSSProperties;
+    contentStyle?: React.CSSProperties;
     sorting: 'asc' | 'desc' | false;
     content: JSX.Element | React.ReactNode;
     onClick: () => void;

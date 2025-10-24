@@ -386,7 +386,7 @@ export const getColumnsAndNames = ({
                 });
                 const columnName = generateName({
                     id: column.id,
-                    name: column.name,
+                    ...(typeof column.name === 'string' ? {name: column.name} : null),
                     level,
                     shift,
                     index,
@@ -423,7 +423,13 @@ export const getColumnsAndNames = ({
             } else {
                 const {id, name, type, css: columnCss, group, autogroup, ...options} = column;
                 const columnWidth = topLevelWidth || column.width;
-                const columnName = generateName({id, name, level, shift, index});
+                const columnName = generateName({
+                    id,
+                    ...(typeof name === 'string' ? {name} : null),
+                    level,
+                    shift,
+                    index,
+                });
 
                 const isColumnSortable =
                     typeof column.sortable === 'undefined' ? true : column.sortable;

@@ -329,3 +329,7 @@ export function getCellCustomStyle(cellData: unknown, tableBgColor?: string) {
 
     return css;
 }
+
+export function getCellCustomContentStyle(cellData: unknown) {
+    return {...camelCaseCss(get(cellData, 'contentCss', {}))} as React.CSSProperties;
+}

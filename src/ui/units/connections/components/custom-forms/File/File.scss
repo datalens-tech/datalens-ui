@@ -188,46 +188,15 @@
         }
     }
 
-    // the normal api for working with data-table styles has not yet been delivered
-    & .data-table {
+    &__preview-table {
         height: calc(
             100vh - var(--container-height-offset) - var(--settings-height) - var(
                     --column-filter-height
                 ) - var(--gn-top-alert-height)
         );
-
-        &__table {
-            min-width: 100%;
-        }
-
-        &__head-cell {
-            display: inline-flex;
-            align-items: center;
-        }
-
-        &__th {
-            border-top: none;
-        }
-
-        &__th,
-        &__td {
-            height: 38px;
-            vertical-align: middle;
-            border-left: none;
-            border-right: none;
-            border-color: var(--g-color-line-generic);
-
-            &:first-child {
-                padding-left: 20px;
-            }
-        }
-
-        &__td {
-            border-bottom: none;
-        }
     }
 
-    &__workspace_standalone .data-table {
+    &__workspace_standalone &__preview-table {
         height: calc(
             100vh - var(--container-height-offset) - var(--column-filter-height) - var(
                     --gn-top-alert-height

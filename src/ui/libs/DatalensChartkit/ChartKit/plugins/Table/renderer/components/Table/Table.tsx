@@ -47,6 +47,7 @@ type Props = {
     onReady?: () => void;
     backgroundColor?: string;
     disableCellFormatting?: boolean;
+    emptyDataMessage?: string;
 };
 
 export const Table = React.memo<Props>((props: Props) => {
@@ -57,6 +58,7 @@ export const Table = React.memo<Props>((props: Props) => {
         onReady,
         backgroundColor,
         disableCellFormatting = false,
+        emptyDataMessage,
     } = props;
     const {config, data: originalData, unresolvedParams, params: currentParams} = widgetData;
     const title = getTableTitle(config);
@@ -273,7 +275,7 @@ export const Table = React.memo<Props>((props: Props) => {
                 <div className={b('table-wrapper', {'highlight-rows': highlightRows, size})}>
                     {noData && (
                         <div className={b('no-data')}>
-                            {i18n('chartkit-table', 'message-no-data')}
+                            {emptyDataMessage || i18n('chartkit-table', 'message-no-data')}
                         </div>
                     )}
                     {!noData && (

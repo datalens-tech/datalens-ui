@@ -34,6 +34,7 @@ import type {
 } from './types';
 import {
     createTableColumns,
+    getCellCustomContentStyle,
     getCellCustomStyle,
     getColumnId,
     getElementBackgroundColor,
@@ -361,6 +362,7 @@ export const usePreparedTableData = (props: {
                             originalCellData,
                             tableBgColor,
                         );
+                        const cellContentStyle = getCellCustomContentStyle(originalCellData);
 
                         if (pinned) {
                             cellStyle.left = leftPositions[originalCellData?.index ?? -1];
@@ -383,6 +385,7 @@ export const usePreparedTableData = (props: {
                             sortable,
                             pinned,
                             style: cellStyle,
+                            contentStyle: cellContentStyle,
                             sorting: header.column.getIsSorted(),
                             content: flexRender(
                                 header.column.columnDef.header,
@@ -477,7 +480,8 @@ export const usePreparedTableData = (props: {
                     cellStyle.wordBreak = 'break-word';
                 }
 
-                const contentStyle: React.CSSProperties = {};
+                const contentStyle: React.CSSProperties =
+                    getCellCustomContentStyle(originalHeadData);
                 if (typeof originalHeadData?.width !== 'undefined') {
                     contentStyle.width = originalHeadData.width;
                 }

@@ -1,3 +1,5 @@
+import type {ReactElement} from 'react';
+
 import type {Column} from '@gravity-ui/react-data-table';
 
 import type {WrappedHTML} from '../charts';
@@ -32,6 +34,7 @@ export interface TableCommonCell {
     // formatted number from Wizard
     formattedValue?: string;
     css?: ChartKitCss;
+    contentCss?: ChartKitCss;
     // if the column type: 'text'
     link?: {
         href: string;
@@ -55,9 +58,9 @@ export type TableCellsRow = {
     cells: TableCell[];
 };
 export type TableRow = TableValuesRow | TableCellsRow;
-export type CommonTableColumn = {
+export type CommonTableColumn<CT extends Record<string, unknown> = Record<string, unknown>> = {
     id?: string;
-    name: string;
+    name: string | ReactElement;
     formattedName?: WrappedHTML | string;
     type: TableCommonCellType;
     group?: boolean;
@@ -67,10 +70,11 @@ export type CommonTableColumn = {
     width?: Column<unknown>['width'];
     /** @deprecated seems like only for type=grid */
     contentCss?: ChartKitCss;
+    innerContentCss?: ChartKitCss;
     sortable?: boolean;
     allowGroupSort?: boolean;
     /** Reserved subspace to store options and values for customized functionality */
-    custom?: Record<string, any>;
+    custom?: CT;
     pinned?: boolean;
     hint?: string;
 };
@@ -133,9 +137,10 @@ export type TableColumn =
     | BarTableColumn;
 type TableSubColumn = {
     id?: string;
-    name: string;
+    name: string | ReactElement;
     formattedName?: WrappedHTML | string;
     css?: ChartKitCss;
+    innerContentCss?: ChartKitCss;
     markup: MarkupItem;
     sub: (TableColumn | TableSubColumn)[];
     width?: string;
