@@ -1,6 +1,7 @@
 import type {DialogTextWidgetProps} from '../../../components/DialogTextWidget/DialogTextWidget';
 import {makeDefaultEmpty} from '../../components/DefaultEmpty';
 
+import type {DashActionPanelAdditionalButtonsProps} from './types/DashActionPanelAdditionalButtons';
 import type {DialogDashOtherSettingsPrependProps} from './types/DialogDashOtherSettingsPrepend';
 
 export const dashComponentsMap = {
@@ -9,5 +10,5 @@ export const dashComponentsMap = {
     DialogTextWidget: makeDefaultEmpty<DialogTextWidgetProps>(),
     DashBodyAdditionalControls: makeDefaultEmpty(),
     DialogDashOtherSettingsPrepend: makeDefaultEmpty<DialogDashOtherSettingsPrependProps>(),
-    DashActionPanelAdditionalButtons: makeDefaultEmpty(),
+    DashActionPanelAdditionalButtons: makeDefaultEmpty<DashActionPanelAdditionalButtonsProps>(),
 } as const;
