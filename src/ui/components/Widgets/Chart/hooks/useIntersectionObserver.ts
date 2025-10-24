@@ -6,6 +6,7 @@ type IntersectionCallback = (state: boolean) => void;
 
 const THROTTLE_VISIBLE_DELAY = 100;
 const LOADING_VISIBLE_OFFSET = 300;
+const LOADING_INTERSECTION_RATIO = 0.05;
 
 class Observer {
     callbacksMap: Map<HTMLDivElement, IntersectionCallback> = new Map();
@@ -52,6 +53,7 @@ class Observer {
         if (this.intersectionObserver === null) {
             this.intersectionObserver = new IntersectionObserver(this.intersectionHandler, {
                 rootMargin: `${LOADING_VISIBLE_OFFSET}px`,
+                threshold: [0, LOADING_INTERSECTION_RATIO],
             });
         }
 
