@@ -244,7 +244,10 @@ const PageComponent = (props: PageProps) => {
                                 />
                             ),
                             isDescriptionEnabled && (
-                                <DescriptionButton isS3BasedConnForm={s3BasedFormOpened} />
+                                <DescriptionButton
+                                    key="connection-description"
+                                    isS3BasedConnForm={s3BasedFormOpened}
+                                />
                             ),
                             isShowCreateButtons && (
                                 <ConnPanelActions

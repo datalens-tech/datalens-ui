@@ -80,6 +80,7 @@ import type {
     SourcesPagination,
     ToggleAllowanceSave,
     Update,
+    UpdateDescription,
     UpdateSetting,
 } from '../../types';
 import * as DATASET_ACTION_TYPES from '../types/dataset';
@@ -1201,6 +1202,16 @@ export function updateSetting(
 export function setDatasetDescription(payload: string) {
     return (dispatch: Dispatch<DatasetReduxAction>) => {
         batch(() => {
+            const update: UpdateDescription = {
+                action: 'update_description',
+                description: payload,
+            };
+            dispatch({
+                type: DATASET_ACTION_TYPES.SET_UPDATES,
+                payload: {
+                    updates: [update],
+                },
+            });
             dispatch({
                 type: DATASET_ACTION_TYPES.SET_DESCRIPTION,
                 payload,
