@@ -19,6 +19,18 @@ type GlobalSelectorIconType = {
     className?: string;
 };
 
+// const i18n = I18n.keyset('dash.control-dialog.edit');
+
+// TODO: Add translations
+const i18n = (key: string) => {
+    const values: Record<string, string> = {
+        'value_all-tabs': 'На всех вкладках',
+        'value_selected-tabs': 'Выбранные вкладки',
+    };
+
+    return values[key];
+};
+
 export const GlobalSelectorIcon = ({
     size = 16,
     withHint,
@@ -29,10 +41,10 @@ export const GlobalSelectorIcon = ({
     let hintTitle = '';
     if (tabsScope === TABS_SCOPE_ALL) {
         icon = <Icon data={Globe} size={size} className={b(null, className)} />;
-        hintTitle = 'На всех вкладках';
+        hintTitle = i18n('value_all-tabs');
     } else if (Array.isArray(tabsScope) || tabsScope === TABS_SCOPE_SELECT_VALUE.SELECTED_TABS) {
         icon = <Icon data={LayoutTabs} size={size} className={b(null, className)} />;
-        hintTitle = 'На выбранных вкладках';
+        hintTitle = i18n('value_selected-tabs');
     }
 
     if (icon) {

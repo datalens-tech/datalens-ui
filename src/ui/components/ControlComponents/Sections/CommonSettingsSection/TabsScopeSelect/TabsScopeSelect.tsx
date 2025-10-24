@@ -25,11 +25,27 @@ import './TabsScopeSelect.scss';
 
 const b = block('tabs-scope-select');
 
+// const i18n = I18n.keyset('dash.control-dialog.edit');
+
+// TODO: Add translations
+const i18n = (key: string) => {
+    const values: Record<string, string> = {
+        'label_tabs-scope': 'Показать во вкладках',
+        'label_selected-tabs-placeholder': 'Выберите вкладки',
+        'value_all-tabs': 'На всех вкладках',
+        'value_selected-tabs': 'Выбранные вкладки',
+        'value_current-tab': 'Текущая вкладка',
+        'value_as-group': 'Как у группы',
+    };
+
+    return values[key];
+};
+
 const LABEL_BY_SCOPE_MAP = {
-    [TABS_SCOPE_SELECT_VALUE.ALL]: 'Во всех вкладках',
-    [TABS_SCOPE_SELECT_VALUE.CURRENT_TAB]: 'Текущая вкладка',
-    [TABS_SCOPE_SELECT_VALUE.AS_GROUP]: 'Как у группы',
-    [TABS_SCOPE_SELECT_VALUE.SELECTED_TABS]: 'Выбранные вкладки',
+    [TABS_SCOPE_SELECT_VALUE.ALL]: i18n('value_all-tabs'),
+    [TABS_SCOPE_SELECT_VALUE.CURRENT_TAB]: i18n('value_current-tab'),
+    [TABS_SCOPE_SELECT_VALUE.AS_GROUP]: i18n('value_as-group'),
+    [TABS_SCOPE_SELECT_VALUE.SELECTED_TABS]: i18n('value_selected-tabs'),
 };
 
 const renderOptions = (option: SelectOption) => <SelectOptionWithIcon option={option} />;
@@ -134,7 +150,6 @@ export const TabsScopeSelect = ({
 
     const updateSelectorsState = React.useCallback(
         (tabsScope: TabsScope) => {
-            // add get tabsScope by tabsScope value
             dispatch(
                 isGroupSettings
                     ? updateSelectorsGroup({
@@ -167,6 +182,7 @@ export const TabsScopeSelect = ({
     const handleSelectedTabsChange = React.useCallback(
         (value: string[]) => {
             // Always ensure current tab is included and can't be removed
+            // TODO: change logic
             const newSelectedTabs = value.includes(currentTabId) ? value : [...value, currentTabId];
             setSelectedTabs(newSelectedTabs);
             updateSelectorsState(newSelectedTabs);
@@ -186,7 +202,7 @@ export const TabsScopeSelect = ({
 
     return (
         <React.Fragment>
-            <FormRow label="Показать во вкладках">
+            <FormRow label={i18n('label_tabs-scope')}>
                 <Flex direction="column" gap={2}>
                     <Select
                         value={[currentTabsScope]}
@@ -205,7 +221,7 @@ export const TabsScopeSelect = ({
                             width="max"
                             multiple
                             options={tabsOptions}
-                            placeholder="Выберите вкладки"
+                            placeholder={i18n('label_selecteed-tabs-placeholder')}
                         />
                     )}
                 </Flex>
