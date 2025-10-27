@@ -197,7 +197,7 @@ const PageComponent = (props: PageProps) => {
     }, [actions, extractedEntryId, workbookId]);
 
     React.useEffect(() => {
-        if (revisionsSupported && !isFakeEntry) {
+        if (revId && revisionsSupported && !isFakeEntry) {
             actions.setRevision(revId);
         }
     }, [revId, revisionsSupported, actions, isFakeEntry]);
