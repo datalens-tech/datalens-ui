@@ -1,3 +1,5 @@
+import type {EntryScope} from '../../../../../../shared/schema';
+import type {CollectionItemEntities} from '../../../constants';
 import type {EntryAnnotation, WorkbookId} from '../../../types';
 
 export type EntryFieldData<T = Record<string, unknown>> = null | T;
@@ -63,6 +65,40 @@ export interface EntryNavigationFields {
     hidden: boolean;
     workbookId: WorkbookId;
     workbookTitle?: string | null;
+}
+
+export interface SharedEntryPermissions {
+    copy: true;
+    createEntryBinding: true;
+    createLimitedEntryBinding: true;
+    delete: true;
+    limitedView: true;
+    listAccessBindings: true;
+    move: true;
+    update: true;
+    updateAccessBindings: true;
+    view: true;
+}
+
+export interface SharedEntryFields {
+    collectionId: string;
+    createdBy: string;
+    updatedBy: string;
+    updatedAt: string;
+    createdAt: string;
+    workbookId: string;
+    scope: Extract<EntryScope, 'connection' | 'dataset'>;
+    tenantId: string;
+    type: string;
+    key: string;
+    entryId: string;
+    entity: typeof CollectionItemEntities.ENTRY;
+    displayKey: string;
+    title: string;
+}
+
+export interface SharedEntryFieldsWithPermissions extends SharedEntryFields {
+    permissions: SharedEntryPermissions;
 }
 
 // corresponds to RETURN_FAVORITES_COLUMNS from US

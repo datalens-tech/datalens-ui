@@ -1,4 +1,5 @@
 export * from './common';
+export * from './collections';
 export * from './connections';
 export * from './datasets';
 export * from './dash';
