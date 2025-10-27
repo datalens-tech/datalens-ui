@@ -157,5 +157,34 @@ datalensTest.describe('Wizard', () => {
             await expect(previewLoader).not.toBeVisible();
             await expect(chartContainer).toHaveScreenshot();
         });
+
+        datalensTest('Markup with null values is colored without errors', async ({page}) => {
+            // Cancel test with error when an uncaught exception happens within the page
+            page.on('pageerror', (exception) => {
+                throw exception;
+            });
+
+            const wizardPage = new WizardPage({page});
+            const chartContainer = page.locator(slct(WizardPageQa.SectionPreview));
+            const previewLoader = chartContainer.locator(slct(ChartKitQa.Loader));
+            const chart = wizardPage.chartkit.getTableLocator();
+
+            const markupField = 'nullable markup';
+            await wizardPage.createNewFieldWithFormula(markupField, `color(null, 'salmon')`);
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.FlatTableColumns,
+                markupField,
+            );
+
+            await wizardPage.visualizationItemDialog.open(
+                PlaceholderName.FlatTableColumns,
+                markupField,
+            );
+            await page.locator(slct(DialogFieldBackgroundSettingsQa.EnableButton)).click();
+            await wizardPage.visualizationItemDialog.clickOnApplyButton();
+
+            await expect(previewLoader).not.toBeVisible();
+            await expect(chart).toBeVisible();
+        });
     });
 });
