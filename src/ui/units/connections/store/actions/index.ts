@@ -102,28 +102,6 @@ async function getConnectionDataRequest({
     return {connectionData, connectionError};
 }
 
-export function setRevision(revId?: string) {
-    return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
-        const {
-            connections: {flattenConnectors, entry},
-        } = getState();
-        if (entry) {
-            dispatch(setPageLoading({pageLoading: true}));
-            const {connectionData, connectionError} = await getConnectionDataRequest({
-                entry,
-                flattenConnectors,
-                rev_id: revId,
-            });
-            batch(() => {
-                dispatch(
-                    setConectorData({connectionData: connectionData ?? {}, error: connectionError}),
-                );
-                dispatch(setPageLoading({pageLoading: false}));
-            });
-        }
-    };
-}
-
 export function setPageData({
     entryId,
     workbookId,

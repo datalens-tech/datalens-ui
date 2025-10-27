@@ -16,7 +16,6 @@ import type {DatalensGlobalState} from 'ui';
 import {PageTitle, SlugifyUrl, URL_QUERY, Utils} from 'ui';
 import type {FilterEntryContextMenuItems} from 'ui/components/EntryContextMenu';
 import {ENTRY_CONTEXT_MENU_ACTION} from 'ui/components/EntryContextMenu';
-import {usePrevious} from 'ui/hooks';
 import {registry} from 'ui/registry';
 import {
     openDialogErrorWithTabs,
@@ -37,7 +36,6 @@ import {
     getConnectors,
     setInitialState,
     setPageData,
-    setRevision,
     updateConnectionWithRevision,
 } from '../../store';
 import {getConnItemByType} from '../../utils';
@@ -163,11 +161,9 @@ const PageComponent = (props: PageProps) => {
     const isRevisionsEnabled = isEnabledFeature(Feature.EnableConnectionRevisions);
     const isExportSettingsFeatureEnabled = isEnabledFeature(Feature.EnableExportSettings);
     const isDescriptionEnabled = isEnabledFeature(Feature.EnableConnectionDescription);
-    const isFakeEntry = entry && 'fake' in entry && entry.fake;
 
     const revisionsSupported = connector?.history && isRevisionsEnabled;
     const revId = currentSearchParams.get(URL_QUERY.REV_ID) ?? undefined;
-    const prevRevId = usePrevious(revId);
 
     const showSettings = !connector?.backend_driven_form;
     let isShowCreateButtons = true;
@@ -194,15 +190,7 @@ const PageComponent = (props: PageProps) => {
             workbookId,
             rev_id: revId,
         });
-        //This is initial request data, there is no need to request it when changing revId
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [actions, extractedEntryId, workbookId]);
-
-    React.useEffect(() => {
-        if ((revId || (prevRevId && !revId)) && revisionsSupported && !isFakeEntry) {
-            actions.setRevision(revId);
-        }
-    }, [revId, revisionsSupported, actions, isFakeEntry, prevRevId]);
+    }, [actions, extractedEntryId, workbookId, revId]);
 
     const setActualVersion = React.useMemo(
         () =>
@@ -310,7 +298,6 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
                 openDialogErrorWithTabs,
                 openDialogSaveDraftChartAsActualConfirm,
                 updateConnectionWithRevision,
-                setRevision,
             },
             dispatch,
         ),
