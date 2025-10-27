@@ -16,6 +16,7 @@ import type {DatalensGlobalState} from 'ui';
 import {PageTitle, SlugifyUrl, URL_QUERY, Utils} from 'ui';
 import type {FilterEntryContextMenuItems} from 'ui/components/EntryContextMenu';
 import {ENTRY_CONTEXT_MENU_ACTION} from 'ui/components/EntryContextMenu';
+import {usePrevious} from 'ui/hooks';
 import {registry} from 'ui/registry';
 import {
     openDialogErrorWithTabs,
@@ -166,6 +167,7 @@ const PageComponent = (props: PageProps) => {
 
     const revisionsSupported = connector?.history && isRevisionsEnabled;
     const revId = currentSearchParams.get(URL_QUERY.REV_ID) ?? undefined;
+    const prevRevId = usePrevious(revId);
 
     const showSettings = !connector?.backend_driven_form;
     let isShowCreateButtons = true;
@@ -197,10 +199,10 @@ const PageComponent = (props: PageProps) => {
     }, [actions, extractedEntryId, workbookId]);
 
     React.useEffect(() => {
-        if (revId && revisionsSupported && !isFakeEntry) {
+        if ((revId || (prevRevId && !revId)) && revisionsSupported && !isFakeEntry) {
             actions.setRevision(revId);
         }
-    }, [revId, revisionsSupported, actions, isFakeEntry]);
+    }, [revId, revisionsSupported, actions, isFakeEntry, prevRevId]);
 
     const setActualVersion = React.useMemo(
         () =>
