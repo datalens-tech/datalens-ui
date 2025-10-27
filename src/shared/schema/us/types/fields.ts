@@ -1,4 +1,3 @@
-import type {EntryScope} from '../../../../../../shared/schema';
 import type {CollectionItemEntities} from '../../../constants';
 import type {EntryAnnotation, WorkbookId} from '../../../types';
 
@@ -87,7 +86,7 @@ export interface SharedEntryFields {
     updatedAt: string;
     createdAt: string;
     workbookId: string;
-    scope: Extract<EntryScope, 'connection' | 'dataset'>;
+    scope: string;
     tenantId: string;
     type: string;
     key: string;
