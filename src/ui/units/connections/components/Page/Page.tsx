@@ -162,6 +162,7 @@ const PageComponent = (props: PageProps) => {
     const isRevisionsEnabled = isEnabledFeature(Feature.EnableConnectionRevisions);
     const isExportSettingsFeatureEnabled = isEnabledFeature(Feature.EnableExportSettings);
     const isDescriptionEnabled = isEnabledFeature(Feature.EnableConnectionDescription);
+    const isFakeEntry = entry && 'fake' in entry && entry.fake;
 
     const revisionsSupported = connector?.history && isRevisionsEnabled;
     const revId = currentSearchParams.get(URL_QUERY.REV_ID) ?? undefined;
@@ -196,10 +197,10 @@ const PageComponent = (props: PageProps) => {
     }, [actions, extractedEntryId, workbookId]);
 
     React.useEffect(() => {
-        if (revisionsSupported) {
+        if (revisionsSupported && !isFakeEntry) {
             actions.setRevision(revId);
         }
-    }, [revId, revisionsSupported, actions]);
+    }, [revId, revisionsSupported, actions, isFakeEntry]);
 
     const setActualVersion = React.useMemo(
         () =>

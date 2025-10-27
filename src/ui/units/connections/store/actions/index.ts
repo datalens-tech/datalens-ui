@@ -78,7 +78,8 @@ interface GetConnectionDataRequestProps {
     flattenConnectors: ConnectorItem[];
     rev_id?: string;
 }
-export async function getConnectionDataRequest({
+
+async function getConnectionDataRequest({
     entry,
     flattenConnectors,
     rev_id,
