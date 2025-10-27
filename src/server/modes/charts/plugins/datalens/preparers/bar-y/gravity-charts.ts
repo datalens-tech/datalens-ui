@@ -96,7 +96,6 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
                 'bar-y': {
                     stackGap: 0,
                     borderWidth: 1,
-                    barMaxWidth: 75,
                 },
             },
         },
