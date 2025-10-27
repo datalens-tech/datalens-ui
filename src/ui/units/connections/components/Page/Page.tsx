@@ -196,8 +196,10 @@ const PageComponent = (props: PageProps) => {
     }, [actions, extractedEntryId, workbookId]);
 
     React.useEffect(() => {
-        actions.setRevision(revId);
-    }, [revId, actions]);
+        if (revisionsSupported) {
+            actions.setRevision(revId);
+        }
+    }, [revId, revisionsSupported, actions]);
 
     const setActualVersion = React.useMemo(
         () =>
