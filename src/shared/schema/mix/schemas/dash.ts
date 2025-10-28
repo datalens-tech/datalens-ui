@@ -61,7 +61,7 @@ export const getDashArgsSchema = z.strictObject({
     includePermissions: z.boolean().optional().default(false),
     includeLinks: z.boolean().optional().default(false),
     includeFavorite: z.boolean().optional().default(false),
-    branch: z.literal(['published', 'saved']).optional().default('published'),
+    branch: z.enum(['published', 'saved']).optional(),
 });
 
 export const getDashResultSchema = dashUsSchema;

@@ -209,7 +209,9 @@ export const dashActions = {
             const result = await Dash.read(
                 dashboardId,
                 {
-                    includePermissions: includePermissions ? includePermissions.toString() : '0',
+                    includePermissionsInfo: includePermissions
+                        ? includePermissions.toString()
+                        : '0',
                     includeLinks: includeLinks ? includeLinks.toString() : '0',
                     includeFavorite,
                     ...(branch ? {branch} : {branch: 'published'}),
