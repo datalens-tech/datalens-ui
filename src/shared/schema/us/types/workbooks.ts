@@ -38,7 +38,7 @@ export type WorkbookWithPermissions = Workbook & {
 };
 
 export type ExtendedWorkbook = WorkbookWithPermissions & {
-    entity: typeof CollectionItemEntities.WORKBOOK;
+    entity?: typeof CollectionItemEntities.WORKBOOK;
 };
 
 export type CreateWorkbookArgs = {

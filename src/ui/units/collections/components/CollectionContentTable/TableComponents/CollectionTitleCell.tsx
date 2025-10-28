@@ -12,6 +12,7 @@ import {WorkbookIcon} from 'ui/components/WorkbookIcon/WorkbookIcon';
 import {DL} from 'ui/constants/common';
 
 import type {WorkbookStatus} from '../../../../../../shared/constants/workbooks';
+import {getIsWorkbookItem} from '../../helpers';
 import {getItemParams} from '../helpers';
 
 import '../CollectionContentTable.scss';
@@ -54,6 +55,12 @@ const ItemIcon = ({item}: CollectionTitleCellProps) => {
                     entityIconSize={entryIconSize}
                     className={b('custom_icon', {mobile: DL.IS_MOBILE})}
                 />
+            );
+        default:
+            return getIsWorkbookItem(item) ? (
+                <WorkbookIcon title={item.title} size={workbookSize} />
+            ) : (
+                <CollectionIcon size={collectionSize} />
             );
     }
 };

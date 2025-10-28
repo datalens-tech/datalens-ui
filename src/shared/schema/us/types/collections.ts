@@ -43,7 +43,7 @@ export type CollectionWithOptionalPermissions = Collection & {
 };
 
 export type ExtendedCollection = CollectionWithPermissions & {
-    entity: typeof CollectionItemEntities.COLLECTION;
+    entity?: typeof CollectionItemEntities.COLLECTION;
 };
 
 export type GetRootCollectionPermissionsResponse = {

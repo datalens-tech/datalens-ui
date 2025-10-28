@@ -2,10 +2,10 @@ import React from 'react';
 
 import {Checkbox} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {CollectionItemEntities} from 'shared';
 import type {StructureItem} from 'shared/schema/types';
 
 import type {SelectedMap, UpdateCheckboxArgs} from '../../CollectionPage/hooks/useSelection';
+import {getIsWorkbookItem} from '../../helpers';
 
 import '../CollectionContentTable.scss';
 
@@ -26,7 +26,7 @@ export const CollectionCheckboxCell = ({
 }: CollectionCheckboxCellProps) => {
     const canMoveItem = item.permissions.move;
     const isDisabled = !canMoveItem || disabled;
-    const isWorkbook = item.entity === CollectionItemEntities.WORKBOOK;
+    const isWorkbook = getIsWorkbookItem(item);
 
     const handleUpdate = (checked: boolean) => {
         onUpdateCheckboxClick({

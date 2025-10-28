@@ -35,6 +35,7 @@ import type {AppDispatch} from '../../../../../store';
 import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
 import {WORKBOOKS_PATH} from '../../../../collections-navigation/constants';
 import {deleteCollectionInItems, deleteWorkbookInItems} from '../../../store/actions';
+import {getIsWorkbookItem} from '../../helpers';
 
 const i18n = I18n.keyset('collections');
 
@@ -397,6 +398,10 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
                     return getWorkbookActions(item);
                 case CollectionItemEntities.ENTRY:
                     return getEntryActions(item);
+                default:
+                    return getIsWorkbookItem(item)
+                        ? getWorkbookActions(item)
+                        : getCollectionActions(item);
             }
         },
         [getCollectionActions, getEntryActions, getWorkbookActions],

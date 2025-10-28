@@ -16,7 +16,7 @@ import {setCollectionBreadcrumbs} from '../../../../collections-navigation/store
 import {setWorkbook} from '../../../../workbooks/store/actions';
 import type {RefreshPageAfterImport} from '../../../hooks/useRefreshPageAfterImport';
 import {setCollection} from '../../../store/actions';
-import {getItemLink} from '../../helpers';
+import {getIsWorkbookItem, getItemLink} from '../../helpers';
 
 import '../CollectionContentTable.scss';
 
@@ -40,7 +40,7 @@ export const CollectionLinkRow: React.FC<CollectionLinkRowProps> = ({
 
     const breadcrumbs = useSelector(selectCollectionBreadcrumbs) ?? [];
 
-    const isWorkbookItem = item.entity === CollectionItemEntities.WORKBOOK;
+    const isWorkbookItem = getIsWorkbookItem(item);
     const isEntryItem = item.entity === CollectionItemEntities.ENTRY;
 
     if (isDisabled && isWorkbookItem) {
@@ -80,11 +80,15 @@ export const CollectionLinkRow: React.FC<CollectionLinkRowProps> = ({
             </div>
         );
     }
+    const entity =
+        item.entity ?? getIsWorkbookItem(item)
+            ? CollectionItemEntities.WORKBOOK
+            : CollectionItemEntities.COLLECTION;
     const dataQa = {
         [CollectionItemEntities.COLLECTION]: CollectionContentTableQa.CollectionLinkRow,
         [CollectionItemEntities.WORKBOOK]: CollectionContentTableQa.WorkbookLinkRow,
         [CollectionItemEntities.ENTRY]: CollectionContentTableQa.EntryLinkRow,
-    }[item.entity];
+    }[entity];
 
     return (
         <Link

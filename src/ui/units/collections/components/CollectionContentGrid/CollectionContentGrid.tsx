@@ -16,7 +16,7 @@ import {setWorkbook} from '../../../workbooks/store/actions';
 import {setCollection} from '../../store/actions';
 import {selectStructureItems} from '../../store/selectors';
 import type {SelectedMap, UpdateCheckboxArgs} from '../CollectionPage/hooks';
-import {getItemKey, getItemLink} from '../helpers';
+import {getIsWorkbookItem, getItemKey, getItemLink} from '../helpers';
 
 import {CollectionItemIcon} from './CollectionItemIcon';
 
@@ -42,7 +42,7 @@ export const CollectionContentGrid = React.memo<Props>(
             <div className={b()}>
                 <div className={b('grid')}>
                     {items.map((item, index) => {
-                        const isWorkbook = item.entity === CollectionItemEntities.WORKBOOK;
+                        const isWorkbook = getIsWorkbookItem(item);
                         const isEntry = item.entity === CollectionItemEntities.ENTRY;
                         const canMove = item.permissions.move;
 

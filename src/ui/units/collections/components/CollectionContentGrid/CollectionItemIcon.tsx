@@ -6,6 +6,8 @@ import {CollectionIcon} from 'ui/components/CollectionIcon/CollectionIcon';
 import {EntryIcon} from 'ui/components/EntryIcon/EntryIcon';
 import {WorkbookIcon} from 'ui/components/WorkbookIcon/WorkbookIcon';
 
+import {getIsWorkbookItem} from '../helpers';
+
 type CollectionItemIconProps = {
     item: StructureItem;
 };
@@ -18,5 +20,11 @@ export const CollectionItemIcon = ({item}: CollectionItemIconProps) => {
             return <WorkbookIcon title={item.title} size="l" />;
         case CollectionItemEntities.ENTRY:
             return <EntryIcon entry={item} className="custom_icon" />;
+        default:
+            return getIsWorkbookItem(item) ? (
+                <WorkbookIcon title={item.title} size="l" />
+            ) : (
+                <CollectionIcon isIconBig size={125} />
+            );
     }
 };

@@ -1,9 +1,17 @@
 import type {AppInstallation} from 'shared';
 import {CollectionItemEntities} from 'shared';
-import type {StructureItem} from 'shared/schema/types';
+import type {ExtendedWorkbook, StructureItem} from 'shared/schema/types';
 import {DL} from 'ui';
 import {registry} from 'ui/registry';
 import {COLLECTIONS_PATH, WORKBOOKS_PATH} from 'ui/units/collections-navigation/constants';
+
+export const getIsWorkbookItem = (item: StructureItem): item is ExtendedWorkbook => {
+    if (item.entity) {
+        return item.entity === CollectionItemEntities.WORKBOOK;
+    } else {
+        return 'workbookId' in item;
+    }
+};
 
 export const getItemKey = (item: StructureItem) => {
     switch (item.entity) {
@@ -13,6 +21,8 @@ export const getItemKey = (item: StructureItem) => {
             return item.workbookId;
         case CollectionItemEntities.ENTRY:
             return item.key;
+        default:
+            return getIsWorkbookItem(item) ? item.workbookId : item.collectionId;
     }
 };
 
@@ -33,5 +43,9 @@ export const getItemLink = (item: StructureItem) => {
                     entry: item,
                 }),
             ).pathname;
+        default:
+            return getIsWorkbookItem(item)
+                ? `${WORKBOOKS_PATH}/${item.workbookId}`
+                : `${COLLECTIONS_PATH}/${item.collectionId}`;
     }
 };
