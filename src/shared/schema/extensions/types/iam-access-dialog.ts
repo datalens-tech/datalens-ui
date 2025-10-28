@@ -161,3 +161,8 @@ export type BatchListAccessBindingsArgs = {
     pageSize?: number;
     pageToken?: string;
 };
+
+export enum ResourceType {
+    Collection = 'collection',
+    Workbook = 'workbook',
+}
