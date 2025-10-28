@@ -4,6 +4,7 @@ import block from 'bem-cn-lite';
 import {ChartKitTableQa} from 'shared';
 
 import type {BodyCellViewData, BodyRowViewData, RowRef} from './types';
+import {getCellVeticalAlignmentStyle} from './utils';
 
 const b = block('dl-table');
 
@@ -20,6 +21,10 @@ const TableBodyCell = (props: {
     isLastPinnedCell?: boolean;
 }) => {
     const {cell, isLastPinnedCell, onClick} = props;
+    const contentStyle = {
+        ...cell.contentStyle,
+        ...getCellVeticalAlignmentStyle(cell),
+    };
 
     return (
         <td
@@ -45,7 +50,7 @@ const TableBodyCell = (props: {
             <div
                 className={b('cell-content', {type: cell.contentType})}
                 data-qa={ChartKitTableQa.CellContent}
-                style={cell.contentStyle}
+                style={contentStyle}
             >
                 {cell.content}
             </div>
