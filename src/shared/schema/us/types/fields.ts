@@ -67,27 +67,16 @@ export interface EntryNavigationFields {
 }
 
 export interface SharedEntryPermissions {
-    copy: true;
-    createEntryBinding: true;
-    createLimitedEntryBinding: true;
     delete: true;
-    limitedView: true;
-    listAccessBindings: true;
     move: true;
     update: true;
-    updateAccessBindings: true;
-    view: true;
 }
 
 export interface SharedEntryFields {
     collectionId: string;
-    createdBy: string;
-    updatedBy: string;
     updatedAt: string;
-    createdAt: string;
     workbookId: string;
     scope: string;
-    tenantId: string;
     type: string;
     key: string;
     entryId: string;
