@@ -81,9 +81,10 @@ export const CollectionLinkRow: React.FC<CollectionLinkRowProps> = ({
         );
     }
     const entity =
-        item.entity ?? getIsWorkbookItem(item)
+        item.entity ??
+        (getIsWorkbookItem(item)
             ? CollectionItemEntities.WORKBOOK
-            : CollectionItemEntities.COLLECTION;
+            : CollectionItemEntities.COLLECTION);
     const dataQa = {
         [CollectionItemEntities.COLLECTION]: CollectionContentTableQa.CollectionLinkRow,
         [CollectionItemEntities.WORKBOOK]: CollectionContentTableQa.WorkbookLinkRow,
