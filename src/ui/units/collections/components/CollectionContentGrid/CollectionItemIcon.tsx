@@ -19,7 +19,16 @@ export const CollectionItemIcon = ({item}: CollectionItemIconProps) => {
         case CollectionItemEntities.WORKBOOK:
             return <WorkbookIcon title={item.title} size="l" />;
         case CollectionItemEntities.ENTRY:
-            return <EntryIcon entry={item} className="custom_icon" />;
+            return (
+                <EntryIcon
+                    entry={item}
+                    entityIconProps={{
+                        classNameIcon: 'custom-icon',
+                        classNameColorBox: 'custom-color-box',
+                    }}
+                    className="custom-entry-icon"
+                />
+            );
         default:
             return getIsWorkbookItem(item) ? (
                 <WorkbookIcon title={item.title} size="l" />

@@ -1,5 +1,3 @@
-@import '../../../../components/EntityIcon/EntityIcon';
-
 .dl-collection-content-grid {
     &__grid {
         display: flex;
@@ -39,14 +37,14 @@
     }
 
     &__icon {
-        .custom_icon {
+        .custom-entry-icon {
             height: 125px;
             width: 125px;
-            #{$entityIconClassName}__color-box {
+            .custom-color-box {
                 height: 125px;
                 width: 125px;
                 border-radius: 12px;
-                svg {
+                .custom-icon {
                     width: 82px;
                     height: 82px;
                 }

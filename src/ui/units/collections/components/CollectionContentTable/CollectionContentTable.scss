@@ -1,4 +1,3 @@
-@import '../../../../components/EntityIcon/EntityIcon';
 @import '~@gravity-ui/uikit/styles/mixins';
 
 .dl-collection-content-table {
@@ -120,10 +119,10 @@
         }
     }
 
-    &__custom_icon {
+    &__custom-entry-icon {
         height: 32px;
         width: 32px;
-        #{$entityIconClassName}__color-box {
+        .custom-color-box {
             height: 32px;
             width: 32px;
             border-radius: 6px;
@@ -132,7 +131,7 @@
         &_mobile {
             height: 28px;
             width: 28px;
-            #{$entityIconClassName}__color-box {
+            .custom-color-box {
                 height: 28px;
                 width: 28px;
                 border-radius: 6px;

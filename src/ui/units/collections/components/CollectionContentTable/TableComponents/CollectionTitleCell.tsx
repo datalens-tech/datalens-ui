@@ -53,7 +53,10 @@ const ItemIcon = ({item}: CollectionTitleCellProps) => {
                 <EntryIcon
                     entry={item}
                     entityIconSize={entryIconSize}
-                    className={b('custom_icon', {mobile: DL.IS_MOBILE})}
+                    entityIconProps={{
+                        classNameColorBox: 'custom-color-box',
+                    }}
+                    className={b('custom-entry-icon', {mobile: DL.IS_MOBILE})}
                 />
             );
         default:
