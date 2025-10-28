@@ -26,6 +26,7 @@ import {DiffCell} from '../components/DiffCell/DiffCell';
 import {HtmlCell} from '../components/HtmlCell/HtmlCell';
 import {MarkupCell} from '../components/MarkupCell/MarkupCell';
 import type {THead} from '../components/Table/types';
+import {getCellVeticalAlignmentStyle} from '../components/Table/utils';
 import {TreeCell} from '../components/TreeCell/TreeCell';
 
 import {calculateNumericProperty} from './math';
@@ -34,7 +35,7 @@ const b = block('chartkit-table-widget');
 
 export type HeadCell = THead & {
     name: string;
-    formattedName?: WrappedHTML | string;
+    formattedName?: React.ReactElement | WrappedHTML | string;
     fieldId?: string;
     custom?: unknown;
 };
@@ -59,8 +60,10 @@ export function mapHeadCell(args: {
                 formattedValue: th.formattedName ?? th.name,
                 type: th.markup ? 'markup' : columnType,
             } as TableCommonCell;
+            const verticalAlignmentStyle = getCellVeticalAlignmentStyle(th);
+            const style = verticalAlignmentStyle ? {style: verticalAlignmentStyle} : null;
             return (
-                <span data-qa={ChartKitTableQa.HeadCellContent}>
+                <span {...style} data-qa={ChartKitTableQa.HeadCellContent}>
                     {renderCellContent({cell, column: th, header: true, onRender: onRenderCell})}
                     {hint && <MarkdownHelpPopover markdown={hint} />}
                 </span>
@@ -156,7 +159,7 @@ export function renderCellContent(args: {
         }
     }
 
-    let formattedValue: string | undefined = cell.formattedValue;
+    let formattedValue: React.ReactElement | string | undefined = cell.formattedValue;
     if (!formattedValue) {
         if (cell.value === null) {
             formattedValue = String(cell.value);
@@ -171,6 +174,8 @@ export function renderCellContent(args: {
         } else {
             formattedValue = String(cell.value ?? '');
         }
+    } else if (React.isValidElement(formattedValue)) {
+        return formattedValue;
     } else if (isWrappedHTML(formattedValue)) {
         return <HtmlCell content={formattedValue[WRAPPED_HTML_KEY]} onRender={onRender} />;
     }
