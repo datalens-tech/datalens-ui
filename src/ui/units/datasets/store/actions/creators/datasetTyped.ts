@@ -808,6 +808,16 @@ export function toggleSourcesLoader(isSourcesLoading: boolean) {
         });
     };
 }
+
+export function toggleSourcesListingOptionsLoader(isLoading: boolean) {
+    return (dispatch: DatasetDispatch) => {
+        dispatch({
+            type: DATASET_ACTION_TYPES.TOGGLE_SOURCES_LISTING_OPTIONS_LOADER,
+            payload: {isLoading},
+        });
+    };
+}
+
 export function setSourcesLoadingError(error: DatasetError) {
     return (dispatch: DatasetDispatch) => {
         dispatch({
@@ -1469,7 +1479,7 @@ export function getSources({
 
 export function getDbNames(connectionIds: string[]) {
     return async (dispatch: DatasetDispatch, getState: GetState) => {
-        dispatch(toggleSourcesLoader(true));
+        dispatch(toggleSourcesListingOptionsLoader(true));
         try {
             if (connectionIds.length) {
                 const state = getState();
@@ -1506,7 +1516,7 @@ export function getDbNames(connectionIds: string[]) {
             logger.logError('dataset: getDbNames failed', e);
             dispatch(setSourcesListingOptionsError(e));
         } finally {
-            dispatch(toggleSourcesLoader(false));
+            dispatch(toggleSourcesListingOptionsLoader(false));
         }
     };
 }
@@ -1988,7 +1998,7 @@ function _getSources() {
 
 export function getSourcesListingOptions(connectionId: string) {
     return async (dispatch: DatasetDispatch, getState: GetState) => {
-        dispatch(toggleSourcesLoader(true));
+        dispatch(toggleSourcesListingOptionsLoader(true));
         let sourceListing: DatasetOptions['source_listing'] | undefined;
         try {
             const result = await (DatasetUtils.isEnabledFeature(
@@ -2016,7 +2026,7 @@ export function getSourcesListingOptions(connectionId: string) {
             logger.logError('dataset: getSourcesListingOptions failed', error);
             dispatch(setSourcesListingOptionsError(error));
         } finally {
-            dispatch(toggleSourcesLoader(false));
+            dispatch(toggleSourcesListingOptionsLoader(false));
         }
 
         const currentDbName = getState().dataset.currentDbName;

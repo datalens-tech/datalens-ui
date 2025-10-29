@@ -701,7 +701,9 @@ export class DatasetSources extends React.Component {
                     >
                         <SelectSourcePrototypes
                             sdk={sdk}
-                            isSourcesLoading={ui.isSourcesLoading}
+                            isSourcesLoading={
+                                ui.isSourcesLoading || ui.isSourcesListingOptionsLoading
+                            }
                             isDisabledAddSource={isUpdating}
                             isDisabledDropSource={this.isDisabledDropSource}
                             connections={connections}

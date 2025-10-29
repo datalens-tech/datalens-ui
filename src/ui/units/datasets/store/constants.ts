@@ -90,6 +90,7 @@ export const initialState: DatasetReduxState = {
         isFieldEditorModuleLoading: false,
         isSourcesLoading: false,
         isSourcesSearchLoading: false,
+        isSourcesListingOptionsLoading: false,
     },
     editor: {
         filter: '',

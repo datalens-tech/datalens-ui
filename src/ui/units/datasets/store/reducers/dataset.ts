@@ -82,6 +82,7 @@ import {
     TOGGLE_FIELD_EDITOR_MODULE_LOADING,
     TOGGLE_LOAD_PREVIEW_BY_DEFAULT,
     TOGGLE_PREVIEW,
+    TOGGLE_SOURCES_LISTING_OPTIONS_LOADER,
     TOGGLE_SOURCES_LOADER,
     TOGGLE_VIEW_PREVIEW,
     UPDATE_FIELD,
@@ -1314,6 +1315,17 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 ui: {
                     ...state.ui,
                     isSourcesLoading,
+                },
+            };
+        }
+        case TOGGLE_SOURCES_LISTING_OPTIONS_LOADER: {
+            const {isLoading} = action.payload;
+
+            return {
+                ...state,
+                ui: {
+                    ...state.ui,
+                    isSourcesListingOptionsLoading: isLoading,
                 },
             };
         }

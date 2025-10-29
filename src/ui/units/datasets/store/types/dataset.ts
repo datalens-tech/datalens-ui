@@ -95,6 +95,7 @@ import type {
     TOGGLE_FIELD_EDITOR_MODULE_LOADING,
     TOGGLE_LOAD_PREVIEW_BY_DEFAULT,
     TOGGLE_PREVIEW,
+    TOGGLE_SOURCES_LISTING_OPTIONS_LOADER,
     TOGGLE_SOURCES_LOADER,
     TOGGLE_VIEW_PREVIEW,
     UPDATE_FIELD,
@@ -323,6 +324,7 @@ export type DatasetReduxState = {
         isFieldEditorModuleLoading: boolean;
         isSourcesLoading: boolean;
         isSourcesSearchLoading: boolean;
+        isSourcesListingOptionsLoading: boolean;
     };
     editor: {
         filter: string;
@@ -369,6 +371,13 @@ type ToggleSourcesLoader = {
     type: typeof TOGGLE_SOURCES_LOADER;
     payload: {
         isSourcesLoading: boolean;
+    };
+};
+
+type ToggleSourcesListingOptionsLoader = {
+    type: typeof TOGGLE_SOURCES_LISTING_OPTIONS_LOADER;
+    payload: {
+        isLoading: boolean;
     };
 };
 
@@ -935,4 +944,5 @@ export type DatasetReduxAction =
     | EntryContentAction
     | SetSourcesListingOptions
     | SetSourcesListingOptionsError
+    | ToggleSourcesListingOptionsLoader
     | EditHistoryAction;
