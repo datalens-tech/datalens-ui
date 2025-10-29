@@ -77,6 +77,7 @@ import type {
     SET_LAST_MODIFIED_TAB,
     SET_QUEUE_TO_LOAD_PREVIEW,
     SET_SOURCES_LISTING_OPTIONS,
+    SET_SOURCES_LISTING_OPTIONS_ERROR,
     SET_SOURCES_LOADING_ERROR,
     SET_SOURCES_PAGINATION,
     SET_SOURCES_SEARCH_LOADING,
@@ -94,6 +95,7 @@ import type {
     TOGGLE_FIELD_EDITOR_MODULE_LOADING,
     TOGGLE_LOAD_PREVIEW_BY_DEFAULT,
     TOGGLE_PREVIEW,
+    TOGGLE_SOURCES_LISTING_OPTIONS_LOADER,
     TOGGLE_SOURCES_LOADER,
     TOGGLE_VIEW_PREVIEW,
     UPDATE_FIELD,
@@ -296,6 +298,7 @@ export type DatasetReduxState = {
         savingError: DatasetError;
         sourceLoadingError: DatasetError;
         validationError: DatasetError;
+        sourceListingOptionsError: DatasetError;
     };
     validation: {
         isLoading: boolean;
@@ -321,6 +324,7 @@ export type DatasetReduxState = {
         isFieldEditorModuleLoading: boolean;
         isSourcesLoading: boolean;
         isSourcesSearchLoading: boolean;
+        isSourcesListingOptionsLoading: boolean;
     };
     editor: {
         filter: string;
@@ -356,10 +360,24 @@ type SetSourcesLoadingError = {
     };
 };
 
+type SetSourcesListingOptionsError = {
+    type: typeof SET_SOURCES_LISTING_OPTIONS_ERROR;
+    payload: {
+        error: DatasetError;
+    };
+};
+
 type ToggleSourcesLoader = {
     type: typeof TOGGLE_SOURCES_LOADER;
     payload: {
         isSourcesLoading: boolean;
+    };
+};
+
+type ToggleSourcesListingOptionsLoader = {
+    type: typeof TOGGLE_SOURCES_LISTING_OPTIONS_LOADER;
+    payload: {
+        isLoading: boolean;
     };
 };
 
@@ -925,4 +943,6 @@ export type DatasetReduxAction =
     | SetSourcesSearchLoading
     | EntryContentAction
     | SetSourcesListingOptions
+    | SetSourcesListingOptionsError
+    | ToggleSourcesListingOptionsLoader
     | EditHistoryAction;

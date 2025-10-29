@@ -12,6 +12,7 @@ import type {
     Dataset,
     DatasetAvatarRelation,
     DatasetField,
+    DatasetOptions,
     DatasetSource,
     DatasetSourceAvatar,
     WorkbookId,
@@ -491,6 +492,8 @@ export function deleteConnection({
             },
         } = getState();
 
+        getSdk().cancelRequest('getSourceListingOptions');
+        getSdk().cancelRequest('getDbNames');
         getSdk().cancelRequest('getSources');
 
         if (
@@ -498,6 +501,7 @@ export function deleteConnection({
             !selectedConnections.length
         ) {
             dispatch(setSourcesLoadingError(null));
+            dispatch(setSourcesListingOptionsError(null));
         }
     };
 }
@@ -804,10 +808,29 @@ export function toggleSourcesLoader(isSourcesLoading: boolean) {
         });
     };
 }
+
+export function toggleSourcesListingOptionsLoader(isLoading: boolean) {
+    return (dispatch: DatasetDispatch) => {
+        dispatch({
+            type: DATASET_ACTION_TYPES.TOGGLE_SOURCES_LISTING_OPTIONS_LOADER,
+            payload: {isLoading},
+        });
+    };
+}
+
 export function setSourcesLoadingError(error: DatasetError) {
     return (dispatch: DatasetDispatch) => {
         dispatch({
             type: DATASET_ACTION_TYPES.SET_SOURCES_LOADING_ERROR,
+            payload: {error},
+        });
+    };
+}
+
+export function setSourcesListingOptionsError(error: DatasetError) {
+    return (dispatch: DatasetDispatch) => {
+        dispatch({
+            type: DATASET_ACTION_TYPES.SET_SOURCES_LISTING_OPTIONS_ERROR,
             payload: {error},
         });
     };
@@ -1375,10 +1398,19 @@ export function getSources({
     isSideEffect = false,
 }: GetSourcesProps) {
     return async (dispatch: DatasetDispatch, getState: GetState) => {
+        const {
+            sourcesPagination,
+            errors: {sourceListingOptionsError},
+        } = getState().dataset;
+
+        if (sourceListingOptionsError) {
+            dispatch(setSourcesLoadingError(sourceListingOptionsError));
+            dispatch(setSourcesListingOptionsError(null));
+            return [];
+        }
         if (!isSideEffect) {
             dispatch(toggleSourcesLoader(true));
         }
-        const {sourcesPagination} = getState().dataset;
         let sources: GetSourceResponse['sources'] = [];
         const currentLimit = limit ? limit + 1 : 10000;
         try {
@@ -1447,7 +1479,7 @@ export function getSources({
 
 export function getDbNames(connectionIds: string[]) {
     return async (dispatch: DatasetDispatch, getState: GetState) => {
-        dispatch(toggleSourcesLoader(true));
+        dispatch(toggleSourcesListingOptionsLoader(true));
         try {
             if (connectionIds.length) {
                 const state = getState();
@@ -1455,19 +1487,20 @@ export function getDbNames(connectionIds: string[]) {
                     options: {source_listing},
                 } = state.dataset;
                 const currentEntryId = selectedConnectionSelector(state)?.entryId;
-                const result = await Promise.allSettled(
+                const result = await Promise.all(
                     connectionIds.map((id) =>
                         getSdk()
-                            .sdk.bi.getDbNames({connectionId: id})
+                            .sdk.bi.getDbNames(
+                                {connectionId: id},
+                                {concurrentId: 'getDbNames', retries: 2},
+                            )
                             .then((res) => ({id, ...res})),
                     ),
                 );
-                const existingDbNames = result
-                    .filter((item) => item.status === 'fulfilled')
-                    .reduce<Record<string, string[]>>((acc, item) => {
-                        acc[item.value.id] = item.value.db_names;
-                        return acc;
-                    }, {});
+                const existingDbNames = result.reduce<Record<string, string[]>>((acc, item) => {
+                    acc[item.id] = item.db_names;
+                    return acc;
+                }, {});
 
                 batch(() => {
                     dispatch({
@@ -1481,8 +1514,9 @@ export function getDbNames(connectionIds: string[]) {
             }
         } catch (e) {
             logger.logError('dataset: getDbNames failed', e);
+            dispatch(setSourcesListingOptionsError(e));
         } finally {
-            dispatch(toggleSourcesLoader(false));
+            dispatch(toggleSourcesListingOptionsLoader(false));
         }
     };
 }
@@ -1806,6 +1840,7 @@ export function initializeDataset({connectionId}: {connectionId: string}) {
     return async (dispatch: DatasetDispatch) => {
         if (connectionId) {
             await dispatch(setInitialSources([connectionId]));
+            await dispatch(getSourcesListingOptions(connectionId));
         }
 
         dispatch(_getSources());
@@ -1963,29 +1998,39 @@ function _getSources() {
 
 export function getSourcesListingOptions(connectionId: string) {
     return async (dispatch: DatasetDispatch, getState: GetState) => {
-        dispatch(toggleSourcesLoader(true));
+        dispatch(toggleSourcesListingOptionsLoader(true));
+        let sourceListing: DatasetOptions['source_listing'] | undefined;
+        try {
+            const result = await (DatasetUtils.isEnabledFeature(
+                Feature.EnableDatasetSourcesPagination,
+            )
+                ? getSdk().sdk.bi.getSourceListingOptions(
+                      {connectionId},
+                      {concurrentId: 'getSourceListingOptions', retries: 2},
+                  )
+                : undefined);
+            sourceListing = result?.source_listing;
 
-        const result = await (DatasetUtils.isEnabledFeature(Feature.EnableDatasetSourcesPagination)
-            ? getSdk().sdk.bi.getSourceListingOptions({connectionId})
-            : undefined);
+            dispatch({
+                type: DATASET_ACTION_TYPES.SET_SOURCES_LISTING_OPTIONS,
+                payload: sourceListing,
+            });
 
-        dispatch({
-            type: DATASET_ACTION_TYPES.SET_SOURCES_LISTING_OPTIONS,
-            payload: result?.source_listing,
-        });
+            const {dbNameRequiredForSearch, supportsDbNameListing} =
+                getSourceListingValues(sourceListing);
 
-        const {dbNameRequiredForSearch, supportsDbNameListing} = getSourceListingValues(
-            result?.source_listing,
-        );
-
-        dispatch(toggleSourcesLoader(false));
-
-        if (dbNameRequiredForSearch || supportsDbNameListing) {
-            await dispatch(getDbNames([connectionId]));
+            if (dbNameRequiredForSearch || supportsDbNameListing) {
+                await dispatch(getDbNames([connectionId]));
+            }
+        } catch (error) {
+            logger.logError('dataset: getSourcesListingOptions failed', error);
+            dispatch(setSourcesListingOptionsError(error));
+        } finally {
+            dispatch(toggleSourcesListingOptionsLoader(false));
         }
 
         const currentDbName = getState().dataset.currentDbName;
 
-        return {sourceListing: result?.source_listing, currentDbName};
+        return {sourceListing, currentDbName};
     };
 }

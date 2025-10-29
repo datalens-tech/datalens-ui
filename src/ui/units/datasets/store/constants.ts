@@ -68,6 +68,7 @@ export const initialState: DatasetReduxState = {
         savingError: null,
         sourceLoadingError: null,
         validationError: null,
+        sourceListingOptionsError: null,
     },
     validation: {
         isLoading: false,
@@ -89,6 +90,7 @@ export const initialState: DatasetReduxState = {
         isFieldEditorModuleLoading: false,
         isSourcesLoading: false,
         isSourcesSearchLoading: false,
+        isSourcesListingOptionsLoading: false,
     },
     editor: {
         filter: '',

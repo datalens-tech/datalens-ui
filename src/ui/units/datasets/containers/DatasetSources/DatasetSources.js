@@ -276,21 +276,23 @@ export class DatasetSources extends React.Component {
         }
     };
 
-    retryToGetSources = () => {
+    retryToGetSources = async () => {
         const {
             selectedConnection: {entryId} = {},
             workbookId,
             sourcesPagination,
-            options,
-            currentDbName,
+            resetSourcesPagination,
+            getSourcesListingOptions,
         } = this.props;
 
         if (!entryId) {
             return;
         }
-        const {serverPagination, dbNameRequiredForSearch} = getSourceListingValues(
-            options?.source_listing,
-        );
+
+        resetSourcesPagination();
+        const {sourceListing, currentDbName} = await getSourcesListingOptions(entryId);
+
+        const {serverPagination, dbNameRequiredForSearch} = getSourceListingValues(sourceListing);
 
         this.props.getSources({
             connectionId: entryId,
@@ -699,7 +701,9 @@ export class DatasetSources extends React.Component {
                     >
                         <SelectSourcePrototypes
                             sdk={sdk}
-                            isSourcesLoading={ui.isSourcesLoading}
+                            isSourcesLoading={
+                                ui.isSourcesLoading || ui.isSourcesListingOptionsLoading
+                            }
                             isDisabledAddSource={isUpdating}
                             isDisabledDropSource={this.isDisabledDropSource}
                             connections={connections}
