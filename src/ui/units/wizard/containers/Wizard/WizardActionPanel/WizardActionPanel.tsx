@@ -1,17 +1,20 @@
 import React from 'react';
 
-import type {DropdownMenuProps} from '@gravity-ui/uikit';
+import {Button, type DropdownMenuProps} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import copyToClipboard from 'clipboard-copy';
 import {useDispatch, useSelector} from 'react-redux';
-import type {ClientChartsConfigWithDataset, WizardType} from 'shared';
+import type {ClientChartsConfigWithDataset, ServerChartsConfig, WizardType} from 'shared';
 import {EntryUpdateMode, Feature} from 'shared';
+import {getChartReceiptFromWizardConfig} from 'ui/units/wizard/utils/chart-recipe';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {selectIsChartSaved} from 'units/wizard/selectors/preview';
 
 import type {DatalensGlobalState} from '../../../../../';
-import {ActionPanel} from '../../../../../';
+import {ActionPanel, Utils} from '../../../../../';
 import {ChartSaveControls} from '../../../../../components/ActionPanel/components/ChartSaveControls/ChartSaveControl';
 import {registry} from '../../../../../registry';
+import {showToast} from '../../../../../store/actions/toaster';
 import {selectCanGoBack, selectCanGoForward} from '../../../../../store/selectors/editHistory';
 import {setEditMode} from '../../../../dash/store/actions/base/actions';
 import {toggleViewOnlyMode} from '../../../actions/settings';
@@ -90,6 +93,18 @@ export const WizardActionPanel: React.FC<WizardActionPanelProps> = (
         }
     }, [isCurrentRevisionActual, onSaveCallback]);
 
+    const handleCopyRecipe = React.useCallback(() => {
+        try {
+            const recipe = getChartReceiptFromWizardConfig(
+                config?.shared as unknown as ServerChartsConfig,
+            );
+            copyToClipboard(JSON.stringify(recipe));
+            dispatch(showToast({title: 'Copied to clipboard'}));
+        } catch (e) {
+            console.error(e);
+        }
+    }, [config?.shared, dispatch]);
+
     const canGoBack = useSelector<DatalensGlobalState, ReturnType<typeof selectCanGoBack>>(
         (state) => selectCanGoBack(state, {unitId: WIZARD_EDIT_HISTORY_UNIT_ID}),
     );
@@ -118,6 +133,11 @@ export const WizardActionPanel: React.FC<WizardActionPanelProps> = (
             enablePublish={enablePublish}
             rightItems={
                 <React.Fragment>
+                    {Utils.isSuperUser() && (
+                        <Button style={{marginRight: 8}} onClick={handleCopyRecipe}>
+                            copy recipe
+                        </Button>
+                    )}
                     <WizardActionPanelExtension />
                     <ChartSaveControls
                         className={b('save-controls')}
