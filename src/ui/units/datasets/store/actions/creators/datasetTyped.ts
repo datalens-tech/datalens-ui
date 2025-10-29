@@ -1974,9 +1974,6 @@ function _getSources() {
 
         if (selectedConnection && !selectedConnection.deleted) {
             const {entryId} = selectedConnection;
-            // if (dbNameRequiredForSearch && !currentDbName) {
-            //     return
-            // }
             dispatch(
                 getSources({
                     connectionId: entryId,
