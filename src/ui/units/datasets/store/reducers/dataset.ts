@@ -64,6 +64,7 @@ import {
     SET_LAST_MODIFIED_TAB,
     SET_QUEUE_TO_LOAD_PREVIEW,
     SET_SOURCES_LISTING_OPTIONS,
+    SET_SOURCES_LISTING_OPTIONS_ERROR,
     SET_SOURCES_LOADING_ERROR,
     SET_SOURCES_PAGINATION,
     SET_SOURCES_SEARCH_LOADING,
@@ -1265,9 +1266,16 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 ...state,
                 sourcePrototypes: sourcePrototypesNext,
                 selectedConnections: selectedConnectionsNext,
+                currentDbName: undefined,
+                options: {
+                    ...state.options,
+                    source_listing: undefined,
+                },
                 ui: {
                     ...state.ui,
                     selectedConnectionId: selectedConnectionIdNext,
+                    isSourcesSearchLoading: false,
+                    isSourcesLoading: false,
                 },
             };
         }
@@ -1473,6 +1481,17 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 options: {
                     ...state.options,
                     source_listing: action.payload,
+                },
+            };
+        }
+        case SET_SOURCES_LISTING_OPTIONS_ERROR: {
+            const {error} = action.payload;
+
+            return {
+                ...state,
+                errors: {
+                    ...state.errors,
+                    sourceListingOptionsError: error,
                 },
             };
         }

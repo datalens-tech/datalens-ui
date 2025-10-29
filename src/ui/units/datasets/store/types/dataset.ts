@@ -77,6 +77,7 @@ import type {
     SET_LAST_MODIFIED_TAB,
     SET_QUEUE_TO_LOAD_PREVIEW,
     SET_SOURCES_LISTING_OPTIONS,
+    SET_SOURCES_LISTING_OPTIONS_ERROR,
     SET_SOURCES_LOADING_ERROR,
     SET_SOURCES_PAGINATION,
     SET_SOURCES_SEARCH_LOADING,
@@ -296,6 +297,7 @@ export type DatasetReduxState = {
         savingError: DatasetError;
         sourceLoadingError: DatasetError;
         validationError: DatasetError;
+        sourceListingOptionsError: DatasetError;
     };
     validation: {
         isLoading: boolean;
@@ -351,6 +353,13 @@ type SetDatasetRevisionMismatch = {
 
 type SetSourcesLoadingError = {
     type: typeof SET_SOURCES_LOADING_ERROR;
+    payload: {
+        error: DatasetError;
+    };
+};
+
+type SetSourcesListingOptionsError = {
+    type: typeof SET_SOURCES_LISTING_OPTIONS_ERROR;
     payload: {
         error: DatasetError;
     };
@@ -925,4 +934,5 @@ export type DatasetReduxAction =
     | SetSourcesSearchLoading
     | EntryContentAction
     | SetSourcesListingOptions
+    | SetSourcesListingOptionsError
     | EditHistoryAction;
