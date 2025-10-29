@@ -4,22 +4,23 @@ import {permissionsSchema} from '../../../../zod-schemas/permissions';
 
 export const listDirectoryArgsSchema = z.object({
     path: z.string().optional(),
+    createdBy: z.union([z.string(), z.array(z.string())]).optional(),
+    orderBy: z
+        .object({
+            field: z.enum(['createdAt', 'name']),
+            direction: z.enum(['desc', 'asc']),
+        })
+        .optional(),
     filters: z
         .object({
             name: z.string().optional(),
         })
         .optional(),
-    orderBy: z
-        .object({
-            field: z.enum(['createdAt', 'name']).optional(),
-            direction: z.enum(['desc', 'asc']).optional(),
-        })
-        .optional(),
-    createdBy: z.union([z.string(), z.array(z.string())]).optional(),
     page: z.number().optional(),
     pageSize: z.number().optional(),
     includePermissionsInfo: z.boolean().optional(),
-    ignoreWorkbookEntries: z.boolean().optional(),
+    // Broken in US controller
+    // ignoreWorkbookEntries: z.boolean().optional(),
 });
 
 export const listDirectoryBreadCrumbSchema = z.object({

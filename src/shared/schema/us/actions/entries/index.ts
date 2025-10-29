@@ -10,7 +10,7 @@ import {
 import {getEntryNameByKey, normalizeDestination} from '../../../../modules';
 import {Feature} from '../../../../types/feature';
 import {createAction} from '../../../gateway-utils';
-import {defaultParamsSerializer, filterUrlFragment} from '../../../utils';
+import {filterUrlFragment} from '../../../utils';
 import type {
     CopyEntriesToWorkbookArgs,
     CopyEntriesToWorkbookResponse,
@@ -24,11 +24,8 @@ import type {
     DeleteUSEntryResponse,
     GetEntriesAnnotationArgs,
     GetEntriesAnnotationResponse,
-    GetEntriesArgs,
     GetEntriesByKeyPatternArgs,
     GetEntriesByKeyPatternResponse,
-    GetEntriesOutput,
-    GetEntriesResponse,
     GetEntryArgs,
     GetEntryByKeyArgs,
     GetEntryByKeyResponse,
@@ -51,6 +48,7 @@ import type {
     SwitchPublicationStatusResponse,
 } from '../../types';
 
+import {getEntries} from './get-entries';
 import {listDirectory} from './list-directory';
 
 const PATH_PREFIX = '/v1';
@@ -58,6 +56,8 @@ const PATH_PREFIX_V2 = '/v2';
 const PRIVATE_PATH_PREFIX = '/private';
 
 export const entriesActions = {
+    listDirectory,
+    getEntries,
     getEntry: createAction<GetEntryResponse, GetEntryArgs>({
         method: 'GET',
         path: ({entryId}) => `${PATH_PREFIX}/entries/${filterUrlFragment(entryId)}`,
@@ -115,22 +115,6 @@ export const entriesActions = {
             hasNextPage: Boolean(data.nextPageToken),
             entries: data.entries,
         }),
-    }),
-
-    listDirectory,
-
-    getEntries: createAction<GetEntriesOutput, GetEntriesArgs, GetEntriesResponse>({
-        method: 'GET',
-        path: () => `${PATH_PREFIX}/entries`,
-        params: (query, headers) => ({query, headers}),
-        transformResponseData: (data) => ({
-            hasNextPage: Boolean(data.nextPageToken),
-            entries: data.entries.map((entry) => ({
-                ...entry,
-                name: getEntryNameByKey({key: entry.key}),
-            })),
-        }),
-        paramsSerializer: defaultParamsSerializer,
     }),
     getRelations: createAction<GetRelationsOutput, GetRelationsArgs, GetRelationsResponse>({
         method: 'GET',

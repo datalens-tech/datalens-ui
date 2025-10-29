@@ -3,6 +3,10 @@ import type z from 'zod';
 import type {EntryScope, WorkbookId} from '../../..';
 import type {Permissions} from '../../../types';
 import type {
+    getEntriesEntryResponseSchema,
+    getEntriesTransformedSchema,
+} from '../schemas/entries/get-entries';
+import type {
     listDirectoryBreadCrumbSchema,
     listDirectoryEntryResponseSchema,
     listDirectoryTransformedSchema,
@@ -94,31 +98,13 @@ export type ListDirectoryBreadCrumb = z.infer<typeof listDirectoryBreadCrumbSche
 
 export type ListDirectoryResponse = z.infer<typeof listDirectoryTransformedSchema>;
 
-export interface GetEntriesEntryOutput extends EntryNavigationFields {
-    isFavorite: boolean;
-    isLocked: boolean;
-    permissions?: Permissions;
-    links?: EntryFieldLinks;
-    data?: EntryFieldData;
-}
+export type GetEntriesEntryResponse = z.infer<typeof getEntriesEntryResponseSchema>;
 
-export interface GetEntriesEntryResponse extends GetEntriesEntryOutput {
-    name: string;
-}
-
-export interface GetEntriesEntryWithPermissions
-    extends Omit<GetEntriesEntryResponse, 'permissions'> {
+export type GetEntriesEntryWithPermissions = Omit<GetEntriesEntryResponse, 'permissions'> & {
     permissions: Permissions;
-}
+};
 
-export interface GetEntriesOutput {
-    nextPageToken?: string;
-    entries: GetEntriesEntryOutput[];
-}
-export interface GetEntriesResponse {
-    hasNextPage: boolean;
-    entries: GetEntriesEntryResponse[];
-}
+export type GetEntriesResponse = z.infer<typeof getEntriesTransformedSchema>;
 
 export type GetEntriesArgs = EntriesCommonArgs & {
     excludeLocked?: boolean;
