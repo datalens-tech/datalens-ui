@@ -37,6 +37,19 @@
     }
 
     &__icon {
+        .custom-entry-icon {
+            height: 125px;
+            width: 125px;
+            .custom-color-box {
+                height: 125px;
+                width: 125px;
+                border-radius: 12px;
+                .custom-icon {
+                    width: 82px;
+                    height: 82px;
+                }
+            }
+        }
         &_selection-mode {
             opacity: 0.5;
         }

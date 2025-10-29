@@ -1,3 +1,4 @@
+import {getEntryNameByKey} from '../../../modules';
 import {createAction} from '../../gateway-utils';
 import type {
     CreateCollectionArgs,
@@ -81,6 +82,15 @@ export const collectionsActions = {
                 mode,
             },
             headers,
+        }),
+        transformResponseData: (data) => ({
+            ...data,
+            items: data.items.map((item) => {
+                if ('displayKey' in item) {
+                    return {...item, title: getEntryNameByKey({key: item.displayKey})};
+                }
+                return item;
+            }),
         }),
     }),
 
