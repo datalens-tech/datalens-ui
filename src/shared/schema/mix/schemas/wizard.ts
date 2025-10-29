@@ -13,7 +13,7 @@ export const getWizardChartArgsSchema = z.strictObject({
     includePermissions: z.boolean().optional(),
     includeLinks: z.boolean().optional(),
     includeFavorite: z.boolean().optional(),
-    branch: z.literal(['saved', 'published']).optional(),
+    branch: z.enum(['saved', 'published']).optional(),
 });
 
 export const getWizardChartResultSchema = z.unknown();

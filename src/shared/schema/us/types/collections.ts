@@ -1,6 +1,9 @@
+import type {CollectionItemEntities} from '../../../constants';
+
+import type {SharedEntryFieldsWithPermissions} from './fields';
 import type {GetDatalensOperationResponse} from './operations';
 import type {OrderBasicField, OrderDirection} from './sort';
-import type {Workbook, WorkbookWithPermissions} from './workbooks';
+import type {ExtendedWorkbook} from './workbooks';
 
 export type GetStructureItemsMode = 'all' | 'onlyCollections' | 'onlyWorkbooks';
 
@@ -39,6 +42,10 @@ export type CollectionWithOptionalPermissions = Collection & {
     permissions?: CollectionPermissions;
 };
 
+export type ExtendedCollection = CollectionWithPermissions & {
+    entity?: typeof CollectionItemEntities.COLLECTION;
+};
+
 export type GetRootCollectionPermissionsResponse = {
     createCollectionInRoot: boolean;
     createWorkbookInRoot: boolean;
@@ -71,8 +78,13 @@ export type GetStructureItemsArgs = {
     includePermissionsInfo?: boolean;
 };
 
+export type StructureItem =
+    | ExtendedCollection
+    | ExtendedWorkbook
+    | SharedEntryFieldsWithPermissions;
+
 export type GetStructureItemsResponse = {
-    items: (Collection | CollectionWithPermissions | Workbook | WorkbookWithPermissions)[];
+    items: StructureItem[];
     nextPageToken?: string | null;
 };
 

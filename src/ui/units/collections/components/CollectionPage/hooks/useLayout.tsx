@@ -11,11 +11,7 @@ import {getParentCollectionPath} from 'ui/units/collections-navigation/utils';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {Feature} from '../../../../../../shared';
-import type {
-    CollectionWithPermissions,
-    CreateCollectionResponse,
-    WorkbookWithPermissions,
-} from '../../../../../../shared/schema';
+import type {CreateCollectionResponse, StructureItem} from '../../../../../../shared/schema';
 import type {StructureItemsFilters} from '../../../../../components/CollectionFilters';
 import {CollectionPageViewMode} from '../../../../../components/CollectionFilters';
 import {
@@ -60,7 +56,7 @@ type UseLayoutArgs = {
     curCollectionId: string | null;
     filters: StructureItemsFilters;
     selectedMap: SelectedMap;
-    itemsAvailableForSelection: (CollectionWithPermissions | WorkbookWithPermissions)[];
+    itemsAvailableForSelection: StructureItem[];
     viewMode: CollectionPageViewMode;
     isOpenSelectionMode: boolean;
     openSelectionMode: () => void;
