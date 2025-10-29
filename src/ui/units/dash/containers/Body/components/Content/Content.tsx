@@ -61,7 +61,7 @@ export type Props = {
       }
 );
 
-export const Content = ({
+const Content = ({
     copiedData,
     dashEntryKey,
     disableHashNavigation,
@@ -168,3 +168,5 @@ export const Content = ({
         </DashKitDnDWrapper>
     );
 };
+
+export default Content;

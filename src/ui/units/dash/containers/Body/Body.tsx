@@ -111,7 +111,7 @@ import {
     FixedHeaderWrapper,
 } from '../FixedHeader/FixedHeader';
 
-import {Content} from './components/Content/Content';
+import Content from './components/Content/Content';
 import {
     FixedContainerWrapperWithContext,
     FixedControlsWrapperWithContext,
