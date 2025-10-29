@@ -1,5 +1,12 @@
+import type z from 'zod';
+
 import type {EntryScope, WorkbookId} from '../../..';
 import type {Permissions} from '../../../types';
+import type {
+    listDirectoryBreadCrumbSchema,
+    listDirectoryEntryResponseSchema,
+    listDirectoryTransformedSchema,
+} from '../schemas/entries/list-directory';
 
 import type {EntriesCommonArgs} from './common';
 import type {
@@ -77,44 +84,15 @@ export interface GetRevisionsArgs {
     revIds?: string[];
 }
 
-export interface ListDirectoryEntryOutput extends EntryNavigationFields {
-    isFavorite: boolean;
-    isLocked: boolean;
-    permissions?: Permissions;
-}
+export type ListDirectoryEntryResponse = z.infer<typeof listDirectoryEntryResponseSchema>;
 
-export interface ListDirectoryEntryResponse extends ListDirectoryEntryOutput {
-    name: string;
-}
-
-export interface ListDirectoryEntryWithPermissions
-    extends Omit<ListDirectoryEntryResponse, 'permissions'> {
+export type ListDirectoryEntryWithPermissions = Omit<ListDirectoryEntryResponse, 'permissions'> & {
     permissions: Permissions;
-}
+};
 
-export interface ListDirectoryBreadCrumb {
-    title: string;
-    path: string;
-    entryId: string;
-    isLocked: boolean;
-    permissions: Permissions;
-}
+export type ListDirectoryBreadCrumb = z.infer<typeof listDirectoryBreadCrumbSchema>;
 
-export interface ListDirectoryOutput {
-    nextPageToken?: string;
-    breadCrumbs: ListDirectoryBreadCrumb[];
-    entries: ListDirectoryEntryOutput[];
-}
-
-export interface ListDirectoryResponse {
-    hasNextPage: boolean;
-    breadCrumbs: ListDirectoryBreadCrumb[];
-    entries: ListDirectoryEntryResponse[];
-}
-
-export interface ListDirectoryArgs extends EntriesCommonArgs {
-    path?: string;
-}
+export type ListDirectoryResponse = z.infer<typeof listDirectoryTransformedSchema>;
 
 export interface GetEntriesEntryOutput extends EntryNavigationFields {
     isFavorite: boolean;

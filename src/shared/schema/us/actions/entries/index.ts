@@ -6,11 +6,11 @@ import {
     TIMEOUT_60_SEC,
     TIMEOUT_90_SEC,
     WORKBOOK_ID_HEADER,
-} from '../../../constants';
-import {getEntryNameByKey, normalizeDestination} from '../../../modules';
-import {Feature} from '../../../types/feature';
-import {createAction} from '../../gateway-utils';
-import {defaultParamsSerializer, filterUrlFragment} from '../../utils';
+} from '../../../../constants';
+import {getEntryNameByKey, normalizeDestination} from '../../../../modules';
+import {Feature} from '../../../../types/feature';
+import {createAction} from '../../../gateway-utils';
+import {defaultParamsSerializer, filterUrlFragment} from '../../../utils';
 import type {
     CopyEntriesToWorkbookArgs,
     CopyEntriesToWorkbookResponse,
@@ -43,16 +43,15 @@ import type {
     GetRevisionsArgs,
     GetRevisionsOutput,
     GetRevisionsResponse,
-    ListDirectoryArgs,
-    ListDirectoryOutput,
-    ListDirectoryResponse,
     MoveEntryArgs,
     MoveEntryResponse,
     RenameEntryArgs,
     RenameEntryResponse,
     SwitchPublicationStatusArgs,
     SwitchPublicationStatusResponse,
-} from '../types';
+} from '../../types';
+
+import {listDirectory} from './list-directory';
 
 const PATH_PREFIX = '/v1';
 const PATH_PREFIX_V2 = '/v2';
@@ -117,20 +116,9 @@ export const entriesActions = {
             entries: data.entries,
         }),
     }),
-    listDirectory: createAction<ListDirectoryOutput, ListDirectoryArgs, ListDirectoryResponse>({
-        method: 'GET',
-        path: () => `${PATH_PREFIX}/navigation`,
-        params: (query, headers) => ({query, headers}),
-        transformResponseData: (data) => ({
-            hasNextPage: Boolean(data.nextPageToken),
-            breadCrumbs: data.breadCrumbs,
-            entries: data.entries.map((entry) => ({
-                ...entry,
-                name: getEntryNameByKey({key: entry.key}),
-            })),
-        }),
-        paramsSerializer: defaultParamsSerializer,
-    }),
+
+    listDirectory,
+
     getEntries: createAction<GetEntriesOutput, GetEntriesArgs, GetEntriesResponse>({
         method: 'GET',
         path: () => `${PATH_PREFIX}/entries`,
