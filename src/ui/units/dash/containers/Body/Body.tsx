@@ -129,7 +129,7 @@ const isMobileFixedHeaderEnabled = isEnabledFeature(Feature.EnableMobileFixedHea
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
-type OwnProps = {
+export type OwnProps = {
     isPublicMode?: boolean;
     hideErrorDetails?: boolean;
     onRetry: () => void;
