@@ -100,7 +100,15 @@ export type ListDirectoryResponse = z.infer<typeof listDirectoryTransformedSchem
 
 export type GetEntriesEntryResponse = z.infer<typeof getEntriesEntryResponseSchema>;
 
-export type GetEntriesEntryWithPermissions = Omit<GetEntriesEntryResponse, 'permissions'> & {
+export type GetEntriesEntryWithExcludedLocked = Extract<
+    GetEntriesEntryResponse,
+    {isLocked?: false}
+>;
+
+export type GetEntriesEntryWithExcludedLockedAndPermissions = Omit<
+    GetEntriesEntryWithExcludedLocked,
+    'permissions'
+> & {
     permissions: Permissions;
 };
 

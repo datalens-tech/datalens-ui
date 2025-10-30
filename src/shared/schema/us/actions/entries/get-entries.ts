@@ -21,7 +21,7 @@ export const getEntries = createTypedAction(
             hasNextPage: Boolean(data.nextPageToken),
             entries: data.entries.map((entry) => ({
                 ...entry,
-                name: getEntryNameByKey({key: entry.key}),
+                name: 'key' in entry ? getEntryNameByKey({key: entry.key}) : '',
             })),
         }),
         paramsSerializer: defaultParamsSerializer,

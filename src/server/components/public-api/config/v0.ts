@@ -3,7 +3,7 @@ import {ApiTag} from '../constants';
 import type {PublicApiVersionActions} from '../types';
 
 export const getPublicApiActionsV0 = <
-    TSchema extends {root: Pick<DatalensGatewaySchemas['root'], 'bi' | 'mix'>},
+    TSchema extends {root: Pick<DatalensGatewaySchemas['root'], 'bi' | 'mix' | 'us'>},
 >(): PublicApiVersionActions<TSchema> => {
     return {
         // Connection
@@ -132,6 +132,15 @@ export const getPublicApiActionsV0 = <
             openApi: {
                 summary: 'Delete dashboard',
                 tags: [ApiTag.Dashboard],
+            },
+        },
+
+        // Navigation
+        getEntries: {
+            resolve: (api) => api.us.getEntries,
+            openApi: {
+                summary: 'Get entries',
+                tags: [ApiTag.Navigation],
             },
         },
     };

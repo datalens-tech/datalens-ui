@@ -37,7 +37,14 @@ export const getEntriesArgsSchema = z
         ]),
     );
 
-export const getEntriesEntryOutputSchema = z.object({
+const getEntriesLockedEntry = z.object({
+    isLocked: z.literal(true),
+    entryId: z.string(),
+    scope: z.string(),
+    type: z.string(),
+});
+
+const getEntriesEntry = z.object({
     entryId: z.string(),
     key: z.string(),
     scope: z.string(),
@@ -53,15 +60,18 @@ export const getEntriesEntryOutputSchema = z.object({
     workbookId: z.string().nullable(),
     workbookTitle: z.string().nullable().optional(),
     isFavorite: z.boolean(),
-    isLocked: z.boolean(),
+    isLocked: z.literal(false).optional(),
     permissions: permissionsSchema.optional(),
     links: z.record(z.string(), z.string()).nullable(),
     data: z.record(z.string(), z.unknown()).optional(),
 });
 
-export const getEntriesEntryResponseSchema = getEntriesEntryOutputSchema.extend({
-    name: z.string(),
-});
+export const getEntriesEntryOutputSchema = z.union([getEntriesLockedEntry, getEntriesEntry]);
+
+export const getEntriesEntryResponseSchema = z.union([
+    getEntriesLockedEntry.extend({name: z.string()}),
+    getEntriesEntry.extend({name: z.string()}),
+]);
 
 export const getEntriesResultSchema = z.object({
     nextPageToken: z.string().optional(),
