@@ -25,6 +25,11 @@ $actionPanelDefaultBottom: 20px;
     text-size-adjust: none;
     $bodyClass: &;
 
+    &_split-pane {
+        height: 100%;
+        overflow-y: auto;
+    }
+
     // redefining the style of the internal header at the dashboard level by design so that it looks the same with the headers
     & .yc-select-control__label {
         font-weight: 500;
@@ -104,6 +109,10 @@ $actionPanelDefaultBottom: 20px;
             border-top: var(--dl-dash-select-container-border-top-width) solid
                 var(--dl-dash-select-container-border-color);
         }
+    }
+
+    &_split-pane &__content-wrapper {
+        overflow-y: unset;
     }
 
     &__content-container {
