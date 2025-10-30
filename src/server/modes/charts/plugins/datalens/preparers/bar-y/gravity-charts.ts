@@ -19,6 +19,7 @@ import {getExportColumnSettings} from '../../utils/export-helpers';
 import {getAxisFormatting} from '../helpers/axis';
 import {getLegendColorScale, shouldUseGradientLegend} from '../helpers/legend';
 import type {PrepareFunctionArgs} from '../types';
+import {mapToGravityChartValueFormat} from '../utils';
 
 import {prepareBarYData} from './prepare-bar-y-data';
 
@@ -51,7 +52,6 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
     const shouldUseHtmlForLabels =
         isMarkupField(labelField) || isHtmlField(labelField) || isMarkdownField(labelField);
 
-    const dataLabelFormat = getFieldFormatOptions({field: labelField});
     const shouldUsePercentStacking = PERCENT_VISUALIZATIONS.has(visualizationId);
     const dataLabelsInside =
         shouldUsePercentStacking ||
@@ -72,7 +72,9 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
                 enabled: graph.dataLabels?.enabled,
                 inside: dataLabelsInside,
                 html: shouldUseHtmlForLabels,
-                format: dataLabelFormat,
+                format: graph.dataLabels
+                    ? mapToGravityChartValueFormat(graph.dataLabels)
+                    : undefined,
             },
             custom: {
                 ...graph.custom,
