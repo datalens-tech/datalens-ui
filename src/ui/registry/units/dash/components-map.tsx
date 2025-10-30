@@ -1,3 +1,5 @@
+import type {Props as DashBodyContentProps} from 'ui/units/dash/containers/Body/components/Content/Content';
+
 import type {DialogTextWidgetProps} from '../../../components/DialogTextWidget/DialogTextWidget';
 import {makeDefaultEmpty} from '../../components/DefaultEmpty';
 
@@ -8,6 +10,7 @@ export const dashComponentsMap = {
     DashSelectState: makeDefaultEmpty(),
     DashSelectStateDialog: makeDefaultEmpty(),
     DialogTextWidget: makeDefaultEmpty<DialogTextWidgetProps>(),
+    DashBodyContent: makeDefaultEmpty<DashBodyContentProps>(),
     DashBodyAdditionalControls: makeDefaultEmpty(),
     DialogDashOtherSettingsPrepend: makeDefaultEmpty<DialogDashOtherSettingsPrependProps>(),
     DashActionPanelAdditionalButtons: makeDefaultEmpty<DashActionPanelAdditionalButtonsProps>(),
