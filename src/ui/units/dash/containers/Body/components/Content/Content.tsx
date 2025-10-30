@@ -39,7 +39,7 @@ const b = block('dash-body');
 
 const isMobileFixedHeaderEnabled = isEnabledFeature(Feature.EnableMobileFixedHeader);
 
-export type Props = {
+type Props = {
     copiedData: CopiedConfigData | null;
     dashEntryKey?: string;
     disableHashNavigation?: boolean;
