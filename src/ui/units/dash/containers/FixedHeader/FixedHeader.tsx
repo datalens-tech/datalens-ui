@@ -48,7 +48,11 @@ const EmptyPlaceholder = ({
     </React.Fragment>
 );
 
-const useFixedHeaderRef = (rootRef: React.RefObject<HTMLDivElement>, topOffset = 0) => {
+const useFixedHeaderRef = (
+    rootRef: React.RefObject<HTMLDivElement>,
+    topOffset = 0,
+    scrollableContainer: HTMLDivElement | Window | null = window,
+) => {
     const [isFixed, setIsFixed] = React.useState(false);
     const [leftOffset, setLeftOffset] = React.useState(0);
     const [width, setWidth] = React.useState<number | string>(0);
@@ -68,7 +72,7 @@ const useFixedHeaderRef = (rootRef: React.RefObject<HTMLDivElement>, topOffset =
             setLeftOffset(rect?.left || 0);
         });
 
-        window.document?.addEventListener('scroll', handler);
+        scrollableContainer?.addEventListener('scroll', handler);
 
         if (rootRef.current) {
             resizeObserver.observe(rootRef.current);
@@ -77,10 +81,10 @@ const useFixedHeaderRef = (rootRef: React.RefObject<HTMLDivElement>, topOffset =
         setTimeout(handler);
 
         return () => {
-            window.document?.removeEventListener('scroll', handler);
+            scrollableContainer?.removeEventListener('scroll', handler);
             resizeObserver.disconnect();
         };
-    }, [rootRef, topOffset]);
+    }, [rootRef, topOffset, scrollableContainer]);
 
     return {isFixed, leftOffset, width};
 };
@@ -158,6 +162,7 @@ type FixedHeaderWrapperProps = CommonFixedHeaderProps & {
     isCollapsed: boolean;
     isControlsGroupEmpty?: boolean;
     isContainerGroupEmpty?: boolean;
+    isSplitPaneContainer?: boolean;
     dashBodyEl: HTMLDivElement | null;
     controlsRef: React.Ref<HTMLDivElement>;
     containerRef: React.Ref<HTMLDivElement>;
@@ -172,6 +177,7 @@ export function FixedHeaderWrapper({
     isCollapsed,
     isControlsGroupEmpty,
     isContainerGroupEmpty,
+    isSplitPaneContainer,
     className,
 }: FixedHeaderWrapperProps) {
     const rootRef = React.useRef<HTMLDivElement>(null);
@@ -183,7 +189,11 @@ export function FixedHeaderWrapper({
         React.useState<React.CSSProperties['overflow']>('auto');
 
     const topOffset = calculateOffset(dashBodyEl);
-    const {isFixed, leftOffset, width} = useFixedHeaderRef(rootRef, topOffset);
+    const {isFixed, leftOffset, width} = useFixedHeaderRef(
+        rootRef,
+        topOffset,
+        isSplitPaneContainer ? dashBodyEl : undefined,
+    );
     const style = isFixed && !editMode ? {left: leftOffset, top: topOffset, width} : {};
 
     React.useEffect(() => {

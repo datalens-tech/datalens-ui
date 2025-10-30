@@ -131,6 +131,7 @@ type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
 export type OwnProps = {
     isPublicMode?: boolean;
+    isSplitPaneLayout?: boolean;
     hideErrorDetails?: boolean;
     onRetry: () => void;
     globalParams: DashKitProps['globalParams'];
@@ -407,7 +408,10 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         const {DashBodyAdditionalControls} = registry.dash.components.getAll();
 
         return (
-            <div className={b()} ref={this._dashBodyRef}>
+            <div
+                className={b({'split-pane': this.props.isSplitPaneLayout})}
+                ref={this._dashBodyRef}
+            >
                 <Content
                     copiedData={this.state.hasCopyInBuffer}
                     dashEntryKey={this.props.entry?.key}
@@ -1214,6 +1218,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                             editMode={isEditMode}
                             isControlsGroupEmpty={!hasFixedHeaderControlsElements}
                             isContainerGroupEmpty={!hasFixedHeaderContainerElements}
+                            isSplitPaneContainer={this.props.isSplitPaneLayout}
                         />
                     )}
                     <DashKit
