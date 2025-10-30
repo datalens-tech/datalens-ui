@@ -35,6 +35,8 @@ $class: 'colors-dialog';
     &__palette {
         margin-top: 20px;
 
+        --g-button-background-color: transparent;
+
         &,
         .g-palette__row {
             gap: 12px;
