@@ -62,7 +62,7 @@ export const createTypedAction = <TOutput, TParams, TTransformed = TOutput>(
     return registerValidationSchema(actionConfig, schemaValidationObject);
 };
 
-export const createExtendedAction =
+export const createExtendedTypedAction =
     <TConfigOutput, TConfigParams, TConfigTransformed = TConfigOutput>(
         actionConfig: ApiServiceActionConfig<
             AppContext,
