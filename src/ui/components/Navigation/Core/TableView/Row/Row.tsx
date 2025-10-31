@@ -85,7 +85,7 @@ export class Row extends React.Component<RowProps> {
             isOnlyCollectionsMode,
             onMenuClick,
         } = this.props;
-        const {name, displayAlias, entryId, hidden = false} = entry;
+        const {name, entryId, hidden = false} = entry;
 
         const isLocked = this.isLockedEntry();
         const inactive = !this.isEntryActive();
@@ -98,13 +98,13 @@ export class Row extends React.Component<RowProps> {
 
         const isFavoritesNameAliasesEnabled = place === PLACE.FAVORITES;
 
-        const visible = Boolean(displayAlias);
+        const visible = 'displayAlias' in entry && Boolean(entry.displayAlias);
 
         const nameElement = isFavoritesNameAliasesEnabled ? (
             <FavoritesNameWithAliasItem
                 entryId={entryId}
                 name={name}
-                displayAlias={displayAlias}
+                displayAlias={'displayAlias' in entry ? entry.displayAlias : undefined}
                 isLocked={isLocked}
                 onMenuClick={onMenuClick}
                 className={b('edit-favorites-alias-btn', {visible})}

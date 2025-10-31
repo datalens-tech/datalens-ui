@@ -1,6 +1,5 @@
-export interface Permissions {
-    read: boolean;
-    edit: boolean;
-    admin: boolean;
-    execute: boolean;
-}
+import type z from 'zod';
+
+import type {permissionsSchema} from '../zod-schemas/permissions';
+
+export type Permissions = z.infer<typeof permissionsSchema>;
