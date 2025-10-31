@@ -112,7 +112,6 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
             },
         },
         xAxis: {
-            min: 0,
             type: 'linear',
             labels: {
                 numberFormat: xAxisLabelNumberFormat ?? undefined,
@@ -163,6 +162,7 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
                     enabled: yPlaceholder?.settings?.hideLabels !== 'yes',
                     html: isHtmlField(yField) || isMarkdownField(yField) || isMarkupField(yField),
                     maxWidth: '33%',
+                    padding: 0,
                 },
             },
         ];
