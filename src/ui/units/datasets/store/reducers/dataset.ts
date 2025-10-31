@@ -1270,8 +1270,8 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 currentDbName: undefined,
                 options: {
                     ...state.options,
-                    source_listing: undefined,
                 },
+                sourceListingOptions: undefined,
                 ui: {
                     ...state.ui,
                     selectedConnectionId: selectedConnectionIdNext,
@@ -1490,10 +1490,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
         case SET_SOURCES_LISTING_OPTIONS: {
             return {
                 ...state,
-                options: {
-                    ...state.options,
-                    source_listing: action.payload,
-                },
+                sourceListingOptions: action.payload,
             };
         }
         case SET_SOURCES_LISTING_OPTIONS_ERROR: {

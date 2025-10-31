@@ -6,10 +6,10 @@ import type {
     Dataset,
     DatasetAvatarRelation,
     DatasetField,
-    DatasetOptions,
     DatasetSource,
     DatasetSourceAvatar,
     Permissions,
+    SourceListingOptions,
     WorkbookId,
 } from '../../../../../shared';
 import type {
@@ -282,6 +282,7 @@ export type DatasetReduxState = {
     currentDbName?: string;
     connectionsDbNames: Record<string, string[]>;
     sourcesPagination: SourcesPagination;
+    sourceListingOptions?: SourceListingOptions['source_listing'];
     preview: {
         previewEnabled: boolean;
         readyPreview: 'loading' | 'failed' | null;
@@ -860,7 +861,7 @@ type SetSourcesSearchLoading = {
 
 type SetSourcesListingOptions = {
     type: typeof SET_SOURCES_LISTING_OPTIONS;
-    payload: DatasetOptions['source_listing'];
+    payload: SourceListingOptions['source_listing'];
 };
 
 export type DatasetReduxAction =

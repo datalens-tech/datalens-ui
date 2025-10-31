@@ -1,4 +1,3 @@
-import type {DatasetOptions} from '../../..';
 import {registry} from '../../../../server/registry';
 import {TIMEOUT_60_SEC, TIMEOUT_95_SEC, WORKBOOK_ID_HEADER} from '../../../constants';
 import {createAction, createTypedAction} from '../../gateway-utils';
@@ -44,6 +43,7 @@ import type {
     GetPreviewArgs,
     GetPreviewResponse,
     GetSourceArgs,
+    GetSourceListingOptionsResponse,
     GetSourceResponse,
     ImportDatasetArgs,
     ImportDatasetResponse,
@@ -94,7 +94,7 @@ export const actions = {
         params: (_, headers) => ({headers}),
     }),
     getSourceListingOptions: createAction<
-        Pick<DatasetOptions, 'source_listing'>,
+        GetSourceListingOptionsResponse,
         Pick<GetSourceArgs, 'connectionId'>
     >({
         method: 'GET',

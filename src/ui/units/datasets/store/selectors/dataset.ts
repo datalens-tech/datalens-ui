@@ -51,6 +51,8 @@ export const rlsSelector = (state: DatalensGlobalState) => {
     return state.dataset.content.rls;
 };
 export const optionsSelector = (state: DatalensGlobalState) => state.dataset.options;
+export const sourceListingOptionsSelector = (state: DatalensGlobalState) =>
+    state.dataset.sourceListingOptions;
 export const currentDbNameSelector = (state: DatalensGlobalState) => state.dataset.currentDbName;
 export const connectionsDbNamesSelector = (state: DatalensGlobalState) =>
     state.dataset.connectionsDbNames;
