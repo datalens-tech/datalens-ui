@@ -5,6 +5,7 @@ import type {
     DatasetField,
     DatasetFieldCalcMode,
     DatasetFieldError,
+    SourceListingOptions,
     TransferIdMapping,
     TransferNotification,
     WorkbookId,
@@ -308,3 +309,5 @@ export type ImportDatasetArgs = {
 export type GetDbNamesResponse = {
     db_names: string[];
 };
+
+export type GetSourceListingOptionsResponse = SourceListingOptions;

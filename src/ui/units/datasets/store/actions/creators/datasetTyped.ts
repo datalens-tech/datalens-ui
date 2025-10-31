@@ -12,9 +12,9 @@ import type {
     Dataset,
     DatasetAvatarRelation,
     DatasetField,
-    DatasetOptions,
     DatasetSource,
     DatasetSourceAvatar,
+    SourceListingOptions,
     WorkbookId,
 } from 'shared';
 import {Feature, TIMEOUT_100_SEC, TIMEOUT_65_SEC} from 'shared';
@@ -1483,9 +1483,7 @@ export function getDbNames(connectionIds: string[]) {
         try {
             if (connectionIds.length) {
                 const state = getState();
-                const {
-                    options: {source_listing},
-                } = state.dataset;
+                const {sourceListingOptions} = state.dataset;
                 const currentEntryId = selectedConnectionSelector(state)?.entryId;
                 const result = await Promise.all(
                     connectionIds.map((id) =>
@@ -1507,7 +1505,7 @@ export function getDbNames(connectionIds: string[]) {
                         type: DATASET_ACTION_TYPES.SET_CONNECTIONS_DB_NAMES,
                         payload: existingDbNames,
                     });
-                    if (source_listing?.db_name_required_for_search && currentEntryId) {
+                    if (sourceListingOptions?.db_name_required_for_search && currentEntryId) {
                         dispatch(setCurrentDbName(existingDbNames[currentEntryId]?.[0]));
                     }
                 });
@@ -1840,7 +1838,6 @@ export function initializeDataset({connectionId}: {connectionId: string}) {
     return async (dispatch: DatasetDispatch) => {
         if (connectionId) {
             await dispatch(setInitialSources([connectionId]));
-            await dispatch(getSourcesListingOptions(connectionId));
         }
 
         dispatch(_getSources());
@@ -1884,19 +1881,12 @@ export function initialFetchDataset({
                 rev_id,
             });
 
-            if (!DatasetUtils.isEnabledFeature(Feature.EnableDatasetSourcesPagination)) {
-                dataset.options.source_listing = undefined;
-            }
-
             const {
                 dataset: {sources = []},
                 options: {
                     preview: {enabled: previewEnabled},
-                    source_listing,
                 },
             } = dataset;
-            const {dbNameRequiredForSearch, supportsDbNameListing} =
-                getSourceListingValues(source_listing);
 
             const connectionsIds = new Set(
                 sources
@@ -1918,10 +1908,6 @@ export function initialFetchDataset({
                     currentRevId,
                 },
             });
-
-            if (dbNameRequiredForSearch || supportsDbNameListing) {
-                await dispatch(getDbNames(ids));
-            }
 
             dispatch(_getSources());
 
@@ -1965,17 +1951,14 @@ export function initialFetchDataset({
 }
 
 function _getSources() {
-    return (dispatch: DatasetDispatch, getState: GetState) => {
+    return async (dispatch: DatasetDispatch, getState: GetState) => {
         const {
             dataset: {
                 sourcesPagination,
                 selectedConnections,
-                currentDbName,
-                options: {source_listing},
                 ui: {selectedConnectionId},
             },
         } = getState();
-        const {serverPagination, dbNameRequiredForSearch} = getSourceListingValues(source_listing);
         const workbookId = workbookIdSelector(getState());
 
         const selectedConnection = selectedConnections.find(
@@ -1984,10 +1967,16 @@ function _getSources() {
 
         if (selectedConnection && !selectedConnection.deleted) {
             const {entryId} = selectedConnection;
+            const {currentDbName, sourceListing} = await dispatch(
+                getSourcesListingOptions(entryId),
+            );
+            const {serverPagination, dbNameRequiredForSearch} =
+                getSourceListingValues(sourceListing);
+
             dispatch(
                 getSources({
                     connectionId: entryId,
-                    workbookId: workbookId!,
+                    workbookId: workbookId,
                     limit: serverPagination ? sourcesPagination.limit : undefined,
                     currentDbName: dbNameRequiredForSearch ? currentDbName : undefined,
                 }),
@@ -1999,7 +1988,7 @@ function _getSources() {
 export function getSourcesListingOptions(connectionId: string) {
     return async (dispatch: DatasetDispatch, getState: GetState) => {
         dispatch(toggleSourcesListingOptionsLoader(true));
-        let sourceListing: DatasetOptions['source_listing'] | undefined;
+        let sourceListing: SourceListingOptions['source_listing'] | undefined;
         try {
             const result = await (DatasetUtils.isEnabledFeature(
                 Feature.EnableDatasetSourcesPagination,
