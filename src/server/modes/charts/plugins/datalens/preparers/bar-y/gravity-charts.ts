@@ -112,7 +112,6 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
             },
         },
         xAxis: {
-            // min: 0,
             type: 'linear',
             labels: {
                 numberFormat: xAxisLabelNumberFormat ?? undefined,
