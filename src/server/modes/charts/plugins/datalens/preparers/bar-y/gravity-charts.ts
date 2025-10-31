@@ -152,6 +152,7 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
                 labels: {
                     enabled: yPlaceholder?.settings?.hideLabels !== 'yes',
                     html: isHtmlField(yField) || isMarkdownField(yField) || isMarkupField(yField),
+                    maxWidth: '33%',
                 },
             },
         ];
