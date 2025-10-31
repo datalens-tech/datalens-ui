@@ -1,10 +1,8 @@
-import type {ValueFormat} from '@gravity-ui/chartkit/gravity-charts';
-
 import type {FormatNumberOptions} from '../../../../../../shared/modules/format-units/types';
 
 import type {ChartKitFormatSettings} from './types';
 
-export function mapToGravityChartValueFormat(old: ChartKitFormatSettings): ValueFormat {
+export function mapToGravityChartValueFormat(old: ChartKitFormatSettings) {
     return {
         type: 'number',
         precision: old.chartKitPrecision,
