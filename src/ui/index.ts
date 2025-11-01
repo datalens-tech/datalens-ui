@@ -13,7 +13,7 @@ import type {MigrationToWorkbookState} from 'ui/store/reducers/migrationToWorkbo
 import type {AuthState} from 'units/auth/store/reducers';
 import type {CollectionsState} from 'units/collections/store/reducers';
 import type {ConnectionsReduxState} from 'units/connections/store/typings';
-import type {DashState} from 'units/dash/store/reducers/dashTypedReducer';
+import type {DashState} from 'units/dash/store/typings/dash';
 import type {DatasetReduxState} from 'units/datasets/store/types';
 import type {QLState} from 'units/ql/store/typings';
 import type {WizardGlobalState} from 'units/wizard/reducers';

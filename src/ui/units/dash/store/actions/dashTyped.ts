@@ -22,6 +22,7 @@ import type {
     DashTabItem,
     DashTabItemControl,
     DashTabItemGroupControl,
+    DashTabItemGroupControlData,
     DashTabItemImage,
     DashTabItemWidget,
     RecursivePartial,
@@ -52,7 +53,6 @@ import {collectDashStats} from '../../modules/pushStats';
 import {DashUpdateStatus} from '../../typings/dash';
 import {DASH_EDIT_HISTORY_UNIT_ID} from '../constants';
 import * as actionTypes from '../constants/dashActionTypes';
-import type {DashState} from '../reducers/dashTypedReducer';
 import {
     selectDash,
     selectDashData,
@@ -60,6 +60,7 @@ import {
     selectDashEntry,
     selectEntryId,
 } from '../selectors/dashTypedSelectors';
+import type {DashState} from '../typings/dash';
 
 import {save} from './base/actions';
 import {migrateDataSettings} from './helpers';
@@ -782,13 +783,30 @@ export function purgeData(data: DashData) {
     return {
         ...data,
         tabs: data.tabs.map((tab) => {
-            const {id: tabId, items: tabItems, layout, connections, aliases} = tab;
+            const {id: tabId, items: tabItems, layout, connections, aliases, globalItems} = tab;
 
             const currentItemsIds = new Set();
             const currentWidgetTabsIds = new Set();
             const currentControlsIds = new Set();
 
             allTabsIds.add(tabId);
+
+            if (globalItems) {
+                globalItems.forEach((item) => {
+                    allItemsIds.add(item.id);
+                    currentItemsIds.add(item.id);
+
+                    if ('group' in data) {
+                        (data as unknown as DashTabItemGroupControlData).group.forEach(
+                            (widgetItem) => {
+                                currentControlsIds.add(widgetItem.id);
+                            },
+                        );
+                    } else {
+                        currentControlsIds.add(item.id);
+                    }
+                });
+            }
 
             const resultItems = tabItems
                 // there are empty data
@@ -1008,3 +1026,15 @@ export function updateDeprecatedDashConfig() {
         dispatch(addDashEditHistoryPoint());
     };
 }
+
+export const REMOVE_GLOBAL_ITEMS = Symbol('dash/REMOVE_GLOBAL_ITEMS');
+export type RemoveGlobalItemsAction = {
+    type: typeof REMOVE_GLOBAL_ITEMS;
+    payload: {items: DashTabItem[]};
+};
+export const removeGlobalItems = (
+    payload: RemoveGlobalItemsAction['payload'],
+): RemoveGlobalItemsAction => ({
+    type: REMOVE_GLOBAL_ITEMS,
+    payload,
+});

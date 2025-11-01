@@ -1,5 +1,6 @@
 import type {ItemDropProps} from '@gravity-ui/dashkit';
 
+import type {TabsScope} from '../../ui/units/dash/typings/selectors';
 import type {Operations} from '../modules';
 
 import type {
@@ -125,6 +126,7 @@ export interface DashTab {
     aliases: DashTabAliases;
     connections: DashTabConnection[];
     settings?: DashTabSettings;
+    globalItems?: DashTabItem[];
 }
 
 export type DashSettingsGlobalParams = Record<string, string | string[]>;
@@ -232,6 +234,7 @@ export interface DashTabItemControlData {
     width?: string;
     defaults?: StringParams;
     namespace: string;
+    tabsScope?: TabsScope;
 }
 
 export type DashTabItemControlSingle = DashTabItemControlDataset | DashTabItemControlManual;
@@ -339,6 +342,7 @@ export interface DashTabItemGroupControlData {
     autoHeight: boolean;
     buttonApply: boolean;
     buttonReset: boolean;
+    tabsScope?: TabsScope;
 
     updateControlsOnChange?: boolean;
 

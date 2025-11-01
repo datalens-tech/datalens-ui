@@ -13,6 +13,7 @@ import {selectSelectorsGroup} from 'ui/store/selectors/controlDialog';
 import type {SelectorDialogState} from 'ui/store/typings/controlDialog';
 
 import {CONTROLS_PLACEMENT_MODE} from '../../constants/dialogs';
+import {TabsScopeSelect} from '../ControlComponents/Sections/CommonSettingsSection/TabsScopeSelect/TabsScopeSelect';
 import {FormSection} from '../FormSection/FormSection';
 
 import {ControlPlacementRow} from './ControlPlacementRow/ControlPlacementRow';
@@ -27,6 +28,7 @@ export type ExtendedSettingsDialogProps = {
     selectorsGroupTitlePlaceholder?: string;
     enableAutoheightDefault?: boolean;
     showSelectorsGroupTitle?: boolean;
+    enableGlobalSelectors?: boolean;
 };
 
 export type OpenDialogExtendedSettingsArgs = {
@@ -48,6 +50,7 @@ const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
     selectorsGroupTitlePlaceholder,
     enableAutoheightDefault,
     showSelectorsGroupTitle,
+    enableGlobalSelectors,
 }) => {
     const selectorsGroup = useSelector(selectSelectorsGroup);
     const [itemsState, setItemsState] = React.useState(selectorsGroup.group);
@@ -229,6 +232,7 @@ const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
             // we allow to enable autoheight
             selectorsGroup.group[0].titlePlacement === TitlePlacementOption.Top);
     const showUpdateControlsOnChange = selectorsGroup.buttonApply && isMultipleSelectors;
+    const showTabsScopeSelect = isMultipleSelectors && enableGlobalSelectors;
 
     return (
         <Dialog onClose={onClose} open={true} className={b()}>
@@ -326,6 +330,13 @@ const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                                 qa={DialogGroupControlQa.updateControlOnChangeCheckbox}
                             />
                         </FormRow>
+                    )}
+
+                    {showTabsScopeSelect && (
+                        <TabsScopeSelect
+                            isGroupSettings={true}
+                            groupTabsScope={selectorsGroup.tabsScope}
+                        />
                     )}
                 </FormSection>
                 {isMultipleSelectors && (

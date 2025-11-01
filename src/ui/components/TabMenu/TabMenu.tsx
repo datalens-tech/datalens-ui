@@ -36,6 +36,8 @@ export const TabMenu = <T extends unknown>({
     pasteButtonText,
     onCopyItem,
     onUpdateItem,
+    renderIcon,
+    renderWrapper,
 }: TabMenuProps<T>) => {
     const [pasteConfig, setPasteConfig] = React.useState<CopiedConfigData | null>(null);
     const workbookId = useSelector(selectDashWorkbookId);
@@ -291,6 +293,8 @@ export const TabMenu = <T extends unknown>({
                 iconOnHover={true}
                 onCopy={onCopyItem}
                 onUpdateItem={onUpdateItem}
+                renderIcon={renderIcon}
+                renderWrapper={renderWrapper}
             />
         );
     };
