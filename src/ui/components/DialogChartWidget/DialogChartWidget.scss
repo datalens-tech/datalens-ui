@@ -2,43 +2,61 @@
 
 .widget-item-dialog {
     width: 960px;
-    max-height: 507px;
+    height: 728px;
     display: flex;
 
-    &_long {
-        max-height: 547px;
-    }
-
-    &_without-sidebar {
-        width: 705px;
-    }
+    $class: &;
 
     & {
         --dl-dropdown-navigation-width: 330px;
     }
 
+    &__body {
+        overflow: hidden;
+        height: 100%;
+        position: relative;
+
+        &:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: var(--g-spacing-8);
+            right: var(--g-spacing-8);
+            border-top: 1px solid var(--g-color-base-generic);
+        }
+
+        &_with-sidebar {
+            display: flex;
+            gap: var(--g-spacing-4);
+            align-items: stretch;
+        }
+    }
+
     &__sidebar {
+        --tab-menu-list-item-horizontal-padding: var(--g-spacing-4);
+        --tab-menu-list-item-border-radius: var(--g-border-radius-m);
+
+        width: 260px;
         max-height: 100%;
         display: flex;
-        flex: 1;
+        flex-grow: 0;
         flex-direction: column;
-        width: 255px;
-        padding-block-end: var(--dialog-footer-vertical-padding, var(--g-spacing-6));
+        overflow-y: auto;
     }
 
-    &__add-icon {
-        margin-left: 6px;
-    }
-
-    &__dialog-sidebar {
+    &__content {
         display: flex;
         flex-direction: column;
+        overflow-y: auto;
+        gap: var(--g-spacing-6);
     }
 
-    &__main {
-        height: 100%;
+    &__section-title {
+        @include text-subheader-2();
         display: flex;
-        flex-direction: column;
+        height: 28px;
+        align-items: center;
+        margin-block-end: var(--g-spacing-3);
     }
 
     &__navigation-input-container {
@@ -84,10 +102,6 @@
         @include text-subheader-3();
     }
 
-    .widget-item-dialog__params-collapse {
-        margin-top: 20px;
-    }
-
     .widget-item-dialog__line-content {
         display: flex;
         align-items: center;
@@ -126,23 +140,8 @@
         padding: 10px;
     }
 
-    &__section-title {
-        @include text-subheader-2();
-        font-weight: 500;
-        margin: 16px 0;
-    }
-
     &__beta {
         margin-left: 4px;
-    }
-
-    &__content {
-        display: flex;
-        flex-direction: column;
-    }
-
-    &__content-body {
-        overflow-y: auto;
     }
 
     &__info-comment {

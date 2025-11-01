@@ -24,6 +24,7 @@ const b = block('tab-menu');
 const ADD_BUTTON_DEFAULT_SIZE = 16;
 
 export const TabMenu = <T extends unknown>({
+    view,
     canPasteItems,
     enableActionMenu,
     items,
@@ -235,7 +236,8 @@ export const TabMenu = <T extends unknown>({
                     className={b('action-button')}
                     onClick={onAction({action: TabActionType.Add})}
                     qa={TabMenuQA.Add}
-                    view="outlined"
+                    view={view === 'new' ? 'flat-secondary' : 'outlined'}
+                    size={view === 'new' ? 'l' : 'm'}
                     width="max"
                 >
                     <Icon
@@ -281,7 +283,7 @@ export const TabMenu = <T extends unknown>({
                     virtualized: false,
                     deactivateOnLeave: true,
                     selectedItemIndex,
-                    className: b('list'),
+                    className: b('list', {view}),
                     onSortEnd: ({oldIndex, newIndex}) => moveItem(oldIndex, newIndex),
                     itemClassName: b('list-item'),
                 }}
@@ -356,7 +358,7 @@ export const TabMenu = <T extends unknown>({
     };
 
     return (
-        <div className={b()}>
+        <div className={b({view})}>
             {enableActionMenu
                 ? renderListWithMenu(items, selectedItemIndex, onUpdateItem)
                 : renderListWithRemove(items, selectedItemIndex)}

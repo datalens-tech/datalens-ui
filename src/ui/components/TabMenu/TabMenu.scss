@@ -8,8 +8,30 @@ $class: '.tab-menu';
     --_--tab-button-outlined-padding: var(--g-spacing-2);
     --_--tab-button-add-height: calc(var(--_--tab-button-outlined-padding) * 2 + 28px);
 
+    &_view_new {
+        --_--tab-button-outlined-padding: 0;
+        --_--tab-button-add-height: calc(var(--_--tab-button-outlined-padding) * 2 + 28px);
+
+        #{$class}__action-button {
+            justify-content: flex-start;
+        }
+
+        #{$class}__buttons-row {
+            padding-inline: 0;
+        }
+    }
+
     &__list-item {
-        padding: 0 var(--dialog-sidebar-horizontal-padding, var(--g-spacing-6));
+        border-radius: var(--tab-menu-list-item-border-radius, 0);
+        padding: 0 var(--tab-menu-list-item-horizontal-padding, var(--g-spacing-6));
+
+        #{$class}_view_new & {
+            margin-block-end: var(--g-spacing-1);
+
+            .g-list__item-sort-icon {
+                margin-inline: 2px;
+            }
+        }
     }
 
     &__item {
@@ -20,6 +42,10 @@ $class: '.tab-menu';
         width: 100%;
         cursor: pointer;
         justify-content: space-between;
+
+        #{$class}_view_new & {
+            height: 36px;
+        }
     }
 
     &__item-star {
@@ -56,7 +82,7 @@ $class: '.tab-menu';
     &__buttons-row {
         display: flex;
         padding: var(--_--tab-button-outlined-padding)
-            var(--dialog-sidebar-horizontal-padding, var(--g-spacing-6));
+            var(--tab-menu-list-item-horizontal-padding, var(--g-spacing-6));
         gap: var(--g-spacing-2);
     }
 }
