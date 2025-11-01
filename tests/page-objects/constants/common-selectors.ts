@@ -2,6 +2,7 @@ export const enum CommonSelectors {
     SelectItem = '.g-select-list__option',
     SelectedItem = '.g-select-list__option_colored',
     TextInput = '.g-text-input__control',
+    TextInputErrorState = '.g-text-input_state_error',
     TextArea = '.g-text-area__control',
     RadioButtonOption = '.g-segmented-radio-group__option',
     RadioButtonOptionControl = '.g-segmented-radio-group__option-control',
