@@ -23,7 +23,7 @@ const VALIDATION_SCHEMA_KEY = Symbol('$schema');
 const registerValidationSchema = <T extends object>(value: T, schema: TypedActionSchema): T => {
     Object.defineProperty(value, VALIDATION_SCHEMA_KEY, {
         value: schema,
-        enumerable: false,
+        configurable: true,
     });
 
     return value;
@@ -61,6 +61,39 @@ export const createTypedAction = <TOutput, TParams, TTransformed = TOutput>(
 
     return registerValidationSchema(actionConfig, schemaValidationObject);
 };
+
+export const createExtendedTypedAction =
+    <TConfigOutput, TConfigParams, TConfigTransformed = TConfigOutput>(
+        actionConfig: ApiServiceActionConfig<
+            AppContext,
+            Request,
+            Response,
+            TConfigOutput,
+            TConfigParams,
+            TConfigTransformed
+        >,
+    ) =>
+    <TResult extends TConfigTransformed, TParams extends TConfigParams>(schema: {
+        resultSchema: z.ZodType<TResult>;
+        paramsSchema: z.ZodType<TParams>;
+    }) => {
+        const schemaValidationObject = {
+            paramsSchema: schema.paramsSchema,
+            resultSchema: schema.resultSchema,
+        };
+
+        return registerValidationSchema(
+            actionConfig as unknown as ApiServiceActionConfig<
+                AppContext,
+                Request,
+                Response,
+                TConfigOutput,
+                TParams,
+                TResult
+            >,
+            schemaValidationObject,
+        );
+    };
 
 type AuthArgsData = {
     userAccessToken?: string;
