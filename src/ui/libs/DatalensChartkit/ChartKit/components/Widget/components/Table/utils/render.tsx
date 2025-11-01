@@ -322,6 +322,8 @@ function getHeaderNode(column: TableHead) {
 
 export const getColumnsAndNames = ({
     onChange,
+    onAction,
+    runAction,
     head,
     rows,
     context,
@@ -333,6 +335,8 @@ export const getColumnsAndNames = ({
     actionParamsData,
 }: {
     onChange: TableProps['onChange'];
+    runAction: TableProps['runAction'];
+    onAction: TableProps['onAction'];
     head: TableHead[];
     rows: TableRow[];
     context: {isHasGroups: boolean};
@@ -378,6 +382,8 @@ export const getColumnsAndNames = ({
                     level: level + 1,
                     shift: index,
                     onChange,
+                    onAction,
+                    runAction,
                     tableWidth,
                     topLevelWidth: currentColumnWidth
                         ? currentColumnWidth / column.sub.length
@@ -542,6 +548,8 @@ export const getColumnsAndNames = ({
                         head,
                         rows,
                         onChange,
+                        onAction,
+                        runAction,
                     }),
                     sortable: isGroupSortAvailable && isColumnSortable,
                     width: columnWidth,
