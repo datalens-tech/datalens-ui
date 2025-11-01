@@ -32,3 +32,4 @@ export type {
     PublicApiConfig,
     PublicApiSecuritySchemes,
 } from '../../src/server/components/public-api/types';
+export {ApiTag as PublicApiTag} from '../../src/server/components/public-api/constants';

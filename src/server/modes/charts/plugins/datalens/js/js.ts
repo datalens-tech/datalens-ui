@@ -863,7 +863,7 @@ export const buildGraphPrivate = (args: {
 
                 const fields: Record<string, string> = {};
 
-                const schema = datasetsSchemaFields[datasetIndex];
+                const schema = datasetsSchemaFields[datasetIndex] ?? [];
 
                 schema.forEach((item) => {
                     fields[item.guid] = idToTitle[item.guid];
@@ -904,7 +904,7 @@ export const buildGraphPrivate = (args: {
 
             const fields: Record<string, string> = {};
 
-            const schema = datasetsSchemaFields[datasetIndex];
+            const schema = datasetsSchemaFields[datasetIndex] ?? [];
 
             schema.forEach((item) => {
                 fields[item.guid] = idToTitle[item.guid];

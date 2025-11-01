@@ -272,7 +272,7 @@ function mutateAndValidateVisualization({
     return everythingIsOk;
 }
 
-const getChartTypeByVisualizationId = (visualizationId: string): WizardType => {
+export const getChartTypeByVisualizationId = (visualizationId: string): WizardType => {
     if (isD3Visualization(visualizationId as WizardVisualizationId)) {
         return WizardType.GravityChartsWizardNode;
     }

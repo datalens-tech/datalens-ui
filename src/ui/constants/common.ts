@@ -338,6 +338,7 @@ export const URL_QUERY = {
     OPEN_DASH_INFO: '_opened_info',
     UNRELEASED: 'unreleased',
     ENTRY_CONFIG: '_entry_config',
+    CHART_RECIPE: '_chart_recipe',
 };
 
 const GRADIENT_ICONS = {

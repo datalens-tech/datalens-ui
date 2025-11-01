@@ -20,7 +20,7 @@ import {
 import {
     currentDbNameSelector,
     currentDbNamesSelector,
-    optionsSelector,
+    sourceListingOptionsSelector,
     sourcePrototypesSelector,
     sourcesErrorSelector,
     sourcesPaginationSelector,
@@ -127,7 +127,7 @@ export const SourcesTable: React.FC<SourcesTableProps> = ({
     const [search, setSearch] = React.useState('');
     const searchInputRef = React.useRef<HTMLInputElement>(null);
     const dispatch = useDispatch();
-    const {source_listing} = useSelector(optionsSelector);
+    const sourceListing = useSelector(sourceListingOptionsSelector);
     const currentDbName = useSelector(currentDbNameSelector);
     const sourcesPagination = useSelector(sourcesPaginationSelector);
     const sourcePrototypes = useSelector(sourcePrototypesSelector);
@@ -152,7 +152,7 @@ export const SourcesTable: React.FC<SourcesTableProps> = ({
         serverPagination,
         supportsDbNameListing,
         parentLabel = '',
-    } = getSourceListingValues(source_listing);
+    } = getSourceListingValues(sourceListing);
 
     React.useEffect(() => {
         setSearch(sourcesPagination.searchValue);

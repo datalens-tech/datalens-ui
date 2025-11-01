@@ -68,6 +68,7 @@ import {getFilteredObject} from '../../../utils';
 import type {WizardDispatch, WizardGlobalState} from '../reducers';
 import {selectWizardWorkbookId} from '../selectors/settings';
 import {selectVisualization} from '../selectors/visualization';
+import {getWizardConfigFromRecipe} from '../utils/chart-recipe';
 import {filterVisualizationColors} from '../utils/colors';
 import {getChartFiltersWithDisabledProp} from '../utils/filters';
 import {getVisualization, transformSchema} from '../utils/helpers';
@@ -2157,6 +2158,7 @@ export function setDefaults(args: SetDefaultsArgs) {
     return async function (dispatch: WizardDispatch, getState: () => DatalensGlobalState) {
         const searchPairs = new URLSearchParams(window.location.search);
         const entryConfigParam = searchPairs.get(URL_QUERY.ENTRY_CONFIG);
+        const chartRecipeParam = searchPairs.get(URL_QUERY.CHART_RECIPE);
 
         if (routeWorkbookId) {
             dispatch(setRouteWorkbookId(routeWorkbookId));
@@ -2174,6 +2176,16 @@ export function setDefaults(args: SetDefaultsArgs) {
             if (entryConfigParam) {
                 try {
                     const config = JSON.parse(entryConfigParam);
+                    await processWidget({widget: {data: config}, dispatch, getState});
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+
+            if (chartRecipeParam) {
+                try {
+                    const chartRecipe = JSON.parse(chartRecipeParam);
+                    const config = await getWizardConfigFromRecipe({recipe: chartRecipe});
                     await processWidget({widget: {data: config}, dispatch, getState});
                 } catch (e) {
                     console.error(e);
