@@ -193,6 +193,23 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
         dropdownActions.push([...otherActions]);
     }
 
+    const {openAccessDialog} = registry.common.functions.getAll();
+
+    const onOpenAccessDialog = React.useCallback(() => {
+        //Access list TODO this is draft only
+        dispatch(
+            openAccessDialog({
+                resourceId: workbook.workbookId,
+                resourceType: ResourceType.Workbook,
+                resourceTitle: workbook.title,
+                canUpdate: workbook.permissions.updateAccessBindings,
+            }),
+        );
+        // setIamAccessDialogIsOpen(true);
+    }, []);
+
+    const {AccessDialog} = registry.common.components.getAll();
+
     return (
         <div className={b()}>
             {Boolean(dropdownActions.length) && (
@@ -210,7 +227,7 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
                     <div className={b('item')}>
                         <Button
                             onClick={() => {
-                                setIamAccessDialogIsOpen(true);
+                                onOpenAccessDialog();
                             }}
                         >
                             <Icon data={LockOpen} />
@@ -224,6 +241,8 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
                     <CreateEntry view="action" />
                 </div>
             )}
+
+            <AccessDialog />
 
             {collectionsAccessEnabled && workbook.permissions.listAccessBindings && (
                 <IamAccessDialog

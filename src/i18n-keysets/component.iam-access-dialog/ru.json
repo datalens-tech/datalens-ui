@@ -7,6 +7,7 @@
   "action_revoke-access": "Отозвать роль",
   "action_save": "Сохранить",
   "button_bindings-list-retry": "Обновить список",
+  "label_access": "Права доступа",
   "label_access_error": "Недостаточно прав",
   "label_all": "Все",
   "label_groups": "Группы",
@@ -14,6 +15,8 @@
   "label_no-data": "Пусто",
   "label_object": "Объект",
   "label_revoke-access": "Отозвать роль",
+  "label_delete": "Удалить",
+  "label_to": "Кому",
   "label_role": "Роль",
   "label_user": "Пользователь",
   "label_user-accounts": "Пользователи",
@@ -21,10 +24,13 @@
   "role_admin": "Администрирование",
   "role_editor": "Редактирование",
   "role_limited-viewer": "Ограниченный просмотр",
+  "role_limited-viewer-hint": "В отличие от просмотра, не даёт доступ просмотру датасетов и подключений",
   "role_viewer": "Просмотр",
   "section_direct_accesses": "Прямые права",
   "section_inherited_accesses": "Наследуемые права",
   "section_revoke-access": "Вы уверены, что хотите отозвать роль у {{userName}}? Пользователь потеряет доступ ко всем объектам находящимся в {{objectName}}.",
   "title_access-list": "Управление доступом",
-  "title_add-user": "Добавление пользователя"
+  "title_add-user": "Добавление пользователя",
+  "placeholder_select-option": "Не выбранно",
+  "placeholder_select_subject_type": "Группы и пользователи"
 }

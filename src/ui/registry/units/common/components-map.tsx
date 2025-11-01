@@ -65,4 +65,5 @@ export const commonComponentsMap = {
     DialogRelatedEntitiesRadioHint: makeDefaultEmpty<DialogRelatedEntitiesRadioHintProps>(),
     WorkbookEntriesTableTabs: makeDefaultEmpty<WorkbookEntriesTableTabsProps>(),
     DialogEntryDescription: makeDefaultEmpty<DialogEntryDescriptionProps>(),
+    AccessDialog: makeDefaultEmpty(),
 } as const;

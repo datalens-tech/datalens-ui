@@ -1,0 +1,31 @@
+$block: '.dl-multi-select-input';
+
+#{$block} {
+    width: var(--multi-select-width, 'auto');
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: start;
+    padding: 5px;
+
+    &__item-list {
+        width: 81%;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        justify-content: flex-start;
+        align-items: center;
+        flex: 1;
+    }
+
+    &__input-wrapper {
+        flex: 1;
+        min-width: 100px;
+        padding-left: 5px;
+    }
+
+    &__end-content-wrapper {
+        flex: 1;
+        min-width: 100px;
+    }
+}

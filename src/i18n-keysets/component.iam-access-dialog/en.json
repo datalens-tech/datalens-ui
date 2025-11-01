@@ -7,6 +7,7 @@
   "action_revoke-access": "Revoke role",
   "action_save": "Save",
   "button_bindings-list-retry": "Reload list",
+  "label_access": "Access rights",
   "label_access_error": "Insufficient rights",
   "label_all": "All",
   "label_groups": "Groups",
@@ -14,6 +15,8 @@
   "label_no-data": "Empty",
   "label_object": "Object",
   "label_revoke-access": "Revoke role",
+  "label_delete": "Delete",
+  "label_to": "To",
   "label_role": "Role",
   "label_user": "User",
   "label_user-accounts": "Users",
@@ -21,10 +24,13 @@
   "role_admin": "Admin",
   "role_editor": "Editor",
   "role_limited-viewer": "Limited viewer",
+  "role_limited-viewer-hint": "Unlike 'Viewer', it doesn't grant access to view datasets and connections",
   "role_viewer": "Viewer",
   "section_direct_accesses": "Direct permissions",
   "section_inherited_accesses": "Inherited permissions",
   "section_revoke-access": "Are you sure you want to revoke this role from {{userName}}? The user will lose access to all objects located in {{objectName}}.",
   "title_access-list": "Manage access",
-  "title_add-user": "Add user"
+  "title_add-user": "Add user",
+  "placeholder_select-option": "Not selected",
+  "placeholder_select_subject_type": "Groups and users"
 }
