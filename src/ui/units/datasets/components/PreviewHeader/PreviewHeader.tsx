@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {ChevronsExpandUpRight, LayoutHeader, LayoutSideContent, Xmark} from '@gravity-ui/icons';
+import type {DatasetReduxState} from 'units/datasets/store/types';
 import {Button, Icon, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
@@ -20,9 +21,9 @@ const ICON_WIDTH = 24;
 interface Props {
     amountPreviewRows: number;
     view: string;
-    toggleViewPreview: (args: {view: string}) => void;
+    toggleViewPreview: (args: {view: DatasetReduxState['preview']['view']}) => void;
     closePreview: () => void;
-    changeAmountPreviewRows: (args: {amountPreviewRows: string}) => void;
+    changeAmountPreviewRows: (args: {amountPreviewRows: number}) => void;
     refetchPreviewDataset: () => void;
 }
 

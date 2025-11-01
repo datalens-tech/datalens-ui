@@ -290,7 +290,10 @@ export type DatasetReduxState = {
         isLoading: boolean;
         amountPreviewRows: number;
         view: 'full' | 'bottom' | 'right';
-        data: string[]; // TODO: correctly describe the type
+        data: {
+            Data: string[][];
+            Type: [string, [string, string[]]];
+        }; // TODO: correctly describe the type
         error: DatasetError;
         isQueued: boolean;
     };
