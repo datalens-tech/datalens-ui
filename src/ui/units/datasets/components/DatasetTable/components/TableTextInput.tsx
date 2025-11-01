@@ -12,10 +12,11 @@ type TableTextInputProps = ColumnItem & {
     text: string;
     error?: boolean;
     onUpdate?: (text: string) => void;
+    qa?: string;
 };
 
 export const TableTextInput = (props: TableTextInputProps) => {
-    const {text, index, error, setActiveRow, onUpdate} = props;
+    const {text, index, error, setActiveRow, onUpdate, qa} = props;
     const [localText, setLocalText] = React.useState(text);
     const ref = React.useRef<HTMLInputElement>(null);
 
@@ -53,6 +54,7 @@ export const TableTextInput = (props: TableTextInputProps) => {
             onBlur={handleBlur}
             onKeyDown={handleKeyDown}
             onUpdate={handleUpdate}
+            qa={qa}
         />
     );
 };

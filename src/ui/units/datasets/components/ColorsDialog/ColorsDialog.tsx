@@ -7,6 +7,7 @@ import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
 import type {DatasetField, DatasetFieldColorConfig, DatasetUpdate, FieldUISettings} from 'shared';
 import {
+    DatasetFieldColorsDialogQa,
     TIMEOUT_90_SEC,
     getFieldDistinctValues,
     getFieldsApiV2RequestSection,
@@ -187,13 +188,19 @@ export const ColorsDialog = (props: Props) => {
                     auto
                 </PaletteItem>
             ),
-            value: '',
+            value: 'auto',
         });
         return items;
     }, [colorsList, paletteSelectedValue]);
 
     return (
-        <Dialog onClose={onClose} open={open} className={b()} disableHeightTransition={true}>
+        <Dialog
+            qa={DatasetFieldColorsDialogQa.Dialog}
+            onClose={onClose}
+            open={open}
+            className={b()}
+            disableHeightTransition={true}
+        >
             <Dialog.Header caption={i18n('label_colors-settings')} />
             <Dialog.Body className={b('body')}>
                 <div className={b('content')}>
@@ -217,7 +224,7 @@ export const ColorsDialog = (props: Props) => {
                             className={b('palette')}
                             size="l"
                             options={paletteOptions}
-                            value={paletteSelectedValue ? [paletteSelectedValue] : undefined}
+                            value={[paletteSelectedValue ?? 'auto']}
                             onUpdate={handleSelectColor}
                         />
                     </div>

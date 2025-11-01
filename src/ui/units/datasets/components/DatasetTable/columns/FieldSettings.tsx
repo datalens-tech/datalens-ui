@@ -6,7 +6,7 @@ import DataTable from '@gravity-ui/react-data-table';
 import {ActionTooltip, Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import type {DatasetField} from 'shared';
+import {type DatasetField, DatasetFieldsTabQa} from 'shared';
 import {isDisplaySettingsAvailable, isFieldWithDisplaySettings} from 'shared/utils';
 
 const b = block('dataset-table');
@@ -46,6 +46,7 @@ export const getFieldSettingsColumn = ({onUpdate}: GetHiddenColumnArgs): Column<
                     view="flat"
                     title={i18n('button_field-settings')}
                     onClick={() => onUpdate(row)}
+                    qa={DatasetFieldsTabQa.FieldSettingsColumnIcon}
                 >
                     <Icon
                         className={b('hidden', {hidden: fieldHasSettings})}
