@@ -24,7 +24,7 @@
             max-height: 3000px;
         }
 
-        --ck-split-pane-background: var(--g-color-base-float);
+        --ck-split-pane-background: var(--dl-color-widget-background, var(--g-color-base-float));
     }
 }
 
