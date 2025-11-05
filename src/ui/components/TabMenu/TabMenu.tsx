@@ -202,10 +202,7 @@ export const TabMenu = <T extends unknown>({
                 [dragIndex, 1],
                 [hoverIndex, 0, dragItem],
             ],
-        }); /* .map((item, index) => ({
-            ...item,
-            isDefault: view === 'new' ? index === 0 : item.isDefault,
-        })); */
+        });
 
         let updatedSelectedItemIndex = selectedItemIndex;
 
