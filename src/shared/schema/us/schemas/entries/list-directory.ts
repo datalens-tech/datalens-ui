@@ -19,7 +19,6 @@ export const listDirectoryArgsSchema = z.object({
     page: z.number().optional(),
     pageSize: z.number().optional(),
     includePermissionsInfo: z.boolean().optional(),
-    ignoreWorkbookEntries: z.boolean().optional(),
 });
 
 export const listDirectoryBreadCrumbSchema = z.object({
