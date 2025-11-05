@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {ArrowRight, ChevronDown, LockOpen, TrashBin} from '@gravity-ui/icons';
+import {ArrowRight, ChevronDown, CodeTrunk, LockOpen, TrashBin} from '@gravity-ui/icons';
 import type {
     DropdownMenuItem,
     DropdownMenuItemAction,
@@ -11,7 +11,9 @@ import {Button, DropdownMenu, Icon, Tooltip} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
+import {useHistory} from 'react-router-dom';
 import {DropdownAction} from 'ui/components/DropdownAction/DropdownAction';
+import {EntryIcon} from 'ui/components/EntryIcon/EntryIcon';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {Feature} from '../../../../../shared';
@@ -47,12 +49,17 @@ export const CollectionActions = React.memo<Props>(
         onDeleteClick,
     }) => {
         const collection = useSelector(selectCollection);
-
+        const history = useHistory();
         const {CustomActionPanelCollectionActions} = registry.collections.components.getAll();
 
         const showCreateCollection = collection ? collection.permissions?.createCollection : true;
 
         const showCreateWorkbook = collection ? collection.permissions?.createWorkbook : true;
+
+        const showCreateSharedEntry =
+            isEnabledFeature(Feature.EnableSharedEntries) && collection
+                ? collection.permissions?.createSharedEntry
+                : false;
 
         const createActionItems: DropdownMenuItemMixed<void>[] = [];
 
@@ -86,6 +93,53 @@ export const CollectionActions = React.memo<Props>(
                 }),
                 action: onCreateCollectionClick,
             });
+        }
+
+        if (showCreateSharedEntry) {
+            createActionItems.push([
+                //TODO texts in CHARTS-11999
+                {
+                    text: 'Общие объекты',
+                    iconStart: <CodeTrunk />,
+                    items: [
+                        {
+                            text: (
+                                <div>
+                                    <div className={b('notice-container')}>
+                                        <p className={b('notice-text')}>
+                                            Объекты для переиспользования и подключения в воркбуки
+                                        </p>
+                                    </div>
+                                </div>
+                            ),
+                            className: b('notice'),
+                            action: () => {},
+                            selected: false,
+                        },
+                        {
+                            iconStart: (
+                                <EntryIcon
+                                    entry={{scope: 'connection'}}
+                                    overrideIconType="connection"
+                                />
+                            ),
+                            text: 'Подключение',
+                            action: () =>
+                                history.push(
+                                    `/collections/${collection?.collectionId}/connections/new`,
+                                ),
+                        },
+                        {
+                            iconStart: <EntryIcon entry={{scope: 'dataset'}} />,
+                            text: 'Датасет',
+                            action: () =>
+                                history.push(
+                                    `/collections/${collection?.collectionId}/datasets/new`,
+                                ),
+                        },
+                    ],
+                },
+            ]);
         }
 
         const collectionsAccessEnabled = isEnabledFeature(Feature.CollectionsAccessEnabled);
@@ -139,7 +193,7 @@ export const CollectionActions = React.memo<Props>(
 
                 {(showCreateCollection || showCreateWorkbook) && (
                     <DropdownMenu
-                        size="s"
+                        size="m"
                         items={createActionItems}
                         switcherWrapperClassName={b('create-wrapper')}
                         popupProps={{placement: 'bottom-end'}}

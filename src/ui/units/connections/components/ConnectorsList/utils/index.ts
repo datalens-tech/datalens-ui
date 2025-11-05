@@ -2,14 +2,22 @@ import {CONNECTOR_VISIBILITY_MODE} from 'shared';
 
 import type {ConnectorItem} from '../../../../../../shared/schema';
 
-export const getConnectorListItemUrl = (args: {connector: ConnectorItem; workbookId?: string}) => {
-    const {connector, workbookId} = args;
+export const getConnectorListItemUrl = (args: {
+    connector: ConnectorItem;
+    workbookId?: string;
+    collectionId?: string;
+}) => {
+    const {connector, workbookId, collectionId} = args;
     const {search = ''} = window.location;
     const type = connector.alias || connector.conn_type;
     let url = `/connections/new/${type}${search}`;
 
     if (workbookId) {
         url = `/workbooks/${workbookId}` + url;
+    }
+
+    if (collectionId) {
+        url = `/collections/${collectionId}` + url;
     }
 
     return url;

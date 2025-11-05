@@ -98,6 +98,8 @@ export enum Feature {
     EnableConnectionRevisions = 'EnableConnectionRevisions',
     /** Enable pagination in dataset sources table */
     EnableDatasetSourcesPagination = 'EnableDatasetSourcesPagination',
+    /** Enable shared connections and datasets */
+    EnableSharedEntries = 'EnableSharedEntries',
 
     EnableMobileFixedHeader = 'EnableMobileFixedHeader',
     EnableCommonChartDashSettings = 'EnableCommonChartDashSettings',

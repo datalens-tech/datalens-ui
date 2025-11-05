@@ -10,19 +10,24 @@ import {closeDialog} from '../../../../../store/actions/dialog';
 
 const i18n = I18n.keyset('connections.form');
 
-export const DIALOG_CONN_CREATE_IN_WB_CONNECTION = Symbol('DIALOG_CONN_CREATE_IN_WB_CONNECTION');
+export const DIALOG_CONN_CREATE_SHARED_CONNECTION = Symbol('DIALOG_CONN_CREATE_SHARED_CONNECTION');
 
-export type DialogCreateConnectionInWbProps = {
+export type DialogCreateSharedConnectionProps = {
     onApply: DialogCreateWorkbookEntryProps['onApply'];
     workbookId?: string;
+    collectionId?: string;
 };
 
 export type OpenDialogCreateConnectionInWbArgs = {
-    id: typeof DIALOG_CONN_CREATE_IN_WB_CONNECTION;
-    props: DialogCreateConnectionInWbProps;
+    id: typeof DIALOG_CONN_CREATE_SHARED_CONNECTION;
+    props: DialogCreateSharedConnectionProps;
 };
 
-const DialogCreateConnection = ({workbookId, onApply}: DialogCreateConnectionInWbProps) => {
+const DialogCreateConnection = ({
+    workbookId,
+    onApply,
+    collectionId,
+}: DialogCreateSharedConnectionProps) => {
     const dispatch = useDispatch();
 
     const closeHandler = () => dispatch(closeDialog());
@@ -36,6 +41,7 @@ const DialogCreateConnection = ({workbookId, onApply}: DialogCreateConnectionInW
             textButtonApply={i18n('button_create')}
             textButtonCancel={i18n('button_cancel')}
             workbookId={workbookId}
+            collectionId={collectionId}
             visible={true}
             onApply={onApply}
             onClose={closeHandler}
@@ -44,4 +50,4 @@ const DialogCreateConnection = ({workbookId, onApply}: DialogCreateConnectionInW
     );
 };
 
-DialogManager.registerDialog(DIALOG_CONN_CREATE_IN_WB_CONNECTION, DialogCreateConnection);
+DialogManager.registerDialog(DIALOG_CONN_CREATE_SHARED_CONNECTION, DialogCreateConnection);

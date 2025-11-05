@@ -31,3 +31,7 @@ export {
     CreateEntryInWorkbookDialog,
     DIALOG_CREATE_ENTRY_IN_WORKBOOK,
 } from './CreateEntryInWorkbookDialog';
+export {
+    CreateEntryInCollectionDialog,
+    DIALOG_CREATE_ENTRY_IN_COLLECTION,
+} from './CreateEntryInCollectionDialog';

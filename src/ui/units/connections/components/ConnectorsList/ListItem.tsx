@@ -37,6 +37,7 @@ export type RenderFn = (props: RenderFnProps) => React.ReactElement | null;
 type ListItemProps = {
     connector: ConnectorItem;
     workbookId?: string;
+    collectionId?: string;
     render: RenderFn;
 };
 
@@ -74,9 +75,14 @@ const ListItemTitle = ({title}: {title: string}) => {
     return <div className={b('item-title')}>{title}</div>;
 };
 
-export const ListItem: React.FC<ListItemProps> = ({connector, workbookId, render}) => {
+export const ListItem: React.FC<ListItemProps> = ({
+    connector,
+    workbookId,
+    render,
+    collectionId,
+}) => {
     const {conn_type: type, alias, title, visibility_mode} = connector;
-    const to = getConnectorListItemUrl({connector, workbookId});
+    const to = getConnectorListItemUrl({connector, workbookId, collectionId});
     const iconData = getConnectorIconDataByAlias(alias) || getConnectorIconData(type);
     const itemTitle = title || getConnectorTitle(type);
 
