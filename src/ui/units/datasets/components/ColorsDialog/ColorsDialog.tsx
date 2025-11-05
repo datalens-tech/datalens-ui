@@ -155,10 +155,18 @@ export const ColorsDialog = (props: Props) => {
 
         return (
             <React.Fragment>
-                <div className={b('value-color', {default: !mountedColorIndex})} style={style}>
+                <div
+                    data-qa={DatasetFieldColorsDialogQa.ValueItemColorIcon}
+                    className={b('value-color', {default: !mountedColorIndex})}
+                    style={style}
+                >
                     {mountedColorIndex ? null : 'a'}
                 </div>
-                <div className={b('value-label')} title={value}>
+                <div
+                    data-qa={DatasetFieldColorsDialogQa.ValueItem}
+                    className={b('value-label')}
+                    title={value}
+                >
                     {value}
                 </div>
             </React.Fragment>
@@ -174,6 +182,7 @@ export const ColorsDialog = (props: Props) => {
                     isSelected={String(index) === paletteSelectedValue}
                     className={b('palette-item')}
                     color={color}
+                    qa={DatasetFieldColorsDialogQa.PaleteItem}
                 />
             ),
             value: String(index),
@@ -184,6 +193,7 @@ export const ColorsDialog = (props: Props) => {
                     isSelected={paletteSelectedValue === undefined}
                     className={b('palette-item')}
                     isDefault={true}
+                    qa={DatasetFieldColorsDialogQa.PaleteItem}
                 >
                     auto
                 </PaletteItem>

@@ -33,20 +33,21 @@ datalensTest.describe('Dataset', () => {
 
             const setColor = async (valueItemIndex: number, paletteItemIndex: number) => {
                 const valueListItem = colorsDialog
-                    .locator('.values-list__item')
+                    .locator(slct(DatasetFieldColorsDialogQa.ValueItem))
                     .nth(valueItemIndex);
                 await valueListItem.click();
 
-                const paletteItem = colorsDialog.locator('.palette-item').nth(paletteItemIndex);
+                const paletteItem = colorsDialog
+                    .locator(slct(DatasetFieldColorsDialogQa.PaleteItem))
+                    .nth(paletteItemIndex);
                 const paletteItemColor = await paletteItem.evaluate(
                     (node) => node.style.backgroundColor,
                 );
                 await paletteItem.click();
 
-                await expect(valueListItem.locator('.colors-dialog__value-color')).toHaveCSS(
-                    'background-color',
-                    paletteItemColor,
-                );
+                await expect(
+                    valueListItem.locator(slct(DatasetFieldColorsDialogQa.ValueItemColorIcon)),
+                ).toHaveCSS('background-color', paletteItemColor);
             };
 
             const colorIndex = 0;

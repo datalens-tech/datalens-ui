@@ -21,6 +21,9 @@ export enum DatasetFieldSettingsDialogQa {
 
 export enum DatasetFieldColorsDialogQa {
     Dialog = 'dataset-field-colors-dialog',
+    ValueItem = 'dataset-field-colors-dialog_value-item',
+    ValueItemColorIcon = 'dataset-field-colors-dialog_value-color',
+    PaleteItem = 'dataset-field-colors-dialog_palette-item',
 }
 
 export enum DatasetTabSectionQA {
