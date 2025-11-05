@@ -1,6 +1,7 @@
 import type {Lang} from '../../..';
 
 export enum AccessServiceResourceType {
+    Organization = 'organization-manager.organization',
     Collection = 'datalens.collection',
     Workbook = 'datalens.workbook',
 }

@@ -193,14 +193,17 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
         dropdownActions.push([...otherActions]);
     }
 
-    const {openAccessDialog} = registry.common.functions.getAll();
+    const {openAccessDialog, useSubjectsListId} = registry.common.functions.getAll();
+
+    const {id: organizationId} = useSubjectsListId();
 
     const onOpenAccessDialog = React.useCallback(() => {
         //Access list TODO this is draft only
         dispatch(
             openAccessDialog({
-                resourceId: workbook.workbookId,
-                resourceType: ResourceType.Workbook,
+                workbookId: workbook.workbookId,
+                collectionId: workbook.collectionId,
+                organizationId,
                 resourceTitle: workbook.title,
                 canUpdate: workbook.permissions.updateAccessBindings,
             }),

@@ -1,4 +1,5 @@
 {
+  "action_add": "Add",
   "action_add-user": "Add user",
   "action_cancel": "Cancel",
   "action_choose-user": "Select user",
@@ -8,6 +9,10 @@
   "action_save": "Save",
   "button_bindings-list-retry": "Reload list",
   "label_access": "Access rights",
+  "label_access_name": "Access",
+  "label_access_workbook": "Workbook",
+  "label_access_collection": "Collection",
+  "label_access_organization": "Organization",
   "label_access_error": "Insufficient rights",
   "label_all": "All",
   "label_groups": "Groups",
@@ -32,5 +37,8 @@
   "title_access-list": "Manage access",
   "title_add-user": "Add user",
   "placeholder_select-option": "Not selected",
-  "placeholder_select_subject_type": "Groups and users"
+  "placeholder_select_subject_type": "Users and Groups",
+  "label_search": "Search by name, title or email",
+  "label_warning-workbook": "You are granting access to the workbook <link>{{resourceTitle}}</link> and all objects inside",
+  "label_warning-collection": "You are granting access to the collection <link>{{resourceTitle}}</link> and all objects inside"
 }

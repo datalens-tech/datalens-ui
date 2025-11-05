@@ -11,6 +11,7 @@ import {EXAMPLE_COMPONENT} from './constants/components';
 import type {AccessRightsProps} from './types/components/AccessRights';
 import type {AccessRightsUrlOpenProps} from './types/components/AccessRightsUrlOpen';
 import type {AclSubjectProps} from './types/components/AclSubject';
+import type {AclSubjectSelectProps} from './types/components/AclSubjectSelect';
 import type {AclSubjectSuggestProps} from './types/components/AclSubjectSuggest';
 import type {ActionPanelEntrySelectProps} from './types/components/ActionPanelEntrySelect';
 import type {ButtonFavoriteProps} from './types/components/ButtonFavorite';
@@ -58,6 +59,7 @@ export const commonComponentsMap = {
     Footer: makeDefaultEmpty(),
     AclSubject: makeDefaultEmpty<AclSubjectProps>(),
     AclSubjectSuggest: makeDefaultEmpty<AclSubjectSuggestProps>(),
+    AclSubjectSelect: makeDefaultEmpty<AclSubjectSelectProps>(),
     DialogShare: makeDefaultEmpty<DialogShareProps>(),
     DialogImageWidgetLinkHint: makeDefaultEmpty<DialogImageWidgetLinkHintProps>(),
     DialogRelatedEntitiesRadioHint: makeDefaultEmpty<DialogRelatedEntitiesRadioHintProps>(),

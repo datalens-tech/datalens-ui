@@ -10,6 +10,8 @@ const b = block('dl-multi-select-input');
 export type MultiSelectInputProps = {
     className?: string | undefined;
     onUpdate?: (value: string) => void;
+    onInputBlur?: React.FocusEventHandler<HTMLInputElement> | undefined;
+    onInputFocus?: React.FocusEventHandler<HTMLInputElement> | undefined;
     value?: string[];
     width?: string | number;
     placeholder?: string;
@@ -28,6 +30,8 @@ type RenderValueArg = {
 export const MultiSelectInput: React.FC<MultiSelectInputProps> = ({
     className,
     onUpdate,
+    onInputBlur,
+    onInputFocus,
     value = [],
     placeholder,
     endContent,
@@ -77,6 +81,8 @@ export const MultiSelectInput: React.FC<MultiSelectInputProps> = ({
                     <TextInput
                         className={b('text-input')}
                         onUpdate={onUpdate}
+                        onBlur={onInputBlur}
+                        onFocus={onInputFocus}
                         placeholder={placeholder}
                         view="clear"
                         type="search"

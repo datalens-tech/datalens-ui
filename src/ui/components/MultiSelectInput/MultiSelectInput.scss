@@ -4,15 +4,15 @@ $block: '.dl-multi-select-input';
     width: var(--multi-select-width, 'auto');
     display: flex;
     flex-direction: row;
-    justify-content: flex-start;
-    align-items: start;
-    padding: 5px;
+    justify-content: space-between;
+    align-items: flex-start;
+    padding: 5px 7px;
 
     &__item-list {
         width: 81%;
         display: flex;
         flex-wrap: wrap;
-        gap: 7px;
+        gap: 8px;
         justify-content: flex-start;
         align-items: center;
         flex: 1;
@@ -25,7 +25,6 @@ $block: '.dl-multi-select-input';
     }
 
     &__end-content-wrapper {
-        flex: 1;
         min-width: 100px;
     }
 }
