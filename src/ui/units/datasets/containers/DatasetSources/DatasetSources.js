@@ -201,9 +201,12 @@ export class DatasetSources extends React.Component {
     };
 
     addAvatarOnMapAutoIfNeeds = (preparedSources = []) => {
-        const {avatars, freeformSources, sourceLoadingError} = this.props;
+        const {avatars, freeformSources, sourceLoadingError, sourcesPagination} = this.props;
         const isNeededToAddNewSource =
-            freeformSources.length && !preparedSources.length && !sourceLoadingError;
+            freeformSources.length &&
+            !preparedSources.length &&
+            !sourceLoadingError &&
+            !sourcesPagination.searchValue;
         const isNeededToAddPreparedSourceAvatar =
             preparedSources.length === 1 && !freeformSources.length && !avatars.length;
 

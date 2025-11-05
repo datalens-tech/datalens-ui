@@ -1,10 +1,10 @@
 import _get from 'lodash/get';
 import type {
     DatasetField,
-    DatasetOptions,
     DatasetSource,
     DatasetSourceAvatar,
     Feature,
+    SourceListingOptions,
     WorkbookId,
 } from 'shared';
 import {DL} from 'ui';
@@ -161,7 +161,7 @@ export function isCreationProcess(pathname = '') {
     return lastPathnamePart === 'new';
 }
 
-export function getSourceListingValues(sourceListing?: DatasetOptions['source_listing']) {
+export function getSourceListingValues(sourceListing?: SourceListingOptions['source_listing']) {
     const serverPagination = sourceListing?.supports_source_pagination;
     const serverSearch = sourceListing?.supports_source_search;
     const supportsDbNameListing = sourceListing?.supports_db_name_listing;
