@@ -3,8 +3,6 @@ import React from 'react';
 import {i18n} from 'i18n';
 import type {ColorPalette, Field, TableBarsSettings} from 'shared';
 import {BarsColorType, DialogFieldBarsSettingsQa} from 'shared';
-import {getColorByColorSettings} from 'shared/utils/palettes';
-import {getPaletteColors} from 'ui/utils';
 
 import {DialogFieldRow} from '../../../DialogFieldRow/DialogFieldRow';
 import {GradientColorControl} from '../GradientColorControl/GradientColorControl';
@@ -21,22 +19,13 @@ type ColorsControlProps = {
 };
 
 export const ColorsControl: React.FC<ColorsControlProps> = (props: ColorsControlProps) => {
-    const {onUpdateColor, colorSettings, onUpdatePalette, disabled, onError, field, colorPalettes} =
+    const {onUpdateColor, colorSettings, onUpdatePalette, onError, disabled, field, colorPalettes} =
         props;
-
-    const paletteColors = React.useMemo(() => {
-        return getPaletteColors(colorSettings.settings.palette, colorPalettes);
-    }, [colorPalettes, colorSettings.settings.palette]);
 
     const selectedPalette = colorSettings.settings.palette ?? '';
 
     switch (colorSettings.colorType) {
         case BarsColorType.OneColor: {
-            const currentColor = getColorByColorSettings({
-                currentColors: paletteColors,
-                colorIndex: colorSettings.settings.colorIndex,
-                color: colorSettings.settings.color,
-            });
             return (
                 <DialogFieldRow
                     customMarginBottom="25px"
@@ -45,7 +34,7 @@ export const ColorsControl: React.FC<ColorsControlProps> = (props: ColorsControl
                         <PaletteColorControl
                             palette={selectedPalette}
                             controlQa={DialogFieldBarsSettingsQa.ColorSelector}
-                            currentColor={currentColor}
+                            currentColorHex={colorSettings.settings.color}
                             currentColorIndex={colorSettings.settings.colorIndex}
                             onPaletteItemChange={(color, index?: number) =>
                                 onUpdateColor({colorIndex: index, color})
@@ -60,19 +49,6 @@ export const ColorsControl: React.FC<ColorsControlProps> = (props: ColorsControl
             );
         }
         case BarsColorType.TwoColor: {
-            const positiveColor = getColorByColorSettings({
-                currentColors: paletteColors,
-                colorIndex: colorSettings.settings.positiveColorIndex,
-                color: colorSettings.settings.positiveColor,
-                fallbackIndex: 2,
-            });
-            const negativeColor = getColorByColorSettings({
-                currentColors: paletteColors,
-                colorIndex: colorSettings.settings.negativeColorIndex,
-                color: colorSettings.settings.negativeColor,
-                fallbackIndex: 1,
-            });
-
             return (
                 <React.Fragment>
                     <DialogFieldRow
@@ -81,8 +57,9 @@ export const ColorsControl: React.FC<ColorsControlProps> = (props: ColorsControl
                             <PaletteColorControl
                                 palette={selectedPalette}
                                 controlQa={DialogFieldBarsSettingsQa.PositiveColorSelector}
-                                currentColor={positiveColor}
+                                currentColorHex={colorSettings.settings.positiveColor}
                                 currentColorIndex={colorSettings.settings.positiveColorIndex}
+                                defaultColorIndex={2}
                                 onPaletteItemChange={(color, index?: number) =>
                                     onUpdateColor({positiveColorIndex: index, positiveColor: color})
                                 }
@@ -100,8 +77,9 @@ export const ColorsControl: React.FC<ColorsControlProps> = (props: ColorsControl
                             <PaletteColorControl
                                 palette={selectedPalette}
                                 controlQa={DialogFieldBarsSettingsQa.NegativeColorSelector}
-                                currentColor={negativeColor}
+                                currentColorHex={colorSettings.settings.negativeColor}
                                 currentColorIndex={colorSettings.settings.negativeColorIndex}
+                                defaultColorIndex={1}
                                 onPaletteItemChange={(color: string, index?: number) => {
                                     onUpdateColor({
                                         negativeColorIndex: index,

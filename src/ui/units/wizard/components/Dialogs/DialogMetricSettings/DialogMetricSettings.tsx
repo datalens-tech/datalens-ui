@@ -14,7 +14,7 @@ import type {DatalensGlobalState} from '../../../../../../ui';
 import DialogManager from '../../../../../components/DialogManager/DialogManager';
 import {closeDialog} from '../../../../../store/actions/dialog';
 import {selectColorPalettes} from '../../../../../store/selectors/colorPaletteEditor';
-import {getPaletteColors, isValidHexColor} from '../../../../../utils';
+import {getPaletteColors} from '../../../../../utils';
 import {selectExtraSettings} from '../../../selectors/widget';
 import {MinifiedPalette} from '../../MinifiedPalette/MinifiedPalette';
 
@@ -43,11 +43,11 @@ interface Props extends StateProps, DispatchProps, OwnProps {}
 
 interface State {
     size: string;
-    currentColor: string;
+    currentColorHex: string;
     colorIndex?: number;
     palette: string | undefined;
-    colorErrorText?: string;
     paletteColors: string[];
+    hasErrors: boolean;
 }
 
 export const DIALOG_METRIC_SETTINGS = Symbol('DIALOG_METRIC_SETTINGS');
@@ -70,7 +70,7 @@ class DialogMetricSettings extends React.PureComponent<Props, State> {
         this.state = {
             size: props.fontSize || DEFAULT_SIZE,
             // initial state
-            currentColor: getColorByColorSettings({
+            currentColorHex: getColorByColorSettings({
                 currentColors: paletteColors,
                 colorIndex: props.metricFontColorIndex,
                 color: props.metricFontColor,
@@ -78,25 +78,12 @@ class DialogMetricSettings extends React.PureComponent<Props, State> {
             palette,
             colorIndex: props.metricFontColorIndex ?? defaultIndex,
             paletteColors,
+            hasErrors: false,
         };
     }
 
-    componentDidUpdate(_prevProps: Readonly<Props>, prevState: Readonly<State>) {
-        const {currentColor} = this.state;
-
-        if (prevState.currentColor !== currentColor) {
-            let colorErrorText = '';
-
-            if (!isValidHexColor(currentColor)) {
-                colorErrorText = i18n('label_color-error');
-            }
-
-            this.setState({colorErrorText});
-        }
-    }
-
     render() {
-        const hasErrors = Boolean(this.state.colorErrorText);
+        const {hasErrors} = this.state;
 
         return (
             <Dialog
@@ -151,22 +138,20 @@ class DialogMetricSettings extends React.PureComponent<Props, State> {
                     onPaletteUpdate={this.handlePaletteUpdate}
                     onPaletteItemClick={this.onPaletteItemClick}
                     palette={this.state.palette ?? ''}
-                    currentColor={this.state.currentColor}
-                    errorText={this.state.colorErrorText}
+                    currentColorHex={this.state.currentColorHex}
                     controlQa="dialog-metric-settings-palette"
                     onInputColorUpdate={this.handleInputColorUpdate}
                     colorPalettes={this.props.colorPalettes}
                     customColorSelected={typeof this.state.colorIndex !== 'number'}
                     customColorBtnQa={DialogMetricSettingsQa.CustomColorButton}
+                    onValidChange={this.handlePalleteValidChange}
                 />
             </div>
         );
     }
 
-    private handleInputColorUpdate = (color: string) => {
-        const preparedColor = `#${color}`;
-
-        this.setState({currentColor: preparedColor, colorIndex: undefined});
+    private handleInputColorUpdate = (colorHex: string) => {
+        this.setState({currentColorHex: colorHex, colorIndex: undefined});
     };
 
     private handlePaletteUpdate = (paletteName: string | undefined) => {
@@ -175,16 +160,20 @@ class DialogMetricSettings extends React.PureComponent<Props, State> {
         const newColor = updatedColors[0];
         this.setState({
             palette: paletteName,
-            currentColor: newColor,
+            currentColorHex: newColor,
             colorIndex: 0,
             paletteColors: updatedColors,
         });
     };
 
+    private handlePalleteValidChange = (valid: boolean): void => {
+        this.setState({hasErrors: !valid});
+    };
+
     private onPaletteItemClick = (value: string) => {
         const colorIndex = this.state.paletteColors.indexOf(value);
         this.setState({
-            currentColor: value,
+            currentColorHex: value,
             colorIndex,
         });
     };
@@ -194,8 +183,8 @@ class DialogMetricSettings extends React.PureComponent<Props, State> {
     };
 
     private onApply = () => {
-        const {size, currentColor, palette, colorIndex} = this.state;
-        this.props.onSave({color: currentColor, size, palette, colorIndex});
+        const {size, currentColorHex, palette, colorIndex} = this.state;
+        this.props.onSave({color: currentColorHex, size, palette, colorIndex});
         this.props.closeDialog();
     };
 
