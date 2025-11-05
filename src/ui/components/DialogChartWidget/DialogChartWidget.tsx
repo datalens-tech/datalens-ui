@@ -6,10 +6,13 @@ import {
     Checkbox,
     Dialog,
     Divider,
-    Flex,
     HelpMark,
     Link,
     Popup,
+    Tab,
+    TabList,
+    TabPanel,
+    TabProvider,
     Text,
     TextInput,
 } from '@gravity-ui/uikit';
@@ -71,6 +74,11 @@ const isWidgetTypeWithAutoHeight = (widgetType?: WidgetKind) => {
         widgetType === DASH_WIDGET_TYPES.MARKUP
     );
 };
+
+const TAB_TYPE = {
+    TABS: 'tabs',
+    SETTINGS: 'settings',
+} as const;
 
 type AfterSettingsWidgetCallback = ((selectedWidgetType: WidgetKind) => void) | null;
 
@@ -205,10 +213,24 @@ class DialogChartWidget extends React.PureComponent<
         const {dialogIsVisible, withoutSidebar, closeDialog} = this.props;
 
         const sidebar = this.renderDialogSidebar();
-        const content = this.renderDialogBody();
+        const tabSettingsContent = this.renderTabSettingsContent();
+        const shouldRenderTabs = false;
+        // isEnabledFeature(Feature.EnableCommonChartDashSettings) && !withoutSidebar;
+        const tabsTabContent = (
+            <React.Fragment>
+                {withoutSidebar ? null : (
+                    <React.Fragment>
+                        {sidebar}
+                        <Divider orientation="vertical" className={b('divider')} />
+                    </React.Fragment>
+                )}
+                <div className={b('content')}>{tabSettingsContent}</div>
+            </React.Fragment>
+        );
 
         return (
             <Dialog
+                size={withoutSidebar ? 'm' : 'l'}
                 open={dialogIsVisible}
                 onClose={closeDialog}
                 className={b()}
@@ -216,14 +238,35 @@ class DialogChartWidget extends React.PureComponent<
                 disableHeightTransition
             >
                 <Dialog.Header caption={i18n('dash.widget-dialog.edit', 'label_widget')} />
-                <Dialog.Body className={b('body', {'with-sidebar': !withoutSidebar})}>
-                    {withoutSidebar ? null : (
-                        <React.Fragment>
-                            {sidebar}
-                            <Divider orientation="vertical" />
-                        </React.Fragment>
+                <Dialog.Body className={b('body')}>
+                    {shouldRenderTabs ? (
+                        <TabProvider
+                            value={TAB_TYPE.TABS}
+                            // onUpdate={(value) => this.setState({activeTab: value})}
+                        >
+                            <TabList className={b('tab-list')}>
+                                <Tab value={TAB_TYPE.TABS}>
+                                    {i18n('dash.widget-dialog.edit', 'tab_tabs')}
+                                </Tab>
+                                <Tab value={TAB_TYPE.SETTINGS}>
+                                    {i18n('dash.widget-dialog.edit', 'tab_settings')}
+                                </Tab>
+                            </TabList>
+                            <TabPanel
+                                value={TAB_TYPE.TABS}
+                                className={b('tab-content', {'with-sidebar': !withoutSidebar})}
+                            >
+                                {tabsTabContent}
+                            </TabPanel>
+                            <TabPanel value={TAB_TYPE.SETTINGS} className={b('tab-content')}>
+                                {tabSettingsContent}
+                            </TabPanel>
+                        </TabProvider>
+                    ) : (
+                        <div className={b('tab-content', {'with-sidebar': !withoutSidebar})}>
+                            {tabsTabContent}
+                        </div>
                     )}
-                    <div className={b('content')}>{content}</div>
                 </Dialog.Body>
                 <Dialog.Footer
                     onClickButtonCancel={closeDialog}
@@ -513,14 +556,13 @@ class DialogChartWidget extends React.PureComponent<
         const {data, tabIndex} = this.state;
 
         return (
-            <div className={b('sidebar')}>
-                <TabMenu
-                    view="new"
-                    items={data.tabs}
-                    selectedItemIndex={tabIndex}
-                    onUpdate={this.updateTabMenu}
-                />
-            </div>
+            <TabMenu
+                className={b('sidebar')}
+                view="new"
+                items={data.tabs}
+                selectedItemIndex={tabIndex}
+                onUpdate={this.updateTabMenu}
+            />
         );
     };
 
@@ -585,7 +627,7 @@ class DialogChartWidget extends React.PureComponent<
         );
     };
 
-    renderDialogBody = () => {
+    renderTabSettingsContent = () => {
         const {data, tabIndex, selectedWidgetType} = this.state;
         const {
             workbookId,
@@ -630,40 +672,29 @@ class DialogChartWidget extends React.PureComponent<
                         fieldId={INPUT_NAME_ID}
                         label={i18n('dash.widget-dialog.edit', 'field_title')}
                     >
-                        <Flex gap={2}>
-                            <TextInput
-                                id={INPUT_NAME_ID}
-                                size="m"
-                                className={b('input')}
-                                placeholder={i18n('dash.widget-dialog.edit', 'context_fill-title')}
-                                value={title}
-                                onUpdate={(value) =>
-                                    this.setState({
-                                        isManualTitle: true,
-                                        data: update(data, {
-                                            tabs: {
-                                                [tabIndex]: {
-                                                    title: {$set: value},
-                                                },
+                        <TextInput
+                            id={INPUT_NAME_ID}
+                            size="m"
+                            className={b('input')}
+                            placeholder={i18n('dash.widget-dialog.edit', 'context_fill-title')}
+                            value={title}
+                            onUpdate={(value) =>
+                                this.setState((prevState) => ({
+                                    isManualTitle: true,
+                                    hideTitle:
+                                        data.tabs.length === 1
+                                            ? !value?.trim().length
+                                            : prevState.hideTitle,
+                                    data: update(data, {
+                                        tabs: {
+                                            [tabIndex]: {
+                                                title: {$set: value},
                                             },
-                                        }),
-                                    })
-                                }
-                            />
-                            {data.tabs.length === 1 && (
-                                <div className={b('visibility-toggle')}>
-                                    <Checkbox
-                                        className={b('checkbox')}
-                                        size="m"
-                                        onChange={this.onVisibilityCheckboxToggle}
-                                        checked={!this.state.hideTitle}
-                                        qa={DashCommonQa.WidgetShowTitleCheckbox}
-                                    >
-                                        {i18n('dash.widget-dialog.edit', 'field_show-title')}
-                                    </Checkbox>
-                                </div>
-                            )}
-                        </Flex>
+                                        },
+                                    }),
+                                }))
+                            }
+                        />
                     </FormRow>
                     <FormRow
                         className={b('row', {type: 'line-widget'})}
@@ -682,6 +713,8 @@ class DialogChartWidget extends React.PureComponent<
                                 workbookId={workbookId}
                                 navigationPath={navigationPath}
                                 changeNavigationPath={changeNavigationPath}
+                                navigationMixin={b('navigation-input-row')}
+                                linkMixin={b('navigation-input-row')}
                             />
                         </div>
                         <Popup

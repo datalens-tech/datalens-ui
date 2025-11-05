@@ -26,6 +26,7 @@ export type UpdateState<T> = ListState<T> | SkippedListState<T>;
 
 export type TabMenuProps<T> = {
     view?: 'new' | 'old';
+    className?: string;
     items: TabMenuItemData<T>[];
     selectedItemIndex: number;
     onUpdate: ({items, selectedItemIndex, action}: UpdateState<T>) => void;

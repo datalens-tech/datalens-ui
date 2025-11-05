@@ -10,7 +10,10 @@ $class: '.tab-menu';
 
     &_view_new {
         --_--tab-button-outlined-padding: 0;
-        --_--tab-button-add-height: calc(var(--_--tab-button-outlined-padding) * 2 + 28px);
+
+        display: grid;
+        grid-template-rows: 1fr auto;
+        row-gap: var(--g-spacing-1);
 
         #{$class}__action-button {
             justify-content: flex-start;
@@ -22,10 +25,10 @@ $class: '.tab-menu';
     }
 
     &__list-item {
-        border-radius: var(--tab-menu-list-item-border-radius, 0);
-        padding: 0 var(--tab-menu-list-item-horizontal-padding, var(--g-spacing-6));
+        padding: 0 var(--g-spacing-4);
 
-        #{$class}_view_new & {
+        &_view_new {
+            border-radius: var(--g-border-radius-m);
             margin-block-end: var(--g-spacing-1);
 
             .g-list__item-sort-icon {
@@ -43,7 +46,7 @@ $class: '.tab-menu';
         cursor: pointer;
         justify-content: space-between;
 
-        #{$class}_view_new & {
+        &_view_new {
             height: 36px;
         }
     }
@@ -66,6 +69,10 @@ $class: '.tab-menu';
         overflow: hidden;
         white-space: nowrap;
         max-width: 160px;
+
+        #{$class}__item_view_new & {
+            max-width: 176px;
+        }
     }
 
     &__item-content {
@@ -77,12 +84,15 @@ $class: '.tab-menu';
     &__list {
         height: calc(100% - var(--_--tab-button-add-height));
         overflow-y: auto;
+
+        #{$class}_view_new & {
+            height: unset;
+        }
     }
 
     &__buttons-row {
         display: flex;
-        padding: var(--_--tab-button-outlined-padding)
-            var(--tab-menu-list-item-horizontal-padding, var(--g-spacing-6));
+        padding: var(--_--tab-button-outlined-padding) var(--g-spacing-4);
         gap: var(--g-spacing-2);
     }
 }

@@ -29,6 +29,8 @@
   "label_widget": "Чарт",
   "section_appearance": "Внешний вид",
   "section_common": "Общие",
+  "tab_settings": "Настройки",
+  "tab_tabs": "Вкладки",
   "toast_required-field": "Поле должно быть заполнено",
   "value_title-default": "Заголовок {{index}}"
 }

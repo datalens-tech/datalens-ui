@@ -37,6 +37,7 @@ export const TabMenu = <T extends unknown>({
     pasteButtonText,
     onCopyItem,
     onUpdateItem,
+    className,
 }: TabMenuProps<T>) => {
     const [pasteConfig, setPasteConfig] = React.useState<CopiedConfigData | null>(null);
     const workbookId = useSelector(selectDashWorkbookId);
@@ -201,7 +202,11 @@ export const TabMenu = <T extends unknown>({
                 [dragIndex, 1],
                 [hoverIndex, 0, dragItem],
             ],
-        });
+        }); /* .map((item, index) => ({
+            ...item,
+            isDefault: view === 'new' ? index === 0 : item.isDefault,
+        })); */
+
         let updatedSelectedItemIndex = selectedItemIndex;
 
         const selectedItemIndexWasChanged =
@@ -285,7 +290,7 @@ export const TabMenu = <T extends unknown>({
                     selectedItemIndex,
                     className: b('list', {view}),
                     onSortEnd: ({oldIndex, newIndex}) => moveItem(oldIndex, newIndex),
-                    itemClassName: b('list-item'),
+                    itemClassName: b('list-item', {view}),
                 }}
                 onRemove={onRemove}
                 onAction={onAction}
@@ -302,9 +307,10 @@ export const TabMenu = <T extends unknown>({
         _: boolean,
         itemIndex: number,
     ) => {
+        const text = <span className={b('item-text')}>{title}</span>;
         return (
             <div
-                className={b('item')}
+                className={b('item', {view})}
                 onClick={onAction({
                     action: TabActionType.ChangeChosen,
                     index: itemIndex,
@@ -330,7 +336,7 @@ export const TabMenu = <T extends unknown>({
                             </Button>
                         )}
                     </span>
-                    <span className={b('item-text')}>{title}</span>
+                    {text}
                 </div>
             </div>
         );
@@ -348,7 +354,7 @@ export const TabMenu = <T extends unknown>({
                     className: b('list'),
                     onSortEnd: ({oldIndex, newIndex}) => moveItem(oldIndex, newIndex),
                     renderItem: renderStarListItem,
-                    itemClassName: b('list-item'),
+                    itemClassName: b('list-item', {view}),
                 }}
                 onRemove={onRemove}
                 iconOnHover={true}
@@ -358,7 +364,7 @@ export const TabMenu = <T extends unknown>({
     };
 
     return (
-        <div className={b({view})}>
+        <div className={b({view}, className)}>
             {enableActionMenu
                 ? renderListWithMenu(items, selectedItemIndex, onUpdateItem)
                 : renderListWithRemove(items, selectedItemIndex)}
