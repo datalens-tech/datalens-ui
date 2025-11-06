@@ -35,6 +35,7 @@
   "section_inherited_accesses": "Inherited permissions",
   "section_revoke-access": "Are you sure you want to revoke this role from {{userName}}? The user will lose access to all objects located in {{objectName}}.",
   "title_access-list": "Manage access",
+  "title_access-roles": "Access roles",
   "title_add-user": "Add user",
   "placeholder_select-option": "Not selected",
   "placeholder_select_subject_type": "Users and Groups",

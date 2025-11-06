@@ -35,6 +35,7 @@
   "section_inherited_accesses": "Наследуемые права",
   "section_revoke-access": "Вы уверены, что хотите отозвать роль у {{userName}}? Пользователь потеряет доступ ко всем объектам находящимся в {{objectName}}.",
   "title_access-list": "Управление доступом",
+  "title_access-roles": "Список ролей",
   "title_add-user": "Добавление пользователя",
   "placeholder_select-option": "Не выбранно",
   "placeholder_select_subject_type": "Пользователи и группы",
