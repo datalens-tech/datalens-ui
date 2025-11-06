@@ -93,10 +93,7 @@ export const FormActionsComponent = (props: FormActionsProps) => {
     const getOpenDialogArs = React.useCallback((): CreateConnectionHandlerArgs => {
         const {getNewConnectionDestination} = registry.connections.functions.getAll();
 
-        const destination = getNewConnectionDestination({
-            hasCollectionIdInParams: Boolean(collectionId),
-            hasWorkbookIdInParams: Boolean(workbookId),
-        });
+        const destination = getNewConnectionDestination(Boolean(workbookId), Boolean(collectionId));
 
         switch (destination) {
             case CreationPlaces.Folder:

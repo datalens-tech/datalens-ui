@@ -8,15 +8,12 @@ export const hasPermissionsToEdit = (permissions: NonNullable<GetEntryResponse['
     return permissions.edit || permissions.admin;
 };
 
-export const getNewConnectionDestination: GetNewConnectionDestination = ({
-    hasWorkbookIdInParams,
+export const getNewConnectionDestination: GetNewConnectionDestination = (
+    _,
     hasCollectionIdInParams,
-}) => {
-    if (hasWorkbookIdInParams) {
-        return 'workbook';
-    } else if (hasCollectionIdInParams && isEnabledFeature(Feature.EnableSharedEntries)) {
+) => {
+    if (hasCollectionIdInParams && isEnabledFeature(Feature.EnableSharedEntries)) {
         return 'collection';
-    } else {
-        return 'workbook';
     }
+    return 'workbook';
 };
