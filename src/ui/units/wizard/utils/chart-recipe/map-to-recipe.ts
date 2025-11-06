@@ -8,7 +8,7 @@ import {PlaceholderId, getFakeTitleOrTitle} from '../../../../../shared';
 
 import type {FilterValue, RecipeField, WizardChartRecipe} from './types';
 
-export function getChartReceiptFromWizardConfig(config: Partial<ChartsConfig>): WizardChartRecipe {
+export function getChartRecipeFromWizardConfig(config: Partial<ChartsConfig>): WizardChartRecipe {
     const mapFieldToRecipeField = (item: ServerField) => {
         const wizardField = item as WizardDatasetField;
 

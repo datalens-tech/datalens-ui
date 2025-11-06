@@ -31,8 +31,7 @@ export type FilterValue = {
 };
 
 export type WizardChartRecipe = {
-    /*  The Id of the dataset whose fields are used to fill in the axes/colors/filters, etc. of the chart recipe
-     */
+    /** The id of the dataset whose fields are used to fill in the axes/colors/filters, etc. of the chart recipe. */
     datasetId: string;
     /** Description of fields added at the chart level or updated parameters (with a different default value, for example). */
     datasetUpdates?: RecipeFieldUpdate[];
@@ -42,7 +41,7 @@ export type WizardChartRecipe = {
      * then each type of visualization will be located on a separate layer.
      */
     layers: {
-        /* visualization type - for example, linear, pie, or bar charts */
+        /** visualization type - for example, linear, pie, or bar charts */
         type: WizardVisualizationId;
         /** Fields whose values are used to form the X-axis.
          * Usually, a single field is used, unless it is a categorical axis with grouping, as, for example, in a bar chart.
