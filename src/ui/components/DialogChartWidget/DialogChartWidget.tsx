@@ -129,6 +129,7 @@ type DialogChartWidgetState = {
 
 const INPUT_FILTERING_ID = 'chartFilteringField';
 const INPUT_NAME_ID = 'chartNameField';
+const INPUT_TITLE_VISIBILITY_ID = 'chartTitleVisibilityField';
 const INPUT_DESCRIPTION_ID = 'chartDescriptionField';
 const INPUT_AUTOHEIGHT_ID = 'chartAutoheightField';
 const INPUT_HINT_ID = 'chartHintField';
@@ -679,12 +680,8 @@ class DialogChartWidget extends React.PureComponent<
                             placeholder={i18n('dash.widget-dialog.edit', 'context_fill-title')}
                             value={title}
                             onUpdate={(value) =>
-                                this.setState((prevState) => ({
+                                this.setState({
                                     isManualTitle: true,
-                                    hideTitle:
-                                        data.tabs.length === 1
-                                            ? !value?.trim().length
-                                            : prevState.hideTitle,
                                     data: update(data, {
                                         tabs: {
                                             [tabIndex]: {
@@ -692,7 +689,7 @@ class DialogChartWidget extends React.PureComponent<
                                             },
                                         },
                                     }),
-                                }))
+                                })
                             }
                         />
                     </FormRow>
@@ -739,6 +736,22 @@ class DialogChartWidget extends React.PureComponent<
                     <Text className={b('section-title')}>
                         {i18n('dash.widget-dialog.edit', 'section_appearance')}
                     </Text>
+                    {data.tabs.length === 1 && (
+                        <FormRow
+                            className={b('row')}
+                            fieldId={INPUT_TITLE_VISIBILITY_ID}
+                            label={i18n('dash.widget-dialog.edit', 'field_title')}
+                        >
+                            <Checkbox
+                                className={b('checkbox')}
+                                size="m"
+                                onChange={this.onVisibilityCheckboxToggle}
+                                checked={!this.state.hideTitle}
+                                id={INPUT_TITLE_VISIBILITY_ID}
+                                qa={DashCommonQa.WidgetShowTitleCheckbox}
+                            />
+                        </FormRow>
+                    )}
                     <FormRow
                         className={b('row')}
                         fieldId={INPUT_DESCRIPTION_ID}
