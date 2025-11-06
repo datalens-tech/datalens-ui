@@ -218,16 +218,14 @@ class DialogChartWidget extends React.PureComponent<
         const shouldRenderTabs = false;
         // isEnabledFeature(Feature.EnableCommonChartDashSettings) && !withoutSidebar;
         const tabsTabContent = (
-            <React.Fragment>
-                {withoutSidebar ? null : (
-                    <React.Fragment>
-                        {sidebar}
-                        <Divider orientation="vertical" className={b('divider')} />
-                    </React.Fragment>
-                )}
-                <div className={b('content')}>{tabSettingsContent}</div>
-            </React.Fragment>
+            <div className={b('tab-content')}>
+                {sidebar}
+                <Divider orientation="vertical" className={b('divider')} />
+                {tabSettingsContent}
+            </div>
         );
+
+        const content = withoutSidebar ? tabSettingsContent : tabsTabContent;
 
         return (
             <Dialog
@@ -264,9 +262,7 @@ class DialogChartWidget extends React.PureComponent<
                             </TabPanel>
                         </TabProvider>
                     ) : (
-                        <div className={b('tab-content', {'with-sidebar': !withoutSidebar})}>
-                            {tabsTabContent}
-                        </div>
+                        content
                     )}
                 </Dialog.Body>
                 <Dialog.Footer
@@ -663,186 +659,188 @@ class DialogChartWidget extends React.PureComponent<
         const {MarkdownControl} = registry.common.components.getAll();
 
         return (
-            <React.Fragment>
-                <div className={b('section')}>
-                    <Text className={b('section-title')}>
-                        {i18n('dash.widget-dialog.edit', 'section_common')}
-                    </Text>
-                    <FormRow
-                        className={b('row')}
-                        fieldId={INPUT_NAME_ID}
-                        label={i18n('dash.widget-dialog.edit', 'field_title')}
-                    >
-                        <TextInput
-                            id={INPUT_NAME_ID}
-                            size="m"
-                            className={b('input')}
-                            placeholder={i18n('dash.widget-dialog.edit', 'context_fill-title')}
-                            value={title}
-                            onUpdate={(value) =>
-                                this.setState({
-                                    isManualTitle: true,
-                                    data: update(data, {
-                                        tabs: {
-                                            [tabIndex]: {
-                                                title: {$set: value},
-                                            },
-                                        },
-                                    }),
-                                })
-                            }
-                        />
-                    </FormRow>
-                    <FormRow
-                        className={b('row', {type: 'line-widget'})}
-                        label={i18n('dash.widget-dialog.edit', 'field_widget')}
-                    >
-                        <div
-                            className={b('navigation-input-container')}
-                            ref={this.navigationInputRef}
-                        >
-                            <NavigationInput
-                                entryId={chartId}
-                                onChange={this.onAddWidget}
-                                excludeClickableType={EntryTypeNode.CONTROL_NODE}
-                                onUpdate={this.setSelectedWidgetType}
-                                scope={EntryScope.Widget}
-                                workbookId={workbookId}
-                                navigationPath={navigationPath}
-                                changeNavigationPath={changeNavigationPath}
-                                navigationMixin={b('navigation-input-row')}
-                                linkMixin={b('navigation-input-row')}
-                            />
-                        </div>
-                        <Popup
-                            anchorElement={this.navigationInputRef.current}
-                            open={this.state.error}
-                            placement="left-start"
-                            hasArrow={true}
-                            onOpenChange={(open) => {
-                                if (!open) {
-                                    this.setState({error: false});
-                                }
-                            }}
-                        >
-                            <div className={b('error')}>
-                                {i18n('dash.widget-dialog.edit', 'toast_required-field')}
-                            </div>
-                        </Popup>
-                    </FormRow>
-                    {enableFilteringSetting && this.renderFilteringCharts()}
-                </div>
-                <div className={b('section')}>
-                    <Text className={b('section-title')}>
-                        {i18n('dash.widget-dialog.edit', 'section_appearance')}
-                    </Text>
-                    {data.tabs.length === 1 && (
+            <div className={b('content-wrapper')}>
+                <div className={b('content')}>
+                    <div className={b('section')}>
+                        <Text className={b('section-title')}>
+                            {i18n('dash.widget-dialog.edit', 'section_common')}
+                        </Text>
                         <FormRow
                             className={b('row')}
-                            fieldId={INPUT_TITLE_VISIBILITY_ID}
+                            fieldId={INPUT_NAME_ID}
                             label={i18n('dash.widget-dialog.edit', 'field_title')}
                         >
-                            <Checkbox
-                                className={b('checkbox')}
+                            <TextInput
+                                id={INPUT_NAME_ID}
                                 size="m"
-                                onChange={this.onVisibilityCheckboxToggle}
-                                checked={!this.state.hideTitle}
-                                id={INPUT_TITLE_VISIBILITY_ID}
-                                qa={DashCommonQa.WidgetShowTitleCheckbox}
+                                className={b('input')}
+                                placeholder={i18n('dash.widget-dialog.edit', 'context_fill-title')}
+                                value={title}
+                                onUpdate={(value) =>
+                                    this.setState({
+                                        isManualTitle: true,
+                                        data: update(data, {
+                                            tabs: {
+                                                [tabIndex]: {
+                                                    title: {$set: value},
+                                                },
+                                            },
+                                        }),
+                                    })
+                                }
                             />
                         </FormRow>
-                    )}
-                    <FormRow
-                        className={b('row')}
-                        fieldId={INPUT_DESCRIPTION_ID}
-                        label={i18n('dash.widget-dialog.edit', 'field_description')}
-                    >
-                        <div className={b('settings-container')}>
-                            <Checkbox
-                                onUpdate={this.handleUpdateEnableDesc}
-                                checked={hasDesc}
-                                size="m"
-                                className={b('checkbox')}
-                            />
-                            {hasDesc && (
-                                <MarkdownControl
-                                    className={b('markdown-control')}
-                                    key={`md-desc-tab-${tabIndex}`}
-                                    value={description || ''}
-                                    onChange={this.handleUpdateDescription}
-                                    disabled={!enableDescription}
-                                    enableExtensions={true}
-                                />
-                            )}
-                        </div>
-                    </FormRow>
-                    <FormRow
-                        className={b('row')}
-                        fieldId={INPUT_HINT_ID}
-                        label={i18n('dash.widget-dialog.edit', 'field_hint')}
-                        labelHelpPopover={
-                            <HelpMark className={b('help-tooltip')}>
-                                {i18n('dash.widget-dialog.edit', 'context_hint-display-info')}
-                            </HelpMark>
-                        }
-                    >
-                        <div className={b('settings-container')}>
-                            <Checkbox
-                                onUpdate={this.handleUpdateEnableHint}
-                                checked={Boolean(enableHint)}
-                                size="m"
-                                className={b('checkbox')}
-                            />
-                            {Boolean(enableHint) && (
-                                <MarkdownControl
-                                    className={b('markdown-control')}
-                                    key={`md-hint-tab-${tabIndex}`}
-                                    value={hint || ''}
-                                    onChange={this.handleUpdateHint}
-                                    disabled={!enableHint}
-                                />
-                            )}
-                        </div>
-                    </FormRow>
-                    {enableAutoheight && (
                         <FormRow
-                            className={b('row')}
-                            fieldId={INPUT_AUTOHEIGHT_ID}
-                            label={i18n('dash.widget-dialog.edit', 'field_autoheight')}
-                            labelHelpPopover={autoHeightHelpPopover}
+                            className={b('row', {type: 'line-widget'})}
+                            label={i18n('dash.widget-dialog.edit', 'field_widget')}
                         >
-                            <Checkbox
-                                className={b('checkbox')}
-                                id={INPUT_AUTOHEIGHT_ID}
-                                size="m"
-                                onChange={this.onAutoHeightRadioButtonChange}
-                                disabled={!isWidgetTypeWithAutoHeight(selectedWidgetType)}
-                                checked={Boolean(autoHeight)}
-                                qa={DashCommonQa.WidgetEnableAutoHeightCheckbox}
-                            />
+                            <div
+                                className={b('navigation-input-container')}
+                                ref={this.navigationInputRef}
+                            >
+                                <NavigationInput
+                                    entryId={chartId}
+                                    onChange={this.onAddWidget}
+                                    excludeClickableType={EntryTypeNode.CONTROL_NODE}
+                                    onUpdate={this.setSelectedWidgetType}
+                                    scope={EntryScope.Widget}
+                                    workbookId={workbookId}
+                                    navigationPath={navigationPath}
+                                    changeNavigationPath={changeNavigationPath}
+                                    navigationMixin={b('navigation-input-row')}
+                                    linkMixin={b('navigation-input-row')}
+                                />
+                            </div>
+                            <Popup
+                                anchorElement={this.navigationInputRef.current}
+                                open={this.state.error}
+                                placement="left-start"
+                                hasArrow={true}
+                                onOpenChange={(open) => {
+                                    if (!open) {
+                                        this.setState({error: false});
+                                    }
+                                }}
+                            >
+                                <div className={b('error')}>
+                                    {i18n('dash.widget-dialog.edit', 'toast_required-field')}
+                                </div>
+                            </Popup>
                         </FormRow>
-                    )}
-                    {enableBackgroundColor && (
+                        {enableFilteringSetting && this.renderFilteringCharts()}
+                    </div>
+                    <div className={b('section')}>
+                        <Text className={b('section-title')}>
+                            {i18n('dash.widget-dialog.edit', 'section_appearance')}
+                        </Text>
+                        {data.tabs.length === 1 && (
+                            <FormRow
+                                className={b('row')}
+                                fieldId={INPUT_TITLE_VISIBILITY_ID}
+                                label={i18n('dash.widget-dialog.edit', 'field_title')}
+                            >
+                                <Checkbox
+                                    className={b('checkbox')}
+                                    size="m"
+                                    onChange={this.onVisibilityCheckboxToggle}
+                                    checked={!this.state.hideTitle}
+                                    id={INPUT_TITLE_VISIBILITY_ID}
+                                    qa={DashCommonQa.WidgetShowTitleCheckbox}
+                                />
+                            </FormRow>
+                        )}
                         <FormRow
                             className={b('row')}
-                            label={
-                                <div className={b('caption')}>
-                                    <span className={b('caption-text')}>
-                                        {i18n('dash.widget-dialog.edit', 'field_background')}
-                                    </span>
-                                </div>
+                            fieldId={INPUT_DESCRIPTION_ID}
+                            label={i18n('dash.widget-dialog.edit', 'field_description')}
+                        >
+                            <div className={b('settings-container')}>
+                                <Checkbox
+                                    onUpdate={this.handleUpdateEnableDesc}
+                                    checked={hasDesc}
+                                    size="m"
+                                    className={b('checkbox')}
+                                />
+                                {hasDesc && (
+                                    <MarkdownControl
+                                        className={b('markdown-control')}
+                                        key={`md-desc-tab-${tabIndex}`}
+                                        value={description || ''}
+                                        onChange={this.handleUpdateDescription}
+                                        disabled={!enableDescription}
+                                        enableExtensions={true}
+                                    />
+                                )}
+                            </div>
+                        </FormRow>
+                        <FormRow
+                            className={b('row')}
+                            fieldId={INPUT_HINT_ID}
+                            label={i18n('dash.widget-dialog.edit', 'field_hint')}
+                            labelHelpPopover={
+                                <HelpMark className={b('help-tooltip')}>
+                                    {i18n('dash.widget-dialog.edit', 'context_hint-display-info')}
+                                </HelpMark>
                             }
                         >
-                            <PaletteBackground
-                                color={background?.color}
-                                onSelect={this.handleBackgroundColorSelected}
-                                enableCustomBgColorSelector={enableCustomBgColorSelector}
-                            />
+                            <div className={b('settings-container')}>
+                                <Checkbox
+                                    onUpdate={this.handleUpdateEnableHint}
+                                    checked={Boolean(enableHint)}
+                                    size="m"
+                                    className={b('checkbox')}
+                                />
+                                {Boolean(enableHint) && (
+                                    <MarkdownControl
+                                        className={b('markdown-control')}
+                                        key={`md-hint-tab-${tabIndex}`}
+                                        value={hint || ''}
+                                        onChange={this.handleUpdateHint}
+                                        disabled={!enableHint}
+                                    />
+                                )}
+                            </div>
                         </FormRow>
-                    )}
+                        {enableAutoheight && (
+                            <FormRow
+                                className={b('row')}
+                                fieldId={INPUT_AUTOHEIGHT_ID}
+                                label={i18n('dash.widget-dialog.edit', 'field_autoheight')}
+                                labelHelpPopover={autoHeightHelpPopover}
+                            >
+                                <Checkbox
+                                    className={b('checkbox')}
+                                    id={INPUT_AUTOHEIGHT_ID}
+                                    size="m"
+                                    onChange={this.onAutoHeightRadioButtonChange}
+                                    disabled={!isWidgetTypeWithAutoHeight(selectedWidgetType)}
+                                    checked={Boolean(autoHeight)}
+                                    qa={DashCommonQa.WidgetEnableAutoHeightCheckbox}
+                                />
+                            </FormRow>
+                        )}
+                        {enableBackgroundColor && (
+                            <FormRow
+                                className={b('row')}
+                                label={
+                                    <div className={b('caption')}>
+                                        <span className={b('caption-text')}>
+                                            {i18n('dash.widget-dialog.edit', 'field_background')}
+                                        </span>
+                                    </div>
+                                }
+                            >
+                                <PaletteBackground
+                                    color={background?.color}
+                                    onSelect={this.handleBackgroundColorSelected}
+                                    enableCustomBgColorSelector={enableCustomBgColorSelector}
+                                />
+                            </FormRow>
+                        )}
+                    </div>
+                    {this.renderParams()}
                 </div>
-                {this.renderParams()}
-            </React.Fragment>
+            </div>
         );
     };
 
