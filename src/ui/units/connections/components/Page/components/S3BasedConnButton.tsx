@@ -8,8 +8,8 @@ import {ConnectionsBaseQA} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {registry} from 'ui/registry';
 
-import type {DialogCreateConnectionProps, DialogCreateSharedConnectionProps} from '../..';
-import {DIALOG_CONN_CREATE_CONNECTION, DIALOG_CONN_CREATE_SHARED_CONNECTION} from '../..';
+import type {DialogCreateConnectionInWbOrCollectionProps, DialogCreateConnectionProps} from '../..';
+import {DIALOG_CONN_CREATE_CONNECTION, DIALOG_CONN_CREATE_IN_WB_OR_COLLECTION} from '../..';
 import {
     connectionTypeSelector,
     createS3BasedConnection,
@@ -49,7 +49,7 @@ const S3BasedConnButtonComponent = (props: S3BasedConnButtonProps) => {
         [dispatch],
     );
 
-    const applyCreationInWbHandler: DialogCreateSharedConnectionProps['onApply'] =
+    const applyCreationInWbHandler: DialogCreateConnectionInWbOrCollectionProps['onApply'] =
         React.useCallback(
             async (args) => {
                 dispatch(createS3BasedConnection({name: args.name, workbookId: args.workbookId}));
@@ -69,7 +69,7 @@ const S3BasedConnButtonComponent = (props: S3BasedConnButtonProps) => {
                   props: {onApply: applyCreationHandler},
               }
             : {
-                  id: DIALOG_CONN_CREATE_SHARED_CONNECTION,
+                  id: DIALOG_CONN_CREATE_IN_WB_OR_COLLECTION,
                   props: {onApply: applyCreationInWbHandler},
               };
     }, [workbookId, applyCreationHandler, applyCreationInWbHandler]);

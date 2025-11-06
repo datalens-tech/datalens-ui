@@ -1,4 +1,4 @@
 export * from './CreateConnection/CreateConnection';
-export * from './CreateSharedConnection/CreateSharedConnection';
+export * from './CreateConnectionInWbOrCollection/CreateConnectionInWbOrCollection';
 export * from './Confirm';
 export * from './S3Source';

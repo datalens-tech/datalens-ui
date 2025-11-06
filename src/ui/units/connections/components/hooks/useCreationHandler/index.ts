@@ -9,10 +9,10 @@ import {
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
-import {DIALOG_CONN_CREATE_CONNECTION, DIALOG_CONN_CREATE_SHARED_CONNECTION} from '../../dialogs';
+import {DIALOG_CONN_CREATE_CONNECTION, DIALOG_CONN_CREATE_IN_WB_OR_COLLECTION} from '../../dialogs';
 import type {
     OpenDialogCreateConnectionArgs,
-    OpenDialogCreateConnectionInWbArgs,
+    OpenDialogCreateConnectionInWbOrCollectionArgs,
 } from '../../dialogs';
 
 type UseCreateConnectionHandlerProps = {
@@ -22,7 +22,7 @@ type UseCreateConnectionHandlerProps = {
 
 export type CreateConnectionHandlerArgs =
     | OpenDialogCreateConnectionArgs
-    | OpenDialogCreateConnectionInWbArgs;
+    | OpenDialogCreateConnectionInWbOrCollectionArgs;
 
 export const useCreateConnectionHandler = (props: UseCreateConnectionHandlerProps) => {
     const {hasWorkbookIdInParams, hasCollectionIdInParams} = props;
@@ -36,7 +36,7 @@ export const useCreateConnectionHandler = (props: UseCreateConnectionHandlerProp
     );
 
     const openCreateEntryInWorkbookDialog = React.useCallback(
-        (args: OpenDialogCreateConnectionInWbArgs) => {
+        (args: OpenDialogCreateConnectionInWbOrCollectionArgs) => {
             dispatch(
                 openDialog({
                     id: DIALOG_CREATE_ENTRY_IN_WORKBOOK,
@@ -45,8 +45,8 @@ export const useCreateConnectionHandler = (props: UseCreateConnectionHandlerProp
                         disableHistoryPush: true,
                         closeDialogAfterSuccessfulApply: false,
                         onApply: (workbookId) => {
-                            const extendedArgs: OpenDialogCreateConnectionInWbArgs = {
-                                id: DIALOG_CONN_CREATE_SHARED_CONNECTION,
+                            const extendedArgs: OpenDialogCreateConnectionInWbOrCollectionArgs = {
+                                id: DIALOG_CONN_CREATE_IN_WB_OR_COLLECTION,
                                 props: {
                                     workbookId,
                                     onApply: async (data) => {
@@ -66,7 +66,7 @@ export const useCreateConnectionHandler = (props: UseCreateConnectionHandlerProp
     );
 
     const openCreateEntryInCollectionDialog = React.useCallback(
-        (args: OpenDialogCreateConnectionInWbArgs) => {
+        (args: OpenDialogCreateConnectionInWbOrCollectionArgs) => {
             dispatch(
                 openDialog({
                     id: DIALOG_CREATE_ENTRY_IN_COLLECTION,
@@ -75,8 +75,8 @@ export const useCreateConnectionHandler = (props: UseCreateConnectionHandlerProp
                         disableHistoryPush: true,
                         closeDialogAfterSuccessfulApply: false,
                         onApply: (collectionId) => {
-                            const extendedArgs: OpenDialogCreateConnectionInWbArgs = {
-                                id: DIALOG_CONN_CREATE_SHARED_CONNECTION,
+                            const extendedArgs: OpenDialogCreateConnectionInWbOrCollectionArgs = {
+                                id: DIALOG_CONN_CREATE_IN_WB_OR_COLLECTION,
                                 props: {
                                     collectionId,
                                     onApply: async (data) => {
@@ -104,7 +104,7 @@ export const useCreateConnectionHandler = (props: UseCreateConnectionHandlerProp
                     openCreationDialog(args);
                     break;
                 }
-                case DIALOG_CONN_CREATE_SHARED_CONNECTION: {
+                case DIALOG_CONN_CREATE_IN_WB_OR_COLLECTION: {
                     if (hasWorkbookIdInParams || hasCollectionIdInParams) {
                         openCreationDialog(args);
                     } else if (isEnabledFeature(Feature.EnableSharedEntries)) {

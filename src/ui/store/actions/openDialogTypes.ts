@@ -11,7 +11,7 @@ import type {OpenDialogNeedResetArgs} from '../../components/OpenDialogNeedReset
 import type {OpenDialogChartSettingsArgs} from '../../units/wizard/components/Dialogs/Settings/Settings';
 import type {
     OpenDialogCreateConnectionArgs,
-    OpenDialogCreateConnectionInWbArgs,
+    OpenDialogCreateConnectionInWbOrCollectionArgs,
 } from '../../units/connections/components';
 import type {OpenDialogConfirmArgs} from '../../components/DialogConfirm/DialogConfirm';
 import type {OpenDialogWarningArgs} from '../../components/DialogWarning/DialogWarning';
@@ -76,7 +76,7 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogNeedResetArgs
     | OpenDialogChartSettingsArgs
     | OpenDialogCreateConnectionArgs
-    | OpenDialogCreateConnectionInWbArgs
+    | OpenDialogCreateConnectionInWbOrCollectionArgs
     | OpenDialogWarningArgs
     | OpenDialogConfirmArgs
     | OpenDialogDatasetFieldInspectorArgs

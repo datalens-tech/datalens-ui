@@ -7,7 +7,7 @@ import {useParams} from 'react-router-dom';
 import type {DatalensGlobalState} from 'ui';
 import {registry} from 'ui/registry';
 
-import {DIALOG_CONN_CREATE_CONNECTION, DIALOG_CONN_CREATE_SHARED_CONNECTION} from '../../';
+import {DIALOG_CONN_CREATE_CONNECTION, DIALOG_CONN_CREATE_IN_WB_OR_COLLECTION} from '../../';
 import type {
     DialogCreateWorkbookEntryProps,
     EntryDialogBaseProps,
@@ -106,12 +106,12 @@ export const FormActionsComponent = (props: FormActionsProps) => {
                 };
             case CreationPlaces.Workbook:
                 return {
-                    id: DIALOG_CONN_CREATE_SHARED_CONNECTION,
+                    id: DIALOG_CONN_CREATE_IN_WB_OR_COLLECTION,
                     props: {onApply: applyCreationInWbHandler},
                 };
             case CreationPlaces.Collection:
                 return {
-                    id: DIALOG_CONN_CREATE_SHARED_CONNECTION,
+                    id: DIALOG_CONN_CREATE_IN_WB_OR_COLLECTION,
                     props: {onApply: applyCreationInCollectionHandler, collectionId},
                 };
         }

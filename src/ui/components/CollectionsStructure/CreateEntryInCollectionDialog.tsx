@@ -36,7 +36,7 @@ export const CreateEntryInCollectionDialog: React.FC<CreateEntryInCollectionDial
     const history = useHistory();
 
     const handleCreateEntry = React.useCallback(
-        ({targetCollectionId}: {targetCollectionId: string | null}) => {
+        async ({targetCollectionId}: {targetCollectionId: string | null}) => {
             if (targetCollectionId) {
                 if (!disableHistoryPush) {
                     switch (entryType) {
@@ -52,7 +52,6 @@ export const CreateEntryInCollectionDialog: React.FC<CreateEntryInCollectionDial
                     onApply(targetCollectionId);
                 }
             }
-            return Promise.resolve();
         },
         [entryType, history, disableHistoryPush, onApply],
     );

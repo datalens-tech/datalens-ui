@@ -10,24 +10,26 @@ import {closeDialog} from '../../../../../store/actions/dialog';
 
 const i18n = I18n.keyset('connections.form');
 
-export const DIALOG_CONN_CREATE_SHARED_CONNECTION = Symbol('DIALOG_CONN_CREATE_SHARED_CONNECTION');
+export const DIALOG_CONN_CREATE_IN_WB_OR_COLLECTION = Symbol(
+    'DIALOG_CONN_CREATE_IN_WB_OR_COLLECTION',
+);
 
-export type DialogCreateSharedConnectionProps = {
+export type DialogCreateConnectionInWbOrCollectionProps = {
     onApply: DialogCreateWorkbookEntryProps['onApply'];
     workbookId?: string;
     collectionId?: string;
 };
 
-export type OpenDialogCreateConnectionInWbArgs = {
-    id: typeof DIALOG_CONN_CREATE_SHARED_CONNECTION;
-    props: DialogCreateSharedConnectionProps;
+export type OpenDialogCreateConnectionInWbOrCollectionArgs = {
+    id: typeof DIALOG_CONN_CREATE_IN_WB_OR_COLLECTION;
+    props: DialogCreateConnectionInWbOrCollectionProps;
 };
 
 const DialogCreateConnection = ({
     workbookId,
     onApply,
     collectionId,
-}: DialogCreateSharedConnectionProps) => {
+}: DialogCreateConnectionInWbOrCollectionProps) => {
     const dispatch = useDispatch();
 
     const closeHandler = () => dispatch(closeDialog());
@@ -50,4 +52,4 @@ const DialogCreateConnection = ({
     );
 };
 
-DialogManager.registerDialog(DIALOG_CONN_CREATE_SHARED_CONNECTION, DialogCreateConnection);
+DialogManager.registerDialog(DIALOG_CONN_CREATE_IN_WB_OR_COLLECTION, DialogCreateConnection);
