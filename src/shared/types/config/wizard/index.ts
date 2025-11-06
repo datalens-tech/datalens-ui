@@ -17,6 +17,7 @@ import type {
     V14Layer,
     V14PlaceholderSettings,
     V14TooltipConfig,
+    V14Update,
 } from './v14';
 import type {V2ChartsConfig} from './v2';
 import type {V3ChartsConfig} from './v3';
@@ -91,6 +92,8 @@ export type ServerColorsConfig = V14ColorsConfig;
 export type ServerPointSizeConfig = NonNullable<ChartsConfig['geopointsConfig']>;
 
 export type ServerField = V14Field;
+
+export type ServerFieldUpdate = V14Update;
 
 export type ServerFilter = V14Filter;
 

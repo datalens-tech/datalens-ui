@@ -1,57 +1,44 @@
-import {getSdk} from 'ui/libs/schematic-sdk';
+import {v1 as uuidv1} from 'uuid';
 
 import type {
     ChartsConfig,
     Dataset,
-    DatasetField,
     ServerColor,
     ServerField,
+    ServerFieldUpdate,
     ServerFilter,
     ServerPlaceholder,
     ServerVisualization,
     ServerVisualizationLayer,
-} from '../../../../shared';
+} from '../../../../../shared';
 import {
     ChartsConfigVersion,
+    DatasetFieldType,
     PlaceholderId,
+    PseudoFieldTitle,
     WizardVisualizationId,
-    getFakeTitleOrTitle,
-} from '../../../../shared';
+} from '../../../../../shared';
+import {getSdk} from '../../../../libs/schematic-sdk';
+import {getAvailableVisualizations} from '../visualization';
 
-import {getAvailableVisualizations} from './visualization';
+import type {FilterValue, RecipeField, WizardChartRecipe} from './types';
 
-type RecipeField = {
-    title: string;
-    formula: string;
-};
+function getServerField({
+    item,
+    dataset,
+    updates,
+}: {
+    item: RecipeField;
+    dataset: Dataset;
+    updates: ServerFieldUpdate[];
+}) {
+    if (item.title === PseudoFieldTitle.MeasureNames) {
+        return {
+            title: item.title,
+            type: DatasetFieldType.Pseudo,
+        };
+    }
 
-type FilterValue = {
-    field: RecipeField;
-    operation: string;
-    values: string[];
-};
-
-export type WizardChartRecipe = {
-    /*  The Id of the dataset whose fields are used to fill in the axes/colors/filters, etc. of the chart recipe
-     */
-    datasetId: string;
-    /**
-     * The chart layer. The most common case is a single-layer chart.
-     * However, if you want to combine several types of visualizations (for example, a line chart and a bar chart),
-     * then each type of visualization will be located on a separate layer.
-     */
-    layers: {
-        /* visualization type - for example, linear, pie, or bar charts */
-        type: WizardVisualizationId;
-
-        x?: RecipeField[];
-        y?: RecipeField[];
-        colors?: RecipeField[];
-        filters?: FilterValue[];
-    }[];
-};
-
-function getServerField({item, dataset}: {item: RecipeField; dataset: Dataset}) {
     const datasetFields = dataset.dataset.result_schema;
     const datasetField = datasetFields.find((d) => d.title === item.title);
     if (datasetField) {
@@ -74,11 +61,17 @@ function getServerField({item, dataset}: {item: RecipeField; dataset: Dataset}) 
     }
 
     // local chart field - not from dataset
-    return {
-        title: item.title,
-        formula: item.formula,
-        datasetId: dataset.id,
-    };
+    const localField = updates.find((d) => d.field.title === item.title)?.field;
+    if (localField) {
+        return {
+            title: localField.title,
+            guid: localField.guid,
+            datasetId: dataset.id,
+        };
+    }
+
+    // Invalid field - it will most likely be displayed in wizard with an error.
+    throw Error('The field was not found in the chart or dataset');
 }
 
 export async function getWizardConfigFromRecipe({
@@ -104,9 +97,29 @@ export async function getWizardConfigFromRecipe({
         );
     }
 
+    const updates: ServerFieldUpdate[] =
+        recipe.datasetUpdates?.map((item) => {
+            const datasetField = dataset.dataset.result_schema.find(
+                (d) => d.title === item.field.title,
+            );
+
+            return {
+                action: item.action,
+                field: {
+                    ...datasetField,
+                    ...item.field,
+                    datasetId: dataset.id,
+                    guid: datasetField?.guid ?? uuidv1(),
+                },
+            };
+        }) ?? [];
+
+    const mapRecipeFieldToServerField = (item: RecipeField) =>
+        getServerField({item, dataset, updates}) as unknown as ServerField;
+
     const availableTypes = getAvailableVisualizations();
     const layers: Partial<ServerVisualizationLayer>[] = [];
-
+    const segments: ServerField[] = [];
     recipe.layers.forEach((layer) => {
         const chartType = layer.type;
 
@@ -128,29 +141,48 @@ export async function getWizardConfigFromRecipe({
             case WizardVisualizationId.Scatter: {
                 placeholders.push({
                     id: PlaceholderId.X,
-                    items: (layer.x ?? []).map((item) =>
-                        getServerField({item, dataset}),
-                    ) as ServerField[],
+                    items: (layer.x ?? []).map(mapRecipeFieldToServerField),
                 });
                 placeholders.push({
                     id: PlaceholderId.Y,
-                    items: (layer.y ?? []).map((item) =>
-                        getServerField({item, dataset}),
-                    ) as ServerField[],
+                    items: (layer.y ?? []).map(mapRecipeFieldToServerField),
+                });
+                break;
+            }
+            case WizardVisualizationId.FlatTable: {
+                placeholders.push({
+                    id: PlaceholderId.FlatTableColumns,
+                    items: (layer.columns ?? []).map(mapRecipeFieldToServerField),
+                });
+                break;
+            }
+            case WizardVisualizationId.PivotTable: {
+                placeholders.push({
+                    id: PlaceholderId.PivotTableColumns,
+                    items: (layer.columns ?? []).map(mapRecipeFieldToServerField),
+                });
+                placeholders.push({
+                    id: PlaceholderId.PivotTableRows,
+                    items: (layer.rows ?? []).map(mapRecipeFieldToServerField),
+                });
+                placeholders.push({
+                    id: PlaceholderId.Measures,
+                    items: (layer.measures ?? []).map(mapRecipeFieldToServerField),
                 });
                 break;
             }
         }
 
-        const colors: ServerColor[] = (layer.colors ?? []).map(
-            (item) => getServerField({item, dataset}) as ServerColor,
-        );
+        const colors: ServerColor[] = (layer.colors ?? []).map(mapRecipeFieldToServerField);
+
+        segments.push(...(layer.split ?? []).map(mapRecipeFieldToServerField));
 
         const layerFilterValues: FilterValue[] = layer.filters ?? [];
         const filters: ServerFilter[] = layerFilterValues.map((item) => {
-            const field = getServerField({item: item.field, dataset}) as ServerField;
+            const field = getServerField({item: item.field, dataset, updates});
+
             return {
-                ...field,
+                ...(field as unknown as ServerField),
                 filter: {
                     operation: {
                         code: item.operation,
@@ -191,13 +223,13 @@ export async function getWizardConfigFromRecipe({
             sort: [],
             tooltips: [],
             type: 'datalens',
-            updates: [],
+            updates,
             visualization,
             shapes: [],
             version: ChartsConfigVersion.V14,
             datasetsIds: [recipe.datasetId],
             datasetsPartialFields: [],
-            segments: [],
+            segments,
         };
     } else {
         // todo: check combined and geo charts
@@ -216,63 +248,13 @@ export async function getWizardConfigFromRecipe({
             sort: [],
             tooltips: [],
             type: 'datalens',
-            updates: [],
+            updates,
             visualization,
             shapes: [],
             version: ChartsConfigVersion.V14,
             datasetsIds: [recipe.datasetId],
             datasetsPartialFields: [],
-            segments: [],
+            segments,
         };
     }
-}
-
-export function getChartReceiptFromWizardConfig(config: Partial<ChartsConfig>): WizardChartRecipe {
-    const layers: WizardChartRecipe['layers'] = [];
-    if (config.visualization?.layers) {
-        // todo: map layers
-    } else {
-        const xPlaceholder = config.visualization?.placeholders.find(
-            (p) => p.id === PlaceholderId.X,
-        );
-        const x: RecipeField[] | undefined = xPlaceholder?.items?.map((item) => ({
-            title: getFakeTitleOrTitle(item),
-            formula: (item as unknown as DatasetField).formula || item.title,
-        }));
-
-        const yPlaceholder = config.visualization?.placeholders.find(
-            (p) => p.id === PlaceholderId.Y,
-        );
-        const y: RecipeField[] | undefined = yPlaceholder?.items?.map((item) => ({
-            title: getFakeTitleOrTitle(item),
-            formula: (item as unknown as DatasetField).formula || item.title,
-        }));
-
-        const colors: RecipeField[] | undefined = config.colors?.map((item) => ({
-            title: getFakeTitleOrTitle(item),
-            formula: (item as unknown as DatasetField).formula || item.title,
-        }));
-
-        const filters: FilterValue[] | undefined = config.filters?.map((item) => ({
-            field: {
-                title: getFakeTitleOrTitle(item as unknown as ServerField),
-                formula: (item as unknown as DatasetField).formula || item.title,
-            },
-            operation: item.filter.operation.code,
-            values: item.filter.value as string[],
-        }));
-
-        layers.push({
-            type: config.visualization?.id as WizardVisualizationId,
-            x,
-            y,
-            colors,
-            filters,
-        });
-    }
-
-    return {
-        datasetId: config.datasetsIds?.[0] ?? '',
-        layers,
-    };
 }
