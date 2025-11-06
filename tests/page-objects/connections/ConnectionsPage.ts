@@ -163,18 +163,18 @@ class ConnectionsPage extends BasePage {
     }
 
     async removeConnection() {
-        const moreButton = await this.page.locator(slct(ActionPanelQA.MoreBtn));
-        await expect(moreButton).toBeVisible();
+        const moreButton = this.page.locator(slct(ActionPanelQA.MoreBtn));
+        expect(moreButton).toBeVisible();
         await moreButton.click();
 
-        const menuItemRemove = await this.page
+        const menuItemRemove = this.page
             .locator(slct(ActionPanelEntryContextMenuQa.Menu))
             .locator(slct(ActionPanelEntryContextMenuQa.Remove));
-        await expect(menuItemRemove).toBeVisible();
+        expect(menuItemRemove).toBeVisible();
         await menuItemRemove.click();
 
-        const applyButton = await this.page.locator(slct(EntryDialogQA.Apply));
-        await expect(applyButton).toBeVisible();
+        const applyButton = this.page.locator(slct(EntryDialogQA.Apply));
+        expect(applyButton).toBeVisible();
 
         await applyButton.click();
     }
