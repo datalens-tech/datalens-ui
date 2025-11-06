@@ -3,7 +3,7 @@ import React from 'react';
 import type {Column} from '@gravity-ui/react-data-table';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import type {DatasetField} from 'shared';
+import {type DatasetField, DatasetFieldsTabQa} from 'shared';
 
 import {TableTextInput} from '../components';
 import type {ColumnItem} from '../types';
@@ -43,6 +43,7 @@ export const getTitleColumn = (args: GetTitleColumnArgs) => {
                     index={index}
                     setActiveRow={setActiveRow}
                     onUpdate={getUpdateHandler(row)}
+                    qa={DatasetFieldsTabQa.FieldNameColumnInput}
                 />
             );
         },
