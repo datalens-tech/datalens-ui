@@ -45,9 +45,10 @@ datalensTest.describe('Dataset', () => {
                 );
                 await paletteItem.click();
 
-                await expect(
-                    valueListItem.locator(slct(DatasetFieldColorsDialogQa.ValueItemColorIcon)),
-                ).toHaveCSS('background-color', paletteItemColor);
+                const valueItemIcon = colorsDialog
+                    .locator(slct(DatasetFieldColorsDialogQa.ValueItemColorIcon))
+                    .nth(valueItemIndex);
+                await expect(valueItemIcon).toHaveCSS('background-color', paletteItemColor);
             };
 
             const colorIndex = 0;
