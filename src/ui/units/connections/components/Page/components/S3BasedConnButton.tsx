@@ -59,9 +59,7 @@ const S3BasedConnButtonComponent = (props: S3BasedConnButtonProps) => {
 
     const getOpenDialogArs = React.useCallback((): CreateConnectionHandlerArgs => {
         const {getNewConnectionDestination} = registry.connections.functions.getAll();
-        const destination = getNewConnectionDestination({
-            hasWorkbookIdInParams: Boolean(workbookId),
-        });
+        const destination = getNewConnectionDestination(Boolean(workbookId));
 
         return destination === 'folder'
             ? {
