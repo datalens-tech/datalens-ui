@@ -8,6 +8,24 @@ export enum ParametersQA {
     ParametersTabSection = 'parameters-tab-section',
 }
 
+export enum DatasetFieldsTabQa {
+    TableRow = 'dataset-fields-table-row',
+    FieldNameColumnInput = 'dataset-fields-name-column-input',
+    FieldSettingsColumnIcon = 'dataset-fields-settings-column-icon',
+}
+
+export enum DatasetFieldSettingsDialogQa {
+    Dialog = 'dataset-field-settings-dialog',
+    ColorSettingsButton = 'dataset-field-settings-dialog-color-settings-btn',
+}
+
+export enum DatasetFieldColorsDialogQa {
+    Dialog = 'dataset-field-colors-dialog',
+    ValueItem = 'dataset-field-colors-dialog_value-item',
+    ValueItemColorIcon = 'dataset-field-colors-dialog_value-color',
+    PaleteItem = 'dataset-field-colors-dialog_palette-item',
+}
+
 export enum DatasetTabSectionQA {
     AddButton = 'dataset-tab-section-add-button',
     FieldRow = 'dataset-tab-section-field-row',
