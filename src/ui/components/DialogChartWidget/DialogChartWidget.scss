@@ -6,9 +6,9 @@
 
     $class: &;
 
-    & {
-        --dl-dropdown-navigation-width: 370px;
-    }
+    --_--sidebar-width: 276px;
+
+    --dl-dropdown-navigation-width: 100%;
 
     &__body {
         overflow: hidden;
@@ -29,21 +29,21 @@
     }
 
     &__tab-content {
-        overflow: hidden;
         height: 100%;
 
         &_with-sidebar {
-            display: flex;
-            gap: var(--g-spacing-4);
-            align-items: stretch;
+            display: grid;
+            grid-template-columns: var(--_--sidebar-width) 33px 1fr;
         }
     }
 
     &__sidebar {
-        width: 260px;
+        --dl-tab-menu-scroll-compensation: var(--g-spacing-4);
+        --dl-tab-menu-items-width: calc(
+            var(--_--sidebar-width) - var(--dl-tab-menu-scroll-compensation)
+        );
+        width: var(--_--sidebar-width);
         height: fit-content;
-        flex-grow: 0;
-        flex-shrink: 0;
         overflow-y: hidden;
     }
 
@@ -55,15 +55,21 @@
         height: 100%;
         display: flex;
         flex-direction: column;
+        align-items: stretch;
         overflow-y: auto;
         gap: var(--g-spacing-6);
 
+        padding-inline-end: var(--g-spacing-4);
         margin-inline-end: calc(
             var(--g-spacing-4) * -1
         ); // scroll width compensation for avoiding form shrinking
 
-        flex-grow: 1;
-        flex-shrink: 0;
+        width: min-content;
+        overflow-x: hidden;
+    }
+
+    &__section {
+        width: 526px;
     }
 
     &__section-title {
@@ -105,6 +111,10 @@
         align-items: flex-start;
         margin-bottom: 5px;
         gap: 8px;
+    }
+
+    &__markdown-control {
+        width: calc(100% - 14px - 8px);
     }
 
     &__checkbox {
@@ -159,6 +169,10 @@
             grid-template-columns: 15% auto;
             align-items: center;
         }
+    }
+
+    &__tag-label {
+        max-width: 250px;
     }
 
     &__error {

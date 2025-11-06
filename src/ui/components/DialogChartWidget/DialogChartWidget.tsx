@@ -766,6 +766,7 @@ class DialogChartWidget extends React.PureComponent<
                             />
                             {hasDesc && (
                                 <MarkdownControl
+                                    className={b('markdown-control')}
                                     key={`md-desc-tab-${tabIndex}`}
                                     value={description || ''}
                                     onChange={this.handleUpdateDescription}
@@ -794,6 +795,7 @@ class DialogChartWidget extends React.PureComponent<
                             />
                             {Boolean(enableHint) && (
                                 <MarkdownControl
+                                    className={b('markdown-control')}
                                     key={`md-hint-tab-${tabIndex}`}
                                     value={hint || ''}
                                     onChange={this.handleUpdateHint}
@@ -880,6 +882,7 @@ class DialogChartWidget extends React.PureComponent<
                 headerClassName={b('section-title')}
             >
                 <ParamsSettings
+                    tagLabelClassName={b('tag-label')}
                     data={this.state.tabParams}
                     group={tabIndex + legacyChanged}
                     onEditParamTitle={this.handleEditParamTitle}

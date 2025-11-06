@@ -304,7 +304,6 @@ export const TabMenu = <T extends unknown>({
         _: boolean,
         itemIndex: number,
     ) => {
-        const text = <span className={b('item-text')}>{title}</span>;
         return (
             <div
                 className={b('item', {view})}
@@ -333,7 +332,7 @@ export const TabMenu = <T extends unknown>({
                             </Button>
                         )}
                     </span>
-                    {text}
+                    <span className={b('item-text')}>{title}</span>
                 </div>
             </div>
         );
