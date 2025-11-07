@@ -17,7 +17,7 @@ import type {
     WizardVisualizationId,
 } from 'shared';
 import {DashCommonQa, DialogDashWidgetQA, EntryScope, Feature, ParamsSettingsQA} from 'shared';
-import {getEntryVisualizationType} from 'shared/schema/mix/helpers';
+import {getEntryVisualizationType} from 'shared/schema/mix/utils';
 import {Collapse} from 'ui/components/Collapse/Collapse';
 import {Interpolate} from 'ui/components/Interpolate';
 import {TabMenu} from 'ui/components/TabMenu/TabMenu';

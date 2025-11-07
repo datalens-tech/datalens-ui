@@ -55,13 +55,30 @@ export const createDashArgsSchema = z.strictObject({
 
 export const createDashResultSchema = dashUsSchema;
 
-export const getDashArgsSchema = z.strictObject({
-    dashboardId: z.string(),
-    revId: z.string().optional(),
-    includePermissions: z.boolean().optional().default(false),
-    includeLinks: z.boolean().optional().default(false),
-    includeFavorite: z.boolean().optional().default(false),
-    branch: z.enum(['published', 'saved']).optional(),
+export const dashSchemaV1 = z.object({
+    annotation: z
+        .object({
+            description: z.string().optional(),
+        })
+        .nullable()
+        .optional(),
+    createdAt: z.string(),
+    createdBy: z.string(),
+    data: dataSchema,
+    entryId: z.string(),
+    hidden: z.boolean(),
+    key: z.union([z.null(), z.string()]),
+    links: z.record(z.string(), z.string()).optional(),
+    meta: z.record(z.string(), z.string()),
+    public: z.boolean(),
+    publishedId: z.string(),
+    revId: z.string(),
+    savedId: z.string(),
+    scope: z.literal(EntryScope.Dash),
+    tenantId: z.string(),
+    type: z.literal(''),
+    updatedAt: z.string(),
+    updatedBy: z.string(),
+    version: z.literal(1),
+    workbookId: z.union([z.null(), z.string()]),
 });
-
-export const getDashResultSchema = dashUsSchema;

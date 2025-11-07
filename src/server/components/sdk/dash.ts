@@ -248,7 +248,7 @@ class Dash {
                 isEnabledServerFeature(Feature.DashServerMigrationEnable),
             );
             if (isServerMigrationEnabled && DashSchemeConverter.isUpdateNeeded(usData.data)) {
-                usData.data = await DashSchemeConverter.update(usData.data);
+                usData.data = DashSchemeConverter.update(usData.data);
             }
 
             usData.links = gatherLinks(usData.data);
@@ -302,7 +302,7 @@ class Dash {
                 (options?.forceMigrate || isServerMigrationEnabled) &&
                 DashSchemeConverter.isUpdateNeeded(result.data)
             ) {
-                result.data = await Dash.migrate(result.data);
+                result.data = Dash.migrate(result.data);
             }
 
             ctx.log('SDK_DASH_READ_SUCCESS', US.getLoggedEntry(result));
@@ -315,7 +315,7 @@ class Dash {
         }
     }
 
-    static async migrate(data: DashEntry['data']) {
+    static migrate(data: DashEntry['data']) {
         return DashSchemeConverter.update(data);
     }
 

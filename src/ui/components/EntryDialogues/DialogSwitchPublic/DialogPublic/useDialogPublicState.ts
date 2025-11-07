@@ -3,7 +3,7 @@ import React from 'react';
 import {toaster} from '@gravity-ui/uikit/toaster-singleton';
 import {i18n} from 'i18n';
 import {useDispatch} from 'react-redux';
-import {isValidPublishLink} from 'shared/schema/mix/helpers/validation';
+import {isValidPublishLink} from 'shared/schema/mix/utils/validation';
 import {showToast} from 'store/actions/toaster';
 import type {DataLensApiError} from 'typings';
 import {CounterName, GoalId, reachMetricaGoal} from 'ui/libs/metrica';
