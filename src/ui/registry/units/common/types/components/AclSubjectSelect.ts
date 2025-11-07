@@ -22,6 +22,7 @@ export type AclSelectedUser = {
 
 export interface AclSubjectSelectProps extends Omit<AclSubjectSuggestProps, 'onSubjectChange'> {
     inputRef?: RefObject<HTMLInputElement>;
+    renderSubject?: (subject: SubjectClaims) => React.ReactNode;
     value: AclSelectedUser[];
     onChange: (users: AclSelectedUser[]) => void;
     size?: 'm' | 'l';
