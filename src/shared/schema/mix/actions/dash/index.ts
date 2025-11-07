@@ -24,12 +24,11 @@ import {
 
 import {createDashboard} from './create-dashboard';
 import {deleteDashboard} from './delete-dashboard';
-import {getDashboard} from './get-dashboard';
+import {getDashboardV1} from './get-dashboard-v1';
 import {updateDashboard} from './update-dashboard';
 
 export const dashActions = {
-    // WIP
-    __getDashboard__: getDashboard,
+    getDashboardV1,
     // WIP
     __updateDashboard__: updateDashboard,
     // WIP

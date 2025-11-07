@@ -107,7 +107,7 @@ export const getPublicApiActionsV0 = <
 
         // Dashboard
         getDashboard: {
-            resolve: (api) => api.mix.__getDashboard__,
+            resolve: (api) => api.mix.getDashboardV1,
             openApi: {
                 summary: 'Get dashboard',
                 tags: [ApiTag.Dashboard],

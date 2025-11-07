@@ -33,7 +33,7 @@ export const getDashResultSchema = z
         title: 'GetDashboardResult',
     });
 
-export const getDashboard = createTypedAction(
+export const getDashboardV1 = createTypedAction(
     {
         paramsSchema: getDashArgsSchema,
         resultSchema: getDashResultSchema,
