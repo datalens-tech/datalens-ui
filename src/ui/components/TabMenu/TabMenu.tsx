@@ -24,6 +24,7 @@ const b = block('tab-menu');
 const ADD_BUTTON_DEFAULT_SIZE = 16;
 
 export const TabMenu = <T extends unknown>({
+    view,
     canPasteItems,
     enableActionMenu,
     items,
@@ -36,6 +37,7 @@ export const TabMenu = <T extends unknown>({
     pasteButtonText,
     onCopyItem,
     onUpdateItem,
+    className,
 }: TabMenuProps<T>) => {
     const [pasteConfig, setPasteConfig] = React.useState<CopiedConfigData | null>(null);
     const workbookId = useSelector(selectDashWorkbookId);
@@ -201,6 +203,7 @@ export const TabMenu = <T extends unknown>({
                 [hoverIndex, 0, dragItem],
             ],
         });
+
         let updatedSelectedItemIndex = selectedItemIndex;
 
         const selectedItemIndexWasChanged =
@@ -235,7 +238,8 @@ export const TabMenu = <T extends unknown>({
                     className={b('action-button')}
                     onClick={onAction({action: TabActionType.Add})}
                     qa={TabMenuQA.Add}
-                    view="outlined"
+                    view={view === 'new' ? 'flat-secondary' : 'outlined'}
+                    size={view === 'new' ? 'l' : 'm'}
                     width="max"
                 >
                     <Icon
@@ -281,9 +285,9 @@ export const TabMenu = <T extends unknown>({
                     virtualized: false,
                     deactivateOnLeave: true,
                     selectedItemIndex,
-                    className: b('list'),
+                    className: b('list', {view}),
                     onSortEnd: ({oldIndex, newIndex}) => moveItem(oldIndex, newIndex),
-                    itemClassName: b('list-item'),
+                    itemClassName: b('list-item', {view}),
                 }}
                 onRemove={onRemove}
                 onAction={onAction}
@@ -302,7 +306,7 @@ export const TabMenu = <T extends unknown>({
     ) => {
         return (
             <div
-                className={b('item')}
+                className={b('item', {view})}
                 onClick={onAction({
                     action: TabActionType.ChangeChosen,
                     index: itemIndex,
@@ -346,7 +350,7 @@ export const TabMenu = <T extends unknown>({
                     className: b('list'),
                     onSortEnd: ({oldIndex, newIndex}) => moveItem(oldIndex, newIndex),
                     renderItem: renderStarListItem,
-                    itemClassName: b('list-item'),
+                    itemClassName: b('list-item', {view}),
                 }}
                 onRemove={onRemove}
                 iconOnHover={true}
@@ -356,7 +360,7 @@ export const TabMenu = <T extends unknown>({
     };
 
     return (
-        <div className={b()}>
+        <div className={b({view}, className)}>
             {enableActionMenu
                 ? renderListWithMenu(items, selectedItemIndex, onUpdateItem)
                 : renderListWithRemove(items, selectedItemIndex)}

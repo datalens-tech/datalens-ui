@@ -1,55 +1,100 @@
 @import '~@gravity-ui/uikit/styles/mixins';
 
 .widget-item-dialog {
-    width: 960px;
-    max-height: 507px;
+    height: 728px;
     display: flex;
 
-    &_long {
-        max-height: 547px;
+    $class: &;
+
+    --_--sidebar-width: 276px;
+
+    --dl-dropdown-navigation-width: 100%;
+
+    &__body {
+        overflow: hidden;
+        height: 100%;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        gap: var(--g-spacing-4);
+
+        &:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: var(--g-spacing-8);
+            right: var(--g-spacing-8);
+            border-top: 1px solid var(--g-color-base-generic);
+        }
     }
 
-    &_without-sidebar {
-        width: 705px;
-    }
-
-    & {
-        --dl-dropdown-navigation-width: 330px;
+    &__tab-content {
+        height: 100%;
+        display: grid;
+        grid-template-columns: var(--_--sidebar-width) 33px 1fr;
     }
 
     &__sidebar {
-        max-height: 100%;
-        display: flex;
-        flex: 1;
-        flex-direction: column;
-        width: 255px;
-        padding-block-end: var(--dialog-footer-vertical-padding, var(--g-spacing-6));
+        --dl-tab-menu-scroll-compensation: var(--g-spacing-4);
+        --dl-tab-menu-items-width: calc(
+            var(--_--sidebar-width) - var(--dl-tab-menu-scroll-compensation)
+        );
+        width: var(--_--sidebar-width);
+        height: fit-content;
+        overflow-y: hidden;
     }
 
-    &__add-icon {
-        margin-left: 6px;
+    &__divider {
+        margin-block: 0 calc(var(--g-spacing-2) * -1);
     }
 
-    &__dialog-sidebar {
-        display: flex;
-        flex-direction: column;
-    }
-
-    &__main {
+    &__content-wrapper {
         height: 100%;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding-inline-end: var(--g-spacing-4);
+        margin-inline-end: calc(
+            var(--g-spacing-4) * -1
+        ); // scroll width compensation for avoiding form shrinking
+    }
+
+    &__content {
         display: flex;
         flex-direction: column;
+        align-items: stretch;
+        gap: var(--g-spacing-6);
+    }
+
+    &__section {
+        width: 526px;
+    }
+
+    &__section-title {
+        @include text-subheader-2();
+        display: flex;
+        height: 28px;
+        align-items: center;
+        margin-block-end: var(--g-spacing-3);
     }
 
     &__navigation-input-container {
         display: grid;
         grid-auto-rows: 40px;
+        grid-template-columns: var(--dl-dropdown-navigation-width);
         align-items: center;
+    }
+
+    &__navigation-input-row {
+        display: contents;
     }
 
     &__textarea {
         height: 80px;
-        width: 330px;
+        flex-grow: 1;
+    }
+
+    &__input {
+        width: var(--dl-dropdown-navigation-width);
     }
 
     &__row {
@@ -57,6 +102,7 @@
     }
 
     &__settings-container {
+        width: var(--dl-dropdown-navigation-width);
         display: flex;
         justify-content: space-between;
         align-items: flex-start;
@@ -64,7 +110,12 @@
         gap: 8px;
     }
 
+    &__markdown-control {
+        width: calc(100% - 14px - 8px);
+    }
+
     &__checkbox {
+        flex-grow: 0;
         margin-block-start: var(--g-spacing-2);
     }
 
@@ -82,10 +133,6 @@
 
     .widget-item-dialog__params-title {
         @include text-subheader-3();
-    }
-
-    .widget-item-dialog__params-collapse {
-        margin-top: 20px;
     }
 
     .widget-item-dialog__line-content {
@@ -121,28 +168,17 @@
         }
     }
 
+    &__tag-label {
+        max-width: 250px;
+    }
+
     &__error {
         color: var(--g-color-text-danger);
         padding: 10px;
     }
 
-    &__section-title {
-        @include text-subheader-2();
-        font-weight: 500;
-        margin: 16px 0;
-    }
-
     &__beta {
         margin-left: 4px;
-    }
-
-    &__content {
-        display: flex;
-        flex-direction: column;
-    }
-
-    &__content-body {
-        overflow-y: auto;
     }
 
     &__info-comment {
