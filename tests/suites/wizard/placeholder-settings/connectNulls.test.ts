@@ -1,13 +1,13 @@
 import {Page} from '@playwright/test';
 
 import {WizardVisualizationId} from '../../../page-objects/common/Visualization';
-import {PlaceholderId, RadioButtons} from '../../../page-objects/wizard/PlaceholderDialog';
+import {RadioButtons} from '../../../page-objects/wizard/PlaceholderDialog';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {openTestPage, waitForCondition} from '../../../utils';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {AxisNullsMode} from '../../../../src/shared';
+import {AxisNullsMode, PlaceholderId} from '../../../../src/shared';
 
 datalensTest.describe('Wizard - placeholder dialog ("Empty values (null)") ', () => {
     datalensTest(

@@ -264,6 +264,23 @@ export type SourcesPagination = {
     searchValue: string;
 };
 
+export type DatasetPreviewView = 'full' | 'bottom' | 'right';
+
+export type DatasetPreview = {
+    previewEnabled: boolean;
+    readyPreview: 'loading' | 'failed' | null;
+    isVisible: boolean;
+    isLoading: boolean;
+    amountPreviewRows: number;
+    view: DatasetPreviewView;
+    data: {
+        Data: string[][];
+        Type: ['ListType', ['StructType', Array<[string, ['OptionalType', ['DataType', string]]]>]];
+    };
+    error: DatasetError;
+    isQueued: boolean;
+};
+
 export type DatasetReduxState = {
     isRefetchingDataset: boolean;
     isLoading: boolean;
@@ -283,17 +300,7 @@ export type DatasetReduxState = {
     connectionsDbNames: Record<string, string[]>;
     sourcesPagination: SourcesPagination;
     sourceListingOptions?: SourceListingOptions['source_listing'];
-    preview: {
-        previewEnabled: boolean;
-        readyPreview: 'loading' | 'failed' | null;
-        isVisible: boolean;
-        isLoading: boolean;
-        amountPreviewRows: number;
-        view: 'full' | 'bottom' | 'right';
-        data: string[]; // TODO: correctly describe the type
-        error: DatasetError;
-        isQueued: boolean;
-    };
+    preview: DatasetPreview;
     errors: {
         previewError: DatasetError;
         savingError: DatasetError;
