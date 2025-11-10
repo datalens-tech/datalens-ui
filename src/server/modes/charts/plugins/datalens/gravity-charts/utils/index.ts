@@ -88,7 +88,7 @@ export function getBaseChartConfig(args: {
                     align: 'top-right',
                     offset: {x: 2, y: 30},
                     relativeTo: 'plot-box',
-                }
+                },
             },
         },
     };
