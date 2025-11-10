@@ -27,7 +27,6 @@ import 'ui/styles/base.scss';
 import 'ui/styles/variables.scss';
 import 'ui/styles/split-pane-resizer.scss';
 import 'ui/styles/theme.scss';
-import 'ui/styles/rebranding-theme.scss';
 import {ScrollableContainerContextProvider} from 'ui/utils/scrollableContainerContext';
 
 const Content = () => {
