@@ -103,6 +103,8 @@ export enum Feature {
 
     EnableMobileFixedHeader = 'EnableMobileFixedHeader',
     EnableCommonChartDashSettings = 'EnableCommonChartDashSettings',
+    /** Shows updated settings page */
+    EnableNewServiceSettings = 'EnableNewServiceSettings',
 }
 
 export type FeatureConfig = Record<string, boolean>;
