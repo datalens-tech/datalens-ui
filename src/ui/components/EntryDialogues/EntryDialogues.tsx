@@ -7,6 +7,7 @@ import type SDK from '../../libs/sdk';
 import {sdk} from '../../libs/sdk';
 import {registry} from '../../registry';
 import {DialogRelatedEntities} from '../DialogRelatedEntities/DialogRelatedEntities';
+import {DialogSharedEntryBindings} from '../DialogSharedEntryBindings/DialogSharedEntryBindings';
 
 import type {DialogAccessProps} from './DialogAccess/DialogAccess';
 import {DialogAccess} from './DialogAccess/DialogAccess';
@@ -68,6 +69,7 @@ export enum EntryDialogName {
     MigrateToWorkbook = 'migrate-to-workbook',
     ShowRelatedEntities = 'show-related-entities',
     Share = 'share',
+    SharedEntryBindings = 'shared_entry_bindings',
 }
 
 const getMapDialogues = (): Record<string, any> => {
@@ -93,6 +95,7 @@ const getMapDialogues = (): Record<string, any> => {
         [EntryDialogName.MigrateToWorkbook]: DialogMigrateToWorkbook,
         [EntryDialogName.ShowRelatedEntities]: DialogRelatedEntities,
         [EntryDialogName.Share]: DialogShareEntry,
+        [EntryDialogName.SharedEntryBindings]: DialogSharedEntryBindings,
         ...getAdditionalEntryDialoguesMap(),
     };
 };
