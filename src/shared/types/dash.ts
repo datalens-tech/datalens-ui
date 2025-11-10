@@ -1,7 +1,9 @@
 import type {ItemDropProps} from '@gravity-ui/dashkit';
 
-import type {TabsScope} from '../../ui/units/dash/typings/selectors';
+import type {TABS_SCOPE_ALL} from '../constants/dash';
 import type {Operations} from '../modules';
+
+export type TabsScope = typeof TABS_SCOPE_ALL | string | string[] | undefined;
 
 import type {
     ClientChartsConfig,

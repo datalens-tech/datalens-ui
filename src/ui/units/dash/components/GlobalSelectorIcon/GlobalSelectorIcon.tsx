@@ -3,10 +3,9 @@ import React from 'react';
 import {Globe, LayoutTabs} from '@gravity-ui/icons';
 import {ActionTooltip, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {TABS_SCOPE_ALL} from 'shared/constants/dash';
+import type {TabsScope} from 'shared/types/dash';
 import {TABS_SCOPE_SELECT_VALUE} from 'ui/components/ControlComponents/Sections/CommonSettingsSection/TabsScopeSelect/constants';
-
-import {TABS_SCOPE_ALL} from '../../modules/constants';
-import type {TabsScope} from '../../typings/selectors';
 
 import './GlobalSelectorIcon.scss';
 

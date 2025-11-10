@@ -20,7 +20,7 @@ import type {DialogChartWidgetFeatureProps} from 'ui/components/DialogChartWidge
 import type {DialogGroupControlFeaturesProps} from 'ui/components/DialogGroupControl/DialogGroupControl';
 import type {DialogExternalControlFeaturesProps} from 'ui/components/DialogExternalControl/DialogExternalControl';
 import type {DialogImageWidgetFeatureProps} from 'ui/components/DialogImageWidget';
-import type {TabsScope} from 'ui/units/dash/typings/selectors';
+import type {TabsScope} from 'shared/types/dash';
 
 export type DialogEditItemFeaturesProp = {
     [DashTabItemType.Title]?: DialogTitleWidgetFeatureProps;

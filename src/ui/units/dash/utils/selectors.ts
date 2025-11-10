@@ -1,8 +1,7 @@
 import {Feature} from 'shared';
-import {TABS_SCOPE_ALL} from 'ui/units/dash/modules/constants';
+import {TABS_SCOPE_ALL} from 'shared/constants/dash';
+import type {TabsScope} from 'shared/types/dash';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
-
-import type {TabsScope} from '../typings/selectors';
 
 export interface TabsScopeItem {
     tabsScope?: string | string[];

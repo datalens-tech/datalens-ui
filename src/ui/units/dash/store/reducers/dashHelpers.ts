@@ -11,9 +11,9 @@ import type {
     DashTabLayout,
 } from 'shared';
 import {DashTabItemType} from 'shared';
+import {TABS_SCOPE_ALL} from 'shared/constants/dash';
+import type {TabsScope} from 'shared/types/dash';
 
-import {TABS_SCOPE_ALL} from '../../modules/constants';
-import type {TabsScope} from '../../typings/selectors';
 import type {DashState} from '../typings/dash';
 
 // Tab properties that can be updated

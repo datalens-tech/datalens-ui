@@ -1,8 +1,8 @@
 import React from 'react';
 
+import {TABS_SCOPE_ALL} from 'shared/constants/dash';
+import type {TabsScope} from 'shared/types/dash';
 import {GlobalSelectorIcon} from 'ui/units/dash/components/GlobalSelectorIcon/GlobalSelectorIcon';
-import {TABS_SCOPE_ALL} from 'ui/units/dash/modules/constants';
-import type {TabsScope} from 'ui/units/dash/typings/selectors';
 
 import {TABS_SCOPE_SELECT_VALUE} from './constants';
 

@@ -6,11 +6,11 @@ import {Flex, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
 import {Feature} from 'shared';
+import type {TabsScope} from 'shared/types/dash';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents/components/SelectOptionWithIcon/SelectOptionWithIcon';
 import {setSelectorDialogItem, updateSelectorsGroup} from 'ui/store/actions/controlDialog';
 import {selectSelectorDialog, selectSelectorsGroup} from 'ui/store/selectors/controlDialog';
 import {selectTabId, selectTabs} from 'ui/units/dash/store/selectors/dashTypedSelectors';
-import type {TabsScope} from 'ui/units/dash/typings/selectors';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {TABS_SCOPE_SELECT_VALUE} from './constants';
