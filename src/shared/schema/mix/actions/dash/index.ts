@@ -22,18 +22,16 @@ import {
     prepareWidgetDatasetData,
 } from '../../utils/dash';
 
-import {createDashboard} from './create-dashboard';
+import {createDashboardV1} from './create-dashboard-v1';
 import {deleteDashboard} from './delete-dashboard';
 import {getDashboardV1} from './get-dashboard-v1';
-import {updateDashboard} from './update-dashboard';
+import {updateDashboardV1} from './update-dashboard-v1';
 
 export const dashActions = {
     getDashboardV1,
-    // WIP
-    __updateDashboard__: updateDashboard,
-    // WIP
-    __createDashboard__: createDashboard,
-    _deleteDashboard: deleteDashboard,
+    createDashboardV1,
+    updateDashboardV1,
+    deleteDashboard,
 
     collectDashStats: createAction<CollectDashStatsResponse, CollectDashStatsArgs>(
         async (_, args, {ctx}) => {

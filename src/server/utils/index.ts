@@ -87,7 +87,7 @@ class Utils {
         };
     }
 
-    static pickRpcHeaders(req: Request) {
+    static pickPublicApiHeaders(req: Request) {
         const headersMap = req.ctx.config.headersMap;
 
         const orgId = req.headers[PUBLIC_API_ORG_ID_HEADER];

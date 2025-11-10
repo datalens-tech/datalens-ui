@@ -52,7 +52,7 @@ export const qlActions = {
         },
     ),
 
-    _deleteQLChart: createTypedAction(
+    deleteQLChart: createTypedAction(
         {
             paramsSchema: deleteQLChartArgsSchema,
             resultSchema: deleteQLChartResultSchema,

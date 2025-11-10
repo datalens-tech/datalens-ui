@@ -48,14 +48,18 @@ import type {
     SwitchPublicationStatusResponse,
 } from '../../types';
 
+import {_createEntry} from './create-entry';
 import {getEntries} from './get-entries';
 import {listDirectory} from './list-directory';
+import {_updateEntry} from './update-entry';
 
 const PATH_PREFIX = '/v1';
 const PATH_PREFIX_V2 = '/v2';
 const PRIVATE_PATH_PREFIX = '/private';
 
 export const entriesActions = {
+    _createEntry,
+    _updateEntry,
     listDirectory,
     getEntries,
     getEntry: createAction<GetEntryResponse, GetEntryArgs>({

@@ -1,7 +1,7 @@
 import z from 'zod';
 
 import {EntryScope, EntryUpdateMode} from '../../..';
-import {dashSchema, dataSchema} from '../../../zod-schemas/dash';
+import {dataSchema} from '../../../zod-schemas/dash';
 
 export const deleteDashArgsSchema = z.strictObject({
     dashboardId: z.string(),
@@ -9,26 +9,6 @@ export const deleteDashArgsSchema = z.strictObject({
 });
 
 export const deleteDashResultSchema = z.object({});
-
-const dashUsSchema = z.object({
-    ...dashSchema.shape,
-    entryId: z.string(),
-    scope: z.literal(EntryScope.Dash),
-    public: z.boolean(),
-    isFavorite: z.boolean(),
-    createdAt: z.string(),
-    createdBy: z.string(),
-    updatedAt: z.string(),
-    updatedBy: z.string(),
-    revId: z.string(),
-    savedId: z.string(),
-    publishedId: z.string(),
-    meta: z.record(z.string(), z.string()),
-    links: z.record(z.string(), z.string()).optional(),
-    key: z.union([z.null(), z.string()]),
-    workbookId: z.union([z.null(), z.string()]),
-    type: z.literal(''),
-});
 
 export const updateDashArgsSchema = z.strictObject({
     key: z.string().min(1),
@@ -39,21 +19,27 @@ export const updateDashArgsSchema = z.strictObject({
     entryId: z.string(),
     revId: z.string(),
     mode: z.enum(EntryUpdateMode),
+    annotation: z
+        .object({
+            description: z.string(),
+        })
+        .optional(),
 });
-
-export const updateDashResultSchema = dashUsSchema;
 
 export const createDashArgsSchema = z.strictObject({
     key: z.string().min(1),
     data: dataSchema,
-    meta: z.record(z.any(), z.any()).optional(),
+    meta: z.record(z.string(), z.string()),
     links: z.record(z.string(), z.string()).optional(),
     workbookId: z.string().optional(),
     lockToken: z.string().optional(),
     mode: z.enum(EntryUpdateMode),
+    annotation: z
+        .object({
+            description: z.string(),
+        })
+        .optional(),
 });
-
-export const createDashResultSchema = dashUsSchema;
 
 export const dashSchemaV1 = z.object({
     annotation: z
@@ -68,10 +54,10 @@ export const dashSchemaV1 = z.object({
     entryId: z.string(),
     hidden: z.boolean(),
     key: z.union([z.null(), z.string()]),
-    links: z.record(z.string(), z.string()).optional(),
+    links: z.record(z.string(), z.string()).nullable().optional(),
     meta: z.record(z.string(), z.string()),
     public: z.boolean(),
-    publishedId: z.string(),
+    publishedId: z.string().nullable(),
     revId: z.string(),
     savedId: z.string(),
     scope: z.literal(EntryScope.Dash),
@@ -81,4 +67,12 @@ export const dashSchemaV1 = z.object({
     updatedBy: z.string(),
     version: z.literal(1),
     workbookId: z.union([z.null(), z.string()]),
+});
+
+export const createDashResultSchema = z.object({
+    entry: dashSchemaV1,
+});
+
+export const updateDashResultSchema = z.object({
+    entry: dashSchemaV1,
 });

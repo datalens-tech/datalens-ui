@@ -93,7 +93,7 @@ function processLinks(data: DashData, matchCallback?: MatchCallback) {
     );
 }
 
-function gatherLinks(data: DashData) {
+export function gatherLinks(data: DashData) {
     return processLinks(data);
 }
 
@@ -144,7 +144,7 @@ function setDefaultData(
 const needSetDefaultData = (data: DashData) =>
     DASH_DATA_REQUIRED_FIELDS.some((fieldName) => !(fieldName in data));
 
-function validateData(data: DashData) {
+export function validateData(data: DashData) {
     const allTabsIds: Set<string> = new Set();
     const allItemsIds: Set<string> = new Set();
     const allWidgetTabsIds: Set<string> = new Set();
