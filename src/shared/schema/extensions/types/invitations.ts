@@ -1,7 +1,13 @@
-import {ResourceType, SubjectClaims} from './iam-access-dialog';
+import {ResourceType} from './iam-access-dialog';
+
+export type Invite = {
+    invitee: {
+        email: string;
+    };
+};
 
 export type InviteUsersRequest = {
-    invites: Invite[];
+    invitations: Invite[];
 };
 
 export type InviteUsersWithAccessRequest = InviteUsersRequest & {
@@ -11,12 +17,11 @@ export type InviteUsersWithAccessRequest = InviteUsersRequest & {
 };
 
 export type InviteUsersResponse = {
-    validInvites?: Invite[];
-    invalidInvites?: Invite[];
+    validInvitations: InviteRespone[];
+    invalidInvitations: InviteRespone[];
 };
 
-export type Invite = {
-    invitee: {
-        email: string;
-    };
+export type InviteRespone = Invite & {
+    inviteeId: string;
+    inviterSubjectId: string;
 };

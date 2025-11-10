@@ -21,6 +21,7 @@ export type AclSelectedUser = {
 } & Omit<SubjectClaims, 'sub' | 'subType'>;
 
 export interface AclSubjectSelectProps extends Omit<AclSubjectSuggestProps, 'onSubjectChange'> {
+    onKeyDown?: (input: HTMLInputElement, event: KeyboardEvent) => void;
     inputRef?: RefObject<HTMLInputElement>;
     renderSubject?: (subject: SubjectClaims) => React.ReactNode;
     value: AclSelectedUser[];

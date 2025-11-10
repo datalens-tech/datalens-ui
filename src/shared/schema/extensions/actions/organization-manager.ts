@@ -1,9 +1,12 @@
 import {createAction} from '../../gateway-utils';
-import {GetDatalensOperationResponse} from '../../types';
+import {GetDatalensOperationArgs, GetDatalensOperationResponse} from '../../types';
 import {InviteUsersRequest} from '../types/invitations';
 
 export const organizationManager = {
-    createUserInvite: createAction<GetDatalensOperationResponse, InviteUsersRequest>(async () => {
+    createInvitation: createAction<GetDatalensOperationResponse, InviteUsersRequest>(async () => {
+        return {} as GetDatalensOperationResponse;
+    }),
+    getOperation: createAction<GetDatalensOperationResponse, GetDatalensOperationArgs>(async () => {
         return {} as GetDatalensOperationResponse;
     }),
 };
