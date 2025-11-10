@@ -90,8 +90,6 @@ export enum Feature {
     GravityChartsForBarYAndScatter = 'GravityChartsForBarYAndScatter',
     /** Use GravityUI Charts as the default library for some wizard visualizations(line, area and bar-x) */
     GravityChartsForLineAreaAndBarX = 'GravityChartsForLineAreaAndBarX',
-    /** Save field settings (formatting and colors) in the dataset */
-    StoreFieldSettingsAtDataset = 'StoreFieldSettingsAtDataset',
     /** Show dataset description button */
     EnableDatasetDescription = 'EnableDatasetDescription',
     /** Show connection description button */
@@ -100,6 +98,8 @@ export enum Feature {
     EnableConnectionRevisions = 'EnableConnectionRevisions',
     /** Enable pagination in dataset sources table */
     EnableDatasetSourcesPagination = 'EnableDatasetSourcesPagination',
+    /** Enable shared connections and datasets */
+    EnableSharedEntries = 'EnableSharedEntries',
 
     EnableMobileFixedHeader = 'EnableMobileFixedHeader',
     EnableCommonChartDashSettings = 'EnableCommonChartDashSettings',

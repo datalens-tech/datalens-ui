@@ -2,10 +2,10 @@ import React, {useRef} from 'react';
 
 import {Popup} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {i18n} from 'i18n';
 import type {ColorPalette} from 'shared';
+import {getColorByColorSettings} from 'shared/utils/palettes';
 import {MinifiedPalette} from 'ui/units/wizard/components/MinifiedPalette/MinifiedPalette';
-import {getPaletteColors, isValidHexColor} from 'ui/utils';
+import {getPaletteColors} from 'ui/utils';
 
 import {PaletteItem} from '../../../../../../../../../components/PaletteItem/PaletteItem';
 
@@ -14,8 +14,9 @@ import './PaletteColorControl.scss';
 type PaletteColorControlProps = {
     palette: string;
     controlQa: string;
-    currentColor: string;
+    currentColorHex?: string;
     currentColorIndex?: number;
+    defaultColorIndex?: number;
     onPaletteItemChange: (color: string, index?: number) => void;
     onPaletteUpdate: (paletteName: string) => void;
     onError: (error: boolean) => void;
@@ -30,8 +31,9 @@ export const PaletteColorControl: React.FC<PaletteColorControlProps> = (
 ) => {
     const {
         controlQa,
-        currentColor,
+        currentColorHex,
         currentColorIndex,
+        defaultColorIndex,
         onPaletteItemChange,
         onPaletteUpdate,
         palette,
@@ -41,7 +43,6 @@ export const PaletteColorControl: React.FC<PaletteColorControlProps> = (
     } = props;
 
     const [isPaletteVisible, setIsPaletteVisible] = React.useState<boolean>(false);
-    const [errorText, setErrorText] = React.useState<string>('');
 
     const paletteColors = React.useMemo(() => {
         return getPaletteColors(palette, colorPalettes);
@@ -49,21 +50,18 @@ export const PaletteColorControl: React.FC<PaletteColorControlProps> = (
 
     const ref = useRef<HTMLDivElement | null>(null);
 
+    const currentColorHexBySettings = getColorByColorSettings({
+        currentColors: paletteColors,
+        colorIndex: currentColorIndex,
+        color: currentColorHex,
+        fallbackIndex: defaultColorIndex,
+    });
+
     const handleInputColorUpdate = React.useCallback(
-        (color: string) => {
-            const hexColor = `#${color}`;
-            onPaletteItemChange(hexColor, undefined);
-
-            if (!isValidHexColor(hexColor)) {
-                setErrorText(i18n('wizard', 'label_bars-custom-color-error'));
-                onError(true);
-                return;
-            }
-
-            onError(false);
-            setErrorText('');
+        (colorHex: string) => {
+            onPaletteItemChange(colorHex, undefined);
         },
-        [onError, onPaletteItemChange],
+        [onPaletteItemChange],
     );
 
     const onPaletteItemClick = (color: string) => {
@@ -72,12 +70,30 @@ export const PaletteColorControl: React.FC<PaletteColorControlProps> = (
     };
 
     const handleEnterPress = React.useCallback(() => {
-        if (!currentColor || errorText) {
+        if (!currentColorHexBySettings) {
             return;
         }
 
         setIsPaletteVisible(false);
-    }, [currentColor, errorText]);
+    }, [currentColorHexBySettings]);
+
+    const handlePalleteValidChange = React.useCallback(
+        (valid: boolean): void => {
+            onError(!valid);
+        },
+        [onError],
+    );
+
+    const handlePopupOpenChange = React.useCallback(
+        (open: boolean) => {
+            setIsPaletteVisible(open);
+
+            if (!open) {
+                onError(false);
+            }
+        },
+        [onError],
+    );
 
     return (
         <>
@@ -85,7 +101,7 @@ export const PaletteColorControl: React.FC<PaletteColorControlProps> = (
                 <PaletteItem
                     ref={ref}
                     className={b('color-control-button')}
-                    color={currentColor}
+                    color={currentColorHexBySettings}
                     isDisabled={disabled}
                     onClick={() => {
                         if (!disabled) {
@@ -101,18 +117,18 @@ export const PaletteColorControl: React.FC<PaletteColorControlProps> = (
                 anchorElement={ref.current}
                 hasArrow
                 className={b('palette')}
-                onOpenChange={setIsPaletteVisible}
+                onOpenChange={handlePopupOpenChange}
                 placement="right"
             >
                 <MinifiedPalette
                     onPaletteUpdate={onPaletteUpdate}
                     onPaletteItemClick={onPaletteItemClick}
                     palette={palette}
-                    currentColor={currentColor}
-                    errorText={errorText}
+                    currentColorHex={currentColorHexBySettings}
                     controlQa={controlQa}
                     onInputColorUpdate={handleInputColorUpdate}
                     onEnterPress={handleEnterPress}
+                    onValidChange={handlePalleteValidChange}
                     colorPalettes={colorPalettes}
                     customColorSelected={typeof currentColorIndex !== 'number'}
                 />

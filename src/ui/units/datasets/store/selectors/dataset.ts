@@ -51,6 +51,8 @@ export const rlsSelector = (state: DatalensGlobalState) => {
     return state.dataset.content.rls;
 };
 export const optionsSelector = (state: DatalensGlobalState) => state.dataset.options;
+export const sourceListingOptionsSelector = (state: DatalensGlobalState) =>
+    state.dataset.sourceListingOptions;
 export const currentDbNameSelector = (state: DatalensGlobalState) => state.dataset.currentDbName;
 export const connectionsDbNamesSelector = (state: DatalensGlobalState) =>
     state.dataset.connectionsDbNames;
@@ -216,13 +218,13 @@ export const rawSqlLevelSelector = createSelector(
     },
 );
 
-const datasetInitialDescrioptionSelector = (state: DatalensGlobalState) =>
+const datasetInitialDescriptionSelector = (state: DatalensGlobalState) =>
     state.dataset.prevContent?.description ?? '';
 
-export const datasetDescrioptionSelector = (state: DatalensGlobalState) =>
+export const datasetDescriptionSelector = (state: DatalensGlobalState) =>
     state.dataset.content?.description ?? '';
 
 export const isDescriptionChangedSelector = createSelector(
-    [datasetInitialDescrioptionSelector, datasetDescrioptionSelector],
+    [datasetInitialDescriptionSelector, datasetDescriptionSelector],
     (initialDescription, previewDescription) => initialDescription !== previewDescription,
 );

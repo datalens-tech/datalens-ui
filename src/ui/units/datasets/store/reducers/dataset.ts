@@ -64,6 +64,7 @@ import {
     SET_LAST_MODIFIED_TAB,
     SET_QUEUE_TO_LOAD_PREVIEW,
     SET_SOURCES_LISTING_OPTIONS,
+    SET_SOURCES_LISTING_OPTIONS_ERROR,
     SET_SOURCES_LOADING_ERROR,
     SET_SOURCES_PAGINATION,
     SET_SOURCES_SEARCH_LOADING,
@@ -81,6 +82,7 @@ import {
     TOGGLE_FIELD_EDITOR_MODULE_LOADING,
     TOGGLE_LOAD_PREVIEW_BY_DEFAULT,
     TOGGLE_PREVIEW,
+    TOGGLE_SOURCES_LISTING_OPTIONS_LOADER,
     TOGGLE_SOURCES_LOADER,
     TOGGLE_VIEW_PREVIEW,
     UPDATE_FIELD,
@@ -1265,9 +1267,16 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 ...state,
                 sourcePrototypes: sourcePrototypesNext,
                 selectedConnections: selectedConnectionsNext,
+                currentDbName: undefined,
+                options: {
+                    ...state.options,
+                },
+                sourceListingOptions: undefined,
                 ui: {
                     ...state.ui,
                     selectedConnectionId: selectedConnectionIdNext,
+                    isSourcesSearchLoading: false,
+                    isSourcesLoading: false,
                 },
             };
         }
@@ -1306,6 +1315,17 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 ui: {
                     ...state.ui,
                     isSourcesLoading,
+                },
+            };
+        }
+        case TOGGLE_SOURCES_LISTING_OPTIONS_LOADER: {
+            const {isLoading} = action.payload;
+
+            return {
+                ...state,
+                ui: {
+                    ...state.ui,
+                    isSourcesListingOptionsLoading: isLoading,
                 },
             };
         }
@@ -1401,7 +1421,6 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 updates: [...state.updates, ...updates],
             };
         }
-        // TODO: Will be fixed in CHARTS-11898
         case SET_DESCRIPTION: {
             return {
                 ...state,
@@ -1471,9 +1490,17 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
         case SET_SOURCES_LISTING_OPTIONS: {
             return {
                 ...state,
-                options: {
-                    ...state.options,
-                    source_listing: action.payload,
+                sourceListingOptions: action.payload,
+            };
+        }
+        case SET_SOURCES_LISTING_OPTIONS_ERROR: {
+            const {error} = action.payload;
+
+            return {
+                ...state,
+                errors: {
+                    ...state.errors,
+                    sourceListingOptionsError: error,
                 },
             };
         }

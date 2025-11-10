@@ -1,3 +1,4 @@
+import type {CollectionItemEntities} from '../../../constants';
 import type {WorkbookStatus} from '../../../constants/workbooks';
 
 import type {GetEntryResponse} from './entries';
@@ -34,6 +35,10 @@ export type Workbook = {
 
 export type WorkbookWithPermissions = Workbook & {
     permissions: WorkbookPermission;
+};
+
+export type ExtendedWorkbook = WorkbookWithPermissions & {
+    entity?: typeof CollectionItemEntities.WORKBOOK;
 };
 
 export type CreateWorkbookArgs = {

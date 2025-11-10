@@ -73,7 +73,7 @@ class PathSelect extends React.PureComponent<PathSelectProps> {
                                     type="folder"
                                     size="l"
                                     iconSize={22}
-                                    classMixin={b('icon-folder')}
+                                    className={b('icon-folder')}
                                 />
                                 <span className={b('path-text')}>{this.text}</span>
                                 {this.props.withInput && (

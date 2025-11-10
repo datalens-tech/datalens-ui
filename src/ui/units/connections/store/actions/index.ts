@@ -12,7 +12,7 @@ import {loadRevisions, setEntryContent} from '../../../../store/actions/entryCon
 import {showToast} from '../../../../store/actions/toaster';
 import {RevisionsMode} from '../../../../store/typings/entryContent';
 import type {DataLensApiError} from '../../../../typings';
-import {getWorkbookIdFromPathname} from '../../../../utils';
+import {getEntityIdFromPathname} from '../../../../utils';
 import history from '../../../../utils/history';
 import {FieldKey, InnerFieldKey} from '../../constants';
 import {getIsRevisionsSupported} from '../../utils';
@@ -78,7 +78,8 @@ interface GetConnectionDataRequestProps {
     flattenConnectors: ConnectorItem[];
     rev_id?: string;
 }
-export async function getConnectionDataRequest({
+
+async function getConnectionDataRequest({
     entry,
     flattenConnectors,
     rev_id,
@@ -99,28 +100,6 @@ export async function getConnectionDataRequest({
         ));
     }
     return {connectionData, connectionError};
-}
-
-export function setRevision(revId?: string) {
-    return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
-        const {
-            connections: {flattenConnectors, entry},
-        } = getState();
-        if (entry) {
-            dispatch(setPageLoading({pageLoading: true}));
-            const {connectionData, connectionError} = await getConnectionDataRequest({
-                entry,
-                flattenConnectors,
-                rev_id: revId,
-            });
-            batch(() => {
-                dispatch(
-                    setConectorData({connectionData: connectionData ?? {}, error: connectionError}),
-                );
-                dispatch(setPageLoading({pageLoading: false}));
-            });
-        }
-    };
 }
 
 export function setPageData({
@@ -231,8 +210,6 @@ function setFetchedFormData(schema: FormSchema) {
     return (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
         const {connectionData} = getState().connections;
         const {form: fetchedFormData} = getFetchedFormData(schema, connectionData);
-        // TODO: remove after BI-6604
-        fetchedFormData[FieldKey.Description] = connectionData[FieldKey.Description];
         // technotes [1]
         fetchedFormData[FieldKey.DbType] = connectionData[FieldKey.DbType];
 
@@ -335,9 +312,19 @@ export function changeInitialForm(initialFormUpdates: ConnectionsReduxState['ini
     };
 }
 
-export function createConnection(args: {name: string; dirPath?: string; workbookId?: string}) {
+export function createConnection(args: {
+    name: string;
+    dirPath?: string;
+    workbookId?: string;
+    collectionId?: string;
+}) {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
-        const {name, dirPath, workbookId = getWorkbookIdFromPathname()} = args;
+        const {
+            name,
+            dirPath,
+            workbookId = getEntityIdFromPathname(),
+            collectionId = getEntityIdFromPathname(true),
+        } = args;
         const {form, innerForm, schema} = getState().connections;
 
         if (!schema || !schema.apiSchema?.create) {
@@ -358,12 +345,11 @@ export function createConnection(args: {name: string; dirPath?: string; workbook
 
         if (typeof dirPath === 'string') {
             resultForm[FieldKey.DirPath] = dirPath;
-        } else {
+        } else if (workbookId) {
             resultForm[FieldKey.WorkbookId] = workbookId;
+        } else {
+            resultForm[FieldKey.CollectionId] = collectionId;
         }
-
-        // TODO: remove after BI-6604
-        resultForm[FieldKey.Description] = form[FieldKey.Description];
 
         flow([setSubmitLoading, dispatch])({loading: true});
         const {id: connectionId, error: connError} = await api.createConnection(resultForm);
@@ -407,6 +393,8 @@ export function createConnection(args: {name: string; dirPath?: string; workbook
             history.replace(`/navigation/${templateFolderId}`);
         } else if (templateWorkbookId) {
             history.replace(`/workbooks/${templateWorkbookId}`);
+        } else if (collectionId && connectionId) {
+            history.replace(`/collections/${collectionId}`);
         } else if (connectionId) {
             history.replace(`/connections/${connectionId}`);
         }
@@ -448,8 +436,6 @@ function updateConnection() {
             innerForm,
             apiSchemaItem: schema.apiSchema?.edit,
         });
-        // TODO: remove after BI-6604
-        resultForm[FieldKey.Description] = form[FieldKey.Description];
 
         // technotes [1]
         delete resultForm[FieldKey.DbType];

@@ -12,11 +12,7 @@ import type {
     PreparedCopyItemOptions,
     ReactGridLayoutProps,
 } from '@gravity-ui/dashkit';
-import {
-    DashKitDnDWrapper,
-    ActionPanel as DashkitActionPanel,
-    DashKit as GravityDashkit,
-} from '@gravity-ui/dashkit';
+import {DashKit as GravityDashkit} from '@gravity-ui/dashkit';
 import {DEFAULT_GROUP, MenuItems} from '@gravity-ui/dashkit/helpers';
 import {
     ChevronsDown,
@@ -47,15 +43,11 @@ import type {DashTab, DashTabItem, DashTabLayout} from 'shared';
 import {
     ControlQA,
     DASH_INFO_HEADER,
-    DashBodyQa,
-    DashEntryQa,
     DashKitOverlayMenuQa,
     DashTabItemType,
-    EntryScope,
     FOCUSED_WIDGET_PARAM_NAME,
     Feature,
     FixedHeaderQa,
-    LOADED_DASH_CLASS,
     SCROLL_TITLE_DEBOUNCE_TIME,
     UPDATE_STATE_DEBOUNCE_TIME,
 } from 'shared';
@@ -69,18 +61,13 @@ import {WidgetContextProvider} from 'ui/components/DashKit/context/WidgetContext
 import {getDashKitMenu} from 'ui/components/DashKit/helpers';
 import {registry} from 'ui/registry';
 import {showToast} from 'ui/store/actions/toaster';
-import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
-import {selectUserSettings} from 'ui/store/selectors/user';
 import {isEmbeddedMode} from 'ui/utils/embedded';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
-import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
 import {getConfiguredDashKit} from '../../../../components/DashKit/DashKit';
 import {DL} from '../../../../constants';
-import Utils from '../../../../utils';
-import {TYPES_TO_DIALOGS_MAP, getActionPanelItems} from '../../../../utils/getActionPanelItems';
+import {TYPES_TO_DIALOGS_MAP} from '../../../../utils/getActionPanelItems';
 import {EmptyState} from '../../components/EmptyState/EmptyState';
-import Loader from '../../components/Loader/Loader';
 import {Mode} from '../../modules/constants';
 import type {CopiedConfigContext, CopiedConfigData} from '../../modules/helpers';
 import {
@@ -89,7 +76,6 @@ import {
     getLayoutParentId,
     getPastedWidgetData,
     getPreparedCopyItemOptions,
-    memoizedGetLocalTabs,
 } from '../../modules/helpers';
 import type {TabsHashStates} from '../../store/actions/dashTyped';
 import {
@@ -110,28 +96,24 @@ import {
     selectCurrentTab,
     selectCurrentTabId,
     selectDashDescription,
-    selectDashError,
     selectDashShowOpenedDescription,
     selectDashWorkbookId,
     selectEntryId,
     selectLastModifiedItemId,
     selectSettings,
-    selectShowTableOfContent,
     selectSkipReload,
     selectTabHashState,
     selectTabs,
 } from '../../store/selectors/dashTypedSelectors';
 import {getCustomizedProperties} from '../../utils/dashkitProps';
 import {scrollIntoView} from '../../utils/scrollUtils';
-import {DashError} from '../DashError/DashError';
 import {
     FixedHeaderContainer,
     FixedHeaderControls,
     FixedHeaderWrapper,
 } from '../FixedHeader/FixedHeader';
-import TableOfContent from '../TableOfContent/TableOfContent';
-import {Tabs} from '../Tabs/Tabs';
 
+import Content from './components/Content/Content';
 import {
     FixedContainerWrapperWithContext,
     FixedControlsWrapperWithContext,
@@ -149,8 +131,9 @@ const isMobileFixedHeaderEnabled = isEnabledFeature(Feature.EnableMobileFixedHea
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
-type OwnProps = {
+export type OwnProps = {
     isPublicMode?: boolean;
+    isSplitPaneLayout?: boolean;
     hideErrorDetails?: boolean;
     onRetry: () => void;
     globalParams: DashKitProps['globalParams'];
@@ -428,8 +411,28 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         const {DashBodyAdditionalControls} = registry.dash.components.getAll();
 
         return (
-            <div className={b()} ref={this._dashBodyRef}>
-                {this.renderBody()}
+            <div
+                className={b({'split-pane': this.props.isSplitPaneLayout})}
+                ref={this._dashBodyRef}
+            >
+                <Content
+                    copiedData={this.state.hasCopyInBuffer}
+                    dashEntryKey={this.props.entry?.key}
+                    disableHashNavigation={this.props.disableHashNavigation}
+                    hideErrorDetails={this.props.hideErrorDetails}
+                    isCondensed={this.isCondensed()}
+                    loaded={this.state.loaded}
+                    mode={this.props.mode}
+                    showEditActionPanel={this.isEditMode()}
+                    renderDashkit={this.renderDashkit}
+                    onDragEnd={this.handleDragEnd}
+                    onDragStart={this.handleDragStart}
+                    onItemClick={this.handleTocItemClick}
+                    onRetry={this.props.onRetry}
+                    {...(this.props.onlyView
+                        ? {onlyView: this.props.onlyView}
+                        : {onlyView: this.props.onlyView, onPasteItem: this.props.onPasteItem})}
+                />
                 <PaletteEditor />
                 <EntryDialogues ref={this.entryDialoguesRef} />
                 <DashBodyAdditionalControls />
@@ -1235,6 +1238,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                             editMode={isEditMode}
                             isControlsGroupEmpty={!hasFixedHeaderControlsElements}
                             isContainerGroupEmpty={!hasFixedHeaderContainerElements}
+                            isSplitPaneContainer={this.props.isSplitPaneLayout}
                         />
                     )}
                     <DashKit
@@ -1324,104 +1328,6 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             });
         }
     };
-
-    private renderBody() {
-        const {
-            mode,
-            settings,
-            tabs,
-            showTableOfContent,
-            isSidebarOpened,
-            hideErrorDetails,
-            onRetry,
-            error,
-            disableHashNavigation,
-        } = this.props;
-
-        const {loaded, hasCopyInBuffer} = this.state;
-
-        switch (mode) {
-            case Mode.Loading:
-            case Mode.Updating:
-                return <Loader size="l" />;
-            case Mode.Error:
-                return <DashError error={error} hideDetails={hideErrorDetails} onRetry={onRetry} />;
-        }
-
-        const localTabs = memoizedGetLocalTabs(tabs);
-
-        const hasTableOfContentForTab = !(localTabs.length === 1 && !localTabs[0].items.length);
-
-        const showEditActionPanel = this.isEditMode();
-
-        const loadedMixin = loaded ? LOADED_DASH_CLASS : undefined;
-
-        const hideDashTitle =
-            settings.hideDashTitle || (DL.IS_MOBILE && !isMobileFixedHeaderEnabled);
-
-        const content = (
-            <div
-                data-qa={DashBodyQa.ContentWrapper}
-                className={b('content-wrapper', {mobile: DL.IS_MOBILE, mode}, loadedMixin)}
-            >
-                <div
-                    className={b('content-container', {
-                        mobile: DL.IS_MOBILE,
-                        'no-title':
-                            settings.hideDashTitle && (settings.hideTabs || tabs.length === 1),
-                        'no-title-with-tabs':
-                            settings.hideDashTitle && !settings.hideTabs && tabs.length > 1,
-                    })}
-                >
-                    <TableOfContent
-                        disableHashNavigation={disableHashNavigation}
-                        onItemClick={this.handleTocItemClick}
-                    />
-                    <div
-                        className={b('content', {
-                            condensed: this.isCondensed(),
-                            'with-table-of-content': showTableOfContent && hasTableOfContentForTab,
-                            mobile: DL.IS_MOBILE,
-                            aside: getIsAsideHeaderEnabled(),
-                            'with-edit-panel': showEditActionPanel,
-                            'with-footer': isEnabledFeature(Feature.EnableFooter),
-                        })}
-                    >
-                        {!hideDashTitle && this.props.entry?.key && (
-                            <div className={b('entry-name')} data-qa={DashEntryQa.EntryName}>
-                                {Utils.getEntryNameFromKey(this.props.entry?.key)}
-                            </div>
-                        )}
-                        {!settings.hideTabs && <Tabs className={b('tabs')} />}
-                        {this.renderDashkit()}
-                        {!this.props.onlyView && (
-                            <DashkitActionPanel
-                                toggleAnimation={true}
-                                disable={!showEditActionPanel}
-                                items={getActionPanelItems({
-                                    copiedData: hasCopyInBuffer,
-                                    onPasteItem: this.props.onPasteItem,
-                                    openDialog: this.props.openDialog,
-                                    filterItem: (item) => item.id === DashTabItemType.Image,
-                                    userSettings: this.props.userSettings,
-                                    scope: EntryScope.Dash,
-                                })}
-                                className={b('edit-panel', {
-                                    'aside-opened': isSidebarOpened,
-                                })}
-                            />
-                        )}
-                    </div>
-                </div>
-            </div>
-        );
-
-        return (
-            <DashKitDnDWrapper onDragStart={this.handleDragStart} onDragEnd={this.handleDragEnd}>
-                {content}
-            </DashKitDnDWrapper>
-        );
-    }
 }
 
 const mapStateToProps = (state: DatalensGlobalState) => ({
@@ -1429,7 +1335,6 @@ const mapStateToProps = (state: DatalensGlobalState) => ({
     lastModifiedItem: selectLastModifiedItemId(state),
     entry: state.dash.entry,
     mode: state.dash.mode,
-    showTableOfContent: selectShowTableOfContent(state),
     hashStates: selectTabHashState(state),
     settings: selectSettings(state),
     tabData: selectCurrentTab(state),
@@ -1437,11 +1342,8 @@ const mapStateToProps = (state: DatalensGlobalState) => ({
     canEdit: canEdit(state),
     tabs: selectTabs(state),
     tabId: selectCurrentTabId(state),
-    isSidebarOpened: !selectAsideHeaderIsCompact(state),
     workbookId: selectDashWorkbookId(state),
-    error: selectDashError(state),
     skipReload: selectSkipReload(state),
-    userSettings: selectUserSettings(state),
     dashDescription: selectDashDescription(state),
     showOpenedDescription: selectDashShowOpenedDescription(state),
     hasTableOfContent: hasTableOfContent(state),

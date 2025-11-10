@@ -4,7 +4,7 @@ import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization
 import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {CommonQa} from '../../../page-objects/constants/common-selectors';
+import {CommonSelectors} from '../../../page-objects/constants/common-selectors';
 import {DialogMetricSettingsQa, WizardPageQa, WizardVisualizationId} from '../../../../src/shared';
 import {openTestPage, slct} from '../../../utils';
 
@@ -105,10 +105,9 @@ datalensTest.describe('Wizard - metric chart. Settings', () => {
         const colorInput = wizardPage.metricSettingsDialog.getPaletteInput();
         await colorInput.fill(inavlidColorValue);
 
-        const colorInputErrorLocator = wizardPage.page.locator(slct(CommonQa.ControlErrorMessage));
+        const colorInputErrorLocator = wizardPage.page.locator(CommonSelectors.TextInputErrorState);
 
-        const errorMessage = await colorInputErrorLocator.textContent();
-        expect(errorMessage).toBeTruthy();
+        await expect(colorInputErrorLocator).toBeVisible();
 
         const validColorValue = customColor.replace('#', '');
         await colorInput.fill(validColorValue);

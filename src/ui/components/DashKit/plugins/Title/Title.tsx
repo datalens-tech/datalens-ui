@@ -9,7 +9,6 @@ import type {Plugin, PluginTitleProps} from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
 import {type DashTabItemTitle, EXPORT_PRINT_HIDDEN_ATTR} from 'shared';
-import {CustomPaletteBgColors} from 'shared/constants/widgets';
 import {
     adjustWidgetLayout as dashkitAdjustWidgetLayout,
     getPreparedWrapSettings,
@@ -118,12 +117,6 @@ const titlePlugin: PluginTitle = {
 
         const content = <DashKitPluginTitle {...props} ref={forwardedRef} />;
 
-        const showBgColor = Boolean(
-            data.background?.enabled !== false &&
-                data.background?.color &&
-                data.background?.color !== CustomPaletteBgColors.NONE,
-        );
-
         const showHint = Boolean(!titlePlugin.hideHint && data.hint?.enabled && data.hint.text);
         const showAnchor = !titlePlugin.hideAnchor && !DL.IS_MOBILE;
 
@@ -132,9 +125,8 @@ const titlePlugin: PluginTitle = {
         const withAbsoluteAnchor = showAnchor && !isInlineExtraElements;
         const withAbsoluteHint = showHint && !isInlineExtraElements;
 
-        const {classMod, style} = getPreparedWrapSettings(
-            showBgColor,
-            data.background?.color,
+        const {classMod, style, showBgColor} = getPreparedWrapSettings(
+            data.background,
             {
                 position: showAnchor ? undefined : 'relative',
             },
@@ -234,7 +226,7 @@ const titlePlugin: PluginTitle = {
                 id={props.id}
                 type="title"
                 nodeRef={rootNodeRef}
-                style={style as React.StyleHTMLAttributes<HTMLDivElement>}
+                style={style}
                 classMod={classMod}
             >
                 <div

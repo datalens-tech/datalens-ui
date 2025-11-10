@@ -6,6 +6,7 @@ export enum ApiTag {
     Wizard = 'Wizard',
     Dashboard = 'Dashboard',
     QL = 'QL',
+    Navigation = 'Navigation',
 }
 
 export const PUBLIC_API_VERSION_HEADER = 'x-dl-api-version';

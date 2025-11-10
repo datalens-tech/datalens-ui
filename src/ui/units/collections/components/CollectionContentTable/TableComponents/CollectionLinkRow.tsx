@@ -3,26 +3,27 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {batch, useDispatch, useSelector} from 'react-redux';
 import {Link, useHistory} from 'react-router-dom';
-import {CollectionContentTableQa} from 'shared';
+import {CollectionContentTableQa, CollectionItemEntities} from 'shared';
 import {WORKBOOK_STATUS} from 'shared/constants/workbooks';
-import type {CollectionWithPermissions, WorkbookWithPermissions} from 'shared/schema/types';
+import type {StructureItem} from 'shared/schema/types';
 import {DIALOG_CREATE_WORKBOOK} from 'ui/components/CollectionsStructure/CreateWorkbookDialog/CreateWorkbookDialog';
 import {DL} from 'ui/constants/common';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {selectCollectionBreadcrumbs} from 'ui/units/collections-navigation/store/selectors';
 
-import {COLLECTIONS_PATH, WORKBOOKS_PATH} from '../../../../collections-navigation/constants';
+import {WORKBOOKS_PATH} from '../../../../collections-navigation/constants';
 import {setCollectionBreadcrumbs} from '../../../../collections-navigation/store/actions';
 import {setWorkbook} from '../../../../workbooks/store/actions';
 import type {RefreshPageAfterImport} from '../../../hooks/useRefreshPageAfterImport';
 import {setCollection} from '../../../store/actions';
+import {getIsWorkbookItem, getItemLink} from '../../helpers';
 
 import '../CollectionContentTable.scss';
 
 const b = block('dl-collection-content-table');
 
 type CollectionLinkRowProps = {
-    item: WorkbookWithPermissions | CollectionWithPermissions;
+    item: StructureItem;
     isDisabled: boolean;
     refreshPageAfterImport: RefreshPageAfterImport;
 };
@@ -39,7 +40,8 @@ export const CollectionLinkRow: React.FC<CollectionLinkRowProps> = ({
 
     const breadcrumbs = useSelector(selectCollectionBreadcrumbs) ?? [];
 
-    const isWorkbookItem = 'workbookId' in item;
+    const isWorkbookItem = getIsWorkbookItem(item);
+    const isEntryItem = item.entity === CollectionItemEntities.ENTRY;
 
     if (isDisabled && isWorkbookItem) {
         const isImport = Boolean(item.status === WORKBOOK_STATUS.CREATING && item.meta.importId);
@@ -78,25 +80,27 @@ export const CollectionLinkRow: React.FC<CollectionLinkRowProps> = ({
             </div>
         );
     }
+    const entity =
+        item.entity ??
+        (getIsWorkbookItem(item)
+            ? CollectionItemEntities.WORKBOOK
+            : CollectionItemEntities.COLLECTION);
+    const dataQa = {
+        [CollectionItemEntities.COLLECTION]: CollectionContentTableQa.CollectionLinkRow,
+        [CollectionItemEntities.WORKBOOK]: CollectionContentTableQa.WorkbookLinkRow,
+        [CollectionItemEntities.ENTRY]: CollectionContentTableQa.EntryLinkRow,
+    }[entity];
 
     return (
         <Link
-            data-qa={
-                isWorkbookItem
-                    ? CollectionContentTableQa.WorkbookLinkRow
-                    : CollectionContentTableQa.CollectionLinkRow
-            }
-            to={
-                isWorkbookItem
-                    ? `${WORKBOOKS_PATH}/${item.workbookId}`
-                    : `${COLLECTIONS_PATH}/${item.collectionId}`
-            }
+            data-qa={dataQa}
+            to={getItemLink(item)}
             className={b('content-row')}
             onClick={(e) => {
                 if (!e.metaKey && !e.ctrlKey) {
                     if (isWorkbookItem) {
                         dispatch(setWorkbook(item));
-                    } else {
+                    } else if (!isEntryItem) {
                         batch(() => {
                             dispatch(setCollection(item));
                             if (
