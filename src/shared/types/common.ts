@@ -310,7 +310,7 @@ export type EntryType = '' | WidgetType;
 
 export interface EntryReadParams {
     revId?: string;
-    includePermissions: string;
+    includePermissionsInfo: string;
     includeLinks: string;
     includeFavorite?: boolean;
     branch?: string;

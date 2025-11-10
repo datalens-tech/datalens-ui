@@ -8,6 +8,26 @@
 
 ### Start project in dev mode
 
+#### In Docker mode (easy-mode):
+
+On Linux systems:
+
+```bash
+git clone git@github.com:datalens-tech/datalens.git
+cd datalens
+./init.sh --ipv6 --docker-ipv6 --dev-light --dev-root --dev-ui
+```
+
+On macOS systems:
+
+```bash
+git clone git@github.com:datalens-tech/datalens.git
+cd datalens
+./init.sh --dev-light --dev-ui
+```
+
+#### Local mode:
+
 Install Node.js >= v18.17.0 manually or via [node version manager](https://github.com/nvm-sh/nvm).
 
 Start project in dev mode:

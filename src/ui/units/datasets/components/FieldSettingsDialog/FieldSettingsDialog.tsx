@@ -10,9 +10,10 @@ import type {
     CommonNumberFormattingOptions,
     DatasetField,
     DatasetFieldColorConfig,
+    DatasetUpdate,
     FieldUISettings,
 } from 'shared';
-import {isDimensionField, isNumberField} from 'shared';
+import {DatasetFieldSettingsDialogQa, isDimensionField, isNumberField} from 'shared';
 import {getFieldUISettings, isFieldWithDisplaySettings} from 'shared/utils';
 import {NumberFormatSettings} from 'ui/components/NumberFormatSettings/NumberFormatSettings';
 import {fetchColorPalettes} from 'ui/store/actions/colorPaletteEditor';
@@ -32,13 +33,14 @@ type Props = {
     field: DatasetField;
     parameters: DatasetField[];
     datasetId: string;
+    updates?: DatasetUpdate[];
     workbookId?: string;
     onClose: () => void;
     onSave: (value: DatasetField | null) => void;
 };
 
 export const FieldSettingsDialog = (props: Props) => {
-    const {open, field, parameters, datasetId, workbookId, onClose, onSave} = props;
+    const {open, field, parameters, datasetId, workbookId, updates, onClose, onSave} = props;
     const hasDisplaySettings = field && isFieldWithDisplaySettings({field});
 
     const fieldUiSettings = React.useMemo<FieldUISettings>(() => {
@@ -116,7 +118,10 @@ export const FieldSettingsDialog = (props: Props) => {
 
             return (
                 <FormRow className={b('row')} label={i18n('label_colors')}>
-                    <Button onClick={() => setColorDialogOpened(true)}>
+                    <Button
+                        qa={DatasetFieldSettingsDialogQa.ColorSettingsButton}
+                        onClick={() => setColorDialogOpened(true)}
+                    >
                         <Icon data={BucketPaint} width="16" height="16" />
                         {i18n('button_colors')}
                     </Button>
@@ -153,11 +158,12 @@ export const FieldSettingsDialog = (props: Props) => {
                     )}
                     <ColorsDialog
                         field={field}
-                        fieldUiSettings={fieldUiSettings}
+                        fieldUiSettings={uiSettings}
                         datasetId={datasetId}
                         workbookId={workbookId}
                         open={colorDialogOpened}
                         parameters={parameters}
+                        updates={updates}
                         onClose={() => setColorDialogOpened(false)}
                         onApply={handleApplyColors}
                     />
@@ -184,7 +190,13 @@ export const FieldSettingsDialog = (props: Props) => {
     };
 
     return (
-        <Dialog onClose={onClose} open={open} className={b()} disableHeightTransition={true}>
+        <Dialog
+            qa={DatasetFieldSettingsDialogQa.Dialog}
+            onClose={onClose}
+            open={open}
+            className={b()}
+            disableHeightTransition={true}
+        >
             <Dialog.Header caption={i18n('label_title')} />
             <Dialog.Body>
                 {renderColorsSection()}

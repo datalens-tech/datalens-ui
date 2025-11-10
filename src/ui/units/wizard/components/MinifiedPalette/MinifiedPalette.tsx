@@ -1,15 +1,17 @@
 import React, {useCallback, useRef} from 'react';
 
-import {TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import type {ColorPalette} from 'shared';
 import {DialogFieldBarsSettingsQa} from 'shared';
 import {ColorPaletteSelect} from 'ui/components/ColorPaletteSelect/ColorPaletteSelect';
+import {
+    ColorPickerInput,
+    type ColorPickerInputProps,
+} from 'ui/components/ColorPickerInput/ColorPickerInput';
 import {useEnterClick} from 'ui/hooks/useEnterClick';
 import {PaletteTypes} from 'ui/units/wizard/constants';
 import {getPaletteColors} from 'ui/utils';
 
-import {PaletteItem} from '../../../../components/PaletteItem/PaletteItem';
 import {Palette} from '../Palette/Palette';
 
 import './MinifiedPalette.scss';
@@ -17,16 +19,15 @@ import './MinifiedPalette.scss';
 type MinifiedPaletteProps = {
     onPaletteUpdate: (paletteName: string) => void;
     onPaletteItemClick: (color: string) => void;
-    onInputColorUpdate: (color: string) => void;
+    onInputColorUpdate: (colorHex: string) => void;
     onEnterPress?: () => void;
     palette: string;
-    currentColor: string;
+    currentColorHex: string;
     colorPalettes: ColorPalette[];
-    errorText?: string;
     controlQa?: string;
     customColorSelected?: boolean;
     customColorBtnQa?: string;
-};
+} & Pick<ColorPickerInputProps, 'onValidChange'>;
 
 const b = block('minified-palette');
 
@@ -35,14 +36,14 @@ export const MinifiedPalette: React.FC<MinifiedPaletteProps> = (props: MinifiedP
         onPaletteUpdate,
         palette,
         onPaletteItemClick,
-        currentColor,
-        errorText,
+        currentColorHex,
         controlQa,
         onInputColorUpdate,
         onEnterPress,
         colorPalettes,
         customColorSelected,
         customColorBtnQa,
+        onValidChange,
     } = props;
 
     const paletteRef = useRef<HTMLDivElement | null>(null);
@@ -51,6 +52,25 @@ export const MinifiedPalette: React.FC<MinifiedPaletteProps> = (props: MinifiedP
             onEnterPress();
         }
     }, [onEnterPress]);
+
+    const handlePaletteItemClick = useCallback(
+        (color: string) => {
+            onPaletteItemClick(color);
+            onValidChange?.(true);
+        },
+        [onPaletteItemClick, onValidChange],
+    );
+
+    const handleColorPickerInputUpdate = useCallback(
+        (colorHex: string | null) => {
+            if (colorHex === null) {
+                return;
+            }
+
+            onInputColorUpdate(colorHex);
+        },
+        [onInputColorUpdate],
+    );
 
     useEnterClick(paletteRef, handleEnterPress);
 
@@ -72,27 +92,26 @@ export const MinifiedPalette: React.FC<MinifiedPaletteProps> = (props: MinifiedP
             <Palette
                 paletteType={PaletteTypes.Colors}
                 palette={colors}
-                onPaletteItemClick={onPaletteItemClick}
-                isSelectedItem={(color) => !customColorSelected && color === currentColor}
+                onPaletteItemClick={handlePaletteItemClick}
+                isSelectedItem={(color) => !customColorSelected && color === currentColorHex}
                 className={b('palette')}
                 itemClassName={b('item')}
                 customColor={{
                     enabled: true,
                     selected: Boolean(customColorSelected),
-                    onSelect: () => onInputColorUpdate(currentColor.slice(1)),
+                    onSelect: () => onInputColorUpdate(currentColorHex),
                     qa: customColorBtnQa,
                 }}
             />
             {customColorSelected && (
                 <div className={b('color-input-wrapper')}>
-                    <PaletteItem color={currentColor} className={b('color-input-icon')} />
-                    <TextInput
-                        error={errorText}
-                        // Cut # from color in HEX format
-                        value={currentColor.slice(1)}
+                    <ColorPickerInput
+                        required
+                        value={currentColorHex}
                         qa={controlQa ? `${controlQa}-palette-input` : undefined}
-                        onUpdate={onInputColorUpdate}
-                        className={b('color-input')}
+                        size="m"
+                        onUpdate={handleColorPickerInputUpdate}
+                        onValidChange={onValidChange}
                     />
                 </div>
             )}

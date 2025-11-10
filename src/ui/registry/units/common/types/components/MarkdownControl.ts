@@ -3,4 +3,5 @@ export type MarkdownControlProps = {
     onChange: (val: string) => void;
     disabled: boolean;
     enableExtensions?: boolean;
+    className?: string;
 };

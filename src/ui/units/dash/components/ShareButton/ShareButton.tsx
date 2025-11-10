@@ -20,21 +20,27 @@ const i18n = I18n.keyset('chartkit.menu');
 
 interface DialogSharePropsForShareButton extends Omit<DialogShareProps, 'onClose'> {}
 
+export interface ShareButtonProps {
+    enablePopover?: boolean;
+    popoverText?: string;
+    popoverTitle?: string;
+    iconSize?: number;
+    mobileShareIconSize?: number;
+    mobileShareIconColorPrimary?: boolean;
+    popoverClassName?: string;
+    dialogShareProps?: DialogSharePropsForShareButton;
+}
+
 export const ShareButton = ({
     enablePopover,
     popoverText,
     popoverTitle,
     iconSize = 18,
+    mobileShareIconSize = 18,
+    mobileShareIconColorPrimary = false,
     popoverClassName,
     dialogShareProps,
-}: {
-    enablePopover?: boolean;
-    popoverText?: string;
-    popoverTitle?: string;
-    iconSize?: number;
-    popoverClassName?: string;
-    dialogShareProps?: DialogSharePropsForShareButton;
-}) => {
+}: ShareButtonProps) => {
     const {DialogShare} = registry.common.components.getAll();
 
     const [showDialogShare, setShowDialogShare] = React.useState(false);
@@ -96,10 +102,10 @@ export const ShareButton = ({
             <Button
                 view="flat"
                 onClick={handleShareButtonClick}
-                className={b('mobile-share-button')}
+                className={b('mobile-share-button', {secondary: !mobileShareIconColorPrimary})}
                 aria-label={i18n('get-code')}
             >
-                <Icon size={18} data={ArrowShapeTurnUpRight} />
+                <Icon size={mobileShareIconSize} data={ArrowShapeTurnUpRight} />
             </Button>
         );
     };

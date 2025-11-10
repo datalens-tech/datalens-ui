@@ -6,7 +6,6 @@ import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
 import get from 'lodash/get';
 import type {DashTabItemText} from 'shared';
-import {CustomPaletteBgColors} from 'shared/constants/widgets';
 import {
     adjustWidgetLayout as dashkitAdjustWidgetLayout,
     getPreparedWrapSettings,
@@ -179,13 +178,7 @@ const textPlugin = {
 
         const data = props.data as DashTabItemText['data'];
 
-        const showBgColor = Boolean(
-            data.background?.enabled !== false &&
-                data.background?.color &&
-                data.background?.color !== CustomPaletteBgColors.NONE,
-        );
-
-        const {classMod, style} = getPreparedWrapSettings(showBgColor, data.background?.color);
+        const {classMod, style, showBgColor} = getPreparedWrapSettings(data.background);
 
         const currentLayout = props.layout.find(({i}) => i === props.id) || {
             x: null,

@@ -9,30 +9,31 @@ import './LogoText.scss';
 
 const b = block('aside-header-logo-text');
 
-export const LogoText = React.forwardRef<
-    HTMLDivElement,
-    {
-        installationInfo?: string;
-        productName?: string;
-        installationInfoClassName?: string;
-    }
->(({installationInfo, productName, installationInfoClassName}, ref) => {
-    const isRebrandingEnabled = isEnabledFeature(Feature.EnableDLRebranding);
-    const showInstallation = isRebrandingEnabled && installationInfo;
-    const defaultProductName = isRebrandingEnabled ? REBRANDING_PRODUCT_NAME : PRODUCT_NAME;
+export type LogoTextProps = {
+    installationInfo?: string;
+    productName?: string;
+    installationInfoClassName?: string;
+};
 
-    return (
-        <div className={b()}>
-            <div className={b('title', {rebranding: isRebrandingEnabled})}>
-                {productName || defaultProductName}
-            </div>
-            {showInstallation && (
-                <div ref={ref} className={b('installation-info', installationInfoClassName)}>
-                    {installationInfo}
+export const LogoText = React.forwardRef<HTMLDivElement, LogoTextProps>(
+    ({installationInfo, productName, installationInfoClassName}, ref) => {
+        const isRebrandingEnabled = isEnabledFeature(Feature.EnableDLRebranding);
+        const showInstallation = isRebrandingEnabled && installationInfo;
+        const defaultProductName = isRebrandingEnabled ? REBRANDING_PRODUCT_NAME : PRODUCT_NAME;
+
+        return (
+            <div className={b()}>
+                <div className={b('title', {rebranding: isRebrandingEnabled})}>
+                    {productName || defaultProductName}
                 </div>
-            )}
-        </div>
-    );
-});
+                {showInstallation && (
+                    <div ref={ref} className={b('installation-info', installationInfoClassName)}>
+                        {installationInfo}
+                    </div>
+                )}
+            </div>
+        );
+    },
+);
 
 LogoText.displayName = 'LogoText';

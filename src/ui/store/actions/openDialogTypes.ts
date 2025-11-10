@@ -11,7 +11,7 @@ import type {OpenDialogNeedResetArgs} from '../../components/OpenDialogNeedReset
 import type {OpenDialogChartSettingsArgs} from '../../units/wizard/components/Dialogs/Settings/Settings';
 import type {
     OpenDialogCreateConnectionArgs,
-    OpenDialogCreateConnectionInWbArgs,
+    OpenDialogCreateConnectionInWbOrCollectionArgs,
 } from '../../units/connections/components';
 import type {OpenDialogConfirmArgs} from '../../components/DialogConfirm/DialogConfirm';
 import type {OpenDialogWarningArgs} from '../../components/DialogWarning/DialogWarning';
@@ -50,6 +50,7 @@ import type {OpenDialogDeleteCollectionArgs} from '../../components/CollectionsS
 import type {OpenDialogDeleteCollectionsWorkbooksArgs} from '../../components/CollectionsStructure/DeleteCollectionsWorkbooksDialog';
 import type {OpenDialogDeleteWorkbookArgs} from '../../components/CollectionsStructure/DeleteWorkbookDialog';
 import type {OpenDialogCreateEntryInWorkbookArgs} from '../../components/CollectionsStructure/CreateEntryInWorkbookDialog';
+import type {OpenDialogCreateEntryInCollectionArgs} from '../../components/CollectionsStructure/CreateEntryInCollectionDialog';
 import type {OpenDialogIamAccessArgs} from '../../components/IamAccessDialog';
 import type {OpenDialogTooltipSettingsArgs} from '../../units/wizard/components/Dialogs/DialogTooltipSettings/DialogTooltipSettings';
 import type {OpenDialogChangeDatasetFieldsArgs} from '../../units/datasets/components/DatasetTable/components/BatchActionPanel/components/DialogChangeDatasetFields/DialogChangeDatasetFields';
@@ -75,7 +76,7 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogNeedResetArgs
     | OpenDialogChartSettingsArgs
     | OpenDialogCreateConnectionArgs
-    | OpenDialogCreateConnectionInWbArgs
+    | OpenDialogCreateConnectionInWbOrCollectionArgs
     | OpenDialogWarningArgs
     | OpenDialogConfirmArgs
     | OpenDialogDatasetFieldInspectorArgs
@@ -113,6 +114,7 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogDeleteWorkbookArgs
     | OpenDialogIamAccessArgs
     | OpenDialogCreateEntryInWorkbookArgs
+    | OpenDialogCreateEntryInCollectionArgs
     | OpenDialogTooltipSettingsArgs
     | OpenDialogChangeDatasetFieldsArgs
     | OpenDialogCollectionNoCreatePermissionArgs

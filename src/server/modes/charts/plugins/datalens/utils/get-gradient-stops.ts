@@ -5,12 +5,12 @@ import {getCurrentGradient, getRgbColors, getThresholdValues} from './color-help
 
 type GetGradientStopsArgs = {
     colorsConfig: ChartColorsConfig;
-    points: Highcharts.PointOptionsObject[];
+    points: {colorValue?: unknown}[];
     minColorValue: number;
     maxColorValue: number;
 };
 
-export function getGradientStops(args: GetGradientStopsArgs): [number, string][] {
+export function getGradientStops(args: GetGradientStopsArgs) {
     const {colorsConfig, points, minColorValue, maxColorValue} = args;
     const colorValues = points.map((point) =>
         typeof point.colorValue === 'number' ? point.colorValue : null,
@@ -19,7 +19,10 @@ export function getGradientStops(args: GetGradientStopsArgs): [number, string][]
     const colorValueRange = maxColorValue - minColorValue;
 
     let stops: number[] = [];
-    if (colorsConfig.gradientMode === GradientType.TWO_POINT) {
+    if (
+        colorsConfig.gradientMode === GradientType.TWO_POINT ||
+        colorsConfig.gradientColors.length === 2
+    ) {
         stops = [(min - minColorValue) / colorValueRange, (max - minColorValue) / colorValueRange];
     } else {
         stops = [
@@ -29,6 +32,13 @@ export function getGradientStops(args: GetGradientStopsArgs): [number, string][]
         ];
     }
 
+    return stops;
+}
+
+export function getHighchartsGradientStops(args: GetGradientStopsArgs): [number, string][] {
+    const {colorsConfig, points, minColorValue, maxColorValue} = args;
+
+    const stops = getGradientStops({colorsConfig, points, minColorValue, maxColorValue});
     const gradient = getCurrentGradient(colorsConfig);
     const gradientColors = getRgbColors(gradient.colors, Boolean(colorsConfig.reversed));
     return gradientColors.map((color, i) => [

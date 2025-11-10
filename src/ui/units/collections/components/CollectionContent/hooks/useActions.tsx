@@ -9,9 +9,11 @@ import {WORKBOOK_STATUS} from 'shared/constants/workbooks';
 import {DIALOG_EXPORT_WORKBOOK} from 'ui/components/CollectionsStructure/ExportWorkbookDialog/ExportWorkbookDialog';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
-import {Feature} from '../../../../../../shared';
+import {CollectionItemEntities, Feature} from '../../../../../../shared';
 import type {
     CollectionWithPermissions,
+    SharedEntryFieldsWithPermissions,
+    StructureItem,
     UpdateCollectionResponse,
     UpdateWorkbookResponse,
     WorkbookWithPermissions,
@@ -33,6 +35,7 @@ import type {AppDispatch} from '../../../../../store';
 import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
 import {WORKBOOKS_PATH} from '../../../../collections-navigation/constants';
 import {deleteCollectionInItems, deleteWorkbookInItems} from '../../../store/actions';
+import {getIsWorkbookItem} from '../../helpers';
 
 const i18n = I18n.keyset('collections');
 
@@ -356,8 +359,53 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
         ],
     );
 
-    return {
-        getCollectionActions,
-        getWorkbookActions,
-    };
+    const getEntryActions = React.useCallback(
+        (item: SharedEntryFieldsWithPermissions): (DropdownMenuItem[] | DropdownMenuItem)[] => {
+            const actions: (DropdownMenuItem[] | DropdownMenuItem)[] = [];
+
+            if (item.permissions.update) {
+                actions.push({
+                    text: <DropdownAction icon={PencilToLine} text={i18n('action_edit')} />,
+                    action: () => {},
+                });
+            }
+
+            const otherActions: DropdownMenuItem[] = [];
+
+            if (item.permissions.delete) {
+                otherActions.push({
+                    text: <DropdownAction icon={TrashBin} text={i18n('action_delete')} />,
+                    action: () => {},
+                    theme: 'danger',
+                });
+            }
+
+            if (otherActions.length > 0) {
+                actions.push([...otherActions]);
+            }
+
+            return actions;
+        },
+        [],
+    );
+
+    const getItemActions = React.useCallback(
+        (item: StructureItem) => {
+            switch (item.entity) {
+                case CollectionItemEntities.COLLECTION:
+                    return getCollectionActions(item);
+                case CollectionItemEntities.WORKBOOK:
+                    return getWorkbookActions(item);
+                case CollectionItemEntities.ENTRY:
+                    return getEntryActions(item);
+                default:
+                    return getIsWorkbookItem(item)
+                        ? getWorkbookActions(item)
+                        : getCollectionActions(item);
+            }
+        },
+        [getCollectionActions, getEntryActions, getWorkbookActions],
+    );
+
+    return getItemActions;
 };

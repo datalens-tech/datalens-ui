@@ -10,10 +10,9 @@ import {Waypoint} from 'react-waypoint';
 import {DL} from 'ui/constants/common';
 
 import type {
-    CollectionWithPermissions,
     GetStructureItemsArgs,
     GetStructureItemsResponse,
-    WorkbookWithPermissions,
+    StructureItem,
 } from '../../../../../shared/schema';
 import {AnimateBlock} from '../../../../components/AnimateBlock';
 import type {StructureItemsFilters} from '../../../../components/CollectionFilters';
@@ -49,7 +48,7 @@ interface Props {
     selectedMap: SelectedMap;
     selectedMapWithMovePermission: SelectedMap;
     selectedMapWithDeletePermission: SelectedMap;
-    itemsAvailableForSelection: (CollectionWithPermissions | WorkbookWithPermissions)[];
+    itemsAvailableForSelection: StructureItem[];
     isOpenSelectionMode: boolean;
     canCreateWorkbook: boolean;
     showCreateWorkbookButton: boolean;
@@ -66,6 +65,7 @@ interface Props {
     onUpdateCheckboxClick: (args: UpdateCheckboxArgs) => void;
     onUpdateAllCheckboxesClick: (checked: boolean) => void;
     resetSelected: () => void;
+    refreshPage: () => void;
 }
 
 export const CollectionContent: React.FC<Props> = ({
@@ -90,6 +90,7 @@ export const CollectionContent: React.FC<Props> = ({
     onUpdateCheckboxClick,
     onUpdateAllCheckboxesClick,
     resetSelected,
+    refreshPage,
 }) => {
     const dispatch: AppDispatch = useDispatch();
     const history = useHistory();
@@ -151,7 +152,7 @@ export const CollectionContent: React.FC<Props> = ({
         nextPageToken,
     ]);
 
-    const {getCollectionActions, getWorkbookActions} = useActions({
+    const getItemActions = useActions({
         fetchStructureItems,
         onCloseMoveDialog,
     });
@@ -253,16 +254,15 @@ export const CollectionContent: React.FC<Props> = ({
                 <CollectionContentGrid
                     selectedMap={selectedMap}
                     isOpenSelectionMode={isOpenSelectionMode}
-                    getWorkbookActions={getWorkbookActions}
-                    getCollectionActions={getCollectionActions}
+                    getItemActions={getItemActions}
                     onUpdateCheckboxClick={onUpdateCheckboxClick}
                 />
             ) : (
                 <CollectionContentTable
                     selectedMap={selectedMap}
                     itemsAvailableForSelectionCount={itemsAvailableForSelection.length}
-                    getWorkbookActions={getWorkbookActions}
-                    getCollectionActions={getCollectionActions}
+                    getItemActions={getItemActions}
+                    refreshPage={refreshPage}
                     onUpdateCheckboxClick={onUpdateCheckboxClick}
                     onUpdateAllCheckboxesClick={onUpdateAllCheckboxesClick}
                 />

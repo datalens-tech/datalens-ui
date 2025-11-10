@@ -22,7 +22,6 @@ export enum Feature {
     QLMonitoring = 'QLMonitoring',
     CollectionsEnabled = 'CollectionsEnabled',
     CollectionsAccessEnabled = 'CollectionsAccessEnabled',
-    DashBoardAccessDescription = 'DashBoardAccessDescription',
     DashBoardSupportDescription = 'DashBoardSupportDescription',
     // Show request body in the Inspector dialog
     ShowInspectorDetails = 'ShowInspectorDetails',
@@ -85,20 +84,25 @@ export enum Feature {
     EnableUpdatingDsSettingsByAction = 'EnableUpdatingDsSettingsByAction',
     /** Enable new favicon, icon, theme, decorations and illustrations */
     EnableDLRebranding = 'EnableDLRebranding',
-    /** Add "auto" palette to the list. If enabled, "auto" is parsed to the value of the tenant settings, otherwise to the default palette. */
-    EnableTenantSettingPalettes = 'EnableTenantSettingPalettes',
-    /** Use default20 instead of classic20 as deafult palette. */
-    NewDefaultPalette = 'NewDefaultPalette',
     /** Use GravityUI Charts as the default library for some wizard visualizations(pie, donut, treemap) */
     GravityChartsForPieAndTreemap = 'GravityChartsForPieAndTreemap',
     /** Use GravityUI Charts as the default library for some wizard visualizations(scatter and bar-y) */
     GravityChartsForBarYAndScatter = 'GravityChartsForBarYAndScatter',
-    /** Save field settings (formatting and colors) in the dataset */
-    StoreFieldSettingsAtDataset = 'StoreFieldSettingsAtDataset',
+    /** Use GravityUI Charts as the default library for some wizard visualizations(line, area and bar-x) */
+    GravityChartsForLineAreaAndBarX = 'GravityChartsForLineAreaAndBarX',
     /** Show dataset description button */
     EnableDatasetDescription = 'EnableDatasetDescription',
     /** Show connection description button */
     EnableConnectionDescription = 'EnableConnectionDescription',
+    /** Enable connection revisions  */
+    EnableConnectionRevisions = 'EnableConnectionRevisions',
+    /** Enable pagination in dataset sources table */
+    EnableDatasetSourcesPagination = 'EnableDatasetSourcesPagination',
+    /** Enable shared connections and datasets */
+    EnableSharedEntries = 'EnableSharedEntries',
+
+    EnableMobileFixedHeader = 'EnableMobileFixedHeader',
+    EnableCommonChartDashSettings = 'EnableCommonChartDashSettings',
 }
 
 export type FeatureConfig = Record<string, boolean>;

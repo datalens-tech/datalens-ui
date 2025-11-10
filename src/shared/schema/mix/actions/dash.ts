@@ -75,13 +75,15 @@ export const dashActions = {
 
         const allDatasetsIdsSet = new Set([...datasetsIds]);
         entries.forEach((entry) => {
-            const {links, meta} = entry;
-            const {dataset} = links || {};
-            // deprecated
-            const {datasetId: metaDatasetId} = meta || {};
-            const datasetId = (dataset || metaDatasetId) as string | undefined;
-            if (datasetId) {
-                allDatasetsIdsSet.add(datasetId);
+            if (!entry.isLocked) {
+                const {links, meta} = entry;
+                const {dataset} = links || {};
+                // deprecated
+                const {datasetId: metaDatasetId} = meta || {};
+                const datasetId = (dataset || metaDatasetId) as string | undefined;
+                if (datasetId) {
+                    allDatasetsIdsSet.add(datasetId);
+                }
             }
         });
 
@@ -101,22 +103,24 @@ export const dashActions = {
 
         const res: GetEntriesDatasetsFieldsResponse = [];
         entries.forEach((entry) => {
-            const {links, meta, type, entryId} = entry;
-            const {dataset} = links || {};
-            // deprecated
-            const {datasetId: metaDatasetId} = meta || {};
-            const datasetId = (dataset || metaDatasetId) as string | undefined;
-            if (datasetId) {
-                const widgetType = type.match(/^[^_]*/)?.[0] || null;
-                res.push(
-                    prepareDatasetData({
-                        items: allDatasetsFetchedDataDict[datasetId],
-                        type: widgetType,
-                        datasetId,
-                        entryId,
-                        visualizationType: getEntryVisualizationType(entry),
-                    }),
-                );
+            if (!entry.isLocked) {
+                const {links, meta, type, entryId} = entry;
+                const {dataset} = links || {};
+                // deprecated
+                const {datasetId: metaDatasetId} = meta || {};
+                const datasetId = (dataset || metaDatasetId) as string | undefined;
+                if (datasetId) {
+                    const widgetType = type.match(/^[^_]*/)?.[0] || null;
+                    res.push(
+                        prepareDatasetData({
+                            items: allDatasetsFetchedDataDict[datasetId],
+                            type: widgetType,
+                            datasetId,
+                            entryId,
+                            visualizationType: getEntryVisualizationType(entry),
+                        }),
+                    );
+                }
             }
         });
         datasetsIds.forEach((datasetId) => {
@@ -146,13 +150,15 @@ export const dashActions = {
 
         const allDatasetsIdsSet = new Set();
         entries.forEach((entry) => {
-            const {links, meta} = entry;
-            const {dataset} = links || {};
-            // deprecated
-            const {datasetId: metaDatasetId} = meta || {};
-            const datasetId = (dataset || metaDatasetId) as string | undefined;
-            if (datasetId) {
-                allDatasetsIdsSet.add(datasetId);
+            if (!entry.isLocked) {
+                const {links, meta} = entry;
+                const {dataset} = links || {};
+                // deprecated
+                const {datasetId: metaDatasetId} = meta || {};
+                const datasetId = (dataset || metaDatasetId) as string | undefined;
+                if (datasetId) {
+                    allDatasetsIdsSet.add(datasetId);
+                }
             }
         });
 
@@ -178,19 +184,21 @@ export const dashActions = {
 
         const res: GetWidgetsDatasetsFieldsResponse = [];
         entries.forEach((entry) => {
-            const {links, meta, entryId} = entry;
-            const {dataset} = links || {};
-            // deprecated
-            const {datasetId: metaDatasetId} = meta || {};
-            const datasetId = (dataset || metaDatasetId) as string | undefined;
-            if (datasetId) {
-                res.push(
-                    prepareWidgetDatasetData({
-                        items: allDatasetsFetchedDataDict[datasetId],
-                        datasetId,
-                        entryId,
-                    }),
-                );
+            if (!entry.isLocked) {
+                const {links, meta, entryId} = entry;
+                const {dataset} = links || {};
+                // deprecated
+                const {datasetId: metaDatasetId} = meta || {};
+                const datasetId = (dataset || metaDatasetId) as string | undefined;
+                if (datasetId) {
+                    res.push(
+                        prepareWidgetDatasetData({
+                            items: allDatasetsFetchedDataDict[datasetId],
+                            datasetId,
+                            entryId,
+                        }),
+                    );
+                }
             }
         });
         return res;
@@ -209,7 +217,9 @@ export const dashActions = {
             const result = await Dash.read(
                 dashboardId,
                 {
-                    includePermissions: includePermissions ? includePermissions.toString() : '0',
+                    includePermissionsInfo: includePermissions
+                        ? includePermissions.toString()
+                        : '0',
                     includeLinks: includeLinks ? includeLinks.toString() : '0',
                     includeFavorite,
                     ...(branch ? {branch} : {branch: 'published'}),
@@ -244,6 +254,7 @@ export const dashActions = {
             })) as unknown as UpdateDashResponse;
         },
     ),
+
     // WIP
     __createDashboard__: createTypedAction(
         {
@@ -257,8 +268,7 @@ export const dashActions = {
         },
     ),
 
-    // WIP
-    __deleteDashboard__: createTypedAction(
+    _deleteDashboard: createTypedAction(
         {
             paramsSchema: deleteDashArgsSchema,
             resultSchema: deleteDashResultSchema,

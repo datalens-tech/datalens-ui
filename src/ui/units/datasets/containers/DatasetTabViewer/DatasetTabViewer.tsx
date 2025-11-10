@@ -14,7 +14,7 @@ type Props = {
     sdk: SDK;
     datasetId?: string;
     forwardedRef?: React.ForwardedRef<React.Component>;
-    workbookId?: string;
+    workbookId?: string | null;
 };
 
 function DatasetTabViewer(props: Props) {

@@ -3,9 +3,10 @@ import React from 'react';
 import {get} from 'lodash';
 import type {RouteComponentProps} from 'react-router-dom';
 import {Redirect, Route, Switch} from 'react-router-dom';
-import {ConnectorType} from 'shared';
+import {ConnectorType, Feature} from 'shared';
 import {ConnectorAlias} from 'ui/constants';
 import {registry} from 'ui/registry';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {ChOverYT, ConnectorForm, ConnectorsList, File, GSheetsV2, Yadocs} from '../';
 import type {ConnectorItem, GetConnectorsResponse} from '../../../../../shared/schema';
@@ -32,8 +33,20 @@ type ExistedFormRouteProps = RouteComponentProps<{
     workbookId?: string;
 }>;
 
-const getDefaultPath = (workbookId?: string) => {
-    return workbookId ? `/workbooks/${workbookId}/connections/new` : '/connections/new';
+const getDefaultPath = ({
+    workbookId,
+    collectionId,
+}: {
+    workbookId?: string;
+    collectionId?: string;
+}) => {
+    if (workbookId) {
+        return `/workbooks/${workbookId}/connections/new`;
+    } else if (collectionId && isEnabledFeature(Feature.EnableSharedEntries)) {
+        return `/collections/${collectionId}/connections/new`;
+    } else {
+        return '/connections/new';
+    }
 };
 
 // This component strongly relies on `connector.alias` field
@@ -72,36 +85,65 @@ const Connector = (props: {type: ConnectorType} | {connector: ConnectorItem}) =>
     return <ConnectorForm type={type} />;
 };
 
+type Routes = 'newList' | 'newType' | 'exist';
+const getPaths = (type: Routes) => {
+    const routes: string[] = [];
+    switch (type) {
+        case 'newList':
+            routes.push('/workbooks/:workbookId/connections/new', '/connections/new');
+            if (isEnabledFeature(Feature.EnableSharedEntries)) {
+                routes.push('/collections/:collectionId/connections/new');
+            }
+            break;
+        case 'newType':
+            routes.push(
+                '/workbooks/:workbookId/connections/new/:connectorType',
+                '/connections/new/:connectorType',
+            );
+            if (isEnabledFeature(Feature.EnableSharedEntries)) {
+                routes.push('/collections/:collectionId/connections/new/:connectorType');
+            }
+            break;
+        case 'exist':
+            routes.push(
+                '/workbooks/:workbookId/connections/:connectionId',
+                '/connections/:connectionId',
+            );
+            if (isEnabledFeature(Feature.EnableSharedEntries)) {
+                routes.push('/collections/:collectionId/connections/:connectionId');
+            }
+            break;
+    }
+    return routes;
+};
+
 export const Router = ({flattenConnectors, groupedConnectors, connectionData}: RouterProps) => {
     return (
         <React.Suspense fallback={<WrappedLoader />}>
             <Switch>
                 <Route
-                    path={['/workbooks/:workbookId/connections/new', '/connections/new']}
+                    path={getPaths('newList')}
                     render={() => (
                         <Switch>
                             <Route
                                 exact
-                                path={[
-                                    '/workbooks/:workbookId/connections/new',
-                                    '/connections/new',
-                                ]}
+                                path={getPaths('newList')}
                                 render={(props: ConnListRouteProps) => {
                                     const workbookId = get(props.match.params, 'workbookId');
+                                    const collectionId = get(props.match.params, 'collectionId');
+
                                     return (
                                         <ConnectorsList
                                             flattenConnectors={flattenConnectors}
                                             groupedConnectors={groupedConnectors}
                                             workbookId={workbookId}
+                                            collectionId={collectionId}
                                         />
                                     );
                                 }}
                             />
                             <Route
-                                path={[
-                                    '/workbooks/:workbookId/connections/new/:connectorType',
-                                    '/connections/new/:connectorType',
-                                ]}
+                                path={getPaths('newType')}
                                 render={(props: NewFormRouteProps) => {
                                     const type = get(props.match.params, 'connectorType');
                                     const connector = getConnItemByType({
@@ -109,32 +151,33 @@ export const Router = ({flattenConnectors, groupedConnectors, connectionData}: R
                                         type,
                                     });
                                     const workbookId = get(props.match.params, 'workbookId');
+                                    const collectionId = get(props.match.params, 'collectionId');
 
                                     if (connector) {
                                         return <Connector connector={connector} />;
                                     }
 
-                                    return <Redirect to={getDefaultPath(workbookId)} />;
+                                    return (
+                                        <Redirect to={getDefaultPath({workbookId, collectionId})} />
+                                    );
                                 }}
                             />
                         </Switch>
                     )}
                 />
                 <Route
-                    path={[
-                        '/workbooks/:workbookId/connections/:connectionId',
-                        '/connections/:connectionId',
-                    ]}
+                    path={getPaths('exist')}
                     render={(props: ExistedFormRouteProps) => {
                         const connectionId = get(props.match.params, 'connectionId');
                         const workbookId = get(props.match.params, 'workbookId');
+                        const collectionId = get(props.match.params, 'collectionId');
                         const type = connectionData?.[FieldKey.DbType] as ConnectorType;
                         const {extractEntryId} = registry.common.functions.getAll();
 
                         const extractedId = extractEntryId(connectionId);
 
                         if (!extractedId) {
-                            return <Redirect to={getDefaultPath(workbookId)} />;
+                            return <Redirect to={getDefaultPath({workbookId, collectionId})} />;
                         }
 
                         return <Connector type={type} />;

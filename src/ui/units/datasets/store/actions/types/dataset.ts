@@ -79,8 +79,15 @@ export const TOGGLE_FIELD_EDITOR_MODULE_LOADING = Symbol(
 );
 
 export const TOGGLE_SOURCES_LOADER = Symbol('dataset/TOGGLE_SOURCES_LOADER');
+export const TOGGLE_SOURCES_LISTING_OPTIONS_LOADER = Symbol(
+    'dataset/TOGGLE_SOURCES_LISTING_OPTIONS_LOADER',
+);
 export const SET_SOURCES_LOADING_ERROR = Symbol('dataset/SET_SOURCES_LOADING_ERROR');
 export const SET_DATASET_REVISION_MISMATCH = Symbol('dataset/SET_DATASET_REVISION_MISMATCH');
+
+export const SET_SOURCES_LISTING_OPTIONS_ERROR = Symbol(
+    'dataset/SET_SOURCES_LISTING_OPTIONS_ERROR',
+);
 
 export const EDITOR_SET_FILTER = Symbol('dataset/EDITOR_SET_FILTER');
 export const EDITOR_SET_ITEMS_TO_DISPLAY = Symbol('dataset/EDITOR_SET_ITEMS_TO_DISPLAY');
@@ -101,3 +108,16 @@ export const SET_DATA_EXPORT_ENABLED = Symbol('dataset/SET_DATA_EXPORT_ENABLED')
 export const SET_UPDATES = Symbol('dataset/SET_UPDATES');
 
 export const SET_DESCRIPTION = Symbol('dataset/SET_DESCRIPTION');
+
+export const SET_CONNECTIONS_DB_NAMES = Symbol('dataset/SET_CONNECTIONS_DB_NAMES');
+
+export const SET_CURRENT_DB_NAME = Symbol('dataset/SET_CURRENT_DB_NAME');
+
+export const SET_SOURCES_SEARCH_LOADING = Symbol('dataset/SOURCES_SEARCH_REQUEST');
+
+export const SET_SOURCES_LISTING_OPTIONS = Symbol('dataset/SET_SOURCES_LISTING_OPTIONS');
+
+export const SOURCES_NEXT_PAGE_REQUEST = Symbol('dataset/SOURCES_NEXT_PAGE_REQUEST');
+export const SOURCES_NEXT_PAGE_SUCCESS = Symbol('dataset/SOURCES_NEXT_PAGE_SUCCESS');
+
+export const SET_SOURCES_PAGINATION = Symbol('dataset/SET_SOURCES_PAGINATION');

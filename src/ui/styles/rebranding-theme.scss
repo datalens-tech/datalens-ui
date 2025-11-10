@@ -7,8 +7,8 @@
 
     &.g-root_theme_light,
     &.g-root_theme_light-hc,
-    &.g-root_theme_light .g-root_theme_light,
-    &.g-root_theme_light .g-root_theme_light-hc {
+    & .g-root_theme_light,
+    & .g-root_theme_light-hc {
         --g-color-private-brand-50: rgba(1, 123, 254, 0.1);
         --g-color-private-brand-100: rgba(1, 123, 254, 0.15);
         --g-color-private-brand-150: rgba(1, 123, 254, 0.2);
@@ -58,8 +58,8 @@
 
     &.g-root_theme_dark,
     &.g-root_theme_dark-hc,
-    &.g-root_theme_light .g-root_theme_dark,
-    &.g-root_theme_light .g-root_theme_dark-hc {
+    & .g-root_theme_dark-hc,
+    & .g-root_theme_dark {
         --g-color-private-brand-50: rgba(1, 123, 254, 0.1);
         --g-color-private-brand-100: rgba(1, 123, 254, 0.15);
         --g-color-private-brand-150: rgba(1, 123, 254, 0.2);

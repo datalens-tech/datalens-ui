@@ -57,12 +57,17 @@ const fetchEntry = async (
 const fetchConnectionData = async (
     connectionId: string,
     workbookId: string | null,
+    rev_id?: string,
 ): Promise<{
     connectionData: ConnectionData;
     error?: DataLensApiError;
 }> => {
     try {
-        const connectionData = await getSdk().sdk.bi.getConnection({connectionId, workbookId});
+        const connectionData = await getSdk().sdk.bi.getConnection({
+            connectionId,
+            workbookId,
+            rev_id,
+        });
         return {connectionData};
     } catch (error) {
         logger.logError('Redux actions (conn): fetchConnectionData failed', error);
@@ -137,7 +142,7 @@ const updateConnection = async (
     dbType: string,
 ): Promise<{error?: DataLensApiError}> => {
     try {
-        await getSdk().sdk.bi.updateConnection({...form, connectionId});
+        await getSdk().sdk.bi.updateConnection({data: form, connectionId});
         reachMetricaGoal(CounterName.Main, GoalId.ConnectionEditSubmit, {
             type: dbType,
         });

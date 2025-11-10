@@ -37,13 +37,15 @@ export type EntityIconType = keyof typeof typeIcons;
 
 export type EntityIconSize = 's' | 'm' | 'l' | 'xl';
 
-type EntityIconProps = {
+export type EntityIconProps = {
     type?: string;
     iconData?: IconData;
     size?: EntityIconSize;
     iconSize?: number;
     view?: 'round';
-    classMixin?: string;
+    className?: string;
+    classNameColorBox?: string;
+    classNameIcon?: string;
 };
 
 export const defaultIconSize = {
@@ -58,7 +60,9 @@ export const EntityIcon = ({
     type,
     iconData,
     iconSize = defaultIconSize[size],
-    classMixin,
+    className,
+    classNameIcon,
+    classNameColorBox,
     view,
 }: EntityIconProps) => {
     let targetIconData;
@@ -69,9 +73,9 @@ export const EntityIcon = ({
     }
 
     return (
-        <div className={b('container', {size, view}, classMixin)}>
-            <div className={b('color-box', {type})}>
-                <Icon data={targetIconData} size={iconSize} />
+        <div className={b('container', {size, view}, className)}>
+            <div className={b('color-box', {type}, classNameColorBox)}>
+                <Icon data={targetIconData} size={iconSize} className={classNameIcon} />
             </div>
         </div>
     );

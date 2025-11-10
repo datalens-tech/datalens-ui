@@ -23,7 +23,7 @@ const waitForBiValidateDatasetResponses = (page: Page, timeout: number): Promise
 
             // When the page loads, the validation request with empty updates initially goes away
             // We are only interested in the one that leaves after the avatar is deleted
-            if (!requestData.updates.length) {
+            if (!requestData.data.updates.length) {
                 return;
             }
 

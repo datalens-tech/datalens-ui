@@ -5,7 +5,7 @@ import {ConnectorType} from 'shared';
 import {isEntryAlreadyExists} from 'utils/errors/errorByCode';
 
 import {showToast} from '../../../../store/actions/toaster';
-import {getWorkbookIdFromPathname} from '../../../../utils';
+import {getEntityIdFromPathname} from '../../../../utils';
 import history from '../../../../utils/history';
 import {FieldKey} from '../../constants';
 import type {ConnectionsReduxDispatch, GetState} from '../typings';
@@ -29,7 +29,7 @@ export const createS3BasedConnection = (args: {
     workbookId?: string;
 }) => {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
-        const {name, dirPath, workbookId = getWorkbookIdFromPathname()} = args;
+        const {name, dirPath, workbookId = getEntityIdFromPathname()} = args;
         const form = getState().connections.form;
         const placementData: Record<string, string> = dirPath
             ? {[FieldKey.DirPath]: dirPath}

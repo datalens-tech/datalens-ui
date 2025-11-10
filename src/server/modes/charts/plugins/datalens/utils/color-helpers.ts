@@ -32,6 +32,7 @@ export type ExtendedPointOptionsObject = Omit<
     colorValue?: string | null;
     colorGuid?: string;
     shapeValue?: string | null;
+    shapeLabel?: string | WrappedMarkdown | WrappedMarkup | WrappedHTML;
     name?: string | WrappedMarkdown | WrappedMarkup | WrappedHTML;
 };
 

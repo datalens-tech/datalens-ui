@@ -11,9 +11,16 @@ import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
-import {ChartkitMenuDialogsQA, type StringParams} from 'shared';
+import {
+    ChartkitMenuDialogsQA,
+    CustomPaletteBgColors,
+    Feature,
+    type StringParams,
+    getDefaultWidgetBackgroundColor,
+} from 'shared';
 import {DL} from 'ui/constants/common';
 import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import Loader from '../../../libs/DatalensChartkit/components/ChartKitBase/components/Loader/Loader';
@@ -485,18 +492,23 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         [tabs, isLoading],
     );
 
+    const reload = React.useCallback(
+        (args: {silentLoading?: boolean; noVeil?: boolean} = {}) => {
+            if (skipReload) {
+                return;
+            }
+            setLoadingProps(args);
+            loadChartData();
+        },
+        [loadChartData, setLoadingProps, skipReload],
+    );
+
     React.useImperativeHandle<ChartKit | ChartKitRef, ChartWidgetWithWrapRefProps>(
         forwardedRef,
         () => ({
             props,
             reflow: handleChartkitReflow,
-            reload: (arg: {silentLoading?: boolean; noVeil?: boolean}) => {
-                if (skipReload) {
-                    return;
-                }
-                setLoadingProps(arg);
-                loadChartData();
-            },
+            reload,
             getMeta: () => new Promise((resolve) => handleGetWidgetMeta(resolve)),
             getCurrentTabChartId: () => chartId || '',
         }),
@@ -504,9 +516,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
             forwardedRef,
             handleChartkitReflow,
             handleGetWidgetMeta,
-            skipReload,
-            loadChartData,
-            setLoadingProps,
+            reload,
             chartId,
             loadedData, // loadedData in deps for meta actual data
         ],
@@ -534,13 +544,14 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         };
     }, [editMode, widgetType]);
 
-    const showBgColor = Boolean(
-        currentTab?.enabled !== false &&
-            currentTab.background?.color &&
-            currentTab.background?.color !== 'transparent',
-    );
-
-    const {classMod, style} = getPreparedWrapSettings(showBgColor, currentTab.background?.color);
+    const {classMod, style} = getPreparedWrapSettings({
+        color:
+            currentTab.background?.color ??
+            getDefaultWidgetBackgroundColor(
+                isEnabledFeature(Feature.EnableCommonChartDashSettings),
+                CustomPaletteBgColors.LIKE_CHART,
+            ),
+    });
 
     const disableControls = noControls || urlNoControls;
 
@@ -565,6 +576,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         showActionParamsFilter,
         noControls: disableControls,
         onFiltersClear: handleFiltersClear,
+        reload,
     };
 
     const withInsights = Boolean(loadedData?.chartsInsightsData);
@@ -603,7 +615,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
             className={`${b({
                 ...mods,
                 autoheight: isAutoHeightEnabled,
-                classMod,
+                [String(classMod)]: Boolean(classMod),
                 ['wait-for-init']: !isInit,
                 'default-mobile': DL.IS_MOBILE && !isFullscreen,
                 pulsate: (showContentLoader || showLoaderVeil) && !isFirstLoadingFloat,

@@ -269,7 +269,7 @@ export const usePreparedTableData = (props: {
                     return rowSpan <= 1;
                 });
 
-                return simpleCell?.getBoundingClientRect()?.height ?? 0;
+                return simpleCell?.offsetHeight ?? 0;
             };
 
             if (rowId && typeof rowMeasures[rowId] === 'undefined') {
@@ -383,6 +383,7 @@ export const usePreparedTableData = (props: {
                             sortable,
                             pinned,
                             style: cellStyle,
+                            verticalAlignment: originalCellData?.verticalAlignment,
                             sorting: header.column.getIsSorted(),
                             content: flexRender(
                                 header.column.columnDef.header,
@@ -486,12 +487,14 @@ export const usePreparedTableData = (props: {
                     typeof cell.column.columnDef.cell === 'function'
                         ? cell.column.columnDef.cell
                         : () => cell.column.columnDef.cell;
+                const {verticalAlignment} = originalCellData;
 
                 const cellData: BodyCellViewData = {
                     id: cell.id,
                     index,
                     style: cellStyle,
                     contentStyle,
+                    verticalAlignment,
                     content: renderCell(cell.getContext()),
                     type: get(originalCellData, 'type', get(originalHeadData, 'type')),
                     contentType: originalCellData?.value === null ? 'null' : undefined,

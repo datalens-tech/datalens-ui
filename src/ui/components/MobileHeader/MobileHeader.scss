@@ -1,10 +1,9 @@
 .mobile-header {
-    &__container {
-        z-index: 100;
-        display: grid;
-        grid-template-rows: var(--mobile-header-size) auto;
-        grid-template-columns: 100%;
-    }
+    position: relative;
+    z-index: 100;
+    display: grid;
+    grid-template-rows: var(--mobile-header-size) auto;
+    grid-template-columns: 100%;
 
     &__content {
         min-height: calc(100vh - var(--mobile-header-size));
@@ -37,5 +36,11 @@
 
     &__user-avatar {
         cursor: pointer;
+    }
+
+    // TODO: Support css api in gravity-ui/navigation and use it
+    .gn-burger-composite-bar .gn-burger-composite-bar__item-icon,
+    .gn-mobile-header-footer-item .gn-mobile-header-footer-item__icon {
+        color: var(--gn-aside-header-item-icon-color);
     }
 }

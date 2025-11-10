@@ -5,6 +5,7 @@ import block from 'bem-cn-lite';
 import {SortIcon} from '../SortIcon/SortIcon';
 
 import type {HeadRowViewData} from './types';
+import {getCellVeticalAlignmentStyle} from './utils';
 
 const b = block('dl-table');
 
@@ -30,6 +31,10 @@ export const TableHead = React.memo<Props>((props: Props) => {
                                 gridRow: th.rowSpan ? `span ${th.rowSpan}` : undefined,
                                 gridColumn: th.colSpan ? `span ${th.colSpan}` : undefined,
                             };
+                            const verticalAlignmentStyle = getCellVeticalAlignmentStyle(th);
+                            const contentStyle = verticalAlignmentStyle
+                                ? {style: verticalAlignmentStyle}
+                                : null;
 
                             return (
                                 <th
@@ -46,6 +51,7 @@ export const TableHead = React.memo<Props>((props: Props) => {
                                 >
                                     {isLastPinnedCell && <div className={b('shadow')} />}
                                     <div
+                                        {...contentStyle}
                                         className={b('th-content', {
                                             sortable: th.sortable,
                                         })}

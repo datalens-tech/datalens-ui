@@ -32,10 +32,11 @@ const getDiscreteBackgroundColorStyle = (args: GetDiscreteBackgroundColorStyle) 
 
     const rawValue = values[valueIndex] as number | string | null | MarkupItem;
 
-    let value: number | string | null;
-
+    let value: number | string | null = null;
     if (colorFieldDataType === 'markup') {
-        value = markupToRawString(rawValue as MarkupItem);
+        if (rawValue) {
+            value = markupToRawString(rawValue as MarkupItem);
+        }
     } else {
         value = getDistinctValue(rawValue);
     }

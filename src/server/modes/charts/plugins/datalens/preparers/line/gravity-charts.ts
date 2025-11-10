@@ -43,7 +43,7 @@ type ExtendedLineSeries = Omit<LineSeries, 'data'> & {
     data: ExtendedLineSeriesData[];
 };
 
-export function prepareD3Line(args: PrepareFunctionArgs) {
+export function prepareGravityChartLine(args: PrepareFunctionArgs) {
     const {
         labels,
         placeholders,

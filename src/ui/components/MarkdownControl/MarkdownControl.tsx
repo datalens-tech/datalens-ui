@@ -10,11 +10,11 @@ import './MarkdownControl.scss';
 const b = block('markdown-control');
 
 export const MarkdownControl = (props: MarkdownControlProps) => {
-    const {value, onChange, disabled} = props;
+    const {value, onChange, disabled, className} = props;
 
     return (
         <TextArea
-            className={b()}
+            className={b(null, className)}
             value={value}
             onUpdate={onChange}
             hasClear={true}

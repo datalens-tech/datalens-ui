@@ -17,6 +17,7 @@ import type {
     DatasetSelectionMap,
     DatasetSourceAvatar,
 } from 'shared';
+import {DatasetFieldsTabQa} from 'shared';
 import type {Permissions} from 'shared/types/permissions';
 import {Interpolate} from 'ui/components/Interpolate';
 import {DL} from 'ui/constants';
@@ -167,6 +168,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
                         onSort={() => {
                             this.selectionIndexAnchor = null;
                         }}
+                        data-qa={DatasetFieldsTabQa.TableRow}
                     />
                 </div>
 
