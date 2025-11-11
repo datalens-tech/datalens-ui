@@ -50,7 +50,6 @@ import type {GetLogoIcon} from './types/functions/getLogoIcon';
 import type {GetShouldShowAIAssistant} from './types/functions/getShouldShowAIAssistant';
 import type {GetUIEntryRouteArgs} from './types/functions/getUIEntryRoute';
 import type {IsValidLogoUrl} from './types/functions/isValidLogoUrl';
-import type {OpenAccessDialog} from './types/functions/onOpenAcceessDialog';
 import type {OpenDialogOrganizationInvite} from './types/functions/openDialogOrganizationInvite';
 import type {OpenDialogOrganizationInviteUsers} from './types/functions/openDialogOrganizationInviteUsers';
 import type {RenderDialogRelatedEntitiesAlertHint} from './types/functions/renderDialogRelatedEntitiesAlertHint';
@@ -179,5 +178,4 @@ export const commonFunctionsMap = {
     getLogoIcon: makeFunctionTemplate<GetLogoIcon>(),
     isValidLogoUrl: makeFunctionTemplate<IsValidLogoUrl>(),
     getShouldShowAIAssistant: makeFunctionTemplate<GetShouldShowAIAssistant>(),
-    openAccessDialog: makeFunctionTemplate<OpenAccessDialog>(),
 } as const;

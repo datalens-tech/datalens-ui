@@ -25,6 +25,7 @@ import {IamAccessDialog} from '../../../../components/IamAccessDialog/IamAccessD
 import {registry} from '../../../../registry';
 import {ResourceType} from '../../../../registry/units/common/types/components/IamAccessDialog';
 import {CreateEntry} from '../CreateEntry/CreateEntry';
+import {DIALOG_ACCESS} from 'ui/components/AccessDialog';
 
 import './WorkbookActions.scss';
 
@@ -193,25 +194,22 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
         dropdownActions.push([...otherActions]);
     }
 
-    const {openAccessDialog, useSubjectsListId} = registry.common.functions.getAll();
-
-    const {id: organizationId} = useSubjectsListId();
-
     const onOpenAccessDialog = React.useCallback(() => {
-        //Access list TODO this is draft only
         dispatch(
-            openAccessDialog({
-                workbookId: workbook.workbookId,
-                collectionId: workbook.collectionId,
-                organizationId,
-                resourceTitle: workbook.title,
-                canUpdate: workbook.permissions.updateAccessBindings,
+            openDialog({
+                id: DIALOG_ACCESS,
+                props: {
+                    workbookId: workbook?.workbookId ?? undefined,
+                    collectionId: workbook?.collectionId ?? undefined,
+                    resourceTitle: workbook.title,
+                    canUpdate: workbook.permissions.updateAccessBindings,
+                    onClose: () => {
+                        dispatch(closeDialog());
+                    },
+                },
             }),
         );
-        // setIamAccessDialogIsOpen(true);
     }, []);
-
-    const {AccessDialog} = registry.common.components.getAll();
 
     return (
         <div className={b()}>
@@ -244,8 +242,6 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
                     <CreateEntry view="action" />
                 </div>
             )}
-
-            <AccessDialog />
 
             {collectionsAccessEnabled && workbook.permissions.listAccessBindings && (
                 <IamAccessDialog

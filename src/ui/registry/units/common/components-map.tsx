@@ -32,6 +32,7 @@ import type {PlaceholderIllustrationImageProps} from './types/components/Placeho
 import type {ReportButtonProps} from './types/components/ReportButton';
 import type {UserAvatarByIdProps} from './types/components/UserAvatarById';
 import type {YfmWrapperProps} from './types/components/YfmWrapper';
+import {AccessDialogProps} from './types/components/AccessDialog';
 
 export const commonComponentsMap = {
     [EXAMPLE_COMPONENT]: Example,
@@ -65,5 +66,5 @@ export const commonComponentsMap = {
     DialogRelatedEntitiesRadioHint: makeDefaultEmpty<DialogRelatedEntitiesRadioHintProps>(),
     WorkbookEntriesTableTabs: makeDefaultEmpty<WorkbookEntriesTableTabsProps>(),
     DialogEntryDescription: makeDefaultEmpty<DialogEntryDescriptionProps>(),
-    AccessDialog: makeDefaultEmpty(),
+    AccessDialog: makeDefaultEmpty<AccessDialogProps>(),
 } as const;
