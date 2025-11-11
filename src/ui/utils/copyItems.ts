@@ -1,10 +1,11 @@
 import type {ConfigItem, ConfigItemData} from '@gravity-ui/dashkit';
-import {WIDGET_BG_COLORS_PRESET, getDefaultWidgetBackgroundColor} from 'shared';
-import type {BackgroundSettings} from 'shared/types';
+import {CustomPaletteBgColors, getDefaultWidgetBackgroundColor} from 'shared';
+import type {ColorSettings} from 'shared/types';
 import {DashTabItemType, Feature, isBackgroundSettings} from 'shared/types';
 import type {ConnectionsData} from 'ui/components/DialogRelations/types';
 
 import {isEnabledFeature} from './isEnabledFeature';
+import {getWidgetColors} from './widgetColors';
 
 // targetId - item is copied data from localStorage
 // id - item is already created via DashKit.setItem
@@ -98,17 +99,21 @@ export const getUpdatedConnections = ({
 
 export function getUpdatedBackgroundValue(
     background: unknown,
-    allowCusomValues?: boolean,
-): Omit<BackgroundSettings, 'enabled'> {
+    allowCustomValues?: boolean,
+): ColorSettings | undefined {
+    const isCustomDahsSettingsEnabled = isEnabledFeature(Feature.EnableCommonChartDashSettings);
+    if (!isBackgroundSettings(background)) {
+        return {
+            color: getDefaultWidgetBackgroundColor(isCustomDahsSettingsEnabled),
+        };
+    }
+
     return {
-        color:
-            isBackgroundSettings(background) &&
-            background?.color &&
-            background.enabled !== false &&
-            (allowCusomValues || WIDGET_BG_COLORS_PRESET.includes(background.color))
-                ? background.color
-                : getDefaultWidgetBackgroundColor(
-                      isEnabledFeature(Feature.EnableCommonChartDashSettings),
-                  ),
+        color: getWidgetColors({
+            color: background?.color,
+            enabled: background?.enabled,
+            defaultOldColor: CustomPaletteBgColors.NONE,
+            enableMultiThemeColors: !allowCustomValues,
+        }),
     };
 }

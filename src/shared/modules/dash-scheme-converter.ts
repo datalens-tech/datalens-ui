@@ -3,13 +3,23 @@ import omitBy from 'lodash/omitBy';
 
 import {DASH_CURRENT_SCHEME_VERSION} from '../constants/dash';
 import {DUPLICATED_WIDGET_BG_COLORS_PRESET} from '../constants/widgets';
-import type {BackgroundSettings, DashData, DashTab, DashTabItem} from '../types';
-import {DashTabConnectionKind, DashTabItemControlElementType, DashTabItemType} from '../types';
+import type {ColorSettings, DashData, DashTab, DashTabItem} from '../types';
+import {
+    DashTabConnectionKind,
+    DashTabItemControlElementType,
+    DashTabItemType,
+    isOldBackgroundSettings,
+} from '../types';
 
 const DATE_FORMAT_V7 = 'YYYY-MM-DD';
 
-function getActualBackground(background?: BackgroundSettings): BackgroundSettings | undefined {
-    if (background && DUPLICATED_WIDGET_BG_COLORS_PRESET.includes(background.color)) {
+function getActualBackground(background?: ColorSettings): ColorSettings | undefined {
+    if (
+        background &&
+        isOldBackgroundSettings(background) &&
+        background.color &&
+        DUPLICATED_WIDGET_BG_COLORS_PRESET.includes(background.color)
+    ) {
         return {
             color: background.color.replace('medium', 'light-hover'),
         };
@@ -22,20 +32,12 @@ export function migrateBgColor(item: DashTabItem): DashTabItem {
     const newItem: DashTabItem = Object.assign({...item}, {data: Object.assign({}, item.data)});
 
     if ('background' in newItem.data) {
-        if (
-            newItem.data.background &&
-            DUPLICATED_WIDGET_BG_COLORS_PRESET.includes(newItem.data.background.color)
-        ) {
-            newItem.data.background = getActualBackground(newItem.data.background);
-
-            return newItem;
-        }
+        newItem.data.background = getActualBackground(newItem.data.background);
+        return newItem;
     }
     if (newItem.type === DashTabItemType.Widget) {
-        newItem.data.tabs = newItem.data.tabs.map((tab) => ({
-            ...tab,
-            background: getActualBackground(tab.background),
-        }));
+        newItem.data.background = getActualBackground(newItem.data.tabs?.[0]?.background);
+        newItem.data.tabs.forEach((tab) => delete tab.background);
 
         return newItem;
     }
