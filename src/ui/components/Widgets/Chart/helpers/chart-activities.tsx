@@ -14,7 +14,7 @@ type UseActionArgs = {
     ) => void;
 };
 
-export function useChartActions(args: UseActionArgs) {
+export function useChartActivities(args: UseActionArgs) {
     const {onChange} = args;
     const dispatch = useDispatch();
 

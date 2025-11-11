@@ -312,7 +312,7 @@ export type ChartContentProps = Pick<
         enableActionParams?: boolean;
         enableAssistant?: boolean;
         rootNodeRef: React.RefObject<HTMLDivElement | null>;
-        runAction?: ControlProps['runAction'];
+        runActivity?: ControlProps['runActivity'];
         backgroundColor?: string;
     };
 
@@ -328,7 +328,7 @@ export type ChartControlsType = Pick<ChartKitWrapperParams, 'onError' | 'onChang
         initialParams: ChartInitialParams;
         getControls?: ChartKitWrapperParams['getControls'];
         onUpdate?: (data: OnChangeData) => void;
-        runAction?: ControlProps['runAction'];
+        runActivity?: ControlProps['runActivity'];
         onAction?: ControlProps['onAction'];
     };
 
