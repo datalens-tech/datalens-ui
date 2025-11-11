@@ -109,6 +109,7 @@ export interface SubjectClaims {
     federation?: unknown;
     pictureData?: string;
     idpType?: string | null;
+    displayName?: string | React.ReactNode;
 }
 
 export type SubjectDetails = {
