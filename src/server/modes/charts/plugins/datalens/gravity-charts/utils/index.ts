@@ -84,6 +84,11 @@ export function getBaseChartConfig(args: {
             },
             zoom: {
                 enabled: true,
+                resetButton: {
+                    align: 'top-right',
+                    offset: {x: 2, y: 30},
+                    relativeTo: 'plot-box',
+                },
             },
         },
     };
