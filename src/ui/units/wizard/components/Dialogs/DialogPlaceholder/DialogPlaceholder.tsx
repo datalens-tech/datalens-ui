@@ -63,7 +63,6 @@ import {
 import {
     getAxisModeTooltipContent,
     isAxisFormatEnabled,
-    isAxisLabelsRotationEnabled,
     isAxisScaleEnabled,
     isAxisTypeEnabled,
     isHolidaysEnabled,
@@ -683,10 +682,9 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
     }
 
     renderLabelsViewSettings() {
-        const {visualizationId} = this.props;
         const {labelsView, hideLabels} = this.state.settings;
 
-        if (typeof labelsView === 'undefined' || !isAxisLabelsRotationEnabled(visualizationId)) {
+        if (typeof labelsView === 'undefined') {
             return null;
         }
 
@@ -703,6 +701,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                         value={labelsView}
                         onUpdate={this.handleLabelsViewRadioButtonUpdate}
                         disabled={disabled}
+                        qa={DialogPlaceholderQa.LabelsViewRadioButtons}
                     />
                 }
             />

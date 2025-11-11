@@ -1,16 +1,12 @@
 import {Page} from '@playwright/test';
 
-import {
-    PlaceholderId,
-    RadioButtons,
-    RadioButtonsValues,
-} from '../../../page-objects/wizard/PlaceholderDialog';
+import {RadioButtons, RadioButtonsValues} from '../../../page-objects/wizard/PlaceholderDialog';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {openTestPage, slct, waitForCondition} from '../../../utils';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
-import {DialogPlaceholderQa} from '../../../../src/shared';
+import {DialogPlaceholderQa, PlaceholderId} from '../../../../src/shared';
 
 datalensTest.describe('Wizard - placeholder dialog ("Axis type") ', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {
