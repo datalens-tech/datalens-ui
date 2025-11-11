@@ -2,13 +2,13 @@ import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
-import {
-    PlaceholderId,
-    RadioButtons,
-    RadioButtonsValues,
-} from '../../../page-objects/wizard/PlaceholderDialog';
+import {RadioButtons, RadioButtonsValues} from '../../../page-objects/wizard/PlaceholderDialog';
 import {openTestPage} from '../../../utils';
-import {AxisMode, DialogFieldAggregationSelectorValuesQa} from '../../../../src/shared';
+import {
+    AxisMode,
+    DialogFieldAggregationSelectorValuesQa,
+    PlaceholderId,
+} from '../../../../src/shared';
 
 datalensTest.describe('Wizard - Section Settings - Display Mode', () => {
     datalensTest.beforeEach(async ({page}) => {

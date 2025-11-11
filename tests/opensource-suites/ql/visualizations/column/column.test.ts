@@ -3,13 +3,9 @@ import {expect} from '@playwright/test';
 import QLPage from '../../../../page-objects/ql/QLPage';
 import {openTestPage} from '../../../../utils';
 import datalensTest from '../../../../utils/playwright/globalTestDefinition';
-import {AxisMode} from '../../../../../src/shared';
+import {AxisMode, PlaceholderId} from '../../../../../src/shared';
 import {PlaceholderName} from '../../../../page-objects/wizard/SectionVisualization';
-import {
-    PlaceholderId,
-    RadioButtons,
-    RadioButtonsValues,
-} from '../../../../page-objects/wizard/PlaceholderDialog';
+import {RadioButtons, RadioButtonsValues} from '../../../../page-objects/wizard/PlaceholderDialog';
 
 datalensTest.describe('QL', () => {
     datalensTest.describe('Column chart', () => {
