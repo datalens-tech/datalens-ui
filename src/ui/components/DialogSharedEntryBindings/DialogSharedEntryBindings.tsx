@@ -4,9 +4,8 @@ import {Button, Dialog, SegmentedRadioGroup as RadioButton} from '@gravity-ui/ui
 import block from 'bem-cn-lite';
 import {CollectionItemEntities} from 'shared';
 import type {GetEntryResponse} from 'shared/schema';
-import type {EntryDialogProps} from 'ui';
-import {EntryDialogResolveStatus} from 'ui';
 
+import DialogManager from '../DialogManager/DialogManager';
 import {EntitiesList} from '../EntitiesList/EntitiesList';
 import {PlaceholderIllustration} from '../PlaceholderIllustration/PlaceholderIllustration';
 import {SharedBindingsList} from '../SharedBindingsList/SharedBindingsList';
@@ -18,9 +17,18 @@ import {getEntityBindings} from './mock';
 
 import './DialogSharedEntryBindings.scss';
 
-type DialogSharedEntryBindingsProps = EntryDialogProps & {
+type DialogSharedEntryBindingsProps = {
+    open: boolean;
     entry: GetEntryResponse;
+    onClose: () => void;
 };
+
+export const DIALOG_SHARED_ENTRY_BINDINGS = Symbol('DIALOG_SHARED_ENTRY_BINDINGS');
+
+export interface OpenDialogSharedEntryBindingArgs {
+    id: typeof DIALOG_SHARED_ENTRY_BINDINGS;
+    props: DialogSharedEntryBindingsProps;
+}
 
 const sortEntities = (entities: (typeof mock)['items']): (typeof mock)['items'] => {
     return entities.sort((entity) => (entity.entity === CollectionItemEntities.WORKBOOK ? -1 : 1));
@@ -30,7 +38,7 @@ const b = block('dialog-shared-entries-binding');
 
 export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps> = ({
     onClose,
-    visible,
+    open,
     entry,
 }) => {
     const [currentDirection, setCurrentDirection] = React.useState<AttachmentValue>(
@@ -43,10 +51,6 @@ export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps>
     const [isError, setIsError] = React.useState(false);
 
     const showDirectionControl = entry.scope === 'dataset';
-
-    const handleClose = () => {
-        onClose({status: EntryDialogResolveStatus.Close});
-    };
 
     const handleDirectionChange = (value: AttachmentValue) => {
         setCurrentDirection(value);
@@ -110,7 +114,7 @@ export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps>
 
     return (
         // TODO texts in CHARTS-11999
-        <Dialog open={visible} onClose={handleClose} className={b()}>
+        <Dialog open={open} onClose={onClose} className={b()}>
             <Dialog.Header caption="Управление привязками" />
             <Dialog.Body className={b('body')}>
                 <EntitiesList
@@ -141,3 +145,5 @@ export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps>
         </Dialog>
     );
 };
+
+DialogManager.registerDialog(DIALOG_SHARED_ENTRY_BINDINGS, DialogSharedEntryBindings);
