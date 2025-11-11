@@ -10,15 +10,14 @@ export const updateDashboardV1 = createTypedAction(
         paramsSchema: updateDashArgsSchema,
         resultSchema: updateDashResultSchema,
     },
-    async (
-        api,
-        {entryId, mode = EntryUpdateMode.Publish, meta, data, revId, links, annotation},
-    ) => {
+    async (api, {entryId, mode = EntryUpdateMode.Publish, meta, data, revId, annotation}) => {
         const typedApi = getTypedApi(api);
 
-        // const gatheredLinks = Dash.gatherLinks(data);
+        const links = Dash.gatherLinks(data);
 
         Dash.validateData(data);
+
+        const skipSyncLinks = mode !== EntryUpdateMode.Publish;
 
         const updateEntryResult = await typedApi.us._updateEntry({
             entryId,
@@ -26,16 +25,10 @@ export const updateDashboardV1 = createTypedAction(
             meta,
             data,
             revId,
-            links, // OR gatheredLinks ? ?? ?? ? ???
+            links,
             annotation,
-            skipSyncLinks: mode !== EntryUpdateMode.Publish,
+            skipSyncLinks,
         });
-
-        // const I18n = ctx.get('i18n');
-
-        // return (await Dash.update(entryId, args, headers, ctx, I18n, {
-        //     forceMigrate: true,
-        // })) as unknown as UpdateDashResponse;
 
         return {
             entry: {
