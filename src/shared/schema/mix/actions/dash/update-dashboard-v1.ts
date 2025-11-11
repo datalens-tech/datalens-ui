@@ -1,9 +1,12 @@
-import {type EntryScope, EntryUpdateMode} from '../../../..';
+import {EntryScope, EntryUpdateMode} from '../../../..';
 import {Dash} from '../../../../../server/components/sdk';
+import {ServerError} from '../../../../constants/error';
 import {createTypedAction} from '../../../gateway-utils';
 import {getTypedApi} from '../../../simple-schema';
 import {updateDashArgsSchema, updateDashResultSchema} from '../../schemas/dash';
 import type {DashV1} from '../../types';
+
+const CURRENT_DASH_VERSION = 1 as const;
 
 export const updateDashboardV1 = createTypedAction(
     {
@@ -12,6 +15,24 @@ export const updateDashboardV1 = createTypedAction(
     },
     async (api, {entryId, mode = EntryUpdateMode.Publish, meta, data, revId, annotation}) => {
         const typedApi = getTypedApi(api);
+
+        const savedEntry = await typedApi.us.getEntry({entryId});
+
+        if (savedEntry.scope !== EntryScope.Dash) {
+            throw new ServerError('Entry not found', {
+                status: 404,
+            });
+        }
+
+        if (savedEntry.version && savedEntry.version > CURRENT_DASH_VERSION) {
+            throw new ServerError(
+                `The entry was created or updated using a newer API version and cannot be modified through this API version. 
+                Entry version is: ${savedEntry.version}`,
+                {
+                    status: 409,
+                },
+            );
+        }
 
         const links = Dash.gatherLinks(data);
 
@@ -32,7 +53,7 @@ export const updateDashboardV1 = createTypedAction(
 
         return {
             entry: {
-                version: 1 as const,
+                version: CURRENT_DASH_VERSION,
                 data: updateEntryResult.data as DashV1['data'],
                 meta: updateEntryResult.meta as DashV1['meta'],
                 scope: updateEntryResult.scope as EntryScope.Dash,
