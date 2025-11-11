@@ -26,7 +26,7 @@ import type {ControlsOnlyWidget} from '../../../libs/DatalensChartkit/types';
 import {selectSkipReload} from '../../../units/dash/store/selectors/dashTypedSelectors';
 import DebugInfoTool from '../../DashKit/plugins/DebugInfoTool/DebugInfoTool';
 
-import {useChartActions} from './helpers/chart-actions';
+import {useChartActivities} from './helpers/chart-activities';
 import {COMPONENT_CLASSNAME, removeEmptyNDatasetFieldsProperties} from './helpers/helpers';
 import {useLoadingChartSelector} from './hooks/useLoadingChartSelector';
 import type {
@@ -246,7 +246,7 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
         setLoadingProps,
         getControls,
         isAutoHeightEnabled,
-        runAction,
+        runActivity,
     } = useLoadingChartSelector({
         ...props,
         chartKitRef,
@@ -264,7 +264,7 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
         widgetType,
     });
 
-    const {onAction} = useChartActions({
+    const {onAction} = useChartActivities({
         onChange: handleChange,
     });
 
@@ -357,7 +357,7 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
                             getControls={getControls}
                             nonBodyScroll={nonBodyScroll}
                             initialParams={controlInitialParams}
-                            runAction={runAction}
+                            runActivity={runActivity}
                             onAction={onAction}
                         />
                     )}

@@ -932,9 +932,9 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         [loadChartData, handleChange],
     );
 
-    const runAction = React.useCallback(
+    const runActivity = React.useCallback(
         (params: StringParams) => {
-            return dataProvider.runAction({
+            return dataProvider.runActivity({
                 props: {...initialData, params},
                 requestId,
                 ...(requestHeadersGetter ? {contextHeaders: requestHeadersGetter()} : {}),
@@ -966,6 +966,6 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         isInit,
         dataProps: requestDataProps,
         isWidgetMenuDataChanged,
-        runAction,
+        runActivity,
     };
 };
