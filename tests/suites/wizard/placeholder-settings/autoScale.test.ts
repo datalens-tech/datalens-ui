@@ -2,16 +2,13 @@ import {Page, expect} from '@playwright/test';
 
 import {WizardVisualizationId} from '../../../page-objects/common/Visualization';
 import {CommonUrls} from '../../../page-objects/constants/common-urls';
-import {
-    PlaceholderId,
-    RadioButtons,
-    RadioButtonsValues,
-} from '../../../page-objects/wizard/PlaceholderDialog';
+import {RadioButtons, RadioButtonsValues} from '../../../page-objects/wizard/PlaceholderDialog';
 import {PlaceholderName} from '../../../page-objects/wizard/SectionVisualization';
 import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {openTestPage} from '../../../utils';
+import {PlaceholderId} from '../../../../src/shared';
 
 datalensTest.describe('Wizard - placeholder dialog ("Autoscaling")', () => {
     datalensTest.beforeEach(async ({page}: {page: Page}) => {

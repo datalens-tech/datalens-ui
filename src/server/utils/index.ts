@@ -13,6 +13,8 @@ import {
     FORWARDED_FOR_HEADER,
     PROJECT_ID_HEADER,
     REQUEST_ID_HEADER,
+    REQUEST_SOURCE_HEADER,
+    RequestSourceHeaderValue,
     SERVICE_USER_ACCESS_TOKEN_HEADER,
     SuperuserHeader,
     TENANT_ID_HEADER,
@@ -87,7 +89,7 @@ class Utils {
         };
     }
 
-    static pickRpcHeaders(req: Request) {
+    static pickPublicApiHeaders(req: Request) {
         const headersMap = req.ctx.config.headersMap;
 
         const orgId = req.headers[PUBLIC_API_ORG_ID_HEADER];
@@ -101,6 +103,7 @@ class Utils {
             ]),
             ...Utils.pickForwardHeaders(req.headers),
             [TENANT_ID_HEADER]: tenantId,
+            [REQUEST_SOURCE_HEADER]: RequestSourceHeaderValue.PublicApi,
         };
     }
 
