@@ -21,7 +21,7 @@ import {
 import block from 'bem-cn-lite';
 import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
 import {i18n} from 'i18n';
-import type {DashTabItemTitle, DashTabItemTitleSize, HintSettings} from 'shared';
+import type {ColorByTheme, DashTabItemTitle, DashTabItemTitleSize, HintSettings} from 'shared';
 import {
     DashTabItemTitleSizes,
     DialogDashTitleQA,
@@ -32,6 +32,7 @@ import {CustomPaletteBgColors, CustomPaletteTextColors} from 'shared/constants/w
 import {registry} from 'ui/registry';
 import {PaletteBackground} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 import {PaletteText} from 'ui/units/dash/containers/Dialogs/components/PaletteText/PaletteText';
+import {getWidgetColors} from 'ui/utils/widgetColors';
 
 import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
 
@@ -75,8 +76,8 @@ interface DialogTitleWidgetState {
     previousSelectedFontSize: number;
     showInTOC?: boolean;
     autoHeight?: boolean;
-    backgroundColor?: string;
-    textColor?: string;
+    backgroundColor?: string | ColorByTheme;
+    textColor?: string | ColorByTheme;
     hint?: HintSettings;
 }
 
@@ -85,6 +86,7 @@ export interface DialogTitleWidgetFeatureProps {
     enableShowInTOC?: boolean;
     enableCustomFontSize?: boolean;
     enableCustomBgColorSelector?: boolean;
+    enableSeparateThemeColorSelector?: boolean;
     enableCustomTextColorSelector?: boolean;
 }
 interface DialogTitleWidgetProps extends DialogTitleWidgetFeatureProps {
@@ -110,8 +112,8 @@ const defaultOpenedItemData: DashTabItemTitle['data'] = {
     size: FONT_SIZE_OPTIONS[0].value,
     showInTOC: true,
     autoHeight: false,
-    background: {color: CustomPaletteBgColors.NONE},
-    textColor: CustomPaletteTextColors.PRIMARY,
+    background: {color: undefined},
+    textColor: undefined,
 };
 
 function DialogTitleWidget(props: DialogTitleWidgetProps) {
@@ -121,6 +123,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         enableAutoheight = true,
         enableShowInTOC = true,
         enableCustomBgColorSelector,
+        enableSeparateThemeColorSelector = true,
         enableCustomTextColorSelector = false,
         theme,
         closeDialog,
@@ -145,8 +148,18 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
               }),
         showInTOC: openedItemData.showInTOC,
         autoHeight: Boolean(openedItemData.autoHeight),
-        backgroundColor: openedItemData.background?.color || '',
-        textColor: openedItemData.textColor || CustomPaletteTextColors.PRIMARY,
+        backgroundColor: getWidgetColors({
+            color: openedItemData.background?.color,
+            enabled: true,
+            defaultOldColor: CustomPaletteBgColors.NONE,
+            enableMultiThemeColors: true,
+        }),
+        textColor: getWidgetColors({
+            color: openedItemData.textColor,
+            enabled: true,
+            defaultOldColor: CustomPaletteTextColors.PRIMARY,
+            enableMultiThemeColors: true,
+        }),
         hint: openedItemData.hint,
     });
     const {
@@ -291,11 +304,11 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         setState((prevState) => ({...prevState, autoHeight: !prevState.autoHeight}));
     }, []);
 
-    const handleHasBackgroundSelected = React.useCallback((color: string) => {
+    const handleHasBackgroundSelected = React.useCallback((color?: string | ColorByTheme) => {
         setState((prevState) => ({...prevState, backgroundColor: color}));
     }, []);
 
-    const handleTextColorChanged = React.useCallback((color: string) => {
+    const handleTextColorChanged = React.useCallback((color: string | ColorByTheme) => {
         setState((prevState) => ({...prevState, textColor: color}));
     }, []);
 
@@ -303,16 +316,13 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
 
     const {MarkdownControl} = registry.common.components.getAll();
 
-    React.useEffect(() => {
-        // TODO remove and use "initialFocus={inputRef}" in Dialog props when switch to uikit7
-        // delay is needed so that the autofocus of the dialog does not interrupt the focus on the input
-        setTimeout(() => {
-            inputRef.current?.focus();
-        });
-    }, []);
-
     return (
-        <Dialog open={dialogIsVisible} onClose={closeDialog} qa={DialogDashWidgetItemQA.Title}>
+        <Dialog
+            open={dialogIsVisible}
+            onClose={closeDialog}
+            qa={DialogDashWidgetItemQA.Title}
+            initialFocus={inputRef}
+        >
             <Dialog.Header caption={i18n('dash.dialogs-common.edit', 'title_widget-settings')} />
             <Dialog.Body className={b()}>
                 <FormRow
@@ -393,6 +403,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
                         theme={theme}
                         onSelect={handleHasBackgroundSelected}
                         enableCustomBgColorSelector={enableCustomBgColorSelector}
+                        enableSeparateThemeColorSelector={enableSeparateThemeColorSelector}
                     />
                 </FormRow>
                 <FormRow
@@ -404,6 +415,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
                         theme={theme}
                         onSelect={handleTextColorChanged}
                         enableCustomColorSelector={enableCustomTextColorSelector}
+                        enableSeparateThemeColorSelector={enableSeparateThemeColorSelector}
                     />
                 </FormRow>
                 <FormRow className={b('row')} label={i18n('dash.widget-dialog.edit', 'field_hint')}>

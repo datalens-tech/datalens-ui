@@ -1,5 +1,6 @@
 import type {Plugin, PluginDefaultLayout} from '@gravity-ui/dashkit';
 import {DashKit} from '@gravity-ui/dashkit';
+import type {ColorSettings} from 'shared';
 import {registry} from 'ui/registry';
 
 import {DL} from '../../constants';
@@ -34,21 +35,32 @@ const wrapPlugins = (plugins: Plugin[], pluginDefaultsGetter?: typeof currentDef
     });
 };
 
+export interface CommonPluginSettings {
+    background?: ColorSettings;
+}
+
 export const getConfiguredDashKit = (
     pluginDefaultsGetter: typeof currentDefaultsGetter = null,
-    options?: {disableHashNavigation?: boolean; disableTitleHints?: boolean},
+    options?: {
+        disableHashNavigation?: boolean;
+        disableTitleHints?: boolean;
+        settings: CommonPluginSettings;
+    },
 ) => {
     if (currentDefaultsGetter !== pluginDefaultsGetter || !isConfigured) {
         const titleSettings = {
+            ...options?.settings,
             hideAnchor: options?.disableHashNavigation,
             hideHint: options?.disableTitleHints,
         };
 
         const textSettings = {
+            ...options?.settings,
             apiHandler: MarkdownProvider.getMarkdown,
         };
 
         const controlSettings = {
+            ...options?.settings,
             getDistincts: getDistinctsAction(),
         };
 
@@ -58,8 +70,8 @@ export const getConfiguredDashKit = (
                 textPlugin.setSettings(textSettings),
                 pluginControl.setSettings(controlSettings),
                 pluginGroupControl.setSettings(controlSettings),
-                widgetPlugin,
-                pluginImage,
+                widgetPlugin.setSettings(options?.settings ?? {}),
+                pluginImage.setSettings(options?.settings ?? {}),
             ],
             pluginDefaultsGetter,
         );

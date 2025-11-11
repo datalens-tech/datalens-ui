@@ -22,6 +22,7 @@ import type {CustomCommands, Spec} from 'immutability-helper';
 import update, {Context} from 'immutability-helper';
 import omit from 'lodash/omit';
 import type {
+    ColorByTheme,
     DashTabItemWidget,
     DashTabItemWidgetTab,
     StringParams,
@@ -29,7 +30,15 @@ import type {
     WidgetType,
     WizardVisualizationId,
 } from 'shared';
-import {DashCommonQa, DialogDashWidgetQA, EntryScope, Feature, ParamsSettingsQA} from 'shared';
+import {
+    CustomPaletteBgColors,
+    DashCommonQa,
+    DialogDashWidgetQA,
+    EntryScope,
+    Feature,
+    LIKE_CHART_COLOR_TOKEN,
+    ParamsSettingsQA,
+} from 'shared';
 import {getEntryVisualizationType} from 'shared/schema/mix/helpers';
 import {Collapse} from 'ui/components/Collapse/Collapse';
 import {Interpolate} from 'ui/components/Interpolate';
@@ -38,6 +47,8 @@ import type {UpdateState} from 'ui/components/TabMenu/types';
 import {TabActionType} from 'ui/components/TabMenu/types';
 import {DL, URL_OPTIONS} from 'ui/constants/common';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import {getWidgetColors} from 'ui/utils/widgetColors';
+import type {ValuesType} from 'utility-types';
 
 import {registry} from '../../registry';
 import NavigationInput from '../../units/dash/components/NavigationInput/NavigationInput';
@@ -88,6 +99,7 @@ export interface DialogChartWidgetFeatureProps {
     enableAutoheight?: boolean;
     enableBackgroundColor?: boolean;
     enableCustomBgColorSelector?: boolean;
+    enableSeparateThemeColorSelector?: boolean;
     enableFilteringSetting?: boolean;
 }
 export interface DialogChartWidgetProps extends DialogChartWidgetFeatureProps {
@@ -114,6 +126,7 @@ type DialogChartWidgetState = {
     hideTitle: boolean;
     prevVisible: boolean;
     error: boolean;
+    backgroundColor?: string | ColorByTheme;
     data: DashTabItemWidget['data'];
     tabIndex: number;
     isManualTitle: boolean;
@@ -125,6 +138,7 @@ type DialogChartWidgetState = {
 
     legacyChanged: number;
     visualizationType?: WizardVisualizationId;
+    activeTab: ValuesType<typeof TAB_TYPE>;
 };
 
 const INPUT_FILTERING_ID = 'chartFilteringField';
@@ -133,6 +147,8 @@ const INPUT_TITLE_VISIBILITY_ID = 'chartTitleVisibilityField';
 const INPUT_DESCRIPTION_ID = 'chartDescriptionField';
 const INPUT_AUTOHEIGHT_ID = 'chartAutoheightField';
 const INPUT_HINT_ID = 'chartHintField';
+
+const isCommonDashSettingsEnabled = isEnabledFeature(Feature.EnableCommonChartDashSettings);
 
 // TODO: put in defaultPath navigation key from entry
 class DialogChartWidget extends React.PureComponent<
@@ -144,8 +160,17 @@ class DialogChartWidget extends React.PureComponent<
         enableBackgroundColor: false,
         enableCustomBgColorSelector: false,
         enableFilteringSetting: true,
+        enableSeparateThemeColorSelector: true,
         openedItemData: {
             hideTitle: false,
+            background: {
+                color: getWidgetColors({
+                    color: undefined,
+                    enabled: true,
+                    defaultOldColor: LIKE_CHART_COLOR_TOKEN,
+                    enableMultiThemeColors: true,
+                }),
+            },
             tabs: [
                 {
                     get title() {
@@ -153,9 +178,6 @@ class DialogChartWidget extends React.PureComponent<
                     },
                     isDefault: true,
                     description: '',
-                    background: {
-                        color: 'transparent',
-                    },
                     enableHint: false,
                     hint: '',
                     enableDescription: false,
@@ -190,6 +212,12 @@ class DialogChartWidget extends React.PureComponent<
             isManualTitle: Boolean(nextProps.openedItemId),
             selectedWidgetType: null,
             selectedEntryType: null,
+            backgroundColor: getWidgetColors({
+                color: nextProps.openedItemData.background?.color,
+                enabled: true,
+                defaultOldColor: CustomPaletteBgColors.LIKE_CHART,
+                enableMultiThemeColors: true,
+            }),
             // new params logic, local state for current tab params
             tabParams: nextProps.openedItemData.tabs[tabIndex]?.params || {},
             legacyChanged: 0,
@@ -205,6 +233,7 @@ class DialogChartWidget extends React.PureComponent<
         isManualTitle: false,
         tabParams: {},
         legacyChanged: 0,
+        activeTab: TAB_TYPE.TABS,
     };
 
     private navigationInputRef = React.createRef<HTMLDivElement>();
@@ -215,8 +244,7 @@ class DialogChartWidget extends React.PureComponent<
 
         const sidebar = this.renderDialogSidebar();
         const mainTabSettingsContent = this.renderTabSettingsContent();
-        const shouldRenderTabs = false;
-        // isEnabledFeature(Feature.EnableCommonChartDashSettings) && !withoutSidebar;
+        const shouldRenderTabs = isCommonDashSettingsEnabled && !withoutSidebar;
         const tabsTabContent = (
             <div className={b('tab-content', {'with-sidebar': !withoutSidebar})}>
                 {!withoutSidebar && (
@@ -228,6 +256,7 @@ class DialogChartWidget extends React.PureComponent<
                 {mainTabSettingsContent}
             </div>
         );
+        const widgetSettingsTabContent = this.renderWidgetSettingsContent();
 
         return (
             <Dialog
@@ -242,8 +271,10 @@ class DialogChartWidget extends React.PureComponent<
                 <Dialog.Body className={b('body')}>
                     {shouldRenderTabs ? (
                         <TabProvider
-                            value={TAB_TYPE.TABS}
-                            // onUpdate={(value) => this.setState({activeTab: value})}
+                            value={this.state.activeTab}
+                            onUpdate={(value) =>
+                                this.setState({activeTab: value as ValuesType<typeof TAB_TYPE>})
+                            }
                         >
                             <TabList className={b('tab-list')}>
                                 <Tab value={TAB_TYPE.TABS}>
@@ -257,7 +288,7 @@ class DialogChartWidget extends React.PureComponent<
                                 {tabsTabContent}
                             </TabPanel>
                             <TabPanel value={TAB_TYPE.SETTINGS} className={b('tab-panel')}>
-                                <div className={b('tab-content')}>{tabsTabContent}</div>
+                                <div className={b('tab-content')}>{widgetSettingsTabContent}</div>
                             </TabPanel>
                         </TabProvider>
                     ) : (
@@ -308,6 +339,9 @@ class DialogChartWidget extends React.PureComponent<
         if (tabIndex === -1) {
             const newData = {
                 hideTitle: tabs.length === 1 && this.state.hideTitle,
+                background: this.state.data.background
+                    ? {color: this.state.data.background.color}
+                    : undefined,
                 tabs: tabs.map(({title, params, ...rest}, index) => {
                     let tabParams =
                         index === this.state.tabIndex
@@ -448,16 +482,17 @@ class DialogChartWidget extends React.PureComponent<
         this.handleUpdateField('hint', val);
     };
 
-    handleBackgroundColorSelected = (color: string) => {
+    handleBackgroundColorSelected = (color: string | ColorByTheme) => {
         const {data, tabIndex} = this.state;
 
         this.setState({
             data: update(data, {
+                background: {
+                    color: {$set: color},
+                },
                 tabs: {
                     [tabIndex]: {
-                        background: {
-                            color: {$set: color},
-                        },
+                        background: {$set: undefined},
                     },
                 },
             }),
@@ -623,6 +658,43 @@ class DialogChartWidget extends React.PureComponent<
         );
     };
 
+    renderBackgroundColorSettings = () => {
+        const {data, tabIndex} = this.state;
+        const {
+            theme,
+            enableCustomBgColorSelector,
+            enableSeparateThemeColorSelector = true,
+        } = this.props;
+        const backgroundColor = getWidgetColors({
+            ...(data.background || data.tabs[tabIndex].background),
+            defaultOldColor: CustomPaletteBgColors.NONE,
+            enableMultiThemeColors: enableSeparateThemeColorSelector,
+        });
+        return (
+            <FormRow
+                className={b('row')}
+                label={i18n('dash.widget-dialog.edit', 'field_background')}
+            >
+                <PaletteBackground
+                    color={backgroundColor}
+                    theme={theme}
+                    onSelect={this.handleBackgroundColorSelected}
+                    enableCustomBgColorSelector={enableCustomBgColorSelector}
+                    enableSeparateThemeColorSelector={enableSeparateThemeColorSelector}
+                    direction="column"
+                />
+            </FormRow>
+        );
+    };
+
+    renderWidgetSettingsContent = () => {
+        return (
+            <div className={b('content-wrapper')}>
+                <div className={b('content')}>{this.renderBackgroundColorSettings()}</div>
+            </div>
+        );
+    };
+
     renderTabSettingsContent = () => {
         const {data, tabIndex, selectedWidgetType} = this.state;
         const {
@@ -630,7 +702,6 @@ class DialogChartWidget extends React.PureComponent<
             navigationPath,
             enableAutoheight,
             enableBackgroundColor,
-            enableCustomBgColorSelector,
             enableFilteringSetting,
             changeNavigationPath,
         } = this.props;
@@ -641,16 +712,8 @@ class DialogChartWidget extends React.PureComponent<
             </HelpMark>
         );
 
-        const {
-            title,
-            chartId,
-            description,
-            autoHeight,
-            background,
-            hint,
-            enableHint,
-            enableDescription,
-        } = data.tabs[tabIndex];
+        const {title, chartId, description, autoHeight, hint, enableHint, enableDescription} =
+            data.tabs[tabIndex];
 
         const hasDesc =
             enableDescription === undefined ? Boolean(description) : Boolean(enableDescription);
@@ -818,24 +881,7 @@ class DialogChartWidget extends React.PureComponent<
                                 />
                             </FormRow>
                         )}
-                        {enableBackgroundColor && (
-                            <FormRow
-                                className={b('row')}
-                                label={
-                                    <div className={b('caption')}>
-                                        <span className={b('caption-text')}>
-                                            {i18n('dash.widget-dialog.edit', 'field_background')}
-                                        </span>
-                                    </div>
-                                }
-                            >
-                                <PaletteBackground
-                                    color={background?.color}
-                                    onSelect={this.handleBackgroundColorSelected}
-                                    enableCustomBgColorSelector={enableCustomBgColorSelector}
-                                />
-                            </FormRow>
-                        )}
+                        {enableBackgroundColor && this.renderBackgroundColorSettings()}
                     </div>
                     {this.renderParams()}
                 </div>

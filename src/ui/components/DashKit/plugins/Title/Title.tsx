@@ -8,15 +8,18 @@ import {
 import type {Plugin, PluginTitleProps} from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
-import {type DashTabItemTitle, EXPORT_PRINT_HIDDEN_ATTR} from 'shared';
+import {CustomPaletteBgColors, EXPORT_PRINT_HIDDEN_ATTR} from 'shared';
+import type {ColorSettings, DashTabItemTitle} from 'shared';
 import {
     adjustWidgetLayout as dashkitAdjustWidgetLayout,
-    getPreparedWrapSettings,
+    usePreparedWrapSettings,
+    useTextColorStyles,
 } from 'ui/components/DashKit/utils';
 import {MarkdownHelpPopover} from 'ui/components/MarkdownHelpPopover/MarkdownHelpPopover';
 import {DL} from 'ui/constants';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
+import type {CommonPluginSettings} from '../../DashKit';
 import {useWidgetContext} from '../../context/WidgetContext';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
@@ -32,7 +35,10 @@ import './Title.scss';
 
 const b = block('dashkit-plugin-title-container');
 
-type PluginTitleObjectSettings = {hideAnchor?: boolean; hideHint?: boolean};
+type PluginTitleObjectSettings = CommonPluginSettings & {
+    hideAnchor?: boolean;
+    hideHint?: boolean;
+};
 
 type Props = PluginTitleProps & PluginTitleObjectSettings;
 
@@ -40,6 +46,7 @@ type PluginTitle = Plugin<Props> & {
     setSettings: (settings: PluginTitleObjectSettings) => PluginTitle;
     hideAnchor?: boolean;
     hideHint?: boolean;
+    background?: ColorSettings;
 };
 
 const WIDGET_RESIZE_DEBOUNCE_TIMEOUT = 100;
@@ -51,14 +58,14 @@ const MIN_AVAILABLE_TOP_OFFSET = -5;
 const titlePlugin: PluginTitle = {
     ...pluginTitle,
     setSettings(settings: PluginTitleObjectSettings) {
-        const {hideAnchor, hideHint} = settings;
+        const {hideAnchor, hideHint, background} = settings;
 
         titlePlugin.hideAnchor = hideAnchor;
         titlePlugin.hideHint = hideHint;
-
+        titlePlugin.background = background;
         return titlePlugin;
     },
-    renderer: function Wrapper(
+    renderer: function PluginTitleRenderer(
         props: Props,
         forwardedRef: React.LegacyRef<DashKitPluginTitle> | undefined,
     ) {
@@ -125,13 +132,14 @@ const titlePlugin: PluginTitle = {
         const withAbsoluteAnchor = showAnchor && !isInlineExtraElements;
         const withAbsoluteHint = showHint && !isInlineExtraElements;
 
-        const {classMod, style, showBgColor} = getPreparedWrapSettings(
-            data.background,
-            {
-                position: showAnchor ? undefined : 'relative',
-            },
-            data.textColor,
-        );
+        const {style, hasBgColor: showBgColor} = usePreparedWrapSettings({
+            widgetBackground: data.background,
+            globalBackground: titlePlugin.background,
+            defaultOldColor: CustomPaletteBgColors.NONE,
+        });
+
+        const textColorStyles = useTextColorStyles(data.textColor);
+        const wrapperStyles = {...style, ...textColorStyles};
 
         const currentLayout = props.layout.find(({i}) => i === props.id) || {
             x: null,
@@ -148,8 +156,7 @@ const titlePlugin: PluginTitle = {
             currentLayout.y,
             currentLayout.h,
             currentLayout.w,
-            classMod,
-            data.background?.color,
+            data.background,
             data.size,
             data.text,
         ]);
@@ -222,13 +229,7 @@ const titlePlugin: PluginTitle = {
         };
 
         return (
-            <RendererWrapper
-                id={props.id}
-                type="title"
-                nodeRef={rootNodeRef}
-                style={style}
-                classMod={classMod}
-            >
+            <RendererWrapper id={props.id} type="title" nodeRef={rootNodeRef} style={wrapperStyles}>
                 <div
                     className={b({
                         'with-auto-height': Boolean(data.autoHeight),

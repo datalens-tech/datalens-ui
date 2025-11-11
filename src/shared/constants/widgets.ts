@@ -1,4 +1,4 @@
-import {type ValueOf} from '../types';
+import type {ColorSettings, ValueOf} from '../types';
 
 export const CustomPaletteBgColors = {
     LIKE_CHART: 'like-chart-bg',
@@ -6,13 +6,8 @@ export const CustomPaletteBgColors = {
 } as const;
 
 export const LIKE_CHART_COLOR_TOKEN = 'var(--g-color-base-float)';
+export const TRANSPARENT_COLOR_HEX = '#00000000';
 export const BASE_GREY_BACKGROUND_COLOR = 'var(--g-color-base-generic)';
-
-export type CustomPaletteBgColor = ValueOf<typeof CustomPaletteBgColors>;
-
-export function isCustomPaletteBgColor(color: string): color is CustomPaletteBgColor {
-    return Object.values(CustomPaletteBgColors).includes(color as CustomPaletteBgColor);
-}
 
 export const WIDGET_BG_HEAVY_COLORS_PRESET = [
     'var(--g-color-base-info-heavy)',
@@ -104,6 +99,13 @@ export const CONTROLS_PLACEMENT_MODE = {
 export function getDefaultWidgetBackgroundColor(
     isCommonChartDashSettingsEnabled?: boolean,
     defaultColor: string = CustomPaletteBgColors.NONE,
-) {
-    return isCommonChartDashSettingsEnabled ? '' : defaultColor;
+    enableMultiThemeColors = true,
+): ColorSettings['color'] {
+    return isCommonChartDashSettingsEnabled
+        ? getColorObject(undefined, enableMultiThemeColors)
+        : defaultColor;
+}
+
+export function getColorObject(color: string | undefined, enableMultiThemeColors: boolean) {
+    return enableMultiThemeColors ? {light: color, dark: color} : {common: color};
 }
