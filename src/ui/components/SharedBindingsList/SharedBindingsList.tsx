@@ -69,8 +69,7 @@ export const SharedBindingsList: React.FC<SharedBindingsListProps> = ({
                 virtualized
                 selectedItemIndex={-1}
                 renderItem={(item) => {
-                    const key = 'key' in item ? item.key : item.workbookId;
-                    return <EntityRow key={key} entity={item} actions={dropdownItems} />;
+                    return <EntityRow entity={item} actions={dropdownItems} />;
                 }}
             />
         );
