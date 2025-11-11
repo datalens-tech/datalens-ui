@@ -143,5 +143,70 @@ export const getPublicApiActionsV0 = <
                 tags: [ApiTag.Navigation],
             },
         },
+
+        // Workbook
+        copyWorkbook: {
+            resolve: (api) => api.us.copyWorkbook,
+            openApi: {
+                summary: 'Copy workbook',
+                tags: [ApiTag.Workbook],
+            },
+        },
+        createWorkbook: {
+            resolve: (api) => api.us.createWorkbook,
+            openApi: {
+                summary: 'Create workbook',
+                tags: [ApiTag.Workbook],
+            },
+        },
+        deleteWorkbook: {
+            resolve: (api) => api.us.deleteWorkbook,
+            openApi: {
+                summary: 'Delete workbook',
+                tags: [ApiTag.Workbook],
+            },
+        },
+        deleteWorkbooks: {
+            resolve: (api) => api.us.deleteWorkbooks,
+            openApi: {
+                summary: 'Delete workbooks',
+                tags: [ApiTag.Workbook],
+            },
+        },
+        getWorkbook: {
+            resolve: (api) => api.us.getWorkbook,
+            openApi: {
+                summary: 'Get workbook',
+                tags: [ApiTag.Workbook],
+            },
+        },
+        getWorkbooksList: {
+            resolve: (api) => api.us.getWorkbooksList,
+            openApi: {
+                summary: 'Get workbooks list',
+                tags: [ApiTag.Workbook],
+            },
+        },
+        moveWorkbook: {
+            resolve: (api) => api.us.moveWorkbook,
+            openApi: {
+                summary: 'Move workbook',
+                tags: [ApiTag.Workbook],
+            },
+        },
+        moveWorkbooks: {
+            resolve: (api) => api.us.moveWorkbooks,
+            openApi: {
+                summary: 'Move workbooks',
+                tags: [ApiTag.Workbook],
+            },
+        },
+        updateWorkbook: {
+            resolve: (api) => api.us.updateWorkbook,
+            openApi: {
+                summary: 'Update workbook',
+                tags: [ApiTag.Workbook],
+            },
+        },
     };
 };
