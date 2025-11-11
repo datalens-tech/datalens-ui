@@ -58,7 +58,6 @@ import {
 } from 'ui/components/DashKit/constants';
 import {WidgetContextProvider} from 'ui/components/DashKit/context/WidgetContext';
 import {getDashKitMenu} from 'ui/components/DashKit/helpers';
-import {registry} from 'ui/registry';
 import {showToast} from 'ui/store/actions/toaster';
 import {isEmbeddedMode} from 'ui/utils/embedded';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -405,8 +404,6 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
     }
 
     render() {
-        const {DashBodyAdditionalControls} = registry.dash.components.getAll();
-
         return (
             <div
                 className={b({'split-pane': this.props.isSplitPaneLayout})}
@@ -432,7 +429,6 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                 />
                 <PaletteEditor />
                 <EntryDialogues ref={this.entryDialoguesRef} />
-                <DashBodyAdditionalControls />
             </div>
         );
     }

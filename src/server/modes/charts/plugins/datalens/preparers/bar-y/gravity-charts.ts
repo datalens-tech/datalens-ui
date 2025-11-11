@@ -59,7 +59,7 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
 
     const series = graphs.map<BarYSeries>((graph) => {
         const labelFormatting = graph.dataLabels
-            ? mapToGravityChartValueFormat(graph.dataLabels)
+            ? mapToGravityChartValueFormat({field: labelField, formatSettings: graph.dataLabels})
             : undefined;
         return {
             ...graph,
@@ -76,7 +76,8 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
                         0,
                     ) ?? 0;
                 const percentage = (d.y / total) * 100;
-                const label = labelFormatting?.labelMode === 'percent' ? percentage : originalLabel;
+                const label =
+                    graph.dataLabels?.labelMode === 'percent' ? percentage : originalLabel;
 
                 return {...other, y: x, x: y, label, total, percentage};
             }),
@@ -90,6 +91,7 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
                 ...graph.custom,
                 colorValue: graph.colorValue,
                 exportSettings,
+                oldDataLabels: graph.dataLabels,
             },
         } as BarYSeries;
     });
