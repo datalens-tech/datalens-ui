@@ -264,8 +264,9 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
         widgetType,
     });
 
-    const {onAction} = useChartActivities({
+    const {onActivityComplete} = useChartActivities({
         onChange: handleChange,
+        onActivityComplete: props.onActivityComplete,
     });
 
     const hasControl = Boolean((loadedData as ControlsOnlyWidget)?.controls?.controls?.length);
@@ -358,7 +359,7 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
                             nonBodyScroll={nonBodyScroll}
                             initialParams={controlInitialParams}
                             runActivity={runActivity}
-                            onAction={onAction}
+                            onActivityComplete={onActivityComplete}
                         />
                     )}
                     {/* DatalensChartkitContent for error displaying & retry */}

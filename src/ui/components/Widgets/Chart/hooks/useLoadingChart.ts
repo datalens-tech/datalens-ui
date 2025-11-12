@@ -13,7 +13,7 @@ import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import unescape from 'lodash/unescape';
-import type {DashChartRequestContext, StringParams} from 'shared';
+import type {ChartActivityResponseData, DashChartRequestContext, StringParams} from 'shared';
 import {DashTabItemControlSourceType, SHARED_URL_OPTIONS} from 'shared';
 import type {ChartKit} from 'ui/libs/DatalensChartkit/ChartKit/ChartKit';
 import {isEmbeddedMode} from 'ui/utils/embedded';
@@ -933,12 +933,17 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
     );
 
     const runActivity = React.useCallback(
-        (params: StringParams) => {
-            return dataProvider.runActivity({
-                props: {...initialData, params},
-                requestId,
-                ...(requestHeadersGetter ? {contextHeaders: requestHeadersGetter()} : {}),
-            });
+        async (params: StringParams) => {
+            try {
+                const responseData = await dataProvider.runActivity({
+                    props: {...initialData, params},
+                    requestId,
+                    ...(requestHeadersGetter ? {contextHeaders: requestHeadersGetter()} : {}),
+                });
+                return responseData;
+            } catch (activityError) {
+                return {error: activityError} as ChartActivityResponseData;
+            }
         },
         [dataProvider, initialData, requestId, requestHeadersGetter],
     );
