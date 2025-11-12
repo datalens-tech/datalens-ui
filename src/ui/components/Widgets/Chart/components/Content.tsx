@@ -16,7 +16,6 @@ import Drill from '../../../../libs/DatalensChartkit/components/Drill/Drill';
 import {SideMarkdown} from '../../../../libs/DatalensChartkit/components/SideMarkdown/SideMarkdown';
 import ExtensionsManager from '../../../../libs/DatalensChartkit/modules/extensions-manager/extensions-manager';
 import type {ControlsOnlyWidget, DrillDownConfig} from '../../../../libs/DatalensChartkit/types';
-import {useChartActivities} from '../helpers/chart-activities';
 import type {ChartContentProps, ChartControlsType, OnLoadChartkitData} from '../types';
 
 import '../ChartWidget.scss';
@@ -121,11 +120,6 @@ export const Content = (props: ChartContentProps) => {
     const showContentLoader = showLoader || isExportLoading;
     const showLoaderVeil = veil && !isExportLoading;
 
-    const {onActivityComplete} = useChartActivities({
-        onChange,
-        onActivityComplete: props.onActivityComplete,
-    });
-
     const isFirstLoadingFloat = loadedData === null;
 
     // chartkit doesn't call onLoad when spltTooltip is enabled
@@ -199,7 +193,6 @@ export const Content = (props: ChartContentProps) => {
                         nonBodyScroll={nonBodyScroll}
                         initialParams={initialParams}
                         runActivity={runActivity}
-                        onActivityComplete={onActivityComplete}
                     />
                 )}
                 {Boolean(drillDownData) && (
@@ -230,6 +223,7 @@ export const Content = (props: ChartContentProps) => {
                     widgetDashState={widgetDashState}
                     rootNodeRef={rootNodeRef}
                     backgroundColor={backgroundColor}
+                    runActivity={runActivity}
                 />
                 {showChartOverlay && (
                     <div

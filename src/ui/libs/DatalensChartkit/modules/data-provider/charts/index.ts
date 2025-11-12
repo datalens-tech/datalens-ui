@@ -653,7 +653,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         return null;
     }
 
-    async runActivity({
+    async makeActivityRequest({
         props,
         contextHeaders,
         requestId,

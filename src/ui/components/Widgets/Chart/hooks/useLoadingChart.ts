@@ -13,7 +13,7 @@ import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
 import unescape from 'lodash/unescape';
-import type {ChartActivityResponseData, DashChartRequestContext, StringParams} from 'shared';
+import type {DashChartRequestContext, StringParams} from 'shared';
 import {DashTabItemControlSourceType, SHARED_URL_OPTIONS} from 'shared';
 import type {ChartKit} from 'ui/libs/DatalensChartkit/ChartKit/ChartKit';
 import {isEmbeddedMode} from 'ui/utils/embedded';
@@ -29,7 +29,11 @@ import DatalensChartkitCustomError, {
     ERROR_CODE,
     formatError,
 } from '../../../../libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
-import type {CombinedError, OnChangeData} from '../../../../libs/DatalensChartkit/types';
+import type {
+    CombinedError,
+    OnActivityComplete,
+    OnChangeData,
+} from '../../../../libs/DatalensChartkit/types';
 import {isAllParamsEmpty} from '../helpers/helpers';
 import {getInitialState, reducer} from '../store/reducer';
 import {
@@ -58,6 +62,7 @@ import type {
 } from '../types';
 import {cleanUpConflictingParameters} from '../utils';
 
+import {useChartActivities} from './useChartActivities';
 import {useIntersectionObserver} from './useIntersectionObserver';
 import {useMemoCallback} from './useMemoCallback';
 
@@ -96,6 +101,7 @@ export type LoadingChartHookProps = {
     autoupdateInterval?: number;
     forceShowSafeChart?: boolean;
     onBeforeChartLoad?: () => Promise<void>;
+    onActivityComplete?: OnActivityComplete;
 };
 
 type AutoupdateDataType = {
@@ -154,6 +160,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         isPageHidden,
         forceShowSafeChart,
         onBeforeChartLoad,
+        onActivityComplete,
     } = props;
 
     const [{isInit, canBeLoaded}, setLoadingState] = React.useReducer(loadingStateReducer, {
@@ -932,21 +939,14 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         [loadChartData, handleChange],
     );
 
-    const runActivity = React.useCallback(
-        async (params: StringParams) => {
-            try {
-                const responseData = await dataProvider.runActivity({
-                    props: {...initialData, params},
-                    requestId,
-                    ...(requestHeadersGetter ? {contextHeaders: requestHeadersGetter()} : {}),
-                });
-                return responseData;
-            } catch (activityError) {
-                return {error: activityError} as ChartActivityResponseData;
-            }
-        },
-        [dataProvider, initialData, requestId, requestHeadersGetter],
-    );
+    const {runActivity} = useChartActivities({
+        requestId,
+        requestHeadersGetter,
+        dataProvider,
+        initialData,
+        onChange: handleChange,
+        onActivityComplete,
+    });
 
     return {
         loadedData,

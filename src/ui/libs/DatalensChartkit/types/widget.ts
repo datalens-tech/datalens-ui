@@ -12,6 +12,7 @@ import type {Optional, Required} from 'utility-types';
 
 import type {
     ApiV2DataExportField,
+    ChartActivityResponseData,
     ChartkitHandlers,
     ChartsInsightsItem,
     GraphTooltipLine,
@@ -398,3 +399,9 @@ export type OnChangeData = ParamsChangedOnChange | YMapGeoObjectVisibilityChange
 export type LoadedWidgetData<TProviderData = unknown> = (Widget & TProviderData) | null;
 
 export type WidgetData = (Widget & ChartsData) | null;
+
+export type OnActivityComplete = (args: {responseData?: ChartActivityResponseData}) => void;
+
+export type WidgetChartActivityProps = {
+    runActivity?: (args: unknown) => void;
+};

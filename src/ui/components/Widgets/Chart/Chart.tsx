@@ -207,6 +207,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
         autoupdateInterval,
         forceShowSafeChart,
         onBeforeChartLoad,
+        onActivityComplete,
     });
 
     /**

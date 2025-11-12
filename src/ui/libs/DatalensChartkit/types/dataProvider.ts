@@ -38,7 +38,7 @@ export interface DataProvider<T extends {params?: StringParams}, R, K> {
         requestId: string;
         requestCancellation: K;
     }) => Promise<(ControlsOnlyWidget & R) | null>;
-    runActivity: (args: {
+    makeActivityRequest: (args: {
         props: T;
         requestId: string;
         contextHeaders?: DashChartRequestContext;

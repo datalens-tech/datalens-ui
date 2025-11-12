@@ -41,6 +41,7 @@ import Loader from './components/Loader/Loader';
 import {CHARTKIT_BASE_CLASSNAME, getVisibleItems} from './helpers';
 
 import './ChartKitBase.scss';
+import {register} from 'module';
 
 export interface ChartKitLoadSuccess<TProviderData> {
     status: 'success';
