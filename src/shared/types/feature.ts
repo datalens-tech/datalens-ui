@@ -97,6 +97,9 @@ export enum Feature {
     EnableConnectionDescription = 'EnableConnectionDescription',
 
     EnableMobileFixedHeader = 'EnableMobileFixedHeader',
+
+    /** Enable new access dialog (AccessDialog) */
+    EnableNewAccessDialog = 'EnableNewAccessDialog',
 }
 
 export type FeatureConfig = Record<string, boolean>;

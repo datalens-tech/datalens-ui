@@ -33,6 +33,7 @@ import type {AppDispatch} from '../../../../../store';
 import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
 import {WORKBOOKS_PATH} from '../../../../collections-navigation/constants';
 import {deleteCollectionInItems, deleteWorkbookInItems} from '../../../store/actions';
+import {DIALOG_ACCESS} from 'ui/components/AccessDialog';
 
 const i18n = I18n.keyset('collections');
 
@@ -285,25 +286,43 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
             }
 
             if (collectionsAccessEnabled && item.permissions.listAccessBindings) {
+                const isNewAccessDialogEnabled = isEnabledFeature(Feature.EnableNewAccessDialog);
                 actions.push({
                     text: <DropdownAction icon={LockOpen} text={i18n('action_access')} />,
                     action: () => {
-                        dispatch(
-                            openDialog({
-                                id: DIALOG_IAM_ACCESS,
-                                props: {
-                                    open: true,
-                                    resourceId: item.workbookId,
-                                    resourceType: ResourceType.Workbook,
-                                    resourceTitle: item.title,
-                                    parentId: item.collectionId,
-                                    canUpdate: item.permissions.updateAccessBindings,
-                                    onClose: () => {
-                                        dispatch(closeDialog());
+                        if (isNewAccessDialogEnabled) {
+                            dispatch(
+                                openDialog({
+                                    id: DIALOG_ACCESS,
+                                    props: {
+                                        workbookId: item?.workbookId ?? undefined,
+                                        collectionId: item?.collectionId ?? undefined,
+                                        resourceTitle: item?.title,
+                                        canUpdate: item?.permissions.updateAccessBindings,
+                                        onClose: () => {
+                                            dispatch(closeDialog());
+                                        },
                                     },
-                                },
-                            }),
-                        );
+                                }),
+                            );
+                        } else {
+                            dispatch(
+                                openDialog({
+                                    id: DIALOG_IAM_ACCESS,
+                                    props: {
+                                        open: true,
+                                        resourceId: item.workbookId,
+                                        resourceType: ResourceType.Workbook,
+                                        resourceTitle: item.title,
+                                        parentId: item.collectionId,
+                                        canUpdate: item.permissions.updateAccessBindings,
+                                        onClose: () => {
+                                            dispatch(closeDialog());
+                                        },
+                                    },
+                                }),
+                            );
+                        }
                     },
                 });
             }
