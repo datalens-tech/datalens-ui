@@ -102,9 +102,12 @@ export enum Feature {
     EnableSharedEntries = 'EnableSharedEntries',
 
     EnableMobileFixedHeader = 'EnableMobileFixedHeader',
+
     EnableCommonChartDashSettings = 'EnableCommonChartDashSettings',
     /** Shows updated settings page */
     EnableNewServiceSettings = 'EnableNewServiceSettings',
+    /** Enable new access dialog (AccessDialog) */
+    EnableNewAccessDialog = 'EnableNewAccessDialog',
 }
 
 export type FeatureConfig = Record<string, boolean>;

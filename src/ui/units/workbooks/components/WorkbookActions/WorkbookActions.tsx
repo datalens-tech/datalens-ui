@@ -25,6 +25,7 @@ import {IamAccessDialog} from '../../../../components/IamAccessDialog/IamAccessD
 import {registry} from '../../../../registry';
 import {ResourceType} from '../../../../registry/units/common/types/components/IamAccessDialog';
 import {CreateEntry} from '../CreateEntry/CreateEntry';
+import {DIALOG_ACCESS} from 'ui/components/AccessDialog';
 
 import './WorkbookActions.scss';
 
@@ -193,6 +194,23 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
         dropdownActions.push([...otherActions]);
     }
 
+    const onOpenAccessDialog = React.useCallback(() => {
+        dispatch(
+            openDialog({
+                id: DIALOG_ACCESS,
+                props: {
+                    workbookId: workbook?.workbookId ?? undefined,
+                    collectionId: workbook?.collectionId ?? undefined,
+                    resourceTitle: workbook.title,
+                    canUpdate: workbook.permissions.updateAccessBindings,
+                    onClose: () => {
+                        dispatch(closeDialog());
+                    },
+                },
+            }),
+        );
+    }, []);
+
     return (
         <div className={b()}>
             {Boolean(dropdownActions.length) && (
@@ -210,7 +228,7 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
                     <div className={b('item')}>
                         <Button
                             onClick={() => {
-                                setIamAccessDialogIsOpen(true);
+                                onOpenAccessDialog();
                             }}
                         >
                             <Icon data={LockOpen} />

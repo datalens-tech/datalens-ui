@@ -12,6 +12,7 @@ import {EXAMPLE_COMPONENT} from './constants/components';
 import type {AccessRightsProps} from './types/components/AccessRights';
 import type {AccessRightsUrlOpenProps} from './types/components/AccessRightsUrlOpen';
 import type {AclSubjectProps} from './types/components/AclSubject';
+import type {AclSubjectSelectProps} from './types/components/AclSubjectSelect';
 import type {AclSubjectSuggestProps} from './types/components/AclSubjectSuggest';
 import type {ActionPanelEntrySelectProps} from './types/components/ActionPanelEntrySelect';
 import type {ButtonFavoriteProps} from './types/components/ButtonFavorite';
@@ -32,6 +33,7 @@ import type {PlaceholderIllustrationImageProps} from './types/components/Placeho
 import type {ReportButtonProps} from './types/components/ReportButton';
 import type {UserAvatarByIdProps} from './types/components/UserAvatarById';
 import type {YfmWrapperProps} from './types/components/YfmWrapper';
+import {AccessDialogProps} from './types/components/AccessDialog';
 
 export const commonComponentsMap = {
     [EXAMPLE_COMPONENT]: Example,
@@ -59,10 +61,12 @@ export const commonComponentsMap = {
     Footer: makeDefaultEmpty(),
     AclSubject: makeDefaultEmpty<AclSubjectProps>(),
     AclSubjectSuggest: makeDefaultEmpty<AclSubjectSuggestProps>(),
+    AclSubjectSelect: makeDefaultEmpty<AclSubjectSelectProps>(),
     DialogShare: makeDefaultEmpty<DialogShareProps>(),
     ShareButton: makeDefaultEmpty<ShareButtonProps>(),
     DialogImageWidgetLinkHint: makeDefaultEmpty<DialogImageWidgetLinkHintProps>(),
     DialogRelatedEntitiesRadioHint: makeDefaultEmpty<DialogRelatedEntitiesRadioHintProps>(),
     WorkbookEntriesTableTabs: makeDefaultEmpty<WorkbookEntriesTableTabsProps>(),
     DialogEntryDescription: makeDefaultEmpty<DialogEntryDescriptionProps>(),
+    AccessDialog: makeDefaultEmpty<AccessDialogProps>(),
 } as const;
