@@ -5,7 +5,7 @@ import {DL} from 'ui';
 import {registry} from 'ui/registry';
 import {COLLECTIONS_PATH, WORKBOOKS_PATH} from 'ui/units/collections-navigation/constants';
 
-import {mockSharedEntriesTexts} from '../../../../i18n-keysets/shared-entries.view/ru';
+import {mockSharedEntriesTexts} from './constants';
 
 export const getIsWorkbookItem = (item: StructureItem): item is ExtendedWorkbook => {
     if (item.entity) {
