@@ -83,6 +83,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
         paneSplitOrientation,
         widgetDashState,
         onBeforeChartLoad,
+        onActivityComplete,
     } = props;
 
     const innerParamsRef = React.useRef<DataProps['params'] | null>(null);
@@ -300,6 +301,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
                 forwardedRef={chartKitRef}
                 getControls={loadControls}
                 runActivity={runActivity}
+                onActivityComplete={onActivityComplete}
                 drillDownFilters={drillDownFilters}
                 drillDownLevel={drillDownLevel}
                 widgetType={widgetType}

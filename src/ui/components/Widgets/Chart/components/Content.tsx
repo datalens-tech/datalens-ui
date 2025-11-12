@@ -121,7 +121,10 @@ export const Content = (props: ChartContentProps) => {
     const showContentLoader = showLoader || isExportLoading;
     const showLoaderVeil = veil && !isExportLoading;
 
-    const {onAction} = useChartActivities({onChange});
+    const {onActivityComplete} = useChartActivities({
+        onChange,
+        onActivityComplete: props.onActivityComplete,
+    });
 
     const isFirstLoadingFloat = loadedData === null;
 
@@ -196,7 +199,7 @@ export const Content = (props: ChartContentProps) => {
                         nonBodyScroll={nonBodyScroll}
                         initialParams={initialParams}
                         runActivity={runActivity}
-                        onAction={onAction}
+                        onActivityComplete={onActivityComplete}
                     />
                 )}
                 {Boolean(drillDownData) && (

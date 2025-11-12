@@ -1,4 +1,4 @@
-import type {StringParams} from 'shared';
+import type {ChartActivityResponseData, StringParams} from 'shared';
 import type {ChartInitialParams} from 'ui/libs/DatalensChartkit/components/ChartKitBase/ChartKitBase';
 
 import type {
@@ -21,8 +21,8 @@ export type ControlProps<TProviderData = unknown> = {
     ) => void;
     onUpdate?: (data: OnChangeData) => void;
     initialParams?: ChartInitialParams;
-    runActivity: (args: StringParams) => Promise<unknown>;
-    onAction: (args: {data: unknown}) => void;
+    runActivity: (args: StringParams) => Promise<ChartActivityResponseData>;
+    onActivityComplete: (args: {responseData?: ChartActivityResponseData}) => void;
 } & Omit<WidgetProps, 'data'>;
 
 export interface ControlState {

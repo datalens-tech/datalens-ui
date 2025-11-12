@@ -4,7 +4,12 @@ import type {ChartKitRef} from '@gravity-ui/chartkit';
 import type {CkHighchartsSeriesOptionsType, Highcharts} from '@gravity-ui/chartkit/highcharts';
 import type {CancelTokenSource} from 'axios';
 import type {Split} from 'react-split-pane';
-import type {DashTabItemControlSourceType, MenuItemsIds, StringParams} from 'shared';
+import type {
+    ChartActivityResponseData,
+    DashTabItemControlSourceType,
+    MenuItemsIds,
+    StringParams,
+} from 'shared';
 import type {OnWidgetLoadDataHandler} from 'ui/components/DashKit/context/WidgetContext';
 import type {
     Widget as ChartWidget,
@@ -126,6 +131,8 @@ type ChartKitBaseWrapperProps = ChartsProps & {
 
     needRenderContentControls?: boolean;
     reload?: (args?: {silentLoading?: boolean; noVeil?: boolean}) => void;
+
+    onActivityComplete?: (args: {responseData?: ChartActivityResponseData}) => void;
 };
 
 export type ChartWidgetProviderPropsWithRefProps = ChartRefProp &
@@ -313,6 +320,7 @@ export type ChartContentProps = Pick<
         enableAssistant?: boolean;
         rootNodeRef: React.RefObject<HTMLDivElement | null>;
         runActivity?: ControlProps['runActivity'];
+        onActivityComplete?: ControlProps['onActivityComplete'];
         backgroundColor?: string;
     };
 
@@ -329,7 +337,7 @@ export type ChartControlsType = Pick<ChartKitWrapperParams, 'onError' | 'onChang
         getControls?: ChartKitWrapperParams['getControls'];
         onUpdate?: (data: OnChangeData) => void;
         runActivity?: ControlProps['runActivity'];
-        onAction?: ControlProps['onAction'];
+        onActivityComplete?: ControlProps['onActivityComplete'];
     };
 
 export type ResolveWidgetControlDataRefArgs =
