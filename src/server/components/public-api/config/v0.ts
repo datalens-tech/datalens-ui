@@ -3,7 +3,7 @@ import {ApiTag} from '../constants';
 import type {PublicApiVersionActions} from '../types';
 
 export const getPublicApiActionsV0 = <
-    TSchema extends {root: Pick<DatalensGatewaySchemas['root'], 'bi' | 'mix'>},
+    TSchema extends {root: Pick<DatalensGatewaySchemas['root'], 'bi' | 'mix' | 'us'>},
 >(): PublicApiVersionActions<TSchema> => {
     return {
         // Connection
@@ -11,6 +11,20 @@ export const getPublicApiActionsV0 = <
             resolve: (api) => api.bi.getConnection,
             openApi: {
                 summary: 'Get connection',
+                tags: [ApiTag.Connection],
+            },
+        },
+        createConnection: {
+            resolve: (api) => api.bi.createConnection,
+            openApi: {
+                summary: 'Create connection',
+                tags: [ApiTag.Connection],
+            },
+        },
+        updateConnection: {
+            resolve: (api) => api.bi.updateConnection,
+            openApi: {
+                summary: 'Update connection',
                 tags: [ApiTag.Connection],
             },
         },
@@ -30,13 +44,6 @@ export const getPublicApiActionsV0 = <
                 tags: [ApiTag.Dataset],
             },
         },
-        updateDataset: {
-            resolve: (api) => api.bi.updateDataset,
-            openApi: {
-                summary: 'Update dataset',
-                tags: [ApiTag.Dataset],
-            },
-        },
         createDataset: {
             resolve: (api) => api.bi.createDataset,
             openApi: {
@@ -44,10 +51,24 @@ export const getPublicApiActionsV0 = <
                 tags: [ApiTag.Dataset],
             },
         },
+        updateDataset: {
+            resolve: (api) => api.bi.updateDataset,
+            openApi: {
+                summary: 'Update dataset',
+                tags: [ApiTag.Dataset],
+            },
+        },
         deleteDataset: {
             resolve: (api) => api.bi.deleteDataset,
             openApi: {
                 summary: 'Delete dataset',
+                tags: [ApiTag.Dataset],
+            },
+        },
+        validateDataset: {
+            resolve: (api) => api.bi.validateDataset,
+            openApi: {
+                summary: 'Validate dataset',
                 tags: [ApiTag.Dataset],
             },
         },
@@ -61,7 +82,7 @@ export const getPublicApiActionsV0 = <
             },
         },
         deleteWizardChart: {
-            resolve: (api) => api.mix.__deleteWizardChart__,
+            resolve: (api) => api.mix._deleteWizardChart,
             openApi: {
                 summary: 'Delete wizard chart',
                 tags: [ApiTag.Wizard],
@@ -77,7 +98,7 @@ export const getPublicApiActionsV0 = <
             },
         },
         deleteQLChart: {
-            resolve: (api) => api.mix.__deleteQLChart__,
+            resolve: (api) => api.mix._deleteQLChart,
             openApi: {
                 summary: 'Delete QL chart',
                 tags: [ApiTag.QL],
@@ -92,13 +113,6 @@ export const getPublicApiActionsV0 = <
                 tags: [ApiTag.Dashboard],
             },
         },
-        updateDashboard: {
-            resolve: (api) => api.mix.__updateDashboard__,
-            openApi: {
-                summary: 'Update dashboard',
-                tags: [ApiTag.Dashboard],
-            },
-        },
         createDashboard: {
             resolve: (api) => api.mix.__createDashboard__,
             openApi: {
@@ -106,11 +120,27 @@ export const getPublicApiActionsV0 = <
                 tags: [ApiTag.Dashboard],
             },
         },
+        updateDashboard: {
+            resolve: (api) => api.mix.__updateDashboard__,
+            openApi: {
+                summary: 'Update dashboard',
+                tags: [ApiTag.Dashboard],
+            },
+        },
         deleteDashboard: {
-            resolve: (api) => api.mix.__deleteDashboard__,
+            resolve: (api) => api.mix._deleteDashboard,
             openApi: {
                 summary: 'Delete dashboard',
                 tags: [ApiTag.Dashboard],
+            },
+        },
+
+        // Navigation
+        getEntries: {
+            resolve: (api) => api.us.getEntries,
+            openApi: {
+                summary: 'Get entries',
+                tags: [ApiTag.Navigation],
             },
         },
     };

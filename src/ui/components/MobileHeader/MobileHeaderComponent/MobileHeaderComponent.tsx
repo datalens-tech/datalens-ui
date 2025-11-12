@@ -47,7 +47,7 @@ const CONTENT_CLASSNAME = b('content');
 export const MobileHeaderComponent = ({
     renderContent,
     logoIcon,
-    installationInfo,
+    logoTextProps,
 }: MobileHeaderComponentProps) => {
     const ref = React.useRef<HTMLDivElement>();
 
@@ -99,9 +99,7 @@ export const MobileHeaderComponent = ({
             ref={setupRefs}
             logo={{
                 icon: logoIcon ?? defaultLogo,
-                text: isRebrandingEnabled
-                    ? () => <LogoText installationInfo={installationInfo} />
-                    : PRODUCT_NAME,
+                text: isRebrandingEnabled ? () => <LogoText {...logoTextProps} /> : PRODUCT_NAME,
                 iconClassName: b('logo-icon', {rebranding: isRebrandingEnabled}),
                 className: b('logo', {rebranding: isRebrandingEnabled}),
                 iconSize: isRebrandingEnabled ? MOBILE_HEADER_LOGO_ICON_SIZE : undefined,

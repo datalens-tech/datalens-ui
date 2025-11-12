@@ -1,3 +1,5 @@
+import type {ReactElement} from 'react';
+
 import type {Column} from '@gravity-ui/react-data-table';
 
 import type {WrappedHTML} from '../charts';
@@ -21,6 +23,7 @@ export type OnClickShowMessage = {
 };
 
 type TableCommonCellType = 'text' | 'date' | 'number' | 'diff' | 'diff_only' | 'markup' | 'bar';
+export type TableCellVeticalAlignment = 'top' | 'center' | 'bottom';
 
 // interface used because it is expanded in chartkit.d.ts
 export interface TableCommonCell {
@@ -43,6 +46,7 @@ export interface TableCommonCell {
     fieldId?: string;
     /** Reserved subspace to store options and values for customized functionality */
     custom?: Record<string, any>;
+    verticalAlignment?: TableCellVeticalAlignment;
 }
 
 export type BarTableCell = TableCommonCell & {
@@ -58,7 +62,7 @@ export type TableRow = TableValuesRow | TableCellsRow;
 export type CommonTableColumn = {
     id?: string;
     name: string;
-    formattedName?: WrappedHTML | string;
+    formattedName?: ReactElement | WrappedHTML | string;
     type: TableCommonCellType;
     group?: boolean;
     autogroup?: boolean;
@@ -73,6 +77,7 @@ export type CommonTableColumn = {
     custom?: Record<string, any>;
     pinned?: boolean;
     hint?: string;
+    verticalAlignment?: TableCellVeticalAlignment;
 };
 export type TableColumnFormatter = {
     format?: 'number' | 'percent';
@@ -134,13 +139,14 @@ export type TableColumn =
 type TableSubColumn = {
     id?: string;
     name: string;
-    formattedName?: WrappedHTML | string;
+    formattedName?: ReactElement | WrappedHTML | string;
     css?: ChartKitCss;
     markup: MarkupItem;
     sub: (TableColumn | TableSubColumn)[];
     width?: string;
     // A reserved subspace to store options and values for customized functionality.
     custom?: Record<string, any>;
+    verticalAlignment?: TableCellVeticalAlignment;
 };
 export type TableHead = TableColumn | TableSubColumn;
 export type TableTitle = {

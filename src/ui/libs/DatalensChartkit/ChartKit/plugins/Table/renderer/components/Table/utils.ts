@@ -14,6 +14,7 @@ import type {Primitive, RGBColor} from 'd3';
 import get from 'lodash/get';
 import round from 'lodash/round';
 import {
+    type TableCellVeticalAlignment,
     type TableCellsRow,
     type TableCommonCell,
     type TableRow,
@@ -328,4 +329,28 @@ export function getCellCustomStyle(cellData: unknown, tableBgColor?: string) {
     }
 
     return css;
+}
+
+const VERTICAL_ALIGNMENT_FLEX_MAP = {
+    top: 'flex-start',
+    center: 'center',
+    bottom: 'flex-end',
+};
+
+export function getCellVeticalAlignmentStyle<
+    CT extends {verticalAlignment?: TableCellVeticalAlignment},
+>(cell: CT): React.CSSProperties | null {
+    const verticalAlignment = get(cell, 'verticalAlignment', null);
+
+    if (
+        typeof verticalAlignment !== 'string' ||
+        !Object.keys(VERTICAL_ALIGNMENT_FLEX_MAP).includes(verticalAlignment)
+    ) {
+        return null;
+    }
+
+    return {
+        display: 'inline-flex',
+        alignItems: VERTICAL_ALIGNMENT_FLEX_MAP[verticalAlignment],
+    };
 }

@@ -85,6 +85,7 @@ export const Content = (props: ChartContentProps) => {
         backgroundColor,
         showActionParamsFilter,
         onFiltersClear,
+        reload,
     } = props;
 
     const [isExportLoading, setIsExportLoading] = React.useState(false);
@@ -172,6 +173,7 @@ export const Content = (props: ChartContentProps) => {
                         onFullscreenClick={onFullscreenClick}
                         showActionParamsFilter={showActionParamsFilter}
                         onFiltersClear={onFiltersClear}
+                        reload={reload}
                     />
                 </React.Fragment>
             )}

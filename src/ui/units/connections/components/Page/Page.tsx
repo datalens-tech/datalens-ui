@@ -13,9 +13,14 @@ import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
 import {type ConnectorType, Feature} from 'shared';
 import type {DatalensGlobalState} from 'ui';
-import {PageTitle, SlugifyUrl, Utils} from 'ui';
+import {PageTitle, SlugifyUrl, URL_QUERY, Utils} from 'ui';
+import type {FilterEntryContextMenuItems} from 'ui/components/EntryContextMenu';
+import {ENTRY_CONTEXT_MENU_ACTION} from 'ui/components/EntryContextMenu';
 import {registry} from 'ui/registry';
-import {openDialogErrorWithTabs} from 'ui/store/actions/dialog';
+import {
+    openDialogErrorWithTabs,
+    openDialogSaveDraftChartAsActualConfirm,
+} from 'ui/store/actions/dialog';
 import type {DataLensApiError} from 'ui/typings';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
@@ -31,6 +36,7 @@ import {
     getConnectors,
     setInitialState,
     setPageData,
+    updateConnectionWithRevision,
 } from '../../store';
 import {getConnItemByType} from '../../utils';
 
@@ -53,15 +59,28 @@ type PageProps = DispatchProps &
 
 type PageContentProps = Omit<DispatchState, 'entry' | 'loading'> & {
     type: ConnectorType;
-    getConnectionData: () => void;
+    getConnectionData: (revId?: string) => void;
     getConnectors: () => void;
     getConnectorSchema: (type: ConnectorType) => void;
     openDialogErrorWithTabs: typeof openDialogErrorWithTabs;
+    revId?: string;
 };
 
 const PageContent = (props: PageContentProps) => {
-    const {type, apiErrors, flattenConnectors, groupedConnectors, connectionData} = props;
+    const {
+        type,
+        apiErrors,
+        flattenConnectors,
+        groupedConnectors,
+        connectionData,
+        revId,
+        getConnectionData,
+    } = props;
     const {error, scope, details} = useApiErrors({apiErrors});
+    const getConnectionDataHandler = React.useCallback(
+        () => getConnectionData(revId),
+        [revId, getConnectionData],
+    );
 
     if (error) {
         let handler: NonNullable<ErrorViewProps['action']>['handler'];
@@ -72,7 +91,7 @@ const PageContent = (props: PageContentProps) => {
                 if (details.includes('platform-permission-required')) {
                     content = (
                         <div style={{display: 'flex', columnGap: 10, marginTop: 20}}>
-                            <Button view="action" onClick={props.getConnectionData}>
+                            <Button view="action" onClick={getConnectionDataHandler}>
                                 {i18n('button_retry')}
                             </Button>
                             <Button
@@ -89,7 +108,7 @@ const PageContent = (props: PageContentProps) => {
                         </div>
                     );
                 } else {
-                    handler = props.getConnectionData;
+                    handler = getConnectionDataHandler;
                 }
                 break;
             }
@@ -137,9 +156,14 @@ const PageComponent = (props: PageProps) => {
     const type = (connector?.conn_type || queryType) as ConnectorType;
     const listPageOpened = isListPageOpened(location.pathname);
     const s3BasedFormOpened = isS3BasedConnForm(connectionData, type);
+    const currentSearchParams = new URLSearchParams(location.search);
 
+    const isRevisionsEnabled = isEnabledFeature(Feature.EnableConnectionRevisions);
     const isExportSettingsFeatureEnabled = isEnabledFeature(Feature.EnableExportSettings);
     const isDescriptionEnabled = isEnabledFeature(Feature.EnableConnectionDescription);
+
+    const revisionsSupported = connector?.history && isRevisionsEnabled;
+    const revId = currentSearchParams.get(URL_QUERY.REV_ID) ?? undefined;
 
     const showSettings = !connector?.backend_driven_form;
     let isShowCreateButtons = true;
@@ -161,8 +185,35 @@ const PageComponent = (props: PageProps) => {
     }, [actions, type, listPageOpened]);
 
     React.useEffect(() => {
-        actions.setPageData({entryId: extractedEntryId, workbookId});
-    }, [actions, extractedEntryId, workbookId]);
+        actions.setPageData({
+            entryId: extractedEntryId,
+            workbookId,
+            rev_id: revId,
+        });
+    }, [actions, extractedEntryId, workbookId, revId]);
+
+    const setActualVersion = React.useMemo(
+        () =>
+            revisionsSupported
+                ? () => {
+                      actions.openDialogSaveDraftChartAsActualConfirm({
+                          onApply: () => {
+                              actions.updateConnectionWithRevision();
+                          },
+                      });
+                  }
+                : undefined,
+        [revisionsSupported, actions],
+    );
+
+    const filterEntryContextMenuItems: FilterEntryContextMenuItems | undefined = React.useMemo(
+        () =>
+            revisionsSupported
+                ? undefined
+                : ({items}) =>
+                      items.filter((item) => item.id !== ENTRY_CONTEXT_MENU_ACTION.REVISIONS),
+        [revisionsSupported],
+    );
 
     return (
         <React.Fragment>
@@ -186,7 +237,10 @@ const PageComponent = (props: PageProps) => {
                                 />
                             ),
                             isDescriptionEnabled && (
-                                <DescriptionButton isS3BasedConnForm={s3BasedFormOpened} />
+                                <DescriptionButton
+                                    key="connection-description"
+                                    isS3BasedConnForm={s3BasedFormOpened}
+                                />
                             ),
                             isShowCreateButtons && (
                                 <ConnPanelActions
@@ -198,6 +252,8 @@ const PageComponent = (props: PageProps) => {
                                 />
                             ),
                         ]}
+                        setActualVersion={setActualVersion}
+                        filterEntryContextMenuItems={filterEntryContextMenuItems}
                     />
                 )}
                 {loading || !entry ? (
@@ -213,6 +269,7 @@ const PageComponent = (props: PageProps) => {
                         getConnectors={actions.getConnectors}
                         getConnectorSchema={actions.getConnectorSchema}
                         openDialogErrorWithTabs={actions.openDialogErrorWithTabs}
+                        revId={revId}
                     />
                 )}
             </div>
@@ -242,6 +299,8 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
                 getConnectors,
                 getConnectorSchema,
                 openDialogErrorWithTabs,
+                openDialogSaveDraftChartAsActualConfirm,
+                updateConnectionWithRevision,
             },
             dispatch,
         ),

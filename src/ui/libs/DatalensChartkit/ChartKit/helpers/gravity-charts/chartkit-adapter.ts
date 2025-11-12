@@ -4,13 +4,14 @@ import {pickActionParamsFromParams} from '@gravity-ui/dashkit/helpers';
 import get from 'lodash/get';
 import merge from 'lodash/merge';
 import set from 'lodash/set';
+import type {ExtendedChartData} from 'shared/types/chartkit';
 
 import type {GraphWidget} from '../../../types';
 import type {ChartKitAdapterProps} from '../../types';
-import {getTooltipRenderer} from '../tooltip';
+import {getTooltipHeaderFormat, getTooltipRenderer, getTooltipRowRenderer} from '../tooltip';
 import {getNormalizedClickActions} from '../utils';
 
-import {convertChartCommentsToPlotBandsAndLines} from './comments';
+import {convertChartCommentsToPlotBandsAndLines, shouldUseCommentsOnYAxis} from './comments';
 import {handleClick} from './event-handlers';
 import {
     getCustomShapeRenderer,
@@ -24,7 +25,7 @@ export function getGravityChartsChartKitData(args: {
     onChange?: ChartKitAdapterProps['onChange'];
 }) {
     const {loadedData, onChange} = args;
-    const widgetData = loadedData?.data as ChartData;
+    const widgetData = loadedData?.data as ExtendedChartData;
     const chartId = loadedData?.entryId;
 
     const chartWidgetData: Partial<ChartData> = {
@@ -57,12 +58,23 @@ export function getGravityChartsChartKitData(args: {
     };
 
     const result = merge({}, chartWidgetData, widgetData);
-    if (result.tooltip) {
-        result.tooltip.renderer = getTooltipRenderer({
-            widgetData,
-            qa: `chartkit-tooltip-entry-${chartId}`,
-        });
+
+    if (!result.tooltip) {
+        result.tooltip = {};
     }
+
+    const tooltipQa = `chartkit-tooltip-entry-${chartId}`;
+    result.tooltip.qa = tooltipQa;
+    result.tooltip.renderer = getTooltipRenderer({
+        widgetData,
+        qa: tooltipQa,
+    });
+    result.tooltip.rowRenderer = getTooltipRowRenderer({
+        widgetData,
+    });
+    result.tooltip.headerFormat = getTooltipHeaderFormat({
+        widgetData,
+    });
 
     result.series?.data.forEach((s) => {
         set(s, 'legend.symbol', {
@@ -105,8 +117,7 @@ export function getGravityChartsChartKitData(args: {
     const comments = hideComments ? [] : get(loadedData, 'comments', []);
     const {plotBands, plotLines} = convertChartCommentsToPlotBandsAndLines({comments});
 
-    const shouldUseCommentsOnYAxis = result.series?.data?.some((s) => s.type === 'bar-y');
-    if (shouldUseCommentsOnYAxis) {
+    if (shouldUseCommentsOnYAxis(result)) {
         set(result, 'yAxis[0].plotBands', [...(result.yAxis?.[0]?.plotBands ?? []), ...plotBands]);
         set(result, 'yAxis[0].plotLines', [...(result.yAxis?.[0]?.plotLines ?? []), ...plotLines]);
     } else {

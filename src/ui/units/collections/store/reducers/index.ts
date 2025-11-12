@@ -1,9 +1,8 @@
 import type {
     CollectionWithOptionalPermissions,
-    CollectionWithPermissions,
     GetRootCollectionPermissionsResponse,
     GetStructureItemsResponse,
-    WorkbookWithPermissions,
+    StructureItem,
 } from '../../../../../shared/schema';
 import type {CollectionsAction} from '../actions';
 import {
@@ -35,7 +34,7 @@ export type CollectionsState = {
         data: GetStructureItemsResponse | null;
         error: Error | null;
     };
-    items: (CollectionWithPermissions | WorkbookWithPermissions)[];
+    items: StructureItem[];
     getRootCollectionPermissions: {
         isLoading: boolean;
         data: GetRootCollectionPermissionsResponse | null;

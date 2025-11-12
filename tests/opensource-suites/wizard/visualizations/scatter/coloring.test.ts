@@ -42,6 +42,8 @@ datalensTest.describe('Wizard', () => {
                 await wizardPage.colorDialog.apply();
 
                 await expect(previewLoader).not.toBeVisible();
+                // move the cursor so that there are no hovered elements on the chart
+                await page.mouse.move(0, 0);
                 await expect(chart).toHaveScreenshot();
             },
         );

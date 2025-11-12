@@ -1,6 +1,7 @@
 import {getSdk, isSdkError} from 'libs/schematic-sdk';
 import logger from 'libs/logger';
 import {showToast} from 'store/actions/toaster';
+import {showCollectionEntityErrorToast} from './showCollectionEntityErrorToast';
 
 import {
     RESET_IMPORT_PROGRESS,
@@ -240,20 +241,23 @@ export type ImportWorkbookAction =
     | ImportWorkbookFailedAction
     | ResetImportWorkbookAction;
 
-export const importWorkbook = ({
-    title,
-    description,
-    collectionId,
-    importFile,
-    publicGalleryUrl,
-}: {
-    title: string;
-    description?: string;
-    collectionId: string | null;
-} & (
-    | {importFile: File; publicGalleryUrl?: undefined}
-    | {publicGalleryUrl: string; importFile?: undefined}
-)) => {
+export const importWorkbook = (
+    {
+        title,
+        description,
+        collectionId,
+        importFile,
+        publicGalleryUrl,
+    }: {
+        title: string;
+        description?: string;
+        collectionId: string | null;
+    } & (
+        | {importFile: File; publicGalleryUrl?: undefined}
+        | {publicGalleryUrl: string; importFile?: undefined}
+    ),
+    shouldThrow = false,
+) => {
     return async (dispatch: CollectionsStructureDispatch) => {
         let data;
 
@@ -267,6 +271,11 @@ export const importWorkbook = ({
                         error: err,
                     }),
                 );
+
+                if (shouldThrow) {
+                    throw err;
+                }
+
                 return Promise.resolve();
             }
         } else {
@@ -280,6 +289,11 @@ export const importWorkbook = ({
                         error: err,
                     }),
                 );
+
+                if (shouldThrow) {
+                    throw err;
+                }
+
                 return Promise.resolve();
             }
         }
@@ -307,18 +321,18 @@ export const importWorkbook = ({
 
                 if (!isCanceled) {
                     logger.logError('collectionsStructure/importWorkbook failed', error);
-                    dispatch(
-                        showToast({
-                            title: error.message,
-                            error,
-                        }),
-                    );
+
+                    dispatch(showCollectionEntityErrorToast(error));
                 }
 
                 dispatch({
                     type: IMPORT_WORKBOOK_FAILED,
                     error: isCanceled ? null : error,
                 });
+
+                if (shouldThrow) {
+                    throw error;
+                }
 
                 return null;
             });

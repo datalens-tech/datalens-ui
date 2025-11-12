@@ -1,4 +1,5 @@
 import {RangeInputPicker} from 'ui/components/common/RangeInputPicker';
+import type {ShareButtonProps} from 'ui/units/dash/components/ShareButton/ShareButton';
 
 import {Datepicker} from '../../../components/common/Datepicker/Datepicker';
 import type {DatepickerControlProps} from '../../../components/common/DatepickerControl/DatepickerControl';
@@ -62,6 +63,7 @@ export const commonComponentsMap = {
     AclSubjectSuggest: makeDefaultEmpty<AclSubjectSuggestProps>(),
     AclSubjectSelect: makeDefaultEmpty<AclSubjectSelectProps>(),
     DialogShare: makeDefaultEmpty<DialogShareProps>(),
+    ShareButton: makeDefaultEmpty<ShareButtonProps>(),
     DialogImageWidgetLinkHint: makeDefaultEmpty<DialogImageWidgetLinkHintProps>(),
     DialogRelatedEntitiesRadioHint: makeDefaultEmpty<DialogRelatedEntitiesRadioHintProps>(),
     WorkbookEntriesTableTabs: makeDefaultEmpty<WorkbookEntriesTableTabsProps>(),

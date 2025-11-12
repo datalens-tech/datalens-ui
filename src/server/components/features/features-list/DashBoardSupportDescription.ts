@@ -4,7 +4,7 @@ import {createFeatureConfig} from '../utils';
 export default createFeatureConfig({
     name: Feature.DashBoardSupportDescription,
     state: {
-        development: true,
-        production: true,
+        development: false,
+        production: false,
     },
 });

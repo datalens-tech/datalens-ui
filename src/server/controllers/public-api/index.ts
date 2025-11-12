@@ -32,7 +32,9 @@ export const createPublicApiController = () => {
             const pathObject = actionToPathMap.get(gatewayAction);
 
             if (!pathObject) {
-                throw new AppError('Public api proxyMap action not found in gatewayApi.');
+                throw new AppError(
+                    `Public api config action "${actionName}" not found in gatewayApi.`,
+                );
             }
 
             const actionConfig =
@@ -65,7 +67,8 @@ export const createPublicApiController = () => {
 
             const {ctx} = req;
 
-            const headers = Utils.pickRpcHeaders(req);
+            const headers = Utils.pickPublicApiHeaders(req);
+
             const requestId = ctx.get(REQUEST_ID_PARAM_NAME) || '';
 
             const gatewayAction = action.resolve(gatewayApi);

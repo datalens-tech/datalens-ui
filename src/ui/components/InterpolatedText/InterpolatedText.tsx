@@ -9,11 +9,19 @@ type InterpolatedTextProps = {
     href?: string;
     br?: boolean;
     b?: boolean;
+    code?: boolean;
     // may be useful if you need to wait for the documentation for the text.
     disableLink?: boolean;
 };
 
-const InterpolatedTextComponent = ({text, href, br, b, disableLink}: InterpolatedTextProps) => {
+const InterpolatedTextComponent = ({
+    text,
+    href,
+    br,
+    b,
+    code,
+    disableLink,
+}: InterpolatedTextProps) => {
     const matches: Record<string, (match: string) => React.ReactNode> = {};
 
     if (disableLink) {
@@ -41,6 +49,12 @@ const InterpolatedTextComponent = ({text, href, br, b, disableLink}: Interpolate
     if (b) {
         matches.b = (match) => {
             return <b>{match}</b>;
+        };
+    }
+
+    if (code) {
+        matches.code = (match) => {
+            return <code>{match}</code>;
         };
     }
 

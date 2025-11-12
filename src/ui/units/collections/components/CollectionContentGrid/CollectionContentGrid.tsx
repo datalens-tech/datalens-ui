@@ -6,21 +6,19 @@ import {Checkbox, DropdownMenu} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {batch, useDispatch, useSelector} from 'react-redux';
 import {Link} from 'react-router-dom';
+import {CollectionItemEntities} from 'shared';
 
-import type {
-    CollectionWithPermissions,
-    WorkbookWithPermissions,
-} from '../../../../../shared/schema';
+import type {StructureItem} from '../../../../../shared/schema';
 import {AnimateBlock} from '../../../../components/AnimateBlock';
-import {CollectionIcon} from '../../../../components/CollectionIcon/CollectionIcon';
-import {WorkbookIcon} from '../../../../components/WorkbookIcon/WorkbookIcon';
-import {COLLECTIONS_PATH, WORKBOOKS_PATH} from '../../../collections-navigation/constants';
 import {setCollectionBreadcrumbs} from '../../../collections-navigation/store/actions';
 import {selectCollectionBreadcrumbs} from '../../../collections-navigation/store/selectors';
 import {setWorkbook} from '../../../workbooks/store/actions';
 import {setCollection} from '../../store/actions';
 import {selectStructureItems} from '../../store/selectors';
 import type {SelectedMap, UpdateCheckboxArgs} from '../CollectionPage/hooks';
+import {getIsWorkbookItem, getItemKey, getItemLink} from '../helpers';
+
+import {CollectionItemIcon} from './CollectionItemIcon';
 
 import './CollectionContentGrid.scss';
 
@@ -29,23 +27,12 @@ const b = block('dl-collection-content-grid');
 type Props = {
     selectedMap: SelectedMap;
     isOpenSelectionMode: boolean;
-    getWorkbookActions: (
-        item: WorkbookWithPermissions,
-    ) => (DropdownMenuItem[] | DropdownMenuItem)[];
-    getCollectionActions: (
-        item: CollectionWithPermissions,
-    ) => (DropdownMenuItem[] | DropdownMenuItem)[];
+    getItemActions: (item: StructureItem) => (DropdownMenuItem[] | DropdownMenuItem)[];
     onUpdateCheckboxClick: (args: UpdateCheckboxArgs) => void;
 };
 
 export const CollectionContentGrid = React.memo<Props>(
-    ({
-        selectedMap,
-        isOpenSelectionMode,
-        getWorkbookActions,
-        getCollectionActions,
-        onUpdateCheckboxClick,
-    }) => {
+    ({selectedMap, isOpenSelectionMode, getItemActions, onUpdateCheckboxClick}) => {
         const dispatch = useDispatch();
 
         const items = useSelector(selectStructureItems);
@@ -55,30 +42,26 @@ export const CollectionContentGrid = React.memo<Props>(
             <div className={b()}>
                 <div className={b('grid')}>
                     {items.map((item, index) => {
+                        const isWorkbook = getIsWorkbookItem(item);
+                        const isEntry = item.entity === CollectionItemEntities.ENTRY;
                         const canMove = item.permissions.move;
 
-                        const actions =
-                            'workbookId' in item
-                                ? getWorkbookActions(item)
-                                : getCollectionActions(item);
+                        const actions = getItemActions(item);
 
                         return (
-                            <AnimateBlock
-                                key={'workbookId' in item ? item.workbookId : item.collectionId}
-                                delay={Math.min(index * 5, 100)}
-                            >
+                            <AnimateBlock key={getItemKey(item)} delay={Math.min(index * 5, 100)}>
                                 <div
                                     className={b('item')}
                                     onClick={
                                         isOpenSelectionMode && canMove
                                             ? () => {
-                                                  if ('workbookId' in item) {
+                                                  if (isWorkbook) {
                                                       onUpdateCheckboxClick({
                                                           entityId: item.workbookId,
                                                           type: 'workbook',
                                                           checked: !selectedMap[item.workbookId],
                                                       });
-                                                  } else {
+                                                  } else if (!isEntry) {
                                                       onUpdateCheckboxClick({
                                                           entityId: item.collectionId,
                                                           type: 'collection',
@@ -93,11 +76,11 @@ export const CollectionContentGrid = React.memo<Props>(
                                         <Checkbox
                                             size="l"
                                             className={b('checkbox')}
-                                            disabled={!canMove}
+                                            disabled={!canMove || isEntry}
                                             checked={
                                                 Boolean(
                                                     selectedMap[
-                                                        'workbookId' in item
+                                                        isWorkbook
                                                             ? item.workbookId
                                                             : item.collectionId
                                                     ],
@@ -106,19 +89,15 @@ export const CollectionContentGrid = React.memo<Props>(
                                         />
                                     )}
                                     <Link
-                                        to={
-                                            'workbookId' in item
-                                                ? `${WORKBOOKS_PATH}/${item.workbookId}`
-                                                : `${COLLECTIONS_PATH}/${item.collectionId}`
-                                        }
+                                        to={getItemLink(item)}
                                         className={b('link', {
                                             'selection-mode': isOpenSelectionMode,
                                         })}
                                         onClick={(e) => {
                                             if (!e.metaKey && !e.ctrlKey) {
-                                                if ('workbookId' in item) {
+                                                if (isWorkbook) {
                                                     dispatch(setWorkbook(item));
-                                                } else {
+                                                } else if (!isEntry) {
                                                     batch(() => {
                                                         dispatch(setCollection(item));
                                                         if (
@@ -145,11 +124,7 @@ export const CollectionContentGrid = React.memo<Props>(
                                                 'selection-mode': isOpenSelectionMode,
                                             })}
                                         >
-                                            {'workbookId' in item ? (
-                                                <WorkbookIcon title={item.title} size="l" />
-                                            ) : (
-                                                <CollectionIcon isIconBig size={125} />
-                                            )}
+                                            <CollectionItemIcon item={item} />
                                         </div>
                                         <div className={b('title')} title={item.title}>
                                             {item.title}

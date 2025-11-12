@@ -25,6 +25,7 @@ import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import {isGradientMode} from '../../utils/misc-helpers';
 import {getAxisFormatting, getAxisType} from '../helpers/axis';
+import {getLegendColorScale} from '../helpers/legend';
 import type {PrepareFunctionArgs} from '../types';
 
 import type {ScatterGraph} from './prepare-scatter';
@@ -53,8 +54,11 @@ function mapScatterSeries(args: MapScatterSeriesArgs): ScatterSeries<PointCustom
                         name: point.name,
                         xLabel: point.xLabel,
                         yLabel: point.yLabel,
+                        colorValue: point.colorValue,
                         cLabel: point.cLabel,
+                        shapeValue: point.shapeValue,
                         sLabel: point.sLabel,
+                        sizeValue: point.sizeValue,
                         sizeLabel: point.sizeLabel,
                     },
                     color: typeof point.color === 'string' ? point.color : undefined,
@@ -114,21 +118,21 @@ export function prepareGravityChartsScatter(args: PrepareFunctionArgs): ChartDat
 
     if (size) {
         exportSettings.columns.push(
-            getExportColumnSettings({path: 'custom.sizeLabel', field: size}),
+            getExportColumnSettings({path: 'custom.sizeValue', field: size}),
         );
     }
 
     const colorItem = colors[0];
     if (colorItem) {
         exportSettings.columns.push(
-            getExportColumnSettings({path: 'custom.cLabel', field: colorItem}),
+            getExportColumnSettings({path: 'custom.colorValue', field: colorItem}),
         );
     }
 
     const shapeItem = shapes[0];
     if (shapeItem) {
         exportSettings.columns.push(
-            getExportColumnSettings({path: 'custom.sLabel', field: shapeItem}),
+            getExportColumnSettings({path: 'custom.shapeValue', field: shapeItem}),
         );
     }
 
@@ -162,6 +166,9 @@ export function prepareGravityChartsScatter(args: PrepareFunctionArgs): ChartDat
             type: 'category',
             // @ts-ignore There may be a type mismatch due to the wrapper over html, markup and markdown
             categories: xCategories,
+            labels: {
+                html: isHtmlField(x) || isMarkdownField(x) || isMarkupField(x),
+            },
         };
     } else {
         if (isDateField(x)) {
@@ -197,14 +204,19 @@ export function prepareGravityChartsScatter(args: PrepareFunctionArgs): ChartDat
     };
 
     if (graphs.length && gradientMode) {
+        const points = graphs
+            .map((graph) => (graph.data ?? []).map((d) => ({colorValue: d.colorValue})))
+            .flat(2);
+        const colorScale = getLegendColorScale({
+            colorsConfig,
+            points,
+        });
+
         legend = {
             enabled: true,
             type: 'continuous',
             title: {text: getFakeTitleOrTitle(color), style: {fontWeight: '500'}},
-            colorScale: {
-                colors: colorsConfig.gradientColors,
-                stops: colorsConfig.gradientColors.length === 2 ? [0, 1] : [0, 0.5, 1],
-            },
+            colorScale,
         };
     } else if (graphs.length <= 1) {
         legend.enabled = false;
@@ -223,6 +235,9 @@ export function prepareGravityChartsScatter(args: PrepareFunctionArgs): ChartDat
             {
                 labels: {
                     numberFormat: axisLabelNumberFormat ?? undefined,
+                    html:
+                        yAxisType === 'category' &&
+                        (isHtmlField(y) || isMarkdownField(y) || isMarkupField(y)),
                 },
                 maxPadding: 0,
             },

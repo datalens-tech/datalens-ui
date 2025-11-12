@@ -13,6 +13,8 @@ import {
     FORWARDED_FOR_HEADER,
     PROJECT_ID_HEADER,
     REQUEST_ID_HEADER,
+    REQUEST_SOURCE_HEADER,
+    RequestSourceHeaderValue,
     SERVICE_USER_ACCESS_TOKEN_HEADER,
     SuperuserHeader,
     TENANT_ID_HEADER,
@@ -20,6 +22,7 @@ import {
     makeTenantIdFromOrgId,
 } from '../../shared';
 import {isOpensourceInstallation} from '../app-env';
+import {PUBLIC_API_VERSION_HEADER} from '../components/public-api/constants';
 import {PUBLIC_API_ORG_ID_HEADER} from '../constants/public-api';
 
 import {isGatewayError} from './gateway';
@@ -86,16 +89,21 @@ class Utils {
         };
     }
 
-    static pickRpcHeaders(req: Request) {
+    static pickPublicApiHeaders(req: Request) {
         const headersMap = req.ctx.config.headersMap;
 
         const orgId = req.headers[PUBLIC_API_ORG_ID_HEADER];
         const tenantId = orgId && !Array.isArray(orgId) ? makeTenantIdFromOrgId(orgId) : undefined;
 
         return {
-            ...pick(req.headers, [AuthHeader.Authorization, headersMap.subjectToken]),
+            ...pick(req.headers, [
+                AuthHeader.Authorization,
+                headersMap.subjectToken,
+                PUBLIC_API_VERSION_HEADER,
+            ]),
             ...Utils.pickForwardHeaders(req.headers),
             [TENANT_ID_HEADER]: tenantId,
+            [REQUEST_SOURCE_HEADER]: RequestSourceHeaderValue.PublicApi,
         };
     }
 

@@ -84,6 +84,7 @@ class ColorPaletteEditorContainer extends React.Component<ColorPaletteEditorProp
                     condensed={condensed}
                     qa={ServiceSettingsQA.ColorPalettes}
                     hasEditRights={hasEditRights}
+                    hasDefaultPalette={true}
                 />
                 <ColorPaletteEditor hasEditRights={hasEditRights} />
                 <GradientColorPaletteEditor hasEditRights={hasEditRights} />

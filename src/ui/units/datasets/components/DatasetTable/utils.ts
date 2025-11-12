@@ -152,10 +152,8 @@ export const getColumns = (args: GetColumnsArgs) => {
 
     const columns = [index, title, source];
 
-    if (isEnabledFeature(Feature.StoreFieldSettingsAtDataset)) {
-        const fieldSettingsColumn = getFieldSettingsColumn({onUpdate: handleUpdateFieldSettings});
-        columns.push(fieldSettingsColumn);
-    }
+    const fieldSettingsColumn = getFieldSettingsColumn({onUpdate: handleUpdateFieldSettings});
+    columns.push(fieldSettingsColumn);
 
     columns.push(...[hidden, cast, aggregation, description, more]);
 

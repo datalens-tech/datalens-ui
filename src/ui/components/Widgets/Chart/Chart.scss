@@ -35,7 +35,7 @@ $fullscreenZIndex: 999;
     &_fullscreen {
         position: fixed;
         width: 100vw;
-        height: 100vh;
+        height: 100dvh;
         left: 0;
         top: var(--fullscreen-widget-top, 0);
         background-color: var(--g-color-base-float);
@@ -97,6 +97,10 @@ $fullscreenZIndex: 999;
         &_hidden {
             opacity: 0;
             z-index: -1;
+        }
+
+        &_d3 {
+            overflow: hidden;
         }
     }
 

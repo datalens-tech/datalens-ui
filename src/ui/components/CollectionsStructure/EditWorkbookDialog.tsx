@@ -2,6 +2,7 @@ import React from 'react';
 
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
+import {ErrorCode} from 'shared/constants';
 import type {UpdateWorkbookResponse} from 'shared/schema';
 import type {AppDispatch} from 'store';
 
@@ -9,7 +10,8 @@ import DialogManager from '../../components/DialogManager/DialogManager';
 import {updateWorkbook} from '../../store/actions/collectionsStructure';
 import {selectUpdateWorkbookIsLoading} from '../../store/selectors/collectionsStructure';
 
-import {WorkbookDialog} from './WorkbookDialog';
+import {WorkbookDialog, type WorkbookDialogValues} from './WorkbookDialog';
+import {useCollectionEntityDialogState} from './hooks/useCollectionEntityDialogState';
 
 const i18n = I18n.keyset('component.collections-structure');
 
@@ -32,48 +34,63 @@ export type OpenDialogEditWorkbookArgs = {
 export const EditWorkbookDialog: React.FC<Props> = (props) => {
     const dispatch: AppDispatch = useDispatch();
 
+    const {title, description, open, onClose} = props;
+
+    const {
+        values: dialogValues,
+        errors: dialogErrors,
+        handleChange: handleDialogChange,
+        handleError: handleDialogError,
+    } = useCollectionEntityDialogState({
+        title,
+        description,
+    });
+
     const isLoading = useSelector(selectUpdateWorkbookIsLoading);
 
     const handleApply = React.useCallback(
-        async ({
-            title,
-            description,
-            onClose,
-        }: {
-            title: string;
-            description?: string;
-            onClose: () => void;
-        }) => {
+        async (
+            {title: dialogTitle, description: dialogDescription}: WorkbookDialogValues,
+            dialogOnClose: () => void,
+        ) => {
             const {workbookId, onApply} = props;
 
-            const result = await dispatch(
-                updateWorkbook({
-                    workbookId,
-                    title,
-                    description: description ?? '',
-                }),
-            );
+            try {
+                const result = await dispatch(
+                    updateWorkbook(
+                        {
+                            workbookId,
+                            title: dialogTitle,
+                            description: dialogDescription ?? '',
+                        },
+                        true,
+                    ),
+                );
 
-            if (onApply) {
-                onApply(result);
+                if (onApply) {
+                    onApply(result);
+                }
+
+                dialogOnClose();
+            } catch (error) {
+                if (error.code === ErrorCode.WorkbookAlreadyExists) {
+                    handleDialogError({title: i18n('label_workbook-already-exists-error')});
+                }
             }
-
-            onClose();
         },
-        [dispatch, props],
+        [dispatch, handleDialogError, props],
     );
-
-    const {title, description, open, onClose} = props;
 
     return (
         <WorkbookDialog
+            values={dialogValues}
+            errors={dialogErrors}
             title={i18n('action_edit-workbook')}
-            titleValue={title}
-            descriptionValue={description}
             textButtonApply={i18n('action_save')}
             open={open}
             isLoading={isLoading}
             titleAutoFocus
+            onChange={handleDialogChange}
             onApply={handleApply}
             onClose={onClose}
         />

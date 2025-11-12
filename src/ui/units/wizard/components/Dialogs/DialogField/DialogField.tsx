@@ -288,31 +288,29 @@ class DialogField extends React.PureComponent<DialogFieldInnerProps, DialogField
             <Dialog
                 open={true}
                 onClose={this.props.onCancel}
-                className={b()}
+                className={b({[itemType]: true})}
                 disableHeightTransition={true}
             >
-                <div className={b(itemType)}>
-                    <Dialog.Header
-                        caption={item.fakeTitle || item.title}
-                        insertBefore={<Icon data={dataTypeIconData} width="16" />}
-                    />
-                    <Dialog.Body className={b('body')}>{modalBody}</Dialog.Body>
-                    <Dialog.Footer
-                        preset="default"
-                        onClickButtonCancel={() => {
-                            this.props.onCancel();
-                        }}
-                        onClickButtonApply={() => {
-                            this.props.onApply(this.state);
-                        }}
-                        textButtonApply={i18n('wizard', 'button_apply')}
-                        textButtonCancel={i18n('wizard', 'button_cancel')}
-                        propsButtonApply={{
-                            disabled: !valid || isErrorOccurred,
-                            qa: 'field-dialog-apply',
-                        }}
-                    />
-                </div>
+                <Dialog.Header
+                    caption={item.fakeTitle || item.title}
+                    insertBefore={<Icon data={dataTypeIconData} width="16" />}
+                />
+                <Dialog.Body className={b('body')}>{modalBody}</Dialog.Body>
+                <Dialog.Footer
+                    preset="default"
+                    onClickButtonCancel={() => {
+                        this.props.onCancel();
+                    }}
+                    onClickButtonApply={() => {
+                        this.props.onApply(this.state);
+                    }}
+                    textButtonApply={i18n('wizard', 'button_apply')}
+                    textButtonCancel={i18n('wizard', 'button_cancel')}
+                    propsButtonApply={{
+                        disabled: !valid || isErrorOccurred,
+                        qa: 'field-dialog-apply',
+                    }}
+                />
             </Dialog>
         );
     }
