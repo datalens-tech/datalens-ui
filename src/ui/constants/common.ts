@@ -169,7 +169,8 @@ export const DL = {
     get IS_NOT_AUTHENTICATED() {
         return (
             this.LANDING_PAGE_ERROR_TYPE === ErrorContentTypes.NOT_AUTHENTICATED ||
-            this.LANDING_PAGE_ERROR_TYPE === ErrorContentTypes.NOT_AUTHENTICATED_GALLERY
+            this.LANDING_PAGE_ERROR_TYPE === ErrorContentTypes.NOT_AUTHENTICATED_GALLERY ||
+            this.LANDING_PAGE_ERROR_TYPE === ErrorContentTypes.NOT_AUTHENTICATED_FESTIVAL
         );
     },
     get PUSH_SERVICE_CONFIG() {
