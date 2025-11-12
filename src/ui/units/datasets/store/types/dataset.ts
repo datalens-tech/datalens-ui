@@ -15,6 +15,7 @@ import type {
 import type {
     BaseSource,
     EntryFieldPublishedId,
+    GetEntryResponse,
     FormOptions as SchemaFormOptions,
     ValidateDatasetResponse,
 } from '../../../../../shared/schema';
@@ -107,7 +108,7 @@ import type {EDIT_HISTORY_OPTIONS_KEY} from '../constants';
 // TODO: correctly describe the type
 export type DatasetError = any | null;
 
-export type ConnectionEntry = {
+export type ConnectionEntry = GetEntryResponse & {
     data: ConnectionData;
     id?: string;
     entryId: string;
@@ -115,6 +116,7 @@ export type ConnectionEntry = {
     permissions?: Permissions;
     workbookId: WorkbookId;
     deleted?: boolean;
+    db_type?: string;
 };
 
 export type TranslatedItem = {

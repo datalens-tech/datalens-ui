@@ -4,13 +4,17 @@ import {Ellipsis, Plus} from '@gravity-ui/icons';
 import {Button, DropdownMenu, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import PropTypes from 'prop-types';
+import type {ConnectorType, DatasetOptions, DatasetSource} from 'shared';
 import {DatasetSourcesLeftPanelQA, EntryScope, PLACE} from 'shared';
-import {NavigationMinimal} from 'ui';
+import type {BaseSource, GetEntryResponse} from 'shared/schema';
+import {NavigationMinimal, type SDK} from 'ui';
 import {ConnectorIcon} from 'ui/components/ConnectorIcon/ConnectorIcon';
 import WorkbookNavigationMinimal from 'ui/components/WorkbookNavigationMinimal/WorkbookNavigationMinimal';
 import {registry} from 'ui/registry';
 import Utils, {getConnectorIconData} from 'ui/utils';
+
+import type {SelectedConnections, SortedSourcePrototypes} from '../../store/selectors';
+import type {ConnectionEntry, DatasetError, FreeformSource} from '../../store/types';
 
 import {SourcesTable} from './SourcesTable';
 import {ICON_PLUS_SIZE} from './constants';
@@ -21,13 +25,13 @@ import './SelectSourcePrototypes.scss';
 const b = block('select-sources-prototypes');
 const i18n = I18n.keyset('dataset.sources-tab.modify');
 
-function getConnectionType(connection = {}) {
+function getConnectionType(connection: Partial<SelectedConnections[number]> = {}) {
     const {db_type: dbType, type} = connection;
 
     return dbType || type;
 }
 
-function getConnectionName(connection) {
+function getConnectionName(connection: SelectedConnections[number]) {
     if (!connection) {
         return '';
     }
@@ -35,7 +39,11 @@ function getConnectionName(connection) {
     return Utils.getEntryNameFromKey(connection.key);
 }
 
-function checkAccessibilityAddConnectionButton({connections = []}) {
+function checkAccessibilityAddConnectionButton({
+    connections = [],
+}: {
+    connections?: SelectedConnections;
+}) {
     let isAllowedAddConnection = connections.length < 1;
 
     const isArrayContainOnlyCSV = connections.every(({type}) => type === 'csv');
@@ -47,7 +55,7 @@ function checkAccessibilityAddConnectionButton({connections = []}) {
     return isAllowedAddConnection;
 }
 
-function hasEnabledFreeformSources(freeformSources) {
+function hasEnabledFreeformSources(freeformSources: FreeformSource[]) {
     if (!freeformSources.length) {
         return false;
     }
@@ -55,11 +63,32 @@ function hasEnabledFreeformSources(freeformSources) {
     return freeformSources.some(({disabled}) => !disabled);
 }
 
-function getInactiveEntryIds(connections = []) {
+function getInactiveEntryIds(connections: SelectedConnections = []) {
     return connections.map(({entryId}) => entryId);
 }
 
-function ConnectionMenu(props) {
+type DeleteConnectionHandle = (props: {connectionId?: string}) => void;
+type OpenConnectionHandle = (connectionId?: string) => void;
+type ReplaceConnectionHandle = (connection: {id?: string}, args: Partial<GetEntryResponse>) => void;
+type DeleteSourceHandle = (props: {id: string}) => void;
+type EditSourceHandle = (source: DatasetSource) => void;
+type ClickConnectionHandle = (connectionId: string) => Promise<BaseSource[]>;
+type SelectConnectionHandle = (props: Partial<GetEntryResponse>) => void;
+
+type ConnectionMenuProps = {
+    sdk: SDK;
+    openEnabled: boolean;
+    deleteEnabled: boolean;
+    connectionId?: string;
+    inactiveEntryIds: string[];
+    onClickDeleteConnection: DeleteConnectionHandle;
+    onClickOpenConnection: OpenConnectionHandle;
+    onClickReplaceConnectionMenuItem: ReplaceConnectionHandle;
+    clickableTypes?: ConnectorType[];
+    workbookId?: string;
+};
+
+function ConnectionMenu(props: ConnectionMenuProps) {
     const {
         connectionId,
         openEnabled,
@@ -75,7 +104,7 @@ function ConnectionMenu(props) {
     const menuControlBtnRef = React.useRef(null);
     const [isNavVisible, setNavVisibility] = useState(false);
 
-    function onEntryClick(connection, e) {
+    function onEntryClick(connection: Partial<GetEntryResponse>, e?: React.MouseEvent) {
         e?.stopPropagation();
         setNavVisibility(false);
         onClickReplaceConnectionMenuItem({id: connectionId}, connection);
@@ -162,7 +191,19 @@ function ConnectionMenu(props) {
     );
 }
 
-function ConnectionsList(props) {
+type ConnectionsListProps = {
+    sdk: SDK;
+    connections: SelectedConnections;
+    connectionId?: string;
+    onClickConnection: ClickConnectionHandle;
+    onClickConnectionDeleteButton: DeleteConnectionHandle;
+    workbookId?: string;
+    openConnection: OpenConnectionHandle;
+    onClickReplaceConnectionMenuItem: ReplaceConnectionHandle;
+    clickableTypes?: ConnectorType[];
+};
+
+function ConnectionsList(props: ConnectionsListProps) {
     const {
         sdk,
         connections,
@@ -175,53 +216,70 @@ function ConnectionsList(props) {
         workbookId,
     } = props;
 
-    return connections.map((connection) => {
-        const {id, entryId, type, deleted, deleteEnabled} = connection;
+    return (
+        <>
+            {connections.map((connection) => {
+                const {id, entryId, deleted, deleteEnabled} = connection;
 
-        const existedConnectionId = id || entryId;
-        const active = existedConnectionId === connectionId;
-        const connectionName = getConnectionName(connection);
+                const existedConnectionId = id || entryId;
+                const active = existedConnectionId === connectionId;
+                const connectionName = getConnectionName(connection);
 
-        return (
-            // 'connection-wrap' is needed in order for clicks within navigation
-            // did not trigger the click event on the 'connection' element
-            <div key={existedConnectionId} className={b('connection-wrap')}>
-                <div
-                    className={b('connection', {active})}
-                    onClick={() => onClickConnection(existedConnectionId, type)}
-                >
-                    <ConnectorIcon
-                        className={b('icon-connection')}
-                        data={getConnectorIconData(getConnectionType(connection))}
-                        height={24}
-                        width={24}
-                    />
-                    <span
-                        className={b('connection-title', {deleted})}
-                        title={connectionName}
-                        data-qa="select-sources-prototypes-connection-title"
-                    >
-                        {connectionName}
-                    </span>
-                </div>
-                <ConnectionMenu
-                    sdk={sdk}
-                    connectionId={existedConnectionId}
-                    openEnabled={!deleted}
-                    deleteEnabled={deleteEnabled}
-                    onClickDeleteConnection={onClickConnectionDeleteButton}
-                    onClickOpenConnection={openConnection}
-                    onClickReplaceConnectionMenuItem={onClickReplaceConnectionMenuItem}
-                    clickableTypes={clickableTypes}
-                    inactiveEntryIds={getInactiveEntryIds(connections)}
-                    workbookId={workbookId}
-                />
-            </div>
-        );
-    });
+                return (
+                    // 'connection-wrap' is needed in order for clicks within navigation
+                    // did not trigger the click event on the 'connection' element
+                    <div key={existedConnectionId} className={b('connection-wrap')}>
+                        <div
+                            className={b('connection', {active})}
+                            onClick={() => onClickConnection(existedConnectionId)}
+                        >
+                            <ConnectorIcon
+                                className={b('icon-connection')}
+                                data={getConnectorIconData(getConnectionType(connection))}
+                                height={24}
+                                width={24}
+                            />
+                            <span
+                                className={b('connection-title', {deleted})}
+                                title={connectionName}
+                                data-qa="select-sources-prototypes-connection-title"
+                            >
+                                {connectionName}
+                            </span>
+                        </div>
+                        <ConnectionMenu
+                            sdk={sdk}
+                            connectionId={existedConnectionId}
+                            openEnabled={!deleted}
+                            deleteEnabled={deleteEnabled}
+                            onClickDeleteConnection={onClickConnectionDeleteButton}
+                            onClickOpenConnection={openConnection}
+                            onClickReplaceConnectionMenuItem={onClickReplaceConnectionMenuItem}
+                            clickableTypes={clickableTypes}
+                            inactiveEntryIds={getInactiveEntryIds(connections)}
+                            workbookId={workbookId}
+                        />
+                    </div>
+                );
+            })}
+        </>
+    );
 }
 
-function SelectConnections(props) {
+type SelectConnectionsProps = {
+    sdk: SDK;
+    connections: SelectedConnections;
+    onSelectConnection: SelectConnectionHandle;
+    onClickConnection: ClickConnectionHandle;
+    onClickConnectionDeleteButton: DeleteConnectionHandle;
+    openConnection: OpenConnectionHandle;
+    replaceConnection: ReplaceConnectionHandle;
+    connectionId?: string;
+    workbookId?: string;
+    options: Partial<DatasetOptions>;
+};
+
+function SelectConnections(props: SelectConnectionsProps) {
     const {
         connectionId,
         sdk,
@@ -237,7 +295,7 @@ function SelectConnections(props) {
     const [isNavVisible, setNavVisibility] = useState(false);
     const connectionBtnRef = useRef(null);
 
-    function onEntryClick(entry) {
+    function onEntryClick(entry: Partial<GetEntryResponse>) {
         onSelectConnection(entry);
         setNavVisibility(false);
     }
@@ -314,13 +372,36 @@ function SelectConnections(props) {
     );
 }
 
-function SelectSourcePrototypes(props) {
+type SelectSourcePrototypesProps = SelectConnectionsProps & {
+    sdk: SDK;
+    connections: SelectedConnections;
+    sourcePrototypes: SortedSourcePrototypes;
+    freeformSources: FreeformSource[];
+    onSelectConnection: SelectConnectionHandle;
+    onClickConnection: ClickConnectionHandle;
+    openConnection: OpenConnectionHandle;
+    onClickConnectionDeleteButton: DeleteConnectionHandle;
+    onClickEditSource: EditSourceHandle;
+    onClickAddSource: () => void;
+    onDeleteSource: DeleteSourceHandle;
+    replaceConnection: ReplaceConnectionHandle;
+    getSources: () => void;
+    selectedConnection?: ConnectionEntry;
+    isDisabledDropSource: boolean;
+    isDisabledAddSource?: boolean;
+    isSourcesLoading: boolean;
+    error?: DatasetError;
+    workbookId?: string;
+    options: Partial<DatasetOptions>;
+};
+
+function SelectSourcePrototypes(props: SelectSourcePrototypesProps) {
     const {
         sdk,
         error,
         selectedConnection: {id, entryId} = {},
-        connections,
-        sourcePrototypes,
+        connections = [],
+        sourcePrototypes = [],
         freeformSources,
         onSelectConnection,
         onClickConnection,
@@ -348,7 +429,6 @@ function SelectSourcePrototypes(props) {
                 sdk={sdk}
                 connections={connections}
                 connectionId={connectionId}
-                isSourcesLoading={isSourcesLoading}
                 onClickConnection={onClickConnection}
                 onClickConnectionDeleteButton={onClickConnectionDeleteButton}
                 onSelectConnection={onSelectConnection}
@@ -372,69 +452,5 @@ function SelectSourcePrototypes(props) {
         </div>
     );
 }
-
-ConnectionsList.propTypes = {
-    sdk: PropTypes.object.isRequired,
-    connections: PropTypes.array.isRequired,
-    onClickConnection: PropTypes.func.isRequired,
-    onClickConnectionDeleteButton: PropTypes.func.isRequired,
-    openConnection: PropTypes.func.isRequired,
-    onClickReplaceConnectionMenuItem: PropTypes.func.isRequired,
-    clickableTypes: PropTypes.array,
-    workbookId: PropTypes.string,
-};
-
-SelectConnections.propTypes = {
-    sdk: PropTypes.object.isRequired,
-    connections: PropTypes.array.isRequired,
-    onSelectConnection: PropTypes.func.isRequired,
-    onClickConnection: PropTypes.func.isRequired,
-    onClickConnectionDeleteButton: PropTypes.func.isRequired,
-    openConnection: PropTypes.func.isRequired,
-    replaceConnection: PropTypes.func.isRequired,
-    connectionId: PropTypes.string,
-    workbookId: PropTypes.string,
-    options: PropTypes.object,
-};
-
-ConnectionMenu.propTypes = {
-    openEnabled: PropTypes.bool.isRequired,
-    deleteEnabled: PropTypes.bool.isRequired,
-    connectionId: PropTypes.string.isRequired,
-    sdk: PropTypes.object.isRequired,
-    inactiveEntryIds: PropTypes.arrayOf(PropTypes.string).isRequired,
-    onClickDeleteConnection: PropTypes.func.isRequired,
-    onClickOpenConnection: PropTypes.func.isRequired,
-    onClickReplaceConnectionMenuItem: PropTypes.func.isRequired,
-    clickableTypes: PropTypes.array,
-    workbookId: PropTypes.string,
-};
-
-SelectSourcePrototypes.propTypes = {
-    sdk: PropTypes.object.isRequired,
-    connections: PropTypes.array.isRequired,
-    sourcePrototypes: PropTypes.array.isRequired,
-    freeformSources: PropTypes.array.isRequired,
-    onSelectConnection: PropTypes.func.isRequired,
-    onClickConnection: PropTypes.func.isRequired,
-    openConnection: PropTypes.func.isRequired,
-    onClickConnectionDeleteButton: PropTypes.func.isRequired,
-    onClickEditSource: PropTypes.func.isRequired,
-    onClickAddSource: PropTypes.func.isRequired,
-    onDeleteSource: PropTypes.func.isRequired,
-    replaceConnection: PropTypes.func.isRequired,
-    getSources: PropTypes.func.isRequired,
-    selectedConnection: PropTypes.object,
-    isDisabledDropSource: PropTypes.bool.isRequired,
-    isDisabledAddSource: PropTypes.bool,
-    isSourcesLoading: PropTypes.bool.isRequired,
-    error: PropTypes.object,
-    workbookId: PropTypes.string,
-    options: PropTypes.object,
-};
-SelectSourcePrototypes.defaultProps = {
-    connections: [],
-    sourcePrototypes: [],
-};
 
 export default SelectSourcePrototypes;
