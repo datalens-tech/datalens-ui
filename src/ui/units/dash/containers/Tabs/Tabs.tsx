@@ -50,18 +50,24 @@ function TabsComponent<T>(props: TabsProps<T>) {
                 size={size}
                 activeTab={props.currentTabId || undefined}
                 items={props.tabs.map(({id, title}) => ({id, title}))}
-                onSelectTab={(tabId, event) => {
+                onSelectTab={async (tabId, event) => {
                     // clicking on the tab with the meta-key pressed - opening the tab in a new window, and not switching to it
                     if (event && event.metaKey) {
                         return;
                     }
 
-                    props.setPageTab(tabId);
+                    const tabHashState = await props.setPageTab(tabId);
 
                     const searchParams = {
                         tab: tabId,
-                        state: getHashStateParam(props.hashStates, tabId),
+                        state: tabHashState?.hash ?? '',
                     };
+
+                    console.log(
+                        getHashStateParam(props.hashStates, tabId),
+                        'getHashStateParam(props.hashStates, tabId)',
+                    );
+
                     history.push({
                         ...location,
                         search: appendSearchQuery(location.search, searchParams),

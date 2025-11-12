@@ -264,8 +264,10 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             const searchParams = new URLSearchParams(location.search);
 
             if (hash) {
+                console.log('dddd');
                 searchParams.set('state', hash);
             } else {
+                console.log('delete');
                 searchParams.delete('state');
             }
 
@@ -1197,6 +1199,8 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         );
         const mobileFixedHeaderInitiallyOpened =
             shouldRenderMobileMenu && isFixedHeaderWidgetFocused;
+
+        console.log(this.props.hashStates, 'this.props.hashStates');
 
         return (
             <RefsContextProvider

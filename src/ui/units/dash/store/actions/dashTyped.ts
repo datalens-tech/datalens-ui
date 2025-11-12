@@ -6,13 +6,19 @@ import type {
     Config,
     DashKit,
     ItemsStateAndParams,
+    ItemsStateAndParamsBase,
     PluginTextProps,
     PluginTitleProps,
+    QueueGlobalItem,
+    QueueItem,
+    StateAndParamsMetaData,
+    StringParams,
 } from '@gravity-ui/dashkit';
 import {i18n} from 'i18n';
 import type {DatalensGlobalState} from 'index';
 import {URL_QUERY, sdk} from 'index';
 import isEmpty from 'lodash/isEmpty';
+import isEqual from 'lodash/isEqual';
 import {batch} from 'react-redux';
 import type {
     DashData,
@@ -27,7 +33,7 @@ import type {
     DashTabItemWidget,
     RecursivePartial,
 } from 'shared';
-import {EntryScope, EntryUpdateMode} from 'shared';
+import {DashTabItemType, EntryScope, EntryUpdateMode, Feature} from 'shared';
 import type {AppDispatch} from 'ui/store';
 import {
     addEditHistoryPoint,
@@ -35,6 +41,7 @@ import {
     resetEditHistoryUnit,
 } from 'ui/store/actions/editHistory';
 import type {ItemDataSource} from 'ui/store/typings/controlDialog';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {getLoginOrIdFromLockedError, isEntryIsLockedError} from 'utils/errors/errorByCode';
 
 import {setLockedTextInfo} from '../../../../components/RevisionsPanel/RevisionsPanel';
@@ -51,6 +58,7 @@ import {LOCK_DURATION, Mode} from '../../modules/constants';
 import type {CopiedConfigContext} from '../../modules/helpers';
 import {collectDashStats} from '../../modules/pushStats';
 import {DashUpdateStatus} from '../../typings/dash';
+import {isItemScopeAvailableOnTab} from '../../utils/selectors';
 import {DASH_EDIT_HISTORY_UNIT_ID} from '../constants';
 import * as actionTypes from '../constants/dashActionTypes';
 import {
@@ -200,23 +208,190 @@ export type SetPageTabAction = {
         hashStates?: TabsHashStates;
     };
 };
-export const setPageTab = (tabId: string) => {
+
+const getStateFromGlobalQueue = (globalQueue: QueueGlobalItem[], influencingIds: Set<string>) => {
+    const params: Record<string, {params: Record<string, StringParams>}> = {};
+    const queue: QueueItem[] = [];
+
+    for (const item of globalQueue) {
+        const {id, groupItemId} = item;
+        if (groupItemId && influencingIds.has(id) && influencingIds.has(groupItemId)) {
+            queue.push({id, groupItemId});
+
+            if (params[id]) {
+                params[id].params[groupItemId] = item.params;
+            } else {
+                params[id] = {params: {[groupItemId]: item.params}};
+            }
+        }
+    }
+
+    return {params, queue};
+};
+
+// Helper function to collect influencing IDs from global items
+const getInfluencingIds = (
+    globalItems: DashTabItem[] | undefined,
+    newTabId: string,
+): Set<string> => {
+    if (!globalItems) {
+        return new Set();
+    }
+
+    const influencingIds = new Set<string>();
+    for (const item of globalItems) {
+        if (item.type === DashTabItemType.GroupControl) {
+            influencingIds.add(item.id);
+            for (const groupItem of item.data.group) {
+                if (isItemScopeAvailableOnTab(groupItem.tabsScope, newTabId)) {
+                    influencingIds.add(groupItem.id);
+                }
+            }
+        }
+    }
+    return influencingIds;
+};
+
+// Helper function to process existing tab state
+const processExistingTabState = (
+    newTabHashState: ItemsStateAndParams,
+    currentMeta: StateAndParamsMetaData,
+    params: Record<string, {params: Record<string, StringParams>}>,
+    queue: QueueItem[],
+    previousMeta: StateAndParamsMetaData,
+): ItemsStateAndParams => {
+    const currentQueue = currentMeta.queue ?? [];
+    const existingQueueIds = new Set(currentQueue.map((item) => item.groupItemId));
+    const updatedGlobalItems = new Set<string>();
+
+    // Check for parameter changes
+    for (const [id, {params: groupParams}] of Object.entries(params)) {
+        const itemParams = (newTabHashState as ItemsStateAndParamsBase)[id]?.params;
+        if (itemParams) {
+            for (const [groupItemId, groupItemParams] of Object.entries(groupParams)) {
+                if (itemParams[groupItemId] && !isEqual(itemParams[groupItemId], groupItemParams)) {
+                    updatedGlobalItems.add(groupItemId);
+                    existingQueueIds.delete(groupItemId);
+                }
+            }
+        }
+    }
+
+    const updatedQueue =
+        updatedGlobalItems.size > 0
+            ? currentQueue.filter(
+                  (item) => item.groupItemId && !updatedGlobalItems.has(item.groupItemId),
+              )
+            : currentQueue;
+
+    const missingQueueItems = queue.filter(
+        (queueItem) => !existingQueueIds.has(queueItem.groupItemId),
+    );
+
+    return {
+        ...newTabHashState,
+        ...params,
+        __meta__: {
+            ...previousMeta,
+            globalQueue: previousMeta.globalQueue,
+            queue: updatedQueue.concat(missingQueueItems),
+            version: previousMeta?.version || 2,
+        },
+    };
+};
+
+// Helper function to create new tab state
+const createNewTabState = (
+    params: Record<string, {params: Record<string, StringParams>}>,
+    queue: QueueItem[],
+    globalQueue: QueueGlobalItem[],
+): ItemsStateAndParams => ({
+    ...params,
+    __meta__: {
+        globalQueue,
+        queue,
+        version: 2,
+    },
+});
+
+export const setPageTab = (newTabId: string) => {
     return async function (dispatch: DashDispatch, getState: GetState) {
-        const {dash} = getState();
+        const {
+            dash: {hashStates, tabId, entry, data},
+        } = getState();
+
+        const setPagePayload: SetPageTabAction['payload'] = {tabId: newTabId};
+
+        const previousHashState = tabId ? hashStates?.[tabId] : null;
+        const previousMeta = previousHashState?.state?.__meta__ as StateAndParamsMetaData;
+        const actualGlobalQueue = previousMeta?.globalQueue;
+
+        // Early return if global selectors are disabled
+        if (!isEnabledFeature(Feature.EnableGlobalSelectors) || !actualGlobalQueue?.length) {
+            collectDashStats({
+                dashId: entry.entryId,
+                dashTabId: newTabId,
+                dashStateHash: null,
+            });
+
+            dispatch({type: SET_PAGE_TAB, payload: setPagePayload});
+            dispatch(addDashEditHistoryPoint(true));
+            return null;
+        }
+
+        const newTab = data.tabs.find((tab) => tab.id === newTabId);
+        const influencingIds = getInfluencingIds(newTab?.globalItems, newTabId);
+
+        if (influencingIds.size === 0) {
+            collectDashStats({
+                dashId: entry.entryId,
+                dashTabId: newTabId,
+                dashStateHash: null,
+            });
+
+            dispatch({type: SET_PAGE_TAB, payload: setPagePayload});
+            dispatch(addDashEditHistoryPoint(true));
+            return null;
+        }
+
+        const {params, queue} = getStateFromGlobalQueue(actualGlobalQueue, influencingIds);
+        const existingTabState = hashStates?.[newTabId]?.state;
+
+        let newTabHashState: ItemsStateAndParams;
+
+        if (existingTabState) {
+            const currentMeta = existingTabState.__meta__ as StateAndParamsMetaData;
+            newTabHashState = processExistingTabState(
+                existingTabState,
+                currentMeta,
+                params,
+                queue,
+                previousMeta,
+            );
+        } else {
+            newTabHashState = createNewTabState(params, queue, actualGlobalQueue);
+        }
+
+        const {hash} = await getSdk().sdk.us.createDashState({
+            entryId: entry.entryId,
+            data: newTabHashState,
+        });
+
+        setPagePayload.hashStates = {
+            ...hashStates,
+            [newTabId]: {state: newTabHashState, hash},
+        };
 
         collectDashStats({
-            dashId: dash.entry.entryId,
-            dashTabId: tabId,
-            // resets when switching tabs
-            dashStateHash: null,
+            dashId: entry.entryId,
+            dashTabId: newTabId,
+            dashStateHash: hash ?? null,
         });
 
-        dispatch({
-            type: SET_PAGE_TAB,
-            // TODO: if you pass null, then DashKit crashes
-            payload: {tabId},
-        });
+        dispatch({type: SET_PAGE_TAB, payload: setPagePayload});
         dispatch(addDashEditHistoryPoint(true));
+
+        return setPagePayload.hashStates[newTabId];
     };
 };
 
@@ -321,14 +496,21 @@ export type SetTabHashStateAction = {
 };
 
 export function setTabHashState(data: Omit<SetTabHashStateAction['payload'], 'hashStates'>) {
-    return async (dispatch: DashDispatch) => {
+    return async (dispatch: DashDispatch, getState: () => DatalensGlobalState) => {
+        const {hashStates} = getState().dash;
         const {entryId, stateHashId, tabId} = data;
         const newData: SetTabHashStateAction['payload'] = {...data};
 
         if (stateHashId && entryId) {
-            const hashData = await getSdk()
-                .sdk.us.getDashState({entryId, hash: stateHashId})
-                .catch((error) => logger.logError('getDashState failed', error));
+            let hashData: ItemsStateAndParams | null | undefined = hashStates?.[tabId]?.state;
+
+            if (!hashData) {
+                const calculatedHashData = await getSdk()
+                    .sdk.us.getDashState({entryId, hash: stateHashId})
+                    .catch((error) => logger.logError('getDashState failed', error));
+
+                hashData = calculatedHashData ? calculatedHashData.data : null;
+            }
 
             if (hashData) {
                 /*const {
@@ -339,7 +521,7 @@ export function setTabHashState(data: Omit<SetTabHashStateAction['payload'], 'ha
                     [tabId]: {
                         hash: stateHashId,
                         // state: {...controls, ...states},
-                        state: hashData.data,
+                        state: hashData,
                     },
                 };
             }
