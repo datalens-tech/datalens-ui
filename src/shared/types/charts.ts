@@ -293,13 +293,19 @@ type ChartActivityToastResult = {
     content?: string;
 };
 
+type ChartActivityPopupResult = {
+    action: 'popup';
+    title: string;
+    content: string;
+};
+
 type ChartActivitySetParamsResult = {
     action: 'setParams';
     params: StringParams;
 };
 
 export type ChartActivityResponseData = {
-    data?: ChartActivityToastResult | ChartActivitySetParamsResult;
+    data?: ChartActivityToastResult | ChartActivitySetParamsResult | ChartActivityPopupResult;
     error?: {
         details?: {
             stackTrace?: string;

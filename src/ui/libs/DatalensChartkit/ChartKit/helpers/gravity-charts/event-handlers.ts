@@ -20,10 +20,11 @@ type OnClickHandlerArgs = {
     series: unknown;
     event: PointerEvent;
     onChange?: ChartKitAdapterProps['onChange'];
+    runActivity?: ChartKitAdapterProps['runActivity'];
 };
 
 export function handleClick(args: OnClickHandlerArgs) {
-    const {widgetData, event, onChange, point, series} = args;
+    const {widgetData, event, point, series, onChange, runActivity} = args;
     const drillDownData = widgetData?.config?.drillDown;
 
     if (drillDownData) {
@@ -85,6 +86,17 @@ export function handleClick(args: OnClickHandlerArgs) {
                         point: point as ChartSeriesData,
                         series: series as ChartSeries,
                     });
+                    break;
+                }
+                case 'runActivity': {
+                    if (runActivity) {
+                        const params = {
+                            point: point as ChartSeriesData,
+                        };
+                        runActivity(params);
+                    }
+
+                    break;
                 }
             }
         });

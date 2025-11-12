@@ -26,7 +26,6 @@ import type {ControlsOnlyWidget} from '../../../libs/DatalensChartkit/types';
 import {selectSkipReload} from '../../../units/dash/store/selectors/dashTypedSelectors';
 import DebugInfoTool from '../../DashKit/plugins/DebugInfoTool/DebugInfoTool';
 
-import {useChartActivities} from './helpers/chart-activities';
 import {COMPONENT_CLASSNAME, removeEmptyNDatasetFieldsProperties} from './helpers/helpers';
 import {useLoadingChartSelector} from './hooks/useLoadingChartSelector';
 import type {
@@ -264,11 +263,6 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
         widgetType,
     });
 
-    const {onActivityComplete} = useChartActivities({
-        onChange: handleChange,
-        onActivityComplete: props.onActivityComplete,
-    });
-
     const hasControl = Boolean((loadedData as ControlsOnlyWidget)?.controls?.controls?.length);
 
     /**
@@ -359,7 +353,6 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
                             nonBodyScroll={nonBodyScroll}
                             initialParams={controlInitialParams}
                             runActivity={runActivity}
-                            onActivityComplete={onActivityComplete}
                         />
                     )}
                     {/* DatalensChartkitContent for error displaying & retry */}

@@ -1,6 +1,7 @@
 import React from 'react';
 
 import type {ChartKitProps, ChartKitType} from '@gravity-ui/chartkit';
+import type {WidgetChartActivityProps} from 'ui/libs/DatalensChartkit/types';
 
 import {ChartKitAdapter} from '../../../../ChartKit/ChartKitAdapter';
 import settings from '../../../../modules/settings/settings';
@@ -28,7 +29,7 @@ type ChartProps = Pick<
     Pick<ChartKitProps<ChartKitType>, 'onRender' | 'onChartLoad' | 'renderPluginLoader'> & {
         rootNodeRef: React.RefObject<HTMLDivElement | null>;
         backgroundColor?: string;
-    };
+    } & WidgetChartActivityProps;
 
 export const Chart = (props: ChartProps) => {
     if (props.error) {
@@ -69,6 +70,8 @@ export const Chart = (props: ChartProps) => {
                 widgetDashState={props.widgetDashState}
                 rootNodeRef={props.rootNodeRef}
                 backgroundColor={props.backgroundColor}
+                runActivity={props.runActivity}
+                onActivityComplete={props.onActivityComplete}
             />
         );
     }

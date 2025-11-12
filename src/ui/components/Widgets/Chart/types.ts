@@ -4,12 +4,7 @@ import type {ChartKitRef} from '@gravity-ui/chartkit';
 import type {CkHighchartsSeriesOptionsType, Highcharts} from '@gravity-ui/chartkit/highcharts';
 import type {CancelTokenSource} from 'axios';
 import type {Split} from 'react-split-pane';
-import type {
-    ChartActivityResponseData,
-    DashTabItemControlSourceType,
-    MenuItemsIds,
-    StringParams,
-} from 'shared';
+import type {DashTabItemControlSourceType, MenuItemsIds, StringParams} from 'shared';
 import type {OnWidgetLoadDataHandler} from 'ui/components/DashKit/context/WidgetContext';
 import type {
     Widget as ChartWidget,
@@ -17,7 +12,9 @@ import type {
     ControlWidget,
     LoadedWidget,
     LoadedWidgetData,
+    OnActivityComplete,
     OnChangeData,
+    WidgetChartActivityProps,
     WidgetDashState,
 } from 'ui/libs/DatalensChartkit/types';
 import type {GetChartkitMenuByType} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
@@ -32,7 +29,6 @@ import type {
     ChartKitWrapperLoadStatusUnknown,
     ChartKitWrapperOnLoadProps,
 } from '../../../libs/DatalensChartkit/components/ChartKitBase/types';
-import type {ControlProps} from '../../../libs/DatalensChartkit/components/Control/types';
 import type {Props as DrillProps} from '../../../libs/DatalensChartkit/components/Drill/Drill';
 import type {MenuItemConfig} from '../../../libs/DatalensChartkit/menu/Menu';
 import type {
@@ -131,9 +127,7 @@ type ChartKitBaseWrapperProps = ChartsProps & {
 
     needRenderContentControls?: boolean;
     reload?: (args?: {silentLoading?: boolean; noVeil?: boolean}) => void;
-
-    onActivityComplete?: (args: {responseData?: ChartActivityResponseData}) => void;
-};
+} & WidgetChartActivityProps;
 
 export type ChartWidgetProviderPropsWithRefProps = ChartRefProp &
     Omit<WidgetPluginProps, 'debouncedAdjustWidgetLayout' | 'forwardedRef'> &
@@ -204,6 +198,7 @@ export type ChartNoWidgetProps = ChartProviderPropsWithRefProps &
     Omit<ChartKitBaseWrapperProps, 'onLoad'> & {
         rootNodeRef?: React.RefObject<HTMLDivElement>;
         chartKitRef?: React.RefObject<ChartKit | ChartKitRef>;
+        onActivityComplete?: OnActivityComplete;
     };
 
 export type ChartWidgetPropsWithContext = ChartWidgetProviderPropsWithRefProps &
@@ -231,7 +226,7 @@ export type ChartKitWrapperParams = {
     getControls: (params: StringParams) => void;
     paneSplitOrientation?: 'vertical' | 'horizontal';
     widgetDashState?: WidgetDashState;
-};
+} & WidgetChartActivityProps;
 
 export type ChartWidgetData =
     | (ChartKitLoadSuccess<ChartsData>['data']['widget'] & {
@@ -319,8 +314,6 @@ export type ChartContentProps = Pick<
         enableActionParams?: boolean;
         enableAssistant?: boolean;
         rootNodeRef: React.RefObject<HTMLDivElement | null>;
-        runActivity?: ControlProps['runActivity'];
-        onActivityComplete?: ControlProps['onActivityComplete'];
         backgroundColor?: string;
     };
 
@@ -336,9 +329,7 @@ export type ChartControlsType = Pick<ChartKitWrapperParams, 'onError' | 'onChang
         initialParams: ChartInitialParams;
         getControls?: ChartKitWrapperParams['getControls'];
         onUpdate?: (data: OnChangeData) => void;
-        runActivity?: ControlProps['runActivity'];
-        onActivityComplete?: ControlProps['onActivityComplete'];
-    };
+    } & WidgetChartActivityProps;
 
 export type ResolveWidgetControlDataRefArgs =
     | (LoadedWidgetData<ChartsData> & ControlWidget & ChartsData['extra'])
