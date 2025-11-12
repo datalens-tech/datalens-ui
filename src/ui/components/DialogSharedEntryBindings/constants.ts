@@ -1,4 +1,4 @@
-import type {mockSharedEntriesTexts} from '../../../i18n-keysets/shared-entries.view/ru';
+import type {mockSharedEntriesTexts} from 'ui/units/collections/components/constants';
 
 export const Attachment = {
     TARGET: 'target',
