@@ -1,9 +1,11 @@
 import React from 'react';
 
-import {Button, Dialog, SegmentedRadioGroup as RadioButton} from '@gravity-ui/uikit';
+import {Button, Dialog, Divider, SegmentedRadioGroup as RadioButton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import debounce from 'lodash/debounce';
 import {CollectionItemEntities} from 'shared';
 import type {GetEntryResponse} from 'shared/schema';
+import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 
 import DialogManager from '../DialogManager/DialogManager';
 import {EntitiesList} from '../EntitiesList/EntitiesList';
@@ -11,7 +13,7 @@ import {PlaceholderIllustration} from '../PlaceholderIllustration/PlaceholderIll
 import {SharedBindingsList} from '../SharedBindingsList/SharedBindingsList';
 
 import type {AttachmentValue} from './constants';
-import {Attachment, ObjectsListTitles} from './constants';
+import {Attachment, ObjectsListTitles, SEARCH_DELAY} from './constants';
 import type {mock} from './mock';
 import {getEntityBindings} from './mock';
 
@@ -48,6 +50,7 @@ export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps>
 
     const [searchFilter, setSearchFilter] = React.useState('');
     const [isLoading, setIsLoading] = React.useState(true);
+    const [isSearchLoading, setIsSearchLoading] = React.useState(false);
     const [isError, setIsError] = React.useState(false);
 
     const showDirectionControl = entry.scope === 'dataset';
@@ -56,25 +59,54 @@ export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps>
         setCurrentDirection(value);
     };
 
-    const fetchEntityBindings = React.useCallback(() => {
-        setIsLoading(true);
-        setIsError(false);
-        // cancelConcurrentRequest();
-        getEntityBindings(entry.entryId, currentDirection, searchFilter)
-            .then((response) => {
-                setEntities(sortEntities(response.items));
-                setIsLoading(false);
-            })
-            .catch((error) => {
-                if (error.isCancelled) {
-                    return;
-                }
-                setIsError(true);
-                setIsLoading(false);
-            });
-    }, [entry, currentDirection, searchFilter]);
+    const fetchEntityBindings = React.useCallback(
+        (filter = '') => {
+            setIsLoading(true);
+            setIsError(false);
+            // cancelConcurrentRequest();
+            getEntityBindings(entry.entryId, currentDirection, filter)
+                .then((response) => {
+                    setEntities(sortEntities(response.items));
+                    setIsLoading(false);
+                    setIsSearchLoading(false);
+                })
+                .catch((error) => {
+                    if (error.isCancelled) {
+                        return;
+                    }
+                    setIsError(true);
+                    setIsLoading(false);
+                    setIsSearchLoading(false);
+                });
+        },
+        [entry, currentDirection],
+    );
+
+    const debouncedSearch = React.useMemo(
+        () =>
+            debounce((value: string) => {
+                setIsSearchLoading(true);
+                fetchEntityBindings(value);
+            }, SEARCH_DELAY),
+        [fetchEntityBindings],
+    );
+
+    const onSearch = React.useCallback(
+        (value: string) => {
+            setSearchFilter(value);
+            debouncedSearch(value);
+        },
+        [debouncedSearch],
+    );
 
     React.useEffect(() => {
+        return () => {
+            debouncedSearch.cancel();
+        };
+    }, [debouncedSearch]);
+
+    React.useEffect(() => {
+        setSearchFilter('');
         fetchEntityBindings();
     }, [fetchEntityBindings]);
 
@@ -82,7 +114,7 @@ export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps>
         if (isError) {
             const renderRetryAction = () => (
                 <Button className={b('button-retry')} size="l" view="action" onClick={() => {}}>
-                    Попробовать снова
+                    {getSharedEntryMockText('bindings-dialog-retry-btn')}
                 </Button>
             );
 
@@ -91,7 +123,7 @@ export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps>
                     <PlaceholderIllustration
                         direction="column"
                         name="error"
-                        title="Произошла ошибка"
+                        title={getSharedEntryMockText('bindings-dialog-error')}
                         renderAction={renderRetryAction}
                     />
                 </div>
@@ -102,29 +134,34 @@ export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps>
             <SharedBindingsList
                 entities={entities}
                 searchProps={{
-                    onSearch: setSearchFilter,
-                    placeholder: 'Name',
+                    value: searchFilter,
+                    onUpdate: onSearch,
+                    placeholder: getSharedEntryMockText('entries-list-search-placeholder'),
                     disabled: isLoading || isError,
+                    loading: isSearchLoading,
                 }}
-                title={showDirectionControl ? ObjectsListTitles[currentDirection] : undefined}
+                title={
+                    showDirectionControl
+                        ? getSharedEntryMockText(ObjectsListTitles[currentDirection])
+                        : undefined
+                }
                 isLoading={isLoading}
             />
         );
     };
 
     return (
-        // TODO texts in CHARTS-11999
         <Dialog open={open} onClose={onClose} className={b()}>
-            <Dialog.Header caption="Управление привязками" />
+            <Dialog.Header caption={getSharedEntryMockText('title-bindings-dialog')} />
             <Dialog.Body className={b('body')}>
                 <EntitiesList
                     isCurrent={true}
                     enableHover={true}
                     entities={[entry]}
-                    title="Выбранный объект"
-                    className={b('current-row', {divider: !showDirectionControl})}
+                    title={getSharedEntryMockText('label-current-entry')}
+                    className={b('current-row')}
                 />
-
+                {!showDirectionControl && <Divider className={b('divider')} />}
                 {showDirectionControl && (
                     <RadioButton
                         className={b('direction')}
@@ -133,10 +170,10 @@ export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps>
                         width="auto"
                     >
                         <RadioButton.Option value={Attachment.TARGET}>
-                            Используется в воркбуках
+                            {getSharedEntryMockText('label-attachment-target')}
                         </RadioButton.Option>
                         <RadioButton.Option value={Attachment.SOURCE}>
-                            Содержит подключения
+                            {getSharedEntryMockText('label-attachment-source')}
                         </RadioButton.Option>
                     </RadioButton>
                 )}

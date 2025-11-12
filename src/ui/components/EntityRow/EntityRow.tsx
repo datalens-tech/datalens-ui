@@ -7,6 +7,7 @@ import block from 'bem-cn-lite';
 import {CollectionItemEntities} from 'shared';
 import {getEntryNameByKey} from 'shared/modules';
 import navigateHelper from 'ui/libs/navigateHelper';
+import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 import {COLLECTIONS_PATH, WORKBOOKS_PATH} from 'ui/units/collections-navigation/constants';
 
 import {CollectionIcon} from '../CollectionIcon/CollectionIcon';
@@ -63,7 +64,6 @@ const getHref = (entity: RowEntityData) => {
     }
 };
 
-// TODO texts in CHARTS-11999
 export const EntityRow = React.memo(
     ({entity, className, actions, showRelationButton = true}: EntryRowProps) => {
         const entryName = getName(entity);
@@ -96,7 +96,7 @@ export const EntityRow = React.memo(
                         <div className={b('workbook-relations')}>
                             <Tooltip
                                 className={b('notice')}
-                                content="Перейти к связанным объектам в воркбуке"
+                                content={getSharedEntryMockText('entity-row-relation-tooltip-text')}
                             >
                                 <Button view="flat" size="s">
                                     <Icon data={CodeTrunk} width={16} height={16} />
@@ -125,7 +125,9 @@ export const EntityRow = React.memo(
                             className={b('delegation-status-icon')}
                         />
                         <Text variant="body-1">
-                            {entity.isDelegated ? 'Права делегированы' : 'Без делегации прав'}
+                            {entity.isDelegated
+                                ? getSharedEntryMockText('entity-row-delegated')
+                                : getSharedEntryMockText('entity-row-not-delegated')}
                         </Text>
                     </div>
                     {actions && <DropdownMenu items={actions} />}

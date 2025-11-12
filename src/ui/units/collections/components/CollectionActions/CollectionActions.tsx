@@ -19,6 +19,7 @@ import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {Feature} from '../../../../../shared';
 import {registry} from '../../../../registry';
 import {selectCollection} from '../../store/selectors';
+import {getSharedEntryMockText} from '../helpers';
 
 import collectionIcon from '../../../../assets/icons/collections/collection.svg';
 import workbookIcon from '../../../../assets/icons/collections/workbook.svg';
@@ -97,9 +98,8 @@ export const CollectionActions = React.memo<Props>(
 
         if (showCreateSharedEntry) {
             createActionItems.push([
-                //TODO texts in CHARTS-11999
                 {
-                    text: 'Общие объекты',
+                    text: getSharedEntryMockText('collection-actions-menu-item'),
                     iconStart: <CodeTrunk />,
                     items: [
                         {
@@ -107,7 +107,9 @@ export const CollectionActions = React.memo<Props>(
                                 <div>
                                     <div className={b('notice-container')}>
                                         <p className={b('notice-text')}>
-                                            Объекты для переиспользования и подключения в воркбуки
+                                            {getSharedEntryMockText(
+                                                'collection-actions-menu-notice',
+                                            )}
                                         </p>
                                     </div>
                                 </div>
@@ -123,7 +125,7 @@ export const CollectionActions = React.memo<Props>(
                                     overrideIconType="connection"
                                 />
                             ),
-                            text: 'Подключение',
+                            text: getSharedEntryMockText('label-shared-connection'),
                             action: () =>
                                 history.push(
                                     `/collections/${collection?.collectionId}/connections/new`,
@@ -131,7 +133,7 @@ export const CollectionActions = React.memo<Props>(
                         },
                         {
                             iconStart: <EntryIcon entry={{scope: 'dataset'}} />,
-                            text: 'Датасет',
+                            text: getSharedEntryMockText('label-shared-dataset'),
                             action: () =>
                                 history.push(
                                     `/collections/${collection?.collectionId}/datasets/new`,

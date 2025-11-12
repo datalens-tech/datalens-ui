@@ -3,6 +3,7 @@ import React from 'react';
 import type {DropdownMenuItem} from '@gravity-ui/uikit';
 import {List, Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 
 import type {RowEntityData} from '../EntityRow/EntityRow';
 import {EntityRow} from '../EntityRow/EntityRow';
@@ -24,21 +25,20 @@ interface SharedBindingsListProps {
 
 const dropdownItems: DropdownMenuItem[] = [
     {
-        text: 'Отвязать',
+        text: getSharedEntryMockText('shared-bindings-list-action-unbind'),
         action: () => {},
     },
     {
-        text: 'Поменять права',
+        text: getSharedEntryMockText('shared-bindings-list-action-change-permissions'),
         action: () => {},
     },
 ];
 
-// TODO texts in CHARTS-11999
 export const SharedBindingsList: React.FC<SharedBindingsListProps> = ({
     entities,
     searchProps,
     isLoading,
-    title = 'Привязанные объекты',
+    title = getSharedEntryMockText('shared-bindings-list-title'),
 }) => {
     const renderList = () => {
         if (isLoading) {
@@ -54,7 +54,7 @@ export const SharedBindingsList: React.FC<SharedBindingsListProps> = ({
                 <PlaceholderIllustration
                     direction="column"
                     name="emptyDirectory"
-                    title="Биндинги отсутствуют"
+                    title={getSharedEntryMockText('shared-bindings-list-empty')}
                 />
             );
         }

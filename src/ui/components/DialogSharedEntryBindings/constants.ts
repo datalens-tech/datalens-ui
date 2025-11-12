@@ -1,3 +1,5 @@
+import type {mockSharedEntriesTexts} from '../../../i18n-keysets/shared-entries.view/ru';
+
 export const Attachment = {
     TARGET: 'target',
     SOURCE: 'source',
@@ -5,8 +7,9 @@ export const Attachment = {
 
 export type AttachmentValue = (typeof Attachment)[keyof typeof Attachment];
 
-// TODO texts in CHARTS-11999
-export const ObjectsListTitles: Record<AttachmentValue, string> = {
-    target: 'Воркбуки',
-    source: 'Подключения',
+export const ObjectsListTitles: Record<AttachmentValue, keyof typeof mockSharedEntriesTexts> = {
+    target: 'entries-list-title-workbook',
+    source: 'entries-list-title-source',
 };
+
+export const SEARCH_DELAY = 1000;
