@@ -105,7 +105,7 @@ export const DialogSharedEntryUnbind: React.FC<DialogSharedEntryUnbindProps> = (
     };
 
     return (
-        <Dialog open={open} onClose={onClose} className={b()}>
+        <Dialog size="m" open={open} onClose={onClose} className={b()}>
             <Dialog.Header
                 caption={getSharedEntryMockText('title-unbind-dialog', {
                     entry: AlertEntryTitles[entryInstance].toLowerCase(),
