@@ -2,7 +2,6 @@ import type z from 'zod';
 
 import type {CollectionItemEntities} from '../../../constants';
 import type {WorkbookStatus} from '../../../constants/workbooks';
-import type {copyWorkbookResultSchema} from '../actions/workbooks/copy-workbook';
 import type {createWorkbookResultSchema} from '../actions/workbooks/create-workbook';
 import type {deleteWorkbookResultSchema} from '../actions/workbooks/delete-workbook';
 import type {deleteWorkbooksResultSchema} from '../actions/workbooks/delete-workbooks';
@@ -15,6 +14,7 @@ import type {moveWorkbooksResultSchema} from '../actions/workbooks/move-workbook
 import type {updateWorkbookResultSchema} from '../actions/workbooks/update-workbook';
 
 import type {GetEntryResponse} from './entries';
+import type {GetDatalensOperationResponse} from './operations';
 import type {OrderDirection, OrderWorkbookEntriesField} from './sort';
 
 export type WorkbookPermission = {
@@ -90,7 +90,13 @@ export type DeleteWorkbooksResponse = z.infer<typeof deleteWorkbooksResultSchema
 
 export type DeleteWorkbookResponse = z.infer<typeof deleteWorkbookResultSchema>;
 
-export type CopyWorkbookResponse = z.infer<typeof copyWorkbookResultSchema>;
+export type CopyWorkbookArgs = {
+    workbookId: string;
+    collectionId?: string | null;
+    title?: string;
+};
+
+export type CopyWorkbookResponse = Workbook & {operation?: GetDatalensOperationResponse};
 
 export type MigrateEntriesToWorkbookArgs = {
     workbookId: string;

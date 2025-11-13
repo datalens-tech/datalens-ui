@@ -146,14 +146,6 @@ export const getPublicApiActionsV0 = <
         },
 
         // Workbook
-        copyWorkbook: {
-            resolve: (api) => api.us.copyWorkbook,
-            openApi: {
-                summary: 'Copy workbook',
-                tags: [ApiTag.Workbook],
-            },
-            features: [Feature.CollectionsEnabled],
-        },
         createWorkbook: {
             resolve: (api) => api.us.createWorkbook,
             openApi: {
