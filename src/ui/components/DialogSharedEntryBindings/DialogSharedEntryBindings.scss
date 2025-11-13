@@ -1,0 +1,36 @@
+.dialog-shared-entries-binding {
+    width: 900px;
+    max-height: 90vh;
+    min-height: 590px;
+    height: 0;
+
+    &__body {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+    }
+
+    &__current-row {
+        margin-bottom: 16px;
+    }
+
+    &__divider {
+        margin-bottom: 16px;
+    }
+
+    &__direction {
+        width: fit-content;
+        margin-bottom: 16px;
+    }
+
+    &__error-state {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+    }
+
+    &__button-retry {
+        margin-top: var(--g-spacing-5);
+    }
+}

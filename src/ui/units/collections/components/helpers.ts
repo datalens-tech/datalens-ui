@@ -5,6 +5,8 @@ import {DL} from 'ui';
 import {registry} from 'ui/registry';
 import {COLLECTIONS_PATH, WORKBOOKS_PATH} from 'ui/units/collections-navigation/constants';
 
+import {mockSharedEntriesTexts} from './constants';
+
 export const getIsWorkbookItem = (item: StructureItem): item is ExtendedWorkbook => {
     if (item.entity) {
         return item.entity === CollectionItemEntities.WORKBOOK;
@@ -48,4 +50,8 @@ export const getItemLink = (item: StructureItem) => {
                 ? `${WORKBOOKS_PATH}/${item.workbookId}`
                 : `${COLLECTIONS_PATH}/${item.collectionId}`;
     }
+};
+
+export const getSharedEntryMockText = (key: keyof typeof mockSharedEntriesTexts) => {
+    return mockSharedEntriesTexts[key];
 };
