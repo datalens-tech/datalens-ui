@@ -41,7 +41,12 @@ export type WizardChartRecipe = {
      * then each type of visualization will be located on a separate layer.
      */
     layers: {
-        /** visualization type - for example, linear, pie, or bar charts */
+        /** visualization type - for example, linear, pie, or bar charts
+         * "column" is a chart with vertical columns. The X-axis usually shows a category (most often a string), and the Y-axis shows a dimension (numbers).
+         * "column100p" is a normalized column chart. This is the same as "column", but "column100p" compares the proportional distribution of parts within each category, with the sum for each column equal to 100%.
+         * "bar" is a chart with horizontal bars. The Y-axis usually shows a category (most often a string), and the X-axis shows a dimension (numbers).
+         * "bar100p" is a normalized "bar" chart.
+         */
         type: WizardVisualizationId;
         /** Fields whose values are used to form the X-axis.
          * Usually, a single field is used, unless it is a categorical axis with grouping, as, for example, in a bar chart.

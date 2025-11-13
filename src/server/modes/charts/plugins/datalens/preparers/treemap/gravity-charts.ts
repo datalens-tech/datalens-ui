@@ -283,5 +283,8 @@ export function prepareD3Treemap({
         legend: {
             enabled: false,
         },
+        chart: {
+            zoom: {enabled: false},
+        },
     });
 }
