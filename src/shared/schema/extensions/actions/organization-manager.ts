@@ -1,5 +1,6 @@
 import {createAction} from '../../gateway-utils';
 import {GetDatalensOperationArgs, GetDatalensOperationResponse} from '../../types';
+import {UpdateAccessBindingsRequest} from '../types';
 import {
     DeleteInvitationRequest,
     InviteUsersRequest,
@@ -28,6 +29,11 @@ export const organizationManager = {
     >(async () => {
         return {} as ListOrganizationInvitationsResponse;
     }),
+    updateAccessBindings: createAction<GetDatalensOperationResponse, UpdateAccessBindingsRequest>(
+        async () => {
+            return {} as GetDatalensOperationResponse;
+        },
+    ),
     getOperation: createAction<GetDatalensOperationResponse, GetDatalensOperationArgs>(async () => {
         return {} as GetDatalensOperationResponse;
     }),

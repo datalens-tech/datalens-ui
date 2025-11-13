@@ -228,7 +228,11 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
                     <div className={b('item')}>
                         <Button
                             onClick={() => {
-                                onOpenAccessDialog();
+                                if (isEnabledFeature(Feature.EnableNewAccessDialog)) {
+                                    onOpenAccessDialog();
+                                } else {
+                                    setIamAccessDialogIsOpen(true);
+                                }
                             }}
                         >
                             <Icon data={LockOpen} />

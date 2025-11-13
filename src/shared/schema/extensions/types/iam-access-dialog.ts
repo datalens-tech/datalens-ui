@@ -168,3 +168,7 @@ export enum ResourceType {
     Collection = 'collection',
     Workbook = 'workbook',
 }
+
+export type UpdateAccessBindingsRequest = {
+    accessBindingDeltas: AccessBindingDelta[];
+};

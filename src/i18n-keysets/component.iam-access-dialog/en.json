@@ -42,7 +42,7 @@
   "label_search": "Search by name, title or email",
   "label_warning-workbook": "You are granting access to the workbook <link>{{resourceTitle}}</link> and all objects inside",
   "label_warning-collection": "You are granting access to the collection <link>{{resourceTitle}}</link> and all objects inside",
-  "title_invitation-sending": "Invitation sent to organization",
+  "title_invitation-sending": "Invitation to organization",
   "action_resend-invitation": "Resend invitation",
   "action_delete-invitation": "Delete",
   "label_show-all-roles": "Show all roles"
