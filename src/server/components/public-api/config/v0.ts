@@ -210,5 +210,79 @@ export const getPublicApiActionsV0 = <
             },
             features: [Feature.CollectionsEnabled],
         },
+
+        // Collection
+        createCollection: {
+            resolve: (api) => api.us.createCollection,
+            openApi: {
+                summary: 'Create collection',
+                tags: [ApiTag.Collection],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
+        deleteCollection: {
+            resolve: (api) => api.us.deleteCollection,
+            openApi: {
+                summary: 'Delete collection',
+                tags: [ApiTag.Collection],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
+        deleteCollections: {
+            resolve: (api) => api.us.deleteCollections,
+            openApi: {
+                summary: 'Delete collections',
+                tags: [ApiTag.Collection],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
+        getCollectionBreadcrumbs: {
+            resolve: (api) => api.us.getCollectionBreadcrumbs,
+            openApi: {
+                summary: 'Get collection breadcrumbs',
+                tags: [ApiTag.Collection],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
+        getCollection: {
+            resolve: (api) => api.us.getCollection,
+            openApi: {
+                summary: 'Get collection',
+                tags: [ApiTag.Collection],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
+        getRootCollectionPermissions: {
+            resolve: (api) => api.us.getRootCollectionPermissions,
+            openApi: {
+                summary: 'Get root collection permissions',
+                tags: [ApiTag.Collection],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
+        moveCollection: {
+            resolve: (api) => api.us.moveCollection,
+            openApi: {
+                summary: 'Move collection',
+                tags: [ApiTag.Collection],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
+        moveCollections: {
+            resolve: (api) => api.us.moveCollections,
+            openApi: {
+                summary: 'Move collections',
+                tags: [ApiTag.Collection],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
+        updateCollection: {
+            resolve: (api) => api.us.updateCollection,
+            openApi: {
+                summary: 'Update collection',
+                tags: [ApiTag.Collection],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
     };
 };

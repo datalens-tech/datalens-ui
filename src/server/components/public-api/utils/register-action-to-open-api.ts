@@ -46,13 +46,17 @@ export const registerActionToOpenApi = ({
         path: resolveUrl({actionName}),
         ...openApi,
         request: {
-            body: {
-                content: {
-                    [CONTENT_TYPE_JSON]: {
-                        schema: actionSchema.paramsSchema,
-                    },
-                },
-            },
+            ...(actionSchema.paramsSchema
+                ? {
+                      body: {
+                          content: {
+                              [CONTENT_TYPE_JSON]: {
+                                  schema: actionSchema.paramsSchema,
+                              },
+                          },
+                      },
+                  }
+                : {}),
         },
         responses: {
             200: {
