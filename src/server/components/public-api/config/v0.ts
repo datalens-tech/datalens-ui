@@ -1,10 +1,11 @@
+import {Feature} from '../../../../shared';
 import type {DatalensGatewaySchemas} from '../../../types/gateway';
 import {ApiTag} from '../constants';
 import type {PublicApiVersionActions} from '../types';
 
 export const getPublicApiActionsV0 = <
     TSchema extends {root: Pick<DatalensGatewaySchemas['root'], 'bi' | 'mix' | 'us'>},
->(): PublicApiVersionActions<TSchema> => {
+>(): PublicApiVersionActions<TSchema, Feature> => {
     return {
         // Connection
         getConnection: {
@@ -151,6 +152,7 @@ export const getPublicApiActionsV0 = <
                 summary: 'Copy workbook',
                 tags: [ApiTag.Workbook],
             },
+            features: [Feature.CollectionsEnabled],
         },
         createWorkbook: {
             resolve: (api) => api.us.createWorkbook,
@@ -158,6 +160,7 @@ export const getPublicApiActionsV0 = <
                 summary: 'Create workbook',
                 tags: [ApiTag.Workbook],
             },
+            features: [Feature.CollectionsEnabled],
         },
         deleteWorkbook: {
             resolve: (api) => api.us.deleteWorkbook,
@@ -165,6 +168,7 @@ export const getPublicApiActionsV0 = <
                 summary: 'Delete workbook',
                 tags: [ApiTag.Workbook],
             },
+            features: [Feature.CollectionsEnabled],
         },
         deleteWorkbooks: {
             resolve: (api) => api.us.deleteWorkbooks,
@@ -172,6 +176,7 @@ export const getPublicApiActionsV0 = <
                 summary: 'Delete workbooks',
                 tags: [ApiTag.Workbook],
             },
+            features: [Feature.CollectionsEnabled],
         },
         getWorkbook: {
             resolve: (api) => api.us.getWorkbook,
@@ -179,6 +184,7 @@ export const getPublicApiActionsV0 = <
                 summary: 'Get workbook',
                 tags: [ApiTag.Workbook],
             },
+            features: [Feature.CollectionsEnabled],
         },
         getWorkbooksList: {
             resolve: (api) => api.us.getWorkbooksList,
@@ -186,6 +192,7 @@ export const getPublicApiActionsV0 = <
                 summary: 'Get workbooks list',
                 tags: [ApiTag.Workbook],
             },
+            features: [Feature.CollectionsEnabled],
         },
         moveWorkbook: {
             resolve: (api) => api.us.moveWorkbook,
@@ -193,6 +200,7 @@ export const getPublicApiActionsV0 = <
                 summary: 'Move workbook',
                 tags: [ApiTag.Workbook],
             },
+            features: [Feature.CollectionsEnabled],
         },
         moveWorkbooks: {
             resolve: (api) => api.us.moveWorkbooks,
@@ -200,6 +208,7 @@ export const getPublicApiActionsV0 = <
                 summary: 'Move workbooks',
                 tags: [ApiTag.Workbook],
             },
+            features: [Feature.CollectionsEnabled],
         },
         updateWorkbook: {
             resolve: (api) => api.us.updateWorkbook,
@@ -207,6 +216,7 @@ export const getPublicApiActionsV0 = <
                 summary: 'Update workbook',
                 tags: [ApiTag.Workbook],
             },
+            features: [Feature.CollectionsEnabled],
         },
     };
 };
