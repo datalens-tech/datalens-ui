@@ -1,0 +1,186 @@
+import React from 'react';
+
+import {Button, Dialog, Divider, SegmentedRadioGroup as RadioButton} from '@gravity-ui/uikit';
+import block from 'bem-cn-lite';
+import debounce from 'lodash/debounce';
+import {CollectionItemEntities} from 'shared';
+import type {GetEntryResponse} from 'shared/schema';
+import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
+
+import DialogManager from '../DialogManager/DialogManager';
+import {EntitiesList} from '../EntitiesList/EntitiesList';
+import {PlaceholderIllustration} from '../PlaceholderIllustration/PlaceholderIllustration';
+import {SharedBindingsList} from '../SharedBindingsList/SharedBindingsList';
+
+import type {AttachmentValue} from './constants';
+import {Attachment, ObjectsListTitles, SEARCH_DELAY} from './constants';
+import type {mock} from './mock';
+import {getEntityBindings} from './mock';
+
+import './DialogSharedEntryBindings.scss';
+
+type DialogSharedEntryBindingsProps = {
+    open: boolean;
+    entry: GetEntryResponse;
+    onClose: () => void;
+};
+
+export const DIALOG_SHARED_ENTRY_BINDINGS = Symbol('DIALOG_SHARED_ENTRY_BINDINGS');
+
+export interface OpenDialogSharedEntryBindingArgs {
+    id: typeof DIALOG_SHARED_ENTRY_BINDINGS;
+    props: DialogSharedEntryBindingsProps;
+}
+
+const sortEntities = (entities: (typeof mock)['items']): (typeof mock)['items'] => {
+    return entities.sort((entity) => (entity.entity === CollectionItemEntities.WORKBOOK ? -1 : 1));
+};
+
+const b = block('dialog-shared-entries-binding');
+
+export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps> = ({
+    onClose,
+    open,
+    entry,
+}) => {
+    const [currentDirection, setCurrentDirection] = React.useState<AttachmentValue>(
+        Attachment.TARGET,
+    );
+    const [entities, setEntities] = React.useState<(typeof mock)['items']>([]);
+
+    const [searchFilter, setSearchFilter] = React.useState('');
+    const [isLoading, setIsLoading] = React.useState(true);
+    const [isSearchLoading, setIsSearchLoading] = React.useState(false);
+    const [isError, setIsError] = React.useState(false);
+
+    const showDirectionControl = entry.scope === 'dataset';
+
+    const handleDirectionChange = (value: AttachmentValue) => {
+        setCurrentDirection(value);
+    };
+
+    const fetchEntityBindings = React.useCallback(
+        (filter = '') => {
+            setIsLoading(true);
+            setIsError(false);
+            // cancelConcurrentRequest();
+            getEntityBindings(entry.entryId, currentDirection, filter)
+                .then((response) => {
+                    setEntities(sortEntities(response.items));
+                    setIsLoading(false);
+                    setIsSearchLoading(false);
+                })
+                .catch((error) => {
+                    if (error.isCancelled) {
+                        return;
+                    }
+                    setIsError(true);
+                    setIsLoading(false);
+                    setIsSearchLoading(false);
+                });
+        },
+        [entry, currentDirection],
+    );
+
+    const debouncedSearch = React.useMemo(
+        () =>
+            debounce((value: string) => {
+                setIsSearchLoading(true);
+                fetchEntityBindings(value);
+            }, SEARCH_DELAY),
+        [fetchEntityBindings],
+    );
+
+    const onSearch = React.useCallback(
+        (value: string) => {
+            setSearchFilter(value);
+            debouncedSearch(value);
+        },
+        [debouncedSearch],
+    );
+
+    React.useEffect(() => {
+        return () => {
+            debouncedSearch.cancel();
+        };
+    }, [debouncedSearch]);
+
+    React.useEffect(() => {
+        setSearchFilter('');
+        fetchEntityBindings();
+    }, [fetchEntityBindings]);
+
+    const renderRelations = () => {
+        if (isError) {
+            const renderRetryAction = () => (
+                <Button className={b('button-retry')} size="l" view="action" onClick={() => {}}>
+                    {getSharedEntryMockText('bindings-dialog-retry-btn')}
+                </Button>
+            );
+
+            return (
+                <div className={b('error-state')}>
+                    <PlaceholderIllustration
+                        direction="column"
+                        name="error"
+                        title={getSharedEntryMockText('bindings-dialog-error')}
+                        renderAction={renderRetryAction}
+                    />
+                </div>
+            );
+        }
+
+        return (
+            <SharedBindingsList
+                entities={entities}
+                searchProps={{
+                    value: searchFilter,
+                    onUpdate: onSearch,
+                    placeholder: getSharedEntryMockText('entries-list-search-placeholder'),
+                    disabled: isLoading || isError,
+                    loading: isSearchLoading,
+                }}
+                title={
+                    showDirectionControl
+                        ? getSharedEntryMockText(ObjectsListTitles[currentDirection])
+                        : undefined
+                }
+                isLoading={isLoading}
+            />
+        );
+    };
+
+    return (
+        <Dialog open={open} onClose={onClose} className={b()}>
+            <Dialog.Header caption={getSharedEntryMockText('title-bindings-dialog')} />
+            <Dialog.Body className={b('body')}>
+                <EntitiesList
+                    isCurrent={true}
+                    enableHover={true}
+                    entities={[entry]}
+                    title={getSharedEntryMockText('label-current-entry')}
+                    className={b('current-row')}
+                />
+                {!showDirectionControl && <Divider className={b('divider')} />}
+                {showDirectionControl && (
+                    <RadioButton
+                        className={b('direction')}
+                        value={currentDirection}
+                        onUpdate={handleDirectionChange}
+                        width="auto"
+                    >
+                        <RadioButton.Option value={Attachment.TARGET}>
+                            {getSharedEntryMockText('label-attachment-target')}
+                        </RadioButton.Option>
+                        <RadioButton.Option value={Attachment.SOURCE}>
+                            {getSharedEntryMockText('label-attachment-source')}
+                        </RadioButton.Option>
+                    </RadioButton>
+                )}
+                {renderRelations()}
+            </Dialog.Body>
+        </Dialog>
+    );
+};
+
+DialogManager.registerDialog(DIALOG_SHARED_ENTRY_BINDINGS, DialogSharedEntryBindings);

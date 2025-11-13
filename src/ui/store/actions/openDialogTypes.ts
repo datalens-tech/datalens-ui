@@ -60,6 +60,7 @@ import type {OpenDialogExportWorkbookArgs} from 'ui/components/CollectionsStruct
 import type {OpenDialogDefaultArgs} from 'ui/components/DialogDefault/DialogDefault';
 import type {OpenDialogCreatePublicGalleryWorkbookArgs} from 'ui/components/CollectionsStructure/CreatePublicGalleryWorkbookDialog';
 import type {OpenDialogEntryDescriptionArgs} from 'ui/components/DialogEntryDescription/DialogEntryDescriptionWrapper';
+import type {OpenDialogSharedEntryBindingArgs} from 'ui/components/DialogSharedEntryBindings/DialogSharedEntryBindings';
 
 export type OpenDialogArgs<T = unknown> =
     | OpenDialogReleaseVersionArgs
@@ -121,4 +122,5 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogExportWorkbookArgs
     | OpenDialogDefaultArgs
     | OpenDialogCreatePublicGalleryWorkbookArgs
+    | OpenDialogSharedEntryBindingArgs
     | OpenDialogEntryDescriptionArgs;

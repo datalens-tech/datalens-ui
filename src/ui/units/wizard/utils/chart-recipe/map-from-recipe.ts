@@ -120,6 +120,8 @@ export async function getWizardConfigFromRecipe({
     const availableTypes = getAvailableVisualizations();
     const layers: Partial<ServerVisualizationLayer>[] = [];
     const segments: ServerField[] = [];
+
+    // eslint-disable-next-line complexity
     recipe.layers.forEach((layer) => {
         const chartType = layer.type;
 
@@ -138,6 +140,8 @@ export async function getWizardConfigFromRecipe({
             case WizardVisualizationId.Column100p:
             case WizardVisualizationId.Area:
             case WizardVisualizationId.Area100p:
+            case WizardVisualizationId.Bar:
+            case WizardVisualizationId.Bar100p:
             case WizardVisualizationId.Scatter: {
                 placeholders.push({
                     id: PlaceholderId.X,
