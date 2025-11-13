@@ -158,11 +158,10 @@ const PageComponent = (props: PageProps) => {
     const s3BasedFormOpened = isS3BasedConnForm(connectionData, type);
     const currentSearchParams = new URLSearchParams(location.search);
 
-    const isRevisionsEnabled = isEnabledFeature(Feature.EnableConnectionRevisions);
     const isExportSettingsFeatureEnabled = isEnabledFeature(Feature.EnableExportSettings);
     const isDescriptionEnabled = isEnabledFeature(Feature.EnableConnectionDescription);
 
-    const revisionsSupported = connector?.history && isRevisionsEnabled;
+    const revisionsSupported = connector?.history;
     const revId = currentSearchParams.get(URL_QUERY.REV_ID) ?? undefined;
 
     const showSettings = !connector?.backend_driven_form;

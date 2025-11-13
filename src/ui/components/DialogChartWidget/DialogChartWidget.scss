@@ -1,7 +1,8 @@
 @import '~@gravity-ui/uikit/styles/mixins';
 
 .widget-item-dialog {
-    height: 728px;
+    height: min(728px, 90vh);
+    min-height: 400px;
     display: flex;
 
     $class: &;
@@ -28,10 +29,20 @@
         }
     }
 
+    &__tab-panel {
+        $tabs-height: 36px;
+        $tab-top-margin: var(--g-spacing-4);
+        margin-block-start: $tab-top-margin;
+        height: calc(100% - $tabs-height - $tab-top-margin);
+    }
+
     &__tab-content {
         height: 100%;
-        display: grid;
-        grid-template-columns: var(--_--sidebar-width) 33px 1fr;
+
+        &_with-sidebar {
+            display: grid;
+            grid-template-columns: var(--_--sidebar-width) 33px 1fr;
+        }
     }
 
     &__sidebar {
