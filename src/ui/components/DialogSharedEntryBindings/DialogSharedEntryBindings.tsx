@@ -3,12 +3,17 @@ import React from 'react';
 import {Button, Dialog, Divider, SegmentedRadioGroup as RadioButton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
+import {useDispatch} from 'react-redux';
 import {CollectionItemEntities} from 'shared';
 import type {GetEntryResponse} from 'shared/schema';
+import type {AppDispatch} from 'ui/store';
 import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 
+import {closeDialog, openDialog} from '../../store/actions/dialog';
 import DialogManager from '../DialogManager/DialogManager';
+import {DIALOG_SHARED_ENTRY_UNBIND} from '../DialogSharedEntryUnbind/DialogSharedEntryUnbind';
 import {EntitiesList} from '../EntitiesList/EntitiesList';
+import type {Entry, RowEntityData} from '../EntityRow/EntityRow';
 import {PlaceholderIllustration} from '../PlaceholderIllustration/PlaceholderIllustration';
 import {SharedBindingsList} from '../SharedBindingsList/SharedBindingsList';
 
@@ -38,6 +43,13 @@ const sortEntities = (entities: (typeof mock)['items']): (typeof mock)['items'] 
 
 const b = block('dialog-shared-entries-binding');
 
+const getIsRelationUnbind = (
+    currentDirection: AttachmentValue,
+    item: RowEntityData,
+): item is RowEntityData & Entry => {
+    return currentDirection === Attachment.SOURCE && 'scope' in item;
+};
+
 export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps> = ({
     onClose,
     open,
@@ -46,6 +58,7 @@ export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps>
     const [currentDirection, setCurrentDirection] = React.useState<AttachmentValue>(
         Attachment.TARGET,
     );
+    const dispatch: AppDispatch = useDispatch();
     const [entities, setEntities] = React.useState<(typeof mock)['items']>([]);
 
     const [searchFilter, setSearchFilter] = React.useState('');
@@ -110,6 +123,38 @@ export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps>
         fetchEntityBindings();
     }, [fetchEntityBindings]);
 
+    const getListItemActions = React.useCallback(
+        (item: RowEntityData) => {
+            return [
+                {
+                    text: getSharedEntryMockText('shared-bindings-list-action-unbind'),
+                    action: () =>
+                        dispatch(
+                            openDialog({
+                                id: DIALOG_SHARED_ENTRY_UNBIND,
+                                props: {
+                                    entry: getIsRelationUnbind(currentDirection, item)
+                                        ? item
+                                        : entry,
+                                    onClose: () => dispatch(closeDialog()),
+                                    onApply: () => {},
+                                    open: true,
+                                    relation: getIsRelationUnbind(currentDirection, item)
+                                        ? undefined
+                                        : item,
+                                },
+                            }),
+                        ),
+                },
+                {
+                    text: getSharedEntryMockText('shared-bindings-list-action-change-permissions'),
+                    action: () => {},
+                },
+            ];
+        },
+        [currentDirection, dispatch, entry],
+    );
+
     const renderRelations = () => {
         if (isError) {
             const renderRetryAction = () => (
@@ -145,6 +190,7 @@ export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps>
                         ? getSharedEntryMockText(ObjectsListTitles[currentDirection])
                         : undefined
                 }
+                getListItemActions={getListItemActions}
                 isLoading={isLoading}
             />
         );
@@ -155,8 +201,6 @@ export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps>
             <Dialog.Header caption={getSharedEntryMockText('title-bindings-dialog')} />
             <Dialog.Body className={b('body')}>
                 <EntitiesList
-                    isCurrent={true}
-                    enableHover={true}
                     entities={[entry]}
                     title={getSharedEntryMockText('label-current-entry')}
                     className={b('current-row')}

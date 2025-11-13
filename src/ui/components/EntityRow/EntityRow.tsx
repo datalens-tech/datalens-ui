@@ -18,7 +18,7 @@ import './EntityRow.scss';
 
 const b = block('entity-row');
 
-type Entry = {
+export type Entry = {
     entity: typeof CollectionItemEntities.ENTRY;
     entryId: string;
     scope: string;
@@ -44,6 +44,7 @@ export type EntryRowProps = {
     actions?: DropdownMenuItem[];
     entity: RowEntityData;
     showRelationButton?: boolean;
+    showRightSide?: boolean;
 };
 
 const getName = (entity: RowEntityData) => {
@@ -65,7 +66,13 @@ const getHref = (entity: RowEntityData) => {
 };
 
 export const EntityRow = React.memo(
-    ({entity, className, actions, showRelationButton = true}: EntryRowProps) => {
+    ({
+        entity,
+        className,
+        actions,
+        showRelationButton = true,
+        showRightSide = true,
+    }: EntryRowProps) => {
         const entryName = getName(entity);
         const renderRelationBtn =
             showRelationButton && entity.entity === CollectionItemEntities.WORKBOOK;
@@ -105,33 +112,35 @@ export const EntityRow = React.memo(
                         </div>
                     )}
                 </div>
-                <div className={b('right-block')}>
-                    <div className={b('entity')}>
-                        <Link
-                            view="primary"
-                            target="_blank"
-                            className={b('text-block')}
-                            title={entryName}
-                            href={`${COLLECTIONS_PATH}/${entity.collectionId}`}
-                        >
-                            <CollectionIcon className={b('icon')} size={18} />
-                            <span className={b('name')}>{entity.collectionTitle}</span>
-                        </Link>
+                {showRightSide && (
+                    <div className={b('right-block')}>
+                        <div className={b('entity')}>
+                            <Link
+                                view="primary"
+                                target="_blank"
+                                className={b('text-block')}
+                                title={entryName}
+                                href={`${COLLECTIONS_PATH}/${entity.collectionId}`}
+                            >
+                                <CollectionIcon className={b('icon')} size={18} />
+                                <span className={b('name')}>{entity.collectionTitle}</span>
+                            </Link>
+                        </div>
+                        <div className={b('delegation-status')}>
+                            <Icon
+                                data={entity.isDelegated ? ShieldCheck : ShieldKeyhole}
+                                size={16}
+                                className={b('delegation-status-icon')}
+                            />
+                            <Text variant="body-1">
+                                {entity.isDelegated
+                                    ? getSharedEntryMockText('entity-row-delegated')
+                                    : getSharedEntryMockText('entity-row-not-delegated')}
+                            </Text>
+                        </div>
+                        {actions && <DropdownMenu items={actions} />}
                     </div>
-                    <div className={b('delegation-status')}>
-                        <Icon
-                            data={entity.isDelegated ? ShieldCheck : ShieldKeyhole}
-                            size={16}
-                            className={b('delegation-status-icon')}
-                        />
-                        <Text variant="body-1">
-                            {entity.isDelegated
-                                ? getSharedEntryMockText('entity-row-delegated')
-                                : getSharedEntryMockText('entity-row-not-delegated')}
-                        </Text>
-                    </div>
-                    {actions && <DropdownMenu items={actions} />}
-                </div>
+                )}
             </div>
         );
     },
