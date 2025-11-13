@@ -45,5 +45,7 @@
   "title_invitation-sending": "Invitation to organization",
   "action_resend-invitation": "Resend invitation",
   "action_delete-invitation": "Delete",
-  "label_show-all-roles": "Show all roles"
+  "label_show-all-roles": "Show all roles",
+  "label_invitation-sending-description": "Send invitations to organization",
+  "label_invitation-sending-description-hint": "Invitation expiration period - 1 week"
 }

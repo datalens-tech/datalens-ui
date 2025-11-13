@@ -43,6 +43,8 @@
   "label_warning-workbook": "Вы даете доступ к воркбуку <link>{{resourceTitle}}</link> и всем объектам внутри",
   "label_warning-collection": "Вы даете доступ к коллекции <link>{{resourceTitle}}</link> и всем объектам внутри",
   "title_invitation-sending": "Приглашение в огранизацию",
+  "label_invitation-sending-description": "Отправить приглашения в организацию",
+  "label_invitation-sending-description-hint": "Срок действия приглашения — 1 неделя",
   "action_resend-invitation": "Отправить повторно",
   "action_delete-invitation": "Удалить",
   "label_show-all-roles": "Показать все роли"
