@@ -6,11 +6,11 @@ import type {
     ControlsOnlyWidget,
     OnChangeData,
     OnLoadData,
-    WidgetChartActivityProps,
+    RunActivityFn,
     WidgetProps,
 } from '../../types';
 
-export type ControlProps<TProviderData = unknown> = WidgetChartActivityProps & {
+export type ControlProps<TProviderData = unknown> = {
     data: ControlsOnlyWidget & TProviderData;
     getControls: (params: StringParams) => Promise<(ControlsOnlyWidget & TProviderData) | null>;
     onLoad: (data?: OnLoadData) => void;
@@ -22,6 +22,7 @@ export type ControlProps<TProviderData = unknown> = WidgetChartActivityProps & {
     ) => void;
     onUpdate?: (data: OnChangeData) => void;
     initialParams?: ChartInitialParams;
+    runActivity?: RunActivityFn;
 } & Omit<WidgetProps, 'data'>;
 
 export interface ControlState {

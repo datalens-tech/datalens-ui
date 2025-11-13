@@ -152,20 +152,6 @@ class Control<TProviderData> extends React.PureComponent<
         );
     }
 
-    async runActivity(args: StringParams) {
-        const {runActivity, onActivityComplete} = this.props;
-
-        if (!runActivity) {
-            return;
-        }
-
-        const responseData = await this.props.runActivity({...this.state.params, ...args});
-
-        if (onActivityComplete) {
-            onActivityComplete({responseData});
-        }
-    }
-
     onChange(control: ActiveControl, value: SimpleControlValue, index: number) {
         const {type, updateControlsOnChange, updateOnChange, postUpdateOnChange} = control;
 
@@ -189,7 +175,7 @@ class Control<TProviderData> extends React.PureComponent<
         }
 
         if (type === 'button' && control.onClick?.action === CLICK_ACTION_TYPE.RUN_ACTIVITY) {
-            this.runActivity(control.onClick.args);
+            this.props.runActivity?.({params: control.onClick.args});
             return;
         }
 

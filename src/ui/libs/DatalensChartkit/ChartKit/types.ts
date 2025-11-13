@@ -7,8 +7,8 @@ import type {
     LoadedWidgetData,
     OnChangeData,
     OnLoadData,
+    RunActivityFn,
     TableWidgetData,
-    WidgetChartActivityProps,
     WidgetDashState,
 } from '../types';
 
@@ -41,8 +41,8 @@ export type ChartKitAdapterProps = {
     onRetry?: () => void;
     rootNodeRef: React.RefObject<HTMLDivElement | null>;
     backgroundColor?: string;
-} & Pick<ChartKitProps<ChartKitType>, 'onRender' | 'onChartLoad' | 'renderPluginLoader'> &
-    WidgetChartActivityProps;
+    runActivity?: RunActivityFn;
+} & Pick<ChartKitProps<ChartKitType>, 'onRender' | 'onChartLoad' | 'renderPluginLoader'>;
 
 declare module '@gravity-ui/chartkit' {
     interface ChartKitWidget {

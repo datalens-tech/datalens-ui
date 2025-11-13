@@ -302,7 +302,6 @@ export const Chart = (props: ChartNoWidgetProps) => {
                 forwardedRef={chartKitRef}
                 getControls={loadControls}
                 runActivity={runActivity}
-                onActivityComplete={onActivityComplete}
                 drillDownFilters={drillDownFilters}
                 drillDownLevel={drillDownLevel}
                 widgetType={widgetType}
