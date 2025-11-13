@@ -33,6 +33,7 @@ function deltaEncode(coords: number[][], precision = 4) {
 function getLayerSimpleConfig(layerData: any) {
     if ('heatmap' in layerData) {
         return {
+            type: 'heatmap',
             title: layerData.options.layerTitle,
             colorField: layerData.options.colorTitle,
             chartAsTable: [
@@ -52,11 +53,12 @@ function getLayerSimpleConfig(layerData: any) {
             (d: any) => d.text.split(': ')[0],
         );
         return {
+            type: 'polygons',
             title: layerData.options.layerTitle,
             colorField: layerData.options.colorTitle,
             deltaEncode: true,
             chartAsTable: [
-                ['Coordinates', ...properties].join(';'),
+                ['Polygons', ...properties].join(';'),
                 ...layerData.polygonmap.polygons.features.map((d: any) =>
                     [
                         JSON.stringify(deltaEncode(d.geometry.coordinates[0])),
@@ -73,6 +75,7 @@ function getLayerSimpleConfig(layerData: any) {
         );
 
         return {
+            type: 'points',
             title: layerData.options.layerTitle,
             colorField: layerData.options.colorTitle,
             sizeField: layerData.options.sizeTitle,
