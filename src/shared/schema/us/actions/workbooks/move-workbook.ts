@@ -9,7 +9,7 @@ const moveWorkbookArgsSchema = z.object({
     title: z.string().optional(),
 });
 
-const moveWorkbookResultSchema = workbookSchema;
+export const moveWorkbookResultSchema = workbookSchema;
 
 export const moveWorkbook = createTypedAction(
     {

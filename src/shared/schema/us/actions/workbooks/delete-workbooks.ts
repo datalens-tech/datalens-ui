@@ -7,7 +7,7 @@ const deleteWorkbooksArgsSchema = z.object({
     workbookIds: z.array(z.string()),
 });
 
-const deleteWorkbooksResultSchema = z.object({
+export const deleteWorkbooksResultSchema = z.object({
     workbooks: z.array(workbookSchema),
 });
 

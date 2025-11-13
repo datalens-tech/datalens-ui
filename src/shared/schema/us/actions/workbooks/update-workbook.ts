@@ -9,7 +9,7 @@ const updateWorkbookArgsSchema = z.object({
     description: z.string().optional(),
 });
 
-const updateWorkbookResultSchema = workbookSchema;
+export const updateWorkbookResultSchema = workbookSchema;
 
 export const updateWorkbook = createTypedAction(
     {

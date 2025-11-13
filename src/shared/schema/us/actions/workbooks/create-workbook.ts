@@ -10,7 +10,9 @@ const createWorkbookArgsSchema = z.object({
     description: z.string().optional(),
 });
 
-const createWorkbookResultSchema = workbookSchema.extend({operation: datalensOperationSchema});
+export const createWorkbookResultSchema = workbookSchema.extend({
+    operation: datalensOperationSchema,
+});
 
 export const createWorkbook = createTypedAction(
     {

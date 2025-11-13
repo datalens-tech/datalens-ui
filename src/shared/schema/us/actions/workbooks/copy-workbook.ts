@@ -11,7 +11,7 @@ const copyWorkbookArgsSchema = z.object({
     title: z.string().optional(),
 });
 
-const copyWorkbookResultSchema = workbookSchema.extend({
+export const copyWorkbookResultSchema = workbookSchema.extend({
     operation: datalensOperationSchema.optional(),
 });
 

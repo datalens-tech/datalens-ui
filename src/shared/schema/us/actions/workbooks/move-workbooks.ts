@@ -8,7 +8,7 @@ const moveWorkbooksArgsSchema = z.object({
     collectionId: z.string().nullable(),
 });
 
-const moveWorkbooksResultSchema = z.object({
+export const moveWorkbooksResultSchema = z.object({
     workbooks: z.array(workbookSchema),
 });
 

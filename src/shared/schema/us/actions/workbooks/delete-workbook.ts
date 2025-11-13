@@ -7,7 +7,7 @@ const deleteWorkbookArgsSchema = z.object({
     workbookId: z.string(),
 });
 
-const deleteWorkbookResultSchema = workbookSchema;
+export const deleteWorkbookResultSchema = workbookSchema;
 
 export const deleteWorkbook = createTypedAction(
     {
