@@ -21,24 +21,15 @@ interface SharedBindingsListProps {
     searchProps?: ListSearchProps;
     entities: RowEntityData[];
     isLoading?: boolean;
+    getListItemActions?: (item: RowEntityData) => DropdownMenuItem[];
 }
-
-const dropdownItems: DropdownMenuItem[] = [
-    {
-        text: getSharedEntryMockText('shared-bindings-list-action-unbind'),
-        action: () => {},
-    },
-    {
-        text: getSharedEntryMockText('shared-bindings-list-action-change-permissions'),
-        action: () => {},
-    },
-];
 
 export const SharedBindingsList: React.FC<SharedBindingsListProps> = ({
     entities,
     searchProps,
     isLoading,
     title = getSharedEntryMockText('shared-bindings-list-title'),
+    getListItemActions,
 }) => {
     const renderList = () => {
         if (isLoading) {
@@ -69,7 +60,8 @@ export const SharedBindingsList: React.FC<SharedBindingsListProps> = ({
                 virtualized
                 selectedItemIndex={-1}
                 renderItem={(item) => {
-                    return <EntityRow entity={item} actions={dropdownItems} />;
+                    const actions = getListItemActions?.(item) ?? [];
+                    return <EntityRow entity={item} actions={actions} />;
                 }}
             />
         );
