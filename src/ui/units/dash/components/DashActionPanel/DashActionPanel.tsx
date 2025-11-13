@@ -117,6 +117,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
                                 <DashActionPanelAdditionalButtons
                                     key="additional-buttons"
                                     dashSettings={this.props.settings}
+                                    isEditMode={this.props.isEditMode}
                                 />,
                                 <div className={b('controls')} key="controls">
                                     {this.renderControls()}
