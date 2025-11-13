@@ -1,5 +1,4 @@
 .two-column-dialog {
-    --dialog-sidebar-horizontal-padding: var(--g-spacing-4);
     --dialog-footer-vertical-padding: 28px; // equal to gravity Dialog footer vertical padding
 
     // Header
@@ -16,7 +15,7 @@
     }
 
     &__sidebar-header {
-        padding-inline: var(--dialog-sidebar-horizontal-padding);
+        padding-inline: var(--g-spacing-4);
     }
 
     &__sidebar-body {

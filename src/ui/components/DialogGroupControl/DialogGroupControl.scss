@@ -21,7 +21,7 @@
     }
 
     &__settings {
-        padding: var(--g-spacing-2) var(--dialog-sidebar-horizontal-padding)
+        padding: var(--g-spacing-2) var(--g-spacing-4)
             calc(var(--dialog-footer-vertical-padding, 28px) + var(--g-spacing-1));
     }
 

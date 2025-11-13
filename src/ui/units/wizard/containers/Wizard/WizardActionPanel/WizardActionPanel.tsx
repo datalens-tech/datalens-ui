@@ -6,7 +6,7 @@ import copyToClipboard from 'clipboard-copy';
 import {useDispatch, useSelector} from 'react-redux';
 import type {ClientChartsConfigWithDataset, ServerChartsConfig, WizardType} from 'shared';
 import {EntryUpdateMode, Feature} from 'shared';
-import {getChartReceiptFromWizardConfig} from 'ui/units/wizard/utils/chart-recipe';
+import {getChartRecipeFromWizardConfig} from 'ui/units/wizard/utils/chart-recipe';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {selectIsChartSaved} from 'units/wizard/selectors/preview';
 
@@ -95,7 +95,7 @@ export const WizardActionPanel: React.FC<WizardActionPanelProps> = (
 
     const handleCopyRecipe = React.useCallback(() => {
         try {
-            const recipe = getChartReceiptFromWizardConfig(
+            const recipe = getChartRecipeFromWizardConfig(
                 config?.shared as unknown as ServerChartsConfig,
             );
             copyToClipboard(JSON.stringify(recipe));

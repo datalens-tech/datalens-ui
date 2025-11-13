@@ -10,6 +10,7 @@ export type GetStructureItemsMode = 'all' | 'onlyCollections' | 'onlyWorkbooks';
 export type CollectionPermissions = {
     listAccessBindings: boolean;
     updateAccessBindings: boolean;
+    createSharedEntry: boolean;
     createCollection: boolean;
     createWorkbook: boolean;
     limitedView: boolean;

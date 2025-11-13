@@ -15,6 +15,12 @@ export enum DlComponentHeader {
     Backend = 'backend',
 }
 
+export const REQUEST_SOURCE_HEADER = 'x-dl-request-source';
+export enum RequestSourceHeaderValue {
+    // Indicates that the request was made via the public API
+    PublicApi = 'public-api',
+}
+
 export const REQUEST_ID_HEADER = 'x-request-id';
 export const TRACE_ID_HEADER = 'x-trace-id';
 export const SERVER_TRACE_ID_HEADER = 'x-server-trace-id';

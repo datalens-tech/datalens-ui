@@ -94,13 +94,15 @@ export enum Feature {
     EnableDatasetDescription = 'EnableDatasetDescription',
     /** Show connection description button */
     EnableConnectionDescription = 'EnableConnectionDescription',
-    /** Enable connection revisions  */
-    EnableConnectionRevisions = 'EnableConnectionRevisions',
     /** Enable pagination in dataset sources table */
     EnableDatasetSourcesPagination = 'EnableDatasetSourcesPagination',
+    /** Enable shared connections and datasets */
+    EnableSharedEntries = 'EnableSharedEntries',
 
     EnableMobileFixedHeader = 'EnableMobileFixedHeader',
     EnableCommonChartDashSettings = 'EnableCommonChartDashSettings',
+    /** Shows updated settings page */
+    EnableNewServiceSettings = 'EnableNewServiceSettings',
 }
 
 export type FeatureConfig = Record<string, boolean>;

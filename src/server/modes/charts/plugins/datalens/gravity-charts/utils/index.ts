@@ -3,6 +3,7 @@ import type {ChartData, ChartTitle} from '@gravity-ui/chartkit/gravity-charts';
 import {PlaceholderId, WizardVisualizationId, isDateField} from '../../../../../../../shared';
 import type {
     ServerCommonSharedExtraSettings,
+    ServerPlaceholderSettings,
     ServerVisualization,
 } from '../../../../../../../shared';
 import {getAxisTitle, getTickPixelInterval, isGridEnabled} from '../../utils/axis-helpers';
@@ -12,6 +13,22 @@ export function getChartTitle(settings?: ServerCommonSharedExtraSettings): Chart
         return {
             text: settings.title,
         };
+    }
+
+    return undefined;
+}
+
+export function getAxisLabelsRotationAngle(placeholderSettings?: ServerPlaceholderSettings) {
+    switch (placeholderSettings?.labelsView) {
+        case 'horizontal': {
+            return 0;
+        }
+        case 'vertical': {
+            return 90;
+        }
+        case 'angle': {
+            return 45;
+        }
     }
 
     return undefined;
@@ -67,6 +84,11 @@ export function getBaseChartConfig(args: {
             },
             zoom: {
                 enabled: true,
+                resetButton: {
+                    align: 'top-right',
+                    offset: {x: 2, y: 30},
+                    relativeTo: 'plot-box',
+                },
             },
         },
     };
@@ -95,6 +117,7 @@ export function getBaseChartConfig(args: {
                 visible: xPlaceholderSettings?.axisVisibility !== 'hide',
                 labels: {
                     enabled: xPlaceholderSettings?.hideLabels !== 'yes',
+                    rotation: getAxisLabelsRotationAngle(xPlaceholderSettings),
                 },
                 title: {
                     text: getAxisTitle(xPlaceholderSettings, xItem) || undefined,
@@ -114,6 +137,7 @@ export function getBaseChartConfig(args: {
                     visible: yPlaceholderSettings?.axisVisibility !== 'hide',
                     labels: {
                         enabled: Boolean(yItem) && yPlaceholder?.settings?.hideLabels !== 'yes',
+                        rotation: getAxisLabelsRotationAngle(yPlaceholder?.settings),
                     },
                     title: {
                         text: getAxisTitle(yPlaceholderSettings, yItem) || undefined,

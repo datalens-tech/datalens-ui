@@ -20,6 +20,7 @@
 
     &__dropdown-text {
         margin-left: 8px;
+        line-height: 24px;
     }
 
     &__dropdown-hint {
@@ -27,5 +28,28 @@
         line-height: normal;
         padding-bottom: 4px;
         color: var(--g-color-text-hint);
+    }
+
+    &__notice {
+        margin: 4px -4px 8px;
+        cursor: initial;
+        &:hover {
+            background-color: initial;
+        }
+    }
+
+    &__notice-container {
+        max-width: 250px;
+        border-radius: 5px;
+        background-color: var(--g-color-base-info-light);
+        padding: 4px 8px;
+    }
+
+    &__notice-text {
+        font: var(--g-text-body-1-font);
+        line-height: var(--g-text-body-1-line-height);
+        margin: 0;
+        text-align: left;
+        color: var(--g-color-text-secondary);
     }
 }

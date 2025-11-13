@@ -20,7 +20,7 @@ type OnErrorReturn = null | {
 
 interface DialogCreateWorkbookEntryGeneralProps<T> {
     onClose: () => void;
-    onApply: (data: {name: string; workbookId?: string}) => Promise<T>;
+    onApply: (data: {name: string; workbookId?: string; collectionId?: string}) => Promise<T>;
     onSuccess: (data: T) => void;
     onError?: (error: DataLensApiError) => OnErrorReturn;
     visible: boolean;
@@ -30,6 +30,7 @@ interface DialogCreateWorkbookEntryGeneralProps<T> {
     placeholder?: string;
     warningMessage?: React.ReactNode;
     workbookId?: string;
+    collectionId?: string;
 }
 
 interface DialogCreateWorkbookEntryDefaultProps {
@@ -161,7 +162,11 @@ export class DialogCreateWorkbookEntry<T> extends React.Component<
         const name = (stateName === '' ? this.props.defaultName : stateName).trim();
 
         try {
-            const data = await this.props.onApply({name, workbookId: this.props.workbookId});
+            const data = await this.props.onApply({
+                name,
+                workbookId: this.props.workbookId,
+                collectionId: this.props.collectionId,
+            });
             this.props.onSuccess(data);
             if (this.isUnmounted) {
                 return;
