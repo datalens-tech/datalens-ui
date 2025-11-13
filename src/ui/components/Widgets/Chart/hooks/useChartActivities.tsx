@@ -3,7 +3,12 @@ import React from 'react';
 import {useDispatch} from 'react-redux';
 import type {ChartActivityResponseData, DashChartRequestContext, StringParams} from 'shared';
 import {DIALOG_DEFAULT} from 'ui/components/DialogDefault/DialogDefault';
-import type {OnActivityComplete, OnChangeData} from 'ui/libs/DatalensChartkit/types';
+import type {
+    OnActivityComplete,
+    OnChangeData,
+    RunActivityArgs,
+    RunActivityFn,
+} from 'ui/libs/DatalensChartkit/types';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {showToast} from 'ui/store/actions/toaster';
 import {getRenderMarkdownFn} from 'ui/utils';
@@ -32,12 +37,12 @@ export const useChartActivities = ({
 }) => {
     const dispatch = useDispatch();
 
-    const runActivity = React.useCallback(
-        async (params: StringParams) => {
+    const runActivity: RunActivityFn = React.useCallback(
+        async ({params}: RunActivityArgs) => {
             let responseData: ChartActivityResponseData;
             try {
                 responseData = await dataProvider.makeActivityRequest({
-                    props: {...initialData, params},
+                    props: {...initialData, params: params as StringParams},
                     requestId,
                     ...(requestHeadersGetter ? {contextHeaders: requestHeadersGetter()} : {}),
                 });

@@ -14,7 +14,7 @@ import type {
     LoadedWidgetData,
     OnActivityComplete,
     OnChangeData,
-    WidgetChartActivityProps,
+    RunActivityFn,
     WidgetDashState,
 } from 'ui/libs/DatalensChartkit/types';
 import type {GetChartkitMenuByType} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
@@ -127,7 +127,8 @@ type ChartKitBaseWrapperProps = ChartsProps & {
 
     needRenderContentControls?: boolean;
     reload?: (args?: {silentLoading?: boolean; noVeil?: boolean}) => void;
-} & WidgetChartActivityProps;
+    runActivity?: RunActivityFn;
+};
 
 export type ChartWidgetProviderPropsWithRefProps = ChartRefProp &
     Omit<WidgetPluginProps, 'debouncedAdjustWidgetLayout' | 'forwardedRef'> &
@@ -187,6 +188,7 @@ export type ChartWithProviderWithRefProps = ChartProviderPropsWithRefProps;
 export type ChartWrapperWithProviderProps = ChartWrapperWithRefProps & {
     workbookId?: string | null;
     enableAssistant?: boolean;
+    onActivityComplete?: OnActivityComplete;
 };
 
 export type ChartWidgetProps = ChartWidgetProviderPropsWithRefProps &
@@ -226,7 +228,8 @@ export type ChartKitWrapperParams = {
     getControls: (params: StringParams) => void;
     paneSplitOrientation?: 'vertical' | 'horizontal';
     widgetDashState?: WidgetDashState;
-} & WidgetChartActivityProps;
+    runActivity?: RunActivityFn;
+};
 
 export type ChartWidgetData =
     | (ChartKitLoadSuccess<ChartsData>['data']['widget'] & {
@@ -329,7 +332,8 @@ export type ChartControlsType = Pick<ChartKitWrapperParams, 'onError' | 'onChang
         initialParams: ChartInitialParams;
         getControls?: ChartKitWrapperParams['getControls'];
         onUpdate?: (data: OnChangeData) => void;
-    } & WidgetChartActivityProps;
+        runActivity?: RunActivityFn;
+    };
 
 export type ResolveWidgetControlDataRefArgs =
     | (LoadedWidgetData<ChartsData> & ControlWidget & ChartsData['extra'])

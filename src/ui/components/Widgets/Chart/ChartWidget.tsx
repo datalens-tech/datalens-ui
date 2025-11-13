@@ -380,6 +380,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         isWidgetMenuDataChanged,
         dataProps,
         noControls: urlNoControls,
+        runActivity,
     } = useLoadingChartWidget({
         ...props,
         chartKitRef,
@@ -609,6 +610,8 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         widgetHeaderProps.showLoader && widgetHeaderProps.veil && !isExportLoading;
     const isFirstLoadingFloat = loadedData === null;
 
+    console.log('ChartWidget');
+
     return (
         <div
             ref={rootNodeRef}
@@ -666,6 +669,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 backgroundColor={style?.backgroundColor}
                 needRenderContentControls={false}
                 chartRevIdRef={null}
+                runActivity={runActivity}
                 {...commonHeaderContentProps}
             />
             {Boolean(description || loadedData?.publicAuthor) && (

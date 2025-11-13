@@ -1,4 +1,5 @@
 import type {ChartKitType, ChartKitProps as OpenSourceChartKitProps} from '@gravity-ui/chartkit';
+import type {ChartSeriesData} from '@gravity-ui/chartkit/gravity-charts';
 import type {
     Highcharts,
     HighchartsComment,
@@ -402,6 +403,7 @@ export type WidgetData = (Widget & ChartsData) | null;
 
 export type OnActivityComplete = (args: {responseData?: ChartActivityResponseData}) => void;
 
-export type WidgetChartActivityProps = {
-    runActivity?: (args: unknown) => void;
+export type RunActivityArgs = {
+    params?: StringParams | ChartSeriesData;
 };
+export type RunActivityFn = (args: RunActivityArgs) => void;

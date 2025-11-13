@@ -7,7 +7,7 @@ import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 
 import type {GraphWidgetEventScope, StringParams} from '../../../../../../shared';
-import type {GraphWidget, LoadedWidgetData} from '../../../types';
+import type {GraphWidget, LoadedWidgetData, RunActivityFn} from '../../../types';
 import type {ChartKitAdapterProps} from '../../types';
 import {addParams, subtractParameters} from '../action-params-handlers';
 import {getNormalizedClickActions} from '../utils';
@@ -20,7 +20,7 @@ type OnClickHandlerArgs = {
     series: unknown;
     event: PointerEvent;
     onChange?: ChartKitAdapterProps['onChange'];
-    runActivity?: ChartKitAdapterProps['runActivity'];
+    runActivity?: RunActivityFn;
 };
 
 export function handleClick(args: OnClickHandlerArgs) {
@@ -90,10 +90,9 @@ export function handleClick(args: OnClickHandlerArgs) {
                 }
                 case 'runActivity': {
                     if (runActivity) {
-                        const params = {
-                            point: point as ChartSeriesData,
-                        };
-                        runActivity(params);
+                        runActivity({
+                            params: point as ChartSeriesData,
+                        });
                     }
 
                     break;
