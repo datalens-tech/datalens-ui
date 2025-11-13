@@ -92,7 +92,9 @@ export const createPublicApiController = () => {
 
             const {paramsSchema} = validationSchema;
 
-            const validatedArgs = await validateRequestBody(paramsSchema, req.body);
+            const validatedArgs = paramsSchema
+                ? await validateRequestBody(paramsSchema, req.body)
+                : undefined;
 
             const result = await gatewayAction({
                 headers,

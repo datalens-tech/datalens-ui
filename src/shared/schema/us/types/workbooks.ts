@@ -1,9 +1,21 @@
+import type z from 'zod';
+
 import type {CollectionItemEntities} from '../../../constants';
 import type {WorkbookStatus} from '../../../constants/workbooks';
+import type {createWorkbookResultSchema} from '../actions/workbooks/create-workbook';
+import type {deleteWorkbookResultSchema} from '../actions/workbooks/delete-workbook';
+import type {deleteWorkbooksResultSchema} from '../actions/workbooks/delete-workbooks';
+import type {
+    getWorkbookArgsSchema,
+    getWorkbookResultSchema,
+} from '../actions/workbooks/get-workbook';
+import type {moveWorkbookResultSchema} from '../actions/workbooks/move-workbook';
+import type {moveWorkbooksResultSchema} from '../actions/workbooks/move-workbooks';
+import type {updateWorkbookResultSchema} from '../actions/workbooks/update-workbook';
 
 import type {GetEntryResponse} from './entries';
 import type {GetDatalensOperationResponse} from './operations';
-import type {OrderBasicField, OrderDirection, OrderWorkbookEntriesField} from './sort';
+import type {OrderDirection, OrderWorkbookEntriesField} from './sort';
 
 export type WorkbookPermission = {
     listAccessBindings: boolean;
@@ -41,20 +53,11 @@ export type ExtendedWorkbook = WorkbookWithPermissions & {
     entity?: typeof CollectionItemEntities.WORKBOOK;
 };
 
-export type CreateWorkbookArgs = {
-    collectionId?: string | null;
-    title: string;
-    description?: string;
-};
+export type CreateWorkbookResponse = z.infer<typeof createWorkbookResultSchema>;
 
-export type CreateWorkbookResponse = Workbook & {operation?: GetDatalensOperationResponse};
+export type GetWorkbookArgs = z.infer<typeof getWorkbookArgsSchema>;
 
-export type GetWorkbookArgs = {
-    workbookId: string;
-    includePermissionsInfo?: boolean;
-};
-
-export type GetWorkbookResponse = WorkbookWithPermissions;
+export type GetWorkbookResponse = z.infer<typeof getWorkbookResultSchema>;
 
 export type GetWorkbookEntriesArgs = {
     workbookId: string;
@@ -77,62 +80,15 @@ export type GetWorkbookEntriesResponse = {
     nextPageToken?: string;
 };
 
-export type GetWorkbooksListArgs =
-    | {
-          collectionId?: string | null;
-          includePermissionsInfo?: boolean;
-          filterString?: string;
-          page?: number;
-          pageSize?: number;
-          orderField?: OrderBasicField;
-          orderDirection?: OrderDirection;
-          onlyMy?: boolean;
-      }
-    | undefined;
+export type UpdateWorkbookResponse = z.infer<typeof updateWorkbookResultSchema>;
 
-export type GetWorkbooksListResponse = {
-    workbooks: (Workbook | WorkbookWithPermissions)[];
-    nextPageToken?: string;
-};
+export type MoveWorkbookResponse = z.infer<typeof moveWorkbookResultSchema>;
 
-export type UpdateWorkbookArgs = {
-    workbookId: string;
-    title?: string;
-    description?: string;
-};
+export type MoveWorkbooksResponse = z.infer<typeof moveWorkbooksResultSchema>;
 
-export type UpdateWorkbookResponse = Workbook;
+export type DeleteWorkbooksResponse = z.infer<typeof deleteWorkbooksResultSchema>;
 
-export type MoveWorkbookArgs = {
-    workbookId: string;
-    collectionId: string | null;
-    title?: string;
-};
-
-export type MoveWorkbookResponse = Workbook;
-
-export type MoveWorkbooksArgs = {
-    workbookIds: string[];
-    collectionId: string | null;
-};
-
-export type MoveWorkbooksResponse = {
-    workbooks: Workbook[];
-};
-
-export type DeleteWorkbooksArgs = {
-    workbookIds: string[];
-};
-
-export type DeleteWorkbooksResponse = {
-    workbooks: Workbook[];
-};
-
-export type DeleteWorkbookArgs = {
-    workbookId: string;
-};
-
-export type DeleteWorkbookResponse = Workbook;
+export type DeleteWorkbookResponse = z.infer<typeof deleteWorkbookResultSchema>;
 
 export type CopyWorkbookArgs = {
     workbookId: string;

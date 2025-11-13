@@ -1,7 +1,20 @@
+import type z from 'zod';
+
 import type {CollectionItemEntities} from '../../../constants';
+import type {createCollectionResultSchema} from '../actions/collections/create-collection';
+import type {deleteCollectionResultSchema} from '../actions/collections/delete-collection';
+import type {deleteCollectionsResultSchema} from '../actions/collections/delete-collections';
+import type {
+    getCollectionArgsSchema,
+    getCollectionResultSchema,
+} from '../actions/collections/get-collection';
+import type {getCollectionBreadcrumbsResultSchema} from '../actions/collections/get-collection-breadcrumbs';
+import type {getRootCollectionPermissionsResultSchema} from '../actions/collections/get-root-collection-permissions';
+import type {moveCollectionResultSchema} from '../actions/collections/move-collection';
+import type {moveCollectionsResultSchema} from '../actions/collections/move-collections';
+import type {updateCollectionResultSchema} from '../actions/collections/update-collection';
 
 import type {SharedEntryFieldsWithPermissions} from './fields';
-import type {GetDatalensOperationResponse} from './operations';
 import type {OrderBasicField, OrderDirection} from './sort';
 import type {ExtendedWorkbook} from './workbooks';
 
@@ -47,25 +60,15 @@ export type ExtendedCollection = CollectionWithPermissions & {
     entity?: typeof CollectionItemEntities.COLLECTION;
 };
 
-export type GetRootCollectionPermissionsResponse = {
-    createCollectionInRoot: boolean;
-    createWorkbookInRoot: boolean;
-};
+export type GetRootCollectionPermissionsResponse = z.infer<
+    typeof getRootCollectionPermissionsResultSchema
+>;
 
-export type CreateCollectionArgs = {
-    title: string;
-    description?: string;
-    parentId: string | null;
-};
+export type CreateCollectionResponse = z.infer<typeof createCollectionResultSchema>;
 
-export type CreateCollectionResponse = Collection & {operation?: GetDatalensOperationResponse};
+export type GetCollectionArgs = z.infer<typeof getCollectionArgsSchema>;
 
-export type GetCollectionArgs = {
-    collectionId: string;
-    includePermissionsInfo?: boolean;
-};
-
-export type GetCollectionResponse = Collection | CollectionWithPermissions;
+export type GetCollectionResponse = z.infer<typeof getCollectionResultSchema>;
 
 export type GetStructureItemsArgs = {
     collectionId: string | null;
@@ -89,50 +92,14 @@ export type GetStructureItemsResponse = {
     nextPageToken?: string | null;
 };
 
-export type GetCollectionBreadcrumbsArgs = {
-    collectionId: string;
-    includePermissionsInfo?: boolean;
-};
+export type GetCollectionBreadcrumbsResponse = z.infer<typeof getCollectionBreadcrumbsResultSchema>;
 
-export type GetCollectionBreadcrumbsResponse = (Collection | CollectionWithPermissions)[];
+export type DeleteCollectionResponse = z.infer<typeof deleteCollectionResultSchema>;
 
-export type DeleteCollectionArgs = {
-    collectionId: string;
-};
+export type MoveCollectionResponse = z.infer<typeof moveCollectionResultSchema>;
 
-export type DeleteCollectionResponse = {
-    collections: Collection[];
-};
+export type MoveCollectionsResponse = z.infer<typeof moveCollectionsResultSchema>;
 
-export type MoveCollectionArgs = {
-    collectionId: string;
-    parentId: string | null;
-    title?: string;
-};
+export type DeleteCollectionsResponse = z.infer<typeof deleteCollectionsResultSchema>;
 
-export type MoveCollectionResponse = Collection;
-
-export type MoveCollectionsArgs = {
-    collectionIds: string[];
-    parentId: string | null;
-};
-
-export type MoveCollectionsResponse = {
-    collections: Collection[];
-};
-
-export type DeleteCollectionsArgs = {
-    collectionIds: string[];
-};
-
-export type DeleteCollectionsResponse = {
-    collections: Collection[];
-};
-
-export type UpdateCollectionArgs = {
-    collectionId: string;
-    title?: string;
-    description?: string;
-};
-
-export type UpdateCollectionResponse = Collection;
+export type UpdateCollectionResponse = z.infer<typeof updateCollectionResultSchema>;
