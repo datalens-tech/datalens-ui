@@ -24,7 +24,7 @@ export const CommonGroupSettingsSection = ({
     className?: string;
 }) => {
     const {sourceType} = useSelector(selectSelectorDialog);
-    const {group, tabsScope} = useSelector(selectSelectorsGroup);
+    const {group, scopeType, scopeTabsIds} = useSelector(selectSelectorsGroup);
 
     const hasMultipleSelectors = group.length > 1;
 
@@ -39,7 +39,8 @@ export const CommonGroupSettingsSection = ({
                     />
                     {enableGlobalSelectors && (
                         <TabsScopeSelect
-                            groupTabsScope={tabsScope}
+                            groupTabsScope={scopeType}
+                            groupSelectedTabs={scopeTabsIds}
                             hasMultipleSelectors={hasMultipleSelectors}
                         />
                     )}

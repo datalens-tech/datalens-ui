@@ -24,7 +24,7 @@ export const ConnectionSettings = ({
     enableGlobalSelectors?: boolean;
 }) => {
     const {connectionQueryTypes} = useSelector(selectSelectorDialog);
-    const {tabsScope, group} = useSelector(selectSelectorsGroup);
+    const {scopeType, scopeTabsIds, group} = useSelector(selectSelectorsGroup);
 
     return (
         <React.Fragment>
@@ -44,7 +44,8 @@ export const ConnectionSettings = ({
             )}
             {enableGlobalSelectors && (
                 <TabsScopeSelect
-                    groupTabsScope={tabsScope}
+                    groupTabsScope={scopeType}
+                    groupSelectedTabs={scopeTabsIds}
                     hasMultipleSelectors={group.length > 1}
                 />
             )}

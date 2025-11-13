@@ -1,7 +1,6 @@
 import React from 'react';
 
-import {TABS_SCOPE_ALL} from 'shared/constants/dash';
-import type {TabsScope} from 'shared/types/dash';
+import type {ScopeType} from 'shared/types/dash';
 import {GlobalSelectorIcon} from 'ui/units/dash/components/GlobalSelectorIcon/GlobalSelectorIcon';
 
 import {TABS_SCOPE_SELECT_VALUE} from './constants';
@@ -10,16 +9,16 @@ export const getTabsScopeByValue = ({
     selectorTabsScope,
     hasMultipleSelectors,
 }: {
-    selectorTabsScope: TabsScope;
+    selectorTabsScope: ScopeType;
     hasMultipleSelectors?: boolean;
 }) => {
-    if (selectorTabsScope === TABS_SCOPE_ALL) {
+    if (selectorTabsScope === 'all') {
         return TABS_SCOPE_SELECT_VALUE.ALL;
     }
-    if (Array.isArray(selectorTabsScope)) {
+    if (selectorTabsScope === 'selected') {
         return TABS_SCOPE_SELECT_VALUE.SELECTED_TABS;
     }
-    if (typeof selectorTabsScope === 'string') {
+    if (selectorTabsScope === 'current') {
         return TABS_SCOPE_SELECT_VALUE.CURRENT_TAB;
     }
 
@@ -28,58 +27,27 @@ export const getTabsScopeByValue = ({
         : TABS_SCOPE_SELECT_VALUE.CURRENT_TAB;
 };
 
-export const getTabsScopeValueByName = ({
-    name,
-    currentTabId,
-
-    selectedTabs,
-}: {
-    name: string;
-    currentTabId: string;
-
-    selectedTabs: string[];
-}) => {
+export const getTabsScopeValueByName = ({name}: {name: string}): ScopeType => {
     switch (name) {
         case TABS_SCOPE_SELECT_VALUE.ALL:
-            return TABS_SCOPE_ALL;
+            return 'all';
         case TABS_SCOPE_SELECT_VALUE.CURRENT_TAB:
-            return currentTabId;
+            return 'current';
+        case TABS_SCOPE_SELECT_VALUE.SELECTED_TABS:
+            return 'selected';
         case TABS_SCOPE_SELECT_VALUE.AS_GROUP:
-            return undefined;
-        case TABS_SCOPE_SELECT_VALUE.SELECTED_TABS:
-            return selectedTabs;
         default:
             return undefined;
     }
 };
 
-export const getIconByTabsScope = (tabsScope: TabsScope) => {
-    switch (tabsScope) {
+export const getIconByTabsScope = (scopeType: string) => {
+    switch (scopeType) {
         case TABS_SCOPE_SELECT_VALUE.ALL:
-            return <GlobalSelectorIcon tabsScope={TABS_SCOPE_SELECT_VALUE.ALL} />;
+            return <GlobalSelectorIcon scopeType="all" />;
         case TABS_SCOPE_SELECT_VALUE.SELECTED_TABS:
-            return <GlobalSelectorIcon tabsScope={TABS_SCOPE_SELECT_VALUE.SELECTED_TABS} />;
+            return <GlobalSelectorIcon scopeType="selected" />;
         default:
             return undefined;
-    }
-};
-
-export const getInitialSelectedTabs = ({
-    selectorTabsScope,
-    isGroupSettings,
-    groupTabsScope,
-    currentTabId,
-}: {
-    selectorTabsScope: TabsScope;
-    isGroupSettings?: boolean;
-    groupTabsScope?: TabsScope;
-    currentTabId: string;
-}) => {
-    if (isGroupSettings && Array.isArray(groupTabsScope)) {
-        return groupTabsScope;
-    } else if (Array.isArray(selectorTabsScope)) {
-        return selectorTabsScope;
-    } else {
-        return [currentTabId];
     }
 };

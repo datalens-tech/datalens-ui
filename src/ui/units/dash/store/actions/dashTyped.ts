@@ -21,6 +21,7 @@ import type {
     DashTab,
     DashTabItem,
     DashTabItemControl,
+    DashTabItemControlSourceType,
     DashTabItemGroupControl,
     DashTabItemGroupControlData,
     DashTabItemImage,
@@ -391,7 +392,7 @@ export const toggleTableOfContent = (expanded?: boolean): ToggleTableOfContentAc
 
 type SetItemDataBase = {
     title?: string;
-    sourceType?: string;
+    sourceType?: DashTabItemControlSourceType;
     autoHeight?: boolean;
     source?: ItemDataSource;
 };

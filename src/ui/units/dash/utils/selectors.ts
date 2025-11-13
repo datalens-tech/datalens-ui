@@ -1,53 +1,63 @@
 import {Feature} from 'shared';
-import {TABS_SCOPE_ALL} from 'shared/constants/dash';
-import type {TabsScope} from 'shared/types/dash';
+import type {ScopeTabsIds, ScopeType} from 'shared/types/dash';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 export interface TabsScopeItem {
-    tabsScope?: string | string[];
+    scopeType?: ScopeType;
+    scopeTabsIds?: ScopeTabsIds;
 }
 
-export const isGroupSettingAvailableOnTab = (
-    groupTabsScope: TabsScope,
+export const isItemScopeAvailableOnTab = (
     currentTabId: string,
+    itemTabsScope: ScopeType,
+    itemSelectedTabs?: ScopeTabsIds,
 ): boolean => {
-    return (
-        !groupTabsScope ||
-        groupTabsScope === TABS_SCOPE_ALL ||
-        groupTabsScope === currentTabId ||
-        (Array.isArray(groupTabsScope) && groupTabsScope.includes(currentTabId))
-    );
+    switch (itemTabsScope) {
+        case 'all':
+            return true;
+        case 'current':
+        case 'selected':
+            return itemSelectedTabs ? itemSelectedTabs.includes(currentTabId) : true;
+        default:
+            return false;
+    }
 };
 
-export const isItemScopeAvailableOnTab = (
-    itemTabsScope: TabsScope,
+export const isGroupSettingAvailableOnTab = (
     currentTabId: string,
+    groupTabsScope: ScopeType,
+    groupSelectedTabs?: ScopeTabsIds,
 ): boolean => {
-    return (
-        itemTabsScope === currentTabId ||
-        itemTabsScope === TABS_SCOPE_ALL ||
-        (Array.isArray(itemTabsScope) && itemTabsScope.includes(currentTabId))
-    );
+    if (!groupTabsScope) {
+        return true;
+    }
+
+    return isItemScopeAvailableOnTab(currentTabId, groupTabsScope, groupSelectedTabs);
 };
 
 export const isItemVisibleOnCurrentTab = (
-    item: {tabsScope?: TabsScope},
+    item: {scopeType?: ScopeType; scopeTabsIds?: ScopeTabsIds},
     currentTabId: string | null,
-    groupTabsScope: TabsScope,
+    groupTabsScope: ScopeType,
+    groupSelectedTabs?: ScopeTabsIds,
 ): boolean => {
     if (!isEnabledFeature(Feature.EnableGlobalSelectors) || !currentTabId) {
         return true;
     }
 
-    const isGroupSettingPrevails = item.tabsScope === undefined;
-    const isGroupAvailable = isGroupSettingAvailableOnTab(groupTabsScope, currentTabId);
+    const isGroupSettingPrevails = item.scopeType === undefined;
+    const isGroupAvailable = isGroupSettingAvailableOnTab(
+        currentTabId,
+        groupTabsScope,
+        groupSelectedTabs,
+    );
 
     if (isGroupSettingPrevails && isGroupAvailable) {
         return true;
     }
 
     return (
-        isItemScopeAvailableOnTab(item.tabsScope, currentTabId) ||
-        (item.tabsScope === undefined && isGroupAvailable)
+        isItemScopeAvailableOnTab(currentTabId, item.scopeType, item.scopeTabsIds) ||
+        (item.scopeType === undefined && isGroupAvailable)
     );
 };

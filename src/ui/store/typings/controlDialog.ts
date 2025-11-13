@@ -9,6 +9,7 @@ import type {
     DashTabItemType,
     Dataset,
     DatasetFieldType,
+    ScopeTabsIds,
     StringParams,
     TitlePlacement,
     TitlePlacementOption,
@@ -20,7 +21,7 @@ import type {DialogChartWidgetFeatureProps} from 'ui/components/DialogChartWidge
 import type {DialogGroupControlFeaturesProps} from 'ui/components/DialogGroupControl/DialogGroupControl';
 import type {DialogExternalControlFeaturesProps} from 'ui/components/DialogExternalControl/DialogExternalControl';
 import type {DialogImageWidgetFeatureProps} from 'ui/components/DialogImageWidget';
-import type {TabsScope} from 'shared/types/dash';
+import type {ScopeType} from 'shared/types/dash';
 
 export type DialogEditItemFeaturesProp = {
     [DashTabItemType.Title]?: DialogTitleWidgetFeatureProps;
@@ -50,16 +51,13 @@ export type SelectorsGroupDialogState = {
     buttonReset: boolean;
     updateControlsOnChange: boolean;
     group: SelectorDialogState[];
-    tabsScope?: TabsScope;
+    scopeType?: ScopeType;
+    scopeTabsIds?: ScopeTabsIds;
 };
 
 export type SelectorElementType = 'select' | 'date' | 'input' | 'checkbox';
 
-export type SelectorSourceType =
-    | DashTabItemControlSourceType.Dataset
-    | DashTabItemControlSourceType.Manual
-    | DashTabItemControlSourceType.External
-    | DashTabItemControlSourceType.Connection;
+export type SelectorSourceType = DashTabItemControlSourceType;
 
 export type ItemDataSource = {
     chartId?: string;
@@ -97,7 +95,7 @@ export type SelectorDialogState = {
     titlePlacement?: TitlePlacement;
 
     innerTitle?: string;
-    sourceType?: SelectorSourceType;
+    sourceType: SelectorSourceType;
     autoHeight?: boolean;
     chartId?: string;
     showInnerTitle?: boolean;
@@ -135,7 +133,8 @@ export type SelectorDialogState = {
     // unique id for manipulating selectors in the creation phase
     draftId?: string;
     // which tabs display the selector
-    tabsScope?: TabsScope;
+    scopeType?: ScopeType;
+    scopeTabsIds?: ScopeTabsIds;
 };
 
 export type PastedSelectorDialogState = SelectorDialogState & {

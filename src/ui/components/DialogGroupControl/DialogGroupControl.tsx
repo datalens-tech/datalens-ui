@@ -46,7 +46,6 @@ export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
     enableAutoheightDefault,
     showSelectorsGroupTitle,
     selectorsGroupTitlePlaceholder,
-    // TODO: Add true by default
     enableGlobalSelectors,
 }) => {
     const {id, draftId} = useSelector(selectSelectorDialog);

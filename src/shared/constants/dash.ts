@@ -57,5 +57,3 @@ export const DASH_DATA_REQUIRED_FIELDS: Array<keyof DashData> = [
     'tabs',
     'settings',
 ];
-
-export const TABS_SCOPE_ALL = 'all' as const;

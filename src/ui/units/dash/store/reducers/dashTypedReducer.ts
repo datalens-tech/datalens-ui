@@ -52,7 +52,7 @@ import type {DashAction} from '../actions/index';
 
 import {TAB_PROPERTIES} from './dashHelpers';
 
-// TODO: Remove after up version
+// TODO (global selectors): Remove after up version
 export type DashState = {
     tabId: null | string;
     lastModifiedItemId: null | string;

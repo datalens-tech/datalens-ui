@@ -6,7 +6,7 @@ import {Flex, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
 import {Feature} from 'shared';
-import type {TabsScope} from 'shared/types/dash';
+import type {ScopeType} from 'shared/types/dash';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents/components/SelectOptionWithIcon/SelectOptionWithIcon';
 import {setSelectorDialogItem, updateSelectorsGroup} from 'ui/store/actions/controlDialog';
 import {selectSelectorDialog, selectSelectorsGroup} from 'ui/store/selectors/controlDialog';
@@ -14,20 +14,17 @@ import {selectTabId, selectTabs} from 'ui/units/dash/store/selectors/dashTypedSe
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {TABS_SCOPE_SELECT_VALUE} from './constants';
-import {
-    getIconByTabsScope,
-    getInitialSelectedTabs,
-    getTabsScopeByValue,
-    getTabsScopeValueByName,
-} from './helpers';
+import {getIconByTabsScope, getTabsScopeByValue, getTabsScopeValueByName} from './helpers';
 
 import './TabsScopeSelect.scss';
+
+import type {ScopeTabsIds} from '../../../../../../shared/types/dash';
 
 const b = block('tabs-scope-select');
 
 // const i18n = I18n.keyset('dash.control-dialog.edit');
 
-// TODO: Add translations
+// TODO (global selectors): Add translations
 const i18n = (key: string) => {
     const values: Record<string, string> = {
         'label_tabs-scope': 'Показать во вкладках',
@@ -51,13 +48,31 @@ const LABEL_BY_SCOPE_MAP = {
 const renderOptions = (option: SelectOption) => <SelectOptionWithIcon option={option} />;
 
 export type TabsScopeSelectProps = {
-    groupTabsScope?: TabsScope;
+    groupTabsScope?: ScopeType;
+    groupSelectedTabs?: ScopeTabsIds;
     hasMultipleSelectors?: boolean;
     isGroupSettings?: boolean;
 };
 
+const getInitialSelectedTabs = ({
+    isGroupSettings,
+    groupSelectedTabs,
+    selectorSelectedTabs,
+}: {
+    isGroupSettings?: boolean;
+    groupSelectedTabs?: ScopeTabsIds;
+    selectorSelectedTabs?: ScopeTabsIds;
+}) => {
+    if (isGroupSettings) {
+        return groupSelectedTabs || [];
+    }
+
+    return selectorSelectedTabs || [];
+};
+
 export const TabsScopeSelect = ({
     groupTabsScope,
+    groupSelectedTabs,
     hasMultipleSelectors,
     isGroupSettings,
 }: TabsScopeSelectProps) => {
@@ -68,14 +83,25 @@ export const TabsScopeSelect = ({
     const tabs = useSelector(selectTabs);
     const selectorsGroup = useSelector(selectSelectorsGroup);
 
-    const [selectedTabs, setSelectedTabs] = React.useState<string[]>(
+    const [scopeTabsIds, setSelectedTabs] = React.useState<string[]>(
         getInitialSelectedTabs({
-            selectorTabsScope: selectorDialog.tabsScope,
             isGroupSettings,
-            groupTabsScope,
-            currentTabId,
+            groupSelectedTabs,
+            selectorSelectedTabs: selectorDialog.scopeTabsIds,
         }),
     );
+
+    const optionTabTitle = React.useMemo(() => {
+        if (scopeTabsIds.length !== 1) {
+            const currentTab = tabs.find((tab) => tab.id === currentTabId);
+            return currentTab?.title || '';
+        }
+
+        const optionTab = tabs.find((tab) => tab.id === scopeTabsIds[0]);
+        const currentTabTitle = optionTab?.title || '';
+
+        return currentTabTitle;
+    }, [currentTabId, scopeTabsIds, tabs]);
 
     const tabsOptions = React.useMemo(() => {
         return tabs.map((tab) => ({
@@ -86,24 +112,19 @@ export const TabsScopeSelect = ({
     }, [tabs, currentTabId]);
 
     const currentTabsScope = getTabsScopeByValue({
-        selectorTabsScope: isGroupSettings ? groupTabsScope : selectorDialog.tabsScope,
+        selectorTabsScope: isGroupSettings ? groupTabsScope : selectorDialog.scopeType,
         hasMultipleSelectors,
     });
 
     // Create options based on whether there are multiple selectors
     const tabsScopeOptions: SelectOption<{icon?: JSX.Element}>[] = React.useMemo(() => {
-        const currentTab = tabs.find((tab) => tab.id === currentTabId);
-        const currentTabTitle = currentTab?.title || '';
-
         const baseOptions = [
             {
                 value: TABS_SCOPE_SELECT_VALUE.CURRENT_TAB,
                 content: (
                     <Flex gap={2} className={b('current-tab')}>
                         <span>{LABEL_BY_SCOPE_MAP[TABS_SCOPE_SELECT_VALUE.CURRENT_TAB]}</span>
-                        {currentTabTitle && (
-                            <span className={b('tab-hint')}>{currentTabTitle}</span>
-                        )}
+                        {optionTabTitle && <span className={b('tab-hint')}>{optionTabTitle}</span>}
                     </Flex>
                 ),
             },
@@ -131,7 +152,7 @@ export const TabsScopeSelect = ({
                     value: TABS_SCOPE_SELECT_VALUE.AS_GROUP,
                     content: (
                         <Flex gap={2} className={b('as-group')}>
-                            <span>Как в группе</span>
+                            <span>{i18n('value_as-group')}</span>
                             <span className={b('group-hint')}>
                                 {LABEL_BY_SCOPE_MAP[groupTabsScopeItem]}
                             </span>
@@ -146,18 +167,20 @@ export const TabsScopeSelect = ({
         }
 
         return baseOptions;
-    }, [groupTabsScope, hasMultipleSelectors, isGroupSettings, tabs, currentTabId]);
+    }, [optionTabTitle, hasMultipleSelectors, isGroupSettings, groupTabsScope]);
 
     const updateSelectorsState = React.useCallback(
-        (tabsScope: TabsScope) => {
+        (scopeType: ScopeType, newSelectedTabs?: string[] | null) => {
             dispatch(
                 isGroupSettings
                     ? updateSelectorsGroup({
                           ...selectorsGroup,
-                          tabsScope,
+                          scopeType,
+                          scopeTabsIds: newSelectedTabs,
                       })
                     : setSelectorDialogItem({
-                          tabsScope,
+                          scopeType,
+                          scopeTabsIds: newSelectedTabs,
                       }),
             );
         },
@@ -167,25 +190,32 @@ export const TabsScopeSelect = ({
     const handleTabsScopeChange = React.useCallback(
         (value: string[]) => {
             const newTabsScope = value[0];
+            const tabsScopeValue = getTabsScopeValueByName({name: newTabsScope});
 
-            updateSelectorsState(
-                getTabsScopeValueByName({
-                    name: newTabsScope,
-                    currentTabId,
-                    selectedTabs,
-                }),
-            );
+            let newSelectedTabs = null;
+            if (tabsScopeValue === 'selected') {
+                // When switching to selected tabs, ensure current tab is included
+                newSelectedTabs = scopeTabsIds.includes(currentTabId)
+                    ? scopeTabsIds
+                    : [...scopeTabsIds, currentTabId];
+                setSelectedTabs(newSelectedTabs);
+            } else if (tabsScopeValue === 'current') {
+                // When switching to current tab, set scopeTabsIds to current tab
+                newSelectedTabs = [currentTabId];
+                setSelectedTabs(newSelectedTabs);
+            }
+
+            updateSelectorsState(tabsScopeValue, newSelectedTabs);
         },
-        [currentTabId, selectedTabs, updateSelectorsState],
+        [currentTabId, scopeTabsIds, updateSelectorsState],
     );
 
     const handleSelectedTabsChange = React.useCallback(
         (value: string[]) => {
-            // Always ensure current tab is included and can't be removed
-            // TODO: change logic
+            // TODO (global selectors): Add validation instead of disable current tab
             const newSelectedTabs = value.includes(currentTabId) ? value : [...value, currentTabId];
             setSelectedTabs(newSelectedTabs);
-            updateSelectorsState(newSelectedTabs);
+            updateSelectorsState('selected', newSelectedTabs);
         },
         [currentTabId, updateSelectorsState],
     );
@@ -216,7 +246,7 @@ export const TabsScopeSelect = ({
 
                     {showTabsSelector && (
                         <Select
-                            value={selectedTabs}
+                            value={scopeTabsIds}
                             onUpdate={handleSelectedTabsChange}
                             width="max"
                             multiple

@@ -93,7 +93,6 @@ class DialogExternalControl extends React.Component<Props> {
             navigationPath,
             changeNavigationPath,
             enableAutoheightDefault,
-            // TODO: Add true by default
             enableGlobalSelectors,
         } = this.props;
 

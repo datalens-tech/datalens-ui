@@ -11,8 +11,7 @@ import type {
     DashTabLayout,
 } from 'shared';
 import {DashTabItemType} from 'shared';
-import {TABS_SCOPE_ALL} from 'shared/constants/dash';
-import type {TabsScope} from 'shared/types/dash';
+import type {ScopeTabsIds, ScopeType} from 'shared/types/dash';
 
 import type {DashState} from '../typings/dash';
 
@@ -33,7 +32,8 @@ export function isItemGlobal(
     itemData: DashTabItemControlData | DashTabItemGroupControlData,
 ): boolean {
     if (itemType === DashTabItemType.Control) {
-        return isControlGlobal((itemData as DashTabItemControlData).tabsScope);
+        const controlData = itemData as DashTabItemControlData;
+        return isControlGlobal(controlData.scopeType, controlData.scopeTabsIds);
     }
 
     if (itemType === DashTabItemType.GroupControl) {
@@ -43,27 +43,53 @@ export function isItemGlobal(
     return false;
 }
 
-function isControlGlobal(tabsScope: TabsScope): boolean {
-    return tabsScope === TABS_SCOPE_ALL || (Array.isArray(tabsScope) && tabsScope.length > 1);
+function isControlGlobal(scopeType: ScopeType, scopeTabsIds?: ScopeTabsIds): boolean {
+    return (
+        scopeType === 'all' ||
+        (scopeType === 'selected' && Boolean(scopeTabsIds && scopeTabsIds?.length > 1))
+    );
 }
 
 function isGroupControlGlobal(itemData: DashTabItemGroupControlData): boolean {
-    const groupTabsScope = itemData.tabsScope;
+    const groupTabsScope = itemData.scopeType;
+    const groupSelectedTabs = itemData.scopeTabsIds;
     const isGroupSettingsApplied = itemData.group.some(
-        (selector) => selector.tabsScope === undefined,
+        (selector) => selector.scopeType === undefined,
     );
 
-    if (isControlGlobal(groupTabsScope) && isGroupSettingsApplied) {
+    if (isControlGlobal(groupTabsScope, groupSelectedTabs) && isGroupSettingsApplied) {
         return true;
     }
 
-    return itemData.group.some((selector) => isControlGlobal(selector.tabsScope));
+    return itemData.group.some((selector) =>
+        isControlGlobal(selector.scopeType, selector.scopeTabsIds),
+    );
 }
 
 type DetailedGlobalStatus = {
     hasAllScope: boolean;
     usedTabs: Set<string>;
 };
+
+function getUsedTabsFromScope({
+    scopeType,
+    scopeTabsIds,
+}: {
+    scopeType: ScopeType;
+    scopeTabsIds?: ScopeTabsIds;
+}) {
+    if (scopeType === 'all') {
+        return {hasAllScope: true, usedTabs: []};
+    } else if (
+        (scopeType === 'selected' || scopeType === 'current') &&
+        scopeTabsIds &&
+        scopeTabsIds?.length > 1
+    ) {
+        return {usedTabs: [...scopeTabsIds], hasAllScope: false};
+    }
+
+    return {usedTabs: [], hasAllScope: false};
+}
 
 export function getDetailedGlobalStatus(
     itemType: DashTabItemType,
@@ -74,48 +100,51 @@ export function getDetailedGlobalStatus(
 
     if (itemType === DashTabItemType.Control) {
         const controlData = itemData as DashTabItemControlData;
-        const tabsScope = controlData.tabsScope;
-        if (tabsScope === TABS_SCOPE_ALL) {
-            hasAllScope = true;
-        } else if (Array.isArray(tabsScope) && tabsScope.length > 1) {
-            tabsScope.forEach((tabId) => usedTabs.add(tabId));
-        }
+        const scopeType = controlData.scopeType;
+        const scopeTabsIds = controlData.scopeTabsIds;
+
+        const usedTabsResult = getUsedTabsFromScope({scopeType, scopeTabsIds});
+
+        hasAllScope = usedTabsResult.hasAllScope;
+        usedTabsResult.usedTabs.forEach((tabId) => usedTabs.add(tabId));
     }
 
     if (itemType === DashTabItemType.GroupControl) {
         const groupData = itemData as DashTabItemGroupControlData;
-        const groupTabsScope = groupData.tabsScope;
+        const groupTabsScope = groupData.scopeType;
+        const groupSelectedTabs = groupData.scopeTabsIds;
         const isGroupSettingsPrevails = groupData.group.every(
-            (selector) => selector.tabsScope === undefined,
+            (selector) => selector.scopeType === undefined,
         );
         const isGroupSettingsApplied = groupData.group.some(
-            (selector) => selector.tabsScope === undefined,
+            (selector) => selector.scopeType === undefined,
         );
 
         if (isGroupSettingsApplied) {
-            if (groupTabsScope === TABS_SCOPE_ALL) {
-                hasAllScope = true;
-            } else if (Array.isArray(groupTabsScope)) {
-                groupTabsScope.forEach((tabId) => usedTabs.add(tabId));
-            } else if (groupTabsScope !== TABS_SCOPE_ALL && typeof groupTabsScope === 'string') {
-                usedTabs.add(groupTabsScope);
-            }
+            const usedTabsResult = getUsedTabsFromScope({
+                scopeType: groupTabsScope,
+                scopeTabsIds: groupSelectedTabs,
+            });
+
+            hasAllScope = usedTabsResult.hasAllScope;
+            usedTabsResult.usedTabs.forEach((tabId) => usedTabs.add(tabId));
         }
 
         if (!isGroupSettingsPrevails) {
             for (const selector of groupData.group) {
-                const selectorTabsScope = selector.tabsScope;
+                const selectorTabsScope = selector.scopeType;
+                const selectorSelectedTabs = selector.scopeTabsIds;
                 if (selectorTabsScope === undefined) {
                     continue;
                 }
 
-                if (selectorTabsScope === TABS_SCOPE_ALL) {
-                    hasAllScope = true;
-                } else if (Array.isArray(selectorTabsScope) && selectorTabsScope.length > 1) {
-                    selectorTabsScope.forEach((tabId) => usedTabs.add(tabId));
-                } else if (typeof selectorTabsScope === 'string') {
-                    usedTabs.add(selectorTabsScope);
-                }
+                const usedTabsResult = getUsedTabsFromScope({
+                    scopeType: selectorTabsScope,
+                    scopeTabsIds: selectorSelectedTabs,
+                });
+
+                hasAllScope = usedTabsResult.hasAllScope;
+                usedTabsResult.usedTabs.forEach((tabId) => usedTabs.add(tabId));
             }
         }
     }
@@ -260,7 +289,7 @@ export function getStateForControlWithGlobalLogic({
         const wasGlobal = Boolean(savedGlobalItem);
 
         if (isGlobal && wasGlobal) {
-            // Case: Global item remains global - item data or tabsScope was changed
+            // Case: Global item remains global - item data or scopeType was changed
             const updatedItem = tabData.globalItems?.find((item) => item.id === state.openedItemId);
 
             if (!updatedItem) {
@@ -373,7 +402,7 @@ export function getGlobalItemsToCopy(tab: DashTab) {
     const usedGlobalItems = tab.globalItems.filter((item) => {
         if (item.type === DashTabItemType.Control) {
             const controlData = item.data;
-            if (controlData.tabsScope === TABS_SCOPE_ALL) {
+            if (controlData.scopeType === 'all') {
                 layout[item.id] = tab.layout.find((layoutItem) => layoutItem.i === item.id);
                 return true;
             }
@@ -384,9 +413,9 @@ export function getGlobalItemsToCopy(tab: DashTab) {
             const groupData = item.data;
 
             if (
-                (groupData.tabsScope === TABS_SCOPE_ALL &&
-                    groupData.group.some((item) => item.tabsScope === undefined)) ||
-                groupData.group.some((item) => item.tabsScope === TABS_SCOPE_ALL)
+                (groupData.scopeType === 'all' &&
+                    groupData.group.some((item) => item.scopeType === undefined)) ||
+                groupData.group.some((item) => item.scopeType === 'all')
             ) {
                 layout[item.id] = tab.layout.find((layoutItem) => layoutItem.i === item.id);
                 return true;

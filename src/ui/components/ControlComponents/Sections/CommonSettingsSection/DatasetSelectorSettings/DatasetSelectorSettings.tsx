@@ -40,7 +40,7 @@ function DatasetSelectorSettings(props: {
     const {datasetId, datasetFieldId, isManualTitle, title, fieldType, validation} =
         useSelector(selectSelectorDialog);
     const {workbookId} = useSelector(selectOpenedItemMeta);
-    const {tabsScope, group} = useSelector(selectSelectorsGroup);
+    const {scopeType, scopeTabsIds, group} = useSelector(selectSelectorsGroup);
     const [isInvalid, setIsInvalid] = React.useState(false);
 
     const fetchDataset = React.useCallback((entryId: string) => {
@@ -181,7 +181,8 @@ function DatasetSelectorSettings(props: {
             {props.enableGlobalSelectors && (
                 <TabsScopeSelect
                     hasMultipleSelectors={group.length > 1}
-                    groupTabsScope={tabsScope}
+                    groupTabsScope={scopeType}
+                    groupSelectedTabs={scopeTabsIds}
                 ></TabsScopeSelect>
             )}
         </React.Fragment>

@@ -335,7 +335,8 @@ const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                     {showTabsScopeSelect && (
                         <TabsScopeSelect
                             isGroupSettings={true}
-                            groupTabsScope={selectorsGroup.tabsScope}
+                            groupTabsScope={selectorsGroup.scopeType}
+                            groupSelectedTabs={selectorsGroup.scopeTabsIds}
                         />
                     )}
                 </FormSection>

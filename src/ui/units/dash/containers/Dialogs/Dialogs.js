@@ -24,9 +24,11 @@ import {
 import Settings from './Settings/Settings';
 import Tabs from './Tabs/Tabs';
 
-// TODO: remove after disable enableGlobalSelectors in other places
 const DASHBOARD_FEATURES = {
     [DashTabItemType.GroupControl]: {
+        enableGlobalSelectors: true,
+    },
+    [DashTabItemType.Control]: {
         enableGlobalSelectors: true,
     },
 };
