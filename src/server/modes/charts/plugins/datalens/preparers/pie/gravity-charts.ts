@@ -124,6 +124,7 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
     return merge(getBaseChartConfig(shared), {
         chart: {
             margin: {top: 20, left: 12, right: 12, bottom: 20},
+            zoom: {enabled: false},
         },
         series: {
             data: data.filter((s) => s.data.length),
