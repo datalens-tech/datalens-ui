@@ -19,6 +19,7 @@ import {
     WizardVisualizationId,
 } from '../../../../../shared';
 import {getSdk} from '../../../../libs/schematic-sdk';
+import {receiveVisualization} from '../../actions';
 import {getAvailableVisualizations} from '../visualization';
 
 import type {FilterValue, RecipeField, WizardChartRecipe} from './types';
@@ -120,6 +121,8 @@ export async function getWizardConfigFromRecipe({
     const availableTypes = getAvailableVisualizations();
     const layers: Partial<ServerVisualizationLayer>[] = [];
     const segments: ServerField[] = [];
+
+    // eslint-disable-next-line complexity
     recipe.layers.forEach((layer) => {
         const chartType = layer.type;
 
@@ -138,6 +141,8 @@ export async function getWizardConfigFromRecipe({
             case WizardVisualizationId.Column100p:
             case WizardVisualizationId.Area:
             case WizardVisualizationId.Area100p:
+            case WizardVisualizationId.Bar:
+            case WizardVisualizationId.Bar100p:
             case WizardVisualizationId.Scatter: {
                 placeholders.push({
                     id: PlaceholderId.X,
@@ -206,14 +211,14 @@ export async function getWizardConfigFromRecipe({
         layers.push(newLayer);
     });
 
-    let visualization: ServerVisualization;
+    let config: ChartsConfig;
     if (layers.length === 1) {
-        visualization = {
+        const visualization: ServerVisualization = {
             id: layers[0].id ?? '',
             placeholders: layers[0].placeholders ?? [],
         };
 
-        return {
+        config = {
             colors: layers[0]?.commonPlaceholders?.colors ?? [],
             extraSettings: undefined,
             filters: layers[0]?.commonPlaceholders?.filters ?? [],
@@ -233,12 +238,12 @@ export async function getWizardConfigFromRecipe({
         };
     } else {
         // todo: check combined and geo charts
-        visualization = {
+        const visualization: ServerVisualization = {
             id: '',
             placeholders: [],
         };
 
-        return {
+        config = {
             colors: [],
             extraSettings: undefined,
             filters: [],
@@ -257,4 +262,15 @@ export async function getWizardConfigFromRecipe({
             segments,
         };
     }
+
+    // @ts-ignore
+    const {visualization} = receiveVisualization({
+        ...config,
+        datasets: [dataset],
+    });
+
+    return {
+        ...config,
+        visualization,
+    };
 }

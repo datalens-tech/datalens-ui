@@ -1,6 +1,3 @@
-import {Feature} from 'shared';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
-
 import type {ConnectorItem, GetEntryResponse} from '../../../../shared/schema/types';
 
 export const isConnectorInList = (connectors: ConnectorItem[], connType?: string) => {
@@ -40,6 +37,5 @@ export const getIsRevisionsSupported = ({
         connectors: flattenConnectors,
         type: entry?.type ?? '',
     });
-    const isRevisionsEnabled = isEnabledFeature(Feature.EnableConnectionRevisions);
-    return Boolean(connector?.history && isRevisionsEnabled);
+    return Boolean(connector?.history);
 };
