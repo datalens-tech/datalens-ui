@@ -19,7 +19,6 @@ export const ChartFromRecipe = React.memo(({recipe}: Props) => {
     React.useEffect(() => {
         (async function () {
             /* eslint-disable no-console */
-            console.groupEnd();
             console.group('Generate wizard config from recipe');
             console.log('Chart recipe:');
             console.log(recipe);

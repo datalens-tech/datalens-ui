@@ -135,6 +135,7 @@ export async function getWizardConfigFromRecipe({
         }
 
         const placeholders: ServerPlaceholder[] = [];
+        const colors: ServerColor[] = [];
         switch (chartType) {
             case WizardVisualizationId.Line:
             case WizardVisualizationId.Column:
@@ -151,6 +152,24 @@ export async function getWizardConfigFromRecipe({
                 placeholders.push({
                     id: PlaceholderId.Y,
                     items: (layer.y ?? []).map(mapRecipeFieldToServerField),
+                });
+                colors.push(...(layer.colors ?? []).map(mapRecipeFieldToServerField));
+                segments.push(...(layer.split ?? []).map(mapRecipeFieldToServerField));
+                break;
+            }
+            case WizardVisualizationId.Pie:
+            case WizardVisualizationId.Donut: {
+                placeholders.push({
+                    id: PlaceholderId.Dimensions,
+                    items: [],
+                });
+                placeholders.push({
+                    id: PlaceholderId.Colors,
+                    items: (layer.colors ?? []).map(mapRecipeFieldToServerField),
+                });
+                placeholders.push({
+                    id: PlaceholderId.Measures,
+                    items: (layer.measures ?? []).map(mapRecipeFieldToServerField),
                 });
                 break;
             }
@@ -177,10 +196,6 @@ export async function getWizardConfigFromRecipe({
                 break;
             }
         }
-
-        const colors: ServerColor[] = (layer.colors ?? []).map(mapRecipeFieldToServerField);
-
-        segments.push(...(layer.split ?? []).map(mapRecipeFieldToServerField));
 
         const layerFilterValues: FilterValue[] = layer.filters ?? [];
         const filters: ServerFilter[] = layerFilterValues.map((item) => {

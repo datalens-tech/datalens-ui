@@ -48,12 +48,16 @@ export type WizardChartRecipe = {
          * "bar100p" is a normalized "bar" chart.
          */
         type: WizardVisualizationId;
-        /** Fields whose values are used to form the X-axis.
+        /**
+         * Fields whose values are used to form the X-axis.
          * Usually, a single field is used, unless it is a categorical axis with grouping, as, for example, in a bar chart.
+         * Unavailable for "pie" and "donut" charts.
          * */
         x?: RecipeField[];
-        /** Fields whose values are used to form the Y-axis.
+        /**
+         * Fields whose values are used to form the Y-axis.
          * Multiple fields can be used if you want to display different data for the same X-axis.
+         * Unavailable for "pie" and "donut" charts.
          * */
         y?: RecipeField[];
         /** There is usually one field whose values are used to group chart series.
@@ -64,8 +68,10 @@ export type WizardChartRecipe = {
         columns?: RecipeField[];
         /** Fields whose values are used to form table rows. The section is used only for pivot tables. */
         rows?: RecipeField[];
-        /** Fields used to generate measure values.
+        /**
+         * Fields used to generate measure values.
          * For pivot tables, this is an aggregation at the intersection of selected columns and rows.
+         * For pie or donut charts, this is the value that will determine the size of the chart segment
          * */
         measures?: RecipeField[];
         /**
