@@ -3,12 +3,12 @@ import z from 'zod';
 import {createTypedAction} from '../../../gateway-utils';
 import {workbookPermissionsSchema, workbookSchema} from '../../schemas/workbooks';
 
-const getWorkbookArgsSchema = z.object({
+export const getWorkbookArgsSchema = z.object({
     workbookId: z.string(),
     includePermissionsInfo: z.boolean().optional(),
 });
 
-const getWorkbookResultSchema = workbookSchema.extend({
+export const getWorkbookResultSchema = workbookSchema.extend({
     permissions: workbookPermissionsSchema,
 });
 

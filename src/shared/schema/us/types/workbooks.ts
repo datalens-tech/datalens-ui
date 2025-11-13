@@ -6,6 +6,10 @@ import type {copyWorkbookResultSchema} from '../actions/workbooks/copy-workbook'
 import type {createWorkbookResultSchema} from '../actions/workbooks/create-workbook';
 import type {deleteWorkbookResultSchema} from '../actions/workbooks/delete-workbook';
 import type {deleteWorkbooksResultSchema} from '../actions/workbooks/delete-workbooks';
+import type {
+    getWorkbookArgsSchema,
+    getWorkbookResultSchema,
+} from '../actions/workbooks/get-workbook';
 import type {moveWorkbookResultSchema} from '../actions/workbooks/move-workbook';
 import type {moveWorkbooksResultSchema} from '../actions/workbooks/move-workbooks';
 import type {updateWorkbookResultSchema} from '../actions/workbooks/update-workbook';
@@ -51,12 +55,9 @@ export type ExtendedWorkbook = WorkbookWithPermissions & {
 
 export type CreateWorkbookResponse = z.infer<typeof createWorkbookResultSchema>;
 
-export type GetWorkbookArgs = {
-    workbookId: string;
-    includePermissionsInfo?: boolean;
-};
+export type GetWorkbookArgs = z.infer<typeof getWorkbookArgsSchema>;
 
-export type GetWorkbookResponse = WorkbookWithPermissions;
+export type GetWorkbookResponse = z.infer<typeof getWorkbookResultSchema>;
 
 export type GetWorkbookEntriesArgs = {
     workbookId: string;
