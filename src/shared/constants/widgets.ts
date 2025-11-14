@@ -3,7 +3,6 @@ import {type ValueOf} from '../types';
 export const CustomPaletteBgColors = {
     LIKE_CHART: 'like-chart-bg',
     NONE: 'transparent',
-    FROM_APP_THEME: 'from-app-theme',
 } as const;
 
 export const LIKE_CHART_COLOR_TOKEN = 'var(--g-color-base-float)';
@@ -106,5 +105,5 @@ export function getDefaultWidgetBackgroundColor(
     isCommonChartDashSettingsEnabled?: boolean,
     defaultColor: string = CustomPaletteBgColors.NONE,
 ) {
-    return isCommonChartDashSettingsEnabled ? CustomPaletteBgColors.FROM_APP_THEME : defaultColor;
+    return isCommonChartDashSettingsEnabled ? '' : defaultColor;
 }
