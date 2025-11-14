@@ -182,17 +182,27 @@ const isSelectorWithContext = (
     return 'originalId' in selector;
 };
 
-const getValidScopeFields = (
-    impactType: ImpactType,
-    impactTabsIds: ImpactTabsIds,
-    tabId: string | null,
-): {impactType: ImpactType; impactTabsIds: ImpactTabsIds} => {
+const getValidScopeFields = ({
+    impactType,
+    impactTabsIds,
+    tabId,
+    isMainSetting,
+}: {
+    impactType: ImpactType;
+    impactTabsIds: ImpactTabsIds;
+    tabId: string | null;
+    isMainSetting?: boolean;
+}): {impactType: ImpactType; impactTabsIds: ImpactTabsIds} => {
     if (impactType === 'allTabs') {
         return {impactType, impactTabsIds: null};
     }
 
     if (impactType === 'selectedTabs' && impactTabsIds?.length) {
         return {impactType, impactTabsIds};
+    }
+
+    if (!isMainSetting && impactType === undefined) {
+        return {impactTabsIds: null, impactType: undefined};
     }
 
     return {impactType: 'currentTab', impactTabsIds: tabId ? [tabId] : undefined};
@@ -300,11 +310,12 @@ export const applyGroupControlDialog = ({
             }
         });
 
-        const {impactType, impactTabsIds} = getValidScopeFields(
-            selectorsGroup.impactType,
-            selectorsGroup.impactTabsIds,
-            state.dash.tabId,
-        );
+        const {impactType, impactTabsIds} = getValidScopeFields({
+            impactType: selectorsGroup.impactType,
+            impactTabsIds: selectorsGroup.impactTabsIds,
+            tabId: state.dash.tabId,
+            isMainSetting: true,
+        });
 
         const data = {
             autoHeight,
@@ -335,11 +346,11 @@ export const applyGroupControlDialog = ({
                     width: isSingleControl ? '' : selector.width,
                     defaults: getControlDefaultsForField(selector, hasChangedSourceType),
                     namespace: selector.namespace,
-                    ...getValidScopeFields(
-                        selector.impactType,
-                        selector.impactTabsIds,
-                        state.dash.tabId,
-                    ),
+                    ...getValidScopeFields({
+                        impactType: selector.impactType,
+                        impactTabsIds: selector.impactTabsIds,
+                        tabId: state.dash.tabId,
+                    }),
                 };
             }),
             // if control is single we take the scope params from the control data
@@ -471,7 +482,12 @@ export const applyExternalControlDialog = ({
             sourceType,
             autoHeight,
             source: getItemDataSource(selectorDialog),
-            ...getValidScopeFields(impactType, impactTabsIds, state.dash.tabId),
+            ...getValidScopeFields({
+                impactType,
+                impactTabsIds,
+                tabId: state.dash.tabId,
+                isMainSetting: true,
+            }),
         };
         const getExtendedItemData = getExtendedItemDataAction();
         const itemData = dispatch(getExtendedItemData({data, defaults}));
