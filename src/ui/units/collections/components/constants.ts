@@ -56,6 +56,17 @@ export const mockSharedEntriesTexts = {
     'entity-row-not-delegated': 'Без делегации прав',
     'cancel-unbind-dialog': 'Отмена',
     'apply-unbind-dialog': 'Отвязать',
+    'apply-permissions-dialog': 'Применить',
+    'title-permissions-dialog': 'Настройка доступа',
+    'delegate-title-permissions-dialog': 'Делегировать права доступа',
+    'delegate-message-permissions-dialog':
+        'Внутри воркбука права на подключение проверяться не будут',
+    'not-delegate-title-permissions-dialog': 'Не делегировать права доступа',
+    'not-delegate-message-permissions-dialog':
+        'Для просмотра данных необходимо выдать права на оригинал подключения',
+    'permissions-dialog-notice':
+        'Неправильная настройка может привести к непредвиденным результатам. Подробнее в ',
+    'permissions-dialog-documentation-link': 'документации',
     'open-relation-unbind-dialog': 'Открыть {{relation}}',
     'title-alert-unbind-dialog': '{{entry}} используется в {{relation}}',
     'title-unbind-dialog': 'Отвязать {{entry}}?',
