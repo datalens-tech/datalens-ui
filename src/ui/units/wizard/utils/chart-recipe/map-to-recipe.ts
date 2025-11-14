@@ -1,20 +1,22 @@
+import {isEmpty} from 'lodash';
+
 import type {
     ChartsConfig,
     ServerField,
+    ServerSort,
     WizardDatasetField,
     WizardVisualizationId,
 } from '../../../../../shared';
-import {PlaceholderId, getFakeTitleOrTitle} from '../../../../../shared';
+import {BarsColorType, PlaceholderId} from '../../../../../shared';
 
-import type {FilterValue, RecipeField, WizardChartRecipe} from './types';
+import type {FilterValue, RecipeField, SortingValue, WizardChartRecipe} from './types';
 
 export function getChartRecipeFromWizardConfig(config: Partial<ChartsConfig>): WizardChartRecipe {
-    const mapFieldToRecipeField = (item: ServerField) => {
+    const mapFieldToRecipeField = (item: ServerField | ServerSort) => {
         const wizardField = item as WizardDatasetField;
 
         return {
-            title: getFakeTitleOrTitle(wizardField),
-            formula: wizardField.formula || item.title,
+            title: wizardField.title,
         } as RecipeField;
     };
 
@@ -39,8 +41,18 @@ export function getChartRecipeFromWizardConfig(config: Partial<ChartsConfig>): W
             (p) =>
                 p.id === PlaceholderId.FlatTableColumns || p.id === PlaceholderId.PivotTableColumns,
         );
-        const columns: RecipeField[] | undefined =
-            columnPlaceholder?.items?.map(mapFieldToRecipeField);
+        const columns: RecipeField[] | undefined = columnPlaceholder?.items?.map((d) => {
+            const bar = d?.barsSettings?.enabled
+                ? {
+                      colorType: d.barsSettings.colorSettings?.colorType ?? BarsColorType.Gradient,
+                      palette: d.barsSettings.colorSettings?.settings?.palette,
+                  }
+                : undefined;
+            return {
+                ...mapFieldToRecipeField(d),
+                bar,
+            };
+        });
 
         const rowsPlaceholder = config.visualization?.placeholders.find(
             (p) => p.id === PlaceholderId.PivotTableRows,
@@ -59,16 +71,24 @@ export function getChartRecipeFromWizardConfig(config: Partial<ChartsConfig>): W
             values: item.filter.value as string[],
         }));
 
+        const sorting = config.sort?.map((d) => {
+            return {
+                ...mapFieldToRecipeField(d),
+                direction: d.direction,
+            } as SortingValue;
+        });
+
         layers.push({
             type: config.visualization?.id as WizardVisualizationId,
             x,
             y,
-            colors,
+            colors: isEmpty(colors) ? undefined : colors,
             columns,
             rows,
             measures,
-            split,
+            split: isEmpty(split) ? undefined : split,
             filters,
+            sorting: isEmpty(sorting) ? undefined : sorting,
         });
     }
 

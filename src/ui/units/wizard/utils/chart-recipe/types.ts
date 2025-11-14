@@ -1,4 +1,4 @@
-import type {ServerFieldUpdate, WizardVisualizationId} from '../../../../../shared';
+import type {BarsColorType, ServerFieldUpdate, WizardVisualizationId} from '../../../../../shared';
 
 export type RecipeField = {
     /**
@@ -28,6 +28,19 @@ export type FilterValue = {
     operation: string;
     /** The filter values used for comparison with the values of the specified dataset field. */
     values: string[];
+};
+
+export type SortingValue = RecipeField & {
+    /** Sorting direction */
+    direction: 'ASC' | 'DESC';
+};
+
+export type TableColumns = RecipeField & {
+    /** If it is defined, then display the linear indicator as a bar in the table cell. */
+    bar?: {
+        colorType?: BarsColorType.Gradient;
+        palette?: string;
+    };
 };
 
 export type WizardChartRecipe = {
@@ -65,7 +78,7 @@ export type WizardChartRecipe = {
          * */
         colors?: RecipeField[];
         /** Fields whose values are used to form table columns. The section is used only for flat and pivot tables. */
-        columns?: RecipeField[];
+        columns?: TableColumns[];
         /** Fields whose values are used to form table rows. The section is used only for pivot tables. */
         rows?: RecipeField[];
         /**
@@ -80,5 +93,7 @@ export type WizardChartRecipe = {
         split?: RecipeField[];
         /** Filters that are used to select the data used in the chart. */
         filters?: FilterValue[];
+        /** Fields that are used to sort the data used in the chart. */
+        sorting?: SortingValue[];
     }[];
 };
