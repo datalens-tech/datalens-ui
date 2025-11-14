@@ -1,25 +1,57 @@
-import type {BarsColorType, ServerFieldUpdate, WizardVisualizationId} from '../../../../../shared';
+import type {WizardVisualizationId} from '../../../../../shared';
+
+export type WizardRecipeType =
+    | WizardVisualizationId.Area
+    | WizardVisualizationId.Area100p
+    | WizardVisualizationId.Bar
+    | WizardVisualizationId.Bar100p
+    | WizardVisualizationId.Column
+    | WizardVisualizationId.Column100p
+    | WizardVisualizationId.Line
+    | WizardVisualizationId.Scatter
+    | WizardVisualizationId.Pie
+    | WizardVisualizationId.Donut
+    | WizardVisualizationId.Metric
+    | WizardVisualizationId.Treemap
+    | WizardVisualizationId.FlatTable
+    | WizardVisualizationId.PivotTable
+    | WizardVisualizationId.CombinedChart;
 
 export type RecipeField = {
     /**
-     * The name of the field. It can be the same as in the dataset, or it can be named differently
-     * if it is required for a better understanding of what is happening on the chart.
+     * The name of the field. The name of the field must be the same as in the dataset or in datasetUpdates.
      */
     title: string;
-    /**
-     * A formula can only contain the name of a data set field (if used one-to-one),
-     * aggregation, or something more complex from the list of formulas available for a given dataset source.
-     */
-    formula: string;
 };
 
-export type RecipeFieldUpdate = {
-    action: ServerFieldUpdate['action'];
-    field: RecipeField & {
-        /** To replace the default value of the dataset parameter. */
-        default_value?: string;
+export type AddNewFieldUpdate = {
+    action: 'add_field';
+    field: {
+        /**
+         * The name for the new field in the chart created based on the rest of the dataset fields (must be unique).
+         */
+        title: string;
+        /**
+         * A formula can only contain the name of a dataset field (if used one-to-one),
+         * aggregation, or something more complex from the list of formulas available for a given dataset source.
+         */
+        formula: string;
     };
 };
+
+export type UpdateParameterUpdate = {
+    action: 'update_field';
+    field: {
+        /**
+         * The name of the dataset parameter for which the value should be redefined.
+         */
+        title: string;
+        /** To replace the default value of the dataset parameter. */
+        default_value: string;
+    };
+};
+
+export type RecipeFieldUpdate = AddNewFieldUpdate | UpdateParameterUpdate;
 
 export type FilterValue = {
     /** A dataset field (or a new field created at the chart level) used to select data. */
@@ -38,7 +70,7 @@ export type SortingValue = RecipeField & {
 export type TableColumns = RecipeField & {
     /** If it is defined, then display the linear indicator as a bar in the table cell. */
     bar?: {
-        colorType?: BarsColorType.Gradient;
+        colorType?: 'gradient';
         palette?: string;
     };
 };
@@ -60,7 +92,7 @@ export type WizardChartRecipe = {
          * "bar" is a chart with horizontal bars. The Y-axis usually shows a category (most often a string), and the X-axis shows a dimension (numbers).
          * "bar100p" is a normalized "bar" chart.
          */
-        type: WizardVisualizationId;
+        type: WizardRecipeType;
         /**
          * Fields whose values are used to form the X-axis.
          * Usually, a single field is used, unless it is a categorical axis with grouping, as, for example, in a bar chart.
@@ -73,6 +105,10 @@ export type WizardChartRecipe = {
          * Unavailable for "pie" and "donut" charts.
          * */
         y?: RecipeField[];
+        /**
+         * The right Y-axis. Useful for comparing two variables with different units or measurement scales on the same plot without distorting the visualization of either data series.
+         */
+        y2?: RecipeField[];
         /** There is usually one field whose values are used to group chart series.
          * The colors are assigned automatically in order or set by the user.
          * */

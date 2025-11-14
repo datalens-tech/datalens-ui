@@ -5,11 +5,17 @@ import type {
     ServerField,
     ServerSort,
     WizardDatasetField,
-    WizardVisualizationId,
 } from '../../../../../shared';
 import {BarsColorType, PlaceholderId} from '../../../../../shared';
 
-import type {FilterValue, RecipeField, SortingValue, WizardChartRecipe} from './types';
+import type {
+    FilterValue,
+    RecipeField,
+    RecipeFieldUpdate,
+    SortingValue,
+    WizardChartRecipe,
+    WizardRecipeType,
+} from './types';
 
 export function getChartRecipeFromWizardConfig(config: Partial<ChartsConfig>): WizardChartRecipe {
     const mapFieldToRecipeField = (item: ServerField | ServerSort) => {
@@ -21,8 +27,45 @@ export function getChartRecipeFromWizardConfig(config: Partial<ChartsConfig>): W
     };
 
     const layers: WizardChartRecipe['layers'] = [];
+
+    const filters: FilterValue[] | undefined = config.filters?.map((item) => ({
+        field: mapFieldToRecipeField(item as WizardDatasetField),
+        operation: item.filter.operation.code,
+        values: item.filter.value as string[],
+    }));
+
     if (config.visualization?.layers) {
-        // todo: map layers
+        const firstLayer = config.visualization?.layers?.[0];
+        const xPlaceholder = firstLayer?.placeholders.find((p) => p.id === PlaceholderId.X);
+        const x: RecipeField[] | undefined = xPlaceholder?.items?.map(mapFieldToRecipeField);
+
+        config.visualization.layers.forEach((layerData) => {
+            const yPlaceholder = layerData?.placeholders.find((p) => p.id === PlaceholderId.Y);
+            const y: RecipeField[] | undefined = yPlaceholder?.items?.map(mapFieldToRecipeField);
+
+            const y2Placeholder = layerData?.placeholders.find((p) => p.id === PlaceholderId.Y2);
+            const y2: RecipeField[] | undefined = y2Placeholder?.items?.map(mapFieldToRecipeField);
+
+            const colors: RecipeField[] | undefined =
+                layerData.commonPlaceholders.colors?.map(mapFieldToRecipeField);
+
+            const sorting = layerData.commonPlaceholders.sort?.map((d) => {
+                return {
+                    ...mapFieldToRecipeField(d),
+                    direction: d.direction,
+                } as SortingValue;
+            });
+
+            layers.push({
+                type: layerData.id as WizardRecipeType,
+                x,
+                y,
+                y2,
+                colors: isEmpty(colors) ? undefined : colors,
+                filters,
+                sorting: isEmpty(sorting) ? undefined : sorting,
+            });
+        });
     } else {
         const xPlaceholder = config.visualization?.placeholders.find(
             (p) => p.id === PlaceholderId.X,
@@ -33,6 +76,11 @@ export function getChartRecipeFromWizardConfig(config: Partial<ChartsConfig>): W
             (p) => p.id === PlaceholderId.Y,
         );
         const y: RecipeField[] | undefined = yPlaceholder?.items?.map(mapFieldToRecipeField);
+
+        const y2Placeholder = config.visualization?.placeholders.find(
+            (p) => p.id === PlaceholderId.Y2,
+        );
+        const y2: RecipeField[] | undefined = y2Placeholder?.items?.map(mapFieldToRecipeField);
 
         const colors: RecipeField[] | undefined = config.colors?.map(mapFieldToRecipeField);
         const split: RecipeField[] | undefined = config.segments?.map(mapFieldToRecipeField);
@@ -65,12 +113,6 @@ export function getChartRecipeFromWizardConfig(config: Partial<ChartsConfig>): W
         const measures: RecipeField[] | undefined =
             measuresPlaceholder?.items?.map(mapFieldToRecipeField);
 
-        const filters: FilterValue[] | undefined = config.filters?.map((item) => ({
-            field: mapFieldToRecipeField(item as WizardDatasetField),
-            operation: item.filter.operation.code,
-            values: item.filter.value as string[],
-        }));
-
         const sorting = config.sort?.map((d) => {
             return {
                 ...mapFieldToRecipeField(d),
@@ -79,9 +121,10 @@ export function getChartRecipeFromWizardConfig(config: Partial<ChartsConfig>): W
         });
 
         layers.push({
-            type: config.visualization?.id as WizardVisualizationId,
+            type: config.visualization?.id as WizardRecipeType,
             x,
             y,
+            y2,
             colors: isEmpty(colors) ? undefined : colors,
             columns,
             rows,
@@ -94,16 +137,32 @@ export function getChartRecipeFromWizardConfig(config: Partial<ChartsConfig>): W
 
     return {
         datasetId: config.datasetsIds?.[0] ?? '',
-        datasetUpdates: config.updates?.map((item) => {
-            return {
-                action: item.action,
-                field: {
-                    title: item.field.title,
-                    formula: item.field.formula,
-                    default_value: item.field.default_value,
-                },
-            };
-        }),
+        datasetUpdates: config.updates
+            ?.map((item) => {
+                switch (item.action) {
+                    case 'add_field': {
+                        return {
+                            action: item.action,
+                            field: {
+                                title: item.field.title,
+                                formula: item.field.formula,
+                            },
+                        };
+                    }
+                    case 'update_field': {
+                        return {
+                            action: item.action,
+                            field: {
+                                title: item.field.title,
+                                default_value: item.field.default_value,
+                            },
+                        };
+                    }
+                }
+
+                return null;
+            })
+            .filter(Boolean) as RecipeFieldUpdate[],
         layers,
     };
 }

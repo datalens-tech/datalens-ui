@@ -1,10 +1,12 @@
 import defaultsDeep from 'lodash/defaultsDeep';
+import isEmpty from 'lodash/isEmpty';
 import {THREE_POINT_GRADIENTS} from 'shared/constants/gradients/three-point-gradients';
 import {TWO_POINT_GRADIENTS} from 'shared/constants/gradients/two-point-gradients';
 import {v1 as uuidv1} from 'uuid';
 
 import type {
     ChartsConfig,
+    CommonPlaceholders,
     Dataset,
     ServerColor,
     ServerField,
@@ -55,17 +57,6 @@ function getServerField({
         };
     }
 
-    // field was renamed
-    const originalDatasetField = datasetFields.find((d) => d.formula === item.formula);
-    if (originalDatasetField) {
-        return {
-            fakeTitle: item.title,
-            title: originalDatasetField.title,
-            guid: originalDatasetField.guid,
-            datasetId: dataset.id,
-        };
-    }
-
     // local chart field - not from dataset
     const localField = updates.find((d) => d.field.title === item.title)?.field;
     if (localField) {
@@ -77,7 +68,11 @@ function getServerField({
     }
 
     // Invalid field - it will most likely be displayed in wizard with an error.
-    throw Error('The field was not found in the chart or dataset');
+    console.error(`The field "${item.title}" was not found in the chart or dataset`);
+
+    return {
+        title: item.title,
+    };
 }
 
 function getGradienType(id?: string) {
@@ -174,6 +169,15 @@ export async function getWizardConfigFromRecipe({
                     id: PlaceholderId.Y,
                     items: (layer.y ?? []).map(mapRecipeFieldToServerField),
                 });
+
+                const y2Items = (layer.y2 ?? []).map(mapRecipeFieldToServerField);
+                if (!isEmpty(y2Items)) {
+                    placeholders.push({
+                        id: PlaceholderId.Y2,
+                        items: y2Items,
+                    });
+                }
+
                 colors.push(...(layer.colors ?? []).map(mapRecipeFieldToServerField));
                 segments.push(...(layer.split ?? []).map(mapRecipeFieldToServerField));
                 break;
@@ -304,30 +308,57 @@ export async function getWizardConfigFromRecipe({
             segments,
         };
     } else {
-        // todo: check combined and geo charts
-        const visualization: ServerVisualization = {
-            id: '',
-            placeholders: [],
-        };
+        const combinedChartTypes = [
+            WizardVisualizationId.Area,
+            WizardVisualizationId.Column,
+            WizardVisualizationId.Line,
+        ] as string[];
+        if (layers.some((l) => l.id && combinedChartTypes.includes(l.id))) {
+            // todo: check combined and geo charts
+            const visualization: ServerVisualization = {
+                id: WizardVisualizationId.CombinedChart,
+                placeholders: [],
+                layers: layers.map((layerData, index) => {
+                    const layerId = layerData.id ?? '';
+                    return {
+                        id: layerId,
+                        layerSettings: {
+                            id: uuidv1(),
+                            type: layerId,
+                            name: `Layer ${index + 1}`,
+                            alpha: 80,
+                            valid: true,
+                        },
+                        commonPlaceholders:
+                            layerData.commonPlaceholders ?? ({} as CommonPlaceholders),
+                        placeholders: layerData.placeholders ?? [],
+                    };
+                }),
+            };
 
-        config = {
-            colors: [],
-            extraSettings: undefined,
-            filters: [],
-            hierarchies: [],
-            labels: [],
-            links: [],
-            sort: [],
-            tooltips: [],
-            type: 'datalens',
-            updates,
-            visualization,
-            shapes: [],
-            version: ChartsConfigVersion.V14,
-            datasetsIds: [recipe.datasetId],
-            datasetsPartialFields: [],
-            segments,
-        };
+            config = {
+                colors: [],
+                extraSettings: undefined,
+                filters: layers[0].commonPlaceholders?.filters ?? [],
+                hierarchies: [],
+                labels: [],
+                links: [],
+                sort: [],
+                tooltips: [],
+                type: 'datalens',
+                updates,
+                visualization,
+                shapes: [],
+                version: ChartsConfigVersion.V14,
+                datasetsIds: [recipe.datasetId],
+                datasetsPartialFields: [],
+                segments: [],
+            };
+        } else {
+            throw Error(
+                `There is no visualization type for layers with types ${layers.map((l) => `"${l.id}"`)}`,
+            );
+        }
     }
 
     // @ts-ignore
