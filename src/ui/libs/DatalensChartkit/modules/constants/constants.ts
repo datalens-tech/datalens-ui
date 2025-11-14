@@ -29,7 +29,7 @@ export const LINE_BREAKS_OPTIONS = {
 export const CLICK_ACTION_TYPE = {
     SET_PARAMS: 'setParams',
     SET_INITIAL_PARAMS: 'setInitialParams',
-    RUN_ACTION: 'runAction',
+    RUN_ACTIVITY: 'runActivity',
 };
 
 export const REQUEST_ID_HEADER = 'x-request-id';

@@ -29,7 +29,11 @@ import DatalensChartkitCustomError, {
     ERROR_CODE,
     formatError,
 } from '../../../../libs/DatalensChartkit/modules/datalens-chartkit-custom-error/datalens-chartkit-custom-error';
-import type {CombinedError, OnChangeData} from '../../../../libs/DatalensChartkit/types';
+import type {
+    CombinedError,
+    OnActivityComplete,
+    OnChangeData,
+} from '../../../../libs/DatalensChartkit/types';
 import {isAllParamsEmpty} from '../helpers/helpers';
 import {getInitialState, reducer} from '../store/reducer';
 import {
@@ -58,6 +62,7 @@ import type {
 } from '../types';
 import {cleanUpConflictingParameters} from '../utils';
 
+import {useChartActivities} from './useChartActivities';
 import {useIntersectionObserver} from './useIntersectionObserver';
 import {useMemoCallback} from './useMemoCallback';
 
@@ -96,6 +101,7 @@ export type LoadingChartHookProps = {
     autoupdateInterval?: number;
     forceShowSafeChart?: boolean;
     onBeforeChartLoad?: () => Promise<void>;
+    onActivityComplete?: OnActivityComplete;
 };
 
 type AutoupdateDataType = {
@@ -154,6 +160,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         isPageHidden,
         forceShowSafeChart,
         onBeforeChartLoad,
+        onActivityComplete,
     } = props;
 
     const [{isInit, canBeLoaded}, setLoadingState] = React.useReducer(loadingStateReducer, {
@@ -932,16 +939,14 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         [loadChartData, handleChange],
     );
 
-    const runAction = React.useCallback(
-        (params: StringParams) => {
-            return dataProvider.runAction({
-                props: {...initialData, params},
-                requestId,
-                ...(requestHeadersGetter ? {contextHeaders: requestHeadersGetter()} : {}),
-            });
-        },
-        [dataProvider, initialData, requestId, requestHeadersGetter],
-    );
+    const {runActivity} = useChartActivities({
+        requestId,
+        requestHeadersGetter,
+        dataProvider,
+        initialData,
+        onChange: handleChange,
+        onActivityComplete,
+    });
 
     return {
         loadedData,
@@ -966,6 +971,6 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         isInit,
         dataProps: requestDataProps,
         isWidgetMenuDataChanged,
-        runAction,
+        runActivity,
     };
 };

@@ -16,7 +16,6 @@ import Drill from '../../../../libs/DatalensChartkit/components/Drill/Drill';
 import {SideMarkdown} from '../../../../libs/DatalensChartkit/components/SideMarkdown/SideMarkdown';
 import ExtensionsManager from '../../../../libs/DatalensChartkit/modules/extensions-manager/extensions-manager';
 import type {ControlsOnlyWidget, DrillDownConfig} from '../../../../libs/DatalensChartkit/types';
-import {useChartActions} from '../helpers/chart-actions';
 import type {ChartContentProps, ChartControlsType, OnLoadChartkitData} from '../types';
 
 import '../ChartWidget.scss';
@@ -81,7 +80,7 @@ export const Content = (props: ChartContentProps) => {
         paneSplitOrientation,
         widgetDashState,
         rootNodeRef,
-        runAction,
+        runActivity,
         backgroundColor,
         showActionParamsFilter,
         onFiltersClear,
@@ -120,8 +119,6 @@ export const Content = (props: ChartContentProps) => {
 
     const showContentLoader = showLoader || isExportLoading;
     const showLoaderVeil = veil && !isExportLoading;
-
-    const {onAction} = useChartActions({onChange});
 
     const isFirstLoadingFloat = loadedData === null;
 
@@ -195,8 +192,7 @@ export const Content = (props: ChartContentProps) => {
                         getControls={getControls}
                         nonBodyScroll={nonBodyScroll}
                         initialParams={initialParams}
-                        runAction={runAction}
-                        onAction={onAction}
+                        runActivity={runActivity}
                     />
                 )}
                 {Boolean(drillDownData) && (
@@ -227,6 +223,7 @@ export const Content = (props: ChartContentProps) => {
                     widgetDashState={widgetDashState}
                     rootNodeRef={rootNodeRef}
                     backgroundColor={backgroundColor}
+                    runActivity={runActivity}
                 />
                 {showChartOverlay && (
                     <div

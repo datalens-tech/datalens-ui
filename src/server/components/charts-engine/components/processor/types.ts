@@ -94,7 +94,8 @@ export type ProcessorFiles =
     | 'Highcharts'
     | 'Config'
     | 'Prepare'
-    | 'Controls';
+    | 'Controls'
+    | 'Activities';
 export type ProcessorLogs = {modules: LogItem[][]} & Partial<
     Record<ProcessorFiles | 'failed', LogItem[][]>
 >;

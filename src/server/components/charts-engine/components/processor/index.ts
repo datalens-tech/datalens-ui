@@ -114,6 +114,36 @@ function collectModulesLogs({
     });
 }
 
+export function stringifyLogs({
+    logs,
+    hooks,
+    ctx,
+}: {
+    logs: ProcessorLogs;
+    hooks: ProcessorHooks;
+    ctx: AppContext;
+}) {
+    try {
+        const formatter = hooks.getLogsFormatter();
+        return JSON.stringify(logs, (_, value: string | number) => {
+            if (typeof value === 'number' && isNaN(value)) {
+                return '__special_value__NaN';
+            }
+            if (value === Infinity) {
+                return '__special_value__Infinity';
+            }
+            if (value === -Infinity) {
+                return '__special_value__-Infinity';
+            }
+            return formatter ? formatter(value) : value;
+        });
+    } catch (e) {
+        ctx.logError('Error during formatting logs', e);
+
+        return '';
+    }
+}
+
 function mergeArrayWithObject(a: [], b: {}) {
     // for example, for xAxis/yAxis, when there is one axis on one side and several on the other
     // typeof === 'object' check in case there is, for example, a string
@@ -294,35 +324,13 @@ export class Processor {
             return target;
         }
 
-        function stringifyLogs(localLogs: ProcessorLogs, localHooks: ProcessorHooks) {
-            try {
-                const formatter = localHooks.getLogsFormatter();
-                return JSON.stringify(localLogs, (_, value: string | number) => {
-                    if (typeof value === 'number' && isNaN(value)) {
-                        return '__special_value__NaN';
-                    }
-                    if (value === Infinity) {
-                        return '__special_value__Infinity';
-                    }
-                    if (value === -Infinity) {
-                        return '__special_value__-Infinity';
-                    }
-                    return formatter ? formatter(value) : value;
-                });
-            } catch (e) {
-                ctx.logError('Error during formatting logs', e);
-
-                return '';
-            }
-        }
-
         function injectLogs({
             target,
         }: {
             target: ProcessorSuccessResponse | Partial<ProcessorErrorResponse>;
         }) {
             if (responseOptions.includeLogs) {
-                target.logs_v2 = stringifyLogs(logs, hooks);
+                target.logs_v2 = stringifyLogs({logs, hooks, ctx});
             }
         }
 

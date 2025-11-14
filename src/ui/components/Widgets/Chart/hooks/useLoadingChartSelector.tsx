@@ -13,6 +13,7 @@ import type {
     ChartKitWrapperOnLoadProps,
 } from '../../../../libs/DatalensChartkit/components/ChartKitBase/types';
 import type {ResponseError} from '../../../../libs/DatalensChartkit/modules/data-provider/charts';
+import type {OnActivityComplete} from '../../../../libs/DatalensChartkit/types';
 import type {WidgetPluginProps} from '../../../DashKit/plugins/Widget/types';
 import {getPreparedConstants, getWidgetSelectorMeta, pushStats} from '../helpers/helpers';
 import type {
@@ -47,6 +48,7 @@ type LoadingChartSelectorHookProps = Pick<
     ChartWidgetProps & {
         widgetId: WidgetPluginProps['id'];
         chartId: string;
+        onActivityComplete?: OnActivityComplete;
     };
 
 const WIDGET_RESIZE_DEBOUNCE_TIMEOUT = 600;
@@ -79,6 +81,7 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
         widgetType,
         settings,
         data,
+        onActivityComplete,
     } = props;
 
     const [isRendered, setIsRendered] = React.useState(false);
@@ -190,7 +193,7 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
         dataProps,
         handleRenderChart,
         loadControls,
-        runAction,
+        runActivity,
     } = useLoadingChart({
         dataProvider,
         requestHeadersGetter,
@@ -211,6 +214,7 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
         widgetDataRef,
         usageType,
         widgetType,
+        onActivityComplete,
     });
 
     const {
@@ -408,6 +412,6 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
         dataProps,
         handleRenderChart,
         getControls: loadControls,
-        runAction,
+        runActivity,
     };
 };

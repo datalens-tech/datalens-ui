@@ -83,6 +83,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
         paneSplitOrientation,
         widgetDashState,
         onBeforeChartLoad,
+        onActivityComplete,
     } = props;
 
     const innerParamsRef = React.useRef<DataProps['params'] | null>(null);
@@ -182,7 +183,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
         dataProps,
         isWidgetMenuDataChanged,
         reloadChart,
-        runAction,
+        runActivity,
         handleChartkitReflow,
     } = useLoadingChart({
         chartKitRef,
@@ -206,6 +207,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
         autoupdateInterval,
         forceShowSafeChart,
         onBeforeChartLoad,
+        onActivityComplete,
     });
 
     /**
@@ -299,7 +301,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
                 loadedData={loadedData}
                 forwardedRef={chartKitRef}
                 getControls={loadControls}
-                runAction={runAction}
+                runActivity={runActivity}
                 drillDownFilters={drillDownFilters}
                 drillDownLevel={drillDownLevel}
                 widgetType={widgetType}
