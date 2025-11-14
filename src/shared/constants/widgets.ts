@@ -6,6 +6,7 @@ export const CustomPaletteBgColors = {
     FROM_APP_THEME: 'from-app-theme',
 } as const;
 
+export const LIKE_CHART_COLOR_TOKEN = 'var(--g-color-base-float)';
 export const BASE_GREY_BACKGROUND_COLOR = 'var(--g-color-base-generic)';
 
 export type CustomPaletteBgColor = ValueOf<typeof CustomPaletteBgColors>;
