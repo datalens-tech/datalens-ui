@@ -101,6 +101,8 @@ export enum Feature {
 
     EnableMobileFixedHeader = 'EnableMobileFixedHeader',
     EnableCommonChartDashSettings = 'EnableCommonChartDashSettings',
+    /** Enable a setting in the Selector settings dialog that allows you to make the selector pass-through for all or several tabs */
+    EnableGlobalSelectors = 'EnableGlobalSelectors',
     /** Shows updated settings page */
     EnableNewServiceSettings = 'EnableNewServiceSettings',
 }

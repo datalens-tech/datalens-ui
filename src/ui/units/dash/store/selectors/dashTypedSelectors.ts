@@ -1,11 +1,12 @@
 import type {DatalensGlobalState} from 'index';
 import isEqual from 'lodash/isEqual';
 import {createSelector} from 'reselect';
+import type {DashTabItem} from 'shared/types';
 
 import {ITEM_TYPE} from '../../../../constants/dialogs';
 import {isOrderIdsChanged} from '../../containers/Dialogs/Tabs/PopupWidgetsOrder/helpers';
 import {Mode} from '../../modules/constants';
-import type {DashState} from '../reducers/dashTypedReducer';
+import type {DashState} from '../typings/dash';
 
 export const selectDash = (state: DatalensGlobalState) => state.dash || null;
 
@@ -176,7 +177,10 @@ export const selectOpenedItemData = createSelector(
     [selectCurrentTab, selectDash],
     (currentTab, dash) => {
         if (dash.openedItemId && currentTab) {
-            const item = currentTab.items.find(({id}) => id === dash.openedItemId);
+            const allItems = currentTab.items.concat(
+                (currentTab.globalItems as DashTabItem[]) || [],
+            );
+            const item = allItems.find(({id}) => id === dash.openedItemId);
             return item?.data;
         }
         return undefined;
