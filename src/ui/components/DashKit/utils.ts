@@ -1,11 +1,17 @@
-import type React from 'react';
+import React from 'react';
 import type {CSSProperties} from 'react';
 
 import type {PluginWidgetProps} from '@gravity-ui/dashkit';
-import {Feature} from 'shared';
-import type {BackgroundSettings, DashTabItemControlElement} from 'shared';
-import {CustomPaletteBgColors} from 'shared/constants/widgets';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import {type ThemeType, useThemeType} from '@gravity-ui/uikit';
+import {color as d3Color} from 'd3-color';
+import {isOldBackgroundSettings} from 'shared';
+import type {
+    ColorByTheme,
+    ColorSettings,
+    DashTabItemControlElement,
+    OldBackgroundSettings,
+} from 'shared';
+import {CustomPaletteBgColors, LIKE_CHART_COLOR_TOKEN} from 'shared/constants/widgets';
 
 import {DL} from '../../constants';
 import {
@@ -272,45 +278,74 @@ export function getControlHint(source: DashTabItemControlElement) {
     return source.showHint ? source.hint : undefined;
 }
 
-const specialBgColors: string[] = [
-    CustomPaletteBgColors.LIKE_CHART,
-    CustomPaletteBgColors.FROM_APP_THEME,
-];
-
 export function getPreparedWrapSettings(
-    background?: BackgroundSettings,
+    background: OldBackgroundSettings = {},
     additionalStyle?: CSSProperties,
-    textColor?: string,
 ) {
-    const color = background?.color;
-    const showBgColor =
-        background?.enabled !== false && Boolean(color) && color !== CustomPaletteBgColors.NONE;
-
-    let wrapperClassMod = '';
-    if (showBgColor) {
-        switch (color) {
-            case CustomPaletteBgColors.LIKE_CHART:
-                wrapperClassMod = 'with-default-color';
-                break;
-            case CustomPaletteBgColors.FROM_APP_THEME:
-                wrapperClassMod = isEnabledFeature(Feature.EnableCommonChartDashSettings)
-                    ? 'with-app-theme-color'
-                    : 'with-color';
-                break;
-            default:
-                wrapperClassMod = 'with-color';
-        }
-    }
+    const {color} = background;
+    const parsedColor = color ? d3Color(color) : null;
+    const hasBgColor =
+        Boolean(color) &&
+        (color !== CustomPaletteBgColors.NONE || (parsedColor && parsedColor.opacity !== 0));
+    const backgroundColor =
+        color === CustomPaletteBgColors.LIKE_CHART ? LIKE_CHART_COLOR_TOKEN : color;
 
     const style: CSSProperties = {
         ...additionalStyle,
-        backgroundColor:
-            !showBgColor || (color && specialBgColors.includes(color)) ? undefined : color,
-        color: textColor,
+        backgroundColor,
     };
     return {
-        classMod: wrapperClassMod,
         style,
-        showBgColor,
+        hasBgColor,
     };
+}
+
+export function useTextColorStyles(textColor?: string | ColorByTheme) {
+    const theme = useThemeType();
+    return React.useMemo(
+        () => ({
+            color:
+                typeof textColor === 'string'
+                    ? textColor
+                    : textColor?.[theme || 'common'] ?? textColor?.common,
+        }),
+        [textColor, theme],
+    );
+}
+
+export function usePreparedWrapSettings({
+    widgetBackground,
+    globalBackground,
+    additionalStyle,
+    defaultOldColor,
+}: {
+    widgetBackground: ColorSettings | undefined;
+    globalBackground: ColorSettings | undefined;
+    additionalStyle?: CSSProperties;
+    defaultOldColor: string;
+}) {
+    const theme = useThemeType();
+    return React.useMemo(
+        () =>
+            getPreparedWrapSettings(
+                {
+                    color:
+                        getResultedBgColor(widgetBackground, theme, defaultOldColor) ??
+                        getResultedBgColor(globalBackground, theme, defaultOldColor),
+                },
+                additionalStyle,
+            ),
+        [widgetBackground, globalBackground, additionalStyle, theme, defaultOldColor],
+    );
+}
+
+function getResultedBgColor(
+    bgColor: ColorSettings | undefined,
+    theme: ThemeType,
+    defaultColor: string,
+) {
+    if (isOldBackgroundSettings(bgColor)) {
+        return bgColor.enabled === false ? defaultColor : bgColor.color;
+    }
+    return bgColor?.color?.[theme || 'common'] ?? bgColor?.color?.common;
 }
