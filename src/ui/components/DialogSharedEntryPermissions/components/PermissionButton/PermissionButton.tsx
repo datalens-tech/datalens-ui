@@ -1,10 +1,8 @@
 import React from 'react';
 
-import {Lock} from '@gravity-ui/icons';
-import {Card, Icon, Text} from '@gravity-ui/uikit';
+import {CircleCheck, Lock} from '@gravity-ui/icons';
+import {Card, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-
-import Check from '../../../../assets/icons/check.svg';
 
 import './PermissionButton.scss';
 
@@ -17,7 +15,7 @@ type PermissionButtonProps = {
     message: string;
 };
 
-const b = block('permission-button');
+const b = block('dl-permission-button');
 
 export const PermissionButton: React.FC<PermissionButtonProps> = ({
     icon,
@@ -40,10 +38,9 @@ export const PermissionButton: React.FC<PermissionButtonProps> = ({
                     <Lock width={14} height={14} fill="currentColor" className={b('lock-icon')} />
                 )}
                 {checked && (
-                    <Icon
+                    <CircleCheck
                         width={14}
                         height={14}
-                        data={Check}
                         fill="currentColor"
                         className={b('check-icon')}
                     />
