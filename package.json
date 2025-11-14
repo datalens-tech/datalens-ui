@@ -93,7 +93,7 @@
     "ioredis": "^4.28.0",
     "ismobilejs": "^1.1.1",
     "js-sha1": "^0.6.0",
-    "js-yaml": "^4.1.0",
+    "js-yaml": "^4.1.1",
     "json-fn": "^1.1.1",
     "jsondiffpatch": "^0.6.0",
     "jsonwebtoken": "^9.0.0",
