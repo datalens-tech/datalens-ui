@@ -1,0 +1,33 @@
+.dl-color-item {
+    --color-item-size: 28px;
+
+    background-clip: padding-box;
+    background-color: var(--g-color-base-float);
+    width: var(--color-item-size);
+    height: var(--color-item-size);
+    overflow: hidden;
+
+    border-radius: 6px;
+
+    &_size_max {
+        --color-item-size: 100%;
+    }
+
+    &_with-external-border {
+        border: 1px solid transparent;
+    }
+
+    &__bg-item {
+        display: inline-block;
+        width: 100%;
+        height: 100%;
+        background-clip: padding-box;
+
+        &_transparent {
+            background-image: repeating-conic-gradient(
+                var(--g-color-base-generic) 0 25%,
+                var(--g-color-base-background) 0 50%
+            );
+        }
+    }
+}
