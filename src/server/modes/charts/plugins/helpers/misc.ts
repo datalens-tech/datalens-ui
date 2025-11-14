@@ -45,7 +45,9 @@ export function getFieldList(datasetFields: ServerField[], placeholders: ServerP
             title: field.title,
             guid: fieldId,
             dataType: field.data_type,
-            formatting: placeholdersField ? getFormatOptions(placeholdersField) : undefined,
+            formatting: placeholdersField
+                ? getFormatOptions({...field, ...placeholdersField})
+                : undefined,
         };
     });
 }

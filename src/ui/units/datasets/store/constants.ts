@@ -4,7 +4,7 @@ import type {DatasetTab} from '../constants';
 import {DATASET_TABS, TAB_DATASET, TAB_SOURCES} from '../constants';
 import DatasetUtils, {isCreationProcess} from '../helpers/utils';
 
-import type {DatasetReduxState} from './types';
+import type {DatasetPreview, DatasetReduxState} from './types';
 
 const getDefaultDatasetContent = (): Partial<Dataset['dataset']> => ({
     avatar_relations: [],
@@ -34,14 +34,17 @@ export const getCurrentTab = (): DatasetTab => {
     return defaultTab;
 };
 
-export const initialPreview: DatasetReduxState['preview'] = {
+export const initialPreview: DatasetPreview = {
     previewEnabled: true,
     readyPreview: 'loading',
     isVisible: true,
     isLoading: true,
     amountPreviewRows: 10,
     view: 'bottom',
-    data: [],
+    data: {
+        Data: [],
+        Type: ['ListType', ['StructType', []]],
+    },
     error: null,
     isQueued: false,
 };
@@ -68,6 +71,7 @@ export const initialState: DatasetReduxState = {
         savingError: null,
         sourceLoadingError: null,
         validationError: null,
+        sourceListingOptionsError: null,
     },
     validation: {
         isLoading: false,
@@ -88,12 +92,22 @@ export const initialState: DatasetReduxState = {
         isDatasetChanged: false,
         isFieldEditorModuleLoading: false,
         isSourcesLoading: false,
+        isSourcesSearchLoading: false,
+        isSourcesListingOptionsLoading: false,
     },
     editor: {
         filter: '',
         itemsToDisplay: ['hiddenFields'],
     },
     updates: [],
+    connectionsDbNames: {},
+    sourcesPagination: {
+        page: 0,
+        limit: 100,
+        isFetchingNextPage: false,
+        isFinished: false,
+        searchValue: '',
+    },
     freeformSources: [],
     selectedConnections: [],
     sourcePrototypes: [],

@@ -5,4 +5,5 @@ export enum MenuType {
     Dash = 'dash',
     Preview = 'preview',
     None = 'none',
+    ChartRecipe = 'chart-recipe',
 }

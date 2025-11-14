@@ -1,4 +1,4 @@
-import type z from 'zod/v4';
+import type z from 'zod';
 
 import type {CONNECTOR_VISIBILITY_MODE, ConnectorType} from '../../../constants';
 import type {
@@ -7,6 +7,7 @@ import type {
     ConnectionTypedQueryApiResponse,
     TransferNotification,
     ValueOf,
+    WorkbookId,
 } from '../../../types';
 import type {deleteConnectionResultSchema} from '../schemas/connections';
 
@@ -72,6 +73,14 @@ export type GetConnectorsResponse = {
     /** Represent connectors out of groups. These one should be rendered before grouped connectors */
     uncategorized?: ConnectorItem[];
 };
+
+export type GetConnectionResponse = ConnectionData;
+
+export type GetConnectionArgs = BaseArgs & {
+    workbookId?: WorkbookId;
+    rev_id?: string;
+};
+
 export type CreateConnectionResponse = {
     id: string;
 };
@@ -86,7 +95,10 @@ export type CreateConnectionArgs = ConnectionData;
 
 export type UpdateConnectionResponse = {};
 
-export type UpdateConnectionArgs = BaseArgs & ConnectionData;
+export type UpdateConnectionArgs = {
+    connectionId: string;
+    data: ConnectionData;
+};
 
 export type VerifyConnectionResponse = {};
 

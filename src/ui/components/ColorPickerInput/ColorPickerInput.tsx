@@ -1,6 +1,11 @@
 import React from 'react';
 
-import type {InputControlSize, NumberInputProps, RealTheme} from '@gravity-ui/uikit';
+import type {
+    InputControlSize,
+    NumberInputProps,
+    RealTheme,
+    TextInputProps,
+} from '@gravity-ui/uikit';
 import {NumberInput, Text, TextInput, ThemeProvider} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {color as d3Color} from 'd3-color';
@@ -30,7 +35,7 @@ const generatePreviewGradient = (color = 'transparent', colorWithOpacity = 'tran
     return `linear-gradient(90deg, ${color} 50%, ${colorWithOpacity} 50%)`;
 };
 
-interface ColorPickerInputProps {
+export interface ColorPickerInputProps extends Pick<TextInputProps, 'qa'> {
     required?: boolean;
     placeholder?: string;
     showPlaceholder?: boolean;
@@ -63,6 +68,7 @@ export function ColorPickerInput({
     onValidChange,
     theme,
     className,
+    qa,
 }: ColorPickerInputProps) {
     const [stateValue, setStateValue] = React.useState<ColorParts>(getColorParts(colorMask(value)));
     const [isValid, setIsValid] = React.useState(true);
@@ -173,6 +179,7 @@ export function ColorPickerInput({
     return (
         <TextInput
             className={b(null, className)}
+            qa={qa}
             size={size}
             value={normalizeColor(stateValue.solid)}
             placeholder={formattedPlaceholder ?? '#'}

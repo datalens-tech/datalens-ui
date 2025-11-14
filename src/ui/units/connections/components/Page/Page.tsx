@@ -36,7 +36,6 @@ import {
     getConnectors,
     setInitialState,
     setPageData,
-    setRevision,
     updateConnectionWithRevision,
 } from '../../store';
 import {getConnItemByType} from '../../utils';
@@ -159,11 +158,10 @@ const PageComponent = (props: PageProps) => {
     const s3BasedFormOpened = isS3BasedConnForm(connectionData, type);
     const currentSearchParams = new URLSearchParams(location.search);
 
-    const isRevisionsEnabled = isEnabledFeature(Feature.EnableConnectionRevisions);
     const isExportSettingsFeatureEnabled = isEnabledFeature(Feature.EnableExportSettings);
     const isDescriptionEnabled = isEnabledFeature(Feature.EnableConnectionDescription);
 
-    const revisionsSupported = connector?.history && isRevisionsEnabled;
+    const revisionsSupported = connector?.history;
     const revId = currentSearchParams.get(URL_QUERY.REV_ID) ?? undefined;
 
     const showSettings = !connector?.backend_driven_form;
@@ -191,13 +189,7 @@ const PageComponent = (props: PageProps) => {
             workbookId,
             rev_id: revId,
         });
-        //This is initial request data, there is no need to request it when changing revId
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [actions, extractedEntryId, workbookId]);
-
-    React.useEffect(() => {
-        actions.setRevision(revId);
-    }, [revId, actions]);
+    }, [actions, extractedEntryId, workbookId, revId]);
 
     const setActualVersion = React.useMemo(
         () =>
@@ -244,7 +236,10 @@ const PageComponent = (props: PageProps) => {
                                 />
                             ),
                             isDescriptionEnabled && (
-                                <DescriptionButton isS3BasedConnForm={s3BasedFormOpened} />
+                                <DescriptionButton
+                                    key="connection-description"
+                                    isS3BasedConnForm={s3BasedFormOpened}
+                                />
                             ),
                             isShowCreateButtons && (
                                 <ConnPanelActions
@@ -305,7 +300,6 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
                 openDialogErrorWithTabs,
                 openDialogSaveDraftChartAsActualConfirm,
                 updateConnectionWithRevision,
-                setRevision,
             },
             dispatch,
         ),

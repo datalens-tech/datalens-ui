@@ -59,7 +59,6 @@ import {
 } from '../../store/selectors/dashTypedSelectors';
 import {getTabId} from '../../utils/getTabId';
 import {getUrlGlobalParams} from '../../utils/url';
-import Body from '../Body/Body';
 import {DashHotkeys} from '../DashHotkes/DashHotkeys';
 import Dialogs from '../Dialogs/Dialogs';
 import Header from '../Header/Header';
@@ -264,6 +263,8 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
             this.props;
         const subtitle = getTabTitleById({tabs, tabId});
 
+        const {DashBody} = registry.dash.components.getAll();
+
         return (
             <DashHotkeys>
                 <PageTitle entry={entry} extraSettings={{subtitle}} />
@@ -280,7 +281,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
                     location={location}
                     isEditModeLoading={this.state.isEditModeLoading}
                 />
-                <Body
+                <DashBody
                     onRetry={this.handleRetry}
                     handlerEditClick={this.handlerEditClick}
                     isEditModeLoading={this.state.isEditModeLoading}

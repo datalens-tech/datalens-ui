@@ -12,6 +12,7 @@ import {
 } from '@gravity-ui/icons';
 import {Icon} from '@gravity-ui/uikit';
 import {I18n, i18n} from 'i18n';
+import get from 'lodash/get';
 import {FOCUSED_WIDGET_PARAM_NAME, Feature, MenuItemsIds, PREVIEW_ROUTE, WidgetKind} from 'shared';
 import {isWidgetTypeDoNotNeedOverlay} from 'ui/components/DashKit/plugins/Widget/components/helpers';
 import {URL_OPTIONS as COMMON_URL_OPTIONS, DL} from 'ui/constants';
@@ -304,3 +305,17 @@ export const getFullscreenMenuItem = (customConfig: Partial<MenuItemConfig>): Me
     },
     action: customConfig?.action || customConfig?.onFullscreenClick || function () {},
 });
+
+export const getEditChartRecipeMenuItem = (): MenuItemConfig =>
+    ({
+        id: 'edit',
+        get title() {
+            return 'edit chart';
+        },
+        icon: <Icon data={Pencil} />,
+        isVisible: () => true,
+        action: ({propsData}) => {
+            const recipe = get(propsData, 'config.data.recipe', {});
+            window.open(`/wizard/?_chart_recipe=${JSON.stringify(recipe)}`);
+        },
+    }) as MenuItemConfig;

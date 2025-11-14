@@ -16,16 +16,10 @@ body.g-root.dl-dash {
 // DATAUI-1287
 
 body.g-root.g-root_theme_dark-hc {
-    .dash-body__entry-name {
-        background-color: var(--g-color-base-background);
-    }
     .dash-action-panel__entry-name {
         background-color: var(--g-color-base-background);
     }
-    .dash-body__content,
-    .dash-body__content-container {
-        background-color: var(--g-color-base-background);
-    }
+
     .expandable-panel__header,
     .expandable-panel__content,
     .expandable-panel__shadow-putty::before,

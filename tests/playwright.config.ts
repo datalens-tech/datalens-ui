@@ -80,6 +80,7 @@ const isAuthDisabled =
     isTrueArg(process.env.NO_AUTH) ||
     isTrueArg(process.env.E2E_NO_AUTH) ||
     !isTrueArg(process.env.AUTH_ENABLED || 'true');
+const isTraceScreenshots = isTrueArg(process.env.E2E_TRACE_SCREENSHOTS);
 const playwrightConfig: PlaywrightTestConfig<DatalensTestFixtures> = {
     workers,
     testMatch,
@@ -107,7 +108,7 @@ const playwrightConfig: PlaywrightTestConfig<DatalensTestFixtures> = {
         baseURL,
         ignoreHTTPSErrors: true,
         viewport: {width: 1920, height: 1080},
-        trace: {mode: 'on-first-retry', screenshots: false, sources: false},
+        trace: {mode: 'on-first-retry', screenshots: isTraceScreenshots, sources: false},
         actionTimeout: actionTimeout,
         testIdAttribute: 'data-qa',
         storageState: isAuthDisabled

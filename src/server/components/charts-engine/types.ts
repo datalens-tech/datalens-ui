@@ -200,6 +200,7 @@ export type SourceConfig = {
 
     args?: Record<string, string | number | (string | number)[]>;
     maxRedirects?: number;
+    isExternal?: boolean;
 };
 
 export enum MiddlewareStage {

@@ -6,6 +6,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import debounce from 'lodash/debounce';
 import {makeUserId} from 'shared';
+import type {GetEntriesEntryWithExcludedLockedAndPermissions} from 'shared/schema';
 import {DL} from 'ui/constants';
 import {getSdk} from 'ui/libs/schematic-sdk';
 
@@ -78,7 +79,7 @@ export function EntrySuggest({
                     setItems([]);
                 }
                 try {
-                    const {entries, hasNextPage} = await getSdk().sdk.us.getEntries(
+                    const getEntriesResponse = await getSdk().sdk.us.getEntries(
                         {
                             scope,
                             orderBy: {field: 'createdAt', direction: 'desc'},
@@ -95,6 +96,10 @@ export function EntrySuggest({
                         },
                         {concurrentId: 'getEntries'},
                     );
+
+                    const {hasNextPage} = getEntriesResponse;
+                    const entries =
+                        getEntriesResponse.entries as GetEntriesEntryWithExcludedLockedAndPermissions[];
 
                     setPaginationParams({
                         page,

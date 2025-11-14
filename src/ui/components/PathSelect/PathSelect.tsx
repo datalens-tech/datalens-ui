@@ -5,7 +5,7 @@ import type {PopupPlacement, TextInputProps} from '@gravity-ui/uikit';
 import {Button, Icon, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {EntryDialogQA, PLACE} from 'shared';
+import {EntryDialogQA, EntryScope, PLACE} from 'shared';
 
 import {Scope} from '../../constants';
 import {sdk} from '../../libs/sdk';
@@ -34,6 +34,7 @@ export interface PathSelectProps {
     className?: string;
     buttonClassName?: string;
     inputClassName?: string;
+    entryScope?: EntryScope;
 }
 
 class PathSelect extends React.PureComponent<PathSelectProps> {
@@ -72,7 +73,7 @@ class PathSelect extends React.PureComponent<PathSelectProps> {
                                     type="folder"
                                     size="l"
                                     iconSize={22}
-                                    classMixin={b('icon-folder')}
+                                    className={b('icon-folder')}
                                 />
                                 <span className={b('path-text')}>{this.text}</span>
                                 {this.props.withInput && (
@@ -112,6 +113,7 @@ class PathSelect extends React.PureComponent<PathSelectProps> {
                             PLACE.ROOT,
                             PLACE.FAVORITES,
                         ])}
+                        canCreateFolder={this.props.entryScope !== EntryScope.Folder}
                     />
                 </div>
             </React.Fragment>

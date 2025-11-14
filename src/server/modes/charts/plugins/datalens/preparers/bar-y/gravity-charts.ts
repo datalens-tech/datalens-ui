@@ -7,16 +7,19 @@ import {
     PERCENT_VISUALIZATIONS,
     PlaceholderId,
     getFakeTitleOrTitle,
+    isDateField,
     isHtmlField,
     isMarkdownField,
     isMarkupField,
 } from '../../../../../../../shared';
+import type {ExtendedChartData} from '../../../../../../../shared/types/chartkit';
 import {getBaseChartConfig} from '../../gravity-charts/utils';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import {getAxisFormatting} from '../helpers/axis';
 import {getLegendColorScale, shouldUseGradientLegend} from '../helpers/legend';
 import type {PrepareFunctionArgs} from '../types';
+import {mapToGravityChartValueFormat} from '../utils';
 
 import {prepareBarYData} from './prepare-bar-y-data';
 
@@ -49,12 +52,15 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
     const shouldUseHtmlForLabels =
         isMarkupField(labelField) || isHtmlField(labelField) || isMarkdownField(labelField);
 
-    const dataLabelFormat = getFieldFormatOptions({field: labelField});
     const shouldUsePercentStacking = PERCENT_VISUALIZATIONS.has(visualizationId);
     const dataLabelsInside =
         shouldUsePercentStacking ||
         shared.extraSettings?.labelsPosition !== LabelsPositions.Outside;
+
     const series = graphs.map<BarYSeries>((graph) => {
+        const labelFormatting = graph.dataLabels
+            ? mapToGravityChartValueFormat({field: labelField, formatSettings: graph.dataLabels})
+            : undefined;
         return {
             ...graph,
             type: 'bar-y',
@@ -62,20 +68,30 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
             stacking: shouldUsePercentStacking ? 'percent' : 'normal',
             name: graph.title,
             data: graph.data.map((d: BarYPoint) => {
-                const {x, y, ...other} = d;
+                const {x, y, label: originalLabel, ...other} = d;
+                const total =
+                    graphs.reduce(
+                        (sum, g) =>
+                            sum + (g.data.find((point: BarYPoint) => point.x === x)?.y ?? 0),
+                        0,
+                    ) ?? 0;
+                const percentage = (d.y / total) * 100;
+                const label =
+                    graph.dataLabels?.labelMode === 'percent' ? percentage : originalLabel;
 
-                return {y: x, x: y, ...other};
+                return {...other, y: x, x: y, label, total, percentage};
             }),
             dataLabels: {
                 enabled: graph.dataLabels?.enabled,
                 inside: dataLabelsInside,
                 html: shouldUseHtmlForLabels,
-                format: dataLabelFormat,
+                format: labelFormatting,
             },
             custom: {
                 ...graph.custom,
                 colorValue: graph.colorValue,
                 exportSettings,
+                oldDataLabels: graph.dataLabels,
             },
         } as BarYSeries;
     });
@@ -87,9 +103,9 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
           })
         : undefined;
 
-    const config: ChartData = {
+    const config: ExtendedChartData = {
         series: {
-            data: series.filter((s) => s.data.length),
+            data: series,
             options: {
                 'bar-y': {
                     stackGap: 0,
@@ -98,10 +114,15 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
             },
         },
         xAxis: {
-            min: 0,
             type: 'linear',
             labels: {
                 numberFormat: xAxisLabelNumberFormat ?? undefined,
+            },
+        },
+        custom: {
+            tooltip: {
+                headerLabel:
+                    isDateField(yField) && !hasCategories ? undefined : getFakeTitleOrTitle(yField),
             },
         },
     };
@@ -128,8 +149,8 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
 
     if (xField) {
         config.tooltip = {
+            ...config.tooltip,
             valueFormat: getFieldFormatOptions({field: xField}),
-            totals: {enabled: true},
         };
     }
 
@@ -142,6 +163,8 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
                 labels: {
                     enabled: yPlaceholder?.settings?.hideLabels !== 'yes',
                     html: isHtmlField(yField) || isMarkdownField(yField) || isMarkupField(yField),
+                    maxWidth: '33%',
+                    padding: 0,
                 },
             },
         ];

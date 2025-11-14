@@ -1,8 +1,10 @@
 import type {ConfigItem, ConfigItemData} from '@gravity-ui/dashkit';
-import {CustomPaletteBgColors, WIDGET_BG_COLORS_PRESET} from 'shared';
+import {WIDGET_BG_COLORS_PRESET, getDefaultWidgetBackgroundColor} from 'shared';
 import type {BackgroundSettings} from 'shared/types';
-import {DashTabItemType, isBackgroundSettings} from 'shared/types';
+import {DashTabItemType, Feature, isBackgroundSettings} from 'shared/types';
 import type {ConnectionsData} from 'ui/components/DialogRelations/types';
+
+import {isEnabledFeature} from './isEnabledFeature';
 
 // targetId - item is copied data from localStorage
 // id - item is already created via DashKit.setItem
@@ -105,6 +107,8 @@ export function getUpdatedBackgroundValue(
             background.enabled !== false &&
             (allowCusomValues || WIDGET_BG_COLORS_PRESET.includes(background.color))
                 ? background.color
-                : CustomPaletteBgColors.NONE,
+                : getDefaultWidgetBackgroundColor(
+                      isEnabledFeature(Feature.EnableCommonChartDashSettings),
+                  ),
     };
 }

@@ -25,13 +25,16 @@ export function FloatMenu({children, align = 'center', container}: FloatMenuProp
     React.useEffect(() => {
         const defaultScrollingContainer = document.scrollingElement;
         const scrollableContainer = scrollableContainerRef?.current ?? defaultScrollingContainer;
+        const scrollableContainerWithListener =
+            scrollableContainer?.tagName.toLowerCase() === 'html' ? window : scrollableContainer;
 
         const handleScroll = () => {
             const currentScrollY = scrollableContainer?.scrollTop || 0;
 
             if (
-                currentScrollY < prevScrollY.current &&
-                currentScrollY > MIN_SCROLL_POSITION_FOR_HIDING
+                currentScrollY === 0 ||
+                (currentScrollY < prevScrollY.current &&
+                    currentScrollY > MIN_SCROLL_POSITION_FOR_HIDING)
             ) {
                 setIsVisible(true);
             } else if (currentScrollY > prevScrollY.current) {
@@ -41,10 +44,10 @@ export function FloatMenu({children, align = 'center', container}: FloatMenuProp
             prevScrollY.current = currentScrollY;
         };
 
-        scrollableContainer?.addEventListener('scroll', handleScroll, {passive: true});
+        scrollableContainerWithListener?.addEventListener('scroll', handleScroll, {passive: true});
 
         return () => {
-            scrollableContainer?.removeEventListener('scroll', handleScroll);
+            scrollableContainerWithListener?.removeEventListener('scroll', handleScroll);
         };
     }, [scrollableContainerRef]);
 

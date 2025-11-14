@@ -45,6 +45,9 @@ export enum ErrorCode {
 
     ChartEditorNotAvailable = 'ERR.CHARTS.CHART_EDITOR_NOT_AVAILABLE',
     InsufficientServicePlan = 'ERR.CHARTS.INSUFFICIENT_SERVICE_PLAN',
+    WorkbookAlreadyExists = 'WORKBOOK_ALREADY_EXISTS',
+    MetaManagerWorkbookAlreadyExists = 'META_MANAGER.WORKBOOK_ALREADY_EXISTS',
+    CollectionAlreadyExists = 'COLLECTION_ALREADY_EXISTS',
 }
 
 export const ErrorContentTypes = {
@@ -65,4 +68,5 @@ export const ErrorContentTypes = {
     FORBIDDEN_BY_PLAN: 'forbidden-by-plan',
     FORBIDDEN_AUTH: 'forbidden-auth',
     NOT_AUTHENTICATED_GALLERY: 'not-authenticated-gallery',
+    NOT_AUTHENTICATED_FESTIVAL: 'not-authenticated-festival',
 };

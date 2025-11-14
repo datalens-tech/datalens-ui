@@ -1,16 +1,31 @@
+import {Feature} from '../../../../shared';
 import type {DatalensGatewaySchemas} from '../../../types/gateway';
 import {ApiTag} from '../constants';
 import type {PublicApiVersionActions} from '../types';
 
 export const getPublicApiActionsV0 = <
-    TSchema extends {root: Pick<DatalensGatewaySchemas['root'], 'bi' | 'mix'>},
->(): PublicApiVersionActions<TSchema> => {
+    TSchema extends {root: Pick<DatalensGatewaySchemas['root'], 'bi' | 'mix' | 'us'>},
+>(): PublicApiVersionActions<TSchema, Feature> => {
     return {
         // Connection
         getConnection: {
             resolve: (api) => api.bi.getConnection,
             openApi: {
                 summary: 'Get connection',
+                tags: [ApiTag.Connection],
+            },
+        },
+        createConnection: {
+            resolve: (api) => api.bi.createConnection,
+            openApi: {
+                summary: 'Create connection',
+                tags: [ApiTag.Connection],
+            },
+        },
+        updateConnection: {
+            resolve: (api) => api.bi.updateConnection,
+            openApi: {
+                summary: 'Update connection',
                 tags: [ApiTag.Connection],
             },
         },
@@ -30,13 +45,6 @@ export const getPublicApiActionsV0 = <
                 tags: [ApiTag.Dataset],
             },
         },
-        updateDataset: {
-            resolve: (api) => api.bi.updateDataset,
-            openApi: {
-                summary: 'Update dataset',
-                tags: [ApiTag.Dataset],
-            },
-        },
         createDataset: {
             resolve: (api) => api.bi.createDataset,
             openApi: {
@@ -44,10 +52,24 @@ export const getPublicApiActionsV0 = <
                 tags: [ApiTag.Dataset],
             },
         },
+        updateDataset: {
+            resolve: (api) => api.bi.updateDataset,
+            openApi: {
+                summary: 'Update dataset',
+                tags: [ApiTag.Dataset],
+            },
+        },
         deleteDataset: {
             resolve: (api) => api.bi.deleteDataset,
             openApi: {
                 summary: 'Delete dataset',
+                tags: [ApiTag.Dataset],
+            },
+        },
+        validateDataset: {
+            resolve: (api) => api.bi.validateDataset,
+            openApi: {
+                summary: 'Validate dataset',
                 tags: [ApiTag.Dataset],
             },
         },
@@ -61,7 +83,7 @@ export const getPublicApiActionsV0 = <
             },
         },
         deleteWizardChart: {
-            resolve: (api) => api.mix.__deleteWizardChart__,
+            resolve: (api) => api.mix._deleteWizardChart,
             openApi: {
                 summary: 'Delete wizard chart',
                 tags: [ApiTag.Wizard],
@@ -77,7 +99,7 @@ export const getPublicApiActionsV0 = <
             },
         },
         deleteQLChart: {
-            resolve: (api) => api.mix.__deleteQLChart__,
+            resolve: (api) => api.mix._deleteQLChart,
             openApi: {
                 summary: 'Delete QL chart',
                 tags: [ApiTag.QL],
@@ -92,13 +114,6 @@ export const getPublicApiActionsV0 = <
                 tags: [ApiTag.Dashboard],
             },
         },
-        updateDashboard: {
-            resolve: (api) => api.mix.__updateDashboard__,
-            openApi: {
-                summary: 'Update dashboard',
-                tags: [ApiTag.Dashboard],
-            },
-        },
         createDashboard: {
             resolve: (api) => api.mix.__createDashboard__,
             openApi: {
@@ -106,12 +121,168 @@ export const getPublicApiActionsV0 = <
                 tags: [ApiTag.Dashboard],
             },
         },
+        updateDashboard: {
+            resolve: (api) => api.mix.__updateDashboard__,
+            openApi: {
+                summary: 'Update dashboard',
+                tags: [ApiTag.Dashboard],
+            },
+        },
         deleteDashboard: {
-            resolve: (api) => api.mix.__deleteDashboard__,
+            resolve: (api) => api.mix._deleteDashboard,
             openApi: {
                 summary: 'Delete dashboard',
                 tags: [ApiTag.Dashboard],
             },
+        },
+
+        // Navigation
+        getEntries: {
+            resolve: (api) => api.us.getEntries,
+            openApi: {
+                summary: 'Get entries',
+                tags: [ApiTag.Navigation],
+            },
+        },
+
+        // Workbook
+        createWorkbook: {
+            resolve: (api) => api.us.createWorkbook,
+            openApi: {
+                summary: 'Create workbook',
+                tags: [ApiTag.Workbook],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
+        deleteWorkbook: {
+            resolve: (api) => api.us.deleteWorkbook,
+            openApi: {
+                summary: 'Delete workbook',
+                tags: [ApiTag.Workbook],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
+        deleteWorkbooks: {
+            resolve: (api) => api.us.deleteWorkbooks,
+            openApi: {
+                summary: 'Delete workbooks',
+                tags: [ApiTag.Workbook],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
+        getWorkbook: {
+            resolve: (api) => api.us.getWorkbook,
+            openApi: {
+                summary: 'Get workbook',
+                tags: [ApiTag.Workbook],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
+        getWorkbooksList: {
+            resolve: (api) => api.us.getWorkbooksList,
+            openApi: {
+                summary: 'Get workbooks list',
+                tags: [ApiTag.Workbook],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
+        moveWorkbook: {
+            resolve: (api) => api.us.moveWorkbook,
+            openApi: {
+                summary: 'Move workbook',
+                tags: [ApiTag.Workbook],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
+        moveWorkbooks: {
+            resolve: (api) => api.us.moveWorkbooks,
+            openApi: {
+                summary: 'Move workbooks',
+                tags: [ApiTag.Workbook],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
+        updateWorkbook: {
+            resolve: (api) => api.us.updateWorkbook,
+            openApi: {
+                summary: 'Update workbook',
+                tags: [ApiTag.Workbook],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
+
+        // Collection
+        createCollection: {
+            resolve: (api) => api.us.createCollection,
+            openApi: {
+                summary: 'Create collection',
+                tags: [ApiTag.Collection],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
+        deleteCollection: {
+            resolve: (api) => api.us.deleteCollection,
+            openApi: {
+                summary: 'Delete collection',
+                tags: [ApiTag.Collection],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
+        deleteCollections: {
+            resolve: (api) => api.us.deleteCollections,
+            openApi: {
+                summary: 'Delete collections',
+                tags: [ApiTag.Collection],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
+        getCollectionBreadcrumbs: {
+            resolve: (api) => api.us.getCollectionBreadcrumbs,
+            openApi: {
+                summary: 'Get collection breadcrumbs',
+                tags: [ApiTag.Collection],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
+        getCollection: {
+            resolve: (api) => api.us.getCollection,
+            openApi: {
+                summary: 'Get collection',
+                tags: [ApiTag.Collection],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
+        getRootCollectionPermissions: {
+            resolve: (api) => api.us.getRootCollectionPermissions,
+            openApi: {
+                summary: 'Get root collection permissions',
+                tags: [ApiTag.Collection],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
+        moveCollection: {
+            resolve: (api) => api.us.moveCollection,
+            openApi: {
+                summary: 'Move collection',
+                tags: [ApiTag.Collection],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
+        moveCollections: {
+            resolve: (api) => api.us.moveCollections,
+            openApi: {
+                summary: 'Move collections',
+                tags: [ApiTag.Collection],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
+        updateCollection: {
+            resolve: (api) => api.us.updateCollection,
+            openApi: {
+                summary: 'Update collection',
+                tags: [ApiTag.Collection],
+            },
+            features: [Feature.CollectionsEnabled],
         },
     };
 };

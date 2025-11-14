@@ -119,6 +119,26 @@
         }
     }
 
+    &__custom-entry-icon {
+        height: 32px;
+        width: 32px;
+        .custom-color-box {
+            height: 32px;
+            width: 32px;
+            border-radius: 6px;
+        }
+
+        &_mobile {
+            height: 28px;
+            width: 28px;
+            .custom-color-box {
+                height: 28px;
+                width: 28px;
+                border-radius: 6px;
+            }
+        }
+    }
+
     &_mobile {
         #{$class}__content-cell {
             @include text-body-2;

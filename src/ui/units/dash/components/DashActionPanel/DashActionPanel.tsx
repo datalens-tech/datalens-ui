@@ -48,6 +48,7 @@ import {
     selectDashDescription,
     selectDashShowOpenedDescription,
     selectLoadingEditMode,
+    selectSettings,
     selectStateMode,
 } from '../../store/selectors/dashTypedSelectors';
 import type {DashEntry} from '../../typings/entry';
@@ -113,7 +114,11 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
                             entry={entry as GetEntryResponse}
                             additionalEntryItems={this.getAdditionalEntryItems()}
                             rightItems={[
-                                <DashActionPanelAdditionalButtons key="additional-buttons" />,
+                                <DashActionPanelAdditionalButtons
+                                    key="additional-buttons"
+                                    dashSettings={this.props.settings}
+                                    isEditMode={this.props.isEditMode}
+                                />,
                                 <div className={b('controls')} key="controls">
                                     {this.renderControls()}
                                 </div>,
@@ -360,6 +365,7 @@ const mapStateToProps = (state: DatalensGlobalState) => {
         accessDescription: selectDashAccessDescription(state),
         showOpenedDescription: selectDashShowOpenedDescription(state),
         description: selectDashDescription(state),
+        settings: selectSettings(state),
     };
 };
 

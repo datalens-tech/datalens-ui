@@ -22,7 +22,6 @@ export enum Feature {
     QLMonitoring = 'QLMonitoring',
     CollectionsEnabled = 'CollectionsEnabled',
     CollectionsAccessEnabled = 'CollectionsAccessEnabled',
-    DashBoardAccessDescription = 'DashBoardAccessDescription',
     DashBoardSupportDescription = 'DashBoardSupportDescription',
     // Show request body in the Inspector dialog
     ShowInspectorDetails = 'ShowInspectorDetails',
@@ -89,17 +88,21 @@ export enum Feature {
     GravityChartsForPieAndTreemap = 'GravityChartsForPieAndTreemap',
     /** Use GravityUI Charts as the default library for some wizard visualizations(scatter and bar-y) */
     GravityChartsForBarYAndScatter = 'GravityChartsForBarYAndScatter',
-    /** Save field settings (formatting and colors) in the dataset */
-    StoreFieldSettingsAtDataset = 'StoreFieldSettingsAtDataset',
+    /** Use GravityUI Charts as the default library for some wizard visualizations(line, area and bar-x) */
+    GravityChartsForLineAreaAndBarX = 'GravityChartsForLineAreaAndBarX',
     /** Show dataset description button */
     EnableDatasetDescription = 'EnableDatasetDescription',
     /** Show connection description button */
     EnableConnectionDescription = 'EnableConnectionDescription',
-    /** Enable connection revisions  */
-    EnableConnectionRevisions = 'EnableConnectionRevisions',
+    /** Enable pagination in dataset sources table */
+    EnableDatasetSourcesPagination = 'EnableDatasetSourcesPagination',
+    /** Enable shared connections and datasets */
+    EnableSharedEntries = 'EnableSharedEntries',
 
     EnableMobileFixedHeader = 'EnableMobileFixedHeader',
     EnableCommonChartDashSettings = 'EnableCommonChartDashSettings',
+    /** Shows updated settings page */
+    EnableNewServiceSettings = 'EnableNewServiceSettings',
 }
 
 export type FeatureConfig = Record<string, boolean>;
