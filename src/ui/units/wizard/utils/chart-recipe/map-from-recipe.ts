@@ -1,3 +1,6 @@
+import defaultsDeep from 'lodash/defaultsDeep';
+import {THREE_POINT_GRADIENTS} from 'shared/constants/gradients/three-point-gradients';
+import {TWO_POINT_GRADIENTS} from 'shared/constants/gradients/two-point-gradients';
 import {v1 as uuidv1} from 'uuid';
 
 import type {
@@ -14,12 +17,14 @@ import type {
 import {
     ChartsConfigVersion,
     DatasetFieldType,
+    GradientType,
     PlaceholderId,
     PseudoFieldTitle,
     WizardVisualizationId,
 } from '../../../../../shared';
 import {getSdk} from '../../../../libs/schematic-sdk';
 import {receiveVisualization} from '../../actions';
+import {getDefaultBarsSettings} from '../table';
 import {getAvailableVisualizations} from '../visualization';
 
 import type {FilterValue, RecipeField, WizardChartRecipe} from './types';
@@ -73,6 +78,22 @@ function getServerField({
 
     // Invalid field - it will most likely be displayed in wizard with an error.
     throw Error('The field was not found in the chart or dataset');
+}
+
+function getGradienType(id?: string) {
+    if (!id) {
+        return undefined;
+    }
+
+    if (TWO_POINT_GRADIENTS[id]) {
+        return GradientType.TWO_POINT;
+    }
+
+    if (THREE_POINT_GRADIENTS[id]) {
+        return GradientType.THREE_POINT;
+    }
+
+    return undefined;
 }
 
 export async function getWizardConfigFromRecipe({
@@ -176,7 +197,31 @@ export async function getWizardConfigFromRecipe({
             case WizardVisualizationId.FlatTable: {
                 placeholders.push({
                     id: PlaceholderId.FlatTableColumns,
-                    items: (layer.columns ?? []).map(mapRecipeFieldToServerField),
+                    items: (layer.columns ?? []).map((d) => {
+                        return {
+                            ...mapRecipeFieldToServerField(d),
+                            ...(d.bar
+                                ? {
+                                      barsSettings: defaultsDeep(
+                                          {
+                                              enabled: true,
+                                              colorSettings: {
+                                                  colorType: d.bar.colorType,
+                                                  settings: {
+                                                      palette: d.bar.palette,
+                                                      gradientType: getGradienType(d.bar.palette),
+                                                      thresholds: {
+                                                          mode: 'auto',
+                                                      },
+                                                  },
+                                              },
+                                          },
+                                          getDefaultBarsSettings(),
+                                      ),
+                                  }
+                                : {}),
+                        };
+                    }),
                 });
                 break;
             }
@@ -212,6 +257,13 @@ export async function getWizardConfigFromRecipe({
             };
         });
 
+        const sort = (layer.sorting ?? []).map((s) => {
+            return {
+                ...mapRecipeFieldToServerField(s),
+                direction: s.direction,
+            };
+        });
+
         const newLayer: Partial<ServerVisualizationLayer> = {
             id: chartType,
             placeholders,
@@ -220,7 +272,7 @@ export async function getWizardConfigFromRecipe({
                 labels: [],
                 tooltips: [],
                 filters,
-                sort: [],
+                sort,
             },
         };
         layers.push(newLayer);
@@ -240,7 +292,7 @@ export async function getWizardConfigFromRecipe({
             hierarchies: [],
             labels: [],
             links: [],
-            sort: [],
+            sort: layers[0]?.commonPlaceholders?.sort ?? [],
             tooltips: [],
             type: 'datalens',
             updates,
