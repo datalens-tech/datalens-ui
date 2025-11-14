@@ -4,8 +4,8 @@ import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
 import {selectSelectorDialog, selectSelectorsGroup} from 'ui/store/selectors/controlDialog';
 
+import {ImpactTypeSelect} from '../ImpactTypeSelect/ImpactTypeSelect';
 import {ParameterNameInput} from '../ParameterNameInput/ParameterNameInput';
-import {TabsScopeSelect} from '../TabsScopeSelect/TabsScopeSelect';
 
 import {ConnectionSelector} from './components/ConnectionSelector/ConnectionSelector';
 import {QueryTypeControl} from './components/QueryTypeControl/QueryTypeControl';
@@ -24,7 +24,7 @@ export const ConnectionSettings = ({
     enableGlobalSelectors?: boolean;
 }) => {
     const {connectionQueryTypes} = useSelector(selectSelectorDialog);
-    const {tabsScope, group} = useSelector(selectSelectorsGroup);
+    const {impactType, impactTabsIds, group} = useSelector(selectSelectorsGroup);
 
     return (
         <React.Fragment>
@@ -43,8 +43,9 @@ export const ConnectionSettings = ({
                 </React.Fragment>
             )}
             {enableGlobalSelectors && (
-                <TabsScopeSelect
-                    groupTabsScope={tabsScope}
+                <ImpactTypeSelect
+                    groupImpactType={impactType}
+                    groupImpactTabsIds={impactTabsIds}
                     hasMultipleSelectors={group.length > 1}
                 />
             )}

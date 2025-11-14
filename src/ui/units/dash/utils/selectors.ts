@@ -1,53 +1,63 @@
 import {Feature} from 'shared';
-import {TABS_SCOPE_ALL} from 'shared/constants/dash';
-import type {TabsScope} from 'shared/types/dash';
+import type {ImpactTabsIds, ImpactType} from 'shared/types/dash';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
-export interface TabsScopeItem {
-    tabsScope?: string | string[];
+export interface ImpactTypeItem {
+    impactType?: ImpactType;
+    impactTabsIds?: ImpactTabsIds;
 }
 
-export const isGroupSettingAvailableOnTab = (
-    groupTabsScope: TabsScope,
+export const isItemScopeAvailableOnTab = (
     currentTabId: string,
+    itemImpactType: ImpactType,
+    itemImpactTabsIds?: ImpactTabsIds,
 ): boolean => {
-    return (
-        !groupTabsScope ||
-        groupTabsScope === TABS_SCOPE_ALL ||
-        groupTabsScope === currentTabId ||
-        (Array.isArray(groupTabsScope) && groupTabsScope.includes(currentTabId))
-    );
+    switch (itemImpactType) {
+        case 'allTabs':
+            return true;
+        case 'currentTab':
+        case 'selectedTabs':
+            return itemImpactTabsIds ? itemImpactTabsIds.includes(currentTabId) : true;
+        default:
+            return false;
+    }
 };
 
-export const isItemScopeAvailableOnTab = (
-    itemTabsScope: TabsScope,
+export const isGroupSettingAvailableOnTab = (
     currentTabId: string,
+    groupImpactType: ImpactType,
+    groupImpactTabsIds?: ImpactTabsIds,
 ): boolean => {
-    return (
-        itemTabsScope === currentTabId ||
-        itemTabsScope === TABS_SCOPE_ALL ||
-        (Array.isArray(itemTabsScope) && itemTabsScope.includes(currentTabId))
-    );
+    if (!groupImpactType) {
+        return true;
+    }
+
+    return isItemScopeAvailableOnTab(currentTabId, groupImpactType, groupImpactTabsIds);
 };
 
 export const isItemVisibleOnCurrentTab = (
-    item: {tabsScope?: TabsScope},
+    item: {impactType?: ImpactType; impactTabsIds?: ImpactTabsIds},
     currentTabId: string | null,
-    groupTabsScope: TabsScope,
+    groupImpactType: ImpactType,
+    groupImpactTabsIds?: ImpactTabsIds,
 ): boolean => {
     if (!isEnabledFeature(Feature.EnableGlobalSelectors) || !currentTabId) {
         return true;
     }
 
-    const isGroupSettingPrevails = item.tabsScope === undefined;
-    const isGroupAvailable = isGroupSettingAvailableOnTab(groupTabsScope, currentTabId);
+    const isGroupSettingPrevails = item.impactType === undefined;
+    const isGroupAvailable = isGroupSettingAvailableOnTab(
+        currentTabId,
+        groupImpactType,
+        groupImpactTabsIds,
+    );
 
     if (isGroupSettingPrevails && isGroupAvailable) {
         return true;
     }
 
     return (
-        isItemScopeAvailableOnTab(item.tabsScope, currentTabId) ||
-        (item.tabsScope === undefined && isGroupAvailable)
+        isItemScopeAvailableOnTab(currentTabId, item.impactType, item.impactTabsIds) ||
+        (item.impactType === undefined && isGroupAvailable)
     );
 };

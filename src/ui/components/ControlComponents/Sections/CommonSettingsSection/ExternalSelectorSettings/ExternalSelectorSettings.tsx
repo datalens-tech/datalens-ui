@@ -15,7 +15,7 @@ import {selectOpenedItemMeta, selectSelectorDialog} from 'ui/store/selectors/con
 import {EntryTypeNode} from 'ui/units/dash/modules/constants';
 
 import {EntrySelector} from '../EntrySelector/EntrySelector';
-import {TabsScopeSelect} from '../TabsScopeSelect/TabsScopeSelect';
+import {ImpactTypeSelect} from '../ImpactTypeSelect/ImpactTypeSelect';
 
 import './ExternalSelectorSettings.scss';
 
@@ -123,7 +123,7 @@ const ExternalSelectorSettings: React.FC<{
                 changeNavigationPath={props.changeNavigationPath}
             />
 
-            {props.enableGlobalSelectors && <TabsScopeSelect />}
+            {props.enableGlobalSelectors && <ImpactTypeSelect />}
 
             {!props.enableAutoheightDefault && (
                 <FormRow

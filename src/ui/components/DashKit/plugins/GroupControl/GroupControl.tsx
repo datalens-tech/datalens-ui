@@ -316,9 +316,13 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         }
 
         const isGroupSettingPrevails = controlData.group.every(
-            (item) => item.tabsScope === undefined,
+            (item) => item.impactType === undefined,
         );
-        const isGroupAvailable = isGroupSettingAvailableOnTab(controlData.tabsScope, currentTabId);
+        const isGroupAvailable = isGroupSettingAvailableOnTab(
+            currentTabId,
+            controlData.impactType,
+            controlData.impactTabsIds,
+        );
 
         if (isGroupSettingPrevails && isGroupAvailable) {
             return controlData.group;
@@ -326,8 +330,8 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
         return controlData.group.filter(
             (item) =>
-                isItemScopeAvailableOnTab(item.tabsScope, currentTabId) ||
-                (item.tabsScope === undefined && isGroupAvailable),
+                (item.impactType === undefined && isGroupAvailable) ||
+                isItemScopeAvailableOnTab(currentTabId, item.impactType, item.impactTabsIds),
         );
     }
 

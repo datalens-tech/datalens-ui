@@ -24,7 +24,7 @@ import type {SelectorElementType, SetSelectorDialogItemArgs} from 'ui/store/typi
 
 import {DatasetField} from '../../Switchers/DatasetField/DatasetField';
 import {EntrySelector} from '../EntrySelector/EntrySelector';
-import {TabsScopeSelect} from '../TabsScopeSelect/TabsScopeSelect';
+import {ImpactTypeSelect} from '../ImpactTypeSelect/ImpactTypeSelect';
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
 
@@ -40,7 +40,7 @@ function DatasetSelectorSettings(props: {
     const {datasetId, datasetFieldId, isManualTitle, title, fieldType, validation} =
         useSelector(selectSelectorDialog);
     const {workbookId} = useSelector(selectOpenedItemMeta);
-    const {tabsScope, group} = useSelector(selectSelectorsGroup);
+    const {impactType, impactTabsIds, group} = useSelector(selectSelectorsGroup);
     const [isInvalid, setIsInvalid] = React.useState(false);
 
     const fetchDataset = React.useCallback((entryId: string) => {
@@ -179,10 +179,11 @@ function DatasetSelectorSettings(props: {
                 </FieldWrapper>
             </FormRow>
             {props.enableGlobalSelectors && (
-                <TabsScopeSelect
+                <ImpactTypeSelect
                     hasMultipleSelectors={group.length > 1}
-                    groupTabsScope={tabsScope}
-                ></TabsScopeSelect>
+                    groupImpactType={impactType}
+                    groupImpactTabsIds={impactTabsIds}
+                ></ImpactTypeSelect>
             )}
         </React.Fragment>
     );

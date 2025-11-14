@@ -7,8 +7,8 @@ import {selectSelectorDialog, selectSelectorsGroup} from 'ui/store/selectors/con
 
 import {ConnectionSettings} from './ConnectionSettings/ConnectionSettings';
 import {DatasetSelectorSettings} from './DatasetSelectorSettings/DatasetSelectorSettings';
+import {ImpactTypeSelect} from './ImpactTypeSelect/ImpactTypeSelect';
 import {ParameterNameInput} from './ParameterNameInput/ParameterNameInput';
-import {TabsScopeSelect} from './TabsScopeSelect/TabsScopeSelect';
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
 
@@ -24,7 +24,7 @@ export const CommonGroupSettingsSection = ({
     className?: string;
 }) => {
     const {sourceType} = useSelector(selectSelectorDialog);
-    const {group, tabsScope} = useSelector(selectSelectorsGroup);
+    const {group, impactType, impactTabsIds} = useSelector(selectSelectorsGroup);
 
     const hasMultipleSelectors = group.length > 1;
 
@@ -38,8 +38,9 @@ export const CommonGroupSettingsSection = ({
                         className={className}
                     />
                     {enableGlobalSelectors && (
-                        <TabsScopeSelect
-                            groupTabsScope={tabsScope}
+                        <ImpactTypeSelect
+                            groupImpactType={impactType}
+                            groupImpactTabsIds={impactTabsIds}
                             hasMultipleSelectors={hasMultipleSelectors}
                         />
                     )}

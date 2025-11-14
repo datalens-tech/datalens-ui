@@ -184,12 +184,12 @@ export const GroupControlSidebar: React.FC<{
             return (
                 <GlobalSelectorIcon
                     withHint
-                    tabsScope={item.tabsScope ?? selectorsGroup.tabsScope}
+                    impactType={item.impactType ?? selectorsGroup.impactType}
                     className={b('global-icon')}
                 />
             );
         },
-        [selectorsGroup.tabsScope],
+        [selectorsGroup.impactType],
     );
 
     const renderControlWrapper = React.useCallback(
@@ -197,7 +197,8 @@ export const GroupControlSidebar: React.FC<{
             const isVisible = isItemVisibleOnCurrentTab(
                 item,
                 currentTabId,
-                selectorsGroup.tabsScope,
+                selectorsGroup.impactType,
+                selectorsGroup.impactTabsIds,
             );
             const iconElement = renderControlIcon(item);
 
@@ -208,7 +209,7 @@ export const GroupControlSidebar: React.FC<{
                 </div>
             );
         },
-        [currentTabId, selectorsGroup.tabsScope, renderControlIcon],
+        [currentTabId, selectorsGroup.impactType, selectorsGroup.impactTabsIds, renderControlIcon],
     );
 
     return (

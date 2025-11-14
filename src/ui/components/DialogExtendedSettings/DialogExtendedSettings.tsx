@@ -13,7 +13,7 @@ import {selectSelectorsGroup} from 'ui/store/selectors/controlDialog';
 import type {SelectorDialogState} from 'ui/store/typings/controlDialog';
 
 import {CONTROLS_PLACEMENT_MODE} from '../../constants/dialogs';
-import {TabsScopeSelect} from '../ControlComponents/Sections/CommonSettingsSection/TabsScopeSelect/TabsScopeSelect';
+import {ImpactTypeSelect} from '../ControlComponents/Sections/CommonSettingsSection/ImpactTypeSelect/ImpactTypeSelect';
 import {FormSection} from '../FormSection/FormSection';
 
 import {ControlPlacementRow} from './ControlPlacementRow/ControlPlacementRow';
@@ -232,7 +232,7 @@ const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
             // we allow to enable autoheight
             selectorsGroup.group[0].titlePlacement === TitlePlacementOption.Top);
     const showUpdateControlsOnChange = selectorsGroup.buttonApply && isMultipleSelectors;
-    const showTabsScopeSelect = isMultipleSelectors && enableGlobalSelectors;
+    const showImpactTypeSelect = isMultipleSelectors && enableGlobalSelectors;
 
     return (
         <Dialog onClose={onClose} open={true} className={b()}>
@@ -332,10 +332,11 @@ const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                         </FormRow>
                     )}
 
-                    {showTabsScopeSelect && (
-                        <TabsScopeSelect
+                    {showImpactTypeSelect && (
+                        <ImpactTypeSelect
                             isGroupSettings={true}
-                            groupTabsScope={selectorsGroup.tabsScope}
+                            groupImpactType={selectorsGroup.impactType}
+                            groupImpactTabsIds={selectorsGroup.impactTabsIds}
                         />
                     )}
                 </FormSection>

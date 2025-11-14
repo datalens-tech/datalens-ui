@@ -92,7 +92,8 @@ export function getSelectorDialogInitialState(
         required: false,
         showHint: false,
         draftId: getRandomKey(),
-        tabsScope: undefined,
+        impactType: undefined,
+        impactTabsIds: undefined,
         ...(args.title ? {title: args.title} : {}),
     };
 }
@@ -104,7 +105,8 @@ export function getGroupSelectorDialogInitialState(): SelectorsGroupDialogState 
         buttonApply: false,
         buttonReset: false,
         updateControlsOnChange: true,
-        tabsScope: undefined,
+        impactType: undefined,
+        impactTabsIds: undefined,
         group: [],
     };
 }
@@ -169,7 +171,8 @@ export function getSelectorDialogFromData(
 
         id: data.id,
         namespace: data.namespace,
-        tabsScope: data.tabsScope,
+        impactType: data.impactType,
+        impactTabsIds: data.impactTabsIds,
     };
 }
 

@@ -21,6 +21,7 @@ import type {
     DashTab,
     DashTabItem,
     DashTabItemControl,
+    DashTabItemControlSingle,
     DashTabItemGroupControl,
     DashTabItemGroupControlData,
     DashTabItemImage,
@@ -395,15 +396,25 @@ type SetItemDataBase = {
     autoHeight?: boolean;
     source?: ItemDataSource;
 };
+
+type SetItemDataGroupControlItem = Partial<Omit<DashTabItemControlSingle, 'sourceType'>> & {
+    sourceType?: string;
+};
 export type SetItemDataText = RecursivePartial<PluginTextProps['data']> & SetItemDataBase;
 export type SetItemDataTitle = RecursivePartial<PluginTitleProps['data']> & SetItemDataBase;
-export type SetItemDataGroupControl = Partial<DashTabItemGroupControl['data']> & SetItemDataBase;
+export type SetItemDataGroupControl = Partial<Omit<DashTabItemGroupControl['data'], 'group'>> &
+    SetItemDataBase & {group?: SetItemDataGroupControlItem[]};
 export type SetItemDataExternalControl = Partial<DashTabItemControl['data']> & SetItemDataBase;
 export type SetItemDataImage = DashTabItemImage['data'];
 export type SetItemDataDefaults = Record<string, string | string[]>;
 
 export type SetItemDataArgs = {
-    data: SetItemDataText | SetItemDataTitle | SetItemDataImage | SetItemDataGroupControl;
+    data:
+        | SetItemDataText
+        | SetItemDataTitle
+        | SetItemDataImage
+        | SetItemDataExternalControl
+        | SetItemDataGroupControl;
     defaults?: SetItemDataDefaults;
     type?: string;
     namespace?: string;
