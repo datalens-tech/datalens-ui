@@ -1,6 +1,8 @@
 import type {ChartKitProps, ChartKitType} from '@gravity-ui/chartkit';
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 import type {Split} from 'react-split-pane';
+import type {StringParams} from 'shared/types/common';
+import type {ActivityResultData} from 'ui/utils/chart-activity';
 
 import type {
     CombinedError,
@@ -40,6 +42,8 @@ export type ChartKitAdapterProps = {
     onRetry?: () => void;
     rootNodeRef: React.RefObject<HTMLDivElement | null>;
     backgroundColor?: string;
+    runAction?: (args: StringParams) => Promise<unknown>;
+    onAction?: (args: {data: ActivityResultData}) => void;
 } & Pick<ChartKitProps<ChartKitType>, 'onRender' | 'onChartLoad' | 'renderPluginLoader'>;
 
 declare module '@gravity-ui/chartkit' {

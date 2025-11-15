@@ -373,6 +373,8 @@ export const ChartSelector = (props: ChartSelectorWidgetProps) => {
                         loadedData={loadedData}
                         forwardedRef={forwardedRef}
                         rootNodeRef={rootNodeRef}
+                        runAction={runAction}
+                        onAction={onAction}
                     />
                 </div>
             </div>
