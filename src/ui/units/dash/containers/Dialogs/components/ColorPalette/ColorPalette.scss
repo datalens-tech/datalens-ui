@@ -1,14 +1,14 @@
 @import '~@gravity-ui/uikit/styles/mixins';
 
-.widget-color-palette {
-    $class: &;
-    display: inline-block;
-    position: relative;
-    line-height: 0;
-    width: fit-content;
-    vertical-align: text-top;
-
+.dl-color-palette {
     $color-item-size: 28px;
+
+    $class: &;
+
+    display: flex;
+    flex-direction: column;
+
+    padding: var(--g-spacing-4);
 
     &__hint {
         @include text-body-1();
@@ -16,48 +16,39 @@
         margin-top: var(--g-spacing-2);
     }
 
-    &__palette-trigger,
     &__custom-palette-bg-btn,
     &__highlight-wrapper {
         width: $color-item-size;
         height: $color-item-size;
-        flex-grow: 0;
-        flex-shrink: 0;
     }
 
-    &__palette-trigger,
     &__custom-palette-bg-btn,
     &__palette-list-btn {
         // disable inheritance from theme
         --g-button-border-radius: 6px;
-    }
-
-    &__palette-list-btn,
-    &__custom-palette-bg-btn {
         // disable selected additional background on button
         --g-button-background-color: transparent;
         --g-button-background-color-hover: transparent;
     }
 
-    &__palette-list {
-        display: flex;
-        flex-direction: column;
-
-        padding: var(--g-spacing-4);
-    }
-
     &__preset {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, $color-item-size);
         margin-block-end: var(--g-spacing-2);
+        gap: var(--g-spacing-2);
+        flex-shrink: 0;
     }
 
     &__palette {
         margin-block-start: var(--g-spacing-5);
+        flex-shrink: 0;
     }
 
     &__color-picker {
         display: block;
         width: 140px;
         min-width: 100%;
+        flex-shrink: 0;
     }
 
     &__highlight-wrapper {
@@ -68,6 +59,10 @@
 
         &_with-border {
             --_--color-item-border-color: var(--g-color-line-generic);
+
+            #{$class}__color-item {
+                border: 1px solid var(--g-color-line-generic);
+            }
         }
 
         &::before {
@@ -81,6 +76,9 @@
         &_selected,
         &:hover {
             --_--color-item-border-color: transparent;
+            #{$class}__color-item {
+                border-width: 0px;
+            }
         }
 
         &:not(&_selected):hover::before {
@@ -100,50 +98,9 @@
         }
     }
 
-    &__color-item {
-        display: inline-block;
-        width: $color-item-size;
-        height: $color-item-size;
-        background-clip: padding-box;
-
-        &_transparent {
-            background-image: repeating-conic-gradient(
-                var(--g-color-base-generic) 0 25%,
-                var(--g-color-base-background) 0 50%
-            );
-            border: 1px solid transparent;
-        }
-
-        &_widget-bg {
-            background-color: var(--g-color-base-float);
-        }
-    }
-
     &__tooltip-trigger {
         position: absolute;
         inset: 0;
         z-index: 1000;
-    }
-
-    &__theme {
-        background-clip: padding-box;
-        background-color: var(--g-color-base-float);
-        width: $color-item-size;
-        height: $color-item-size;
-        overflow: hidden;
-    }
-
-    &__theme,
-    &__color-item {
-        border-radius: 6px;
-    }
-
-    &__palette-trigger &__theme,
-    &__palette-trigger &__color-item {
-        border: 1px solid transparent;
-    }
-
-    &__palette-trigger &__theme &__color-item {
-        margin: -1px;
     }
 }

@@ -8,7 +8,7 @@ import {
     WIDGET_BG_HEAVY_COLORS_PRESET,
 } from 'shared/constants/widgets';
 
-import {ColorPalette} from '../ColorPalette/ColorPalette';
+import {ColorPicker} from '../ColorPicker/ColorPicker';
 
 type PaletteBackgroundProps = {
     color?: string;
@@ -38,7 +38,7 @@ export const PaletteBackground = ({
     );
 
     return (
-        <ColorPalette
+        <ColorPicker
             onSelect={onSelect}
             color={color}
             enableCustomColorSelector={enableCustomBgColorSelector}

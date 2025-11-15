@@ -3,7 +3,7 @@ import React from 'react';
 import {type RealTheme} from '@gravity-ui/uikit';
 import {CustomPaletteTextColors, TITLE_WIDGET_TEXT_COLORS_PRESET} from 'shared/constants/widgets';
 
-import {ColorPalette} from '../ColorPalette/ColorPalette';
+import {ColorPicker} from '../ColorPicker/ColorPicker';
 
 type PaletteTextProps = {
     color?: string;
@@ -26,7 +26,7 @@ export const PaletteText = ({
     enableCustomColorSelector,
 }: PaletteTextProps) => {
     return (
-        <ColorPalette
+        <ColorPicker
             onSelect={onSelect}
             color={color}
             enableCustomColorSelector={enableCustomColorSelector}
