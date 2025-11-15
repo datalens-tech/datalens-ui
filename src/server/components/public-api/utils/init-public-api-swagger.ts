@@ -93,6 +93,8 @@ export const initPublicApiSwagger = (app: ExpressKit) => {
                 const swaggerOptions = {
                     url: jsonPath,
                     validatorUrl: null,
+                    tagsSorter: 'alpha',
+                    operationsSorter: 'alpha',
                 };
 
                 app.express.use(
