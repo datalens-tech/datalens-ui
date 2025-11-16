@@ -1,6 +1,7 @@
 import {createSelector} from 'reselect';
 import type {DatalensGlobalState} from 'index';
 import {getStatusFromOperation} from '../utils/collectionStructure';
+import {CollectionItemEntities} from 'shared';
 
 export const selectGetRootCollectionPermissions = (state: DatalensGlobalState) =>
     state.collectionsStructure.getRootCollectionPermissions;
@@ -16,6 +17,9 @@ export const selectGetStructureItems = (state: DatalensGlobalState) =>
 
 export const selectStructureItems = (state: DatalensGlobalState) =>
     state.collectionsStructure.items;
+
+export const selectFilteredStructureItems = (state: DatalensGlobalState) =>
+    state.collectionsStructure.items.filter((item) => item.entity !== CollectionItemEntities.ENTRY);
 
 export const selectCopyTemplate = (state: DatalensGlobalState) =>
     state.collectionsStructure.copyTemplate;

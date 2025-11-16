@@ -9,12 +9,11 @@ import type {WorkbookId} from 'shared';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 
 import type {
-    Collection,
     GetCollectionBreadcrumbsResponse,
     GetStructureItemsArgs,
     GetStructureItemsResponse,
+    StructureItem,
 } from '../../../../../shared/schema/us/types/collections';
-import type {Workbook} from '../../../../../shared/schema/us/types/workbooks';
 import {CollectionsStructureBreadcrumbs} from '../../../Breadcrumbs/CollectionsStructureBreadcrumbs/CollectionsStructureBreadcrumbs';
 import {SmartLoader} from '../../../SmartLoader/SmartLoader';
 
@@ -34,7 +33,7 @@ export type Props = {
     contentIsLoading: boolean;
     contentError: Error | null;
     breadcrumbs: GetCollectionBreadcrumbsResponse;
-    items: (Collection | Workbook)[];
+    items: StructureItem[];
     nextPageToken: string | null;
     pageSize: number;
     isSelectionAllowed: boolean;

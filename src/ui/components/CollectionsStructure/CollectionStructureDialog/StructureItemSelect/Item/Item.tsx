@@ -3,8 +3,7 @@ import React from 'react';
 import {useThemeType} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {DialogCollectionStructureQa} from 'shared/constants';
-import type {Collection} from 'shared/schema/us/types/collections';
-import type {Workbook} from 'shared/schema/us/types/workbooks';
+import type {StructureItem} from 'shared/schema/us/types/collections';
 
 import {IconById} from '../../../../../components/IconById/IconById';
 import {WorkbookIcon} from '../../../../WorkbookIcon/WorkbookIcon';
@@ -14,10 +13,10 @@ import './Item.scss';
 const b = block('dl-collections-structure-collection-select-item');
 
 export type Props = {
-    item: Collection | Workbook;
+    item: StructureItem;
     active: boolean;
     canSelectWorkbook: boolean;
-    onSelect: (item: Collection | Workbook) => void;
+    onSelect: (item: StructureItem) => void;
 };
 
 export const Item = React.memo<Props>(({item, active, canSelectWorkbook, onSelect}) => {

@@ -34,9 +34,9 @@ import {
     selectCollectionIsLoading,
     selectCreateCollectionIsLoading,
     selectCreateWorkbookIsLoading,
+    selectFilteredStructureItems,
     selectNextPageToken,
     selectRootPermissionsData,
-    selectStructureItems,
     selectStructureItemsError,
     selectStructureItemsIsLoading,
 } from 'store/selectors/collectionsStructure';
@@ -133,7 +133,7 @@ export const CollectionStructureDialog = React.memo<Props>(
         const breadcrumbsIsLoading = useSelector(selectBreadcrumbsIsLoading);
         const breadcrumbs = useSelector(selectBreadcrumbs) ?? [];
 
-        const structureItems = useSelector(selectStructureItems) ?? [];
+        const structureItems = useSelector(selectFilteredStructureItems) ?? [];
         const structureItemsIsLoading = useSelector(selectStructureItemsIsLoading);
         const structureItemsError = useSelector(selectStructureItemsError);
         const nextPageToken = useSelector(selectNextPageToken);
