@@ -150,6 +150,7 @@ const PageComponent = (props: PageProps) => {
     const {extractEntryId} = registry.common.functions.getAll();
     const extractedEntryId = extractEntryId(entryId);
     const workbookId = get(props.match?.params, 'workbookId');
+    const collectionId = get(props.match?.params, 'collectionId');
     const queryType = get(props.match?.params, 'type', '');
     const connectorType = entry?.type || queryType;
     const connector = getConnItemByType({connectors: flattenConnectors, type: connectorType});
@@ -187,9 +188,10 @@ const PageComponent = (props: PageProps) => {
         actions.setPageData({
             entryId: extractedEntryId,
             workbookId,
+            collectionId,
             rev_id: revId,
         });
-    }, [actions, extractedEntryId, workbookId, revId]);
+    }, [actions, extractedEntryId, workbookId, revId, collectionId]);
 
     const setActualVersion = React.useMemo(
         () =>
