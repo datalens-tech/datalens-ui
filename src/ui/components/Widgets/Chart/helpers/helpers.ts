@@ -44,6 +44,8 @@ import type {
     WidgetDataRef,
 } from '../types';
 
+import {getMapSimpleConfig} from './yandex-map';
+
 export const COMPONENT_CLASSNAME = 'dl-widget';
 
 /**
@@ -135,12 +137,29 @@ export const getChartSimpleLoadedData = ({
         });
     }
 
-    // eslint-disable-next-line no-nested-ternary
-    const data = isEmpty(convertedToTableData)
-        ? ['metric2', 'metric', 'markup', 'markdown'].includes(loadedData?.type || '')
-            ? loadedData?.data
-            : loadedData
-        : convertedToTableData;
+    let data: object | null = convertedToTableData;
+    if (isEmpty(convertedToTableData)) {
+        switch (loadedData?.type) {
+            case 'metric':
+            case 'metric2':
+            case 'markup':
+            case 'markdown': {
+                data = loadedData?.data;
+                break;
+            }
+            case 'ymap': {
+                data = getMapSimpleConfig({
+                    widgetData: loadedData as LoadedWidgetData<unknown>,
+                });
+                break;
+            }
+            default: {
+                data = loadedData;
+                break;
+            }
+        }
+    }
+
     return {queries, data};
 };
 
