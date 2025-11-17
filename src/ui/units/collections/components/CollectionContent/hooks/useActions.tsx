@@ -111,25 +111,42 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
             }
 
             if (collectionsAccessEnabled && item.permissions.listAccessBindings) {
+                const isNewAccessDialogEnabled = isEnabledFeature(Feature.EnableNewAccessDialog);
                 actions.push({
                     text: <DropdownAction icon={LockOpen} text={i18n('action_access')} />,
                     action: () => {
-                        dispatch(
-                            openDialog({
-                                id: DIALOG_IAM_ACCESS,
-                                props: {
-                                    open: true,
-                                    resourceId: item.collectionId,
-                                    resourceType: ResourceType.Collection,
-                                    resourceTitle: item.title,
-                                    parentId: item.parentId,
-                                    canUpdate: item.permissions.updateAccessBindings,
-                                    onClose: () => {
-                                        dispatch(closeDialog());
+                        if (isNewAccessDialogEnabled) {
+                            dispatch(
+                                openDialog({
+                                    id: DIALOG_ACCESS,
+                                    props: {
+                                        collectionId: item?.collectionId ?? undefined,
+                                        resourceTitle: item?.title,
+                                        canUpdate: item?.permissions.updateAccessBindings,
+                                        onClose: () => {
+                                            dispatch(closeDialog());
+                                        },
                                     },
-                                },
-                            }),
-                        );
+                                }),
+                            );
+                        } else {
+                            dispatch(
+                                openDialog({
+                                    id: DIALOG_IAM_ACCESS,
+                                    props: {
+                                        open: true,
+                                        resourceId: item.collectionId,
+                                        resourceType: ResourceType.Collection,
+                                        resourceTitle: item.title,
+                                        parentId: item.parentId,
+                                        canUpdate: item.permissions.updateAccessBindings,
+                                        onClose: () => {
+                                            dispatch(closeDialog());
+                                        },
+                                    },
+                                }),
+                            );
+                        }
                     },
                 });
             }

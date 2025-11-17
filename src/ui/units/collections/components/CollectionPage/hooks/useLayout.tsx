@@ -25,6 +25,7 @@ import {DIALOG_IAM_ACCESS} from '../../../../../components/IamAccessDialog';
 import {DL} from '../../../../../constants';
 import {registry} from '../../../../../registry';
 import {ResourceType} from '../../../../../registry/units/common/types/components/IamAccessDialog';
+import {DIALOG_ACCESS} from 'ui/components/AccessDialog';
 import type {AppDispatch} from '../../../../../store';
 import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
 import {
@@ -256,24 +257,47 @@ export const useLayout = ({
                             }}
                             onEditAccessClick={() => {
                                 if (collectionsAccessEnabled && curCollectionId && collection) {
-                                    dispatch(
-                                        openDialog({
-                                            id: DIALOG_IAM_ACCESS,
-                                            props: {
-                                                open: true,
-                                                resourceId: collection.collectionId,
-                                                resourceType: ResourceType.Collection,
-                                                resourceTitle: collection.title,
-                                                parentId: collection.parentId,
-                                                canUpdate: Boolean(
-                                                    collection.permissions?.updateAccessBindings,
-                                                ),
-                                                onClose: () => {
-                                                    dispatch(closeDialog());
-                                                },
-                                            },
-                                        }),
+                                    const isNewAccessDialogEnabled = isEnabledFeature(
+                                        Feature.EnableNewAccessDialog,
                                     );
+                                    if (isNewAccessDialogEnabled) {
+                                        dispatch(
+                                            openDialog({
+                                                id: DIALOG_ACCESS,
+                                                props: {
+                                                    collectionId: collection.collectionId,
+                                                    resourceTitle: collection.title,
+                                                    canUpdate: Boolean(
+                                                        collection.permissions
+                                                            ?.updateAccessBindings,
+                                                    ),
+                                                    onClose: () => {
+                                                        dispatch(closeDialog());
+                                                    },
+                                                },
+                                            }),
+                                        );
+                                    } else {
+                                        dispatch(
+                                            openDialog({
+                                                id: DIALOG_IAM_ACCESS,
+                                                props: {
+                                                    open: true,
+                                                    resourceId: collection.collectionId,
+                                                    resourceType: ResourceType.Collection,
+                                                    resourceTitle: collection.title,
+                                                    parentId: collection.parentId,
+                                                    canUpdate: Boolean(
+                                                        collection.permissions
+                                                            ?.updateAccessBindings,
+                                                    ),
+                                                    onClose: () => {
+                                                        dispatch(closeDialog());
+                                                    },
+                                                },
+                                            }),
+                                        );
+                                    }
                                 }
                             }}
                         />
