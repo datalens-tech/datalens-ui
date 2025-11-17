@@ -61,6 +61,10 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
         const labelFormatting = graph.dataLabels
             ? mapToGravityChartValueFormat({field: labelField, formatSettings: graph.dataLabels})
             : undefined;
+        const shouldUsePercentageAsLabel =
+            labelFormatting &&
+            'labelMode' in labelFormatting &&
+            labelFormatting?.labelMode === 'percent';
         return {
             ...graph,
             type: 'bar-y',
@@ -76,8 +80,7 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
                         0,
                     ) ?? 0;
                 const percentage = (d.y / total) * 100;
-                const label =
-                    graph.dataLabels?.labelMode === 'percent' ? percentage : originalLabel;
+                const label = shouldUsePercentageAsLabel ? percentage : originalLabel;
 
                 return {...other, y: x, x: y, label, total, percentage};
             }),
