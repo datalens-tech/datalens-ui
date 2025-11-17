@@ -5,7 +5,7 @@ import type {GetCollectionBreadcrumbsResponse, GetEntryResponse} from 'shared/sc
 
 export type EntryBreadcrumbsProps = {
     renderRootContent?: (item: BreadcrumbsItem) => React.ReactNode;
-    entry?: GetEntryResponse & {collectionId?: string};
+    entry?: GetEntryResponse;
     workbookName?: string;
     //TODO delete after CHARTS-12145
     workbookBreadcrumbs?: GetCollectionBreadcrumbsResponse | null;

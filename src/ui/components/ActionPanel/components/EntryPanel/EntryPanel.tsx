@@ -44,11 +44,9 @@ type StateProps = ReturnType<typeof mapStateToProps>;
 
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
 
-type Entry = GetEntryResponse & {collectionId?: string};
-
 type OwnProps = {
     additionalEntryItems: EntryContextMenuItems;
-    entry?: Entry;
+    entry?: GetEntryResponse;
     onCloseNavigation?: () => void;
     enablePublish?: boolean;
     filterEntryContextMenuItems?: FilterEntryContextMenuItems;
@@ -58,7 +56,7 @@ type Props = OwnProps & DispatchProps & StateProps & RouteComponentProps;
 
 type State = {
     visibleEntryContextMenu?: boolean;
-    entry?: Entry;
+    entry?: GetEntryResponse;
     error?: Error;
 };
 
