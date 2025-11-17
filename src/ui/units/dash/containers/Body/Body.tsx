@@ -1288,6 +1288,12 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                 // that will try to scroll to the title after each item rendering
                 this.scrollIntoViewWithDebounce();
             }
+
+            if (isLoaded && navigator.userAgent === 'StatScreenshooter') {
+                const customEvent = new CustomEvent('dash.done', {bubbles: true});
+                document.body.dispatchEvent(customEvent);
+            }
+
             this.setState({loaded: isLoaded});
         }
     };
