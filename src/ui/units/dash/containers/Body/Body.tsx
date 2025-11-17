@@ -48,6 +48,7 @@ import {
     Feature,
     FixedHeaderQa,
     SCROLL_TITLE_DEBOUNCE_TIME,
+    SCR_USER_AGENT_HEADER_VALUE,
     UPDATE_STATE_DEBOUNCE_TIME,
 } from 'shared';
 import type {DatalensGlobalState} from 'ui';
@@ -1288,6 +1289,12 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                 // that will try to scroll to the title after each item rendering
                 this.scrollIntoViewWithDebounce();
             }
+
+            if (isLoaded && navigator.userAgent === SCR_USER_AGENT_HEADER_VALUE) {
+                const customEvent = new CustomEvent('dash.done', {bubbles: true});
+                document.body.dispatchEvent(customEvent);
+            }
+
             this.setState({loaded: isLoaded});
         }
     };

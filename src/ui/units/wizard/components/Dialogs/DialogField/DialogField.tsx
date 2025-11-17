@@ -51,6 +51,7 @@ import {
     HIDE_LABEL_MODES,
 } from '../../../constants';
 import {getCommonDataType, getIconForDataType} from '../../../utils/helpers';
+import {getDefaultBarsSettings} from '../../../utils/table';
 import {DialogRadioButtons} from '../components/DialogRadioButtons/DialogRadioButtons';
 
 import {BackgroundSettings} from './components/BackgroundSettings/BackgroundSettings';
@@ -62,7 +63,7 @@ import {
     getDefaultBackgroundSettings,
     showBackgroundSettingsInDialogField,
 } from './utils/backgroundSettings';
-import {getDefaultBarsSettings, showBarsInDialogField} from './utils/barsSettings';
+import {showBarsInDialogField} from './utils/barsSettings';
 import {
     canUseStringAsHtml,
     canUseStringAsMarkdown,

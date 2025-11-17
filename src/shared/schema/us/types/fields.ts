@@ -29,6 +29,7 @@ export interface EntryFields {
     updatedBy: string;
     unversionedData?: unknown;
     workbookId: WorkbookId;
+    collectionId?: string;
     annotation?: EntryAnnotation | null;
 }
 

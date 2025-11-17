@@ -14,7 +14,7 @@ export function createAction<TOutput, TParams = undefined, TTransformed = TOutpu
 }
 
 type TypedActionSchema = {
-    paramsSchema: z.ZodType;
+    paramsSchema?: z.ZodType;
     resultSchema: z.ZodType;
 };
 
@@ -42,7 +42,7 @@ export const getValidationSchema = (value: object): TypedActionSchema | null => 
 export const createTypedAction = <TOutput, TParams, TTransformed = TOutput>(
     schema: {
         resultSchema: z.ZodType<TOutput>;
-        paramsSchema: z.ZodType<TParams>;
+        paramsSchema?: z.ZodType<TParams>;
         transformedSchema?: z.ZodType<TTransformed>;
     },
     actionConfig: ApiServiceActionConfig<
