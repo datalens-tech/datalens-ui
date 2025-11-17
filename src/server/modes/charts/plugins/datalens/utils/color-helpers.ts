@@ -1,4 +1,5 @@
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
+import isNumber from 'lodash/isNumber';
 
 import type {
     ExtendedSeriesLineOptions,
@@ -17,6 +18,7 @@ import {
 } from '../../../../../../shared';
 import type {WrappedMarkdown} from '../../../../../../shared/utils/markdown';
 import {getColorsSettings} from '../../helpers/color-palettes';
+import {interpolateRgbBasis} from '../preparers/helpers/colors';
 import type {ChartColorsConfig} from '../types';
 
 import {getColor, getMountedColor} from './constants';
@@ -480,6 +482,73 @@ function getColorValuesAmongSeries(graphs: ExtendedSeriesLineOptions[]) {
             .map((point) => point.colorValue as ColorValue);
         return [...acc, ...colorValues];
     }, [] as ColorValue[]);
+}
+
+const MAX_COLOR_DELTA_VALUE = 1;
+
+function getColorFn(colors: RGBColor[]) {
+    if (colors.length > 2) {
+        const firstColors = interpolateRgbBasis(colors.slice(0, 2));
+        const lastColors = interpolateRgbBasis(colors.slice(1));
+
+        return (colorValue: number) =>
+            colorValue >= 0.5 ? lastColors((colorValue - 0.5) * 2) : firstColors(colorValue * 2);
+    }
+
+    return interpolateRgbBasis(colors);
+}
+
+export function colorizeByColorValues({
+    colorValues,
+    colorsConfig,
+}: {
+    colorValues: ColorValue[];
+    colorsConfig: ChartColorsConfig;
+}) {
+    const {min, mid, max} = getThresholdValues(colorsConfig, colorValues.filter(isNumber));
+    const currentGradient = getCurrentGradient(colorsConfig);
+    const colors: RGBColor[] = getRgbColors(currentGradient.colors, Boolean(colorsConfig.reversed));
+    const getRgbColor = getColorFn(colors);
+
+    let deltas: (number | null)[];
+
+    if (min === max) {
+        // If all values are the same, then we paint in the maximum color.
+        deltas = colorValues.map((colorValue) => {
+            if (colorValue === null) {
+                return null;
+            }
+
+            return MAX_COLOR_DELTA_VALUE;
+        });
+    } else {
+        deltas = colorValues.map((colorValue) => {
+            if (colorValue === null) {
+                return null;
+            }
+
+            if (colorValue <= min) {
+                return 0;
+            }
+
+            if (colorValue >= max) {
+                return 1;
+            }
+
+            return colorValue >= mid
+                ? getRangeDelta(colorValue, 2 * mid - max, 2 * (max - mid))
+                : getRangeDelta(colorValue, min, 2 * (mid - min));
+        });
+    }
+
+    return deltas.map((delta) => {
+        if (delta === null) {
+            return null;
+        }
+
+        const {red, green, blue} = getRgbColor(delta);
+        return `rgb(${red}, ${green}, ${blue})`;
+    });
 }
 
 export {

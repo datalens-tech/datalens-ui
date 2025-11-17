@@ -36,5 +36,27 @@ datalensTest.describe('Wizard', () => {
 
             await expect(preview).toHaveScreenshot();
         });
+
+        datalensTest('Coloring by Measure Values (gradient) @screenshot', async ({page}) => {
+            const wizardPage = new WizardPage({page});
+
+            // Create measure field
+            await wizardPage.createNewFieldWithFormula('SalesSum', 'sum([Sales])');
+
+            const preview = page.locator(slct(WizardPageQa.SectionPreview));
+            const previewLoader = preview.locator(slct(ChartKitQa.Loader));
+
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'segment');
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'SalesSum');
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.Colors,
+                'Measure Values',
+            );
+
+            // Put the mouse away so that the presence of hover elements does not interfere with taking screenshots
+            await page.mouse.move(-1, -1);
+            await expect(previewLoader).not.toBeVisible();
+            await expect(preview).toHaveScreenshot();
+        });
     });
 });
