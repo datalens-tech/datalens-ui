@@ -541,19 +541,14 @@ export function colorizeByColorValues({
         });
     }
 
-    return deltas.reduce(
-        (acc, delta, index) => {
-            if (delta === null) {
-                acc[String(colorValues[index])] = null;
-            } else {
-                const {red, green, blue} = getRgbColor(delta);
-                acc[String(colorValues[index])] = `rgb(${red}, ${green}, ${blue})`;
-            }
+    return deltas.map((delta) => {
+        if (delta === null) {
+            return null;
+        }
 
-            return acc;
-        },
-        {} as Record<string, string | null>,
-    );
+        const {red, green, blue} = getRgbColor(delta);
+        return `rgb(${red}, ${green}, ${blue})`;
+    });
 }
 
 export {

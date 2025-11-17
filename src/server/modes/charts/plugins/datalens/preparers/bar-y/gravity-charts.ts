@@ -59,7 +59,7 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
         shouldUsePercentStacking ||
         shared.extraSettings?.labelsPosition !== LabelsPositions.Outside;
 
-    let gradientColors: Record<string, string | null> = {};
+    let gradientColorMap: Record<string, string | null> = {};
     const shouldSetColorByValues = graphs.some((s) =>
         s.data.some((d: any) => !d.color && d.colorValue),
     );
@@ -68,7 +68,16 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
             .map((s) => s.data.map((point: any) => Number(point.colorValue) as ColorValue))
             .flat(2);
 
-        gradientColors = colorizeByColorValues({colorsConfig, colorValues});
+        const gradientColors = colorizeByColorValues({colorsConfig, colorValues});
+
+        gradientColorMap = gradientColors.reduce(
+            (acc, color, index) => {
+                acc[String(colorValues[index])] = color;
+
+                return acc;
+            },
+            {} as Record<string, string | null>,
+        );
     }
 
     const series = graphs.map<BarYSeries>((graph) => {
@@ -95,7 +104,7 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
 
                 let color = d.color;
                 if (!color && typeof d.colorValue === 'number') {
-                    color = gradientColors[String(d.colorValue)];
+                    color = gradientColorMap[String(d.colorValue)];
                 }
 
                 return {...other, y: x, x: y, label, total, percentage, color};

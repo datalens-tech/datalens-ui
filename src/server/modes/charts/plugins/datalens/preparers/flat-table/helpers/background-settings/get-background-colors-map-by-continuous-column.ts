@@ -33,8 +33,7 @@ export function colorizeFlatTableColumn({
         return acc;
     }, []);
 
-    const colors = colorizeByColorValues({colorValues, colorsConfig});
-    return Object.values(colors);
+    return colorizeByColorValues({colorValues, colorsConfig});
 }
 
 export const getBackgroundColorsMapByContinuousColumn = (
