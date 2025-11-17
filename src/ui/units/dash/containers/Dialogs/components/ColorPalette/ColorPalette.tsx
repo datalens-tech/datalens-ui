@@ -74,30 +74,42 @@ export function ColorPalette(props: ColorPaletteProps) {
         [customColorInputEnabled, onSelect, selectedColor],
     );
 
-    const options: PaletteOption[] = paletteOptions.map((colorItem) => {
-        const selected = colorItem === selectedColor;
-        const showItemBorder =
-            externalShowItemBorder || COLORS_WITH_VISIBLE_BORDER.includes(colorItem);
-        return {
-            content: (
-                <div
-                    className={b('highlight-wrapper', {
-                        selected,
-                        'with-border': showItemBorder,
-                    })}
-                >
-                    <ColorItem
-                        className={b('color-item')}
-                        size="max"
-                        color={colorItem}
-                        ref={selected ? previewRef : undefined}
-                        theme={theme}
-                    />
-                </div>
-            ),
-            value: colorItem,
-        };
-    });
+    const shouldShowItemBorder = React.useCallback(
+        (colorItem: string) => {
+            return (
+                Boolean(externalShowItemBorder) || COLORS_WITH_VISIBLE_BORDER.includes(colorItem)
+            );
+        },
+        [externalShowItemBorder],
+    );
+
+    const options: PaletteOption[] = React.useMemo(
+        () =>
+            paletteOptions.map((colorItem) => {
+                const selected = colorItem === selectedColor;
+                const showItemBorder = shouldShowItemBorder(colorItem);
+                return {
+                    content: (
+                        <div
+                            className={b('highlight-wrapper', {
+                                selected,
+                                'with-border': showItemBorder,
+                            })}
+                        >
+                            <ColorItem
+                                className={b('color-item')}
+                                size="max"
+                                color={colorItem}
+                                ref={selected ? previewRef : undefined}
+                                theme={theme}
+                            />
+                        </div>
+                    ),
+                    value: colorItem,
+                };
+            }),
+        [paletteOptions, selectedColor, previewRef, theme, shouldShowItemBorder],
+    );
 
     const handleSelectColor = React.useCallback(
         (val) => {
@@ -113,8 +125,7 @@ export function ColorPalette(props: ColorPaletteProps) {
                 {mainPresetOptions.map((colorItem) => {
                     const previewColorWithSlideTheme = colorItem !== CustomPaletteBgColors.NONE;
                     const selected = colorItem === selectedColor;
-                    const showItemBorder =
-                        externalShowItemBorder || COLORS_WITH_VISIBLE_BORDER.includes(colorItem);
+                    const showItemBorder = shouldShowItemBorder(colorItem);
                     const colorContent = (
                         <div
                             className={b('highlight-wrapper', {
