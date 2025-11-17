@@ -286,10 +286,7 @@ export function getPreparedWrapSettings(
 
     const style: CSSProperties = {
         ...additionalStyle,
-        backgroundColor:
-            showBgColor || backgroundColor === CustomPaletteBgColors.NONE
-                ? backgroundColor
-                : undefined,
+        backgroundColor: showBgColor ? backgroundColor : undefined,
         color: textColor,
     };
     return {
