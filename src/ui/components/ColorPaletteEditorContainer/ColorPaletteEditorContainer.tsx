@@ -5,7 +5,7 @@ import {i18n} from 'i18n';
 import type {ResolveThunks} from 'react-redux';
 import {connect} from 'react-redux';
 import type {ColorPalette} from 'shared';
-import {GradientType, ServiceSettingsQA, selectAvailableGradientsColors} from 'shared';
+import {Feature, GradientType, ServiceSettingsQA, selectAvailableGradientsColors} from 'shared';
 import {
     deleteColorPalette,
     fetchColorPalettes,
@@ -15,6 +15,7 @@ import {
 } from 'store/actions/colorPaletteEditor';
 import {selectColorPalettes, selectCurrentColorPalette} from 'store/selectors/colorPaletteEditor';
 import type {DatalensGlobalState} from 'ui';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {
     getAvailableClientPalettesMap,
@@ -65,7 +66,9 @@ class ColorPaletteEditorContainer extends React.Component<ColorPaletteEditorProp
                     handleCreateColorPalette={this.handleCreateGradientColorPalette}
                     handleItemClick={this.handleItemClick}
                     handleRemoveColorPaletteClick={this.handlDeleteColorPalette}
-                    className={b('color-palettes-card')}
+                    className={b('color-palettes-card', {
+                        new: isEnabledFeature(Feature.EnableNewServiceSettings),
+                    })}
                     colorPalettes={colorPalettes.filter((item) => item.isGradient)}
                     condensed={condensed}
                     hasEditRights={hasEditRights}
@@ -79,7 +82,9 @@ class ColorPaletteEditorContainer extends React.Component<ColorPaletteEditorProp
                     handleCreateColorPalette={this.handleCreateColorPalette}
                     handleItemClick={this.handleItemClick}
                     handleRemoveColorPaletteClick={this.handlDeleteColorPalette}
-                    className={b('color-palettes-card')}
+                    className={b('color-palettes-card', {
+                        new: isEnabledFeature(Feature.EnableNewServiceSettings),
+                    })}
                     colorPalettes={colorPalettes.filter((item) => !item.isGradient)}
                     condensed={condensed}
                     qa={ServiceSettingsQA.ColorPalettes}

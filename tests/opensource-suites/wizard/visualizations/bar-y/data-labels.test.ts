@@ -2,7 +2,13 @@ import {expect} from '@playwright/test';
 
 import datalensTest from '../../../../utils/playwright/globalTestDefinition';
 import {openTestPage, slct} from '../../../../utils';
-import {ChartKitQa, WizardPageQa, WizardVisualizationId} from '../../../../../src/shared';
+import {
+    ChartKitQa,
+    DialogFieldLabelModeValuesQa,
+    DialogFieldMainSectionQa,
+    WizardPageQa,
+    WizardVisualizationId,
+} from '../../../../../src/shared';
 import WizardPage from '../../../../page-objects/wizard/WizardPage';
 import {PlaceholderName} from '../../../../page-objects/wizard/SectionVisualization';
 import {SMALL_SCREENSHOT_VIEWPORT_SIZE} from '../constants';
@@ -91,6 +97,45 @@ datalensTest.describe('Wizard', () => {
                 PlaceholderName.Labels,
                 'Measure Values',
             );
+
+            // Put the mouse away so that the presence of hover elements does not interfere with taking screenshots
+            await page.mouse.move(-1, -1);
+            await expect(preview.locator(slct(ChartKitQa.Loader))).not.toBeVisible();
+            await expect(preview).toHaveScreenshot();
+        });
+    });
+
+    datalensTest.describe('Normalise bar-y chart', () => {
+        datalensTest.beforeEach(async ({page, config}) => {
+            await openTestPage(page, config.wizard.urls.WizardBasicDataset);
+            await page.setViewportSize(SMALL_SCREENSHOT_VIEWPORT_SIZE);
+            const wizardPage = new WizardPage({page});
+            await wizardPage.setVisualization(WizardVisualizationId.BarY100pD3);
+        });
+
+        datalensTest('Percentage as labels @screenshot', async ({page}) => {
+            const wizardPage = new WizardPage({page});
+            const preview = page.locator(slct(WizardPageQa.SectionPreview));
+
+            await wizardPage.createNewFieldWithFormula('SalesSum', 'sum([Sales])');
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'SalesSum');
+
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.Colors,
+                'segment',
+            );
+
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.Labels,
+                'SalesSum',
+            );
+            await wizardPage.visualizationItemDialog.open(PlaceholderName.Labels, 'SalesSum');
+            await wizardPage.visualizationItemDialog.changeSelectorValue(
+                DialogFieldMainSectionQa.LabelModeSelector,
+                DialogFieldLabelModeValuesQa.Percent,
+            );
+
+            await wizardPage.visualizationItemDialog.clickOnApplyButton();
 
             // Put the mouse away so that the presence of hover elements does not interfere with taking screenshots
             await page.mouse.move(-1, -1);

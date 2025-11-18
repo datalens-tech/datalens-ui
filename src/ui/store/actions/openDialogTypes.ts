@@ -62,6 +62,7 @@ import type {OpenDialogCreatePublicGalleryWorkbookArgs} from 'ui/components/Coll
 import type {OpenDialogEntryDescriptionArgs} from 'ui/components/DialogEntryDescription/DialogEntryDescriptionWrapper';
 import type {OpenDialogSharedEntryBindingArgs} from 'ui/components/DialogSharedEntryBindings/DialogSharedEntryBindings';
 import type {OpenDialogSharedEntryUnbindArgs} from 'ui/components/DialogSharedEntryUnbind/DialogSharedEntryUnbind';
+import type {OpenDialogSharedEntryPermissionsArgs} from 'ui/components/DialogSharedEntryPermissions/DialogSharedEntryPermissions';
 
 export type OpenDialogArgs<T = unknown> =
     | OpenDialogReleaseVersionArgs
@@ -125,4 +126,5 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogCreatePublicGalleryWorkbookArgs
     | OpenDialogSharedEntryBindingArgs
     | OpenDialogSharedEntryUnbindArgs
+    | OpenDialogSharedEntryPermissionsArgs
     | OpenDialogEntryDescriptionArgs;

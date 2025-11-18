@@ -11,6 +11,7 @@ import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 
 import {closeDialog, openDialog} from '../../store/actions/dialog';
 import DialogManager from '../DialogManager/DialogManager';
+import {DIALOG_SHARED_ENTRY_PERMISSIONS} from '../DialogSharedEntryPermissions/DialogSharedEntryPermissions';
 import {DIALOG_SHARED_ENTRY_UNBIND} from '../DialogSharedEntryUnbind/DialogSharedEntryUnbind';
 import {EntitiesList} from '../EntitiesList/EntitiesList';
 import type {Entry, RowEntityData} from '../EntityRow/EntityRow';
@@ -148,7 +149,19 @@ export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps>
                 },
                 {
                     text: getSharedEntryMockText('shared-bindings-list-action-change-permissions'),
-                    action: () => {},
+                    action: () =>
+                        dispatch(
+                            openDialog({
+                                id: DIALOG_SHARED_ENTRY_PERMISSIONS,
+                                props: {
+                                    entry,
+                                    onClose: () => dispatch(closeDialog()),
+                                    onApply: () => {},
+                                    open: true,
+                                    relation: item,
+                                },
+                            }),
+                        ),
                 },
             ];
         },

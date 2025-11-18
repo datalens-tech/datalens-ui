@@ -11,8 +11,7 @@ import {
 import type {ChartsData} from '../modules/data-provider/charts';
 import type {GraphWidget, TableWidget} from '../types';
 
-import {type MenuItemArgs, getEditChartRecipeMenuItem} from './MenuItems';
-import {MenuType} from './constants';
+import {type MenuItemArgs} from './MenuItems';
 import {getWidgetChartMenu} from './helpers';
 
 export type MenuItemsConfig = Array<MenuItemConfig>;
@@ -72,15 +71,12 @@ export const getChartkitMenuItems = (props: GetChartkitMenuItems) => {
             menuItemsGroups = getPanePreviewChartMenuFn({chartsDataProvider});
             break;
         }
-        case MenuType.ChartRecipe: {
-            menuItemsGroups = [getEditChartRecipeMenuItem()];
-            break;
-        }
         case 'dash':
         case 'preview':
         default: {
             const getDefaultChartMenuFn = registry.chart.functions.get('getDefaultChartMenu');
             menuItemsGroups = getDefaultChartMenuFn({
+                type,
                 chartsDataProvider,
                 customOptions,
                 extraOptions,
