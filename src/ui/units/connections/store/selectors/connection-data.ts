@@ -18,3 +18,7 @@ export const connectionIdSelector = (state: DatalensGlobalState) => {
 export const workbookIdSelector = (state: DatalensGlobalState) => {
     return state.connections.connectionData[FieldKey.WorkbookId] as string | undefined;
 };
+
+export const collectionIdSelector = (state: DatalensGlobalState) => {
+    return state.connections.connectionData[FieldKey.CollectionId] as string | undefined;
+};

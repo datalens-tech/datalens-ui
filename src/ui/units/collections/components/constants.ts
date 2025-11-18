@@ -74,4 +74,8 @@ export const mockSharedEntriesTexts = {
         'Если на данных из {{entry}} построены {{relation}}, они перестанут работать. Убедитесь что все безопасно',
     'message-relation-alert-unbind-dialog': 'чарты',
     'message-relations-alert-unbind-dialog': 'датасеты и чарты',
+    'label_filter-by-type-only-entries': 'Только общие объекты',
+    'or-select-shared-entry-dialog': 'или',
+    'past-link-btn-select-shared-entry-dialog': 'Указать ссылку',
+    'title-select-shared-entry-dialog-dataset': 'Выберите подключение',
 };

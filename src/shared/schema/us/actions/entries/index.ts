@@ -18,6 +18,8 @@ import type {
     CopyEntryResponse,
     CopyWorkbookEntryArgs,
     CopyWorkbookEntryResponse,
+    CreateEntityBindingsArgs,
+    CreateEntityBindingsResponse,
     CreateFolderArgs,
     CreateFolderResponse,
     DeleteUSEntryArgs,
@@ -248,6 +250,14 @@ export const entriesActions = {
     getEntriesAnnotation: createAction<GetEntriesAnnotationResponse, GetEntriesAnnotationArgs>({
         method: 'POST',
         path: () => `${PATH_PREFIX}/get-entries-annotation`,
+        params: (params, headers) => ({
+            body: params,
+            headers,
+        }),
+    }),
+    createEntityBinding: createAction<CreateEntityBindingsResponse, CreateEntityBindingsArgs>({
+        method: 'POST',
+        path: () => `${PATH_PREFIX}/entity-bindings/create`,
         params: (params, headers) => ({
             body: params,
             headers,

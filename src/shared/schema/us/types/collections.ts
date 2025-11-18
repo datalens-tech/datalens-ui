@@ -18,7 +18,7 @@ import type {SharedEntryFields, SharedEntryFieldsWithPermissions} from './fields
 import type {OrderBasicField, OrderDirection} from './sort';
 import type {ExtendedWorkbook, ExtendedWorkbookWithPermissions} from './workbooks';
 
-export type GetStructureItemsMode = 'all' | 'onlyCollections' | 'onlyWorkbooks';
+export type GetStructureItemsMode = 'all' | 'onlyCollections' | 'onlyWorkbooks' | 'onlyEntries';
 
 export type CollectionPermissions = {
     listAccessBindings: boolean;

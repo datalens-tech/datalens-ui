@@ -1,4 +1,5 @@
 import type {ApplyData} from 'components/DialogFilter/DialogFilter';
+import type {CloseDialogAction, OpenDialogAction} from 'ui/store/actions/dialog';
 import type {EditHistoryAction} from 'ui/store/actions/editHistory';
 
 import type {
@@ -77,6 +78,7 @@ import type {
     SET_IS_DATASET_CHANGED_FLAG,
     SET_LAST_MODIFIED_TAB,
     SET_QUEUE_TO_LOAD_PREVIEW,
+    SET_SHARED_DATASET_DELEGATION,
     SET_SOURCES_LISTING_OPTIONS,
     SET_SOURCES_LISTING_OPTIONS_ERROR,
     SET_SOURCES_LOADING_ERROR,
@@ -319,6 +321,7 @@ export type DatasetReduxState = {
         disabled: boolean;
         isProcessingSavingDataset: boolean;
         error: DatasetError;
+        sharedDatasetDelegationState?: boolean;
     };
     types: {
         data: {
@@ -873,6 +876,11 @@ type SetSourcesListingOptions = {
     payload: SourceListingOptions['source_listing'];
 };
 
+export type SetSharedDatasetDelegation = {
+    type: typeof SET_SHARED_DATASET_DELEGATION;
+    payload: boolean;
+};
+
 export type DatasetReduxAction =
     | SetFreeformSources
     | ResetDatasetState
@@ -955,4 +963,7 @@ export type DatasetReduxAction =
     | SetSourcesListingOptions
     | SetSourcesListingOptionsError
     | ToggleSourcesListingOptionsLoader
+    | SetSharedDatasetDelegation
+    | OpenDialogAction
+    | CloseDialogAction
     | EditHistoryAction;
