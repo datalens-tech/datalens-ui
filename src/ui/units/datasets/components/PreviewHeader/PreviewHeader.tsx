@@ -1,12 +1,11 @@
 import React from 'react';
 
 import {ChevronsExpandUpRight, LayoutHeader, LayoutSideContent, Xmark} from '@gravity-ui/icons';
-import {Button, Icon, TextInput, type TextInputProps} from '@gravity-ui/uikit';
+import {Button, Icon, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import _debounce from 'lodash/debounce';
 import {formatNumber} from 'shared/modules/format-units/formatUnit';
-import type {DatasetPreviewView} from 'units/datasets/store/types';
 
 import {VIEW_PREVIEW} from '../../constants';
 
@@ -21,37 +20,19 @@ const ICON_WIDTH = 24;
 interface Props {
     amountPreviewRows: number;
     view: string;
-    toggleViewPreview: (args: {view: DatasetPreviewView}) => void;
+    toggleViewPreview: (args: {view: string}) => void;
     closePreview: () => void;
-    changeAmountPreviewRows: (args: {amountPreviewRows: number}) => void;
+    changeAmountPreviewRows: (args: {amountPreviewRows: string}) => void;
     refetchPreviewDataset: () => void;
 }
 
-interface State {
-    internalAmountPreviewRows: string;
-}
-
-const TEXT_INPUT_CONTROL_PROPS: TextInputProps['controlProps'] = {
-    min: 0,
-    step: 1,
-};
-
-class PreviewHeader extends React.Component<Props, State> {
+class PreviewHeader extends React.Component<Props> {
     static defaultProps = {};
 
     private debouncedChangeAmountPreviewRows = _debounce(this.props.refetchPreviewDataset, 1000);
 
-    constructor(props: Props) {
-        super(props);
-
-        this.state = {
-            internalAmountPreviewRows: props.amountPreviewRows.toString(),
-        };
-    }
-
     render() {
-        const {view} = this.props;
-        const {internalAmountPreviewRows} = this.state;
+        const {view, amountPreviewRows} = this.props;
 
         return (
             <div className={b({view})}>
@@ -63,9 +44,8 @@ class PreviewHeader extends React.Component<Props, State> {
                     <TextInput
                         className={b('amount-preview-rows-inp')}
                         type="number"
-                        value={internalAmountPreviewRows}
+                        value={String(amountPreviewRows)}
                         onUpdate={this.changeAmountPreviewRows}
-                        controlProps={TEXT_INPUT_CONTROL_PROPS}
                     />
                     <span className={b('fade-text')}>
                         {i18n('dataset.dataset-editor.modify', 'label_max-amount-rows', {
@@ -125,26 +105,18 @@ class PreviewHeader extends React.Component<Props, State> {
         );
     }
 
-    changeAmountPreviewRows = (amountPreviewRowsString: string) => {
+    changeAmountPreviewRows = (amountPreviewRows: string) => {
         const {changeAmountPreviewRows} = this.props;
 
         if (this.debouncedChangeAmountPreviewRows) {
             this.debouncedChangeAmountPreviewRows.cancel();
         }
 
-        if (shouldFetchPreview(amountPreviewRowsString)) {
+        if (shouldFetchPreview(amountPreviewRows)) {
             this.debouncedChangeAmountPreviewRows();
         }
 
-        this.setState({internalAmountPreviewRows: amountPreviewRowsString});
-
-        const amountPreviewRowsNumber = parseInt(amountPreviewRowsString, 10);
-
-        if (Number.isNaN(amountPreviewRowsNumber)) {
-            return;
-        }
-
-        changeAmountPreviewRows({amountPreviewRows: amountPreviewRowsNumber});
+        changeAmountPreviewRows({amountPreviewRows});
     };
 
     togglePreviewFull = () => {
