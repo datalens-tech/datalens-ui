@@ -7,10 +7,16 @@ import get from 'lodash/get';
 import isObject from 'lodash/isObject';
 
 import type {ChartsEngine} from '..';
-import type {DashTabItemControlData} from '../../../../shared';
+import type {
+    DashTab,
+    DashTabItemControlData,
+    DashTabItemControlDataset,
+    DashTabItemControlManual,
+} from '../../../../shared';
 import {
     ControlType,
     DL_EMBED_TOKEN_HEADER,
+    DashTabItemControlSourceType,
     DashTabItemType,
     EntryScope,
     ErrorCode,
@@ -20,6 +26,44 @@ import {resolveEmbedConfig} from '../components/storage';
 import type {EmbedResolveConfigProps, ResolveConfigError} from '../components/storage/base';
 import type {EmbeddingInfo, ReducedResolvedConfig} from '../components/storage/types';
 import {getDuration, isDashEntry} from '../components/utils';
+
+const isControlDisabled = (
+    controlData: DashTabItemControlData,
+    embeddingInfo: EmbeddingInfo,
+    controlTab: DashTab,
+) => {
+    if (
+        controlData.sourceType !== DashTabItemControlSourceType.Dataset &&
+        controlData.sourceType !== DashTabItemControlSourceType.Manual
+    ) {
+        return false;
+    }
+    const controlSource = controlData.source as
+        | DashTabItemControlDataset['source']
+        | DashTabItemControlManual['source'];
+
+    const controlParam =
+        'datasetFieldId' in controlSource ? controlSource.datasetFieldId : controlSource.fieldName;
+
+    const tabAliases = controlTab.aliases[controlData.namespace];
+
+    const aliasesParamsList = tabAliases
+        ? tabAliases.find((alias) => alias.includes(controlParam))
+        : null;
+
+    if (embeddingInfo.embed.publicParamsMode) {
+        // dash doesn't support publicParamsMode
+        return false;
+    } else {
+        const forbiddenParams = embeddingInfo.embed.privateParams.concat(
+            embeddingInfo.token.params ? Object.keys(embeddingInfo.token.params) : [],
+        );
+
+        return aliasesParamsList
+            ? aliasesParamsList.some((alias) => forbiddenParams.includes(alias))
+            : forbiddenParams.includes(controlParam);
+    }
+};
 
 const isResponseError = (error: unknown): error is AxiosError<{code: string}> => {
     return Boolean(isObject(error) && 'response' in error && error.response);
@@ -155,7 +199,7 @@ function processControlWidget(
         return null;
     }
 
-    const sharedData: DashTabItemControlData | undefined =
+    const sharedData: (DashTabItemControlData & {disabled?: boolean}) | undefined =
         controlWidgetConfig.type === DashTabItemType.GroupControl
             ? controlWidgetConfig.data.group.find(({id}: {id: string}) => id === controlData.id)
             : controlWidgetConfig.data;
@@ -166,6 +210,8 @@ function processControlWidget(
         });
         return null;
     }
+
+    sharedData.disabled = isControlDisabled(sharedData, embeddingInfo, controlTab);
 
     return {
         data: {shared: sharedData},
@@ -251,6 +297,10 @@ async function filterParams({
         }
 
         forbiddenParamsSet = fillingForbiddenParamsSet;
+    }
+
+    if (embeddingInfo.token.params) {
+        Object.keys(embeddingInfo.token.params).forEach((param) => forbiddenParamsSet?.add(param));
     }
 
     let finalParams;
