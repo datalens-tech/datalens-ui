@@ -11,8 +11,8 @@ import {openDialog} from 'ui/store/actions/dialog';
 
 import type {DatalensGlobalState} from '../../../../..';
 import {i18n} from '../../../../../../i18n';
-import type {DashSettings, DashSettingsGlobalParams} from '../../../../../../shared';
-import {DashLoadPriority} from '../../../../../../shared';
+import type {ColorByTheme, DashSettings, DashSettingsGlobalParams} from '../../../../../../shared';
+import {DashLoadPriority, getColorObject} from '../../../../../../shared';
 import {DIALOG_ENTRY_DESCRIPTION} from '../../../../../components/DialogEntryDescription';
 import EntryDialogues from '../../../../../components/EntryDialogues/EntryDialogues';
 import {DIALOG_TYPE} from '../../../../../constants/dialogs';
@@ -73,6 +73,9 @@ const Settings = () => {
     const [accessDescription, setAccessDesc] = React.useState(accessDesc);
     const [supportDescription, setSupportDesc] = React.useState(supportDesc);
     const [margins, setMargins] = React.useState(settings.margins || DEFAULT_DASH_MARGINS);
+    const [backgroundColor, setBackgroundColor] = React.useState(
+        settings.background?.color || getColorObject(undefined, true),
+    );
     const [otherSettinsState, setOtherSettingsState] = React.useState<Partial<DashSettings>>({});
 
     const entryDialoguesRef = React.useRef<EntryDialogues>(null);
@@ -135,6 +138,9 @@ const Settings = () => {
                 hideDashTitle,
                 expandTOC,
                 loadPriority,
+                background: {
+                    color: backgroundColor,
+                },
                 ...otherSettinsState,
             };
 
@@ -218,6 +224,10 @@ const Settings = () => {
         }
     }, []);
 
+    const handleBackgroundColorChange = React.useCallback((color: ColorByTheme) => {
+        setBackgroundColor(color);
+    }, []);
+
     const showDependentSelectors = !settings.dependentSelectors;
 
     return settings ? (
@@ -256,6 +266,8 @@ const Settings = () => {
                     onChangeHideDashTitle={() => setHideTitle(!hideDashTitle)}
                     expandTOCValue={expandTOC}
                     onChangeExpandTOC={() => setExpandTOC(!expandTOC)}
+                    backgroundColor={backgroundColor}
+                    onChangeBackgroundColor={handleBackgroundColorChange}
                 />
                 <OtherSettings
                     showDependentSelectors={showDependentSelectors}

@@ -5,9 +5,12 @@ import type {RealTheme} from '@gravity-ui/uikit';
 import {Checkbox, Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
-import type {DashTabItemText} from 'shared';
-import {DialogDashWidgetItemQA, DialogDashWidgetQA} from 'shared';
+import type {ColorByTheme, DashTabItemText} from 'shared';
+import {DialogDashWidgetItemQA, DialogDashWidgetQA, Feature} from 'shared';
+import {CustomPaletteBgColors, getDefaultWidgetBackgroundColor} from 'shared/constants/widgets';
 import {PaletteBackground} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import {getWidgetColors} from 'ui/utils/widgetColors';
 
 import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
 import {TextEditor} from '../TextEditor/TextEditor';
@@ -19,6 +22,7 @@ const b = block('dialog-text');
 export interface DialogTextWidgetFeatureProps {
     enableAutoheight?: boolean;
     enableCustomBgColorSelector?: boolean;
+    enableSeparateThemeColorSelector?: boolean;
 }
 
 export interface DialogTextWidgetProps extends DialogTextWidgetFeatureProps {
@@ -36,19 +40,25 @@ interface DialogTextWidgetState {
     text?: string;
     prevVisible?: boolean;
     autoHeight?: boolean;
-    backgroundColor?: string;
+    backgroundColor?: string | ColorByTheme;
 }
 
 const INPUT_TEXT_ID = 'widgetTextField';
 const INPUT_AUTOHEIGHT_ID = 'widgetAutoHeightField';
+const isCommonDashSettingsEnabled = isEnabledFeature(Feature.EnableCommonChartDashSettings);
 
 class DialogTextWidget extends React.PureComponent<DialogTextWidgetProps, DialogTextWidgetState> {
     static defaultProps = {
         enableAutoheight: true,
+        enableSeparateThemeColorSelector: true,
         openedItemData: {
             text: '',
             autoHeight: false,
-            backgroundColor: 'transparent',
+            backgroundColor: getDefaultWidgetBackgroundColor(
+                isCommonDashSettingsEnabled,
+                CustomPaletteBgColors.NONE,
+                true,
+            ),
         },
     };
 
@@ -64,7 +74,12 @@ class DialogTextWidget extends React.PureComponent<DialogTextWidgetProps, Dialog
             prevVisible: nextProps.dialogIsVisible,
             text: nextProps.openedItemData.text,
             autoHeight: Boolean(nextProps.openedItemData.autoHeight),
-            backgroundColor: nextProps.openedItemData.background?.color || '',
+            backgroundColor: getWidgetColors({
+                color: nextProps.openedItemData.background?.color,
+                enabled: true,
+                defaultOldColor: CustomPaletteBgColors.NONE,
+                enableMultiThemeColors: true,
+            }),
         };
     }
 
@@ -89,8 +104,14 @@ class DialogTextWidget extends React.PureComponent<DialogTextWidgetProps, Dialog
     }
 
     render() {
-        const {openedItemId, dialogIsVisible, enableAutoheight, enableCustomBgColorSelector} =
-            this.props;
+        const {
+            openedItemId,
+            dialogIsVisible,
+            enableAutoheight,
+            enableCustomBgColorSelector,
+            enableSeparateThemeColorSelector,
+            theme,
+        } = this.props;
         const {text, autoHeight, backgroundColor} = this.state;
 
         return (
@@ -122,8 +143,10 @@ class DialogTextWidget extends React.PureComponent<DialogTextWidgetProps, Dialog
                     >
                         <PaletteBackground
                             color={backgroundColor}
+                            theme={theme}
                             onSelect={this.handleHasBackgroundSelected}
                             enableCustomBgColorSelector={enableCustomBgColorSelector}
+                            enableSeparateThemeColorSelector={enableSeparateThemeColorSelector}
                         />
                     </FormRow>
                     {enableAutoheight && (
@@ -181,7 +204,7 @@ class DialogTextWidget extends React.PureComponent<DialogTextWidgetProps, Dialog
         this.setState({autoHeight: !this.state.autoHeight});
     };
 
-    handleHasBackgroundSelected = (color: string) => {
+    handleHasBackgroundSelected = (color: string | ColorByTheme) => {
         this.setState({backgroundColor: color});
     };
 }

@@ -2,9 +2,11 @@ import React from 'react';
 
 import {Checkbox, Label, Slider} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {I18n} from 'i18n';
+import {I18n, i18n as i18nOriginal} from 'i18n';
+import type {ColorByTheme} from 'shared';
 import {Feature} from 'shared';
 import {DASH_MARGIN_STEP, MAX_DASH_MARGIN, MIN_DASH_MARGIN} from 'ui/components/DashKit/constants';
+import {ColorInputsGroup} from 'ui/units/dash/containers/Dialogs/components/ColorInputsGroup/ColorInputsGroup';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {SectionWrapper} from '../../../../../../components/SectionWrapper/SectionWrapper';
@@ -26,6 +28,8 @@ type DisplayProps = {
     onChangeHideDashTitle: () => void;
     expandTOCValue: boolean;
     onChangeExpandTOC: () => void;
+    backgroundColor: ColorByTheme | undefined;
+    onChangeBackgroundColor: (color: ColorByTheme) => void;
 };
 
 export const Display = ({
@@ -37,6 +41,8 @@ export const Display = ({
     onChangeHideDashTitle,
     expandTOCValue,
     onChangeExpandTOC,
+    backgroundColor,
+    onChangeBackgroundColor,
 }: DisplayProps) => {
     return (
         <SectionWrapper
@@ -86,6 +92,17 @@ export const Display = ({
                         tooltipDisplay={'on'}
                         value={margins[0]}
                         onUpdate={onChangeMargins}
+                    />
+                </Row>
+            )}
+            {isEnabledFeature(Feature.EnableCommonChartDashSettings) && (
+                <Row>
+                    <Title text={i18nOriginal('dash.widget-dialog.edit', 'field_background')} />
+                    <ColorInputsGroup
+                        value={backgroundColor || {}}
+                        onUpdate={onChangeBackgroundColor}
+                        isSingleColorSelector={false}
+                        direction="column"
                     />
                 </Row>
             )}
