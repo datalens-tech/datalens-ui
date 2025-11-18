@@ -110,7 +110,9 @@ export const useRelations = ({
             }
 
             setIsLoading(true);
-            const data = (await Promise.all(dashKitRef.current.getItemsMeta())) as DashkitMetaData;
+            const data = (await Promise.all(
+                dashKitRef.current.getItemsMeta() || [],
+            )) as DashkitMetaData;
             const {metaData, datasetsList, entriesList, controlsList} = getPreparedMetaData(
                 data,
                 dashKitRef.current,
