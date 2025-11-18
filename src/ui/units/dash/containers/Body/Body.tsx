@@ -1141,7 +1141,10 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
 
         const isEmptyTab = !tabDataConfig?.items.length;
 
-        const DashKit = getConfiguredDashKit(undefined, {disableHashNavigation});
+        const DashKit = getConfiguredDashKit(undefined, {
+            disableHashNavigation,
+            scope: 'dash',
+        });
 
         const hasFixedHeaderControlsElements = Boolean(
             this.getWidgetLayoutByGroup(FIXED_GROUP_HEADER_ID)?.length,
