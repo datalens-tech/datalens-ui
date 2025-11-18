@@ -610,8 +610,6 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         widgetHeaderProps.showLoader && widgetHeaderProps.veil && !isExportLoading;
     const isFirstLoadingFloat = loadedData === null;
 
-    console.log('ChartWidget');
-
     return (
         <div
             ref={rootNodeRef}

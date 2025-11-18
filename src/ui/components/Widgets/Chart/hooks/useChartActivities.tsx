@@ -37,6 +37,69 @@ export const useChartActivities = ({
 }) => {
     const dispatch = useDispatch();
 
+    const handleActivityCompleteSuccess = React.useCallback(
+        async (responseData: ChartActivityResponseData) => {
+            switch (responseData?.data?.action) {
+                case 'toast': {
+                    const {title = '', type, content = ''} = responseData.data;
+                    const renderMarkdown = await getRenderMarkdownFn();
+                    dispatch(
+                        showToast({
+                            title,
+                            type,
+                            content: (
+                                <div
+                                    dangerouslySetInnerHTML={{
+                                        __html: renderMarkdown(String(content)),
+                                    }}
+                                />
+                            ),
+                        }),
+                    );
+                    break;
+                }
+                case 'popup': {
+                    const {title = '', content = ''} = responseData.data;
+                    const renderMarkdown = await getRenderMarkdownFn();
+
+                    dispatch(
+                        openDialog({
+                            id: DIALOG_DEFAULT,
+                            props: {
+                                open: true,
+                                onApply: () => {
+                                    dispatch(closeDialog());
+                                },
+                                onCancel: () => dispatch(closeDialog()),
+                                caption: title,
+                                message: (
+                                    <div
+                                        dangerouslySetInnerHTML={{
+                                            __html: renderMarkdown(content),
+                                        }}
+                                    />
+                                ),
+                            },
+                        }),
+                    );
+                    break;
+                }
+                case 'setParams': {
+                    if (onChange) {
+                        onChange(
+                            {type: 'PARAMS_CHANGED', data: {params: responseData.data.params}},
+                            {forceUpdate: true},
+                            true,
+                        );
+                    }
+
+                    break;
+                }
+            }
+        },
+        [dispatch, onChange],
+    );
+
     const runActivity: RunActivityFn = React.useCallback(
         async ({params}: RunActivityArgs) => {
             let responseData: ChartActivityResponseData;
@@ -47,62 +110,27 @@ export const useChartActivities = ({
                     ...(requestHeadersGetter ? {contextHeaders: requestHeadersGetter()} : {}),
                 });
 
-                switch (responseData?.data?.action) {
-                    case 'toast': {
-                        const {title = '', type, content = ''} = responseData.data;
-                        const renderMarkdown = await getRenderMarkdownFn();
-                        dispatch(
-                            showToast({
-                                title,
-                                type,
-                                content: (
-                                    <div
-                                        dangerouslySetInnerHTML={{
-                                            __html: renderMarkdown(String(content)),
-                                        }}
-                                    />
-                                ),
-                            }),
-                        );
-                        break;
-                    }
-                    case 'popup': {
-                        const {title = '', content = ''} = responseData.data;
-                        const renderMarkdown = await getRenderMarkdownFn();
-
-                        dispatch(
-                            openDialog({
-                                id: DIALOG_DEFAULT,
-                                props: {
-                                    open: true,
-                                    onApply: () => {
-                                        dispatch(closeDialog());
-                                    },
-                                    onCancel: () => dispatch(closeDialog()),
-                                    caption: title,
-                                    message: (
-                                        <div
-                                            dangerouslySetInnerHTML={{
-                                                __html: renderMarkdown(content),
-                                            }}
-                                        />
-                                    ),
-                                },
-                            }),
-                        );
-                        break;
-                    }
-                    case 'setParams': {
-                        if (onChange) {
-                            onChange(
-                                {type: 'PARAMS_CHANGED', data: {params: responseData.data.params}},
-                                {forceUpdate: true},
-                                true,
+                if (responseData.error) {
+                    switch (responseData.settings?.logError) {
+                        case 'toast': {
+                            dispatch(
+                                showToast({
+                                    type: 'danger',
+                                    title: responseData.error.message,
+                                }),
                             );
+                            break;
                         }
-
-                        break;
+                        case 'ignore': {
+                            break;
+                        }
+                        default: {
+                            console.error(responseData.error);
+                            break;
+                        }
                     }
+                } else {
+                    handleActivityCompleteSuccess(responseData);
                 }
             } catch (activityError) {
                 responseData = {error: activityError};
@@ -114,9 +142,9 @@ export const useChartActivities = ({
         [
             dataProvider,
             dispatch,
+            handleActivityCompleteSuccess,
             initialData,
             onActivityComplete,
-            onChange,
             requestHeadersGetter,
             requestId,
         ],

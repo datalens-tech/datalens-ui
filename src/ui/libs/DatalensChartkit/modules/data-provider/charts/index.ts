@@ -702,6 +702,14 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
 
             return this.getExtendedResponse({responseData, headers, includeLogs});
         } catch (error) {
+            if (error.response?.data) {
+                return this.getExtendedResponse({
+                    responseData: error.response.data,
+                    headers: error.response.headers,
+                    includeLogs,
+                });
+            }
+
             this.processError({
                 error,
                 requestId,

@@ -307,10 +307,12 @@ type ChartActivitySetParamsResult = {
 export type ChartActivityResponseData = {
     data?: ChartActivityToastResult | ChartActivitySetParamsResult | ChartActivityPopupResult;
     error?: {
+        message: string;
         details?: {
             stackTrace?: string;
         };
     };
+    settings?: {logError: 'toast' | 'ignore'};
     logs_v2?: string;
     requestId?: string;
     traceId?: string;
