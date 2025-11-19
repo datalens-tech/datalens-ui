@@ -11,12 +11,19 @@ type SetActionParamsEventHandler = {
     type: 'setActionParams';
 };
 
+type RunActivityEventHandler = {
+    type: 'runActivity';
+};
+
 export type GoToEventHandler = {
     type: 'goTo';
     target?: '_self' | '_blank';
 };
 
-export type WidgetEventHandler = SetActionParamsEventHandler | GoToEventHandler;
+export type WidgetEventHandler =
+    | SetActionParamsEventHandler
+    | GoToEventHandler
+    | RunActivityEventHandler;
 
 export type GraphWidgetEventScope = 'point';
 
