@@ -344,6 +344,9 @@ function getResultedBgColor(
             }
             return defaultColor;
         }
+        if (!bgColor.color) {
+            return defaultColor;
+        }
         return bgColor.color;
     }
 
