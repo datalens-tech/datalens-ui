@@ -338,8 +338,7 @@ export const URL_QUERY = {
     DEBUG: '_debug',
     OPEN_DASH_INFO: '_opened_info',
     UNRELEASED: 'unreleased',
-    ENTRY_CONFIG: '_entry_config',
-    CHART_RECIPE: '_chart_recipe',
+    LOCAL_CONFIG: '_use_local_config',
 };
 
 const GRADIENT_ICONS = {

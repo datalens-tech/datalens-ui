@@ -20,7 +20,6 @@ const isTitleMatchedByFilter = (title: string, filter: string) => {
 const BASE_CELL_CSS = {
     height: '38px',
     borderBottom: '1px solid var(--g-color-line-generic)',
-    whiteSpace: 'nowrap',
 };
 
 const FIRST_CELL_CSS = {

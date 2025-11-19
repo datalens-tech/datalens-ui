@@ -105,10 +105,12 @@ async function getConnectionDataRequest({
 export function setPageData({
     entryId,
     workbookId,
+    collectionId,
     rev_id,
 }: {
     entryId?: string | null;
     workbookId?: string;
+    collectionId?: string;
     rev_id?: string;
 }) {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
@@ -132,7 +134,7 @@ export function setPageData({
 
         if (!entry) {
             const getFakeEntry = registry.connections.functions.get('getFakeEntry');
-            entry = getFakeEntry(workbookId);
+            entry = getFakeEntry(workbookId, collectionId);
         }
 
         batch(() => {

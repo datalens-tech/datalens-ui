@@ -237,6 +237,7 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         isInit,
         isWidgetMenuDataChanged,
         dataProps,
+        runActivity,
     } = useLoadingChart({
         dataProvider,
         requestHeadersGetter,
@@ -708,5 +709,6 @@ export const useLoadingChartWidget = (props: LoadingChartWidgetHookProps) => {
         isWidgetMenuDataChanged,
         dataProps,
         noControls,
+        runActivity,
     };
 };

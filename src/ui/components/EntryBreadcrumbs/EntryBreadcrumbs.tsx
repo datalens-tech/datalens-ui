@@ -8,14 +8,14 @@ import type {
     EntryBreadcrumbsProps,
 } from 'ui/registry/units/common/types/components/EntryBreadcrumbs';
 
-import {getWorkbookBreadcrumbsItems} from './helpers';
+import {getEntityBreadcrumbsItems} from './helpers';
 
 import './EntryBreadcrumbs.scss';
 
 const b = block('entry-panel-breadcrumbs');
 
 export const EntryBreadcrumbs = (props: EntryBreadcrumbsProps) => {
-    const {renderRootContent, entry, workbookName, workbookBreadcrumbs, endContent} = props;
+    const {renderRootContent, entry, workbookName, entityBreadcrumbs, endContent} = props;
 
     const history = useHistory();
     const location = useLocation();
@@ -23,8 +23,8 @@ export const EntryBreadcrumbs = (props: EntryBreadcrumbsProps) => {
     let breadcrumbsItems: BreadcrumbsItem[] = [];
 
     if (entry?.workbookId) {
-        breadcrumbsItems = getWorkbookBreadcrumbsItems({
-            workbookBreadcrumbs,
+        breadcrumbsItems = getEntityBreadcrumbsItems({
+            entityBreadcrumbs,
             workbookName,
             entry,
             history,
