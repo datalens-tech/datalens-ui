@@ -41,7 +41,10 @@ const widgetPlugin: PluginWidget = {
 
         const workbookId = props.context.workbookId;
         const enableAssistant = props.context.enableAssistant;
-        const propsBg = props.data.background ?? props.data.tabs?.[0]?.background;
+        const propsBg =
+            props.data.background || widgetPlugin.scope === 'dash'
+                ? props.data.background
+                : props.data.tabs?.[0]?.background;
         const {style} = usePreparedWrapSettings({
             widgetBackground: isBackgroundSettings(propsBg) ? propsBg : undefined,
             globalBackground: props.background,
@@ -61,6 +64,7 @@ const widgetPlugin: PluginWidget = {
                     workbookId={workbookId}
                     enableAssistant={enableAssistant}
                     onWidgetLoadData={onWidgetLoadData}
+                    backgroundColor={style?.backgroundColor}
                 />
             </RendererWrapper>
         );

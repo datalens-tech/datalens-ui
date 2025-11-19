@@ -83,6 +83,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         workbookId,
         enableAssistant,
         onWidgetLoadData,
+        backgroundColor,
     } = props;
 
     const extDashkitContext = React.useContext(ExtendedDashKitContext);
@@ -645,6 +646,7 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 widgetType={widgetType}
                 widgetDashState={widgetDashState}
                 rootNodeRef={rootNodeRef}
+                backgroundColor={backgroundColor}
                 needRenderContentControls={false}
                 chartRevIdRef={null}
                 runActivity={runActivity}
