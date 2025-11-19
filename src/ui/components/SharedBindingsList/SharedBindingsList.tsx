@@ -3,9 +3,9 @@ import React from 'react';
 import type {DropdownMenuItem} from '@gravity-ui/uikit';
 import {List, Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import type {SharedEntryBindingsItem} from 'shared/schema';
 import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 
-import type {RowEntityData} from '../EntityRow/EntityRow';
 import {EntityRow} from '../EntityRow/EntityRow';
 import {PlaceholderIllustration} from '../PlaceholderIllustration/PlaceholderIllustration';
 
@@ -19,9 +19,9 @@ const b = block('shared-entities-list');
 interface SharedBindingsListProps {
     title?: string;
     searchProps?: ListSearchProps;
-    entities: RowEntityData[];
+    entities: SharedEntryBindingsItem[];
     isLoading?: boolean;
-    getListItemActions?: (item: RowEntityData) => DropdownMenuItem[];
+    getListItemActions?: (item: SharedEntryBindingsItem) => DropdownMenuItem[];
 }
 
 export const SharedBindingsList: React.FC<SharedBindingsListProps> = ({

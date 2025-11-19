@@ -1,6 +1,6 @@
 import type z from 'zod';
 
-import type {EntryScope, WorkbookId} from '../../..';
+import type {CollectionItemEntities, EntryScope, WorkbookId} from '../../..';
 import type {Permissions} from '../../../types';
 import type {
     getEntriesEntryResponseSchema,
@@ -262,3 +262,37 @@ export interface GetEntriesAnnotationArgs {
     scope?: EntryScope;
     type?: string;
 }
+
+export type GetSharedEntryBindingsArgs = {
+    entryId: string;
+    entryAs: 'target' | 'source';
+    mode?: 'all' | 'onlyWorkbooks' | 'onlyEntries';
+    filterString?: string;
+    page?: number;
+    pageSize?: number;
+};
+
+export type SharedEntry = {
+    entity: typeof CollectionItemEntities.ENTRY;
+    entryId: string;
+    scope: string;
+    type: string;
+    displayKey: string;
+    key: string;
+};
+
+type Workbook = {
+    entity: typeof CollectionItemEntities.WORKBOOK;
+    title: string;
+};
+
+export type SharedEntryBindingsItem = {
+    collectionTitle: string;
+    collectionId: string;
+    workbookId: WorkbookId;
+    isDelegated: boolean;
+} & (SharedEntry | Workbook);
+
+export type GetSharedEntryBindingsResponse = {
+    items: SharedEntryBindingsItem[];
+};
