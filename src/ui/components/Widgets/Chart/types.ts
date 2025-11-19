@@ -135,6 +135,7 @@ export type ChartWidgetProviderPropsWithRefProps = ChartRefProp &
     ChartsProps & {
         usageType: 'widget';
         onWidgetLoadData?: OnWidgetLoadDataHandler;
+        backgroundColor?: string;
     };
 
 export type ChartProviderPropsWithRefProps = ChartRefProp &
