@@ -4,7 +4,7 @@ import type {DatasetTab} from '../constants';
 import {DATASET_TABS, TAB_DATASET, TAB_SOURCES} from '../constants';
 import DatasetUtils, {isCreationProcess} from '../helpers/utils';
 
-import type {DatasetPreview, DatasetReduxState} from './types';
+import type {DatasetReduxState} from './types';
 
 const getDefaultDatasetContent = (): Partial<Dataset['dataset']> => ({
     avatar_relations: [],
@@ -34,17 +34,14 @@ export const getCurrentTab = (): DatasetTab => {
     return defaultTab;
 };
 
-export const initialPreview: DatasetPreview = {
+export const initialPreview: DatasetReduxState['preview'] = {
     previewEnabled: true,
     readyPreview: 'loading',
     isVisible: true,
     isLoading: true,
     amountPreviewRows: 10,
     view: 'bottom',
-    data: {
-        Data: [],
-        Type: ['ListType', ['StructType', []]],
-    },
+    data: [],
     error: null,
     isQueued: false,
 };
