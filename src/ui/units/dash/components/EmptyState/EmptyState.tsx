@@ -1,8 +1,9 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 
 import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import {SCR_USER_AGENT_HEADER_VALUE} from 'shared/constants';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 import {DL} from 'ui/constants';
 import type {ValuesType} from 'utility-types';
@@ -30,6 +31,13 @@ export const EmptyState = ({
     onEditClick,
     isEditModeLoading,
 }: EmptyStateProps) => {
+    useEffect(() => {
+        if (navigator.userAgent === SCR_USER_AGENT_HEADER_VALUE) {
+            const customEvent = new CustomEvent('dash.done', {bubbles: true});
+            document.body.dispatchEvent(customEvent);
+        }
+    }, []);
+
     const showActions = !DL.IS_MOBILE && canEdit;
 
     const title = isTabView ? i18n('label_empty-tab') : i18n('label_empty-dash');
