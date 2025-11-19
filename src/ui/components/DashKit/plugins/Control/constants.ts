@@ -22,4 +22,4 @@ export const LOAD_STATUS: Record<string, LoadStatus> = {
 };
 
 // This value is also used in charts
-export const LIMIT = 2;
+export const LIMIT = 1000;
