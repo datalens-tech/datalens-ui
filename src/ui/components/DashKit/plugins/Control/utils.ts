@@ -6,12 +6,12 @@ import type {
     DashTabItemControlDataset,
     DashTabItemControlExternal,
     DashTabItemControlSingle,
-    DatasetFieldType,
     StringParams,
 } from 'shared';
 import {
     DATASET_IGNORED_DATA_TYPES,
     DashTabItemControlSourceType,
+    DatasetFieldType,
     Operations,
     resolveIntervalDate,
     resolveOperation,
@@ -283,7 +283,7 @@ export const processParamsForGetDistincts = ({
 
     const filters: ApiV2Filter[] = where
         .filter((el) => {
-            return datasetFieldsMap[el.column]?.fieldType !== ('measure' as DatasetFieldType);
+            return datasetFieldsMap[el.column]?.fieldType !== DatasetFieldType.Measure;
         })
         .map<ApiV2Filter>((filter) => {
             return {

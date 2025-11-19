@@ -31,10 +31,12 @@ const isControlDisabled = (
     controlData: DashTabItemControlData,
     embeddingInfo: EmbeddingInfo,
     controlTab: DashTab,
-) => {
+): boolean => {
     if (
-        controlData.sourceType !== DashTabItemControlSourceType.Dataset &&
-        controlData.sourceType !== DashTabItemControlSourceType.Manual
+        (controlData.sourceType !== DashTabItemControlSourceType.Dataset &&
+            controlData.sourceType !== DashTabItemControlSourceType.Manual) ||
+        // dash doesn't support publicParamsMode
+        !embeddingInfo.embed.publicParamsMode
     ) {
         return false;
     }
@@ -47,22 +49,15 @@ const isControlDisabled = (
 
     const tabAliases = controlTab.aliases[controlData.namespace];
 
-    const aliasesParamsList = tabAliases
-        ? tabAliases.find((alias) => alias.includes(controlParam))
-        : null;
+    const aliasesParamsList = tabAliases?.find((alias) => alias.includes(controlParam));
 
-    if (embeddingInfo.embed.publicParamsMode) {
-        // dash doesn't support publicParamsMode
-        return false;
-    } else {
-        const forbiddenParams = embeddingInfo.embed.privateParams.concat(
-            embeddingInfo.token.params ? Object.keys(embeddingInfo.token.params) : [],
-        );
+    const forbiddenParams = embeddingInfo.embed.privateParams.concat(
+        embeddingInfo.token.params ? Object.keys(embeddingInfo.token.params) : [],
+    );
 
-        return aliasesParamsList
-            ? aliasesParamsList.some((alias) => forbiddenParams.includes(alias))
-            : forbiddenParams.includes(controlParam);
-    }
+    return aliasesParamsList
+        ? aliasesParamsList.some((alias) => forbiddenParams.includes(alias))
+        : forbiddenParams.includes(controlParam);
 };
 
 const isResponseError = (error: unknown): error is AxiosError<{code: string}> => {
