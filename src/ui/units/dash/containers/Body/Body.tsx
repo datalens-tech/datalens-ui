@@ -123,6 +123,7 @@ import iconRelations from 'ui/assets/icons/relations.svg';
 
 import './Body.scss';
 
+// Do not change, the snapter service uses
 const b = block('dash-body');
 
 const isMobileFixedHeaderEnabled = isEnabledFeature(Feature.EnableMobileFixedHeader);
