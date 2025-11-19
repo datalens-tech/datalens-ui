@@ -36,7 +36,7 @@ const isControlDisabled = (
         (controlData.sourceType !== DashTabItemControlSourceType.Dataset &&
             controlData.sourceType !== DashTabItemControlSourceType.Manual) ||
         // dash doesn't support publicParamsMode
-        !embeddingInfo.embed.publicParamsMode
+        embeddingInfo.embed.publicParamsMode
     ) {
         return false;
     }
