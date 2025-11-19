@@ -7,8 +7,6 @@ export type EntryBreadcrumbsProps = {
     renderRootContent?: (item: BreadcrumbsItem) => React.ReactNode;
     entry?: GetEntryResponse;
     workbookName?: string;
-    //TODO delete after CHARTS-12145
-    workbookBreadcrumbs?: GetCollectionBreadcrumbsResponse | null;
     entityBreadcrumbs?: GetCollectionBreadcrumbsResponse | null;
     openNavigationAction?: (startFromNavigation: string) => void;
     endContent?: React.ReactNode;

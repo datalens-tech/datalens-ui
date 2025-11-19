@@ -2,10 +2,8 @@ import type React from 'react';
 import type {CSSProperties} from 'react';
 
 import type {PluginWidgetProps} from '@gravity-ui/dashkit';
-import {Feature} from 'shared';
 import type {BackgroundSettings, DashTabItemControlElement} from 'shared';
-import {CustomPaletteBgColors} from 'shared/constants/widgets';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import {CustomPaletteBgColors, LIKE_CHART_COLOR_TOKEN} from 'shared/constants/widgets';
 
 import {DL} from '../../constants';
 import {
@@ -272,11 +270,6 @@ export function getControlHint(source: DashTabItemControlElement) {
     return source.showHint ? source.hint : undefined;
 }
 
-const specialBgColors: string[] = [
-    CustomPaletteBgColors.LIKE_CHART,
-    CustomPaletteBgColors.FROM_APP_THEME,
-];
-
 export function getPreparedWrapSettings(
     background?: BackgroundSettings,
     additionalStyle?: CSSProperties,
@@ -286,26 +279,14 @@ export function getPreparedWrapSettings(
     const showBgColor =
         background?.enabled !== false && Boolean(color) && color !== CustomPaletteBgColors.NONE;
 
-    let wrapperClassMod = '';
-    if (showBgColor) {
-        switch (color) {
-            case CustomPaletteBgColors.LIKE_CHART:
-                wrapperClassMod = 'with-default-color';
-                break;
-            case CustomPaletteBgColors.FROM_APP_THEME:
-                wrapperClassMod = isEnabledFeature(Feature.EnableCommonChartDashSettings)
-                    ? 'with-app-theme-color'
-                    : 'with-color';
-                break;
-            default:
-                wrapperClassMod = 'with-color';
-        }
-    }
+    const backgroundColor =
+        color === CustomPaletteBgColors.LIKE_CHART ? LIKE_CHART_COLOR_TOKEN : color;
+
+    const wrapperClassMod = showBgColor ? 'with-color' : '';
 
     const style: CSSProperties = {
         ...additionalStyle,
-        backgroundColor:
-            !showBgColor || (color && specialBgColors.includes(color)) ? undefined : color,
+        backgroundColor: showBgColor ? backgroundColor : undefined,
         color: textColor,
     };
     return {
