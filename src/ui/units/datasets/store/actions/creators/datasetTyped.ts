@@ -1599,7 +1599,7 @@ export function saveDataset({
                 selectedConnections?.[0].entryId &&
                 sharedDatasetDelegationState !== undefined
             ) {
-                await getSdk().sdk.us.createEntityBinding(
+                await getSdk().sdk.us.createSharedEntryBinding(
                     {
                         // when support many connections, US must support many source
                         sourceId: selectedConnections[0].entryId,

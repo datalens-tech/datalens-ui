@@ -255,7 +255,7 @@ export const entriesActions = {
             headers,
         }),
     }),
-    createEntityBinding: createAction<CreateEntityBindingsResponse, CreateEntityBindingsArgs>({
+    createSharedEntryBinding: createAction<CreateEntityBindingsResponse, CreateEntityBindingsArgs>({
         method: 'POST',
         path: () => `${PATH_PREFIX}/entity-bindings/create`,
         params: (params, headers) => ({
