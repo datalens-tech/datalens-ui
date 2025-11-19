@@ -3,6 +3,7 @@
 .dashkit-plugin-container {
     &__wrapper {
         height: 100%;
+        background-color: var(--dl-color-widget-background);
 
         &_widget {
             width: 100%;

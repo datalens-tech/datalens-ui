@@ -11,16 +11,9 @@ import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import omit from 'lodash/omit';
 import pick from 'lodash/pick';
-import {
-    ChartkitMenuDialogsQA,
-    CustomPaletteBgColors,
-    Feature,
-    type StringParams,
-    getDefaultWidgetBackgroundColor,
-} from 'shared';
+import {ChartkitMenuDialogsQA, type StringParams} from 'shared';
 import {DL} from 'ui/constants/common';
 import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import Loader from '../../../libs/DatalensChartkit/components/ChartKitBase/components/Loader/Loader';
@@ -28,7 +21,6 @@ import {getDataProviderData} from '../../../libs/DatalensChartkit/components/Cha
 import settings from '../../../libs/DatalensChartkit/modules/settings/settings';
 import DebugInfoTool from '../../DashKit/plugins/DebugInfoTool/DebugInfoTool';
 import type {CurrentTab, WidgetPluginDataWithTabs} from '../../DashKit/plugins/Widget/types';
-import {getPreparedWrapSettings} from '../../DashKit/utils';
 import {MarkdownHelpPopover} from '../../MarkdownHelpPopover/MarkdownHelpPopover';
 
 import {Content} from './components/Content';
@@ -545,15 +537,6 @@ export const ChartWidget = (props: ChartWidgetProps) => {
         };
     }, [editMode, widgetType]);
 
-    const {classMod, style} = getPreparedWrapSettings({
-        color:
-            currentTab.background?.color ??
-            getDefaultWidgetBackgroundColor(
-                isEnabledFeature(Feature.EnableCommonChartDashSettings),
-                CustomPaletteBgColors.LIKE_CHART,
-            ),
-    });
-
     const disableControls = noControls || urlNoControls;
 
     const commonHeaderContentProps = {
@@ -616,13 +599,11 @@ export const ChartWidget = (props: ChartWidgetProps) => {
             className={`${b({
                 ...mods,
                 autoheight: isAutoHeightEnabled,
-                [String(classMod)]: Boolean(classMod),
                 ['wait-for-init']: !isInit,
                 'default-mobile': DL.IS_MOBILE && !isFullscreen,
                 pulsate: (showContentLoader || showLoaderVeil) && !isFirstLoadingFloat,
                 'loading-mobile-height': DL.IS_MOBILE && isFirstLoadingFloat,
             })}`}
-            style={style}
             data-qa={ChartkitMenuDialogsQA.chartWidget}
             data-qa-mod={isFullscreen ? 'fullscreen' : ''}
         >
@@ -664,7 +645,6 @@ export const ChartWidget = (props: ChartWidgetProps) => {
                 widgetType={widgetType}
                 widgetDashState={widgetDashState}
                 rootNodeRef={rootNodeRef}
-                backgroundColor={style?.backgroundColor}
                 needRenderContentControls={false}
                 chartRevIdRef={null}
                 runActivity={runActivity}
