@@ -5,11 +5,13 @@ import type {
     ChartSeries,
 } from '@gravity-ui/chartkit/gravity-charts';
 import merge from 'lodash/merge';
+import sortBy from 'lodash/sortBy';
 
 import type {SeriesExportSettings, ServerField, WrappedMarkdown} from '../../../../../../../shared';
 import {
     AxisMode,
     LabelsPositions,
+    PERCENT_VISUALIZATIONS,
     PlaceholderId,
     getFakeTitleOrTitle,
     getXAxisMode,
@@ -27,6 +29,7 @@ import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import {getAxisFormatting, getAxisType} from '../helpers/axis';
 import {getLegendColorScale, shouldUseGradientLegend} from '../helpers/legend';
+import {getSegmentMap} from '../helpers/segments';
 import type {PrepareFunctionArgs} from '../types';
 
 import {prepareBarX} from './prepare-bar-x';
@@ -112,14 +115,14 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
 
     const shouldUseHtmlForLabels =
         isMarkupField(labelField) || isHtmlField(labelField) || isMarkdownField(labelField);
-
+    const shouldUsePercentStacking = PERCENT_VISUALIZATIONS.has(visualizationId);
     const seriesData = preparedData.graphs.map<ExtendedBarXSeries>((graph) => {
         return {
             name: graph.title,
             type: 'bar-x',
             color: graph.color,
             stackId: graph.stack,
-            stacking: 'normal',
+            stacking: shouldUsePercentStacking ? 'percent' : 'normal',
             data: graph.data.reduce(
                 (acc: ExtendedBaXrSeriesData[], item: OldBarXDataItem, index: number) => {
                     const dataItem: ExtendedBaXrSeriesData = {
@@ -158,6 +161,7 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
                 inside: shared.extraSettings?.labelsPosition !== LabelsPositions.Outside,
                 html: shouldUseHtmlForLabels,
             },
+            yAxis: graph.yAxis,
         };
     });
 
@@ -211,6 +215,10 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
         }
     }
 
+    const segmentsMap = getSegmentMap(args);
+    const segments = sortBy(Object.values(segmentsMap), (s) => s.index);
+    const isSplitEnabled = new Set(segments.map((d) => d.index)).size > 1;
+
     const axisLabelNumberFormat = yPlaceholder
         ? getAxisFormatting({
               placeholder: yPlaceholder,
@@ -223,13 +231,23 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
         },
         legend,
         xAxis,
-        yAxis: [
-            {
+        yAxis: segments.map((d) => {
+            return {
                 labels: {
                     numberFormat: axisLabelNumberFormat ?? undefined,
                 },
-            },
-        ],
+                plotIndex: d.index,
+                position: d.isOpposite ? 'right' : 'left',
+                title: isSplitEnabled ? {text: d.title} : undefined,
+            };
+        }),
+        split: {
+            enable: isSplitEnabled,
+            gap: '40px',
+            plots: segments.map(() => {
+                return {};
+            }),
+        },
     };
 
     if (yField) {
@@ -238,5 +256,11 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
         };
     }
 
-    return merge(getBaseChartConfig(shared), config);
+    return merge(
+        getBaseChartConfig({
+            extraSettings: shared.extraSettings,
+            visualization: {placeholders, id: visualizationId},
+        }),
+        config,
+    );
 }

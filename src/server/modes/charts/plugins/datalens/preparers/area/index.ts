@@ -1,11 +1,10 @@
 import type {
+    AreaSeries,
+    AreaSeriesData,
     ChartData,
     ChartSeries,
-    LineSeries,
-    LineSeriesData,
 } from '@gravity-ui/chartkit/gravity-charts';
 import merge from 'lodash/merge';
-import sortBy from 'lodash/sortBy';
 
 import type {
     SeriesExportSettings,
@@ -16,6 +15,7 @@ import type {
 import {
     AxisMode,
     PlaceholderId,
+    WizardVisualizationId,
     getXAxisMode,
     isDateField,
     isHtmlField,
@@ -29,32 +29,29 @@ import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import {getAxisType} from '../helpers/axis';
-import {getSegmentMap} from '../helpers/segments';
+import {prepareLineData} from '../line/prepare-line-data';
 import type {PrepareFunctionArgs} from '../types';
 
-import {prepareLineData} from './prepare-line-data';
-
-type ExtendedLineSeriesData = Omit<LineSeriesData, 'x'> & {
-    x?: LineSeriesData['x'] | WrappedHTML | WrappedMarkdown;
+type ExtendedLineSeriesData = Omit<AreaSeriesData, 'x'> & {
+    x?: AreaSeriesData['x'] | WrappedHTML | WrappedMarkdown;
 };
 
-type ExtendedLineSeries = Omit<LineSeries, 'data'> & {
+type ExtendedLineSeries = Omit<AreaSeries, 'data'> & {
     custom?: {
         exportSettings?: SeriesExportSettings;
     };
     data: ExtendedLineSeriesData[];
 };
 
-export function prepareGravityChartLine(args: PrepareFunctionArgs) {
+export function prepareGravityChartArea(args: PrepareFunctionArgs) {
     const {
+        visualizationId,
         labels,
         placeholders,
         disableDefaultSorting = false,
         shared,
         idToDataType,
         colors,
-        shapes,
-        visualizationId,
     } = args;
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xField: ServerField | undefined = xPlaceholder?.items?.[0];
@@ -98,20 +95,15 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
         );
     }
 
-    const shapeItem = shapes[0];
-    if (shapeItem) {
-        exportSettings.columns.push(
-            getExportColumnSettings({path: 'series.custom.shapeValue', field: shapeItem}),
-        );
-    }
-
     const shouldUseHtmlForLabels =
         isMarkupField(labelField) || isHtmlField(labelField) || isMarkdownField(labelField);
-
-    const seriesData: ExtendedLineSeries[] = preparedData.graphs.map<LineSeries>((graph: any) => {
+    const shouldUsePercentStacking = visualizationId === WizardVisualizationId.Area100p;
+    const seriesData: ExtendedLineSeries[] = preparedData.graphs.map<AreaSeries>((graph: any) => {
         return {
             name: graph.title,
-            type: 'line',
+            type: 'area',
+            stackId: graph.stack,
+            stacking: shouldUsePercentStacking ? 'percent' : 'normal',
             color: graph.color,
             data: graph.data.reduce((acc: ExtendedLineSeriesData[], item: any, index: number) => {
                 const dataItem: ExtendedLineSeriesData = {
@@ -145,19 +137,13 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
                 enabled: isDataLabelsEnabled,
                 html: shouldUseHtmlForLabels,
             },
-            legend: {
-                symbol: {
-                    width: 36,
-                },
-            },
-            dashStyle: graph.dashStyle,
-            yAxis: graph.yAxis,
             custom: {
                 ...graph.custom,
                 exportSettings,
                 colorValue: graph.colorValue,
                 shapeValue: graph.shapeValue,
             },
+            yAxis: graph.yAxis,
         };
     });
 
@@ -182,29 +168,11 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
         }
     }
 
-    const segmentsMap = getSegmentMap(args);
-    const segments = sortBy(Object.values(segmentsMap), (s) => s.index);
-    const isSplitEnabled = new Set(segments.map((d) => d.index)).size > 1;
-
     const config: ChartData = {
         series: {
             data: seriesData as ChartSeries[],
         },
         xAxis,
-        yAxis: segments.map((d) => {
-            return {
-                title: isSplitEnabled ? {text: d.title} : undefined,
-                plotIndex: d.index,
-                position: d.isOpposite ? 'right' : 'left',
-            };
-        }),
-        split: {
-            enable: isSplitEnabled,
-            gap: '40px',
-            plots: segments.map(() => {
-                return {};
-            }),
-        },
         legend,
     };
 

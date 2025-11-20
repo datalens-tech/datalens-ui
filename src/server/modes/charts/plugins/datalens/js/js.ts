@@ -29,6 +29,7 @@ import {
 } from '../../../../../../shared';
 import {extractColorPalettesFromData} from '../../helpers/color-palettes';
 import {getDatasetIdAndLayerIdFromKey, getFieldList} from '../../helpers/misc';
+import {prepareGravityChartArea} from '../preparers/area';
 import prepareBackendPivotTableData from '../preparers/backend-pivot-table';
 import type {PivotData} from '../preparers/backend-pivot-table/types';
 import {prepareGravityChartBarX, prepareHighchartsBarX} from '../preparers/bar-x';
@@ -69,6 +70,7 @@ import {
     isSegmentsOversizeError,
 } from './helpers/errors/oversize-error/utils';
 import {
+    combineLayersIntoSingleChart,
     extendCombinedChartGraphs,
     getLayerChartMeta,
     mergeResultForCombinedCharts,
@@ -483,16 +485,23 @@ function prepareSingleResult({
     const segments: ServerField[] = shared.segments || [];
 
     switch (visualization.id) {
-        case WizardVisualizationId.Line:
-        case WizardVisualizationId.Area:
-        case WizardVisualizationId.Area100p: {
-            if (visualization.id === WizardVisualizationId.Line) {
-                shapes = shared.shapes || [];
-                shapesConfig = shared.shapesConfig;
-            }
+        case WizardVisualizationId.Line: {
+            shapes = shared.shapes || [];
+            shapesConfig = shared.shapesConfig;
 
             if (plugin === 'gravity-charts') {
                 prepare = prepareGravityChartLine;
+            } else {
+                prepare = prepareHighchartsLine;
+            }
+            rowsLimit = 75000;
+            break;
+        }
+
+        case WizardVisualizationId.Area:
+        case WizardVisualizationId.Area100p: {
+            if (plugin === 'gravity-charts') {
+                prepare = prepareGravityChartArea;
             } else {
                 prepare = prepareHighchartsLine;
             }
@@ -987,21 +996,29 @@ export const buildGraphPrivate = (args: {
                 }
             }
 
-            if (localResult?.graphs && shared.visualization.id === 'combined-chart') {
-                extendCombinedChartGraphs({
-                    graphs: localResult.graphs,
-                    layer,
-                    layers,
-                    legendValues,
-                });
-                result = result.concat(localResult);
+            if (shared.visualization.id === WizardVisualizationId.CombinedChart) {
+                if (plugin === 'gravity-charts') {
+                    result.push(localResult);
+                } else if (localResult?.graphs) {
+                    extendCombinedChartGraphs({
+                        graphs: localResult.graphs,
+                        layer,
+                        layers,
+                        legendValues,
+                    });
+                    result = result.concat(localResult);
+                }
             } else if (Array.isArray(localResult)) {
                 result = [...result, ...localResult];
             }
         });
 
-        if (shared.visualization.id === 'combined-chart') {
-            result = mergeResultForCombinedCharts(result);
+        if (shared.visualization.id === WizardVisualizationId.CombinedChart) {
+            if (plugin === 'gravity-charts') {
+                result = combineLayersIntoSingleChart({layers: result});
+            } else {
+                result = mergeResultForCombinedCharts(result);
+            }
         }
     } else {
         const resultData = mergedData[0].result;
