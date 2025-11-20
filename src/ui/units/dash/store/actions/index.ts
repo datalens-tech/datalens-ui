@@ -13,6 +13,7 @@ import type {EntryContentAction} from '../../../../store/actions/entryContent';
 import type {SaveDashErrorAction, SaveDashSuccessAction} from './dash';
 import type {
     ChangeNavigationPathAction,
+    RemoveGlobalItemsAction,
     SetAccessDescriptionAction,
     SetDashKeyAction,
     SetDashKitRefAction,
@@ -76,6 +77,7 @@ export type DashAction<T = unknown> =
     | SaveDashErrorAction
     | SetSettingsAction
     | SetHistoryStateAction
-    | EditHistoryAction;
+    | EditHistoryAction
+    | RemoveGlobalItemsAction;
 
 export type DashDispatch = ThunkDispatch<DatalensGlobalState, void, DashAction>;

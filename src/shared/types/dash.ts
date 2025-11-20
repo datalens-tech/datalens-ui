@@ -2,6 +2,9 @@ import type {ItemDropProps} from '@gravity-ui/dashkit';
 
 import type {Operations} from '../modules';
 
+export type ImpactType = 'allTabs' | 'currentTab' | 'selectedTabs' | undefined;
+export type ImpactTabsIds = string[] | null | undefined;
+
 import type {
     ClientChartsConfig,
     Dictionary,
@@ -126,6 +129,7 @@ export interface DashTab {
     aliases: DashTabAliases;
     connections: DashTabConnection[];
     settings?: DashTabSettings;
+    globalItems?: DashTabItem[];
 }
 
 export type DashSettingsGlobalParams = Record<string, string | string[]>;
@@ -235,6 +239,8 @@ export interface DashTabItemControlData {
     width?: string;
     defaults?: StringParams;
     namespace: string;
+    impactType?: ImpactType;
+    impactTabsIds?: ImpactTabsIds;
 }
 
 export type DashTabItemControlSingle = DashTabItemControlDataset | DashTabItemControlManual;
@@ -342,6 +348,8 @@ export interface DashTabItemGroupControlData {
     autoHeight: boolean;
     buttonApply: boolean;
     buttonReset: boolean;
+    impactType?: ImpactType;
+    impactTabsIds?: ImpactTabsIds;
 
     updateControlsOnChange?: boolean;
 
