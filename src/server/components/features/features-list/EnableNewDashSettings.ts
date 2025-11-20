@@ -2,9 +2,9 @@ import {Feature} from '../../../../shared';
 import {createFeatureConfig} from '../utils';
 
 export default createFeatureConfig({
-    name: Feature.ChartActions,
+    name: Feature.EnableNewDashSettings,
     state: {
-        development: false,
+        development: true,
         production: false,
     },
 });

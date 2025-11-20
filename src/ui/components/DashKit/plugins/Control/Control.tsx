@@ -530,13 +530,14 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         if (this.props.getDistincts) {
             this._getDistinctsMemo =
                 this._getDistinctsMemo ||
-                ((params) => {
+                ((params, _, options) => {
                     const {getDistincts} = this.props;
                     const headers = this?.context?.dataProviderContextGetter?.(this.props.id);
 
                     return (getDistincts as Exclude<ControlSettings['getDistincts'], void>)?.(
                         params,
                         headers,
+                        options,
                     );
                 });
         } else {

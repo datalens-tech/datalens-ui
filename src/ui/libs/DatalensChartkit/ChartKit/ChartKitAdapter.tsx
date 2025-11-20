@@ -36,6 +36,7 @@ const ChartkitWidget = React.forwardRef<ChartKit | ChartKitRef | undefined, Char
             paneSplitOrientation,
             widgetDashState,
             backgroundColor,
+            runActivity,
         } = props;
 
         const {data: chartkitHolidays} = useGetChartkitHolidaysAsyncQuery();
@@ -62,7 +63,12 @@ const ChartkitWidget = React.forwardRef<ChartKit | ChartKitRef | undefined, Char
 
             return {
                 type: chartkitType,
-                data: getOpensourceChartKitData({type: chartkitType, loadedData, onChange}),
+                data: getOpensourceChartKitData({
+                    type: chartkitType,
+                    loadedData,
+                    onChange,
+                    runActivity,
+                }),
                 lang,
                 splitTooltip,
                 isMobile,
