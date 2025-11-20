@@ -164,6 +164,8 @@ const PageComponent = (props: PageProps) => {
     const s3BasedFormOpened = isS3BasedConnForm(connectionData, type);
     const currentSearchParams = new URLSearchParams(location.search);
 
+    const isFakeEntry = entry && (entry as {fake?: boolean}).fake;
+
     const isExportSettingsFeatureEnabled = isEnabledFeature(Feature.EnableExportSettings);
     const isDescriptionEnabled = isEnabledFeature(Feature.EnableConnectionDescription);
 
@@ -175,7 +177,7 @@ const PageComponent = (props: PageProps) => {
     const showSettings = !connector?.backend_driven_form;
     let isShowCreateButtons = true;
 
-    if (entry?.workbookId && !(entry as {fake?: boolean}).fake) {
+    if (entry?.workbookId && !isFakeEntry) {
         isShowCreateButtons = Boolean(entry.permissions?.edit);
     }
 
@@ -234,7 +236,7 @@ const PageComponent = (props: PageProps) => {
 
     const additionalEntryItems = React.useMemo(
         () =>
-            isSharedConnection && entry
+            isSharedConnection && entry && !isFakeEntry
                 ? [
                       {
                           id: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,
@@ -253,7 +255,7 @@ const PageComponent = (props: PageProps) => {
                       },
                   ]
                 : undefined,
-        [isSharedConnection, entry],
+        [isSharedConnection, entry, isFakeEntry, actions],
     );
 
     return (
