@@ -74,4 +74,5 @@ export const mockSharedEntriesTexts = {
         'Если на данных из {{entry}} построены {{relation}}, они перестанут работать. Убедитесь что все безопасно',
     'message-relation-alert-unbind-dialog': 'чарты',
     'message-relations-alert-unbind-dialog': 'датасеты и чарты',
+    'shared-entry-bindings-dropdown-menu-title': 'Управление привязками',
 };
