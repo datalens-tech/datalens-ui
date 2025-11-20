@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 
 import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
@@ -12,6 +12,7 @@ import type {DIALOG_TYPE} from '../../../../constants/dialogs';
 
 import './EmptyState.scss';
 
+// Do not change, the snapter service uses
 const b = block('dash-empty-state');
 const i18n = I18n.keyset('dash.empty-state.view');
 
@@ -31,7 +32,7 @@ export const EmptyState = ({
     onEditClick,
     isEditModeLoading,
 }: EmptyStateProps) => {
-    useEffect(() => {
+    React.useEffect(() => {
         if (navigator.userAgent === SCR_USER_AGENT_HEADER_VALUE) {
             const customEvent = new CustomEvent('dash.done', {bubbles: true});
             document.body.dispatchEvent(customEvent);
