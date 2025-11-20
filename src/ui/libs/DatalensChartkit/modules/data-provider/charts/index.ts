@@ -710,14 +710,12 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
                 });
             }
 
-            this.processError({
+            return this.processError({
                 error,
                 requestId,
                 includeLogs,
                 isEditMode,
             });
-
-            return {error};
         }
     }
 

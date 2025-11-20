@@ -42,7 +42,7 @@ export interface DataProvider<T extends {params?: StringParams}, R, K> {
         props: T;
         requestId: string;
         contextHeaders?: DashChartRequestContext;
-    }) => Promise<ChartActivityResponseData>;
+    }) => Promise<ChartActivityResponseData | null>;
     setSettings?: <TSettings>(settings: TSettings) => void;
     pushStats?: (
         input: any, // ChartKitLoadSuccess<ChartsData>, // TODO after remove old alternative Chartkit code, cause cycle imports

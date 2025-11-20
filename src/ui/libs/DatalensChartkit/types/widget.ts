@@ -401,7 +401,7 @@ export type LoadedWidgetData<TProviderData = unknown> = (Widget & TProviderData)
 
 export type WidgetData = (Widget & ChartsData) | null;
 
-export type OnActivityComplete = (args: {responseData?: ChartActivityResponseData}) => void;
+export type OnActivityComplete = (args: {responseData?: ChartActivityResponseData | null}) => void;
 
 export type RunActivityArgs = {
     params?: StringParams | ChartSeriesData;
