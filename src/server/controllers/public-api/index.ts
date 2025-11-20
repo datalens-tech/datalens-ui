@@ -67,7 +67,8 @@ export const createPublicApiController = () => {
 
             const {ctx} = req;
 
-            const headers = Utils.pickRpcHeaders(req);
+            const headers = Utils.pickPublicApiHeaders(req);
+
             const requestId = ctx.get(REQUEST_ID_PARAM_NAME) || '';
 
             const gatewayAction = action.resolve(gatewayApi);
@@ -91,7 +92,9 @@ export const createPublicApiController = () => {
 
             const {paramsSchema} = validationSchema;
 
-            const validatedArgs = await validateRequestBody(paramsSchema, req.body);
+            const validatedArgs = paramsSchema
+                ? await validateRequestBody(paramsSchema, req.body)
+                : undefined;
 
             const result = await gatewayAction({
                 headers,

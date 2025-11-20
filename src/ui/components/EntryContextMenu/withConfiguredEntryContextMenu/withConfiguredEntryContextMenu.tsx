@@ -19,7 +19,7 @@ import '../EntryContextMenuBase/EntryContextMenuBase.scss';
 
 const i18n = I18n.keyset('component.entry-context-menu.view');
 
-const OVERRIDE_CONTEXT_MENU = {
+const OVERRIDE_CONTEXT_MENU: Record<string, Record<string, string>> = {
     [ENTRY_CONTEXT_MENU_ACTION.DELETE]: {
         theme: 'danger',
     },

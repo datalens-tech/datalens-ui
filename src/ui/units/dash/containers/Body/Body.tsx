@@ -48,6 +48,7 @@ import {
     Feature,
     FixedHeaderQa,
     SCROLL_TITLE_DEBOUNCE_TIME,
+    SCR_USER_AGENT_HEADER_VALUE,
     UPDATE_STATE_DEBOUNCE_TIME,
 } from 'shared';
 import type {DatalensGlobalState} from 'ui';
@@ -58,7 +59,6 @@ import {
 } from 'ui/components/DashKit/constants';
 import {WidgetContextProvider} from 'ui/components/DashKit/context/WidgetContext';
 import {getDashKitMenu} from 'ui/components/DashKit/helpers';
-import {registry} from 'ui/registry';
 import {showToast} from 'ui/store/actions/toaster';
 import {isEmbeddedMode} from 'ui/utils/embedded';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -405,8 +405,6 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
     }
 
     render() {
-        const {DashBodyAdditionalControls} = registry.dash.components.getAll();
-
         return (
             <div
                 className={b({'split-pane': this.props.isSplitPaneLayout})}
@@ -432,7 +430,6 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                 />
                 <PaletteEditor />
                 <EntryDialogues ref={this.entryDialoguesRef} />
-                <DashBodyAdditionalControls />
             </div>
         );
     }
@@ -1144,7 +1141,10 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
 
         const isEmptyTab = !tabDataConfig?.items.length;
 
-        const DashKit = getConfiguredDashKit(undefined, {disableHashNavigation});
+        const DashKit = getConfiguredDashKit(undefined, {
+            disableHashNavigation,
+            scope: 'dash',
+        });
 
         const hasFixedHeaderControlsElements = Boolean(
             this.getWidgetLayoutByGroup(FIXED_GROUP_HEADER_ID)?.length,
@@ -1292,6 +1292,12 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                 // that will try to scroll to the title after each item rendering
                 this.scrollIntoViewWithDebounce();
             }
+
+            if (isLoaded && navigator.userAgent === SCR_USER_AGENT_HEADER_VALUE) {
+                const customEvent = new CustomEvent('dash.done', {bubbles: true});
+                document.body.dispatchEvent(customEvent);
+            }
+
             this.setState({loaded: isLoaded});
         }
     };

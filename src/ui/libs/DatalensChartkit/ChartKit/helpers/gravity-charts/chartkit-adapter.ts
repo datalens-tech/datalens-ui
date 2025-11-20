@@ -23,8 +23,9 @@ import {
 export function getGravityChartsChartKitData(args: {
     loadedData: ChartKitAdapterProps['loadedData'];
     onChange?: ChartKitAdapterProps['onChange'];
+    runActivity?: ChartKitAdapterProps['runActivity'];
 }) {
-    const {loadedData, onChange} = args;
+    const {loadedData, runActivity, onChange} = args;
     const widgetData = loadedData?.data as ExtendedChartData;
     const chartId = loadedData?.entryId;
 
@@ -40,6 +41,7 @@ export function getGravityChartsChartKitData(args: {
                         ),
                         event,
                         onChange,
+                        runActivity,
                     });
                 },
             },

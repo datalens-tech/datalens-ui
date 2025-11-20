@@ -11,7 +11,7 @@ import {
 import type {ChartsData} from '../modules/data-provider/charts';
 import type {GraphWidget, TableWidget} from '../types';
 
-import type {MenuItemArgs} from './MenuItems';
+import {type MenuItemArgs} from './MenuItems';
 import {getWidgetChartMenu} from './helpers';
 
 export type MenuItemsConfig = Array<MenuItemConfig>;
@@ -76,6 +76,7 @@ export const getChartkitMenuItems = (props: GetChartkitMenuItems) => {
         default: {
             const getDefaultChartMenuFn = registry.chart.functions.get('getDefaultChartMenu');
             menuItemsGroups = getDefaultChartMenuFn({
+                type,
                 chartsDataProvider,
                 customOptions,
                 extraOptions,

@@ -29,7 +29,14 @@ import type {
     WidgetType,
     WizardVisualizationId,
 } from 'shared';
-import {DashCommonQa, DialogDashWidgetQA, EntryScope, Feature, ParamsSettingsQA} from 'shared';
+import {
+    CustomPaletteBgColors,
+    DashCommonQa,
+    DialogDashWidgetQA,
+    EntryScope,
+    Feature,
+    ParamsSettingsQA,
+} from 'shared';
 import {getEntryVisualizationType} from 'shared/schema/mix/helpers';
 import {Collapse} from 'ui/components/Collapse/Collapse';
 import {Interpolate} from 'ui/components/Interpolate';
@@ -154,7 +161,7 @@ class DialogChartWidget extends React.PureComponent<
                     isDefault: true,
                     description: '',
                     background: {
-                        color: 'transparent',
+                        color: CustomPaletteBgColors.NONE,
                     },
                     enableHint: false,
                     hint: '',
@@ -214,18 +221,20 @@ class DialogChartWidget extends React.PureComponent<
         const {dialogIsVisible, withoutSidebar, closeDialog} = this.props;
 
         const sidebar = this.renderDialogSidebar();
-        const tabSettingsContent = this.renderTabSettingsContent();
+        const mainTabSettingsContent = this.renderTabSettingsContent();
         const shouldRenderTabs = false;
         // isEnabledFeature(Feature.EnableCommonChartDashSettings) && !withoutSidebar;
         const tabsTabContent = (
-            <div className={b('tab-content')}>
-                {sidebar}
-                <Divider orientation="vertical" className={b('divider')} />
-                {tabSettingsContent}
+            <div className={b('tab-content', {'with-sidebar': !withoutSidebar})}>
+                {!withoutSidebar && (
+                    <React.Fragment>
+                        {sidebar}
+                        <Divider orientation="vertical" className={b('divider')} />
+                    </React.Fragment>
+                )}
+                {mainTabSettingsContent}
             </div>
         );
-
-        const content = withoutSidebar ? tabSettingsContent : tabsTabContent;
 
         return (
             <Dialog
@@ -251,18 +260,15 @@ class DialogChartWidget extends React.PureComponent<
                                     {i18n('dash.widget-dialog.edit', 'tab_settings')}
                                 </Tab>
                             </TabList>
-                            <TabPanel
-                                value={TAB_TYPE.TABS}
-                                className={b('tab-content', {'with-sidebar': !withoutSidebar})}
-                            >
+                            <TabPanel value={TAB_TYPE.TABS} className={b('tab-panel')}>
                                 {tabsTabContent}
                             </TabPanel>
-                            <TabPanel value={TAB_TYPE.SETTINGS} className={b('tab-content')}>
-                                {tabSettingsContent}
+                            <TabPanel value={TAB_TYPE.SETTINGS} className={b('tab-panel')}>
+                                <div className={b('tab-content')}>{tabsTabContent}</div>
                             </TabPanel>
                         </TabProvider>
                     ) : (
-                        content
+                        tabsTabContent
                     )}
                 </Dialog.Body>
                 <Dialog.Footer
@@ -457,7 +463,9 @@ class DialogChartWidget extends React.PureComponent<
                 tabs: {
                     [tabIndex]: {
                         background: {
-                            color: {$set: color},
+                            $set: {
+                                color: color,
+                            },
                         },
                     },
                 },

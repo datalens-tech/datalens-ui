@@ -1,3 +1,5 @@
+import type {ChartData} from '@gravity-ui/chartkit/gravity-charts';
+
 import type {LayerChartMeta} from '../../../preparers/types';
 
 import type {ExtendCombinedChartGraphsArgs} from './types';
@@ -47,6 +49,26 @@ export const extendCombinedChartGraphs = (args: ExtendCombinedChartGraphsArgs) =
         }
     });
 };
+
+export function combineLayersIntoSingleChart({layers}: {layers: Partial<ChartData>[]}) {
+    if (layers.length > 1) {
+        return {
+            ...layers[0],
+            series: {
+                options: layers.reduce(
+                    (acc, layerData) => ({...acc, ...layerData.series?.options}),
+                    {} as ChartData['series']['options'],
+                ),
+                data: layers.reduce(
+                    (acc, layerData) => [...acc, ...(layerData.series?.data ?? [])],
+                    [] as ChartData['series']['data'],
+                ),
+            },
+        };
+    }
+
+    return layers[0];
+}
 
 const isChartWithoutData = (graph: {data: any[]}) => {
     const uniqueData = new Set(graph.data || []);

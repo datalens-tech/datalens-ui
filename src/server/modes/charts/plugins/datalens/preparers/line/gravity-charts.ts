@@ -5,6 +5,7 @@ import type {
     LineSeriesData,
 } from '@gravity-ui/chartkit/gravity-charts';
 import merge from 'lodash/merge';
+import sortBy from 'lodash/sortBy';
 
 import type {
     SeriesExportSettings,
@@ -28,6 +29,7 @@ import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import {getAxisType} from '../helpers/axis';
+import {getSegmentMap} from '../helpers/segments';
 import type {PrepareFunctionArgs} from '../types';
 
 import {prepareLineData} from './prepare-line-data';
@@ -52,6 +54,7 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
         idToDataType,
         colors,
         shapes,
+        visualizationId,
     } = args;
     const xPlaceholder = placeholders.find((p) => p.id === PlaceholderId.X);
     const xField: ServerField | undefined = xPlaceholder?.items?.[0];
@@ -148,6 +151,7 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
                 },
             },
             dashStyle: graph.dashStyle,
+            yAxis: graph.yAxis,
             custom: {
                 ...graph.custom,
                 exportSettings,
@@ -178,11 +182,29 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
         }
     }
 
+    const segmentsMap = getSegmentMap(args);
+    const segments = sortBy(Object.values(segmentsMap), (s) => s.index);
+    const isSplitEnabled = new Set(segments.map((d) => d.index)).size > 1;
+
     const config: ChartData = {
         series: {
             data: seriesData as ChartSeries[],
         },
         xAxis,
+        yAxis: segments.map((d) => {
+            return {
+                title: isSplitEnabled ? {text: d.title} : undefined,
+                plotIndex: d.index,
+                position: d.isOpposite ? 'right' : 'left',
+            };
+        }),
+        split: {
+            enable: isSplitEnabled,
+            gap: '40px',
+            plots: segments.map(() => {
+                return {};
+            }),
+        },
         legend,
     };
 
@@ -192,5 +214,11 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
         };
     }
 
-    return merge(getBaseChartConfig(shared), config);
+    return merge(
+        getBaseChartConfig({
+            extraSettings: shared.extraSettings,
+            visualization: {placeholders, id: visualizationId},
+        }),
+        config,
+    );
 }
