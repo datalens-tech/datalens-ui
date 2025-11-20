@@ -26,7 +26,7 @@ export type ResolvedConfig = {
         statface_graph: string;
         map?: string;
         ymap?: string;
-        actions?: string;
+        activities?: string;
     };
     key: string;
     links?: string[];

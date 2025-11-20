@@ -5,6 +5,8 @@ export const CustomPaletteBgColors = {
     NONE: 'transparent',
 } as const;
 
+export const TRANSPARENT_COLOR_HEX = '#00000000';
+
 export const LIKE_CHART_COLOR_TOKEN = 'var(--g-color-base-float)';
 export const BASE_GREY_BACKGROUND_COLOR = 'var(--g-color-base-generic)';
 

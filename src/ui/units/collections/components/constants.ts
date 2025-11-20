@@ -78,4 +78,5 @@ export const mockSharedEntriesTexts = {
     'or-select-shared-entry-dialog': 'или',
     'past-link-btn-select-shared-entry-dialog': 'Указать ссылку',
     'title-select-shared-entry-dialog-dataset': 'Выберите подключение',
+    'shared-entry-bindings-dropdown-menu-title': 'Управление привязками',
 };

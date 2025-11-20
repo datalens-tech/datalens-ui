@@ -42,6 +42,8 @@ import type {
     GetRevisionsArgs,
     GetRevisionsOutput,
     GetRevisionsResponse,
+    GetSharedEntryBindingsArgs,
+    GetSharedEntryBindingsResponse,
     MoveEntryArgs,
     MoveEntryResponse,
     RenameEntryArgs,
@@ -260,6 +262,24 @@ export const entriesActions = {
         path: () => `${PATH_PREFIX}/entity-bindings/create`,
         params: (params, headers) => ({
             body: params,
+            headers,
+        }),
+    }),
+
+    getSharedEntryBindings: createAction<
+        GetSharedEntryBindingsResponse,
+        GetSharedEntryBindingsArgs
+    >({
+        method: 'GET',
+        path: ({entryId}) => `${PATH_PREFIX}/shared-entries/${entryId}/entity-bindings`,
+        params: ({page, pageSize, entryAs, mode, filterString}, headers) => ({
+            query: {
+                pageSize,
+                page,
+                entryAs,
+                mode,
+                filterString,
+            },
             headers,
         }),
     }),

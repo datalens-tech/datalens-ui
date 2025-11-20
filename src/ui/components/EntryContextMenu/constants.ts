@@ -36,7 +36,7 @@ export const ENTRY_CONTEXT_MENU_ACTION = {
     REVISIONS: 'revisions',
     MIGRATE_TO_WORKBOOK: 'migrate-to-workbook',
     SHOW_RELATED_ENTITIES: 'show-related-entities',
-};
+} as const;
 
 const CONTEXT_MENU_COPY = {
     id: ENTRY_CONTEXT_MENU_ACTION.COPY,

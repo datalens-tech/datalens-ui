@@ -1,9 +1,10 @@
 import React from 'react';
 
+import {CodeTrunk} from '@gravity-ui/icons';
 import {Button, spacing} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {get} from 'lodash';
+import get from 'lodash/get';
 import omit from 'lodash/omit';
 import {connect} from 'react-redux';
 import type {RouteChildrenProps} from 'react-router-dom';
@@ -18,16 +19,20 @@ import type {FilterEntryContextMenuItems} from 'ui/components/EntryContextMenu';
 import {ENTRY_CONTEXT_MENU_ACTION} from 'ui/components/EntryContextMenu';
 import {registry} from 'ui/registry';
 import {
+    closeDialog,
+    openDialog,
     openDialogErrorWithTabs,
     openDialogSaveDraftChartAsActualConfirm,
 } from 'ui/store/actions/dialog';
 import type {DataLensApiError} from 'ui/typings';
+import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {ErrorViewProps} from '../';
 import {ErrorView, Router, WrappedLoader} from '../';
 import {AccessRightsUrlOpen} from '../../../../components/AccessRights/AccessRightsUrlOpen';
 import {ActionPanel} from '../../../../components/ActionPanel';
+import {DIALOG_SHARED_ENTRY_BINDINGS} from '../../../../components/DialogSharedEntryBindings/DialogSharedEntryBindings';
 import withErrorPage from '../../../../components/ErrorPage/withErrorPage';
 import {FieldKey} from '../../constants';
 import {
@@ -159,16 +164,20 @@ const PageComponent = (props: PageProps) => {
     const s3BasedFormOpened = isS3BasedConnForm(connectionData, type);
     const currentSearchParams = new URLSearchParams(location.search);
 
+    const isFakeEntry = entry && (entry as {fake?: boolean}).fake;
+
     const isExportSettingsFeatureEnabled = isEnabledFeature(Feature.EnableExportSettings);
     const isDescriptionEnabled = isEnabledFeature(Feature.EnableConnectionDescription);
 
     const revisionsSupported = connector?.history;
     const revId = currentSearchParams.get(URL_QUERY.REV_ID) ?? undefined;
 
+    const isSharedConnection = Boolean(entry?.collectionId);
+
     const showSettings = !connector?.backend_driven_form;
     let isShowCreateButtons = true;
 
-    if (entry?.workbookId && !(entry as {fake?: boolean}).fake) {
+    if (entry?.workbookId && !isFakeEntry) {
         isShowCreateButtons = Boolean(entry.permissions?.edit);
     }
 
@@ -207,13 +216,46 @@ const PageComponent = (props: PageProps) => {
         [revisionsSupported, actions],
     );
 
-    const filterEntryContextMenuItems: FilterEntryContextMenuItems | undefined = React.useMemo(
+    const filterEntryContextMenuItems: FilterEntryContextMenuItems = React.useCallback(
+        ({items}) => {
+            return items.filter((item) => {
+                if (
+                    isSharedConnection &&
+                    item.id === ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES
+                ) {
+                    return false;
+                }
+                if (!revisionsSupported && item.id === ENTRY_CONTEXT_MENU_ACTION.REVISIONS) {
+                    return false;
+                }
+                return true;
+            });
+        },
+        [revisionsSupported, isSharedConnection],
+    );
+
+    const additionalEntryItems = React.useMemo(
         () =>
-            revisionsSupported
-                ? undefined
-                : ({items}) =>
-                      items.filter((item) => item.id !== ENTRY_CONTEXT_MENU_ACTION.REVISIONS),
-        [revisionsSupported],
+            isSharedConnection && entry && !isFakeEntry
+                ? [
+                      {
+                          id: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,
+                          action: () => {
+                              actions.openDialog({
+                                  id: DIALOG_SHARED_ENTRY_BINDINGS,
+                                  props: {
+                                      onClose: actions.closeDialog,
+                                      open: true,
+                                      entry,
+                                  },
+                              });
+                          },
+                          icon: <CodeTrunk />,
+                          text: getSharedEntryMockText('shared-entry-bindings-dropdown-menu-title'),
+                      },
+                  ]
+                : undefined,
+        [isSharedConnection, entry, isFakeEntry, actions],
     );
 
     return (
@@ -255,6 +297,7 @@ const PageComponent = (props: PageProps) => {
                         ]}
                         setActualVersion={setActualVersion}
                         filterEntryContextMenuItems={filterEntryContextMenuItems}
+                        additionalEntryItems={additionalEntryItems}
                     />
                 )}
                 {loading || !entry ? (
@@ -302,6 +345,8 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
                 openDialogErrorWithTabs,
                 openDialogSaveDraftChartAsActualConfirm,
                 updateConnectionWithRevision,
+                openDialog,
+                closeDialog,
             },
             dispatch,
         ),

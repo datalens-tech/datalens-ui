@@ -3,8 +3,8 @@ import type {ChartData, ChartTitle} from '@gravity-ui/chartkit/gravity-charts';
 import {PlaceholderId, WizardVisualizationId, isDateField} from '../../../../../../../shared';
 import type {
     ServerCommonSharedExtraSettings,
+    ServerPlaceholder,
     ServerPlaceholderSettings,
-    ServerVisualization,
 } from '../../../../../../../shared';
 import {getAxisTitle, getTickPixelInterval, isGridEnabled} from '../../utils/axis-helpers';
 
@@ -52,7 +52,7 @@ function getAxisMinMax(
 
 export function getBaseChartConfig(args: {
     extraSettings?: ServerCommonSharedExtraSettings;
-    visualization: ServerVisualization;
+    visualization: {id: string; placeholders: ServerPlaceholder[]};
 }) {
     const {extraSettings, visualization} = args;
     const isLegendEnabled = extraSettings?.legendMode !== 'hide';
