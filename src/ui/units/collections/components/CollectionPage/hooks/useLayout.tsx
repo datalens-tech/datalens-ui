@@ -7,6 +7,7 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {batch, useDispatch, useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
+import {DIALOG_ACCESS} from 'ui/components/AccessDialog';
 import {getParentCollectionPath} from 'ui/units/collections-navigation/utils';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
@@ -25,7 +26,6 @@ import {DIALOG_IAM_ACCESS} from '../../../../../components/IamAccessDialog';
 import {DL} from '../../../../../constants';
 import {registry} from '../../../../../registry';
 import {ResourceType} from '../../../../../registry/units/common/types/components/IamAccessDialog';
-import {DIALOG_ACCESS} from 'ui/components/AccessDialog';
 import type {AppDispatch} from '../../../../../store';
 import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
 import {

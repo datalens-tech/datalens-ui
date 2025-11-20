@@ -1,9 +1,9 @@
 import React from 'react';
 
 import {registry} from 'ui/registry';
+import type {AccessDialogProps} from 'ui/registry/units/common/types/components/AccessDialog';
 
 import DialogManager from '../DialogManager/DialogManager';
-import {AccessDialogProps} from 'ui/registry/units/common/types/components/AccessDialog';
 
 export const DIALOG_ACCESS = Symbol('DIALOG_ACCESS');
 

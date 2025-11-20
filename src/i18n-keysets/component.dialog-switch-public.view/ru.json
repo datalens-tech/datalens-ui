@@ -7,6 +7,9 @@
   "button_enable-all": "Включить всё",
   "button_refresh": "Обновить",
   "button_repeat": "Повторить",
+  "label_author": "Автор",
+  "label_link": "Ссылка",
+  "label_share": "Поделиться",
   "label_access-by-link": "Доступ по ссылке",
   "label_alert-publish-text": "Объект станет доступен любому пользователю в интернете.",
   "label_alert-publish-text-many": "Объекты станут доступны любому пользователю в интернете.",
@@ -15,6 +18,7 @@
   "label_author-description": "При публикации {{subject}} можно указать ссылку на его источник или автора. Ссылка будет отображаться внизу {{subject}}.",
   "label_author-link": "Ссылка",
   "label_author-link-error": "Неверный формат ссылки",
+  "label_author-link-required": "Ссылка обязательна при указании автора",
   "label_author-subject-dash": "дашборда",
   "label_author-subject-widget": "чарта",
   "label_author-text": "Текст ссылки",
@@ -41,5 +45,10 @@
   "toast_get-publication-preview-failed": "Не удалось загрузить",
   "toast_link-copied": "Ссылка скопирована",
   "toast_switch-publication-status-failed": "Не удалось изменить публичный доступ",
-  "toast_switch-publication-status-success": "Публичный доступ был изменен"
+  "toast_switch-publication-status-success": "Публичный доступ был изменен",
+  "label_public-access-warning-title": "Вы даете доступ ко всем выбранным связанным объектам",
+  "label_public-access-warning-message": "После применения настроек дашборд и все включённые связанные объекты будут доступны любому пользователю в интернете",
+  "label_public-access": "Публичный доступ",
+  "label_propose-to-gallery": "Предложить в DataLens Gallery",
+  "label_author-publication": "Автор публикации"
 }

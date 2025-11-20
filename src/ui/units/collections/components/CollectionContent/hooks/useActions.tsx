@@ -6,6 +6,7 @@ import {I18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {useHistory} from 'react-router-dom';
 import {WORKBOOK_STATUS} from 'shared/constants/workbooks';
+import {DIALOG_ACCESS} from 'ui/components/AccessDialog';
 import {DIALOG_EXPORT_WORKBOOK} from 'ui/components/CollectionsStructure/ExportWorkbookDialog/ExportWorkbookDialog';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
@@ -36,7 +37,6 @@ import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
 import {WORKBOOKS_PATH} from '../../../../collections-navigation/constants';
 import {deleteCollectionInItems, deleteWorkbookInItems} from '../../../store/actions';
 import {getIsWorkbookItem} from '../../helpers';
-import {DIALOG_ACCESS} from 'ui/components/AccessDialog';
 
 const i18n = I18n.keyset('collections');
 

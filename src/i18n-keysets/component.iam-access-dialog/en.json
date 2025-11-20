@@ -47,5 +47,8 @@
   "action_delete-invitation": "Delete",
   "label_show-all-roles": "Show all roles",
   "label_invitation-sending-description": "Send invitations to organization",
-  "label_invitation-sending-description-hint": "Invitation expiration period - 1 week"
+  "label_invitation-sending-description-hint": "Invitation expiration period - 1 week",
+  "label_organization-access": "Organization",
+  "tab_public-access": "Public access",
+  "label_embed-access": "Embed"
 }

@@ -13,6 +13,7 @@ import {I18N} from 'i18n';
 import {useDispatch} from 'react-redux';
 import {useHistory, useLocation} from 'react-router-dom';
 import {WorkbookPageActionsMoreQA} from 'shared/constants/qa';
+import {DIALOG_ACCESS} from 'ui/components/AccessDialog';
 import {DIALOG_EXPORT_WORKBOOK} from 'ui/components/CollectionsStructure/ExportWorkbookDialog/ExportWorkbookDialog';
 import {DropdownAction} from 'ui/components/DropdownAction/DropdownAction';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
@@ -25,7 +26,6 @@ import {IamAccessDialog} from '../../../../components/IamAccessDialog/IamAccessD
 import {registry} from '../../../../registry';
 import {ResourceType} from '../../../../registry/units/common/types/components/IamAccessDialog';
 import {CreateEntry} from '../CreateEntry/CreateEntry';
-import {DIALOG_ACCESS} from 'ui/components/AccessDialog';
 
 import './WorkbookActions.scss';
 

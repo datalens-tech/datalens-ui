@@ -47,5 +47,8 @@
   "label_invitation-sending-description-hint": "Срок действия приглашения — 1 неделя",
   "action_resend-invitation": "Отправить повторно",
   "action_delete-invitation": "Удалить",
-  "label_show-all-roles": "Показать все роли"
+  "label_show-all-roles": "Показать все роли",
+  "tab_organization-access": "В организации",
+  "tab_public-access": "Публичный доступ",
+  "tab_embed-access": "Встроить"
 }

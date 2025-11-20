@@ -15,6 +15,7 @@
   "label_author-description": "When publishing a {{subject}}, you can specify a link to its source or author. The link will be displayed at the bottom of the {{subject}}.",
   "label_author-link": "Link",
   "label_author-link-error": "Invalid link format",
+  "label_author-link-required": "Link is required when author is specified",
   "label_author-subject-dash": "dashboard",
   "label_author-subject-widget": "chart",
   "label_author-text": "Link text",
@@ -41,5 +42,13 @@
   "toast_get-publication-preview-failed": "Failed to load",
   "toast_link-copied": "Link copied",
   "toast_switch-publication-status-failed": "Failed to change public access",
-  "toast_switch-publication-status-success": "Public access changed"
+  "toast_switch-publication-status-success": "Public access changed",
+  "label_public-access-warning-title": "You are giving access to all selected related objects",
+  "label_public-access-warning-message": "After applying the settings, the dashboard and all enabled related objects will be available to any internet user",
+  "label_author": "Author",
+  "label_link": "Link",
+  "label_share": "Share",
+  "label_public-access": "Public access",
+  "label_propose-to-gallery": "Propose to DataLens Gallery",
+  "label_author-publication": "Author publication"
 }
