@@ -98,7 +98,10 @@ export enum Feature {
     EnableSharedEntries = 'EnableSharedEntries',
 
     EnableMobileFixedHeader = 'EnableMobileFixedHeader',
+    /** enabled redesign/moving to drawers existing settings */
     EnableCommonChartDashSettings = 'EnableCommonChartDashSettings',
+    /** enables new dash & widgets settings */
+    EnableNewDashSettings = 'EnableNewDashSettings',
     /** Shows updated settings page */
     EnableNewServiceSettings = 'EnableNewServiceSettings',
 }
