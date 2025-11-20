@@ -3,16 +3,16 @@ import React from 'react';
 import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {SCR_USER_AGENT_HEADER_VALUE} from 'shared/constants';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 import {DL} from 'ui/constants';
 import type {ValuesType} from 'utility-types';
 
 import type {DIALOG_TYPE} from '../../../../constants/dialogs';
+import {dispatchDashLoadedEvent} from '../../utils/customEvents';
 
 import './EmptyState.scss';
 
-// Do not change, the snapter service uses
+// Do not change class name, the snapter service uses
 const b = block('dash-empty-state');
 const i18n = I18n.keyset('dash.empty-state.view');
 
@@ -33,10 +33,7 @@ export const EmptyState = ({
     isEditModeLoading,
 }: EmptyStateProps) => {
     React.useEffect(() => {
-        if (navigator.userAgent === SCR_USER_AGENT_HEADER_VALUE) {
-            const customEvent = new CustomEvent('dash.done', {bubbles: true});
-            document.body.dispatchEvent(customEvent);
-        }
+        dispatchDashLoadedEvent();
     }, []);
 
     const showActions = !DL.IS_MOBILE && canEdit;
