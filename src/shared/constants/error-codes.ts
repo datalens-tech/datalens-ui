@@ -69,4 +69,5 @@ export const ErrorContentTypes = {
     FORBIDDEN_AUTH: 'forbidden-auth',
     NOT_AUTHENTICATED_GALLERY: 'not-authenticated-gallery',
     NOT_AUTHENTICATED_FESTIVAL: 'not-authenticated-festival',
+    NON_ADMIN_LICENSE_EXPIRED: 'non-admin-license-expired',
 };
