@@ -26,16 +26,22 @@ export type DialogCreateDatasetInWorkbookProps = {
     creationScope: 'workbook';
 };
 
+export type DialogCreateDatasetInCollectionProps = {
+    onApply: DialogCreateWorkbookEntryProps<void>['onApply'];
+    creationScope: 'collection';
+};
+
 export type DialogCreateDatasetProps =
     | (DialogCreateDatasetBaseProps & DialogCreateDatasetInNavigationProps)
-    | (DialogCreateDatasetBaseProps & DialogCreateDatasetInWorkbookProps);
+    | (DialogCreateDatasetBaseProps & DialogCreateDatasetInWorkbookProps)
+    | (DialogCreateDatasetBaseProps & DialogCreateDatasetInCollectionProps);
 
 const DialogCreateDataset = (props: DialogCreateDatasetProps) => {
     const {visible, onClose} = props;
     const path =
         DatasetUtils.getQueryParam(URL_QUERY.CURRENT_PATH) || DatasetUtils.getPersonalFolderPath();
 
-    if (props.creationScope === 'workbook') {
+    if (props.creationScope === 'workbook' || props.creationScope === 'collection') {
         return (
             <DialogCreateWorkbookEntry
                 name={i18n('label_name-default')}

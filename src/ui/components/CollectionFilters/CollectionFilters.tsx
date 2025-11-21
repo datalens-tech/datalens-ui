@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {LayoutRows} from '@gravity-ui/icons';
-import type {SegmentedRadioGroupSize as RadioButtonSize} from '@gravity-ui/uikit';
+import type {SegmentedRadioGroupSize as RadioButtonSize, SelectOption} from '@gravity-ui/uikit';
 import {Icon, SegmentedRadioGroup as RadioButton, Select, TextInput} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -13,6 +13,7 @@ import {OrderBySelect, SORT_TYPE} from 'ui/components/OrderBySelect';
 import type {OrderBy, OrderByOptions, SortType} from 'ui/components/OrderBySelect';
 import Tabs from 'ui/components/Tabs/Tabs';
 import {DL} from 'ui/constants/common';
+import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 
@@ -70,6 +71,8 @@ type Props = {
     viewMode?: CollectionPageViewMode;
     onChange: (value: StructureItemsFilters) => void;
     changeViewMode?: (value: CollectionPageViewMode) => void;
+    searchRowExtendContent?: React.ReactNode;
+    canFilterOnlyEntries?: boolean;
 };
 
 const onlyMyOptions = [
@@ -86,12 +89,39 @@ export const CollectionFilters = React.memo<Props>(
         viewMode,
         changeViewMode,
         onChange,
+        canFilterOnlyEntries = false,
+        searchRowExtendContent,
     }) => {
         const {filterString, onlyMy, mode, orderField, orderDirection} = filters;
 
         const [innerFilterString, setInnerFilterString] = React.useState<string>(
             filterString || '',
         );
+
+        const selectOptions: SelectOption<StructureItemsFilters['mode']>[] = React.useMemo(() => {
+            const options = [
+                {
+                    value: 'all',
+                    content: i18n('label_filter-by-type-all'),
+                },
+                {
+                    value: 'onlyWorkbooks',
+                    content: i18n('label_filter-by-type-only-workbooks'),
+                },
+                {
+                    value: 'onlyCollections',
+                    content: i18n('label_filter-by-type-only-collections'),
+                },
+            ];
+
+            if (canFilterOnlyEntries) {
+                options.push({
+                    value: 'onlyEntries',
+                    content: getSharedEntryMockText('label_filter-by-type-only-entries'),
+                });
+            }
+            return options;
+        }, [canFilterOnlyEntries]);
 
         const handleChangeFilters = React.useCallback(
             (updatedValues: Partial<StructureItemsFilters>) =>
@@ -187,14 +217,17 @@ export const CollectionFilters = React.memo<Props>(
 
         return (
             <div className={b({'compact-mode': compactMode}, className)}>
-                <TextInput
-                    className={b('filter-string')}
-                    value={innerFilterString}
-                    size={controlSize}
-                    onUpdate={handleUpdateFilterString}
-                    placeholder={i18n('label_filter-string-placeholder')}
-                    hasClear
-                />
+                <div className={b('filter-string-container')}>
+                    <TextInput
+                        className={b('filter-string')}
+                        value={innerFilterString}
+                        size={controlSize}
+                        onUpdate={handleUpdateFilterString}
+                        placeholder={i18n('label_filter-string-placeholder')}
+                        hasClear
+                    />
+                    {searchRowExtendContent}
+                </div>
 
                 <div className={b('filters-block')}>
                     <Select
@@ -202,17 +235,8 @@ export const CollectionFilters = React.memo<Props>(
                         value={[mode]}
                         size={controlSize}
                         onUpdate={handleChangeMode}
-                    >
-                        <Select.Option value="all">
-                            {i18n('label_filter-by-type-all')}
-                        </Select.Option>
-                        <Select.Option value="onlyWorkbooks">
-                            {i18n('label_filter-by-type-only-workbooks')}
-                        </Select.Option>
-                        <Select.Option value="onlyCollections">
-                            {i18n('label_filter-by-type-only-collections')}
-                        </Select.Option>
-                    </Select>
+                        options={selectOptions}
+                    />
 
                     <OrderBySelect
                         className={b('sort')}

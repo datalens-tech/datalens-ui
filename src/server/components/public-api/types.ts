@@ -14,6 +14,7 @@ export type PublicApiVersion = ValueOf<typeof PUBLIC_API_VERSION>;
 export type PublicApiActionOpenApi = {
     summary: string;
     tags?: string[];
+    experimental?: boolean;
 };
 
 export type PublicApiAction<TSchema extends SchemasByScope, TFeature> = {

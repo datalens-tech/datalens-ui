@@ -6,24 +6,12 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import type {
-    ApiV2Filter,
-    ApiV2Parameter,
     DashTabItemControlDataset,
     DashTabItemControlElementSelect,
     DashTabItemControlSingle,
     StringParams,
 } from 'shared';
-import {
-    DashTabItemControlSourceType,
-    DatasetFieldType,
-    Operations,
-    resolveIntervalDate,
-    resolveOperation,
-    resolveRelativeDate,
-    splitParamsToParametersAndFilters,
-    transformParamsToUrlParams,
-    transformUrlParamsToParams,
-} from 'shared';
+import {DashTabItemControlSourceType} from 'shared';
 import {DL} from 'ui/constants/common';
 import type {ChartKitCustomError} from 'ui/libs/DatalensChartkit/ChartKit/modules/chartkit-custom-error/chartkit-custom-error';
 import {ControlSelect} from 'ui/libs/DatalensChartkit/components/Control/Items/Items';
@@ -49,6 +37,7 @@ import {
     getErrorText,
     isValidRequiredValue,
     prepareSelectorError,
+    processParamsForGetDistincts,
 } from '../utils';
 
 import './ControlItemSelect.scss';
@@ -110,109 +99,36 @@ export const ControlItemSelect = ({
         async ({searchPattern, nextPageToken}: {searchPattern: string; nextPageToken: number}) => {
             try {
                 const datasetData = data as DashTabItemControlDataset;
-                const {datasetId, datasetFieldId, datasetFields, datasetFieldsMap} =
-                    getDatasetSourceInfo({actualLoadedData: loadedData, data: datasetData});
-
-                const splitParams = splitParamsToParametersAndFilters(
-                    transformParamsToUrlParams(actualParams),
-                    datasetFields,
-                );
-
-                const filtersParams = transformUrlParamsToParams(splitParams.filtersParams);
-
-                const where = Object.entries(filtersParams).reduce(
-                    (result, [key, rawValue]) => {
-                        // ignoring the values of the current field when filtering,
-                        // because it is enabled by default with operation: 'ICONTAINS',
-                        // otherwise, we will search among the selected
-                        if (key === datasetFieldId) {
-                            return result;
-                        }
-
-                        const valuesWithOperation = (
-                            Array.isArray(rawValue) ? rawValue : [rawValue]
-                        ).map((item) => resolveOperation(item));
-
-                        if (valuesWithOperation.length > 0 && valuesWithOperation[0]?.value) {
-                            const value = valuesWithOperation[0]?.value;
-                            let operation = valuesWithOperation[0]?.operation;
-                            let values = valuesWithOperation.map((item) => item?.value!);
-
-                            if (
-                                valuesWithOperation.length === 1 &&
-                                value.indexOf('__interval_') === 0
-                            ) {
-                                const resolvedInterval = resolveIntervalDate(value);
-
-                                if (resolvedInterval) {
-                                    values = [resolvedInterval.from, resolvedInterval.to];
-                                    operation = Operations.BETWEEN;
-                                }
-                            }
-
-                            if (
-                                valuesWithOperation.length === 1 &&
-                                value.indexOf('__relative_') === 0
-                            ) {
-                                const resolvedRelative = resolveRelativeDate(value);
-
-                                if (resolvedRelative) {
-                                    values = [resolvedRelative];
-                                }
-                            }
-
-                            result.push({
-                                column: key,
-                                operation,
-                                values,
-                            });
-                        }
-
-                        return result;
-                    },
-                    [
-                        {
-                            column: datasetFieldId,
-                            operation: 'ICONTAINS',
-                            values: [searchPattern],
-                        },
-                    ],
-                );
-
-                const filters: ApiV2Filter[] = where
-                    .filter((el) => {
-                        return datasetFieldsMap[el.column]?.fieldType !== DatasetFieldType.Measure;
-                    })
-                    .map<ApiV2Filter>((filter) => {
-                        return {
-                            ref: {type: 'id', id: filter.column},
-                            operation: filter.operation,
-                            values: filter.values,
-                        };
-                    });
-
-                const parameter_values: ApiV2Parameter[] =
-                    splitParams.parametersParams.map<ApiV2Parameter>(([key, value]) => {
-                        return {
-                            ref: {type: 'id', id: key},
-                            value,
-                        };
-                    });
-
-                const {result} = await getDistincts!({
-                    datasetId,
-                    workbookId,
-                    fields: [
-                        {
-                            ref: {type: 'id', id: datasetFieldId},
-                            role_spec: {role: 'distinct'},
-                        },
-                    ],
-                    limit: LIMIT,
-                    offset: LIMIT * nextPageToken,
-                    filters,
-                    parameter_values,
+                const datasetSourceInfo = getDatasetSourceInfo({
+                    actualLoadedData: loadedData,
+                    data: datasetData,
                 });
+                const {datasetId, datasetFieldId} = datasetSourceInfo;
+
+                const {filters, parameter_values} = processParamsForGetDistincts({
+                    params: actualParams,
+                    datasetSourceInfo,
+                    searchPattern,
+                });
+
+                const {result} = await getDistincts!(
+                    {
+                        datasetId,
+                        workbookId,
+                        fields: [
+                            {
+                                ref: {type: 'id', id: datasetFieldId},
+                                role_spec: {role: 'distinct'},
+                            },
+                        ],
+                        limit: LIMIT,
+                        offset: LIMIT * nextPageToken,
+                        filters,
+                        parameter_values,
+                    },
+                    undefined,
+                    {datasetSourceInfo, searchPattern},
+                );
 
                 return {
                     items: result.data.Data.map(([value]) => ({value, title: value})),

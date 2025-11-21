@@ -1,15 +1,15 @@
 import React from 'react';
 
 import block from 'bem-cn-lite';
+import type {SharedEntryBindingsItem} from 'shared/schema';
 
-import type {RowEntityData} from '../EntityRow/EntityRow';
 import {EntityRow} from '../EntityRow/EntityRow';
 
 import './EntityLink.scss';
 
 type EntityLinkProps = {
     title?: string;
-    entity: RowEntityData;
+    entity: SharedEntryBindingsItem;
 };
 
 const b = block('entity-link');

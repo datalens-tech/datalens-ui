@@ -29,7 +29,14 @@ import type {
     WidgetType,
     WizardVisualizationId,
 } from 'shared';
-import {DashCommonQa, DialogDashWidgetQA, EntryScope, Feature, ParamsSettingsQA} from 'shared';
+import {
+    CustomPaletteBgColors,
+    DashCommonQa,
+    DialogDashWidgetQA,
+    EntryScope,
+    Feature,
+    ParamsSettingsQA,
+} from 'shared';
 import {getEntryVisualizationType} from 'shared/schema/mix/helpers';
 import {Collapse} from 'ui/components/Collapse/Collapse';
 import {Interpolate} from 'ui/components/Interpolate';
@@ -154,7 +161,7 @@ class DialogChartWidget extends React.PureComponent<
                     isDefault: true,
                     description: '',
                     background: {
-                        color: 'transparent',
+                        color: CustomPaletteBgColors.NONE,
                     },
                     enableHint: false,
                     hint: '',
@@ -456,7 +463,9 @@ class DialogChartWidget extends React.PureComponent<
                 tabs: {
                     [tabIndex]: {
                         background: {
-                            color: {$set: color},
+                            $set: {
+                                color: color,
+                            },
                         },
                     },
                 },

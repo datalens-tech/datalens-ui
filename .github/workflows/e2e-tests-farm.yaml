@@ -93,6 +93,9 @@ jobs:
             if [ "${FARM_STATUS}" = "running" ]; then
               break
             fi
+            if [ "${FARM_STATUS}" = "errored" ]; then
+              exit 1
+            fi
             echo "  retry, status [${FARM_STATUS}]..."
             sleep "${FARM_POLL_SLEEP_SEC}"
           done

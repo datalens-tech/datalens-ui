@@ -9,6 +9,7 @@ import {
     PUBLIC_API_HTTP_METHOD,
     PUBLIC_API_URL,
 } from '../constants';
+import type {PublicApiActionOpenApi} from '../types';
 
 const resolveUrl = ({actionName}: {actionName: string}) => {
     return PUBLIC_API_URL.replace(':action', actionName);
@@ -22,10 +23,7 @@ export const registerActionToOpenApi = ({
 }: {
     actionConfig: AnyApiServiceActionConfig;
     actionName: string;
-    openApi: {
-        summary: string;
-        tags?: string[];
-    };
+    openApi: PublicApiActionOpenApi;
     openApiRegistry: OpenAPIRegistry;
 }) => {
     const {securityTypes} = registry.getPublicApiConfig();
@@ -39,12 +37,15 @@ export const registerActionToOpenApi = ({
         throw new Error(`Action schema not found for action: ${actionName}`);
     }
 
+    const {summary, tags, experimental} = openApi;
+
     openApiRegistry.registerPath({
         method: PUBLIC_API_HTTP_METHOD.toLocaleLowerCase() as Lowercase<
             typeof PUBLIC_API_HTTP_METHOD
         >,
         path: resolveUrl({actionName}),
-        ...openApi,
+        tags,
+        summary: experimental ? `🚧 [Experimental] ${summary}` : summary,
         request: {
             ...(actionSchema.paramsSchema
                 ? {
