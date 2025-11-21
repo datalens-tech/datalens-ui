@@ -22,18 +22,24 @@ const b = block('dl-workbook-entries-table');
 export type WorkbookEntriesTableTabsProps = {
     workbook: WorkbookWithPermissions;
     loadMoreEntries?: (entryScope: EntryScope) => void;
+    loadMoreSharedEntries?: (entryScope?: EntryScope) => void;
     retryLoadEntries?: (entryScope: EntryScope) => void;
+    retryLoadSharedEntries?: (entryScope?: EntryScope) => void;
     scope?: EntryScope;
     mapTokens?: Record<string, string>;
+    sharedToken?: string;
     mapErrors?: Record<string, boolean>;
+    sharedError?: boolean | null;
     mapLoaders?: Record<string, boolean>;
-    chunks: ChunkItem[][];
+    sharedLoader?: boolean;
+    chunks?: ChunkItem[][];
+    sharedChunks?: ChunkItem[][];
     availableScopes?: EntryScope[];
-    onRenameEntry: (data: WorkbookEntry) => void;
-    onDeleteEntry: (data: WorkbookEntry) => void;
-    onDuplicateEntry: (data: WorkbookEntry) => void;
-    onCopyEntry: (data: WorkbookEntry) => void;
-    onShowRelated: (data: WorkbookEntry) => void;
+    onRenameEntry?: (data: WorkbookEntry) => void;
+    onDeleteEntry?: (data: WorkbookEntry) => void;
+    onDuplicateEntry?: (data: WorkbookEntry) => void;
+    onCopyEntry?: (data: WorkbookEntry) => void;
+    onShowRelated?: (data: WorkbookEntry) => void;
     onCopyId?: (data: WorkbookEntry) => void;
 };
 
@@ -57,7 +63,7 @@ export const WorkbookEntriesTableTabs = ({
         return null;
     }
 
-    const [dashChunk = [], widgetChunk = [], datasetChunk = [], connChunk = []] = chunks;
+    const [dashChunk = [], widgetChunk = [], datasetChunk = [], connChunk = []] = chunks ?? [];
 
     const isWidgetEmpty = widgetChunk.length === 0;
     const isDashEmpty = dashChunk.length === 0;

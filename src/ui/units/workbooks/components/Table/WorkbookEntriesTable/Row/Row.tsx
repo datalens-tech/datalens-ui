@@ -26,11 +26,11 @@ type RowProps = {
     item: WorkbookEntry;
     workbook: WorkbookWithPermissions;
     isOpen?: boolean;
-    onRenameEntry: (data: WorkbookEntry) => void;
-    onDeleteEntry: (data: WorkbookEntry) => void;
-    onDuplicateEntry: (data: WorkbookEntry) => void;
-    onCopyEntry: (data: WorkbookEntry) => void;
-    onShowRelatedClick: (data: WorkbookEntry) => void;
+    onRenameEntry?: (data: WorkbookEntry) => void;
+    onDeleteEntry?: (data: WorkbookEntry) => void;
+    onDuplicateEntry?: (data: WorkbookEntry) => void;
+    onCopyEntry?: (data: WorkbookEntry) => void;
+    onShowRelatedClick?: (data: WorkbookEntry) => void;
     onCopyId?: (data: WorkbookEntry) => void;
 };
 
@@ -146,24 +146,16 @@ const Row: React.FC<RowProps> = ({
                             <EntryActions
                                 workbook={workbook}
                                 entry={item}
-                                onRenameClick={() => {
-                                    onRenameEntry(item);
-                                }}
-                                onDeleteClick={() => {
-                                    onDeleteEntry(item);
-                                }}
-                                onDuplicateEntry={() => {
-                                    onDuplicateEntry(item);
-                                }}
-                                onCopyEntry={() => {
-                                    onCopyEntry(item);
-                                }}
-                                onShowRelatedClick={() => {
-                                    onShowRelatedClick(item);
-                                }}
-                                onCopyId={() => {
-                                    onCopyId?.(item);
-                                }}
+                                onRenameClick={onRenameEntry && (() => onRenameEntry(item))}
+                                onDeleteClick={onDeleteEntry && (() => onDeleteEntry(item))}
+                                onDuplicateEntry={
+                                    onDuplicateEntry && (() => onDuplicateEntry(item))
+                                }
+                                onCopyEntry={onCopyEntry && (() => onCopyEntry(item))}
+                                onShowRelatedClick={
+                                    onShowRelatedClick && (() => onShowRelatedClick(item))
+                                }
+                                onCopyId={onCopyId && (() => onCopyId(item))}
                             />
                         </div>
                     )}

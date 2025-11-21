@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {ArrowRight, ChevronDown, CodeTrunk, LockOpen, TrashBin} from '@gravity-ui/icons';
+import {ArrowRight, ChevronDown, LockOpen, TrashBin} from '@gravity-ui/icons';
 import type {
     DropdownMenuItem,
     DropdownMenuItemAction,
@@ -13,13 +13,13 @@ import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
 import {useHistory} from 'react-router-dom';
 import {DropdownAction} from 'ui/components/DropdownAction/DropdownAction';
-import {EntryIcon} from 'ui/components/EntryIcon/EntryIcon';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {Feature} from '../../../../../shared';
 import {registry} from '../../../../registry';
 import {selectCollection} from '../../store/selectors';
-import {getSharedEntryMockText} from '../helpers';
+
+import {getSharedEntriesMenuItems} from './utils';
 
 import collectionIcon from '../../../../assets/icons/collections/collection.svg';
 import workbookIcon from '../../../../assets/icons/collections/workbook.svg';
@@ -97,51 +97,17 @@ export const CollectionActions = React.memo<Props>(
         }
 
         if (showCreateSharedEntry) {
-            createActionItems.push([
-                {
-                    text: getSharedEntryMockText('collection-actions-menu-item'),
-                    iconStart: <CodeTrunk />,
-                    items: [
-                        {
-                            text: (
-                                <div>
-                                    <div className={b('notice-container')}>
-                                        <p className={b('notice-text')}>
-                                            {getSharedEntryMockText(
-                                                'collection-actions-menu-notice',
-                                            )}
-                                        </p>
-                                    </div>
-                                </div>
-                            ),
-                            className: b('notice'),
-                            action: () => {},
-                            selected: false,
-                        },
-                        {
-                            iconStart: (
-                                <EntryIcon
-                                    entry={{scope: 'connection'}}
-                                    overrideIconType="connection"
-                                />
-                            ),
-                            text: getSharedEntryMockText('label-shared-connection'),
-                            action: () =>
-                                history.push(
-                                    `/collections/${collection?.collectionId}/connections/new`,
-                                ),
-                        },
-                        {
-                            iconStart: <EntryIcon entry={{scope: 'dataset'}} />,
-                            text: getSharedEntryMockText('label-shared-dataset'),
-                            action: () =>
-                                history.push(
-                                    `/collections/${collection?.collectionId}/datasets/new`,
-                                ),
-                        },
-                    ],
-                },
-            ]);
+            createActionItems.push(
+                getSharedEntriesMenuItems({
+                    connectionAction: () => {
+                        history.push(`/collections/${collection?.collectionId}/connections/new`);
+                    },
+                    datasetAction: () => {
+                        history.push(`/collections/${collection?.collectionId}/datasets/new`);
+                    },
+                    noticeClassName: b('notice'),
+                }),
+            );
         }
 
         const collectionsAccessEnabled = isEnabledFeature(Feature.CollectionsAccessEnabled);

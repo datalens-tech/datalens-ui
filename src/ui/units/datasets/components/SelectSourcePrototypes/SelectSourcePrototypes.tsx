@@ -346,7 +346,7 @@ function SelectConnections(props: SelectConnectionsProps) {
                             onClose: () => dispatch(closeDialog()),
                             collectionId,
                             dialogTitle: getSharedEntryMockText(
-                                'title-select-shared-entry-dialog-dataset',
+                                'title-select-shared-entry-dialog-connection',
                             ),
                             getIsInactiveEntity: (entry) =>
                                 entry.entity === CollectionItemEntities.ENTRY &&
