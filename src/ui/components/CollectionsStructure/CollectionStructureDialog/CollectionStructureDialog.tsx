@@ -117,9 +117,9 @@ export const CollectionStructureDialog = React.memo<Props>(
         const collectionData = useSelector(selectCollectionData);
 
         const breadcrumbsIsLoading = useSelector(selectBreadcrumbsIsLoading);
-        const breadcrumbs = useSelector(selectBreadcrumbs) ?? [];
+        const breadcrumbs = useSelector(selectBreadcrumbs);
 
-        const structureItems = useSelector(selectFilteredStructureItems) ?? [];
+        const structureItems = useSelector(selectFilteredStructureItems);
         const structureItemsIsLoading = useSelector(selectStructureItemsIsLoading);
         const structureItemsError = useSelector(selectStructureItemsError);
         const nextPageToken = useSelector(selectNextPageToken);

@@ -43,14 +43,14 @@ const PAGE_SIZE = 50;
 
 const b = block('dialog-select-shared-entries');
 
-export const DialogSelectSharedEntry: React.FC<DialogSelectSharedEntryProps> = ({
+export const DialogSelectSharedEntry = ({
     onClose,
     open,
     collectionId,
     getIsInactiveEntity,
     onSelectEntry,
     dialogTitle,
-}) => {
+}: DialogSelectSharedEntryProps) => {
     const {
         filters,
         setFilters,
@@ -64,9 +64,9 @@ export const DialogSelectSharedEntry: React.FC<DialogSelectSharedEntryProps> = (
         initialCollectionId: collectionId,
     });
     const breadcrumbsIsLoading = useSelector(selectBreadcrumbsIsLoading);
-    const breadcrumbs = useSelector(selectBreadcrumbs) ?? [];
+    const breadcrumbs = useSelector(selectBreadcrumbs);
 
-    const structureItems = useSelector(selectStructureItems) ?? [];
+    const structureItems = useSelector(selectStructureItems);
     const structureItemsIsLoading = useSelector(selectStructureItemsIsLoading);
     const structureItemsError = useSelector(selectStructureItemsError);
     const nextPageToken = useSelector(selectNextPageToken);
