@@ -131,6 +131,7 @@ const ChartkitWidget = React.forwardRef<ChartKit | ChartKitRef | undefined, Char
                 paneSplitOrientation={paneSplitOrientation}
                 widgetDashState={widgetDashState}
                 backgroundColor={backgroundColor}
+                runActivity={runActivity}
             />
         );
     },
