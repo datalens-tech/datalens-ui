@@ -1,8 +1,11 @@
 import React from 'react';
 
+import {i18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import type {ChartActivityResponseData, DashChartRequestContext, StringParams} from 'shared';
 import {DIALOG_DEFAULT} from 'ui/components/DialogDefault/DialogDefault';
+import type {ResponseError} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
+import {ChartsDataProvider} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
 import type {
     OnActivityComplete,
     OnChangeData,
@@ -102,39 +105,42 @@ export const useChartActivities = ({
 
     const runActivity: RunActivityFn = React.useCallback(
         async ({params}: RunActivityArgs) => {
-            let responseData: ChartActivityResponseData;
+            let responseData: ChartActivityResponseData | null;
             try {
                 responseData = await dataProvider.makeActivityRequest({
                     props: {...initialData, params: params as StringParams},
                     requestId,
                     ...(requestHeadersGetter ? {contextHeaders: requestHeadersGetter()} : {}),
                 });
+            } catch (e) {
+                responseData = {error: e};
+            }
 
-                if (responseData.error) {
-                    switch (responseData.settings?.logError) {
-                        case 'toast': {
-                            dispatch(
-                                showToast({
-                                    type: 'danger',
-                                    title: responseData.error.message,
-                                }),
-                            );
-                            break;
-                        }
-                        case 'ignore': {
-                            break;
-                        }
-                        default: {
-                            console.error(responseData.error);
-                            break;
-                        }
+            if (responseData?.error) {
+                switch (responseData.settings?.logError) {
+                    case 'toast': {
+                        dispatch(
+                            showToast({
+                                type: 'danger',
+                                title: i18n('chartkit.data-provider', 'error-execution'),
+                                error: ChartsDataProvider.formatError(
+                                    responseData.error as ResponseError['error'],
+                                    false,
+                                ),
+                            }),
+                        );
+                        break;
                     }
-                } else {
-                    handleActivityCompleteSuccess(responseData);
+                    case 'ignore': {
+                        break;
+                    }
+                    default: {
+                        console.error(responseData.error);
+                        break;
+                    }
                 }
-            } catch (activityError) {
-                responseData = {error: activityError};
-                console.error('responseData.error: ', responseData.error);
+            } else if (responseData) {
+                handleActivityCompleteSuccess(responseData);
             }
 
             onActivityComplete?.({responseData});
