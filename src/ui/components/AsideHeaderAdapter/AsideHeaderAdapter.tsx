@@ -42,7 +42,7 @@ const COLLECTIONS_PATH = '/collections';
 const SERVICE_SETTINGS_PATH = '/settings';
 
 const FOOTER_ITEM_DEFAULT_SIZE = 18;
-const PROMO_SITE_DOMAIN = 'https://datalens.tech';
+const PROMO_SITE_DOMAIN = 'https://datalens.ru/opensource';
 const PROMO_DOC_PATH = '/docs';
 const GITHUB_URL = 'https://github.com/datalens-tech/datalens';
 
