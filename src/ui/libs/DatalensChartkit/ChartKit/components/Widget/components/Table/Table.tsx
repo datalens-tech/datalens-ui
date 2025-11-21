@@ -32,7 +32,7 @@ import {
     validateConfigAndData,
 } from './utils';
 import type {ActionParamsData} from './utils';
-import {getActionParamsEventScope} from './utils/action-params';
+import {getNormalizedEvents} from './utils/action-params';
 
 import './Table.scss';
 
@@ -210,17 +210,22 @@ export class Table extends React.PureComponent<TableProps, TableState> {
                 unresolvedParams,
             },
             onChange,
+            runActivity,
         } = this.props;
         // dynamicRender, highlightRows, sorting does not work properly if there is a group
         const isHasGroups = hasGroups(head);
         const context = {isHasGroups};
-        let actionParamsData: ActionParamsData | undefined;
-        const scope = getActionParamsEventScope(events);
+        const normalizedEvents = getNormalizedEvents(events);
+        const actionParamsEvent = normalizedEvents?.find((e) => {
+            const handlers = Array.isArray(e.handler) ? e.handler : [e.handler];
+            return handlers.some((h) => h.type === 'setActionParams');
+        });
 
-        if (scope) {
+        let actionParamsData: ActionParamsData | undefined;
+        if (actionParamsEvent?.scope) {
             actionParamsData = {
                 params: pickActionParamsFromParams(unresolvedParams),
-                scope,
+                scope: actionParamsEvent.scope,
             };
         }
 
@@ -232,6 +237,8 @@ export class Table extends React.PureComponent<TableProps, TableState> {
             onChange,
             tableRef: this.dataTableRef,
             actionParamsData,
+            events: normalizedEvents,
+            runActivity,
         });
 
         let initialSortOrder: DataTableProps<DataTableData>['initialSortOrder'];

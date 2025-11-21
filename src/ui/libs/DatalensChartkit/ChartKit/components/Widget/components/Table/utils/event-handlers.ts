@@ -1,5 +1,5 @@
 import type {Column} from '@gravity-ui/react-data-table';
-import type {TableHead, TableRow} from 'shared';
+import type {TableHead, TableRow, TableWidgetEventScope, WidgetEvent} from 'shared';
 import {isMacintosh} from 'ui/utils';
 
 import {CLICK_ACTION_TYPE} from '../../../../../../modules/constants/constants';
@@ -22,12 +22,14 @@ export const getCellClickArgs = (row: DataTableData | undefined, columnName: str
 export function getCellOnClickHandler(args: {
     actionParamsData?: ActionParamsData;
     onChange: TableProps['onChange'];
+    runActivity: TableProps['runActivity'];
     head: TableHead[];
     rows: TableRow[];
+    events?: WidgetEvent<TableWidgetEventScope>[];
 }) {
-    const {actionParamsData, head, rows, onChange} = args;
+    const {actionParamsData, head, rows, events, runActivity, onChange} = args;
 
-    const handleCellClick: Column<DataTableData>['onClick'] = ({row}, col, event) => {
+    const handleCellClick: Column<DataTableData>['onClick'] = ({row, index}, col, event) => {
         const onClick = getCellOnClick(row, col.name);
         const cell = row && col.name ? row[col.name] : undefined;
         const metaKey = isMacintosh() ? event.metaKey : event.ctrlKey;
@@ -73,6 +75,16 @@ export function getCellOnClickHandler(args: {
                         true,
                         true,
                     );
+                }
+
+                const runActivityEvent = events?.find((e) => {
+                    const handlers = Array.isArray(e.handler) ? e.handler : [e.handler];
+                    return handlers.some((h) => h.type === 'runActivity');
+                });
+
+                if (runActivityEvent && runActivity) {
+                    const params = runActivityEvent.scope === 'cell' ? cell : rows[index];
+                    runActivity({params: params as any});
                 }
             }
         }

@@ -5,14 +5,7 @@ import clone from 'lodash/clone';
 import get from 'lodash/get';
 import intersection from 'lodash/intersection';
 import without from 'lodash/without';
-import type {
-    StringParams,
-    TableCell,
-    TableCommonCell,
-    TableHead,
-    TableRow,
-    TableWidgetEventScope,
-} from 'shared';
+import type {StringParams, TableCell, TableCommonCell, TableHead, TableRow} from 'shared';
 import type {DataTableData, TableWidgetData} from 'ui/libs/DatalensChartkit/types';
 
 import {
@@ -275,18 +268,13 @@ function extractCellActionParams(args: {cell: TableCell; head?: TableHead}): Str
     return {};
 }
 
-export function getActionParamsEventScope(
-    events?: NonNullable<TableWidgetData['config']>['events'],
-): TableWidgetEventScope | undefined {
+export function getNormalizedEvents(events?: NonNullable<TableWidgetData['config']>['events']) {
     if (!events?.click) {
         return undefined;
     }
 
-    const normalizedEvents = Array.isArray(events.click) ? events.click : [events.click];
-
-    return normalizedEvents.reduce<TableWidgetEventScope | undefined>((_, e) => {
-        return e.scope;
-    }, undefined);
+    const clickEvent = Array.isArray(events.click) ? events.click : [events.click];
+    return clickEvent;
 }
 
 function setMapValue(map: ValuesMap, value: string, hash: string) {
