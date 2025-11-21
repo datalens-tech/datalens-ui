@@ -4,10 +4,8 @@ import {Flex, useThemeType} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
 import {Redirect, Route, Switch, useLocation} from 'react-router-dom';
-import {Feature} from 'shared';
 import {DL} from 'ui/constants';
 import {registry} from 'ui/registry';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {AUTH_ROUTE} from '../../constants/routes';
 import {resetAuthState} from '../../store/actions/common';
@@ -54,16 +52,10 @@ export function AuthPage({backgroundImage}: AuthPageProps) {
     const currentDefaultImage = theme === 'dark' ? defaultBackgroundDark : defaultBackgroundLight;
     const currentImage = backgroundImage?.[theme] || currentDefaultImage;
 
-    const showBackgroundImage =
-        isEnabledFeature(Feature.EnableDLRebranding) &&
-        [AUTH_ROUTE.SIGNIN, AUTH_ROUTE.SIGNUP].includes(pathname);
+    const showBackgroundImage = [AUTH_ROUTE.SIGNIN, AUTH_ROUTE.SIGNUP].includes(pathname);
 
     return (
-        <Flex
-            direction="column"
-            height="100%"
-            className={b({rebranding: isEnabledFeature(Feature.EnableDLRebranding), theme})}
-        >
+        <Flex direction="column" height="100%" className={b({theme})}>
             {showBackgroundImage && (
                 <img
                     className={b('background-image', {

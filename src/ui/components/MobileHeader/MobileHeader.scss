@@ -11,7 +11,7 @@
         height: 0;
     }
 
-    &__logo_rebranding {
+    &__logo {
         flex: 1;
     }
 
@@ -25,13 +25,10 @@
     }
 
     &__logo-icon {
+        height: auto;
+        width: auto;
+        padding-left: var(--g-spacing-2);
         color: var(--g-color-base-brand);
-
-        &_rebranding {
-            height: auto;
-            width: auto;
-            padding-left: var(--g-spacing-2);
-        }
     }
 
     &__user-avatar {
