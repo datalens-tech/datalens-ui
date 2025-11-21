@@ -20,6 +20,7 @@ import type {
 import {Feature, TIMEOUT_100_SEC, TIMEOUT_65_SEC} from 'shared';
 import type {
     BaseSource,
+    CreateCollectionDatasetArgs,
     CreateDatasetArgs,
     CreateDirDatasetArgs,
     CreateWorkbookDatasetArgs,
@@ -31,6 +32,7 @@ import type {
 import {sdk} from 'ui';
 import {BI_ERRORS} from 'ui/constants';
 import type {AppDispatch} from 'ui/store';
+import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {addEditHistoryPoint, resetEditHistoryUnit} from 'ui/store/actions/editHistory';
 import {loadRevisions, setEntryContent} from 'ui/store/actions/entryContent';
 import {EDIT_HISTORY_ACTION} from 'ui/store/constants/editHistory';
@@ -40,6 +42,7 @@ import {RevisionsMode} from 'ui/store/typings/entryContent';
 import Utils, {getFilteredObject} from 'ui/utils';
 
 import type {ApplyData} from '../../../../../components/DialogFilter/DialogFilter';
+import {DIALOG_SHARED_ENTRY_PERMISSIONS} from '../../../../../components/DialogSharedEntryPermissions/DialogSharedEntryPermissions';
 import logger from '../../../../../libs/logger';
 import {getSdk} from '../../../../../libs/schematic-sdk';
 import {
@@ -76,6 +79,7 @@ import type {
     SetCurrentDbName,
     SetCurrentTab,
     SetLastModifiedTab,
+    SetSharedDatasetDelegation,
     SetSourcesPagination,
     SetValidationState,
     SourcesPagination,
@@ -1521,7 +1525,8 @@ export function getDbNames(connectionIds: string[]) {
 
 interface SaveDatasetProps {
     key?: string;
-    workbookId?: string | null;
+    workbookId?: WorkbookId;
+    collectionId?: string;
     name?: string;
     history: History;
     isCreationProcess?: boolean;
@@ -1532,6 +1537,7 @@ interface SaveDatasetProps {
 export function saveDataset({
     key,
     workbookId,
+    collectionId,
     name,
     history,
     isCreationProcess,
@@ -1545,8 +1551,13 @@ export function saveDataset({
                 payload: {},
             });
 
-            const {entryContent, dataset: {id, content: dataset} = {}} = getState();
+            const {
+                entryContent,
+                dataset: {id, content: dataset, selectedConnections, savingDataset} = {},
+            } = getState();
             let datasetId = id;
+            const isSharedDatasetCreation = Boolean(collectionId);
+            const sharedDatasetDelegationState = savingDataset?.sharedDatasetDelegationState;
 
             if (isCreationProcess) {
                 const creationData: Partial<CreateDatasetArgs> = {
@@ -1556,6 +1567,9 @@ export function saveDataset({
 
                 if (workbookId) {
                     (creationData as CreateWorkbookDatasetArgs).workbook_id = workbookId;
+                    creationData.name = name;
+                } else if (collectionId) {
+                    (creationData as CreateCollectionDatasetArgs).collection_id = collectionId;
                     creationData.name = name;
                 } else {
                     const dividedKey = DatasetUtils.divideKey(key);
@@ -1578,6 +1592,22 @@ export function saveDataset({
                 });
 
                 dispatch(setValidationData(validation as unknown as ValidateDatasetResponse));
+            }
+
+            if (
+                isSharedDatasetCreation &&
+                selectedConnections?.[0].entryId &&
+                sharedDatasetDelegationState !== undefined
+            ) {
+                await getSdk().sdk.us.createSharedEntryBinding(
+                    {
+                        // when support many connections, US must support many source
+                        sourceId: selectedConnections[0].entryId,
+                        targetId: datasetId!,
+                        delegation: sharedDatasetDelegationState,
+                    },
+                    {concurrentId: 'createEntityBinding', retries: 2},
+                );
             }
 
             if (!isCreationProcess) {
@@ -1628,7 +1658,11 @@ export function saveDataset({
                 history.replace(`/datasets/${datasetId}`);
                 DatasetUtils.openCreationWidgetPage({datasetId: datasetId!, target: '_self'});
             } else if (isCreationProcess) {
-                history.push(`/datasets/${datasetId}`);
+                if (isSharedDatasetCreation) {
+                    history.push(`/collections/${collectionId}`);
+                } else {
+                    history.push(`/datasets/${datasetId}`);
+                }
             }
 
             dispatch(resetEditHistoryUnit({unitId: DATASETS_EDIT_HISTORY_UNIT_ID}));
@@ -1834,10 +1868,35 @@ function setInitialSources(ids: string[]) {
     };
 }
 
-export function initializeDataset({connectionId}: {connectionId: string}) {
-    return async (dispatch: DatasetDispatch) => {
+export function initializeDataset({
+    connectionId,
+    collectionId,
+}: {
+    connectionId: string;
+    collectionId?: string;
+}) {
+    return async (dispatch: DatasetDispatch, getState: GetState) => {
         if (connectionId) {
             await dispatch(setInitialSources([connectionId]));
+        }
+
+        if (collectionId) {
+            const {selectedConnections} = getState().dataset;
+            const connection = selectedConnections[0];
+            dispatch(
+                openDialog({
+                    id: DIALOG_SHARED_ENTRY_PERMISSIONS,
+                    props: {
+                        onClose: () => dispatch(closeDialog()),
+                        onApply: (delegate) => {
+                            dispatch(setSharedDatasetDelegation(delegate));
+                            dispatch(closeDialog());
+                        },
+                        open: true,
+                        entry: connection,
+                    },
+                }),
+            );
         }
 
         dispatch(_getSources());
@@ -2021,5 +2080,12 @@ export function getSourcesListingOptions(connectionId: string) {
         const currentDbName = getState().dataset.currentDbName;
 
         return {sourceListing, currentDbName};
+    };
+}
+
+export function setSharedDatasetDelegation(delegation: boolean): SetSharedDatasetDelegation {
+    return {
+        type: DATASET_ACTION_TYPES.SET_SHARED_DATASET_DELEGATION,
+        payload: delegation,
     };
 }

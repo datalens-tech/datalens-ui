@@ -9,8 +9,10 @@ import type {RouteComponentProps} from 'react-router-dom';
 import {Route, Switch, withRouter} from 'react-router-dom';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
+import {Feature} from 'shared';
 import {setCurrentPageEntry} from 'store/actions/asideHeader';
 import {registry} from 'ui/registry';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {resetDatasetState} from 'units/datasets/store/actions/creators';
 
 import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
@@ -33,6 +35,14 @@ type Props = StateProps &
     RouteComponentProps & {
         sdk: SDK;
     };
+
+const getDatasetPaths = (end: string) => {
+    const routes = [end, `/workbooks/:workbookId${end}`];
+    if (isEnabledFeature(Feature.EnableSharedEntries)) {
+        routes.push(`/collections/:collectionId${end}`);
+    }
+    return routes;
+};
 
 const DatasetRouter = ({sdk, datasetKey, setCurrentPageEntry, resetDatasetState, match}: Props) => {
     const isAsideHeaderEnabled = getIsAsideHeaderEnabled();
@@ -71,31 +81,39 @@ const DatasetRouter = ({sdk, datasetKey, setCurrentPageEntry, resetDatasetState,
         <div className={b()}>
             <Switch>
                 <Route
-                    path={['/datasets/new', '/workbooks/:workbookId/datasets/new']}
-                    render={(props: RouteComponentProps<{workbookId?: string}>) => {
-                        const {workbookId} = props.match.params;
+                    path={getDatasetPaths('/datasets/new')}
+                    render={(
+                        props: RouteComponentProps<{workbookId?: string; collectionId?: string}>,
+                    ) => {
+                        const {workbookId, collectionId} = props.match.params;
                         return (
                             <DatasetPage
                                 {...props}
                                 sdk={sdk}
                                 datasetId={workbookId}
                                 workbookId={workbookId}
+                                collectionId={collectionId}
                             />
                         );
                     }}
                 />
                 <Route
-                    path={['/datasets/:datasetId', '/workbooks/:workbookId/datasets/:datasetId']}
+                    path={getDatasetPaths('/datasets/:datasetId')}
                     render={(
-                        props: RouteComponentProps<{datasetId?: string; workbookId?: string}>,
+                        props: RouteComponentProps<{
+                            datasetId?: string;
+                            workbookId?: string;
+                            collectionId?: string;
+                        }>,
                     ) => {
-                        const {datasetId, workbookId} = props.match.params;
+                        const {datasetId, workbookId, collectionId} = props.match.params;
                         return (
                             <DatasetPage
                                 {...props}
                                 sdk={sdk}
                                 datasetId={datasetId}
                                 workbookId={workbookId}
+                                collectionId={collectionId}
                             />
                         );
                     }}

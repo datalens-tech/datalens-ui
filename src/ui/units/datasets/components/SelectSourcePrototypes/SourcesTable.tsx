@@ -46,7 +46,7 @@ type ErrorViewProps = {
 type SourcesTableProps = {
     onEdit: (source: DatasetSource) => void;
     onAdd: () => void;
-    onDelete: () => void;
+    onDelete: (props: {id: string}) => void;
     onRetry: () => void;
     sources: DatasetSource[];
     error?: DataLensApiError;

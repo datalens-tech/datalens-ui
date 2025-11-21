@@ -2,11 +2,11 @@ import React from 'react';
 
 import {useThemeType} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {DialogCollectionStructureQa} from 'shared/constants';
-import type {Collection} from 'shared/schema/us/types/collections';
-import type {Workbook} from 'shared/schema/us/types/workbooks';
+import {CollectionItemEntities, DialogCollectionStructureQa} from 'shared/constants';
+import type {StructureItem} from 'shared/schema/us/types/collections';
 
 import {IconById} from '../../../../../components/IconById/IconById';
+import {EntryIcon} from '../../../../EntryIcon/EntryIcon';
 import {WorkbookIcon} from '../../../../WorkbookIcon/WorkbookIcon';
 
 import './Item.scss';
@@ -14,21 +14,48 @@ import './Item.scss';
 const b = block('dl-collections-structure-collection-select-item');
 
 export type Props = {
-    item: Collection | Workbook;
+    item: StructureItem;
     active: boolean;
     canSelectWorkbook: boolean;
-    onSelect: (item: Collection | Workbook) => void;
+    inactive: boolean;
+    onSelect: (item: StructureItem) => void;
 };
 
-export const Item = React.memo<Props>(({item, active, canSelectWorkbook, onSelect}) => {
+const ItemIcon = ({item}: Pick<Props, 'item'>) => {
     const theme = useThemeType();
 
-    const isWorkbook = 'workbookId' in item;
+    switch (item.entity) {
+        case CollectionItemEntities.WORKBOOK:
+            return <WorkbookIcon title={item.title} size="s" />;
+        case CollectionItemEntities.COLLECTION:
+            return (
+                <IconById
+                    id={theme === 'dark' ? 'collectionColoredDark' : 'collectionColored'}
+                    size={20}
+                />
+            );
+        case CollectionItemEntities.ENTRY:
+            return (
+                <EntryIcon
+                    entry={item}
+                    entityIconProps={{
+                        classNameColorBox: 'custom-color-box',
+                    }}
+                    className={b('entry-icon')}
+                />
+            );
+        default:
+            return null;
+    }
+};
+
+export const Item = React.memo<Props>(({item, active, canSelectWorkbook, inactive, onSelect}) => {
+    const isWorkbook = item.entity === CollectionItemEntities.WORKBOOK;
 
     return (
         <div
             className={b({
-                inactive: Boolean(isWorkbook && !canSelectWorkbook),
+                inactive: inactive || Boolean(isWorkbook && !canSelectWorkbook),
                 active: Boolean(isWorkbook && canSelectWorkbook && active),
             })}
             onClick={() => {
@@ -37,14 +64,7 @@ export const Item = React.memo<Props>(({item, active, canSelectWorkbook, onSelec
             data-qa={DialogCollectionStructureQa.ListItem}
         >
             <div className={b('icon')}>
-                {isWorkbook ? (
-                    <WorkbookIcon title={item.title} size="s" />
-                ) : (
-                    <IconById
-                        id={theme === 'dark' ? 'collectionColoredDark' : 'collectionColored'}
-                        size={20}
-                    />
-                )}
+                <ItemIcon item={item} />
             </div>
             <div className={b('title')}>{item.title}</div>
         </div>

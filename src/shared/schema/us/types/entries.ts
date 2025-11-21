@@ -263,6 +263,18 @@ export interface GetEntriesAnnotationArgs {
     type?: string;
 }
 
+export interface CreateEntityBindingsResponse {
+    sourceId: string;
+    targetId: string;
+    isDelegated: boolean;
+}
+
+export interface CreateEntityBindingsArgs {
+    sourceId: string;
+    targetId: string;
+    delegation: boolean;
+}
+
 export type GetSharedEntryBindingsArgs = {
     entryId: string;
     entryAs: 'target' | 'source';

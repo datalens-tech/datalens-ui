@@ -11,7 +11,10 @@ import {getParentCollectionPath} from 'ui/units/collections-navigation/utils';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {Feature} from '../../../../../../shared';
-import type {CreateCollectionResponse, StructureItem} from '../../../../../../shared/schema';
+import type {
+    CreateCollectionResponse,
+    StructureItemWithPermissions,
+} from '../../../../../../shared/schema';
 import type {StructureItemsFilters} from '../../../../../components/CollectionFilters';
 import {CollectionPageViewMode} from '../../../../../components/CollectionFilters';
 import {
@@ -56,7 +59,7 @@ type UseLayoutArgs = {
     curCollectionId: string | null;
     filters: StructureItemsFilters;
     selectedMap: SelectedMap;
-    itemsAvailableForSelection: StructureItem[];
+    itemsAvailableForSelection: StructureItemWithPermissions[];
     viewMode: CollectionPageViewMode;
     isOpenSelectionMode: boolean;
     openSelectionMode: () => void;

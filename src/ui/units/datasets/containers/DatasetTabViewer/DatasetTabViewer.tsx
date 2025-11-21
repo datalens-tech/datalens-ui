@@ -15,14 +15,22 @@ type Props = {
     datasetId?: string;
     forwardedRef?: React.ForwardedRef<React.Component>;
     workbookId?: string | null;
+    collectionId?: string;
 };
 
 function DatasetTabViewer(props: Props) {
-    const {tab, sdk, datasetId, forwardedRef, workbookId} = props;
+    const {tab, sdk, datasetId, forwardedRef, workbookId, collectionId} = props;
 
     switch (tab) {
         case TAB_SOURCES:
-            return <DatasetSources ref={forwardedRef} sdk={sdk} workbookId={workbookId} />;
+            return (
+                <DatasetSources
+                    ref={forwardedRef}
+                    sdk={sdk}
+                    workbookId={workbookId}
+                    collectionId={collectionId}
+                />
+            );
         case TAB_FILTERS:
             return <DatasetFilters />;
         case TAB_PARAMETERS:

@@ -51,6 +51,7 @@ export const getAppMetricGroupNameI18n = (key: string) => _getSelectItemTitle()[
 export const getFakeEntry = (
     scope: EntryScope.Connection | EntryScope.Dataset,
     workbookId?: WorkbookId,
+    collectionId?: string,
     searchCurrentPath?: string,
 ) => {
     let path = searchCurrentPath || DL.USER_FOLDER;
@@ -60,6 +61,7 @@ export const getFakeEntry = (
     return genericGetFakeEntry({
         key: `${path}${i18n('connections.form', `section_creation-${scope}`)}`,
         workbookId,
+        collectionId,
         fakeName: i18n('connections.form', `section_creation-${scope}`),
     });
 };

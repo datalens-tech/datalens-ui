@@ -219,7 +219,14 @@ export type CreateWorkbookDatasetArgs = CreateDatasetBaseArgs & {
     workbook_id: string;
 };
 
-export type CreateDatasetArgs = CreateDirDatasetArgs | CreateWorkbookDatasetArgs;
+export type CreateCollectionDatasetArgs = CreateDatasetBaseArgs & {
+    collection_id: string;
+};
+
+export type CreateDatasetArgs =
+    | CreateDirDatasetArgs
+    | CreateWorkbookDatasetArgs
+    | CreateCollectionDatasetArgs;
 
 export type CreateDatasetResponse = Id & DatasetWithOptions;
 

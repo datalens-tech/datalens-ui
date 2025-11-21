@@ -18,6 +18,8 @@ import type {
     CopyEntryResponse,
     CopyWorkbookEntryArgs,
     CopyWorkbookEntryResponse,
+    CreateEntityBindingsArgs,
+    CreateEntityBindingsResponse,
     CreateFolderArgs,
     CreateFolderResponse,
     DeleteUSEntryArgs,
@@ -255,6 +257,15 @@ export const entriesActions = {
             headers,
         }),
     }),
+    createSharedEntryBinding: createAction<CreateEntityBindingsResponse, CreateEntityBindingsArgs>({
+        method: 'POST',
+        path: () => `${PATH_PREFIX}/entity-bindings/create`,
+        params: (params, headers) => ({
+            body: params,
+            headers,
+        }),
+    }),
+
     getSharedEntryBindings: createAction<
         GetSharedEntryBindingsResponse,
         GetSharedEntryBindingsArgs
