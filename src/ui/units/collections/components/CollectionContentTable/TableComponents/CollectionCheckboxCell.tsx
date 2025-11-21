@@ -2,7 +2,7 @@ import React from 'react';
 
 import {Checkbox} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import type {StructureItem} from 'shared/schema/types';
+import type {StructureItemWithPermissions} from 'shared/schema/types';
 
 import type {SelectedMap, UpdateCheckboxArgs} from '../../CollectionPage/hooks/useSelection';
 import {getIsWorkbookItem} from '../../helpers';
@@ -12,7 +12,7 @@ import '../CollectionContentTable.scss';
 const b = block('dl-collection-content-table');
 
 type CollectionCheckboxCellProps = {
-    item: StructureItem;
+    item: StructureItemWithPermissions;
     selectedMap: SelectedMap;
     onUpdateCheckboxClick: (args: UpdateCheckboxArgs) => void;
     disabled?: boolean;

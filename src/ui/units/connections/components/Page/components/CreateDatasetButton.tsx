@@ -7,7 +7,7 @@ import {get} from 'lodash';
 import {connect} from 'react-redux';
 import type {DatalensGlobalState} from 'ui';
 
-import {workbookIdSelector} from '../../../store';
+import {collectionIdSelector, workbookIdSelector} from '../../../store';
 
 const i18n = I18n.keyset('connections.form');
 const KEY_PARTS_DELIMITER = '/';
@@ -24,7 +24,7 @@ const getPathFromEntryKey = (key = '') => {
 };
 
 const CreateDatasetButtonComponent = (props: CreateDatasetButtonProps) => {
-    const {visible, entryKey, entryId, workbookId, size = 'm'} = props;
+    const {visible, entryKey, entryId, workbookId, collectionId, size = 'm'} = props;
 
     if (!entryId || !visible) {
         return null;
@@ -38,7 +38,11 @@ const CreateDatasetButtonComponent = (props: CreateDatasetButtonProps) => {
         pathname = `/workbooks/${workbookId}${pathname}`;
     }
 
-    if (currentPath && !workbookId) {
+    if (collectionId) {
+        pathname = `/collections/${collectionId}${pathname}`;
+    }
+
+    if (currentPath && !workbookId && !collectionId) {
         query += `&currentPath=${encodeURIComponent(currentPath)}`;
     }
 
@@ -64,6 +68,7 @@ const mapStateToProps = (state: DatalensGlobalState) => {
     return {
         visible: isCreateDatasetButtonVisible(state),
         workbookId: workbookIdSelector(state),
+        collectionId: collectionIdSelector(state),
     };
 };
 

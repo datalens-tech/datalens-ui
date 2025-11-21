@@ -13,7 +13,7 @@ import {CollectionItemEntities, Feature} from '../../../../../../shared';
 import type {
     CollectionWithPermissions,
     SharedEntryFieldsWithPermissions,
-    StructureItem,
+    StructureItemWithPermissions,
     UpdateCollectionResponse,
     UpdateWorkbookResponse,
     WorkbookWithPermissions,
@@ -390,7 +390,7 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
     );
 
     const getItemActions = React.useCallback(
-        (item: StructureItem) => {
+        (item: StructureItemWithPermissions) => {
             switch (item.entity) {
                 case CollectionItemEntities.COLLECTION:
                     return getCollectionActions(item);

@@ -119,6 +119,7 @@ export const connectionsSelector = (state: DatalensGlobalState) => {
         };
     });
 };
+export type SelectedConnections = ReturnType<typeof connectionsSelector>;
 
 const getSourceHashTitleId = <T extends {parameter_hash: string; title: string}>({
     parameter_hash,
@@ -166,6 +167,8 @@ export const sortedSourcePrototypesSelector = (state: DatalensGlobalState) => {
         return Number(isSourceRight) - Number(isSourceLeft);
     });
 };
+
+export type SortedSourcePrototypes = ReturnType<typeof sortedSourcePrototypesSelector>;
 
 export const selectedConnectionSelector = (state: DatalensGlobalState) => {
     const {ui: {selectedConnectionId} = {}, selectedConnections} = state.dataset;

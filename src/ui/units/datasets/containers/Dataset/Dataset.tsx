@@ -122,6 +122,7 @@ interface OwnProps {
     connectionId: string;
     ytPath?: string;
     workbookIdFromPath?: string;
+    collectionIdFromPath?: string;
     hotkeysContext?: HotkeysContextType;
     location: Location;
     history: History;
@@ -181,13 +182,14 @@ class Dataset extends React.Component<Props, State> {
             fetchFieldTypes,
             location,
         } = this.props;
+        const collectionId = this.getCollectionId();
         const currentSearchParams = new URLSearchParams(location.search);
         const revId = currentSearchParams.get(URL_QUERY.REV_ID) ?? undefined;
 
         fetchFieldTypes();
 
         if (isCreationProcess) {
-            initializeDataset({connectionId});
+            initializeDataset({connectionId, collectionId});
         } else if (datasetId) {
             initialFetchDataset({datasetId, rev_id: revId});
         }
@@ -411,12 +413,13 @@ class Dataset extends React.Component<Props, State> {
             currentRevId,
         } = this.props;
         const workbookId = this.getWorkbookId();
+        const collectionId = this.getCollectionId();
 
         if (isCreationProcess) {
             const searchParams = new URLSearchParams(location.search);
             const searchCurrentPath = searchParams.get(URL_QUERY.CURRENT_PATH);
 
-            return getFakeEntry(EntryScope.Dataset, workbookId, searchCurrentPath!);
+            return getFakeEntry(EntryScope.Dataset, workbookId, collectionId, searchCurrentPath!);
         }
 
         return {
@@ -469,8 +472,23 @@ class Dataset extends React.Component<Props, State> {
         });
     };
 
+    createSharedDatasetInCollection: DialogCreateDatasetInWorkbookProps['onApply'] = ({name}) => {
+        const {isCreationProcess, history} = this.props;
+        return this.props.saveDataset({
+            name,
+            history,
+            isCreationProcess,
+            collectionId: this.getCollectionId(),
+            isErrorThrows: true,
+        });
+    };
+
     getWorkbookId() {
         return this.props.workbookIdFromPath || this.props.workbookId;
+    }
+
+    getCollectionId() {
+        return this.props.collectionIdFromPath;
     }
 
     refreshSources = () => {
@@ -584,6 +602,7 @@ class Dataset extends React.Component<Props, State> {
                         sdk={sdk}
                         datasetId={datasetId}
                         workbookId={this.getWorkbookId()}
+                        collectionId={this.getCollectionId()}
                     />
                     <DatasetPreview closePreview={this.closeDatasetPreview} />
                 </SplitPane>
@@ -637,11 +656,26 @@ class Dataset extends React.Component<Props, State> {
         const {isRefetchingDataset} = this.props;
         const {isVisibleDialogCreateDataset} = this.state;
         const workbookId = this.getWorkbookId();
+        const collectionId = this.getCollectionId();
+
+        let creationScope: DialogCreateDatasetProps['creationScope'];
+        let onApply: DialogCreateDatasetProps['onApply'];
+
+        if (workbookId) {
+            creationScope = 'workbook';
+            onApply = this.createDatasetInWorkbook;
+        } else if (collectionId) {
+            creationScope = 'collection';
+            onApply = this.createSharedDatasetInCollection;
+        } else {
+            creationScope = 'navigation';
+            onApply = this.createDatasetInNavigation;
+        }
 
         const dialogProps = {
-            creationScope: workbookId ? 'workbook' : 'navigation',
+            creationScope,
+            onApply,
             visible: isVisibleDialogCreateDataset,
-            onApply: workbookId ? this.createDatasetInWorkbook : this.createDatasetInNavigation,
             onClose: this.closeDialogCreateDataset,
         } as DialogCreateDatasetProps;
 
