@@ -48,7 +48,6 @@ import {
     Feature,
     FixedHeaderQa,
     SCROLL_TITLE_DEBOUNCE_TIME,
-    SCR_USER_AGENT_HEADER_VALUE,
     UPDATE_STATE_DEBOUNCE_TIME,
 } from 'shared';
 import type {DatalensGlobalState} from 'ui';
@@ -103,6 +102,7 @@ import {
     selectTabHashState,
     selectTabs,
 } from '../../store/selectors/dashTypedSelectors';
+import {dispatchDashLoadedEvent} from '../../utils/customEvents';
 import {getCustomizedProperties} from '../../utils/dashkitProps';
 import {scrollIntoView} from '../../utils/scrollUtils';
 import {
@@ -123,6 +123,7 @@ import iconRelations from 'ui/assets/icons/relations.svg';
 
 import './Body.scss';
 
+// Do not change class name, the snapter service uses
 const b = block('dash-body');
 
 const isMobileFixedHeaderEnabled = isEnabledFeature(Feature.EnableMobileFixedHeader);
@@ -1293,9 +1294,8 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                 this.scrollIntoViewWithDebounce();
             }
 
-            if (isLoaded && navigator.userAgent === SCR_USER_AGENT_HEADER_VALUE) {
-                const customEvent = new CustomEvent('dash.done', {bubbles: true});
-                document.body.dispatchEvent(customEvent);
+            if (isLoaded) {
+                dispatchDashLoadedEvent();
             }
 
             this.setState({loaded: isLoaded});
