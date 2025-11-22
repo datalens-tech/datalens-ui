@@ -111,6 +111,7 @@ export interface DLUserSettings {
         token: string;
         createdAt: string;
     };
+    topServiceAlerts?: Record<string, {closedAt: string | null}>;
 }
 
 export interface DLUserAccount {
@@ -183,6 +184,9 @@ export type DLGlobalData = {
         features?: Record<string, unknown>;
     };
     userIsOrgAdmin?: boolean;
+    nonAdminLicenseExpirationWarningDays?: number | null;
+    billingAccountIssue?: boolean;
+    hasActiveLicense?: boolean;
     tenantSettings?: TenantSettings;
     allowLanguages?: Language[];
     langRegion?: string;
