@@ -77,6 +77,11 @@ export const mockSharedEntriesTexts = {
     'label_filter-by-type-only-entries': 'Только общие объекты',
     'or-select-shared-entry-dialog': 'или',
     'past-link-btn-select-shared-entry-dialog': 'Указать ссылку',
-    'title-select-shared-entry-dialog-dataset': 'Выберите подключение',
+    'title-select-shared-entry-dialog-connection': 'Выберите подключение',
+    'title-select-shared-entry-dialog-dataset': 'Выберите датасет',
     'shared-entry-bindings-dropdown-menu-title': 'Управление привязками',
+    'shared-entry-workbook-table-title': 'Привязанные объекты',
+    'add-entry-workbook-toast-title-dataset': 'Датасет привязан к воркбуку',
+    'add-entry-workbook-toast-title-connection': 'Подключение привязано к воркбуку',
+    'add-entry-workbook-toast-message': 'Название: {{name}}',
 };

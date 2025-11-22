@@ -39,10 +39,13 @@ export const DialogSharedEntryPermissions: React.FC<DialogSharedEntryPermissions
     onClose,
 }) => {
     const [delegate, setDelegate] = React.useState(true);
+    const [isLoading, setIsLoading] = React.useState(false);
 
-    const onSubmit = () => {
+    const onSubmit = async () => {
         // TODO add request
-        onApply?.(delegate);
+        setIsLoading(true);
+        await onApply?.(delegate);
+        setIsLoading(false);
     };
 
     return (
@@ -96,6 +99,7 @@ export const DialogSharedEntryPermissions: React.FC<DialogSharedEntryPermissions
                 propsButtonCancel={{
                     view: 'flat',
                 }}
+                loading={isLoading}
                 textButtonCancel={getSharedEntryMockText('cancel-unbind-dialog')}
                 onClickButtonApply={onSubmit}
                 onClickButtonCancel={onClose}

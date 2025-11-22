@@ -4,6 +4,8 @@ import {createSelector} from 'reselect';
 const selectGetWorkbook = (state: DatalensGlobalState) => state.workbooks.getWorkbook;
 
 const selectGetWorkbookEntries = (state: DatalensGlobalState) => state.workbooks.getWorkbookEntries;
+const selectGetWorkbookSharedEntries = (state: DatalensGlobalState) =>
+    state.workbooks.getWorkbookSharedEntries;
 
 const selectGetWorkbookBreadcrumbs = (state: DatalensGlobalState) =>
     state.workbooks.getWorkbookBreadcrumbs;
@@ -12,6 +14,8 @@ const selectCreateWorkbookEntry = (state: DatalensGlobalState) =>
     state.workbooks.createWorkbookEntry;
 
 export const selectWorkbookItems = (state: DatalensGlobalState) => state.workbooks.items;
+export const selectWorkbookSharedItems = (state: DatalensGlobalState) =>
+    state.workbooks.sharedItems;
 
 const selectRenameEntry = (state: DatalensGlobalState) => state.workbooks.renameEntry;
 
@@ -69,16 +73,31 @@ export const selectWorkbookEntriesIsLoading = createSelector(
     (getWorkbookEntries) => getWorkbookEntries.isLoading,
 );
 
+export const selectWorkbookSharedEntriesIsLoading = createSelector(
+    [selectGetWorkbookSharedEntries],
+    (getWorkbookSharedEntries) => getWorkbookSharedEntries.isLoading,
+);
+
 // Token for reloading subsequent entity pages
 export const selectNextPageToken = createSelector(
     [selectGetWorkbookEntries],
     (getWorkbookEntries) => getWorkbookEntries.data?.nextPageToken,
 );
 
+export const selectSharedNextPageToken = createSelector(
+    [selectGetWorkbookSharedEntries],
+    (getWorkbookSharedEntries) => getWorkbookSharedEntries.data?.nextPageToken,
+);
+
 // Error (before) loading entities in the workbook
 export const selectWorkbookEntriesError = createSelector(
     [selectGetWorkbookEntries],
     (getWorkbookEntries) => getWorkbookEntries.error,
+);
+
+export const selectWorkbookSharedEntriesError = createSelector(
+    [selectGetWorkbookSharedEntries],
+    (getWorkbookSharedEntries) => getWorkbookSharedEntries.error,
 );
 
 export const selectCreateWorkbookEntryType = createSelector(

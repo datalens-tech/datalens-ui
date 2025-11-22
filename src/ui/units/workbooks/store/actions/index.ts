@@ -21,6 +21,9 @@ import type {CreateEntryActionType} from '../../constants';
 import type {WorkbookEntriesFilters, WorkbookEntry} from '../../types';
 import {
     ADD_WORKBOOK_INFO,
+    BIND_SHARED_ENTRY_TO_WORKBOOK_FAILED,
+    BIND_SHARED_ENTRY_TO_WORKBOOK_LOADING,
+    BIND_SHARED_ENTRY_TO_WORKBOOK_SUCCESS,
     CHANGE_FAVORITE_ENTRY_FAILED,
     CHANGE_FAVORITE_ENTRY_INLINE,
     CHANGE_FAVORITE_ENTRY_LOADING,
@@ -39,6 +42,9 @@ import {
     GET_WORKBOOK_ENTRIES_SUCCESS,
     GET_WORKBOOK_FAILED,
     GET_WORKBOOK_LOADING,
+    GET_WORKBOOK_SHARED_ENTRIES_FAILED,
+    GET_WORKBOOK_SHARED_ENTRIES_LOADING,
+    GET_WORKBOOK_SHARED_ENTRIES_SUCCESS,
     GET_WORKBOOK_SUCCESS,
     RENAME_ENTRY_FAILED,
     RENAME_ENTRY_INLINE,
@@ -48,6 +54,7 @@ import {
     RESET_WORKBOOK_ENTRIES,
     RESET_WORKBOOK_ENTRIES_BY_SCOPE,
     RESET_WORKBOOK_PERMISSIONS,
+    RESET_WORKBOOK_SHARED_ENTRIES,
     RESET_WORKBOOK_STATE,
     SET_CREATE_WORKBOOK_ENTRY_TYPE,
     SET_WORKBOOK,
@@ -175,6 +182,37 @@ type GetWorkbookEntriesAction =
     | GetWorkbookEntriesSuccessAction
     | GetWorkbookEntriesFailedAction;
 
+type GetWorkbookSharedEntriesLoadingAction = {
+    type: typeof GET_WORKBOOK_SHARED_ENTRIES_LOADING;
+};
+type GetWorkbookSharedEntriesSuccessAction = {
+    type: typeof GET_WORKBOOK_SHARED_ENTRIES_SUCCESS;
+    data: GetWorkbookEntriesResponse;
+};
+type GetWorkbookSharedEntriesFailedAction = {
+    type: typeof GET_WORKBOOK_SHARED_ENTRIES_FAILED;
+    error: Error;
+};
+type GetWorkbookSharedEntriesAction =
+    | GetWorkbookSharedEntriesLoadingAction
+    | GetWorkbookSharedEntriesSuccessAction
+    | GetWorkbookSharedEntriesFailedAction;
+
+type BindSharedEntryToWorkbookLoadingAction = {
+    type: typeof BIND_SHARED_ENTRY_TO_WORKBOOK_LOADING;
+};
+type BindSharedEntryToWorkbookSuccessAction = {
+    type: typeof BIND_SHARED_ENTRY_TO_WORKBOOK_SUCCESS;
+};
+type BindSharedEntryToWorkbookFailedAction = {
+    type: typeof BIND_SHARED_ENTRY_TO_WORKBOOK_FAILED;
+    error: Error;
+};
+type BindSharedEntryToWorkbookAction =
+    | BindSharedEntryToWorkbookLoadingAction
+    | BindSharedEntryToWorkbookSuccessAction
+    | BindSharedEntryToWorkbookFailedAction;
+
 export const getWorkbookEntries = ({
     workbookId,
     filters,
@@ -240,6 +278,118 @@ export const getWorkbookEntries = ({
 
             return null;
         }
+    };
+};
+
+export const getWorkbookSharedEntries = ({
+    workbookId,
+    filters,
+    scope,
+    nextPageToken,
+    pageSize = 200,
+    ignoreConcurrentId = false,
+}: {
+    workbookId: string;
+    filters: WorkbookEntriesFilters;
+    scope?: EntryScope;
+    nextPageToken?: string;
+    pageSize?: number;
+    ignoreConcurrentId?: boolean;
+}) => {
+    return async (dispatch: WorkbooksDispatch) => {
+        dispatch({
+            type: GET_WORKBOOK_SHARED_ENTRIES_LOADING,
+        });
+
+        const args: GetWorkbookEntriesArgs = {
+            workbookId,
+            pageSize,
+            page: Number(nextPageToken || 0),
+            orderBy: {
+                field: filters.orderField,
+                direction: filters.orderDirection,
+            },
+            scope,
+        };
+
+        if (filters.filterString) {
+            args.filters = {
+                name: filters.filterString,
+            };
+        }
+
+        try {
+            const data = await getSdk().sdk.us.getWorkbookSharedEntries(args, {
+                concurrentId: ignoreConcurrentId ? undefined : 'workbooks/getWorkbookSharedEntries',
+            });
+            dispatch({
+                type: GET_WORKBOOK_SHARED_ENTRIES_SUCCESS,
+                data,
+            });
+
+            return data;
+        } catch (error) {
+            if (getSdk().sdk.isCancel(error)) {
+                return null;
+            }
+            logger.logError('workbooks/getWorkbookSharedEntries failed', error);
+            dispatch(
+                showToast({
+                    title: error.message,
+                    error,
+                }),
+            );
+            dispatch({
+                type: GET_WORKBOOK_SHARED_ENTRIES_FAILED,
+                error,
+            });
+
+            return null;
+        }
+    };
+};
+
+export const bindSharedEntryToWorkbook = ({
+    sourceId,
+    targetId,
+    delegation,
+}: {
+    sourceId: string;
+    targetId: string;
+    delegation: boolean;
+}) => {
+    return async (dispatch: WorkbooksDispatch) => {
+        dispatch({
+            type: BIND_SHARED_ENTRY_TO_WORKBOOK_LOADING,
+        });
+        try {
+            await getSdk().sdk.us.createSharedEntryBinding(
+                {
+                    sourceId,
+                    targetId,
+                    delegation,
+                },
+                {concurrentId: 'workbooks/bindSharedEntryToWorkbook', retries: 2},
+            );
+
+            dispatch({
+                type: BIND_SHARED_ENTRY_TO_WORKBOOK_SUCCESS,
+            });
+            return true;
+        } catch (error) {
+            logger.logError('workbooks/bindSharedEntryToWorkbook failed', error);
+            dispatch(
+                showToast({
+                    title: error.message,
+                    error,
+                }),
+            );
+            dispatch({
+                type: BIND_SHARED_ENTRY_TO_WORKBOOK_FAILED,
+                error: error,
+            });
+        }
+        return false;
     };
 };
 
@@ -327,9 +477,19 @@ type ResetWorkbookEntriesAction = {
     type: typeof RESET_WORKBOOK_ENTRIES;
 };
 
+type ResetWorkbookSharedEntriesAction = {
+    type: typeof RESET_WORKBOOK_SHARED_ENTRIES;
+};
+
 export const resetWorkbookEntries = () => {
     return (dispatch: WorkbooksDispatch) => {
         dispatch({type: RESET_WORKBOOK_ENTRIES});
+    };
+};
+
+export const resetWorkbookSharedEntries = () => {
+    return (dispatch: WorkbooksDispatch) => {
+        dispatch({type: RESET_WORKBOOK_SHARED_ENTRIES});
     };
 };
 
@@ -716,6 +876,7 @@ export type WorkbooksAction =
     | SetWorkbookAction
     | GetWorkbookBreadcrumbsAction
     | GetWorkbookEntriesAction
+    | GetWorkbookSharedEntriesAction
     | GetAllWorkbookEntriesSeparatelyAction
     | ResetWorkbookEntriesAction
     | ResetWorkbookEntriesByScopeAction
@@ -725,6 +886,8 @@ export type WorkbooksAction =
     | ChangeFavoriteEntryAction
     | DeleteEntryAction
     | ResetWorkbookStateAction
+    | ResetWorkbookSharedEntriesAction
+    | BindSharedEntryToWorkbookAction
     | ChangeFiltersAction
     | AddWorkbookInfoAction
     | ResetWorkbookPermissionsAction;
