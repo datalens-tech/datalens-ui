@@ -28,7 +28,7 @@ type DialogSharedEntryUnbindProps = {
     onClose: () => void;
     entry: Partial<GetEntryResponse> & {scope: string};
     relation?: SharedEntryBindingsItem;
-    onApply: () => void;
+    onApply: () => Promise<void> | void;
 };
 
 export const DIALOG_SHARED_ENTRY_UNBIND = Symbol('DIALOG_SHARED_ENTRY_UNBIND');
@@ -67,7 +67,14 @@ export const DialogSharedEntryUnbind: React.FC<DialogSharedEntryUnbindProps> = (
     onApply,
     onClose,
 }) => {
+    const [isLoading, setIsLoading] = React.useState(false);
     const entryInstance: EntyInstance = entry.scope === 'dataset' ? 'dataset' : 'connection';
+
+    const onSubmit = async () => {
+        setIsLoading(true);
+        await onApply();
+        setIsLoading(false);
+    };
 
     const renderAlert = () => {
         let title: string | undefined;
@@ -133,8 +140,9 @@ export const DialogSharedEntryUnbind: React.FC<DialogSharedEntryUnbindProps> = (
                 propsButtonCancel={{
                     view: 'flat',
                 }}
+                loading={isLoading}
                 textButtonCancel={getSharedEntryMockText('cancel-unbind-dialog')}
-                onClickButtonApply={onApply}
+                onClickButtonApply={onSubmit}
                 onClickButtonCancel={onClose}
             />
         </Dialog>

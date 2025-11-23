@@ -8,6 +8,7 @@ import {CollectionItemEntities} from 'shared';
 import type {GetEntryResponse, SharedEntry, SharedEntryBindingsItem} from 'shared/schema';
 import {getSdk} from 'ui/libs/schematic-sdk';
 import type {AppDispatch} from 'ui/store';
+import {showToast} from 'ui/store/actions/toaster';
 import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 
 import {closeDialog, openDialog} from '../../store/actions/dialog';
@@ -49,7 +50,7 @@ const getIsRelationUnbind = (
     currentDirection: AttachmentValue,
     item: SharedEntryBindingsItem,
 ): item is SharedEntryBindingsItem & SharedEntry => {
-    return currentDirection === Attachment.SOURCE && 'scope' in item;
+    return currentDirection === Attachment.TARGET && 'scope' in item;
 };
 
 export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps> = ({
@@ -145,7 +146,26 @@ export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps>
                                         ? item
                                         : entry,
                                     onClose: () => dispatch(closeDialog()),
-                                    onApply: () => {},
+                                    onApply: async () => {
+                                        try {
+                                            await getSdk().sdk.us.deleteSharedEntryBinding({
+                                                sourceId: entry.entryId,
+                                                targetId:
+                                                    item.entity === CollectionItemEntities.WORKBOOK
+                                                        ? item.workbookId!
+                                                        : item.entryId,
+                                            });
+                                            dispatch(closeDialog());
+                                            fetchEntityBindings();
+                                        } catch (error) {
+                                            dispatch(
+                                                showToast({
+                                                    title: error.message,
+                                                    error,
+                                                }),
+                                            );
+                                        }
+                                    },
                                     open: true,
                                     relation: getIsRelationUnbind(currentDirection, item)
                                         ? undefined
@@ -163,8 +183,29 @@ export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps>
                                 props: {
                                     entry,
                                     onClose: () => dispatch(closeDialog()),
-                                    onApply: () => {},
+                                    onApply: async (delegate) => {
+                                        try {
+                                            await getSdk().sdk.us.updateSharedEntryBinding({
+                                                sourceId: entry.entryId,
+                                                targetId:
+                                                    item.entity === CollectionItemEntities.WORKBOOK
+                                                        ? item.workbookId!
+                                                        : item.entryId,
+                                                delegation: delegate,
+                                            });
+                                            dispatch(closeDialog());
+                                            fetchEntityBindings();
+                                        } catch (error) {
+                                            dispatch(
+                                                showToast({
+                                                    title: error.message,
+                                                    error,
+                                                }),
+                                            );
+                                        }
+                                    },
                                     open: true,
+                                    delegation: item.isDelegated,
                                     relation: item,
                                 },
                             }),
@@ -172,7 +213,7 @@ export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps>
                 },
             ];
         },
-        [currentDirection, dispatch, entry],
+        [currentDirection, dispatch, entry, fetchEntityBindings],
     );
 
     const renderRelations = () => {
