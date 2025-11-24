@@ -3,7 +3,7 @@ import React from 'react';
 export interface InterpolateProps {
     text: string;
     matches: {
-        [key: string]: (match: string) => React.ReactNode;
+        [key: string]: (match: string, index?: number) => React.ReactNode;
     };
 }
 
@@ -17,6 +17,9 @@ export const Interpolate: React.FC<InterpolateProps> = ({text, matches}) => {
         // ["this", "wrap", "link", " !"]
         const splitted = text.split(reg);
 
+        // Track usage count for each tag
+        const tagUsageCount: {[key: string]: number} = {};
+
         const nodes = splitted.reduce((acc: React.ReactNode[], part, index) => {
             let node: React.ReactNode;
             if (index % 3 === 2) {
@@ -28,7 +31,10 @@ export const Interpolate: React.FC<InterpolateProps> = ({text, matches}) => {
                 node = part;
             } else {
                 const match = splitted[index + 1];
-                node = matches[part](match);
+                // Increment usage count for this tag
+                tagUsageCount[part] = (tagUsageCount[part] || 0) + 1;
+                // Pass the usage index (0-based) to the match function
+                node = matches[part](match, tagUsageCount[part] - 1);
             }
             acc.push(node);
             return acc;
