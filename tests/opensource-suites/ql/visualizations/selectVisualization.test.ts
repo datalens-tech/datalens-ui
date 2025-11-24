@@ -5,6 +5,17 @@ import {CommonUrls} from '../../../page-objects/constants/common-urls';
 import QLPage from '../../../page-objects/ql/QLPage';
 import {openTestPage, slct} from '../../../utils';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
+import {VisualizationsQa} from '../../../../src/shared';
+
+const visualizationList = [
+    VisualizationsQa.Column,
+    VisualizationsQa.Bar,
+    VisualizationsQa.Scatter,
+    VisualizationsQa.Pie,
+    VisualizationsQa.Donut,
+    VisualizationsQa.Metric,
+    VisualizationsQa.FlatTable,
+];
 
 datalensTest.describe('SQL validation of visualizations', () => {
     datalensTest(
@@ -16,14 +27,14 @@ datalensTest.describe('SQL validation of visualizations', () => {
 
             const visualizations = await qlPage.getVisualizations();
 
-            expect(config.ql.qa.visualizationList.sort()).toEqual(visualizations.sort());
+            expect([...visualizationList].sort()).toEqual(visualizations.sort());
         },
     );
 
     datalensTest(
         `Correct draw for all available visualizations`,
         async ({page, config}: {page: Page; config: TestParametrizationConfig}) => {
-            for (const visualizationName of config.ql.qa.visualizationList) {
+            for (const visualizationName of visualizationList) {
                 const qlPage = new QLPage({page});
 
                 await openTestPage(page, config.ql.urls.NewQLChartWithConnection);

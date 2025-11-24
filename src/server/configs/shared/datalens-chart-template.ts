@@ -3,6 +3,7 @@ import type {Request} from '@gravity-ui/expresskit';
 import type {ExtendedChartsConfig} from '../../../shared';
 import {
     Feature,
+    WizardType,
     WizardVisualizationId,
     getDatasetLinks,
     isGravityChartsVisualization,
@@ -28,14 +29,15 @@ export default {
         }
 
         const {ctx} = req;
+        const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
         const features = {
-            GravityChartsForPieAndTreemap: ctx.get('isEnabledServerFeature')(
+            GravityChartsForPieAndTreemap: isEnabledServerFeature(
                 Feature.GravityChartsForPieAndTreemap,
             ),
-            GravityChartsForBarYAndScatter: ctx.get('isEnabledServerFeature')(
+            GravityChartsForBarYAndScatter: isEnabledServerFeature(
                 Feature.GravityChartsForBarYAndScatter,
             ),
-            GravityChartsForLineAreaAndBarX: ctx.get('isEnabledServerFeature')(
+            GravityChartsForLineAreaAndBarX: isEnabledServerFeature(
                 Feature.GravityChartsForLineAreaAndBarX,
             ),
         };
@@ -43,7 +45,7 @@ export default {
         if (
             isGravityChartsVisualization({id: visualizationId as WizardVisualizationId, features})
         ) {
-            return 'd3_wizard_node';
+            return WizardType.GravityChartsWizardNode;
         }
 
         switch (visualizationId) {
