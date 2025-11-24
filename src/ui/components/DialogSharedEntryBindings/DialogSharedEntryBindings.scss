@@ -4,6 +4,11 @@
     min-height: 590px;
     height: 0;
 
+    &_empty-list {
+        height: auto;
+        min-height: 0;
+    }
+
     &__body {
         display: flex;
         flex-direction: column;
@@ -11,16 +16,16 @@
     }
 
     &__current-row {
-        margin-bottom: 16px;
+        margin-bottom: var(--g-spacing-4);
     }
 
     &__divider {
-        margin-bottom: 16px;
+        margin-bottom: var(--g-spacing-4);
     }
 
     &__direction {
         width: fit-content;
-        margin-bottom: 16px;
+        margin-bottom: var(--g-spacing-4);
     }
 
     &__error-state {
@@ -32,5 +37,21 @@
 
     &__button-retry {
         margin-top: var(--g-spacing-5);
+    }
+
+    &__info {
+        margin-bottom: var(--g-spacing-4);
+        &_empty-list {
+            margin-bottom: 0;
+        }
+    }
+
+    &__footer {
+        margin-left: -32px;
+        margin-right: -32px;
+        border-top: 1px solid var(--g-color-line-generic);
+        &_empty-list {
+            border: none;
+        }
     }
 }

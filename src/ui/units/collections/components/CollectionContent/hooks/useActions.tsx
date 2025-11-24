@@ -7,6 +7,7 @@ import {useDispatch} from 'react-redux';
 import {useHistory} from 'react-router-dom';
 import {WORKBOOK_STATUS} from 'shared/constants/workbooks';
 import {DIALOG_EXPORT_WORKBOOK} from 'ui/components/CollectionsStructure/ExportWorkbookDialog/ExportWorkbookDialog';
+import {DIALOG_SHARED_ENTRY_BINDINGS} from 'ui/components/DialogSharedEntryBindings/DialogSharedEntryBindings';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {CollectionItemEntities, Feature} from '../../../../../../shared';
@@ -34,7 +35,11 @@ import {ResourceType} from '../../../../../registry/units/common/types/component
 import type {AppDispatch} from '../../../../../store';
 import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
 import {WORKBOOKS_PATH} from '../../../../collections-navigation/constants';
-import {deleteCollectionInItems, deleteWorkbookInItems} from '../../../store/actions';
+import {
+    deleteCollectionInItems,
+    deleteSharedEntryInItems,
+    deleteWorkbookInItems,
+} from '../../../store/actions';
 import {getIsWorkbookItem} from '../../helpers';
 
 const i18n = I18n.keyset('collections');
@@ -375,7 +380,23 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
             if (item.permissions.delete) {
                 otherActions.push({
                     text: <DropdownAction icon={TrashBin} text={i18n('action_delete')} />,
-                    action: () => {},
+                    action: () => {
+                        dispatch(
+                            openDialog({
+                                id: DIALOG_SHARED_ENTRY_BINDINGS,
+                                props: {
+                                    onClose: () => dispatch(closeDialog()),
+                                    open: true,
+                                    entry: item,
+                                    isDeleteDialog: true,
+                                    onDeleteSuccess: () => {
+                                        dispatch(deleteSharedEntryInItems(item.entryId));
+                                        dispatch(closeDialog());
+                                    },
+                                },
+                            }),
+                        );
+                    },
                     theme: 'danger',
                 });
             }
