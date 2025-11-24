@@ -21,6 +21,7 @@ export const OPEN_DIALOG = Symbol('dialog/OPEN_DIALOG');
 export const UPDATE_DIALOG_PROPS = Symbol('dialog/UPDATE_DIALOG_PROPS');
 export const CLOSE_DIALOG = Symbol('dialog/CLOSE_DIALOG');
 export const SET_CONFIRM_DIALOG_LOADING_STATUS = Symbol('dialog/SET_CONFIRM_DIALOG_LOADING_STATUS');
+export const PARTIAL_UPDATE_DIALOG_PROPS = Symbol('dialog/PARTIAL_UPDATE_DIALOG_PROPS');
 
 export type OpenDialogAction = {
     type: typeof OPEN_DIALOG;
@@ -34,6 +35,12 @@ export type CloseDialogAction = {
 
 export type UpdateDialogStateAction = {
     type: typeof UPDATE_DIALOG_PROPS;
+    id: symbol;
+    props?: any;
+};
+
+export type PartialUpdateDialogStateAction = {
+    type: typeof PARTIAL_UPDATE_DIALOG_PROPS;
     id: symbol;
     props?: any;
 };
@@ -73,6 +80,17 @@ export function setDialogConfirmLoadingStatus(
     return {
         type: SET_CONFIRM_DIALOG_LOADING_STATUS,
         payload,
+    };
+}
+
+export function partialUpdateDialogProps<T extends unknown>(args: {
+    id: OpenDialogArgs<T>['id'];
+    props: Partial<OpenDialogArgs<T>['props']>;
+}): PartialUpdateDialogStateAction {
+    return {
+        type: PARTIAL_UPDATE_DIALOG_PROPS,
+        id: args.id,
+        props: args.props,
     };
 }
 
@@ -299,4 +317,5 @@ export type DialogAction =
     | OpenDialogAction
     | CloseDialogAction
     | UpdateDialogStateAction
-    | SetConfirmDialogLoadingStatusAction;
+    | SetConfirmDialogLoadingStatusAction
+    | PartialUpdateDialogStateAction;
