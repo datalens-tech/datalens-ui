@@ -19,7 +19,8 @@ type DialogSharedEntryPermissionsProps = {
     onClose: () => void;
     entry: Partial<GetEntryResponse> & {scope: string};
     relation?: SharedEntryBindingsItem;
-    onApply: (delegate: boolean) => void;
+    onApply: (delegate: boolean) => Promise<void> | void;
+    delegation?: boolean;
 };
 
 export const DIALOG_SHARED_ENTRY_PERMISSIONS = Symbol('DIALOG_SHARED_ENTRY_PERMISSIONS');
@@ -37,14 +38,14 @@ export const DialogSharedEntryPermissions: React.FC<DialogSharedEntryPermissions
     open,
     onApply,
     onClose,
+    delegation = true,
 }) => {
-    const [delegate, setDelegate] = React.useState(true);
+    const [delegate, setDelegate] = React.useState(delegation);
     const [isLoading, setIsLoading] = React.useState(false);
 
     const onSubmit = async () => {
-        // TODO add request
         setIsLoading(true);
-        await onApply?.(delegate);
+        await onApply(delegate);
         setIsLoading(false);
     };
 

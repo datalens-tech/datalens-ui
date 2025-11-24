@@ -18,12 +18,12 @@ import type {
     CopyEntryResponse,
     CopyWorkbookEntryArgs,
     CopyWorkbookEntryResponse,
-    CreateEntityBindingsArgs,
-    CreateEntityBindingsResponse,
     CreateFolderArgs,
     CreateFolderResponse,
     DeleteUSEntryArgs,
     DeleteUSEntryResponse,
+    EntityBindingsArgs,
+    EntityBindingsResponse,
     GetEntriesAnnotationArgs,
     GetEntriesAnnotationResponse,
     GetEntriesByKeyPatternArgs,
@@ -257,7 +257,7 @@ export const entriesActions = {
             headers,
         }),
     }),
-    createSharedEntryBinding: createAction<CreateEntityBindingsResponse, CreateEntityBindingsArgs>({
+    createSharedEntryBinding: createAction<EntityBindingsResponse, EntityBindingsArgs>({
         method: 'POST',
         path: () => `${PATH_PREFIX}/entity-bindings/create`,
         params: (params, headers) => ({
@@ -265,7 +265,25 @@ export const entriesActions = {
             headers,
         }),
     }),
-
+    updateSharedEntryBinding: createAction<EntityBindingsResponse, EntityBindingsArgs>({
+        method: 'POST',
+        path: () => `${PATH_PREFIX}/entity-bindings/update`,
+        params: (params, headers) => ({
+            body: params,
+            headers,
+        }),
+    }),
+    deleteSharedEntryBinding: createAction<
+        EntityBindingsResponse,
+        Omit<EntityBindingsArgs, 'delegation'>
+    >({
+        method: 'DELETE',
+        path: () => `${PATH_PREFIX}/entity-bindings/delete`,
+        params: (params, headers) => ({
+            query: params,
+            headers,
+        }),
+    }),
     getSharedEntryBindings: createAction<
         GetSharedEntryBindingsResponse,
         GetSharedEntryBindingsArgs

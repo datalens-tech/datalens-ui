@@ -263,13 +263,13 @@ export interface GetEntriesAnnotationArgs {
     type?: string;
 }
 
-export interface CreateEntityBindingsResponse {
+export interface EntityBindingsResponse {
     sourceId: string;
     targetId: string;
     isDelegated: boolean;
 }
 
-export interface CreateEntityBindingsArgs {
+export interface EntityBindingsArgs {
     sourceId: string;
     targetId: string;
     delegation: boolean;
