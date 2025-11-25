@@ -16,6 +16,7 @@ export const editorActions = {
         path: () => `${PATH_PREFIX}/entries`,
         params: (
             {
+                version,
                 type,
                 key,
                 data,
@@ -31,6 +32,7 @@ export const editorActions = {
         ) => {
             return {
                 body: {
+                    version,
                     scope: 'widget',
                     type,
                     key,
@@ -52,9 +54,13 @@ export const editorActions = {
         method: 'POST',
         path: ({entryId}) => `${PATH_PREFIX}/entries/${filterUrlFragment(entryId)}`,
 
-        params: ({data, mode, revId, meta = {}, links, annotation, description = ''}, headers) => {
+        params: (
+            {version, data, mode, revId, meta = {}, links, annotation, description = ''},
+            headers,
+        ) => {
             return {
                 body: {
+                    version,
                     mode,
                     meta,
                     data,

@@ -8,7 +8,7 @@ export const deleteWizardChartResultSchema = z.object({});
 
 export const getWizardChartArgsSchema = z.strictObject({
     chartId: z.string(),
-    workbookId: z.union([z.string(), z.null()]).optional(),
+    workbookId: z.string().nullable().optional(),
     revId: z.string().optional(),
     includePermissions: z.boolean().optional(),
     includeLinks: z.boolean().optional(),
