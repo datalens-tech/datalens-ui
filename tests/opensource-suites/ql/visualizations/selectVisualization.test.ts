@@ -8,11 +8,17 @@ import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {VisualizationsQa} from '../../../../src/shared';
 
 const visualizationList = [
+    VisualizationsQa.Line,
+    VisualizationsQa.Area,
+    VisualizationsQa.Area100p,
     VisualizationsQa.Column,
+    VisualizationsQa.Column100p,
     VisualizationsQa.Bar,
+    VisualizationsQa.Bar100p,
     VisualizationsQa.Scatter,
     VisualizationsQa.Pie,
     VisualizationsQa.Donut,
+    VisualizationsQa.Treemap,
     VisualizationsQa.Metric,
     VisualizationsQa.FlatTable,
 ];
