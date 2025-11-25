@@ -8,6 +8,7 @@ export type EntryFieldPublishedId = null | string;
 
 // corresponds to RETURN_COLUMNS from US
 export interface EntryFields {
+    version?: number | null;
     displayAlias?: string | null;
     createdAt: string;
     createdBy: string;
