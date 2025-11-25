@@ -84,7 +84,7 @@ export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps>
                         {!showDirectionControl && !isDeleteDialog && (
                             <Divider className={b('divider')} />
                         )}
-                        {showDirectionControl && (
+                        {showDirectionControl && !isDeleteDialog && (
                             <DirectionControl
                                 currentDirection={currentDirection}
                                 onUpdate={onDirectionChange}
