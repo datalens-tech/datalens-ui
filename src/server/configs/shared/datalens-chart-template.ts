@@ -16,14 +16,11 @@ export default {
         return {};
     },
     identifyChartType: (chart: ExtendedChartsConfig, req: Request) => {
+        const config = mapChartsConfigToLatestVersion(chart);
         let visualizationId;
 
-        if (
-            chart.visualization &&
-            chart.visualization.id &&
-            /[a-zA-Z]+/.test(chart.visualization.id)
-        ) {
-            visualizationId = chart.visualization.id;
+        if (config.visualization?.id && /[a-zA-Z]+/.test(chart.visualization.id)) {
+            visualizationId = config.visualization.id;
         } else {
             throw new Error('UNABLE_TO_IDENTIFY_CHART_TYPE');
         }
@@ -60,7 +57,7 @@ export default {
                 return 'ymap_wizard_node';
             }
             case WizardVisualizationId.Metric: {
-                const {placeholders} = chart.visualization;
+                const {placeholders} = config.visualization;
                 // @ts-ignore will be removed after migration to v5
                 const dataType = placeholders.find((p) => p.id === 'measures')?.items[0]?.data_type;
                 const useMarkup = dataType === 'markup';
