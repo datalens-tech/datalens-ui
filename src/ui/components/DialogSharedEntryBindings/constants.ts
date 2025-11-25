@@ -13,3 +13,5 @@ export const ObjectsListTitles: Record<AttachmentValue, keyof typeof mockSharedE
 };
 
 export const SEARCH_DELAY = 1000;
+
+export const DialogClassName = 'dialog-shared-entries-binding';

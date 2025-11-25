@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {CodeTrunk} from '@gravity-ui/icons';
+import {CodeTrunk, TrashBin} from '@gravity-ui/icons';
 import {Button, spacing} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -225,6 +225,9 @@ const PageComponent = (props: PageProps) => {
                 ) {
                     return false;
                 }
+                if (isSharedConnection && item.id === ENTRY_CONTEXT_MENU_ACTION.DELETE) {
+                    return false;
+                }
                 if (!revisionsSupported && item.id === ENTRY_CONTEXT_MENU_ACTION.REVISIONS) {
                     return false;
                 }
@@ -253,9 +256,30 @@ const PageComponent = (props: PageProps) => {
                           icon: <CodeTrunk />,
                           text: getSharedEntryMockText('shared-entry-bindings-dropdown-menu-title'),
                       },
+                      {
+                          id: ENTRY_CONTEXT_MENU_ACTION.DELETE,
+                          action: () => {
+                              actions.openDialog({
+                                  id: DIALOG_SHARED_ENTRY_BINDINGS,
+                                  props: {
+                                      onClose: actions.closeDialog,
+                                      open: true,
+                                      entry,
+                                      isDeleteDialog: true,
+                                      onDeleteSuccess: () => {
+                                          actions.closeDialog();
+                                          history.push(`/collections/${entry?.collectionId}`);
+                                      },
+                                  },
+                              });
+                          },
+                          icon: <TrashBin />,
+                          theme: 'danger',
+                          text: getSharedEntryMockText('shared-entry-delete-dropdown-menu-title'),
+                      },
                   ]
                 : undefined,
-        [isSharedConnection, entry, isFakeEntry, actions],
+        [isSharedConnection, entry, isFakeEntry, actions, history],
     );
 
     return (
