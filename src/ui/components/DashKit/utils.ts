@@ -336,6 +336,10 @@ function getResultedBgColor(
     if (!bgColor) {
         return defaultColor;
     }
+    if (typeof bgColor === 'string') {
+        // where was a bug, when new Textwidgets were created with background color set by string
+        return bgColor;
+    }
     if (typeof bgColor.color === 'string' || bgColor.color === undefined) {
         if ('enabled' in bgColor && bgColor.enabled === false) {
             if (bgColor.color === CustomPaletteBgColors.NONE) {
