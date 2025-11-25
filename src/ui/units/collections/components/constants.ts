@@ -46,7 +46,8 @@ export const mockSharedEntriesTexts = {
     'relation-dataset-bindings-dialog-delete': 'датасетах',
     'bindings-dialog-delete-refresh-btn': 'Обновить',
     'entries-list-title-workbook': 'Воркбуки',
-    'entries-list-title-source': 'Подключения',
+    'entries-list-title-connection': 'Подключения',
+    'entries-list-title-dataset': 'Датасеты',
     'label-of-shared-dataset': 'Датасета',
     'entries-list-search-placeholder': 'Название',
     'bindings-dialog-error': 'Произошла ошибка',
@@ -97,4 +98,6 @@ export const mockSharedEntriesTexts = {
     'add-entry-workbook-toast-title-dataset': 'Датасет привязан к воркбуку',
     'add-entry-workbook-toast-title-connection': 'Подключение привязано к воркбуку',
     'add-entry-workbook-toast-message': 'Название: {{name}}',
+    'workbook-navigation-title': '{{entry}} в воркбуке',
+    'workbook-navigation-shared-title': 'Привязанные {{entry}}',
 };

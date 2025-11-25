@@ -1,9 +1,10 @@
 import React from 'react';
 
 import {Dialog} from '@gravity-ui/uikit';
+import type {SharedScope} from 'shared';
 import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 
-import type {SharedEntry, SharedScope} from '../types';
+import type {SharedEntry} from '../types';
 
 type SharedBindingsHeaderProps = {
     isDeleteDialog: boolean;

@@ -30,6 +30,9 @@ export interface GetEntryResponse extends EntryFields {
     parentDashEntryId?: string;
     parentDashName?: string;
 }
+export interface GetSharedEntryResponse extends GetEntryResponse {
+    isDelegated: boolean;
+}
 export interface GetEntryArgs {
     entryId: string;
     workbookId?: WorkbookId;
