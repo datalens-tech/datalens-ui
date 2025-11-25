@@ -34,7 +34,7 @@ export const showToast = (opt: ShowToastOptions) => {
         let type: ShowToastOptions['type'] = opt.type || 'info';
 
         if (error) {
-            type = opt.type ? opt.type : 'danger';
+            type = opt.type ?? 'danger';;
             actions = opt.actions || [
                 {
                     label: i18n('label_details'),
