@@ -6,6 +6,7 @@ import {Button, DropdownMenu, Icon, Link, Text, Tooltip} from '@gravity-ui/uikit
 import block from 'bem-cn-lite';
 import {CollectionItemEntities} from 'shared';
 import {getEntryNameByKey} from 'shared/modules';
+import type {SharedEntryBindingsItem} from 'shared/schema';
 import navigateHelper from 'ui/libs/navigateHelper';
 import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 import {COLLECTIONS_PATH, WORKBOOKS_PATH} from 'ui/units/collections-navigation/constants';
@@ -18,36 +19,15 @@ import './EntityRow.scss';
 
 const b = block('entity-row');
 
-export type Entry = {
-    entity: typeof CollectionItemEntities.ENTRY;
-    entryId: string;
-    scope: string;
-    type: string;
-    displayKey: string;
-    key: string;
-};
-
-type Workbook = {
-    entity: typeof CollectionItemEntities.WORKBOOK;
-    title: string;
-};
-
-export type RowEntityData = {
-    collectionTitle?: string;
-    collectionId?: string;
-    workbookId?: string;
-    isDelegated: boolean;
-} & (Entry | Workbook);
-
 export type EntryRowProps = {
     className?: string;
     actions?: DropdownMenuItem[];
-    entity: RowEntityData;
+    entity: SharedEntryBindingsItem;
     showRelationButton?: boolean;
     showRightSide?: boolean;
 };
 
-const getName = (entity: RowEntityData) => {
+const getName = (entity: SharedEntryBindingsItem) => {
     switch (entity.entity) {
         case CollectionItemEntities.WORKBOOK:
             return entity.title;
@@ -56,7 +36,7 @@ const getName = (entity: RowEntityData) => {
     }
 };
 
-const getHref = (entity: RowEntityData) => {
+const getHref = (entity: SharedEntryBindingsItem) => {
     switch (entity.entity) {
         case CollectionItemEntities.WORKBOOK:
             return `${WORKBOOKS_PATH}/${entity.workbookId}`;

@@ -11,7 +11,7 @@ import {CollectionContentTableQa, DEFAULT_DATE_FORMAT} from 'shared/constants';
 import {DL} from 'ui/constants/common';
 import {selectDateTimeFormat} from 'ui/store/selectors/user';
 
-import type {StructureItem} from '../../../../../shared/schema';
+import type {StructureItemWithPermissions} from '../../../../../shared/schema';
 import {AnimateBlock} from '../../../../components/AnimateBlock';
 import {useRefreshPageAfterImport} from '../../hooks/useRefreshPageAfterImport';
 import {selectStructureItems} from '../../store/selectors';
@@ -32,7 +32,9 @@ const b = block('dl-collection-content-table');
 type Props = {
     selectedMap: SelectedMap;
     itemsAvailableForSelectionCount: number;
-    getItemActions: (item: StructureItem) => (DropdownMenuItem[] | DropdownMenuItem)[];
+    getItemActions: (
+        item: StructureItemWithPermissions,
+    ) => (DropdownMenuItem[] | DropdownMenuItem)[];
     refreshPage: () => void;
     onUpdateCheckboxClick: (args: UpdateCheckboxArgs) => void;
     onUpdateAllCheckboxesClick: (checked: boolean) => void;

@@ -57,8 +57,6 @@ export enum Feature {
     EnableEmbedsInDialogShare = 'EnableEmbedsInDialogShare',
     EnableEntryMenuItemShare = 'EnableEntryMenuItemShare',
     NewTableWidgetForCE = 'NewTableWidgetForCE',
-    /** Additional chart config for making requests by widget events */
-    ChartActions = 'ChartActions',
     /** Disable the use of html and function in chart configs */
     DisableFnAndHtml = 'DisableFnAndHtml',
     /** Enable using of presigned urls for uploading files to S3 */
@@ -100,7 +98,10 @@ export enum Feature {
     EnableSharedEntries = 'EnableSharedEntries',
 
     EnableMobileFixedHeader = 'EnableMobileFixedHeader',
+    /** enabled redesign/moving to drawers existing settings */
     EnableCommonChartDashSettings = 'EnableCommonChartDashSettings',
+    /** enables new dash & widgets settings */
+    EnableNewDashSettings = 'EnableNewDashSettings',
     /** Shows updated settings page */
     EnableNewServiceSettings = 'EnableNewServiceSettings',
 }

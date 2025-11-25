@@ -19,6 +19,7 @@ interface DatasetPageProps extends RouteComponentProps<Record<string, string>> {
     sdk: SDK;
     datasetId?: string;
     workbookId?: string;
+    collectionId?: string;
 }
 
 export const DatasetPageContext = createDatasetPageContext({sdk: {} as SDK, datasetId: ''});
@@ -37,6 +38,7 @@ class DatasetPage extends React.Component<DatasetPageProps> {
                         connectionId={this.connectionId}
                         datasetId={this.datasetId}
                         workbookIdFromPath={this.props.workbookId}
+                        collectionIdFromPath={this.props.collectionId}
                         history={this.props.history}
                         location={this.props.location}
                         ytPath={this.ytPath}

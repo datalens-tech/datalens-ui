@@ -11,8 +11,6 @@ const i18n = I18n.keyset('component.collection-breadcrumbs');
 type GetEntityBreadcrumbsItems = (props: {
     entry: EntryBreadcrumbsProps['entry'];
     entityBreadcrumbs?: EntryBreadcrumbsProps['entityBreadcrumbs'];
-    //TODO delete after CHARTS-12145
-    workbookBreadcrumbs?: EntryBreadcrumbsProps['entityBreadcrumbs'];
     workbookName: EntryBreadcrumbsProps['workbookName'];
     history: History;
     location: Location;
@@ -82,9 +80,4 @@ export const getEntityBreadcrumbsItems: GetEntityBreadcrumbsItems = ({
     }
 
     return breadcrumbsItems;
-};
-
-//TODO delete after CHARTS-12145
-export const getWorkbookBreadcrumbsItems: GetEntityBreadcrumbsItems = (props) => {
-    return getEntityBreadcrumbsItems({...props, entityBreadcrumbs: props.workbookBreadcrumbs});
 };

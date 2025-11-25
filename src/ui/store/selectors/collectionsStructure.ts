@@ -1,6 +1,7 @@
 import {createSelector} from 'reselect';
 import type {DatalensGlobalState} from 'index';
 import {getStatusFromOperation} from '../utils/collectionStructure';
+import {CollectionItemEntities} from 'shared';
 
 export const selectGetRootCollectionPermissions = (state: DatalensGlobalState) =>
     state.collectionsStructure.getRootCollectionPermissions;
@@ -15,7 +16,12 @@ export const selectGetStructureItems = (state: DatalensGlobalState) =>
     state.collectionsStructure.getStructureItems;
 
 export const selectStructureItems = (state: DatalensGlobalState) =>
-    state.collectionsStructure.items;
+    state.collectionsStructure.items ?? [];
+
+export const selectFilteredStructureItems = (state: DatalensGlobalState) =>
+    state.collectionsStructure.items?.filter(
+        (item) => item.entity !== CollectionItemEntities.ENTRY,
+    ) ?? [];
 
 export const selectCopyTemplate = (state: DatalensGlobalState) =>
     state.collectionsStructure.copyTemplate;
@@ -169,7 +175,7 @@ export const selectBreadcrumbsIsLoading = createSelector(
 // The result of loading the bread crumbs of the collection
 export const selectBreadcrumbs = createSelector(
     [selectGetCollectionBreadcrumbs],
-    (getCollectionBreadcrumbs) => getCollectionBreadcrumbs.data,
+    (getCollectionBreadcrumbs) => getCollectionBreadcrumbs.data ?? [],
 );
 
 // Status of loading information about the contents of the collection

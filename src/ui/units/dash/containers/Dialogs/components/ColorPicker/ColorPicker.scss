@@ -1,0 +1,26 @@
+@import '~@gravity-ui/uikit/styles/mixins';
+
+.dl-color-picker {
+    $class: &;
+    display: inline-block;
+    position: relative;
+    line-height: 0;
+    width: fit-content;
+    vertical-align: text-top;
+
+    $color-item-size: 28px;
+
+    &__palette-trigger {
+        width: $color-item-size;
+        height: $color-item-size;
+    }
+
+    &__palette-trigger {
+        // disable inheritance from theme
+        --g-button-border-radius: 6px;
+    }
+
+    &__color-item {
+        border: 1px solid transparent;
+    }
+}

@@ -3,8 +3,8 @@ import type {ChartData, ChartTitle} from '@gravity-ui/chartkit/gravity-charts';
 import {PlaceholderId, WizardVisualizationId, isDateField} from '../../../../../../../shared';
 import type {
     ServerCommonSharedExtraSettings,
+    ServerPlaceholder,
     ServerPlaceholderSettings,
-    ServerVisualization,
 } from '../../../../../../../shared';
 import {getAxisTitle, getTickPixelInterval, isGridEnabled} from '../../utils/axis-helpers';
 
@@ -34,9 +34,25 @@ export function getAxisLabelsRotationAngle(placeholderSettings?: ServerPlacehold
     return undefined;
 }
 
+function getAxisMinMax(
+    placeholderSettings?: ServerPlaceholderSettings,
+): [number | undefined, number | undefined] {
+    if (
+        placeholderSettings?.scale !== 'manual' ||
+        !Array.isArray(placeholderSettings?.scaleValue)
+    ) {
+        return [undefined, undefined];
+    }
+
+    const min = Number(placeholderSettings.scaleValue[0]);
+    const max = Number(placeholderSettings.scaleValue[1]);
+
+    return [Number.isNaN(min) ? undefined : min, Number.isNaN(max) ? undefined : max];
+}
+
 export function getBaseChartConfig(args: {
     extraSettings?: ServerCommonSharedExtraSettings;
-    visualization: ServerVisualization;
+    visualization: {id: string; placeholders: ServerPlaceholder[]};
 }) {
     const {extraSettings, visualization} = args;
     const isLegendEnabled = extraSettings?.legendMode !== 'hide';
@@ -111,6 +127,8 @@ export function getBaseChartConfig(args: {
     ];
 
     if (!visualizationWithoutAxis.includes(visualizationId)) {
+        const [xMin, xMax] = getAxisMinMax(xPlaceholderSettings);
+        const [yMin, yMax] = getAxisMinMax(yPlaceholderSettings);
         chartWidgetData = {
             ...chartWidgetData,
             xAxis: {
@@ -129,6 +147,8 @@ export function getBaseChartConfig(args: {
                     pixelInterval: getTickPixelInterval(xPlaceholderSettings) || 120,
                 },
                 lineColor: 'var(--g-color-line-generic)',
+                min: xMin,
+                max: xMax,
             },
             yAxis: [
                 {
@@ -149,6 +169,8 @@ export function getBaseChartConfig(args: {
                         pixelInterval: getTickPixelInterval(yPlaceholderSettings) || 72,
                     },
                     lineColor: 'var(--g-color-line-generic)',
+                    min: yMin,
+                    max: yMax,
                 },
             ],
         };

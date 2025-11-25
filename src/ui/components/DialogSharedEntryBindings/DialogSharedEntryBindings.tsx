@@ -5,8 +5,10 @@ import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
 import {useDispatch} from 'react-redux';
 import {CollectionItemEntities} from 'shared';
-import type {GetEntryResponse} from 'shared/schema';
+import type {GetEntryResponse, SharedEntry, SharedEntryBindingsItem} from 'shared/schema';
+import {getSdk} from 'ui/libs/schematic-sdk';
 import type {AppDispatch} from 'ui/store';
+import {showToast} from 'ui/store/actions/toaster';
 import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 
 import {closeDialog, openDialog} from '../../store/actions/dialog';
@@ -14,14 +16,11 @@ import DialogManager from '../DialogManager/DialogManager';
 import {DIALOG_SHARED_ENTRY_PERMISSIONS} from '../DialogSharedEntryPermissions/DialogSharedEntryPermissions';
 import {DIALOG_SHARED_ENTRY_UNBIND} from '../DialogSharedEntryUnbind/DialogSharedEntryUnbind';
 import {EntitiesList} from '../EntitiesList/EntitiesList';
-import type {Entry, RowEntityData} from '../EntityRow/EntityRow';
 import {PlaceholderIllustration} from '../PlaceholderIllustration/PlaceholderIllustration';
 import {SharedBindingsList} from '../SharedBindingsList/SharedBindingsList';
 
 import type {AttachmentValue} from './constants';
 import {Attachment, ObjectsListTitles, SEARCH_DELAY} from './constants';
-import type {mock} from './mock';
-import {getEntityBindings} from './mock';
 
 import './DialogSharedEntryBindings.scss';
 
@@ -33,12 +32,15 @@ type DialogSharedEntryBindingsProps = {
 
 export const DIALOG_SHARED_ENTRY_BINDINGS = Symbol('DIALOG_SHARED_ENTRY_BINDINGS');
 
+const CONCURRENT_ID = 'shared-entry-bindings';
+const cancelConcurrentRequest = () => getSdk().cancelRequest(CONCURRENT_ID);
+
 export interface OpenDialogSharedEntryBindingArgs {
     id: typeof DIALOG_SHARED_ENTRY_BINDINGS;
     props: DialogSharedEntryBindingsProps;
 }
 
-const sortEntities = (entities: (typeof mock)['items']): (typeof mock)['items'] => {
+const sortEntities = (entities: SharedEntryBindingsItem[]) => {
     return entities.sort((entity) => (entity.entity === CollectionItemEntities.WORKBOOK ? -1 : 1));
 };
 
@@ -46,9 +48,9 @@ const b = block('dialog-shared-entries-binding');
 
 const getIsRelationUnbind = (
     currentDirection: AttachmentValue,
-    item: RowEntityData,
-): item is RowEntityData & Entry => {
-    return currentDirection === Attachment.SOURCE && 'scope' in item;
+    item: SharedEntryBindingsItem,
+): item is SharedEntryBindingsItem & SharedEntry => {
+    return currentDirection === Attachment.TARGET && 'scope' in item;
 };
 
 export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps> = ({
@@ -57,10 +59,10 @@ export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps>
     entry,
 }) => {
     const [currentDirection, setCurrentDirection] = React.useState<AttachmentValue>(
-        Attachment.TARGET,
+        Attachment.SOURCE,
     );
     const dispatch: AppDispatch = useDispatch();
-    const [entities, setEntities] = React.useState<(typeof mock)['items']>([]);
+    const [entities, setEntities] = React.useState<SharedEntryBindingsItem[]>([]);
 
     const [searchFilter, setSearchFilter] = React.useState('');
     const [isLoading, setIsLoading] = React.useState(true);
@@ -77,8 +79,14 @@ export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps>
         (filter = '') => {
             setIsLoading(true);
             setIsError(false);
-            // cancelConcurrentRequest();
-            getEntityBindings(entry.entryId, currentDirection, filter)
+            cancelConcurrentRequest();
+            getSdk()
+                .sdk.us.getSharedEntryBindings({
+                    entryId: entry.entryId,
+                    entryAs: currentDirection,
+                    filterString: filter ? filter : undefined,
+                    mode: 'all',
+                })
                 .then((response) => {
                     setEntities(sortEntities(response.items));
                     setIsLoading(false);
@@ -125,7 +133,7 @@ export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps>
     }, [fetchEntityBindings]);
 
     const getListItemActions = React.useCallback(
-        (item: RowEntityData) => {
+        (item: SharedEntryBindingsItem) => {
             return [
                 {
                     text: getSharedEntryMockText('shared-bindings-list-action-unbind'),
@@ -138,7 +146,26 @@ export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps>
                                         ? item
                                         : entry,
                                     onClose: () => dispatch(closeDialog()),
-                                    onApply: () => {},
+                                    onApply: async () => {
+                                        try {
+                                            await getSdk().sdk.us.deleteSharedEntryBinding({
+                                                sourceId: entry.entryId,
+                                                targetId:
+                                                    item.entity === CollectionItemEntities.WORKBOOK
+                                                        ? item.workbookId!
+                                                        : item.entryId,
+                                            });
+                                            dispatch(closeDialog());
+                                            fetchEntityBindings();
+                                        } catch (error) {
+                                            dispatch(
+                                                showToast({
+                                                    title: error.message,
+                                                    error,
+                                                }),
+                                            );
+                                        }
+                                    },
                                     open: true,
                                     relation: getIsRelationUnbind(currentDirection, item)
                                         ? undefined
@@ -156,8 +183,29 @@ export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps>
                                 props: {
                                     entry,
                                     onClose: () => dispatch(closeDialog()),
-                                    onApply: () => {},
+                                    onApply: async (delegate) => {
+                                        try {
+                                            await getSdk().sdk.us.updateSharedEntryBinding({
+                                                sourceId: entry.entryId,
+                                                targetId:
+                                                    item.entity === CollectionItemEntities.WORKBOOK
+                                                        ? item.workbookId!
+                                                        : item.entryId,
+                                                delegation: delegate,
+                                            });
+                                            dispatch(closeDialog());
+                                            fetchEntityBindings();
+                                        } catch (error) {
+                                            dispatch(
+                                                showToast({
+                                                    title: error.message,
+                                                    error,
+                                                }),
+                                            );
+                                        }
+                                    },
                                     open: true,
+                                    delegation: item.isDelegated,
                                     relation: item,
                                 },
                             }),
@@ -165,7 +213,7 @@ export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps>
                 },
             ];
         },
-        [currentDirection, dispatch, entry],
+        [currentDirection, dispatch, entry, fetchEntityBindings],
     );
 
     const renderRelations = () => {
@@ -226,11 +274,11 @@ export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps>
                         onUpdate={handleDirectionChange}
                         width="auto"
                     >
-                        <RadioButton.Option value={Attachment.TARGET}>
-                            {getSharedEntryMockText('label-attachment-target')}
-                        </RadioButton.Option>
                         <RadioButton.Option value={Attachment.SOURCE}>
                             {getSharedEntryMockText('label-attachment-source')}
+                        </RadioButton.Option>
+                        <RadioButton.Option value={Attachment.TARGET}>
+                            {getSharedEntryMockText('label-attachment-target')}
                         </RadioButton.Option>
                     </RadioButton>
                 )}

@@ -12,7 +12,13 @@ import {useVirtualizer} from '@tanstack/react-virtual';
 import debounce from 'lodash/debounce';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
-import type {TableCell, TableCellsRow, TableCommonCell, TableHead} from 'shared';
+import {
+    TRANSPARENT_COLOR_HEX,
+    type TableCell,
+    type TableCellsRow,
+    type TableCommonCell,
+    type TableHead,
+} from 'shared';
 import {i18n} from 'ui/libs/DatalensChartkit/ChartKit/modules/i18n/i18n';
 import {getRandomCKId} from 'ui/libs/DatalensChartkit/helpers/helpers';
 
@@ -331,9 +337,10 @@ export const usePreparedTableData = (props: {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [colSizes, data.head]);
 
-    const tableBgColor = backgroundColor
-        ? toSolidColor(backgroundColor)
-        : getElementBackgroundColor(tableContainerRef.current);
+    const tableBgColor =
+        backgroundColor && !['transparent', TRANSPARENT_COLOR_HEX].includes(backgroundColor)
+            ? toSolidColor(backgroundColor)
+            : getElementBackgroundColor(tableContainerRef.current);
 
     const whiteSpace = preserveWhiteSpace ? 'pre-wrap' : 'normal';
 

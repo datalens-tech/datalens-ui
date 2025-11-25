@@ -8,7 +8,7 @@ import {batch, useDispatch, useSelector} from 'react-redux';
 import {Link} from 'react-router-dom';
 import {CollectionItemEntities} from 'shared';
 
-import type {StructureItem} from '../../../../../shared/schema';
+import type {StructureItemWithPermissions} from '../../../../../shared/schema';
 import {AnimateBlock} from '../../../../components/AnimateBlock';
 import {setCollectionBreadcrumbs} from '../../../collections-navigation/store/actions';
 import {selectCollectionBreadcrumbs} from '../../../collections-navigation/store/selectors';
@@ -27,7 +27,9 @@ const b = block('dl-collection-content-grid');
 type Props = {
     selectedMap: SelectedMap;
     isOpenSelectionMode: boolean;
-    getItemActions: (item: StructureItem) => (DropdownMenuItem[] | DropdownMenuItem)[];
+    getItemActions: (
+        item: StructureItemWithPermissions,
+    ) => (DropdownMenuItem[] | DropdownMenuItem)[];
     onUpdateCheckboxClick: (args: UpdateCheckboxArgs) => void;
 };
 

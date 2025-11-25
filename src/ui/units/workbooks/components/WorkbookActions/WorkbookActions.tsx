@@ -221,7 +221,7 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
 
             {workbook.permissions.update && (
                 <div className={b('item')}>
-                    <CreateEntry view="action" />
+                    <CreateEntry workbook={workbook} view="action" />
                 </div>
             )}
 

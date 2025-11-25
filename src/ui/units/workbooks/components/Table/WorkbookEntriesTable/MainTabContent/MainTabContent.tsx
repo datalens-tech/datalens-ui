@@ -23,12 +23,12 @@ const b = block('dl-main-tab-content');
 const i18n = I18n.keyset('new-workbooks');
 
 type MainTabContentProps = WorkbookEntriesTableProps & {
-    actionCreateText: string;
+    actionCreateText?: string;
     chunk: ChunkItem[];
     title: string;
     isErrorMessage?: boolean;
     isLoading?: boolean;
-    actionType: CreateEntryActionType;
+    actionType?: CreateEntryActionType;
     isShowMoreBtn: boolean;
     loadMoreEntries: () => void;
     retryLoadEntries: () => void;
@@ -63,7 +63,9 @@ const MainTabContent = ({
     const dispatch = useDispatch();
 
     const handleCreateEntity = () => {
-        dispatch(setCreateWorkbookEntryType(actionType));
+        if (actionType) {
+            dispatch(setCreateWorkbookEntryType(actionType));
+        }
     };
 
     const getContentTab = () => {

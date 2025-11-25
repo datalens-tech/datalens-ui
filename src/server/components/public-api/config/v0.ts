@@ -80,6 +80,7 @@ export const getPublicApiActionsV0 = <
             openApi: {
                 summary: 'Get wizard chart',
                 tags: [ApiTag.Wizard],
+                experimental: true,
             },
         },
         deleteWizardChart: {
@@ -96,6 +97,7 @@ export const getPublicApiActionsV0 = <
             openApi: {
                 summary: 'Get QL chart',
                 tags: [ApiTag.QL],
+                experimental: true,
             },
         },
         deleteQLChart: {
@@ -112,6 +114,7 @@ export const getPublicApiActionsV0 = <
             openApi: {
                 summary: 'Get dashboard',
                 tags: [ApiTag.Dashboard],
+                experimental: true,
             },
         },
         createDashboard: {
@@ -119,6 +122,7 @@ export const getPublicApiActionsV0 = <
             openApi: {
                 summary: 'Create dashboard',
                 tags: [ApiTag.Dashboard],
+                experimental: true,
             },
         },
         updateDashboard: {
@@ -126,6 +130,7 @@ export const getPublicApiActionsV0 = <
             openApi: {
                 summary: 'Update dashboard',
                 tags: [ApiTag.Dashboard],
+                experimental: true,
             },
         },
         deleteDashboard: {

@@ -7,7 +7,7 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import cloneDeep from 'lodash/cloneDeep';
 import merge from 'lodash/merge';
-import {DialogDashWidgetItemQA, DialogDashWidgetQA} from 'shared';
+import {CustomPaletteBgColors, DialogDashWidgetItemQA, DialogDashWidgetQA} from 'shared';
 import type {DashTabItemImage, EntryScope, RecursivePartial} from 'shared';
 import {registry} from 'ui/registry';
 
@@ -24,7 +24,7 @@ const DEFAULT_ITEM_DATA: DashTabItemImage['data'] = {
     src: '',
     alt: '',
     background: {
-        color: 'transparent',
+        color: CustomPaletteBgColors.NONE,
     },
     preserveAspectRatio: true,
 };

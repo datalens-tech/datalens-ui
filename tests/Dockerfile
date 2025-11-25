@@ -55,6 +55,9 @@ COPY --from=install-stage /opt/app/node_modules /opt/app/node_modules
 # split install playwright deps and browser
 RUN npx playwright install chromium ffmpeg --with-deps --dry-run | grep --color=never 'sh -c' | sed 's|sh -c "||' | sed 's|"||' > ./deps.sh && chmod +x ./deps.sh && ./deps.sh && rm -rf ./deps.sh
 
+# remove DejaVuSans fonts
+RUN apt purge -y fonts-dejavu-core fonts-dejavu-mono
+
 ENV PLAYWRIGHT_DOWNLOAD_HOST=https://storage.yandexcloud.net/playwright
 ENV PLAYWRIGHT_BROWSERS_PATH=/opt/app/pw-browsers
 

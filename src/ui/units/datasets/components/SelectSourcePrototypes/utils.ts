@@ -1,7 +1,7 @@
 import type {Dataset} from 'shared';
 
 export const getClickableTypes = (
-    connectionId: string,
+    connectionId?: string,
     replacementData: Dataset['options']['connections']['items'] = [],
 ) => {
     const replacementConnData = replacementData.find(({id}) => id === connectionId);

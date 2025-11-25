@@ -3,13 +3,12 @@ import React from 'react';
 import {ShieldCheck, ShieldKeyhole} from '@gravity-ui/icons';
 import {Dialog, Divider, Link, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import type {GetEntryResponse} from 'shared/schema';
+import type {GetEntryResponse, SharedEntryBindingsItem} from 'shared/schema';
 import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 
 import DialogManager from '../DialogManager/DialogManager';
 import {EntitiesList} from '../EntitiesList/EntitiesList';
 import {EntityLink} from '../EntityLink/EntityLink';
-import type {RowEntityData} from '../EntityRow/EntityRow';
 
 import {PermissionButton} from './components/PermissionButton/PermissionButton';
 
@@ -19,8 +18,9 @@ type DialogSharedEntryPermissionsProps = {
     open: boolean;
     onClose: () => void;
     entry: Partial<GetEntryResponse> & {scope: string};
-    relation?: RowEntityData;
-    onApply: (delegate: boolean) => void;
+    relation?: SharedEntryBindingsItem;
+    onApply: (delegate: boolean) => Promise<void> | void;
+    delegation?: boolean;
 };
 
 export const DIALOG_SHARED_ENTRY_PERMISSIONS = Symbol('DIALOG_SHARED_ENTRY_PERMISSIONS');
@@ -38,12 +38,15 @@ export const DialogSharedEntryPermissions: React.FC<DialogSharedEntryPermissions
     open,
     onApply,
     onClose,
+    delegation = true,
 }) => {
-    const [delegate, setDelegate] = React.useState(true);
+    const [delegate, setDelegate] = React.useState(delegation);
+    const [isLoading, setIsLoading] = React.useState(false);
 
-    const onSubmit = () => {
-        // TODO add request
-        onApply?.(delegate);
+    const onSubmit = async () => {
+        setIsLoading(true);
+        await onApply(delegate);
+        setIsLoading(false);
     };
 
     return (
@@ -97,6 +100,7 @@ export const DialogSharedEntryPermissions: React.FC<DialogSharedEntryPermissions
                 propsButtonCancel={{
                     view: 'flat',
                 }}
+                loading={isLoading}
                 textButtonCancel={getSharedEntryMockText('cancel-unbind-dialog')}
                 onClickButtonApply={onSubmit}
                 onClickButtonCancel={onClose}

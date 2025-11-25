@@ -6,7 +6,7 @@ import {Interpolate} from '../Interpolate/Interpolate';
 
 type InterpolatedTextProps = {
     text: string;
-    href?: string;
+    href?: string | string[];
     br?: boolean;
     b?: boolean;
     code?: boolean;
@@ -22,7 +22,7 @@ const InterpolatedTextComponent = ({
     code,
     disableLink,
 }: InterpolatedTextProps) => {
-    const matches: Record<string, (match: string) => React.ReactNode> = {};
+    const matches: Record<string, (match: string, index?: number) => React.ReactNode> = {};
 
     if (disableLink) {
         matches.link = (match) => {
@@ -31,7 +31,15 @@ const InterpolatedTextComponent = ({
     }
 
     if (href) {
-        matches.link = (match) => {
+        matches.link = (match, index) => {
+            if (Array.isArray(href)) {
+                return (
+                    <Link href={href[index ?? 0]} target="_blank">
+                        {match}
+                    </Link>
+                );
+            }
+
             return (
                 <Link href={href} target="_blank">
                     {match}
