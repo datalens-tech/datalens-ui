@@ -259,7 +259,7 @@ describe('Preview reducer', () => {
                 tooltips: [],
                 type: 'datalens',
                 updates: [],
-                version: ChartsConfigVersion.V14,
+                version: ChartsConfigVersion.V15,
                 visualization: stateWithDataset.visualization,
                 wizardDataset: mockedDataset,
             };
