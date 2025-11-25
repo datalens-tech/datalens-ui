@@ -2,5 +2,4 @@ import type {SubjectClaims} from '../../../../../../shared/schema/extensions/typ
 
 export type AclSubjectProps = {
     subjectClaims: SubjectClaims;
-    iconSlot?: React.ReactNode;
 };
