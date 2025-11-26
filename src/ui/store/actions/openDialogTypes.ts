@@ -127,7 +127,7 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogDefaultArgs
     | OpenDialogCreatePublicGalleryWorkbookArgs
     | OpenDialogEntryDescriptionArgs
-    | OpenDialogAccessDialogArgs;
+    | OpenDialogAccessDialogArgs
     | OpenDialogSharedEntryBindingArgs
     | OpenDialogSharedEntryUnbindArgs
     | OpenDialogSharedEntryPermissionsArgs
