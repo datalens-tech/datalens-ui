@@ -18,6 +18,7 @@ export type ShowToastOptions = {
     error?: DataLensApiError;
     name?: string;
     content?: React.ReactNode;
+    // true by default (error is requred)
     withReport?: boolean;
     actions?: ToastAction[];
 };
@@ -33,7 +34,7 @@ export const showToast = (opt: ShowToastOptions) => {
         let type: ShowToastOptions['type'] = opt.type || 'info';
 
         if (error) {
-            type = 'danger';
+            type = opt.type ?? 'danger';
             actions = opt.actions || [
                 {
                     label: i18n('label_details'),
