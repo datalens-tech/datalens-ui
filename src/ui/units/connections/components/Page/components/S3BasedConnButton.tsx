@@ -38,8 +38,7 @@ const S3BasedConnButtonComponent = (props: S3BasedConnButtonProps) => {
         view = 'action',
     } = props;
     const dispatch = useDispatch();
-    const {workbookId} = useParams<{workbookId?: string}>();
-    const {collectionId} = useParams<{collectionId?: string}>();
+    const {workbookId, collectionId} = useParams<{workbookId?: string; collectionId?: string}>();
     const {createConnectionHandler} = useCreateConnectionHandler({
         hasWorkbookIdInParams: Boolean(workbookId),
         hasCollectionIdInParams: Boolean(collectionId),
