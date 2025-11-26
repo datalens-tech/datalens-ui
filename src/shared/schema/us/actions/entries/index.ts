@@ -53,6 +53,7 @@ import type {
 } from '../../types';
 
 import {getEntries} from './get-entries';
+import {getEntriesRelations} from './get-entries-relations';
 import {listDirectory} from './list-directory';
 
 const PATH_PREFIX = '/v1';
@@ -60,6 +61,7 @@ const PATH_PREFIX_V2 = '/v2';
 const PRIVATE_PATH_PREFIX = '/private';
 
 export const entriesActions = {
+    getEntriesRelations,
     listDirectory,
     getEntries,
     getEntry: createAction<GetEntryResponse, GetEntryArgs>({
