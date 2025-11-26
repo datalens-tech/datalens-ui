@@ -5,26 +5,33 @@ import {List, Loader, Popup} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {DebouncedInput} from 'components/DebouncedInput';
 import {EntryIcon} from 'components/EntryIcon/EntryIcon';
-import {OrderBySelect, SORT_TYPE} from 'components/OrderBySelect';
 import type {OrderBy, OrderByOptions, SortType} from 'components/OrderBySelect';
+import {OrderBySelect, SORT_TYPE} from 'components/OrderBySelect';
 import {i18n} from 'i18n';
 import {getSdk} from 'libs/schematic-sdk';
 import moment from 'moment';
-import type {EntryScope} from 'shared';
-import {WorkbookNavigationMinimalQa, getEntryNameByKey} from 'shared';
+import type {SharedScope} from 'shared';
+import {EntryScope, WorkbookNavigationMinimalQa, getEntryNameByKey} from 'shared';
 import type {
     GetEntryResponse,
+    GetSharedEntryResponse,
     GetWorkbookEntriesArgs,
     OrderDirection,
     OrderWorkbookEntriesField,
 } from 'shared/schema';
 import {DEFAULT_DATE_FORMAT} from 'ui/constants/misc';
+import {getIsSharedEntry} from 'ui/utils';
 
 import {PlaceholderIllustration} from '../PlaceholderIllustration/PlaceholderIllustration';
+import {SharedEntryIcon} from '../SharedEntryIcon/SharedEntryIcon';
+
+import {ListWithSharedEntries} from './components/ListWithSharedEntries';
+import {PopupClassName} from './constants';
+import type {BaseListItem, Item, SharedItem} from './types';
 
 import './WorkbookNavigationMinimal.scss';
 
-const b = block('dl-core-workbook-navigation-minimal');
+const b = block(PopupClassName);
 
 const SORT_TYPE_VALUES: OrderByOptions<SortType, OrderWorkbookEntriesField, OrderDirection> = {
     [SORT_TYPE.FIRST_NEW]: {
@@ -51,12 +58,6 @@ const SORT_TYPE_VALUES: OrderByOptions<SortType, OrderWorkbookEntriesField, Orde
 
 const ROW_HEIGHT = 40;
 
-type Item = {
-    entry: GetEntryResponse;
-    inactive: boolean;
-    qa?: string;
-};
-
 type Props = {
     anchor: React.RefObject<any>;
     visible: boolean;
@@ -74,6 +75,7 @@ type Props = {
 type State = {
     filter: string;
     items?: Item[];
+    sharedItems?: SharedItem[];
     orderByField: OrderWorkbookEntriesField;
     orderByDirection: OrderDirection;
 };
@@ -92,21 +94,27 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
     };
 
     componentDidMount() {
-        const {visible, workbookId} = this.props;
+        const {visible, workbookId, scope} = this.props;
 
         if (visible && workbookId) {
-            this.fetchWorkbooEntries(true);
+            this.fetchWorkbookEntries(true);
+            if (this.getIsSharedScope(scope)) {
+                this.fetchWorkbookSharedEntries();
+            }
         }
     }
 
     componentDidUpdate(prevProps: Props) {
-        const {visible, workbookId} = this.props;
+        const {visible, workbookId, scope} = this.props;
         const becameVisibleOrRecievedWorkbookId =
             (prevProps.visible !== visible && visible) ||
             (prevProps.workbookId !== workbookId && visible);
 
         if (becameVisibleOrRecievedWorkbookId) {
-            this.fetchWorkbooEntries(true);
+            this.fetchWorkbookEntries(true);
+            if (this.getIsSharedScope(scope)) {
+                this.fetchWorkbookSharedEntries();
+            }
         }
     }
 
@@ -123,7 +131,11 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
             return null;
         }
 
-        const items = this.state.items as undefined | any[];
+        const items = this.state.items;
+        const sharedItems = this.state.sharedItems;
+
+        const isEmpty = items && !items.length && !sharedItems?.length;
+        const scope = this.props.scope;
 
         return (
             <Popup
@@ -163,8 +175,8 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
                                 />
                             </div>
                         </div>
-                        {!items ? <Loader className={b('loader')} /> : null}
-                        {items && !items.length ? (
+                        {!items && !sharedItems ? <Loader className={b('loader')} /> : null}
+                        {isEmpty && (
                             <div className={b('empty-entries')}>
                                 <PlaceholderIllustration
                                     name="notFound"
@@ -176,24 +188,35 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
                                     direction="column"
                                 />
                             </div>
-                        ) : null}
-                        {items && items.length ? (
-                            <List
-                                qa={WorkbookNavigationMinimalQa.List}
+                        )}
+                        {this.getIsSharedScope(scope) ? (
+                            <ListWithSharedEntries
                                 items={items}
-                                filterable={false}
+                                scope={scope}
+                                sharedItems={sharedItems}
                                 renderItem={this.renderItem}
-                                itemHeight={this.getRowHeight}
+                                itemHeight={this.getRowHeight()}
                                 onItemClick={this.onItemClick}
                             />
-                        ) : null}
+                        ) : (
+                            Boolean(items?.length) && (
+                                <List
+                                    qa={WorkbookNavigationMinimalQa.List}
+                                    items={items}
+                                    filterable={false}
+                                    renderItem={this.renderItem}
+                                    itemHeight={this.getRowHeight}
+                                    onItemClick={this.onItemClick}
+                                />
+                            )
+                        )}
                     </div>
                 )}
             </Popup>
         );
     }
 
-    private renderItem = (item: Item) => {
+    private renderItem = (item: Item | SharedItem) => {
         const {entry, inactive, qa} = item;
         const name = getEntryNameByKey({key: entry.key});
         const date = moment(entry.createdAt).format(DEFAULT_DATE_FORMAT);
@@ -206,6 +229,9 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
                         <div title={name} className={b('name-line')}>
                             <span>{name}</span>
                         </div>
+                        {getIsSharedEntry(entry) && (
+                            <SharedEntryIcon className={b('shared-item-icon')} entry={entry} />
+                        )}
                     </div>
 
                     <div title={date} className={b('date')}>
@@ -216,7 +242,38 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
         );
     };
 
-    private fetchWorkbooEntries(reinit = false) {
+    private getItemsFromResponse = <T extends GetEntryResponse | GetSharedEntryResponse>({
+        entries,
+    }: {
+        entries: T[];
+    }): BaseListItem<T>[] => {
+        const {includeClickableType, excludeClickableType, inactiveEntryIds} = this.props;
+
+        const includeType = new Set(
+            Array.isArray(includeClickableType) ? includeClickableType : [includeClickableType],
+        );
+        const excludeType = new Set(
+            Array.isArray(excludeClickableType) ? excludeClickableType : [excludeClickableType],
+        );
+        const inactiveIds = new Set(Array.isArray(inactiveEntryIds) ? inactiveEntryIds : []);
+        return entries.map((entry) => {
+            const inactiveByIncludeType = includeClickableType
+                ? !includeType.has(entry.type)
+                : false;
+            const inactiveByExcludeType = excludeClickableType
+                ? excludeType.has(entry.type)
+                : false;
+            const inactiveByIds = inactiveEntryIds ? inactiveIds.has(entry.entryId) : false;
+            const name = getEntryNameByKey({key: entry.key});
+            return {
+                qa: name,
+                entry: {...entry, name},
+                inactive: inactiveByIncludeType || inactiveByExcludeType || inactiveByIds,
+            };
+        });
+    };
+
+    private fetchWorkbookEntries(reinit = false) {
         this.setState({
             items: undefined,
             filter: reinit ? '' : this.state.filter,
@@ -243,45 +300,49 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
                 },
                 {concurrentId: 'WorkbookNavigationMinimal/getWorkbookEntries'},
             )
-            .then(({entries}) => {
-                const {includeClickableType, excludeClickableType, inactiveEntryIds} = this.props;
-
-                const includeType = new Set(
-                    Array.isArray(includeClickableType)
-                        ? includeClickableType
-                        : [includeClickableType],
-                );
-                const excludeType = new Set(
-                    Array.isArray(excludeClickableType)
-                        ? excludeClickableType
-                        : [excludeClickableType],
-                );
-                const inactiveIds = new Set(
-                    Array.isArray(inactiveEntryIds) ? inactiveEntryIds : [],
-                );
-
+            .then((res) => {
                 this.setState({
-                    items: entries.map((entry) => {
-                        const inactiveByIncludeType = includeClickableType
-                            ? !includeType.has(entry.type)
-                            : false;
-                        const inactiveByExcludeType = excludeClickableType
-                            ? excludeType.has(entry.type)
-                            : false;
-                        const inactiveByIds = inactiveEntryIds
-                            ? inactiveIds.has(entry.entryId)
-                            : false;
-                        const name = getEntryNameByKey({key: entry.key});
-                        return {
-                            qa: name,
-                            entry: {...entry, name},
-                            inactive:
-                                inactiveByIncludeType || inactiveByExcludeType || inactiveByIds,
-                        };
-                    }),
+                    items: this.getItemsFromResponse(res),
                 });
             });
     }
+
+    private fetchWorkbookSharedEntries() {
+        this.setState({
+            sharedItems: undefined,
+        });
+
+        let filters: GetWorkbookEntriesArgs['filters'];
+
+        if (this.state.filter) {
+            filters = {
+                name: this.state.filter,
+            };
+        }
+
+        getSdk()
+            .sdk.us.getWorkbookSharedEntries(
+                {
+                    workbookId: this.props.workbookId,
+                    scope: this.props.scope,
+                    filters,
+                    orderBy: {
+                        field: this.state.orderByField,
+                        direction: this.state.orderByDirection,
+                    },
+                },
+                {concurrentId: 'WorkbookNavigationMinimal/getWorkbookSharedEntries'},
+            )
+            .then((res) => {
+                this.setState({
+                    sharedItems: this.getItemsFromResponse(res),
+                });
+            });
+    }
+
+    private getIsSharedScope = (scope: EntryScope): scope is SharedScope => {
+        return scope === EntryScope.Dataset || scope === EntryScope.Connection;
+    };
 
     private getRowHeight = () => ROW_HEIGHT;
 
@@ -293,15 +354,23 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
     };
 
     private onUpdateFilter = (filter: string) =>
-        this.setState({filter}, () => this.fetchWorkbooEntries());
+        this.setState({filter}, () => {
+            this.fetchWorkbookEntries();
+            if (this.getIsSharedScope(this.props.scope)) {
+                this.fetchWorkbookSharedEntries();
+            }
+        });
 
     private onUpdateOrderBy = ({
         field,
         direction,
     }: OrderBy<OrderWorkbookEntriesField, OrderDirection>): void => {
-        this.setState({orderByField: field, orderByDirection: direction}, () =>
-            this.fetchWorkbooEntries(),
-        );
+        this.setState({orderByField: field, orderByDirection: direction}, () => {
+            this.fetchWorkbookEntries();
+            if (this.getIsSharedScope(this.props.scope)) {
+                this.fetchWorkbookSharedEntries();
+            }
+        });
     };
 }
 

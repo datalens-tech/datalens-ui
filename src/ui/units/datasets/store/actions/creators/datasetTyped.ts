@@ -1883,20 +1883,22 @@ export function initializeDataset({
         if (collectionId) {
             const {selectedConnections} = getState().dataset;
             const connection = selectedConnections[0];
-            dispatch(
-                openDialog({
-                    id: DIALOG_SHARED_ENTRY_PERMISSIONS,
-                    props: {
-                        onClose: () => dispatch(closeDialog()),
-                        onApply: (delegate) => {
-                            dispatch(setSharedDatasetDelegation(delegate));
-                            dispatch(closeDialog());
+            if (connection) {
+                dispatch(
+                    openDialog({
+                        id: DIALOG_SHARED_ENTRY_PERMISSIONS,
+                        props: {
+                            onClose: () => dispatch(closeDialog()),
+                            onApply: (delegate) => {
+                                dispatch(setSharedDatasetDelegation(delegate));
+                                dispatch(closeDialog());
+                            },
+                            open: true,
+                            entry: connection,
                         },
-                        open: true,
-                        entry: connection,
-                    },
-                }),
-            );
+                    }),
+                );
+            }
         }
 
         dispatch(_getSources());

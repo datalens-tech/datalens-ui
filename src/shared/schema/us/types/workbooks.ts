@@ -13,7 +13,7 @@ import type {moveWorkbookResultSchema} from '../actions/workbooks/move-workbook'
 import type {moveWorkbooksResultSchema} from '../actions/workbooks/move-workbooks';
 import type {updateWorkbookResultSchema} from '../actions/workbooks/update-workbook';
 
-import type {GetEntryResponse} from './entries';
+import type {GetEntryResponse, GetSharedEntryResponse} from './entries';
 import type {GetDatalensOperationResponse} from './operations';
 import type {OrderDirection, OrderWorkbookEntriesField} from './sort';
 
@@ -81,6 +81,11 @@ export type GetWorkbookEntriesArgs = {
 
 export type GetWorkbookEntriesResponse = {
     entries: GetEntryResponse[]; // TODO: Take into account permishins
+    nextPageToken?: string;
+};
+
+export type GetWorkbookSharedEntriesResponse = {
+    entries: GetSharedEntryResponse[];
     nextPageToken?: string;
 };
 

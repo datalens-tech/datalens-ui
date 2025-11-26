@@ -1,5 +1,5 @@
 import type {CollectionItemEntities} from '../../../constants';
-import type {EntryAnnotation, WorkbookId} from '../../../types';
+import type {CollectionId, EntryAnnotation, WorkbookId} from '../../../types';
 
 export type EntryFieldData<T = Record<string, unknown>> = null | T;
 export type EntryFieldLinks = null | Record<string, string>;
@@ -29,7 +29,7 @@ export interface EntryFields {
     updatedBy: string;
     unversionedData?: unknown;
     workbookId: WorkbookId;
-    collectionId?: string;
+    collectionId?: CollectionId;
     annotation?: EntryAnnotation | null;
 }
 
@@ -105,6 +105,8 @@ export interface EntryFavoriteFields {
     hidden: boolean;
     workbookId: WorkbookId;
     workbookTitle?: string | null;
+    collectionId: CollectionId;
+    collectionTitle?: string | null;
 }
 
 // corresponds to RETURN_RELATION_COLUMNS from US

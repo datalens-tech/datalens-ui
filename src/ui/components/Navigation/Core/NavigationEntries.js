@@ -73,6 +73,7 @@ class NavigationEntries extends React.Component {
         isMobileNavigation: PropTypes.bool,
         isOnlyCollectionsMode: PropTypes.bool,
         ignoreWorkbookEntries: PropTypes.bool,
+        ignoreSharedEntries: PropTypes.bool,
         onChangeLocation: PropTypes.func,
 
         resolveUsersByIds: PropTypes.func,
@@ -154,7 +155,8 @@ class NavigationEntries extends React.Component {
     refSearchInput = React.createRef();
     getFilteredEntries(entries = []) {
         return entries.filter((entry) => {
-            const showEntry = !entry.hidden || this.showHidden;
+            const hideSharedEntry = entry.collectionId && this.props.ignoreSharedEntries;
+            const showEntry = !hideSharedEntry && (!entry.hidden || this.showHidden);
 
             return this.props.isMobileNavigation
                 ? showEntry && MOBILE_PLACES.includes(entry.scope)
