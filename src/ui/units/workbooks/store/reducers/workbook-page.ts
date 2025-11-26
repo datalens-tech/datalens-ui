@@ -16,6 +16,9 @@ import type {WorkbookEntriesFilters} from '../../types';
 import type {WorkbooksAction} from '../actions';
 import {
     ADD_WORKBOOK_INFO,
+    BIND_SHARED_ENTRY_TO_WORKBOOK_FAILED,
+    BIND_SHARED_ENTRY_TO_WORKBOOK_LOADING,
+    BIND_SHARED_ENTRY_TO_WORKBOOK_SUCCESS,
     CHANGE_FAVORITE_ENTRY_FAILED,
     CHANGE_FAVORITE_ENTRY_INLINE,
     CHANGE_FAVORITE_ENTRY_LOADING,
@@ -34,6 +37,9 @@ import {
     GET_WORKBOOK_ENTRIES_SUCCESS,
     GET_WORKBOOK_FAILED,
     GET_WORKBOOK_LOADING,
+    GET_WORKBOOK_SHARED_ENTRIES_FAILED,
+    GET_WORKBOOK_SHARED_ENTRIES_LOADING,
+    GET_WORKBOOK_SHARED_ENTRIES_SUCCESS,
     GET_WORKBOOK_SUCCESS,
     RENAME_ENTRY_FAILED,
     RENAME_ENTRY_INLINE,
@@ -43,6 +49,7 @@ import {
     RESET_WORKBOOK_ENTRIES,
     RESET_WORKBOOK_ENTRIES_BY_SCOPE,
     RESET_WORKBOOK_PERMISSIONS,
+    RESET_WORKBOOK_SHARED_ENTRIES,
     SET_CREATE_WORKBOOK_ENTRY_TYPE,
     SET_WORKBOOK,
 } from '../constants';
@@ -53,6 +60,16 @@ export type WorkbooksState = {
         data: GetWorkbookEntriesResponse | null;
         error: Error | null;
     };
+    getWorkbookSharedEntries: {
+        isLoading: boolean;
+        data: GetWorkbookEntriesResponse | null;
+        error: Error | null;
+    };
+    bindSharedEntryToWorkbook: {
+        isLoading: boolean;
+        error: Error | null;
+    };
+    sharedItems: GetWorkbookEntriesResponse['entries'];
     items: GetWorkbookEntriesResponse['entries'];
     getWorkbook: {
         isLoading: boolean;
@@ -94,7 +111,17 @@ const initialState: WorkbooksState = {
         data: null,
         error: null,
     },
+    getWorkbookSharedEntries: {
+        isLoading: false,
+        data: null,
+        error: null,
+    },
+    bindSharedEntryToWorkbook: {
+        isLoading: false,
+        error: null,
+    },
     items: [],
+    sharedItems: [],
     getWorkbook: {
         isLoading: false,
         data: null,
@@ -270,12 +297,93 @@ export const workbooksReducer = (state: WorkbooksState = initialState, action: W
             };
         }
 
+        // Shared entities in the workbook
+        case GET_WORKBOOK_SHARED_ENTRIES_LOADING: {
+            return {
+                ...state,
+                getWorkbookSharedEntries: {
+                    ...state.getWorkbookSharedEntries,
+                    isLoading: true,
+                    error: null,
+                },
+            };
+        }
+        case GET_WORKBOOK_SHARED_ENTRIES_SUCCESS: {
+            const loadedIds = new Set(
+                state.sharedItems.map((item) => {
+                    return item.entryId;
+                }),
+            );
+
+            const newEntries = action.data.entries.filter((entry) => !loadedIds.has(entry.entryId));
+
+            return {
+                ...state,
+                getWorkbookSharedEntries: {
+                    isLoading: false,
+                    data: action.data,
+                    error: null,
+                },
+                sharedItems: [...state.sharedItems, ...newEntries],
+            };
+        }
+
+        case GET_WORKBOOK_SHARED_ENTRIES_FAILED: {
+            return {
+                ...state,
+                getWorkbookSharedEntries: {
+                    ...state.getWorkbookSharedEntries,
+                    isLoading: false,
+                    error: action.error,
+                },
+            };
+        }
+
+        case BIND_SHARED_ENTRY_TO_WORKBOOK_LOADING: {
+            return {
+                ...state,
+                bindSharedEntryToWorkbook: {
+                    ...state.bindSharedEntryToWorkbook,
+                    isLoading: true,
+                },
+            };
+        }
+
+        case BIND_SHARED_ENTRY_TO_WORKBOOK_SUCCESS: {
+            return {
+                ...state,
+                bindSharedEntryToWorkbook: {
+                    isLoading: false,
+                    error: null,
+                },
+            };
+        }
+
+        case BIND_SHARED_ENTRY_TO_WORKBOOK_FAILED: {
+            return {
+                ...state,
+                bindSharedEntryToWorkbook: {
+                    isLoading: false,
+                    error: action.error,
+                },
+            };
+        }
+
         // Resetting information about the contents of the workbook
         case RESET_WORKBOOK_ENTRIES: {
             return {
                 ...state,
                 getWorkbookEntries: initialState.getWorkbookEntries,
                 items: initialState.items,
+            };
+        }
+
+        // Resetting information about the shared entries of the workbook
+        case RESET_WORKBOOK_SHARED_ENTRIES: {
+            return {
+                ...state,
+                getWorkbookSharedEntries: initialState.getWorkbookSharedEntries,
+                sharedItems: initialState.sharedItems,
             };
         }
 
@@ -396,19 +504,21 @@ export const workbooksReducer = (state: WorkbooksState = initialState, action: W
         }
         case CHANGE_FAVORITE_ENTRY_INLINE: {
             const changeFavoriteEntry = Array.isArray(action.data) ? action.data[0] : action.data;
+            const mapItemsCallback = (item: GetEntryResponse) => {
+                if (changeFavoriteEntry.entryId === item.entryId) {
+                    const newItem = {...item} as GetEntryResponse;
+
+                    newItem.isFavorite = !newItem.isFavorite;
+
+                    return newItem;
+                }
+                return item;
+            };
 
             return {
                 ...state,
-                items: state.items.map((item) => {
-                    if (changeFavoriteEntry.entryId === item.entryId) {
-                        const newItem = {...item} as GetEntryResponse;
-
-                        newItem.isFavorite = !newItem.isFavorite;
-
-                        return newItem;
-                    }
-                    return item;
-                }),
+                sharedItems: state.sharedItems.map(mapItemsCallback),
+                items: state.items.map(mapItemsCallback),
             };
         }
 

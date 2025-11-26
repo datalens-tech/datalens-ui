@@ -9,14 +9,22 @@ export type EntitiesListProps = {
     rightSectionSlot?: React.FC<RightSectionProps>;
     className?: string;
     rowClassName?: string;
-} & (CurrentEntity | ScopeEntities);
+} & (CurrentEntity | ScopeEntities | CustomTitle);
 
 export type CurrentEntity = {
     isCurrent: true;
     scope?: string;
+    title?: string;
 };
 
 export type ScopeEntities = {
     isCurrent?: false;
     scope: string;
+    title?: string;
+};
+
+export type CustomTitle = {
+    isCurrent?: false;
+    scope?: string;
+    title: string;
 };

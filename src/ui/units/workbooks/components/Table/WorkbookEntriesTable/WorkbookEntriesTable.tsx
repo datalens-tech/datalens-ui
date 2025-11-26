@@ -36,6 +36,12 @@ type WorkbookEntriesTableProps = {
     entries: GetEntryResponse[];
     refreshEntries: (scope: EntryScope) => void;
     loadMoreEntries?: (entryScope: EntryScope) => void;
+    loadMoreSharedEntries?: (entryScope?: EntryScope) => void;
+    retryLoadSharedEntries?: (entryScope?: EntryScope) => void;
+    sharedToken?: string;
+    sharedError?: boolean;
+    sharedLoader?: boolean;
+    sharedChunks: ChunkItem[][];
     retryLoadEntries?: (entryScope: EntryScope) => void;
     scope?: EntryScope;
     mapTokens?: Record<string, string>;
@@ -58,6 +64,12 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
         mapLoaders,
         chunks,
         availableScopes,
+        sharedChunks,
+        loadMoreSharedEntries,
+        retryLoadSharedEntries,
+        sharedError,
+        sharedLoader,
+        sharedToken,
     }) => {
         const dispatch: AppDispatch = useDispatch();
         const entryDialoguesRef = React.useRef<EntryDialogues>(null);
@@ -164,7 +176,8 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
             });
         };
 
-        const {WorkbookEntriesTableTabs} = registry.common.components.getAll();
+        const {WorkbookEntriesTableTabs, WorkbookEntryExtended} =
+            registry.common.components.getAll();
 
         return (
             <React.Fragment>
@@ -198,6 +211,17 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                             ))}
                     </div>
                 </div>
+                {scope && (
+                    <WorkbookEntryExtended
+                        sharedChunks={sharedChunks}
+                        loadMoreSharedEntries={() => loadMoreSharedEntries?.(scope)}
+                        retryLoadSharedEntries={() => retryLoadSharedEntries?.(scope)}
+                        sharedError={sharedError}
+                        sharedLoader={sharedLoader}
+                        sharedToken={sharedToken}
+                        workbook={workbook}
+                    />
+                )}
                 <WorkbookEntriesTableTabs
                     workbook={workbook}
                     retryLoadEntries={retryLoadEntries}
@@ -207,6 +231,12 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
                     mapErrors={mapErrors}
                     mapLoaders={mapLoaders}
                     chunks={chunks}
+                    sharedChunks={sharedChunks}
+                    sharedToken={sharedToken}
+                    sharedError={sharedError}
+                    sharedLoader={sharedLoader}
+                    retryLoadSharedEntries={retryLoadSharedEntries}
+                    loadMoreSharedEntries={loadMoreSharedEntries}
                     availableScopes={availableScopes}
                     onRenameEntry={onRenameEntry}
                     onDeleteEntry={onDeleteEntry}

@@ -8,9 +8,11 @@ import {DL} from 'ui/constants';
 import type {ValuesType} from 'utility-types';
 
 import type {DIALOG_TYPE} from '../../../../constants/dialogs';
+import {dispatchDashLoadedEvent} from '../../utils/customEvents';
 
 import './EmptyState.scss';
 
+// Do not change class name, the snapter service uses
 const b = block('dash-empty-state');
 const i18n = I18n.keyset('dash.empty-state.view');
 
@@ -30,6 +32,10 @@ export const EmptyState = ({
     onEditClick,
     isEditModeLoading,
 }: EmptyStateProps) => {
+    React.useEffect(() => {
+        dispatchDashLoadedEvent();
+    }, []);
+
     const showActions = !DL.IS_MOBILE && canEdit;
 
     const title = isTabView ? i18n('label_empty-tab') : i18n('label_empty-dash');

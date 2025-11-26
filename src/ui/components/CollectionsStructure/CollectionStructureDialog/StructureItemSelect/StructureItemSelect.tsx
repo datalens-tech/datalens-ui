@@ -6,15 +6,15 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {Waypoint} from 'react-waypoint';
 import type {WorkbookId} from 'shared';
+import {CollectionItemEntities} from 'shared';
 import {PlaceholderIllustration} from 'ui/components/PlaceholderIllustration/PlaceholderIllustration';
 
 import type {
-    Collection,
     GetCollectionBreadcrumbsResponse,
     GetStructureItemsArgs,
     GetStructureItemsResponse,
+    StructureItem,
 } from '../../../../../shared/schema/us/types/collections';
-import type {Workbook} from '../../../../../shared/schema/us/types/workbooks';
 import {CollectionsStructureBreadcrumbs} from '../../../Breadcrumbs/CollectionsStructureBreadcrumbs/CollectionsStructureBreadcrumbs';
 import {SmartLoader} from '../../../SmartLoader/SmartLoader';
 
@@ -34,7 +34,7 @@ export type Props = {
     contentIsLoading: boolean;
     contentError: Error | null;
     breadcrumbs: GetCollectionBreadcrumbsResponse;
-    items: (Collection | Workbook)[];
+    items: StructureItem[];
     nextPageToken: string | null;
     pageSize: number;
     isSelectionAllowed: boolean;
@@ -46,6 +46,8 @@ export type Props = {
     ) => CancellablePromise<GetStructureItemsResponse | null>;
     onChangeCollection: (newValue: string | null) => void;
     onChangeWorkbook?: (newValue: string) => void;
+    onSelectEntry?: (entry: StructureItem) => void;
+    getIsInactiveItem?: (item: StructureItem) => boolean;
 };
 
 export const StructureItemSelect = React.memo<Props>(
@@ -64,7 +66,9 @@ export const StructureItemSelect = React.memo<Props>(
         disabled,
         getStructureItemsRecursively,
         onChangeCollection,
+        getIsInactiveItem,
         onChangeWorkbook = () => {},
+        onSelectEntry = () => {},
     }) => {
         const [waypointDisabled, setWaypointDisabled] = React.useState(false);
 
@@ -125,31 +129,47 @@ export const StructureItemSelect = React.memo<Props>(
                         {items.length > 0 ? (
                             <React.Fragment>
                                 <div className={b('items')}>
-                                    {items.map((item) => (
-                                        <Item
-                                            key={
-                                                'workbookId' in item
-                                                    ? item.workbookId
-                                                    : item.collectionId
-                                            }
-                                            item={item}
-                                            active={
-                                                'workbookId' in item &&
-                                                canSelectWorkbook &&
-                                                item.workbookId === workbookId
-                                            }
-                                            canSelectWorkbook={canSelectWorkbook}
-                                            onSelect={(selectedItem) => {
-                                                if ('workbookId' in selectedItem) {
-                                                    if (canSelectWorkbook) {
-                                                        onChangeWorkbook(selectedItem.workbookId);
-                                                    }
-                                                } else {
-                                                    onChangeCollection(selectedItem.collectionId);
+                                    {items.map((item) => {
+                                        const isInactive = getIsInactiveItem?.(item) ?? false;
+                                        return (
+                                            <Item
+                                                key={
+                                                    'workbookId' in item
+                                                        ? item.workbookId
+                                                        : item.collectionId
                                                 }
-                                            }}
-                                        />
-                                    ))}
+                                                inactive={isInactive}
+                                                item={item}
+                                                active={
+                                                    'workbookId' in item &&
+                                                    canSelectWorkbook &&
+                                                    item.workbookId === workbookId
+                                                }
+                                                canSelectWorkbook={canSelectWorkbook}
+                                                onSelect={(selectedItem) => {
+                                                    switch (selectedItem.entity) {
+                                                        case CollectionItemEntities.WORKBOOK:
+                                                            if (canSelectWorkbook) {
+                                                                onChangeWorkbook(
+                                                                    selectedItem.workbookId,
+                                                                );
+                                                            }
+                                                            break;
+                                                        case CollectionItemEntities.COLLECTION:
+                                                            onChangeCollection(
+                                                                selectedItem.collectionId,
+                                                            );
+                                                            break;
+                                                        case CollectionItemEntities.ENTRY:
+                                                            if (!isInactive) {
+                                                                onSelectEntry(selectedItem);
+                                                            }
+                                                            break;
+                                                    }
+                                                }}
+                                            />
+                                        );
+                                    })}
                                 </div>
                                 {contentIsLoading && (
                                     <div className={b('page-loader')}>

@@ -1,0 +1,19 @@
+.dialog-select-shared-entries {
+    width: 900px;
+
+    &__body {
+        display: flex;
+        flex-direction: column;
+    }
+
+    &__filters {
+        margin-bottom: var(--g-spacing-3);
+    }
+
+    &__extend-filters {
+        display: flex;
+        gap: var(--g-spacing-2);
+        align-items: center;
+        margin-left: var(--g-spacing-2);
+    }
+}

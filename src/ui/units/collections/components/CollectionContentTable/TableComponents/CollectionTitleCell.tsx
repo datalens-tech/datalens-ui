@@ -5,7 +5,7 @@ import {Label, spacing} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {CollectionContentTableQa, CollectionItemEntities} from 'shared';
-import type {StructureItem} from 'shared/schema';
+import type {StructureItemWithPermissions} from 'shared/schema';
 import {CollectionIcon} from 'ui/components/CollectionIcon/CollectionIcon';
 import {EntryIcon} from 'ui/components/EntryIcon/EntryIcon';
 import {WorkbookIcon} from 'ui/components/WorkbookIcon/WorkbookIcon';
@@ -22,7 +22,7 @@ const b = block('dl-collection-content-table');
 const i18n = I18n.keyset('collections');
 
 type CollectionTitleCellProps = {
-    item: StructureItem;
+    item: StructureItemWithPermissions;
 };
 
 const getLabelByStatus = (

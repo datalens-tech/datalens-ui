@@ -117,6 +117,7 @@ const VISUALIZATION_WITH_DISABLED_MEASURE_COLOR = new Set([
 ]);
 const VISUALIZATION_WITH_LABEL_MODE = new Set([
     WizardVisualizationId.Bar100p,
+    WizardVisualizationId.BarY100pD3,
     WizardVisualizationId.Area100p,
     WizardVisualizationId.Column100p,
     WizardVisualizationId.Pie,

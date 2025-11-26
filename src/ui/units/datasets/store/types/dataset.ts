@@ -1,4 +1,5 @@
 import type {ApplyData} from 'components/DialogFilter/DialogFilter';
+import type {CloseDialogAction, OpenDialogAction} from 'ui/store/actions/dialog';
 import type {EditHistoryAction} from 'ui/store/actions/editHistory';
 
 import type {
@@ -15,6 +16,7 @@ import type {
 import type {
     BaseSource,
     EntryFieldPublishedId,
+    GetEntryResponse,
     FormOptions as SchemaFormOptions,
     ValidateDatasetResponse,
 } from '../../../../../shared/schema';
@@ -76,6 +78,7 @@ import type {
     SET_IS_DATASET_CHANGED_FLAG,
     SET_LAST_MODIFIED_TAB,
     SET_QUEUE_TO_LOAD_PREVIEW,
+    SET_SHARED_DATASET_DELEGATION,
     SET_SOURCES_LISTING_OPTIONS,
     SET_SOURCES_LISTING_OPTIONS_ERROR,
     SET_SOURCES_LOADING_ERROR,
@@ -107,7 +110,7 @@ import type {EDIT_HISTORY_OPTIONS_KEY} from '../constants';
 // TODO: correctly describe the type
 export type DatasetError = any | null;
 
-export type ConnectionEntry = {
+export type ConnectionEntry = GetEntryResponse & {
     data: ConnectionData;
     id?: string;
     entryId: string;
@@ -115,6 +118,7 @@ export type ConnectionEntry = {
     permissions?: Permissions;
     workbookId: WorkbookId;
     deleted?: boolean;
+    db_type?: string;
 };
 
 export type TranslatedItem = {
@@ -264,23 +268,6 @@ export type SourcesPagination = {
     searchValue: string;
 };
 
-export type DatasetPreviewView = 'full' | 'bottom' | 'right';
-
-export type DatasetPreview = {
-    previewEnabled: boolean;
-    readyPreview: 'loading' | 'failed' | null;
-    isVisible: boolean;
-    isLoading: boolean;
-    amountPreviewRows: number;
-    view: DatasetPreviewView;
-    data: {
-        Data: string[][];
-        Type: ['ListType', ['StructType', Array<[string, ['OptionalType', ['DataType', string]]]>]];
-    };
-    error: DatasetError;
-    isQueued: boolean;
-};
-
 export type DatasetReduxState = {
     isRefetchingDataset: boolean;
     isLoading: boolean;
@@ -300,7 +287,17 @@ export type DatasetReduxState = {
     connectionsDbNames: Record<string, string[]>;
     sourcesPagination: SourcesPagination;
     sourceListingOptions?: SourceListingOptions['source_listing'];
-    preview: DatasetPreview;
+    preview: {
+        previewEnabled: boolean;
+        readyPreview: 'loading' | 'failed' | null;
+        isVisible: boolean;
+        isLoading: boolean;
+        amountPreviewRows: number;
+        view: 'full' | 'bottom' | 'right';
+        data: string[]; // TODO: correctly describe the type
+        error: DatasetError;
+        isQueued: boolean;
+    };
     errors: {
         previewError: DatasetError;
         savingError: DatasetError;
@@ -317,6 +314,7 @@ export type DatasetReduxState = {
         disabled: boolean;
         isProcessingSavingDataset: boolean;
         error: DatasetError;
+        sharedDatasetDelegationState?: boolean;
     };
     types: {
         data: {
@@ -871,6 +869,11 @@ type SetSourcesListingOptions = {
     payload: SourceListingOptions['source_listing'];
 };
 
+export type SetSharedDatasetDelegation = {
+    type: typeof SET_SHARED_DATASET_DELEGATION;
+    payload: boolean;
+};
+
 export type DatasetReduxAction =
     | SetFreeformSources
     | ResetDatasetState
@@ -953,4 +956,7 @@ export type DatasetReduxAction =
     | SetSourcesListingOptions
     | SetSourcesListingOptionsError
     | ToggleSourcesListingOptionsLoader
+    | SetSharedDatasetDelegation
+    | OpenDialogAction
+    | CloseDialogAction
     | EditHistoryAction;

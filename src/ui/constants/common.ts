@@ -169,7 +169,8 @@ export const DL = {
     get IS_NOT_AUTHENTICATED() {
         return (
             this.LANDING_PAGE_ERROR_TYPE === ErrorContentTypes.NOT_AUTHENTICATED ||
-            this.LANDING_PAGE_ERROR_TYPE === ErrorContentTypes.NOT_AUTHENTICATED_GALLERY
+            this.LANDING_PAGE_ERROR_TYPE === ErrorContentTypes.NOT_AUTHENTICATED_GALLERY ||
+            this.LANDING_PAGE_ERROR_TYPE === ErrorContentTypes.NOT_AUTHENTICATED_FESTIVAL
         );
     },
     get PUSH_SERVICE_CONFIG() {
@@ -337,8 +338,7 @@ export const URL_QUERY = {
     DEBUG: '_debug',
     OPEN_DASH_INFO: '_opened_info',
     UNRELEASED: 'unreleased',
-    ENTRY_CONFIG: '_entry_config',
-    CHART_RECIPE: '_chart_recipe',
+    LOCAL_CONFIG: '_use_local_config',
 };
 
 const GRADIENT_ICONS = {

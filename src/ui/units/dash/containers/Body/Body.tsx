@@ -102,6 +102,7 @@ import {
     selectTabHashState,
     selectTabs,
 } from '../../store/selectors/dashTypedSelectors';
+import {dispatchDashLoadedEvent} from '../../utils/customEvents';
 import {getCustomizedProperties} from '../../utils/dashkitProps';
 import {scrollIntoView} from '../../utils/scrollUtils';
 import {
@@ -122,6 +123,7 @@ import iconRelations from 'ui/assets/icons/relations.svg';
 
 import './Body.scss';
 
+// Do not change class name, the snapter service uses
 const b = block('dash-body');
 
 const isMobileFixedHeaderEnabled = isEnabledFeature(Feature.EnableMobileFixedHeader);
@@ -1140,7 +1142,10 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
 
         const isEmptyTab = !tabDataConfig?.items.length;
 
-        const DashKit = getConfiguredDashKit(undefined, {disableHashNavigation});
+        const DashKit = getConfiguredDashKit(undefined, {
+            disableHashNavigation,
+            scope: 'dash',
+        });
 
         const hasFixedHeaderControlsElements = Boolean(
             this.getWidgetLayoutByGroup(FIXED_GROUP_HEADER_ID)?.length,
@@ -1288,6 +1293,11 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                 // that will try to scroll to the title after each item rendering
                 this.scrollIntoViewWithDebounce();
             }
+
+            if (isLoaded) {
+                dispatchDashLoadedEvent();
+            }
+
             this.setState({loaded: isLoaded});
         }
     };

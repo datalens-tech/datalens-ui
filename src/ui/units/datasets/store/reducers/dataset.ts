@@ -63,6 +63,7 @@ import {
     SET_IS_DATASET_CHANGED_FLAG,
     SET_LAST_MODIFIED_TAB,
     SET_QUEUE_TO_LOAD_PREVIEW,
+    SET_SHARED_DATASET_DELEGATION,
     SET_SOURCES_LISTING_OPTIONS,
     SET_SOURCES_LISTING_OPTIONS_ERROR,
     SET_SOURCES_LOADING_ERROR,
@@ -332,6 +333,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 savingDataset: {
                     ...state.savingDataset,
                     isProcessingSavingDataset: false,
+                    sharedDatasetDelegationState: undefined,
                 },
                 ui: {
                     ...state.ui,
@@ -1501,6 +1503,15 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 errors: {
                     ...state.errors,
                     sourceListingOptionsError: error,
+                },
+            };
+        }
+        case SET_SHARED_DATASET_DELEGATION: {
+            return {
+                ...state,
+                savingDataset: {
+                    ...state.savingDataset,
+                    sharedDatasetDelegationState: action.payload,
                 },
             };
         }

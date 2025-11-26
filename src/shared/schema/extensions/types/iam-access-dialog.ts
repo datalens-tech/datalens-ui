@@ -108,6 +108,7 @@ export interface SubjectClaims {
     preferredUsername: string;
     federation?: unknown;
     pictureData?: string;
+    picture?: string;
     idpType?: string | null;
     displayName?: string | React.ReactNode;
 }

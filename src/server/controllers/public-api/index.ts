@@ -13,7 +13,7 @@ import {parseRequestApiVersion, prepareError, validateRequestBody} from './utils
 
 export const createPublicApiController = () => {
     const {gatewayApi} = registry.getGatewayApi<SchemasByScope>();
-    const {baseConfig} = registry.getPublicApiConfig();
+    const {baseConfig, getAuthArgs} = registry.getPublicApiConfig();
     const schemasByScope = registry.getGatewaySchemasByScope();
 
     const actionToPathMap = new Map<Function, {serviceName: string; actionName: string}>();
@@ -92,13 +92,16 @@ export const createPublicApiController = () => {
 
             const {paramsSchema} = validationSchema;
 
-            const validatedArgs = await validateRequestBody(paramsSchema, req.body);
+            const validatedArgs = paramsSchema
+                ? await validateRequestBody(paramsSchema, req.body)
+                : undefined;
 
             const result = await gatewayAction({
                 headers,
                 args: validatedArgs,
                 ctx,
                 requestId,
+                authArgs: getAuthArgs?.(req, res),
             });
 
             res.status(200).send(result.responseData);
