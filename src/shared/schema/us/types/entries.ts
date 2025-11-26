@@ -1,6 +1,12 @@
 import type z from 'zod';
 
-import type {EntryAnnotationArgs, EntryScope, EntryUpdateMode, WorkbookId} from '../../..';
+import type {
+    CollectionItemEntities,
+    EntryAnnotationArgs,
+    EntryScope,
+    EntryUpdateMode,
+    WorkbookId,
+} from '../../..';
 import type {Permissions} from '../../../types';
 import type {
     getEntriesEntryResponseSchema,
@@ -30,6 +36,9 @@ export interface GetEntryResponse extends EntryFields {
     links?: EntryFieldLinks;
     parentDashEntryId?: string;
     parentDashName?: string;
+}
+export interface GetSharedEntryResponse extends GetEntryResponse {
+    isDelegated: boolean;
 }
 export interface GetEntryArgs {
     entryId: string;
@@ -297,3 +306,49 @@ export interface UpdateEntryArgs {
     annotation?: EntryAnnotationArgs;
     skipSyncLinks?: boolean;
 }
+
+export interface EntityBindingsResponse {
+    sourceId: string;
+    targetId: string;
+    isDelegated: boolean;
+}
+
+export interface EntityBindingsArgs {
+    sourceId: string;
+    targetId: string;
+    delegation: boolean;
+}
+
+export type GetSharedEntryBindingsArgs = {
+    entryId: string;
+    entryAs: 'target' | 'source';
+    mode?: 'all' | 'onlyWorkbooks' | 'onlyEntries';
+    filterString?: string;
+    page?: number;
+    pageSize?: number;
+};
+
+export type SharedEntry = {
+    entity: typeof CollectionItemEntities.ENTRY;
+    entryId: string;
+    scope: string;
+    type: string;
+    displayKey: string;
+    key: string;
+};
+
+type Workbook = {
+    entity: typeof CollectionItemEntities.WORKBOOK;
+    title: string;
+};
+
+export type SharedEntryBindingsItem = {
+    collectionTitle: string;
+    collectionId: string;
+    workbookId: WorkbookId;
+    isDelegated: boolean;
+} & (SharedEntry | Workbook);
+
+export type GetSharedEntryBindingsResponse = {
+    items: SharedEntryBindingsItem[];
+};

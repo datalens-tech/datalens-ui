@@ -25,7 +25,6 @@
         width: 100%;
     }
 
-    &_with-default-color,
     &_with-color {
         .dashkit-plugin-title {
             padding: 5px 10px;
@@ -33,7 +32,7 @@
         }
 
         #{$class}__anchor {
-            padding: 5px 0 5px 5px;
+            padding-block: 5px;
         }
 
         #{$class}__extra-elements-container {

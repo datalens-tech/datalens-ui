@@ -26,12 +26,12 @@ const copyEntriesToWorkbookEnabled = isEnabledFeature(Feature.CopyEntriesToWorkb
 type EntryActionsProps = {
     workbook: WorkbookWithPermissions;
     entry: WorkbookEntry;
-    onRenameClick: () => void;
-    onDeleteClick: () => void;
-    onDuplicateEntry: () => void;
-    onCopyEntry: () => void;
-    onShowRelatedClick: () => void;
-    onCopyId: () => void;
+    onRenameClick?: () => void;
+    onDeleteClick?: () => void;
+    onDuplicateEntry?: () => void;
+    onCopyEntry?: () => void;
+    onShowRelatedClick?: () => void;
+    onCopyId?: () => void;
 };
 
 export const EntryActions = ({
@@ -51,68 +51,75 @@ export const EntryActions = ({
 
     const isFileConnection = isConnection && isS3BasedConnector;
 
-    const items: DropdownMenuItemMixed<unknown>[] = [
-        {
+    const items: DropdownMenuItemMixed<unknown>[] = [];
+
+    if (onRenameClick) {
+        items.push({
             action: onRenameClick,
             text: <DropdownAction icon={FontCursor} text={i18n('action_rename')} />,
-        },
+        });
+    }
 
-        ...(isFileConnection === false
-            ? [
-                  {
-                      action: onDuplicateEntry,
-                      text: <DropdownAction icon={Copy} text={i18n('action_duplicate')} />,
-                      qa: WorkbookPageQa.MenuItemDuplicate,
-                  },
-              ]
-            : []),
-        ...(!isFileConnection && copyEntriesToWorkbookEnabled
-            ? [
-                  {
-                      action: onCopyEntry,
-                      text: <DropdownAction icon={CopyArrowRight} text={i18n('action_copy')} />,
-                  },
-              ]
-            : []),
-        ...useAdditionalWorkbookEntryActions(entry, workbook),
-        [
-            {
-                action: onShowRelatedClick,
-                text: (
-                    <DropdownAction
-                        icon={CodeTrunk}
-                        text={commonMenuI18n('value_show-related-entities')}
-                    />
-                ),
-            },
-            ...(onCopyId
-                ? [
-                      {
-                          action: onCopyId,
-                          text: (
-                              <DropdownAction
-                                  size={16}
-                                  icon={iconId}
-                                  text={commonMenuI18n('value_copy-id')}
-                              />
-                          ),
-                      },
-                  ]
-                : []),
-        ],
-    ];
+    if (isFileConnection === false && onDuplicateEntry) {
+        items.push({
+            action: onDuplicateEntry,
+            text: <DropdownAction icon={Copy} text={i18n('action_duplicate')} />,
+            qa: WorkbookPageQa.MenuItemDuplicate,
+        });
+    }
+
+    if (!isFileConnection && copyEntriesToWorkbookEnabled && onCopyEntry) {
+        items.push({
+            action: onCopyEntry,
+            text: <DropdownAction icon={CopyArrowRight} text={i18n('action_copy')} />,
+        });
+    }
+    const additionalWorkbookEntryActions = useAdditionalWorkbookEntryActions(entry, workbook);
+    if (additionalWorkbookEntryActions.length) {
+        items.push(...additionalWorkbookEntryActions);
+    }
+    const subMenu = [];
+    if (onShowRelatedClick) {
+        subMenu.push({
+            action: onShowRelatedClick,
+            text: (
+                <DropdownAction
+                    icon={CodeTrunk}
+                    text={commonMenuI18n('value_show-related-entities')}
+                />
+            ),
+        });
+    }
+    if (onCopyId) {
+        subMenu.push({
+            action: onCopyId,
+            text: <DropdownAction size={16} icon={iconId} text={commonMenuI18n('value_copy-id')} />,
+        });
+    }
+
+    if (subMenu.length) {
+        items.push(subMenu);
+    }
 
     const otherActions: DropdownMenuItemMixed<unknown>[] = [];
 
-    otherActions.push([
-        {
-            action: onDeleteClick,
-            text: <DropdownAction icon={TrashBin} text={i18n('action_delete')} />,
-            theme: 'danger',
-        },
-    ]);
+    if (onDeleteClick) {
+        otherActions.push([
+            {
+                action: onDeleteClick,
+                text: <DropdownAction icon={TrashBin} text={i18n('action_delete')} />,
+                theme: 'danger',
+            },
+        ]);
+    }
 
-    items.push(...otherActions);
+    if (otherActions.length) {
+        items.push(...otherActions);
+    }
+
+    if (items.length === 0) {
+        return null;
+    }
 
     return (
         <DropdownMenu

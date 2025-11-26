@@ -9,6 +9,7 @@ import type {
     ServerVisualizationLayer,
 } from '../../../../../../../../shared';
 import {WizardVisualizationId, isMonitoringOrPrometheusChart} from '../../../../../../../../shared';
+import {prepareGravityChartArea} from '../../../preparers/area';
 import prepareBackendPivotTableData from '../../../preparers/backend-pivot-table';
 import type {PivotData} from '../../../preparers/backend-pivot-table/types';
 import {prepareGravityChartBarX, prepareHighchartsBarX} from '../../../preparers/bar-x';
@@ -127,14 +128,24 @@ export default ({
     const segments = shared.segments || [];
 
     switch (visualization.id) {
-        case WizardVisualizationId.Line:
+        case WizardVisualizationId.Line: {
+            rowsLimit = 75000;
+            if (isMonitoringOrPrometheusChart(chartType)) {
+                prepare = prepareLineTime;
+            } else if (plugin === 'gravity-charts') {
+                prepare = prepareGravityChartLine;
+            } else {
+                prepare = prepareHighchartsLine;
+            }
+            break;
+        }
         case WizardVisualizationId.Area:
         case WizardVisualizationId.Area100p: {
             rowsLimit = 75000;
             if (isMonitoringOrPrometheusChart(chartType)) {
                 prepare = prepareLineTime;
             } else if (plugin === 'gravity-charts') {
-                prepare = prepareGravityChartLine;
+                prepare = prepareGravityChartArea;
             } else {
                 prepare = prepareHighchartsLine;
             }

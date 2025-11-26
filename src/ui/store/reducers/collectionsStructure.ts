@@ -83,8 +83,7 @@ import type {
     GetCollectionBreadcrumbsResponse,
     GetStructureItemsResponse,
     CollectionWithPermissions,
-    Collection,
-    Workbook,
+    StructureItem,
     CreateCollectionResponse,
     MoveCollectionResponse,
     MoveCollectionsResponse,
@@ -127,7 +126,7 @@ export type CollectionsStructureState = {
         data: GetStructureItemsResponse | null;
         error: Error | null;
     };
-    items: (Collection | Workbook)[];
+    items: StructureItem[];
     createCollection: {
         isLoading: boolean;
         data: CreateCollectionResponse | null;

@@ -25,3 +25,4 @@ export const RESET_STRUCTURE_ITEMS = Symbol('collections/RESET_STRUCTURE_ITEMS')
 
 export const DELETE_COLLECTION_IN_ITEMS = Symbol('collections/DELETE_COLLECTION_IN_ITEMS');
 export const DELETE_WORKBOOK_IN_ITEMS = Symbol('collections/DELETE_WORKBOOK_IN_ITEMS');
+export const DELETE_SHARED_ENTRY_IN_ITEMS = Symbol('collections/DELETE_SHARED_ENTRY_IN_ITEMS');

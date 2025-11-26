@@ -12,7 +12,7 @@ import {DL} from 'ui/constants/common';
 import type {
     GetStructureItemsArgs,
     GetStructureItemsResponse,
-    StructureItem,
+    StructureItemWithPermissions,
 } from '../../../../../shared/schema';
 import {AnimateBlock} from '../../../../components/AnimateBlock';
 import type {StructureItemsFilters} from '../../../../components/CollectionFilters';
@@ -48,7 +48,7 @@ interface Props {
     selectedMap: SelectedMap;
     selectedMapWithMovePermission: SelectedMap;
     selectedMapWithDeletePermission: SelectedMap;
-    itemsAvailableForSelection: StructureItem[];
+    itemsAvailableForSelection: StructureItemWithPermissions[];
     isOpenSelectionMode: boolean;
     canCreateWorkbook: boolean;
     showCreateWorkbookButton: boolean;

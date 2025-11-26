@@ -13,10 +13,6 @@ export function isAxisFormatEnabled(visualizationId: WizardVisualizationId) {
     return !isD3Visualization(visualizationId);
 }
 
-export function isAxisLabelsRotationEnabled(visualizationId: WizardVisualizationId) {
-    return !isD3Visualization(visualizationId);
-}
-
 export function isHolidaysEnabled(visualizationId: WizardVisualizationId) {
     return !isD3Visualization(visualizationId);
 }

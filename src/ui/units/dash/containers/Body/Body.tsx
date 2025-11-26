@@ -58,7 +58,6 @@ import {
 } from 'ui/components/DashKit/constants';
 import {WidgetContextProvider} from 'ui/components/DashKit/context/WidgetContext';
 import {getDashKitMenu} from 'ui/components/DashKit/helpers';
-import {registry} from 'ui/registry';
 import {showToast} from 'ui/store/actions/toaster';
 import {isEmbeddedMode} from 'ui/utils/embedded';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -103,6 +102,7 @@ import {
     selectTabHashState,
     selectTabs,
 } from '../../store/selectors/dashTypedSelectors';
+import {dispatchDashLoadedEvent} from '../../utils/customEvents';
 import {getCustomizedProperties} from '../../utils/dashkitProps';
 import {scrollIntoView} from '../../utils/scrollUtils';
 import {
@@ -123,6 +123,7 @@ import iconRelations from 'ui/assets/icons/relations.svg';
 
 import './Body.scss';
 
+// Do not change class name, the snapter service uses
 const b = block('dash-body');
 
 const isMobileFixedHeaderEnabled = isEnabledFeature(Feature.EnableMobileFixedHeader);
@@ -405,8 +406,6 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
     }
 
     render() {
-        const {DashBodyAdditionalControls} = registry.dash.components.getAll();
-
         return (
             <div
                 className={b({'split-pane': this.props.isSplitPaneLayout})}
@@ -432,7 +431,6 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                 />
                 <PaletteEditor />
                 <EntryDialogues ref={this.entryDialoguesRef} />
-                <DashBodyAdditionalControls />
             </div>
         );
     }
@@ -1144,7 +1142,10 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
 
         const isEmptyTab = !tabDataConfig?.items.length;
 
-        const DashKit = getConfiguredDashKit(undefined, {disableHashNavigation});
+        const DashKit = getConfiguredDashKit(undefined, {
+            disableHashNavigation,
+            scope: 'dash',
+        });
 
         const hasFixedHeaderControlsElements = Boolean(
             this.getWidgetLayoutByGroup(FIXED_GROUP_HEADER_ID)?.length,
@@ -1292,6 +1293,11 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                 // that will try to scroll to the title after each item rendering
                 this.scrollIntoViewWithDebounce();
             }
+
+            if (isLoaded) {
+                dispatchDashLoadedEvent();
+            }
+
             this.setState({loaded: isLoaded});
         }
     };

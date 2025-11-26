@@ -242,7 +242,6 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
                     showInTOC,
                     autoHeight,
                     background: {
-                        enabled: backgroundColor !== CustomPaletteBgColors.NONE,
                         color: backgroundColor,
                     },
                     textColor,

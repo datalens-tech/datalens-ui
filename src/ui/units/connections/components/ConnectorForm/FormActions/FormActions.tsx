@@ -7,12 +7,13 @@ import {useParams} from 'react-router-dom';
 import type {DatalensGlobalState} from 'ui';
 import {registry} from 'ui/registry';
 
-import {DIALOG_CONN_CREATE_CONNECTION, DIALOG_CONN_CREATE_IN_WB_CONNECTION} from '../../';
+import {DIALOG_CONN_CREATE_CONNECTION, DIALOG_CONN_CREATE_IN_WB_OR_COLLECTION} from '../../';
 import type {
     DialogCreateWorkbookEntryProps,
     EntryDialogBaseProps,
 } from '../../../../../components/EntryDialogues';
 import {openDialogErrorWithTabs} from '../../../../../store/actions/dialog';
+import {CreationPlaces} from '../../../constants';
 import {
     checkConnection,
     createConnection,
@@ -25,8 +26,8 @@ import {
     updateConnectionWithRevision,
 } from '../../../store';
 import {validateFormBeforeAction} from '../../../store/utils';
-import {useCreateConnectionHandler} from '../../hooks';
 import type {CreateConnectionHandlerArgs} from '../../hooks';
+import {useCreateConnectionHandler} from '../../hooks';
 
 import {CheckParamsButton} from './CheckParamsButton/CheckParamsButton';
 import {SubmitButton} from './SubmitButton/SubmitButton';
@@ -54,9 +55,10 @@ export const FormActionsComponent = (props: FormActionsProps) => {
         readonly,
     } = props;
     const dispatch = useDispatch();
-    const {workbookId} = useParams<{workbookId?: string}>();
+    const {workbookId, collectionId} = useParams<{workbookId?: string; collectionId?: string}>();
     const {createConnectionHandler} = useCreateConnectionHandler({
         hasWorkbookIdInParams: Boolean(workbookId),
+        hasCollectionIdInParams: Boolean(collectionId),
     });
     const submitDisabled = (!newConnection && !formChanged) || checkLoading;
 
@@ -74,20 +76,49 @@ export const FormActionsComponent = (props: FormActionsProps) => {
         [dispatch],
     );
 
+    const applyCreationInCollectionHandler: DialogCreateWorkbookEntryProps['onApply'] =
+        React.useCallback(
+            async (args) => {
+                dispatch(
+                    createConnection({
+                        name: args.name,
+                        workbookId: args.workbookId,
+                        collectionId: args.collectionId,
+                    }),
+                );
+            },
+            [dispatch],
+        );
+
     const getOpenDialogArs = React.useCallback((): CreateConnectionHandlerArgs => {
         const {getNewConnectionDestination} = registry.connections.functions.getAll();
-        const destination = getNewConnectionDestination(Boolean(workbookId));
 
-        return destination === 'folder'
-            ? {
-                  id: DIALOG_CONN_CREATE_CONNECTION,
-                  props: {onApply: applyCreationHandler},
-              }
-            : {
-                  id: DIALOG_CONN_CREATE_IN_WB_CONNECTION,
-                  props: {onApply: applyCreationInWbHandler},
-              };
-    }, [workbookId, applyCreationHandler, applyCreationInWbHandler]);
+        const destination = getNewConnectionDestination(Boolean(workbookId), Boolean(collectionId));
+
+        switch (destination) {
+            case CreationPlaces.Folder:
+                return {
+                    id: DIALOG_CONN_CREATE_CONNECTION,
+                    props: {onApply: applyCreationHandler},
+                };
+            case CreationPlaces.Workbook:
+                return {
+                    id: DIALOG_CONN_CREATE_IN_WB_OR_COLLECTION,
+                    props: {onApply: applyCreationInWbHandler},
+                };
+            case CreationPlaces.Collection:
+                return {
+                    id: DIALOG_CONN_CREATE_IN_WB_OR_COLLECTION,
+                    props: {onApply: applyCreationInCollectionHandler, collectionId},
+                };
+        }
+    }, [
+        workbookId,
+        collectionId,
+        applyCreationHandler,
+        applyCreationInWbHandler,
+        applyCreationInCollectionHandler,
+    ]);
 
     const submitHandler = React.useCallback(() => {
         if (newConnection) {

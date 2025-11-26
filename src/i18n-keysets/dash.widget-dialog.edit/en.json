@@ -27,6 +27,10 @@
   "label_new-param": "New parameter",
   "label_settings": "Settings",
   "label_widget": "Chart",
+  "section_appearance": "Appearance",
+  "section_common": "Common",
+  "tab_settings": "Settings",
+  "tab_tabs": "Tabs",
   "toast_required-field": "The field cannot be empty",
   "value_title-default": "Title {{index}}"
 }

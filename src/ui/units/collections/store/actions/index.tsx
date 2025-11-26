@@ -14,6 +14,7 @@ import {getSdk} from '../../../../libs/schematic-sdk';
 import {showToast} from '../../../../store/actions/toaster';
 import {
     DELETE_COLLECTION_IN_ITEMS,
+    DELETE_SHARED_ENTRY_IN_ITEMS,
     DELETE_WORKBOOK_IN_ITEMS,
     GET_COLLECTION_FAILED,
     GET_COLLECTION_LOADING,
@@ -287,11 +288,27 @@ type DeleteWorkbookInItemsAction = {
     };
 };
 
+type DeleteSharedEntryInItemsAction = {
+    type: typeof DELETE_SHARED_ENTRY_IN_ITEMS;
+    data: {
+        entryId: string;
+    };
+};
+
 export const deleteWorkbookInItems = (workbookId: string) => {
     return {
         type: DELETE_WORKBOOK_IN_ITEMS,
         data: {
             workbookId,
+        },
+    };
+};
+
+export const deleteSharedEntryInItems = (entryId: string) => {
+    return {
+        type: DELETE_SHARED_ENTRY_IN_ITEMS,
+        data: {
+            entryId,
         },
     };
 };
@@ -305,6 +322,7 @@ export type CollectionsAction =
     | ResetStructureItemsAction
     | GetRootCollectionPemissionsAction
     | DeleteCollectionInItemsAction
-    | DeleteWorkbookInItemsAction;
+    | DeleteWorkbookInItemsAction
+    | DeleteSharedEntryInItemsAction;
 
 export type CollectionsDispatch = ThunkDispatch<DatalensGlobalState, void, CollectionsAction>;

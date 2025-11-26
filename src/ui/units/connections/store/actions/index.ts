@@ -12,7 +12,7 @@ import {loadRevisions, setEntryContent} from '../../../../store/actions/entryCon
 import {showToast} from '../../../../store/actions/toaster';
 import {RevisionsMode} from '../../../../store/typings/entryContent';
 import type {DataLensApiError} from '../../../../typings';
-import {getWorkbookIdFromPathname} from '../../../../utils';
+import {getEntityIdFromPathname} from '../../../../utils';
 import history from '../../../../utils/history';
 import {FieldKey, InnerFieldKey} from '../../constants';
 import {getIsRevisionsSupported} from '../../utils';
@@ -105,10 +105,12 @@ async function getConnectionDataRequest({
 export function setPageData({
     entryId,
     workbookId,
+    collectionId,
     rev_id,
 }: {
     entryId?: string | null;
     workbookId?: string;
+    collectionId?: string;
     rev_id?: string;
 }) {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
@@ -132,7 +134,7 @@ export function setPageData({
 
         if (!entry) {
             const getFakeEntry = registry.connections.functions.get('getFakeEntry');
-            entry = getFakeEntry(workbookId);
+            entry = getFakeEntry(workbookId, collectionId);
         }
 
         batch(() => {
@@ -312,9 +314,19 @@ export function changeInitialForm(initialFormUpdates: ConnectionsReduxState['ini
     };
 }
 
-export function createConnection(args: {name: string; dirPath?: string; workbookId?: string}) {
+export function createConnection(args: {
+    name: string;
+    dirPath?: string;
+    workbookId?: string;
+    collectionId?: string;
+}) {
     return async (dispatch: ConnectionsReduxDispatch, getState: GetState) => {
-        const {name, dirPath, workbookId = getWorkbookIdFromPathname()} = args;
+        const {
+            name,
+            dirPath,
+            workbookId = getEntityIdFromPathname(),
+            collectionId = getEntityIdFromPathname(true),
+        } = args;
         const {form, innerForm, schema} = getState().connections;
 
         if (!schema || !schema.apiSchema?.create) {
@@ -335,8 +347,10 @@ export function createConnection(args: {name: string; dirPath?: string; workbook
 
         if (typeof dirPath === 'string') {
             resultForm[FieldKey.DirPath] = dirPath;
-        } else {
+        } else if (workbookId) {
             resultForm[FieldKey.WorkbookId] = workbookId;
+        } else {
+            resultForm[FieldKey.CollectionId] = collectionId;
         }
 
         flow([setSubmitLoading, dispatch])({loading: true});
@@ -381,6 +395,8 @@ export function createConnection(args: {name: string; dirPath?: string; workbook
             history.replace(`/navigation/${templateFolderId}`);
         } else if (templateWorkbookId) {
             history.replace(`/workbooks/${templateWorkbookId}`);
+        } else if (collectionId && connectionId) {
+            history.replace(`/collections/${collectionId}`);
         } else if (connectionId) {
             history.replace(`/connections/${connectionId}`);
         }

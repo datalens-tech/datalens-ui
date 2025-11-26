@@ -1,26 +1,32 @@
 import React from 'react';
 
-import type {PluginTextObjectSettings, PluginTextProps} from '@gravity-ui/dashkit';
-import {PluginText, pluginText} from '@gravity-ui/dashkit';
+import type {
+    PluginTextObjectSettings as DashkitPluginTextObjectSettings,
+    Plugin,
+    PluginTextProps,
+} from '@gravity-ui/dashkit';
+import {PluginText as PluginTextRenderer, pluginText} from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
 import debounce from 'lodash/debounce';
 import get from 'lodash/get';
+import {CustomPaletteBgColors} from 'shared';
 import type {DashTabItemText} from 'shared';
 import {
     adjustWidgetLayout as dashkitAdjustWidgetLayout,
-    getPreparedWrapSettings,
+    usePreparedWrapSettings,
 } from 'ui/components/DashKit/utils';
 import {YFM_MARKDOWN_CLASSNAME} from 'ui/constants/yfm';
 import {usePrevious} from 'ui/hooks';
 
 import {useBeforeLoad} from '../../../../hooks/useBeforeLoad';
 import {YfmWrapper} from '../../../YfmWrapper/YfmWrapper';
+import type {CommonPluginProps, CommonPluginSettings} from '../../DashKit';
 import {useWidgetContext} from '../../context/WidgetContext';
 import {RendererWrapper} from '../RendererWrapper/RendererWrapper';
 
 import './Text.scss';
 
-type Props = Omit<PluginTextProps, 'apiHandler'>;
+type Props = Omit<PluginTextProps, 'apiHandler'> & CommonPluginProps;
 
 const b = block('dashkit-plugin-text-container');
 
@@ -72,7 +78,12 @@ const useWatchDomResizeObserver = ({
     }, [domElement, onResizeRef]);
 };
 
-const textPlugin = {
+type PluginTextObjectSettings = CommonPluginSettings & DashkitPluginTextObjectSettings;
+
+type PluginText = Plugin<Props> & {
+    setSettings: (settings: PluginTextObjectSettings) => PluginText;
+};
+const textPlugin: PluginText = {
     ...pluginText,
     setSettings(settings: PluginTextObjectSettings) {
         const {apiHandler} = settings;
@@ -81,7 +92,7 @@ const textPlugin = {
     },
     renderer: function Wrapper(
         props: Props,
-        forwardedRef: React.LegacyRef<PluginText> | undefined,
+        forwardedRef: React.LegacyRef<PluginTextRenderer> | undefined,
     ) {
         const rootNodeRef = React.useRef<HTMLDivElement>(null);
         const [metaScripts, setMetaScripts] = React.useState<string[] | undefined>();
@@ -174,11 +185,17 @@ const textPlugin = {
             enable: props.data.autoHeight as boolean,
         });
 
-        const content = <PluginText {...props} apiHandler={textHandler} ref={forwardedRef} />;
+        const content = (
+            <PluginTextRenderer {...props} apiHandler={textHandler} ref={forwardedRef} />
+        );
 
         const data = props.data as DashTabItemText['data'];
 
-        const {classMod, style, showBgColor} = getPreparedWrapSettings(data.background);
+        const {style, hasBgColor} = usePreparedWrapSettings({
+            widgetBackground: data.background,
+            globalBackground: props.background,
+            defaultOldColor: CustomPaletteBgColors.NONE,
+        });
 
         const currentLayout = props.layout.find(({i}) => i === props.id) || {
             x: null,
@@ -208,7 +225,6 @@ const textPlugin = {
             currentLayout.y,
             currentLayout.h,
             currentLayout.w,
-            classMod,
             data.background?.color,
         ]);
 
@@ -222,18 +238,12 @@ const textPlugin = {
         }, [YfmWrapperKeyRef, data.text]);
 
         return (
-            <RendererWrapper
-                id={props.id}
-                type="text"
-                nodeRef={rootNodeRef}
-                style={style as React.StyleHTMLAttributes<HTMLDivElement>}
-                classMod={classMod}
-            >
+            <RendererWrapper id={props.id} type="text" nodeRef={rootNodeRef} style={style}>
                 <YfmWrapper
                     // needed for force update when text is changed
                     key={`yfm_${YfmWrapperKeyRef.current}`}
                     content={<div className={b('content-wrap', null)}>{content}</div>}
-                    className={b({'with-color': Boolean(showBgColor)})}
+                    className={b({'with-color': Boolean(hasBgColor)})}
                     metaScripts={metaScripts}
                     onRenderCallback={handleTextRender}
                 />

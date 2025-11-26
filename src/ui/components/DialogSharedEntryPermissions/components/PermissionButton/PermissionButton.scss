@@ -1,0 +1,37 @@
+.dl-permission-button {
+    position: relative;
+
+    &__content-container {
+        display: flex;
+        gap: var(--g-spacing-3);
+        padding: var(--g-spacing-4);
+        border-radius: var(--g-border-radius-l);
+
+        &_disabled {
+            color: var(--g-color-text-secondary);
+            background-color: var(--g-color-base-generic);
+        }
+    }
+
+    &__content {
+        display: flex;
+        flex-direction: column;
+        gap: var(--g-spacing-1);
+    }
+
+    &__status-icon-container {
+        display: flex;
+        gap: var(--g-spacing-1);
+        position: absolute;
+        top: 6px;
+        right: 6px;
+    }
+
+    &__check-icon {
+        color: var(--g-color-base-brand);
+    }
+
+    &__lock-icon {
+        color: var(--g-color-text-secondary);
+    }
+}
