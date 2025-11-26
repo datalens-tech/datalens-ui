@@ -199,8 +199,7 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
                                 onItemClick={this.onItemClick}
                             />
                         ) : (
-                            items &&
-                            !!items.length && (
+                            Boolean(items?.length) && (
                                 <List
                                     qa={WorkbookNavigationMinimalQa.List}
                                     items={items}
