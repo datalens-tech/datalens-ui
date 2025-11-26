@@ -60,7 +60,7 @@ export const DialogSelectSharedEntry = ({
         targetWorkbookId,
     } = useCollectionStructureDialogState({
         open,
-        includePermissionsInfo: false,
+        includePermissionsInfo: true,
         initialCollectionId: collectionId,
     });
     const breadcrumbsIsLoading = useSelector(selectBreadcrumbsIsLoading);
