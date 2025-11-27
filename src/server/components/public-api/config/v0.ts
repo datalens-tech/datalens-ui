@@ -208,6 +208,22 @@ export const getPublicApiActionsV0 = <
                 experimental: true,
             },
         },
+        createQLChart: {
+            resolve: (api) => api.mix.__createQlChart__,
+            openApi: {
+                summary: 'Create QL chart',
+                tags: [ApiTag.QL],
+                experimental: true,
+            },
+        },
+        updateQLChart: {
+            resolve: (api) => api.mix.__updateQlChart__,
+            openApi: {
+                summary: 'Update QL chart',
+                tags: [ApiTag.QL],
+                experimental: true,
+            },
+        },
         deleteQLChart: {
             resolve: (api) => api.mix._deleteQLChart,
             openApi: {
@@ -221,6 +237,22 @@ export const getPublicApiActionsV0 = <
             resolve: (api) => api.mix.__getWizardChart__,
             openApi: {
                 summary: 'Get wizard chart',
+                tags: [ApiTag.Wizard],
+                experimental: true,
+            },
+        },
+        createWizardChart: {
+            resolve: (api) => api.mix.__createWizardChart__,
+            openApi: {
+                summary: 'Create wizard chart',
+                tags: [ApiTag.Wizard],
+                experimental: true,
+            },
+        },
+        updateWizardChart: {
+            resolve: (api) => api.mix.__updateWizardChart__,
+            openApi: {
+                summary: 'Update wizard chart',
                 tags: [ApiTag.Wizard],
                 experimental: true,
             },
