@@ -1,0 +1,92 @@
+import React from 'react';
+
+import {Popup} from '@gravity-ui/uikit';
+import block from 'bem-cn-lite';
+
+import {
+    ColorPickerInput,
+    type ColorPickerInputProps,
+} from '../../../../../../components/ColorPickerInput/ColorPickerInput';
+import {ColorPalette} from '../ColorPalette/ColorPalette';
+
+import './ColorPickerInputWithPreset.scss';
+
+const b = block('color-picker-input-with-preset');
+
+export interface ColorPickerInputWithPresetProps extends ColorPickerInputProps {
+    mainPresetOptions?: string[];
+    paletteOptions?: string[];
+}
+
+export function ColorPickerInputWithPreset({
+    mainPresetOptions,
+    paletteOptions,
+    value,
+    onUpdate,
+    theme,
+    ...colorPickerInputProps
+}: ColorPickerInputWithPresetProps) {
+    const [isPopupOpen, setIsPopupOpen] = React.useState(false);
+    const inputRef = React.useRef<HTMLInputElement>(null);
+
+    const handleSelectColor = React.useCallback(
+        (color: string) => {
+            onUpdate(color || null);
+            setIsPopupOpen(false);
+        },
+        [onUpdate],
+    );
+
+    const handleFocus = React.useCallback(() => {
+        setIsPopupOpen(true);
+    }, []);
+
+    const handleClosePopup = React.useCallback((open: boolean) => {
+        if (!open) {
+            setIsPopupOpen(false);
+        }
+    }, []);
+
+    if (!mainPresetOptions?.length && !paletteOptions?.length) {
+        return (
+            <ColorPickerInput
+                {...colorPickerInputProps}
+                value={value}
+                onUpdate={onUpdate}
+                theme={theme}
+            />
+        );
+    }
+
+    return (
+        <React.Fragment>
+            <ColorPickerInput
+                {...colorPickerInputProps}
+                value={value}
+                onUpdate={onUpdate}
+                theme={theme}
+                onFocus={handleFocus}
+                ref={inputRef}
+            />
+            <Popup
+                open={isPopupOpen}
+                anchorElement={inputRef.current}
+                hasArrow
+                onOpenChange={handleClosePopup}
+                className={b('popup')}
+            >
+                <ColorPalette
+                    onSelect={handleSelectColor}
+                    selectedColor={value || ''}
+                    mainPresetOptions={mainPresetOptions || []}
+                    paletteOptions={paletteOptions || []}
+                    theme={theme}
+                    paletteColumns={5}
+                    showItemBorder
+                />
+            </Popup>
+        </React.Fragment>
+    );
+}
+
+export default ColorPickerInputWithPreset;
