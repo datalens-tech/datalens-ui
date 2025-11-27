@@ -6,8 +6,9 @@ import {Checkbox, Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import type {DashTabItemText} from 'shared';
-import {CustomPaletteBgColors, DialogDashWidgetItemQA, DialogDashWidgetQA} from 'shared';
+import {CustomPaletteBgColors, DialogDashWidgetItemQA, DialogDashWidgetQA, Feature} from 'shared';
 import {PaletteBackground} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
 import {useBackgroundColorSettings} from '../DialogTitleWidget/useColorSettings';
@@ -43,10 +44,12 @@ interface DialogTextWidgetState {
 const INPUT_TEXT_ID = 'widgetTextField';
 const INPUT_AUTOHEIGHT_ID = 'widgetAutoHeightField';
 
+const isDashColorPickersByThemeEnabled = isEnabledFeature(Feature.EnableDashColorPickersByTheme);
+
 const DEFAULT_OPENED_ITEM_DATA: DashTabItemText['data'] = {
     text: '',
     autoHeight: false,
-    background: {color: CustomPaletteBgColors.NONE},
+    background: isDashColorPickersByThemeEnabled ? undefined : {color: CustomPaletteBgColors.NONE},
 };
 
 function DialogTextWidget(props: DialogTextWidgetProps) {
@@ -97,7 +100,13 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
             text: openedItemData.text,
             autoHeight: Boolean(openedItemData.autoHeight),
         }));
-    }, [openedItemData, dialogIsVisible, prevDialogIsVisible, enableSeparateThemeColorSelector]);
+    }, [
+        openedItemData,
+        dialogIsVisible,
+        prevDialogIsVisible,
+        enableSeparateThemeColorSelector,
+        updateStateByProps,
+    ]);
 
     const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {type RealTheme} from '@gravity-ui/uikit';
+import type {FlexProps, RealTheme} from '@gravity-ui/uikit';
 import {type ColorSettings, Feature} from 'shared';
 import {CustomPaletteTextColors, TITLE_WIDGET_TEXT_COLORS_PRESET} from 'shared/constants/widgets';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -17,6 +17,7 @@ type PaletteTextProps = {
     theme?: RealTheme;
     enableCustomColorSelector?: boolean;
     enableSeparateThemeColorSelector?: boolean;
+    direction?: FlexProps['direction'];
 };
 const mainPresetOptions = [
     CustomPaletteTextColors.PRIMARY,
@@ -34,6 +35,7 @@ export const PaletteText = ({
     theme,
     enableCustomColorSelector,
     enableSeparateThemeColorSelector = true,
+    direction = 'row',
 }: PaletteTextProps) => {
     if (isCommonDashSettingsEnabled || color) {
         return (
@@ -42,6 +44,7 @@ export const PaletteText = ({
                 value={color ?? computeColorFromToken(oldColor)}
                 onUpdate={onSelect}
                 isSingleColorSelector={!enableSeparateThemeColorSelector}
+                direction={direction}
             />
         );
     }
