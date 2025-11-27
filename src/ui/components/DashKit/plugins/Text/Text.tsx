@@ -80,14 +80,17 @@ const useWatchDomResizeObserver = ({
 
 type PluginTextObjectSettings = CommonPluginSettings & DashkitPluginTextObjectSettings;
 
-type PluginText = Plugin<Props> & {
-    setSettings: (settings: PluginTextObjectSettings) => PluginText;
-};
+type PluginText = Plugin<Props> &
+    CommonPluginSettings & {
+        setSettings: (settings: PluginTextObjectSettings) => PluginText;
+    };
 const textPlugin: PluginText = {
     ...pluginText,
     setSettings(settings: PluginTextObjectSettings) {
-        const {apiHandler} = settings;
+        const {apiHandler, globalBackground, globalBackgroundSettings} = settings;
         pluginText._apiHandler = apiHandler;
+        textPlugin.globalBackground = globalBackground;
+        textPlugin.globalBackgroundSettings = globalBackgroundSettings;
         return textPlugin;
     },
     renderer: function Wrapper(
@@ -193,7 +196,9 @@ const textPlugin: PluginText = {
 
         const {style, hasBgColor} = usePreparedWrapSettings({
             widgetBackground: data.background,
-            globalBackground: props.background,
+            globalBackground: textPlugin.globalBackground,
+            widgetBackgroundSettings: data.backgroundSettings,
+            globalBackgroundSettings: textPlugin.globalBackgroundSettings,
             defaultOldColor: CustomPaletteBgColors.NONE,
         });
 

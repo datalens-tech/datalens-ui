@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type {Plugin} from '@gravity-ui/dashkit';
-import {CustomPaletteBgColors, isBackgroundSettings} from 'shared';
+import {CustomPaletteBgColors, isOldBackgroundSettings} from 'shared';
 import type {ChartWidgetWithWrapRefProps} from 'ui/components/Widgets/Chart/types';
 
 import MarkdownProvider from '../../../../modules/markdownProvider';
@@ -17,16 +17,18 @@ type Props = WidgetPluginProps & CommonPluginProps;
 
 type PluginWidgetObjectSettings = CommonPluginSettings;
 
-type PluginWidget = Plugin<Props> & {
-    setSettings: (settings: PluginWidgetObjectSettings) => PluginWidget;
-    scope?: string;
-};
+type PluginWidget = Plugin<Props> &
+    CommonPluginSettings & {
+        setSettings: (settings: PluginWidgetObjectSettings) => PluginWidget;
+    };
 
 const widgetPlugin: PluginWidget = {
     type: 'widget',
     defaultLayout: {w: 12, h: 12},
     setSettings: (settings: PluginWidgetObjectSettings) => {
         widgetPlugin.scope = settings.scope;
+        widgetPlugin.globalBackground = settings.globalBackground;
+        widgetPlugin.globalBackgroundSettings = settings.globalBackgroundSettings;
         return widgetPlugin;
     },
     renderer: function Wrapper(
@@ -46,8 +48,10 @@ const widgetPlugin: PluginWidget = {
                 ? {color: CustomPaletteBgColors.LIKE_CHART}
                 : props.data.tabs?.[0]?.background;
         const {style} = usePreparedWrapSettings({
-            widgetBackground: isBackgroundSettings(propsBg) ? propsBg : undefined,
-            globalBackground: props.background,
+            widgetBackground: isOldBackgroundSettings(propsBg) ? propsBg : undefined,
+            globalBackground: widgetPlugin.globalBackground,
+            widgetBackgroundSettings: props.backgroundSettings,
+            globalBackgroundSettings: widgetPlugin.globalBackgroundSettings,
             defaultOldColor:
                 widgetPlugin.scope === 'dash'
                     ? CustomPaletteBgColors.LIKE_CHART
