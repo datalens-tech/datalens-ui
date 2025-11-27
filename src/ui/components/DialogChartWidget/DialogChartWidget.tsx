@@ -245,10 +245,11 @@ function DialogChartWidget({
         const {
             data: {tabs},
             hideTitle,
+            tabIndex,
         } = state;
-        const tabIndex = tabs.findIndex(({chartId}) => !chartId);
+        const tabWithoutChartIdIndex = tabs.findIndex(({chartId}) => !chartId);
 
-        if (tabIndex === -1) {
+        if (tabWithoutChartIdIndex === -1) {
             const newData = {
                 hideTitle: tabs.length === 1 && hideTitle,
                 tabs: tabs.map(({title, params, ...rest}, index) => {
@@ -285,7 +286,7 @@ function DialogChartWidget({
             setState((prevState) => ({
                 ...prevState,
                 error: true,
-                tabIndex,
+                tabIndex: tabWithoutChartIdIndex,
             }));
         }
     }, [state, setItemData, closeDialog]);
