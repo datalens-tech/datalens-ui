@@ -29,7 +29,7 @@ import {
     DialogDashWidgetQA,
     Feature,
 } from 'shared';
-import {CustomPaletteBgColors} from 'shared/constants/widgets';
+import {CustomPaletteBgColors, CustomPaletteTextColors} from 'shared/constants/widgets';
 import {registry} from 'ui/registry';
 import {PaletteBackground} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 import {PaletteText} from 'ui/units/dash/containers/Dialogs/components/PaletteText/PaletteText';
@@ -117,8 +117,17 @@ const defaultOpenedItemData: DashTabItemTitle['data'] = {
     size: FONT_SIZE_OPTIONS[0].value,
     showInTOC: true,
     autoHeight: false,
-    background: {color: CustomPaletteBgColors.NONE},
-    backgroundSettings: undefined,
+    ...(isDashColorPickersByThemeEnabled
+        ? {
+              backgroundSettings: {
+                  color: undefined,
+              },
+          }
+        : {
+              background: {
+                  color: CustomPaletteBgColors.NONE,
+              },
+          }),
     textColor: undefined,
 };
 
@@ -128,7 +137,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         dialogIsVisible,
         enableAutoheight = true,
         enableShowInTOC = true,
-        enableCustomBgColorSelector,
+        enableCustomBgColorSelector = false,
         enableSeparateThemeColorSelector = true,
         enableCustomTextColorSelector = false,
         theme,
@@ -136,6 +145,8 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         setItemData,
         openedItemData = defaultOpenedItemData,
     } = props;
+
+    const isNewWidget = !props.openedItemData;
 
     const [state, setState] = React.useState<DialogTitleWidgetState>({
         validation: {},
@@ -169,6 +180,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         backgroundSettings: openedItemData.backgroundSettings,
         defaultOldColor: CustomPaletteBgColors.NONE,
         enableSeparateThemeColorSelector: enableSeparateThemeColorSelector,
+        isNewWidget,
     });
 
     const {
@@ -179,6 +191,9 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
     } = useColorSettings({
         color: openedItemData.textColor,
         colorSettings: openedItemData.textColorSettings,
+        defaultOldColor: CustomPaletteTextColors.PRIMARY,
+        enableSeparateThemeColorSelector: enableSeparateThemeColorSelector,
+        isNewWidget,
     });
 
     const {

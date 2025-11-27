@@ -43,12 +43,15 @@ const widgetPlugin: PluginWidget = {
 
         const workbookId = props.context.workbookId;
         const enableAssistant = props.context.enableAssistant;
-        const propsBg =
-            widgetPlugin.scope === 'dash'
-                ? {color: CustomPaletteBgColors.LIKE_CHART}
-                : props.data.tabs?.[0]?.background;
+        const propsBg = props.data.tabs?.[0]?.background;
+
+        let oldWidgetBg = isOldBackgroundSettings(propsBg) ? propsBg : undefined;
+        if (widgetPlugin.scope === 'dash' && !props.data.backgroundSettings) {
+            oldWidgetBg = {color: CustomPaletteBgColors.LIKE_CHART};
+        }
+
         const {style} = usePreparedWrapSettings({
-            widgetBackground: isOldBackgroundSettings(propsBg) ? propsBg : undefined,
+            widgetBackground: oldWidgetBg,
             globalBackground: widgetPlugin.globalBackground,
             widgetBackgroundSettings: props.backgroundSettings,
             globalBackgroundSettings: widgetPlugin.globalBackgroundSettings,

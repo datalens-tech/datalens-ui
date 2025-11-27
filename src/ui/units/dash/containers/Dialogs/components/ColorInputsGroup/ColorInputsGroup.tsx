@@ -7,7 +7,6 @@ import block from 'bem-cn-lite';
 import ColorPickerInputWithPreset from 'ui/units/dash/containers/Dialogs/components/ColorPickerInputWithPreset/ColorPickerInputWithPreset';
 
 import {type ColorSettings, isColorByTheme} from '../../../../../../../shared';
-import {ColorPickerInput} from '../../../../../../components/ColorPickerInput/ColorPickerInput';
 
 import './ColorInputsGroup.scss';
 const b = block('color-inputs-group');
@@ -40,7 +39,9 @@ export function ColorInputsGroup({
     return (
         <Flex className={b(null, className)} direction={direction}>
             {isSingleColorSelector ? (
-                <ColorPickerInput
+                <ColorPickerInputWithPreset
+                    mainPresetOptions={mainPresetOptions}
+                    paletteOptions={paletteOptions}
                     className={b('color-input')}
                     theme={theme}
                     value={common}

@@ -7,9 +7,10 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import cloneDeep from 'lodash/cloneDeep';
 import merge from 'lodash/merge';
-import {CustomPaletteBgColors, DialogDashWidgetItemQA, DialogDashWidgetQA} from 'shared';
+import {CustomPaletteBgColors, DialogDashWidgetItemQA, DialogDashWidgetQA, Feature} from 'shared';
 import type {DashTabItemImage, EntryScope, RecursivePartial} from 'shared';
 import {registry} from 'ui/registry';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {PaletteBackground} from '../..//units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
@@ -21,13 +22,23 @@ const b = block('dialog-image');
 const INPUT_SRC_ID = 'dialog-image-input-src';
 const INPUT_ALT_ID = 'dialog-image-input-alt';
 const INPUT_PRESERVE_ASPECT_RATIO_ID = 'dialog-image-input-preserve-aspect-ratio';
+
+const isDashColorPickersByThemeEnabled = isEnabledFeature(Feature.EnableDashColorPickersByTheme);
+
 const DEFAULT_ITEM_DATA: DashTabItemImage['data'] = {
     src: '',
     alt: '',
-    background: {
-        color: CustomPaletteBgColors.NONE,
-    },
-    backgroundSettings: undefined,
+    ...(isDashColorPickersByThemeEnabled
+        ? {
+              backgroundSettings: {
+                  color: undefined,
+              },
+          }
+        : {
+              background: {
+                  color: CustomPaletteBgColors.NONE,
+              },
+          }),
     preserveAspectRatio: true,
 };
 
@@ -64,8 +75,9 @@ export function DialogImageWidget(props: Props) {
         onApply,
         scope,
         theme,
-        enableSeparateThemeColorSelector,
+        enableSeparateThemeColorSelector = true,
     } = props;
+    const isNewWidget = !props.openedItemData;
     const [data, setData] = React.useState(openedItemData);
     const [validationErrors, setValidationErrors] = React.useState<Record<string, string>>({});
     const {DialogImageWidgetLinkHint} = registry.common.components.getAll();
@@ -84,7 +96,8 @@ export function DialogImageWidget(props: Props) {
         background: openedItemData.background,
         backgroundSettings: openedItemData.backgroundSettings,
         defaultOldColor: CustomPaletteBgColors.NONE,
-        enableSeparateThemeColorSelector: enableSeparateThemeColorSelector,
+        enableSeparateThemeColorSelector,
+        isNewWidget,
     });
 
     const handleSrcUpdate = (nextSrc: string) => {

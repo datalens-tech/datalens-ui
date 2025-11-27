@@ -180,6 +180,21 @@ export function isColorByTheme(value: unknown): value is ColorByTheme {
     );
 }
 
+export function isColorSettings(value: unknown): value is ColorSettings {
+    return typeof value === 'string' || isColorByTheme(value);
+}
+
+export function isBackgroundSettings(value: unknown): value is BackgroundSettings {
+    return (
+        typeof value === 'object' &&
+        value !== null &&
+        'color' in value &&
+        (value.color === undefined ||
+            typeof value.color === 'string' ||
+            isColorSettings(value.color))
+    );
+}
+
 export interface DashTabItemBase {
     id: string;
     namespace: string;
@@ -189,14 +204,14 @@ export interface DashTabItemBase {
     title?: string;
 }
 
-export interface DahsTabItemBaseData {
+export type DashTabItemBaseData = {
     background?: OldBackgroundSettings;
     backgroundSettings?: BackgroundSettings;
-}
+};
 
 export interface DashTabItemText extends DashTabItemBase {
     type: DashTabItemType.Text;
-    data: DahsTabItemBaseData & {
+    data: DashTabItemBaseData & {
         text: string;
         autoHeight?: boolean;
     };
@@ -211,7 +226,7 @@ export type DashTitleSize =
 
 export interface DashTabItemTitle extends DashTabItemBase {
     type: DashTabItemType.Title;
-    data: DahsTabItemBaseData & {
+    data: DashTabItemBaseData & {
         text: string;
         size: DashTitleSize;
         showInTOC: boolean;
@@ -224,9 +239,10 @@ export interface DashTabItemTitle extends DashTabItemBase {
 
 export interface DashTabItemWidget extends DashTabItemBase {
     type: DashTabItemType.Widget;
-    data: DahsTabItemBaseData & {
+    data: {
         hideTitle: boolean;
         tabs: DashTabItemWidgetTab[];
+        backgroundSettings?: BackgroundSettings;
     };
 }
 
@@ -424,11 +440,9 @@ export interface DashStats {
 
 export interface DashTabItemImage extends DashTabItemBase {
     type: DashTabItemType.Image;
-    data: {
+    data: DashTabItemBaseData & {
         src: string;
         alt?: string;
-        background?: OldBackgroundSettings;
-        backgroundSettings?: BackgroundSettings;
         preserveAspectRatio?: boolean;
     };
 }
