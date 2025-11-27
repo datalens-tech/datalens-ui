@@ -9,7 +9,7 @@ import {
     getDefaultDashWidgetBgColorByType,
 } from 'shared/constants/widgets';
 import {migrateConnectionsForGroupControl} from 'ui/store/utils/controlDialog';
-import {getUpdatedBackgroundValue, getUpdatedConnections} from 'ui/utils/copyItems';
+import {getUpdatedBackgroundData, getUpdatedConnections} from 'ui/utils/copyItems';
 
 import {EMBEDDED_MODE} from '../../../../constants/embedded';
 import {Mode} from '../../modules/constants';
@@ -263,16 +263,18 @@ function dash(state = initialState, action) {
             ) {
                 delete itemData.textColor;
             }
+
             const defaultBgColorValue = getDefaultDashWidgetBgColorByType(itemData.type);
             const backgroundData =
-                'background' in itemData
-                    ? {
-                          background: getUpdatedBackgroundValue(
-                              itemData.background,
-                              false,
-                              defaultBgColorValue,
-                          ),
-                      }
+                action.payload.item.type !== DashTabItemType.Control &&
+                action.payload.item.type !== DashTabItemType.GroupControl
+                    ? getUpdatedBackgroundData({
+                          background: itemData.background,
+                          backgroundSettings: itemData.backgroundSettings,
+                          allowCustomValues: false,
+                          enableSeparateThemeColorSelector: true,
+                          defaultOldColor: defaultBgColorValue,
+                      })
                     : {};
             const newItem = {
                 ...action.payload.item,

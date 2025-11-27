@@ -145,8 +145,17 @@ const INPUT_DESCRIPTION_ID = 'chartDescriptionField';
 const INPUT_AUTOHEIGHT_ID = 'chartAutoheightField';
 const INPUT_HINT_ID = 'chartHintField';
 
+const isDashColorPickersByThemeEnabled = isEnabledFeature(Feature.EnableCommonChartDashSettings);
+
 const DEFAULT_OPENED_ITEM_DATA: DashTabItemWidget['data'] = {
     hideTitle: false,
+    ...(isDashColorPickersByThemeEnabled
+        ? {
+              backgroundSettings: {
+                  color: undefined,
+              },
+          }
+        : {}),
     tabs: [
         {
             get title() {
@@ -154,9 +163,13 @@ const DEFAULT_OPENED_ITEM_DATA: DashTabItemWidget['data'] = {
             },
             isDefault: true,
             description: '',
-            background: {
-                color: CustomPaletteBgColors.NONE,
-            },
+            ...(isDashColorPickersByThemeEnabled
+                ? {}
+                : {
+                      background: {
+                          color: CustomPaletteBgColors.NONE,
+                      },
+                  }),
             enableHint: false,
             hint: '',
             enableDescription: false,
@@ -165,23 +178,24 @@ const DEFAULT_OPENED_ITEM_DATA: DashTabItemWidget['data'] = {
 } as DashTabItemWidget['data'];
 
 // TODO: put in defaultPath navigation key from entry
-function DialogChartWidget({
-    enableAutoheight = true,
-    enableBackgroundColor = false,
-    enableCustomBgColorSelector = false,
-    enableSeparateThemeColorSelector = true,
-    enableFilteringSetting = true,
-    openedItemData = DEFAULT_OPENED_ITEM_DATA,
-    dialogIsVisible,
-    widgetsCurrentTab,
-    withoutSidebar,
-    changeNavigationPath,
-    workbookId,
-    navigationPath,
-    closeDialog,
-    setItemData,
-    openedItemId,
-}: DialogChartWidgetProps) {
+function DialogChartWidget(props: DialogChartWidgetProps) {
+    const {
+        enableAutoheight = true,
+        enableBackgroundColor = false,
+        enableCustomBgColorSelector = false,
+        enableSeparateThemeColorSelector = true,
+        enableFilteringSetting = true,
+        openedItemData = DEFAULT_OPENED_ITEM_DATA,
+        dialogIsVisible,
+        widgetsCurrentTab,
+        withoutSidebar,
+        changeNavigationPath,
+        workbookId,
+        navigationPath,
+        closeDialog,
+        setItemData,
+        openedItemId,
+    } = props;
     const [state, setState] = React.useState<DialogChartWidgetState>({
         hideTitle: true,
         prevVisible: false,
@@ -194,6 +208,8 @@ function DialogChartWidget({
         activeTab: TAB_TYPE.TABS,
     });
 
+    const couldChangeOldBg = enableCustomBgColorSelector;
+
     const {
         oldBackgroundColor,
         backgroundColorSettings,
@@ -201,12 +217,15 @@ function DialogChartWidget({
         setBackgroundColorSettings,
         resultedBackgroundSettings,
     } = useBackgroundColorSettings({
-        background: openedItemData.background,
+        background: couldChangeOldBg
+            ? openedItemData.tabs[0]?.background
+            : {color: CustomPaletteBgColors.LIKE_CHART},
         backgroundSettings: openedItemData.backgroundSettings,
-        defaultOldColor: enableCustomBgColorSelector
+        defaultOldColor: couldChangeOldBg
             ? CustomPaletteBgColors.NONE
             : CustomPaletteBgColors.LIKE_CHART,
         enableSeparateThemeColorSelector,
+        isNewWidget: !props.openedItemData,
     });
     const [prevDialogIsVisible, setPrevDialogIsVisible] = React.useState<boolean | undefined>();
 
@@ -275,7 +294,10 @@ function DialogChartWidget({
 
             if (tabWithoutChartIdIndex === -1) {
                 const newData = {
-                    ...resultedBg,
+                    ...(resultedBg?.backgroundSettings
+                        ? {backgroundSettings: resultedBg.backgroundSettings}
+                        : {}),
+
                     hideTitle: tabs.length === 1 && hideTitle,
                     tabs: tabs.map(({title, params, ...rest}, index) => {
                         let resultTabParams =
@@ -300,6 +322,7 @@ function DialogChartWidget({
                                 }),
                             params: resultTabParams,
                             ...rest,
+                            ...(resultedBg?.background ? {background: resultedBg.background} : {}),
                         };
                         return tab;
                     }),

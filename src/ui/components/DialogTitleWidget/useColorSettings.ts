@@ -11,22 +11,29 @@ type UseColorSettingsProps = {
     colorSettings?: ColorSettings;
     defaultOldColor?: string;
     enableSeparateThemeColorSelector?: boolean;
+    isNewWidget: boolean;
 };
 
 const isDashColorPickersByThemeEnabled = isEnabledFeature(Feature.EnableDashColorPickersByTheme);
 
 export function useColorSettings(props: UseColorSettingsProps) {
-    const getPartialStateFromProps = React.useCallback((propsLocal: UseColorSettingsProps) => {
-        return {
-            oldColor: propsLocal.color ?? propsLocal.defaultOldColor,
-            colorSettings: getWidgetColorSettings({
-                colorSettings: propsLocal.colorSettings,
-                oldColor: propsLocal.color,
-                defaultOldColor: propsLocal.defaultOldColor ?? CustomPaletteBgColors.NONE,
-                enableMultiThemeColors: propsLocal.enableSeparateThemeColorSelector ?? true,
-            }),
-        };
-    }, []);
+    const getPartialStateFromProps = React.useCallback(
+        (propsLocal: UseColorSettingsProps) => {
+            return {
+                oldColor:
+                    props.isNewWidget && isDashColorPickersByThemeEnabled
+                        ? undefined
+                        : propsLocal.color ?? propsLocal.defaultOldColor,
+                colorSettings: getWidgetColorSettings({
+                    colorSettings: propsLocal.colorSettings,
+                    oldColor: propsLocal.color,
+                    defaultOldColor: propsLocal.defaultOldColor ?? CustomPaletteBgColors.NONE,
+                    enableMultiThemeColors: propsLocal.enableSeparateThemeColorSelector ?? true,
+                }),
+            };
+        },
+        [props.isNewWidget],
+    );
 
     const [{oldColor, colorSettings}, setBgSettings] = React.useState<{
         oldColor?: string;
@@ -41,10 +48,9 @@ export function useColorSettings(props: UseColorSettingsProps) {
     );
 
     const setOldColor = React.useCallback((color?: string) => {
-        setBgSettings((prev) => ({
-            ...prev,
+        setBgSettings({
             oldColor: color,
-        }));
+        });
     }, []);
 
     const setColorSettings = React.useCallback((settings?: ColorSettings) => {
@@ -64,18 +70,29 @@ export function useColorSettings(props: UseColorSettingsProps) {
 }
 
 type UseBackgroundColorSettingsProps = {
-    background?: OldBackgroundSettings;
-    backgroundSettings?: BackgroundSettings;
-    defaultOldColor?: string;
-    enableSeparateThemeColorSelector?: boolean;
+    background: OldBackgroundSettings | undefined;
+    backgroundSettings: BackgroundSettings | undefined;
+    defaultOldColor: string | undefined;
+    enableSeparateThemeColorSelector: boolean;
+    isNewWidget: boolean;
 };
 
-function getColorSettingsProps(propsLocal: UseBackgroundColorSettingsProps): UseColorSettingsProps {
+function getColorSettingsProps({
+    background,
+    backgroundSettings,
+    defaultOldColor,
+    enableSeparateThemeColorSelector,
+    isNewWidget,
+}: UseBackgroundColorSettingsProps): UseColorSettingsProps {
     return {
-        color: getResultedOldBgColor(propsLocal.background, propsLocal.defaultOldColor),
-        colorSettings: propsLocal.backgroundSettings?.color,
-        defaultOldColor: propsLocal.defaultOldColor,
-        enableSeparateThemeColorSelector: propsLocal.enableSeparateThemeColorSelector,
+        color:
+            isNewWidget && isDashColorPickersByThemeEnabled
+                ? undefined
+                : getResultedOldBgColor(background, defaultOldColor),
+        colorSettings: backgroundSettings?.color,
+        defaultOldColor,
+        enableSeparateThemeColorSelector,
+        isNewWidget,
     };
 }
 
@@ -84,6 +101,7 @@ export function useBackgroundColorSettings({
     backgroundSettings,
     defaultOldColor = CustomPaletteBgColors.NONE,
     enableSeparateThemeColorSelector = true,
+    isNewWidget,
 }: UseBackgroundColorSettingsProps) {
     const {
         oldColor: oldBackgroundColor,
@@ -97,6 +115,7 @@ export function useBackgroundColorSettings({
             backgroundSettings,
             defaultOldColor,
             enableSeparateThemeColorSelector,
+            isNewWidget,
         }),
     );
 

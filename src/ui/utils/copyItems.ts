@@ -1,9 +1,22 @@
 import type {ConfigItem, ConfigItemData} from '@gravity-ui/dashkit';
-import {CustomPaletteBgColors, WIDGET_BG_COLORS_PRESET} from 'shared';
+import {
+    CustomPaletteBgColors,
+    WIDGET_BG_COLORS_PRESET,
+    getColorSettingsWithValue,
+} from 'shared/constants';
 import {getActualOldBackground} from 'shared/modules/dash-scheme-converter';
-import type {BackgroundSettings} from 'shared/types';
-import {DashTabItemType, isBackgroundSettings} from 'shared/types';
+import type {BackgroundSettings, ColorSettings, OldBackgroundSettings} from 'shared/types';
+import {
+    DashTabItemType,
+    Feature,
+    isBackgroundSettings,
+    isColorByTheme,
+    isOldBackgroundSettings,
+} from 'shared/types';
 import type {ConnectionsData} from 'ui/components/DialogRelations/types';
+
+import {isEnabledFeature} from './isEnabledFeature';
+import {computeColorFromToken} from './widgetColors';
 
 // targetId - item is copied data from localStorage
 // id - item is already created via DashKit.setItem
@@ -95,25 +108,67 @@ export const getUpdatedConnections = ({
     return [...connections, ...copiedConnections];
 };
 
-export function getUpdatedBackgroundValue(
-    background: unknown,
-    allowCusomValues?: boolean,
-    defaultOldColor?: string,
-): Omit<BackgroundSettings, 'enabled'> | undefined {
-    if (isBackgroundSettings(background)) {
-        const newBg = getActualOldBackground(background, defaultOldColor);
+const isDashColorPickersByThemeEnabled = isEnabledFeature(Feature.EnableDashColorPickersByTheme);
+
+export function getUpdatedBackgroundData({
+    background,
+    backgroundSettings,
+    allowCustomValues = false,
+    enableSeparateThemeColorSelector = true,
+    defaultOldColor,
+}: {
+    background: unknown;
+    backgroundSettings: unknown;
+    allowCustomValues: boolean;
+    enableSeparateThemeColorSelector: boolean;
+    defaultOldColor: string;
+}): {
+    backgroundSettings: BackgroundSettings | undefined;
+    background: OldBackgroundSettings | undefined;
+} {
+    let oldColor: string | undefined;
+    let newColor: ColorSettings | undefined;
+
+    const isOldBackground = isOldBackgroundSettings(background);
+    const isBgSettings = isBackgroundSettings(backgroundSettings);
+
+    if (isOldBackground) {
+        oldColor = getActualOldBackground(background, defaultOldColor)?.color;
 
         if (
-            allowCusomValues ||
-            WIDGET_BG_COLORS_PRESET.includes(background.color) ||
-            Object.values<string>(CustomPaletteBgColors).includes(background.color)
+            !isDashColorPickersByThemeEnabled &&
+            !allowCustomValues &&
+            oldColor &&
+            !WIDGET_BG_COLORS_PRESET.includes(oldColor) &&
+            !Object.values<string>(CustomPaletteBgColors).includes(oldColor)
         ) {
-            return newBg;
+            oldColor = defaultOldColor;
         }
     }
-    return defaultOldColor
+
+    if (isBgSettings) {
+        const color = backgroundSettings.color;
+        if (
+            !color ||
+            (isColorByTheme(color) && enableSeparateThemeColorSelector) ||
+            (!isColorByTheme(color) && !enableSeparateThemeColorSelector)
+        ) {
+            newColor = color;
+        }
+    } else if (isDashColorPickersByThemeEnabled) {
+        newColor = getColorSettingsWithValue(
+            computeColorFromToken(oldColor ?? defaultOldColor),
+            enableSeparateThemeColorSelector,
+        );
+    }
+
+    return isBgSettings
         ? {
-              color: defaultOldColor,
+              background: undefined,
+              backgroundSettings: {color: newColor},
           }
-        : undefined;
+        : {
+              background: oldColor ? {color: oldColor} : undefined,
+              backgroundSettings: undefined,
+          };
 }
