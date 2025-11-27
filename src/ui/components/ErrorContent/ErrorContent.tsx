@@ -294,6 +294,7 @@ class ErrorContent extends React.PureComponent<ErrorContentProps> {
                 imageName = 'error';
                 break;
             case ErrorContentTypes.CREDENTIALS:
+            case ErrorContentTypes.LICENSE_EXPIRED:
                 imageName = 'identity';
                 break;
             case ErrorContentTypes.INACCESSIBLE_ON_MOBILE:

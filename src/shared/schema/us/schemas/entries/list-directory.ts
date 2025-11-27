@@ -44,6 +44,8 @@ export const listDirectoryEntryOutputSchema = z.object({
     hidden: z.boolean(),
     workbookId: z.string(),
     workbookTitle: z.string().nullable().optional(),
+    collectionId: z.string().nullable(),
+    collectionTitle: z.string().nullable().optional(),
     isFavorite: z.boolean(),
     isLocked: z.boolean(),
     permissions: permissionsSchema.optional(),

@@ -2,11 +2,12 @@ import React from 'react';
 
 import {Alert} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import {type SharedEntryBindingsItem} from 'shared/schema';
+import type {SharedScope} from 'shared';
+import type {SharedEntryBindingsItem} from 'shared/schema';
 import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 
 import {DialogClassName} from '../constants';
-import type {SharedEntry, SharedScope} from '../types';
+import type {SharedEntry} from '../types';
 import {getRelationText} from '../utils';
 
 type DeleteAlertProps = {

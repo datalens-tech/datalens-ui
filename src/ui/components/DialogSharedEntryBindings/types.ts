@@ -1,8 +1,9 @@
-import type {EntryScope} from 'shared';
+import type {Permissions} from 'shared';
+import type {SharedEntryPermissions} from 'shared/schema';
 
-export type SharedScope = EntryScope.Dataset | EntryScope.Connection;
 export type SharedEntry = {
     scope: string;
     entryId: string;
-    //TODO add fullPermissions
+    fullPermissions?: SharedEntryPermissions;
+    permissions?: Partial<Permissions & SharedEntryPermissions>;
 };

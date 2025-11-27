@@ -273,7 +273,7 @@ export enum EntryScope {
     Folder = 'folder',
     Connection = 'connection',
 }
-
+export type SharedScope = EntryScope.Dataset | EntryScope.Connection;
 export interface EntryAnnotation {
     description?: string;
 }

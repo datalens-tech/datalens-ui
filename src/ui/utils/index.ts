@@ -16,3 +16,4 @@ export * from './date';
 export * from './markdown';
 export * from './markup';
 export * from './palettes';
+export * from './shared-entries';

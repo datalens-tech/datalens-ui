@@ -1,10 +1,10 @@
 import {makeUserId} from '../../../../modules';
 import {createAction} from '../../../gateway-utils';
 import {defaultParamsSerializer} from '../../../utils';
-import type {GetWorkbookEntriesArgs, GetWorkbookEntriesResponse} from '../../types';
+import type {GetWorkbookEntriesArgs, GetWorkbookSharedEntriesResponse} from '../../types';
 
 export const getWorkbookSharedEntries = createAction<
-    GetWorkbookEntriesResponse,
+    GetWorkbookSharedEntriesResponse,
     GetWorkbookEntriesArgs
 >({
     method: 'GET',

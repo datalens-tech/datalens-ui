@@ -59,6 +59,8 @@ const getEntriesEntry = z.object({
     hidden: z.boolean(),
     workbookId: z.string().nullable(),
     workbookTitle: z.string().nullable().optional(),
+    collectionId: z.string().nullable(),
+    collectionTitle: z.string().nullable().optional(),
     isFavorite: z.boolean(),
     isLocked: z.literal(false).optional(),
     permissions: permissionsSchema.optional(),

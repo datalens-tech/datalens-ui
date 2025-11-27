@@ -179,7 +179,7 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
         });
 
         legend = {
-            enabled: true,
+            enabled: shared.extraSettings?.legendMode !== 'hide',
             type: 'continuous',
             title: {text: getFakeTitleOrTitle(colorItem), style: {fontWeight: '500'}},
             colorScale,
