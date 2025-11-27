@@ -1,6 +1,6 @@
 import type {Plugin, PluginDefaultLayout} from '@gravity-ui/dashkit';
 import {DashKit} from '@gravity-ui/dashkit';
-import type {BackgroundSettings} from 'shared';
+import type {BackgroundSettings, OldBackgroundSettings} from 'shared';
 import {registry} from 'ui/registry';
 
 import {DL} from '../../constants';
@@ -37,10 +37,13 @@ const wrapPlugins = (plugins: Plugin[], pluginDefaultsGetter?: typeof currentDef
 
 export interface CommonPluginSettings {
     scope?: string;
+    globalBackground?: OldBackgroundSettings;
+    globalBackgroundSettings?: BackgroundSettings;
 }
 
 export interface CommonPluginProps {
-    background?: BackgroundSettings;
+    background?: OldBackgroundSettings;
+    backgroundSettings?: BackgroundSettings;
 }
 
 export const getConfiguredDashKit = (
@@ -49,22 +52,29 @@ export const getConfiguredDashKit = (
         disableHashNavigation?: boolean;
         disableTitleHints?: boolean;
         scope?: string;
+        background?: OldBackgroundSettings;
+        backgroundSettings?: BackgroundSettings;
     },
 ) => {
     if (currentDefaultsGetter !== pluginDefaultsGetter || !isConfigured) {
-        const titleSettings = {
+        const commonSettings: CommonPluginSettings = {
             scope: options?.scope,
+            globalBackground: options?.background,
+            globalBackgroundSettings: options?.backgroundSettings,
+        };
+        const titleSettings = {
+            ...commonSettings,
             hideAnchor: options?.disableHashNavigation,
             hideHint: options?.disableTitleHints,
         };
 
         const textSettings = {
-            scope: options?.scope,
+            ...commonSettings,
             apiHandler: MarkdownProvider.getMarkdown,
         };
 
         const controlSettings = {
-            scope: options?.scope,
+            ...commonSettings,
             getDistincts: getDistinctsAction(),
         };
 
@@ -74,8 +84,8 @@ export const getConfiguredDashKit = (
                 textPlugin.setSettings(textSettings),
                 pluginControl.setSettings(controlSettings),
                 pluginGroupControl.setSettings(controlSettings),
-                widgetPlugin.setSettings({scope: options?.scope}),
-                pluginImage.setSettings({scope: options?.scope}),
+                widgetPlugin.setSettings(commonSettings),
+                pluginImage.setSettings(commonSettings),
             ],
             pluginDefaultsGetter,
         );
