@@ -3,12 +3,14 @@ import omitBy from 'lodash/omitBy';
 
 import {DASH_CURRENT_SCHEME_VERSION} from '../constants/dash';
 import {DUPLICATED_WIDGET_BG_COLORS_PRESET} from '../constants/widgets';
-import type {BackgroundSettings, DashData, DashTab, DashTabItem} from '../types';
+import type {DashData, DashTab, DashTabItem, OldBackgroundSettings} from '../types';
 import {DashTabConnectionKind, DashTabItemControlElementType, DashTabItemType} from '../types';
 
 const DATE_FORMAT_V7 = 'YYYY-MM-DD';
 
-function getActualBackground(background?: BackgroundSettings): BackgroundSettings | undefined {
+function getActualBackground(
+    background?: OldBackgroundSettings,
+): OldBackgroundSettings | undefined {
     if (background && DUPLICATED_WIDGET_BG_COLORS_PRESET.includes(background.color)) {
         return {
             color: background.color.replace('medium', 'light-hover'),
