@@ -10,6 +10,7 @@ import {CustomPaletteBgColors, DialogDashWidgetItemQA, DialogDashWidgetQA} from 
 import {PaletteBackground} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 
 import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
+import {useBackgroundColorSettings} from '../DialogTitleWidget/useColorSettings';
 import {TextEditor} from '../TextEditor/TextEditor';
 
 import './DialogTextWidget.scss';
@@ -19,6 +20,7 @@ const b = block('dialog-text');
 export interface DialogTextWidgetFeatureProps {
     enableAutoheight?: boolean;
     enableCustomBgColorSelector?: boolean;
+    enableSeparateThemeColorSelector?: boolean;
 }
 
 export interface DialogTextWidgetProps extends DialogTextWidgetFeatureProps {
@@ -36,7 +38,6 @@ interface DialogTextWidgetState {
     text?: string;
     prevVisible?: boolean;
     autoHeight?: boolean;
-    backgroundColor?: string;
 }
 
 const INPUT_TEXT_ID = 'widgetTextField';
@@ -52,6 +53,7 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
     const {
         enableAutoheight = true,
         enableCustomBgColorSelector,
+        enableSeparateThemeColorSelector,
         openedItemData = DEFAULT_OPENED_ITEM_DATA,
         dialogIsVisible,
         closeDialog,
@@ -62,7 +64,19 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
     const [state, setState] = React.useState<DialogTextWidgetState>({
         text: openedItemData.text,
         autoHeight: Boolean(openedItemData.autoHeight),
-        backgroundColor: openedItemData.background?.color,
+    });
+    const {
+        oldBackgroundColor,
+        backgroundColorSettings,
+        setOldBackgroundColor,
+        setBackgroundColorSettings,
+        resultedBackgroundSettings,
+        updateStateByProps,
+    } = useBackgroundColorSettings({
+        background: openedItemData.background,
+        backgroundSettings: openedItemData.backgroundSettings,
+        defaultOldColor: CustomPaletteBgColors.NONE,
+        enableSeparateThemeColorSelector,
     });
     const [prevDialogIsVisible, setPrevDialogIsVisible] = React.useState<boolean | undefined>();
 
@@ -72,13 +86,18 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
         }
 
         setPrevDialogIsVisible(dialogIsVisible);
+        updateStateByProps({
+            background: openedItemData.background,
+            backgroundSettings: openedItemData.backgroundSettings,
+            defaultOldColor: CustomPaletteBgColors.NONE,
+            enableSeparateThemeColorSelector,
+        });
         setState((prevState) => ({
             ...prevState,
             text: openedItemData.text,
             autoHeight: Boolean(openedItemData.autoHeight),
-            backgroundColor: openedItemData.background?.color,
         }));
-    }, [openedItemData, dialogIsVisible, prevDialogIsVisible]);
+    }, [openedItemData, dialogIsVisible, prevDialogIsVisible, enableSeparateThemeColorSelector]);
 
     const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
@@ -116,29 +135,23 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
     }, []);
 
     const onApply = React.useCallback(() => {
-        const {text, autoHeight, backgroundColor} = state;
+        const {text, autoHeight} = state;
 
         setItemData({
             data: {
                 text,
                 autoHeight,
-                background: {
-                    color: backgroundColor,
-                },
+                ...resultedBackgroundSettings,
             },
         });
         closeDialog();
-    }, [state, setItemData, closeDialog]);
+    }, [state, setItemData, closeDialog, resultedBackgroundSettings]);
 
     const handleAutoHeightChanged = React.useCallback(() => {
         setState((prevState) => ({...prevState, autoHeight: !prevState.autoHeight}));
     }, []);
 
-    const handleHasBackgroundSelected = React.useCallback((color: string) => {
-        setState((prevState) => ({...prevState, backgroundColor: color}));
-    }, []);
-
-    const {text, autoHeight, backgroundColor} = state;
+    const {text, autoHeight} = state;
 
     return (
         <Dialog
@@ -166,8 +179,10 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
                     label={i18n('dash.dashkit-plugin-common.view', 'label_background-checkbox')}
                 >
                     <PaletteBackground
-                        color={backgroundColor}
-                        onSelect={handleHasBackgroundSelected}
+                        oldColor={oldBackgroundColor}
+                        onSelectOldColor={setOldBackgroundColor}
+                        color={backgroundColorSettings}
+                        onSelect={setBackgroundColorSettings}
                         enableCustomBgColorSelector={enableCustomBgColorSelector}
                     />
                 </FormRow>
