@@ -1145,6 +1145,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         const DashKit = getConfiguredDashKit(undefined, {
             disableHashNavigation,
             scope: 'dash',
+            backgroundSettings: settings.backgroundSettings,
         });
 
         const hasFixedHeaderControlsElements = Boolean(
