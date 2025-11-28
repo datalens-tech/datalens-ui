@@ -31,7 +31,16 @@ enum Mode {
 reducerRegistry.register({iamAccessDialog: iamAccessDialogReducer});
 
 export const IamAccessDialogComponent = React.memo<IamAccessDialogProps>(
-    ({open, resourceId, resourceType, resourceTitle, parentId, canUpdate, onClose}) => {
+    ({
+        open,
+        resourceId,
+        resourceType,
+        resourceTitle,
+        resourceScope,
+        parentId,
+        canUpdate,
+        onClose,
+    }) => {
         const dispatch = useDispatch<IamAccessDialogDispatch>();
 
         const [mode, setMode] = React.useState(Mode.AccessListMode);
@@ -286,6 +295,7 @@ export const IamAccessDialogComponent = React.memo<IamAccessDialogProps>(
                         resourceId={resourceId}
                         resourceType={resourceType}
                         resourceTitle={resourceTitle}
+                        resourceScope={resourceScope}
                         canUpdate={canUpdate}
                         refetch={fetchData}
                         loadMoreInheritedAccessBindings={loadMoreInheritedAccessBindings}
@@ -298,6 +308,7 @@ export const IamAccessDialogComponent = React.memo<IamAccessDialogProps>(
                     />
                 ) : (
                     <AddSubjects
+                        resourceScope={resourceScope}
                         resourceId={resourceId}
                         resourceType={resourceType}
                         resourceTitle={resourceTitle}

@@ -1,4 +1,5 @@
 import type {ConnectorType} from 'shared';
+import type {GetEntryResponse, SharedEntryPermissions} from 'shared/schema';
 import {S3_BASED_CONNECTORS} from 'ui/constants';
 
 import {FieldKey} from '../../constants';
@@ -11,4 +12,10 @@ export const isS3BasedConnForm = (connectionData: FormDict, paramsType?: string)
 
 export const isListPageOpened = (pathname = '') => {
     return /new$/.test(pathname);
+};
+
+export const getIsSharedConnection = (
+    entry?: GetEntryResponse,
+): entry is GetEntryResponse & {collectionId: string; fullPermissions: SharedEntryPermissions} => {
+    return Boolean(entry?.collectionId);
 };
