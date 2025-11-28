@@ -63,7 +63,6 @@ import {
 import {
     getAxisModeTooltipContent,
     isAxisFormatEnabled,
-    isAxisScaleEnabled,
     isAxisTypeEnabled,
     isHolidaysEnabled,
 } from './utils';
@@ -709,10 +708,9 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
     }
 
     renderScaleSettings() {
-        const {visualizationId} = this.props;
         const {scale, scaleValue} = this.state.settings;
 
-        if (typeof scale === 'undefined' || !isAxisScaleEnabled(visualizationId)) {
+        if (typeof scale === 'undefined') {
             return null;
         }
 
@@ -728,6 +726,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                             items={SCALE_RADIO_BUTTON_OPTIONS}
                             value={scale}
                             onUpdate={this.handleScaleRadioButtonsUpdate}
+                            qa={DialogPlaceholderQa.AxisScaleModeRadioButtons}
                         />
                     }
                 />
@@ -765,6 +764,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                                             onUpdate={(value) => {
                                                 this.handleManualScaleValueUpdate(value, 'min');
                                             }}
+                                            qa={DialogPlaceholderQa.AxisMinInput}
                                         />
                                     }
                                 />
@@ -783,6 +783,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                                             onUpdate={(value) => {
                                                 this.handleManualScaleValueUpdate(value, 'max');
                                             }}
+                                            qa={DialogPlaceholderQa.AxisMaxInput}
                                         />
                                     }
                                 />
