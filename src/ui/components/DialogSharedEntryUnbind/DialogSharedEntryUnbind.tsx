@@ -4,12 +4,13 @@ import type {AlertProps} from '@gravity-ui/uikit';
 import {Alert, Dialog} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {CollectionItemEntities} from 'shared';
-import type {GetEntryResponse, SharedEntryBindingsItem} from 'shared/schema';
+import type {SharedEntryBindingsItem} from 'shared/schema';
 import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 import {WORKBOOKS_PATH} from 'ui/units/collections-navigation/constants';
 
 import navigateHelper from '../../libs/navigateHelper';
 import DialogManager from '../DialogManager/DialogManager';
+import type {SharedEntry} from '../DialogSharedEntryBindings/types';
 import {EntitiesList} from '../EntitiesList/EntitiesList';
 import {EntityLink} from '../EntityLink/EntityLink';
 
@@ -26,7 +27,7 @@ import './DialogSharedEntryUnbind.scss';
 type DialogSharedEntryUnbindProps = {
     open: boolean;
     onClose: () => void;
-    entry: Partial<GetEntryResponse> & {scope: string};
+    entry: SharedEntry;
     relation?: SharedEntryBindingsItem;
     onApply: () => Promise<void> | void;
 };

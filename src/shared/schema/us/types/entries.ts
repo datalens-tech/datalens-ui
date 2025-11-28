@@ -20,15 +20,20 @@ import type {
     EntryMetaFields,
     EntryNavigationFields,
     EntryRelationFields,
+    SharedEntryPermissions,
 } from './fields';
 
 export interface GetEntryResponse extends EntryFields {
     isFavorite: boolean;
     permissions?: Permissions;
+    fullPermissions?: SharedEntryPermissions;
     isLocked?: boolean;
     links?: EntryFieldLinks;
     parentDashEntryId?: string;
     parentDashName?: string;
+}
+export interface GetSharedEntryResponse extends GetEntryResponse {
+    isDelegated: boolean;
 }
 export interface GetEntryArgs {
     entryId: string;

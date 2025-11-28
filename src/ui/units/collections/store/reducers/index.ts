@@ -7,6 +7,7 @@ import type {
 import type {CollectionsAction} from '../actions';
 import {
     DELETE_COLLECTION_IN_ITEMS,
+    DELETE_SHARED_ENTRY_IN_ITEMS,
     DELETE_WORKBOOK_IN_ITEMS,
     GET_COLLECTION_FAILED,
     GET_COLLECTION_LOADING,
@@ -220,6 +221,17 @@ export const collectionsReducer = (
                 ...state,
                 items: state.items.filter((item) => {
                     if ('workbookId' in item && action.data.workbookId === item.workbookId) {
+                        return false;
+                    }
+                    return true;
+                }),
+            };
+        }
+        case DELETE_SHARED_ENTRY_IN_ITEMS: {
+            return {
+                ...state,
+                items: state.items.filter((item) => {
+                    if ('entryId' in item && action.data.entryId === item.entryId) {
                         return false;
                     }
                     return true;

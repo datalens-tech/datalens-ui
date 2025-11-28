@@ -6,7 +6,7 @@ export const AlertEntryTitles = {
 };
 
 export const AlertEntryPluralizedTitles = {
-    connection: getSharedEntryMockText('entries-list-title-source').toLowerCase(),
+    connection: getSharedEntryMockText('entries-list-title-connection').toLowerCase(),
     dataset: getSharedEntryMockText('label-of-shared-dataset').toLowerCase(),
 };
 

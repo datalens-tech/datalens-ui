@@ -206,6 +206,7 @@ function ConnectionMenu(props: ConnectionMenuProps) {
                     includeClickableType={clickableTypes}
                     inactiveEntryIds={inactiveEntryIds}
                     ignoreWorkbookEntries={true}
+                    ignoreSharedEntries={true}
                     placeSelectParameters={getPlaceSelectParameters([
                         PLACE.ROOT,
                         PLACE.FAVORITES,
@@ -448,6 +449,7 @@ function SelectConnections(props: SelectConnectionsProps) {
                     popupPlacement="auto"
                     includeClickableType={clickableTypes}
                     ignoreWorkbookEntries={true}
+                    ignoreSharedEntries={true}
                     inactiveEntryIds={getInactiveEntryIds(connections)}
                     placeSelectParameters={getPlaceSelectParameters([
                         PLACE.ROOT,

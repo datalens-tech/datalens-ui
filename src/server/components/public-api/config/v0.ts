@@ -7,215 +7,6 @@ export const getPublicApiActionsV0 = <
     TSchema extends {root: Pick<DatalensGatewaySchemas['root'], 'bi' | 'mix' | 'us'>},
 >(): PublicApiVersionActions<TSchema, Feature> => {
     return {
-        // Connection
-        getConnection: {
-            resolve: (api) => api.bi.getConnection,
-            openApi: {
-                summary: 'Get connection',
-                tags: [ApiTag.Connection],
-            },
-        },
-        createConnection: {
-            resolve: (api) => api.bi.createConnection,
-            openApi: {
-                summary: 'Create connection',
-                tags: [ApiTag.Connection],
-            },
-        },
-        updateConnection: {
-            resolve: (api) => api.bi.updateConnection,
-            openApi: {
-                summary: 'Update connection',
-                tags: [ApiTag.Connection],
-            },
-        },
-        deleteConnection: {
-            resolve: (api) => api.bi.deleteConnection,
-            openApi: {
-                summary: 'Delete connection',
-                tags: [ApiTag.Connection],
-            },
-        },
-
-        // Dataset
-        getDataset: {
-            resolve: (api) => api.bi.getDatasetByVersion,
-            openApi: {
-                summary: 'Get dataset',
-                tags: [ApiTag.Dataset],
-            },
-        },
-        createDataset: {
-            resolve: (api) => api.bi.createDataset,
-            openApi: {
-                summary: 'Create dataset',
-                tags: [ApiTag.Dataset],
-            },
-        },
-        updateDataset: {
-            resolve: (api) => api.bi.updateDataset,
-            openApi: {
-                summary: 'Update dataset',
-                tags: [ApiTag.Dataset],
-            },
-        },
-        deleteDataset: {
-            resolve: (api) => api.bi.deleteDataset,
-            openApi: {
-                summary: 'Delete dataset',
-                tags: [ApiTag.Dataset],
-            },
-        },
-        validateDataset: {
-            resolve: (api) => api.bi.validateDataset,
-            openApi: {
-                summary: 'Validate dataset',
-                tags: [ApiTag.Dataset],
-            },
-        },
-
-        // Wizard
-        getWizardChart: {
-            resolve: (api) => api.mix.__getWizardChart__,
-            openApi: {
-                summary: 'Get wizard chart',
-                tags: [ApiTag.Wizard],
-                experimental: true,
-            },
-        },
-        deleteWizardChart: {
-            resolve: (api) => api.mix._deleteWizardChart,
-            openApi: {
-                summary: 'Delete wizard chart',
-                tags: [ApiTag.Wizard],
-            },
-        },
-
-        // QL
-        getQLChart: {
-            resolve: (api) => api.mix.__getQLChart__,
-            openApi: {
-                summary: 'Get QL chart',
-                tags: [ApiTag.QL],
-                experimental: true,
-            },
-        },
-        deleteQLChart: {
-            resolve: (api) => api.mix._deleteQLChart,
-            openApi: {
-                summary: 'Delete QL chart',
-                tags: [ApiTag.QL],
-            },
-        },
-
-        // Dashboard
-        getDashboard: {
-            resolve: (api) => api.mix.__getDashboard__,
-            openApi: {
-                summary: 'Get dashboard',
-                tags: [ApiTag.Dashboard],
-                experimental: true,
-            },
-        },
-        createDashboard: {
-            resolve: (api) => api.mix.__createDashboard__,
-            openApi: {
-                summary: 'Create dashboard',
-                tags: [ApiTag.Dashboard],
-                experimental: true,
-            },
-        },
-        updateDashboard: {
-            resolve: (api) => api.mix.__updateDashboard__,
-            openApi: {
-                summary: 'Update dashboard',
-                tags: [ApiTag.Dashboard],
-                experimental: true,
-            },
-        },
-        deleteDashboard: {
-            resolve: (api) => api.mix._deleteDashboard,
-            openApi: {
-                summary: 'Delete dashboard',
-                tags: [ApiTag.Dashboard],
-            },
-        },
-
-        // Navigation
-        getEntries: {
-            resolve: (api) => api.us.getEntries,
-            openApi: {
-                summary: 'Get entries',
-                tags: [ApiTag.Navigation],
-            },
-        },
-
-        // Workbook
-        createWorkbook: {
-            resolve: (api) => api.us.createWorkbook,
-            openApi: {
-                summary: 'Create workbook',
-                tags: [ApiTag.Workbook],
-            },
-            features: [Feature.CollectionsEnabled],
-        },
-        deleteWorkbook: {
-            resolve: (api) => api.us.deleteWorkbook,
-            openApi: {
-                summary: 'Delete workbook',
-                tags: [ApiTag.Workbook],
-            },
-            features: [Feature.CollectionsEnabled],
-        },
-        deleteWorkbooks: {
-            resolve: (api) => api.us.deleteWorkbooks,
-            openApi: {
-                summary: 'Delete workbooks',
-                tags: [ApiTag.Workbook],
-            },
-            features: [Feature.CollectionsEnabled],
-        },
-        getWorkbook: {
-            resolve: (api) => api.us.getWorkbook,
-            openApi: {
-                summary: 'Get workbook',
-                tags: [ApiTag.Workbook],
-            },
-            features: [Feature.CollectionsEnabled],
-        },
-        getWorkbooksList: {
-            resolve: (api) => api.us.getWorkbooksList,
-            openApi: {
-                summary: 'Get workbooks list',
-                tags: [ApiTag.Workbook],
-            },
-            features: [Feature.CollectionsEnabled],
-        },
-        moveWorkbook: {
-            resolve: (api) => api.us.moveWorkbook,
-            openApi: {
-                summary: 'Move workbook',
-                tags: [ApiTag.Workbook],
-            },
-            features: [Feature.CollectionsEnabled],
-        },
-        moveWorkbooks: {
-            resolve: (api) => api.us.moveWorkbooks,
-            openApi: {
-                summary: 'Move workbooks',
-                tags: [ApiTag.Workbook],
-            },
-            features: [Feature.CollectionsEnabled],
-        },
-        updateWorkbook: {
-            resolve: (api) => api.us.updateWorkbook,
-            openApi: {
-                summary: 'Update workbook',
-                tags: [ApiTag.Workbook],
-            },
-            features: [Feature.CollectionsEnabled],
-        },
-
         // Collection
         createCollection: {
             resolve: (api) => api.us.createCollection,
@@ -286,6 +77,224 @@ export const getPublicApiActionsV0 = <
             openApi: {
                 summary: 'Update collection',
                 tags: [ApiTag.Collection],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
+
+        // Connection
+        getConnection: {
+            resolve: (api) => api.bi.getConnection,
+            openApi: {
+                summary: 'Get connection',
+                tags: [ApiTag.Connection],
+            },
+        },
+        createConnection: {
+            resolve: (api) => api.bi.createConnection,
+            openApi: {
+                summary: 'Create connection',
+                tags: [ApiTag.Connection],
+            },
+        },
+        updateConnection: {
+            resolve: (api) => api.bi.updateConnection,
+            openApi: {
+                summary: 'Update connection',
+                tags: [ApiTag.Connection],
+            },
+        },
+        deleteConnection: {
+            resolve: (api) => api.bi.deleteConnection,
+            openApi: {
+                summary: 'Delete connection',
+                tags: [ApiTag.Connection],
+            },
+        },
+
+        // Dashboard
+        getDashboard: {
+            resolve: (api) => api.mix.__getDashboard__,
+            openApi: {
+                summary: 'Get dashboard',
+                tags: [ApiTag.Dashboard],
+                experimental: true,
+            },
+        },
+        createDashboard: {
+            resolve: (api) => api.mix.__createDashboard__,
+            openApi: {
+                summary: 'Create dashboard',
+                tags: [ApiTag.Dashboard],
+                experimental: true,
+            },
+        },
+        updateDashboard: {
+            resolve: (api) => api.mix.__updateDashboard__,
+            openApi: {
+                summary: 'Update dashboard',
+                tags: [ApiTag.Dashboard],
+                experimental: true,
+            },
+        },
+        deleteDashboard: {
+            resolve: (api) => api.mix._deleteDashboard,
+            openApi: {
+                summary: 'Delete dashboard',
+                tags: [ApiTag.Dashboard],
+            },
+        },
+
+        // Dataset
+        getDataset: {
+            resolve: (api) => api.bi.getDatasetByVersion,
+            openApi: {
+                summary: 'Get dataset',
+                tags: [ApiTag.Dataset],
+            },
+        },
+        createDataset: {
+            resolve: (api) => api.bi.createDataset,
+            openApi: {
+                summary: 'Create dataset',
+                tags: [ApiTag.Dataset],
+            },
+        },
+        updateDataset: {
+            resolve: (api) => api.bi.updateDataset,
+            openApi: {
+                summary: 'Update dataset',
+                tags: [ApiTag.Dataset],
+            },
+        },
+        deleteDataset: {
+            resolve: (api) => api.bi.deleteDataset,
+            openApi: {
+                summary: 'Delete dataset',
+                tags: [ApiTag.Dataset],
+            },
+        },
+        validateDataset: {
+            resolve: (api) => api.bi.validateDataset,
+            openApi: {
+                summary: 'Validate dataset',
+                tags: [ApiTag.Dataset],
+            },
+        },
+
+        // Entries
+        getEntriesRelations: {
+            resolve: (api) => api.us.getEntriesRelations,
+            openApi: {
+                summary: 'Get entries relations',
+                tags: [ApiTag.Entries],
+            },
+        },
+
+        // Navigation
+        getEntries: {
+            resolve: (api) => api.us.getEntries,
+            openApi: {
+                summary: 'Get entries',
+                tags: [ApiTag.Navigation],
+            },
+        },
+
+        // QL
+        getQLChart: {
+            resolve: (api) => api.mix.__getQLChart__,
+            openApi: {
+                summary: 'Get QL chart',
+                tags: [ApiTag.QL],
+                experimental: true,
+            },
+        },
+        deleteQLChart: {
+            resolve: (api) => api.mix._deleteQLChart,
+            openApi: {
+                summary: 'Delete QL chart',
+                tags: [ApiTag.QL],
+            },
+        },
+
+        // Wizard
+        getWizardChart: {
+            resolve: (api) => api.mix.__getWizardChart__,
+            openApi: {
+                summary: 'Get wizard chart',
+                tags: [ApiTag.Wizard],
+                experimental: true,
+            },
+        },
+        deleteWizardChart: {
+            resolve: (api) => api.mix._deleteWizardChart,
+            openApi: {
+                summary: 'Delete wizard chart',
+                tags: [ApiTag.Wizard],
+            },
+        },
+
+        // Workbook
+        createWorkbook: {
+            resolve: (api) => api.us.createWorkbook,
+            openApi: {
+                summary: 'Create workbook',
+                tags: [ApiTag.Workbook],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
+        deleteWorkbook: {
+            resolve: (api) => api.us.deleteWorkbook,
+            openApi: {
+                summary: 'Delete workbook',
+                tags: [ApiTag.Workbook],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
+        deleteWorkbooks: {
+            resolve: (api) => api.us.deleteWorkbooks,
+            openApi: {
+                summary: 'Delete workbooks',
+                tags: [ApiTag.Workbook],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
+        getWorkbook: {
+            resolve: (api) => api.us.getWorkbook,
+            openApi: {
+                summary: 'Get workbook',
+                tags: [ApiTag.Workbook],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
+        getWorkbooksList: {
+            resolve: (api) => api.us.getWorkbooksList,
+            openApi: {
+                summary: 'Get workbooks list',
+                tags: [ApiTag.Workbook],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
+        moveWorkbook: {
+            resolve: (api) => api.us.moveWorkbook,
+            openApi: {
+                summary: 'Move workbook',
+                tags: [ApiTag.Workbook],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
+        moveWorkbooks: {
+            resolve: (api) => api.us.moveWorkbooks,
+            openApi: {
+                summary: 'Move workbooks',
+                tags: [ApiTag.Workbook],
+            },
+            features: [Feature.CollectionsEnabled],
+        },
+        updateWorkbook: {
+            resolve: (api) => api.us.updateWorkbook,
+            openApi: {
+                summary: 'Update workbook',
+                tags: [ApiTag.Workbook],
             },
             features: [Feature.CollectionsEnabled],
         },
