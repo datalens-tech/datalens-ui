@@ -6,6 +6,7 @@ export interface ListSuggestUser {
     meta?: string;
     avatarUrl?: string;
     isInvitee?: boolean;
+    isUnknown?: boolean;
 }
 
 export type GetUsersSuggestItems = (

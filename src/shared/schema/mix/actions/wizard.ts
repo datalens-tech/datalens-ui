@@ -1,13 +1,14 @@
+import {getTypedApi} from '../..';
 import {ENTRY_TYPES, EntryScope, mapChartsConfigToLatestVersion} from '../../..';
 import {ServerError} from '../../../constants/error';
 import {createTypedAction} from '../../gateway-utils';
-import {getTypedApi} from '../../simple-schema';
 import {
     deleteWizardChartArgsSchema,
     deleteWizardChartResultSchema,
     getWizardChartArgsSchema,
     getWizardChartResultSchema,
 } from '../schemas/wizard';
+import type {DeleteWizardResult, GetWizardResult} from '../types';
 
 export const wizardActions = {
     // WIP
@@ -16,7 +17,7 @@ export const wizardActions = {
             paramsSchema: getWizardChartArgsSchema,
             resultSchema: getWizardChartResultSchema,
         },
-        async (api, args) => {
+        async (api, args): Promise<GetWizardResult> => {
             const {
                 includePermissions,
                 includeLinks,
@@ -65,7 +66,7 @@ export const wizardActions = {
             paramsSchema: deleteWizardChartArgsSchema,
             resultSchema: deleteWizardChartResultSchema,
         },
-        async (api, {chartId}) => {
+        async (api, {chartId}): Promise<DeleteWizardResult> => {
             const typedApi = getTypedApi(api);
 
             await typedApi.us._deleteUSEntry({
