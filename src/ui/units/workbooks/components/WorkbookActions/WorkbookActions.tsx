@@ -202,7 +202,7 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
                     workbookId: workbook?.workbookId ?? undefined,
                     collectionId: workbook?.collectionId ?? undefined,
                     resourceTitle: workbook.title,
-                    canUpdate: workbook.permissions.updateAccessBindings,
+                    canUpdateAccessBindings: workbook.permissions.updateAccessBindings,
                     onClose: () => {
                         dispatch(closeDialog());
                     },

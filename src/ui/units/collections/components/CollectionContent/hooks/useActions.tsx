@@ -127,7 +127,8 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
                                     props: {
                                         collectionId: item?.collectionId ?? undefined,
                                         resourceTitle: item?.title,
-                                        canUpdate: item?.permissions.updateAccessBindings,
+                                        canUpdateAccessBindings:
+                                            item?.permissions.updateAccessBindings,
                                         onClose: () => {
                                             dispatch(closeDialog());
                                         },
@@ -323,7 +324,8 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
                                         workbookId: item?.workbookId ?? undefined,
                                         collectionId: item?.collectionId ?? undefined,
                                         resourceTitle: item?.title,
-                                        canUpdate: item?.permissions.updateAccessBindings,
+                                        canUpdateAccessBindings:
+                                            item?.permissions.updateAccessBindings,
                                         onClose: () => {
                                             dispatch(closeDialog());
                                         },

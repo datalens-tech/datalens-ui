@@ -270,7 +270,7 @@ export const useLayout = ({
                                                 props: {
                                                     collectionId: collection.collectionId,
                                                     resourceTitle: collection.title,
-                                                    canUpdate: Boolean(
+                                                    canUpdateAccessBindings: Boolean(
                                                         collection.permissions
                                                             ?.updateAccessBindings,
                                                     ),
