@@ -12,7 +12,7 @@ const b = block('created-illustration');
 const SKELETON_TIMEOUT = 300;
 
 export const Illustration = ({illustrationStore, ...props}: PlaceholderIllustrationImageProps) => {
-    const CreatedIllustration = createIllustration([illustrationStore]);
+    const CreatedIllustration = createIllustration([illustrationStore]); // CHARTS-12228
 
     return (
         <CreatedIllustration

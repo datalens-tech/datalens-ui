@@ -18,7 +18,7 @@ export const PlaceholderIllustration = ({
     const placeholderDirection = direction || (DL.IS_MOBILE ? 'column' : 'row');
 
     const image = React.useMemo(() => {
-        const {PlaceholderIllustrationImage} = registry.common.components.getAll();
+        const {PlaceholderIllustrationImage} = registry.common.components.getAll(); // CHARTS-12228
         const {getIllustrationStore} = registry.common.functions.getAll();
 
         const store = getIllustrationStore();

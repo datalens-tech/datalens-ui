@@ -22,7 +22,7 @@ export function createIllustration(
 
     function Illustration({name, ...props}: IllustrationComponent) {
         const theme = useThemeType();
-        const src = store[theme] && store[theme][name];
+        const src = store[theme] && store[theme][name]; // CHARTS-12228
         return <AsyncImage alt={props.alt || name} src={src} {...props} />;
     }
 
