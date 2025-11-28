@@ -75,6 +75,20 @@ export type UpdateWorkbookAccessBindingsArgs = {
     deltas: AccessBindingDelta[];
 };
 
+export type ListSharedEntryAccessBindingsArgs = {
+    entryId: string;
+    withInherits?: boolean;
+    pageTokenData?: PageTokenData;
+    pageSize?: number;
+};
+
+export type ListSharedEntryAccessBindingsResponse = ListAccessBindingsResultItem[];
+
+export type UpdateSharedEntryAccessBindingsArgs = {
+    entryId: string;
+    deltas: AccessBindingDelta[];
+};
+
 export type PageTokenData = {
     type: `${AccessServiceResourceType}`;
     id: string;
