@@ -2,11 +2,11 @@
     position: relative;
     z-index: 1;
 
-    &_rebranding#{&}_theme_dark {
+    &_theme_dark {
         background: #081b38;
     }
 
-    &_rebranding#{&}_theme_light {
+    &_theme_light {
         background: #f5f9fe;
     }
 

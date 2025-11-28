@@ -1,3 +1,4 @@
+// TODO: remove CHARTS-11919
 export const getRebrandingIllustrationStore = () => ({
     light: {
         notFound: () => import('assets/images/new-illustrations/light/nothing_found.svg'),
