@@ -11,7 +11,7 @@ import {i18n} from 'i18n';
 import {getSdk} from 'libs/schematic-sdk';
 import moment from 'moment';
 import type {SharedScope} from 'shared';
-import {EntryScope, WorkbookNavigationMinimalQa, getEntryNameByKey} from 'shared';
+import {EntryScope, Feature, WorkbookNavigationMinimalQa, getEntryNameByKey} from 'shared';
 import type {
     GetEntryResponse,
     GetSharedEntryResponse,
@@ -21,6 +21,7 @@ import type {
 } from 'shared/schema';
 import {DEFAULT_DATE_FORMAT} from 'ui/constants/misc';
 import {getIsSharedEntry} from 'ui/utils';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {PlaceholderIllustration} from '../PlaceholderIllustration/PlaceholderIllustration';
 import {SharedEntryIcon} from '../SharedEntryIcon/SharedEntryIcon';
@@ -98,7 +99,7 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
 
         if (visible && workbookId) {
             this.fetchWorkbookEntries(true);
-            if (this.getIsSharedScope(scope)) {
+            if (this.getIsSharedScope(scope) && this.getIsSharedEntriesEnabled()) {
                 this.fetchWorkbookSharedEntries();
             }
         }
@@ -112,7 +113,7 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
 
         if (becameVisibleOrRecievedWorkbookId) {
             this.fetchWorkbookEntries(true);
-            if (this.getIsSharedScope(scope)) {
+            if (this.getIsSharedScope(scope) && this.getIsSharedEntriesEnabled()) {
                 this.fetchWorkbookSharedEntries();
             }
         }
@@ -189,7 +190,7 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
                                 />
                             </div>
                         )}
-                        {this.getIsSharedScope(scope) ? (
+                        {this.getIsSharedScope(scope) && this.getIsSharedEntriesEnabled() ? (
                             <ListWithSharedEntries
                                 items={items}
                                 scope={scope}
@@ -344,6 +345,10 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
         return scope === EntryScope.Dataset || scope === EntryScope.Connection;
     };
 
+    private getIsSharedEntriesEnabled = () => {
+        return isEnabledFeature(Feature.EnableSharedEntries);
+    };
+
     private getRowHeight = () => ROW_HEIGHT;
 
     private onItemClick = (item: Item) => {
@@ -356,7 +361,7 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
     private onUpdateFilter = (filter: string) =>
         this.setState({filter}, () => {
             this.fetchWorkbookEntries();
-            if (this.getIsSharedScope(this.props.scope)) {
+            if (this.getIsSharedScope(this.props.scope) && this.getIsSharedEntriesEnabled()) {
                 this.fetchWorkbookSharedEntries();
             }
         });
@@ -367,7 +372,7 @@ class WorkbookNavigationMinimal extends React.Component<Props, State> {
     }: OrderBy<OrderWorkbookEntriesField, OrderDirection>): void => {
         this.setState({orderByField: field, orderByDirection: direction}, () => {
             this.fetchWorkbookEntries();
-            if (this.getIsSharedScope(this.props.scope)) {
+            if (this.getIsSharedScope(this.props.scope) && this.getIsSharedEntriesEnabled()) {
                 this.fetchWorkbookSharedEntries();
             }
         });

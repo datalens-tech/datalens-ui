@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {CodeTrunk, TrashBin} from '@gravity-ui/icons';
+import {CodeTrunk, Persons, TrashBin} from '@gravity-ui/icons';
 import {Button, spacing} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
@@ -12,12 +12,14 @@ import {withRouter} from 'react-router-dom';
 import {compose} from 'recompose';
 import type {Dispatch} from 'redux';
 import {bindActionCreators} from 'redux';
-import {type ConnectorType, Feature} from 'shared';
+import {type ConnectorType, EntryScope, Feature, getEntryNameByKey} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 import {PageTitle, SlugifyUrl, URL_QUERY, Utils} from 'ui';
 import type {FilterEntryContextMenuItems} from 'ui/components/EntryContextMenu';
 import {ENTRY_CONTEXT_MENU_ACTION} from 'ui/components/EntryContextMenu';
+import {DIALOG_IAM_ACCESS} from 'ui/components/IamAccessDialog';
 import {registry} from 'ui/registry';
+import {ResourceType} from 'ui/registry/units/common/types/components/IamAccessDialog';
 import {
     closeDialog,
     openDialog,
@@ -49,12 +51,13 @@ import ConnPanelActions from './ConnPanelActions';
 import {DescriptionButton, UnloadConfirmation} from './components';
 import {ConnSettings} from './components/ConnSettings';
 import {useApiErrors} from './useApiErrors';
-import {isListPageOpened, isS3BasedConnForm} from './utils';
+import {getIsSharedConnection, isListPageOpened, isS3BasedConnForm} from './utils';
 
 import './Page.scss';
 
 const b = block('conn-page');
 const i18n = I18n.keyset('connections.form');
+const i18ContextMenu = I18n.keyset('component.entry-context-menu.view');
 
 type DispatchState = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ReturnType<typeof mapDispatchToProps>;
@@ -172,7 +175,7 @@ const PageComponent = (props: PageProps) => {
     const revisionsSupported = connector?.history;
     const revId = currentSearchParams.get(URL_QUERY.REV_ID) ?? undefined;
 
-    const isSharedConnection = Boolean(entry?.collectionId);
+    const isSharedConnection = getIsSharedConnection(entry);
 
     const showSettings = !connector?.backend_driven_form;
     let isShowCreateButtons = true;
@@ -228,6 +231,9 @@ const PageComponent = (props: PageProps) => {
                 if (isSharedConnection && item.id === ENTRY_CONTEXT_MENU_ACTION.DELETE) {
                     return false;
                 }
+                if (isSharedConnection && item.id === ENTRY_CONTEXT_MENU_ACTION.ACCESS) {
+                    return false;
+                }
                 if (!revisionsSupported && item.id === ENTRY_CONTEXT_MENU_ACTION.REVISIONS) {
                     return false;
                 }
@@ -255,6 +261,30 @@ const PageComponent = (props: PageProps) => {
                           },
                           icon: <CodeTrunk />,
                           text: getSharedEntryMockText('shared-entry-bindings-dropdown-menu-title'),
+                      },
+                      {
+                          id: ENTRY_CONTEXT_MENU_ACTION.ACCESS,
+                          action: () => {
+                              actions.openDialog({
+                                  id: DIALOG_IAM_ACCESS,
+                                  props: {
+                                      open: true,
+                                      resourceId: entry.entryId,
+                                      resourceType: ResourceType.SharedEntry,
+                                      resourceTitle: getEntryNameByKey({key: entry.key}),
+                                      resourceScope: EntryScope.Connection,
+                                      parentId: entry.collectionId,
+                                      canUpdate: Boolean(
+                                          entry.fullPermissions?.updateAccessBindings,
+                                      ),
+                                      onClose: () => {
+                                          actions.closeDialog();
+                                      },
+                                  },
+                              });
+                          },
+                          icon: <Persons />,
+                          text: i18ContextMenu('value_access'),
                       },
                       {
                           id: ENTRY_CONTEXT_MENU_ACTION.DELETE,

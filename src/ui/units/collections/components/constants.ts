@@ -100,4 +100,6 @@ export const mockSharedEntriesTexts = {
     'add-entry-workbook-toast-message': 'Название: {{name}}',
     'workbook-navigation-title': '{{entry}} в воркбуке',
     'workbook-navigation-shared-title': 'Привязанные {{entry}}',
+    'iam-dialog-role-limitedEntryBindingCreator': 'Делегация прав',
+    'iam-dialog-role-entryBindingCreator': 'Без делегации прав',
 };

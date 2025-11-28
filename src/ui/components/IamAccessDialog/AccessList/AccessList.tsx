@@ -5,13 +5,14 @@ import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
 import {useSelector} from 'react-redux';
 import {Waypoint} from 'react-waypoint';
+import type {SharedScope} from 'shared';
 import {Utils} from 'ui';
+import type {ResourceType} from 'ui/registry/units/common/types/components/IamAccessDialog';
 
 import type {
     ListAccessBindingsResultItem,
     PageTokenData,
 } from '../../../../shared/schema/extensions/types';
-import type {ResourceType} from '../../../store/actions/iamAccessDialog';
 import {
     selectGetCollectionBreadcrumbsData,
     selectGetCollectionBreadcrumbsError,
@@ -39,6 +40,7 @@ export type Props = {
     resourceId: string;
     resourceType: ResourceType;
     resourceTitle: string;
+    resourceScope?: SharedScope;
     canUpdate: boolean;
     refetch: () => void;
     loadMoreInheritedAccessBindings: (pageTokenData?: PageTokenData) => void;
@@ -60,6 +62,7 @@ export const AccessList = React.memo<Props>(
         onClose,
         isLoadingDirect,
         isLoadingInherited,
+        resourceScope,
     }) => {
         const accessBindingsError = useSelector(selectListAccessBindingsError);
         const accessBindings: ListAccessBindingsResultItem[] | null =
@@ -210,6 +213,7 @@ export const AccessList = React.memo<Props>(
                     <ActionPanel
                         type={resourceType}
                         title={resourceTitle}
+                        resourceScope={resourceScope}
                         canUpdate={canUpdate}
                         onAddUserClick={onAddUserClick}
                         isLoadingDirect={isLoadingDirect}

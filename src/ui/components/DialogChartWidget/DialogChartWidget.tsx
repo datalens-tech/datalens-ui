@@ -141,327 +141,276 @@ const INPUT_DESCRIPTION_ID = 'chartDescriptionField';
 const INPUT_AUTOHEIGHT_ID = 'chartAutoheightField';
 const INPUT_HINT_ID = 'chartHintField';
 
+const DEFAULT_OPENED_ITEM_DATA: DashTabItemWidget['data'] = {
+    hideTitle: false,
+    tabs: [
+        {
+            get title() {
+                return i18n('dash.widget-dialog.edit', 'value_title-default', {index: 1});
+            },
+            isDefault: true,
+            description: '',
+            background: {
+                color: CustomPaletteBgColors.NONE,
+            },
+            enableHint: false,
+            hint: '',
+            enableDescription: false,
+        },
+    ],
+} as DashTabItemWidget['data'];
+
 // TODO: put in defaultPath navigation key from entry
-class DialogChartWidget extends React.PureComponent<
-    DialogChartWidgetProps,
-    DialogChartWidgetState
-> {
-    static defaultProps = {
-        enableAutoheight: true,
-        enableBackgroundColor: false,
-        enableCustomBgColorSelector: false,
-        enableFilteringSetting: true,
-        openedItemData: {
-            hideTitle: false,
-            tabs: [
-                {
-                    get title() {
-                        return i18n('dash.widget-dialog.edit', 'value_title-default', {index: 1});
-                    },
-                    isDefault: true,
-                    description: '',
-                    background: {
-                        color: CustomPaletteBgColors.NONE,
-                    },
-                    enableHint: false,
-                    hint: '',
-                    enableDescription: false,
-                },
-            ],
-        } as DashTabItemWidget['data'],
-    };
-
-    static getDerivedStateFromProps(
-        nextProps: DialogChartWidgetProps,
-        prevState: DialogChartWidgetState,
-    ) {
-        if (nextProps.dialogIsVisible === prevState.prevVisible) {
-            return null;
-        }
-
-        let currentTab: string;
-        let tabIndex = 0;
-        if (nextProps.openedItemId) {
-            currentTab = nextProps.widgetsCurrentTab[nextProps.openedItemId];
-            tabIndex = nextProps.openedItemData.tabs.findIndex(({id}) => id === currentTab);
-        }
-        tabIndex = tabIndex === -1 ? 0 : tabIndex;
-
-        return {
-            hideTitle:
-                nextProps.openedItemData.tabs.length === 1 && nextProps.openedItemData.hideTitle,
-            prevVisible: nextProps.dialogIsVisible,
-            error: false,
-            data: nextProps.openedItemData,
-            tabIndex,
-            isManualTitle: Boolean(nextProps.openedItemId),
-            selectedWidgetType: null,
-            selectedEntryType: null,
-            // new params logic, local state for current tab params
-            tabParams: nextProps.openedItemData.tabs[tabIndex]?.params || {},
-            legacyChanged: 0,
-        };
-    }
-
-    state: DialogChartWidgetState = {
+function DialogChartWidget({
+    enableAutoheight = true,
+    enableBackgroundColor = false,
+    enableCustomBgColorSelector = false,
+    enableFilteringSetting = true,
+    openedItemData = DEFAULT_OPENED_ITEM_DATA,
+    dialogIsVisible,
+    widgetsCurrentTab,
+    withoutSidebar,
+    changeNavigationPath,
+    workbookId,
+    navigationPath,
+    closeDialog,
+    setItemData,
+    openedItemId,
+}: DialogChartWidgetProps) {
+    const [state, setState] = React.useState<DialogChartWidgetState>({
         hideTitle: true,
         prevVisible: false,
         error: false,
         tabIndex: 0,
-        data: DialogChartWidget.defaultProps.openedItemData,
+        data: openedItemData,
         isManualTitle: false,
         tabParams: {},
         legacyChanged: 0,
-    };
+    });
+    const [prevDialogIsVisible, setPrevDialogIsVisible] = React.useState<boolean | undefined>();
 
-    private navigationInputRef = React.createRef<HTMLDivElement>();
-    private afterSettingSelectedWidgetTypeCallback: AfterSettingsWidgetCallback = null;
+    React.useEffect(() => {
+        if (dialogIsVisible === prevDialogIsVisible) {
+            return;
+        }
+        setPrevDialogIsVisible(dialogIsVisible);
+        let currentTab: string;
+        let tabIndex = 0;
+        if (openedItemId) {
+            currentTab = widgetsCurrentTab[openedItemId];
+            tabIndex = openedItemData.tabs.findIndex(({id}) => id === currentTab);
+        }
+        tabIndex = tabIndex === -1 ? 0 : tabIndex;
 
-    render() {
-        const {dialogIsVisible, withoutSidebar, closeDialog} = this.props;
+        setState((prevState) => ({
+            ...prevState,
+            hideTitle: openedItemData.tabs.length === 1 && openedItemData.hideTitle,
+            prevVisible: dialogIsVisible,
+            error: false,
+            data: openedItemData,
+            tabIndex,
+            isManualTitle: Boolean(openedItemId),
+            selectedWidgetType: undefined,
+            selectedEntryType: undefined,
+            // new params logic, local state for current tab params
+            tabParams: openedItemData.tabs[tabIndex]?.params || {},
+            legacyChanged: 0,
+        }));
+    }, [dialogIsVisible, prevDialogIsVisible, openedItemData, openedItemId, widgetsCurrentTab]);
 
-        const sidebar = this.renderDialogSidebar();
-        const mainTabSettingsContent = this.renderTabSettingsContent();
-        const shouldRenderTabs = false;
-        // isEnabledFeature(Feature.EnableCommonChartDashSettings) && !withoutSidebar;
-        const tabsTabContent = (
-            <div className={b('tab-content', {'with-sidebar': !withoutSidebar})}>
-                {!withoutSidebar && (
-                    <React.Fragment>
-                        {sidebar}
-                        <Divider orientation="vertical" className={b('divider')} />
-                    </React.Fragment>
-                )}
-                {mainTabSettingsContent}
-            </div>
-        );
+    const navigationInputRef = React.useRef<HTMLDivElement>(null);
+    const afterSettingSelectedWidgetTypeCallbackRef =
+        React.useRef<AfterSettingsWidgetCallback>(null);
 
-        return (
-            <Dialog
-                size={withoutSidebar ? 'm' : 'l'}
-                open={dialogIsVisible}
-                onClose={closeDialog}
-                className={b()}
-                disableEscapeKeyDown
-                disableHeightTransition
-            >
-                <Dialog.Header caption={i18n('dash.widget-dialog.edit', 'label_widget')} />
-                <Dialog.Body className={b('body')}>
-                    {shouldRenderTabs ? (
-                        <TabProvider
-                            value={TAB_TYPE.TABS}
-                            // onUpdate={(value) => this.setState({activeTab: value})}
-                        >
-                            <TabList className={b('tab-list')}>
-                                <Tab value={TAB_TYPE.TABS}>
-                                    {i18n('dash.widget-dialog.edit', 'tab_tabs')}
-                                </Tab>
-                                <Tab value={TAB_TYPE.SETTINGS}>
-                                    {i18n('dash.widget-dialog.edit', 'tab_settings')}
-                                </Tab>
-                            </TabList>
-                            <TabPanel value={TAB_TYPE.TABS} className={b('tab-panel')}>
-                                {tabsTabContent}
-                            </TabPanel>
-                            <TabPanel value={TAB_TYPE.SETTINGS} className={b('tab-panel')}>
-                                <div className={b('tab-content')}>{tabsTabContent}</div>
-                            </TabPanel>
-                        </TabProvider>
-                    ) : (
-                        tabsTabContent
-                    )}
-                </Dialog.Body>
-                <Dialog.Footer
-                    onClickButtonCancel={closeDialog}
-                    onClickButtonApply={this.onApply}
-                    textButtonApply={
-                        this.isEdit
-                            ? i18n('dash.widget-dialog.edit', 'button_save')
-                            : i18n('dash.widget-dialog.edit', 'button_add')
-                    }
-                    textButtonCancel={i18n('dash.widget-dialog.edit', 'button_cancel')}
-                    propsButtonApply={{qa: DialogDashWidgetQA.Apply}}
-                    propsButtonCancel={{qa: DialogDashWidgetQA.Cancel}}
-                />
-            </Dialog>
-        );
-    }
+    const isEdit = Boolean(openedItemId);
 
-    get isEdit() {
-        return Boolean(this.props.openedItemId);
-    }
-
-    handleUpdateField = (field: keyof DashTabItemWidgetTab, value: string | boolean) => {
-        const {data, tabIndex} = this.state;
-        this.setState({
-            data: update(data, {
-                tabs: {
-                    [tabIndex]: {
-                        [field]: {$set: value},
+    const handleUpdateField = React.useCallback(
+        (field: keyof DashTabItemWidgetTab, value: string | boolean) => {
+            setState((prevState) => ({
+                ...prevState,
+                data: update(prevState.data, {
+                    tabs: {
+                        [prevState.tabIndex]: {[field]: {$set: value}},
                     },
-                },
-            }),
-        });
-    };
-
-    onApply = () => {
-        const isValidateParamTitle = isEnabledFeature(
-            Feature.DashBoardWidgetParamsStrictValidation,
-        );
-
-        const {tabs} = this.state.data;
-        const tabIndex = tabs.findIndex(({chartId}) => !chartId);
-
-        if (tabIndex === -1) {
-            const newData = {
-                hideTitle: tabs.length === 1 && this.state.hideTitle,
-                tabs: tabs.map(({title, params, ...rest}, index) => {
-                    let tabParams =
-                        index === this.state.tabIndex
-                            ? clearEmptyParams(this.state.tabParams)
-                            : params;
-                    if (isValidateParamTitle) {
-                        tabParams = Object.entries(tabParams).reduce<StringParams>(
-                            (accParams, [paramTitle, paramValue]) => {
-                                if (validateParamTitle(paramTitle) === null) {
-                                    accParams[paramTitle] = paramValue;
-                                }
-                                return accParams;
-                            },
-                            {},
-                        );
-                    }
-
-                    const tab = {
-                        title:
-                            title.trim() ||
-                            i18n('dash.widget-dialog.edit', 'value_title-default', {
-                                index: index + 1,
-                            }),
-                        params: tabParams,
-                        ...rest,
-                    };
-                    return tab;
                 }),
-            };
+            }));
+        },
+        [],
+    );
 
-            this.props.setItemData({data: newData});
+    const onApply = React.useCallback(
+        (argState: DialogChartWidgetState) => {
+            const isValidateParamTitle = isEnabledFeature(
+                Feature.DashBoardWidgetParamsStrictValidation,
+            );
 
-            this.props.closeDialog();
-        } else {
-            this.setState({
-                error: true,
+            const {
+                data: {tabs},
+                hideTitle,
                 tabIndex,
+                tabParams,
+            } = argState;
+            const tabWithoutChartIdIndex = tabs.findIndex(({chartId}) => !chartId);
+
+            if (tabWithoutChartIdIndex === -1) {
+                const newData = {
+                    hideTitle: tabs.length === 1 && hideTitle,
+                    tabs: tabs.map(({title, params, ...rest}, index) => {
+                        let resultTabParams =
+                            index === tabIndex ? clearEmptyParams(tabParams) : params;
+                        if (isValidateParamTitle) {
+                            resultTabParams = Object.entries(resultTabParams).reduce<StringParams>(
+                                (accParams, [paramTitle, paramValue]) => {
+                                    if (validateParamTitle(paramTitle) === null) {
+                                        accParams[paramTitle] = paramValue;
+                                    }
+                                    return accParams;
+                                },
+                                {},
+                            );
+                        }
+
+                        const tab = {
+                            title:
+                                title.trim() ||
+                                i18n('dash.widget-dialog.edit', 'value_title-default', {
+                                    index: index + 1,
+                                }),
+                            params: resultTabParams,
+                            ...rest,
+                        };
+                        return tab;
+                    }),
+                };
+
+                setItemData({data: newData});
+
+                closeDialog();
+            } else {
+                setState((prevState) => ({
+                    ...prevState,
+                    error: true,
+                    tabIndex: tabWithoutChartIdIndex,
+                }));
+            }
+        },
+        [setItemData, closeDialog],
+    );
+
+    const onAddWidget = React.useCallback(
+        ({entryId, name, params = {}}: {entryId: string; name: string; params: StringParams}) => {
+            const filteredParams = omit(params, [URL_OPTIONS.EMBEDDED, URL_OPTIONS.NO_CONTROLS]);
+
+            setState((prevState) => {
+                const {data, tabIndex, isManualTitle, tabParams, legacyChanged} = prevState;
+                const newTabParams = imm.update<
+                    {tabParams: StringParams},
+                    AutoExtendCommand<StringParams>
+                >({tabParams}, {tabParams: {$auto: {$merge: filteredParams}}}).tabParams;
+
+                if (isManualTitle) {
+                    return {
+                        ...prevState,
+                        data: imm.update<
+                            DialogChartWidgetState['data'],
+                            AutoExtendCommand<DialogChartWidgetState['data']['tabs']>
+                        >(data, {
+                            tabs: {
+                                [tabIndex]: {
+                                    chartId: {$set: entryId},
+                                    params: {$auto: {$merge: filteredParams}},
+                                    autoHeight: {$set: false},
+                                },
+                            },
+                        }),
+                        tabParams: newTabParams,
+                        legacyChanged: legacyChanged + 1,
+                    };
+                } else {
+                    return {
+                        ...prevState,
+                        data: imm.update<
+                            DialogChartWidgetState['data'],
+                            AutoExtendCommand<DialogChartWidgetState['data']['tabs']>
+                        >(data, {
+                            tabs: {
+                                [tabIndex]: {
+                                    title: {$set: name},
+                                    chartId: {$set: entryId},
+                                    params: {$auto: {$merge: filteredParams}},
+                                    autoHeight: {$set: false},
+                                },
+                            },
+                        }),
+                        tabParams: newTabParams,
+                        legacyChanged: legacyChanged + 1,
+                    };
+                }
             });
-        }
-    };
 
-    onAddWidget = ({
-        entryId,
-        name,
-        params = {},
-    }: {
-        entryId: string;
-        name: string;
-        params: StringParams;
-    }) => {
-        const {enableAutoheight} = this.props;
-        const {data, tabIndex, isManualTitle, tabParams, legacyChanged} = this.state;
-
-        const filteredParams = omit(params, [URL_OPTIONS.EMBEDDED, URL_OPTIONS.NO_CONTROLS]);
-
-        const newTabParams = imm.update<{tabParams: StringParams}, AutoExtendCommand<StringParams>>(
-            {tabParams},
-            {tabParams: {$auto: {$merge: filteredParams}}},
-        ).tabParams;
-
-        if (isManualTitle) {
-            this.setState({
-                data: imm.update<
-                    DialogChartWidgetState['data'],
-                    AutoExtendCommand<DialogChartWidgetState['data']['tabs']>
-                >(data, {
-                    tabs: {
-                        [tabIndex]: {
-                            chartId: {$set: entryId},
-                            params: {$auto: {$merge: filteredParams}},
-                            autoHeight: {$set: false},
-                        },
-                    },
-                }),
-                tabParams: newTabParams,
-                legacyChanged: legacyChanged + 1,
-            });
-        } else {
-            this.setState({
-                data: imm.update<
-                    DialogChartWidgetState['data'],
-                    AutoExtendCommand<DialogChartWidgetState['data']['tabs']>
-                >(data, {
-                    tabs: {
-                        [tabIndex]: {
-                            title: {$set: name},
-                            chartId: {$set: entryId},
-                            params: {$auto: {$merge: filteredParams}},
-                            autoHeight: {$set: false},
-                        },
-                    },
-                }),
-                tabParams: newTabParams,
-                legacyChanged: legacyChanged + 1,
-            });
-        }
-
-        this.afterSettingSelectedWidgetTypeCallback = (selectedWidgetType) => {
-            this.setState({
-                data: update(this.state.data, {
-                    tabs: {
-                        [tabIndex]: {
-                            autoHeight: {
-                                $set:
-                                    enableAutoheight &&
-                                    selectedWidgetType === DASH_WIDGET_TYPES.METRIC,
+            afterSettingSelectedWidgetTypeCallbackRef.current = (selectedWidgetType) => {
+                setState((prevState) => ({
+                    ...prevState,
+                    data: update(prevState.data, {
+                        tabs: {
+                            [prevState.tabIndex]: {
+                                autoHeight: {
+                                    $set:
+                                        enableAutoheight &&
+                                        selectedWidgetType === DASH_WIDGET_TYPES.METRIC,
+                                },
                             },
                         },
-                    },
-                }),
-            });
-        };
-    };
+                    }),
+                }));
+            };
+        },
+        [enableAutoheight],
+    );
 
-    onVisibilityCheckboxToggle = () => {
-        this.setState((state) => ({hideTitle: !state.hideTitle}));
-    };
+    const onVisibilityCheckboxToggle = React.useCallback(() => {
+        setState((prevState) => ({...prevState, hideTitle: !prevState.hideTitle}));
+    }, []);
 
-    onAutoHeightRadioButtonChange = () => {
-        const currentCondition = this.state.data.tabs[this.state.tabIndex].autoHeight;
+    const isAutoHeightOnCurrentTab = Boolean(state.data.tabs[state.tabIndex].autoHeight);
+    const onAutoHeightRadioButtonChange = React.useCallback(() => {
+        handleUpdateField('autoHeight', !isAutoHeightOnCurrentTab);
+    }, [handleUpdateField, isAutoHeightOnCurrentTab]);
 
-        this.handleUpdateField('autoHeight', !currentCondition);
-    };
+    const handleUpdateEnableDesc = React.useCallback(
+        (val: boolean) => {
+            handleUpdateField('enableDescription', val);
+        },
+        [handleUpdateField],
+    );
 
-    handleUpdateEnableDesc = (val: boolean) => {
-        this.handleUpdateField('enableDescription', val);
-    };
+    const handleUpdateEnableHint = React.useCallback(
+        (val: boolean) => {
+            handleUpdateField('enableHint', val);
+        },
+        [handleUpdateField],
+    );
 
-    handleUpdateEnableHint = (val: boolean) => {
-        this.handleUpdateField('enableHint', val);
-    };
+    const handleUpdateDescription = React.useCallback(
+        (val: string) => {
+            handleUpdateField('description', val);
+        },
+        [handleUpdateField],
+    );
 
-    handleUpdateDescription = (val: string) => {
-        this.handleUpdateField('description', val);
-    };
+    const handleUpdateHint = React.useCallback(
+        (val: string) => {
+            handleUpdateField('hint', val);
+        },
+        [handleUpdateField],
+    );
 
-    handleUpdateHint = (val: string) => {
-        this.handleUpdateField('hint', val);
-    };
-
-    handleBackgroundColorSelected = (color: string) => {
-        const {data, tabIndex} = this.state;
-
-        this.setState({
-            data: update(data, {
+    const handleBackgroundColorSelected = React.useCallback((color: string) => {
+        setState((prevState) => ({
+            ...prevState,
+            data: update(prevState.data, {
                 tabs: {
-                    [tabIndex]: {
+                    [prevState.tabIndex]: {
                         background: {
                             $set: {
                                 color: color,
@@ -470,135 +419,111 @@ class DialogChartWidget extends React.PureComponent<
                     },
                 },
             }),
-        });
-    };
+        }));
+    }, []);
 
-    handleChangeFiltering = () => {
-        const currentCondition = this.state.data.tabs[this.state.tabIndex].enableActionParams;
-        this.handleUpdateField('enableActionParams', !currentCondition);
-    };
+    const isEnabledFilteringOnCurrentTab = Boolean(
+        state.data.tabs[state.tabIndex].enableActionParams,
+    );
+    const handleChangeFiltering = React.useCallback(() => {
+        handleUpdateField('enableActionParams', !isEnabledFilteringOnCurrentTab);
+    }, [handleUpdateField, isEnabledFilteringOnCurrentTab]);
 
-    updateTabMenu = ({items, selectedItemIndex, action}: UpdateState<DashTabItemWidgetTab>) => {
-        const {data, tabIndex, tabParams} = this.state;
+    const updateTabMenu = React.useCallback(
+        ({items, selectedItemIndex, action}: UpdateState<DashTabItemWidgetTab>) => {
+            if (action === TabActionType.Skipped) {
+                return;
+            }
 
-        if (action === TabActionType.Skipped) {
-            return;
-        }
+            const isNeedSaveParams =
+                action === TabActionType.ChangeChosen || action === TabActionType.Add;
 
-        const isNeedSaveParams =
-            action === TabActionType.ChangeChosen || action === TabActionType.Add;
+            setState((prevState) => {
+                const {tabIndex, tabParams} = prevState;
 
-        const itemsWithParams: UpdateState<DashTabItemWidgetTab>['items'] = items.map(
-            (item, index) => {
-                // fill empty description for correct work of TextArea
-                const description = item.description || '';
+                const itemsWithParams: UpdateState<DashTabItemWidgetTab>['items'] = items.map(
+                    (item, index) => {
+                        // fill empty description for correct work of TextArea
+                        const description = item.description || '';
 
-                return isNeedSaveParams && index === tabIndex
-                    ? {
-                          ...item,
-                          params: tabParams,
-                          description,
-                      }
-                    : {...item, description};
-            },
-        );
+                        return isNeedSaveParams && index === tabIndex
+                            ? {
+                                  ...item,
+                                  params: tabParams,
+                                  description,
+                              }
+                            : {...item, description};
+                    },
+                );
 
-        this.setState({
-            data: update(data, {tabs: {$set: itemsWithParams}}),
-            tabIndex: selectedItemIndex,
-            error: false,
-            isManualTitle: action === TabActionType.Add ? false : this.isEdit,
-            tabParams: items[selectedItemIndex].params || {},
-            legacyChanged: 0,
-        });
-    };
+                return {
+                    ...prevState,
+                    data: update(prevState.data, {tabs: {$set: itemsWithParams}}),
+                    tabIndex: selectedItemIndex,
+                    error: false,
+                    isManualTitle: action === TabActionType.Add ? false : isEdit,
+                    tabParams: items[selectedItemIndex].params || {},
+                    legacyChanged: 0,
+                };
+            });
+        },
+        [isEdit],
+    );
 
-    handleEditParamTitle = (paramTitleOld: string, paramTitle: string) => {
-        this.setState({
-            tabParams: updateParamTitle(this.state.tabParams, paramTitleOld, paramTitle),
-        });
-    };
+    const handleEditParamTitle = React.useCallback((paramTitleOld: string, paramTitle: string) => {
+        setState((prevState) => ({
+            ...prevState,
+            tabParams: updateParamTitle(prevState.tabParams, paramTitleOld, paramTitle),
+        }));
+    }, []);
 
-    handleEditParamValue = (paramTitle: string, paramValue: string[]) => {
-        this.setState({
-            tabParams: updateParamValue(this.state.tabParams, paramTitle, paramValue),
-        });
-    };
+    const handleEditParamValue = React.useCallback((paramTitle: string, paramValue: string[]) => {
+        setState((prevState) => ({
+            ...prevState,
+            tabParams: updateParamValue(prevState.tabParams, paramTitle, paramValue),
+        }));
+    }, []);
 
-    handleRemoveParam = (paramTitle: string) => {
-        this.setState({
-            tabParams: removeParam(this.state.tabParams, paramTitle),
-        });
-    };
+    const handleRemoveParam = React.useCallback((paramTitle: string) => {
+        setState((prevState) => ({
+            ...prevState,
+            tabParams: removeParam(prevState.tabParams, paramTitle),
+        }));
+    }, []);
 
-    handleRemoveAllParams = () => {
-        this.setState({
+    const handleRemoveAllParams = React.useCallback(() => {
+        setState((prevState) => ({
+            ...prevState,
             tabParams: {},
-        });
-    };
+        }));
+    }, []);
 
-    setSelectedWidgetType = ({
-        selectedWidgetType,
-        entryMeta,
-    }: {
-        selectedWidgetType: WidgetKind;
-        entryMeta: {type: WidgetType};
-    }) => {
-        const visualizationType = getEntryVisualizationType(entryMeta);
-        this.setState({
+    const handleSetSelectedWidgetType = React.useCallback(
+        ({
             selectedWidgetType,
-            selectedEntryType: entryMeta.type,
-            visualizationType,
-        });
+            entryMeta,
+        }: {
+            selectedWidgetType: WidgetKind;
+            entryMeta: {type: WidgetType};
+        }) => {
+            const visualizationType = getEntryVisualizationType(entryMeta);
+            setState((prevState) => ({
+                ...prevState,
+                selectedWidgetType,
+                selectedEntryType: entryMeta.type,
+                visualizationType,
+            }));
 
-        if (this.afterSettingSelectedWidgetTypeCallback) {
-            this.afterSettingSelectedWidgetTypeCallback(selectedWidgetType);
-            this.afterSettingSelectedWidgetTypeCallback = null;
-        }
-    };
+            if (afterSettingSelectedWidgetTypeCallbackRef.current) {
+                afterSettingSelectedWidgetTypeCallbackRef.current(selectedWidgetType);
+                afterSettingSelectedWidgetTypeCallbackRef.current = null;
+            }
+        },
+        [],
+    );
 
-    renderDialogSidebar = () => {
-        const {data, tabIndex} = this.state;
-
-        return (
-            <TabMenu
-                className={b('sidebar')}
-                view="new"
-                items={data.tabs}
-                selectedItemIndex={tabIndex}
-                onUpdate={this.updateTabMenu}
-            />
-        );
-    };
-
-    getFiltrationDocsLink = () => {
-        if (!DL.ENDPOINTS.datalensDocs) {
-            return null;
-        }
-
-        return (
-            <p className={b('info-comment')}>
-                <Interpolate
-                    text={i18n('dash.widget-dialog.edit', 'context_filtering-usage-limitations')}
-                    matches={{
-                        link(match) {
-                            return (
-                                <Link
-                                    target="_blank"
-                                    href={`${DL.ENDPOINTS.datalensDocs}/dashboard/chart-chart-filtration#using`}
-                                >
-                                    {match}
-                                </Link>
-                            );
-                        },
-                    }}
-                />
-            </p>
-        );
-    };
-
-    renderFilteringCharts = () => {
-        const {data, tabIndex, selectedEntryType, visualizationType} = this.state;
+    const renderFilteringCharts = () => {
+        const {data, tabIndex, selectedEntryType, visualizationType} = state;
         const canUseFiltration = isEntryTypeWithFiltering(selectedEntryType, visualizationType);
         const enableActionParams = Boolean(
             canUseFiltration && data.tabs[tabIndex].enableActionParams,
@@ -607,7 +532,28 @@ class DialogChartWidget extends React.PureComponent<
         const helpPopover = (
             <HelpMark className={b('help-tooltip')}>
                 {i18n('dash.widget-dialog.edit', 'context_filtering-other-charts')}
-                {this.getFiltrationDocsLink()}
+                {DL.ENDPOINTS.datalensDocs ? (
+                    <p className={b('info-comment')}>
+                        <Interpolate
+                            text={i18n(
+                                'dash.widget-dialog.edit',
+                                'context_filtering-usage-limitations',
+                            )}
+                            matches={{
+                                link(match) {
+                                    return (
+                                        <Link
+                                            target="_blank"
+                                            href={`${DL.ENDPOINTS.datalensDocs}/dashboard/chart-chart-filtration#using`}
+                                        >
+                                            {match}
+                                        </Link>
+                                    );
+                                },
+                            }}
+                        />
+                    </p>
+                ) : null}
             </HelpMark>
         );
 
@@ -623,7 +569,7 @@ class DialogChartWidget extends React.PureComponent<
                         className={b('checkbox')}
                         id={INPUT_FILTERING_ID}
                         size="m"
-                        onChange={this.handleChangeFiltering}
+                        onChange={handleChangeFiltering}
                         checked={enableActionParams}
                         disabled={!canUseFiltration}
                     />
@@ -632,17 +578,8 @@ class DialogChartWidget extends React.PureComponent<
         );
     };
 
-    renderTabSettingsContent = () => {
-        const {data, tabIndex, selectedWidgetType} = this.state;
-        const {
-            workbookId,
-            navigationPath,
-            enableAutoheight,
-            enableBackgroundColor,
-            enableCustomBgColorSelector,
-            enableFilteringSetting,
-            changeNavigationPath,
-        } = this.props;
+    const renderTabSettingsContent = () => {
+        const {data, tabIndex, selectedWidgetType, tabParams, legacyChanged} = state;
 
         const autoHeightHelpPopover = (
             <HelpMark className={b('help-tooltip')}>
@@ -685,16 +622,17 @@ class DialogChartWidget extends React.PureComponent<
                                 placeholder={i18n('dash.widget-dialog.edit', 'context_fill-title')}
                                 value={title}
                                 onUpdate={(value) =>
-                                    this.setState({
+                                    setState((prevState) => ({
+                                        ...prevState,
                                         isManualTitle: true,
-                                        data: update(data, {
+                                        data: update(prevState.data, {
                                             tabs: {
-                                                [tabIndex]: {
+                                                [prevState.tabIndex]: {
                                                     title: {$set: value},
                                                 },
                                             },
                                         }),
-                                    })
+                                    }))
                                 }
                             />
                         </FormRow>
@@ -704,13 +642,13 @@ class DialogChartWidget extends React.PureComponent<
                         >
                             <div
                                 className={b('navigation-input-container')}
-                                ref={this.navigationInputRef}
+                                ref={navigationInputRef}
                             >
                                 <NavigationInput
                                     entryId={chartId}
-                                    onChange={this.onAddWidget}
+                                    onChange={onAddWidget}
                                     excludeClickableType={EntryTypeNode.CONTROL_NODE}
-                                    onUpdate={this.setSelectedWidgetType}
+                                    onUpdate={handleSetSelectedWidgetType}
                                     scope={EntryScope.Widget}
                                     workbookId={workbookId}
                                     navigationPath={navigationPath}
@@ -720,13 +658,13 @@ class DialogChartWidget extends React.PureComponent<
                                 />
                             </div>
                             <Popup
-                                anchorElement={this.navigationInputRef.current}
-                                open={this.state.error}
+                                anchorElement={navigationInputRef.current}
+                                open={state.error}
                                 placement="left-start"
                                 hasArrow={true}
                                 onOpenChange={(open) => {
                                     if (!open) {
-                                        this.setState({error: false});
+                                        setState((prevState) => ({...prevState, error: false}));
                                     }
                                 }}
                             >
@@ -735,7 +673,7 @@ class DialogChartWidget extends React.PureComponent<
                                 </div>
                             </Popup>
                         </FormRow>
-                        {enableFilteringSetting && this.renderFilteringCharts()}
+                        {enableFilteringSetting && renderFilteringCharts()}
                     </div>
                     <div className={b('section')}>
                         <Text className={b('section-title')}>
@@ -750,8 +688,8 @@ class DialogChartWidget extends React.PureComponent<
                                 <Checkbox
                                     className={b('checkbox')}
                                     size="m"
-                                    onChange={this.onVisibilityCheckboxToggle}
-                                    checked={!this.state.hideTitle}
+                                    onChange={onVisibilityCheckboxToggle}
+                                    checked={!state.hideTitle}
                                     id={INPUT_TITLE_VISIBILITY_ID}
                                     qa={DashCommonQa.WidgetShowTitleCheckbox}
                                 />
@@ -764,7 +702,7 @@ class DialogChartWidget extends React.PureComponent<
                         >
                             <div className={b('settings-container')}>
                                 <Checkbox
-                                    onUpdate={this.handleUpdateEnableDesc}
+                                    onUpdate={handleUpdateEnableDesc}
                                     checked={hasDesc}
                                     size="m"
                                     className={b('checkbox')}
@@ -774,7 +712,7 @@ class DialogChartWidget extends React.PureComponent<
                                         className={b('markdown-control')}
                                         key={`md-desc-tab-${tabIndex}`}
                                         value={description || ''}
-                                        onChange={this.handleUpdateDescription}
+                                        onChange={handleUpdateDescription}
                                         disabled={!enableDescription}
                                         enableExtensions={true}
                                     />
@@ -793,7 +731,7 @@ class DialogChartWidget extends React.PureComponent<
                         >
                             <div className={b('settings-container')}>
                                 <Checkbox
-                                    onUpdate={this.handleUpdateEnableHint}
+                                    onUpdate={handleUpdateEnableHint}
                                     checked={Boolean(enableHint)}
                                     size="m"
                                     className={b('checkbox')}
@@ -803,7 +741,7 @@ class DialogChartWidget extends React.PureComponent<
                                         className={b('markdown-control')}
                                         key={`md-hint-tab-${tabIndex}`}
                                         value={hint || ''}
-                                        onChange={this.handleUpdateHint}
+                                        onChange={handleUpdateHint}
                                         disabled={!enableHint}
                                     />
                                 )}
@@ -820,7 +758,7 @@ class DialogChartWidget extends React.PureComponent<
                                     className={b('checkbox')}
                                     id={INPUT_AUTOHEIGHT_ID}
                                     size="m"
-                                    onChange={this.onAutoHeightRadioButtonChange}
+                                    onChange={onAutoHeightRadioButtonChange}
                                     disabled={!isWidgetTypeWithAutoHeight(selectedWidgetType)}
                                     checked={Boolean(autoHeight)}
                                     qa={DashCommonQa.WidgetEnableAutoHeightCheckbox}
@@ -840,66 +778,152 @@ class DialogChartWidget extends React.PureComponent<
                             >
                                 <PaletteBackground
                                     color={background?.color}
-                                    onSelect={this.handleBackgroundColorSelected}
+                                    onSelect={handleBackgroundColorSelected}
                                     enableCustomBgColorSelector={enableCustomBgColorSelector}
                                 />
                             </FormRow>
                         )}
                     </div>
-                    {this.renderParams()}
+                    <ParamsSection
+                        tabIndex={tabIndex}
+                        legacyChanged={legacyChanged}
+                        tabParams={tabParams}
+                        handleEditParamTitle={handleEditParamTitle}
+                        handleEditParamValue={handleEditParamValue}
+                        handleRemoveParam={handleRemoveParam}
+                        handleRemoveAllParams={handleRemoveAllParams}
+                    />
                 </div>
             </div>
         );
     };
 
-    renderParams() {
-        const isValidateParamTitle = isEnabledFeature(
-            Feature.DashBoardWidgetParamsStrictValidation,
-        );
+    const shouldRenderTabs = false;
+    // isEnabledFeature(Feature.EnableCommonChartDashSettings) && !withoutSidebar;
+    const tabsTabContent = (
+        <div className={b('tab-content', {'with-sidebar': !withoutSidebar})}>
+            {!withoutSidebar && (
+                <React.Fragment>
+                    <TabMenu
+                        className={b('sidebar')}
+                        view="new"
+                        items={state.data.tabs}
+                        selectedItemIndex={state.tabIndex}
+                        onUpdate={updateTabMenu}
+                    />
+                    <Divider orientation="vertical" className={b('divider')} />
+                </React.Fragment>
+            )}
+            {renderTabSettingsContent()}
+        </div>
+    );
 
-        const {tabIndex, legacyChanged} = this.state;
-
-        let paramValidator;
-        if (isValidateParamTitle) {
-            paramValidator = (paramTitle: string) => {
-                const errorCode = validateParamTitle(paramTitle);
-
-                if (errorCode) {
-                    return new Error(
-                        i18n('dash.params-button-dialog.view', `context_${errorCode}`),
-                    );
+    return (
+        <Dialog
+            size={withoutSidebar ? 'm' : 'l'}
+            open={dialogIsVisible}
+            onClose={closeDialog}
+            className={b()}
+            disableEscapeKeyDown
+            disableHeightTransition
+        >
+            <Dialog.Header caption={i18n('dash.widget-dialog.edit', 'label_widget')} />
+            <Dialog.Body className={b('body')}>
+                {shouldRenderTabs ? (
+                    <TabProvider
+                        value={TAB_TYPE.TABS}
+                        // onUpdate={(value) => this.setState({activeTab: value})}
+                    >
+                        <TabList className={b('tab-list')}>
+                            <Tab value={TAB_TYPE.TABS}>
+                                {i18n('dash.widget-dialog.edit', 'tab_tabs')}
+                            </Tab>
+                            <Tab value={TAB_TYPE.SETTINGS}>
+                                {i18n('dash.widget-dialog.edit', 'tab_settings')}
+                            </Tab>
+                        </TabList>
+                        <TabPanel value={TAB_TYPE.TABS} className={b('tab-panel')}>
+                            {tabsTabContent}
+                        </TabPanel>
+                        <TabPanel value={TAB_TYPE.SETTINGS} className={b('tab-panel')}>
+                            <div className={b('tab-content')}>{tabsTabContent}</div>
+                        </TabPanel>
+                    </TabProvider>
+                ) : (
+                    tabsTabContent
+                )}
+            </Dialog.Body>
+            <Dialog.Footer
+                onClickButtonCancel={closeDialog}
+                onClickButtonApply={() => onApply(state)}
+                textButtonApply={
+                    isEdit
+                        ? i18n('dash.widget-dialog.edit', 'button_save')
+                        : i18n('dash.widget-dialog.edit', 'button_add')
                 }
+                textButtonCancel={i18n('dash.widget-dialog.edit', 'button_cancel')}
+                propsButtonApply={{qa: DialogDashWidgetQA.Apply}}
+                propsButtonCancel={{qa: DialogDashWidgetQA.Cancel}}
+            />
+        </Dialog>
+    );
+}
 
-                return null;
-            };
-        }
+function ParamsSection({
+    tabIndex,
+    legacyChanged,
+    tabParams,
+    handleEditParamTitle,
+    handleEditParamValue,
+    handleRemoveParam,
+    handleRemoveAllParams,
+}: {
+    tabIndex: number;
+    legacyChanged: number;
+    tabParams: StringParams;
+    handleEditParamTitle: (paramTitleOld: string, paramTitle: string) => void;
+    handleEditParamValue: (paramTitle: string, paramValue: string[]) => void;
+    handleRemoveParam: (paramTitle: string) => void;
+    handleRemoveAllParams: () => void;
+}) {
+    const isValidateParamTitle = isEnabledFeature(Feature.DashBoardWidgetParamsStrictValidation);
 
-        return (
-            <Collapse
-                className={b('params-collapse', null, b('section'))}
-                title={
-                    <Text variant="subheader-2">
-                        {i18n('dash.widget-dialog.edit', 'field_params')}
-                    </Text>
-                }
-                titleSize="m"
-                arrowPosition="right"
-                arrowQa={ParamsSettingsQA.Open}
-                headerClassName={b('section-title')}
-            >
-                <ParamsSettings
-                    tagLabelClassName={b('tag-label')}
-                    data={this.state.tabParams}
-                    group={tabIndex + legacyChanged}
-                    onEditParamTitle={this.handleEditParamTitle}
-                    onEditParamValue={this.handleEditParamValue}
-                    onRemoveParam={this.handleRemoveParam}
-                    onRemoveAllParams={this.handleRemoveAllParams}
-                    validator={{title: paramValidator}}
-                />
-            </Collapse>
-        );
+    let paramValidator;
+    if (isValidateParamTitle) {
+        paramValidator = (paramTitle: string) => {
+            const errorCode = validateParamTitle(paramTitle);
+
+            if (errorCode) {
+                return new Error(i18n('dash.params-button-dialog.view', `context_${errorCode}`));
+            }
+
+            return null;
+        };
     }
+
+    return (
+        <Collapse
+            className={b('params-collapse', null, b('section'))}
+            title={
+                <Text variant="subheader-2">{i18n('dash.widget-dialog.edit', 'field_params')}</Text>
+            }
+            titleSize="m"
+            arrowPosition="right"
+            arrowQa={ParamsSettingsQA.Open}
+            headerClassName={b('section-title')}
+        >
+            <ParamsSettings
+                tagLabelClassName={b('tag-label')}
+                data={tabParams}
+                group={tabIndex + legacyChanged}
+                onEditParamTitle={handleEditParamTitle}
+                onEditParamValue={handleEditParamValue}
+                onRemoveParam={handleRemoveParam}
+                onRemoveAllParams={handleRemoveAllParams}
+                validator={{title: paramValidator}}
+            />
+        </Collapse>
+    );
 }
 
 export default DialogChartWidget;

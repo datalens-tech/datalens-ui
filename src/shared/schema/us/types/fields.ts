@@ -69,9 +69,16 @@ export interface EntryNavigationFields {
 }
 
 export interface SharedEntryPermissions {
-    delete: true;
-    move: true;
-    update: true;
+    copy: boolean;
+    createEntryBinding: boolean;
+    createLimitedEntryBinding: boolean;
+    delete: boolean;
+    limitedView: boolean;
+    listAccessBindings: boolean;
+    move: boolean;
+    update: boolean;
+    updateAccessBindings: boolean;
+    view: boolean;
 }
 
 export interface SharedEntryFields {

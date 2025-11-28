@@ -42,130 +42,83 @@ interface DialogTextWidgetState {
 const INPUT_TEXT_ID = 'widgetTextField';
 const INPUT_AUTOHEIGHT_ID = 'widgetAutoHeightField';
 
-class DialogTextWidget extends React.PureComponent<DialogTextWidgetProps, DialogTextWidgetState> {
-    static defaultProps = {
-        enableAutoheight: true,
-        openedItemData: {
-            text: '',
-            autoHeight: false,
-            background: {color: CustomPaletteBgColors.NONE},
-        },
-    };
+const DEFAULT_OPENED_ITEM_DATA: DashTabItemText['data'] = {
+    text: '',
+    autoHeight: false,
+    background: {color: CustomPaletteBgColors.NONE},
+};
 
-    static getDerivedStateFromProps(
-        nextProps: DialogTextWidgetProps,
-        prevState: DialogTextWidgetState,
-    ) {
-        if (nextProps.dialogIsVisible === prevState.prevVisible) {
-            return null;
+function DialogTextWidget(props: DialogTextWidgetProps) {
+    const {
+        enableAutoheight = true,
+        enableCustomBgColorSelector,
+        openedItemData = DEFAULT_OPENED_ITEM_DATA,
+        dialogIsVisible,
+        closeDialog,
+        setItemData,
+        openedItemId,
+    } = props;
+
+    const [state, setState] = React.useState<DialogTextWidgetState>({
+        text: openedItemData.text,
+        autoHeight: Boolean(openedItemData.autoHeight),
+        backgroundColor: openedItemData.background?.color,
+    });
+    const [prevDialogIsVisible, setPrevDialogIsVisible] = React.useState<boolean | undefined>();
+
+    React.useEffect(() => {
+        if (dialogIsVisible === prevDialogIsVisible) {
+            return;
         }
 
-        return {
-            prevVisible: nextProps.dialogIsVisible,
-            text: nextProps.openedItemData.text,
-            autoHeight: Boolean(nextProps.openedItemData.autoHeight),
-            backgroundColor: nextProps.openedItemData.background?.color || '',
-        };
-    }
+        setPrevDialogIsVisible(dialogIsVisible);
+        setState((prevState) => ({
+            ...prevState,
+            text: openedItemData.text,
+            autoHeight: Boolean(openedItemData.autoHeight),
+            backgroundColor: openedItemData.background?.color,
+        }));
+    }, [openedItemData, dialogIsVisible, prevDialogIsVisible]);
 
-    state: DialogTextWidgetState = {};
+    const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
-    private textEditor: React.RefObject<HTMLTextAreaElement> = React.createRef();
-
-    componentDidMount() {
-        /**
-         * TODO try to remove and use "initialFocus={inputRef}" in Dialog props when switch to uikit7
-         * Don't forget test caret position
-         */
-        // delay is needed so that the autofocus of the dialog does not interrupt the focus on the input
-        setTimeout(() => {
-            this.textEditor.current?.focus();
-
-            const inputValue = this.state.text;
-            if (inputValue) {
-                this.textEditor.current?.setSelectionRange(inputValue.length, inputValue.length);
+    React.useEffect(() => {
+        return () => {
+            if (timeoutRef.current) {
+                clearTimeout(timeoutRef.current);
             }
-        });
-    }
+        };
+    }, []);
 
-    render() {
-        const {openedItemId, dialogIsVisible, enableAutoheight, enableCustomBgColorSelector} =
-            this.props;
-        const {text, autoHeight, backgroundColor} = this.state;
+    const textEditorRef = React.useCallback(
+        (textEditor: HTMLTextAreaElement) => {
+            /**
+             * TODO try to remove and use "initialFocus={inputRef}" in Dialog props when switch to uikit7
+             * Don't forget test caret position
+             */
+            // delay is needed so that the autofocus of the dialog does not interrupt the focus on the input
+            if (textEditor) {
+                timeoutRef.current = setTimeout(() => {
+                    textEditor.focus();
 
-        return (
-            <Dialog
-                open={dialogIsVisible}
-                onClose={this.props.closeDialog}
-                disableOutsideClick={true}
-                qa={DialogDashWidgetItemQA.Text}
-            >
-                <Dialog.Header
-                    caption={i18n('dash.dialogs-common.edit', 'title_widget-settings')}
-                />
-                <Dialog.Body className={b()}>
-                    <FormRow
-                        className={b('row')}
-                        fieldId={INPUT_TEXT_ID}
-                        label={i18n('dash.text-dialog.edit', 'label_text')}
-                    >
-                        <TextEditor
-                            id={INPUT_TEXT_ID}
-                            onTextUpdate={this.onTextUpdate}
-                            text={text}
-                            controlRef={this.textEditor}
-                        />
-                    </FormRow>
-                    <FormRow
-                        className={b('row')}
-                        label={i18n('dash.dashkit-plugin-common.view', 'label_background-checkbox')}
-                    >
-                        <PaletteBackground
-                            color={backgroundColor}
-                            onSelect={this.handleHasBackgroundSelected}
-                            enableCustomBgColorSelector={enableCustomBgColorSelector}
-                        />
-                    </FormRow>
-                    {enableAutoheight && (
-                        <FormRow
-                            className={b('row')}
-                            fieldId={INPUT_AUTOHEIGHT_ID}
-                            label={i18n(
-                                'dash.dashkit-plugin-common.view',
-                                'label_autoheight-checkbox',
-                            )}
-                        >
-                            <Checkbox
-                                id={INPUT_AUTOHEIGHT_ID}
-                                className={b('checkbox')}
-                                checked={Boolean(autoHeight)}
-                                onChange={this.handleAutoHeightChanged}
-                            />
-                        </FormRow>
-                    )}
-                </Dialog.Body>
-                <Dialog.Footer
-                    onClickButtonApply={this.onApply}
-                    textButtonApply={
-                        openedItemId
-                            ? i18n('dash.text-dialog.edit', 'button_save')
-                            : i18n('dash.text-dialog.edit', 'button_add')
+                    const inputValueLength = textEditor.textLength ?? 0;
+                    if (inputValueLength > 0) {
+                        textEditor.setSelectionRange(inputValueLength, inputValueLength);
                     }
-                    onClickButtonCancel={this.props.closeDialog}
-                    textButtonCancel={i18n('dash.text-dialog.edit', 'button_cancel')}
-                    propsButtonApply={{qa: DialogDashWidgetQA.Apply}}
-                    propsButtonCancel={{qa: DialogDashWidgetQA.Cancel}}
-                />
-            </Dialog>
-        );
-    }
+                }, 0);
+            }
+        },
+        [timeoutRef],
+    );
 
-    onTextUpdate = (text: string) => this.setState({text});
+    const onTextUpdate = React.useCallback((text: string) => {
+        setState((prevState) => ({...prevState, text}));
+    }, []);
 
-    onApply = () => {
-        const {text, autoHeight, backgroundColor} = this.state;
+    const onApply = React.useCallback(() => {
+        const {text, autoHeight, backgroundColor} = state;
 
-        this.props.setItemData({
+        setItemData({
             data: {
                 text,
                 autoHeight,
@@ -174,16 +127,79 @@ class DialogTextWidget extends React.PureComponent<DialogTextWidgetProps, Dialog
                 },
             },
         });
-        this.props.closeDialog();
-    };
+        closeDialog();
+    }, [state, setItemData, closeDialog]);
 
-    handleAutoHeightChanged = () => {
-        this.setState({autoHeight: !this.state.autoHeight});
-    };
+    const handleAutoHeightChanged = React.useCallback(() => {
+        setState((prevState) => ({...prevState, autoHeight: !prevState.autoHeight}));
+    }, []);
 
-    handleHasBackgroundSelected = (color: string) => {
-        this.setState({backgroundColor: color});
-    };
+    const handleHasBackgroundSelected = React.useCallback((color: string) => {
+        setState((prevState) => ({...prevState, backgroundColor: color}));
+    }, []);
+
+    const {text, autoHeight, backgroundColor} = state;
+
+    return (
+        <Dialog
+            open={dialogIsVisible}
+            onClose={closeDialog}
+            disableOutsideClick={true}
+            qa={DialogDashWidgetItemQA.Text}
+        >
+            <Dialog.Header caption={i18n('dash.dialogs-common.edit', 'title_widget-settings')} />
+            <Dialog.Body className={b()}>
+                <FormRow
+                    className={b('row')}
+                    fieldId={INPUT_TEXT_ID}
+                    label={i18n('dash.text-dialog.edit', 'label_text')}
+                >
+                    <TextEditor
+                        id={INPUT_TEXT_ID}
+                        onTextUpdate={onTextUpdate}
+                        text={text}
+                        controlRef={textEditorRef}
+                    />
+                </FormRow>
+                <FormRow
+                    className={b('row')}
+                    label={i18n('dash.dashkit-plugin-common.view', 'label_background-checkbox')}
+                >
+                    <PaletteBackground
+                        color={backgroundColor}
+                        onSelect={handleHasBackgroundSelected}
+                        enableCustomBgColorSelector={enableCustomBgColorSelector}
+                    />
+                </FormRow>
+                {enableAutoheight && (
+                    <FormRow
+                        className={b('row')}
+                        fieldId={INPUT_AUTOHEIGHT_ID}
+                        label={i18n('dash.dashkit-plugin-common.view', 'label_autoheight-checkbox')}
+                    >
+                        <Checkbox
+                            id={INPUT_AUTOHEIGHT_ID}
+                            className={b('checkbox')}
+                            checked={Boolean(autoHeight)}
+                            onChange={handleAutoHeightChanged}
+                        />
+                    </FormRow>
+                )}
+            </Dialog.Body>
+            <Dialog.Footer
+                onClickButtonApply={onApply}
+                textButtonApply={
+                    openedItemId
+                        ? i18n('dash.text-dialog.edit', 'button_save')
+                        : i18n('dash.text-dialog.edit', 'button_add')
+                }
+                onClickButtonCancel={closeDialog}
+                textButtonCancel={i18n('dash.text-dialog.edit', 'button_cancel')}
+                propsButtonApply={{qa: DialogDashWidgetQA.Apply}}
+                propsButtonCancel={{qa: DialogDashWidgetQA.Cancel}}
+            />
+        </Dialog>
+    );
 }
 
 export default DialogTextWidget;
