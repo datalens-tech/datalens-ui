@@ -22,7 +22,7 @@ datalensTest.describe('Wizard', () => {
             await wizardPage.setVisualization(WizardVisualizationId.ScatterD3);
         });
 
-        datalensTest.only('Min and max values for Y-axis @screenshot', async ({page}) => {
+        datalensTest('Min and max values for Y-axis @screenshot', async ({page}) => {
             const wizardPage = new WizardPage({page});
 
             await wizardPage.createNewFieldWithFormula('SalesSum', 'sum([Sales])');
