@@ -3,7 +3,7 @@ import type z from 'zod';
 import type {WizardVisualizationId} from '../../../constants';
 import type {ChartsStats, DashStats, WorkbookId} from '../../../types';
 import type {GetEntriesEntryResponse} from '../../us/types';
-import type {createDashResultSchema, updateDashResultSchema} from '../schemas/dash';
+import type {createDashResultSchema, dashSchemaV1, updateDashResultSchema} from '../schemas/dash';
 
 export type CollectDashStatsResponse = {
     status: string;
@@ -58,3 +58,5 @@ export type GetWidgetsDatasetsFieldsArgs = {
 export type UpdateDashResponse = z.infer<typeof updateDashResultSchema>;
 
 export type CreateDashResponse = z.infer<typeof createDashResultSchema>;
+
+export type DashV1 = z.infer<typeof dashSchemaV1>;

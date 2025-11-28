@@ -1,0 +1,22 @@
+import {EntryScope} from '../../../..';
+import {createTypedAction} from '../../../gateway-utils';
+import {getTypedApi} from '../../../simple-schema';
+import {deleteDashArgsSchema, deleteDashResultSchema} from '../../schemas/dash';
+
+export const deleteDashboard = createTypedAction(
+    {
+        paramsSchema: deleteDashArgsSchema,
+        resultSchema: deleteDashResultSchema,
+    },
+    async (api, {lockToken, dashboardId}) => {
+        const typedApi = getTypedApi(api);
+
+        await typedApi.us._deleteUSEntry({
+            entryId: dashboardId,
+            lockToken,
+            scope: EntryScope.Dash,
+        });
+
+        return {};
+    },
+);
