@@ -681,6 +681,7 @@ export class DatasetSources extends React.Component {
             freeformSources,
             sourceLoadingError,
             workbookId,
+            collectionId,
         } = this.props;
         const {
             isVisibleSourceEditorDialog,
@@ -716,6 +717,7 @@ export class DatasetSources extends React.Component {
                             freeformSources={freeformSources}
                             error={sourceLoadingError}
                             workbookId={workbookId}
+                            collectionId={collectionId}
                             options={options}
                             onSelectConnection={this.selectConnection}
                             onClickConnection={this.clickConnection}
@@ -799,6 +801,7 @@ DatasetSources.propTypes = {
     options: PropTypes.object,
     showToast: PropTypes.func.isRequired,
     workbookId: PropTypes.string,
+    collectionId: PropTypes.string,
     sourcesPagination: PropTypes.object,
     currentDbName: PropTypes.string,
     resetSourcesPagination: PropTypes.func.isRequired,

@@ -1,7 +1,6 @@
 import {i18n} from 'i18n';
 import type {EntryScope, WorkbookId} from 'shared';
 import {DL} from 'ui';
-import type {DatasetPreviewView} from 'units/datasets/store/types';
 
 import {getFakeEntry as genericGetFakeEntry} from '../../../components/ActionPanel';
 
@@ -52,6 +51,7 @@ export const getAppMetricGroupNameI18n = (key: string) => _getSelectItemTitle()[
 export const getFakeEntry = (
     scope: EntryScope.Connection | EntryScope.Dataset,
     workbookId?: WorkbookId,
+    collectionId?: string,
     searchCurrentPath?: string,
 ) => {
     let path = searchCurrentPath || DL.USER_FOLDER;
@@ -61,6 +61,7 @@ export const getFakeEntry = (
     return genericGetFakeEntry({
         key: `${path}${i18n('connections.form', `section_creation-${scope}`)}`,
         workbookId,
+        collectionId,
         fakeName: i18n('connections.form', `section_creation-${scope}`),
     });
 };
@@ -234,7 +235,7 @@ export const THEME = {
     DARK: 'dark',
 };
 
-export const VIEW_PREVIEW: Record<string, DatasetPreviewView> = {
+export const VIEW_PREVIEW = {
     FULL: 'full',
     BOTTOM: 'bottom',
     RIGHT: 'right',

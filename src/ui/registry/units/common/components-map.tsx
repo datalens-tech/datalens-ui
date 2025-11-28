@@ -64,5 +64,6 @@ export const commonComponentsMap = {
     DialogImageWidgetLinkHint: makeDefaultEmpty<DialogImageWidgetLinkHintProps>(),
     DialogRelatedEntitiesRadioHint: makeDefaultEmpty<DialogRelatedEntitiesRadioHintProps>(),
     WorkbookEntriesTableTabs: makeDefaultEmpty<WorkbookEntriesTableTabsProps>(),
+    WorkbookEntryExtended: makeDefaultEmpty<WorkbookEntriesTableTabsProps>(),
     DialogEntryDescription: makeDefaultEmpty<DialogEntryDescriptionProps>(),
 } as const;

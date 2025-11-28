@@ -3,9 +3,9 @@ import React from 'react';
 import type {DropdownMenuItem} from '@gravity-ui/uikit';
 import {List, Loader} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import type {SharedEntryBindingsItem} from 'shared/schema';
 import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 
-import type {RowEntityData} from '../EntityRow/EntityRow';
 import {EntityRow} from '../EntityRow/EntityRow';
 import {PlaceholderIllustration} from '../PlaceholderIllustration/PlaceholderIllustration';
 
@@ -19,26 +19,17 @@ const b = block('shared-entities-list');
 interface SharedBindingsListProps {
     title?: string;
     searchProps?: ListSearchProps;
-    entities: RowEntityData[];
+    entities: SharedEntryBindingsItem[];
     isLoading?: boolean;
+    getListItemActions?: (item: SharedEntryBindingsItem) => DropdownMenuItem[];
 }
-
-const dropdownItems: DropdownMenuItem[] = [
-    {
-        text: getSharedEntryMockText('shared-bindings-list-action-unbind'),
-        action: () => {},
-    },
-    {
-        text: getSharedEntryMockText('shared-bindings-list-action-change-permissions'),
-        action: () => {},
-    },
-];
 
 export const SharedBindingsList: React.FC<SharedBindingsListProps> = ({
     entities,
     searchProps,
     isLoading,
     title = getSharedEntryMockText('shared-bindings-list-title'),
+    getListItemActions,
 }) => {
     const renderList = () => {
         if (isLoading) {
@@ -69,7 +60,8 @@ export const SharedBindingsList: React.FC<SharedBindingsListProps> = ({
                 virtualized
                 selectedItemIndex={-1}
                 renderItem={(item) => {
-                    return <EntityRow entity={item} actions={dropdownItems} />;
+                    const actions = getListItemActions?.(item) ?? [];
+                    return <EntityRow entity={item} actions={actions} />;
                 }}
             />
         );

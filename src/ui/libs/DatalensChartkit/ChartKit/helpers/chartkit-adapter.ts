@@ -113,10 +113,12 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
     type,
     loadedData,
     onChange,
+    runActivity,
 }: {
     type: T;
     loadedData: ChartKitAdapterProps['loadedData'];
     onChange?: ChartKitAdapterProps['onChange'];
+    runActivity?: ChartKitAdapterProps['runActivity'];
 }) => {
     switch (type) {
         case 'indicator': {
@@ -212,6 +214,7 @@ export const getOpensourceChartKitData = <T extends ChartKitType>({
             return getGravityChartsChartKitData({
                 loadedData: data,
                 onChange,
+                runActivity,
             });
         }
         default: {

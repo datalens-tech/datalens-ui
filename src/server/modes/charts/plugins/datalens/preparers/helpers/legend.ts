@@ -1,5 +1,3 @@
-import reverse from 'lodash/reverse';
-
 import type {ServerChartsConfig, ServerColor} from '../../../../../../../shared';
 import {WizardVisualizationId, isDimensionField} from '../../../../../../../shared';
 import type {ChartColorsConfig} from '../../types';
@@ -44,9 +42,9 @@ export function getLegendColorScale({
     const minColorValue = Math.min(...colorValues);
     const maxColorValue = Math.max(...colorValues);
 
-    let colorScaleColors = colorsConfig.gradientColors;
+    const colorScaleColors = [...colorsConfig.gradientColors];
     if (colorsConfig.reversed) {
-        colorScaleColors = reverse(colorScaleColors);
+        colorScaleColors.reverse();
     }
 
     let stops = colorsConfig.gradientColors.length === 2 ? [0, 1] : [0, 0.5, 1];

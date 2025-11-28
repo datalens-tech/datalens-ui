@@ -22,6 +22,8 @@ import type {
     CreateFolderResponse,
     DeleteUSEntryArgs,
     DeleteUSEntryResponse,
+    EntityBindingsArgs,
+    EntityBindingsResponse,
     GetEntriesAnnotationArgs,
     GetEntriesAnnotationResponse,
     GetEntriesByKeyPatternArgs,
@@ -40,6 +42,8 @@ import type {
     GetRevisionsArgs,
     GetRevisionsOutput,
     GetRevisionsResponse,
+    GetSharedEntryBindingsArgs,
+    GetSharedEntryBindingsResponse,
     MoveEntryArgs,
     MoveEntryResponse,
     RenameEntryArgs,
@@ -49,6 +53,7 @@ import type {
 } from '../../types';
 
 import {getEntries} from './get-entries';
+import {getEntriesRelations} from './get-entries-relations';
 import {listDirectory} from './list-directory';
 
 const PATH_PREFIX = '/v1';
@@ -56,6 +61,7 @@ const PATH_PREFIX_V2 = '/v2';
 const PRIVATE_PATH_PREFIX = '/private';
 
 export const entriesActions = {
+    getEntriesRelations,
     listDirectory,
     getEntries,
     getEntry: createAction<GetEntryResponse, GetEntryArgs>({
@@ -250,6 +256,50 @@ export const entriesActions = {
         path: () => `${PATH_PREFIX}/get-entries-annotation`,
         params: (params, headers) => ({
             body: params,
+            headers,
+        }),
+    }),
+    createSharedEntryBinding: createAction<EntityBindingsResponse, EntityBindingsArgs>({
+        method: 'POST',
+        path: () => `${PATH_PREFIX}/entity-bindings/create`,
+        params: (params, headers) => ({
+            body: params,
+            headers,
+        }),
+    }),
+    updateSharedEntryBinding: createAction<EntityBindingsResponse, EntityBindingsArgs>({
+        method: 'POST',
+        path: () => `${PATH_PREFIX}/entity-bindings/update`,
+        params: (params, headers) => ({
+            body: params,
+            headers,
+        }),
+    }),
+    deleteSharedEntryBinding: createAction<
+        EntityBindingsResponse,
+        Omit<EntityBindingsArgs, 'delegation'>
+    >({
+        method: 'DELETE',
+        path: () => `${PATH_PREFIX}/entity-bindings/delete`,
+        params: (params, headers) => ({
+            query: params,
+            headers,
+        }),
+    }),
+    getSharedEntryBindings: createAction<
+        GetSharedEntryBindingsResponse,
+        GetSharedEntryBindingsArgs
+    >({
+        method: 'GET',
+        path: ({entryId}) => `${PATH_PREFIX}/shared-entries/${entryId}/entity-bindings`,
+        params: ({page, pageSize, entryAs, mode, filterString}, headers) => ({
+            query: {
+                pageSize,
+                page,
+                entryAs,
+                mode,
+                filterString,
+            },
             headers,
         }),
     }),

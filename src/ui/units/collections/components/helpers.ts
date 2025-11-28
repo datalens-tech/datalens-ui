@@ -52,6 +52,12 @@ export const getItemLink = (item: StructureItem) => {
     }
 };
 
-export const getSharedEntryMockText = (key: keyof typeof mockSharedEntriesTexts) => {
-    return mockSharedEntriesTexts[key];
+export const getSharedEntryMockText = (
+    key: keyof typeof mockSharedEntriesTexts,
+    args?: Record<string, string>,
+) => {
+    const text = mockSharedEntriesTexts[key];
+    return text.replace(/\{\{(\w+)\}\}/g, (_, name) => {
+        return args?.[name] ?? `{{${name}}}`;
+    });
 };

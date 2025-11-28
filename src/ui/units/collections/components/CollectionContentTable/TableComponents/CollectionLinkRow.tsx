@@ -5,7 +5,7 @@ import {batch, useDispatch, useSelector} from 'react-redux';
 import {Link, useHistory} from 'react-router-dom';
 import {CollectionContentTableQa, CollectionItemEntities} from 'shared';
 import {WORKBOOK_STATUS} from 'shared/constants/workbooks';
-import type {StructureItem} from 'shared/schema/types';
+import type {StructureItemWithPermissions} from 'shared/schema/types';
 import {DIALOG_CREATE_WORKBOOK} from 'ui/components/CollectionsStructure/CreateWorkbookDialog/CreateWorkbookDialog';
 import {DL} from 'ui/constants/common';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
@@ -23,7 +23,7 @@ import '../CollectionContentTable.scss';
 const b = block('dl-collection-content-table');
 
 type CollectionLinkRowProps = {
-    item: StructureItem;
+    item: StructureItemWithPermissions;
     isDisabled: boolean;
     refreshPageAfterImport: RefreshPageAfterImport;
 };

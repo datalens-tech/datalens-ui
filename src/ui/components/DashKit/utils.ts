@@ -1,11 +1,10 @@
-import type React from 'react';
+import React from 'react';
 import type {CSSProperties} from 'react';
 
 import type {PluginWidgetProps} from '@gravity-ui/dashkit';
-import {Feature} from 'shared';
+import {type ThemeType, useThemeType} from '@gravity-ui/uikit';
 import type {BackgroundSettings, DashTabItemControlElement} from 'shared';
-import {CustomPaletteBgColors} from 'shared/constants/widgets';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+import {CustomPaletteBgColors, LIKE_CHART_COLOR_TOKEN} from 'shared/constants/widgets';
 
 import {DL} from '../../constants';
 import {
@@ -272,45 +271,88 @@ export function getControlHint(source: DashTabItemControlElement) {
     return source.showHint ? source.hint : undefined;
 }
 
-const specialBgColors: string[] = [
-    CustomPaletteBgColors.LIKE_CHART,
-    CustomPaletteBgColors.FROM_APP_THEME,
-];
-
 export function getPreparedWrapSettings(
-    background?: BackgroundSettings,
+    backgroundColor: string | undefined,
     additionalStyle?: CSSProperties,
-    textColor?: string,
 ) {
-    const color = background?.color;
-    const showBgColor =
-        background?.enabled !== false && Boolean(color) && color !== CustomPaletteBgColors.NONE;
+    const hasBgColor = Boolean(backgroundColor) && backgroundColor !== CustomPaletteBgColors.NONE;
 
-    let wrapperClassMod = '';
-    if (showBgColor) {
-        switch (color) {
-            case CustomPaletteBgColors.LIKE_CHART:
-                wrapperClassMod = 'with-default-color';
-                break;
-            case CustomPaletteBgColors.FROM_APP_THEME:
-                wrapperClassMod = isEnabledFeature(Feature.EnableCommonChartDashSettings)
-                    ? 'with-app-theme-color'
-                    : 'with-color';
-                break;
-            default:
-                wrapperClassMod = 'with-color';
-        }
-    }
+    const newBackgroundColor =
+        backgroundColor === CustomPaletteBgColors.LIKE_CHART
+            ? LIKE_CHART_COLOR_TOKEN
+            : backgroundColor;
 
     const style: CSSProperties = {
         ...additionalStyle,
         backgroundColor:
-            !showBgColor || (color && specialBgColors.includes(color)) ? undefined : color,
-        color: textColor,
+            hasBgColor || backgroundColor === CustomPaletteBgColors.NONE
+                ? newBackgroundColor
+                : undefined,
     };
     return {
-        classMod: wrapperClassMod,
         style,
-        showBgColor,
+        hasBgColor,
     };
+}
+
+export function useTextColorStyles(textColor?: string) {
+    // const theme = useThemeType(); // it would be used in next PR
+    return React.useMemo(
+        () => ({
+            color: textColor,
+        }),
+        [textColor /* , theme */],
+    );
+}
+
+export function usePreparedWrapSettings({
+    widgetBackground,
+    globalBackground,
+    additionalStyle,
+    defaultOldColor,
+}: {
+    widgetBackground: BackgroundSettings | undefined;
+    globalBackground: BackgroundSettings | undefined;
+    additionalStyle?: CSSProperties;
+    defaultOldColor: string;
+}) {
+    const theme = useThemeType();
+    return React.useMemo(
+        () =>
+            getPreparedWrapSettings(
+                getResultedBgColor(widgetBackground, theme, defaultOldColor) ??
+                    getResultedBgColor(globalBackground, theme, defaultOldColor),
+                additionalStyle,
+            ),
+        [widgetBackground, globalBackground, additionalStyle, theme, defaultOldColor],
+    );
+}
+
+function getResultedBgColor(
+    bgColor: BackgroundSettings | undefined,
+    _theme: ThemeType, // it would be used in next PR
+    defaultColor: string,
+): string | undefined {
+    if (!bgColor) {
+        return defaultColor;
+    }
+    if (typeof bgColor === 'string') {
+        // where was a bug, when new Textwidgets were created with background color set by string
+        return bgColor;
+    }
+    if (typeof bgColor.color === 'string' || bgColor.color === undefined) {
+        if ('enabled' in bgColor && bgColor.enabled === false) {
+            if (bgColor.color === CustomPaletteBgColors.NONE) {
+                // where was a bug, when new widgets were created with background color set to transparent, but enabled set to false
+                return CustomPaletteBgColors.NONE;
+            }
+            return defaultColor;
+        }
+        if (!bgColor.color) {
+            return defaultColor;
+        }
+        return bgColor.color;
+    }
+
+    return defaultColor;
 }

@@ -137,6 +137,10 @@ $actionPanelDefaultBottom: 20px;
         }
     }
 
+    &_split-pane &__content-container {
+        overflow-y: unset;
+    }
+
     &__entry-name {
         font-size: var(--g-text-header-2-font-size);
         line-height: var(--g-text-header-2-line-height);

@@ -92,6 +92,7 @@ export type DashSettings = {
     loadOnlyVisibleCharts?: boolean;
     margins?: [number, number];
     enableAssistant?: boolean;
+    background?: BackgroundSettings;
 };
 
 export interface DashData {
@@ -111,10 +112,10 @@ export type DashDragOptions = ItemDropProps;
 // config with strict requirements of settings for new dash
 // schemeVersion comes from server
 export type FakeDashData = Omit<DashData, 'schemeVersion'> & {
-    settings: Required<Omit<DashSettings, 'margins' | 'enableAssistant' | 'signedGlobalParams'>> & {
-        margins?: DashSettings['margins'];
-        enableAssistant?: boolean;
-    };
+    settings: Required<
+        Omit<DashSettings, 'margins' | 'enableAssistant' | 'signedGlobalParams' | 'background'>
+    > &
+        Pick<DashSettings, 'margins' | 'enableAssistant' | 'background'>;
 };
 
 export interface DashTabSettings {
@@ -142,9 +143,11 @@ export type DashTabItem =
     | DashTabItemGroupControl
     | DashTabItemImage;
 
+export type ColorSettings = string;
+
 export type BackgroundSettings = {
     enabled?: boolean;
-    color: string;
+    color: ColorSettings;
 };
 
 export function isBackgroundSettings(value: unknown): value is BackgroundSettings {
@@ -192,14 +195,14 @@ export interface DashTabItemTitle extends DashTabItemBase {
         showInTOC: boolean;
         autoHeight?: boolean;
         background?: BackgroundSettings;
-        textColor?: string;
+        textColor?: ColorSettings;
         hint?: HintSettings;
     };
 }
 
 export interface DashTabItemWidget extends DashTabItemBase {
     type: DashTabItemType.Widget;
-    data: {hideTitle: boolean; tabs: DashTabItemWidgetTab[]};
+    data: {hideTitle: boolean; tabs: DashTabItemWidgetTab[]; background?: BackgroundSettings};
 }
 
 export interface DashTabItemWidgetTab {

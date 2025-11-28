@@ -36,6 +36,7 @@ class NavigationMinimalService extends React.PureComponent {
         }),
         inactiveEntryIds: PropTypes.arrayOf(PropTypes.string),
         ignoreWorkbookEntries: PropTypes.bool,
+        ignoreSharedEntries: PropTypes.bool,
         canCreateFolder: PropTypes.bool,
     };
 
@@ -205,6 +206,7 @@ class NavigationMinimalService extends React.PureComponent {
                     getPlaceParameters={getPlaceParameters}
                     placeSelectNode={placeSelectNode}
                     ignoreWorkbookEntries={this.props.ignoreWorkbookEntries}
+                    ignoreSharedEntries={this.props.ignoreSharedEntries}
                     onPermissionError={this.onPermissionError}
                 />
                 <EntryDialogues ref={this.refDialogues} sdk={this.props.sdk} />
