@@ -9,6 +9,7 @@ import {makeDefaultEmpty} from '../../components/DefaultEmpty';
 
 import {Example} from './components/Example/Example';
 import {EXAMPLE_COMPONENT} from './constants/components';
+import type {AccessDialogProps} from './types/components/AccessDialog';
 import type {AccessRightsProps} from './types/components/AccessRights';
 import type {AccessRightsUrlOpenProps} from './types/components/AccessRightsUrlOpen';
 import type {AclSubjectProps} from './types/components/AclSubject';
@@ -66,4 +67,5 @@ export const commonComponentsMap = {
     WorkbookEntriesTableTabs: makeDefaultEmpty<WorkbookEntriesTableTabsProps>(),
     WorkbookEntryExtended: makeDefaultEmpty<WorkbookEntriesTableTabsProps>(),
     DialogEntryDescription: makeDefaultEmpty<DialogEntryDescriptionProps>(),
+    AccessDialog: makeDefaultEmpty<AccessDialogProps>(),
 } as const;

@@ -1,4 +1,5 @@
 {
+  "action_add": "Add",
   "action_add-user": "Add user",
   "action_cancel": "Cancel",
   "action_choose-user": "Select user",
@@ -7,6 +8,7 @@
   "action_revoke-access": "Revoke role",
   "action_save": "Save",
   "button_bindings-list-retry": "Reload list",
+  "label_access": "Access rights",
   "label_access_error": "Insufficient rights",
   "label_all": "All",
   "label_groups": "Groups",
@@ -21,6 +23,7 @@
   "role_admin": "Admin",
   "role_editor": "Editor",
   "role_limited-viewer": "Limited viewer",
+  "role_limited-viewer-hint": "Unlike 'Viewer', it doesn't grant access to view datasets and connections",
   "role_viewer": "Viewer",
   "section_direct_accesses": "Direct permissions",
   "section_inherited_accesses": "Inherited permissions",
