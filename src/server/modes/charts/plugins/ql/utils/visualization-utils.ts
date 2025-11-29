@@ -50,8 +50,6 @@ export const migrateOrAutofillVisualization = ({
             WizardVisualizationId.Column100p,
             WizardVisualizationId.Bar,
             WizardVisualizationId.Bar100p,
-            WizardVisualizationId.BarXD3,
-            WizardVisualizationId.BarYD3,
         ]).has(visualizationId as WizardVisualizationId)
     ) {
         if (order) {
@@ -84,11 +82,7 @@ export const migrateOrAutofillVisualization = ({
                 newColors = colors;
             }
         }
-    } else if (
-        [WizardVisualizationId.Scatter, WizardVisualizationId.ScatterD3].includes(
-            visualizationId as WizardVisualizationId,
-        )
-    ) {
+    } else if (visualizationId === WizardVisualizationId.Scatter) {
         // Scatter visualization was not present in older ql charts,
         // so we don't need to migrate older order
         const {xFields, yFields, pointsFields} = autofillScatterVisualization({fields});
@@ -97,12 +91,9 @@ export const migrateOrAutofillVisualization = ({
         newVisualization.placeholders[1].items = yFields;
         newVisualization.placeholders[2].items = pointsFields;
     } else if (
-        new Set([
-            WizardVisualizationId.Pie,
-            WizardVisualizationId.Donut,
-            WizardVisualizationId.PieD3,
-            WizardVisualizationId.DonutD3,
-        ]).has(visualizationId as WizardVisualizationId)
+        new Set([WizardVisualizationId.Pie, WizardVisualizationId.Donut]).has(
+            visualizationId as WizardVisualizationId,
+        )
     ) {
         // Checking if order is set (from older versions of ql charts)
         const hasOrder = order && order.length > 0;
@@ -148,10 +139,7 @@ export const migrateOrAutofillVisualization = ({
 
             newVisualization.placeholders[0].items = measureFields;
         }
-    } else if (
-        visualizationId === WizardVisualizationId.Treemap ||
-        visualizationId === WizardVisualizationId.TreemapD3
-    ) {
+    } else if (visualizationId === WizardVisualizationId.Treemap) {
         const {dimensionFields, sizeFields} = autofillTreemapVisualization({
             fields,
         });

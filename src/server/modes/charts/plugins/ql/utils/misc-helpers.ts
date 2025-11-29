@@ -15,7 +15,6 @@ import {
     DATALENS_QL_CONNECTION_TYPES,
     DATALENS_QL_TYPES,
     QLParamType,
-    WizardVisualizationId,
     biToDatalensQL,
     getDatalensQLTypeName,
     getUtcDateTime,
@@ -767,8 +766,5 @@ export const doesQueryContainOrderBy = (query: string) => {
 };
 
 export const visualizationCanHaveContinuousAxis = (visualization: ServerVisualization) => {
-    return (
-        LINEAR_VISUALIZATIONS.has(visualization.id) ||
-        visualization.id === WizardVisualizationId.BarXD3
-    );
+    return LINEAR_VISUALIZATIONS.has(visualization.id);
 };

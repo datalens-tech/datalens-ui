@@ -21,7 +21,7 @@ datalensTest.describe('Wizard', () => {
             await wizardPage.hierarchyEditor.selectFields(['country', 'region']);
             await wizardPage.hierarchyEditor.clickSave();
 
-            await wizardPage.setVisualization(WizardVisualizationId.TreemapD3);
+            await wizardPage.setVisualization(WizardVisualizationId.Treemap);
         });
 
         datalensTest(

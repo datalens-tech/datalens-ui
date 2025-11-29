@@ -13,10 +13,7 @@ datalensTest.describe('Wizard', () => {
             const wizardPage = new WizardPage({page});
             await openTestPage(page, config.wizard.urls.WizardBasicDataset);
 
-            await wizardPage.setVisualization([
-                WizardVisualizationId.Pie,
-                WizardVisualizationId.PieD3,
-            ]);
+            await wizardPage.setVisualization(WizardVisualizationId.Pie);
 
             await wizardPage.sectionVisualization.addFieldByClick(
                 PlaceholderName.Colors,

@@ -12,7 +12,7 @@ datalensTest.describe('QL', () => {
             await openTestPage(page, config.ql.urls.NewQLChartWithConnection);
 
             const qlPage = new QLPage({page});
-            await qlPage.setVisualization(WizardVisualizationId.PieD3);
+            await qlPage.setVisualization(WizardVisualizationId.Pie);
             await qlPage.setScript(config.ql.queries.citySales);
             await qlPage.runScript();
         });

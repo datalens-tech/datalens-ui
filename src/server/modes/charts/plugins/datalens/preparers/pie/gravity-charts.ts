@@ -2,7 +2,12 @@ import type {ChartData, PieSeries, PieSeriesData} from '@gravity-ui/chartkit/gra
 import merge from 'lodash/merge';
 
 import type {SeriesExportSettings} from '../../../../../../../shared';
-import {formatNumber, getFormatOptions, isMeasureValue} from '../../../../../../../shared';
+import {
+    WizardVisualizationId,
+    formatNumber,
+    getFormatOptions,
+    isMeasureValue,
+} from '../../../../../../../shared';
 import {getFakeTitleOrTitle} from '../../../../../../../shared/modules/fields';
 import {isHtmlField, isMarkdownField, isMarkupField} from '../../../../../../../shared/types/index';
 import {getBaseChartConfig} from '../../gravity-charts/utils';
@@ -12,7 +17,7 @@ import {getLegendColorScale} from '../helpers/legend';
 import type {PiePoint, PrepareFunctionArgs} from '../types';
 
 import preparePieData from './prepare-pie-data';
-import {getFormattedValue, isColoringByMeasure, isDonut} from './utils';
+import {getFormattedValue, isColoringByMeasure} from './utils';
 
 type ExtendedPieSeriesData = Omit<PieSeriesData, 'label'> & {
     drillDownFilterValue?: string;
@@ -81,7 +86,7 @@ export function prepareD3Pie(args: PrepareFunctionArgs) {
             },
         };
 
-        if (isDonut({visualizationId})) {
+        if (visualizationId === WizardVisualizationId.Donut) {
             seriesConfig.innerRadius = '50%';
 
             if (measure && totals) {

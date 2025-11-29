@@ -12,10 +12,7 @@ datalensTest.describe('Wizard', () => {
             const wizardPage = new WizardPage({page});
             await openTestPage(page, config.wizard.urls.WizardBasicDataset);
 
-            await wizardPage.setVisualization([
-                WizardVisualizationId.Line,
-                WizardVisualizationId.LineD3,
-            ]);
+            await wizardPage.setVisualization([WizardVisualizationId.Line]);
         });
 
         datalensTest('Date and time on the Y axis @screenshot', async ({page}) => {

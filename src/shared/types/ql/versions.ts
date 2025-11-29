@@ -10,4 +10,6 @@ export enum QlConfigVersions {
     V5 = '5',
     // rename the palette id (remove the word "palette" from the value)
     V6 = '6',
+    // use standard visualization ids instead of d3
+    V7 = '7',
 }

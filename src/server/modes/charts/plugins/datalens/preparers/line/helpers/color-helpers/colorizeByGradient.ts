@@ -19,11 +19,8 @@ export const colorizeByGradient = (
     switch (visualizationId) {
         case WizardVisualizationId.Column:
         case WizardVisualizationId.Column100p:
-        case WizardVisualizationId.BarXD3:
         case WizardVisualizationId.Bar:
-        case WizardVisualizationId.Bar100p:
-        case WizardVisualizationId.BarYD3:
-        case WizardVisualizationId.BarY100pD3: {
+        case WizardVisualizationId.Bar100p: {
             colorizeColumnAndBarGraphs(options.graphs, options.colorsConfig);
         }
     }

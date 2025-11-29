@@ -38,7 +38,6 @@ export enum Feature {
     EntryMenuItemMove = 'EntryMenuItemMove',
     ExternalSelectors = 'ExternalSelectors',
     DashBoardWidgetParamsStrictValidation = 'DashBoardWidgetParamsStrictValidation',
-    D3Visualizations = 'D3Visualizations',
     HideMultiDatasets = 'HideMultiDatasets',
     ShouldCheckEditorAccess = 'ShouldCheckEditorAccess',
     HideMultitenant = 'HideMultitenant',

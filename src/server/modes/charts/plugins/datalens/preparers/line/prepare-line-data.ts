@@ -550,10 +550,7 @@ export function prepareLineData(args: PrepareFunctionArgs) {
             });
         }
 
-        if (
-            visualizationId === WizardVisualizationId.Line ||
-            visualizationId === WizardVisualizationId.LineD3
-        ) {
+        if (visualizationId === WizardVisualizationId.Line) {
             mapAndShapeGraph({
                 graphs,
                 shapesConfig,

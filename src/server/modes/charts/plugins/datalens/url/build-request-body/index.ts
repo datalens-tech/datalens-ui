@@ -474,7 +474,6 @@ export function prepareSingleRequest({
     const withTotals =
         (visualization.id === WizardVisualizationId.FlatTable ||
             visualization.id === WizardVisualizationId.Donut ||
-            visualization.id === WizardVisualizationId.DonutD3 ||
             visualization.id === WizardVisualizationId.PivotTable) &&
         extraSettings?.totals === 'on' &&
         isMeasureInFields;

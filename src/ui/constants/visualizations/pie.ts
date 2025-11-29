@@ -69,8 +69,3 @@ export const PIE_VISUALIZATION: GraphShared['visualization'] = {
         },
     ],
 };
-
-export const PIE_D3_VISUALIZATION: GraphShared['visualization'] = {
-    ...PIE_VISUALIZATION,
-    id: WizardVisualizationId.PieD3,
-};
