@@ -58,5 +58,35 @@ datalensTest.describe('Wizard', () => {
             await expect(previewLoader).not.toBeVisible();
             await expect(preview).toHaveScreenshot();
         });
+
+        datalensTest(
+            'Coloring by Measure Values with Measure Names in Y section @screenshot',
+            async ({page}) => {
+                const wizardPage = new WizardPage({page});
+
+                // Create measure fields
+                await wizardPage.createNewFieldWithFormula('1', 'sum(1)');
+                await wizardPage.createNewFieldWithFormula('2', 'sum(2)');
+
+                const preview = page.locator(slct(WizardPageQa.SectionPreview));
+                const previewLoader = preview.locator(slct(ChartKitQa.Loader));
+
+                await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, '1');
+                await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, '2');
+                await wizardPage.sectionVisualization.addFieldByClick(
+                    PlaceholderName.Y,
+                    'Measure Names',
+                );
+                await wizardPage.sectionVisualization.addFieldByClick(
+                    PlaceholderName.Colors,
+                    'Measure Values',
+                );
+
+                // Put the mouse away so that the presence of hover elements does not interfere with taking screenshots
+                await page.mouse.move(-1, -1);
+                await expect(previewLoader).not.toBeVisible();
+                await expect(preview).toHaveScreenshot();
+            },
+        );
     });
 });
