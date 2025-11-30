@@ -194,7 +194,7 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
         dropdownActions.push([...otherActions]);
     }
 
-    const onOpenAccessDialog = React.useCallback(() => {
+    const onOpenAccessDialog = () => {
         dispatch(
             openDialog({
                 id: DIALOG_ACCESS,
@@ -209,7 +209,7 @@ export const WorkbookActions: React.FC<Props> = ({workbook, refreshWorkbookInfo}
                 },
             }),
         );
-    }, []);
+    };
 
     return (
         <div className={b()}>

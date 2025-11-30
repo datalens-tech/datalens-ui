@@ -110,7 +110,7 @@ export interface SubjectClaims {
     pictureData?: string;
     picture?: string;
     idpType?: string | null;
-    displayName?: string | React.ReactNode;
+    displayName?: string;
 }
 
 export type SubjectDetails = {
