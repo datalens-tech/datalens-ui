@@ -37,13 +37,20 @@ export const mockSharedEntriesTexts = {
     'apply-bindings-dialog-delete': 'Удалить',
     'alert-title-info-bindings-dialog-delete': '{{entry}} нигде не используется',
     'alert-message-info-bindings-dialog-delete': 'Удаление ничего не сломает',
+    'alert-message-info-workbook-dialog-delete':
+        'Удаление не повлияет на Wizard-чарты, но может повлиять на Editor-чарты если используется в них',
     'alert-title-warning-bindings-dialog-delete': '{{entry}} используется в некоторых {{relation}}',
     'alert-message-warning-bindings-dialog-delete':
         'Перед удалением убедитесь, что ничего не сломается',
+    'alert-message-warning-workbook-dialog-delete':
+        'Перед удалением убедитесь, что ничего не сломается. Если у вас есть Editor-чарты, их придется проверить вручную',
     'cancel-bindings-dialog-delete': 'Отмена',
     'relations-bindings-dialog-delete': 'воркбуках и датасетах',
+    'relations-workbook-dialog-delete': 'зависимостях',
     'relation-workbook-bindings-dialog-delete': 'воркбуках',
     'relation-dataset-bindings-dialog-delete': 'датасетах',
+    'relation-chart-workbook-dialog-delete': 'чартах',
+    'relation-dash-workbook-dialog-delete': 'дашбордах',
     'bindings-dialog-delete-refresh-btn': 'Обновить',
     'entries-list-title-workbook': 'Воркбуки',
     'entries-list-title-connection': 'Подключения',

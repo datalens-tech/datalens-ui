@@ -304,6 +304,7 @@ export const getWorkbookSharedEntries = ({
         const args: GetWorkbookEntriesArgs = {
             workbookId,
             pageSize,
+            includePermissionsInfo: true,
             page: Number(nextPageToken || 0),
             orderBy: {
                 field: filters.orderField,
