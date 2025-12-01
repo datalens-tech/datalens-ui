@@ -1,9 +1,9 @@
 import keyBy from 'lodash/keyBy';
 import type {Required} from 'utility-types';
 
+import {getTypedApi} from '../..';
 import {EntryScope} from '../../../types';
 import {createAction} from '../../gateway-utils';
-import {getTypedApi} from '../../simple-schema';
 import type {
     GetEntriesEntryResponse,
     GetRelationsEntry,
@@ -34,26 +34,28 @@ import type {
 } from '../types';
 
 export const entriesActions = {
-    deleteEntry: createAction<DeleteEntryResponse, DeleteEntryArgs>(async (api, args) => {
-        const typedApi = getTypedApi(api);
-        const {entryId, lockToken, scope} = args;
-        switch (scope) {
-            case EntryScope.Dataset: {
-                const data = await typedApi.bi.deleteDataset({datasetId: entryId});
-                return data;
+    deleteEntry: createAction<DeleteEntryResponse, DeleteEntryArgs>(
+        async (api, args): Promise<DeleteEntryResponse> => {
+            const typedApi = getTypedApi(api);
+            const {entryId, lockToken, scope} = args;
+            switch (scope) {
+                case EntryScope.Dataset: {
+                    const data = await typedApi.bi.deleteDataset({datasetId: entryId});
+                    return data;
+                }
+                case EntryScope.Connection: {
+                    const data = await typedApi.bi.deleteConnection({connectionId: entryId});
+                    return data;
+                }
+                default: {
+                    const data = await typedApi.us._deleteUSEntry({entryId, lockToken});
+                    return data;
+                }
             }
-            case EntryScope.Connection: {
-                const data = await typedApi.bi.deleteConnection({connectionId: entryId});
-                return data;
-            }
-            default: {
-                const data = await typedApi.us._deleteUSEntry({entryId, lockToken});
-                return data;
-            }
-        }
-    }),
+        },
+    ),
     getPublicationPreview: createAction<GetPublicationPreviewResponse, GetPublicationPreviewArgs>(
-        async (api, {entryId, workbookId}) => {
+        async (api, {entryId, workbookId}): Promise<GetPublicationPreviewResponse> => {
             const typedApi = getTypedApi(api);
             const relations = (await typedApi.us.getRelations({
                 entryId,
@@ -101,7 +103,7 @@ export const entriesActions = {
     switchPublicationStatus: createAction<
         SwitchPublicationStatusResponse,
         MixedSwitchPublicationStatusArgs
-    >(async (api, {entries, mainEntry, workbookId}) => {
+    >(async (api, {entries, mainEntry, workbookId}): Promise<SwitchPublicationStatusResponse> => {
         if (!isValidPublishLink(mainEntry?.unversionedData?.publicAuthor?.link)) {
             throw new Error('Failed to publish dashboard - invalid publish link.');
         }
@@ -144,7 +146,7 @@ export const entriesActions = {
         return result;
     }),
     resolveEntryByLink: createAction<ResolveEntryByLinkResponse, ResolveEntryByLinkArgs>(
-        async (api, {url}, {ctx}) => {
+        async (api, {url}, {ctx}): Promise<ResolveEntryByLinkResponse> => {
             const typedApi = getTypedApi(api);
             const {resolveEntryByLink} = ctx.get('gateway');
             const result = await resolveEntryByLink({
@@ -157,7 +159,7 @@ export const entriesActions = {
         },
     ),
     getEntryMetaStatus: createAction<GetEntryMetaStatusResponse, GetEntryMetaStatusArgs>(
-        async (api, args) => {
+        async (api, args): Promise<GetEntryMetaStatusResponse> => {
             const typedApi = getTypedApi(api);
             const {entryId} = args;
             try {
@@ -169,7 +171,7 @@ export const entriesActions = {
         },
     ),
     getEntriesInFolder: createAction<GetEntriesInFolderResponse, GetEntriesInFolderArgs>(
-        async (api, {folderId}) => {
+        async (api, {folderId}): Promise<GetEntriesInFolderResponse> => {
             const typedApi = getTypedApi(api);
             const folderEntry = await typedApi.us.getEntry({
                 entryId: folderId,
@@ -186,7 +188,7 @@ export const entriesActions = {
         },
     ),
     getEntryRelations: createAction<GetEntryRelationsResponse, GetEntryRelationsArgs>(
-        async (api, {entryId, direction = 'parent'}) => {
+        async (api, {entryId, direction = 'parent'}): Promise<GetEntryRelationsResponse> => {
             return await getTypedApi(api).us.getRelations({
                 entryId,
                 direction,
@@ -194,7 +196,7 @@ export const entriesActions = {
         },
     ),
     getBatchEntriesByIds: createAction<GetBatchEntriesByIdsResponse, GetBatchEntriesByIdsArgs>(
-        async (api, args) => {
+        async (api, args): Promise<GetBatchEntriesByIdsResponse> => {
             const typedApi = getTypedApi(api);
             const {ids, ...restArgs} = args;
 
