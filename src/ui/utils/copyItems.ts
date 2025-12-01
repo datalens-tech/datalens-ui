@@ -1,5 +1,9 @@
 import type {ConfigItem, ConfigItemData} from '@gravity-ui/dashkit';
-import {WIDGET_BG_COLORS_PRESET} from 'shared/constants';
+import {
+    CustomPaletteBgColors,
+    WIDGET_BG_COLORS_PRESET,
+    getColorSettingsWithValue,
+} from 'shared/constants';
 import {getResultedOldBgColor} from 'shared/modules/dash-scheme-converter';
 import type {BackgroundSettings, ColorSettings, OldBackgroundSettings} from 'shared/types';
 import {
@@ -104,12 +108,19 @@ export const getUpdatedConnections = ({
     return [...connections, ...copiedConnections];
 };
 
-export function getUpdatedBackgroundData(
-    background: unknown,
-    backgroundSettings: unknown,
+export function getUpdatedBackgroundData({
+    background,
+    backgroundSettings,
     allowCustomValues = false,
     enableSeparateThemeColorSelector = true,
-): {
+    defaultOldColor = CustomPaletteBgColors.NONE,
+}: {
+    background: unknown;
+    backgroundSettings: unknown;
+    allowCustomValues: boolean;
+    enableSeparateThemeColorSelector: boolean;
+    defaultOldColor: string;
+}): {
     backgroundSettings: BackgroundSettings | undefined;
     background: OldBackgroundSettings | undefined;
 } {
@@ -145,13 +156,10 @@ export function getUpdatedBackgroundData(
             newColor = color;
         }
     } else if (isDashColorPickersByThemeEnabled) {
-        newColor = computeColorFromToken(oldColor);
-        if (enableSeparateThemeColorSelector) {
-            newColor = {
-                light: newColor,
-                dark: newColor,
-            };
-        }
+        newColor = getColorSettingsWithValue(
+            computeColorFromToken(oldColor ?? defaultOldColor),
+            enableSeparateThemeColorSelector,
+        );
     }
 
     return {

@@ -44,10 +44,9 @@ export function useColorSettings(props: UseColorSettingsProps) {
     );
 
     const setOldColor = React.useCallback((color?: string) => {
-        setBgSettings((prev) => ({
-            ...prev,
+        setBgSettings({
             oldColor: color,
-        }));
+        });
     }, []);
 
     const setColorSettings = React.useCallback((settings?: ColorSettings) => {

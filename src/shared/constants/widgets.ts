@@ -108,7 +108,7 @@ export function getDefaultWidgetBackgroundColor(
 
 export function getColorSettingsWithValue(
     color: string | undefined,
-    enableMultiThemeColors: boolean,
+    enableSeparateThemeColorSelector: boolean,
 ) {
-    return enableMultiThemeColors ? {light: color, dark: color} : color;
+    return enableSeparateThemeColorSelector ? {light: color, dark: color} : color;
 }

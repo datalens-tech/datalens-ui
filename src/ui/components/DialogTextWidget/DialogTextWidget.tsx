@@ -100,7 +100,13 @@ function DialogTextWidget(props: DialogTextWidgetProps) {
             text: openedItemData.text,
             autoHeight: Boolean(openedItemData.autoHeight),
         }));
-    }, [openedItemData, dialogIsVisible, prevDialogIsVisible, enableSeparateThemeColorSelector]);
+    }, [
+        openedItemData,
+        dialogIsVisible,
+        prevDialogIsVisible,
+        enableSeparateThemeColorSelector,
+        updateStateByProps,
+    ]);
 
     const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
