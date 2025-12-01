@@ -1,8 +1,8 @@
 import get from 'lodash/get';
 
+import type {TypedApi} from '../..';
 import type {WizardVisualizationId} from '../../../constants';
 import {EntryScope, type Shared, type WorkbookId} from '../../../types';
-import type {TypedApi} from '../../simple-schema';
 import type {
     CheckConnectionsForPublicationResponse,
     CheckDatasetsForPublicationResponse,

@@ -1,8 +1,16 @@
 import type {DeepNonNullable} from 'utility-types';
 
+import {getTypedApi} from '../../..';
 import type {ChartsStats} from '../../../../types/charts';
 import {createAction} from '../../../gateway-utils';
-import {getTypedApi} from '../../../simple-schema';
+import {getEntryVisualizationType} from '../../helpers';
+import type {DatasetDictResponse, DatasetFieldsDictResponse} from '../../helpers/dash';
+import {
+    fetchDataset,
+    fetchDatasetFieldsById,
+    prepareDatasetData,
+    prepareWidgetDatasetData,
+} from '../../helpers/dash';
 import type {
     CollectChartkitStatsArgs,
     CollectChartkitStatsResponse,
@@ -13,14 +21,6 @@ import type {
     GetWidgetsDatasetsFieldsArgs,
     GetWidgetsDatasetsFieldsResponse,
 } from '../../types';
-import {getEntryVisualizationType} from '../../utils';
-import type {DatasetDictResponse, DatasetFieldsDictResponse} from '../../utils/dash';
-import {
-    fetchDataset,
-    fetchDatasetFieldsById,
-    prepareDatasetData,
-    prepareWidgetDatasetData,
-} from '../../utils/dash';
 
 import {createDashboardV1} from './create-dashboard-v1';
 import {deleteDashboard} from './delete-dashboard';
@@ -34,7 +34,7 @@ export const dashActions = {
     deleteDashboard,
 
     collectDashStats: createAction<CollectDashStatsResponse, CollectDashStatsArgs>(
-        async (_, args, {ctx}) => {
+        async (_, args, {ctx}): Promise<CollectDashStatsResponse> => {
             ctx.stats('dashStats', {
                 datetime: Date.now(),
                 ...(args as DeepNonNullable<CollectDashStatsArgs>),
@@ -43,7 +43,7 @@ export const dashActions = {
         },
     ),
     collectChartkitStats: createAction<CollectChartkitStatsResponse, CollectChartkitStatsArgs>(
-        async (_, args, {ctx}) => {
+        async (_, args, {ctx}): Promise<CollectChartkitStatsResponse> => {
             ctx.log('ChartKit stats collect', {rowsCount: args.length});
 
             args.forEach((data) => {
@@ -60,81 +60,87 @@ export const dashActions = {
     getEntriesDatasetsFields: createAction<
         GetEntriesDatasetsFieldsResponse,
         GetEntriesDatasetsFieldsArgs
-    >(async (api, {entriesIds, datasetsIds, workbookId}, {ctx}) => {
-        const typedApi = getTypedApi(api);
-        const {entries} = await typedApi.us.getEntries({
-            scope: 'widget',
-            ids: entriesIds,
-            includeLinks: true,
-            includeData: true,
-        });
+    >(
+        async (
+            api,
+            {entriesIds, datasetsIds, workbookId},
+            {ctx},
+        ): Promise<GetEntriesDatasetsFieldsResponse> => {
+            const typedApi = getTypedApi(api);
+            const {entries} = await typedApi.us.getEntries({
+                scope: 'widget',
+                ids: entriesIds,
+                includeLinks: true,
+                includeData: true,
+            });
 
-        const allDatasetsIdsSet = new Set([...datasetsIds]);
-        entries.forEach((entry) => {
-            if (!entry.isLocked) {
-                const {links, meta} = entry;
-                const {dataset} = links || {};
-                // deprecated
-                const {datasetId: metaDatasetId} = meta || {};
-                const datasetId = (dataset || metaDatasetId) as string | undefined;
-                if (datasetId) {
-                    allDatasetsIdsSet.add(datasetId);
+            const allDatasetsIdsSet = new Set([...datasetsIds]);
+            entries.forEach((entry) => {
+                if (!entry.isLocked) {
+                    const {links, meta} = entry;
+                    const {dataset} = links || {};
+                    // deprecated
+                    const {datasetId: metaDatasetId} = meta || {};
+                    const datasetId = (dataset || metaDatasetId) as string | undefined;
+                    if (datasetId) {
+                        allDatasetsIdsSet.add(datasetId);
+                    }
                 }
-            }
-        });
+            });
 
-        const allDatasetsIds = [...allDatasetsIdsSet];
-        const allDatasetsPromises = allDatasetsIds.map((datasetId) =>
-            fetchDataset({datasetId, workbookId, typedApi, ctx}),
-        );
-
-        const allDatasetsFetchedData = await Promise.all([...allDatasetsPromises]);
-
-        const allDatasetsFetchedDataDict = allDatasetsFetchedData
-            .filter((item) => Boolean(item.data && item.datasetId))
-            .reduce((res: Record<string, DatasetDictResponse>, item: DatasetDictResponse) => {
-                res[item.datasetId] = {...item};
-                return res;
-            }, {});
-
-        const res: GetEntriesDatasetsFieldsResponse = [];
-        entries.forEach((entry) => {
-            if (!entry.isLocked) {
-                const {links, meta, type, entryId} = entry;
-                const {dataset} = links || {};
-                // deprecated
-                const {datasetId: metaDatasetId} = meta || {};
-                const datasetId = (dataset || metaDatasetId) as string | undefined;
-                if (datasetId) {
-                    const widgetType = type.match(/^[^_]*/)?.[0] || null;
-                    res.push(
-                        prepareDatasetData({
-                            items: allDatasetsFetchedDataDict[datasetId],
-                            type: widgetType,
-                            datasetId,
-                            entryId,
-                            visualizationType: getEntryVisualizationType(entry),
-                        }),
-                    );
-                }
-            }
-        });
-        datasetsIds.forEach((datasetId) => {
-            res.push(
-                prepareDatasetData({
-                    items: allDatasetsFetchedDataDict[datasetId],
-                    type: 'dataset',
-                    entryId: datasetId,
-                    datasetId,
-                }),
+            const allDatasetsIds = [...allDatasetsIdsSet];
+            const allDatasetsPromises = allDatasetsIds.map((datasetId) =>
+                fetchDataset({datasetId, workbookId, typedApi, ctx}),
             );
-        });
-        return res;
-    }),
+
+            const allDatasetsFetchedData = await Promise.all([...allDatasetsPromises]);
+
+            const allDatasetsFetchedDataDict = allDatasetsFetchedData
+                .filter((item) => Boolean(item.data && item.datasetId))
+                .reduce((res: Record<string, DatasetDictResponse>, item: DatasetDictResponse) => {
+                    res[item.datasetId] = {...item};
+                    return res;
+                }, {});
+
+            const res: GetEntriesDatasetsFieldsResponse = [];
+            entries.forEach((entry) => {
+                if (!entry.isLocked) {
+                    const {links, meta, type, entryId} = entry;
+                    const {dataset} = links || {};
+                    // deprecated
+                    const {datasetId: metaDatasetId} = meta || {};
+                    const datasetId = (dataset || metaDatasetId) as string | undefined;
+                    if (datasetId) {
+                        const widgetType = type.match(/^[^_]*/)?.[0] || null;
+                        res.push(
+                            prepareDatasetData({
+                                items: allDatasetsFetchedDataDict[datasetId],
+                                type: widgetType,
+                                datasetId,
+                                entryId,
+                                visualizationType: getEntryVisualizationType(entry),
+                            }),
+                        );
+                    }
+                }
+            });
+            datasetsIds.forEach((datasetId) => {
+                res.push(
+                    prepareDatasetData({
+                        items: allDatasetsFetchedDataDict[datasetId],
+                        type: 'dataset',
+                        entryId: datasetId,
+                        datasetId,
+                    }),
+                );
+            });
+            return res;
+        },
+    ),
     getWidgetsDatasetsFields: createAction<
         GetWidgetsDatasetsFieldsResponse,
         GetWidgetsDatasetsFieldsArgs
-    >(async (api, {entriesIds, workbookId}, opt) => {
+    >(async (api, {entriesIds, workbookId}, opt): Promise<GetWidgetsDatasetsFieldsResponse> => {
         const {ctx, headers} = opt;
         const typedApi = getTypedApi(api);
 

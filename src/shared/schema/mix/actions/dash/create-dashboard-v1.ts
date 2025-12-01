@@ -1,7 +1,7 @@
+import {getTypedApi} from '../../..';
 import {EntryScope} from '../../../..';
 import {Dash} from '../../../../../server/components/sdk';
 import {createTypedAction} from '../../../gateway-utils';
-import {getTypedApi} from '../../../simple-schema';
 import {createDashArgsSchema, createDashResultSchema} from '../../schemas/dash';
 import type {DashV1} from '../../types';
 
