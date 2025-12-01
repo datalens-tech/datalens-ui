@@ -130,7 +130,8 @@ const prepareSourceRequests = (args: PrepareSourceRequestsArgs): SourceRequests 
 export const buildSourcesPrivate = (
     args: SourcesArgs & {palettes: Record<string, Palette>},
 ): SourceRequests => {
-    const {shared, palettes} = args;
+    const {palettes, ...sourceArgs} = args;
+    const {shared} = sourceArgs;
     const apiVersion = args.apiVersion || '1.5';
 
     const config = mapChartsConfigToServerConfig(shared);
@@ -147,7 +148,7 @@ export const buildSourcesPrivate = (
         visualization,
         datasetsIds,
         extraSettings,
-        sourceArgs: args,
+        sourceArgs: sourceArgs,
         links: config.links,
     });
 
