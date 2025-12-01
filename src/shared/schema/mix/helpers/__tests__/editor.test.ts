@@ -1,6 +1,6 @@
 import {getEntryLinks, validateData} from '../editor';
 
-describe('shared/schema/mix/utils/validateData', () => {
+describe('shared/schema/mix/helpers/validateData', () => {
     test.each([
         {
             name: 'valid meta with links',
@@ -64,7 +64,7 @@ describe('shared/schema/mix/utils/validateData', () => {
     });
 });
 
-describe('shared/schema/mix/utils/getEntryLinks', () => {
+describe('shared/schema/mix/helpers/getEntryLinks', () => {
     test.each([
         {
             name: 'returns empty object when no meta',
