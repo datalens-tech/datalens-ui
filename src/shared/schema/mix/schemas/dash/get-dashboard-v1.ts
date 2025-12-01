@@ -9,9 +9,9 @@ export const getDashV1ArgsSchema = z
     .object({
         dashboardId: z.string(),
         revId: z.string().optional(),
-        includePermissions: z.boolean().optional().default(false),
-        includeLinks: z.boolean().optional().default(false),
-        includeFavorite: z.boolean().optional().default(false),
+        includePermissions: z.boolean().optional(),
+        includeLinks: z.boolean().optional(),
+        includeFavorite: z.boolean().optional(),
         branch: z.enum(['published', 'saved']).optional(),
         workbookId: z.string().optional(),
     })
