@@ -1,12 +1,12 @@
+import {getTypedApi} from '../..';
 import {MAP_PLACE_TO_SCOPE, PLACE} from '../../../constants';
 import {createAction} from '../../gateway-utils';
-import {getTypedApi} from '../../simple-schema';
 import type {GetEntriesResponse, GetFavoritesResponse, ListDirectoryResponse} from '../../us/types';
 import type {GetNavigationListArgs, GetNavigationListResponse, NavigationEntry} from '../types';
 
 export const navigationActions = {
     getNavigationList: createAction<GetNavigationListResponse, GetNavigationListArgs>(
-        async (api, args) => {
+        async (api, args): Promise<GetNavigationListResponse> => {
             const {place, path, ...restArgs} = args;
             const typedApi = getTypedApi(api);
             let data: ListDirectoryResponse | GetFavoritesResponse | GetEntriesResponse;

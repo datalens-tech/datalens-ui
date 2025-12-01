@@ -28,6 +28,7 @@ $monospaceFontFamily: 'Consolas', 'Menlo', 'Ubuntu Mono', monospace;
 
 .g-root {
     --dl-navigation-breadcrumbs-height: 28px;
+    --dl-revision-panel-top-offset: #{$actionPanelHeight};
 
     --dl-color-border: var(--g-color-line-generic);
     --dl-color-border-solid: var(--g-color-line-generic-solid);
