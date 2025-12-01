@@ -5,7 +5,9 @@ export interface ListSuggestUser {
     email?: string;
     meta?: string;
     avatarUrl?: string;
+    // TODO: remove
     isInvitee?: boolean;
+    type?: string;
     isUnknown?: boolean;
 }
 
