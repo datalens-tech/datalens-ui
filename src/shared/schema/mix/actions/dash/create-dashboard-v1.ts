@@ -10,7 +10,7 @@ export const createDashboardV1 = createTypedAction(
         paramsSchema: createDashArgsSchema,
         resultSchema: createDashResultSchema,
     },
-    async (api, args) => {
+    async (api, args): Promise<any> => {
         const typedApi = getTypedApi(api);
 
         const links = Dash.gatherLinks(args.data);

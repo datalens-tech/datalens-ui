@@ -1,13 +1,13 @@
 import z from 'zod';
 
+import {getTypedApi} from '../../..';
 import {EntryScope} from '../../../..';
 import {registerComponentId} from '../../../../components/public-api/utils';
 import {ServerError} from '../../../../constants/error';
 import {permissionsSchema} from '../../../../zod-schemas/permissions';
 import {createTypedAction} from '../../../gateway-utils';
-import {getTypedApi} from '../../../simple-schema';
+import {migrateDashToV1} from '../../helpers/dash/migrate-dash-to-v1';
 import {dashSchemaV1} from '../../schemas/dash';
-import {migrateDashToV1} from '../../utils/dash/migrate-dash-to-v1';
 
 export const getDashArgsSchema = z
     .object({
@@ -38,7 +38,7 @@ export const getDashboardV1 = createTypedAction(
         paramsSchema: getDashArgsSchema,
         resultSchema: getDashResultSchema,
     },
-    async (api, args) => {
+    async (api, args): Promise<any> => {
         const {
             dashboardId,
             includePermissions,

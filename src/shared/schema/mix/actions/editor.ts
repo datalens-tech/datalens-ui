@@ -7,8 +7,8 @@ import type {
     UpdateEditorChartArgs,
     UpdateEditorChartResponse,
 } from '../../us/types';
-import {getEntryLinks} from '../utils';
-import {validateData} from '../utils/editor/validation';
+import {getEntryLinks} from '../helpers';
+import {validateData} from '../helpers/editor/validation';
 
 export const editorActions = {
     createEditorChart: createAction<CreateEditorChartResponse, CreateEditorChartArgs>(

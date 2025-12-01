@@ -37,7 +37,7 @@ import {
     Feature,
     ParamsSettingsQA,
 } from 'shared';
-import {getEntryVisualizationType} from 'shared/schema/mix/utils';
+import {getEntryVisualizationType} from 'shared/schema/mix/helpers';
 import {Collapse} from 'ui/components/Collapse/Collapse';
 import {Interpolate} from 'ui/components/Interpolate';
 import {TabMenu} from 'ui/components/TabMenu/TabMenu';

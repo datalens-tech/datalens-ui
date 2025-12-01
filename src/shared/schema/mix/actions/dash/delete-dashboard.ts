@@ -1,6 +1,6 @@
+import {getTypedApi} from '../../..';
 import {EntryScope} from '../../../..';
 import {createTypedAction} from '../../../gateway-utils';
-import {getTypedApi} from '../../../simple-schema';
 import {deleteDashArgsSchema, deleteDashResultSchema} from '../../schemas/dash';
 
 export const deleteDashboard = createTypedAction(
@@ -8,7 +8,7 @@ export const deleteDashboard = createTypedAction(
         paramsSchema: deleteDashArgsSchema,
         resultSchema: deleteDashResultSchema,
     },
-    async (api, {lockToken, dashboardId}) => {
+    async (api, {lockToken, dashboardId}): Promise<any> => {
         const typedApi = getTypedApi(api);
 
         await typedApi.us._deleteUSEntry({

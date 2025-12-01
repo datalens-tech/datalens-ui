@@ -1,8 +1,8 @@
+import {getTypedApi} from '../../..';
 import {EntryScope, EntryUpdateMode} from '../../../..';
 import {Dash} from '../../../../../server/components/sdk';
 import {ServerError} from '../../../../constants/error';
 import {createTypedAction} from '../../../gateway-utils';
-import {getTypedApi} from '../../../simple-schema';
 import {updateDashArgsSchema, updateDashResultSchema} from '../../schemas/dash';
 import type {DashV1} from '../../types';
 
@@ -13,7 +13,10 @@ export const updateDashboardV1 = createTypedAction(
         paramsSchema: updateDashArgsSchema,
         resultSchema: updateDashResultSchema,
     },
-    async (api, {entryId, mode = EntryUpdateMode.Publish, meta, data, revId, annotation}) => {
+    async (
+        api,
+        {entryId, mode = EntryUpdateMode.Publish, meta, data, revId, annotation},
+    ): Promise<any> => {
         const typedApi = getTypedApi(api);
 
         const savedEntry = await typedApi.us.getEntry({entryId});
