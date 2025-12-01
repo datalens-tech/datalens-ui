@@ -1,5 +1,5 @@
-import {authSimpleSchema} from './simple-schema';
+import auth from './auth';
 
 export const authSchema = {
-    ...authSimpleSchema,
+    auth,
 };

@@ -94,6 +94,8 @@ jobs:
               break
             fi
             if [ "${FARM_STATUS}" = "errored" ]; then
+              echo "  status [${FARM_STATUS}], exit..."
+              echo "  ⚠️ please check build farm logs on farm instance..."
               exit 1
             fi
             echo "  retry, status [${FARM_STATUS}]..."
