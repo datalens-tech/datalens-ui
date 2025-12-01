@@ -1,9 +1,9 @@
 import z from 'zod';
 
+import {getTypedApi} from '../../..';
 import {ENTRY_TYPES, EntryScope, mapChartsConfigToLatestVersion} from '../../../..';
 import {ServerError} from '../../../../constants/error';
 import {createTypedAction} from '../../../gateway-utils';
-import {getTypedApi} from '../../../simple-schema';
 
 const getWizardChartArgsSchema = z.strictObject({
     chartId: z.string(),
@@ -22,7 +22,7 @@ export const __getWizardChart__ = createTypedAction(
         paramsSchema: getWizardChartArgsSchema,
         resultSchema: getWizardChartResultSchema,
     },
-    async (api, args) => {
+    async (api, args): Promise<any> => {
         const {
             includePermissions,
             includeLinks,

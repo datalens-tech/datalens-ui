@@ -1,8 +1,8 @@
 import z from 'zod';
 
+import {getTypedApi} from '../../..';
 import {ENTRY_TYPES, EntryScope} from '../../../..';
 import {createTypedAction} from '../../../gateway-utils';
-import {getTypedApi} from '../../../simple-schema';
 
 const deleteWizardChartArgsSchema = z.strictObject({
     chartId: z.string(),
@@ -15,7 +15,7 @@ export const deleteWizardChart = createTypedAction(
         paramsSchema: deleteWizardChartArgsSchema,
         resultSchema: deleteWizardChartResultSchema,
     },
-    async (api, {chartId}) => {
+    async (api, {chartId}): Promise<any> => {
         const typedApi = getTypedApi(api);
 
         await typedApi.us._deleteUSEntry({

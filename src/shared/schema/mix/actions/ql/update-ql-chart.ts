@@ -1,9 +1,9 @@
 import z from 'zod';
 
+import {getTypedApi} from '../../..';
 import {ENTRY_TYPES, EntryScope, EntryUpdateMode} from '../../../..';
 import {ServerError} from '../../../../constants/error';
 import {createTypedAction} from '../../../gateway-utils';
-import {getTypedApi} from '../../../simple-schema';
 
 const updateQlChartArgsSchema = z.strictObject({
     key: z.string().min(1),
@@ -27,7 +27,10 @@ export const __updateQlChart__ = createTypedAction(
         paramsSchema: updateQlChartArgsSchema,
         resultSchema: updateQlChartResultSchema,
     },
-    async (api, {entryId, mode = EntryUpdateMode.Publish, meta, data, revId, annotation}) => {
+    async (
+        api,
+        {entryId, mode = EntryUpdateMode.Publish, meta, data, revId, annotation},
+    ): Promise<any> => {
         const typedApi = getTypedApi(api);
 
         const savedEntry = await typedApi.us.getEntry({entryId});

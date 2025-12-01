@@ -1,8 +1,8 @@
 import z from 'zod';
 
+import {getTypedApi} from '../../..';
 import {ENTRY_TYPES, EntryScope} from '../../../..';
 import {createTypedAction} from '../../../gateway-utils';
-import {getTypedApi} from '../../../simple-schema';
 
 import {__getQLChart__} from './get-ql-chart';
 
@@ -17,7 +17,7 @@ export const deleteQLChart = createTypedAction(
         paramsSchema: deleteQLChartArgsSchema,
         resultSchema: deleteQLChartResultSchema,
     },
-    async (api, {chartId}) => {
+    async (api, {chartId}): Promise<any> => {
         const typedApi = getTypedApi(api);
 
         await typedApi.us._deleteUSEntry({

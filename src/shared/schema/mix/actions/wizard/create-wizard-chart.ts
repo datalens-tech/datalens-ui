@@ -1,8 +1,8 @@
 import z from 'zod';
 
+import {getTypedApi} from '../../..';
 import {ENTRY_TYPES, EntryScope, EntryUpdateMode} from '../../../..';
 import {createTypedAction} from '../../../gateway-utils';
-import {getTypedApi} from '../../../simple-schema';
 
 const createWizardChartArgsSchema = z.object({
     type: z.enum(ENTRY_TYPES.wizard),
@@ -26,7 +26,7 @@ export const __createWizardChart__ = createTypedAction(
         paramsSchema: createWizardChartArgsSchema,
         resultSchema: createWizardChartResultSchema,
     },
-    async (api, args) => {
+    async (api, args): Promise<any> => {
         const typedApi = getTypedApi(api);
 
         const createEntryResult = await typedApi.us._createEntry({

@@ -1,9 +1,9 @@
 import z from 'zod';
 
+import {getTypedApi} from '../../..';
 import {ENTRY_TYPES, EntryScope} from '../../../..';
 import {ServerError} from '../../../../constants/error';
 import {createTypedAction} from '../../../gateway-utils';
-import {getTypedApi} from '../../../simple-schema';
 
 const getQLChartArgsSchema = z.strictObject({
     chartId: z.string(),
@@ -22,7 +22,7 @@ export const __getQLChart__ = createTypedAction(
         paramsSchema: getQLChartArgsSchema,
         resultSchema: getQLChartResultSchema,
     },
-    async (api, args) => {
+    async (api, args): Promise<any> => {
         const {
             includePermissions,
             includeLinks,
