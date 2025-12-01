@@ -1,44 +1,17 @@
-import z from 'zod';
-
+import type {GetDashV1Result} from '../../..';
 import {getTypedApi} from '../../..';
 import {EntryScope} from '../../../..';
-import {registerComponentId} from '../../../../components/public-api/utils';
 import {ServerError} from '../../../../constants/error';
-import {permissionsSchema} from '../../../../zod-schemas/permissions';
 import {createTypedAction} from '../../../gateway-utils';
 import {migrateDashToV1} from '../../helpers/dash/migrate-dash-to-v1';
-import {dashSchemaV1} from '../../schemas/dash';
-
-export const getDashArgsSchema = z
-    .object({
-        dashboardId: z.string(),
-        revId: z.string().optional(),
-        includePermissions: z.boolean().optional().default(false),
-        includeLinks: z.boolean().optional().default(false),
-        includeFavorite: z.boolean().optional().default(false),
-        branch: z.enum(['published', 'saved']).optional(),
-        workbookId: z.string().optional(),
-    })
-    .openapi(registerComponentId('GetDashboardArgs'), {
-        title: 'GetDashboardArgs',
-    });
-
-export const getDashResultSchema = z
-    .object({
-        entry: dashSchemaV1,
-        isFavorite: z.boolean().optional(),
-        permissions: permissionsSchema.optional(),
-    })
-    .openapi(registerComponentId('GetDashboardResult'), {
-        title: 'GetDashboardResult',
-    });
+import {getDashV1ArgsSchema, getDashV1ResultSchema} from '../../schemas/dash/get-dashboard-v1';
 
 export const getDashboardV1 = createTypedAction(
     {
-        paramsSchema: getDashArgsSchema,
-        resultSchema: getDashResultSchema,
+        paramsSchema: getDashV1ArgsSchema,
+        resultSchema: getDashV1ResultSchema,
     },
-    async (api, args): Promise<any> => {
+    async (api, args): Promise<GetDashV1Result> => {
         const {
             dashboardId,
             includePermissions,

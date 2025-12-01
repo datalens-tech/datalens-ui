@@ -2,15 +2,18 @@ import {getTypedApi} from '../../..';
 import {EntryScope} from '../../../..';
 import {Dash} from '../../../../../server/components/sdk';
 import {createTypedAction} from '../../../gateway-utils';
-import {createDashArgsSchema, createDashResultSchema} from '../../schemas/dash';
-import type {DashV1} from '../../types';
+import {
+    createDashV1ArgsSchema,
+    createDashV1ResultSchema,
+} from '../../schemas/dash/create-dashboard-v1';
+import type {CreateDashV1Result, DashV1} from '../../types';
 
 export const createDashboardV1 = createTypedAction(
     {
-        paramsSchema: createDashArgsSchema,
-        resultSchema: createDashResultSchema,
+        paramsSchema: createDashV1ArgsSchema,
+        resultSchema: createDashV1ResultSchema,
     },
-    async (api, args): Promise<any> => {
+    async (api, args): Promise<CreateDashV1Result> => {
         const typedApi = getTypedApi(api);
 
         const links = Dash.gatherLinks(args.data);
