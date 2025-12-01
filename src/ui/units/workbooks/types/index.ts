@@ -12,7 +12,7 @@ export type WorkbookEntriesFilters = {
     filterString?: string;
 };
 
-export type WorkbookEntry = GetEntryResponse & {name: string; isDelegated?: boolean};
+export type WorkbookEntry = GetEntryResponse & {name: string};
 export type WorkbookSharedEntry = WorkbookEntry & {isDelegated: boolean; scope: SharedScope};
 
 export type EntryChunkItem<T extends WorkbookEntry> = {
