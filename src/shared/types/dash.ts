@@ -176,6 +176,10 @@ export function isColorByTheme(value: unknown): value is ColorByTheme {
     );
 }
 
+export function isColorSettings(value: unknown): value is ColorSettings {
+    return typeof value === 'string' || isColorByTheme(value);
+}
+
 export interface DashTabItemBase {
     id: string;
     namespace: string;

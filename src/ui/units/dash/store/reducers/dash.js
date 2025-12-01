@@ -5,7 +5,7 @@ import pick from 'lodash/pick';
 import {DashTabItemTitleSizes, DashTabItemType} from 'shared';
 import {CustomPaletteTextColors, TITLE_WIDGET_TEXT_COLORS_PRESET} from 'shared/constants/widgets';
 import {migrateConnectionsForGroupControl} from 'ui/store/utils/controlDialog';
-import {getUpdatedBackgroundValue, getUpdatedConnections} from 'ui/utils/copyItems';
+import {getUpdatedBackgroundData, getUpdatedConnections} from 'ui/utils/copyItems';
 
 import {EMBEDDED_MODE} from '../../../../constants/embedded';
 import {Mode} from '../../modules/constants';
@@ -241,8 +241,13 @@ function dash(state = initialState, action) {
                 delete itemData.textColor;
             }
             const backgroundData =
-                'background' in itemData
-                    ? {background: getUpdatedBackgroundValue(itemData.background, false)}
+                'background' in itemData || 'backgroundSettings' in itemData
+                    ? getUpdatedBackgroundData(
+                          itemData.background,
+                          itemData.backgroundSettings,
+                          false,
+                          true,
+                      )
                     : {};
             const newItem = {
                 ...action.payload.item,

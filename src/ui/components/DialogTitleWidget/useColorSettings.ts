@@ -18,7 +18,10 @@ const isDashColorPickersByThemeEnabled = isEnabledFeature(Feature.EnableDashColo
 export function useColorSettings(props: UseColorSettingsProps) {
     const getPartialStateFromProps = React.useCallback((propsLocal: UseColorSettingsProps) => {
         return {
-            oldColor: propsLocal.color ?? propsLocal.defaultOldColor,
+            oldColor:
+                propsLocal.color ?? isDashColorPickersByThemeEnabled
+                    ? undefined
+                    : propsLocal.defaultOldColor,
             colorSettings: getWidgetColorSettings({
                 colorSettings: propsLocal.colorSettings,
                 oldColor: propsLocal.color,
@@ -72,7 +75,7 @@ type UseBackgroundColorSettingsProps = {
 
 function getColorSettingsProps(propsLocal: UseBackgroundColorSettingsProps): UseColorSettingsProps {
     return {
-        color: getResultedOldBgColor(propsLocal.background, propsLocal.defaultOldColor),
+        color: getResultedOldBgColor(propsLocal.background, undefined),
         colorSettings: propsLocal.backgroundSettings?.color,
         defaultOldColor: propsLocal.defaultOldColor,
         enableSeparateThemeColorSelector: propsLocal.enableSeparateThemeColorSelector,

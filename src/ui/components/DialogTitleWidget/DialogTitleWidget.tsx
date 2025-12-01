@@ -29,7 +29,7 @@ import {
     DialogDashWidgetQA,
     Feature,
 } from 'shared';
-import {CustomPaletteBgColors} from 'shared/constants/widgets';
+import {CustomPaletteBgColors, CustomPaletteTextColors} from 'shared/constants/widgets';
 import {registry} from 'ui/registry';
 import {PaletteBackground} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 import {PaletteText} from 'ui/units/dash/containers/Dialogs/components/PaletteText/PaletteText';
@@ -117,7 +117,7 @@ const defaultOpenedItemData: DashTabItemTitle['data'] = {
     size: FONT_SIZE_OPTIONS[0].value,
     showInTOC: true,
     autoHeight: false,
-    background: {color: CustomPaletteBgColors.NONE},
+    background: isDashColorPickersByThemeEnabled ? undefined : {color: CustomPaletteBgColors.NONE},
     backgroundSettings: undefined,
     textColor: undefined,
 };
@@ -128,7 +128,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         dialogIsVisible,
         enableAutoheight = true,
         enableShowInTOC = true,
-        enableCustomBgColorSelector,
+        enableCustomBgColorSelector = false,
         enableSeparateThemeColorSelector = true,
         enableCustomTextColorSelector = false,
         theme,
@@ -179,6 +179,8 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
     } = useColorSettings({
         color: openedItemData.textColor,
         colorSettings: openedItemData.textColorSettings,
+        defaultOldColor: CustomPaletteTextColors.PRIMARY,
+        enableSeparateThemeColorSelector: enableSeparateThemeColorSelector,
     });
 
     const {
