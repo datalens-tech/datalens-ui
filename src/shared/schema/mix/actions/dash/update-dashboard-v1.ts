@@ -3,13 +3,12 @@ import {EntryScope, EntryUpdateMode} from '../../../..';
 import {Dash} from '../../../../../server/components/sdk';
 import {ServerError} from '../../../../constants/error';
 import {createTypedAction} from '../../../gateway-utils';
+import {DASH_VERSION_1} from '../../schemas/dash/dash-v1';
 import {
     updateDashV1ArgsSchema,
     updateDashV1ResultSchema,
 } from '../../schemas/dash/update-dashboard-v1';
 import type {DashV1, UpdateDashV1Result} from '../../types';
-
-const CURRENT_DASH_VERSION = 1 as const;
 
 export const updateDashboardV1 = createTypedAction(
     {
@@ -30,7 +29,7 @@ export const updateDashboardV1 = createTypedAction(
             });
         }
 
-        if (savedEntry.version && savedEntry.version > CURRENT_DASH_VERSION) {
+        if (savedEntry.version && savedEntry.version > DASH_VERSION_1) {
             throw new ServerError(
                 `The entry was created or updated using a newer API version and cannot be modified through this API version. 
                 Entry version is: ${savedEntry.version}`,
@@ -59,7 +58,7 @@ export const updateDashboardV1 = createTypedAction(
 
         return {
             entry: {
-                version: CURRENT_DASH_VERSION,
+                version: DASH_VERSION_1,
                 data: updateEntryResult.data as DashV1['data'],
                 meta: updateEntryResult.meta as DashV1['meta'],
                 scope: updateEntryResult.scope as EntryScope.Dash,

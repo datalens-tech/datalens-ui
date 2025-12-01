@@ -2,6 +2,7 @@ import type {DashData} from '../../../..';
 import {DashSchemeConverter} from '../../../..';
 import {ServerError} from '../../../../constants/error';
 import type {DashV1, GetEntryResponse} from '../../../types';
+import {DASH_VERSION_1} from '../../schemas/dash/dash-v1';
 
 export const migrateDashToV1 = ({
     version,
@@ -25,7 +26,7 @@ export const migrateDashToV1 = ({
     annotation,
     links,
 }: GetEntryResponse): DashV1 => {
-    if (version && version > 1) {
+    if (version && version > DASH_VERSION_1) {
         throw new ServerError(`Unsupported dashboard version: ${version}`, {
             status: 500,
         });
@@ -46,14 +47,17 @@ export const migrateDashToV1 = ({
 
     let migratedData: DashData;
 
-    if (version === 1 || !DashSchemeConverter.isUpdateNeeded(data as unknown as DashData)) {
+    if (
+        version === DASH_VERSION_1 ||
+        !DashSchemeConverter.isUpdateNeeded(data as unknown as DashData)
+    ) {
         migratedData = data as unknown as DashData;
     } else {
         migratedData = DashSchemeConverter.update(data as unknown as DashData);
     }
 
     return {
-        version: 1,
+        version: DASH_VERSION_1,
         scope,
         entryId,
         key,

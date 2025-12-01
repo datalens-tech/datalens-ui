@@ -3,6 +3,8 @@ import z from 'zod';
 import {EntryScope} from '../../../..';
 import {dataSchema} from '../../../../zod-schemas/dash';
 
+export const DASH_VERSION_1 = 1;
+
 export const dashSchemaV1 = z.object({
     annotation: z
         .object({
@@ -27,6 +29,6 @@ export const dashSchemaV1 = z.object({
     type: z.literal(''),
     updatedAt: z.string(),
     updatedBy: z.string(),
-    version: z.literal(1),
+    version: z.literal(DASH_VERSION_1),
     workbookId: z.union([z.null(), z.string()]),
 });
