@@ -7,12 +7,14 @@ import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import cloneDeep from 'lodash/cloneDeep';
 import merge from 'lodash/merge';
-import {CustomPaletteBgColors, DialogDashWidgetItemQA, DialogDashWidgetQA} from 'shared';
+import {CustomPaletteBgColors, DialogDashWidgetItemQA, DialogDashWidgetQA, Feature} from 'shared';
 import type {DashTabItemImage, EntryScope, RecursivePartial} from 'shared';
 import {registry} from 'ui/registry';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {PaletteBackground} from '../..//units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
+import {useBackgroundColorSettings} from '../DialogTitleWidget/useColorSettings';
 
 import './DialogImageWidget.scss';
 
@@ -20,16 +22,20 @@ const b = block('dialog-image');
 const INPUT_SRC_ID = 'dialog-image-input-src';
 const INPUT_ALT_ID = 'dialog-image-input-alt';
 const INPUT_PRESERVE_ASPECT_RATIO_ID = 'dialog-image-input-preserve-aspect-ratio';
+
+const isDashColorPickersByThemeEnabled = isEnabledFeature(Feature.EnableDashColorPickersByTheme);
+
 const DEFAULT_ITEM_DATA: DashTabItemImage['data'] = {
     src: '',
     alt: '',
-    background: {
-        color: CustomPaletteBgColors.NONE,
-    },
+    background: isDashColorPickersByThemeEnabled ? undefined : {color: CustomPaletteBgColors.NONE},
+    backgroundSettings: undefined,
     preserveAspectRatio: true,
 };
 
-export type DialogImageWidgetFeatureProps = {};
+export type DialogImageWidgetFeatureProps = {
+    enableSeparateThemeColorSelector?: boolean;
+};
 
 type Props = {
     openedItemId: string | null;
@@ -59,6 +65,8 @@ export function DialogImageWidget(props: Props) {
         onClose,
         onApply,
         scope,
+        theme,
+        enableSeparateThemeColorSelector,
     } = props;
     const [data, setData] = React.useState(openedItemData);
     const [validationErrors, setValidationErrors] = React.useState<Record<string, string>>({});
@@ -67,6 +75,19 @@ export function DialogImageWidget(props: Props) {
         const resultData = merge(cloneDeep(data), updates);
         setData(resultData);
     };
+
+    const {
+        oldBackgroundColor,
+        backgroundColorSettings,
+        setOldBackgroundColor,
+        setBackgroundColorSettings,
+        resultedBackgroundSettings,
+    } = useBackgroundColorSettings({
+        background: openedItemData.background,
+        backgroundSettings: openedItemData.backgroundSettings,
+        defaultOldColor: CustomPaletteBgColors.NONE,
+        enableSeparateThemeColorSelector: enableSeparateThemeColorSelector,
+    });
 
     const handleSrcUpdate = (nextSrc: string) => {
         setValidationErrors({
@@ -77,14 +98,18 @@ export function DialogImageWidget(props: Props) {
     };
 
     const handleApply = () => {
-        const nextValidationErrors = getValidationErrors(data);
+        const newData = {
+            ...data,
+            ...resultedBackgroundSettings,
+        };
+        const nextValidationErrors = getValidationErrors(newData);
 
         if (Object.keys(nextValidationErrors).length) {
             setValidationErrors(nextValidationErrors);
             return;
         }
 
-        onApply({data});
+        onApply({data: newData});
         onClose();
     };
 
@@ -151,9 +176,13 @@ export function DialogImageWidget(props: Props) {
                     label={i18n('dash.dashkit-plugin-common.view', 'label_background-checkbox')}
                 >
                     <PaletteBackground
-                        color={data.background?.color}
-                        onSelect={(color) => updateData({background: {color}})}
+                        color={backgroundColorSettings}
+                        oldColor={oldBackgroundColor}
+                        theme={theme}
+                        onSelect={setBackgroundColorSettings}
+                        onSelectOldColor={setOldBackgroundColor}
                         enableCustomBgColorSelector
+                        enableSeparateThemeColorSelector={enableSeparateThemeColorSelector}
                     />
                 </FormRow>
             </Dialog.Body>

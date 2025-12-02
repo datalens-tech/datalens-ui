@@ -1,0 +1,18 @@
+.color-inputs-group {
+    display: flex;
+    gap: var(--g-spacing-4);
+
+    &__item {
+        display: flex;
+        align-items: center;
+        gap: var(--g-spacing-2);
+    }
+
+    &__theme-icon {
+        color: var(--g-color-text-hint);
+    }
+
+    &__color-input {
+        flex: 0 1 200px;
+    }
+}

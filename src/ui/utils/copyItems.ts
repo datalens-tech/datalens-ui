@@ -1,10 +1,22 @@
 import type {ConfigItem, ConfigItemData} from '@gravity-ui/dashkit';
-import {WIDGET_BG_COLORS_PRESET, getDefaultWidgetBackgroundColor} from 'shared';
-import type {BackgroundSettings} from 'shared/types';
-import {DashTabItemType, Feature, isBackgroundSettings} from 'shared/types';
+import {
+    CustomPaletteBgColors,
+    WIDGET_BG_COLORS_PRESET,
+    getColorSettingsWithValue,
+} from 'shared/constants';
+import {getResultedOldBgColor} from 'shared/modules/dash-scheme-converter';
+import type {BackgroundSettings, ColorSettings, OldBackgroundSettings} from 'shared/types';
+import {
+    DashTabItemType,
+    Feature,
+    isColorByTheme,
+    isColorSettings,
+    isOldBackgroundSettings,
+} from 'shared/types';
 import type {ConnectionsData} from 'ui/components/DialogRelations/types';
 
 import {isEnabledFeature} from './isEnabledFeature';
+import {computeColorFromToken} from './widgetColors';
 
 // targetId - item is copied data from localStorage
 // id - item is already created via DashKit.setItem
@@ -96,19 +108,62 @@ export const getUpdatedConnections = ({
     return [...connections, ...copiedConnections];
 };
 
-export function getUpdatedBackgroundValue(
-    background: unknown,
-    allowCusomValues?: boolean,
-): Omit<BackgroundSettings, 'enabled'> {
+export function getUpdatedBackgroundData({
+    background,
+    backgroundSettings,
+    allowCustomValues = false,
+    enableSeparateThemeColorSelector = true,
+    defaultOldColor = CustomPaletteBgColors.NONE,
+}: {
+    background: unknown;
+    backgroundSettings: unknown;
+    allowCustomValues: boolean;
+    enableSeparateThemeColorSelector: boolean;
+    defaultOldColor: string;
+}): {
+    backgroundSettings: BackgroundSettings | undefined;
+    background: OldBackgroundSettings | undefined;
+} {
+    const isDashColorPickersByThemeEnabled = isEnabledFeature(
+        Feature.EnableDashColorPickersByTheme,
+    );
+    let oldColor: string | undefined;
+    let newColor: ColorSettings | undefined;
+
+    if (isOldBackgroundSettings(background)) {
+        oldColor = getResultedOldBgColor(background, undefined);
+        if (
+            !isDashColorPickersByThemeEnabled &&
+            !allowCustomValues &&
+            oldColor &&
+            WIDGET_BG_COLORS_PRESET.includes(oldColor)
+        ) {
+            oldColor = undefined;
+        }
+    }
+
+    if (
+        typeof backgroundSettings === 'object' &&
+        backgroundSettings !== null &&
+        'color' in backgroundSettings &&
+        isColorSettings(backgroundSettings.color)
+    ) {
+        const color = backgroundSettings.color;
+        if (
+            (isColorByTheme(color) && enableSeparateThemeColorSelector) ||
+            (!isColorByTheme(color) && !enableSeparateThemeColorSelector)
+        ) {
+            newColor = color;
+        }
+    } else if (isDashColorPickersByThemeEnabled) {
+        newColor = getColorSettingsWithValue(
+            computeColorFromToken(oldColor ?? defaultOldColor),
+            enableSeparateThemeColorSelector,
+        );
+    }
+
     return {
-        color:
-            isBackgroundSettings(background) &&
-            background?.color &&
-            background.enabled !== false &&
-            (allowCusomValues || WIDGET_BG_COLORS_PRESET.includes(background.color))
-                ? background.color
-                : getDefaultWidgetBackgroundColor(
-                      isEnabledFeature(Feature.EnableCommonChartDashSettings),
-                  ),
+        background: oldColor ? {color: oldColor} : undefined,
+        backgroundSettings: newColor ? {color: newColor} : undefined,
     };
 }

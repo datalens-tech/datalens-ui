@@ -2,40 +2,80 @@ import {dateTimeUtc} from '@gravity-ui/date-utils';
 import omitBy from 'lodash/omitBy';
 
 import {DASH_CURRENT_SCHEME_VERSION} from '../constants/dash';
-import {DUPLICATED_WIDGET_BG_COLORS_PRESET} from '../constants/widgets';
-import type {BackgroundSettings, DashData, DashTab, DashTabItem} from '../types';
-import {DashTabConnectionKind, DashTabItemControlElementType, DashTabItemType} from '../types';
+import {CustomPaletteBgColors, DUPLICATED_WIDGET_BG_COLORS_PRESET} from '../constants/widgets';
+import type {DashData, DashTab, DashTabItem, OldBackgroundSettings} from '../types';
+import {
+    DashTabConnectionKind,
+    DashTabItemControlElementType,
+    DashTabItemType,
+    isOldBackgroundSettings,
+} from '../types';
 
 const DATE_FORMAT_V7 = 'YYYY-MM-DD';
 
-function getActualBackground(background?: BackgroundSettings): BackgroundSettings | undefined {
-    if (background && DUPLICATED_WIDGET_BG_COLORS_PRESET.includes(background.color)) {
-        return {
-            color: background.color.replace('medium', 'light-hover'),
-        };
+export function getResultedOldBgColor(
+    oldBgColor: OldBackgroundSettings | undefined,
+    defaultColor: string | undefined,
+): string | undefined {
+    if (!oldBgColor) {
+        return defaultColor;
+    }
+    if (typeof oldBgColor === 'string') {
+        // where was a bug, when new Textwidgets were created with background color set by string
+        return oldBgColor;
+    }
+    if ('enabled' in oldBgColor && oldBgColor.enabled === false) {
+        if (oldBgColor.color === CustomPaletteBgColors.NONE) {
+            // where was a bug, when new widgets were created with background color set to transparent, but enabled set to false
+            return CustomPaletteBgColors.NONE;
+        }
+        return defaultColor;
+    }
+    if (!oldBgColor.color) {
+        return defaultColor;
+    }
+    return oldBgColor.color;
+}
+
+function getActualOldBackground(
+    background: OldBackgroundSettings | undefined,
+    defaultColor: string | undefined,
+): string | undefined {
+    if (
+        background &&
+        isOldBackgroundSettings(background) &&
+        background.color &&
+        DUPLICATED_WIDGET_BG_COLORS_PRESET.includes(background.color)
+    ) {
+        background.color.replace('medium', 'light-hover');
     }
 
-    return background;
+    return getResultedOldBgColor(background, defaultColor);
 }
 
 export function migrateBgColor(item: DashTabItem): DashTabItem {
+    if (DashTabItemType.GroupControl === item.type || DashTabItemType.Control === item.type) {
+        return item;
+    }
     const newItem: DashTabItem = Object.assign({...item}, {data: Object.assign({}, item.data)});
 
+    const oldBgColorValue = getActualOldBackground(newItem.data.background, undefined);
     if ('background' in newItem.data) {
-        if (
-            newItem.data.background &&
-            DUPLICATED_WIDGET_BG_COLORS_PRESET.includes(newItem.data.background.color)
-        ) {
-            newItem.data.background = getActualBackground(newItem.data.background);
-
-            return newItem;
-        }
+        newItem.data.background = oldBgColorValue
+            ? {
+                  color: oldBgColorValue,
+              }
+            : undefined;
+        return newItem;
     }
     if (newItem.type === DashTabItemType.Widget) {
-        newItem.data.tabs = newItem.data.tabs.map((tab) => ({
-            ...tab,
-            background: getActualBackground(tab.background),
-        }));
+        const bgFromTab = getActualOldBackground(newItem.data.tabs?.[0]?.background, undefined);
+        newItem.data.background = bgFromTab
+            ? {
+                  color: bgFromTab,
+              }
+            : undefined;
+        newItem.data.tabs.forEach((tab) => delete tab.background);
 
         return newItem;
     }
