@@ -1,10 +1,9 @@
 import type {ConfigItem, ConfigItemData} from '@gravity-ui/dashkit';
-import {WIDGET_BG_COLORS_PRESET, getDefaultWidgetBackgroundColor} from 'shared';
+import {CustomPaletteBgColors, WIDGET_BG_COLORS_PRESET} from 'shared';
+import {getActualOldBackground} from 'shared/modules/dash-scheme-converter';
 import type {BackgroundSettings} from 'shared/types';
-import {DashTabItemType, Feature, isBackgroundSettings} from 'shared/types';
+import {DashTabItemType, isBackgroundSettings} from 'shared/types';
 import type {ConnectionsData} from 'ui/components/DialogRelations/types';
-
-import {isEnabledFeature} from './isEnabledFeature';
 
 // targetId - item is copied data from localStorage
 // id - item is already created via DashKit.setItem
@@ -99,16 +98,22 @@ export const getUpdatedConnections = ({
 export function getUpdatedBackgroundValue(
     background: unknown,
     allowCusomValues?: boolean,
-): Omit<BackgroundSettings, 'enabled'> {
-    return {
-        color:
-            isBackgroundSettings(background) &&
-            background?.color &&
-            background.enabled !== false &&
-            (allowCusomValues || WIDGET_BG_COLORS_PRESET.includes(background.color))
-                ? background.color
-                : getDefaultWidgetBackgroundColor(
-                      isEnabledFeature(Feature.EnableCommonChartDashSettings),
-                  ),
-    };
+    defaultOldColor?: string,
+): Omit<BackgroundSettings, 'enabled'> | undefined {
+    if (isBackgroundSettings(background)) {
+        const newBg = getActualOldBackground(background, defaultOldColor);
+
+        if (
+            allowCusomValues ||
+            WIDGET_BG_COLORS_PRESET.includes(background.color) ||
+            Object.values<string>(CustomPaletteBgColors).includes(background.color)
+        ) {
+            return newBg;
+        }
+    }
+    return defaultOldColor
+        ? {
+              color: defaultOldColor,
+          }
+        : undefined;
 }
