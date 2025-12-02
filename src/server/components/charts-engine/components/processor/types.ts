@@ -165,6 +165,9 @@ export type ChartBuilder = {
         actionParams: StringParams;
         hooks: ProcessorHooks;
     }) => Promise<ChartBuilderResult>;
+    buildPaletteSources?: (args: {
+        sources?: Record<string, DataFetcherResult>;
+    }) => Promise<ChartBuilderResult>;
     buildChartLibraryConfig: (args: {
         data?: unknown;
         params: StringParams;
