@@ -175,7 +175,7 @@ class Control<TProviderData> extends React.PureComponent<
         }
 
         if (type === 'button' && control.onClick?.action === CLICK_ACTION_TYPE.RUN_ACTIVITY) {
-            this.props.runActivity?.({params: control.onClick.args});
+            this.props.runActivity?.({params: {...newParams, ...control.onClick.args}});
             return;
         }
 
