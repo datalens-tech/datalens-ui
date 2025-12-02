@@ -2,23 +2,64 @@ import {dateTimeUtc} from '@gravity-ui/date-utils';
 import omitBy from 'lodash/omitBy';
 
 import {DASH_CURRENT_SCHEME_VERSION} from '../constants/dash';
-import {DUPLICATED_WIDGET_BG_COLORS_PRESET} from '../constants/widgets';
+import {
+    CustomPaletteBgColors,
+    DUPLICATED_WIDGET_BG_COLORS_PRESET,
+    getDefaultDashWidgetBgColorByType,
+} from '../constants/widgets';
 import type {BackgroundSettings, DashData, DashTab, DashTabItem} from '../types';
-import {DashTabConnectionKind, DashTabItemControlElementType, DashTabItemType} from '../types';
+import {
+    DashTabConnectionKind,
+    DashTabItemControlElementType,
+    DashTabItemType,
+    isBackgroundSettings,
+} from '../types';
 
 const DATE_FORMAT_V7 = 'YYYY-MM-DD';
 
-function getActualBackground(background?: BackgroundSettings): BackgroundSettings | undefined {
-    if (background && DUPLICATED_WIDGET_BG_COLORS_PRESET.includes(background.color)) {
-        return {
-            color: background.color.replace('medium', 'light-hover'),
-        };
+export function getResultedOldBgColor(
+    oldBgColor: BackgroundSettings | undefined,
+    defaultColor: string | undefined,
+): string | undefined {
+    if (!oldBgColor) {
+        return defaultColor;
     }
-
-    return background;
+    if (typeof oldBgColor === 'string') {
+        // where was a bug, when new Textwidgets were created with background color set by string
+        return oldBgColor;
+    }
+    if ('enabled' in oldBgColor && oldBgColor.enabled === false) {
+        if (oldBgColor.color === CustomPaletteBgColors.NONE) {
+            // where was a bug, when new widgets were created with background color set to transparent, but enabled set to false
+            return CustomPaletteBgColors.NONE;
+        }
+        return defaultColor;
+    }
+    if (!oldBgColor.color) {
+        return defaultColor;
+    }
+    return oldBgColor.color;
 }
 
-export function migrateBgColor(item: DashTabItem): DashTabItem {
+export function getActualOldBackground(
+    background: BackgroundSettings | undefined,
+    defaultColor: string | undefined,
+): Omit<BackgroundSettings, 'enabled'> | undefined {
+    if (
+        background &&
+        isBackgroundSettings(background) &&
+        background.color &&
+        DUPLICATED_WIDGET_BG_COLORS_PRESET.includes(background.color)
+    ) {
+        background.color.replace('medium', 'light-hover');
+    }
+
+    const color = getResultedOldBgColor(background, defaultColor);
+
+    return color ? {color} : undefined;
+}
+
+export function migrateBgColor(item: DashTabItem, defaultOldColor?: string): DashTabItem {
     const newItem: DashTabItem = Object.assign({...item}, {data: Object.assign({}, item.data)});
 
     if ('background' in newItem.data) {
@@ -26,7 +67,10 @@ export function migrateBgColor(item: DashTabItem): DashTabItem {
             newItem.data.background &&
             DUPLICATED_WIDGET_BG_COLORS_PRESET.includes(newItem.data.background.color)
         ) {
-            newItem.data.background = getActualBackground(newItem.data.background);
+            newItem.data.background = getActualOldBackground(
+                newItem.data.background,
+                defaultOldColor,
+            );
 
             return newItem;
         }
@@ -34,7 +78,7 @@ export function migrateBgColor(item: DashTabItem): DashTabItem {
     if (newItem.type === DashTabItemType.Widget) {
         newItem.data.tabs = newItem.data.tabs.map((tab) => ({
             ...tab,
-            background: getActualBackground(tab.background),
+            background: getActualOldBackground(tab.background, defaultOldColor),
         }));
 
         return newItem;
@@ -42,10 +86,10 @@ export function migrateBgColor(item: DashTabItem): DashTabItem {
     return item;
 }
 
-export function preparedData(data: DashData) {
+export function preparedData(data: DashData, defaultOldColor: string) {
     data.tabs.forEach((dashTabItem) => {
         dashTabItem.items = dashTabItem.items.map((wi) => {
-            const widgetItem = migrateBgColor(wi);
+            const widgetItem = migrateBgColor(wi, defaultOldColor);
             if (widgetItem.type !== DashTabItemType.Control) {
                 return widgetItem;
             }
@@ -355,7 +399,8 @@ class DashSchemeConverter {
 
         data.tabs.forEach((dashTabItem) => {
             dashTabItem.items = dashTabItem.items.map((wi) => {
-                const widgetItem = migrateBgColor(wi);
+                const defaultOldColor = getDefaultDashWidgetBgColorByType(wi.type);
+                const widgetItem = migrateBgColor(wi, defaultOldColor);
                 if (widgetItem.type !== DashTabItemType.Control) {
                     return widgetItem;
                 }
