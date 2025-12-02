@@ -4,6 +4,10 @@
 
     &__icon {
         min-width: 20px;
+        .shared-entry-icon-box {
+            width: 20px;
+            height: 20px;
+        }
     }
 
     &__title {

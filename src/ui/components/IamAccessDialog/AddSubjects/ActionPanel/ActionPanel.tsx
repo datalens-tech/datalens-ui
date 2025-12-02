@@ -2,8 +2,9 @@ import React from 'react';
 
 import {Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import type {SharedScope} from 'shared';
+import type {ResourceType} from 'ui/registry/units/common/types/components/IamAccessDialog';
 
-import type {ResourceType} from '../../../../store/actions/iamAccessDialog';
 import {ResourceInfo} from '../../ResourceInfo/ResourceInfo';
 import {getResourceRoles} from '../../utils';
 
@@ -14,6 +15,7 @@ const b = block('dl-iam-access-dialog-add-user-action-panel');
 export type Props = {
     type: ResourceType;
     title: string;
+    resourceScope?: SharedScope;
     options: {
         title: string;
         value: string;
@@ -22,13 +24,13 @@ export type Props = {
     onChangeRole: (role: string) => void;
 };
 
-export const ActionPanel = ({type, title, role, onChangeRole}: Props) => {
+export const ActionPanel = ({type, title, role, resourceScope, onChangeRole}: Props) => {
     const options = getResourceRoles(type);
 
     return (
         <div className={b()}>
             <div className={b('info')}>
-                <ResourceInfo type={type} title={title} />
+                <ResourceInfo scope={resourceScope} type={type} title={title} />
             </div>
             <div className={b('change-role')}>
                 <Select
