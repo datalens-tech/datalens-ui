@@ -5,9 +5,13 @@ import {dataSchema} from '../../../../zod-schemas/dash';
 
 import {dashSchemaV1} from './dash-v1';
 
+const createDashData = dataSchema
+    .partial({tabs: true, salt: true})
+    .omit({schemeVersion: true, counter: true});
+
 export const createDashV1ArgsSchema = z.strictObject({
     key: z.string().min(1),
-    data: dataSchema,
+    data: createDashData,
     meta: z.record(z.string(), z.string()),
     workbookId: z.string().optional(),
     lockToken: z.string().optional(),

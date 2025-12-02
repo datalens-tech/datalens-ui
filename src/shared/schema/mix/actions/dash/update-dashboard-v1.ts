@@ -21,22 +21,12 @@ export const updateDashboardV1 = createTypedAction(
     ): Promise<UpdateDashV1Result> => {
         const typedApi = getTypedApi(api);
 
-        const savedEntry = await typedApi.us.getEntry({entryId});
+        const {entry: savedDash} = await typedApi.mix.getDashboardV1({dashboardId: entryId});
 
-        if (savedEntry.scope !== EntryScope.Dash) {
+        if (savedDash.scope !== EntryScope.Dash) {
             throw new ServerError('Entry not found', {
                 status: 404,
             });
-        }
-
-        if (savedEntry.version && savedEntry.version > DASH_VERSION_1) {
-            throw new ServerError(
-                `The entry was created or updated using a newer API version and cannot be modified through this API version. 
-                Entry version is: ${savedEntry.version}`,
-                {
-                    status: 409,
-                },
-            );
         }
 
         const links = Dash.gatherLinks(data);

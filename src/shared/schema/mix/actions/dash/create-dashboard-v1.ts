@@ -2,9 +2,10 @@ import type {AppContext} from '@gravity-ui/nodekit';
 import Hashids from 'hashids';
 
 import {getTypedApi} from '../../..';
-import {EntryScope} from '../../../..';
+import {DASH_CURRENT_SCHEME_VERSION, EntryScope} from '../../../..';
 import {Dash} from '../../../../../server/components/sdk';
 import {createTypedAction} from '../../../gateway-utils';
+import {DEFAULT_SETTINGS} from '../../constants/dash';
 import {
     createDashV1ArgsSchema,
     createDashV1ResultSchema,
@@ -12,34 +13,50 @@ import {
 import {DASH_VERSION_1} from '../../schemas/dash/dash-v1';
 import type {CreateDashV1Result, DashV1} from '../../types';
 
-const DEFAULT_COUNTER_VALUE = 2;
+const processTabs = ({
+    ctx,
+    salt = Math.random().toString(),
+    tabs,
+}: {
+    ctx: AppContext;
+    salt?: string;
+    tabs?: DashV1['data']['tabs'];
+}): {
+    salt: string;
+    counter: number;
+    tabs: DashV1['data']['tabs'];
+} => {
+    if (!tabs) {
+        const I18n = ctx.get('i18n');
+        const i18n = I18n.keyset('dash.tabs-dialog.edit');
 
-const DEFAULT_SETTINGS = {
-    autoupdateInterval: null,
-    maxConcurrentRequests: null,
-    silentLoading: false,
-    dependentSelectors: true,
-    hideTabs: false,
-    hideDashTitle: false,
-    expandTOC: false,
-};
+        const hashids = new Hashids(salt);
 
-const getDefaultTabs = ({ctx, salt}: {ctx: AppContext; salt: string}) => {
-    const I18n = ctx.get('i18n');
-    const i18n = I18n.keyset('dash.tabs-dialog.edit');
+        return {
+            salt,
+            counter: 2,
+            tabs: [
+                {
+                    id: hashids.encode(1),
+                    title: i18n('value_default', {index: 1}),
+                    items: [],
+                    layout: [],
+                    aliases: {},
+                    connections: [],
+                },
+            ],
+        };
+    }
 
-    const hashids = new Hashids(salt);
+    const counter = tabs.reduce((acc, tab) => {
+        return acc + 1 + (tab.items?.length ?? 0); // + 1 tabId + n items ids
+    }, 0);
 
-    return [
-        {
-            id: hashids.encode(1),
-            title: i18n('value_default', {index: 1}),
-            items: [],
-            layout: [],
-            aliases: {},
-            connections: [],
-        },
-    ];
+    return {
+        salt,
+        counter,
+        tabs,
+    };
 };
 
 export const createDashboardV1 = createTypedAction(
@@ -50,15 +67,13 @@ export const createDashboardV1 = createTypedAction(
     async (api, args, {ctx}): Promise<CreateDashV1Result> => {
         const typedApi = getTypedApi(api);
 
-        const salt = args.data.salt ?? Math.random().toString();
+        const argsData = args.data;
 
         const data = {
-            ...args.data,
-            counter: args.data.counter ?? DEFAULT_COUNTER_VALUE,
-            salt,
-            tabs: args.data.tabs ?? getDefaultTabs({ctx, salt}),
-            settings: args.data.settings ?? DEFAULT_SETTINGS,
-            schemeVersion: 8,
+            ...argsData,
+            ...processTabs({ctx, salt: argsData.salt, tabs: argsData.tabs}),
+            settings: argsData.settings ?? DEFAULT_SETTINGS,
+            schemeVersion: DASH_CURRENT_SCHEME_VERSION,
         };
 
         const links = Dash.gatherLinks(data);
