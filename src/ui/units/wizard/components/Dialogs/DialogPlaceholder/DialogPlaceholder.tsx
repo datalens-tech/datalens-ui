@@ -717,6 +717,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                             items={SCALE_RADIO_BUTTON_OPTIONS}
                             value={scale}
                             onUpdate={this.handleScaleRadioButtonsUpdate}
+                            qa={DialogPlaceholderQa.AxisScaleModeRadioButtons}
                         />
                     }
                 />
@@ -754,6 +755,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                                             onUpdate={(value) => {
                                                 this.handleManualScaleValueUpdate(value, 'min');
                                             }}
+                                            qa={DialogPlaceholderQa.AxisMinInput}
                                         />
                                     }
                                 />
@@ -772,6 +774,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
                                             onUpdate={(value) => {
                                                 this.handleManualScaleValueUpdate(value, 'max');
                                             }}
+                                            qa={DialogPlaceholderQa.AxisMaxInput}
                                         />
                                     }
                                 />
