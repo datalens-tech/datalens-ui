@@ -2,7 +2,11 @@ import {dateTimeUtc} from '@gravity-ui/date-utils';
 import omitBy from 'lodash/omitBy';
 
 import {DASH_CURRENT_SCHEME_VERSION} from '../constants/dash';
-import {CustomPaletteBgColors, DUPLICATED_WIDGET_BG_COLORS_PRESET} from '../constants/widgets';
+import {
+    CustomPaletteBgColors,
+    DUPLICATED_WIDGET_BG_COLORS_PRESET,
+    getDefaultDashWidgetBgColorByType,
+} from '../constants/widgets';
 import type {BackgroundSettings, DashData, DashTab, DashTabItem} from '../types';
 import {
     DashTabConnectionKind,
@@ -395,10 +399,7 @@ class DashSchemeConverter {
 
         data.tabs.forEach((dashTabItem) => {
             dashTabItem.items = dashTabItem.items.map((wi) => {
-                const defaultOldColor =
-                    wi.type === DashTabItemType.Widget
-                        ? CustomPaletteBgColors.LIKE_CHART
-                        : CustomPaletteBgColors.NONE;
+                const defaultOldColor = getDefaultDashWidgetBgColorByType(wi.type);
                 const widgetItem = migrateBgColor(wi, defaultOldColor);
                 if (widgetItem.type !== DashTabItemType.Control) {
                     return widgetItem;
