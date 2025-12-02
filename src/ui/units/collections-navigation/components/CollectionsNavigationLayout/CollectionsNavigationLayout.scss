@@ -22,7 +22,7 @@ $class: 'dl-collections-navigation-layout';
         flex: 1;
         flex-direction: column;
         width: 100%;
-        max-width: 936px;
+        max-width: $pageMaxWidth;
         padding: 0 20px;
         justify-self: center;
     }
