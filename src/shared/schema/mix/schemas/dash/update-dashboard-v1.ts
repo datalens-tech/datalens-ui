@@ -9,7 +9,7 @@ export const updateDashV1ArgsSchema = z.strictObject({
     entry: z.strictObject({
         entryId: z.string(),
         data: dataSchema,
-        meta: z.record(z.string(), z.string()),
+        meta: z.record(z.string(), z.string()).nullable(),
         revId: z.string().optional(),
         annotation: z
             .object({

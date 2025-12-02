@@ -19,7 +19,7 @@ export const dashSchemaV1 = z.object({
     hidden: z.boolean(),
     key: z.union([z.null(), z.string()]),
     links: z.record(z.string(), z.string()).nullable().optional(),
-    meta: z.record(z.string(), z.string()),
+    meta: z.record(z.string(), z.string()).nullable(),
     public: z.boolean(),
     publishedId: z.string().nullable(),
     revId: z.string(),

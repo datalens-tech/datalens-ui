@@ -13,7 +13,7 @@ export const createDashV1ArgsSchema = z.strictObject({
     entry: z.strictObject({
         key: z.string().min(1),
         data: createDashData,
-        meta: z.record(z.string(), z.string()),
+        meta: z.record(z.string(), z.string()).nullable(),
         workbookId: z.string().optional(),
         annotation: z
             .object({
