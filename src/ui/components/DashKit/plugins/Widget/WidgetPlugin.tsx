@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type {Plugin} from '@gravity-ui/dashkit';
-import {DashTabItemType, getDefaultDashWidgetBgColorByType, isBackgroundSettings} from 'shared';
+import {CustomPaletteBgColors, isBackgroundSettings} from 'shared';
 import type {ChartWidgetWithWrapRefProps} from 'ui/components/Widgets/Chart/types';
 
 import MarkdownProvider from '../../../../modules/markdownProvider';
@@ -48,7 +48,10 @@ const widgetPlugin: PluginWidget = {
         const {style} = usePreparedWrapSettings({
             widgetBackground: isBackgroundSettings(propsBg) ? propsBg : undefined,
             globalBackground: props.background,
-            defaultOldColor: getDefaultDashWidgetBgColorByType(DashTabItemType.Widget),
+            defaultOldColor:
+                widgetPlugin.scope === 'dash'
+                    ? CustomPaletteBgColors.LIKE_CHART
+                    : CustomPaletteBgColors.NONE,
         });
 
         return (
