@@ -67,7 +67,8 @@ export const createDashboardV1 = createTypedAction(
     async (api, args, {ctx}): Promise<CreateDashV1Result> => {
         const typedApi = getTypedApi(api);
 
-        const argsData = args.data;
+        const argsEntry = args.entry;
+        const argsData = argsEntry.data;
 
         const data = {
             ...argsData,
@@ -81,7 +82,11 @@ export const createDashboardV1 = createTypedAction(
         Dash.validateData(data);
 
         const createEntryResult = await typedApi.us._createEntry({
-            ...args,
+            key: argsEntry.key,
+            meta: argsEntry.meta,
+            workbookId: argsEntry.workbookId,
+            annotation: argsEntry.annotation,
+            mode: args.mode,
             data,
             type: '',
             scope: EntryScope.Dash,

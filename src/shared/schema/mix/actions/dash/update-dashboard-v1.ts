@@ -17,7 +17,7 @@ export const updateDashboardV1 = createTypedAction(
     },
     async (
         api,
-        {entryId, mode = EntryUpdateMode.Publish, meta, data, revId, annotation},
+        {mode = EntryUpdateMode.Publish, entry: {entryId, meta, data, revId, annotation}},
     ): Promise<UpdateDashV1Result> => {
         const typedApi = getTypedApi(api);
 
