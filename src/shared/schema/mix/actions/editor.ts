@@ -1,6 +1,6 @@
+import {getTypedApi} from '../..';
 import {DeveloperModeCheckStatus} from '../../../types';
 import {createAction} from '../../gateway-utils';
-import {getTypedApi} from '../../simple-schema';
 import type {
     CreateEditorChartArgs,
     CreateEditorChartResponse,
@@ -12,7 +12,7 @@ import {validateData} from '../helpers/editor/validation';
 
 export const editorActions = {
     createEditorChart: createAction<CreateEditorChartResponse, CreateEditorChartArgs>(
-        async (api, args, {ctx}) => {
+        async (api, args, {ctx}): Promise<CreateEditorChartResponse> => {
             const {checkRequestForDeveloperModeAccess} = ctx.get('gateway');
 
             const checkResult = await checkRequestForDeveloperModeAccess({ctx});
@@ -29,7 +29,7 @@ export const editorActions = {
         },
     ),
     updateEditorChart: createAction<UpdateEditorChartResponse, UpdateEditorChartArgs>(
-        async (api, args, {ctx}) => {
+        async (api, args, {ctx}): Promise<UpdateEditorChartResponse> => {
             const {checkRequestForDeveloperModeAccess} = ctx.get('gateway');
 
             const checkResult = await checkRequestForDeveloperModeAccess({ctx});
