@@ -1,10 +1,6 @@
 import type {WizardVisualizationId} from '../../../../../../shared';
 import {AxisModeDisabledReason, isD3Visualization} from '../../../../../../shared';
 
-export function isAxisScaleEnabled(visualizationId: WizardVisualizationId) {
-    return !isD3Visualization(visualizationId);
-}
-
 export function isAxisTypeEnabled(visualizationId: WizardVisualizationId) {
     return !isD3Visualization(visualizationId);
 }
