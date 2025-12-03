@@ -1,3 +1,5 @@
+import {ENTRY_CONTEXT_MENU_ACTION} from 'ui/components/EntryContextMenu';
+
 import {DL} from '../../../constants';
 
 const preprodEnv = DL.IS_DEVELOPMENT || DL.IS_PREPROD;
@@ -32,3 +34,12 @@ export const MANAGED_BY = {
 
 export const MIN_AVAILABLE_DATASET_REV_DATE = '2024-12-01T00:00:00.000Z';
 export const DATASET_DATE_AVAILABLE_FORMAT = 'DD.MM.YYYY';
+
+export const SharedDatasetHiddenContextMenuItems = new Set<string>([
+    ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,
+    ENTRY_CONTEXT_MENU_ACTION.DELETE,
+    ENTRY_CONTEXT_MENU_ACTION.ACCESS,
+    ENTRY_CONTEXT_MENU_ACTION.MOVE,
+    ENTRY_CONTEXT_MENU_ACTION.COPY,
+    ENTRY_CONTEXT_MENU_ACTION.MIGRATE_TO_WORKBOOK,
+]);

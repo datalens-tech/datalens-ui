@@ -1,6 +1,7 @@
 import React from 'react';
 
 import {dateTimeUtc} from '@gravity-ui/date-utils';
+import {CodeTrunk, Persons, TrashBin} from '@gravity-ui/icons';
 import type {ButtonView} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import type {History, Location} from 'history';
@@ -12,18 +13,26 @@ import {connect} from 'react-redux';
 import SplitPane from 'react-split-pane';
 import {createStructuredSelector} from 'reselect';
 import type {DatasetSource, DatasetSourceAvatar} from 'shared';
-import {EntryScope, ErrorCode, ErrorContentTypes} from 'shared';
+import {EntryScope, ErrorCode, ErrorContentTypes, getEntryNameByKey} from 'shared';
 import type {GetEntryResponse, GetRevisionsEntry} from 'shared/schema';
 import type {DataLensApiError, SDK} from 'ui';
+import {DIALOG_SHARED_ENTRY_BINDINGS} from 'ui/components/DialogSharedEntryBindings/DialogSharedEntryBindings';
+import type {FilterEntryContextMenuItems} from 'ui/components/EntryContextMenu';
+import {ENTRY_CONTEXT_MENU_ACTION} from 'ui/components/EntryContextMenu';
 import type {DialogUnlockProps} from 'ui/components/EntryDialogues/DialogUnlock';
+import {DIALOG_IAM_ACCESS} from 'ui/components/IamAccessDialog';
 import {SPLIT_PANE_RESIZER_CLASSNAME, URL_QUERY} from 'ui/constants/common';
 import {HOTKEYS_SCOPES} from 'ui/constants/misc';
 import {withHotkeysContext} from 'ui/hoc/withHotkeysContext';
+import {ResourceType} from 'ui/registry/units/common/types/components/IamAccessDialog';
 import {
+    closeDialog,
+    openDialog,
     openDialogErrorWithTabs,
     openDialogSaveDraftChartAsActualConfirm,
 } from 'ui/store/actions/dialog';
 import {initEditHistoryUnit} from 'ui/store/actions/editHistory';
+import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 import {
     addAvatar,
     addSource,
@@ -72,10 +81,11 @@ import {
 import DatasetError from '../../containers/DatasetError/DatasetError';
 import DatasetTabViewer from '../../containers/DatasetTabViewer/DatasetTabViewer';
 import {getAutoCreatedYTDatasetKey} from '../../helpers/datasets';
-import DatasetUtils from '../../helpers/utils';
+import DatasetUtils, {filterContextMenuItems} from '../../helpers/utils';
 import {
     UISelector,
     currentTabSelector,
+    datasetCollectionIdSelector,
     datasetCurrentRevIdSelector,
     datasetErrorSelector,
     datasetKeySelector,
@@ -108,6 +118,7 @@ const i18n = I18n.keyset('dataset.dataset-editor.modify');
 const i18nError = I18n.keyset('component.view-error.view');
 const i18nActionPanel = I18n.keyset('component.action-panel.view');
 const i18nDialogRevisions = I18n.keyset('component.dialog-revisions.view');
+const i18ContextMenu = I18n.keyset('component.entry-context-menu.view');
 const RIGHT_PREVIEW_PANEL_MIN_SIZE = 500;
 const BOTTOM_PREVIEW_PANEL_MIN_SIZE = 48;
 const BOTTOM_PREVIEW_PANEL_DEFAULT_SIZE = 200;
@@ -424,6 +435,7 @@ class Dataset extends React.Component<Props, State> {
 
         return {
             workbookId,
+            collectionId,
             isFavorite,
             publishedId,
             revId: currentRevId,
@@ -488,7 +500,11 @@ class Dataset extends React.Component<Props, State> {
     }
 
     getCollectionId() {
-        return this.props.collectionIdFromPath;
+        return this.props.collectionIdFromPath || this.props.collectionId;
+    }
+
+    getIsSharedDataset() {
+        return Boolean(this.getCollectionId());
     }
 
     refreshSources = () => {
@@ -501,9 +517,11 @@ class Dataset extends React.Component<Props, State> {
 
     getRightItems = () => {
         const {isCreationProcess, history} = this.props;
+        const isSharedDataset = this.getIsSharedDataset();
 
         return (
             <ActionPanelRightItems
+                canCreateWidget={!isSharedDataset}
                 isCreationProcess={isCreationProcess}
                 onClickCreateWidgetButton={this.openCreationWidgetPage}
                 onClickSaveDatasetButton={() =>
@@ -610,6 +628,11 @@ class Dataset extends React.Component<Props, State> {
         );
     }
 
+    filterEntryContextMenuItems: FilterEntryContextMenuItems = ({items}) => {
+        const isSharedDataset = this.getIsSharedDataset();
+        return filterContextMenuItems({items, isSharedDataset});
+    };
+
     renderControls() {
         const DATASET_DISABLED_DATE = dateTimeUtc({input: MIN_AVAILABLE_DATASET_REV_DATE});
         const formattedMinDatasetDate = DATASET_DISABLED_DATE?.format(
@@ -630,6 +653,72 @@ class Dataset extends React.Component<Props, State> {
             };
         };
 
+        const isSharedDataset = this.getIsSharedDataset();
+        const entry = this.getEntry();
+        const {openDialog, closeDialog, history} = this.props;
+        const additionalEntryItems =
+            isSharedDataset && !entry.fake
+                ? [
+                      {
+                          id: ENTRY_CONTEXT_MENU_ACTION.SHOW_RELATED_ENTITIES,
+                          action: () => {
+                              openDialog({
+                                  id: DIALOG_SHARED_ENTRY_BINDINGS,
+                                  props: {
+                                      onClose: closeDialog,
+                                      open: true,
+                                      entry,
+                                  },
+                              });
+                          },
+                          icon: <CodeTrunk />,
+                          text: getSharedEntryMockText('shared-entry-bindings-dropdown-menu-title'),
+                      },
+                      {
+                          id: ENTRY_CONTEXT_MENU_ACTION.ACCESS,
+                          action: () =>
+                              openDialog({
+                                  id: DIALOG_IAM_ACCESS,
+                                  props: {
+                                      open: true,
+                                      resourceId: entry.entryId,
+                                      resourceType: ResourceType.SharedEntry,
+                                      resourceTitle: getEntryNameByKey({key: entry.key}),
+                                      resourceScope: EntryScope.Dataset,
+                                      parentId: entry.collectionId!,
+                                      canUpdate: Boolean(
+                                          entry.fullPermissions?.updateAccessBindings,
+                                      ),
+                                      onClose: closeDialog,
+                                  },
+                              }),
+                          icon: <Persons />,
+                          text: i18ContextMenu('value_access'),
+                      },
+                      {
+                          id: ENTRY_CONTEXT_MENU_ACTION.DELETE,
+                          action: () => {
+                              openDialog({
+                                  id: DIALOG_SHARED_ENTRY_BINDINGS,
+                                  props: {
+                                      onClose: closeDialog,
+                                      open: true,
+                                      entry,
+                                      isDeleteDialog: true,
+                                      onDeleteSuccess: () => {
+                                          closeDialog();
+                                          history.push(`/collections/${entry?.collectionId}`);
+                                      },
+                                  },
+                              });
+                          },
+                          icon: <TrashBin />,
+                          theme: 'danger',
+                          text: getSharedEntryMockText('shared-entry-delete-dropdown-menu-title'),
+                      },
+                  ]
+                : undefined;
+
         return (
             <React.Fragment>
                 <ActionPanel
@@ -638,6 +727,8 @@ class Dataset extends React.Component<Props, State> {
                     setActualVersion={this.setActualVersionHandler}
                     expandablePanelDescription={description}
                     getRevisionRowExtendedProps={getRevisionRowExtendedProps}
+                    filterEntryContextMenuItems={this.filterEntryContextMenuItems}
+                    additionalEntryItems={additionalEntryItems}
                 />
                 <DatasetPanel
                     isCreationProcess={this.props.isCreationProcess}
@@ -757,6 +848,7 @@ const mapStateToProps = createStructuredSelector({
     sourceTemplate: sourceTemplateSelector,
     ui: UISelector,
     workbookId: workbookIdSelector,
+    collectionId: datasetCollectionIdSelector,
     currentTab: currentTabSelector,
 });
 const mapDispatchToProps = {
@@ -776,6 +868,8 @@ const mapDispatchToProps = {
     setEditHistoryState,
     setCurrentTab,
     setActualDataset,
+    openDialog,
+    closeDialog,
 };
 const connector = connect(mapStateToProps, mapDispatchToProps);
 
