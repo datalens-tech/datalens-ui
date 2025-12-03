@@ -49,10 +49,16 @@ type Props = {
     isCreationProcess?: boolean;
     onClickCreateWidgetButton: () => void;
     onClickSaveDatasetButton: () => void;
+    canCreateWidget: boolean;
 };
 
 export function ActionPanelRightItems(props: Props) {
-    const {isCreationProcess, onClickCreateWidgetButton, onClickSaveDatasetButton} = props;
+    const {
+        isCreationProcess,
+        onClickCreateWidgetButton,
+        onClickSaveDatasetButton,
+        canCreateWidget,
+    } = props;
     const dispatch = useDispatch();
     const isDatasetRevisionMismatch = useSelector(isDatasetRevisionMismatchSelector);
     const isLoadPreviewByDefault = useSelector(isLoadPreviewByDefaultSelector);
@@ -180,8 +186,6 @@ export function ActionPanelRightItems(props: Props) {
         );
     }
 
-    const isDescriptionEnabled = isEnabledFeature(Feature.EnableDatasetDescription);
-
     return (
         <div className={b('actions-panel-right-items')}>
             {historyActions}
@@ -195,11 +199,11 @@ export function ActionPanelRightItems(props: Props) {
             >
                 {settingsSelectOptions}
             </Select>
-            {isDescriptionEnabled && <DescriptionButton />}
+            <DescriptionButton />
             <Button
                 view="normal"
                 size="m"
-                disabled={isCreationProcess}
+                disabled={isCreationProcess || !canCreateWidget}
                 onClick={onClickCreateWidgetButton}
             >
                 {i18n('button_create-widget')}

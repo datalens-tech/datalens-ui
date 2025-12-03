@@ -17,7 +17,7 @@ import './DialogSharedEntryPermissions.scss';
 
 type DialogSharedEntryPermissionsProps = {
     open: boolean;
-    onClose: () => void;
+    onClose: (delegate: boolean) => void;
     entry: SharedEntry;
     relation?: SharedEntryBindingsItem;
     onApply: (delegate: boolean) => Promise<void> | void;
@@ -50,8 +50,12 @@ export const DialogSharedEntryPermissions: React.FC<DialogSharedEntryPermissions
         setIsLoading(false);
     };
 
+    const onCloseHandler = () => {
+        onClose(delegate);
+    };
+
     return (
-        <Dialog size="m" open={open} onClose={onClose} className={b()}>
+        <Dialog size="m" open={open} onClose={onCloseHandler} className={b()}>
             <Dialog.Header caption={getSharedEntryMockText('title-permissions-dialog')} />
             <Dialog.Body className={b('body')}>
                 <div className={b('objects-wrapper')}>
@@ -110,7 +114,7 @@ export const DialogSharedEntryPermissions: React.FC<DialogSharedEntryPermissions
                 loading={isLoading}
                 textButtonCancel={getSharedEntryMockText('cancel-unbind-dialog')}
                 onClickButtonApply={onSubmit}
-                onClickButtonCancel={onClose}
+                onClickButtonCancel={onCloseHandler}
             />
         </Dialog>
     );
