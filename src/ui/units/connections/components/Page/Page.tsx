@@ -170,7 +170,6 @@ const PageComponent = (props: PageProps) => {
     const isFakeEntry = entry && (entry as {fake?: boolean}).fake;
 
     const isExportSettingsFeatureEnabled = isEnabledFeature(Feature.EnableExportSettings);
-    const isDescriptionEnabled = isEnabledFeature(Feature.EnableConnectionDescription);
 
     const revisionsSupported = connector?.history;
     const revId = currentSearchParams.get(URL_QUERY.REV_ID) ?? undefined;
@@ -333,12 +332,10 @@ const PageComponent = (props: PageProps) => {
                                     connectionId={extractedEntryId}
                                 />
                             ),
-                            isDescriptionEnabled && (
-                                <DescriptionButton
-                                    key="connection-description"
-                                    isS3BasedConnForm={s3BasedFormOpened}
-                                />
-                            ),
+                            <DescriptionButton
+                                key="connection-description"
+                                isS3BasedConnForm={s3BasedFormOpened}
+                            />,
                             isShowCreateButtons && (
                                 <ConnPanelActions
                                     key="conn-panel-actions"
