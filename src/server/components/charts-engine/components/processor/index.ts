@@ -579,8 +579,7 @@ export class Processor {
                     subrequestHeaders[DL_CONTEXT_HEADER] = JSON.stringify(dlContext);
                 }
 
-                resolvedSources = await DataFetcher.fetch({
-                    sources,
+                const dataFetcherOptions = {
                     ctx,
                     iamToken,
                     subrequestHeaders,
@@ -595,7 +594,22 @@ export class Processor {
                     telemetryCallbacks,
                     cacheClient,
                     sourcesConfig,
+                };
+                resolvedSources = await DataFetcher.fetch({
+                    sources,
+                    ...dataFetcherOptions,
                 });
+
+                if (builder.buildPaletteSources) {
+                    const paletteSourcesResult = await builder.buildPaletteSources({
+                        sources: resolvedSources,
+                    });
+                    const resolvedPalettes = await DataFetcher.fetch({
+                        sources: paletteSourcesResult.exports as Record<string, Source>,
+                        ...dataFetcherOptions,
+                    });
+                    Object.assign(resolvedSources, resolvedPalettes);
+                }
 
                 if (Object.keys(resolvedSources).length) {
                     timings.dataFetching = getDuration(hrStart);

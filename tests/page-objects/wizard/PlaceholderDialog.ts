@@ -66,7 +66,7 @@ export default class PlaceholderDialog {
         await radioGroupLocator.locator(`[value="${value}"]`).click();
     }
 
-    async fillInput(qa: Inputs, value: string) {
+    async fillInput(qa: string, value: string) {
         await this.page.fill(`${slct(qa)} input`, value);
     }
 

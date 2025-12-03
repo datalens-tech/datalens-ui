@@ -44,6 +44,7 @@ export interface EntryMetaFields {
     publishedId: EntryFieldPublishedId;
     tenantId: string;
     workbookId: WorkbookId;
+    collectionId: CollectionId;
     accessDescription?: string;
     supportDescription?: string;
 }

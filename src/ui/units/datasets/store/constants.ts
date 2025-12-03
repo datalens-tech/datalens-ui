@@ -56,6 +56,7 @@ export const initialState: DatasetReduxState = {
     id: '',
     key: '',
     workbookId: null,
+    collectionId: null,
     connection: null,
     // current content of the dataset
     content: getDefaultDatasetContent(),

@@ -3,7 +3,11 @@ import {generateUniqId} from '@gravity-ui/dashkit/helpers';
 import update from 'immutability-helper';
 import pick from 'lodash/pick';
 import {DashTabItemTitleSizes, DashTabItemType} from 'shared';
-import {CustomPaletteTextColors, TITLE_WIDGET_TEXT_COLORS_PRESET} from 'shared/constants/widgets';
+import {
+    CustomPaletteTextColors,
+    TITLE_WIDGET_TEXT_COLORS_PRESET,
+    getDefaultDashWidgetBgColorByType,
+} from 'shared/constants/widgets';
 import {migrateConnectionsForGroupControl} from 'ui/store/utils/controlDialog';
 import {getUpdatedBackgroundValue, getUpdatedConnections} from 'ui/utils/copyItems';
 
@@ -240,9 +244,16 @@ function dash(state = initialState, action) {
             ) {
                 delete itemData.textColor;
             }
+            const defaultBgColorValue = getDefaultDashWidgetBgColorByType(itemData.type);
             const backgroundData =
                 'background' in itemData
-                    ? {background: getUpdatedBackgroundValue(itemData.background, false)}
+                    ? {
+                          background: getUpdatedBackgroundValue(
+                              itemData.background,
+                              false,
+                              defaultBgColorValue,
+                          ),
+                      }
                     : {};
             const newItem = {
                 ...action.payload.item,

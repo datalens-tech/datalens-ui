@@ -1,4 +1,5 @@
-import {type ValueOf} from '../types';
+import {DashTabItemType} from '../types';
+import type {ValueOf} from '../types';
 
 export const CustomPaletteBgColors = {
     LIKE_CHART: 'like-chart-bg',
@@ -102,10 +103,8 @@ export const CONTROLS_PLACEMENT_MODE = {
     PIXELS: 'px',
 } as const;
 
-// TODO: replace by DEFAULT_WIDGET_BACKGROUND_COLOR constant after removing flag Feature.EnableCommonChartDashSettings
-export function getDefaultWidgetBackgroundColor(
-    isCommonChartDashSettingsEnabled?: boolean,
-    defaultColor: string = CustomPaletteBgColors.NONE,
-) {
-    return isCommonChartDashSettingsEnabled ? '' : defaultColor;
+export function getDefaultDashWidgetBgColorByType(type: DashTabItemType) {
+    return type === DashTabItemType.Widget
+        ? CustomPaletteBgColors.LIKE_CHART
+        : CustomPaletteBgColors.NONE;
 }

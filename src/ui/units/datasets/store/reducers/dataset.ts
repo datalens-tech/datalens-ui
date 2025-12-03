@@ -271,6 +271,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                     workbook_id: workbookId,
                     permissions,
                 },
+                collectionId,
                 publishedId,
                 currentRevId,
             } = action.payload;
@@ -285,6 +286,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 workbookId,
                 connection,
                 content,
+                collectionId,
                 prevContent: content,
                 options,
                 preview: {

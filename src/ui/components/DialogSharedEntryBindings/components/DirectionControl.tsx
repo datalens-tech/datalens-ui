@@ -23,10 +23,10 @@ export const DirectionControl = ({currentDirection, onUpdate}: DirectionControlP
             width="auto"
         >
             <RadioButton.Option value={Attachment.SOURCE}>
-                {getSharedEntryMockText('label-attachment-source')}
+                {getSharedEntryMockText('label-attachment-target')}
             </RadioButton.Option>
             <RadioButton.Option value={Attachment.TARGET}>
-                {getSharedEntryMockText('label-attachment-target')}
+                {getSharedEntryMockText('label-attachment-source')}
             </RadioButton.Option>
         </RadioButton>
     );

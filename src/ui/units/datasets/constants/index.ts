@@ -1,5 +1,5 @@
 import {i18n} from 'i18n';
-import type {EntryScope, WorkbookId} from 'shared';
+import type {CollectionId, EntryScope, WorkbookId} from 'shared';
 import {DL} from 'ui';
 
 import {getFakeEntry as genericGetFakeEntry} from '../../../components/ActionPanel';
@@ -51,7 +51,7 @@ export const getAppMetricGroupNameI18n = (key: string) => _getSelectItemTitle()[
 export const getFakeEntry = (
     scope: EntryScope.Connection | EntryScope.Dataset,
     workbookId?: WorkbookId,
-    collectionId?: string,
+    collectionId?: CollectionId,
     searchCurrentPath?: string,
 ) => {
     let path = searchCurrentPath || DL.USER_FOLDER;
