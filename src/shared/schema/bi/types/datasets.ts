@@ -194,6 +194,7 @@ export type PartialDatasetField = {
     title: string;
     type: string;
     calc_mode: DatasetFieldCalcMode;
+    ui_settings?: string;
 };
 
 export type GetDataSetFieldsByIdResponse = {

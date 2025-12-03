@@ -7,8 +7,13 @@ import type {
     StringParams,
     TenantSettings,
 } from '../../../../../shared';
-import {getServerFeatures} from '../../../../../shared';
-import {addColorPaletteRequest} from '../../../../modes/charts/plugins/helpers/color-palettes';
+import {getFieldUISettings, getServerFeatures} from '../../../../../shared';
+import type {SourceRequests} from '../../../../modes/charts/plugins/datalens/url/types';
+import {
+    COLOR_PALETTES_SOURCE,
+    getColorPalettesRequest,
+    isCustomColorPaletteId,
+} from '../../../../modes/charts/plugins/helpers/color-palettes';
 import {registry} from '../../../../registry';
 import {getDefaultColorPaletteId} from '../utils';
 import type {WizardWorker} from '../wizard-worker/types';
@@ -123,16 +128,39 @@ export const getWizardChartBuilder = async (
                 })
                 .timeout(timeouts.sources || ONE_SECOND);
 
-            addColorPaletteRequest({
-                result: execResult.exports,
-                colorPaletteId: defaultColorPaletteId,
-                palettes,
-            });
-
             return {
                 executionTiming: process.hrtime(timeStart),
                 name: 'Sources',
                 ...execResult,
+            };
+        },
+
+        buildPaletteSources: async (options) => {
+            const {sources = {}} = options;
+            const timeStart = process.hrtime();
+
+            const result: SourceRequests = {};
+            const hasFieldWithCustomPalette = Object.values(sources).some((s) => {
+                return (s.datasetFields ?? []).some((d) => {
+                    const uiSettings = getFieldUISettings({field: d});
+                    const palette = uiSettings?.palette;
+
+                    return palette && isCustomColorPaletteId(palette, palettes);
+                });
+            });
+
+            if (
+                hasFieldWithCustomPalette ||
+                isCustomColorPaletteId(defaultColorPaletteId, palettes)
+            ) {
+                result[COLOR_PALETTES_SOURCE] = getColorPalettesRequest();
+            }
+
+            return {
+                exports: result,
+                executionTiming: process.hrtime(timeStart),
+                name: 'PaletteSources',
+                runtimeMetadata: {},
             };
         },
 
