@@ -2,7 +2,7 @@ import type {ItemDropProps} from '@gravity-ui/dashkit';
 
 import type {Operations} from '../modules';
 
-export type ImpactType = 'allTabs' | 'currentTab' | 'selectedTabs' | undefined;
+export type ImpactType = 'allTabs' | 'currentTab' | 'selectedTabs' | 'asGroup';
 export type ImpactTabsIds = string[] | null | undefined;
 
 import type {
@@ -226,14 +226,9 @@ export interface DashTabItemControl extends DashTabItemBase {
     defaults: StringParams;
 }
 
-export interface DashTabItemControlData {
+export interface DashTabItemControlBaseData {
     id: string;
     title: string;
-    sourceType: DashTabItemControlSourceType;
-    source:
-        | DashTabItemControlDataset['source']
-        | DashTabItemControlManual['source']
-        | DashTabItemControlExternal['source'];
     placementMode?: 'auto' | '%' | 'px';
     autoHeight?: boolean;
     width?: string;
@@ -241,6 +236,14 @@ export interface DashTabItemControlData {
     namespace: string;
     impactType?: ImpactType;
     impactTabsIds?: ImpactTabsIds;
+}
+
+export interface DashTabItemControlData extends DashTabItemControlBaseData {
+    sourceType: DashTabItemControlSourceType;
+    source:
+        | DashTabItemControlDataset['source']
+        | DashTabItemControlManual['source']
+        | DashTabItemControlExternal['source'];
 }
 
 export type DashTabItemControlSingle = DashTabItemControlDataset | DashTabItemControlManual;
@@ -342,7 +345,7 @@ export interface DashTabItemGroupControl extends DashTabItemBase {
     defaults: StringParams;
 }
 
-export interface DashTabItemGroupControlData {
+export interface DashTabItemGroupControlBaseData {
     showGroupName: boolean;
     groupName?: string;
     autoHeight: boolean;
@@ -352,7 +355,9 @@ export interface DashTabItemGroupControlData {
     impactTabsIds?: ImpactTabsIds;
 
     updateControlsOnChange?: boolean;
+}
 
+export interface DashTabItemGroupControlData extends DashTabItemGroupControlBaseData {
     group: DashTabItemControlSingle[];
 }
 

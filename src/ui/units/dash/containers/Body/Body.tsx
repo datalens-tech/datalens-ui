@@ -189,6 +189,7 @@ type MemoContext = {
     isPublicMode?: boolean;
     workbookId?: string | null;
     enableAssistant?: boolean;
+    // used in group selectors plugin
     currentTabId?: string | null;
 };
 type DashkitGroupRenderWithContextProps = DashkitGroupRenderProps & {context: MemoContext};
@@ -1117,7 +1118,6 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                     ...tabDataConfig,
                     layout: sortedLayout,
                     items: sortedItems as ConfigItem[],
-                    // just for types
                     globalItems: tabDataConfig.globalItems as Config['globalItems'],
                 },
             };

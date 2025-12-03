@@ -34,14 +34,12 @@ export interface ListWithMenuProps<T> {
     iconOnHover?: boolean;
     /* * Callback on update item data via TabMenu */
     onUpdateItem: (title: string) => void;
-    renderIcon?: (item: T) => React.ReactNode;
     renderWrapper?: (item: T, children: React.ReactNode) => React.ReactNode;
 }
 
 type ItemWithTitleAndDraftId = {
     title?: string;
     draftId?: string;
-    secondary?: string;
 };
 
 export const ListWithMenu = <T extends ItemWithTitleAndDraftId>({
@@ -52,7 +50,6 @@ export const ListWithMenu = <T extends ItemWithTitleAndDraftId>({
     onDuplicate,
     onCopy,
     onUpdateItem,
-    renderIcon,
     renderWrapper,
 }: ListWithMenuProps<T>): React.ReactElement => {
     const {items, className, ...restListProps} = list;
@@ -75,17 +72,17 @@ export const ListWithMenu = <T extends ItemWithTitleAndDraftId>({
         }
     };
 
-    const onDuplicateItem = () => {
+    const onDuplicateItem = React.useCallback(() => {
         if (expandedItemIndex !== undefined) {
             onDuplicate(expandedItemIndex);
         }
-    };
+    }, [expandedItemIndex, onDuplicate]);
 
-    const onCopyItem = () => {
+    const onCopyItem = React.useCallback(() => {
         if (expandedItemIndex !== undefined) {
             onCopy?.(expandedItemIndex);
         }
-    };
+    }, [expandedItemIndex, onCopy]);
 
     const handleItemClick = (
         _item: T,
@@ -107,22 +104,25 @@ export const ListWithMenu = <T extends ItemWithTitleAndDraftId>({
         event.currentTarget.focus();
     };
 
-    const customMenuOptions: DropdownMenuItem[] = [
-        {
-            action: onDuplicateItem,
-            text: i18n('button_duplicate'),
-            iconStart: <Icon data={Copy} />,
-            className: b('menu-button'),
-            qa: DialogGroupControlQa.duplicateControlButton,
-        },
-        {
-            action: onCopyItem,
-            text: i18n('button_copy'),
-            iconStart: <Icon data={CopyArrowRight} />,
-            className: b('menu-button'),
-            qa: DialogGroupControlQa.copyControlButton,
-        },
-    ];
+    const customMenuOptions: DropdownMenuItem[] = React.useMemo(
+        () => [
+            {
+                action: onDuplicateItem,
+                text: i18n('button_duplicate'),
+                iconStart: <Icon data={Copy} />,
+                className: b('menu-button'),
+                qa: DialogGroupControlQa.duplicateControlButton,
+            },
+            {
+                action: onCopyItem,
+                text: i18n('button_copy'),
+                iconStart: <Icon data={CopyArrowRight} />,
+                className: b('menu-button'),
+                qa: DialogGroupControlQa.copyControlButton,
+            },
+        ],
+        [onCopyItem, onDuplicateItem],
+    );
 
     if (isMultipleItems) {
         customMenuOptions.push({
@@ -134,91 +134,92 @@ export const ListWithMenu = <T extends ItemWithTitleAndDraftId>({
         });
     }
 
-    const wrappedRenderItem = (item: T, active: boolean, itemIndex: number) => {
-        const handleTitleCommit = (text: string) => {
-            if (itemIndexWithEdit !== null) {
-                onUpdateItem(text);
-                setItemIndexWithEdit(null);
-            }
-        };
+    const wrappedRenderItem = React.useCallback(
+        (item: T, active: boolean, itemIndex: number) => {
+            const handleTitleCommit = (text: string) => {
+                if (itemIndexWithEdit !== null) {
+                    onUpdateItem(text);
+                    setItemIndexWithEdit(null);
+                }
+            };
 
-        const handleDoubleClick = () => {
-            setItemIndexWithEdit(itemIndex);
-        };
+            const handleDoubleClick = () => {
+                setItemIndexWithEdit(itemIndex);
+            };
 
-        const showEdit = itemIndex === itemIndexWithEdit;
+            const showEdit = itemIndex === itemIndexWithEdit;
 
-        return (
-            <div
-                className={b('wrapper', {
-                    'icon-on-hover': iconOnHover,
-                    active,
-                    secondary: item.secondary,
-                })}
-                data-qa={TabMenuQA.Item}
-            >
-                {showEdit ? (
-                    <div className={b('item')}>
-                        {renderWrapper ? (
-                            renderWrapper(
-                                item,
-                                <EditedTabItem
-                                    onCommit={handleTitleCommit}
-                                    id={item.draftId || String(itemIndex)}
-                                    title={item.title || ''}
-                                />,
-                            )
-                        ) : (
-                            <React.Fragment>
-                                {renderIcon?.(item)}
-                                <EditedTabItem
-                                    onCommit={handleTitleCommit}
-                                    id={item.draftId || String(itemIndex)}
-                                    title={item.title || ''}
-                                />
-                            </React.Fragment>
-                        )}
+            const renderItemContent = (renderItem: T) => {
+                const baseContent = (
+                    <div className={b('item-content')}>
+                        <span title={renderItem.title} className={b('item-text')}>
+                            {renderItem.title}
+                        </span>
                     </div>
-                ) : (
-                    <div
-                        className={b('item')}
-                        onClick={onAction({action: TabActionType.ChangeChosen, index: itemIndex})}
-                        key={item.draftId || String(itemIndex)}
-                        onDoubleClick={handleDoubleClick}
-                    >
-                        {renderWrapper ? (
-                            renderWrapper(
-                                item,
-                                <div className={b('item-content')}>
-                                    <span title={item.title} className={b('item-text')}>
-                                        {item.title}
-                                    </span>
-                                </div>,
-                            )
-                        ) : (
-                            <React.Fragment>
-                                {renderIcon?.(item)}
-                                <div className={b('item-content')}>
-                                    <span title={item.title} className={b('item-text')}>
-                                        {item.title}
-                                    </span>
-                                </div>
-                            </React.Fragment>
-                        )}
-                    </div>
-                )}
+                );
 
-                <div className={b('controls')}>
-                    <DropdownMenu
-                        size="m"
-                        onOpenToggle={handleMenuToggle(itemIndex)}
-                        items={customMenuOptions}
-                        defaultSwitcherProps={{qa: DialogGroupControlQa.controlMenu}}
+                const editContent = (
+                    <EditedTabItem
+                        onCommit={handleTitleCommit}
+                        id={renderItem.draftId || String(itemIndex)}
+                        title={renderItem.title || ''}
                     />
+                );
+
+                const content = showEdit ? editContent : baseContent;
+
+                if (renderWrapper) {
+                    return renderWrapper(renderItem, content);
+                }
+
+                return content;
+            };
+
+            return (
+                <div
+                    className={b('wrapper', {
+                        'icon-on-hover': iconOnHover,
+                        active,
+                    })}
+                    data-qa={TabMenuQA.Item}
+                >
+                    {showEdit ? (
+                        <div className={b('item')}>{renderItemContent(item)}</div>
+                    ) : (
+                        <div
+                            className={b('item')}
+                            onClick={onAction({
+                                action: TabActionType.ChangeChosen,
+                                index: itemIndex,
+                            })}
+                            key={item.draftId || String(itemIndex)}
+                            onDoubleClick={handleDoubleClick}
+                        >
+                            {renderItemContent(item)}
+                        </div>
+                    )}
+
+                    <div className={b('controls')}>
+                        <DropdownMenu
+                            size="m"
+                            onOpenToggle={handleMenuToggle(itemIndex)}
+                            items={customMenuOptions}
+                            defaultSwitcherProps={{qa: DialogGroupControlQa.controlMenu}}
+                        />
+                    </div>
                 </div>
-            </div>
-        );
-    };
+            );
+        },
+        [
+            customMenuOptions,
+            handleMenuToggle,
+            iconOnHover,
+            itemIndexWithEdit,
+            onAction,
+            onUpdateItem,
+            renderWrapper,
+        ],
+    );
 
     return (
         <div className={className}>

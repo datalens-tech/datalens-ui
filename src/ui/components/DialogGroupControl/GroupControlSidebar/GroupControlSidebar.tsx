@@ -27,7 +27,7 @@ import {GlobalSelectorIcon} from 'ui/units/dash/components/GlobalSelectorIcon/Gl
 import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
 import {isItemPasteAllowed} from 'ui/units/dash/modules/helpers';
 import {selectCurrentTabId} from 'ui/units/dash/store/selectors/dashTypedSelectors';
-import {isItemVisibleOnCurrentTab} from 'ui/units/dash/utils/selectors';
+import {isControlItemVisibleOnCurrentTab} from 'ui/units/dash/utils/selectors';
 
 import {DIALOG_EXTENDED_SETTINGS} from '../../DialogExtendedSettings/DialogExtendedSettings';
 
@@ -181,12 +181,12 @@ export const GroupControlSidebar: React.FC<{
 
     const renderControlIcon = React.useCallback(
         (item: SelectorDialogState) => {
+            const impactType =
+                item.impactType === undefined || item.impactType === 'asGroup'
+                    ? selectorsGroup.impactType
+                    : item.impactType;
             return (
-                <GlobalSelectorIcon
-                    withHint
-                    impactType={item.impactType ?? selectorsGroup.impactType}
-                    className={b('global-icon')}
-                />
+                <GlobalSelectorIcon withHint impactType={impactType} className={b('global-icon')} />
             );
         },
         [selectorsGroup.impactType],
@@ -194,7 +194,7 @@ export const GroupControlSidebar: React.FC<{
 
     const renderControlWrapper = React.useCallback(
         (item: SelectorDialogState, children: React.ReactNode) => {
-            const isVisible = isItemVisibleOnCurrentTab(
+            const isVisible = isControlItemVisibleOnCurrentTab(
                 item,
                 currentTabId,
                 selectorsGroup.impactType,

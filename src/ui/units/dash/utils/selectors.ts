@@ -9,7 +9,7 @@ export interface ImpactTypeItem {
 
 export const isItemScopeAvailableOnTab = (
     currentTabId: string,
-    itemImpactType: ImpactType,
+    itemImpactType?: ImpactType,
     itemImpactTabsIds?: ImpactTabsIds,
 ): boolean => {
     switch (itemImpactType) {
@@ -25,39 +25,39 @@ export const isItemScopeAvailableOnTab = (
 
 export const isGroupSettingAvailableOnTab = (
     currentTabId: string,
-    groupImpactType: ImpactType,
+    groupImpactType?: ImpactType,
     groupImpactTabsIds?: ImpactTabsIds,
 ): boolean => {
-    if (!groupImpactType) {
+    if (!groupImpactType || groupImpactType === 'asGroup') {
         return true;
     }
 
     return isItemScopeAvailableOnTab(currentTabId, groupImpactType, groupImpactTabsIds);
 };
 
-export const isItemVisibleOnCurrentTab = (
+export const isControlItemVisibleOnCurrentTab = (
     item: {impactType?: ImpactType; impactTabsIds?: ImpactTabsIds},
     currentTabId: string | null,
-    groupImpactType: ImpactType,
+    groupImpactType?: ImpactType,
     groupImpactTabsIds?: ImpactTabsIds,
 ): boolean => {
     if (!isEnabledFeature(Feature.EnableGlobalSelectors) || !currentTabId) {
         return true;
     }
 
-    const isGroupSettingPrevails = item.impactType === undefined;
+    const isGroupSettingPrevailing = item.impactType === undefined || item.impactType === 'asGroup';
     const isGroupAvailable = isGroupSettingAvailableOnTab(
         currentTabId,
         groupImpactType,
         groupImpactTabsIds,
     );
 
-    if (isGroupSettingPrevails && isGroupAvailable) {
+    if (isGroupSettingPrevailing && isGroupAvailable) {
         return true;
     }
 
     return (
         isItemScopeAvailableOnTab(currentTabId, item.impactType, item.impactTabsIds) ||
-        (item.impactType === undefined && isGroupAvailable)
+        ((item.impactType === undefined || item.impactType === 'asGroup') && isGroupAvailable)
     );
 };

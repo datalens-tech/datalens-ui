@@ -165,23 +165,22 @@ function validateData(data: DashData) {
             allTabsIds.add(tabId);
         }
 
-        if (globalItems) {
-            globalItems.forEach(({id: itemId, type, data}) => {
-                allItemsIds.add(itemId);
-                currentItemsIds.add(itemId);
+        globalItems?.forEach(({id: itemId, type, data}) => {
+            allItemsIds.add(itemId);
+            currentItemsIds.add(itemId);
 
-                if (type === DashTabItemType.Control || type === DashTabItemType.GroupControl) {
-                    // if it is group control all connections set on its items
-                    if ('group' in data) {
-                        data.group.forEach((widgetItem) => {
-                            currentControlsIds.add(widgetItem.id);
-                        });
-                    } else {
-                        currentControlsIds.add(itemId);
-                    }
+            // to avoid isIdUniq check
+            if (type === DashTabItemType.Control || type === DashTabItemType.GroupControl) {
+                // if it is group control all connections set on its items
+                if ('group' in data) {
+                    data.group.forEach((widgetItem) => {
+                        currentControlsIds.add(widgetItem.id);
+                    });
+                } else {
+                    currentControlsIds.add(itemId);
                 }
-            });
-        }
+            }
+        });
 
         items.forEach(({id: itemId, type, data}) => {
             if (isIdUniq(itemId)) {

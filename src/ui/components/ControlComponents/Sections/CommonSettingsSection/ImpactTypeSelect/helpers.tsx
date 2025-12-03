@@ -9,7 +9,7 @@ export const getImpactTypeByValue = ({
     selectorImpactType,
     hasMultipleSelectors,
 }: {
-    selectorImpactType: ImpactType;
+    selectorImpactType?: ImpactType;
     hasMultipleSelectors?: boolean;
 }) => {
     switch (selectorImpactType) {
@@ -21,18 +21,6 @@ export const getImpactTypeByValue = ({
             return hasMultipleSelectors
                 ? IMPACT_TYPE_OPTION_VALUE.AS_GROUP
                 : IMPACT_TYPE_OPTION_VALUE.CURRENT_TAB;
-    }
-};
-
-export const getImpactTypeValueByName = ({name}: {name: string}): ImpactType => {
-    switch (name) {
-        case IMPACT_TYPE_OPTION_VALUE.ALL_TABS:
-        case IMPACT_TYPE_OPTION_VALUE.CURRENT_TAB:
-        case IMPACT_TYPE_OPTION_VALUE.SELECTED_TABS:
-            return name as ImpactType;
-        case IMPACT_TYPE_OPTION_VALUE.AS_GROUP:
-        default:
-            return undefined;
     }
 };
 

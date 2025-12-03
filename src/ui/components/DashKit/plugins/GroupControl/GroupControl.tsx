@@ -163,9 +163,13 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
         const hasTabChanged = this.props.context.currentTabId !== prevProps.context.currentTabId;
 
+        let memoGroupItems = this.state.memoGroupItems;
+
         if (hasDataChanged || hasTabChanged) {
+            const updatedMemoGroupItems = this.getVisibleGroupItems();
+            memoGroupItems = updatedMemoGroupItems;
             this.setState({
-                memoGroupItems: this.getVisibleGroupItems(),
+                memoGroupItems,
             });
         }
 
@@ -187,7 +191,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
             const updatedStateParams: Record<string, StringParams> = {};
             const updatedItemsIds: string[] = [];
-            this.props.data.group?.forEach((groupItem) => {
+            memoGroupItems?.forEach((groupItem) => {
                 const newPropsParams = filterSignificantParams({
                     params: this.props.params[groupItem.id],
                     loadedData: this.controlsData[groupItem.id],
@@ -315,22 +319,23 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             return controlData.group;
         }
 
-        const isGroupSettingPrevails = controlData.group.every(
-            (item) => item.impactType === undefined,
+        const isGroupSettingPrevailing = controlData.group.every(
+            (item) => item.impactType === undefined || item.impactType === 'asGroup',
         );
-        const isGroupAvailable = isGroupSettingAvailableOnTab(
+        const isGroupAvailableOnTab = isGroupSettingAvailableOnTab(
             currentTabId,
             controlData.impactType,
             controlData.impactTabsIds,
         );
 
-        if (isGroupSettingPrevails && isGroupAvailable) {
+        if (isGroupSettingPrevailing && isGroupAvailableOnTab) {
             return controlData.group;
         }
 
         return controlData.group.filter(
             (item) =>
-                (item.impactType === undefined && isGroupAvailable) ||
+                ((item.impactType === undefined || item.impactType === 'asGroup') &&
+                    isGroupAvailableOnTab) ||
                 isItemScopeAvailableOnTab(currentTabId, item.impactType, item.impactTabsIds),
         );
     }
@@ -601,7 +606,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             label = loadedData.uiScheme.controls[0].label;
         }
 
-        const currentItem = this.propsControlData.group?.find((item) => item.id === id);
+        const currentItem = this.state.memoGroupItems?.find((item) => item.id === id);
 
         const widgetMetaInfo = {
             layoutId: this.props.id,

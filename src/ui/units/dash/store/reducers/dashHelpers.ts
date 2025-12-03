@@ -43,21 +43,21 @@ export function isItemGlobal(
     return false;
 }
 
-function isControlGlobal(impactType: ImpactType, impactTabsIds?: ImpactTabsIds): boolean {
+function isControlGlobal(impactType?: ImpactType, impactTabsIds?: ImpactTabsIds): boolean {
     return (
         impactType === 'allTabs' ||
-        (impactType === 'selectedTabs' && Boolean(impactTabsIds && impactTabsIds?.length > 1))
+        (impactType === 'selectedTabs' && Boolean(impactTabsIds && impactTabsIds?.length > 0))
     );
 }
 
 function isGroupControlGlobal(itemData: DashTabItemGroupControlData): boolean {
     const groupImpactType = itemData.impactType;
     const groupImpactTabsIds = itemData.impactTabsIds;
-    const isGroupSettingsApplied = itemData.group.some(
-        (selector) => selector.impactType === undefined,
+    const isGroupSettingApplied = itemData.group.some(
+        (selector) => selector.impactType === undefined || selector.impactType === 'asGroup',
     );
 
-    if (isControlGlobal(groupImpactType, groupImpactTabsIds) && isGroupSettingsApplied) {
+    if (isGroupSettingApplied && isControlGlobal(groupImpactType, groupImpactTabsIds)) {
         return true;
     }
 
@@ -75,7 +75,7 @@ function getUsedTabsFromScope({
     impactType,
     impactTabsIds,
 }: {
-    impactType: ImpactType;
+    impactType?: ImpactType;
     impactTabsIds?: ImpactTabsIds;
 }) {
     if (impactType === 'allTabs') {
@@ -83,7 +83,7 @@ function getUsedTabsFromScope({
     } else if (
         (impactType === 'selectedTabs' || impactType === 'currentTab') &&
         impactTabsIds &&
-        impactTabsIds?.length > 1
+        impactTabsIds.length > 0
     ) {
         return {usedTabs: [...impactTabsIds], hasAllScope: false};
     }
@@ -113,14 +113,15 @@ export function getDetailedGlobalStatus(
         const groupData = itemData as DashTabItemGroupControlData;
         const groupImpactType = groupData.impactType;
         const groupImpactTabsIds = groupData.impactTabsIds;
-        const isGroupSettingsPrevails = groupData.group.every(
-            (selector) => selector.impactType === undefined,
+        const isGroupSettingPrevailing = groupData.group.every(
+            (selector) => selector.impactType === undefined || selector.impactType === 'asGroup',
         );
-        const isGroupSettingsApplied = groupData.group.some(
-            (selector) => selector.impactType === undefined,
+        const isGroupSettingApplied = groupData.group.some(
+            (selector) => selector.impactType === undefined || selector.impactType === 'asGroup',
         );
 
-        if (isGroupSettingsApplied) {
+        // if the group setting is applied to at least one selector, we take out usedTabs from it.
+        if (isGroupSettingApplied) {
             const usedTabsResult = getUsedTabsFromScope({
                 impactType: groupImpactType,
                 impactTabsIds: groupImpactTabsIds,
@@ -130,11 +131,12 @@ export function getDetailedGlobalStatus(
             usedTabsResult.usedTabs.forEach((tabId) => usedTabs.add(tabId));
         }
 
-        if (!isGroupSettingsPrevails) {
+        // if the group setting does not apply to all selectors, add usedTabs of individual selectors
+        if (!isGroupSettingPrevailing) {
             for (const selector of groupData.group) {
                 const selectorImpactType = selector.impactType;
                 const selectorImpactTabsIds = selector.impactTabsIds;
-                if (selectorImpactType === undefined) {
+                if (selectorImpactType === undefined || selectorImpactType === 'asGroup') {
                     continue;
                 }
 
@@ -152,10 +154,14 @@ export function getDetailedGlobalStatus(
     return {hasAllScope, usedTabs};
 }
 
-export function addItemToTab(tab: DashTab, item: DashTabItem, layoutItem?: DashTabLayout): DashTab {
+export function addGlobalItemToTab(
+    tab: DashTab,
+    item: DashTabItem,
+    layoutItem?: DashTabLayout,
+): DashTab {
     // we need only to update layout as globalItem will be passed in separate field
-    // add new global item to top of parent
-    // TODO: Need groups
+    // add new global item to top of parent group
+    // TODO (global selectors): Need groups
     const reflowedLayout = DashKit.reflowLayout({
         newLayoutItem: layoutItem
             ? {...layoutItem, x: 0, y: 0}
@@ -177,6 +183,25 @@ export function addItemToTab(tab: DashTab, item: DashTabItem, layoutItem?: DashT
     };
 }
 
+function removeGlobalItemFromTab(tab: DashTab, globalItemId: string): DashTab {
+    if (!tab.globalItems || tab.globalItems.length === 0) {
+        return tab;
+    }
+
+    const updatedGlobalItems = tab.globalItems?.filter((item) => item.id !== globalItemId);
+
+    // Only return updated tab if globalItems actually changed
+    if (updatedGlobalItems.length !== tab.globalItems.length) {
+        return {
+            ...tab,
+            globalItems: updatedGlobalItems,
+            layout: tab.layout.filter((item) => item.i !== globalItemId),
+        };
+    }
+
+    return tab;
+}
+
 export function updateTabsWithGlobalItem(
     data: DashData,
     addedItem: DashTabItem,
@@ -194,25 +219,15 @@ export function updateTabsWithGlobalItem(
             return removeFromCurrentTab
                 ? {
                       ...tabData,
-                      items: tabData.items.slice(0, tabData.items.length - 1),
+                      globalItems: tabData.globalItems?.slice(0, tabData.items.length - 1),
                       layout: tabData.layout.slice(0, tabData.layout.length - 1),
                   }
                 : tabData;
         }
 
         // If tab is not in tabsToProcess, remove the item from globalItems if it exists
-        if (!tabsToProcess.includes(tab) && tab.globalItems) {
-            const updatedGlobalItems = tab.globalItems?.filter((item) => item.id !== addedItem.id);
-
-            // Only return updated tab if globalItems actually changed
-            if (updatedGlobalItems.length !== tab.globalItems.length) {
-                return {
-                    ...tab,
-                    globalItems: updatedGlobalItems,
-                };
-            }
-
-            return tab;
+        if (!tabsToProcess.includes(tab)) {
+            return removeGlobalItemFromTab(tab, addedItem.id);
         }
 
         // Check if item with same id already exists in this tab's globalItems
@@ -230,33 +245,22 @@ export function updateTabsWithGlobalItem(
         }
 
         // Add new item to tab
-        return addItemToTab(tab, addedItem, layoutItem);
+        return addGlobalItemToTab(tab, addedItem, layoutItem);
     });
 }
 
 export function removeGlobalItemFromTabs(
     data: DashData,
-    openedItemId: string,
+    globalItemId: string,
     currentTabIndex: number,
-    tabData?: DashTab,
 ): DashTab[] {
     return data.tabs.map((tab, index) => {
-        if (index === currentTabIndex) {
-            return tabData || tab;
+        if (index === currentTabIndex || !tab.globalItems || tab.globalItems.length === 0) {
+            // transformations for the current tab have already been done in Dashkit.setItem
+            return tab;
         }
 
-        const updateFields: Partial<DashTab> = {
-            layout: tab.layout.filter((layoutItem) => layoutItem.i !== openedItemId),
-        };
-
-        if (tab.globalItems) {
-            updateFields.globalItems = tab.globalItems.filter((item) => item.id !== openedItemId);
-        }
-
-        return {
-            ...tab,
-            ...updateFields,
-        };
+        return removeGlobalItemFromTab(tab, globalItemId);
     });
 }
 
@@ -283,6 +287,7 @@ export function getStateForControlWithGlobalLogic({
 
     // Editing existing control
     if (state.openedItemId) {
+        // find prev state of global item in old date
         const savedGlobalItem = data.tabs[tabIndex].globalItems?.find(
             (item) => item.id === state.openedItemId,
         );
@@ -290,12 +295,17 @@ export function getStateForControlWithGlobalLogic({
 
         if (isGlobal && wasGlobal) {
             // Case: Global item remains global - item data or impactType was changed
+
+            // find new state of global item in updated tabData
             const updatedItem = tabData.globalItems?.find((item) => item.id === state.openedItemId);
 
+            // impossible case
             if (!updatedItem) {
                 return null;
             }
 
+            // deleting, adding, or updating the global item in all tabs, depending on the current impactType
+            // updating in current tab is made in dashkit, if necessary, we only delete
             const updatedTabs = updateTabsWithGlobalItem(
                 data,
                 updatedItem,
@@ -315,13 +325,8 @@ export function getStateForControlWithGlobalLogic({
                 }),
             };
         } else if (wasGlobal && !isGlobal) {
-            // Case: Global to local - remove from globalItems, add to current tab
-            const updatedTabs = removeGlobalItemFromTabs(
-                data,
-                state.openedItemId,
-                tabIndex,
-                tabData,
-            );
+            // Case: Global to local - remove from globalItems in all tabs, update in current tab (updating for current tab is made in dashkit)
+            const updatedTabs = removeGlobalItemFromTabs(data, state.openedItemId, tabIndex);
 
             return {
                 ...state,
@@ -332,9 +337,12 @@ export function getStateForControlWithGlobalLogic({
                 }),
             };
         } else if (!wasGlobal && isGlobal) {
-            // Case: Local to global - remove from current tab, add to globalItems and appropriate tabs
+            // Case: Local to global - remove from items in current tab, add to globalItems for appropriate tabs
+
+            // find new state of global item in updated tabData
             const addedItem = tabData.globalItems?.find((item) => item.id === state.openedItemId);
 
+            // impossible case
             if (!addedItem) {
                 return null;
             }
@@ -346,7 +354,6 @@ export function getStateForControlWithGlobalLogic({
                 usedTabs,
                 tabData,
                 tabIndex,
-                removeFromCurrentTab,
             );
 
             return {
@@ -364,10 +371,12 @@ export function getStateForControlWithGlobalLogic({
     if (!state.openedItemId && isGlobal && tabData.globalItems) {
         const addedItem = tabData.globalItems[tabData.globalItems.length - 1];
 
+        // impossible case
         if (!addedItem) {
             return null;
         }
 
+        // add to all tabs
         const updatedTabs = updateTabsWithGlobalItem(
             data,
             addedItem,
@@ -375,7 +384,6 @@ export function getStateForControlWithGlobalLogic({
             usedTabs,
             tabData,
             tabIndex,
-            removeFromCurrentTab,
         );
 
         return {
@@ -392,7 +400,7 @@ export function getStateForControlWithGlobalLogic({
     return null;
 }
 
-export function getGlobalItemsToCopy(tab: DashTab) {
+export function getGlobalItemsToCopy(tab?: DashTab | null) {
     if (!tab || !tab.globalItems) {
         return {globalItems: [], layout: {}};
     }
@@ -412,9 +420,11 @@ export function getGlobalItemsToCopy(tab: DashTab) {
         if (item.type === DashTabItemType.GroupControl) {
             const groupData = item.data;
 
+            const isGroupSettingApplied = groupData.group.some(
+                (item) => item.impactType === undefined || item.impactType === 'asGroup',
+            );
             if (
-                (groupData.impactType === 'allTabs' &&
-                    groupData.group.some((item) => item.impactType === undefined)) ||
+                (groupData.impactType === 'allTabs' && isGroupSettingApplied) ||
                 groupData.group.some((item) => item.impactType === 'allTabs')
             ) {
                 layout[item.id] = tab.layout.find((layoutItem) => layoutItem.i === item.id);

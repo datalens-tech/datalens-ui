@@ -10,13 +10,17 @@ import type {ImpactType} from 'shared/types/dash';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents/components/SelectOptionWithIcon/SelectOptionWithIcon';
 import {setSelectorDialogItem, updateSelectorsGroup} from 'ui/store/actions/controlDialog';
 import {selectSelectorDialog, selectSelectorsGroup} from 'ui/store/selectors/controlDialog';
-import {selectTabId, selectTabs} from 'ui/units/dash/store/selectors/dashTypedSelectors';
+import {
+    selectCurrentTab,
+    selectTabId,
+    selectTabs,
+} from 'ui/units/dash/store/selectors/dashTypedSelectors';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {ImpactTabsIds} from '../../../../../../shared/types/dash';
 
 import {IMPACT_TYPE_OPTION_VALUE} from './constants';
-import {getIconByImpactType, getImpactTypeByValue, getImpactTypeValueByName} from './helpers';
+import {getIconByImpactType, getImpactTypeByValue} from './helpers';
 
 import './ImpactTypeSelect.scss';
 
@@ -80,6 +84,7 @@ export const ImpactTypeSelect = ({
     const selectorDialog = useSelector(selectSelectorDialog);
 
     const currentTabId = useSelector(selectTabId) as string;
+    const currentTab = useSelector(selectCurrentTab);
     const tabs = useSelector(selectTabs);
     const selectorsGroup = useSelector(selectSelectorsGroup);
 
@@ -93,7 +98,6 @@ export const ImpactTypeSelect = ({
 
     const optionTabTitle = React.useMemo(() => {
         if (impactTabsIds.length !== 1) {
-            const currentTab = tabs.find((tab) => tab.id === currentTabId);
             return currentTab?.title || '';
         }
 
@@ -101,12 +105,13 @@ export const ImpactTypeSelect = ({
         const currentTabTitle = optionTab?.title || '';
 
         return currentTabTitle;
-    }, [currentTabId, impactTabsIds, tabs]);
+    }, [currentTab?.title, impactTabsIds, tabs]);
 
     const tabsOptions = React.useMemo(() => {
         return tabs.map((tab) => ({
             value: tab.id,
             content: tab.title,
+            // TODO (global selectors): Add validation instead of disable current tab
             disabled: tab.id === currentTabId,
         }));
     }, [tabs, currentTabId]);
@@ -189,17 +194,16 @@ export const ImpactTypeSelect = ({
 
     const handleImpactTypeChange = React.useCallback(
         (value: string[]) => {
-            const newImpactType = value[0];
-            const tabsScopeValue = getImpactTypeValueByName({name: newImpactType});
+            const tabsScopeValue = value[0] as ImpactType;
 
             let newImpactTabsIds = null;
-            if (tabsScopeValue === 'selectedTabs') {
+            if (tabsScopeValue === IMPACT_TYPE_OPTION_VALUE.SELECTED_TABS) {
                 // When switching to selected tabs, ensure current tab is included
                 newImpactTabsIds = impactTabsIds.includes(currentTabId)
                     ? impactTabsIds
                     : [...impactTabsIds, currentTabId];
                 setImpactTabsIds(newImpactTabsIds);
-            } else if (tabsScopeValue === 'currentTab') {
+            } else if (tabsScopeValue === IMPACT_TYPE_OPTION_VALUE.CURRENT_TAB) {
                 // When switching to current tab, set impactTabsIds to current tab
                 newImpactTabsIds = [currentTabId];
                 setImpactTabsIds(newImpactTabsIds);
@@ -217,45 +221,44 @@ export const ImpactTypeSelect = ({
                 ? value
                 : [...value, currentTabId];
             setImpactTabsIds(newImpactTabsIds);
-            updateSelectorsState('selectedTabs', newImpactTabsIds);
+            updateSelectorsState(IMPACT_TYPE_OPTION_VALUE.SELECTED_TABS, newImpactTabsIds);
         },
         [currentTabId, updateSelectorsState],
     );
-
-    const showTabsSelector = currentImpactType === 'selectedTabs';
 
     if (!currentTabId || !isEnabledFeature(Feature.EnableGlobalSelectors)) {
         return null;
     }
 
-    const hasClear = currentImpactType !== 'currentTab' && currentImpactType !== 'asGroup';
+    const showTabsSelector = currentImpactType === IMPACT_TYPE_OPTION_VALUE.SELECTED_TABS;
+    const hasClear =
+        currentImpactType !== IMPACT_TYPE_OPTION_VALUE.CURRENT_TAB &&
+        currentImpactType !== IMPACT_TYPE_OPTION_VALUE.AS_GROUP;
 
     return (
-        <React.Fragment>
-            <FormRow label={i18n('label_tabs-scope')}>
-                <Flex direction="column" gap={2}>
-                    <Select
-                        value={[currentImpactType]}
-                        onUpdate={handleImpactTypeChange}
-                        width="max"
-                        options={tabsScopeOptions}
-                        renderOption={renderOptions}
-                        renderSelectedOption={renderOptions}
-                        hasClear={hasClear}
-                    />
+        <FormRow label={i18n('label_tabs-scope')}>
+            <Flex direction="column" gap={2}>
+                <Select
+                    value={[currentImpactType]}
+                    onUpdate={handleImpactTypeChange}
+                    width="max"
+                    options={tabsScopeOptions}
+                    renderOption={renderOptions}
+                    renderSelectedOption={renderOptions}
+                    hasClear={hasClear}
+                />
 
-                    {showTabsSelector && (
-                        <Select
-                            value={impactTabsIds}
-                            onUpdate={handleImpactTabsIdsChange}
-                            width="max"
-                            multiple
-                            options={tabsOptions}
-                            placeholder={i18n('label_selecteed-tabs-placeholder')}
-                        />
-                    )}
-                </Flex>
-            </FormRow>
-        </React.Fragment>
+                {showTabsSelector && (
+                    <Select
+                        value={impactTabsIds}
+                        onUpdate={handleImpactTabsIdsChange}
+                        width="max"
+                        multiple
+                        options={tabsOptions}
+                        placeholder={i18n('label_selecteed-tabs-placeholder')}
+                    />
+                )}
+            </Flex>
+        </FormRow>
     );
 };

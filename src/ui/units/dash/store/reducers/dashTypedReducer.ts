@@ -52,7 +52,7 @@ import type {DashAction} from '../actions/index';
 
 import {TAB_PROPERTIES} from './dashHelpers';
 
-// TODO (global selectors): Remove after up version
+// TODO (global selectors): Remove moved type after up version
 export type DashState = {
     tabId: null | string;
     lastModifiedItemId: null | string;
@@ -370,25 +370,28 @@ export function dashTypedReducer(
         }
 
         case REMOVE_GLOBAL_ITEMS: {
+            // In the usual case, only one item comes here
             const removedItems = action.payload.items;
 
             if (removedItems.length === 0) {
                 return state;
             }
 
-            const removedItemsIds = removedItems.map((item) => item.id);
+            const removedItemsIds = new Set<string>();
+
+            removedItems.forEach((item) => removedItemsIds.add(item.id));
 
             return {
                 ...state,
                 data: {
                     ...state.data,
                     tabs: state.data.tabs.map((tab) => {
-                        if (!tab.globalItems) {
+                        if (!tab.globalItems || tab.globalItems.length === 0) {
                             return tab;
                         }
 
                         const filteredGlobalItems = tab.globalItems.filter(
-                            (item) => !removedItemsIds.includes(item.id),
+                            (item) => !removedItemsIds.has(item.id),
                         );
 
                         if (filteredGlobalItems.length === tab.globalItems.length) {
@@ -398,9 +401,9 @@ export function dashTypedReducer(
                         return {
                             ...tab,
                             globalItems: tab.globalItems.filter(
-                                (item) => !removedItemsIds.includes(item.id),
+                                (item) => !removedItemsIds.has(item.id),
                             ),
-                            layout: tab.layout.filter((item) => !removedItemsIds.includes(item.i)),
+                            layout: tab.layout.filter((item) => !removedItemsIds.has(item.i)),
                         };
                     }),
                 },

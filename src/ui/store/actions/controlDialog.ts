@@ -186,12 +186,14 @@ const getValidScopeFields = ({
     impactType,
     impactTabsIds,
     tabId,
-    isMainSetting,
+    isGroupSetting,
+    isSingleControl,
 }: {
-    impactType: ImpactType;
+    impactType?: ImpactType;
     impactTabsIds: ImpactTabsIds;
     tabId: string | null;
-    isMainSetting?: boolean;
+    isGroupSetting?: boolean;
+    isSingleControl?: boolean;
 }): {impactType: ImpactType; impactTabsIds: ImpactTabsIds} => {
     if (impactType === 'allTabs') {
         return {impactType, impactTabsIds: null};
@@ -201,8 +203,12 @@ const getValidScopeFields = ({
         return {impactType, impactTabsIds};
     }
 
-    if (!isMainSetting && impactType === undefined) {
-        return {impactTabsIds: null, impactType: undefined};
+    if (
+        !isGroupSetting &&
+        !isSingleControl &&
+        (impactType === undefined || impactType === 'asGroup')
+    ) {
+        return {impactTabsIds: null, impactType: 'asGroup'};
     }
 
     return {impactType: 'currentTab', impactTabsIds: tabId ? [tabId] : undefined};
@@ -314,7 +320,8 @@ export const applyGroupControlDialog = ({
             impactType: selectorsGroup.impactType,
             impactTabsIds: selectorsGroup.impactTabsIds,
             tabId: state.dash.tabId,
-            isMainSetting: true,
+            isGroupSetting: true,
+            isSingleControl,
         });
 
         const data = {
@@ -350,6 +357,7 @@ export const applyGroupControlDialog = ({
                         impactType: selector.impactType,
                         impactTabsIds: selector.impactTabsIds,
                         tabId: state.dash.tabId,
+                        isSingleControl,
                     }),
                 };
             }),
@@ -359,7 +367,7 @@ export const applyGroupControlDialog = ({
         };
 
         const getExtendedItemData = getExtendedItemDataAction();
-        const itemData = dispatch(getExtendedItemData({data: data as SetItemDataArgs['data']}));
+        const itemData = dispatch(getExtendedItemData({data}));
 
         const finalItemData = {
             ...itemData,
@@ -486,11 +494,14 @@ export const applyExternalControlDialog = ({
                 impactType,
                 impactTabsIds,
                 tabId: state.dash.tabId,
-                isMainSetting: true,
+                isGroupSetting: true,
+                isSingleControl: true,
             }),
         };
         const getExtendedItemData = getExtendedItemDataAction();
-        const itemData = dispatch(getExtendedItemData({data, defaults}));
+        const itemData = dispatch(
+            getExtendedItemData({data: data as SetItemDataArgs['data'], defaults}),
+        );
 
         setItemData({
             data: itemData.data,

@@ -37,7 +37,6 @@ export type TabMenuProps<T> = {
     onPasteItems?: (pasteConfig: CopiedConfigData | null) => null | TabMenuItemData<T>[];
     canPasteItems?: (pasteConfig: CopiedConfigData | null, workbooId?: string | null) => boolean;
     onCopyItem?: (itemIndex: number) => void;
-    renderIcon?: (item: TabMenuItemData<T>) => React.ReactNode;
     renderWrapper?: (item: TabMenuItemData<T>, children: React.ReactNode) => React.ReactNode;
 } & (TabsWithMenu | TabsWithRemove);
 

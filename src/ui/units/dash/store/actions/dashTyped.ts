@@ -21,8 +21,8 @@ import type {
     DashTab,
     DashTabItem,
     DashTabItemControl,
-    DashTabItemControlSingle,
-    DashTabItemGroupControl,
+    DashTabItemControlBaseData,
+    DashTabItemGroupControlBaseData,
     DashTabItemGroupControlData,
     DashTabItemImage,
     DashTabItemWidget,
@@ -397,13 +397,13 @@ type SetItemDataBase = {
     source?: ItemDataSource;
 };
 
-type SetItemDataGroupControlItem = Partial<Omit<DashTabItemControlSingle, 'sourceType'>> & {
-    sourceType?: string;
-};
+type SetItemDataGroupControlItem = Partial<DashTabItemControlBaseData> & SetItemDataBase;
+
 export type SetItemDataText = RecursivePartial<PluginTextProps['data']> & SetItemDataBase;
 export type SetItemDataTitle = RecursivePartial<PluginTitleProps['data']> & SetItemDataBase;
-export type SetItemDataGroupControl = Partial<Omit<DashTabItemGroupControl['data'], 'group'>> &
-    SetItemDataBase & {group?: SetItemDataGroupControlItem[]};
+export type SetItemDataGroupControl = Partial<DashTabItemGroupControlBaseData> & {
+    group: SetItemDataGroupControlItem[];
+};
 export type SetItemDataExternalControl = Partial<DashTabItemControl['data']> & SetItemDataBase;
 export type SetItemDataImage = DashTabItemImage['data'];
 export type SetItemDataDefaults = Record<string, string | string[]>;
@@ -794,7 +794,7 @@ export function purgeData(data: DashData) {
     return {
         ...data,
         tabs: data.tabs.map((tab) => {
-            const {id: tabId, items: tabItems, layout, connections, aliases, globalItems} = tab;
+            const {id: tabId, items, layout, connections, aliases, globalItems} = tab;
 
             const currentItemsIds = new Set();
             const currentWidgetTabsIds = new Set();
@@ -802,24 +802,20 @@ export function purgeData(data: DashData) {
 
             allTabsIds.add(tabId);
 
-            if (globalItems) {
-                globalItems.forEach((item) => {
-                    allItemsIds.add(item.id);
-                    currentItemsIds.add(item.id);
+            globalItems?.forEach((item) => {
+                allItemsIds.add(item.id);
+                currentItemsIds.add(item.id);
 
-                    if ('group' in data) {
-                        (data as unknown as DashTabItemGroupControlData).group.forEach(
-                            (widgetItem) => {
-                                currentControlsIds.add(widgetItem.id);
-                            },
-                        );
-                    } else {
-                        currentControlsIds.add(item.id);
-                    }
-                });
-            }
+                if ('group' in data) {
+                    (data as unknown as DashTabItemGroupControlData).group.forEach((widgetItem) => {
+                        currentControlsIds.add(widgetItem.id);
+                    });
+                } else {
+                    currentControlsIds.add(item.id);
+                }
+            });
 
-            const resultItems = tabItems
+            const resultItems = items
                 // there are empty data
                 .filter((item) => !isEmpty(item.data))
                 .map((item) => {

@@ -14,7 +14,7 @@ import * as actionTypes from '../constants/dashActionTypes';
 
 import {
     TAB_PROPERTIES,
-    addItemToTab,
+    addGlobalItemToTab,
     getGlobalItemsToCopy,
     getStateForControlWithGlobalLogic,
     isItemGlobal,
@@ -72,7 +72,7 @@ function dash(state = initialState, action) {
             const salt = data.salt;
             const dashDataUniqIds = getUniqIdsFromDashData(data);
 
-            // Get global items to copy from the first existing tab
+            // Get global items with 'allTabs' impact to copy from the first existing tab
             const firstExistingTab = data.tabs.length > 0 ? data.tabs[0] : null;
             const {globalItems: globalItemsToCopy, layout} = getGlobalItemsToCopy(firstExistingTab);
 
@@ -80,8 +80,10 @@ function dash(state = initialState, action) {
                 let tabItem = null;
                 const idsMapper = {};
 
+                // tab is exist
                 if (tab.id) {
                     tabItem = tab;
+                    // tab is duplicated
                 } else if (tab.duplicatedFrom) {
                     const tabForDuplication = state.data.tabs.find(
                         ({id}) => id === tab.duplicatedFrom,
@@ -180,6 +182,7 @@ function dash(state = initialState, action) {
                             })),
                         items,
                     };
+                    // new tab
                 } else {
                     const uniqTabIdData = generateUniqId({salt, counter, ids: dashDataUniqIds});
                     counter = uniqTabIdData.counter;
@@ -192,7 +195,11 @@ function dash(state = initialState, action) {
                     // Copy global items to new tab if they exist
                     if (globalItemsToCopy.length > 0) {
                         globalItemsToCopy.forEach((globalItem) => {
-                            tabItem = addItemToTab(tabItem, globalItem, layout[globalItem.id]);
+                            tabItem = addGlobalItemToTab(
+                                tabItem,
+                                globalItem,
+                                layout[globalItem.id],
+                            );
                         });
                     }
                 }

@@ -35,7 +35,6 @@ type DispatchProps = ReturnType<typeof mapDispatchToProps>;
 
 export type DialogExternalControlFeaturesProps = {
     enableAutoheightDefault?: boolean;
-    showSelectorsGroupTitle?: boolean;
     enableGlobalSelectors?: boolean;
 };
 
