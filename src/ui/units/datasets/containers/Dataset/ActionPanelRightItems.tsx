@@ -180,8 +180,6 @@ export function ActionPanelRightItems(props: Props) {
         );
     }
 
-    const isDescriptionEnabled = isEnabledFeature(Feature.EnableDatasetDescription);
-
     return (
         <div className={b('actions-panel-right-items')}>
             {historyActions}
@@ -195,7 +193,7 @@ export function ActionPanelRightItems(props: Props) {
             >
                 {settingsSelectOptions}
             </Select>
-            {isDescriptionEnabled && <DescriptionButton />}
+            <DescriptionButton />
             <Button
                 view="normal"
                 size="m"
