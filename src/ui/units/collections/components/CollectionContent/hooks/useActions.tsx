@@ -50,6 +50,31 @@ type UseActionsArgs = {
     onCloseMoveDialog: (structureChanged: boolean) => void;
 };
 
+const openAccessDialog = (
+    dispatch: AppDispatch,
+    params: {
+        collectionId?: string;
+        workbookId?: string;
+        resourceTitle?: string;
+        canUpdateAccessBindings?: boolean;
+    },
+) => {
+    dispatch(
+        openDialog({
+            id: DIALOG_ACCESS,
+            props: {
+                collectionId: params.collectionId,
+                workbookId: params.workbookId,
+                resourceTitle: params.resourceTitle,
+                canUpdateAccessBindings: params.canUpdateAccessBindings ?? false,
+                onClose: () => {
+                    dispatch(closeDialog());
+                },
+            },
+        }),
+    );
+};
+
 export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsArgs) => {
     const collectionsAccessEnabled = isEnabledFeature(Feature.CollectionsAccessEnabled);
 
@@ -121,20 +146,11 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
                     text: <DropdownAction icon={LockOpen} text={i18n('action_access')} />,
                     action: () => {
                         if (isNewAccessDialogEnabled) {
-                            dispatch(
-                                openDialog({
-                                    id: DIALOG_ACCESS,
-                                    props: {
-                                        collectionId: item?.collectionId ?? undefined,
-                                        resourceTitle: item?.title,
-                                        canUpdateAccessBindings:
-                                            item?.permissions.updateAccessBindings,
-                                        onClose: () => {
-                                            dispatch(closeDialog());
-                                        },
-                                    },
-                                }),
-                            );
+                            openAccessDialog(dispatch, {
+                                collectionId: item?.collectionId ?? undefined,
+                                resourceTitle: item?.title,
+                                canUpdateAccessBindings: item?.permissions.updateAccessBindings,
+                            });
                         } else {
                             dispatch(
                                 openDialog({
@@ -317,21 +333,12 @@ export const useActions = ({fetchStructureItems, onCloseMoveDialog}: UseActionsA
                     text: <DropdownAction icon={LockOpen} text={i18n('action_access')} />,
                     action: () => {
                         if (isNewAccessDialogEnabled) {
-                            dispatch(
-                                openDialog({
-                                    id: DIALOG_ACCESS,
-                                    props: {
-                                        workbookId: item?.workbookId ?? undefined,
-                                        collectionId: item?.collectionId ?? undefined,
-                                        resourceTitle: item?.title,
-                                        canUpdateAccessBindings:
-                                            item?.permissions.updateAccessBindings,
-                                        onClose: () => {
-                                            dispatch(closeDialog());
-                                        },
-                                    },
-                                }),
-                            );
+                            openAccessDialog(dispatch, {
+                                workbookId: item?.workbookId ?? undefined,
+                                collectionId: item?.collectionId ?? undefined,
+                                resourceTitle: item?.title,
+                                canUpdateAccessBindings: item?.permissions.updateAccessBindings,
+                            });
                         } else {
                             dispatch(
                                 openDialog({

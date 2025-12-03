@@ -41,14 +41,14 @@ function AuthorSection(props: AuthorSectionProps) {
     return (
         <div className={b(null, className)}>
             {showWarning && (
-                <>
+                <React.Fragment>
                     <div className={b('title')}>{i18n('section_author')}</div>
                     <div className={b('description')}>
                         {i18n('label_author-description', {
                             subject: i18n(`label_author-subject-${scope}`),
                         })}
                     </div>
-                </>
+                </React.Fragment>
             )}
             <div className={b('form')}>
                 <FormRow label={textLabel} className={b('form-row')}>
