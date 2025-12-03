@@ -14,6 +14,7 @@ import type {
     GetEntryResponse,
 } from 'shared/schema';
 import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
+import type {GetErrorContentTypesExtendedConfig} from 'ui/utils/errorContentTypes';
 
 import type {DLUserSettings, EntryScope, IconId, formatNumber} from '../../../../shared';
 import {makeFunctionTemplate} from '../../../../shared/utils/makeFunctionTemplate';
@@ -178,4 +179,5 @@ export const commonFunctionsMap = {
     getLogoIcon: makeFunctionTemplate<GetLogoIcon>(),
     isValidLogoUrl: makeFunctionTemplate<IsValidLogoUrl>(),
     getShouldShowAIAssistant: makeFunctionTemplate<GetShouldShowAIAssistant>(),
+    getErrorContentTypesExtendedConfig: makeFunctionTemplate<GetErrorContentTypesExtendedConfig>(),
 } as const;

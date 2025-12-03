@@ -53,7 +53,6 @@ export enum ErrorCode {
 export const ErrorContentTypes = {
     NOT_FOUND: 'not-found',
     NOT_FOUND_BY_RESOLVE_TENANT: 'not-found-by-resolve-tenant',
-    NOT_FOUND_CURRENT_CLOUD_FOLDER: 'not-found-current-cloud-folder',
     CLOUD_FOLDER_ACCESS_DENIED: 'cloud-folder-access-denied',
     NO_ACCESS: 'no-access',
     NO_ENTRY_ACCESS: 'no-entry-access',
@@ -67,7 +66,4 @@ export const ErrorContentTypes = {
     NOT_AUTHENTICATED: 'not-authenticated',
     FORBIDDEN_BY_PLAN: 'forbidden-by-plan',
     FORBIDDEN_AUTH: 'forbidden-auth',
-    NOT_AUTHENTICATED_GALLERY: 'not-authenticated-gallery',
-    NOT_AUTHENTICATED_FESTIVAL: 'not-authenticated-festival',
-    LICENSE_EXPIRED: 'license-expired',
 };
