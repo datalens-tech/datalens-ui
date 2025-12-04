@@ -89,6 +89,8 @@ export function App({...routeProps}: RouteComponentProps) {
                 return;
             }
 
+            console.log('setTabHashState', newTabId, newStateHashId);
+
             dispatch(setTabHashState({tabId: newTabId, stateHashId: newStateHashId, entryId}));
         },
         [entryId, tabs, stateHashId, dispatch],

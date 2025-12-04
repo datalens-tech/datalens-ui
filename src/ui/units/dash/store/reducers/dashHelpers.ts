@@ -13,7 +13,11 @@ import type {
 import {DashTabItemType} from 'shared';
 import type {ImpactTabsIds, ImpactType} from 'shared/types/dash';
 
-import type {SetItemDataArgs, SetItemDataGroupControl} from '../actions/dashTyped';
+import type {
+    SetItemDataArgs,
+    SetItemDataExternalControl,
+    SetItemDataGroupControl,
+} from '../actions/dashTyped';
 import type {DashState} from '../typings/dash';
 
 // Tab properties that can be updated
@@ -28,7 +32,11 @@ export const TAB_PROPERTIES = [
     'globalItems',
 ] as const;
 
-export function isItemGlobal(item: SetItemDataArgs): boolean {
+type GlobalItem =
+    | {type: DashTabItemType.Control; data: Partial<DashTabItemControlData>}
+    | {type: DashTabItemType.GroupControl; data: Partial<DashTabItemGroupControlData>};
+
+export function isItemGlobal(item: GlobalItem): boolean {
     if (item.type === DashTabItemType.Control) {
         const controlData = item.data;
         return isControlGlobal(controlData.impactType, controlData.impactTabsIds);
@@ -48,10 +56,10 @@ function isControlGlobal(impactType?: ImpactType, impactTabsIds?: ImpactTabsIds)
     );
 }
 
-function isGroupControlGlobal(itemData: SetItemDataGroupControl): boolean {
+function isGroupControlGlobal(itemData: Partial<DashTabItemGroupControlData>): boolean {
     const groupImpactType = itemData.impactType;
     const groupImpactTabsIds = itemData.impactTabsIds;
-    const isGroupSettingApplied = itemData.group.some(
+    const isGroupSettingApplied = itemData.group?.some(
         (selector) => selector.impactType === undefined || selector.impactType === 'asGroup',
     );
 
@@ -59,8 +67,10 @@ function isGroupControlGlobal(itemData: SetItemDataGroupControl): boolean {
         return true;
     }
 
-    return itemData.group.some((selector) =>
-        isControlGlobal(selector.impactType, selector.impactTabsIds),
+    return Boolean(
+        itemData.group?.some((selector) =>
+            isControlGlobal(selector.impactType, selector.impactTabsIds),
+        ),
     );
 }
 
@@ -143,7 +153,8 @@ export function getDetailedGlobalStatus(
                     impactTabsIds: selectorImpactTabsIds,
                 });
 
-                hasAllScope = usedTabsResult.hasAllScope;
+                // don't rewrite hasAllScope if it's already true
+                hasAllScope = hasAllScope || usedTabsResult.hasAllScope;
                 usedTabsResult.usedTabs.forEach((tabId) => usedTabs.add(tabId));
             }
         }

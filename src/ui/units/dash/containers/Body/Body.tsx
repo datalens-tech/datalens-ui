@@ -86,6 +86,7 @@ import {
     setStateHashId,
     setWidgetCurrentTab,
     toggleTableOfContent,
+    updateGlobalTabsState,
 } from '../../store/actions/dashTyped';
 import {openDialog, openItemDialogAndSetData} from '../../store/actions/dialogs/actions';
 import {closeDialogRelations, openDialogRelations} from '../../store/actions/relations/actions';
@@ -267,8 +268,10 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
             const searchParams = new URLSearchParams(location.search);
 
             if (hash) {
+                console.log('dddd');
                 searchParams.set('state', hash);
             } else {
+                console.log('delete');
                 searchParams.delete('state');
             }
 
@@ -1203,6 +1206,8 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         const mobileFixedHeaderInitiallyOpened =
             shouldRenderMobileMenu && isFixedHeaderWidgetFocused;
 
+        console.log(this.props.hashStates, 'this.props.hashStates');
+
         return (
             <RefsContextProvider
                 fixedHeaderControlsEl={this.state.fixedHeaderControlsEl}
@@ -1270,6 +1275,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                         onItemRender={this.handleItemRender}
                         hideErrorDetails={this.props.hideErrorDetails}
                         setWidgetCurrentTab={this.props.setWidgetCurrentTab}
+                        updateGlobalTabsState={this.props.updateGlobalTabsState}
                         dataProviderContextGetter={this.dataProviderContextGetter}
                     />
                 </WidgetContextProvider>
@@ -1369,6 +1375,7 @@ const mapDispatchToProps = {
     setWidgetCurrentTab,
     toggleTableOfContent,
     removeGlobalItems,
+    updateGlobalTabsState,
 };
 
 export default compose<BodyProps, OwnProps>(

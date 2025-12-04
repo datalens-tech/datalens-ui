@@ -9,11 +9,12 @@ import {I18n} from 'i18n';
 import type {DatalensGlobalState} from 'index';
 import throttle from 'lodash/throttle';
 import {useDispatch, useSelector} from 'react-redux';
-import {Link, useLocation} from 'react-router-dom';
+import {Link, useHistory, useLocation} from 'react-router-dom';
 import {TableOfContentQa} from 'shared';
 import {MarkdownHelpPopover} from 'ui/components/MarkdownHelpPopover/MarkdownHelpPopover';
 import {DL} from 'ui/constants';
 import {selectAsideHeaderIsCompact} from 'ui/store/selectors/asideHeader';
+import {isEmbeddedEntry} from 'ui/utils/embedded';
 import {
     selectHashStates,
     selectShowTableOfContent,
@@ -27,6 +28,7 @@ import {
     getHashStateParam,
     memoizedGetLocalTabs,
 } from '../../modules/helpers';
+import type {DashDispatch} from '../../store/actions';
 import {setPageTab, toggleTableOfContent} from '../../store/actions/dashTyped';
 
 import {getUpdatedOffsets} from './helpers';
@@ -64,8 +66,9 @@ const TableOfContent = React.memo(
         disableHashNavigation?: boolean;
         onItemClick: (itemTitle: string) => void;
     }) => {
-        const dispatch = useDispatch();
+        const dispatch = useDispatch<DashDispatch>();
         const location = useLocation();
+        const history = useHistory();
 
         const isAsideHeaderCompact = useSelector(selectAsideHeaderIsCompact);
 
@@ -83,26 +86,77 @@ const TableOfContent = React.memo(
         }, [dispatch]);
 
         const handleTabClick = React.useCallback(
-            (tabId: string) => () => {
-                dispatch(setPageTab(tabId));
+            async (event: React.MouseEvent<Element, MouseEvent>, tabId: string) => {
+                // clicking on the tab with the meta-key pressed - opening the tab in a new window, and not switching to it
+                if (event && event.metaKey) {
+                    return;
+                }
+
+                // use history instead of link for correct work of logic in setPageTab until it's not metaKey
+                event.preventDefault();
+
+                const tabHashState = await dispatch(setPageTab(tabId));
+
+                const searchParams = {
+                    tab: tabId,
+                    state: tabHashState?.hash ?? '',
+                };
+
+                history.push({
+                    ...location,
+                    search: appendSearchQuery(location.search, searchParams),
+                    hash: isEmbeddedEntry() ? location.hash : '',
+                });
+
                 if (DL.IS_MOBILE) {
                     handleToggleTableOfContent();
                 }
             },
-            [dispatch, handleToggleTableOfContent],
+            [dispatch, handleToggleTableOfContent, history, location],
         );
 
         const handleItemClick = React.useCallback(
-            (tabId: string, itemTitle: string) => () => {
+            async (
+                event: React.MouseEvent<Element, MouseEvent>,
+                tabId: string,
+                itemTitle: string,
+            ) => {
+                // clicking on the tab with the meta-key pressed - opening the tab in a new window, and not switching to it
+                if (event && event.metaKey) {
+                    return;
+                }
+
                 if (!isSelectedTab(tabId)) {
-                    dispatch(setPageTab(tabId));
+                    // use history instead of link for correct work of logic in setPageTab until it's not metaKey
+                    event.preventDefault();
+
+                    const tabHashState = await dispatch(setPageTab(tabId));
+
+                    const searchParams = {
+                        tab: tabId,
+                        state: tabHashState?.hash ?? '',
+                    };
+
+                    history.push({
+                        ...location,
+                        search: appendSearchQuery(location.search, searchParams),
+                        hash: getHash({itemTitle, hash: location.hash, disableHashNavigation}),
+                    });
                 }
                 if (DL.IS_MOBILE) {
                     handleToggleTableOfContent();
                 }
                 onItemClick(itemTitle);
             },
-            [isSelectedTab, onItemClick, dispatch, handleToggleTableOfContent],
+            [
+                isSelectedTab,
+                onItemClick,
+                dispatch,
+                history,
+                location,
+                disableHashNavigation,
+                handleToggleTableOfContent,
+            ],
         );
 
         const handleSheetClose = () => {
@@ -191,7 +245,7 @@ const TableOfContent = React.memo(
                         <Link
                             to={getLinkTo(tab.id)}
                             className={b('title', {selected: isSelectedTab(tab.id)})}
-                            onClick={handleTabClick(tab.id)}
+                            onClick={(event) => handleTabClick(event, tab.id)}
                         >
                             {tab.title}
                         </Link>
@@ -200,7 +254,7 @@ const TableOfContent = React.memo(
                                 <Link
                                     to={getLinkTo(tab.id, item.title)}
                                     className={b('title', {item: true})}
-                                    onClick={handleItemClick(tab.id, item.title)}
+                                    onClick={(event) => handleItemClick(event, tab.id, item.title)}
                                     key={item.id}
                                 >
                                     {item.title}

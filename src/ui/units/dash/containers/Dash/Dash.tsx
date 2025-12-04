@@ -103,6 +103,7 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
         const search = this.props.location.search;
         const tabId = getTabId(new URLSearchParams(search), this.props.tabs);
         if (tabId !== this.props.tabId) {
+            console.log('setPageTab', tabId);
             this.props.setPageTab(tabId);
         }
 

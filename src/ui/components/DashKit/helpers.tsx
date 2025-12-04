@@ -115,6 +115,10 @@ interface DashkitWrapperProps extends DashKitProps {
     // Extended headers context for widgets
     dataProviderContextGetter?: (widgetId: string) => DashChartRequestContext;
     setWidgetCurrentTab?: (payload: {widgetId: string; tabId: string}) => void;
+    updateGlobalTabsState?: (
+        selectorId: string,
+        selectorData?: {impactType?: string; impactTabsIds?: string[]},
+    ) => void;
 }
 
 export const DashkitWrapper: React.FC<
@@ -125,7 +129,13 @@ export const DashkitWrapper: React.FC<
         )
 > = React.forwardRef(
     (
-        {skipReload = false, dataProviderContextGetter, setWidgetCurrentTab, ...props},
+        {
+            skipReload = false,
+            dataProviderContextGetter,
+            setWidgetCurrentTab,
+            updateGlobalTabsState,
+            ...props
+        },
         ref: React.ForwardedRef<DashKit>,
     ) => {
         const contextValue = React.useMemo(() => {
@@ -134,6 +144,7 @@ export const DashkitWrapper: React.FC<
                 defaultGlobalParams: props.defaultGlobalParams,
                 skipReload,
                 setWidgetCurrentTab,
+                updateGlobalTabsState,
                 dataProviderContextGetter,
                 hideErrorDetails: props.hideErrorDetails,
                 selectorsGroupTitlePlaceholder: props.selectorsGroupTitlePlaceholder,
@@ -143,6 +154,7 @@ export const DashkitWrapper: React.FC<
             props.defaultGlobalParams,
             skipReload,
             setWidgetCurrentTab,
+            updateGlobalTabsState,
             dataProviderContextGetter,
             props.hideErrorDetails,
             props.selectorsGroupTitlePlaceholder,

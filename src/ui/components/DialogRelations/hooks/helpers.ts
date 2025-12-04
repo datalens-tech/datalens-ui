@@ -52,7 +52,8 @@ export const getPreparedMetaData = (
 
     const config = dashkitData.props.config;
     const configItems: Record<string, string> = {};
-    config.items.forEach((item) => {
+    const allItems = config.items.concat(config.globalItems || []);
+    allItems.forEach((item) => {
         configItems[item.id] = item.namespace;
     });
 

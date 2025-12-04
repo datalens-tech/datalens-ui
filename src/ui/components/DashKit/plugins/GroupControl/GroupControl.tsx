@@ -23,10 +23,7 @@ import {
     CLICK_ACTION_TYPE,
     CONTROL_TYPE,
 } from 'ui/libs/DatalensChartkit/modules/constants/constants';
-import {
-    isGroupSettingAvailableOnTab,
-    isItemScopeAvailableOnTab,
-} from 'ui/units/dash/utils/selectors';
+import {isItemVisibleOnTab, isWidgetVisibleByGroupSetting} from 'ui/units/dash/utils/selectors';
 import {getUrlGlobalParams} from 'ui/units/dash/utils/url';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
@@ -322,7 +319,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         const isGroupSettingPrevailing = controlData.group.every(
             (item) => item.impactType === undefined || item.impactType === 'asGroup',
         );
-        const isGroupAvailableOnTab = isGroupSettingAvailableOnTab(
+        const isGroupAvailableOnTab = isWidgetVisibleByGroupSetting(
             currentTabId,
             controlData.impactType,
             controlData.impactTabsIds,
@@ -336,7 +333,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             (item) =>
                 ((item.impactType === undefined || item.impactType === 'asGroup') &&
                     isGroupAvailableOnTab) ||
-                isItemScopeAvailableOnTab(currentTabId, item.impactType, item.impactTabsIds),
+                isItemVisibleOnTab(currentTabId, item.impactType, item.impactTabsIds),
         );
     }
 
@@ -499,6 +496,12 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
                 {groupItemIds: this.getControlsIds({data: controlData, controlId})},
             );
             this.localMeta.queue = [];
+
+            this.context?.updateGlobalTabsState?.({
+                params,
+                selectorData: controlData,
+                widgetId: this.props.id,
+            });
             return;
         }
 

@@ -18,7 +18,12 @@ import type {
     StringParams,
     WorkbookId,
 } from 'shared';
-import {ControlType, DATASET_FIELD_TYPES, DashTabItemControlSourceType} from 'shared';
+import {
+    ControlType,
+    DATASET_FIELD_TYPES,
+    DashTabItemControlSourceType,
+    DashTabItemType,
+} from 'shared';
 import {ChartWrapper} from 'ui/components/Widgets/Chart/ChartWidgetWithProvider';
 import type {ChartWidgetWithWrapRefProps} from 'ui/components/Widgets/Chart/types';
 import {DL} from 'ui/constants/common';
@@ -818,7 +823,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 }
 
 const plugin: PluginControl = {
-    type: 'control',
+    type: DashTabItemType.Control,
     defaultLayout: DEFAULT_CONTROL_LAYOUT,
     setSettings(settings: ControlSettings) {
         const {getDistincts} = settings;
