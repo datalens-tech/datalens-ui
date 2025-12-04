@@ -23,7 +23,7 @@ import {
     isMarkupField,
     isNumberField,
 } from '../../../../../../../shared';
-import {getBaseChartConfig} from '../../gravity-charts/utils';
+import {getBaseChartConfig, getYAxisBaseConfig} from '../../gravity-charts/utils';
 import {getFormattedLabel} from '../../gravity-charts/utils/dataLabels';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
@@ -192,11 +192,15 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
         },
         xAxis,
         yAxis: segments.map((d) => {
-            return {
+            const axisBaseConfig = getYAxisBaseConfig({
+                visualization: {placeholders, id: visualizationId},
+            });
+
+            return merge(axisBaseConfig, {
                 title: isSplitEnabled ? {text: d.title} : undefined,
                 plotIndex: d.index,
                 position: d.isOpposite ? 'right' : 'left',
-            };
+            });
         }),
         split: {
             enable: isSplitEnabled,
