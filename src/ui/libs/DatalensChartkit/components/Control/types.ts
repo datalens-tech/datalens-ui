@@ -34,6 +34,7 @@ export interface ControlState {
     params: StringParams;
     statePriority: boolean;
     validationErrors: {[key: string]: string | null};
+    loading: boolean;
 }
 
 export type ControlValue = string | string[] | {from: string | string[]; to: string | string[]};
