@@ -23,13 +23,13 @@ datalensTest.describe('Wizard', () => {
                 const preview = page.locator(slct(WizardPageQa.SectionPreview));
                 const chart = preview.locator('.gcharts-chart');
 
-                // float - should be two sight after dot
+                // Fractional value - by default, it should have two decimal places
                 await wizardPage.createNewFieldWithFormula('SalesSum', 'sum([Sales])');
                 await wizardPage.sectionVisualization.addFieldByClick(
                     PlaceholderName.X,
                     'SalesSum',
                 );
-                // integer
+                // Integer - no decimal places
                 await wizardPage.createNewFieldWithFormula('orderCount', 'count([order_id])');
                 await wizardPage.sectionVisualization.addFieldByClick(
                     PlaceholderName.X,
