@@ -9,7 +9,7 @@ import {DialogControlQa} from 'shared';
 import {FieldWrapper} from 'ui/components/FieldWrapper/FieldWrapper';
 import {VIEW_MODES} from 'ui/components/Select/hooks/useSelectRenderFilter/useSelectRenderFilter';
 import {registry} from 'ui/registry';
-import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
+import {setSelectorDialogItem} from 'ui/store/actions/controlDialog/controlDialog';
 import {CheckboxControlValue} from 'ui/store/constants/controlDialog';
 import {
     selectIsControlConfigurationDisabled,

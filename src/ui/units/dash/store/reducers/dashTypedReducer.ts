@@ -400,9 +400,7 @@ export function dashTypedReducer(
 
                         return {
                             ...tab,
-                            globalItems: tab.globalItems.filter(
-                                (item) => !removedItemsIds.has(item.id),
-                            ),
+                            globalItems: filteredGlobalItems,
                             layout: tab.layout.filter((item) => !removedItemsIds.has(item.i)),
                         };
                     }),

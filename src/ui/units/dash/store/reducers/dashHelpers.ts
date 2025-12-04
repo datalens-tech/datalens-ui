@@ -13,6 +13,7 @@ import type {
 import {DashTabItemType} from 'shared';
 import type {ImpactTabsIds, ImpactType} from 'shared/types/dash';
 
+import type {SetItemDataArgs, SetItemDataGroupControl} from '../actions/dashTyped';
 import type {DashState} from '../typings/dash';
 
 // Tab properties that can be updated
@@ -27,17 +28,14 @@ export const TAB_PROPERTIES = [
     'globalItems',
 ] as const;
 
-export function isItemGlobal(
-    itemType: DashTabItemType,
-    itemData: DashTabItemControlData | DashTabItemGroupControlData,
-): boolean {
-    if (itemType === DashTabItemType.Control) {
-        const controlData = itemData as DashTabItemControlData;
+export function isItemGlobal(item: SetItemDataArgs): boolean {
+    if (item.type === DashTabItemType.Control) {
+        const controlData = item.data;
         return isControlGlobal(controlData.impactType, controlData.impactTabsIds);
     }
 
-    if (itemType === DashTabItemType.GroupControl) {
-        return isGroupControlGlobal(itemData as DashTabItemGroupControlData);
+    if (item.type === DashTabItemType.GroupControl) {
+        return isGroupControlGlobal(item.data);
     }
 
     return false;
@@ -50,7 +48,7 @@ function isControlGlobal(impactType?: ImpactType, impactTabsIds?: ImpactTabsIds)
     );
 }
 
-function isGroupControlGlobal(itemData: DashTabItemGroupControlData): boolean {
+function isGroupControlGlobal(itemData: SetItemDataGroupControl): boolean {
     const groupImpactType = itemData.impactType;
     const groupImpactTabsIds = itemData.impactTabsIds;
     const isGroupSettingApplied = itemData.group.some(

@@ -330,7 +330,7 @@ function dash(state = initialState, action) {
 
             const isGlobal =
                 itemType === DashTabItemType.GroupControl || itemType === DashTabItemType.Control
-                    ? isItemGlobal(itemType, itemData)
+                    ? isItemGlobal(action.payload)
                     : false;
 
             const tabData = DashKit.setItem({

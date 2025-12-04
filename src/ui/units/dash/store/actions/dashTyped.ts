@@ -25,6 +25,7 @@ import type {
     DashTabItemGroupControlBaseData,
     DashTabItemGroupControlData,
     DashTabItemImage,
+    DashTabItemType,
     DashTabItemWidget,
     RecursivePartial,
 } from 'shared';
@@ -409,14 +410,7 @@ export type SetItemDataImage = DashTabItemImage['data'];
 export type SetItemDataDefaults = Record<string, string | string[]>;
 
 export type SetItemDataArgs = {
-    data:
-        | SetItemDataText
-        | SetItemDataTitle
-        | SetItemDataImage
-        | SetItemDataExternalControl
-        | SetItemDataGroupControl;
     defaults?: SetItemDataDefaults;
-    type?: string;
     namespace?: string;
     // context for selectors pasted from the buffer
     contextList?: {
@@ -425,7 +419,13 @@ export type SetItemDataArgs = {
         targetEntryId: string;
         targetDashTabId: string;
     }[];
-};
+} & (
+    | {type?: DashTabItemType.Control; data: SetItemDataExternalControl}
+    | {type?: DashTabItemType.GroupControl; data: SetItemDataGroupControl}
+    | {type?: DashTabItemType.Text; data: SetItemDataText}
+    | {type?: DashTabItemType.Title; data: SetItemDataTitle}
+    | {type?: DashTabItemType.Image; data: SetItemDataImage}
+);
 
 export type SetItemDataAction = {
     type: typeof actionTypes.SET_ITEM_DATA;
