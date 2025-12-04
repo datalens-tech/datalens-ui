@@ -123,6 +123,14 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
                 html: shouldUseHtmlForLabels,
                 format: labelFormatting,
             },
+            tooltip: graph.tooltip?.chartKitFormatting
+                ? {
+                      valueFormat: {
+                          type: 'number',
+                          precision: graph.tooltip.chartKitPrecision,
+                      },
+                  }
+                : undefined,
             custom: {
                 ...graph.custom,
                 colorValue: graph.colorValue,
