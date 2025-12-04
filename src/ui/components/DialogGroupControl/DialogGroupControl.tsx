@@ -5,7 +5,10 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {type DashTabItemGroupControl} from 'shared';
 import {ControlQA} from 'shared/constants/qa';
-import {applyGroupControlDialog, copyControlToStorage} from 'ui/store/actions/controlDialog';
+import {
+    applyGroupControlDialog,
+    copyControlToStorage,
+} from 'ui/store/actions/controlDialog/controlDialog';
 import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 import type {SetItemDataArgs} from 'ui/units/dash/store/actions/dashTyped';
 
@@ -24,6 +27,7 @@ export type DialogGroupControlFeaturesProps = {
     enableAutoheightDefault?: boolean;
     showSelectorsGroupTitle?: boolean;
     theme?: string;
+    enableGlobalSelectors?: boolean;
 };
 
 export type DialogGroupControlProps = {
@@ -45,6 +49,7 @@ export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
     enableAutoheightDefault,
     showSelectorsGroupTitle,
     selectorsGroupTitlePlaceholder,
+    enableGlobalSelectors,
 }) => {
     const {id, draftId} = useSelector(selectSelectorDialog);
 
@@ -80,6 +85,7 @@ export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
                     selectorsGroupTitlePlaceholder={selectorsGroupTitlePlaceholder}
                     enableAutoheightDefault={enableAutoheightDefault}
                     showSelectorsGroupTitle={showSelectorsGroupTitle}
+                    enableGlobalSelectors={enableGlobalSelectors}
                     handleCopyItem={handleCopyItem}
                 />
             }
@@ -90,6 +96,7 @@ export const DialogGroupControl: React.FC<DialogGroupControlProps> = ({
                     key={draftId || id}
                     navigationPath={navigationPath}
                     changeNavigationPath={changeNavigationPath}
+                    enableGlobalSelectors={enableGlobalSelectors}
                 />
             }
             footer={<GroupControlFooter handleClose={handleClose} handleApply={handleApply} />}

@@ -8,8 +8,8 @@ export const Attachment = {
 export type AttachmentValue = (typeof Attachment)[keyof typeof Attachment];
 
 export const ObjectsListTitles: Record<AttachmentValue, keyof typeof mockSharedEntriesTexts> = {
-    target: 'entries-list-title-workbook',
-    source: 'entries-list-title-connection',
+    source: 'entries-list-title-workbook',
+    target: 'entries-list-title-connection',
 };
 
 export const SEARCH_DELAY = 1000;

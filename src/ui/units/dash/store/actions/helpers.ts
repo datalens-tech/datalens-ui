@@ -5,7 +5,7 @@ import {isEmbeddedEntry} from 'ui/utils/embedded';
 
 import ChartKit from '../../../../libs/DatalensChartkit';
 import {registry} from '../../../../registry';
-import type {DashState} from '../reducers/dashTypedReducer';
+import type {DashState} from '../typings/dash';
 
 import type {SetItemDataArgs} from './dashTyped';
 

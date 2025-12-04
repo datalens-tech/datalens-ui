@@ -156,7 +156,7 @@ function validateData(data: DashData) {
         return true;
     };
 
-    data.tabs.forEach(({id: tabId, title: tabTitle, items, layout, connections}) => {
+    data.tabs.forEach(({id: tabId, title: tabTitle, items, layout, connections, globalItems}) => {
         const currentItemsIds: Set<string> = new Set();
         const currentWidgetTabsIds: Set<string> = new Set();
         const currentControlsIds: Set<string> = new Set();
@@ -164,6 +164,23 @@ function validateData(data: DashData) {
         if (isIdUniq(tabId)) {
             allTabsIds.add(tabId);
         }
+
+        globalItems?.forEach(({id: itemId, type, data}) => {
+            allItemsIds.add(itemId);
+            currentItemsIds.add(itemId);
+
+            // to avoid isIdUniq check
+            if (type === DashTabItemType.Control || type === DashTabItemType.GroupControl) {
+                // if it is group control all connections set on its items
+                if ('group' in data) {
+                    data.group.forEach((widgetItem) => {
+                        currentControlsIds.add(widgetItem.id);
+                    });
+                } else {
+                    currentControlsIds.add(itemId);
+                }
+            }
+        });
 
         items.forEach(({id: itemId, type, data}) => {
             if (isIdUniq(itemId)) {
@@ -190,10 +207,12 @@ function validateData(data: DashData) {
             }
         });
 
+        const allItemsLength = items.length + (globalItems?.length ?? 0);
+
         // checking that layout has all the ids from item, i.e. positions are set for all elements
         if (
-            items.length !== layout.length ||
-            items.length !==
+            allItemsLength !== layout.length ||
+            allItemsLength !==
                 intersection(
                     Array.from(currentItemsIds),
                     layout.map(({i}) => i),

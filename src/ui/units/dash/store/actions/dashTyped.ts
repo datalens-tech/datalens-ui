@@ -21,8 +21,11 @@ import type {
     DashTab,
     DashTabItem,
     DashTabItemControl,
-    DashTabItemGroupControl,
+    DashTabItemControlBaseData,
+    DashTabItemGroupControlBaseData,
+    DashTabItemGroupControlData,
     DashTabItemImage,
+    DashTabItemType,
     DashTabItemWidget,
     RecursivePartial,
 } from 'shared';
@@ -52,7 +55,6 @@ import {collectDashStats} from '../../modules/pushStats';
 import {DashUpdateStatus} from '../../typings/dash';
 import {DASH_EDIT_HISTORY_UNIT_ID} from '../constants';
 import * as actionTypes from '../constants/dashActionTypes';
-import type {DashState} from '../reducers/dashTypedReducer';
 import {
     selectDash,
     selectDashData,
@@ -60,6 +62,7 @@ import {
     selectDashEntry,
     selectEntryId,
 } from '../selectors/dashTypedSelectors';
+import type {DashState} from '../typings/dash';
 
 import {save} from './base/actions';
 import {migrateDataSettings} from './helpers';
@@ -394,17 +397,20 @@ type SetItemDataBase = {
     autoHeight?: boolean;
     source?: ItemDataSource;
 };
+
+type SetItemDataGroupControlItem = Partial<DashTabItemControlBaseData> & SetItemDataBase;
+
 export type SetItemDataText = RecursivePartial<PluginTextProps['data']> & SetItemDataBase;
 export type SetItemDataTitle = RecursivePartial<PluginTitleProps['data']> & SetItemDataBase;
-export type SetItemDataGroupControl = Partial<DashTabItemGroupControl['data']> & SetItemDataBase;
+export type SetItemDataGroupControl = Partial<DashTabItemGroupControlBaseData> & {
+    group: SetItemDataGroupControlItem[];
+};
 export type SetItemDataExternalControl = Partial<DashTabItemControl['data']> & SetItemDataBase;
 export type SetItemDataImage = DashTabItemImage['data'];
 export type SetItemDataDefaults = Record<string, string | string[]>;
 
 export type SetItemDataArgs = {
-    data: SetItemDataText | SetItemDataTitle | SetItemDataImage | SetItemDataGroupControl;
     defaults?: SetItemDataDefaults;
-    type?: string;
     namespace?: string;
     // context for selectors pasted from the buffer
     contextList?: {
@@ -413,7 +419,13 @@ export type SetItemDataArgs = {
         targetEntryId: string;
         targetDashTabId: string;
     }[];
-};
+} & (
+    | {type?: DashTabItemType.Control; data: SetItemDataExternalControl}
+    | {type?: DashTabItemType.GroupControl; data: SetItemDataGroupControl}
+    | {type?: DashTabItemType.Text; data: SetItemDataText}
+    | {type?: DashTabItemType.Title; data: SetItemDataTitle}
+    | {type?: DashTabItemType.Image; data: SetItemDataImage}
+);
 
 export type SetItemDataAction = {
     type: typeof actionTypes.SET_ITEM_DATA;
@@ -782,7 +794,7 @@ export function purgeData(data: DashData) {
     return {
         ...data,
         tabs: data.tabs.map((tab) => {
-            const {id: tabId, items: tabItems, layout, connections, aliases} = tab;
+            const {id: tabId, items, layout, connections, aliases, globalItems} = tab;
 
             const currentItemsIds = new Set();
             const currentWidgetTabsIds = new Set();
@@ -790,7 +802,20 @@ export function purgeData(data: DashData) {
 
             allTabsIds.add(tabId);
 
-            const resultItems = tabItems
+            globalItems?.forEach((item) => {
+                allItemsIds.add(item.id);
+                currentItemsIds.add(item.id);
+
+                if ('group' in data) {
+                    (data as unknown as DashTabItemGroupControlData).group.forEach((widgetItem) => {
+                        currentControlsIds.add(widgetItem.id);
+                    });
+                } else {
+                    currentControlsIds.add(item.id);
+                }
+            });
+
+            const resultItems = items
                 // there are empty data
                 .filter((item) => !isEmpty(item.data))
                 .map((item) => {
@@ -1008,3 +1033,15 @@ export function updateDeprecatedDashConfig() {
         dispatch(addDashEditHistoryPoint());
     };
 }
+
+export const REMOVE_GLOBAL_ITEMS = Symbol('dash/REMOVE_GLOBAL_ITEMS');
+export type RemoveGlobalItemsAction = {
+    type: typeof REMOVE_GLOBAL_ITEMS;
+    payload: {items: DashTabItem[]};
+};
+export const removeGlobalItems = (
+    payload: RemoveGlobalItemsAction['payload'],
+): RemoveGlobalItemsAction => ({
+    type: REMOVE_GLOBAL_ITEMS,
+    payload,
+});

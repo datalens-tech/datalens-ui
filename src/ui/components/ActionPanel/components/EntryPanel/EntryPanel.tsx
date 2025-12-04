@@ -16,10 +16,12 @@ import type {FilterEntryContextMenuItems} from 'ui/components/EntryContextMenu';
 import {CounterName, GoalId, reachMetricaGoal} from 'ui/libs/metrica';
 import {registry} from 'ui/registry';
 import type {BreadcrumbsItem} from 'ui/registry/units/common/types/components/EntryBreadcrumbs';
-import {getCollectionBreadcrumbs} from 'ui/store/actions/collectionsStructure';
-import {selectGetCollectionBreadcrumbs} from 'ui/store/selectors/collectionsStructure';
-import {addWorkbookInfo, resetWorkbookPermissions} from 'units/workbooks/store/actions';
-import {selectWorkbookBreadcrumbs, selectWorkbookName} from 'units/workbooks/store/selectors';
+import {
+    addCollectionBreadcrumbs,
+    addWorkbookInfo,
+    resetWorkbookPermissions,
+} from 'units/workbooks/store/actions';
+import {selectEntityBreadcrumbs, selectWorkbookName} from 'units/workbooks/store/selectors';
 
 import type {GetEntryResponse} from '../../../../../shared/schema';
 import {DL} from '../../../../constants/common';
@@ -109,9 +111,8 @@ class EntryPanel extends React.Component<Props, State> {
 
         if (workbookId) {
             this.props.actions.addWorkbookInfo(workbookId, true);
-        }
-        if (collectionId) {
-            this.props.actions.getCollectionBreadcrumbs({collectionId});
+        } else if (collectionId) {
+            this.props.actions.addCollectionBreadcrumbs({collectionId});
         }
     }
 
@@ -123,19 +124,17 @@ class EntryPanel extends React.Component<Props, State> {
 
         if (prevWorkbookId !== workbookId && workbookId) {
             this.props.actions.addWorkbookInfo(workbookId, true);
+        } else if (prevCollectionId !== collectionId && collectionId) {
+            this.props.actions.addCollectionBreadcrumbs({collectionId});
         }
 
         if (prevWorkbookId && !workbookId) {
             this.props.actions.resetWorkbookPermissions();
         }
-
-        if (prevCollectionId !== collectionId && collectionId) {
-            this.props.actions.getCollectionBreadcrumbs({collectionId});
-        }
     }
 
     render() {
-        const {children, workbookName, workbookBreadcrumbs, collectionBreadcrumbs} = this.props;
+        const {children, workbookName, entityBreadcrumbs} = this.props;
         const {EntryBreadcrumbs} = registry.common.components.getAll();
 
         return (
@@ -145,7 +144,7 @@ class EntryPanel extends React.Component<Props, State> {
                     renderRootContent={this.renderRootContent}
                     entry={this.state.entry}
                     workbookName={workbookName}
-                    entityBreadcrumbs={workbookBreadcrumbs ?? collectionBreadcrumbs.data}
+                    entityBreadcrumbs={entityBreadcrumbs}
                     endContent={
                         <React.Fragment>
                             {this.renderControls()}
@@ -342,8 +341,7 @@ const mapStateToProps = (state: DatalensGlobalState, ownProps: OwnProps) => {
 
     return {
         workbookName: selectWorkbookName(state, workbookId),
-        workbookBreadcrumbs: selectWorkbookBreadcrumbs(state),
-        collectionBreadcrumbs: selectGetCollectionBreadcrumbs(state),
+        entityBreadcrumbs: selectEntityBreadcrumbs(state),
     };
 };
 
@@ -351,7 +349,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
     return {
         actions: bindActionCreators(
             {
-                getCollectionBreadcrumbs,
+                addCollectionBreadcrumbs,
                 addWorkbookInfo,
                 resetWorkbookPermissions,
             },

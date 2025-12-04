@@ -131,6 +131,7 @@ export interface Dataset {
         description?: string;
     };
     workbook_id?: string;
+    collection_id?: string;
     permissions?: Permissions;
 
     // This part of the fields moved to the dataset field. right here saved for backward compatibility
