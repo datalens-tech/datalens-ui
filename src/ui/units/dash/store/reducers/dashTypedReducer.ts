@@ -1,5 +1,3 @@
-import type React from 'react';
-
 import type {DashKit} from '@gravity-ui/dashkit';
 import update from 'immutability-helper';
 import {cloneDeep, pick} from 'lodash';
@@ -15,6 +13,7 @@ import type {DIALOG_TYPE} from 'ui/constants/dialogs';
 import type {ValuesType} from 'utility-types';
 
 import {Mode} from '../../modules/constants';
+import type {TabsHashStates} from '../../store/actions/dashTyped';
 import type {DashUpdateStatus} from '../../typings/dash';
 import {
     CLOSE_DIALOG,
@@ -23,9 +22,9 @@ import {
     SAVE_DASH_ERROR,
     SAVE_DASH_SUCCESS,
 } from '../actions/dash';
-import type {TabsHashStates} from '../actions/dashTyped';
 import {
     CHANGE_NAVIGATION_PATH,
+    REMOVE_GLOBAL_ITEMS,
     SET_DASHKIT_REF,
     SET_DASH_ACCESS_DESCRIPTION,
     SET_DASH_DESCRIPTION,
@@ -51,8 +50,9 @@ import {
 } from '../actions/dashTyped';
 import type {DashAction} from '../actions/index';
 
-import {TAB_PROPERTIES} from './dash';
+import {TAB_PROPERTIES} from './dashHelpers';
 
+// TODO (global selectors): Remove moved type after up version
 export type DashState = {
     tabId: null | string;
     lastModifiedItemId: null | string;
@@ -366,6 +366,47 @@ export function dashTypedReducer(
             return {
                 ...state,
                 ...action.payload,
+            };
+        }
+
+        case REMOVE_GLOBAL_ITEMS: {
+            // In the usual case, only one item comes here
+            const removedItems = action.payload.items;
+
+            if (removedItems.length === 0) {
+                return state;
+            }
+
+            const removedItemsIds = new Set<string>();
+
+            removedItems.forEach((item) => removedItemsIds.add(item.id));
+
+            return {
+                ...state,
+                data: {
+                    ...state.data,
+                    tabs: state.data.tabs.map((tab) => {
+                        if (!tab.globalItems || tab.globalItems.length === 0) {
+                            return tab;
+                        }
+
+                        const filteredGlobalItems = tab.globalItems.filter(
+                            (item) => !removedItemsIds.has(item.id),
+                        );
+
+                        if (filteredGlobalItems.length === tab.globalItems.length) {
+                            return tab;
+                        }
+
+                        return {
+                            ...tab,
+                            globalItems: tab.globalItems.filter(
+                                (item) => !removedItemsIds.has(item.id),
+                            ),
+                            layout: tab.layout.filter((item) => !removedItemsIds.has(item.i)),
+                        };
+                    }),
+                },
             };
         }
 

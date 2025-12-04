@@ -3,6 +3,8 @@ import type {
     DashTabItem,
     DashTabItemControlData,
     DashTabItemGroupControl,
+    ImpactTabsIds,
+    ImpactType,
     StringParams,
 } from 'shared';
 import type {
@@ -180,6 +182,38 @@ const isSelectorWithContext = (
     return 'originalId' in selector;
 };
 
+const getValidScopeFields = ({
+    impactType,
+    impactTabsIds,
+    tabId,
+    isGroupSetting,
+    isSingleControl,
+}: {
+    impactType?: ImpactType;
+    impactTabsIds: ImpactTabsIds;
+    tabId: string | null;
+    isGroupSetting?: boolean;
+    isSingleControl?: boolean;
+}): {impactType: ImpactType; impactTabsIds: ImpactTabsIds} => {
+    if (impactType === 'allTabs') {
+        return {impactType, impactTabsIds: null};
+    }
+
+    if (impactType === 'selectedTabs' && impactTabsIds?.length) {
+        return {impactType, impactTabsIds};
+    }
+
+    if (
+        !isGroupSetting &&
+        !isSingleControl &&
+        (impactType === undefined || impactType === 'asGroup')
+    ) {
+        return {impactTabsIds: null, impactType: 'asGroup'};
+    }
+
+    return {impactType: 'currentTab', impactTabsIds: tabId ? [tabId] : undefined};
+};
+
 export const applyGroupControlDialog = ({
     setItemData,
     closeDialog,
@@ -282,6 +316,14 @@ export const applyGroupControlDialog = ({
             }
         });
 
+        const {impactType, impactTabsIds} = getValidScopeFields({
+            impactType: selectorsGroup.impactType,
+            impactTabsIds: selectorsGroup.impactTabsIds,
+            tabId: state.dash.tabId,
+            isGroupSetting: true,
+            isSingleControl,
+        });
+
         const data = {
             autoHeight,
             updateControlsOnChange,
@@ -306,13 +348,22 @@ export const applyGroupControlDialog = ({
                     id: selector.id,
                     title: selector.title,
                     sourceType: selector.sourceType,
-                    source: getItemDataSource(selector) as DashTabItemControlData['source'],
+                    source: getItemDataSource(selector),
                     placementMode: isSingleControl ? 'auto' : selector.placementMode,
                     width: isSingleControl ? '' : selector.width,
                     defaults: getControlDefaultsForField(selector, hasChangedSourceType),
                     namespace: selector.namespace,
+                    ...getValidScopeFields({
+                        impactType: selector.impactType,
+                        impactTabsIds: selector.impactTabsIds,
+                        tabId: state.dash.tabId,
+                        isSingleControl,
+                    }),
                 };
             }),
+            // if control is single we take the scope params from the control data
+            impactType: isSingleControl ? undefined : impactType,
+            impactTabsIds: isSingleControl ? undefined : impactTabsIds,
         };
 
         const getExtendedItemData = getExtendedItemDataAction();
@@ -418,7 +469,7 @@ export const applyExternalControlDialog = ({
     return (dispatch: AppDispatch, getState: () => DatalensGlobalState) => {
         const state = getState();
         const selectorDialog = selectSelectorDialog(state);
-        const {title, sourceType, autoHeight} = selectorDialog;
+        const {title, sourceType, autoHeight, impactType, impactTabsIds} = selectorDialog;
 
         const validation = getControlValidation(selectorDialog);
 
@@ -439,9 +490,18 @@ export const applyExternalControlDialog = ({
             sourceType,
             autoHeight,
             source: getItemDataSource(selectorDialog),
+            ...getValidScopeFields({
+                impactType,
+                impactTabsIds,
+                tabId: state.dash.tabId,
+                isGroupSetting: true,
+                isSingleControl: true,
+            }),
         };
         const getExtendedItemData = getExtendedItemDataAction();
-        const itemData = dispatch(getExtendedItemData({data, defaults}));
+        const itemData = dispatch(
+            getExtendedItemData({data: data as SetItemDataArgs['data'], defaults}),
+        );
 
         setItemData({
             data: itemData.data,

@@ -15,25 +15,32 @@ import {
 import logger from 'ui/libs/logger';
 import {setLastUsedDatasetId, setSelectorDialogItem} from 'ui/store/actions/controlDialog';
 import {ELEMENT_TYPE} from 'ui/store/constants/controlDialog';
-import {selectOpenedItemMeta, selectSelectorDialog} from 'ui/store/selectors/controlDialog';
+import {
+    selectOpenedItemMeta,
+    selectSelectorDialog,
+    selectSelectorsGroup,
+} from 'ui/store/selectors/controlDialog';
 import type {SelectorElementType, SetSelectorDialogItemArgs} from 'ui/store/typings/controlDialog';
 
 import {DatasetField} from '../../Switchers/DatasetField/DatasetField';
 import {EntrySelector} from '../EntrySelector/EntrySelector';
+import {ImpactTypeSelect} from '../ImpactTypeSelect/ImpactTypeSelect';
 
 const i18n = I18n.keyset('dash.control-dialog.edit');
 
 const getDatasetLink = (entryId: string) => `/datasets/${entryId}`;
 
-function DatasetSelector(props: {
+function DatasetSelectorSettings(props: {
     navigationPath: string | null;
     changeNavigationPath: (newNavigationPath: string) => void;
     rowClassName?: string;
+    enableGlobalSelectors?: boolean;
 }) {
     const dispatch = useDispatch();
     const {datasetId, datasetFieldId, isManualTitle, title, fieldType, validation} =
         useSelector(selectSelectorDialog);
     const {workbookId} = useSelector(selectOpenedItemMeta);
+    const {impactType, impactTabsIds, group} = useSelector(selectSelectorsGroup);
     const [isInvalid, setIsInvalid] = React.useState(false);
 
     const fetchDataset = React.useCallback((entryId: string) => {
@@ -53,7 +60,7 @@ function DatasetSelector(props: {
             })
             .catch((isInvalid) => {
                 setIsInvalid(true);
-                logger.logError('DatasetSelector: load dataset failed', isInvalid);
+                logger.logError('DatasetSelectorSettings: load dataset failed', isInvalid);
             });
     }, []);
 
@@ -171,8 +178,15 @@ function DatasetSelector(props: {
                     />
                 </FieldWrapper>
             </FormRow>
+            {props.enableGlobalSelectors && (
+                <ImpactTypeSelect
+                    hasMultipleSelectors={group.length > 1}
+                    groupImpactType={impactType}
+                    groupImpactTabsIds={impactTabsIds}
+                ></ImpactTypeSelect>
+            )}
         </React.Fragment>
     );
 }
 
-export {DatasetSelector};
+export {DatasetSelectorSettings};

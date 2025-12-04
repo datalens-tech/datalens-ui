@@ -15,6 +15,7 @@ import {selectOpenedItemMeta, selectSelectorDialog} from 'ui/store/selectors/con
 import {EntryTypeNode} from 'ui/units/dash/modules/constants';
 
 import {EntrySelector} from '../EntrySelector/EntrySelector';
+import {ImpactTypeSelect} from '../ImpactTypeSelect/ImpactTypeSelect';
 
 import './ExternalSelectorSettings.scss';
 
@@ -32,6 +33,7 @@ const ExternalSelectorSettings: React.FC<{
     navigationPath: string | null;
     changeNavigationPath: (newNavigationPath: string) => void;
     enableAutoheightDefault?: boolean;
+    enableGlobalSelectors?: boolean;
     rowClassName?: string;
 }> = (props) => {
     const dispatch = useDispatch();
@@ -120,6 +122,8 @@ const ExternalSelectorSettings: React.FC<{
                 navigationPath={props.navigationPath}
                 changeNavigationPath={props.changeNavigationPath}
             />
+
+            {props.enableGlobalSelectors && <ImpactTypeSelect />}
 
             {!props.enableAutoheightDefault && (
                 <FormRow

@@ -1,5 +1,10 @@
 import type {QueueItem, StateAndParamsMetaData} from '@gravity-ui/dashkit/helpers';
-import type {DashTabItemControlSourceType, StringParams, WorkbookId} from 'shared';
+import type {
+    DashTabItemControlSingle,
+    DashTabItemControlSourceType,
+    StringParams,
+    WorkbookId,
+} from 'shared';
 import type {ResponseSuccessSingleControl} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
 
 import type {LoadStatus} from '../Control/types';
@@ -23,6 +28,7 @@ export interface PluginGroupControlState {
     localUpdateLoader: boolean;
     quickActionLoader: boolean;
     disableButtons?: boolean;
+    memoGroupItems: DashTabItemControlSingle[];
 }
 
 export type GroupControlLocalMeta = Omit<StateAndParamsMetaData, 'queue'> & {

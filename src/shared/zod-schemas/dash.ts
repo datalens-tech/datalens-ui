@@ -116,6 +116,13 @@ const controlSchema = z
         namespace: z.literal(DASH_DEFAULT_NAMESPACE),
         title: z.string().min(1),
         sourceType: z.enum(DashTabItemControlSourceType),
+        // TODO(global selectors): uncomment when flag will be enabled
+        // fields that regulate which tabs the selector will be displayed on
+        // 'allTabs' = global selectors
+        // 'currentTab' = regular selector that is visible only on one tab
+        // 'selectedTabs' + impactTabsIds = selector is visible on the selected tabs
+        // impactType: z.enum(['allTabs', 'currentTab', 'selectedTabs']).optional(),
+        // impactTabsIds: z.array(z.string()).optional(),
     })
     .and(
         z.discriminatedUnion('sourceType', [
@@ -147,6 +154,13 @@ const groupControlItemsSchema = z
         defaults: z.record(z.any(), z.any()),
         placementMode: z.enum(CONTROLS_PLACEMENT_MODE).optional(),
         width: z.string().optional(),
+        // TODO(global selectors): uncomment when flag will be enabled
+        // fields that regulate which tabs the selector will be displayed on
+        // 'allTabs' = global selectors
+        // 'currentTab' = regular selector that is visible only on one tab
+        // 'selectedTabs' + impactTabsIds = selector is visible on the selected tabs
+        // impactType: z.enum(['allTabs', 'currentTab', 'selectedTabs']).optional(),
+        // impactTabsIds: z.array(z.string()).optional(),
     })
     .and(
         z.discriminatedUnion('sourceType', [

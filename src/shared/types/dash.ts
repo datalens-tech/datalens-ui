@@ -2,6 +2,9 @@ import type {ItemDropProps} from '@gravity-ui/dashkit';
 
 import type {Operations} from '../modules';
 
+export type ImpactType = 'allTabs' | 'currentTab' | 'selectedTabs' | 'asGroup';
+export type ImpactTabsIds = string[] | null | undefined;
+
 import type {
     ClientChartsConfig,
     Dictionary,
@@ -126,6 +129,7 @@ export interface DashTab {
     aliases: DashTabAliases;
     connections: DashTabConnection[];
     settings?: DashTabSettings;
+    globalItems?: DashTabItem[];
 }
 
 export type DashSettingsGlobalParams = Record<string, string | string[]>;
@@ -222,19 +226,24 @@ export interface DashTabItemControl extends DashTabItemBase {
     defaults: StringParams;
 }
 
-export interface DashTabItemControlData {
+export interface DashTabItemControlBaseData {
     id: string;
     title: string;
-    sourceType: DashTabItemControlSourceType;
-    source:
-        | DashTabItemControlDataset['source']
-        | DashTabItemControlManual['source']
-        | DashTabItemControlExternal['source'];
     placementMode?: 'auto' | '%' | 'px';
     autoHeight?: boolean;
     width?: string;
     defaults?: StringParams;
     namespace: string;
+    impactType?: ImpactType;
+    impactTabsIds?: ImpactTabsIds;
+}
+
+export interface DashTabItemControlData extends DashTabItemControlBaseData {
+    sourceType: DashTabItemControlSourceType;
+    source:
+        | DashTabItemControlDataset['source']
+        | DashTabItemControlManual['source']
+        | DashTabItemControlExternal['source'];
 }
 
 export type DashTabItemControlSingle = DashTabItemControlDataset | DashTabItemControlManual;
@@ -336,15 +345,19 @@ export interface DashTabItemGroupControl extends DashTabItemBase {
     defaults: StringParams;
 }
 
-export interface DashTabItemGroupControlData {
+export interface DashTabItemGroupControlBaseData {
     showGroupName: boolean;
     groupName?: string;
     autoHeight: boolean;
     buttonApply: boolean;
     buttonReset: boolean;
+    impactType?: ImpactType;
+    impactTabsIds?: ImpactTabsIds;
 
     updateControlsOnChange?: boolean;
+}
 
+export interface DashTabItemGroupControlData extends DashTabItemGroupControlBaseData {
     group: DashTabItemControlSingle[];
 }
 

@@ -8,7 +8,6 @@ import type {DatalensGlobalState} from 'index';
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {ControlQA} from 'shared';
-import {CommonSettingsSection} from 'ui/components/ControlComponents/Sections/CommonSettingsSection/CommonSettingsSection';
 import {ParametersSection} from 'ui/components/ControlComponents/Sections/ParametersSection/ParametersSection';
 import {SelectorPreview} from 'ui/components/ControlComponents/SelectorPreview/SelectorPreview';
 import {SectionWrapper} from 'ui/components/SectionWrapper/SectionWrapper';
@@ -24,6 +23,8 @@ import {
 } from 'ui/store/selectors/controlDialog';
 import type {SetItemDataArgs} from 'ui/units/dash/store/actions/dashTyped';
 
+import {ExternalSelectorSettings} from '../ControlComponents/Sections/CommonSettingsSection/ExternalSelectorSettings/ExternalSelectorSettings';
+
 import './DialogExternalControl.scss';
 
 const controlI18n = I18n.keyset('dash.control-dialog.edit');
@@ -34,6 +35,7 @@ type DispatchProps = ReturnType<typeof mapDispatchToProps>;
 
 export type DialogExternalControlFeaturesProps = {
     enableAutoheightDefault?: boolean;
+    enableGlobalSelectors?: boolean;
 };
 
 type OwnProps = {
@@ -86,7 +88,12 @@ class DialogExternalControl extends React.Component<Props> {
 
     private renderBody() {
         const showParametersSection = this.props.isParametersSectionAvailable;
-        const {navigationPath, changeNavigationPath, enableAutoheightDefault} = this.props;
+        const {
+            navigationPath,
+            changeNavigationPath,
+            enableAutoheightDefault,
+            enableGlobalSelectors,
+        } = this.props;
 
         return (
             <React.Fragment>
@@ -95,10 +102,11 @@ class DialogExternalControl extends React.Component<Props> {
                 </div>
                 <div className={b('section')}>
                     <SectionWrapper title={controlI18n('label_common-settings')}>
-                        <CommonSettingsSection
+                        <ExternalSelectorSettings
                             navigationPath={navigationPath}
                             changeNavigationPath={changeNavigationPath}
                             enableAutoheightDefault={enableAutoheightDefault}
+                            enableGlobalSelectors={enableGlobalSelectors}
                         />
                     </SectionWrapper>
                 </div>
