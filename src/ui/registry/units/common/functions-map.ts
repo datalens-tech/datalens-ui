@@ -13,7 +13,6 @@ import type {
     GetDistinctsApiV2TransformedResponse,
     GetEntryResponse,
 } from 'shared/schema';
-import type {IllustrationName} from 'ui/components/Illustration/types';
 import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
 
 import type {DLUserSettings, EntryScope, IconId, formatNumber} from '../../../../shared';
@@ -45,9 +44,13 @@ import type {GetAdditionalChartkitErrorContent} from './types/functions/getAddit
 import type {GetBasicActionPanelItems} from './types/functions/getBasicActionPanelItems';
 import type {GetFunctionsDocumentationResponse} from './types/functions/getFunctionsDocumentation';
 import type {GloballyEntrySettings} from './types/functions/getGloballyEntrySettings';
+import type {GetHeaderWithoutHelpCenterErrorContentTypes} from './types/functions/getHeaderWithoutHelpCenterErrorContentTypes';
+import type {GetHeaderWithoutNavigationErrorContentTypes} from './types/functions/getHeaderWithoutNavigationErrorContentTypes';
 import type {GetIllustrationStore} from './types/functions/getIllustrationStore';
+import type {GetImageNameFromErrorContentType} from './types/functions/getImageNameFromErrorContentType';
 import type {GetLoginById} from './types/functions/getLoginById';
 import type {GetLogoIcon} from './types/functions/getLogoIcon';
+import type {GetNotAuthenticatedErrorContentTypes} from './types/functions/getNotAuthenticatedErrorContentTypes';
 import type {GetShouldShowAIAssistant} from './types/functions/getShouldShowAIAssistant';
 import type {GetUIEntryRouteArgs} from './types/functions/getUIEntryRoute';
 import type {IsValidLogoUrl} from './types/functions/isValidLogoUrl';
@@ -179,9 +182,11 @@ export const commonFunctionsMap = {
     getLogoIcon: makeFunctionTemplate<GetLogoIcon>(),
     isValidLogoUrl: makeFunctionTemplate<IsValidLogoUrl>(),
     getShouldShowAIAssistant: makeFunctionTemplate<GetShouldShowAIAssistant>(),
-    getNotAuthenticatedErrorContentTypes: makeFunctionTemplate<() => string[]>(),
-    getHeaderWithoutHelpCenterErrorContentTypes: makeFunctionTemplate<() => string[]>(),
-    getHeaderWithoutNavigationErrorContentTypes: makeFunctionTemplate<() => string[]>(),
-    getImageNameFromErrorContentType:
-        makeFunctionTemplate<(errorContentType: string) => IllustrationName | null>(),
+    getNotAuthenticatedErrorContentTypes:
+        makeFunctionTemplate<GetNotAuthenticatedErrorContentTypes>(),
+    getHeaderWithoutHelpCenterErrorContentTypes:
+        makeFunctionTemplate<GetHeaderWithoutHelpCenterErrorContentTypes>(),
+    getHeaderWithoutNavigationErrorContentTypes:
+        makeFunctionTemplate<GetHeaderWithoutNavigationErrorContentTypes>(),
+    getImageNameFromErrorContentType: makeFunctionTemplate<GetImageNameFromErrorContentType>(),
 } as const;
