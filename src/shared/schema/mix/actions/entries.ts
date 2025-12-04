@@ -10,8 +10,11 @@ import type {
     SwitchPublicationStatusResponse,
 } from '../../us/types';
 import {
+    buildEnrichedLinksTree,
     checkEntriesForPublication,
+    collectAllRelatedEntryIds,
     escapeStringForLike,
+    fetchEntriesWithLinks,
     getEntryMetaStatusByError,
 } from '../helpers';
 import {isValidPublishLink} from '../helpers/validation';
@@ -20,6 +23,8 @@ import type {
     DeleteEntryResponse,
     GetBatchEntriesByIdsArgs,
     GetBatchEntriesByIdsResponse,
+    GetEnrichedLinksTreeArgs,
+    GetEnrichedLinksTreeResponse,
     GetEntriesInFolderArgs,
     GetEntriesInFolderResponse,
     GetEntryMetaStatusArgs,
@@ -235,6 +240,41 @@ export const entriesActions = {
             const entriesResponse = await typedApi.us.getEntries(args);
 
             return {entries: entriesResponse.entries};
+        },
+    ),
+    getEnrichedLinksTree: createAction<GetEnrichedLinksTreeResponse, GetEnrichedLinksTreeArgs>(
+        async (api, {entryId}, {ctx}) => {
+            const typedApi = getTypedApi(api);
+
+            const allRelatedEntryIds = await collectAllRelatedEntryIds({
+                entryId,
+                typedApi,
+                ctx,
+            });
+
+            const entriesData = await fetchEntriesWithLinks({
+                entryIds: Array.from(allRelatedEntryIds),
+                typedApi,
+                ctx,
+            });
+
+            let annotations;
+            if (allRelatedEntryIds.size > 0) {
+                try {
+                    annotations = await typedApi.us.getEntriesAnnotation({
+                        entryIds: Array.from(allRelatedEntryIds),
+                    });
+                } catch (error) {
+                    ctx.logError('Error getting entries annotation', error as Error);
+                }
+            }
+
+            const linksTree = buildEnrichedLinksTree({
+                entriesData,
+                annotations,
+            });
+
+            return {linksTree};
         },
     ),
 };
