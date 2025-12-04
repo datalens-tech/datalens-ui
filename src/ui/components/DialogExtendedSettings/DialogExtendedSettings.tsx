@@ -8,7 +8,7 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {DialogGroupControlQa, TitlePlacementOption} from 'shared';
 import {BackButton} from 'ui/components/ControlComponents/BackButton/BackButton';
-import {updateSelectorsGroup} from 'ui/store/actions/controlDialog';
+import {updateSelectorsGroup} from 'ui/store/actions/controlDialog/controlDialog';
 import {selectSelectorsGroup} from 'ui/store/selectors/controlDialog';
 import type {SelectorDialogState} from 'ui/store/typings/controlDialog';
 

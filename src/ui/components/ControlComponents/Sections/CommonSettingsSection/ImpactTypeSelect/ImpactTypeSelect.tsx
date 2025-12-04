@@ -8,7 +8,10 @@ import {useDispatch, useSelector} from 'react-redux';
 import {Feature} from 'shared';
 import type {ImpactType} from 'shared/types/dash';
 import {SelectOptionWithIcon} from 'ui/components/SelectComponents/components/SelectOptionWithIcon/SelectOptionWithIcon';
-import {setSelectorDialogItem, updateSelectorsGroup} from 'ui/store/actions/controlDialog';
+import {
+    setSelectorDialogItem,
+    updateSelectorsGroup,
+} from 'ui/store/actions/controlDialog/controlDialog';
 import {selectSelectorDialog, selectSelectorsGroup} from 'ui/store/selectors/controlDialog';
 import {
     selectCurrentTab,
