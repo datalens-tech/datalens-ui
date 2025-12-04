@@ -4,36 +4,28 @@ import {ErrorContentTypes} from 'shared';
 import type {IllustrationName} from '../../ui/components/Illustration/types';
 import {registry} from '../../ui/registry';
 
-export type GetErrorContentTypesExtendedConfig = () => {
-    getNotAuthenticatedErrorContentTypes: () => string[];
-    getHeaderWithoutHelpCenterErrorContentTypes: () => string[];
-    getHeaderWithoutNavigationErrorContentTypes: () => string[];
-    getImageNameFromErrorContentType: (errorContentType: string) => IllustrationName | null;
-};
-
-const getErrorContentTypesExtendedConfig = (): ReturnType<GetErrorContentTypesExtendedConfig> => {
-    const getExtendedConfig = registry.common.functions.get('getErrorContentTypesExtendedConfig');
-    const errorContentTypesExtendedConfig = getExtendedConfig();
-
-    return errorContentTypesExtendedConfig;
-};
-
 export const isNotAuthenticatedError = (errorType: string | undefined) => {
     if (!errorType) return false;
 
-    const {getNotAuthenticatedErrorContentTypes} = getErrorContentTypesExtendedConfig();
-    const extraNotAuthenticatedErrorContentTypes = getNotAuthenticatedErrorContentTypes();
+    const getNotAuthenticatedErrorContentTypes = registry.common.functions.get(
+        'getNotAuthenticatedErrorContentTypes',
+    );
+    const notAuthenticatedErrorContentTypesExtended = getNotAuthenticatedErrorContentTypes();
 
     return (
+        notAuthenticatedErrorContentTypesExtended.includes(errorType) ||
         errorType === ErrorContentTypes.NOT_AUTHENTICATED ||
-        extraNotAuthenticatedErrorContentTypes.includes(errorType)
+        errorType === ErrorContentTypes.NOT_AUTHENTICATED_GALLERY ||
+        errorType === ErrorContentTypes.NOT_AUTHENTICATED_FESTIVAL
     );
 };
 
 export const isHeaderWithoutHelpCenterError = (errorType: string | undefined) => {
     if (!errorType) return false;
 
-    const {getHeaderWithoutHelpCenterErrorContentTypes} = getErrorContentTypesExtendedConfig();
+    const getHeaderWithoutHelpCenterErrorContentTypes = registry.common.functions.get(
+        'getHeaderWithoutHelpCenterErrorContentTypes',
+    );
     const extraHeaderWithoutHelpCenterErrorContentTypes =
         getHeaderWithoutHelpCenterErrorContentTypes();
 
@@ -46,6 +38,7 @@ export const isHeaderWithoutHelpCenterError = (errorType: string | undefined) =>
             ErrorContentTypes.AUTH_DENIED,
             ErrorContentTypes.NOT_FOUND_BY_RESOLVE_TENANT,
             ErrorContentTypes.NOT_AUTHENTICATED,
+            ErrorContentTypes.NOT_AUTHENTICATED_GALLERY,
         ].includes(errorType)
     );
 };
@@ -53,13 +46,16 @@ export const isHeaderWithoutHelpCenterError = (errorType: string | undefined) =>
 export const isHeaderWithoutNavigationError = (errorType: string | undefined) => {
     if (!errorType) return false;
 
-    const {getHeaderWithoutNavigationErrorContentTypes} = getErrorContentTypesExtendedConfig();
+    const getHeaderWithoutNavigationErrorContentTypes = registry.common.functions.get(
+        'getHeaderWithoutNavigationErrorContentTypes',
+    );
     const extraHeaderWithoutNavigationErrorContentTypes =
         getHeaderWithoutNavigationErrorContentTypes();
 
     return (
         extraHeaderWithoutNavigationErrorContentTypes?.includes(errorType) ||
         [
+            ErrorContentTypes.NOT_FOUND_CURRENT_CLOUD_FOLDER,
             ErrorContentTypes.CLOUD_FOLDER_ACCESS_DENIED,
             ErrorContentTypes.NEW_ORGANIZATION_USER,
             ErrorContentTypes.NEW_LOCAL_FEDERATION_USER,
@@ -68,6 +64,7 @@ export const isHeaderWithoutNavigationError = (errorType: string | undefined) =>
             ErrorContentTypes.NOT_FOUND_BY_RESOLVE_TENANT,
             ErrorContentTypes.NOT_AUTHENTICATED,
             ErrorContentTypes.FORBIDDEN_AUTH,
+            ErrorContentTypes.NOT_AUTHENTICATED_GALLERY,
         ].includes(errorType)
     );
 };
@@ -79,43 +76,37 @@ export const getImageNameFromErrorContentType = (
         return 'error';
     }
 
-    const {getImageNameFromErrorContentType: getImageNameFromErrorContentTypeExtended} =
-        getErrorContentTypesExtendedConfig();
+    const getImageNameFromErrorContentTypeExtended = registry.common.functions.get(
+        'getImageNameFromErrorContentType',
+    );
 
-    let imageName: IllustrationName | null;
+    const imageNameExtended = getImageNameFromErrorContentTypeExtended(errorContentType);
 
-    imageName = getImageNameFromErrorContentTypeExtended(errorContentType);
-
-    if (imageName) {
-        return imageName;
+    if (imageNameExtended) {
+        return imageNameExtended;
     }
 
     switch (errorContentType) {
         case ErrorContentTypes.NOT_FOUND:
+        case ErrorContentTypes.NOT_FOUND_CURRENT_CLOUD_FOLDER:
         case ErrorContentTypes.NOT_FOUND_BY_RESOLVE_TENANT:
-            imageName = 'notFoundError';
-            break;
+            return 'notFoundError';
         case ErrorContentTypes.NO_ACCESS:
         case ErrorContentTypes.CLOUD_FOLDER_ACCESS_DENIED:
         case ErrorContentTypes.NO_ENTRY_ACCESS:
         case ErrorContentTypes.AUTH_DENIED:
-            imageName = 'noAccess';
-            break;
+            return 'noAccess';
         case ErrorContentTypes.ERROR:
         case ErrorContentTypes.AUTH_FAILED:
-            imageName = 'error';
-            break;
+            return 'error';
         case ErrorContentTypes.CREDENTIALS:
-            imageName = 'identity';
-            break;
+        case ErrorContentTypes.LICENSE_EXPIRED:
+            return 'identity';
         case ErrorContentTypes.INACCESSIBLE_ON_MOBILE:
         case ErrorContentTypes.FORBIDDEN_BY_PLAN:
         case ErrorContentTypes.FORBIDDEN_AUTH:
-            imageName = 'project';
-            break;
+            return 'project';
         default:
-            imageName = 'error';
+            return 'error';
     }
-
-    return imageName;
 };
