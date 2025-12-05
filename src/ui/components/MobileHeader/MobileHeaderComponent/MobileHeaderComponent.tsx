@@ -5,11 +5,8 @@ import {MobileHeader, getMobileHeaderCustomEvent} from '@gravity-ui/navigation';
 import {mergeRefs} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
-import {Feature} from 'shared/types';
 import {LogoText} from 'ui/components/AsideHeaderAdapter/LogoText/LogoText';
-import {PRODUCT_NAME} from 'ui/constants';
 import type {MobileHeaderComponentProps} from 'ui/registry/units/common/types/components/MobileHeaderComponent';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {useScrollableContainerContext} from 'ui/utils/scrollableContainerContext';
 
 import {DL} from '../../../constants/common';
@@ -19,9 +16,8 @@ import {MOBILE_HEADER_LOGO_ICON_SIZE} from '../constants';
 import {BurgerMenuFooter} from './BurgerMenuFooter/BurgerMenuFooter';
 import {UserPanel} from './UserPanel/UserPanel';
 
-import defaultLogoIcon from 'ui/assets/icons/logo.svg';
 import iconCollection from 'ui/assets/icons/mono-collection.svg';
-import rebrandingLogoIcon from 'ui/assets/icons/os-logo.svg';
+import defaultLogoIcon from 'ui/assets/icons/os-logo.svg';
 
 import '../MobileHeader.scss';
 
@@ -73,12 +69,6 @@ export const MobileHeaderComponent = ({
           ]
         : undefined;
 
-    const defaultLogo = isEnabledFeature(Feature.EnableDLRebranding)
-        ? rebrandingLogoIcon
-        : defaultLogoIcon;
-
-    const isRebrandingEnabled = isEnabledFeature(Feature.EnableDLRebranding);
-
     const {scrollableContainerRef} = useScrollableContainerContext();
 
     const contentRef = React.useRef<HTMLDivElement>();
@@ -98,11 +88,11 @@ export const MobileHeaderComponent = ({
         <MobileHeader
             ref={setupRefs}
             logo={{
-                icon: logoIcon ?? defaultLogo,
-                text: isRebrandingEnabled ? () => <LogoText {...logoTextProps} /> : PRODUCT_NAME,
-                iconClassName: b('logo-icon', {rebranding: isRebrandingEnabled}),
-                className: b('logo', {rebranding: isRebrandingEnabled}),
-                iconSize: isRebrandingEnabled ? MOBILE_HEADER_LOGO_ICON_SIZE : undefined,
+                icon: logoIcon ?? defaultLogoIcon,
+                text: () => <LogoText {...logoTextProps} />,
+                iconClassName: b('logo-icon'),
+                className: b('logo'),
+                iconSize: MOBILE_HEADER_LOGO_ICON_SIZE,
             }}
             burgerMenu={{items: menuItems, renderFooter: () => <BurgerMenuFooter />}}
             contentClassName={CONTENT_CLASSNAME}
