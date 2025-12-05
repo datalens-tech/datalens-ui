@@ -271,18 +271,9 @@ const settingsSchema = z.object({
 export const dataSchema = z.object({
     counter: z.number().int().min(1),
     salt: z.string().min(1),
-    schemeVersion: z.literal(DASH_CURRENT_SCHEME_VERSION).default(DASH_CURRENT_SCHEME_VERSION),
+    schemeVersion: z.literal(DASH_CURRENT_SCHEME_VERSION),
     tabs: z.array(tabSchema),
     settings: settingsSchema,
     supportDescription: z.string().optional(),
     accessDescription: z.string().optional(),
-});
-
-// Main dashboard API validation schema
-export const dashSchema = z.object({
-    key: z.string().min(1).optional(),
-    workbookId: z.union([z.null(), z.string()]).optional(),
-    data: dataSchema,
-    meta: z.record(z.any(), z.any()).optional(),
-    links: z.record(z.string(), z.string()).optional(),
 });

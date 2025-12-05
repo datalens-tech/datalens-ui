@@ -1,0 +1,121 @@
+import type {AppContext} from '@gravity-ui/nodekit';
+import Hashids from 'hashids';
+
+import {getTypedApi} from '../../..';
+import {DASH_CURRENT_SCHEME_VERSION, EntryScope} from '../../../..';
+import {Dash} from '../../../../../server/components/sdk';
+import {createTypedAction} from '../../../gateway-utils';
+import {DEFAULT_SETTINGS} from '../../constants/dash';
+import {
+    createDashV1ArgsSchema,
+    createDashV1ResultSchema,
+} from '../../schemas/dash/create-dashboard-v1';
+import {DASH_VERSION_1} from '../../schemas/dash/dash-v1';
+import type {CreateDashV1Result, DashV1} from '../../types';
+
+const processTabs = ({
+    ctx,
+    salt = Math.random().toString(),
+    tabs,
+}: {
+    ctx: AppContext;
+    salt?: string;
+    tabs?: DashV1['data']['tabs'];
+}): {
+    salt: string;
+    counter: number;
+    tabs: DashV1['data']['tabs'];
+} => {
+    if (!tabs) {
+        const I18n = ctx.get('i18n');
+        const i18n = I18n.keyset('dash.tabs-dialog.edit');
+
+        const hashids = new Hashids(salt);
+
+        return {
+            salt,
+            counter: 2,
+            tabs: [
+                {
+                    id: hashids.encode(1),
+                    title: i18n('value_default', {index: 1}),
+                    items: [],
+                    layout: [],
+                    aliases: {},
+                    connections: [],
+                },
+            ],
+        };
+    }
+
+    const counter = tabs.reduce((acc, tab) => {
+        return acc + 1 + (tab.items?.length ?? 0); // + 1 tabId + n items ids
+    }, 0);
+
+    return {
+        salt,
+        counter,
+        tabs,
+    };
+};
+
+export const createDashboardV1 = createTypedAction(
+    {
+        paramsSchema: createDashV1ArgsSchema,
+        resultSchema: createDashV1ResultSchema,
+    },
+    async (api, args, {ctx}): Promise<CreateDashV1Result> => {
+        const typedApi = getTypedApi(api);
+
+        const argsEntry = args.entry;
+        const argsData = argsEntry.data;
+
+        const data = {
+            ...argsData,
+            ...processTabs({ctx, salt: argsData.salt, tabs: argsData.tabs}),
+            settings: argsData.settings ?? DEFAULT_SETTINGS,
+            schemeVersion: DASH_CURRENT_SCHEME_VERSION,
+        };
+
+        const links = Dash.gatherLinks(data);
+
+        Dash.validateData(data);
+
+        const createEntryResult = await typedApi.us._createEntry({
+            key: argsEntry.key,
+            meta: argsEntry.meta,
+            workbookId: argsEntry.workbookId,
+            annotation: argsEntry.annotation,
+            mode: args.mode,
+            data,
+            type: '',
+            scope: EntryScope.Dash,
+            links,
+        });
+
+        return {
+            entry: {
+                version: DASH_VERSION_1,
+                data: createEntryResult.data as DashV1['data'],
+                meta: createEntryResult.meta as DashV1['meta'],
+                scope: createEntryResult.scope as EntryScope.Dash,
+                type: createEntryResult.type as DashV1['type'],
+                entryId: createEntryResult.entryId,
+                key: createEntryResult.key,
+                createdAt: createEntryResult.createdAt,
+                createdBy: createEntryResult.createdBy,
+                updatedAt: createEntryResult.updatedAt,
+                updatedBy: createEntryResult.updatedBy,
+                revId: createEntryResult.revId,
+                savedId: createEntryResult.savedId,
+                publishedId: createEntryResult.publishedId,
+                tenantId: createEntryResult.tenantId,
+                hidden: createEntryResult.hidden,
+                public: createEntryResult.public,
+                workbookId: createEntryResult.workbookId,
+                annotation: createEntryResult.annotation,
+                links: createEntryResult.links,
+            },
+        };
+    },
+);
