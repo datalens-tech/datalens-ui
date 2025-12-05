@@ -1,4 +1,4 @@
-import type {ChartData, ChartTitle} from '@gravity-ui/chartkit/gravity-charts';
+import type {ChartData, ChartTitle, ChartYAxis} from '@gravity-ui/chartkit/gravity-charts';
 
 import {PlaceholderId, WizardVisualizationId, isDateField} from '../../../../../../../shared';
 import type {
@@ -50,6 +50,40 @@ function getAxisMinMax(
     return [Number.isNaN(min) ? undefined : min, Number.isNaN(max) ? undefined : max];
 }
 
+export function getYAxisBaseConfig({
+    visualization,
+}: {
+    visualization: {id: string; placeholders: ServerPlaceholder[]};
+}): ChartYAxis {
+    const yPlaceholder = visualization.placeholders.find((p) => p.id === PlaceholderId.Y);
+    const yPlaceholderSettings = yPlaceholder?.settings || {};
+    const yItem = yPlaceholder?.items[0];
+
+    const [yMin, yMax] = getAxisMinMax(yPlaceholderSettings);
+
+    return {
+        // todo: the axis type should depend on the type of field
+        type: isDateField(yItem) ? 'datetime' : 'linear',
+        visible: yPlaceholderSettings?.axisVisibility !== 'hide',
+        labels: {
+            enabled: Boolean(yItem) && yPlaceholder?.settings?.hideLabels !== 'yes',
+            rotation: getAxisLabelsRotationAngle(yPlaceholder?.settings),
+        },
+        title: {
+            text: getAxisTitle(yPlaceholderSettings, yItem) || undefined,
+        },
+        grid: {
+            enabled: Boolean(yItem) && isGridEnabled(yPlaceholderSettings),
+        },
+        ticks: {
+            pixelInterval: getTickPixelInterval(yPlaceholderSettings) || 72,
+        },
+        lineColor: 'var(--g-color-line-generic)',
+        min: yMin,
+        max: yMax,
+    };
+}
+
 export function getBaseChartConfig(args: {
     extraSettings?: ServerCommonSharedExtraSettings;
     visualization: {id: string; placeholders: ServerPlaceholder[]};
@@ -60,10 +94,6 @@ export function getBaseChartConfig(args: {
     const xPlaceholder = visualization.placeholders.find((p) => p.id === PlaceholderId.X);
     const xItem = xPlaceholder?.items[0];
     const xPlaceholderSettings = xPlaceholder?.settings || {};
-
-    const yPlaceholder = visualization.placeholders.find((p) => p.id === PlaceholderId.Y);
-    const yPlaceholderSettings = yPlaceholder?.settings || {};
-    const yItem = yPlaceholder?.items[0];
 
     let chartWidgetData: Partial<ChartData> = {
         title: getChartTitle(extraSettings),
@@ -128,7 +158,7 @@ export function getBaseChartConfig(args: {
 
     if (!visualizationWithoutAxis.includes(visualizationId)) {
         const [xMin, xMax] = getAxisMinMax(xPlaceholderSettings);
-        const [yMin, yMax] = getAxisMinMax(yPlaceholderSettings);
+
         chartWidgetData = {
             ...chartWidgetData,
             xAxis: {
@@ -150,29 +180,7 @@ export function getBaseChartConfig(args: {
                 min: xMin,
                 max: xMax,
             },
-            yAxis: [
-                {
-                    // todo: the axis type should depend on the type of field
-                    type: isDateField(yItem) ? 'datetime' : 'linear',
-                    visible: yPlaceholderSettings?.axisVisibility !== 'hide',
-                    labels: {
-                        enabled: Boolean(yItem) && yPlaceholder?.settings?.hideLabels !== 'yes',
-                        rotation: getAxisLabelsRotationAngle(yPlaceholder?.settings),
-                    },
-                    title: {
-                        text: getAxisTitle(yPlaceholderSettings, yItem) || undefined,
-                    },
-                    grid: {
-                        enabled: Boolean(yItem) && isGridEnabled(yPlaceholderSettings),
-                    },
-                    ticks: {
-                        pixelInterval: getTickPixelInterval(yPlaceholderSettings) || 72,
-                    },
-                    lineColor: 'var(--g-color-line-generic)',
-                    min: yMin,
-                    max: yMax,
-                },
-            ],
+            yAxis: [getYAxisBaseConfig({visualization})],
         };
 
         if (visualizationWithYMainAxis.includes(visualizationId)) {

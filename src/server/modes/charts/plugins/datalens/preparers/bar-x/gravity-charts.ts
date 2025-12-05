@@ -22,7 +22,7 @@ import {
     isNumberField,
 } from '../../../../../../../shared';
 import type {WrappedHTML} from '../../../../../../../shared/types/charts';
-import {getBaseChartConfig} from '../../gravity-charts/utils';
+import {getBaseChartConfig, getYAxisBaseConfig} from '../../gravity-charts/utils';
 import {getFormattedLabel} from '../../gravity-charts/utils/dataLabels';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
@@ -232,14 +232,18 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
         legend,
         xAxis,
         yAxis: segments.map((d) => {
-            return {
+            const axisBaseConfig = getYAxisBaseConfig({
+                visualization: {placeholders, id: visualizationId},
+            });
+
+            return merge(axisBaseConfig, {
                 labels: {
                     numberFormat: axisLabelNumberFormat ?? undefined,
                 },
                 plotIndex: d.index,
                 position: d.isOpposite ? 'right' : 'left',
                 title: isSplitEnabled ? {text: d.title} : undefined,
-            };
+            });
         }),
         split: {
             enable: isSplitEnabled,
