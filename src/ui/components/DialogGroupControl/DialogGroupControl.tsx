@@ -5,7 +5,10 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {type DashTabItemGroupControl} from 'shared';
 import {ControlQA} from 'shared/constants/qa';
-import {applyGroupControlDialog, copyControlToStorage} from 'ui/store/actions/controlDialog';
+import {
+    applyGroupControlDialog,
+    copyControlToStorage,
+} from 'ui/store/actions/controlDialog/controlDialog';
 import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 import type {SetItemDataArgs} from 'ui/units/dash/store/actions/dashTyped';
 

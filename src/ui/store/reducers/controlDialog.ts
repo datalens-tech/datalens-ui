@@ -23,7 +23,7 @@ import {
     UPDATE_SELECTORS_GROUP,
     SET_LAST_USED_DATASET_ID,
     SET_LAST_USED_CONNECTION_ID,
-} from '../actions/controlDialog';
+} from '../actions/controlDialog/controlDialog';
 import type {
     SetLastUsedDatasetIdAction,
     SetLastUsedConnectionIdAction,
@@ -33,7 +33,7 @@ import type {
     SetActiveSelectorIndexAction,
     UpdateSelectorsGroupAction,
     AddSelectorToGroupAction,
-} from '../actions/controlDialog';
+} from '../actions/controlDialog/controlDialog';
 import {getActualUniqueFieldNameValidation, getInitialDefaultValue} from '../utils/controlDialog';
 import {I18n} from 'i18n';
 import {ELEMENT_TYPE} from '../constants/controlDialog';

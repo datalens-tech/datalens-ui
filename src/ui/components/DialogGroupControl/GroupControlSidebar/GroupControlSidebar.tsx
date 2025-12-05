@@ -15,7 +15,7 @@ import {
     setActiveSelectorIndex,
     setSelectorDialogItem,
     updateSelectorsGroup,
-} from 'ui/store/actions/controlDialog';
+} from 'ui/store/actions/controlDialog/controlDialog';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {
     getSelectorDialogFromData,
@@ -166,6 +166,7 @@ export const GroupControlSidebar: React.FC<{
         selectorsGroupTitlePlaceholder,
         enableAutoheightDefault,
         showSelectorsGroupTitle,
+        enableGlobalSelectors,
     ]);
 
     const handleUpdateItem = React.useCallback(
@@ -179,19 +180,6 @@ export const GroupControlSidebar: React.FC<{
         [dispatch],
     );
 
-    const renderControlIcon = React.useCallback(
-        (item: SelectorDialogState) => {
-            const impactType =
-                item.impactType === undefined || item.impactType === 'asGroup'
-                    ? selectorsGroup.impactType
-                    : item.impactType;
-            return (
-                <GlobalSelectorIcon withHint impactType={impactType} className={b('global-icon')} />
-            );
-        },
-        [selectorsGroup.impactType],
-    );
-
     const renderControlWrapper = React.useCallback(
         (item: SelectorDialogState, children: React.ReactNode) => {
             const isVisible = isControlItemVisibleOnCurrentTab(
@@ -200,16 +188,23 @@ export const GroupControlSidebar: React.FC<{
                 selectorsGroup.impactType,
                 selectorsGroup.impactTabsIds,
             );
-            const iconElement = renderControlIcon(item);
+            const impactType =
+                item.impactType === undefined || item.impactType === 'asGroup'
+                    ? selectorsGroup.impactType
+                    : item.impactType;
 
             return (
                 <div className={b('item-wrapper', {secondary: !isVisible})}>
-                    {iconElement}
+                    <GlobalSelectorIcon
+                        withHint
+                        impactType={impactType}
+                        className={b('global-icon')}
+                    />
                     {children}
                 </div>
             );
         },
-        [currentTabId, selectorsGroup.impactType, selectorsGroup.impactTabsIds, renderControlIcon],
+        [currentTabId, selectorsGroup.impactType, selectorsGroup.impactTabsIds],
     );
 
     return (

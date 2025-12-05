@@ -93,6 +93,7 @@ class Control<TProviderData> extends React.PureComponent<
         params: this.props.data.params,
         statePriority: false,
         validationErrors: {},
+        loading: false,
     };
 
     componentDidMount() {
@@ -152,7 +153,7 @@ class Control<TProviderData> extends React.PureComponent<
         );
     }
 
-    onChange(control: ActiveControl, value: SimpleControlValue, index: number) {
+    async onChange(control: ActiveControl, value: SimpleControlValue, index: number) {
         const {type, updateControlsOnChange, updateOnChange, postUpdateOnChange} = control;
 
         const {newParams, callExternalOnChange, callChangeByClick} = this.getChangedParams(
@@ -175,7 +176,13 @@ class Control<TProviderData> extends React.PureComponent<
         }
 
         if (type === 'button' && control.onClick?.action === CLICK_ACTION_TYPE.RUN_ACTIVITY) {
-            this.props.runActivity?.({params: {...newParams, ...control.onClick.args}});
+            this.setState({loading: true});
+            try {
+                await this.props.runActivity?.({params: {...newParams, ...control.onClick.args}});
+            } catch (e) {
+            } finally {
+                this.setState({loading: false});
+            }
             return;
         }
 
@@ -230,6 +237,7 @@ class Control<TProviderData> extends React.PureComponent<
             key: index + (param || (isNotSingleParam(control) && control.paramFrom) || label),
             value: control.disabled ? '' : value,
             onChange: (value: SimpleControlValue) => this.onChange(control, value, index),
+            loading: this.state.loading,
         };
 
         if ('required' in control) {

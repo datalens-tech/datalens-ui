@@ -5,7 +5,7 @@ import type {
     SetActiveSelectorIndexAction,
     SetSelectorDialogItemAction,
     UpdateSelectorsGroupAction,
-} from 'ui/store/actions/controlDialog';
+} from 'ui/store/actions/controlDialog/controlDialog';
 import type {EditHistoryAction} from 'ui/store/actions/editHistory';
 
 import type {EntryContentAction} from '../../../../store/actions/entryContent';

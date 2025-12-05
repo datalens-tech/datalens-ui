@@ -5,7 +5,7 @@ import {HelpMark, TextInput} from '@gravity-ui/uikit';
 import {useDispatch, useSelector} from 'react-redux';
 import {DialogControlQa} from 'shared';
 import {YfmWrapper} from 'ui/components/YfmWrapper/YfmWrapper';
-import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
+import {setSelectorDialogItem} from 'ui/store/actions/controlDialog/controlDialog';
 import {selectSelectorDialog} from 'ui/store/selectors/controlDialog';
 
 import {FieldWrapper} from '../../../../FieldWrapper/FieldWrapper';

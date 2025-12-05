@@ -15,7 +15,7 @@ import type {AppDispatch} from 'ui/store';
 import {
     applyExternalControlDialog,
     closeExternalControlDialog,
-} from 'ui/store/actions/controlDialog';
+} from 'ui/store/actions/controlDialog/controlDialog';
 import {
     selectIsParametersSectionAvailable,
     selectOpenedItemData,

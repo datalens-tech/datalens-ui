@@ -13,7 +13,10 @@ import {
     EntryScope,
 } from 'shared';
 import logger from 'ui/libs/logger';
-import {setLastUsedDatasetId, setSelectorDialogItem} from 'ui/store/actions/controlDialog';
+import {
+    setLastUsedDatasetId,
+    setSelectorDialogItem,
+} from 'ui/store/actions/controlDialog/controlDialog';
 import {ELEMENT_TYPE} from 'ui/store/constants/controlDialog';
 import {
     selectOpenedItemMeta,

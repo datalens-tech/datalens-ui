@@ -2,9 +2,8 @@ import {DashTabItemType, TitlePlacementOption} from 'shared';
 import type {
     DashTabItem,
     DashTabItemControlData,
+    DashTabItemControlExternal,
     DashTabItemGroupControl,
-    ImpactTabsIds,
-    ImpactType,
     StringParams,
 } from 'shared';
 import type {
@@ -13,22 +12,23 @@ import type {
     SelectorDialogState,
     SelectorsGroupDialogState,
     SetSelectorDialogItemArgs,
-} from '../typings/controlDialog';
-import type {AppDispatch} from '..';
+    ItemDataSource,
+} from '../../typings/controlDialog';
+import type {AppDispatch} from '../..';
 import {
     getControlDefaultsForField,
     getControlValidation,
     getItemDataSource,
-} from '../utils/controlDialog';
+} from '../../utils/controlDialog';
 import isEmpty from 'lodash/isEmpty';
 import {
     getBeforeCloseDialogItemAction,
     getExtendedItemDataAction,
 } from 'ui/units/dash/store/actions/helpers';
-import {showToast} from './toaster';
+import {showToast} from '../toaster';
 import {I18n} from 'i18n';
-import type {ControlDialogStateItemMeta} from '../reducers/controlDialog';
-import {getGroupSelectorDialogInitialState} from '../reducers/controlDialog';
+import type {ControlDialogStateItemMeta} from '../../reducers/controlDialog';
+import {getGroupSelectorDialogInitialState} from '../../reducers/controlDialog';
 import {DEFAULT_CONTROL_LAYOUT} from 'ui/components/DashKit/constants';
 import {COPIED_WIDGET_STORAGE_KEY} from 'ui/constants';
 import type {ConfigItemGroup} from '@gravity-ui/dashkit/helpers';
@@ -37,7 +37,11 @@ import {CONTROLS_PLACEMENT_MODE} from 'ui/constants/dialogs';
 import type {PreparedCopyItemOptions} from '@gravity-ui/dashkit';
 import type {RealTheme} from '@gravity-ui/uikit';
 import {getPreparedCopyItemOptions, type CopiedConfigContext} from 'ui/units/dash/modules/helpers';
-import type {SetItemDataArgs} from 'ui/units/dash/store/actions/dashTyped';
+import type {
+    SetItemDataArgs,
+    SetItemDataExternalControl,
+    SetItemDataGroupControl,
+} from 'ui/units/dash/store/actions/dashTyped';
 import type {DatalensGlobalState} from 'ui/index';
 import {
     selectActiveSelectorIndex,
@@ -49,7 +53,8 @@ import {
     selectSelectorsGroup,
     selectControlDialogFeatureByType,
     selectControlDialogState,
-} from '../selectors/controlDialog';
+} from '../../selectors/controlDialog';
+import {getValidScopeFields} from './helpers';
 
 const dialogI18n = I18n.keyset('dash.group-controls-dialog.edit');
 
@@ -182,38 +187,6 @@ const isSelectorWithContext = (
     return 'originalId' in selector;
 };
 
-const getValidScopeFields = ({
-    impactType,
-    impactTabsIds,
-    tabId,
-    isGroupSetting,
-    isSingleControl,
-}: {
-    impactType?: ImpactType;
-    impactTabsIds: ImpactTabsIds;
-    tabId: string | null;
-    isGroupSetting?: boolean;
-    isSingleControl?: boolean;
-}): {impactType: ImpactType; impactTabsIds: ImpactTabsIds} => {
-    if (impactType === 'allTabs') {
-        return {impactType, impactTabsIds: null};
-    }
-
-    if (impactType === 'selectedTabs' && impactTabsIds?.length) {
-        return {impactType, impactTabsIds};
-    }
-
-    if (
-        !isGroupSetting &&
-        !isSingleControl &&
-        (impactType === undefined || impactType === 'asGroup')
-    ) {
-        return {impactTabsIds: null, impactType: 'asGroup'};
-    }
-
-    return {impactType: 'currentTab', impactTabsIds: tabId ? [tabId] : undefined};
-};
-
 export const applyGroupControlDialog = ({
     setItemData,
     closeDialog,
@@ -324,7 +297,7 @@ export const applyGroupControlDialog = ({
             isSingleControl,
         });
 
-        const data = {
+        const data: SetItemDataGroupControl = {
             autoHeight,
             updateControlsOnChange,
             showGroupName: selectorsGroup.showGroupName,
@@ -367,15 +340,11 @@ export const applyGroupControlDialog = ({
         };
 
         const getExtendedItemData = getExtendedItemDataAction();
-        const itemData = dispatch(getExtendedItemData({data}));
+        const itemData = dispatch(
+            getExtendedItemData({data, type: DashTabItemType.GroupControl, contextList}),
+        );
 
-        const finalItemData = {
-            ...itemData,
-            type: DashTabItemType.GroupControl,
-            contextList,
-        };
-
-        setItemData(finalItemData);
+        setItemData(itemData);
         closeDialog();
     };
 };
@@ -459,6 +428,12 @@ export const copyControlToStorage = (controlIndex: number) => {
     };
 };
 
+const isValidExternalSource = (
+    dataSource: ItemDataSource,
+): dataSource is DashTabItemControlExternal['source'] => {
+    return typeof dataSource.chartId === 'string';
+};
+
 export const applyExternalControlDialog = ({
     closeDialog,
     setItemData,
@@ -485,11 +460,13 @@ export const applyExternalControlDialog = ({
         const hasChangedSourceType = selectIsControlSourceTypeHasChanged(state);
         const defaults = getControlDefaultsForField(selectorDialog, hasChangedSourceType);
 
-        const data = {
+        const dataSource = getItemDataSource(selectorDialog);
+
+        const data: SetItemDataExternalControl = {
             title,
             sourceType,
             autoHeight,
-            source: getItemDataSource(selectorDialog),
+            source: isValidExternalSource(dataSource) ? dataSource : undefined,
             ...getValidScopeFields({
                 impactType,
                 impactTabsIds,
@@ -500,14 +477,10 @@ export const applyExternalControlDialog = ({
         };
         const getExtendedItemData = getExtendedItemDataAction();
         const itemData = dispatch(
-            getExtendedItemData({data: data as SetItemDataArgs['data'], defaults}),
+            getExtendedItemData({data, defaults, type: DashTabItemType.Control}),
         );
 
-        setItemData({
-            data: itemData.data,
-            type: DashTabItemType.Control,
-            defaults: itemData.defaults,
-        });
+        setItemData(itemData);
         closeDialog();
     };
 };
