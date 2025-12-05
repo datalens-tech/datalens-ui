@@ -5,6 +5,7 @@ import type {
     ChartSeries,
 } from '@gravity-ui/chartkit/gravity-charts';
 import merge from 'lodash/merge';
+import sortBy from 'lodash/sortBy';
 
 import type {
     SeriesExportSettings,
@@ -23,12 +24,13 @@ import {
     isMarkupField,
     isNumberField,
 } from '../../../../../../../shared';
-import {getBaseChartConfig} from '../../gravity-charts/utils';
+import {getBaseChartConfig, getYAxisBaseConfig} from '../../gravity-charts/utils';
 import {getFormattedLabel} from '../../gravity-charts/utils/dataLabels';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
-import {getAxisType} from '../helpers/axis';
+import {getAxisFormatting, getAxisType} from '../helpers/axis';
+import {getSegmentMap} from '../helpers/segments';
 import {prepareLineData} from '../line/prepare-line-data';
 import type {PrepareFunctionArgs} from '../types';
 
@@ -77,6 +79,10 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
             },
         };
     }
+
+    const segmentsMap = getSegmentMap(args);
+    const segments = sortBy(Object.values(segmentsMap), (s) => s.index);
+    const isSplitEnabled = new Set(segments.map((d) => d.index)).size > 1;
 
     const preparedData = prepareLineData(args);
     const xCategories = preparedData.categories;
@@ -168,12 +174,39 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
         }
     }
 
+    const axisLabelNumberFormat = yPlaceholder
+        ? getAxisFormatting({
+              placeholder: yPlaceholder,
+              visualizationId,
+          })
+        : undefined;
+
     const config: ChartData = {
         series: {
             data: seriesData as ChartSeries[],
         },
         xAxis,
+        yAxis: segments.map((d) => {
+            const baseConfig = getYAxisBaseConfig({
+                visualization: {placeholders, id: visualizationId},
+            });
+            return merge(baseConfig, {
+                lineColor: 'transparent',
+                labels: {
+                    numberFormat: axisLabelNumberFormat ?? undefined,
+                },
+                plotIndex: d.index,
+                title: isSplitEnabled ? {text: d.title} : undefined,
+            });
+        }),
         legend,
+        split: {
+            enable: isSplitEnabled,
+            gap: '40px',
+            plots: segments.map(() => {
+                return {};
+            }),
+        },
     };
 
     if (yFields[0]) {
