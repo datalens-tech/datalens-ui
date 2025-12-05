@@ -7,8 +7,6 @@ import {isContinuousAxisModeDisabled} from '../wizard-helpers';
 const Y_AS_MAIN_AXIS: WizardVisualizationId[] = [
     WizardVisualizationId.Bar,
     WizardVisualizationId.Bar100p,
-    WizardVisualizationId.BarYD3,
-    WizardVisualizationId.BarY100pD3,
 ];
 
 type GetXAxisModeArgs = {

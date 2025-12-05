@@ -12,7 +12,7 @@ datalensTest.describe('Wizard', () => {
             await openTestPage(page, config.wizard.urls.WizardBasicDataset);
             const wizardPage = new WizardPage({page});
             await wizardPage.createNewFieldWithFormula('sum', 'sum([Sales])');
-            await wizardPage.setVisualization(WizardVisualizationId.TreemapD3);
+            await wizardPage.setVisualization(WizardVisualizationId.Treemap);
         });
 
         datalensTest('Tooltip when hovering chart area @screenshot', async ({page}) => {

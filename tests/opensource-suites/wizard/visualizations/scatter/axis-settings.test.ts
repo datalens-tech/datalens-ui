@@ -19,7 +19,7 @@ datalensTest.describe('Wizard', () => {
             await page.setViewportSize(SMALL_SCREENSHOT_VIEWPORT_SIZE);
             await openTestPage(page, config.wizard.urls.WizardBasicDataset);
             const wizardPage = new WizardPage({page});
-            await wizardPage.setVisualization(WizardVisualizationId.ScatterD3);
+            await wizardPage.setVisualization(WizardVisualizationId.Scatter);
         });
 
         datalensTest('Min and max values for Y-axis @screenshot', async ({page}) => {

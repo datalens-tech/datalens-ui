@@ -165,16 +165,6 @@ export default ({
             break;
         }
 
-        case WizardVisualizationId.LineD3: {
-            if (isMonitoringOrPrometheusChart(chartType)) {
-                prepare = prepareLineTime;
-            } else {
-                prepare = prepareGravityChartLine;
-            }
-            rowsLimit = 75000;
-            break;
-        }
-
         case WizardVisualizationId.Bar:
         case WizardVisualizationId.Bar100p: {
             if (plugin === 'gravity-charts') {
@@ -182,19 +172,6 @@ export default ({
             } else {
                 prepare = prepareHighchartsBarY;
             }
-            rowsLimit = 75000;
-            break;
-        }
-
-        case WizardVisualizationId.BarYD3:
-        case WizardVisualizationId.BarY100pD3: {
-            prepare = prepareGravityChartsBarY;
-            rowsLimit = 75000;
-            break;
-        }
-
-        case WizardVisualizationId.BarXD3: {
-            prepare = prepareGravityChartBarX;
             rowsLimit = 75000;
             break;
         }
@@ -208,11 +185,6 @@ export default ({
             rowsLimit = 75000;
             break;
 
-        case WizardVisualizationId.ScatterD3:
-            prepare = prepareGravityChartsScatter;
-            rowsLimit = 75000;
-            break;
-
         case WizardVisualizationId.Pie:
         case WizardVisualizationId.Donut:
             if (plugin === 'gravity-charts') {
@@ -220,12 +192,6 @@ export default ({
             } else {
                 prepare = prepareHighchartsPie;
             }
-            rowsLimit = 1000;
-            break;
-
-        case WizardVisualizationId.PieD3:
-        case WizardVisualizationId.DonutD3:
-            prepare = prepareD3Pie;
             rowsLimit = 1000;
             break;
 
@@ -240,11 +206,6 @@ export default ({
             } else {
                 prepare = prepareHighchartsTreemap;
             }
-            rowsLimit = 800;
-            break;
-
-        case WizardVisualizationId.TreemapD3:
-            prepare = prepareD3Treemap;
             rowsLimit = 800;
             break;
 

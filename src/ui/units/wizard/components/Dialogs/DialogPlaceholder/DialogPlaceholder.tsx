@@ -28,7 +28,6 @@ import {
     getAxisNullsSettings,
     hasSortThanAffectAxisMode,
     isContinuousAxisModeDisabled,
-    isD3Visualization,
     isDateField,
     isFieldHierarchy,
     isNumberField,
@@ -60,12 +59,7 @@ import {
     SCALE_RADIO_BUTTON_OPTIONS,
     SCALE_VALUE_RADIO_BUTTON_OPTIONS,
 } from './constants/radio-buttons';
-import {
-    getAxisModeTooltipContent,
-    isAxisFormatEnabled,
-    isAxisTypeEnabled,
-    isHolidaysEnabled,
-} from './utils';
+import {getAxisModeTooltipContent} from './utils';
 
 import './DialogPlaceholder.scss';
 
@@ -246,15 +240,14 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
     }
 
     renderHolidaysRadioButtons() {
-        const {item, visualizationId} = this.props;
+        const {item} = this.props;
         const {settings, firstField} = this.state;
         const holidays = item.settings?.holidays;
 
         if (
             !isEnabledFeature(Feature.HolidaysOnChart) ||
             typeof holidays === 'undefined' ||
-            typeof settings.holidays === 'undefined' ||
-            !isHolidaysEnabled(visualizationId)
+            typeof settings.holidays === 'undefined'
         ) {
             return null;
         }
@@ -345,8 +338,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
 
         const isYagr = qlChartType && isYAGRVisualization(qlChartType, visualizationId);
 
-        const isAixsTypeNotExist =
-            typeof type === 'undefined' || !isAxisTypeEnabled(visualizationId) || isYagr;
+        const isAixsTypeNotExist = typeof type === 'undefined' || isYagr;
 
         if (isAixsTypeNotExist) {
             return null;
@@ -374,7 +366,7 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
         const {axisFormatMode} = this.state.settings;
         const {visualizationId, item, qlChartType} = this.props;
 
-        if (typeof axisFormatMode === 'undefined' || !isAxisFormatEnabled(visualizationId)) {
+        if (typeof axisFormatMode === 'undefined') {
             return null;
         }
 
@@ -389,14 +381,13 @@ class DialogPlaceholder extends React.PureComponent<Props, State> {
         const section = `section_${item.id}`;
 
         const isYagr = qlChartType && isYAGRVisualization(qlChartType, visualizationId);
-        const isD3 = isD3Visualization(visualizationId);
 
         const radioOptions = AXIS_FORMAT_MODE_RADIO_BUTTON_OPTIONS.reduce<
             SegmentedRadioGroupOptionProps[]
         >((acc, option) => {
             switch (option.value) {
                 case SETTINGS.AXIS_FORMAT_MODE.MANUAL:
-                    if (!isYagr && !isD3) {
+                    if (!isYagr) {
                         acc.push({
                             ...option,
                             disabled: isAxisWithPercent || isFormatless,
