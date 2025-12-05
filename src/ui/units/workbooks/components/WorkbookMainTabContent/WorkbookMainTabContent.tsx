@@ -25,7 +25,7 @@ import {
     selectWorkbookSharedEntriesIsLoading,
     selectWorkbookSharedItems,
 } from '../../store/selectors';
-import type {WorkbookEntriesFilters} from '../../types';
+import type {WorkbookEntriesFilters, WorkbookSharedEntry} from '../../types';
 import {WorkbookEntriesTable} from '../Table/WorkbookEntriesTable/WorkbookEntriesTable';
 import {useChunkedEntries as useSharedChunkedEntries} from '../WorkbookTabContent/useChunkedEntries';
 import {TAB_ALL} from '../WorkbookTabs/constants';
@@ -72,7 +72,7 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
         availableScopes,
     });
 
-    const sharedChunks = useSharedChunkedEntries({
+    const sharedChunks = useSharedChunkedEntries<WorkbookSharedEntry>({
         entries: sharedEntries,
         availableScopes: [EntryScope.Connection, EntryScope.Dataset],
     });
@@ -255,6 +255,18 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
         [dispatch, workbookId, filters, mapTokens],
     );
 
+    const refreshSharedEntries = React.useCallback(() => {
+        dispatch(resetWorkbookSharedEntries());
+
+        dispatch(
+            getWorkbookSharedEntries({
+                workbookId,
+                filters,
+                pageSize: PAGE_SIZE_MAIN_TAB,
+            }),
+        );
+    }, [dispatch, workbookId, filters]);
+
     if (
         (isEntriesLoading || isLoading) &&
         entries.length === 0 &&
@@ -267,6 +279,7 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
         <AnimateBlock>
             <WorkbookEntriesTable
                 refreshEntries={refreshEntries}
+                refreshSharedEntries={refreshSharedEntries}
                 workbook={workbook}
                 entries={entries}
                 loadMoreEntries={loadMoreEntries}

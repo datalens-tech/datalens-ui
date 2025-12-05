@@ -12,7 +12,7 @@ export const useChunkedEntries = ({
 }: {
     entries: GetEntryResponse[];
     availableScopes: EntryScope[];
-}): ChunkItem[][] => {
+}): ChunkItem<WorkbookEntry>[][] => {
     const chunks = React.useMemo(() => {
         const allowedScopes = new Set(availableScopes);
 
@@ -29,14 +29,16 @@ export const useChunkedEntries = ({
         if (workbookEntries.length === 0) {
             return [];
         } else {
-            const chunkArrays = availableScopes.map(() => [] as Array<EntryChunkItem>);
+            const chunkArrays = availableScopes.map(
+                () => [] as Array<EntryChunkItem<WorkbookEntry>>,
+            );
 
             workbookEntries.forEach((chunkItem) => {
                 const item = {
                     type: 'entry',
                     item: chunkItem,
                     key: chunkItem.entryId,
-                } as EntryChunkItem;
+                } as EntryChunkItem<WorkbookEntry>;
 
                 const chunkIndex = availableScopes.findIndex((scope) => scope === chunkItem.scope);
 

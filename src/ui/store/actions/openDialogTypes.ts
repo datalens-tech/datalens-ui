@@ -24,6 +24,7 @@ import type {OpenDialogColumnSettingsArgs} from '../../units/wizard/components/D
 import type {OpenDialogFieldEditorArgs} from '../../components/DialogFieldEditor/DialogFieldEditor';
 import type {OpenDialogRenameEntryInNewWorkbookArgs} from '../../units/workbooks/components/RenameEntryDialog/RenameEntryDialog';
 import type {OpenDialogDeleteEntryInNewWorkbookArgs} from '../../units/workbooks/components/DeleteEntryDialog/DeleteEntryDialog';
+import type {OpenDialogDeleteSharedEntryInWorkbookArgs} from '../../units/workbooks/components/DeleteSharedEntryDialog/DeleteSharedEntryDialog';
 import type {OpenDialogDuplicateEntryInWorkbookArgs} from '../../units/workbooks/components/DuplicateEntryDialog/DuplicateEntryDialog';
 import type {OpenDialogConnS3Sources} from '../../units/connections/components/dialogs';
 import type {OpenDialogConnWithInputArgs} from '../../units/connections/components/custom-forms/components/DialogWithInput';
@@ -129,4 +130,5 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogSharedEntryUnbindArgs
     | OpenDialogSharedEntryPermissionsArgs
     | OpenDialogSelectSharedEntryArgs
+    | OpenDialogDeleteSharedEntryInWorkbookArgs
     | OpenDialogEntryDescriptionArgs;

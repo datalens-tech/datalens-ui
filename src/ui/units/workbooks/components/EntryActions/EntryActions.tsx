@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {CodeTrunk, Copy, CopyArrowRight, FontCursor, TrashBin} from '@gravity-ui/icons';
+import {CodeTrunk, Copy, CopyArrowRight, FontCursor, Shield, TrashBin} from '@gravity-ui/icons';
 import type {DropdownMenuItemMixed} from '@gravity-ui/uikit';
 import {DropdownMenu} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
@@ -10,6 +10,7 @@ import {WorkbookPageQa} from 'shared/constants/qa/workbooks';
 import type {WorkbookWithPermissions} from 'shared/schema/us/types';
 import {EntryScope} from 'shared/types/common';
 import {S3_BASED_CONNECTORS} from 'ui/constants';
+import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {DropdownAction} from '../../../../components/DropdownAction/DropdownAction';
@@ -32,6 +33,7 @@ type EntryActionsProps = {
     onCopyEntry?: () => void;
     onShowRelatedClick?: () => void;
     onCopyId?: () => void;
+    onUpdateSharedEntryBindings?: () => void;
 };
 
 export const EntryActions = ({
@@ -43,6 +45,7 @@ export const EntryActions = ({
     onCopyEntry,
     onShowRelatedClick,
     onCopyId,
+    onUpdateSharedEntryBindings,
 }: EntryActionsProps) => {
     const {useAdditionalWorkbookEntryActions} = registry.workbooks.functions.getAll();
 
@@ -99,6 +102,18 @@ export const EntryActions = ({
 
     if (subMenu.length) {
         items.push(subMenu);
+    }
+
+    if (onUpdateSharedEntryBindings) {
+        items.push({
+            action: onUpdateSharedEntryBindings,
+            text: (
+                <DropdownAction
+                    icon={Shield}
+                    text={getSharedEntryMockText('shared-entry-bindings-dropdown-menu-title')}
+                />
+            ),
+        });
     }
 
     const otherActions: DropdownMenuItemMixed<unknown>[] = [];

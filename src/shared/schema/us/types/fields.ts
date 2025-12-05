@@ -132,6 +132,11 @@ export interface EntryRelationFields {
     isLocked: boolean;
 }
 
+export type SharedEntryRelationFields = Omit<EntryRelationFields, 'isLocked'> & {
+    collectionId: string;
+    createdAt: string;
+};
+
 export interface TenantSettings {
     defaultColorPaletteId?: string;
 }

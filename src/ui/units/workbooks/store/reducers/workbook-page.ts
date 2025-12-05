@@ -6,6 +6,7 @@ import type {
     GetCollectionBreadcrumbsResponse,
     GetEntryResponse,
     GetWorkbookEntriesResponse,
+    GetWorkbookSharedEntriesResponse,
     RenameEntryResponse,
     WorkbookPermission,
     WorkbookWithPermissions,
@@ -70,7 +71,7 @@ export type WorkbooksState = {
         isLoading: boolean;
         error: Error | null;
     };
-    sharedItems: GetWorkbookEntriesResponse['entries'];
+    sharedItems: GetWorkbookSharedEntriesResponse['entries'];
     items: GetWorkbookEntriesResponse['entries'];
     getWorkbook: {
         isLoading: boolean;

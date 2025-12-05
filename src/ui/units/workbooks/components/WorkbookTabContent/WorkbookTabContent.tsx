@@ -29,7 +29,7 @@ import {
     selectWorkbookSharedEntriesIsLoading,
     selectWorkbookSharedItems,
 } from '../../store/selectors';
-import type {WorkbookEntriesFilters} from '../../types';
+import type {WorkbookEntriesFilters, WorkbookSharedEntry} from '../../types';
 import {EmptyWorkbookContainer} from '../EmptyWorkbook/EmptyWorkbookContainer';
 import {WorkbookEntriesTable} from '../Table/WorkbookEntriesTable/WorkbookEntriesTable';
 import {TAB_ALL} from '../WorkbookTabs/constants';
@@ -75,7 +75,7 @@ export const WorkbookTabContent = React.memo<Props>(({workbookId, workbook, filt
     }, [getWorkbookTabs, workbook]) as EntryScope[];
 
     const chunks = useChunkedEntries({entries, availableScopes});
-    const sharedChunks = useChunkedEntries({
+    const sharedChunks = useChunkedEntries<WorkbookSharedEntry>({
         entries: sharedEntries,
         availableScopes: [EntryScope.Connection, EntryScope.Dataset],
     });
@@ -97,6 +97,15 @@ export const WorkbookTabContent = React.memo<Props>(({workbookId, workbook, filt
             dispatch(resetWorkbookEntries());
 
             dispatch(getWorkbookEntries({workbookId, filters, scope: entryScope}));
+        },
+        [dispatch, workbookId, filters],
+    );
+
+    const refreshSharedEntries = React.useCallback(
+        (entryScope?: EntryScope) => {
+            dispatch(resetWorkbookSharedEntries());
+
+            dispatch(getWorkbookSharedEntries({workbookId, filters, scope: entryScope}));
         },
         [dispatch, workbookId, filters],
     );
@@ -194,6 +203,7 @@ export const WorkbookTabContent = React.memo<Props>(({workbookId, workbook, filt
     return (
         <AnimateBlock>
             <WorkbookEntriesTable
+                refreshSharedEntries={refreshSharedEntries}
                 refreshEntries={refreshEntries}
                 workbook={workbook}
                 entries={entries}

@@ -1,14 +1,15 @@
 import type {WorkbookWithPermissions} from 'shared/schema/us/types/workbooks';
 import type {WorkbookEntry} from 'ui/units/workbooks/types/index';
 
-interface WorkbookEntriesTableProps {
+interface WorkbookEntriesTableProps<T extends WorkbookEntry> {
     workbook: WorkbookWithPermissions;
-    onRenameEntry?: (data: WorkbookEntry) => void;
-    onDeleteEntry?: (data: WorkbookEntry) => void;
-    onDuplicateEntry?: (data: WorkbookEntry) => void;
-    onCopyEntry?: (data: WorkbookEntry) => void;
-    onShowRelatedClick?: (data: WorkbookEntry) => void;
-    onCopyId?: (data: WorkbookEntry) => void;
+    onRenameEntry?: (data: T) => void;
+    onDeleteEntry?: (data: T) => void;
+    onDuplicateEntry?: (data: T) => void;
+    onCopyEntry?: (data: T) => void;
+    onShowRelatedClick?: (data: T) => void;
+    onCopyId?: (data: T) => void;
+    onUpdateSharedEntryBindings?: (data: T) => void;
 }
 
 export {WorkbookEntriesTableProps};

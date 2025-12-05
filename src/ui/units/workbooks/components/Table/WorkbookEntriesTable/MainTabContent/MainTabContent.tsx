@@ -9,7 +9,7 @@ import {useDispatch} from 'react-redux';
 import {DL} from 'ui/constants/common';
 import type {CreateEntryActionType} from 'ui/units/workbooks/constants';
 import {setCreateWorkbookEntryType} from 'ui/units/workbooks/store/actions';
-import type {ChunkItem} from 'ui/units/workbooks/types';
+import type {ChunkItem, WorkbookEntry} from 'ui/units/workbooks/types';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 
 import {ChunkGroup} from '../ChunkGroup/ChunkGroup';
@@ -22,9 +22,9 @@ const b = block('dl-main-tab-content');
 
 const i18n = I18n.keyset('new-workbooks');
 
-type MainTabContentProps = WorkbookEntriesTableProps & {
+type MainTabContentProps<T extends WorkbookEntry> = WorkbookEntriesTableProps<T> & {
     actionCreateText?: string;
-    chunk: ChunkItem[];
+    chunk: ChunkItem<T>[];
     title: string;
     isErrorMessage?: boolean;
     isLoading?: boolean;
@@ -37,7 +37,7 @@ type MainTabContentProps = WorkbookEntriesTableProps & {
     hasCreateButton?: boolean;
 };
 
-const MainTabContent = ({
+const MainTabContent = <T extends WorkbookEntry>({
     workbook,
     chunk,
     onRenameEntry,
@@ -57,7 +57,8 @@ const MainTabContent = ({
     clearView,
     onShowRelatedClick,
     onCopyId,
-}: MainTabContentProps) => {
+    onUpdateSharedEntryBindings,
+}: MainTabContentProps<T>) => {
     const [isOpen, setIsOpen] = React.useState(true);
 
     const dispatch = useDispatch();
@@ -85,6 +86,7 @@ const MainTabContent = ({
                     onCopyEntry={onCopyEntry}
                     onShowRelatedClick={onShowRelatedClick}
                     onCopyId={onCopyId}
+                    onUpdateSharedEntryBindings={onUpdateSharedEntryBindings}
                 />
             );
         }
