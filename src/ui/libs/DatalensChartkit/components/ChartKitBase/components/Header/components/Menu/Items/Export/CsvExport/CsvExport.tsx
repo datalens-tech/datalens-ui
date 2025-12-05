@@ -1,5 +1,6 @@
 import React from 'react';
 
+import type {ExportParams} from 'shared';
 import type {MenuActionComponent, MenuItemModalProps} from 'ui/libs/DatalensChartkit/menu/Menu';
 
 import {DownloadCsv} from '../../DownloadCsv/DownloadCsv';
@@ -15,15 +16,17 @@ export const csvExportAction: ExportMenuAction = (_chartsDataProvider, onExportL
 
         const chartType = loadedData.type;
 
+        const onSubmit = (params: ExportParams) => {
+            downloadData({chartData, params, onExportLoading});
+        };
+
         if (!event.ctrlKey && !event.metaKey) {
             return function DownloadCsvModalRenderer(props: MenuItemModalProps) {
                 return (
                     <DownloadCsv
                         onClose={props.onClose}
-                        chartData={chartData}
-                        onApply={downloadData}
+                        onSubmit={onSubmit}
                         chartType={chartType}
-                        onExportLoading={onExportLoading}
                     />
                 );
             };
