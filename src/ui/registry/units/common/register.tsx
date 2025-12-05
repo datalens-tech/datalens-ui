@@ -112,6 +112,10 @@ export const registerCommonPlugins = () => {
         getRestrictedParamNames,
         getAdditionalChartkitErrorContent,
         getCurrentUserRights,
+        getNotAuthenticatedErrorContentTypes: () => [],
+        getHeaderWithoutHelpCenterErrorContentTypes: () => [],
+        getHeaderWithoutNavigationErrorContentTypes: () => [],
+        getImageNameFromErrorContentType: () => null,
     });
 
     if (DL.AUTH_ENABLED) {
