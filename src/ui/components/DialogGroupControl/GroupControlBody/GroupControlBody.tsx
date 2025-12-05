@@ -10,7 +10,7 @@ import {HintRow} from 'ui/components/ControlComponents/Sections/AppearanceSectio
 import {InnerTitleRow} from 'ui/components/ControlComponents/Sections/AppearanceSection/Rows/InnerTitleRow/InnerTitleRow';
 import {TitlePlacementRow} from 'ui/components/ControlComponents/Sections/AppearanceSection/Rows/TitlePlacementRow/TitlePlacementRow';
 import {TitleRow} from 'ui/components/ControlComponents/Sections/AppearanceSection/Rows/TitleRow/TitleRow';
-import {CommonSettingsSection} from 'ui/components/ControlComponents/Sections/CommonSettingsSection/CommonSettingsSection';
+import {CommonGroupSettingsSection} from 'ui/components/ControlComponents/Sections/CommonSettingsSection/CommonGroupSettingsSection';
 import {InputTypeSelector} from 'ui/components/ControlComponents/Sections/CommonSettingsSection/InputTypeSelector/InputTypeSelector';
 import {OperationSelector} from 'ui/components/ControlComponents/Sections/OperationSelector/OperationSelector';
 import {RequiredValueCheckbox} from 'ui/components/ControlComponents/Sections/ValueSelector/RequiredValueCheckbox/RequiredValueCheckbox';
@@ -30,6 +30,7 @@ const i18n = I18n.keyset('dash.group-controls-dialog.edit');
 export const GroupControlBody: React.FC<{
     navigationPath: string | null;
     changeNavigationPath: (newNavigationPath: string) => void;
+    enableGlobalSelectors?: boolean;
 }> = (props) => {
     const elementType = useSelector(selectSelectorControlType);
 
@@ -41,10 +42,11 @@ export const GroupControlBody: React.FC<{
                 <FormRow label={i18n('label_source')} className={b('row')}>
                     <SelectorTypeSelect showExternalType={false} mode="select" />
                 </FormRow>
-                <CommonSettingsSection
+                <CommonGroupSettingsSection
                     className={b('row')}
                     navigationPath={props.navigationPath}
                     changeNavigationPath={props.changeNavigationPath}
+                    enableGlobalSelectors={props.enableGlobalSelectors}
                 />
             </FormSection>
             <FormSection title={i18n('label_filtration')}>

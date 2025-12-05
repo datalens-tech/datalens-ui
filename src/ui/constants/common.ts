@@ -1,10 +1,10 @@
 import {UserRole} from 'shared/components/auth/constants/role';
+import {isNotAuthenticatedError} from 'ui/utils/errorContentTypes';
 
 import type {LineShapeType} from '../../shared';
 import {
     AppEnvironment,
     DeviceType,
-    ErrorContentTypes,
     FALLBACK_LANGUAGES,
     GRADIENT_PALETTES,
     GradientType,
@@ -167,11 +167,7 @@ export const DL = {
         return window.DL.landingPageSettings;
     },
     get IS_NOT_AUTHENTICATED() {
-        return (
-            this.LANDING_PAGE_ERROR_TYPE === ErrorContentTypes.NOT_AUTHENTICATED ||
-            this.LANDING_PAGE_ERROR_TYPE === ErrorContentTypes.NOT_AUTHENTICATED_GALLERY ||
-            this.LANDING_PAGE_ERROR_TYPE === ErrorContentTypes.NOT_AUTHENTICATED_FESTIVAL
-        );
+        return isNotAuthenticatedError(this.LANDING_PAGE_ERROR_TYPE);
     },
     get PUSH_SERVICE_CONFIG() {
         return window.DL.push;

@@ -38,7 +38,6 @@ export enum Feature {
     EntryMenuItemMove = 'EntryMenuItemMove',
     ExternalSelectors = 'ExternalSelectors',
     DashBoardWidgetParamsStrictValidation = 'DashBoardWidgetParamsStrictValidation',
-    D3Visualizations = 'D3Visualizations',
     HideMultiDatasets = 'HideMultiDatasets',
     ShouldCheckEditorAccess = 'ShouldCheckEditorAccess',
     HideMultitenant = 'HideMultitenant',
@@ -100,6 +99,8 @@ export enum Feature {
     EnableMobileFixedHeader = 'EnableMobileFixedHeader',
     /** enabled redesign/moving to drawers existing settings */
     EnableCommonChartDashSettings = 'EnableCommonChartDashSettings',
+    /** Enable a setting in the Selector settings dialog that allows you to make the selector pass-through for all or several tabs */
+    EnableGlobalSelectors = 'EnableGlobalSelectors',
     /** enables new dash & widgets settings */
     EnableNewDashSettings = 'EnableNewDashSettings',
     /** Shows updated settings page */

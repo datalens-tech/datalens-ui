@@ -6,7 +6,7 @@ import type {EntryScope, StringParams, WidgetType} from 'shared';
 import {DashTabItemType} from 'shared';
 import {ITEM_TYPE} from 'ui/constants/dialogs';
 import {useEffectOnce} from 'ui/hooks';
-import {initControlDialog, resetControlDialog} from 'ui/store/actions/controlDialog';
+import {initControlDialog, resetControlDialog} from 'ui/store/actions/controlDialog/controlDialog';
 import {selectOpenedDialogType} from 'ui/store/selectors/controlDialog';
 import type {DialogEditItemFeaturesProp} from 'ui/store/typings/controlDialog';
 

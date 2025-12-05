@@ -2,7 +2,7 @@ import React from 'react';
 
 import {DEFAULT_NAMESPACE} from '@gravity-ui/dashkit/helpers';
 import {useDispatch, useSelector} from 'react-redux';
-import {EntryScope} from 'shared';
+import {DashTabItemType, EntryScope} from 'shared';
 import {useEffectOnce} from 'ui';
 import {DialogEditItem, isDialogEditItemType} from 'ui/components/DialogEditItem/DialogEditItem';
 import {registry} from 'ui/registry';
@@ -23,6 +23,15 @@ import {
 
 import Settings from './Settings/Settings';
 import Tabs from './Tabs/Tabs';
+
+const DASHBOARD_FEATURES = {
+    [DashTabItemType.GroupControl]: {
+        enableGlobalSelectors: true,
+    },
+    [DashTabItemType.Control]: {
+        enableGlobalSelectors: true,
+    },
+};
 
 // TODO: to see if dialogs with complex content will slow down due to the fact that mount/unmount is happening
 // TODO: if there are noticeable lags, it will be possible to render the contents of the dialogs as available
@@ -85,6 +94,7 @@ export function Dialogs() {
                 navigationPath={navigationPath}
                 changeNavigationPath={changeNavigationPathHandle}
                 theme={theme}
+                features={DASHBOARD_FEATURES}
             />
         );
     }
