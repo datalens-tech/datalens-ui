@@ -43,6 +43,7 @@ export default {
         if (
             isGravityChartsVisualization({id: visualizationId as WizardVisualizationId, features})
         ) {
+            // CHARTS-10226
             return 'd3_wizard_node';
         }
 

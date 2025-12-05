@@ -282,6 +282,7 @@ export const chartGenerator = {
 
         switch (type) {
             case WizardType.GravityChartsWizardNode: {
+                // CHARTS-10226
                 const chart: Chart = {
                     ...getGravityChartEditorTemplate({
                         module: chartTemplate.module,
@@ -291,9 +292,13 @@ export const chartGenerator = {
                     meta: serializedData.meta,
                 };
 
+                console.log('[CHARTS-10226]: generateChart WizardType.GravityChartsWizardNode');
+                console.dir(chart);
+
                 return {chart, links, type};
             }
             default: {
+                // CHARTS-10226
                 const chart: Chart = {...commonTemplate};
 
                 chart.shared = serializedData.shared;
@@ -329,6 +334,9 @@ export const chartGenerator = {
 
                 const chartsWithConfig = isTable;
                 const {config: _, ...chartWithoutConfig} = chart;
+
+                console.log('[CHARTS-10226]: generateChart default');
+                console.dir(chartsWithConfig ? chart : chartWithoutConfig);
 
                 return {chart: chartsWithConfig ? chart : chartWithoutConfig, links, type};
             }

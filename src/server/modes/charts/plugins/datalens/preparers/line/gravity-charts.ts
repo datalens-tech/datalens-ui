@@ -158,6 +158,7 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
                 colorValue: graph.colorValue,
                 shapeValue: graph.shapeValue,
             },
+            lineWidth: 12, // CHARTS-10226 gravity-charts
         };
     });
 

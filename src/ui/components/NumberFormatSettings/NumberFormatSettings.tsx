@@ -127,6 +127,7 @@ export const NumberFormatSettings = (props: Props) => {
                     </RadioButton.Option>
                 </RadioButton>
             </FormRow>
+            {/* CHARTS-10226 */}
             {isShowDigitsAfterDot && (
                 <FormRow className={rowClassName} label={i18n('field_precision')}>
                     <NumberInput

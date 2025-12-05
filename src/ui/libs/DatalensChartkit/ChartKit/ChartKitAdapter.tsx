@@ -110,6 +110,7 @@ const ChartkitWidget = React.forwardRef<ChartKit | ChartKitRef | undefined, Char
         }, [lang]);
 
         if (opensourceChartKitProps) {
+            // CHARTS-10226
             return <OpensourceChartKit {...opensourceChartKitProps} ref={ref} />;
         }
 

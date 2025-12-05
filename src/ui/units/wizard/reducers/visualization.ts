@@ -978,6 +978,7 @@ export function visualization(
 
             return {...state, shapes: [...shapes], visualization, layers};
         }
+        // CHARTS-10226
         case SET_SHAPES_CONFIG: {
             const {shapesConfig} = action;
 

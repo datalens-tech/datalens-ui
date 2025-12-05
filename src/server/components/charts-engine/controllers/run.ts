@@ -153,6 +153,7 @@ export const runController = (
 
             req.body.key = req.body.key || config.key;
 
+            // CHARTS-10226
             await runnerFound.handler(ctx, {
                 chartsEngine,
                 req,

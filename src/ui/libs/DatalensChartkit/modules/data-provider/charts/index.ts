@@ -623,6 +623,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         requestId: string;
         requestCancellation: CancelTokenSource;
     }) {
+        // CHARTS-10226
         const loaded = await this.load({
             data: props,
             contextHeaders,
@@ -792,6 +793,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         return config;
     }
 
+    // CHARTS-10226
     async makeRequest(requestOptions: EntityRequestOptions & {url?: string}) {
         const stype = (requestOptions.data?.config as EntityConfig)?.meta?.stype;
         const isControlRequest =
@@ -1015,7 +1017,7 @@ class ChartsDataProvider implements DataProvider<ChartsProps, ChartsData, Cancel
         };
 
         try {
-            const result = await this.makeRequest(requestOptions);
+            const result = await this.makeRequest(requestOptions); // CHARTS-10226
             const responseData = this.getExtendedResponse({
                 responseData: result.data,
                 headers: result.headers,

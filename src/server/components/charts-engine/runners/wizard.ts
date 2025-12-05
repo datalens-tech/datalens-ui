@@ -22,6 +22,7 @@ async function getWizardWorker(options?: WorkerPoolOptions): Promise<Proxy<Wizar
     return wizardWorkersPool.proxy<WizardWorker>();
 }
 
+// CHARTS-10226
 export const runWizardChart: RunnerHandler = async (cx: AppContext, props: RunnerHandlerProps) => {
     const {req, res, config} = props;
     const timeouts = cx.config.runnerExecutionTimeouts?.wizard;

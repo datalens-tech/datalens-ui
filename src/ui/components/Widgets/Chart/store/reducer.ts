@@ -43,7 +43,7 @@ export const reducer = (state: State, action: Action) => {
         case WIDGET_CHART_SET_LOADED_DATA:
             return {
                 ...state,
-                loadedData: action.payload,
+                loadedData: action.payload, // CHARTS-10226
                 isLoading: false,
                 isSilentReload: false,
                 isReloadWithNoVeil: false,

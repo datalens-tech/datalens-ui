@@ -67,6 +67,7 @@ export const runWorkerChart = async (
                     data.type = config.meta && config.meta.stype;
                 }
 
+                // CHARTS-10226
                 result = chartGenerator.generateChart({
                     data,
                     template,

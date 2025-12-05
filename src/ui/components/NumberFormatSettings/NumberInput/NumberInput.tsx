@@ -16,6 +16,7 @@ interface NumberInputProps {
 const b = block('wizard-number-input');
 const DEFAULT_VALUE = 0;
 
+// CHARTS-10226: refactor and move up the tree?
 const NumberInput: React.FC<NumberInputProps> = ({
     value,
     onChange,

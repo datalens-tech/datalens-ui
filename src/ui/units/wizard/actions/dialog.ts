@@ -350,6 +350,7 @@ export function openDialogShapes({
                         options: dataset && dataset.options,
                         paletteType,
                         onApply: (config: ShapesConfig) => {
+                            // CHARTS-10226
                             dispatch(setShapesConfig({shapesConfig: config}));
 
                             dispatch(closeDialog());

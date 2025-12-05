@@ -108,6 +108,7 @@ const DialogShapes: React.FC<Props> = ({
         onClose();
     }, [item.guid, onApply, onClose, shapesState.mountedShapes]);
 
+    // CHARTS-10226
     return (
         <Dialog onClose={onClose} open={true}>
             <div className={b()}>
@@ -120,6 +121,7 @@ const DialogShapes: React.FC<Props> = ({
                     caption={i18n('wizard', 'label_shapes-settings')}
                 />
                 <Dialog.Body>
+                    
                     <DialogShapesPalette
                         parameters={parameters}
                         dashboardParameters={dashboardParameters}

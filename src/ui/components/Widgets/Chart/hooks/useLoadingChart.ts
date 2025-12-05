@@ -428,6 +428,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
              * fix in CHARTS-7043
              */
             const getWidget = dataProvider.getWidget.bind(dataProvider);
+            // CHARTS-10226
             const loadedWidgetData = await getWidget({
                 props: getWidgetProps,
                 requestId,
@@ -599,7 +600,7 @@ export const useLoadingChart = (props: LoadingChartHookProps) => {
         }
 
         setIsInit(true);
-        loadChartData();
+        loadChartData(); // CHARTS-10226
     }, [canBeLoaded, isInit, loadChartData]);
 
     /**

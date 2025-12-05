@@ -76,6 +76,7 @@ export function isGravityChartsVisualization({
         WizardVisualizationId.Column100p,
         WizardVisualizationId.CombinedChart,
     ].includes(id as WizardVisualizationId);
+    // CHARTS-10226
     if (isLineAreaOrBarX && features?.[Feature.GravityChartsForLineAreaAndBarX]) {
         return true;
     }

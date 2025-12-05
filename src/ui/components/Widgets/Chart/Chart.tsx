@@ -273,6 +273,7 @@ export const Chart = (props: ChartNoWidgetProps) => {
         [handleChartkitReflow, reloadChart],
     );
 
+    // CHARTS-10226
     return (
         <div ref={rootNodeRef} className={b(mods)} data-qa={ChartkitMenuDialogsQA.chartWidget}>
             <DebugInfoTool data={[{label: 'chartId', value: chartId || ''}]} />

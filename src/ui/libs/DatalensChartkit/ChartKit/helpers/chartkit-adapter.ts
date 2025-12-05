@@ -21,6 +21,7 @@ export const extractWidgetType = (data?: LoadedWidgetData) => {
     return data && 'type' in data && data.type;
 };
 
+// CHARTS-10226
 export const getChartkitType = (data?: LoadedWidgetData): ChartKitType | undefined => {
     const type = extractWidgetType(data);
 

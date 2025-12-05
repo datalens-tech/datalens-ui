@@ -1,5 +1,6 @@
 import React from 'react';
 
+import {Flex, Select} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import type {
     DatasetOptions,
@@ -19,6 +20,9 @@ import ValuesList from '../../../ValuesList/ValuesList';
 import type {ShapesState} from '../DialogShapes';
 
 import './DialogShapesPalette.scss';
+import { LineWidthSelect } from '../../../LineWidthSelect/LineWidthSelect';
+import NumberInput from 'ui/components/NumberFormatSettings/NumberInput/NumberInput';
+import { DialogLineWidth } from '../DialogLineWidth/DialogLineWidth';
 
 type Props = {
     onPaletteItemClick: (shape: string) => void;
@@ -42,17 +46,9 @@ const b = block('dialog-shapes-palette');
 
 const DialogShapesPalette: React.FC<Props> = ({
     shapesState,
-    setShapesState,
-    item,
-    items,
-    distincts,
-    datasetId,
-    options,
-    updates,
-    filters,
+    
     onPaletteItemClick,
-    parameters,
-    dashboardParameters,
+    
     paletteType,
 }: Props) => {
     const {mountedShapes, selectedValue} = shapesState;
@@ -85,74 +81,23 @@ const DialogShapesPalette: React.FC<Props> = ({
         },
         [mountedShapes, selectedValue],
     );
-    const renderValueIcon = React.useCallback(
-        (value) => {
-            const currentShape = mountedShapes[value];
 
-            const isDefault = !palette.includes(currentShape);
-            let content;
-            if (isDefault) {
-                content = 'A';
-            } else {
-                switch (paletteType) {
-                    case PaletteTypes.Lines: {
-                        content = (
-                            <IconRenderer iconType={currentShape as LineShapeType} width="40px" />
-                        );
-                        break;
-                    }
-
-                    case PaletteTypes.Points: {
-                        content = (
-                            <IconRenderer iconType={currentShape as PointsShapeType} width="12px" />
-                        );
-                        break;
-                    }
-                }
-            }
-
-            return (
-                <div className={b('value-shape', {default: isDefault, type: paletteType})}>
-                    {content}
-                </div>
-            );
-        },
-        [mountedShapes, paletteType],
-    );
-
+    // CHARTS-10226: refactor into seprate components?
     return (
         <React.Fragment>
-            <ValuesList
-                item={item}
-                items={items}
-                distincts={distincts}
-                filters={filters}
-                parameters={parameters}
-                dashboardParameters={dashboardParameters}
-                updates={updates}
-                options={options}
-                datasetId={datasetId}
-                selectedValue={shapesState.selectedValue}
-                renderValueIcon={renderValueIcon}
-                onChangeSelectedValue={(value, shouldResetShapes) => {
-                    const state: Partial<ShapesState> = {selectedValue: value};
-
-                    if (shouldResetShapes) {
-                        state.mountedShapes = {};
-                    }
-
-                    setShapesState(state);
-                }}
-            />
-            <Palette
-                className={b('palette', {type: paletteType})}
-                itemClassName={b('palette-item', {type: paletteType})}
-                paletteType={paletteType}
-                palette={palette}
-                onPaletteItemClick={onPaletteItemClick}
-                isSelectedItem={isSelectedItem}
-                isDefaultItem={isDefaultItem}
-            />
+            
+            <Flex direction="column">
+                <DialogLineWidth />
+                <Palette
+                    className={b('palette', {type: paletteType})}
+                    itemClassName={b('palette-item', {type: paletteType})}
+                    paletteType={paletteType}
+                    palette={palette}
+                    onPaletteItemClick={onPaletteItemClick}
+                    isSelectedItem={isSelectedItem}
+                    isDefaultItem={isDefaultItem}
+                />
+            </Flex>
         </React.Fragment>
     );
 };
