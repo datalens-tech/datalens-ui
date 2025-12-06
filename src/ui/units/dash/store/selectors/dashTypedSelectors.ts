@@ -191,7 +191,8 @@ export const selectOpenedItem = createSelector(
     [selectCurrentTab, selectDash],
     (currentTab, dash) => {
         if (dash.openedItemId && currentTab) {
-            const item = currentTab.items.find(({id}) => id === dash.openedItemId);
+            const allItems = currentTab.items.concat(currentTab.globalItems || []);
+            const item = allItems.find(({id}) => id === dash.openedItemId);
             return item;
         }
         return undefined;

@@ -264,12 +264,6 @@ export const updateTabsWithGlobalState = ({
 
             const currentHashState = currentTabId ? hashStates?.[currentTabId] : null;
             const currentMeta = currentHashState?.state?.[META_KEY] as StateAndParamsMetaData;
-            const actualGlobalQueue = currentMeta?.globalQueue;
-
-            if (!actualGlobalQueue?.length) {
-                resolve(null);
-                return;
-            }
 
             const updatedHashStates: TabsHashStates = {};
             let hasUpdates = false;
@@ -303,11 +297,7 @@ export const updateTabsWithGlobalState = ({
                         currentMeta,
                     );
                 } else {
-                    newTabHashState = createNewTabState(
-                        globalParams,
-                        globalQueue,
-                        actualGlobalQueue,
-                    );
+                    newTabHashState = createNewTabState(globalParams, globalQueue);
                 }
 
                 updatedHashStates[tab.id] = {

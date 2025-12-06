@@ -755,6 +755,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                         editMode={editMode}
                         forwardedRef={this.chartKitRef}
                         workbookId={workbookId}
+                        updateTabsWithGlobalState={this.context?.updateTabsWithGlobalState}
                     />
                 </ControlWrapper>
             );

@@ -3,7 +3,6 @@ import type {
     ItemParams,
     ItemsStateAndParams,
     ItemsStateAndParamsBase,
-    QueueGlobalItem,
     QueueItem,
     StateAndParamsMetaData,
 } from '@gravity-ui/dashkit/helpers';
@@ -144,46 +143,6 @@ export const applyDataProviderChartSettings = ({data}: {data: DashData}) => {
             loadPriority: data.settings.loadPriority,
         });
     }
-};
-
-export const getStateFromGlobalQueue = (
-    globalQueue: QueueGlobalItem[],
-    influencingIds: Set<string>,
-) => {
-    const params: ItemsStateAndParamsBase = {};
-    const queue: QueueItem[] = [];
-
-    const setNewParams = ({
-        widgetId,
-        groupItemId,
-        newParams,
-    }: {
-        widgetId: string;
-        groupItemId?: string;
-        newParams: StringParams;
-    }) => {
-        if (params[widgetId] && params[widgetId].params) {
-            params[widgetId].params[groupItemId ?? widgetId] = newParams;
-        } else {
-            params[widgetId] = {params: {[groupItemId ?? widgetId]: newParams}};
-        }
-    };
-
-    for (const item of globalQueue) {
-        const {id, groupItemId} = item;
-
-        if (groupItemId && influencingIds.has(id) && influencingIds.has(groupItemId)) {
-            //group control
-            queue.push({id, groupItemId});
-            setNewParams({widgetId: id, groupItemId, newParams: item.params});
-        } else if (!groupItemId && influencingIds.has(id)) {
-            // external control
-            queue.push({id});
-            setNewParams({widgetId: id, newParams: item.params});
-        }
-    }
-
-    return {params, queue};
 };
 
 export const getVisibleGlobalItemsIdsByTab = (
@@ -328,84 +287,12 @@ export const updateExistingStateWithGlobalSelector = (
     };
 };
 
-export const updateExistingStateWithGlobalParams = (
-    newTabHashState: ItemsStateAndParams,
-    globalParams: ItemsStateAndParamsBase,
-    globalQueue: QueueItem[],
-    previousMeta: StateAndParamsMetaData,
-): ItemsStateAndParams => {
-    const currentMeta = newTabHashState.__meta__ as StateAndParamsMetaData;
-    const currentQueue = currentMeta.queue ?? [];
-    const updatedGlobalItems = new Set<string>();
-
-    // Check for parameter changes
-    for (const [widgetId, {params: paramsRecord}] of Object.entries(globalParams)) {
-        const currentItemParams = (newTabHashState as ItemsStateAndParamsBase)[widgetId]?.params;
-        if (currentItemParams && paramsRecord) {
-            for (const [recordId, recordValue] of Object.entries(paramsRecord)) {
-                if (Array.isArray(recordValue[recordId])) {
-                    // external control
-                    // comparing arrays of values
-                    if (!isEqual(currentItemParams[recordId], recordValue)) {
-                        updatedGlobalItems.add(widgetId);
-                        // if at least one value has changed, the widget has been updated
-                        break;
-                    }
-                    // group control
-                    // comparing objects with values for a specific groupItem
-                    // we need to check each groupItem so continue cycle
-                } else if (!isEqual(currentItemParams[recordId], recordValue)) {
-                    updatedGlobalItems.add(recordId);
-                }
-            }
-        }
-    }
-
-    const globalQueueIds = new Set(globalQueue.map((item) => item.groupItemId ?? item.id));
-
-    const updatedQueue: QueueItem[] = [];
-
-    currentQueue.forEach((item) => {
-        const id = item.groupItemId ?? item.id;
-
-        const isGlobalId = globalQueueIds.has(id);
-        const isUpdated = updatedGlobalItems.has(id);
-
-        if (!isGlobalId) {
-            // save common item in queue without changes
-            updatedQueue.push(item);
-        } else if (!isUpdated) {
-            // remove from global items because current item was not updated and must stay in his place in the queue
-            globalQueueIds.delete(id);
-            updatedQueue.push(item);
-        }
-        // if the item was updated, we don't keep it in the same place in the queue, it should be added at the end
-    });
-
-    const updatedAndNewGlobalItems = globalQueue.filter((item) =>
-        globalQueueIds.has(item.groupItemId ?? item.id),
-    );
-
-    return {
-        ...newTabHashState,
-        ...globalParams,
-        __meta__: {
-            ...previousMeta,
-            globalQueue: previousMeta.globalQueue,
-            queue: updatedQueue.concat(updatedAndNewGlobalItems),
-            version: previousMeta?.version || CURRENT_VERSION,
-        },
-    };
-};
-
 export const createNewTabState = (
     params: ItemsStateAndParamsBase,
     queue: QueueItem[],
-    globalQueue?: QueueGlobalItem[],
 ): ItemsStateAndParams => ({
     ...params,
     __meta__: {
-        globalQueue,
         queue,
         version: CURRENT_VERSION,
     },
