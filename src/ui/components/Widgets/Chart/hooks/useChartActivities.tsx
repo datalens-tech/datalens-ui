@@ -102,8 +102,17 @@ export const useChartActivities = ({
         [dispatch, onChange],
     );
 
+    const inProgressRef = React.useRef(false);
+
     const runActivity: RunActivityFn = React.useCallback(
         async ({params}: RunActivityArgs) => {
+            // blocking the run until the previous one ends
+            if (inProgressRef.current) {
+                return null;
+            }
+
+            inProgressRef.current = true;
+
             let responseData: ChartActivityResponseData | null;
             try {
                 responseData = await dataProvider.makeActivityRequest({
@@ -143,6 +152,9 @@ export const useChartActivities = ({
             }
 
             onActivityComplete?.({responseData});
+            inProgressRef.current = false;
+
+            return responseData;
         },
         [
             dataProvider,

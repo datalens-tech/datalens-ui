@@ -12,7 +12,7 @@ export type ExportFormatsType = ValueOf<typeof EXPORT_FORMATS>;
 
 export type ExportParams = {
     format: ExportFormatsType;
-    delValues: string | null;
-    delNumbers: string | null;
-    encoding: string | null;
+    delValues?: string | null;
+    delNumbers?: string | null;
+    encoding?: string | null;
 };
