@@ -3,6 +3,8 @@ import {createContext} from 'react';
 import type {Config} from '@gravity-ui/dashkit';
 import type {DashChartRequestContext, DashSettingsGlobalParams, DashTab} from 'shared/types';
 
+import type {UpdateTabsWithGlobalStateArgs} from '../store/actions/dashTyped';
+
 export const ExtendedDashKitContext = createContext<{
     config?: Config | DashTab;
     skipReload: boolean;
@@ -11,4 +13,5 @@ export const ExtendedDashKitContext = createContext<{
     selectorsGroupTitlePlaceholder?: string;
     dataProviderContextGetter?: (widgetId: string) => DashChartRequestContext;
     setWidgetCurrentTab?: (payload: {widgetId: string; tabId: string}) => void;
+    updateTabsWithGlobalState?: (payload: UpdateTabsWithGlobalStateArgs) => void;
 } | null>(null);

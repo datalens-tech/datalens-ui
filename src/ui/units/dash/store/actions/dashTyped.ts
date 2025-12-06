@@ -5,10 +5,13 @@ import type {
     AddNewItemOptions,
     Config,
     DashKit,
+    ItemParams,
     ItemsStateAndParams,
     PluginTextProps,
     PluginTitleProps,
+    StateAndParamsMetaData,
 } from '@gravity-ui/dashkit';
+import {META_KEY} from '@gravity-ui/dashkit/helpers';
 import {i18n} from 'i18n';
 import type {DatalensGlobalState} from 'index';
 import {URL_QUERY, sdk} from 'index';
@@ -22,14 +25,14 @@ import type {
     DashTabItem,
     DashTabItemControl,
     DashTabItemControlBaseData,
+    DashTabItemGroupControl,
     DashTabItemGroupControlBaseData,
-    DashTabItemGroupControlData,
     DashTabItemImage,
     DashTabItemType,
     DashTabItemWidget,
     RecursivePartial,
 } from 'shared';
-import {EntryScope, EntryUpdateMode} from 'shared';
+import {EntryScope, EntryUpdateMode, Feature} from 'shared';
 import type {AppDispatch} from 'ui/store';
 import {
     addEditHistoryPoint,
@@ -37,6 +40,7 @@ import {
     resetEditHistoryUnit,
 } from 'ui/store/actions/editHistory';
 import type {ItemDataSource} from 'ui/store/typings/controlDialog';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import {getLoginOrIdFromLockedError, isEntryIsLockedError} from 'utils/errors/errorByCode';
 
 import {setLockedTextInfo} from '../../../../components/RevisionsPanel/RevisionsPanel';
@@ -55,6 +59,7 @@ import {collectDashStats} from '../../modules/pushStats';
 import {DashUpdateStatus} from '../../typings/dash';
 import {DASH_EDIT_HISTORY_UNIT_ID} from '../constants';
 import * as actionTypes from '../constants/dashActionTypes';
+import {isItemGlobal} from '../reducers/dashHelpers';
 import {
     selectDash,
     selectDashData,
@@ -65,7 +70,12 @@ import {
 import type {DashState} from '../typings/dash';
 
 import {save} from './base/actions';
-import {migrateDataSettings} from './helpers';
+import {
+    createNewTabState,
+    getNewGlobalParamsAndQueueItems,
+    migrateDataSettings,
+    updateExistingStateWithGlobalSelector,
+} from './helpers';
 
 import type {DashDispatch} from './index';
 
@@ -73,7 +83,7 @@ type GetState = () => DatalensGlobalState;
 
 export type TabsHashStates = {
     [key: string]: {
-        hash: string;
+        hash: string | null;
         state: ItemsStateAndParams;
     };
 };
@@ -202,6 +212,7 @@ export type SetPageTabAction = {
         hashStates?: TabsHashStates;
     };
 };
+
 export const setPageTab = (tabId: string) => {
     return async function (dispatch: DashDispatch, getState: GetState) {
         const {dash} = getState();
@@ -219,6 +230,106 @@ export const setPageTab = (tabId: string) => {
             payload: {tabId},
         });
         dispatch(addDashEditHistoryPoint(true));
+    };
+};
+
+export type UpdateTabsWithGlobalStateArgs = {
+    params: ItemParams;
+    selectorItem:
+        | Pick<DashTabItemControl, 'type' | 'data' | 'id'>
+        | Pick<DashTabItemGroupControl, 'type' | 'data' | 'id'>;
+    appliedSelectorsIds: string[];
+};
+export const UPDATE_TABS_WITH_GLOBAL_STATE = Symbol('dash/UPDATE_TABS_WITH_GLOBAL_STATE');
+export type UpdateTabsWithGlobalStateAction = {
+    type: typeof UPDATE_TABS_WITH_GLOBAL_STATE;
+    payload: {hashStates: TabsHashStates};
+};
+
+export const updateTabsWithGlobalState = ({
+    params,
+    selectorItem,
+    appliedSelectorsIds,
+}: UpdateTabsWithGlobalStateArgs) => {
+    return function (dispatch: DashDispatch, getState: GetState) {
+        return new Promise((resolve) => {
+            if (!isEnabledFeature(Feature.EnableGlobalSelectors) || !isItemGlobal(selectorItem)) {
+                resolve(null);
+                return;
+            }
+
+            const {
+                dash: {hashStates, tabId: currentTabId, data},
+            } = getState();
+
+            const currentHashState = currentTabId ? hashStates?.[currentTabId] : null;
+            const currentMeta = currentHashState?.state?.[META_KEY] as StateAndParamsMetaData;
+            const actualGlobalQueue = currentMeta?.globalQueue;
+
+            if (!actualGlobalQueue?.length) {
+                resolve(null);
+                return;
+            }
+
+            const updatedHashStates: TabsHashStates = {};
+            let hasUpdates = false;
+
+            for (const tab of data.tabs) {
+                // skip the current tab, as its state is updated separately in the general order.
+                if (tab.id === currentTabId) {
+                    continue;
+                }
+
+                const {globalQueue, globalParams} = getNewGlobalParamsAndQueueItems(
+                    tab.id,
+                    selectorItem,
+                    appliedSelectorsIds,
+                    params,
+                );
+
+                if (globalQueue.length === 0) {
+                    continue;
+                }
+
+                const existingTabState = hashStates?.[tab.id]?.state;
+
+                let newTabHashState: ItemsStateAndParams;
+
+                if (existingTabState) {
+                    newTabHashState = updateExistingStateWithGlobalSelector(
+                        existingTabState,
+                        globalParams,
+                        globalQueue,
+                        currentMeta,
+                    );
+                } else {
+                    newTabHashState = createNewTabState(
+                        globalParams,
+                        globalQueue,
+                        actualGlobalQueue,
+                    );
+                }
+
+                updatedHashStates[tab.id] = {
+                    state: newTabHashState,
+                    hash: null,
+                };
+                hasUpdates = true;
+            }
+
+            if (hasUpdates) {
+                dispatch({
+                    type: UPDATE_TABS_WITH_GLOBAL_STATE,
+                    payload: {
+                        hashStates: updatedHashStates,
+                    },
+                });
+                resolve(updatedHashStates);
+                return;
+            }
+
+            resolve(null);
+        });
     };
 };
 
@@ -311,51 +422,6 @@ export const setHashState =
         dispatch(addDashEditHistoryPoint());
     };
 
-export const SET_TAB_HASH_STATE = Symbol('dash/SET_TAB_HASH_STATE');
-export type SetTabHashStateAction = {
-    type: typeof SET_TAB_HASH_STATE;
-    payload: {
-        tabId: string;
-        entryId: string | null;
-        stateHashId?: string;
-        hashStates?: TabsHashStates;
-    };
-};
-
-export function setTabHashState(data: Omit<SetTabHashStateAction['payload'], 'hashStates'>) {
-    return async (dispatch: DashDispatch) => {
-        const {entryId, stateHashId, tabId} = data;
-        const newData: SetTabHashStateAction['payload'] = {...data};
-
-        if (stateHashId && entryId) {
-            const hashData = await getSdk()
-                .sdk.us.getDashState({entryId, hash: stateHashId})
-                .catch((error) => logger.logError('getDashState failed', error));
-
-            if (hashData) {
-                /*const {
-                    data: {controls, ...states},
-                } = hashData;*/ // TODO to deal with controls with further typing of actions, apparently controls is no longer relevant
-
-                newData.hashStates = {
-                    [tabId]: {
-                        hash: stateHashId,
-                        // state: {...controls, ...states},
-                        state: hashData.data,
-                    },
-                };
-            }
-        }
-
-        dispatch({
-            type: SET_TAB_HASH_STATE,
-            payload: {
-                ...newData,
-            },
-        });
-    };
-}
-
 export const SET_STATE_HASH_ID = Symbol('dash/SET_STATE_HASH_ID');
 export type SetStateHashIdAction = {
     type: typeof SET_STATE_HASH_ID;
@@ -368,6 +434,80 @@ export const setStateHashId = (data: SetStateHashIdAction['payload']): SetStateH
     type: SET_STATE_HASH_ID,
     payload: data,
 });
+
+export const SET_TAB_HASH_STATE = Symbol('dash/SET_TAB_HASH_STATE');
+export type SetTabHashStateAction = {
+    type: typeof SET_TAB_HASH_STATE;
+    payload: {
+        tabId: string;
+        entryId: string | null;
+        stateHashId?: string;
+        hashStates?: TabsHashStates;
+    };
+};
+
+export function setTabHashState(data: Omit<SetTabHashStateAction['payload'], 'hashStates'>) {
+    return async (dispatch: DashDispatch, getState: () => DatalensGlobalState) => {
+        const {hashStates} = getState().dash;
+        const {entryId, stateHashId, tabId} = data;
+        const newData: SetTabHashStateAction['payload'] = {...data};
+
+        let hashId: string | undefined = stateHashId;
+        let hashData: ItemsStateAndParams | null | undefined = hashStates?.[tabId]?.state;
+
+        if (!stateHashId && hashData && entryId) {
+            await getSdk()
+                .sdk.us.createDashState({entryId, data: hashData})
+                .then(({hash}) => {
+                    hashId = hash;
+                    const searchParams = new URLSearchParams(location.search);
+
+                    if (hash) {
+                        searchParams.set('state', hash);
+
+                        history.replace({
+                            ...location,
+                            search: `?${searchParams.toString()}`,
+                        });
+                    }
+                })
+                .catch((error) => logger.logError('getDashState failed', error));
+        }
+
+        if (hashId && entryId) {
+            if (!hashData) {
+                // a non-spa opening a link with an existing hash of the state
+                const calculatedHashData = await getSdk()
+                    .sdk.us.getDashState({entryId, hash: hashId})
+                    .catch((error) => logger.logError('getDashState failed', error));
+
+                hashData = calculatedHashData ? calculatedHashData.data : null;
+            }
+
+            if (hashData) {
+                /*const {
+                    data: {controls, ...states},
+                } = hashData;*/ // TODO to deal with controls with further typing of actions, apparently controls is no longer relevant
+
+                newData.hashStates = {
+                    [tabId]: {
+                        hash: hashId,
+                        // state: {...controls, ...states},
+                        state: hashData,
+                    },
+                };
+            }
+        }
+
+        dispatch({
+            type: SET_TAB_HASH_STATE,
+            payload: {
+                ...newData,
+                stateHashId: hashId,
+            },
+        });
+    };
+}
 
 export const SET_ERROR_MODE = Symbol('dash/SET_ERROR_MODE');
 export type SetErrorModeAction = {
@@ -806,8 +946,8 @@ export function purgeData(data: DashData) {
                 allItemsIds.add(item.id);
                 currentItemsIds.add(item.id);
 
-                if ('group' in data) {
-                    (data as unknown as DashTabItemGroupControlData).group.forEach((widgetItem) => {
+                if (item.type === ITEM_TYPE.GROUP_CONTROL && 'group' in item.data) {
+                    item.data.group.forEach((widgetItem) => {
                         currentControlsIds.add(widgetItem.id);
                     });
                 } else {

@@ -7,11 +7,15 @@ export interface ImpactTypeItem {
     impactTabsIds?: ImpactTabsIds;
 }
 
-export const isItemScopeAvailableOnTab = (
-    currentTabId: string,
+export const isItemVisibleOnTab = (
+    currentTabId?: string | null,
     itemImpactType?: ImpactType,
     itemImpactTabsIds?: ImpactTabsIds,
 ): boolean => {
+    if (!currentTabId) {
+        return false;
+    }
+
     switch (itemImpactType) {
         case 'allTabs':
             return true;
@@ -23,19 +27,19 @@ export const isItemScopeAvailableOnTab = (
     }
 };
 
-export const isGroupSettingAvailableOnTab = (
+export const isWidgetVisibleByGroupSetting = (
     currentTabId: string,
     groupImpactType?: ImpactType,
     groupImpactTabsIds?: ImpactTabsIds,
 ): boolean => {
-    if (!groupImpactType || groupImpactType === 'asGroup') {
+    if (!groupImpactType) {
         return true;
     }
 
-    return isItemScopeAvailableOnTab(currentTabId, groupImpactType, groupImpactTabsIds);
+    return isItemVisibleOnTab(currentTabId, groupImpactType, groupImpactTabsIds);
 };
 
-export const isControlItemVisibleOnCurrentTab = (
+export const isControlWidgetVisibleOnCurrentTab = (
     item: {impactType?: ImpactType; impactTabsIds?: ImpactTabsIds},
     currentTabId: string | null,
     groupImpactType?: ImpactType,
@@ -46,7 +50,7 @@ export const isControlItemVisibleOnCurrentTab = (
     }
 
     const isGroupSettingPrevailing = item.impactType === undefined || item.impactType === 'asGroup';
-    const isGroupAvailable = isGroupSettingAvailableOnTab(
+    const isGroupAvailable = isWidgetVisibleByGroupSetting(
         currentTabId,
         groupImpactType,
         groupImpactTabsIds,
@@ -57,7 +61,7 @@ export const isControlItemVisibleOnCurrentTab = (
     }
 
     return (
-        isItemScopeAvailableOnTab(currentTabId, item.impactType, item.impactTabsIds) ||
-        ((item.impactType === undefined || item.impactType === 'asGroup') && isGroupAvailable)
+        ((item.impactType === undefined || item.impactType === 'asGroup') && isGroupAvailable) ||
+        isItemVisibleOnTab(currentTabId, item.impactType, item.impactTabsIds)
     );
 };

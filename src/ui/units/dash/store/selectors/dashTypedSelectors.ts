@@ -205,7 +205,9 @@ export const selectCurrentTabRelationDataItems = createSelector(
             return undefined;
         }
 
-        return currentTab.items.filter(
+        const allItems = currentTab.items.concat(currentTab.globalItems || []);
+
+        return allItems.filter(
             ({type}) =>
                 type === ITEM_TYPE.CONTROL ||
                 type === ITEM_TYPE.WIDGET ||

@@ -3,6 +3,8 @@ import type {
     DashData,
     DashDragOptions,
     DashEntry,
+    DashTabItemControl,
+    DashTabItemGroupControl,
     EntryAnnotation,
     Permissions,
     WidgetType,
@@ -44,3 +46,7 @@ export type DashState = {
     dragOperationProps: DashDragOptions | null;
     openInfoOnLoad?: boolean;
 };
+
+export type GlobalItem =
+    | Pick<DashTabItemControl, 'type' | 'data' | 'id'>
+    | Pick<DashTabItemGroupControl, 'type' | 'data' | 'id'>;

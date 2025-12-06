@@ -350,6 +350,8 @@ function dash(state = initialState, action) {
                 },
             });
 
+            const allTabItems = tabData.items.concat(tabData.globalItems || []);
+
             // migration of connections if old selector becomes a group selector
             // 1. state.openedItemId existance means that widget already exist
             // 2. !action.payload.data.group[0].id - first selector doesn't have an id because it was just converted
@@ -361,7 +363,7 @@ function dash(state = initialState, action) {
                 tabData.connections = migrateConnectionsForGroupControl({
                     openedItemId: state.openedItemId,
                     currentTab: tab,
-                    tabDataItems: tabData.items,
+                    tabDataItems: allTabItems,
                 });
             }
 
@@ -378,8 +380,8 @@ function dash(state = initialState, action) {
                 });
 
                 const item = state.openedItemId
-                    ? tabData.items.find((tabItem) => tabItem.id === state.openedItemId)
-                    : tabData.items[tabData.items.length - 1];
+                    ? allTabItems.find((tabItem) => tabItem.id === state.openedItemId)
+                    : allTabItems[tabData.items.length - 1];
 
                 const updatedConnections = getUpdatedConnections({
                     connections: tabData.connections,
