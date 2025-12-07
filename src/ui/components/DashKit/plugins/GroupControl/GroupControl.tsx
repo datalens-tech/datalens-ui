@@ -23,7 +23,11 @@ import {
     CLICK_ACTION_TYPE,
     CONTROL_TYPE,
 } from 'ui/libs/DatalensChartkit/modules/constants/constants';
-import {isItemVisibleOnTab, isWidgetVisibleByGroupSetting} from 'ui/units/dash/utils/selectors';
+import {
+    isGlobalWidgetVisibleByMainSetting,
+    isItemVisibleOnTab,
+    isItemVisibleOnTabByGroup,
+} from 'ui/units/dash/utils/selectors';
 import {getUrlGlobalParams} from 'ui/units/dash/utils/url';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
@@ -319,7 +323,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         const isGroupSettingPrevailing = controlData.group.every(
             (item) => item.impactType === undefined || item.impactType === 'asGroup',
         );
-        const isGroupAvailableOnTab = isWidgetVisibleByGroupSetting(
+        const isGroupAvailableOnTab = isGlobalWidgetVisibleByMainSetting(
             currentTabId,
             controlData.impactType,
             controlData.impactTabsIds,
@@ -331,8 +335,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
 
         return controlData.group.filter(
             (item) =>
-                ((item.impactType === undefined || item.impactType === 'asGroup') &&
-                    isGroupAvailableOnTab) ||
+                isItemVisibleOnTabByGroup(isGroupAvailableOnTab, item.impactType) ||
                 isItemVisibleOnTab(currentTabId, item.impactType, item.impactTabsIds),
         );
     }

@@ -12,10 +12,9 @@ import {DashTabItemType} from 'shared';
 import type {
     DashData,
     DashEntry,
+    DashTab,
     DashTabItem,
     DashTabItemWidget,
-    ImpactTabsIds,
-    ImpactType,
     StringParams,
 } from 'shared';
 import {URL_QUERY} from 'ui/constants/common';
@@ -23,10 +22,14 @@ import {isEmbeddedEntry} from 'ui/utils/embedded';
 
 import ChartKit from '../../../../libs/DatalensChartkit';
 import {registry} from '../../../../registry';
-import {isItemVisibleOnTab} from '../../utils/selectors';
+import {
+    isGlobalWidgetVisibleByMainSetting,
+    isGroupItemVisibleOnTab,
+    isItemVisibleOnTab,
+} from '../../utils/selectors';
 import type {DashState, GlobalItem} from '../typings/dash';
 
-import type {SetItemDataArgs} from './dashTyped';
+import type {SetItemDataArgs, TabsHashStates} from './dashTyped';
 
 export const NOT_FOUND_ERROR_TEXT = 'No entry found';
 export const DOES_NOT_EXIST_ERROR_TEXT = "The entity doesn't exist";
@@ -172,27 +175,6 @@ export const getVisibleGlobalItemsIdsByTab = (
     return influencingIds;
 };
 
-const isItemHasImpactOnTab = (
-    item: {impactType?: ImpactType; impactTabsIds?: ImpactTabsIds},
-    tabId: string,
-) => {
-    return Boolean(
-        item.impactType === 'allTabs' || (item.impactTabsIds && item.impactTabsIds.includes(tabId)),
-    );
-};
-
-const isGroupItemHasImpactOnTab = (
-    groupItem: {impactType?: ImpactType; impactTabsIds?: ImpactTabsIds},
-    tabId: string,
-    isMainSettingAvailableOnTab?: boolean,
-) => {
-    return (
-        ((!groupItem.impactType || groupItem.impactType === 'asGroup') &&
-            isMainSettingAvailableOnTab) ||
-        isItemHasImpactOnTab(groupItem, tabId)
-    );
-};
-
 export const getNewGlobalParamsAndQueueItems = (
     tabId: string,
     selector: GlobalItem,
@@ -200,7 +182,11 @@ export const getNewGlobalParamsAndQueueItems = (
     params: ItemParams,
 ) => {
     const selectorData = selector.data;
-    const isMainSettingAvailableOnTab = isItemHasImpactOnTab(selectorData, tabId);
+    const isWidgetVisibleByMainSetting = isGlobalWidgetVisibleByMainSetting(
+        tabId,
+        selectorData.impactType,
+        selectorData.impactTabsIds,
+    );
 
     if ('group' in selectorData) {
         const globalParams: ItemsStateAndParamsBase = {};
@@ -209,7 +195,11 @@ export const getNewGlobalParamsAndQueueItems = (
         selectorData.group.forEach((groupItem) => {
             if (
                 appliedSelectorsIds.includes(groupItem.id) &&
-                isGroupItemHasImpactOnTab(groupItem, tabId, isMainSettingAvailableOnTab)
+                isGroupItemVisibleOnTab({
+                    item: groupItem,
+                    tabId,
+                    isVisibleByMainSetting: isWidgetVisibleByMainSetting,
+                })
             ) {
                 const groupItemsParams = (params[groupItem.id] as StringParams) ?? params;
 
@@ -231,7 +221,7 @@ export const getNewGlobalParamsAndQueueItems = (
         });
 
         return {globalParams, globalQueue};
-    } else if (isMainSettingAvailableOnTab) {
+    } else if (isWidgetVisibleByMainSetting) {
         return {globalParams: {[selector.id]: {params}}, globalQueue: [{id: selector.id}]};
     }
 
@@ -271,9 +261,27 @@ export const updateExistingStateWithGlobalSelector = (
         }
     }
 
-    const globalQueueIds = new Set(globalQueue.map((item) => item.groupItemId ?? item.id));
+    const globalIdsToAddInQueue = new Set(globalQueue.map((item) => item.groupItemId ?? item.id));
 
-    const updatedQueue: QueueItem[] = currentQueue.filter((item) => !globalQueueIds.has(item.id));
+    const updatedQueue: QueueItem[] = currentQueue.filter((item) => {
+        const itemId = item.groupItemId ?? item.id;
+        const isGlobalItem = globalIdsToAddInQueue.has(itemId);
+        if (isGlobalItem && updatedGlobalItems.has(itemId)) {
+            // if item is updated we need to filter it now and then add to the end of the queue
+            return false;
+        } else if (isGlobalItem) {
+            // if item is not updated we don't need to filter or add it to the queue
+            globalIdsToAddInQueue.delete(itemId);
+        }
+
+        return true;
+    });
+
+    globalQueue.forEach((item) => {
+        if (globalIdsToAddInQueue.has(item.id)) {
+            updatedQueue.push(item);
+        }
+    });
 
     return {
         ...newTabHashState,
@@ -281,7 +289,7 @@ export const updateExistingStateWithGlobalSelector = (
         __meta__: {
             ...previousMeta,
             globalQueue: previousMeta.globalQueue,
-            queue: updatedQueue.concat(globalQueue),
+            queue: updatedQueue,
             version: previousMeta?.version || CURRENT_VERSION,
         },
     };
@@ -297,3 +305,44 @@ export const createNewTabState = (
         version: CURRENT_VERSION,
     },
 });
+
+export const processTabForGlobalUpdate = (
+    tab: DashTab,
+    currentTabId: string | null,
+    selectorItem: GlobalItem,
+    appliedSelectorsIds: string[],
+    params: ItemParams,
+    hashStates: TabsHashStates | null | undefined,
+    currentMeta: StateAndParamsMetaData,
+): {tabId: string; newState: ItemsStateAndParams} | null => {
+    if (tab.id === currentTabId) {
+        return null;
+    }
+
+    const {globalQueue, globalParams} = getNewGlobalParamsAndQueueItems(
+        tab.id,
+        selectorItem,
+        appliedSelectorsIds,
+        params,
+    );
+
+    if (globalQueue.length === 0) {
+        return null;
+    }
+
+    const existingTabState = hashStates?.[tab.id]?.state;
+
+    const newTabHashState: ItemsStateAndParams = existingTabState
+        ? updateExistingStateWithGlobalSelector(
+              existingTabState,
+              globalParams,
+              globalQueue,
+              currentMeta,
+          )
+        : createNewTabState(globalParams, globalQueue);
+
+    return {
+        tabId: tab.id,
+        newState: newTabHashState,
+    };
+};

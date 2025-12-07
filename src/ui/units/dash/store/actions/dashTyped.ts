@@ -25,7 +25,6 @@ import type {
     DashTabItem,
     DashTabItemControl,
     DashTabItemControlBaseData,
-    DashTabItemGroupControl,
     DashTabItemGroupControlBaseData,
     DashTabItemImage,
     DashTabItemType,
@@ -67,15 +66,10 @@ import {
     selectDashEntry,
     selectEntryId,
 } from '../selectors/dashTypedSelectors';
-import type {DashState} from '../typings/dash';
+import type {DashState, GlobalItem} from '../typings/dash';
 
 import {save} from './base/actions';
-import {
-    createNewTabState,
-    getNewGlobalParamsAndQueueItems,
-    migrateDataSettings,
-    updateExistingStateWithGlobalSelector,
-} from './helpers';
+import {migrateDataSettings, processTabForGlobalUpdate} from './helpers';
 
 import type {DashDispatch} from './index';
 
@@ -235,9 +229,7 @@ export const setPageTab = (tabId: string) => {
 
 export type UpdateTabsWithGlobalStateArgs = {
     params: ItemParams;
-    selectorItem:
-        | Pick<DashTabItemControl, 'type' | 'data' | 'id'>
-        | Pick<DashTabItemGroupControl, 'type' | 'data' | 'id'>;
+    selectorItem: GlobalItem;
     appliedSelectorsIds: string[];
 };
 export const UPDATE_TABS_WITH_GLOBAL_STATE = Symbol('dash/UPDATE_TABS_WITH_GLOBAL_STATE');
@@ -266,59 +258,40 @@ export const updateTabsWithGlobalState = ({
             const currentMeta = currentHashState?.state?.[META_KEY] as StateAndParamsMetaData;
 
             const updatedHashStates: TabsHashStates = {};
-            let hasUpdates = false;
+            let hasUpdated = false;
 
-            for (const tab of data.tabs) {
-                // skip the current tab, as its state is updated separately in the general order.
-                if (tab.id === currentTabId) {
-                    continue;
-                }
-
-                const {globalQueue, globalParams} = getNewGlobalParamsAndQueueItems(
-                    tab.id,
+            data.tabs.forEach((tab) => {
+                const processedTab = processTabForGlobalUpdate(
+                    tab,
+                    currentTabId,
                     selectorItem,
                     appliedSelectorsIds,
                     params,
+                    hashStates,
+                    currentMeta,
                 );
-
-                if (globalQueue.length === 0) {
-                    continue;
+                if (processedTab) {
+                    updatedHashStates[tab.id] = {
+                        state: processedTab.newState,
+                        hash: null,
+                    };
+                    hasUpdated = true;
                 }
+            });
 
-                const existingTabState = hashStates?.[tab.id]?.state;
-
-                let newTabHashState: ItemsStateAndParams;
-
-                if (existingTabState) {
-                    newTabHashState = updateExistingStateWithGlobalSelector(
-                        existingTabState,
-                        globalParams,
-                        globalQueue,
-                        currentMeta,
-                    );
-                } else {
-                    newTabHashState = createNewTabState(globalParams, globalQueue);
-                }
-
-                updatedHashStates[tab.id] = {
-                    state: newTabHashState,
-                    hash: null,
-                };
-                hasUpdates = true;
-            }
-
-            if (hasUpdates) {
-                dispatch({
-                    type: UPDATE_TABS_WITH_GLOBAL_STATE,
-                    payload: {
-                        hashStates: updatedHashStates,
-                    },
-                });
-                resolve(updatedHashStates);
+            if (!hasUpdated) {
+                resolve(null);
                 return;
             }
 
-            resolve(null);
+            dispatch({
+                type: UPDATE_TABS_WITH_GLOBAL_STATE,
+                payload: {
+                    hashStates: updatedHashStates,
+                },
+            });
+
+            resolve(updatedHashStates);
         });
     };
 };
