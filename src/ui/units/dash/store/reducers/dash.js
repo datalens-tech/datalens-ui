@@ -14,6 +14,7 @@ import {getUpdatedBackgroundValue, getUpdatedConnections} from 'ui/utils/copyIte
 import {EMBEDDED_MODE} from '../../../../constants/embedded';
 import {Mode} from '../../modules/constants';
 import {getUniqIdsFromDashData} from '../../modules/helpers';
+import {getAllTabItems} from '../../utils/selectors';
 import * as actionTypes from '../constants/dashActionTypes';
 
 import {
@@ -350,7 +351,7 @@ function dash(state = initialState, action) {
                 },
             });
 
-            const allTabItems = tabData.items.concat(tabData.globalItems || []);
+            const allTabItems = getAllTabItems(tabData);
 
             // migration of connections if old selector becomes a group selector
             // 1. state.openedItemId existance means that widget already exist

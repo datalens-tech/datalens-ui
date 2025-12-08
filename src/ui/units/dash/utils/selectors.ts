@@ -1,5 +1,6 @@
+import type {Config} from '@gravity-ui/dashkit';
 import {Feature} from 'shared';
-import type {ImpactTabsIds, ImpactType} from 'shared/types/dash';
+import type {DashTab, ImpactTabsIds, ImpactType} from 'shared/types/dash';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 export interface ImpactTypeItem {
@@ -78,4 +79,8 @@ export const isGroupItemVisibleOnTab = ({
         isItemVisibleOnTabByGroup(isVisibleByGroupSetting, item.impactType) ||
         isItemVisibleOnTab(tabId, item.impactType, item.impactTabsIds)
     );
+};
+
+export const getAllTabItems = (tab: DashTab | Config) => {
+    return tab.items.concat(tab.globalItems || []);
 };

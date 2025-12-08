@@ -181,18 +181,17 @@ export const getNewGlobalParamsAndQueueItems = (
     appliedSelectorsIds: string[],
     params: ItemParams,
 ) => {
-    const selectorData = selector.data;
     const isWidgetVisibleByMainSetting = isGlobalWidgetVisibleByMainSetting(
         tabId,
-        selectorData.impactType,
-        selectorData.impactTabsIds,
+        selector.data.impactType,
+        selector.data.impactTabsIds,
     );
 
-    if ('group' in selectorData) {
+    if (selector.type === DashTabItemType.GroupControl) {
         const globalParams: ItemsStateAndParamsBase = {};
         const globalQueue: QueueItem[] = [];
 
-        selectorData.group.forEach((groupItem) => {
+        selector.data.group.forEach((groupItem) => {
             if (
                 appliedSelectorsIds.includes(groupItem.id) &&
                 isGroupItemVisibleOnTab({
@@ -234,8 +233,10 @@ export const updateExistingStateWithGlobalSelector = (
     globalQueue: QueueItem[],
     previousMeta: StateAndParamsMetaData,
 ): ItemsStateAndParams => {
-    const currentMeta = newTabHashState.__meta__ as StateAndParamsMetaData;
-    const currentQueue = currentMeta.queue ?? [];
+    const currentQueue =
+        newTabHashState.__meta__ && 'queue' in newTabHashState.__meta__
+            ? newTabHashState.__meta__.queue
+            : [];
     const updatedGlobalItems = new Set<string>();
 
     // Check for parameter changes

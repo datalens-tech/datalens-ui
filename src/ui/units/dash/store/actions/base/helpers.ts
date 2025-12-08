@@ -3,7 +3,6 @@ import type {
     ItemsStateAndParams,
     ItemsStateAndParamsBase,
     QueueItem,
-    StateAndParamsMeta,
 } from '@gravity-ui/dashkit/helpers';
 import type {DashData} from 'shared/types';
 import {DashTabItemType, Feature} from 'shared/types';
@@ -12,6 +11,82 @@ import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {TabsHashStates} from '../dashTyped';
 import {createNewTabState} from '../helpers';
+
+const buildParamsStateFromQueue = (
+    actualTabQueue: QueueItem[],
+    paramsState: ItemsStateAndParamsBase,
+): ItemsStateAndParamsBase => {
+    const actualTabParams: ItemsStateAndParamsBase = {};
+
+    actualTabQueue.forEach((queueItem) => {
+        if (queueItem.groupItemId) {
+            const paramsFromState = paramsState?.[queueItem.id].params?.[queueItem.groupItemId] as
+                | StringParams
+                | undefined;
+
+            if (paramsFromState) {
+                const existingItem = actualTabParams[queueItem.id];
+                if (existingItem?.params) {
+                    existingItem.params[queueItem.groupItemId] = paramsFromState;
+                } else {
+                    actualTabParams[queueItem.id] = {
+                        params: {[queueItem.groupItemId]: paramsFromState},
+                    };
+                }
+            }
+        } else {
+            const paramsFromState = paramsState?.[queueItem.id].params;
+
+            if (paramsFromState) {
+                actualTabParams[queueItem.id] = {
+                    params: paramsFromState,
+                };
+            }
+        }
+    });
+
+    return actualTabParams;
+};
+
+const processTabForGlobalStates = (
+    tab: DashData['tabs'][0],
+    currentStateQueue: QueueItem[],
+    paramsState: ItemsStateAndParamsBase,
+): {state: ItemsStateAndParams; hash: null} | null => {
+    const tabGlobalItemsIds = new Set<string>();
+
+    tab.globalItems?.forEach((item) => {
+        if (item.type === DashTabItemType.GroupControl) {
+            item.data.group.forEach((groupItem) => {
+                if (isItemVisibleOnTab(tab.id, groupItem.impactType, groupItem.impactTabsIds)) {
+                    tabGlobalItemsIds.add(groupItem.id);
+                }
+            });
+        } else {
+            tabGlobalItemsIds.add(item.id);
+        }
+    });
+
+    if (!tabGlobalItemsIds.size) {
+        return null;
+    }
+
+    const actualTabQueue: QueueItem[] = currentStateQueue.filter((item) =>
+        item.groupItemId ? tabGlobalItemsIds.has(item.groupItemId) : tabGlobalItemsIds.has(item.id),
+    );
+
+    if (actualTabQueue.length === 0) {
+        return null;
+    }
+
+    const actualTabParams = buildParamsStateFromQueue(actualTabQueue, paramsState);
+    const newTabHashState = createNewTabState(actualTabParams, actualTabQueue);
+
+    return {
+        state: newTabHashState,
+        hash: null,
+    };
+};
 
 export const getGlobalStatesForInactiveTabs = ({
     state,
@@ -23,21 +98,21 @@ export const getGlobalStatesForInactiveTabs = ({
     currentTabId: string | null;
 }) => {
     return new Promise((resolve) => {
-        if (!state) {
-            resolve(null);
-            return;
-        }
+        const currentStateQueue =
+            state?.__meta__ && 'queue' in state.__meta__ ? state.__meta__.queue : null;
 
-        const currentStateQueue = (state as StateAndParamsMeta).__meta__?.queue;
-
-        if (!isEnabledFeature(Feature.EnableGlobalSelectors) || !currentStateQueue?.length) {
+        if (
+            !isEnabledFeature(Feature.EnableGlobalSelectors) ||
+            !currentStateQueue ||
+            !currentStateQueue?.length
+        ) {
             resolve(null);
             return;
         }
 
         let hasUpdates = false;
-
         const updatedHashStates: TabsHashStates = {};
+        const paramsState = state as ItemsStateAndParamsBase;
 
         for (const tab of data.tabs) {
             // skip the current tab, as its state is updated separately in the general order
@@ -45,78 +120,12 @@ export const getGlobalStatesForInactiveTabs = ({
                 continue;
             }
 
-            const tabGlobalItemsIds = new Set<string>();
+            const tabResult = processTabForGlobalStates(tab, currentStateQueue, paramsState);
 
-            tab.globalItems?.forEach((item) => {
-                if (item.type === DashTabItemType.GroupControl) {
-                    item.data.group.forEach((groupItem) => {
-                        if (
-                            isItemVisibleOnTab(
-                                tab.id,
-                                groupItem.impactType,
-                                groupItem.impactTabsIds,
-                            )
-                        ) {
-                            tabGlobalItemsIds.add(groupItem.id);
-                        }
-                    });
-                } else {
-                    tabGlobalItemsIds.add(item.id);
-                }
-            });
-
-            if (!tabGlobalItemsIds.size) {
-                continue;
+            if (tabResult) {
+                updatedHashStates[tab.id] = tabResult;
+                hasUpdates = true;
             }
-
-            const actualTabQueue: QueueItem[] = currentStateQueue.filter((item) =>
-                item.groupItemId
-                    ? tabGlobalItemsIds.has(item.groupItemId)
-                    : tabGlobalItemsIds.has(item.id),
-            );
-
-            if (actualTabQueue.length === 0) {
-                continue;
-            }
-
-            const actualTabParams: ItemsStateAndParamsBase = {};
-
-            const paramsState = state as ItemsStateAndParamsBase;
-
-            actualTabQueue.forEach((queueItem) => {
-                if (queueItem.groupItemId) {
-                    const paramsFromState = paramsState?.[queueItem.id].params?.[
-                        queueItem.groupItemId
-                    ] as StringParams;
-
-                    if (paramsFromState) {
-                        const existingItem = actualTabParams[queueItem.id];
-                        if (existingItem?.params) {
-                            existingItem.params[queueItem.groupItemId] = paramsFromState;
-                        } else {
-                            actualTabParams[queueItem.id] = {
-                                params: {[queueItem.groupItemId]: paramsFromState},
-                            };
-                        }
-                    }
-                } else {
-                    const paramsFromState = paramsState?.[queueItem.id].params;
-
-                    if (paramsFromState) {
-                        actualTabParams[queueItem.id] = {
-                            params: paramsFromState,
-                        };
-                    }
-                }
-            });
-
-            const newTabHashState = createNewTabState(actualTabParams, actualTabQueue);
-
-            updatedHashStates[tab.id] = {
-                state: newTabHashState,
-                hash: null,
-            };
-            hasUpdates = true;
         }
 
         if (hasUpdates) {

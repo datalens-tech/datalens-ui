@@ -27,10 +27,6 @@ export const TAB_PROPERTIES = [
     'globalItems',
 ] as const;
 
-// type GlobalItem =
-//     | {type: DashTabItemType.Control; data: Partial<DashTabItemControlData>}
-//     | {type: DashTabItemType.GroupControl; data: Partial<DashTabItemGroupControlData>};
-
 export function isItemGlobal(item: GlobalItem): boolean {
     if (item.type === DashTabItemType.Control) {
         const controlData = item.data;
@@ -149,7 +145,9 @@ export function getDetailedGlobalStatus(
                 });
 
                 // don't rewrite hasAllScope if it's already true
-                hasAllScope = hasAllScope || usedTabsResult.hasAllScope;
+                if (!hasAllScope) {
+                    hasAllScope = usedTabsResult.hasAllScope;
+                }
                 usedTabsResult.usedTabs.forEach((tabId) => usedTabs.add(tabId));
             }
         }

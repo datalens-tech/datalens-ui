@@ -160,7 +160,7 @@ export const useLoadingChartSelector = (props: LoadingChartSelectorHookProps) =>
                 onStateAndParamsChange({params: changedProps.data.params || {}});
             }
         },
-        [data, onStateAndParamsChange, props, updateTabsWithGlobalState, widgetId],
+        [data, onStateAndParamsChange, updateTabsWithGlobalState, widgetId],
     );
 
     /**

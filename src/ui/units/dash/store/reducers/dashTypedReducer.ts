@@ -410,13 +410,11 @@ export function dashTypedReducer(
         }
 
         case UPDATE_TABS_WITH_GLOBAL_STATE: {
-            const {hashStates: updatedHashStates} = action.payload;
-
             return {
                 ...state,
                 hashStates: {
                     ...state.hashStates,
-                    ...updatedHashStates,
+                    ...action.payload.hashStates,
                 },
             };
         }

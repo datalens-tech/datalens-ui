@@ -1,11 +1,11 @@
 import type {DatalensGlobalState} from 'index';
 import isEqual from 'lodash/isEqual';
 import {createSelector} from 'reselect';
-import type {DashTabItem} from 'shared/types';
 
 import {ITEM_TYPE} from '../../../../constants/dialogs';
 import {isOrderIdsChanged} from '../../containers/Dialogs/Tabs/PopupWidgetsOrder/helpers';
 import {Mode} from '../../modules/constants';
+import {getAllTabItems} from '../../utils/selectors';
 import type {DashState} from '../typings/dash';
 
 export const selectDash = (state: DatalensGlobalState) => state.dash || null;
@@ -177,9 +177,7 @@ export const selectOpenedItemData = createSelector(
     [selectCurrentTab, selectDash],
     (currentTab, dash) => {
         if (dash.openedItemId && currentTab) {
-            const allItems = currentTab.items.concat(
-                (currentTab.globalItems as DashTabItem[]) || [],
-            );
+            const allItems = getAllTabItems(currentTab);
             const item = allItems.find(({id}) => id === dash.openedItemId);
             return item?.data;
         }
@@ -191,7 +189,7 @@ export const selectOpenedItem = createSelector(
     [selectCurrentTab, selectDash],
     (currentTab, dash) => {
         if (dash.openedItemId && currentTab) {
-            const allItems = currentTab.items.concat(currentTab.globalItems || []);
+            const allItems = getAllTabItems(currentTab);
             const item = allItems.find(({id}) => id === dash.openedItemId);
             return item;
         }
@@ -206,7 +204,7 @@ export const selectCurrentTabRelationDataItems = createSelector(
             return undefined;
         }
 
-        const allItems = currentTab.items.concat(currentTab.globalItems || []);
+        const allItems = getAllTabItems(currentTab);
 
         return allItems.filter(
             ({type}) =>

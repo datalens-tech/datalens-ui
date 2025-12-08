@@ -385,19 +385,6 @@ export const setHashState =
         dispatch(addDashEditHistoryPoint());
     };
 
-export const SET_STATE_HASH_ID = Symbol('dash/SET_STATE_HASH_ID');
-export type SetStateHashIdAction = {
-    type: typeof SET_STATE_HASH_ID;
-    payload: {
-        hash: string;
-        tabId: string;
-    };
-};
-export const setStateHashId = (data: SetStateHashIdAction['payload']): SetStateHashIdAction => ({
-    type: SET_STATE_HASH_ID,
-    payload: data,
-});
-
 export const SET_TAB_HASH_STATE = Symbol('dash/SET_TAB_HASH_STATE');
 export type SetTabHashStateAction = {
     type: typeof SET_TAB_HASH_STATE;
@@ -471,6 +458,19 @@ export function setTabHashState(data: Omit<SetTabHashStateAction['payload'], 'ha
         });
     };
 }
+
+export const SET_STATE_HASH_ID = Symbol('dash/SET_STATE_HASH_ID');
+export type SetStateHashIdAction = {
+    type: typeof SET_STATE_HASH_ID;
+    payload: {
+        hash: string;
+        tabId: string;
+    };
+};
+export const setStateHashId = (data: SetStateHashIdAction['payload']): SetStateHashIdAction => ({
+    type: SET_STATE_HASH_ID,
+    payload: data,
+});
 
 export const SET_ERROR_MODE = Symbol('dash/SET_ERROR_MODE');
 export type SetErrorModeAction = {
