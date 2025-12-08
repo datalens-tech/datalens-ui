@@ -289,7 +289,6 @@ export const updateExistingStateWithGlobalSelector = (
         ...globalParams,
         __meta__: {
             ...previousMeta,
-            globalQueue: previousMeta.globalQueue,
             queue: updatedQueue,
             version: previousMeta?.version || CURRENT_VERSION,
         },

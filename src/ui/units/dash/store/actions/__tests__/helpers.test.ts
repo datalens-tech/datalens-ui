@@ -149,7 +149,6 @@ describe('dash helpers', () => {
             const previousMeta: StateAndParamsMetaData = {
                 queue: [{id: 'widget2'}],
                 version: 2,
-                globalQueue: [],
             };
 
             const result = updateExistingStateWithGlobalSelector(
@@ -164,7 +163,6 @@ describe('dash helpers', () => {
                 __meta__: {
                     queue: [{id: 'widget2'}, {id: 'widget1'}],
                     version: 2,
-                    globalQueue: [],
                 },
             });
         });
