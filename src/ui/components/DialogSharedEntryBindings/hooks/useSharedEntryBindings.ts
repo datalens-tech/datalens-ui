@@ -36,6 +36,7 @@ export const useSharedEntryBindings = ({entry}: UseSharedEntryBindingsProps) => 
                     entryId: entry.entryId,
                     entryAs: currentDirection,
                     filterString: filter ? filter : undefined,
+                    includePermissionsInfo: currentDirection === Attachment.TARGET,
                     mode: 'all',
                 })
                 .then((response) => {

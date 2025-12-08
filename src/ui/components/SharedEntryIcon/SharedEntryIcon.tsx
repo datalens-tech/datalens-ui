@@ -2,19 +2,18 @@ import React from 'react';
 
 import {ShieldCheck, ShieldKeyhole} from '@gravity-ui/icons';
 import block from 'bem-cn-lite';
-import type {GetSharedEntryResponse} from 'shared/schema';
 
 import './SharedEntryIcon.scss';
 
 type SharedEntryIconProps = {
-    entry: GetSharedEntryResponse;
+    isDelegated: boolean;
     className?: string;
 };
 
 const b = block('dl-shared-entry-icon');
 
-export const SharedEntryIcon = ({entry, className}: SharedEntryIconProps) => {
-    if (entry.isDelegated) {
+export const SharedEntryIcon = ({isDelegated, className}: SharedEntryIconProps) => {
+    if (isDelegated) {
         return (
             <div className={b(null, className)}>
                 <ShieldCheck width={12} height={12} />

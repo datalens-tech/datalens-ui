@@ -194,13 +194,14 @@ class Dataset extends React.Component<Props, State> {
             location,
         } = this.props;
         const collectionId = this.getCollectionId();
+        const workbookId = this.getWorkbookId();
         const currentSearchParams = new URLSearchParams(location.search);
         const revId = currentSearchParams.get(URL_QUERY.REV_ID) ?? undefined;
 
         fetchFieldTypes();
 
         if (isCreationProcess) {
-            initializeDataset({connectionId, collectionId});
+            initializeDataset({connectionId, collectionId, workbookId});
         } else if (datasetId) {
             initialFetchDataset({datasetId, rev_id: revId});
         }

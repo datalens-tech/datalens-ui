@@ -287,6 +287,7 @@ export type GetSharedEntryBindingsArgs = {
     filterString?: string;
     page?: number;
     pageSize?: number;
+    includePermissionsInfo?: boolean;
 };
 
 export type SharedEntry = {

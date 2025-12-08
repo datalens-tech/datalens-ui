@@ -233,3 +233,6 @@ export const isDescriptionChangedSelector = createSelector(
     [datasetInitialDescriptionSelector, datasetDescriptionSelector],
     (initialDescription, previewDescription) => initialDescription !== previewDescription,
 );
+
+export const selectedConnectionDelegationStatusSelector = (state: DatalensGlobalState) =>
+    state.dataset.ui.selectedConnectionDelegationStatus;
