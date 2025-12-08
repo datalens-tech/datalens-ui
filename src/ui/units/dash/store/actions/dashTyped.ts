@@ -406,9 +406,11 @@ export function setTabHashState(data: Omit<SetTabHashStateAction['payload'], 'ha
         let hashData: ItemsStateAndParams | null | undefined = hashStates?.[tabId]?.state;
         const prevHash = hashStates?.[tabId]?.hash;
 
-        const needUpdateHash = !stateHashId && !prevHash;
+        // when generating a state for global parameters for inactive tabs, the hash remains undefined
+        // so we need to create hash
+        const needCreateHashByGlobalData = !stateHashId && !prevHash;
 
-        if (needUpdateHash && hashData && entryId) {
+        if (needCreateHashByGlobalData && hashData && entryId) {
             await getSdk()
                 .sdk.us.createDashState({entryId, data: hashData})
                 .then(({hash}) => {
@@ -428,7 +430,8 @@ export function setTabHashState(data: Omit<SetTabHashStateAction['payload'], 'ha
         }
 
         if (hashId && entryId) {
-            if (!hashData) {
+            // don't need to get a state if it has already been generated for global items
+            if (!hashData || !needCreateHashByGlobalData) {
                 // a non-spa opening a link with an existing hash of the state
                 const calculatedHashData = await getSdk()
                     .sdk.us.getDashState({entryId, hash: hashId})
