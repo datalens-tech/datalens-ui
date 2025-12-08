@@ -206,8 +206,8 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
             return merge(axisBaseConfig, {
                 labels: {
                     numberFormat: axisLabelNumberFormat ?? undefined,
-                },        
-                lineColor: 'transparent',      
+                },
+                lineColor: 'transparent',
                 title: isSplitEnabled ? {text: d.title} : undefined,
                 plotIndex: d.index,
                 position: d.isOpposite ? 'right' : 'left',
