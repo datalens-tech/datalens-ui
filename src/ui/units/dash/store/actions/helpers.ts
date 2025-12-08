@@ -26,6 +26,7 @@ import {
     isGlobalWidgetVisibleByMainSetting,
     isGroupItemVisibleOnTab,
     isItemVisibleOnTab,
+    isItemVisibleOnTabByGroup,
 } from '../../utils/selectors';
 import type {DashState, GlobalItem} from '../typings/dash';
 
@@ -163,8 +164,7 @@ export const getVisibleGlobalItemsIdsByTab = (
         if (item.type === DashTabItemType.GroupControl) {
             for (const groupItem of item.data.group) {
                 if (
-                    groupItem.impactType === undefined ||
-                    groupItem.impactType === 'asGroup' ||
+                    isItemVisibleOnTabByGroup(true, groupItem.impactType) ||
                     isItemVisibleOnTab(newTabId, groupItem.impactType, groupItem.impactTabsIds)
                 ) {
                     influencingIds.add(groupItem.id);
@@ -227,6 +227,54 @@ export const getNewGlobalParamsAndQueueItems = (
     return {globalParams: {}, globalQueue: []};
 };
 
+const findUpdatedGlobalItems = (
+    newTabHashState: ItemsStateAndParams,
+    globalParams: ItemsStateAndParamsBase,
+) => {
+    const updatedGlobalItems = new Set<string>();
+    const updatedParams = {...newTabHashState} as ItemsStateAndParamsBase;
+
+    // Check for parameter changes
+    for (const [widgetId, widgetParams] of Object.entries(globalParams)) {
+        const currentItemParams = (newTabHashState as ItemsStateAndParamsBase)[widgetId]?.params;
+        const itemParams = widgetParams.params;
+
+        if (currentItemParams && itemParams) {
+            for (const [recordId, recordValue] of Object.entries(itemParams) as [
+                string,
+                string | string[] | StringParams,
+            ][]) {
+                const isParamsEqual = isEqual(currentItemParams[recordId], recordValue);
+                if (isParamsEqual) {
+                    continue;
+                }
+
+                if (Array.isArray(recordValue) || typeof recordValue === 'string') {
+                    // external control
+                    // comparing arrays of values
+                    updatedGlobalItems.add(widgetId);
+                    updatedParams[widgetId].params = itemParams;
+                    break;
+                } else {
+                    // group control
+                    // comparing params for every group item in itemParams
+                    updatedGlobalItems.add(recordId);
+                    const currentParams = updatedParams[widgetId].params as Record<
+                        string,
+                        StringParams
+                    >;
+                    updatedParams[widgetId].params = {
+                        ...currentParams,
+                        [recordId]: recordValue,
+                    };
+                }
+            }
+        }
+    }
+
+    return {updatedGlobalItems, updatedParams};
+};
+
 export const updateExistingStateWithGlobalSelector = (
     newTabHashState: ItemsStateAndParams,
     globalParams: ItemsStateAndParamsBase,
@@ -237,30 +285,11 @@ export const updateExistingStateWithGlobalSelector = (
         newTabHashState.__meta__ && 'queue' in newTabHashState.__meta__
             ? newTabHashState.__meta__.queue
             : [];
-    const updatedGlobalItems = new Set<string>();
 
-    // Check for parameter changes
-    for (const [widgetId, {params: paramsRecord}] of Object.entries(globalParams)) {
-        const currentItemParams = (newTabHashState as ItemsStateAndParamsBase)[widgetId]?.params;
-        if (currentItemParams && paramsRecord) {
-            for (const [recordId, recordValue] of Object.entries(paramsRecord)) {
-                if (Array.isArray(recordValue[recordId])) {
-                    // external control
-                    // comparing arrays of values
-                    if (!isEqual(currentItemParams[recordId], recordValue)) {
-                        updatedGlobalItems.add(widgetId);
-                        // if at least one value has changed, the widget has been updated
-                        break;
-                    }
-                    // group control
-                    // comparing objects with values for a specific groupItem
-                    // we need to check each groupItem so continue cycle
-                } else if (!isEqual(currentItemParams[recordId], recordValue)) {
-                    updatedGlobalItems.add(recordId);
-                }
-            }
-        }
-    }
+    const {updatedGlobalItems, updatedParams} = findUpdatedGlobalItems(
+        newTabHashState,
+        globalParams,
+    );
 
     const globalIdsToAddInQueue = new Set(globalQueue.map((item) => item.groupItemId ?? item.id));
 
@@ -279,14 +308,13 @@ export const updateExistingStateWithGlobalSelector = (
     });
 
     globalQueue.forEach((item) => {
-        if (globalIdsToAddInQueue.has(item.id)) {
+        if (globalIdsToAddInQueue.has(item.groupItemId ?? item.id)) {
             updatedQueue.push(item);
         }
     });
 
     return {
-        ...newTabHashState,
-        ...globalParams,
+        ...updatedParams,
         __meta__: {
             ...previousMeta,
             queue: updatedQueue,

@@ -6,7 +6,11 @@ import type {
 } from '@gravity-ui/dashkit/helpers';
 import type {DashData} from 'shared/types';
 import {DashTabItemType, Feature} from 'shared/types';
-import {isItemVisibleOnTab} from 'ui/units/dash/utils/selectors';
+import {
+    isGlobalWidgetVisibleByMainSetting,
+    isItemVisibleOnTab,
+    isItemVisibleOnTabByGroup,
+} from 'ui/units/dash/utils/selectors';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {TabsHashStates} from '../dashTyped';
@@ -57,8 +61,16 @@ const processTabForGlobalStates = (
 
     tab.globalItems?.forEach((item) => {
         if (item.type === DashTabItemType.GroupControl) {
+            const isGroupSettingApplied = isGlobalWidgetVisibleByMainSetting(
+                tab.id,
+                item.data.impactType,
+                item.data.impactTabsIds,
+            );
             item.data.group.forEach((groupItem) => {
-                if (isItemVisibleOnTab(tab.id, groupItem.impactType, groupItem.impactTabsIds)) {
+                if (
+                    isItemVisibleOnTab(tab.id, groupItem.impactType, groupItem.impactTabsIds) ||
+                    isItemVisibleOnTabByGroup(isGroupSettingApplied, groupItem.impactType)
+                ) {
                     tabGlobalItemsIds.add(groupItem.id);
                 }
             });

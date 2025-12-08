@@ -404,8 +404,11 @@ export function setTabHashState(data: Omit<SetTabHashStateAction['payload'], 'ha
 
         let hashId: string | undefined = stateHashId;
         let hashData: ItemsStateAndParams | null | undefined = hashStates?.[tabId]?.state;
+        const prevHash = hashStates?.[tabId]?.hash;
 
-        if (!stateHashId && hashData && entryId) {
+        const needUpdateHash = !stateHashId && !prevHash;
+
+        if (needUpdateHash && hashData && entryId) {
             await getSdk()
                 .sdk.us.createDashState({entryId, data: hashData})
                 .then(({hash}) => {

@@ -17,8 +17,6 @@ export const isItemVisibleOnTab = (
     }
 
     switch (itemImpactType) {
-        case undefined:
-            return true;
         case 'allTabs':
             return true;
         case 'currentTab':
