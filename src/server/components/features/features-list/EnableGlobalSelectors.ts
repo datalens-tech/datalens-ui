@@ -2,9 +2,9 @@ import {Feature} from '../../../../shared';
 import {createFeatureConfig} from '../utils';
 
 export default createFeatureConfig({
-    name: Feature.EnableDatasetDescription,
+    name: Feature.EnableGlobalSelectors,
     state: {
-        development: true,
+        development: false,
         production: false,
     },
 });

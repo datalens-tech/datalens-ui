@@ -22,7 +22,7 @@ import {registry} from '../../../../../registry';
 import {showToast} from '../../../../../store/actions/toaster';
 import {DashErrorCode, Mode} from '../../../modules/constants';
 import {collectDashStats} from '../../../modules/pushStats';
-import type {DashState} from '../../reducers/dashTypedReducer';
+import type {DashState} from '../../typings/dash';
 import {getFakeDashEntry} from '../../utils';
 import {
     SET_ERROR_MODE,

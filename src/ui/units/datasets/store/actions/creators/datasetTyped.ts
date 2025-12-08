@@ -9,6 +9,7 @@ import get from 'lodash/get';
 import {batch} from 'react-redux';
 import type {Dispatch} from 'redux';
 import type {
+    CollectionId,
     Dataset,
     DatasetAvatarRelation,
     DatasetField,
@@ -1526,7 +1527,7 @@ export function getDbNames(connectionIds: string[]) {
 interface SaveDatasetProps {
     key?: string;
     workbookId?: WorkbookId;
-    collectionId?: string;
+    collectionId?: CollectionId;
     name?: string;
     history: History;
     isCreationProcess?: boolean;
@@ -1556,7 +1557,8 @@ export function saveDataset({
                 dataset: {id, content: dataset, selectedConnections, savingDataset} = {},
             } = getState();
             let datasetId = id;
-            const isSharedDatasetCreation = Boolean(collectionId);
+            const isSharedDataset =
+                DatasetUtils.isEnabledFeature(Feature.EnableSharedEntries) && Boolean(collectionId);
             const sharedDatasetDelegationState = savingDataset?.sharedDatasetDelegationState;
 
             if (isCreationProcess) {
@@ -1595,7 +1597,7 @@ export function saveDataset({
             }
 
             if (
-                isSharedDatasetCreation &&
+                isSharedDataset &&
                 selectedConnections?.[0].entryId &&
                 sharedDatasetDelegationState !== undefined
             ) {
@@ -1658,7 +1660,7 @@ export function saveDataset({
                 history.replace(`/datasets/${datasetId}`);
                 DatasetUtils.openCreationWidgetPage({datasetId: datasetId!, target: '_self'});
             } else if (isCreationProcess) {
-                if (isSharedDatasetCreation) {
+                if (isSharedDataset) {
                     history.push(`/collections/${collectionId}`);
                 } else {
                     history.push(`/datasets/${datasetId}`);
@@ -1873,7 +1875,7 @@ export function initializeDataset({
     collectionId,
 }: {
     connectionId: string;
-    collectionId?: string;
+    collectionId?: CollectionId;
 }) {
     return async (dispatch: DatasetDispatch, getState: GetState) => {
         if (connectionId) {
@@ -1888,7 +1890,11 @@ export function initializeDataset({
                     openDialog({
                         id: DIALOG_SHARED_ENTRY_PERMISSIONS,
                         props: {
-                            onClose: () => dispatch(closeDialog()),
+                            // required delegation status, if user close dialog and ignore question
+                            onClose: (delegate) => {
+                                dispatch(setSharedDatasetDelegation(delegate));
+                                dispatch(closeDialog());
+                            },
                             onApply: (delegate) => {
                                 dispatch(setSharedDatasetDelegation(delegate));
                                 dispatch(closeDialog());
@@ -1943,6 +1949,7 @@ export function initialFetchDataset({
             });
 
             const {
+                collection_id: collectionId,
                 dataset: {sources = []},
                 options: {
                     preview: {enabled: previewEnabled},
@@ -1967,6 +1974,7 @@ export function initialFetchDataset({
                     dataset: dataset as Dataset,
                     publishedId,
                     currentRevId,
+                    collectionId: collectionId ?? null,
                 },
             });
 
