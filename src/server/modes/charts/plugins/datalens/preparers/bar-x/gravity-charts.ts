@@ -241,7 +241,6 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
                     numberFormat: axisLabelNumberFormat ?? undefined,
                 },
                 plotIndex: d.index,
-                position: d.isOpposite ? 'right' : 'left',
                 title: isSplitEnabled ? {text: d.title} : undefined,
             });
         }),
