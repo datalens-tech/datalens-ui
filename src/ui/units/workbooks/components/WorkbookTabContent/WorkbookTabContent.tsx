@@ -4,7 +4,7 @@ import {Button} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {SmartLoader} from 'components/SmartLoader/SmartLoader';
 import {I18n} from 'i18n';
-import {useDispatch, useSelector} from 'react-redux';
+import {batch, useDispatch, useSelector} from 'react-redux';
 import {Waypoint} from 'react-waypoint';
 import {EntryScope, Feature} from 'shared';
 import type {WorkbookWithPermissions} from 'shared/schema';
@@ -83,29 +83,35 @@ export const WorkbookTabContent = React.memo<Props>(({workbookId, workbook, filt
     const dispatch = useDispatch<AppDispatch>();
 
     React.useEffect(() => {
-        dispatch(resetWorkbookEntries());
-        dispatch(resetWorkbookSharedEntries());
+        batch(() => {
+            dispatch(resetWorkbookEntries());
+            dispatch(resetWorkbookSharedEntries());
 
-        dispatch(getWorkbookEntries({workbookId, filters, scope}));
-        if (isSharedEntriesEnabled) {
-            dispatch(getWorkbookSharedEntries({workbookId, filters, scope}));
-        }
+            dispatch(getWorkbookEntries({workbookId, filters, scope}));
+            if (isSharedEntriesEnabled) {
+                dispatch(getWorkbookSharedEntries({workbookId, filters, scope}));
+            }
+        });
     }, [dispatch, filters, scope, workbook, workbookId, isSharedEntriesEnabled]);
 
     const refreshEntries = React.useCallback(
         (entryScope: EntryScope) => {
-            dispatch(resetWorkbookEntries());
+            batch(() => {
+                dispatch(resetWorkbookEntries());
 
-            dispatch(getWorkbookEntries({workbookId, filters, scope: entryScope}));
+                dispatch(getWorkbookEntries({workbookId, filters, scope: entryScope}));
+            });
         },
         [dispatch, workbookId, filters],
     );
 
     const refreshSharedEntries = React.useCallback(
         (entryScope?: EntryScope) => {
-            dispatch(resetWorkbookSharedEntries());
+            batch(() => {
+                dispatch(resetWorkbookSharedEntries());
 
-            dispatch(getWorkbookSharedEntries({workbookId, filters, scope: entryScope}));
+                dispatch(getWorkbookSharedEntries({workbookId, filters, scope: entryScope}));
+            });
         },
         [dispatch, workbookId, filters],
     );

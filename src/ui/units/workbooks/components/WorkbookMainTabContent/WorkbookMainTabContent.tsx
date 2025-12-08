@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {SmartLoader} from 'components/SmartLoader/SmartLoader';
-import {useDispatch, useSelector} from 'react-redux';
+import {batch, useDispatch, useSelector} from 'react-redux';
 import {EntryScope, Feature} from 'shared';
 import type {WorkbookWithPermissions} from 'shared/schema';
 import {registry} from 'ui/registry';
@@ -80,8 +80,10 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
     React.useEffect(() => {
         if (workbook?.workbookId === workbookId) {
             (async () => {
-                dispatch(resetWorkbookEntries());
-                dispatch(resetWorkbookSharedEntries());
+                batch(() => {
+                    dispatch(resetWorkbookEntries());
+                    dispatch(resetWorkbookSharedEntries());
+                });
 
                 setIsLoading(true);
 
@@ -228,43 +230,47 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
             setMapLoaders({
                 [entryScope]: true,
             });
-            dispatch(resetWorkbookEntriesByScope(entryScope));
+            batch(() => {
+                dispatch(resetWorkbookEntriesByScope(entryScope));
 
-            dispatch(
-                getWorkbookEntries({
-                    workbookId,
-                    filters,
-                    scope: entryScope,
-                    pageSize: PAGE_SIZE_MAIN_TAB,
-                }),
-            )
-                .then((data) => {
-                    if (data) {
-                        setMapTokens({
-                            ...mapTokens,
-                            [entryScope]: data?.nextPageToken || '',
+                dispatch(
+                    getWorkbookEntries({
+                        workbookId,
+                        filters,
+                        scope: entryScope,
+                        pageSize: PAGE_SIZE_MAIN_TAB,
+                    }),
+                )
+                    .then((data) => {
+                        if (data) {
+                            setMapTokens({
+                                ...mapTokens,
+                                [entryScope]: data?.nextPageToken || '',
+                            });
+                        }
+                    })
+                    .finally(() => {
+                        setMapLoaders({
+                            [entryScope]: false,
                         });
-                    }
-                })
-                .finally(() => {
-                    setMapLoaders({
-                        [entryScope]: false,
                     });
-                });
+            });
         },
         [dispatch, workbookId, filters, mapTokens],
     );
 
     const refreshSharedEntries = React.useCallback(() => {
-        dispatch(resetWorkbookSharedEntries());
+        batch(() => {
+            dispatch(resetWorkbookSharedEntries());
 
-        dispatch(
-            getWorkbookSharedEntries({
-                workbookId,
-                filters,
-                pageSize: PAGE_SIZE_MAIN_TAB,
-            }),
-        );
+            dispatch(
+                getWorkbookSharedEntries({
+                    workbookId,
+                    filters,
+                    pageSize: PAGE_SIZE_MAIN_TAB,
+                }),
+            );
+        });
     }, [dispatch, workbookId, filters]);
 
     if (

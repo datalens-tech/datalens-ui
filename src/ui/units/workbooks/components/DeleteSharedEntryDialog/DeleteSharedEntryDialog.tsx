@@ -191,32 +191,31 @@ const DeleteSharedEntryDialog = React.memo<Props>(
                             {!isListEmpty && <div className={b('list')}>{renderRelations()}</div>}
                         </>
                     )}
-
-                    <Dialog.Footer
-                        textButtonApply={getSharedEntryMockText('apply-bindings-dialog-delete')}
-                        propsButtonApply={{
-                            view: 'outlined-danger',
-                        }}
-                        propsButtonCancel={{
-                            view: 'flat',
-                        }}
-                        className={b('footer')}
-                        loading={isLoading || isLoadingDelete}
-                        textButtonCancel={getSharedEntryMockText('cancel-bindings-dialog-delete')}
-                        onClickButtonApply={onDelete}
-                        onClickButtonCancel={onClose}
-                    >
-                        <Button
-                            loading={isLoading || isLoadingDelete}
-                            view="outlined"
-                            size="l"
-                            onClick={() => fetchEntityRelations()}
-                        >
-                            <Icon data={ArrowsRotateRightIcon} />
-                            {getSharedEntryMockText('bindings-dialog-delete-refresh-btn')}
-                        </Button>
-                    </Dialog.Footer>
                 </Dialog.Body>
+                <Dialog.Footer
+                    textButtonApply={getSharedEntryMockText('apply-bindings-dialog-delete')}
+                    propsButtonApply={{
+                        view: 'outlined-danger',
+                    }}
+                    propsButtonCancel={{
+                        view: 'flat',
+                    }}
+                    className={b('footer')}
+                    loading={isLoading || isLoadingDelete}
+                    textButtonCancel={getSharedEntryMockText('cancel-bindings-dialog-delete')}
+                    onClickButtonApply={onDelete}
+                    onClickButtonCancel={onClose}
+                >
+                    <Button
+                        loading={isLoading || isLoadingDelete}
+                        view="outlined"
+                        size="l"
+                        onClick={() => fetchEntityRelations()}
+                    >
+                        <Icon data={ArrowsRotateRightIcon} />
+                        {getSharedEntryMockText('bindings-dialog-delete-refresh-btn')}
+                    </Button>
+                </Dialog.Footer>
             </Dialog>
         );
     },
