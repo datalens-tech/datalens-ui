@@ -406,4 +406,4 @@ export type OnActivityComplete = (args: {responseData?: ChartActivityResponseDat
 export type RunActivityArgs = {
     params?: StringParams | ChartSeriesData;
 };
-export type RunActivityFn = (args: RunActivityArgs) => void;
+export type RunActivityFn = (args: RunActivityArgs) => Promise<ChartActivityResponseData | null>;

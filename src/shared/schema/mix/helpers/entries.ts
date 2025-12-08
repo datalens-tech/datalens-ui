@@ -8,7 +8,7 @@ import type {
     CheckDatasetsForPublicationResponse,
     GetEntryMetaStatusResponse,
 } from '../../types';
-import type {EntryFields} from '../../us/types';
+import type {EntryFields, GetEntriesEntryResponse} from '../../us/types';
 
 export function filterEntirsForCheck(entries: Pick<EntryFields, 'entryId' | 'scope'>[]) {
     const datasetIds: string[] = [];
@@ -115,4 +115,158 @@ export function getEntryMetaStatusByError(errorWrapper: unknown): GetEntryMetaSt
     } else {
         return {code: 'UNHANDLED'};
     }
+}
+
+export async function collectAllRelatedEntryIds({
+    entryId,
+    typedApi,
+    ctx,
+}: {
+    entryId: string;
+    typedApi: TypedApi;
+    ctx?: {logError: (message: string, error: Error) => void};
+}): Promise<Set<string>> {
+    const allRelatedEntryIds = new Set<string>();
+    const visited = new Set<string>();
+
+    async function collectRelations(currentEntryId: string): Promise<void> {
+        if (visited.has(currentEntryId)) {
+            return;
+        }
+        visited.add(currentEntryId);
+
+        try {
+            const relations = await typedApi.us.getRelations({
+                entryId: currentEntryId,
+                direction: 'parent',
+            });
+
+            for (const relation of relations) {
+                allRelatedEntryIds.add(relation.entryId);
+                await collectRelations(relation.entryId);
+            }
+        } catch (error) {
+            ctx?.logError(`Error getting relations for entry ${currentEntryId}`, error as Error);
+        }
+    }
+
+    await collectRelations(entryId);
+
+    return allRelatedEntryIds;
+}
+
+export async function fetchEntriesWithLinks({
+    entryIds,
+    typedApi,
+    ctx,
+}: {
+    entryIds: string[];
+    typedApi: TypedApi;
+    ctx?: {logError: (message: string, error: Error) => void};
+}): Promise<(GetEntriesEntryResponse | null)[]> {
+    if (entryIds.length === 0) {
+        return [];
+    }
+
+    const results: (GetEntriesEntryResponse | null)[] = [];
+
+    // Process in batches of 50 to avoid URL length limitations
+    for (let i = 0; i < entryIds.length; i += 50) {
+        const batchIds = entryIds.slice(i, i + 50);
+
+        try {
+            const entriesResult = await typedApi.us.getEntries({
+                ids: batchIds,
+                includeLinks: true,
+            });
+
+            // Create map for quick lookup
+            const entriesMap = new Map(
+                entriesResult.entries.map((entry) => [entry.entryId, entry]),
+            );
+
+            // Preserve order from batchIds
+            batchIds.forEach((id) => {
+                const entry = entriesMap.get(id);
+                results.push(entry || null);
+            });
+        } catch (error) {
+            ctx?.logError(`Error fetching entries batch (${batchIds.length} IDs)`, error as Error);
+            results.push(...new Array(batchIds.length).fill(null));
+        }
+    }
+
+    return results;
+}
+
+export function buildEnrichedLinksTree({
+    entriesData,
+    annotations,
+}: {
+    entriesData: (GetEntriesEntryResponse | null)[];
+    annotations?: Array<{
+        entryId: string;
+        result?: {
+            scope?: EntryScope;
+            type?: string;
+            annotation?: {
+                description?: string;
+            };
+        };
+        error?: {
+            code?: string;
+            message?: string;
+            details?: unknown;
+        };
+    }>;
+}) {
+    const linksTree: Record<string, {description?: string; links: Record<string, any>}> = {};
+
+    // Build basic tree structure
+    for (const entry of entriesData) {
+        if (!entry) continue;
+
+        linksTree[entry.entryId] = {
+            links: {},
+        };
+
+        if ('links' in entry && entry.links) {
+            for (const [_linkId, linkEntryId] of Object.entries(entry.links)) {
+                if (typeof linkEntryId === 'string') {
+                    linksTree[entry.entryId].links[linkEntryId] = {
+                        entryId: linkEntryId,
+                        links: {},
+                    };
+                }
+            }
+        }
+    }
+
+    // Enrich with annotations if provided
+    if (annotations) {
+        const annotationsMap = new Map(
+            annotations
+                .filter(
+                    (ann): ann is typeof ann & {result: NonNullable<typeof ann.result>} =>
+                        'result' in ann && Boolean(ann.result),
+                )
+                .map((ann) => [ann.entryId, ann.result.annotation?.description]),
+        );
+
+        for (const [currentEntryId, node] of Object.entries(linksTree)) {
+            const description = annotationsMap.get(currentEntryId);
+            if (description) {
+                node.description = description;
+            }
+
+            for (const [linkId, linkNode] of Object.entries(node.links)) {
+                const linkDescription = annotationsMap.get(linkId);
+                if (linkDescription) {
+                    linkNode.description = linkDescription;
+                }
+            }
+        }
+    }
+
+    return linksTree;
 }

@@ -54,13 +54,14 @@ export function getYAxisBaseConfig({
     visualization,
 }: {
     visualization: {id: string; placeholders: ServerPlaceholder[]};
-}) {
+}): ChartYAxis {
     const yPlaceholder = visualization.placeholders.find((p) => p.id === PlaceholderId.Y);
     const yPlaceholderSettings = yPlaceholder?.settings || {};
     const yItem = yPlaceholder?.items[0];
+
     const [yMin, yMax] = getAxisMinMax(yPlaceholderSettings);
 
-    const yAxisConfig: ChartYAxis = {
+    return {
         // todo: the axis type should depend on the type of field
         type: isDateField(yItem) ? 'datetime' : 'linear',
         visible: yPlaceholderSettings?.axisVisibility !== 'hide',
@@ -81,8 +82,6 @@ export function getYAxisBaseConfig({
         min: yMin,
         max: yMax,
     };
-
-    return yAxisConfig;
 }
 
 export function getBaseChartConfig(args: {
@@ -159,6 +158,7 @@ export function getBaseChartConfig(args: {
 
     if (!visualizationWithoutAxis.includes(visualizationId)) {
         const [xMin, xMax] = getAxisMinMax(xPlaceholderSettings);
+
         chartWidgetData = {
             ...chartWidgetData,
             xAxis: {

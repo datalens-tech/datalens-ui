@@ -232,12 +232,11 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
         legend,
         xAxis,
         yAxis: segments.map((d) => {
-            const baseConfig = getYAxisBaseConfig({
+            const axisBaseConfig = getYAxisBaseConfig({
                 visualization: {placeholders, id: visualizationId},
             });
 
-            return merge(baseConfig, {
-                lineColor: 'transparent',
+            return merge(axisBaseConfig, {
                 labels: {
                     numberFormat: axisLabelNumberFormat ?? undefined,
                 },

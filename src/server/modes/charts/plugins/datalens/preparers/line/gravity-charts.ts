@@ -199,14 +199,15 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
         },
         xAxis,
         yAxis: segments.map((d) => {
-            const baseConfig = getYAxisBaseConfig({
+            const axisBaseConfig = getYAxisBaseConfig({
                 visualization: {placeholders, id: visualizationId},
             });
-            return merge(baseConfig, {
-                lineColor: 'transparent',
+
+            return merge(axisBaseConfig, {
                 labels: {
                     numberFormat: axisLabelNumberFormat ?? undefined,
-                },
+                },        
+                lineColor: 'transparent',      
                 title: isSplitEnabled ? {text: d.title} : undefined,
                 plotIndex: d.index,
                 position: d.isOpposite ? 'right' : 'left',

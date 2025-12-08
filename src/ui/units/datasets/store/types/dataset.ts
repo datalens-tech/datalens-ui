@@ -3,6 +3,7 @@ import type {CloseDialogAction, OpenDialogAction} from 'ui/store/actions/dialog'
 import type {EditHistoryAction} from 'ui/store/actions/editHistory';
 
 import type {
+    CollectionId,
     ConnectionData,
     Dataset,
     DatasetAvatarRelation,
@@ -278,6 +279,7 @@ export type DatasetReduxState = {
     id: string;
     key: string;
     workbookId: WorkbookId;
+    collectionId: CollectionId;
     permissions?: Permissions;
     connection: ConnectionEntry | null;
     content: Partial<Dataset['dataset']>;
@@ -723,6 +725,7 @@ type DatasetInitialFetchSuccess = {
         };
         publishedId: EntryFieldPublishedId;
         currentRevId: string | null;
+        collectionId: CollectionId;
     };
 };
 

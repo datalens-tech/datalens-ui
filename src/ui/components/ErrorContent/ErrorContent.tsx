@@ -8,6 +8,7 @@ import type {ValueOf} from 'shared';
 import {ErrorContentTypes} from 'shared';
 import {DL} from 'ui/constants/common';
 import {type DataLensApiError, type ParsedError, isParsedError} from 'ui/typings';
+import {getImageNameFromErrorContentType} from 'ui/utils/errorContentTypes';
 import {MOBILE_SIZE} from 'ui/utils/mobile';
 import Utils from 'ui/utils/utils';
 
@@ -15,7 +16,6 @@ import logger from '../../libs/logger';
 import {sdk} from '../../libs/sdk';
 import MarkdownProvider from '../../modules/markdownProvider';
 import {EntryDialogName, EntryDialogues} from '../EntryDialogues';
-import type {IllustrationName} from '../Illustration/types';
 import {PlaceholderIllustration} from '../PlaceholderIllustration/PlaceholderIllustration';
 import {YfmWrapper} from '../YfmWrapper/YfmWrapper';
 
@@ -271,40 +271,10 @@ class ErrorContent extends React.PureComponent<ErrorContentProps> {
     render() {
         const {noControls, className, size, direction, showDebugInfo, style, containerClassName} =
             this.props;
-
         const showDebugActions = showDebugInfo && DL.IS_MOBILE;
-
         const {type} = this.props;
-        let imageName: IllustrationName = 'error';
 
-        switch (type) {
-            case ErrorContentTypes.NOT_FOUND:
-            case ErrorContentTypes.NOT_FOUND_CURRENT_CLOUD_FOLDER:
-            case ErrorContentTypes.NOT_FOUND_BY_RESOLVE_TENANT:
-                imageName = 'notFoundError';
-                break;
-            case ErrorContentTypes.NO_ACCESS:
-            case ErrorContentTypes.CLOUD_FOLDER_ACCESS_DENIED:
-            case ErrorContentTypes.NO_ENTRY_ACCESS:
-            case ErrorContentTypes.AUTH_DENIED:
-                imageName = 'noAccess';
-                break;
-            case ErrorContentTypes.ERROR:
-            case ErrorContentTypes.AUTH_FAILED:
-                imageName = 'error';
-                break;
-            case ErrorContentTypes.CREDENTIALS:
-            case ErrorContentTypes.LICENSE_EXPIRED:
-                imageName = 'identity';
-                break;
-            case ErrorContentTypes.INACCESSIBLE_ON_MOBILE:
-            case ErrorContentTypes.FORBIDDEN_BY_PLAN:
-            case ErrorContentTypes.FORBIDDEN_AUTH:
-                imageName = 'project';
-                break;
-            default:
-                imageName = 'error';
-        }
+        const imageName = getImageNameFromErrorContentType(type);
 
         return (
             <div

@@ -20,6 +20,7 @@ import type {
 import type {CreateEntryActionType} from '../../constants';
 import type {WorkbookEntriesFilters, WorkbookEntry} from '../../types';
 import {
+    ADD_COLLECTION_BREADCRUMBS,
     ADD_WORKBOOK_INFO,
     BIND_SHARED_ENTRY_TO_WORKBOOK_FAILED,
     BIND_SHARED_ENTRY_TO_WORKBOOK_LOADING,
@@ -861,6 +862,31 @@ export const addWorkbookInfo = (workbookId: string, withBreadcrumbs = false) => 
     };
 };
 
+type AddCollectionBreadcrumbsAction = {
+    type: typeof ADD_COLLECTION_BREADCRUMBS;
+    data: GetCollectionBreadcrumbsResponse | null;
+};
+
+export const addCollectionBreadcrumbs = ({collectionId}: {collectionId: string}) => {
+    return async (dispatch: WorkbooksDispatch) => {
+        try {
+            const breadcrumbs = await getSdk().sdk.us.getCollectionBreadcrumbs(
+                {
+                    collectionId,
+                },
+                {concurrentId: 'workbooks/getCollectionBreadcrumbs'},
+            );
+
+            dispatch({
+                type: ADD_COLLECTION_BREADCRUMBS,
+                data: breadcrumbs,
+            });
+        } catch (e) {
+            logger.logError('workbooks/getCollectionBreadcrumbs failed', e);
+        }
+    };
+};
+
 type ResetWorkbookPermissionsAction = {
     type: typeof RESET_WORKBOOK_PERMISSIONS;
 };
@@ -890,6 +916,7 @@ export type WorkbooksAction =
     | BindSharedEntryToWorkbookAction
     | ChangeFiltersAction
     | AddWorkbookInfoAction
+    | AddCollectionBreadcrumbsAction
     | ResetWorkbookPermissionsAction;
 
 export type WorkbooksDispatch = ThunkDispatch<DatalensGlobalState, void, WorkbooksAction>;

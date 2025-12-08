@@ -7,7 +7,7 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import type {TitlePlacement} from 'shared';
 import {DialogControlQa, TitlePlacements} from 'shared';
-import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
+import {setSelectorDialogItem} from 'ui/store/actions/controlDialog/controlDialog';
 import {ELEMENT_TYPE} from 'ui/store/constants/controlDialog';
 import {
     selectIsControlConfigurationDisabled,
