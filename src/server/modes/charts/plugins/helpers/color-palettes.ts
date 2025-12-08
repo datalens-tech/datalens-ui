@@ -27,14 +27,6 @@ export function isCustomColorPaletteId(value: string, systemPalettes: Record<str
     return !isSystem && isEntryId(value);
 }
 
-export function getColorPalettesRequest(): SourceRequest {
-    return {
-        method: 'GET',
-        url: `/_us_color_palettes/`,
-        hideInInspector: true,
-    };
-}
-
 export function addColorPaletteRequest({
     colorPaletteId,
     palettes,
@@ -109,18 +101,12 @@ export function getColorPalettesRequests(args: GetColorPalettesRequestArgs) {
     return result;
 }
 
-export const COLOR_PALETTES_SOURCE = '_colorPalettes_';
-
 export function extractColorPalettesFromData(data: {[key: string]: any}) {
     const palettes: Record<string, any> = {};
     const loadedData: Record<string, any> = {};
 
     Object.keys(data).forEach((key) => {
-        if (key === COLOR_PALETTES_SOURCE) {
-            data[key].forEach((item: any) => {
-                palettes[item.colorPaletteId] = item;
-            });
-        } else if (key.includes('colorPalettes_')) {
+        if (key.includes('colorPalettes_')) {
             const paletteId = key.replace('colorPalettes_', '');
 
             palettes[paletteId] = data[key][0];
