@@ -7,7 +7,7 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {ControlQA, DashTabItemControlSourceType, DialogControlQa} from 'shared';
 import {YfmWrapper} from 'ui/components/YfmWrapper/YfmWrapper';
-import {setSelectorDialogItem} from 'ui/store/actions/controlDialog';
+import {setSelectorDialogItem} from 'ui/store/actions/controlDialog/controlDialog';
 import {
     selectIsControlConfigurationDisabled,
     selectSelectorDialog,
