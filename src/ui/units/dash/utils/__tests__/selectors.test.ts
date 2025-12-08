@@ -40,9 +40,9 @@ describe('dash selectors utils', () => {
             expect(result).toBe(false);
         });
 
-        it('should return true for undefined impact type', () => {
+        it('should return false for undefined impact type', () => {
             const result = isItemVisibleOnTab('tab1', undefined);
-            expect(result).toBe(true);
+            expect(result).toBe(false);
         });
     });
 
