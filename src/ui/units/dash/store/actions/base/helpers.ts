@@ -52,7 +52,7 @@ const processTabForGlobalStates = (
     tab: DashData['tabs'][0],
     currentStateQueue: QueueItem[],
     paramsState: ItemsStateAndParamsBase,
-): {state: ItemsStateAndParams; hash: null} | null => {
+): {state: ItemsStateAndParams; hash: undefined} | null => {
     const tabGlobalItemsIds = new Set<string>();
 
     tab.globalItems?.forEach((item) => {
@@ -84,7 +84,7 @@ const processTabForGlobalStates = (
 
     return {
         state: newTabHashState,
-        hash: null,
+        hash: undefined,
     };
 };
 

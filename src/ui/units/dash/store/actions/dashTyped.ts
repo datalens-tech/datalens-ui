@@ -77,7 +77,7 @@ type GetState = () => DatalensGlobalState;
 
 export type TabsHashStates = {
     [key: string]: {
-        hash: string | null;
+        hash?: string;
         state: ItemsStateAndParams;
     };
 };
@@ -273,7 +273,7 @@ export const updateTabsWithGlobalState = ({
                 if (processedTab) {
                     updatedHashStates[tab.id] = {
                         state: processedTab.newState,
-                        hash: null,
+                        hash: undefined,
                     };
                     hasUpdated = true;
                 }
