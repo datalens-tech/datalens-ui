@@ -19,7 +19,7 @@ datalensTest.describe('Wizard', () => {
             await openTestPage(page, config.wizard.urls.WizardBasicDataset);
             await page.setViewportSize(SMALL_SCREENSHOT_VIEWPORT_SIZE);
             const wizardPage = new WizardPage({page});
-            await wizardPage.setVisualization(WizardVisualizationId.BarYD3);
+            await wizardPage.setVisualization(WizardVisualizationId.Bar);
         });
 
         datalensTest('String dataLabels @screenshot', async ({page}) => {
@@ -110,7 +110,7 @@ datalensTest.describe('Wizard', () => {
             await openTestPage(page, config.wizard.urls.WizardBasicDataset);
             await page.setViewportSize(SMALL_SCREENSHOT_VIEWPORT_SIZE);
             const wizardPage = new WizardPage({page});
-            await wizardPage.setVisualization(WizardVisualizationId.BarY100pD3);
+            await wizardPage.setVisualization(WizardVisualizationId.Bar100p);
         });
 
         datalensTest('Percentage as labels @screenshot', async ({page}) => {

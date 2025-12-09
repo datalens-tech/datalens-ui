@@ -5,24 +5,26 @@ import type {QlConfigV2} from './v2';
 import type {QlConfigV3} from './v3';
 import type {QlConfigV4} from './v4';
 import type {QlConfigV5} from './v5';
+import type {QlConfigV6} from './v6';
 import type {
-    QLParamIntervalV6,
-    QLParamV6,
-    QLPreviewTableDataColumnV6,
-    QLPreviewTableDataRowV6,
-    QLPreviewTableDataV6,
-    QLQueryV6,
-    QLRequestParamV6,
-    QLResultEntryMetadataDataColumnOrGroupV6,
-    QLResultEntryMetadataDataColumnV6,
-    QLResultEntryMetadataDataGroupV6,
-    QlConfigV6,
-} from './v6';
+    QLParamIntervalV7,
+    QLParamV7,
+    QLPreviewTableDataColumnV7,
+    QLPreviewTableDataRowV7,
+    QLPreviewTableDataV7,
+    QLQueryV7,
+    QLRequestParamV7,
+    QLResultEntryMetadataDataColumnOrGroupV7,
+    QLResultEntryMetadataDataColumnV7,
+    QLResultEntryMetadataDataGroupV7,
+    QlConfigV7,
+} from './v7';
 
-export type QlConfig = QlConfigV6;
+export type QlConfig = QlConfigV7;
 
 export type QlPreviousConfig =
     | QLEntryDataShared
+    | QlConfigV6
     | QlConfigV5
     | QlConfigV4
     | QlConfigV3
@@ -31,24 +33,24 @@ export type QlPreviousConfig =
 
 export type QlExtendedConfig = QlConfig | QlPreviousConfig;
 
-export type QLConfigQuery = QLQueryV6;
+export type QLConfigQuery = QLQueryV7;
 
-export type QlConfigResultEntryMetadataDataGroup = QLResultEntryMetadataDataGroupV6;
+export type QlConfigResultEntryMetadataDataGroup = QLResultEntryMetadataDataGroupV7;
 
-export type QlConfigResultEntryMetadataDataColumn = QLResultEntryMetadataDataColumnV6;
+export type QlConfigResultEntryMetadataDataColumn = QLResultEntryMetadataDataColumnV7;
 
-export type QlConfigParamInterval = QLParamIntervalV6;
+export type QlConfigParamInterval = QLParamIntervalV7;
 
-export type QlConfigParam = QLParamV6;
+export type QlConfigParam = QLParamV7;
 
-export type QlConfigRequestParam = QLRequestParamV6;
+export type QlConfigRequestParam = QLRequestParamV7;
 
-export type QlConfigResultEntryMetadataDataColumnOrGroup = QLResultEntryMetadataDataColumnOrGroupV6;
+export type QlConfigResultEntryMetadataDataColumnOrGroup = QLResultEntryMetadataDataColumnOrGroupV7;
 
-export type QlConfigPreviewTableDataColumn = QLPreviewTableDataColumnV6;
+export type QlConfigPreviewTableDataColumn = QLPreviewTableDataColumnV7;
 
-export type QlConfigPreviewTableDataRow = QLPreviewTableDataRowV6;
+export type QlConfigPreviewTableDataRow = QLPreviewTableDataRowV7;
 
-export type QlConfigPreviewTableData = QLPreviewTableDataV6;
+export type QlConfigPreviewTableData = QLPreviewTableDataV7;
 
 export type MonitoringPreset = MonitoringPresetV1 | MonitoringPresetV2;

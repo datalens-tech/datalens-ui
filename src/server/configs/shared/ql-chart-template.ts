@@ -31,14 +31,15 @@ export default {
         const id = visualization.id;
 
         const {ctx} = req;
+        const isEnabledServerFeature = ctx.get('isEnabledServerFeature');
         const features = {
-            GravityChartsForPieAndTreemap: ctx.get('isEnabledServerFeature')(
+            GravityChartsForPieAndTreemap: isEnabledServerFeature(
                 Feature.GravityChartsForPieAndTreemap,
             ),
-            GravityChartsForBarYAndScatter: ctx.get('isEnabledServerFeature')(
+            GravityChartsForBarYAndScatter: isEnabledServerFeature(
                 Feature.GravityChartsForBarYAndScatter,
             ),
-            GravityChartsForLineAreaAndBarX: ctx.get('isEnabledServerFeature')(
+            GravityChartsForLineAreaAndBarX: isEnabledServerFeature(
                 Feature.GravityChartsForLineAreaAndBarX,
             ),
         };
