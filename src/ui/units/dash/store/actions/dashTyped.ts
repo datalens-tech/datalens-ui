@@ -58,7 +58,6 @@ import {collectDashStats} from '../../modules/pushStats';
 import {DashUpdateStatus} from '../../typings/dash';
 import {DASH_EDIT_HISTORY_UNIT_ID} from '../constants';
 import * as actionTypes from '../constants/dashActionTypes';
-import {isItemGlobal} from '../reducers/dashHelpers';
 import {
     selectDash,
     selectDashData,
@@ -245,7 +244,7 @@ export const updateTabsWithGlobalState = ({
 }: UpdateTabsWithGlobalStateArgs) => {
     return function (dispatch: DashDispatch, getState: GetState) {
         return new Promise((resolve) => {
-            if (!isEnabledFeature(Feature.EnableGlobalSelectors) || !isItemGlobal(selectorItem)) {
+            if (!isEnabledFeature(Feature.EnableGlobalSelectors)) {
                 resolve(null);
                 return;
             }
