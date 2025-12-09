@@ -188,7 +188,7 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
         xAxis,
         yAxis: segments.map((d) => {
             const baseConfig = getYAxisBaseConfig({
-                visualization: {placeholders, id: visualizationId},
+                placeholder: yPlaceholder,
             });
             return merge(baseConfig, {
                 lineColor: 'transparent',

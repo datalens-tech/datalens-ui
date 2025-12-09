@@ -1,15 +1,18 @@
 import type {
     ChartData,
     ChartSeries,
+    ChartYAxis,
     LineSeries,
     LineSeriesData,
 } from '@gravity-ui/chartkit/gravity-charts';
+import groupBy from 'lodash/groupBy';
 import merge from 'lodash/merge';
 import sortBy from 'lodash/sortBy';
 
 import type {
     SeriesExportSettings,
     ServerField,
+    ServerPlaceholder,
     WrappedHTML,
     WrappedMarkdown,
 } from '../../../../../../../shared';
@@ -45,6 +48,7 @@ type ExtendedLineSeries = Omit<LineSeries, 'data'> & {
     data: ExtendedLineSeriesData[];
 };
 
+// eslint-disable-next-line complexity
 export function prepareGravityChartLine(args: PrepareFunctionArgs) {
     const {
         labels,
@@ -60,6 +64,9 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
     const xField: ServerField | undefined = xPlaceholder?.items?.[0];
     const yPlaceholder = placeholders.find((p) => p.id === PlaceholderId.Y);
     const yFields = yPlaceholder?.items || [];
+    const y2Placeholder = placeholders.find((p) => p.id === PlaceholderId.Y2);
+    const y2Fields = y2Placeholder?.items || [];
+
     const labelField = labels?.[0];
     const isDataLabelsEnabled = Boolean(labelField);
     const chartConfig = getConfigWithActualFieldTypes({config: shared, idToDataType});
@@ -73,7 +80,15 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
         }) === 'category' ||
         disableDefaultSorting;
 
-    if (!xField || !yFields.length) {
+    const yAxisItems: ServerPlaceholder[] = [];
+    if (yPlaceholder && yFields.length) {
+        yAxisItems.push(yPlaceholder);
+    }
+    if (y2Placeholder && y2Fields.length) {
+        yAxisItems.push(y2Placeholder);
+    }
+
+    if (!xField || !yAxisItems.length) {
         return {
             series: {
                 data: [],
@@ -186,37 +201,69 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
     const segments = sortBy(Object.values(segmentsMap), (s) => s.index);
     const isSplitEnabled = new Set(segments.map((d) => d.index)).size > 1;
 
-    const axisLabelNumberFormat = yPlaceholder
-        ? getAxisFormatting({
-              placeholder: yPlaceholder,
-              visualizationId,
-          })
-        : undefined;
+    let yAxis: ChartYAxis[] = [];
+    if (isSplitEnabled) {
+        yAxis = segments.reduce((acc, d) => {
+            const placeholder = d.isOpposite ? y2Placeholder : yPlaceholder;
+            const labelNumberFormat = placeholder
+                ? getAxisFormatting({
+                      placeholder,
+                      visualizationId,
+                  })
+                : undefined;
+
+            const axisBaseConfig = getYAxisBaseConfig({
+                placeholder,
+            });
+            const shouldUseSegmentTitle = yAxisItems.length < 2 || !d.isOpposite;
+
+            acc.push(
+                merge(axisBaseConfig, {
+                    title: shouldUseSegmentTitle ? {text: d.title} : null,
+                    plotIndex: d.plotIndex,
+                    labels: {
+                        numberFormat: labelNumberFormat ?? undefined,
+                    },
+                    lineColor: 'transparent',
+                    position: placeholder?.id === PlaceholderId.Y2 ? 'right' : 'left',
+                }),
+            );
+
+            return acc;
+        }, [] as ChartYAxis[]);
+    } else {
+        yAxis = yAxisItems.map((placeholder) => {
+            const labelNumberFormat = placeholder
+                ? getAxisFormatting({
+                      placeholder,
+                      visualizationId,
+                  })
+                : undefined;
+
+            const axisBaseConfig = getYAxisBaseConfig({
+                placeholder,
+            });
+
+            return merge(axisBaseConfig, {
+                labels: {
+                    numberFormat: labelNumberFormat ?? undefined,
+                },
+                lineColor: 'transparent',
+                position: placeholder?.id === PlaceholderId.Y2 ? 'right' : 'left',
+            });
+        });
+    }
 
     const config: ChartData = {
         series: {
             data: seriesData as ChartSeries[],
         },
         xAxis,
-        yAxis: segments.map((d) => {
-            const axisBaseConfig = getYAxisBaseConfig({
-                visualization: {placeholders, id: visualizationId},
-            });
-
-            return merge(axisBaseConfig, {
-                labels: {
-                    numberFormat: axisLabelNumberFormat ?? undefined,
-                },
-                lineColor: 'transparent',
-                title: isSplitEnabled ? {text: d.title} : undefined,
-                plotIndex: d.index,
-                position: d.isOpposite ? 'right' : 'left',
-            });
-        }),
+        yAxis,
         split: {
             enable: isSplitEnabled,
             gap: '40px',
-            plots: segments.map(() => {
+            plots: Object.values(groupBy(segments, (d) => d.plotIndex)).map(() => {
                 return {};
             }),
         },
