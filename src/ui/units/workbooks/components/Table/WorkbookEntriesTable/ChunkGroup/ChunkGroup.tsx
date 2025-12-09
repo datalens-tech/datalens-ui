@@ -3,7 +3,7 @@ import React from 'react';
 import block from 'bem-cn-lite';
 import {useInView} from 'react-intersection-observer';
 import {WorkbookPageQa} from 'shared/constants';
-import type {ChunkItem} from 'ui/units/workbooks/types';
+import type {ChunkItem, WorkbookEntry} from 'ui/units/workbooks/types';
 
 import {EmptyRow, Row} from '../Row/Row';
 import {ROW_HEIGHT, options} from '../constants';
@@ -11,13 +11,13 @@ import type {WorkbookEntriesTableProps} from '../types';
 
 import './ChunkGroup.scss';
 
-interface ChunkGroupProps extends WorkbookEntriesTableProps {
-    chunk: ChunkItem[];
+interface ChunkGroupProps<T extends WorkbookEntry> extends WorkbookEntriesTableProps<T> {
+    chunk: ChunkItem<T>[];
 }
 
 const b = block('dl-workbook-entries-chunk-group');
 
-export function ChunkGroup({
+export function ChunkGroup<T extends WorkbookEntry>({
     chunk,
     workbook,
     onRenameEntry,
@@ -26,7 +26,8 @@ export function ChunkGroup({
     onCopyEntry,
     onShowRelatedClick,
     onCopyId,
-}: ChunkGroupProps) {
+    onUpdateSharedEntryBindings,
+}: ChunkGroupProps<T>) {
     const {ref, inView} = useInView(options);
 
     const height = chunk.length * ROW_HEIGHT;
@@ -50,6 +51,7 @@ export function ChunkGroup({
                             onDuplicateEntry={onDuplicateEntry}
                             onCopyEntry={onCopyEntry}
                             onShowRelatedClick={onShowRelatedClick}
+                            onUpdateSharedEntryBindings={onUpdateSharedEntryBindings}
                             onCopyId={onCopyId}
                         />
                     );

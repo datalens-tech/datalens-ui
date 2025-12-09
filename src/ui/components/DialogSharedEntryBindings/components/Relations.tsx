@@ -174,7 +174,7 @@ export const Relations = ({
         );
     }
 
-    if (isDeleteDialog && entities.length === 0) {
+    if (isDeleteDialog && entities.length === 0 && searchValue === '') {
         return null;
     }
 

@@ -89,7 +89,6 @@ const QL_SETTINGS_KEYS: SettingsKeys[] = [...BASE_SETTINGS_KEYS, 'qlAutoExecuteC
 
 const VISUALIZATION_WITH_TOOLTIP_AVAILABLE = new Set<string>([
     WizardVisualizationId.Line,
-    WizardVisualizationId.LineD3,
     WizardVisualizationId.Area,
     WizardVisualizationId.Area100p,
     WizardVisualizationId.Column,
@@ -118,7 +117,6 @@ const DEFAULT_PERIOD: Period = 'day';
 const visualizationsWithLegendDict = (
     [
         VISUALIZATION_IDS.LINE,
-        WizardVisualizationId.LineD3,
 
         VISUALIZATION_IDS.AREA,
         VISUALIZATION_IDS.AREA_100P,
@@ -140,13 +138,6 @@ const visualizationsWithLegendDict = (
         VISUALIZATION_IDS.COMBINED_CHART,
 
         VISUALIZATION_IDS.POLYLINE,
-
-        VISUALIZATION_IDS.SCATTER_D3,
-        VISUALIZATION_IDS.PIE_D3,
-        VISUALIZATION_IDS.BAR_X_D3,
-        WizardVisualizationId.DonutD3,
-        WizardVisualizationId.BarYD3,
-        WizardVisualizationId.BarY100pD3,
     ] as string[]
 ).reduce((acc: Record<string, boolean>, item) => {
     acc[item] = true;
@@ -219,9 +210,7 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
 
         const isFlatTable = visualization.id === 'flatTable';
         const isPivotTable = visualization.id === 'pivotTable';
-        const isDonut = [WizardVisualizationId.Donut, WizardVisualizationId.DonutD3].includes(
-            visualization.id as WizardVisualizationId,
-        );
+        const isDonut = visualization.id === WizardVisualizationId.Donut;
 
         if (isFlatTable) {
             const placeholderWithGrouppingSettings = visualization.placeholders.find(
@@ -830,7 +819,6 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
         const shouldRenderTotal = [
             WizardVisualizationId.FlatTable,
             WizardVisualizationId.Donut,
-            WizardVisualizationId.DonutD3,
         ].includes(visualizationId);
 
         if (!shouldRenderTotal || qlMode) {

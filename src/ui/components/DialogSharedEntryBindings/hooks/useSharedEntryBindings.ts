@@ -1,21 +1,27 @@
 import React from 'react';
 
 import debounce from 'lodash/debounce';
+import {useDispatch} from 'react-redux';
 import type {SharedEntryBindingsItem} from 'shared/schema';
 import {getSdk} from 'ui/libs/schematic-sdk';
+import type {AppDispatch} from 'ui/store';
+import {showToast} from 'ui/store/actions/toaster';
 
 import type {AttachmentValue} from '../constants';
 import {Attachment, SEARCH_DELAY} from '../constants';
 import type {SharedEntry} from '../types';
 import {sortEntities} from '../utils';
+
 type UseSharedEntryBindingsProps = {
     entry: SharedEntry;
+    onDeleteSuccess?: () => void;
 };
 
 const CONCURRENT_ID = 'shared-entry-bindings';
 const cancelConcurrentRequest = () => getSdk().cancelRequest(CONCURRENT_ID);
 
-export const useSharedEntryBindings = ({entry}: UseSharedEntryBindingsProps) => {
+export const useSharedEntryBindings = ({entry, onDeleteSuccess}: UseSharedEntryBindingsProps) => {
+    const dispatch: AppDispatch = useDispatch();
     const [entities, setEntities] = React.useState<SharedEntryBindingsItem[]>([]);
 
     const [currentDirection, setCurrentDirection] = React.useState<AttachmentValue>(
@@ -25,6 +31,27 @@ export const useSharedEntryBindings = ({entry}: UseSharedEntryBindingsProps) => 
     const [isLoading, setIsLoading] = React.useState(true);
     const [isSearchLoading, setIsSearchLoading] = React.useState(false);
     const [isError, setIsError] = React.useState(false);
+    const [isLoadingDelete, setIsLoadingDelete] = React.useState(false);
+
+    const onDelete = React.useCallback(async () => {
+        setIsLoadingDelete(true);
+        try {
+            await getSdk().sdk.mix.deleteEntry({
+                entryId: entry.entryId,
+                scope: entry.scope,
+            });
+            setIsLoadingDelete(false);
+            onDeleteSuccess?.();
+        } catch (error) {
+            setIsLoadingDelete(false);
+            dispatch(
+                showToast({
+                    title: error.message,
+                    error,
+                }),
+            );
+        }
+    }, [onDeleteSuccess, entry, dispatch]);
 
     const fetchEntityBindings = React.useCallback(
         (filter = '') => {
@@ -91,6 +118,8 @@ export const useSharedEntryBindings = ({entry}: UseSharedEntryBindingsProps) => 
     return {
         isError,
         isLoading,
+        isLoadingDelete,
+        onDelete,
         isSearchLoading,
         onSearch,
         searchValue: searchFilter,

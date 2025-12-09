@@ -18,7 +18,7 @@ datalensTest.describe('Wizard', () => {
             await openTestPage(page, config.wizard.urls.WizardBasicDataset);
             await page.setViewportSize(SMALL_SCREENSHOT_VIEWPORT_SIZE);
             const wizardPage = new WizardPage({page});
-            await wizardPage.setVisualization(WizardVisualizationId.BarYD3);
+            await wizardPage.setVisualization(WizardVisualizationId.Bar);
         });
 
         datalensTest('Sorting by X field @screenshot', async ({page}) => {
