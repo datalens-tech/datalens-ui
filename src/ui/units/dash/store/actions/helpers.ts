@@ -21,13 +21,10 @@ import {isEmbeddedEntry} from 'ui/utils/embedded';
 
 import ChartKit from '../../../../libs/DatalensChartkit';
 import {registry} from '../../../../registry';
-import {
-    isGlobalWidgetVisibleByMainSetting,
-    isGroupItemVisibleOnTab,
-    isItemVisibleOnTab,
-    isItemVisibleOnTabByGroup,
-} from '../../utils/selectors';
+import {DASHKIT_STATE_VERSION} from '../../modules/constants';
+import {isGlobalWidgetVisibleByMainSetting, isGroupItemVisibleOnTab} from '../../utils/selectors';
 import type {DashState, GlobalItem} from '../typings/dash';
+import {createNewTabState} from '../utils';
 
 import type {SetItemDataArgs, TabsHashStates} from './dashTyped';
 
@@ -146,32 +143,6 @@ export const applyDataProviderChartSettings = ({data}: {data: DashData}) => {
             loadPriority: data.settings.loadPriority,
         });
     }
-};
-
-export const getVisibleGlobalItemsIdsByTab = (
-    globalItems: DashTabItem[] | undefined,
-    newTabId: string,
-): Set<string> => {
-    if (!globalItems) {
-        return new Set();
-    }
-
-    const influencingIds = new Set<string>();
-    for (const item of globalItems) {
-        influencingIds.add(item.id);
-        // if the item is present in the globalItems tab, then it is guaranteed to have one or more groupItems that are visible on this tab
-        if (item.type === DashTabItemType.GroupControl) {
-            for (const groupItem of item.data.group) {
-                if (
-                    isItemVisibleOnTabByGroup(true, groupItem.impactType) ||
-                    isItemVisibleOnTab(newTabId, groupItem.impactType, groupItem.impactTabsIds)
-                ) {
-                    influencingIds.add(groupItem.id);
-                }
-            }
-        }
-    }
-    return influencingIds;
 };
 
 export const getNewGlobalParamsAndQueueItems = (
@@ -317,21 +288,10 @@ export const updateExistingStateWithGlobalSelector = (
         __meta__: {
             ...previousMeta,
             queue: updatedQueue,
-            version: previousMeta?.version || 2,
+            version: previousMeta?.version || DASHKIT_STATE_VERSION,
         },
     };
 };
-
-export const createNewTabState = (
-    params: ItemsStateAndParamsBase,
-    queue: QueueItem[],
-): ItemsStateAndParams => ({
-    ...params,
-    __meta__: {
-        queue,
-        version: 2,
-    },
-});
 
 export const processTabForGlobalUpdate = (
     tab: DashTab,

@@ -1,57 +1,12 @@
 import type {StateAndParamsMetaData} from '@gravity-ui/dashkit/helpers';
 import {DashTabItemType} from 'shared';
-import type {DashTabItem, DashTabItemControlData, DashTabItemGroupControlData} from 'shared';
+import type {DashTabItemControlData, DashTabItemGroupControlData} from 'shared';
+import {DASHKIT_STATE_VERSION} from 'ui/units/dash/modules/constants';
 
 import type {GlobalItem} from '../../typings/dash';
-import {
-    getNewGlobalParamsAndQueueItems,
-    getVisibleGlobalItemsIdsByTab,
-    updateExistingStateWithGlobalSelector,
-} from '../helpers';
+import {getNewGlobalParamsAndQueueItems, updateExistingStateWithGlobalSelector} from '../helpers';
 
 describe('dash helpers', () => {
-    describe('getVisibleGlobalItemsIdsByTab', () => {
-        it('should return empty set when no global items', () => {
-            const result = getVisibleGlobalItemsIdsByTab(undefined, 'tab1');
-            expect(result).toEqual(new Set());
-        });
-
-        it('should return control item id', () => {
-            const globalItems: DashTabItem[] = [
-                {
-                    id: 'control1',
-                    type: DashTabItemType.Control,
-                    data: {} as DashTabItemControlData,
-                    namespace: 'default',
-                    orderId: 0,
-                    defaults: {},
-                },
-            ];
-            const result = getVisibleGlobalItemsIdsByTab(globalItems, 'tab1');
-            expect(result).toEqual(new Set(['control1']));
-        });
-
-        it('should return group control and its group items ids', () => {
-            const globalItems: DashTabItem[] = [
-                {
-                    id: 'group1',
-                    type: DashTabItemType.GroupControl,
-                    data: {
-                        group: [
-                            {id: 'item1', impactType: 'allTabs'},
-                            {id: 'item2', impactType: 'selectedTabs', impactTabsIds: ['tab1']},
-                        ],
-                    } as DashTabItemGroupControlData,
-                    namespace: 'default',
-                    orderId: 0,
-                    defaults: {},
-                },
-            ];
-            const result = getVisibleGlobalItemsIdsByTab(globalItems, 'tab1');
-            expect(result).toEqual(new Set(['group1', 'item1', 'item2']));
-        });
-    });
-
     describe('getNewGlobalParamsAndQueueItems', () => {
         const mockSelector: GlobalItem = {
             id: 'selector1',
@@ -139,7 +94,7 @@ describe('dash helpers', () => {
                 widget1: {params: {oldParam: 'oldValue'}},
                 __meta__: {
                     queue: [{id: 'widget2'}],
-                    version: 2,
+                    version: DASHKIT_STATE_VERSION,
                 },
             };
             const globalParams = {
@@ -148,7 +103,7 @@ describe('dash helpers', () => {
             const globalQueue = [{id: 'widget1'}];
             const previousMeta: StateAndParamsMetaData = {
                 queue: [{id: 'widget2'}],
-                version: 2,
+                version: DASHKIT_STATE_VERSION,
             };
 
             const result = updateExistingStateWithGlobalSelector(
@@ -162,7 +117,7 @@ describe('dash helpers', () => {
                 widget1: {params: {newParam: 'newValue'}},
                 __meta__: {
                     queue: [{id: 'widget2'}, {id: 'widget1'}],
-                    version: 2,
+                    version: DASHKIT_STATE_VERSION,
                 },
             });
         });
@@ -173,7 +128,7 @@ describe('dash helpers', () => {
                 widget2: {params: {param2: 'value2'}},
                 __meta__: {
                     queue: [{id: 'widget1'}, {id: 'widget2'}],
-                    version: 2,
+                    version: DASHKIT_STATE_VERSION,
                 },
             };
             const globalParams = {
@@ -211,7 +166,7 @@ describe('dash helpers', () => {
                         {id: 'widget1'},
                         {id: 'groupControl1', groupItemId: 'groupItem2'},
                     ],
-                    version: 2,
+                    version: DASHKIT_STATE_VERSION,
                 },
             };
 
@@ -233,7 +188,7 @@ describe('dash helpers', () => {
 
             const previousMeta: StateAndParamsMetaData = {
                 queue: existingState.__meta__.queue,
-                version: 2,
+                version: DASHKIT_STATE_VERSION,
             };
 
             const result = updateExistingStateWithGlobalSelector(
@@ -282,7 +237,7 @@ describe('dash helpers', () => {
                         {id: 'groupControl1', groupItemId: 'visibleItem2'},
                         {id: 'groupControl1', groupItemId: 'hiddenItem3'},
                     ],
-                    version: 2,
+                    version: DASHKIT_STATE_VERSION,
                 },
             };
 
@@ -306,7 +261,7 @@ describe('dash helpers', () => {
 
             const previousMeta: StateAndParamsMetaData = {
                 queue: existingState.__meta__.queue,
-                version: 2,
+                version: DASHKIT_STATE_VERSION,
             };
 
             const result = updateExistingStateWithGlobalSelector(

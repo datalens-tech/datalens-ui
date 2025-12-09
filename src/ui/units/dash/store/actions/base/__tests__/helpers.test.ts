@@ -12,6 +12,7 @@ import type {
     DashTabItemGroupControlData,
     ImpactType,
 } from 'shared';
+import {DASHKIT_STATE_VERSION} from 'ui/units/dash/modules/constants';
 
 import {getGlobalStatesForInactiveTabs} from '../helpers';
 
@@ -65,7 +66,7 @@ const createMockControlItem = (
     defaults: {},
 });
 
-const createMockGroupControlItem = (id: string, groupItems: MockedGroupItem[], orderId = 0) => ({
+const createMockGroupControlItem = (id: string, groupItems: MockedGroupItem[]) => ({
     id,
     type: DashTabItemType.GroupControl,
     namespace: 'default',
@@ -73,13 +74,12 @@ const createMockGroupControlItem = (id: string, groupItems: MockedGroupItem[], o
         group: groupItems,
     } as DashTabItemGroupControlData,
     defaults: {},
-    orderId,
 });
 
 const createMockState = (
     items: ItemsStateAndParamsBase,
     queue: QueueItem[],
-    version = 2,
+    version = DASHKIT_STATE_VERSION,
 ): ItemsStateAndParams => ({
     ...items,
     __meta__: {
@@ -156,25 +156,17 @@ describe('base/helpers.ts', () => {
             const data = createMockDashData([
                 createMockTab('tab1', 'Tab 1', [
                     createMockControlItem('control1', 'Control 1'),
-                    createMockGroupControlItem(
-                        'groupControl1',
-                        [
-                            {id: 'groupItem1', impactType: 'allTabs'},
-                            {id: 'groupItem2', impactType: 'allTabs'},
-                        ],
-                        1,
-                    ),
+                    createMockGroupControlItem('groupControl1', [
+                        {id: 'groupItem1', impactType: 'allTabs'},
+                        {id: 'groupItem2', impactType: 'allTabs'},
+                    ]),
                 ]),
                 createMockTab('tab2', 'Tab 2', [
                     createMockControlItem('control1', 'Control 1'),
-                    createMockGroupControlItem(
-                        'groupControl1',
-                        [
-                            {id: 'groupItem1', impactType: 'allTabs'},
-                            {id: 'groupItem2', impactType: 'allTabs'},
-                        ],
-                        1,
-                    ),
+                    createMockGroupControlItem('groupControl1', [
+                        {id: 'groupItem1', impactType: 'allTabs'},
+                        {id: 'groupItem2', impactType: 'allTabs'},
+                    ]),
                 ]),
             ]);
 
@@ -239,18 +231,14 @@ describe('base/helpers.ts', () => {
                         DashTabItemControlSourceType.Manual,
                         {chartId: 'test'},
                     ),
-                    createMockGroupControlItem(
-                        'groupControl1',
-                        [
-                            {id: 'groupItem1', impactType: 'allTabs'},
-                            {
-                                id: 'groupItem2',
-                                impactType: 'selectedTabs',
-                                impactTabsIds: ['tab1', 'tab3'],
-                            },
-                        ],
-                        1,
-                    ),
+                    createMockGroupControlItem('groupControl1', [
+                        {id: 'groupItem1', impactType: 'allTabs'},
+                        {
+                            id: 'groupItem2',
+                            impactType: 'selectedTabs',
+                            impactTabsIds: ['tab1', 'tab3'],
+                        },
+                    ]),
                 ]),
                 createMockTab('tab2', 'Tab 2', [
                     createMockControlItem(
@@ -273,18 +261,14 @@ describe('base/helpers.ts', () => {
                         DashTabItemControlSourceType.Manual,
                         {chartId: 'test'},
                     ),
-                    createMockGroupControlItem(
-                        'groupControl1',
-                        [
-                            {id: 'groupItem1', impactType: 'allTabs'},
-                            {
-                                id: 'groupItem2',
-                                impactType: 'selectedTabs',
-                                impactTabsIds: ['tab1', 'tab3'],
-                            },
-                        ],
-                        2,
-                    ),
+                    createMockGroupControlItem('groupControl1', [
+                        {id: 'groupItem1', impactType: 'allTabs'},
+                        {
+                            id: 'groupItem2',
+                            impactType: 'selectedTabs',
+                            impactTabsIds: ['tab1', 'tab3'],
+                        },
+                    ]),
                 ]),
             ]);
 

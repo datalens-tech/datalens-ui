@@ -16,7 +16,7 @@ import {DashLoadPriority, DashTabItemType} from 'shared/types/dash';
 import {DL, URL_QUERY} from 'ui/constants';
 import Utils from 'ui/utils';
 
-import {Mode} from '../modules/constants';
+import {DASHKIT_STATE_VERSION, Mode} from '../modules/constants';
 
 import type {GlobalItem} from './typings/dash';
 
@@ -132,6 +132,6 @@ export const createNewTabState = (
     ...params,
     __meta__: {
         queue,
-        version: 2,
+        version: DASHKIT_STATE_VERSION,
     },
 });
