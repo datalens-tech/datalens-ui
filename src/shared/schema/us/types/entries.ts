@@ -21,6 +21,7 @@ import type {
     EntryNavigationFields,
     EntryRelationFields,
     SharedEntryPermissions,
+    SharedEntryRelationFields,
 } from './fields';
 
 export interface GetEntryResponse extends EntryFields {
@@ -312,4 +313,14 @@ export type SharedEntryBindingsItem = {
 
 export type GetSharedEntryBindingsResponse = {
     items: SharedEntryBindingsItem[];
+};
+
+export type GetSharedEntryWorkbookRelationsArgs = {
+    entryId: string;
+    workbookId: string;
+    scope?: `${EntryScope}`;
+};
+
+export type GetSharedEntryWorkbookRelationsResponse = {
+    relations: SharedEntryRelationFields[];
 };

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {SmartLoader} from 'components/SmartLoader/SmartLoader';
-import {useDispatch, useSelector} from 'react-redux';
+import {batch, useDispatch, useSelector} from 'react-redux';
 import {EntryScope, Feature} from 'shared';
 import type {WorkbookWithPermissions} from 'shared/schema';
 import {registry} from 'ui/registry';
@@ -25,7 +25,7 @@ import {
     selectWorkbookSharedEntriesIsLoading,
     selectWorkbookSharedItems,
 } from '../../store/selectors';
-import type {WorkbookEntriesFilters} from '../../types';
+import type {WorkbookEntriesFilters, WorkbookSharedEntry} from '../../types';
 import {WorkbookEntriesTable} from '../Table/WorkbookEntriesTable/WorkbookEntriesTable';
 import {useChunkedEntries as useSharedChunkedEntries} from '../WorkbookTabContent/useChunkedEntries';
 import {TAB_ALL} from '../WorkbookTabs/constants';
@@ -72,7 +72,7 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
         availableScopes,
     });
 
-    const sharedChunks = useSharedChunkedEntries({
+    const sharedChunks = useSharedChunkedEntries<WorkbookSharedEntry>({
         entries: sharedEntries,
         availableScopes: [EntryScope.Connection, EntryScope.Dataset],
     });
@@ -80,8 +80,10 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
     React.useEffect(() => {
         if (workbook?.workbookId === workbookId) {
             (async () => {
-                dispatch(resetWorkbookEntries());
-                dispatch(resetWorkbookSharedEntries());
+                batch(() => {
+                    dispatch(resetWorkbookEntries());
+                    dispatch(resetWorkbookSharedEntries());
+                });
 
                 setIsLoading(true);
 
@@ -228,32 +230,48 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
             setMapLoaders({
                 [entryScope]: true,
             });
-            dispatch(resetWorkbookEntriesByScope(entryScope));
+            batch(() => {
+                dispatch(resetWorkbookEntriesByScope(entryScope));
 
-            dispatch(
-                getWorkbookEntries({
-                    workbookId,
-                    filters,
-                    scope: entryScope,
-                    pageSize: PAGE_SIZE_MAIN_TAB,
-                }),
-            )
-                .then((data) => {
-                    if (data) {
-                        setMapTokens({
-                            ...mapTokens,
-                            [entryScope]: data?.nextPageToken || '',
+                dispatch(
+                    getWorkbookEntries({
+                        workbookId,
+                        filters,
+                        scope: entryScope,
+                        pageSize: PAGE_SIZE_MAIN_TAB,
+                    }),
+                )
+                    .then((data) => {
+                        if (data) {
+                            setMapTokens({
+                                ...mapTokens,
+                                [entryScope]: data?.nextPageToken || '',
+                            });
+                        }
+                    })
+                    .finally(() => {
+                        setMapLoaders({
+                            [entryScope]: false,
                         });
-                    }
-                })
-                .finally(() => {
-                    setMapLoaders({
-                        [entryScope]: false,
                     });
-                });
+            });
         },
         [dispatch, workbookId, filters, mapTokens],
     );
+
+    const refreshSharedEntries = React.useCallback(() => {
+        batch(() => {
+            dispatch(resetWorkbookSharedEntries());
+
+            dispatch(
+                getWorkbookSharedEntries({
+                    workbookId,
+                    filters,
+                    pageSize: PAGE_SIZE_MAIN_TAB,
+                }),
+            );
+        });
+    }, [dispatch, workbookId, filters]);
 
     if (
         (isEntriesLoading || isLoading) &&
@@ -267,6 +285,7 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
         <AnimateBlock>
             <WorkbookEntriesTable
                 refreshEntries={refreshEntries}
+                refreshSharedEntries={refreshSharedEntries}
                 workbook={workbook}
                 entries={entries}
                 loadMoreEntries={loadMoreEntries}
