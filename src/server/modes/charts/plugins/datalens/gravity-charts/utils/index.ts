@@ -142,19 +142,11 @@ export function getBaseChartConfig(args: {
     const visualizationId = visualization.id as WizardVisualizationId;
     const visualizationWithoutAxis = [
         WizardVisualizationId.Pie,
-        WizardVisualizationId.PieD3,
         WizardVisualizationId.Donut,
-        WizardVisualizationId.DonutD3,
         WizardVisualizationId.Treemap,
-        WizardVisualizationId.TreemapD3,
     ];
 
-    const visualizationWithYMainAxis = [
-        WizardVisualizationId.Bar,
-        WizardVisualizationId.Bar100p,
-        WizardVisualizationId.BarYD3,
-        WizardVisualizationId.BarY100pD3,
-    ];
+    const visualizationWithYMainAxis = [WizardVisualizationId.Bar, WizardVisualizationId.Bar100p];
 
     if (!visualizationWithoutAxis.includes(visualizationId)) {
         const [xMin, xMax] = getAxisMinMax(xPlaceholderSettings);

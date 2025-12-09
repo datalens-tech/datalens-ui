@@ -1,17 +1,4 @@
-import type {WizardVisualizationId} from '../../../../../../shared';
-import {AxisModeDisabledReason, isD3Visualization} from '../../../../../../shared';
-
-export function isAxisTypeEnabled(visualizationId: WizardVisualizationId) {
-    return !isD3Visualization(visualizationId);
-}
-
-export function isAxisFormatEnabled(visualizationId: WizardVisualizationId) {
-    return !isD3Visualization(visualizationId);
-}
-
-export function isHolidaysEnabled(visualizationId: WizardVisualizationId) {
-    return !isD3Visualization(visualizationId);
-}
+import {AxisModeDisabledReason} from '../../../../../../shared';
 
 export function getAxisModeTooltipContent(reason: AxisModeDisabledReason) {
     switch (reason) {

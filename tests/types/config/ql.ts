@@ -9,7 +9,4 @@ export type QlParametrizationConfig = {
         dateAndSales: string;
         dateAndSalesModified: string;
     };
-    qa: {
-        visualizationList: string[];
-    };
 };
