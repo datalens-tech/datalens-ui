@@ -51,32 +51,31 @@ function getAxisMinMax(
 }
 
 export function getYAxisBaseConfig({
-    visualization,
+    placeholder,
 }: {
-    visualization: {id: string; placeholders: ServerPlaceholder[]};
+    placeholder: ServerPlaceholder | undefined;
 }): ChartYAxis {
-    const yPlaceholder = visualization.placeholders.find((p) => p.id === PlaceholderId.Y);
-    const yPlaceholderSettings = yPlaceholder?.settings || {};
-    const yItem = yPlaceholder?.items[0];
+    const placeholderSettings = placeholder?.settings || {};
+    const yItem = placeholder?.items[0];
 
-    const [yMin, yMax] = getAxisMinMax(yPlaceholderSettings);
+    const [yMin, yMax] = getAxisMinMax(placeholderSettings);
 
     return {
         // todo: the axis type should depend on the type of field
         type: isDateField(yItem) ? 'datetime' : 'linear',
-        visible: yPlaceholderSettings?.axisVisibility !== 'hide',
+        visible: placeholderSettings?.axisVisibility !== 'hide',
         labels: {
-            enabled: Boolean(yItem) && yPlaceholder?.settings?.hideLabels !== 'yes',
-            rotation: getAxisLabelsRotationAngle(yPlaceholder?.settings),
+            enabled: Boolean(yItem) && placeholder?.settings?.hideLabels !== 'yes',
+            rotation: getAxisLabelsRotationAngle(placeholder?.settings),
         },
         title: {
-            text: getAxisTitle(yPlaceholderSettings, yItem) || undefined,
+            text: getAxisTitle(placeholderSettings, yItem) || undefined,
         },
         grid: {
-            enabled: Boolean(yItem) && isGridEnabled(yPlaceholderSettings),
+            enabled: Boolean(yItem) && isGridEnabled(placeholderSettings),
         },
         ticks: {
-            pixelInterval: getTickPixelInterval(yPlaceholderSettings) || 72,
+            pixelInterval: getTickPixelInterval(placeholderSettings) || 72,
         },
         lineColor: 'var(--g-color-line-generic)',
         min: yMin,
@@ -149,6 +148,7 @@ export function getBaseChartConfig(args: {
     const visualizationWithYMainAxis = [WizardVisualizationId.Bar, WizardVisualizationId.Bar100p];
 
     if (!visualizationWithoutAxis.includes(visualizationId)) {
+        const yPlaceholder = visualization.placeholders.find((p) => p.id === PlaceholderId.Y);
         const [xMin, xMax] = getAxisMinMax(xPlaceholderSettings);
 
         chartWidgetData = {
@@ -172,7 +172,7 @@ export function getBaseChartConfig(args: {
                 min: xMin,
                 max: xMax,
             },
-            yAxis: [getYAxisBaseConfig({visualization})],
+            yAxis: [getYAxisBaseConfig({placeholder: yPlaceholder})],
         };
 
         if (visualizationWithYMainAxis.includes(visualizationId)) {
