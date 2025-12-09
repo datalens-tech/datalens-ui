@@ -5,12 +5,14 @@ import type {
     LineSeries,
     LineSeriesData,
 } from '@gravity-ui/chartkit/gravity-charts';
+import groupBy from 'lodash/groupBy';
 import merge from 'lodash/merge';
 import sortBy from 'lodash/sortBy';
 
 import type {
     SeriesExportSettings,
     ServerField,
+    ServerPlaceholder,
     WrappedHTML,
     WrappedMarkdown,
 } from '../../../../../../../shared';
@@ -78,11 +80,11 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
         }) === 'category' ||
         disableDefaultSorting;
 
-    const yAxisItems = [];
-    if (yFields.length) {
+    const yAxisItems: ServerPlaceholder[] = [];
+    if (yPlaceholder && yFields.length) {
         yAxisItems.push(yPlaceholder);
     }
-    if (y2Fields.length) {
+    if (y2Placeholder && y2Fields.length) {
         yAxisItems.push(y2Placeholder);
     }
 
@@ -199,30 +201,36 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
     const segments = sortBy(Object.values(segmentsMap), (s) => s.index);
     const isSplitEnabled = new Set(segments.map((d) => d.index)).size > 1;
 
-    const axisLabelNumberFormat = yPlaceholder
-        ? getAxisFormatting({
-              placeholder: yPlaceholder,
-              visualizationId,
-          })
-        : undefined;
-
     let yAxis: ChartYAxis[] = [];
     if (isSplitEnabled) {
-        yAxis = segments.map((d) => {
-            const axisBaseConfig = getYAxisBaseConfig({
-                placeholder: yPlaceholder,
-            });
+        yAxis = segments.reduce((acc, d) => {
+            const placeholder = d.isOpposite ? y2Placeholder : yPlaceholder;
+            const labelNumberFormat = placeholder
+                ? getAxisFormatting({
+                      placeholder,
+                      visualizationId,
+                  })
+                : undefined;
 
-            return merge(axisBaseConfig, {
-                labels: {
-                    numberFormat: axisLabelNumberFormat ?? undefined,
-                },
-                lineColor: 'transparent',
-                title: isSplitEnabled ? {text: d.title} : undefined,
-                plotIndex: d.index,
-                position: d.isOpposite ? 'right' : 'left',
+            const axisBaseConfig = getYAxisBaseConfig({
+                placeholder,
             });
-        });
+            const shouldUseSegmentTitle = yAxisItems.length < 2 || !d.isOpposite;
+
+            acc.push(
+                merge(axisBaseConfig, {
+                    title: shouldUseSegmentTitle ? {text: d.title} : null,
+                    plotIndex: d.plotIndex,
+                    labels: {
+                        numberFormat: labelNumberFormat ?? undefined,
+                    },
+                    lineColor: 'transparent',
+                    position: placeholder?.id === PlaceholderId.Y2 ? 'right' : 'left',
+                }),
+            );
+
+            return acc;
+        }, [] as ChartYAxis[]);
     } else {
         yAxis = yAxisItems.map((placeholder) => {
             const labelNumberFormat = placeholder
@@ -255,7 +263,7 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
         split: {
             enable: isSplitEnabled,
             gap: '40px',
-            plots: segments.map(() => {
+            plots: Object.values(groupBy(segments, (d) => d.plotIndex)).map(() => {
                 return {};
             }),
         },
