@@ -1,4 +1,3 @@
-import {CURRENT_VERSION} from '@gravity-ui/dashkit/helpers';
 import type {
     ItemParams,
     ItemsStateAndParams,
@@ -318,7 +317,7 @@ export const updateExistingStateWithGlobalSelector = (
         __meta__: {
             ...previousMeta,
             queue: updatedQueue,
-            version: previousMeta?.version || CURRENT_VERSION,
+            version: previousMeta?.version || 2,
         },
     };
 };
@@ -330,7 +329,7 @@ export const createNewTabState = (
     ...params,
     __meta__: {
         queue,
-        version: CURRENT_VERSION,
+        version: 2,
     },
 });
 

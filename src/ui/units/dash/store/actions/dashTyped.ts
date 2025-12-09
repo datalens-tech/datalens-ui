@@ -11,7 +11,6 @@ import type {
     PluginTitleProps,
     StateAndParamsMetaData,
 } from '@gravity-ui/dashkit';
-import {META_KEY} from '@gravity-ui/dashkit/helpers';
 import {i18n} from 'i18n';
 import type {DatalensGlobalState} from 'index';
 import {URL_QUERY, sdk} from 'index';
@@ -58,7 +57,6 @@ import {collectDashStats} from '../../modules/pushStats';
 import {DashUpdateStatus} from '../../typings/dash';
 import {DASH_EDIT_HISTORY_UNIT_ID} from '../constants';
 import * as actionTypes from '../constants/dashActionTypes';
-import {isItemGlobal} from '../reducers/dashHelpers';
 import {
     selectDash,
     selectDashData,
@@ -67,6 +65,7 @@ import {
     selectEntryId,
 } from '../selectors/dashTypedSelectors';
 import type {DashState, GlobalItem} from '../typings/dash';
+import {isItemGlobal} from '../utils';
 
 import {save} from './base/actions';
 import {migrateDataSettings, processTabForGlobalUpdate} from './helpers';
@@ -255,7 +254,7 @@ export const updateTabsWithGlobalState = ({
             } = getState();
 
             const currentHashState = currentTabId ? hashStates?.[currentTabId] : null;
-            const currentMeta = currentHashState?.state?.[META_KEY] as StateAndParamsMetaData;
+            const currentMeta = currentHashState?.state?.__meta__ as StateAndParamsMetaData;
 
             const updatedHashStates: TabsHashStates = {};
             let hasUpdated = false;

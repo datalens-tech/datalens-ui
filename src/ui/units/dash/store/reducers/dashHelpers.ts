@@ -13,7 +13,7 @@ import type {
 import {DashTabItemType} from 'shared';
 import type {ImpactTabsIds, ImpactType} from 'shared/types/dash';
 
-import type {DashState, GlobalItem} from '../typings/dash';
+import type {DashState} from '../typings/dash';
 
 // Tab properties that can be updated
 export const TAB_PROPERTIES = [
@@ -26,44 +26,6 @@ export const TAB_PROPERTIES = [
     'settings',
     'globalItems',
 ] as const;
-
-export function isItemGlobal(item: GlobalItem): boolean {
-    if (item.type === DashTabItemType.Control) {
-        const controlData = item.data;
-        return isControlGlobal(controlData.impactType, controlData.impactTabsIds);
-    }
-
-    if (item.type === DashTabItemType.GroupControl) {
-        return isGroupControlGlobal(item.data);
-    }
-
-    return false;
-}
-
-function isControlGlobal(impactType?: ImpactType, impactTabsIds?: ImpactTabsIds): boolean {
-    return (
-        impactType === 'allTabs' ||
-        (impactType === 'selectedTabs' && Boolean(impactTabsIds && impactTabsIds?.length > 0))
-    );
-}
-
-function isGroupControlGlobal(itemData: Partial<DashTabItemGroupControlData>): boolean {
-    const groupImpactType = itemData.impactType;
-    const groupImpactTabsIds = itemData.impactTabsIds;
-    const isGroupSettingApplied = itemData.group?.some(
-        (selector) => selector.impactType === undefined || selector.impactType === 'asGroup',
-    );
-
-    if (isGroupSettingApplied && isControlGlobal(groupImpactType, groupImpactTabsIds)) {
-        return true;
-    }
-
-    return Boolean(
-        itemData.group?.some((selector) =>
-            isControlGlobal(selector.impactType, selector.impactTabsIds),
-        ),
-    );
-}
 
 type DetailedGlobalStatus = {
     hasAllScope: boolean;

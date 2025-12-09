@@ -1,7 +1,7 @@
 import type {Config} from '@gravity-ui/dashkit';
 import type {DashChartRequestContext, DashSettingsGlobalParams, DashTab} from 'shared/types';
 
-import type {UpdateTabsWithGlobalStateArgs} from '../store/actions/dashTyped';
+import type {UpdateTabsWithGlobalStateArgs} from '../store/typings/dash';
 
 export type ExtendedDashKitContextType = {
     config?: Config | DashTab;

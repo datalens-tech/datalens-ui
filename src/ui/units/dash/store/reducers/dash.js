@@ -16,13 +16,13 @@ import {Mode} from '../../modules/constants';
 import {getUniqIdsFromDashData} from '../../modules/helpers';
 import {getAllTabItems} from '../../utils/selectors';
 import * as actionTypes from '../constants/dashActionTypes';
+import {isItemGlobal} from '../utils';
 
 import {
     TAB_PROPERTIES,
     addGlobalItemToTab,
     getGlobalItemsToCopy,
     getStateForControlWithGlobalLogic,
-    isItemGlobal,
 } from './dashHelpers';
 import {dashTypedReducer} from './dashTypedReducer';
 

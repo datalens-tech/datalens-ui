@@ -10,7 +10,7 @@ import {I18n} from 'i18n';
 import type {DashChartRequestContext, StringParams} from 'shared';
 import {DashTabItemControlSourceType, DashTabItemType} from 'shared';
 import {DashKitOverlayMenuQa} from 'shared/constants/qa/dash';
-import type {UpdateTabsWithGlobalStateArgs} from 'ui/units/dash/store/actions/dashTyped';
+import type {UpdateTabsWithGlobalStateArgs} from 'ui/units/dash/store/typings/dash';
 import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
 
 import {getEndpointForNavigation} from '../../libs/DatalensChartkit/modules/navigation';

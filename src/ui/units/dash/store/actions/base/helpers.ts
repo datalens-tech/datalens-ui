@@ -13,8 +13,8 @@ import {
 } from 'ui/units/dash/utils/selectors';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
+import {createNewTabState} from '../../utils';
 import type {TabsHashStates} from '../dashTyped';
-import {createNewTabState} from '../helpers';
 
 const buildParamsStateFromQueue = (
     actualTabQueue: QueueItem[],

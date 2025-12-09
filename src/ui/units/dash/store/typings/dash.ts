@@ -1,4 +1,4 @@
-import type {DashKit} from '@gravity-ui/dashkit';
+import type {DashKit, ItemParams} from '@gravity-ui/dashkit';
 import type {
     DashData,
     DashDragOptions,
@@ -50,3 +50,9 @@ export type DashState = {
 export type GlobalItem =
     | Pick<DashTabItemControl, 'type' | 'data' | 'id'>
     | Pick<DashTabItemGroupControl, 'type' | 'data' | 'id'>;
+
+export type UpdateTabsWithGlobalStateArgs = {
+    params: ItemParams;
+    selectorItem: GlobalItem;
+    appliedSelectorsIds: string[];
+};
