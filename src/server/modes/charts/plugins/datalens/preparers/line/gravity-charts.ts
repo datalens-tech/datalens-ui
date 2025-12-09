@@ -1,6 +1,7 @@
 import type {
     ChartData,
     ChartSeries,
+    ChartYAxis,
     LineSeries,
     LineSeriesData,
 } from '@gravity-ui/chartkit/gravity-charts';
@@ -45,6 +46,7 @@ type ExtendedLineSeries = Omit<LineSeries, 'data'> & {
     data: ExtendedLineSeriesData[];
 };
 
+// eslint-disable-next-line complexity
 export function prepareGravityChartLine(args: PrepareFunctionArgs) {
     const {
         labels,
@@ -60,6 +62,9 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
     const xField: ServerField | undefined = xPlaceholder?.items?.[0];
     const yPlaceholder = placeholders.find((p) => p.id === PlaceholderId.Y);
     const yFields = yPlaceholder?.items || [];
+    const y2Placeholder = placeholders.find((p) => p.id === PlaceholderId.Y2);
+    const y2Fields = y2Placeholder?.items || [];
+
     const labelField = labels?.[0];
     const isDataLabelsEnabled = Boolean(labelField);
     const chartConfig = getConfigWithActualFieldTypes({config: shared, idToDataType});
@@ -73,7 +78,15 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
         }) === 'category' ||
         disableDefaultSorting;
 
-    if (!xField || !yFields.length) {
+    const yAxisItems = [];
+    if (yFields.length) {
+        yAxisItems.push(yPlaceholder);
+    }
+    if (y2Fields.length) {
+        yAxisItems.push(y2Placeholder);
+    }
+
+    if (!xField || !yAxisItems.length) {
         return {
             series: {
                 data: [],
@@ -193,14 +206,11 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
           })
         : undefined;
 
-    const config: ChartData = {
-        series: {
-            data: seriesData as ChartSeries[],
-        },
-        xAxis,
-        yAxis: segments.map((d) => {
+    let yAxis: ChartYAxis[] = [];
+    if (isSplitEnabled) {
+        yAxis = segments.map((d) => {
             const axisBaseConfig = getYAxisBaseConfig({
-                visualization: {placeholders, id: visualizationId},
+                placeholder: yPlaceholder,
             });
 
             return merge(axisBaseConfig, {
@@ -212,7 +222,36 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
                 plotIndex: d.index,
                 position: d.isOpposite ? 'right' : 'left',
             });
-        }),
+        });
+    } else {
+        yAxis = yAxisItems.map((placeholder) => {
+            const labelNumberFormat = placeholder
+                ? getAxisFormatting({
+                      placeholder,
+                      visualizationId,
+                  })
+                : undefined;
+
+            const axisBaseConfig = getYAxisBaseConfig({
+                placeholder,
+            });
+
+            return merge(axisBaseConfig, {
+                labels: {
+                    numberFormat: labelNumberFormat ?? undefined,
+                },
+                lineColor: 'transparent',
+                position: placeholder?.id === PlaceholderId.Y2 ? 'right' : 'left',
+            });
+        });
+    }
+
+    const config: ChartData = {
+        series: {
+            data: seriesData as ChartSeries[],
+        },
+        xAxis,
+        yAxis,
         split: {
             enable: isSplitEnabled,
             gap: '40px',

@@ -233,7 +233,7 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
         xAxis,
         yAxis: segments.map((d) => {
             const axisBaseConfig = getYAxisBaseConfig({
-                visualization: {placeholders, id: visualizationId},
+                placeholder: yPlaceholder,
             });
 
             return merge(axisBaseConfig, {
