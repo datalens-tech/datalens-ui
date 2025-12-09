@@ -98,13 +98,12 @@ const getSubItems = ({
         customConfig?.items?.find((item) => item.id === MenuItemsIds.EXPORT_CSV)?.action ??
         csvExportAction(chartsDataProvider, onExportLoading);
 
-    let xlsxAction =
+    const xlsxAction =
         customConfig?.items?.find((item) => item.id === MenuItemsIds.EXPORT_XLSX)?.action ??
         directExportAction(EXPORT_FORMATS.XLSX, onExportLoading);
 
     if (customConfig?.actionWrapper) {
         csvAction = customConfig.actionWrapper(csvAction);
-        xlsxAction = customConfig.actionWrapper(xlsxAction);
     }
 
     const submenuItems = [
