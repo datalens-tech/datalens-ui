@@ -5,7 +5,6 @@ import type {
     AddNewItemOptions,
     Config,
     DashKit,
-    ItemParams,
     ItemsStateAndParams,
     PluginTextProps,
     PluginTitleProps,
@@ -64,7 +63,7 @@ import {
     selectDashEntry,
     selectEntryId,
 } from '../selectors/dashTypedSelectors';
-import type {DashState, GlobalItem} from '../typings/dash';
+import type {DashState, UpdateTabsWithGlobalStateArgs} from '../typings/dash';
 import {isItemGlobal} from '../utils';
 
 import {save} from './base/actions';
@@ -226,11 +225,6 @@ export const setPageTab = (tabId: string) => {
     };
 };
 
-export type UpdateTabsWithGlobalStateArgs = {
-    params: ItemParams;
-    selectorItem: GlobalItem;
-    appliedSelectorsIds: string[];
-};
 export const UPDATE_TABS_WITH_GLOBAL_STATE = Symbol('dash/UPDATE_TABS_WITH_GLOBAL_STATE');
 export type UpdateTabsWithGlobalStateAction = {
     type: typeof UPDATE_TABS_WITH_GLOBAL_STATE;
@@ -243,16 +237,15 @@ export const updateTabsWithGlobalState = ({
     appliedSelectorsIds,
 }: UpdateTabsWithGlobalStateArgs) => {
     return function (dispatch: DashDispatch, getState: GetState) {
-        return new Promise((resolve) => {
-            if (!isEnabledFeature(Feature.EnableGlobalSelectors) || !isItemGlobal(selectorItem)) {
-                resolve(null);
-                return;
-            }
+        if (!isEnabledFeature(Feature.EnableGlobalSelectors) || !isItemGlobal(selectorItem)) {
+            return;
+        }
 
-            const {
-                dash: {hashStates, tabId: currentTabId, data},
-            } = getState();
+        const {
+            dash: {hashStates, tabId: currentTabId, data},
+        } = getState();
 
+        try {
             const currentHashState = currentTabId ? hashStates?.[currentTabId] : null;
             const currentMeta = currentHashState?.state?.__meta__ as StateAndParamsMetaData;
 
@@ -279,7 +272,6 @@ export const updateTabsWithGlobalState = ({
             });
 
             if (!hasUpdated) {
-                resolve(null);
                 return;
             }
 
@@ -289,9 +281,9 @@ export const updateTabsWithGlobalState = ({
                     hashStates: updatedHashStates,
                 },
             });
-
-            resolve(updatedHashStates);
-        });
+        } catch (error) {
+            logger.logError('updateTabsWithGlobalState failed', error);
+        }
     };
 };
 

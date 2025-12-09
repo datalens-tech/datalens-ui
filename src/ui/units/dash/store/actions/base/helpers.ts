@@ -8,8 +8,7 @@ import type {DashData} from 'shared/types';
 import {DashTabItemType, Feature} from 'shared/types';
 import {
     isGlobalWidgetVisibleByMainSetting,
-    isItemVisibleOnTab,
-    isItemVisibleOnTabByGroup,
+    isGroupItemVisibleOnTab,
 } from 'ui/units/dash/utils/selectors';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
@@ -68,8 +67,11 @@ const processTabForGlobalStates = (
             );
             item.data.group.forEach((groupItem) => {
                 if (
-                    isItemVisibleOnTab(tab.id, groupItem.impactType, groupItem.impactTabsIds) ||
-                    isItemVisibleOnTabByGroup(isGroupSettingApplied, groupItem.impactType)
+                    isGroupItemVisibleOnTab({
+                        item: groupItem,
+                        tabId: tab.id,
+                        isVisibleByMainSetting: isGroupSettingApplied,
+                    })
                 ) {
                     tabGlobalItemsIds.add(groupItem.id);
                 }

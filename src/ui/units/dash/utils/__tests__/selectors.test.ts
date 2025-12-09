@@ -1,10 +1,6 @@
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
-import {
-    isGlobalWidgetVisibleByMainSetting,
-    isGroupItemVisibleOnTab,
-    isItemVisibleOnTab,
-} from '../selectors';
+import {isGlobalWidgetVisibleByMainSetting, isGroupItemVisibleOnTab} from '../selectors';
 
 jest.mock('ui/utils/isEnabledFeature');
 const mockIsEnabledFeature = isEnabledFeature as jest.MockedFunction<typeof isEnabledFeature>;
@@ -14,38 +10,6 @@ describe('dash selectors utils', () => {
         jest.clearAllMocks();
         mockIsEnabledFeature.mockReturnValue(true);
     });
-    describe('isItemVisibleOnTab', () => {
-        it('should return true for allTabs impact type', () => {
-            const result = isItemVisibleOnTab('tab1', 'allTabs');
-            expect(result).toBe(true);
-        });
-
-        it('should return true when tab is in selectedTabs list', () => {
-            const result = isItemVisibleOnTab('tab1', 'selectedTabs', ['tab1', 'tab2']);
-            expect(result).toBe(true);
-        });
-
-        it('should return false when tab is not in selectedTabs list', () => {
-            const result = isItemVisibleOnTab('tab3', 'selectedTabs', ['tab1', 'tab2']);
-            expect(result).toBe(false);
-        });
-
-        it('should return true when tab matches currentTab impact type', () => {
-            const result = isItemVisibleOnTab('tab1', 'currentTab', ['tab1']);
-            expect(result).toBe(true);
-        });
-
-        it('should return false when tab does not match currentTab impact type', () => {
-            const result = isItemVisibleOnTab('tab2', 'currentTab', ['tab1']);
-            expect(result).toBe(false);
-        });
-
-        it('should return false for undefined impact type', () => {
-            const result = isItemVisibleOnTab('tab1', undefined);
-            expect(result).toBe(false);
-        });
-    });
-
     describe('isGlobalWidgetVisibleByMainSetting', () => {
         it('should return true when groupImpactType is undefined', () => {
             const result = isGlobalWidgetVisibleByMainSetting('tab1', undefined);
@@ -54,6 +18,36 @@ describe('dash selectors utils', () => {
     });
 
     describe('isGroupItemVisibleOnTab', () => {
+        it('should return true for allTabs impact type', () => {
+            const item = {impactType: 'allTabs' as const};
+            const result = isGroupItemVisibleOnTab({item, tabId: 'tab1'});
+            expect(result).toBe(true);
+        });
+
+        it('should return true when tab is in selectedTabs list', () => {
+            const item = {impactType: 'selectedTabs' as const, impactTabsIds: ['tab1', 'tab2']};
+            const result = isGroupItemVisibleOnTab({item, tabId: 'tab1'});
+            expect(result).toBe(true);
+        });
+
+        it('should return false when tab is not in selectedTabs list', () => {
+            const item = {impactType: 'selectedTabs' as const, impactTabsIds: ['tab1', 'tab2']};
+            const result = isGroupItemVisibleOnTab({item, tabId: 'tab3'});
+            expect(result).toBe(false);
+        });
+
+        it('should return true when tab matches currentTab impact type', () => {
+            const item = {impactType: 'currentTab' as const, impactTabsIds: ['tab1']};
+            const result = isGroupItemVisibleOnTab({item, tabId: 'tab1'});
+            expect(result).toBe(true);
+        });
+
+        it('should return false when tab does not match currentTab impact type', () => {
+            const item = {impactType: 'currentTab' as const, impactTabsIds: ['tab1']};
+            const result = isGroupItemVisibleOnTab({item, tabId: 'tab2'});
+            expect(result).toBe(false);
+        });
+
         const mockItem = {
             impactType: 'selectedTabs' as const,
             impactTabsIds: ['tab1', 'tab2'],

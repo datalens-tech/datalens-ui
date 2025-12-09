@@ -25,8 +25,7 @@ import {
 } from 'ui/libs/DatalensChartkit/modules/constants/constants';
 import {
     isGlobalWidgetVisibleByMainSetting,
-    isItemVisibleOnTab,
-    isItemVisibleOnTabByGroup,
+    isGroupItemVisibleOnTab,
 } from 'ui/units/dash/utils/selectors';
 import {getUrlGlobalParams} from 'ui/units/dash/utils/url';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -333,10 +332,12 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             return controlData.group;
         }
 
-        return controlData.group.filter(
-            (item) =>
-                isItemVisibleOnTabByGroup(isGroupAvailableOnTab, item.impactType) ||
-                isItemVisibleOnTab(currentTabId, item.impactType, item.impactTabsIds),
+        return controlData.group.filter((item) =>
+            isGroupItemVisibleOnTab({
+                item,
+                tabId: currentTabId,
+                isVisibleByMainSetting: isGroupAvailableOnTab,
+            }),
         );
     }
 

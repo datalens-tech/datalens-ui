@@ -7,7 +7,7 @@ export interface ImpactTypeItem {
     impactTabsIds?: ImpactTabsIds;
 }
 
-export const isItemVisibleOnTab = (
+const isItemVisibleOnTab = (
     tabId?: string | null,
     itemImpactType?: ImpactType,
     itemImpactTabsIds?: ImpactTabsIds,
@@ -27,6 +27,10 @@ export const isItemVisibleOnTab = (
     }
 };
 
+const isItemVisibleOnTabByGroup = (isVisibleByGroupSetting: boolean, impactType?: ImpactType) => {
+    return (impactType === undefined || impactType === 'asGroup') && isVisibleByGroupSetting;
+};
+
 export const isGlobalWidgetVisibleByMainSetting = (
     tabId: string,
     groupImpactType?: ImpactType,
@@ -37,13 +41,6 @@ export const isGlobalWidgetVisibleByMainSetting = (
     }
 
     return isItemVisibleOnTab(tabId, groupImpactType, groupImpactTabsIds);
-};
-
-export const isItemVisibleOnTabByGroup = (
-    isVisibleByGroupSetting: boolean,
-    impactType?: ImpactType,
-) => {
-    return (impactType === undefined || impactType === 'asGroup') && isVisibleByGroupSetting;
 };
 
 export const isGroupItemVisibleOnTab = ({
