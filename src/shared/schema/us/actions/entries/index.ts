@@ -44,6 +44,8 @@ import type {
     GetRevisionsResponse,
     GetSharedEntryBindingsArgs,
     GetSharedEntryBindingsResponse,
+    GetSharedEntryWorkbookRelationsArgs,
+    GetSharedEntryWorkbookRelationsResponse,
     MoveEntryArgs,
     MoveEntryResponse,
     RenameEntryArgs,
@@ -317,6 +319,20 @@ export const entriesActions = {
                 mode,
                 filterString,
                 includePermissionsInfo,
+            },
+            headers,
+        }),
+    }),
+    getSharedEntryWorkbookRelations: createAction<
+        GetSharedEntryWorkbookRelationsResponse,
+        GetSharedEntryWorkbookRelationsArgs
+    >({
+        method: 'GET',
+        path: ({entryId}) => `${PATH_PREFIX}/shared-entries/${entryId}/workbook-relations`,
+        params: ({scope, workbookId}, headers) => ({
+            query: {
+                workbookId,
+                scope,
             },
             headers,
         }),

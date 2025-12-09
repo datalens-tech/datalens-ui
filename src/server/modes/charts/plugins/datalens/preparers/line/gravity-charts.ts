@@ -23,12 +23,12 @@ import {
     isMarkupField,
     isNumberField,
 } from '../../../../../../../shared';
-import {getBaseChartConfig} from '../../gravity-charts/utils';
+import {getBaseChartConfig, getYAxisBaseConfig} from '../../gravity-charts/utils';
 import {getFormattedLabel} from '../../gravity-charts/utils/dataLabels';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
 import {getConfigWithActualFieldTypes} from '../../utils/config-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
-import {getAxisType} from '../helpers/axis';
+import {getAxisFormatting, getAxisType} from '../helpers/axis';
 import {getSegmentMap} from '../helpers/segments';
 import type {PrepareFunctionArgs} from '../types';
 
@@ -186,17 +186,32 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
     const segments = sortBy(Object.values(segmentsMap), (s) => s.index);
     const isSplitEnabled = new Set(segments.map((d) => d.index)).size > 1;
 
+    const axisLabelNumberFormat = yPlaceholder
+        ? getAxisFormatting({
+              placeholder: yPlaceholder,
+              visualizationId,
+          })
+        : undefined;
+
     const config: ChartData = {
         series: {
             data: seriesData as ChartSeries[],
         },
         xAxis,
         yAxis: segments.map((d) => {
-            return {
+            const axisBaseConfig = getYAxisBaseConfig({
+                visualization: {placeholders, id: visualizationId},
+            });
+
+            return merge(axisBaseConfig, {
+                labels: {
+                    numberFormat: axisLabelNumberFormat ?? undefined,
+                },
+                lineColor: 'transparent',
                 title: isSplitEnabled ? {text: d.title} : undefined,
                 plotIndex: d.index,
                 position: d.isOpposite ? 'right' : 'left',
-            };
+            });
         }),
         split: {
             enable: isSplitEnabled,
