@@ -22,16 +22,17 @@ import './Row.scss';
 
 const i18n = I18n.keyset('new-workbooks');
 
-type RowProps = {
-    item: WorkbookEntry;
+type RowProps<T extends WorkbookEntry> = {
+    item: T;
     workbook: WorkbookWithPermissions;
     isOpen?: boolean;
-    onRenameEntry?: (data: WorkbookEntry) => void;
-    onDeleteEntry?: (data: WorkbookEntry) => void;
-    onDuplicateEntry?: (data: WorkbookEntry) => void;
-    onCopyEntry?: (data: WorkbookEntry) => void;
-    onShowRelatedClick?: (data: WorkbookEntry) => void;
-    onCopyId?: (data: WorkbookEntry) => void;
+    onRenameEntry?: (data: T) => void;
+    onDeleteEntry?: (data: T) => void;
+    onDuplicateEntry?: (data: T) => void;
+    onCopyEntry?: (data: T) => void;
+    onShowRelatedClick?: (data: T) => void;
+    onCopyId?: (data: T) => void;
+    onUpdateSharedEntryBindings?: (data: T) => void;
 };
 
 const onClickStopPropogation: React.MouseEventHandler = (e) => {
@@ -41,7 +42,7 @@ const onClickStopPropogation: React.MouseEventHandler = (e) => {
 
 const b = block('dl-content-row');
 
-const Row: React.FC<RowProps> = ({
+const Row = <T extends WorkbookEntry>({
     item,
     workbook,
     onRenameEntry,
@@ -50,10 +51,10 @@ const Row: React.FC<RowProps> = ({
     onCopyEntry,
     onShowRelatedClick,
     onCopyId,
-}) => {
+    onUpdateSharedEntryBindings,
+}: RowProps<T>) => {
     const {getWorkbookEntryUrl} = registry.workbooks.functions.getAll();
     const {getLoginById} = registry.common.functions.getAll();
-
     const dispatch: AppDispatch = useDispatch();
 
     const url = getWorkbookEntryUrl(item, workbook);
@@ -156,6 +157,10 @@ const Row: React.FC<RowProps> = ({
                                     onShowRelatedClick && (() => onShowRelatedClick(item))
                                 }
                                 onCopyId={onCopyId && (() => onCopyId(item))}
+                                onUpdateSharedEntryBindings={
+                                    onUpdateSharedEntryBindings &&
+                                    (() => onUpdateSharedEntryBindings(item))
+                                }
                             />
                         </div>
                     )}

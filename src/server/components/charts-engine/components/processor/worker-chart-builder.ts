@@ -9,11 +9,7 @@ import type {
 } from '../../../../../shared';
 import {getFieldUISettings, getServerFeatures} from '../../../../../shared';
 import type {SourceRequests} from '../../../../modes/charts/plugins/datalens/url/types';
-import {
-    COLOR_PALETTES_SOURCE,
-    getColorPalettesRequest,
-    isCustomColorPaletteId,
-} from '../../../../modes/charts/plugins/helpers/color-palettes';
+import {addColorPaletteRequest} from '../../../../modes/charts/plugins/helpers/color-palettes';
 import {registry} from '../../../../registry';
 import {getDefaultColorPaletteId} from '../utils';
 import type {WizardWorker} from '../wizard-worker/types';
@@ -140,21 +136,18 @@ export const getWizardChartBuilder = async (
             const timeStart = process.hrtime();
 
             const result: SourceRequests = {};
-            const hasFieldWithCustomPalette = Object.values(sources).some((s) => {
-                return (s.datasetFields ?? []).some((d) => {
+
+            addColorPaletteRequest({result, colorPaletteId: defaultColorPaletteId, palettes});
+            Object.values(sources).forEach((s) => {
+                return (s.datasetFields ?? []).forEach((d) => {
                     const uiSettings = getFieldUISettings({field: d});
                     const palette = uiSettings?.palette;
 
-                    return palette && isCustomColorPaletteId(palette, palettes);
+                    if (palette) {
+                        addColorPaletteRequest({result, colorPaletteId: palette, palettes});
+                    }
                 });
             });
-
-            if (
-                hasFieldWithCustomPalette ||
-                isCustomColorPaletteId(defaultColorPaletteId, palettes)
-            ) {
-                result[COLOR_PALETTES_SOURCE] = getColorPalettesRequest();
-            }
 
             return {
                 exports: result,

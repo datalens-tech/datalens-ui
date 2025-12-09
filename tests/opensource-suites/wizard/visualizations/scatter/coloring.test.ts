@@ -14,7 +14,7 @@ datalensTest.describe('Wizard', () => {
             await openTestPage(page, config.wizard.urls.WizardBasicDataset);
             const wizardPage = new WizardPage({page});
             await wizardPage.createNewFieldWithFormula('sum', 'sum([Sales])');
-            await wizardPage.setVisualization(WizardVisualizationId.ScatterD3);
+            await wizardPage.setVisualization(WizardVisualizationId.Scatter);
         });
 
         datalensTest(
