@@ -55,6 +55,7 @@ import {LOCK_DURATION, Mode} from '../../modules/constants';
 import type {CopiedConfigContext} from '../../modules/helpers';
 import {collectDashStats} from '../../modules/pushStats';
 import {DashUpdateStatus} from '../../typings/dash';
+import {isItemGlobal} from '../../utils/selectors';
 import {DASH_EDIT_HISTORY_UNIT_ID} from '../constants';
 import * as actionTypes from '../constants/dashActionTypes';
 import {isWidgetVisibleOnTab} from '../reducers/dashHelpers';
@@ -66,7 +67,6 @@ import {
     selectEntryId,
 } from '../selectors/dashTypedSelectors';
 import type {DashState, UpdateTabsWithGlobalStateArgs} from '../typings/dash';
-import {isItemGlobal} from '../utils';
 
 import {save} from './base/actions';
 import {migrateDataSettings, processTabForGlobalUpdate} from './helpers';

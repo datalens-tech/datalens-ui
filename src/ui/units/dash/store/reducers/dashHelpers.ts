@@ -13,9 +13,13 @@ import type {
 import {DashTabItemType} from 'shared';
 import type {ImpactTabsIds, ImpactType} from 'shared/types/dash';
 
-import {isGlobalWidgetVisibleByMainSetting, isGroupItemVisibleOnTab} from '../../utils/selectors';
-import type {DashState, GlobalItem} from '../typings/dash';
-import {isItemGlobal} from '../utils';
+import type {GlobalItem} from '../../typings/dash';
+import {
+    isGlobalWidgetVisibleByMainSetting,
+    isGroupItemVisibleOnTab,
+    isItemGlobal,
+} from '../../utils/selectors';
+import type {DashState} from '../typings/dash';
 
 // Tab properties that can be updated
 export const TAB_PROPERTIES = [

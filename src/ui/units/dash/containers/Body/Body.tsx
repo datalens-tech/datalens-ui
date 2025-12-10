@@ -106,10 +106,10 @@ import {
     selectTabHashState,
     selectTabs,
 } from '../../store/selectors/dashTypedSelectors';
-import {isItemGlobal} from '../../store/utils';
 import {dispatchDashLoadedEvent} from '../../utils/customEvents';
 import {getCustomizedProperties} from '../../utils/dashkitProps';
 import {scrollIntoView} from '../../utils/scrollUtils';
+import {isItemGlobal} from '../../utils/selectors';
 import {
     FixedHeaderContainer,
     FixedHeaderControls,

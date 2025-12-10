@@ -1,6 +1,8 @@
-import {Feature} from 'shared';
-import type {ImpactTabsIds, ImpactType} from 'shared/types/dash';
+import {DashTabItemType, Feature} from 'shared';
+import type {DashTabItemGroupControlData, ImpactTabsIds, ImpactType} from 'shared/types/dash';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+
+import type {GlobalItem} from '../typings/dash';
 
 export interface ImpactTypeItem {
     impactType?: ImpactType;
@@ -78,3 +80,41 @@ export const isGroupItemVisibleOnTab = ({
 export const getAllTabItems = <T>(tab: {items: T[]; globalItems?: T[]}) => {
     return tab.items.concat(tab.globalItems || []);
 };
+
+function isControlGlobal(impactType?: ImpactType, impactTabsIds?: ImpactTabsIds): boolean {
+    return (
+        impactType === 'allTabs' ||
+        (impactType === 'selectedTabs' && Boolean(impactTabsIds && impactTabsIds?.length > 0))
+    );
+}
+
+function isGroupControlGlobal(itemData: Partial<DashTabItemGroupControlData>): boolean {
+    const groupImpactType = itemData.impactType;
+    const groupImpactTabsIds = itemData.impactTabsIds;
+    const isGroupSettingApplied = itemData.group?.some(
+        (selector) => selector.impactType === undefined || selector.impactType === 'asGroup',
+    );
+
+    if (isGroupSettingApplied && isControlGlobal(groupImpactType, groupImpactTabsIds)) {
+        return true;
+    }
+
+    return Boolean(
+        itemData.group?.some((selector) =>
+            isControlGlobal(selector.impactType, selector.impactTabsIds),
+        ),
+    );
+}
+
+export function isItemGlobal(item: GlobalItem): boolean {
+    if (item.type === DashTabItemType.Control) {
+        const controlData = item.data;
+        return isControlGlobal(controlData.impactType, controlData.impactTabsIds);
+    }
+
+    if (item.type === DashTabItemType.GroupControl) {
+        return isGroupControlGlobal(item.data);
+    }
+
+    return false;
+}
