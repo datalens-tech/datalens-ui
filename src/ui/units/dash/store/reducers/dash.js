@@ -14,9 +14,8 @@ import {getUpdatedBackgroundValue, getUpdatedConnections} from 'ui/utils/copyIte
 import {EMBEDDED_MODE} from '../../../../constants/embedded';
 import {Mode} from '../../modules/constants';
 import {getUniqIdsFromDashData} from '../../modules/helpers';
-import {getAllTabItems} from '../../utils/selectors';
+import {getAllTabItems, isItemGlobal} from '../../utils/selectors';
 import * as actionTypes from '../constants/dashActionTypes';
-import {isItemGlobal} from '../utils';
 
 import {
     TAB_PROPERTIES,
