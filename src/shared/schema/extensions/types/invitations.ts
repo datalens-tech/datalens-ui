@@ -1,4 +1,4 @@
-import {ResourceType} from './iam-access-dialog';
+import type {ResourceType} from './iam-access-dialog';
 
 export type Invite = {
     invitee: {
