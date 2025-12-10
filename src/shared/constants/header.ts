@@ -42,5 +42,6 @@ export const SERVICE_USER_ACCESS_TOKEN_HEADER = 'x-dl-service-user-access-token'
 export const CSP_HEADER = 'content-security-policy';
 export const CSP_REPORT_TO_HEADER = 'report-to';
 export const SET_COOKIE_HEADER = 'set-cookie';
+export const AUDIT_MODE_HEADER = 'x-dl-audit-mode-enabled';
 
 export const SCR_USER_AGENT_HEADER_VALUE = 'StatScreenshooter';
