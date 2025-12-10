@@ -79,6 +79,9 @@ export const CHANGE_FILTERS = Symbol('workbooks/CHANGE_FILTERS');
 // Add the name of the current workflow for navigation in entries
 export const ADD_WORKBOOK_INFO = Symbol('workbooks/ADD_WORKBOOK_INFO');
 
+// Add breadcrumbs for collection entries
+export const ADD_COLLECTION_BREADCRUMBS = Symbol('workbooks/ADD_COLLECTION_BREADCRUMBS');
+
 // Reset permissions of the current workflow
 export const RESET_WORKBOOK_PERMISSIONS = Symbol('workbooks/RESET_WORKBOOK_PERMISSIONS');
 

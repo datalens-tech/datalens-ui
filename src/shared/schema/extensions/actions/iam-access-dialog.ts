@@ -9,9 +9,12 @@ import type {
     GetClaimsResponse,
     ListCollectionAccessBindingsArgs,
     ListCollectionAccessBindingsResponse,
+    ListSharedEntryAccessBindingsArgs,
+    ListSharedEntryAccessBindingsResponse,
     ListWorkbookAccessBindingsArgs,
     ListWorkbookAccessBindingsResponse,
     UpdateCollectionAccessBindingsArgs,
+    UpdateSharedEntryAccessBindingsArgs,
     UpdateWorkbookAccessBindingsArgs,
 } from '../types';
 
@@ -33,6 +36,16 @@ export const iamAccessDialogActions = {
     updateWorkbookAccessBindings: createAction<
         GetDatalensOperationResponse,
         UpdateWorkbookAccessBindingsArgs
+    >(async () => {
+        return {} as GetDatalensOperationResponse;
+    }),
+    listSharedEntryAccessBindings: createAction<
+        ListSharedEntryAccessBindingsResponse,
+        ListSharedEntryAccessBindingsArgs
+    >(async () => []),
+    updateSharedEntryAccessBindings: createAction<
+        GetDatalensOperationResponse,
+        UpdateSharedEntryAccessBindingsArgs
     >(async () => {
         return {} as GetDatalensOperationResponse;
     }),

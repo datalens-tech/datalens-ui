@@ -1,5 +1,6 @@
 import React from 'react';
 
+import type {CollectionId} from 'shared';
 import type {SDK} from 'ui';
 
 import type {DatasetTab} from '../../constants';
@@ -15,7 +16,7 @@ type Props = {
     datasetId?: string;
     forwardedRef?: React.ForwardedRef<React.Component>;
     workbookId?: string | null;
-    collectionId?: string;
+    collectionId?: CollectionId;
 };
 
 function DatasetTabViewer(props: Props) {

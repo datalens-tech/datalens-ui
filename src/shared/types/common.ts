@@ -183,10 +183,6 @@ export type DLGlobalData = {
         features?: Record<string, unknown>;
     };
     userIsOrgAdmin?: boolean;
-    licenseExpirationWarningDays?: number | null;
-    hasBillingAccountProblems?: boolean;
-    licenseLimitMoreThanOne?: boolean;
-    hasActiveLicense?: boolean;
     tenantSettings?: TenantSettings;
     allowLanguages?: Language[];
     langRegion?: string;
@@ -200,6 +196,8 @@ export type DLGlobalData = {
                 editor: string;
                 viewer: string;
                 limitedViewer?: string;
+                entryBindingCreator?: string;
+                limitedEntryBindingCreator?: string;
             };
         };
         workbook: {
@@ -208,6 +206,16 @@ export type DLGlobalData = {
                 editor: string;
                 viewer: string;
                 limitedViewer?: string;
+            };
+        };
+        sharedEntry: {
+            roles: {
+                admin: string;
+                editor: string;
+                viewer: string;
+                limitedViewer?: string;
+                entryBindingCreator?: string;
+                limitedEntryBindingCreator?: string;
             };
         };
     };

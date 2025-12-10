@@ -4,6 +4,7 @@ import {i18n} from 'i18n';
 import {useDispatch} from 'react-redux';
 import type {ChartActivityResponseData, DashChartRequestContext, StringParams} from 'shared';
 import {DIALOG_DEFAULT} from 'ui/components/DialogDefault/DialogDefault';
+import {YfmWrapper} from 'ui/components/YfmWrapper/YfmWrapper';
 import type {ResponseError} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
 import {ChartsDataProvider} from 'ui/libs/DatalensChartkit/modules/data-provider/charts';
 import type {
@@ -51,10 +52,9 @@ export const useChartActivities = ({
                             title,
                             type,
                             content: (
-                                <div
-                                    dangerouslySetInnerHTML={{
-                                        __html: renderMarkdown(String(content)),
-                                    }}
+                                <YfmWrapper
+                                    setByInnerHtml={true}
+                                    content={renderMarkdown(content)}
                                 />
                             ),
                         }),
@@ -76,10 +76,9 @@ export const useChartActivities = ({
                                 onCancel: () => dispatch(closeDialog()),
                                 caption: title,
                                 message: (
-                                    <div
-                                        dangerouslySetInnerHTML={{
-                                            __html: renderMarkdown(content),
-                                        }}
+                                    <YfmWrapper
+                                        setByInnerHtml={true}
+                                        content={renderMarkdown(content)}
                                     />
                                 ),
                             },
@@ -103,8 +102,17 @@ export const useChartActivities = ({
         [dispatch, onChange],
     );
 
+    const inProgressRef = React.useRef(false);
+
     const runActivity: RunActivityFn = React.useCallback(
         async ({params}: RunActivityArgs) => {
+            // blocking the run until the previous one ends
+            if (inProgressRef.current) {
+                return null;
+            }
+
+            inProgressRef.current = true;
+
             let responseData: ChartActivityResponseData | null;
             try {
                 responseData = await dataProvider.makeActivityRequest({
@@ -144,6 +152,9 @@ export const useChartActivities = ({
             }
 
             onActivityComplete?.({responseData});
+            inProgressRef.current = false;
+
+            return responseData;
         },
         [
             dataProvider,

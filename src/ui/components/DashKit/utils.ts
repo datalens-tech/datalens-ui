@@ -2,9 +2,9 @@ import React from 'react';
 import type {CSSProperties} from 'react';
 
 import type {PluginWidgetProps} from '@gravity-ui/dashkit';
-import {type ThemeType, useThemeType} from '@gravity-ui/uikit';
 import type {BackgroundSettings, DashTabItemControlElement} from 'shared';
 import {CustomPaletteBgColors, LIKE_CHART_COLOR_TOKEN} from 'shared/constants/widgets';
+import {getResultedOldBgColor} from 'shared/modules/dash-scheme-converter';
 
 import {DL} from '../../constants';
 import {
@@ -316,43 +316,13 @@ export function usePreparedWrapSettings({
     additionalStyle?: CSSProperties;
     defaultOldColor: string;
 }) {
-    const theme = useThemeType();
     return React.useMemo(
         () =>
             getPreparedWrapSettings(
-                getResultedBgColor(widgetBackground, theme, defaultOldColor) ??
-                    getResultedBgColor(globalBackground, theme, defaultOldColor),
+                getResultedOldBgColor(widgetBackground, defaultOldColor) ??
+                    getResultedOldBgColor(globalBackground, defaultOldColor),
                 additionalStyle,
             ),
-        [widgetBackground, globalBackground, additionalStyle, theme, defaultOldColor],
+        [widgetBackground, globalBackground, additionalStyle, defaultOldColor],
     );
-}
-
-function getResultedBgColor(
-    bgColor: BackgroundSettings | undefined,
-    _theme: ThemeType, // it would be used in next PR
-    defaultColor: string,
-): string | undefined {
-    if (!bgColor) {
-        return defaultColor;
-    }
-    if (typeof bgColor === 'string') {
-        // where was a bug, when new Textwidgets were created with background color set by string
-        return bgColor;
-    }
-    if (typeof bgColor.color === 'string' || bgColor.color === undefined) {
-        if ('enabled' in bgColor && bgColor.enabled === false) {
-            if (bgColor.color === CustomPaletteBgColors.NONE) {
-                // where was a bug, when new widgets were created with background color set to transparent, but enabled set to false
-                return CustomPaletteBgColors.NONE;
-            }
-            return defaultColor;
-        }
-        if (!bgColor.color) {
-            return defaultColor;
-        }
-        return bgColor.color;
-    }
-
-    return defaultColor;
 }

@@ -139,6 +139,8 @@ export default {
                 editor: 'datalens.collections.editor',
                 viewer: 'datalens.collections.viewer',
                 limitedViewer: 'datalens.collections.limitedViewer',
+                entryBindingCreator: 'datalens.collections.entryBindingCreator',
+                limitedEntryBindingCreator: 'datalens.collections.limitedEntryBindingCreator',
             },
         },
         workbook: {
@@ -147,6 +149,16 @@ export default {
                 editor: 'datalens.workbooks.editor',
                 viewer: 'datalens.workbooks.viewer',
                 limitedViewer: 'datalens.workbooks.limitedViewer',
+            },
+        },
+        sharedEntry: {
+            roles: {
+                admin: 'datalens.sharedEntries.admin',
+                editor: 'datalens.sharedEntries.editor',
+                viewer: 'datalens.sharedEntries.viewer',
+                limitedViewer: 'datalens.sharedEntries.limitedViewer',
+                entryBindingCreator: 'datalens.sharedEntries.entryBindingCreator',
+                limitedEntryBindingCreator: 'datalens.sharedEntries.limitedEntryBindingCreator',
             },
         },
     },

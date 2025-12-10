@@ -20,11 +20,14 @@ import type {
     EntryMetaFields,
     EntryNavigationFields,
     EntryRelationFields,
+    SharedEntryPermissions,
+    SharedEntryRelationFields,
 } from './fields';
 
 export interface GetEntryResponse extends EntryFields {
     isFavorite: boolean;
     permissions?: Permissions;
+    fullPermissions?: SharedEntryPermissions;
     isLocked?: boolean;
     links?: EntryFieldLinks;
     parentDashEntryId?: string;
@@ -310,4 +313,14 @@ export type SharedEntryBindingsItem = {
 
 export type GetSharedEntryBindingsResponse = {
     items: SharedEntryBindingsItem[];
+};
+
+export type GetSharedEntryWorkbookRelationsArgs = {
+    entryId: string;
+    workbookId: string;
+    scope?: `${EntryScope}`;
+};
+
+export type GetSharedEntryWorkbookRelationsResponse = {
+    relations: SharedEntryRelationFields[];
 };

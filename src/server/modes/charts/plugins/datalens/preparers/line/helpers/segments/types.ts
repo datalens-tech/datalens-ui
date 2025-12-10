@@ -22,5 +22,6 @@ export type SegmentsMap = Record<
         title: string;
         index: number;
         isOpposite: boolean;
+        plotIndex?: number;
     }
 >;

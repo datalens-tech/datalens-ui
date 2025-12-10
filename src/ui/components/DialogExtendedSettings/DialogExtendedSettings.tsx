@@ -8,11 +8,12 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {DialogGroupControlQa, TitlePlacementOption} from 'shared';
 import {BackButton} from 'ui/components/ControlComponents/BackButton/BackButton';
-import {updateSelectorsGroup} from 'ui/store/actions/controlDialog';
+import {updateSelectorsGroup} from 'ui/store/actions/controlDialog/controlDialog';
 import {selectSelectorsGroup} from 'ui/store/selectors/controlDialog';
 import type {SelectorDialogState} from 'ui/store/typings/controlDialog';
 
 import {CONTROLS_PLACEMENT_MODE} from '../../constants/dialogs';
+import {ImpactTypeSelect} from '../ControlComponents/Sections/CommonSettingsSection/ImpactTypeSelect/ImpactTypeSelect';
 import {FormSection} from '../FormSection/FormSection';
 
 import {ControlPlacementRow} from './ControlPlacementRow/ControlPlacementRow';
@@ -27,6 +28,7 @@ export type ExtendedSettingsDialogProps = {
     selectorsGroupTitlePlaceholder?: string;
     enableAutoheightDefault?: boolean;
     showSelectorsGroupTitle?: boolean;
+    enableGlobalSelectors?: boolean;
 };
 
 export type OpenDialogExtendedSettingsArgs = {
@@ -48,6 +50,7 @@ const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
     selectorsGroupTitlePlaceholder,
     enableAutoheightDefault,
     showSelectorsGroupTitle,
+    enableGlobalSelectors,
 }) => {
     const selectorsGroup = useSelector(selectSelectorsGroup);
     const [itemsState, setItemsState] = React.useState(selectorsGroup.group);
@@ -229,6 +232,7 @@ const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
             // we allow to enable autoheight
             selectorsGroup.group[0].titlePlacement === TitlePlacementOption.Top);
     const showUpdateControlsOnChange = selectorsGroup.buttonApply && isMultipleSelectors;
+    const showImpactTypeSelect = isMultipleSelectors && enableGlobalSelectors;
 
     return (
         <Dialog onClose={onClose} open={true} className={b()}>
@@ -326,6 +330,14 @@ const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                                 qa={DialogGroupControlQa.updateControlOnChangeCheckbox}
                             />
                         </FormRow>
+                    )}
+
+                    {showImpactTypeSelect && (
+                        <ImpactTypeSelect
+                            isGroupSettings={true}
+                            groupImpactType={selectorsGroup.impactType}
+                            groupImpactTabsIds={selectorsGroup.impactTabsIds}
+                        />
                     )}
                 </FormSection>
                 {isMultipleSelectors && (

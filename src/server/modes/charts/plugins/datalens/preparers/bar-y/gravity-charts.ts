@@ -15,7 +15,6 @@ import {
 import type {ExtendedChartData} from '../../../../../../../shared/types/chartkit';
 import {getBaseChartConfig} from '../../gravity-charts/utils';
 import {getFieldFormatOptions} from '../../gravity-charts/utils/format';
-import type {ColorValue} from '../../utils/color-helpers';
 import {colorizeByColorValues} from '../../utils/color-helpers';
 import {getExportColumnSettings} from '../../utils/export-helpers';
 import {getAxisFormatting} from '../helpers/axis';
@@ -64,9 +63,15 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
         s.data.some((d: any) => !d.color && d.colorValue),
     );
     if (shouldSetColorByValues) {
-        const colorValues = graphs
-            .map((s) => s.data.map((point: any) => Number(point.colorValue) as ColorValue))
-            .flat(2);
+        const colorValues: number[] = [];
+        graphs.forEach((s) => {
+            s.data.forEach((d: any) => {
+                const colorValue = Number(d.colorValue);
+                if (Number.isFinite(colorValue)) {
+                    colorValues.push(colorValue);
+                }
+            });
+        });
 
         const gradientColors = colorizeByColorValues({colorsConfig, colorValues});
 
@@ -118,11 +123,18 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
                 html: shouldUseHtmlForLabels,
                 format: labelFormatting,
             },
+            tooltip: graph.tooltip?.chartKitFormatting
+                ? {
+                      valueFormat: {
+                          type: 'number',
+                          precision: graph.tooltip.chartKitPrecision,
+                      },
+                  }
+                : undefined,
             custom: {
                 ...graph.custom,
                 colorValue: graph.colorValue,
                 exportSettings,
-                oldDataLabels: graph.dataLabels,
             },
         } as BarYSeries;
     });

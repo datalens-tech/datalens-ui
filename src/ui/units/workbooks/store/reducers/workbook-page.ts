@@ -6,6 +6,7 @@ import type {
     GetCollectionBreadcrumbsResponse,
     GetEntryResponse,
     GetWorkbookEntriesResponse,
+    GetWorkbookSharedEntriesResponse,
     RenameEntryResponse,
     WorkbookPermission,
     WorkbookWithPermissions,
@@ -15,6 +16,7 @@ import type {CreateEntryActionType} from '../../constants';
 import type {WorkbookEntriesFilters} from '../../types';
 import type {WorkbooksAction} from '../actions';
 import {
+    ADD_COLLECTION_BREADCRUMBS,
     ADD_WORKBOOK_INFO,
     BIND_SHARED_ENTRY_TO_WORKBOOK_FAILED,
     BIND_SHARED_ENTRY_TO_WORKBOOK_LOADING,
@@ -69,7 +71,7 @@ export type WorkbooksState = {
         isLoading: boolean;
         error: Error | null;
     };
-    sharedItems: GetWorkbookEntriesResponse['entries'];
+    sharedItems: GetWorkbookSharedEntriesResponse['entries'];
     items: GetWorkbookEntriesResponse['entries'];
     getWorkbook: {
         isLoading: boolean;
@@ -102,7 +104,7 @@ export type WorkbooksState = {
     filters: WorkbookEntriesFilters;
     workbooksNames: Record<string, string>;
     workbookPermissions: WorkbookPermission | null;
-    workbookBreadcrumbs: GetCollectionBreadcrumbsResponse | null;
+    entityBreadcrumbs: GetCollectionBreadcrumbsResponse | null;
 };
 
 const initialState: WorkbooksState = {
@@ -157,7 +159,7 @@ const initialState: WorkbooksState = {
     },
     workbooksNames: {},
     workbookPermissions: null,
-    workbookBreadcrumbs: null,
+    entityBreadcrumbs: null,
 };
 
 // eslint-disable-next-line complexity
@@ -583,7 +585,14 @@ export const workbooksReducer = (state: WorkbooksState = initialState, action: W
                     [action.data.workbookId]: action.data.workbookName,
                 },
                 workbookPermissions: action.data.workbookPermissions,
-                workbookBreadcrumbs: action.data.workbookBreadcrumbs,
+                entityBreadcrumbs: action.data.workbookBreadcrumbs,
+            };
+        }
+
+        case ADD_COLLECTION_BREADCRUMBS: {
+            return {
+                ...state,
+                entityBreadcrumbs: action.data,
             };
         }
 
