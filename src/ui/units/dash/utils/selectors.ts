@@ -7,57 +7,74 @@ export interface ImpactTypeItem {
     impactTabsIds?: ImpactTabsIds;
 }
 
-export const isItemScopeAvailableOnTab = (
-    currentTabId: string,
+const isItemVisibleOnTab = (
+    tabId?: string | null,
     itemImpactType?: ImpactType,
     itemImpactTabsIds?: ImpactTabsIds,
 ): boolean => {
+    if (!tabId) {
+        return false;
+    }
+
     switch (itemImpactType) {
         case 'allTabs':
             return true;
         case 'currentTab':
         case 'selectedTabs':
-            return itemImpactTabsIds ? itemImpactTabsIds.includes(currentTabId) : true;
+            return itemImpactTabsIds ? itemImpactTabsIds.includes(tabId) : false;
         default:
             return false;
     }
 };
 
-export const isGroupSettingAvailableOnTab = (
-    currentTabId: string,
+const isItemVisibleOnTabByGroup = (isVisibleByGroupSetting: boolean, impactType?: ImpactType) => {
+    return (impactType === undefined || impactType === 'asGroup') && isVisibleByGroupSetting;
+};
+
+export const isGlobalWidgetVisibleByMainSetting = (
+    tabId: string,
     groupImpactType?: ImpactType,
     groupImpactTabsIds?: ImpactTabsIds,
 ): boolean => {
-    if (!groupImpactType || groupImpactType === 'asGroup') {
+    if (!groupImpactType) {
         return true;
     }
 
-    return isItemScopeAvailableOnTab(currentTabId, groupImpactType, groupImpactTabsIds);
+    return isItemVisibleOnTab(tabId, groupImpactType, groupImpactTabsIds);
 };
 
-export const isControlItemVisibleOnCurrentTab = (
-    item: {impactType?: ImpactType; impactTabsIds?: ImpactTabsIds},
-    currentTabId: string | null,
-    groupImpactType?: ImpactType,
-    groupImpactTabsIds?: ImpactTabsIds,
-): boolean => {
-    if (!isEnabledFeature(Feature.EnableGlobalSelectors) || !currentTabId) {
+export const isGroupItemVisibleOnTab = ({
+    item,
+    tabId,
+    groupImpactType,
+    groupImpactTabsIds,
+    isVisibleByMainSetting,
+}: {
+    item: {impactType?: ImpactType; impactTabsIds?: ImpactTabsIds};
+    tabId: string | null;
+    groupImpactType?: ImpactType;
+    groupImpactTabsIds?: ImpactTabsIds;
+    isVisibleByMainSetting?: boolean;
+}): boolean => {
+    if (!isEnabledFeature(Feature.EnableGlobalSelectors) || !tabId) {
         return true;
     }
 
     const isGroupSettingPrevailing = item.impactType === undefined || item.impactType === 'asGroup';
-    const isGroupAvailable = isGroupSettingAvailableOnTab(
-        currentTabId,
-        groupImpactType,
-        groupImpactTabsIds,
-    );
+    const isVisibleByGroupSetting =
+        isVisibleByMainSetting ??
+        isGlobalWidgetVisibleByMainSetting(tabId, groupImpactType, groupImpactTabsIds);
 
-    if (isGroupSettingPrevailing && isGroupAvailable) {
+    if (isGroupSettingPrevailing && isVisibleByGroupSetting) {
         return true;
     }
 
     return (
-        isItemScopeAvailableOnTab(currentTabId, item.impactType, item.impactTabsIds) ||
-        ((item.impactType === undefined || item.impactType === 'asGroup') && isGroupAvailable)
+        isItemVisibleOnTabByGroup(isVisibleByGroupSetting, item.impactType) ||
+        isItemVisibleOnTab(tabId, item.impactType, item.impactTabsIds)
     );
+};
+
+export const getAllTabItems = <T>(tab: {items: T[]; globalItems?: T[]}) => {
+    return tab.items.concat(tab.globalItems || []);
 };
