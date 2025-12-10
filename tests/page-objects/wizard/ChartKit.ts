@@ -3,6 +3,7 @@ import {Page} from '@playwright/test';
 import {ChartkitMenuDialogsQA, ChartKitTableQa, ChartQa, MenuItemsQA} from '../../../src/shared';
 import {slct, waitForCondition} from '../../utils';
 import {readDownload} from '../../utils/playwright/utils';
+import {COMMON_CHARTKIT_SELECTORS} from '../constants/chartkit';
 
 export enum DOMNamedAttributes {
     StrokeDashArray = 'stroke-dasharray',
@@ -23,7 +24,7 @@ export default class ChartKit {
     geopointSelector = '.chartkit-yandex-map-chips';
     tooltipSelector = '.chartkit-tooltip';
     yMapSelector = '.chartkit-ymap';
-    legendItemSelector = '.highcharts-legend-item';
+    legendItemSelector = COMMON_CHARTKIT_SELECTORS.chartLegendItem;
     chartMenuSwitcher = slct('chart-dropdown-switcher');
     chartMenuList = slct('chart-dropdown-menu');
     commentsSelector = '.highcharts-comment';
@@ -251,7 +252,7 @@ export default class ChartKit {
             lines = await this.page.evaluate(
                 ({attribute}: {attribute: DOMNamedAttributes}) => {
                     const lineNodes = document.querySelectorAll(
-                        '.highcharts-series .highcharts-graph',
+                        '.highcharts-series .highcharts-graph, .gcharts-line path',
                     );
                     return Array.from(lineNodes)
                         .map((lineEl) => lineEl.attributes.getNamedItem(attribute)?.value)

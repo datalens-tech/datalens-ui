@@ -136,7 +136,7 @@ datalensTest.describe('Dashboards - Widgets loading', () => {
 
             // check that the widget content is not loaded
             await waitForCondition(async () => {
-                const elems = await page.$$(`.${COMMON_CHARTKIT_SELECTORS.graph}`);
+                const elems = await page.$$(COMMON_CHARTKIT_SELECTORS.chart);
                 return elems.length === 0;
             });
 
@@ -153,7 +153,7 @@ datalensTest.describe('Dashboards - Widgets loading', () => {
             await page
                 .locator(SELECTORS.CHART_LINE_ITEM)
                 .first()
-                .or(page.locator(`.${COMMON_CHARTKIT_SELECTORS.graph}`))
+                .or(page.locator(COMMON_CHARTKIT_SELECTORS.chart))
                 .waitFor({state: 'visible'});
 
             await dashboardPage.exitEditMode();
