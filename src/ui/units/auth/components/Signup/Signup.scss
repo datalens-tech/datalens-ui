@@ -1,22 +1,13 @@
 .dl-signup {
     $class: &;
     height: 100%;
-    background-color: var(--g-color-base-misc-light);
 
     &__form-container {
         background-color: var(--g-color-base-background);
-        border-radius: var(--g-border-radius-l);
+        border-radius: 32px;
         width: 720px;
         min-height: 200px;
         padding: 48px;
-    }
-
-    &_rebranding {
-        background-color: unset;
-
-        #{$class}__form-container {
-            box-shadow: 0 30px 100px 0 rgba(0, 0, 0, 0.25);
-            border-radius: 32px;
-        }
+        box-shadow: 0 30px 100px 0 rgba(0, 0, 0, 0.25);
     }
 }
