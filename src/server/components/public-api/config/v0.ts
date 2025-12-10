@@ -113,7 +113,7 @@ export const getPublicApiActionsV0 = <
 
         // Dashboard
         getDashboard: {
-            resolve: (api) => api.mix.__getDashboard__,
+            resolve: (api) => api.mix.getDashboardV1,
             openApi: {
                 summary: 'Get dashboard',
                 tags: [ApiTag.Dashboard],
@@ -121,7 +121,7 @@ export const getPublicApiActionsV0 = <
             },
         },
         createDashboard: {
-            resolve: (api) => api.mix.__createDashboard__,
+            resolve: (api) => api.mix.createDashboardV1,
             openApi: {
                 summary: 'Create dashboard',
                 tags: [ApiTag.Dashboard],
@@ -129,7 +129,7 @@ export const getPublicApiActionsV0 = <
             },
         },
         updateDashboard: {
-            resolve: (api) => api.mix.__updateDashboard__,
+            resolve: (api) => api.mix.updateDashboardV1,
             openApi: {
                 summary: 'Update dashboard',
                 tags: [ApiTag.Dashboard],
@@ -137,7 +137,7 @@ export const getPublicApiActionsV0 = <
             },
         },
         deleteDashboard: {
-            resolve: (api) => api.mix._deleteDashboard,
+            resolve: (api) => api.mix.deleteDashboard,
             openApi: {
                 summary: 'Delete dashboard',
                 tags: [ApiTag.Dashboard],
@@ -209,7 +209,7 @@ export const getPublicApiActionsV0 = <
             },
         },
         deleteQLChart: {
-            resolve: (api) => api.mix._deleteQLChart,
+            resolve: (api) => api.mix.deleteQLChart,
             openApi: {
                 summary: 'Delete QL chart',
                 tags: [ApiTag.QL],
@@ -226,7 +226,7 @@ export const getPublicApiActionsV0 = <
             },
         },
         deleteWizardChart: {
-            resolve: (api) => api.mix._deleteWizardChart,
+            resolve: (api) => api.mix.deleteWizardChart,
             openApi: {
                 summary: 'Delete wizard chart',
                 tags: [ApiTag.Wizard],

@@ -305,7 +305,7 @@ export const load = ({
                     type: SET_STATE,
                     payload: {mode: Mode.Updating},
                 });
-                data = await DashSchemeConverter.update(entry.data);
+                data = DashSchemeConverter.update(entry.data);
                 convertedEntryData = data;
             }
 
