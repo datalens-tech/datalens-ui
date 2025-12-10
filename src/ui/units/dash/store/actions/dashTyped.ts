@@ -58,7 +58,6 @@ import {DashUpdateStatus} from '../../typings/dash';
 import {isItemGlobal} from '../../utils/selectors';
 import {DASH_EDIT_HISTORY_UNIT_ID} from '../constants';
 import * as actionTypes from '../constants/dashActionTypes';
-import {isWidgetVisibleOnTab} from '../reducers/dashHelpers';
 import {
     selectDash,
     selectDashData,
@@ -69,7 +68,7 @@ import {
 import type {DashState, UpdateTabsWithGlobalStateArgs} from '../typings/dash';
 
 import {save} from './base/actions';
-import {migrateDataSettings, processTabForGlobalUpdate} from './helpers';
+import {isWidgetVisibleOnTab, migrateDataSettings, processTabForGlobalUpdate} from './helpers';
 
 import type {DashDispatch} from './index';
 
