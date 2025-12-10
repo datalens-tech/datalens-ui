@@ -114,7 +114,7 @@ export class ChartPage extends BasePage {
         return element.innerText();
     }
 
-    async saveInFolder(folderName: string, entryName: string) {
+    async saveInFolder(folderName: string, entryName: string, useSearch?: boolean) {
         const saveButtonLocator = this.getSaveButtonLocator();
         await saveButtonLocator.click();
 
@@ -122,6 +122,13 @@ export class ChartPage extends BasePage {
         await folderSelect.click();
 
         await this.page.waitForSelector(slct(DlNavigationQA.NavigationMinimal));
+
+        if (useSearch) {
+            const searchInput = this.page
+                .locator(slct(DlNavigationQA.SearchInput))
+                .locator('input');
+            await searchInput.fill(folderName);
+        }
         const folderRow = await this.page.waitForSelector(
             `${slct(DlNavigationQA.Row)} >> text=${folderName}`,
         );
