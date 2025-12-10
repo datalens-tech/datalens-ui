@@ -21,6 +21,11 @@ export enum RequestSourceHeaderValue {
     PublicApi = 'public-api',
 }
 
+export const AUDIT_MODE_HEADER = 'x-dl-audit-mode-enabled';
+export enum AuditModeHeaderValue {
+    True = 'true',
+}
+
 export const REQUEST_ID_HEADER = 'x-request-id';
 export const TRACE_ID_HEADER = 'x-trace-id';
 export const SERVER_TRACE_ID_HEADER = 'x-server-trace-id';
@@ -42,6 +47,5 @@ export const SERVICE_USER_ACCESS_TOKEN_HEADER = 'x-dl-service-user-access-token'
 export const CSP_HEADER = 'content-security-policy';
 export const CSP_REPORT_TO_HEADER = 'report-to';
 export const SET_COOKIE_HEADER = 'set-cookie';
-export const AUDIT_MODE_HEADER = 'x-dl-audit-mode-enabled';
 
 export const SCR_USER_AGENT_HEADER_VALUE = 'StatScreenshooter';
