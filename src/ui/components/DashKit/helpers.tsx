@@ -10,6 +10,7 @@ import {I18n} from 'i18n';
 import type {DashChartRequestContext, StringParams} from 'shared';
 import {DashTabItemControlSourceType, DashTabItemType} from 'shared';
 import {DashKitOverlayMenuQa} from 'shared/constants/qa/dash';
+import type {UpdateTabsWithGlobalStateArgs} from 'ui/units/dash/store/typings/dash';
 import {ExtendedDashKitContext} from 'ui/units/dash/utils/context';
 
 import {getEndpointForNavigation} from '../../libs/DatalensChartkit/modules/navigation';
@@ -115,6 +116,7 @@ interface DashkitWrapperProps extends DashKitProps {
     // Extended headers context for widgets
     dataProviderContextGetter?: (widgetId: string) => DashChartRequestContext;
     setWidgetCurrentTab?: (payload: {widgetId: string; tabId: string}) => void;
+    updateTabsWithGlobalState?: (payload: UpdateTabsWithGlobalStateArgs) => void;
 }
 
 export const DashkitWrapper: React.FC<
@@ -125,7 +127,13 @@ export const DashkitWrapper: React.FC<
         )
 > = React.forwardRef(
     (
-        {skipReload = false, dataProviderContextGetter, setWidgetCurrentTab, ...props},
+        {
+            skipReload = false,
+            dataProviderContextGetter,
+            setWidgetCurrentTab,
+            updateTabsWithGlobalState,
+            ...props
+        },
         ref: React.ForwardedRef<DashKit>,
     ) => {
         const contextValue = React.useMemo(() => {
@@ -134,6 +142,7 @@ export const DashkitWrapper: React.FC<
                 defaultGlobalParams: props.defaultGlobalParams,
                 skipReload,
                 setWidgetCurrentTab,
+                updateTabsWithGlobalState,
                 dataProviderContextGetter,
                 hideErrorDetails: props.hideErrorDetails,
                 selectorsGroupTitlePlaceholder: props.selectorsGroupTitlePlaceholder,
@@ -143,6 +152,7 @@ export const DashkitWrapper: React.FC<
             props.defaultGlobalParams,
             skipReload,
             setWidgetCurrentTab,
+            updateTabsWithGlobalState,
             dataProviderContextGetter,
             props.hideErrorDetails,
             props.selectorsGroupTitlePlaceholder,
