@@ -21,7 +21,7 @@ export enum RequestSourceHeaderValue {
     PublicApi = 'public-api',
 }
 
-export const AUDIT_MODE_HEADER = 'x-dl-audit-mode-enabled';
+export const AUDIT_MODE_HEADER = 'x-dl-audit-mode';
 export enum AuditModeHeaderValue {
     True = 'true',
 }
