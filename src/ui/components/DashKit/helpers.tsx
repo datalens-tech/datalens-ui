@@ -65,7 +65,7 @@ export function getEditLink(configItem: ConfigItem, params: ItemParams, state: I
     return `${endpoint}/${entryId}${queryPrams}`;
 }
 
-export function getDashKitMenu(): Array<MenuItem> {
+export function getDashKitMenu(onRemoveItem?: (configItem: ConfigItem) => void): Array<MenuItem> {
     return [
         {
             id: 'edit',
@@ -100,6 +100,7 @@ export function getDashKitMenu(): Array<MenuItem> {
             icon: <Icon data={TrashBin} size={16} />,
             className: b('item', {danger: true}),
             qa: DashKitOverlayMenuQa.RemoveButton,
+            handler: onRemoveItem,
         },
     ];
 }

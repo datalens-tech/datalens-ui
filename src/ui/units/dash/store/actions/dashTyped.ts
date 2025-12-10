@@ -30,6 +30,7 @@ import type {
     RecursivePartial,
 } from 'shared';
 import {EntryScope, EntryUpdateMode, Feature} from 'shared';
+import {openDialogDefault} from 'ui/components/DialogDefault/DialogDefault';
 import type {AppDispatch} from 'ui/store';
 import {
     addEditHistoryPoint,
@@ -56,6 +57,7 @@ import {collectDashStats} from '../../modules/pushStats';
 import {DashUpdateStatus} from '../../typings/dash';
 import {DASH_EDIT_HISTORY_UNIT_ID} from '../constants';
 import * as actionTypes from '../constants/dashActionTypes';
+import {isWidgetVisibleOnTab} from '../reducers/dashHelpers';
 import {
     selectDash,
     selectDashData,
@@ -1056,7 +1058,24 @@ export const setCopiedItemData = (payload: {
     context?: CopiedConfigContext;
     options: AddNewItemOptions;
 }) => {
-    return (dispatch: DashDispatch) => {
+    return (dispatch: DashDispatch, getState: () => DatalensGlobalState) => {
+        const {tabId} = getState().dash;
+
+        if (tabId && !isWidgetVisibleOnTab({item: payload.item, tabId})) {
+            dispatch(
+                openDialogDefault({
+                    caption: i18n('dash.main.view', 'title_failed-copy-global-item'),
+                    message: i18n('dash.main.view', 'label_failed-copy-global-item'),
+                    textButtonCancel: i18n('dash.main.view', 'button_close'),
+                    propsButtonCancel: {
+                        view: 'action',
+                    },
+                    size: 's',
+                }),
+            );
+            return;
+        }
+
         batch(() => {
             dispatch({
                 type: actionTypes.SET_COPIED_ITEM_DATA as any, // TODO move to TS,
@@ -1137,7 +1156,7 @@ export function updateDeprecatedDashConfig() {
 export const REMOVE_GLOBAL_ITEMS = Symbol('dash/REMOVE_GLOBAL_ITEMS');
 export type RemoveGlobalItemsAction = {
     type: typeof REMOVE_GLOBAL_ITEMS;
-    payload: {items: DashTabItem[]};
+    payload: {itemId: string};
 };
 export const removeGlobalItems = (
     payload: RemoveGlobalItemsAction['payload'],

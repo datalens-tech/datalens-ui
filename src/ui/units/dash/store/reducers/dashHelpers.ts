@@ -1,5 +1,5 @@
 /* eslint-disable complexity */
-import type {Config} from '@gravity-ui/dashkit';
+import type {AddConfigItem, Config} from '@gravity-ui/dashkit';
 import {DashKit} from '@gravity-ui/dashkit';
 import update from 'immutability-helper';
 import type {
@@ -13,7 +13,9 @@ import type {
 import {DashTabItemType} from 'shared';
 import type {ImpactTabsIds, ImpactType} from 'shared/types/dash';
 
-import type {DashState} from '../typings/dash';
+import {isGlobalWidgetVisibleByMainSetting, isGroupItemVisibleOnTab} from '../../utils/selectors';
+import type {DashState, GlobalItem} from '../typings/dash';
+import {isItemGlobal} from '../utils';
 
 // Tab properties that can be updated
 export const TAB_PROPERTIES = [
@@ -401,3 +403,51 @@ export function getGlobalItemsToCopy(tab?: DashTab | null) {
 
     return {globalItems: usedGlobalItems, layout};
 }
+
+export const getCreatedItem = ({
+    isGlobal,
+    items,
+    globalItems,
+}: {
+    isGlobal: boolean;
+    items: DashTabItem[];
+    globalItems: DashTabItem[];
+}) => {
+    return isGlobal ? globalItems[globalItems.length - 1] : items[items.length - 1];
+};
+
+export const isWidgetVisibleOnTab = ({item, tabId}: {item: AddConfigItem; tabId: string}) => {
+    if (item.type !== DashTabItemType.Control && item.type !== DashTabItemType.GroupControl) {
+        return true;
+    }
+
+    const globalItem = item as unknown as GlobalItem;
+
+    if (!isItemGlobal(globalItem)) {
+        return true;
+    }
+
+    const isVisibleByMainSetting = isGlobalWidgetVisibleByMainSetting(
+        tabId,
+        globalItem.data.impactType,
+        globalItem.data.impactTabsIds,
+    );
+
+    if (globalItem.type === DashTabItemType.GroupControl) {
+        for (const groupItem of globalItem.data.group) {
+            if (
+                isGroupItemVisibleOnTab({
+                    item: groupItem,
+                    tabId: tabId,
+                    isVisibleByMainSetting,
+                })
+            ) {
+                return true;
+            }
+        }
+    } else if (isVisibleByMainSetting) {
+        return true;
+    }
+
+    return false;
+};
