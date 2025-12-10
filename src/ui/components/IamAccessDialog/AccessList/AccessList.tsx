@@ -178,7 +178,7 @@ export const AccessList = React.memo<Props>(
             return isLoadingInherited && inheritedAccesses?.length === 0 ? (
                 <SmartLoader size="m" showAfter={0} />
             ) : (
-                <React.Fragment>
+                <>
                     <InheritedAccessesTable data={inheritedAccesses} />
 
                     {footerInheritedAccessesTable}
@@ -190,7 +190,7 @@ export const AccessList = React.memo<Props>(
                             }}
                         />
                     )}
-                </React.Fragment>
+                </>
             );
         };
 
