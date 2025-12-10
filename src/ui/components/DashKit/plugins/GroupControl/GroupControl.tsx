@@ -1,7 +1,7 @@
 import React from 'react';
 
 import {type Plugin, type PluginWidgetProps, type SettingsProps} from '@gravity-ui/dashkit';
-import type {Config, StateAndParamsMetaData} from '@gravity-ui/dashkit/helpers';
+import type {Config, ItemParams, StateAndParamsMetaData} from '@gravity-ui/dashkit/helpers';
 import {getItemsParams, pluginGroupControlBaseDL} from '@gravity-ui/dashkit/helpers';
 import {Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
@@ -24,8 +24,8 @@ import {
     CONTROL_TYPE,
 } from 'ui/libs/DatalensChartkit/modules/constants/constants';
 import {
-    isGroupSettingAvailableOnTab,
-    isItemScopeAvailableOnTab,
+    isGlobalWidgetVisibleByMainSetting,
+    isGroupItemVisibleOnTab,
 } from 'ui/units/dash/utils/selectors';
 import {getUrlGlobalParams} from 'ui/units/dash/utils/url';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -322,7 +322,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         const isGroupSettingPrevailing = controlData.group.every(
             (item) => item.impactType === undefined || item.impactType === 'asGroup',
         );
-        const isGroupAvailableOnTab = isGroupSettingAvailableOnTab(
+        const isGroupAvailableOnTab = isGlobalWidgetVisibleByMainSetting(
             currentTabId,
             controlData.impactType,
             controlData.impactTabsIds,
@@ -332,11 +332,12 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
             return controlData.group;
         }
 
-        return controlData.group.filter(
-            (item) =>
-                ((item.impactType === undefined || item.impactType === 'asGroup') &&
-                    isGroupAvailableOnTab) ||
-                isItemScopeAvailableOnTab(currentTabId, item.impactType, item.impactTabsIds),
+        return controlData.group.filter((item) =>
+            isGroupItemVisibleOnTab({
+                item,
+                tabId: currentTabId,
+                isVisibleByMainSetting: isGroupAvailableOnTab,
+            }),
         );
     }
 
@@ -484,7 +485,7 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         callChangeByClick,
         controlId,
     }: {
-        params: StringParams | Record<string, StringParams>;
+        params: ItemParams;
         callChangeByClick?: boolean;
         controlId?: string;
     }) => {
@@ -494,11 +495,19 @@ class GroupControl extends React.PureComponent<PluginGroupControlProps, PluginGr
         // 1. 'Apply button' is clicked
         // 2. 'Apply button' isn't enabled
         if (!controlData.buttonApply || callChangeByClick) {
-            this.props.onStateAndParamsChange(
-                {params},
-                {groupItemIds: this.getControlsIds({data: controlData, controlId})},
-            );
+            const appliedControlsIds = this.getControlsIds({data: controlData, controlId});
+            this.props.onStateAndParamsChange({params}, {groupItemIds: appliedControlsIds});
             this.localMeta.queue = [];
+
+            this.context?.updateTabsWithGlobalState?.({
+                params,
+                selectorItem: {
+                    type: DashTabItemType.GroupControl,
+                    data: controlData,
+                    id: this.props.id,
+                },
+                appliedSelectorsIds: appliedControlsIds,
+            });
             return;
         }
 

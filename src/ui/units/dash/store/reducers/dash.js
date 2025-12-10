@@ -14,14 +14,15 @@ import {getUpdatedBackgroundValue, getUpdatedConnections} from 'ui/utils/copyIte
 import {EMBEDDED_MODE} from '../../../../constants/embedded';
 import {Mode} from '../../modules/constants';
 import {getUniqIdsFromDashData} from '../../modules/helpers';
+import {getAllTabItems} from '../../utils/selectors';
 import * as actionTypes from '../constants/dashActionTypes';
+import {isItemGlobal} from '../utils';
 
 import {
     TAB_PROPERTIES,
     addGlobalItemToTab,
     getGlobalItemsToCopy,
     getStateForControlWithGlobalLogic,
-    isItemGlobal,
 } from './dashHelpers';
 import {dashTypedReducer} from './dashTypedReducer';
 
@@ -350,6 +351,8 @@ function dash(state = initialState, action) {
                 },
             });
 
+            const allTabItems = getAllTabItems(tabData);
+
             // migration of connections if old selector becomes a group selector
             // 1. state.openedItemId existance means that widget already exist
             // 2. !action.payload.data.group[0].id - first selector doesn't have an id because it was just converted
@@ -361,7 +364,7 @@ function dash(state = initialState, action) {
                 tabData.connections = migrateConnectionsForGroupControl({
                     openedItemId: state.openedItemId,
                     currentTab: tab,
-                    tabDataItems: tabData.items,
+                    tabDataItems: allTabItems,
                 });
             }
 
@@ -378,8 +381,8 @@ function dash(state = initialState, action) {
                 });
 
                 const item = state.openedItemId
-                    ? tabData.items.find((tabItem) => tabItem.id === state.openedItemId)
-                    : tabData.items[tabData.items.length - 1];
+                    ? allTabItems.find((tabItem) => tabItem.id === state.openedItemId)
+                    : allTabItems[tabData.items.length - 1];
 
                 const updatedConnections = getUpdatedConnections({
                     connections: tabData.connections,

@@ -86,6 +86,7 @@ import {
     setStateHashId,
     setWidgetCurrentTab,
     toggleTableOfContent,
+    updateTabsWithGlobalState,
 } from '../../store/actions/dashTyped';
 import {openDialog, openItemDialogAndSetData} from '../../store/actions/dialogs/actions';
 import {closeDialogRelations, openDialogRelations} from '../../store/actions/relations/actions';
@@ -1270,6 +1271,7 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                         onItemRender={this.handleItemRender}
                         hideErrorDetails={this.props.hideErrorDetails}
                         setWidgetCurrentTab={this.props.setWidgetCurrentTab}
+                        updateTabsWithGlobalState={this.props.updateTabsWithGlobalState}
                         dataProviderContextGetter={this.dataProviderContextGetter}
                     />
                 </WidgetContextProvider>
@@ -1369,6 +1371,7 @@ const mapDispatchToProps = {
     setWidgetCurrentTab,
     toggleTableOfContent,
     removeGlobalItems,
+    updateTabsWithGlobalState,
 };
 
 export default compose<BodyProps, OwnProps>(
