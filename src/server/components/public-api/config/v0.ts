@@ -1,4 +1,6 @@
-import {Feature} from '../../../../shared';
+import z from 'zod';
+
+import {AUDIT_MODE_HEADER, AuditModeHeaderValue, Feature} from '../../../../shared';
 import type {DatalensGatewaySchemas} from '../../../types/gateway';
 import {ApiTag} from '../constants';
 import type {PublicApiVersionActions} from '../types';
@@ -117,6 +119,9 @@ export const getPublicApiActionsV0 = <
             openApi: {
                 summary: 'Get dashboard',
                 tags: [ApiTag.Dashboard],
+                headers: z.object({
+                    [AUDIT_MODE_HEADER]: z.enum(AuditModeHeaderValue).optional(),
+                }),
                 experimental: true,
             },
         },
