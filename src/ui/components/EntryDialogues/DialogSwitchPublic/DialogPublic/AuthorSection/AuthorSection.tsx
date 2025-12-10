@@ -12,7 +12,7 @@ import './AuthorSection.scss';
 const b = block('dl-dialog-public-author-section');
 const i18n = I18n.keyset('component.dialog-switch-public.view');
 
-export type AuthorSectionProps = {
+type Props = {
     validationErrors: ValidationErrors;
     className?: string;
     scope: 'widget' | 'dash';
@@ -20,38 +20,20 @@ export type AuthorSectionProps = {
     progress: boolean;
     disabled: boolean;
     onChange: ({link, text}: {link?: string; text?: string}) => void;
-    showWarning?: boolean;
-    linkLabel?: string;
-    textLabel?: string;
 };
 
-function AuthorSection(props: AuthorSectionProps) {
-    const {
-        className,
-        authorData,
-        disabled,
-        onChange,
-        scope,
-        validationErrors,
-        showWarning = true,
-        linkLabel = i18n('label_author-link'),
-        textLabel = i18n('label_author-text'),
-    } = props;
+function AuthorSection(props: Props) {
+    const {className, authorData, disabled, onChange, scope, validationErrors} = props;
 
     return (
         <div className={b(null, className)}>
-            {showWarning && (
-                <React.Fragment>
-                    <div className={b('title')}>{i18n('section_author')}</div>
-                    <div className={b('description')}>
-                        {i18n('label_author-description', {
-                            subject: i18n(`label_author-subject-${scope}`),
-                        })}
-                    </div>
-                </React.Fragment>
-            )}
+            <div className={b('title')}>{i18n('section_author')}</div>
+            <div className={b('description')}>
+                {i18n('label_author-description', {subject: i18n(`label_author-subject-${scope}`)})}
+            </div>
+
             <div className={b('form')}>
-                <FormRow label={textLabel} className={b('form-row')}>
+                <FormRow label={i18n('label_author-text')} className={b('form-row')}>
                     <TextInput
                         error={validationErrors.text ?? false}
                         value={authorData.text}
@@ -59,7 +41,7 @@ function AuthorSection(props: AuthorSectionProps) {
                         onUpdate={(value) => onChange({text: value})}
                     ></TextInput>
                 </FormRow>
-                <FormRow label={linkLabel} className={b('form-row')}>
+                <FormRow label={i18n('label_author-link')} className={b('form-row')}>
                     <TextInput
                         error={validationErrors.link ?? false}
                         value={authorData.link}
