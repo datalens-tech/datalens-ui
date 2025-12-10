@@ -61,7 +61,7 @@ export type CreateWorkbookDialogProps = {
     // TODO: remove and use onCreateWorkbook
     onApply?: (result: {workbookId?: string}) => void | Promise<void>;
     onCreateWorkbook?: ({workbookId}: {workbookId?: string}) => void | Promise<void>;
-    onImportStartSuccess?: (publicGalleryImport: boolean) => void;
+    onImportAttempt?: (publicGalleryImport: boolean) => void;
     defaultView?: 'default' | 'import';
     importId?: string;
     showImport?: boolean;
@@ -82,7 +82,7 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
     importId,
     showImport,
     publicGallery,
-    onImportStartSuccess,
+    onImportAttempt,
 }) => {
     const dispatch: AppDispatch = useDispatch();
     const [publicGalleryState, setPublicGalleryState] = React.useState<PublicGalleryData | null>(
@@ -252,7 +252,7 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
                 if (importResult && importResult.importId) {
                     setView('import');
                     pollImportStatus(importResult.importId);
-                    onImportStartSuccess?.(Boolean(publicGalleryState));
+                    onImportAttempt?.(Boolean(publicGalleryState));
                 }
             } catch (error) {
                 if (error.code === ErrorCode.MetaManagerWorkbookAlreadyExists) {
@@ -267,7 +267,7 @@ export const CreateWorkbookDialog: React.FC<CreateWorkbookDialogProps> = ({
             importFiles,
             pollImportStatus,
             publicGalleryState,
-            onImportStartSuccess,
+            onImportAttempt,
         ],
     );
 
