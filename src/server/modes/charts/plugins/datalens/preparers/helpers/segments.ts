@@ -30,13 +30,13 @@ export function getSegmentMap(args: PrepareFunctionArgs): SegmentsMap {
     const y2Fields = placeholders.find((p) => p.id === PlaceholderId.Y2)?.items || [];
     const hasOppositeYAxis = y2Fields.length > 0;
 
-    return segmentsList.reduce((acc, segmentName) => {
+    return segmentsList.reduce((acc, segmentName, index) => {
         if (!acc[segmentName]) {
             const segmentIndex = Object.keys(acc).length;
             const title = segmentName;
 
             Object.assign(acc, {
-                [segmentName]: {title, index: segmentIndex, isOpposite: false},
+                [segmentName]: {title, index: segmentIndex, isOpposite: false, plotIndex: index},
             });
 
             if (hasOppositeYAxis) {
@@ -45,6 +45,7 @@ export function getSegmentMap(args: PrepareFunctionArgs): SegmentsMap {
                         title,
                         index: segmentIndex + 1,
                         isOpposite: true,
+                        plotIndex: index,
                     },
                 });
             }

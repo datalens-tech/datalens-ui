@@ -17,7 +17,7 @@ export const getValidScopeFields = ({
         return {impactType, impactTabsIds: null};
     }
 
-    if (impactType === 'selectedTabs' && impactTabsIds?.length) {
+    if ((impactType === 'selectedTabs' || impactType === 'currentTab') && impactTabsIds?.length) {
         return {impactType, impactTabsIds};
     }
 

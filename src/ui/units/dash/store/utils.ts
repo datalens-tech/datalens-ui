@@ -1,12 +1,24 @@
+import type {
+    ItemsStateAndParams,
+    ItemsStateAndParamsBase,
+    QueueItem,
+} from '@gravity-ui/dashkit/helpers';
 import {generateUniqId} from '@gravity-ui/dashkit/helpers';
 import {I18n} from 'i18n';
 import {EntryScope} from 'shared';
-import type {FakeDashData} from 'shared/types/dash';
-import {DashLoadPriority} from 'shared/types/dash';
+import type {
+    DashTabItemGroupControlData,
+    FakeDashData,
+    ImpactTabsIds,
+    ImpactType,
+} from 'shared/types/dash';
+import {DashLoadPriority, DashTabItemType} from 'shared/types/dash';
 import {DL, URL_QUERY} from 'ui/constants';
 import Utils from 'ui/utils';
 
-import {Mode} from '../modules/constants';
+import {DASHKIT_STATE_VERSION, Mode} from '../modules/constants';
+
+import type {GlobalItem} from './typings/dash';
 
 const storeI18n = I18n.keyset('dash.store.view');
 const dashCreateI18n = I18n.keyset('component.dialog-create-dashboard.view');
@@ -74,3 +86,52 @@ export const getFakeDashEntry = (workbookId?: string) => {
         annotation: null,
     };
 };
+
+function isControlGlobal(impactType?: ImpactType, impactTabsIds?: ImpactTabsIds): boolean {
+    return (
+        impactType === 'allTabs' ||
+        (impactType === 'selectedTabs' && Boolean(impactTabsIds && impactTabsIds?.length > 0))
+    );
+}
+
+function isGroupControlGlobal(itemData: Partial<DashTabItemGroupControlData>): boolean {
+    const groupImpactType = itemData.impactType;
+    const groupImpactTabsIds = itemData.impactTabsIds;
+    const isGroupSettingApplied = itemData.group?.some(
+        (selector) => selector.impactType === undefined || selector.impactType === 'asGroup',
+    );
+
+    if (isGroupSettingApplied && isControlGlobal(groupImpactType, groupImpactTabsIds)) {
+        return true;
+    }
+
+    return Boolean(
+        itemData.group?.some((selector) =>
+            isControlGlobal(selector.impactType, selector.impactTabsIds),
+        ),
+    );
+}
+
+export function isItemGlobal(item: GlobalItem): boolean {
+    if (item.type === DashTabItemType.Control) {
+        const controlData = item.data;
+        return isControlGlobal(controlData.impactType, controlData.impactTabsIds);
+    }
+
+    if (item.type === DashTabItemType.GroupControl) {
+        return isGroupControlGlobal(item.data);
+    }
+
+    return false;
+}
+
+export const createNewTabState = (
+    params: ItemsStateAndParamsBase,
+    queue: QueueItem[],
+): ItemsStateAndParams => ({
+    ...params,
+    __meta__: {
+        queue,
+        version: DASHKIT_STATE_VERSION,
+    },
+});

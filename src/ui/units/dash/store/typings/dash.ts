@@ -1,8 +1,10 @@
-import type {DashKit} from '@gravity-ui/dashkit';
+import type {DashKit, ItemParams} from '@gravity-ui/dashkit';
 import type {
     DashData,
     DashDragOptions,
     DashEntry,
+    DashTabItemControl,
+    DashTabItemGroupControl,
     EntryAnnotation,
     Permissions,
     WidgetType,
@@ -43,4 +45,14 @@ export type DashState = {
     widgetsCurrentTab: {[key: string]: string};
     dragOperationProps: DashDragOptions | null;
     openInfoOnLoad?: boolean;
+};
+
+export type GlobalItem =
+    | Pick<DashTabItemControl, 'type' | 'data' | 'id'>
+    | Pick<DashTabItemGroupControl, 'type' | 'data' | 'id'>;
+
+export type UpdateTabsWithGlobalStateArgs = {
+    params: ItemParams;
+    selectorItem: GlobalItem;
+    appliedSelectorsIds: string[];
 };

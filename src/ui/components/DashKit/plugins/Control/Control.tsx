@@ -18,7 +18,12 @@ import type {
     StringParams,
     WorkbookId,
 } from 'shared';
-import {ControlType, DATASET_FIELD_TYPES, DashTabItemControlSourceType} from 'shared';
+import {
+    ControlType,
+    DATASET_FIELD_TYPES,
+    DashTabItemControlSourceType,
+    DashTabItemType,
+} from 'shared';
 import {ChartWrapper} from 'ui/components/Widgets/Chart/ChartWidgetWithProvider';
 import type {ChartWidgetWithWrapRefProps} from 'ui/components/Widgets/Chart/types';
 import {DL} from 'ui/constants/common';
@@ -487,6 +492,16 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     };
 
     onChange = ({param, value}: {param: string; value: string | string[]}) => {
+        const params: StringParams = {[param]: value};
+        this.context?.updateTabsWithGlobalState?.({
+            params,
+            selectorItem: {
+                type: DashTabItemType.Control,
+                data: this.propsControlData,
+                id: this.props.id,
+            },
+            appliedSelectorsIds: [this.props.id],
+        });
         this.props.onStateAndParamsChange({params: {[param]: value}}, {action: 'setParams'});
     };
 
@@ -501,6 +516,15 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
         // }
         if (type === 'PARAMS_CHANGED') {
             const {params} = data as {params: StringParams};
+            this.context?.updateTabsWithGlobalState?.({
+                params,
+                selectorItem: {
+                    type: DashTabItemType.Control,
+                    data: this.propsControlData,
+                    id: this.props.id,
+                },
+                appliedSelectorsIds: [this.props.id],
+            });
             this.props.onStateAndParamsChange({params: params || {}});
         }
     };
@@ -578,7 +602,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
     }
 
     renderControls() {
-        const data = this.props.data as unknown as DashTabItemControlSingle;
+        const data = this.propsControlData;
 
         const {sourceType} = data;
         const {id} = this.props;
@@ -731,6 +755,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                         editMode={editMode}
                         forwardedRef={this.chartKitRef}
                         workbookId={workbookId}
+                        updateTabsWithGlobalState={this.context?.updateTabsWithGlobalState}
                     />
                 </ControlWrapper>
             );
@@ -760,6 +785,10 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
                     : this.renderControls()}
             </ControlWrapper>
         );
+    }
+
+    private get propsControlData() {
+        return this.props.data as unknown as DashTabItemControlSingle;
     }
 
     private setErrorData = (errorData: ErrorData, status: LoadStatus) => {
@@ -818,7 +847,7 @@ class Control extends React.PureComponent<PluginControlProps, PluginControlState
 }
 
 const plugin: PluginControl = {
-    type: 'control',
+    type: DashTabItemType.Control,
     defaultLayout: DEFAULT_CONTROL_LAYOUT,
     setSettings(settings: ControlSettings) {
         const {getDistincts} = settings;
