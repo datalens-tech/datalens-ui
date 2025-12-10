@@ -47,6 +47,7 @@ import {
     SET_TAB_HASH_STATE,
     SET_WIDGET_CURRENT_TAB,
     TOGGLE_TABLE_OF_CONTENT,
+    UPDATE_TABS_WITH_GLOBAL_STATE,
 } from '../actions/dashTyped';
 import type {DashAction} from '../actions/index';
 
@@ -404,6 +405,16 @@ export function dashTypedReducer(
                             layout: tab.layout.filter((item) => !removedItemsIds.has(item.i)),
                         };
                     }),
+                },
+            };
+        }
+
+        case UPDATE_TABS_WITH_GLOBAL_STATE: {
+            return {
+                ...state,
+                hashStates: {
+                    ...state.hashStates,
+                    ...action.payload.hashStates,
                 },
             };
         }
