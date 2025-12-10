@@ -40,6 +40,8 @@ const SINGLE_SELECTOR_SETTINGS: Partial<SelectorsGroupDialogState> = {
     buttonApply: false,
     buttonReset: false,
     autoHeight: false,
+    impactType: undefined,
+    impactTabsIds: undefined,
 };
 
 const canPasteItems = (pasteConfig: CopiedConfigData | null, workbookId?: string | null) => {

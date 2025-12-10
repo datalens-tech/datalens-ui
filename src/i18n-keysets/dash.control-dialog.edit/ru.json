@@ -68,6 +68,8 @@
   "validation_empty-parameters-values": "Поле с параметрами должно быть заполнено",
   "validation_field-name-in-parameters": "Имя параметра не должно совпадать с именами параметров из раздела ниже",
   "validation_field-name-unique": "Имена параметров в группе не должны совпадать. Селекторы с одинаковыми именами параметров: {{selectorsNames}}",
+  "validation_need-current-tab-impact": "Должен быть хотя бы один селектор, видимый на текущей вкладке",
+  "validation_not-combined-with-group-setting": "Настройка селектора не должна быть шире, чем настройка группы",
   "validation_required": "Поле должно быть заполнено",
   "value_absolute-date": "Точная дата",
   "value_checkbox-default-value-false": "False",

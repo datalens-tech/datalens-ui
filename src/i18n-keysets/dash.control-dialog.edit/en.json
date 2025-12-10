@@ -68,6 +68,8 @@
   "validation_empty-parameters-values": "Fields with parameters must be filled out",
   "validation_field-name-in-parameters": "The parameter name must not be the same as the names of parameters in the section below",
   "validation_field-name-unique": "Parameter names in the group should not match. These selectors have the same parameter names: {{selectorsNames}}",
+  "validation_need-current-tab-impact": "There must be at least one selector visible on the current tab",
+  "validation_not-combined-with-group-setting": "The selector setting should not be wider than the group setting",
   "validation_required": "Field must be filled",
   "value_absolute-date": "Exact date",
   "value_checkbox-default-value-false": "False",

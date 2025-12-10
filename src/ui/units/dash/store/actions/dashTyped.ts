@@ -25,11 +25,15 @@ import type {
     DashTabItemControlBaseData,
     DashTabItemGroupControlBaseData,
     DashTabItemImage,
-    DashTabItemType,
     DashTabItemWidget,
     RecursivePartial,
 } from 'shared';
+<<<<<<< Updated upstream
 import {EntryScope, EntryUpdateMode, Feature} from 'shared';
+=======
+import {DashTabItemType, EntryScope, EntryUpdateMode, Feature} from 'shared';
+import {openDialogDefault} from 'ui/components/DialogDefault/DialogDefault';
+>>>>>>> Stashed changes
 import type {AppDispatch} from 'ui/store';
 import {
     addEditHistoryPoint,
@@ -53,7 +57,13 @@ import type {DashTabChanged} from '../../containers/Dialogs/Tabs/TabItem';
 import {LOCK_DURATION, Mode} from '../../modules/constants';
 import type {CopiedConfigContext} from '../../modules/helpers';
 import {collectDashStats} from '../../modules/pushStats';
+import type {GlobalItem, GlobalItemWihoutId} from '../../typings/dash';
 import {DashUpdateStatus} from '../../typings/dash';
+<<<<<<< Updated upstream
+=======
+import type {IsWidgetVisibleOnTabArgs} from '../../utils/selectors';
+import {isItemGlobal, isWidgetVisibleOnTab} from '../../utils/selectors';
+>>>>>>> Stashed changes
 import {DASH_EDIT_HISTORY_UNIT_ID} from '../constants';
 import * as actionTypes from '../constants/dashActionTypes';
 import {
@@ -1056,7 +1066,35 @@ export const setCopiedItemData = (payload: {
     context?: CopiedConfigContext;
     options: AddNewItemOptions;
 }) => {
-    return (dispatch: DashDispatch) => {
+    return (dispatch: DashDispatch, getState: () => DatalensGlobalState) => {
+        const {tabId} = getState().dash;
+
+        const isSelectorItem =
+            payload.item.type === DashTabItemType.Control ||
+            payload.item.type === DashTabItemType.GroupControl;
+
+        if (
+            tabId &&
+            isSelectorItem &&
+            !isWidgetVisibleOnTab({
+                itemData: payload.item.data as IsWidgetVisibleOnTabArgs['itemData'],
+                tabId,
+            })
+        ) {
+            dispatch(
+                openDialogDefault({
+                    caption: i18n('dash.main.view', 'title_failed-copy-global-item'),
+                    message: i18n('dash.main.view', 'label_failed-copy-global-item'),
+                    textButtonCancel: i18n('dash.main.view', 'button_close'),
+                    propsButtonCancel: {
+                        view: 'action',
+                    },
+                    size: 's',
+                }),
+            );
+            return;
+        }
+
         batch(() => {
             dispatch({
                 type: actionTypes.SET_COPIED_ITEM_DATA as any, // TODO move to TS,

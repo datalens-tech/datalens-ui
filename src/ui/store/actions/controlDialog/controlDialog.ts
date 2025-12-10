@@ -222,10 +222,11 @@ export const applyGroupControlDialog = ({
 
         // check validation for every control
         for (let i = 0; i < validatedSelectorsGroup.group.length; i += 1) {
-            const validation = getControlValidation(
-                validatedSelectorsGroup.group[i],
+            const validation = getControlValidation({
+                selectorDialog: validatedSelectorsGroup.group[i],
                 groupFieldNames,
-            );
+                selectorsGroup: validatedSelectorsGroup,
+            });
 
             if (!isEmpty(validation) && firstInvalidIndex === null) {
                 firstInvalidIndex = i;
@@ -239,6 +240,7 @@ export const applyGroupControlDialog = ({
                 validatedSelectorsGroup.group[activeSelectorIndex].validation;
             dispatch(updateSelectorsGroup(validatedSelectorsGroup));
 
+            // зачем нужно
             if (!isEmpty(activeSelectorValidation)) {
                 dispatch(
                     setSelectorDialogItem({
@@ -361,7 +363,10 @@ export const copyControlToStorage = (controlIndex: number) => {
             namespace,
             currentTabId: tabId,
         } = selectOpenedItemMeta(state);
-        const validation = getControlValidation(selectorsGroup.group[controlIndex]);
+        const validation = getControlValidation({
+            selectorDialog: selectorsGroup.group[controlIndex],
+            selectorsGroup,
+        });
 
         if (!scope) {
             return;
@@ -446,7 +451,7 @@ export const applyExternalControlDialog = ({
         const selectorDialog = selectSelectorDialog(state);
         const {title, sourceType, autoHeight, impactType, impactTabsIds} = selectorDialog;
 
-        const validation = getControlValidation(selectorDialog);
+        const validation = getControlValidation({selectorDialog});
 
         if (!isEmpty(validation)) {
             dispatch(

@@ -353,6 +353,14 @@ export function controlDialog(
                     selectorDialog.defaultValue === payload.defaultValue
                         ? selectorDialog.validation.defaultValue
                         : undefined,
+                impactType:
+                    selectorDialog.impactType === payload.impactType
+                        ? selectorDialog.validation.impactType
+                        : undefined,
+                impactTabsIds:
+                    selectorDialog.impactTabsIds === payload.impactTabsIds
+                        ? selectorDialog.validation.impactTabsIds
+                        : undefined,
             };
 
             const newSelectorState = {
@@ -412,10 +420,13 @@ export function controlDialog(
         }
 
         case UPDATE_SELECTORS_GROUP: {
-            const {selectorsGroup} = state;
+            const {selectorsGroup, selectorDialog} = state;
             const {group, autoHeight} = action.payload;
 
             const {enableAutoheightDefault} = state.features[DashTabItemType.GroupControl] || {};
+
+            const isSingleSelectorLeft =
+                selectorsGroup.group.length > 1 && selectorsGroup.group.length === 1;
 
             let updatedAutoHeight;
             if (enableAutoheightDefault) {
@@ -426,6 +437,10 @@ export function controlDialog(
                     selectorsGroup.group.length === 1 && group.length > 1 ? true : autoHeight;
             }
 
+            const validation: SelectorDialogState['validation'] = {
+                impactType: isSingleSelectorLeft ? undefined : selectorDialog.validation.impactType,
+            };
+
             return {
                 ...state,
                 selectorsGroup: {
@@ -433,6 +448,10 @@ export function controlDialog(
                     ...action.payload,
 
                     autoHeight: updatedAutoHeight,
+                },
+                selectorDialog: {
+                    ...state.selectorDialog,
+                    validation: {...state.selectorDialog.validation, ...validation},
                 },
             };
         }

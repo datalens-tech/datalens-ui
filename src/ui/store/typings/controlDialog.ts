@@ -41,6 +41,8 @@ export type SelectorDialogValidation = {
     defaultValue?: string;
     connectionQueryContent?: string;
     selectorParameters?: string;
+    impactType?: string;
+    impactTabsIds?: string;
 };
 
 export type SelectorsGroupDialogState = {
