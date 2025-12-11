@@ -21,6 +21,11 @@ export enum RequestSourceHeaderValue {
     PublicApi = 'public-api',
 }
 
+export const AUDIT_MODE_HEADER = 'x-dl-audit-mode';
+export enum AuditModeHeaderValue {
+    True = 'true',
+}
+
 export const REQUEST_ID_HEADER = 'x-request-id';
 export const TRACE_ID_HEADER = 'x-trace-id';
 export const SERVER_TRACE_ID_HEADER = 'x-server-trace-id';
