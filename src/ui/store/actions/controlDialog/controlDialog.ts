@@ -55,6 +55,7 @@ import {
     selectControlDialogState,
 } from '../../selectors/controlDialog';
 import {getValidScopeFields} from './helpers';
+import {selectTabId} from 'ui/units/dash/store/selectors/dashTypedSelectors';
 
 const dialogI18n = I18n.keyset('dash.group-controls-dialog.edit');
 
