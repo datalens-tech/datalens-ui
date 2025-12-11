@@ -29,13 +29,15 @@ export const ChOverYT = (props: Props) => {
             {isConnectorInList(connectors, ConnectorType.ChOverYt) && (
                 <Route
                     path={`*/${ChytPath.ROOT}/${ChytPath.TOKEN_AUTH}`}
-                    render={() => <ConnectorForm type={ConnectorType.ChOverYt} />}
+                    render={() => <ConnectorForm readonly={false} type={ConnectorType.ChOverYt} />}
                 />
             )}
             {isConnectorInList(connectors, ConnectorType.ChOverYtUserAuth) && (
                 <Route
                     path={`*/${ChytPath.ROOT}/${ChytPath.USER_AUTH}`}
-                    render={() => <ConnectorForm type={ConnectorType.ChOverYtUserAuth} />}
+                    render={() => (
+                        <ConnectorForm readonly={false} type={ConnectorType.ChOverYtUserAuth} />
+                    )}
                 />
             )}
             <Route path="*" render={() => <Redirect to={`/connections/new/${ChytPath.ROOT}`} />} />

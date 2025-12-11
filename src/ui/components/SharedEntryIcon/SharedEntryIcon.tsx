@@ -6,13 +6,16 @@ import block from 'bem-cn-lite';
 import './SharedEntryIcon.scss';
 
 type SharedEntryIconProps = {
-    isDelegated: boolean;
+    isDelegated?: boolean;
     className?: string;
 };
 
 const b = block('dl-shared-entry-icon');
 
 export const SharedEntryIcon = ({isDelegated, className}: SharedEntryIconProps) => {
+    if (typeof isDelegated !== 'boolean') {
+        return null;
+    }
     if (isDelegated) {
         return (
             <div className={b(null, className)}>
