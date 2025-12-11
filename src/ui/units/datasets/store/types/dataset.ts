@@ -19,6 +19,7 @@ import type {
     EntryFieldPublishedId,
     GetEntryResponse,
     FormOptions as SchemaFormOptions,
+    SharedEntryPermissions,
     ValidateDatasetResponse,
 } from '../../../../../shared/schema';
 import type {EntryContentAction} from '../../../../store/actions/entryContent';
@@ -282,6 +283,7 @@ export type DatasetReduxState = {
     workbookId: WorkbookId;
     collectionId: CollectionId;
     permissions?: Permissions;
+    fullPermissions?: SharedEntryPermissions;
     connection: ConnectionEntry | null;
     content: Partial<Dataset['dataset']>;
     prevContent: Partial<Dataset['dataset']>;

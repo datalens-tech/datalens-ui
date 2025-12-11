@@ -271,6 +271,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                     dataset: content,
                     workbook_id: workbookId,
                     permissions,
+                    full_permissions,
                 },
                 collectionId,
                 publishedId,
@@ -300,6 +301,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                     isDatasetChanged: false,
                 },
                 permissions,
+                fullPermissions: full_permissions,
                 isLoading: false,
                 isRefetchingDataset: false,
             };

@@ -88,6 +88,7 @@ import {
     datasetCollectionIdSelector,
     datasetCurrentRevIdSelector,
     datasetErrorSelector,
+    datasetFullPermissionsSelector,
     datasetKeySelector,
     datasetPermissionsSelector,
     datasetPreviewErrorSelector,
@@ -421,6 +422,7 @@ class Dataset extends React.Component<Props, State> {
             isFavorite,
             datasetKey,
             datasetPermissions,
+            datasetFullPermissions,
             publishedId,
             currentRevId,
         } = this.props;
@@ -444,6 +446,7 @@ class Dataset extends React.Component<Props, State> {
             key: datasetKey,
             scope: 'dataset',
             permissions: datasetPermissions,
+            fullPermissions: datasetFullPermissions,
         } as GetEntryResponse;
     }
 
@@ -833,6 +836,7 @@ class Dataset extends React.Component<Props, State> {
 const mapStateToProps = createStructuredSelector({
     datasetKey: datasetKeySelector,
     datasetPermissions: datasetPermissionsSelector,
+    datasetFullPermissions: datasetFullPermissionsSelector,
     datasetError: datasetErrorSelector,
     previewError: datasetPreviewErrorSelector,
     savingError: datasetSavingErrorSelector,
