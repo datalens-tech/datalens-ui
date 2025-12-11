@@ -1,4 +1,3 @@
-import type {AddConfigItem} from '@gravity-ui/dashkit';
 import type {
     ItemParams,
     ItemsStateAndParams,
@@ -24,11 +23,7 @@ import ChartKit from '../../../../libs/DatalensChartkit';
 import {registry} from '../../../../registry';
 import {DASHKIT_STATE_VERSION} from '../../modules/constants';
 import type {GlobalItem} from '../../typings/dash';
-import {
-    isGlobalWidgetVisibleByMainSetting,
-    isGroupItemVisibleOnTab,
-    isItemGlobal,
-} from '../../utils/selectors';
+import {isGlobalWidgetVisibleByMainSetting, isGroupItemVisibleOnTab} from '../../utils/selectors';
 import type {DashState} from '../typings/dash';
 import {createNewTabState} from '../utils';
 
@@ -338,40 +333,4 @@ export const processTabForGlobalUpdate = (
         tabId: tab.id,
         newState: newTabHashState,
     };
-};
-
-export const isWidgetVisibleOnTab = ({item, tabId}: {item: AddConfigItem; tabId: string}) => {
-    if (item.type !== DashTabItemType.Control && item.type !== DashTabItemType.GroupControl) {
-        return true;
-    }
-
-    const globalItem = item as unknown as GlobalItem;
-
-    if (!isItemGlobal(globalItem)) {
-        return true;
-    }
-
-    const isVisibleByMainSetting = isGlobalWidgetVisibleByMainSetting(
-        tabId,
-        globalItem.data.impactType,
-        globalItem.data.impactTabsIds,
-    );
-
-    if (globalItem.type === DashTabItemType.GroupControl) {
-        for (const groupItem of globalItem.data.group) {
-            if (
-                isGroupItemVisibleOnTab({
-                    item: groupItem,
-                    tabId: tabId,
-                    isVisibleByMainSetting,
-                })
-            ) {
-                return true;
-            }
-        }
-    } else if (isVisibleByMainSetting) {
-        return true;
-    }
-
-    return false;
 };
