@@ -1,9 +1,11 @@
 import React from 'react';
 
+import type {ChartData} from '@gravity-ui/chartkit/gravity-charts';
 import type {Highcharts} from '@gravity-ui/chartkit/highcharts';
 import {Dialog, Loader, SegmentedRadioGroup as RadioButton} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
+import get from 'lodash/get';
 import _isEqual from 'lodash/isEqual';
 import _pick from 'lodash/pick';
 import {connect} from 'react-redux';
@@ -28,6 +30,7 @@ import {
     MapCenterMode,
     NavigatorLinesMode,
     PlaceholderId,
+    WidgetKind,
     WidgetSize,
     WizardVisualizationId,
     ZoomMode,
@@ -36,6 +39,7 @@ import {
     isTreeField,
 } from 'shared';
 import type {DatalensGlobalState} from 'ui';
+import type {Widget} from 'ui/libs/DatalensChartkit/types/widget';
 import {getFirstFieldInPlaceholder} from 'ui/units/wizard/utils/placeholder';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 import type {WidgetData} from 'units/wizard/actions/widget';
@@ -337,28 +341,39 @@ class DialogSettings extends React.PureComponent<InnerProps, State> {
         if (!isNavigatorAvailable) {
             return [];
         }
-        const highchartsWidget = this.props?.highchartsWidget;
-        const userSeries = highchartsWidget?.userOptions?.series || [];
-        const graphs = highchartsWidget?.series || [];
 
-        const seriesNames = userSeries.map(
-            (userSeria) => userSeria.legendTitle || userSeria.title || userSeria.name,
-        );
-        return graphs
-            .filter((series: Highcharts.Series) => {
-                const axisExtremes = series.yAxis.getExtremes();
+        const widgetData = this.props?.highchartsWidget;
 
-                if (!series.data.length) {
-                    return false;
-                }
+        const widgetType = get(widgetData, 'type');
+        switch (widgetType) {
+            case WidgetKind.GravityCharts: {
+                const chartData = (widgetData as unknown as Widget).data as ChartData;
+                return chartData.series.data.map((s) => get(s, 'name'));
+            }
+            default: {
+                const userSeries = widgetData?.userOptions?.series || [];
+                const graphs = widgetData?.series || [];
 
-                if (axisExtremes.dataMin === null && axisExtremes.dataMax === null) {
-                    return false;
-                } else {
-                    return seriesNames.includes(series.name);
-                }
-            })
-            .map((series) => series.name);
+                const seriesNames = userSeries.map(
+                    (userSeria) => userSeria.legendTitle || userSeria.title || userSeria.name,
+                );
+                return graphs
+                    .filter((series: Highcharts.Series) => {
+                        const axisExtremes = series.yAxis.getExtremes();
+
+                        if (!series.data.length) {
+                            return false;
+                        }
+
+                        if (axisExtremes.dataMin === null && axisExtremes.dataMax === null) {
+                            return false;
+                        } else {
+                            return seriesNames.includes(series.name);
+                        }
+                    })
+                    .map((series) => series.name);
+            }
+        }
     }
 
     prepareNavigatorSettings(

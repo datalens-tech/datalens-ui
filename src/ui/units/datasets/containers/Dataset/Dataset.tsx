@@ -88,6 +88,7 @@ import {
     datasetCollectionIdSelector,
     datasetCurrentRevIdSelector,
     datasetErrorSelector,
+    datasetFullPermissionsSelector,
     datasetKeySelector,
     datasetPermissionsSelector,
     datasetPreviewErrorSelector,
@@ -194,13 +195,14 @@ class Dataset extends React.Component<Props, State> {
             location,
         } = this.props;
         const collectionId = this.getCollectionId();
+        const workbookId = this.getWorkbookId();
         const currentSearchParams = new URLSearchParams(location.search);
         const revId = currentSearchParams.get(URL_QUERY.REV_ID) ?? undefined;
 
         fetchFieldTypes();
 
         if (isCreationProcess) {
-            initializeDataset({connectionId, collectionId});
+            initializeDataset({connectionId, collectionId, workbookId});
         } else if (datasetId) {
             initialFetchDataset({datasetId, rev_id: revId});
         }
@@ -420,6 +422,7 @@ class Dataset extends React.Component<Props, State> {
             isFavorite,
             datasetKey,
             datasetPermissions,
+            datasetFullPermissions,
             publishedId,
             currentRevId,
         } = this.props;
@@ -443,6 +446,7 @@ class Dataset extends React.Component<Props, State> {
             key: datasetKey,
             scope: 'dataset',
             permissions: datasetPermissions,
+            fullPermissions: datasetFullPermissions,
         } as GetEntryResponse;
     }
 
@@ -832,6 +836,7 @@ class Dataset extends React.Component<Props, State> {
 const mapStateToProps = createStructuredSelector({
     datasetKey: datasetKeySelector,
     datasetPermissions: datasetPermissionsSelector,
+    datasetFullPermissions: datasetFullPermissionsSelector,
     datasetError: datasetErrorSelector,
     previewError: datasetPreviewErrorSelector,
     savingError: datasetSavingErrorSelector,
