@@ -38,7 +38,7 @@ datalensTest.describe('Wizard - Combined diagram. Tooltip', () => {
 
             await (await apiRunRequest).response();
 
-            const graph = page.locator(`.${COMMON_CHARTKIT_SELECTORS.graph}`);
+            const graph = page.locator(COMMON_CHARTKIT_SELECTORS.chart);
             await graph.waitFor({state: 'visible', timeout: TIMEOUT});
 
             let attempts = 3;
