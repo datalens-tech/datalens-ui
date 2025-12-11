@@ -46,9 +46,10 @@ import {getConnItemByType} from '../../utils';
 import ConnPanelActions from './ConnPanelActions';
 import {DescriptionButton, UnloadConfirmation} from './components';
 import {ConnSettings} from './components/ConnSettings';
+import {filterMenuItems} from './filterContextMenuItems';
 import {useAdditionalContextMenuItems} from './useAdditionalContextMenuItems';
 import {useApiErrors} from './useApiErrors';
-import {filterMenuItems, getIsSharedConnection, isListPageOpened, isS3BasedConnForm} from './utils';
+import {getIsSharedConnection, isListPageOpened, isS3BasedConnForm} from './utils';
 
 import './Page.scss';
 
