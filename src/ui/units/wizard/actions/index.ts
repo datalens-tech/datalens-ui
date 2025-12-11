@@ -7,6 +7,7 @@ import type {
     Dataset,
     DatasetApiError,
     DatasetField,
+    DatasetWithDelegation,
     ExtendedChartsConfig,
     Field,
     FilterField,
@@ -164,23 +165,32 @@ type GetDatasetArgs = {
     workbookId: WorkbookId;
 };
 
-function getDataset({id, workbookId}: GetDatasetArgs) {
-    return getSdk()
-        .sdk.bi.getDatasetByVersion({
-            datasetId: id,
-            workbookId,
-        })
-        .then((dataset) => {
-            if (dataset && dataset.key) {
-                dataset.realName = getEntryNameByKey({key: dataset.key});
-            }
+async function getDataset({id, workbookId}: GetDatasetArgs) {
+    const dataset: DatasetWithDelegation = await getSdk().sdk.bi.getDatasetByVersion({
+        datasetId: id,
+        workbookId,
+    });
 
-            if (dataset.result_schema) {
-                delete dataset.result_schema;
-            }
+    if (dataset && dataset.key) {
+        dataset.realName = getEntryNameByKey({key: dataset.key});
+    }
 
-            return dataset;
-        });
+    if (dataset.result_schema) {
+        delete dataset.result_schema;
+    }
+
+    if (dataset.collection_id && workbookId) {
+        const delegation = await getSdk().sdk.us.getSharedEntryDelegation(
+            {
+                sourceId: dataset.id,
+                targetId: workbookId,
+            },
+            {retries: 2},
+        );
+        dataset.isDelegated = delegation.isDelegated;
+    }
+
+    return dataset;
 }
 
 type GetDatasetsArgs = {
