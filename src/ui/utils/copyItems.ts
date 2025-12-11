@@ -1,4 +1,5 @@
 import type {ConfigItem, ConfigItemData} from '@gravity-ui/dashkit';
+import type {ThemeType} from '@gravity-ui/uikit';
 import {
     CustomPaletteBgColors,
     WIDGET_BG_COLORS_PRESET,
@@ -116,12 +117,14 @@ export function getUpdatedBackgroundData({
     allowCustomValues = false,
     enableSeparateThemeColorSelector = true,
     defaultOldColor,
+    themeType = 'light',
 }: {
     background: unknown;
     backgroundSettings: unknown;
     allowCustomValues: boolean;
     enableSeparateThemeColorSelector: boolean;
     defaultOldColor: string;
+    themeType?: ThemeType;
 }): {
     backgroundSettings: BackgroundSettings | undefined;
     background: OldBackgroundSettings | undefined;
@@ -148,12 +151,17 @@ export function getUpdatedBackgroundData({
 
     if (isBgSettings) {
         const color = backgroundSettings.color;
-        if (
-            !color ||
-            (isColorByTheme(color) && enableSeparateThemeColorSelector) ||
-            (!isColorByTheme(color) && !enableSeparateThemeColorSelector)
-        ) {
+
+        if (!enableSeparateThemeColorSelector) {
+            if (isColorByTheme(color)) {
+                newColor = color[themeType] ?? Object.values(color).find((c) => c !== undefined);
+            } else {
+                newColor = color;
+            }
+        } else if (isColorByTheme(color)) {
             newColor = color;
+        } else {
+            newColor = getColorSettingsWithValue(color, enableSeparateThemeColorSelector);
         }
     } else if (isDashColorPickersByThemeEnabled) {
         newColor = getColorSettingsWithValue(
@@ -168,7 +176,7 @@ export function getUpdatedBackgroundData({
               backgroundSettings: {color: newColor},
           }
         : {
-              background: oldColor ? {color: oldColor} : undefined,
+              background: oldColor ? {color: oldColor} : {color: defaultOldColor},
               backgroundSettings: undefined,
           };
 }

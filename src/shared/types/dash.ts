@@ -232,7 +232,7 @@ export interface DashTabItemTitle extends DashTabItemBase {
         showInTOC: boolean;
         autoHeight?: boolean;
         textColor?: string;
-        textColorSettings?: ColorSettings;
+        textSettings?: {color?: ColorSettings};
         hint?: HintSettings;
     };
 }

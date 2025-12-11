@@ -274,6 +274,7 @@ function dash(state = initialState, action) {
                           allowCustomValues: false,
                           enableSeparateThemeColorSelector: true,
                           defaultOldColor: defaultBgColorValue,
+                          themeType: action.payload.dashVisualSettings?.themeType,
                       })
                     : {};
             const newItem = {

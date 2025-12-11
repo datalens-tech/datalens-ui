@@ -190,7 +190,7 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         setColorSettings: setTextColorSettings,
     } = useColorSettings({
         color: openedItemData.textColor,
-        colorSettings: openedItemData.textColorSettings,
+        colorSettings: openedItemData.textSettings?.color,
         defaultOldColor: CustomPaletteTextColors.PRIMARY,
         enableSeparateThemeColorSelector: enableSeparateThemeColorSelector,
         isNewWidget,
@@ -273,10 +273,10 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
 
         const resultTextColorSettings: Pick<
             DashTabItemTitle['data'],
-            'textColor' | 'textColorSettings'
+            'textColor' | 'textSettings'
         > =
             textColorSettings || isDashColorPickersByThemeEnabled
-                ? {textColorSettings}
+                ? {textSettings: {color: textColorSettings}}
                 : {textColor: oldTextColor};
         if (Object.values(validationErrors).filter(Boolean).length === 0) {
             const resultedCustomFontSize = customFontSize ?? previousSelectedFontSize;
