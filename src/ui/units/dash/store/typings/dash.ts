@@ -3,8 +3,6 @@ import type {
     DashData,
     DashDragOptions,
     DashEntry,
-    DashTabItemControl,
-    DashTabItemGroupControl,
     EntryAnnotation,
     Permissions,
     WidgetType,
@@ -14,7 +12,7 @@ import type {ValuesType} from 'utility-types';
 
 import type {Mode} from '../../modules/constants';
 import type {TabsHashStates} from '../../store/actions/dashTyped';
-import type {DashUpdateStatus} from '../../typings/dash';
+import type {DashUpdateStatus, GlobalItem} from '../../typings/dash';
 
 export type DashState = {
     tabId: null | string;
@@ -46,10 +44,6 @@ export type DashState = {
     dragOperationProps: DashDragOptions | null;
     openInfoOnLoad?: boolean;
 };
-
-export type GlobalItem =
-    | Pick<DashTabItemControl, 'type' | 'data' | 'id'>
-    | Pick<DashTabItemGroupControl, 'type' | 'data' | 'id'>;
 
 export type UpdateTabsWithGlobalStateArgs = {
     params: ItemParams;
