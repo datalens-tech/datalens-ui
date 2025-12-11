@@ -19,7 +19,6 @@ import {registry} from 'ui/registry';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {ChartWidgetDataRef} from '../../../components/Widgets/Chart/types';
-import {CHARTKIT_WIDGET_TYPE} from '../ChartKit/components/Widget/Widget';
 import {
     getExportItem,
     isExportItemDisabled,
