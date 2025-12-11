@@ -25,11 +25,10 @@ import type {
     DashTabItemControlBaseData,
     DashTabItemGroupControlBaseData,
     DashTabItemImage,
-    DashTabItemType,
     DashTabItemWidget,
     RecursivePartial,
 } from 'shared';
-import {EntryScope, EntryUpdateMode, Feature} from 'shared';
+import {DashTabItemType, EntryScope, EntryUpdateMode, Feature} from 'shared';
 import {openDialogDefault} from 'ui/components/DialogDefault/DialogDefault';
 import type {AppDispatch} from 'ui/store';
 import {
@@ -55,7 +54,11 @@ import {LOCK_DURATION, Mode} from '../../modules/constants';
 import type {CopiedConfigContext} from '../../modules/helpers';
 import {collectDashStats} from '../../modules/pushStats';
 import {DashUpdateStatus} from '../../typings/dash';
-import {isItemGlobal} from '../../utils/selectors';
+import {
+    type IsWidgetVisibleOnTabArgs,
+    isItemGlobal,
+    isWidgetVisibleOnTab,
+} from '../../utils/selectors';
 import {DASH_EDIT_HISTORY_UNIT_ID} from '../constants';
 import * as actionTypes from '../constants/dashActionTypes';
 import {
@@ -68,7 +71,7 @@ import {
 import type {DashState, UpdateTabsWithGlobalStateArgs} from '../typings/dash';
 
 import {save} from './base/actions';
-import {isWidgetVisibleOnTab, migrateDataSettings, processTabForGlobalUpdate} from './helpers';
+import {migrateDataSettings, processTabForGlobalUpdate} from './helpers';
 
 import type {DashDispatch} from './index';
 
@@ -1060,7 +1063,18 @@ export const setCopiedItemData = (payload: {
     return (dispatch: DashDispatch, getState: () => DatalensGlobalState) => {
         const {tabId} = getState().dash;
 
-        if (tabId && !isWidgetVisibleOnTab({item: payload.item, tabId})) {
+        const isSelectorItem =
+            payload.item.type === DashTabItemType.Control ||
+            payload.item.type === DashTabItemType.GroupControl;
+
+        if (
+            tabId &&
+            isSelectorItem &&
+            !isWidgetVisibleOnTab({
+                itemData: payload.item.data as IsWidgetVisibleOnTabArgs['itemData'],
+                tabId,
+            })
+        ) {
             dispatch(
                 openDialogDefault({
                     caption: i18n('dash.main.view', 'title_failed-copy-global-item'),

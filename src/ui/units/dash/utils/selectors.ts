@@ -118,3 +118,38 @@ export function isItemGlobal(item: GlobalItem): boolean {
 
     return false;
 }
+
+export type IsWidgetVisibleOnTabArgs = {
+    itemData: {
+        group?: {impactType?: ImpactType; impactTabsIds?: ImpactTabsIds}[];
+        impactType?: ImpactType;
+        impactTabsIds?: ImpactTabsIds;
+    };
+    tabId: string;
+};
+
+export const isWidgetVisibleOnTab = ({itemData, tabId}: IsWidgetVisibleOnTabArgs) => {
+    const isVisibleByMainSetting = isGlobalWidgetVisibleByMainSetting(
+        tabId,
+        itemData.impactType,
+        itemData.impactTabsIds,
+    );
+
+    if (itemData.group) {
+        for (const groupItem of itemData.group) {
+            if (
+                isGroupItemVisibleOnTab({
+                    item: groupItem,
+                    tabId: tabId,
+                    isVisibleByMainSetting,
+                })
+            ) {
+                return true;
+            }
+        }
+    } else if (isVisibleByMainSetting) {
+        return true;
+    }
+
+    return false;
+};
