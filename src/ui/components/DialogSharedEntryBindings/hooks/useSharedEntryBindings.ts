@@ -63,6 +63,7 @@ export const useSharedEntryBindings = ({entry, onDeleteSuccess}: UseSharedEntryB
                     entryId: entry.entryId,
                     entryAs: currentDirection,
                     filterString: filter ? filter : undefined,
+                    includePermissionsInfo: currentDirection === Attachment.TARGET,
                     mode: 'all',
                 })
                 .then((response) => {

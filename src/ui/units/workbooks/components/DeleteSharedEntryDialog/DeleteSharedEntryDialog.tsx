@@ -181,7 +181,7 @@ const DeleteSharedEntryDialog = React.memo<Props>(
                         entities={[entry]}
                         title={getSharedEntryMockText('label-current-entry')}
                         className={b('current-row')}
-                        rightSectionSlot={() => <SharedEntryIcon entry={entry} />}
+                        rightSectionSlot={() => <SharedEntryIcon isDelegated={entry.isDelegated} />}
                     />
                     {isLoading ? (
                         <SmartLoader showAfter={0} />

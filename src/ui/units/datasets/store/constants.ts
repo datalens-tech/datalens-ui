@@ -80,6 +80,7 @@ export const initialState: DatasetReduxState = {
         disabled: true,
         isProcessingSavingDataset: false,
         error: null,
+        delegationFromConnToSharedDataset: null,
     },
     types: {
         data: [],
@@ -87,6 +88,7 @@ export const initialState: DatasetReduxState = {
     },
     ui: {
         selectedConnectionId: null,
+        selectedConnectionDelegationStatus: null,
         isDatasetChanged: false,
         isFieldEditorModuleLoading: false,
         isSourcesLoading: false,
@@ -120,3 +122,8 @@ export const getInitialState = (extra?: Partial<DatasetReduxState>): DatasetRedu
 });
 
 export const EDIT_HISTORY_OPTIONS_KEY = '__editHistoryOptions__';
+
+export const ConnectionUpdateActions = {
+    ADD: 'add',
+    REPLACE: 'replace',
+} as const;
