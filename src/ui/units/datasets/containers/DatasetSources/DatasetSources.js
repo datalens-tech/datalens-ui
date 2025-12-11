@@ -224,7 +224,7 @@ export class DatasetSources extends React.Component {
 
     selectConnection = async ({entryId, isDelegated}) => {
         try {
-            this.setState((state) => ({...state, isLoadingConnectionInfo: true}));
+            this.setState({isLoadingConnectionInfo: true});
             const connection = await getSdk().sdk.us.getEntry({
                 entryId,
                 includePermissionsInfo: true,
@@ -234,7 +234,7 @@ export class DatasetSources extends React.Component {
                 connection: {...connection, isDelegated},
                 tab: TAB_SOURCES,
             });
-            this.setState((state) => ({...state, isLoadingConnectionInfo: false}));
+            this.setState({isLoadingConnectionInfo: false});
 
             this.clickConnection(entryId);
         } catch (error) {
@@ -400,7 +400,7 @@ export class DatasetSources extends React.Component {
             case DATASET_UPDATE_ACTIONS.CONNECTION_REPLACE: {
                 const {connection, newConnection} = update;
 
-                this.setState((state) => ({...state, isLoadingConnectionInfo: true}));
+                this.setState({isLoadingConnectionInfo: true});
 
                 return this.props
                     .replaceConnection({
@@ -408,7 +408,7 @@ export class DatasetSources extends React.Component {
                         newConnection,
                     })
                     .then(() => {
-                        this.setState((state) => ({...state, isLoadingConnectionInfo: false}));
+                        this.setState({isLoadingConnectionInfo: false});
                         return this.updateDatasetByValidation({
                             updatePreview,
                             validateEnabled,
