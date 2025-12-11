@@ -32,7 +32,11 @@ export function replaceRelativeLinksToAbsoluteInHTML(doc: string) {
         if (path) {
             const baseUrl = getDocsBaseUrl();
 
-            return `href="${baseUrl}/troubleshooting/errors/${path}"`;
+            const docsPath = path.toLowerCase().includes('err')
+                ? `troubleshooting/errors/${path}`
+                : path;
+
+            return `href="${baseUrl}/${docsPath}"`;
         }
         return subString;
     });
