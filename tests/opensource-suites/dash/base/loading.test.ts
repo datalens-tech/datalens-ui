@@ -153,7 +153,7 @@ datalensTest.describe('Dashboards - Widgets loading', () => {
             await page
                 .locator(SELECTORS.CHART_LINE_ITEM)
                 .first()
-                .or(page.locator(COMMON_CHARTKIT_SELECTORS.chart))
+                .or(page.locator(COMMON_CHARTKIT_SELECTORS.chart).first())
                 .waitFor({state: 'visible'});
 
             await dashboardPage.exitEditMode();
