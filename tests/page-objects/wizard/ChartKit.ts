@@ -116,7 +116,7 @@ export default class ChartKit {
 
     async waitForSuccessfulRender() {
         const locator = this.page
-            .locator('.chartkit-graph,.chartkit .gcharts-chart')
+            .locator(COMMON_CHARTKIT_SELECTORS.chart)
             .or(this.getTableLocator());
         await locator.waitFor();
     }

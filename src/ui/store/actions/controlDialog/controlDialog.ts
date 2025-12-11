@@ -55,6 +55,7 @@ import {
     selectControlDialogState,
 } from '../../selectors/controlDialog';
 import {getValidScopeFields} from './helpers';
+import {selectTabId} from 'ui/units/dash/store/selectors/dashTypedSelectors';
 
 const dialogI18n = I18n.keyset('dash.group-controls-dialog.edit');
 
@@ -289,10 +290,12 @@ export const applyGroupControlDialog = ({
             }
         });
 
+        const tabId = selectTabId(state);
+
         const {impactType, impactTabsIds} = getValidScopeFields({
             impactType: selectorsGroup.impactType,
             impactTabsIds: selectorsGroup.impactTabsIds,
-            tabId: state.dash.tabId,
+            tabId,
             isGroupSetting: true,
             isSingleControl,
         });
@@ -329,7 +332,7 @@ export const applyGroupControlDialog = ({
                     ...getValidScopeFields({
                         impactType: selector.impactType,
                         impactTabsIds: selector.impactTabsIds,
-                        tabId: state.dash.tabId,
+                        tabId,
                         isSingleControl,
                     }),
                 };
@@ -462,6 +465,8 @@ export const applyExternalControlDialog = ({
 
         const dataSource = getItemDataSource(selectorDialog);
 
+        const tabId = selectTabId(state);
+
         const data: SetItemDataExternalControl = {
             title,
             sourceType,
@@ -470,7 +475,7 @@ export const applyExternalControlDialog = ({
             ...getValidScopeFields({
                 impactType,
                 impactTabsIds,
-                tabId: state.dash.tabId,
+                tabId,
                 isGroupSetting: true,
                 isSingleControl: true,
             }),

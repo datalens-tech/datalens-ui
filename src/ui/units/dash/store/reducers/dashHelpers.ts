@@ -401,3 +401,15 @@ export function getGlobalItemsToCopy(tab?: DashTab | null) {
 
     return {globalItems: usedGlobalItems, layout};
 }
+
+export const getCreatedItem = ({
+    isGlobal,
+    items,
+    globalItems,
+}: {
+    isGlobal: boolean;
+    items: DashTabItem[];
+    globalItems: DashTabItem[];
+}) => {
+    return isGlobal ? globalItems[globalItems.length - 1] : items[items.length - 1];
+};

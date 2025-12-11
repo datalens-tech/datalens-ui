@@ -25,11 +25,11 @@ import type {
     DashTabItemControlBaseData,
     DashTabItemGroupControlBaseData,
     DashTabItemImage,
-    DashTabItemType,
     DashTabItemWidget,
     RecursivePartial,
 } from 'shared';
-import {EntryScope, EntryUpdateMode, Feature} from 'shared';
+import {DashTabItemType, EntryScope, EntryUpdateMode, Feature} from 'shared';
+import {openDialogDefault} from 'ui/components/DialogDefault/DialogDefault';
 import type {AppDispatch} from 'ui/store';
 import {
     addEditHistoryPoint,
@@ -54,6 +54,11 @@ import {LOCK_DURATION, Mode} from '../../modules/constants';
 import type {CopiedConfigContext} from '../../modules/helpers';
 import {collectDashStats} from '../../modules/pushStats';
 import {DashUpdateStatus} from '../../typings/dash';
+import {
+    type IsWidgetVisibleOnTabArgs,
+    isItemGlobal,
+    isWidgetVisibleOnTab,
+} from '../../utils/selectors';
 import {DASH_EDIT_HISTORY_UNIT_ID} from '../constants';
 import * as actionTypes from '../constants/dashActionTypes';
 import {
@@ -64,7 +69,6 @@ import {
     selectEntryId,
 } from '../selectors/dashTypedSelectors';
 import type {DashState, UpdateTabsWithGlobalStateArgs} from '../typings/dash';
-import {isItemGlobal} from '../utils';
 
 import {save} from './base/actions';
 import {migrateDataSettings, processTabForGlobalUpdate} from './helpers';
@@ -1051,12 +1055,51 @@ export const updateAllDashSettings = (data: {
     };
 };
 
+// TODO (global selectors): add translations
+const TEMP_I18N_DASH_MAIN_VIEW = {
+    'title_failed-copy-global-item': 'Не удалось скопировать',
+    'label_failed-copy-global-item':
+        'Настройки скопированного селектора делают невозможным отображение его на текущей вкладке. Поменяйти настройки в целевом селекторе перед копированием',
+    button_close: 'Закрыть',
+};
+
 export const setCopiedItemData = (payload: {
     item: AddConfigItem;
     context?: CopiedConfigContext;
     options: AddNewItemOptions;
 }) => {
-    return (dispatch: DashDispatch) => {
+    return (dispatch: DashDispatch, getState: () => DatalensGlobalState) => {
+        const {tabId} = getState().dash;
+
+        const isSelectorItem =
+            payload.item.type === DashTabItemType.Control ||
+            payload.item.type === DashTabItemType.GroupControl;
+
+        if (
+            tabId &&
+            isSelectorItem &&
+            !isWidgetVisibleOnTab({
+                itemData: payload.item.data as IsWidgetVisibleOnTabArgs['itemData'],
+                tabId,
+            })
+        ) {
+            dispatch(
+                openDialogDefault({
+                    // i18n('dash.main.view', 'title_failed-copy-global-item')
+                    caption: TEMP_I18N_DASH_MAIN_VIEW['title_failed-copy-global-item'],
+                    // i18n('dash.main.view', 'label_failed-copy-global-item')
+                    message: TEMP_I18N_DASH_MAIN_VIEW['label_failed-copy-global-item'],
+                    // i18n('dash.main.view', 'button_close')
+                    textButtonCancel: TEMP_I18N_DASH_MAIN_VIEW['button_close'],
+                    propsButtonCancel: {
+                        view: 'action',
+                    },
+                    size: 's',
+                }),
+            );
+            return;
+        }
+
         batch(() => {
             dispatch({
                 type: actionTypes.SET_COPIED_ITEM_DATA as any, // TODO move to TS,
@@ -1137,7 +1180,7 @@ export function updateDeprecatedDashConfig() {
 export const REMOVE_GLOBAL_ITEMS = Symbol('dash/REMOVE_GLOBAL_ITEMS');
 export type RemoveGlobalItemsAction = {
     type: typeof REMOVE_GLOBAL_ITEMS;
-    payload: {items: DashTabItem[]};
+    payload: {itemId: string};
 };
 export const removeGlobalItems = (
     payload: RemoveGlobalItemsAction['payload'],
