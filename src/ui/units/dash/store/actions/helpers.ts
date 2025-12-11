@@ -22,8 +22,9 @@ import {isEmbeddedEntry} from 'ui/utils/embedded';
 import ChartKit from '../../../../libs/DatalensChartkit';
 import {registry} from '../../../../registry';
 import {DASHKIT_STATE_VERSION} from '../../modules/constants';
+import type {GlobalItem} from '../../typings/dash';
 import {isGlobalWidgetVisibleByMainSetting, isGroupItemVisibleOnTab} from '../../utils/selectors';
-import type {DashState, GlobalItem} from '../typings/dash';
+import type {DashState} from '../typings/dash';
 import {createNewTabState} from '../utils';
 
 import type {SetItemDataArgs, TabsHashStates} from './dashTyped';

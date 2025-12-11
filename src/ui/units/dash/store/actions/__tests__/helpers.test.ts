@@ -2,8 +2,8 @@ import type {StateAndParamsMetaData} from '@gravity-ui/dashkit/helpers';
 import {DashTabItemType} from 'shared';
 import type {DashTabItemControlData, DashTabItemGroupControlData} from 'shared';
 import {DASHKIT_STATE_VERSION} from 'ui/units/dash/modules/constants';
+import type {GlobalItem} from 'ui/units/dash/typings/dash';
 
-import type {GlobalItem} from '../../typings/dash';
 import {getNewGlobalParamsAndQueueItems, updateExistingStateWithGlobalSelector} from '../helpers';
 
 describe('dash helpers', () => {

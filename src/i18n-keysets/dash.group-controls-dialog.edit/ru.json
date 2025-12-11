@@ -8,6 +8,7 @@
   "label_data": "Данные",
   "label_default-tab": "Селектор {{index}}",
   "label_filtration": "Фильтрация",
+  "label_no-display-on-current-tab": "Не отображается на текущей вкладке",
   "label_representation": "Отображение",
   "label_selector-settings": "Настройки селектора",
   "label_selectors-list": "Селекторы",
