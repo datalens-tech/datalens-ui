@@ -87,9 +87,11 @@ export const getAlertsMenuItem = ({
                 return false;
             }
 
+            const widgetTypesWithAlert = [WidgetKind.Graph, WidgetKind.GravityCharts] as string[];
+
             return (
                 !isCriticalError &&
-                (loadedData.isNewWizard || loadedData.type === CHARTKIT_WIDGET_TYPE.GRAPH)
+                (loadedData.isNewWizard || widgetTypesWithAlert.includes(loadedData.type))
             );
         },
         action: ({loadedData}: AlertsActionArgs) => {
