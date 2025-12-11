@@ -31,7 +31,8 @@ export function replaceRelativeLinksToAbsoluteInHTML(doc: string) {
         const path = matchedPath[PATH_IN_REGEXP_INDEX];
         if (path) {
             const baseUrl = getDocsBaseUrl();
-            return `href="${baseUrl}/${path}"`;
+
+            return `href="${baseUrl}/troubleshooting/errors/${path}"`;
         }
         return subString;
     });
