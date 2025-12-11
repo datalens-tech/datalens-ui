@@ -14,13 +14,13 @@ import {getUpdatedBackgroundValue, getUpdatedConnections} from 'ui/utils/copyIte
 import {EMBEDDED_MODE} from '../../../../constants/embedded';
 import {Mode} from '../../modules/constants';
 import {getUniqIdsFromDashData} from '../../modules/helpers';
-import {getAllTabItems} from '../../utils/selectors';
+import {getAllTabItems, isItemGlobal} from '../../utils/selectors';
 import * as actionTypes from '../constants/dashActionTypes';
-import {isItemGlobal} from '../utils';
 
 import {
     TAB_PROPERTIES,
     addGlobalItemToTab,
+    getCreatedItem,
     getGlobalItemsToCopy,
     getStateForControlWithGlobalLogic,
 } from './dashHelpers';
@@ -287,12 +287,20 @@ function dash(state = initialState, action) {
                 },
             };
 
+            const itemType = action.payload.item.type;
+
+            const isGlobal =
+                itemType === DashTabItemType.GroupControl || itemType === DashTabItemType.Control
+                    ? isItemGlobal(action.payload.item)
+                    : false;
+
             const tabData = DashKit.setItem({
                 item: newItem,
                 config: {...tab, salt: data.salt, counter: data.counter},
                 options: {
                     ...action.payload.options,
                     excludeIds: getUniqIdsFromDashData(data),
+                    ...(isGlobal ? {useGlobalItems: true} : {}),
                 },
             });
 
@@ -304,7 +312,11 @@ function dash(state = initialState, action) {
                 state.entry.entryId === targetEntryId &&
                 targetIds?.length
             ) {
-                const copiedItem = tabData.items[tabData.items.length - 1];
+                const copiedItem = getCreatedItem({
+                    isGlobal,
+                    items: tabData.items,
+                    globalItems: tabData.globalItems,
+                });
 
                 const updatedConnections = getUpdatedConnections({
                     connections: tabData.connections,
@@ -313,6 +325,24 @@ function dash(state = initialState, action) {
                 });
 
                 tabData.connections = updatedConnections;
+            }
+
+            // Handle global control items (GroupControl and Control types)
+            if (itemType === DashTabItemType.GroupControl || itemType === DashTabItemType.Control) {
+                const updatedState = getStateForControlWithGlobalLogic({
+                    state,
+                    data,
+                    tabData,
+                    tabIndex,
+                    itemType,
+                    itemData,
+                    isGlobal,
+                });
+
+                // If the function returned a state, return it
+                if (updatedState) {
+                    return updatedState;
+                }
             }
 
             return {
@@ -382,7 +412,11 @@ function dash(state = initialState, action) {
 
                 const item = state.openedItemId
                     ? allTabItems.find((tabItem) => tabItem.id === state.openedItemId)
-                    : allTabItems[tabData.items.length - 1];
+                    : getCreatedItem({
+                          isGlobal,
+                          items: tabData.items,
+                          globalItems: tabData.globalItems,
+                      });
 
                 const updatedConnections = getUpdatedConnections({
                     connections: tabData.connections,

@@ -59,6 +59,7 @@ import {
 } from 'ui/components/DashKit/constants';
 import {WidgetContextProvider} from 'ui/components/DashKit/context/WidgetContext';
 import {getDashKitMenu} from 'ui/components/DashKit/helpers';
+import {openDialogDefault} from 'ui/components/DialogDefault/DialogDefault';
 import {showToast} from 'ui/store/actions/toaster';
 import {isEmbeddedMode} from 'ui/utils/embedded';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
@@ -108,6 +109,7 @@ import {
 import {dispatchDashLoadedEvent} from '../../utils/customEvents';
 import {getCustomizedProperties} from '../../utils/dashkitProps';
 import {scrollIntoView} from '../../utils/scrollUtils';
+import {isItemGlobal} from '../../utils/selectors';
 import {
     FixedHeaderContainer,
     FixedHeaderControls,
@@ -125,6 +127,15 @@ import {
 import iconRelations from 'ui/assets/icons/relations.svg';
 
 import './Body.scss';
+
+// TODO (global selectors): add translations
+const TEMP_I18N_DASH_MAIN_VIEW = {
+    'title_remove-global-selector': 'Селектор есть на других вкладках',
+    'label_remove-global-selector':
+        'У селектора выставлены настройки показа на других вкладках. Точно удалить его со всех вкладок?',
+    'button_apply-remove-global-item': 'Удалить',
+    button_cancel: 'Отменить',
+};
 
 // Do not change class name, the snapter service uses
 const b = block('dash-body');
@@ -502,19 +513,6 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         config: DashKitProps['config'];
         itemsStateAndParams: DashKitProps['itemsStateAndParams'];
     }) => {
-        // if the widget was deleted and it was in globalItems, we need to remove it from other places manually
-        if (
-            this.props.tabData?.globalItems &&
-            this.props.tabData.globalItems.length !== config.globalItems?.length
-        ) {
-            const updatedGlobalItems = config.globalItems as DashTabItem[];
-            const removedItems = this.props.tabData.globalItems.filter(
-                (item) => !updatedGlobalItems?.includes(item),
-            );
-
-            this.props.removeGlobalItems({items: removedItems});
-        }
-
         if (
             this.props.hashStates !== itemsStateAndParams &&
             itemsStateAndParams &&
@@ -1037,9 +1035,22 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         return this._memoizedControls;
     };
 
-    getOverlayMenu = () => {
+    dataProviderContextGetter = () => {
+        const {tabId, entryId} = this.props;
+
+        const dashInfo = {
+            dashId: entryId || '',
+            dashTabId: tabId || '',
+        };
+
+        return {
+            [DASH_INFO_HEADER]: new URLSearchParams(dashInfo).toString(),
+        };
+    };
+
+    private getOverlayMenu = () => {
         if (!this._memoizedMenu) {
-            const dashkitMenu = getDashKitMenu();
+            const dashkitMenu = getDashKitMenu(this.onRemoveDashkitItem);
 
             this._memoizedMenu = [
                 ...dashkitMenu.slice(0, -1),
@@ -1070,17 +1081,50 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
         return this._memoizedMenu;
     };
 
-    dataProviderContextGetter = () => {
-        const {tabId, entryId} = this.props;
+    private removeItemManual = (itemId: string, isGlobal?: boolean) => {
+        const currentItemsStateAndParams =
+            'state' in this.props.hashStates ? this.props.hashStates.state : {};
 
-        const dashInfo = {
-            dashId: entryId || '',
-            dashTabId: tabId || '',
-        };
+        const {itemsStateAndParams, config} = GravityDashkit.removeItem({
+            id: itemId,
+            config: this.getConfig() as DashKitProps['config'],
+            itemsStateAndParams: currentItemsStateAndParams,
+        });
+        this.onChange({
+            config,
+            itemsStateAndParams,
+        });
 
-        return {
-            [DASH_INFO_HEADER]: new URLSearchParams(dashInfo).toString(),
-        };
+        // if the widget was deleted and it was in globalItems, we need to remove it from other places manually
+        if (isGlobal) {
+            this.props.removeGlobalItems({itemId});
+        }
+    };
+
+    private onRemoveDashkitItem = (configItem: ConfigItem) => {
+        const dashItem = configItem as unknown as DashTabItem;
+        if (
+            (dashItem.type === DashTabItemType.Control ||
+                dashItem.type === DashTabItemType.GroupControl) &&
+            isItemGlobal(dashItem)
+        ) {
+            this.props.openDialogDefault({
+                // i18n('dash.main.view', 'title_remove-global-selector')
+                caption: TEMP_I18N_DASH_MAIN_VIEW['title_remove-global-selector'],
+                // i18n('dash.main.view', 'label_remove-global-selector')
+                message: TEMP_I18N_DASH_MAIN_VIEW['label_remove-global-selector'],
+                onApply: () => {
+                    this.removeItemManual(configItem.id, true);
+                },
+                // i18n('dash.main.view', 'button_apply-remove-global-item')
+                textButtonApply: TEMP_I18N_DASH_MAIN_VIEW['button_apply-remove-global-item'],
+                // i18n('dash.main.view', 'button_cancel')
+                textButtonCancel: TEMP_I18N_DASH_MAIN_VIEW['button_cancel'],
+                size: 's',
+            });
+            return;
+        }
+        this.removeItemManual(configItem.id, true);
     };
 
     private isEditMode() {
@@ -1367,6 +1411,7 @@ const mapDispatchToProps = {
     openDialogRelations,
     closeDialogRelations,
     openDialog,
+    openDialogDefault,
     showToast,
     setWidgetCurrentTab,
     toggleTableOfContent,
