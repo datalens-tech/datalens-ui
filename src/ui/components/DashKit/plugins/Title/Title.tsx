@@ -141,7 +141,7 @@ const titlePlugin: PluginTitle = {
             defaultOldColor: CustomPaletteBgColors.NONE,
         });
 
-        const textColorStyles = useTextColorStyles(data.textColor, data.textColorSettings);
+        const textColorStyles = useTextColorStyles(data.textColor, data.textSettings?.color);
         const wrapperStyles = {...style, ...textColorStyles};
 
         const currentLayout = props.layout.find(({i}) => i === props.id) || {
