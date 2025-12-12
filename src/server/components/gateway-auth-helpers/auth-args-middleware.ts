@@ -24,7 +24,6 @@ export function createAuthArgsMiddleware(config: AppConfig) {
         });
     }
 
-    // Initialize node-cache once in the factory
     const cache = new NodeCache();
 
     return async function authArgsMiddleware(
