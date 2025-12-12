@@ -6,11 +6,13 @@ import {
     type DialogHeaderProps,
     type DialogProps,
 } from '@gravity-ui/uikit';
+import type {AppDispatch} from 'ui/store';
+import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 
 import DialogManager from '../DialogManager/DialogManager';
 
 export type DialogDefaultProps = {
-    onApply: () => void;
+    onApply?: () => void;
     onCancel: () => void;
     message: React.ReactNode;
     confirmOnEnterPress?: boolean;
@@ -31,6 +33,34 @@ export const DIALOG_DEFAULT = Symbol('DIALOG_DEFAULT');
 export type OpenDialogDefaultArgs = {
     id: typeof DIALOG_DEFAULT;
     props: DialogDefaultProps;
+};
+
+export const openDialogDefault = ({
+    onCancel,
+    onApply,
+    ...props
+}: Omit<DialogDefaultProps, 'onCancel' | 'open'> & {onCancel?: () => void}) => {
+    return function (dispatch: AppDispatch) {
+        dispatch(
+            openDialog({
+                id: DIALOG_DEFAULT,
+                props: {
+                    ...props,
+                    open: true,
+                    onCancel: () => {
+                        onCancel?.();
+                        dispatch(closeDialog());
+                    },
+                    onApply: onApply
+                        ? () => {
+                              onApply?.();
+                              dispatch(closeDialog());
+                          }
+                        : undefined,
+                },
+            }),
+        );
+    };
 };
 
 export const DialogDefault = (props: DialogDefaultProps) => {

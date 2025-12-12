@@ -5,9 +5,10 @@ import {getControlByTitle, openTestPage, slct, waitForCondition} from '../../../
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
 import {DashRelationTypes} from '../../../../src/shared';
 import {RobotChartsDashboardUrls} from '../../../utils/constants';
+import {COMMON_CHARTKIT_SELECTORS} from '../../../page-objects/constants/chartkit';
 
 const SELECTORS = {
-    CHART_LEGEND_ITEM: '.highcharts-legend-item, .gcharts-legend__item',
+    CHART_LEGEND_ITEM: COMMON_CHARTKIT_SELECTORS.chartLegendItem,
     CONTROL_SELECT_KEY: 'chartkit-control-select',
     CONTROL_SELECT_ITEMS_KEY: 'chartkit-control-select-items',
 };

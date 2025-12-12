@@ -18,6 +18,7 @@ import type {
     WidgetDashState,
 } from 'ui/libs/DatalensChartkit/types';
 import type {GetChartkitMenuByType} from 'ui/registry/units/chart/types/functions/getChartkitMenuByType';
+import type {ExtendedDashKitContextType} from 'ui/units/dash/typings/context';
 
 import type {ChartKit} from '../../../libs/DatalensChartkit/ChartKit/ChartKit';
 import type {
@@ -128,6 +129,7 @@ type ChartKitBaseWrapperProps = ChartsProps & {
     needRenderContentControls?: boolean;
     reload?: (args?: {silentLoading?: boolean; noVeil?: boolean}) => void;
     runActivity?: RunActivityFn;
+    updateTabsWithGlobalState?: ExtendedDashKitContextType['updateTabsWithGlobalState'];
 };
 
 export type ChartWidgetProviderPropsWithRefProps = ChartRefProp &

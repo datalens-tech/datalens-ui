@@ -1,3 +1,5 @@
+import type {SharedScope} from 'shared';
+
 import type {GetEntryResponse} from '../../../../shared/schema';
 import type {
     OrderDirection,
@@ -11,10 +13,11 @@ export type WorkbookEntriesFilters = {
 };
 
 export type WorkbookEntry = GetEntryResponse & {name: string};
+export type WorkbookSharedEntry = WorkbookEntry & {isDelegated: boolean; scope: SharedScope};
 
-export type EntryChunkItem = {
+export type EntryChunkItem<T extends WorkbookEntry> = {
     type: 'entry';
-    item: WorkbookEntry;
+    item: T;
     key: string;
 };
 
@@ -23,4 +26,4 @@ export type EmptyChunkItem = {
     key: 'empty';
 };
 
-export type ChunkItem = EntryChunkItem | EmptyChunkItem;
+export type ChunkItem<T extends WorkbookEntry> = EntryChunkItem<T> | EmptyChunkItem;

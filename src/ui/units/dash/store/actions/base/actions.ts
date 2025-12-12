@@ -42,6 +42,8 @@ import {
     removeParamAndUpdate,
 } from '../helpers';
 
+import {getGlobalStatesForInactiveTabs} from './helpers';
+
 const i18n = I18n.keyset('dash.store.view');
 
 export const setSelectStateMode = ({
@@ -312,10 +314,18 @@ export const load = ({
                 throw new Error(NOT_FOUND_ERROR_TEXT);
             }
 
-            // without await, they will start following each markdown separately
-            await MarkdownProvider.init(data);
-
             const {tabId, widgetsCurrentTab} = getCurrentTab({searchParams, data, history});
+
+            // without await, they will start following each markdown separately
+
+            const [updatedHashStates, _] = await Promise.all([
+                getGlobalStatesForInactiveTabs({
+                    state: hashData?.data,
+                    data,
+                    currentTabId: tabId,
+                }),
+                MarkdownProvider.init(data),
+            ]);
 
             let hashStates = {};
             if (hashData) {
@@ -326,6 +336,7 @@ export const load = ({
                         hash,
                         state: {...controls, ...states},
                     },
+                    ...(updatedHashStates || {}),
                 };
             }
 

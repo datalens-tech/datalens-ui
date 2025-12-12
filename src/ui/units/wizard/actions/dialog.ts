@@ -200,10 +200,7 @@ export function openDialogPointsSize({
         const visualizationId = visualization.id;
 
         const pointType =
-            visualizationId === WizardVisualizationId.Scatter ||
-            visualizationId === WizardVisualizationId.ScatterD3
-                ? 'scatter'
-                : 'geopoint';
+            visualizationId === WizardVisualizationId.Scatter ? 'scatter' : 'geopoint';
 
         dispatch(
             openDialog({

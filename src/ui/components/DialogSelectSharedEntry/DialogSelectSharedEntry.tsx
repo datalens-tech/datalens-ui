@@ -51,6 +51,7 @@ export const DialogSelectSharedEntry = ({
     onSelectEntry,
     dialogTitle,
 }: DialogSelectSharedEntryProps) => {
+    const [isLoading, setIsLoading] = React.useState(false);
     const {
         filters,
         setFilters,
@@ -70,6 +71,15 @@ export const DialogSelectSharedEntry = ({
     const structureItemsIsLoading = useSelector(selectStructureItemsIsLoading);
     const structureItemsError = useSelector(selectStructureItemsError);
     const nextPageToken = useSelector(selectNextPageToken);
+
+    const onSelectEntryHandle = React.useCallback(
+        async (entry: StructureItem) => {
+            setIsLoading(true);
+            await onSelectEntry(entry);
+            setIsLoading(false);
+        },
+        [onSelectEntry],
+    );
 
     return (
         <Dialog open={open} onClose={onClose} className={b()}>
@@ -101,17 +111,17 @@ export const DialogSelectSharedEntry = ({
                 <StructureItemSelect
                     collectionId={targetCollectionId}
                     workbookId={targetWorkbookId}
-                    contentIsLoading={structureItemsIsLoading || breadcrumbsIsLoading}
+                    contentIsLoading={structureItemsIsLoading || breadcrumbsIsLoading || isLoading}
                     contentError={structureItemsError}
                     breadcrumbs={breadcrumbs}
-                    items={structureItems}
+                    items={isLoading ? [] : structureItems}
                     nextPageToken={nextPageToken}
                     pageSize={PAGE_SIZE}
                     isSelectionAllowed={true}
                     canSelectWorkbook={false}
                     getStructureItemsRecursively={getStructureItemsRecursively}
                     onChangeCollection={handleChangeCollection}
-                    onSelectEntry={onSelectEntry}
+                    onSelectEntry={onSelectEntryHandle}
                     getIsInactiveItem={getIsInactiveEntity}
                 />
             </Dialog.Body>

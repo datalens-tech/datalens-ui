@@ -79,12 +79,9 @@ function prepareColors(
     colors: Field[],
     colorsConfig: ColorsConfig,
 ): PrepareColorsItems {
-    const isPieOrDonut = [
-        WizardVisualizationId.Donut,
-        WizardVisualizationId.Pie,
-        WizardVisualizationId.PieD3,
-        WizardVisualizationId.DonutD3,
-    ].includes(visualization?.id);
+    const isPieOrDonut = [WizardVisualizationId.Donut, WizardVisualizationId.Pie].includes(
+        visualization?.id,
+    );
 
     // Historically, the Pie Chart and the Ring Chart had their own placeholders for colors
     // Thus, there is no allowColors, and we always fall into else here and could never change colors and so on.

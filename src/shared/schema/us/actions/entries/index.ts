@@ -44,6 +44,8 @@ import type {
     GetRevisionsResponse,
     GetSharedEntryBindingsArgs,
     GetSharedEntryBindingsResponse,
+    GetSharedEntryWorkbookRelationsArgs,
+    GetSharedEntryWorkbookRelationsResponse,
     MoveEntryArgs,
     MoveEntryResponse,
     RenameEntryArgs,
@@ -259,6 +261,20 @@ export const entriesActions = {
             headers,
         }),
     }),
+    getSharedEntryDelegation: createAction<
+        EntityBindingsResponse,
+        Omit<EntityBindingsArgs, 'delegation'>
+    >({
+        method: 'GET',
+        path: () => `${PATH_PREFIX}/entity-bindings`,
+        params: ({sourceId, targetId}, headers) => ({
+            query: {
+                sourceId,
+                targetId,
+            },
+            headers,
+        }),
+    }),
     createSharedEntryBinding: createAction<EntityBindingsResponse, EntityBindingsArgs>({
         method: 'POST',
         path: () => `${PATH_PREFIX}/entity-bindings/create`,
@@ -292,13 +308,31 @@ export const entriesActions = {
     >({
         method: 'GET',
         path: ({entryId}) => `${PATH_PREFIX}/shared-entries/${entryId}/entity-bindings`,
-        params: ({page, pageSize, entryAs, mode, filterString}, headers) => ({
+        params: (
+            {page, pageSize, entryAs, mode, filterString, includePermissionsInfo},
+            headers,
+        ) => ({
             query: {
                 pageSize,
                 page,
                 entryAs,
                 mode,
                 filterString,
+                includePermissionsInfo,
+            },
+            headers,
+        }),
+    }),
+    getSharedEntryWorkbookRelations: createAction<
+        GetSharedEntryWorkbookRelationsResponse,
+        GetSharedEntryWorkbookRelationsArgs
+    >({
+        method: 'GET',
+        path: ({entryId}) => `${PATH_PREFIX}/shared-entries/${entryId}/workbook-relations`,
+        params: ({scope, workbookId}, headers) => ({
+            query: {
+                workbookId,
+                scope,
             },
             headers,
         }),

@@ -8,6 +8,7 @@ import axios from 'axios';
 import pick from 'lodash/pick';
 
 import {
+    AUDIT_MODE_HEADER,
     AuthHeader,
     DL_CONTEXT_HEADER,
     FORWARDED_FOR_HEADER,
@@ -100,6 +101,7 @@ class Utils {
                 AuthHeader.Authorization,
                 headersMap.subjectToken,
                 PUBLIC_API_VERSION_HEADER,
+                AUDIT_MODE_HEADER,
             ]),
             ...Utils.pickForwardHeaders(req.headers),
             [TENANT_ID_HEADER]: tenantId,

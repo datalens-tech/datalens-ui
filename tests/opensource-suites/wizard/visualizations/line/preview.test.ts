@@ -12,7 +12,7 @@ datalensTest.describe('Wizard', () => {
             await openTestPage(page, config.wizard.urls.WizardBasicDataset);
 
             const wizardPage = new WizardPage({page});
-            await wizardPage.setVisualization(WizardVisualizationId.LineD3);
+            await wizardPage.setVisualization(WizardVisualizationId.Line);
         });
 
         datalensTest.afterEach(async ({page}) => {
