@@ -60,7 +60,7 @@ export const entriesActions = {
     listDirectory,
     getEntries,
     getEntry,
-    _getEntryPrivate: getEntry,
+    _getEntryWithAudit: getEntry,
     getEntryByKey: createAction<GetEntryByKeyResponse, GetEntryByKeyArgs>({
         method: 'GET',
         path: () => `${PATH_PREFIX}/entriesByKey`,
