@@ -2,17 +2,25 @@ import type {ConfigItem, ConfigItemData} from '@gravity-ui/dashkit';
 import type {ThemeType} from '@gravity-ui/uikit';
 import {
     CustomPaletteBgColors,
+    CustomPaletteTextColors,
+    TITLE_WIDGET_TEXT_COLORS_PRESET,
     WIDGET_BG_COLORS_PRESET,
     getColorSettingsWithValue,
 } from 'shared/constants';
 import {getActualOldBackground} from 'shared/modules/dash-scheme-converter';
-import type {BackgroundSettings, ColorSettings, OldBackgroundSettings} from 'shared/types';
+import type {
+    BackgroundSettings,
+    ColorSettings,
+    OldBackgroundSettings,
+    TitleTextSettings,
+} from 'shared/types';
 import {
     DashTabItemType,
     Feature,
     isBackgroundSettings,
     isColorByTheme,
     isOldBackgroundSettings,
+    isTextSettings,
 } from 'shared/types';
 import type {ConnectionsData} from 'ui/components/DialogRelations/types';
 
@@ -176,7 +184,76 @@ export function getUpdatedBackgroundData({
               backgroundSettings: {color: newColor},
           }
         : {
-              background: oldColor ? {color: oldColor} : {color: defaultOldColor},
+              background: {color: oldColor ?? defaultOldColor},
               backgroundSettings: undefined,
+          };
+}
+
+export function getUpdatedTextData({
+    textColor,
+    textSettings,
+    allowCustomValues = false,
+    enableSeparateThemeColorSelector = true,
+    themeType = 'light',
+}: {
+    textColor: unknown;
+    textSettings: unknown;
+    allowCustomValues: boolean;
+    enableSeparateThemeColorSelector: boolean;
+    themeType?: ThemeType;
+}): {
+    textSettings: TitleTextSettings | undefined;
+    textColor: string | undefined;
+} {
+    const defaultOldColor = CustomPaletteTextColors.PRIMARY;
+    let oldColor: string | undefined;
+    let newColor: ColorSettings | undefined;
+
+    const isOldTextColor = typeof textColor === 'string';
+    const isTextColorSettings = isTextSettings(textSettings);
+
+    if (isOldTextColor) {
+        oldColor = textColor;
+
+        if (
+            !isDashColorPickersByThemeEnabled &&
+            !allowCustomValues &&
+            oldColor &&
+            !TITLE_WIDGET_TEXT_COLORS_PRESET.includes(oldColor) &&
+            !Object.values<string>(CustomPaletteTextColors).includes(oldColor)
+        ) {
+            oldColor = defaultOldColor;
+        }
+    }
+
+    if (isTextColorSettings) {
+        const color = textSettings.color;
+
+        if (!enableSeparateThemeColorSelector) {
+            if (isColorByTheme(color)) {
+                newColor = color[themeType] ?? Object.values(color).find((c) => c !== undefined);
+            } else {
+                newColor = color;
+            }
+        } else if (isColorByTheme(color)) {
+            newColor = color;
+        } else {
+            newColor = getColorSettingsWithValue(color, enableSeparateThemeColorSelector);
+        }
+    } else if (isDashColorPickersByThemeEnabled) {
+        newColor = getColorSettingsWithValue(
+            computeColorFromToken(oldColor ?? defaultOldColor),
+            enableSeparateThemeColorSelector,
+        );
+    }
+
+    return isTextColorSettings
+        ? {
+              textSettings: {color: newColor},
+              textColor: undefined,
+          }
+        : {
+              textSettings: undefined,
+              textColor: oldColor ?? defaultOldColor,
           };
 }

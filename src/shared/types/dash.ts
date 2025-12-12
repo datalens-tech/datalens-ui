@@ -157,6 +157,8 @@ export type OldBackgroundSettings = {
 export type ColorSettings = ColorByTheme | string;
 export type BackgroundSettings = {color?: ColorSettings};
 
+export type TitleTextSettings = {color?: ColorSettings};
+
 export function isOldBackgroundSettings(value: unknown): value is OldBackgroundSettings {
     return (
         typeof value === 'object' &&
@@ -184,7 +186,7 @@ export function isColorSettings(value: unknown): value is ColorSettings {
     return typeof value === 'string' || isColorByTheme(value);
 }
 
-export function isBackgroundSettings(value: unknown): value is BackgroundSettings {
+function isSettingsWithColor(value: unknown): value is {color?: ColorSettings} {
     return (
         typeof value === 'object' &&
         value !== null &&
@@ -193,6 +195,14 @@ export function isBackgroundSettings(value: unknown): value is BackgroundSetting
             typeof value.color === 'string' ||
             isColorSettings(value.color))
     );
+}
+
+export function isBackgroundSettings(value: unknown): value is BackgroundSettings {
+    return isSettingsWithColor(value);
+}
+
+export function isTextSettings(value: unknown): value is TitleTextSettings {
+    return isSettingsWithColor(value);
 }
 
 export interface DashTabItemBase {
@@ -232,7 +242,7 @@ export interface DashTabItemTitle extends DashTabItemBase {
         showInTOC: boolean;
         autoHeight?: boolean;
         textColor?: string;
-        textSettings?: {color?: ColorSettings};
+        textSettings?: TitleTextSettings;
         hint?: HintSettings;
     };
 }
