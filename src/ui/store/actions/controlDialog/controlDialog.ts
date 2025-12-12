@@ -13,11 +13,14 @@ import type {
     SelectorsGroupDialogState,
     SetSelectorDialogItemArgs,
     ItemDataSource,
+    SelectorsGroupValidation,
+    SelectorDialogValidation,
 } from '../../typings/controlDialog';
 import type {AppDispatch} from '../..';
 import {
     getControlDefaultsForField,
     getControlValidation,
+    getGroupControlValidation,
     getItemDataSource,
 } from '../../utils/controlDialog';
 import isEmpty from 'lodash/isEmpty';
@@ -182,6 +185,25 @@ export const setLastUsedConnectionId = (connectionId: string): SetLastUsedConnec
     payload: connectionId,
 });
 
+export const UPDATE_CONTROLS_VALIDATION = Symbol('controlDialog/UPDATE_CONTROLS_VALIDATION');
+
+export type UpdateControlsValidationAction = {
+    type: typeof UPDATE_CONTROLS_VALIDATION;
+    payload: {
+        groupValidation?: SelectorsGroupValidation;
+        itemsValidation?: SelectorDialogValidation;
+    };
+};
+
+export const updateControlsValidation = (
+    payload: UpdateControlsValidationAction['payload'],
+): UpdateControlsValidationAction => {
+    return {
+        type: UPDATE_CONTROLS_VALIDATION,
+        payload,
+    };
+};
+
 const isSelectorWithContext = (
     selector: SelectorDialogState,
 ): selector is PastedSelectorDialogState => {
@@ -223,10 +245,11 @@ export const applyGroupControlDialog = ({
 
         // check validation for every control
         for (let i = 0; i < validatedSelectorsGroup.group.length; i += 1) {
-            const validation = getControlValidation(
-                validatedSelectorsGroup.group[i],
+            const validation = getControlValidation({
+                selectorDialog: validatedSelectorsGroup.group[i],
                 groupFieldNames,
-            );
+                selectorsGroup: validatedSelectorsGroup,
+            });
 
             if (!isEmpty(validation) && firstInvalidIndex === null) {
                 firstInvalidIndex = i;
@@ -235,10 +258,17 @@ export const applyGroupControlDialog = ({
             validatedSelectorsGroup.group[i].validation = validation;
         }
 
+        validatedSelectorsGroup.validation = getGroupControlValidation({
+            selectorsGroup: validatedSelectorsGroup,
+        });
+
+        if (firstInvalidIndex !== null || !isEmpty(validatedSelectorsGroup.validation)) {
+            dispatch(updateSelectorsGroup(validatedSelectorsGroup));
+        }
+
         if (firstInvalidIndex !== null) {
             const activeSelectorValidation =
                 validatedSelectorsGroup.group[activeSelectorIndex].validation;
-            dispatch(updateSelectorsGroup(validatedSelectorsGroup));
 
             if (!isEmpty(activeSelectorValidation)) {
                 dispatch(
@@ -364,7 +394,10 @@ export const copyControlToStorage = (controlIndex: number) => {
             namespace,
             currentTabId: tabId,
         } = selectOpenedItemMeta(state);
-        const validation = getControlValidation(selectorsGroup.group[controlIndex]);
+        const validation = getControlValidation({
+            selectorDialog: selectorsGroup.group[controlIndex],
+            selectorsGroup,
+        });
 
         if (!scope) {
             return;
@@ -449,7 +482,7 @@ export const applyExternalControlDialog = ({
         const selectorDialog = selectSelectorDialog(state);
         const {title, sourceType, autoHeight, impactType, impactTabsIds} = selectorDialog;
 
-        const validation = getControlValidation(selectorDialog);
+        const validation = getControlValidation({selectorDialog});
 
         if (!isEmpty(validation)) {
             dispatch(
