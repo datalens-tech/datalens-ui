@@ -1,11 +1,20 @@
 import type {StringParams} from '@gravity-ui/chartkit/highcharts';
 import {i18n} from 'i18n';
 import {DashTabItemControlSourceType, TitlePlacements} from 'shared/types';
+
+// Mock i18n object for testing/development
+const mockI18n = {
+    'validation_invalid-impact-type':
+        'Настройка селектора не должна быть шире, чем настройка группы',
+    'validation_empty-impact-tabs-ids': 'Должна быть выбрана хотя бы одна вкладка',
+};
 import type {
     ItemDataSource,
     SelectorDialogState,
     SelectorDialogValidation,
     SelectorElementType,
+    SelectorsGroupDialogState,
+    SelectorsGroupValidation,
 } from 'ui/store/typings/controlDialog';
 import {validateParamTitleOnlyUnderscore} from 'ui/units/dash/components/ParamsSettings/helpers';
 import {addOperationForValue} from 'ui/units/dash/modules/helpers';
@@ -89,10 +98,104 @@ const getFieldNameValidation = (
     return {};
 };
 
-export const getControlValidation = (
+// The type of item should narrow down or match the type of group
+const validateGroupItemImpactType = (
+    selectorsGroup: SelectorsGroupDialogState,
     selectorDialog: SelectorDialogState,
-    groupFieldNames?: Record<string, string[]>,
 ) => {
+    const {impactType: itemImpactType, impactTabsIds: itemImpactTabsIds} = selectorDialog;
+    const {impactType: groupItemImpactType, impactTabsIds: groupImpactTabsIds} = selectorsGroup;
+    // No validation needed if item has no impact type or follows group
+    if (!itemImpactType || itemImpactType === 'asGroup' || !groupItemImpactType) {
+        return null;
+    }
+
+    // Group affects all tabs - always valid
+    if (groupItemImpactType === 'allTabs') {
+        return null;
+    }
+
+    // Group affects selected tabs - item can affect selected tabs or current tab
+    if (
+        groupItemImpactType === 'selectedTabs' &&
+        (itemImpactType === 'selectedTabs' || itemImpactType === 'currentTab')
+    ) {
+        return null;
+    }
+
+    // Group affects current tab - item must also affect current tab
+    if (
+        groupItemImpactType === 'currentTab' &&
+        itemImpactType === 'currentTab' &&
+        groupImpactTabsIds?.[0] === itemImpactTabsIds?.[0]
+    ) {
+        return null;
+    }
+
+    return mockI18n['validation_invalid-impact-type'];
+    // return i18n('dash.control-dialog.edit', 'validation_not-combined-with-group-setting');
+};
+
+const getImpactValidation = (
+    selectorDialog: SelectorDialogState,
+    selectorsGroup?: SelectorsGroupDialogState,
+) => {
+    const {impactType, impactTabsIds} = selectorDialog;
+
+    const validation: SelectorDialogValidation = {};
+
+    if (impactType === 'selectedTabs' && (!impactTabsIds || impactTabsIds.length === 0)) {
+        // validation.impactTabsIds = i18n(
+        //     'dash.control-dialog.edit',
+        //     'validation_empty-impact-tabs-ids',
+        // );
+        validation.impactTabsIds = mockI18n['validation_empty-impact-tabs-ids'];
+    }
+
+    if (selectorsGroup) {
+        const impactTypeValidation = validateGroupItemImpactType(selectorsGroup, selectorDialog);
+
+        if (impactTypeValidation) {
+            validation.impactType = impactTypeValidation;
+        }
+    }
+
+    return validation;
+};
+
+export const getGroupControlValidation = ({
+    selectorsGroup,
+}: {
+    selectorsGroup: SelectorsGroupDialogState;
+}) => {
+    const {impactTabsIds, impactType, validation: prevValidation} = selectorsGroup;
+
+    const validation: SelectorsGroupValidation = {};
+
+    if (impactType === 'selectedTabs' && impactTabsIds?.length === 0) {
+        // validation.impactTabsIds = i18n(
+        //     'dash.control-dialog.edit',
+        //     'validation_empty-impact-tabs-ids',
+        // );
+        validation.impactTabsIds = mockI18n['validation_empty-impact-tabs-ids'];
+    }
+
+    if (prevValidation.currentTabVisibility) {
+        validation.currentTabVisibility = prevValidation.currentTabVisibility;
+    }
+
+    return validation;
+};
+
+export const getControlValidation = ({
+    selectorDialog,
+    groupFieldNames,
+    selectorsGroup,
+}: {
+    selectorDialog: SelectorDialogState;
+    groupFieldNames?: Record<string, string[]>;
+    selectorsGroup?: SelectorsGroupDialogState;
+}) => {
     const {
         title,
         sourceType,
@@ -103,6 +206,7 @@ export const getControlValidation = (
         required,
         connectionQueryContent,
         selectorParameters,
+        validation: prevValidation,
     } = selectorDialog;
 
     const validation: SelectorDialogValidation = {};
@@ -154,9 +258,14 @@ export const getControlValidation = (
         );
     }
 
+    if (prevValidation.currentTabVisibility) {
+        validation.currentTabVisibility = prevValidation.currentTabVisibility;
+    }
+
     return {
         ...validation,
         ...getFieldNameValidation(sourceType, fieldName, selectorParameters),
+        ...getImpactValidation(selectorDialog, selectorsGroup),
     };
 };
 
