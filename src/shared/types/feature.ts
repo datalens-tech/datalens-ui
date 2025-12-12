@@ -105,6 +105,8 @@ export enum Feature {
     EnableNewDashSettings = 'EnableNewDashSettings',
     /** Shows updated settings page */
     EnableNewServiceSettings = 'EnableNewServiceSettings',
+    /** Replace static master token with dynamic one */
+    UsDynamicMasterToken = 'UsDynamicMasterToken',
 }
 
 export type FeatureConfig = Record<string, boolean>;
