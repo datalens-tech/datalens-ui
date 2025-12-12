@@ -30,7 +30,7 @@ export const qlActions = {
 
             const typedApi = getTypedApi(api);
 
-            const getEntryResponse = await typedApi.us.getEntry({
+            const getEntryResponse = await typedApi.us._getEntryPrivate({
                 entryId: chartId,
                 includePermissionsInfo: includePermissions,
                 includeLinks,
