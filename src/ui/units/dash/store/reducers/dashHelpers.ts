@@ -2,6 +2,7 @@
 import type {Config} from '@gravity-ui/dashkit';
 import {DashKit} from '@gravity-ui/dashkit';
 import update from 'immutability-helper';
+import pick from 'lodash/pick';
 import type {
     DashData,
     DashTab,
@@ -249,6 +250,8 @@ export function getStateForControlWithGlobalLogic({
     const {hasAllScope, usedTabs} = detailedGlobalStatus;
     const removeFromCurrentTab = !hasAllScope && !usedTabs.has(tabData.id);
 
+    const preparedTabData = pick(tabData, TAB_PROPERTIES);
+
     // Editing existing control
     if (state.openedItemId) {
         // find prev state of global item in old date
@@ -279,6 +282,7 @@ export function getStateForControlWithGlobalLogic({
                 tabIndex,
                 removeFromCurrentTab,
             );
+            updatedTabs[tabIndex] = preparedTabData;
 
             return {
                 ...state,
@@ -291,6 +295,7 @@ export function getStateForControlWithGlobalLogic({
         } else if (wasGlobal && !isGlobal) {
             // Case: Global to local - remove from globalItems in all tabs, update in current tab (updating for current tab is made in dashkit)
             const updatedTabs = removeGlobalItemFromTabs(data, state.openedItemId, tabIndex);
+            updatedTabs[tabIndex] = preparedTabData;
 
             return {
                 ...state,
@@ -319,6 +324,7 @@ export function getStateForControlWithGlobalLogic({
                 tabData,
                 tabIndex,
             );
+            updatedTabs[tabIndex] = preparedTabData;
 
             return {
                 ...state,
@@ -349,6 +355,7 @@ export function getStateForControlWithGlobalLogic({
             tabData,
             tabIndex,
         );
+        updatedTabs[tabIndex] = preparedTabData;
 
         return {
             ...state,
