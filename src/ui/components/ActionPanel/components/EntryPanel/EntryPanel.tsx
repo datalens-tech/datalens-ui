@@ -52,6 +52,7 @@ type OwnProps = {
     onCloseNavigation?: () => void;
     enablePublish?: boolean;
     filterEntryContextMenuItems?: FilterEntryContextMenuItems;
+    lastCrumbAdditionalContent?: React.ReactNode;
 };
 
 type Props = OwnProps & DispatchProps & StateProps & RouteComponentProps;
@@ -75,7 +76,9 @@ class EntryPanel extends React.Component<Props, State> {
         if (entryState) {
             if (
                 entryProps &&
-                (entryState.entryId !== entryProps.entryId || entryState.key !== entryProps.key)
+                (entryState.entryId !== entryProps.entryId ||
+                    entryState.key !== entryProps.key ||
+                    entryState.collectionId !== entryProps.collectionId)
             ) {
                 return {
                     entry: {
@@ -134,7 +137,7 @@ class EntryPanel extends React.Component<Props, State> {
     }
 
     render() {
-        const {children, workbookName, entityBreadcrumbs} = this.props;
+        const {children, workbookName, entityBreadcrumbs, lastCrumbAdditionalContent} = this.props;
         const {EntryBreadcrumbs} = registry.common.components.getAll();
 
         return (
@@ -147,6 +150,7 @@ class EntryPanel extends React.Component<Props, State> {
                     entityBreadcrumbs={entityBreadcrumbs}
                     endContent={
                         <React.Fragment>
+                            {lastCrumbAdditionalContent}
                             {this.renderControls()}
                             <div className={b()}>{children}</div>
                         </React.Fragment>

@@ -37,7 +37,11 @@ const ConnPanelActions = ({
                 <CreateEditorChartButton entryId={entryId} workbookId={workbookId} />
             )}
             <CreateQlChartButton entryId={entryId} workbookId={workbookId} />
-            <CreateDatasetButton entryId={entryId} entryKey={entryKey} />
+            <CreateDatasetButton
+                entryId={entryId}
+                entryKey={entryKey}
+                externalWorkbookId={workbookId}
+            />
             {s3BasedFormOpened && <S3BasedConnButton />}
         </div>
     );
