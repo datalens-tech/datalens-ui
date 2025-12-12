@@ -176,9 +176,10 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
         };
     });
 
-    let legend: ChartData['legend'];
+    const shouldUseHtmlForLegend = [colorItem, shapeItem].some(isHtmlField);
+    const legend: ChartData['legend'] = {html: shouldUseHtmlForLegend};
     if (seriesData.length <= 1) {
-        legend = {enabled: false};
+        legend.enabled = false;
     }
 
     let xAxis: ChartData['xAxis'] = {};

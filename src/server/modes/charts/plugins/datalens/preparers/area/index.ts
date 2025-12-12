@@ -153,9 +153,10 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
         };
     });
 
-    let legend: ChartData['legend'];
+    const shouldUseHtmlForLegend = isHtmlField(colorItem);
+    const legend: ChartData['legend'] = {html: shouldUseHtmlForLegend};
     if (seriesData.length <= 1) {
-        legend = {enabled: false};
+        legend.enabled = false;
     }
 
     let xAxis: ChartData['xAxis'] = {};
