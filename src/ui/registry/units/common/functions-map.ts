@@ -14,6 +14,7 @@ import type {
     GetEntryResponse,
 } from 'shared/schema';
 import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
+import type {DashEntry} from 'ui/units/dash/typings/entry';
 
 import type {DLUserSettings, EntryScope, IconId, formatNumber} from '../../../../shared';
 import {makeFunctionTemplate} from '../../../../shared/utils/makeFunctionTemplate';
@@ -72,7 +73,11 @@ export const commonFunctionsMap = {
     getMenuGroupConfig: makeFunctionTemplate<() => Array<MenuGroup>>(),
     getSelectStateMenuItem:
         makeFunctionTemplate<
-            <T>(args: {action: () => void; hidden: boolean}) => EntryContextMenuItem<T>
+            <T>(args: {
+                action: () => void;
+                hidden: boolean;
+                entry?: DashEntry;
+            }) => EntryContextMenuItem<T>
         >(),
     getIconDataById: makeFunctionTemplate<(arg: IconId) => IconData>(),
     getIllustrationStore: makeFunctionTemplate<() => GetIllustrationStore>(),

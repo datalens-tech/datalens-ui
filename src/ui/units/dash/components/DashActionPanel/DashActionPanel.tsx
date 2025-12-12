@@ -289,6 +289,7 @@ class DashActionPanel extends React.PureComponent<ActionPanelProps, ActionPanelS
         const getSelectStateMenuItemFn = registry.common.functions.get('getSelectStateMenuItem');
 
         const selectStateMenuItem = getSelectStateMenuItemFn({
+            entry,
             action: this.onSelectStateClick,
             hidden: !canEdit || !isCurrentRevisionActual || DL.IS_MOBILE || Boolean(entry?.fake),
         });
