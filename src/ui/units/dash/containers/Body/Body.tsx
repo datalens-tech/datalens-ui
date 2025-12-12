@@ -305,8 +305,6 @@ class Body extends React.PureComponent<BodyProps, DashBodyState> {
                     onItemMountChange={this.handleItemMountChange}
                     onItemRender={this.handleItemRender}
                     onWidgetMountChange={this.itemAddHandler}
-                    history={this.props.history}
-                    location={this.props.location}
                     {...(this.props.onlyView
                         ? {onlyView: this.props.onlyView, onPasteItem: undefined}
                         : {onlyView: this.props.onlyView, onPasteItem: this.props.onPasteItem})}

@@ -5,7 +5,7 @@ import {i18n} from 'i18n';
 import {getSdk} from 'libs/schematic-sdk';
 import debounce from 'lodash/debounce';
 import {useDispatch, useSelector} from 'react-redux';
-import type {RouteComponentProps} from 'react-router';
+import {useHistory, useLocation} from 'react-router-dom';
 import {UPDATE_STATE_DEBOUNCE_TIME} from 'shared';
 import type {DashTab} from 'shared';
 import {showToast} from 'ui/store/actions/toaster';
@@ -18,17 +18,18 @@ import {
     selectTabHashState,
 } from '../../../../../store/selectors/dashTypedSelectors';
 
-type Args = {disableUrlState?: boolean} & Pick<RouteComponentProps, 'history' | 'location'>;
+type Args = {disableUrlState?: boolean};
 
 export const useHashStates = ({
     disableUrlState,
-    history,
-    location,
 }: Args): {
     hashStates: DashKitProps['itemsStateAndParams'];
     onStateChange: (tabsHashStates: TabsHashStates, config: DashTab) => void;
 } => {
     const dispatch = useDispatch();
+
+    const history = useHistory();
+    const location = useLocation();
 
     const hashStates = useSelector(selectTabHashState);
     const entryId = useSelector(selectEntryId);
