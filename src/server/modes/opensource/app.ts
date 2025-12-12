@@ -39,6 +39,12 @@ export default function initApp(nodekit: NodeKit) {
         initZitadel({nodekit, beforeAuth});
     }
 
+    const isEnabledServerFeature = nodekit.ctx.get('isEnabledServerFeature');
+
+    if (isEnabledServerFeature(Feature.UsDynamicMasterToken)) {
+        beforeAuth.push(createAuthArgsMiddleware(nodekit.config));
+    }
+
     if (isFullMode || isDatalensMode) {
         initDataLensApp({beforeAuth, afterAuth, nodekit});
     }
@@ -67,18 +73,11 @@ export default function initApp(nodekit: NodeKit) {
 function initDataLensApp({
     beforeAuth,
     afterAuth,
-    nodekit,
 }: {
     beforeAuth: AppMiddleware[];
     afterAuth: AppMiddleware[];
     nodekit: NodeKit;
 }) {
-    const isEnabledServerFeature = nodekit.ctx.get('isEnabledServerFeature');
-
-    if (isEnabledServerFeature(Feature.UsDynamicMasterToken)) {
-        beforeAuth.push(createAuthArgsMiddleware(nodekit.config));
-    }
-
     beforeAuth.push(
         createAppLayoutMiddleware({
             plugins: [createLayoutPlugin(), createUikitPlugin()],
