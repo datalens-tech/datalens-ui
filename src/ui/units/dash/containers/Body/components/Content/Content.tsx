@@ -4,7 +4,6 @@ import type {ConfigItem, ConfigLayout, DashKitGroup, DashKitProps} from '@gravit
 import {DashKitDnDWrapper, ActionPanel as DashkitActionPanel} from '@gravity-ui/dashkit';
 import block from 'bem-cn-lite';
 import {useDispatch, useSelector} from 'react-redux';
-import type {RouteComponentProps} from 'react-router';
 import {
     DashBodyQa,
     DashEntryQa,
@@ -82,8 +81,7 @@ type Props = {
           onPasteItem: (data: CopiedConfigData, newLayout?: ConfigLayout[]) => void;
       }
 ) &
-    DashKitWrapperProps &
-    Pick<RouteComponentProps, 'history' | 'location'>;
+    DashKitWrapperProps;
 
 const Content = ({
     copiedData,
@@ -117,9 +115,6 @@ const Content = ({
     onItemMountChange,
     onItemRender,
     onWidgetMountChange,
-
-    history,
-    location,
 
     ...restProps
 }: Props) => {
@@ -218,8 +213,6 @@ const Content = ({
                                 onItemRender,
                                 onWidgetMountChange,
                                 onPasteItem: restProps.onPasteItem,
-                                history,
-                                location,
                             }}
                         />
 

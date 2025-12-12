@@ -10,7 +10,6 @@ import type {
 import block from 'bem-cn-lite';
 import {i18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
-import type {RouteComponentProps} from 'react-router';
 import type {DashTab, DashTabLayout} from 'shared';
 import {FOCUSED_WIDGET_PARAM_NAME, Feature} from 'shared';
 import {showToast} from 'ui/store/actions/toaster';
@@ -85,7 +84,7 @@ type DashkitWrapperProps = {
     onItemRender: (item: ConfigItem) => void;
     onWidgetMountChange: (isMounted: boolean, id: string, domElement: HTMLElement) => void;
     onPasteItem?: (data: CopiedConfigData, newLayout?: ConfigLayout[]) => void;
-} & Pick<RouteComponentProps, 'history' | 'location'>;
+};
 
 export const DashkitWrapper: React.FC<DashkitWrapperProps> = (props) => {
     const {
@@ -112,8 +111,6 @@ export const DashkitWrapper: React.FC<DashkitWrapperProps> = (props) => {
         onItemRender,
         onWidgetMountChange,
         onPasteItem,
-        location,
-        history,
     } = props;
 
     const dispatch = useDispatch();
@@ -137,7 +134,7 @@ export const DashkitWrapper: React.FC<DashkitWrapperProps> = (props) => {
     const tabDataConfig = useConfig();
     const context = useDashKitContext({isFixedHeaderCollapsed, isPublicMode});
     const {dataProviderContextGetter} = useDataProviderContext();
-    const {hashStates, onStateChange} = useHashStates({disableUrlState, location, history});
+    const {hashStates, onStateChange} = useHashStates({disableUrlState});
     const {getPreparedCopyItemOptionsFn} = usePreparedCopyItemOptions();
 
     const onDropElement = React.useCallback(

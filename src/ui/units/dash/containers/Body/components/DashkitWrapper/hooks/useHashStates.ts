@@ -5,7 +5,7 @@ import {i18n} from 'i18n';
 import {getSdk} from 'libs/schematic-sdk';
 import debounce from 'lodash/debounce';
 import {useDispatch, useSelector} from 'react-redux';
-import type {RouteComponentProps} from 'react-router';
+import {useHistory, useLocation} from 'react-router-dom';
 import {UPDATE_STATE_DEBOUNCE_TIME} from 'shared';
 import type {DashTab} from 'shared';
 import {showToast} from 'ui/store/actions/toaster';
@@ -18,41 +18,51 @@ import {
     selectTabHashState,
 } from '../../../../../store/selectors/dashTypedSelectors';
 
-type Args = {disableUrlState?: boolean} & Pick<RouteComponentProps, 'history' | 'location'>;
+type Args = {disableUrlState?: boolean};
 
 export const useHashStates = ({
     disableUrlState,
-    history,
-    location,
 }: Args): {
     hashStates: DashKitProps['itemsStateAndParams'];
     onStateChange: (tabsHashStates: TabsHashStates, config: DashTab) => void;
 } => {
     const dispatch = useDispatch();
 
+    const history = useHistory();
+    const location = useLocation();
+
     const hashStates = useSelector(selectTabHashState);
     const entryId = useSelector(selectEntryId);
     const currentTabId = useSelector(selectCurrentTabId);
 
+    const updateUrlHashStateParamsRef = React.useRef({entryId, currentTabId, location, history});
+
+    React.useEffect(() => {
+        updateUrlHashStateParamsRef.current = {entryId, currentTabId, location, history};
+    }, [entryId, currentTabId, location, history]);
+
     const updateUrlHashState = React.useMemo(
         () =>
             debounce(async (data, tabId) => {
-                if (!entryId) {
+                const updateUrlHashStateParams = updateUrlHashStateParamsRef.current;
+                if (!updateUrlHashStateParams.entryId) {
                     return;
                 }
 
                 try {
                     const {hash} = await getSdk().sdk.us.createDashState({
-                        entryId,
+                        entryId: updateUrlHashStateParams.entryId,
                         data,
                     });
                     // check if we are still on the same tab (user could switch to another when request is still in progress)
-                    if (tabId !== currentTabId) {
+                    if (tabId !== updateUrlHashStateParams.currentTabId) {
                         dispatch(setStateHashId({hash, tabId}));
                         return;
                     }
 
-                    const searchParams = new URLSearchParams(location.search);
+                    const searchParams = new URLSearchParams(
+                        updateUrlHashStateParams.location.search,
+                    );
 
                     if (hash) {
                         searchParams.set('state', hash);
@@ -62,8 +72,8 @@ export const useHashStates = ({
 
                     dispatch(setStateHashId({hash, tabId}));
 
-                    history.push({
-                        ...location,
+                    updateUrlHashStateParams.history.push({
+                        ...updateUrlHashStateParams.location,
                         search: `?${searchParams.toString()}`,
                     });
                 } catch (error) {
@@ -94,7 +104,7 @@ export const useHashStates = ({
                     throw error;
                 }
             }, UPDATE_STATE_DEBOUNCE_TIME),
-        [entryId, currentTabId, location, history, dispatch],
+        [dispatch],
     );
 
     const onStateChange = React.useCallback(
