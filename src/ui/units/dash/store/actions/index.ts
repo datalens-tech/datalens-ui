@@ -38,6 +38,7 @@ import type {
     SetViewModeAction,
     SetWidgetCurrentTabAction,
     ToggleTableOfContentAction,
+    UpdateTabsWithGlobalStateAction,
 } from './dashTyped';
 import type {CloseDialogAction, OpenDialogAction, OpenItemDialogAction} from './dialogs/actions';
 
@@ -78,6 +79,7 @@ export type DashAction<T = unknown> =
     | SetSettingsAction
     | SetHistoryStateAction
     | EditHistoryAction
-    | RemoveGlobalItemsAction;
+    | RemoveGlobalItemsAction
+    | UpdateTabsWithGlobalStateAction;
 
 export type DashDispatch = ThunkDispatch<DatalensGlobalState, void, DashAction>;

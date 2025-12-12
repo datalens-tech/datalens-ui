@@ -88,3 +88,7 @@ export enum Mode {
 export const socialNets = [ShareOptions.Telegram, ShareOptions.VK];
 
 export const CROSS_PASTE_ITEMS_ALLOWED = [ITEM_TYPE.TITLE, ITEM_TYPE.TEXT];
+
+// current version of the dashkit parameter structure
+// now the logic of applying the parameters in the update manager from the dashkit depends on it
+export const DASHKIT_STATE_VERSION = 2;

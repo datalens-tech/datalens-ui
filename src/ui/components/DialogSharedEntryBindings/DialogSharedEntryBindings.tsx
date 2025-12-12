@@ -53,8 +53,11 @@ export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps>
         onDirectionChange,
         currentDirection,
         fetchEntityBindings,
+        isLoadingDelete,
+        onDelete,
     } = useSharedEntryBindings({
         entry,
+        onDeleteSuccess,
     });
     const showDirectionControl = entry.scope === 'dataset';
 
@@ -71,11 +74,12 @@ export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps>
                     title={getSharedEntryMockText('label-current-entry')}
                     className={b('current-row')}
                 />
-                {isLoading && !isSearchLoading ? (
+                {(isLoading || isLoadingDelete) && !isSearchLoading ? (
                     <SmartLoader showAfter={0} />
                 ) : (
                     <>
                         <DeleteAlert
+                            isSearchActive={searchValue !== ''}
                             isDeleteDialog={isDeleteDialog}
                             entry={entry}
                             entities={entities}
@@ -105,17 +109,16 @@ export const DialogSharedEntryBindings: React.FC<DialogSharedEntryBindingsProps>
                         />
                     </>
                 )}
-                {isDeleteDialog && (
-                    <SharedBindingsFooter
-                        onClose={onClose}
-                        entry={entry}
-                        onRefresh={() => fetchEntityBindings(searchValue)}
-                        isLoading={isLoading || isSearchLoading}
-                        emptyList={entities.length === 0}
-                        onDeleteSuccess={onDeleteSuccess}
-                    />
-                )}
             </Dialog.Body>
+            {isDeleteDialog && (
+                <SharedBindingsFooter
+                    onClose={onClose}
+                    onRefresh={() => fetchEntityBindings(searchValue)}
+                    isLoading={isLoading || isSearchLoading || isLoadingDelete}
+                    emptyList={entities.length === 0}
+                    onDelete={onDelete}
+                />
+            )}
         </Dialog>
     );
 };

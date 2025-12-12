@@ -41,6 +41,14 @@ export type SelectorDialogValidation = {
     defaultValue?: string;
     connectionQueryContent?: string;
     selectorParameters?: string;
+    impactType?: string;
+    impactTabsIds?: string;
+    currentTabVisibility?: string;
+};
+
+export type SelectorsGroupValidation = {
+    impactTabsIds?: string;
+    currentTabVisibility?: string;
 };
 
 export type SelectorsGroupDialogState = {
@@ -53,6 +61,7 @@ export type SelectorsGroupDialogState = {
     group: SelectorDialogState[];
     impactType?: ImpactType;
     impactTabsIds?: ImpactTabsIds;
+    validation: SelectorsGroupValidation;
 };
 
 export type SelectorElementType = 'select' | 'date' | 'input' | 'checkbox';

@@ -19,6 +19,7 @@ import type {
     EntryFieldPublishedId,
     GetEntryResponse,
     FormOptions as SchemaFormOptions,
+    SharedEntryPermissions,
     ValidateDatasetResponse,
 } from '../../../../../shared/schema';
 import type {EntryContentAction} from '../../../../store/actions/entryContent';
@@ -72,6 +73,7 @@ import type {
     SET_CURRENT_TAB,
     SET_DATASET_REVISION_MISMATCH,
     SET_DATA_EXPORT_ENABLED,
+    SET_DELEGATION_FROM_CONN_TO_SHARED_DATASET,
     SET_DESCRIPTION,
     SET_EDIT_HISTORY_STATE,
     SET_FREEFORM_SOURCES,
@@ -79,7 +81,7 @@ import type {
     SET_IS_DATASET_CHANGED_FLAG,
     SET_LAST_MODIFIED_TAB,
     SET_QUEUE_TO_LOAD_PREVIEW,
-    SET_SHARED_DATASET_DELEGATION,
+    SET_SELECTED_CONNECTION_DELEGATION,
     SET_SOURCES_LISTING_OPTIONS,
     SET_SOURCES_LISTING_OPTIONS_ERROR,
     SET_SOURCES_LOADING_ERROR,
@@ -281,6 +283,7 @@ export type DatasetReduxState = {
     workbookId: WorkbookId;
     collectionId: CollectionId;
     permissions?: Permissions;
+    fullPermissions?: SharedEntryPermissions;
     connection: ConnectionEntry | null;
     content: Partial<Dataset['dataset']>;
     prevContent: Partial<Dataset['dataset']>;
@@ -316,7 +319,7 @@ export type DatasetReduxState = {
         disabled: boolean;
         isProcessingSavingDataset: boolean;
         error: DatasetError;
-        sharedDatasetDelegationState?: boolean;
+        delegationFromConnToSharedDataset: boolean | null;
     };
     types: {
         data: {
@@ -328,6 +331,7 @@ export type DatasetReduxState = {
     };
     ui: {
         selectedConnectionId: string | null;
+        selectedConnectionDelegationStatus: boolean | null;
         isDatasetChanged: boolean;
         isFieldEditorModuleLoading: boolean;
         isSourcesLoading: boolean;
@@ -872,9 +876,14 @@ type SetSourcesListingOptions = {
     payload: SourceListingOptions['source_listing'];
 };
 
-export type SetSharedDatasetDelegation = {
-    type: typeof SET_SHARED_DATASET_DELEGATION;
-    payload: boolean;
+export type SetDelegationFromConnToSharedDataset = {
+    type: typeof SET_DELEGATION_FROM_CONN_TO_SHARED_DATASET;
+    payload: boolean | null;
+};
+
+export type SetSelectedConnectionDelegation = {
+    type: typeof SET_SELECTED_CONNECTION_DELEGATION;
+    payload: boolean | null;
 };
 
 export type DatasetReduxAction =
@@ -959,7 +968,8 @@ export type DatasetReduxAction =
     | SetSourcesListingOptions
     | SetSourcesListingOptionsError
     | ToggleSourcesListingOptionsLoader
-    | SetSharedDatasetDelegation
+    | SetDelegationFromConnToSharedDataset
+    | SetSelectedConnectionDelegation
     | OpenDialogAction
     | CloseDialogAction
     | EditHistoryAction;

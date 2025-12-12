@@ -47,6 +47,7 @@ import {
     SET_TAB_HASH_STATE,
     SET_WIDGET_CURRENT_TAB,
     TOGGLE_TABLE_OF_CONTENT,
+    UPDATE_TABS_WITH_GLOBAL_STATE,
 } from '../actions/dashTyped';
 import type {DashAction} from '../actions/index';
 
@@ -370,16 +371,7 @@ export function dashTypedReducer(
         }
 
         case REMOVE_GLOBAL_ITEMS: {
-            // In the usual case, only one item comes here
-            const removedItems = action.payload.items;
-
-            if (removedItems.length === 0) {
-                return state;
-            }
-
-            const removedItemsIds = new Set<string>();
-
-            removedItems.forEach((item) => removedItemsIds.add(item.id));
+            const removedItemId = action.payload.itemId;
 
             return {
                 ...state,
@@ -391,7 +383,7 @@ export function dashTypedReducer(
                         }
 
                         const filteredGlobalItems = tab.globalItems.filter(
-                            (item) => !removedItemsIds.has(item.id),
+                            (item) => item.id !== removedItemId,
                         );
 
                         if (filteredGlobalItems.length === tab.globalItems.length) {
@@ -401,9 +393,19 @@ export function dashTypedReducer(
                         return {
                             ...tab,
                             globalItems: filteredGlobalItems,
-                            layout: tab.layout.filter((item) => !removedItemsIds.has(item.i)),
+                            layout: tab.layout.filter((item) => item.i !== removedItemId),
                         };
                     }),
+                },
+            };
+        }
+
+        case UPDATE_TABS_WITH_GLOBAL_STATE: {
+            return {
+                ...state,
+                hashStates: {
+                    ...state.hashStates,
+                    ...action.payload.hashStates,
                 },
             };
         }

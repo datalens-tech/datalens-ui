@@ -56,6 +56,7 @@ import {
     SET_CURRENT_TAB,
     SET_DATASET_REVISION_MISMATCH,
     SET_DATA_EXPORT_ENABLED,
+    SET_DELEGATION_FROM_CONN_TO_SHARED_DATASET,
     SET_DESCRIPTION,
     SET_EDIT_HISTORY_STATE,
     SET_FREEFORM_SOURCES,
@@ -63,7 +64,7 @@ import {
     SET_IS_DATASET_CHANGED_FLAG,
     SET_LAST_MODIFIED_TAB,
     SET_QUEUE_TO_LOAD_PREVIEW,
-    SET_SHARED_DATASET_DELEGATION,
+    SET_SELECTED_CONNECTION_DELEGATION,
     SET_SOURCES_LISTING_OPTIONS,
     SET_SOURCES_LISTING_OPTIONS_ERROR,
     SET_SOURCES_LOADING_ERROR,
@@ -270,6 +271,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                     dataset: content,
                     workbook_id: workbookId,
                     permissions,
+                    full_permissions,
                 },
                 collectionId,
                 publishedId,
@@ -299,6 +301,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                     isDatasetChanged: false,
                 },
                 permissions,
+                fullPermissions: full_permissions,
                 isLoading: false,
                 isRefetchingDataset: false,
             };
@@ -1508,12 +1511,21 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 },
             };
         }
-        case SET_SHARED_DATASET_DELEGATION: {
+        case SET_DELEGATION_FROM_CONN_TO_SHARED_DATASET: {
             return {
                 ...state,
                 savingDataset: {
                     ...state.savingDataset,
-                    sharedDatasetDelegationState: action.payload,
+                    delegationFromConnToSharedDataset: action.payload,
+                },
+            };
+        }
+        case SET_SELECTED_CONNECTION_DELEGATION: {
+            return {
+                ...state,
+                ui: {
+                    ...state.ui,
+                    selectedConnectionDelegationStatus: action.payload,
                 },
             };
         }

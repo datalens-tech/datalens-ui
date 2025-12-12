@@ -14,9 +14,7 @@ export const isNotAuthenticatedError = (errorType: string | undefined) => {
 
     return (
         notAuthenticatedErrorContentTypesExtended.includes(errorType) ||
-        errorType === ErrorContentTypes.NOT_AUTHENTICATED ||
-        errorType === ErrorContentTypes.NOT_AUTHENTICATED_GALLERY ||
-        errorType === ErrorContentTypes.NOT_AUTHENTICATED_FESTIVAL
+        errorType === ErrorContentTypes.NOT_AUTHENTICATED
     );
 };
 
@@ -32,13 +30,10 @@ export const isHeaderWithoutHelpCenterError = (errorType: string | undefined) =>
     return (
         extraHeaderWithoutHelpCenterErrorContentTypes?.includes(errorType) ||
         [
-            ErrorContentTypes.NEW_ORGANIZATION_USER,
-            ErrorContentTypes.NEW_LOCAL_FEDERATION_USER,
             ErrorContentTypes.AUTH_FAILED,
             ErrorContentTypes.AUTH_DENIED,
             ErrorContentTypes.NOT_FOUND_BY_RESOLVE_TENANT,
             ErrorContentTypes.NOT_AUTHENTICATED,
-            ErrorContentTypes.NOT_AUTHENTICATED_GALLERY,
         ].includes(errorType)
     );
 };
@@ -55,16 +50,11 @@ export const isHeaderWithoutNavigationError = (errorType: string | undefined) =>
     return (
         extraHeaderWithoutNavigationErrorContentTypes?.includes(errorType) ||
         [
-            ErrorContentTypes.NOT_FOUND_CURRENT_CLOUD_FOLDER,
-            ErrorContentTypes.CLOUD_FOLDER_ACCESS_DENIED,
-            ErrorContentTypes.NEW_ORGANIZATION_USER,
-            ErrorContentTypes.NEW_LOCAL_FEDERATION_USER,
             ErrorContentTypes.AUTH_FAILED,
             ErrorContentTypes.AUTH_DENIED,
             ErrorContentTypes.NOT_FOUND_BY_RESOLVE_TENANT,
             ErrorContentTypes.NOT_AUTHENTICATED,
             ErrorContentTypes.FORBIDDEN_AUTH,
-            ErrorContentTypes.NOT_AUTHENTICATED_GALLERY,
         ].includes(errorType)
     );
 };
@@ -88,11 +78,9 @@ export const getImageNameFromErrorContentType = (
 
     switch (errorContentType) {
         case ErrorContentTypes.NOT_FOUND:
-        case ErrorContentTypes.NOT_FOUND_CURRENT_CLOUD_FOLDER:
         case ErrorContentTypes.NOT_FOUND_BY_RESOLVE_TENANT:
             return 'notFoundError';
         case ErrorContentTypes.NO_ACCESS:
-        case ErrorContentTypes.CLOUD_FOLDER_ACCESS_DENIED:
         case ErrorContentTypes.NO_ENTRY_ACCESS:
         case ErrorContentTypes.AUTH_DENIED:
             return 'noAccess';
@@ -100,7 +88,6 @@ export const getImageNameFromErrorContentType = (
         case ErrorContentTypes.AUTH_FAILED:
             return 'error';
         case ErrorContentTypes.CREDENTIALS:
-        case ErrorContentTypes.LICENSE_EXPIRED:
             return 'identity';
         case ErrorContentTypes.INACCESSIBLE_ON_MOBILE:
         case ErrorContentTypes.FORBIDDEN_BY_PLAN:

@@ -1,14 +1,5 @@
 import {createContext} from 'react';
 
-import type {Config} from '@gravity-ui/dashkit';
-import type {DashChartRequestContext, DashSettingsGlobalParams, DashTab} from 'shared/types';
+import type {ExtendedDashKitContextType} from '../typings/context';
 
-export const ExtendedDashKitContext = createContext<{
-    config?: Config | DashTab;
-    skipReload: boolean;
-    defaultGlobalParams?: DashSettingsGlobalParams;
-    hideErrorDetails?: boolean;
-    selectorsGroupTitlePlaceholder?: string;
-    dataProviderContextGetter?: (widgetId: string) => DashChartRequestContext;
-    setWidgetCurrentTab?: (payload: {widgetId: string; tabId: string}) => void;
-} | null>(null);
+export const ExtendedDashKitContext = createContext<ExtendedDashKitContextType | null>(null);

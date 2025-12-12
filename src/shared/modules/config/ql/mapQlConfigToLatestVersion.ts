@@ -8,6 +8,7 @@ import {mapV2ConfigToV3} from './v3/mapV2ConfigToV3';
 import {mapV3ConfigToV4} from './v4/mapV3ConfigToV4';
 import {mapV4ConfigToV5} from './v5/mapV4ConfigToV5';
 import {mapV5ConfigToV6} from './v6/mapV5ConfigToV6';
+import {mapV6ConfigToV7} from './v7/mapV6ConfigToV7';
 
 type MapQlConfigToLatestVersionOptions = {
     i18n: GetTranslationFn;
@@ -41,6 +42,10 @@ export const mapQlConfigToLatestVersion = (
 
     if (config.version === QlConfigVersions.V5) {
         config = mapV5ConfigToV6(config);
+    }
+
+    if (config.version === QlConfigVersions.V6) {
+        config = mapV6ConfigToV7(config);
     }
 
     return config;

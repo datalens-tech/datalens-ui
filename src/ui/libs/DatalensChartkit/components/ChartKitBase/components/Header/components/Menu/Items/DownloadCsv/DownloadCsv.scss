@@ -14,7 +14,7 @@
 
     &__content {
         display: flex;
-        justify-content: space-between;
+        justify-content: flex-start;
         flex-direction: column;
         flex: 1;
     }

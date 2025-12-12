@@ -15,12 +15,19 @@ type DeleteAlertProps = {
     entities: SharedEntryBindingsItem[];
     isDeleteDialog: boolean;
     isError: boolean;
+    isSearchActive: boolean;
 };
 
 const b = block(DialogClassName);
 
-export const DeleteAlert = ({entities, entry, isDeleteDialog, isError}: DeleteAlertProps) => {
-    if (!isDeleteDialog || isError) {
+export const DeleteAlert = ({
+    entities,
+    entry,
+    isDeleteDialog,
+    isError,
+    isSearchActive,
+}: DeleteAlertProps) => {
+    if (!isDeleteDialog || isError || (isSearchActive && entities.length === 0)) {
         return null;
     }
 
