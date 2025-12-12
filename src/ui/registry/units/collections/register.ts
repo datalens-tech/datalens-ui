@@ -1,4 +1,4 @@
-import {useCreateWorkbookDialogHandlers} from 'ui/units/collections/components/CollectionPage/hooks/useBaseCreateWorkbookDialogHandlers';
+import {useCreateWorkbookDialogHandlers} from 'ui/units/collections/components/CollectionPage/hooks/useCreateWorkbookDialogHandlers';
 
 import {
     customizeCollectionsActions,
