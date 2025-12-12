@@ -184,7 +184,7 @@ export const getGroupControlValidation = ({
         validation.currentTabVisibility = prevValidation.currentTabVisibility;
     }
 
-    return {};
+    return validation;
 };
 
 export const getControlValidation = ({
