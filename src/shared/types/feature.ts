@@ -99,6 +99,8 @@ export enum Feature {
     EnableGlobalSelectors = 'EnableGlobalSelectors',
     /** enables new dash & widgets settings */
     EnableNewDashSettings = 'EnableNewDashSettings',
+    /** Enable color pickers with customization of values for light & dark themes separately */
+    EnableDashColorPickersByTheme = 'EnableDashColorPickersByTheme',
     /** Shows updated settings page */
     EnableNewServiceSettings = 'EnableNewServiceSettings',
 }

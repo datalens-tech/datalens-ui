@@ -22,14 +22,17 @@ type Props = PluginWidgetProps &
 
 type PluginImageObjectSettings = CommonPluginSettings;
 
-type PluginImage = Plugin<Props> & {
-    setSettings: (settings: PluginImageObjectSettings) => PluginImage;
-};
+type PluginImage = Plugin<Props> &
+    CommonPluginSettings & {
+        setSettings: (settings: PluginImageObjectSettings) => PluginImage;
+    };
 
 export const pluginImage: PluginImage = {
     type: DashTabItemType.Image,
     defaultLayout: {w: 12, h: 12, minH: 1, minW: 1},
-    setSettings: (_settings: PluginImageObjectSettings) => {
+    setSettings: (settings: PluginImageObjectSettings) => {
+        pluginImage.globalBackground = settings.globalBackground;
+        pluginImage.globalBackgroundSettings = settings.globalBackgroundSettings;
         return pluginImage;
     },
     renderer: PluginImageRenderer,
@@ -38,7 +41,7 @@ export const pluginImage: PluginImage = {
 function PluginImageRenderer(props: Props, _ref?: React.LegacyRef<HTMLDivElement>) {
     const {
         id,
-        data: {alt, background, src, preserveAspectRatio},
+        data: {alt, background, backgroundSettings, src, preserveAspectRatio},
         layout,
     } = props;
 
@@ -58,7 +61,9 @@ function PluginImageRenderer(props: Props, _ref?: React.LegacyRef<HTMLDivElement
 
     const {style} = usePreparedWrapSettings({
         widgetBackground: background,
-        globalBackground: props.background,
+        globalBackground: pluginImage.globalBackground,
+        widgetBackgroundSettings: backgroundSettings,
+        globalBackgroundSettings: pluginImage.globalBackgroundSettings,
         defaultOldColor: CustomPaletteBgColors.NONE,
     });
 
