@@ -3,13 +3,13 @@ import {generateUniqId} from '@gravity-ui/dashkit/helpers';
 import update from 'immutability-helper';
 import pick from 'lodash/pick';
 import {DashTabItemTitleSizes, DashTabItemType} from 'shared';
-import {
-    CustomPaletteTextColors,
-    TITLE_WIDGET_TEXT_COLORS_PRESET,
-    getDefaultDashWidgetBgColorByType,
-} from 'shared/constants/widgets';
+import {getDefaultDashWidgetBgColorByType} from 'shared/constants/widgets';
 import {migrateConnectionsForGroupControl} from 'ui/store/utils/controlDialog';
-import {getUpdatedBackgroundData, getUpdatedConnections} from 'ui/utils/copyItems';
+import {
+    getUpdatedBackgroundData,
+    getUpdatedConnections,
+    getUpdatedTextData,
+} from 'ui/utils/copyItems';
 
 import {EMBEDDED_MODE} from '../../../../constants/embedded';
 import {Mode} from '../../modules/constants';
@@ -256,13 +256,17 @@ function dash(state = initialState, action) {
             };
         case actionTypes.SET_COPIED_ITEM_DATA: {
             const itemData = action.payload.item.data;
-            if (
-                itemData.textColor &&
-                !CustomPaletteTextColors[itemData.textColor] &&
-                !TITLE_WIDGET_TEXT_COLORS_PRESET.includes(itemData.textColor)
-            ) {
-                delete itemData.textColor;
-            }
+
+            const textData =
+                action.payload.item.type === DashTabItemType.Title
+                    ? getUpdatedTextData({
+                          textColor: itemData.textColor,
+                          textSettings: itemData.textSettings,
+                          allowCustomValues: false,
+                          enableSeparateThemeColorSelector: true,
+                          themeType: action.payload.dashVisualSettings?.themeType,
+                      })
+                    : {};
 
             const defaultBgColorValue = getDefaultDashWidgetBgColorByType(itemData.type);
             const backgroundData =
@@ -287,6 +291,7 @@ function dash(state = initialState, action) {
                             ? DashTabItemTitleSizes.XL
                             : itemData.size,
                     ...backgroundData,
+                    ...textData,
                 },
             };
 

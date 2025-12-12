@@ -2,6 +2,7 @@ import React from 'react';
 
 import {Popup} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
+import {computeColorFromToken} from 'ui/utils/widgetColors';
 
 import {
     ColorPickerInput,
@@ -31,7 +32,8 @@ export function ColorPickerInputWithPreset({
 
     const handleSelectColor = React.useCallback(
         (color: string) => {
-            onUpdate(color || null);
+            const hexColor = computeColorFromToken(color);
+            onUpdate(hexColor || null);
             setIsPopupOpen(false);
         },
         [onUpdate],
