@@ -184,8 +184,13 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
             title: {text: getFakeTitleOrTitle(colorItem), style: {fontWeight: '500'}},
             colorScale,
         };
-    } else if (seriesData.length <= 1) {
-        legend = {enabled: false};
+    } else {
+        const shouldUseHtmlForLegend = isHtmlField(colorItem);
+        legend = {html: shouldUseHtmlForLegend};
+
+        if (seriesData.length <= 1) {
+            legend.enabled = false;
+        }
     }
 
     let xAxis: ChartData['xAxis'] = {};
