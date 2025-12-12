@@ -4,11 +4,12 @@ import {AuthPolicy} from '@gravity-ui/expresskit';
 import type {NodeKit} from '@gravity-ui/nodekit';
 import passport from 'passport';
 
-import {DASH_API_BASE_URL, PUBLIC_API_DASH_API_BASE_URL} from '../../../shared';
+import {DASH_API_BASE_URL, Feature, PUBLIC_API_DASH_API_BASE_URL} from '../../../shared';
 import {isApiMode, isChartsMode, isDatalensMode, isFullMode} from '../../app-env';
 import {getAppLayoutSettings} from '../../components/app-layout/app-layout-settings';
 import {createLayoutPlugin} from '../../components/app-layout/plugins/layout';
 import type {ChartsEngine} from '../../components/charts-engine';
+import {createAuthArgsMiddleware} from '../../components/gateway-auth-helpers';
 import {initZitadel} from '../../components/zitadel/init-zitadel';
 import {xlsxConverter} from '../../controllers/xlsx-converter';
 import {getExpressKit} from '../../expresskit';
@@ -38,8 +39,14 @@ export default function initApp(nodekit: NodeKit) {
         initZitadel({nodekit, beforeAuth});
     }
 
+    const isEnabledServerFeature = nodekit.ctx.get('isEnabledServerFeature');
+
+    if (isEnabledServerFeature(Feature.UsDynamicMasterToken)) {
+        beforeAuth.push(createAuthArgsMiddleware(nodekit.config));
+    }
+
     if (isFullMode || isDatalensMode) {
-        initDataLensApp({beforeAuth, afterAuth});
+        initDataLensApp({beforeAuth, afterAuth, nodekit});
     }
 
     let chartsEngine: ChartsEngine | undefined;
@@ -69,6 +76,7 @@ function initDataLensApp({
 }: {
     beforeAuth: AppMiddleware[];
     afterAuth: AppMiddleware[];
+    nodekit: NodeKit;
 }) {
     beforeAuth.push(
         createAppLayoutMiddleware({
