@@ -192,7 +192,11 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
     if (isCategoriesXAxis) {
         xAxis = {
             type: 'category',
-            categories: xCategories?.map(String),
+            // @ts-ignore There may be a type mismatch due to the wrapper over html, markup and markdown
+            categories: xCategories,
+            labels: {
+                html: isHtmlField(xField) || isMarkdownField(xField) || isMarkupField(xField),
+            },
         };
     } else {
         if (isDateField(xField)) {
