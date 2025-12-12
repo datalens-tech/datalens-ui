@@ -24,10 +24,10 @@ const b = block('conn-form');
 
 type Props = {
     type: ConnectorType;
-    readonly: boolean;
+    readonly?: boolean;
 };
 
-export const ConnectorForm = ({type, readonly}: Props) => {
+export const ConnectorForm = ({type, readonly = false}: Props) => {
     const dispatch = useDispatch();
     const schema = useSelector(formSchemaSelector);
     const isNewConnection = useSelector(newConnectionSelector);

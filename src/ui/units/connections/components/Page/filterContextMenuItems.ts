@@ -17,10 +17,15 @@ export const filterMenuItems = ({
     isWorkbookSharedEntry,
 }: FilterMenuItemsProps) => {
     return items.filter((item) => {
-        if (isWorkbookSharedEntry && HiddenContextsForWorkbookSharedEntry.has(item.id))
+        if (isWorkbookSharedEntry && HiddenContextsForWorkbookSharedEntry.has(item.id)) {
             return false;
-        if (isSharedConnection && HiddenContextsForSharedEntry.has(item.id)) return false;
-        if (!revisionsSupported && item.id === ENTRY_CONTEXT_MENU_ACTION.REVISIONS) return false;
+        }
+        if (isSharedConnection && HiddenContextsForSharedEntry.has(item.id)) {
+            return false;
+        }
+        if (!revisionsSupported && item.id === ENTRY_CONTEXT_MENU_ACTION.REVISIONS) {
+            return false;
+        }
         return true;
     });
 };
