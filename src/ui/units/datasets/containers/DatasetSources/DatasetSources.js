@@ -238,7 +238,10 @@ export class DatasetSources extends React.Component {
 
             this.clickConnection(entryId);
         } catch (error) {
-            logger.logError('DatasetSources: selectConnection failed', error);
+            this.setState({isLoadingConnectionInfo: false});
+            if (error !== null) {
+                logger.logError('DatasetSources: selectConnection failed', error);
+            }
             this._showToast({
                 error,
                 name: TOAST_TYPES.SELECT_CONNECTION,
