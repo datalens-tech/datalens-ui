@@ -335,6 +335,7 @@ export const URL_QUERY = {
     OPEN_DASH_INFO: '_opened_info',
     UNRELEASED: 'unreleased',
     LOCAL_CONFIG: '_use_local_config',
+    BINDED_WOKRBOOK: 'bindedWorkbookId',
 };
 
 const GRADIENT_ICONS = {

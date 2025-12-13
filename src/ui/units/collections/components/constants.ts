@@ -117,4 +117,5 @@ export const mockSharedEntriesTexts = {
     'add-shared-connection-from-link-dialog-error': 'Некорректная ссылка',
     'add-shared-connection-from-link-dialog-required': 'Введите ссылку',
     'add-shared-connection-from-link-dialog-entry-error': 'Невалидная сущность',
+    'workbook-shared-entry-original-link': 'Открыть оригинал',
 };
