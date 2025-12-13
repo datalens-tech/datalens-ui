@@ -7,7 +7,6 @@ import type {
     Dataset,
     DatasetApiError,
     DatasetField,
-    DatasetWithDelegation,
     ExtendedChartsConfig,
     Field,
     FilterField,
@@ -87,6 +86,7 @@ import {
 import {
     setDataset,
     setDatasetApiErrors,
+    setDatasetDelegation,
     setDatasetLoading,
     setDatasetSchema,
     setDatasets,
@@ -165,32 +165,53 @@ type GetDatasetArgs = {
     workbookId: WorkbookId;
 };
 
-async function getDataset({id, workbookId}: GetDatasetArgs) {
-    const dataset: DatasetWithDelegation = await getSdk().sdk.bi.getDatasetByVersion({
-        datasetId: id,
-        workbookId,
-    });
+function getDataset({id, workbookId}: GetDatasetArgs) {
+    return getSdk()
+        .sdk.bi.getDatasetByVersion({
+            datasetId: id,
+            workbookId,
+        })
+        .then((dataset) => {
+            if (dataset && dataset.key) {
+                dataset.realName = getEntryNameByKey({key: dataset.key});
+            }
 
-    if (dataset && dataset.key) {
-        dataset.realName = getEntryNameByKey({key: dataset.key});
-    }
+            if (dataset.result_schema) {
+                delete dataset.result_schema;
+            }
 
-    if (dataset.result_schema) {
-        delete dataset.result_schema;
-    }
+            return dataset;
+        });
+}
 
-    if (dataset.collection_id && workbookId) {
-        const delegation = await getSdk().sdk.us.getSharedEntryDelegation(
-            {
-                sourceId: dataset.id,
+type GetDatasetDelegationArgs = {
+    datasetId: string;
+    workbookId: string;
+};
+
+function getDatasetDelegation({datasetId, workbookId}: GetDatasetDelegationArgs) {
+    return async function (dispatch: WizardDispatch) {
+        try {
+            const delegation = await getSdk().sdk.us.getSharedEntryDelegation({
+                sourceId: datasetId,
                 targetId: workbookId,
-            },
-            {retries: 2},
-        );
-        dataset.isDelegated = delegation.isDelegated;
-    }
-
-    return dataset;
+            });
+            dispatch(
+                setDatasetDelegation({
+                    datasetId,
+                    delegation: delegation.isDelegated,
+                }),
+            );
+        } catch (error) {
+            dispatch(
+                showToast({
+                    title: error.message,
+                    type: 'danger',
+                    error,
+                }),
+            );
+        }
+    };
 }
 
 type GetDatasetsArgs = {
@@ -315,6 +336,14 @@ export function fetchDataset({id, replacing}: FetchDatasetArgs) {
                 }
 
                 dispatch(updatePreviewAndClientChartsConfig(preview));
+                if (dataset.collection_id && workbookId) {
+                    dispatch(
+                        getDatasetDelegation({
+                            datasetId: dataset.id,
+                            workbookId,
+                        }),
+                    );
+                }
             })
             .catch((error: DataLensApiError) => {
                 logger.logError('wizard: fetchDataset failed', error as Error);
@@ -2074,6 +2103,16 @@ function processWidget(args: ProcessWidgetArgs) {
                     isInitialPreview: true,
                 }),
             );
+            datasets.forEach((currentDataset) => {
+                if (currentDataset.collection_id && workbookId) {
+                    dispatch(
+                        getDatasetDelegation({
+                            datasetId: currentDataset.id,
+                            workbookId,
+                        }),
+                    );
+                }
+            });
         })
         .catch((error: DataLensApiError & {handeled: boolean}) => {
             if (error.handeled) {
