@@ -109,4 +109,5 @@ export const mockSharedEntriesTexts = {
     'workbook-navigation-shared-title': 'Привязанные {{entry}}',
     'iam-dialog-role-limitedEntryBindingCreator': 'Делегация прав',
     'iam-dialog-role-entryBindingCreator': 'Без делегации прав',
+    'workbook-shared-entry-original-link': 'Открыть оригинал',
 };

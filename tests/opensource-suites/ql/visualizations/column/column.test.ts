@@ -6,6 +6,7 @@ import datalensTest from '../../../../utils/playwright/globalTestDefinition';
 import {AxisMode, PlaceholderId} from '../../../../../src/shared';
 import {PlaceholderName} from '../../../../page-objects/wizard/SectionVisualization';
 import {RadioButtons, RadioButtonsValues} from '../../../../page-objects/wizard/PlaceholderDialog';
+import {COMMON_CHARTKIT_SELECTORS} from '../../../../page-objects/constants/chartkit';
 
 datalensTest.describe('QL', () => {
     datalensTest.describe('Column chart', () => {
@@ -24,7 +25,7 @@ datalensTest.describe('QL', () => {
                 const qlPage = new QLPage({page});
 
                 const previewLoader = page.locator('.grid-loader');
-                const chart = page.locator('.chartkit-graph,.gcharts-chart');
+                const chart = page.locator(COMMON_CHARTKIT_SELECTORS.chart);
 
                 await qlPage.sectionVisualization.removeFieldByClick(
                     PlaceholderName.X,
