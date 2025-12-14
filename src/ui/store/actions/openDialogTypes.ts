@@ -64,6 +64,7 @@ import type {OpenDialogSharedEntryBindingArgs} from 'ui/components/DialogSharedE
 import type {OpenDialogSharedEntryUnbindArgs} from 'ui/components/DialogSharedEntryUnbind/DialogSharedEntryUnbind';
 import type {OpenDialogSharedEntryPermissionsArgs} from 'ui/components/DialogSharedEntryPermissions/DialogSharedEntryPermissions';
 import type {OpenDialogSelectSharedEntryArgs} from 'ui/components/DialogSelectSharedEntry/DialogSelectSharedEntry';
+import type {OpenDialogAddSharedEntryFromLinkArgs} from 'ui/components/DialogAddSharedEntryFromLink/DialogAddSharedEntryFromLink';
 
 export type OpenDialogArgs<T = unknown> =
     | OpenDialogReleaseVersionArgs
@@ -129,4 +130,5 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogSharedEntryPermissionsArgs
     | OpenDialogSelectSharedEntryArgs
     | OpenDialogDeleteSharedEntryInWorkbookArgs
+    | OpenDialogAddSharedEntryFromLinkArgs
     | OpenDialogEntryDescriptionArgs;
