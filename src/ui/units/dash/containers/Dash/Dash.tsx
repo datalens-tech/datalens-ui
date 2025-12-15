@@ -1,7 +1,7 @@
 import React from 'react';
 
 import type {ConfigLayout} from '@gravity-ui/dashkit';
-import {Link, type ThemeType} from '@gravity-ui/uikit';
+import {Link} from '@gravity-ui/uikit';
 import {AccessRightsUrlOpen} from 'components/AccessRights/AccessRightsUrlOpen';
 import {I18n} from 'i18n';
 import logger from 'libs/logger';
@@ -69,9 +69,7 @@ const AUTH_UPDATE_TIMEOUT = 40 * 60 * 1000;
 
 type StateProps = ReturnType<typeof mapStateToProps>;
 type DispatchProps = ResolveThunks<typeof mapDispatchToProps>;
-type OwnProps = {
-    themeType?: ThemeType;
-};
+type OwnProps = {};
 
 type DashProps = StateProps & DispatchProps & RouteComponentProps & OwnProps;
 
@@ -420,9 +418,6 @@ class DashComponent extends React.PureComponent<DashProps, DashState> {
             context: itemData.copyContext,
             options: {
                 updateLayout,
-            },
-            dashVisualSettings: {
-                themeType: this.props.themeType,
             },
         });
     };

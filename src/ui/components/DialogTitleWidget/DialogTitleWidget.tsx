@@ -21,27 +21,21 @@ import {
 import block from 'bem-cn-lite';
 import {FieldWrapper} from 'components/FieldWrapper/FieldWrapper';
 import {i18n} from 'i18n';
-import type {ColorSettings, DashTabItemTitle, DashTabItemTitleSize, HintSettings} from 'shared';
+import type {DashTabItemTitle, DashTabItemTitleSize, HintSettings} from 'shared';
 import {
     DashTabItemTitleSizes,
     DialogDashTitleQA,
     DialogDashWidgetItemQA,
     DialogDashWidgetQA,
-    Feature,
 } from 'shared';
 import {CustomPaletteBgColors, CustomPaletteTextColors} from 'shared/constants/widgets';
 import {registry} from 'ui/registry';
 import {PaletteBackground} from 'ui/units/dash/containers/Dialogs/components/PaletteBackground/PaletteBackground';
 import {PaletteText} from 'ui/units/dash/containers/Dialogs/components/PaletteText/PaletteText';
-import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import type {SetItemDataArgs} from '../../units/dash/store/actions/dashTyped';
 
-import {useBackgroundColorSettings, useColorSettings} from './useColorSettings';
-
 import './DialogTitleWidget.scss';
-
-const isDashColorPickersByThemeEnabled = isEnabledFeature(Feature.EnableDashColorPickersByTheme);
 
 type RadioButtonFontSizeOption = DashTabItemTitleSize | 'custom';
 
@@ -81,8 +75,8 @@ interface DialogTitleWidgetState {
     previousSelectedFontSize: number;
     showInTOC?: boolean;
     autoHeight?: boolean;
+    backgroundColor?: string;
     textColor?: string;
-    textColorSettings?: ColorSettings;
     hint?: HintSettings;
 }
 
@@ -91,7 +85,6 @@ export interface DialogTitleWidgetFeatureProps {
     enableShowInTOC?: boolean;
     enableCustomFontSize?: boolean;
     enableCustomBgColorSelector?: boolean;
-    enableSeparateThemeColorSelector?: boolean;
     enableCustomTextColorSelector?: boolean;
 }
 interface DialogTitleWidgetProps extends DialogTitleWidgetFeatureProps {
@@ -117,18 +110,8 @@ const defaultOpenedItemData: DashTabItemTitle['data'] = {
     size: FONT_SIZE_OPTIONS[0].value,
     showInTOC: true,
     autoHeight: false,
-    ...(isDashColorPickersByThemeEnabled
-        ? {
-              backgroundSettings: {
-                  color: undefined,
-              },
-          }
-        : {
-              background: {
-                  color: CustomPaletteBgColors.NONE,
-              },
-          }),
-    textColor: undefined,
+    background: {color: CustomPaletteBgColors.NONE},
+    textColor: CustomPaletteTextColors.PRIMARY,
 };
 
 function DialogTitleWidget(props: DialogTitleWidgetProps) {
@@ -137,16 +120,13 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         dialogIsVisible,
         enableAutoheight = true,
         enableShowInTOC = true,
-        enableCustomBgColorSelector = false,
-        enableSeparateThemeColorSelector = true,
+        enableCustomBgColorSelector,
         enableCustomTextColorSelector = false,
         theme,
         closeDialog,
         setItemData,
         openedItemData = defaultOpenedItemData,
     } = props;
-
-    const isNewWidget = !props.openedItemData;
 
     const [state, setState] = React.useState<DialogTitleWidgetState>({
         validation: {},
@@ -165,37 +145,10 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
               }),
         showInTOC: openedItemData.showInTOC,
         autoHeight: Boolean(openedItemData.autoHeight),
-
+        backgroundColor: openedItemData.background?.color || '',
+        textColor: openedItemData.textColor || CustomPaletteTextColors.PRIMARY,
         hint: openedItemData.hint,
     });
-
-    const {
-        oldBackgroundColor,
-        backgroundColorSettings,
-        setOldBackgroundColor,
-        setBackgroundColorSettings,
-        resultedBackgroundSettings,
-    } = useBackgroundColorSettings({
-        background: openedItemData.background,
-        backgroundSettings: openedItemData.backgroundSettings,
-        defaultOldColor: CustomPaletteBgColors.NONE,
-        enableSeparateThemeColorSelector: enableSeparateThemeColorSelector,
-        isNewWidget,
-    });
-
-    const {
-        oldColor: oldTextColor,
-        colorSettings: textColorSettings,
-        setOldColor: setOldTextColor,
-        setColorSettings: setTextColorSettings,
-    } = useColorSettings({
-        color: openedItemData.textColor,
-        colorSettings: openedItemData.textSettings?.color,
-        defaultOldColor: CustomPaletteTextColors.PRIMARY,
-        enableSeparateThemeColorSelector: enableSeparateThemeColorSelector,
-        isNewWidget,
-    });
-
     const {
         text,
         fontSize,
@@ -204,6 +157,8 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         validation,
         hint,
         autoHeight,
+        backgroundColor,
+        textColor,
         previousSelectedFontSize,
     } = state;
 
@@ -270,14 +225,6 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         const validationErrors: DialogTitleWidgetState['validation'] = {
             text: text?.trim() ? undefined : i18n('dash.title-dialog.edit', 'toast_required-field'),
         };
-
-        const resultTextColorSettings: Pick<
-            DashTabItemTitle['data'],
-            'textColor' | 'textSettings'
-        > =
-            textColorSettings || isDashColorPickersByThemeEnabled
-                ? {textSettings: {color: textColorSettings}}
-                : {textColor: oldTextColor};
         if (Object.values(validationErrors).filter(Boolean).length === 0) {
             const resultedCustomFontSize = customFontSize ?? previousSelectedFontSize;
             setItemData({
@@ -294,8 +241,10 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
                             : fontSize,
                     showInTOC,
                     autoHeight,
-                    ...resultedBackgroundSettings,
-                    ...resultTextColorSettings,
+                    background: {
+                        color: backgroundColor,
+                    },
+                    textColor,
                     hint,
                 },
             });
@@ -314,9 +263,8 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         previousSelectedFontSize,
         showInTOC,
         autoHeight,
-        resultedBackgroundSettings,
-        oldTextColor,
-        textColorSettings,
+        backgroundColor,
+        textColor,
         closeDialog,
         hint,
     ]);
@@ -343,17 +291,28 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
         setState((prevState) => ({...prevState, autoHeight: !prevState.autoHeight}));
     }, []);
 
+    const handleHasBackgroundSelected = React.useCallback((color: string) => {
+        setState((prevState) => ({...prevState, backgroundColor: color}));
+    }, []);
+
+    const handleTextColorChanged = React.useCallback((color: string) => {
+        setState((prevState) => ({...prevState, textColor: color}));
+    }, []);
+
     const inputRef: React.Ref<HTMLInputElement> = React.useRef(null);
 
     const {MarkdownControl} = registry.common.components.getAll();
 
+    React.useEffect(() => {
+        // TODO remove and use "initialFocus={inputRef}" in Dialog props when switch to uikit7
+        // delay is needed so that the autofocus of the dialog does not interrupt the focus on the input
+        setTimeout(() => {
+            inputRef.current?.focus();
+        });
+    }, []);
+
     return (
-        <Dialog
-            open={dialogIsVisible}
-            onClose={closeDialog}
-            qa={DialogDashWidgetItemQA.Title}
-            initialFocus={inputRef}
-        >
+        <Dialog open={dialogIsVisible} onClose={closeDialog} qa={DialogDashWidgetItemQA.Title}>
             <Dialog.Header caption={i18n('dash.dialogs-common.edit', 'title_widget-settings')} />
             <Dialog.Body className={b()}>
                 <FormRow
@@ -430,13 +389,10 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
                     label={i18n('dash.dashkit-plugin-common.view', 'label_background-checkbox')}
                 >
                     <PaletteBackground
-                        color={backgroundColorSettings}
-                        oldColor={oldBackgroundColor}
+                        color={backgroundColor}
                         theme={theme}
-                        onSelect={setBackgroundColorSettings}
-                        onSelectOldColor={setOldBackgroundColor}
+                        onSelect={handleHasBackgroundSelected}
                         enableCustomBgColorSelector={enableCustomBgColorSelector}
-                        enableSeparateThemeColorSelector={enableSeparateThemeColorSelector}
                     />
                 </FormRow>
                 <FormRow
@@ -444,13 +400,10 @@ function DialogTitleWidget(props: DialogTitleWidgetProps) {
                     label={i18n('dash.title-dialog.edit', 'label_text-color')}
                 >
                     <PaletteText
-                        color={textColorSettings}
-                        oldColor={oldTextColor}
+                        color={textColor}
                         theme={theme}
-                        onSelect={setTextColorSettings}
-                        onSelectOldColor={setOldTextColor}
+                        onSelect={handleTextColorChanged}
                         enableCustomColorSelector={enableCustomTextColorSelector}
-                        enableSeparateThemeColorSelector={enableSeparateThemeColorSelector}
                     />
                 </FormRow>
                 <FormRow className={b('row')} label={i18n('dash.widget-dialog.edit', 'field_hint')}>
