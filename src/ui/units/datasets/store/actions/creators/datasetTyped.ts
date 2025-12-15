@@ -2026,9 +2026,11 @@ export function initializeDataset({
 export function initialFetchDataset({
     datasetId,
     rev_id,
+    bindedWorkbookId,
     isInitialFetch = true,
 }: {
     datasetId: string;
+    bindedWorkbookId?: string | null;
     rev_id?: string;
     isInitialFetch?: boolean;
 }) {
@@ -2062,6 +2064,15 @@ export function initialFetchDataset({
                     preview: {enabled: previewEnabled},
                 },
             } = dataset;
+            let isDelegated: boolean | undefined;
+
+            if (dataset.collection_id && bindedWorkbookId) {
+                const result = await getSdk().sdk.us.getSharedEntryDelegation({
+                    sourceId: dataset.id,
+                    targetId: bindedWorkbookId,
+                });
+                isDelegated = result.isDelegated;
+            }
 
             const connectionsIds = new Set(
                 sources
@@ -2081,6 +2092,7 @@ export function initialFetchDataset({
                     dataset: dataset as Dataset,
                     publishedId,
                     currentRevId,
+                    isDelegated,
                     collectionId: collectionId ?? null,
                 },
             });
@@ -2280,6 +2292,34 @@ function createSharedConnectionBinding({sourceId, targetId, delegation}: EntityB
             result = response;
         } catch (error) {
             logger.logError('dataset: getSharedEntryDelegation failed', error);
+            dispatch(
+                showToast({
+                    title: error.message,
+                    error,
+                }),
+            );
+        }
+        return result;
+    };
+}
+
+export function updateDatasetDelegation({delegation, sourceId, targetId}: EntityBindingsArgs) {
+    return async (dispatch: DatasetDispatch) => {
+        let result;
+        try {
+            const delegationResult = await getSdk().sdk.us.updateSharedEntryBinding({
+                sourceId,
+                targetId,
+                delegation,
+            });
+            if (delegationResult) {
+                dispatch({
+                    type: DATASET_ACTION_TYPES.SET_DATASET_DELEGATION,
+                    payload: delegationResult.isDelegated,
+                });
+            }
+            result = delegationResult;
+        } catch (error) {
             dispatch(
                 showToast({
                     title: error.message,

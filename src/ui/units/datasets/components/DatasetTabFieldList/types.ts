@@ -58,6 +58,7 @@ export type ButtonControlArgs = {
     onButtonClick: (item: DatasetField) => void;
     icon?: IconData;
     qa?: string;
+    readonly?: boolean;
 };
 
 export type MenuControlItem = {

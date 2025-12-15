@@ -75,6 +75,7 @@ type DatasetTableProps = {
     onDisplaySettingsUpdate: (itemsToDisplay: string[]) => void;
     rls: DatasetRls;
     permissions?: Permissions;
+    readonly: boolean;
 };
 
 type DatasetTableState = {
@@ -263,6 +264,7 @@ class DatasetTable extends React.Component<DatasetTableProps, DatasetTableState>
             handleDescriptionUpdate: this.handleDescriptionUpdate,
             handleMoreActionClick: this.handleMoreActionClick,
             onSelectChange: this.onSelectChange,
+            readonly: this.props.readonly,
         });
     }
 

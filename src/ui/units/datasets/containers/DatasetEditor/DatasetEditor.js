@@ -350,6 +350,7 @@ export class DatasetEditor extends React.Component {
             datasetId,
             workbookId,
             parameters,
+            readonly,
         } = this.props;
         const {field, visibleRLSDialog, currentRLSField, visibleFieldSettingsDialog} = this.state;
         const {renderRLSDialog} = registry.datasets.functions.getAll();
@@ -357,6 +358,7 @@ export class DatasetEditor extends React.Component {
         return (
             <div className={b()}>
                 <DatasetTable
+                    readonly={readonly}
                     permissions={permissions}
                     rls={rls}
                     fields={this.filteredFields}
@@ -436,6 +438,7 @@ DatasetEditor.propTypes = {
     permissions: PropTypes.object,
     workbookId: PropTypes.string,
     dlDebugMode: PropTypes.bool,
+    readonly: PropTypes.bool,
 };
 
 const mapStateToProps = createStructuredSelector({

@@ -164,6 +164,7 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
                 symbol: {
                     width: 36,
                 },
+                groupId: graph.id,
             },
             dashStyle: graph.dashStyle,
             yAxis: graph.yAxis,
@@ -176,16 +177,24 @@ export function prepareGravityChartLine(args: PrepareFunctionArgs) {
         };
     });
 
-    let legend: ChartData['legend'];
-    if (seriesData.length <= 1) {
-        legend = {enabled: false};
+    const shouldUseHtmlForLegend = [colorItem, shapeItem].some(isHtmlField);
+    const legend: ChartData['legend'] = {html: shouldUseHtmlForLegend};
+    const nonEmptyLegendGroups = Array.from(
+        new Set(seriesData.map((s) => s.legend?.groupId).filter(Boolean)),
+    );
+    if (seriesData.length <= 1 || nonEmptyLegendGroups.length <= 1) {
+        legend.enabled = false;
     }
 
     let xAxis: ChartData['xAxis'] = {};
     if (isCategoriesXAxis) {
         xAxis = {
             type: 'category',
-            categories: xCategories?.map(String),
+            // @ts-ignore There may be a type mismatch due to the wrapper over html, markup and markdown
+            categories: xCategories,
+            labels: {
+                html: isHtmlField(xField) || isMarkdownField(xField) || isMarkupField(xField),
+            },
         };
     } else {
         if (isDateField(xField)) {

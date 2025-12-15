@@ -14,6 +14,7 @@ export const getIndexColumn = ({
     indeterminate,
     onSelectChange,
     onSelectAllChange,
+    readonly,
 }: {
     selectedRows: DatasetSelectionMap;
     isAllSelected?: boolean;
@@ -25,6 +26,7 @@ export const getIndexColumn = ({
         modifier: {shiftKey: boolean},
     ) => void;
     onSelectAllChange: (isSelected: boolean) => void;
+    readonly: boolean;
 }): Column<DatasetField> => ({
     name: 'index',
     className: b('column'),
@@ -37,6 +39,7 @@ export const getIndexColumn = ({
             checked={isAllSelected}
             indeterminate={indeterminate}
             onUpdate={onSelectAllChange}
+            disabled={readonly}
         />
     ),
     render: function IndexColumnItem({index, row}) {
@@ -61,6 +64,7 @@ export const getIndexColumn = ({
                     className={b('btn-select')}
                     checked={selectedRows[guid] ?? false}
                     size={'l'}
+                    disabled={readonly}
                     onChange={handleCheckboxChange}
                 />
                 <div className={b('title-index')}>{index + 1}</div>

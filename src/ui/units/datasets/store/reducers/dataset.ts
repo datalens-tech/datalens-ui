@@ -54,6 +54,7 @@ import {
     SET_CONNECTIONS_DB_NAMES,
     SET_CURRENT_DB_NAME,
     SET_CURRENT_TAB,
+    SET_DATASET_DELEGATION,
     SET_DATASET_REVISION_MISMATCH,
     SET_DATA_EXPORT_ENABLED,
     SET_DELEGATION_FROM_CONN_TO_SHARED_DATASET,
@@ -273,6 +274,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                     permissions,
                     full_permissions,
                 },
+                isDelegated,
                 collectionId,
                 publishedId,
                 currentRevId,
@@ -291,6 +293,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 collectionId,
                 prevContent: content,
                 options,
+                isDelegated,
                 preview: {
                     ...state.preview,
                     previewEnabled,
@@ -1527,6 +1530,12 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                     ...state.ui,
                     selectedConnectionDelegationStatus: action.payload,
                 },
+            };
+        }
+        case SET_DATASET_DELEGATION: {
+            return {
+                ...state,
+                isDelegated: action.payload,
             };
         }
         default: {
