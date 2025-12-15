@@ -80,7 +80,6 @@ function validateEmbedToken(
             extra: {
                 message: 'You must provide embedToken',
                 hideRetry: true,
-                hideDebugInfo: true,
             },
         });
         return null;
@@ -92,7 +91,7 @@ function validateEmbedToken(
         ctx.log('CHARTS_ENGINE_WRONG_TOKEN');
         res.status(400).send({
             code: ErrorCode.InvalidToken,
-            extra: {message: 'Wrong token format', hideRetry: true, hideDebugInfo: true},
+            extra: {message: 'Wrong token format', hideRetry: true},
         });
         return null;
     }
@@ -126,7 +125,6 @@ function handleError(
             extra: {
                 message: 'Dependencies of embed are outdated',
                 hideRetry: true,
-                hideDebugInfo: true,
             },
         });
         return;
@@ -151,7 +149,6 @@ function handleError(
             },
             extra: {
                 hideRetry: false,
-                hideDebugInfo: true,
             },
         },
     });
@@ -239,7 +236,6 @@ function processEntry(
         extra: {
             message: 'Invalid token',
             hideRetry: true,
-            hideDebugInfo: true,
         },
     });
     return null;
