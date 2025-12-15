@@ -13,6 +13,7 @@ import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 
 import {DIALOG_SHARED_ENTRY_PERMISSIONS} from '../../DialogSharedEntryPermissions/DialogSharedEntryPermissions';
 import {DIALOG_SHARED_ENTRY_UNBIND} from '../../DialogSharedEntryUnbind/DialogSharedEntryUnbind';
+import {DIALOG_SHARED_RELATED_ENTITIES} from '../../DialogSharedRelatedEntities/DialogSharedRelatedEntities';
 import {PlaceholderIllustration} from '../../PlaceholderIllustration/PlaceholderIllustration';
 import {SharedBindingsList} from '../../SharedBindingsList/SharedBindingsList';
 import type {AttachmentValue} from '../constants';
@@ -50,6 +51,23 @@ export const Relations = ({
     fetchEntityBindings,
 }: RelationsProps) => {
     const dispatch: AppDispatch = useDispatch();
+
+    const onClickRelationButton = React.useCallback(
+        ({workbookId, isDelegated}: SharedEntryBindingsItem) => {
+            dispatch(
+                openDialog({
+                    id: DIALOG_SHARED_RELATED_ENTITIES,
+                    props: {
+                        entry: {...entry, isDelegated},
+                        workbookId: workbookId!,
+                        open: true,
+                        onClose: () => dispatch(closeDialog()),
+                    },
+                }),
+            );
+        },
+        [entry, dispatch],
+    );
 
     const showErrorToast = React.useCallback(
         (error) => {
@@ -195,6 +213,7 @@ export const Relations = ({
             }
             getListItemActions={getListItemActions}
             isLoading={isLoading}
+            onClickRelationButton={onClickRelationButton}
         />
     );
 };

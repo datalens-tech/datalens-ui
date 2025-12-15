@@ -69,6 +69,8 @@ export const mockSharedEntriesTexts = {
     'collection-structure-dialog-caption': 'Выберите коллекцию для создания',
     'shared-bindings-list-title': 'Привязанные объекты',
     'shared-bindings-list-empty': 'Биндинги отсутствуют',
+    'shared-object-related-entities-list-empty': 'Связанные объекты в воркбуке отсутствуют',
+    'shared-object-related-entities-dialog-title': 'Связанные объекты в воркбуке',
     'shared-bindings-list-action-unbind': 'Отвязать',
     'shared-bindings-list-action-change-permissions': 'Поменять права',
     'entity-row-relation-tooltip-text': 'Перейти к связанным объектам в воркбуке',
