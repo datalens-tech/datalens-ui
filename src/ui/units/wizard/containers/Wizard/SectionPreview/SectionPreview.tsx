@@ -195,7 +195,7 @@ class SectionPreview extends Component<Props> {
 
     render() {
         return (
-            <div className={'container preview-container'}>
+            <div className="preview-container">
                 <div className="preview-chartkit" data-qa={WizardPageQa.SectionPreview}>
                     {this.renderChartkit()}
                 </div>
