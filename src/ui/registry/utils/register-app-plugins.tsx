@@ -1,3 +1,4 @@
+import type {LibsPluginsConfig} from '../libs/registryLibsPlugins';
 import {registryLibsPlugins} from '../libs/registryLibsPlugins';
 import {registerAuthPlugins} from '../units/auth/register';
 import {registerChartPlugins} from '../units/chart/register';
@@ -13,7 +14,11 @@ import {registerQlPlugins} from '../units/ql/register';
 import {registerWizardPlugins} from '../units/wizard/register';
 import {registerWorkbooksPlugins} from '../units/workbooks/register';
 
-export const registerAppPlugins = () => {
+export type AppPluginsConfig = {
+    libs?: LibsPluginsConfig;
+};
+
+export const registerAppPlugins = (options: AppPluginsConfig = {}) => {
     registerChartPlugins();
     registerConnectionsPlugins();
     registerCommonPlugins();
@@ -28,5 +33,5 @@ export const registerAppPlugins = () => {
     registerCollectionsPlugins();
     registerAuthPlugins();
     //libs
-    registryLibsPlugins();
+    registryLibsPlugins(options.libs);
 };

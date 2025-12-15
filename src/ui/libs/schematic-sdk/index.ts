@@ -74,8 +74,20 @@ export type TypedSchema = {
     auth: typeof authSchema;
 };
 
-export const initSdk = () => {
-    const sdk: DatalensSdk<TypedSchema> = sdkFactory<TypedSchema>(sdkConfig);
+export type SdkOptions = {
+    /** Expected to be without trailing slash */
+    baseUrl?: string;
+};
+
+const preparedConfig = (options: SdkOptions = {}): SdkConfig => {
+    return {
+        ...sdkConfig,
+        ...(options.baseUrl && {endpoint: options.baseUrl + sdkConfig.endpoint}),
+    };
+};
+
+export const initSdk = (options: SdkOptions = {}) => {
+    const sdk: DatalensSdk<TypedSchema> = sdkFactory<TypedSchema>(preparedConfig(options));
 
     sdk.setDefaultHeader({
         name: TIMEZONE_OFFSET_HEADER,
