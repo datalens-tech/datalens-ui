@@ -30,6 +30,7 @@ type UseFilterSectionArgs = {
     updateFilter: (data: ApplyData) => void;
     addFilter: (data: ApplyData) => void;
     deleteFilter: (filterId: string) => void;
+    readonly: boolean;
 };
 
 type UseFilterSection = {
@@ -48,7 +49,7 @@ export const useFilterSection = (args: UseFilterSectionArgs): UseFilterSection =
     const parameters = useSelector(filteredDatasetParametersSelector);
     const workbookId = useSelector(workbookIdSelector);
 
-    const {filters, options, fields, updateFilter, addFilter, deleteFilter} = args;
+    const {filters, options, fields, updateFilter, addFilter, deleteFilter, readonly} = args;
 
     const headerColumns = getHeaderColumns();
     const preparedFields = getFieldsByFilters(fields, filters);
@@ -104,8 +105,9 @@ export const useFilterSection = (args: UseFilterSectionArgs): UseFilterSection =
                 const filter = getFilterByField(item, filters);
                 deleteFilter(filter.id);
             },
+            readonly,
         };
-    }, [deleteFilter, filters]);
+    }, [deleteFilter, filters, readonly]);
 
     const checkIsRowValid = React.useCallback(
         (item: DatasetField) => {

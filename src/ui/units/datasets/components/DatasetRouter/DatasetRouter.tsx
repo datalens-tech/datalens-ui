@@ -2,7 +2,7 @@ import React from 'react';
 
 import block from 'bem-cn-lite';
 import {usePrevious} from 'hooks/usePrevious';
-import type {DatalensGlobalState} from 'index';
+import {type DatalensGlobalState, URL_QUERY} from 'index';
 import type {SDK} from 'libs';
 import {connect} from 'react-redux';
 import type {RouteComponentProps} from 'react-router-dom';
@@ -107,10 +107,15 @@ const DatasetRouter = ({sdk, datasetKey, setCurrentPageEntry, resetDatasetState,
                         }>,
                     ) => {
                         const {datasetId, workbookId, collectionId} = props.match.params;
+                        const bindedWorkbookId = new URLSearchParams(props.location.search).get(
+                            URL_QUERY.BINDED_WOKRBOOK,
+                        );
+
                         return (
                             <DatasetPage
                                 {...props}
                                 sdk={sdk}
+                                bindedWorkbookId={bindedWorkbookId}
                                 datasetId={datasetId}
                                 workbookId={workbookId}
                                 collectionId={collectionId}

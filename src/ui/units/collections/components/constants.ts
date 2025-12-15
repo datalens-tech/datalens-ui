@@ -110,4 +110,14 @@ export const mockSharedEntriesTexts = {
     'iam-dialog-role-limitedEntryBindingCreator': 'Делегация прав',
     'iam-dialog-role-entryBindingCreator': 'Без делегации прав',
     'workbook-shared-entry-original-link': 'Открыть оригинал',
+    'dataset-filters-readonly-alert-title': 'Фильтры отсутствуют',
+    'dataset-parameters-readonly-alert-title': 'Параметры отсутствуют',
+    'dataset-empty-filters-readonly-alert-message':
+        'Для добавления фильтров перейдите к оригиналу датасета',
+    'dataset-empty-parameters-readonly-alert-message':
+        'Для добавления параметров перейдите к оригиналу датасета',
+    'dataset-filters-readonly-alert-message':
+        'Для редактирования и добавления фильтров перейдите к оригиналу датасета',
+    'dataset-parameters-readonly-alert-message':
+        'Для редактирования и добавления параметров перейдите к оригиналу датасета',
 };

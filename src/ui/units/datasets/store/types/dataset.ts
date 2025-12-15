@@ -71,6 +71,7 @@ import type {
     SET_CONNECTIONS_DB_NAMES,
     SET_CURRENT_DB_NAME,
     SET_CURRENT_TAB,
+    SET_DATASET_DELEGATION,
     SET_DATASET_REVISION_MISMATCH,
     SET_DATA_EXPORT_ENABLED,
     SET_DELEGATION_FROM_CONN_TO_SHARED_DATASET,
@@ -350,6 +351,7 @@ export type DatasetReduxState = {
     error: DatasetError;
     currentTab: DatasetTab;
     lastModifiedTab?: DatasetTab;
+    isDelegated?: boolean;
 };
 
 type SetFreeformSources = {
@@ -562,21 +564,21 @@ type InitializeDataset = {
     type: typeof INITIALIZE_DATASET;
 };
 
-type DeleteObligatoryFilter = {
+export type DeleteObligatoryFilter = {
     type: typeof DELETE_OBLIGATORY_FILTER;
     payload: {
         id: string;
     } & EditHistoryOptionsProperty;
 };
 
-type UpdateObligatoryFilter = {
+export type UpdateObligatoryFilter = {
     type: typeof UPDATE_OBLIGATORY_FILTER;
     payload: {
         filter: ApplyData;
     } & EditHistoryOptionsProperty;
 };
 
-type AddObligatoryFilter = {
+export type AddObligatoryFilter = {
     type: typeof ADD_OBLIGATORY_FILTER;
     payload: {
         filter: ApplyData;
@@ -727,6 +729,7 @@ type DatasetInitialFetchSuccess = {
         dataset: Dataset & {
             connection?: ConnectionEntry | null;
         };
+        isDelegated: boolean | undefined;
         publishedId: EntryFieldPublishedId;
         currentRevId: string | null;
         collectionId: CollectionId;
@@ -886,6 +889,11 @@ export type SetSelectedConnectionDelegation = {
     payload: boolean | null;
 };
 
+export type SetDatasetDelegation = {
+    type: typeof SET_DATASET_DELEGATION;
+    payload: boolean;
+};
+
 export type DatasetReduxAction =
     | SetFreeformSources
     | ResetDatasetState
@@ -972,4 +980,5 @@ export type DatasetReduxAction =
     | SetSelectedConnectionDelegation
     | OpenDialogAction
     | CloseDialogAction
+    | SetDatasetDelegation
     | EditHistoryAction;

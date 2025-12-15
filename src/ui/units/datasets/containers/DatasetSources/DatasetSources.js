@@ -698,6 +698,7 @@ export class DatasetSources extends React.Component {
             sourceLoadingError,
             workbookId,
             collectionId,
+            readonly,
         } = this.props;
         const {
             isVisibleSourceEditorDialog,
@@ -726,6 +727,7 @@ export class DatasetSources extends React.Component {
                                 ui.isSourcesLoading || ui.isSourcesListingOptionsLoading
                             }
                             isLoadingConnectionInfo={isLoadingConnectionInfo}
+                            readonly={readonly}
                             isDisabledAddSource={isUpdating}
                             isDisabledDropSource={this.isDisabledDropSource}
                             connections={connections}
@@ -748,6 +750,7 @@ export class DatasetSources extends React.Component {
                             getSources={this.retryToGetSources}
                         />
                         <RelationsMap
+                            readonly={readonly}
                             avatars={avatars}
                             relations={relations}
                             relationsErrors={this.relationsErrors}
@@ -824,6 +827,7 @@ DatasetSources.propTypes = {
     currentDbName: PropTypes.string,
     resetSourcesPagination: PropTypes.func.isRequired,
     getSourcesListingOptions: PropTypes.func.isRequired,
+    readonly: PropTypes.bool.isRequired,
 };
 
 const mapStateToProps = createStructuredSelector({

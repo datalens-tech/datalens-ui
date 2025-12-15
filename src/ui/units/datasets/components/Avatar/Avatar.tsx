@@ -118,6 +118,7 @@ type AvatarProps = {
     onDeleteAvatar: (avatar: {id?: string}) => void;
     onDeleteSource: (source: {id?: string}) => void;
     dragDisabled?: boolean;
+    readonly: boolean;
 };
 
 function Avatar(props: AvatarProps) {
@@ -134,6 +135,7 @@ function Avatar(props: AvatarProps) {
         onDeleteSource,
         replaceSource,
         position,
+        readonly = false,
     } = props;
     const {id, isSource} = avatar;
 
@@ -163,8 +165,8 @@ function Avatar(props: AvatarProps) {
             </span>
             <RightArea
                 avatar={avatar}
-                isDisplayReplaceSourceZone={isDisplayReplaceSourceZone}
-                isDisplayDeleteButton={isActive}
+                isDisplayReplaceSourceZone={isDisplayReplaceSourceZone && !readonly}
+                isDisplayDeleteButton={isActive && !readonly}
                 onDelete={isSource ? onDeleteSource : onDeleteAvatar}
                 replaceSource={replaceSource}
             />

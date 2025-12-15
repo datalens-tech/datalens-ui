@@ -99,6 +99,7 @@ type ConnectionMenuProps = {
     workbookId?: string;
     collectionId?: string;
     onSharedDatasetCreationHandle: OnSharedDatasetCreationHandle;
+    readonly: boolean;
 };
 
 function ConnectionMenu(props: ConnectionMenuProps) {
@@ -115,6 +116,7 @@ function ConnectionMenu(props: ConnectionMenuProps) {
         workbookId,
         collectionId,
         onSharedDatasetCreationHandle,
+        readonly,
     } = props;
     const menuControlBtnRef = React.useRef(null);
     const [isNavVisible, setNavVisibility] = useState(false);
@@ -170,6 +172,7 @@ function ConnectionMenu(props: ConnectionMenuProps) {
                     },
                     {
                         text: i18n('label_menu-popup-replace-connection'),
+                        disabled: readonly,
                         action: (e) => {
                             e.stopPropagation();
                             onReplaceConnectionClick();
@@ -235,6 +238,7 @@ type ConnectionsListProps = {
     clickableTypes?: ConnectorType[];
     onSharedDatasetCreationHandle: OnSharedDatasetCreationHandle;
     isLoading: boolean;
+    readonly: boolean;
 };
 
 function ConnectionsList(props: ConnectionsListProps) {
@@ -251,6 +255,7 @@ function ConnectionsList(props: ConnectionsListProps) {
         collectionId,
         onSharedDatasetCreationHandle,
         isLoading,
+        readonly,
     } = props;
     const connectionDelegation = useSelector(selectedConnectionDelegationStatusSelector);
 
@@ -300,6 +305,7 @@ function ConnectionsList(props: ConnectionsListProps) {
                                 </div>
                             </div>
                             <ConnectionMenu
+                                readonly={readonly}
                                 sdk={sdk}
                                 connectionId={existedConnectionId}
                                 openEnabled={!deleted}
@@ -334,6 +340,7 @@ type SelectConnectionsProps = {
     collectionId?: string;
     options: Partial<DatasetOptions>;
     isLoadingConnectionInfo: boolean;
+    readonly: boolean;
 };
 
 function SelectConnections(props: SelectConnectionsProps) {
@@ -350,6 +357,7 @@ function SelectConnections(props: SelectConnectionsProps) {
         options,
         collectionId,
         isLoadingConnectionInfo,
+        readonly,
     } = props;
     const dispatch = useDispatch();
     const [isNavVisible, setNavVisibility] = useState(false);
@@ -408,6 +416,7 @@ function SelectConnections(props: SelectConnectionsProps) {
                 <span>{i18n('label_sources')}</span>
             </div>
             <ConnectionsList
+                readonly={readonly}
                 sdk={sdk}
                 connectionId={connectionId}
                 connections={connections}
@@ -496,6 +505,7 @@ type SelectSourcePrototypesProps = SelectConnectionsProps & {
     collectionId?: string;
     options: Partial<DatasetOptions>;
     isLoadingConnectionInfo: boolean;
+    readonly: boolean;
 };
 
 function SelectSourcePrototypes(props: SelectSourcePrototypesProps) {
@@ -522,6 +532,7 @@ function SelectSourcePrototypes(props: SelectSourcePrototypesProps) {
         collectionId,
         options,
         isLoadingConnectionInfo,
+        readonly,
     } = props;
 
     const connectionId = id || entryId;
@@ -543,8 +554,10 @@ function SelectSourcePrototypes(props: SelectSourcePrototypesProps) {
                 workbookId={workbookId}
                 collectionId={collectionId}
                 options={options}
+                readonly={readonly}
             />
             <SourcesTable
+                readonly={readonly}
                 error={error}
                 sources={sourcePrototypes}
                 loading={isSourcesLoading}
