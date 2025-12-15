@@ -147,7 +147,7 @@ export interface Dataset {
     source_features: {};
     sources: DatasetSource[];
 }
-
+export type DatasetWithDelegation = Dataset & {isDelegated?: boolean};
 export interface ObligatoryFilter {
     id: string;
     field_guid: string;
