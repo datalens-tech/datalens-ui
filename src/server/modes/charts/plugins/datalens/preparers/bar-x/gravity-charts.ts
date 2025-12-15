@@ -155,6 +155,9 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
                 },
                 [],
             ),
+            legend: {
+                groupId: graph.id,
+            },
             custom: {...graph.custom, colorValue: graph.colorValue, exportSettings},
             dataLabels: {
                 enabled: isDataLabelsEnabled,
@@ -188,7 +191,10 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
         const shouldUseHtmlForLegend = isHtmlField(colorItem);
         legend = {html: shouldUseHtmlForLegend};
 
-        if (seriesData.length <= 1) {
+        const nonEmptyLegendGroups = Array.from(
+            new Set(seriesData.map((s) => s.legend?.groupId).filter(Boolean)),
+        );
+        if (seriesData.length <= 1 || nonEmptyLegendGroups.length <= 1) {
             legend.enabled = false;
         }
     }
@@ -197,7 +203,11 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
     if (isCategoriesXAxis) {
         xAxis = {
             type: 'category',
-            categories: xCategories?.map(String),
+            // @ts-ignore There may be a type mismatch due to the wrapper over html, markup and markdown
+            categories: xCategories,
+            labels: {
+                html: isHtmlField(xField) || isMarkdownField(xField) || isMarkupField(xField),
+            },
         };
     } else {
         if (isDateField(xField)) {

@@ -25,7 +25,7 @@ import './DeleteSharedEntryDialog.scss';
 
 export type Props = {
     open: boolean;
-    entry: WorkbookSharedEntry;
+    entry: Omit<WorkbookSharedEntry, 'name'>;
     workbookId: string;
     onDeleteSuccess?: () => void;
     onClose: () => void;

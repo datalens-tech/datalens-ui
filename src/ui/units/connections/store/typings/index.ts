@@ -21,6 +21,7 @@ import type {
     SET_CONNECTION_KEY,
     SET_CONNECTOR_DATA,
     SET_ENTRY,
+    SET_ENTRY_DELEGATION,
     SET_FILE_COLUMN_FILTER,
     SET_FILE_REPLACE_SOURCES,
     SET_FILE_SELECTED_ITEM_ID,
@@ -65,7 +66,7 @@ export type CheckData = {
     status: 'unknown' | 'success' | 'error';
     error?: DataLensApiError;
 };
-
+export type ConnectionEntry = GetEntryResponse & {isDelegated?: boolean};
 export type ConnectionsReduxState = {
     /** Groups of available connectors to create */
     groupedConnectors: GetConnectorsResponse;
@@ -119,7 +120,7 @@ export type ConnectionsReduxState = {
         activeDialog?: YadocsActiveDialog;
     };
     currentTenantId?: string;
-    entry?: GetEntryResponse;
+    entry?: ConnectionEntry;
     schema?: FormSchema;
 };
 
@@ -152,6 +153,11 @@ export type SetEntry = {
         entry: ConnectionsReduxState['entry'];
         error?: DataLensApiError;
     };
+};
+
+export type SetEntryDelegation = {
+    type: typeof SET_ENTRY_DELEGATION;
+    payload: boolean;
 };
 
 export type SetConnectionKey = {
@@ -363,6 +369,7 @@ export type ConnectionsReduxAction =
     | SetFlattenConnectors
     | SetConectorData
     | SetEntry
+    | SetEntryDelegation
     | SetConnectionKey
     | SetForm
     | SetInitialForm
