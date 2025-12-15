@@ -1,13 +1,22 @@
+import type {BaseSchema} from '@gravity-ui/gateway';
 import z from 'zod';
 
 import {AUDIT_MODE_HEADER, AuditModeHeaderValue, Feature} from '../../../../shared';
-import type {DatalensGatewaySchemas} from '../../../types/gateway';
+import type {AnyApiServiceActionConfig, DatalensGatewaySchemas} from '../../../types/gateway';
 import {ApiTag} from '../constants';
 import type {PublicApiVersionActions} from '../types';
 
+type OverrideActions<T extends BaseSchema> = {
+    [K in keyof T]: Omit<T[K], 'actions'> & {
+        actions: Record<string, AnyApiServiceActionConfig>;
+    };
+};
+
 export const getPublicApiActionsV0 = <
-    TSchema extends {root: Pick<DatalensGatewaySchemas['root'], 'bi' | 'mix' | 'us'>},
->(): PublicApiVersionActions<TSchema, Feature> => {
+    TSchema extends {
+        root: OverrideActions<Pick<DatalensGatewaySchemas['root'], 'bi' | 'mix' | 'us'>>;
+    },
+>() => {
     return {
         // Collection
         createCollection: {
@@ -303,5 +312,5 @@ export const getPublicApiActionsV0 = <
             },
             features: [Feature.CollectionsEnabled],
         },
-    };
+    } satisfies PublicApiVersionActions<TSchema, Feature>;
 };

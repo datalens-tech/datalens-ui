@@ -84,7 +84,9 @@ type DeleteSourceHandle = (props: {id: string}) => void;
 type EditSourceHandle = (source: DatasetSource) => void;
 type ClickConnectionHandle = (connectionId: string) => Promise<BaseSource[]>;
 type SelectConnectionHandle = (props: Partial<GetEntryResponse>) => void;
-type OnSharedDatasetCreationHandle = (onApply: (entry: SharedEntryFields) => void) => void;
+type OnSharedDatasetCreationHandle = (
+    onApply: (entry: Partial<SharedEntryFields>) => Promise<void> | void,
+) => void;
 
 type ConnectionMenuProps = {
     sdk: SDK;
@@ -377,9 +379,7 @@ function SelectConnections(props: SelectConnectionsProps) {
                                 entry.entity === CollectionItemEntities.ENTRY &&
                                 (entry.scope === 'dataset' || entry.entryId === connectionId),
                             onSelectEntry: async (connection) => {
-                                if (connection.entity === CollectionItemEntities.ENTRY) {
-                                    await onApply(connection);
-                                }
+                                await onApply(connection);
                             },
                         },
                     }),
