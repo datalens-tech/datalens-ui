@@ -1,0 +1,82 @@
+import React from 'react';
+
+import {Moon, Sun} from '@gravity-ui/icons';
+import type {FlexProps, RealTheme} from '@gravity-ui/uikit';
+import {Flex, Icon} from '@gravity-ui/uikit';
+import block from 'bem-cn-lite';
+import ColorPickerInputWithPreset from 'ui/units/dash/containers/Dialogs/components/ColorPickerInputWithPreset/ColorPickerInputWithPreset';
+
+import type {ColorSettings} from '../../../../../../../shared/types';
+import {isColorByTheme} from '../../../../../../../shared/utils';
+
+import './ColorInputsGroup.scss';
+const b = block('color-inputs-group');
+
+export interface ColorInputsGroupProps {
+    theme?: RealTheme;
+    value: ColorSettings | undefined;
+    onUpdate: (value: ColorSettings | undefined) => void;
+    isSingleColorSelector?: boolean;
+    direction?: FlexProps['direction'];
+    className?: string;
+    mainPresetOptions?: string[];
+    paletteOptions?: string[];
+}
+
+export function ColorInputsGroup({
+    theme,
+    value,
+    onUpdate,
+    className,
+    isSingleColorSelector = false,
+    direction = 'row',
+    mainPresetOptions,
+    paletteOptions,
+}: ColorInputsGroupProps) {
+    const {light, dark, common} = isColorByTheme(value)
+        ? {...value, common: undefined}
+        : {common: value};
+
+    return (
+        <Flex className={b(null, className)} direction={direction}>
+            {isSingleColorSelector ? (
+                <ColorPickerInputWithPreset
+                    mainPresetOptions={mainPresetOptions}
+                    paletteOptions={paletteOptions}
+                    className={b('color-input')}
+                    theme={theme}
+                    value={common}
+                    onUpdate={(color) => onUpdate(color ?? undefined)}
+                    hasOpacityInput
+                />
+            ) : (
+                <React.Fragment>
+                    <div className={b('item')}>
+                        <Icon data={Sun} size={16} className={b('theme-icon')} />
+                        <ColorPickerInputWithPreset
+                            mainPresetOptions={mainPresetOptions}
+                            paletteOptions={paletteOptions}
+                            className={b('color-input')}
+                            value={light}
+                            theme="light"
+                            onUpdate={(color) => onUpdate({light: color ?? undefined, dark})}
+                            hasOpacityInput
+                        />
+                    </div>
+                    <div className={b('item')}>
+                        <Icon data={Moon} size={16} className={b('theme-icon')} />
+                        <ColorPickerInputWithPreset
+                            mainPresetOptions={mainPresetOptions}
+                            paletteOptions={paletteOptions}
+                            className={b('color-input')}
+                            value={dark}
+                            theme="dark"
+                            onUpdate={(color) => onUpdate({dark: color ?? undefined, light})}
+                            hasOpacityInput
+                        />
+                    </div>
+                </React.Fragment>
+            )}
+        </Flex>
+    );
+}

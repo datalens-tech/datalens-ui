@@ -14,7 +14,11 @@ export const workbooksFunctionsMap = {
     getWorkbookTabs: makeFunctionTemplate<(workbook: WorkbookWithPermissions) => Item[]>(),
     getWorkbookEntryUrl:
         makeFunctionTemplate<
-            (workbookEntry: WorkbookEntry, workbook: WorkbookWithPermissions) => string
+            (
+                workbookEntry: WorkbookEntry,
+                workbook: WorkbookWithPermissions,
+                isSharedEntry?: boolean,
+            ) => string
         >(),
     getWorkbookDashboardEntryUrl:
         makeFunctionTemplate<(response: EntryDialogOnCloseArg) => string>(),

@@ -21,12 +21,21 @@ type DatasetTabFieldListProps = {
     isLoading: boolean;
     controlSettings?: FieldRowControlSettings;
     checkIsRowValid?: (item: DatasetField) => boolean;
+    readonly: boolean;
 };
 
 export const DatasetTabFieldList: React.FC<DatasetTabFieldListProps> = (
     props: DatasetTabFieldListProps,
 ) => {
-    const {fields, headerColumns, columns, isLoading, controlSettings, checkIsRowValid} = props;
+    const {fields, headerColumns, columns, isLoading, controlSettings, checkIsRowValid, readonly} =
+        props;
+
+    const listItems = React.useMemo(() => {
+        if (readonly) {
+            return fields.map((item) => ({...item, disabled: true}));
+        }
+        return fields;
+    }, [readonly, fields]);
 
     const renderItem = React.useCallback(
         (item: ListItemData<DatasetField>, _isActive: boolean, rowIndex: number) => {
@@ -40,6 +49,7 @@ export const DatasetTabFieldList: React.FC<DatasetTabFieldListProps> = (
 
             return (
                 <FieldRow
+                    readonly={readonly}
                     isValid={isValid}
                     columns={preparedColumns}
                     field={item}
@@ -52,9 +62,12 @@ export const DatasetTabFieldList: React.FC<DatasetTabFieldListProps> = (
 
     return (
         <div className={b({progress: isLoading})}>
-            {Boolean(fields.length) && <FieldRow isHeader={true} columns={headerColumns} />}
+            {Boolean(fields.length) && (
+                <FieldRow isHeader={true} columns={headerColumns} readonly={readonly} />
+            )}
             <List
-                items={fields}
+                itemClassName={b('list-item', {readonly})}
+                items={listItems}
                 renderItem={renderItem}
                 onItemClick={props.onItemClick}
                 filterable={false}

@@ -13,11 +13,13 @@ const b = block('dataset-table');
 type GetMoreColumnArgs = {
     setActiveRow: ColumnItem['setActiveRow'];
     onItemClick: FieldActionsPopupProps['onItemClick'];
+    readonly: boolean;
 };
 
 export const getMoreColumn = ({
     setActiveRow,
     onItemClick,
+    readonly,
 }: GetMoreColumnArgs): Column<DatasetField> => ({
     name: 'more',
     className: b('column', b('column-more')),
@@ -27,6 +29,7 @@ export const getMoreColumn = ({
     render: function MoreColumnItem({index, row}) {
         return (
             <FieldActionsPopup
+                readonly={readonly}
                 className={b('more-dropdown')}
                 field={row}
                 index={index}

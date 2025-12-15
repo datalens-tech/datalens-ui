@@ -43,3 +43,7 @@ export const SharedDatasetHiddenContextMenuItems = new Set<string>([
     ENTRY_CONTEXT_MENU_ACTION.COPY,
     ENTRY_CONTEXT_MENU_ACTION.MIGRATE_TO_WORKBOOK,
 ]);
+
+export const SharedWorkbookDatasetHiddenContextMenuItems = new Set<string>(
+    SharedDatasetHiddenContextMenuItems,
+).add(ENTRY_CONTEXT_MENU_ACTION.RENAME);

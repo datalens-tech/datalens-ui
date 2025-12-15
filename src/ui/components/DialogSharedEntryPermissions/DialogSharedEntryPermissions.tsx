@@ -10,6 +10,7 @@ import DialogManager from '../DialogManager/DialogManager';
 import type {SharedEntry} from '../DialogSharedEntryBindings/types';
 import {EntitiesList} from '../EntitiesList/EntitiesList';
 import {EntityLink} from '../EntityLink/EntityLink';
+import {SharedEntryIcon} from '../SharedEntryIcon/SharedEntryIcon';
 
 import {PermissionButton} from './components/PermissionButton/PermissionButton';
 
@@ -61,6 +62,7 @@ export const DialogSharedEntryPermissions: React.FC<DialogSharedEntryPermissions
                 <div className={b('objects-wrapper')}>
                     <EntitiesList
                         entities={[entry]}
+                        rightSectionSlot={() => <SharedEntryIcon isDelegated={entry.isDelegated} />}
                         title={getSharedEntryMockText('label-current-entry')}
                     />
                     {relation && (

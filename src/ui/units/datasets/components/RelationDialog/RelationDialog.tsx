@@ -49,6 +49,7 @@ const getFieldItems = (items: DatasetRawSchema[]): SelectOption[] => {
                     />
                 ),
             },
+            title,
         }),
     );
 };
@@ -94,7 +95,7 @@ const renderOptionWithIcon = (option: SelectOption) => {
     const iconNode = option.data?.iconNode;
 
     return (
-        <div className={b('option')}>
+        <div className={b('option')} title={option.title}>
             {iconNode && <span className={b('option-icon')}>{iconNode}</span>}
             <span>{option.content}</span>
         </div>
@@ -144,6 +145,7 @@ function FieldSelect(props: FieldSelectProps) {
             onUpdate={(v) => onChange(v[0])}
             renderOption={renderOptionWithIcon}
             renderSelectedOption={renderOptionWithIcon}
+            filterable={true}
         />
     );
 }

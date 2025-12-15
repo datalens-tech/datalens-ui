@@ -64,64 +64,59 @@ export const CreateEntry = React.memo<Props>(
                                     `title-select-shared-entry-dialog-${scope}`,
                                 ),
                                 onSelectEntry: (entry) => {
-                                    if (entry.entity === CollectionItemEntities.ENTRY) {
-                                        dispatch(
-                                            openDialog({
-                                                id: DIALOG_SHARED_ENTRY_PERMISSIONS,
-                                                props: {
-                                                    open: true,
-                                                    onClose: () => dispatch(closeDialog()),
-                                                    entry,
-                                                    onApply: async (delegation) => {
-                                                        const success = await dispatch(
-                                                            bindSharedEntryToWorkbook({
-                                                                sourceId: entry.entryId,
-                                                                targetId: workbookId,
-                                                                delegation,
+                                    dispatch(
+                                        openDialog({
+                                            id: DIALOG_SHARED_ENTRY_PERMISSIONS,
+                                            props: {
+                                                open: true,
+                                                onClose: () => dispatch(closeDialog()),
+                                                entry,
+                                                onApply: async (delegation) => {
+                                                    const success = await dispatch(
+                                                        bindSharedEntryToWorkbook({
+                                                            sourceId: entry.entryId,
+                                                            targetId: workbookId,
+                                                            delegation,
+                                                        }),
+                                                    );
+                                                    if (success) {
+                                                        dispatch(closeDialog());
+                                                        dispatch(closeDialog());
+
+                                                        const entries = await dispatch(
+                                                            getWorkbookSharedEntries({
+                                                                scope,
+                                                                workbookId,
+                                                                filters,
                                                             }),
                                                         );
-                                                        if (success) {
-                                                            dispatch(closeDialog());
-                                                            dispatch(closeDialog());
 
-                                                            const entries = await dispatch(
-                                                                getWorkbookSharedEntries({
-                                                                    scope,
-                                                                    workbookId,
-                                                                    filters,
-                                                                }),
-                                                            );
+                                                        const addedEntry = entries?.entries.find(
+                                                            (item) =>
+                                                                item.entryId === entry.entryId,
+                                                        );
 
-                                                            const addedEntry =
-                                                                entries?.entries.find(
-                                                                    (item) =>
-                                                                        item.entryId ===
-                                                                        entry.entryId,
-                                                                );
-
-                                                            dispatch(
-                                                                showToast({
-                                                                    type: 'success',
-                                                                    title: getSharedEntryMockText(
-                                                                        `add-entry-workbook-toast-title-${scope}`,
-                                                                    ),
-                                                                    content: getSharedEntryMockText(
-                                                                        'add-entry-workbook-toast-message',
-                                                                        {
-                                                                            name: Utils.getEntryNameFromKey(
-                                                                                addedEntry?.key ??
-                                                                                    '',
-                                                                            ),
-                                                                        },
-                                                                    ),
-                                                                }),
-                                                            );
-                                                        }
-                                                    },
+                                                        dispatch(
+                                                            showToast({
+                                                                type: 'success',
+                                                                title: getSharedEntryMockText(
+                                                                    `add-entry-workbook-toast-title-${scope}`,
+                                                                ),
+                                                                content: getSharedEntryMockText(
+                                                                    'add-entry-workbook-toast-message',
+                                                                    {
+                                                                        name: Utils.getEntryNameFromKey(
+                                                                            addedEntry?.key ?? '',
+                                                                        ),
+                                                                    },
+                                                                ),
+                                                            }),
+                                                        );
+                                                    }
                                                 },
-                                            }),
-                                        );
-                                    }
+                                            },
+                                        }),
+                                    );
                                 },
                                 getIsInactiveEntity: (entry) =>
                                     entry.entity === CollectionItemEntities.ENTRY &&
