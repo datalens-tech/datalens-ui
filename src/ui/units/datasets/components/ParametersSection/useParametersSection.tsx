@@ -26,7 +26,7 @@ type UseParametersSection = {
     onItemClick: (field: DatasetField) => void;
 };
 
-export const useParametersSection = (): UseParametersSection => {
+export const useParametersSection = ({readonly}: {readonly: boolean}): UseParametersSection => {
     const dispatch = useDispatch();
 
     const [headerColumns, setHeaderColumns] = React.useState<FieldHeaderColumn[]>([]);
@@ -37,7 +37,7 @@ export const useParametersSection = (): UseParametersSection => {
         })
         .filter((column): column is FieldListColumn => Boolean(column));
 
-    const menuItems: MenuControlItem[] = getParameterRowMenuItems(dispatch);
+    const menuItems: MenuControlItem[] = getParameterRowMenuItems(dispatch, readonly);
 
     const controlSettings: FieldRowControlSettings = {
         type: 'menu',

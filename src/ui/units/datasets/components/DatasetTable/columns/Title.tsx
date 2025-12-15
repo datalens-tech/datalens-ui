@@ -16,10 +16,11 @@ type GetTitleColumnArgs = {
     width: string;
     setActiveRow: ColumnItem['setActiveRow'];
     onUpdate: (row: DatasetField, value: string) => void;
+    readonly: boolean;
 };
 
 export const getTitleColumn = (args: GetTitleColumnArgs) => {
-    const {width, setActiveRow, onUpdate} = args;
+    const {width, setActiveRow, onUpdate, readonly} = args;
 
     const getUpdateHandler = (row: DatasetField) => {
         return (nextTitle: string) => onUpdate(row, nextTitle);
@@ -44,6 +45,7 @@ export const getTitleColumn = (args: GetTitleColumnArgs) => {
                     setActiveRow={setActiveRow}
                     onUpdate={getUpdateHandler(row)}
                     qa={DatasetFieldsTabQa.FieldNameColumnInput}
+                    disabled={readonly}
                 />
             );
         },

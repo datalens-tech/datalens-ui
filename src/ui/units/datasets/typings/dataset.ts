@@ -1,3 +1,6 @@
+import type {EntryScope} from 'shared';
+import type {GetEntryResponse} from 'shared/schema';
+
 export interface ObligatoryFilter {
     id: string;
     field_guid: string;
@@ -11,3 +14,9 @@ export interface ObligatoryFilter {
         },
     ];
 }
+
+export type DatasetEntry = GetEntryResponse & {
+    isDelegated?: boolean;
+    scope: EntryScope.Connection;
+    fake?: boolean;
+};
