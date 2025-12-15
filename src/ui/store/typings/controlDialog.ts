@@ -9,6 +9,7 @@ import type {
     DashTabItemType,
     Dataset,
     DatasetFieldType,
+    ImpactTabsIds,
     StringParams,
     TitlePlacement,
     TitlePlacementOption,
@@ -20,6 +21,7 @@ import type {DialogChartWidgetFeatureProps} from 'ui/components/DialogChartWidge
 import type {DialogGroupControlFeaturesProps} from 'ui/components/DialogGroupControl/DialogGroupControl';
 import type {DialogExternalControlFeaturesProps} from 'ui/components/DialogExternalControl/DialogExternalControl';
 import type {DialogImageWidgetFeatureProps} from 'ui/components/DialogImageWidget';
+import type {ImpactType} from 'shared/types/dash';
 
 export type DialogEditItemFeaturesProp = {
     [DashTabItemType.Title]?: DialogTitleWidgetFeatureProps;
@@ -39,6 +41,14 @@ export type SelectorDialogValidation = {
     defaultValue?: string;
     connectionQueryContent?: string;
     selectorParameters?: string;
+    impactType?: string;
+    impactTabsIds?: string;
+    currentTabVisibility?: string;
+};
+
+export type SelectorsGroupValidation = {
+    impactTabsIds?: string;
+    currentTabVisibility?: string;
 };
 
 export type SelectorsGroupDialogState = {
@@ -49,6 +59,9 @@ export type SelectorsGroupDialogState = {
     buttonReset: boolean;
     updateControlsOnChange: boolean;
     group: SelectorDialogState[];
+    impactType?: ImpactType;
+    impactTabsIds?: ImpactTabsIds;
+    validation: SelectorsGroupValidation;
 };
 
 export type SelectorElementType = 'select' | 'date' | 'input' | 'checkbox';
@@ -95,7 +108,7 @@ export type SelectorDialogState = {
     titlePlacement?: TitlePlacement;
 
     innerTitle?: string;
-    sourceType?: SelectorSourceType;
+    sourceType: SelectorSourceType;
     autoHeight?: boolean;
     chartId?: string;
     showInnerTitle?: boolean;
@@ -132,6 +145,9 @@ export type SelectorDialogState = {
     accentType?: AccentTypeValue;
     // unique id for manipulating selectors in the creation phase
     draftId?: string;
+    // which tabs display the selector
+    impactType?: ImpactType;
+    impactTabsIds?: ImpactTabsIds;
 };
 
 export type PastedSelectorDialogState = SelectorDialogState & {

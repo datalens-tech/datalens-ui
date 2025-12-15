@@ -8,11 +8,17 @@ import {I18n} from 'i18n';
 import {useDispatch, useSelector} from 'react-redux';
 import {DialogGroupControlQa, TitlePlacementOption} from 'shared';
 import {BackButton} from 'ui/components/ControlComponents/BackButton/BackButton';
-import {updateSelectorsGroup} from 'ui/store/actions/controlDialog';
-import {selectSelectorsGroup} from 'ui/store/selectors/controlDialog';
+import {
+    updateControlsValidation,
+    updateSelectorsGroup,
+} from 'ui/store/actions/controlDialog/controlDialog';
+import {selectSelectorValidation, selectSelectorsGroup} from 'ui/store/selectors/controlDialog';
 import type {SelectorDialogState} from 'ui/store/typings/controlDialog';
+import {selectTabId} from 'ui/units/dash/store/selectors/dashTypedSelectors';
+import {isWidgetVisibleOnTab} from 'ui/units/dash/utils/selectors';
 
 import {CONTROLS_PLACEMENT_MODE} from '../../constants/dialogs';
+import {ImpactTypeSelect} from '../ControlComponents/Sections/CommonSettingsSection/ImpactTypeSelect/ImpactTypeSelect';
 import {FormSection} from '../FormSection/FormSection';
 
 import {ControlPlacementRow} from './ControlPlacementRow/ControlPlacementRow';
@@ -27,6 +33,7 @@ export type ExtendedSettingsDialogProps = {
     selectorsGroupTitlePlaceholder?: string;
     enableAutoheightDefault?: boolean;
     showSelectorsGroupTitle?: boolean;
+    enableGlobalSelectors?: boolean;
 };
 
 export type OpenDialogExtendedSettingsArgs = {
@@ -38,6 +45,18 @@ const b = block('extended-settings-dialog');
 
 const i18n = I18n.keyset('dash.extended-settings-dialog.edit');
 
+// const dialogI18n = I18n.keyset('dash.control-dialog.edit');
+
+// TODO (global selectors): Add translations
+const dialogI18n = (key: string) => {
+    const values: Record<string, string> = {
+        'validation_need-current-tab-impact':
+            'Должен быть хотя бы один селектор, видимый на текущей вкладке',
+    };
+
+    return values[key];
+};
+
 const resetAutoValues = (group: SelectorDialogState[]) =>
     group.map((item) =>
         item.placementMode === CONTROLS_PLACEMENT_MODE.AUTO ? {...item, width: ''} : item,
@@ -48,8 +67,12 @@ const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
     selectorsGroupTitlePlaceholder,
     enableAutoheightDefault,
     showSelectorsGroupTitle,
+    enableGlobalSelectors,
 }) => {
     const selectorsGroup = useSelector(selectSelectorsGroup);
+    const selectorValidation = useSelector(selectSelectorValidation);
+    const tabId = useSelector(selectTabId);
+
     const [itemsState, setItemsState] = React.useState(selectorsGroup.group);
     const [errorsIndexes, setErrorsIndexes] = React.useState<number[]>([]);
     const [showErrors, setShowErrors] = React.useState(false);
@@ -82,8 +105,36 @@ const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                 group: updatedItemsState,
             }),
         );
+
+        if (
+            tabId &&
+            (selectorsGroup.validation.currentTabVisibility ||
+                selectorValidation.currentTabVisibility) &&
+            isWidgetVisibleOnTab({itemData: selectorsGroup, tabId})
+        ) {
+            dispatch(
+                updateControlsValidation({
+                    groupValidation: {
+                        ...selectorsGroup.validation,
+                        currentTabVisibility: undefined,
+                    },
+                    itemsValidation: {
+                        ...selectorValidation,
+                        currentTabVisibility: undefined,
+                    },
+                }),
+            );
+        }
         onClose();
-    }, [selectorsGroup, itemsState, dispatch, onClose, errorsIndexes.length]);
+    }, [
+        errorsIndexes.length,
+        itemsState,
+        dispatch,
+        selectorsGroup,
+        tabId,
+        selectorValidation,
+        onClose,
+    ]);
 
     const handlePlacementModeUpdate = React.useCallback(
         (targetIndex: number, newType: SelectorDialogState['placementMode']) => {
@@ -220,6 +271,22 @@ const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
         [dispatch, selectorsGroup],
     );
 
+    const handleCurrentTabVisibilityProblem = React.useCallback(() => {
+        const validationError = dialogI18n('validation_need-current-tab-impact');
+        dispatch(
+            updateControlsValidation({
+                groupValidation: {currentTabVisibility: validationError},
+            }),
+        );
+
+        setItemsState((prevItemsState) => {
+            return prevItemsState.map((item) => ({
+                ...item,
+                validation: {...item.validation, currentTabVisibility: validationError},
+            }));
+        });
+    }, [dispatch]);
+
     const showAutoHeight =
         !enableAutoheightDefault &&
         (isMultipleSelectors ||
@@ -229,6 +296,7 @@ const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
             // we allow to enable autoheight
             selectorsGroup.group[0].titlePlacement === TitlePlacementOption.Top);
     const showUpdateControlsOnChange = selectorsGroup.buttonApply && isMultipleSelectors;
+    const showImpactTypeSelect = isMultipleSelectors && enableGlobalSelectors;
 
     return (
         <Dialog onClose={onClose} open={true} className={b()}>
@@ -326,6 +394,15 @@ const DialogExtendedSettings: React.FC<ExtendedSettingsDialogProps> = ({
                                 qa={DialogGroupControlQa.updateControlOnChangeCheckbox}
                             />
                         </FormRow>
+                    )}
+
+                    {showImpactTypeSelect && (
+                        <ImpactTypeSelect
+                            isGroupSettings={true}
+                            groupImpactType={selectorsGroup.impactType}
+                            groupImpactTabsIds={selectorsGroup.impactTabsIds}
+                            onRaiseTabVisibilityProblem={handleCurrentTabVisibilityProblem}
+                        />
                     )}
                 </FormSection>
                 {isMultipleSelectors && (

@@ -149,13 +149,6 @@ export const LINE_VISUALIZATION: GraphShared['visualization'] = {
     ] as Placeholder[],
 };
 
-export const LINE_D3_VISUALIZATION: GraphShared['visualization'] = {
-    ...LINE_VISUALIZATION,
-    id: WizardVisualizationId.LineD3,
-    placeholders: [LineXPlaceholder, {...LineYPlaceholder, required: true}],
-    allowSegments: false,
-};
-
 export const AREA_VISUALIZATION: GraphShared['visualization'] = {
     id: WizardVisualizationId.Area,
     type: 'line',

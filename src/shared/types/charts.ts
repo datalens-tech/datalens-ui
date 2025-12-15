@@ -307,6 +307,7 @@ type ChartActivitySetParamsResult = {
 export type ChartActivityResponseData = {
     data?: ChartActivityToastResult | ChartActivitySetParamsResult | ChartActivityPopupResult;
     error?: {
+        code?: string;
         message: string;
         details?: {
             stackTrace?: string;

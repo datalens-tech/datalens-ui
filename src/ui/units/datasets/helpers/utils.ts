@@ -8,7 +8,13 @@ import type {
     WorkbookId,
 } from 'shared';
 import {DL} from 'ui';
+import type {EntryContextMenuItem} from 'ui/components/EntryContextMenu/helpers';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
+
+import {
+    SharedDatasetHiddenContextMenuItems,
+    SharedWorkbookDatasetHiddenContextMenuItems,
+} from '../constants';
 
 export default class DatasetUtils {
     static sortObjectBy(sortParameter: string) {
@@ -176,3 +182,23 @@ export function getSourceListingValues(sourceListing?: SourceListingOptions['sou
         dbNameRequiredForSearch,
     };
 }
+
+export const filterContextMenuItems = ({
+    items,
+    isSharedDataset,
+    isWorkbookSharedDataset,
+}: {
+    items: EntryContextMenuItem[];
+    isSharedDataset: boolean;
+    isWorkbookSharedDataset: boolean;
+}) => {
+    return items.filter((item) => {
+        if (isWorkbookSharedDataset && SharedWorkbookDatasetHiddenContextMenuItems.has(item.id)) {
+            return false;
+        }
+        if (isSharedDataset && SharedDatasetHiddenContextMenuItems.has(item.id)) {
+            return false;
+        }
+        return true;
+    });
+};

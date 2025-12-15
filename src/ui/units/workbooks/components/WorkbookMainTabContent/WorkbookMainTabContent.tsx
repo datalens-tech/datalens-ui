@@ -1,22 +1,33 @@
 import React from 'react';
 
 import {SmartLoader} from 'components/SmartLoader/SmartLoader';
-import {useDispatch, useSelector} from 'react-redux';
-import type {EntryScope} from 'shared';
+import {batch, useDispatch, useSelector} from 'react-redux';
+import {EntryScope, Feature} from 'shared';
 import type {WorkbookWithPermissions} from 'shared/schema';
 import {registry} from 'ui/registry';
 import type {AppDispatch} from 'ui/store';
+import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {AnimateBlock} from '../../../../components/AnimateBlock';
 import {
     getAllWorkbookEntriesSeparately,
     getWorkbookEntries,
+    getWorkbookSharedEntries,
     resetWorkbookEntries,
     resetWorkbookEntriesByScope,
+    resetWorkbookSharedEntries,
 } from '../../store/actions';
-import {selectWorkbookEntriesIsLoading, selectWorkbookItems} from '../../store/selectors';
-import type {WorkbookEntriesFilters} from '../../types';
+import {
+    selectSharedNextPageToken,
+    selectWorkbookEntriesIsLoading,
+    selectWorkbookItems,
+    selectWorkbookSharedEntriesError,
+    selectWorkbookSharedEntriesIsLoading,
+    selectWorkbookSharedItems,
+} from '../../store/selectors';
+import type {WorkbookEntriesFilters, WorkbookSharedEntry} from '../../types';
 import {WorkbookEntriesTable} from '../Table/WorkbookEntriesTable/WorkbookEntriesTable';
+import {useChunkedEntries as useSharedChunkedEntries} from '../WorkbookTabContent/useChunkedEntries';
 import {TAB_ALL} from '../WorkbookTabs/constants';
 
 import {useChunkedEntries} from './useChunkedEntries';
@@ -34,9 +45,16 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
     const [mapErrors, setMapErrors] = React.useState<Record<string, boolean>>({});
     const [mapLoaders, setMapLoaders] = React.useState<Record<string, boolean>>({});
     const [isLoading, setIsLoading] = React.useState(false);
+    const isSharedEntriesLoading = useSelector(selectWorkbookSharedEntriesIsLoading);
+    const workbookSharedEntriesError = useSelector(selectWorkbookSharedEntriesError);
+    const sharedNextPageToken = useSelector(selectSharedNextPageToken);
+
+    const isSharedEntriesEnabled = isEnabledFeature(Feature.EnableSharedEntries);
 
     const dispatch = useDispatch<AppDispatch>();
     const entries = useSelector(selectWorkbookItems);
+    const sharedEntries = useSelector(selectWorkbookSharedItems);
+
     const isEntriesLoading = useSelector(selectWorkbookEntriesIsLoading);
 
     const {getWorkbookTabs} = registry.workbooks.functions.getAll();
@@ -54,10 +72,18 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
         availableScopes,
     });
 
+    const sharedChunks = useSharedChunkedEntries<WorkbookSharedEntry>({
+        entries: sharedEntries,
+        availableScopes: [EntryScope.Connection, EntryScope.Dataset],
+    });
+
     React.useEffect(() => {
         if (workbook?.workbookId === workbookId) {
             (async () => {
-                dispatch(resetWorkbookEntries());
+                batch(() => {
+                    dispatch(resetWorkbookEntries());
+                    dispatch(resetWorkbookSharedEntries());
+                });
 
                 setIsLoading(true);
 
@@ -70,6 +96,15 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
                     }),
                 );
 
+                if (isSharedEntriesEnabled) {
+                    dispatch(
+                        getWorkbookSharedEntries({
+                            workbookId,
+                            filters,
+                            pageSize: PAGE_SIZE_MAIN_TAB,
+                        }),
+                    );
+                }
                 const errors: Record<string, boolean> = {};
                 const tokensMap: Record<string, string> = {};
 
@@ -95,6 +130,7 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
         workbook.permissions.view,
         workbookId,
         availableScopes,
+        isSharedEntriesEnabled,
     ]);
 
     const loadMoreEntries = React.useCallback(
@@ -119,6 +155,23 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
             }
         },
         [dispatch, filters, mapTokens, workbookId],
+    );
+
+    const loadMoreSharedEntries = React.useCallback(
+        (entryScope?: EntryScope) => {
+            if (sharedNextPageToken) {
+                dispatch(
+                    getWorkbookSharedEntries({
+                        workbookId,
+                        filters,
+                        scope: entryScope,
+                        nextPageToken: sharedNextPageToken,
+                        pageSize: PAGE_SIZE_MAIN_TAB,
+                    }),
+                );
+            }
+        },
+        [dispatch, filters, sharedNextPageToken, workbookId],
     );
 
     const retryLoadEntries = React.useCallback(
@@ -157,37 +210,68 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
         [dispatch, workbookId, filters, mapErrors, mapTokens],
     );
 
+    const retryLoadSharedEntries = React.useCallback(
+        (entryScope?: EntryScope) => {
+            dispatch(
+                getWorkbookSharedEntries({
+                    workbookId,
+                    filters,
+                    scope: entryScope,
+                    nextPageToken: sharedNextPageToken,
+                    pageSize: PAGE_SIZE_MAIN_TAB,
+                }),
+            );
+        },
+        [dispatch, workbookId, filters, sharedNextPageToken],
+    );
+
     const refreshEntries = React.useCallback(
         (entryScope: EntryScope) => {
             setMapLoaders({
                 [entryScope]: true,
             });
-            dispatch(resetWorkbookEntriesByScope(entryScope));
+            batch(() => {
+                dispatch(resetWorkbookEntriesByScope(entryScope));
 
-            dispatch(
-                getWorkbookEntries({
-                    workbookId,
-                    filters,
-                    scope: entryScope,
-                    pageSize: PAGE_SIZE_MAIN_TAB,
-                }),
-            )
-                .then((data) => {
-                    if (data) {
-                        setMapTokens({
-                            ...mapTokens,
-                            [entryScope]: data?.nextPageToken || '',
+                dispatch(
+                    getWorkbookEntries({
+                        workbookId,
+                        filters,
+                        scope: entryScope,
+                        pageSize: PAGE_SIZE_MAIN_TAB,
+                    }),
+                )
+                    .then((data) => {
+                        if (data) {
+                            setMapTokens({
+                                ...mapTokens,
+                                [entryScope]: data?.nextPageToken || '',
+                            });
+                        }
+                    })
+                    .finally(() => {
+                        setMapLoaders({
+                            [entryScope]: false,
                         });
-                    }
-                })
-                .finally(() => {
-                    setMapLoaders({
-                        [entryScope]: false,
                     });
-                });
+            });
         },
         [dispatch, workbookId, filters, mapTokens],
     );
+
+    const refreshSharedEntries = React.useCallback(() => {
+        batch(() => {
+            dispatch(resetWorkbookSharedEntries());
+
+            dispatch(
+                getWorkbookSharedEntries({
+                    workbookId,
+                    filters,
+                    pageSize: PAGE_SIZE_MAIN_TAB,
+                }),
+            );
+        });
+    }, [dispatch, workbookId, filters]);
 
     if (
         (isEntriesLoading || isLoading) &&
@@ -201,6 +285,7 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
         <AnimateBlock>
             <WorkbookEntriesTable
                 refreshEntries={refreshEntries}
+                refreshSharedEntries={refreshSharedEntries}
                 workbook={workbook}
                 entries={entries}
                 loadMoreEntries={loadMoreEntries}
@@ -209,7 +294,13 @@ export const WorkbookMainTabContent = React.memo<Props>(({filters, workbookId, w
                 mapErrors={mapErrors}
                 mapLoaders={mapLoaders}
                 chunks={chunks}
+                sharedChunks={sharedChunks}
+                loadMoreSharedEntries={loadMoreSharedEntries}
+                retryLoadSharedEntries={retryLoadSharedEntries}
                 availableScopes={availableScopes}
+                sharedError={Boolean(workbookSharedEntriesError)}
+                sharedLoader={isSharedEntriesLoading}
+                sharedToken={sharedNextPageToken}
             />
         </AnimateBlock>
     );

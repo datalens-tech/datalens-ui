@@ -3,12 +3,14 @@ import React from 'react';
 import {ShieldCheck, ShieldKeyhole} from '@gravity-ui/icons';
 import {Dialog, Divider, Link, Text} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
-import type {GetEntryResponse, SharedEntryBindingsItem} from 'shared/schema';
+import type {SharedEntryBindingsItem} from 'shared/schema';
 import {getSharedEntryMockText} from 'ui/units/collections/components/helpers';
 
 import DialogManager from '../DialogManager/DialogManager';
+import type {SharedEntry} from '../DialogSharedEntryBindings/types';
 import {EntitiesList} from '../EntitiesList/EntitiesList';
 import {EntityLink} from '../EntityLink/EntityLink';
+import {SharedEntryIcon} from '../SharedEntryIcon/SharedEntryIcon';
 
 import {PermissionButton} from './components/PermissionButton/PermissionButton';
 
@@ -16,10 +18,11 @@ import './DialogSharedEntryPermissions.scss';
 
 type DialogSharedEntryPermissionsProps = {
     open: boolean;
-    onClose: () => void;
-    entry: Partial<GetEntryResponse> & {scope: string};
+    onClose: (delegate: boolean) => void;
+    entry: SharedEntry;
     relation?: SharedEntryBindingsItem;
-    onApply: (delegate: boolean) => void;
+    onApply: (delegate: boolean) => Promise<void> | void;
+    delegation?: boolean;
 };
 
 export const DIALOG_SHARED_ENTRY_PERMISSIONS = Symbol('DIALOG_SHARED_ENTRY_PERMISSIONS');
@@ -37,21 +40,29 @@ export const DialogSharedEntryPermissions: React.FC<DialogSharedEntryPermissions
     open,
     onApply,
     onClose,
+    delegation = true,
 }) => {
-    const [delegate, setDelegate] = React.useState(true);
+    const [delegate, setDelegate] = React.useState(delegation);
+    const [isLoading, setIsLoading] = React.useState(false);
 
-    const onSubmit = () => {
-        // TODO add request
-        onApply?.(delegate);
+    const onSubmit = async () => {
+        setIsLoading(true);
+        await onApply(delegate);
+        setIsLoading(false);
+    };
+
+    const onCloseHandler = () => {
+        onClose(delegate);
     };
 
     return (
-        <Dialog size="m" open={open} onClose={onClose} className={b()}>
+        <Dialog size="m" open={open} onClose={onCloseHandler} className={b()}>
             <Dialog.Header caption={getSharedEntryMockText('title-permissions-dialog')} />
             <Dialog.Body className={b('body')}>
                 <div className={b('objects-wrapper')}>
                     <EntitiesList
                         entities={[entry]}
+                        rightSectionSlot={() => <SharedEntryIcon isDelegated={entry.isDelegated} />}
                         title={getSharedEntryMockText('label-current-entry')}
                     />
                     {relation && (
@@ -77,7 +88,10 @@ export const DialogSharedEntryPermissions: React.FC<DialogSharedEntryPermissions
                         icon={<ShieldCheck />}
                         title={getSharedEntryMockText('delegate-title-permissions-dialog')}
                         message={getSharedEntryMockText('delegate-message-permissions-dialog')}
-                        disabled={false}
+                        disabled={
+                            !entry.fullPermissions?.createEntryBinding &&
+                            !entry.permissions?.createEntryBinding
+                        }
                         checked={delegate}
                         onCheck={() => setDelegate(true)}
                     />
@@ -85,7 +99,10 @@ export const DialogSharedEntryPermissions: React.FC<DialogSharedEntryPermissions
                         icon={<ShieldKeyhole />}
                         title={getSharedEntryMockText('not-delegate-title-permissions-dialog')}
                         message={getSharedEntryMockText('not-delegate-message-permissions-dialog')}
-                        disabled={false}
+                        disabled={
+                            !entry.fullPermissions?.createLimitedEntryBinding &&
+                            !entry.permissions?.createLimitedEntryBinding
+                        }
                         checked={!delegate}
                         onCheck={() => setDelegate(false)}
                     />
@@ -96,9 +113,10 @@ export const DialogSharedEntryPermissions: React.FC<DialogSharedEntryPermissions
                 propsButtonCancel={{
                     view: 'flat',
                 }}
+                loading={isLoading}
                 textButtonCancel={getSharedEntryMockText('cancel-unbind-dialog')}
                 onClickButtonApply={onSubmit}
-                onClickButtonCancel={onClose}
+                onClickButtonCancel={onCloseHandler}
             />
         </Dialog>
     );

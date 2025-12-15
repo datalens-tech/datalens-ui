@@ -6,6 +6,7 @@ import type {RouteComponentProps} from 'react-router-dom';
 import {useParams} from 'react-router-dom';
 import {Feature} from 'shared';
 import {DL} from 'ui/constants/common';
+import {registry} from 'ui/registry';
 import {isEnabledFeature} from 'ui/utils/isEnabledFeature';
 
 import {AnimateBlock} from '../../../../components/AnimateBlock';
@@ -31,7 +32,6 @@ import {CollectionContent} from '../CollectionContent';
 import {DEFAULT_FILTERS} from '../constants';
 
 import {useData, useFilters, useLayout, useSelection, useViewMode} from './hooks';
-import {useCreateWorkbookDialogHandlers} from './hooks/useCreateWorkbookDialogHandlers';
 import {useOpenCreateWorkbookDialog} from './hooks/useOpenCreateWorkbookDialog';
 
 import './CollectionPage.scss';
@@ -84,6 +84,7 @@ export const CollectionPage = (props: RouteComponentProps) => {
 
     const {refreshPageAfterImport} = useRefreshPageAfterImport({refreshPage});
 
+    const {useCreateWorkbookDialogHandlers} = registry.collections.functions.getAll();
     const {handleOpenCreateDialog, handleOpenCreateDialogWithConnection} =
         useCreateWorkbookDialogHandlers();
 

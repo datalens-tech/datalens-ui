@@ -97,31 +97,37 @@ export const getParameterRowColumn = (
     }
 };
 
-export const getParameterRowMenuItems = (dispatch: DatasetDispatch): MenuControlItem[] => {
-    return [
-        {
-            text: () => i18n('dataset.dataset-editor.modify', 'button_duplicate'),
-            action: (field: DatasetField) =>
-                dispatch(duplicateFieldWithValidation(field, {tab: TAB_PARAMETERS})),
-            qa: DatasetTabSectionQA.DuplicateRow,
-        },
-        {
-            qa: DatasetTabSectionQA.EditRow,
-            text: () => i18n('dataset.dataset-editor.modify', 'button_edit'),
-            action: (field: DatasetField) =>
-                dispatch(openDialogParameterEdit({field, tab: TAB_PARAMETERS})),
-        },
-        {
-            text: renderClipboardButton,
-            action: () => {},
-            qa: DatasetTabSectionQA.Copy,
-        },
-        {
-            text: () => i18n('dataset.dataset-editor.modify', 'button_remove'),
-            action: (field: DatasetField) =>
-                dispatch(deleteFieldWithValidation(field, {tab: TAB_PARAMETERS})),
-            qa: DatasetTabSectionQA.RemoveRow,
-            theme: 'danger',
-        },
-    ];
+export const getParameterRowMenuItems = (
+    dispatch: DatasetDispatch,
+    readonly: boolean,
+): MenuControlItem[] => {
+    const DUPLICATE_FIELD = {
+        text: () => i18n('dataset.dataset-editor.modify', 'button_duplicate'),
+        action: (field: DatasetField) =>
+            dispatch(duplicateFieldWithValidation(field, {tab: TAB_PARAMETERS})),
+        qa: DatasetTabSectionQA.DuplicateRow,
+    };
+    const EDIT_FIELD = {
+        qa: DatasetTabSectionQA.EditRow,
+        text: () => i18n('dataset.dataset-editor.modify', 'button_edit'),
+        action: (field: DatasetField) =>
+            dispatch(openDialogParameterEdit({field, tab: TAB_PARAMETERS})),
+    };
+    const COPY_FIELD = {
+        text: renderClipboardButton,
+        action: () => {},
+        qa: DatasetTabSectionQA.Copy,
+    };
+    const REMOVE_FIELD = {
+        text: () => i18n('dataset.dataset-editor.modify', 'button_remove'),
+        action: (field: DatasetField) =>
+            dispatch(deleteFieldWithValidation(field, {tab: TAB_PARAMETERS})),
+        qa: DatasetTabSectionQA.RemoveRow,
+        theme: 'danger',
+    };
+    if (readonly) {
+        return [COPY_FIELD];
+    } else {
+        return [DUPLICATE_FIELD, EDIT_FIELD, COPY_FIELD, REMOVE_FIELD];
+    }
 };

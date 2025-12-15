@@ -4,8 +4,9 @@ import {Plus} from '@gravity-ui/icons';
 import {Button, Icon} from '@gravity-ui/uikit';
 import block from 'bem-cn-lite';
 import {I18n} from 'i18n';
+import type {SharedScope} from 'shared';
+import type {ResourceType} from 'ui/registry/units/common/types/components/IamAccessDialog';
 
-import type {ResourceType} from '../../../../store/actions/iamAccessDialog';
 import {ResourceInfo} from '../../ResourceInfo/ResourceInfo';
 
 import './ActionPanel.scss';
@@ -17,16 +18,24 @@ const i18n = I18n.keyset('component.iam-access-dialog');
 export type Props = {
     type: ResourceType;
     title: string;
+    resourceScope?: SharedScope;
     canUpdate: boolean;
     onAddUserClick: () => void;
     isLoadingDirect: boolean;
 };
 
-export const ActionPanel = ({type, title, canUpdate, onAddUserClick, isLoadingDirect}: Props) => {
+export const ActionPanel = ({
+    type,
+    title,
+    canUpdate,
+    onAddUserClick,
+    isLoadingDirect,
+    resourceScope,
+}: Props) => {
     return (
         <div className={b()}>
             <div className={b('info')}>
-                <ResourceInfo type={type} title={title} />
+                <ResourceInfo scope={resourceScope} type={type} title={title} />
             </div>
             <div className={b('add-button')}>
                 <Button onClick={onAddUserClick} disabled={!canUpdate || isLoadingDirect}>

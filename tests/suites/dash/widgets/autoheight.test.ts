@@ -67,7 +67,7 @@ datalensTest.describe('Dashboards - Auto-height of widgets', () => {
             await openTestPage(page, RobotChartsDashboardUrls.DashboardWithWidgetsWithAutoheight);
 
             // waiting for the widget content to load
-            await page.waitForSelector(`.${COMMON_CHARTKIT_SELECTORS.graph}`);
+            await page.waitForSelector(COMMON_CHARTKIT_SELECTORS.chart);
 
             await dashboard.changeWidgetTab(WIDGET_TABS.TAB_MD_AUTO);
 
@@ -108,7 +108,7 @@ datalensTest.describe('Dashboards - Auto-height of widgets', () => {
             // go back to the first tab
             await dashboard.changeWidgetTab(WIDGET_TABS.TAB_CHART);
             // waiting for the widget content to load
-            await page.waitForSelector(`.${COMMON_CHARTKIT_SELECTORS.graph}`);
+            await page.waitForSelector(COMMON_CHARTKIT_SELECTORS.chart);
 
             // Switching dashboart to selectors tab
             await dashboard.changeTab({tabName: TABS.SELECTORS});

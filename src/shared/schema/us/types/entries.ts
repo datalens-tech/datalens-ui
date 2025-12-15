@@ -20,15 +20,21 @@ import type {
     EntryMetaFields,
     EntryNavigationFields,
     EntryRelationFields,
+    SharedEntryPermissions,
+    SharedEntryRelationFields,
 } from './fields';
 
 export interface GetEntryResponse extends EntryFields {
     isFavorite: boolean;
     permissions?: Permissions;
+    fullPermissions?: SharedEntryPermissions;
     isLocked?: boolean;
     links?: EntryFieldLinks;
     parentDashEntryId?: string;
     parentDashName?: string;
+}
+export interface GetSharedEntryResponse extends GetEntryResponse {
+    isDelegated: boolean;
 }
 export interface GetEntryArgs {
     entryId: string;
@@ -263,6 +269,18 @@ export interface GetEntriesAnnotationArgs {
     type?: string;
 }
 
+export interface EntityBindingsResponse {
+    sourceId: string;
+    targetId: string;
+    isDelegated: boolean;
+}
+
+export interface EntityBindingsArgs {
+    sourceId: string;
+    targetId: string;
+    delegation: boolean;
+}
+
 export type GetSharedEntryBindingsArgs = {
     entryId: string;
     entryAs: 'target' | 'source';
@@ -270,6 +288,7 @@ export type GetSharedEntryBindingsArgs = {
     filterString?: string;
     page?: number;
     pageSize?: number;
+    includePermissionsInfo?: boolean;
 };
 
 export type SharedEntry = {
@@ -295,4 +314,14 @@ export type SharedEntryBindingsItem = {
 
 export type GetSharedEntryBindingsResponse = {
     items: SharedEntryBindingsItem[];
+};
+
+export type GetSharedEntryWorkbookRelationsArgs = {
+    entryId: string;
+    workbookId: string;
+    scope?: `${EntryScope}`;
+};
+
+export type GetSharedEntryWorkbookRelationsResponse = {
+    relations: SharedEntryRelationFields[];
 };

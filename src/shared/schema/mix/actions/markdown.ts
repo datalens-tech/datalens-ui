@@ -8,12 +8,12 @@ import type {
 
 export const markdownActions = {
     renderMarkdown: createAction<RenderMarkdownResponse, RenderMarkdownArgs>(
-        async (_, {text, lang}, {ctx}) => {
+        async (_, {text, lang}, {ctx}): Promise<RenderMarkdownResponse> => {
             return ctx.get('gateway').markdown({text, lang});
         },
     ),
     batchRenderMarkdown: createAction<BatchRenderMarkdownResponse, BatchRenderMarkdownArgs>(
-        async (_, {texts, lang}, {ctx}) => {
+        async (_, {texts, lang}, {ctx}): Promise<BatchRenderMarkdownResponse> => {
             const {markdown} = ctx.get('gateway');
             const results = {} as BatchRenderMarkdownResponse;
             for (const key of Object.keys(texts)) {

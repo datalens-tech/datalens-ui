@@ -226,6 +226,7 @@ class ViewSetupComponent extends React.PureComponent<ViewSetupInnerProps, ViewSe
                                 scope="connection"
                                 startFrom={defaultPath}
                                 ignoreWorkbookEntries={true}
+                                ignoreSharedEntries={true}
                                 placeSelectParameters={getPlaceSelectParameters([
                                     PLACE.ROOT,
                                     PLACE.FAVORITES,

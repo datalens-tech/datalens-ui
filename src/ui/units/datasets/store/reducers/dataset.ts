@@ -54,8 +54,10 @@ import {
     SET_CONNECTIONS_DB_NAMES,
     SET_CURRENT_DB_NAME,
     SET_CURRENT_TAB,
+    SET_DATASET_DELEGATION,
     SET_DATASET_REVISION_MISMATCH,
     SET_DATA_EXPORT_ENABLED,
+    SET_DELEGATION_FROM_CONN_TO_SHARED_DATASET,
     SET_DESCRIPTION,
     SET_EDIT_HISTORY_STATE,
     SET_FREEFORM_SOURCES,
@@ -63,6 +65,7 @@ import {
     SET_IS_DATASET_CHANGED_FLAG,
     SET_LAST_MODIFIED_TAB,
     SET_QUEUE_TO_LOAD_PREVIEW,
+    SET_SELECTED_CONNECTION_DELEGATION,
     SET_SOURCES_LISTING_OPTIONS,
     SET_SOURCES_LISTING_OPTIONS_ERROR,
     SET_SOURCES_LOADING_ERROR,
@@ -269,7 +272,10 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                     dataset: content,
                     workbook_id: workbookId,
                     permissions,
+                    full_permissions,
                 },
+                isDelegated,
+                collectionId,
                 publishedId,
                 currentRevId,
             } = action.payload;
@@ -284,8 +290,10 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 workbookId,
                 connection,
                 content,
+                collectionId,
                 prevContent: content,
                 options,
+                isDelegated,
                 preview: {
                     ...state.preview,
                     previewEnabled,
@@ -296,6 +304,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                     isDatasetChanged: false,
                 },
                 permissions,
+                fullPermissions: full_permissions,
                 isLoading: false,
                 isRefetchingDataset: false,
             };
@@ -332,6 +341,7 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                 savingDataset: {
                     ...state.savingDataset,
                     isProcessingSavingDataset: false,
+                    sharedDatasetDelegationState: undefined,
                 },
                 ui: {
                     ...state.ui,
@@ -1502,6 +1512,30 @@ export default (state: DatasetReduxState = initialState, action: DatasetReduxAct
                     ...state.errors,
                     sourceListingOptionsError: error,
                 },
+            };
+        }
+        case SET_DELEGATION_FROM_CONN_TO_SHARED_DATASET: {
+            return {
+                ...state,
+                savingDataset: {
+                    ...state.savingDataset,
+                    delegationFromConnToSharedDataset: action.payload,
+                },
+            };
+        }
+        case SET_SELECTED_CONNECTION_DELEGATION: {
+            return {
+                ...state,
+                ui: {
+                    ...state.ui,
+                    selectedConnectionDelegationStatus: action.payload,
+                },
+            };
+        }
+        case SET_DATASET_DELEGATION: {
+            return {
+                ...state,
+                isDelegated: action.payload,
             };
         }
         default: {

@@ -21,6 +21,11 @@ export enum RequestSourceHeaderValue {
     PublicApi = 'public-api',
 }
 
+export const AUDIT_MODE_HEADER = 'x-dl-audit-mode';
+export enum AuditModeHeaderValue {
+    True = 'true',
+}
+
 export const REQUEST_ID_HEADER = 'x-request-id';
 export const TRACE_ID_HEADER = 'x-trace-id';
 export const SERVER_TRACE_ID_HEADER = 'x-server-trace-id';
@@ -31,7 +36,6 @@ export const ACCEPT_LANGUAGE_HEADER = 'accept-language';
 export const TIMEZONE_OFFSET_HEADER = 'x-timezone-offset';
 export const US_PUBLIC_API_TOKEN_HEADER = 'x-us-public-api-token';
 export const CSRF_TOKEN_HEADER = 'x-csrf-token';
-export const DLS_API_KEY_HEADER = 'x-api-key';
 export const DASH_INFO_HEADER = 'x-dash-info';
 export const DISPLAY_MODE_HEADER = 'x-dl-display-mode';
 export const DL_COMPONENT_HEADER = 'x-dl-component';

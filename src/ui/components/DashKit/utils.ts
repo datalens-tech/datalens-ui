@@ -2,9 +2,16 @@ import React from 'react';
 import type {CSSProperties} from 'react';
 
 import type {PluginWidgetProps} from '@gravity-ui/dashkit';
-import {type ThemeType, useThemeType} from '@gravity-ui/uikit';
-import type {BackgroundSettings, DashTabItemControlElement} from 'shared';
+import type {ThemeType} from '@gravity-ui/uikit';
+import {useThemeType} from '@gravity-ui/uikit';
+import type {
+    BackgroundSettings,
+    ColorSettings,
+    DashTabItemControlElement,
+    OldBackgroundSettings,
+} from 'shared';
 import {CustomPaletteBgColors, LIKE_CHART_COLOR_TOKEN} from 'shared/constants/widgets';
+import {getResultedOldBgColor} from 'shared/modules/dash-scheme-converter';
 
 import {DL} from '../../constants';
 import {
@@ -271,7 +278,7 @@ export function getControlHint(source: DashTabItemControlElement) {
     return source.showHint ? source.hint : undefined;
 }
 
-export function getPreparedWrapSettings(
+function getPreparedWrapSettings(
     backgroundColor: string | undefined,
     additionalStyle?: CSSProperties,
 ) {
@@ -295,60 +302,69 @@ export function getPreparedWrapSettings(
     };
 }
 
-export function useTextColorStyles(textColor?: string) {
-    // const theme = useThemeType(); // it would be used in next PR
-    return React.useMemo(
-        () => ({
-            color: textColor,
-        }),
-        [textColor /* , theme */],
-    );
+export function useTextColorStyles(oldTextColor?: string, textColorSettings?: ColorSettings) {
+    const theme = useThemeType();
+    return React.useMemo(() => {
+        const resultedNewTextColor =
+            typeof textColorSettings === 'string' ? textColorSettings : textColorSettings?.[theme];
+
+        return {
+            color: typeof oldTextColor === 'string' ? oldTextColor : resultedNewTextColor,
+        };
+    }, [oldTextColor, textColorSettings, theme]);
 }
 
 export function usePreparedWrapSettings({
     widgetBackground,
     globalBackground,
+    widgetBackgroundSettings,
+    globalBackgroundSettings,
     additionalStyle,
     defaultOldColor,
 }: {
-    widgetBackground: BackgroundSettings | undefined;
-    globalBackground: BackgroundSettings | undefined;
+    widgetBackground: OldBackgroundSettings | undefined;
+    globalBackground: OldBackgroundSettings | undefined;
+    widgetBackgroundSettings: BackgroundSettings | undefined;
+    globalBackgroundSettings: BackgroundSettings | undefined;
     additionalStyle?: CSSProperties;
     defaultOldColor: string;
 }) {
     const theme = useThemeType();
-    return React.useMemo(
-        () =>
-            getPreparedWrapSettings(
-                getResultedBgColor(widgetBackground, theme, defaultOldColor) ??
-                    getResultedBgColor(globalBackground, theme, defaultOldColor),
-                additionalStyle,
-            ),
-        [widgetBackground, globalBackground, additionalStyle, theme, defaultOldColor],
-    );
+    return React.useMemo(() => {
+        return getPreparedWrapSettings(
+            getResultedBgColor(
+                widgetBackground,
+                theme,
+                defaultOldColor,
+                widgetBackgroundSettings,
+            ) ??
+                getResultedBgColor(
+                    globalBackground,
+                    theme,
+                    defaultOldColor,
+                    globalBackgroundSettings,
+                ),
+            additionalStyle,
+        );
+    }, [
+        widgetBackground,
+        globalBackground,
+        widgetBackgroundSettings,
+        globalBackgroundSettings,
+        additionalStyle,
+        defaultOldColor,
+        theme,
+    ]);
 }
 
-function getResultedBgColor(
-    bgColor: BackgroundSettings | undefined,
-    _theme: ThemeType, // it would be used in next PR
+export function getResultedBgColor(
+    oldBgColor: OldBackgroundSettings | undefined,
+    theme: ThemeType,
     defaultColor: string,
+    newBgColor: BackgroundSettings | undefined,
 ): string | undefined {
-    if (!bgColor) {
-        return defaultColor;
+    if (newBgColor?.color) {
+        return typeof newBgColor.color === 'string' ? newBgColor.color : newBgColor.color?.[theme];
     }
-    if (typeof bgColor.color === 'string' || bgColor.color === undefined) {
-        if ('enabled' in bgColor && bgColor.enabled === false) {
-            if (bgColor.color === CustomPaletteBgColors.NONE) {
-                // where was a bug, when new widgets were created with background color set to transparent, but enabled set to false
-                return CustomPaletteBgColors.NONE;
-            }
-            return defaultColor;
-        }
-        if (!bgColor.color) {
-            return defaultColor;
-        }
-        return bgColor.color;
-    }
-
-    return defaultColor;
+    return getResultedOldBgColor(oldBgColor, defaultColor);
 }

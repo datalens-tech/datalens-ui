@@ -15,7 +15,7 @@ import {
     setActiveSelectorIndex,
     setSelectorDialogItem,
     updateSelectorsGroup,
-} from 'ui/store/actions/controlDialog';
+} from 'ui/store/actions/controlDialog/controlDialog';
 import {closeDialog, openDialog} from 'ui/store/actions/dialog';
 import {
     getSelectorDialogFromData,
@@ -23,8 +23,11 @@ import {
 } from 'ui/store/reducers/controlDialog';
 import {selectActiveSelectorIndex, selectSelectorsGroup} from 'ui/store/selectors/controlDialog';
 import type {SelectorDialogState, SelectorsGroupDialogState} from 'ui/store/typings/controlDialog';
+import {GlobalSelectorIcon} from 'ui/units/dash/components/GlobalSelectorIcon/GlobalSelectorIcon';
 import type {CopiedConfigData} from 'ui/units/dash/modules/helpers';
 import {isItemPasteAllowed} from 'ui/units/dash/modules/helpers';
+import {selectCurrentTabId} from 'ui/units/dash/store/selectors/dashTypedSelectors';
+import {isGroupItemVisibleOnTab} from 'ui/units/dash/utils/selectors';
 
 import {DIALOG_EXTENDED_SETTINGS} from '../../DialogExtendedSettings/DialogExtendedSettings';
 
@@ -37,6 +40,8 @@ const SINGLE_SELECTOR_SETTINGS: Partial<SelectorsGroupDialogState> = {
     buttonApply: false,
     buttonReset: false,
     autoHeight: false,
+    impactType: undefined,
+    impactTabsIds: undefined,
 };
 
 const canPasteItems = (pasteConfig: CopiedConfigData | null, workbookId?: string | null) => {
@@ -91,14 +96,17 @@ export const GroupControlSidebar: React.FC<{
     selectorsGroupTitlePlaceholder?: string;
     enableAutoheightDefault?: boolean;
     showSelectorsGroupTitle?: boolean;
+    enableGlobalSelectors?: boolean;
 }> = ({
     handleCopyItem,
     selectorsGroupTitlePlaceholder,
     enableAutoheightDefault,
     showSelectorsGroupTitle,
+    enableGlobalSelectors,
 }) => {
     const selectorsGroup = useSelector(selectSelectorsGroup);
     const activeSelectorIndex = useSelector(selectActiveSelectorIndex);
+    const currentTabId = useSelector(selectCurrentTabId);
 
     const dispatch = useDispatch();
 
@@ -150,6 +158,7 @@ export const GroupControlSidebar: React.FC<{
                     selectorsGroupTitlePlaceholder,
                     enableAutoheightDefault,
                     showSelectorsGroupTitle,
+                    enableGlobalSelectors,
                 },
             }),
         );
@@ -159,6 +168,7 @@ export const GroupControlSidebar: React.FC<{
         selectorsGroupTitlePlaceholder,
         enableAutoheightDefault,
         showSelectorsGroupTitle,
+        enableGlobalSelectors,
     ]);
 
     const handleUpdateItem = React.useCallback(
@@ -170,6 +180,33 @@ export const GroupControlSidebar: React.FC<{
             );
         },
         [dispatch],
+    );
+
+    const renderControlWrapper = React.useCallback(
+        (item: SelectorDialogState, children: React.ReactNode) => {
+            const isVisible = isGroupItemVisibleOnTab({
+                item,
+                tabId: currentTabId,
+                groupImpactType: selectorsGroup.impactType,
+                groupImpactTabsIds: selectorsGroup.impactTabsIds,
+            });
+            const impactType =
+                item.impactType === undefined || item.impactType === 'asGroup'
+                    ? selectorsGroup.impactType
+                    : item.impactType;
+
+            return (
+                <div className={b('item-wrapper', {secondary: !isVisible})}>
+                    <GlobalSelectorIcon
+                        withHint
+                        impactType={impactType}
+                        className={b('global-icon')}
+                    />
+                    {children}
+                </div>
+            );
+        },
+        [currentTabId, selectorsGroup.impactType, selectorsGroup.impactTabsIds],
     );
 
     return (
@@ -187,6 +224,7 @@ export const GroupControlSidebar: React.FC<{
                     canPasteItems={canPasteItems}
                     onCopyItem={handleCopyItem}
                     onUpdateItem={handleUpdateItem}
+                    renderWrapper={renderControlWrapper}
                 />
             </div>
             <div className={b('settings')}>

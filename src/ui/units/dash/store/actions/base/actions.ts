@@ -22,7 +22,7 @@ import {registry} from '../../../../../registry';
 import {showToast} from '../../../../../store/actions/toaster';
 import {DashErrorCode, Mode} from '../../../modules/constants';
 import {collectDashStats} from '../../../modules/pushStats';
-import type {DashState} from '../../reducers/dashTypedReducer';
+import type {DashState} from '../../typings/dash';
 import {getFakeDashEntry} from '../../utils';
 import {
     SET_ERROR_MODE,
@@ -41,6 +41,8 @@ import {
     isCallable,
     removeParamAndUpdate,
 } from '../helpers';
+
+import {getGlobalStatesForInactiveTabs} from './helpers';
 
 const i18n = I18n.keyset('dash.store.view');
 
@@ -312,10 +314,18 @@ export const load = ({
                 throw new Error(NOT_FOUND_ERROR_TEXT);
             }
 
-            // without await, they will start following each markdown separately
-            await MarkdownProvider.init(data);
-
             const {tabId, widgetsCurrentTab} = getCurrentTab({searchParams, data, history});
+
+            // without await, they will start following each markdown separately
+
+            const [updatedHashStates, _] = await Promise.all([
+                getGlobalStatesForInactiveTabs({
+                    state: hashData?.data,
+                    data,
+                    currentTabId: tabId,
+                }),
+                MarkdownProvider.init(data),
+            ]);
 
             let hashStates = {};
             if (hashData) {
@@ -326,6 +336,7 @@ export const load = ({
                         hash,
                         state: {...controls, ...states},
                     },
+                    ...(updatedHashStates || {}),
                 };
             }
 

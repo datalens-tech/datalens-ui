@@ -5,7 +5,7 @@ import type {
     SetActiveSelectorIndexAction,
     SetSelectorDialogItemAction,
     UpdateSelectorsGroupAction,
-} from 'ui/store/actions/controlDialog';
+} from 'ui/store/actions/controlDialog/controlDialog';
 import type {EditHistoryAction} from 'ui/store/actions/editHistory';
 
 import type {EntryContentAction} from '../../../../store/actions/entryContent';
@@ -13,6 +13,7 @@ import type {EntryContentAction} from '../../../../store/actions/entryContent';
 import type {SaveDashErrorAction, SaveDashSuccessAction} from './dash';
 import type {
     ChangeNavigationPathAction,
+    RemoveGlobalItemsAction,
     SetAccessDescriptionAction,
     SetDashKeyAction,
     SetDashKitRefAction,
@@ -37,6 +38,7 @@ import type {
     SetViewModeAction,
     SetWidgetCurrentTabAction,
     ToggleTableOfContentAction,
+    UpdateTabsWithGlobalStateAction,
 } from './dashTyped';
 import type {CloseDialogAction, OpenDialogAction, OpenItemDialogAction} from './dialogs/actions';
 
@@ -76,6 +78,8 @@ export type DashAction<T = unknown> =
     | SaveDashErrorAction
     | SetSettingsAction
     | SetHistoryStateAction
-    | EditHistoryAction;
+    | EditHistoryAction
+    | RemoveGlobalItemsAction
+    | UpdateTabsWithGlobalStateAction;
 
 export type DashDispatch = ThunkDispatch<DatalensGlobalState, void, DashAction>;

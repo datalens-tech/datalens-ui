@@ -23,7 +23,7 @@ export type EntryRowProps = {
     className?: string;
     actions?: DropdownMenuItem[];
     entity: SharedEntryBindingsItem;
-    showRelationButton?: boolean;
+    onClickRelationButton?: () => void;
     showRightSide?: boolean;
 };
 
@@ -46,16 +46,10 @@ const getHref = (entity: SharedEntryBindingsItem) => {
 };
 
 export const EntityRow = React.memo(
-    ({
-        entity,
-        className,
-        actions,
-        showRelationButton = true,
-        showRightSide = true,
-    }: EntryRowProps) => {
+    ({entity, className, actions, onClickRelationButton, showRightSide = true}: EntryRowProps) => {
         const entryName = getName(entity);
         const renderRelationBtn =
-            showRelationButton && entity.entity === CollectionItemEntities.WORKBOOK;
+            onClickRelationButton && entity.entity === CollectionItemEntities.WORKBOOK;
 
         const renderIcon = () => {
             switch (entity.entity) {
@@ -85,7 +79,7 @@ export const EntityRow = React.memo(
                                 className={b('notice')}
                                 content={getSharedEntryMockText('entity-row-relation-tooltip-text')}
                             >
-                                <Button view="flat" size="s">
+                                <Button view="flat" size="s" onClick={onClickRelationButton}>
                                     <Icon data={CodeTrunk} width={16} height={16} />
                                 </Button>
                             </Tooltip>

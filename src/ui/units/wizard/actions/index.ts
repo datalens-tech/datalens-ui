@@ -86,6 +86,7 @@ import {
 import {
     setDataset,
     setDatasetApiErrors,
+    setDatasetDelegation,
     setDatasetLoading,
     setDatasetSchema,
     setDatasets,
@@ -181,6 +182,36 @@ function getDataset({id, workbookId}: GetDatasetArgs) {
 
             return dataset;
         });
+}
+
+type GetDatasetDelegationArgs = {
+    datasetId: string;
+    workbookId: string;
+};
+
+function getDatasetDelegation({datasetId, workbookId}: GetDatasetDelegationArgs) {
+    return async function (dispatch: WizardDispatch) {
+        try {
+            const delegation = await getSdk().sdk.us.getSharedEntryDelegation({
+                sourceId: datasetId,
+                targetId: workbookId,
+            });
+            dispatch(
+                setDatasetDelegation({
+                    datasetId,
+                    delegation: delegation.isDelegated,
+                }),
+            );
+        } catch (error) {
+            dispatch(
+                showToast({
+                    title: error.message,
+                    type: 'danger',
+                    error,
+                }),
+            );
+        }
+    };
 }
 
 type GetDatasetsArgs = {
@@ -305,6 +336,14 @@ export function fetchDataset({id, replacing}: FetchDatasetArgs) {
                 }
 
                 dispatch(updatePreviewAndClientChartsConfig(preview));
+                if (dataset.collection_id && workbookId) {
+                    dispatch(
+                        getDatasetDelegation({
+                            datasetId: dataset.id,
+                            workbookId,
+                        }),
+                    );
+                }
             })
             .catch((error: DataLensApiError) => {
                 logger.logError('wizard: fetchDataset failed', error as Error);
@@ -2064,6 +2103,16 @@ function processWidget(args: ProcessWidgetArgs) {
                     isInitialPreview: true,
                 }),
             );
+            datasets.forEach((currentDataset) => {
+                if (currentDataset.collection_id && workbookId) {
+                    dispatch(
+                        getDatasetDelegation({
+                            datasetId: currentDataset.id,
+                            workbookId,
+                        }),
+                    );
+                }
+            });
         })
         .catch((error: DataLensApiError & {handeled: boolean}) => {
             if (error.handeled) {

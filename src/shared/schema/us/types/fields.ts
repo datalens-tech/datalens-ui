@@ -1,5 +1,5 @@
 import type {CollectionItemEntities} from '../../../constants';
-import type {EntryAnnotation, WorkbookId} from '../../../types';
+import type {CollectionId, EntryAnnotation, WorkbookId} from '../../../types';
 
 export type EntryFieldData<T = Record<string, unknown>> = null | T;
 export type EntryFieldLinks = null | Record<string, string>;
@@ -8,6 +8,7 @@ export type EntryFieldPublishedId = null | string;
 
 // corresponds to RETURN_COLUMNS from US
 export interface EntryFields {
+    version?: number | null;
     displayAlias?: string | null;
     createdAt: string;
     createdBy: string;
@@ -28,7 +29,7 @@ export interface EntryFields {
     updatedBy: string;
     unversionedData?: unknown;
     workbookId: WorkbookId;
-    collectionId?: string;
+    collectionId?: CollectionId;
     annotation?: EntryAnnotation | null;
 }
 
@@ -43,6 +44,7 @@ export interface EntryMetaFields {
     publishedId: EntryFieldPublishedId;
     tenantId: string;
     workbookId: WorkbookId;
+    collectionId: CollectionId;
     accessDescription?: string;
     supportDescription?: string;
 }
@@ -68,9 +70,16 @@ export interface EntryNavigationFields {
 }
 
 export interface SharedEntryPermissions {
-    delete: true;
-    move: true;
-    update: true;
+    copy: boolean;
+    createEntryBinding: boolean;
+    createLimitedEntryBinding: boolean;
+    delete: boolean;
+    limitedView: boolean;
+    listAccessBindings: boolean;
+    move: boolean;
+    update: boolean;
+    updateAccessBindings: boolean;
+    view: boolean;
 }
 
 export interface SharedEntryFields {
@@ -104,6 +113,8 @@ export interface EntryFavoriteFields {
     hidden: boolean;
     workbookId: WorkbookId;
     workbookTitle?: string | null;
+    collectionId: CollectionId;
+    collectionTitle?: string | null;
 }
 
 // corresponds to RETURN_RELATION_COLUMNS from US
@@ -120,6 +131,11 @@ export interface EntryRelationFields {
     workbookId: WorkbookId;
     isLocked: boolean;
 }
+
+export type SharedEntryRelationFields = Omit<EntryRelationFields, 'isLocked'> & {
+    collectionId: string;
+    createdAt: string;
+};
 
 export interface TenantSettings {
     defaultColorPaletteId?: string;

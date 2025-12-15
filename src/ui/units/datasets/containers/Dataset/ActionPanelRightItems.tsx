@@ -49,10 +49,18 @@ type Props = {
     isCreationProcess?: boolean;
     onClickCreateWidgetButton: () => void;
     onClickSaveDatasetButton: () => void;
+    canCreateWidget: boolean;
+    readonly: boolean;
 };
 
 export function ActionPanelRightItems(props: Props) {
-    const {isCreationProcess, onClickCreateWidgetButton, onClickSaveDatasetButton} = props;
+    const {
+        isCreationProcess,
+        onClickCreateWidgetButton,
+        onClickSaveDatasetButton,
+        canCreateWidget,
+        readonly,
+    } = props;
     const dispatch = useDispatch();
     const isDatasetRevisionMismatch = useSelector(isDatasetRevisionMismatchSelector);
     const isLoadPreviewByDefault = useSelector(isLoadPreviewByDefaultSelector);
@@ -65,7 +73,7 @@ export function ActionPanelRightItems(props: Props) {
     const isValidationLoading = useSelector(datasetValidationSelector).isLoading;
     const rawSqlLevel = useSelector(rawSqlLevelSelector);
     const historyActions = useHistoryActions();
-    const isSaveButtonDisabled = isSavingDatasetDisabled || isDatasetRevisionMismatch;
+    const isSaveButtonDisabled = isSavingDatasetDisabled || isDatasetRevisionMismatch || readonly;
     const isRawSqlLevelEnableTemplating = RAW_SQL_LEVELS_ALLOW_TEMPLATING.includes(rawSqlLevel);
     const settingsValue = React.useMemo(() => {
         const nextValue: string[] = [];
@@ -180,8 +188,6 @@ export function ActionPanelRightItems(props: Props) {
         );
     }
 
-    const isDescriptionEnabled = isEnabledFeature(Feature.EnableDatasetDescription);
-
     return (
         <div className={b('actions-panel-right-items')}>
             {historyActions}
@@ -195,11 +201,11 @@ export function ActionPanelRightItems(props: Props) {
             >
                 {settingsSelectOptions}
             </Select>
-            {isDescriptionEnabled && <DescriptionButton />}
+            <DescriptionButton readonly={readonly} />
             <Button
                 view="normal"
                 size="m"
-                disabled={isCreationProcess}
+                disabled={isCreationProcess || !canCreateWidget}
                 onClick={onClickCreateWidgetButton}
             >
                 {i18n('button_create-widget')}

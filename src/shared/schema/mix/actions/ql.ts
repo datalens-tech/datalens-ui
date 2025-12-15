@@ -1,13 +1,14 @@
+import {getTypedApi} from '../..';
 import {ENTRY_TYPES, EntryScope} from '../../..';
 import {ServerError} from '../../../constants/error';
 import {createTypedAction} from '../../gateway-utils';
-import {getTypedApi} from '../../simple-schema';
 import {
     deleteQLChartArgsSchema,
     deleteQLChartResultSchema,
     getQLChartArgsSchema,
     getQLChartResultSchema,
 } from '../schemas/ql';
+import type {DeleteQLChartResult, GetQLChartResult} from '../types';
 
 export const qlActions = {
     // WIP
@@ -16,7 +17,7 @@ export const qlActions = {
             paramsSchema: getQLChartArgsSchema,
             resultSchema: getQLChartResultSchema,
         },
-        async (api, args) => {
+        async (api, args): Promise<GetQLChartResult> => {
             const {
                 includePermissions,
                 includeLinks,
@@ -29,7 +30,7 @@ export const qlActions = {
 
             const typedApi = getTypedApi(api);
 
-            const getEntryResponse = await typedApi.us.getEntry({
+            const getEntryResponse = await typedApi.us._getEntryWithAudit({
                 entryId: chartId,
                 includePermissionsInfo: includePermissions,
                 includeLinks,
@@ -57,7 +58,7 @@ export const qlActions = {
             paramsSchema: deleteQLChartArgsSchema,
             resultSchema: deleteQLChartResultSchema,
         },
-        async (api, {chartId}) => {
+        async (api, {chartId}): Promise<DeleteQLChartResult> => {
             const typedApi = getTypedApi(api);
 
             await typedApi.us._deleteUSEntry({

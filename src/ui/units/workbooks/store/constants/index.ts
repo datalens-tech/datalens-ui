@@ -8,11 +8,32 @@ export const GET_WORKBOOK_ENTRIES_LOADING = Symbol('workbooks/GET_WORKBOOK_ENTRI
 export const GET_WORKBOOK_ENTRIES_SUCCESS = Symbol('workbooks/GET_WORKBOOK_ENTRIES_SUCCESS');
 export const GET_WORKBOOK_ENTRIES_FAILED = Symbol('workbooks/GET_WORKBOOK_ENTRIES_FAILED');
 
+export const GET_WORKBOOK_SHARED_ENTRIES_LOADING = Symbol(
+    'workbooks/GET_WORKBOOK_SHARED_ENTRIES_LOADING',
+);
+export const GET_WORKBOOK_SHARED_ENTRIES_SUCCESS = Symbol(
+    'workbooks/GET_WORKBOOK_SHARED_ENTRIES_SUCCESS',
+);
+export const GET_WORKBOOK_SHARED_ENTRIES_FAILED = Symbol(
+    'workbooks/GET_WORKBOOK_SHARED_ENTRIES_FAILED',
+);
+
+export const BIND_SHARED_ENTRY_TO_WORKBOOK_LOADING = Symbol(
+    'workbooks/BIND_SHARED_ENTRY_TO_WORKBOOK_LOADING',
+);
+export const BIND_SHARED_ENTRY_TO_WORKBOOK_SUCCESS = Symbol(
+    'workbooks/BIND_SHARED_ENTRY_TO_WORKBOOK_SUCCESS',
+);
+export const BIND_SHARED_ENTRY_TO_WORKBOOK_FAILED = Symbol(
+    'workbooks/BIND_SHARED_ENTRY_TO_WORKBOOK_FAILED',
+);
+
 export const GET_ALL_WORKBOOK_ENTRIES_SEPARATELY_SUCCESS = Symbol(
     'workbooks/GET_ALL_WORKBOOK_ENTRIES_SEPARATELY_SUCCESS',
 );
 
 export const RESET_WORKBOOK_ENTRIES = Symbol('workbooks/RESET_WORKBOOK_ENTRIES');
+export const RESET_WORKBOOK_SHARED_ENTRIES = Symbol('workbooks/RESET_WORKBOOK_SHARED_ENTRIES');
 
 export const RESET_WORKBOOK_ENTRIES_BY_SCOPE = Symbol('workbooks/RESET_WORKBOOK_ENTRIES_BY_SCOPE');
 
@@ -57,6 +78,9 @@ export const CHANGE_FILTERS = Symbol('workbooks/CHANGE_FILTERS');
 
 // Add the name of the current workflow for navigation in entries
 export const ADD_WORKBOOK_INFO = Symbol('workbooks/ADD_WORKBOOK_INFO');
+
+// Add breadcrumbs for collection entries
+export const ADD_COLLECTION_BREADCRUMBS = Symbol('workbooks/ADD_COLLECTION_BREADCRUMBS');
 
 // Reset permissions of the current workflow
 export const RESET_WORKBOOK_PERMISSIONS = Symbol('workbooks/RESET_WORKBOOK_PERMISSIONS');

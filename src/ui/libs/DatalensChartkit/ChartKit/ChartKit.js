@@ -99,6 +99,7 @@ export class ChartKit extends React.Component {
                     onRender={this.props.onRender}
                     onError={this.props.onError}
                     onChange={this.props.onChange}
+                    runActivity={this.props.runActivity}
                 />
             </div>
         );
@@ -114,4 +115,5 @@ ChartKit.propTypes = {
     onLoad: PropTypes.func,
     onError: PropTypes.func,
     onChange: PropTypes.func,
+    runActivity: PropTypes.func,
 };
