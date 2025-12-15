@@ -24,7 +24,7 @@ export const getDashboardV1 = createTypedAction(
 
         const typedApi = getTypedApi(api);
 
-        const getEntryResponse = await typedApi.us.getEntry({
+        const getEntryResponse = await typedApi.us._getEntryWithAudit({
             entryId: dashboardId,
             includePermissionsInfo: includePermissions,
             includeLinks,
