@@ -1,10 +1,15 @@
-.dl-shared-entry-workbook-delete-dialog {
+.dl-shared-related-entities-dialog {
     max-height: 85vh;
 
     &__body {
         display: flex;
         flex-direction: column;
         height: 100%;
+        min-height: 320px;
+
+        &_isDeleteDialog {
+            min-height: 0;
+        }
     }
 
     &__list {
@@ -17,9 +22,13 @@
     }
 
     &__current-row {
-        margin-bottom: var(--g-spacing-4);
+        margin-bottom: 0;
+        &_isDeleteDialog {
+            margin-bottom: var(--g-spacing-4);
+        }
     }
 
+    &__empty-state,
     &__error-state {
         display: flex;
         justify-content: center;

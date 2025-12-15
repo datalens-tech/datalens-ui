@@ -7,6 +7,7 @@ import type {EntryScope} from 'shared';
 import {getUserId} from 'shared/modules/user';
 import {DIALOG_COPY_ENTRIES_TO_WORKBOOK} from 'ui/components/CopyEntriesToWorkbookDialog';
 import {DIALOG_SHARED_ENTRY_PERMISSIONS} from 'ui/components/DialogSharedEntryPermissions/DialogSharedEntryPermissions';
+import {DIALOG_SHARED_RELATED_ENTITIES} from 'ui/components/DialogSharedRelatedEntities/DialogSharedRelatedEntities';
 import {EntryDialogName, EntryDialogues} from 'ui/components/EntryDialogues';
 import {DL} from 'ui/constants/common';
 import {getSdk} from 'ui/libs/schematic-sdk';
@@ -21,7 +22,6 @@ import type {AppDispatch} from '../../../../../store';
 import {closeDialog, openDialog} from '../../../../../store/actions/dialog';
 import type {ChunkItem, WorkbookEntry, WorkbookSharedEntry} from '../../../types';
 import {DIALOG_DELETE_ENTRY_IN_NEW_WORKBOOK} from '../../DeleteEntryDialog/DeleteEntryDialog';
-import {DIALOG_DELETE_SHARED_ENTRY_IN_WORKBOOK} from '../../DeleteSharedEntryDialog/DeleteSharedEntryDialog';
 import {DIALOG_DUPLICATE_ENTRY_IN_WORKBOOK} from '../../DuplicateEntryDialog/DuplicateEntryDialog';
 import {DIALOG_RENAME_ENTRY_IN_NEW_WORKBOOK} from '../../RenameEntryDialog/RenameEntryDialog';
 
@@ -151,12 +151,13 @@ export const WorkbookEntriesTable = React.memo<WorkbookEntriesTableProps>(
             (entity: WorkbookSharedEntry) => {
                 dispatch(
                     openDialog({
-                        id: DIALOG_DELETE_SHARED_ENTRY_IN_WORKBOOK,
+                        id: DIALOG_SHARED_RELATED_ENTITIES,
                         props: {
                             open: true,
                             onClose: () => dispatch(closeDialog()),
                             entry: entity,
                             workbookId: workbook.workbookId,
+                            isDeleteDialog: true,
                             onDeleteSuccess: () => {
                                 dispatch(closeDialog());
                                 refreshSharedEntries(scope);
