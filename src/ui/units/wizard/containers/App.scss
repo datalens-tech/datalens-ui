@@ -2,16 +2,10 @@
 @import '../styles/mixins';
 
 .wizard-app {
+    display: flex;
+    flex-direction: column;
     height: 100%;
     min-width: 1100px;
-
-    &__main {
-        height: calc(100% - 70px);
-    }
-
-    &__main_aside {
-        height: 100%;
-    }
 
     .dnd-container {
         padding-top: 8px;
