@@ -247,6 +247,7 @@ export const DashkitWrapper: React.FC<DashkitWrapperProps> = (props) => {
     const DashKit = getConfiguredDashKit(undefined, {
         disableHashNavigation,
         scope: 'dash',
+        backgroundSettings: settings.backgroundSettings,
     });
 
     const fixedHeaderHasNoVisibleContent =
