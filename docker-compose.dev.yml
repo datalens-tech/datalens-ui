@@ -1,0 +1,7 @@
+services:
+    node:
+        image: node:22
+        user: node
+        volumes:
+            - ./:/project
+        working_dir: /project

@@ -32,8 +32,13 @@ body.js-screenshot-mode * {
     https://github.com/gravity-ui/uikit/blob/main/styles/typography.scss#L2
 */
 
+:root {
+    --datalens-font-family: 'YS Text', 'Helvetica Neue', 'Arial', 'Helvetica', sans-serif;
+    --datalens-font-family-variant: 'Inter', sans-serif;
+}
+
 body.g-root {
-    --g-font-family-sans: 'YS Text', 'Helvetica Neue', 'Arial', 'Helvetica', sans-serif;
+    --g-font-family-sans: var(--datalens-font-family);
     --gn-top-alert-height: 0px;
     // Disable overscroll for desktop cause sticky and fixed navigation elements has different behavior
     overscroll-behavior: none;

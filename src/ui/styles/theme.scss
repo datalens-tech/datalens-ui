@@ -1,5 +1,9 @@
 @import './variables.scss';
 
+body.g-root {
+    --g-font-family-sans: var(--datalens-font-family-variant);
+}
+
 .g-root:not(#{$customThemeRoot}) {
     --dl-color-export-loading-toast: var(--g-color-private-brand-100-solid);
     --gn-aside-header-item-icon-color: var(--g-color-text-primary);

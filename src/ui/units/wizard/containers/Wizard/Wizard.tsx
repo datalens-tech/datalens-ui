@@ -36,7 +36,6 @@ import type {DatalensGlobalState} from '../../../../';
 import {ChartSaveControlsQA, EntryUpdateMode, Feature} from '../../../../../shared';
 import type {ChartsConfig} from '../../../../../shared';
 import {AccessRightsUrlOpen} from '../../../../components/AccessRights/AccessRightsUrlOpen';
-import {getIsAsideHeaderEnabled} from '../../../../components/AsideHeaderAdapter';
 import withErrorPage from '../../../../components/ErrorPage/withErrorPage';
 import type {RevisionEntry} from '../../../../components/Revisions/types';
 import {HOTKEYS_SCOPES} from '../../../../constants/misc';
@@ -549,7 +548,7 @@ class Wizard extends React.Component<Props, State> {
                         onSaveAsDraftClick={this.handleSaveDraftClick}
                         onSaveAndPublishClick={this.handleSavePublishClick}
                     />
-                    <div className={`columns columns_aside-${getIsAsideHeaderEnabled()}`}>
+                    <div className={b('columns')}>
                         <SplitPane
                             resizerClassName={SPLIT_PANE_RESIZER_CLASSNAME}
                             className="top-pane"

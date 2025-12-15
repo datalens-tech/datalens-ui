@@ -2,6 +2,15 @@
 @import '../../styles/variables';
 
 .wizard {
+    display: flex;
+    flex-grow: 1;
+
+    &__hotkeyes-area {
+        display: flex;
+        flex-direction: column;
+        flex-grow: 1;
+    }
+
     &__error-content {
         top: calc(50% - 150px);
         position: relative;
@@ -34,12 +43,12 @@
         align-items: center;
     }
 
-    .columns {
+    &__columns {
+        flex-grow: 1;
         position: relative;
-        height: calc(100vh - 70px - #{$actionPanelHeight});
 
-        &_aside-true {
-            height: calc(100vh - #{$actionPanelHeight} - var(--gn-top-alert-height));
+        .fullscreen-mode & .preview-column {
+            width: 100%;
         }
 
         .column {
@@ -101,12 +110,6 @@
 }
 
 .fullscreen-mode {
-    .columns {
-        .preview-column {
-            width: 100%;
-        }
-    }
-
     .top-pane {
         .Pane1 {
             display: none;
