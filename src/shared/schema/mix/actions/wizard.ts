@@ -30,7 +30,7 @@ export const wizardActions = {
 
             const typedApi = getTypedApi(api);
 
-            const getEntryResponse = await typedApi.us.getEntry({
+            const getEntryResponse = await typedApi.us._getEntryWithAudit({
                 entryId: chartId,
                 includePermissionsInfo: includePermissions,
                 includeLinks,

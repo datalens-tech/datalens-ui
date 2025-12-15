@@ -6,6 +6,7 @@ import WizardPage from '../../../page-objects/wizard/WizardPage';
 import {getXAxisValues, openTestPage, waitForCondition} from '../../../utils';
 import {RobotChartsWizardUrls} from '../../../utils/constants';
 import datalensTest from '../../../utils/playwright/globalTestDefinition';
+import {COMMON_CHARTKIT_SELECTORS} from '../../../page-objects/constants/chartkit';
 
 const checkXAxisValuesOrder = async (wizardPage: WizardPage, expectedValues: string[]) => {
     let xAxisValues: (string | null)[] = [];
@@ -255,7 +256,9 @@ datalensTest.describe('Wizard - Sort', () => {
             let legendItemsTexts: string[] = [];
 
             await waitForCondition(async () => {
-                const legendItems = await wizardPage.page.$$('.highcharts-legend-item');
+                const legendItems = await wizardPage.page.$$(
+                    COMMON_CHARTKIT_SELECTORS.chartLegendItem,
+                );
 
                 if (!legendItems?.length) {
                     return false;

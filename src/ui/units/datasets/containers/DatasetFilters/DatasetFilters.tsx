@@ -22,7 +22,10 @@ import {
 import type {ObligatoryFilter} from '../../typings/dataset';
 import type {UpdateDatasetByValidationData, Validation} from '../../typings/redux';
 
-interface DatasetFiltersProps {
+interface OwnProps {
+    readonly: boolean;
+}
+interface DatasetFiltersProps extends OwnProps {
     fields: DatasetField[];
     obligatoryFilters: ObligatoryFilter[];
     validation: Validation;
@@ -35,10 +38,11 @@ interface DatasetFiltersProps {
 
 class DatasetFilters extends React.Component<DatasetFiltersProps> {
     render() {
-        const {fields, obligatoryFilters, validation, options} = this.props;
+        const {fields, obligatoryFilters, validation, options, readonly} = this.props;
 
         return (
             <FilterSection
+                readonly={readonly}
                 type={FilterType.Obligatory}
                 fields={fields}
                 filters={obligatoryFilters}
@@ -83,6 +87,6 @@ const mapDispatchToProps = {
     updateDatasetByValidation,
 };
 
-export default compose<DatasetFiltersProps, {}>(connect(mapStateToProps, mapDispatchToProps))(
+export default compose<DatasetFiltersProps, OwnProps>(connect(mapStateToProps, mapDispatchToProps))(
     DatasetFilters,
 );

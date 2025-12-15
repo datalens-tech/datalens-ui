@@ -24,6 +24,7 @@ import type {OpenDialogColumnSettingsArgs} from '../../units/wizard/components/D
 import type {OpenDialogFieldEditorArgs} from '../../components/DialogFieldEditor/DialogFieldEditor';
 import type {OpenDialogRenameEntryInNewWorkbookArgs} from '../../units/workbooks/components/RenameEntryDialog/RenameEntryDialog';
 import type {OpenDialogDeleteEntryInNewWorkbookArgs} from '../../units/workbooks/components/DeleteEntryDialog/DeleteEntryDialog';
+import type {OpenDialogDeleteSharedEntryInWorkbookArgs} from '../../units/workbooks/components/DeleteSharedEntryDialog/DeleteSharedEntryDialog';
 import type {OpenDialogDuplicateEntryInWorkbookArgs} from '../../units/workbooks/components/DuplicateEntryDialog/DuplicateEntryDialog';
 import type {OpenDialogConnS3Sources} from '../../units/connections/components/dialogs';
 import type {OpenDialogConnWithInputArgs} from '../../units/connections/components/custom-forms/components/DialogWithInput';
@@ -58,12 +59,12 @@ import type {OpenDialogCollectionNoCreatePermissionArgs} from 'ui/components/Col
 import type {OpenDialogReleaseVersionArgs} from 'ui/components/AsideHeaderAdapter/VersionDialog/VersionDialog';
 import type {OpenDialogExportWorkbookArgs} from 'ui/components/CollectionsStructure/ExportWorkbookDialog/ExportWorkbookDialog';
 import type {OpenDialogDefaultArgs} from 'ui/components/DialogDefault/DialogDefault';
-import type {OpenDialogCreatePublicGalleryWorkbookArgs} from 'ui/components/CollectionsStructure/CreatePublicGalleryWorkbookDialog';
 import type {OpenDialogEntryDescriptionArgs} from 'ui/components/DialogEntryDescription/DialogEntryDescriptionWrapper';
 import type {OpenDialogSharedEntryBindingArgs} from 'ui/components/DialogSharedEntryBindings/DialogSharedEntryBindings';
 import type {OpenDialogSharedEntryUnbindArgs} from 'ui/components/DialogSharedEntryUnbind/DialogSharedEntryUnbind';
 import type {OpenDialogSharedEntryPermissionsArgs} from 'ui/components/DialogSharedEntryPermissions/DialogSharedEntryPermissions';
 import type {OpenDialogSelectSharedEntryArgs} from 'ui/components/DialogSelectSharedEntry/DialogSelectSharedEntry';
+import type {OpenDialogAddSharedEntryFromLinkArgs} from 'ui/components/DialogAddSharedEntryFromLink/DialogAddSharedEntryFromLink';
 
 export type OpenDialogArgs<T = unknown> =
     | OpenDialogReleaseVersionArgs
@@ -124,9 +125,10 @@ export type OpenDialogArgs<T = unknown> =
     | OpenDialogCollectionNoCreatePermissionArgs
     | OpenDialogExportWorkbookArgs
     | OpenDialogDefaultArgs
-    | OpenDialogCreatePublicGalleryWorkbookArgs
     | OpenDialogSharedEntryBindingArgs
     | OpenDialogSharedEntryUnbindArgs
     | OpenDialogSharedEntryPermissionsArgs
     | OpenDialogSelectSharedEntryArgs
+    | OpenDialogDeleteSharedEntryInWorkbookArgs
+    | OpenDialogAddSharedEntryFromLinkArgs
     | OpenDialogEntryDescriptionArgs;

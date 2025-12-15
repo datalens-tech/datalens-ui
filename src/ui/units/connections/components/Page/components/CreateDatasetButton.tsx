@@ -5,6 +5,7 @@ import {Button} from '@gravity-ui/uikit';
 import {I18n} from 'i18n';
 import {get} from 'lodash';
 import {connect} from 'react-redux';
+import type {WorkbookId} from 'shared';
 import type {DatalensGlobalState} from 'ui';
 
 import {collectionIdSelector, workbookIdSelector} from '../../../store';
@@ -17,6 +18,7 @@ type CreateDatasetButtonProps = DispatchState &
     Partial<ButtonProps> & {
         entryId?: string | null;
         entryKey?: string;
+        externalWorkbookId?: WorkbookId;
     };
 
 const getPathFromEntryKey = (key = '') => {
@@ -24,7 +26,15 @@ const getPathFromEntryKey = (key = '') => {
 };
 
 const CreateDatasetButtonComponent = (props: CreateDatasetButtonProps) => {
-    const {visible, entryKey, entryId, workbookId, collectionId, size = 'm'} = props;
+    const {
+        visible,
+        entryKey,
+        entryId,
+        workbookId,
+        externalWorkbookId,
+        collectionId,
+        size = 'm',
+    } = props;
 
     if (!entryId || !visible) {
         return null;
@@ -34,11 +44,9 @@ const CreateDatasetButtonComponent = (props: CreateDatasetButtonProps) => {
     let pathname = '/datasets/new';
     let query = `?id=${entryId}`;
 
-    if (workbookId) {
-        pathname = `/workbooks/${workbookId}${pathname}`;
-    }
-
-    if (collectionId) {
+    if (workbookId || externalWorkbookId) {
+        pathname = `/workbooks/${workbookId || externalWorkbookId}${pathname}`;
+    } else if (collectionId) {
         pathname = `/collections/${collectionId}${pathname}`;
     }
 

@@ -229,24 +229,16 @@ export interface GraphShared extends CommonShared {
     visualization: {
         id:
             | WizardVisualizationId.Line
-            | WizardVisualizationId.LineD3
             | WizardVisualizationId.Area
             | WizardVisualizationId.Area100p
             | WizardVisualizationId.Column
-            | WizardVisualizationId.BarXD3
             | WizardVisualizationId.Column100p
             | WizardVisualizationId.Bar
             | WizardVisualizationId.Bar100p
-            | WizardVisualizationId.BarYD3
-            | WizardVisualizationId.BarY100pD3
             | WizardVisualizationId.Pie
-            | WizardVisualizationId.PieD3
             | WizardVisualizationId.Donut
-            | WizardVisualizationId.DonutD3
             | WizardVisualizationId.Scatter
-            | WizardVisualizationId.ScatterD3
-            | WizardVisualizationId.Treemap
-            | WizardVisualizationId.TreemapD3;
+            | WizardVisualizationId.Treemap;
         iconProps: VisualizationIconProps;
         name: string;
         hidden?: boolean;

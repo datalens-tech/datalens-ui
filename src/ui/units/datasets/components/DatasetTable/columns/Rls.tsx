@@ -15,9 +15,14 @@ const i18n = I18n.keyset('dataset.dataset-editor.modify');
 type GetHiddenColumnArgs = {
     onUpdate: (row: DatasetField) => void;
     rls: DatasetRls;
+    readonly: boolean;
 };
 
-export const getRlsColumn = ({onUpdate, rls}: GetHiddenColumnArgs): Column<DatasetField> => ({
+export const getRlsColumn = ({
+    onUpdate,
+    rls,
+    readonly,
+}: GetHiddenColumnArgs): Column<DatasetField> => ({
     name: 'rls',
     className: b('column'),
     align: DataTable.CENTER,
@@ -35,6 +40,7 @@ export const getRlsColumn = ({onUpdate, rls}: GetHiddenColumnArgs): Column<Datas
                 view="flat"
                 title={i18n('button_row-level-security')}
                 onClick={() => onUpdate(row)}
+                disabled={readonly}
             >
                 <Icon className={b('hidden', {hidden: isRls})} data={Key} width="16" height="16" />
             </Button>

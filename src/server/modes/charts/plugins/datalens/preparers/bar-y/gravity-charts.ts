@@ -186,8 +186,13 @@ export function prepareGravityChartsBarY(args: PrepareFunctionArgs): ChartData {
             title: {text: getFakeTitleOrTitle(colorItem), style: {fontWeight: '500'}},
             colorScale,
         };
-    } else if (graphs.length <= 1) {
-        config.legend = {enabled: false};
+    } else {
+        const shouldUseHtmlForLegend = isHtmlField(colorItem);
+        config.legend = {html: shouldUseHtmlForLegend};
+
+        if (graphs.length <= 1) {
+            config.legend.enabled = false;
+        }
     }
 
     if (xField) {

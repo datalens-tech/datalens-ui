@@ -10,7 +10,8 @@ const SELECTORS = {
     TAB_SELECTOR_KEY: 'chartkit-control-select',
     TAB_SELECTOR_TEXT: '.yc-select-control__tokens-text',
     CHART_KEY: 'chartkit-body-entry-vevhev23wodko',
-    CHART_BODY_PATH: '.chartkit-highcharts rect.highcharts-point',
+    CHART_BODY_PATH:
+        '.chartkit-highcharts rect.highcharts-point, .gcharts-chart .gcharts-bar-x__segment',
     EMPTY_SELECTOR_VAL: '.yc-select-control__tokens-text_empty',
 };
 const PARAMS = {

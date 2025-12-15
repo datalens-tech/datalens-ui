@@ -1,4 +1,5 @@
 import {Page} from '@playwright/test';
+import {COMMON_CHARTKIT_SELECTORS} from '../constants/chartkit';
 
 export class ChartContainer {
     private page: Page;
@@ -33,11 +34,13 @@ export class ChartContainer {
     }
 
     async getLegendItems() {
-        const legendItems = this.page.locator('.highcharts-legend-item');
+        const legendItems = this.page.locator(COMMON_CHARTKIT_SELECTORS.chartLegendItem);
 
         return await legendItems.evaluateAll((elements) =>
             elements.map((element) => {
-                const lineEl = element.getElementsByClassName('highcharts-graph')[0];
+                const lineEl =
+                    element.getElementsByClassName('highcharts-graph')[0] ||
+                    element.getElementsByClassName('gcharts-legend__item-symbol')[0];
                 return {
                     legendTitle: element.textContent,
                     color: lineEl.getAttribute('stroke'),

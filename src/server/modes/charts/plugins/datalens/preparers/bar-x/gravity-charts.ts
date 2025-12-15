@@ -155,6 +155,9 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
                 },
                 [],
             ),
+            legend: {
+                groupId: graph.id,
+            },
             custom: {...graph.custom, colorValue: graph.colorValue, exportSettings},
             dataLabels: {
                 enabled: isDataLabelsEnabled,
@@ -184,15 +187,27 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
             title: {text: getFakeTitleOrTitle(colorItem), style: {fontWeight: '500'}},
             colorScale,
         };
-    } else if (seriesData.length <= 1) {
-        legend = {enabled: false};
+    } else {
+        const shouldUseHtmlForLegend = isHtmlField(colorItem);
+        legend = {html: shouldUseHtmlForLegend};
+
+        const nonEmptyLegendGroups = Array.from(
+            new Set(seriesData.map((s) => s.legend?.groupId).filter(Boolean)),
+        );
+        if (seriesData.length <= 1 || nonEmptyLegendGroups.length <= 1) {
+            legend.enabled = false;
+        }
     }
 
     let xAxis: ChartData['xAxis'] = {};
     if (isCategoriesXAxis) {
         xAxis = {
             type: 'category',
-            categories: xCategories?.map(String),
+            // @ts-ignore There may be a type mismatch due to the wrapper over html, markup and markdown
+            categories: xCategories,
+            labels: {
+                html: isHtmlField(xField) || isMarkdownField(xField) || isMarkupField(xField),
+            },
         };
     } else {
         if (isDateField(xField)) {
@@ -233,7 +248,7 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
         xAxis,
         yAxis: segments.map((d) => {
             const axisBaseConfig = getYAxisBaseConfig({
-                visualization: {placeholders, id: visualizationId},
+                placeholder: yPlaceholder,
             });
 
             return merge(axisBaseConfig, {
@@ -241,7 +256,6 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
                     numberFormat: axisLabelNumberFormat ?? undefined,
                 },
                 plotIndex: d.index,
-                position: d.isOpposite ? 'right' : 'left',
                 title: isSplitEnabled ? {text: d.title} : undefined,
             });
         }),
