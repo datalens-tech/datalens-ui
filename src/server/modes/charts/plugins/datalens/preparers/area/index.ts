@@ -156,12 +156,13 @@ export function prepareGravityChartArea(args: PrepareFunctionArgs) {
         };
     });
 
-    let legend: ChartData['legend'];
+    const shouldUseHtmlForLegend = isHtmlField(colorItem);
+    const legend: ChartData['legend'] = {html: shouldUseHtmlForLegend};
     const nonEmptyLegendGroups = Array.from(
         new Set(seriesData.map((s) => s.legend?.groupId).filter(Boolean)),
     );
     if (seriesData.length <= 1 || nonEmptyLegendGroups.length <= 1) {
-        legend = {enabled: false};
+        legend.enabled = false;
     }
 
     let xAxis: ChartData['xAxis'] = {};

@@ -45,5 +45,30 @@ datalensTest.describe('Wizard', () => {
             await expect(previewLoader).not.toBeVisible();
             await expect(preview).toHaveScreenshot();
         });
+
+        datalensTest('Html legend (color field) @screenshot', async ({page}) => {
+            const wizardPage = new WizardPage({page});
+            const preview = page.locator(slct(WizardPageQa.SectionPreview));
+            const previewLoader = preview.locator(slct(ChartKitQa.Loader));
+
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.X, 'ship_mode');
+            await wizardPage.sectionVisualization.addFieldByClick(PlaceholderName.Y, 'salesSum');
+
+            await wizardPage.sectionVisualization.addFieldByClick(
+                PlaceholderName.Colors,
+                'html_region',
+            );
+            await wizardPage.visualizationItemDialog.open(PlaceholderName.Colors, 'html_region');
+            await page
+                .locator(slct(DialogFieldSettingsQa.MarkupTypeRadioButtons))
+                .locator(`[value="${MARKUP_TYPE.html}"]`)
+                .click();
+            await wizardPage.visualizationItemDialog.clickOnApplyButton();
+
+            // Put the mouse away so that the presence of hover elements does not interfere with taking screenshots
+            await page.mouse.move(-1, -1);
+            await expect(previewLoader).not.toBeVisible();
+            await expect(preview).toHaveScreenshot();
+        });
     });
 });

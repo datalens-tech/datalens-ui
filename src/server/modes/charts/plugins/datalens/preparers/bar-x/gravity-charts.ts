@@ -188,11 +188,14 @@ export function prepareGravityChartBarX(args: PrepareFunctionArgs) {
             colorScale,
         };
     } else {
+        const shouldUseHtmlForLegend = isHtmlField(colorItem);
+        legend = {html: shouldUseHtmlForLegend};
+
         const nonEmptyLegendGroups = Array.from(
             new Set(seriesData.map((s) => s.legend?.groupId).filter(Boolean)),
         );
         if (seriesData.length <= 1 || nonEmptyLegendGroups.length <= 1) {
-            legend = {enabled: false};
+            legend.enabled = false;
         }
     }
 
