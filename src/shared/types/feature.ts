@@ -103,6 +103,8 @@ export enum Feature {
     EnableNewServiceSettings = 'EnableNewServiceSettings',
     /** Replace static master token with dynamic one */
     UsDynamicMasterToken = 'UsDynamicMasterToken',
+    /** Enable using dynamic master token in proxy */
+    UsDynamicMasterTokenInProxy = 'UsDynamicMasterTokenInProxy',
 }
 
 export type FeatureConfig = Record<string, boolean>;
